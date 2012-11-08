@@ -31,6 +31,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Scroll.H>
 #include "ge_window.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"

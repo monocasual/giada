@@ -74,7 +74,9 @@ public:
 
 	int         write(const char *file, const char *name);
 	int         readRecs();
+#ifdef WITH_VST
 	int         readPlugins();
+#endif
 };
 
 #endif

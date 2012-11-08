@@ -38,7 +38,9 @@ extern Mixer	   		 G_Mixer;
 extern Patch     		 G_Patch;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
+#ifdef WITH_VST
 extern PluginHost		 G_PluginHost;
+#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -457,7 +459,9 @@ void glue_resetToInitState(bool resetGui) {
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();
+#ifdef WITH_VST
 	G_PluginHost.freeAllStacks();
+#endif
 	if (resetGui)	gu_update_controls();
 }
 

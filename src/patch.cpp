@@ -32,9 +32,9 @@
 
 extern Mixer 		  G_Mixer;
 extern Conf 		  G_Conf;
-/** IFDEF VST!!! */
+#ifdef WITH_VST
 extern PluginHost G_PluginHost;
-
+#endif
 
 
 int Patch::open(const char *file) {
@@ -362,6 +362,7 @@ int Patch::readRecs() {
 /* ------------------------------------------------------------------ */
 
 
+#ifdef WITH_VST
 int Patch::readPlugins() {
 	puts("[PATCH] Reading plugins...");
 
@@ -419,6 +420,7 @@ printf("%d master plugins found\n", nmp);
 	}
 	return globalOut;
 }
+#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -472,7 +474,7 @@ int Patch::write(const char *file, const char *name) {
 		}
 	}
 
-
+#ifdef WITH_VST
 	int numPlugs;
 	int numParams;
 	Plugin  *pPlugin;
@@ -512,6 +514,7 @@ int Patch::write(const char *file, const char *name) {
 				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", i, j, k, pPlugin->getParam(k));
 		}
 	}
+#endif
 
 	fclose(fp);
 	return 1;
