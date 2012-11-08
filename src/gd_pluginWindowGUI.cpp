@@ -41,6 +41,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	set_non_modal();
 	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiHeight());
 	show();
+
 #if defined(__linux__)
 
 	/* Fl::check(): Waits until "something happens" and then returns. It's
@@ -48,9 +49,17 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 	Fl::check();
 	Window w = fl_xid(this);
+
 #elif defined(_WIN32)
+
 	HWND w = fl_xid(this);
+
+#elif defined(__APPLE__)
+
+	NSWindow w = fl_xid(this);
+
 #endif
+
 	pPlugin->openGui((void*)w);
 
 	char name[256];

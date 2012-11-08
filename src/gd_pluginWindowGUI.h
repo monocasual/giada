@@ -36,6 +36,9 @@
 #include <FL/Fl_Window.H>
 #include "pluginHost.h"
 #include "ge_mixed.h"
+#ifdef __APPLE__
+	#include <Cocoa/Cocoa.h>  // for NSWindow
+#endif
 
 
 class gdPluginWindowGUI : public gWindow {
