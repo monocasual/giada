@@ -1,0 +1,518 @@
+
+------------------------------------------------------------------------
+
+
+  Giada - Your Hardcore Loopmachine.
+
+  Developed by Monocasual
+
+  www.monocasual.com/giada
+
+  CHANGELOG
+------------------------------------------------------------------------
+
+
+
+0.5.3 --- 2012 . 10 . 26
+- Live beat manipulators (x2)(/2)
+- New sub-windows management, faster and more comfortable
+- New optional hard limiter on the output side
+- Action Editor window recalls x,y,w,h zoom and position
+- Usability improvements while handling an action (action editor)
+- Refresh actionEditor window when switching channel mode or delete
+	actions
+- Unable to delete a killchan action (action editor) (fixed)
+- Don't show ACTION_KILLCHAN in a singlepress channel (action editor)
+- Libsndfile no longer statically linked in Linux
+- Fixed a typo in config: "when the sequeCer is halted"
+- redefinition of DEFAULT_PITCH in wingdi.h (windows) (fixed)
+- Upgrade to FLTK 1.3.0
+- Other internal optimizations
+- Other small bugs fixed
+
+
+0.5.2 --- 2012 . 10 . 05
+- Add ability to handle actions for loop-mode channels
+- Add ability to record live mute actions for loop-mode channels
+- Lots of live action recording improvements
+- Enhanced usability for the action editor
+- More verbose output if kernel audio fails to start
+- Several internal optimizations
+
+
+0.5.1 --- 2012 . 09 . 13
+- First implementation of the Action Editor
+- Added compatibility with Ubuntu >= 10.04
+
+
+0.5.0 --- 2012 . 07 . 23
+- New custom project folder (.gprj)
+- Sample names are now made unique
+- Fixed unwanted time stretching while exporting a mono sample
+- Lots of minor internal improvements
+
+
+0.4.12 --- 2012 . 07 . 01
+- VST parameters and stacks are now stored in patch file
+- Upgrade to RtAudio 0.4.11
+- PulseAudio support in Linux (thanks to RtAudio 0.4.11)
+- Revised .deb package
+- Enhanced "normalize" function in wave editor
+- Several memory issues fixed
+- Internal enhancements and minor bugs fixed
+
+
+0.4.11 --- 2012 . 06 . 10
+- VST stack for each channel
+- Custom paths for plugins, samples and patches
+- Crash in config panel if device is busy (fixed)
+- Graphical bug in the input meter (fixed)
+- ParamLabel added in the VST parameter list
+
+
+0.4.10 --- 2012 . 05 . 30
+- Ability to shift up an down VST plugins
+- Enhanced patch/conf architecture
+- Ability to edit a sample while playing
+- Mutex controls in VST processing
+- Lots of security issues fixed while changing pitch dinamically
+- Enhanced sub-window system
+- Several minor bugs fixed
+
+
+0.4.9 --- 2012 . 05 . 12
+- No more mandatory inputs
+- Pitch value properly stored inside the patch
+- Several small VST host improvements
+- Enhanced window management
+- Ability to browse files while playing with main GUI (non-modal browser)
+- Improved error checking in KernelAudio
+- Wrong style for lower scrollbar in Browser (fixed)
+- Fixed compilation on 64 bit systems (thanks to Speps@Archlinux)
+- Samplerate no longer hardcoded, auto-detected with JACK
+- Minor internal improvements and bugfixing
+
+
+0.4.8 --- 2012 . 04 . 21
+- Initial VST support (experimental)
+- Pitch controller (experimental, no filtering)
+- OSX bundles are now correctly handled by the file browser
+- Fixed several memory leaks
+- Minor internal improvements
+
+
+0.4.7 --- 2012 . 03 . 31
+- Cut, trim & silence operations in sample editor
+- New "Reload sample" button added
+- Lots of optimizations in the waveform drawing routines
+- The sample is no longer editable while in play mode
+- Fixed potential startup crashes while using Giada with Jack Audio
+- Other minor fixes applied to the configuration panel
+- Fixed compilation on 64 bit systems (thanks to Speps@Archlinux)
+
+
+0.4.6 --- 2012 . 03 . 11
+- New device information panel
+- The device configuration now shows only active and available devices
+- Channel panel no longer pops up during a recording process
+- GUI beautifications and other minor graphical fixes
+- Program icon added in all subwindows
+- Action records no longer available during a take, and vice versa
+- Fixed a serious bug that swapped input and output devices
+- Fixed loop behavior in ending mode
+- Fixed clicks when stopping a muted channel in loop
+
+
+0.4.5 --- 2012 . 02 . 25
+- Complete GUI redesign
+- New "start/stop action recs" button
+- Lots of internal cleanups and micro refactorings
+- Small drawing glithes in Editor and status box (fixed)
+- An invalid patch puts Giada to init state (fixed)
+- Fixed button repeat on start/stop, action rec, input rec
+- Checks against takes with unique name
+- Message "this action may stop the channel" always shown (fixed)
+- Channel no longer freeable while a take is in progress
+
+
+0.4.4 --- 2012 . 02 . 04
+- New input/output channel selector
+- Rewind bypasses the quantizer if triggered via mouse (fixed)
+- Fixed library paths in configure and makefile (thanks to Yann C.)
+- Added AUTHORS and NEWS files to the source package (thanks to Yann C.)
+- More robust sample export procedure
+- Issues with mute buttons when opening a patch (fixed)
+- Several usability improvements
+- Minor code cleanups and optimizations
+
+
+0.4.3 --- 2012 . 01 . 21
+- New "save project" feature
+- Ability to export a single sample to disk
+- More feedback when removing/clearing actions and samples
+- Sequencer starts automatically when action-rec button is pressed
+- Alert if patch name is empty while saving it
+- Channels now store internally the name of the samples
+- Missing "--no devices found--" in input devices menu (fixed)
+- Alert added if there are no empty channels for recording
+- "Edit->Clear all actions" no longer works (fixed)
+- END button could be used as a channel trigger (fixed)
+- Recorders are available even if device status is wrong (fixed)
+- Missing sample rewind if channel is muted (fixed)
+- Quantizer doesn't work if framesize is odd (fixed)
+- Random segfault when closing Giada (fixed)
+- Lots of code cleanups
+- Other minor improvements and optimizations
+
+
+0.4.2 --- 2012 . 01 . 09
+- Live sampling from external input with meter and delay compensation
+- Check against uneven values and overflow in buffersize field
+- Wrong normalized values if volume level is 0.0 (fixed)
+- Boost dial goes crazy if normalized > 20.0 dB (fixed)
+- Boost dial goes crazy if normalized < 0.0 dB (fixed)
+- Unwanted noise click if a muted channel is being rewinded (fixed)
+- Mute doesn't work well for single-shot samples (fixed)
+- Wrong FLTK headers (fixed, thanks to Yann C.)
+- Moving chanStart/chanEnd swaps stereo image (fixed)
+- Reset to init state doesn't reset mute buttons (fixed)
+- Wrong chanStart value if > 0 (fixed)
+
+
+0.4.1 --- 2011 . 12 . 07
+- Complete mixer engine refactoring
+- Faster audio buffer allocation
+- Global beat system revisited
+- Autocrossfade between samples is now enabled by default
+- No more recorded actions on odd frames
+- Unintentional channel swapping fixed
+- Unable to list all sound systems and sound devs under OSX (fixed)
+- Missing graceful stop of audio streaming under OSX (fixed)
+
+
+0.4.0 --- 2011 . 11 . 16
+- Support for all major uncompressed file formats (with libsndfile)
+- Enhanced mono > stereo conversion
+- Fixed drawing issues for the start/stop labels inside the waveform
+- Enhanced backward compatibility with old patches
+- Support for compilation on OS X and Windows
+
+
+0.3.6 --- 2011 . 11 . 02
+- Initial Mac OS X release
+- (Windows) Ability to list and browse all active drives
+- Change some internal routines plus minor optimizations
+- Added -pedantic and -Werror flag to the compiler
+- Crash if clicking on mute in an empty channel (fixed)
+- Chan status changes if an empty channel is being muted (fixed)
+
+
+0.3.5 --- 2011 . 10 . 22
+- Pan controller added
+- New GNU-style source code packaging
+- Revamped .deb package
+- Program icon missing under Windows (fixed)
+- Crash if a sample in patch is missing from the filesystem (fixed)
+- Unable to rewind to beat 1 if quantizer is on and seq stopped (fixed)
+- Several minor glitches fixed
+
+
+0.3.4 --- 2011 . 10 . 10
+- Full source code released under GPL license
+- Autosmooth is now toggleable via setup
+- Faster loading process of patch files
+- Various internal cleanups and optimizations
+- Fixed incorrect reading of boost values from patch
+- Fixed a potential bug that prevented the config panel to appear
+- Fixed stereo swap bug
+- Minor graphical revisions
+
+
+0.3.3 --- 2011 . 09 . 28
+- New "normalize" function
+- More editing tools added inside the sample editor
+- Waveform beautifications
+- Fixed interaction bugs for boost and volume controls
+
+
+0.3.2 --- 2011 . 09 . 19
+- New "mute" button inside the main window
+- Waveform is now updated when the boost value changes
+- Zoomin/zoomout relative to the scrollbar position
+- Fixed garbage output if the volume was "-inf" (windows version)
+- Fixed several rendering issues for short waveforms
+
+
+0.3.1 --- 2011 . 09 . 12
+- Boost volume + fine volume control in sample editor
+- Start/End handles inside the editor are now draggable via mouse
+- Fixed scrollbar issues in sample editor
+- Start/end points are now always drawn in the foreground
+- Waveform no longer overflow if a value is greater than the window
+- (linux) giada.conf is saved inside the hidden folder /home/.giada
+- patch loading process is now faster and cleaner
+- Update to rtAudio 4.0.10
+
+
+0.3.0 --- 2011 . 09 . 01
+- New sample editor window
+- Ability to set start/end points within a sample
+- Update to rtAudio 4.0.9
+- Fixed an string overflow inside a patch
+- Fixed a missing memory free if a sample is unreadable
+- Several internal updates and optimizations
+
+
+0.2.7 --- 2011 . 07.  22
+- New way to handle recorded channels as loops
+- Fixed retrig for backspace key (rewind)
+- Enhanced rewind with quantization support
+- Main and alert windows now appear centered on screen
+- Sanity check against old patches without metronome informations
+- Rewind now affects loops in rec-reading mode
+
+
+0.2.6 --- 2011 . 07 . 11
+- Internal metronome
+- Fixed some glitches in config panel
+- Minor cleanups
+
+
+0.2.5 --- 2011 . 06 . 20
+- Configuration panel redesign
+- Several new control options
+- Progress feedback when loading patches
+- Internal optimizations
+- Updated docs
+
+
+0.2.4 --- 2011 . 06 . 08
+- New loop repeat mode
+- Ability to save patches anywhere in the filesystem
+- Sub-beat management
+- Sound meter has been revisited and improved
+- Several patch enhancements
+- Core audio optimizations
+
+
+0.2.3 --- 2011 . 05 . 18
+- ASIO support for Windows version
+- Enhanced security when reading values from a patch
+- Ability to disable the recordings when the sequencer is paused
+- Master volume and rec status are now saved inside the patch
+- Device selection fixed and improved
+- Sequencer flickering in Windows has been fixed
+- Feedback added if a sample from a patch is unreadable or corrupted
+- Minor internal optimizations
+
+
+0.2.2 --- 2011 . 05 . 04
+- New open-source patch system
+- A patch can now be loaded from any location of the filesystem
+- Enhanced file browser coords system
+- Lots of minor improvements to the sample loading/unloading procedure
+- (win) Init path of file browser now starts from %userProfile%/Desktop
+- Wrong handling of "/" chars fixed in config menu
+- Fixed potential hangs on quit
+- Fixed clicks when stopping sequencer/sample
+- Minor gui beautifications
+
+
+0.2.1 --- 2011 . 04 . 26
+- Windows version
+
+
+0.2.0 --- 2011 . 04 . 19
+- Full JACK and ALSA support with RtAudio
+- New list of sound devices in menu window
+- Enhanced shutdown procedure to prevent potential crashes
+- Some GUI glitches fixed
+- Fixed random locks when the screensaver is active
+
+
+0.1.8 --- 2011 . 04 . 13
+- new functions: free al samples/recordings, reset to init patch
+- main menu redesign
+- the file browser is now resizable
+- GUI feedback for samples in play mode
+- some fixes when unloading a sample
+
+
+0.1.7 --- 2011 . 04 . 07
+- Ability to remove only action recordings or mute recordings
+- Shift+key now stops the sample if the master play is deactivated
+- Frame 0 was always processed at the end of the sequencer
+- Minor internal improvements
+
+
+0.1.6 --- 2011 . 03 . 29
+- Autocrossfade to prevent clicks
+- Internal improvements and bugfixing
+
+
+0.1.5 --- 2011 . 03 . 10
+- decimal bpm adjustment
+- ability to shrink/expand actions when changing the global beats
+- improved GUI for beats and bpm controllers
+- improved routines for action management
+- actions are now updated when you change bpm
+
+
+0.1.4 --- 2011 . 03 . 04
+- ability to save recorded actions
+- status box now shows if a recorded chan is deactivated
+- recorder is reset correctly when you load a new patch
+- minor improvements
+
+
+0.1.3 --- 2011 . 02 . 26
+- action recorder (first implementation)
+- quantization procedure slightly optimized
+- minor graphical adjustments
+- expanded documentation
+
+
+0.1.2 --- 2011 . 02 . 08
+- master volume controller
+- improved sound meter with more accuracy
+- improved verifications when reading or writing a patch
+- beat counter is now always reset to 1 after a patch is loaded
+- made loading wave files more robust, plus memory optimizations
+- minor crashes fixed
+
+
+0.1.1 --- 2011 . 01 . 26
+- expansion to 32 channels
+- GUI restyling
+- live quantizer
+- fixed wrong handling of "mute" value when loading a patch
+- minor internal improvements
+
+
+0.1.0 --- 2011 . 01 . 18
+- ability to mute channels
+- stop and rewind buttons now affect only channels in loop mode
+- undo for ending loops
+- internal patch improvements to provide backward compatibility
+- better behaviour when exceeding the total amount of available memory
+- fixed random reversals of stereo field at the end of the beat bar
+- fixed a potential segmentation fault when freeing a sample
+
+
+0.0.12 --- 2011 . 01 . 11
+- ability to free a channel
+- "stop" button to suspend the general program
+- new "stop-to-end" mode for looped channels
+- new "full stop" key combination
+- enhanced mouse interaction
+- minor bugfixing
+
+
+0.0.11 --- 2010 . 12 . 28
+- customizable keys
+- GUI layer optimizations and improvements
+- overwrite confirmation when saving a patch
+- the browser always displays the patch folder when loading a new patch
+- browser url is now read-only to prevent manipulations
+
+
+0.0.10 --- 2010 . 12 . 16
+- new "single-mode retrig" mode added
+- expansion to 16 channels
+- new advanced file browser with the ability to navigate the filesystem
+- audio configuration now uses the "default" device, if not changed
+- graphical restyling for audio channels
+- fixed a random crash on startup, due to a wrong thread synch
+
+
+0.0.9 --- 2010 . 12 . 08
+- new loop once mode
+- new graphical beat meter
+- rewind-program button added
+- heavy buttons and controls restyling
+- reinforced header verification when a new patch is opened for reading
+- some bugfixing for the loading procedure of a patch
+- fixed a potential crash while a new sample is being loaded
+
+
+0.0.8 --- 2010 . 11 . 28
+- fixed a critical crash while loading a sample
+- GUI warning when loading a sample or a patch into an active channel
+- little optimization during the search for data into waves
+- all popup windows are now modal (always on top)
+- fixed a potential crash in case of malformed wave files
+
+
+0.0.7 --- 2010 . 11 . 18
+- new peak meter with clip warning and system status report
+- any "ok" button is associated to the "return" key (for fast inputs)
+- graphical improvements for checkboxes, buttons, smaller fonts in browsers
+- graphical feedback for missing samples
+- internal optimizations
+
+
+0.0.6 --- 2010 . 11 . 01
+- new 32 bit floating point audio engine
+- support for any wave bit-rate, from 8 bit pcm to 32 float
+- Giada now prompts when a sound card error occurs
+- removed the hard-limiting system, now useless
+- the "save patch" panel now shows the actual patchname in use
+- alphabetic sort into the file browser
+- fixed an annoying gui flickering
+- patch volume informations are now handled correctly
+- minor internal optimizations
+- fixed a memory leak when loading a new patch
+- other memory optimizations
+
+
+0.0.5 --- 2010 . 10 . 21
+- Patch-based system: load/save your setup from/to a binary file
+- New audio configuration panel
+- New configuration file (giada.conf) where to store data
+- Complete implementation of the double click startup
+- Fixed a bug related to the confirm-on-quit window
+- Minor GUI beautifications
+- Extended documentation
+
+
+0.0.4 --- 2010 . 10 . 11
+- New internal sample-accurate loop engine
+- Ability to configure the period size through ini file
+- First implementation of the double click startup
+- Debug informations are now properly tagged, reporting the interested layer
+
+
+0.0.3 --- 2010 . 10 . 02
+- (giada) New official logo
+- (giada) Ability to load single-channel samples
+- (giada) Capital letter consistency between GUI buttons
+- (giada) Added "cancel" button to the browser window
+- (giada) Endianness verification
+- (giada) Cleanup of the audio initialization procedure
+- (giada) Several internal optimization for audio playback
+- (giada) ALSA layer now tells if an underrun occurs
+- (giada) Internal memory allocation improvements
+- (giada) Fixed an unallocated hardware parameter into ALSA configuration
+- (wa) Informations about wave endianness
+- Added a "Requirements" section to the readme file
+
+
+0.0.2 --- 2010 . 09 . 17
+- (giada) More visual feedbacks if a key is pressed
+- (giada) Added a graphical alert if a sample is in an incorrect format
+- (giada) Confirm on exit
+- (giada) Graphical improvements for the browser window
+- (giada) Browser window doesn't close itself anymore if a sample format is incorrect
+- (giada) Added "-- no sample --" for empty channels
+- (giada) Startup no longer fails if a sample from the ini file is not found
+- (giada) Internal optimization for the sample loading routine
+- (giada) More graphical consistency between subwindows
+- (giada) The sample name is now trucated to fit into its box, preventing overflow
+- (giada) Other minor GUI tweaks
+- (giada) Internal memory improvements to prevent a bad bug of allocation with malformed wave files
+- (wa) More informations about sample size
+- (wa) Added calculations and comparison between data sizes
+
+
+0.0.1 --- 2010 . 09 . 06
+(initial release)

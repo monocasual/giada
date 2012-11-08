@@ -1,0 +1,156 @@
+/* ---------------------------------------------------------------------
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * glue
+ * Intermediate layer GUI <-> CORE.
+ *
+ * How to know if you need another glue_ function? Ask yourself if the
+ * new action will ever be called via MIDI or keyboard/mouse. If yes,
+ * put it here.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2011 Giovanni A. Zuliani | Monocasual
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * ------------------------------------------------------------------ */
+
+
+#ifndef GLUE_H
+#define GLUE_H
+
+#include "mixerHandler.h"
+#include "gui_utils.h"
+#include "ge_mixed.h"
+
+
+int glue_loadChannel(int c, const char *fname, const char *fpath);
+int glue_unloadChannel(int c);
+
+/** FIXME - noboy will call these via MIDI/keyb/mouse! */
+int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status);
+int glue_savePatch(const char *fullpath, const char *name);
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+int glue_saveSample(int ch, const char *fullpath);
+
+/* keyPress / keyRelease
+ * handle the key pressure, either via mouse/keyboard or MIDI. If gui
+ * is true it means that the event comes from the main window (mouse,
+ * keyb or MIDI), otherwise the event comes from the action recorder. */
+
+void glue_keyPress  (int c, bool ctrl=0, bool shift=0);
+void glue_keyRelease(int c, bool ctrl=0, bool shift=0);
+
+void glue_setBpm(const char *v1, const char *v2);
+void glue_setBeats(int beats, int bars, bool expand);
+
+void glue_startSeq();
+void glue_stopSeq();
+void glue_rewindSeq();
+
+/* start/stopRec
+ * handle the action recording. */
+
+void glue_startRec();
+void glue_stopRec();
+
+/* start/stopInputRec
+ * handle the input recording (take). */
+
+int glue_startInputRec();
+int glue_stopInputRec();
+
+/* start/stopReadingRecs
+ * handle the 'R' button. */
+
+void glue_startReadingRecs(int chan);
+void glue_stopReadingRecs(int chan);
+
+void glue_quantize(int val);
+
+void glue_setVol(int chan, float v);
+void glue_setOutVol(float v);
+void glue_setInVol(float v);
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_setPanning(class gdEditor *win, int ch, float val);
+
+void glue_clearAllSamples();
+void glue_clearAllRecs();
+
+/* resetToInitState
+ * reset Giada to init state. */
+
+void glue_resetToInitState(bool resetGui=true);
+
+void glue_startStopMetronome();
+
+/* setBeginEndChannel
+ * sets start/end points in the sample editor.
+ * Recalc=false: don't recalc internal position
+ * check=true: check the points' consistency */
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_setBeginEndChannel(class gdEditor *win, int ch, int b, int e,
+														 bool recalc=false, bool check=true);
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_setBoost(class gdEditor *win, int ch, float val, bool numeric);
+
+void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric);
+
+/* setVolEditor
+ * handles the volume inside the SAMPLE EDITOR (not the main gui). The
+ * numeric flag tells if we want to handle the dial or the numeric input
+ * field. */
+
+ /** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_setVolEditor(class gdEditor *win, int ch, float val, bool numeric);
+
+/* writeMute
+ * enables/disables mute for channel 'ch'.
+ * Gui==true: the signal comes from the GUI
+ * Gui==false: the signal comes from the keyboard/MIDI */
+
+void glue_writeMute(int ch, bool gui);
+
+/* readMute
+ * similar to writeMute, it reads a MUTE event from the stack */
+
+ /** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_readMute(int ch, int type);
+
+/* setChannelWithActions
+ * add 'R' button if channel has actions, and set recorder to active. */
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+void glue_setChannelWithActions(int ch);
+
+/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+int glue_saveProject(const char *folderPath, const char *projName);
+
+
+/* beatsDivide/Multiply
+ * shrinks or enlarges the number of beats by 2. */
+
+void glue_beatsMultiply();
+void glue_beatsDivide();
+
+#endif
