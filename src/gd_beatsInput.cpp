@@ -29,12 +29,16 @@
 #include "gd_beatsInput.h"
 
 extern Mixer				 G_Mixer;
+extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 
 gdBeatsInput::gdBeatsInput()
 	: gWindow(164, 60, "Beats")
 {
+	if (G_Conf.beatsX)
+		resize(G_Conf.beatsX, G_Conf.beatsY, w(), h());
+
 	set_modal();
 
 	beats   = new gInput(8,  8,  35, 20);
@@ -64,7 +68,10 @@ gdBeatsInput::gdBeatsInput()
 /* ------------------------------------------------------------------ */
 
 
-gdBeatsInput::~gdBeatsInput() {}
+gdBeatsInput::~gdBeatsInput() {
+	G_Conf.beatsX = x();
+	G_Conf.beatsY = y();
+}
 
 
 /* ------------------------------------------------------------------ */

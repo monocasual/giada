@@ -29,11 +29,16 @@
 #include "gd_bpmInput.h"
 
 extern Mixer     		 G_Mixer;
+extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 
 gdBpmInput::gdBpmInput()
 : gWindow(144, 36, "Bpm") {
+
+	if (G_Conf.bpmX)
+		resize(G_Conf.bpmX, G_Conf.bpmY, w(), h());
+
 	set_modal();
 
 	input_a = new gInput(8,  8, 30, 20);
@@ -65,7 +70,14 @@ gdBpmInput::gdBpmInput()
 	show();
 }
 
-gdBpmInput::~gdBpmInput() {}
+
+/* ------------------------------------------------------------------ */
+
+
+gdBpmInput::~gdBpmInput() {
+	G_Conf.bpmX = x();
+	G_Conf.bpmY = y();
+}
 
 
 /* ------------------------------------------------------------------ */

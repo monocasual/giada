@@ -28,6 +28,8 @@
 
 #include "gd_about.h"
 
+extern Conf G_Conf;
+
 
 gdAbout::gdAbout()
 #ifdef WITH_VST
@@ -35,6 +37,10 @@ gdAbout::gdAbout()
 #else
 : gWindow(340, 320, "About Giada") {
 #endif
+
+	if (G_Conf.aboutX)
+		resize(G_Conf.aboutX, G_Conf.aboutY, w(), h());
+
 	set_modal();
 
 	logo  = new gBox(8, 10, 324, 86);
@@ -81,7 +87,10 @@ gdAbout::gdAbout()
 /* ------------------------------------------------------------------ */
 
 
-gdAbout::~gdAbout() {}
+gdAbout::~gdAbout() {
+	G_Conf.aboutX = x();
+	G_Conf.aboutY = y();
+}
 
 
 /* ------------------------------------------------------------------ */
