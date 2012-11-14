@@ -490,8 +490,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 							/* we must append another frame in the buffer when the fadeout
 							 * ends: there's a gap here which would clip otherwise */
 
-							vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
-							vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
+							//vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
+							//vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
+
+							vChan[k][j]   = 0.0f;
+							vChan[k][j+1] = 0.0f;
 						}
 					}  // no fadeout to do
 					else {
