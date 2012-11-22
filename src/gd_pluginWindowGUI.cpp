@@ -42,25 +42,11 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiHeight());
 	show();
 
-#if defined(__linux__)
-
 	/* Fl::check(): Waits until "something happens" and then returns. It's
 	 * mandatory on linux, otherwise X can't find 'this' window. */
 
 	Fl::check();
-	Window w = fl_xid(this);
-
-#elif defined(_WIN32)
-
-	HWND w = fl_xid(this);
-
-#elif defined(__APPLE__)
-
-	NSWindow w = fl_xid(this);
-
-#endif
-
-	pPlugin->openGui((void*)w);
+	pPlugin->openGui((void*)fl_xid(this));
 
 	char name[256];
 	pPlugin->getProduct(name);
