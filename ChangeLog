@@ -13,6 +13,20 @@
 
 
 
+0.5.4 --- 2012 . 11 . 24
+- VST GUI support
+- Better subwindow management
+- Implemented many other VST opcodes
+- Missing plugins are now shown in the list with a 'dead' state
+- Refresh action editor when changing beats (via beat operator or
+  beat window)
+- Graphical improvements in the action editor
+- Resizable action editor doesn't work well (fixed)
+- Fix auto fadeout for SINGLE_PRESS channels
+- Fix compilation without --enable-vst
+- Fix for a wrong prototype definition of the VST hostCallback
+
+
 0.5.3 --- 2012 . 10 . 26
 - Live beat manipulators (x2)(/2)
 - New sub-windows management, faster and more comfortable
