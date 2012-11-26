@@ -29,7 +29,7 @@ Documentation
 -------------
 Docs are available online on the official website
 
-http://www.monocasual.com/giada/documentation
+http://www.monocasual.com/giada/documentation-index.php
 
 
 
