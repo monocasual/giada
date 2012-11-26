@@ -74,7 +74,7 @@ bool canRec(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(unsigned c, char act, int frame) {
+void rec(int c, char act, int frame) {
 
 	/* allocating the action */
 
@@ -128,7 +128,7 @@ void rec(unsigned c, char act, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void clearChan(unsigned ch) {
+void clearChan(int ch) {
 
 	printf("[REC] clearing chan %d...\n", ch);
 
@@ -153,7 +153,7 @@ void clearChan(unsigned ch) {
 /* ------------------------------------------------------------------ */
 
 
-void clearAction(unsigned ch, char act) {
+void clearAction(int ch, char act) {
 	printf("[REC] clearing action %d from chan %d...\n", act, ch);
 	for (unsigned i=0; i<global.size; i++) {						// for each frame i
 		unsigned j=0;
@@ -178,7 +178,7 @@ void clearAction(unsigned ch, char act) {
 /* ------------------------------------------------------------------ */
 
 
-void deleteAction(unsigned chan, int frame, char type) {
+void deleteAction(int chan, int frame, char type) {
 
 	/* let's find the frame 'frame' in our stack. */
 
@@ -406,7 +406,7 @@ void disableRead(int c) {
 /* ------------------------------------------------------------------ */
 
 
-void chanHasEvents(unsigned ch) {
+void chanHasEvents(int ch) {
 	if (global.size == 0) {
 		chanEvents[ch] = false;
 		return;
@@ -423,7 +423,7 @@ void chanHasEvents(unsigned ch) {
 /* ------------------------------------------------------------------ */
 
 
-int getStartActionFrame(unsigned chan, char action, int frame) {
+int getStartActionFrame(int chan, char action, int frame) {
 
 	/* since 'frame' holds the position of the B-action (e.g. MUTE_ON(A) +
 	 * MUTE_OFF(B)) we look in the stack for the frame lower than 'frame'.
@@ -454,7 +454,7 @@ int getStartActionFrame(unsigned chan, char action, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getEndActionFrame(unsigned chan, char action, int frame) {
+int getEndActionFrame(int chan, char action, int frame) {
 
 	for (unsigned i=0; i<frames.size; i++)
 		for (unsigned j=0; j<global.at(i).size; j++)

@@ -45,8 +45,8 @@
 namespace recorder {
 
 struct _action { /** FIXME - please remove the underscore */
-	unsigned chan;
-	char     type;
+	int  chan;
+	char type;
 };
 
 extern gVector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
@@ -65,7 +65,7 @@ void init();
 /* chanHasEvents
  * Checks if the channel has at least one action recorded. If false, sets
  * chanEvents[ch] = false. Used after an action deletion. */
-void chanHasEvents(unsigned chan);
+void chanHasEvents(int chan);
 
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
@@ -73,19 +73,19 @@ bool canRec(int chan);
 
 /* rec
  * records an action. */
-void rec(unsigned chan, char action, int frame);
+void rec(int chan, char action, int frame);
 
 /* clearChan
  * clears all actions from a channel. */
-void clearChan(unsigned chan);
+void clearChan(int chan);
 
 /* clearAction
  * clears the 'action' action type from a channel. */
-void clearAction(unsigned chan, char action);
+void clearAction(int chan, char action);
 
 /* deleteAction
  * deletes ONE action. Useful in the action editor. */
-void deleteAction(unsigned chan, int frame, char type);
+void deleteAction(int chan, int frame, char type);
 
 /* clearAll
  * deletes everything. */
@@ -121,11 +121,11 @@ void disableRead(int chan);
  * searches for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
  * MUTE_ON(b). Returns the MUTE_OFF frame, if any. 'action' is the
  * action to look for. */
-int getStartActionFrame(unsigned chan, char action, int frame);
+int getStartActionFrame(int chan, char action, int frame);
 
 /* getEndActionFrame
  * same as getStartActionFrame but searches the B-frame. */
-int getEndActionFrame(unsigned chan, char action, int frame);
+int getEndActionFrame(int chan, char action, int frame);
 
 /* print
  * debug of the frame stack. */
