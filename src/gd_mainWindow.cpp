@@ -209,7 +209,8 @@ void gdMainWindow::__cb_endprogram() {
 
 
 void gdMainWindow::__cb_change_bpm() {
-	addSubWindow(new gdBpmInput());
+	//addSubWindow(new gdBpmInput());
+	gu_openSubWindow(mainWin, new gdBpmInput(), WID_BPM);
 }
 
 
@@ -217,7 +218,8 @@ void gdMainWindow::__cb_change_bpm() {
 
 
 void gdMainWindow::__cb_change_batt() {
-	addSubWindow(new gdBeatsInput());
+	//addSubWindow(new gdBeatsInput());
+	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
 }
 
 
@@ -225,7 +227,8 @@ void gdMainWindow::__cb_change_batt() {
 
 
 void gdMainWindow::__cb_open_about_win() {
-	addSubWindow(new gdAbout());
+	//addSubWindow(new gdAbout());
+	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
 }
 
 

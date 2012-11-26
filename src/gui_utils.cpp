@@ -230,8 +230,10 @@ void gu_setFavicon(Fl_Window *w) {
 
 
 void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
-	if (parent->hasWindow(id))
+	if (parent->hasWindow(id)) {
+		printf("parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
+	}
 	child->setId(id);
 	parent->addSubWindow(child);
 }

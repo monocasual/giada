@@ -245,7 +245,7 @@
 #define WID_FX_LIST       38
 #define WID_ACTION_EDITOR 39
 #define WID_SAMPLE_EDITOR 40
-#define WID_FX            40
+#define WID_FX            41
 
 
 
