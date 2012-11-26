@@ -1,12 +1,9 @@
-------------------------------------------------------------------------
 
 
-  Giada - Your Hardcore Loopmachine.
+Giada - Your Hardcore Loopmachine
+=================================
 
-  http://www.monocasual.com/giada
-
-  README
-------------------------------------------------------------------------
+http://www.monocasual.com/giada
 
 
 
