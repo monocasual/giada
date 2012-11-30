@@ -233,8 +233,6 @@ void gdMainWindow::__cb_open_about_win() {
 
 
 void gdMainWindow::__cb_open_loadpatch_win() {
-	if (!G_Mixer.isSilent() && !gdConfirmWin("Warning", "This action may stop audio: are you sure?"))
-		return;
 	gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath, 0, BROWSER_LOAD_PATCH);
 	gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 }
