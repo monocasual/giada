@@ -131,6 +131,9 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 	if (resPlugins != 1)
 		gdAlert("Some VST files were not loaded successfully.");
 #endif
+
+	/* lastly close all other windows */
+	gu_closeAllSubwindows();
 	return res;
 }
 
