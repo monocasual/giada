@@ -182,11 +182,19 @@ int gMuteChannel::handle(int e) {
 			 * left click on void: add */
 
 			if (Fl::event_button1())  {
+
 				if (selectedPoint != -1) {
 					draggedPoint   = selectedPoint;
 					previousXPoint = points.at(selectedPoint).x;
 				}
 				else {
+
+					/* click on the grey area leads to nowhere */
+
+					if (mouseX > parent->coverX-x()) {
+						ret = 1;
+						break;
+					}
 
 					/* click in the middle of a long mute_on (between two points): new actions
 					 * must be added in reverse: first mute_off then mute_on. Let's find the
@@ -203,15 +211,25 @@ int gMuteChannel::handle(int e) {
 					/* next point odd = mute_on [click here] mute_off
 					 * next point even = mute_off [click here] mute_on */
 
-					unsigned frame_a = mouseX*2*parent->zoom;
+					int frame_a = mouseX*2*parent->zoom;
+					int frame_b = frame_a+2048;
+
+					/* avoid overflow: frame_b must be within the sequencer range. In that
+					 * case shift the ON-OFF block */
+
+					if (frame_b >= parent->framesPerBeats*2) { // *2 == stereo
+						frame_b = parent->framesPerBeats*2;
+						frame_a = frame_b-2048;
+					}
+
 					if (nextPoint % 2 != 0) {
 						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEON,  frame_a+2048);
+						recorder::rec(parent->chan, ACTION_MUTEON,  frame_b);
 						recorder::sortActions();
 					}
 					else {
 						recorder::rec(parent->chan, ACTION_MUTEON,  frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_a+2048);
+						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
 					glue_setChannelWithActions(parent->chan); // update mainWindow
