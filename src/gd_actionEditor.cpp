@@ -52,11 +52,11 @@ gdActionEditor::gdActionEditor(int chan)
 
 	/* container with zoom buttons */
 
-	Fl_Group *zooms = new Fl_Group(8, 8, 624, 20);
+	Fl_Group *zooms = new Fl_Group(8, 8, w()-16, 20);
 	zooms->begin();
-		gBox *b = new gBox  (500, 8, 80, 20);  // padding border - buttons (500 is random width, please FIXME)
-		zoomIn  = new gClick(640-8-40-4, 8, 20, 20, "+");
-		zoomOut = new gClick(640-8-20,   8, 20, 20, "-");
+		gBox *b = new gBox  (8, 8, w()-8-40-16, 20);  // padding border - buttons
+		zoomIn  = new gClick(w()-8-40-4, 8, 20, 20, "+");
+		zoomOut = new gClick(w()-8-20,   8, 20, 20, "-");
 	zooms->end();
 	zooms->resizable(b);
 	zoomIn->callback(cb_zoomIn, (void*)this);
