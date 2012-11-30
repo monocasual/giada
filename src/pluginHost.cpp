@@ -188,6 +188,20 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			printf("[pluginHost] requested opcode 'audioMasterGetAutomationState' (%d)\n", opcode);
 			return 0;
 
+		/* 43 - It tells the Host that if it needs to, it has to record
+		 * automation data for this control. In other words this opcode is fired
+		 * when the user start to tweak a parameter with the mouse.
+		 * Useful when the plugin actions will be recorded. */
+
+		case audioMasterBeginEdit:
+			return 0;
+
+		/* 44 - no more interaction for the user, started with the previous
+		 * opcode. */
+
+		case audioMasterEndEdit:
+			return 0;
+
 		default:
 			printf("[pluginHost] FIXME: host callback called with opcode %d\n", opcode);
 			return 0;
