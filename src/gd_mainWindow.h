@@ -125,8 +125,6 @@ public:
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
 	~gdMainWindow();
-
-	void closeAllSubwindows();
 };
 
 #endif

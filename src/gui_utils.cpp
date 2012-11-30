@@ -250,3 +250,15 @@ void gu_refreshActionEditor() {
 		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
 	}
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gu_closeAllSubwindows() {
+	mainWin->delSubWindow(WID_FILE_BROWSER);
+	mainWin->delSubWindow(WID_ACTION_EDITOR);
+	mainWin->delSubWindow(WID_SAMPLE_EDITOR);
+	mainWin->delSubWindow(WID_FX_LIST);
+	mainWin->delSubWindow(WID_FX);
+}

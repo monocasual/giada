@@ -427,7 +427,7 @@ void gdMainWindow::__cb_open_edit_menu() {
 	if (strcmp(m->label(), "Reset to init state") == 0) {
 		if (!gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 			return;
-		closeAllSubwindows();
+		gu_closeAllSubwindows();
 		glue_resetToInitState();
 		return;
 	}
@@ -467,14 +467,3 @@ void gdMainWindow::__cb_openMasterFxOut() {
 }
 #endif
 
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::closeAllSubwindows() {
-	mainWin->delSubWindow(WID_FILE_BROWSER);
-	mainWin->delSubWindow(WID_ACTION_EDITOR);
-	mainWin->delSubWindow(WID_SAMPLE_EDITOR);
-	mainWin->delSubWindow(WID_FX_LIST);
-	mainWin->delSubWindow(WID_FX);
-}

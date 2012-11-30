@@ -86,4 +86,10 @@ void gu_openSubWindow(gWindow *parent, gWindow *child, int id);
 
 void gu_refreshActionEditor();
 
+
+/* closeAllSubwindows
+ * close all subwindows attached to mainWin. */
+
+void gu_closeAllSubwindows();
+
 #endif
