@@ -280,6 +280,14 @@ int gActionChannel::handle(int e) {
 				selected = getSelectedAction();
 
 				if (selected == NULL) {
+
+					/* avoid click on grey area */
+
+					if (Fl::event_x() >= parent->coverX) {
+						ret = 1;
+						break;
+					}
+
 					gAction *a = new gAction(
 							Fl::event_x(),                        // x
 							y()+4,                                // y
