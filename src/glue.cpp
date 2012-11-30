@@ -133,7 +133,10 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 #endif
 
 	/* lastly close all other windows */
-	gu_closeAllSubwindows();
+
+	if (res)
+		gu_closeAllSubwindows();
+
 	return res;
 }
 

@@ -256,7 +256,10 @@ void gu_refreshActionEditor() {
 
 
 void gu_closeAllSubwindows() {
-	mainWin->delSubWindow(WID_FILE_BROWSER);
+
+	/* don't close WID_FILE_BROWSER, because it's the caller of this
+	 * function */
+
 	mainWin->delSubWindow(WID_ACTION_EDITOR);
 	mainWin->delSubWindow(WID_SAMPLE_EDITOR);
 	mainWin->delSubWindow(WID_FX_LIST);
