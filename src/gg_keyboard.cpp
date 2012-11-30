@@ -174,11 +174,6 @@ void Keyboard::__cb_openChanMenu(int chan) {
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-
-		if (G_Mixer.chanStatus[chan] == STATUS_PLAY || (recorder::chanActive[chan] && G_Mixer.running))
-			if (!gdConfirmWin("Warning", "This action may stop the channel: are you sure?"))
-				return;
-
 		char title[30];
 		sprintf(title, "Browse Sample for Channel %d", chan+1);
 		gWindow *childWin = new gdBrowser(title, G_Conf.samplePath, chan, BROWSER_LOAD_SAMPLE);
