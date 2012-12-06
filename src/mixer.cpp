@@ -71,6 +71,8 @@ float Mixer::tick[TICKSIZE] = {
 
 void Mixer::init() {
 
+	vChanInput = NULL;
+
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
 		chan[i]          = NULL;
 		vChan[i] 				 = NULL;
@@ -127,6 +129,11 @@ void Mixer::init() {
 	pthread_mutex_init(&mutex_plugins, NULL);
 
 	updateFrameBars();
+
+	/* alloc virtual input channel */
+
+	vChanInput = (float *) malloc(totalFrames * sizeof(float));
+
 	rewind();
 }
 
@@ -243,9 +250,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	/* always clean each buffer */
 
-	memset(buffer, 0, sizeof(float) * bufferFrames);
+	memset(buffer, 0, sizeof(float) * bufferFrames);     // out
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		memset(vChan[i], 0, sizeof(float) * bufferFrames);
+		memset(vChan[i], 0, sizeof(float) * bufferFrames); // vchans
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 
@@ -275,9 +282,12 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (waitRec < G_Conf.delayComp)
 					waitRec += 2;
 				else {
-					chan[chanInput]->data[inputTracker]   += inBuf[j]   * inVol;
-					chan[chanInput]->data[inputTracker+1] += inBuf[j+1] * inVol;
+					//chan[chanInput]->data[inputTracker]   += inBuf[j]   * inVol;
+					//chan[chanInput]->data[inputTracker+1] += inBuf[j+1] * inVol;
+					vChanInput[inputTracker]   += inBuf[j]   * inVol;
+					vChanInput[inputTracker+1] += inBuf[j+1] * inVol;
 					inputTracker += 2;
+					//printf("rec in vChan | inputTracker=%d\n", inputTracker);
 					if (inputTracker >= totalFrames)
 						inputTracker = 0;
 				}
@@ -642,10 +652,15 @@ int Mixer::close() {
 			chanStatus[i] = STATUS_OFF;		  // for safety
 			delete chan[i];
 		}
+
 		/* all vChans must be deallocated */
 
 		free(vChan[i]);
 	}
+
+	/* free virtual input channel */
+
+	free(vChanInput);
 	return 1;
 }
 
@@ -788,4 +803,20 @@ void Mixer::setChanEnd(int ch, unsigned val) {
 		val++;
 	chanEndTrue[ch] = val;
 	chanEnd[ch]     = (unsigned) floorf(chanEndTrue[ch] / chanPitch[ch]);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool Mixer::mergeVirtualInput() {
+	if (vChanInput == NULL) {
+		puts("[Mixer] virtual input channel not alloc'd");
+		return false;
+	}
+	else {
+		memcpy(chan[chanInput]->data, vChanInput, totalFrames*sizeof(float));
+		memset(vChanInput, 0, totalFrames*sizeof(float)); // clear vchan
+		return true;
+	}
 }

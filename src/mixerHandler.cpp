@@ -399,6 +399,7 @@ int mh_startInputRec() {
 
 int mh_stopInputRec() {
 	printf("[mh] stop input recs\n");
+	G_Mixer.mergeVirtualInput();
 	int chan = G_Mixer.chanInput;
 	G_Mixer.chanInput = -1;
 	G_Mixer.waitRec   = 0;					// if delay compensation is in use

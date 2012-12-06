@@ -58,6 +58,7 @@ public:
 
 	/* fadeout
 	 * does a fadeout and eventually another action when finished. */
+
 	void fadeout(int chan, int actionPostFadeout=DO_STOP);
 
 	void xfade(int chan);
@@ -65,10 +66,12 @@ public:
 	/* getChanPos
 	 * returns the position of an active sample. If EMPTY o MISSING
 	 * returns -1. */
+
 	int getChanPos(int chan);
 
 	/* masterPlay
 	 * core method (callback) */
+
 	static int masterPlay(
 		void *out_buf, void *in_buf, unsigned n_frames,
 		double streamTime, RtAudioStreamStatus status, void *userData
@@ -77,38 +80,52 @@ public:
 
 	/* updateFrameBars
 	 * updates bpm, frames, beats and so on. */
+
 	void updateFrameBars();
 
 	/* isSilent
 	 * is mixer silent? */
+
 	bool isSilent();
 
 	void rewind();
 
 	/* updateQuanto
 	 * recomputes the quanto between two quantizations */
+
 	void updateQuanto();
 
 	/* hasLogicalSamples
 	 * true if 1 or more samples are logical (memory only, such as takes) */
+
 	bool hasLogicalSamples();
 
 	/* hasEditedSamples
 	 * true if 1 or more samples was edited via gEditor */
+
 	bool hasEditedSamples();
 
 	/* updatePitch
 	 * updates the pitch value and chanStart+chanEnd accordingly */
+
 	void setPitch(int chan, float val);
 
 	void setChanStart(int chan, unsigned val);
 	void setChanEnd  (int chan, unsigned val);
 
 
+	/* mergeVirtualInput
+	 * memcpy the virtual channel input in the channel designed for input
+	 * recording. Called by mixerHandler on stopInputRec() */
+
+	bool mergeVirtualInput();
+
+
 	/* ---------------------------------------------------------------- */
 
 
 	bool     running;
+	float   *vChanInput;                    // virtual channel for recording
 	Wave    *chan          [MAX_NUM_CHAN];
 	float   *vChan				 [MAX_NUM_CHAN];	// virtual channel
 	int      chanStatus    [MAX_NUM_CHAN];	// status: see const.h
@@ -124,9 +141,9 @@ public:
 	float 	 chanPanRight  [MAX_NUM_CHAN];
 	unsigned chanMode      [MAX_NUM_CHAN];  // mode: see const.h
 
-	/** problema: chanMute è del tutto inutile. Viene usato ora come flag
-	 * per capire se il canale è muto o no: ma per questo basta chanMuteVol
-	 * che è 0.0 quando il canale è in mute, 1.0 quando invece suona. */
+	/** chanMute is completely useless: use chanMuteVol: it's 0.0 when muted
+	 *  otherwise 1.0 */
+
 	bool     chanMute      [MAX_NUM_CHAN];
 
 	float    chanMuteVol   [MAX_NUM_CHAN];
