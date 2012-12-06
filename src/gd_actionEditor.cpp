@@ -50,15 +50,28 @@ gdActionEditor::gdActionEditor(int chan)
 	beatWidth      = framesPerBeat / zoom;
 	totalWidth     = (int) ceilf(totalFrames / (float) zoom);
 
-	/* container with zoom buttons */
+	/* container with zoom buttons and the action type selector. Scheme of
+	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
 
-	Fl_Group *zooms = new Fl_Group(8, 8, w()-16, 20);
-	zooms->begin();
-		gBox *b = new gBox  (8, 8, w()-8-40-16, 20);  // padding border - buttons
-		zoomIn  = new gClick(w()-8-40-4, 8, 20, 20, "+");
-		zoomOut = new gClick(w()-8-20,   8, 20, 20, "-");
-	zooms->end();
-	zooms->resizable(b);
+	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
+	upperArea->begin();
+		//gBox *b    = new gBox  (8, 8, w()-8-40-16, 20);  // padding border - buttons
+	  actionType = new gChoice(104, 8, 80, 20);
+		gBox *b1    = new gBox  (184, 8, 20, 20);
+		b1->box(FL_BORDER_BOX);
+		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
+		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
+	upperArea->end();
+	upperArea->resizable(b1);
+
+	actionType->add("key press");
+	actionType->add("key release");
+	actionType->add("kill chan");
+	actionType->value(0);
+
+	if (G_Mixer.chanMode[chan] == SINGLE_PRESS)
+		actionType->deactivate();
+
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
 

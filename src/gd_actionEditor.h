@@ -58,6 +58,7 @@ public:
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 
+	class gChoice        *actionType;
 	class gClick         *zoomIn;
 	class gClick         *zoomOut;
 	class Fl_Scroll      *scroller;  // widget container

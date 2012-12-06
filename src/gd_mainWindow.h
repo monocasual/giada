@@ -73,6 +73,7 @@ private:
 	static void cb_beatsDivide     (Fl_Widget *v, void *p);
 #ifdef WITH_VST
 	static void cb_openMasterFxOut (Fl_Widget *v, void *p);
+	static void cb_openMasterFxIn  (Fl_Widget *v, void *p);
 #endif
 	inline void __cb_endprogram();
 	inline void __cb_change_bpm();
@@ -96,6 +97,7 @@ private:
 	inline void __cb_beatsDivide();
 #ifdef WITH_VST
 	inline void __cb_openMasterFxOut();
+	inline void __cb_openMasterFxIn();
 #endif
 
 public:
@@ -121,6 +123,7 @@ public:
 	class gClick      *metronome;
 #ifdef WITH_VST
 	class gButton			*masterFxOut;
+	class gButton			*masterFxIn;
 #endif
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);

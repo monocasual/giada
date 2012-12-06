@@ -66,6 +66,7 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 	outVol		  = new gDial  (758, 8, 20, 20);
 	inVol		    = new gDial  (446, 8, 20, 20);
 	masterFxOut = new gButton(782, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	masterFxIn  = new gButton(422, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
 #else
 	outMeter    = new gSoundMeter(638, 13, 140, 10);
 	inMeter     = new gSoundMeter(494, 13, 140, 10);
@@ -100,6 +101,7 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 	inVol->value(G_Mixer.inVol);
 #ifdef WITH_VST
 	masterFxOut->callback(cb_openMasterFxOut);
+	masterFxIn->callback(cb_openMasterFxIn);
 #endif
 
 	beat_rew->callback(cb_rewind_tracker);
@@ -160,6 +162,7 @@ void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_
 void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
 #ifdef WITH_VST
 void gdMainWindow::cb_openMasterFxOut(Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxOut(); }
+void gdMainWindow::cb_openMasterFxIn (Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxIn(); }
 #endif
 
 
@@ -462,6 +465,10 @@ void gdMainWindow::__cb_beatsDivide() {
 #ifdef WITH_VST
 void gdMainWindow::__cb_openMasterFxOut() {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
+}
+
+void gdMainWindow::__cb_openMasterFxIn() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 #endif
 

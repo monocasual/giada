@@ -58,6 +58,9 @@ gdPluginList::gdPluginList(int stackType, int ch)
 
 	if (stackType == PluginHost::MASTER_OUT)
 		label("Master Out Plugins");
+	else
+	if (stackType == PluginHost::MASTER_IN)
+		label("Master In Plugins");
 	else {
 		char tmp[32];
 		sprintf(tmp, "Channel %d Plugins", ch+1);
