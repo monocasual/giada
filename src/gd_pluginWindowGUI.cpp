@@ -59,6 +59,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 gdPluginWindowGUI::~gdPluginWindowGUI() {
 	pPlugin->closeGui();
+	puts("VST GUI closed");
 }
 
 #endif // #ifdef WITH_VST

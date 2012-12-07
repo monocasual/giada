@@ -61,17 +61,19 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 	beats_div   = new gClick(787,  49, 15, 15, "÷");
 
 #if defined(WITH_VST)
+	masterFxIn  = new gButton(408, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	inVol		    = new gDial  (432, 8, 20, 20);
+	inMeter     = new gSoundMeter(456, 13, 140, 10);
+	inToOut     = new gClick (600, 13, 10, 10, "");
 	outMeter    = new gSoundMeter(614, 13, 140, 10);
-	inMeter     = new gSoundMeter(470, 13, 140, 10);
 	outVol		  = new gDial  (758, 8, 20, 20);
-	inVol		    = new gDial  (446, 8, 20, 20);
 	masterFxOut = new gButton(782, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
-	masterFxIn  = new gButton(422, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
 #else
 	outMeter    = new gSoundMeter(638, 13, 140, 10);
 	inMeter     = new gSoundMeter(494, 13, 140, 10);
 	outVol		  = new gDial(782, 8, 20, 20);
 	inVol		    = new gDial(470, 8, 20, 20);
+	inToOut     = new gClick (600, 8, 15, 15, "");
 #endif
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
@@ -102,6 +104,8 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 #ifdef WITH_VST
 	masterFxOut->callback(cb_openMasterFxOut);
 	masterFxIn->callback(cb_openMasterFxIn);
+	inToOut->callback(cb_inToOut);
+	inToOut->type(FL_TOGGLE_BUTTON);
 #endif
 
 	beat_rew->callback(cb_rewind_tracker);
@@ -163,6 +167,7 @@ void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_
 #ifdef WITH_VST
 void gdMainWindow::cb_openMasterFxOut(Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxOut(); }
 void gdMainWindow::cb_openMasterFxIn (Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxIn(); }
+void gdMainWindow::cb_inToOut        (Fl_Widget *v, void *p)    { mainWin->__cb_inToOut(); }
 #endif
 
 
@@ -469,6 +474,10 @@ void gdMainWindow::__cb_openMasterFxOut() {
 
 void gdMainWindow::__cb_openMasterFxIn() {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
+}
+
+void gdMainWindow::__cb_inToOut() {
+	G_Mixer.inToOut = inToOut->value();
 }
 #endif
 

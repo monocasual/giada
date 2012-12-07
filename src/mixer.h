@@ -126,6 +126,7 @@ public:
 
 	bool     running;
 	float   *vChanInput;                    // virtual channel for recording
+	float   *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
 	Wave    *chan          [MAX_NUM_CHAN];
 	float   *vChan				 [MAX_NUM_CHAN];	// virtual channel
 	int      chanStatus    [MAX_NUM_CHAN];	// status: see const.h
@@ -145,7 +146,6 @@ public:
 	 *  otherwise 1.0 */
 
 	bool     chanMute      [MAX_NUM_CHAN];
-
 	float    chanMuteVol   [MAX_NUM_CHAN];
 	bool     chanQWait     [MAX_NUM_CHAN];  // quantizer wait
 	int 		 chanRecStatus [MAX_NUM_CHAN];  // status of the recordings (treat recs as loops)
@@ -186,11 +186,19 @@ public:
 
 	/* chanInput
 	 * the active channel during a recording. -1 = no channels active */
+
 	int chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */
+
 	int inputTracker;
+
+	/* inToOut
+	 * copy, process and paste the input into the output, in order to
+	 * obtain a "hear what you're playing" feature. */
+
+	bool inToOut;
 
 	pthread_mutex_t mutex_recs;
 	pthread_mutex_t mutex_plugins;

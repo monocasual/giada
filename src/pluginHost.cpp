@@ -262,7 +262,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, int chan) {
 		}
 
 		char name[256]; p->getName(name);
-		printf("[pluginHost] plugin loaded (%s), stack type = %d, stack size %d\n", name, stackType, pStack->size);
+		printf("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n", p->getId(), name, stackType, pStack->size);
 
 		/* this is suggested. Who knows... */
 

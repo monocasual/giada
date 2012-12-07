@@ -130,9 +130,10 @@ void Mixer::init() {
 
 	updateFrameBars();
 
-	/* alloc virtual input channel */
+	/* alloc virtual input channels */
 
-	vChanInput = (float *) malloc(totalFrames * sizeof(float));
+	vChanInput   = (float *) malloc(totalFrames * sizeof(float));
+	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 
 	rewind();
 }
@@ -250,17 +251,29 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	/* always clean each buffer */
 
-	memset(buffer, 0, sizeof(float) * bufferFrames);     // out
+	memset(buffer, 0, sizeof(float) * bufferFrames);         // out
+	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
 		memset(vChan[i], 0, sizeof(float) * bufferFrames); // vchans
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 
-		/* input peak calculation (left chan only so far). */
+		/* things to do if the input is enabled */
 
 		if (kernelAudio::inputEnabled) {
+
+			/* input peak calculation (left chan only so far). */
+
 			if (inBuf[j] * inVol > peakIn)
 				peakIn = inBuf[j] * inVol;
+
+			/* "hear what you're playing" - process, copy and paste the input buffer
+			 * onto the output buffer */
+
+			if (inToOut) {
+				vChanInToOut[j]   = inBuf[j]   * inVol;
+				vChanInToOut[j+1] = inBuf[j+1] * inVol;
+			}
 		}
 
 		/* operations to do if the sequencer is running:
@@ -287,7 +300,6 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					vChanInput[inputTracker]   += inBuf[j]   * inVol;
 					vChanInput[inputTracker+1] += inBuf[j+1] * inVol;
 					inputTracker += 2;
-					//printf("rec in vChan | inputTracker=%d\n", inputTracker);
 					if (inputTracker >= totalFrames)
 						inputTracker = 0;
 				}
@@ -574,17 +586,25 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		}
 	}
 
-	/* processing fxs master out, if any. */
+	/* processing fxs master in & out, if any. */
 
 #ifdef WITH_VST
 	pthread_mutex_lock(&mutex_plugins);
 	G_PluginHost.processStack(buffer, PluginHost::MASTER_OUT);
+	G_PluginHost.processStack(vChanInToOut, PluginHost::MASTER_IN);
 	pthread_mutex_unlock(&mutex_plugins);
 #endif
 
 	/* post processing fx of master + peak calculation. */
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
+
+		/* merging vChanInToOut, if enabled */
+
+		if (inToOut) {
+			buffer[j]   += vChanInToOut[j];
+			buffer[j+1] += vChanInToOut[j+1];
+		}
 
 		buffer[j]   *= outVol;
 		buffer[j+1] *= outVol;
@@ -605,7 +625,6 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			else if (buffer[j+1] < -1.0f)
 				buffer[j+1] = -1.0f;
 		}
-
 	}
 
 	return 0;
@@ -661,6 +680,8 @@ int Mixer::close() {
 	/* free virtual input channel */
 
 	free(vChanInput);
+	free(vChanInToOut);
+
 	return 1;
 }
 
