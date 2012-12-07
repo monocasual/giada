@@ -82,7 +82,7 @@ private:
 	/* unload
 	 * free plugin from memory. Calls dlclose and similars. */
 
-	void	unload();
+	int unload();
 
 public:
 	Plugin();

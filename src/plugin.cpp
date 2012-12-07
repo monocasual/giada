@@ -52,7 +52,7 @@ Plugin::Plugin()
 
 Plugin::~Plugin() {
 	if (module) {
-		unload();
+		printf("[plugin] unload, res=%d\n", unload());
 	}
 }
 
@@ -60,14 +60,16 @@ Plugin::~Plugin() {
 /* ------------------------------------------------------------------ */
 
 
-void Plugin::unload() {
+int Plugin::unload() {
 #if defined(_WIN32)
-	FreeLibrary((HMODULE)module);
+	FreeLibrary((HMODULE)module); // FIXME - error checking
+	return 1;
 #elif defined(__linux__)
-	dlclose(module);
+	return dlclose(module) == 0 ? 1 : 0;
 #elif defined(__APPLE__)
-	CFBundleUnloadExecutable(module);
+	CFBundleUnloadExecutable(module); // FIXME - error checking
 	CFRelease(module);
+	return 1
 #endif
 }
 
