@@ -77,20 +77,20 @@ int PluginHost::allocBuffers() {
 	 * If you use JACK, that value would be meaningless. Always refer to
 	 * kernelAudio::realBufsize. */
 
-	int bufSize = kernelAudio::realBufsize;
+	int bufSize = kernelAudio::realBufsize*sizeof(float);
 
 	bufferI    = (float **) malloc(2 * sizeof(float*));
-	bufferI[0] =  (float *) malloc(bufSize * sizeof(float));
-	bufferI[1] =  (float *) malloc(bufSize * sizeof(float));
+	bufferI[0] =  (float *) malloc(bufSize);
+	bufferI[1] =  (float *) malloc(bufSize);
 
 	bufferO    = (float **) malloc(2 * sizeof(float*));
-	bufferO[0] =  (float *) malloc(bufSize * sizeof(float));
-	bufferO[1] =  (float *) malloc(bufSize * sizeof(float));
+	bufferO[0] =  (float *) malloc(bufSize);
+	bufferO[1] =  (float *) malloc(bufSize);
 
-	memset(bufferI[0], 0, sizeof(float) * bufSize);
-	memset(bufferI[1], 0, sizeof(float) * bufSize);
-	memset(bufferO[0], 0, sizeof(float) * bufSize);
-	memset(bufferO[1], 0, sizeof(float) * bufSize);
+	memset(bufferI[0], 0, bufSize);
+	memset(bufferI[1], 0, bufSize);
+	memset(bufferO[0], 0, bufSize);
+	memset(bufferO[1], 0, bufSize);
 
 	printf("[pluginHost] buffers allocated, buffersize = %d\n", bufSize);
 
