@@ -296,7 +296,7 @@ int gActionChannel::handle(int e) {
 							recorder::frames.size-1,              // n. of actions recorded
 							parent,                               // parent window pointer
 							true,                                 // record = true: record it!
-							ACTION_KEYPRESS);                     // type of action
+							parent->getActionType());             // type of action
 					add(a);
 					glue_setChannelWithActions(parent->chan); // mainWindow update
 					redraw();
@@ -551,7 +551,7 @@ void gAction::addAction() {
 		//printf("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
-		recorder::rec(parent->chan, ACTION_KEYPRESS, frame_a);
+		recorder::rec(parent->chan, parent->getActionType(), frame_a);
 		//printf("action added, [%d]\n", frame_a);
 	}
 

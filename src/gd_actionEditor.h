@@ -53,6 +53,8 @@ public:
 	gdActionEditor(int chan);
 	~gdActionEditor();
 
+	int getActionType();
+
 	static void cb_zoomIn(Fl_Widget *w, void *p);
 	static void cb_zoomOut(Fl_Widget *w, void *p);
 	inline void __cb_zoomIn();

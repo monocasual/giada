@@ -136,7 +136,7 @@ gdConfig::gdConfig(int w, int h)
 	fetchOutChans(sounddevOut->value());
 	fetchInChans(sounddevIn->value());
 
-	char buf[5];
+	char buf[8];
 	sprintf(buf, "%d", G_Conf.buffersize);
 	buffersize->value(buf);
 	buffersize->type(FL_INT_INPUT);
