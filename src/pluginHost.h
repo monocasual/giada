@@ -110,8 +110,6 @@ public:
 	void freePlugin(int id, int stackType, int chan=0);
 
 	void swapPlugin(unsigned indexA, unsigned indexB, int stackType, int chan=0);
-
-	void printOpcodes();
 };
 #endif
 

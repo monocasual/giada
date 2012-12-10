@@ -137,6 +137,11 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterIdle:
 			return 0;
 
+		/* 6 - tells the host that the plugin is an instrument. Deprecated. */
+
+		case DECLARE_VST_DEPRECATED(audioMasterWantMidi):
+			return 0;
+
 		/* 7 - time infos */
 
 		case audioMasterGetTime:
@@ -160,15 +165,15 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			return false;
 
 		case audioMasterSizeWindow:
-			printf("[pluginHost] requested opcode 'audioMasterSizeWindow' (%d)\n", audioMasterSizeWindow);
+			printf("[pluginHost] requested opcode 'audioMasterSizeWindow' (%d)\n", opcode);
 			return 0;
 
 		case audioMasterGetSampleRate:
-			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", audioMasterGetSampleRate);
+			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
 			return 0;
 
 		case audioMasterGetBlockSize:
-			printf("[pluginHost] requested opcode 'audioMasterGetBlockSize' (%d)\n", audioMasterGetBlockSize);
+			printf("[pluginHost] requested opcode 'audioMasterGetBlockSize' (%d)\n", opcode);
 			return 0;
 
 		case audioMasterGetInputLatency:
@@ -471,17 +476,5 @@ unsigned PluginHost::countPlugins(int stackType, int chan) {
 	return pStack->size;
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-void PluginHost::printOpcodes() {
-	puts("[pluginHost] testing opcodes...");
-	printf("  opcode 'audioMasterAutomate'  = %d\n", audioMasterAutomate);
-	printf("  opcode 'audioMasterVersion'   = %d\n", audioMasterVersion);
-	printf("  opcode 'audioMasterCurrentId' = %d\n", audioMasterCurrentId);
-	printf("  opcode 'audioMasterIdle'      = %d\n", audioMasterIdle);
-	printf("  opcode 'audioMasterGetTime'   = %d\n", audioMasterGetTime);
-}
 
 #endif // #ifdef WITH_VST
