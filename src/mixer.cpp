@@ -96,7 +96,8 @@ void Mixer::init() {
 		fadeoutStep[i]   = DEFAULT_FADEOUT_STEP;
 
 		/* virtual channel malloc. We use kernelAudio::realBufsize, the real
-		 * buffer size from the soundcard. */	/** Why? */
+		 * buffer size from the soundcard. G_Conf.bufferSize may be wrong or
+		 * useless, especially when JACK is running. */
 
 		vChan[i] = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 	}

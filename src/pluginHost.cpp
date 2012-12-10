@@ -73,20 +73,26 @@ int PluginHost::allocBuffers() {
 
 	/** FIXME - ERROR CHECKING! */
 
+	/* never, ever use G_Conf.buffersize to alloc these chunks of memory.
+	 * If you use JACK, that value would be meaningless. Always refer to
+	 * kernelAudio::realBufsize. */
+
+	int bufSize = kernelAudio::realBufsize;
+
 	bufferI    = (float **) malloc(2 * sizeof(float*));
-	bufferI[0] =  (float *) malloc(G_Conf.buffersize * sizeof(float));
-	bufferI[1] =  (float *) malloc(G_Conf.buffersize * sizeof(float));
+	bufferI[0] =  (float *) malloc(bufSize * sizeof(float));
+	bufferI[1] =  (float *) malloc(bufSize * sizeof(float));
 
 	bufferO    = (float **) malloc(2 * sizeof(float*));
-	bufferO[0] =  (float *) malloc(G_Conf.buffersize * sizeof(float));
-	bufferO[1] =  (float *) malloc(G_Conf.buffersize * sizeof(float));
+	bufferO[0] =  (float *) malloc(bufSize * sizeof(float));
+	bufferO[1] =  (float *) malloc(bufSize * sizeof(float));
 
-	memset(bufferI[0], 0, sizeof(float) * G_Conf.buffersize);
-	memset(bufferI[1], 0, sizeof(float) * G_Conf.buffersize);
-	memset(bufferO[0], 0, sizeof(float) * G_Conf.buffersize);
-	memset(bufferO[1], 0, sizeof(float) * G_Conf.buffersize);
+	memset(bufferI[0], 0, sizeof(float) * bufSize);
+	memset(bufferI[1], 0, sizeof(float) * bufSize);
+	memset(bufferO[0], 0, sizeof(float) * bufSize);
+	memset(bufferO[1], 0, sizeof(float) * bufSize);
 
-	printf("[pluginHost] buffers allocated, buffersize = %d\n", G_Conf.buffersize);
+	printf("[pluginHost] buffers allocated, buffersize = %d\n", bufSize);
 
 	//printOpcodes();
 
@@ -247,7 +253,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, int chan) {
 
 		/* plugin setup */
 
-		p->setup(G_Conf.samplerate, G_Conf.buffersize);
+		p->setup(G_Conf.samplerate, kernelAudio::realBufsize);
 
 		/* try to add the new plugin until succeed */
 
@@ -287,7 +293,7 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 
 	/* converting buffer from Giada to VST */
 
-	for (int i=0; i<G_Conf.buffersize; i++) {
+	for (unsigned i=0; i<kernelAudio::realBufsize; i++) {
 		bufferI[0][i] = buffer[i*2];
 		bufferI[1][i] = buffer[(i*2)+1];
 	}
@@ -300,14 +306,14 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 			continue;
 		if (pStack->at(i)->bypass)
 			continue;
-		pStack->at(i)->processAudio(bufferI, bufferO, G_Conf.buffersize);
+		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);
 		bufferI = bufferO;
 	}
 
 	/* converting buffer from VST to Giada. A note for the future: if we
 	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
 
-	for (int i=0; i<G_Conf.buffersize; i++) {
+	for (unsigned i=0; i<kernelAudio::realBufsize; i++) {
 		buffer[i*2]     = bufferO[0][i];
 		buffer[(i*2)+1] = bufferO[1][i];
 	}
