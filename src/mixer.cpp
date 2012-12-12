@@ -837,8 +837,12 @@ bool Mixer::mergeVirtualInput() {
 		return false;
 	}
 	else {
-		memcpy(chan[chanInput]->data, vChanInput, totalFrames*sizeof(float));
-		memset(vChanInput, 0, totalFrames*sizeof(float)); // clear vchan
+		int numFrames = totalFrames*sizeof(float);
+#ifdef WITH_VST
+		G_PluginHost.processStackOffline(vChanInput, 0, PluginHost::MASTER_IN, numFrames);
+#endif
+		memcpy(chan[chanInput]->data, vChanInput, numFrames);
+		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
 	}
 }

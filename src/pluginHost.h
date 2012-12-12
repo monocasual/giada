@@ -91,7 +91,15 @@ public:
 
 	int addPlugin(const char *fname, int stackType, int chan=0);
 
+	/* processStack
+	 * apply the fx list to the buffer. */
+
 	void processStack(float *buffer, int stackType, int chan=0);
+
+	/* processStackOffline
+	 * apply the fx list to a longer chunk of data */
+
+	void processStackOffline(float *buffer, int stackType, int chan, int size);
 
 	gVector <Plugin *> *getStack(int stackType, int chan=0);
 

@@ -56,7 +56,7 @@ gdActionEditor::gdActionEditor(int chan)
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
 	  actionType = new gChoice(104, 8, 80, 20);
-		gBox *b1    = new gBox  (188, 8, 706, 20);    // padding actionType - zoomButtons
+		gBox *b1   = new gBox  (188, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
 	upperArea->end();

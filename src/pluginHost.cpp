@@ -328,6 +328,25 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
+void PluginHost::processStackOffline(float *buffer, int stackType, int chan, int size) {
+
+	/* call processStack on the entire size of the buffer. How many cycles?
+	 * size / kernelAudio::realBufsize (ie. internal bufsize) */
+
+	int cycles = ceil(size / (float) kernelAudio::realBufsize);
+	int index  = 0;
+
+	printf("cycles = %d\n", cycles);
+
+	while (index < size) {
+		index+=kernelAudio::realBufsize;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 Plugin *PluginHost::getPluginById(int id, int stackType, int chan) {
 
 	gVector <Plugin *> *pStack = getStack(stackType, chan);
