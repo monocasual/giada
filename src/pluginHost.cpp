@@ -92,7 +92,7 @@ int PluginHost::allocBuffers() {
 	memset(bufferO[0], 0, bufSize);
 	memset(bufferO[1], 0, bufSize);
 
-	printf("[pluginHost] buffers allocated, buffersize = %d\n", bufSize);
+	printf("[pluginHost] buffers allocated, buffersize = %d\n", 2*kernelAudio::realBufsize);
 
 	//printOpcodes();
 
@@ -331,16 +331,28 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 void PluginHost::processStackOffline(float *buffer, int stackType, int chan, int size) {
 
 	/* call processStack on the entire size of the buffer. How many cycles?
-	 * size / kernelAudio::realBufsize (ie. internal bufsize) */
+	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
 
-	int cycles = ceil(size / (float) kernelAudio::realBufsize);
-	int index  = 0;
+	/* FIXME 1 - calling processStack is slow, due to its internal buffer
+	 * conversions. */
 
-	printf("cycles = %d\n", cycles);
+	int index = 0;
+	int step  = kernelAudio::realBufsize*2;
 
-	while (index < size) {
-		index+=kernelAudio::realBufsize;
+	while (index <= size) {
+		int left = index+step-size;
+		if (left < 0)
+			processStack(&buffer[index], stackType, chan);
+
+	/* FIXME 2 - we left out the last part of buffer, because size % step != 0.
+	 * we should process the last chunk in a separate buffer, padded with 0 */
+
+		//else
+		//	printf("chunk of buffer left, size=%d\n", left);
+
+		index+=step;
 	}
+
 }
 
 

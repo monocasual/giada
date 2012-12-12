@@ -126,16 +126,16 @@ void Mixer::init() {
 	chanInput    = -1;
 	inputTracker = 0;
 
+	/* alloc virtual input channels. vChanInput malloc is done in
+	 * updateFrameBars, because of its variable size */
+
+	vChanInput   = NULL;
+	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+
 	pthread_mutex_init(&mutex_recs, NULL);
 	pthread_mutex_init(&mutex_plugins, NULL);
 
 	updateFrameBars();
-
-	/* alloc virtual input channels */
-
-	vChanInput   = (float *) malloc(totalFrames * sizeof(float));
-	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
-
 	rewind();
 }
 
@@ -659,6 +659,14 @@ void Mixer::updateFrameBars() {
 		framesPerBeat--;
 
 	updateQuanto();
+
+	/* realloc input virtual channel, if not NULL. TotalFrames is changed! */
+
+	if (vChanInput != NULL)
+		free(vChanInput);
+	vChanInput = (float*) malloc(totalFrames * sizeof(float));
+	if (!vChanInput)
+		printf("[Mixer] vChanInput realloc error!");
 }
 
 
@@ -837,10 +845,10 @@ bool Mixer::mergeVirtualInput() {
 		return false;
 	}
 	else {
-		int numFrames = totalFrames*sizeof(float);
 #ifdef WITH_VST
-		G_PluginHost.processStackOffline(vChanInput, 0, PluginHost::MASTER_IN, numFrames);
+		G_PluginHost.processStackOffline(vChanInput, PluginHost::MASTER_IN, 0, totalFrames);
 #endif
+		int numFrames = totalFrames*sizeof(float);
 		memcpy(chan[chanInput]->data, vChanInput, numFrames);
 		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
