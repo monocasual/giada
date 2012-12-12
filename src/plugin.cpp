@@ -51,9 +51,8 @@ Plugin::Plugin()
 
 
 Plugin::~Plugin() {
-	if (module) {
-		printf("[plugin] unload, res=%d\n", unload());
-	}
+	if (module)
+		unload();
 }
 
 
