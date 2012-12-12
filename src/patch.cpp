@@ -370,28 +370,8 @@ int Patch::readPlugins() {
 
 	/* master plugins */
 
-	int nmp = atoi(getValue("masterPlugins").c_str());
-
-printf("%d master plugins found\n", nmp);
-
-	for (int i=0; i<nmp; i++) {
-		char tmp[MAX_LINE_LEN];
-		sprintf(tmp, "master_p%dpathfile", i);
-		int out = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::MASTER_OUT);
-		if (out != 0) {
-			sprintf(tmp, "master_p%dnumParams", i);
-			Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::MASTER_OUT);
-			sprintf(tmp, "master_p%dbypass", i);
-			pPlugin->bypass = atoi(getValue(tmp).c_str());
-			int nparam = atoi(getValue(tmp).c_str());
-			for (int j=0; j<nparam; j++) {
-				sprintf(tmp, "master_p%dparam%dvalue", i, j);
-				float pval = atof(getValue(tmp).c_str());
-				pPlugin->setParam(j, pval);
-			}
-		}
-		globalOut &= out;
-	}
+	globalOut &= readMasterPlugins(PluginHost::MASTER_IN);
+	globalOut &= readMasterPlugins(PluginHost::MASTER_OUT);
 
 	/* channel plugins */
 
@@ -475,28 +455,17 @@ int Patch::write(const char *file, const char *name) {
 	}
 
 #ifdef WITH_VST
+
+	/* writing master VST parameters */
+
+	writeMasterPlugins(PluginHost::MASTER_IN);
+	writeMasterPlugins(PluginHost::MASTER_OUT);
+
+	/* writing VST parameters, channels */
+
 	int numPlugs;
 	int numParams;
 	Plugin  *pPlugin;
-
-	/* writing VST parameters, master out */
-
-	fprintf(fp, "# --- VST / master --- \n");
-	numPlugs = G_PluginHost.countPlugins(PluginHost::MASTER_OUT);
-	fprintf(fp, "masterPlugins=%d\n", numPlugs);
-
-	for (int i=0; i<numPlugs; i++) {
-		pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::MASTER_OUT);
-		fprintf(fp, "master_p%dpathfile=%s\n", i, pPlugin->pathfile);
-		fprintf(fp, "master_p%dbypass=%d\n",   i, pPlugin->bypass);
-		numParams = pPlugin->getNumParams();
-		fprintf(fp, "master_p%dnumParams=%d\n", i, numParams);
-
-		for (int j=0; j<numParams; j++)
-			fprintf(fp, "master_p%dparam%dvalue=%f\n", i, j, pPlugin->getParam(j));
-	}
-
-	/* writing VST parameters, channels */
 
 	fprintf(fp, "# --- VST / channels --- \n");
 	for (int i=0; i<MAX_NUM_CHAN; i++) {
@@ -518,4 +487,77 @@ int Patch::write(const char *file, const char *name) {
 
 	fclose(fp);
 	return 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::readMasterPlugins(int type) {
+
+	int  nmp;
+	char chr;
+	int  res = 1;
+
+	if (type == PluginHost::MASTER_IN) {
+		chr = 'I';
+		nmp = atoi(getValue("masterIPlugins").c_str());
+	}
+	else {
+		chr = 'O';
+		nmp = atoi(getValue("masterOPlugins").c_str());
+	}
+
+	for (int i=0; i<nmp; i++) {
+		char tmp[MAX_LINE_LEN];
+		sprintf(tmp, "master%c_p%dpathfile", chr, i);
+		int out = G_PluginHost.addPlugin(getValue(tmp).c_str(), type);
+		if (out != 0) {
+			Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
+			sprintf(tmp, "master%c_p%dbypass", chr, i);
+			pPlugin->bypass = atoi(getValue(tmp).c_str());
+			sprintf(tmp, "master%c_p%dnumParams", chr, i);
+			int nparam = atoi(getValue(tmp).c_str());
+			for (int j=0; j<nparam; j++) {
+				sprintf(tmp, "master%c_p%dparam%dvalue", chr, i, j);
+				float pval = atof(getValue(tmp).c_str());
+				pPlugin->setParam(j, pval);
+			}
+		}
+		res &= out;
+	}
+
+	return res;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Patch::writeMasterPlugins(int type) {
+
+	char chr;
+
+	if (type == PluginHost::MASTER_IN) {
+		fprintf(fp, "# --- VST / master in --- \n");
+		chr = 'I';
+	}
+	else {
+		fprintf(fp, "# --- VST / master out --- \n");
+		chr = 'O';
+	}
+
+	int nmp = G_PluginHost.countPlugins(type);
+	fprintf(fp, "master%cPlugins=%d\n", chr, nmp);
+
+	for (int i=0; i<nmp; i++) {
+		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
+		fprintf(fp, "master%c_p%dpathfile=%s\n", chr, i, pPlugin->pathfile);
+		fprintf(fp, "master%c_p%dbypass=%d\n", chr, i, pPlugin->bypass);
+		int numParams = pPlugin->getNumParams();
+		fprintf(fp, "master%c_p%dnumParams=%d\n", chr, i, numParams);
+
+		for (int j=0; j<numParams; j++)
+			fprintf(fp, "master%c_p%dparam%dvalue=%f\n", chr, i, j, pPlugin->getParam(j));
+	}
 }

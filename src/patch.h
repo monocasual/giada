@@ -40,6 +40,10 @@
 
 class Patch : public DataStorage {
 
+private:
+	int  readMasterPlugins(int type);
+	void writeMasterPlugins(int type);
+
 public:
 
 	char name[MAX_PATCHNAME_LEN];
