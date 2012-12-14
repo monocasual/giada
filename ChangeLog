@@ -13,6 +13,20 @@
 
 
 
+0.5.5 --- 2012 . 12 . 15
+- "Hear what you're playing" feature
+- Fx processing on the input side
+- Ability to add different action types (Action Editor)
+- Desktop integration on Linux (via deb package)
+- Upgrade to FLTK 1.3.2
+- Remove "the action might stop the channel" when loading new samples
+- Fix wrong positioning of zoom tools (Action Editor)
+- Fix unwanted interactions on the grey area (Action Editor)
+- Fix wrong memory alloc during the VST processing
+- VST don't show up in OS X (fixed)
+- Minor internal refactoring + bugfixing
+
+
 0.5.4 --- 2012 . 11 . 24
 - VST GUI support
 - Better subwindow management

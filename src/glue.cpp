@@ -71,7 +71,8 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 
 	status->show();
 	status->value(0.1f);
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 
 	/* is it a valid patch? */
 
@@ -84,7 +85,8 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 	glue_resetToInitState(false);
 
 	status->value(0.2f);  // progress status: % 0.2
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 
 	/* mixerHandler will update the samples inside Mixer */
 
@@ -96,16 +98,19 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 	gu_update_win_label(G_Patch.name);
 
 	status->value(0.4f);  // progress status: 0.4
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 
 	G_Patch.readRecs();
 	status->value(0.6f);  // progress status: 0.6
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 
 #ifdef WITH_VST
 	int resPlugins = G_Patch.readPlugins();
 	status->value(0.8f);  // progress status: 0.8
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 #endif
 
 	/* this one is vital: let recorder recompute the actions' positions if
@@ -118,7 +123,8 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 	gu_update_controls();
 
 	status->value(1.0f);  // progress status: 1.0 (done)
-	Fl::check();
+	//Fl::check();
+	Fl::wait(0);
 
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */

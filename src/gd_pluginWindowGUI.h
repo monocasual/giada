@@ -1,3 +1,4 @@
+
 /* ---------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
@@ -37,11 +38,17 @@
 #include "pluginHost.h"
 #include "ge_mixed.h"
 
+#if defined(__APPLE__)
+	#include <Carbon/Carbon.h>
+#endif
 
 class gdPluginWindowGUI : public gWindow {
 private:
 
 	Plugin *pPlugin;
+#if defined(__APPLE__)
+	WindowRef window;
+#endif
 
 public:
 

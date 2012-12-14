@@ -50,7 +50,7 @@ giada_SOURCES += resource.rc
 endif
 if OSX
 giada_LDADD   = /usr/local/lib/libsndfile.a -lrtaudio -lm -lpthread -lfltk
-giada_LDFLAGS = -framework CoreAudio -framework Cocoa
+giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon
 endif
 
 

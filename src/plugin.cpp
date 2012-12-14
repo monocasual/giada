@@ -68,7 +68,7 @@ int Plugin::unload() {
 #elif defined(__APPLE__)
 	CFBundleUnloadExecutable(module); // FIXME - error checking
 	CFRelease(module);
-	return 1
+	return 1;
 #endif
 }
 

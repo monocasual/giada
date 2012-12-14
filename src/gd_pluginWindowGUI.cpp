@@ -30,6 +30,10 @@
 
 #include "gd_pluginWindowGUI.h"
 
+#if defined(__APPLE__)
+static pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void* inUserData);
+#endif
+
 
 extern PluginHost G_PluginHost;
 
@@ -37,16 +41,44 @@ extern PluginHost G_PluginHost;
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
+
+	/* on OSX VST uses a Carbon window, completely different from this
+	 * (type == Cocoa) */
+
+#ifndef __APPLE__
 	gu_setFavicon(this);
 	set_non_modal();
 	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiHeight());
 	show();
+#endif
+
+#if defined(__APPLE__)
+	Rect mRect = {0, 0, 300, 300};
+	OSStatus err = CreateNewWindow(kDocumentWindowClass, kWindowCloseBoxAttribute | kWindowCompositingAttribute | kWindowAsyncDragAttribute | kWindowStandardHandlerAttribute, &mRect, &window);
+	if (err != noErr)	{
+		puts("[PluginWindow] Unable to create mac window!");
+		return;
+	}
+	static EventTypeSpec eventTypes[] = {
+		{ kEventClassWindow, kEventWindowClose }
+	};
+	InstallWindowEventHandler(window, windowHandler, GetEventTypeCount (eventTypes), eventTypes, window, NULL);
+	pPlugin->openGui((void*)window);
+	Rect bounds;
+	GetWindowBounds(window, kWindowContentRgn, &bounds);
+	bounds.right = bounds.left + pPlugin->getGuiWidth();
+	bounds.bottom = bounds.top + pPlugin->getGuiHeight();
+	SetWindowBounds(window, kWindowContentRgn, &bounds);
+	RepositionWindow(window, NULL, kWindowCenterOnMainScreen);
+	ShowWindow(window);
+#else
 
 	/* Fl::check(): Waits until "something happens" and then returns. It's
 	 * mandatory on linux, otherwise X can't find 'this' window. */
 
 	Fl::check();
 	pPlugin->openGui((void*)fl_xid(this));
+#endif
 
 	char name[256];
 	pPlugin->getProduct(name);
@@ -59,6 +91,32 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 gdPluginWindowGUI::~gdPluginWindowGUI() {
 	pPlugin->closeGui();
+#if defined(__APPLE__)
+	CFRelease(window);
+#endif
 }
+
+
+#if defined(__APPLE__)
+pascal OSStatus windowHandler (EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void *inUserData) {
+	OSStatus result = eventNotHandledErr;
+	WindowRef window = (WindowRef) inUserData;
+	UInt32 eventClass = GetEventClass (inEvent);
+	UInt32 eventKind = GetEventKind (inEvent);
+
+	switch (eventClass)	{
+		case kEventClassWindow:	{
+			switch (eventKind) {
+				case kEventWindowClose:	{
+					QuitAppModalLoopForWindow (window);
+					break;
+				}
+			}
+			break;
+		}
+	}
+	return result;
+}
+#endif
 
 #endif // #ifdef WITH_VST

@@ -45,7 +45,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == (unsigned)parent->chan) {
+			if (recorder::global.at(i).at(j)->chan == parent->chan) {
 
 				/* don't show actions > than the grey area */
 
