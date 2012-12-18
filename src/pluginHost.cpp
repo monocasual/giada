@@ -164,9 +164,12 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterIOChanged:
 			return false;
 
+		/* 15 - requests to resize the editor window. The window is already
+		 * resized, nothing to do. */
+
 		case audioMasterSizeWindow:
-			printf("[pluginHost] requested opcode 'audioMasterSizeWindow' (%d)\n", opcode);
-			return 0;
+			printf("[pluginHost] requested new window size: w=%d, h=%d\n", index, value);
+			return true;
 
 		case audioMasterGetSampleRate:
 			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
@@ -191,9 +194,14 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterGetCurrentProcessLevel:
 			return kVstProcessLevelRealtime;
 
+		/* 37 - Plugin asks Host if it implements the feature text. */
+
 		case audioMasterCanDo:
-			printf("[pluginHost] requested opcode 'audioMasterCanDo' (%d)\n", opcode);
-			return 0;
+			printf("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
+			if (!strcmp((char*)ptr, "sizeWindow"))
+				return -1; // no resizing
+			else
+				return 0;
 
 		case audioMasterGetAutomationState:
 			printf("[pluginHost] requested opcode 'audioMasterGetAutomationState' (%d)\n", opcode);
@@ -432,6 +440,8 @@ void PluginHost::freePlugin(int id, int stackType, int chan) {
 			while (true) {
 				lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 				if (lockStatus == 0) {
+					pStack->at(i)->suspend();
+					pStack->at(i)->close();
 					delete pStack->at(i);
 					pStack->del(i);
 					pthread_mutex_unlock(&G_Mixer.mutex_plugins);

@@ -121,6 +121,7 @@ public:
 	void  processAudio(float **in, float **out, long frames);
 	void  resume();
 	void  suspend();
+	void  close();
 
 	/* there's a specific opcode for the bypass, but we don't trust the
 	 * plugin's developers. */

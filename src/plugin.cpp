@@ -353,5 +353,9 @@ void Plugin::suspend() {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 0, 0, 0);
 }
 
+void Plugin::close() {
+	plugin->dispatcher(plugin, effClose, 0, 0, 0, 0);
+}
+
 
 #endif
