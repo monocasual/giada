@@ -403,8 +403,11 @@ void PluginHost::freeStack(int stackType, int chan) {
 	while (true) {
 		lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 		if (lockStatus == 0) {
-			for (unsigned i=0; i<pStack->size; i++)
+			for (unsigned i=0; i<pStack->size; i++) {
+				pStack->at(i)->suspend();
+				pStack->at(i)->close();
 				delete pStack->at(i);
+			}
 			pStack->clear();
 			pthread_mutex_unlock(&G_Mixer.mutex_plugins);
 			break;
