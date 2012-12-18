@@ -317,6 +317,8 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 	for (unsigned i=0; i<pStack->size; i++) {
 		if (pStack->at(i)->status != 1)
 			continue;
+		if (pStack->at(i)->suspended)
+			continue;
 		if (pStack->at(i)->bypass)
 			continue;
 		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);

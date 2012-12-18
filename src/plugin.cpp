@@ -43,7 +43,8 @@ Plugin::Plugin()
 	  entryPoint(NULL),
 	  plugin(NULL),
 	  id(id_generator++),
-	  bypass(false)
+	  bypass(false),
+	  suspended(false)
 {}
 
 
@@ -347,10 +348,12 @@ void Plugin::processAudio(float **in, float **out, long frames) {
 
 void Plugin::resume() {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 1, 0, 0);
+	suspended = false;
 }
 
 void Plugin::suspend() {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 0, 0, 0);
+	suspended = true;
 }
 
 void Plugin::close() {

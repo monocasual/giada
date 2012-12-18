@@ -134,6 +134,12 @@ public:
 
 	int status;
 
+	/* suspended
+	 * true after suspend(), false after resume(). A suspended plugin isn't
+	 * processed by pluginHost. */
+
+	bool suspended;
+
 	char pathfile[PATH_MAX]; // full path filename
 };
 
