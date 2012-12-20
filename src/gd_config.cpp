@@ -108,6 +108,7 @@ gdConfig::gdConfig(int w, int h)
 			break;
 		case SYS_API_JACK:
 			soundsys->value(1);
+			buffersize->deactivate();
 			break;
 		case SYS_API_PULSE:
 			soundsys->value(2);
