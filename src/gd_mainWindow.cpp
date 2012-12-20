@@ -73,7 +73,6 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 	inMeter     = new gSoundMeter(494, 13, 140, 10);
 	outVol		  = new gDial(782, 8, 20, 20);
 	inVol		    = new gDial(470, 8, 20, 20);
-	inToOut     = new gClick (600, 8, 15, 15, "");
 #endif
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);

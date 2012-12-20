@@ -492,6 +492,7 @@ int Patch::write(const char *file, const char *name) {
 
 /* ------------------------------------------------------------------ */
 
+#ifdef WITH_VST
 
 int Patch::readMasterPlugins(int type) {
 
@@ -561,3 +562,4 @@ void Patch::writeMasterPlugins(int type) {
 			fprintf(fp, "master%c_p%dparam%dvalue=%f\n", chr, i, j, pPlugin->getParam(j));
 	}
 }
+#endif

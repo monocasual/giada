@@ -1,6 +1,7 @@
 *.o
 AUTHORS
 ERRORS
+README
 INSTALL
 Makefile
 Makefile.in
