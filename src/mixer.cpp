@@ -577,7 +577,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
 #ifdef WITH_VST
+		pthread_mutex_lock(&mutex_plugins);
 		G_PluginHost.processStack(vChan[k], PluginHost::CHANNEL, k);
+		pthread_mutex_unlock(&mutex_plugins);
 #endif
 		for (unsigned j=0; j<bufferFrames; j+=2) {
 			if (chan[k] != NULL) {
