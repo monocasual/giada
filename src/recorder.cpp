@@ -180,23 +180,33 @@ void clearAction(int ch, char act) {
 
 void deleteAction(int chan, int frame, char type) {
 
-	/* let's find the frame 'frame' in our stack. */
+	/* find the frame 'frame' in our stack. */
 
 	bool found = false;
 	for (unsigned i=0; i<frames.size && !found; i++) {
 		if (frames.at(i) == frame) {
 
-			/* let's find the action in frame i */
+			/* find the action in frame i */
 
-			for (unsigned j=0; j<global.at(i).size; j++)
+			for (unsigned j=0; j<global.at(i).size; j++) {
 				if (global.at(i).at(j)->chan == chan &&
 				    global.at(i).at(j)->type == type)
-				 {
-					free(global.at(i).at(j));
-					global.at(i).del(j);
-					found = true;
-					break;
+				{
+					int lockStatus = 0;
+					while (lockStatus == 0) {
+						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
+						if (lockStatus == 0) {
+							free(global.at(i).at(j));
+							global.at(i).del(j);
+							pthread_mutex_unlock(&G_Mixer.mutex_recs);
+							found = true;
+							break;
+						}
+						else
+							puts("[REC] waiting for mutex...");
+					}
 				}
+			}
 		}
 	}
 	if (found) {
