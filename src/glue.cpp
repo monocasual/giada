@@ -366,6 +366,10 @@ void glue_stopRec() {
 
 	mainWin->beat_rec->value(0);
 	mainWin->beat_rec->redraw();
+
+	/* if acton editor is on */
+
+	gu_refreshActionEditor();
 }
 
 
