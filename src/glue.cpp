@@ -836,14 +836,29 @@ void glue_keyPress(int c, bool ctrl, bool shift) {
 
 	/* -- case no modifier -------------------------------------------- */
 	else {
-		mh_startChan(c);
 
 		/* record now if the quantizer is off, otherwise let mixer to handle it
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Mixer.quantize == 0 && recorder::canRec(c) && !(G_Mixer.chanMode[c] & LOOP_ANY))
-			recorder::rec(c, ACTION_KEYPRESS, G_Mixer.actualFrame);
+		if (G_Mixer.quantize == 0 && recorder::canRec(c) && !(G_Mixer.chanMode[c] & LOOP_ANY)) {
+
+			int frame = G_Mixer.actualFrame;
+
+			/* avoid composite action truncation, if SINGLE PRESS */
+
+			if (G_Mixer.chanMode[c] == SINGLE_PRESS) {
+				int f = recorder::getEndActionFrame(c, ACTION_KEYREL, frame);
+				if (f != -1) {
+					recorder::rec(c, ACTION_KEYREL, frame-512);
+					recorder::disableRead(c);
+				}
+			}
+			recorder::rec(c, ACTION_KEYPRESS, frame);
+		}
+
+
+		mh_startChan(c);
 	}
 
 	/* the GUI update is done by gui_refresh() */

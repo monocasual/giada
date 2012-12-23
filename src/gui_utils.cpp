@@ -243,6 +243,9 @@ void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
 
 
 void gu_refreshActionEditor() {
+
+	/** FIXME - why don't we simply call WID_ACTION_EDITOR->redraw()? */
+
 	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
 		int chan = aeditor->chan;

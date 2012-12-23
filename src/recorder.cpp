@@ -36,8 +36,8 @@ extern Conf	 G_Conf;
 namespace recorder {
 
 gVector<int> frames;
-gVector< gVector<_action*> > global;
-gVector<_action*>  actions;
+gVector< gVector<action*> > global;
+gVector<action*>  actions;
 
 bool active = false;
 bool chanActive[MAX_NUM_CHAN];
@@ -78,7 +78,7 @@ void rec(int c, char act, int frame) {
 
 	/* allocating the action */
 
-	_action *a = (_action*) malloc(sizeof(_action));
+	action *a = (action*) malloc(sizeof(action));
 	a->chan  = c;
 	a->type  = act;
 
@@ -97,7 +97,7 @@ void rec(int c, char act, int frame) {
 	 * Espandere frames è facile, basta aggiungere un frame in coda.
 	 * Espandere global è più complesso: bisogna prima allocare una
 	 * cella in global (per renderlo parallelo a frames) e poi
-	 * inizializzare il suo sub-stack (di _action). */
+	 * inizializzare il suo sub-stack (di action). */
 
 	if (frameToExpand == (int) frames.size) {
 		frames.add(frame);
@@ -479,6 +479,21 @@ int getEndActionFrame(int chan, char action, int frame) {
 	puts("[REC] end Action frame NOT found, suspected ring loop!");
 	return -1;
 }
+
+
+/* ------------------------------------------------------------------ */
+/*
+
+void overdubAction(int chan, char action, int frame) {
+
+
+	int f = getEndActionFrame(chan, ACTION_KEYREL, G_Mixer.actualFrame);
+	if (f != -1) {
+		puts("[REC] action overdub");
+		rec(chan, ACTION_KEYREL, G_Mixer.actualFrame-512);
+	}
+}
+*/
 
 
 /* ------------------------------------------------------------------ */

@@ -34,6 +34,7 @@
 #include "const.h"
 #include "utils.h"
 #include "mixer.h"
+#include "mixerHandler.h"
 
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
@@ -44,14 +45,23 @@
 
 namespace recorder {
 
-struct _action { /** FIXME - please remove the underscore */
+struct action {
 	int  chan;
 	char type;
 };
 
+/* composite
+ * a group of two actions (keypress+keyrel, muteon+muteoff) used during
+ * the overdub process */
+
+struct composite {
+	action a1;
+	action a2;
+};
+
 extern gVector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
-extern gVector< gVector<_action*> > global;	// container of containers of actions
-extern gVector<_action*>  actions;				  // container of actions
+extern gVector< gVector<action*> > global;	// container of containers of actions
+extern gVector<action*>  actions;				  // container of actions
 
 extern bool active;
 extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
@@ -60,52 +70,64 @@ extern bool sortedActions;                  // actions are sorted via sortAction
 
 /* init
  * everything starts from here. */
+
 void init();
 
 /* chanHasEvents
  * Checks if the channel has at least one action recorded. If false, sets
  * chanEvents[ch] = false. Used after an action deletion. */
+
 void chanHasEvents(int chan);
 
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
+
 bool canRec(int chan);
 
 /* rec
  * records an action. */
+
 void rec(int chan, char action, int frame);
 
 /* clearChan
  * clears all actions from a channel. */
+
 void clearChan(int chan);
 
 /* clearAction
  * clears the 'action' action type from a channel. */
+
 void clearAction(int chan, char action);
 
 /* deleteAction
  * deletes ONE action. Useful in the action editor. */
+
 void deleteAction(int chan, int frame, char type);
 
 /* clearAll
  * deletes everything. */
+
 void clearAll();
 
 /* optimize
  * clears frames without actions. */
+
 void optimize();
 
 /* sortActions
  * sorts actions, asc mode. */
+
 void sortActions();
 
 /* updateBpm
  * reassigns frames by calculating the new bpm value. */
+
 void updateBpm(float oldval, float newval, int oldquanto);
 
 /* updateSamplerate
  * reassigns frames taking in account the samplerate. If f_system ==
  * f_patch nothing changes, otherwise the conversion is mandatory. */
+
 void updateSamplerate(int systemRate, int patchRate);
 
 void expand(int old_fpb, int new_fpb);
@@ -114,6 +136,7 @@ void shrink(int new_fpb);
 /* enable/disableRead
  * if enabled  = read actions from channel chan
  * if disabled = don't read actions from channel chan. */
+
 void enableRead(int chan);
 void disableRead(int chan);
 
@@ -121,14 +144,22 @@ void disableRead(int chan);
  * searches for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
  * MUTE_ON(b). Returns the MUTE_OFF frame, if any. 'action' is the
  * action to look for. */
+
 int getStartActionFrame(int chan, char action, int frame);
 
 /* getEndActionFrame
  * same as getStartActionFrame but searches the B-frame. */
+
 int getEndActionFrame(int chan, char action, int frame);
+
+/* start/endOverdub */
+
+void startOverdub(int chan, char action, int frame);
+void endOverdub();
 
 /* print
  * debug of the frame stack. */
+
 void print();
 
 }  // namespace
