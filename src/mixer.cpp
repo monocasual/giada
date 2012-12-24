@@ -712,16 +712,14 @@ void Mixer::rewind() {
 	actualFrame = 0;
 	G_beats     = 0;
 
-	/* rewind channels only if the sequencer is running */
+	if (running)
+		for (unsigned i=0; i<MAX_NUM_CHAN; i++)
+			if (chan[i] != NULL)
 
-	if (running) {
-		for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-			if (chan[i] != NULL) {
-				if ((chanMode[i] & LOOP_ANY))// || chanRecStatus[i] == REC_READING)
+				/* don't rewind a SINGLE_ANY, unless it's in read-record-mode */
+
+				if ((chanMode[i] & LOOP_ANY) || (chanRecStatus[i] == REC_READING && (chanMode[i] & SINGLE_ANY)))
 					chanTracker[i] = chanStart[i];
-			}
-		}
-	}
 }
 
 
