@@ -630,33 +630,10 @@ void glue_writeMute(int ch, bool gui) {
 	/* recording mute actions, only if Recorder can record. */
 
 	if (recorder::canRec(ch)) {
-
-		/* if recording an ACTION_MUTEOFF we want to avoid ring loops. Let's
-		 * look for the ACTION_MUTEON. The process for an ACTION_MUTEON
-		 * recording is actually straightforward. */
-
 		if (action == ACTION_MUTEON)
 			recorder::startOverdub(ch, ACTION_MUTES, G_Mixer.actualFrame);
 		else
 		 recorder::stopOverdub(G_Mixer.actualFrame);
-
-		/* --------------
-		if (action == ACTION_MUTEOFF) {
-
-			int frame_a = recorder::getStartActionFrame(ch, ACTION_MUTEON, G_Mixer.actualFrame);
-			int frame_b = G_Mixer.actualFrame;
-
-			if (frame_a == -1)  // ring loop!
-				recorder::rec(ch, action, G_Mixer.totalFrames);
-			else
-			if (frame_a == frame_b)
-				recorder::deleteAction(ch, frame_b, ACTION_MUTEON);
-			else
-			recorder::rec(ch, action, G_Mixer.actualFrame);
-		}
-		else  // if action == mute_on
-			recorder::rec(ch, action, G_Mixer.actualFrame);
-		----------------- */
 	}
 
 	/* if the caller is mixer/keyboard/MIDI (not the GUI) we turn on or
