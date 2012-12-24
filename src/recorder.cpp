@@ -234,12 +234,8 @@ void deleteActions(int chan, int frame_a, int frame_b, char type) {
 		if (frames.at(i) > frame_a && frames.at(i) < frame_b)
 			dels.add(frames.at(i));
 
-	for (unsigned i=0; i<dels.size; i++) {
-		printf("deleteActions - deleting action %d at frame %d\n", type, dels.at(i));
+	for (unsigned i=0; i<dels.size; i++)
 		deleteAction(chan, dels.at(i), type);
-	}
-
-	print();
 }
 
 
@@ -511,7 +507,7 @@ int getEndActionFrame(int chan, char type, int frame) {
 
 
 
-int getNextAction(int chan, char type, int frame, action *out) {
+int getNextAction(int chan, char type, int frame, action **out) {
 
 	sortActions();  // mandatory
 
@@ -524,9 +520,10 @@ int getNextAction(int chan, char type, int frame, action *out) {
 
 	for (unsigned j=0; j<global.at(i).size; j++) {
 		action *a = global.at(i).at(j);
-		if (a->chan == chan && (type & a->type) == a->type)
-			//return a->type;
-			a->type = a->type;
+		if (a->chan == chan && (type & a->type) == a->type) {
+			*out = global.at(i).at(j);
+			return 1;
+		}
 	}
 
 	return -2;   // no 'type' actions found
@@ -558,12 +555,16 @@ void startOverdub(int ch, char actionMask, int frame) {
 
 	rec(ch, cmp.a1.type, frame);
 
-	action act;
-	getNextAction(ch, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
-	if (act.type == cmp.a2.type) {
-		printf("startOverdub - add truncation at frame %d, type=%d\n", cmp.a1.frame-512, cmp.a2.type);
-		rec(ch, cmp.a2.type, cmp.a1.frame-512);
-		print();
+	action *act = NULL;
+	int res = getNextAction(ch, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
+	if (res == 1) {
+		if (act->type == cmp.a2.type) {
+			int truncFrame = cmp.a1.frame-kernelAudio::realBufsize;
+			if (truncFrame < 0)
+				truncFrame = 0;
+			printf("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
+			rec(ch, cmp.a2.type, truncFrame);
+		}
 	}
 
 	disableRead(ch);
@@ -584,13 +585,13 @@ void stopOverdub(int frame) {
 
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
-		printf("RING LOOP! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		printf("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		rec(cmp.a2.chan, cmp.a2.type, G_Mixer.totalFrames); 	// record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
-		printf("NULL LOOP! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		printf("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
 	}
 
@@ -608,11 +609,14 @@ void stopOverdub(int frame) {
 		/* avoid underlying action truncation, if keyrel happens inside a
 		* composite action */
 
-		//int a = getNextActionType(cmp.a2.chan, cmp.a2.type | cmp.a2.type, cmp.a2.frame);
-		//if (a == cmp.a2.type) {
-			//deleteAction(cmp.a2.chan, cmp.frame2, cmp.a2.type);
-			// TODO - delete next action
-		//}
+		action *act = NULL;
+		int res = getNextAction(cmp.a2.chan, cmp.a2.type | cmp.a2.type, cmp.a2.frame, &act);
+		if (res == 1) {
+			if (act->type == cmp.a2.type) {
+				printf("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
+				deleteAction(act->chan, act->frame, act->type);
+			}
+		}
 	}
 }
 

@@ -35,6 +35,7 @@
 #include "utils.h"
 #include "mixer.h"
 #include "mixerHandler.h"
+#include "kernelAudio.h"
 
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
@@ -163,7 +164,7 @@ int getEndActionFrame(int chan, char action, int frame);
  * return the nearest action in chan 'chan' of type 'action' starting
  * from 'frame'. Action can be a bitmask. */
 
-int getNextAction(int chan, char action, int frame, struct action *out);
+int getNextAction(int chan, char action, int frame, struct action **out);
 
 /* start/endOverdub */
 
