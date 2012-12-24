@@ -76,7 +76,7 @@ void gStatus::draw() {
 
 	if (G_Mixer.chanInput == ch)
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
-	else if (recorder::active && (G_Mixer.chanMode[ch] & SINGLE_ANY))
+	else if (recorder::active && recorder::canRec(ch))
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
 	/* equation for the progress bar:
