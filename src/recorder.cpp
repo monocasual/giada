@@ -567,7 +567,7 @@ void startOverdub(int ch, char actionMask, int frame) {
 		}
 	}
 
-	disableRead(ch);
+	chanActive[ch] = false; // don't use disableRead()
 }
 
 
@@ -595,7 +595,7 @@ void stopOverdub(int frame) {
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
 	}
 
-	enableRead(cmp.a2.chan);
+	chanActive[cmp.a2.chan] = true; // don't use disableRead()
 
 	/* remove any nested action between keypress----keyrel, then record */
 

@@ -635,6 +635,12 @@ void glue_writeMute(int ch, bool gui) {
 		 * look for the ACTION_MUTEON. The process for an ACTION_MUTEON
 		 * recording is actually straightforward. */
 
+		if (action == ACTION_MUTEON)
+			recorder::startOverdub(ch, ACTION_MUTES, G_Mixer.actualFrame);
+		else
+		 recorder::stopOverdub(G_Mixer.actualFrame);
+
+		/* --------------
 		if (action == ACTION_MUTEOFF) {
 
 			int frame_a = recorder::getStartActionFrame(ch, ACTION_MUTEON, G_Mixer.actualFrame);
@@ -650,6 +656,7 @@ void glue_writeMute(int ch, bool gui) {
 		}
 		else  // if action == mute_on
 			recorder::rec(ch, action, G_Mixer.actualFrame);
+		----------------- */
 	}
 
 	/* if the caller is mixer/keyboard/MIDI (not the GUI) we turn on or
