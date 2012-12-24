@@ -44,6 +44,9 @@ bool chanActive[MAX_NUM_CHAN];
 bool chanEvents[MAX_NUM_CHAN];
 bool sortedActions = false;
 
+composite cmp;
+
+
 /* ------------------------------------------------------------------ */
 
 
@@ -168,7 +171,7 @@ void clearAction(int ch, char act) {
 				j++;
 		}
 	}
-	chanEvents[ch] = false; /// wtf??? chanHasEvents is useless???
+	chanEvents[ch] = false;
 	optimize();
 	chanHasEvents(ch);
 	//print();
@@ -180,7 +183,7 @@ void clearAction(int ch, char act) {
 
 void deleteAction(int chan, int frame, char type) {
 
-	/* find the frame 'frame' in our stack. */
+	/* find the frame 'frame' */
 
 	bool found = false;
 	for (unsigned i=0; i<frames.size && !found; i++) {
@@ -189,8 +192,9 @@ void deleteAction(int chan, int frame, char type) {
 			/* find the action in frame i */
 
 			for (unsigned j=0; j<global.at(i).size; j++) {
-				if (global.at(i).at(j)->chan == chan &&
-				    global.at(i).at(j)->type == type)
+				//action *a = global.at(i).at(j);
+				//if (a->chan == chan && (type & a->type) == a->type)
+				if (global.at(i).at(j)->chan == chan && global.at(i).at(j)->type == type)
 				{
 					int lockStatus = 0;
 					while (lockStatus == 0) {
@@ -214,6 +218,27 @@ void deleteAction(int chan, int frame, char type) {
 		chanHasEvents(chan);
 		printf("[REC] deleted action type=%d at frame %d from chan %d\n", type, frame, chan);
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void deleteActions(int chan, int frame_a, int frame_b, char type) {
+
+	sortActions();
+	gVector<int> dels;
+
+	for (unsigned i=0; i<frames.size; i++)
+		if (frames.at(i) > frame_a && frames.at(i) < frame_b)
+			dels.add(frames.at(i));
+
+	for (unsigned i=0; i<dels.size; i++) {
+		printf("deleteActions - deleting action %d at frame %d\n", type, dels.at(i));
+		deleteAction(chan, dels.at(i), type);
+	}
+
+	print();
 }
 
 
@@ -446,17 +471,17 @@ int getStartActionFrame(int chan, char action, int frame) {
 					global.at(i-1).at(j)->type == action)
 			{
 				if (frames.at(i-1) < frame) {
-					printf("[REC] start Action frame found = %d\n", frames.at(i-1));
+					//printf("[REC] start Action frame found = %d\n", frames.at(i-1));
 					return frames.at(i-1);
 				}
 				else
 				if (frames.at(i-1) == frame) {
-					printf("[REC start Action & end Action collision at %d!\n", frame);
+					//printf("[REC start Action & end Action collision at %d!\n", frame);
 					return -2;
 				}
 			}
 
-	puts("[REC] start Action frame NOT found, suspected ring loop!");
+	//puts("[REC] start Action frame NOT found, suspected ring loop!");
 	return -1;
 }
 
@@ -464,36 +489,127 @@ int getStartActionFrame(int chan, char action, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getEndActionFrame(int chan, char action, int frame) {
+int getEndActionFrame(int chan, char type, int frame) {
 
 	for (unsigned i=0; i<frames.size; i++)
 		for (unsigned j=0; j<global.at(i).size; j++)
 			if (global.at(i).at(j)->chan == chan &&
-					global.at(i).at(j)->type == action &&
+					global.at(i).at(j)->type == type &&
 					frames.at(i) > frame)
 			{
-				printf("[REC] end Action frame found | frame=%d, index=%d\n", frames.at(i), i);
+				//printf("[REC] end Action frame found | frame=%d, index=%d\n", frames.at(i), i);
 				return frames.at(i);
 			}
 
-	puts("[REC] end Action frame NOT found, suspected ring loop!");
+	//puts("[REC] end Action frame NOT found, suspected ring loop!");
 	return -1;
 }
 
 
 /* ------------------------------------------------------------------ */
-/*
-
-void overdubAction(int chan, char action, int frame) {
 
 
-	int f = getEndActionFrame(chan, ACTION_KEYREL, G_Mixer.actualFrame);
-	if (f != -1) {
-		puts("[REC] action overdub");
-		rec(chan, ACTION_KEYREL, G_Mixer.actualFrame-512);
+
+int getNextActionType(int chan, char type, int frame) {
+
+	sortActions();  // mandatory
+
+	unsigned i=0;
+	while (i < frames.size && frames.at(i) <= frame)
+		i++;
+
+	if (i == frames.size)   // no further actions
+		return -1;
+
+	for (unsigned j=0; j<global.at(i).size; j++) {
+		action *a = global.at(i).at(j);
+		if (a->chan == chan && (type & a->type) == a->type)
+			return a->type;
 	}
+
+	return -2;   // no 'type' actions found
 }
-*/
+
+
+/* ------------------------------------------------------------------ */
+
+
+void startOverdub(int ch, char actionMask, int frame) {
+
+	/* prepare the composite struct */
+
+	if (actionMask == ACTION_KEYS) {
+		cmp.a1.type = ACTION_KEYPRESS;
+		cmp.a2.type = ACTION_KEYREL;
+	}
+	else {
+		cmp.a1.type = ACTION_MUTEON;
+		cmp.a2.type = ACTION_MUTEOFF;
+	}
+	cmp.a1.chan = ch;
+	cmp.a2.chan = ch;
+	cmp.frame1  = frame;
+
+	/* avoid underlying action truncation: if action2.type == nextAction:
+	 * you are in the middle of a composite action, truncation needed */
+
+	rec(ch, cmp.a1.type, frame);
+
+	int a = getNextActionType(ch, cmp.a1.type | cmp.a2.type, cmp.frame1);
+	if (a == cmp.a2.type) {
+		printf("startOverdub - add truncation at frame %d, type=%d\n", frame-512, cmp.a2.type);
+		rec(ch, cmp.a2.type, frame-512);
+		print();
+	}
+
+	disableRead(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void stopOverdub(int frame) {
+
+	cmp.frame2 = frame;
+	bool ringLoop = false;
+	bool nullLoop = false;
+
+	/* ring loop verification, i.e. an action key_press that starts at
+	 *  frame N and the corresponding key_release at frame M, with M <= N */
+
+	if (cmp.frame2 < cmp.frame1) {
+		ringLoop = true;
+		puts("RING LOOP!");
+		rec(cmp.a2.chan, cmp.a2.type, G_Mixer.totalFrames); 	// record at the end of the sequencer
+	}
+	else {
+	if (cmp.frame2 == cmp.frame1)
+		nullLoop = true;
+		puts("NULL LOOP!");
+		deleteAction(cmp.a1.chan, cmp.frame1, cmp.a1.type);
+	}
+
+	enableRead(cmp.a2.chan);
+
+	/* remove any nested action between keypress----keyrel, then record */
+
+	if (!nullLoop)
+		deleteActions(cmp.a2.chan, cmp.frame1, cmp.frame2, cmp.a1.type);
+		deleteActions(cmp.a2.chan, cmp.frame1, cmp.frame2, cmp.a2.type);
+
+	if (!ringLoop && !nullLoop)
+		rec(cmp.a2.chan, cmp.a2.type, cmp.frame2);
+
+	/* avoid underlying action truncation, if keyrel happens inside a
+	 * composite action */
+
+	/// TODO - use getNextActionType
+	///int f = getEndActionFrame(cmp.a2.chan, cmp.a2.type, cmp.frame2);
+	///if (f != -1)  // truncation needed
+	///	deleteAction(cmp.a2.chan, f, cmp.a2.type);
+
+}
 
 
 /* ------------------------------------------------------------------ */

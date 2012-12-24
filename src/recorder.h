@@ -57,11 +57,13 @@ struct action {
 struct composite {
 	action a1;
 	action a2;
+	int    frame1;
+	int    frame2;
 };
 
 extern gVector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
 extern gVector< gVector<action*> > global;	// container of containers of actions
-extern gVector<action*>  actions;				  // container of actions
+extern gVector<action*>  actions;				    // container of actions
 
 extern bool active;
 extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
@@ -74,7 +76,7 @@ extern bool sortedActions;                  // actions are sorted via sortAction
 void init();
 
 /* chanHasEvents
- * Checks if the channel has at least one action recorded. If false, sets
+ * Check if the channel has at least one action recorded. If false, sets
  * chanEvents[ch] = false. Used after an action deletion. */
 
 void chanHasEvents(int chan);
@@ -85,32 +87,38 @@ void chanHasEvents(int chan);
 bool canRec(int chan);
 
 /* rec
- * records an action. */
+ * record an action. */
 
 void rec(int chan, char action, int frame);
 
 /* clearChan
- * clears all actions from a channel. */
+ * clear all actions from a channel. */
 
 void clearChan(int chan);
 
 /* clearAction
- * clears the 'action' action type from a channel. */
+ * clear the 'action' action type from a channel. */
 
 void clearAction(int chan, char action);
 
 /* deleteAction
- * deletes ONE action. Useful in the action editor. */
+ * delete ONE action. Useful in the action editor. 'type' can be a mask. */
 
 void deleteAction(int chan, int frame, char type);
 
+/* deleteActions
+ * delete A RANGE of actions from frame_a to frame_b in channel 'chan'.
+ * 'type' can be a bitmask. Exclusive range (frame_a, frame_b). */
+
+void deleteActions(int chan, int frame_a, int frame_b, char type);
+
 /* clearAll
- * deletes everything. */
+ * delete everything. */
 
 void clearAll();
 
 /* optimize
- * clears frames without actions. */
+ * clear frames without actions. */
 
 void optimize();
 
@@ -120,12 +128,12 @@ void optimize();
 void sortActions();
 
 /* updateBpm
- * reassigns frames by calculating the new bpm value. */
+ * reassign frames by calculating the new bpm value. */
 
 void updateBpm(float oldval, float newval, int oldquanto);
 
 /* updateSamplerate
- * reassigns frames taking in account the samplerate. If f_system ==
+ * reassign frames taking in account the samplerate. If f_system ==
  * f_patch nothing changes, otherwise the conversion is mandatory. */
 
 void updateSamplerate(int systemRate, int patchRate);
@@ -141,7 +149,7 @@ void enableRead(int chan);
 void disableRead(int chan);
 
 /* getStartActionFrame
- * searches for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
+ * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
  * MUTE_ON(b). Returns the MUTE_OFF frame, if any. 'action' is the
  * action to look for. */
 
@@ -152,10 +160,16 @@ int getStartActionFrame(int chan, char action, int frame);
 
 int getEndActionFrame(int chan, char action, int frame);
 
+/* getNextActionType
+ * returns the type of the nearest action in chan 'chan' of type 'action'
+ * starting from 'frame'. Action can be a bitmask. */
+
+int getNextActionType(int chan, char action, int frame);
+
 /* start/endOverdub */
 
 void startOverdub(int chan, char action, int frame);
-void endOverdub();
+void stopOverdub(int frame);
 
 /* print
  * debug of the frame stack. */

@@ -841,22 +841,15 @@ void glue_keyPress(int c, bool ctrl, bool shift) {
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Mixer.quantize == 0 && recorder::canRec(c) && !(G_Mixer.chanMode[c] & LOOP_ANY)) {
-
-			int frame = G_Mixer.actualFrame;
-
-			/* avoid composite action truncation, if SINGLE PRESS */
-
-			if (G_Mixer.chanMode[c] == SINGLE_PRESS) {
-				int f = recorder::getEndActionFrame(c, ACTION_KEYREL, frame);
-				if (f != -1) {
-					recorder::rec(c, ACTION_KEYREL, frame-512);
-					recorder::disableRead(c);
-				}
-			}
-			recorder::rec(c, ACTION_KEYPRESS, frame);
+		if (G_Mixer.quantize == 0 &&
+		    recorder::canRec(c)   &&
+		    !(G_Mixer.chanMode[c] & LOOP_ANY))
+		{
+			if (G_Mixer.chanMode[c] == SINGLE_PRESS)
+				recorder::startOverdub(c, ACTION_KEYS, G_Mixer.actualFrame);
+			else
+				recorder::rec(c, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
-
 
 		mh_startChan(c);
 	}
@@ -873,13 +866,15 @@ void glue_keyRelease(int c, bool ctrl, bool shift) {
 	if (!ctrl && !shift) {
 		mh_stopChan(c);
 
-		/* we record a key release only if channel is single_press. For any
-		 * other mode the key release is meaningless. */
+		/* record a key release only if channel is single_press. For any
+		 * other mode the KEY REL is meaningless. */
 
 		if (G_Mixer.chanMode[c] == SINGLE_PRESS && recorder::canRec(c)) {
 
-			int frame_a = recorder::getStartActionFrame(c, ACTION_KEYPRESS, G_Mixer.actualFrame);
-			int frame_b = G_Mixer.actualFrame;
+			recorder::stopOverdub(G_Mixer.actualFrame);
+
+			//int frame_a = recorder::getStartActionFrame(c, ACTION_KEYPRESS, G_Mixer.actualFrame);
+			//int frame_b = G_Mixer.actualFrame;
 
 			/* we must avoid any ring loop effect, i.e. an action key_press
 			 * that starts at frame N and the corresponding key_release at
@@ -887,19 +882,18 @@ void glue_keyRelease(int c, bool ctrl, bool shift) {
 			 * right at the end of the sequencer. Recorder::getStartActionFrame
 			 * returns -1 in case of a suspected ring loop. */
 
-			if (frame_a == -1)
-				recorder::rec(c, ACTION_KEYREL, G_Mixer.totalFrames);
+			//if (frame_a == -1)
+			//	recorder::rec(c, ACTION_KEYREL, G_Mixer.totalFrames);
 
 			/* now we avoid frame_a == frame_b: it happens with a quick press
 			 * and release of the button. In that case we delete frame_a. */
 
-			else
-			if (frame_a == -2)
-				recorder::deleteAction(c, frame_b, ACTION_KEYPRESS);
+			//else
+			//if (frame_a == -2)
+			//	recorder::deleteAction(c, frame_b, ACTION_KEYPRESS);
 
-			else {
-				recorder::rec(c, ACTION_KEYREL, frame_b);
-			}
+			//else
+			//	recorder::rec(c, ACTION_KEYREL, frame_b);
 		}
 	}
 
