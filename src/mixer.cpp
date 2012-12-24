@@ -714,10 +714,14 @@ void Mixer::rewind() {
 
 	/* rewind channels only if the sequencer is running */
 
-	if (running)
-		for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-			if ((chanMode[i] & LOOP_ANY) || chanRecStatus[i] == REC_READING)
-				chanTracker[i] = chanStart[i];
+	if (running) {
+		for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
+			if (chan[i] != NULL) {
+				if ((chanMode[i] & LOOP_ANY))// || chanRecStatus[i] == REC_READING)
+					chanTracker[i] = chanStart[i];
+			}
+		}
+	}
 }
 
 
