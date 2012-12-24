@@ -48,6 +48,7 @@ namespace recorder {
 struct action {
 	int  chan;
 	char type;
+	int  frame; // redundant info, used by helper functions
 };
 
 /* composite
@@ -57,8 +58,6 @@ struct action {
 struct composite {
 	action a1;
 	action a2;
-	int    frame1;
-	int    frame2;
 };
 
 extern gVector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
@@ -160,11 +159,11 @@ int getStartActionFrame(int chan, char action, int frame);
 
 int getEndActionFrame(int chan, char action, int frame);
 
-/* getNextActionType
- * returns the type of the nearest action in chan 'chan' of type 'action'
- * starting from 'frame'. Action can be a bitmask. */
+/* getNextAction
+ * return the nearest action in chan 'chan' of type 'action' starting
+ * from 'frame'. Action can be a bitmask. */
 
-int getNextActionType(int chan, char action, int frame);
+int getNextAction(int chan, char action, int frame, struct action *out);
 
 /* start/endOverdub */
 

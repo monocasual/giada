@@ -84,6 +84,7 @@ void rec(int c, char act, int frame) {
 	action *a = (action*) malloc(sizeof(action));
 	a->chan  = c;
 	a->type  = act;
+	a->frame = frame;
 
 	/* check if the frame exists in the stack. If it exists, we don't extend
 	 * the stack, but we add (or push) a new action to it. */
@@ -510,7 +511,7 @@ int getEndActionFrame(int chan, char type, int frame) {
 
 
 
-int getNextActionType(int chan, char type, int frame) {
+int getNextAction(int chan, char type, int frame, action *out) {
 
 	sortActions();  // mandatory
 
@@ -524,7 +525,8 @@ int getNextActionType(int chan, char type, int frame) {
 	for (unsigned j=0; j<global.at(i).size; j++) {
 		action *a = global.at(i).at(j);
 		if (a->chan == chan && (type & a->type) == a->type)
-			return a->type;
+			//return a->type;
+			a->type = a->type;
 	}
 
 	return -2;   // no 'type' actions found
@@ -546,19 +548,21 @@ void startOverdub(int ch, char actionMask, int frame) {
 		cmp.a1.type = ACTION_MUTEON;
 		cmp.a2.type = ACTION_MUTEOFF;
 	}
-	cmp.a1.chan = ch;
-	cmp.a2.chan = ch;
-	cmp.frame1  = frame;
+	cmp.a1.chan  = ch;
+	cmp.a2.chan  = ch;
+	cmp.a1.frame = frame;
+	// cmp.a2.frame doesn't exist yet
 
 	/* avoid underlying action truncation: if action2.type == nextAction:
 	 * you are in the middle of a composite action, truncation needed */
 
 	rec(ch, cmp.a1.type, frame);
 
-	int a = getNextActionType(ch, cmp.a1.type | cmp.a2.type, cmp.frame1);
-	if (a == cmp.a2.type) {
-		printf("startOverdub - add truncation at frame %d, type=%d\n", frame-512, cmp.a2.type);
-		rec(ch, cmp.a2.type, frame-512);
+	action act;
+	getNextAction(ch, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
+	if (act.type == cmp.a2.type) {
+		printf("startOverdub - add truncation at frame %d, type=%d\n", cmp.a1.frame-512, cmp.a2.type);
+		rec(ch, cmp.a2.type, cmp.a1.frame-512);
 		print();
 	}
 
@@ -571,23 +575,23 @@ void startOverdub(int ch, char actionMask, int frame) {
 
 void stopOverdub(int frame) {
 
-	cmp.frame2 = frame;
+	cmp.a2.frame  = frame;
 	bool ringLoop = false;
 	bool nullLoop = false;
 
-	/* ring loop verification, i.e. an action key_press that starts at
-	 *  frame N and the corresponding key_release at frame M, with M <= N */
+	/* ring loop verification, i.e. a composite action with key_press at
+	 * frame N and key_release at frame M, with M <= N */
 
-	if (cmp.frame2 < cmp.frame1) {
+	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
-		puts("RING LOOP!");
+		printf("RING LOOP! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		rec(cmp.a2.chan, cmp.a2.type, G_Mixer.totalFrames); 	// record at the end of the sequencer
 	}
-	else {
-	if (cmp.frame2 == cmp.frame1)
+	else
+	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
-		puts("NULL LOOP!");
-		deleteAction(cmp.a1.chan, cmp.frame1, cmp.a1.type);
+		printf("NULL LOOP! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
 	}
 
 	enableRead(cmp.a2.chan);
@@ -595,20 +599,21 @@ void stopOverdub(int frame) {
 	/* remove any nested action between keypress----keyrel, then record */
 
 	if (!nullLoop)
-		deleteActions(cmp.a2.chan, cmp.frame1, cmp.frame2, cmp.a1.type);
-		deleteActions(cmp.a2.chan, cmp.frame1, cmp.frame2, cmp.a2.type);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type);
 
-	if (!ringLoop && !nullLoop)
-		rec(cmp.a2.chan, cmp.a2.type, cmp.frame2);
+	if (!ringLoop && !nullLoop) {
+		rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
 
-	/* avoid underlying action truncation, if keyrel happens inside a
-	 * composite action */
+		/* avoid underlying action truncation, if keyrel happens inside a
+		* composite action */
 
-	/// TODO - use getNextActionType
-	///int f = getEndActionFrame(cmp.a2.chan, cmp.a2.type, cmp.frame2);
-	///if (f != -1)  // truncation needed
-	///	deleteAction(cmp.a2.chan, f, cmp.a2.type);
-
+		//int a = getNextActionType(cmp.a2.chan, cmp.a2.type | cmp.a2.type, cmp.a2.frame);
+		//if (a == cmp.a2.type) {
+			//deleteAction(cmp.a2.chan, cmp.frame2, cmp.a2.type);
+			// TODO - delete next action
+		//}
+	}
 }
 
 
