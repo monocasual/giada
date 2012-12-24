@@ -255,11 +255,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	memset(buffer, 0, sizeof(float) * bufferFrames);         // out
 	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		memset(vChan[i], 0, sizeof(float) * bufferFrames); // vchans
+		memset(vChan[i], 0, sizeof(float) * bufferFrames);     // vchans
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
-
-		/* things to do if the input is enabled */
 
 		if (kernelAudio::inputEnabled) {
 
@@ -296,8 +294,6 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (waitRec < G_Conf.delayComp)
 					waitRec += 2;
 				else {
-					//chan[chanInput]->data[inputTracker]   += inBuf[j]   * inVol;
-					//chan[chanInput]->data[inputTracker+1] += inBuf[j+1] * inVol;
 					vChanInput[inputTracker]   += inBuf[j]   * inVol;
 					vChanInput[inputTracker+1] += inBuf[j+1] * inVol;
 					inputTracker += 2;
@@ -400,7 +396,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (recorder::frames.at(y) == (int) actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
 						int chan = recorder::global.at(y).at(z)->chan;
-						if (recorder::chanActive[chan] == false)     /// move this at the top
+						if (recorder::chanActive[chan] == false)
 							continue;
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
