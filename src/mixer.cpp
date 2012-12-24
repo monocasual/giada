@@ -400,7 +400,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (recorder::frames.at(y) == (int) actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
 						int chan = recorder::global.at(y).at(z)->chan;
-						if (recorder::chanActive[chan] == false)
+						if (recorder::chanActive[chan] == false)     /// move this at the top
 							continue;
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
@@ -576,13 +576,13 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	/* final loop: sum virtual channels */
 
 	for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
+		if (chan[k] != NULL) {
 #ifdef WITH_VST
-		pthread_mutex_lock(&mutex_plugins);
-		G_PluginHost.processStack(vChan[k], PluginHost::CHANNEL, k);
-		pthread_mutex_unlock(&mutex_plugins);
+			pthread_mutex_lock(&mutex_plugins);
+			G_PluginHost.processStack(vChan[k], PluginHost::CHANNEL, k);
+			pthread_mutex_unlock(&mutex_plugins);
 #endif
-		for (unsigned j=0; j<bufferFrames; j+=2) {
-			if (chan[k] != NULL) {
+			for (unsigned j=0; j<bufferFrames; j+=2) {
 				buffer[j]   += vChan[k][j];
 				buffer[j+1] += vChan[k][j+1];
 			}
