@@ -340,7 +340,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			/* reset LOOP_REPEAT, if a bar has passed */
 
-			if (actualFrame % framesPerBar == 0) {
+			if (actualFrame % framesPerBar == 0 && actualFrame != 0) {
 				if (metronome)
 					tickPlay = true;
 
