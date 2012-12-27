@@ -359,7 +359,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
 					if (chan[k] == NULL)
 						continue;
-					if  (chanMode[k] & LOOP_ANY) {
+					//if  (chanMode[k] & LOOP_ANY) {
+					if (chanMode[k] & (LOOP_ONCE | LOOP_BASIC)) {
 
 						/* do a crossfade if the sample is playing. Regular chanReset
 						 * instead if it's muted, otherwise a click occurs */
@@ -374,6 +375,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						if (chanStatus[k] == STATUS_ENDING)
 							chanStop(k);
 					}
+
 					if (chanStatus[k] == STATUS_WAIT)
 						chanStatus[k] = STATUS_PLAY;
 
