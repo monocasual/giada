@@ -151,7 +151,6 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			vstTimeInfo.timeSigNumerator   = G_Mixer.beats;
 			vstTimeInfo.timeSigDenominator = G_Mixer.bars;
 			vstTimeInfo.ppqPos             = (G_Mixer.actualFrame / (float) G_Conf.samplerate) * (float) G_Mixer.bpm / 60.0f;
-			printf("ppqPos=%f\n", vstTimeInfo.ppqPos);
 			return (VstIntPtr) &vstTimeInfo;
 
 		/* ? - requires a pointer to VstEvents. No vstEvents so far (v0.5.4) */
