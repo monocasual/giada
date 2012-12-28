@@ -36,13 +36,13 @@ extern PluginHost G_PluginHost;
 
 
 gdPluginList::gdPluginList(int stackType, int ch)
- : gWindow(368, 204), chan(ch), stackType(stackType)
+ : gWindow(468, 204), chan(ch), stackType(stackType)
 {
 
 	if (G_Conf.pluginListX)
 		resize(G_Conf.pluginListX, G_Conf.pluginListY, w(), h());
 
-	list = new Fl_Scroll(8, 8, 376, 188);
+	list = new Fl_Scroll(8, 8, 476, 188);
 	list->type(Fl_Scroll::VERTICAL);
 	list->scrollbar.color(COLOR_BG_0);
 	list->scrollbar.selection_color(COLOR_BG_1);
@@ -90,6 +90,7 @@ void gdPluginList::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPluginLis
 void gdPluginList::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPluginList*)p)->__cb_setBypass(v); }
 void gdPluginList::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPluginList*)p)->__cb_shiftUp(v); }
 void gdPluginList::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPluginList*)p)->__cb_shiftDown(v); }
+void gdPluginList::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPluginList*)p)->__cb_setProgram(v); }
 
 
 /* ------------------------------------------------------------------ */
@@ -248,11 +249,12 @@ void gdPluginList::refreshList() {
 	int i = 0;
 	while (i<numPlugins) {
 
-		gButton *button    = new gButton(8,   i*20+8+i*4, 221, 20); // button contains an index
-		gButton *bypass    = new gButton(233, i*20+8+i*4, 20, 20);
-		gButton *shiftUp   = new gButton(257, i*20+8+i*4, 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
-		gButton *shiftDown = new gButton(281, i*20+8+i*4, 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-		gButton *remove    = new gButton(305, i*20+8+i*4, 55, 20, "remove");
+		gButton *button    = new gButton(8,   i*20+8+i*4, 220, 20); // button contains an index
+		gChoice *program   = new gChoice(button->x()+button->w()+4, i*20+8+i*4, 132, 20);
+		gButton *bypass    = new gButton(program->x()+program->w()+4, i*20+8+i*4, 20, 20);
+		gButton *shiftUp   = new gButton(bypass->x()+bypass->w()+4, i*20+8+i*4, 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
+		gButton *shiftDown = new gButton(shiftUp->x()+shiftUp->w()+4, i*20+8+i*4, 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
+		gButton *remove    = new gButton(shiftDown->x()+shiftDown->w()+4, i*20+8+i*4, 20, 20, "x");
 
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, chan);
 
@@ -276,6 +278,21 @@ void gdPluginList::refreshList() {
 			button->callback(cb_openPluginWindow, (void*)this);
 			button->id = pPlugin->getId();
 
+			program->callback(cb_setProgram, (void*)this);
+			program->id = pPlugin->getId();
+
+			/* loading vst programs */
+
+			for (int i=0; i<64; i++) {
+				char out[kVstMaxProgNameLen];
+				pPlugin->getProgramName(i, out);
+				for (int j=0; j<kVstMaxProgNameLen; j++)  // escape FLTK special chars
+					if (out[j] == '/' || out[j] == '\\' || out[j] == '&' || out[j] == '_')
+						out[j] = '-';
+				program->add(out);
+			}
+			program->value(0);
+
 			bypass->callback(cb_setBypass, (void*)this);
 			bypass->type(FL_TOGGLE_BUTTON);
 			bypass->value(pPlugin->bypass ? 0 : 1);
@@ -291,6 +308,7 @@ void gdPluginList::refreshList() {
 		remove->id = pPlugin->getId();
 
 		list->add(button);
+		list->add(program);
 		list->add(remove);
 		list->add(bypass);
 		list->add(shiftUp);
@@ -300,7 +318,7 @@ void gdPluginList::refreshList() {
 	}
 
 	int addPlugY = numPlugins == 0 ? 90 : i*20+8+i*4;
-	addPlugin = new gClick(8, addPlugY, 352, 20, "-- add new plugin --");
+	addPlugin = new gClick(8, addPlugY, 452, 20, "-- add new plugin --");
 	addPlugin->callback(cb_addPlugin, (void*)this);
 	list->add(addPlugin);
 
@@ -308,9 +326,9 @@ void gdPluginList::refreshList() {
 	 * Scrollbar.width = 20 + 4(margin) */
 
 	if (i>7)
-		size(392, h());
+		size(492, h());
 	else
-		size(368, h());
+		size(468, h());
 }
 
 
@@ -321,6 +339,16 @@ void gdPluginList::__cb_setBypass(Fl_Widget *w) {
 	int id = ((gButton*)w)->id;
 	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, chan);
 	pPlugin->bypass = !pPlugin->bypass;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdPluginList::__cb_setProgram(Fl_Widget *w) {
+	int id = ((gChoice*)w)->id;
+	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, chan);
+	pPlugin->setProgram(((gChoice*)w)->value());
 }
 
 

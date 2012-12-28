@@ -220,6 +220,7 @@ public:
 	gChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
 	void draw();
 	bool angle;
+	int  id;
 };
 
 

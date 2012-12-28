@@ -100,7 +100,8 @@ public:
 	void  getName   (char *out);
 	void  getVendor (char *out);
 	void  getProduct(char *out);
-	int   getNumPrograms();
+	int   getNumPrograms();        // list all programs
+	int   setProgram(int index);   // load a program
 	int   getNumParams();
 	int   getNumInputs();
 	int   getNumOutputs();

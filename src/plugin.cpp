@@ -264,6 +264,13 @@ int Plugin::getNumPrograms() {
 	return plugin->numPrograms;
 }
 
+int Plugin::setProgram(int index) {
+	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
+	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
+	printf("[plugin] program changed, index %d\n", index);
+	return plugin->dispatcher(plugin, effEndSetProgram, 0, 0, 0, 0);
+}
+
 int Plugin::getNumParams() {
 	return plugin->numParams;
 }
