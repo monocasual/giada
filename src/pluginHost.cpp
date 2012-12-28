@@ -450,20 +450,28 @@ void PluginHost::freePlugin(int id, int stackType, int chan) {
 
 	for (unsigned i=0; i<pStack->size; i++)
 		if (pStack->at(i)->getId() == id) {
-			int lockStatus;
-			while (true) {
-				lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
-				if (lockStatus == 0) {
-					pStack->at(i)->suspend();
-					pStack->at(i)->close();
-					delete pStack->at(i);
-					pStack->del(i);
-					pthread_mutex_unlock(&G_Mixer.mutex_plugins);
-					printf("[pluginHost] plugin id=%d removed\n", id);
-					return;
+
+			if (pStack->at(i)->status == 0) { // no frills if plugin is missing
+				delete pStack->at(i);
+				pStack->del(i);
+				return;
+			}
+			else {
+				int lockStatus;
+				while (true) {
+					lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
+					if (lockStatus == 0) {
+						pStack->at(i)->suspend();
+						pStack->at(i)->close();
+						delete pStack->at(i);
+						pStack->del(i);
+						pthread_mutex_unlock(&G_Mixer.mutex_plugins);
+						printf("[pluginHost] plugin id=%d removed\n", id);
+						return;
+					}
+					//else
+						//puts("[pluginHost] waiting for mutex...");
 				}
-				//else
-					//puts("[pluginHost] waiting for mutex...");
 			}
 		}
 	printf("[pluginHost] plugin id=%d not found\n", id);
