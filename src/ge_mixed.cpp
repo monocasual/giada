@@ -444,13 +444,16 @@ void gChoice::draw() {
 
 	fl_color(!active() ? COLOR_BD_0 : COLOR_TEXT_0);
 	if (value() != -1) {
-		if (fl_width(text(value())) < w()) {
+		if (fl_width(text(value())) < w()-8) {
 			fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);
 		}
 		else {
 			std::string tmp = text(value());
-			while (fl_width(tmp.c_str()) >= w())
-				tmp.resize(1);
+			int size        = tmp.size();
+			while (fl_width(tmp.c_str()) >= w()-16) {
+				tmp.resize(size);
+				size--;
+			}
 			tmp += "...";
 			fl_draw(tmp.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
 		}
