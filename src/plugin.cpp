@@ -276,8 +276,8 @@ int Plugin::getNumOutputs() {
 	return plugin->numOutputs;
 }
 
-void Plugin::getProgramName(int index, char *out) {
-	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, out, 0);
+int Plugin::getProgramName(int index, char *out) {
+	return plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, out, 0);
 }
 
 void Plugin::getParamName(int index, char *out) {

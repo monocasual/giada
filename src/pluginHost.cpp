@@ -203,6 +203,15 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			else
 				return 0;
 
+		/* 42 - Something has changed, update the host's 'multi-fx' display.
+		 * Not supported right now, return 0. This opcode deals with the program
+		 * changes, more infos http://www.asseca.com/vst-24-specs/amUpdateDisplay.html */
+
+		case audioMasterUpdateDisplay:
+			return 0;
+
+		/* ?? */
+
 		case audioMasterGetAutomationState:
 			printf("[pluginHost] requested opcode 'audioMasterGetAutomationState' (%d)\n", opcode);
 			return 0;
@@ -283,7 +292,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, int chan) {
 		char name[256]; p->getName(name);
 		printf("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n", p->getId(), name, stackType, pStack->size);
 
-		/* this is suggested. Who knows... */
+		/* p->resume() is suggested. Who knows... */
 
 		p->resume();
 
