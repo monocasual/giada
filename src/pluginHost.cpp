@@ -188,7 +188,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 					}
 
 			gdPluginList *list = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
-			(list->getChild(idWindow))->size(index, value);
+			(list->getChild(idWindow))->size((int)index, (int)value);
 			return 1;
 		}
 
