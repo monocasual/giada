@@ -236,6 +236,14 @@ int Plugin::setup(int samplerate, int frames) {
 /* ------------------------------------------------------------------ */
 
 
+AEffect *Plugin::getPlugin() {
+	return plugin;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int Plugin::getId() {
 	return id;
 }

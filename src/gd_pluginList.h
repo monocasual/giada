@@ -77,9 +77,6 @@ public:
 	~gdPluginList();
 
 	void refreshList();
-
-	void resizePluginWindow(void *p);
-
 };
 
 #endif

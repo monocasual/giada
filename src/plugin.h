@@ -92,6 +92,8 @@ public:
 	int  init(VstIntPtr VSTCALLBACK (*HostCallback)(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float));
 	int  setup(int samplerate, int frames);
 
+	AEffect *getPlugin();
+
 	/* get[Item].
 	 * Wrappers called by host when it wants info from the plugin. */
 
@@ -142,6 +144,11 @@ public:
 	bool suspended;
 
 	char pathfile[PATH_MAX]; // full path filename
+
+	/* idWindow
+	 * plugin must know its window in case of a resize via opcode */
+
+	int idWindow;
 };
 
 #endif

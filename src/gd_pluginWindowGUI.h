@@ -52,8 +52,6 @@ private:
 
 public:
 
-	int id;
-
 	gdPluginWindowGUI(Plugin *pPlugin);
 	~gdPluginWindowGUI();
 };

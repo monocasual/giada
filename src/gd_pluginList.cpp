@@ -352,14 +352,4 @@ void gdPluginList::__cb_setProgram(Fl_Widget *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
-
-
-void gdPluginList::resizePluginWindow(void *p) {
-	printf("gdPluginList - resize plugin %p\n", p);
-	printf("gdPluginList - subwindows = %d\n", subWindows.size);
-}
-
-
-
 #endif // #ifdef WITH_VST

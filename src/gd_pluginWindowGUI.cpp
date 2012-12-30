@@ -84,6 +84,9 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	pPlugin->getProduct(name);
 	copy_label(name);
 
+	printf("add plugin id window = %d\n", id);
+	pPlugin->idWindow = id;
+
 	pPlugin->idle();
 }
 

@@ -167,13 +167,21 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 15 - requests to resize the editor window */
 
 		case audioMasterSizeWindow: {
-			printf("[pluginHost] requested new window size: w=%d, h=%d, plugin %p\n", index, value, (void*)effect);
-			gdPluginList *fxList = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
-			if (fxList) {
-				fxList->resizePluginWindow((void*)effect);
-				return 1;
-			}
-			return 0;
+			printf("[pluginHost] requested new window size: w=%d, h=%d\n", index, value);
+			int idWindow = 0;
+			for (unsigned i=0; i<masterOut.size; i++)
+				if (masterOut.at(i)->getPlugin() == effect)
+					idWindow = masterOut.at(i)->idWindow;
+			for (unsigned i=0; i<masterIn.size; i++)
+				if (masterIn.at(i)->getPlugin() == effect)
+					idWindow = masterIn.at(i)->idWindow;
+			for (unsigned i=0; i<MAX_NUM_CHAN; i++)
+				for (unsigned j=0; j<channel[i].size; j++)
+					if (channel[i].at(j)->getPlugin() == effect)
+						idWindow = channel[i].at(j)->idWindow;
+
+			printf("idWindow = %d\n", idWindow);
+			return 1;
 		}
 
 		case audioMasterGetSampleRate:
