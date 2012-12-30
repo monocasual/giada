@@ -49,7 +49,7 @@ private:
  	gClick    *addPlugin;
 	Fl_Scroll *list;
 
-	gVector<class gdPluginWindow *> subWindows;
+	//gVector<class gdPluginWindow *> subWindows;
 
 	static void cb_addPlugin          (Fl_Widget *v, void *p);
 	static void cb_removePlugin       (Fl_Widget *v, void *p);
@@ -77,6 +77,8 @@ public:
 	~gdPluginList();
 
 	void refreshList();
+
+	void resizePluginWindow(void *p);
 
 };
 

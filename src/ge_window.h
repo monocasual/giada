@@ -38,7 +38,7 @@
 
 class gWindow : public Fl_Double_Window {
 
-private:
+protected:
 	gVector <gWindow *> subWindows;
 	int id;
 	gWindow *parent;

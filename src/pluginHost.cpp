@@ -31,11 +31,11 @@
 #include "pluginHost.h"
 
 
-
-extern Conf       G_Conf;
-extern Mixer      G_Mixer;
-extern PluginHost G_PluginHost;
-extern unsigned   G_beats;
+extern Conf          G_Conf;
+extern Mixer         G_Mixer;
+extern PluginHost    G_PluginHost;
+extern unsigned      G_beats;
+extern gdMainWindow *mainWin;
 
 
 PluginHost::PluginHost() {
@@ -164,12 +164,17 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterIOChanged:
 			return false;
 
-		/* 15 - requests to resize the editor window. The window is already
-		 * resized, nothing to do. */
+		/* 15 - requests to resize the editor window */
 
-		case audioMasterSizeWindow:
-			printf("[pluginHost] requested new window size: w=%d, h=%d\n", index, value);
-			return true;
+		case audioMasterSizeWindow: {
+			printf("[pluginHost] requested new window size: w=%d, h=%d, plugin %p\n", index, value, (void*)effect);
+			gdPluginList *fxList = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
+			if (fxList) {
+				fxList->resizePluginWindow((void*)effect);
+				return 1;
+			}
+			return 0;
+		}
 
 		case audioMasterGetSampleRate:
 			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
@@ -199,7 +204,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterCanDo:
 			printf("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
 			if (!strcmp((char*)ptr, "sizeWindow"))
-				return -1; // no resizing
+				return 1; // we can resize the window
 			else
 				return 0;
 

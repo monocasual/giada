@@ -31,6 +31,7 @@
 #ifndef __PLUGIN_HOST_
 #define __PLUGIN_HOST_
 
+#include "ge_window.h"
 #include "plugin.h"
 #include "utils.h"
 #include "init.h"
