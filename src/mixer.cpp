@@ -330,10 +330,15 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						else
 							xfade(k);
 
-						/* this is the moment in which we record the keypress, if the quantizer is on */
+						/* this is the moment in which we record the keypress, if the quantizer is on.
+						 * SINGLE_PRESS needs overdub */
 
-						if (recorder::canRec(k))
+						if (recorder::canRec(k)) {
+							if (chanMode[k] == SINGLE_PRESS)
+								recorder::startOverdub(k, ACTION_KEYS, actualFrame);
+							else
 								recorder::rec(k, ACTION_KEYPRESS, actualFrame);
+						}
 					}
 				}
 			}

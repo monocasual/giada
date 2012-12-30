@@ -148,14 +148,14 @@ void shrink(int new_fpb);
 void enableRead(int chan);
 void disableRead(int chan);
 
-/* getStartActionFrame
+/* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
  * MUTE_ON(b). Returns the MUTE_OFF frame, if any. 'action' is the
  * action to look for. */
 
 int getStartActionFrame(int chan, char action, int frame);
 
-/* getEndActionFrame
+/* getEndActionFrame ------- DEPRECATED!
  * same as getStartActionFrame but searches the B-frame. */
 
 int getEndActionFrame(int chan, char action, int frame);
