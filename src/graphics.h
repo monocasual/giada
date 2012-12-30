@@ -80,6 +80,9 @@ extern const char *fxShiftUpOff_xpm[];
 extern const char *fxShiftDownOn_xpm[];
 extern const char *fxShiftDownOff_xpm[];
 
+extern const char *fxRemoveOff_xpm[];
+extern const char *fxRemoveOn_xpm[];
+
 extern const char *vstLogo_xpm[];
 #endif
 

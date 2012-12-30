@@ -254,7 +254,7 @@ void gdPluginList::refreshList() {
 		gButton *bypass    = new gButton(program->x()+program->w()+4, i*20+8+i*4, 20, 20);
 		gButton *shiftUp   = new gButton(bypass->x()+bypass->w()+4, i*20+8+i*4, 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
 		gButton *shiftDown = new gButton(shiftUp->x()+shiftUp->w()+4, i*20+8+i*4, 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-		gButton *remove    = new gButton(shiftDown->x()+shiftDown->w()+4, i*20+8+i*4, 20, 20, "x");
+		gButton *remove    = new gButton(shiftDown->x()+shiftDown->w()+4, i*20+8+i*4, 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, chan);
 
