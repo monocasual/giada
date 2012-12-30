@@ -164,23 +164,31 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterIOChanged:
 			return false;
 
-		/* 15 - requests to resize the editor window */
+		/* 15 - requests to resize the editor window. w = index, h = value*/
 
 		case audioMasterSizeWindow: {
-			printf("[pluginHost] requested new window size: w=%d, h=%d\n", index, value);
-			int idWindow = 0;
-			for (unsigned i=0; i<masterOut.size; i++)
-				if (masterOut.at(i)->getPlugin() == effect)
-					idWindow = masterOut.at(i)->idWindow;
-			for (unsigned i=0; i<masterIn.size; i++)
-				if (masterIn.at(i)->getPlugin() == effect)
-					idWindow = masterIn.at(i)->idWindow;
-			for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-				for (unsigned j=0; j<channel[i].size; j++)
-					if (channel[i].at(j)->getPlugin() == effect)
-						idWindow = channel[i].at(j)->idWindow;
+			int  idWindow = 0;
+			bool found   = false;
 
-			printf("idWindow = %d\n", idWindow);
+			for (unsigned i=0; i<masterOut.size && !found; i++)
+				if (masterOut.at(i)->getPlugin() == effect) {
+					idWindow = masterOut.at(i)->idWindow;
+					found    = true;
+				}
+			for (unsigned i=0; i<masterIn.size && !found; i++)
+				if (masterIn.at(i)->getPlugin() == effect) {
+					idWindow = masterIn.at(i)->idWindow;
+					found    = true;
+				}
+			for (unsigned i=0; i<MAX_NUM_CHAN && !found; i++)
+				for (unsigned j=0; j<channel[i].size && !found; j++)
+					if (channel[i].at(j)->getPlugin() == effect) {
+						idWindow = channel[i].at(j)->idWindow;
+						found    = true;
+					}
+
+			gdPluginList *list = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
+			(list->getChild(idWindow))->size(index, value);
 			return 1;
 		}
 
