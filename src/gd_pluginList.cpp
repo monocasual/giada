@@ -282,6 +282,7 @@ void gdPluginList::refreshList() {
 			program->id = pPlugin->getId();
 
 			/* loading vst programs */
+			/* FIXME - max programs = 128 (unknown source) */
 
 			for (int i=0; i<64; i++) {
 				char out[kVstMaxProgNameLen];
@@ -289,7 +290,12 @@ void gdPluginList::refreshList() {
 				for (int j=0; j<kVstMaxProgNameLen; j++)  // escape FLTK special chars
 					if (out[j] == '/' || out[j] == '\\' || out[j] == '&' || out[j] == '_')
 						out[j] = '-';
-				program->add(out);
+				if (strlen(out) > 0)
+					program->add(out);
+			}
+			if (program->size() == 0) {
+				program->add("-- no programs --\0");
+				program->deactivate();
 			}
 			program->value(0);
 
