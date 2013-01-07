@@ -76,4 +76,24 @@ public:
 	int coverX; 					// x1 of the unused area (x2 = totalWidth)
 };
 
+
+/* ------------------------------------------------------------------ */
+
+
+class gGridTool : public Fl_Group {
+private:
+	class gChoice  *gridType;
+	class gCheck   *active;
+
+	class gdActionEditor *parent;
+
+	static void cb_changeType(Fl_Widget *w, void *p);
+	inline void __cb_changeType();
+
+public:
+	gGridTool(int x, int y, gdActionEditor *parent);
+	int getValue();
+};
+
+
 #endif

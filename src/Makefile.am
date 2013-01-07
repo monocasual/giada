@@ -32,7 +32,7 @@ gd_pluginWindow.h	 gd_pluginWindow.cpp  ge_window.h			     ge_window.cpp \
 dataStorage.h			 dataStorage.cpp		  conf.h					     conf.cpp \
 gd_actionEditor.h	 gd_actionEditor.cpp  ge_muteChannel.h     ge_muteChannel.cpp \
 ge_actionChannel.h ge_actionChannel.cpp gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
-ge_gridTool.h			 ge_gridTool.cpp      ge_actionWidget.h    ge_actionWidget.cpp
+ge_actionWidget.h  ge_actionWidget.cpp
 
 
 # Check for environment: these vars are defined via AM_CONDITIONAL

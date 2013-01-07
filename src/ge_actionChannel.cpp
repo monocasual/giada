@@ -28,7 +28,6 @@
 
 
 #include "ge_actionChannel.h"
-#include "ge_gridTool.h"
 
 
 extern Mixer    G_Mixer;

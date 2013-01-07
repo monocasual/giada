@@ -30,7 +30,6 @@
 #include "gd_actionEditor.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
-#include "ge_gridTool.h"
 
 
 extern Mixer G_Mixer;
@@ -193,4 +192,58 @@ int gdActionEditor::getActionType() {
 		return ACTION_KILLCHAN;
 	else
 		return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
+	:	Fl_Group(x, y, 80, 20), parent(parent)
+{
+	gridType = new gChoice(x, y, 40, 20);
+	gridType->add("off");
+	gridType->add("2");
+	gridType->add("4");
+	gridType->add("8");
+	gridType->add("16");
+	gridType->add("32");
+	gridType->value(0);
+	gridType->callback(cb_changeType, (void*)this);
+
+	active = new gCheck (x+44, y, 20, 20);
+	end();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_changeType(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gGridTool::__cb_changeType() {
+	puts("change type");
+	parent->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gGridTool::getValue() {
+	switch (gridType->value()) {
+		case 0:	return 0;
+		case 1: return 2;
+		case 2: return 4;
+		case 3: return 8;
+		case 4: return 16;
+		case 5: return 32;
+	}
+	return 0;
 }
