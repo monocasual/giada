@@ -31,8 +31,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include "ge_window.h"
-#include "ge_mixed.h"
+#include "ge_actionWidget.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
@@ -67,18 +66,14 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gActionChannel : public Fl_Group {
+///class gActionChannel : public Fl_Group {
+class gActionChannel : public gActionWidget {
 private:
 
 	/* getSelectedAction
 	 * get the action under the mouse. NULL if nothing found. */
 
 	gAction *getSelectedAction();
-
-	/* parent
-	 * pointer to gActionEditor */
-
-	gdActionEditor *parent;
 
 	/* selected
 	 * pointer to the selected action. Useful when dragging around. */

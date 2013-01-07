@@ -28,6 +28,7 @@
 
 
 #include "ge_actionChannel.h"
+#include "ge_gridTool.h"
 
 
 extern Mixer    G_Mixer;
@@ -38,7 +39,7 @@ extern Conf	    G_Conf;
 
 
 gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
-: Fl_Group(x, y, 200, 40), parent(parent), selected(NULL)
+ : gActionWidget(x, y, 200, 40, parent), selected(NULL)
 {
 	/* let's add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
@@ -140,53 +141,10 @@ void gActionChannel::updateActions() {
 
 void gActionChannel::draw() {
 
-	/* widen or narrow the widget */
+	/* draw basic boundaries (+ beat bars) and hide the unused area. Then
+	 * draw the children (the actions) */
 
-	w(parent->totalWidth);
-
-	/* clear the screen */
-
-	fl_rectf(x(), y(), parent->totalWidth, h(), COLOR_BG_MAIN);
-
-	/* draw the container */
-
-	fl_color(COLOR_BD_0);
-	fl_rect(x(), y(), parent->totalWidth, h());
-
-	/* print beats and bars. The method is the same of the waveform in sample
-	 * editor. Take totalwidth (the width in pixel of the area to draw), knowing
-	 * that totalWidth = totalFrames / zoom. Then, for each pixel of totalwidth,
-	 * put a concentrate of each block (which is totalFrames / zoom). */
-
-	int    j = 0;
-	bool end = false;
-
-	/* don't draw beyond the hidden area. If 'end': stop drawing. */
-
-	for (int i=1; i<=parent->totalWidth && !end; i++) {
-		int step = parent->zoom*i;
-		while (j < step) {
-			if (j > parent->totalFrames)     // don't query beyond totalFrames
-				break;
-			if (j % parent->framesPerBeat == 0) {                            // print each beat
-				fl_color(COLOR_BD_0);
-				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
-			}
-			if (j % parent->framesPerBar == 0 && i!=1 && i != parent->totalWidth) {    // print bar division
-				fl_color(COLOR_BG_2);
-				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
-			}
-			if (j == parent->framesPerBeats) {                      // search for the start point
-				parent->coverX=i+x()-1;                               // of the hidden area
-				end = true;
-			}
-			j++;
-		}
-		j = step;
-	}
-
-	/* hide the unused area and draw the children (the actions) */
-
+	baseDraw();
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
 	draw_children();
 }

@@ -33,9 +33,6 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 #include "ge_window.h"
-#include "ge_actionChannel.h"
-#include "ge_muteChannel.h"
-#include "ge_mixed.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
@@ -61,6 +58,7 @@ public:
 	inline void __cb_zoomOut();
 
 	class gChoice        *actionType;
+	class gGridTool      *gridTool;
 	class gClick         *zoomIn;
 	class gClick         *zoomOut;
 	class Fl_Scroll      *scroller;  // widget container

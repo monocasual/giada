@@ -28,6 +28,9 @@
 
 
 #include "gd_actionEditor.h"
+#include "ge_actionChannel.h"
+#include "ge_muteChannel.h"
+#include "ge_gridTool.h"
 
 
 extern Mixer G_Mixer;
@@ -56,7 +59,9 @@ gdActionEditor::gdActionEditor(int chan)
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
 	  actionType = new gChoice(104, 8, 80, 20);
-		gBox *b1   = new gBox  (188, 8, 300, 20);    // padding actionType - zoomButtons
+	  gridTool   = new gGridTool(188, 8, this);
+		gBox *b1   = new gBox  (248, 8, 300, 20);    // padding actionType - zoomButtons
+		b1->box(FL_BORDER_BOX);
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
 	upperArea->end();
@@ -153,9 +158,10 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 
 
 void gdActionEditor::__cb_zoomIn() {
-	if (zoom <= 100)
+	if (zoom == 1)
 		return;
-	zoom -= 100;
+	zoom /= 2;
+	printf("%d\n", zoom);
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
@@ -167,7 +173,7 @@ void gdActionEditor::__cb_zoomIn() {
 
 
 void gdActionEditor::__cb_zoomOut() {
-	zoom += 100;
+	zoom *= 2;
 	totalWidth  = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
