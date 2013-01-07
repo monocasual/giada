@@ -33,10 +33,11 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include "gd_actionEditor.h"
+#include "ge_actionWidget.h"
+#include "utils.h"
 
 
-class gMuteChannel : public Fl_Widget {
+class gMuteChannel : public gActionWidget {
 
 private:
 
@@ -49,7 +50,7 @@ private:
 		int      x;
 	};
 
-	class gdActionEditor *parent;   // pointer to parent class (gActionEditor)
+	//class gdActionEditor *parent;   // pointer to parent class (gActionEditor)
 	gVector<point>        points;   // array of points on/off, in frames
 
 	/* draggedPoint
@@ -79,7 +80,7 @@ private:
 
 public:
 
-	gMuteChannel(int x, int y, gdActionEditor *parent);
+	gMuteChannel(int x, int y, class gdActionEditor *parent);
 	void draw();
 	int  handle(int e);
 

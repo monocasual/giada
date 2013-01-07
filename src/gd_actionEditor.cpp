@@ -61,7 +61,6 @@ gdActionEditor::gdActionEditor(int chan)
 	  actionType = new gChoice(104, 8, 80, 20);
 	  gridTool   = new gGridTool(188, 8, this);
 		gBox *b1   = new gBox  (248, 8, 300, 20);    // padding actionType - zoomButtons
-		b1->box(FL_BORDER_BOX);
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
 	upperArea->end();

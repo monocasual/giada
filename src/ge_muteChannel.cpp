@@ -29,10 +29,12 @@
 
 
 #include "ge_muteChannel.h"
+#include "gd_actionEditor.h"
+#include "ge_actionWidget.h"
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
-: Fl_Widget(x, y, 200, 60), parent(parent), draggedPoint(-1), selectedPoint(-1)
+ : gActionWidget(x, y, 200, 60, parent), draggedPoint(-1), selectedPoint(-1)
 {
 	extractPoints();
 }
@@ -43,16 +45,7 @@ gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
 
 void gMuteChannel::draw() {
 
-	w(parent->totalWidth);
-
-	/* clear everything */
-
-	fl_rectf(x(), y(), parent->totalWidth, h(), COLOR_BG_MAIN);
-
-	/* border */
-
-	fl_color(COLOR_BD_0);
-	fl_rect(x(), y(), parent->totalWidth, h());
+	baseDraw();
 
 	/* cover unused area */
 
