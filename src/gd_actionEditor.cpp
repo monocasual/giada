@@ -161,7 +161,6 @@ void gdActionEditor::__cb_zoomIn() {
 	if (zoom == 1)
 		return;
 	zoom /= 2;
-	printf("%d\n", zoom);
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
