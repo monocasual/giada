@@ -70,6 +70,8 @@ gdActionEditor::gdActionEditor(int chan)
 	actionType->add("kill chan");
 	actionType->value(0);
 
+	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
+
 	if (G_Mixer.chanMode[chan] == SINGLE_PRESS || G_Mixer.chanMode[chan] & LOOP_ANY)
 		actionType->deactivate();
 
@@ -221,6 +223,15 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 /* ------------------------------------------------------------------ */
 
 
+gGridTool::~gGridTool() {
+	G_Conf.actionEditorGridVal = gridType->value();
+	G_Conf.actionEditorGridOn  = active->value();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_changeType(); }
 
 
@@ -228,8 +239,24 @@ void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_ch
 
 
 void gGridTool::__cb_changeType() {
-	puts("change type");
 	parent->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool gGridTool::isOn() {
+	return active->value();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gGridTool::init(int v, bool b) {
+	gridType->value(v);
+	active->value(b);
 }
 
 

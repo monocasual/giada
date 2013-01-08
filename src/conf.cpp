@@ -206,11 +206,15 @@ int Conf::read() {
 	actionEditorW    = atoi(getValue("actionEditorW").c_str());
 	actionEditorH    = atoi(getValue("actionEditorH").c_str());
 	actionEditorZoom = atoi(getValue("actionEditorZoom").c_str());
+	actionEditorGridVal = atoi(getValue("actionEditorGridVal").c_str());
+	actionEditorGridOn  = atoi(getValue("actionEditorGridOn").c_str());
 	if (actionEditorX < 0)      actionEditorX = 0;
 	if (actionEditorY < 0)      actionEditorY = 0;
 	if (actionEditorW < 640)    actionEditorW = 640;
 	if (actionEditorH < 176)    actionEditorH = 176;
 	if (actionEditorZoom < 100) actionEditorZoom = 100;
+	if (actionEditorGridVal < 0) actionEditorGridVal = 0;
+	if (actionEditorGridOn < 0)  actionEditorGridOn = 0;
 
 	sampleEditorX    = atoi(getValue("sampleEditorX").c_str());
 	sampleEditorY    = atoi(getValue("sampleEditorY").c_str());

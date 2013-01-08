@@ -81,6 +81,7 @@ public:
 
 
 class gGridTool : public Fl_Group {
+
 private:
 	class gChoice  *gridType;
 	class gCheck   *active;
@@ -91,8 +92,12 @@ private:
 	inline void __cb_changeType();
 
 public:
+
 	gGridTool(int x, int y, gdActionEditor *parent);
-	int getValue();
+	~gGridTool();
+	int  getValue();
+	void init(int val, bool on);
+	bool isOn();
 };
 
 

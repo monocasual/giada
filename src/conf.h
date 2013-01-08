@@ -73,6 +73,8 @@ public:
 
 	int  browserX, browserY, browserW, browserH;
 	int  actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
+	int  actionEditorGridVal;
+	int  actionEditorGridOn;
 	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
 	int  pluginListX, pluginListY;
 	int  configX, configY;

@@ -217,8 +217,13 @@ int gActionChannel::handle(int e) {
 					else
 					if (real_x+selected->w() > parent->coverX)         // don't go beyond the right border
 						selected->position(parent->coverX-selected->w(), selected->y());
-					else
-						selected->position(real_x, selected->y());
+					else {
+						if (parent->gridTool->isOn()) {
+							puts("TODO snapping");
+						}
+						else
+							selected->position(real_x, selected->y());
+					}
 				}
 				redraw();
 			}
