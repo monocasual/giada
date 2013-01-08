@@ -64,7 +64,7 @@ gdAbout::gdAbout()
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
-		"www.monocasual.com/giada",
+		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
 
 	text->copy_label(message);
