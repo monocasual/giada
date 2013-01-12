@@ -82,7 +82,7 @@ void gActionWidget::baseDraw() {
 		wantHidden = true;
 
 
-	/* grid drawing */
+	/* grid drawing, if > 1 */
 
 	if (parent->gridTool->getValue() > 1) {
 		fl_color(fl_rgb_color(54, 54, 54));
@@ -90,13 +90,18 @@ void gActionWidget::baseDraw() {
 		for (int i=0; i<(int) parent->gridTool->points.size; i++) {
 			int px = parent->gridTool->points.at(i)+x()-1;
 			fl_line(px, y()+1, px, y()+h()-2);
+			/*
+			char c[16];
+			sprintf(c, "%d (%d)", px, parent->gridTool->points.at(i));
+			fl_draw(c, px+1, y()+h()-4);
+			*/
 		}
 		fl_line_style(0);
 	}
 
 	/* box and beat separator drawing */
 
-	for (int i=0; i<parent->totalWidth && !end; i++) {
+	for (int i=1; i<parent->totalWidth && !end; i++) {
 		int step = parent->zoom*i;
 		while (j < step && j <= parent->totalFrames) {
 
@@ -109,21 +114,6 @@ void gActionWidget::baseDraw() {
 				fl_color(COLOR_BD_0);
 				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
 			}
-
-			/*
-			else {
-				int grid = parent->gridTool->getValue();
-				if (grid > 1) {
-					int framesPerGrid = floor(parent->framesPerBeat / grid);
-					if (j % framesPerGrid == 0) {
-						fl_color(fl_rgb_color(54, 54, 54));
-						fl_line_style(FL_DASH, 0, NULL);
-						fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
-						fl_line_style(0);
-					}
-				}
-			}
-			*/
 
 			if (j % parent->framesPerBar == 0 && i!=1 && i != parent->totalWidth) {    // print bar division
 				fl_color(COLOR_BG_2);

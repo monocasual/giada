@@ -294,15 +294,15 @@ void gGridTool::calc() {
 	int  j   = 0;
 	int fpgc = floor(parent->framesPerBeat / getValue());  // frames per grid cell
 
-	//printf("grid calculation\n");
-	//printf("   frames per beat = %d\n", parent->framesPerBeat);
-	//printf("   frames per grid cell = %d\n", fpgc);
+	printf("grid calculation\n");
+	printf("   frames per beats = %d\n", parent->framesPerBeats);
+	printf("   frames per grid cell = %d\n", fpgc);
 
-	for (int i=0; i<parent->totalWidth && !end; i++) {
+	for (int i=1; i<parent->totalWidth && !end; i++) {
 		int step = parent->zoom*i;
-		while (j < step && j < parent->totalFrames) {
+		while (j < step && j < parent->framesPerBeats) {
 			if (j % fpgc == 0) {
-				//printf("   grid frame found at %d, pixel %d\n", j, i);
+				printf("   grid frame found at %d, pixel %d\n", j, i);
 				points.add(i);
 			}
 			j++;
@@ -311,4 +311,28 @@ void gGridTool::calc() {
 	}
 
 	printf("gridTool::calc done, %d points found\n", points.size);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gGridTool::getSnapPoint(int v) {
+	for (int i=0; i<(int)points.size; i++) {
+
+		if (i == (int) points.size-1)
+			return points.at(i);
+
+		int gp  = points.at(i);
+		int gpn = points.at(i+1);
+
+		if (v >= gp && v < gpn) {
+			if (v < gpn) {
+				printf("%d < value (%d) < %d\n", gp, v, gpn);
+				return gp;
+				break;
+			}
+		}
+	}
+	return v;  // default value
 }

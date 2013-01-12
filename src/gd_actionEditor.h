@@ -100,6 +100,12 @@ public:
 	bool isOn();
 	void calc();
 
+	/* getSnapPoint
+	 * given a cursor position in input, return the x coordinates of the
+	 * nearest snap point (in pixel, clean, ie. not x()-shifted) */
+
+	int  getSnapPoint(int v);
+
 	gVector<int> points;   // points of the grid
 };
 

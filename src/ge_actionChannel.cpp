@@ -219,12 +219,8 @@ int gActionChannel::handle(int e) {
 						selected->position(parent->coverX-selected->w(), selected->y());
 					else {
 						if (parent->gridTool->isOn()) {
-							int pixelWidth = parent->coverX-x()-1;
-							int snapSize   = pixelWidth / (G_Mixer.beats * parent->gridTool->getValue());
-							if (Fl::event_x() % snapSize == 0) {
-								selected->position(real_x, selected->y());
-								printf("snap! real_x=%d, pixelWidth=%d, snapSize=%d\n", real_x, pixelWidth, snapSize);
-							}
+							int snpx = parent->gridTool->getSnapPoint(real_x) +x() -1;
+							selected->position(snpx, selected->y());
 						}
 						else
 							selected->position(real_x, selected->y());
