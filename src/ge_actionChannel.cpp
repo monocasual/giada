@@ -251,8 +251,12 @@ int gActionChannel::handle(int e) {
 						break;
 					}
 
+					int ax = Fl::event_x();
+					if (parent->gridTool->isOn())
+						ax = parent->gridTool->getSnapPoint(ax-x()) + x() -1;
+
 					gAction *a = new gAction(
-							Fl::event_x(),                        // x
+							ax,                                   // x
 							y()+4,                                // y
 							h()-8,                                // h
 							((Fl::event_x()-x())*parent->zoom)*2, // actual frame
