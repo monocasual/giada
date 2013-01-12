@@ -219,7 +219,7 @@ int gActionChannel::handle(int e) {
 						selected->position(parent->coverX-selected->w(), selected->y());
 					else {
 						if (parent->gridTool->isOn()) {
-							int snpx = parent->gridTool->getSnapPoint(real_x) +x() -1;
+							int snpx = parent->gridTool->getSnapPoint(real_x-x()) + x() -1;
 							selected->position(snpx, selected->y());
 						}
 						else
