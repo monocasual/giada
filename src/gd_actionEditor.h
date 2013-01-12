@@ -73,7 +73,7 @@ public:
 	int totalFrames;
 	int totalWidth;      // total width of the widget, in pixel (zoom affected)
 	int beatWidth;       // total width of a beat cell, in pixel (zoom affected)
-	int coverX; 					// x1 of the unused area (x2 = totalWidth)
+	int coverX; 				 // x1 of the unused area (x2 = totalWidth)
 };
 
 
@@ -98,6 +98,9 @@ public:
 	int  getValue();
 	void init(int val, bool on);
 	bool isOn();
+	void calc();
+
+	gVector<int> points;   // points of the grid
 };
 
 

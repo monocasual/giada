@@ -71,6 +71,7 @@ gdActionEditor::gdActionEditor(int chan)
 	actionType->value(0);
 
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
+	gridTool->calc();
 
 	if (G_Mixer.chanMode[chan] == SINGLE_PRESS || G_Mixer.chanMode[chan] & LOOP_ANY)
 		actionType->deactivate();
@@ -164,6 +165,7 @@ void gdActionEditor::__cb_zoomIn() {
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
+	gridTool->calc();
 	scroller->redraw();
 }
 
@@ -176,6 +178,7 @@ void gdActionEditor::__cb_zoomOut() {
 	totalWidth  = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
+	gridTool->calc();
 	scroller->redraw();
 }
 
@@ -206,7 +209,7 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 	:	Fl_Group(x, y, 80, 20), parent(parent)
 {
 	gridType = new gChoice(x, y, 40, 20);
-	gridType->add("off");
+	gridType->add("1");
 	gridType->add("2");
 	gridType->add("4");
 	gridType->add("8");
@@ -239,6 +242,7 @@ void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_ch
 
 
 void gGridTool::__cb_changeType() {
+	calc();
 	parent->redraw();
 }
 
@@ -265,7 +269,7 @@ void gGridTool::init(int v, bool b) {
 
 int gGridTool::getValue() {
 	switch (gridType->value()) {
-		case 0:	return 0;
+		case 0:	return 1;
 		case 1: return 2;
 		case 2: return 4;
 		case 3: return 8;
@@ -273,4 +277,38 @@ int gGridTool::getValue() {
 		case 5: return 32;
 	}
 	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gGridTool::calc() {
+
+	points.clear();
+
+	/* same algorithm used in ge_actionWidget::draw() and wave display,
+	 * restricted to the first beat. The rest is just a multiple of it */
+
+	bool end = false;
+	int  j   = 0;
+	int fpgc = floor(parent->framesPerBeat / getValue());  // frames per grid cell
+
+	//printf("grid calculation\n");
+	//printf("   frames per beat = %d\n", parent->framesPerBeat);
+	//printf("   frames per grid cell = %d\n", fpgc);
+
+	for (int i=0; i<parent->totalWidth && !end; i++) {
+		int step = parent->zoom*i;
+		while (j < step && j < parent->totalFrames) {
+			if (j % fpgc == 0) {
+				//printf("   grid frame found at %d, pixel %d\n", j, i);
+				points.add(i);
+			}
+			j++;
+		}
+		j = step;
+	}
+
+	printf("gridTool::calc done, %d points found\n", points.size);
 }
