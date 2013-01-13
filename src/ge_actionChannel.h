@@ -45,13 +45,29 @@ private:
   char                  type;     // type of action
 
 public:
-	gAction(int x, int y, int h, unsigned frame,
-					unsigned index, gdActionEditor *parent, bool record, char type);
+	gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEditor *parent, bool record, char type);
 	void draw();
 	int  handle(int e);
 	void addAction();
 	void delAction();
-	void moveAction();
+
+	/* moveAction
+	 * shift the action on the x-axis and update Recorder. If frame_a != -1
+	 * use the new frame in input (used while snapping) */
+
+	void moveAction(int frame_a=-1);
+
+	/* absx
+	 * x() is relative to scrolling position. absx() returns the absolute
+	 * x value of the action, from the leftmost edge. */
+
+	int  absx();
+
+	/* xToFrame_a,b
+	 * return the real frames of x() position */
+
+	int xToFrame_a();
+	int xToFrame_b();
 
 	int frame_a;  // initial frame (KEYPRESS for singlemode.press)
 	int frame_b;  // terminal frame (KEYREL for singlemode.press, null for others)
@@ -66,7 +82,6 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-///class gActionChannel : public Fl_Group {
 class gActionChannel : public gActionWidget {
 private:
 

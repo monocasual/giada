@@ -45,8 +45,8 @@ gdActionEditor::gdActionEditor(int chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	framesPerBar   = G_Mixer.framesPerBar / 2;      // /2 = we don't care about stereo infos
-	framesPerBeat  = G_Mixer.framesPerBeat / 2;
+	framesPerBar   = G_Mixer.framesPerBar;      // we do care about stereo infos, no /2 division
+	framesPerBeat  = G_Mixer.framesPerBeat;
 	framesPerBeats = framesPerBeat * G_Mixer.beats;
 	totalFrames    = framesPerBeat * MAX_BEATS;
 	beatWidth      = framesPerBeat / zoom;
@@ -286,6 +286,7 @@ int gGridTool::getValue() {
 void gGridTool::calc() {
 
 	points.clear();
+	frames.clear();
 
 	/* same algorithm used in ge_actionWidget::draw() and wave display,
 	 * restricted to the first beat. The rest is just a multiple of it */
@@ -294,23 +295,24 @@ void gGridTool::calc() {
 	int  j   = 0;
 	int fpgc = floor(parent->framesPerBeat / getValue());  // frames per grid cell
 
-	printf("grid calculation\n");
-	printf("   frames per beats = %d\n", parent->framesPerBeats);
-	printf("   frames per grid cell = %d\n", fpgc);
+	//printf("grid calculation\n");
+	//printf("   frames per beats = %d\n", parent->framesPerBeats);
+	//printf("   frames per grid cell = %d\n", fpgc);
 
-	for (int i=1; i<parent->totalWidth && !end; i++) {
+	for (int i=1; i<parent->totalWidth && !end; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
 		while (j < step && j < parent->framesPerBeats) {
 			if (j % fpgc == 0) {
-				printf("   grid frame found at %d, pixel %d\n", j, i);
+				//printf("   grid frame found at %d, pixel %d\n", j, i);
 				points.add(i);
+				frames.add(j);
 			}
 			j++;
 		}
 		j = step;
 	}
 
-	printf("gridTool::calc done, %d points found\n", points.size);
+	//printf("gridTool::calc done, %d points found\n", points.size);
 }
 
 
@@ -328,10 +330,43 @@ int gGridTool::getSnapPoint(int v) {
 
 		if (v >= gp && v < gpn) {
 			if (v < gpn) {
-				printf("%d < value (%d) < %d\n", gp, v, gpn);
+				//printf("%d < value (%d) < %d\n", gp, v, gpn);
 				return gp;
 				break;
 			}
+		}
+	}
+	return v;  // default value
+}
+
+
+
+int gGridTool::getSnapFrame(int v) {
+
+	v *= parent->zoom;  // transformation pixel -> frame
+
+	for (int i=0; i<(int)frames.size; i++) {
+
+		//printf("getSnapFrame --- inspecting frame %d (%d)\n", i, frames.at(i));
+
+		if (i == (int) frames.size-1) {
+			//printf("getSnapFrame --- last frame, return %d\n", frames.at(i));
+			return frames.at(i);
+		}
+
+		int gf  = frames.at(i);     // grid frame
+		int gfn = frames.at(i+1);   // grid frame next
+
+		if (v >= gf && v < gfn) {
+
+			//printf("getSnapFrame --- %d < value (%d) < %d\n", gf, v, gfn);
+
+			/* which one is the closest? gf < v < gfn */
+
+			if ((gfn - v) < (v - gf))
+				return gfn;
+			else
+				return gf;
 		}
 	}
 	return v;  // default value

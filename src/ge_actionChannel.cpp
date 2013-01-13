@@ -76,12 +76,12 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF))
 					continue;
 
-				int ax = x+((recorder::frames.at(i)/2)/parent->zoom);
+				int ax = x+((recorder::frames.at(i))/parent->zoom);
 				gAction *a = new gAction(
 						ax,                                   // x
 						y+4,                                  // y
 						h()-8,                                // h
-						recorder::frames.at(i),               // actual frame
+						recorder::frames.at(i),								// frame_a
 						i,                                    // n. of recordings
 						parent,                               // pointer to the parent window
 						false,                                // record = false: don't record it, we are just displaying it!
@@ -121,10 +121,10 @@ void gActionChannel::updateActions() {
 	for (int i=0; i<children(); i++) {
 
 		a = (gAction*)child(i);
-		int newX = x() + ((a->frame_a/2) / parent->zoom);
+		int newX = x() + (a->frame_a / parent->zoom);
 
 		if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
-			int newW = ((a->frame_b - a->frame_a) / 2 / parent->zoom);
+			int newW = ((a->frame_b - a->frame_a) / parent->zoom);
 			if (newW < gAction::MIN_WIDTH)
 				newW = gAction::MIN_WIDTH;
 			a->resize(newX, a->y(), newW, a->h());
@@ -251,15 +251,22 @@ int gActionChannel::handle(int e) {
 						break;
 					}
 
+					/* snap function, if enabled */
+
 					int ax = Fl::event_x();
-					if (parent->gridTool->isOn())
+					int fx = (ax - x()) * parent->zoom;
+					if (parent->gridTool->isOn()) {
 						ax = parent->gridTool->getSnapPoint(ax-x()) + x() -1;
+						fx = parent->gridTool->getSnapFrame(ax-x());
+					}
+
+					printf("actionChannel --- add new action, x=%d, frame=%d\n", ax, fx);
 
 					gAction *a = new gAction(
 							ax,                                   // x
 							y()+4,                                // y
 							h()-8,                                // h
-							((Fl::event_x()-x())*parent->zoom)*2, // actual frame
+							fx,																		// frame_a
 							recorder::frames.size-1,              // n. of actions recorded
 							parent,                               // parent window pointer
 							true,                                 // record = true: record it!
@@ -356,8 +363,14 @@ int gActionChannel::handle(int e) {
 			 * Anyway the selected action becomes NULL, because when you release
 			 * the mouse button the dragging process ends. */
 
-			if (!overlap)
-				selected->moveAction();
+			if (!overlap) {
+				if (parent->gridTool->isOn()) {
+					int f = parent->gridTool->getSnapFrame(selected->absx());
+					selected->moveAction(f);
+				}
+				else
+					selected->moveAction();
+			}
 			selected = NULL;
 			ret = 1;
 			break;
@@ -380,7 +393,7 @@ const int gAction::MIN_WIDTH = 8;
 
 
 /** index is useless? */
-gAction::gAction(int x, int y, int h, unsigned frame_a, unsigned index, gdActionEditor *parent, bool record, char type)
+gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEditor *parent, bool record, char type)
 : Fl_Box     (x, y, MIN_WIDTH, h),
   selected   (false),
   index      (index),
@@ -506,6 +519,11 @@ int gAction::handle(int e) {
 
 void gAction::addAction() {
 
+	/* always check frame parity */
+
+	if (frame_a % 2 != 0)
+		frame_a++;
+
 	/* anatomy of an action
 	 * ____[#######]_____ (a) is the left margin, ACTION_KEYPRESS. (b) is
 	 *     a       b      the right margin, the ACTION_KEYREL. This is the
@@ -553,23 +571,53 @@ void gAction::delAction() {
 /* ------------------------------------------------------------------ */
 
 
-void gAction::moveAction() {
+void gAction::moveAction(int frame_a) {
 
 	/* easy one: delete previous action and record the new ones. As usual,
-	 * SINGLE_PRESS requires two jobs */
+	 * SINGLE_PRESS requires two jobs. If frame_a is valid, use that frame
+	 * value. */
 
 	delAction();
 
-	/* frame update. The offset of gActionChannel is calculated by going up
-	 * to the parent ( x()-parent->ac->x() ) */
+	if (frame_a != -1)
+		this->frame_a = frame_a;
+	else
+		this->frame_a = xToFrame_a();
 
-	frame_a = (x()-parent->ac->x())*parent->zoom*2;
-	recorder::rec(parent->chan, type, frame_a);
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
-		frame_b = (x()+w()-parent->ac->x())*parent->zoom*2;;
-		recorder::rec(parent->chan, ACTION_KEYREL, frame_b);
-	}
+	/* always check frame parity */
+
+	if (this->frame_a % 2 != 0)
+		this->frame_a++;
+
+	recorder::rec(parent->chan, type, this->frame_a);
+
+	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS)
+		recorder::rec(parent->chan, ACTION_KEYREL, xToFrame_b());
 
 	recorder::sortActions();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gAction::absx() {
+	return x() - parent->ac->x();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gAction::xToFrame_a() {
+	return (absx()) * parent->zoom;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gAction::xToFrame_b() {
+	return (absx() + w()) * parent->zoom;
 }

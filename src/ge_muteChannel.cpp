@@ -203,8 +203,11 @@ int gMuteChannel::handle(int e) {
 
 					/* next point odd = mute_on [click here] mute_off
 					 * next point even = mute_off [click here] mute_on */
-
-					int frame_a = mouseX*2*parent->zoom;
+					int frame_a;
+					if (parent->gridTool->isOn())
+						frame_a = (parent->gridTool->getSnapPoint(mouseX)*2*parent->zoom)-1;
+					else
+						frame_a = mouseX*2*parent->zoom;
 					int frame_b = frame_a+2048;
 
 					/* avoid overflow: frame_b must be within the sequencer range. In that
@@ -324,6 +327,9 @@ int gMuteChannel::handle(int e) {
 				else
 				if (mouseX >= nextPoint)
 					points.at(draggedPoint).x = nextPoint;
+				else
+				if (parent->gridTool->isOn())
+					points.at(draggedPoint).x = parent->gridTool->getSnapPoint(mouseX)-1;
 				else
 					points.at(draggedPoint).x = mouseX;
 

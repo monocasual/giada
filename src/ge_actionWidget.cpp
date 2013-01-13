@@ -119,7 +119,7 @@ void gActionWidget::baseDraw() {
 				fl_color(COLOR_BG_2);
 				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
 			}
-			j++;
+			j+=2;
 		}
 		j = step;
 	}

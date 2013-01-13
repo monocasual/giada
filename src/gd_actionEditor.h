@@ -105,8 +105,10 @@ public:
 	 * nearest snap point (in pixel, clean, ie. not x()-shifted) */
 
 	int  getSnapPoint(int v);
+	int  getSnapFrame(int v);
 
 	gVector<int> points;   // points of the grid
+	gVector<int> frames;   // frames of the grid
 };
 
 
