@@ -90,11 +90,6 @@ void gActionWidget::baseDraw() {
 		for (int i=0; i<(int) parent->gridTool->points.size; i++) {
 			int px = parent->gridTool->points.at(i)+x()-1;
 			fl_line(px, y()+1, px, y()+h()-2);
-			/*
-			char c[16];
-			sprintf(c, "%d (%d)", px, parent->gridTool->points.at(i));
-			fl_draw(c, px+1, y()+h()-4);
-			*/
 		}
 		fl_line_style(0);
 	}

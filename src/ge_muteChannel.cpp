@@ -31,6 +31,7 @@
 #include "ge_muteChannel.h"
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
+#include "recorder.h"
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
@@ -119,7 +120,7 @@ void gMuteChannel::extractPoints() {
 					point p;
 					p.frame = recorder::frames.at(i);
 					p.type  = recorder::global.at(i).at(j)->type;
-					p.x     = p.frame / 2 / parent->zoom;
+					p.x     = p.frame / parent->zoom;
 					points.add(p);
 					//printf("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
@@ -134,7 +135,7 @@ void gMuteChannel::extractPoints() {
 
 void gMuteChannel::updatePoints() {
 	for (unsigned i=0; i<points.size; i++)
-		points.at(i).x = points.at(i).frame / 2 / parent->zoom;
+		points.at(i).x = points.at(i).frame / parent->zoom;
 }
 
 
@@ -205,16 +206,16 @@ int gMuteChannel::handle(int e) {
 					 * next point even = mute_off [click here] mute_on */
 					int frame_a;
 					if (parent->gridTool->isOn())
-						frame_a = (parent->gridTool->getSnapPoint(mouseX)*2*parent->zoom)-1;
+						frame_a = parent->gridTool->getSnapFrame(mouseX);
 					else
-						frame_a = mouseX*2*parent->zoom;
+						frame_a = mouseX * parent->zoom;
 					int frame_b = frame_a+2048;
 
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= parent->framesPerBeats*2) { // *2 == stereo
-						frame_b = parent->framesPerBeats*2;
+					if (frame_b >= parent->framesPerBeats) {
+						frame_b = parent->framesPerBeats;
 						frame_a = frame_b-2048;
 					}
 
@@ -275,7 +276,7 @@ int gMuteChannel::handle(int e) {
 				}
 				else {
 
-					unsigned newFrame = (points.at(draggedPoint).x*parent->zoom)*2;
+					unsigned newFrame = (points.at(draggedPoint).x * parent->zoom);
 
 					recorder::deleteAction(
 							parent->chan,
@@ -322,7 +323,9 @@ int gMuteChannel::handle(int e) {
 					nextPoint = points.at(draggedPoint+1).x;
 				}
 
-				if (mouseX < prevPoint)
+				//parent->gridTool->getCellSize();
+
+				if (mouseX <= prevPoint)
 					points.at(draggedPoint).x = prevPoint;
 				else
 				if (mouseX >= nextPoint)

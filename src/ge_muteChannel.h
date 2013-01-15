@@ -33,6 +33,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
+#include <FL/fl_draw.H>
 #include "ge_actionWidget.h"
 #include "utils.h"
 
@@ -50,8 +51,10 @@ private:
 		int      x;
 	};
 
-	//class gdActionEditor *parent;   // pointer to parent class (gActionEditor)
-	gVector<point>        points;   // array of points on/off, in frames
+	/* points
+	 * array of on/off points, in frames */
+
+	gVector<point> points;
 
 	/* draggedPoint
 	 * which point we are dragging? */
@@ -64,8 +67,8 @@ private:
 	int selectedPoint;
 
 	/* previousXPoint
-	 * la X del punto all'istante t-1. Serve per capire se c'è stato un
-	 * effettivo spostamento. */
+	 * x coordinate of point at time t-1. Used to check effective shifts */
+
 	int previousXPoint;
 
 	/* extractPoints

@@ -33,9 +33,7 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 #include "ge_window.h"
-#include "gui_utils.h"
-#include "mixer.h"
-#include "recorder.h"
+
 
 
 /* gActionEditor
@@ -95,6 +93,7 @@ public:
 
 	gGridTool(int x, int y, gdActionEditor *parent);
 	~gGridTool();
+
 	int  getValue();
 	void init(int val, bool on);
 	bool isOn();
@@ -104,8 +103,13 @@ public:
 	 * given a cursor position in input, return the x coordinates of the
 	 * nearest snap point (in pixel, clean, ie. not x()-shifted) */
 
-	int  getSnapPoint(int v);
-	int  getSnapFrame(int v);
+	int getSnapPoint(int v);
+	int getSnapFrame(int v);
+
+	/* getCellSize
+	 * return the size in pixel of a single cell of the grid. */
+
+	int getCellSize();
 
 	gVector<int> points;   // points of the grid
 	gVector<int> frames;   // frames of the grid

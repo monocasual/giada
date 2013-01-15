@@ -30,6 +30,9 @@
 #include "gd_actionEditor.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
+#include "gui_utils.h"
+#include "mixer.h"
+#include "recorder.h"
 
 
 extern Mixer G_Mixer;
@@ -340,6 +343,8 @@ int gGridTool::getSnapPoint(int v) {
 }
 
 
+/* ------------------------------------------------------------------ */
+
 
 int gGridTool::getSnapFrame(int v) {
 
@@ -370,4 +375,13 @@ int gGridTool::getSnapFrame(int v) {
 		}
 	}
 	return v;  // default value
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gGridTool::getCellSize() {
+	printf("cell size: %d\n", (parent->coverX - parent->ac->x()) / G_Mixer.beats / getValue());
+	return (parent->coverX - parent->ac->x()) / G_Mixer.beats / getValue();
 }
