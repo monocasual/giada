@@ -29,7 +29,7 @@ Documentation
 -------------
 Docs are available online on the official website
 
-http://www.monocasual.com/giada/documentation-index.php
+http://www.giadamusic.com/documentation-index.php
 
 
 
@@ -37,7 +37,7 @@ Bugs, requests and questions for non-developers
 -----------------------------------------------
 End users forum
 
-http://www.monocasual.com/giada/forum
+http://www.giadamusic.com/forum
 
 
 
