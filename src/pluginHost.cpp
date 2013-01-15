@@ -196,9 +196,10 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
 			return 0;
 
+		/* ?? - buffer size */
+
 		case audioMasterGetBlockSize:
-			printf("[pluginHost] requested opcode 'audioMasterGetBlockSize' (%d)\n", opcode);
-			return 0;
+			return kernelAudio::realBufsize;
 
 		case audioMasterGetInputLatency:
 			printf("[pluginHost] requested opcode 'audioMasterGetInputLatency' (%d)\n", opcode);
@@ -218,13 +219,13 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 32 - vendor name */
 
 		case audioMasterGetVendorString:
-			strcpy(text, "Monocasual");
+			strcpy((char*)ptr, "Monocasual");
 			return 1;
 
 		/* 32 - product name */
 
 		case audioMasterGetProductString:
-			strcpy(text, "Giada");
+			strcpy((char*)ptr, "Giada");
 			return 1;
 
 		/* 33 - product version */
