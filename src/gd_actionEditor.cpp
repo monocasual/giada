@@ -61,7 +61,7 @@ gdActionEditor::gdActionEditor(int chan)
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
 	  actionType = new gChoice(104, 8, 80, 20);
-	  gridTool   = new gGridTool(188, 8, this);
+	  gridTool   = new gGridTool(192, 8, this);
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
@@ -214,7 +214,9 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 	gridType = new gChoice(x, y, 40, 20);
 	gridType->add("1");
 	gridType->add("2");
+	gridType->add("3");
 	gridType->add("4");
+	gridType->add("6");
 	gridType->add("8");
 	gridType->add("16");
 	gridType->add("32");
@@ -274,10 +276,12 @@ int gGridTool::getValue() {
 	switch (gridType->value()) {
 		case 0:	return 1;
 		case 1: return 2;
-		case 2: return 4;
-		case 3: return 8;
-		case 4: return 16;
-		case 5: return 32;
+		case 2: return 3;
+		case 3: return 4;
+		case 4: return 6;
+		case 5: return 8;
+		case 6: return 16;
+		case 7: return 32;
 	}
 	return 0;
 }
@@ -298,10 +302,6 @@ void gGridTool::calc() {
 	int  j   = 0;
 	int fpgc = floor(parent->framesPerBeat / getValue());  // frames per grid cell
 
-	//printf("grid calculation\n");
-	//printf("   frames per beats = %d\n", parent->framesPerBeats);
-	//printf("   frames per grid cell = %d\n", fpgc);
-
 	for (int i=1; i<parent->totalWidth && !end; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
 		while (j < step && j < parent->framesPerBeats) {
@@ -314,8 +314,6 @@ void gGridTool::calc() {
 		}
 		j = step;
 	}
-
-	//printf("gridTool::calc done, %d points found\n", points.size);
 }
 
 
@@ -333,7 +331,6 @@ int gGridTool::getSnapPoint(int v) {
 
 		if (v >= gp && v < gpn) {
 			if (v < gpn) {
-				//printf("%d < value (%d) < %d\n", gp, v, gpn);
 				return gp;
 				break;
 			}
@@ -352,19 +349,13 @@ int gGridTool::getSnapFrame(int v) {
 
 	for (int i=0; i<(int)frames.size; i++) {
 
-		//printf("getSnapFrame --- inspecting frame %d (%d)\n", i, frames.at(i));
-
-		if (i == (int) frames.size-1) {
-			//printf("getSnapFrame --- last frame, return %d\n", frames.at(i));
+		if (i == (int) frames.size-1)
 			return frames.at(i);
-		}
 
 		int gf  = frames.at(i);     // grid frame
 		int gfn = frames.at(i+1);   // grid frame next
 
 		if (v >= gf && v < gfn) {
-
-			//printf("getSnapFrame --- %d < value (%d) < %d\n", gf, v, gfn);
 
 			/* which one is the closest? gf < v < gfn */
 
@@ -382,6 +373,5 @@ int gGridTool::getSnapFrame(int v) {
 
 
 int gGridTool::getCellSize() {
-	printf("cell size: %d\n", (parent->coverX - parent->ac->x()) / G_Mixer.beats / getValue());
 	return (parent->coverX - parent->ac->x()) / G_Mixer.beats / getValue();
 }

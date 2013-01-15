@@ -312,11 +312,13 @@ int Conf::write() {
 	fprintf(fp, "browserW=%d\n", browserW);
 	fprintf(fp, "browserH=%d\n", browserH);
 
-	fprintf(fp, "actionEditorX=%d\n",    actionEditorX);
-	fprintf(fp, "actionEditorY=%d\n",    actionEditorY);
-	fprintf(fp, "actionEditorW=%d\n",    actionEditorW);
-	fprintf(fp, "actionEditorH=%d\n",    actionEditorH);
-	fprintf(fp, "actionEditorZoom=%d\n", actionEditorZoom);
+	fprintf(fp, "actionEditorX=%d\n",       actionEditorX);
+	fprintf(fp, "actionEditorY=%d\n",       actionEditorY);
+	fprintf(fp, "actionEditorW=%d\n",       actionEditorW);
+	fprintf(fp, "actionEditorH=%d\n",       actionEditorH);
+	fprintf(fp, "actionEditorZoom=%d\n",    actionEditorZoom);
+	fprintf(fp, "actionEditorGridOn=%d\n",  actionEditorGridOn);
+	fprintf(fp, "actionEditorGridVal=%d\n", actionEditorGridVal);
 
 	fprintf(fp, "sampleEditorX=%d\n", sampleEditorX);
 	fprintf(fp, "sampleEditorY=%d\n", sampleEditorY);

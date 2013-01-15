@@ -204,12 +204,14 @@ int gMuteChannel::handle(int e) {
 
 					/* next point odd = mute_on [click here] mute_off
 					 * next point even = mute_off [click here] mute_on */
-					int frame_a;
-					if (parent->gridTool->isOn())
-						frame_a = parent->gridTool->getSnapFrame(mouseX);
-					else
-						frame_a = mouseX * parent->zoom;
+
+					int frame_a = mouseX * parent->zoom;
 					int frame_b = frame_a+2048;
+
+					if (parent->gridTool->isOn()) {
+						frame_a = parent->gridTool->getSnapFrame(mouseX);
+						frame_b = parent->gridTool->getSnapFrame(mouseX + parent->gridTool->getCellSize());
+					}
 
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
@@ -312,18 +314,23 @@ int gMuteChannel::handle(int e) {
 				if (draggedPoint == 0) {
 					prevPoint = 0;
 					nextPoint = points.at(draggedPoint+1).x;
+					if (parent->gridTool->isOn())
+						nextPoint -= parent->gridTool->getCellSize();
 				}
 				else
 				if ((unsigned) draggedPoint == points.size-1) {
 					prevPoint = points.at(draggedPoint-1).x;
 					nextPoint = parent->coverX-x();
+					if (parent->gridTool->isOn())
+						prevPoint += parent->gridTool->getCellSize();
 				}
 				else {
 					prevPoint = points.at(draggedPoint-1).x;
 					nextPoint = points.at(draggedPoint+1).x;
 				}
 
-				//parent->gridTool->getCellSize();
+
+
 
 				if (mouseX <= prevPoint)
 					points.at(draggedPoint).x = prevPoint;
