@@ -215,6 +215,24 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterGetCurrentProcessLevel:
 			return kVstProcessLevelRealtime;
 
+		/* 32 - vendor name */
+
+		case audioMasterGetVendorString:
+			strcpy(text, "Monocasual");
+			return 1;
+
+		/* 32 - product name */
+
+		case audioMasterGetProductString:
+			strcpy(text, "Giada");
+			return 1;
+
+		/* 33 - product version */
+
+		case audioMasterGetVendorVersion:
+			return (int) VERSIONE_FLOAT * 100;
+
+
 		/* 37 - Plugin asks Host if it implements the feature text. */
 
 		case audioMasterCanDo:
