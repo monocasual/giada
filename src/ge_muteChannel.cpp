@@ -276,7 +276,7 @@ int gMuteChannel::handle(int e) {
 				}
 				else {
 
-					unsigned newFrame = (points.at(draggedPoint).x * parent->zoom);
+					int newFrame = parent->gridTool->getSnapFrame(points.at(draggedPoint).x);
 
 					recorder::deleteAction(
 							parent->chan,
