@@ -146,7 +146,9 @@ void Conf::setDefault() {
 	chansStopOnSeqHalt = false;
 	treatRecsAsLoops   = false;
 
-	actionEditorZoom = 100;
+	actionEditorZoom    = 100;
+	actionEditorGridOn  = false;
+	actionEditorGridVal = 1;
 
 	int arkeys[MAX_NUM_CHAN] = DEFAULT_KEY_ARRAY;
 	for (int i=0; i<MAX_NUM_CHAN; i++)
