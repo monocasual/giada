@@ -59,7 +59,7 @@ gdActionEditor::gdActionEditor(int chan)
 	upperArea->begin();
 	  actionType = new gChoice(104, 8, 80, 20);
 	  gridTool   = new gGridTool(188, 8, this);
-		gBox *b1   = new gBox  (248, 8, 300, 20);    // padding actionType - zoomButtons
+		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
 	upperArea->end();
@@ -218,7 +218,7 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 	gridType->value(0);
 	gridType->callback(cb_changeType, (void*)this);
 
-	active = new gCheck (x+44, y, 20, 20);
+	active = new gCheck (x+44, y+4, 12, 12);
 	end();
 }
 
