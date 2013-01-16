@@ -1,17 +1,17 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# prereq & init 
+# prereq & init
 AC_PREREQ(2.60)
-AC_INIT([giada], [0.4], [development@monocasual.com])
+AC_INIT([giada], [0.5], [monocasual@gmail.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
-AM_INIT_AUTOMAKE([giada], [0.4])
+AM_INIT_AUTOMAKE([giada], [0.5])
 
 # ----------------------------------------------------------------------
 
 # test the build environment. These vars are used in Makefile.am during
 # the linking of the libraries.
-# Usage: ./configure --target=[windows | linux | osx] 
+# Usage: ./configure --target=[windows | linux | osx]
 if test "$target" = ""; then
 	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | osx>"])
 fi
@@ -42,8 +42,8 @@ AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
 #
 # AC_ARG_ENABLE (
 # feature,                [--enable-] + [feature], eg --enable-vst
-# help-string,            
-# [action-if-given],      == gcc ... -DWITH_VST 
+# help-string,
+# [action-if-given],      == gcc ... -DWITH_VST
 # [action-if-not-given])  not used here
 
 AC_ARG_ENABLE(
@@ -64,27 +64,27 @@ AC_PROG_MAKE_SET
 
 # Checks for libraries.
 AC_CHECK_LIB(
-	[pthread], 
-	[pthread_exit], 
-	[], 
+	[pthread],
+	[pthread_exit],
+	[],
 	[AC_MSG_ERROR([error: library 'pthread' not found!])]
 )
 
 # ----------------------------------------------------------------------
 
-# Checks for headers (fltk, rtaudio and libsndfile are static, we ask if 
+# Checks for headers (fltk, rtaudio and libsndfile are static, we ask if
 # headers are available)
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
-	[FL/Fl.H], 
-	[], 
+	[FL/Fl.H],
+	[],
 	[AC_MSG_ERROR([library 'fltk' not found!])]
 )
 AC_LANG_POP
-	
+
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
-	[RtAudio.h], 
+	[RtAudio.h],
 	[],
 	[AC_MSG_ERROR([library 'rtAudio' not found!])]
 )
@@ -92,7 +92,7 @@ AC_LANG_POP
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
-	[sndfile.h], 
+	[sndfile.h],
 	[],
 	[AC_MSG_ERROR([library 'libsndfile' not found!])]
 )

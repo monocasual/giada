@@ -177,8 +177,10 @@ void gdActionEditor::__cb_zoomIn() {
 
 
 void gdActionEditor::__cb_zoomOut() {
+	if (zoom >= 3200)
+		return;
 	zoom *= 2;
-	totalWidth  = (int) ceilf(totalFrames / (float) zoom);
+	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
 	gridTool->calc();
@@ -295,8 +297,7 @@ void gGridTool::calc() {
 	points.clear();
 	frames.clear();
 
-	/* same algorithm used in ge_actionWidget::draw() and wave display,
-	 * restricted to the first beat. The rest is just a multiple of it */
+	/* same algorithm used in ge_actionWidget::draw() and wave display */
 
 	bool end = false;
 	int  j   = 0;

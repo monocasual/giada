@@ -3,7 +3,7 @@
 Giada - Your Hardcore Loopmachine
 =================================
 
-http://www.monocasual.com/giada
+http://www.giadamusic.com
 
 
 
