@@ -260,7 +260,7 @@ void gu_refreshActionEditor() {
 
 gWindow *gu_getSubwindow(gWindow *parent, int id) {
 	if (parent->hasWindow(id))
-		return parent->getChild(int id);
+		return parent->getChild(id);
 	else
 		return NULL;
 }
