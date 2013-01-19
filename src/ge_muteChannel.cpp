@@ -211,6 +211,14 @@ int gMuteChannel::handle(int e) {
 					if (parent->gridTool->isOn()) {
 						frame_a = parent->gridTool->getSnapFrame(mouseX);
 						frame_b = parent->gridTool->getSnapFrame(mouseX + parent->gridTool->getCellSize());
+
+						/* with snap=on a point can fall onto another */
+
+						if (pointCollides(frame_a) || pointCollides(frame_b)) {
+							puts("point_a collision");
+							ret = 1;
+							break;
+						}
 					}
 
 					/* avoid overflow: frame_b must be within the sequencer range. In that
@@ -352,6 +360,17 @@ int gMuteChannel::handle(int e) {
 
 
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool gMuteChannel::pointCollides(int frame) {
+	for (unsigned i=0; i<points.size; i++)
+		if (frame == points.at(i).frame)
+			return true;
+	return false;
 }
 
 

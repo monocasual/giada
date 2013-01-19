@@ -46,9 +46,9 @@ private:
 	 * a single dot in the graph. */
 
 	struct point {
-		unsigned frame;
-		char     type;
-		int      x;
+		int  frame;
+		char type;
+		int  x;
 	};
 
 	/* points
@@ -80,6 +80,12 @@ private:
 	 * ritorna l'indice di points[] in base al punto selezionato (quello
 	 * con il mouse hover). Ritorna -1 se non trova niente. */
 	int getSelectedPoint();
+
+	/* pointCollides
+	 * true if a point collides with another. Used while adding new points
+	 * with snap active.*/
+
+	bool pointCollides(int frame);
 
 public:
 
