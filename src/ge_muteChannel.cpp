@@ -286,7 +286,7 @@ int gMuteChannel::handle(int e) {
 				}
 				else {
 
-					int newFrame = parent->gridTool->getSnapFrame(points.at(draggedPoint).x);
+					int newFrame = points.at(draggedPoint).x * parent->zoom;
 
 					recorder::deleteAction(
 							parent->chan,
@@ -321,28 +321,25 @@ int gMuteChannel::handle(int e) {
 
 				if (draggedPoint == 0) {
 					prevPoint = 0;
-					nextPoint = points.at(draggedPoint+1).x;
+					nextPoint = points.at(draggedPoint+1).x - 1;
 					if (parent->gridTool->isOn())
 						nextPoint -= parent->gridTool->getCellSize();
 				}
 				else
 				if ((unsigned) draggedPoint == points.size-1) {
-					prevPoint = points.at(draggedPoint-1).x;
+					prevPoint = points.at(draggedPoint-1).x + 1;
 					nextPoint = parent->coverX-x();
 					if (parent->gridTool->isOn())
 						prevPoint += parent->gridTool->getCellSize();
 				}
 				else {
-					prevPoint = points.at(draggedPoint-1).x;
-					nextPoint = points.at(draggedPoint+1).x;
+					prevPoint = points.at(draggedPoint-1).x + 1;
+					nextPoint = points.at(draggedPoint+1).x - 1;
 					if (parent->gridTool->isOn()) {
 						prevPoint += parent->gridTool->getCellSize();
 						nextPoint -= parent->gridTool->getCellSize();
 					}
 				}
-
-
-
 
 				if (mouseX <= prevPoint)
 					points.at(draggedPoint).x = prevPoint;
