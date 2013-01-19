@@ -258,9 +258,19 @@ int gActionChannel::handle(int e) {
 					if (parent->gridTool->isOn()) {
 						ax = parent->gridTool->getSnapPoint(ax-x()) + x() -1;
 						fx = parent->gridTool->getSnapFrame(ax-x());
-					}
 
-					printf("actionChannel --- add new action, x=%d, frame=%d\n", ax, fx);
+						/* with snap=on an action can fall onto another */
+
+						bool collision = false;
+						for (int i=0; i<children() && !collision; i++) {
+							if ( ((gAction*)child(i))->x() == ax)
+								collision = true;
+						}
+						if (collision) {
+							ret = 1;
+							break;
+						}
+					}
 
 					gAction *a = new gAction(
 							ax,                                   // x

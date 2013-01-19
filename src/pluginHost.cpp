@@ -238,8 +238,9 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 
 		case audioMasterCanDo:
 			printf("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
-			if (!strcmp((char*)ptr, "sizeWindow"))
-				return 1; // we can resize the window
+			if (!strcmp((char*)ptr, "sizeWindow") ||
+					!strcmp((char*)ptr, "sendVstTimeInfo"))
+				return 1; // we can do all of that
 			else
 				return 0;
 
