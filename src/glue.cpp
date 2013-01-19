@@ -210,7 +210,10 @@ void glue_setBpm(const char *v1, const char *v2) {
 	float old_bpm = G_Mixer.bpm;
 	G_Mixer.bpm = value;
 	G_Mixer.updateFrameBars();
+
 	recorder::updateBpm(old_bpm, value, G_Mixer.quanto);
+	if (mainWin->hasWindow(WID_ACTION_EDITOR))
+
 	mainWin->bpm->copy_label(buf);
 	printf("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }

@@ -50,6 +50,11 @@ public:
 
 	int getActionType();
 
+	/* calc
+	 * do its own calculations on frames, zoom, bpm and so on. */
+
+	void calc();
+
 	static void cb_zoomIn(Fl_Widget *w, void *p);
 	static void cb_zoomOut(Fl_Widget *w, void *p);
 	inline void __cb_zoomIn();

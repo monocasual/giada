@@ -48,12 +48,9 @@ gdActionEditor::gdActionEditor(int chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	framesPerBar   = G_Mixer.framesPerBar;      // we do care about stereo infos, no /2 division
-	framesPerBeat  = G_Mixer.framesPerBeat;
-	framesPerBeats = framesPerBeat * G_Mixer.beats;
-	totalFrames    = framesPerBeat * MAX_BEATS;
-	beatWidth      = framesPerBeat / zoom;
-	totalWidth     = (int) ceilf(totalFrames / (float) zoom);
+	/* compute values */
+
+	calc();
 
 	/* container with zoom buttons and the action type selector. Scheme of
 	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
@@ -185,6 +182,19 @@ void gdActionEditor::__cb_zoomOut() {
 	mc->updatePoints();
 	gridTool->calc();
 	scroller->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdActionEditor::calc() {
+	framesPerBar   = G_Mixer.framesPerBar;      // we do care about stereo infos, no /2 division
+	framesPerBeat  = G_Mixer.framesPerBeat;
+	framesPerBeats = framesPerBeat * G_Mixer.beats;
+	totalFrames    = framesPerBeat * MAX_BEATS;
+	beatWidth      = framesPerBeat / zoom;
+	totalWidth     = (int) ceilf(totalFrames / (float) zoom);
 }
 
 
