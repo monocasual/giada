@@ -215,7 +215,6 @@ int gMuteChannel::handle(int e) {
 						/* with snap=on a point can fall onto another */
 
 						if (pointCollides(frame_a) || pointCollides(frame_b)) {
-							puts("point_a collision");
 							ret = 1;
 							break;
 						}
