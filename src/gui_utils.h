@@ -92,4 +92,10 @@ void gu_refreshActionEditor();
 
 void gu_closeAllSubwindows();
 
+
+/* getSubwindow
+ * return a pointer to an open subwindow, otherwise NULL. */
+
+gWindow *gu_getSubwindow(gWindow *parent, int id);
+
 #endif

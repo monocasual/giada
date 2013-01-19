@@ -231,7 +231,7 @@ void gu_setFavicon(Fl_Window *w) {
 
 void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
 	if (parent->hasWindow(id)) {
-		printf("parent has subwindow with id=%d, deleting\n", id);
+		printf("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
 	}
 	child->setId(id);
@@ -252,6 +252,17 @@ void gu_refreshActionEditor() {
 		mainWin->delSubWindow(WID_ACTION_EDITOR);
 		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gWindow *gu_getSubwindow(gWindow *parent, int id) {
+	if (parent->hasWindow(id))
+		return parent->getChild(int id);
+	else
+		return NULL;
 }
 
 
