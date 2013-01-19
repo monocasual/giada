@@ -397,19 +397,14 @@ bool gActionChannel::actionCollides(int frame) {
 	bool collision = false;
 
 	for (int i=0; i<children() && !collision; i++)
-		if ( ((gAction*)child(i))->frame_a == frame) {
-			printf("collision frame_a, %d\n", frame);
+		if ( ((gAction*)child(i))->frame_a == frame)
 			collision = true;
-		}
 
 	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
 			gAction *c = ((gAction*)child(i));
-			printf("analyzing %d - %d ||| input %d\n", c->frame_a, c->frame_b, frame);
-			if (frame <= c->frame_b && frame >= c->frame_a ) {
-				printf("collision frame_b, %d\n", frame);
+			if (frame <= c->frame_b && frame >= c->frame_a)
 				collision = true;
-			}
 		}
 	}
 
