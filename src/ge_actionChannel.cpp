@@ -261,12 +261,7 @@ int gActionChannel::handle(int e) {
 
 						/* with snap=on an action can fall onto another */
 
-						bool collision = false;
-						for (int i=0; i<children() && !collision; i++) {
-							if ( ((gAction*)child(i))->x() == ax)
-								collision = true;
-						}
-						if (collision) {
+						if (actionCollides(fx)) {
 							ret = 1;
 							break;
 						}
@@ -388,6 +383,37 @@ int gActionChannel::handle(int e) {
 	}
 
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool gActionChannel::actionCollides(int frame) {
+
+	/* if SINGLE_PRESS we check that the tail (frame_b) of the action doesn't
+	 * overlap the head (frame) of the new one. First the general case, yet. */
+
+	bool collision = false;
+
+	for (int i=0; i<children() && !collision; i++)
+		if ( ((gAction*)child(i))->frame_a == frame) {
+			printf("collision frame_a, %d\n", frame);
+			collision = true;
+		}
+
+	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+		for (int i=0; i<children() && !collision; i++) {
+			gAction *c = ((gAction*)child(i));
+			printf("analyzing %d - %d ||| input %d\n", c->frame_a, c->frame_b, frame);
+			if (frame <= c->frame_b && frame >= c->frame_a ) {
+				printf("collision frame_b, %d\n", frame);
+				collision = true;
+			}
+		}
+	}
+
+	return collision;
 }
 
 
@@ -602,8 +628,10 @@ void gAction::moveAction(int frame_a) {
 
 	recorder::rec(parent->chan, type, this->frame_a);
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS)
-		recorder::rec(parent->chan, ACTION_KEYREL, xToFrame_b());
+	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+		frame_b = xToFrame_b();
+		recorder::rec(parent->chan, ACTION_KEYREL, frame_b);
+	}
 
 	recorder::sortActions();
 }

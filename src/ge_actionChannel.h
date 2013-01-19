@@ -109,6 +109,13 @@ private:
 
 	int actionPickPoint;
 
+
+	/* actionCollides
+	 * true if an action collides with another. Used while adding new points
+	 * with snap active.*/
+
+	bool actionCollides(int frame);
+
 public:
 	gActionChannel(int x, int y, gdActionEditor *parent);
 	void draw();
