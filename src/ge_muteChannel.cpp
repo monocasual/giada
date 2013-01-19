@@ -335,6 +335,10 @@ int gMuteChannel::handle(int e) {
 				else {
 					prevPoint = points.at(draggedPoint-1).x;
 					nextPoint = points.at(draggedPoint+1).x;
+					if (parent->gridTool->isOn()) {
+						prevPoint += parent->gridTool->getCellSize();
+						nextPoint -= parent->gridTool->getCellSize();
+					}
 				}
 
 
