@@ -13,9 +13,17 @@
 
 
 
-0.5.7 --- 2013 . 01 . ??
-
-
+0.5.7 --- 2013 . 01 . 21
+- visual grid + snapping in the action editor
+- implement more audioMasterCanDo's in pluginHost
+- limit zoom in actionEditor
+- revise zoom behavior in actionEditor, now more comfortable
+- fix forward declaration & inclusion of several headers
+- implemented VST opcode 32
+- implemented VST opcode 33
+- implemented VST opcode 34
+- update website link in tar files
+- update copyright info for 2013
 
 
 0.5.6 --- 2013 . 01 . 03

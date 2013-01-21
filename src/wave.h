@@ -34,8 +34,7 @@
 #include <sndfile.h>
 #include <string>
 #include <string.h>  // memcpy
-#include "utils.h"
-#include "init.h"
+#include <samplerate.h>
 
 
 class Wave {

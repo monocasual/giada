@@ -26,7 +26,11 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "wave.h"
+#include "utils.h"
+#include "init.h"
+
 
 extern Conf G_Conf;
 
