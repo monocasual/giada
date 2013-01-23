@@ -213,9 +213,12 @@ int mh_loadChan(const char *file, int c) {
 			return SAMPLE_READ_ERROR;
 		}
 
-		if (w->inHeader.channels == 1) {
-			/** FIXME: error checking + new constant SAMPLE_CONVERSION_ERROR */
+		if (w->inHeader.channels == 1) /** FIXME: error checking  */
 			wfx_monoToStereo(w);
+
+		if (w->inHeader.samplerate != G_Conf.samplerate) {
+			printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
+			w->resample(SRC_SINC_FASTEST, (float)G_Conf.samplerate / w->inHeader.samplerate);
 		}
 
 		mh_freeChan(c);  // free the previous sample

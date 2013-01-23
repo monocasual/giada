@@ -187,11 +187,11 @@ int Wave::resample(int quality, float ratio) {
 	src_data.output_frames = newsize/2;  // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
 
-	printf("[wave] resampling: new size=%d (%d frames)", newsize, newsize/2);
+	printf("[wave] resampling: new size=%d (%d frames)\n", newsize, newsize/2);
 
 	int ret = src_simple(&src_data, quality, 2);
 	if (ret != 0) {
-		printf("[wave] resampling error: %s", src_strerror(ret));
+		printf("[wave] resampling error: %s\n", src_strerror(ret));
 		return 0;
 	}
 
