@@ -55,18 +55,17 @@ public:
 	bool     isLogical; // memory only (a take)
 	bool     isEdited;  // edited via editor
 
-
 	int open(const char *f);
-
 	int readData();
-
 	int	writeData(const char *f);
-
 	void clear();
 
 	/* allocEmpty
 	 * alloc an empty waveform. */
+
 	int allocEmpty(unsigned size);
+
+	int resample(int quality, float ratio);
 };
 
 #endif

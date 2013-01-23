@@ -166,3 +166,37 @@ int Wave::allocEmpty(unsigned __size) {
 	isLogical = true;
 	return 1;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Wave::resample(int quality, float ratio) {
+
+	int newsize = ceil(size * ratio);
+	float *tmp  = (float *) malloc(newsize * sizeof(float));
+	if (!tmp) {
+		puts("[wave] unable to allocate memory for resampling");
+		return -1;
+	}
+
+	SRC_DATA src_data;
+	src_data.data_in       = data;
+	src_data.input_frames  = size/2;     // in frames, i.e. /2 (stereo)
+	src_data.data_out      = tmp;
+	src_data.output_frames = newsize/2;  // in frames, i.e. /2 (stereo)
+	src_data.src_ratio     = ratio;
+
+	printf("[wave] resampling: new size=%d (%d frames)", newsize, newsize/2);
+
+	int ret = src_simple(&src_data, quality, 2);
+	if (ret != 0) {
+		printf("[wave] resampling error: %s", src_strerror(ret));
+		return 0;
+	}
+
+	free(data);
+	data = tmp;
+	size = newsize;
+	return 1;
+}
