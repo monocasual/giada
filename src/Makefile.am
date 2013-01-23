@@ -39,19 +39,20 @@ ge_actionWidget.h  ge_actionWidget.cpp
 # inside configure.ac
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -lrtaudio  \
-						  -ljack -lasound -lpthread -ldl -lpulse-simple
+						  -ljack -lasound -lpthread -ldl -lpulse-simple -lsamplerate
 endif
 if WINDOWS
 giada_LDADD   = -lole32 -lrtaudio -ldsound -lwinmm -lwsock32 -lm       \
   						  -lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32   \
   						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32            \
-  						  -Lc:/mingw/lib -lsndfile
+  						  -Lc:/mingw/lib -lsndfile -lsamplerate
 giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
 if OSX
 giada_LDADD   = /usr/local/lib/libsndfile.a -lrtaudio -lm -lpthread -lfltk
-giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon
+giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
+                -lsamplerate
 endif
 
 
