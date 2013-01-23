@@ -58,6 +58,9 @@ int glue_loadChannel(int c, const char *fname, const char *fpath) {
 	if (result == SAMPLE_LOADED_OK)
 		gu_trim_label(G_Mixer.chan[c]->name.c_str(), 28, mainWin->keyboard->sampleButton[c]);
 
+	if (G_Conf.fullChanVolOnLoad)
+		glue_setVol(c, 1.0);
+
 	return result;
 }
 

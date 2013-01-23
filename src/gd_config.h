@@ -32,9 +32,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Tabs.H>
-#include "gd_keyGrabber.h"
-#include "gd_devInfo.h"
-#include "ge_mixed.h"
+#include "ge_window.h"
+
 
 class gdConfig : public gWindow {
 private:
@@ -90,6 +89,7 @@ public:
 	class gRadio    *chansStopOnSeqHalt_1;
 	class gRadio    *chansStopOnSeqHalt_0;
 	class gCheck		*treatRecsAsLoops;
+	class gCheck		*fullChanVolOnLoad;
 	class gClick 		*save;
 	class gClick 		*cancel;
 

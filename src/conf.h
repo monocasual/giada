@@ -27,8 +27,6 @@
  * ------------------------------------------------------------------ */
 
 
-
-
 #ifndef __CONF_H__
 #define __CONF_H__
 
@@ -36,7 +34,7 @@
 #include <limits.h>
 #include "dataStorage.h"
 #include "const.h"
-#include "utils.h"
+
 
 #if defined(__APPLE__)
 	#include <pwd.h>
@@ -66,6 +64,7 @@ public:
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
+	bool fullChanVolOnLoad;
 
 	char pluginPath[FILENAME_MAX];
 	char patchPath [FILENAME_MAX];

@@ -27,6 +27,10 @@
  * ------------------------------------------------------------------ */
 
 #include "gd_config.h"
+#include "gd_keyGrabber.h"
+#include "gd_devInfo.h"
+#include "ge_mixed.h"
+
 
 extern Patch     	 G_Patch;
 extern Conf	 	   	 G_Conf;
@@ -83,7 +87,8 @@ gdConfig::gdConfig(int w, int h)
 				chansStopOnSeqHalt_0 = new gRadio(grpBehvs->x()+25, grpBehvs->y()+125, 280, 20, "play all dynamic channels until finished");
 			radioGrp_2->end();
 
-			treatRecsAsLoops = new gCheck(tabs->x()+12, grpBehvs->y()+155, 280, 20, "Treat recorded channels as loops");
+			treatRecsAsLoops  = new gCheck(tabs->x()+12, grpBehvs->y()+155, 280, 20, "Treat recorded channels as loops");
+			fullChanVolOnLoad = new gCheck(tabs->x()+12, grpBehvs->y()+185, 280, 20, "Bring channels to full volume on sample load");
 
 		grpBehvs->end();
 		grpBehvs->labelsize(11);
@@ -158,7 +163,8 @@ gdConfig::gdConfig(int w, int h)
 
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
-	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1) : treatRecsAsLoops->value(0);
+	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
+	G_Conf.fullChanVolOnLoad  == 1 ? fullChanVolOnLoad->value(1) : fullChanVolOnLoad->value(0);
 
 	for (int i=0; i<MAX_NUM_CHAN; i++) {
 		char x[11];
@@ -281,6 +287,7 @@ void gdConfig::__cb_save_config() {
 	G_Conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
+	G_Conf.fullChanVolOnLoad  = fullChanVolOnLoad->value() == 1 ? 1 : 0;
 
 	do_callback();
 }
