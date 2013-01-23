@@ -158,11 +158,16 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterProcessEvents:
 			return 0;
 
-		/* ? - tells that numInputs/numOutputs are changed. Not supported and
+		/* 13 - tells that numInputs/numOutputs are changed. Not supported and
 		 * not needed. */
 
 		case audioMasterIOChanged:
 			return false;
+
+		/* 14 - plugin needs idle calls (outside its editor window). Deprecated */
+
+		case DECLARE_VST_DEPRECATED(audioMasterNeedIdle):
+			return 0;
 
 		/* 15 - requests to resize the editor window. w = index, h = value*/
 
