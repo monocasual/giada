@@ -218,7 +218,7 @@ int mh_loadChan(const char *file, int c) {
 
 		if (w->inHeader.samplerate != G_Conf.samplerate) {
 			printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
-			w->resample(SRC_SINC_FASTEST, (float)G_Conf.samplerate / w->inHeader.samplerate);
+			w->resample(SRC_SINC_FASTEST, G_Conf.samplerate);
 		}
 
 		mh_freeChan(c);  // free the previous sample
@@ -260,7 +260,7 @@ void mh_loadPatch() {
 	int i = 0;
 	while (i < MAX_NUM_CHAN) {
 
-		/* for safety kills all channels. Useful if the patch is loaded on
+		/* kills all channels for safety. Useful if the patch is loaded on
 		 * the fly. */
 
 		mh_killChan(i);

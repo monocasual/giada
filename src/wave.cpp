@@ -171,10 +171,12 @@ int Wave::allocEmpty(unsigned __size) {
 /* ------------------------------------------------------------------ */
 
 
-int Wave::resample(int quality, float ratio) {
+int Wave::resample(int quality, int newRate) {
 
-	int newsize = ceil(size * ratio);
-	float *tmp  = (float *) malloc(newsize * sizeof(float));
+	float ratio = newRate / (float) inHeader.samplerate;
+	int newSize = ceil(size * ratio);
+
+	float *tmp  = (float *) malloc(newSize * sizeof(float));
 	if (!tmp) {
 		puts("[wave] unable to allocate memory for resampling");
 		return -1;
@@ -184,10 +186,10 @@ int Wave::resample(int quality, float ratio) {
 	src_data.data_in       = data;
 	src_data.input_frames  = size/2;     // in frames, i.e. /2 (stereo)
 	src_data.data_out      = tmp;
-	src_data.output_frames = newsize/2;  // in frames, i.e. /2 (stereo)
+	src_data.output_frames = newSize/2;  // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
 
-	printf("[wave] resampling: new size=%d (%d frames)\n", newsize, newsize/2);
+	printf("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
 
 	int ret = src_simple(&src_data, quality, 2);
 	if (ret != 0) {
@@ -197,6 +199,7 @@ int Wave::resample(int quality, float ratio) {
 
 	free(data);
 	data = tmp;
-	size = newsize;
+	size = newSize;
+	inHeader.samplerate = newRate;
 	return 1;
 }
