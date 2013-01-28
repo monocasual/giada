@@ -70,6 +70,8 @@ public:
 	~gdConfig();
 
 	class gChoice 	*soundsys;
+	class gChoice 	*samplerate;
+	class gChoice 	*rsmpQuality;
 	class gChoice  	*sounddevIn;
 	class gClick  	*devInInfo;
 	class gChoice  	*channelsIn;

@@ -48,19 +48,22 @@ gdConfig::gdConfig(int w, int h)
 
 		Fl_Group *grpSound = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Sound System");
 
-			soundsys     = new gChoice(grpSound->x()+92,  grpSound->y()+9,   253, 20, "System");
-			buffersize   = new gInput (grpSound->x()+92,  grpSound->y()+37, 55,  20, "Buffer size");
-			sounddevOut  = new gChoice(grpSound->x()+92,  grpSound->y()+65,  225, 20, "Output device");
-			devOutInfo   = new gClick (grpSound->x()+325, grpSound->y()+65,  20,  20, "?");
-			channelsOut  = new gChoice(grpSound->x()+92,  grpSound->y()+93,  55,  20, "Output channels");
-			limitOutput  = new gCheck (grpSound->x()+155, grpSound->y()+97,  55,  20, "Limit output");
+			soundsys    = new gChoice(grpSound->x()+92,  grpSound->y()+9,  253, 20, "System");
+			buffersize  = new gInput (grpSound->x()+92,  grpSound->y()+37, 55,  20, "Buffer size");
+			samplerate  = new gChoice(grpSound->x()+290, grpSound->y()+37, 55,  20, "Sample rate");
+			sounddevOut = new gChoice(grpSound->x()+92,  grpSound->y()+65, 225, 20, "Output device");
+			devOutInfo  = new gClick (grpSound->x()+325, grpSound->y()+65, 20,  20, "?");
+			channelsOut = new gChoice(grpSound->x()+92,  grpSound->y()+93, 55,  20, "Output channels");
+			limitOutput = new gCheck (grpSound->x()+155, grpSound->y()+97, 55,  20, "Limit output");
 
-			sounddevIn   = new gChoice(grpSound->x()+92,  grpSound->y()+121,  225, 20, "Input device");
-			devInInfo    = new gClick (grpSound->x()+325, grpSound->y()+121,  20,  20, "?");
-			channelsIn   = new gChoice(grpSound->x()+92,  grpSound->y()+149, 55,  20, "Input channels");
-		  delayComp    = new gInput (grpSound->x()+290, grpSound->y()+149, 55,  20, "Rec delay comp.");
+			sounddevIn  = new gChoice(grpSound->x()+92,  grpSound->y()+121, 225, 20, "Input device");
+			devInInfo   = new gClick (grpSound->x()+325, grpSound->y()+121, 20,  20, "?");
+			channelsIn  = new gChoice(grpSound->x()+92,  grpSound->y()+149, 55,  20, "Input channels");
+		  delayComp   = new gInput (grpSound->x()+290, grpSound->y()+149, 55,  20, "Rec delay comp.");
 
-			               new gBox   (grpSound->x(),     grpSound->y()+210, grpSound->w(), 50, "Restart Giada for the\nchanges to take effect.");
+		  rsmpQuality = new gChoice(grpSound->x()+92, grpSound->y()+177, 253, 20, "Resampling");
+
+			new gBox(grpSound->x(), grpSound->y()+210, grpSound->w(), 50, "Restart Giada for the\nchanges to take effect.");
 
 		grpSound->end();
 		grpSound->labelsize(11);
@@ -114,6 +117,7 @@ gdConfig::gdConfig(int w, int h)
 		case SYS_API_JACK:
 			soundsys->value(1);
 			buffersize->deactivate();
+			samplerate->deactivate();
 			break;
 		case SYS_API_PULSE:
 			soundsys->value(2);
@@ -147,6 +151,24 @@ gdConfig::gdConfig(int w, int h)
 	buffersize->value(buf);
 	buffersize->type(FL_INT_INPUT);
 	buffersize->maximum_size(5);
+
+	/* fill frequency dropdown menu */
+
+	int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
+	for (int i=0; i<nfreq; i++) {
+		char buf[16];
+		int  freq = kernelAudio::getFreq(sounddevOut->value(), i);
+		sprintf(buf, "%d", freq);
+		samplerate->add(buf);
+		if (freq == G_Conf.samplerate)
+			samplerate->value(i);
+	}
+
+	rsmpQuality->add("Sinc best quality (very slow)");
+	rsmpQuality->add("Sinc medium quality (slow)");
+	rsmpQuality->add("Sinc basic quality (medium)");
+	rsmpQuality->add("Zero Order Hold (fast)");
+	rsmpQuality->add("Linear (very fast)");
 
 	buf[0] = '\0';
 	sprintf(buf, "%d", G_Conf.delayComp);
@@ -279,6 +301,11 @@ void gdConfig::__cb_save_config() {
 	if (bufsize < 8)		  bufsize = 8;
 	if (bufsize > 8192)		bufsize = 8192;
 	G_Conf.buffersize = bufsize;
+
+	const Fl_Menu_Item *i = NULL;
+	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
+	if (i)
+		G_Conf.samplerate = atoi(i->label());
 
 	int _delayComp = atoi(delayComp->value());
 	if (_delayComp < 0) _delayComp = 0;

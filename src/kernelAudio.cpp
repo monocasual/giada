@@ -111,16 +111,13 @@ int openDevice(
 
 	realBufsize = buffersize;
 
-	/** ---- TEMPORARY WORKAROUND ----
-	 * if JACK we change the frequency in G_Conf. In the future the user
-	 * will choose the desired frquency from the dropdown menu */
+#if defined(__linux__) || defined(__APPLE__)
 	if (api == SYS_API_JACK) {
 		samplerate = getFreq(outDev, 0);
 		printf("[KA] JACK in use, freq = %d\n", samplerate);
 		G_Conf.samplerate = samplerate;
 	}
-	/** ------------------------------- */
-
+#endif
 
 	try {
 		if (inDev != -1) {
