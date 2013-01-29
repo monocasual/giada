@@ -218,7 +218,7 @@ int mh_loadChan(const char *file, int c) {
 
 		if (w->inHeader.samplerate != G_Conf.samplerate) {
 			printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
-			w->resample(SRC_SINC_FASTEST, G_Conf.samplerate);
+			w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
 		}
 
 		mh_freeChan(c);  // free the previous sample

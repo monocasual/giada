@@ -169,6 +169,7 @@ gdConfig::gdConfig(int w, int h)
 	rsmpQuality->add("Sinc basic quality (medium)");
 	rsmpQuality->add("Zero Order Hold (fast)");
 	rsmpQuality->add("Linear (very fast)");
+	rsmpQuality->value(G_Conf.rsmpQuality);
 
 	buf[0] = '\0';
 	sprintf(buf, "%d", G_Conf.delayComp);
@@ -295,6 +296,7 @@ void gdConfig::__cb_save_config() {
 	G_Conf.channelsOut    = channelsOut->value();
 	G_Conf.channelsIn     = channelsIn->value();
 	G_Conf.limitOutput    = limitOutput->value();
+	G_Conf.rsmpQuality    = rsmpQuality->value();
 
 	int bufsize = atoi(buffersize->value());
 	if (bufsize % 2 != 0) bufsize++;
