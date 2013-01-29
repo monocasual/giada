@@ -138,6 +138,7 @@ void Conf::setDefault() {
 	buffersize     = DEFAULT_BUFSIZE;
 	delayComp      = DEFAULT_DELAYCOMP;
 	limitOutput    = false;
+	rsmpQuality    = 0;
 
 	pluginPath[0]  = '\0';
 	patchPath [0]  = '\0';
@@ -257,6 +258,7 @@ int Conf::read() {
 	if (samplerate < 8000) samplerate = DEFAULT_SAMPLERATE;
 
 	limitOutput = atoi(getValue("limitOutput").c_str());
+	rsmpQuality = atoi(getValue("rsmpQuality").c_str());
 
 	std::string p = getValue("pluginPath");
 	strncpy(pluginPath, p.c_str(), p.size());
@@ -306,6 +308,7 @@ int Conf::write() {
 	fprintf(fp, "delayComp=%d\n",      delayComp);
 	fprintf(fp, "samplerate=%d\n",     samplerate);
 	fprintf(fp, "limitOutput=%d\n",    limitOutput);
+	fprintf(fp, "rsmpQuality=%d\n",    rsmpQuality);
 
 	fprintf(fp, "pluginPath=%s\n", pluginPath);
 	fprintf(fp, "patchPath=%s\n",  patchPath);

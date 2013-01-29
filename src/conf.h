@@ -60,6 +60,7 @@ public:
 	int  buffersize;
 	int  delayComp;
 	bool limitOutput;
+	int  rsmpQuality;
 
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
