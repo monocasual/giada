@@ -348,15 +348,17 @@ void updateSamplerate(int systemRate, int patchRate) {
 	float ratio = systemRate / (float) patchRate;
 	for (unsigned i=0; i<frames.size; i++) {
 
+		printf("[REC]    oldFrame = %d", frames.at(i));
+
 		float newFrame = frames.at(i);
 		newFrame = floorf(newFrame * ratio);
 
-		printf("[REC]    oldFrame = %d, newFrame = %d\n", frames.at(i), (unsigned) newFrame);
-
-		frames.at(i) = (unsigned) newFrame;
+		frames.at(i) = (int) newFrame;
 
 		if (frames.at(i) % 2 != 0)
 			frames.at(i)++;
+
+		printf(", newFrame = %d\n", frames.at(i));
 	}
 }
 
