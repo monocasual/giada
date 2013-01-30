@@ -26,18 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef MIXER_H
 #define MIXER_H
 
 #include <stdlib.h>
 #include <pthread.h>
-#include "init.h"
 #include "const.h"
 #include "kernelAudio.h"
-#include "wave.h"
-#include "gui_utils.h"
-#include "recorder.h"
-#include "pluginHost.h"
 
 
 class Mixer {
@@ -113,7 +109,6 @@ public:
 	void setChanStart(int chan, unsigned val);
 	void setChanEnd  (int chan, unsigned val);
 
-
 	/* mergeVirtualInput
 	 * memcpy the virtual channel input in the channel designed for input
 	 * recording. Called by mixerHandler on stopInputRec() */
@@ -123,6 +118,16 @@ public:
 
 	/* ---------------------------------------------------------------- */
 
+
+	enum {    // const - what to do when a fadeout ends
+		DO_STOP = 0x01,
+		DO_MUTE = 0x02
+	};
+
+	enum {    // const - fade types
+		FADEOUT = 0x01,
+		XFADE   = 0x02
+	};
 
 	bool     running;
 	float   *vChanInput;                    // virtual channel for recording

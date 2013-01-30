@@ -225,15 +225,8 @@
 
 /** FIXME - move this stuff in mixer:: */
 /* -- fadeout types ------------------------------------------------- */
-#define FADEOUT 0x00
-#define XFADE   0x01
-
-
-
-/** FIXME - move this stuff in mixer:: */
-/* -- what to do when a fadeout ends -------------------------------- */
-#define DO_STOP 0x00
-#define DO_MUTE 0x01
+//#define FADEOUT 0x00
+//#define XFADE   0x01
 
 
 

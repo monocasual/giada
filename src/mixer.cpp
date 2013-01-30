@@ -26,7 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "mixer.h"
+#include "init.h"
+#include "wave.h"
+#include "gui_utils.h"
+#include "recorder.h"
+#include "pluginHost.h"
+
 
 extern Mixer 			 G_Mixer;
 extern unsigned 	 G_beats;
