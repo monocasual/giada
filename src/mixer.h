@@ -50,10 +50,13 @@ public:
 	void chanStop(int chan);
 	void chanReset(int chan);
 
-	void fadein(int chan);
+	/* fadein
+	 * prepare for fade-in process. */
+
+	void fadein(int chan, bool internal);
 
 	/* fadeout
-	 * does a fadeout and eventually another action when finished. */
+	 * do a fadeout and eventually another action when finished. */
 
 	void fadeout(int chan, int actionPostFadeout=DO_STOP);
 
@@ -120,8 +123,9 @@ public:
 
 
 	enum {    // const - what to do when a fadeout ends
-		DO_STOP = 0x01,
-		DO_MUTE = 0x02
+		DO_STOP   = 0x01,
+		DO_MUTE   = 0x02,
+		DO_MUTE_I = 0x04
 	};
 
 	enum {    // const - fade types

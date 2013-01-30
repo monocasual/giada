@@ -118,8 +118,9 @@ int Wave::writeData(const char *f) {
 		return 0;
 	}
 
-	if (sf_write_float(fileOut, data, size) != size) {
-		printf("[wave] error while exporting %s\n", f);
+	int out = sf_write_float(fileOut, data, size);
+	if (out != (int) size) {
+		printf("[wave] error while exporting %s - written size (%d) != sample size (%d)\n", f, out, size);
 		return 0;
 	}
 
@@ -150,6 +151,7 @@ int Wave::allocEmpty(unsigned __size) {
 
 	/* the caller must pass a __size for stereo values */
 
+	/// FIXME - this way if malloc fails size becomes wrong
 	size = __size;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {

@@ -223,13 +223,6 @@
 
 
 
-/** FIXME - move this stuff in mixer:: */
-/* -- fadeout types ------------------------------------------------- */
-//#define FADEOUT 0x00
-//#define XFADE   0x01
-
-
-
 /* -- unique IDs of mainWin's subwindows ---------------------------- */
 /* -- 0-31 are reserved by ge_keyboard ------------------------------ */
 #define WID_BEATS         32

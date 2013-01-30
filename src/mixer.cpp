@@ -190,12 +190,12 @@ void Mixer::chanReset(int ch)	{
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::fadein(int ch) {
+void Mixer::fadein(int ch, bool internal) {
 
-	/* when mute goes off, chanMuteVol returns to 1.0 */
+	/* remove mute before fading in */
 
-	//chanMute_i[ch] = false;
-	chanMute[ch]   = false;
+	if (internal) chanMute_i[ch] = false;
+	else          chanMute[ch]   = false;
 	chanFadein[ch] = 0.0f;
 }
 
@@ -379,7 +379,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						 * instead if it's muted, otherwise a click occurs */
 
 						if (chanStatus[k] == STATUS_PLAY) {
-							if (chanMute[k])
+							if (chanMute[k] || chanMute_i[k])
 								chanReset(k);
 							else
 								xfade(k);
@@ -408,7 +408,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			pthread_mutex_lock(&mutex_recs);
 			for (unsigned y=0; y<recorder::frames.size; y++) {
-				if (recorder::frames.at(y) == (int) actualFrame) {
+				if (recorder::frames.at(y) == actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
 						int chan = recorder::global.at(y).at(z)->chan;
 						if (recorder::chanActive[chan] == false)
@@ -430,11 +430,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 									break;
 								}
 							case ACTION_MUTEON:
-								mh_muteChan(chan);
-								//glue_readMute(chan, ACTION_MUTEON); break;
+								mh_muteChan(chan, true);   // internal mute
+								break;
 							case ACTION_MUTEOFF:
-								mh_unmuteChan(chan);
-								//glue_readMute(chan, ACTION_MUTEOFF); break;
+								mh_unmuteChan(chan, true); // internal mute
+								break;
 						}
 					}
 					break;
@@ -519,6 +519,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 							else {
 								if (fadeoutEnd[k] == DO_MUTE)
 									chanMute[k] = true;
+								else
+								if (fadeoutEnd[k] == DO_MUTE_I)
+									chanMute_i[k] = true;
 								else              // DO_STOP
 									chanStop(k);
 							}
@@ -531,7 +534,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						}
 					}  // no fadeout to do
 					else {
-						if (!chanMute[k]) {
+						if (!chanMute[k] && !chanMute_i[k]) {
 							vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
 							vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
 						}

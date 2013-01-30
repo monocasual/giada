@@ -117,7 +117,7 @@ void mh_stopChan(int c) {
 			if (G_Mixer.chanMute[c])
 				G_Mixer.chanStop(c);
 			else
-				G_Mixer.fadeout(c, DO_STOP);
+				G_Mixer.fadeout(c, Mixer::DO_STOP);
 		}
 	}
 
@@ -138,31 +138,32 @@ void mh_killChan(int c) {
 		if (G_Mixer.chanMute[c])
 			G_Mixer.chanStop(c);
 		else
-			G_Mixer.fadeout(c, DO_STOP);
+			G_Mixer.fadeout(c, Mixer::DO_STOP);
 	}
 }
 
 
-
 /* ------------------------------------------------------------------ */
 
 
-void mh_muteChan(int c) {
+void mh_muteChan(int c, bool internal) {
 	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
-		G_Mixer.fadeout(c, DO_MUTE);
+		G_Mixer.fadeout(c, internal ? Mixer::DO_MUTE_I : Mixer::DO_MUTE);
 	else
-		G_Mixer.chanMute[c] = true;
+		if (!internal) // setting internal mute is useless if sample != PLAY
+			G_Mixer.chanMute[c] = true;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void mh_unmuteChan(int c) {
+void mh_unmuteChan(int c, bool internal) {
 	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
-		G_Mixer.fadein(c);
+		G_Mixer.fadein(c, internal);
 	else
-		G_Mixer.chanMute[c] = false;
+		if (!internal)  // setting internal mute is useless if sample != PLAY
+			G_Mixer.chanMute[c] = false;
 }
 
 

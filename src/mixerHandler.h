@@ -57,8 +57,8 @@ void mh_freeChan(int c);
 void mh_killChan(int c);
 
 
-void mh_muteChan(int c);
-void mh_unmuteChan(int c);
+void mh_muteChan(int c, bool internal=false);
+void mh_unmuteChan(int c, bool internal=false);
 
 void mh_loadPatch();
 
