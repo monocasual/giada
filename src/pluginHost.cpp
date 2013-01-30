@@ -44,7 +44,7 @@ PluginHost::PluginHost() {
 	 * the opcode we load the right infos from G_Mixer. */
 
 	vstTimeInfo.samplePos          = 0.0;
-	vstTimeInfo.sampleRate         = 44100;
+	vstTimeInfo.sampleRate         = G_Conf.samplerate;
 	vstTimeInfo.nanoSeconds        = 0.0;
 	vstTimeInfo.ppqPos             = 0.0;
 	vstTimeInfo.tempo              = 120.0;
