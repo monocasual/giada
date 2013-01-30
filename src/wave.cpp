@@ -119,7 +119,7 @@ int Wave::writeData(const char *f) {
 	}
 
 	if (sf_write_float(fileOut, data, size) != size) {
-		printf("[wave] error while exporting %s", f);
+		printf("[wave] error while exporting %s\n", f);
 		return 0;
 	}
 
