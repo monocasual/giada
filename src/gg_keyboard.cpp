@@ -355,7 +355,7 @@ int Keyboard::handle(int e) {
 
 
 void Keyboard::__cb_mute(int chan) {
-	glue_writeMute(chan, true);
+	glue_setMute(chan);
 }
 
 

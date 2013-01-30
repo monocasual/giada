@@ -134,7 +134,7 @@ void gu_update_controls() {
 		/* update volumes+mute */
 
 		mainWin->keyboard->vol[i]->value(G_Mixer.chanVolume[i]);
-		mainWin->keyboard->mute[i]->value(G_Mixer.chanMuteVol[i] == 1.0f ? 0 : 1);
+		mainWin->keyboard->mute[i]->value(G_Mixer.chanMute[i]);
 
 		/* updates modebox */
 

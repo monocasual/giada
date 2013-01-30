@@ -618,24 +618,26 @@ void glue_setVolEditor(class gdEditor *win, int ch, float val, bool numeric) {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void glue_writeMute(int ch, bool gui) {
 
+
 	int action;
-	int button;
+	//int button;
 
 	if (!G_Mixer.chanMute[ch]) {
-		mh_muteChan(ch);
+		//mh_muteChan(ch);
 		action = ACTION_MUTEON;
-		button = 1;
+		//button = 1;
 	}
 	else {
-		mh_unmuteChan(ch);
+		//mh_unmuteChan(ch);
 		action = ACTION_MUTEOFF;
-		button = 0;
+		//button = 0;
 	}
 
-	/* recording mute actions, only if Recorder can record. */
+
+	// recording mute actions, only if Recorder can record.
 
 	if (recorder::canRec(ch)) {
 		if (action == ACTION_MUTEON)
@@ -643,27 +645,26 @@ void glue_writeMute(int ch, bool gui) {
 		else
 		 recorder::stopOverdub(G_Mixer.actualFrame);
 	}
-
-	/* if the caller is mixer/keyboard/MIDI (not the GUI) we turn on or
-	 * off the button. */
-
-	if (!gui)
-		mainWin->keyboard->mute[ch]->value(button);
 }
+*/
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_readMute(int ch, int type) {
-	if (type == ACTION_MUTEON) {
-		mh_muteChan(ch);
-		mainWin->keyboard->mute[ch]->value(1);
+void glue_setMute(int ch) {
+
+	bool muted = G_Mixer.chanMute[ch] ? true : false;
+
+	if (recorder::active && recorder::canRec(ch)) {
+		if (!muted)
+			recorder::startOverdub(ch, ACTION_MUTES, G_Mixer.actualFrame);
+		else
+		 recorder::stopOverdub(G_Mixer.actualFrame);
 	}
-	else {
-		mh_unmuteChan(ch);
-		mainWin->keyboard->mute[ch]->value(0);
-	}
+
+	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
+	mainWin->keyboard->mute[ch]->value(!muted);
 }
 
 
@@ -795,7 +796,8 @@ void glue_keyPress(int c, bool ctrl, bool shift) {
 
 	/* -- case CTRL --------------------------------------------------- */
 	if (ctrl)
-		glue_writeMute(c, false);
+		//glue_writeMute(c, false);
+		glue_setMute(c);
 
 	/* -- case SHIFT------------------------------------------------------
 	 * action recording on:

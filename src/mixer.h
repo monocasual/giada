@@ -142,13 +142,11 @@ public:
 	float 	 chanPanRight  [MAX_NUM_CHAN];
 	unsigned chanMode      [MAX_NUM_CHAN];  // mode: see const.h
 
-	/** chanMute is completely useless: use chanMuteVol: it's 0.0 when muted
-	 *  otherwise 1.0 */
+	bool     chanMute_i    [MAX_NUM_CHAN];  // inner mute
+	bool     chanMute      [MAX_NUM_CHAN];  // global mute
 
-	bool     chanMute      [MAX_NUM_CHAN];
-	float    chanMuteVol   [MAX_NUM_CHAN];
 	bool     chanQWait     [MAX_NUM_CHAN];  // quantizer wait
-	int 		 chanRecStatus [MAX_NUM_CHAN];  // status of the recordings (treat recs as loops)
+	int 		 chanRecStatus [MAX_NUM_CHAN];  // status of recordings (treat recs as loops)
 	float    chanFadein    [MAX_NUM_CHAN];
 	bool     fadeoutOn     [MAX_NUM_CHAN];	//
 	float    fadeoutVol    [MAX_NUM_CHAN];  // fadeout volume

@@ -77,7 +77,7 @@ void mh_startChan(int c, bool do_quantize) {
 					/* do a xfade only if the mute is off. An xfade on a mute channel
 					 * introduces some bad clics */
 
-					if (G_Mixer.chanMuteVol[c] == 0.0f)
+					if (G_Mixer.chanMute[c])
 						G_Mixer.chanReset(c);
 					else
 						G_Mixer.xfade(c);
@@ -114,7 +114,7 @@ void mh_stopChan(int c) {
 
 			/* no fadeout if chan is muted */
 
-			if (G_Mixer.chanMuteVol[c] == 0.0f)
+			if (G_Mixer.chanMute[c])
 				G_Mixer.chanStop(c);
 			else
 				G_Mixer.fadeout(c, DO_STOP);
@@ -135,7 +135,7 @@ void mh_stopChan(int c) {
 void mh_killChan(int c) {
 
 	if (G_Mixer.chan[c] != NULL && G_Mixer.chanStatus[c] != STATUS_OFF) {
-		if (G_Mixer.chanMuteVol[c] == 0.0f)
+		if (G_Mixer.chanMute[c])
 			G_Mixer.chanStop(c);
 		else
 			G_Mixer.fadeout(c, DO_STOP);
@@ -148,18 +148,21 @@ void mh_killChan(int c) {
 
 
 void mh_muteChan(int c) {
-	G_Mixer.chanMute[c] = true;
 	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
 		G_Mixer.fadeout(c, DO_MUTE);
 	else
-		G_Mixer.chanMuteVol[c] = 0.0f;
+		G_Mixer.chanMute[c] = true;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
 void mh_unmuteChan(int c) {
-	G_Mixer.chanMute[c] = false;
 	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
 		G_Mixer.fadein(c);
 	else
-		G_Mixer.chanMuteVol[c] = 1.0f;
+		G_Mixer.chanMute[c] = false;
 }
 
 
@@ -272,7 +275,8 @@ void mh_loadPatch() {
 		if (res == SAMPLE_LOADED_OK) {
 			G_Mixer.chanVolume[i]    = G_Patch.getVol(i);
 			G_Mixer.chanMode[i]      = G_Patch.getMode(i);
-			if (G_Patch.getMute(i))	   glue_readMute(i, ACTION_MUTEON); // glue_ will activate the gui ('R' button)
+			G_Mixer.chanMute[i]      = G_Patch.getMute(i);
+			//if (G_Patch.getMute(i))	   glue_readMute(i, ACTION_MUTEON); // glue_ will activate the gui ('R' button)
 			G_Mixer.chanBoost[i]     = G_Patch.getBoost(i);
 			G_Mixer.chanPanLeft[i]   = G_Patch.getPanLeft(i);
 			G_Mixer.chanPanRight[i]  = G_Patch.getPanRight(i);

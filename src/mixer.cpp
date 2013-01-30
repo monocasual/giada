@@ -81,7 +81,7 @@ void Mixer::init() {
 		chanStart[i]     = 0;
 		chanEnd[i]       = 0;
 		chanMute[i]      = false;
-		chanMuteVol[i]   = 1.0f;
+		chanMute_i[i]    = false;
 		chanMode[i]      = DEFAULT_CHANMODE;
 		chanVolume[i]    = DEFAULT_VOL;
 		chanPitch[i]     = gDEFAULT_PITCH;
@@ -187,8 +187,8 @@ void Mixer::fadein(int ch) {
 
 	/* when mute goes off, chanMuteVol returns to 1.0 */
 
-	if (!chanMute[ch])
-		chanMuteVol[ch] = 1.0f;
+	//chanMute_i[ch] = false;
+	chanMute[ch]   = false;
 	chanFadein[ch] = 0.0f;
 }
 
@@ -372,10 +372,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						 * instead if it's muted, otherwise a click occurs */
 
 						if (chanStatus[k] == STATUS_PLAY) {
-							if (chanMuteVol[k] == 1.0f)
-								xfade(k);
-							else
+							if (chanMute[k])
 								chanReset(k);
+							else
+								xfade(k);
 						}
 						else
 						if (chanStatus[k] == STATUS_ENDING)
@@ -423,9 +423,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 									break;
 								}
 							case ACTION_MUTEON:
-								glue_readMute(chan, ACTION_MUTEON); break;
+								mh_muteChan(chan);
+								//glue_readMute(chan, ACTION_MUTEON); break;
 							case ACTION_MUTEOFF:
-								glue_readMute(chan, ACTION_MUTEOFF); break;
+								mh_unmuteChan(chan);
+								//glue_readMute(chan, ACTION_MUTEOFF); break;
 						}
 					}
 					break;
@@ -509,7 +511,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 							}
 							else {
 								if (fadeoutEnd[k] == DO_MUTE)
-									chanMuteVol[k] = 0.0f;
+									chanMute[k] = true;
 								else              // DO_STOP
 									chanStop(k);
 							}
@@ -522,8 +524,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						}
 					}  // no fadeout to do
 					else {
-						vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
-						vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanMuteVol[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
+						if (!chanMute[k]) {
+							vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
+							vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
+						}
 					}
 
 					chanTracker[k] += 2;

@@ -124,18 +124,7 @@ void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric);
  /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 void glue_setVolEditor(class gdEditor *win, int ch, float val, bool numeric);
 
-/* writeMute
- * enables/disables mute for channel 'ch'.
- * Gui==true: the signal comes from the GUI
- * Gui==false: the signal comes from the keyboard/MIDI */
-
-void glue_writeMute(int ch, bool gui);
-
-/* readMute
- * similar to writeMute, it reads a MUTE event from the stack */
-
- /** FIXME - noboy will call this via MIDI/keyb/mouse! */
-void glue_readMute(int ch, int type);
+void glue_setMute(int ch);
 
 /* setChannelWithActions
  * add 'R' button if channel has actions, and set recorder to active. */
