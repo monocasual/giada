@@ -26,7 +26,11 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gg_waveTools.h"
+#include "graphics.h"
+#include "ge_mixed.h"
+
 
 extern Mixer G_Mixer;
 

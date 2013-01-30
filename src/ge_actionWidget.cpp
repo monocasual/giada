@@ -29,6 +29,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include <FL/fl_draw.H>
 #include "ge_actionWidget.h"
 #include "gd_actionEditor.h"
 #include "mixer.h"

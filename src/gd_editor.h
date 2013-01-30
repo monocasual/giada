@@ -32,6 +32,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <math.h>
+#include "ge_window.h"
 #include "gg_waveTools.h"
 #include "waveFx.h"
 #include "conf.h"

@@ -26,7 +26,10 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_editor.h"
+#include "gd_mainWindow.h"
+
 
 extern Mixer         G_Mixer;
 extern gdMainWindow *mainWin;

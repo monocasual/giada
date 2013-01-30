@@ -27,7 +27,12 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "ge_waveform.h"
+#include "gd_editor.h"
+#include "wave.h"
+#include "glue.h"
+
 
 extern Mixer G_Mixer;
 

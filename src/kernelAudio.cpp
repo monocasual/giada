@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 #include "kernelAudio.h"
+#include "conf.h"
 
 extern Mixer G_Mixer;
 extern Conf  G_Conf;

@@ -32,6 +32,8 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
+#include <FL/fl_draw.H>
+#include <math.h>
 #include "mixer.h"
 
 #define  FLAG_WIDTH  14
