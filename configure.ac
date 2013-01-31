@@ -98,6 +98,14 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER(
+	[samplerate.h],
+	[],
+	[AC_MSG_ERROR([library 'libsamplerate' not found!])]
+)
+AC_LANG_POP
+
 # ----------------------------------------------------------------------
 
 # Checks for header files.
