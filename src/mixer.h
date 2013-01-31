@@ -151,7 +151,7 @@ public:
 	float 	 chanPanRight  [MAX_NUM_CHAN];
 	unsigned chanMode      [MAX_NUM_CHAN];  // mode: see const.h
 
-	bool     chanMute_i    [MAX_NUM_CHAN];  // inner mute
+	bool     chanMute_i    [MAX_NUM_CHAN];  // internal mute
 	bool     chanMute      [MAX_NUM_CHAN];  // global mute
 
 	bool     chanQWait     [MAX_NUM_CHAN];  // quantizer wait

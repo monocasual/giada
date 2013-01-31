@@ -120,7 +120,7 @@ int Wave::writeData(const char *f) {
 
 	int out = sf_write_float(fileOut, data, size);
 	if (out != (int) size) {
-		printf("[wave] error while exporting %s - written size (%d) != sample size (%d)\n", f, out, size);
+		printf("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
 		return 0;
 	}
 
@@ -177,6 +177,8 @@ int Wave::resample(int quality, int newRate) {
 
 	float ratio = newRate / (float) inHeader.samplerate;
 	int newSize = ceil(size * ratio);
+	if (newSize % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
+		newSize++;
 
 	float *tmp  = (float *) malloc(newSize * sizeof(float));
 	if (!tmp) {
