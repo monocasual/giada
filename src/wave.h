@@ -26,15 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef WAVE_H
 #define WAVE_H
 
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <samplerate.h>
 #include <sndfile.h>
 #include <string>
-#include <string.h>  // memcpy
-#include <samplerate.h>
 
 
 class Wave {

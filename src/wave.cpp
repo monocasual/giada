@@ -27,6 +27,9 @@
  * ------------------------------------------------------------------ */
 
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>  // memcpy
 #include "wave.h"
 #include "utils.h"
 #include "init.h"
