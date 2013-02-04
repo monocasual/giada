@@ -63,7 +63,7 @@ gdConfig::gdConfig(int w, int h)
 
 		  rsmpQuality = new gChoice(grpSound->x()+92, grpSound->y()+177, 253, 20, "Resampling");
 
-			new gBox(grpSound->x(), grpSound->y()+210, grpSound->w(), 50, "Restart Giada for the\nchanges to take effect.");
+			new gBox(grpSound->x(), grpSound->y()+220, grpSound->w(), 50, "Restart Giada for the changes to take effect.");
 
 		grpSound->end();
 		grpSound->labelsize(11);
@@ -73,7 +73,7 @@ gdConfig::gdConfig(int w, int h)
 			            new gBox   (grpKeys->x()+22,  grpKeys->y()+37, 70, 20, "Actual key", FL_ALIGN_RIGHT);
 			actualKey	= new gBox	 (grpKeys->x()+92,  grpKeys->y()+37, 25, 20);
 			setKey	  = new gClick (grpKeys->x()+270, grpKeys->y()+37, 75, 20, "Set new");
-			            new gBox(grpKeys->x()+10, setKey->y()+110, grpKeys->w()-10, 50, "Restart Giada for the\nchanges to take effect.");
+			            new gBox(grpKeys->x()+10, setKey->y()+120, grpKeys->w()-10, 50, "Restart Giada for the changes to take effect.");
 		grpKeys->end();
 		grpKeys->labelsize(11);
 
