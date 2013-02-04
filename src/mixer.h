@@ -87,6 +87,11 @@ public:
 
 	bool isSilent();
 
+	/* isPlaying
+	 * is channel playing? */
+
+	bool isPlaying(int chan);
+
 	void rewind();
 
 	/* updateQuanto

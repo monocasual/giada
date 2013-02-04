@@ -873,3 +873,11 @@ bool Mixer::mergeVirtualInput() {
 		return true;
 	}
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool Mixer::isPlaying(int c) {
+	return chanStatus[c] == STATUS_PLAY || chanStatus[c] == STATUS_ENDING;
+}
