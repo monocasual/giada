@@ -68,14 +68,21 @@ gdAbout::gdAbout()
 		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
 
+	int tw = 0;
+	int th = 0;
+	fl_measure(message, tw, th);
 	text->copy_label(message);
+	text->size(text->w(), th);
 
 #ifdef WITH_VST
 	vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
+	vstLogo->position(vstLogo->x(), text->y()+text->h());
 	vstText->label(
 		"VST Plug-In Technology by Steinberg\n"
 		"VST is a trademark of Steinberg\nMedia Technologies GmbH"
 	);
+	vstText->position(vstText->x(), vstLogo->y()+vstLogo->h());
+
 #endif
 
 	close->callback(cb_close, (void*)this);
