@@ -183,7 +183,8 @@ void Mixer::chanStop(int ch) {
 
 
 void Mixer::chanReset(int ch)	{
-		chanTracker[ch] = chanStart[ch];
+	chanTracker[ch] = chanStart[ch];
+	chanMute_i [ch] = false;
 }
 
 
@@ -733,12 +734,13 @@ void Mixer::rewind() {
 
 	if (running)
 		for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-			if (chan[i] != NULL)
+			if (chan[i] != NULL) {
 
 				/* don't rewind a SINGLE_ANY, unless it's in read-record-mode */
 
 				if ((chanMode[i] & LOOP_ANY) || (chanRecStatus[i] == REC_READING && (chanMode[i] & SINGLE_ANY)))
-					chanTracker[i] = chanStart[i];
+					chanReset(i); //chanTracker[i] = chanStart[i];
+			}
 }
 
 
