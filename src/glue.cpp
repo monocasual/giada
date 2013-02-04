@@ -296,6 +296,7 @@ void glue_stopSeq() {
 	G_Mixer.running = false;
 
 	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true */
+	/** TODO: mh_stopSeq() */
 
 	if (G_Conf.chansStopOnSeqHalt) {
 		for (int i=0; i<MAX_NUM_CHAN; i++) {

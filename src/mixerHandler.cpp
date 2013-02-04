@@ -109,16 +109,13 @@ void mh_startChan(int c, bool do_quantize) {
 
 
 void mh_stopChan(int c) {
-	if (G_Mixer.chanStatus[c] == STATUS_PLAY) {
-		if (G_Mixer.chanMode[c] == SINGLE_PRESS) {
-
-			/* no fadeout if chan is muted */
-
-			if (G_Mixer.chanMute[c])
-				G_Mixer.chanStop(c);
-			else
-				G_Mixer.fadeout(c, Mixer::DO_STOP);
-		}
+	if (G_Mixer.chanStatus[c] == STATUS_PLAY &&
+	    G_Mixer.chanMode[c] == SINGLE_PRESS)
+	{
+		if (G_Mixer.chanMute[c] || G_Mixer.chanMute_i[c])
+			G_Mixer.chanStop(c);
+		else
+			G_Mixer.fadeout(c, Mixer::DO_STOP);
 	}
 
 	/* stop a SINGLE_PRESS immediately, if the quantizer is on */
@@ -133,9 +130,8 @@ void mh_stopChan(int c) {
 
 
 void mh_killChan(int c) {
-
 	if (G_Mixer.chan[c] != NULL && G_Mixer.chanStatus[c] != STATUS_OFF) {
-		if (G_Mixer.chanMute[c])
+		if (G_Mixer.chanMute[c] || G_Mixer.chanMute_i[c])
 			G_Mixer.chanStop(c);
 		else
 			G_Mixer.fadeout(c, Mixer::DO_STOP);
@@ -147,11 +143,24 @@ void mh_killChan(int c) {
 
 
 void mh_muteChan(int c, bool internal) {
-	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
-		G_Mixer.fadeout(c, internal ? Mixer::DO_MUTE_I : Mixer::DO_MUTE);
-	else
-		if (!internal) // setting internal mute is useless if sample != PLAY
-			G_Mixer.chanMute[c] = true;
+	if (internal) {
+		if (G_Mixer.chanMute[c])          // global mute? don't waste time with fadeout,
+			G_Mixer.chanMute_i[c] = true;   // just mute it internally
+		else
+			if (G_Mixer.isPlaying(c))
+				G_Mixer.fadeout(c, Mixer::DO_MUTE_I);
+			else
+				G_Mixer.chanMute_i[c] = true;
+	}
+	else {
+		if (G_Mixer.chanMute_i[c])        // internal mute? don't waste time with fadeout,
+			G_Mixer.chanMute[c] = true;     // just mute it globally
+		else
+			if (G_Mixer.isPlaying(c))              // sample in play? fadeout needed. Else,
+				G_Mixer.fadeout(c, Mixer::DO_MUTE);  // just mute it globally
+			else
+				G_Mixer.chanMute[c] = true;
+	}
 }
 
 
@@ -159,11 +168,24 @@ void mh_muteChan(int c, bool internal) {
 
 
 void mh_unmuteChan(int c, bool internal) {
-	if (G_Mixer.chanStatus[c] == STATUS_PLAY || G_Mixer.chanStatus[c] == STATUS_ENDING)
-		G_Mixer.fadein(c, internal);
-	else
-		if (!internal)  // setting internal mute is useless if sample != PLAY
+	if (internal) {
+		if (G_Mixer.chanMute[c])
+			G_Mixer.chanMute_i[c] = false;
+		else
+			if (G_Mixer.isPlaying(c))
+				G_Mixer.fadein(c, internal);
+			else
+				G_Mixer.chanMute_i[c] = false;
+	}
+	else {
+		if (G_Mixer.chanMute_i[c])
 			G_Mixer.chanMute[c] = false;
+		else
+			if (G_Mixer.isPlaying(c))
+				G_Mixer.fadein(c, internal);
+			else
+				G_Mixer.chanMute[c] = false;
+	}
 }
 
 
