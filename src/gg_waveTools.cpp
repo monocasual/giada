@@ -38,16 +38,17 @@ extern Mixer G_Mixer;
 gWaveTools::gWaveTools(int X, int Y, int W, int H, int chan, const char *L)
 : Fl_Group(X,Y,W,H,L) {
 
-	wave = new gWaveform(8, 8, 484, 154, chan);
-	scrollLeft  = new gClickRepeat(8,  170, 14, 14, "", scrollLeftOff_xpm, scrollLeftOn_xpm);
-	scrollRight = new gClickRepeat(442, 170, 14, 14, "", scrollRightOff_xpm, scrollRightOn_xpm);
-	zoomPlus    = new gClick(460, 170, 14, 14, "", zoomInOff_xpm, zoomInOn_xpm);
-	zoomMins    = new gClick(478, 170, 14, 14, "", zoomOutOff_xpm, zoomOutOn_xpm);
-	scrollBar   = new gWavescroll(26, 170, 412, 14,
+	wave = new gWaveform(8, 8, 484, 150, chan);
+	scrollLeft  = new gClickRepeat(8,  166, 20, 20, "", scrollLeftOff_xpm, scrollLeftOn_xpm);
+	scrollRight = new gClickRepeat(442, 166, 20, 20, "", scrollRightOff_xpm, scrollRightOn_xpm);
+	zoomPlus    = new gClick(460, 166, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+	zoomMins    = new gClick(478, 166, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+	scrollBar   = new gWavescroll(26, 166, 412, 20,
 		wave->initZoom,
 		wave->zoom,
 		G_Mixer.chan[chan]->size
 	);
+	resizable(wave);
 	end();
 
 	scrollBar->callback(cb_scroll,      (void*)this);
