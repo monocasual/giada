@@ -29,7 +29,7 @@ Documentation
 -------------
 Docs are available online on the official website
 
-http://www.giadamusic.com/documentation-index.php
+http://www.giadamusic.com/documentation
 
 
 

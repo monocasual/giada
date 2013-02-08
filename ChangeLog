@@ -13,6 +13,15 @@
 
 
 
+0.5.8 --- 2013 . 02 . 07
+- Internal samplerate conversion (with libsamplerate)
+- Bring channels automatically to full volume on sample load
+- Ability to set the audio device frequency
+- New "internal mute" feature
+- fix for deprecated VST opcode 14
+- fix deb package issues on Ubuntu 12.10 / KXStudio
+
+
 0.5.7 --- 2013 . 01 . 21
 - visual grid + snapping in the action editor
 - implement more audioMasterCanDo's in pluginHost

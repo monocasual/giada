@@ -98,12 +98,22 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
-PKG_CHECK_MODULES(
-	SAMPLERATE,
-	samplerate >= 0.1.8,
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER(
+	[samplerate.h],
 	[],
-	AC_MSG_ERROR([library 'libsamplerate' not found!])
+	[AC_MSG_ERROR([library 'samplerate' not found!])]
 )
+AC_LANG_POP
+
+
+#
+#PKG_CHECK_MODULES(
+#	SAMPLERATE,
+#	samplerate >= 0.1.8,
+#	[],
+#	AC_MSG_ERROR([library 'libsamplerate' not found!])
+#)
 
 
 # ----------------------------------------------------------------------
