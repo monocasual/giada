@@ -50,7 +50,7 @@ public:
 	SF_INFO  inHeader;
 	SF_INFO  outHeader;
 	float   *data;
-	unsigned size;			// wave size (size in stereo: size / 2)
+	int      size;			// wave size (size in stereo: size / 2)
 	bool     isLogical; // memory only (a take)
 	bool     isEdited;  // edited via editor
 

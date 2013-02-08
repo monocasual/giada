@@ -138,49 +138,49 @@ public:
 		XFADE   = 0x02
 	};
 
-	bool     running;
-	float   *vChanInput;                    // virtual channel for recording
-	float   *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
-	Wave    *chan          [MAX_NUM_CHAN];
-	float   *vChan				 [MAX_NUM_CHAN];	// virtual channel
-	int      chanStatus    [MAX_NUM_CHAN];	// status: see const.h
-	unsigned chanTracker   [MAX_NUM_CHAN];  // chan position
-	unsigned chanStart     [MAX_NUM_CHAN];
-	unsigned chanEnd       [MAX_NUM_CHAN];
-	unsigned chanStartTrue [MAX_NUM_CHAN];	// chanStart NOT pitch affected
-	unsigned chanEndTrue   [MAX_NUM_CHAN];	// chanend   NOT pitch affected
-	float    chanVolume    [MAX_NUM_CHAN];
-  float    chanPitch     [MAX_NUM_CHAN];
-	float    chanBoost     [MAX_NUM_CHAN];
-	float 	 chanPanLeft   [MAX_NUM_CHAN];
-	float 	 chanPanRight  [MAX_NUM_CHAN];
-	unsigned chanMode      [MAX_NUM_CHAN];  // mode: see const.h
+	bool   running;
+	float *vChanInput;                    // virtual channel for recording
+	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
+	Wave  *chan          [MAX_NUM_CHAN];
+	float *vChan				 [MAX_NUM_CHAN];	// virtual channel
+	int    chanStatus    [MAX_NUM_CHAN];	// status: see const.h
+	int    chanTracker   [MAX_NUM_CHAN];  // chan position
+	int    chanStart     [MAX_NUM_CHAN];
+	int    chanEnd       [MAX_NUM_CHAN];
+	int    chanStartTrue [MAX_NUM_CHAN];	// chanStart NOT pitch affected
+	int    chanEndTrue   [MAX_NUM_CHAN];	// chanend   NOT pitch affected
+	float  chanVolume    [MAX_NUM_CHAN];
+  float  chanPitch     [MAX_NUM_CHAN];
+	float  chanBoost     [MAX_NUM_CHAN];
+	float  chanPanLeft   [MAX_NUM_CHAN];
+	float  chanPanRight  [MAX_NUM_CHAN];
+	int    chanMode      [MAX_NUM_CHAN];  // mode: see const.h
 
-	bool     chanMute_i    [MAX_NUM_CHAN];  // internal mute
-	bool     chanMute      [MAX_NUM_CHAN];  // global mute
+	bool   chanMute_i    [MAX_NUM_CHAN];  // internal mute
+	bool   chanMute      [MAX_NUM_CHAN];  // global mute
 
-	bool     chanQWait     [MAX_NUM_CHAN];  // quantizer wait
-	int 		 chanRecStatus [MAX_NUM_CHAN];  // status of recordings (treat recs as loops)
-	float    chanFadein    [MAX_NUM_CHAN];
-	bool     fadeoutOn     [MAX_NUM_CHAN];	//
-	float    fadeoutVol    [MAX_NUM_CHAN];  // fadeout volume
-	unsigned fadeoutTracker[MAX_NUM_CHAN];  // tracker fadeout, xfade only
-	float    fadeoutStep   [MAX_NUM_CHAN];  // fadeout decrease
-  int      fadeoutType   [MAX_NUM_CHAN];  // xfade or fadeout
-  int			 fadeoutEnd    [MAX_NUM_CHAN];  // what to do when fadeout ends
+	bool   chanQWait     [MAX_NUM_CHAN];  // quantizer wait
+	int 	 chanRecStatus [MAX_NUM_CHAN];  // status of recordings (treat recs as loops)
+	float  chanFadein    [MAX_NUM_CHAN];
+	bool   fadeoutOn     [MAX_NUM_CHAN];	//
+	float  fadeoutVol    [MAX_NUM_CHAN];  // fadeout volume
+	int    fadeoutTracker[MAX_NUM_CHAN];  // tracker fadeout, xfade only
+	float  fadeoutStep   [MAX_NUM_CHAN];  // fadeout decrease
+  int    fadeoutType   [MAX_NUM_CHAN];  // xfade or fadeout
+  int		 fadeoutEnd    [MAX_NUM_CHAN];  // what to do when fadeout ends
 
-	unsigned frameSize;
-	float    outVol;
-	float    inVol;
-	float    peakOut;
-	float    peakIn;
-	unsigned quanto;
-	char     quantize;
-	bool		 metronome;
-	float    bpm;
-	int   	 bars;
-	int      beats;
-	int      waitRec; // delayComp guard
+	int    frameSize;
+	float  outVol;
+	float  inVol;
+	float  peakOut;
+	float  peakIn;
+	int    quanto;
+	char   quantize;
+	bool	 metronome;
+	float  bpm;
+	int    bars;
+	int    beats;
+	int    waitRec; // delayComp guard
 
 	bool docross;			// crossfade guard
 	bool rewindWait;	// rewind guard, if quantized

@@ -42,10 +42,10 @@ float wfx_normalizeSoft(class Wave *w);
 
 bool wfx_monoToStereo(class Wave *w);
 
-void wfx_silence(class Wave *w, unsigned a, unsigned b);
+void wfx_silence(class Wave *w, int a, int b);
 
-int wfx_cut(int ch, unsigned a, unsigned b);
+int wfx_cut(int ch, int a, int b);
 
-int wfx_trim(int ch, unsigned a, unsigned b);
+int wfx_trim(int ch, int a, int b);
 
 #endif
