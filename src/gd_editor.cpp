@@ -44,19 +44,25 @@ gdEditor::gdEditor(const char *title, int chan)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, w(), h());
 
 	wt            = new gWaveTools(8, 8, 484, 179, chan);
-	chanStart     = new gInput(50,  192, 70, 20, "Range");
-	chanEnd       = new gInput(124, 192, 70, 20);
-	resetStartEnd = new gClick(198, 192, 50, 20, "Reset");
-	volume        = new gDial (100,	216, 20, 20, "Volume");
-	volumeNum     = new gInput(124,	216, 45, 20, "dB");
-	boost         = new gDial (100,	240, 20, 20, "Boost");
-	boostNum      = new gInput(124,	240, 45, 20, "dB");
-	normalize     = new gClick(198, 240, 50, 20, "Norm.");
-	pan 					= new gDial (100, 264, 20, 20, "Pan");
-	panNum    		= new gInput(124,	264, 45, 20, "%");
-	reload    		= new gClick(252, 192, 50, 20, "Reload");
-	pitch					= new gDial (300,	216, 20, 20, "Pitch");
-	pitchNum		  = new gInput(324,	216, 45, 20);
+
+	Fl_Group *tools = new Fl_Group(8, wt->y()+wt->h()+5, w()-16, 92);
+	tools->begin();
+		chanStart     = new gInput(50,  192, 70, 20, "Range");
+		chanEnd       = new gInput(124, 192, 70, 20);
+		resetStartEnd = new gClick(198, 192, 50, 20, "Reset");
+		volume        = new gDial (100,	216, 20, 20, "Volume");
+		volumeNum     = new gInput(124,	216, 45, 20, "dB");
+		boost         = new gDial (100,	240, 20, 20, "Boost");
+		boostNum      = new gInput(124,	240, 45, 20, "dB");
+		normalize     = new gClick(198, 240, 50, 20, "Norm.");
+		pan 					= new gDial (100, 264, 20, 20, "Pan");
+		panNum    		= new gInput(124,	264, 45, 20, "%");
+		reload    		= new gClick(252, 192, 50, 20, "Reload");
+		pitch					= new gDial (300,	216, 20, 20, "Pitch");
+		pitchNum		  = new gInput(324,	216, 45, 20);
+		gBox *spacer  = new gBox(pitchNum->x()+pitchNum->w()+4, tools->y(), 80, tools->h());    // padding actionType - zoomButtons
+	tools->end();
+	tools->resizable(spacer);
 
 	char buf[16];
 	sprintf(buf, "%d", G_Mixer.chanStartTrue[chan]/2); // divided by 2 because stereo
@@ -145,6 +151,7 @@ gdEditor::gdEditor(const char *title, int chan)
 
 	gu_setFavicon(this);
 	size_range(500, 292);
+	resizable(wt);
 
 	show();
 }
