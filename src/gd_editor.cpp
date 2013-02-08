@@ -144,6 +144,7 @@ gdEditor::gdEditor(const char *title, int chan)
 	panNum->cursor_color(FL_WHITE);
 
 	gu_setFavicon(this);
+	size_range(500, 292);
 
 	show();
 }
