@@ -33,9 +33,6 @@
 #include <FL/Fl_Double_Window.H>
 #include <math.h>
 #include "ge_window.h"
-#include "gg_waveTools.h"
-#include "waveFx.h"
-#include "conf.h"
 
 
 class gdEditor : public gWindow {
@@ -67,7 +64,8 @@ public:
 	gdEditor(const char *title, int chan);
 	~gdEditor();
 
-	class gWaveTools *wt;
+	class Fl_Scroll  *scroller;  // widget container
+	class gWaveform  *waveform;
 	class gInput     *chanStart;
 	class gInput     *chanEnd;
 	class gClick		 *resetStartEnd;

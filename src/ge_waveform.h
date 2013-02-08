@@ -27,6 +27,7 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GE_WAVEFORM_H
 #define GE_WAVEFORM_H
 
@@ -34,7 +35,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <math.h>
-#include "mixer.h"
 
 #define  FLAG_WIDTH  14
 #define  FLAG_HEIGHT 12
@@ -85,7 +85,7 @@ public:
 	void draw();
 	int  handle(int e);
 
-	bool setZoom(unsigned z);
+	//bool setZoom(unsigned z);
 	void alloc(); 			       // alloc memory for the picture
 	void recalcPoints();       // re-calc chanStart, chanEnd, ...
 	void openEditMenu();
@@ -94,24 +94,29 @@ public:
 	 * (re)calculate zoom from the original sample in Mixer. Use this method
 	 * only after a cut or trim: the editor needs to update the zoom because
 	 * the sample is shortened */
+
 	void calcZoom();
 
-	unsigned zoom;
-	unsigned initZoom;
-	int      start;		         // start drawing from here
-	int     *dataPos;          // positive values (> 0.0f)
-	int     *dataNeg;          // negative values (<= 0.0f)
-	int      dataSize;
-	int      chanStart;
-	bool     chanStartLit;
-	int      chanEnd;
-	bool     chanEndLit;
-	bool     pushed;
-	bool		 dragged;
-	bool		 resized;
+	/* zoom
+	 * type == 1 : zoom out, type == -1: zoom in */
 
-	int      mouseX;					 // mouse pos for drag.n.drop
-	int      mouseY;
+	void setZoom(int type);
+
+	int  zoom;
+	int  initZoom;
+	int  start;		      // start drawing from here
+	int *data;          // only positive values (> 0.0f)
+	int  dataSize;
+	int  chanStart;
+	bool chanStartLit;
+	int  chanEnd;
+	bool chanEndLit;
+	bool pushed;
+	bool dragged;
+	bool resized;
+
+	int  mouseX;					 // mouse pos for drag.n.drop
+	int  mouseY;
 
 	/* selectionA/B  = portion of the selected wave
 	 * " " "" " _abs = selectionA/B not affected by zoom */

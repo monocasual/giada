@@ -29,11 +29,15 @@
 
 #include "gd_editor.h"
 #include "gd_mainWindow.h"
+#include "ge_waveform.h"
+#include "waveFx.h"
+#include "conf.h"
 
 
 extern Mixer         G_Mixer;
 extern gdMainWindow *mainWin;
 extern Conf	         G_Conf;
+
 
 gdEditor::gdEditor(const char *title, int chan)
 : gWindow(500, 292, title), chan(chan)
@@ -43,9 +47,10 @@ gdEditor::gdEditor(const char *title, int chan)
 	if (G_Conf.sampleEditorX)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, w(), h());
 
-	wt            = new gWaveTools(8, 8, 484, 179, chan);
+	//wt            = new gWaveTools(8, 8, 484, 179, chan);
+	waveform        = new gWaveform(8, 8, 484, 179, chan);
 
-	Fl_Group *tools = new Fl_Group(8, wt->y()+wt->h()+5, w()-16, 92);
+	Fl_Group *tools = new Fl_Group(8, waveform->y()+waveform->h()+5, w()-16, 92);
 	tools->begin();
 		chanStart     = new gInput(50,  192, 70, 20, "Range");
 		chanEnd       = new gInput(124, 192, 70, 20);
@@ -151,7 +156,7 @@ gdEditor::gdEditor(const char *title, int chan)
 
 	gu_setFavicon(this);
 	size_range(500, 292);
-	resizable(wt);
+	resizable(waveform);
 
 	show();
 }
@@ -230,8 +235,8 @@ void gdEditor::__cb_setBoost() {
 		glue_setBoost(this, chan, boost->value(), false);
 	else if (Fl::event() == FL_RELEASE) {
 		glue_setBoost(this, chan, boost->value(), false);
-		wt->wave->alloc();
-		wt->wave->redraw();
+		waveform->alloc();
+		waveform->redraw();
 	}
 }
 
@@ -241,8 +246,8 @@ void gdEditor::__cb_setBoost() {
 
 void gdEditor::__cb_setBoostNum() {
 	glue_setBoost(this, chan, atof(boostNum->value()), true);
-	wt->wave->alloc();
-	wt->wave->redraw();
+	waveform->alloc();
+	waveform->redraw();
 }
 
 
@@ -259,8 +264,8 @@ void gdEditor::__cb_normalize() {
 		boost->value(10.0f);
 	else
 		boost->value(val);
-	wt->wave->alloc();
-	wt->wave->redraw();
+	waveform->alloc();
+	waveform->redraw();
 }
 
 
@@ -290,9 +295,9 @@ void gdEditor::__cb_reload() {
 	pan->value(1.0f);  // glue_setPanning doesn't do it
 	pan->redraw();     // glue_setPanning doesn't do it
 
-	wt->wave->calcZoom();
-	wt->wave->alloc();
-	wt->wave->redraw();
+	waveform->calcZoom();
+	waveform->alloc();
+	waveform->redraw();
 
 	glue_setBeginEndChannel(this, chan, 0, G_Mixer.chan[chan]->size, true);
 

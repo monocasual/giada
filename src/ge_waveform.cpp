@@ -32,6 +32,7 @@
 #include "gd_editor.h"
 #include "wave.h"
 #include "glue.h"
+#include "mixer.h"
 
 
 extern Mixer G_Mixer;
@@ -42,8 +43,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 	chan(ch),
 	menuOpen(false),
 	start(0),
-	dataPos(NULL),
-	dataNeg(NULL),
+	data(NULL),
 	dataSize(0),
 	chanStart(0),
 	chanStartLit(false),
@@ -59,16 +59,21 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 gWaveform::~gWaveform() {
-	if (dataPos != NULL) {
-		free(dataPos);
-		free(dataNeg);
+	if (data != NULL) {
+		free(data);
 		dataSize = 0;
-		//printf("[waveform] dataPos free'd\n");
+		//printf("[waveform] data free'd\n");
 	}
 }
 
 
+/* ------------------------------------------------------------------ */
+
+/*
 bool gWaveform::setZoom(unsigned z) {
 
 	bool ret = true;
@@ -85,6 +90,10 @@ bool gWaveform::setZoom(unsigned z) {
 	//printf("[waveform] set zoom to %d\n", zoom);
 	return ret;
 }
+*/
+
+
+/* ------------------------------------------------------------------ */
 
 
 void gWaveform::alloc() {
@@ -94,18 +103,15 @@ void gWaveform::alloc() {
 
 	/* full wave zoom-affected in memory. Later, we draw a part of it */
 
-	if (dataPos != NULL) {
-		free(dataPos);
-		free(dataNeg);
-		dataPos  = NULL;
-		dataNeg  = NULL;
+	if (data != NULL) {
+		free(data);
+		data  = NULL;
 		dataSize = 0;
-		//printf("[waveform] dataPos free'd\n");
+		//printf("[waveform] data free'd\n");
 	}
 
 	dataSize  = (int) ceilf((float)(G_Mixer.chan[chan]->size) / (float)zoom);
-	dataPos   = (int*) malloc(dataSize*sizeof(int));
-	dataNeg   = (int*) malloc(dataSize*sizeof(int));
+	data   = (int*) malloc(dataSize*sizeof(int));
 
 	printf(
 		"[waveform] alloc %d cells of data (orig.size=%d, zoom=%d)\n",
@@ -116,10 +122,9 @@ void gWaveform::alloc() {
 
 	/* sampling from the original wave */
 
-	int _h     = h()/2;
-	int zero   = y() + _h; // sample zero (-inf dB)
-	unsigned s = 0;
-	int      i = 0;
+	int zero = h()+y()-2; // zero sample (-inf dB)
+	int s = 0;
+	int i = 0;
 	int corrector = zoom % 2 != 0 ? 1 : 0;
 
 	while (i<dataSize) {
@@ -129,37 +134,25 @@ void gWaveform::alloc() {
 		 * pick up Left samples: corrector helps to do it right. */
 
 		if (s+zoom+corrector > G_Mixer.chan[chan]->size) {
-			dataPos[i] = zero;
-			dataNeg[i] = zero;
+			data[i] = zero;
 		}
 		else {
 
-			/* computing values > 0 in dataPos */
+			/* computing values > 0 in data */
 
 			float peak = 0.0f;
-			for (unsigned k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
+			for (int k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
 				if (G_Mixer.chan[chan]->data[k] > peak)
 					peak = G_Mixer.chan[chan]->data[k];
 			}
-			dataPos[i] = zero - (peak * G_Mixer.chanBoost[chan] * _h);
+			data[i] = zero - (peak * G_Mixer.chanBoost[chan] * h());
 
-			/* computing values < 0 in dataNeg */
-
-			peak = 0.0f;
-			for (unsigned k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
-				if (G_Mixer.chan[chan]->data[k] < peak)
-					peak = G_Mixer.chan[chan]->data[k];
-			}
-			dataNeg[i] = zero - (peak * G_Mixer.chanBoost[chan] * _h);
-
-			//printf("dataPos[%d]=%d | range [%d-%d) (zoom=%d)\n", i, dataPos[i], s, s+zoom+corrector, zoom);
+			//printf("data[%d]=%d | range [%d-%d) (zoom=%d)\n", i, data[i], s, s+zoom+corrector, zoom);
 
 			/* avoid window overflow */
 
-			if (dataPos[i] < y())
-				dataPos[i] = y();
-			if (dataNeg[i] > y()+h()-2)
-				dataNeg[i] = y()+h()-2;
+			if (data[i] < y())
+				data[i] = y();
 		}
 		i += 1;
 		s += zoom + corrector;
@@ -167,6 +160,9 @@ void gWaveform::alloc() {
 
 	recalcPoints();
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 void gWaveform::recalcPoints() {
@@ -186,22 +182,19 @@ void gWaveform::recalcPoints() {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 void gWaveform::draw() {
 
 	if (start < 0)
 		start = 0;
 
-	int _h     = h()/2;
-	int zero   = y() + _h; // zero sample (-inf dB)
+	int zero = h()+y()-2; // zero sample (-inf dB)
 
 	/* blank canvas */
 
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
-
-	/* line y = 0  */
-
-	fl_color(0, 0, 0);
-	fl_line(x()+1, zero, w()+x()-2, zero);
 
 	/* draw selection (if any) */
 
@@ -228,11 +221,9 @@ void gWaveform::draw() {
 	fl_color(0, 0, 0);
 	//printf("[waveform] drawing from %d to %d\n", start, w()-2);
 	for (int i=1; i<=w()-2; i++) {
-
 		if (i+start < dataSize) {
 			fl_color(0, 0, 0);
-			fl_line(i+x(), zero, i+x(), dataPos[i+start]);
-			fl_line(i+x(), zero, i+x(), dataNeg[i+start]);
+			fl_line(i+x(), zero, i+x(), data[i+start]);
 		}
 	}
 
@@ -291,9 +282,10 @@ void gWaveform::draw() {
 			fl_draw("e", lineX-10, y()+10);
 		}
 	}
-
-
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 int gWaveform::handle(int e) {
@@ -301,6 +293,12 @@ int gWaveform::handle(int e) {
 	int ret = 0;
 
 	switch (e) {
+
+		case FL_MOUSEWHEEL: {
+			setZoom(Fl::event_dy());
+			ret = 1;
+			break;
+		}
 
 		case FL_PUSH: {
 
@@ -493,11 +491,17 @@ int gWaveform::handle(int e) {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 bool gWaveform::mouseOnStart() {
 	return mouseX-10 >  chanStart - start              &&
 				 mouseX-10 <= chanStart - start + FLAG_WIDTH &&
 				 mouseY    >  h() + y() - FLAG_HEIGHT;
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 bool gWaveform::mouseOnEnd() {
@@ -507,6 +511,9 @@ bool gWaveform::mouseOnEnd() {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 bool gWaveform::mouseOnSelectionA() {
 	if (selectionA == selectionB)
 		return false;
@@ -514,11 +521,17 @@ bool gWaveform::mouseOnSelectionA() {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 bool gWaveform::mouseOnSelectionB() {
 	if (selectionA == selectionB)
 		return false;
 	return mouseX-10 >= selectionB-5-start && mouseX-10 <= selectionB-start;
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 int gWaveform::absolutePoint(int p) {
@@ -533,9 +546,15 @@ int gWaveform::absolutePoint(int p) {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 int gWaveform::relativePoint(int p) {
 	return (ceilf(p / (float) zoom)) * 2;
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 void gWaveform::openEditMenu() {
@@ -658,6 +677,9 @@ void gWaveform::openEditMenu() {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 void gWaveform::straightSel() {
 	if (selectionA > selectionB) {
 		unsigned tmp = selectionB;
@@ -667,10 +689,40 @@ void gWaveform::straightSel() {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
 void gWaveform::calcZoom() {
 	zoom = (int) ceil((float)(G_Mixer.chan[chan]->size) / (float)(w()-2));
 	if (zoom < 2)
 		zoom = 2;
 	initZoom = zoom;
 	//printf("[waveform] init zoom = %d (chansize=%d, windowsize=%d\n", zoom, G_Mixer.chan[chan]->size, w-2);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gWaveform::setZoom(int type) {
+	if (type == -1)			// zoom in
+		zoom = (int) ceil((float) zoom / 2.0f);
+	else                // zoom out
+		zoom = zoom * 2;
+
+	if (zoom % 2 != 0)  // avoid odd values
+		zoom++;
+
+	alloc();
+
+	/* avoid waveform overflow on the rightmost side of the window */
+
+	if (dataSize > w()-2) {
+		int overflow = start+w()-2 - dataSize;
+		if (overflow > 1) {
+			//printf("[waveTools] overflow of %d pixel. Wave->start now = %d, after = %d\n", overflow, wave->start, wave->start - overflow);
+			start -= overflow;
+		}
+	}
+	redraw();
 }
