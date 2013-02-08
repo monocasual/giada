@@ -23,8 +23,8 @@ gd_browser.cpp     ge_waveScroll.cpp    init.cpp             utils.h \
 gd_browser.h       ge_waveScroll.h      init.h  				     gd_config.cpp \
 gg_keyboard.cpp    kernelAudio.cpp      wave.cpp  	         gd_config.h \
 gg_keyboard.h      kernelAudio.h        waveFx.cpp 		       gd_editor.cpp \
-gg_waveTools.cpp   main.cpp             waveFx.h				     gd_editor.h \
-gg_waveTools.h     mixer.cpp            wave.h  				     gd_keyGrabber.cpp \
+main.cpp           waveFx.h				     gd_editor.h           mixer.cpp \
+wave.h  				   gd_keyGrabber.cpp \
 glue.cpp           mixer.h						  ge_browser.h		     ge_browser.cpp \
 gd_devInfo.cpp		 gd_devInfo.h         plugin.h             plugin.cpp \
 pluginHost.h			 pluginHost.cpp       gd_pluginList.h	     gd_pluginList.cpp \
