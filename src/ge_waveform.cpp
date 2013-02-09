@@ -103,7 +103,7 @@ void gWaveform::alloc() {
 	/* sampling from the original wave */
 
 	int offset = h() / 2;
-	int zero   = y() + offset; // sample zero (-inf dB)
+	int zero   = y() + offset; // center, zero amplitude (-inf dB)
 	int s = 0;
 	int i = 0;
 	int corrector = zoom % 2 != 0 ? 1 : 0; /// zoom is ALWAYS even, this is useless
@@ -118,34 +118,26 @@ void gWaveform::alloc() {
 			data.sup[i] = zero;
 		}
 		else {
-
-			/* values > 0 */
-
-			float peak = 0.0f;
+			float peaksup = 0.0f;
+			float peakinf = 0.0f;
 			for (int k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
-				if (G_Mixer.chan[chan]->data[k] > peak)
-					peak = G_Mixer.chan[chan]->data[k];
+				if (G_Mixer.chan[chan]->data[k] > peaksup)
+					peaksup = G_Mixer.chan[chan]->data[k];
+				else
+				if (G_Mixer.chan[chan]->data[k] <= peakinf)
+					peakinf = G_Mixer.chan[chan]->data[k];
 			}
-			data.sup[i] = zero - (peak * G_Mixer.chanBoost[chan] * offset);
+			data.sup[i] = zero - (peaksup * G_Mixer.chanBoost[chan] * offset);
+			data.inf[i] = zero - (peakinf * G_Mixer.chanBoost[chan] * offset);
 
-			/* value < 0 */
+			/* avoid window overflow  */
 
-			peak = 0.0f;
-			for (int k=s; k<s+zoom+corrector; k+=2) {
-				if (G_Mixer.chan[chan]->data[k] < peak)
-					peak = G_Mixer.chan[chan]->data[k];
-			}
-			data.inf[i] = zero + (peak * G_Mixer.chanBoost[chan] * offset);
-
-			/**  avoid window overflow  DO IT IN DRAW() */
-
-			///if (data.sup[i] < y())
-			///	data.sup[i] = y();
+			if (data.sup[i] < y())       data.sup[i] = y();
+			if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
 		}
 		i += 1;
 		s += zoom + corrector;
 	}
-
 	recalcPoints();
 }
 
@@ -203,17 +195,15 @@ void gWaveform::draw() {
 			fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
 	}
 
-	/* draw waveform. S is the offset, driven by the scrollbar */
+	/* draw waveform. start is the offset, driven by the scrollbar */
 
 	fl_color(0, 0, 0);
-	//printf("[waveform] drawing from %d to %d\n", start, w()-2);
-	for (int i=1; i<=w()-2; i++) {
+	for (int i=1; i<=w()-2; i++)
 		if (i+start < data.size) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
 			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
 		}
-	}
 
 	/* border box */
 
