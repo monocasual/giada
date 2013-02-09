@@ -26,7 +26,18 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_browser.h"
+#include "ge_browser.h"
+#include "mixer.h"
+#include "gd_pluginList.h"
+#include "gd_mainWindow.h"
+#include "graphics.h"
+#include "gd_warnings.h"
+#include "wave.h"
+#include "glue.h"
+#include "pluginHost.h"
+
 
 extern Patch         G_Patch;
 extern Conf	         G_Conf;

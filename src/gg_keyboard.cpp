@@ -28,6 +28,18 @@
 
 
 #include "gg_keyboard.h"
+#include "gd_browser.h"
+#include "const.h"
+#include "mixer.h"
+#include "gd_editor.h"
+#include "conf.h"
+#include "patch.h"
+#include "gd_mainWindow.h"
+#include "graphics.h"
+#include "glue.h"
+#include "recorder.h"
+#include "gd_warnings.h"
+#include "pluginHost.h"
 
 
 extern Mixer 		     G_Mixer;

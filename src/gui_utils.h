@@ -36,9 +36,6 @@
 #ifdef __APPLE__
 	#include <libgen.h>	// in osx, for basename() (but linux?)
 #endif
-#include "graphics.h"
-#include "gd_warnings.h"
-#include "ge_window.h"
 
 /* including stuff for the favicon (or whatever called) */
 
@@ -77,7 +74,7 @@ void gu_resetChannel(int c);
 
 void gu_setFavicon(Fl_Window *w);
 
-void gu_openSubWindow(gWindow *parent, gWindow *child, int id);
+void gu_openSubWindow(class gWindow *parent, gWindow *child, int id);
 
 /* refreshActionEditor
  * reload the action editor window by closing and reopening it. It's used
@@ -96,6 +93,6 @@ void gu_closeAllSubwindows();
 /* getSubwindow
  * return a pointer to an open subwindow, otherwise NULL. */
 
-gWindow *gu_getSubwindow(gWindow *parent, int id);
+gWindow *gu_getSubwindow(class gWindow *parent, int id);
 
 #endif

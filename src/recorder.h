@@ -31,11 +31,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "const.h"
 #include "utils.h"
-#include "mixer.h"
-#include "mixerHandler.h"
-#include "kernelAudio.h"
+#include "const.h"
 
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]

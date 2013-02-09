@@ -30,7 +30,7 @@
 #define GE_ACTIONCHANNEL_H
 
 #include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Box.H>
 #include "ge_actionWidget.h"
 #include "gui_utils.h"
 #include "mixer.h"

@@ -26,9 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifdef WITH_VST
 
+#include <FL/Fl_Scroll.H>
 #include "gd_pluginWindow.h"
+#include "pluginHost.h"
+#include "ge_mixed.h"
+#include "gui_utils.h"
 
 
 extern PluginHost G_PluginHost;

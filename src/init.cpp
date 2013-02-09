@@ -26,7 +26,21 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "init.h"
+#include "mixer.h"
+#include "wave.h"
+#include "const.h"
+#include "utils.h"
+#include "mixerHandler.h"
+#include "patch.h"
+#include "conf.h"
+#include "pluginHost.h"
+#include "recorder.h"
+#include "gd_mainWindow.h"
+#include "gui_utils.h"
+#include "gd_warnings.h"
+
 
 extern Mixer 			 G_Mixer;
 extern bool		 		 G_audio_status;
@@ -34,6 +48,7 @@ extern bool		 		 G_audio_status;
 #ifdef WITH_VST
 extern PluginHost	 G_PluginHost;
 #endif
+
 
 Patch 	        G_Patch;
 Conf		        G_Conf;

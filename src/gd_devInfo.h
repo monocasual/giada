@@ -32,8 +32,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "ge_mixed.h"
-#include "kernelAudio.h"
+
 
 class gdDevInfo : public Fl_Window {
 private:

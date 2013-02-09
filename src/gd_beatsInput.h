@@ -31,8 +31,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "patch.h"
-#include "gd_mainWindow.h"
 #include "ge_window.h"
 
 

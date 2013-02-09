@@ -30,8 +30,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>  // memcpy
+#include <math.h>
 #include "wave.h"
 #include "utils.h"
+#include "conf.h"
 #include "init.h"
 
 

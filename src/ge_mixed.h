@@ -50,10 +50,6 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
-#include "gd_mainWindow.h"
-#include "const.h"
-#include "mixer.h"
-
 
 #ifdef _WIN32
 	#include <shlobj.h>  // for SHGetFolderPath
@@ -246,6 +242,15 @@ public:
 
 #define G_BOX FL_FREE_BOXTYPE
 void gDrawBox(int x, int y, int w, int h, Fl_Color c);
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gScrollbar : public Fl_Scrollbar {
+public:
+	gScrollbar(int x, int y, int w, int h, const char *l=0);
+};
 
 
 /* ------------------------------------------------------------------ */

@@ -26,7 +26,17 @@
  *
  * ------------------------------------------------------------------ */
 
+
+#include "mixer.h"
+#include "patch.h"
 #include "gui_utils.h"
+#include "graphics.h"
+#include "gd_warnings.h"
+#include "ge_window.h"
+#include "gd_mainWindow.h"
+#include "recorder.h"
+#include "wave.h"
+
 
 extern Mixer 	       G_Mixer;
 extern unsigned      G_beats;

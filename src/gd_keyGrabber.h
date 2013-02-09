@@ -26,12 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GD_KEYGRABBER_H
 #define GD_KEYGRABBER_H
 
+
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "ge_mixed.h"
+
 
 class gdKeyGrabber : public Fl_Window {
 private:

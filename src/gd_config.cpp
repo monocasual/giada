@@ -26,15 +26,20 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
 #include "ge_mixed.h"
+#include "conf.h"
+#include "gui_utils.h"
+#include "patch.h"
+#include "kernelAudio.h"
 
 
-extern Patch     	 G_Patch;
-extern Conf	 	   	 G_Conf;
-extern bool        G_audio_status;
+extern Patch G_Patch;
+extern Conf	 G_Conf;
+extern bool  G_audio_status;
 
 
 gdConfig::gdConfig(int w, int h)

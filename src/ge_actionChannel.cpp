@@ -27,7 +27,11 @@
  * ------------------------------------------------------------------ */
 
 
+#include <FL/fl_draw.H>
+#include "glue.h"
 #include "ge_actionChannel.h"
+#include "conf.h"
+#include "gd_actionEditor.h"
 
 
 extern Mixer    G_Mixer;

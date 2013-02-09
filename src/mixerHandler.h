@@ -26,18 +26,9 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef MIXERHANDLER_H
 #define MIXERHANDLER_H
-
-#include "mixer.h"
-#include "const.h"
-#include "utils.h"
-#include "init.h"
-#include "pluginHost.h"
-#include "plugin.h"
-#include "waveFx.h"
-#include "glue.h"
-#include "conf.h"
 
 
 /* startChan

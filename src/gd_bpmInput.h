@@ -31,7 +31,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "ge_mixed.h"
 #include "ge_window.h"
 
 

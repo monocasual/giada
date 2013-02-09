@@ -26,9 +26,14 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifdef WITH_VST
 
+
 #include "pluginHost.h"
+#include "conf.h"
+#include "mixer.h"
+#include "gd_mainWindow.h"
 
 
 extern Conf          G_Conf;

@@ -26,7 +26,20 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "mixerHandler.h"
+#include "mixer.h"
+#include "const.h"
+#include "utils.h"
+#include "init.h"
+#include "pluginHost.h"
+#include "plugin.h"
+#include "waveFx.h"
+#include "glue.h"
+#include "conf.h"
+#include "patch.h"
+#include "recorder.h"
+
 
 extern Mixer 		  G_Mixer;
 extern Patch 		  G_Patch;
@@ -35,7 +48,6 @@ extern Conf 		  G_Conf;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
-
 
 
 void mh_startChan(int c, bool do_quantize) {

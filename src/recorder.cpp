@@ -27,11 +27,23 @@
  *
  * ------------------------------------------------------------------ */
 
+
+#include <math.h>
 #include "recorder.h"
+#include "const.h"
+#include "utils.h"
+#include "mixer.h"
+#include "mixerHandler.h"
+#include "kernelAudio.h"
+#include "utils.h"
+#include "patch.h"
+#include "conf.h"
+
 
 extern Mixer G_Mixer;
 extern Patch f_patch;
 extern Conf	 G_Conf;
+
 
 namespace recorder {
 

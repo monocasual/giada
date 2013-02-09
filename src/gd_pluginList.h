@@ -34,9 +34,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
-#include "utils.h"
-#include "gd_pluginWindow.h"
-#include "gd_pluginWindowGUI.h"
 #include "ge_window.h"
 
 
@@ -44,10 +41,10 @@ class gdPluginList : public gWindow {
 
 private:
 
-	int        chan;      // chan == -1 ? masterOut
-	int        stackType;
- 	gClick    *addPlugin;
-	Fl_Scroll *list;
+	int chan;      // chan == -1 ? masterOut
+	int stackType;
+ 	class gClick *addPlugin;
+	Fl_Scroll    *list;
 
 	//gVector<class gdPluginWindow *> subWindows;
 

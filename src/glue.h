@@ -35,10 +35,6 @@
 #ifndef GLUE_H
 #define GLUE_H
 
-#include "mixerHandler.h"
-#include "gui_utils.h"
-#include "ge_mixed.h"
-
 
 int glue_loadChannel(int c, const char *fname, const char *fpath);
 int glue_unloadChannel(int c);

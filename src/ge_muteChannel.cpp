@@ -32,6 +32,7 @@
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
 #include "recorder.h"
+#include "glue.h"
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)

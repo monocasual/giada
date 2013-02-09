@@ -28,11 +28,15 @@
  * ------------------------------------------------------------------ */
 
 
+#include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Menu_Button.H>
 #include "ge_waveform.h"
 #include "gd_editor.h"
 #include "wave.h"
 #include "glue.h"
 #include "mixer.h"
+#include "waveFx.h"
+#include "ge_mixed.h"
 
 
 extern Mixer G_Mixer;
@@ -705,24 +709,38 @@ void gWaveform::calcZoom() {
 
 
 void gWaveform::setZoom(int type) {
+	int newZoom;
 	if (type == -1)			// zoom in
-		zoom = (int) ceil((float) zoom / 2.0f);
+		newZoom = (int) ceil((float) zoom / 2.0f);
 	else                // zoom out
-		zoom = zoom * 2;
+		newZoom = zoom * 2;
 
-	if (zoom % 2 != 0)  // avoid odd values
-		zoom++;
+	if (newZoom % 2 != 0)  // avoid odd values
+		newZoom++;
 
-	alloc();
+	if (newZoom > 2) {
+		zoom = newZoom;
+		alloc();
 
-	/* avoid waveform overflow on the rightmost side of the window */
+		/* avoid waveform overflow on the rightmost side of the window */
 
-	if (dataSize > w()-2) {
-		int overflow = start+w()-2 - dataSize;
-		if (overflow > 1) {
-			//printf("[waveTools] overflow of %d pixel. Wave->start now = %d, after = %d\n", overflow, wave->start, wave->start - overflow);
-			start -= overflow;
+		if (dataSize > w()-2) {
+			int overflow = start+w()-2 - dataSize;
+			if (overflow > 1) {
+				//printf("[waveTools] overflow of %d pixel. Wave->start now = %d, after = %d\n", overflow, wave->start, wave->start - overflow);
+				start -= overflow;
+			}
 		}
+		redraw();
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gWaveform::resize(int x, int y, int w, int h) {
+	Fl_Widget::resize(x,y,w,h);
+	alloc();
 	redraw();
 }

@@ -28,6 +28,14 @@
 
 
 #include "gd_mainWindow.h"
+#include "graphics.h"
+#include "gd_warnings.h"
+#include "glue.h"
+#include "mixer.h"
+#include "recorder.h"
+#include "gd_browser.h"
+#include "mixerHandler.h"
+#include "pluginHost.h"
 
 
 extern Mixer	   		 G_Mixer;

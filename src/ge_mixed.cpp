@@ -26,7 +26,16 @@
  *
  * ------------------------------------------------------------------ */
 
+
+#include <math.h>
 #include "ge_mixed.h"
+#include "gd_mainWindow.h"
+#include "const.h"
+#include "mixer.h"
+#include "graphics.h"
+#include "recorder.h"
+#include "gui_utils.h"
+
 
 extern Mixer 		     G_Mixer;
 extern unsigned 		 G_beats;
@@ -34,7 +43,6 @@ extern bool  		     G_audio_status;
 extern Patch 		     f_patch;
 extern Conf  		     f_conf;
 extern gdMainWindow *mainWin;
-
 
 
 void __cb_window_closer(Fl_Widget *v, void *p) {
@@ -470,7 +478,9 @@ void gDrawBox(int x, int y, int w, int h, Fl_Color c) {
   fl_rect(x, y, w, h);
 }
 
+
 /* ------------------------------------------------------------------ */
+
 
 gSlider::gSlider(int x, int y, int w, int h, const char *l)
 	: Fl_Slider(x, y, w, h, l)
@@ -484,4 +494,18 @@ gSlider::gSlider(int x, int y, int w, int h, const char *l)
 	box(G_BOX);
 	color(COLOR_BG_0);
 	selection_color(COLOR_BD_0);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gScrollbar::gScrollbar(int x, int y, int w, int h, const char *l)
+	: Fl_Scrollbar(x, y, w, h, l)
+{
+	type(Fl_Scroll::HORIZONTAL);
+	color(COLOR_BG_0);
+	selection_color(COLOR_BG_1);
+	labelcolor(COLOR_BD_1);
+	slider(G_BOX);
 }

@@ -26,7 +26,10 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "ge_browser.h"
+#include "const.h"
+#include "utils.h"
 
 
 gBrowser::gBrowser(int x, int y, int w, int h, const char *L)

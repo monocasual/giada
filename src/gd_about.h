@@ -32,9 +32,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "ge_mixed.h"
-#include "graphics.h"
-#include "gui_utils.h"
+#include "ge_window.h"
 
 
 class gdAbout : public gWindow {

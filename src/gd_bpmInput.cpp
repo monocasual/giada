@@ -26,7 +26,15 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_bpmInput.h"
+#include "gd_mainWindow.h"
+#include "conf.h"
+#include "ge_mixed.h"
+#include "mixer.h"
+#include "gui_utils.h"
+#include "glue.h"
+
 
 extern Mixer     		 G_Mixer;
 extern Conf          G_Conf;

@@ -27,12 +27,15 @@
  * ------------------------------------------------------------------ */
 
 
+#include <math.h>
 #include "gd_actionEditor.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
+#include "conf.h"
+#include "ge_mixed.h"
 
 
 extern Mixer G_Mixer;

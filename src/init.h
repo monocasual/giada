@@ -34,13 +34,6 @@
 #ifdef __APPLE__
 	#include <pwd.h>
 #endif
-#include "mixer.h"
-#include "wave.h"
-#include "const.h"
-#include "utils.h"
-#include "mixerHandler.h"
-#include "patch.h"
-#include "conf.h"
 
 
 void init_prepareParser();

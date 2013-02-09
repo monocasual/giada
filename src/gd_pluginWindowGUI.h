@@ -35,8 +35,8 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "pluginHost.h"
-#include "ge_mixed.h"
+#include "ge_window.h"
+
 
 #if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
@@ -45,7 +45,7 @@
 class gdPluginWindowGUI : public gWindow {
 private:
 
-	Plugin *pPlugin;
+	class Plugin *pPlugin;
 #if defined(__APPLE__)
 	WindowRef window;
 #endif

@@ -34,14 +34,13 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "pluginHost.h"
-#include "ge_mixed.h"
+#include "ge_window.h"
 
 
 class gdPluginWindow : public gWindow {
 private:
 
-	Plugin                    *pPlugin;
+	class Plugin              *pPlugin;
 	gVector <class gSlider *>  sliders;
 	gVector <class gBox *>     values;
 

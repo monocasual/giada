@@ -26,9 +26,19 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifdef WITH_VST
 
 #include "gd_pluginList.h"
+#include "utils.h"
+#include "gd_pluginWindow.h"
+#include "gd_pluginWindowGUI.h"
+#include "conf.h"
+#include "gui_utils.h"
+#include "gd_browser.h"
+#include "graphics.h"
+#include "pluginHost.h"
+#include "ge_mixed.h"
 
 
 extern Conf       G_Conf;

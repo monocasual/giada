@@ -34,6 +34,16 @@
 
 #include "glue.h"
 #include "ge_waveform.h"
+#include "mixerHandler.h"
+#include "gui_utils.h"
+#include "ge_mixed.h"
+#include "mixer.h"
+#include "recorder.h"
+#include "gd_mainWindow.h"
+#include "gd_editor.h"
+#include "wave.h"
+#include "gd_warnings.h"
+#include "pluginHost.h"
 
 
 extern gdMainWindow *mainWin;

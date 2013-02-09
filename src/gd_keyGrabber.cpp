@@ -26,7 +26,13 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_keyGrabber.h"
+#include "ge_mixed.h"
+#include "conf.h"
+#include "gui_utils.h"
+#include "gd_config.h"
+
 
 extern Conf	G_Conf;
 

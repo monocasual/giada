@@ -26,15 +26,15 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GD_BROWSER_H
 #define GD_BROWSER_H
 
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include "ge_browser.h"
-#include "mixer.h"
-#include "gd_pluginList.h"
 #include "ge_window.h"
+
 
 class gdBrowser : public gWindow {
 

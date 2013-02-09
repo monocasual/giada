@@ -27,12 +27,16 @@
  * ------------------------------------------------------------------ */
 
 
+#include <math.h>
 #include "mixer.h"
 #include "init.h"
 #include "wave.h"
 #include "gui_utils.h"
 #include "recorder.h"
 #include "pluginHost.h"
+#include "patch.h"
+#include "conf.h"
+#include "mixerHandler.h"
 
 
 extern Mixer 			 G_Mixer;

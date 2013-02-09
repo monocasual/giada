@@ -26,9 +26,13 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifdef WITH_VST
 
 #include "gd_pluginWindowGUI.h"
+#include "pluginHost.h"
+#include "ge_mixed.h"
+#include "gui_utils.h"
 
 #if defined(__APPLE__)
 static pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void* inUserData);

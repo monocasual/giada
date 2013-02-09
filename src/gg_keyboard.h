@@ -26,16 +26,15 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GG_KEYBOARD_H
 #define GG_KEYBOARD_H
 
 #include <stdio.h>
 #include <stdint.h>          // for intptr_t
 #include <FL/Fl.H>
-#include "gd_browser.h"
+#include <FL/Fl_Group.H>
 #include "const.h"
-#include "mixer.h"
-#include "gd_editor.h"
 
 
 class Keyboard : public Fl_Group {

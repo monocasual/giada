@@ -26,7 +26,12 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_devInfo.h"
+#include "ge_mixed.h"
+#include "kernelAudio.h"
+#include "gui_utils.h"
+
 
 gdDevInfo::gdDevInfo(unsigned dev)
 : Fl_Window(340, 300, "Device information") {

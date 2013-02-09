@@ -28,6 +28,13 @@
 
 
 #include "patch.h"
+#include "init.h"
+#include "recorder.h"
+#include "utils.h"
+#include "conf.h"
+#include "pluginHost.h"
+#include "wave.h"
+#include "mixer.h"
 
 
 extern Mixer 		  G_Mixer;

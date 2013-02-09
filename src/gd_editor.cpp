@@ -32,6 +32,10 @@
 #include "ge_waveform.h"
 #include "waveFx.h"
 #include "conf.h"
+#include "gui_utils.h"
+#include "glue.h"
+#include "gd_warnings.h"
+#include "mixerHandler.h"
 
 
 extern Mixer         G_Mixer;
@@ -47,8 +51,8 @@ gdEditor::gdEditor(const char *title, int chan)
 	if (G_Conf.sampleEditorX)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, w(), h());
 
-	//wt            = new gWaveTools(8, 8, 484, 179, chan);
-	waveform        = new gWaveform(8, 8, 484, 179, chan);
+	waveform        = new gWaveform(8, 8, 484, 155, chan);
+	//scrollbar       = new Fl_Scroll
 
 	Fl_Group *tools = new Fl_Group(8, waveform->y()+waveform->h()+5, w()-16, 92);
 	tools->begin();

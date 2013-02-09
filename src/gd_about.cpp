@@ -26,7 +26,13 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "gd_about.h"
+#include "conf.h"
+#include "ge_mixed.h"
+#include "graphics.h"
+#include "gui_utils.h"
+
 
 extern Conf G_Conf;
 
