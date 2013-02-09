@@ -45,38 +45,53 @@ class gWaveform : public Fl_Widget {
 
 private:
 
+	struct data {
+		int *sup;
+		int *inf;
+		int  size;
+	} data;
+
 	/* chan
 	 * chan in use. */
 	int  chan;
 
 	/* menuOpen
 	 * is the menu open? */
+
 	bool menuOpen;
 
 	/* mouseOnStart/end
 	 * is mouse on start or end flag? */
+
 	bool mouseOnStart();
 	bool mouseOnEnd();
 
 	/* mouseOnSelectionA/B
 	 * as above, for the selection */
+
 	bool mouseOnSelectionA();
 	bool mouseOnSelectionB();
 
 	/* absolutePoint
 	 * from a relative 'p' point (zoom affected) returns the same point
 	 * zoom 1:1 based */
+
 	int absolutePoint(int p);
 
 	/* relativePoint
 	 * from an absolute 'p' point (1:1 zoom), returns the same point zoom
 	 * affected */
+
 	int relativePoint(int p);
 
 	/* straightSel
 	 * helper function which flattens the selection if it was made from
 	 * right to left (inverse selection) */
+
 	void straightSel();
+
+
+	void freeData();
 
 
 public:
@@ -86,7 +101,6 @@ public:
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 
-	//bool setZoom(unsigned z);
 	void alloc(); 			       // alloc memory for the picture
 	void recalcPoints();       // re-calc chanStart, chanEnd, ...
 	void openEditMenu();
@@ -106,8 +120,6 @@ public:
 	int  zoom;
 	int  initZoom;
 	int  start;		      // start drawing from here
-	int *data;          // only positive values (> 0.0f)
-	int  dataSize;
 	int  chanStart;
 	bool chanStartLit;
 	int  chanEnd;

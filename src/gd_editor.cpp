@@ -36,6 +36,7 @@
 #include "glue.h"
 #include "gd_warnings.h"
 #include "mixerHandler.h"
+#include "ge_mixed.h"
 
 
 extern Mixer         G_Mixer;
@@ -44,31 +45,31 @@ extern Conf	         G_Conf;
 
 
 gdEditor::gdEditor(const char *title, int chan)
-: gWindow(500, 292, title), chan(chan)
+: gWindow(640, 480, title), chan(chan)
 {
 	set_non_modal();
 
 	if (G_Conf.sampleEditorX)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, w(), h());
 
-	waveform        = new gWaveform(8, 8, 484, 155, chan);
-	//scrollbar       = new Fl_Scroll
+	waveform        = new gWaveform(8, 8, 624, 336, chan);
+	scrollbar       = new gScrollbar(8, waveform->y()+waveform->h()+8, 100, 20);
 
-	Fl_Group *tools = new Fl_Group(8, waveform->y()+waveform->h()+5, w()-16, 92);
+	Fl_Group *tools = new Fl_Group(8, scrollbar->y()+scrollbar->h()+8, w()-16, 92);
 	tools->begin();
-		chanStart     = new gInput(50,  192, 70, 20, "Range");
-		chanEnd       = new gInput(124, 192, 70, 20);
-		resetStartEnd = new gClick(198, 192, 50, 20, "Reset");
-		volume        = new gDial (100,	216, 20, 20, "Volume");
-		volumeNum     = new gInput(124,	216, 45, 20, "dB");
-		boost         = new gDial (100,	240, 20, 20, "Boost");
-		boostNum      = new gInput(124,	240, 45, 20, "dB");
-		normalize     = new gClick(198, 240, 50, 20, "Norm.");
-		pan 					= new gDial (100, 264, 20, 20, "Pan");
-		panNum    		= new gInput(124,	264, 45, 20, "%");
-		reload    		= new gClick(252, 192, 50, 20, "Reload");
-		pitch					= new gDial (300,	216, 20, 20, "Pitch");
-		pitchNum		  = new gInput(324,	216, 45, 20);
+		chanStart     = new gInput(50,  tools->y(), 70, 20, "Range");
+		chanEnd       = new gInput(124, tools->y(), 70, 20);
+		resetStartEnd = new gClick(198, tools->y(), 50, 20, "Reset");
+		reload    		= new gClick(252, tools->y(), 50, 20, "Reload");
+		volume        = new gDial (100,	chanEnd->y()+chanEnd->h()+4, 20, 20, "Volume");
+		volumeNum     = new gInput(124,	volume->y(), 45, 20, "dB");
+		boost         = new gDial (100,	volume->y()+volume->h()+4, 20, 20, "Boost");
+		boostNum      = new gInput(124,	boost->y(), 45, 20, "dB");
+		normalize     = new gClick(198, boost->y(), 50, 20, "Norm.");
+		pan 					= new gDial (100, boost->y()+boost->h()+4, 20, 20, "Pan");
+		panNum    		= new gInput(124,	pan->y(), 45, 20, "%");
+		pitch					= new gDial (300,	volume->y(), 20, 20, "Pitch");
+		pitchNum		  = new gInput(324,	volume->y(), 45, 20);
 		gBox *spacer  = new gBox(pitchNum->x()+pitchNum->w()+4, tools->y(), 80, tools->h());    // padding actionType - zoomButtons
 	tools->end();
 	tools->resizable(spacer);
