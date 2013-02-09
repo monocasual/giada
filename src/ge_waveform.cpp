@@ -102,10 +102,11 @@ void gWaveform::alloc() {
 
 	/* sampling from the original wave */
 
-	int zero = h() / 2; // zero sample (-inf dB)
+	int offset = h() / 2;
+	int zero   = y() + offset; // sample zero (-inf dB)
 	int s = 0;
 	int i = 0;
-	int corrector = zoom % 2 != 0 ? 1 : 0;
+	int corrector = zoom % 2 != 0 ? 1 : 0; /// zoom is ALWAYS even, this is useless
 
 	while (i < data.size) {
 
@@ -118,21 +119,28 @@ void gWaveform::alloc() {
 		}
 		else {
 
-			/* computing values > 0 in data */
+			/* values > 0 */
 
 			float peak = 0.0f;
 			for (int k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
 				if (G_Mixer.chan[chan]->data[k] > peak)
 					peak = G_Mixer.chan[chan]->data[k];
 			}
-			data.sup[i] = zero - (peak * G_Mixer.chanBoost[chan] * h());
+			data.sup[i] = zero - (peak * G_Mixer.chanBoost[chan] * offset);
 
-			//printf("data[%d]=%d | range [%d-%d) (zoom=%d)\n", i, data[i], s, s+zoom+corrector, zoom);
+			/* value < 0 */
 
-			/* avoid window overflow */
+			peak = 0.0f;
+			for (int k=s; k<s+zoom+corrector; k+=2) {
+				if (G_Mixer.chan[chan]->data[k] < peak)
+					peak = G_Mixer.chan[chan]->data[k];
+			}
+			data.inf[i] = zero + (peak * G_Mixer.chanBoost[chan] * offset);
 
-			if (data.sup[i] < y())
-				data.sup[i] = y();
+			/**  avoid window overflow  DO IT IN DRAW() */
+
+			///if (data.sup[i] < y())
+			///	data.sup[i] = y();
 		}
 		i += 1;
 		s += zoom + corrector;
@@ -170,7 +178,8 @@ void gWaveform::draw() {
 	if (start < 0)
 		start = 0;
 
-	int zero = h() / 2; // zero sample (-inf dB)
+	int offset = h() / 2;
+	int zero   = y() + offset; // sample zero (-inf dB)
 
 	/* blank canvas */
 
@@ -188,8 +197,6 @@ void gWaveform::draw() {
 		if (b_x >= w()-1)
 			b_x = w()-1;
 
-		//printf("[waveform] drawing selectionA = %d, selectionB = %d\n", a_x, b_x);
-
 		if (selectionA < selectionB)
 			fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), COLOR_BD_0);
 		else
@@ -204,6 +211,7 @@ void gWaveform::draw() {
 		if (i+start < data.size) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
+			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
 		}
 	}
 
