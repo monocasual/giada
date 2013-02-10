@@ -53,6 +53,7 @@ private:
 
 	/* chan
 	 * chan in use. */
+
 	int  chan;
 
 	/* menuOpen
@@ -101,8 +102,16 @@ public:
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 
-	void alloc(); 			       // alloc memory for the picture
-	void recalcPoints();       // re-calc chanStart, chanEnd, ...
+	/* alloc
+	 * allocate memory for the picture */
+
+	void alloc();
+
+	/* recalcPoints
+	 * re-calc chanStart, chanEnd, ... */
+
+	void recalcPoints();
+
 	void openEditMenu();
 
 	/* calcZoom
@@ -112,10 +121,22 @@ public:
 
 	void calcZoom();
 
+	/* displayRadio
+	 * how much of the waveform is being displayed on screen */
+
+	inline float displayRatio() { return 1.0f / (data.size / (float) w()); };
+
+	/* scroll
+	 * move the waveform to pixel 'px'. */
+
+	void scrollTo(int px);
+
 	/* zoom
 	 * type == 1 : zoom out, type == -1: zoom in */
 
 	void setZoom(int type);
+
+	inline int getSize() { return data.size; }
 
 	int  zoom;
 	int  initZoom;

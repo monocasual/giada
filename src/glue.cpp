@@ -44,6 +44,7 @@
 #include "wave.h"
 #include "gd_warnings.h"
 #include "pluginHost.h"
+#include "gg_waveTools.h"
 
 
 extern gdMainWindow *mainWin;
@@ -546,8 +547,8 @@ void glue_setBeginEndChannel(gdEditor *win, int ch, int b, int e, bool recalc, b
 	/* recalc is not needed when the user drags the bars directly over the waveform */
 
 	if (recalc) {
-		win->waveform->recalcPoints();	// importante, altrimenti non si vedono
-		win->waveform->redraw();
+		win->waveTools->waveform->recalcPoints();	// importante, altrimenti non si vedono
+		win->waveTools->waveform->redraw();
 	}
 }
 

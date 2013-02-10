@@ -37,6 +37,7 @@
 #include "mixer.h"
 #include "waveFx.h"
 #include "ge_mixed.h"
+#include "gg_waveTools.h"
 
 
 extern Mixer G_Mixer;
@@ -271,12 +272,6 @@ int gWaveform::handle(int e) {
 	int ret = 0;
 
 	switch (e) {
-
-		case FL_MOUSEWHEEL: {
-			setZoom(Fl::event_dy());
-			ret = 1;
-			break;
-		}
 
 		case FL_PUSH: {
 
@@ -623,9 +618,9 @@ void gWaveform::openEditMenu() {
 		selectionB_abs = 0;
 		start          = 0;
 
-		calcZoom();
 		alloc();
 		redraw();
+		((gWaveTools*)parent())->updateScrollbar();
 		menuOpen = false;
 		return;
 	}
@@ -649,6 +644,7 @@ void gWaveform::openEditMenu() {
 		calcZoom();
 		alloc();
 		redraw();
+		((gWaveTools*)parent())->updateScrollbar();
 		menuOpen = false;
 		return;
 	}
@@ -718,3 +714,14 @@ void gWaveform::resize(int x, int y, int w, int h) {
 	alloc();
 	redraw();
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gWaveform::scrollTo(int px) {
+	start = px;
+	redraw();
+}
+
+

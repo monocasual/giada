@@ -37,6 +37,7 @@
 #include "gd_warnings.h"
 #include "mixerHandler.h"
 #include "ge_mixed.h"
+#include "gg_waveTools.h"
 
 
 extern Mixer         G_Mixer;
@@ -50,12 +51,9 @@ gdEditor::gdEditor(const char *title, int chan)
 	set_non_modal();
 
 	if (G_Conf.sampleEditorX)
-		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, w(), h());
+		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, G_Conf.sampleEditorW, G_Conf.sampleEditorH);
 
-	waveform        = new gWaveform(8, 8, 624, 336, chan);
-	scrollbar       = new gScrollbar(8, waveform->y()+waveform->h()+8, 100, 20);
-
-	Fl_Group *tools = new Fl_Group(8, scrollbar->y()+scrollbar->h()+8, w()-16, 92);
+	Fl_Group *tools = new Fl_Group(8, 376, w()-16, 92);
 	tools->begin();
 		chanStart     = new gInput(50,  tools->y(), 70, 20, "Range");
 		chanEnd       = new gInput(124, tools->y(), 70, 20);
@@ -73,6 +71,11 @@ gdEditor::gdEditor(const char *title, int chan)
 		gBox *spacer  = new gBox(pitchNum->x()+pitchNum->w()+4, tools->y(), 80, tools->h());    // padding actionType - zoomButtons
 	tools->end();
 	tools->resizable(spacer);
+
+	/** FIXME - if wavetools goes before tools, the latter no longer receives
+	 * mouse events. FLTK bug? */
+
+	waveTools = new gWaveTools(8, 8, w()-16, 360, chan);
 
 	char buf[16];
 	sprintf(buf, "%d", G_Mixer.chanStartTrue[chan]/2); // divided by 2 because stereo
@@ -160,8 +163,8 @@ gdEditor::gdEditor(const char *title, int chan)
 	panNum->cursor_color(FL_WHITE);
 
 	gu_setFavicon(this);
-	size_range(500, 292);
-	resizable(waveform);
+	size_range(640, 480);
+	resizable(waveTools);
 
 	show();
 }
@@ -240,8 +243,7 @@ void gdEditor::__cb_setBoost() {
 		glue_setBoost(this, chan, boost->value(), false);
 	else if (Fl::event() == FL_RELEASE) {
 		glue_setBoost(this, chan, boost->value(), false);
-		waveform->alloc();
-		waveform->redraw();
+	waveTools->updateWaveform();
 	}
 }
 
@@ -251,8 +253,7 @@ void gdEditor::__cb_setBoost() {
 
 void gdEditor::__cb_setBoostNum() {
 	glue_setBoost(this, chan, atof(boostNum->value()), true);
-	waveform->alloc();
-	waveform->redraw();
+	waveTools->updateWaveform();
 }
 
 
@@ -269,8 +270,7 @@ void gdEditor::__cb_normalize() {
 		boost->value(10.0f);
 	else
 		boost->value(val);
-	waveform->alloc();
-	waveform->redraw();
+	waveTools->updateWaveform();
 }
 
 
@@ -300,9 +300,8 @@ void gdEditor::__cb_reload() {
 	pan->value(1.0f);  // glue_setPanning doesn't do it
 	pan->redraw();     // glue_setPanning doesn't do it
 
-	waveform->calcZoom();
-	waveform->alloc();
-	waveform->redraw();
+	waveTools->waveform->calcZoom();
+	waveTools->updateWaveform();
 
 	glue_setBeginEndChannel(this, chan, 0, G_Mixer.chan[chan]->size, true);
 

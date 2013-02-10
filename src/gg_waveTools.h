@@ -26,52 +26,29 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GG_WAVETOOLS_H
 #define GG_WAVETOOLS_H
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include "ge_waveform.h"
-#include "ge_waveScroll.h"
-#include "mixer.h"
+
 
 class gWaveTools : public Fl_Group {
 private:
-	static void cb_zoomPlus(Fl_Widget *w, void *p);
-	static void cb_zoomMins(Fl_Widget *w, void *p);
 	static void cb_scroll(Fl_Widget *w, void *p);
-	static void cb_moveLeft(Fl_Widget *w, void *p);
-	static void cb_moveRight(Fl_Widget *w, void *p);
-	inline void __cb_zoomPlus(Fl_Widget *v);
-	inline void __cb_zoomMins(Fl_Widget *v);
 	inline void __cb_scroll();
-	inline void __cb_moveLeft();
-	inline void __cb_moveRight();
-
-	/* getScrollPosition
-	 * return the scrollbar value according to the length of the wave */
-	int getScrollPosition();
-
-	void zoom(int type);
-
-	void move(int dir);
-
-	/* setScrollPosition
-	 * update the scrollbar position when clicking on < and > buttons */
-	int setScrollPosition();
-
-	class gWavescroll  *scrollBar;
-	class gClickRepeat *scrollLeft;
-	class gClickRepeat *scrollRight;
-	class gClick		   *zoomPlus;
-	class gClick		   *zoomMins;
-
-	int j; // for scrolling (see .cpp)
 
 public:
-	gWaveTools(int X,int Y,int W,int H, int chan, const char *L=0);
+	class gScrollbar *scrollbar;
+	class gWaveform  *waveform;
 
-	class gWaveform   *wave;
+	gWaveTools(int X,int Y,int W, int H, int chan, const char *L=0);
+
+	int  handle(int e);
+
+	void updateWaveform();
+	void updateScrollbar();
 };
 
 #endif

@@ -64,8 +64,7 @@ public:
 	gdEditor(const char *title, int chan);
 	~gdEditor();
 
-	class gScrollbar *scrollbar;
-	class gWaveform  *waveform;
+	class gWaveTools *waveTools;
 	class gInput     *chanStart;
 	class gInput     *chanEnd;
 	class gClick		 *resetStartEnd;
