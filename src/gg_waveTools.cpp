@@ -35,18 +35,20 @@
 
 
 gWaveTools::gWaveTools(int x, int y, int w, int h, int chan, const char *l)
-	: Fl_Group(x, y, w, h, l)
+	: Fl_Scroll(x, y, w, h, l)
 {
+	type(Fl_Scroll::HORIZONTAL_ALWAYS);
+	hscrollbar.color(COLOR_BG_0);
+	hscrollbar.selection_color(COLOR_BG_1);
+	hscrollbar.labelcolor(COLOR_BD_1);
+	hscrollbar.slider(G_BOX);
 
-	waveform  = new gWaveform(x, y, w, h-28, chan);
-	scrollbar = new gScrollbar(x, y+h-20, w, 20);
-	scrollbar->slider_size(1.0f);
-	scrollbar->bounds(0, waveform->getSize());
-	scrollbar->value(0);
-	scrollbar->callback(cb_scroll, (void*)this);
+	waveform = new gWaveform(x, y, w, h-24, chan);
 
-	resizable(waveform);
+
+	//resizable(waveform);
 }
+
 
 
 /* ------------------------------------------------------------------ */
@@ -61,9 +63,9 @@ void gWaveTools::updateWaveform() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::updateScrollbar() {
-	scrollbar->slider_size(waveform->displayRatio());
-	scrollbar->bounds(0, waveform->getSize()-w()+2);
+void gWaveTools::resize(int x, int y, int w, int h) {
+	Fl_Widget::resize(x, y, w, h);
+	waveform->resize(x, y, w, h-24);
 }
 
 
@@ -75,7 +77,7 @@ int gWaveTools::handle(int e) {
 	switch (e) {
 		case FL_MOUSEWHEEL: {
 			waveform->setZoom(Fl::event_dy());
-			updateScrollbar();
+			redraw();
 			ret = 1;
 			break;
 		}
@@ -83,16 +85,3 @@ int gWaveTools::handle(int e) {
 	return ret;
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-void gWaveTools::cb_scroll(Fl_Widget *v, void *p)  { ((gWaveTools*)p)->__cb_scroll(); }
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gWaveTools::__cb_scroll() {
-	waveform->scrollTo(scrollbar->value());
-}

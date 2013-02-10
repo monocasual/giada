@@ -199,8 +199,9 @@ void gWaveform::draw() {
 	/* draw waveform. start is the offset, driven by the scrollbar */
 
 	fl_color(0, 0, 0);
-	for (int i=1; i<=w()-2; i++)
-		if (i+start < data.size) {
+	///for (int i=1; i<=w()-2; i++)
+	///	if (i+start < data.size) {
+	for (int i=0; i<data.size; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
 			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
@@ -620,7 +621,7 @@ void gWaveform::openEditMenu() {
 
 		alloc();
 		redraw();
-		((gWaveTools*)parent())->updateScrollbar();
+		//((gWaveTools*)parent())->updateScrollbar();
 		menuOpen = false;
 		return;
 	}
@@ -644,7 +645,7 @@ void gWaveform::openEditMenu() {
 		calcZoom();
 		alloc();
 		redraw();
-		((gWaveTools*)parent())->updateScrollbar();
+		//((gWaveTools*)parent())->updateScrollbar();
 		menuOpen = false;
 		return;
 	}
@@ -694,6 +695,7 @@ void gWaveform::setZoom(int type) {
 
 		/* avoid waveform overflow on the rightmost side of the window */
 
+		/*
 		if (data.size > w()-2) {
 			int overflow = start+w()-2 - data.size;
 			if (overflow > 1) {
@@ -701,6 +703,8 @@ void gWaveform::setZoom(int type) {
 				start -= overflow;
 			}
 		}
+		*/
+		size(data.size, h());
 		redraw();
 	}
 }
@@ -710,7 +714,7 @@ void gWaveform::setZoom(int type) {
 
 
 void gWaveform::resize(int x, int y, int w, int h) {
-	Fl_Widget::resize(x,y,w,h);
+	Fl_Widget::resize(x, y, data.size, h);
 	alloc();
 	redraw();
 }

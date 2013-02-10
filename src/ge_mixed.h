@@ -248,15 +248,6 @@ void gDrawBox(int x, int y, int w, int h, Fl_Color c);
 /* ------------------------------------------------------------------ */
 
 
-class gScrollbar : public Fl_Scrollbar {
-public:
-	gScrollbar(int x, int y, int w, int h, const char *l=0);
-};
-
-
-/* ------------------------------------------------------------------ */
-
-
 class gSlider : public Fl_Slider {
 public:
 	gSlider(int x, int y, int w, int h, const char *l=0);

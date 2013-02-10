@@ -496,16 +496,3 @@ gSlider::gSlider(int x, int y, int w, int h, const char *l)
 	selection_color(COLOR_BD_0);
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-gScrollbar::gScrollbar(int x, int y, int w, int h, const char *l)
-	: Fl_Scrollbar(x, y, w, h, l)
-{
-	type(Fl_Scroll::HORIZONTAL);
-	color(COLOR_BG_0);
-	selection_color(COLOR_BG_1);
-	labelcolor(COLOR_BD_1);
-	slider(G_BOX);
-}

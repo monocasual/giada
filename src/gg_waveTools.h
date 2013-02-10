@@ -32,23 +32,18 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Scroll.H>
 
 
-class gWaveTools : public Fl_Group {
-private:
-	static void cb_scroll(Fl_Widget *w, void *p);
-	inline void __cb_scroll();
-
+class gWaveTools : public Fl_Scroll {
 public:
-	class gScrollbar *scrollbar;
 	class gWaveform  *waveform;
 
 	gWaveTools(int X,int Y,int W, int H, int chan, const char *L=0);
-
+	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 
 	void updateWaveform();
-	void updateScrollbar();
 };
 
 #endif
