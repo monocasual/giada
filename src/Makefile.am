@@ -11,29 +11,7 @@ endif
 
 bin_PROGRAMS = giada
 
-giada_SOURCES = \
-const.h            gd_keyGrabber.h      glue.h               mixerHandler.cpp \
-gd_about.cpp       gd_mainWindow.cpp    graphics.cpp         mixerHandler.h \
-gd_about.h         gd_mainWindow.h      graphics.h           patch.cpp \
-gd_beatsInput.cpp  gd_warnings.cpp      ge_mixed.cpp         patch.h \
-gd_beatsInput.h    gd_warnings.h        ge_mixed.h           recorder.cpp \
-gd_bpmInput.cpp    ge_waveform.cpp      gui_utils.cpp        recorder.h \
-gd_bpmInput.h      ge_waveform.h        gui_utils.h          utils.cpp \
-gd_browser.cpp     ge_waveScroll.cpp    init.cpp             utils.h \
-gd_browser.h       ge_waveScroll.h      init.h  				     gd_config.cpp \
-gg_keyboard.cpp    kernelAudio.cpp      wave.cpp  	         gd_config.h \
-gg_keyboard.h      kernelAudio.h        waveFx.cpp 		       gd_editor.cpp \
-main.cpp           waveFx.h				     gd_editor.h           mixer.cpp \
-wave.h  				   gd_keyGrabber.cpp \
-glue.cpp           mixer.h						  ge_browser.h		     ge_browser.cpp \
-gd_devInfo.cpp		 gd_devInfo.h         plugin.h             plugin.cpp \
-pluginHost.h			 pluginHost.cpp       gd_pluginList.h	     gd_pluginList.cpp \
-gd_pluginWindow.h	 gd_pluginWindow.cpp  ge_window.h			     ge_window.cpp \
-dataStorage.h			 dataStorage.cpp		  conf.h					     conf.cpp \
-gd_actionEditor.h	 gd_actionEditor.cpp  ge_muteChannel.h     ge_muteChannel.cpp \
-ge_actionChannel.h ge_actionChannel.cpp gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
-ge_actionWidget.h  ge_actionWidget.cpp
-
+giada_SOURCES = *.h *.cpp
 
 # Check for environment: these vars are defined via AM_CONDITIONAL
 # inside configure.ac
