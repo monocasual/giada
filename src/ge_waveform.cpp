@@ -192,13 +192,14 @@ void gWaveform::draw() {
 			fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
 	}
 
-	/* draw waveform. start is the offset, driven by the scrollbar */
+	/* draw waveform from x1, the offset driven by the scrollbar to x2,
+	 * the width of parent window */
+
+	int x1 = abs(x() - ((gWaveTools*)parent())->x());
+	int x2 = x1 + ((gWaveTools*)parent())->w();
 
 	fl_color(0, 0, 0);
-	///for (int i=1; i<=w()-2; i++)
-	///	if (i+start < data.size) {
-	printf("waveform x()=%d\n", x());
-	for (int i=0; i<data.size; i++) {
+	for (int i=x1; i<x2; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
 			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
