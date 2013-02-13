@@ -53,7 +53,10 @@ gdEditor::gdEditor(const char *title, int chan)
 	if (G_Conf.sampleEditorX)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, G_Conf.sampleEditorW, G_Conf.sampleEditorH);
 
-	Fl_Group *tools = new Fl_Group(8, 376, w()-16, 92);
+	waveTools = new gWaveTools(8, 8, w()-16, h()-120, chan);
+	waveTools->end();
+
+	Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
 	tools->begin();
 		chanStart     = new gInput(50,  tools->y(), 70, 20, "Range");
 		chanEnd       = new gInput(124, tools->y(), 70, 20);
@@ -71,11 +74,6 @@ gdEditor::gdEditor(const char *title, int chan)
 		gBox *spacer  = new gBox(pitchNum->x()+pitchNum->w()+4, tools->y(), 80, tools->h());    // padding actionType - zoomButtons
 	tools->end();
 	tools->resizable(spacer);
-
-	/** FIXME - if wavetools goes before tools, the latter no longer receives
-	 * mouse events. FLTK bug? */
-
-	waveTools = new gWaveTools(8, 8, w()-16, 360, chan);
 
 	char buf[16];
 	sprintf(buf, "%d", G_Mixer.chanStartTrue[chan]/2); // divided by 2 because stereo
@@ -300,7 +298,7 @@ void gdEditor::__cb_reload() {
 	pan->value(1.0f);  // glue_setPanning doesn't do it
 	pan->redraw();     // glue_setPanning doesn't do it
 
-	waveTools->waveform->calcZoom();
+	waveTools->waveform->stretchToWindow();
 	waveTools->updateWaveform();
 
 	glue_setBeginEndChannel(this, chan, 0, G_Mixer.chan[chan]->size, true);
