@@ -90,7 +90,10 @@ int openDevice(
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId  = outDev;
+	if (outDev == DEFAULT_SOUNDDEV_OUT)
+		outParams.deviceId = getDefaultOut();
+	else
+		outParams.deviceId = outDev;
 	outParams.nChannels = 2;
 	outParams.firstChannel = outChan*2; // chan 0=0, 1=2, 2=4, ...
 
@@ -324,6 +327,18 @@ int	getFreq(unsigned dev, int i) {
 	catch (RtError &e) {
 		return 0;
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int getDefaultIn() {
+	return system->getDefaultInputDevice();
+}
+
+int getDefaultOut() {
+	return system->getDefaultOutputDevice();
 }
 
 

@@ -519,15 +519,15 @@ void glue_startStopMetronome() {
 void glue_setBeginEndChannel(gdEditor *win, int ch, int b, int e, bool recalc, bool check) {
 
 	if (check) {
-		if ((unsigned) e > G_Mixer.chan[ch]->size)
+		if (e > G_Mixer.chan[ch]->size)
 			e = G_Mixer.chan[ch]->size;
 		if (b < 0)
 			b = 0;
-		if ((unsigned) b > G_Mixer.chan[ch]->size)
+		if (b > G_Mixer.chan[ch]->size)
 			b = (G_Mixer.chan[ch]->size)-2;
-		if ((unsigned) b >= G_Mixer.chanEndTrue[ch])
+		if (b >= G_Mixer.chanEndTrue[ch])
 			b = G_Mixer.chanStart[ch];
-		if ((unsigned) e <= G_Mixer.chanStartTrue[ch])
+		if (e <= G_Mixer.chanStartTrue[ch])
 			e = G_Mixer.chanEnd[ch];
 	}
 

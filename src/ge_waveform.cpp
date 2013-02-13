@@ -101,32 +101,29 @@ void gWaveform::alloc() {
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
-	/* sampling from the original wave */
+	/* sampling from the original wave. Warning: zoom must always be a power
+	 * of two (even number). */
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
-	int s = 0;
-	int i = 0;
-	int corrector = zoom % 2 != 0 ? 1 : 0; /// zoom is ALWAYS even, this is useless
 
-	while (i < data.size) {
+	for (int i=0, s=0; i<data.size; i++) {
 
 		/* how to draw a scaled wave: for each chunk s+zoom compute the peak
-		 * inside that range. That's the point we will draw on screen. Always
-		 * pick up Left samples: corrector helps to do it right. */
+		 * inside that range. That's the point we will draw on screen. */
 
-		if (s+zoom+corrector > G_Mixer.chan[chan]->size) {
+		if (s+zoom > G_Mixer.chan[chan]->size) {
 			data.sup[i] = zero;
 		}
 		else {
 			float peaksup = 0.0f;
 			float peakinf = 0.0f;
-			for (int k=s; k<s+zoom+corrector; k+=2) {  // k+=2: LRLRLRLRLRLRLR... only L channels
+			for (int k=s; k<s+zoom; k+=2) {
 				if (G_Mixer.chan[chan]->data[k] > peaksup)
-					peaksup = G_Mixer.chan[chan]->data[k];
+					peaksup = G_Mixer.chan[chan]->data[k];    // Left data only
 				else
 				if (G_Mixer.chan[chan]->data[k] <= peakinf)
-					peakinf = G_Mixer.chan[chan]->data[k];
+					peakinf = G_Mixer.chan[chan]->data[k];    // Left data only
 			}
 			data.sup[i] = zero - (peaksup * G_Mixer.chanBoost[chan] * offset);
 			data.inf[i] = zero - (peakinf * G_Mixer.chanBoost[chan] * offset);
@@ -136,8 +133,7 @@ void gWaveform::alloc() {
 			if (data.sup[i] < y())       data.sup[i] = y();
 			if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
 		}
-		i += 1;
-		s += zoom + corrector;
+		s += zoom;
 	}
 	recalcPoints();
 }
@@ -201,6 +197,7 @@ void gWaveform::draw() {
 	fl_color(0, 0, 0);
 	///for (int i=1; i<=w()-2; i++)
 	///	if (i+start < data.size) {
+	printf("waveform x()=%d\n", x());
 	for (int i=0; i<data.size; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
@@ -671,8 +668,9 @@ void gWaveform::calcZoom() {
 	zoom = (int) ceil((float)(G_Mixer.chan[chan]->size) / (float)(w()-2));
 	if (zoom < 2)
 		zoom = 2;
+	if (zoom % 2 != 0)  // avoid odd values
+		zoom++;
 	initZoom = zoom;
-	//printf("[waveform] init zoom = %d (chansize=%d, windowsize=%d\n", zoom, G_Mixer.chan[chan]->size, w-2);
 }
 
 

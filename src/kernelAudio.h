@@ -60,6 +60,8 @@ namespace kernelAudio {
 	int         getTotalFreqs(unsigned dev);
 	int					getFreq(unsigned dev, int i);
 	int					getDeviceByName(const char *name);
+	int         getDefaultOut();
+	int         getDefaultIn();
 
 	/* *** how to avoid multiple definition of ***
 	 * When you declare a variable in a header file, every source file that
