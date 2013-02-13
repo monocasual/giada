@@ -60,8 +60,9 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 	data.sup  = NULL;
 	data.inf  = NULL;
 	data.size = 0;
-	calcZoom();
-	alloc();
+	//calcZoom();
+	//alloc();
+	stretchToWindow();
 }
 
 
@@ -90,14 +91,17 @@ void gWaveform::freeData() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::alloc() {
+void gWaveform::alloc(int datasize) {
 
 	/* note: zoom must be always greater than 2: we don't want to draw
 	 * the pair Left+Right, this is a representation of the left channel */
 
 	freeData();
 
-	data.size = (int) ceilf((float) G_Mixer.chan[chan]->size / (float) zoom);
+	if (datasize)
+		data.size = datasize;
+	else
+		data.size = (int) ceilf((float) G_Mixer.chan[chan]->size / (float) zoom);
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
@@ -164,9 +168,6 @@ void gWaveform::recalcPoints() {
 
 void gWaveform::draw() {
 
-	if (start < 0)
-		start = 0;
-
 	int offset = h() / 2;
 	int zero   = y() + offset; // sample zero (-inf dB)
 
@@ -178,8 +179,8 @@ void gWaveform::draw() {
 
 	if (selectionA != selectionB) {
 
-		int a_x = selectionA - start;
-		int b_x = selectionB - start;
+		int a_x = selectionA + x() - BORDER; // - start;
+		int b_x = selectionB + x() - BORDER; //  - start;
 
 		if (a_x < 0)
 			a_x = 0;
@@ -195,11 +196,11 @@ void gWaveform::draw() {
 	/* draw waveform from x1, the offset driven by the scrollbar to x2,
 	 * the width of parent window */
 
-	int x1 = abs(x() - ((gWaveTools*)parent())->x());
-	int x2 = x1 + ((gWaveTools*)parent())->w();
+	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
+	int wx2 = wx1 + ((gWaveTools*)parent())->w();
 
 	fl_color(0, 0, 0);
-	for (int i=x1; i<x2; i++) {
+	for (int i=wx1; i<wx2; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
 			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
@@ -290,7 +291,7 @@ int gWaveform::handle(int e) {
 				}
 				else {
 					dragged = true;
-					selectionA = mouseX - BORDER + start;
+					selectionA = Fl::event_x() - x();
 
 					if (selectionA >= data.size) selectionA = data.size;
 
@@ -422,7 +423,7 @@ int gWaveform::handle(int e) {
 			else
 			if (dragged) {
 
-				selectionB = Fl::event_x() - BORDER + start;
+				selectionB = Fl::event_x() - x();
 
 				if (selectionB >= data.size)
 					selectionB = data.size;
@@ -431,25 +432,16 @@ int gWaveform::handle(int e) {
 					selectionB = 0;
 
 				selectionB_abs = absolutePoint(selectionB);
-
-				/*
-				printf("selection: x1 = %d (abs = %d) x2 = %d (abs = %d)\n",
-					selectionA,
-					selectionA_abs,
-					selectionB,
-					selectionB_abs
-				);
-				*/
 				redraw();
 			}
 			else
 			if (resized) {
 				if (mouseOnSelectionA()) {
-					selectionA     = Fl::event_x() - BORDER + start;
+					selectionA     = Fl::event_x() - x();
 					selectionA_abs = absolutePoint(selectionA);
 				}
 				else {
-					selectionB     = Fl::event_x() - BORDER + start;
+					selectionB     = Fl::event_x() - x();
 					selectionB_abs = absolutePoint(selectionB);
 				}
 				redraw();
@@ -489,7 +481,7 @@ bool gWaveform::mouseOnEnd() {
 bool gWaveform::mouseOnSelectionA() {
 	if (selectionA == selectionB)
 		return false;
-	return mouseX-10 >= selectionA-5-start && mouseX-10 <= selectionA-start;
+	return mouseX >= selectionA-5+x() && mouseX <= selectionA+5+x();
 }
 
 
@@ -499,7 +491,7 @@ bool gWaveform::mouseOnSelectionA() {
 bool gWaveform::mouseOnSelectionB() {
 	if (selectionA == selectionB)
 		return false;
-	return mouseX-10 >= selectionB-5-start && mouseX-10 <= selectionB-start;
+	return mouseX >= selectionB-5+x() && mouseX <= selectionB+5+x();
 }
 
 
@@ -507,7 +499,6 @@ bool gWaveform::mouseOnSelectionB() {
 
 
 int gWaveform::absolutePoint(int p) {
-
 	if (p <= 0)
 		return 0;
 
@@ -640,11 +631,9 @@ void gWaveform::openEditMenu() {
 		selectionB_abs = 0;
 		start          = 0;
 
-		calcZoom();
-		alloc();
-		redraw();
-		//((gWaveTools*)parent())->updateScrollbar();
+		stretchToWindow();
 		menuOpen = false;
+		redraw();
 		return;
 	}
 }
@@ -665,19 +654,6 @@ void gWaveform::straightSel() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::calcZoom() {
-	zoom = (int) ceil((float)(G_Mixer.chan[chan]->size) / (float)(w()-2));
-	if (zoom < 2)
-		zoom = 2;
-	if (zoom % 2 != 0)  // avoid odd values
-		zoom++;
-	initZoom = zoom;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void gWaveform::setZoom(int type) {
 	int newZoom;
 	if (type == -1)			// zoom in
@@ -691,19 +667,22 @@ void gWaveform::setZoom(int type) {
 	if (newZoom > 2) {
 		zoom = newZoom;
 		alloc();
-
-		/* avoid waveform overflow on the rightmost side of the window */
-
-		/*
-		if (data.size > w()-2) {
-			int overflow = start+w()-2 - data.size;
-			if (overflow > 1) {
-				//printf("[waveTools] overflow of %d pixel. Wave->start now = %d, after = %d\n", overflow, wave->start, wave->start - overflow);
-				start -= overflow;
-			}
-		}
-		*/
 		size(data.size, h());
+
+		/* avoid overflow when zooming out with scrollbar like that:
+		 * |----------[     ]| */
+
+		int offset = x() + w() - ((gWaveTools*)parent())->w();
+		if (offset < 0)
+			position(x()-offset+BORDER, y());
+
+		/* avoid  */
+
+		if (data.size < ((gWaveTools*)parent())->w()-2) {
+			//puts("ugly underflow");
+			//zoom = data.size / (float) G_Mixer.chan[chan]->size;
+		}
+
 		redraw();
 	}
 }
@@ -728,3 +707,17 @@ void gWaveform::scrollTo(int px) {
 }
 
 
+/* ------------------------------------------------------------------ */
+
+
+void gWaveform::stretchToWindow() {
+	int s = ((gWaveTools*)parent())->w()-1;
+
+	zoom = ceil(G_Mixer.chan[chan]->size / (float) s);
+	if (zoom < 2)       zoom = 2;
+	if (zoom % 2 != 0)  zoom++;
+
+	printf("stretchToWindow %d\n", s);
+	alloc(s);
+	size(s, h());
+}

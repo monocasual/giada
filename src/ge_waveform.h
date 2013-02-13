@@ -94,7 +94,6 @@ private:
 
 	void freeData();
 
-
 public:
 	gWaveform(int x, int y, int w, int h, int chan, const char *l=0);
 	~gWaveform();
@@ -105,7 +104,7 @@ public:
 	/* alloc
 	 * allocate memory for the picture */
 
-	void alloc();
+	void alloc(int datasize=0);
 
 	/* recalcPoints
 	 * re-calc chanStart, chanEnd, ... */
@@ -113,13 +112,6 @@ public:
 	void recalcPoints();
 
 	void openEditMenu();
-
-	/* calcZoom
-	 * (re)calculate zoom from the original sample in Mixer. Use this method
-	 * only after a cut or trim: the editor needs to update the zoom because
-	 * the sample is shortened */
-
-	void calcZoom();
 
 	/* displayRadio
 	 * how much of the waveform is being displayed on screen */
@@ -135,6 +127,11 @@ public:
 	 * type == 1 : zoom out, type == -1: zoom in */
 
 	void setZoom(int type);
+
+	/* strecthToWindow
+	 * shrink or enlarge the waveform to match parent's width (gWaveTools) */
+
+	void stretchToWindow();
 
 	inline int getSize() { return data.size; }
 
