@@ -198,6 +198,8 @@ void gWaveform::draw() {
 
 	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
 	int wx2 = wx1 + ((gWaveTools*)parent())->w();
+	if (x()+w() < ((gWaveTools*)parent())->w())
+		wx2 = x() + w() - BORDER;
 
 	fl_color(0, 0, 0);
 	for (int i=wx1; i<wx2; i++) {
@@ -670,18 +672,22 @@ void gWaveform::setZoom(int type) {
 		size(data.size, h());
 
 		/* avoid overflow when zooming out with scrollbar like that:
-		 * |----------[     ]| */
+		 * |----------[scrollbar]|
+		 *
+		 * offset vs smaller:
+		 * |[wave------------| offset > 0  smaller = false
+		 * |[wave----]       | offset < 0, smaller = true */
 
-		int offset = x() + w() - ((gWaveTools*)parent())->w();
+		int  offset  = x() + w() - ((gWaveTools*)parent())->w();
+		bool smaller = w() < ((gWaveTools*)parent())->w();
+
+		if (smaller && offset < 0) {
+			position(BORDER, y());
+			stretchToWindow();
+		}
+		else
 		if (offset < 0)
 			position(x()-offset+BORDER, y());
-
-		/* avoid  */
-
-		if (data.size < ((gWaveTools*)parent())->w()-2) {
-			//puts("ugly underflow");
-			//zoom = data.size / (float) G_Mixer.chan[chan]->size;
-		}
 
 		redraw();
 	}
@@ -717,7 +723,6 @@ void gWaveform::stretchToWindow() {
 	if (zoom < 2)       zoom = 2;
 	if (zoom % 2 != 0)  zoom++;
 
-	printf("stretchToWindow %d\n", s);
 	alloc(s);
 	size(s, h());
 }
