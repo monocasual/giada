@@ -136,7 +136,6 @@ public:
 
 	int  zoom;
 	int  initZoom;
-	int  start;		      // start drawing from here
 	int  chanStart;
 	bool chanStartLit;
 	int  chanEnd;

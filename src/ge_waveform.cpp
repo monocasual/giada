@@ -47,7 +47,6 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
 	chan(ch),
 	menuOpen(false),
-	start(0),
 	chanStart(0),
 	chanStartLit(false),
 	chanEnd(0),
@@ -216,66 +215,50 @@ void gWaveform::draw() {
 	fl_color(0, 0, 0);
 	for (int i=wx1; i<wx2; i++) {
 			fl_color(0, 0, 0);
-			fl_line(i+x(), zero, i+x(), data.sup[i+start]);
-			fl_line(i+x(), zero, i+x(), data.inf[i+start]);
+			fl_line(i+x(), zero, i+x(), data.sup[i]);
+			fl_line(i+x(), zero, i+x(), data.inf[i]);
 		}
 
 	/* border box */
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
-	/* chanStart, if visible */
+	/* print chanStart */
 
-	if (chanStart >= start && chanStart-start < w()-2) {
-	//if (chanStart >= x() && chanStart-x() < w()-2) {
+	int lineX = x()+chanStart+1;
 
-		//printf("[waveform] print chanStart at %d\n", chanStart+x());
+	if (chanStartLit) fl_color(COLOR_BD_1);
+	else              fl_color(COLOR_BD_0);
 
-		int lineX = x()+chanStart-start+1;
-		//int lineX = x()+chanStart+1;
+	/* vertical line */
 
-		if (chanStartLit)
-			fl_color(COLOR_BD_1);
-		else
-			fl_color(COLOR_BD_0);
+	fl_line(lineX, y()+1, lineX, y()+h()-2);
 
-		/* vertical line */
-		fl_line(lineX, y()+1, lineX, y()+h()-2);
+	/* print flag and avoid overflow */
 
-		/* print flag and avoid overflow */
-
-		if (lineX+FLAG_WIDTH > w()+x()-2)
-			fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, w()-lineX+x()-1, FLAG_HEIGHT);
-		else  {
-			fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
-			fl_color(255, 255, 255);
-			fl_draw("s", lineX+4, y()+h()-3);
-		}
+	if (lineX+FLAG_WIDTH > w()+x()-2)
+		fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, w()-lineX+x()-1, FLAG_HEIGHT);
+	else  {
+		fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
+		fl_color(255, 255, 255);
+		fl_draw("s", lineX+4, y()+h()-3);
 	}
 
-	/* print chanEnd, if visible (as above) */
+	/* print chanEnd */
 
-	if (chanEnd >= start && chanEnd-start <= w()-1) {
+	lineX = x()+chanEnd;
 
-		//printf("[waveform] print chanEnd at %d\n", chanEnd-start);
+	if (chanEndLit)	fl_color(COLOR_BD_1);
+	else            fl_color(COLOR_BD_0);
 
-		int lineX = x()+chanEnd-start;
+	fl_line(lineX, y()+1, lineX, y()+h()-2);
 
-		//printf("[waveform] print chanEnd at %d (abs=%d), start=%d\n", x()+i, chanEnd, start);
-		if (chanEndLit)
-			fl_color(COLOR_BD_1);
-		else
-			fl_color(COLOR_BD_0);
-
-		fl_line(lineX, y()+1, lineX, y()+h()-2);
-
-		if (lineX-FLAG_WIDTH < x())
-			fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
-		else {
-			fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
-			fl_color(255, 255, 255);
-			fl_draw("e", lineX-10, y()+10);
-		}
+	if (lineX-FLAG_WIDTH < x())
+		fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
+	else {
+		fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
+		fl_color(255, 255, 255);
+		fl_draw("e", lineX-10, y()+10);
 	}
 }
 
@@ -425,8 +408,8 @@ int gWaveform::handle(int e) {
 
 				chanEnd += Fl::event_x() - mouseX;
 
-				if (chanEnd > data.size)
-					chanEnd = data.size;
+				if (chanEnd >= data.size - 2)
+					chanEnd = data.size - 2;
 
 				if (chanEnd <= chanStart)
 					chanEnd = chanStart + 2;
@@ -475,8 +458,8 @@ int gWaveform::handle(int e) {
 
 
 bool gWaveform::mouseOnStart() {
-	return mouseX-10 >  chanStart - start              &&
-				 mouseX-10 <= chanStart - start + FLAG_WIDTH &&
+	return mouseX-10 >  chanStart + x() - BORDER              &&
+				 mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
 				 mouseY    >  h() + y() - FLAG_HEIGHT;
 }
 
@@ -485,8 +468,8 @@ bool gWaveform::mouseOnStart() {
 
 
 bool gWaveform::mouseOnEnd() {
-	return mouseX-10 >= chanEnd - start - FLAG_WIDTH &&
-				 mouseX-10 <= chanEnd - start              &&
+	return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
+				 mouseX-10 <= chanEnd + x() - BORDER              &&
 				 mouseY    <= y() + FLAG_HEIGHT + 1;
 }
 
@@ -622,7 +605,6 @@ void gWaveform::openEditMenu() {
 		selectionB     = 0;
 		selectionA_abs = 0;
 		selectionB_abs = 0;
-		start          = 0;
 
 		alloc();
 		redraw();
@@ -645,7 +627,6 @@ void gWaveform::openEditMenu() {
 		selectionB     = 0;
 		selectionA_abs = 0;
 		selectionB_abs = 0;
-		start          = 0;
 
 		stretchToWindow();
 		menuOpen = false;
@@ -714,7 +695,6 @@ void gWaveform::setZoom(int type) {
 
 
 void gWaveform::scrollTo(int px) {
-	start = px;
 	redraw();
 }
 
