@@ -694,14 +694,6 @@ void gWaveform::setZoom(int type) {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::scrollTo(int px) {
-	redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void gWaveform::stretchToWindow() {
 	int s = ((gWaveTools*)parent())->w();
 

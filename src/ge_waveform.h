@@ -117,11 +117,6 @@ public:
 
 	inline float displayRatio() { return 1.0f / (data.size / (float) w()); };
 
-	/* scroll
-	 * move the waveform to pixel 'px'. */
-
-	void scrollTo(int px);
-
 	/* zoom
 	 * type == 1 : zoom out, type == -1: zoom in */
 
