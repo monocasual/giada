@@ -100,8 +100,6 @@ void gWaveform::alloc(int datasize) {
 	if (datasize)	data.size = datasize;
 	else          data.size = ceilf(G_Mixer.chan[chan]->size / (float) zoom);
 
-	printf("alloc datasize = %d\n", data.size);
-
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
@@ -110,11 +108,24 @@ void gWaveform::alloc(int datasize) {
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
+	int margin = data.size - ceilf(G_Mixer.chan[chan]->size / (float) zoom);
+	int spread = margin == 0 ? 0 : data.size / margin;
+
+	//printf("data.size = %d, margin = %d, spread = %d\n", data.size, margin, spread);
 
 	for (int i=0, s=0; i<data.size; i++) {
 
 		/* how to draw a scaled wave: for each chunk s+zoom compute the peak
-		 * inside that range. That's the point we will draw on screen. */
+		 * inside that range. That's the point we will draw on screen. Use the
+		 * margin and the spread in order to fit the entire window nicely:
+		 * fill data with a padding pixel each 'spread' pixels */
+
+		if (spread != 0 && i % spread == 0) {
+			//printf("spread correction at %d\n", i);
+			data.sup[i] = zero;
+			data.inf[i] = zero;
+			continue;
+		}
 
 		if (s+zoom > G_Mixer.chan[chan]->size) {
 			data.sup[i] = zero;
@@ -158,7 +169,7 @@ void gWaveform::recalcPoints() {
 	 * sample */
 
 	if (G_Mixer.chanEndTrue[chan] == G_Mixer.chan[chan]->size)
-		chanEnd = data.size;
+		chanEnd = data.size - 2; // 2 px border
 	else
 		chanEnd = relativePoint(G_Mixer.chanEndTrue[chan] / 2);
 }
@@ -216,10 +227,12 @@ void gWaveform::draw() {
 	/* chanStart, if visible */
 
 	if (chanStart >= start && chanStart-start < w()-2) {
+	//if (chanStart >= x() && chanStart-x() < w()-2) {
 
-		//printf("[waveform] print chanStart at %d\n", chanStart-start);
+		//printf("[waveform] print chanStart at %d\n", chanStart+x());
 
 		int lineX = x()+chanStart-start+1;
+		//int lineX = x()+chanStart+1;
 
 		if (chanStartLit)
 			fl_color(COLOR_BD_1);
