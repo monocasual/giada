@@ -98,10 +98,9 @@ void gWaveform::alloc(int datasize) {
 
 	freeData();
 
-	if (datasize)
-		data.size = datasize;
-	else
-		data.size = (int) ceilf((float) G_Mixer.chan[chan]->size / (float) zoom);
+	if (datasize)	data.size = datasize;
+	else          data.size = ceilf(G_Mixer.chan[chan]->size / (float) zoom);
+
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
@@ -680,6 +679,8 @@ void gWaveform::setZoom(int type) {
 
 		int  offset  = x() + w() - ((gWaveTools*)parent())->w();
 		bool smaller = w() < ((gWaveTools*)parent())->w();
+
+		printf("offset = %d, smaller = %d\n", offset, smaller);
 
 		if (smaller && offset < 0) {
 			position(BORDER, y());
