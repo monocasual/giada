@@ -48,6 +48,8 @@ private:
 	static void cb_reload       (Fl_Widget *w, void *p);
 	static void cb_setPitch     (Fl_Widget *w, void *p);
 	static void cb_setPitchNum  (Fl_Widget *w, void *p);
+	static void cb_zoomIn       (Fl_Widget *w, void *p);
+	static void cb_zoomOut      (Fl_Widget *w, void *p);
 	inline void __cb_setChanPos();
 	inline void __cb_resetStartEnd();
 	inline void __cb_setVolume();
@@ -59,6 +61,8 @@ private:
 	inline void __cb_reload();
 	inline void __cb_setPitch();
 	inline void __cb_setPitchNum();
+	inline void __cb_zoomIn();
+	inline void __cb_zoomOut();
 
 public:
 	gdEditor(const char *title, int chan);

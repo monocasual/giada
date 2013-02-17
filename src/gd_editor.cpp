@@ -61,8 +61,6 @@ gdEditor::gdEditor(const char *title, int chan)
 	bar->end();
 	bar->resizable(new gBox(reload->x()+reload->w()+4, bar->y(), 80, bar->h()));
 
-
-
 	waveTools = new gWaveTools(8, 36, w()-16, h()-120, chan);
 	waveTools->end();
 
@@ -144,6 +142,9 @@ gdEditor::gdEditor(const char *title, int chan)
 
 	reload->callback(cb_reload, (void*)this);
 
+	zoomOut->callback(cb_zoomOut, (void*)this);
+	zoomIn->callback(cb_zoomIn, (void*)this);
+
 	/* logical samples (aka takes) cannot be reloaded. So far. */
 
 	if (G_Mixer.chan[chan]->isLogical)
@@ -203,6 +204,8 @@ void gdEditor::cb_panning      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_pa
 void gdEditor::cb_reload       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
 void gdEditor::cb_setPitch     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
 void gdEditor::cb_setPitchNum  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
+void gdEditor::cb_zoomIn       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
+void gdEditor::cb_zoomOut      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -330,4 +333,22 @@ void gdEditor::__cb_setPitch() {
 
 void gdEditor::__cb_setPitchNum() {
 	glue_setPitch(this, chan, atof(pitchNum->value()), true);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_zoomIn() {
+	waveTools->waveform->setZoom(-1);
+	waveTools->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_zoomOut() {
+	waveTools->waveform->setZoom(0);
+	waveTools->redraw();
 }
