@@ -98,7 +98,6 @@ public:
 	gWaveform(int x, int y, int w, int h, int chan, const char *l=0);
 	~gWaveform();
 	void draw();
-	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 
 	/* alloc

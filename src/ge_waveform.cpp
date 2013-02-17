@@ -60,8 +60,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 	data.sup  = NULL;
 	data.inf  = NULL;
 	data.size = 0;
-	//calcZoom();
-	//alloc();
+
 	stretchToWindow();
 }
 
@@ -101,6 +100,8 @@ void gWaveform::alloc(int datasize) {
 	if (datasize)	data.size = datasize;
 	else          data.size = ceilf(G_Mixer.chan[chan]->size / (float) zoom);
 
+	printf("alloc datasize = %d\n", data.size);
+
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
@@ -117,6 +118,7 @@ void gWaveform::alloc(int datasize) {
 
 		if (s+zoom > G_Mixer.chan[chan]->size) {
 			data.sup[i] = zero;
+			data.inf[i] = zero;
 		}
 		else {
 			float peaksup = 0.0f;
@@ -680,7 +682,7 @@ void gWaveform::setZoom(int type) {
 		int  offset  = x() + w() - ((gWaveTools*)parent())->w();
 		bool smaller = w() < ((gWaveTools*)parent())->w();
 
-		printf("offset = %d, smaller = %d\n", offset, smaller);
+		///printf("offset = %d, smaller = %d\n", offset, smaller);
 
 		if (smaller && offset < 0) {
 			position(BORDER, y());
@@ -692,16 +694,6 @@ void gWaveform::setZoom(int type) {
 
 		redraw();
 	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gWaveform::resize(int x, int y, int w, int h) {
-	Fl_Widget::resize(x, y, data.size, h);
-	alloc();
-	redraw();
 }
 
 
