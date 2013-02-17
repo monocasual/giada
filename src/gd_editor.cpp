@@ -172,7 +172,7 @@ gdEditor::gdEditor(const char *title, int chan)
 	panNum->cursor_color(FL_WHITE);
 
 	gu_setFavicon(this);
-	size_range(320, 200);
+	size_range(640, 480);
 	resizable(waveTools);
 
 	show();

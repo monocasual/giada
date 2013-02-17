@@ -69,12 +69,17 @@ void gWaveTools::resize(int x, int y, int w, int h) {
 		waveform->resize(x, y, waveform->w(), h-24);
 		updateWaveform();
 	}
-	else {                                                        // vertical resize
+	else {                                                        // horizontal resize
 		Fl_Widget::resize(x, y, w, h);
 	}
 
 	if (this->w() > waveform->w())
 		waveform->stretchToWindow();
+
+	int offset = waveform->x() + waveform->w() - this->w() - this->x();
+	printf("offset = %d\n", offset);
+	if (offset < 0)
+		waveform->position(waveform->x()-offset, this->y());
 }
 
 

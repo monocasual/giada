@@ -676,8 +676,6 @@ void gWaveform::setZoom(int type) {
 		int  offset  = x() + w() - ((gWaveTools*)parent())->w();
 		bool smaller = w() < ((gWaveTools*)parent())->w();
 
-		///printf("offset = %d, smaller = %d\n", offset, smaller);
-
 		if (smaller && offset < 0) {
 			position(BORDER, y());
 			stretchToWindow();
