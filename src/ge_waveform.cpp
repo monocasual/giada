@@ -710,7 +710,7 @@ void gWaveform::scrollTo(int px) {
 
 
 void gWaveform::stretchToWindow() {
-	int s = ((gWaveTools*)parent())->w()-1;
+	int s = ((gWaveTools*)parent())->w();
 
 	zoom = ceil(G_Mixer.chan[chan]->size / (float) s);
 	if (zoom < 2)       zoom = 2;

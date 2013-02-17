@@ -64,8 +64,17 @@ void gWaveTools::updateWaveform() {
 
 
 void gWaveTools::resize(int x, int y, int w, int h) {
-	Fl_Widget::resize(x, y, w, h);
-	waveform->resize(x, y, w, h-24);
+	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
+		Fl_Widget::resize(x, y, w, h);
+		waveform->resize(x, y, waveform->w(), h-24);
+		updateWaveform();
+	}
+	else {                                                        // vertical resize
+		Fl_Widget::resize(x, y, w, h);
+	}
+
+	if (this->w() > waveform->w())
+		waveform->stretchToWindow();
 }
 
 
