@@ -64,6 +64,8 @@ public:
 	gdEditor(const char *title, int chan);
 	~gdEditor();
 
+	class gClick     *zoomIn;
+	class gClick     *zoomOut;
 	class gWaveTools *waveTools;
 	class gInput     *chanStart;
 	class gInput     *chanEnd;
