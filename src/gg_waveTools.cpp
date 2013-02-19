@@ -77,7 +77,6 @@ void gWaveTools::resize(int x, int y, int w, int h) {
 		waveform->stretchToWindow();
 
 	int offset = waveform->x() + waveform->w() - this->w() - this->x();
-	printf("offset = %d\n", offset);
 	if (offset < 0)
 		waveform->position(waveform->x()-offset, this->y());
 }

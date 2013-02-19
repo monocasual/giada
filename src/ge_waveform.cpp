@@ -221,6 +221,8 @@ void gWaveform::draw() {
 
 	/* border box */
 
+	/// TODO: draw only if visible (wx1 < x < wx2)
+
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
 	/* print chanStart */
@@ -653,18 +655,30 @@ void gWaveform::straightSel() {
 
 void gWaveform::setZoom(int type) {
 	int newZoom;
-	if (type == -1)			// zoom in
+	int oldSize;
+	if (type == -1)		// zoom in
 		newZoom = (int) ceil((float) zoom / 2.0f);
-	else                // zoom out
-		newZoom = zoom * 2;
+	else               // zoom out
+		newZoom = zoom * 2.0f;
 
 	if (newZoom % 2 != 0)  // avoid odd values
 		newZoom++;
 
 	if (newZoom > 2) {
-		zoom = newZoom;
+		oldSize = data.size;
+		zoom    = newZoom;
 		alloc();
 		size(data.size, h());
+
+		float  diff  = data.size - oldSize;
+		float mouse = Fl::event_x() - BORDER;
+		float pw    = ((gWaveTools*)parent())->w();
+
+		float yy = (mouse * diff) / pw;
+
+		printf("y = %f\n", yy);
+		position(x() - yy, y());
+
 
 		/* avoid overflow when zooming out with scrollbar like that:
 		 * |----------[scrollbar]|
