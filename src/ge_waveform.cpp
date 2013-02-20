@@ -670,14 +670,19 @@ void gWaveform::setZoom(int type) {
 		alloc();
 		size(data.size, h());
 
-		float  diff  = data.size - oldSize;
-		float mouse = Fl::event_x() - BORDER;
-		float pw    = ((gWaveTools*)parent())->w();
+		/* zoom to pointer - we need to map the cursor's range [0, w()] to
+		 * [0, diff] in order to shift the waveform and place it under the
+		 * cursor. Using the formula of a rect between two points A(w, diff)
+		 * and B(0, 0) we get y = (x*diff) / w. This is the amount to subtract
+		 * from x() in order to shift it correctly. */
 
-		float yy = (mouse * diff) / pw;
+		int diff  = data.size - oldSize;
+		int mouse = Fl::event_x() - BORDER;
+		int pw    = ((gWaveTools*)parent())->w();
 
-		printf("y = %f\n", yy);
-		position(x() - yy, y());
+		int newx = x() - ((mouse * diff) / (float) pw);
+		if (newx > 0)	newx = 0;
+		position(newx, y());
 
 
 		/* avoid overflow when zooming out with scrollbar like that:
