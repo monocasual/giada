@@ -104,7 +104,7 @@ public:
 	/* alloc
 	 * allocate memory for the picture */
 
-	void alloc(int datasize=0);
+	int alloc(int datasize=0);
 
 	/* recalcPoints
 	 * re-calc chanStart, chanEnd, ... */

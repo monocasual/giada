@@ -89,25 +89,29 @@ void gWaveform::freeData() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::alloc(int datasize) {
+int gWaveform::alloc(int datasize) {
 
 	/* note: zoom must be always greater than 2: we don't want to draw
 	 * the pair Left+Right, this is a representation of the left channel */
 
+	zoom = G_Mixer.chan[chan]->size / datasize;
+	if (zoom < 2)
+		return 0;
+
 	freeData();
 
-	if (datasize)	data.size = datasize;
-	else          data.size = ceilf(G_Mixer.chan[chan]->size / (float) zoom);
-
+	data.size = datasize;
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
+
+
 
 	/* sampling from the original wave. Warning: zoom must always be a power
 	 * of two (even number). */
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
-	int margin = data.size - ceilf(G_Mixer.chan[chan]->size / (float) zoom);
+	int margin = 0; ///data.size - ceilf(G_Mixer.chan[chan]->size / (float) zoom);
 	int spread = margin == 0 ? 0 : data.size / margin;
 
 	//printf("data.size = %d, margin = %d, spread = %d\n", data.size, margin, spread);
@@ -151,6 +155,7 @@ void gWaveform::alloc(int datasize) {
 		s += zoom;
 	}
 	recalcPoints();
+	return 1;
 }
 
 
@@ -655,18 +660,12 @@ void gWaveform::straightSel() {
 
 
 void gWaveform::setZoom(int type) {
-	int newZoom;
-	if (type == -1)		// zoom in
-		newZoom = (int) ceil((float) zoom / 2.0f);
-	else               // zoom out
-		newZoom = zoom * 2.0f;
 
-	if (newZoom % 2 != 0)  // avoid odd values
-		newZoom++;
+	int newSize;
+	if (type == -1) newSize = data.size*2;  // zoom in
+	else            newSize = data.size/2;  // zoom out
 
-	if (newZoom > 2) {
-		zoom = newZoom;
-		alloc();
+	if (alloc(newSize)) {
 		size(data.size, h());
 
 		/* zoom to pointer */
@@ -714,11 +713,6 @@ void gWaveform::setZoom(int type) {
 
 void gWaveform::stretchToWindow() {
 	int s = ((gWaveTools*)parent())->w();
-
-	zoom = ceil(G_Mixer.chan[chan]->size / (float) s);
-	if (zoom < 2)       zoom = 2;
-	if (zoom % 2 != 0)  zoom++;
-
 	alloc(s);
 	position(BORDER, y());
 	size(s, h());
