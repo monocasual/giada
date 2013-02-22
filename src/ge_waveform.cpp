@@ -179,6 +179,8 @@ void gWaveform::recalcPoints() {
 
 void gWaveform::draw() {
 
+	printf("x()=%d\n", x());
+
 	int offset = h() / 2;
 	int zero   = y() + offset; // sample zero (-inf dB)
 
@@ -204,8 +206,8 @@ void gWaveform::draw() {
 			fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
 	}
 
-	/* draw waveform from x1, the offset driven by the scrollbar to x2,
-	 * the width of parent window */
+	/* draw waveform from x1 (offset driven by the scrollbar) to x2
+	 * (width of parent window) */
 
 	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
 	int wx2 = wx1 + ((gWaveTools*)parent())->w();
@@ -221,9 +223,9 @@ void gWaveform::draw() {
 
 	/* border box */
 
-	/// TODO: draw only if visible (wx1 < x < wx2)
-
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
+
+	/// TODO: draw only if visible (wx1 < x < wx2)
 
 	/* print chanStart */
 
@@ -608,9 +610,8 @@ void gWaveform::openEditMenu() {
 		selectionA_abs = 0;
 		selectionB_abs = 0;
 
-		alloc();
-		redraw();
-		//((gWaveTools*)parent())->updateScrollbar();
+		setZoom(0);
+
 		menuOpen = false;
 		return;
 	}
@@ -655,7 +656,6 @@ void gWaveform::straightSel() {
 
 void gWaveform::setZoom(int type) {
 	int newZoom;
-	int oldSize;
 	if (type == -1)		// zoom in
 		newZoom = (int) ceil((float) zoom / 2.0f);
 	else               // zoom out
@@ -665,43 +665,44 @@ void gWaveform::setZoom(int type) {
 		newZoom++;
 
 	if (newZoom > 2) {
-		oldSize = data.size;
-		zoom    = newZoom;
+		zoom = newZoom;
 		alloc();
 		size(data.size, h());
 
-		/* zoom to pointer - we need to map the cursor's range [0, w()] to
-		 * [0, diff] in order to shift the waveform and place it under the
-		 * cursor. Using the formula of a rect between two points A(w, diff)
-		 * and B(0, 0) we get y = (x*diff) / w. This is the amount to subtract
-		 * from x() in order to shift it correctly. */
+		/* zoom to pointer */
 
-		int diff  = data.size - oldSize;
-		int mouse = Fl::event_x() - BORDER;
-		int pw    = ((gWaveTools*)parent())->w();
+		int cwave; /// = Fl::event_x()+abs(x());      // cursor relative to the entire waveform
+		int newx;
 
-		int newx = x() - ((mouse * diff) / (float) pw);
-		if (newx > 0)	newx = 0;
+		if (x() == BORDER)
+			cwave = Fl::event_x()+abs(x())-BORDER-BORDER-1;
+		else
+			cwave = Fl::event_x()+abs(x());
+
+		if (type == -1)  newx = x() - cwave;
+		else             newx = x() + (cwave/2);
+
+		printf("x()=%d, w()=%d, cWave=%d, x()-cwave=%d\n", x(), w(), cwave, x()-cwave);
+
+		if (newx > BORDER) newx = BORDER;
+
 		position(newx, y());
-
 
 		/* avoid overflow when zooming out with scrollbar like that:
 		 * |----------[scrollbar]|
 		 *
 		 * offset vs smaller:
 		 * |[wave------------| offset > 0  smaller = false
-		 * |[wave----]       | offset < 0, smaller = true */
+		 * |[wave----]       | offset < 0, smaller = true
+		 * |-------------]   | offset < 0, smaller = false  */
 
-		int  offset  = x() + w() - ((gWaveTools*)parent())->w();
-		bool smaller = w() < ((gWaveTools*)parent())->w();
+		int  parentW = ((gWaveTools*)parent())->w();
+		int  thisW   = x() + w() - BORDER;           // visible width, not full width
 
-		if (smaller && offset < 0) {
-			position(BORDER, y());
+		if (thisW < parentW)
+			position(x() + parentW - thisW, y());
+		if (smaller())
 			stretchToWindow();
-		}
-		else
-		if (offset < 0)
-			position(x()-offset+BORDER, y());
 
 		redraw();
 	}
@@ -719,5 +720,14 @@ void gWaveform::stretchToWindow() {
 	if (zoom % 2 != 0)  zoom++;
 
 	alloc(s);
+	position(BORDER, y());
 	size(s, h());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool gWaveform::smaller() {
+	return w() < ((gWaveTools*)parent())->w();
 }

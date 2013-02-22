@@ -91,8 +91,9 @@ private:
 
 	void straightSel();
 
-
 	void freeData();
+
+	bool smaller();
 
 public:
 	gWaveform(int x, int y, int w, int h, int chan, const char *l=0);
