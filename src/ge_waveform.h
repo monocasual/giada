@@ -131,7 +131,6 @@ public:
 	inline int getSize() { return data.size; }
 
 	int  zoom;
-	int  initZoom;
 	int  chanStart;
 	bool chanStartLit;
 	int  chanEnd;

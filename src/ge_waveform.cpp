@@ -98,21 +98,24 @@ int gWaveform::alloc(int datasize) {
 	if (zoom < 2)
 		return 0;
 
+	if (zoom % 2 != 0)
+		zoom++;
+
 	freeData();
 
 	data.size = datasize;
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
-
-
 	/* sampling from the original wave. Warning: zoom must always be a power
 	 * of two (even number). */
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
-	int margin = 0; ///data.size - ceilf(G_Mixer.chan[chan]->size / (float) zoom);
+	int margin = 0; ///data.size - ceilf(G_Mixer.chan[chan]->size / (float) datasize);
 	int spread = margin == 0 ? 0 : data.size / margin;
+
+	printf("margin = %d\n", G_Mixer.chan[chan]->size % datasize);
 
 	//printf("data.size = %d, margin = %d, spread = %d\n", data.size, margin, spread);
 
@@ -183,8 +186,6 @@ void gWaveform::recalcPoints() {
 
 
 void gWaveform::draw() {
-
-	printf("x()=%d\n", x());
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // sample zero (-inf dB)
@@ -670,22 +671,13 @@ void gWaveform::setZoom(int type) {
 
 		/* zoom to pointer */
 
-		int cwave; /// = Fl::event_x()+abs(x());      // cursor relative to the entire waveform
-		int newx;
+		int shift;
+		if (x() > 0) shift = Fl::event_x() - x();
+		else         shift = Fl::event_x() + abs(x());
+		position(x() - shift, y());
 
-		if (x() == BORDER)
-			cwave = Fl::event_x()+abs(x())-BORDER-BORDER-1;
-		else
-			cwave = Fl::event_x()+abs(x());
+		printf("w()=%d   new x()=%d\n", w(), x());
 
-		if (type == -1)  newx = x() - cwave;
-		else             newx = x() + (cwave/2);
-
-		printf("x()=%d, w()=%d, cWave=%d, x()-cwave=%d\n", x(), w(), cwave, x()-cwave);
-
-		if (newx > BORDER) newx = BORDER;
-
-		position(newx, y());
 
 		/* avoid overflow when zooming out with scrollbar like that:
 		 * |----------[scrollbar]|

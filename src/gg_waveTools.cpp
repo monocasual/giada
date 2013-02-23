@@ -55,7 +55,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, int chan, const char *l)
 
 
 void gWaveTools::updateWaveform() {
-	waveform->alloc();
+	waveform->alloc(w());
 	waveform->redraw();
 }
 
