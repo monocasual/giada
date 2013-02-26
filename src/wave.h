@@ -54,6 +54,8 @@ public:
 	bool     isLogical; // memory only (a take)
 	bool     isEdited;  // edited via editor
 
+	inline int getRate() { return inHeader.samplerate; }
+
 	int open(const char *f);
 	int readData();
 	int	writeData(const char *f);
