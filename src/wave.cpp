@@ -178,14 +178,14 @@ int Wave::allocEmpty(unsigned __size) {
 /* ------------------------------------------------------------------ */
 
 
-int Wave::resample(int quality, int newRate) {
+int Wave::resample(int quality, int newRate, bool copy, float *out) {
 
 	float ratio = newRate / (float) inHeader.samplerate;
 	int newSize = ceil(size * ratio);
 	if (newSize % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
 		newSize++;
 
-	float *tmp  = (float *) malloc(newSize * sizeof(float));
+	float *tmp = (float *) malloc(newSize * sizeof(float));
 	if (!tmp) {
 		puts("[wave] unable to allocate memory for resampling");
 		return -1;
@@ -206,9 +206,15 @@ int Wave::resample(int quality, int newRate) {
 		return 0;
 	}
 
-	free(data);
-	data = tmp;
-	size = newSize;
-	inHeader.samplerate = newRate;
-	return 1;
+	if (copy) {
+		out = tmp;
+		return newSize;
+	}
+	else {
+		free(data);
+		data = tmp;
+		size = newSize;
+		inHeader.samplerate = newRate;
+		return 1;
+	}
 }
