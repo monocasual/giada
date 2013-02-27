@@ -666,8 +666,17 @@ void gWaveform::setZoom(int type) {
 		/* zoom to pointer */
 
 		int shift;
-		if (x() > 0) shift = Fl::event_x() - x();
-		else         shift = Fl::event_x() + abs(x());
+		if (x() > 0)
+			shift = Fl::event_x() - x();
+		else
+		if (type == -1)
+			shift = Fl::event_x() + abs(x());
+		else
+			shift = (Fl::event_x() + abs(x())) / -2;
+
+		if (x() - shift > BORDER)
+			shift = 0;
+
 		position(x() - shift, y());
 
 
