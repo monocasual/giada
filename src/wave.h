@@ -66,7 +66,7 @@ public:
 
 	int allocEmpty(unsigned size);
 
-	int resample(int quality, int newRate, bool copy=false, float *out=NULL);
+	int resample(int quality, int newRate);
 
 };
 

@@ -30,6 +30,7 @@
 
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
+#include <samplerate.h>
 #include "ge_waveform.h"
 #include "gd_editor.h"
 #include "wave.h"
@@ -95,7 +96,7 @@ int gWaveform::alloc(int datasize) {
 	 * the pair Left+Right, this is a representation of the left channel */
 
 	zoom = (int) G_Mixer.chan[chan]->size / (float) datasize;  // hard floor!
-	if (zoom % 2 != 0) zoom--;
+	if (zoom % 2 != 0) zoom++;
 	if (zoom < 2)      return 0;
 
 	freeData();
@@ -104,47 +105,42 @@ int gWaveform::alloc(int datasize) {
 	data.sup  = (int*) malloc(data.size * sizeof(int));
 	data.inf  = (int*) malloc(data.size * sizeof(int));
 
-	/* sampling from the original wave. Warning: zoom must always be a power
-	 * of two (even number). */
-
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
-	int error  = G_Mixer.chan[chan]->size - (zoom * data.size);
-	int spread = error == 0 ? 0 : (int) ceilf(G_Mixer.chan[chan]->size / (float) error);
 
-	/*
-	int margin = data.size - ceilf(G_Mixer.chan[chan]->size / (float) zoom);
-	int spread = margin == 0 ? 0 : data.size / margin;
-	*/
 
-	printf("wavesize=%d datasize=%d zoom=%d error=%d spread=%d\n", G_Mixer.chan[chan]->size, datasize, zoom, error, spread);
+	for (int i=0; i<data.size; i++) {
 
-	for (int i=0, s=0; i<data.size; i++) {
+		int pp;  // point prev
+		int pn;  // point next
 
-		/* how to draw a scaled wave: for each chunk s+zoom compute the peak
-		 * inside that range. That's the point we will draw on screen. Use the
-		 * margin and the spread in order to fit the entire window nicely:
-		 * fill data with a padding pixel each 'spread' pixels */
+		/* resampling the waveform, hardcore way. Many thanks to
+		 * http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html
+		 * Note: we use
+		 * 	 p = j * (m-1 / n)
+		 * instead of
+		 * 	 p = j * (m-1 / n-1)
+		 * in order to obtain 'datasize' cells to parse (and not datasize-1) */
+
+		pp = i * ((G_Mixer.chan[chan]->size - 1) / (float) datasize);
+		pn = (i+1) * ((G_Mixer.chan[chan]->size - 1) / (float) datasize);
+
+		if (pp % 2 != 0) pp -= 1;
+		if (pn % 2 != 0) pn -= 1;
 
 		float peaksup = 0.0f;
 		float peakinf = 0.0f;
 
-		int k = s;
-		int block = zoom;
-
-		while (k < s+block) {
-			if (k > G_Mixer.chan[chan]->size) {
-				puts("k > size");
-				break;
-			}
+		int k = pp;
+		while (k < pn) {
 			if (G_Mixer.chan[chan]->data[k] > peaksup)
 				peaksup = G_Mixer.chan[chan]->data[k];    // Left data only
 			else
 			if (G_Mixer.chan[chan]->data[k] <= peakinf)
 				peakinf = G_Mixer.chan[chan]->data[k];    // Left data only
-
 			k += 2;
 		}
+
 		data.sup[i] = zero - (peaksup * G_Mixer.chanBoost[chan] * offset);
 		data.inf[i] = zero - (peakinf * G_Mixer.chanBoost[chan] * offset);
 
@@ -152,8 +148,6 @@ int gWaveform::alloc(int datasize) {
 
 		if (data.sup[i] < y())       data.sup[i] = y();
 		if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
-
-		s += block;
 	}
 	recalcPoints();
 	return 1;
@@ -213,16 +207,15 @@ void gWaveform::draw() {
 	/* draw waveform from x1 (offset driven by the scrollbar) to x2
 	 * (width of parent window) */
 
-	/**
+
 	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
 	int wx2 = wx1 + ((gWaveTools*)parent())->w();
 	if (x()+w() < ((gWaveTools*)parent())->w())
 		wx2 = x() + w() - BORDER;
-	*/
 
 	fl_color(0, 0, 0);
-	/**for (int i=wx1; i<wx2; i++) {*/
-	for (int i=0; i<data.size; i++) {
+	for (int i=wx1; i<wx2; i++) {
+	//for (int i=0; i<data.size; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i]);
 			fl_line(i+x(), zero, i+x(), data.inf[i]);
@@ -676,8 +669,6 @@ void gWaveform::setZoom(int type) {
 		if (x() > 0) shift = Fl::event_x() - x();
 		else         shift = Fl::event_x() + abs(x());
 		position(x() - shift, y());
-
-		printf("w()=%d   new x()=%d\n", w(), x());
 
 
 		/* avoid overflow when zooming out with scrollbar like that:

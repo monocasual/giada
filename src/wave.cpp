@@ -178,7 +178,7 @@ int Wave::allocEmpty(unsigned __size) {
 /* ------------------------------------------------------------------ */
 
 
-int Wave::resample(int quality, int newRate, bool copy, float *out) {
+int Wave::resample(int quality, int newRate) {
 
 	float ratio = newRate / (float) inHeader.samplerate;
 	int newSize = ceil(size * ratio);
@@ -206,15 +206,9 @@ int Wave::resample(int quality, int newRate, bool copy, float *out) {
 		return 0;
 	}
 
-	if (copy) {
-		out = tmp;
-		return newSize;
-	}
-	else {
-		free(data);
-		data = tmp;
-		size = newSize;
-		inHeader.samplerate = newRate;
-		return 1;
-	}
+	free(data);
+	data = tmp;
+	size = newSize;
+	inHeader.samplerate = newRate;
+	return 1;
 }
