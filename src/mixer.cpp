@@ -81,9 +81,6 @@ float Mixer::tick[TICKSIZE] = {
 
 
 void Mixer::init() {
-
-	vChanInput = NULL;
-
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
 		chan[i]          = NULL;
 		vChan[i] 				 = NULL;
@@ -161,6 +158,30 @@ void Mixer::loadWave(Wave *w, int ch) {
 	chanStartTrue[ch] = 0;
 	chanEnd[ch]			  = chan[ch]->size;
 	chanEndTrue[ch]	  = chan[ch]->size;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Mixer::loadChannel(class Wave *w, int ch, char side) {
+	channel *c = (channel*) malloc(sizeof(channel));
+	if (!c)
+		return 0;
+	channels.add(c);
+	return 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Mixer::freeChannel(int ch) {
+	if (ch >= (int) channels.size)
+		return 0;
+	free(channels.at(ch));
+	channels.del(ch);
+	return 1;
 }
 
 

@@ -211,6 +211,7 @@ void mh_freeChan(int c) {
 	}
 	else if (G_Mixer.chan[c] != NULL) {
 		G_Mixer.freeWave(c);
+		G_Mixer.freeChannel(c);
 		delete G_Mixer.chan[c];
 		G_Mixer.chan[c] = NULL;
 		printf("[MH] channel %d free\n", c+1);
@@ -261,6 +262,7 @@ int mh_loadChan(const char *file, int c) {
 
 		mh_freeChan(c);  // free the previous sample
 		G_Mixer.loadWave(w, c);
+		G_Mixer.loadChannel(w, c, 0);
 
 		/* sample name must be unique */
 

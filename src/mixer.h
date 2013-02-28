@@ -34,6 +34,37 @@
 #include <pthread.h>
 #include "const.h"
 #include "kernelAudio.h"
+#include "utils.h"
+
+
+struct channel {
+	class Wave *wave;
+	float *vChan;	     // virtual channel
+	int    status;	   // status: see const.h
+	char   side;       // left or right column
+	int    tracker;    // chan position
+	int    start;
+	int    end;
+	int    startTrue;	 // chanStart NOT pitch affected
+	int    endTrue;	   // chanend   NOT pitch affected
+	float  volume;
+  float  pitch;
+	float  boost;
+	float  panLeft;
+	float  panRight;
+	int    mode;       // mode: see const.h
+	bool   mute_i;     // internal mute
+	bool   mute;       // global mute
+	bool   qWait;      // quantizer wait
+	int 	 recStatus;  // status of recordings (treat recs as loops)
+	float  fadein;
+	bool   fadeoutOn;
+	float  fadeoutVol;      // fadeout volume
+	int    fadeoutTracker;  // tracker fadeout, xfade only
+	float  fadeoutStep;     // fadeout decrease
+  int    fadeoutType;     // xfade or fadeout
+  int		 fadeoutEnd;      // what to do when fadeout ends
+};
 
 
 class Mixer {
@@ -46,6 +77,9 @@ public:
 
 	void loadWave(class Wave *w, int chan);
 	void freeWave(int chan);
+
+	int loadChannel(class Wave *w, int ch, char side);
+	int freeChannel(int ch);
 
 	void chanStop(int chan);
 	void chanReset(int chan);
@@ -138,9 +172,12 @@ public:
 		XFADE   = 0x02
 	};
 
+	gVector<channel*> channels;
+
 	bool   running;
 	float *vChanInput;                    // virtual channel for recording
 	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
+
 	Wave  *chan          [MAX_NUM_CHAN];
 	float *vChan				 [MAX_NUM_CHAN];	// virtual channel
 	int    chanStatus    [MAX_NUM_CHAN];	// status: see const.h
