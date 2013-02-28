@@ -52,6 +52,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 	chanStartLit(false),
 	chanEnd(0),
 	chanEndLit(false),
+	ratio(0.0f),
 	selectionA(0),
 	selectionB(0),
 	selectionA_abs(0),
@@ -92,12 +93,7 @@ void gWaveform::freeData() {
 
 int gWaveform::alloc(int datasize) {
 
-	/* note: zoom must be always greater than 2: we don't want to draw
-	 * the pair Left+Right, this is a representation of the left channel */
-
-	zoom = (int) G_Mixer.chan[chan]->size / (float) datasize;  // hard floor!
-	if (zoom % 2 != 0) zoom++;
-	if (zoom < 2)      return 0;
+	ratio = G_Mixer.chan[chan]->size / (float) datasize;
 
 	freeData();
 
@@ -179,9 +175,6 @@ void gWaveform::recalcPoints() {
 
 void gWaveform::draw() {
 
-	int offset = h() / 2;
-	int zero   = y() + offset; // sample zero (-inf dB)
-
 	/* blank canvas */
 
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
@@ -207,15 +200,18 @@ void gWaveform::draw() {
 	/* draw waveform from x1 (offset driven by the scrollbar) to x2
 	 * (width of parent window) */
 
+	int offset = h() / 2;
+	int zero   = y() + offset; // sample zero (-inf dB)
 
 	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
 	int wx2 = wx1 + ((gWaveTools*)parent())->w();
 	if (x()+w() < ((gWaveTools*)parent())->w())
 		wx2 = x() + w() - BORDER;
 
+	printf("wx1=%d wx2=%d, width=%d\n", wx1, wx2, wx2-wx1);
+
 	fl_color(0, 0, 0);
 	for (int i=wx1; i<wx2; i++) {
-	//for (int i=0; i<data.size; i++) {
 			fl_color(0, 0, 0);
 			fl_line(i+x(), zero, i+x(), data.sup[i]);
 			fl_line(i+x(), zero, i+x(), data.inf[i]);
@@ -225,11 +221,10 @@ void gWaveform::draw() {
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
-	/// TODO: draw only if visible (wx1 < x < wx2)
-
 	/* print chanStart */
 
 	int lineX = x()+chanStart+1;
+		printf("chanStart = %d, lineX=%d\n", chanStart, lineX);
 
 	if (chanStartLit) fl_color(COLOR_BD_1);
 	else              fl_color(COLOR_BD_0);
@@ -251,7 +246,6 @@ void gWaveform::draw() {
 	/* print chanEnd */
 
 	lineX = x()+chanEnd;
-
 	if (chanEndLit)	fl_color(COLOR_BD_1);
 	else            fl_color(COLOR_BD_0);
 
@@ -508,7 +502,7 @@ int gWaveform::absolutePoint(int p) {
 	if (p > data.size)
 		return G_Mixer.chan[chan]->size / 2;
 
-	return (p * (float) zoom) / 2;
+	return (p * ratio) / 2;
 }
 
 
@@ -516,7 +510,7 @@ int gWaveform::absolutePoint(int p) {
 
 
 int gWaveform::relativePoint(int p) {
-	return (ceilf(p / (float) zoom)) * 2;
+	return (ceilf(p / ratio)) * 2;
 }
 
 

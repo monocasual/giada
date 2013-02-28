@@ -130,7 +130,6 @@ public:
 
 	inline int getSize() { return data.size; }
 
-	int  zoom;
 	int  chanStart;
 	bool chanStartLit;
 	int  chanEnd;
@@ -138,6 +137,8 @@ public:
 	bool pushed;
 	bool dragged;
 	bool resized;
+
+	float ratio;
 
 	int  mouseX;					 // mouse pos for drag.n.drop
 	int  mouseY;
