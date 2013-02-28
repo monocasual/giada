@@ -82,6 +82,7 @@ void glue_stopReadingRecs(int chan);
 void glue_quantize(int val);
 
 void glue_setVol(int chan, float v);
+void glue_setVolMainWin(int chan, float v);
 void glue_setOutVol(float v);
 void glue_setInVol(float v);
 

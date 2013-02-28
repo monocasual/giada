@@ -272,7 +272,8 @@ void Keyboard::__cb_openChanMenu(int chan) {
 
 
 void Keyboard::__cb_change_vol(int chan) {
-	G_Mixer.chanVolume[chan] = vol[chan]->value();
+	glue_setVolMainWin(chan, vol[chan]->value());
+	//G_Mixer.chanVolume[chan] = vol[chan]->value();
 }
 
 

@@ -453,6 +453,20 @@ void glue_setVol(int ch, float v) {
 /* ------------------------------------------------------------------ */
 
 
+void glue_setVolMainWin(int ch, float v) {
+	G_Mixer.chanVolume[ch] = v;
+
+	gdEditor *editor = (gdEditor*) gu_getSubwindow(mainWin, WID_SAMPLE_EDITOR);
+	if (editor) {
+		glue_setVolEditor(editor, ch, v, false);
+		editor->volume->value(v);
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void glue_setOutVol(float val) {
 	G_Mixer.outVol = val;
 }
