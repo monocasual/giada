@@ -262,7 +262,7 @@ int mh_loadChan(const char *file, int c) {
 
 		mh_freeChan(c);  // free the previous sample
 		G_Mixer.loadWave(w, c);
-		G_Mixer.loadChannel(w, c, 0);
+		G_Mixer.loadChannel(w, 0);
 
 		/* sample name must be unique */
 

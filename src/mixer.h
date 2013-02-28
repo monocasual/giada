@@ -78,7 +78,7 @@ public:
 	void loadWave(class Wave *w, int chan);
 	void freeWave(int chan);
 
-	int loadChannel(class Wave *w, int ch, char side);
+	int loadChannel(class Wave *w, char side);
 	int freeChannel(int ch);
 
 	void chanStop(int chan);

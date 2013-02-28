@@ -164,11 +164,43 @@ void Mixer::loadWave(Wave *w, int ch) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::loadChannel(class Wave *w, int ch, char side) {
+int Mixer::loadChannel(class Wave *w, char side) {
 	channel *c = (channel*) malloc(sizeof(channel));
 	if (!c)
 		return 0;
+
+	c->wave        = w;
+	c->tracker     = 0;
+	c->status      = STATUS_EMPTY;
+	c->start       = 0;
+	c->end         = 0;
+	c->mute        = false;
+	c->mute_i      = false;
+	c->mode        = DEFAULT_CHANMODE;
+	c->volume      = DEFAULT_VOL;
+	c->pitch       = gDEFAULT_PITCH;
+	c->boost       = 1.0f;
+	c->panLeft     = 1.0f;
+	c->panRight    = 1.0f;
+	c->qWait	     = false;
+	c->recStatus   = REC_STOPPED;
+	c->fadein      = 1.0f;
+	c->fadeoutOn   = false;
+	c->fadeoutVol  = 1.0f;
+	c->fadeoutStep = DEFAULT_FADEOUT_STEP;
+
+	/* virtual channel malloc. We use kernelAudio::realBufsize, the real
+	 * buffer size from the soundcard. G_Conf.bufferSize may be wrong or
+	 * useless, especially when JACK is running. */
+
+	c->vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	if (!c->vChan) {
+		printf("[mixer] warning: unable to alloc memory for this vChan\n");
+		return 0;
+	}
+
 	channels.add(c);
+
 	return 1;
 }
 
