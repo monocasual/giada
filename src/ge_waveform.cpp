@@ -95,6 +95,9 @@ int gWaveform::alloc(int datasize) {
 
 	ratio = G_Mixer.chan[chan]->size / (float) datasize;
 
+	if (ratio < 2)
+		return 0;
+
 	freeData();
 
 	data.size = datasize;
@@ -208,8 +211,6 @@ void gWaveform::draw() {
 	if (x()+w() < ((gWaveTools*)parent())->w())
 		wx2 = x() + w() - BORDER;
 
-	printf("wx1=%d wx2=%d, width=%d\n", wx1, wx2, wx2-wx1);
-
 	fl_color(0, 0, 0);
 	for (int i=wx1; i<wx2; i++) {
 			fl_color(0, 0, 0);
@@ -224,7 +225,6 @@ void gWaveform::draw() {
 	/* print chanStart */
 
 	int lineX = x()+chanStart+1;
-		printf("chanStart = %d, lineX=%d\n", chanStart, lineX);
 
 	if (chanStartLit) fl_color(COLOR_BD_1);
 	else              fl_color(COLOR_BD_0);
