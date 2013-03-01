@@ -83,8 +83,11 @@ int openDevice(
 		G_audio_status = false;
 		return 0;
 	}
-	else
+	else {
 		printf("[KA] %d device(s) found\n", numDevs);
+		for (unsigned i=0; i<numDevs; i++)
+			printf("  %d) %s\n", i, getDeviceName(i));
+	}
 
 
 	RtAudio::StreamParameters outParams;
