@@ -271,7 +271,7 @@ void gdConfig::__cb_showInputInfo() {
 
 
 void gdConfig::__cb_showOutputInfo() {
-	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevOut->value()));
+	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
 	new gdDevInfo(dev);
 }
 
