@@ -13,6 +13,15 @@
 
 
 
+0.6.0 --- 2013 . 03 . 02
+- New, full-screen, redesigned sample editor
+- Zoom with mouse wheel in sample editor
+- Use kernelAudio::defaultIn/defaultOut for DEFAULT_SOUNDDEV_OUT
+- Volume knob in main window now updates the editor
+- Sound system issues in OS X (fixed)
+- Output device info dialog refers to wrong device (fixed)
+
+
 0.5.8 --- 2013 . 02 . 07
 - Internal samplerate conversion (with libsamplerate)
 - Bring channels automatically to full volume on sample load
