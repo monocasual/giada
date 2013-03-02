@@ -271,7 +271,8 @@ void gdConfig::__cb_showInputInfo() {
 
 
 void gdConfig::__cb_showOutputInfo() {
-	new gdDevInfo(sounddevOut->value());
+	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	new gdDevInfo(dev);
 }
 
 
@@ -402,7 +403,7 @@ void gdConfig::__cb_fetchOutChans() {
 
 void gdConfig::fetchSoundDevs() {
 
-	if (kernelAudio::numDevs == 0 || G_audio_status == false) {
+	if (kernelAudio::numDevs == 0) {
 		sounddevOut->add("-- no devices found --");
 		sounddevOut->value(0);
 		sounddevIn->add("-- no devices found --");
@@ -442,13 +443,27 @@ void gdConfig::fetchSoundDevs() {
 				sounddevIn->add(tmp.c_str());
 		}
 
-	 /* we show the device saved in the configuration file. */
+		/* we show the device saved in the configuration file. */
 
-		int outMenuValue = findMenuDevice(sounddevOut, G_Conf.soundDeviceOut);
-		int inMenuValue  = findMenuDevice(sounddevIn, G_Conf.soundDeviceIn);
+		if (sounddevOut->size() == 0) {
+			sounddevOut->add("-- no devices found --");
+			sounddevOut->value(0);
+			devOutInfo->deactivate();
+		}
+		else {
+			int outMenuValue = findMenuDevice(sounddevOut, G_Conf.soundDeviceOut);
+			sounddevOut->value(outMenuValue);
+		}
 
-		sounddevOut->value(outMenuValue);
-		sounddevIn ->value(inMenuValue);
+		if (sounddevIn->size() == 0) {
+			sounddevIn->add("-- no devices found --");
+			sounddevIn->value(0);
+			devInInfo->deactivate();
+		}
+		else {
+			int inMenuValue = findMenuDevice(sounddevIn, G_Conf.soundDeviceIn);
+			sounddevIn->value(inMenuValue);
+		}
 	}
 }
 
