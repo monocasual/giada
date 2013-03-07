@@ -229,9 +229,9 @@ public:
 
 class gStatus : public Fl_Box {
 public:
-	gStatus(int X, int Y, int W, int H, int chan, const char *L=0);
+	gStatus(int X, int Y, int W, int H, struct channel *ch, const char *L=0);
 	void draw();
-	int  ch;
+	struct channel *ch;
 };
 
 

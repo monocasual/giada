@@ -51,12 +51,12 @@ extern gdMainWindow	*mainWin;
 gdBrowser::gdBrowser(
 	const char *title,
 	const char *initPath,
-	int chan,
+	channel *ch,
 	int type,
 	int stackType)
 :
 	gWindow(396, 302, title),
-	chan(chan),
+	ch(ch),
 	type(type),
 	stackType(stackType) {
 
@@ -112,7 +112,7 @@ gdBrowser::gdBrowser(
 	else
 	if (type == BROWSER_SAVE_SAMPLE) {
 		ok->callback(cb_save_sample, (void*)this);
-		name->value(G_Mixer.chan[chan]->name.c_str());
+		name->value(ch->wave->name.c_str());
 	}
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
@@ -241,7 +241,7 @@ void gdBrowser::__cb_save_sample() {
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_saveSample(chan, fullpath))
+	if (glue_saveSample(ch->index, fullpath))
 		do_callback();
 	else
 		gdAlert("Unable to save this sample!");
@@ -255,7 +255,7 @@ void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = glue_loadChannel(chan, browser->get_selected_item(), browser->path_obj->value());
+	int res = glue_loadChannel(ch, browser->get_selected_item(), browser->path_obj->value());
 
 	if (res == SAMPLE_LOADED_OK) {
 		do_callback();
@@ -385,7 +385,7 @@ void gdBrowser::__cb_loadPlugin() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, chan);
+	int res = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch->index);
 
 	/* store the folder path inside G_Conf, in order to reuse it the
 	 * next time. */

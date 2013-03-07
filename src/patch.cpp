@@ -423,6 +423,7 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "version=%s\n", VERSIONE);
 	fprintf(fp, "patchname=%s\n", name);
 
+#if 0
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
 		fprintf(fp, "samplepath%d=%s\n",    i, G_Mixer.chan[i] == NULL ? "" : G_Mixer.chan[i]->pathfile.c_str());
 		fprintf(fp, "chanmute%d=%d\n",      i, G_Mixer.chanMute[i]);
@@ -436,6 +437,8 @@ int Patch::write(const char *file, const char *name) {
 		fprintf(fp, "chanRecActive%d=%d\n", i, recorder::chanActive[i]);
 		fprintf(fp, "chanPitch%d=%f\n",     i, G_Mixer.chanPitch[i]);
 	}
+
+#endif
 
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
 	fprintf(fp, "bars=%d\n",       G_Mixer.bars);

@@ -50,8 +50,8 @@ extern PluginHost  	 G_PluginHost;
 #endif
 
 
-gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv)
-: gWindow(x, y, w, h, title) {
+gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int argc, char **argv)
+: gWindow(X, Y, W, H, title) {
 
 	Fl::visible_focus(0);
 	Fl::background(25, 25, 25);
@@ -84,7 +84,8 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 #endif
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-	keyboard    = new Keyboard(8, 122, 790, 470);
+	keyboard    = new Keyboard(8, 122, w()-16, 370);
+	keyboard->box(FL_BORDER_BOX);
 
 	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	beat_stop		= new gClick(37, 39, 25, 25, "", play_xpm, pause_xpm);
@@ -403,13 +404,13 @@ void gdMainWindow::__cb_open_edit_menu() {
 
 	menu[1].deactivate();
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		if (recorder::chanEvents[i]) {
 			menu[1].activate();
 			break;
 		}
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		if (G_Mixer.chan[i] != NULL) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		if (G_Mixer.channels.at(i)->wave != NULL) {
 			menu[0].activate();
 			break;
 		}

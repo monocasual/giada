@@ -32,6 +32,7 @@
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
 #include "recorder.h"
+#include "mixer.h"
 #include "glue.h"
 
 
@@ -116,7 +117,7 @@ void gMuteChannel::extractPoints() {
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == parent->chan) {
+			if (recorder::global.at(i).at(j)->chan == parent->chan->index) {
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
 					p.frame = recorder::frames.at(i);
@@ -230,16 +231,16 @@ int gMuteChannel::handle(int e) {
 					}
 
 					if (nextPoint % 2 != 0) {
-						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEON,  frame_b);
+						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_a);
+						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_b);
 						recorder::sortActions();
 					}
 					else {
-						recorder::rec(parent->chan, ACTION_MUTEON,  frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_b);
+						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_a);
+						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
-					glue_setChannelWithActions(parent->chan); // update mainWindow
+					glue_setChannelWithActions(parent->chan->index); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -265,11 +266,11 @@ int gMuteChannel::handle(int e) {
 					//printf("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					recorder::deleteAction(parent->chan,	points.at(a).frame,	points.at(a).type);
-					recorder::deleteAction(parent->chan,	points.at(b).frame,	points.at(b).type);
+					recorder::deleteAction(parent->chan->index, points.at(a).frame,	points.at(a).type);
+					recorder::deleteAction(parent->chan->index,	points.at(b).frame,	points.at(b).type);
 					recorder::sortActions();
 
-					glue_setChannelWithActions(parent->chan); // update mainWindow
+					glue_setChannelWithActions(parent->chan->index); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -289,11 +290,12 @@ int gMuteChannel::handle(int e) {
 					int newFrame = points.at(draggedPoint).x * parent->zoom;
 
 					recorder::deleteAction(
-							parent->chan,
+							parent->chan->index,
 							points.at(draggedPoint).frame,
 							points.at(draggedPoint).type);
 
-					recorder::rec(parent->chan,
+					recorder::rec(
+							parent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 

@@ -42,7 +42,7 @@ extern Mixer G_Mixer;
 extern Conf	 G_Conf;
 
 
-gdActionEditor::gdActionEditor(int chan)
+gdActionEditor::gdActionEditor(channel *chan)
 : gWindow(640, 176), chan(chan), zoom(100)
 {
 
@@ -76,7 +76,8 @@ gdActionEditor::gdActionEditor(int chan)
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
 	gridTool->calc();
 
-	if (G_Mixer.chanMode[chan] == SINGLE_PRESS || G_Mixer.chanMode[chan] & LOOP_ANY)
+	if (chan->mode == SINGLE_PRESS ||
+			chan->mode & LOOP_ANY)
 		actionType->deactivate();
 
 	zoomIn->callback(cb_zoomIn, (void*)this);
@@ -94,7 +95,7 @@ gdActionEditor::gdActionEditor(int chan)
 		txtActions->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 		txtMutes  ->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-		if (G_Mixer.chanMode[chan] & LOOP_ANY) {
+		if (chan->mode & LOOP_ANY) {
 			gBox *txtDisabled = new gBox(8, 48, 92, 20, "disabled");
 			txtDisabled->labelsize(9);
 			txtDisabled->labelcolor(COLOR_BD_0);
@@ -122,13 +123,13 @@ gdActionEditor::gdActionEditor(int chan)
 	/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
 	 * hold keypress/keyrelease actions */
 
-	if (G_Mixer.chanMode[chan] & LOOP_ANY)
+	if (chan->mode & LOOP_ANY)
 		ac->deactivate();
 
 	gu_setFavicon(this);
 
 	char buf[256];
-	sprintf(buf, "Edit Actions in Channel %d", chan+1);
+	sprintf(buf, "Edit Actions in Channel %d", chan->index+1);
 	label(buf);
 
 	set_non_modal();

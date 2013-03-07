@@ -39,6 +39,7 @@
 
 struct channel {
 	class Wave *wave;
+	int    index;
 	float *vChan;	     // virtual channel
 	int    status;	   // status: see const.h
 	char   side;       // left or right column
@@ -75,11 +76,19 @@ public:
 	void init();
 	int  close();
 
-	void loadWave(class Wave *w, int chan);
-	void freeWave(int chan);
+	/* loadChannel
+	 * add a new channel in channels stack and put a Wave inside of it. Wave
+	 * could be NULL == empty new channel */
 
-	int loadChannel(class Wave *w, char side);
-	int freeChannel(int ch);
+	channel *loadChannel(class Wave *w, char side);
+	int      deleteChannel(channel *ch);
+	void     initChannel(channel *ch);
+	void     freeChannel(channel *ch);
+
+	/* pushChannel
+	 * add a new wave to an existing channel. */
+
+	void     pushChannel(class Wave *w, channel *ch);
 
 	void chanStop(int chan);
 	void chanReset(int chan);
@@ -157,6 +166,10 @@ public:
 
 	bool mergeVirtualInput();
 
+	int getChannelIndex(channel *ch);
+
+	inline channel* getLastChannel() { return channels.at(channels.size-1); }
+
 
 	/* ---------------------------------------------------------------- */
 
@@ -178,6 +191,7 @@ public:
 	float *vChanInput;                    // virtual channel for recording
 	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
 
+	/*
 	Wave  *chan          [MAX_NUM_CHAN];
 	float *vChan				 [MAX_NUM_CHAN];	// virtual channel
 	int    chanStatus    [MAX_NUM_CHAN];	// status: see const.h
@@ -205,6 +219,7 @@ public:
 	float  fadeoutStep   [MAX_NUM_CHAN];  // fadeout decrease
   int    fadeoutType   [MAX_NUM_CHAN];  // xfade or fadeout
   int		 fadeoutEnd    [MAX_NUM_CHAN];  // what to do when fadeout ends
+  */
 
 	int    frameSize;
 	float  outVol;

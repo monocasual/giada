@@ -41,7 +41,8 @@ class gdPluginList : public gWindow {
 
 private:
 
-	int chan;      // chan == -1 ? masterOut
+	struct channel *ch;      // ch == NULL ? masterOut
+
 	int stackType;
  	class gClick *addPlugin;
 	Fl_Scroll    *list;
@@ -70,7 +71,7 @@ private:
 
 public:
 
-	gdPluginList(int stackType, int ch=-1);
+	gdPluginList(int stackType, struct channel *ch=NULL);
 	~gdPluginList();
 
 	void refreshList();

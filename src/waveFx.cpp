@@ -106,16 +106,18 @@ void wfx_silence(Wave *w, int a, int b) {
 
 int wfx_cut(int ch, int a, int b) {
 
+	channel *c = G_Mixer.channels.at(ch);
+
 	a = a * 2;
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > G_Mixer.chan[ch]->size) b = G_Mixer.chan[ch]->size;
+	if (b > c->wave->size) b = c->wave->size;
 
 	/* create a new temp wave and copy there the original one, skipping
 	 * the a-b range */
 
-	unsigned newSize = G_Mixer.chan[ch]->size-(b-a);
+	unsigned newSize = c->wave->size-(b-a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == NULL) {
 		puts("[wfx] unable to allocate memory for cutting");
@@ -124,18 +126,18 @@ int wfx_cut(int ch, int a, int b) {
 
 	printf("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", a, b, newSize, newSize/2);
 
-	for (int i=0, k=0; i<G_Mixer.chan[ch]->size; i++) {
+	for (int i=0, k=0; i<c->wave->size; i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep
-			temp[k] = G_Mixer.chan[ch]->data[i];   // the stereo pair
+			temp[k] = c->wave->data[i];   // the stereo pair
 			k++;
 		}
 	}
 
-	free(G_Mixer.chan[ch]->data);
-	G_Mixer.chan[ch]->data = temp;
-	G_Mixer.chan[ch]->size = newSize;
-	G_Mixer.chan[ch]->inHeader.frames -= b-a;
-	G_Mixer.chan[ch]->isEdited = true;
+	free(c->wave->data);
+	c->wave->data = temp;
+	c->wave->size = newSize;
+	c->wave->inHeader.frames -= b-a;
+	c->wave->isEdited = true;
 
 	puts("[wfx] cutting done");
 
@@ -148,11 +150,13 @@ int wfx_cut(int ch, int a, int b) {
 
 int wfx_trim(int ch, int a, int b) {
 
+	channel *c = G_Mixer.channels.at(ch);
+
 	a = a * 2;
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > G_Mixer.chan[ch]->size) b = G_Mixer.chan[ch]->size;
+	if (b > c->wave->size) b = c->wave->size;
 
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));
@@ -164,13 +168,13 @@ int wfx_trim(int ch, int a, int b) {
 	printf("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
 	for (int i=a, k=0; i<b; i++, k++)
-		temp[k] = G_Mixer.chan[ch]->data[i];
+		temp[k] = c->wave->data[i];
 
-	free(G_Mixer.chan[ch]->data);
-	G_Mixer.chan[ch]->data = temp;
-	G_Mixer.chan[ch]->size = newSize;
-	G_Mixer.chan[ch]->inHeader.frames = b-a;
- 	G_Mixer.chan[ch]->isEdited = true;
+	free(c->wave->data);
+	c->wave->data = temp;
+	c->wave->size = newSize;
+	c->wave->inHeader.frames = b-a;
+ 	c->wave->isEdited = true;
 
 	return 1;
 }

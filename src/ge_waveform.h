@@ -54,7 +54,8 @@ private:
 	/* chan
 	 * chan in use. */
 
-	int  chan;
+	//int  chan;
+	struct channel *chan;
 
 	/* menuOpen
 	 * is the menu open? */

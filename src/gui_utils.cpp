@@ -59,18 +59,21 @@ void gu_refresh() {
 
 	/* update channels */
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
-		if (G_Mixer.chan[i] == NULL)
+		channel *ch = G_Mixer.channels.at(i);
+
+		if (ch->wave == NULL)
 			continue;
 
-		if (G_Mixer.chanStatus[i] == STATUS_OFF) {
+		/*
+		if (ch->status == STATUS_OFF) {
 			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_0;
 			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_0;
 			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
 		}
-
-		if (G_Mixer.chanStatus[i] & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
+		/// ELSE?
+		if (ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
 			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_2;
 			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_1;
 			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_1;
@@ -87,6 +90,7 @@ void gu_refresh() {
 
 		mainWin->keyboard->sampleButton[i]->redraw();
 		mainWin->keyboard->status[i]->redraw();
+		*/
 	}
 
 	/* redraw GUI */
@@ -120,13 +124,14 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 
 void gu_update_controls() {
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
 		/* update status box and sampleButton */
 
 		gu_resetChannel(i);
 
-		switch (G_Mixer.chanStatus[i]) {
+		channel *ch = G_Mixer.channels.at(i);
+		switch (ch->status) {
 			case STATUS_EMPTY:
 				mainWin->keyboard->sampleButton[i]->label("-- no sample --");
 				break;
@@ -135,7 +140,7 @@ void gu_update_controls() {
 				mainWin->keyboard->sampleButton[i]->label("* file not found! *");
 				break;
 			default:
-				gu_trim_label(G_Mixer.chan[i]->name.c_str(), 28, mainWin->keyboard->sampleButton[i]);
+				gu_trim_label(ch->wave->name.c_str(), 28, mainWin->keyboard->sampleButton[i]);
 				break;
 		}
 
@@ -143,12 +148,12 @@ void gu_update_controls() {
 
 		/* update volumes+mute */
 
-		mainWin->keyboard->vol[i]->value(G_Mixer.chanVolume[i]);
-		mainWin->keyboard->mute[i]->value(G_Mixer.chanMute[i]);
+		mainWin->keyboard->vol[i]->value(ch->volume);
+		mainWin->keyboard->mute[i]->value(ch->mute);
 
 		/* updates modebox */
 
-		mainWin->keyboard->modeBoxes[i]->value(G_Mixer.chanMode[i]);
+		mainWin->keyboard->modeBoxes[i]->value(ch->mode);
 		mainWin->keyboard->modeBoxes[i]->redraw();
 
 		/* upate channels. If you load a patch with recorded actions, the 'R'
@@ -258,9 +263,12 @@ void gu_refreshActionEditor() {
 
 	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
+		aeditor->redraw();
+		/**
 		int chan = aeditor->chan;
 		mainWin->delSubWindow(WID_ACTION_EDITOR);
 		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
+		*/
 	}
 }
 

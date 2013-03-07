@@ -45,7 +45,7 @@ class gdActionEditor : public gWindow {
 
 public:
 
-	gdActionEditor(int chan);
+	gdActionEditor(struct channel *chan);
 	~gdActionEditor();
 
 	int getActionType();
@@ -68,7 +68,8 @@ public:
 	class gActionChannel *ac;
 	class gMuteChannel   *mc;
 
-	int chan;
+	struct channel *chan;
+
 	int zoom;
 	int framesPerBar;
 	int framesPerBeat;

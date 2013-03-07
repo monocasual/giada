@@ -37,9 +37,11 @@
 
 void mh_startChan(int c, bool do_quantize=true);
 
-void mh_stopChan(int c);
+void mh_stopChan(struct channel *ch);
 
-void mh_freeChan(int c);
+void mh_deleteChannel(struct channel *ch);
+
+void mh_freeChannel(struct channel *ch);
 
 
 /* killChan
@@ -53,7 +55,7 @@ void mh_unmuteChan(int c, bool internal=false);
 
 void mh_loadPatch();
 
-int mh_loadChan(const char *file, int chan);
+int mh_loadChan(const char *file, struct channel *ch, bool push=true);
 
 
 /* startInputRec - record from line in
@@ -61,7 +63,7 @@ int mh_loadChan(const char *file, int chan);
  * the chan number chosen, otherwise -1 if there are no more empty
  * channels available. */
 
-int mh_startInputRec();
+struct channel *mh_startInputRec();
 
 int mh_stopInputRec();
 

@@ -122,57 +122,82 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::loadWave(Wave *w, int ch) {
-	chan[ch]				  = w;
-	chanStatus[ch] 	  = STATUS_OFF;
-	chanStart[ch]     = 0;
-	chanStartTrue[ch] = 0;
-	chanEnd[ch]			  = chan[ch]->size;
-	chanEndTrue[ch]	  = chan[ch]->size;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-int Mixer::loadChannel(class Wave *w, char side) {
-	channel *c = (channel*) malloc(sizeof(channel));
-	if (!c) {
+channel *Mixer::loadChannel(class Wave *w, char side) {
+	channel *ch = (channel*) malloc(sizeof(channel));
+	if (!ch) {
 		printf("[mixer] unable to alloc memory for channel struct\n");
-		return 0;
+		return NULL;
 	}
-
-	c->wave        = w;
-	c->tracker     = 0;
-	c->status      = STATUS_EMPTY;
-	c->start       = 0;
-	c->end         = 0;
-	c->mute        = false;
-	c->mute_i      = false;
-	c->mode        = DEFAULT_CHANMODE;
-	c->volume      = DEFAULT_VOL;
-	c->pitch       = gDEFAULT_PITCH;
-	c->boost       = 1.0f;
-	c->panLeft     = 1.0f;
-	c->panRight    = 1.0f;
-	c->qWait	     = false;
-	c->recStatus   = REC_STOPPED;
-	c->fadein      = 1.0f;
-	c->fadeoutOn   = false;
-	c->fadeoutVol  = 1.0f;
-	c->fadeoutStep = DEFAULT_FADEOUT_STEP;
 
 	/* virtual channel malloc. We use kernelAudio::realBufsize, the real
 	 * buffer size from the soundcard. G_Conf.bufferSize may be wrong or
 	 * useless, especially when JACK is running. */
 
-	c->vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
-	if (!c->vChan) {
+	ch->vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	if (!ch->vChan) {
 		printf("[mixer] unable to alloc memory for this vChan\n");
-		return 0;
+		return NULL;
 	}
 
-	channels.add(c);
+	channels.add(ch);
+	ch->wave  = w;
+	ch->index = channels.size-1;
+	initChannel(ch);
+	if (w)
+		ch->status = STATUS_OFF;
+
+	printf("[mixer] channel loaded, wave=%p, size=%d\n", (void*)w, channels.size);
+
+	return ch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::pushChannel(Wave *w, channel *ch) {
+	ch->wave = w;
+	initChannel(ch);
+	ch->status = STATUS_OFF;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::initChannel(channel *ch) {
+	ch->tracker     = 0;
+	ch->status      = STATUS_EMPTY;
+	ch->start       = 0;
+	ch->end         = 0;
+	ch->mute        = false;
+	ch->mute_i      = false;
+	ch->mode        = DEFAULT_CHANMODE;
+	ch->volume      = DEFAULT_VOL;
+	ch->pitch       = gDEFAULT_PITCH;
+	ch->boost       = 1.0f;
+	ch->panLeft     = 1.0f;
+	ch->panRight    = 1.0f;
+	ch->qWait	      = false;
+	ch->recStatus   = REC_STOPPED;
+	ch->fadein      = 1.0f;
+	ch->fadeoutOn   = false;
+	ch->fadeoutVol  = 1.0f;
+	ch->fadeoutStep = DEFAULT_FADEOUT_STEP;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Mixer::deleteChannel(channel *ch) {
+	ch->status = STATUS_OFF;
+	int i = getChannelIndex(ch);
+	delete ch->wave;
+	free(ch->vChan);
+	free(ch);
+	channels.del(i);
+	printf("[mixer] total channels = %d\n", channels.size);
 	return 1;
 }
 
@@ -180,33 +205,20 @@ int Mixer::loadChannel(class Wave *w, char side) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::freeChannel(int ch) {
-	if (ch >= (int) channels.size)
-		return 0;
-	channels.at(ch)->status = STATUS_OFF;
-	delete channels.at(ch)->wave;
-	free(channels.at(ch)->vChan);
-	free(channels.at(ch));
-	channels.del(ch);
-	return 1;
+void Mixer::freeChannel(channel *ch) {
+	ch->status = STATUS_OFF;
+	delete ch->wave;
+	ch->wave   = NULL;
+	ch->status = STATUS_EMPTY;
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-void Mixer::freeWave(int ch) {
-	chanStatus[ch]  = STATUS_EMPTY;
-	chanTracker[ch] = 0;
-	chanBoost[ch]   = 1.0f;
-}
 
 
 /* ------------------------------------------------------------------ */
 
 
 void Mixer::chanStop(int ch) {
-	chanStatus[ch] = STATUS_OFF;
+	channels.at(ch)->status = STATUS_OFF;
 	chanReset(ch);
 }
 
@@ -214,9 +226,21 @@ void Mixer::chanStop(int ch) {
 /* ------------------------------------------------------------------ */
 
 
+int Mixer::getChannelIndex(channel *ch) {
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->index == ch->index)
+			return i;
+	return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void Mixer::chanReset(int ch)	{
-	chanTracker[ch] = chanStart[ch];
-	chanMute_i [ch] = false;
+	channel *c = channels.at(ch);
+	c->tracker = c->start;
+	c->mute_i  = false;
 }
 
 
@@ -224,12 +248,13 @@ void Mixer::chanReset(int ch)	{
 
 
 void Mixer::fadein(int ch, bool internal) {
+	channel *c = channels.at(ch);
 
 	/* remove mute before fading in */
 
-	if (internal) chanMute_i[ch] = false;
-	else          chanMute[ch]   = false;
-	chanFadein[ch] = 0.0f;
+	if (internal) c->mute_i = false;
+	else          c->mute   = false;
+	c->fadein = 0.0f;
 }
 
 
@@ -237,11 +262,12 @@ void Mixer::fadein(int ch, bool internal) {
 
 
 void Mixer::fadeout(int ch, int actionPostFadeout) {
+	channel *c = channels.at(ch);
 	calcFadeoutStep(ch);
-	fadeoutOn[ch]      = true;
-	fadeoutVol[ch]     = 1.0f;
-	fadeoutType[ch]    = FADEOUT;
-	fadeoutEnd[ch]		 = actionPostFadeout;
+	c->fadeoutOn   = true;
+	c->fadeoutVol  = 1.0f;
+	c->fadeoutType = FADEOUT;
+	c->fadeoutEnd	 = actionPostFadeout;
 }
 
 
@@ -249,11 +275,12 @@ void Mixer::fadeout(int ch, int actionPostFadeout) {
 
 
 void Mixer::xfade(int ch) {
+	channel *c = channels.at(ch);
 	calcFadeoutStep(ch);
-	fadeoutOn[ch]      = true;
-	fadeoutVol[ch]     = 1.0f;
-	fadeoutTracker[ch] = chanTracker[ch];
-	fadeoutType[ch]    = XFADE;
+	c->fadeoutOn      = true;
+	c->fadeoutVol     = 1.0f;
+	c->fadeoutTracker = c->tracker;
+	c->fadeoutType    = XFADE;
 	chanReset(ch);
 }
 
@@ -262,8 +289,9 @@ void Mixer::xfade(int ch) {
 
 
 int Mixer::getChanPos(int ch)	{
-	if (chanStatus[ch] & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
-		return chanTracker[ch] - chanStart[ch];
+	channel *c = channels.at(ch);
+	if (c->status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
+		return c->tracker - c->start;
 	else
 		return -1;
 }
@@ -425,7 +453,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					}
 
 					if (ch->status== STATUS_WAIT)
-						chanStatus[k] = STATUS_PLAY;
+						ch->status = STATUS_PLAY;
 
 					if (ch->recStatus == REC_ENDING) {
 						ch->recStatus = REC_STOPPED;
@@ -456,7 +484,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								}
 							case ACTION_KEYREL:
 								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_stopChan(c);
+									mh_stopChan(channels.at(c));
 									break;
 								}
 							case ACTION_KILLCHAN:
@@ -731,7 +759,7 @@ void Mixer::updateFrameBars() {
 int Mixer::close() {
 	running = false;
 	for (unsigned i=0; i<channels.size; i++)
-		freeChannel(i);
+		deleteChannel(channels.at(i));
 	free(vChanInput);
 	free(vChanInToOut);
 	return 1;

@@ -36,8 +36,11 @@
 #define GLUE_H
 
 
-int glue_loadChannel(int c, const char *fname, const char *fpath);
-int glue_unloadChannel(int c);
+int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath);
+//int glue_unloadChannel(struct channel *ch);
+void glue_deleteChannel(struct channel *ch);
+
+void glue_freeChannel(struct channel *ch);
 
 /** FIXME - noboy will call these via MIDI/keyb/mouse! */
 int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status);
@@ -51,8 +54,8 @@ int glue_saveSample(int ch, const char *fullpath);
  * is true it means that the event comes from the main window (mouse,
  * keyb or MIDI), otherwise the event comes from the action recorder. */
 
-void glue_keyPress  (int c, bool ctrl=0, bool shift=0);
-void glue_keyRelease(int c, bool ctrl=0, bool shift=0);
+void glue_keyPress  (struct channel *c, bool ctrl=0, bool shift=0);
+void glue_keyRelease(struct channel *c, bool ctrl=0, bool shift=0);
 
 void glue_setBpm(const char *v1, const char *v2);
 void glue_setBeats(int beats, int bars, bool expand);
@@ -81,8 +84,8 @@ void glue_stopReadingRecs(int chan);
 
 void glue_quantize(int val);
 
-void glue_setVol(int chan, float v);
-void glue_setVolMainWin(int chan, float v);
+void glue_setVol(struct channel *ch, float v);
+void glue_setVolMainWin(struct channel *ch, float v);
 void glue_setOutVol(float v);
 void glue_setInVol(float v);
 
@@ -119,9 +122,9 @@ void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric);
  * field. */
 
  /** FIXME - noboy will call this via MIDI/keyb/mouse! */
-void glue_setVolEditor(class gdEditor *win, int ch, float val, bool numeric);
+void glue_setVolEditor(class gdEditor *win, struct channel *ch, float val, bool numeric);
 
-void glue_setMute(int ch);
+void glue_setMute(struct channel *ch);
 
 /* setChannelWithActions
  * add 'R' button if channel has actions, and set recorder to active. */
