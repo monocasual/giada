@@ -71,10 +71,8 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 
 	int result = mh_loadChan(fname, ch, true);  // push = true
 
-	if (result == SAMPLE_LOADED_OK) {
-		gChannel *gc = (gChannel*) mainWin->keyboard->gChannels->child(ch->index);
-		gu_trim_label(ch->wave->name.c_str(), 28, gc->sampleButton);
-	}
+	if (result == SAMPLE_LOADED_OK)
+		mainWin->keyboard->updateChannel(ch);
 
 	if (G_Conf.fullChanVolOnLoad)
 		glue_setVol(ch, 1.0);
@@ -202,22 +200,9 @@ int glue_saveSample(int ch, const char *fullpath) {
 
 /* ------------------------------------------------------------------ */
 
-/*
-int glue_unloadChannel(channel *ch) {
-	mh_deleteChan(ch);
-	recorder::clearChan(ch->index);
-	gu_resetChannel(ch->index);
-	return 1;
-}
-*/
 
 void glue_deleteChannel(channel *ch) {
-	gChannel *gch = (gChannel *) mainWin->keyboard->gChannels->child(ch->index);
-	mainWin->keyboard->gChannels->remove(gch);
-	delete gch;
-
-	printf("[glue]::deleteChannel - gChannels = %d\n", mainWin->keyboard->gChannels->children());
-
+	mainWin->keyboard->deleteChannel(ch);
 	mh_deleteChannel(ch);
 	///recorder::clearChan(index);
 	mainWin->keyboard->updateChannels();
@@ -228,11 +213,9 @@ void glue_deleteChannel(channel *ch) {
 
 
 void glue_freeChannel(channel *ch) {
-	int index = ch->index;
+	mainWin->keyboard->freeChannel(ch);
 	mh_freeChannel(ch);
-	recorder::clearChan(index);
-	gChannel *gch = (gChannel *) mainWin->keyboard->gChannels->child(index);
-	gch->reset();
+	recorder::clearChan(ch->index);
 }
 
 

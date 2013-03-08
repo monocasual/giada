@@ -31,6 +31,7 @@
 #include "gd_browser.h"
 #include "const.h"
 #include "mixer.h"
+#include "wave.h"
 #include "gd_editor.h"
 #include "conf.h"
 #include "patch.h"
@@ -372,7 +373,7 @@ printf("[keyboard] children = %d\n", children());
 		vol[i]->callback(cb_change_vol, (void*)(intptr_t)i);
 	}
 */
-	gChannels = new Fl_Group(x(), y(), w(), 20);
+	gChannels = new Fl_Group(x(), y(), w(), 40);
 	gChannels->resizable(NULL);
 	gChannels->box(FL_BORDER_BOX);
 
@@ -385,27 +386,86 @@ printf("[keyboard] children = %d\n", children());
 /* ------------------------------------------------------------------ */
 
 
+void Keyboard::freeChannel(struct channel *ch) {
+	for (int i=0; i<gChannels->children(); i++) {
+		gChannel *gch = (gChannel*) gChannels->child(i);
+		if (gch->ch == ch) {
+			gch->reset();
+			return;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::deleteChannel(struct channel *ch) {
+	for (int i=0; i<gChannels->children(); i++) {
+		gChannel *gch = (gChannel*) gChannels->child(i);
+		if (gch->ch == ch) {
+			remove(gch);
+			delete gch;
+			printf("[keyboard::deleteChannel] chan deleted, size = %d\n", gChannels->children());
+			return;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::updateChannel(struct channel *ch) {
+	for (int i=0; i<gChannels->children(); i++) {
+		gChannel *gch = (gChannel*) gChannels->child(i);
+		if (gch->ch == ch) {
+			gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
+			return;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gChannel *Keyboard::getChannel(struct channel *ch) {
+	for (int i=0; i<gChannels->children(); i++) {
+		gChannel *gch = (gChannel*) gChannels->child(i);
+		if (gch->ch == ch)
+			return gch;
+	}
+	return NULL;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void Keyboard::updateChannels() {
 
 	remove(addChannelL);
 	remove(addChannelR);
 
 	if (G_Mixer.channels.size == 0) {
-		puts("[keyboard] mixer::channels == 0");
-		gChannels->size(w(), 20);
-		addChannelL = new gClick(x(), gChannels->y()+gChannels->h(), 359, 20, "Add new channel");
+		addChannelL = new gClick(x(), y() + h()/2, 359, 20, "Add new Left Channel");
 		addChannelL->callback(cb_addChannelL, (void*) this);
 		add(addChannelL);
 	}
 	else {
-		puts("[keyboard] mixer::channels > 0, TODO");
-		/*
+		gChannels->clear();
+		gChannels->resizable(NULL);
+
 		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			gChannel *gch = new gChannel(x(), i*24+y(), 359, 20, "-- no sample --", G_Mixer.channels.at(i));
+			gChannel *gch = new gChannel(x(), i*24+y(), 359, 20, NULL, G_Mixer.channels.at(i));
 			gChannels->add(gch);
-			addChannelL->position(x(), gch->y()+24);
+			gChannels->size(w(), gChannels->children() * 24);
 		}
-		*/
+
+		addChannelL = new gClick(x(), gChannels->y()+gChannels->h(), 359, 20, "Add new Left Channel");
+		addChannelL->callback(cb_addChannelL, (void*) this);
+		add(addChannelL);
 	}
 	redraw();
 }
@@ -423,13 +483,11 @@ void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addC
 
 
 void Keyboard::__cb_addChannelL() {
-
-	int     delta = gChannels->children() * 24;
 	channel  *ch  = G_Mixer.loadChannel(NULL, 0);
-	gChannel *gch = new gChannel(x(), gChannels->y() + delta, 359, 20, "-- no sample --", ch);
+	gChannel *gch = new gChannel(x(), gChannels->y() + gChannels->children() * 24, 359, 20, NULL, ch);
 
 	gChannels->add(gch);
-	gChannels->size(w(), gChannels->h() + 24);
+	gChannels->size(w(), gChannels->children() * 24);
 	addChannelL->position(x(), gChannels->y()+gChannels->h());
 	redraw();
 }
@@ -588,18 +646,4 @@ void Keyboard::remActionButton(int c) {
 		sampleButton[c]->h());
 
 	sampleButton[c]->redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-gChannel *Keyboard::getChannelByIndex(int index) {
-	/*
-	for (unsigned i=0; i<channels.size; i++)
-		if (channels.at(i)->ch->index == index)
-			return channels.at(i);
-	return NULL;
-	*/
-	return NULL;
 }

@@ -101,9 +101,9 @@ gdEditor::gdEditor(const char *title, channel *ch)
 
 	resetStartEnd->callback(cb_resetStartEnd, this);
 
-	gChannel *gc = mainWin->keyboard->getChannelByIndex(ch->index);
+	gChannel *gch = mainWin->keyboard->getChannel(ch);
 	volume->callback(cb_setVolume, (void*)this);
-	volume->value(gc->vol->value());
+	volume->value(gch->vol->value());
 
 	float dB = 20*log10(ch->volume);   // dB = 20*log_10(linear value)
 	if (dB > -INFINITY)	sprintf(buf, "%.2f", dB);

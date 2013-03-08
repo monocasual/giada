@@ -123,7 +123,21 @@ public:
 	void addActionButton(int i, bool status);
 	void remActionButton(int i);
 
-	gChannel *getChannelByIndex(int i);
+	gChannel *getChannel(struct channel *ch);
+
+	/* deleteChannel
+	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
+	 * it from the stack. */
+
+	void deleteChannel(struct channel *ch);
+
+	/* freeChannel
+	 * free a channel from gChannels<> where gChannel->ch == ch. No channels
+	 * are deleted */
+
+	void freeChannel(struct channel *ch);
+
+	void updateChannel(struct channel *ch);
 
 	void updateChannels();
 };
