@@ -61,7 +61,7 @@ gdEditor::gdEditor(const char *title, channel *ch)
 	bar->end();
 	bar->resizable(new gBox(reload->x()+reload->w()+4, bar->y(), 80, bar->h()));
 
-	waveTools = new gWaveTools(8, 36, w()-16, h()-120, ch->index);
+	waveTools = new gWaveTools(8, 36, w()-16, h()-120, ch);
 	waveTools->end();
 
 	Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);

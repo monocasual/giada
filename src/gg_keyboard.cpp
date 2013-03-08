@@ -66,6 +66,9 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 #endif
 	end();
 
+	if (ch->wave)
+		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+
 	modeBox    = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20);
 	readAction = NULL; // no rec button at start
 
@@ -406,7 +409,6 @@ void Keyboard::deleteChannel(struct channel *ch) {
 		if (gch->ch == ch) {
 			remove(gch);
 			delete gch;
-			printf("[keyboard::deleteChannel] chan deleted, size = %d\n", gChannels->children());
 			return;
 		}
 	}

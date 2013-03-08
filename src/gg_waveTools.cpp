@@ -34,7 +34,7 @@
 #include "mixer.h"
 
 
-gWaveTools::gWaveTools(int x, int y, int w, int h, int chan, const char *l)
+gWaveTools::gWaveTools(int x, int y, int w, int h, channel *ch, const char *l)
 	: Fl_Scroll(x, y, w, h, l)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
@@ -43,7 +43,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, int chan, const char *l)
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_BOX);
 
-	waveform = new gWaveform(x, y, w, h-24, chan);
+	waveform = new gWaveform(x, y, w, h-24, ch);
 
 
 	//resizable(waveform);

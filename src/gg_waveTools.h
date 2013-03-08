@@ -39,7 +39,7 @@ class gWaveTools : public Fl_Scroll {
 public:
 	class gWaveform  *waveform;
 
-	gWaveTools(int X,int Y,int W, int H, int chan, const char *L=0);
+	gWaveTools(int X,int Y,int W, int H, struct channel *ch, const char *L=0);
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 

@@ -44,9 +44,9 @@
 extern Mixer G_Mixer;
 
 
-gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
+gWaveform::gWaveform(int x, int y, int w, int h, struct channel *ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
-	//chan(ch),
+	chan(ch),
 	menuOpen(false),
 	chanStart(0),
 	chanStartLit(false),
@@ -61,8 +61,6 @@ gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
 	data.sup  = NULL;
 	data.inf  = NULL;
 	data.size = 0;
-
-	chan = G_Mixer.channels.at(ch);
 
 	stretchToWindow();
 }
