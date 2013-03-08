@@ -100,7 +100,8 @@ private:
 	class gClick *addChannelR;
 
 public:
-	Fl_Group *gChannels;
+	Fl_Group *gChannelsL;
+	Fl_Group *gChannelsR;
 
 	class gStatus     *status      [MAX_NUM_CHAN];
 	class gDial       *vol         [MAX_NUM_CHAN];

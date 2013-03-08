@@ -142,6 +142,7 @@ channel *Mixer::loadChannel(class Wave *w, char side) {
 	channels.add(ch);
 	ch->wave  = w;
 	ch->index = channels.size-1;
+	ch->side  = side;
 	initChannel(ch);
 	if (w)
 		ch->status = STATUS_OFF;

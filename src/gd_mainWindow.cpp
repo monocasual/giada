@@ -85,7 +85,7 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
 	keyboard    = new Keyboard(8, 122, w()-16, 370);
-	keyboard->box(FL_BORDER_BOX);
+	//keyboard->box(FL_BORDER_BOX);
 
 	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	beat_stop		= new gClick(37, 39, 25, 25, "", play_xpm, pause_xpm);
