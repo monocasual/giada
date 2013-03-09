@@ -365,12 +365,15 @@ void gBeatMeter::draw() {
 	fl_rectf(x()+(G_Mixer.beats*cursorW)+1, y()+1, ((MAX_BEATS-G_Mixer.beats)*cursorW)-1, h()-2, COLOR_BG_1);
 }
 
+
 /* ------------------------------------------------------------------ */
 
-int gModeBox::id_generator = 0;
 
-gModeBox::gModeBox(int x, int y, int w, int h, const char *L)
-	: Fl_Menu_Button(x, y, w, h, L) {
+//int gModeBox::id_generator = 0;
+
+gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
+	: Fl_Menu_Button(x, y, w, h, L), ch(ch)
+{
 	box(G_BOX);
 	textsize(11);
 	textcolor(COLOR_TEXT_0);
@@ -381,12 +384,12 @@ gModeBox::gModeBox(int x, int y, int w, int h, const char *L)
 	add("Oneshot . basic",  0, cb_change_chanmode, (void *)SINGLE_BASIC);
 	add("Oneshot . press",  0, cb_change_chanmode, (void *)SINGLE_PRESS);
 	add("Oneshot . retrig", 0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-	id = id_generator++;
+	//id = id_generator++;
 }
 
 void gModeBox::draw() {
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		// border
-	switch (G_Mixer.channels.at(id)->mode) {
+	switch (ch->mode) {
 		case LOOP_BASIC:
 			fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
 			break;
@@ -411,8 +414,7 @@ void gModeBox::draw() {
 void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
 
 void gModeBox::__cb_change_chanmode(int mode) {
-
-	G_Mixer.channels.at(id)->mode = mode;
+	ch->mode = mode;
 
 	/* what to do when the channel is playing and you change the mode?
 	 * Nothing, since v0.5.3. Just refresh the action editor window, in

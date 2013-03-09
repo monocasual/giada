@@ -52,25 +52,25 @@ extern gdMainWindow *mainWin;
 gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 : Fl_Group(X, Y, W, H, L), ch(ch)
 {
+	begin();
 	button = new gButton (x(), y(), 20, 20);
 	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, NULL);
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 251, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 227, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	fx           = new gButton (mute->x()+mute->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
 	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 275, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 251, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
 	vol          = new gDial   (mute->x()+mute->w()+4, y(), 20, 20);
 #endif
+	modeBox      = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20, ch);
+	readAction   = NULL; // no rec button at start
 	end();
 
 	if (ch->wave)
 		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
-
-	modeBox    = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20);
-	readAction = NULL; // no rec button at start
 
 	button->callback(cb_button, (void*)this);
 	/*
@@ -333,65 +333,29 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 	scrollbar.labelcolor(COLOR_BD_1);
 	scrollbar.slider(G_BOX);
 
-	/* read the config file */
-printf("[keyboard] children = %d\n", children());
+	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-26, 0);
+	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+28, y(), (w()/2)-26, 0);
+	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
+	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
 
-	begin();
-/**
-	int arkeys[MAX_NUM_CHAN] = DEFAULT_KEY_ARRAY;
-		for (int i=0; i<MAX_NUM_CHAN; i++)
-			arkeys[i] = G_Conf.keys[i];
+	//updateChannels();
 
-	for (unsigned i=0, _y=0, _x=0; i<G_Mixer.channels.size; i++) {
-		if (i>=MAX_NUM_CHAN/2) {
-			_y = 24*MAX_NUM_CHAN/2;
-			_x = 411;
-		}
-		butts[i]        = new gButton (    x()+_x, (y()+i*24)-_y, 20,  20);
-		status[i]       = new gStatus (24 +x()+_x, (y()+i*24)-_y, 20,  20, i);
-#if defined(WITH_VST)
-		sampleButton[i] = new gClick  (48 +x()+_x, (y()+i*24)-_y, 239, 20, "-- no sample --");
-		mute[i]         = new gClick  (291+x()+_x, (y()+i*24)-_y, 20,  20, "", muteOff_xpm, muteOn_xpm);
-		fx[i]           = new gButton (315+x()+_x, (y()+i*24)-_y, 20,  20, "", fxOff_xpm, fxOn_xpm);
-#else
-		sampleButton[i] = new gClick  (48 +x()+_x, (y()+i*24)-_y, 263, 20, "-- no sample --");
-		mute[i]         = new gClick  (315+x()+_x, (y()+i*24)-_y, 20,  20, "", muteOff_xpm, muteOn_xpm);
-#endif
-		vol[i]          = new gDial   (339+x()+_x, (y()+i*24)-_y, 20,  20);
-		modeBoxes[i]    = new gModeBox(363+x()+_x, (y()+i*24)-_y, 20,  20);
-		readActions[i]  = NULL; // tutti vuoti all'inizio
+	/* begin() - end() don't work well here, with sub-Fl_Group */
 
-		butts[i]->callback(cb_button, (void*)this);
-		char buf[2]; sprintf(buf, "%c", arkeys[i]);
-		butts[i]->copy_label(buf);
-		butts[i]->key = arkeys[i];
-		butts[i]->id  = i;
+	add(addChannelL);
+	add(addChannelR);
+	add(gChannelsL);
+	add(gChannelsR);
 
-#ifdef WITH_VST
-		fx[i]->id = i;
-		fx[i]->callback(cb_openFxWindow, (void*)(intptr_t)i);
-#endif
+	//gChannelsL->box(FL_BORDER_BOX);
+	//gChannelsR->box(FL_BORDER_BOX);
 
-		mute[i]->type(FL_TOGGLE_BUTTON);
-		mute[i]->callback(cb_mute, (void*)(intptr_t)i);
-
-    sampleButton[i]->callback(cb_openChanMenu, (void*)(intptr_t)i);
-
-		vol[i]->callback(cb_change_vol, (void*)(intptr_t)i);
-	}
-*/
-
-	gChannelsL = new Fl_Group(x(), y(), (w()/2)-26, 40);
 	gChannelsL->resizable(NULL);
-	gChannelsL->box(FL_BORDER_BOX);
-
-	gChannelsR = new Fl_Group(gChannelsL->x()+gChannelsL->w()+28, y(), (w()/2)-26, 40);
 	gChannelsR->resizable(NULL);
-	gChannelsR->box(FL_BORDER_BOX);
 
-	updateChannels();
 
-	end();
+	addChannelL->callback(cb_addChannelL, (void*) this);
+	addChannelR->callback(cb_addChannelR, (void*) this);
 }
 
 
@@ -413,14 +377,25 @@ void Keyboard::freeChannel(struct channel *ch) {
 
 
 void Keyboard::deleteChannel(struct channel *ch) {
-	for (int i=0; i<gChannelsL->children(); i++) {
+	bool found = false;
+	Fl::lock();
+	for (int i=0; i<gChannelsL->children() && !found; i++) {
 		gChannel *gch = (gChannel*) gChannelsL->child(i);
 		if (gch->ch == ch) {
-			remove(gch);
-			delete gch;
-			return;
+			gch->hide();
+			gChannelsL->remove(gch);
+			found = true;
 		}
 	}
+	for (int i=0; i<gChannelsR->children() && !found; i++) {
+		gChannel *gch = (gChannel*) gChannelsR->child(i);
+		if (gch->ch == ch) {
+			gch->hide();
+			gChannelsR->remove(gch);
+			found = true;
+		}
+	}
+	Fl::unlock();
 }
 
 
@@ -430,6 +405,13 @@ void Keyboard::deleteChannel(struct channel *ch) {
 void Keyboard::updateChannel(struct channel *ch) {
 	for (int i=0; i<gChannelsL->children(); i++) {
 		gChannel *gch = (gChannel*) gChannelsL->child(i);
+		if (gch->ch == ch) {
+			gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
+			return;
+		}
+	}
+	for (int i=0; i<gChannelsR->children(); i++) {
+		gChannel *gch = (gChannel*) gChannelsR->child(i);
 		if (gch->ch == ch) {
 			gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
 			return;
@@ -454,40 +436,29 @@ gChannel *Keyboard::getChannel(struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::updateChannels() {
+void Keyboard::updateChannels(char side) {
 
-	remove(addChannelL);
-	remove(addChannelR);
+	Fl_Group *group;
+	gClick   *add;
 
-	if (G_Mixer.channels.size == 0) {
-		addChannelL = new gClick(gChannelsL->x(), y() + h()/2, gChannelsL->w(), 20, "Add new Left Channel");
-		addChannelL->callback(cb_addChannelL, (void*) this);
-		add(addChannelL);
-
-		addChannelR = new gClick(gChannelsR->x(), y() + h()/2, gChannelsR->w(), 20, "Add new Right Channel");
-		addChannelR->callback(cb_addChannelR, (void*) this);
-		add(addChannelR);
+	if (side == 0)	{
+		group = gChannelsL;
+		add   = addChannelL;
 	}
 	else {
-		gChannelsL->clear();
-		gChannelsL->resizable(NULL);
-
-		for (unsigned i=0, k=0; i<G_Mixer.channels.size; i++) {
-			channel *ch = G_Mixer.channels.at(i);
-			if (ch->side == 0) {
-				gChannel *gch = new gChannel(x(), k*24+y(), 359, 20, NULL, ch);
-				gChannelsL->add(gch);
-				gChannelsL->size(gChannelsL->w(), gChannelsL->children() * 24);
-				k++;
-			}
-			else
-				printf("[keyboard::updateChannels] right side channel TODO (%d)\n", ch->side);
-		}
-
-		addChannelL = new gClick(x(), gChannelsL->y()+gChannelsL->h(), 359, 20, "Add new Left Channel");
-		addChannelL->callback(cb_addChannelL, (void*) this);
-		add(addChannelL);
+		group = gChannelsR;
+		add   = addChannelR;
 	}
+
+	printf("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
+
+	for (int i=0; i<group->children(); i++) {
+		gChannel *gch = (gChannel*) group->child(i);
+		gch->position(gch->x(), y()+(i*24));
+	}
+	group->size(group->w(), group->children()*24);
+	add->position(add->x(), group->y()+group->h());
+
 	redraw();
 }
 
@@ -509,12 +480,18 @@ void Keyboard::__cb_addChannelL() {
 
 	gChannelsL->add(gch);
 	gChannelsL->size(gChannelsL->w(), gChannelsL->children() * 24);
-	addChannelL->position(x(), gChannelsL->y()+gChannelsL->h());
+	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
 	redraw();
 }
 
 void Keyboard::__cb_addChannelR() {
-	puts("add right channel");
+	channel  *ch  = G_Mixer.loadChannel(NULL, 1);
+	gChannel *gch = new gChannel(gChannelsR->x(), gChannelsR->y() + gChannelsR->children() * 24, gChannelsR->w(), 20, NULL, ch);
+
+	gChannelsR->add(gch);
+	gChannelsR->size(gChannelsR->w(), gChannelsR->children() * 24);
+	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
+	redraw();
 }
 
 

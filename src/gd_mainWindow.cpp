@@ -57,6 +57,8 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	Fl::background(25, 25, 25);
 	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
 
+	begin();
+
 	menu_file 	= new gClick(8,   -1, 70, 21, "file");
 	menu_edit	  = new gClick(82,  -1, 70, 21, "edit");
 	menu_config	= new gClick(156, -1, 70, 21, "config");
@@ -84,8 +86,6 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 #endif
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-	keyboard    = new Keyboard(8, 122, w()-16, 370);
-	//keyboard->box(FL_BORDER_BOX);
 
 	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	beat_stop		= new gClick(37, 39, 25, 25, "", play_xpm, pause_xpm);
@@ -93,6 +93,10 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	input_rec		= new gClick(95, 39, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
 
 	metronome   = new gClick(124, 49, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+
+	keyboard    = new Keyboard(8, 122, w()-16, 370);
+	//keyboard->box(FL_BORDER_BOX);
+
 	end();
 
 	char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);

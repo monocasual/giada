@@ -140,7 +140,7 @@ public:
 
 	void updateChannel(struct channel *ch);
 
-	void updateChannels();
+	void updateChannels(char side);
 };
 
 #endif

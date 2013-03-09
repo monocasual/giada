@@ -202,10 +202,10 @@ int glue_saveSample(int ch, const char *fullpath) {
 
 
 void glue_deleteChannel(channel *ch) {
-	mainWin->keyboard->deleteChannel(ch);
 	mh_deleteChannel(ch);
+	mainWin->keyboard->deleteChannel(ch);
 	///recorder::clearChan(index);
-	mainWin->keyboard->updateChannels();
+	mainWin->keyboard->updateChannels(ch->side);
 }
 
 
