@@ -45,8 +45,8 @@
 namespace recorder {
 
 struct action {
-	int  chan;
-	char type;
+	int  chan;  // channel index, mixer::channel->index
+ 	char type;
 	int  frame; // redundant info, used by helper functions
 };
 
@@ -64,8 +64,8 @@ extern gVector< gVector<action*> > global;	// container of containers of actions
 extern gVector<action*>  actions;				    // container of actions
 
 extern bool active;
-extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
-extern bool chanEvents[MAX_NUM_CHAN];				// chan has events?
+//extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
+//extern bool chanEvents[MAX_NUM_CHAN];				// chan has events?
 extern bool sortedActions;                  // actions are sorted via sortActions()?
 
 /* init
@@ -143,8 +143,8 @@ void shrink(int new_fpb);
  * if enabled  = read actions from channel chan
  * if disabled = don't read actions from channel chan. */
 
-void enableRead(int chan);
-void disableRead(int chan);
+void enableRead(channel *ch);
+void disableRead(channel *ch);
 
 /* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +

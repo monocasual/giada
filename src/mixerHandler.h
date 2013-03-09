@@ -47,7 +47,7 @@ void mh_freeChannel(struct channel *ch);
 /* killChan
  * kill a chan abruptly, without checking LOOP_ENDING and such */
 
-void mh_killChan(int c);
+void mh_killChan(struct channel *ch);
 
 
 void mh_muteChan(channel *ch, bool internal=false);

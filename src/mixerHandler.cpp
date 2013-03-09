@@ -141,8 +141,7 @@ void mh_stopChan(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_killChan(int c) {
-	channel *ch = G_Mixer.channels.at(c);
+void mh_killChan(channel *ch) {
 	if (ch->wave != NULL && ch->status != STATUS_OFF) {
 		if (ch->mute || ch->mute_i)
 			G_Mixer.chanStop(ch);

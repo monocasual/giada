@@ -31,9 +31,13 @@
 #include "ge_muteChannel.h"
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
+#include "gd_mainWindow.h"
 #include "recorder.h"
 #include "mixer.h"
 #include "glue.h"
+
+
+extern gdMainWindow *mainWin;
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
@@ -240,7 +244,7 @@ int gMuteChannel::handle(int e) {
 						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
-					glue_setChannelWithActions(parent->chan->index); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -270,7 +274,7 @@ int gMuteChannel::handle(int e) {
 					recorder::deleteAction(parent->chan->index,	points.at(b).frame,	points.at(b).type);
 					recorder::sortActions();
 
-					glue_setChannelWithActions(parent->chan->index); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}

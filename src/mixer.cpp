@@ -188,6 +188,9 @@ void Mixer::initChannel(channel *ch) {
 	ch->fadeoutOn   = false;
 	ch->fadeoutVol  = 1.0f;
 	ch->fadeoutStep = DEFAULT_FADEOUT_STEP;
+
+	ch->readActions = false;
+	ch->hasActions  = false;
 }
 
 
@@ -235,6 +238,17 @@ int Mixer::getChannelIndex(channel *ch) {
 		if (channels.at(i)->index == ch->index)
 			return i;
 	return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+channel *Mixer::getChannelByIndex(int index) {
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->index == index)
+			return channels.at(i);
+	return NULL;
 }
 
 
@@ -458,12 +472,12 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 					if (ch->recStatus == REC_ENDING) {
 						ch->recStatus = REC_STOPPED;
-						recorder::disableRead(k);    // rec stop
+						recorder::disableRead(ch);    // rec stop
 					}
 					else
 					if (ch->recStatus == REC_WAITING) {
 						ch->recStatus = REC_READING;
-						recorder::enableRead(k);     // rec start
+						recorder::enableRead(ch);     // rec start
 					}
 				}
 			}
@@ -475,7 +489,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (recorder::frames.at(y) == actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
 						int c = recorder::global.at(y).at(z)->chan;
-						if (recorder::chanActive[c] == false)
+						if (channels.at(c)->readActions == false)
 							continue;
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
@@ -490,7 +504,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								}
 							case ACTION_KILLCHAN:
 								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_killChan(c);
+									mh_killChan(channels.at(c));
 									break;
 								}
 							case ACTION_MUTEON:

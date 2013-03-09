@@ -45,6 +45,7 @@ private:
 	static void cb_mute          (Fl_Widget *v, void *p);
 	static void cb_openChanMenu  (Fl_Widget *v, void *p);
 	static void cb_change_vol    (Fl_Widget *v, void *p);
+	static void cb_readActions   (Fl_Widget *v, void *p);
 #ifdef WITH_VST
 	static void cb_openFxWindow  (Fl_Widget *v, void *p);
 #endif
@@ -52,6 +53,7 @@ private:
 	inline void __cb_mute        ();
 	inline void __cb_openChanMenu();
 	inline void __cb_change_vol  ();
+	inline void __cb_readActions ();
 #ifdef WITH_VST
 	inline void __cb_openFxWindow();
 #endif
@@ -62,10 +64,17 @@ public:
 	gChannel(int x, int y, int w, int h, const char *l, struct channel *ch);
 	void reset();
 
+	/* [add/rem]ActionButton
+	 * add or removes the 'R' button. Status tells if the button should be
+	 * on or off during the first appearance */
+
+	void addActionButton(bool status);
+	void remActionButton();
+
 	class gStatus     *status;
 	class gDial       *vol;
 	class gClick 	    *mute;
-	class gClick 	    *readAction;
+	class gClick 	    *readActions;
 	class gClick 	    *sampleButton;
 	class gModeBox    *modeBox;
 	class gButton     *button;
@@ -83,11 +92,9 @@ public:
 
 class Keyboard : public Fl_Scroll {
 private:
-	static void cb_readActions  (Fl_Widget *v, void *p);
 	static void cb_addChannelL  (Fl_Widget *v, void *p);
 	static void cb_addChannelR  (Fl_Widget *v, void *p);
 
-	inline void __cb_readActions(int chan);
 	inline void __cb_addChannelL();
 	inline void __cb_addChannelR();
 
@@ -119,12 +126,6 @@ public:
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
-	/* [add/rem]ActionButton
-	 * add or removes the 'R' button. Status tells if the button should be
-	 * on or off during the first appearance */
-
-	void addActionButton(int i, bool status);
-	void remActionButton(int i);
 
 	gChannel *getChannel(struct channel *ch);
 
@@ -143,6 +144,11 @@ public:
 	void updateChannel(struct channel *ch);
 
 	void updateChannels(char side);
+
+	/* setChannelWithActions
+	 * add 'R' button if channel has actions, and set recorder to active. */
+
+	void setChannelWithActions(struct channel *ch);
 };
 
 #endif

@@ -89,12 +89,12 @@ bool canRec(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(int c, char act, int frame) {
+void rec(int index, char act, int frame) {
 
 	/* allocating the action */
 
 	action *a = (action*) malloc(sizeof(action));
-	a->chan  = c;
+	a->chan  = index;
 	a->type  = act;
 	a->frame = frame;
 
@@ -125,18 +125,23 @@ void rec(int c, char act, int frame) {
 		/* no duplicates, please */
 
 		for (unsigned t=0; t<global.at(frameToExpand).size; t++)
-			if (global.at(frameToExpand).at(t)->chan == c && global.at(frameToExpand).at(t)->type == act)
+			if (global.at(frameToExpand).at(t)->chan == index && global.at(frameToExpand).at(t)->type == act)
 				return;
 		global.at(frameToExpand).add(a);		// expand array
 	}
 
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
+	/** DEPRECATED */
+	chanEvents[index] = true;
+	/** DEPRECATED */
 
-	chanEvents[c] = true;
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = true;
+
 	sortedActions = false;
 
-	printf("[REC] action %d recorded on frame %d, chan %d\n", act, frame, c);
+	printf("[REC] action %d recorded on frame %d, chan %d\n", act, frame, index);
 	//print();
 }
 
@@ -434,18 +439,18 @@ void shrink(int new_fpb) {
 /* ------------------------------------------------------------------ */
 
 
-void enableRead(int c) {
-	chanActive[c] = true;
+void enableRead(channel *ch) {
+	ch->readActions = true;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void disableRead(int c) {
-	chanActive[c] = false;
+void disableRead(channel *ch) {
+	ch->readActions = false;
 	if (G_Conf.recsStopOnChanHalt)
-		mh_killChan(c);
+		mh_killChan(ch);
 }
 
 

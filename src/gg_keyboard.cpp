@@ -66,7 +66,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	vol          = new gDial   (mute->x()+mute->w()+4, y(), 20, 20);
 #endif
 	modeBox      = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20, ch);
-	readAction   = NULL; // no rec button at start
+	readActions  = NULL; // no rec button at start
 	end();
 
 	if (ch->wave)
@@ -98,6 +98,7 @@ void gChannel::cb_button      (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_but
 void gChannel::cb_mute        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_mute(); }
 void gChannel::cb_openChanMenu(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openChanMenu(); }
 void gChannel::cb_change_vol  (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_change_vol(); }
+void gChannel::cb_readActions (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_readActions(); }
 #ifdef WITH_VST
 void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openFxWindow(); }
 #endif
@@ -191,7 +192,7 @@ void gChannel::__cb_openChanMenu() {
 
 	/* no 'clear actions' if there are no actions */
 
-	if (!recorder::chanEvents[ch->index])
+	if (!ch->hasActions)
 		rclick_menu[4].deactivate();
 
 	/* no 'clear all actions' or 'clear start/stop actions' for those channels
@@ -255,8 +256,8 @@ void gChannel::__cb_openChanMenu() {
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
 		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
-		if (!recorder::chanEvents[ch->index])
-			((Keyboard*)parent())->remActionButton(ch->index);
+		if (!ch->hasActions)
+			remActionButton();
 
 		/* TODO - set mute=false */
 
@@ -268,8 +269,8 @@ void gChannel::__cb_openChanMenu() {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
 		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
-		if (!recorder::chanEvents[ch->index])
-			((Keyboard*)parent())->remActionButton(ch->index);
+		if (!ch->hasActions)
+			remActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -278,7 +279,7 @@ void gChannel::__cb_openChanMenu() {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		recorder::clearChan(ch->index);
-		((Keyboard*)parent())->remActionButton(ch->index);
+		remActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}
@@ -316,6 +317,57 @@ void gChannel::openBrowser(int type) {
 
 void gChannel::__cb_change_vol() {
 	glue_setVolMainWin(ch, vol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::addActionButton(bool status) {
+
+	/* quit if 'R' exists yet. */
+
+	if (readActions != NULL)
+		return;
+
+	sampleButton->size(sampleButton->w()-24, sampleButton->h());
+
+	redraw();
+
+	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4, sampleButton->y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
+	readActions->type(FL_TOGGLE_BUTTON);
+	readActions->value(status);
+	readActions->callback(cb_readActions, (void*)this);
+	add(readActions);
+
+	/* hard redraw: there's no other way to avoid glitches when moving
+	 * the 'R' button */
+
+	mainWin->keyboard->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::remActionButton() {
+	if (readActions == NULL)
+		return;
+
+	remove(readActions);		// delete from Keyboard group (FLTK)
+	//delete readActions[c];  // delete (C++)
+	readActions = NULL;
+
+	sampleButton->size(sampleButton->w()+24, sampleButton->h());
+	sampleButton->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_readActions() {
+	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
 }
 
 
@@ -475,7 +527,6 @@ void Keyboard::updateChannels(char side) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::cb_readActions(Fl_Widget *v, void *p) { ((Keyboard*)((gClick*)v)->parent())->__cb_readActions((intptr_t)p); }
 void Keyboard::cb_addChannelL(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelL(); }
 void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelR(); }
 
@@ -599,65 +650,15 @@ int Keyboard::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_readActions(int c) {
-	recorder::chanActive[c] ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
+void Keyboard::setChannelWithActions(channel *ch) {
+	gChannel *gch = getChannel(ch);
+	if (ch->hasActions) {
+		ch->readActions = true;   /// <---- move this to glue_stopRec
+		gch->addActionButton(true); // true = button on
+	}
+	else {
+		ch->readActions = false;  /// <---- move this to glue_stopRec
+		gch->remActionButton();
+	}
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-void Keyboard::addActionButton(int c, bool status) {
-
-#if 0
-	/* quit if 'R' exists yet. */
-
-	if (readActions[c] != NULL)
-		return;
-
-	sampleButton[c]->resize(
-		sampleButton[c]->x(),
-		sampleButton[c]->y(),
-		sampleButton[c]->w()-24,
-		sampleButton[c]->h());
-
-	int _y = sampleButton[c]->y();
-	int _x = sampleButton[c]->x() + sampleButton[c]->w() + 4;
-
-	readActions[c] = new gClick(_x, _y, 20, 20, "", readActionOff_xpm, readActionOn_xpm);
-	readActions[c]->type(FL_TOGGLE_BUTTON);
-	readActions[c]->value(status);
-	readActions[c]->callback(cb_readActions, (void*)(intptr_t)c);
-	add(readActions[c]);
-
-	/* hard redraw: there's no other way to avoid glitches when moving
-	 * the 'R' button */
-	/** FIXME - check with fltk 1.3.x */
-
-	mainWin->redraw();
-
-#endif
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void Keyboard::remActionButton(int c) {
-#if 0
-	if (readActions[c] == NULL)
-		return;
-
-	remove(readActions[c]);		// delete from Keyboard group (FLTK)
-	delete readActions[c];    // delete (C++)
-	readActions[c] = NULL;
-
-	sampleButton[c]->resize(
-		sampleButton[c]->x(),
-		sampleButton[c]->y(),
-		sampleButton[c]->w()+24,
-		sampleButton[c]->h());
-
-	sampleButton[c]->redraw();
-#endif
-}

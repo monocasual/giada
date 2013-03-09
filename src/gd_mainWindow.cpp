@@ -409,7 +409,7 @@ void gdMainWindow::__cb_open_edit_menu() {
 	menu[1].deactivate();
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		if (recorder::chanEvents[i]) {
+		if (G_Mixer.channels.at(i)->hasActions) {
 			menu[1].activate();
 			break;
 		}

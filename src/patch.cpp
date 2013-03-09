@@ -328,6 +328,7 @@ int Patch::getSamplerate() {
 
 int Patch::readRecs() {
 
+#if 0
 	puts("[PATCH] Reading recs...");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
@@ -362,6 +363,7 @@ int Patch::readRecs() {
 		}
 	}
 
+#endif
 	return 1;
 }
 

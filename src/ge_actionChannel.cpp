@@ -30,12 +30,14 @@
 #include <FL/fl_draw.H>
 #include "glue.h"
 #include "ge_actionChannel.h"
-#include "conf.h"
+#include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
+#include "conf.h"
 
 
-extern Mixer    G_Mixer;
-extern Conf	    G_Conf;
+extern gdMainWindow *mainWin;
+extern Mixer         G_Mixer;
+extern Conf	         G_Conf;
 
 
 /* ------------------------------------------------------------------ */
@@ -281,7 +283,7 @@ int gActionChannel::handle(int e) {
 							true,                                 // record = true: record it!
 							parent->getActionType());             // type of action
 					add(a);
-					glue_setChannelWithActions(parent->chan->index); // mainWindow update
+					mainWin->keyboard->setChannelWithActions(parent->chan); // mainWindow update
 					redraw();
 					ret = 1;
 				}
@@ -299,7 +301,7 @@ int gActionChannel::handle(int e) {
 					a->delAction();
 					remove(a);
 					delete a;
-					glue_setChannelWithActions(parent->chan->index);
+					mainWin->keyboard->setChannelWithActions(parent->chan);
 					redraw();
 					ret = 1;
 				}

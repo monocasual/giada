@@ -328,7 +328,7 @@ void glue_stopSeq() {
 		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 			channel *c = G_Mixer.channels.at(i);
 			if (c->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-				mh_killChan(i);
+				mh_killChan(c);
 
 			/* when a channel has recs in play?
 			 * Recorder has events for that channel
@@ -337,8 +337,8 @@ void glue_stopSeq() {
 			 * si stoppino i sample suonati manualmente in un canale con rec
 			 * disattivate) */
 
-			if (recorder::chanEvents[i] && recorder::chanActive[i] && c->status == STATUS_PLAY)
-				mh_killChan(i);
+			if (c->hasActions && c->readActions && c->status == STATUS_PLAY)
+				mh_killChan(c);
 		}
 	}
 
@@ -392,13 +392,13 @@ void glue_startRec() {
 
 void glue_stopRec() {
 
-	/* stop the recorder and sort the new actions */
+	/* stop the recorder and sort new actions */
 
 	recorder::active = false;
 	recorder::sortActions();
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		glue_setChannelWithActions(i);
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		mainWin->keyboard->setChannelWithActions(G_Mixer.channels.at(i));
 
 	mainWin->beat_rec->value(0);
 	mainWin->beat_rec->redraw();
@@ -412,25 +412,23 @@ void glue_stopRec() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startReadingRecs(int c) {
-#if 0
+void glue_startReadingRecs(channel *ch) {
 	/* treatRecsAsLoops */
 
 	if (G_Conf.treatRecsAsLoops)
-		G_Mixer.channels.at(c)->recStatus = REC_WAITING;
+		ch->recStatus = REC_WAITING;
 	else
-		recorder::enableRead(c);
+		recorder::enableRead(ch);
 
-	mainWin->keyboard->readActions[c]->value(1);
-	mainWin->keyboard->readActions[c]->redraw();
-#endif
+	//mainWin->keyboard->readActions[c]->value(1);
+	//mainWin->keyboard->readActions[c]->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_stopReadingRecs(int c) {
+void glue_stopReadingRecs(channel *ch) {
 #if 0
 	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
 	 * the channel in REC_ENDING status */
@@ -831,20 +829,20 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 	if (shift) {
 		if (recorder::active) {
 			if (G_Mixer.running) {
-				mh_killChan(c->index);
+				mh_killChan(c);
 				if (recorder::canRec(c) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
 					recorder::rec(c->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
 			}
 		}
 		else {
-			if (recorder::chanEvents[c->index]) {
+			if (c->hasActions) {
 				if (G_Mixer.running || c->status == STATUS_OFF)
-					recorder::chanActive[c->index] ? glue_stopReadingRecs(c->index) : glue_startReadingRecs(c->index);
+					c->readActions ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
 				else
-					mh_killChan(c->index);
+					mh_killChan(c);
 			}
 			else
-				mh_killChan(c->index);
+				mh_killChan(c);
 		}
 	}
 
@@ -908,21 +906,6 @@ void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric) {
 	sprintf(buf, "%.4f", val);
 	win->pitchNum->value(buf);
 	win->pitchNum->redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void glue_setChannelWithActions(int ch) {
-	if (recorder::chanEvents[ch]) {
-		recorder::chanActive[ch] = true;
-		mainWin->keyboard->addActionButton(ch, true); // true = button on
-	}
-	else {
-		recorder::chanActive[ch] = false;
-		mainWin->keyboard->remActionButton(ch);
-	}
 }
 
 

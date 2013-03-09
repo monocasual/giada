@@ -57,7 +57,6 @@ struct channel {
 	bool   mute_i;     // internal mute
 	bool   mute;       // global mute
 	bool   qWait;      // quantizer wait
-	int 	 recStatus;  // status of recordings (treat recs as loops)
 	float  fadein;
 	bool   fadeoutOn;
 	float  fadeoutVol;      // fadeout volume
@@ -65,6 +64,12 @@ struct channel {
 	float  fadeoutStep;     // fadeout decrease
   int    fadeoutType;     // xfade or fadeout
   int		 fadeoutEnd;      // what to do when fadeout ends
+
+	/* recorder:: stuff */
+
+	int 	 recStatus;    // status of recordings (treat recs as loops)
+  bool   readActions;  // read actions or not
+  bool   hasActions;   // has something recorded
 };
 
 
@@ -167,6 +172,8 @@ public:
 	bool mergeVirtualInput();
 
 	int getChannelIndex(channel *ch);
+
+	channel *getChannelByIndex(int i);
 
 	inline channel* getLastChannel() { return channels.at(channels.size-1); }
 
