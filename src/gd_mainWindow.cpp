@@ -94,7 +94,7 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 
 	metronome   = new gClick(124, 49, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
-	keyboard    = new Keyboard(8, 122, w()-16, 370);
+	keyboard    = new Keyboard(8, 122, w()-16, 380);
 	//keyboard->box(FL_BORDER_BOX);
 
 	end();

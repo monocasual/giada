@@ -56,12 +56,12 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	button = new gButton (x(), y(), 20, 20);
 	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, NULL);
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 227, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	fx           = new gButton (mute->x()+mute->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
 	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 251, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 261, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
 	vol          = new gDial   (mute->x()+mute->w()+4, y(), 20, 20);
 #endif
@@ -333,8 +333,8 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 	scrollbar.labelcolor(COLOR_BD_1);
 	scrollbar.slider(G_BOX);
 
-	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-26, 0);
-	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+28, y(), (w()/2)-26, 0);
+	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-16, 0);
+	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+8, y(), (w()/2)-16, 0);
 	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
 	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
 
@@ -568,6 +568,7 @@ int Keyboard::handle(int e) {
 			}
 			break;
 		}
+
 		/*
 		case FL_PUSH: {
 			for (int t=0; t<children(); t++) {
@@ -580,6 +581,7 @@ int Keyboard::handle(int e) {
 			break;
 		}
 		*/
+
 	}
 	return ret;
 }
