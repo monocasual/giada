@@ -50,12 +50,11 @@ extern PluginHost G_PluginHost;
 #endif
 
 
-void mh_startChan(int c, bool do_quantize) {
+void mh_startChan(channel *ch, bool do_quantize) {
 
-	channel *ch = G_Mixer.channels.at(c);
+	printf("[mh] start chan %d, status=%d\n", ch->index, ch->status);
 
 	switch (ch->status) {
-
 		case STATUS_EMPTY:
 		case STATUS_MISSING:
 		case STATUS_WRONG:
@@ -78,7 +77,7 @@ void mh_startChan(int c, bool do_quantize) {
 		case STATUS_PLAY:
 		{
 			if (ch->mode == SINGLE_BASIC) {
-				G_Mixer.fadeout(c);
+				G_Mixer.fadeout(ch);
 			}
 			else
 			if (ch->mode == SINGLE_RETRIG) {
@@ -92,9 +91,9 @@ void mh_startChan(int c, bool do_quantize) {
 					 * introduces some bad clics */
 
 					if (ch->mute)
-						G_Mixer.chanReset(c);
+						G_Mixer.chanReset(ch);
 					else
-						G_Mixer.xfade(c);
+						G_Mixer.xfade(ch);
 				}
 			}
 			else
@@ -123,15 +122,14 @@ void mh_startChan(int c, bool do_quantize) {
 
 
 void mh_stopChan(channel *ch) {
-
 	if (ch == NULL)
 		return;
 
 	if (ch->status == STATUS_PLAY && ch->mode == SINGLE_PRESS) {
 		if (ch->mute || ch->mute_i)
-			G_Mixer.chanStop(ch->index);
+			G_Mixer.chanStop(ch);
 		else
-			G_Mixer.fadeout(ch->index, Mixer::DO_STOP);
+			G_Mixer.fadeout(ch, Mixer::DO_STOP);
 	}
 
 	/* stop a SINGLE_PRESS immediately, if the quantizer is on */
@@ -149,9 +147,9 @@ void mh_killChan(int c) {
 	channel *ch = G_Mixer.channels.at(c);
 	if (ch->wave != NULL && ch->status != STATUS_OFF) {
 		if (ch->mute || ch->mute_i)
-			G_Mixer.chanStop(c);
+			G_Mixer.chanStop(ch);
 		else
-			G_Mixer.fadeout(c, Mixer::DO_STOP);
+			G_Mixer.fadeout(ch, Mixer::DO_STOP);
 	}
 }
 
@@ -166,7 +164,7 @@ void mh_muteChan(int c, bool internal) {
 			ch->mute_i = true;   // just mute it internally
 		else
 			if (G_Mixer.isPlaying(c))
-				G_Mixer.fadeout(c, Mixer::DO_MUTE_I);
+				G_Mixer.fadeout(ch, Mixer::DO_MUTE_I);
 			else
 				ch->mute_i = true;
 	}
@@ -175,7 +173,7 @@ void mh_muteChan(int c, bool internal) {
 			ch->mute = true;     // just mute it globally
 		else
 			if (G_Mixer.isPlaying(c))              // sample in play? fadeout needed. Else,
-				G_Mixer.fadeout(c, Mixer::DO_MUTE);  // just mute it globally
+				G_Mixer.fadeout(ch, Mixer::DO_MUTE);  // just mute it globally
 			else
 				ch->mute = true;
 	}
@@ -449,7 +447,7 @@ channel *mh_startInputRec() {
 	G_Patch.lastTakeId += 1;
 
 	G_Mixer.pushChannel(w, chan);
-	G_Mixer.chanInput = chan->index;
+	G_Mixer.chanInput = chan;
 
 	/* start to write from the actualFrame, not the beginning */
 	/** FIXME: move this before wave allocation*/
@@ -468,11 +466,11 @@ channel *mh_startInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-int mh_stopInputRec() {
+channel *mh_stopInputRec() {
 	printf("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
-	int chan = G_Mixer.chanInput;
-	G_Mixer.chanInput = -1;
+	channel *ch = G_Mixer.chanInput;
+	G_Mixer.chanInput = NULL;
 	G_Mixer.waitRec   = 0;					// if delay compensation is in use
-	return chan;
+	return ch;
 }

@@ -35,7 +35,7 @@
  * starts a channel. do_quantize = false (don't quantize) when Mixer is
  * reading actions from Recorder::.  */
 
-void mh_startChan(int c, bool do_quantize=true);
+void mh_startChan(struct channel *ch, bool do_quantize=true);
 
 void mh_stopChan(struct channel *ch);
 
@@ -65,7 +65,7 @@ int mh_loadChan(const char *file, struct channel *ch, bool push=true);
 
 struct channel *mh_startInputRec();
 
-int mh_stopInputRec();
+channel *mh_stopInputRec();
 
 void mh_rewind();
 

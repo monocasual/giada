@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "const.h"
+#include "mixer.h"
 
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
@@ -81,7 +82,7 @@ void chanHasEvents(int chan);
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
 
-bool canRec(int chan);
+bool canRec(channel *ch);
 
 /* rec
  * record an action. */

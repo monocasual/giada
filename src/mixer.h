@@ -90,8 +90,8 @@ public:
 
 	void     pushChannel(class Wave *w, channel *ch);
 
-	void chanStop(int chan);
-	void chanReset(int chan);
+	void chanStop(channel *ch);
+	void chanReset(channel *ch);
 
 	/* fadein
 	 * prepare for fade-in process. */
@@ -101,15 +101,15 @@ public:
 	/* fadeout
 	 * do a fadeout and eventually another action when finished. */
 
-	void fadeout(int chan, int actionPostFadeout=DO_STOP);
+	void fadeout(channel *ch, int actionPostFadeout=DO_STOP);
 
-	void xfade(int chan);
+	void xfade(channel *ch);
 
 	/* getChanPos
 	 * returns the position of an active sample. If EMPTY o MISSING
 	 * returns -1. */
 
-	int getChanPos(int chan);
+	int getChanPos(channel *ch);
 
 	/* masterPlay
 	 * core method (callback) */
@@ -249,9 +249,9 @@ public:
 	bool tickPlay, tockPlay; // 1 = play, 0 = stop
 
 	/* chanInput
-	 * the active channel during a recording. -1 = no channels active */
+	 * the active channel during a recording. NULL = no channels active */
 
-	int chanInput;
+	channel *chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */
@@ -272,7 +272,7 @@ private:
 
 	/* calcFadeoutStep
 	 * allows to do a fadeout even if the sample is almost finished */
-	void calcFadeoutStep(int ch);
+	void calcFadeoutStep(channel *ch);
 };
 
 #endif

@@ -68,12 +68,8 @@ void gStatus::draw() {
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		          // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
 
-	/* same status for wait, ending, ... */
-
 	if (ch != NULL) {
-		int waitStat = STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING;
-
-		if (ch->status & waitStat) {
+		if (ch->status & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING)) {
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_2);	// status wait
 			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
 		}
@@ -83,15 +79,15 @@ void gStatus::draw() {
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
 
 
-		if (G_Mixer.chanInput == ch->index)
+		if (G_Mixer.chanInput == ch)
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
-		else if (recorder::active && recorder::canRec(ch->index))
+		else if (recorder::active && recorder::canRec(ch))
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
 		/* equation for the progress bar:
 		 * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 
-		int mixerPos = G_Mixer.getChanPos(ch->index);
+		int mixerPos = G_Mixer.getChanPos(ch);
 		if (mixerPos == -1)
 			mixerPos = 0;
 		else

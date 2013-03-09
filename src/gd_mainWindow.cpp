@@ -312,7 +312,7 @@ void gdMainWindow::__cb_rec() {
 
 
 void gdMainWindow::__cb_inputRec() {
-	if (G_Mixer.chanInput == -1) {
+	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec())
 			gdAlert("No more channels available.");
 	}

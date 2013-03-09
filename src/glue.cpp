@@ -354,7 +354,7 @@ void glue_stopSeq() {
 	/* if input recs are active (who knows why) we must deactivate them.
 	 * Someone might stop the sequencer while an input rec is running. */
 
-	if (G_Mixer.chanInput != -1) {
+	if (G_Mixer.chanInput != NULL) {
 		mh_stopInputRec();
 		mainWin->input_rec->value(0);
 		mainWin->input_rec->redraw();
@@ -665,7 +665,7 @@ void glue_setMute(channel *ch) {
 
 	bool muted = ch->mute ? true : false;
 
-	if (recorder::active && recorder::canRec(ch->index)) {
+	if (recorder::active && recorder::canRec(ch)) {
 		if (!muted)
 			recorder::startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
 		else
@@ -716,7 +716,7 @@ int glue_startInputRec() {
 	if (G_audio_status == false)
 		return -1;
 
-	if (G_Mixer.chanInput != -1)			// if there's another recording active
+	if (G_Mixer.chanInput != NULL)			// if there's another recording active
 		return 1;
 
 	if (!G_Mixer.running) {
@@ -744,9 +744,9 @@ int glue_startInputRec() {
 
 int glue_stopInputRec() {
 
-	int ch = mh_stopInputRec();
+	channel *ch = mh_stopInputRec();
 
-	if (G_Mixer.channels.at(ch)->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
+	if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
 		mh_startChan(ch);
 
 	mainWin->input_rec->value(0);
@@ -819,11 +819,11 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 	 * 		|	 else kill chan
 	 *		else kill chan */
 	else
-	if (shift)	{
+	if (shift) {
 		if (recorder::active) {
 			if (G_Mixer.running) {
 				mh_killChan(c->index);
-				if (recorder::canRec(c->index) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
+				if (recorder::canRec(c) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
 					recorder::rec(c->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
 			}
 		}
@@ -846,9 +846,7 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Mixer.quantize == 0 &&
-		    recorder::canRec(c->index)   &&
-		    !(c->mode & LOOP_ANY))
+		if (G_Mixer.quantize == 0 && recorder::canRec(c) && !(c->mode & LOOP_ANY))
 		{
 			if (c->mode == SINGLE_PRESS)
 				recorder::startOverdub(c->index, ACTION_KEYS, G_Mixer.actualFrame);
@@ -856,7 +854,7 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 				recorder::rec(c->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
 
-		mh_startChan(c->index);
+		mh_startChan(c);
 	}
 
 	/* the GUI update is done by gui_refresh() */
@@ -874,7 +872,7 @@ void glue_keyRelease(channel *c, bool ctrl, bool shift) {
 		/* record a key release only if channel is single_press. For any
 		 * other mode the KEY REL is meaningless. */
 
-		if (c->mode == SINGLE_PRESS && recorder::canRec(c->index))
+		if (c->mode == SINGLE_PRESS && recorder::canRec(c))
 			recorder::stopOverdub(G_Mixer.actualFrame);
 	}
 

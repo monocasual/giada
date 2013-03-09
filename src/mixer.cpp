@@ -102,7 +102,7 @@ void Mixer::init() {
 	inVol        = DEFAULT_IN_VOL;
 	peakOut      = 0.0f;
 	peakIn	     = 0.0f;
-	chanInput    = -1;
+	chanInput    = NULL;
 	inputTracker = 0;
 
 	/* alloc virtual input channels. vChanInput malloc is done in
@@ -140,12 +140,14 @@ channel *Mixer::loadChannel(class Wave *w, char side) {
 	}
 
 	channels.add(ch);
+	initChannel(ch);
 	ch->wave  = w;
 	ch->index = channels.size-1;
 	ch->side  = side;
-	initChannel(ch);
-	if (w)
+	if (w) {
 		ch->status = STATUS_OFF;
+		ch->end   = ch->wave->size;
+	}
 
 	printf("[mixer] channel loaded, wave=%p, size=%d\n", (void*)w, channels.size);
 
@@ -160,6 +162,7 @@ void Mixer::pushChannel(Wave *w, channel *ch) {
 	ch->wave = w;
 	initChannel(ch);
 	ch->status = STATUS_OFF;
+	ch->end    = ch->wave->size;
 }
 
 
@@ -218,8 +221,8 @@ void Mixer::freeChannel(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::chanStop(int ch) {
-	channels.at(ch)->status = STATUS_OFF;
+void Mixer::chanStop(channel *ch) {
+	ch->status = STATUS_OFF;
 	chanReset(ch);
 }
 
@@ -238,10 +241,9 @@ int Mixer::getChannelIndex(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::chanReset(int ch)	{
-	channel *c = channels.at(ch);
-	c->tracker = c->start;
-	c->mute_i  = false;
+void Mixer::chanReset(channel *ch)	{
+	ch->tracker = ch->start;
+	ch->mute_i  = false;
 }
 
 
@@ -262,26 +264,24 @@ void Mixer::fadein(int ch, bool internal) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::fadeout(int ch, int actionPostFadeout) {
-	channel *c = channels.at(ch);
+void Mixer::fadeout(channel *ch, int actionPostFadeout) {
 	calcFadeoutStep(ch);
-	c->fadeoutOn   = true;
-	c->fadeoutVol  = 1.0f;
-	c->fadeoutType = FADEOUT;
-	c->fadeoutEnd	 = actionPostFadeout;
+	ch->fadeoutOn   = true;
+	ch->fadeoutVol  = 1.0f;
+	ch->fadeoutType = FADEOUT;
+	ch->fadeoutEnd	 = actionPostFadeout;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::xfade(int ch) {
-	channel *c = channels.at(ch);
+void Mixer::xfade(channel *ch) {
 	calcFadeoutStep(ch);
-	c->fadeoutOn      = true;
-	c->fadeoutVol     = 1.0f;
-	c->fadeoutTracker = c->tracker;
-	c->fadeoutType    = XFADE;
+	ch->fadeoutOn      = true;
+	ch->fadeoutVol     = 1.0f;
+	ch->fadeoutTracker = ch->tracker;
+	ch->fadeoutType    = XFADE;
 	chanReset(ch);
 }
 
@@ -289,10 +289,9 @@ void Mixer::xfade(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::getChanPos(int ch)	{
-	channel *c = channels.at(ch);
-	if (c->status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
-		return c->tracker - c->start;
+int Mixer::getChanPos(channel *ch)	{
+	if (ch->status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
+		return ch->tracker - ch->start;
 	else
 		return -1;
 }
@@ -355,7 +354,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			/* line in recording */
 
-			if (chanInput != -1 && kernelAudio::inputEnabled) {
+			if (chanInput != NULL && kernelAudio::inputEnabled) {
 
 				/* delay comp: wait until waitRec reaches delayComp. WaitRec
 				 * returns to 0 in mixerHandler, as soon as the recording ends */
@@ -385,25 +384,26 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				}
 
 				for (unsigned k=0; k<channels.size; k++) {
-					if (channels.at(k)->wave == NULL)
+					channel *ch = channels.at(k);
+					if (ch->wave == NULL)
 						continue;
-					if (isQuanto && (channels.at(k)->mode & SINGLE_ANY) && channels.at(k)->qWait == true)	{
+					if (isQuanto && (ch->mode & SINGLE_ANY) && ch->qWait == true)	{
 
 						/* no fadeout if the sample starts for the first time (from a STATUS_OFF), it would
 						 * be meaningless. */
 
-						if (channels.at(k)->status == STATUS_OFF) {
-							channels.at(k)->status = STATUS_PLAY;
-							channels.at(k)->qWait  = false;
+						if (ch->status == STATUS_OFF) {
+							ch->status = STATUS_PLAY;
+							ch->qWait  = false;
 						}
 						else
-							xfade(k);
+							xfade(ch);
 
 						/* this is the moment in which we record the keypress, if the quantizer is on.
 						 * SINGLE_PRESS needs overdub */
 
-						if (recorder::canRec(k)) {
-							if (channels.at(k)->mode == SINGLE_PRESS)
+						if (recorder::canRec(ch)) {
+							if (ch->mode == SINGLE_PRESS)
 								recorder::startOverdub(k, ACTION_KEYS, actualFrame);
 							else
 								recorder::rec(k, ACTION_KEYPRESS, actualFrame);
@@ -419,10 +419,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					tickPlay = true;
 
 				for (unsigned k=0; k<channels.size; k++) {
-					if (channels.at(k)->wave == NULL)
+					channel *ch = channels.at(k);
+					if (ch->wave == NULL)
 						continue;
-					if (channels.at(k)->mode == LOOP_REPEAT && channels.at(k)->status == STATUS_PLAY)
-						xfade(k);
+					if (ch->mode == LOOP_REPEAT && ch->status == STATUS_PLAY)
+						xfade(ch);
 				}
 			}
 
@@ -444,13 +445,13 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 						if (ch->status == STATUS_PLAY) {
 							if (ch->mute || ch->mute_i)
-								chanReset(k);
+								chanReset(ch);
 							else
-								xfade(k);
+								xfade(ch);
 						}
 						else
 						if (ch->status == STATUS_ENDING)
-							chanStop(k);
+							chanStop(ch);
 					}
 
 					if (ch->status== STATUS_WAIT)
@@ -480,7 +481,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
 								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_startChan(c, false);
+									mh_startChan(channels.at(c), false);
 									break;
 								}
 							case ACTION_KEYREL:
@@ -589,7 +590,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								if (ch->fadeoutEnd == DO_MUTE_I)
 									ch->mute_i = true;
 								else              // DO_STOP
-									chanStop(k);
+									chanStop(ch);
 							}
 
 							/* we must append another frame in the buffer when the fadeout
@@ -612,7 +613,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 					if (ch->tracker >= ch->end) {
 
-						chanReset(k);
+						chanReset(ch);
 
 						if (ch->mode & SINGLE_ANY)
 							ch->status = STATUS_OFF;
@@ -794,7 +795,7 @@ void Mixer::rewind() {
 				/* don't rewind a SINGLE_ANY, unless it's in read-record-mode */
 
 				if ((ch->mode & LOOP_ANY) || (ch->recStatus == REC_READING && (ch->mode & SINGLE_ANY)))
-					chanReset(i);
+					chanReset(ch);
 			}
 		}
 }
@@ -817,12 +818,10 @@ void Mixer::updateQuanto() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::calcFadeoutStep(int c) {
+void Mixer::calcFadeoutStep(channel *ch) {
 
 	/* how many frames are left before the end of the sample? Is there
 	 * enough room for a complete fadeout? Should we shorten it? */
-
-	channel *ch = channels.at(c);
 
 	unsigned ctracker = ch->tracker * ch->pitch;
 
@@ -932,7 +931,7 @@ bool Mixer::mergeVirtualInput() {
 		G_PluginHost.processStackOffline(vChanInput, PluginHost::MASTER_IN, 0, totalFrames);
 #endif
 		int numFrames = totalFrames*sizeof(float);
-		memcpy(channels.at(chanInput)->wave->data, vChanInput, numFrames);
+		memcpy(chanInput->wave->data, vChanInput, numFrames);
 		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
 	}

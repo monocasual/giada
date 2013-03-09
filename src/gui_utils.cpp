@@ -59,44 +59,52 @@ void gu_refresh() {
 
 	/* update channels */
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-
-		channel *ch = G_Mixer.channels.at(i);
-
-		if (ch->wave == NULL)
-			continue;
-
-		/*
-		if (ch->status == STATUS_OFF) {
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_0;
-			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_0;
-			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
-		}
-		/// ELSE?
-		if (ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_2;
-			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_1;
-			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_1;
-		}
-
-		if (G_Mixer.chanInput == (int) i)
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_3;
-
-		if (recorder::active)
-			if (recorder::canRec(i)) {
-				mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_4;
-				mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
-			}
-
-		mainWin->keyboard->sampleButton[i]->redraw();
-		mainWin->keyboard->status[i]->redraw();
-		*/
-	}
+	__gu_refreshColumn(mainWin->keyboard->gChannelsL);
+	__gu_refreshColumn(mainWin->keyboard->gChannelsR);
 
 	/* redraw GUI */
 
 	Fl::unlock();
 	Fl::awake();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void __gu_refreshColumn(Fl_Group *col) {
+	for (int i=0; i<col->children(); i++) {
+
+		gChannel *gch = (gChannel *) col->child(i);
+
+		if (gch->ch->wave == NULL)
+			continue;
+
+		if (gch->ch->status == STATUS_OFF) {
+			gch->sampleButton->bgColor0 = COLOR_BG_0;
+			gch->sampleButton->bdColor  = COLOR_BD_0;
+			gch->sampleButton->txtColor = COLOR_TEXT_0;
+		}
+		else
+		if (gch->ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
+			gch->sampleButton->bgColor0 = COLOR_BG_2;
+			gch->sampleButton->bdColor  = COLOR_BD_1;
+			gch->sampleButton->txtColor = COLOR_TEXT_1;
+		}
+
+		if (G_Mixer.chanInput == gch->ch)
+			gch->sampleButton->bgColor0 = COLOR_BG_3;
+
+		/*
+		if (recorder::active)
+			if (recorder::canRec(i)) {
+				mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_4;
+				mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
+			}
+		*/
+		gch->sampleButton->redraw();
+		gch->status->redraw();
+	}
 }
 
 

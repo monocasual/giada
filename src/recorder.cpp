@@ -72,7 +72,7 @@ void init() {
 /* ------------------------------------------------------------------ */
 
 
-bool canRec(int ch) {
+bool canRec(channel *ch) {
 
 	/* NO recording if:
 	 * recorder is inactive
@@ -80,7 +80,7 @@ bool canRec(int ch) {
 	 * mixer is recording a take in this channel ch
 	 * channel is empty */
 
-	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || G_Mixer.channels.at(ch)->wave == NULL)
+	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || ch->wave == NULL)
 		return 0;
 	return 1;
 }

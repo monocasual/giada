@@ -51,6 +51,8 @@
 
 void gu_refresh();
 
+void __gu_refreshColumn(Fl_Group *col);
+
 /* trim_label
  * trim a string C to N chars, and apply it to label W. */
 

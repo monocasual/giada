@@ -54,7 +54,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 {
 	begin();
 	button = new gButton (x(), y(), 20, 20);
-	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, NULL);
+	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 #if defined(WITH_VST)
 	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -107,10 +107,14 @@ void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_ope
 
 
 void gChannel::__cb_button() {
+
+	/*
 	if (button->value())    // pushed
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 	else                    // released
 		glue_keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+	*/
+	glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -159,7 +163,7 @@ void gChannel::__cb_openChanMenu() {
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
 
-	if (G_Mixer.chanInput == ch->index || recorder::active)
+	if (G_Mixer.chanInput == ch || recorder::active)
 		return;
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
@@ -521,7 +525,7 @@ int Keyboard::handle(int e) {
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					G_Mixer.chanInput == -1 ? glue_startInputRec() : glue_stopInputRec();
+					G_Mixer.chanInput == NULL ? glue_startInputRec() : glue_stopInputRec();
 					ret = 1;
 					break;
 				}
