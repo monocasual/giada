@@ -50,8 +50,8 @@ void mh_freeChannel(struct channel *ch);
 void mh_killChan(int c);
 
 
-void mh_muteChan(int c, bool internal=false);
-void mh_unmuteChan(int c, bool internal=false);
+void mh_muteChan(channel *ch, bool internal=false);
+void mh_unmuteChan(channel *ch, bool internal=false);
 
 void mh_loadPatch();
 

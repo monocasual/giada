@@ -96,7 +96,7 @@ public:
 	/* fadein
 	 * prepare for fade-in process. */
 
-	void fadein(int chan, bool internal);
+	void fadein(channel *ch, bool internal);
 
 	/* fadeout
 	 * do a fadeout and eventually another action when finished. */
@@ -133,7 +133,7 @@ public:
 	/* isPlaying
 	 * is channel playing? */
 
-	bool isPlaying(int chan);
+	bool isPlaying(channel *ch);
 
 	void rewind();
 

@@ -413,7 +413,7 @@ void glue_stopRec() {
 
 
 void glue_startReadingRecs(int c) {
-
+#if 0
 	/* treatRecsAsLoops */
 
 	if (G_Conf.treatRecsAsLoops)
@@ -423,7 +423,7 @@ void glue_startReadingRecs(int c) {
 
 	mainWin->keyboard->readActions[c]->value(1);
 	mainWin->keyboard->readActions[c]->redraw();
-
+#endif
 }
 
 
@@ -431,7 +431,7 @@ void glue_startReadingRecs(int c) {
 
 
 void glue_stopReadingRecs(int c) {
-
+#if 0
 	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
 	 * the channel in REC_ENDING status */
 
@@ -442,6 +442,7 @@ void glue_stopReadingRecs(int c) {
 
 	mainWin->keyboard->readActions[c]->value(0);
 	mainWin->keyboard->readActions[c]->redraw();
+#endif
 }
 
 
@@ -459,7 +460,8 @@ void glue_quantize(int val) {
 
 void glue_setVol(channel *ch, float v) {
 	ch->volume = v;
-	mainWin->keyboard->vol[ch->index]->value(v);
+	gChannel *gch = mainWin->keyboard->getChannel(ch);
+	gch->vol->value(v);
 }
 
 
@@ -637,8 +639,9 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 		win->volumeNum->value(buf);
 		win->volumeNum->redraw();
 
-		mainWin->keyboard->vol[ch->index]->value(linear);
-		mainWin->keyboard->vol[ch->index]->redraw();
+		gChannel *gch = mainWin->keyboard->getChannel(ch);
+		gch->vol->value(linear);
+		gch->vol->redraw();
 	}
 	else {
 		ch->volume = val;
@@ -652,8 +655,10 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 
 		win->volumeNum->value(buf);
 		win->volumeNum->redraw();
-		mainWin->keyboard->vol[ch->index]->value(val);
-		mainWin->keyboard->vol[ch->index]->redraw();
+
+		gChannel *gch = mainWin->keyboard->getChannel(ch);
+		gch->vol->value(val);
+		gch->vol->redraw();
 	}
 }
 
@@ -672,8 +677,10 @@ void glue_setMute(channel *ch) {
 		 recorder::stopOverdub(G_Mixer.actualFrame);
 	}
 
-	muted ? mh_unmuteChan(ch->index) : mh_muteChan(ch->index);
-	mainWin->keyboard->mute[ch->index]->value(!muted);
+	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
+
+	gChannel *gch = mainWin->keyboard->getChannel(ch);
+	gch->mute->value(!muted);
 }
 
 
@@ -729,7 +736,9 @@ int glue_startInputRec() {
 		return 0;
 
 	glue_setVol(ch, 1.0f);
-	gu_trim_label(ch->wave->name.c_str(), 28, mainWin->keyboard->sampleButton[ch->index]);
+
+	gChannel *gch = mainWin->keyboard->getChannel(ch);
+	gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
 
 	mainWin->input_rec->value(1);
 	mainWin->input_rec->redraw();

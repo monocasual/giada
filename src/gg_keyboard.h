@@ -103,6 +103,7 @@ public:
 	Fl_Group *gChannelsL;
 	Fl_Group *gChannelsR;
 
+/*
 	class gStatus     *status      [MAX_NUM_CHAN];
 	class gDial       *vol         [MAX_NUM_CHAN];
 #ifdef WITH_VST
@@ -113,6 +114,7 @@ public:
 	class gClick 	    *sampleButton[MAX_NUM_CHAN];
 	class gModeBox    *modeBoxes   [MAX_NUM_CHAN];
 	class gButton     *butts       [MAX_NUM_CHAN];
+*/
 
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);

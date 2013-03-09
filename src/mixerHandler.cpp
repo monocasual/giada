@@ -52,8 +52,6 @@ extern PluginHost G_PluginHost;
 
 void mh_startChan(channel *ch, bool do_quantize) {
 
-	printf("[mh] start chan %d, status=%d\n", ch->index, ch->status);
-
 	switch (ch->status) {
 		case STATUS_EMPTY:
 		case STATUS_MISSING:
@@ -157,13 +155,12 @@ void mh_killChan(int c) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_muteChan(int c, bool internal) {
-	channel *ch = G_Mixer.channels.at(c);
+void mh_muteChan(channel *ch, bool internal) {
 	if (internal) {
 		if (ch->mute)          // global mute? don't waste time with fadeout,
 			ch->mute_i = true;   // just mute it internally
 		else
-			if (G_Mixer.isPlaying(c))
+			if (G_Mixer.isPlaying(ch))
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE_I);
 			else
 				ch->mute_i = true;
@@ -172,7 +169,7 @@ void mh_muteChan(int c, bool internal) {
 		if (ch->mute_i)        // internal mute? don't waste time with fadeout,
 			ch->mute = true;     // just mute it globally
 		else
-			if (G_Mixer.isPlaying(c))              // sample in play? fadeout needed. Else,
+			if (G_Mixer.isPlaying(ch))              // sample in play? fadeout needed. Else,
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE);  // just mute it globally
 			else
 				ch->mute = true;
@@ -183,14 +180,13 @@ void mh_muteChan(int c, bool internal) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_unmuteChan(int c, bool internal) {
-	channel *ch = G_Mixer.channels.at(c);
+void mh_unmuteChan(channel *ch, bool internal) {
 	if (internal) {
 		if (ch->mute)
 			ch->mute_i = false;
 		else
-			if (G_Mixer.isPlaying(c))
-				G_Mixer.fadein(c, internal);
+			if (G_Mixer.isPlaying(ch))
+				G_Mixer.fadein(ch, internal);
 			else
 				ch->mute_i = false;
 	}
@@ -198,8 +194,8 @@ void mh_unmuteChan(int c, bool internal) {
 		if (ch->mute_i)
 			ch->mute = false;
 		else
-			if (G_Mixer.isPlaying(c))
-				G_Mixer.fadein(c, internal);
+			if (G_Mixer.isPlaying(ch))
+				G_Mixer.fadein(ch, internal);
 			else
 				ch->mute = false;
 	}

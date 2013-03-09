@@ -433,6 +433,11 @@ gChannel *Keyboard::getChannel(struct channel *ch) {
 		if (gch->ch == ch)
 			return gch;
 	}
+	for (int i=0; i<gChannelsR->children(); i++) {
+		gChannel *gch = (gChannel*) gChannelsR->child(i);
+		if (gch->ch == ch)
+			return gch;
+	}
 	return NULL;
 }
 
@@ -604,6 +609,7 @@ void Keyboard::__cb_readActions(int c) {
 
 void Keyboard::addActionButton(int c, bool status) {
 
+#if 0
 	/* quit if 'R' exists yet. */
 
 	if (readActions[c] != NULL)
@@ -629,6 +635,8 @@ void Keyboard::addActionButton(int c, bool status) {
 	/** FIXME - check with fltk 1.3.x */
 
 	mainWin->redraw();
+
+#endif
 }
 
 
@@ -636,6 +644,7 @@ void Keyboard::addActionButton(int c, bool status) {
 
 
 void Keyboard::remActionButton(int c) {
+#if 0
 	if (readActions[c] == NULL)
 		return;
 
@@ -650,4 +659,5 @@ void Keyboard::remActionButton(int c) {
 		sampleButton[c]->h());
 
 	sampleButton[c]->redraw();
+#endif
 }

@@ -132,6 +132,8 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 
 void gu_update_controls() {
+
+#if 0
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
 		/* update status box and sampleButton */
@@ -200,6 +202,7 @@ void gu_update_controls() {
 
 	mainWin->metronome->value(0);
 	mainWin->metronome->redraw();
+#endif
 }
 
 
@@ -216,7 +219,7 @@ void gu_update_win_label(const char *c) {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gu_resetChannel(int c) {
 	mainWin->keyboard->sampleButton[c]->bgColor0 = COLOR_BG_0;
 	mainWin->keyboard->sampleButton[c]->bdColor  = COLOR_BD_0;
@@ -226,6 +229,7 @@ void gu_resetChannel(int c) {
 	mainWin->keyboard->sampleButton[c]->redraw();
 	mainWin->keyboard->status[c]->redraw();
 }
+*/
 
 
 /* ------------------------------------------------------------------ */

@@ -250,14 +250,13 @@ void Mixer::chanReset(channel *ch)	{
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::fadein(int ch, bool internal) {
-	channel *c = channels.at(ch);
+void Mixer::fadein(channel *ch, bool internal) {
 
 	/* remove mute before fading in */
 
-	if (internal) c->mute_i = false;
-	else          c->mute   = false;
-	c->fadein = 0.0f;
+	if (internal) ch->mute_i = false;
+	else          ch->mute   = false;
+	ch->fadein = 0.0f;
 }
 
 
@@ -495,10 +494,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 									break;
 								}
 							case ACTION_MUTEON:
-								mh_muteChan(c, true);   // internal mute
+								mh_muteChan(channels.at(c), true);   // internal mute
 								break;
 							case ACTION_MUTEOFF:
-								mh_unmuteChan(c, true); // internal mute
+								mh_unmuteChan(channels.at(c), true); // internal mute
 								break;
 						}
 					}
@@ -941,7 +940,6 @@ bool Mixer::mergeVirtualInput() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::isPlaying(int c) {
-	channel *ch = channels.at(c);
+bool Mixer::isPlaying(channel *ch) {
 	return ch->status == STATUS_PLAY || ch->status == STATUS_ENDING;
 }

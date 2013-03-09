@@ -72,7 +72,7 @@ void gu_update_win_label(const char *c);
 /* resetChannel
  * reset original colors in status and sample button */
 
-void gu_resetChannel(int c);
+//void gu_resetChannel(int c);
 
 void gu_setFavicon(Fl_Window *w);
 
