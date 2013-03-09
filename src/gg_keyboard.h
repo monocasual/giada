@@ -107,22 +107,6 @@ private:
 	class gClick *addChannelR;
 
 public:
-	Fl_Group *gChannelsL;
-	Fl_Group *gChannelsR;
-
-/*
-	class gStatus     *status      [MAX_NUM_CHAN];
-	class gDial       *vol         [MAX_NUM_CHAN];
-#ifdef WITH_VST
-	class gButton     *fx          [MAX_NUM_CHAN];
-#endif
-	class gClick 	    *mute        [MAX_NUM_CHAN];
-	class gClick 	    *readActions [MAX_NUM_CHAN];
-	class gClick 	    *sampleButton[MAX_NUM_CHAN];
-	class gModeBox    *modeBoxes   [MAX_NUM_CHAN];
-	class gButton     *butts       [MAX_NUM_CHAN];
-*/
-
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
@@ -149,6 +133,9 @@ public:
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
 	void setChannelWithActions(struct channel *ch);
+
+	Fl_Group *gChannelsL;
+	Fl_Group *gChannelsR;
 };
 
 #endif
