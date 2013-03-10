@@ -626,6 +626,9 @@ void Keyboard::clear() {
 	gChannelsR->size(gChannelsR->w(), 0);
 	gChannelsL->size(gChannelsL->w(), 0);
 
+	gChannelsL->resizable(NULL);
+	gChannelsR->resizable(NULL);
+
 	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
 	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
 
