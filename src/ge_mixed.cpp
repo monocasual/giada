@@ -35,6 +35,7 @@
 #include "graphics.h"
 #include "recorder.h"
 #include "gui_utils.h"
+#include "channel.h"
 
 
 extern Mixer 		     G_Mixer;

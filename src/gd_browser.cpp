@@ -37,6 +37,7 @@
 #include "wave.h"
 #include "glue.h"
 #include "pluginHost.h"
+#include "channel.h"
 
 
 extern Patch         G_Patch;

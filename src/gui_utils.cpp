@@ -36,6 +36,7 @@
 #include "gd_mainWindow.h"
 #include "recorder.h"
 #include "wave.h"
+#include "channel.h"
 
 
 extern Mixer 	       G_Mixer;
@@ -132,7 +133,6 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 
 void gu_update_controls() {
-
 #if 0
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
@@ -166,7 +166,7 @@ void gu_update_controls() {
 		mainWin->keyboard->modeBoxes[i]->value(ch->mode);
 		mainWin->keyboard->modeBoxes[i]->redraw();
 
-		/* upate channels. If you load a patch with recorded actions, the 'R'
+		/* update channels. If you load a patch with recorded actions, the 'R'
 		 * button must be shown. Moreover if the actions are active, the 'R'
 		 * button must be activated accordingly. */
 

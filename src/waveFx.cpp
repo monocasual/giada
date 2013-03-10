@@ -26,7 +26,9 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "waveFx.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;

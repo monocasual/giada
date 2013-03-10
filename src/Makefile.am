@@ -19,8 +19,8 @@ gd_beatsInput.cpp  gd_warnings.cpp      ge_mixed.cpp         patch.h \
 gd_beatsInput.h    gd_warnings.h        ge_mixed.h           recorder.cpp \
 gd_bpmInput.cpp    ge_waveform.cpp      gui_utils.cpp        recorder.h \
 gd_bpmInput.h      ge_waveform.h        gui_utils.h          utils.cpp \
-gd_browser.cpp         init.cpp             utils.h \
-gd_browser.h            init.h  				     gd_config.cpp \
+gd_browser.cpp     init.cpp             channel.h            utils.h \
+gd_browser.h       init.h  				      gd_config.cpp \
 gg_keyboard.cpp    kernelAudio.cpp      wave.cpp  	         gd_config.h \
 gg_keyboard.h      kernelAudio.h        waveFx.cpp 		       gd_editor.cpp \
 gg_waveTools.cpp   main.cpp             waveFx.h				     gd_editor.h \

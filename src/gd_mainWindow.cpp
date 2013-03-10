@@ -36,6 +36,7 @@
 #include "gd_browser.h"
 #include "mixerHandler.h"
 #include "pluginHost.h"
+#include "channel.h"
 
 
 extern Mixer	   		 G_Mixer;

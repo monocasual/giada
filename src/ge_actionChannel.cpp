@@ -33,6 +33,7 @@
 #include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
 #include "conf.h"
+#include "channel.h"
 
 
 extern gdMainWindow *mainWin;

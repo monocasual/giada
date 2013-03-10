@@ -38,6 +38,7 @@
 #include "mixerHandler.h"
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
+#include "channel.h"
 
 
 extern Mixer         G_Mixer;

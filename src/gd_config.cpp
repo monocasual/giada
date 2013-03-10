@@ -184,22 +184,26 @@ gdConfig::gdConfig(int w, int h)
 
 	limitOutput->value(G_Conf.limitOutput);
 
+	/**
 	sprintf(buf, "%c", G_Conf.keys[0]);
 	actualKey->copy_label(buf);
 	actualKey->box(G_BOX);
 	actualKey->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
+	*/
 
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
 	G_Conf.fullChanVolOnLoad  == 1 ? fullChanVolOnLoad->value(1) : fullChanVolOnLoad->value(0);
 
+	/**
 	for (int i=0; i<MAX_NUM_CHAN; i++) {
 		char x[11];
 		sprintf(x, "channel %d", i+1);
 		listChans->add(x, 0, cb_get_key_chan, (void*)this);
 	}
 	listChans->value(0); // starts with element number 0
+	*/
 
 	setKey->callback(cb_open_grab_win, (void*)this);
 	save->callback(cb_save_config, (void*)this);
@@ -244,9 +248,11 @@ void gdConfig::cb_cancel        (Fl_Widget *w, void *p)      { ((gdConfig*)p)->_
 
 
 void gdConfig::__cb_get_key_chan() {
+	/**
 	char key[2];
 	sprintf(key, "%c", G_Conf.keys[listChans->value()]);
 	actualKey->copy_label(key);
+	**/
 }
 
 

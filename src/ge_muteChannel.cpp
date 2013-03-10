@@ -35,6 +35,7 @@
 #include "recorder.h"
 #include "mixer.h"
 #include "glue.h"
+#include "channel.h"
 
 
 extern gdMainWindow *mainWin;

@@ -38,6 +38,7 @@
 #include "utils.h"
 #include "patch.h"
 #include "conf.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;

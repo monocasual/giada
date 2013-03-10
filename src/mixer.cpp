@@ -37,6 +37,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "mixerHandler.h"
+#include "channel.h"
 
 
 extern Mixer 			 G_Mixer;
@@ -220,8 +221,10 @@ int Mixer::deleteChannel(channel *ch) {
 
 void Mixer::freeChannel(channel *ch) {
 	ch->status = STATUS_OFF;
-	delete ch->wave;
-	ch->wave   = NULL;
+	if (ch->wave != NULL) {
+		delete ch->wave;
+		ch->wave   = NULL;
+	}
 	ch->status = STATUS_EMPTY;
 }
 
@@ -781,7 +784,7 @@ void Mixer::updateFrameBars() {
 int Mixer::close() {
 	printf("[mixer::close] total channels %d\n", channels.size);
 	running = false;
-	int i = channels.size-1;
+	int i   = channels.size-1;
 	while (i >= 0) {
 		deleteChannel(channels.at(i));
 		i--;

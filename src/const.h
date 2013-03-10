@@ -65,7 +65,6 @@
 
 
 /* -- MIN/MAX values ------------------------------------------------ */
-#define MAX_NUM_CHAN 		   32
 #define MAX_BEATS				   32
 #define MAX_BARS				   32
 #define MAX_PATCHNAME_LEN	 32

@@ -59,7 +59,7 @@ int gdKeyGrabber::handle(int e) {
 			    && x != FL_Tab
 			    && x != FL_End
 			    && x != ' ') {
-				G_Conf.keys[ch] = x;
+				/**G_Conf.keys[ch] = x;*/
 				printf("set key '%c' (%d) for channel %d\n", x, x, ch);
 
 				char tmp[2]; sprintf(tmp, "%c", x);

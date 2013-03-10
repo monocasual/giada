@@ -39,6 +39,7 @@
 #include "conf.h"
 #include "patch.h"
 #include "recorder.h"
+#include "channel.h"
 
 
 extern Mixer 		  G_Mixer;
@@ -322,7 +323,6 @@ void mh_loadPatch() {
 #if 0
 
 	int i = 0;
-
 	while (i < MAX_NUM_CHAN) {
 
 		/* kills all channels for safety. Useful if the patch is loaded on

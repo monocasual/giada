@@ -82,7 +82,7 @@ public:
 	int  beatsX, beatsY;
 	int  aboutX, aboutY;
 
-	int  keys[MAX_NUM_CHAN];
+	///int  keys[MAX_NUM_CHAN];
 
 	int  read();
 	int  write();

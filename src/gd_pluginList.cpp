@@ -40,6 +40,7 @@
 #include "pluginHost.h"
 #include "ge_mixed.h"
 #include "mixer.h"
+#include "channel.h"
 
 
 extern Conf       G_Conf;

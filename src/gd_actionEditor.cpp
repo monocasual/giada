@@ -36,6 +36,7 @@
 #include "recorder.h"
 #include "conf.h"
 #include "ge_mixed.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;

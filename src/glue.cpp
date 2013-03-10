@@ -45,6 +45,7 @@
 #include "gd_warnings.h"
 #include "pluginHost.h"
 #include "gg_waveTools.h"
+#include "channel.h"
 
 
 extern gdMainWindow *mainWin;
@@ -495,8 +496,11 @@ void glue_setInVol(float val) {
 
 void glue_clearAllSamples() {
 	G_Mixer.running = false;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		mh_deleteChannel(G_Mixer.channels.at(i));
+	int i = G_Mixer.channels.size-1;
+	while (i >= 0) {
+		mh_freeChannel(G_Mixer.channels.at(i));
+		i--;
+	}
 	recorder::init();
 	gu_update_controls();
 	return;

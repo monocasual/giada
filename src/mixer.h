@@ -37,47 +37,6 @@
 #include "utils.h"
 
 
-struct channel {
-	class Wave *wave;
-
-	int    index;
-	float *vChan;	     // virtual channel
-	int    status;	   // status: see const.h
-	char   side;       // left or right column
-	int    tracker;    // chan position
-	int    start;
-	int    end;
-	int    startTrue;	 // chanStart NOT pitch affected
-	int    endTrue;	   // chanend   NOT pitch affected
-	float  volume;
-  float  pitch;
-	float  boost;
-	float  panLeft;
-	float  panRight;
-	int    mode;       // mode: see const.h
-	bool   mute_i;     // internal mute
-	bool   mute;       // global mute
-	bool   qWait;      // quantizer wait
-	float  fadein;
-	bool   fadeoutOn;
-	float  fadeoutVol;      // fadeout volume
-	int    fadeoutTracker;  // tracker fadeout, xfade only
-	float  fadeoutStep;     // fadeout decrease
-  int    fadeoutType;     // xfade or fadeout
-  int		 fadeoutEnd;      // what to do when fadeout ends
-
-	/* recorder:: stuff */
-
-	int 	 recStatus;    // status of recordings (treat recs as loops)
-  bool   readActions;  // read actions or not
-  bool   hasActions;   // has something recorded
-
-  int    key;
-
-  gVector <class Plugin *> plugins;
-};
-
-
 class Mixer {
 public:
 
@@ -90,18 +49,18 @@ public:
 	 * add a new channel in channels stack and put a Wave inside of it. Wave
 	 * could be NULL == empty new channel */
 
-	channel *loadChannel(class Wave *w, char side);
-	int      deleteChannel(channel *ch);
-	void     initChannel(channel *ch);
-	void     freeChannel(channel *ch);
+	struct channel *loadChannel(class Wave *w, char side);
+	int      deleteChannel(struct channel *ch);
+	void     initChannel(struct channel *ch);
+	void     freeChannel(struct channel *ch);
 
 	/* pushChannel
 	 * add a new wave to an existing channel. */
 
-	void     pushChannel(class Wave *w, channel *ch);
+	void     pushChannel(class Wave *w, struct channel *ch);
 
-	void chanStop(channel *ch);
-	void chanReset(channel *ch);
+	void chanStop(struct channel *ch);
+	void chanReset(struct channel *ch);
 
 	/* fadein
 	 * prepare for fade-in process. */
@@ -113,13 +72,13 @@ public:
 
 	void fadeout(channel *ch, int actionPostFadeout=DO_STOP);
 
-	void xfade(channel *ch);
+	void xfade(struct channel *ch);
 
 	/* getChanPos
 	 * returns the position of an active sample. If EMPTY o MISSING
 	 * returns -1. */
 
-	int getChanPos(channel *ch);
+	int getChanPos(struct channel *ch);
 
 	/* masterPlay
 	 * core method (callback) */
@@ -143,7 +102,7 @@ public:
 	/* isPlaying
 	 * is channel playing? */
 
-	bool isPlaying(channel *ch);
+	bool isPlaying(struct channel *ch);
 
 	void rewind();
 
@@ -176,7 +135,7 @@ public:
 
 	bool mergeVirtualInput();
 
-	int getChannelIndex(channel *ch);
+	int getChannelIndex(struct channel *ch);
 
 	channel *getChannelByIndex(int i);
 
@@ -202,37 +161,6 @@ public:
 	bool   running;
 	float *vChanInput;                    // virtual channel for recording
 	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
-
-	/*
-	Wave  *chan          [MAX_NUM_CHAN];
-	float *vChan				 [MAX_NUM_CHAN];	// virtual channel
-	int    chanStatus    [MAX_NUM_CHAN];	// status: see const.h
-	int    chanTracker   [MAX_NUM_CHAN];  // chan position
-	int    chanStart     [MAX_NUM_CHAN];
-	int    chanEnd       [MAX_NUM_CHAN];
-	int    chanStartTrue [MAX_NUM_CHAN];	// chanStart NOT pitch affected
-	int    chanEndTrue   [MAX_NUM_CHAN];	// chanend   NOT pitch affected
-	float  chanVolume    [MAX_NUM_CHAN];
-  float  chanPitch     [MAX_NUM_CHAN];
-	float  chanBoost     [MAX_NUM_CHAN];
-	float  chanPanLeft   [MAX_NUM_CHAN];
-	float  chanPanRight  [MAX_NUM_CHAN];
-	int    chanMode      [MAX_NUM_CHAN];  // mode: see const.h
-
-	bool   chanMute_i    [MAX_NUM_CHAN];  // internal mute
-	bool   chanMute      [MAX_NUM_CHAN];  // global mute
-
-	bool   chanQWait     [MAX_NUM_CHAN];  // quantizer wait
-	int 	 chanRecStatus [MAX_NUM_CHAN];  // status of recordings (treat recs as loops)
-	float  chanFadein    [MAX_NUM_CHAN];
-	bool   fadeoutOn     [MAX_NUM_CHAN];	//
-	float  fadeoutVol    [MAX_NUM_CHAN];  // fadeout volume
-	int    fadeoutTracker[MAX_NUM_CHAN];  // tracker fadeout, xfade only
-	float  fadeoutStep   [MAX_NUM_CHAN];  // fadeout decrease
-  int    fadeoutType   [MAX_NUM_CHAN];  // xfade or fadeout
-  int		 fadeoutEnd    [MAX_NUM_CHAN];  // what to do when fadeout ends
-  */
-
 	int    frameSize;
 	float  outVol;
 	float  inVol;
@@ -284,7 +212,7 @@ private:
 
 	/* calcFadeoutStep
 	 * allows to do a fadeout even if the sample is almost finished */
-	void calcFadeoutStep(channel *ch);
+	void calcFadeoutStep(struct channel *ch);
 };
 
 #endif

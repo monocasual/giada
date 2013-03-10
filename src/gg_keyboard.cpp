@@ -41,6 +41,7 @@
 #include "recorder.h"
 #include "gd_warnings.h"
 #include "pluginHost.h"
+#include "channel.h"
 
 
 extern Mixer 		     G_Mixer;
