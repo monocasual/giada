@@ -201,10 +201,12 @@ int glue_saveSample(int ch, const char *fullpath) {
 
 
 void glue_deleteChannel(channel *ch) {
-	mh_deleteChannel(ch);
+	int index = ch->index;
+	int side  = ch->side;
+	recorder::clearChan(index);
 	mainWin->keyboard->deleteChannel(ch);
-	///recorder::clearChan(index);
-	mainWin->keyboard->updateChannels(ch->side);
+	mh_deleteChannel(ch);
+	mainWin->keyboard->updateChannels(side);
 }
 
 
@@ -213,8 +215,8 @@ void glue_deleteChannel(channel *ch) {
 
 void glue_freeChannel(channel *ch) {
 	mainWin->keyboard->freeChannel(ch);
-	mh_freeChannel(ch);
 	recorder::clearChan(ch->index);
+	mh_freeChannel(ch);
 }
 
 
@@ -496,11 +498,8 @@ void glue_setInVol(float val) {
 
 void glue_clearAllSamples() {
 	G_Mixer.running = false;
-	int i = G_Mixer.channels.size-1;
-	while (i >= 0) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		mh_freeChannel(G_Mixer.channels.at(i));
-		i--;
-	}
 	recorder::init();
 	gu_update_controls();
 	return;

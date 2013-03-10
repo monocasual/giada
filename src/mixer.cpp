@@ -211,7 +211,6 @@ int Mixer::deleteChannel(channel *ch) {
 	free(ch->vChan);
 	free(ch);
 	channels.del(i);
-	printf("[mixer::deleteChannel] deleted %d\n", i);
 	return 1;
 }
 
@@ -784,11 +783,9 @@ void Mixer::updateFrameBars() {
 int Mixer::close() {
 	printf("[mixer::close] total channels %d\n", channels.size);
 	running = false;
-	int i   = channels.size-1;
-	while (i >= 0) {
-		deleteChannel(channels.at(i));
-		i--;
-	}
+	while (channels.size > 0)
+		deleteChannel(channels.at(0));
+	printf("[mixer::close] total channels %d\n", channels.size);
 	free(vChanInput);
 	free(vChanInToOut);
 	return 1;

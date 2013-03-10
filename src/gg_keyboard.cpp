@@ -89,6 +89,8 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	mute->callback(cb_mute, (void*)this);
 	sampleButton->callback(cb_openChanMenu, (void*)this);
 	vol->callback(cb_change_vol, (void*)this);
+
+	ch->guiChannel = this;
 }
 
 
@@ -420,13 +422,7 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 
 
 void Keyboard::freeChannel(struct channel *ch) {
-	for (int i=0; i<gChannelsL->children(); i++) {
-		gChannel *gch = (gChannel*) gChannelsL->child(i);
-		if (gch->ch == ch) {
-			gch->reset();
-			return;
-		}
-	}
+	ch->guiChannel->reset();
 }
 
 
@@ -434,24 +430,11 @@ void Keyboard::freeChannel(struct channel *ch) {
 
 
 void Keyboard::deleteChannel(struct channel *ch) {
-	bool found = false;
 	Fl::lock();
-	for (int i=0; i<gChannelsL->children() && !found; i++) {
-		gChannel *gch = (gChannel*) gChannelsL->child(i);
-		if (gch->ch == ch) {
-			gch->hide();
-			gChannelsL->remove(gch);
-			found = true;
-		}
-	}
-	for (int i=0; i<gChannelsR->children() && !found; i++) {
-		gChannel *gch = (gChannel*) gChannelsR->child(i);
-		if (gch->ch == ch) {
-			gch->hide();
-			gChannelsR->remove(gch);
-			found = true;
-		}
-	}
+	ch->guiChannel->hide();
+	gChannelsR->remove(ch->guiChannel);
+	gChannelsL->remove(ch->guiChannel);
+	ch->guiChannel = NULL;
 	Fl::unlock();
 }
 
@@ -460,20 +443,7 @@ void Keyboard::deleteChannel(struct channel *ch) {
 
 
 void Keyboard::updateChannel(struct channel *ch) {
-	for (int i=0; i<gChannelsL->children(); i++) {
-		gChannel *gch = (gChannel*) gChannelsL->child(i);
-		if (gch->ch == ch) {
-			gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
-			return;
-		}
-	}
-	for (int i=0; i<gChannelsR->children(); i++) {
-		gChannel *gch = (gChannel*) gChannelsR->child(i);
-		if (gch->ch == ch) {
-			gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
-			return;
-		}
-	}
+	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 }
 
 
