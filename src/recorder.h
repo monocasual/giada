@@ -45,7 +45,7 @@
 namespace recorder {
 
 struct action {
-	int  chan;  // channel index, mixer::channel->index
+	int  chan;  // channel index, struct channel->index
  	char type;
 	int  frame; // redundant info, used by helper functions
 };
@@ -64,8 +64,6 @@ extern gVector< gVector<action*> > global;	// container of containers of actions
 extern gVector<action*>  actions;				    // container of actions
 
 extern bool active;
-//extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
-//extern bool chanEvents[MAX_NUM_CHAN];				// chan has events?
 extern bool sortedActions;                  // actions are sorted via sortActions()?
 
 /* init

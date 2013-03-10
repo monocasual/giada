@@ -52,8 +52,6 @@ gVector< gVector<action*> > global;
 gVector<action*>  actions;
 
 bool active = false;
-bool chanActive[MAX_NUM_CHAN];
-bool chanEvents[MAX_NUM_CHAN];
 bool sortedActions = false;
 
 composite cmp;
@@ -133,7 +131,7 @@ void rec(int index, char act, int frame) {
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
 	/** DEPRECATED */
-	chanEvents[index] = true;
+	//chanEvents[index] = true;
 	/** DEPRECATED */
 
 	channel *ch = G_Mixer.getChannelByIndex(index);
@@ -149,15 +147,15 @@ void rec(int index, char act, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void clearChan(int ch) {
+void clearChan(int index) {
 
-	printf("[REC] clearing chan %d...\n", ch);
+	printf("[REC] clearing chan %d...\n", index);
 
 	for (unsigned i=0; i<global.size; i++) {	// for each frame i
 		unsigned j=0;
 		while (true) {
 			if (j == global.at(i).size) break; 	  // for each action j of frame i
-			if (global.at(i).at(j)->chan == ch)	{
+			if (global.at(i).at(j)->chan == index)	{
 				free(global.at(i).at(j));
 				global.at(i).del(j);
 			}
@@ -165,7 +163,9 @@ void clearChan(int ch) {
 				j++;
 		}
 	}
-	chanEvents[ch] = false;
+
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = false;
 	optimize();
 	//print();
 }
@@ -174,14 +174,14 @@ void clearChan(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-void clearAction(int ch, char act) {
-	printf("[REC] clearing action %d from chan %d...\n", act, ch);
+void clearAction(int index, char act) {
+	printf("[REC] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size; i++) {						// for each frame i
 		unsigned j=0;
 		while (true) {                                   // for each action j of frame i
 			if (j == global.at(i).size)
 				break;
-			if (global.at(i).at(j)->chan == ch && (act & global.at(i).at(j)->type) == global.at(i).at(j)->type)	{ // bitmask
+			if (global.at(i).at(j)->chan == index && (act & global.at(i).at(j)->type) == global.at(i).at(j)->type)	{ // bitmask
 				free(global.at(i).at(j));
 				global.at(i).del(j);
 			}
@@ -189,9 +189,10 @@ void clearAction(int ch, char act) {
 				j++;
 		}
 	}
-	chanEvents[ch] = false;
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = false;
 	optimize();
-	chanHasEvents(ch);
+	chanHasEvents(index);
 	//print();
 }
 
@@ -269,9 +270,9 @@ void clearAll() {
 		}
 	}
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		chanEvents[i] = false;
-		chanActive[i] = false;
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		G_Mixer.channels.at(i)->hasActions  = false;
+		G_Mixer.channels.at(i)->readActions = false;
 	}
 
 	global.clear();
@@ -457,15 +458,16 @@ void disableRead(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void chanHasEvents(int ch) {
+void chanHasEvents(int index) {
+	channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
-		chanEvents[ch] = false;
+		ch->hasActions = false;
 		return;
 	}
-	for (unsigned i=0; i<global.size && !chanEvents[ch]; i++) {
-		for (unsigned j=0; j<global.at(i).size && !chanEvents[ch]; j++) {
-			if (global.at(i).at(j)->chan == ch)
-				chanEvents[ch] = true;
+	for (unsigned i=0; i<global.size && !ch->hasActions; i++) {
+		for (unsigned j=0; j<global.at(i).size && !ch->hasActions; j++) {
+			if (global.at(i).at(j)->chan == index)
+				ch->hasActions = true;
 		}
 	}
 }
@@ -552,7 +554,7 @@ int getNextAction(int chan, char type, int frame, action **out) {
 /* ------------------------------------------------------------------ */
 
 
-void startOverdub(int ch, char actionMask, int frame) {
+void startOverdub(int index, char actionMask, int frame) {
 
 	/* prepare the composite struct */
 
@@ -564,29 +566,30 @@ void startOverdub(int ch, char actionMask, int frame) {
 		cmp.a1.type = ACTION_MUTEON;
 		cmp.a2.type = ACTION_MUTEOFF;
 	}
-	cmp.a1.chan  = ch;
-	cmp.a2.chan  = ch;
+	cmp.a1.chan  = index;
+	cmp.a2.chan  = index;
 	cmp.a1.frame = frame;
 	// cmp.a2.frame doesn't exist yet
 
 	/* avoid underlying action truncation: if action2.type == nextAction:
 	 * you are in the middle of a composite action, truncation needed */
 
-	rec(ch, cmp.a1.type, frame);
+	rec(index, cmp.a1.type, frame);
 
 	action *act = NULL;
-	int res = getNextAction(ch, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
+	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
 			int truncFrame = cmp.a1.frame-kernelAudio::realBufsize;
 			if (truncFrame < 0)
 				truncFrame = 0;
 			printf("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
-			rec(ch, cmp.a2.type, truncFrame);
+			rec(index, cmp.a2.type, truncFrame);
 		}
 	}
 
-	chanActive[ch] = false; // don't use disableRead()
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->readActions = false;   // don't use disableRead()
 }
 
 
@@ -614,7 +617,8 @@ void stopOverdub(int frame) {
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
 	}
 
-	chanActive[cmp.a2.chan] = true; // don't use disableRead()
+	channel *ch = G_Mixer.getChannelByIndex(cmp.a2.chan);
+	ch->readActions = false;      // don't use disableRead()
 
 	/* remove any nested action between keypress----keyrel, then record */
 
