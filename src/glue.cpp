@@ -459,8 +459,7 @@ void glue_quantize(int val) {
 
 void glue_setVol(channel *ch, float v) {
 	ch->volume = v;
-	gChannel *gch = mainWin->keyboard->getChannel(ch);
-	gch->vol->value(v);
+	ch->guiChannel->vol->value(v);
 }
 
 
@@ -640,9 +639,8 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 		win->volumeNum->value(buf);
 		win->volumeNum->redraw();
 
-		gChannel *gch = mainWin->keyboard->getChannel(ch);
-		gch->vol->value(linear);
-		gch->vol->redraw();
+		ch->guiChannel->vol->value(linear);
+		ch->guiChannel->vol->redraw();
 	}
 	else {
 		ch->volume = val;
@@ -657,9 +655,8 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 		win->volumeNum->value(buf);
 		win->volumeNum->redraw();
 
-		gChannel *gch = mainWin->keyboard->getChannel(ch);
-		gch->vol->value(val);
-		gch->vol->redraw();
+		ch->guiChannel->vol->value(val);
+		ch->guiChannel->vol->redraw();
 	}
 }
 
@@ -680,8 +677,7 @@ void glue_setMute(channel *ch) {
 
 	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
 
-	gChannel *gch = mainWin->keyboard->getChannel(ch);
-	gch->mute->value(!muted);
+	ch->guiChannel->mute->value(!muted);
 }
 
 
@@ -738,8 +734,7 @@ int glue_startInputRec() {
 
 	glue_setVol(ch, 1.0f);
 
-	gChannel *gch = mainWin->keyboard->getChannel(ch);
-	gu_trim_label(ch->wave->name.c_str(), 28, gch->sampleButton);
+	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 
 	mainWin->input_rec->value(1);
 	mainWin->input_rec->redraw();

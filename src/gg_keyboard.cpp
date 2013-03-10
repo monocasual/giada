@@ -397,8 +397,6 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
 	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
 
-	//updateChannels();
-
 	/* begin() - end() don't work well here, with sub-Fl_Group */
 
 	add(addChannelL);
@@ -451,24 +449,6 @@ void Keyboard::updateChannel(struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-gChannel *Keyboard::getChannel(struct channel *ch) {
-	for (int i=0; i<gChannelsL->children(); i++) {
-		gChannel *gch = (gChannel*) gChannelsL->child(i);
-		if (gch->ch == ch)
-			return gch;
-	}
-	for (int i=0; i<gChannelsR->children(); i++) {
-		gChannel *gch = (gChannel*) gChannelsR->child(i);
-		if (gch->ch == ch)
-			return gch;
-	}
-	return NULL;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void Keyboard::updateChannels(char side) {
 
 	Fl_Group *group;
@@ -507,8 +487,9 @@ void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addC
 
 
 void Keyboard::__cb_addChannelL() {
-	channel  *ch  = G_Mixer.loadChannel(NULL, 0);
-	gChannel *gch = new gChannel(gChannelsL->x(), gChannelsL->y() + gChannelsL->children() * 24, gChannelsL->w(), 20, NULL, ch);
+	channel  *ch   = G_Mixer.loadChannel(NULL, 0);
+	gChannel *gch  = new gChannel(gChannelsL->x(), gChannelsL->y() + gChannelsL->children() * 24, gChannelsL->w(), 20, NULL, ch);
+	ch->guiChannel = gch;
 
 	gChannelsL->add(gch);
 	gChannelsL->size(gChannelsL->w(), gChannelsL->children() * 24);
@@ -517,8 +498,9 @@ void Keyboard::__cb_addChannelL() {
 }
 
 void Keyboard::__cb_addChannelR() {
-	channel  *ch  = G_Mixer.loadChannel(NULL, 1);
-	gChannel *gch = new gChannel(gChannelsR->x(), gChannelsR->y() + gChannelsR->children() * 24, gChannelsR->w(), 20, NULL, ch);
+	channel  *ch   = G_Mixer.loadChannel(NULL, 1);
+	gChannel *gch  = new gChannel(gChannelsR->x(), gChannelsR->y() + gChannelsR->children() * 24, gChannelsR->w(), 20, NULL, ch);
+	ch->guiChannel = gch;
 
 	gChannelsR->add(gch);
 	gChannelsR->size(gChannelsR->w(), gChannelsR->children() * 24);
@@ -655,14 +637,13 @@ void Keyboard::clear() {
 
 
 void Keyboard::setChannelWithActions(channel *ch) {
-	gChannel *gch = getChannel(ch);
 	if (ch->hasActions) {
 		ch->readActions = true;   /// <---- move this to glue_stopRec
-		gch->addActionButton(true); // true = button on
+		ch->guiChannel->addActionButton(true); // true = button on
 	}
 	else {
 		ch->readActions = false;  /// <---- move this to glue_stopRec
-		gch->remActionButton();
+		ch->guiChannel->remActionButton();
 	}
 }
 

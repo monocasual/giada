@@ -111,9 +111,6 @@ public:
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
-
-	gChannel *getChannel(struct channel *ch);
-
 	/* deleteChannel
 	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
 	 * it from the stack. */
