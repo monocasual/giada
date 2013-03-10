@@ -137,7 +137,7 @@ void gChannel::reset() {
 	sampleButton->bdColor  = COLOR_BD_0;
 	sampleButton->txtColor = COLOR_TEXT_0;
 	sampleButton->label("-- no sample --");
-	///remActionButton();
+	remActionButton();
 	sampleButton->redraw();
 	status->redraw();
 }
@@ -218,7 +218,7 @@ void gChannel::__cb_openChanMenu() {
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(mainWin, new gdEditor("title", ch), WID_SAMPLE_EDITOR);
+		gu_openSubWindow(mainWin, new gdEditor("title", ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
 		return;
 	}
 
@@ -298,7 +298,7 @@ void gChannel::openBrowser(int type) {
 	const char *title = "";
 	switch (type) {
 		case BROWSER_LOAD_SAMPLE:
-			title = "Browse Sample"; //sprintf(title, "Browse Sample", ch->index+1);
+			title = "Browse Sample";
 			break;
 		case BROWSER_SAVE_SAMPLE:
 			title = "Save Sample";
@@ -609,23 +609,15 @@ int Keyboard::handle(int e) {
 					enterPressed = false;
 			}
 
-			/* Walk button array, trying to match button's label with the Keyboard event.
+			/* Walk button arrays, trying to match button's label with the Keyboard event.
 			 * If found, set that button's value() based on up/down event,
 			 * and invoke that button's callback() */
 
-			for (int t=0; t<children(); t++) {
-				gChannel *ch = (gChannel*) child(t);
-				if (e == FL_KEYDOWN && ch->button->value())			 // key already pressed! skip it
-					ret = 1;
-				else {
-					if (Fl::event_key() == ch->key) {
-						ch->button->take_focus();                        // move focus to this button
-						ch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-						ch->button->do_callback();                       // invoke the button's callback
-						ret = 1;                               				 // indicate we handled it
-					}
-				}
-			}
+			for (int i=0; i<gChannelsL->children(); i++)
+				ret &= keypress((gChannel*)gChannelsL->child(i), e);
+			for (int i=0; i<gChannelsR->children(); i++)
+				ret &= keypress((gChannel*)gChannelsR->child(i), e);
+
 			break;
 		}
 
@@ -644,6 +636,25 @@ int Keyboard::handle(int e) {
 
 	}
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Keyboard::keypress(gChannel *gch, int e) {
+	if (e == FL_KEYDOWN && gch->button->value())	      // key already pressed! skip it
+		return 1;
+	else
+	if (Fl::event_key() == gch->ch->key) {
+		gch->button->take_focus();                        // move focus to this button
+		gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+		gch->button->do_callback();                       // invoke the button's callback
+		return 1;                               				 // indicate we handled it
+	}
+	else
+		return 0;
+
 }
 
 

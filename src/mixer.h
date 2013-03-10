@@ -39,6 +39,7 @@
 
 struct channel {
 	class Wave *wave;
+
 	int    index;
 	float *vChan;	     // virtual channel
 	int    status;	   // status: see const.h
@@ -70,6 +71,8 @@ struct channel {
 	int 	 recStatus;    // status of recordings (treat recs as loops)
   bool   readActions;  // read actions or not
   bool   hasActions;   // has something recorded
+
+  int    key;
 };
 
 

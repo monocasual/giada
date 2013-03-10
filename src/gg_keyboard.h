@@ -92,9 +92,10 @@ public:
 
 class Keyboard : public Fl_Scroll {
 private:
+	int keypress(gChannel *gch, int event);
+
 	static void cb_addChannelL  (Fl_Widget *v, void *p);
 	static void cb_addChannelR  (Fl_Widget *v, void *p);
-
 	inline void __cb_addChannelL();
 	inline void __cb_addChannelR();
 
