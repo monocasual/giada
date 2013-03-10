@@ -434,6 +434,7 @@ void Keyboard::deleteChannel(struct channel *ch) {
 	ch->guiChannel->hide();
 	gChannelsR->remove(ch->guiChannel);
 	gChannelsL->remove(ch->guiChannel);
+	delete ch->guiChannel;
 	ch->guiChannel = NULL;
 	Fl::unlock();
 }
@@ -626,6 +627,27 @@ int Keyboard::keypress(gChannel *gch, int e) {
 	else
 		return 0;
 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::clear() {
+	Fl::lock();
+	gChannelsL->clear();
+	gChannelsR->clear();
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		G_Mixer.channels.at(i)->guiChannel = NULL;
+	Fl::unlock();
+
+	gChannelsR->size(gChannelsR->w(), 0);
+	gChannelsL->size(gChannelsL->w(), 0);
+
+	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
+	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
+
+	redraw();
 }
 
 

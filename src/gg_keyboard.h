@@ -130,6 +130,11 @@ public:
 
 	void updateChannels(char side);
 
+	/* clear
+	 * delete all channels and groups */
+
+	void clear();
+
 	/* setChannelWithActions
 	 * add 'R' button if channel has actions, and set recorder to active. */
 

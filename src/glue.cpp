@@ -521,8 +521,9 @@ void glue_clearAllRecs() {
 
 void glue_resetToInitState(bool resetGui) {
 	G_Mixer.running = false;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		mh_deleteChannel(G_Mixer.channels.at(i));
+	while (G_Mixer.channels.size > 0)
+		mh_deleteChannel(G_Mixer.channels.at(0));
+	mainWin->keyboard->clear();
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();
