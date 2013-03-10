@@ -498,10 +498,11 @@ void glue_setInVol(float val) {
 
 void glue_clearAllSamples() {
 	G_Mixer.running = false;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		mh_freeChannel(G_Mixer.channels.at(i));
+		G_Mixer.channels.at(i)->guiChannel->reset();
+	}
 	recorder::init();
-	gu_update_controls();
 	return;
 }
 
