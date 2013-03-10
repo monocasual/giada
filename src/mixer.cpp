@@ -160,8 +160,9 @@ channel *Mixer::loadChannel(class Wave *w, char side) {
 
 void Mixer::pushChannel(Wave *w, channel *ch) {
 	ch->wave = w;
-	initChannel(ch);
+	//initChannel(ch);
 	ch->status = STATUS_OFF;
+	ch->start  = 0;
 	ch->end    = ch->wave->size;
 }
 
@@ -191,6 +192,11 @@ void Mixer::initChannel(channel *ch) {
 
 	ch->readActions = false;
 	ch->hasActions  = false;
+
+	/* call gVector constructor with p, and using it as the real gVector */
+
+	gVector <class Plugin *> p;
+	ch->plugins = p;
 }
 
 
@@ -248,6 +254,7 @@ channel *Mixer::getChannelByIndex(int index) {
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
+	printf("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
 	return NULL;
 }
 

@@ -71,7 +71,6 @@ public:
 
 	gVector <Plugin *> masterOut;
 	gVector <Plugin *> masterIn;
-	gVector <Plugin *> channel[MAX_NUM_CHAN];
 
 	PluginHost();
 	~PluginHost();

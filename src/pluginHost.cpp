@@ -190,12 +190,14 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 					idWindow = masterIn.at(i)->idWindow;
 					found    = true;
 				}
-			for (unsigned i=0; i<MAX_NUM_CHAN && !found; i++)
-				for (unsigned j=0; j<channel[i].size && !found; j++)
-					if (channel[i].at(j)->getPlugin() == effect) {
-						idWindow = channel[i].at(j)->idWindow;
+			for (unsigned i=0; i<G_Mixer.channels.size && !found; i++) {
+				channel *ch = G_Mixer.channels.at(i);
+				for (unsigned j=0; j<ch->plugins.size && !found; j++)
+					if (ch->plugins.at(j)->getPlugin() == effect) {
+						idWindow = ch->plugins.at(j)->idWindow;
 						found    = true;
 					}
+			}
 
 			gdPluginList *list = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
 			(list->getChild(idWindow))->size((int)index, (int)value);
@@ -446,6 +448,10 @@ Plugin *PluginHost::getPluginById(int id, int stackType, int chan) {
 
 Plugin *PluginHost::getPluginByIndex(int index, int stackType, int chan) {
 	gVector <Plugin *> *pStack = getStack(stackType, chan);
+	if (pStack->size == 0)
+		return NULL;
+	if ((unsigned) index >= pStack->size)
+		return NULL;
 	return pStack->at(index);
 }
 
@@ -484,8 +490,9 @@ void PluginHost::freeStack(int stackType, int chan) {
 
 void PluginHost::freeAllStacks() {
 	freeStack(PluginHost::MASTER_OUT);
-	for (int i=0; i<MAX_NUM_CHAN; i++)
-		freeStack(PluginHost::CHANNEL, i);
+	freeStack(PluginHost::MASTER_IN);
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		freeStack(PluginHost::CHANNEL, G_Mixer.channels.at(i)->index);
 }
 
 
@@ -575,7 +582,7 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, int chan) {
 		case MASTER_IN:
 			return &masterIn;
 		case CHANNEL:
-			return &channel[chan];
+			return &(G_Mixer.getChannelByIndex(chan))->plugins;
 		default:
 			return NULL;
 	}

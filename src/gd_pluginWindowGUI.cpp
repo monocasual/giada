@@ -60,7 +60,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	Rect mRect = {0, 0, 300, 300};
 	OSStatus err = CreateNewWindow(kDocumentWindowClass, kWindowCloseBoxAttribute | kWindowCompositingAttribute | kWindowAsyncDragAttribute | kWindowStandardHandlerAttribute, &mRect, &window);
 	if (err != noErr)	{
-		puts("[PluginWindow] Unable to create mac window!");
+		puts("[pluginWindow] Unable to create mac window!");
 		return;
 	}
 	static EventTypeSpec eventTypes[] = {
@@ -88,7 +88,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	pPlugin->getProduct(name);
 	copy_label(name);
 
-	printf("add plugin id window = %d\n", id);
+	printf("[pluginWindow] add plugin id window = %d\n", id);
 	pPlugin->idWindow = id;
 
 	pPlugin->idle();

@@ -73,6 +73,8 @@ struct channel {
   bool   hasActions;   // has something recorded
 
   int    key;
+
+  gVector <class Plugin *> plugins;
 };
 
 
