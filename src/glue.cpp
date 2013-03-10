@@ -65,8 +65,6 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
-	printf("[glue] load channel %d\n", ch->index);
-
 	G_Conf.setPath(G_Conf.samplePath, fpath);
 
 	int result = mh_loadChan(fname, ch, true);  // push = true
