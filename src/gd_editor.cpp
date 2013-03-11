@@ -304,7 +304,7 @@ void gdEditor::__cb_reload() {
 
 	/* no need for glue_loadChan, there's no gui to refresh */
 
-	mh_loadChan(ch->wave->pathfile.c_str(), ch, true);
+	mh_loadChan(ch->wave->pathfile.c_str(), ch);
 
 	glue_setBoost(this, ch->index, DEFAULT_BOOST, true);
 	glue_setPitch(this, ch, gDEFAULT_PITCH, true);

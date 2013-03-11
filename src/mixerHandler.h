@@ -55,7 +55,7 @@ void mh_unmuteChan(channel *ch, bool internal=false);
 
 void mh_loadPatch();
 
-int mh_loadChan(const char *file, struct channel *ch, bool push=true);
+int mh_loadChan(const char *file, struct channel *ch);
 
 
 /* startInputRec - record from line in

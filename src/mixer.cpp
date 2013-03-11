@@ -123,7 +123,7 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-channel *Mixer::loadChannel(class Wave *w, char side) {
+channel *Mixer::addChannel(char side) {
 	channel *ch = (channel*) malloc(sizeof(channel));
 	if (!ch) {
 		printf("[mixer] unable to alloc memory for channel struct\n");
@@ -142,15 +142,10 @@ channel *Mixer::loadChannel(class Wave *w, char side) {
 
 	channels.add(ch);
 	initChannel(ch);
-	ch->wave  = w;
-	ch->index = channels.size-1;
-	ch->side  = side;
-	if (w) {
-		ch->status = STATUS_OFF;
-		ch->end   = ch->wave->size;
-	}
+	ch->index  = channels.size-1;
+	ch->side   = side;
 
-	printf("[mixer] channel loaded, wave=%p, size=%d\n", (void*)w, channels.size);
+	printf("[mixer] channel added, total=%d\n", channels.size);
 
 	return ch;
 }
@@ -172,10 +167,13 @@ void Mixer::pushChannel(Wave *w, channel *ch) {
 
 
 void Mixer::initChannel(channel *ch) {
+	ch->wave        = NULL;
 	ch->tracker     = 0;
 	ch->status      = STATUS_EMPTY;
 	ch->start       = 0;
+	ch->startTrue   = 0;
 	ch->end         = 0;
+	ch->endTrue     = 0;
 	ch->mute        = false;
 	ch->mute_i      = false;
 	ch->mode        = DEFAULT_CHANMODE;
@@ -195,6 +193,7 @@ void Mixer::initChannel(channel *ch) {
 	ch->hasActions  = false;
 
 	/* call gVector constructor with p, and using it as the real gVector */
+	/** FIXME - is it really useful??? */
 
 	gVector <class Plugin *> p;
 	ch->plugins = p;
@@ -205,13 +204,21 @@ void Mixer::initChannel(channel *ch) {
 
 
 int Mixer::deleteChannel(channel *ch) {
+
+	/** TODO - check against mutex_plugins */
+
 	ch->status = STATUS_OFF;
 	int i = getChannelIndex(ch);
-	delete ch->wave;
+	if (ch->wave) {
+		delete ch->wave;
+		ch->wave = NULL;
+	}
 	free(ch->vChan);
 	free(ch);
 	channels.del(i);
 	return 1;
+
+	/** TODO - check against mutex_plugins */
 }
 
 

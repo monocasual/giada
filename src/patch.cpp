@@ -120,7 +120,16 @@ int Patch::getNumChans() {
 
 char Patch::getSide(int c) {
 	char tmp[16];
-	sprintf(tmp, "chanside%d", c);
+	sprintf(tmp, "chanSide%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getIndex(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanIndex%d", c);
 	return atoi(getValue(tmp).c_str());
 }
 
@@ -189,7 +198,7 @@ int Patch::getEnd(int c, unsigned size) {
 		return size;
 
 	unsigned out = atoi(val.c_str());
-	if (out < 0 || out > size)
+	if (out <= 0 || out > size)
 		return size;
 	return out;
 }
@@ -449,7 +458,8 @@ int Patch::write(const char *file, const char *name) {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *ch = G_Mixer.channels.at(i);
 		fprintf(fp, "samplepath%d=%s\n",    i, ch->wave == NULL ? "" : ch->wave->pathfile.c_str());
-		fprintf(fp, "chanside%d=%d\n",      i, ch->side);
+		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
+		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
 		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
 		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);
 		fprintf(fp, "chanmode%d=%d\n",      i, ch->mode);

@@ -36,9 +36,9 @@
 #define GLUE_H
 
 /* addChannel
- * add an empty new channel to the stack. */
+ * add an empty new channel to the stack. Returns the new channel. */
 
-void glue_addChannel(int side);
+struct channel *glue_addChannel(int side);
 
 /* loadChannel
  * fill an existing channel with a wave. */

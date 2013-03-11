@@ -45,11 +45,11 @@ public:
 	void init();
 	int  close();
 
-	/* loadChannel
-	 * add a new channel in channels stack and put a Wave inside of it. Wave
-	 * could be NULL == empty new channel */
+	/* addChannel
+	 * add a new channel without any wave inside of it. */
 
-	struct channel *loadChannel(class Wave *w, char side);
+	struct channel *addChannel(char side);
+
 	int      deleteChannel(struct channel *ch);
 	void     initChannel(struct channel *ch);
 	void     freeChannel(struct channel *ch);

@@ -68,7 +68,7 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 
 	G_Conf.setPath(G_Conf.samplePath, fpath);
 
-	int result = mh_loadChan(fname, ch, true);  // push = true
+	int result = mh_loadChan(fname, ch);
 
 	if (result == SAMPLE_LOADED_OK)
 		mainWin->keyboard->updateChannel(ch);
@@ -83,10 +83,11 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_addChannel(int side) {
-	channel *ch    = G_Mixer.loadChannel(NULL, side);
+channel *glue_addChannel(int side) {
+	channel *ch    = G_Mixer.addChannel(side);
 	gChannel *gch  = mainWin->keyboard->addChannel(side, ch);
 	ch->guiChannel = gch;
+	return ch;
 }
 
 

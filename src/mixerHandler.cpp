@@ -237,80 +237,70 @@ void mh_freeChannel(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-int mh_loadChan(const char *file, struct channel *ch, bool push) {
+int mh_loadChan(const char *file, struct channel *ch) {
 
 	if (strcmp(file, "") == 0) {
 		puts("[MH] file not specified");
 		return SAMPLE_LEFT_EMPTY;
 	}
 
-	else if (strlen(file) > FILENAME_MAX)
+	if (strlen(file) > FILENAME_MAX)
 		return SAMPLE_PATH_TOO_LONG;
 
-	else {
-		Wave *w = new Wave();
+	Wave *w = new Wave();
 
-		if(!w->open(file)) {
-			printf("[MH] %s: read error\n", file);
-			delete w;
-			return SAMPLE_READ_ERROR;
-		}
-
-		if (w->inHeader.channels > 2) {
-			printf("[MH] %s: unsupported multichannel wave\n", file);
-			delete w;
-			return SAMPLE_MULTICHANNEL;
-		}
-
-		if (!w->readData()) {
-			delete w;
-			return SAMPLE_READ_ERROR;
-		}
-
-		if (w->inHeader.channels == 1) /** FIXME: error checking  */
-			wfx_monoToStereo(w);
-
-		if (w->inHeader.samplerate != G_Conf.samplerate) {
-			printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
-			w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
-		}
-
-		channel *thisCh;
-
-		if (push) {
-			G_Mixer.pushChannel(w, ch);
-			thisCh = ch;
-		}
-		else {
-			thisCh = G_Mixer.loadChannel(w, 0);
-		}
-
-		/* sample name must be unique */
-
-		std::string sampleName = gBasename(stripExt(file).c_str());
-		int k = 0;
-		bool exists = false;
-		do {
-			for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-				channel *thatCh = G_Mixer.channels.at(i);
-				if (thatCh->wave != NULL && thatCh->index != thisCh->index) {  // skip itself
-					if (thisCh->wave->name == thatCh->wave->name) {
-						char n[32];
-						sprintf(n, "%d", k);
-						thisCh->wave->name = sampleName + "-" + n;
-						exists = true;
-						break;
-					}
-				}
-				exists = false;
-			}
-			k++;
-		}
-		while (exists);
-
-		printf("[MH] %s loaded in channel %d\n", file, thisCh->index);
-		return SAMPLE_LOADED_OK;
+	if(!w->open(file)) {
+		printf("[MH] %s: read error\n", file);
+		delete w;
+		return SAMPLE_READ_ERROR;
 	}
+
+	if (w->inHeader.channels > 2) {
+		printf("[MH] %s: unsupported multichannel wave\n", file);
+		delete w;
+		return SAMPLE_MULTICHANNEL;
+	}
+
+	if (!w->readData()) {
+		delete w;
+		return SAMPLE_READ_ERROR;
+	}
+
+	if (w->inHeader.channels == 1) /** FIXME: error checking  */
+		wfx_monoToStereo(w);
+
+	if (w->inHeader.samplerate != G_Conf.samplerate) {
+		printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
+		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
+	}
+
+	G_Mixer.pushChannel(w, ch);
+
+	/* sample name must be unique */
+
+	std::string sampleName = gBasename(stripExt(file).c_str());
+	int k = 0;
+	bool exists = false;
+	do {
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *thatCh = G_Mixer.channels.at(i);
+			if (thatCh->wave != NULL && thatCh->index != ch->index) {  // skip itself
+				if (ch->wave->name == thatCh->wave->name) {
+					char n[32];
+					sprintf(n, "%d", k);
+					ch->wave->name = sampleName + "-" + n;
+					exists = true;
+					break;
+				}
+			}
+			exists = false;
+		}
+		k++;
+	}
+	while (exists);
+
+	printf("[MH] %s loaded in channel %d\n", file, ch->index);
+	return SAMPLE_LOADED_OK;
 }
 
 
@@ -322,27 +312,19 @@ void mh_loadPatch() {
 
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
-
-		/** kills all channels for safety. Useful if the patch is loaded on
-		 * the fly. */
-		/// mh_killChan(i); won't work anymore
-
-
-		/** TODO: add channel to keyboard */
-
-		channel *ch = G_Mixer.loadChannel(NULL, G_Patch.getSide(i));
-
-		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), ch, true);
+		channel *ch = glue_addChannel(G_Patch.getSide(i));
+		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), ch);
 
 		if (res == SAMPLE_LOADED_OK) {
 			ch->volume      = G_Patch.getVol(i);
+			ch->index       = G_Patch.getIndex(i);
 			ch->mode        = G_Patch.getMode(i);
 			ch->mute        = G_Patch.getMute(i);
 			ch->boost       = G_Patch.getBoost(i);
 			ch->panLeft     = G_Patch.getPanLeft(i);
 			ch->panRight    = G_Patch.getPanRight(i);
 			ch->tracker     = ch->start;
-			ch->readActions = G_Patch.getRecActive(i); // gu_update_controls will activate the gui (bg color)
+			ch->readActions = G_Patch.getRecActive(i);
 			ch->recStatus   = ch->readActions ? REC_READING : REC_STOPPED;
 			G_Mixer.setChanStart(ch, G_Patch.getStart(i));
 			G_Mixer.setChanEnd  (ch, G_Patch.getEnd(i, ch->wave->size));
