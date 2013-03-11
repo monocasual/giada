@@ -124,10 +124,10 @@ public:
 	/* updatePitch
 	 * updates the pitch value and chanStart+chanEnd accordingly */
 
-	void setPitch(int chan, float val);
+	void setPitch(struct channel *ch, float val);
 
-	void setChanStart(int chan, unsigned val);
-	void setChanEnd  (int chan, unsigned val);
+	void setChanStart(struct channel *ch, unsigned val);
+	void setChanEnd  (struct channel *ch, unsigned val);
 
 	/* mergeVirtualInput
 	 * memcpy the virtual channel input in the channel designed for input

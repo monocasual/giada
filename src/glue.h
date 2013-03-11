@@ -35,9 +35,16 @@
 #ifndef GLUE_H
 #define GLUE_H
 
+/* addChannel
+ * add an empty new channel to the stack. */
+
+void glue_addChannel(int side);
+
+/* loadChannel
+ * fill an existing channel with a wave. */
 
 int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath);
-//int glue_unloadChannel(struct channel *ch);
+
 void glue_deleteChannel(struct channel *ch);
 
 void glue_freeChannel(struct channel *ch);
@@ -108,13 +115,13 @@ void glue_startStopMetronome();
  * check=true: check the points' consistency */
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
-void glue_setBeginEndChannel(class gdEditor *win, int ch, int b, int e,
+void glue_setBeginEndChannel(class gdEditor *win, struct channel *ch, int b, int e,
 														 bool recalc=false, bool check=true);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 void glue_setBoost(class gdEditor *win, int ch, float val, bool numeric);
 
-void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric);
+void glue_setPitch(class gdEditor *win, struct channel *ch, float val, bool numeric);
 
 /* setVolEditor
  * handles the volume inside the SAMPLE EDITOR (not the main gui). The

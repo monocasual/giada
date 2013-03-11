@@ -215,7 +215,7 @@ void gdEditor::cb_zoomOut      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zo
 void gdEditor::__cb_setChanPos() {
 	glue_setBeginEndChannel(
 		this,
-		ch->index,
+		ch,
 		atoi(chanStart->value())*2,  // glue halves printed values
 		atoi(chanEnd->value())*2,
 		true
@@ -227,7 +227,7 @@ void gdEditor::__cb_setChanPos() {
 
 
 void gdEditor::__cb_resetStartEnd() {
-	glue_setBeginEndChannel(this, ch->index, 0, ch->wave->size, true);
+	glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 }
 
 
@@ -307,7 +307,7 @@ void gdEditor::__cb_reload() {
 	mh_loadChan(ch->wave->pathfile.c_str(), ch, true);
 
 	glue_setBoost(this, ch->index, DEFAULT_BOOST, true);
-	glue_setPitch(this, ch->index, gDEFAULT_PITCH, true);
+	glue_setPitch(this, ch, gDEFAULT_PITCH, true);
 	glue_setPanning(this, ch->index, 1.0f);
 	pan->value(1.0f);  // glue_setPanning doesn't do it
 	pan->redraw();     // glue_setPanning doesn't do it
@@ -315,7 +315,7 @@ void gdEditor::__cb_reload() {
 	waveTools->waveform->stretchToWindow();
 	waveTools->updateWaveform();
 
-	glue_setBeginEndChannel(this, ch->index, 0, ch->wave->size, true);
+	glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 
 	redraw();
 }
@@ -325,7 +325,7 @@ void gdEditor::__cb_reload() {
 
 
 void gdEditor::__cb_setPitch() {
-	glue_setPitch(this, ch->index, pitch->value(), false);
+	glue_setPitch(this, ch, pitch->value(), false);
 }
 
 
@@ -333,7 +333,7 @@ void gdEditor::__cb_setPitch() {
 
 
 void gdEditor::__cb_setPitchNum() {
-	glue_setPitch(this, ch->index, atof(pitchNum->value()), true);
+	glue_setPitch(this, ch, atof(pitchNum->value()), true);
 }
 
 

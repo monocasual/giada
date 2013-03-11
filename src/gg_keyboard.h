@@ -111,6 +111,12 @@ public:
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
+	/* addChannel
+	 * add a new channel to gChannels[l/r]. Used by callbacks and during
+	 * patch loading. */
+
+	gChannel *addChannel(char side, struct channel *ch);
+
 	/* deleteChannel
 	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
 	 * it from the stack. */

@@ -883,15 +883,13 @@ bool Mixer::hasEditedSamples() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setPitch(int c, float val) {
+void Mixer::setPitch(channel *ch, float val) {
 
 	/* if the pitch changes also chanStart/chanEnd must change accordingly
 	 * and to do that we need the original (or previous) chanStart/chanEnd
 	 * values (chanStartTrue and chanEndTrue). Formula:
 	 *
 	 * chanStart{pitched} = chanStart{Original} / newpitch */
-
-	channel *ch = channels.at(c);
 
 	if (val == 1.0f) {
 		ch->start = ch->startTrue;
@@ -920,8 +918,7 @@ void Mixer::setPitch(int c, float val) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setChanStart(int c, unsigned val) {
-	channel *ch = channels.at(c);
+void Mixer::setChanStart(struct channel *ch, unsigned val) {
 	if (val % 2 != 0)
 		val++;
 	ch->startTrue = val;
@@ -933,8 +930,7 @@ void Mixer::setChanStart(int c, unsigned val) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setChanEnd(int c, unsigned val) {
-	channel *ch = channels.at(c);
+void Mixer::setChanEnd(struct channel *ch, unsigned val) {
 	if (val % 2 != 0)
 		val++;
 	ch->endTrue = val;

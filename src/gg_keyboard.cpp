@@ -486,26 +486,40 @@ void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addC
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_addChannelL() {
-	channel  *ch   = G_Mixer.loadChannel(NULL, 0);
-	gChannel *gch  = new gChannel(gChannelsL->x(), gChannelsL->y() + gChannelsL->children() * 24, gChannelsL->w(), 20, NULL, ch);
-	ch->guiChannel = gch;
+gChannel *Keyboard::addChannel(char side, channel *ch) {
+	Fl_Group *group;
+	gClick   *add;
 
-	gChannelsL->add(gch);
-	gChannelsL->size(gChannelsL->w(), gChannelsL->children() * 24);
-	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
+	if (side == 0)	{
+		group = gChannelsL;
+		add   = addChannelL;
+	}
+	else {
+		group = gChannelsR;
+		add   = addChannelR;
+	}
+
+	gChannel *gch = new gChannel(group->x(), group->y() + group->children() * 24, group->w(), 20, NULL, ch);
+
+	group->add(gch);
+	group->size(group->w(), group->children() * 24);
+	add->position(group->x(), group->y()+group->h());
 	redraw();
+
+	return gch;
 }
 
-void Keyboard::__cb_addChannelR() {
-	channel  *ch   = G_Mixer.loadChannel(NULL, 1);
-	gChannel *gch  = new gChannel(gChannelsR->x(), gChannelsR->y() + gChannelsR->children() * 24, gChannelsR->w(), 20, NULL, ch);
-	ch->guiChannel = gch;
 
-	gChannelsR->add(gch);
-	gChannelsR->size(gChannelsR->w(), gChannelsR->children() * 24);
-	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
-	redraw();
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::__cb_addChannelL() {
+	glue_addChannel(0);
+}
+
+
+void Keyboard::__cb_addChannelR() {
+	glue_addChannel(1);
 }
 
 

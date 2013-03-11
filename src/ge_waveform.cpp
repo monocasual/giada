@@ -323,7 +323,7 @@ int gWaveform::handle(int e) {
 			if (chanEndLit)
 				realChanEnd = absolutePoint(chanEnd)*2;
 
-			glue_setBeginEndChannel((gdEditor *) window(), chan->index, realChanStart, realChanEnd, false);
+			glue_setBeginEndChannel((gdEditor *) window(), chan, realChanStart, realChanEnd, false);
 
 			pushed  = false;
 			dragged = false;
@@ -570,7 +570,7 @@ void gWaveform::openEditMenu() {
 
 		glue_setBeginEndChannel(
 				(gdEditor *) window(), // parent
-				chan->index,
+				chan,
 				absolutePoint(selectionA) * 2,  // stereo!
 				absolutePoint(selectionB) * 2,  // stereo!
 				false, // no recalc (we do it here)
@@ -595,7 +595,7 @@ void gWaveform::openEditMenu() {
 
 		glue_setBeginEndChannel(
 			(gdEditor *) window(),
-			chan->index,
+			chan,
 			0,
 			chan->wave->size,
 			false);
@@ -616,7 +616,7 @@ void gWaveform::openEditMenu() {
 
 		glue_setBeginEndChannel(
 			(gdEditor *) window(),
-			chan->index,
+			chan,
 			0,
 			chan->wave->size,
 			false);

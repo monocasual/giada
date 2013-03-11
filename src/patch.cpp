@@ -118,6 +118,16 @@ int Patch::getNumChans() {
 /* ------------------------------------------------------------------ */
 
 
+char Patch::getSide(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanside%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 float Patch::getVol(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanvol%d", c);

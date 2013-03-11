@@ -320,50 +320,46 @@ int mh_loadChan(const char *file, struct channel *ch, bool push) {
 void mh_loadPatch() {
 	G_Mixer.init();
 
-#if 0
+	int numChans = G_Patch.getNumChans();
+	for (int i=0; i<numChans; i++) {
 
-	int i = 0;
-	while (i < MAX_NUM_CHAN) {
-
-		/* kills all channels for safety. Useful if the patch is loaded on
+		/** kills all channels for safety. Useful if the patch is loaded on
 		 * the fly. */
+		/// mh_killChan(i); won't work anymore
 
-		mh_killChan(i);
 
-		/* let's load the sample */
+		/** TODO: add channel to keyboard */
 
-		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), i);
+		channel *ch = G_Mixer.loadChannel(NULL, G_Patch.getSide(i));
+
+		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), ch, true);
 
 		if (res == SAMPLE_LOADED_OK) {
-			G_Mixer.chanVolume[i]    = G_Patch.getVol(i);
-			G_Mixer.chanMode[i]      = G_Patch.getMode(i);
-			G_Mixer.chanMute[i]      = G_Patch.getMute(i);
-			//if (G_Patch.getMute(i))	   glue_readMute(i, ACTION_MUTEON); // glue_ will activate the gui ('R' button)
-			G_Mixer.chanBoost[i]     = G_Patch.getBoost(i);
-			G_Mixer.chanPanLeft[i]   = G_Patch.getPanLeft(i);
-			G_Mixer.chanPanRight[i]  = G_Patch.getPanRight(i);
-			G_Mixer.chanTracker[i]   = G_Mixer.chanStart[i];
-			recorder::chanActive[i]  = G_Patch.getRecActive(i); // gu_update_controls will activate the gui (bg color)
-			G_Mixer.chanRecStatus[i] = recorder::chanActive[i] ? REC_READING : REC_STOPPED;
-			G_Mixer.setChanStart(i, G_Patch.getStart(i));
-			G_Mixer.setChanEnd  (i, G_Patch.getEnd(i, G_Mixer.chan[i]->size));
-			G_Mixer.setPitch    (i, G_Patch.getPitch(i));
+			ch->volume      = G_Patch.getVol(i);
+			ch->mode        = G_Patch.getMode(i);
+			ch->mute        = G_Patch.getMute(i);
+			ch->boost       = G_Patch.getBoost(i);
+			ch->panLeft     = G_Patch.getPanLeft(i);
+			ch->panRight    = G_Patch.getPanRight(i);
+			ch->tracker     = ch->start;
+			ch->readActions = G_Patch.getRecActive(i); // gu_update_controls will activate the gui (bg color)
+			ch->recStatus   = ch->readActions ? REC_READING : REC_STOPPED;
+			G_Mixer.setChanStart(ch, G_Patch.getStart(i));
+			G_Mixer.setChanEnd  (ch, G_Patch.getEnd(i, ch->wave->size));
+			G_Mixer.setPitch    (ch, G_Patch.getPitch(i));
 		}
 		else {
-			G_Mixer.chanVolume[i] = DEFAULT_VOL;
-			G_Mixer.chanMode[i]   = DEFAULT_CHANMODE;
-			G_Mixer.chanStatus[i] = STATUS_WRONG;
+			ch->volume = DEFAULT_VOL;
+			ch->mode   = DEFAULT_CHANMODE;
+			ch->status = STATUS_WRONG;
 
 			if (res == SAMPLE_LEFT_EMPTY)
-				G_Mixer.chanStatus[i] = STATUS_EMPTY;
+				ch->status = STATUS_EMPTY;
 			else
 			if (res == SAMPLE_READ_ERROR)
-				G_Mixer.chanStatus[i] = STATUS_MISSING;
+				ch->status = STATUS_MISSING;
 		}
-		i++;
 	}
-
-#endif
 
 	G_Mixer.outVol     = G_Patch.getOutVol();
 	G_Mixer.inVol      = G_Patch.getInVol();

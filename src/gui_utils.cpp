@@ -133,47 +133,47 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 
 void gu_update_controls() {
-#if 0
+
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
 		/* update status box and sampleButton */
 
-		gu_resetChannel(i);
-
 		channel *ch = G_Mixer.channels.at(i);
+		ch->guiChannel->reset();
+
 		switch (ch->status) {
 			case STATUS_EMPTY:
-				mainWin->keyboard->sampleButton[i]->label("-- no sample --");
+				ch->guiChannel->sampleButton->label("-- no sample --");
 				break;
 			case STATUS_MISSING:
 			case STATUS_WRONG:
-				mainWin->keyboard->sampleButton[i]->label("* file not found! *");
+				ch->guiChannel->sampleButton->label("* file not found! *");
 				break;
 			default:
-				gu_trim_label(ch->wave->name.c_str(), 28, mainWin->keyboard->sampleButton[i]);
+				gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 				break;
 		}
 
-		mainWin->keyboard->sampleButton[i]->redraw();
+		ch->guiChannel->sampleButton->redraw();
 
 		/* update volumes+mute */
 
-		mainWin->keyboard->vol[i]->value(ch->volume);
-		mainWin->keyboard->mute[i]->value(ch->mute);
+		ch->guiChannel->vol->value(ch->volume);
+		ch->guiChannel->mute->value(ch->mute);
 
 		/* updates modebox */
 
-		mainWin->keyboard->modeBoxes[i]->value(ch->mode);
-		mainWin->keyboard->modeBoxes[i]->redraw();
+		ch->guiChannel->modeBox->value(ch->mode);
+		ch->guiChannel->modeBox->redraw();
 
 		/* update channels. If you load a patch with recorded actions, the 'R'
 		 * button must be shown. Moreover if the actions are active, the 'R'
 		 * button must be activated accordingly. */
 
-		if (recorder::chanEvents[i])
-			mainWin->keyboard->addActionButton(i, recorder::chanActive[i]);
+		if (ch->hasActions)
+			ch->guiChannel->addActionButton(ch->readActions);
 		else
-			mainWin->keyboard->remActionButton(i);
+			ch->guiChannel->remActionButton();
 	}
 
 	mainWin->outVol->value(G_Mixer.outVol);
@@ -202,7 +202,6 @@ void gu_update_controls() {
 
 	mainWin->metronome->value(0);
 	mainWin->metronome->redraw();
-#endif
 }
 
 
@@ -215,21 +214,6 @@ void gu_update_win_label(const char *c) {
 	out += c;
 	mainWin->copy_label(out.c_str());
 }
-
-
-/* ------------------------------------------------------------------ */
-
-/*
-void gu_resetChannel(int c) {
-	mainWin->keyboard->sampleButton[c]->bgColor0 = COLOR_BG_0;
-	mainWin->keyboard->sampleButton[c]->bdColor  = COLOR_BD_0;
-	mainWin->keyboard->sampleButton[c]->txtColor = COLOR_TEXT_0;
-	mainWin->keyboard->sampleButton[c]->label("-- no sample --");
-	mainWin->keyboard->remActionButton(c);
-	mainWin->keyboard->sampleButton[c]->redraw();
-	mainWin->keyboard->status[c]->redraw();
-}
-*/
 
 
 /* ------------------------------------------------------------------ */

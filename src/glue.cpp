@@ -83,6 +83,16 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
+void glue_addChannel(int side) {
+	channel *ch    = G_Mixer.loadChannel(NULL, side);
+	gChannel *gch  = mainWin->keyboard->addChannel(side, ch);
+	ch->guiChannel = gch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 
 	/* update browser's status bar with % 0.1 */
@@ -544,19 +554,18 @@ void glue_startStopMetronome() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBeginEndChannel(gdEditor *win, int ch, int b, int e, bool recalc, bool check) {
-	channel *c = G_Mixer.channels.at(ch);
+void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool recalc, bool check) {
 	if (check) {
-		if (e > c->wave->size)
-			e = c->wave->size;
+		if (e > ch->wave->size)
+			e = ch->wave->size;
 		if (b < 0)
 			b = 0;
-		if (b > c->wave->size)
-			b = c->wave->size-2;
-		if (b >= c->endTrue)
-			b = c->start;
-		if (e <= c->startTrue)
-			e = c->end;
+		if (b > ch->wave->size)
+			b = ch->wave->size-2;
+		if (b >= ch->endTrue)
+			b = ch->start;
+		if (e <= ch->startTrue)
+			e = ch->end;
 	}
 
 	/* print mono values */
@@ -889,7 +898,7 @@ void glue_keyRelease(channel *c, bool ctrl, bool shift) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setPitch(class gdEditor *win, int ch, float val, bool numeric) {
+void glue_setPitch(class gdEditor *win, channel *ch, float val, bool numeric) {
 	if (numeric) {
 		if (val <= 0.0f)
 			val = 0.1000f;

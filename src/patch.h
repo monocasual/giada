@@ -65,6 +65,7 @@ public:
 	float       getPanRight  (int i);
 	float       getPitch     (int i);
 	bool        getRecActive (int i);
+	char        getSide      (int i);
 	float       getOutVol    ();
 	float       getInVol     ();
 	float       getBpm       ();
