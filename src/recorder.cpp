@@ -131,9 +131,6 @@ void rec(int index, char act, int frame) {
 
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
-	/** DEPRECATED */
-	//chanEvents[index] = true;
-	/** DEPRECATED */
 
 	channel *ch = G_Mixer.getChannelByIndex(index);
 	ch->hasActions = true;
