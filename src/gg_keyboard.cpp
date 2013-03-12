@@ -42,6 +42,7 @@
 #include "gd_warnings.h"
 #include "pluginHost.h"
 #include "channel.h"
+#include "gd_keyGrabber.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -215,6 +216,11 @@ void gChannel::__cb_openChanMenu() {
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
 		openBrowser(BROWSER_LOAD_SAMPLE);
+		return;
+	}
+
+	if (strcmp(m->label(), "Set key...") == 0) {
+		new gdKeyGrabber(ch);
 		return;
 	}
 

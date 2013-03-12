@@ -237,6 +237,16 @@ float Patch::getPanLeft(int c) {
 /* ------------------------------------------------------------------ */
 
 
+int Patch::getKey(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanKey%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 float Patch::getPanRight(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanPanRight%d", c);
@@ -457,6 +467,7 @@ int Patch::write(const char *file, const char *name) {
 		channel *ch = G_Mixer.channels.at(i);
 		fprintf(fp, "samplepath%d=%s\n",    i, ch->wave == NULL ? "" : ch->wave->pathfile.c_str());
 		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
+		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
 		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
 		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
 		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);

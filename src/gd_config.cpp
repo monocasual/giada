@@ -73,6 +73,7 @@ gdConfig::gdConfig(int w, int h)
 		grpSound->end();
 		grpSound->labelsize(11);
 
+		/*
 		Fl_Group *grpKeys = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Controls");
 			listChans	= new gChoice(grpKeys->x()+92,  grpKeys->y()+9, 253, 20, "Key for");
 			            new gBox   (grpKeys->x()+22,  grpKeys->y()+37, 70, 20, "Actual key", FL_ALIGN_RIGHT);
@@ -81,6 +82,7 @@ gdConfig::gdConfig(int w, int h)
 			            new gBox(grpKeys->x()+10, setKey->y()+120, grpKeys->w()-10, 50, "Restart Giada for the changes to take effect.");
 		grpKeys->end();
 		grpKeys->labelsize(11);
+		*/
 
 		Fl_Group *grpBehvs = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Behaviors");
 			Fl_Group *radioGrp_1 = new Fl_Group(grpBehvs->x(), grpBehvs->y()+10, grpBehvs->w(), 70); // radio group for the mutex
@@ -203,9 +205,9 @@ gdConfig::gdConfig(int w, int h)
 		listChans->add(x, 0, cb_get_key_chan, (void*)this);
 	}
 	listChans->value(0); // starts with element number 0
-	*/
 
 	setKey->callback(cb_open_grab_win, (void*)this);
+	*/
 	save->callback(cb_save_config, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
 	soundsys->callback(cb_deactivate_sounddev, (void*)this);
@@ -260,7 +262,7 @@ void gdConfig::__cb_get_key_chan() {
 
 
 void gdConfig::__cb_open_grab_win() {
-	new gdKeyGrabber(listChans->value(), this);
+	//new gdKeyGrabber(listChans->value(), this);
 }
 
 

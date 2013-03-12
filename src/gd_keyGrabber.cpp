@@ -32,20 +32,24 @@
 #include "conf.h"
 #include "gui_utils.h"
 #include "gd_config.h"
+#include "channel.h"
+#include "gg_keyboard.h"
 
 
 extern Conf	G_Conf;
 
 
-gdKeyGrabber::gdKeyGrabber(int ch, gdConfig *w)
-: Fl_Window(300, 100, "Key configuration"), w(w), ch(ch) {
+gdKeyGrabber::gdKeyGrabber(channel *ch)
+: Fl_Window(300, 100, "Key configuration"), ch(ch) {
 	set_modal();
 	text = new gBox(10, 10, 280, 80, "Press a key (esc to quit):");
 	gu_setFavicon(this);
 	show();
 }
 
-gdKeyGrabber::~gdKeyGrabber() {}
+
+/* ------------------------------------------------------------------ */
+
 
 int gdKeyGrabber::handle(int e) {
 	int ret = Fl_Group::handle(e);
@@ -60,12 +64,12 @@ int gdKeyGrabber::handle(int e) {
 			    && x != FL_End
 			    && x != ' ') {
 				/**G_Conf.keys[ch] = x;*/
-				printf("set key '%c' (%d) for channel %d\n", x, x, ch);
+				printf("set key '%c' (%d) for channel %d\n", x, x, ch->index);
 
 				char tmp[2]; sprintf(tmp, "%c", x);
-				w->actualKey->copy_label(tmp);
-
-				hide();	// hide de window when done
+				ch->guiChannel->button->copy_label(tmp);
+				ch->key = x;
+				Fl::delete_widget(this);
 				break;
 			}
 			else
