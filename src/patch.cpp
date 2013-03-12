@@ -386,7 +386,6 @@ int Patch::readRecs() {
 			if (frame % 2 != 0)
 				frame++;
 
-
 			channel *ch = G_Mixer.channels.at(chan);
 			recorder::rec(ch->index, type, frame);
 		}

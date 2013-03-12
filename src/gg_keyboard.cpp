@@ -159,21 +159,11 @@ void gChannel::__cb_mute() {
 
 void gChannel::__cb_openChanMenu() {
 
-	if (ch == NULL) {
-		openBrowser(BROWSER_LOAD_SAMPLE);
-		return;
-	}
-
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
 
 	if (G_Mixer.chanInput == ch || recorder::active)
 		return;
-
-	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
-		openBrowser(BROWSER_LOAD_SAMPLE);
-		return;
-	}
 
 	/* the following is a trash workaround for a FLTK menu. We need a gMenu
 	 * widget asap */
@@ -181,6 +171,7 @@ void gChannel::__cb_openChanMenu() {
 	Fl_Menu_Item rclick_menu[] = {
 		{"Load new sample..."},
 		{"Export sample to file..."},
+		{"Set key..."},
 		{"Edit sample..."},
 		{"Edit actions..."},
 		{"Clear actions", 0, 0, 0, FL_SUBMENU},
@@ -193,16 +184,23 @@ void gChannel::__cb_openChanMenu() {
 		{0}
 	};
 
+	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
+		rclick_menu[1].deactivate();
+		rclick_menu[3].deactivate();
+		rclick_menu[4].deactivate();
+		rclick_menu[10].deactivate();
+	}
+
 	/* no 'clear actions' if there are no actions */
 
 	if (!ch->hasActions)
-		rclick_menu[4].deactivate();
+		rclick_menu[5].deactivate();
 
 	/* no 'clear all actions' or 'clear start/stop actions' for those channels
 	 * in loop mode: they can only have mute actions. */
 
 	if (ch->mode & LOOP_ANY) {
-		rclick_menu[5].deactivate();
+		rclick_menu[6].deactivate();
 		rclick_menu[7].deactivate();
 	}
 
