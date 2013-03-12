@@ -50,14 +50,14 @@ public:
 
 	struct channel *addChannel(char side);
 
-	int      deleteChannel(struct channel *ch);
-	void     initChannel(struct channel *ch);
-	void     freeChannel(struct channel *ch);
+	int  deleteChannel(struct channel *ch);
+	void initChannel(struct channel *ch);
+	void freeChannel(struct channel *ch);
 
 	/* pushChannel
 	 * add a new wave to an existing channel. */
 
-	void     pushChannel(class Wave *w, struct channel *ch);
+	void pushChannel(class Wave *w, struct channel *ch);
 
 	void chanStop(struct channel *ch);
 	void chanReset(struct channel *ch);
@@ -205,6 +205,7 @@ public:
 	bool inToOut;
 
 	pthread_mutex_t mutex_recs;
+	pthread_mutex_t mutex_chans;
 	pthread_mutex_t mutex_plugins;
 
 

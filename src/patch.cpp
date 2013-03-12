@@ -512,11 +512,11 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "# --- VST / channels --- \n");
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *ch = G_Mixer.channels.at(i);
-		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch->index);
+		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch);
 		fprintf(fp, "chan%dPlugins=%d\n", i, numPlugs);
 
 		for (int j=0; j<numPlugs; j++) {
-			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, i);
+			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
 			fprintf(fp, "chan%d_p%dpathfile=%s\n", i, j, pPlugin->pathfile);
 			fprintf(fp, "chan%d_p%dbypass=%d\n",   i, j, pPlugin->bypass);
 			numParams = pPlugin->getNumParams();

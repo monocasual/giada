@@ -204,21 +204,25 @@ void Mixer::initChannel(channel *ch) {
 
 
 int Mixer::deleteChannel(channel *ch) {
-
-	/** TODO - check against mutex_plugins */
-
-	ch->status = STATUS_OFF;
-	int i = getChannelIndex(ch);
-	if (ch->wave) {
-		delete ch->wave;
-		ch->wave = NULL;
+	int lockStatus;
+	while (true) {
+		lockStatus = pthread_mutex_trylock(&mutex_chans);
+		if (lockStatus == 0) {
+			ch->status = STATUS_OFF;
+			int i = getChannelIndex(ch);
+			if (ch->wave) {
+				delete ch->wave;
+				ch->wave = NULL;
+			}
+			free(ch->vChan);
+			free(ch);
+			channels.del(i);
+			pthread_mutex_unlock(&mutex_chans);
+			return 1;
+		}
+		else
+			puts("[mixer::deleteChannel] waiting for mutex...");
 	}
-	free(ch->vChan);
-	free(ch);
-	channels.del(i);
-	return 1;
-
-	/** TODO - check against mutex_plugins */
 }
 
 
@@ -412,6 +416,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					rewind();
 				}
 
+				pthread_mutex_lock(&mutex_chans);
 				for (unsigned k=0; k<channels.size; k++) {
 					channel *ch = channels.at(k);
 					if (ch->wave == NULL)
@@ -439,6 +444,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						}
 					}
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 			/* reset LOOP_REPEAT, if a bar has passed */
@@ -447,6 +453,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (metronome)
 					tickPlay = true;
 
+				pthread_mutex_lock(&mutex_chans);
 				for (unsigned k=0; k<channels.size; k++) {
 					channel *ch = channels.at(k);
 					if (ch->wave == NULL)
@@ -454,14 +461,15 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					if (ch->mode == LOOP_REPEAT && ch->status == STATUS_PLAY)
 						xfade(ch);
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 
 			/* reset sample on beat 0 */
 
 			if (actualFrame == 0) {
+				pthread_mutex_lock(&mutex_chans);
 				for (unsigned k=0; k<channels.size; k++) {
-
 					channel *ch = channels.at(k);
 
 					if (ch->wave == NULL)
@@ -496,6 +504,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						recorder::enableRead(ch);     // rec start
 					}
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 			/* reading all actions recorded */
@@ -559,6 +568,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 		/* sum channels  */
 
+		pthread_mutex_lock(&mutex_chans);
 		for (unsigned k=0; k<channels.size; k++) {
 			channel *ch = channels.at(k);
 
@@ -661,6 +671,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				}
 			}
 		} // end loop K
+		pthread_mutex_unlock(&mutex_chans);
 
 		/* metronome. FIXME - move this one after the peak meter calculation */
 
@@ -686,12 +697,13 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	/* final loop: sum virtual channels */
 
+	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size; k++) {
 		channel *ch = channels.at(k);
 		if (ch->wave != NULL) {
 #ifdef WITH_VST
 			pthread_mutex_lock(&mutex_plugins);
-			G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, k);
+			G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
 			pthread_mutex_unlock(&mutex_plugins);
 #endif
 			for (unsigned j=0; j<bufferFrames; j+=2) {
@@ -700,6 +712,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			}
 		}
 	}
+	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */
 

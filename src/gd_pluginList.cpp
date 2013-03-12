@@ -112,19 +112,18 @@ void gdPluginList::__cb_shiftUp(Fl_Widget *v) {
 
 	/*nothing to do if there's only one plugin */
 
-	int index = ch == NULL ? 0 : ch->index;
-	if (G_PluginHost.countPlugins(stackType, index) == 1)
+	if (G_PluginHost.countPlugins(stackType, ch) == 1)
 		return;
 
 	int id  = ((gButton*)v)->id;
-	int pId = G_PluginHost.getPluginIndex(id, stackType, index);
+	int pId = G_PluginHost.getPluginIndex(id, stackType, ch);
 
 	/* if the plugin is the first one of the stack, do nothing */
 
 	if (pId == 0)
 		return;
 
-	G_PluginHost.swapPlugin(pId, pId-1, stackType, index);
+	G_PluginHost.swapPlugin(pId, pId-1, stackType, ch);
 	refreshList();
 	redraw();
 }
@@ -137,18 +136,18 @@ void gdPluginList::__cb_shiftDown(Fl_Widget *v) {
 
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost.countPlugins(stackType, ch->index) == 1)
+	if (G_PluginHost.countPlugins(stackType, ch) == 1)
 		return;
 
 	int id = ((gButton*)v)->id;
-	unsigned index = G_PluginHost.getPluginIndex(id, stackType, ch->index);
+	unsigned index = G_PluginHost.getPluginIndex(id, stackType, ch);
 
 	/* if the plugin is the first one of the stack, do nothing */
 
 	if (index == G_PluginHost.masterOut.size-1)
 		return;
 
-	G_PluginHost.swapPlugin(index, index+1, stackType, ch->index);
+	G_PluginHost.swapPlugin(index, index+1, stackType, ch);
 	refreshList();
 	redraw();
 }
@@ -204,8 +203,7 @@ void gdPluginList::__cb_removePlugin(Fl_Widget *v) {
 
 	delSubWindow(i+1);
 
-	int index = ch == NULL ? 0 : ch->index;
-	G_PluginHost.freePlugin(i, stackType, index);
+	G_PluginHost.freePlugin(i, stackType, ch);
 
 	refreshList();
 	redraw();
@@ -221,9 +219,8 @@ void gdPluginList::__cb_openPluginWindow(Fl_Widget *v) {
 	 * plugin and create an unique window id */
 
 	int id    = ((gButton*)v)->id;
-	int index = ch == NULL ? 0 : ch->index;
 
-	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, index);
+	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, ch);
 
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	 * for the window 'add plugin'. */
@@ -261,8 +258,7 @@ void gdPluginList::refreshList() {
 	 * the 'add new' button. Warning: if ch == NULL we are working with
 	 * master in/master out stacks. */
 
-	int index      = ch == NULL ? 0 : ch->index;
-	int numPlugins = G_PluginHost.countPlugins(stackType, index);
+	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
 	int i = 0;
 	while (i<numPlugins) {
 
@@ -273,7 +269,7 @@ void gdPluginList::refreshList() {
 		gButton *shiftDown = new gButton(shiftUp->x()+shiftUp->w()+4, i*20+8+i*4, 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
 		gButton *remove    = new gButton(shiftDown->x()+shiftDown->w()+4, i*20+8+i*4, 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 
-		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, index);
+		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, ch);
 
 		/* plugin is dead */
 
@@ -359,9 +355,8 @@ void gdPluginList::refreshList() {
 
 
 void gdPluginList::__cb_setBypass(Fl_Widget *w) {
-	int id    = ((gButton*)w)->id;
-	int index = ch == NULL ? 0 : ch->index;
-	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, index);
+	int id = ((gButton*)w)->id;
+	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, ch);
 	pPlugin->bypass = !pPlugin->bypass;
 }
 
@@ -370,9 +365,8 @@ void gdPluginList::__cb_setBypass(Fl_Widget *w) {
 
 
 void gdPluginList::__cb_setProgram(Fl_Widget *w) {
-	int id    = ((gChoice*)w)->id;
-	int index = ch == NULL ? 0 : ch->index;
-	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, index);
+	int id = ((gChoice*)w)->id;
+	Plugin *pPlugin = G_PluginHost.getPluginById(id, stackType, ch);
 	pPlugin->setProgram(((gChoice*)w)->value());
 }
 

@@ -386,8 +386,7 @@ void gdBrowser::__cb_loadPlugin() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int index = ch == NULL ? 0 : ch->index;
-	int res   = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, index);
+	int res = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch);
 
 	/* store the folder path inside G_Conf, in order to reuse it the
 	 * next time. */
