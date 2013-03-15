@@ -75,12 +75,9 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
 
 	button->callback(cb_button, (void*)this);
-	/*
-	char buf[2]; sprintf(buf, "%c", arkeys[i]);
+
+	char buf[2]; sprintf(buf, "%c", ch->key);
 	button->copy_label(buf);
-	button->key = arkeys[i];
-	button->id  = i;
-	*/
 
 #ifdef WITH_VST
 	fx->callback(cb_openFxWindow, (void*)this);

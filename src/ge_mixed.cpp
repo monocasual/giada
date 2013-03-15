@@ -54,8 +54,8 @@ void __cb_window_closer(Fl_Widget *v, void *p) {
 /* ------------------------------------------------------------------ */
 
 
-gButton::gButton(int X,int Y,int W,int H,const char *L, const char **imgOff, const char **imgOn)
-	: gClick(X,Y,W,H,L,imgOff,imgOn) {}
+gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
+	: gClick(X, Y, W, H, L, imgOff, imgOn) {}
 
 
 /* ------------------------------------------------------------------ */

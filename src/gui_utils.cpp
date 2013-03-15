@@ -141,6 +141,8 @@ void gu_update_controls() {
 		channel *ch = G_Mixer.channels.at(i);
 		ch->guiChannel->reset();
 
+		/** FIXME - move this to gChannel */
+
 		switch (ch->status) {
 			case STATUS_EMPTY:
 				ch->guiChannel->sampleButton->label("-- no sample --");
@@ -153,6 +155,11 @@ void gu_update_controls() {
 				gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 				break;
 		}
+
+		char k[4];
+		sprintf(k, "%c", ch->key);
+		ch->guiChannel->button->copy_label(k);
+		ch->guiChannel->button->redraw();
 
 		ch->guiChannel->sampleButton->redraw();
 
