@@ -409,7 +409,7 @@ int Patch::readRecs() {
 			if (frame % 2 != 0)
 				frame++;
 
-			channel *ch = G_Mixer.channels.at(chan);
+			channel *ch = G_Mixer.getChannelByIndex(chan);
 			recorder::rec(ch->index, type, frame);
 		}
 	}
@@ -432,23 +432,25 @@ int Patch::readPlugins() {
 	globalOut &= readMasterPlugins(PluginHost::MASTER_OUT);
 
 	/* channel plugins */
-	//int numChans = getNumChans();
+
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		char tmp[MAX_LINE_LEN];
-		sprintf(tmp, "chan%dPlugins", i);
-		int np = atoi(getValue(tmp).c_str());
 		channel *ch = G_Mixer.channels.at(i);
+
+		char tmp[MAX_LINE_LEN];
+		sprintf(tmp, "chan%dPlugins", ch->index);
+		int np = atoi(getValue(tmp).c_str());
+
 		for (int j=0; j<np; j++) {
-			sprintf(tmp, "chan%d_p%dpathfile", i, j);
+			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
 			int out = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, ch);
 			if (out != 0) {
-				sprintf(tmp, "chan%d_p%dnumParams", i, j);
+				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
 				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
-				sprintf(tmp, "chan%d_p%dbypass", i, j);
+				sprintf(tmp, "chan%d_p%dbypass", ch->index, j);
 				pPlugin->bypass = atoi(getValue(tmp).c_str());
 				for (int k=0; k<nparam; k++) {
-					sprintf(tmp, "chan%d_p%dparam%dvalue", i, j, k);
+					sprintf(tmp, "chan%d_p%dparam%dvalue", ch->index, j, k);
 					float pval = atof(getValue(tmp).c_str());
 					pPlugin->setParam(k, pval);
 				}
@@ -505,7 +507,8 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "lastTakeId=%d\n", lastTakeId);
 	fprintf(fp, "samplerate=%d\n", G_Conf.samplerate);	// original samplerate when the patch was saved
 
-	/* writing recs */
+	/* writing recs. Warning: channel index is not mixer.channels.at(chan),
+	 * but mixer.channels.at(chan)->index! */
 
 	fprintf(fp, "# --- actions --- \n");
 	fprintf(fp, "numrecs=%d\n", recorder::global.size);
@@ -526,8 +529,8 @@ int Patch::write(const char *file, const char *name) {
 	writeMasterPlugins(PluginHost::MASTER_IN);
 	writeMasterPlugins(PluginHost::MASTER_OUT);
 
-	/* writing VST parameters, channels. chan[i] is G_Mixer.channels.at(i).
-	 * No indexes here. */
+	/* writing VST parameters, channels. chan%d is mixer::channels.at(%d)->index,
+	 * not mixer::chanels.at(%d)! */
 
 	int numPlugs;
 	int numParams;
@@ -537,17 +540,17 @@ int Patch::write(const char *file, const char *name) {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *ch = G_Mixer.channels.at(i);
 		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch);
-		fprintf(fp, "chan%dPlugins=%d\n", i, numPlugs);
+		fprintf(fp, "chan%dPlugins=%d\n", ch->index, numPlugs);
 
 		for (int j=0; j<numPlugs; j++) {
 			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
-			fprintf(fp, "chan%d_p%dpathfile=%s\n", i, j, pPlugin->pathfile);
-			fprintf(fp, "chan%d_p%dbypass=%d\n",   i, j, pPlugin->bypass);
+			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
+			fprintf(fp, "chan%d_p%dbypass=%d\n",   ch->index, j, pPlugin->bypass);
 			numParams = pPlugin->getNumParams();
-			fprintf(fp, "chan%d_p%dnumParams=%d\n", i, j, numParams);
+			fprintf(fp, "chan%d_p%dnumParams=%d\n", ch->index, j, numParams);
 
 			for (int k=0; k<numParams; k++)
-				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", i, j, k, pPlugin->getParam(k));
+				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", ch->index, j, k, pPlugin->getParam(k));
 		}
 	}
 
