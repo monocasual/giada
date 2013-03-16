@@ -108,6 +108,29 @@ void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_ope
 
 /* ------------------------------------------------------------------ */
 
+int gChannel::keypress(int e) {
+	int ret;
+	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
+		ret = 1;
+	else
+	if (Fl::event_key() == ch->key && !button->value()) {
+		button->take_focus();                                              // move focus to this button
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+		button->do_callback();                                             // invoke the button's callback
+		ret = 1;
+	}
+	else
+		ret = 0;
+
+	if (Fl::event_key() == ch->key)
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
 
 void gChannel::__cb_button() {
 	if (button->value())    // pushed
@@ -580,9 +603,11 @@ int Keyboard::handle(int e) {
 			 * and invoke that button's callback() */
 
 			for (int i=0; i<gChannelsL->children(); i++)
-				ret &= keypress((gChannel*)gChannelsL->child(i), e);
+				//ret &= keypress((gChannel*)gChannelsL->child(i), e);
+				ret &= ((gChannel*)gChannelsL->child(i))->keypress(e);
 			for (int i=0; i<gChannelsR->children(); i++)
-				ret &= keypress((gChannel*)gChannelsR->child(i), e);
+				//ret &= keypress((gChannel*)gChannelsR->child(i), e);
+				ret &= ((gChannel*)gChannelsR->child(i))->keypress(e);
 
 			break;
 		}
@@ -601,31 +626,6 @@ int Keyboard::handle(int e) {
 		*/
 
 	}
-	return ret;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-/** FIXME move this to gChannel */
-
-int Keyboard::keypress(gChannel *gch, int e) {
-	int ret;
-	if (e == FL_KEYDOWN && gch->button->value())                              // key already pressed! skip it
-		ret = 1;
-	else
-	if (Fl::event_key() == gch->ch->key && !gch->button->value()) {
-		gch->button->take_focus();                                              // move focus to this button
-		gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-		gch->button->do_callback();                                             // invoke the button's callback
-		ret = 1;
-	}
-	else
-		ret = 0;
-
-	if (Fl::event_key() == gch->ch->key)
-		gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-
 	return ret;
 }
 
