@@ -168,6 +168,7 @@ void Mixer::pushChannel(Wave *w, channel *ch) {
 
 void Mixer::initChannel(channel *ch) {
 	ch->wave        = NULL;
+	ch->key         = 0;
 	ch->tracker     = 0;
 	ch->status      = STATUS_EMPTY;
 	ch->start       = 0;
