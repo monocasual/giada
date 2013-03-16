@@ -98,6 +98,11 @@ private:
 	inline void __cb_addChannelL();
 	inline void __cb_addChannelR();
 
+	/* fixRightColumn
+	 * shift right column if scrollbar doesn't show up */
+
+	void fixRightColumn();
+
 	bool bckspcPressed;
 	bool endPressed;
 	bool spacePressed;
@@ -141,6 +146,8 @@ public:
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
 	void setChannelWithActions(struct channel *ch);
+
+	bool hasScrollbar();
 
 	Fl_Group *gChannelsL;
 	Fl_Group *gChannelsR;

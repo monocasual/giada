@@ -416,7 +416,7 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 	scrollbar.slider(G_BOX);
 
 	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-16, 0);
-	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+8, y(), (w()/2)-16, 0);
+	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+32, y(), (w()/2)-16, 0);
 	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
 	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
 
@@ -442,6 +442,18 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 /* ------------------------------------------------------------------ */
 
 
+void Keyboard::fixRightColumn() {
+	if (!hasScrollbar())
+		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+32, gChannelsR->y());
+	else
+		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+8, gChannelsR->y());
+	addChannelR->position(gChannelsR->x(), addChannelR->y());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void Keyboard::freeChannel(struct channel *ch) {
 	ch->guiChannel->reset();
 }
@@ -458,6 +470,7 @@ void Keyboard::deleteChannel(struct channel *ch) {
 	delete ch->guiChannel;
 	ch->guiChannel = NULL;
 	Fl::unlock();
+	fixRightColumn();
 }
 
 
@@ -488,9 +501,11 @@ void Keyboard::updateChannels(char side) {
 
 	//printf("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
 
+	printf("group->y() = %d\n", group->y());
+
 	for (int i=0; i<group->children(); i++) {
 		gChannel *gch = (gChannel*) group->child(i);
-		gch->position(gch->x(), y()+(i*24));
+		gch->position(gch->x(), group->y()+(i*24));
 	}
 	group->size(group->w(), group->children()*24);
 	add->position(add->x(), group->y()+group->h());
@@ -527,9 +542,22 @@ gChannel *Keyboard::addChannel(char side, channel *ch) {
 	group->add(gch);
 	group->size(group->w(), group->children() * 24);
 	add->position(group->x(), group->y()+group->h());
+	fixRightColumn();
 	redraw();
 
 	return gch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool Keyboard::hasScrollbar() {
+	if (24 * (gChannelsL->children()) > h())
+		return true;
+	if (24 * (gChannelsR->children()) > h())
+		return true;
+	return false;
 }
 
 
