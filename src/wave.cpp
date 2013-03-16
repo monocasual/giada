@@ -69,6 +69,7 @@ int Wave::open(const char *f) {
 	}
 	isLogical = false;
 	isEdited  = false;
+
 	return 1;
 }
 
@@ -90,7 +91,6 @@ int Wave::open(const char *f) {
  */
 
 int Wave::readData() {
-
 	size = inHeader.frames * inHeader.channels;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {

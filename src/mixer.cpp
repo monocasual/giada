@@ -221,8 +221,8 @@ int Mixer::deleteChannel(channel *ch) {
 			pthread_mutex_unlock(&mutex_chans);
 			return 1;
 		}
-		else
-			puts("[mixer::deleteChannel] waiting for mutex...");
+		//else
+		//	puts("[mixer::deleteChannel] waiting for mutex...");
 	}
 }
 
