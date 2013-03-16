@@ -165,8 +165,10 @@ channel *Mixer::addChannel(char side) {
 void Mixer::pushChannel(Wave *w, channel *ch) {
 	ch->wave = w;
 	ch->status = STATUS_OFF;
-	ch->start  = 0;
-	ch->end    = ch->wave->size;
+	ch->start     = 0;
+	ch->startTrue = 0;
+	ch->end       = ch->wave->size;
+	ch->endTrue   = ch->wave->size;
 }
 
 
