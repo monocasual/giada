@@ -194,12 +194,18 @@ void gdMainWindow::__cb_endprogram() {
 
 	G_quit = true;
 
+	/* close any open subwindow, especially before cleaning PluginHost to
+	 * avoid mess */
+
 	puts("GUI closing...");
+	gu_closeAllSubwindows();
+
+	/* write configuration file */
 
 	if (!G_Conf.write())
 		puts("Error while saving configuration file!");
 	else
-		puts("Saving configuration...");
+		puts("Configuration saved");
 
 	puts("Mixer cleanup...");
 

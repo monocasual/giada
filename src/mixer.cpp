@@ -811,11 +811,11 @@ void Mixer::updateFrameBars() {
 
 
 int Mixer::close() {
-	printf("[mixer::close] total channels %d\n", channels.size);
+	//printf("[mixer::close] total channels %d\n", channels.size);
 	running = false;
 	while (channels.size > 0)
 		deleteChannel(channels.at(0));
-	printf("[mixer::close] total channels %d\n", channels.size);
+	//printf("[mixer::close] total channels %d\n", channels.size);
 	free(vChanInput);
 	free(vChanInToOut);
 	return 1;
