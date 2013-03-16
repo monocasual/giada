@@ -75,7 +75,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
 
 	button->callback(cb_button, (void*)this);
-	button->when(0);  // never do callback automatically, it's up to keyboard::handle
+	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
 
 	char buf[2]; sprintf(buf, "%c", ch->key);
 	button->copy_label(buf);
@@ -603,17 +603,27 @@ int Keyboard::handle(int e) {
 			 * and invoke that button's callback() */
 
 			for (int i=0; i<gChannelsL->children(); i++)
-				//ret &= keypress((gChannel*)gChannelsL->child(i), e);
 				ret &= ((gChannel*)gChannelsL->child(i))->keypress(e);
 			for (int i=0; i<gChannelsR->children(); i++)
-				//ret &= keypress((gChannel*)gChannelsR->child(i), e);
 				ret &= ((gChannel*)gChannelsR->child(i))->keypress(e);
-
 			break;
 		}
 
 		/*
 		case FL_PUSH: {
+			for (int i=0; i<gChannelsL->children(); i++)
+				if (((gChannel*)gChannelsL->child(i))->button->value()) {
+					((gChannel*)gChannelsL->child(i))->button->do_callback();
+					break;
+				}
+			for (int i=0; i<gChannelsR->children(); i++)
+				if (((gChannel*)gChannelsL->child(i))->button->value()) {
+					((gChannel*)gChannelsL->child(i))->button->do_callback();
+					break;
+				}
+			break;
+		*/
+			/*
 			for (int t=0; t<children(); t++) {
 				gChannel *ch = (gChannel*) child(t);
 				if (ch->button->value()) {	      // if button ON do callback
@@ -622,9 +632,8 @@ int Keyboard::handle(int e) {
 				}
 			}
 			break;
-		}
-		*/
-
+			*/
+		//}
 	}
 	return ret;
 }
