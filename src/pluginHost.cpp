@@ -583,15 +583,8 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 			return &masterOut;
 		case MASTER_IN:
 			return &masterIn;
-		case CHANNEL: {
+		case CHANNEL:
 			return &ch->plugins;
-			/*
-			channel *ch = G_Mixer.getChannelByIndex(chan);
-			if (ch) return &ch->plugins;
-			else    return NULL;
-			*/
-			//return &(G_Mixer.getChannelByIndex(chan))->plugins;
-		}
 		default:
 			return NULL;
 	}
