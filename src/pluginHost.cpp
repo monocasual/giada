@@ -365,11 +365,12 @@ void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
-	/* empty stack or stack not found: do nothing */
+	/* empty stack, stack not found or mixer not ready: do nothing */
 
+	if (!G_Mixer.ready)
+		return;
 	if (pStack == NULL)
 		return;
-
 	if (pStack->size == 0)
 		return;
 

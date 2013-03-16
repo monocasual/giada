@@ -309,6 +309,7 @@ int mh_loadChan(const char *file, struct channel *ch) {
 
 void mh_loadPatch() {
 	G_Mixer.init();
+	G_Mixer.ready = false;   // put it in wait mode
 
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
@@ -359,6 +360,7 @@ void mh_loadPatch() {
 
 	G_Mixer.rewind();
 	G_Mixer.updateFrameBars();
+	G_Mixer.ready = true;
 }
 
 

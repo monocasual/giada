@@ -86,6 +86,7 @@ void Mixer::init() {
 	docross     = false;
 	rewindWait  = false;
 	running     = false;
+	ready       = true;
 	waitRec     = 0;
 	actualFrame = 0;
 	bpm 		    = DEFAULT_BPM;
