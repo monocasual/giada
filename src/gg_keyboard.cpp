@@ -242,7 +242,7 @@ void gChannel::__cb_openChanMenu() {
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(mainWin, new gdEditor("title", ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
+		gu_openSubWindow(mainWin, new gdEditor(ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
 		return;
 	}
 

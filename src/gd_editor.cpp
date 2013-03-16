@@ -46,9 +46,7 @@ extern gdMainWindow *mainWin;
 extern Conf	         G_Conf;
 
 
-gdEditor::gdEditor(const char *title, channel *ch)
-: gWindow(640, 480, title), ch(ch)
-{
+gdEditor::gdEditor(channel *ch) : gWindow(640, 480), ch(ch) {
 	set_non_modal();
 
 	if (G_Conf.sampleEditorX)
@@ -175,6 +173,8 @@ gdEditor::gdEditor(const char *title, channel *ch)
 	gu_setFavicon(this);
 	size_range(640, 480);
 	resizable(waveTools);
+
+	label(ch->wave->name.c_str());
 
 	show();
 }

@@ -65,7 +65,7 @@ private:
 	inline void __cb_zoomOut();
 
 public:
-	gdEditor(const char *title, struct channel *ch);
+	gdEditor(struct channel *ch);
 	~gdEditor();
 
 	class gClick     *zoomIn;
