@@ -523,30 +523,31 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			for (unsigned y=0; y<recorder::frames.size; y++) {
 				if (recorder::frames.at(y) == actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
-						int c = recorder::global.at(y).at(z)->chan;
-						if (channels.at(c)->readActions == false)
+						int index   = recorder::global.at(y).at(z)->chan;
+						channel *ch = getChannelByIndex(index);
+						if (ch->readActions == false)
 							continue;
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
-								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_startChan(channels.at(c), false);
+								if (ch->mode & SINGLE_ANY) {
+									mh_startChan(ch, false);
 									break;
 								}
 							case ACTION_KEYREL:
-								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_stopChan(channels.at(c));
+								if (ch->mode & SINGLE_ANY) {
+									mh_stopChan(ch);
 									break;
 								}
 							case ACTION_KILLCHAN:
-								if (channels.at(c)->mode & SINGLE_ANY) {
-									mh_killChan(channels.at(c));
+								if (ch->mode & SINGLE_ANY) {
+									mh_killChan(ch);
 									break;
 								}
 							case ACTION_MUTEON:
-								mh_muteChan(channels.at(c), true);   // internal mute
+								mh_muteChan(ch, true);   // internal mute
 								break;
 							case ACTION_MUTEOFF:
-								mh_unmuteChan(channels.at(c), true); // internal mute
+								mh_unmuteChan(ch, true); // internal mute
 								break;
 						}
 					}
