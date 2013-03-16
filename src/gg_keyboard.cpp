@@ -75,6 +75,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
 
 	button->callback(cb_button, (void*)this);
+	button->when(0);  // never do callback automatically, it's up to keyboard::handle
 
 	char buf[2]; sprintf(buf, "%c", ch->key);
 	button->copy_label(buf);
@@ -109,14 +110,10 @@ void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_ope
 
 
 void gChannel::__cb_button() {
-
-	/*
 	if (button->value())    // pushed
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 	else                    // released
 		glue_keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
-	*/
-	glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -610,20 +607,25 @@ int Keyboard::handle(int e) {
 
 /* ------------------------------------------------------------------ */
 
+/** FIXME move this to gChannel */
 
 int Keyboard::keypress(gChannel *gch, int e) {
-	if (e == FL_KEYDOWN && gch->button->value())	      // key already pressed! skip it
-		return 1;
+	int ret;
+	if (e == FL_KEYDOWN && gch->button->value())                              // key already pressed! skip it
+		ret = 1;
 	else
-	if (Fl::event_key() == gch->ch->key) {
-		gch->button->take_focus();                        // move focus to this button
+	if (Fl::event_key() == gch->ch->key && !gch->button->value()) {
+		gch->button->take_focus();                                              // move focus to this button
 		gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-		gch->button->do_callback();                       // invoke the button's callback
-		return 1;                               				 // indicate we handled it
+		gch->button->do_callback();                                             // invoke the button's callback
+		ret = 1;
 	}
 	else
-		return 0;
+		ret = 0;
 
+	gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);        // change the button's state
+
+	return ret;
 }
 
 
