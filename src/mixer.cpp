@@ -140,7 +140,15 @@ channel *Mixer::addChannel(char side) {
 		return NULL;
 	}
 
-	channels.add(ch);
+	while (true) {
+		int lockStatus = pthread_mutex_trylock(&mutex_chans);
+		if (lockStatus == 0) {
+			channels.add(ch);
+			pthread_mutex_unlock(&mutex_chans);
+			break;
+		}
+	}
+
 	initChannel(ch);
 	ch->index  = channels.size-1;
 	ch->side   = side;
