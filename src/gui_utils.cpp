@@ -96,13 +96,13 @@ void __gu_refreshColumn(Fl_Group *col) {
 		if (G_Mixer.chanInput == gch->ch)
 			gch->sampleButton->bgColor0 = COLOR_BG_3;
 
-		/*
+
 		if (recorder::active)
-			if (recorder::canRec(i)) {
-				mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_4;
-				mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
+			if (recorder::canRec(gch->ch)) {
+				gch->sampleButton->bgColor0 = COLOR_BG_4;
+				gch->sampleButton->txtColor = COLOR_TEXT_0;
 			}
-		*/
+
 		gch->sampleButton->redraw();
 		gch->status->redraw();
 	}
