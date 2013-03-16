@@ -636,32 +636,6 @@ int Keyboard::handle(int e) {
 				ret &= ((gChannel*)gChannelsR->child(i))->keypress(e);
 			break;
 		}
-
-		/*
-		case FL_PUSH: {
-			for (int i=0; i<gChannelsL->children(); i++)
-				if (((gChannel*)gChannelsL->child(i))->button->value()) {
-					((gChannel*)gChannelsL->child(i))->button->do_callback();
-					break;
-				}
-			for (int i=0; i<gChannelsR->children(); i++)
-				if (((gChannel*)gChannelsL->child(i))->button->value()) {
-					((gChannel*)gChannelsL->child(i))->button->do_callback();
-					break;
-				}
-			break;
-		*/
-			/*
-			for (int t=0; t<children(); t++) {
-				gChannel *ch = (gChannel*) child(t);
-				if (ch->button->value()) {	      // if button ON do callback
-					ch->button->do_callback();
-					break;
-				}
-			}
-			break;
-			*/
-		//}
 	}
 	return ret;
 }
