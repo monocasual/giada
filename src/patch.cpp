@@ -111,6 +111,7 @@ float Patch::getPitch(int c) {
 
 
 int Patch::getNumChans() {
+	//float v =
 	return atoi(getValue("channels").c_str());
 }
 
@@ -459,6 +460,7 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "# --- Giada patch file --- \n");
 	fprintf(fp, "header=GIADAPTC\n");
 	fprintf(fp, "version=%s\n", VERSIONE);
+	fprintf(fp, "versionf=%f\n", VERSIONE_FLOAT);
 	fprintf(fp, "patchname=%s\n", name);
 
 	fprintf(fp, "channels=%d\n", G_Mixer.channels.size);
