@@ -501,8 +501,6 @@ void Keyboard::updateChannels(char side) {
 
 	//printf("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
 
-	printf("group->y() = %d\n", group->y());
-
 	for (int i=0; i<group->children(); i++) {
 		gChannel *gch = (gChannel*) group->child(i);
 		gch->position(gch->x(), group->y()+(i*24));
