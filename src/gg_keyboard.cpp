@@ -252,6 +252,8 @@ void gChannel::__cb_openChanMenu() {
 	}
 
 	if (strcmp(m->label(), "Delete channel") == 0) {
+		if (ch->wave != NULL && !gdConfirmWin("Warning", "Delete channel: are you sure?"))
+			return;
 		glue_deleteChannel(ch);
 		return;
 	}
