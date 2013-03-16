@@ -318,7 +318,6 @@ void mh_loadPatch() {
 		if (res == SAMPLE_LOADED_OK) {
 			ch->volume      = G_Patch.getVol(i);
 			ch->key         = G_Patch.getKey(i);
-			printf(">>> key[%d]=%d\n", i, ch->key);
 			ch->index       = G_Patch.getIndex(i);
 			ch->mode        = G_Patch.getMode(i);
 			ch->mute        = G_Patch.getMute(i);

@@ -53,6 +53,10 @@ int Patch::open(const char *file) {
 	if (getValue("header") != "GIADAPTC")
 		return PATCH_INVALID;
 
+	version = atof(getValue("versionf").c_str());
+	if (version == 0.0)
+		puts("[PATCH] patch < 0.6.1, backward compatibility mode");
+
 	return PATCH_OPEN_OK;
 }
 
@@ -111,7 +115,8 @@ float Patch::getPitch(int c) {
 
 
 int Patch::getNumChans() {
-	//float v =
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 32;
 	return atoi(getValue("channels").c_str());
 }
 
@@ -120,6 +125,8 @@ int Patch::getNumChans() {
 
 
 char Patch::getSide(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 0;
 	char tmp[16];
 	sprintf(tmp, "chanSide%d", c);
 	return atoi(getValue(tmp).c_str());
@@ -129,6 +136,9 @@ char Patch::getSide(int c) {
 
 
 int Patch::getIndex(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return c;
+
 	char tmp[16];
 	sprintf(tmp, "chanIndex%d", c);
 	return atoi(getValue(tmp).c_str());
@@ -239,6 +249,8 @@ float Patch::getPanLeft(int c) {
 
 
 int Patch::getKey(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 0;
 	char tmp[16];
 	sprintf(tmp, "chanKey%d", c);
 	return atoi(getValue(tmp).c_str());

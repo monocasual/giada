@@ -44,9 +44,10 @@ private:
 
 public:
 
-	char name[MAX_PATCHNAME_LEN];
-	int  lastTakeId;
-	int  samplerate;
+	char  name[MAX_PATCHNAME_LEN];
+	float version;
+	int   lastTakeId;
+	int   samplerate;
 
 	int         open(const char *file);
 	void        setDefault();
