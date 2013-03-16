@@ -623,7 +623,8 @@ int Keyboard::keypress(gChannel *gch, int e) {
 	else
 		ret = 0;
 
-	gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);        // change the button's state
+	if (Fl::event_key() == gch->ch->key)
+		gch->button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
 
 	return ret;
 }
