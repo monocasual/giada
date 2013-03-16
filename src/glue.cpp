@@ -425,15 +425,10 @@ void glue_stopRec() {
 
 
 void glue_startReadingRecs(channel *ch) {
-	/* treatRecsAsLoops */
-
 	if (G_Conf.treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
 	else
 		recorder::enableRead(ch);
-
-	//mainWin->keyboard->readActions[c]->value(1);
-	//mainWin->keyboard->readActions[c]->redraw();
 }
 
 
@@ -441,18 +436,14 @@ void glue_startReadingRecs(channel *ch) {
 
 
 void glue_stopReadingRecs(channel *ch) {
-#if 0
+
 	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
 	 * the channel in REC_ENDING status */
 
 	if (G_Conf.treatRecsAsLoops)
-		G_Mixer.channels.at(c)->recStatus = REC_ENDING;
+		ch->recStatus = REC_ENDING;
 	else
-		recorder::disableRead(c);
-
-	mainWin->keyboard->readActions[c]->value(0);
-	mainWin->keyboard->readActions[c]->redraw();
-#endif
+		recorder::disableRead(ch);
 }
 
 
