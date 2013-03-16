@@ -159,8 +159,9 @@ public:
 	gVector<channel*> channels;
 
 	bool   running;
-	float *vChanInput;                    // virtual channel for recording
-	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
+	bool   ready;
+	float *vChanInput;        // virtual channel for recording
+	float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
 	int    frameSize;
 	float  outVol;
 	float  inVol;

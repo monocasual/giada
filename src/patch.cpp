@@ -547,7 +547,7 @@ int Patch::write(const char *file, const char *name) {
 			fprintf(fp, "chan%d_p%dnumParams=%d\n", i, j, numParams);
 
 			for (int k=0; k<numParams; k++)
-				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", ch->index, j, k, pPlugin->getParam(k));
+				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", i, j, k, pPlugin->getParam(k));
 		}
 	}
 

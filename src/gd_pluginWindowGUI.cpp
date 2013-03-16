@@ -88,8 +88,9 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	pPlugin->getProduct(name);
 	copy_label(name);
 
-	printf("[pluginWindow] add plugin id window = %d\n", id);
-	pPlugin->idWindow = id;
+	/* add a pointer to this window to plugin */
+
+	pPlugin->window = this;
 
 	pPlugin->idle();
 }

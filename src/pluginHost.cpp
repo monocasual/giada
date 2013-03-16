@@ -178,31 +178,34 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 15 - requests to resize the editor window. w = index, h = value*/
 
 		case audioMasterSizeWindow: {
-			int  idWindow = 0;
-			bool found   = false;
+			gWindow *window = NULL;
+			for (unsigned i=0; i<masterOut.size && !window; i++)
+				if (masterOut.at(i)->getPlugin() == effect)
+					window = masterOut.at(i)->window;
 
-			for (unsigned i=0; i<masterOut.size && !found; i++)
-				if (masterOut.at(i)->getPlugin() == effect) {
-					idWindow = masterOut.at(i)->idWindow;
-					found    = true;
-				}
-			for (unsigned i=0; i<masterIn.size && !found; i++)
-				if (masterIn.at(i)->getPlugin() == effect) {
-					idWindow = masterIn.at(i)->idWindow;
-					found    = true;
-				}
-			for (unsigned i=0; i<G_Mixer.channels.size && !found; i++) {
+			for (unsigned i=0; i<masterIn.size && !window; i++)
+				if (masterIn.at(i)->getPlugin() == effect)
+					window = masterIn.at(i)->window;
+
+			for (unsigned i=0; i<G_Mixer.channels.size && !window; i++) {
 				channel *ch = G_Mixer.channels.at(i);
-				for (unsigned j=0; j<ch->plugins.size && !found; j++)
-					if (ch->plugins.at(j)->getPlugin() == effect) {
-						idWindow = ch->plugins.at(j)->idWindow;
-						found    = true;
-					}
+				for (unsigned j=0; j<ch->plugins.size && !window; j++)
+					if (ch->plugins.at(j)->getPlugin() == effect)
+						window = ch->plugins.at(j)->window;
 			}
 
-			gdPluginList *list = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
-			(list->getChild(idWindow))->size((int)index, (int)value);
-			return 1;
+			if (window) {
+				printf("[pluginHost] audioMasterSizeWindow: resizing window from plugin %p\n", (void*) effect);
+				if (index == 1 || value == 1)
+					puts("[pluginHost] warning: non-sense values!");
+				else
+					window->size((int)index, (int)value);
+				return 1;
+			}
+			else {
+				printf("[pluginHost] audioMasterSizeWindow: window from plugin %p not found\n", (void*) effect);
+				return 0;
+			}
 		}
 
 		case audioMasterGetSampleRate:

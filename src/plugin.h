@@ -145,10 +145,10 @@ public:
 
 	char pathfile[PATH_MAX]; // full path filename
 
-	/* idWindow
+	/* window
 	 * plugin must know its window in case of a resize via opcode */
 
-	int idWindow;
+	class gWindow *window;
 };
 
 #endif
