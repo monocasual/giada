@@ -60,9 +60,11 @@ int main(int argc, char **argv) {
 	Fl::lock();
 	pthread_create(&t_video, NULL, thread_video, NULL);
 	init_startKernelAudio();
-	return Fl::run();
 
-	/// FIXME and what about pthread_join(...) ?
+	int ret = Fl::run();
+
+	pthread_join(t_video, NULL);
+	return ret;
 }
 
 
