@@ -356,6 +356,9 @@ int Mixer::masterPlay(
 
 int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
+	if (!ready)
+		return 0;
+
 	float *buffer  = ((float *) out_buf);
 	float *inBuf   = ((float *) in_buf);
 	bufferFrames  *= 2;     // stereo
