@@ -522,6 +522,7 @@ void glue_clearAllRecs() {
 
 void glue_resetToInitState(bool resetGui) {
 	G_Mixer.running = false;
+	G_Mixer.ready   = false;
 	while (G_Mixer.channels.size > 0)
 		mh_deleteChannel(G_Mixer.channels.at(0));
 	mainWin->keyboard->clear();
@@ -532,6 +533,7 @@ void glue_resetToInitState(bool resetGui) {
 	G_PluginHost.freeAllStacks();
 #endif
 	if (resetGui)	gu_update_controls();
+	G_Mixer.ready = true;
 }
 
 
