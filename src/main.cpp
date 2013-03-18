@@ -61,6 +61,8 @@ int main(int argc, char **argv) {
 	pthread_create(&t_video, NULL, thread_video, NULL);
 	init_startKernelAudio();
 
+	//return Fl::run();
+
 	int ret = Fl::run();
 
 	pthread_join(t_video, NULL);

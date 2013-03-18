@@ -13,6 +13,15 @@
 
 
 
+0.6.1 --- 2013 . 03 . 21
+- Unlimited number of channels
+- Deep internal refactory, mixer/GUI layers
+- Fix random crashes on exit
+- Fix crashes when closing Giada with VST windows opened
+- Always free Master In plugin stack on exit
+- Lots of other minor bugs fixed and small enhancements
+
+
 0.6.0 --- 2013 . 03 . 02
 - New, full-screen, redesigned sample editor
 - Zoom with mouse wheel in sample editor
