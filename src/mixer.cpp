@@ -114,6 +114,7 @@ void Mixer::init() {
 	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 
 	pthread_mutex_init(&mutex_recs, NULL);
+	pthread_mutex_init(&mutex_chans, NULL);
 	pthread_mutex_init(&mutex_plugins, NULL);
 
 	updateFrameBars();
