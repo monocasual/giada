@@ -48,6 +48,8 @@ public:
 	gdActionEditor(struct channel *chan);
 	~gdActionEditor();
 
+	int handle(int e);
+
 	int getActionType();
 
 	/* calc

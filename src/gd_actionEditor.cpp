@@ -206,6 +206,23 @@ void gdActionEditor::calc() {
 /* ------------------------------------------------------------------ */
 
 
+int gdActionEditor::handle(int e) {
+	int ret = Fl_Group::handle(e);
+	switch (e) {
+		case FL_MOUSEWHEEL: {
+			if (Fl::event_dy() == -1) __cb_zoomIn();
+			else __cb_zoomOut();
+			ret = 1;
+			break;
+		}
+	}
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int gdActionEditor::getActionType() {
 	if (actionType->value() == 0)
 		return ACTION_KEYPRESS;
