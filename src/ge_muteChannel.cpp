@@ -56,6 +56,7 @@ void gMuteChannel::draw() {
 	baseDraw();
 
 	/* cover unused area */
+	/** FIXME - move this to base class gActionWidget::baseDraw() */
 
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
 

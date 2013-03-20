@@ -114,10 +114,16 @@ gdActionEditor::gdActionEditor(channel *chan)
 	scroller->hscrollbar.labelcolor(COLOR_BD_1);
 	scroller->hscrollbar.slider(G_BOX);
 
+	/*
 	scroller->begin();
 		ac = new gActionChannel(scroller->x(), 36, this);
 		mc = new gMuteChannel  (scroller->x(), 84, this);
 	scroller->end();
+	*/
+	ac = new gActionChannel(scroller->x(), 36, this);
+	mc = new gMuteChannel  (scroller->x(), 84, this);
+	scroller->add(ac);
+	scroller->add(mc);
 
 	end();
 
