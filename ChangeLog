@@ -15,7 +15,7 @@
 
 0.6.1 --- 2013 . 03 . 21
 - Unlimited number of channels
-- Deep internal refactory, mixer/GUI layers
+- Deep internal refactoring, mixer/GUI layers
 - Fix random crashes on exit
 - Fix crashes when closing Giada with VST windows opened
 - Always free Master In plugin stack on exit
