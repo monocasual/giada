@@ -44,10 +44,17 @@
 
 namespace recorder {
 
+/* action
+ * struct containing fields to describe an atomic action. Note from
+ * VST sdk: parameter values, like all VST parameters, are declared as
+ * floats with an inclusive range of 0.0 to 1.0 (fValue). */
+
 struct action {
-	int  chan;  // channel index, struct channel->index
- 	char type;
-	int  frame; // redundant info, used by helper functions
+	int   chan;    // channel index, struct channel->index
+ 	char  type;
+	int   frame;   // redundant info, used by helper functions
+	float fValue;  // used only for envelopes (volumes, vst params).
+	int   iValue;  // used only for MIDI events
 };
 
 /* composite
