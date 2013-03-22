@@ -191,9 +191,13 @@
 #define ACTION_KILLCHAN		0x04 // 0000 0100
 #define ACTION_MUTEON			0x08 // 0000 1000
 #define ACTION_MUTEOFF		0x10 // 0001 0000
+#define ACTION_VOLUME     0x20 // 0010 0000
 
 #define ACTION_KEYS       0x03 // 0000 0011 any key
 #define ACTION_MUTES      0x24 // 0001 1000 any mute
+
+#define RANGE_INT         0x01
+#define RANGE_FLOAT       0x02
 
 
 
