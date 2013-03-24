@@ -183,18 +183,7 @@
 
 
 /* -- unique IDs of mainWin's subwindows ---------------------------- */
-/* -- wid > 0 are reserved by gg_keyboard --- ----------------------- */
-/*
-#define WID_BEATS         32
-#define WID_BPM           33
-#define WID_ABOUT         34
-#define WID_FILE_BROWSER  36
-#define WID_CONFIG        37
-#define WID_FX_LIST       38
-#define WID_ACTION_EDITOR 39
-#define WID_SAMPLE_EDITOR 40
-#define WID_FX            41
-*/
+/* -- wid > 0 are reserved by gg_keyboard --------------------------- */
 #define WID_BEATS         -1
 #define WID_BPM           -2
 #define WID_ABOUT         -3
