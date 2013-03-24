@@ -79,6 +79,8 @@ class gEnvelopeChannel : public gActionWidget {
 
 	int getSelectedPoint();
 
+	void sortPoints();
+
 public:
 	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range);
 	~gEnvelopeChannel();

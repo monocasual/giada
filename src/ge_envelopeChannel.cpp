@@ -57,12 +57,14 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue) {
 	p.frame  = frame;
 	p.iValue = iValue;
 	p.fValue = fValue;
-	p.x = (p.frame / parent->zoom) + x();
+	p.x = (p.frame / parent->zoom);
 	if (range == RANGE_CHAR)
 		p.y = p.iValue / h();
 	else
-		p.y = p.fValue / h();
+		p.y = (-(p.fValue - 1) * h()) + y();
 	points.add(p);
+
+	printf("[addPoint] y=%d\n", p.y);
 }
 
 
@@ -71,7 +73,7 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue) {
 
 void gEnvelopeChannel::updatePoints() {
 	for (unsigned i=0; i<points.size; i++)
-		points.at(i).x = (points.at(i).frame / parent->zoom) + x();
+		points.at(i).x = points.at(i).frame / parent->zoom;
 }
 
 
@@ -79,20 +81,33 @@ void gEnvelopeChannel::updatePoints() {
 
 
 void gEnvelopeChannel::draw() {
+
 	baseDraw();
 
-	for (unsigned i=0; i<points.size; i++) {
-		//printf("draw point %d, x=%d, val=%f\n", i, points.at(i).x, points.at(i).fValue);
+	int pxOld = x()+1-3;
+	int pyOld = y();
+	int pxNew = 0;
+	int pyNew = 0;
 
-		fl_color(COLOR_BG_2);
+	fl_color(COLOR_BG_2);
+
+	for (unsigned i=0; i<points.size; i++) {
+
+		pxNew = points.at(i).x+x();
+		pyNew = points.at(i).y;
+
+		fl_line(pxOld+3, pyOld+3, pxNew+3, pyNew+3);
 
 		if (selectedPoint == (int) i) {
 			fl_color(COLOR_BD_1);
-			fl_rectf(points.at(i).x, y(), 7, 7);
+			fl_rectf(pxNew, pyNew, 7, 7);
 			fl_color(COLOR_BG_2);
 		}
 		else
-			fl_rectf(points.at(i).x, y(), 7, 7);
+			fl_rectf(pxNew, pyNew, 7, 7);
+
+		pxOld = pxNew;
+		pyOld = pyNew;
 	}
 }
 
@@ -146,6 +161,8 @@ int gEnvelopeChannel::handle(int e) {
 					float value = (-1.0f / (h()-1)) * (my - (h()-1));
 					addPoint(frame, 0, value);
 					recorder::rec(parent->chan->index, type, frame, 0, value);
+					recorder::sortActions();
+					sortPoints();
 				}
 				else {
 					//int value = (-255 / (float) (h()-1)) * (my - h()-1);
@@ -159,7 +176,9 @@ int gEnvelopeChannel::handle(int e) {
 
 				if (selectedPoint != -1) {
 					recorder::deleteAction(parent->chan->index, points.at(selectedPoint).frame, type);
+					recorder::sortActions();
 					points.del(selectedPoint);
+					sortPoints();
 					redraw();
 				}
 			}
@@ -176,13 +195,24 @@ int gEnvelopeChannel::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
+void gEnvelopeChannel::sortPoints() {
+	for (unsigned i=0; i<points.size; i++)
+		for (unsigned j=0; j<points.size; j++)
+			if (points.at(j).x > points.at(i).x)
+				points.swap(j, i);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int gEnvelopeChannel::getSelectedPoint() {
 
 	/* point is a 7x7 dot */
 
 	for (unsigned i=0; i<points.size; i++) {
-		if (Fl::event_x() >= points.at(i).x-3 &&
-				Fl::event_x() <= points.at(i).x+3)
+		if (Fl::event_x() >= points.at(i).x+x()-3 &&
+				Fl::event_x() <= points.at(i).x+x()+3)
 		return i;
 	}
 	return -1;
