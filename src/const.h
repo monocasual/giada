@@ -87,51 +87,7 @@
 
 
 
-/* -- default keys -------------------------------------------------- */
-#define DEFAULT_KEY_1		'1'
-#define DEFAULT_KEY_2		'2'
-#define DEFAULT_KEY_3		'3'
-#define DEFAULT_KEY_4		'4'
-#define DEFAULT_KEY_5		'5'
-#define DEFAULT_KEY_6		'6'
-#define DEFAULT_KEY_7		'7'
-#define DEFAULT_KEY_8		'8'
-#define DEFAULT_KEY_9		'q'
-#define DEFAULT_KEY_10	'w'
-#define DEFAULT_KEY_11	'e'
-#define DEFAULT_KEY_12	'r'
-#define DEFAULT_KEY_13	't'
-#define DEFAULT_KEY_14	'y'
-#define DEFAULT_KEY_15	'u'
-#define DEFAULT_KEY_16	'i'
-#define DEFAULT_KEY_17	'a'
-#define DEFAULT_KEY_18	's'
-#define DEFAULT_KEY_19	'd'
-#define DEFAULT_KEY_20	'f'
-#define DEFAULT_KEY_21	'g'
-#define DEFAULT_KEY_22	'h'
-#define DEFAULT_KEY_23	'j'
-#define DEFAULT_KEY_24	'k'
-#define DEFAULT_KEY_25	'z'
-#define DEFAULT_KEY_26	'x'
-#define DEFAULT_KEY_27	'c'
-#define DEFAULT_KEY_28	'v'
-#define DEFAULT_KEY_29	'b'
-#define DEFAULT_KEY_30	'n'
-#define DEFAULT_KEY_31	'm'
-#define DEFAULT_KEY_32	','
-
-#define DEFAULT_KEY_ARRAY { \
-	DEFAULT_KEY_1,  DEFAULT_KEY_2,  DEFAULT_KEY_3,  DEFAULT_KEY_4,  \
-	DEFAULT_KEY_5,  DEFAULT_KEY_6,  DEFAULT_KEY_7,  DEFAULT_KEY_8,  \
-	DEFAULT_KEY_9,  DEFAULT_KEY_10, DEFAULT_KEY_11, DEFAULT_KEY_12, \
-	DEFAULT_KEY_13, DEFAULT_KEY_14, DEFAULT_KEY_15, DEFAULT_KEY_16, \
-	DEFAULT_KEY_17, DEFAULT_KEY_18, DEFAULT_KEY_19, DEFAULT_KEY_20, \
-	DEFAULT_KEY_21, DEFAULT_KEY_22, DEFAULT_KEY_23, DEFAULT_KEY_24, \
-	DEFAULT_KEY_25, DEFAULT_KEY_26, DEFAULT_KEY_27, DEFAULT_KEY_28, \
-	DEFAULT_KEY_29, DEFAULT_KEY_30, DEFAULT_KEY_31, DEFAULT_KEY_32  \
-}
-
+/* -- default system ------------------------------------------------ */
 #if defined(__linux__)
 	#define DEFAULT_SOUNDSYS	SYS_API_ALSA
 #elif defined(_WIN32)
@@ -196,8 +152,8 @@
 #define ACTION_KEYS       0x03 // 0000 0011 any key
 #define ACTION_MUTES      0x24 // 0001 1000 any mute
 
-#define RANGE_INT         0x01
-#define RANGE_FLOAT       0x02
+#define RANGE_CHAR        0x01 // range for MIDI (0-127)
+#define RANGE_FLOAT       0x02 // range for volumes and VST params (0.0-1.0)
 
 
 
