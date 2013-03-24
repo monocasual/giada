@@ -93,9 +93,11 @@ void rec(int index, char act, int frame, int iValue, float fValue) {
 	/* allocating the action */
 
 	action *a = (action*) malloc(sizeof(action));
-	a->chan  = index;
-	a->type  = act;
-	a->frame = frame;
+	a->chan   = index;
+	a->type   = act;
+	a->frame  = frame;
+	a->iValue = iValue;
+	a->fValue = fValue;
 
 	/* check if the frame exists in the stack. If it exists, we don't extend
 	 * the stack, but we add (or push) a new action to it. */
