@@ -51,7 +51,7 @@ namespace recorder {
 
 struct action {
 	int   chan;    // channel index, struct channel->index
- 	char  type;
+ 	int   type;
 	int   frame;   // redundant info, used by helper functions
 	float fValue;  // used only for envelopes (volumes, vst params).
 	int   iValue;  // used only for MIDI events
@@ -92,7 +92,7 @@ bool canRec(channel *ch);
 /* rec
  * record an action. */
 
-void rec(int chan, char action, int frame);
+void rec(int chan, char action, int frame, int iValue=0, float fValue=0.0f);
 
 /* clearChan
  * clear all actions from a channel. */
