@@ -44,16 +44,18 @@ class gEnvelopeChannel : public gActionWidget {
 	 * channel and type of action */
 
 	struct channel *ch;
-	char type;
+	int    type;
+	int    range;
 
 	/* point
-	 * a single dot in the graph. x = absolute frame, y = absolute value */
+	 * a single dot in the graph. x = relative frame, y = relative value */
 
 	struct point {
-		int frame;
-		int value;
-		int x;
-		int y;
+		int   frame;
+		int   iValue;
+		float fValue;
+		int   x;
+		int   y;
 	};
 
 	/* points
@@ -61,10 +63,24 @@ class gEnvelopeChannel : public gActionWidget {
 
 	gVector<point> points;
 
+	/* selectedPoint
+	 * which point we are selecting? */
+
+	int selectedPoint;
+
+	/* draggedPoint
+	 * which point we are dragging? */
+
+	int draggedPoint;
+
 	void draw();
 
+	int handle(int e);
+
+	int getSelectedPoint();
+
 public:
-	gEnvelopeChannel(int x, int y, int w, int h, gdActionEditor *parent, struct channel *ch, char type);
+	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range);
 	~gEnvelopeChannel();
 
 	/* addPoint
@@ -72,7 +88,9 @@ public:
 	 * doesn't query recorder or any other stacks for the actions. It's up
 	 * to the caller to fill points[] with this method. */
 
-	void addPoint(int frame, int value);
+	void addPoint(int frame, int iValue=0, float fValue=0.0f);
+
+	void updatePoints();
 
 	inline void clearPoints() { points.clear(); }
 };

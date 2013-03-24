@@ -139,7 +139,7 @@ void rec(int index, char act, int frame, int iValue, float fValue) {
 
 	sortedActions = false;
 
-	printf("[REC] action %d recorded on frame %d, chan %d\n", act, frame, index);
+	printf("[REC] action %d recorded on frame %d, chan %d, iValue=%d, fValue=%f\n", act, frame, index, iValue, fValue);
 	//print();
 }
 

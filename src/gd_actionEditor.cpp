@@ -31,6 +31,7 @@
 #include "gd_actionEditor.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
+#include "ge_envelopeChannel.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
@@ -120,10 +121,12 @@ gdActionEditor::gdActionEditor(channel *chan)
 		mc = new gMuteChannel  (scroller->x(), 84, this);
 	scroller->end();
 	*/
-	ac = new gActionChannel(scroller->x(), 36, this);
-	mc = new gMuteChannel  (scroller->x(), 84, this);
+	ac = new gActionChannel  (scroller->x(), 36, this);
+	mc = new gMuteChannel    (scroller->x(), 84, this);
+	vc = new gEnvelopeChannel(scroller->x(), 154, this, ACTION_VOLUME, RANGE_FLOAT);
 	scroller->add(ac);
 	scroller->add(mc);
+	scroller->add(vc);
 
 	end();
 
@@ -176,6 +179,7 @@ void gdActionEditor::__cb_zoomIn() {
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
+	vc->updatePoints();
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -191,6 +195,7 @@ void gdActionEditor::__cb_zoomOut() {
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();
 	mc->updatePoints();
+	vc->updatePoints();
 	gridTool->calc();
 	scroller->redraw();
 }
