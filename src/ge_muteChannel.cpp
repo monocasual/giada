@@ -42,7 +42,7 @@ extern gdMainWindow *mainWin;
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
- : gActionWidget(x, y, 200, 60, parent), draggedPoint(-1), selectedPoint(-1)
+ : gActionWidget(x, y, 200, 80, parent), draggedPoint(-1), selectedPoint(-1)
 {
 	extractPoints();
 }
@@ -59,6 +59,12 @@ void gMuteChannel::draw() {
 	/** FIXME - move this to base class gActionWidget::baseDraw() */
 
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+
+	/* print label */
+
+	fl_color(COLOR_BG_1);
+	fl_font(FL_HELVETICA, 12);
+	fl_draw("mute", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 	/* draw "on" and "off" labels. Must stay in background */
 

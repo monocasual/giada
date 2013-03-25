@@ -62,8 +62,8 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
-	  actionType = new gChoice(104, 8, 80, 20);
-	  gridTool   = new gGridTool(192, 8, this);
+	  actionType = new gChoice(8, 8, 80, 20);
+	  gridTool   = new gGridTool(actionType->x()+actionType->w()+4, 8, this);
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
@@ -89,6 +89,7 @@ gdActionEditor::gdActionEditor(channel *chan)
 	 * Even here we need the padding box trick, otherwise when you enlarge
 	 * the window vertically, text boxes strech. */
 
+	/*
 	Fl_Group *texts = new Fl_Group(8, 36, 92, 160);
 		gBox *txtActions = new gBox(8, 36,  92, 20, "Actions");
 		gBox *txtMutes   = new gBox(8, 80,  92, 20, "Mute");
@@ -105,10 +106,11 @@ gdActionEditor::gdActionEditor(channel *chan)
 		}
 	texts->end();
 	texts->resizable(txtDist);
+	*/
 
 	/* main scroller: contains all widgets */
 
-	scroller = new Fl_Scroll(104, 36, this->w()-112, this->h()-44);
+	scroller = new Fl_Scroll(8, 36, this->w()-16, this->h()-44);
 	scroller->type(Fl_Scroll::HORIZONTAL);
 	scroller->hscrollbar.color(COLOR_BG_0);
 	scroller->hscrollbar.selection_color(COLOR_BG_1);
@@ -121,9 +123,9 @@ gdActionEditor::gdActionEditor(channel *chan)
 		mc = new gMuteChannel  (scroller->x(), 84, this);
 	scroller->end();
 	*/
-	ac = new gActionChannel  (scroller->x(), 36, this);
-	mc = new gMuteChannel    (scroller->x(), 84, this);
-	vc = new gEnvelopeChannel(scroller->x(), 154, this, ACTION_VOLUME, RANGE_FLOAT);
+	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
+	vc = new gEnvelopeChannel(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
 	scroller->add(ac);
 	scroller->add(mc);
 	scroller->add(vc);

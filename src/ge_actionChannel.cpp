@@ -47,7 +47,7 @@ extern Conf	         G_Conf;
 gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
  : gActionWidget(x, y, 200, 40, parent), selected(NULL)
 {
-	/* let's add actions when the window opens. Their position is zoom-based;
+	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
@@ -79,8 +79,9 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				}
 
 				/* we also skip mutes. There's a widget for that */
+				/** FIXME - change logic: do something only if type & ACTION_KEYPRESS etc */
 
-				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF))
+				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME))
 					continue;
 
 				int ax = x+((recorder::frames.at(i))/parent->zoom);
@@ -151,7 +152,15 @@ void gActionChannel::draw() {
 	 * draw the children (the actions) */
 
 	baseDraw();
+
+	/* print label */
+
+	fl_color(COLOR_BG_1);
+	fl_font(FL_HELVETICA, 12);
+	fl_draw("actions", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+
 	draw_children();
 }
 

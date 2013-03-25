@@ -73,6 +73,11 @@ class gEnvelopeChannel : public gActionWidget {
 
 	int draggedPoint;
 
+	/* previousXPoint
+	 * x coordinate of point at time t-1. Used to check effective shifts */
+
+	int previousXPoint;
+
 	void draw();
 
 	int handle(int e);
@@ -82,7 +87,7 @@ class gEnvelopeChannel : public gActionWidget {
 	void sortPoints();
 
 public:
-	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range);
+	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range, const char *l);
 	~gEnvelopeChannel();
 
 	/* addPoint
