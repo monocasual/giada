@@ -60,19 +60,25 @@ gEnvelopeChannel::~gEnvelopeChannel() {
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue) {
+void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int py) {
 	point p;
 	p.frame  = frame;
 	p.iValue = iValue;
 	p.fValue = fValue;
-	p.x = (p.frame / parent->zoom);
-	if (range == RANGE_CHAR)
-		p.y = p.iValue / h();
-	else
-		p.y = (-(p.fValue - 1) * h()) + y();
-	points.add(p);
+	p.x = px;
+	p.y = py;
 
-	printf("[addPoint] y=%d\n", p.y);
+	/* addPoint called externally, without x and y coordinates */
+
+	if (px == -1) {
+		p.x = (p.frame / parent->zoom);
+		if (range == RANGE_CHAR)
+			p.y = p.iValue / h();
+		else
+			p.y = (-(p.fValue - 1) * h()) + y();    /// CHECK
+	}
+
+	points.add(p);
 }
 
 
@@ -112,7 +118,7 @@ void gEnvelopeChannel::draw() {
 	for (unsigned i=0; i<points.size; i++) {
 
 		pxNew = points.at(i).x+x()-3;
-		pyNew = points.at(i).y;
+		pyNew = points.at(i).y+y();
 
 		fl_line(pxOld+3, pyOld+3, pxNew+3, pyNew+3);
 
@@ -188,7 +194,7 @@ int gEnvelopeChannel::handle(int e) {
 
 					if (range == RANGE_FLOAT) {
 						float value = (-1.0f / (h()-1)) * (my - (h()-1));
-						addPoint(frame, 0, value);
+						addPoint(frame, 0, value, mx, my);
 						recorder::rec(parent->chan->index, type, frame, 0, value);
 						recorder::sortActions();
 						sortPoints();
@@ -241,10 +247,15 @@ int gEnvelopeChannel::handle(int e) {
 							points.at(draggedPoint).frame,
 							type);
 
-					recorder::rec(
-							parent->chan->index,
-							type,
-							newFrame);
+					if (range == RANGE_FLOAT) {
+						float value = (-1.0f / (h()-1)) * (points.at(draggedPoint).y - (h()-1));
+						printf("y=%d\n", points.at(draggedPoint).y);
+						recorder::rec(parent->chan->index, type, newFrame, 0, value);
+					}
+					else {
+						/// TODO
+					}
+
 
 					recorder::sortActions();
 
@@ -264,12 +275,13 @@ int gEnvelopeChannel::handle(int e) {
 
 				/* y constraint */
 
-				if (Fl::event_y() > y()+h()-8)
-					points.at(draggedPoint).y = y()+h()-8;
-				else if (Fl::event_y() < y()+1)
-					points.at(draggedPoint).y = y()+1;
+				if (my > h()-8)
+					points.at(draggedPoint).y = h()-8;
 				else
-					points.at(draggedPoint).y = Fl::event_y();
+				if (my < 1)
+					points.at(draggedPoint).y = 1;
+				else
+					points.at(draggedPoint).y = my;
 
 				/* x constraint
 				 * constrain the point between two ends (leftBorder-point, point-point,
@@ -337,10 +349,10 @@ int gEnvelopeChannel::getSelectedPoint() {
 	/* point is a 7x7 dot */
 
 	for (unsigned i=0; i<points.size; i++) {
-		if (Fl::event_x() >= points.at(i).x+x()   &&
-				Fl::event_x() <= points.at(i).x+x()+7 &&
-				Fl::event_y() >= points.at(i).y       &&
-				Fl::event_y() <= points.at(i).y+7)
+		if (Fl::event_x() >= points.at(i).x+x()    &&
+				Fl::event_x() <= points.at(i).x+x()+7  &&
+				Fl::event_y() >= points.at(i).y+y()    &&
+				Fl::event_y() <= points.at(i).y+y()+7)
 		return i;
 	}
 	return -1;

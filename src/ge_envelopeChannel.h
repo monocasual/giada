@@ -93,9 +93,10 @@ public:
 	/* addPoint
 	 * add a point made of frame+value to points[]. This class, being general,
 	 * doesn't query recorder or any other stacks for the actions. It's up
-	 * to the caller to fill points[] with this method. */
+	 * to the caller to fill points[] with this method. An external caller
+	 * can skip x and y, computed internally. */
 
-	void addPoint(int frame, int iValue=0, float fValue=0.0f);
+	void addPoint(int frame, int iValue=0, float fValue=0.0f, int x=-1, int y=-1);
 
 	void updatePoints();
 
