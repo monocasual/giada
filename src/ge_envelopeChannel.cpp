@@ -33,12 +33,14 @@
 #include <FL/fl_draw.H>
 #include "ge_envelopeChannel.h"
 #include "gd_actionEditor.h"
+#include "gd_mainWindow.h"
 #include "channel.h"
 #include "recorder.h"
 #include "mixer.h"
 
 
-extern Mixer G_Mixer;
+extern Mixer         G_Mixer;
+extern gdMainWindow *mainWin;
 
 
 gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range, const char *l)
@@ -205,6 +207,7 @@ int gEnvelopeChannel::handle(int e) {
 						//recorder::rec(parent->chan->index, type, frame, value, 0.0f);
 						//printf("rec action INT at x=%d (%d), h=%d, y=%d, v=%d\n", mx, mx*parent->zoom, h(), my, v);
 					}
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					redraw();
 				}
 			}

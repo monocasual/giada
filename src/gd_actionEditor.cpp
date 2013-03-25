@@ -45,7 +45,7 @@ extern Conf	 G_Conf;
 
 
 gdActionEditor::gdActionEditor(channel *chan)
-: gWindow(640, 176), chan(chan), zoom(100)
+: gWindow(640, 284), chan(chan), zoom(100)
 {
 
 	if (G_Conf.actionEditorW) {
@@ -145,7 +145,7 @@ gdActionEditor::gdActionEditor(channel *chan)
 	label(buf);
 
 	set_non_modal();
-	size_range(640, 176);
+	size_range(640, 284);
 	resizable(scroller);
 
 	show();
