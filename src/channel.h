@@ -43,7 +43,9 @@ struct channel {
 	int    end;
 	int    startTrue;	 // chanStart NOT pitch affected
 	int    endTrue;	   // chanend   NOT pitch affected
-	float  volume;
+	float  volume;     // global volume
+	float  volume_i;   // internal volume
+	float  volume_d;   // delta volume (for envelope)
   float  pitch;
 	float  boost;
 	float  panLeft;
