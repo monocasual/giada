@@ -122,8 +122,6 @@ void gEnvelopeChannel::draw() {
 		pxNew = points.at(i).x+x()-3;
 		pyNew = points.at(i).y+y();
 
-		fl_line(pxOld+3, pyOld+3, pxNew+3, pyNew+3);
-
 		if (selectedPoint == (int) i) {
 			fl_color(COLOR_BD_1);
 			fl_rectf(pxNew, pyNew, 7, 7);
@@ -132,14 +130,12 @@ void gEnvelopeChannel::draw() {
 		else
 			fl_rectf(pxNew, pyNew, 7, 7);
 
+		if (i > 0)
+			fl_line(pxOld+3, pyOld+3, pxNew+3, pyNew+3);
+
 		pxOld = pxNew;
 		pyOld = pyNew;
 	}
-
-	/* last line */
-
-	fl_line(pxOld+3, pyOld+3, parent->coverX, y()+4);
-
 }
 
 
@@ -194,7 +190,16 @@ int gEnvelopeChannel::handle(int e) {
 
 					if (my > h()-8) my = h()-8;   // bottom fix
 
+					/* if this is the first point ever, add other two points at the beginning
+					 * and the end of the range */
+
 					if (range == RANGE_FLOAT) {
+						if (points.size == 0) {
+							addPoint(0, 0, 1.0f, 0, 1);
+							recorder::rec(parent->chan->index, type, 0, 0, 1.0f);
+							addPoint(0, 0, 1.0f, parent->coverX-x(), 1);
+							recorder::rec(parent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
+						}
 						float value = (-1.0f / (h()-1)) * (my - (h()-1));
 						addPoint(frame, 0, value, mx, my);
 						recorder::rec(parent->chan->index, type, frame, 0, value);
@@ -202,10 +207,7 @@ int gEnvelopeChannel::handle(int e) {
 						sortPoints();
 					}
 					else {
-						//int value = (-255 / (float) (h()-1)) * (my - h()-1);
-						//addPoint(frame, value, 0.0f);
-						//recorder::rec(parent->chan->index, type, frame, value, 0.0f);
-						//printf("rec action INT at x=%d (%d), h=%d, y=%d, v=%d\n", mx, mx*parent->zoom, h(), my, v);
+						/// TODO
 					}
 					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					redraw();
@@ -213,11 +215,19 @@ int gEnvelopeChannel::handle(int e) {
 			}
 			else {
 
+				/* right click on point 0 or point size-1 deletes the entire envelope */
+
 				if (selectedPoint != -1) {
-					recorder::deleteAction(parent->chan->index, points.at(selectedPoint).frame, type);
-					recorder::sortActions();
-					points.del(selectedPoint);
-					sortPoints();
+					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size-1) {
+						recorder::clearAction(parent->chan->index, type);
+						points.clear();
+					}
+					else {
+						recorder::deleteAction(parent->chan->index, points.at(selectedPoint).frame, type);
+						recorder::sortActions();
+						points.del(selectedPoint);
+					}
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					redraw();
 				}
 			}
@@ -288,39 +298,24 @@ int gEnvelopeChannel::handle(int e) {
 
 				/* x constraint
 				 * constrain the point between two ends (leftBorder-point, point-point,
-				 * point-rightBorder) */
+				 * point-rightBorder). First & last points cannot be shifted on x */
 
-				int prevPoint;
-				int nextPoint;
-
-				if (points.size == 1) {
-					prevPoint = x()-8;
-					nextPoint = parent->coverX-x();
-				}
+				if (draggedPoint == 0)
+					points.at(draggedPoint).x = x()-8;
+				else
+				if ((unsigned) draggedPoint == points.size-1)
+					points.at(draggedPoint).x = parent->coverX-x();
 				else {
-					if ((unsigned) draggedPoint == points.size-1) {
-						prevPoint = points.at(draggedPoint-1).x;
-						nextPoint = parent->coverX-x();
-					}
+					int prevPoint = points.at(draggedPoint-1).x;
+					int nextPoint = points.at(draggedPoint+1).x;
+					if (mx <= prevPoint)
+						points.at(draggedPoint).x = prevPoint;
 					else
-					if (draggedPoint == 0) {
-						prevPoint = x()-8;
-						nextPoint = points.at(draggedPoint+1).x;
-					}
-					else {
-						prevPoint = points.at(draggedPoint-1).x;
-						nextPoint = points.at(draggedPoint+1).x;
-					}
+					if (mx >= nextPoint)
+						points.at(draggedPoint).x = nextPoint;
+					else
+						points.at(draggedPoint).x = mx;
 				}
-
-				if (mx <= prevPoint)
-					points.at(draggedPoint).x = prevPoint;
-				else
-				if (mx >= nextPoint)
-					points.at(draggedPoint).x = nextPoint;
-				else
-					points.at(draggedPoint).x = mx;
-
 				redraw();
 			}
 
