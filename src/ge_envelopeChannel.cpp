@@ -63,6 +63,9 @@ gEnvelopeChannel::~gEnvelopeChannel() {
 
 
 void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int py) {
+
+	printf("addPoint x=%d, frame=%d\n", px, frame);
+
 	point p;
 	p.frame  = frame;
 	p.iValue = iValue;
@@ -197,7 +200,7 @@ int gEnvelopeChannel::handle(int e) {
 						if (points.size == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							recorder::rec(parent->chan->index, type, 0, 0, 1.0f);
-							addPoint(0, 0, 1.0f, parent->coverX-x(), 1);
+							addPoint(G_Mixer.totalFrames, 0, 1.0f, parent->coverX-x(), 1);
 							recorder::rec(parent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
 						float value = (-1.0f / (h()-1)) * (my - (h()-1));
