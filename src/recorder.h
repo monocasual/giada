@@ -169,6 +169,12 @@ int getEndActionFrame(int chan, char action, int frame);
 
 int getNextAction(int chan, char action, int frame, struct action **out);
 
+/* getAction
+ * return a pointer to action in chan 'chan' of type 'action' at frame
+ * 'frame'. */
+
+int getAction(int chan, char action, int frame, struct action **out);
+
 /* start/endOverdub */
 
 void startOverdub(int chan, char action, int frame);

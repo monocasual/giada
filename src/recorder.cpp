@@ -527,7 +527,6 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-
 int getNextAction(int chan, char type, int frame, action **out) {
 
 	sortActions();  // mandatory
@@ -548,6 +547,22 @@ int getNextAction(int chan, char type, int frame, action **out) {
 	}
 
 	return -2;   // no 'type' actions found
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int getAction(int chan, char action, int frame, struct action **out) {
+	for (unsigned i=0; i<global.size; i++)
+		for (unsigned j=0; j<global.at(i).size; i++)
+			if (frame  == global.at(i).at(j)->frame &&
+					action == global.at(i).at(j)->type)
+			{
+				*out = global.at(i).at(j);
+				return 1;
+			}
+	return 0;
 }
 
 
