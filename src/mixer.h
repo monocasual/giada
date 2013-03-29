@@ -213,8 +213,14 @@ public:
 private:
 
 	/* calcFadeoutStep
-	 * allows to do a fadeout even if the sample is almost finished */
+	 * allows a fadeout even if the sample is almost finished */
+
 	void calcFadeoutStep(struct channel *ch);
+
+	/* calcVolumeEnv
+	 * compute any changes in volume done viaenvelope tool */
+
+	void calcVolumeEnv(struct channel *ch, int frame);
 };
 
 #endif

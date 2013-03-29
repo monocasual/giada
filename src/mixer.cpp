@@ -190,6 +190,8 @@ void Mixer::initChannel(channel *ch) {
 	ch->mute_i      = false;
 	ch->mode        = DEFAULT_CHANMODE;
 	ch->volume      = DEFAULT_VOL;
+	ch->volume_i    = 1.0f;
+	ch->volume_d    = 0.0f;
 	ch->pitch       = gDEFAULT_PITCH;
 	ch->boost       = 1.0f;
 	ch->panLeft     = 1.0f;
@@ -554,6 +556,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 							case ACTION_MUTEOFF:
 								mh_unmuteChan(ch, true); // internal mute
 								break;
+							case ACTION_VOLUME:
+								calcVolumeEnv(ch, actualFrame);
+								break;
 						}
 					}
 					break;
@@ -657,8 +662,20 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					}  // no fadeout to do
 					else {
 						if (!ch->mute && !ch->mute_i) {
-							ch->vChan[j]   += ch->wave->data[ctracker]   * ch->volume * ch->fadein * ch->boost * ch->panLeft;
-							ch->vChan[j+1] += ch->wave->data[ctracker+1] * ch->volume * ch->fadein * ch->boost * ch->panRight;
+
+							/* volume envelope */
+
+							if (running) {
+								ch->volume_i += ch->volume_d;
+								if (ch->volume_i < 0.0f)
+									ch->volume_i = 0.0f;
+								else
+								if (ch->volume_i > 1.0f)
+									ch->volume_i = 1.0f;
+							}
+							float v = ch->volume * ch->volume_i * ch->fadein * ch->boost;
+							ch->vChan[j]   += ch->wave->data[ctracker]   * v * ch->panLeft;
+							ch->vChan[j+1] += ch->wave->data[ctracker+1] * v * ch->panRight;
 						}
 					}
 
@@ -999,4 +1016,48 @@ bool Mixer::mergeVirtualInput() {
 
 bool Mixer::isPlaying(channel *ch) {
 	return ch->status == STATUS_PLAY || ch->status == STATUS_ENDING;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::calcVolumeEnv(struct channel *ch, int frame) {
+
+	/* method: check this frame && next frame, then calculate delta */
+
+	recorder::action *a0 = NULL;
+	recorder::action *a1 = NULL;
+	int res;
+
+	res = recorder::getAction(ch->index, ACTION_VOLUME, frame, &a0);
+	if (res == 0) {
+		printf("[mixer::calcVolumeEnv] a0 not found\n");
+		return;
+	}
+
+	printf("[mixer::calcVolumeEnv] a0 found, frame=%d value=%f\n", a0->frame, a0->fValue);
+
+	res = recorder::getNextAction(ch->index, ACTION_VOLUME, frame, &a1);
+
+	/* res == -1: a1 not found, this is the last one. Rewind the search
+	 * and use action at frame number 0 (actions[0]) */
+
+	if (res == -1) {
+		puts("[mixer::calcVolumeEnv] a1 not found, using actions[0]");
+		res = recorder::getAction(ch->index, ACTION_VOLUME, 0, &a1);
+	}
+	else
+		printf("[mixer::calcVolumeEnv] a1 found, at frame %d value=%f\n", a1->frame, a1->fValue);
+
+	ch->volume_i = a0->fValue;
+	ch->volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
+
+	printf("[mixer::calcVolumeEnv] delta=%f\n\n", ch->volume_d);
+
+	/*
+	if (res == -2) {
+		puts("[mixer::calcVolumeEnv] ACTION_VOLUME not found");
+		return;
+	}*/
 }

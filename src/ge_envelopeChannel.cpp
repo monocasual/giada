@@ -63,9 +63,6 @@ gEnvelopeChannel::~gEnvelopeChannel() {
 
 
 void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int py) {
-
-	printf("addPoint x=%d, frame=%d\n", px, frame);
-
 	point p;
 	p.frame  = frame;
 	p.iValue = iValue;
@@ -78,7 +75,7 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 	if (px == -1) {
 		p.x = (p.frame / parent->zoom);
 		if (range == RANGE_CHAR)
-			p.y = p.iValue / h();
+			p.y = p.iValue / h();                   /// CHECK
 		else
 			p.y = (-(p.fValue - 1) * h()) + y();    /// CHECK
 	}
@@ -197,13 +194,19 @@ int gEnvelopeChannel::handle(int e) {
 					 * and the end of the range */
 
 					if (range == RANGE_FLOAT) {
+
 						if (points.size == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							recorder::rec(parent->chan->index, type, 0, 0, 1.0f);
 							addPoint(G_Mixer.totalFrames, 0, 1.0f, parent->coverX-x(), 1);
 							recorder::rec(parent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
-						float value = (-1.0f / (h()-1)) * (my - (h()-1));
+
+						/* line between 2 points y = (x-a) / (b-a)
+						 * a = h() - 8
+						 * b = 1 */
+
+						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
 						recorder::rec(parent->chan->index, type, frame, 0, value);
 						recorder::sortActions();
@@ -251,32 +254,25 @@ int gEnvelopeChannel::handle(int e) {
 
 					int newFrame = points.at(draggedPoint).x * parent->zoom;
 
-					/* edge correction */
+					/* x edge correction */
 
 					if (newFrame < 0)
 						newFrame = 0;
 					else if (newFrame > G_Mixer.totalFrames)
 						newFrame = G_Mixer.totalFrames;
 
-					recorder::deleteAction(
-							parent->chan->index,
-							points.at(draggedPoint).frame,
-							type);
+					recorder::deleteAction(parent->chan->index,	points.at(draggedPoint).frame, type);
 
 					if (range == RANGE_FLOAT) {
-						float value = (-1.0f / (h()-1)) * (points.at(draggedPoint).y - (h()-1));
-						printf("y=%d\n", points.at(draggedPoint).y);
+						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
 						recorder::rec(parent->chan->index, type, newFrame, 0, value);
 					}
 					else {
 						/// TODO
 					}
 
-
 					recorder::sortActions();
-
 					points.at(draggedPoint).frame = newFrame;
-
 					draggedPoint  = -1;
 					selectedPoint = -1;
 				}
