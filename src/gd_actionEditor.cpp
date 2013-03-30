@@ -85,29 +85,6 @@ gdActionEditor::gdActionEditor(channel *chan)
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
 
-	/* side boxes with text infos for the channel (actions, mute, ...)
-	 * Even here we need the padding box trick, otherwise when you enlarge
-	 * the window vertically, text boxes strech. */
-
-	/*
-	Fl_Group *texts = new Fl_Group(8, 36, 92, 160);
-		gBox *txtActions = new gBox(8, 36,  92, 20, "Actions");
-		gBox *txtMutes   = new gBox(8, 80,  92, 20, "Mute");
-		gBox *txtDist    = new gBox(8, 100, 92, 20);  // pading border - buttons
-
-		txtActions->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		txtMutes  ->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
-		if (chan->mode & LOOP_ANY) {
-			gBox *txtDisabled = new gBox(8, 48, 92, 20, "disabled");
-			txtDisabled->labelsize(9);
-			txtDisabled->labelcolor(COLOR_BD_0);
-			txtDisabled->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		}
-	texts->end();
-	texts->resizable(txtDist);
-	*/
-
 	/* main scroller: contains all widgets */
 
 	scroller = new Fl_Scroll(8, 36, this->w()-16, this->h()-44);
@@ -131,6 +108,10 @@ gdActionEditor::gdActionEditor(channel *chan)
 	scroller->add(vc);
 
 	end();
+
+	/* fill volume envelope with actions from recorder */
+
+	vc->fill();
 
 	/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
 	 * hold keypress/keyrelease actions */

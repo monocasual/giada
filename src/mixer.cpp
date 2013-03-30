@@ -1048,16 +1048,14 @@ void Mixer::calcVolumeEnv(struct channel *ch, int frame) {
 		res = recorder::getAction(ch->index, ACTION_VOLUME, 0, &a1);
 	}
 	else
+
+	/* res == -2 ACTION_VOLUME not found. This should never happen */
+
+	if (res == -2)
+		puts("[mixer::calcVolumeEnv] WARNING: action1 as ACTION_VOLUME not found!");
+	else
 		printf("[mixer::calcVolumeEnv] a1 found, at frame %d value=%f\n", a1->frame, a1->fValue);
 
 	ch->volume_i = a0->fValue;
 	ch->volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
-
-	printf("[mixer::calcVolumeEnv] delta=%f\n\n", ch->volume_d);
-
-	/*
-	if (res == -2) {
-		puts("[mixer::calcVolumeEnv] ACTION_VOLUME not found");
-		return;
-	}*/
 }

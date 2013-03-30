@@ -43,7 +43,7 @@ class gEnvelopeChannel : public gActionWidget {
 	/* channel, type
 	 * channel and type of action */
 
-	struct channel *ch;
+	//struct channel *ch;
 	int    type;
 	int    range;
 
@@ -99,6 +99,8 @@ public:
 	void addPoint(int frame, int iValue=0, float fValue=0.0f, int x=-1, int y=-1);
 
 	void updatePoints();
+
+	void fill();
 
 	inline void clearPoints() { points.clear(); }
 };

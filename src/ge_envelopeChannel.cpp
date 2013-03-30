@@ -72,13 +72,15 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 
 	/* addPoint called externally, without x and y coordinates */
 
+	/** useless */
 	if (px == -1) {
 		p.x = (p.frame / parent->zoom);
 		if (range == RANGE_CHAR)
 			p.y = p.iValue / h();                   /// CHECK
 		else
-			p.y = (-(p.fValue - 1) * h()) + y();    /// CHECK
+			p.y = ((1 - h() - 8) * fValue) + h() - 8;    // line between 2 points
 	}
+	/** useless */
 
 	points.add(p);
 }
@@ -353,4 +355,26 @@ int gEnvelopeChannel::getSelectedPoint() {
 		return i;
 	}
 	return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gEnvelopeChannel::fill() {
+	for (unsigned i=0; i<recorder::global.size; i++)
+		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+			recorder::action *a = recorder::global.at(i).at(j);
+			if (a->type == type && a->chan == parent->chan->index) {
+				if (range == RANGE_FLOAT)
+					addPoint(
+						a->frame,                      // frame
+						0,                             // int value (unused)
+						a->fValue,                     // float value
+						a->frame / parent->zoom,       // x
+						((1-h()+8)*a->fValue)+h()-8);  // y = (b-a)x + a (line between two points)
+				// else: TODO
+			}
+		}
+
 }
