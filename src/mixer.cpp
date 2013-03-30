@@ -152,12 +152,26 @@ channel *Mixer::addChannel(char side) {
 	}
 
 	initChannel(ch);
-	ch->index  = channels.size-1;
-	ch->side   = side;
+
+	ch->index = getNewIndex();
+	ch->side  = side;
 
 	printf("[mixer] channel added, total=%d\n", channels.size);
 
 	return ch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Mixer::getNewIndex() {
+	int index = 0;
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->index > index)
+			index = channels.at(i)->index;
+	index = index + 1;
+	return index;
 }
 
 
@@ -234,8 +248,8 @@ int Mixer::deleteChannel(channel *ch) {
 			pthread_mutex_unlock(&mutex_chans);
 			return 1;
 		}
-		//else
-		//	puts("[mixer::deleteChannel] waiting for mutex...");
+		else
+			puts("[mixer::deleteChannel] waiting for mutex...");
 	}
 }
 
@@ -372,8 +386,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	memset(buffer, 0, sizeof(float) * bufferFrames);         // out
 	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
+
+	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size; i++)
 		memset(channels.at(i)->vChan, 0, sizeof(float) * bufferFrames);     // vchans
+	pthread_mutex_unlock(&mutex_chans);
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 

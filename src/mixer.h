@@ -221,6 +221,11 @@ private:
 	 * compute any changes in volume done viaenvelope tool */
 
 	void calcVolumeEnv(struct channel *ch, int frame);
+
+	/* getNewIndex
+	 * compute new index value for new channels */
+
+	int getNewIndex();
 };
 
 #endif
