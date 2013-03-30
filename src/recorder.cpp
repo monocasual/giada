@@ -531,6 +531,8 @@ int getNextAction(int chan, char type, int frame, action **out) {
 
 	sortActions();  // mandatory
 
+	/* looking for frame > 'frame' */
+
 	unsigned i=0;
 	while (i < frames.size && frames.at(i) <= frame)
 		i++;
@@ -538,13 +540,14 @@ int getNextAction(int chan, char type, int frame, action **out) {
 	if (i == frames.size)   // no further actions
 		return -1;
 
-	for (unsigned j=0; j<global.at(i).size; j++) {
-		action *a = global.at(i).at(j);
-		if (a->chan == chan && (type & a->type) == a->type) {
-			*out = global.at(i).at(j);
-			return 1;
+	for (; i<global.size; i++)
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			if (a->chan == chan && (type & a->type) == a->type) {
+				*out = global.at(i).at(j);
+				return 1;
+			}
 		}
-	}
 
 	return -2;   // no 'type' actions found
 }
@@ -554,10 +557,12 @@ int getNextAction(int chan, char type, int frame, action **out) {
 
 
 int getAction(int chan, char action, int frame, struct action **out) {
+	print();
 	for (unsigned i=0; i<global.size; i++)
-		for (unsigned j=0; j<global.at(i).size; i++)
+		for (unsigned j=0; j<global.at(i).size; j++)
 			if (frame  == global.at(i).at(j)->frame &&
-					action == global.at(i).at(j)->type)
+					action == global.at(i).at(j)->type &&
+					chan   == global.at(i).at(j)->chan)
 			{
 				*out = global.at(i).at(j);
 				return 1;
@@ -665,11 +670,10 @@ void stopOverdub(int frame) {
 void print() {
 	printf("[REC] ** print debug **\n");
 	for (unsigned i=0; i<global.size; i++) {
-		printf("      [f.%d]", frames.at(i));
+		printf("  frame %d\n", frames.at(i));
 		for (unsigned j=0; j<global.at(i).size; j++) {
-			printf("[a.%d|c.%d]", global.at(i).at(j)->type, global.at(i).at(j)->chan);
+			printf("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
 		}
-		printf("\n");
 	}
 }
 
