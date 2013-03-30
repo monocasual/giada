@@ -587,8 +587,7 @@ void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool reca
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBoost(gdEditor *win, int ch, float val, bool numeric) {
-	channel *c = G_Mixer.channels.at(ch);
+void glue_setBoost(gdEditor *win, channel *ch, float val, bool numeric) {
 	if (numeric) {
 		if (val > 20.0f)
 			val = 20.0f;
@@ -597,7 +596,7 @@ void glue_setBoost(gdEditor *win, int ch, float val, bool numeric) {
 
 	  float linear = pow(10, (val / 20)); // linear = 10^(dB/20)
 
-		c->boost = linear;
+		ch->boost = linear;
 
 		char buf[10];
 		sprintf(buf, "%.2f", val);
@@ -608,7 +607,7 @@ void glue_setBoost(gdEditor *win, int ch, float val, bool numeric) {
 		win->boost->redraw();       /// inutile
 	}
 	else {
-		c->boost = val;
+		ch->boost = val;
 		char buf[10];
 		sprintf(buf, "%.2f", 20*log10(val));
 		win->boostNum->value(buf);

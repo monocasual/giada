@@ -119,7 +119,7 @@ void glue_setBeginEndChannel(class gdEditor *win, struct channel *ch, int b, int
 														 bool recalc=false, bool check=true);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
-void glue_setBoost(class gdEditor *win, int ch, float val, bool numeric);
+void glue_setBoost(class gdEditor *win, struct channel *ch, float val, bool numeric);
 
 void glue_setPitch(class gdEditor *win, struct channel *ch, float val, bool numeric);
 

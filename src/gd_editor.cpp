@@ -254,9 +254,9 @@ void gdEditor::__cb_setVolumeNum() {
 
 void gdEditor::__cb_setBoost() {
 	if (Fl::event() == FL_DRAG)
-		glue_setBoost(this, ch->index, boost->value(), false);
+		glue_setBoost(this, ch, boost->value(), false);
 	else if (Fl::event() == FL_RELEASE) {
-		glue_setBoost(this, ch->index, boost->value(), false);
+		glue_setBoost(this, ch, boost->value(), false);
 	waveTools->updateWaveform();
 	}
 }
@@ -266,7 +266,7 @@ void gdEditor::__cb_setBoost() {
 
 
 void gdEditor::__cb_setBoostNum() {
-	glue_setBoost(this, ch->index, atof(boostNum->value()), true);
+	glue_setBoost(this, ch, atof(boostNum->value()), true);
 	waveTools->updateWaveform();
 }
 
@@ -276,7 +276,7 @@ void gdEditor::__cb_setBoostNum() {
 
 void gdEditor::__cb_normalize() {
 	float val = wfx_normalizeSoft(ch->wave);
-	glue_setBoost(this, ch->index, val, false); // we pretend that a fake user turns the dial (numeric=false)
+	glue_setBoost(this, ch, val, false); // we pretend that a fake user turns the dial (numeric=false)
 	if (val < 0.0f)
 		boost->value(0.0f);
 	else
@@ -308,7 +308,7 @@ void gdEditor::__cb_reload() {
 
 	mh_loadChan(ch->wave->pathfile.c_str(), ch);
 
-	glue_setBoost(this, ch->index, DEFAULT_BOOST, true);
+	glue_setBoost(this, ch, DEFAULT_BOOST, true);
 	glue_setPitch(this, ch, gDEFAULT_PITCH, true);
 	glue_setPanning(this, ch, 1.0f);
 	pan->value(1.0f);  // glue_setPanning doesn't do it
