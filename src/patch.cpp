@@ -54,6 +54,7 @@ int Patch::open(const char *file) {
 		return PATCH_INVALID;
 
 	version = atof(getValue("versionf").c_str());
+	printf("[PATCH] open patch version %f\n", version);
 	if (version == 0.0)
 		puts("[PATCH] patch < 0.6.1, backward compatibility mode");
 
@@ -394,15 +395,22 @@ int Patch::readRecs() {
 //printf("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
 
 		for (int k=0; k<recPerFrame; k++) {
-			int chan, type;
+			int   chan = 0;
+			int   type = 0;
+			float fValue = 0.0f;
+			int   iValue = 0;
 
 			/* reading info for each frame: %d|%d */
 
 			char tmpbuf[16];
 			sprintf(tmpbuf, "f%da%d", i, k);
-			sscanf(getValue(tmpbuf).c_str(), "%d|%d", &chan, &type);
 
-//printf("  loading chan=%d, type=%d\n", chan, type);
+			if (version < 0.61f) // no float and int values
+				sscanf(getValue(tmpbuf).c_str(), "%d|%d", &chan, &type);
+			else
+				sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%d", &chan, &type, &fValue, &iValue);
+
+//printf("  loading chan=%d, type=%d, fValue=%f, iValue=%d\n", chan, type, fValue, iValue);
 
 			/* backward compatibility < 0.4.1 */
 
@@ -410,7 +418,7 @@ int Patch::readRecs() {
 				frame++;
 
 			channel *ch = G_Mixer.getChannelByIndex(chan);
-			recorder::rec(ch->index, type, frame);
+			recorder::rec(ch->index, type, frame, iValue, fValue);
 		}
 	}
 	return 1;
@@ -515,10 +523,12 @@ int Patch::write(const char *file, const char *name) {
 	for (unsigned i=0; i<recorder::global.size; i++) {
 		fprintf(fp, "recframe%d=%d %d\n", i, recorder::frames.at(i), recorder::global.at(i).size);
 		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
-			fprintf(fp, "f%da%d=%d|%d\n",
+			fprintf(fp, "f%da%d=%d|%d|%f|%d\n",
 				i, k,
 				recorder::global.at(i).at(k)->chan,
-				recorder::global.at(i).at(k)->type);
+				recorder::global.at(i).at(k)->type,
+				recorder::global.at(i).at(k)->fValue,
+				recorder::global.at(i).at(k)->iValue);
 		}
 	}
 
