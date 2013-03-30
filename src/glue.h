@@ -97,7 +97,7 @@ void glue_setOutVol(float v);
 void glue_setInVol(float v);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
-void glue_setPanning(class gdEditor *win, int ch, float val);
+void glue_setPanning(class gdEditor *win, struct channel *ch, float val);
 
 void glue_clearAllSamples();
 void glue_clearAllRecs();

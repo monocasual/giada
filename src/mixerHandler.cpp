@@ -40,6 +40,7 @@
 #include "patch.h"
 #include "recorder.h"
 #include "channel.h"
+#include "wave.h"
 
 
 extern Mixer 		  G_Mixer;

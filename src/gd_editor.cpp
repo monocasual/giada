@@ -39,6 +39,8 @@
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "mixer.h"
+#include "wave.h"
 
 
 extern Mixer         G_Mixer;
@@ -290,7 +292,7 @@ void gdEditor::__cb_normalize() {
 
 
 void gdEditor::__cb_panning() {
-	glue_setPanning(this, ch->index, pan->value());
+	glue_setPanning(this, ch, pan->value());
 }
 
 
@@ -308,7 +310,7 @@ void gdEditor::__cb_reload() {
 
 	glue_setBoost(this, ch->index, DEFAULT_BOOST, true);
 	glue_setPitch(this, ch, gDEFAULT_PITCH, true);
-	glue_setPanning(this, ch->index, 1.0f);
+	glue_setPanning(this, ch, 1.0f);
 	pan->value(1.0f);  // glue_setPanning doesn't do it
 	pan->redraw();     // glue_setPanning doesn't do it
 

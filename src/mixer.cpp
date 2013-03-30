@@ -156,7 +156,7 @@ channel *Mixer::addChannel(char side) {
 	ch->index = getNewIndex();
 	ch->side  = side;
 
-	printf("[mixer] channel added, total=%d\n", channels.size);
+	printf("[mixer] channel index=%d added, total=%d\n", ch->index, channels.size);
 
 	return ch;
 }
@@ -166,11 +166,18 @@ channel *Mixer::addChannel(char side) {
 
 
 int Mixer::getNewIndex() {
+
+	/* always skip last channel: it's the last one just added */
+
+	if (channels.size == 1)
+		return 0;
+
 	int index = 0;
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size-1; i++) {
 		if (channels.at(i)->index > index)
 			index = channels.at(i)->index;
-	index = index + 1;
+		}
+	index += 1;
 	return index;
 }
 
@@ -248,8 +255,8 @@ int Mixer::deleteChannel(channel *ch) {
 			pthread_mutex_unlock(&mutex_chans);
 			return 1;
 		}
-		else
-			puts("[mixer::deleteChannel] waiting for mutex...");
+		//else
+		//	puts("[mixer::deleteChannel] waiting for mutex...");
 	}
 }
 

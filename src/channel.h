@@ -30,6 +30,8 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
+#include "utils.h"
+
 
 struct channel {
 	class Wave *wave;

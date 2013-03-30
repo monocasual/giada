@@ -589,7 +589,7 @@ void gWaveform::openEditMenu() {
 	}
 
 	if (strcmp(m->label(), "Cut") == 0) {
-		wfx_cut(chan->index, absolutePoint(selectionA), absolutePoint(selectionB));
+		wfx_cut(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
 		/* for convenience reset start/end points */
 
@@ -612,7 +612,7 @@ void gWaveform::openEditMenu() {
 	}
 
 	if (strcmp(m->label(), "Trim") == 0) {
-		wfx_trim(chan->index, absolutePoint(selectionA), absolutePoint(selectionB));
+		wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
 		glue_setBeginEndChannel(
 			(gdEditor *) window(),

@@ -31,8 +31,7 @@
 #define WAVEFX_H
 
 #include <math.h>
-#include "wave.h"
-#include "mixer.h"
+
 
 /* normalizeSoft
  * normalize the wave by returning the dB value for the boost volume. It
@@ -44,8 +43,8 @@ bool wfx_monoToStereo(class Wave *w);
 
 void wfx_silence(class Wave *w, int a, int b);
 
-int wfx_cut(int ch, int a, int b);
+int wfx_cut(class Wave *w, int a, int b);
 
-int wfx_trim(int ch, int a, int b);
+int wfx_trim(class Wave *w, int a, int b);
 
 #endif

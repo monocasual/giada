@@ -687,28 +687,26 @@ void glue_setMute(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setPanning(class gdEditor *win, int ch, float val) {
-	channel *c = G_Mixer.channels.at(ch);
-
+void glue_setPanning(class gdEditor *win, channel *ch, float val) {
 	if (val < 1.0f) {
-		c->panLeft = 1.0f;
-		c->panRight= 0.0f + val;
+		ch->panLeft = 1.0f;
+		ch->panRight= 0.0f + val;
 
 		char buf[8];
-		sprintf(buf, "%d L", abs((c->panRight * 100.0f) - 100));
+		sprintf(buf, "%d L", abs((ch->panRight * 100.0f) - 100));
 		win->panNum->value(buf);
 	}
 	else if (val == 1.0f) {
-		c->panLeft = 1.0f;
-		c->panRight= 1.0f;
+		ch->panLeft = 1.0f;
+		ch->panRight= 1.0f;
 	  win->panNum->value("C");
 	}
 	else {
-		c->panLeft = 2.0f - val;
-		c->panRight= 1.0f;
+		ch->panLeft = 2.0f - val;
+		ch->panRight= 1.0f;
 
 		char buf[8];
-		sprintf(buf, "%d R", abs((c->panLeft * 100.0f) - 100));
+		sprintf(buf, "%d R", abs((ch->panLeft * 100.0f) - 100));
 		win->panNum->value(buf);
 	}
 	win->panNum->redraw();
