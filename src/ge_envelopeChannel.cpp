@@ -348,8 +348,8 @@ int gEnvelopeChannel::getSelectedPoint() {
 	/* point is a 7x7 dot */
 
 	for (unsigned i=0; i<points.size; i++) {
-		if (Fl::event_x() >= points.at(i).x+x()    &&
-				Fl::event_x() <= points.at(i).x+x()+7  &&
+		if (Fl::event_x() >= points.at(i).x+x()-4  &&
+				Fl::event_x() <= points.at(i).x+x()+4  &&
 				Fl::event_y() >= points.at(i).y+y()    &&
 				Fl::event_y() <= points.at(i).y+y()+7)
 		return i;
