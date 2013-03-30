@@ -557,7 +557,6 @@ int getNextAction(int chan, char type, int frame, action **out) {
 
 
 int getAction(int chan, char action, int frame, struct action **out) {
-	print();
 	for (unsigned i=0; i<global.size; i++)
 		for (unsigned j=0; j<global.at(i).size; j++)
 			if (frame  == global.at(i).at(j)->frame &&
