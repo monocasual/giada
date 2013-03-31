@@ -292,6 +292,7 @@ int gMuteChannel::handle(int e) {
 		}
 
 		case FL_RELEASE: {
+
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
@@ -314,11 +315,11 @@ int gMuteChannel::handle(int e) {
 					recorder::sortActions();
 
 					points.at(draggedPoint).frame = newFrame;
-
-					draggedPoint  = -1;
-					selectedPoint = -1;
 				}
 			}
+			draggedPoint  = -1;
+			selectedPoint = -1;
+
 			ret = 1;
 			break;
 		}
