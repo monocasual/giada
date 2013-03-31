@@ -52,7 +52,6 @@ extern PluginHost	 G_PluginHost;
 
 Patch 	        G_Patch;
 Conf		        G_Conf;
-unsigned        G_beats; /// FIXME ??? it's useless
 gdMainWindow   *mainWin;
 
 
@@ -69,7 +68,6 @@ void init_prepareParser() {
 
 
 void init_prepareKernelAudio() {
-	G_beats = 0;
 	kernelAudio::openDevice(
 		G_Conf.soundSystem,
 		G_Conf.soundDeviceOut,

@@ -182,6 +182,7 @@ public:
 	int framesPerBeat;
 	int totalFrames;
 	int actualFrame;
+	int actualBeat;
 
 #define TICKSIZE 38
 	static float tock[TICKSIZE];

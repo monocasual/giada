@@ -41,7 +41,6 @@
 
 
 extern Mixer 			 G_Mixer;
-extern unsigned 	 G_beats;
 extern Patch		 	 G_Patch;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
@@ -106,6 +105,8 @@ void Mixer::init() {
 	peakIn	     = 0.0f;
 	chanInput    = NULL;
 	inputTracker = 0;
+
+	actualBeat   = 0;
 
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
@@ -516,7 +517,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					if (ch->wave == NULL)
 						continue;
 
-					if (ch->mode & (LOOP_ONCE | LOOP_BASIC)) { // LOOP_REPEAT already done
+					if (ch->mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) { // LOOP_REPEAT already done
 
 						/* do a crossfade if the sample is playing. Regular chanReset
 						 * instead if it's muted, otherwise a click occurs */
@@ -597,10 +598,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			if (actualFrame > totalFrames) {
 				actualFrame = 0;
-				G_beats     = 0;
+				actualBeat  = 0;
 			}
 			else if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
-				G_beats++;
+				actualBeat++;
 
 				/* avoid tick and tock to overlap when a new bar has passed (which
 				 * is also a beat) */
@@ -886,7 +887,7 @@ bool Mixer::isSilent() {
 void Mixer::rewind() {
 
 	actualFrame = 0;
-	G_beats     = 0;
+	actualBeat  = 0;
 
 	if (running)
 		for (unsigned i=0; i<channels.size; i++) {

@@ -342,7 +342,7 @@ void gBeatMeter::draw() {
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);													      // border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);  						// bg
-	fl_rectf(x()+(G_beats*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
+	fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
 
 	/* beat cells */
 
