@@ -96,7 +96,10 @@ void gActionWidget::baseDraw() {
 
 	/* box and beat separator drawing */
 
-	for (int i=1; i<parent->totalWidth && !end; i++) {
+	int wx1 = abs(x() - parent->scroller->x());
+	int wx2 = wx1 + parent->scroller->w();
+
+	for (int i=wx1; i<wx2 && !end; i++) {
 		int step = parent->zoom*i;
 		while (j < step && j <= parent->totalFrames) {
 
