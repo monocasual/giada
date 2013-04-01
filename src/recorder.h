@@ -165,9 +165,10 @@ int getEndActionFrame(int chan, char action, int frame);
 
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
- * from 'frame'. Action can be a bitmask. */
+ * from 'frame'. Action can be a bitmask. If inclusive, search from
+ * [frame, else (frame. */
 
-int getNextAction(int chan, char action, int frame, struct action **out);
+int getNextAction(int chan, char action, int frame, struct action **out, bool inclusive=false);
 
 /* getAction
  * return a pointer to action in chan 'chan' of type 'action' at frame

@@ -527,15 +527,19 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out) {
+int getNextAction(int chan, char type, int frame, action **out, bool inclusive) {
 
 	sortActions();  // mandatory
 
-	/* looking for frame > 'frame' */
+	/* inclusive: looking for frame => 'frame'
+	 * not incl.: looking for frame >  'frame */
 
 	unsigned i=0;
-	while (i < frames.size && frames.at(i) <= frame)
-		i++;
+
+	if (inclusive)
+		while (i < frames.size && frames.at(i) < frame)	i++;
+	else
+		while (i < frames.size && frames.at(i) <= frame) i++;
 
 	if (i == frames.size)   // no further actions
 		return -1;
