@@ -88,13 +88,13 @@ bool canRec(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(int index, char act, int frame, int iValue, float fValue) {
+void rec(int index, char type, int frame, int iValue, float fValue) {
 
 	/* allocating the action */
 
 	action *a = (action*) malloc(sizeof(action));
 	a->chan   = index;
-	a->type   = act;
+	a->type   = type;
 	a->frame  = frame;
 	a->iValue = iValue;
 	a->fValue = fValue;
@@ -125,9 +125,16 @@ void rec(int index, char act, int frame, int iValue, float fValue) {
 
 		/* no duplicates, please */
 
-		for (unsigned t=0; t<global.at(frameToExpand).size; t++)
-			if (global.at(frameToExpand).at(t)->chan == index && global.at(frameToExpand).at(t)->type == act)
+		for (unsigned t=0; t<global.at(frameToExpand).size; t++) {
+			action *ac = global.at(frameToExpand).at(t);
+			if (ac->chan   == index  &&
+			    ac->type   == type   &&
+			    ac->frame  == frame  &&
+			    ac->iValue == iValue &&
+			    ac->fValue == fValue)
 				return;
+		}
+
 		global.at(frameToExpand).add(a);		// expand array
 	}
 
@@ -139,7 +146,7 @@ void rec(int index, char act, int frame, int iValue, float fValue) {
 
 	sortedActions = false;
 
-	printf("[REC] action %d recorded on frame %d, chan %d, iValue=%d, fValue=%f\n", act, frame, index, iValue, fValue);
+	printf("[REC] action %d recorded on frame %d, chan %d, iValue=%d, fValue=%f\n", type, frame, index, iValue, fValue);
 	//print();
 }
 
@@ -527,19 +534,12 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out, bool inclusive) {
+int getNextAction(int chan, char type, int frame, action **out) {
 
 	sortActions();  // mandatory
 
-	/* inclusive: looking for frame => 'frame'
-	 * not incl.: looking for frame >  'frame */
-
 	unsigned i=0;
-
-	if (inclusive)
-		while (i < frames.size && frames.at(i) < frame)	i++;
-	else
-		while (i < frames.size && frames.at(i) <= frame) i++;
+	while (i < frames.size && frames.at(i) <= frame) i++;
 
 	if (i == frames.size)   // no further actions
 		return -1;

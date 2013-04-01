@@ -168,7 +168,7 @@ int getEndActionFrame(int chan, char action, int frame);
  * from 'frame'. Action can be a bitmask. If inclusive, search from
  * [frame, else (frame. */
 
-int getNextAction(int chan, char action, int frame, struct action **out, bool inclusive=false);
+int getNextAction(int chan, char action, int frame, struct action **out);
 
 /* getAction
  * return a pointer to action in chan 'chan' of type 'action' at frame

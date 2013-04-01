@@ -625,14 +625,25 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 				if (ch->tracker <= channels.at(k)->end) {
 
-					/* ctrakcer is chanTracker, pitch affected */
+					/* ctp is chanTracker, pitch affected */
 
-					unsigned ctracker = ch->tracker * ch->pitch;
+					unsigned ctp = ch->tracker * ch->pitch;
 
 					/* fade in */
 
 					if (ch->fadein <= 1.0f)
 						ch->fadein += 0.01f;		/// FIXME - remove the hardcoded value
+
+					/* volume envelope, only if seq is running */
+
+					if (running) {
+						ch->volume_i += ch->volume_d;
+						if (ch->volume_i < 0.0f)
+							ch->volume_i = 0.0f;
+						else
+						if (ch->volume_i > 1.0f)
+							ch->volume_i = 1.0f;
+					}
 
 					/* fadeout process (both fadeout and xfade) */
 
@@ -641,19 +652,19 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 							if (ch->fadeoutType == XFADE) {
 
-								/* ftracker is fadeoutTracker affected by pitch */
+								/* ftp is fadeoutTracker affected by pitch */
 
-								unsigned ftracker = ch->fadeoutTracker * ch->pitch;
+								unsigned ftp = ch->fadeoutTracker * ch->pitch;
 
-								ch->vChan[j]   += ch->wave->data[ftracker]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ftracker+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+								ch->vChan[j]   += ch->wave->data[ftp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
 
-								ch->vChan[j]   += ch->wave->data[ctracker]   * ch->volume * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ctracker+1] * ch->volume * ch->boost * ch->panRight;
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->boost * ch->panLeft;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->boost * ch->panRight;
 							}
 							else { // FADEOUT
-								ch->vChan[j]   += ch->wave->data[ctracker]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ctracker+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
 							}
 
 							ch->fadeoutVol     -= ch->fadeoutStep;
@@ -687,20 +698,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					}  // no fadeout to do
 					else {
 						if (!ch->mute && !ch->mute_i) {
-
-							/* volume envelope */
-
-							if (running) {
-								ch->volume_i += ch->volume_d;
-								if (ch->volume_i < 0.0f)
-									ch->volume_i = 0.0f;
-								else
-								if (ch->volume_i > 1.0f)
-									ch->volume_i = 1.0f;
-							}
 							float v = ch->volume * ch->volume_i * ch->fadein * ch->boost;
-							ch->vChan[j]   += ch->wave->data[ctracker]   * v * ch->panLeft;
-							ch->vChan[j+1] += ch->wave->data[ctracker+1] * v * ch->panRight;
+							ch->vChan[j]   += ch->wave->data[ctp]   * v * ch->panLeft;
+							ch->vChan[j+1] += ch->wave->data[ctp+1] * v * ch->panRight;
 						}
 					}
 
