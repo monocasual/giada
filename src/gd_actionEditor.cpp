@@ -156,10 +156,19 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 
 
 void gdActionEditor::__cb_zoomIn() {
-	if (zoom == 1)
+	if (zoom <= 8)
 		return;
 	zoom /= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
+
+	/* FLTK 1.3.x doesn't seem to support widget width > 16 bit signed
+	 * (32767 max) */
+
+	if (totalWidth > 32767) {
+		totalWidth = 32760;
+		zoom = (int) ceilf(totalFrames / (float) totalWidth);
+	}
+
 	ac->updateActions();
 	mc->updatePoints();
 	vc->updatePoints();
@@ -172,8 +181,6 @@ void gdActionEditor::__cb_zoomIn() {
 
 
 void gdActionEditor::__cb_zoomOut() {
-	if (zoom >= 3200)
-		return;
 	zoom *= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 	ac->updateActions();

@@ -82,7 +82,6 @@ void gActionWidget::baseDraw() {
 	else
 		wantHidden = true;
 
-
 	/* grid drawing, if > 1 */
 
 	if (parent->gridTool->getValue() > 1) {

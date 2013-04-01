@@ -86,19 +86,29 @@ class gEnvelopeChannel : public gActionWidget {
 
 	void sortPoints();
 
+	/* verticalPoint
+	 * check if two points form a vertical line. In that case the frame value
+	 * would be the same and recorder would go crazy, so shift by a small value
+	 * of frames to create a minimal fadein/fadeout level. Return 0: no
+	 * vertical points; return 1: vertical with the next one, return -1: vertical
+	 * with the previous one. */
+
+	int verticalPoint(const point &p);
+
 public:
 	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range, const char *l);
 	~gEnvelopeChannel();
 
 	/* addPoint
-	 * add a point made of frame+value to points[]. This class, being general,
-	 * doesn't query recorder or any other stacks for the actions. It's up
-	 * to the caller to fill points[] with this method. An external caller
-	 * can skip x and y, computed internally. */
+	 * add a point made of frame+value to internal points[]. */
 
 	void addPoint(int frame, int iValue=0, float fValue=0.0f, int x=-1, int y=-1);
 
 	void updatePoints();
+
+	/* fill
+	 * parse recorder's stack and fill the widget with points. It's up to
+	 * the caller to call this method as initialization. */
 
 	void fill();
 

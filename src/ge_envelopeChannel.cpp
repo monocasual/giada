@@ -69,19 +69,6 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 	p.fValue = fValue;
 	p.x = px;
 	p.y = py;
-
-	/* addPoint called externally, without x and y coordinates */
-
-	/** useless */
-	if (px == -1) {
-		p.x = (p.frame / parent->zoom);
-		if (range == RANGE_CHAR)
-			p.y = p.iValue / h();                   /// CHECK
-		else
-			p.y = ((1 - h() - 8) * fValue) + h() - 8;    // line between 2 points
-	}
-	/** useless */
-
 	points.add(p);
 }
 
@@ -188,9 +175,11 @@ int gEnvelopeChannel::handle(int e) {
 					draggedPoint = selectedPoint;
 				}
 				else {
-					int frame = mx * parent->zoom;
 
-					if (my > h()-8) my = h()-8;   // bottom fix
+					/* top & border fix */
+
+					if (my > h()-8) my = h()-8;
+					if (mx > parent->coverX-x()) mx = parent->coverX-x();
 
 					/* if this is the first point ever, add other two points at the beginning
 					 * and the end of the range */
@@ -204,10 +193,9 @@ int gEnvelopeChannel::handle(int e) {
 							recorder::rec(parent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
 
-						/* line between 2 points y = (x-a) / (b-a)
-						 * a = h() - 8
-						 * b = 1 */
+						/* line between 2 points y = (x-a) / (b-a); a = h() - 8; b = 1 */
 
+						int frame   = mx * parent->zoom;
 						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
 						recorder::rec(parent->chan->index, type, frame, 0, value);
@@ -251,9 +239,6 @@ int gEnvelopeChannel::handle(int e) {
 					puts("nothing to do");
 				}
 				else {
-
-					/*  delete previous point and record a new one */
-
 					int newFrame = points.at(draggedPoint).x * parent->zoom;
 
 					/* x edge correction */
@@ -262,6 +247,14 @@ int gEnvelopeChannel::handle(int e) {
 						newFrame = 0;
 					else if (newFrame > G_Mixer.totalFrames)
 						newFrame = G_Mixer.totalFrames;
+
+					/* vertical line check */
+
+					int vp = verticalPoint(points.at(draggedPoint));
+					if (vp == 1) 			 newFrame -= 256;
+					else if (vp == -1) newFrame += 256;
+
+					/*  delete previous point and record a new one */
 
 					recorder::deleteAction(parent->chan->index,	points.at(draggedPoint).frame, type);
 
@@ -326,6 +319,28 @@ int gEnvelopeChannel::handle(int e) {
 	}
 
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gEnvelopeChannel::verticalPoint(const point &p) {
+	for (unsigned i=0; i<points.size; i++) {
+		if (&p == &points.at(i)) {
+			if (i == 0 || i == points.size-1)  // first or last point
+				return 0;
+			else {
+				if (points.at(i-1).x == p.x)    // vertical with point[i-1]
+					return -1;
+				else
+				if (points.at(i+1).x == p.x)    // vertical with point[i+1]
+					return 1;
+			}
+			break;
+		}
+	}
+	return 0;
 }
 
 
