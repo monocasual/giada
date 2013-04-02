@@ -307,8 +307,14 @@ int gEnvelopeChannel::handle(int e) {
 					else
 					if (mx >= nextPoint)
 						points.at(draggedPoint).x = nextPoint;
-					else
-						points.at(draggedPoint).x = mx;
+					//else
+					//	points.at(draggedPoint).x = mx;
+					else {
+						if (parent->gridTool->isOn())
+							points.at(draggedPoint).x = parent->gridTool->getSnapPoint(mx)-1;
+						else
+							points.at(draggedPoint).x = mx;
+					}
 				}
 				redraw();
 			}
