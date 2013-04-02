@@ -183,6 +183,12 @@ void gdActionEditor::__cb_zoomIn() {
 void gdActionEditor::__cb_zoomOut() {
 	zoom *= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
+
+	if (totalWidth < scroller->w()) {
+		totalWidth = scroller->w();
+		zoom = (int) ceilf(totalFrames / (float) totalWidth);
+	}
+
 	ac->updateActions();
 	mc->updatePoints();
 	vc->updatePoints();
