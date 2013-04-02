@@ -560,7 +560,7 @@ void gWaveform::openEditMenu() {
 		selectionA = 0;
 		selectionB = 0;
 
-		alloc();
+		stretchToWindow();
 		redraw();
 		menuOpen = false;
 		return;
