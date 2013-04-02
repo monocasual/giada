@@ -353,6 +353,16 @@ void updateBpm(float oldval, float newval, int oldquanto) {
 		if (frames.at(i) % 2 != 0)
 			frames.at(i)++;
 	}
+
+	/* update structs */
+
+	for (unsigned i=0; i<frames.size; i++) {
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			a->frame = frames.at(i);
+		}
+	}
+
 	//print();
 }
 
@@ -384,6 +394,15 @@ void updateSamplerate(int systemRate, int patchRate) {
 			frames.at(i)++;
 
 		printf(", newFrame = %d\n", frames.at(i));
+	}
+
+	/* update structs */
+
+	for (unsigned i=0; i<frames.size; i++) {
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			a->frame = frames.at(i);
+		}
 	}
 }
 

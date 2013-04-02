@@ -187,18 +187,18 @@ void gChannel::__cb_openChanMenu() {
 	 * widget asap */
 
 	Fl_Menu_Item rclick_menu[] = {
-		{"Load new sample..."},
-		{"Export sample to file..."},
-		{"Set key..."},
-		{"Edit sample..."},
-		{"Edit actions..."},
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},
-			{"All"},
-			{"Mute"},
-			{"Start/Stop"},
-			{0},
-		{"Free channel"},
-		{"Delete channel"},
+		{"Load new sample..."},                     // 0
+		{"Export sample to file..."},               // 1
+		{"Set key..."},                             // 2
+		{"Edit sample..."},                         // 3
+		{"Edit actions..."},                        // 4
+		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 5
+			{"All"},                                  // 6
+			{"Mute"},                                 // 7
+			{"Start/Stop"},                           // 8
+			{0},                                      // 9
+		{"Free channel"},                           // 10
+		{"Delete channel"},                         // 11
 		{0}
 	};
 
@@ -214,13 +214,11 @@ void gChannel::__cb_openChanMenu() {
 	if (!ch->hasActions)
 		rclick_menu[5].deactivate();
 
-	/* no 'clear all actions' or 'clear start/stop actions' for those channels
-	 * in loop mode: they can only have mute actions. */
+	/* no 'clear start/stop actions' for those channels in loop mode:
+	 * they cannot have start/stop actions. */
 
-	if (ch->mode & LOOP_ANY) {
-		rclick_menu[6].deactivate();
-		rclick_menu[7].deactivate();
-	}
+	if (ch->mode & LOOP_ANY)
+		rclick_menu[8].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);
