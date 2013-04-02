@@ -195,10 +195,11 @@ void gChannel::__cb_openChanMenu() {
 		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 5
 			{"All"},                                  // 6
 			{"Mute"},                                 // 7
-			{"Start/Stop"},                           // 8
-			{0},                                      // 9
-		{"Free channel"},                           // 10
-		{"Delete channel"},                         // 11
+			{"Volume"},                               // 8
+			{"Start/Stop"},                           // 9
+			{0},                                      // 10
+		{"Free channel"},                           // 11
+		{"Delete channel"},                         // 12
 		{0}
 	};
 
@@ -206,7 +207,7 @@ void gChannel::__cb_openChanMenu() {
 		rclick_menu[1].deactivate();
 		rclick_menu[3].deactivate();
 		rclick_menu[4].deactivate();
-		rclick_menu[10].deactivate();
+		rclick_menu[11].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
@@ -218,7 +219,7 @@ void gChannel::__cb_openChanMenu() {
 	 * they cannot have start/stop actions. */
 
 	if (ch->mode & LOOP_ANY)
-		rclick_menu[8].deactivate();
+		rclick_menu[9].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);
@@ -293,6 +294,16 @@ void gChannel::__cb_openChanMenu() {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
 		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+		if (!ch->hasActions)
+			remActionButton();
+		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+		return;
+	}
+
+	if (strcmp(m->label(), "Volume") == 0) {
+		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
+			return;
+		recorder::clearAction(ch->index, ACTION_VOLUME);
 		if (!ch->hasActions)
 			remActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
