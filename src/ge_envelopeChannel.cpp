@@ -384,7 +384,6 @@ int gEnvelopeChannel::getSelectedPoint() {
 
 void gEnvelopeChannel::fill() {
 	points.clear();
-	puts("fill");
 	for (unsigned i=0; i<recorder::global.size; i++)
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
 			recorder::action *a = recorder::global.at(i).at(j);

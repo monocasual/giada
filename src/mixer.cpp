@@ -650,21 +650,33 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					if (ch->fadeoutOn) {
 						if (ch->fadeoutVol >= 0.0f) { // fadeout ongoing
 
+							float v = ch->volume * ch->volume_i * ch->boost;
+
 							if (ch->fadeoutType == XFADE) {
 
 								/* ftp is fadeoutTracker affected by pitch */
 
 								unsigned ftp = ch->fadeoutTracker * ch->pitch;
 
-								ch->vChan[j]   += ch->wave->data[ftp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+								///ch->vChan[j]   += ch->wave->data[ftp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
 
-								ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->boost * ch->panRight;
+								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->boost * ch->panRight;
+
+								ch->vChan[j]   += ch->wave->data[ftp]   * ch->fadeoutVol * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->fadeoutVol * ch->panRight * v;
+
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->panRight * v;
+
 							}
 							else { // FADEOUT
-								ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->fadeoutVol * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->fadeoutVol * ch->panRight * v;
 							}
 
 							ch->fadeoutVol     -= ch->fadeoutStep;
@@ -1076,12 +1088,10 @@ void Mixer::calcVolumeEnv(struct channel *ch, int frame) {
 
 	/* res == -2 ACTION_VOLUME not found. This should never happen */
 
-	/*
-	if (res == -2)
-		puts("[mixer::calcVolumeEnv] WARNING: action1 as ACTION_VOLUME not found!");
-	else
-		printf("[mixer::calcVolumeEnv] a1 found, at frame %d value=%f\n", a1->frame, a1->fValue);
-	*/
+	//if (res == -2)
+	//	puts("[mixer::calcVolumeEnv] WARNING: action1 as ACTION_VOLUME not found!");
+	//else
+	//	printf("[mixer::calcVolumeEnv] a1 found, at frame %d value=%f\n", a1->frame, a1->fValue);
 
 	ch->volume_i = a0->fValue;
 	ch->volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
