@@ -786,8 +786,11 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 		/* update the new samplePath: everything now comes from the project folder */
 
 		char samplePath[PATH_MAX];
+#if defined(_WIN32)
+		sprintf(samplePath, "%s\%s.wav", folderPath, c->wave->name.c_str());
+#else
 		sprintf(samplePath, "%s/%s.wav", folderPath, c->wave->name.c_str());
-
+#endif
 		/* remove any existing file */
 
 		if (gFileExists(samplePath))
@@ -798,7 +801,11 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 
 	std::string projNameClean = stripExt(projName);
 	char gptcPath[PATH_MAX];
+#if defined(_WIN32)
+	sprintf(gptcPath, "%s\%s.gptc", folderPath, projNameClean.c_str());
+#else
 	sprintf(gptcPath, "%s/%s.gptc", folderPath, projNameClean.c_str());
+#endif
 	glue_savePatch(gptcPath, projName);
 
 	return 1;
