@@ -365,7 +365,11 @@ void gdBrowser::__cb_save_project() {
 		ext[0] = '\0';
 
 	char fullpath[PATH_MAX];
+#if defined(_WIN32)
+	sprintf(fullpath, "%s\\%s%s", where->value(), name->value(), ext);
+#else
 	sprintf(fullpath, "%s/%s%s", where->value(), name->value(), ext);
+#endif
 
 	if (gIsProject(fullpath) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
