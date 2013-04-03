@@ -787,7 +787,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 
 		char samplePath[PATH_MAX];
 #if defined(_WIN32)
-		sprintf(samplePath, "%s\%s.wav", folderPath, c->wave->name.c_str());
+		sprintf(samplePath, "%s\\%s.wav", folderPath, c->wave->name.c_str());
 #else
 		sprintf(samplePath, "%s/%s.wav", folderPath, c->wave->name.c_str());
 #endif
@@ -802,7 +802,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 	std::string projNameClean = stripExt(projName);
 	char gptcPath[PATH_MAX];
 #if defined(_WIN32)
-	sprintf(gptcPath, "%s\%s.gptc", folderPath, projNameClean.c_str());
+	sprintf(gptcPath, "%s\\%s.gptc", folderPath, projNameClean.c_str());
 #else
 	sprintf(gptcPath, "%s/%s.gptc", folderPath, projNameClean.c_str());
 #endif
