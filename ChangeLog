@@ -13,6 +13,17 @@
 
 
 
+0.6.2 --- 2013 . 04 . 05
+- New volume envelope widget
+- Zoom with mouse wheel in the action editor
+- Graphical enhancements & speedups for the action editor
+- Loop-repeat doesn't stop when put in ending mode (fixed)
+- Fix draw errors when zooming too much the action editor
+- Set silence in wave editor messes up the waveform (fixed)
+- Wrong slashes in file path when saving a patch in Windows (fixed)
+- Many, many code improvements and bugs fixed
+
+
 0.6.1 --- 2013 . 03 . 21
 - Unlimited number of channels
 - Deep internal refactoring, mixer/GUI layers
