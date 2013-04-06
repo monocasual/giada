@@ -31,19 +31,21 @@
 #include "gd_actionEditor.h"
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
+#include "ge_envelopeChannel.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
 #include "conf.h"
 #include "ge_mixed.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;
 extern Conf	 G_Conf;
 
 
-gdActionEditor::gdActionEditor(int chan)
-: gWindow(640, 176), chan(chan), zoom(100)
+gdActionEditor::gdActionEditor(channel *chan)
+: gWindow(640, 284), chan(chan), zoom(100)
 {
 
 	if (G_Conf.actionEditorW) {
@@ -60,8 +62,8 @@ gdActionEditor::gdActionEditor(int chan)
 
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
-	  actionType = new gChoice(104, 8, 80, 20);
-	  gridTool   = new gGridTool(192, 8, this);
+	  actionType = new gChoice(8, 8, 80, 20);
+	  gridTool   = new gGridTool(actionType->x()+actionType->w()+4, 8, this);
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
@@ -76,63 +78,55 @@ gdActionEditor::gdActionEditor(int chan)
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
 	gridTool->calc();
 
-	if (G_Mixer.chanMode[chan] == SINGLE_PRESS || G_Mixer.chanMode[chan] & LOOP_ANY)
+	if (chan->mode == SINGLE_PRESS ||
+			chan->mode & LOOP_ANY)
 		actionType->deactivate();
 
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
 
-	/* side boxes with text infos for the channel (actions, mute, ...)
-	 * Even here we need the padding box trick, otherwise when you enlarge
-	 * the window vertically, text boxes strech. */
-
-	Fl_Group *texts = new Fl_Group(8, 36, 92, 160);
-		gBox *txtActions = new gBox(8, 36,  92, 20, "Actions");
-		gBox *txtMutes   = new gBox(8, 80,  92, 20, "Mute");
-		gBox *txtDist    = new gBox(8, 100, 92, 20);  // pading border - buttons
-
-		txtActions->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		txtMutes  ->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-
-		if (G_Mixer.chanMode[chan] & LOOP_ANY) {
-			gBox *txtDisabled = new gBox(8, 48, 92, 20, "disabled");
-			txtDisabled->labelsize(9);
-			txtDisabled->labelcolor(COLOR_BD_0);
-			txtDisabled->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		}
-	texts->end();
-	texts->resizable(txtDist);
-
 	/* main scroller: contains all widgets */
 
-	scroller = new Fl_Scroll(104, 36, this->w()-112, this->h()-44);
+	scroller = new Fl_Scroll(8, 36, this->w()-16, this->h()-44);
 	scroller->type(Fl_Scroll::HORIZONTAL);
 	scroller->hscrollbar.color(COLOR_BG_0);
 	scroller->hscrollbar.selection_color(COLOR_BG_1);
 	scroller->hscrollbar.labelcolor(COLOR_BD_1);
 	scroller->hscrollbar.slider(G_BOX);
 
+	/*
 	scroller->begin();
 		ac = new gActionChannel(scroller->x(), 36, this);
 		mc = new gMuteChannel  (scroller->x(), 84, this);
 	scroller->end();
+	*/
+	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
+	vc = new gEnvelopeChannel(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+	scroller->add(ac);
+	scroller->add(mc);
+	scroller->add(vc);
 
 	end();
+
+	/* fill volume envelope with actions from recorder */
+
+	vc->fill();
 
 	/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
 	 * hold keypress/keyrelease actions */
 
-	if (G_Mixer.chanMode[chan] & LOOP_ANY)
+	if (chan->mode & LOOP_ANY)
 		ac->deactivate();
 
 	gu_setFavicon(this);
 
 	char buf[256];
-	sprintf(buf, "Edit Actions in Channel %d", chan+1);
+	sprintf(buf, "Edit Actions in Channel %d", chan->index+1);
 	label(buf);
 
 	set_non_modal();
-	size_range(640, 176);
+	size_range(640, 284);
 	resizable(scroller);
 
 	show();
@@ -162,12 +156,22 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 
 
 void gdActionEditor::__cb_zoomIn() {
-	if (zoom == 1)
+	if (zoom <= 8)
 		return;
 	zoom /= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
+
+	/* FLTK 1.3.x doesn't seem to support widget width > 16 bit signed
+	 * (32767 max) */
+
+	if (totalWidth > 32767) {
+		totalWidth = 32760;
+		zoom = (int) ceilf(totalFrames / (float) totalWidth);
+	}
+
 	ac->updateActions();
 	mc->updatePoints();
+	vc->updatePoints();
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -177,12 +181,17 @@ void gdActionEditor::__cb_zoomIn() {
 
 
 void gdActionEditor::__cb_zoomOut() {
-	if (zoom >= 3200)
-		return;
 	zoom *= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
+
+	if (totalWidth < scroller->w()) {
+		totalWidth = scroller->w();
+		zoom = (int) ceilf(totalFrames / (float) totalWidth);
+	}
+
 	ac->updateActions();
 	mc->updatePoints();
+	vc->updatePoints();
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -198,6 +207,23 @@ void gdActionEditor::calc() {
 	totalFrames    = framesPerBeat * MAX_BEATS;
 	beatWidth      = framesPerBeat / zoom;
 	totalWidth     = (int) ceilf(totalFrames / (float) zoom);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gdActionEditor::handle(int e) {
+	int ret = Fl_Group::handle(e);
+	switch (e) {
+		case FL_MOUSEWHEEL: {
+			if (Fl::event_dy() == -1) __cb_zoomIn();
+			else __cb_zoomOut();
+			ret = 1;
+			break;
+		}
+	}
+	return ret;
 }
 
 

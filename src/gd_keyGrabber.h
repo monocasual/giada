@@ -38,12 +38,11 @@
 class gdKeyGrabber : public Fl_Window {
 private:
 	class gBox     *text;
-	class gdConfig *w;     // parent window for refresh when done
-	int	ch;
+	//class gdConfig *w;     // parent window for refresh when done
+	struct channel *ch;
 
 public:
-	gdKeyGrabber(int ch, gdConfig *w);
-	~gdKeyGrabber();
+	gdKeyGrabber(struct channel *ch);
 	int handle(int e);
 };
 

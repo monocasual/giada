@@ -36,6 +36,7 @@
 #include "gd_mainWindow.h"
 #include "recorder.h"
 #include "wave.h"
+#include "channel.h"
 
 
 extern Mixer 	       G_Mixer;
@@ -59,40 +60,52 @@ void gu_refresh() {
 
 	/* update channels */
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-
-		if (G_Mixer.chan[i] == NULL)
-			continue;
-
-		if (G_Mixer.chanStatus[i] == STATUS_OFF) {
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_0;
-			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_0;
-			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
-		}
-
-		if (G_Mixer.chanStatus[i] & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_2;
-			mainWin->keyboard->sampleButton[i]->bdColor  = COLOR_BD_1;
-			mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_1;
-		}
-
-		if (G_Mixer.chanInput == (int) i)
-			mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_3;
-
-		if (recorder::active)
-			if (recorder::canRec(i)) {
-				mainWin->keyboard->sampleButton[i]->bgColor0 = COLOR_BG_4;
-				mainWin->keyboard->sampleButton[i]->txtColor = COLOR_TEXT_0;
-			}
-
-		mainWin->keyboard->sampleButton[i]->redraw();
-		mainWin->keyboard->status[i]->redraw();
-	}
+	__gu_refreshColumn(mainWin->keyboard->gChannelsL);
+	__gu_refreshColumn(mainWin->keyboard->gChannelsR);
 
 	/* redraw GUI */
 
 	Fl::unlock();
 	Fl::awake();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void __gu_refreshColumn(Fl_Group *col) {
+	for (int i=0; i<col->children(); i++) {
+
+		gChannel *gch = (gChannel *) col->child(i);
+
+		if (gch->ch->wave == NULL)
+			continue;
+
+		if (gch->ch->status == STATUS_OFF) {
+			gch->sampleButton->bgColor0 = COLOR_BG_0;
+			gch->sampleButton->bdColor  = COLOR_BD_0;
+			gch->sampleButton->txtColor = COLOR_TEXT_0;
+		}
+		else
+		if (gch->ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
+			gch->sampleButton->bgColor0 = COLOR_BG_2;
+			gch->sampleButton->bdColor  = COLOR_BD_1;
+			gch->sampleButton->txtColor = COLOR_TEXT_1;
+		}
+
+		if (G_Mixer.chanInput == gch->ch)
+			gch->sampleButton->bgColor0 = COLOR_BG_3;
+
+
+		if (recorder::active)
+			if (recorder::canRec(gch->ch)) {
+				gch->sampleButton->bgColor0 = COLOR_BG_4;
+				gch->sampleButton->txtColor = COLOR_TEXT_0;
+			}
+
+		gch->sampleButton->redraw();
+		gch->status->redraw();
+	}
 }
 
 
@@ -120,45 +133,54 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 
 void gu_update_controls() {
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
 		/* update status box and sampleButton */
 
-		gu_resetChannel(i);
+		channel *ch = G_Mixer.channels.at(i);
+		ch->guiChannel->reset();
 
-		switch (G_Mixer.chanStatus[i]) {
+		/** FIXME - move this to gChannel */
+
+		switch (ch->status) {
 			case STATUS_EMPTY:
-				mainWin->keyboard->sampleButton[i]->label("-- no sample --");
+				ch->guiChannel->sampleButton->label("-- no sample --");
 				break;
 			case STATUS_MISSING:
 			case STATUS_WRONG:
-				mainWin->keyboard->sampleButton[i]->label("* file not found! *");
+				ch->guiChannel->sampleButton->label("* file not found! *");
 				break;
 			default:
-				gu_trim_label(G_Mixer.chan[i]->name.c_str(), 28, mainWin->keyboard->sampleButton[i]);
+				gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 				break;
 		}
 
-		mainWin->keyboard->sampleButton[i]->redraw();
+		char k[4];
+		sprintf(k, "%c", ch->key);
+		ch->guiChannel->button->copy_label(k);
+		ch->guiChannel->button->redraw();
+
+		ch->guiChannel->sampleButton->redraw();
 
 		/* update volumes+mute */
 
-		mainWin->keyboard->vol[i]->value(G_Mixer.chanVolume[i]);
-		mainWin->keyboard->mute[i]->value(G_Mixer.chanMute[i]);
+		ch->guiChannel->vol->value(ch->volume);
+		ch->guiChannel->mute->value(ch->mute);
 
 		/* updates modebox */
 
-		mainWin->keyboard->modeBoxes[i]->value(G_Mixer.chanMode[i]);
-		mainWin->keyboard->modeBoxes[i]->redraw();
+		ch->guiChannel->modeBox->value(ch->mode);
+		ch->guiChannel->modeBox->redraw();
 
-		/* upate channels. If you load a patch with recorded actions, the 'R'
+		/* update channels. If you load a patch with recorded actions, the 'R'
 		 * button must be shown. Moreover if the actions are active, the 'R'
 		 * button must be activated accordingly. */
 
-		if (recorder::chanEvents[i])
-			mainWin->keyboard->addActionButton(i, recorder::chanActive[i]);
+		if (ch->hasActions)
+			ch->guiChannel->addActionButton(ch->readActions);
 		else
-			mainWin->keyboard->remActionButton(i);
+			ch->guiChannel->remActionButton();
 	}
 
 	mainWin->outVol->value(G_Mixer.outVol);
@@ -204,20 +226,6 @@ void gu_update_win_label(const char *c) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_resetChannel(int c) {
-	mainWin->keyboard->sampleButton[c]->bgColor0 = COLOR_BG_0;
-	mainWin->keyboard->sampleButton[c]->bdColor  = COLOR_BD_0;
-	mainWin->keyboard->sampleButton[c]->txtColor = COLOR_TEXT_0;
-	mainWin->keyboard->sampleButton[c]->label("-- no sample --");
-	mainWin->keyboard->remActionButton(c);
-	mainWin->keyboard->sampleButton[c]->redraw();
-	mainWin->keyboard->status[c]->redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void gu_setFavicon(Fl_Window *w) {
 #if defined(__linux__)
 	fl_open_display();
@@ -254,11 +262,11 @@ void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
 
 void gu_refreshActionEditor() {
 
-	/** FIXME - why don't we simply call WID_ACTION_EDITOR->redraw()? */
+	/** TODO - why don't we simply call WID_ACTION_EDITOR->redraw()? */
 
 	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
-		int chan = aeditor->chan;
+		channel *chan = aeditor->chan;
 		mainWin->delSubWindow(WID_ACTION_EDITOR);
 		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
 	}

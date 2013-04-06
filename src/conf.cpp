@@ -152,9 +152,11 @@ void Conf::setDefault() {
 	actionEditorGridOn  = false;
 	actionEditorGridVal = 1;
 
+	/**
 	int arkeys[MAX_NUM_CHAN] = DEFAULT_KEY_ARRAY;
 	for (int i=0; i<MAX_NUM_CHAN; i++)
 		keys[i] = arkeys[i];
+	*/
 }
 
 
@@ -272,11 +274,13 @@ int Conf::read() {
 	strncpy(samplePath, p.c_str(), p.size());
 	samplePath[p.size()] = '\0';	// strncpy doesn't add '\0'
 
+	/**
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
 		char tmp[16];
 		sprintf(tmp, "keys%d", i);
 		keys[i] = atoi(getValue(tmp).c_str());
 	}
+	*/
 
 	recsStopOnChanHalt = atoi(getValue("recsStopOnChanHalt").c_str());
 	chansStopOnSeqHalt = atoi(getValue("chansStopOnSeqHalt").c_str());
@@ -347,8 +351,10 @@ int Conf::write() {
 	fprintf(fp, "aboutX=%d\n", aboutX);
 	fprintf(fp, "aboutY=%d\n", aboutY);
 
+	/**
 	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
 		fprintf(fp, "keys%d=%d\n", i, keys[i]);
+	*/
 
 	fprintf(fp, "recsStopOnChanHalt=%d\n", recsStopOnChanHalt);
 	fprintf(fp, "chansStopOnSeqHalt=%d\n", chansStopOnSeqHalt);

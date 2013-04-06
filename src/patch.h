@@ -44,26 +44,31 @@ private:
 
 public:
 
-	char name[MAX_PATCHNAME_LEN];
-	int  lastTakeId;
-	int  samplerate;
+	char  name[MAX_PATCHNAME_LEN];
+	float version;
+	int   lastTakeId;
+	int   samplerate;
 
 	int         open(const char *file);
 	void        setDefault();
 	int         close();
 
 	void				getName();
-	std::string getSamplePath(int chan);
-	float       getVol       (int chan);
-	int         getMode      (int chan);
-	int         getMute      (int chan);
-	int         getStart     (int chan);
-	int         getEnd       (int chan, unsigned sampleSize);
-	float       getBoost     (int chan);
-	float       getPanLeft   (int chan);
-	float       getPanRight  (int chan);
-	float       getPitch     (int chan);
-	bool        getRecActive (int chan);
+	int         getNumChans  ();
+	std::string getSamplePath(int i);
+	float       getVol       (int i);
+	int         getMode      (int i);
+	int         getMute      (int i);
+	int         getStart     (int i);
+	int         getEnd       (int i, unsigned sampleSize);
+	float       getBoost     (int i);
+	float       getPanLeft   (int i);
+	float       getPanRight  (int i);
+	float       getPitch     (int i);
+	bool        getRecActive (int i);
+	char        getSide      (int i);
+	int         getIndex     (int i);
+	int         getKey       (int i);
 	float       getOutVol    ();
 	float       getInVol     ();
 	float       getBpm       ();

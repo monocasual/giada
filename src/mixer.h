@@ -34,6 +34,7 @@
 #include <pthread.h>
 #include "const.h"
 #include "kernelAudio.h"
+#include "utils.h"
 
 
 class Mixer {
@@ -44,29 +45,40 @@ public:
 	void init();
 	int  close();
 
-	void loadWave(class Wave *w, int chan);
-	void freeWave(int chan);
+	/* addChannel
+	 * add a new channel without any wave inside of it. */
 
-	void chanStop(int chan);
-	void chanReset(int chan);
+	struct channel *addChannel(char side);
+
+	int  deleteChannel(struct channel *ch);
+	void initChannel(struct channel *ch);
+	void freeChannel(struct channel *ch);
+
+	/* pushChannel
+	 * add a new wave to an existing channel. */
+
+	void pushChannel(class Wave *w, struct channel *ch);
+
+	void chanStop(struct channel *ch);
+	void chanReset(struct channel *ch);
 
 	/* fadein
 	 * prepare for fade-in process. */
 
-	void fadein(int chan, bool internal);
+	void fadein(channel *ch, bool internal);
 
 	/* fadeout
 	 * do a fadeout and eventually another action when finished. */
 
-	void fadeout(int chan, int actionPostFadeout=DO_STOP);
+	void fadeout(channel *ch, int actionPostFadeout=DO_STOP);
 
-	void xfade(int chan);
+	void xfade(struct channel *ch);
 
 	/* getChanPos
 	 * returns the position of an active sample. If EMPTY o MISSING
 	 * returns -1. */
 
-	int getChanPos(int chan);
+	int getChanPos(struct channel *ch);
 
 	/* masterPlay
 	 * core method (callback) */
@@ -90,7 +102,7 @@ public:
 	/* isPlaying
 	 * is channel playing? */
 
-	bool isPlaying(int chan);
+	bool isPlaying(struct channel *ch);
 
 	void rewind();
 
@@ -112,16 +124,22 @@ public:
 	/* updatePitch
 	 * updates the pitch value and chanStart+chanEnd accordingly */
 
-	void setPitch(int chan, float val);
+	void setPitch(struct channel *ch, float val);
 
-	void setChanStart(int chan, unsigned val);
-	void setChanEnd  (int chan, unsigned val);
+	void setChanStart(struct channel *ch, unsigned val);
+	void setChanEnd  (struct channel *ch, unsigned val);
 
 	/* mergeVirtualInput
 	 * memcpy the virtual channel input in the channel designed for input
 	 * recording. Called by mixerHandler on stopInputRec() */
 
 	bool mergeVirtualInput();
+
+	int getChannelIndex(struct channel *ch);
+
+	channel *getChannelByIndex(int i);
+
+	inline channel* getLastChannel() { return channels.at(channels.size-1); }
 
 
 	/* ---------------------------------------------------------------- */
@@ -138,37 +156,12 @@ public:
 		XFADE   = 0x02
 	};
 
+	gVector<channel*> channels;
+
 	bool   running;
-	float *vChanInput;                    // virtual channel for recording
-	float *vChanInToOut;                  // virtual channel in->out bridge (hear what you're playin)
-	Wave  *chan          [MAX_NUM_CHAN];
-	float *vChan				 [MAX_NUM_CHAN];	// virtual channel
-	int    chanStatus    [MAX_NUM_CHAN];	// status: see const.h
-	int    chanTracker   [MAX_NUM_CHAN];  // chan position
-	int    chanStart     [MAX_NUM_CHAN];
-	int    chanEnd       [MAX_NUM_CHAN];
-	int    chanStartTrue [MAX_NUM_CHAN];	// chanStart NOT pitch affected
-	int    chanEndTrue   [MAX_NUM_CHAN];	// chanend   NOT pitch affected
-	float  chanVolume    [MAX_NUM_CHAN];
-  float  chanPitch     [MAX_NUM_CHAN];
-	float  chanBoost     [MAX_NUM_CHAN];
-	float  chanPanLeft   [MAX_NUM_CHAN];
-	float  chanPanRight  [MAX_NUM_CHAN];
-	int    chanMode      [MAX_NUM_CHAN];  // mode: see const.h
-
-	bool   chanMute_i    [MAX_NUM_CHAN];  // internal mute
-	bool   chanMute      [MAX_NUM_CHAN];  // global mute
-
-	bool   chanQWait     [MAX_NUM_CHAN];  // quantizer wait
-	int 	 chanRecStatus [MAX_NUM_CHAN];  // status of recordings (treat recs as loops)
-	float  chanFadein    [MAX_NUM_CHAN];
-	bool   fadeoutOn     [MAX_NUM_CHAN];	//
-	float  fadeoutVol    [MAX_NUM_CHAN];  // fadeout volume
-	int    fadeoutTracker[MAX_NUM_CHAN];  // tracker fadeout, xfade only
-	float  fadeoutStep   [MAX_NUM_CHAN];  // fadeout decrease
-  int    fadeoutType   [MAX_NUM_CHAN];  // xfade or fadeout
-  int		 fadeoutEnd    [MAX_NUM_CHAN];  // what to do when fadeout ends
-
+	bool   ready;
+	float *vChanInput;        // virtual channel for recording
+	float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
 	int    frameSize;
 	float  outVol;
 	float  inVol;
@@ -189,6 +182,7 @@ public:
 	int framesPerBeat;
 	int totalFrames;
 	int actualFrame;
+	int actualBeat;
 
 #define TICKSIZE 38
 	static float tock[TICKSIZE];
@@ -197,9 +191,9 @@ public:
 	bool tickPlay, tockPlay; // 1 = play, 0 = stop
 
 	/* chanInput
-	 * the active channel during a recording. -1 = no channels active */
+	 * the active channel during a recording. NULL = no channels active */
 
-	int chanInput;
+	channel *chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */
@@ -213,14 +207,26 @@ public:
 	bool inToOut;
 
 	pthread_mutex_t mutex_recs;
+	pthread_mutex_t mutex_chans;
 	pthread_mutex_t mutex_plugins;
 
 
 private:
 
 	/* calcFadeoutStep
-	 * allows to do a fadeout even if the sample is almost finished */
-	void calcFadeoutStep(int ch);
+	 * allows a fadeout even if the sample is almost finished */
+
+	void calcFadeoutStep(struct channel *ch);
+
+	/* calcVolumeEnv
+	 * compute any changes in volume done viaenvelope tool */
+
+	void calcVolumeEnv(struct channel *ch, int frame);
+
+	/* getNewIndex
+	 * compute new index value for new channels */
+
+	int getNewIndex();
 };
 
 #endif

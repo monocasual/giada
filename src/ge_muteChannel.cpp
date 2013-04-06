@@ -31,12 +31,18 @@
 #include "ge_muteChannel.h"
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
+#include "gd_mainWindow.h"
 #include "recorder.h"
+#include "mixer.h"
 #include "glue.h"
+#include "channel.h"
+
+
+extern gdMainWindow *mainWin;
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
- : gActionWidget(x, y, 200, 60, parent), draggedPoint(-1), selectedPoint(-1)
+ : gActionWidget(x, y, 200, 80, parent), draggedPoint(-1), selectedPoint(-1)
 {
 	extractPoints();
 }
@@ -50,8 +56,15 @@ void gMuteChannel::draw() {
 	baseDraw();
 
 	/* cover unused area */
+	/** FIXME - move this to base class gActionWidget::baseDraw() */
 
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+
+	/* print label */
+
+	fl_color(COLOR_BG_1);
+	fl_font(FL_HELVETICA, 12);
+	fl_draw("mute", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 	/* draw "on" and "off" labels. Must stay in background */
 
@@ -116,7 +129,7 @@ void gMuteChannel::extractPoints() {
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == parent->chan) {
+			if (recorder::global.at(i).at(j)->chan == parent->chan->index) {
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
 					p.frame = recorder::frames.at(i);
@@ -230,16 +243,16 @@ int gMuteChannel::handle(int e) {
 					}
 
 					if (nextPoint % 2 != 0) {
-						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEON,  frame_b);
+						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_a);
+						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_b);
 						recorder::sortActions();
 					}
 					else {
-						recorder::rec(parent->chan, ACTION_MUTEON,  frame_a);
-						recorder::rec(parent->chan, ACTION_MUTEOFF, frame_b);
+						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_a);
+						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
-					glue_setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -265,11 +278,11 @@ int gMuteChannel::handle(int e) {
 					//printf("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					recorder::deleteAction(parent->chan,	points.at(a).frame,	points.at(a).type);
-					recorder::deleteAction(parent->chan,	points.at(b).frame,	points.at(b).type);
+					recorder::deleteAction(parent->chan->index, points.at(a).frame,	points.at(a).type);
+					recorder::deleteAction(parent->chan->index,	points.at(b).frame,	points.at(b).type);
 					recorder::sortActions();
 
-					glue_setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -279,6 +292,7 @@ int gMuteChannel::handle(int e) {
 		}
 
 		case FL_RELEASE: {
+
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
@@ -289,22 +303,23 @@ int gMuteChannel::handle(int e) {
 					int newFrame = points.at(draggedPoint).x * parent->zoom;
 
 					recorder::deleteAction(
-							parent->chan,
+							parent->chan->index,
 							points.at(draggedPoint).frame,
 							points.at(draggedPoint).type);
 
-					recorder::rec(parent->chan,
+					recorder::rec(
+							parent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 
 					recorder::sortActions();
 
 					points.at(draggedPoint).frame = newFrame;
-
-					draggedPoint  = -1;
-					selectedPoint = -1;
 				}
 			}
+			draggedPoint  = -1;
+			selectedPoint = -1;
+
 			ret = 1;
 			break;
 		}

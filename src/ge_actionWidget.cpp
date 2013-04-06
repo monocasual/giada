@@ -69,7 +69,7 @@ void gActionWidget::baseDraw() {
 	/* print beats and bars. The method is the same of the waveform in sample
 	 * editor. Take totalwidth (the width in pixel of the area to draw), knowing
 	 * that totalWidth = totalFrames / zoom. Then, for each pixel of totalwidth,
-	 * put a concentrate of each block (which is totalFrames / zoom). */
+	 * put a concentrate of each block (which is totalFrames / zoom) */
 
 	int    j = 0;
 	bool end = false;
@@ -81,7 +81,6 @@ void gActionWidget::baseDraw() {
 		parent->coverX = w()+x()-1;
 	else
 		wantHidden = true;
-
 
 	/* grid drawing, if > 1 */
 
@@ -97,7 +96,9 @@ void gActionWidget::baseDraw() {
 
 	/* box and beat separator drawing */
 
-	for (int i=1; i<parent->totalWidth && !end; i++) {
+	int wx1  = abs(x() - parent->scroller->x());
+
+	for (int i=wx1; i<parent->totalWidth && !end; i++) {
 		int step = parent->zoom*i;
 		while (j < step && j <= parent->totalFrames) {
 

@@ -39,12 +39,13 @@
 #include "waveFx.h"
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;
 
 
-gWaveform::gWaveform(int x, int y, int w, int h, int ch, const char *l)
+gWaveform::gWaveform(int x, int y, int w, int h, struct channel *ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
 	chan(ch),
 	menuOpen(false),
@@ -93,7 +94,7 @@ void gWaveform::freeData() {
 
 int gWaveform::alloc(int datasize) {
 
-	ratio = G_Mixer.chan[chan]->size / (float) datasize;
+	ratio = chan->wave->size / (float) datasize;
 
 	if (ratio < 2)
 		return 0;
@@ -121,8 +122,8 @@ int gWaveform::alloc(int datasize) {
 		 * 	 p = j * (m-1 / n-1)
 		 * in order to obtain 'datasize' cells to parse (and not datasize-1) */
 
-		pp = i * ((G_Mixer.chan[chan]->size - 1) / (float) datasize);
-		pn = (i+1) * ((G_Mixer.chan[chan]->size - 1) / (float) datasize);
+		pp = i * ((chan->wave->size - 1) / (float) datasize);
+		pn = (i+1) * ((chan->wave->size - 1) / (float) datasize);
 
 		if (pp % 2 != 0) pp -= 1;
 		if (pn % 2 != 0) pn -= 1;
@@ -132,16 +133,16 @@ int gWaveform::alloc(int datasize) {
 
 		int k = pp;
 		while (k < pn) {
-			if (G_Mixer.chan[chan]->data[k] > peaksup)
-				peaksup = G_Mixer.chan[chan]->data[k];    // Left data only
+			if (chan->wave->data[k] > peaksup)
+				peaksup = chan->wave->data[k];    // Left data only
 			else
-			if (G_Mixer.chan[chan]->data[k] <= peakinf)
-				peakinf = G_Mixer.chan[chan]->data[k];    // Left data only
+			if (chan->wave->data[k] <= peakinf)
+				peakinf = chan->wave->data[k];    // Left data only
 			k += 2;
 		}
 
-		data.sup[i] = zero - (peaksup * G_Mixer.chanBoost[chan] * offset);
-		data.inf[i] = zero - (peakinf * G_Mixer.chanBoost[chan] * offset);
+		data.sup[i] = zero - (peaksup * chan->boost * offset);
+		data.inf[i] = zero - (peakinf * chan->boost * offset);
 
 		// avoid window overflow
 
@@ -161,15 +162,15 @@ void gWaveform::recalcPoints() {
 	selectionA = relativePoint(selectionA_abs);
 	selectionB = relativePoint(selectionB_abs);
 
-	chanStart  = relativePoint(G_Mixer.chanStartTrue[chan] / 2);
+	chanStart  = relativePoint(chan->startTrue / 2);
 
 	/* fix the rounding error when chanEnd is set on the very end of the
 	 * sample */
 
-	if (G_Mixer.chanEndTrue[chan] == G_Mixer.chan[chan]->size)
+	if (chan->endTrue == chan->wave->size)
 		chanEnd = data.size - 2; // 2 px border
 	else
-		chanEnd = relativePoint(G_Mixer.chanEndTrue[chan] / 2);
+		chanEnd = relativePoint(chan->endTrue / 2);
 }
 
 
@@ -313,8 +314,8 @@ int gWaveform::handle(int e) {
 				break;
 			}
 
-			int realChanStart = G_Mixer.chanStartTrue[chan];
-			int realChanEnd   = G_Mixer.chanEndTrue[chan];
+			int realChanStart = chan->startTrue;
+			int realChanEnd   = chan->endTrue;
 
 			if (chanStartLit)
 				realChanStart = absolutePoint(chanStart)*2;
@@ -500,7 +501,7 @@ int gWaveform::absolutePoint(int p) {
 		return 0;
 
 	if (p > data.size)
-		return G_Mixer.chan[chan]->size / 2;
+		return chan->wave->size / 2;
 
 	return (p * ratio) / 2;
 }
@@ -532,7 +533,7 @@ void gWaveform::openEditMenu() {
 		{0}
 	};
 
-	if (G_Mixer.chanStatus[chan] == STATUS_PLAY) {
+	if (chan->status == STATUS_PLAY) {
 		menu[0].deactivate();
 		menu[1].deactivate();
 	}
@@ -554,12 +555,12 @@ void gWaveform::openEditMenu() {
 	straightSel();
 
 	if (strcmp(m->label(), "Silence") == 0) {
-		wfx_silence(G_Mixer.chan[chan], absolutePoint(selectionA), absolutePoint(selectionB));
+		wfx_silence(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
 		selectionA = 0;
 		selectionB = 0;
 
-		alloc();
+		stretchToWindow();
 		redraw();
 		menuOpen = false;
 		return;
@@ -588,7 +589,7 @@ void gWaveform::openEditMenu() {
 	}
 
 	if (strcmp(m->label(), "Cut") == 0) {
-		wfx_cut(chan, absolutePoint(selectionA), absolutePoint(selectionB));
+		wfx_cut(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
 		/* for convenience reset start/end points */
 
@@ -596,7 +597,7 @@ void gWaveform::openEditMenu() {
 			(gdEditor *) window(),
 			chan,
 			0,
-			G_Mixer.chan[chan]->size,
+			chan->wave->size,
 			false);
 
 		selectionA     = 0;
@@ -611,13 +612,13 @@ void gWaveform::openEditMenu() {
 	}
 
 	if (strcmp(m->label(), "Trim") == 0) {
-		wfx_trim(chan, absolutePoint(selectionA), absolutePoint(selectionB));
+		wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
 		glue_setBeginEndChannel(
 			(gdEditor *) window(),
 			chan,
 			0,
-			G_Mixer.chan[chan]->size,
+			chan->wave->size,
 			false);
 
 		selectionA     = 0;

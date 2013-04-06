@@ -35,6 +35,7 @@
 #include "graphics.h"
 #include "recorder.h"
 #include "gui_utils.h"
+#include "channel.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -53,50 +54,47 @@ void __cb_window_closer(Fl_Widget *v, void *p) {
 /* ------------------------------------------------------------------ */
 
 
-gButton::gButton(int X,int Y,int W,int H,const char *L, const char **imgOff, const char **imgOn)
-	: gClick(X,Y,W,H,L,imgOff,imgOn) {}
+gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
+	: gClick(X, Y, W, H, L, imgOff, imgOn) {}
 
 
 /* ------------------------------------------------------------------ */
 
 
-gStatus::gStatus(int x, int y, int w, int h,  int chan, const char *L)
-: Fl_Box(x, y, w, h, L), ch(chan) {}
+gStatus::gStatus(int x, int y, int w, int h, channel *ch, const char *L)
+: Fl_Box(x, y, w, h, L), ch(ch) {}
 
 void gStatus::draw() {
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		          // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
 
-	/* same status for wait, ending, ... */
+	if (ch != NULL) {
+		if (ch->status & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING)) {
+			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_2);	// status wait
+			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+		}
+		else if (ch->status == STATUS_PLAY)
+			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+		else
+			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
 
-	int waitStat = STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING;
 
-	if (G_Mixer.chanStatus[ch] & waitStat) {
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_2);	// status wait
-		fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+		if (G_Mixer.chanInput == ch)
+			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
+		else if (recorder::active && recorder::canRec(ch))
+			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
+
+		/* equation for the progress bar:
+		 * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
+
+		int mixerPos = G_Mixer.getChanPos(ch);
+		if (mixerPos == -1)
+			mixerPos = 0;
+		else
+			mixerPos = (mixerPos * (w()-1)) / (ch->end - ch->start);
+		fl_rectf(x()+1, y()+1, mixerPos, h()-2, COLOR_BG_2);
 	}
-	else if (G_Mixer.chanStatus[ch] == STATUS_PLAY)
-		fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-	else
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
-
-
-	if (G_Mixer.chanInput == ch)
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
-	else if (recorder::active && recorder::canRec(ch))
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
-
-	/* equation for the progress bar:
-	 * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-
-	int mixerPos = G_Mixer.getChanPos(ch);
-	if (mixerPos == -1)
-		mixerPos = 0;
-	else
-		mixerPos = (mixerPos * (w()-1)) / (G_Mixer.chanEnd[ch] - G_Mixer.chanStart[ch]);
-
-	fl_rectf(x()+1, y()+1, mixerPos, h()-2, COLOR_BG_2);
 }
 
 
@@ -344,7 +342,7 @@ void gBeatMeter::draw() {
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);													      // border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);  						// bg
-	fl_rectf(x()+(G_beats*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
+	fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
 
 	/* beat cells */
 
@@ -364,12 +362,15 @@ void gBeatMeter::draw() {
 	fl_rectf(x()+(G_Mixer.beats*cursorW)+1, y()+1, ((MAX_BEATS-G_Mixer.beats)*cursorW)-1, h()-2, COLOR_BG_1);
 }
 
+
 /* ------------------------------------------------------------------ */
 
-int gModeBox::id_generator = 0;
 
-gModeBox::gModeBox(int x, int y, int w, int h, const char *L)
-	: Fl_Menu_Button(x, y, w, h, L) {
+//int gModeBox::id_generator = 0;
+
+gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
+	: Fl_Menu_Button(x, y, w, h, L), ch(ch)
+{
 	box(G_BOX);
 	textsize(11);
 	textcolor(COLOR_TEXT_0);
@@ -380,12 +381,12 @@ gModeBox::gModeBox(int x, int y, int w, int h, const char *L)
 	add("Oneshot . basic",  0, cb_change_chanmode, (void *)SINGLE_BASIC);
 	add("Oneshot . press",  0, cb_change_chanmode, (void *)SINGLE_PRESS);
 	add("Oneshot . retrig", 0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-	id = id_generator++;
+	//id = id_generator++;
 }
 
 void gModeBox::draw() {
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		// border
-	switch (G_Mixer.chanMode[id]) {
+	switch (ch->mode) {
 		case LOOP_BASIC:
 			fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
 			break;
@@ -410,21 +411,11 @@ void gModeBox::draw() {
 void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
 
 void gModeBox::__cb_change_chanmode(int mode) {
-
-	G_Mixer.chanMode[id] = mode;
+	ch->mode = mode;
 
 	/* what to do when the channel is playing and you change the mode?
-	 * Probabily nothing, since v0.5.3
-
-	if (mode == LOOP_ONCE || mode == LOOP_BASIC) {
-		if (recorder::chanEvents[id])
-			if (G_Mixer.running)
-				G_Mixer.chanStatus[id] = STATUS_OFF;
-	}
-	*/
-
-	/* when you change the mode, refresh the action editor window, in case
-	 * it's open */
+	 * Nothing, since v0.5.3. Just refresh the action editor window, in
+	 * case it's open */
 
 	gu_refreshActionEditor();
 }

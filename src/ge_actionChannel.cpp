@@ -30,12 +30,15 @@
 #include <FL/fl_draw.H>
 #include "glue.h"
 #include "ge_actionChannel.h"
-#include "conf.h"
+#include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
+#include "conf.h"
+#include "channel.h"
 
 
-extern Mixer    G_Mixer;
-extern Conf	    G_Conf;
+extern gdMainWindow *mainWin;
+extern Mixer         G_Mixer;
+extern Conf	         G_Conf;
 
 
 /* ------------------------------------------------------------------ */
@@ -44,12 +47,12 @@ extern Conf	    G_Conf;
 gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
  : gActionWidget(x, y, 200, 40, parent), selected(NULL)
 {
-	/* let's add actions when the window opens. Their position is zoom-based;
+	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == parent->chan) {
+			if (recorder::global.at(i).at(j)->chan == parent->chan->index) {
 
 				/* don't show actions > than the grey area */
 
@@ -60,7 +63,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				 * the end of a composite action (press+release). In that case, skip it to
 				 * the next event. */
 
-				if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS &&
+				if (parent->chan->mode == SINGLE_PRESS &&
 				    recorder::global.at(i).at(j)->type == ACTION_KEYREL)
 				{
 					continue;
@@ -70,14 +73,15 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				 * in such mode, but they can exist if you change from another mode to singlepress */
 
 				if (recorder::global.at(i).at(j)->type == ACTION_KILLCHAN &&
-						G_Mixer.chanMode[parent->chan] == SINGLE_PRESS)
+						parent->chan->mode == SINGLE_PRESS)
 				{
 					continue;
 				}
 
 				/* we also skip mutes. There's a widget for that */
+				/** FIXME - change logic: do something only if type & ACTION_KEYPRESS etc */
 
-				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF))
+				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME))
 					continue;
 
 				int ax = x+((recorder::frames.at(i))/parent->zoom);
@@ -127,7 +131,7 @@ void gActionChannel::updateActions() {
 		a = (gAction*)child(i);
 		int newX = x() + (a->frame_a / parent->zoom);
 
-		if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+		if (parent->chan->mode == SINGLE_PRESS) {
 			int newW = ((a->frame_b - a->frame_a) / parent->zoom);
 			if (newW < gAction::MIN_WIDTH)
 				newW = gAction::MIN_WIDTH;
@@ -148,7 +152,18 @@ void gActionChannel::draw() {
 	 * draw the children (the actions) */
 
 	baseDraw();
+
+	/* print label */
+
+	fl_color(COLOR_BG_1);
+	fl_font(FL_HELVETICA, 12);
+	if (active())
+		fl_draw("start/stop", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+	else
+		fl_draw("start/stop (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+
 	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+
 	draw_children();
 }
 
@@ -281,7 +296,7 @@ int gActionChannel::handle(int e) {
 							true,                                 // record = true: record it!
 							parent->getActionType());             // type of action
 					add(a);
-					glue_setChannelWithActions(parent->chan); // mainWindow update
+					mainWin->keyboard->setChannelWithActions(parent->chan); // mainWindow update
 					redraw();
 					ret = 1;
 				}
@@ -299,7 +314,7 @@ int gActionChannel::handle(int e) {
 					a->delAction();
 					remove(a);
 					delete a;
-					glue_setChannelWithActions(parent->chan);
+					mainWin->keyboard->setChannelWithActions(parent->chan);
 					redraw();
 					ret = 1;
 				}
@@ -319,7 +334,7 @@ int gActionChannel::handle(int e) {
 			bool noChanges = false;
 			if (actionOriginalX == selected->x())
 				noChanges = true;
-			if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS &&
+			if (parent->chan->mode == SINGLE_PRESS &&
 					actionOriginalX+actionOriginalW != selected->x()+selected->w())
 				noChanges = false;
 
@@ -343,7 +358,7 @@ int gActionChannel::handle(int e) {
 
 				int action_x  = ((gAction*)child(i))->x();
 				int action_w  = ((gAction*)child(i))->w();
-				if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+				if (parent->chan->mode == SINGLE_PRESS) {
 
 					/* when 2 segments overlap?
 					 * start = the highest value between the two starting points
@@ -404,7 +419,7 @@ bool gActionChannel::actionCollides(int frame) {
 		if ( ((gAction*)child(i))->frame_a == frame)
 			collision = true;
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+	if (parent->chan->mode == SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
 			gAction *c = ((gAction*)child(i));
 			if (frame <= c->frame_b && frame >= c->frame_a)
@@ -453,8 +468,8 @@ gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEdito
 	 * do that after the possible recording, otherwise we don't know which
 	 * key_release is associated. */
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
-		frame_b = recorder::getEndActionFrame(parent->chan, ACTION_KEYREL, frame_a);
+	if (parent->chan->mode == SINGLE_PRESS) {
+		frame_b = recorder::getEndActionFrame(parent->chan->index, ACTION_KEYREL, frame_a);
 		if (frame_b == -1)
 			frame_b = frame_a+4096;
 		w((frame_b - frame_a)/parent->zoom/2);
@@ -472,7 +487,7 @@ void gAction::draw() {
 	 * it. It's up to the user to zoom in and drag it. */
 
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS)
+	if (parent->chan->mode == SINGLE_PRESS)
 		if (w() < MIN_WIDTH)
 			w(MIN_WIDTH);
 
@@ -487,7 +502,7 @@ void gAction::draw() {
 		fl_rect(x(), y(), w(), h(), (Fl_Color) color);
 	else {
 		fl_rectf(x(), y(), w(), h(), (Fl_Color) color);
-		if (G_Mixer.chanMode[parent->chan] != SINGLE_PRESS) { // don't do that for SINGLE PRESS
+		if (parent->chan->mode != SINGLE_PRESS) { // don't do that for SINGLE PRESS
 			if (type == ACTION_KEYPRESS)
 				fl_rectf(x()+3, y()+h()-11, 2, 8, COLOR_BD_0);
 			else
@@ -527,7 +542,7 @@ int gAction::handle(int e) {
 
 			/* handling of the two margins, left & right. 4 pixels are good enough */
 
-			if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+			if (parent->chan->mode == SINGLE_PRESS) {
 				onLeftEdge  = false;
 				onRightEdge = false;
 				if (Fl::event_x() >= x() && Fl::event_x() < x()+4) {
@@ -565,13 +580,13 @@ void gAction::addAction() {
 	 * theory behind the singleshot.press actions; for any other kind the
 	 * (b) is just a graphical and meaningless point. */
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
-		recorder::rec(parent->chan, ACTION_KEYPRESS, frame_a);
-		recorder::rec(parent->chan, ACTION_KEYREL, frame_a+4096);
+	if (parent->chan->mode == SINGLE_PRESS) {
+		recorder::rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
+		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
 		//printf("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
-		recorder::rec(parent->chan, parent->getActionType(), frame_a);
+		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
 		//printf("action added, [%d]\n", frame_a);
 	}
 
@@ -589,12 +604,12 @@ void gAction::delAction() {
 	/* if SINGLE_PRESS you must delete both the keypress and the keyrelease
 	 * actions. */
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
-		recorder::deleteAction(parent->chan, frame_a, ACTION_KEYPRESS);
-		recorder::deleteAction(parent->chan, frame_b, ACTION_KEYREL);
+	if (parent->chan->mode == SINGLE_PRESS) {
+		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS);
+		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL);
 	}
 	else
-		recorder::deleteAction(parent->chan, frame_a, type);
+		recorder::deleteAction(parent->chan->index, frame_a, type);
 
 	/* restore the initial cursor shape, in case you delete an action and
 	 * the double arrow (for resizing) is displayed */
@@ -625,11 +640,11 @@ void gAction::moveAction(int frame_a) {
 	if (this->frame_a % 2 != 0)
 		this->frame_a++;
 
-	recorder::rec(parent->chan, type, this->frame_a);
+	recorder::rec(parent->chan->index, type, this->frame_a);
 
-	if (G_Mixer.chanMode[parent->chan] == SINGLE_PRESS) {
+	if (parent->chan->mode == SINGLE_PRESS) {
 		frame_b = xToFrame_b();
-		recorder::rec(parent->chan, ACTION_KEYREL, frame_b);
+		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_b);
 	}
 
 	recorder::sortActions();

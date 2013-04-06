@@ -33,55 +33,124 @@
 #include <stdio.h>
 #include <stdint.h>          // for intptr_t
 #include <FL/Fl.H>
+#include <FL/Fl_Scroll.H>
 #include <FL/Fl_Group.H>
 #include "const.h"
+#include "utils.h"
 
 
-class Keyboard : public Fl_Group {
+class gChannel : public Fl_Group {
 private:
 	static void cb_button        (Fl_Widget *v, void *p);
+	static void cb_mute          (Fl_Widget *v, void *p);
 	static void cb_openChanMenu  (Fl_Widget *v, void *p);
 	static void cb_change_vol    (Fl_Widget *v, void *p);
-	static void cb_mute          (Fl_Widget *v, void *p);
 	static void cb_readActions   (Fl_Widget *v, void *p);
 #ifdef WITH_VST
 	static void cb_openFxWindow  (Fl_Widget *v, void *p);
 #endif
-	inline void __cb_button      (class gButton *gb);
-	inline void __cb_openChanMenu(int chan);
-	inline void __cb_change_vol  (int chan);
-	inline void __cb_mute        (int chan);
-	inline void __cb_readActions (int chan);
+	inline void __cb_button      ();
+	inline void __cb_mute        ();
+	inline void __cb_openChanMenu();
+	inline void __cb_change_vol  ();
+	inline void __cb_readActions ();
 #ifdef WITH_VST
-	inline void __cb_openFxWindow(int chan);
+	inline void __cb_openFxWindow();
 #endif
+
+	void openBrowser(int type);
+
+public:
+	gChannel(int x, int y, int w, int h, const char *l, struct channel *ch);
+	void reset();
+
+	/* [add/rem]ActionButton
+	 * add or removes the 'R' button. Status tells if the button should be
+	 * on or off during the first appearance */
+
+	void addActionButton(bool status);
+	void remActionButton();
+	int  keypress(int event);
+
+	class gStatus     *status;
+	class gDial       *vol;
+	class gClick 	    *mute;
+	class gClick 	    *readActions;
+	class gClick 	    *sampleButton;
+	class gModeBox    *modeBox;
+	class gButton     *button;
+#ifdef WITH_VST
+	class gButton     *fx;
+#endif
+
+	int key;
+	struct channel *ch;
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class Keyboard : public Fl_Scroll {
+private:
+	static void cb_addChannelL  (Fl_Widget *v, void *p);
+	static void cb_addChannelR  (Fl_Widget *v, void *p);
+	inline void __cb_addChannelL();
+	inline void __cb_addChannelR();
+
+	/* fixRightColumn
+	 * shift right column if scrollbar doesn't show up */
+
+	void fixRightColumn();
 
 	bool bckspcPressed;
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
 
-public:
-	class gStatus     *status      [MAX_NUM_CHAN];
-	class gDial       *vol         [MAX_NUM_CHAN];
-#ifdef WITH_VST
-	class gButton     *fx          [MAX_NUM_CHAN];
-#endif
-	class gClick 	    *mute        [MAX_NUM_CHAN];
-	class gClick 	    *readActions [MAX_NUM_CHAN];
-	class gClick 	    *sampleButton[MAX_NUM_CHAN];
-	class gModeBox    *modeBoxes   [MAX_NUM_CHAN];
-	class gButton     *butts       [MAX_NUM_CHAN];
+	class gClick *addChannelL;
+	class gClick *addChannelR;
 
+public:
 	Keyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
-	/* [add/rem]ActionButton
-	 * add or removes the 'R' button. Status tells if the button should be
-	 * on or off during the first appearance */
+	/* addChannel
+	 * add a new channel to gChannels[l/r]. Used by callbacks and during
+	 * patch loading. */
 
-	void addActionButton(int i, bool status);
-	void remActionButton(int i);
+	gChannel *addChannel(char side, struct channel *ch);
+
+	/* deleteChannel
+	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
+	 * it from the stack. */
+
+	void deleteChannel(struct channel *ch);
+
+	/* freeChannel
+	 * free a channel from gChannels<> where gChannel->ch == ch. No channels
+	 * are deleted */
+
+	void freeChannel(struct channel *ch);
+
+	void updateChannel(struct channel *ch);
+
+	void updateChannels(char side);
+
+	/* clear
+	 * delete all channels and groups */
+
+	void clear();
+
+	/* setChannelWithActions
+	 * add 'R' button if channel has actions, and set recorder to active. */
+
+	void setChannelWithActions(struct channel *ch);
+
+	bool hasScrollbar();
+
+	Fl_Group *gChannelsL;
+	Fl_Group *gChannelsR;
 };
 
 #endif

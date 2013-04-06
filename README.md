@@ -9,12 +9,12 @@ http://www.giadamusic.com
 
 What is Giada?
 --------------
-Giada is a free, minimal, hardcore audio tool for djs and live
-performers. Load or record up to 32 samples, choose to play them in
-single mode (drum machine) or loop mode (sequencer) and start the show
-with your computer keyboard as a controller. Giada aims to be a
-compact and portable virtual device for Linux, Windows and OS X for
-production use and live sets.
+Giada is a free, minimal, hardcore audio tool for DJs and live
+performers. How does it work? Just pick up your sample, drop it in any
+channel and start the show by using this tiny piece of software as a
+loop machine, drum machine, sequencer, live sampler or yet as an effect
+(VST) host. Giada aims to be a compact and portable virtual device for
+Linux, Mac OS X and Windows for production use and live sets.
 
 
 

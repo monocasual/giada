@@ -26,7 +26,11 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "waveFx.h"
+#include "channel.h"
+#include "mixer.h"
+#include "wave.h"
 
 
 extern Mixer G_Mixer;
@@ -104,18 +108,17 @@ void wfx_silence(Wave *w, int a, int b) {
 /* ------------------------------------------------------------------ */
 
 
-int wfx_cut(int ch, int a, int b) {
-
+int wfx_cut(Wave *w, int a, int b) {
 	a = a * 2;
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > G_Mixer.chan[ch]->size) b = G_Mixer.chan[ch]->size;
+	if (b > w->size) b = w->size;
 
 	/* create a new temp wave and copy there the original one, skipping
 	 * the a-b range */
 
-	unsigned newSize = G_Mixer.chan[ch]->size-(b-a);
+	unsigned newSize = w->size-(b-a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == NULL) {
 		puts("[wfx] unable to allocate memory for cutting");
@@ -124,18 +127,18 @@ int wfx_cut(int ch, int a, int b) {
 
 	printf("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", a, b, newSize, newSize/2);
 
-	for (int i=0, k=0; i<G_Mixer.chan[ch]->size; i++) {
+	for (int i=0, k=0; i<w->size; i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep
-			temp[k] = G_Mixer.chan[ch]->data[i];   // the stereo pair
+			temp[k] = w->data[i];   // the stereo pair
 			k++;
 		}
 	}
 
-	free(G_Mixer.chan[ch]->data);
-	G_Mixer.chan[ch]->data = temp;
-	G_Mixer.chan[ch]->size = newSize;
-	G_Mixer.chan[ch]->inHeader.frames -= b-a;
-	G_Mixer.chan[ch]->isEdited = true;
+	free(w->data);
+	w->data = temp;
+	w->size = newSize;
+	w->inHeader.frames -= b-a;
+	w->isEdited = true;
 
 	puts("[wfx] cutting done");
 
@@ -146,13 +149,12 @@ int wfx_cut(int ch, int a, int b) {
 /* ------------------------------------------------------------------ */
 
 
-int wfx_trim(int ch, int a, int b) {
-
+int wfx_trim(Wave *w, int a, int b) {
 	a = a * 2;
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > G_Mixer.chan[ch]->size) b = G_Mixer.chan[ch]->size;
+	if (b > w->size) b = w->size;
 
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));
@@ -164,13 +166,13 @@ int wfx_trim(int ch, int a, int b) {
 	printf("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
 	for (int i=a, k=0; i<b; i++, k++)
-		temp[k] = G_Mixer.chan[ch]->data[i];
+		temp[k] = w->data[i];
 
-	free(G_Mixer.chan[ch]->data);
-	G_Mixer.chan[ch]->data = temp;
-	G_Mixer.chan[ch]->size = newSize;
-	G_Mixer.chan[ch]->inHeader.frames = b-a;
- 	G_Mixer.chan[ch]->isEdited = true;
+	free(w->data);
+	w->data = temp;
+	w->size = newSize;
+	w->inHeader.frames = b-a;
+ 	w->isEdited = true;
 
 	return 1;
 }

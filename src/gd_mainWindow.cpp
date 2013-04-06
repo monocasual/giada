@@ -36,6 +36,7 @@
 #include "gd_browser.h"
 #include "mixerHandler.h"
 #include "pluginHost.h"
+#include "channel.h"
 
 
 extern Mixer	   		 G_Mixer;
@@ -50,12 +51,14 @@ extern PluginHost  	 G_PluginHost;
 #endif
 
 
-gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv)
-: gWindow(x, y, w, h, title) {
+gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int argc, char **argv)
+: gWindow(X, Y, W, H, title) {
 
 	Fl::visible_focus(0);
 	Fl::background(25, 25, 25);
 	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
+
+	begin();
 
 	menu_file 	= new gClick(8,   -1, 70, 21, "file");
 	menu_edit	  = new gClick(82,  -1, 70, 21, "edit");
@@ -84,7 +87,6 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 #endif
 
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-	keyboard    = new Keyboard(8, 122, 790, 470);
 
 	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	beat_stop		= new gClick(37, 39, 25, 25, "", play_xpm, pause_xpm);
@@ -92,6 +94,10 @@ gdMainWindow::gdMainWindow(int x, int y, int w, int h, const char *title, int ar
 	input_rec		= new gClick(95, 39, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
 
 	metronome   = new gClick(124, 49, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+
+	keyboard    = new Keyboard(8, 122, w()-16, 380);
+	//keyboard->box(FL_BORDER_BOX);
+
 	end();
 
 	char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);
@@ -188,12 +194,18 @@ void gdMainWindow::__cb_endprogram() {
 
 	G_quit = true;
 
+	/* close any open subwindow, especially before cleaning PluginHost to
+	 * avoid mess */
+
 	puts("GUI closing...");
+	gu_closeAllSubwindows();
+
+	/* write configuration file */
 
 	if (!G_Conf.write())
 		puts("Error while saving configuration file!");
 	else
-		puts("Saving configuration...");
+		puts("Configuration saved");
 
 	puts("Mixer cleanup...");
 
@@ -307,7 +319,7 @@ void gdMainWindow::__cb_rec() {
 
 
 void gdMainWindow::__cb_inputRec() {
-	if (G_Mixer.chanInput == -1) {
+	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec())
 			gdAlert("No more channels available.");
 	}
@@ -403,13 +415,13 @@ void gdMainWindow::__cb_open_edit_menu() {
 
 	menu[1].deactivate();
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		if (recorder::chanEvents[i]) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		if (G_Mixer.channels.at(i)->hasActions) {
 			menu[1].activate();
 			break;
 		}
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		if (G_Mixer.chan[i] != NULL) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		if (G_Mixer.channels.at(i)->wave != NULL) {
 			menu[0].activate();
 			break;
 		}

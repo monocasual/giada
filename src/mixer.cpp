@@ -37,10 +37,10 @@
 #include "patch.h"
 #include "conf.h"
 #include "mixerHandler.h"
+#include "channel.h"
 
 
 extern Mixer 			 G_Mixer;
-extern unsigned 	 G_beats;
 extern Patch		 	 G_Patch;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
@@ -81,42 +81,11 @@ float Mixer::tick[TICKSIZE] = {
 
 
 void Mixer::init() {
-
-	vChanInput = NULL;
-
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		chan[i]          = NULL;
-		vChan[i] 				 = NULL;
-		chanTracker[i]   = 0;
-		chanStatus[i]    = STATUS_EMPTY;
-		chanStart[i]     = 0;
-		chanEnd[i]       = 0;
-		chanMute[i]      = false;
-		chanMute_i[i]    = false;
-		chanMode[i]      = DEFAULT_CHANMODE;
-		chanVolume[i]    = DEFAULT_VOL;
-		chanPitch[i]     = gDEFAULT_PITCH;
-		chanBoost[i]     = 1.0f;
-		chanPanLeft[i]   = 1.0f;
-		chanPanRight[i]  = 1.0f;
-		chanQWait[i]	   = false;
-		chanRecStatus[i] = REC_STOPPED;
-		chanFadein[i]    = 1.0f;
-		fadeoutOn[i]     = false;
-		fadeoutVol[i]    = 1.0f;
-		fadeoutStep[i]   = DEFAULT_FADEOUT_STEP;
-
-		/* virtual channel malloc. We use kernelAudio::realBufsize, the real
-		 * buffer size from the soundcard. G_Conf.bufferSize may be wrong or
-		 * useless, especially when JACK is running. */
-
-		vChan[i] = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
-	}
-
 	quanto      = 1;
 	docross     = false;
 	rewindWait  = false;
 	running     = false;
+	ready       = true;
 	waitRec     = 0;
 	actualFrame = 0;
 	bpm 		    = DEFAULT_BPM;
@@ -134,8 +103,10 @@ void Mixer::init() {
 	inVol        = DEFAULT_IN_VOL;
 	peakOut      = 0.0f;
 	peakIn	     = 0.0f;
-	chanInput    = -1;
+	chanInput    = NULL;
 	inputTracker = 0;
+
+	actualBeat   = 0;
 
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
@@ -144,6 +115,7 @@ void Mixer::init() {
 	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 
 	pthread_mutex_init(&mutex_recs, NULL);
+	pthread_mutex_init(&mutex_chans, NULL);
 	pthread_mutex_init(&mutex_plugins, NULL);
 
 	updateFrameBars();
@@ -154,31 +126,161 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::loadWave(Wave *w, int ch) {
-	chan[ch]				  = w;
-	chanStatus[ch] 	  = STATUS_OFF;
-	chanStart[ch]     = 0;
-	chanStartTrue[ch] = 0;
-	chanEnd[ch]			  = chan[ch]->size;
-	chanEndTrue[ch]	  = chan[ch]->size;
+channel *Mixer::addChannel(char side) {
+	channel *ch = (channel*) malloc(sizeof(channel));
+	if (!ch) {
+		printf("[mixer] unable to alloc memory for channel struct\n");
+		return NULL;
+	}
+
+	/* virtual channel malloc. We use kernelAudio::realBufsize, the real
+	 * buffer size from the soundcard. G_Conf.bufferSize may be wrong or
+	 * useless, especially when JACK is running. */
+
+	ch->vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	if (!ch->vChan) {
+		printf("[mixer] unable to alloc memory for this vChan\n");
+		return NULL;
+	}
+
+	while (true) {
+		int lockStatus = pthread_mutex_trylock(&mutex_chans);
+		if (lockStatus == 0) {
+			channels.add(ch);
+			pthread_mutex_unlock(&mutex_chans);
+			break;
+		}
+	}
+
+	initChannel(ch);
+
+	ch->index = getNewIndex();
+	ch->side  = side;
+
+	printf("[mixer] channel index=%d added, total=%d\n", ch->index, channels.size);
+
+	return ch;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::freeWave(int ch) {
-	chanStatus[ch]  = STATUS_EMPTY;
-	chanTracker[ch] = 0;
-	chanBoost[ch]   = 1.0f;
+int Mixer::getNewIndex() {
+
+	/* always skip last channel: it's the last one just added */
+
+	if (channels.size == 1)
+		return 0;
+
+	int index = 0;
+	for (unsigned i=0; i<channels.size-1; i++) {
+		if (channels.at(i)->index > index)
+			index = channels.at(i)->index;
+		}
+	index += 1;
+	return index;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::chanStop(int ch) {
-	chanStatus[ch] = STATUS_OFF;
+void Mixer::pushChannel(Wave *w, channel *ch) {
+	ch->wave = w;
+	ch->status = STATUS_OFF;
+	ch->start     = 0;
+	ch->startTrue = 0;
+	ch->end       = ch->wave->size;
+	ch->endTrue   = ch->wave->size;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::initChannel(channel *ch) {
+	ch->wave        = NULL;
+	ch->key         = 0;
+	ch->tracker     = 0;
+	ch->status      = STATUS_EMPTY;
+	ch->start       = 0;
+	ch->startTrue   = 0;
+	ch->end         = 0;
+	ch->endTrue     = 0;
+	ch->mute        = false;
+	ch->mute_i      = false;
+	ch->mode        = DEFAULT_CHANMODE;
+	ch->volume      = DEFAULT_VOL;
+	ch->volume_i    = 1.0f;
+	ch->volume_d    = 0.0f;
+	ch->pitch       = gDEFAULT_PITCH;
+	ch->boost       = 1.0f;
+	ch->panLeft     = 1.0f;
+	ch->panRight    = 1.0f;
+	ch->qWait	      = false;
+	ch->recStatus   = REC_STOPPED;
+	ch->fadein      = 1.0f;
+	ch->fadeoutOn   = false;
+	ch->fadeoutVol  = 1.0f;
+	ch->fadeoutStep = DEFAULT_FADEOUT_STEP;
+
+	ch->readActions = false;
+	ch->hasActions  = false;
+
+	/* call gVector constructor with p, and using it as the real gVector */
+	/** FIXME - is it really useful??? */
+
+	gVector <class Plugin *> p;
+	ch->plugins = p;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Mixer::deleteChannel(channel *ch) {
+	int lockStatus;
+	while (true) {
+		lockStatus = pthread_mutex_trylock(&mutex_chans);
+		if (lockStatus == 0) {
+			ch->status = STATUS_OFF;
+			int i = getChannelIndex(ch);
+			if (ch->wave) {
+				delete ch->wave;
+				ch->wave = NULL;
+			}
+			free(ch->vChan);
+			free(ch);
+			channels.del(i);
+			pthread_mutex_unlock(&mutex_chans);
+			return 1;
+		}
+		//else
+		//	puts("[mixer::deleteChannel] waiting for mutex...");
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::freeChannel(channel *ch) {
+	ch->status = STATUS_OFF;
+	if (ch->wave != NULL) {
+		delete ch->wave;
+		ch->wave   = NULL;
+	}
+	ch->status = STATUS_EMPTY;
+}
+
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::chanStop(channel *ch) {
+	ch->status = STATUS_OFF;
 	chanReset(ch);
 }
 
@@ -186,46 +288,69 @@ void Mixer::chanStop(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::chanReset(int ch)	{
-	chanTracker[ch] = chanStart[ch];
-	chanMute_i [ch] = false;
+int Mixer::getChannelIndex(channel *ch) {
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->index == ch->index)
+			return i;
+	return -1;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::fadein(int ch, bool internal) {
+channel *Mixer::getChannelByIndex(int index) {
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->index == index)
+			return channels.at(i);
+	printf("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
+	return NULL;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::chanReset(channel *ch)	{
+	ch->tracker = ch->start;
+	ch->mute_i  = false;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::fadein(channel *ch, bool internal) {
 
 	/* remove mute before fading in */
 
-	if (internal) chanMute_i[ch] = false;
-	else          chanMute[ch]   = false;
-	chanFadein[ch] = 0.0f;
+	if (internal) ch->mute_i = false;
+	else          ch->mute   = false;
+	ch->fadein = 0.0f;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::fadeout(int ch, int actionPostFadeout) {
+void Mixer::fadeout(channel *ch, int actionPostFadeout) {
 	calcFadeoutStep(ch);
-	fadeoutOn[ch]      = true;
-	fadeoutVol[ch]     = 1.0f;
-	fadeoutType[ch]    = FADEOUT;
-	fadeoutEnd[ch]		 = actionPostFadeout;
+	ch->fadeoutOn   = true;
+	ch->fadeoutVol  = 1.0f;
+	ch->fadeoutType = FADEOUT;
+	ch->fadeoutEnd	 = actionPostFadeout;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::xfade(int ch) {
+void Mixer::xfade(channel *ch) {
 	calcFadeoutStep(ch);
-	fadeoutOn[ch]      = true;
-	fadeoutVol[ch]     = 1.0f;
-	fadeoutTracker[ch] = chanTracker[ch];
-	fadeoutType[ch]    = XFADE;
+	ch->fadeoutOn      = true;
+	ch->fadeoutVol     = 1.0f;
+	ch->fadeoutTracker = ch->tracker;
+	ch->fadeoutType    = XFADE;
 	chanReset(ch);
 }
 
@@ -233,9 +358,9 @@ void Mixer::xfade(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::getChanPos(int ch)	{
-	if (chanStatus[ch] & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
-		return chanTracker[ch] - chanStart[ch];
+int Mixer::getChanPos(channel *ch)	{
+	if (ch->status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF))  // if chanStatus[ch] is not (...)
+		return ch->tracker - ch->start;
 	else
 		return -1;
 }
@@ -256,6 +381,9 @@ int Mixer::masterPlay(
 
 int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
+	if (!ready)
+		return 0;
+
 	float *buffer  = ((float *) out_buf);
 	float *inBuf   = ((float *) in_buf);
 	bufferFrames  *= 2;     // stereo
@@ -266,8 +394,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	memset(buffer, 0, sizeof(float) * bufferFrames);         // out
 	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		memset(vChan[i], 0, sizeof(float) * bufferFrames);     // vchans
+
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned i=0; i<channels.size; i++)
+		memset(channels.at(i)->vChan, 0, sizeof(float) * bufferFrames);     // vchans
+	pthread_mutex_unlock(&mutex_chans);
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 
@@ -298,7 +429,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			/* line in recording */
 
-			if (chanInput != -1 && kernelAudio::inputEnabled) {
+			if (chanInput != NULL && kernelAudio::inputEnabled) {
 
 				/* delay comp: wait until waitRec reaches delayComp. WaitRec
 				 * returns to 0 in mixerHandler, as soon as the recording ends */
@@ -327,32 +458,35 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					rewind();
 				}
 
-				for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
-					if (chan[k] == NULL)
+				pthread_mutex_lock(&mutex_chans);
+				for (unsigned k=0; k<channels.size; k++) {
+					channel *ch = channels.at(k);
+					if (ch->wave == NULL)
 						continue;
-					if (isQuanto && (chanMode[k] & SINGLE_ANY) && chanQWait[k] == true)	{
+					if (isQuanto && (ch->mode & SINGLE_ANY) && ch->qWait == true)	{
 
 						/* no fadeout if the sample starts for the first time (from a STATUS_OFF), it would
 						 * be meaningless. */
 
-						if (chanStatus[k] == STATUS_OFF) {
-							chanStatus[k] = STATUS_PLAY;
-							chanQWait[k]  = false;
+						if (ch->status == STATUS_OFF) {
+							ch->status = STATUS_PLAY;
+							ch->qWait  = false;
 						}
 						else
-							xfade(k);
+							xfade(ch);
 
 						/* this is the moment in which we record the keypress, if the quantizer is on.
 						 * SINGLE_PRESS needs overdub */
 
-						if (recorder::canRec(k)) {
-							if (chanMode[k] == SINGLE_PRESS)
+						if (recorder::canRec(ch)) {
+							if (ch->mode == SINGLE_PRESS)
 								recorder::startOverdub(k, ACTION_KEYS, actualFrame);
 							else
 								recorder::rec(k, ACTION_KEYPRESS, actualFrame);
 						}
 					}
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 			/* reset LOOP_REPEAT, if a bar has passed */
@@ -361,52 +495,58 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (metronome)
 					tickPlay = true;
 
-				for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
-					if (chan[k] == NULL)
+				pthread_mutex_lock(&mutex_chans);
+				for (unsigned k=0; k<channels.size; k++) {
+					channel *ch = channels.at(k);
+					if (ch->wave == NULL)
 						continue;
-					if (chanMode[k] == LOOP_REPEAT && chanStatus[k] == STATUS_PLAY)
-						xfade(k);
+					if (ch->mode == LOOP_REPEAT && ch->status == STATUS_PLAY)
+						xfade(ch);
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 
 			/* reset sample on beat 0 */
 
 			if (actualFrame == 0) {
-				for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
+				pthread_mutex_lock(&mutex_chans);
+				for (unsigned k=0; k<channels.size; k++) {
+					channel *ch = channels.at(k);
 
-					if (chan[k] == NULL)
+					if (ch->wave == NULL)
 						continue;
 
-					if (chanMode[k] & (LOOP_ONCE | LOOP_BASIC)) { // LOOP_REPEAT already done
+					if (ch->mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) { // LOOP_REPEAT already done
 
 						/* do a crossfade if the sample is playing. Regular chanReset
 						 * instead if it's muted, otherwise a click occurs */
 
-						if (chanStatus[k] == STATUS_PLAY) {
-							if (chanMute[k] || chanMute_i[k])
-								chanReset(k);
+						if (ch->status == STATUS_PLAY) {
+							if (ch->mute || ch->mute_i)
+								chanReset(ch);
 							else
-								xfade(k);
+								xfade(ch);
 						}
 						else
-						if (chanStatus[k] == STATUS_ENDING)
-							chanStop(k);
+						if (ch->status == STATUS_ENDING)
+							chanStop(ch);
 					}
 
-					if (chanStatus[k] == STATUS_WAIT)
-						chanStatus[k] = STATUS_PLAY;
+					if (ch->status== STATUS_WAIT)
+						ch->status = STATUS_PLAY;
 
-					if (chanRecStatus[k] == REC_ENDING) {
-						chanRecStatus[k] = REC_STOPPED;
-						recorder::disableRead(k);    // rec stop
+					if (ch->recStatus == REC_ENDING) {
+						ch->recStatus = REC_STOPPED;
+						recorder::disableRead(ch);    // rec stop
 					}
 					else
-					if (chanRecStatus[k] == REC_WAITING) {
-						chanRecStatus[k] = REC_READING;
-						recorder::enableRead(k);     // rec start
+					if (ch->recStatus == REC_WAITING) {
+						ch->recStatus = REC_READING;
+						recorder::enableRead(ch);     // rec start
 					}
 				}
+				pthread_mutex_unlock(&mutex_chans);
 			}
 
 			/* reading all actions recorded */
@@ -415,30 +555,34 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			for (unsigned y=0; y<recorder::frames.size; y++) {
 				if (recorder::frames.at(y) == actualFrame) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
-						int chan = recorder::global.at(y).at(z)->chan;
-						if (recorder::chanActive[chan] == false)
+						int index   = recorder::global.at(y).at(z)->chan;
+						channel *ch = getChannelByIndex(index);
+						if (ch->readActions == false)
 							continue;
 						switch (recorder::global.at(y).at(z)->type) {
 							case ACTION_KEYPRESS:
-								if (chanMode[chan] & SINGLE_ANY) {
-									mh_startChan(chan, false);
+								if (ch->mode & SINGLE_ANY) {
+									mh_startChan(ch, false);
 									break;
 								}
 							case ACTION_KEYREL:
-								if (chanMode[chan] & SINGLE_ANY) {
-									mh_stopChan(chan);
+								if (ch->mode & SINGLE_ANY) {
+									mh_stopChan(ch);
 									break;
 								}
 							case ACTION_KILLCHAN:
-								if (chanMode[chan] & SINGLE_ANY) {
-									mh_killChan(chan);
+								if (ch->mode & SINGLE_ANY) {
+									mh_killChan(ch);
 									break;
 								}
 							case ACTION_MUTEON:
-								mh_muteChan(chan, true);   // internal mute
+								mh_muteChan(ch, true);   // internal mute
 								break;
 							case ACTION_MUTEOFF:
-								mh_unmuteChan(chan, true); // internal mute
+								mh_unmuteChan(ch, true); // internal mute
+								break;
+							case ACTION_VOLUME:
+								calcVolumeEnv(ch, actualFrame);
 								break;
 						}
 					}
@@ -454,10 +598,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			if (actualFrame > totalFrames) {
 				actualFrame = 0;
-				G_beats     = 0;
+				actualBeat  = 0;
 			}
 			else if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
-				G_beats++;
+				actualBeat++;
 
 				/* avoid tick and tock to overlap when a new bar has passed (which
 				 * is also a beat) */
@@ -470,106 +614,134 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 		/* sum channels  */
 
-		for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
-			if (chan[k] == NULL)
+		pthread_mutex_lock(&mutex_chans);
+		for (unsigned k=0; k<channels.size; k++) {
+			channel *ch = channels.at(k);
+
+			if (ch->wave == NULL)
 				continue;
 
-			if (chanStatus[k] & (STATUS_PLAY | STATUS_ENDING)) {
+			if (ch->status & (STATUS_PLAY | STATUS_ENDING)) {
 
-				if (chanTracker[k] <= chanEnd[k]) {
+				if (ch->tracker <= channels.at(k)->end) {
 
-					/* ctrakcer is chanTracker, pitch affected */
+					/* ctp is chanTracker, pitch affected */
 
-					unsigned ctracker = chanTracker[k]*chanPitch[k];
+					unsigned ctp = ch->tracker * ch->pitch;
 
 					/* fade in */
 
-					if (chanFadein[k] <= 1.0f)
-						chanFadein[k] += 0.01f;		/// FIXME - remove the hardcoded value
+					if (ch->fadein <= 1.0f)
+						ch->fadein += 0.01f;		/// FIXME - remove the hardcoded value
+
+					/* volume envelope, only if seq is running */
+
+					if (running) {
+						ch->volume_i += ch->volume_d;
+						if (ch->volume_i < 0.0f)
+							ch->volume_i = 0.0f;
+						else
+						if (ch->volume_i > 1.0f)
+							ch->volume_i = 1.0f;
+					}
 
 					/* fadeout process (both fadeout and xfade) */
 
-					if (fadeoutOn[k]) {
-						if (fadeoutVol[k] >= 0.0f) { // fadeout ongoing
+					if (ch->fadeoutOn) {
+						if (ch->fadeoutVol >= 0.0f) { // fadeout ongoing
 
-							if (fadeoutType[k] == XFADE) {
+							float v = ch->volume * ch->volume_i * ch->boost;
 
-								/* ftracker is fadeoutTracker affected by pitch */
+							if (ch->fadeoutType == XFADE) {
 
-								unsigned ftracker = fadeoutTracker[k]*chanPitch[k];
+								/* ftp is fadeoutTracker affected by pitch */
 
-								vChan[k][j]   += chan[k]->data[ftracker]   * chanVolume[k] * fadeoutVol[k] * chanBoost[k] * chanPanLeft[k];
-								vChan[k][j+1] += chan[k]->data[ftracker+1] * chanVolume[k] * fadeoutVol[k] * chanBoost[k] * chanPanRight[k];
+								unsigned ftp = ch->fadeoutTracker * ch->pitch;
 
-								vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanBoost[k] * chanPanLeft[k];
-								vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanBoost[k] * chanPanRight[k];
+								///ch->vChan[j]   += ch->wave->data[ftp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+
+								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->boost * ch->panRight;
+
+								ch->vChan[j]   += ch->wave->data[ftp]   * ch->fadeoutVol * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->fadeoutVol * ch->panRight * v;
+
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->panRight * v;
+
 							}
 							else { // FADEOUT
-								vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * fadeoutVol[k] * chanBoost[k] * chanPanLeft[k];
-								vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * fadeoutVol[k] * chanBoost[k] * chanPanRight[k];
+								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
+								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
+
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->fadeoutVol * ch->panLeft  * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->fadeoutVol * ch->panRight * v;
 							}
 
-							fadeoutVol[k]     -= fadeoutStep[k];
-							fadeoutTracker[k] += 2;
+							ch->fadeoutVol     -= ch->fadeoutStep;
+							ch->fadeoutTracker += 2;
 						}
 						else {  // fadeout end
-							fadeoutOn[k]  = false;
-							fadeoutVol[k] = 1.0f;
+							ch->fadeoutOn  = false;
+							ch->fadeoutVol = 1.0f;
 
 							/* QWait ends with the end of the xfade */
 
-							if (fadeoutType[k] == XFADE) {
-								chanQWait[k] = false;
+							if (ch->fadeoutType == XFADE) {
+								ch->qWait = false;
 							}
 							else {
-								if (fadeoutEnd[k] == DO_MUTE)
-									chanMute[k] = true;
+								if (ch->fadeoutEnd == DO_MUTE)
+									ch->mute = true;
 								else
-								if (fadeoutEnd[k] == DO_MUTE_I)
-									chanMute_i[k] = true;
+								if (ch->fadeoutEnd == DO_MUTE_I)
+									ch->mute_i = true;
 								else              // DO_STOP
-									chanStop(k);
+									chanStop(ch);
 							}
 
 							/* we must append another frame in the buffer when the fadeout
 							 * ends: there's a gap here which would clip otherwise */
 
-							vChan[k][j]   = vChan[k][j-2];
-							vChan[k][j+1] = vChan[k][j-1];
+							ch->vChan[j]   = ch->vChan[j-2];
+							ch->vChan[j+1] = ch->vChan[j-1];
 						}
 					}  // no fadeout to do
 					else {
-						if (!chanMute[k] && !chanMute_i[k]) {
-							vChan[k][j]   += chan[k]->data[ctracker]   * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanLeft[k];
-							vChan[k][j+1] += chan[k]->data[ctracker+1] * chanVolume[k] * chanFadein[k] * chanBoost[k] * chanPanRight[k];
+						if (!ch->mute && !ch->mute_i) {
+							float v = ch->volume * ch->volume_i * ch->fadein * ch->boost;
+							ch->vChan[j]   += ch->wave->data[ctp]   * v * ch->panLeft;
+							ch->vChan[j+1] += ch->wave->data[ctp+1] * v * ch->panRight;
 						}
 					}
 
-					chanTracker[k] += 2;
+					ch->tracker += 2;
 
 					/* check for end of samples */
 
-					if (chanTracker[k] >= chanEnd[k]) {
+					if (ch->tracker >= ch->end) {
 
-						chanReset(k);
+						chanReset(ch);
 
-						if (chanMode[k] & SINGLE_ANY)
-							chanStatus[k] = STATUS_OFF;
+						if (ch->mode & SINGLE_ANY)
+							ch->status = STATUS_OFF;
 
 						/* stop loops when the seq is off */
 
-						if ((chanMode[k] & LOOP_ANY) && !running)
-							chanStatus[k] = STATUS_OFF;
+						if ((ch->mode & LOOP_ANY) && !running)
+							ch->status = STATUS_OFF;
 
 						/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
 						 * would return in wait, losing the ENDING status */
 
-						if (chanMode[k] == LOOP_ONCE && chanStatus[k] != STATUS_ENDING)
-							chanStatus[k] = STATUS_WAIT;
+						if (ch->mode == LOOP_ONCE && ch->status != STATUS_ENDING)
+							ch->status = STATUS_WAIT;
 					}
 				}
 			}
 		} // end loop K
+		pthread_mutex_unlock(&mutex_chans);
 
 		/* metronome. FIXME - move this one after the peak meter calculation */
 
@@ -595,19 +767,22 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	/* final loop: sum virtual channels */
 
-	for (unsigned k=0; k<MAX_NUM_CHAN; k++) {
-		if (chan[k] != NULL) {
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size; k++) {
+		channel *ch = channels.at(k);
+		if (ch->wave != NULL) {
 #ifdef WITH_VST
 			pthread_mutex_lock(&mutex_plugins);
-			G_PluginHost.processStack(vChan[k], PluginHost::CHANNEL, k);
+			G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
 			pthread_mutex_unlock(&mutex_plugins);
 #endif
 			for (unsigned j=0; j<bufferFrames; j+=2) {
-				buffer[j]   += vChan[k][j];
-				buffer[j+1] += vChan[k][j+1];
+				buffer[j]   += ch->vChan[j];
+				buffer[j+1] += ch->vChan[j+1];
 			}
 		}
 	}
+	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */
 
@@ -696,23 +871,13 @@ void Mixer::updateFrameBars() {
 
 
 int Mixer::close() {
+	//printf("[mixer::close] total channels %d\n", channels.size);
 	running = false;
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		if (chan[i] != NULL) {
-			chanStatus[i] = STATUS_OFF;		  // for safety
-			delete chan[i];
-		}
-
-		/* all vChans must be deallocated */
-
-		free(vChan[i]);
-	}
-
-	/* free virtual input channel */
-
+	while (channels.size > 0)
+		deleteChannel(channels.at(0));
+	//printf("[mixer::close] total channels %d\n", channels.size);
 	free(vChanInput);
 	free(vChanInToOut);
-
 	return 1;
 }
 
@@ -721,8 +886,8 @@ int Mixer::close() {
 
 
 bool Mixer::isSilent() {
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		if (chanStatus[i] == STATUS_PLAY)
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->status == STATUS_PLAY)
 			return false;
 	return true;
 }
@@ -734,17 +899,19 @@ bool Mixer::isSilent() {
 void Mixer::rewind() {
 
 	actualFrame = 0;
-	G_beats     = 0;
+	actualBeat  = 0;
 
 	if (running)
-		for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-			if (chan[i] != NULL) {
+		for (unsigned i=0; i<channels.size; i++) {
+			channel *ch = channels.at(i);
+			if (ch->wave != NULL) {
 
 				/* don't rewind a SINGLE_ANY, unless it's in read-record-mode */
 
-				if ((chanMode[i] & LOOP_ANY) || (chanRecStatus[i] == REC_READING && (chanMode[i] & SINGLE_ANY)))
-					chanReset(i); //chanTracker[i] = chanStart[i];
+				if ((ch->mode & LOOP_ANY) || (ch->recStatus == REC_READING && (ch->mode & SINGLE_ANY)))
+					chanReset(ch);
 			}
+		}
 }
 
 
@@ -765,17 +932,17 @@ void Mixer::updateQuanto() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::calcFadeoutStep(int ch) {
+void Mixer::calcFadeoutStep(channel *ch) {
 
 	/* how many frames are left before the end of the sample? Is there
 	 * enough room for a complete fadeout? Should we shorten it? */
 
-	unsigned ctracker = chanTracker[ch]*chanPitch[ch];
+	unsigned ctracker = ch->tracker * ch->pitch;
 
-	if (chanEnd[ch] - ctracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
-		fadeoutStep[ch] = ceil((chanEnd[ch] - ctracker) / chanVolume[ch]) * 2;
+	if (ch->end - ctracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
+		ch->fadeoutStep = ceil((ch->end - ctracker) / ch->volume) * 2;
 	else
-		fadeoutStep[ch] = DEFAULT_FADEOUT_STEP;
+		ch->fadeoutStep = DEFAULT_FADEOUT_STEP;
 }
 
 
@@ -783,9 +950,9 @@ void Mixer::calcFadeoutStep(int ch) {
 
 
 bool Mixer::hasLogicalSamples() {
-	for (int i=0; i<MAX_NUM_CHAN; i++)
-		if (chan[i] != NULL)
-			if (chan[i]->isLogical)
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->wave != NULL)
+			if (channels.at(i)->wave->isLogical)
 				return true;
 	return false;
 }
@@ -795,9 +962,9 @@ bool Mixer::hasLogicalSamples() {
 
 
 bool Mixer::hasEditedSamples() {
-	for (int i=0; i<MAX_NUM_CHAN; i++)
-		if (chan[i] != NULL)
-			if (chan[i]->isEdited)
+	for (unsigned i=0; i<channels.size; i++)
+		if (channels.at(i)->wave != NULL)
+			if (channels.at(i)->wave->isEdited)
 				return true;
 	return false;
 }
@@ -806,7 +973,7 @@ bool Mixer::hasEditedSamples() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setPitch(int ch, float val) {
+void Mixer::setPitch(channel *ch, float val) {
 
 	/* if the pitch changes also chanStart/chanEnd must change accordingly
 	 * and to do that we need the original (or previous) chanStart/chanEnd
@@ -815,49 +982,49 @@ void Mixer::setPitch(int ch, float val) {
 	 * chanStart{pitched} = chanStart{Original} / newpitch */
 
 	if (val == 1.0f) {
-		chanStart[ch] = chanStartTrue[ch];
-		chanEnd[ch]   = chanEndTrue[ch];
-		chanPitch[ch] = 1.0f;
+		ch->start = ch->startTrue;
+		ch->end   = ch->endTrue;
+		ch->pitch = 1.0f;
 		return;
 	}
 
-	chanStart[ch] = (unsigned) floorf(chanStartTrue[ch] / val);
-	chanEnd[ch]   = (unsigned) floorf(chanEndTrue[ch]   / val);
+	ch->start = (unsigned) floorf(ch->startTrue / val);
+	ch->end   = (unsigned) floorf(ch->endTrue   / val);
 
-	chanPitch[ch] = val;
+	ch->pitch = val;
 
 	/* even values please */
 
-	if (chanStart[ch] % 2 != 0)	chanStart[ch]++;
-	if (chanEnd[ch]   % 2 != 0)	chanEnd[ch]++;
+	if (ch->start % 2 != 0)	ch->start++;
+	if (ch->end   % 2 != 0)	ch->end++;
 
 	/* avoid overflow when changing pitch during play mode */
 
-	if (chanTracker[ch] > chanEnd[ch])
-		chanTracker[ch] = chanEnd[ch];
+	if (ch->tracker > ch->end)
+		ch->tracker = ch->end;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setChanStart(int ch, unsigned val) {
+void Mixer::setChanStart(struct channel *ch, unsigned val) {
 	if (val % 2 != 0)
 		val++;
-	chanStartTrue[ch] = val;
-	chanStart[ch]     = (unsigned) floorf(chanStartTrue[ch] / chanPitch[ch]);
-	chanTracker[ch]   = chanStart[ch];
+	ch->startTrue = val;
+	ch->start     = (unsigned) floorf(ch->startTrue / ch->pitch);
+	ch->tracker   = ch->start;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::setChanEnd(int ch, unsigned val) {
+void Mixer::setChanEnd(struct channel *ch, unsigned val) {
 	if (val % 2 != 0)
 		val++;
-	chanEndTrue[ch] = val;
-	chanEnd[ch]     = (unsigned) floorf(chanEndTrue[ch] / chanPitch[ch]);
+	ch->endTrue = val;
+	ch->end = (unsigned) floorf(ch->endTrue / ch->pitch);
 }
 
 
@@ -874,7 +1041,7 @@ bool Mixer::mergeVirtualInput() {
 		G_PluginHost.processStackOffline(vChanInput, PluginHost::MASTER_IN, 0, totalFrames);
 #endif
 		int numFrames = totalFrames*sizeof(float);
-		memcpy(chan[chanInput]->data, vChanInput, numFrames);
+		memcpy(chanInput->wave->data, vChanInput, numFrames);
 		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
 	}
@@ -884,6 +1051,48 @@ bool Mixer::mergeVirtualInput() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::isPlaying(int c) {
-	return chanStatus[c] == STATUS_PLAY || chanStatus[c] == STATUS_ENDING;
+bool Mixer::isPlaying(channel *ch) {
+	return ch->status == STATUS_PLAY || ch->status == STATUS_ENDING;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::calcVolumeEnv(struct channel *ch, int frame) {
+
+	/* method: check this frame && next frame, then calculate delta */
+
+	recorder::action *a0 = NULL;
+	recorder::action *a1 = NULL;
+	int res;
+
+	res = recorder::getAction(ch->index, ACTION_VOLUME, frame, &a0);
+	if (res == 0) {
+		//printf("[mixer::calcVolumeEnv] a0 not found\n");
+		return;
+	}
+
+	//printf("[mixer::calcVolumeEnv] a0 found, frame=%d value=%f\n", a0->frame, a0->fValue);
+
+	res = recorder::getNextAction(ch->index, ACTION_VOLUME, frame, &a1);
+
+	/* res == -1: a1 not found, this is the last one. Rewind the search
+	 * and use action at frame number 0 (actions[0]) */
+
+	if (res == -1) {
+		//puts("[mixer::calcVolumeEnv] a1 not found, using actions[0]");
+		res = recorder::getAction(ch->index, ACTION_VOLUME, 0, &a1);
+	}
+	else
+
+	/* res == -2 ACTION_VOLUME not found. This should never happen */
+
+	//if (res == -2)
+	//	puts("[mixer::calcVolumeEnv] WARNING: action1 as ACTION_VOLUME not found!");
+	//else
+	//	printf("[mixer::calcVolumeEnv] a1 found, at frame %d value=%f\n", a1->frame, a1->fValue);
+
+	ch->volume_i = a0->fValue;
+	ch->volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
 }

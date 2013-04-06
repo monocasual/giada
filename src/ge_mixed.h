@@ -201,11 +201,13 @@ private:
 	static void cb_change_chanmode(Fl_Widget *v, void *p);
 	inline void __cb_change_chanmode(int mode);
 
+	struct channel *ch;
+
 public:
-	gModeBox(int X,int Y,int W,int H,const char *L=0);
+	gModeBox(int x, int y, int w, int h, struct channel *ch, const char *l=0);
 	void draw();
-	int id;
-	static int id_generator;
+	//int id;
+	//static int id_generator;
 };
 
 
@@ -229,9 +231,9 @@ public:
 
 class gStatus : public Fl_Box {
 public:
-	gStatus(int X, int Y, int W, int H, int chan, const char *L=0);
+	gStatus(int X, int Y, int W, int H, struct channel *ch, const char *L=0);
 	void draw();
-	int  ch;
+	struct channel *ch;
 };
 
 

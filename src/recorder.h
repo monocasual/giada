@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include "utils.h"
 #include "const.h"
+#include "mixer.h"
 
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
@@ -43,10 +44,17 @@
 
 namespace recorder {
 
+/* action
+ * struct containing fields to describe an atomic action. Note from
+ * VST sdk: parameter values, like all VST parameters, are declared as
+ * floats with an inclusive range of 0.0 to 1.0 (fValue). */
+
 struct action {
-	int  chan;
-	char type;
-	int  frame; // redundant info, used by helper functions
+	int   chan;    // channel index, struct channel->index
+ 	int   type;
+	int   frame;   // redundant info, used by helper functions
+	float fValue;  // used only for envelopes (volumes, vst params).
+	int   iValue;  // used only for MIDI events
 };
 
 /* composite
@@ -63,8 +71,6 @@ extern gVector< gVector<action*> > global;	// container of containers of actions
 extern gVector<action*>  actions;				    // container of actions
 
 extern bool active;
-extern bool chanActive[MAX_NUM_CHAN];				// recs are read only for active channels
-extern bool chanEvents[MAX_NUM_CHAN];				// chan has events?
 extern bool sortedActions;                  // actions are sorted via sortActions()?
 
 /* init
@@ -81,12 +87,12 @@ void chanHasEvents(int chan);
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
 
-bool canRec(int chan);
+bool canRec(channel *ch);
 
 /* rec
  * record an action. */
 
-void rec(int chan, char action, int frame);
+void rec(int chan, char action, int frame, int iValue=0, float fValue=0.0f);
 
 /* clearChan
  * clear all actions from a channel. */
@@ -142,8 +148,8 @@ void shrink(int new_fpb);
  * if enabled  = read actions from channel chan
  * if disabled = don't read actions from channel chan. */
 
-void enableRead(int chan);
-void disableRead(int chan);
+void enableRead(channel *ch);
+void disableRead(channel *ch);
 
 /* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
@@ -159,9 +165,16 @@ int getEndActionFrame(int chan, char action, int frame);
 
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
- * from 'frame'. Action can be a bitmask. */
+ * from 'frame'. Action can be a bitmask. If inclusive, search from
+ * [frame, else (frame. */
 
 int getNextAction(int chan, char action, int frame, struct action **out);
+
+/* getAction
+ * return a pointer to action in chan 'chan' of type 'action' at frame
+ * 'frame'. */
+
+int getAction(int chan, char action, int frame, struct action **out);
 
 /* start/endOverdub */
 

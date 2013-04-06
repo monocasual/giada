@@ -45,8 +45,10 @@ class gdActionEditor : public gWindow {
 
 public:
 
-	gdActionEditor(int chan);
+	gdActionEditor(struct channel *chan);
 	~gdActionEditor();
+
+	int handle(int e);
 
 	int getActionType();
 
@@ -65,10 +67,12 @@ public:
 	class gClick         *zoomIn;
 	class gClick         *zoomOut;
 	class Fl_Scroll      *scroller;  // widget container
-	class gActionChannel *ac;
-	class gMuteChannel   *mc;
+	class gActionChannel   *ac;      // action channel
+	class gMuteChannel     *mc;      // mute channel
+	class gEnvelopeChannel *vc;      // volume channel
 
-	int chan;
+	struct channel *chan;
+
 	int zoom;
 	int framesPerBar;
 	int framesPerBeat;

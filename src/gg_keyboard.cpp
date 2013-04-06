@@ -31,6 +31,7 @@
 #include "gd_browser.h"
 #include "const.h"
 #include "mixer.h"
+#include "wave.h"
 #include "gd_editor.h"
 #include "conf.h"
 #include "patch.h"
@@ -40,6 +41,8 @@
 #include "recorder.h"
 #include "gd_warnings.h"
 #include "pluginHost.h"
+#include "channel.h"
+#include "gd_keyGrabber.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -48,133 +51,175 @@ extern Patch 		     G_Patch;
 extern gdMainWindow *mainWin;
 
 
-Keyboard::Keyboard(int X,int Y,int W,int H,const char *L)
-: Fl_Group(X,Y,W,H,L),
-	bckspcPressed(false),
-	endPressed(false),
-	spacePressed(false)
+gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
+: Fl_Group(X, Y, W, H, L), ch(ch)
 {
-	color(COLOR_BG_MAIN);
-
-	/* read the config file */
-
-	int arkeys[MAX_NUM_CHAN] = DEFAULT_KEY_ARRAY;
-		for (int i=0; i<MAX_NUM_CHAN; i++)
-			arkeys[i] = G_Conf.keys[i];
-
-	for (unsigned i=0, _y=0, _x=0; i<MAX_NUM_CHAN; i++) {
-		if (i>=MAX_NUM_CHAN/2) {
-			_y = 24*MAX_NUM_CHAN/2;
-			_x = 411;
-		}
-		butts[i]        = new gButton (    x()+_x, (y()+i*24)-_y, 20,  20);
-		status[i]       = new gStatus (24 +x()+_x, (y()+i*24)-_y, 20,  20, i);
+	begin();
+	button = new gButton (x(), y(), 20, 20);
+	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 #if defined(WITH_VST)
-		sampleButton[i] = new gClick  (48 +x()+_x, (y()+i*24)-_y, 239, 20, "-- no sample --");
-		mute[i]         = new gClick  (291+x()+_x, (y()+i*24)-_y, 20,  20, "", muteOff_xpm, muteOn_xpm);
-		fx[i]           = new gButton (315+x()+_x, (y()+i*24)-_y, 20,  20, "", fxOff_xpm, fxOn_xpm);
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
+	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	fx           = new gButton (mute->x()+mute->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
+	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-		sampleButton[i] = new gClick  (48 +x()+_x, (y()+i*24)-_y, 263, 20, "-- no sample --");
-		mute[i]         = new gClick  (315+x()+_x, (y()+i*24)-_y, 20,  20, "", muteOff_xpm, muteOn_xpm);
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 261, 20, "-- no sample --");
+	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
+	vol          = new gDial   (mute->x()+mute->w()+4, y(), 20, 20);
 #endif
-		vol[i]          = new gDial   (339+x()+_x, (y()+i*24)-_y, 20,  20);
-		modeBoxes[i]    = new gModeBox(363+x()+_x, (y()+i*24)-_y, 20,  20);
-		readActions[i]  = NULL; // tutti vuoti all'inizio
-
-		butts[i]->callback(cb_button, (void*)this);
-		char buf[2]; sprintf(buf, "%c", arkeys[i]);
-		butts[i]->copy_label(buf);
-		butts[i]->key = arkeys[i];
-		butts[i]->id  = i;
-
-#ifdef WITH_VST
-		fx[i]->id = i;
-		fx[i]->callback(cb_openFxWindow, (void*)(intptr_t)i);
-#endif
-
-		mute[i]->type(FL_TOGGLE_BUTTON);
-		mute[i]->callback(cb_mute, (void*)(intptr_t)i);
-
-    sampleButton[i]->callback(cb_openChanMenu, (void*)(intptr_t)i);
-
-		vol[i]->callback(cb_change_vol, (void*)(intptr_t)i);
-	}
+	modeBox      = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20, ch);
+	readActions  = NULL; // no rec button at start
 	end();
+
+	if (ch->wave)
+		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+
+	button->callback(cb_button, (void*)this);
+	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
+
+	char buf[2]; sprintf(buf, "%c", ch->key);
+	button->copy_label(buf);
+
+#ifdef WITH_VST
+	fx->callback(cb_openFxWindow, (void*)this);
+#endif
+
+	mute->type(FL_TOGGLE_BUTTON);
+	mute->callback(cb_mute, (void*)this);
+	sampleButton->callback(cb_openChanMenu, (void*)this);
+	vol->callback(cb_change_vol, (void*)this);
+
+	ch->guiChannel = this;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::cb_button      (Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_button((gButton*)v); }
-void Keyboard::cb_openChanMenu(Fl_Widget *v, void *p) { ((Keyboard*)((gDial*)v)->parent())->__cb_openChanMenu((intptr_t)p); } // veramente bestiale...
-void Keyboard::cb_change_vol  (Fl_Widget *v, void *p) { ((Keyboard*)((gDial*)v)->parent())->__cb_change_vol((intptr_t)p); }	 // veramente bestiale...
-void Keyboard::cb_mute        (Fl_Widget *v, void *p) { ((Keyboard*)((gClick*)v)->parent())->__cb_mute((intptr_t)p); }	       // veramente bestiale...
-void Keyboard::cb_readActions (Fl_Widget *v, void *p) { ((Keyboard*)((gClick*)v)->parent())->__cb_readActions((intptr_t)p); } // veramente bestiale...
+void gChannel::cb_button      (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_button(); }
+void gChannel::cb_mute        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_mute(); }
+void gChannel::cb_openChanMenu(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openChanMenu(); }
+void gChannel::cb_change_vol  (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_change_vol(); }
+void gChannel::cb_readActions (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_readActions(); }
 #ifdef WITH_VST
-void Keyboard::cb_openFxWindow(Fl_Widget *v, void *p) { mainWin->keyboard->__cb_openFxWindow((intptr_t)p); } /// perchè non semplificare anche gli altri?
+void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openFxWindow(); }
+#endif
+
+
+/* ------------------------------------------------------------------ */
+
+int gChannel::keypress(int e) {
+	int ret;
+	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
+		ret = 1;
+	else
+	if (Fl::event_key() == ch->key && !button->value()) {
+		button->take_focus();                                              // move focus to this button
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+		button->do_callback();                                             // invoke the button's callback
+		ret = 1;
+	}
+	else
+		ret = 0;
+
+	if (Fl::event_key() == ch->key)
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_button() {
+	if (button->value())    // pushed
+		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+	else                    // released
+		glue_keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+void gChannel::__cb_openFxWindow() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+}
 #endif
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_button(gButton *gb) {
-	if (gb->value())   // pushed
-		glue_keyPress(gb->id, Fl::event_ctrl(), Fl::event_shift());
-	else               // released
-		glue_keyRelease(gb->id, Fl::event_ctrl(), Fl::event_shift());
+void gChannel::reset() {
+	sampleButton->bgColor0 = COLOR_BG_0;
+	sampleButton->bdColor  = COLOR_BD_0;
+	sampleButton->txtColor = COLOR_TEXT_0;
+	sampleButton->label("-- no sample --");
+	remActionButton();
+	sampleButton->redraw();
+	status->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_openChanMenu(int chan) {
+void gChannel::__cb_mute() {
+	glue_setMute(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_openChanMenu() {
 
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
 
-	if (G_Mixer.chanInput == chan || recorder::active)
+	if (G_Mixer.chanInput == ch || recorder::active)
 		return;
-
-	if (G_Mixer.chanStatus[chan] & (STATUS_EMPTY | STATUS_MISSING)) {
-		char title[30];
-		sprintf(title, "Browse Sample for Channel %d", chan+1);
-		gWindow *childWin = new gdBrowser(title, G_Conf.samplePath, chan, BROWSER_LOAD_SAMPLE);
-		gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
-		return;
-	}
 
 	/* the following is a trash workaround for a FLTK menu. We need a gMenu
 	 * widget asap */
 
 	Fl_Menu_Item rclick_menu[] = {
-		{"Load new sample..."},
-		{"Export sample to file..."},
-		{"Edit sample..."},
-		{"Edit actions..."},
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},
-			{"All"},
-			{"Mute"},
-			{"Start/Stop"},
-			{0},
-		{"Free channel"},
+		{"Load new sample..."},                     // 0
+		{"Export sample to file..."},               // 1
+		{"Set key..."},                             // 2
+		{"Edit sample..."},                         // 3
+		{"Edit actions..."},                        // 4
+		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 5
+			{"All"},                                  // 6
+			{"Mute"},                                 // 7
+			{"Volume"},                               // 8
+			{"Start/Stop"},                           // 9
+			{0},                                      // 10
+		{"Free channel"},                           // 11
+		{"Delete channel"},                         // 12
 		{0}
 	};
 
+	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
+		rclick_menu[1].deactivate();
+		rclick_menu[3].deactivate();
+		rclick_menu[4].deactivate();
+		rclick_menu[11].deactivate();
+	}
+
 	/* no 'clear actions' if there are no actions */
 
-	if (!recorder::chanEvents[chan])
-		rclick_menu[4].deactivate();
-
-	/* no 'clear all actions' or 'clear start/stop actions' for those channels
-	 * in loop mode: they can only have mute actions. */
-
-	if (G_Mixer.chanMode[chan] & LOOP_ANY) {
+	if (!ch->hasActions)
 		rclick_menu[5].deactivate();
-		rclick_menu[7].deactivate();
-	}
+
+	/* no 'clear start/stop actions' for those channels in loop mode:
+	 * they cannot have start/stop actions. */
+
+	if (ch->mode & LOOP_ANY)
+		rclick_menu[9].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);
@@ -186,38 +231,41 @@ void Keyboard::__cb_openChanMenu(int chan) {
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-		char title[30];
-		sprintf(title, "Browse Sample for Channel %d", chan+1);
-		gWindow *childWin = new gdBrowser(title, G_Conf.samplePath, chan, BROWSER_LOAD_SAMPLE);
-		gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
+		openBrowser(BROWSER_LOAD_SAMPLE);
+		return;
+	}
+
+	if (strcmp(m->label(), "Set key...") == 0) {
+		new gdKeyGrabber(ch);
 		return;
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		char title[26];
-		sprintf(title, "Edit Sample in Channel %d", chan+1);
-		gWindow *childWin = new gdEditor(title, chan);
-		gu_openSubWindow(mainWin, childWin,	WID_SAMPLE_EDITOR);
+		gu_openSubWindow(mainWin, new gdEditor(ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
 		return;
 	}
 
 	if (strcmp(m->label(), "Export sample to file...") == 0) {
-		char title[30];
-		sprintf(title, "Save Sample in Channel %d", chan+1);
-		gWindow *childWin = new gdBrowser(title, G_Conf.samplePath, chan, BROWSER_SAVE_SAMPLE);
-		gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
+		openBrowser(BROWSER_SAVE_SAMPLE);
+		return;
+	}
+
+	if (strcmp(m->label(), "Delete channel") == 0) {
+		if (ch->wave != NULL && !gdConfirmWin("Warning", "Delete channel: are you sure?"))
+			return;
+		glue_deleteChannel(ch);
 		return;
 	}
 
 	if (strcmp(m->label(), "Free channel") == 0) {
-		if (G_Mixer.chanStatus[chan] == STATUS_PLAY) {
+		if (ch->status == STATUS_PLAY) {
 			if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
 				return;
 		}
 		else if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
 			return;
 
-		glue_unloadChannel(chan);
+		glue_freeChannel(ch);
 
 		/* delete any related subwindow */
 
@@ -232,9 +280,9 @@ void Keyboard::__cb_openChanMenu(int chan) {
 	if (strcmp(m->label(), "Mute") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
-		recorder::clearAction(chan, ACTION_MUTEON | ACTION_MUTEOFF);
-		if (!recorder::chanEvents[chan])
-			remActionButton(chan);
+		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
+		if (!ch->hasActions)
+			remActionButton();
 
 		/* TODO - set mute=false */
 
@@ -245,9 +293,19 @@ void Keyboard::__cb_openChanMenu(int chan) {
 	if (strcmp(m->label(), "Start/Stop") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
-		recorder::clearAction(chan, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
-		if (!recorder::chanEvents[chan])
-			remActionButton(chan);
+		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+		if (!ch->hasActions)
+			remActionButton();
+		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+		return;
+	}
+
+	if (strcmp(m->label(), "Volume") == 0) {
+		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
+			return;
+		recorder::clearAction(ch->index, ACTION_VOLUME);
+		if (!ch->hasActions)
+			remActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -255,14 +313,14 @@ void Keyboard::__cb_openChanMenu(int chan) {
 	if (strcmp(m->label(), "All") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		recorder::clearChan(chan);
-		remActionButton(chan);
+		recorder::clearChan(ch->index);
+		remActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}
 
 	if (strcmp(m->label(), "Edit actions...") == 0) {
-		gu_openSubWindow(mainWin, new gdActionEditor(chan),	WID_ACTION_EDITOR);
+		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
 		return;
 	}
 }
@@ -271,9 +329,255 @@ void Keyboard::__cb_openChanMenu(int chan) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_change_vol(int chan) {
-	glue_setVolMainWin(chan, vol[chan]->value());
-	//G_Mixer.chanVolume[chan] = vol[chan]->value();
+void gChannel::openBrowser(int type) {
+	const char *title = "";
+	switch (type) {
+		case BROWSER_LOAD_SAMPLE:
+			title = "Browse Sample";
+			break;
+		case BROWSER_SAVE_SAMPLE:
+			title = "Save Sample";
+			break;
+		case -1:
+			title = "Edit Sample";
+			break;
+	}
+	gWindow *childWin = new gdBrowser(title, G_Conf.samplePath, ch, type);
+	gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_change_vol() {
+	glue_setVolMainWin(ch, vol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::addActionButton(bool status) {
+
+	/* quit if 'R' exists yet. */
+
+	if (readActions != NULL)
+		return;
+
+	sampleButton->size(sampleButton->w()-24, sampleButton->h());
+
+	redraw();
+
+	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4, sampleButton->y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
+	readActions->type(FL_TOGGLE_BUTTON);
+	readActions->value(status);
+	readActions->callback(cb_readActions, (void*)this);
+	add(readActions);
+
+	/* hard redraw: there's no other way to avoid glitches when moving
+	 * the 'R' button */
+
+	mainWin->keyboard->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::remActionButton() {
+	if (readActions == NULL)
+		return;
+
+	remove(readActions);		// delete from Keyboard group (FLTK)
+	//delete readActions[c];  // delete (C++)
+	readActions = NULL;
+
+	sampleButton->size(sampleButton->w()+24, sampleButton->h());
+	sampleButton->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_readActions() {
+	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
+: Fl_Scroll(X, Y, W, H, L),
+	bckspcPressed(false),
+	endPressed(false),
+	spacePressed(false)
+{
+	color(COLOR_BG_MAIN);
+	type(Fl_Scroll::VERTICAL);
+	scrollbar.color(COLOR_BG_0);
+	scrollbar.selection_color(COLOR_BG_1);
+	scrollbar.labelcolor(COLOR_BD_1);
+	scrollbar.slider(G_BOX);
+
+	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-16, 0);
+	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+32, y(), (w()/2)-16, 0);
+	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
+	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
+
+	/* begin() - end() don't work well here, with sub-Fl_Group */
+
+	add(addChannelL);
+	add(addChannelR);
+	add(gChannelsL);
+	add(gChannelsR);
+
+	//gChannelsL->box(FL_BORDER_BOX);
+	//gChannelsR->box(FL_BORDER_BOX);
+
+	gChannelsL->resizable(NULL);
+	gChannelsR->resizable(NULL);
+
+
+	addChannelL->callback(cb_addChannelL, (void*) this);
+	addChannelR->callback(cb_addChannelR, (void*) this);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::fixRightColumn() {
+	if (!hasScrollbar())
+		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+32, gChannelsR->y());
+	else
+		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+8, gChannelsR->y());
+	addChannelR->position(gChannelsR->x(), addChannelR->y());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::freeChannel(struct channel *ch) {
+	ch->guiChannel->reset();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::deleteChannel(struct channel *ch) {
+	Fl::lock();
+	ch->guiChannel->hide();
+	gChannelsR->remove(ch->guiChannel);
+	gChannelsL->remove(ch->guiChannel);
+	delete ch->guiChannel;
+	ch->guiChannel = NULL;
+	Fl::unlock();
+	fixRightColumn();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::updateChannel(struct channel *ch) {
+	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::updateChannels(char side) {
+
+	Fl_Group *group;
+	gClick   *add;
+
+	if (side == 0)	{
+		group = gChannelsL;
+		add   = addChannelL;
+	}
+	else {
+		group = gChannelsR;
+		add   = addChannelR;
+	}
+
+	//printf("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
+
+	for (int i=0; i<group->children(); i++) {
+		gChannel *gch = (gChannel*) group->child(i);
+		gch->position(gch->x(), group->y()+(i*24));
+	}
+	group->size(group->w(), group->children()*24);
+	add->position(add->x(), group->y()+group->h());
+
+	redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::cb_addChannelL(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelL(); }
+void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelR(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+gChannel *Keyboard::addChannel(char side, channel *ch) {
+	Fl_Group *group;
+	gClick   *add;
+
+	if (side == 0)	{
+		group = gChannelsL;
+		add   = addChannelL;
+	}
+	else {
+		group = gChannelsR;
+		add   = addChannelR;
+	}
+
+	gChannel *gch = new gChannel(group->x(), group->y() + group->children() * 24, group->w(), 20, NULL, ch);
+
+	group->add(gch);
+	group->size(group->w(), group->children() * 24);
+	add->position(group->x(), group->y()+group->h());
+	fixRightColumn();
+	redraw();
+
+	return gch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool Keyboard::hasScrollbar() {
+	if (24 * (gChannelsL->children()) > h())
+		return true;
+	if (24 * (gChannelsR->children()) > h())
+		return true;
+	return false;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Keyboard::__cb_addChannelL() {
+	glue_addChannel(0);
+}
+
+
+void Keyboard::__cb_addChannelR() {
+	glue_addChannel(1);
 }
 
 
@@ -303,7 +607,7 @@ int Keyboard::handle(int e) {
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					G_Mixer.chanInput == -1 ? glue_startInputRec() : glue_stopInputRec();
+					G_Mixer.chanInput == NULL ? glue_startInputRec() : glue_stopInputRec();
 					ret = 1;
 					break;
 				}
@@ -331,32 +635,14 @@ int Keyboard::handle(int e) {
 					enterPressed = false;
 			}
 
-			/* Walk button array, trying to match button's label with the Keyboard event.
+			/* Walk button arrays, trying to match button's label with the Keyboard event.
 			 * If found, set that button's value() based on up/down event,
 			 * and invoke that button's callback() */
 
-			for (int t=0; t<MAX_NUM_CHAN; t++) {
-
-				if (e == FL_KEYDOWN && butts[t]->value())			 // key already pressed! skip it
-					ret = 1;
-				else {
-					if (Fl::event_key() == butts[t]->key) {
-						butts[t]->take_focus();                        // move focus to this button
-						butts[t]->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-						butts[t]->do_callback();                       // invoke the button's callback
-						ret = 1;                               				 // indicate we handled it
-					}
-				}
-			}
-			break;
-		}
-		case FL_PUSH: {
-			for (int t=0; t<MAX_NUM_CHAN; t++) {
-				if (butts[t]->value()) {	      // if button ON do callback
-					butts[t]->do_callback();
-					break;
-				}
-			}
+			for (int i=0; i<gChannelsL->children(); i++)
+				ret &= ((gChannel*)gChannelsL->child(i))->keypress(e);
+			for (int i=0; i<gChannelsR->children(); i++)
+				ret &= ((gChannel*)gChannelsR->child(i))->keypress(e);
 			break;
 		}
 	}
@@ -367,78 +653,38 @@ int Keyboard::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_mute(int chan) {
-	glue_setMute(chan);
+void Keyboard::clear() {
+	Fl::lock();
+	gChannelsL->clear();
+	gChannelsR->clear();
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		G_Mixer.channels.at(i)->guiChannel = NULL;
+	Fl::unlock();
+
+	gChannelsR->size(gChannelsR->w(), 0);
+	gChannelsL->size(gChannelsL->w(), 0);
+
+	gChannelsL->resizable(NULL);
+	gChannelsR->resizable(NULL);
+
+	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
+	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
+
+	redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_readActions(int c) {
-	recorder::chanActive[c] ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
+void Keyboard::setChannelWithActions(channel *ch) {
+	if (ch->hasActions) {
+		ch->readActions = true;   /// <---- move this to glue_stopRec
+		ch->guiChannel->addActionButton(true); // true = button on
+	}
+	else {
+		ch->readActions = false;  /// <---- move this to glue_stopRec
+		ch->guiChannel->remActionButton();
+	}
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-void Keyboard::addActionButton(int c, bool status) {
-
-	/* quit if 'R' exists yet. */
-
-	if (readActions[c] != NULL)
-		return;
-
-	sampleButton[c]->resize(
-		sampleButton[c]->x(),
-		sampleButton[c]->y(),
-		sampleButton[c]->w()-24,
-		sampleButton[c]->h());
-
-	int _y = sampleButton[c]->y();
-	int _x = sampleButton[c]->x() + sampleButton[c]->w() + 4;
-
-	readActions[c] = new gClick(_x, _y, 20, 20, "", readActionOff_xpm, readActionOn_xpm);
-	readActions[c]->type(FL_TOGGLE_BUTTON);
-	readActions[c]->value(status);
-	readActions[c]->callback(cb_readActions, (void*)(intptr_t)c);
-	add(readActions[c]);
-
-	/* hard redraw: there's no other way to avoid glitches when moving
-	 * the 'R' button */
-	/** FIXME - check with fltk 1.3.x */
-
-	mainWin->redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void Keyboard::remActionButton(int c) {
-	if (readActions[c] == NULL)
-		return;
-
-	remove(readActions[c]);		// delete from Keyboard group (FLTK)
-	delete readActions[c];    // delete (C++)
-	readActions[c] = NULL;
-
-	sampleButton[c]->resize(
-		sampleButton[c]->x(),
-		sampleButton[c]->y(),
-		sampleButton[c]->w()+24,
-		sampleButton[c]->h());
-
-	sampleButton[c]->redraw();
-}
-
-
-
-/* ------------------------------------------------------------------ */
-
-#ifdef WITH_VST
-void Keyboard::__cb_openFxWindow(int c) {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, c), WID_FX_LIST);
-}
-#endif

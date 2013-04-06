@@ -35,6 +35,7 @@
 #include "pluginHost.h"
 #include "wave.h"
 #include "mixer.h"
+#include "channel.h"
 
 
 extern Mixer 		  G_Mixer;
@@ -51,6 +52,11 @@ int Patch::open(const char *file) {
 
 	if (getValue("header") != "GIADAPTC")
 		return PATCH_INVALID;
+
+	version = atof(getValue("versionf").c_str());
+	printf("[PATCH] open patch version %f\n", version);
+	if (version == 0.0)
+		puts("[PATCH] patch < 0.6.1, backward compatibility mode");
 
 	return PATCH_OPEN_OK;
 }
@@ -103,6 +109,40 @@ float Patch::getPitch(int c) {
 	if (out > 2.0f || out < 0.1f)
 		return 1.0f;
 	return out;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getNumChans() {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 32;
+	return atoi(getValue("channels").c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+char Patch::getSide(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 0;
+	char tmp[16];
+	sprintf(tmp, "chanSide%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getIndex(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return c;
+
+	char tmp[16];
+	sprintf(tmp, "chanIndex%d", c);
+	return atoi(getValue(tmp).c_str());
 }
 
 
@@ -170,7 +210,7 @@ int Patch::getEnd(int c, unsigned size) {
 		return size;
 
 	unsigned out = atoi(val.c_str());
-	if (out < 0 || out > size)
+	if (out <= 0 || out > size)
 		return size;
 	return out;
 }
@@ -203,6 +243,18 @@ float Patch::getPanLeft(int c) {
 	if (out < 0.0f || out > 1.0f)
 		return 1.0f;
 	return out;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getKey(int c) {
+	if (version == 0.0)      // backward compatibility with version < 0.6.1
+		return 0;
+	char tmp[16];
+	sprintf(tmp, "chanKey%d", c);
+	return atoi(getValue(tmp).c_str());
 }
 
 
@@ -343,25 +395,32 @@ int Patch::readRecs() {
 //printf("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
 
 		for (int k=0; k<recPerFrame; k++) {
-			int chan, type;
+			int   chan = 0;
+			int   type = 0;
+			float fValue = 0.0f;
+			int   iValue = 0;
 
 			/* reading info for each frame: %d|%d */
 
 			char tmpbuf[16];
 			sprintf(tmpbuf, "f%da%d", i, k);
-			sscanf(getValue(tmpbuf).c_str(), "%d|%d", &chan, &type);
 
-//printf("  loading chan=%d, type=%d\n", chan, type);
+			if (version < 0.61f) // no float and int values
+				sscanf(getValue(tmpbuf).c_str(), "%d|%d", &chan, &type);
+			else
+				sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%d", &chan, &type, &fValue, &iValue);
+
+//printf("  loading chan=%d, type=%d, fValue=%f, iValue=%d\n", chan, type, fValue, iValue);
 
 			/* backward compatibility < 0.4.1 */
 
 			if (frame % 2 != 0)
 				frame++;
 
-			recorder::rec(chan, type, frame);
+			channel *ch = G_Mixer.getChannelByIndex(chan);
+			recorder::rec(ch->index, type, frame, iValue, fValue);
 		}
 	}
-
 	return 1;
 }
 
@@ -382,22 +441,24 @@ int Patch::readPlugins() {
 
 	/* channel plugins */
 
-	for (int i=0; i<MAX_NUM_CHAN; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *ch = G_Mixer.channels.at(i);
+
 		char tmp[MAX_LINE_LEN];
-		sprintf(tmp, "chan%dPlugins", i);
+		sprintf(tmp, "chan%dPlugins", ch->index);
 		int np = atoi(getValue(tmp).c_str());
 
 		for (int j=0; j<np; j++) {
-			sprintf(tmp, "chan%d_p%dpathfile", i, j);
-			int out = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, i);
+			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
+			int out = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, ch);
 			if (out != 0) {
-				sprintf(tmp, "chan%d_p%dnumParams", i, j);
+				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
-				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, i);
-				sprintf(tmp, "chan%d_p%dbypass", i, j);
+				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
+				sprintf(tmp, "chan%d_p%dbypass", ch->index, j);
 				pPlugin->bypass = atoi(getValue(tmp).c_str());
 				for (int k=0; k<nparam; k++) {
-					sprintf(tmp, "chan%d_p%dparam%dvalue", i, j, k);
+					sprintf(tmp, "chan%d_p%dparam%dvalue", ch->index, j, k);
 					float pval = atof(getValue(tmp).c_str());
 					pPlugin->setParam(k, pval);
 				}
@@ -421,20 +482,27 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "# --- Giada patch file --- \n");
 	fprintf(fp, "header=GIADAPTC\n");
 	fprintf(fp, "version=%s\n", VERSIONE);
+	fprintf(fp, "versionf=%f\n", VERSIONE_FLOAT);
 	fprintf(fp, "patchname=%s\n", name);
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		fprintf(fp, "samplepath%d=%s\n",    i, G_Mixer.chan[i] == NULL ? "" : G_Mixer.chan[i]->pathfile.c_str());
-		fprintf(fp, "chanmute%d=%d\n",      i, G_Mixer.chanMute[i]);
-		fprintf(fp, "chanvol%d=%f\n",       i, G_Mixer.chanVolume[i]);
-		fprintf(fp, "chanmode%d=%d\n",      i, G_Mixer.chanMode[i]);
-		fprintf(fp, "chanstart%d=%d\n",     i, G_Mixer.chanStartTrue[i]);  // true values, not pitched
-		fprintf(fp, "chanend%d=%d\n",       i, G_Mixer.chanEndTrue[i]);    // true values, not pitched
-		fprintf(fp, "chanBoost%d=%f\n",     i, G_Mixer.chanBoost[i]);
-		fprintf(fp, "chanPanLeft%d=%f\n",   i, G_Mixer.chanPanLeft[i]);
-		fprintf(fp, "chanPanRight%d=%f\n",  i, G_Mixer.chanPanRight[i]);
-		fprintf(fp, "chanRecActive%d=%d\n", i, recorder::chanActive[i]);
-		fprintf(fp, "chanPitch%d=%f\n",     i, G_Mixer.chanPitch[i]);
+	fprintf(fp, "channels=%d\n", G_Mixer.channels.size);
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		fprintf(fp, "# --- channel %d --- \n", i);
+		channel *ch = G_Mixer.channels.at(i);
+		fprintf(fp, "samplepath%d=%s\n",    i, ch->wave == NULL ? "" : ch->wave->pathfile.c_str());
+		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
+		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
+		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
+		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
+		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);
+		fprintf(fp, "chanmode%d=%d\n",      i, ch->mode);
+		fprintf(fp, "chanstart%d=%d\n",     i, ch->startTrue);       // true values, not pitched
+		fprintf(fp, "chanend%d=%d\n",       i, ch->endTrue);         // true values, not pitched
+		fprintf(fp, "chanBoost%d=%f\n",     i, ch->boost);
+		fprintf(fp, "chanPanLeft%d=%f\n",   i, ch->panLeft);
+		fprintf(fp, "chanPanRight%d=%f\n",  i, ch->panRight);
+		fprintf(fp, "chanRecActive%d=%d\n", i, ch->readActions);
+		fprintf(fp, "chanPitch%d=%f\n",     i, ch->pitch);
 	}
 
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
@@ -447,17 +515,20 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "lastTakeId=%d\n", lastTakeId);
 	fprintf(fp, "samplerate=%d\n", G_Conf.samplerate);	// original samplerate when the patch was saved
 
-	/* writing recs */
+	/* writing recs. Warning: channel index is not mixer.channels.at(chan),
+	 * but mixer.channels.at(chan)->index! */
 
 	fprintf(fp, "# --- actions --- \n");
 	fprintf(fp, "numrecs=%d\n", recorder::global.size);
 	for (unsigned i=0; i<recorder::global.size; i++) {
 		fprintf(fp, "recframe%d=%d %d\n", i, recorder::frames.at(i), recorder::global.at(i).size);
 		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
-			fprintf(fp, "f%da%d=%d|%d\n",
+			fprintf(fp, "f%da%d=%d|%d|%f|%d\n",
 				i, k,
 				recorder::global.at(i).at(k)->chan,
-				recorder::global.at(i).at(k)->type);
+				recorder::global.at(i).at(k)->type,
+				recorder::global.at(i).at(k)->fValue,
+				recorder::global.at(i).at(k)->iValue);
 		}
 	}
 
@@ -468,28 +539,31 @@ int Patch::write(const char *file, const char *name) {
 	writeMasterPlugins(PluginHost::MASTER_IN);
 	writeMasterPlugins(PluginHost::MASTER_OUT);
 
-	/* writing VST parameters, channels */
+	/* writing VST parameters, channels. chan%d is mixer::channels.at(%d)->index,
+	 * not mixer::chanels.at(%d)! */
 
 	int numPlugs;
 	int numParams;
-	Plugin  *pPlugin;
+	Plugin *pPlugin;
 
 	fprintf(fp, "# --- VST / channels --- \n");
-	for (int i=0; i<MAX_NUM_CHAN; i++) {
-		numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, i);
-		fprintf(fp, "chan%dPlugins=%d\n", i, numPlugs);
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *ch = G_Mixer.channels.at(i);
+		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch);
+		fprintf(fp, "chan%dPlugins=%d\n", ch->index, numPlugs);
 
 		for (int j=0; j<numPlugs; j++) {
-			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, i);
-			fprintf(fp, "chan%d_p%dpathfile=%s\n", i, j, pPlugin->pathfile);
-			fprintf(fp, "chan%d_p%dbypass=%d\n",   i, j, pPlugin->bypass);
+			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
+			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
+			fprintf(fp, "chan%d_p%dbypass=%d\n",   ch->index, j, pPlugin->bypass);
 			numParams = pPlugin->getNumParams();
-			fprintf(fp, "chan%d_p%dnumParams=%d\n", i, j, numParams);
+			fprintf(fp, "chan%d_p%dnumParams=%d\n", ch->index, j, numParams);
 
 			for (int k=0; k<numParams; k++)
-				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", i, j, k, pPlugin->getParam(k));
+				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", ch->index, j, k, pPlugin->getParam(k));
 		}
 	}
+
 #endif
 
 	fclose(fp);
@@ -569,4 +643,5 @@ void Patch::writeMasterPlugins(int type) {
 			fprintf(fp, "master%c_p%dparam%dvalue=%f\n", chr, i, j, pPlugin->getParam(j));
 	}
 }
+
 #endif

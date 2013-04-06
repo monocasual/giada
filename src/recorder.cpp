@@ -38,6 +38,7 @@
 #include "utils.h"
 #include "patch.h"
 #include "conf.h"
+#include "channel.h"
 
 
 extern Mixer G_Mixer;
@@ -52,8 +53,6 @@ gVector< gVector<action*> > global;
 gVector<action*>  actions;
 
 bool active = false;
-bool chanActive[MAX_NUM_CHAN];
-bool chanEvents[MAX_NUM_CHAN];
 bool sortedActions = false;
 
 composite cmp;
@@ -72,7 +71,7 @@ void init() {
 /* ------------------------------------------------------------------ */
 
 
-bool canRec(int ch) {
+bool canRec(channel *ch) {
 
 	/* NO recording if:
 	 * recorder is inactive
@@ -80,7 +79,7 @@ bool canRec(int ch) {
 	 * mixer is recording a take in this channel ch
 	 * channel is empty */
 
-	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || G_Mixer.chan[ch] == NULL)
+	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || ch->wave == NULL)
 		return 0;
 	return 1;
 }
@@ -89,14 +88,16 @@ bool canRec(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(int c, char act, int frame) {
+void rec(int index, char type, int frame, int iValue, float fValue) {
 
 	/* allocating the action */
 
 	action *a = (action*) malloc(sizeof(action));
-	a->chan  = c;
-	a->type  = act;
-	a->frame = frame;
+	a->chan   = index;
+	a->type   = type;
+	a->frame  = frame;
+	a->iValue = iValue;
+	a->fValue = fValue;
 
 	/* check if the frame exists in the stack. If it exists, we don't extend
 	 * the stack, but we add (or push) a new action to it. */
@@ -124,19 +125,28 @@ void rec(int c, char act, int frame) {
 
 		/* no duplicates, please */
 
-		for (unsigned t=0; t<global.at(frameToExpand).size; t++)
-			if (global.at(frameToExpand).at(t)->chan == c && global.at(frameToExpand).at(t)->type == act)
+		for (unsigned t=0; t<global.at(frameToExpand).size; t++) {
+			action *ac = global.at(frameToExpand).at(t);
+			if (ac->chan   == index  &&
+			    ac->type   == type   &&
+			    ac->frame  == frame  &&
+			    ac->iValue == iValue &&
+			    ac->fValue == fValue)
 				return;
+		}
+
 		global.at(frameToExpand).add(a);		// expand array
 	}
 
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
 
-	chanEvents[c] = true;
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = true;
+
 	sortedActions = false;
 
-	printf("[REC] action %d recorded on frame %d, chan %d\n", act, frame, c);
+	printf("[REC] action %d recorded on frame %d, chan %d, iValue=%d, fValue=%f\n", type, frame, index, iValue, fValue);
 	//print();
 }
 
@@ -144,15 +154,15 @@ void rec(int c, char act, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void clearChan(int ch) {
+void clearChan(int index) {
 
-	printf("[REC] clearing chan %d...\n", ch);
+	printf("[REC] clearing chan %d...\n", index);
 
 	for (unsigned i=0; i<global.size; i++) {	// for each frame i
 		unsigned j=0;
 		while (true) {
 			if (j == global.at(i).size) break; 	  // for each action j of frame i
-			if (global.at(i).at(j)->chan == ch)	{
+			if (global.at(i).at(j)->chan == index)	{
 				free(global.at(i).at(j));
 				global.at(i).del(j);
 			}
@@ -160,7 +170,9 @@ void clearChan(int ch) {
 				j++;
 		}
 	}
-	chanEvents[ch] = false;
+
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = false;
 	optimize();
 	//print();
 }
@@ -169,14 +181,14 @@ void clearChan(int ch) {
 /* ------------------------------------------------------------------ */
 
 
-void clearAction(int ch, char act) {
-	printf("[REC] clearing action %d from chan %d...\n", act, ch);
+void clearAction(int index, char act) {
+	printf("[REC] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size; i++) {						// for each frame i
 		unsigned j=0;
 		while (true) {                                   // for each action j of frame i
 			if (j == global.at(i).size)
 				break;
-			if (global.at(i).at(j)->chan == ch && (act & global.at(i).at(j)->type) == global.at(i).at(j)->type)	{ // bitmask
+			if (global.at(i).at(j)->chan == index && (act & global.at(i).at(j)->type) == global.at(i).at(j)->type)	{ // bitmask
 				free(global.at(i).at(j));
 				global.at(i).del(j);
 			}
@@ -184,9 +196,10 @@ void clearAction(int ch, char act) {
 				j++;
 		}
 	}
-	chanEvents[ch] = false;
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->hasActions = false;
 	optimize();
-	chanHasEvents(ch);
+	chanHasEvents(index);
 	//print();
 }
 
@@ -264,9 +277,9 @@ void clearAll() {
 		}
 	}
 
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		chanEvents[i] = false;
-		chanActive[i] = false;
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		G_Mixer.channels.at(i)->hasActions  = false;
+		G_Mixer.channels.at(i)->readActions = false;
 	}
 
 	global.clear();
@@ -340,6 +353,16 @@ void updateBpm(float oldval, float newval, int oldquanto) {
 		if (frames.at(i) % 2 != 0)
 			frames.at(i)++;
 	}
+
+	/* update structs */
+
+	for (unsigned i=0; i<frames.size; i++) {
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			a->frame = frames.at(i);
+		}
+	}
+
 	//print();
 }
 
@@ -371,6 +394,15 @@ void updateSamplerate(int systemRate, int patchRate) {
 			frames.at(i)++;
 
 		printf(", newFrame = %d\n", frames.at(i));
+	}
+
+	/* update structs */
+
+	for (unsigned i=0; i<frames.size; i++) {
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			a->frame = frames.at(i);
+		}
 	}
 }
 
@@ -434,33 +466,34 @@ void shrink(int new_fpb) {
 /* ------------------------------------------------------------------ */
 
 
-void enableRead(int c) {
-	chanActive[c] = true;
+void enableRead(channel *ch) {
+	ch->readActions = true;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void disableRead(int c) {
-	chanActive[c] = false;
+void disableRead(channel *ch) {
+	ch->readActions = false;
 	if (G_Conf.recsStopOnChanHalt)
-		mh_killChan(c);
+		mh_killChan(ch);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void chanHasEvents(int ch) {
+void chanHasEvents(int index) {
+	channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
-		chanEvents[ch] = false;
+		ch->hasActions = false;
 		return;
 	}
-	for (unsigned i=0; i<global.size && !chanEvents[ch]; i++) {
-		for (unsigned j=0; j<global.at(i).size && !chanEvents[ch]; j++) {
-			if (global.at(i).at(j)->chan == ch)
-				chanEvents[ch] = true;
+	for (unsigned i=0; i<global.size && !ch->hasActions; i++) {
+		for (unsigned j=0; j<global.at(i).size && !ch->hasActions; j++) {
+			if (global.at(i).at(j)->chan == index)
+				ch->hasActions = true;
 		}
 	}
 }
@@ -520,25 +553,24 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-
 int getNextAction(int chan, char type, int frame, action **out) {
 
 	sortActions();  // mandatory
 
 	unsigned i=0;
-	while (i < frames.size && frames.at(i) <= frame)
-		i++;
+	while (i < frames.size && frames.at(i) <= frame) i++;
 
 	if (i == frames.size)   // no further actions
 		return -1;
 
-	for (unsigned j=0; j<global.at(i).size; j++) {
-		action *a = global.at(i).at(j);
-		if (a->chan == chan && (type & a->type) == a->type) {
-			*out = global.at(i).at(j);
-			return 1;
+	for (; i<global.size; i++)
+		for (unsigned j=0; j<global.at(i).size; j++) {
+			action *a = global.at(i).at(j);
+			if (a->chan == chan && (type & a->type) == a->type) {
+				*out = global.at(i).at(j);
+				return 1;
+			}
 		}
-	}
 
 	return -2;   // no 'type' actions found
 }
@@ -547,7 +579,24 @@ int getNextAction(int chan, char type, int frame, action **out) {
 /* ------------------------------------------------------------------ */
 
 
-void startOverdub(int ch, char actionMask, int frame) {
+int getAction(int chan, char action, int frame, struct action **out) {
+	for (unsigned i=0; i<global.size; i++)
+		for (unsigned j=0; j<global.at(i).size; j++)
+			if (frame  == global.at(i).at(j)->frame &&
+					action == global.at(i).at(j)->type &&
+					chan   == global.at(i).at(j)->chan)
+			{
+				*out = global.at(i).at(j);
+				return 1;
+			}
+	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void startOverdub(int index, char actionMask, int frame) {
 
 	/* prepare the composite struct */
 
@@ -559,29 +608,30 @@ void startOverdub(int ch, char actionMask, int frame) {
 		cmp.a1.type = ACTION_MUTEON;
 		cmp.a2.type = ACTION_MUTEOFF;
 	}
-	cmp.a1.chan  = ch;
-	cmp.a2.chan  = ch;
+	cmp.a1.chan  = index;
+	cmp.a2.chan  = index;
 	cmp.a1.frame = frame;
 	// cmp.a2.frame doesn't exist yet
 
 	/* avoid underlying action truncation: if action2.type == nextAction:
 	 * you are in the middle of a composite action, truncation needed */
 
-	rec(ch, cmp.a1.type, frame);
+	rec(index, cmp.a1.type, frame);
 
 	action *act = NULL;
-	int res = getNextAction(ch, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
+	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
 			int truncFrame = cmp.a1.frame-kernelAudio::realBufsize;
 			if (truncFrame < 0)
 				truncFrame = 0;
 			printf("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
-			rec(ch, cmp.a2.type, truncFrame);
+			rec(index, cmp.a2.type, truncFrame);
 		}
 	}
 
-	chanActive[ch] = false; // don't use disableRead()
+	channel *ch = G_Mixer.getChannelByIndex(index);
+	ch->readActions = false;   // don't use disableRead()
 }
 
 
@@ -609,7 +659,8 @@ void stopOverdub(int frame) {
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
 	}
 
-	chanActive[cmp.a2.chan] = true; // don't use disableRead()
+	channel *ch = G_Mixer.getChannelByIndex(cmp.a2.chan);
+	ch->readActions = false;      // don't use disableRead()
 
 	/* remove any nested action between keypress----keyrel, then record */
 
@@ -641,11 +692,10 @@ void stopOverdub(int frame) {
 void print() {
 	printf("[REC] ** print debug **\n");
 	for (unsigned i=0; i<global.size; i++) {
-		printf("      [f.%d]", frames.at(i));
+		printf("  frame %d\n", frames.at(i));
 		for (unsigned j=0; j<global.at(i).size; j++) {
-			printf("[a.%d|c.%d]", global.at(i).at(j)->type, global.at(i).at(j)->chan);
+			printf("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
 		}
-		printf("\n");
 	}
 }
 

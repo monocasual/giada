@@ -73,6 +73,7 @@ gdConfig::gdConfig(int w, int h)
 		grpSound->end();
 		grpSound->labelsize(11);
 
+		/*
 		Fl_Group *grpKeys = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Controls");
 			listChans	= new gChoice(grpKeys->x()+92,  grpKeys->y()+9, 253, 20, "Key for");
 			            new gBox   (grpKeys->x()+22,  grpKeys->y()+37, 70, 20, "Actual key", FL_ALIGN_RIGHT);
@@ -81,6 +82,7 @@ gdConfig::gdConfig(int w, int h)
 			            new gBox(grpKeys->x()+10, setKey->y()+120, grpKeys->w()-10, 50, "Restart Giada for the changes to take effect.");
 		grpKeys->end();
 		grpKeys->labelsize(11);
+		*/
 
 		Fl_Group *grpBehvs = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Behaviors");
 			Fl_Group *radioGrp_1 = new Fl_Group(grpBehvs->x(), grpBehvs->y()+10, grpBehvs->w(), 70); // radio group for the mutex
@@ -184,16 +186,19 @@ gdConfig::gdConfig(int w, int h)
 
 	limitOutput->value(G_Conf.limitOutput);
 
+	/**
 	sprintf(buf, "%c", G_Conf.keys[0]);
 	actualKey->copy_label(buf);
 	actualKey->box(G_BOX);
 	actualKey->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
+	*/
 
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
 	G_Conf.fullChanVolOnLoad  == 1 ? fullChanVolOnLoad->value(1) : fullChanVolOnLoad->value(0);
 
+	/**
 	for (int i=0; i<MAX_NUM_CHAN; i++) {
 		char x[11];
 		sprintf(x, "channel %d", i+1);
@@ -202,6 +207,7 @@ gdConfig::gdConfig(int w, int h)
 	listChans->value(0); // starts with element number 0
 
 	setKey->callback(cb_open_grab_win, (void*)this);
+	*/
 	save->callback(cb_save_config, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
 	soundsys->callback(cb_deactivate_sounddev, (void*)this);
@@ -244,9 +250,11 @@ void gdConfig::cb_cancel        (Fl_Widget *w, void *p)      { ((gdConfig*)p)->_
 
 
 void gdConfig::__cb_get_key_chan() {
+	/**
 	char key[2];
 	sprintf(key, "%c", G_Conf.keys[listChans->value()]);
 	actualKey->copy_label(key);
+	**/
 }
 
 
@@ -254,7 +262,7 @@ void gdConfig::__cb_get_key_chan() {
 
 
 void gdConfig::__cb_open_grab_win() {
-	new gdKeyGrabber(listChans->value(), this);
+	//new gdKeyGrabber(listChans->value(), this);
 }
 
 

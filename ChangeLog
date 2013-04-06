@@ -13,6 +13,35 @@
 
 
 
+0.6.2 --- 2013 . 04 . 05
+- New volume envelope widget
+- Zoom with mouse wheel in the action editor
+- Graphical enhancements & speedups for the action editor
+- Loop-repeat doesn't stop when put in ending mode (fixed)
+- Fix draw errors when zooming too much the action editor
+- Set silence in wave editor messes up the waveform (fixed)
+- Wrong slashes in file path when saving a patch in Windows (fixed)
+- Many, many code improvements and bugs fixed
+
+
+0.6.1 --- 2013 . 03 . 21
+- Unlimited number of channels
+- Deep internal refactoring, mixer/GUI layers
+- Fix random crashes on exit
+- Fix crashes when closing Giada with VST windows opened
+- Always free Master In plugin stack on exit
+- Lots of other minor bugs fixed and small enhancements
+
+
+0.6.0 --- 2013 . 03 . 02
+- New, full-screen, redesigned sample editor
+- Zoom with mouse wheel in sample editor
+- Use kernelAudio::defaultIn/defaultOut for DEFAULT_SOUNDDEV_OUT
+- Volume knob in main window now updates the editor
+- Sound system issues in OS X (fixed)
+- Output device info dialog refers to wrong device (fixed)
+
+
 0.5.8 --- 2013 . 02 . 07
 - Internal samplerate conversion (with libsamplerate)
 - Bring channels automatically to full volume on sample load

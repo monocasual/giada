@@ -34,6 +34,7 @@
 #include "conf.h"
 #include "mixer.h"
 #include "gd_mainWindow.h"
+#include "channel.h"
 
 
 extern Conf          G_Conf;
@@ -177,29 +178,34 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 15 - requests to resize the editor window. w = index, h = value*/
 
 		case audioMasterSizeWindow: {
-			int  idWindow = 0;
-			bool found   = false;
+			gWindow *window = NULL;
+			for (unsigned i=0; i<masterOut.size && !window; i++)
+				if (masterOut.at(i)->getPlugin() == effect)
+					window = masterOut.at(i)->window;
 
-			for (unsigned i=0; i<masterOut.size && !found; i++)
-				if (masterOut.at(i)->getPlugin() == effect) {
-					idWindow = masterOut.at(i)->idWindow;
-					found    = true;
-				}
-			for (unsigned i=0; i<masterIn.size && !found; i++)
-				if (masterIn.at(i)->getPlugin() == effect) {
-					idWindow = masterIn.at(i)->idWindow;
-					found    = true;
-				}
-			for (unsigned i=0; i<MAX_NUM_CHAN && !found; i++)
-				for (unsigned j=0; j<channel[i].size && !found; j++)
-					if (channel[i].at(j)->getPlugin() == effect) {
-						idWindow = channel[i].at(j)->idWindow;
-						found    = true;
-					}
+			for (unsigned i=0; i<masterIn.size && !window; i++)
+				if (masterIn.at(i)->getPlugin() == effect)
+					window = masterIn.at(i)->window;
 
-			gdPluginList *list = (gdPluginList*) mainWin->getChild(WID_FX_LIST);
-			(list->getChild(idWindow))->size((int)index, (int)value);
-			return 1;
+			for (unsigned i=0; i<G_Mixer.channels.size && !window; i++) {
+				channel *ch = G_Mixer.channels.at(i);
+				for (unsigned j=0; j<ch->plugins.size && !window; j++)
+					if (ch->plugins.at(j)->getPlugin() == effect)
+						window = ch->plugins.at(j)->window;
+			}
+
+			if (window) {
+				printf("[pluginHost] audioMasterSizeWindow: resizing window from plugin %p\n", (void*) effect);
+				if (index == 1 || value == 1)
+					puts("[pluginHost] warning: non-sense values!");
+				else
+					window->size((int)index, (int)value);
+				return 1;
+			}
+			else {
+				printf("[pluginHost] audioMasterSizeWindow: window from plugin %p not found\n", (void*) effect);
+				return 0;
+			}
 		}
 
 		case audioMasterGetSampleRate:
@@ -291,13 +297,13 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 /* ------------------------------------------------------------------ */
 
 
-int PluginHost::addPlugin(const char *fname, int stackType, int chan) {
+int PluginHost::addPlugin(const char *fname, int stackType, channel *ch) {
 
 	Plugin *p    = new Plugin();
 	bool success = true;
 
 	gVector <Plugin *> *pStack;
-	pStack = getStack(stackType, chan);
+	pStack = getStack(stackType, ch);
 
 	if (!p->load(fname)) {
 		//delete p;
@@ -355,12 +361,16 @@ int PluginHost::addPlugin(const char *fname, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::processStack(float *buffer, int stackType, int chan) {
+void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
-	/* empty stack: do nothing */
+	/* empty stack, stack not found or mixer not ready: do nothing */
 
+	if (!G_Mixer.ready)
+		return;
+	if (pStack == NULL)
+		return;
 	if (pStack->size == 0)
 		return;
 
@@ -398,7 +408,7 @@ void PluginHost::processStack(float *buffer, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::processStackOffline(float *buffer, int stackType, int chan, int size) {
+void PluginHost::processStackOffline(float *buffer, int stackType, channel *ch, int size) {
 
 	/* call processStack on the entire size of the buffer. How many cycles?
 	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
@@ -412,7 +422,7 @@ void PluginHost::processStackOffline(float *buffer, int stackType, int chan, int
 	while (index <= size) {
 		int left = index+step-size;
 		if (left < 0)
-			processStack(&buffer[index], stackType, chan);
+			processStack(&buffer[index], stackType, ch);
 
 	/* FIXME 2 - we left out the last part of buffer, because size % step != 0.
 	 * we should process the last chunk in a separate buffer, padded with 0 */
@@ -429,10 +439,8 @@ void PluginHost::processStackOffline(float *buffer, int stackType, int chan, int
 /* ------------------------------------------------------------------ */
 
 
-Plugin *PluginHost::getPluginById(int id, int stackType, int chan) {
-
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
-
+Plugin *PluginHost::getPluginById(int id, int stackType, channel *ch) {
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
 	for (unsigned i=0; i<pStack->size; i++) {
 		if (pStack->at(i)->getId() == id)
 			return pStack->at(i);
@@ -444,8 +452,12 @@ Plugin *PluginHost::getPluginById(int id, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-Plugin *PluginHost::getPluginByIndex(int index, int stackType, int chan) {
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
+Plugin *PluginHost::getPluginByIndex(int index, int stackType, channel *ch) {
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
+	if (pStack->size == 0)
+		return NULL;
+	if ((unsigned) index >= pStack->size)
+		return NULL;
 	return pStack->at(index);
 }
 
@@ -453,10 +465,10 @@ Plugin *PluginHost::getPluginByIndex(int index, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::freeStack(int stackType, int chan) {
+void PluginHost::freeStack(int stackType, channel *ch) {
 
 	gVector <Plugin *> *pStack;
-	pStack = getStack(stackType, chan);
+	pStack = getStack(stackType, ch);
 
 	if (pStack->size == 0)
 		return;
@@ -484,18 +496,19 @@ void PluginHost::freeStack(int stackType, int chan) {
 
 void PluginHost::freeAllStacks() {
 	freeStack(PluginHost::MASTER_OUT);
-	for (int i=0; i<MAX_NUM_CHAN; i++)
-		freeStack(PluginHost::CHANNEL, i);
+	freeStack(PluginHost::MASTER_IN);
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		freeStack(PluginHost::CHANNEL, G_Mixer.channels.at(i));
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::freePlugin(int id, int stackType, int chan) {
+void PluginHost::freePlugin(int id, int stackType, channel *ch) {
 
 	gVector <Plugin *> *pStack;
-	pStack = getStack(stackType, chan);
+	pStack = getStack(stackType, ch);
 
 	/* try to delete the plugin until succeed. G_Mixer has priority. */
 
@@ -532,9 +545,9 @@ void PluginHost::freePlugin(int id, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, int chan) {
+void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, channel *ch) {
 
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
 	int lockStatus;
 	while (true) {
@@ -554,9 +567,9 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, int
 /* ------------------------------------------------------------------ */
 
 
-int PluginHost::getPluginIndex(int id, int stackType, int chan) {
+int PluginHost::getPluginIndex(int id, int stackType, channel *ch) {
 
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
 	for (unsigned i=0; i<pStack->size; i++)
 		if (pStack->at(i)->getId() == id)
@@ -568,14 +581,14 @@ int PluginHost::getPluginIndex(int id, int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-gVector <Plugin *> *PluginHost::getStack(int stackType, int chan) {
+gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 	switch(stackType) {
 		case MASTER_OUT:
 			return &masterOut;
 		case MASTER_IN:
 			return &masterIn;
 		case CHANNEL:
-			return &channel[chan];
+			return &ch->plugins;
 		default:
 			return NULL;
 	}
@@ -585,8 +598,8 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, int chan) {
 /* ------------------------------------------------------------------ */
 
 
-unsigned PluginHost::countPlugins(int stackType, int chan) {
-	gVector <Plugin *> *pStack = getStack(stackType, chan);
+unsigned PluginHost::countPlugins(int stackType, channel *ch) {
+	gVector <Plugin *> *pStack = getStack(stackType, ch);
 	return pStack->size;
 }
 

@@ -71,7 +71,6 @@ public:
 
 	gVector <Plugin *> masterOut;
 	gVector <Plugin *> masterIn;
-	gVector <Plugin *> channel[MAX_NUM_CHAN];
 
 	PluginHost();
 	~PluginHost();
@@ -91,35 +90,35 @@ public:
 	static VstIntPtr VSTCALLBACK HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 	VstIntPtr gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 
-	int addPlugin(const char *fname, int stackType, int chan=0);
+	int addPlugin(const char *fname, int stackType, struct channel *ch=NULL);
 
 	/* processStack
 	 * apply the fx list to the buffer. */
 
-	void processStack(float *buffer, int stackType, int chan=0);
+	void processStack(float *buffer, int stackType, struct channel *ch=NULL);
 
 	/* processStackOffline
 	 * apply the fx list to a longer chunk of data */
 
-	void processStackOffline(float *buffer, int stackType, int chan, int size);
+	void processStackOffline(float *buffer, int stackType, struct channel *ch, int size);
 
-	gVector <Plugin *> *getStack(int stackType, int chan=0);
+	gVector <Plugin *> *getStack(int stackType, struct channel *ch=NULL);
 
-	Plugin *getPluginById(int id, int stackType, int chan=0);
+	Plugin *getPluginById(int id, int stackType, struct channel *ch=NULL);
 
-	Plugin *getPluginByIndex(int index, int stackType, int chan=0);
+	Plugin *getPluginByIndex(int index, int stackType, struct channel *ch=NULL);
 
-	int getPluginIndex(int id, int stackType, int chan=0);
+	int getPluginIndex(int id, int stackType, struct channel *ch=NULL);
 
-	unsigned countPlugins(int stackType, int chan=0);
+	unsigned countPlugins(int stackType, struct channel *ch=NULL);
 
-	void freeStack(int stackType, int chan=0);
+	void freeStack(int stackType, struct channel *ch=NULL);
 
 	void freeAllStacks();
 
-	void freePlugin(int id, int stackType, int chan=0);
+	void freePlugin(int id, int stackType, struct channel *ch=NULL);
 
-	void swapPlugin(unsigned indexA, unsigned indexB, int stackType, int chan=0);
+	void swapPlugin(unsigned indexA, unsigned indexB, int stackType, struct channel *ch=NULL);
 };
 #endif
 

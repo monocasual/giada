@@ -51,6 +51,8 @@
 
 void gu_refresh();
 
+void __gu_refreshColumn(Fl_Group *col);
+
 /* trim_label
  * trim a string C to N chars, and apply it to label W. */
 
@@ -66,11 +68,6 @@ void gu_update_controls();
  * update the name of the main window */
 
 void gu_update_win_label(const char *c);
-
-/* resetChannel
- * reset original colors in status and sample button */
-
-void gu_resetChannel(int c);
 
 void gu_setFavicon(Fl_Window *w);
 

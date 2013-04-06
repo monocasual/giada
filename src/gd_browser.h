@@ -70,7 +70,8 @@ private:
 	class gInput    *name;
  	class gClick    *updir;
  	class gProgress *status;
-	int chan;
+
+	struct channel *ch;
 
 	/* browser type: see const.h */
 
@@ -87,7 +88,7 @@ private:
 	int stackType;
 
 public:
-	gdBrowser(const char *title, const char *initPath, int chan, int type, int stackType=0);
+	gdBrowser(const char *title, const char *initPath, struct channel *ch, int type, int stackType=0);
 	~gdBrowser();
 };
 

@@ -32,9 +32,9 @@
 
 
 /* -- version ------------------------------------------------------- */
-#define VERSIONE 				"0.6.0"
+#define VERSIONE 				"0.6.2"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	0.60f
+#define VERSIONE_FLOAT	0.62f
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -65,7 +65,6 @@
 
 
 /* -- MIN/MAX values ------------------------------------------------ */
-#define MAX_NUM_CHAN 		   32
 #define MAX_BEATS				   32
 #define MAX_BARS				   32
 #define MAX_PATCHNAME_LEN	 32
@@ -88,51 +87,7 @@
 
 
 
-/* -- default keys -------------------------------------------------- */
-#define DEFAULT_KEY_1		'1'
-#define DEFAULT_KEY_2		'2'
-#define DEFAULT_KEY_3		'3'
-#define DEFAULT_KEY_4		'4'
-#define DEFAULT_KEY_5		'5'
-#define DEFAULT_KEY_6		'6'
-#define DEFAULT_KEY_7		'7'
-#define DEFAULT_KEY_8		'8'
-#define DEFAULT_KEY_9		'q'
-#define DEFAULT_KEY_10	'w'
-#define DEFAULT_KEY_11	'e'
-#define DEFAULT_KEY_12	'r'
-#define DEFAULT_KEY_13	't'
-#define DEFAULT_KEY_14	'y'
-#define DEFAULT_KEY_15	'u'
-#define DEFAULT_KEY_16	'i'
-#define DEFAULT_KEY_17	'a'
-#define DEFAULT_KEY_18	's'
-#define DEFAULT_KEY_19	'd'
-#define DEFAULT_KEY_20	'f'
-#define DEFAULT_KEY_21	'g'
-#define DEFAULT_KEY_22	'h'
-#define DEFAULT_KEY_23	'j'
-#define DEFAULT_KEY_24	'k'
-#define DEFAULT_KEY_25	'z'
-#define DEFAULT_KEY_26	'x'
-#define DEFAULT_KEY_27	'c'
-#define DEFAULT_KEY_28	'v'
-#define DEFAULT_KEY_29	'b'
-#define DEFAULT_KEY_30	'n'
-#define DEFAULT_KEY_31	'm'
-#define DEFAULT_KEY_32	','
-
-#define DEFAULT_KEY_ARRAY { \
-	DEFAULT_KEY_1,  DEFAULT_KEY_2,  DEFAULT_KEY_3,  DEFAULT_KEY_4,  \
-	DEFAULT_KEY_5,  DEFAULT_KEY_6,  DEFAULT_KEY_7,  DEFAULT_KEY_8,  \
-	DEFAULT_KEY_9,  DEFAULT_KEY_10, DEFAULT_KEY_11, DEFAULT_KEY_12, \
-	DEFAULT_KEY_13, DEFAULT_KEY_14, DEFAULT_KEY_15, DEFAULT_KEY_16, \
-	DEFAULT_KEY_17, DEFAULT_KEY_18, DEFAULT_KEY_19, DEFAULT_KEY_20, \
-	DEFAULT_KEY_21, DEFAULT_KEY_22, DEFAULT_KEY_23, DEFAULT_KEY_24, \
-	DEFAULT_KEY_25, DEFAULT_KEY_26, DEFAULT_KEY_27, DEFAULT_KEY_28, \
-	DEFAULT_KEY_29, DEFAULT_KEY_30, DEFAULT_KEY_31, DEFAULT_KEY_32  \
-}
-
+/* -- default system ------------------------------------------------ */
 #if defined(__linux__)
 	#define DEFAULT_SOUNDSYS	SYS_API_ALSA
 #elif defined(_WIN32)
@@ -192,9 +147,13 @@
 #define ACTION_KILLCHAN		0x04 // 0000 0100
 #define ACTION_MUTEON			0x08 // 0000 1000
 #define ACTION_MUTEOFF		0x10 // 0001 0000
+#define ACTION_VOLUME     0x20 // 0010 0000
 
 #define ACTION_KEYS       0x03 // 0000 0011 any key
 #define ACTION_MUTES      0x24 // 0001 1000 any mute
+
+#define RANGE_CHAR        0x01 // range for MIDI (0-127)
+#define RANGE_FLOAT       0x02 // range for volumes and VST params (0.0-1.0)
 
 
 
@@ -224,18 +183,16 @@
 
 
 /* -- unique IDs of mainWin's subwindows ---------------------------- */
-/* -- 0-31 are reserved by ge_keyboard ------------------------------ */
-#define WID_BEATS         32
-#define WID_BPM           33
-#define WID_ABOUT         34
-//#define WID_MASTER_OUT_FX 35
-#define WID_FILE_BROWSER  36
-#define WID_CONFIG        37
-#define WID_FX_LIST       38
-#define WID_ACTION_EDITOR 39
-#define WID_SAMPLE_EDITOR 40
-#define WID_FX            41
-
+/* -- wid > 0 are reserved by gg_keyboard --------------------------- */
+#define WID_BEATS         -1
+#define WID_BPM           -2
+#define WID_ABOUT         -3
+#define WID_FILE_BROWSER  -4
+#define WID_CONFIG        -5
+#define WID_FX_LIST       -6
+#define WID_ACTION_EDITOR -7
+#define WID_SAMPLE_EDITOR -8
+#define WID_FX            -9
 
 
 /* -- patch signals ------------------------------------------------- */
