@@ -75,6 +75,7 @@ public:
 	class gStatus     *status;
 	class gDial       *vol;
 	class gClick 	    *mute;
+	class gClick 	    *solo;
 	class gClick 	    *readActions;
 	class gClick 	    *sampleButton;
 	class gModeBox    *modeBox;

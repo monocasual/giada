@@ -58,9 +58,10 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	button = new gButton (x(), y(), 20, 20);
 	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	fx           = new gButton (mute->x()+mute->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
+	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
 	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
 	sampleButton = new gClick  (status->x()+status->w()+4, y(), 261, 20, "-- no sample --");
@@ -86,6 +87,9 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 
 	mute->type(FL_TOGGLE_BUTTON);
 	mute->callback(cb_mute, (void*)this);
+
+	solo->type(FL_TOGGLE_BUTTON);
+
 	sampleButton->callback(cb_openChanMenu, (void*)this);
 	vol->callback(cb_change_vol, (void*)this);
 
@@ -436,12 +440,8 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 	add(gChannelsL);
 	add(gChannelsR);
 
-	//gChannelsL->box(FL_BORDER_BOX);
-	//gChannelsR->box(FL_BORDER_BOX);
-
 	gChannelsL->resizable(NULL);
 	gChannelsR->resizable(NULL);
-
 
 	addChannelL->callback(cb_addChannelL, (void*) this);
 	addChannelR->callback(cb_addChannelR, (void*) this);

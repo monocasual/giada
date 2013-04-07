@@ -68,6 +68,10 @@ extern const char *inputRecOff_xpm[];
 
 extern const char *muteOff_xpm[];
 extern const char *muteOn_xpm[];
+
+extern const char *soloOff_xpm[];
+extern const char *soloOn_xpm[];
+
 extern const char *readActionOn_xpm[];
 extern const char *readActionOff_xpm[];
 
