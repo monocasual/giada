@@ -208,6 +208,7 @@ void Mixer::initChannel(channel *ch) {
 	ch->startTrue   = 0;
 	ch->end         = 0;
 	ch->endTrue     = 0;
+	ch->solo        = false;
 	ch->mute        = false;
 	ch->mute_i      = false;
 	ch->mode        = DEFAULT_CHANMODE;

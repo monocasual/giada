@@ -668,7 +668,7 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 
 void glue_setMute(channel *ch) {
 
-	bool muted = ch->mute ? true : false;
+	bool muted = ch->mute ? true : false;  /// FIXME - useless
 
 	if (recorder::active && recorder::canRec(ch)) {
 		if (!muted)
@@ -680,6 +680,34 @@ void glue_setMute(channel *ch) {
 	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
 
 	ch->guiChannel->mute->value(!muted);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_setSolo(channel *ch) {
+
+	if (ch->solo) {
+	}
+	else {
+		mh_unmuteChan(ch);
+		ch->guiChannel->mute->value(false);
+
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *och = G_Mixer.channels.at(i);
+			printf("analyzing channel %d: och=%p, ch=%p, och->solo=%d\n", i, (void*)och, (void*)ch, och->solo);
+			if (och != ch && !och->solo) {
+				printf("  mute-ing %d\n", i);
+				mh_muteChan(och);
+				och->guiChannel->mute->value(true);
+			}
+		}
+	}
+
+	mh_soloChan(ch);
+
+
 }
 
 

@@ -89,6 +89,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	mute->callback(cb_mute, (void*)this);
 
 	solo->type(FL_TOGGLE_BUTTON);
+	solo->callback(cb_solo, (void*)this);
 
 	sampleButton->callback(cb_openChanMenu, (void*)this);
 	vol->callback(cb_change_vol, (void*)this);
@@ -102,6 +103,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 
 void gChannel::cb_button      (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_button(); }
 void gChannel::cb_mute        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_mute(); }
+void gChannel::cb_solo        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_solo(); }
 void gChannel::cb_openChanMenu(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openChanMenu(); }
 void gChannel::cb_change_vol  (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_change_vol(); }
 void gChannel::cb_readActions (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_readActions(); }
@@ -173,6 +175,14 @@ void gChannel::reset() {
 
 void gChannel::__cb_mute() {
 	glue_setMute(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::__cb_solo() {
+	glue_setSolo(ch);
 }
 
 

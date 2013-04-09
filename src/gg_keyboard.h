@@ -43,6 +43,7 @@ class gChannel : public Fl_Group {
 private:
 	static void cb_button        (Fl_Widget *v, void *p);
 	static void cb_mute          (Fl_Widget *v, void *p);
+	static void cb_solo          (Fl_Widget *v, void *p);
 	static void cb_openChanMenu  (Fl_Widget *v, void *p);
 	static void cb_change_vol    (Fl_Widget *v, void *p);
 	static void cb_readActions   (Fl_Widget *v, void *p);
@@ -51,6 +52,7 @@ private:
 #endif
 	inline void __cb_button      ();
 	inline void __cb_mute        ();
+	inline void __cb_solo        ();
 	inline void __cb_openChanMenu();
 	inline void __cb_change_vol  ();
 	inline void __cb_readActions ();

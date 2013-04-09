@@ -53,6 +53,8 @@ void mh_killChan(struct channel *ch);
 void mh_muteChan(channel *ch, bool internal=false);
 void mh_unmuteChan(channel *ch, bool internal=false);
 
+void mh_soloChan(channel *ch);
+
 void mh_loadPatch();
 
 int mh_loadChan(const char *file, struct channel *ch);

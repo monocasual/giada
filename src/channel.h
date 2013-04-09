@@ -55,6 +55,7 @@ struct channel {
 	int    mode;       // mode: see const.h
 	bool   mute_i;     // internal mute
 	bool   mute;       // global mute
+	bool   solo;
 	bool   qWait;      // quantizer wait
 	float  fadein;
 	bool   fadeoutOn;

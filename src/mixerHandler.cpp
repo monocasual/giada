@@ -206,21 +206,15 @@ void mh_unmuteChan(channel *ch, bool internal) {
 /* ------------------------------------------------------------------ */
 
 
+void mh_soloChan(channel *ch) {
+	ch->solo = !ch->solo;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void mh_deleteChannel(channel *ch) {
-	/*
-	if (ch == NULL)
-		return;
-	if (ch->wave == NULL)
-		return;
-	if (ch->status == STATUS_MISSING) {
-		ch->status = STATUS_EMPTY;  // returns to init state
-	}
-	else {
-		int i = ch->index;
-		G_Mixer.deleteChannel(ch);
-		printf("[MH] channel %d freed\n", i);
-	}
-	*/
 	int i = ch->index;
 	G_Mixer.deleteChannel(ch);
 	printf("[MH] channel %d freed\n", i);
