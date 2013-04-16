@@ -50,6 +50,9 @@ void mh_freeChannel(struct channel *ch);
 void mh_killChan(struct channel *ch);
 
 
+/* (un)muteChan
+ * if internal == true, set internal mute without altering main mute. */
+
 void mh_muteChan(channel *ch, bool internal=false);
 void mh_unmuteChan(channel *ch, bool internal=false);
 

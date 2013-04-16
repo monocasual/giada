@@ -211,6 +211,7 @@ void Mixer::initChannel(channel *ch) {
 	ch->solo        = false;
 	ch->mute        = false;
 	ch->mute_i      = false;
+	ch->mute_s      = false;
 	ch->mode        = DEFAULT_CHANMODE;
 	ch->volume      = DEFAULT_VOL;
 	ch->volume_i    = 1.0f;
