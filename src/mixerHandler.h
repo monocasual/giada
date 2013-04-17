@@ -58,6 +58,11 @@ void mh_unmuteChan(channel *ch, bool internal=false);
 
 void mh_soloChan(channel *ch);
 
+/* uniqueSolo
+ * true if ch is the only solo'd channel in mixer. */
+
+bool uniqueSolo(channel *ch);
+
 void mh_loadPatch();
 
 int mh_loadChan(const char *file, struct channel *ch);

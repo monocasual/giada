@@ -214,6 +214,20 @@ void mh_soloChan(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
+bool uniqueSolo(channel *ch) {
+	int solos = 0;
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *ch = G_Mixer.channels.at(i);
+		if (ch->solo) solos++;
+		if (solos > 1) return false;
+	}
+	return true;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void mh_deleteChannel(channel *ch) {
 	int i = ch->index;
 	G_Mixer.deleteChannel(ch);
