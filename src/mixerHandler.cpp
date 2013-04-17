@@ -214,7 +214,7 @@ void mh_soloChan(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-bool uniqueSolo(channel *ch) {
+bool mh_uniqueSolo(channel *ch) {
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *ch = G_Mixer.channels.at(i);

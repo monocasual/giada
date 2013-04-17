@@ -54,7 +54,7 @@ struct channel {
 	float  panRight;
 	int    mode;       // mode: see const.h
 	bool   mute_i;     // internal mute
-	bool 	 mute_s;     // mute status previous to solo on
+	bool 	 mute_s;     // previous mute status after being solo'd
 	bool   mute;       // global mute
 	bool   solo;
 	bool   qWait;      // quantizer wait

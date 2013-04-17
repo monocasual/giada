@@ -61,7 +61,7 @@ void mh_soloChan(channel *ch);
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 
-bool uniqueSolo(channel *ch);
+bool mh_uniqueSolo(channel *ch);
 
 void mh_loadPatch();
 

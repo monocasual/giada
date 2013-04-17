@@ -688,75 +688,73 @@ void glue_setMute(channel *ch) {
 
 void glue_setSolo(channel *ch) {
 
-	/* checking previous solo status. Previously soloed? */
-
-	if (ch->solo) {
-		if (ch->mute_s) {  // restore mute status previous to solo
-			ch->mute_s = false;
-			mh_muteChan(ch, false);
-			ch->guiChannel->mute->value(true);
-		}
-
-		/* check if this is the last soloed channel */
-
-		int solos = 0;
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *och = G_Mixer.channels.at(i);
-			if (och->solo)
-				solos++;
-		}
-
-		printf("soloed channels = %d\n", solos);
-
-		/* solos == 1: this is the last soloed channel. Parse all channels
-		 * and restore previous mute status, if any */
-
-		if (solos == 1)
-			for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-				channel *och = G_Mixer.channels.at(i);
-				if (och != ch) {
-					if (!och->mute_s) {  // should we remove fake mute?
-						mh_unmuteChan(och, false);
-						och->guiChannel->mute->value(false);
-						och->mute_s = false;
-					}
-				}
-			}
+	if (ch->mute) {
+		printf("channel THIS is muted, unmute it temporarily\n");
+		mh_unmuteChan(ch, false);
+		ch->mute_s = true;       // when unsol'd, restore this mute status
+		ch->guiChannel->mute->value(false);
 	}
-
-	/* it wasn't soloed, so set it now */
-
-	else {
-
-		/* if channel is muted, remove mute temporarily */
-
-		if (ch->mute) {
-			mh_unmuteChan(ch, false);
-			ch->mute_s = true;
-			ch->guiChannel->mute->value(false);
-		}
-
-		/* mute any other channel different from this one and not already
-		 * soloed. Set flag to restore mute at the next unsolo */
-
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *och = G_Mixer.channels.at(i);
-			if (och != ch && !och->solo) {
-				if (och->mute)      // if muted, remember the mute status
-					och->mute_s = true;
-				else {
-					mh_muteChan(och);
-					och->guiChannel->mute->value(true);
-				}
-			}
-		}
-	}
-
-	/* set solo to channel */
 
 	mh_soloChan(ch);
 
+	/* mute any other channel different from this one and not already
+	 * solo'd. Do it only if solo'd channels == 1 */
 
+	if (mh_uniqueSolo(ch)) {
+		printf("solos == 1, muting other channels...\n");
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *och = G_Mixer.channels.at(i);
+			if (och != ch && !och->solo) {
+				if (och->mute) {
+					printf("   channel %d is muted, keep its status\n", och->index);
+					och->mute_s = true;
+				}
+				else {
+					printf("   channel %d is not muted, mute it and remember it\n", och->index);
+					mh_muteChan(och);
+					och->guiChannel->mute->value(true);
+					och->mute_s = false;
+				}
+			}
+		}
+	}
+
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_unsetSolo(channel *ch) {
+
+	if (ch->mute_s) {  // restore mute status previous to solo
+		printf("channel THIS was muted, restore its status\n");
+		mh_muteChan(ch, false);
+		ch->guiChannel->mute->value(true);
+		ch->mute_s = false;
+	}
+
+	/* if this is the last solo'd channel. Parse all channels and restore
+	 * previous mute status, if any */
+
+	if (mh_uniqueSolo(ch)) {
+		printf("last solo'd channel, restoring mutes...\n");
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *och = G_Mixer.channels.at(i);
+			if (och != ch) {
+				if (och->mute_s) {
+					printf("  channel %d was muted, leave it unchanged\n", och->index);
+				}
+				else {  // should we remove fake mute?
+					printf("  channel %d was not muted, restore it\n", och->index);
+					mh_unmuteChan(och, false);
+					och->guiChannel->mute->value(false);
+					och->mute_s = false;
+				}
+			}
+		}
+	}
+	mh_soloChan(ch);
 }
 
 
