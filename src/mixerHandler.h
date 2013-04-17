@@ -63,7 +63,11 @@ void mh_soloChan(channel *ch);
 
 bool mh_uniqueSolo(channel *ch);
 
-void mh_loadPatch();
+/* loadPatch
+ * load a path or a project (if isProject) into Mixer. If isProject, path
+ * must contain the address of the project folder. */
+
+void mh_loadPatch(bool isProject, const char *projPath=0);
 
 int mh_loadChan(const char *file, struct channel *ch);
 

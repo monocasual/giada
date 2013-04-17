@@ -156,7 +156,9 @@ bool gIsPatch(const char *path);
 
 bool gMkdir(const char *path);
 
-std::string gBasename(const char *fullpath);
+std::string gBasename(const char *path);
+
+std::string gDirname(const char *path);
 
 std::string getCurrentPath();
 

@@ -81,7 +81,7 @@ public:
 	int         getLastTakeId();
 	int         getSamplerate();
 
-	int         write(const char *file, const char *name);
+	int         write(const char *file, const char *name, bool isProject);
 	int         readRecs();
 #ifdef WITH_VST
 	int         readPlugins();

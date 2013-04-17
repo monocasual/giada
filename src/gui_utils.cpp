@@ -167,8 +167,7 @@ void gu_update_controls() {
 
 		ch->guiChannel->vol->value(ch->volume);
 		ch->guiChannel->mute->value(ch->mute);
-		ch->guiChannel->solo->value(ch->solo);    /// <--------------
-		ch->guiChannel->mute->value(ch->mute_s);  /// <--------------
+		ch->guiChannel->solo->value(ch->solo);
 
 		/* updates modebox */
 

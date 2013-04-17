@@ -494,7 +494,7 @@ int Patch::readPlugins() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::write(const char *file, const char *name) {
+int Patch::write(const char *file, const char *name, bool project) {
 	fp = fopen(file, "w");
 	if (fp == NULL)
 		return 0;
@@ -504,12 +504,21 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "version=%s\n", VERSIONE);
 	fprintf(fp, "versionf=%f\n", VERSIONE_FLOAT);
 	fprintf(fp, "patchname=%s\n", name);
-
 	fprintf(fp, "channels=%d\n", G_Mixer.channels.size);
+
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+
 		fprintf(fp, "# --- channel %d --- \n", i);
 		channel *ch = G_Mixer.channels.at(i);
-		fprintf(fp, "samplepath%d=%s\n",    i, ch->wave == NULL ? "" : ch->wave->pathfile.c_str());
+
+		const char *path = "";
+		if (ch->wave != NULL) {
+			path = ch->wave->pathfile.c_str();
+			if (project)
+				path = gBasename(path).c_str();  // make it portable
+		}
+
+		fprintf(fp, "samplepath%d=%s\n",    i, path);
 		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
 		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
 		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);

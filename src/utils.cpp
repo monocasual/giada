@@ -26,7 +26,9 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include "utils.h"
+
 
 bool gFileExists(const char *filename) {
 	FILE *fh = fopen(filename, "rb");
@@ -127,6 +129,18 @@ std::string gBasename(const char *fullpath) {
 	std::string out = buffer;
 	return out;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string gDirname(const char *path) {
+	std::string base = gBasename(path);
+	std::string full = path;
+	size_t i = full.find(base);
+	return full.erase(i-1, full.size());  // i-1 trims '/'
+}
+
 
 
 /* ------------------------------------------------------------------ */

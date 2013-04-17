@@ -248,7 +248,7 @@ void mh_freeChannel(channel *ch) {
 
 int mh_loadChan(const char *file, struct channel *ch) {
 
-	if (strcmp(file, "") == 0) {
+	if (strcmp(file, "") == 0 || gIsDir(file)) {
 		puts("[MH] file not specified");
 		return SAMPLE_LEFT_EMPTY;
 	}
@@ -316,14 +316,30 @@ int mh_loadChan(const char *file, struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_loadPatch() {
+void mh_loadPatch(bool isProject, const char *projPath) {
+
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
 
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
+
 		channel *ch = glue_addChannel(G_Patch.getSide(i));
-		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), ch);
+		char smpPath[PATH_MAX];
+
+		/* projects < 0.6.3 version are not portable. Just use the regular
+		 * samplePath */
+
+		if (isProject && G_Patch.version >= 0.63f)
+#if defined(_WIN32)
+			sprintf(smpPath, "%s\\%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
+#else
+			sprintf(smpPath, "%s/%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
+#endif
+		else
+			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
+
+		int res = mh_loadChan(smpPath, ch);
 
 		if (res == SAMPLE_LOADED_OK) {
 			ch->volume      = G_Patch.getVol(i);

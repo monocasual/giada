@@ -46,6 +46,7 @@
 #include "pluginHost.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "utils.h"
 
 
 extern gdMainWindow *mainWin;
@@ -94,7 +95,7 @@ channel *glue_addChannel(int side) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
+int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject) {
 
 	/* update browser's status bar with % 0.1 */
 
@@ -119,7 +120,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch();
+	mh_loadPatch(isProject, fname);
 
 	/* take the patch name and update the main window's title */
 
@@ -179,9 +180,9 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_savePatch(const char *fullpath, const char *name) {
+int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
 
-	if (G_Patch.write(fullpath, name) == 1) {
+	if (G_Patch.write(fullpath, name, isProject) == 1) {
 		strcpy(G_Patch.name, name);
 		G_Patch.name[strlen(name)] = '\0';
 		gu_update_win_label(name);
@@ -850,7 +851,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 	}
 
 	/* copy all samples inside the folder. Takes and logical ones are saved
-	 * with glue_saveSample() */
+	 * via glue_saveSample() */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *c = G_Mixer.channels.at(i);
@@ -881,7 +882,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 #else
 	sprintf(gptcPath, "%s/%s.gptc", folderPath, projNameClean.c_str());
 #endif
-	glue_savePatch(gptcPath, projName);
+	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;
 }
