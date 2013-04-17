@@ -166,7 +166,7 @@ int Patch::getMode(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanmode%d", c);
 	int out = atoi(getValue(tmp).c_str());
-	if (out & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT | SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG))
+	if (out & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT | SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG)) /// FIXME use SINGLE_ANY | LOOP_ANY
 		return out;
 	return DEFAULT_CHANMODE;
 }
@@ -178,6 +178,26 @@ int Patch::getMode(int c) {
 int Patch::getMute(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanmute%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getMute_s(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanMute_s%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getSolo(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanSolo%d", c);
 	return atoi(getValue(tmp).c_str());
 }
 
@@ -494,6 +514,8 @@ int Patch::write(const char *file, const char *name) {
 		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
 		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
 		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
+		fprintf(fp, "chanMute_s%d=%d\n",    i, ch->mute_s);
+		fprintf(fp, "chanSolo%d=%d\n",      i, ch->solo);
 		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);
 		fprintf(fp, "chanmode%d=%d\n",      i, ch->mode);
 		fprintf(fp, "chanstart%d=%d\n",     i, ch->startTrue);       // true values, not pitched

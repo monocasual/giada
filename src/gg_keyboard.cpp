@@ -182,10 +182,7 @@ void gChannel::__cb_mute() {
 
 
 void gChannel::__cb_solo() {
-	if (solo->value())
-		glue_setSolo(ch);
-	else
-		glue_unsetSolo(ch);
+	solo->value() ? glue_setSolo(ch) : glue_unsetSolo(ch);
 }
 
 

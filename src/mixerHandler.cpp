@@ -331,6 +331,8 @@ void mh_loadPatch() {
 			ch->index       = G_Patch.getIndex(i);
 			ch->mode        = G_Patch.getMode(i);
 			ch->mute        = G_Patch.getMute(i);
+			ch->mute_s      = G_Patch.getMute_s(i);
+			ch->solo        = G_Patch.getSolo(i);
 			ch->boost       = G_Patch.getBoost(i);
 			ch->panLeft     = G_Patch.getPanLeft(i);
 			ch->panRight    = G_Patch.getPanRight(i);

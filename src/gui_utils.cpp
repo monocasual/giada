@@ -163,10 +163,12 @@ void gu_update_controls() {
 
 		ch->guiChannel->sampleButton->redraw();
 
-		/* update volumes+mute */
+		/* update volumes+mute+solo */
 
 		ch->guiChannel->vol->value(ch->volume);
 		ch->guiChannel->mute->value(ch->mute);
+		ch->guiChannel->solo->value(ch->solo);    /// <--------------
+		ch->guiChannel->mute->value(ch->mute_s);  /// <--------------
 
 		/* updates modebox */
 
