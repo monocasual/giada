@@ -50,13 +50,11 @@ PluginHost 	G_PluginHost;
 Mixer    G_Mixer;
 bool	   G_quit;
 bool	   G_audio_status;
-uint32_t G_time;    // max ~6.7 years of running time @ 24 Hz
 
 
 int main(int argc, char **argv) {
 
 	G_quit = false;
-	G_time = 0;
 
 	init_prepareParser();
 	init_prepareKernelAudio();
@@ -81,7 +79,6 @@ void *thread_video(void *arg) {
 			Sleep(GUI_SLEEP);
 #else
 			usleep(GUI_SLEEP);
-			G_time++;
 #endif
 		}
 	pthread_exit(NULL);

@@ -47,6 +47,8 @@ extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 
+static int blinker = 0;
+
 
 void gu_refresh() {
 	Fl::lock();
@@ -63,6 +65,10 @@ void gu_refresh() {
 
 	__gu_refreshColumn(mainWin->keyboard->gChannelsL);
 	__gu_refreshColumn(mainWin->keyboard->gChannelsR);
+
+	blinker++;
+	if (blinker > 12)
+		blinker = 0;
 
 	/* redraw GUI */
 
@@ -88,12 +94,24 @@ void __gu_refreshColumn(Fl_Group *col) {
 			gch->sampleButton->txtColor = COLOR_TEXT_0;
 		}
 		else
-		if (gch->ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
-			if (G_time % 4 == 0)
-				printf("blink %d\n", G_time);
+		if (gch->ch->status == STATUS_PLAY) {
 			gch->sampleButton->bgColor0 = COLOR_BG_2;
 			gch->sampleButton->bdColor  = COLOR_BD_1;
 			gch->sampleButton->txtColor = COLOR_TEXT_1;
+		}
+		else
+		if (gch->ch->status & (STATUS_WAIT | STATUS_ENDING)) {
+			if (blinker > 6) {
+				gch->sampleButton->bgColor0 = COLOR_BG_2;
+				gch->sampleButton->bdColor  = COLOR_BD_1;
+				gch->sampleButton->txtColor = COLOR_TEXT_1;
+			}
+			else {
+				gch->sampleButton->bgColor0 = COLOR_BG_0;
+				gch->sampleButton->bdColor  = COLOR_BD_0;
+				gch->sampleButton->txtColor = COLOR_TEXT_0;
+			}
+
 		}
 
 		if (G_Mixer.chanInput == gch->ch)
