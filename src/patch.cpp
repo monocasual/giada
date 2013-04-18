@@ -166,7 +166,7 @@ int Patch::getMode(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanmode%d", c);
 	int out = atoi(getValue(tmp).c_str());
-	if (out & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT | SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG)) /// FIXME use SINGLE_ANY | LOOP_ANY
+	if (out & (LOOP_ANY | SINGLE_ANY))
 		return out;
 	return DEFAULT_CHANMODE;
 }
