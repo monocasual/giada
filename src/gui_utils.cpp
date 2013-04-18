@@ -44,6 +44,7 @@ extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch         G_patch;
 extern Conf          G_conf;
+extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 
 
@@ -88,6 +89,8 @@ void __gu_refreshColumn(Fl_Group *col) {
 		}
 		else
 		if (gch->ch->status & (STATUS_PLAY | STATUS_WAIT | STATUS_ENDING)) {
+			if (G_time % 4 == 0)
+				printf("blink %d\n", G_time);
 			gch->sampleButton->bgColor0 = COLOR_BG_2;
 			gch->sampleButton->bdColor  = COLOR_BD_1;
 			gch->sampleButton->txtColor = COLOR_TEXT_1;

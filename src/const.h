@@ -44,7 +44,7 @@
 #ifdef _WIN32
 	#define GUI_SLEEP			1000/24
 #else
-	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 refresh per second
+	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
 #endif
 #define GUI_WIDTH				810
 #define GUI_HEIGHT			510
