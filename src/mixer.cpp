@@ -711,14 +711,18 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 					ch->tracker += 2;
 
-					/* check for end of samples. SINGLE_ENDLESS runs forever */
+					/* check for end of samples. SINGLE_ENDLESS runs forever unless
+					 * it's in ENDING mode */
 
 					if (ch->tracker >= ch->end) {
 
 						chanReset(ch);
 
-						if (ch->mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG))
+						if (ch->mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+						   (ch->mode == SINGLE_ENDLESS && ch->status == STATUS_ENDING))
+						{
 							ch->status = STATUS_OFF;
+						}
 
 						/* stop loops when the seq is off */
 

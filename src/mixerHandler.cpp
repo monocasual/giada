@@ -97,7 +97,7 @@ void mh_startChan(channel *ch, bool do_quantize) {
 				}
 			}
 			else
-			if (ch->mode & LOOP_ANY)
+			if (ch->mode & (LOOP_ANY | SINGLE_ENDLESS))
 				ch->status = STATUS_ENDING;
 
 			break;
