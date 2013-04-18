@@ -375,13 +375,13 @@ gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
 	textsize(11);
 	textcolor(COLOR_TEXT_0);
 	color(COLOR_BG_0);
-	add("Loop . basic", 	  0, cb_change_chanmode, (void *)LOOP_BASIC);
-	add("Loop . once", 		  0, cb_change_chanmode, (void *)LOOP_ONCE);
-	add("Loop . repeat", 	  0, cb_change_chanmode, (void *)LOOP_REPEAT);
-	add("Oneshot . basic",  0, cb_change_chanmode, (void *)SINGLE_BASIC);
-	add("Oneshot . press",  0, cb_change_chanmode, (void *)SINGLE_PRESS);
-	add("Oneshot . retrig", 0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-	//id = id_generator++;
+	add("Loop . basic", 	   0, cb_change_chanmode, (void *)LOOP_BASIC);
+	add("Loop . once", 		   0, cb_change_chanmode, (void *)LOOP_ONCE);
+	add("Loop . repeat", 	   0, cb_change_chanmode, (void *)LOOP_REPEAT);
+	add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
+	add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
+	add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
+	add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
 }
 
 void gModeBox::draw() {
@@ -404,6 +404,9 @@ void gModeBox::draw() {
 			break;
 		case SINGLE_RETRIG:
 			fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
+			break;
+		case SINGLE_ENDLESS:
+			fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
 			break;
 	}
 }

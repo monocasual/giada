@@ -37,6 +37,7 @@ extern const char *loopOnce_xpm[];
 extern const char *oneshotBasic_xpm[];
 extern const char *oneshotRetrig_xpm[];
 extern const char *oneshotPress_xpm[];
+extern const char *oneshotEndless_xpm[];
 
 extern const char *updirOff_xpm[];
 extern const char *updirOn_xpm[];
