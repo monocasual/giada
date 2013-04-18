@@ -70,11 +70,10 @@ void gStatus::draw() {
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
 
 	if (ch != NULL) {
-		if (ch->status & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING)) {
-			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_2);	// status wait
+		if (ch->status & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING))
 			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-		}
-		else if (ch->status == STATUS_PLAY)
+		else
+		if (ch->status == STATUS_PLAY)
 			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
 		else
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
@@ -82,7 +81,8 @@ void gStatus::draw() {
 
 		if (G_Mixer.chanInput == ch)
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
-		else if (recorder::active && recorder::canRec(ch))
+		else
+		if (recorder::active && recorder::canRec(ch))
 			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
 		/* equation for the progress bar:

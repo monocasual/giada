@@ -724,6 +724,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 							ch->status = STATUS_OFF;
 						}
 
+						/// FIXME - unify these
 						/* stop loops when the seq is off */
 
 						if ((ch->mode & LOOP_ANY) && !running)
