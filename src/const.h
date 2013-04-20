@@ -135,10 +135,10 @@
 #define STATUS_MISSING  0x20 // 0010 0000  chanStatus - not found
 #define STATUS_WRONG    0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
 
-#define REC_WAITING			0x80   // 1000 0000
-#define REC_ENDING      0x100
-#define REC_READING     0x200
-#define REC_STOPPED     0x400
+#define REC_WAITING			0x01 // 0000 0001
+#define REC_ENDING      0x02 // 0000 0010
+#define REC_READING     0x04 // 0000 0100
+#define REC_STOPPED     0x08 // 0000 1000
 
 
 

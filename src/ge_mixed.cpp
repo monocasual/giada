@@ -70,8 +70,11 @@ void gStatus::draw() {
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
 
 	if (ch != NULL) {
-		if (ch->status & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING))
+		if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
+				ch->recStatus & (REC_WAITING | REC_ENDING))
+		{
 			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+		}
 		else
 		if (ch->status == STATUS_PLAY)
 			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
