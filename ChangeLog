@@ -13,6 +13,14 @@
 
 
 
+0.6.3 --- 2013 . 04 . 23
+- New 'solo' button
+- Portable project system
+- New 'Single Endless' channel mode
+- GUI enhancements for channels in WAIT or ENDING status
+- Minor fixes & cleanups
+
+
 0.6.2 --- 2013 . 04 . 05
 - New volume envelope widget
 - Zoom with mouse wheel in the action editor
