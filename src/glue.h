@@ -132,8 +132,8 @@ void glue_setVolEditor(class gdEditor *win, struct channel *ch, float val, bool 
 
 void glue_setMute(struct channel *ch);
 
-void glue_setSolo  (struct channel *ch);
-void glue_unsetSolo(struct channel *ch);
+void glue_setSoloOn (struct channel *ch);
+void glue_setSoloOff(struct channel *ch);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 int glue_saveProject(const char *folderPath, const char *projName);
