@@ -62,7 +62,7 @@ int Wave::open(const char *f) {
 #endif
 	fileIn = sf_open(f, SFM_READ, &inHeader);
 	if (fileIn == NULL) {
-		printf("[wave] unable to read %s\n", f);
+		printf("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
 		pathfile = "";
 		name     = "";
 		return 0;
