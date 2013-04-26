@@ -81,21 +81,23 @@ gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
 
 		char name[256];
 		pPlugin->getParamName(i, name);
-		char disp[256];
-		char labl[256];
-		pPlugin->getParamDisplay(i, disp);
-		pPlugin->getParamLabel(i, labl);
-		sprintf(disp, "%s %s", disp, labl);
 
 		label->copy_label(name);
 		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
+		char disp[256];
+		char labl[256];
+		char str [256];
+		pPlugin->getParamDisplay(i, disp);
+		pPlugin->getParamLabel(i, labl);
+		sprintf(str, "%s %s", disp, labl);
+
+		value->copy_label(str);
+		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+
 		sl->value(pPlugin->getParam(i));
 		sl->callback(cb_setValue, (void *)this);
 		sl->id = i;
-
-		value->copy_label(disp);
-		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 		sliders.add(sl);
 		values.add(value);
@@ -148,11 +150,13 @@ void gdPluginWindow::__cb_setValue(Fl_Widget *v) {
 
 	char disp[256];
 	char labl[256];
+	char str [256];
+
 	pPlugin->getParamDisplay(s->id, disp);
 	pPlugin->getParamLabel(s->id, labl);
-	sprintf(disp, "%s %s", disp, labl);
+	sprintf(str, "%s %s", disp, labl);
 
-	(values.at(s->id))->copy_label(disp);
+	(values.at(s->id))->copy_label(str);
 	(values.at(s->id))->redraw();
 
 }

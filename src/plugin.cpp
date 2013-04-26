@@ -302,21 +302,17 @@ void Plugin::getParamName(int index, char *out) {
 }
 
 void Plugin::getParamLabel(int index, char *out) {
-	char tmp[256];
+	char tmp[64];
 	plugin->dispatcher(plugin, effGetParamLabel, index, 0, tmp, 0);
-	if (strcmp(tmp, "") == 0 || tmp[0] <= 0x20) 	// some plugins print garbage below 0x20 ascii... why?!?
-		out[0] = '\0';
-	else
-		strcpy(out, tmp);
+	tmp[strlen(tmp)] = '\0';
+	strncpy(out, tmp, 64);
 }
 
 void Plugin::getParamDisplay(int index, char *out) {
-	char tmp[256];
+	char tmp[64];
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
-	if (strcmp(tmp, "") == 0 || tmp[0] <= 0x20)
-		out[0] = '\0';
-	else
-		strcpy(out, tmp);
+	tmp[strlen(tmp)] = '\0';
+	strncpy(out, tmp, 64);
 }
 
 float Plugin::getParam(int index) {
