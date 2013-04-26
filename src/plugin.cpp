@@ -294,6 +294,7 @@ int Plugin::getNumOutputs() {
 void Plugin::getProgramName(int index, char *out) {
 	char tmp[kVstMaxProgNameLen];
 	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
+	tmp[strlen(tmp)] = '\0';
 	strncpy(out, tmp, kVstMaxProgNameLen);
 }
 

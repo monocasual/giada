@@ -142,9 +142,9 @@ void gdPluginList::__cb_shiftDown(Fl_Widget *v) {
 	int id = ((gButton*)v)->id;
 	unsigned index = G_PluginHost.getPluginIndex(id, stackType, ch);
 
-	/* if the plugin is the first one of the stack, do nothing */
+	/* if the plugin is the last one of the stack, do nothing */
 
-	if (index == G_PluginHost.masterOut.size-1)
+	if (index == (G_PluginHost.getStack(stackType, ch))->size-1)
 		return;
 
 	G_PluginHost.swapPlugin(index, index+1, stackType, ch);
