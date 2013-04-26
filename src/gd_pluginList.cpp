@@ -116,14 +116,14 @@ void gdPluginList::__cb_shiftUp(Fl_Widget *v) {
 		return;
 
 	int id  = ((gButton*)v)->id;
-	int pId = G_PluginHost.getPluginIndex(id, stackType, ch);
+	int idx = G_PluginHost.getPluginIndex(id, stackType, ch);
 
 	/* if the plugin is the first one of the stack, do nothing */
 
-	if (pId == 0)
+	if (idx == 0)
 		return;
 
-	G_PluginHost.swapPlugin(pId, pId-1, stackType, ch);
+	G_PluginHost.swapPlugin(idx, idx-1, stackType, ch);
 	refreshList();
 	redraw();
 }
@@ -139,15 +139,15 @@ void gdPluginList::__cb_shiftDown(Fl_Widget *v) {
 	if (G_PluginHost.countPlugins(stackType, ch) == 1)
 		return;
 
-	int id = ((gButton*)v)->id;
-	unsigned index = G_PluginHost.getPluginIndex(id, stackType, ch);
+	int id  = ((gButton*)v)->id;
+	int idx = G_PluginHost.getPluginIndex(id, stackType, ch);
 
 	/* if the plugin is the last one of the stack, do nothing */
 
-	if (index == (G_PluginHost.getStack(stackType, ch))->size-1)
+	if (idx == (int) (G_PluginHost.getStack(stackType, ch))->size-1)
 		return;
 
-	G_PluginHost.swapPlugin(index, index+1, stackType, ch);
+	G_PluginHost.swapPlugin(idx, idx+1, stackType, ch);
 	refreshList();
 	redraw();
 }
