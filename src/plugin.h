@@ -107,7 +107,7 @@ public:
 	int   getNumParams();
 	int   getNumInputs();
 	int   getNumOutputs();
-	int   getProgramName(int index, char *out);  // program = preset
+	void  getProgramName(int index, char *out);  // program = preset
 	void  getParamName(int index, char *out);
 	void  getParamLabel(int index, char *out);   // parameter's value(0, -39, ...)
 	void  getParamDisplay(int index, char *out); // parameter's unit measurement (dB, Pan, ...)

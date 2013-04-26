@@ -291,8 +291,10 @@ int Plugin::getNumOutputs() {
 	return plugin->numOutputs;
 }
 
-int Plugin::getProgramName(int index, char *out) {
-	return plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, out, 0);
+void Plugin::getProgramName(int index, char *out) {
+	char tmp[kVstMaxProgNameLen];
+	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
+	strncpy(out, tmp, kVstMaxProgNameLen);
 }
 
 void Plugin::getParamName(int index, char *out) {
