@@ -73,17 +73,6 @@ gdConfig::gdConfig(int w, int h)
 		grpSound->end();
 		grpSound->labelsize(11);
 
-		/*
-		Fl_Group *grpKeys = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Controls");
-			listChans	= new gChoice(grpKeys->x()+92,  grpKeys->y()+9, 253, 20, "Key for");
-			            new gBox   (grpKeys->x()+22,  grpKeys->y()+37, 70, 20, "Actual key", FL_ALIGN_RIGHT);
-			actualKey	= new gBox	 (grpKeys->x()+92,  grpKeys->y()+37, 25, 20);
-			setKey	  = new gClick (grpKeys->x()+270, grpKeys->y()+37, 75, 20, "Set new");
-			            new gBox(grpKeys->x()+10, setKey->y()+120, grpKeys->w()-10, 50, "Restart Giada for the changes to take effect.");
-		grpKeys->end();
-		grpKeys->labelsize(11);
-		*/
-
 		Fl_Group *grpBehvs = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Behaviors");
 			Fl_Group *radioGrp_1 = new Fl_Group(grpBehvs->x(), grpBehvs->y()+10, grpBehvs->w(), 70); // radio group for the mutex
 				                       new gBox(grpBehvs->x(), grpBehvs->y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);

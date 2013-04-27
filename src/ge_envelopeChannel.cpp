@@ -89,10 +89,6 @@ void gEnvelopeChannel::draw() {
 
 	baseDraw();
 
-	/* cover unused area */
-
-	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
-
 	/* print label */
 
 	fl_color(COLOR_BG_1);
@@ -125,6 +121,10 @@ void gEnvelopeChannel::draw() {
 		pxOld = pxNew;
 		pyOld = pyNew;
 	}
+
+	/* cover unused area */
+
+	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
 }
 
 
