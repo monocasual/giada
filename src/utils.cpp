@@ -119,12 +119,15 @@ std::string gBasename(const char *fullpath) {
 	const char *buffer;
 	buffer = basename(fullpath);
 #elif defined(__APPLE__)
-	char path[PATH_MAX];						/// come trasformare un const char * in char[]
+	char path[PATH_MAX];
 	sprintf(path, "%s", fullpath);
 	char *buffer = basename(path);
 #elif defined(_WIN32)
+	char file[_MAX_FNAME];
+	char ext[_MAX_EXT];
 	char buffer[FILENAME_MAX];
-	_splitpath(fullpath, NULL, NULL, buffer, NULL);
+	_splitpath(fullpath, NULL, NULL, file, ext);
+	sprintf(buffer, "%s%s", file, ext);
 #endif
 	std::string out = buffer;
 	return out;
