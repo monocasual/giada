@@ -438,7 +438,9 @@ int Patch::readRecs() {
 				frame++;
 
 			channel *ch = G_Mixer.getChannelByIndex(chan);
-			recorder::rec(ch->index, type, frame, iValue, fValue);
+			if (ch)
+				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY))
+					recorder::rec(ch->index, type, frame, iValue, fValue);
 		}
 	}
 	return 1;
