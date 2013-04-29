@@ -253,19 +253,24 @@ int Plugin::getSDKVersion() {
 }
 
 void Plugin::getName(char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetEffectName, 0, 0, tmp, 0);
-	strlen(tmp) == 0 ? strcpy(out, " ") : strcpy(out, tmp);
+	tmp[kVstMaxEffectNameLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxEffectNameLen);
 }
 
 void Plugin::getVendor(char *out) {
-	plugin->dispatcher(plugin, effGetVendorString, 0, 0, out, 0);
+	char tmp[128] = "\0";
+	plugin->dispatcher(plugin, effGetVendorString, 0, 0, tmp, 0);
+	tmp[kVstMaxVendorStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxVendorStrLen);
 }
 
 void Plugin::getProduct(char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProductString, 0, 0, tmp, 0);
-	strlen(tmp) == 0 ? strcpy(out, " ") : strcpy(out, tmp);
+	tmp[kVstMaxProductStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxProductStrLen);
 }
 
 int Plugin::getNumPrograms() {
@@ -292,28 +297,31 @@ int Plugin::getNumOutputs() {
 }
 
 void Plugin::getProgramName(int index, char *out) {
-	char tmp[kVstMaxProgNameLen];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
-	tmp[strlen(tmp)] = '\0';
+	tmp[kVstMaxProgNameLen-1] = '\0';
 	strncpy(out, tmp, kVstMaxProgNameLen);
 }
 
 void Plugin::getParamName(int index, char *out) {
-	plugin->dispatcher(plugin, effGetParamName, index, 0, out, 0);
+	char tmp[128] = "\0";
+	plugin->dispatcher(plugin, effGetParamName, index, 0, tmp, 0);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 void Plugin::getParamLabel(int index, char *out) {
-	char tmp[64];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamLabel, index, 0, tmp, 0);
-	tmp[strlen(tmp)] = '\0';
-	strncpy(out, tmp, 64);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 void Plugin::getParamDisplay(int index, char *out) {
-	char tmp[64];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
-	tmp[strlen(tmp)] = '\0';
-	strncpy(out, tmp, 64);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 float Plugin::getParam(int index) {
