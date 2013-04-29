@@ -208,9 +208,10 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			}
 		}
 
+		/* 16 - sample rate */
+
 		case audioMasterGetSampleRate:
-			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
-			return 0;
+			return G_Conf.samplerate;
 
 		/* ?? - buffer size */
 
