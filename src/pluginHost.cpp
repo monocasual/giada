@@ -268,6 +268,9 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		case audioMasterUpdateDisplay:
 			return 0;
 
+		case audioMasterGetLanguage:
+			return kVstLangEnglish;
+
 		/* ?? */
 
 		case audioMasterGetAutomationState:
