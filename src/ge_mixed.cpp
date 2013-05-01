@@ -387,6 +387,7 @@ gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
 	add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
 }
 
+
 void gModeBox::draw() {
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		// border
 	switch (ch->mode) {
@@ -414,7 +415,9 @@ void gModeBox::draw() {
 	}
 }
 
+
 void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
+
 
 void gModeBox::__cb_change_chanmode(int mode) {
 	ch->mode = mode;
@@ -426,7 +429,9 @@ void gModeBox::__cb_change_chanmode(int mode) {
 	gu_refreshActionEditor();
 }
 
+
 /* ------------------------------------------------------------------ */
+
 
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
 	: Fl_Choice(x, y, w, h, l), angle(ang) {
@@ -437,6 +442,7 @@ gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
 	textcolor(COLOR_TEXT_0);
 	color(COLOR_BG_0);
 }
+
 
 void gChoice::draw() {
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);              // bg
@@ -466,13 +472,40 @@ void gChoice::draw() {
 	}
 }
 
+
 /* ------------------------------------------------------------------ */
+
 
 void gDrawBox(int x, int y, int w, int h, Fl_Color c) {
 	fl_color(c);
   fl_rectf(x, y, w, h);
   fl_color(COLOR_BD_0);
   fl_rect(x, y, w, h);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
+	: Fl_Scroll(x, y, w, h, l)
+{
+	type(Fl_Scroll::VERTICAL);
+	scrollbar.color(COLOR_BG_0);
+	scrollbar.selection_color(COLOR_BG_1);
+	scrollbar.labelcolor(COLOR_BD_1);
+	scrollbar.slider(G_BOX);
+}
+
+
+void gLiquidScroll::resize(int X, int Y, int W, int H) {
+	int nc = children()-2;                // skip hscrollbar and vscrollbar
+	for ( int t=0; t<nc; t++) {					  // tell children to resize to our new width
+		Fl_Widget *c = child(t);
+		c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
+	}
+	init_sizes();		// tell scroll children changed in size
+	Fl_Scroll::resize(X,Y,W,H);
 }
 
 
