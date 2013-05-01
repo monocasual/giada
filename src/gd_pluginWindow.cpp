@@ -101,7 +101,7 @@ void Parameter::__cb_setValue() {
 
 
 gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
- : gWindow(400, 300), pPlugin(pPlugin) // 350
+ : gWindow(400, 156), pPlugin(pPlugin) // 350
 {
 	set_non_modal();
 
@@ -122,7 +122,7 @@ gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
 		pPlugin->getName(name);
 	label(name);
 
-	size_range(400, (24*3)+12);
+	size_range(400, (24*1)+12);
 	resizable(list);
 
 	gu_setFavicon(this);

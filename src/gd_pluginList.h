@@ -41,22 +41,47 @@ class gdPluginList : public gWindow {
 
 private:
 
-	struct channel *ch;      // ch == NULL ? masterOut
-
-	int stackType;
  	class gClick *addPlugin;
 	Fl_Scroll    *list;
 
 	//gVector<class gdPluginWindow *> subWindows;
 
 	static void cb_addPlugin          (Fl_Widget *v, void *p);
+	inline void __cb_addPlugin        ();
+
+public:
+
+	struct channel *ch;      // ch == NULL ? masterOut
+	int    stackType;
+
+	gdPluginList(int stackType, struct channel *ch=NULL);
+	~gdPluginList();
+
+	/* special callback, passed to browser. When closed (i.e. plugin
+	 * has been selected) the same browser will refresh this window. */
+
+	static void cb_refreshList(Fl_Widget*, void*);
+
+	void refreshList();
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gdPlugin : public Fl_Group {
+
+private:
+
+	class  gdPluginList *pParent;
+	class  Plugin       *pPlugin;
+
 	static void cb_removePlugin       (Fl_Widget *v, void *p);
 	static void cb_openPluginWindow   (Fl_Widget *v, void *p);
 	static void cb_setBypass          (Fl_Widget *v, void *p);
 	static void cb_shiftUp            (Fl_Widget *v, void *p);
 	static void cb_shiftDown          (Fl_Widget *v, void *p);
 	static void cb_setProgram         (Fl_Widget *v, void *p);
-	inline void __cb_addPlugin        ();
 	inline void __cb_removePlugin     (Fl_Widget *v);
 	inline void __cb_openPluginWindow (Fl_Widget *v);
 	inline void __cb_setBypass        (Fl_Widget *v);
@@ -64,17 +89,17 @@ private:
 	inline void __cb_shiftDown        (Fl_Widget *v);
 	inline void __cb_setProgram       (Fl_Widget *v);
 
-	/* special callback, passed to browser. When closed (i.e. plugin
-	 * has been selected) the same browser will refresh this window. */
-
-	static void cb_refreshList(Fl_Widget*, void*);
-
 public:
 
-	gdPluginList(int stackType, struct channel *ch=NULL);
-	~gdPluginList();
+	class gButton *button;
+	class gChoice *program;
+	class gButton *bypass;
+	class gButton *shiftUp;
+	class gButton *shiftDown;
+	class gButton *remove;
 
-	void refreshList();
+	gdPlugin(gdPluginList *gdp, class Plugin *p, int x, int y, int w);
+
 };
 
 #endif
