@@ -82,12 +82,12 @@ private:
 	static void cb_shiftUp            (Fl_Widget *v, void *p);
 	static void cb_shiftDown          (Fl_Widget *v, void *p);
 	static void cb_setProgram         (Fl_Widget *v, void *p);
-	inline void __cb_removePlugin     (Fl_Widget *v);
-	inline void __cb_openPluginWindow (Fl_Widget *v);
-	inline void __cb_setBypass        (Fl_Widget *v);
-	inline void __cb_shiftUp          (Fl_Widget *v);
-	inline void __cb_shiftDown        (Fl_Widget *v);
-	inline void __cb_setProgram       (Fl_Widget *v);
+	inline void __cb_removePlugin     ();
+	inline void __cb_openPluginWindow ();
+	inline void __cb_setBypass        ();
+	inline void __cb_shiftUp          ();
+	inline void __cb_shiftDown        ();
+	inline void __cb_setProgram       ();
 
 public:
 

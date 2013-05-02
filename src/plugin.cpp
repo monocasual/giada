@@ -39,12 +39,13 @@ int Plugin::id_generator = 0;
 
 
 Plugin::Plugin()
-	: module(NULL),
+	: module    (NULL),
 	  entryPoint(NULL),
-	  plugin(NULL),
-	  id(id_generator++),
-	  bypass(false),
-	  suspended(false)
+	  plugin    (NULL),
+	  id        (id_generator++),
+	  program   (-1),
+	  bypass    (false),
+	  suspended (false)
 {}
 
 
@@ -281,6 +282,7 @@ int Plugin::setProgram(int index) {
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
 	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
 	printf("[plugin] program changed, index %d\n", index);
+	program = index;
 	return plugin->dispatcher(plugin, effEndSetProgram, 0, 0, 0, 0);
 }
 

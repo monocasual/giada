@@ -157,12 +157,12 @@ void gdPluginList::refreshList() {
 
 	while (i<numPlugins) {
 		Plugin   *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
-		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800); // y() - yposition()
+		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
 	}
 
-	int addPlugY = numPlugins == 0 ? 90 : list->y()-list->yposition()+(i*24); //i*20+8+i*4;
+	int addPlugY = numPlugins == 0 ? 90 : list->y()-list->yposition()+(i*24);
 	addPlugin = new gClick(8, addPlugY, 452, 20, "-- add new plugin --");
 	addPlugin->callback(cb_addPlugin, (void*)this);
 	list->add(addPlugin);
@@ -174,9 +174,13 @@ void gdPluginList::refreshList() {
 		size(492, h());
 	else
 		size(468, h());
+
+	redraw();
 }
 
 
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
 
@@ -240,18 +244,18 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_removePlugin(v); }
-void gdPlugin::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_openPluginWindow(v); }
-void gdPlugin::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setBypass(v); }
-void gdPlugin::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftUp(v); }
-void gdPlugin::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftDown(v); }
-void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setProgram(v); }
+void gdPlugin::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_removePlugin(); }
+void gdPlugin::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_openPluginWindow(); }
+void gdPlugin::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setBypass(); }
+void gdPlugin::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftUp(); }
+void gdPlugin::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftDown(); }
+void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setProgram(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_shiftUp(Fl_Widget *v) {
+void gdPlugin::__cb_shiftUp() {
 
 	/*nothing to do if there's only one plugin */
 
@@ -265,14 +269,13 @@ void gdPlugin::__cb_shiftUp(Fl_Widget *v) {
 
 	G_PluginHost.swapPlugin(pluginIndex, pluginIndex-1, pParent->stackType, pParent->ch);
 	pParent->refreshList();
-	pParent->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_shiftDown(Fl_Widget *v) {
+void gdPlugin::__cb_shiftDown() {
 
 	/*nothing to do if there's only one plugin */
 
@@ -282,19 +285,18 @@ void gdPlugin::__cb_shiftDown(Fl_Widget *v) {
 	unsigned pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
 	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size;
 
-	if (pluginIndex == stackSize-1)  // last of the stack, do nothing
+	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
 	G_PluginHost.swapPlugin(pluginIndex, pluginIndex+1, pParent->stackType, pParent->ch);
 	pParent->refreshList();
-	pParent->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_removePlugin(Fl_Widget *v) {
+void gdPlugin::__cb_removePlugin() {
 
 	/* any subwindow linked to the plugin must be destroyed */
 
@@ -303,14 +305,13 @@ void gdPlugin::__cb_removePlugin(Fl_Widget *v) {
 	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
 
 	pParent->refreshList();
-	pParent->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_openPluginWindow(Fl_Widget *v) {
+void gdPlugin::__cb_openPluginWindow() {
 
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	 * for the window 'add plugin'. */
@@ -338,7 +339,7 @@ void gdPlugin::__cb_openPluginWindow(Fl_Widget *v) {
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_setBypass(Fl_Widget *w) {
+void gdPlugin::__cb_setBypass() {
 	pPlugin->bypass = !pPlugin->bypass;
 }
 
@@ -346,7 +347,7 @@ void gdPlugin::__cb_setBypass(Fl_Widget *w) {
 /* ------------------------------------------------------------------ */
 
 
-void gdPlugin::__cb_setProgram(Fl_Widget *w) {
+void gdPlugin::__cb_setProgram() {
 	pPlugin->setProgram(program->value());
 }
 

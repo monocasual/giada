@@ -79,6 +79,11 @@ private:
 	static int id_generator;
 	int        id;
 
+	/* program
+	 * selected program. -1 if no program available */
+
+	int program;
+
 	/* unload
 	 * free plugin from memory. Calls dlclose and similars. */
 
@@ -126,6 +131,8 @@ public:
 	void  suspend();
 	void  close();
 
+	inline int getProgram() { return program; }
+
 	/* there's a specific opcode for the bypass, but we don't trust the
 	 * plugin's developers. */
 
@@ -143,7 +150,9 @@ public:
 
 	bool suspended;
 
-	char pathfile[PATH_MAX]; // full path filename
+	/* pathfile
+	 * full filename path */
+	char pathfile[PATH_MAX];
 
 	/* window
 	 * plugin must know its window in case of a resize via opcode */
