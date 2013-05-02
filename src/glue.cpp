@@ -113,6 +113,12 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	if (res != PATCH_OPEN_OK)
 		return res;
 
+	/* close all other windows. This prevents segfault if plugin windows
+	 * GUI are on. */
+
+	if (res)
+		gu_closeAllSubwindows();
+
 	/* reset the system. False = don't update the gui right now */
 
 	glue_resetToInitState(false);
@@ -170,11 +176,6 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	if (resPlugins != 1)
 		gdAlert("Some VST files were not loaded successfully.");
 #endif
-
-	/* lastly close all other windows */
-
-	if (res)
-		gu_closeAllSubwindows();
 
 	return res;
 }

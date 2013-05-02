@@ -228,7 +228,10 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 			program->add("-- no programs --\0");
 			program->deactivate();
 		}
-		program->value(0);
+		if (pPlugin->getProgram() == -1)
+			program->value(0);
+		else
+			program->value(pPlugin->getProgram());
 
 		bypass->callback(cb_setBypass, (void*)this);
 		bypass->type(FL_TOGGLE_BUTTON);
