@@ -102,33 +102,45 @@ gdConfig::gdConfig(int w, int h)
 	end();
 
 #if defined(__linux__)
-	soundsys->add("ALSA");
-	soundsys->add("JACK");
-	soundsys->add("PULSE");
+
+	if (kernelAudio::hasAPI(RtAudio::LINUX_ALSA))
+		soundsys->add("ALSA");
+	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
+		soundsys->add("JACK");
+	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
+		soundsys->add("PULSE");
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_ALSA:
-			soundsys->value(0);
+			soundsys->show("ALSA");
 			break;
 		case SYS_API_JACK:
-			soundsys->value(1);
+			soundsys->show("JACK");
 			buffersize->deactivate();
 			samplerate->deactivate();
 			break;
 		case SYS_API_PULSE:
-			soundsys->value(2);
+			soundsys->show("PULSE");
 			break;
 	}
 	soundsysInitValue = soundsys->value();
+
 #elif defined(_WIN32)
-	soundsys->add("DirectSound");
-	soundsys->add("ASIO");
-	soundsys->value(G_Conf.soundSystem == SYS_API_DS ? 0 : 1);
+
+	if kernelAudio::hasAPI(RtAudio::WINDOWS_DS)
+		soundsys->add("DirectSound");
+	if kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO)
+		soundsys->add("ASIO");
+	soundsys->show(G_Conf.soundSystem == SYS_API_DS ? "DirectSound" : "ASIO");
 	soundsysInitValue = soundsys->value();
+
 #elif defined (__APPLE__)
-	soundsys->add("CoreAudio");
-	soundsys->value(0);
+
+	if kernelAudio::hasAPI(RtAudio::MACOSX_CORE)
+		soundsys->add("CoreAudio");
+	soundsys->show("CoreAudio");
 	soundsysInitValue = soundsys->value();
+
 #endif
 
 	sounddevIn->callback(cb_fetchInChans, this);
