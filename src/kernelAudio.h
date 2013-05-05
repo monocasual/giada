@@ -50,18 +50,19 @@ namespace kernelAudio {
 	int startStream();
 	int stopStream();
 
-	bool			  isProbed(unsigned dev);
-	bool		    isDefaultIn (unsigned dev);
-	bool			  isDefaultOut(unsigned dev);
-	const char *getDeviceName (unsigned dev);
-	unsigned    getMaxInChans (int dev);
-	unsigned    getMaxOutChans(unsigned dev);
-	unsigned    getDuplexChans(unsigned dev);
-	int         getTotalFreqs(unsigned dev);
-	int					getFreq(unsigned dev, int i);
+	bool			  isProbed       (unsigned dev);
+	bool		    isDefaultIn    (unsigned dev);
+	bool			  isDefaultOut   (unsigned dev);
+	const char *getDeviceName  (unsigned dev);
+	unsigned    getMaxInChans  (int dev);
+	unsigned    getMaxOutChans (unsigned dev);
+	unsigned    getDuplexChans (unsigned dev);
+	int         getTotalFreqs  (unsigned dev);
+	int					getFreq        (unsigned dev, int i);
 	int					getDeviceByName(const char *name);
-	int         getDefaultOut();
-	int         getDefaultIn();
+	int         getDefaultOut  ();
+	int         getDefaultIn   ();
+	bool        hasAPI         (int API);
 
 	/* *** how to avoid multiple definition of ***
 	 * When you declare a variable in a header file, every source file that

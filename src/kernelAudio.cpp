@@ -26,12 +26,16 @@
  *
  * ------------------------------------------------------------------ */
 
+
+#include <vector>
 #include "kernelAudio.h"
 #include "conf.h"
+
 
 extern Mixer G_Mixer;
 extern Conf  G_Conf;
 extern bool	 G_audio_status;
+
 
 namespace kernelAudio {
 
@@ -51,27 +55,28 @@ int openDevice(
 {
 	printf("[KA] using system 0x%x\n", api);
 #if defined(__linux__)
-	if (api == SYS_API_JACK)
+	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		system = new RtAudio(RtAudio::UNIX_JACK);
 	else
-	if (api == SYS_API_ALSA)
+	if (api == SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
 		system = new RtAudio(RtAudio::LINUX_ALSA);
 	else
-	if (api == SYS_API_PULSE)
+	if (api == SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
 		system = new RtAudio(RtAudio::LINUX_PULSE);
 #elif defined(_WIN32)
-	if (api == SYS_API_DS)
+	if (api == SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
 		system = new RtAudio(RtAudio::WINDOWS_DS);
 	else
-	if (api == SYS_API_ASIO)
+	if (api == SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
 		system = new RtAudio(RtAudio::WINDOWS_ASIO);
+#elif defined(__APPLE__)
+	if (api == SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
+		system = new RtAudio(RtAudio::MACOSX_CORE);
+#endif
 	else {
 		G_audio_status = false;
 		return 0;
 	}
-#elif defined(__APPLE__)
-	system = new RtAudio(RtAudio::MACOSX_CORE);
-#endif
 
 	printf("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
 
@@ -353,6 +358,19 @@ int	getDeviceByName(const char *name) {
 		if (strcmp(name, getDeviceName(i))==0)
 			return i;
 	return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool hasAPI(int API) {
+	std::vector<RtAudio::Api> APIs;
+	RtAudio::getCompiledApi(APIs);
+	for (unsigned i=0; i<APIs.size(); i++)
+		if (APIs.at(i) == API)
+			return true;
+	return false;
 }
 
 }
