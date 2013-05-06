@@ -127,16 +127,16 @@ gdConfig::gdConfig(int w, int h)
 
 #elif defined(_WIN32)
 
-	if kernelAudio::hasAPI(RtAudio::WINDOWS_DS)
+	if (kernelAudio::hasAPI(RtAudio::WINDOWS_DS))
 		soundsys->add("DirectSound");
-	if kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO)
+	if (kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO))
 		soundsys->add("ASIO");
 	soundsys->show(G_Conf.soundSystem == SYS_API_DS ? "DirectSound" : "ASIO");
 	soundsysInitValue = soundsys->value();
 
 #elif defined (__APPLE__)
 
-	if kernelAudio::hasAPI(RtAudio::MACOSX_CORE)
+	if (kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
 	soundsys->show("CoreAudio");
 	soundsysInitValue = soundsys->value();
