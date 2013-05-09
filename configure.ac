@@ -3,9 +3,9 @@
 
 # prereq & init
 AC_PREREQ(2.60)
-AC_INIT([giada], [0.6], [info@giadamusic.com])
+AC_INIT([giada], [0.7], [info@giadamusic.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
-AM_INIT_AUTOMAKE([giada], [0.6])
+AM_INIT_AUTOMAKE([giada], [0.7])
 
 # ----------------------------------------------------------------------
 
