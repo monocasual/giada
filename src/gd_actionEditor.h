@@ -62,11 +62,11 @@ public:
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 
-	class gChoice        *actionType;
-	class gGridTool      *gridTool;
-	class gClick         *zoomIn;
-	class gClick         *zoomOut;
-	class Fl_Scroll      *scroller;  // widget container
+	class gChoice   *actionType;
+	class gGridTool *gridTool;
+	class gClick    *zoomIn;
+	class gClick    *zoomOut;
+	class gScroll   *scroller;       // widget container
 
 	class gActionChannel   *ac;      // action channel
 	class gMuteChannel     *mc;      // mute channel

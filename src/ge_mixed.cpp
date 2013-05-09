@@ -535,7 +535,7 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H)
 {
 	orig_h = H;
 	last_y = 0;
-	min_h  = 10;
+	min_h  = 30;
 	align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
 	labelfont(FL_COURIER);
 	labelsize(H);
@@ -602,4 +602,24 @@ int gResizerBar::handle(int e) {
 
 void gResizerBar::resize(int X,int Y,int W,int H) {
 	Fl_Box::resize(X,Y,W,orig_h);                                // height of resizer stays constant size
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gScroll::gScroll(int x, int y, int w, int h, int t)
+	: Fl_Scroll(x, y, w, h)
+{
+	type(t);
+
+	scrollbar.color(COLOR_BG_0);
+	scrollbar.selection_color(COLOR_BG_1);
+	scrollbar.labelcolor(COLOR_BD_1);
+	scrollbar.slider(G_BOX);
+
+	hscrollbar.color(COLOR_BG_0);
+	hscrollbar.selection_color(COLOR_BG_1);
+	hscrollbar.labelcolor(COLOR_BD_1);
+	hscrollbar.slider(G_BOX);
 }

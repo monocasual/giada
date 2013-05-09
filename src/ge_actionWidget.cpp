@@ -33,6 +33,7 @@
 #include "ge_actionWidget.h"
 #include "gd_actionEditor.h"
 #include "mixer.h"
+#include "ge_mixed.h"
 
 
 extern Mixer G_Mixer;

@@ -268,6 +268,18 @@ public:
 /* ------------------------------------------------------------------ */
 
 
+/* gScroll
+ * custom scroll with nice scrollbars and something else. */
+
+class gScroll : public Fl_Scroll {
+public:
+	gScroll(int x, int y, int w, int h, int type=Fl_Scroll::BOTH);
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 /* gResizerBar
  * 'resizer bar' between widgets Fl_Scroll. Thanks to Greg Ercolano from
  * FLTK dev team. http://seriss.com/people/erco/fltk/

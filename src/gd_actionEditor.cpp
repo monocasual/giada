@@ -87,12 +87,7 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	/* main scroller: contains all widgets */
 
-	scroller = new Fl_Scroll(8, 36, this->w()-16, this->h()-44);
-	scroller->type(Fl_Scroll::HORIZONTAL);
-	scroller->hscrollbar.color(COLOR_BG_0);
-	scroller->hscrollbar.selection_color(COLOR_BG_1);
-	scroller->hscrollbar.labelcolor(COLOR_BD_1);
-	scroller->hscrollbar.slider(G_BOX);
+	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
 
 	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
 	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
