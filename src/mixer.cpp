@@ -208,8 +208,10 @@ void Mixer::initChannel(channel *ch) {
 	ch->startTrue   = 0;
 	ch->end         = 0;
 	ch->endTrue     = 0;
+	ch->solo        = false;
 	ch->mute        = false;
 	ch->mute_i      = false;
+	ch->mute_s      = false;
 	ch->mode        = DEFAULT_CHANMODE;
 	ch->volume      = DEFAULT_VOL;
 	ch->volume_i    = 1.0f;
@@ -658,12 +660,6 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 								unsigned ftp = ch->fadeoutTracker * ch->pitch;
 
-								///ch->vChan[j]   += ch->wave->data[ftp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								///ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
-
-								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->boost * ch->panLeft;
-								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->boost * ch->panRight;
-
 								ch->vChan[j]   += ch->wave->data[ftp]   * ch->fadeoutVol * ch->panLeft  * v;
 								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->fadeoutVol * ch->panRight * v;
 
@@ -672,9 +668,6 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 							}
 							else { // FADEOUT
-								///ch->vChan[j]   += ch->wave->data[ctp]   * ch->volume * ch->fadeoutVol * ch->boost * ch->panLeft;
-								///ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->volume * ch->fadeoutVol * ch->boost * ch->panRight;
-
 								ch->vChan[j]   += ch->wave->data[ctp]   * ch->fadeoutVol * ch->panLeft  * v;
 								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->fadeoutVol * ch->panRight * v;
 							}
@@ -718,15 +711,20 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 					ch->tracker += 2;
 
-					/* check for end of samples */
+					/* check for end of samples. SINGLE_ENDLESS runs forever unless
+					 * it's in ENDING mode */
 
 					if (ch->tracker >= ch->end) {
 
 						chanReset(ch);
 
-						if (ch->mode & SINGLE_ANY)
+						if (ch->mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+						   (ch->mode == SINGLE_ENDLESS && ch->status == STATUS_ENDING))
+						{
 							ch->status = STATUS_OFF;
+						}
 
+						/// FIXME - unify these
 						/* stop loops when the seq is off */
 
 						if ((ch->mode & LOOP_ANY) && !running)

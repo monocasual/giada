@@ -32,9 +32,9 @@
 
 
 /* -- version ------------------------------------------------------- */
-#define VERSIONE 				"0.6.2"
+#define VERSIONE 				"0.7.0"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	0.62f
+#define VERSIONE_FLOAT	0.7f
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -44,7 +44,7 @@
 #ifdef _WIN32
 	#define GUI_SLEEP			1000/24
 #else
-	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 refresh per second
+	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
 #endif
 #define GUI_WIDTH				810
 #define GUI_HEIGHT			510
@@ -122,9 +122,10 @@
 #define SINGLE_PRESS		0x08 //	0000 1000	 chanMode
 #define SINGLE_RETRIG		0x10 //	0001 0000	 chanMode
 #define LOOP_REPEAT			0x20 // 0010 0000  chanMode
+#define SINGLE_ENDLESS  0x40 // 0100 0000  chanMode
 
 #define LOOP_ANY				0x23 // 0010 0011  chanMode - any loop mode
-#define SINGLE_ANY		  0x1C // 0001 1100  chanMode - any single mode
+#define SINGLE_ANY		  0x5C // 0101 1100  chanMode - any single mode
 
 #define	STATUS_ENDING		0x01 // 0000 0001  chanStatus - ending            (loop mode only)
 #define	STATUS_WAIT			0x02 // 0000 0010  chanStatus - waiting for start (loop mode only)
@@ -134,10 +135,10 @@
 #define STATUS_MISSING  0x20 // 0010 0000  chanStatus - not found
 #define STATUS_WRONG    0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
 
-#define REC_WAITING			0x80   // 1000 0000
-#define REC_ENDING      0x100
-#define REC_READING     0x200
-#define REC_STOPPED     0x400
+#define REC_WAITING			0x01 // 0000 0001
+#define REC_ENDING      0x02 // 0000 0010
+#define REC_READING     0x04 // 0000 0100
+#define REC_STOPPED     0x08 // 0000 1000
 
 
 

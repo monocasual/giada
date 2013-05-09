@@ -24,6 +24,7 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #include <pthread.h>
 #include "init.h"
 #include "const.h"
@@ -36,6 +37,7 @@
 #include "pluginHost.h"
 #endif
 
+
 pthread_t t_video;
 
 void *thread_video(void *arg);
@@ -44,10 +46,10 @@ void *thread_video(void *arg);
 PluginHost 	G_PluginHost;
 #endif
 
-Mixer 	 		G_Mixer;
-bool		 		G_quit;
-bool		 		G_audio_status;
 
+Mixer    G_Mixer;
+bool	   G_quit;
+bool	   G_audio_status;
 
 
 int main(int argc, char **argv) {
@@ -60,8 +62,6 @@ int main(int argc, char **argv) {
 	Fl::lock();
 	pthread_create(&t_video, NULL, thread_video, NULL);
 	init_startKernelAudio();
-
-	//return Fl::run();
 
 	int ret = Fl::run();
 

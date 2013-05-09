@@ -50,10 +50,24 @@ void mh_freeChannel(struct channel *ch);
 void mh_killChan(struct channel *ch);
 
 
+/* (un)muteChan
+ * if internal == true, set internal mute without altering main mute. */
+
 void mh_muteChan(channel *ch, bool internal=false);
 void mh_unmuteChan(channel *ch, bool internal=false);
 
-void mh_loadPatch();
+void mh_soloChan(channel *ch);
+
+/* uniqueSolo
+ * true if ch is the only solo'd channel in mixer. */
+
+bool mh_uniqueSolo(channel *ch);
+
+/* loadPatch
+ * load a path or a project (if isProject) into Mixer. If isProject, path
+ * must contain the address of the project folder. */
+
+void mh_loadPatch(bool isProject, const char *projPath=0);
 
 int mh_loadChan(const char *file, struct channel *ch);
 

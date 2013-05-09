@@ -79,7 +79,7 @@ public:
 	class gClick  	*devOutInfo;
 	class gChoice  	*channelsOut;
 	class gCheck    *limitOutput;
-	class gInput    *buffersize;
+	class gChoice   *buffersize;
 	class gInput    *delayComp;
 
 	class gBox		  *actualKey;

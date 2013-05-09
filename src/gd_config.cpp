@@ -54,7 +54,7 @@ gdConfig::gdConfig(int w, int h)
 		Fl_Group *grpSound = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Sound System");
 
 			soundsys    = new gChoice(grpSound->x()+92,  grpSound->y()+9,  253, 20, "System");
-			buffersize  = new gInput (grpSound->x()+92,  grpSound->y()+37, 55,  20, "Buffer size");
+			buffersize  = new gChoice(grpSound->x()+92,  grpSound->y()+37, 55,  20, "Buffer size");
 			samplerate  = new gChoice(grpSound->x()+290, grpSound->y()+37, 55,  20, "Sample rate");
 			sounddevOut = new gChoice(grpSound->x()+92,  grpSound->y()+65, 225, 20, "Output device");
 			devOutInfo  = new gClick (grpSound->x()+325, grpSound->y()+65, 20,  20, "?");
@@ -72,17 +72,6 @@ gdConfig::gdConfig(int w, int h)
 
 		grpSound->end();
 		grpSound->labelsize(11);
-
-		/*
-		Fl_Group *grpKeys = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Controls");
-			listChans	= new gChoice(grpKeys->x()+92,  grpKeys->y()+9, 253, 20, "Key for");
-			            new gBox   (grpKeys->x()+22,  grpKeys->y()+37, 70, 20, "Actual key", FL_ALIGN_RIGHT);
-			actualKey	= new gBox	 (grpKeys->x()+92,  grpKeys->y()+37, 25, 20);
-			setKey	  = new gClick (grpKeys->x()+270, grpKeys->y()+37, 75, 20, "Set new");
-			            new gBox(grpKeys->x()+10, setKey->y()+120, grpKeys->w()-10, 50, "Restart Giada for the changes to take effect.");
-		grpKeys->end();
-		grpKeys->labelsize(11);
-		*/
 
 		Fl_Group *grpBehvs = new Fl_Group(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40, "Behaviors");
 			Fl_Group *radioGrp_1 = new Fl_Group(grpBehvs->x(), grpBehvs->y()+10, grpBehvs->w(), 70); // radio group for the mutex
@@ -113,33 +102,45 @@ gdConfig::gdConfig(int w, int h)
 	end();
 
 #if defined(__linux__)
-	soundsys->add("ALSA");
-	soundsys->add("JACK");
-	soundsys->add("PULSE");
+
+	if (kernelAudio::hasAPI(RtAudio::LINUX_ALSA))
+		soundsys->add("ALSA");
+	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
+		soundsys->add("JACK");
+	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
+		soundsys->add("PULSE");
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_ALSA:
-			soundsys->value(0);
+			soundsys->show("ALSA");
 			break;
 		case SYS_API_JACK:
-			soundsys->value(1);
+			soundsys->show("JACK");
 			buffersize->deactivate();
 			samplerate->deactivate();
 			break;
 		case SYS_API_PULSE:
-			soundsys->value(2);
+			soundsys->show("PULSE");
 			break;
 	}
 	soundsysInitValue = soundsys->value();
+
 #elif defined(_WIN32)
-	soundsys->add("DirectSound");
-	soundsys->add("ASIO");
-	soundsys->value(G_Conf.soundSystem == SYS_API_DS ? 0 : 1);
+
+	if (kernelAudio::hasAPI(RtAudio::WINDOWS_DS))
+		soundsys->add("DirectSound");
+	if (kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO))
+		soundsys->add("ASIO");
+	soundsys->show(G_Conf.soundSystem == SYS_API_DS ? "DirectSound" : "ASIO");
 	soundsysInitValue = soundsys->value();
+
 #elif defined (__APPLE__)
-	soundsys->add("CoreAudio");
-	soundsys->value(0);
+
+	if (kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
+		soundsys->add("CoreAudio");
+	soundsys->show("CoreAudio");
 	soundsysInitValue = soundsys->value();
+
 #endif
 
 	sounddevIn->callback(cb_fetchInChans, this);
@@ -153,11 +154,20 @@ gdConfig::gdConfig(int w, int h)
 	fetchOutChans(sounddevOut->value());
 	fetchInChans(sounddevIn->value());
 
+	buffersize->add("8");
+	buffersize->add("16");
+	buffersize->add("32");
+	buffersize->add("64");
+	buffersize->add("128");
+	buffersize->add("256");
+	buffersize->add("512");
+	buffersize->add("1024");
+	buffersize->add("2048");
+	buffersize->add("4096");
+
 	char buf[8];
 	sprintf(buf, "%d", G_Conf.buffersize);
-	buffersize->value(buf);
-	buffersize->type(FL_INT_INPUT);
-	buffersize->maximum_size(5);
+	buffersize->show(buf);
 
 	/* fill frequency dropdown menu */
 
@@ -186,28 +196,11 @@ gdConfig::gdConfig(int w, int h)
 
 	limitOutput->value(G_Conf.limitOutput);
 
-	/**
-	sprintf(buf, "%c", G_Conf.keys[0]);
-	actualKey->copy_label(buf);
-	actualKey->box(G_BOX);
-	actualKey->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
-	*/
-
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
 	G_Conf.fullChanVolOnLoad  == 1 ? fullChanVolOnLoad->value(1) : fullChanVolOnLoad->value(0);
 
-	/**
-	for (int i=0; i<MAX_NUM_CHAN; i++) {
-		char x[11];
-		sprintf(x, "channel %d", i+1);
-		listChans->add(x, 0, cb_get_key_chan, (void*)this);
-	}
-	listChans->value(0); // starts with element number 0
-
-	setKey->callback(cb_open_grab_win, (void*)this);
-	*/
 	save->callback(cb_save_config, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
 	soundsys->callback(cb_deactivate_sounddev, (void*)this);
@@ -312,7 +305,7 @@ void gdConfig::__cb_save_config() {
 	G_Conf.limitOutput    = limitOutput->value();
 	G_Conf.rsmpQuality    = rsmpQuality->value();
 
-	int bufsize = atoi(buffersize->value());
+	int bufsize = atoi(buffersize->text());
 	if (bufsize % 2 != 0) bufsize++;
 	if (bufsize < 8)		  bufsize = 8;
 	if (bufsize > 8192)		bufsize = 8192;

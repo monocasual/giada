@@ -79,7 +79,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				}
 
 				/* we also skip mutes. There's a widget for that */
-				/** FIXME - change logic: do something only if type & ACTION_KEYPRESS etc */
+				/** FIXME - change overall logic: do something only if type & ACTION_KEYPRESS etc */
 
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME))
 					continue;
@@ -472,7 +472,7 @@ gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEdito
 		frame_b = recorder::getEndActionFrame(parent->chan->index, ACTION_KEYREL, frame_a);
 		if (frame_b == -1)
 			frame_b = frame_a+4096;
-		w((frame_b - frame_a)/parent->zoom/2);
+		w((frame_b - frame_a)/parent->zoom);
 	}
 }
 

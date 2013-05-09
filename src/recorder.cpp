@@ -427,8 +427,10 @@ void expand(int old_fpb, int new_fpb) {
 			unsigned newframe = frames.at(i) + (old_fpb*z);
 			frames.add(newframe);
 			global.add(actions);
-			for (unsigned k=0; k<global.at(i).size; k++)
-				rec(global.at(i).at(k)->chan, global.at(i).at(k)->type, newframe);
+			for (unsigned k=0; k<global.at(i).size; k++) {
+				action *a = global.at(i).at(k);
+				rec(a->chan, a->type, newframe, a->iValue, a->fValue);
+			}
 		}
 	}
 	printf("[REC] expanded recs\n");

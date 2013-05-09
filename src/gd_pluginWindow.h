@@ -38,24 +38,38 @@
 
 
 class gdPluginWindow : public gWindow {
+
 private:
-
-	class Plugin              *pPlugin;
-	gVector <class gSlider *>  sliders;
-	gVector <class gBox *>     values;
-
-	static void cb_setValue(Fl_Widget *v, void *p);
-	inline void __cb_setValue(Fl_Widget *v);
-
+	class Plugin *pPlugin;
 
 public:
-
 	int id;
 
 	gdPluginWindow(Plugin *pPlugin);
 	~gdPluginWindow();
-
 };
+
+
+/* ------------------------------------------------------------------ */
+
+
+class Parameter : public Fl_Group {
+
+private:
+	int   id;
+	class Plugin *pPlugin;
+
+	static void cb_setValue(Fl_Widget *v, void *p);
+	inline void __cb_setValue();
+
+public:
+	class gBox    *label;
+	class gSlider *slider;
+	class gBox    *value;
+
+	Parameter(int id, class Plugin *p, int x, int y, int w);
+};
+
 
 #endif
 

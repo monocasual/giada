@@ -6,7 +6,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2011 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2013 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -54,7 +54,7 @@ std::string DataStorage::getValue(const char *in) {
 		if (strncmp(buffer, in, len) == 0) {
 
 			for (unsigned i=len+1; i<MAX_LINE_LEN; i++) {
-				if (buffer[i] == '\0' || buffer[i] == '\n')
+				if (buffer[i] == '\0' || buffer[i] == '\n' || buffer[i] == '\r')
 					break;
 				out += buffer[i];
 			}

@@ -39,12 +39,13 @@ int Plugin::id_generator = 0;
 
 
 Plugin::Plugin()
-	: module(NULL),
+	: module    (NULL),
 	  entryPoint(NULL),
-	  plugin(NULL),
-	  id(id_generator++),
-	  bypass(false),
-	  suspended(false)
+	  plugin    (NULL),
+	  id        (id_generator++),
+	  program   (-1),
+	  bypass    (false),
+	  suspended (false)
 {}
 
 
@@ -253,19 +254,24 @@ int Plugin::getSDKVersion() {
 }
 
 void Plugin::getName(char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetEffectName, 0, 0, tmp, 0);
-	strlen(tmp) == 0 ? strcpy(out, " ") : strcpy(out, tmp);
+	tmp[kVstMaxEffectNameLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxEffectNameLen);
 }
 
 void Plugin::getVendor(char *out) {
-	plugin->dispatcher(plugin, effGetVendorString, 0, 0, out, 0);
+	char tmp[128] = "\0";
+	plugin->dispatcher(plugin, effGetVendorString, 0, 0, tmp, 0);
+	tmp[kVstMaxVendorStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxVendorStrLen);
 }
 
 void Plugin::getProduct(char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProductString, 0, 0, tmp, 0);
-	strlen(tmp) == 0 ? strcpy(out, " ") : strcpy(out, tmp);
+	tmp[kVstMaxProductStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxProductStrLen);
 }
 
 int Plugin::getNumPrograms() {
@@ -276,6 +282,7 @@ int Plugin::setProgram(int index) {
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
 	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
 	printf("[plugin] program changed, index %d\n", index);
+	program = index;
 	return plugin->dispatcher(plugin, effEndSetProgram, 0, 0, 0, 0);
 }
 
@@ -291,30 +298,32 @@ int Plugin::getNumOutputs() {
 	return plugin->numOutputs;
 }
 
-int Plugin::getProgramName(int index, char *out) {
-	return plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, out, 0);
+void Plugin::getProgramName(int index, char *out) {
+	char tmp[128] = "\0";
+	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
+	tmp[kVstMaxProgNameLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxProgNameLen);
 }
 
 void Plugin::getParamName(int index, char *out) {
-	plugin->dispatcher(plugin, effGetParamName, index, 0, out, 0);
+	char tmp[128] = "\0";
+	plugin->dispatcher(plugin, effGetParamName, index, 0, tmp, 0);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 void Plugin::getParamLabel(int index, char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamLabel, index, 0, tmp, 0);
-	if (strcmp(tmp, "") == 0 || tmp[0] <= 0x20) 	// some plugins print garbage below 0x20 ascii... why?!?
-		out[0] = '\0';
-	else
-		strcpy(out, tmp);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 void Plugin::getParamDisplay(int index, char *out) {
-	char tmp[256];
+	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
-	if (strcmp(tmp, "") == 0 || tmp[0] <= 0x20)
-		out[0] = '\0';
-	else
-		strcpy(out, tmp);
+	tmp[kVstMaxParamStrLen-1] = '\0';
+	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
 float Plugin::getParam(int index) {

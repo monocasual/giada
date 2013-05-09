@@ -46,6 +46,7 @@
 #include "pluginHost.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "utils.h"
 
 
 extern gdMainWindow *mainWin;
@@ -56,6 +57,9 @@ extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
 extern PluginHost		 G_PluginHost;
 #endif
+
+
+static bool __soloSession__ = false;
 
 
 /* ------------------------------------------------------------------ */
@@ -94,7 +98,7 @@ channel *glue_addChannel(int side) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
+int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject) {
 
 	/* update browser's status bar with % 0.1 */
 
@@ -109,6 +113,12 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 	if (res != PATCH_OPEN_OK)
 		return res;
 
+	/* close all other windows. This prevents segfault if plugin windows
+	 * GUI are on. */
+
+	if (res)
+		gu_closeAllSubwindows();
+
 	/* reset the system. False = don't update the gui right now */
 
 	glue_resetToInitState(false);
@@ -119,7 +129,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch();
+	mh_loadPatch(isProject, fname);
 
 	/* take the patch name and update the main window's title */
 
@@ -167,11 +177,6 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 		gdAlert("Some VST files were not loaded successfully.");
 #endif
 
-	/* lastly close all other windows */
-
-	if (res)
-		gu_closeAllSubwindows();
-
 	return res;
 }
 
@@ -179,9 +184,9 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_savePatch(const char *fullpath, const char *name) {
+int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
 
-	if (G_Patch.write(fullpath, name) == 1) {
+	if (G_Patch.write(fullpath, name, isProject) == 1) {
 		strcpy(G_Patch.name, name);
 		G_Patch.name[strlen(name)] = '\0';
 		gu_update_win_label(name);
@@ -668,7 +673,7 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 
 void glue_setMute(channel *ch) {
 
-	bool muted = ch->mute ? true : false;
+	bool muted = ch->mute ? true : false;  /// FIXME - useless
 
 	if (recorder::active && recorder::canRec(ch)) {
 		if (!muted)
@@ -680,6 +685,73 @@ void glue_setMute(channel *ch) {
 	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
 
 	ch->guiChannel->mute->value(!muted);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_setSoloOn(channel *ch) {
+
+	/* if there's no solo session, store mute configuration of all chans
+	 * and start the session */
+
+	if (!__soloSession__) {
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *och = G_Mixer.channels.at(i);
+			och->mute_s  = och->mute;
+		}
+		__soloSession__ = true;
+	}
+
+	mh_soloChan(ch);
+
+	/* mute all other channels and unmute this (if muted) */
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *och = G_Mixer.channels.at(i);
+		if (!och->solo && !och->mute) {
+			mh_muteChan(och);
+			och->guiChannel->mute->value(true);
+		}
+	}
+
+	if (ch->mute) {
+		mh_unmuteChan(ch);
+		ch->guiChannel->mute->value(false);
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_setSoloOff(channel *ch) {
+
+	/* if this is uniqueSolo, stop solo session and restore mute status,
+	 * else mute this */
+
+	if (mh_uniqueSolo(ch)) {
+		__soloSession__ = false;
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *och = G_Mixer.channels.at(i);
+			if (och->mute_s) {
+				mh_muteChan(och);
+				och->guiChannel->mute->value(true);
+			}
+			else {
+				mh_unmuteChan(och);
+				och->guiChannel->mute->value(false);
+			}
+			och->mute_s = false;
+		}
+	}
+	else {
+		mh_muteChan(ch);
+		ch->guiChannel->mute->value(true);
+	}
+
+	mh_soloChan(ch);
 }
 
 
@@ -775,7 +847,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 	}
 
 	/* copy all samples inside the folder. Takes and logical ones are saved
-	 * with glue_saveSample() */
+	 * via glue_saveSample() */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		channel *c = G_Mixer.channels.at(i);
@@ -806,7 +878,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 #else
 	sprintf(gptcPath, "%s/%s.gptc", folderPath, projNameClean.c_str());
 #endif
-	glue_savePatch(gptcPath, projName);
+	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;
 }

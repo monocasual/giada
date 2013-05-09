@@ -208,9 +208,10 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			}
 		}
 
+		/* 16 - sample rate */
+
 		case audioMasterGetSampleRate:
-			printf("[pluginHost] requested opcode 'audioMasterGetSampleRate' (%d)\n", opcode);
-			return 0;
+			return G_Conf.samplerate;
 
 		/* ?? - buffer size */
 
@@ -266,6 +267,9 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 
 		case audioMasterUpdateDisplay:
 			return 0;
+
+		case audioMasterGetLanguage:
+			return kVstLangEnglish;
 
 		/* ?? */
 
@@ -478,8 +482,10 @@ void PluginHost::freeStack(int stackType, channel *ch) {
 		lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 		if (lockStatus == 0) {
 			for (unsigned i=0; i<pStack->size; i++) {
-				pStack->at(i)->suspend();
-				pStack->at(i)->close();
+				if (pStack->at(i)->status == 1) {  // only if plugin is ok
+					pStack->at(i)->suspend();
+					pStack->at(i)->close();
+				}
 				delete pStack->at(i);
 			}
 			pStack->clear();

@@ -39,122 +39,99 @@
 extern PluginHost G_PluginHost;
 
 
-gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
- : gWindow(450, 300), pPlugin(pPlugin) {
+Parameter::Parameter(int id, Plugin *p, int X, int Y, int W)
+	: Fl_Group(X,Y,W-24,20), id(id), pPlugin(p)
+{
+	begin();
 
-	int numParams = pPlugin->getNumParams();
-	int i = 0;
-
-	/* before printing the paramName (which of course is not standard), we
-	 * must check its length, so that we can shift the block on the right
-	 * in order to make room for it.
-	 *  [paramName] [slider] [paramDisplay] */
-
-	int dx = 0;
-	for (int i=0; i<numParams; i++) {
-		char name[256];
-		pPlugin->getParamName(i, name);
-		if (fl_width(name) > dx)
-			dx = fl_width(name)+25; // fl_width is not 100% precise, at least on Linux
-	}
-
-	Fl_Scroll *list = new Fl_Scroll(8, 8, w()-16, h()-16);
-	list->type(Fl_Scroll::VERTICAL);
-	list->scrollbar.color(COLOR_BG_0);
-	list->scrollbar.selection_color(COLOR_BG_1);
-	list->scrollbar.labelcolor(COLOR_BD_1);
-	list->scrollbar.slider(G_BOX);
-
-	list->begin();
-
-	while (i<numParams) {
-
-		/* y = i*20 [widget heigth] + i*4 [padding] + 8 [border top] */
-
-		gBox    *label = new gBox   (list->x(), i*24+8, dx,  20);
-		gSlider *sl    = new gSlider(dx+12,     i*24+8, 278, 20);
-		gBox    *value = new gBox   (278+dx+16, i*24+8, 80,  20);
-
-		/* some vsts don't follow kVstMaxParamStrLen for the params' length.
-		 * The text value is made of paramDisplay and paramLabel. Example:
-		 * -3 dB = -3 (display) + dB (label). */
-
-		char name[256];
-		pPlugin->getParamName(i, name);
-		char disp[256];
-		char labl[256];
-		pPlugin->getParamDisplay(i, disp);
-		pPlugin->getParamLabel(i, labl);
-		sprintf(disp, "%s %s", disp, labl);
-
+		label = new gBox(x(), y(), 60, 20);
+		char name[kVstMaxParamStrLen];
+		pPlugin->getParamName(id, name);
 		label->copy_label(name);
 		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-		sl->value(pPlugin->getParam(i));
-		sl->callback(cb_setValue, (void *)this);
-		sl->id = i;
+		slider = new gSlider(label->x()+label->w()+8, y(), W-200, 20);
+		slider->value(pPlugin->getParam(id));
+		slider->callback(cb_setValue, (void *)this);
 
-		value->copy_label(disp);
+		value = new gBox(slider->x()+slider->w()+8, y(), 100, 20);
+		char disp[kVstMaxParamStrLen];
+		char labl[kVstMaxParamStrLen];
+		char str [256];
+		pPlugin->getParamDisplay(id, disp);
+		pPlugin->getParamLabel(id, labl);
+		sprintf(str, "%s %s", disp, labl);
+		value->copy_label(str);
 		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		value->box(G_BOX);
 
-		sliders.add(sl);
-		values.add(value);
+		resizable(slider);
 
-		i++;
-	}
+	end();
+}
 
+
+/* ------------------------------------------------------------------ */
+
+
+void Parameter::cb_setValue(Fl_Widget *v, void *p)  { ((Parameter*)p)->__cb_setValue(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Parameter::__cb_setValue() {
+
+	pPlugin->setParam(id, slider->value());
+
+	char disp[256];
+	char labl[256];
+	char str [256];
+
+	pPlugin->getParamDisplay(id, disp);
+	pPlugin->getParamLabel(id, labl);
+	sprintf(str, "%s %s", disp, labl);
+
+	value->copy_label(str);
+	value->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
+ : gWindow(400, 156), pPlugin(pPlugin) // 350
+{
+	set_non_modal();
+
+	gLiquidScroll *list = new gLiquidScroll(8, 8, w()-16, h()-16);
+	list->type(Fl_Scroll::VERTICAL_ALWAYS);
+	list->begin();
+
+	int numParams = pPlugin->getNumParams();
+	for (int i=0; i<numParams; i++)
+		new Parameter(i, pPlugin, list->x(), list->y()+(i*24), list->w());
 	list->end();
 
 	end();
-
-	/* if parameters' height < N, reduce the window. Otherwise the window
-	 * remains fixed with a new scrollbar on the right. */
-
-	if (i*24+8 < h()) {
-		list->size(dx+278+80+24, i*24+8+4);
-		this->size(dx+278+80+24, i*24+8+4);
-	}
-	else {
-		list->size(dx+278+80+24, h()-16);
-		this->size(dx+278+80+40, h());
-	}
 
 	char name[256];
 	pPlugin->getProduct(name);
 	if (strcmp(name, " ")==0)
 		pPlugin->getName(name);
 	label(name);
+
+	size_range(400, (24*1)+12);
+	resizable(list);
+
 	gu_setFavicon(this);
-	//callback(__cb_window_closer, (void*)this);
-	set_non_modal();
 	show();
 
 }
 
 
-
 gdPluginWindow::~gdPluginWindow() {}
 
-
-
-void gdPluginWindow::cb_setValue(Fl_Widget *v, void *p)  { ((gdPluginWindow*)p)->__cb_setValue(v); }
-
-
-
-void gdPluginWindow::__cb_setValue(Fl_Widget *v) {
-
-	gSlider *s = (gSlider *) v;
-	pPlugin->setParam(s->id, s->value());
-
-	char disp[256];
-	char labl[256];
-	pPlugin->getParamDisplay(s->id, disp);
-	pPlugin->getParamLabel(s->id, labl);
-	sprintf(disp, "%s %s", disp, labl);
-
-	(values.at(s->id))->copy_label(disp);
-	(values.at(s->id))->redraw();
-
-}
 
 #endif // #ifdef WITH_VST

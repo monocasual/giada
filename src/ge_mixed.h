@@ -218,6 +218,9 @@ class gChoice : public Fl_Choice {
 public:
 	gChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
 	void draw();
+
+	inline void show(const char *c) {value(find_index(c)); }
+
 	bool angle;
 	int  id;
 };
@@ -245,6 +248,21 @@ public:
 
 #define G_BOX FL_FREE_BOXTYPE
 void gDrawBox(int x, int y, int w, int h, Fl_Color c);
+
+
+/* ------------------------------------------------------------------ */
+
+
+/* gLiquidScroll
+ * custom scroll that tells children to follow scroll's width when
+ * resized. Thanks to Greg Ercolano from FLTK dev team.
+ * http://seriss.com/people/erco/fltk/ */
+
+class gLiquidScroll : public Fl_Scroll {
+public:
+	gLiquidScroll(int x, int y, int w, int h, const char *l=0);
+	void resize(int x, int y, int w, int h);
+};
 
 
 /* ------------------------------------------------------------------ */

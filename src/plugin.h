@@ -79,6 +79,11 @@ private:
 	static int id_generator;
 	int        id;
 
+	/* program
+	 * selected program. -1 if no program available */
+
+	int program;
+
 	/* unload
 	 * free plugin from memory. Calls dlclose and similars. */
 
@@ -107,7 +112,7 @@ public:
 	int   getNumParams();
 	int   getNumInputs();
 	int   getNumOutputs();
-	int   getProgramName(int index, char *out);  // program = preset
+	void  getProgramName(int index, char *out);  // program = preset
 	void  getParamName(int index, char *out);
 	void  getParamLabel(int index, char *out);   // parameter's value(0, -39, ...)
 	void  getParamDisplay(int index, char *out); // parameter's unit measurement (dB, Pan, ...)
@@ -126,6 +131,8 @@ public:
 	void  suspend();
 	void  close();
 
+	inline int getProgram() { return program; }
+
 	/* there's a specific opcode for the bypass, but we don't trust the
 	 * plugin's developers. */
 
@@ -143,7 +150,9 @@ public:
 
 	bool suspended;
 
-	char pathfile[PATH_MAX]; // full path filename
+	/* pathfile
+	 * full filename path */
+	char pathfile[PATH_MAX];
 
 	/* window
 	 * plugin must know its window in case of a resize via opcode */

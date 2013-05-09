@@ -50,8 +50,8 @@ void glue_deleteChannel(struct channel *ch);
 void glue_freeChannel(struct channel *ch);
 
 /** FIXME - noboy will call these via MIDI/keyb/mouse! */
-int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status);
-int glue_savePatch(const char *fullpath, const char *name);
+int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
+int glue_savePatch(const char *fullpath, const char *name, bool isProject);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 int glue_saveSample(int ch, const char *fullpath);
@@ -96,7 +96,6 @@ void glue_setVolMainWin(struct channel *ch, float v);
 void glue_setOutVol(float v);
 void glue_setInVol(float v);
 
-/** FIXME - noboy will call this via MIDI/keyb/mouse! */
 void glue_setPanning(class gdEditor *win, struct channel *ch, float val);
 
 void glue_clearAllSamples();
@@ -132,6 +131,9 @@ void glue_setPitch(class gdEditor *win, struct channel *ch, float val, bool nume
 void glue_setVolEditor(class gdEditor *win, struct channel *ch, float val, bool numeric);
 
 void glue_setMute(struct channel *ch);
+
+void glue_setSoloOn (struct channel *ch);
+void glue_setSoloOff(struct channel *ch);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 int glue_saveProject(const char *folderPath, const char *projName);

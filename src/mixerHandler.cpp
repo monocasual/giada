@@ -97,7 +97,7 @@ void mh_startChan(channel *ch, bool do_quantize) {
 				}
 			}
 			else
-			if (ch->mode & LOOP_ANY)
+			if (ch->mode & (LOOP_ANY | SINGLE_ENDLESS))
 				ch->status = STATUS_ENDING;
 
 			break;
@@ -206,21 +206,29 @@ void mh_unmuteChan(channel *ch, bool internal) {
 /* ------------------------------------------------------------------ */
 
 
+void mh_soloChan(channel *ch) {
+	ch->solo = !ch->solo;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool mh_uniqueSolo(channel *ch) {
+	int solos = 0;
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *ch = G_Mixer.channels.at(i);
+		if (ch->solo) solos++;
+		if (solos > 1) return false;
+	}
+	return true;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void mh_deleteChannel(channel *ch) {
-	/*
-	if (ch == NULL)
-		return;
-	if (ch->wave == NULL)
-		return;
-	if (ch->status == STATUS_MISSING) {
-		ch->status = STATUS_EMPTY;  // returns to init state
-	}
-	else {
-		int i = ch->index;
-		G_Mixer.deleteChannel(ch);
-		printf("[MH] channel %d freed\n", i);
-	}
-	*/
 	int i = ch->index;
 	G_Mixer.deleteChannel(ch);
 	printf("[MH] channel %d freed\n", i);
@@ -240,7 +248,7 @@ void mh_freeChannel(channel *ch) {
 
 int mh_loadChan(const char *file, struct channel *ch) {
 
-	if (strcmp(file, "") == 0) {
+	if (strcmp(file, "") == 0 || gIsDir(file)) {
 		puts("[MH] file not specified");
 		return SAMPLE_LEFT_EMPTY;
 	}
@@ -308,14 +316,30 @@ int mh_loadChan(const char *file, struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_loadPatch() {
+void mh_loadPatch(bool isProject, const char *projPath) {
+
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
 
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
+
 		channel *ch = glue_addChannel(G_Patch.getSide(i));
-		int res = mh_loadChan(G_Patch.getSamplePath(i).c_str(), ch);
+		char smpPath[PATH_MAX];
+
+		/* projects < 0.6.3 version are not portable. Just use the regular
+		 * samplePath */
+
+		if (isProject && G_Patch.version >= 0.63f)
+#if defined(_WIN32)
+			sprintf(smpPath, "%s\\%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
+#else
+			sprintf(smpPath, "%s/%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
+#endif
+		else
+			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
+
+		int res = mh_loadChan(smpPath, ch);
 
 		if (res == SAMPLE_LOADED_OK) {
 			ch->volume      = G_Patch.getVol(i);
@@ -323,6 +347,8 @@ void mh_loadPatch() {
 			ch->index       = G_Patch.getIndex(i);
 			ch->mode        = G_Patch.getMode(i);
 			ch->mute        = G_Patch.getMute(i);
+			ch->mute_s      = G_Patch.getMute_s(i);
+			ch->solo        = G_Patch.getSolo(i);
 			ch->boost       = G_Patch.getBoost(i);
 			ch->panLeft     = G_Patch.getPanLeft(i);
 			ch->panRight    = G_Patch.getPanRight(i);

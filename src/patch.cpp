@@ -166,7 +166,7 @@ int Patch::getMode(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanmode%d", c);
 	int out = atoi(getValue(tmp).c_str());
-	if (out & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT | SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG))
+	if (out & (LOOP_ANY | SINGLE_ANY))
 		return out;
 	return DEFAULT_CHANMODE;
 }
@@ -178,6 +178,26 @@ int Patch::getMode(int c) {
 int Patch::getMute(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanmute%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getMute_s(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanMute_s%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getSolo(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanSolo%d", c);
 	return atoi(getValue(tmp).c_str());
 }
 
@@ -418,7 +438,9 @@ int Patch::readRecs() {
 				frame++;
 
 			channel *ch = G_Mixer.getChannelByIndex(chan);
-			recorder::rec(ch->index, type, frame, iValue, fValue);
+			if (ch)
+				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY))
+					recorder::rec(ch->index, type, frame, iValue, fValue);
 		}
 	}
 	return 1;
@@ -474,7 +496,7 @@ int Patch::readPlugins() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::write(const char *file, const char *name) {
+int Patch::write(const char *file, const char *name, bool project) {
 	fp = fopen(file, "w");
 	if (fp == NULL)
 		return 0;
@@ -484,16 +506,27 @@ int Patch::write(const char *file, const char *name) {
 	fprintf(fp, "version=%s\n", VERSIONE);
 	fprintf(fp, "versionf=%f\n", VERSIONE_FLOAT);
 	fprintf(fp, "patchname=%s\n", name);
-
 	fprintf(fp, "channels=%d\n", G_Mixer.channels.size);
+
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+
 		fprintf(fp, "# --- channel %d --- \n", i);
 		channel *ch = G_Mixer.channels.at(i);
-		fprintf(fp, "samplepath%d=%s\n",    i, ch->wave == NULL ? "" : ch->wave->pathfile.c_str());
+
+		const char *path = "";
+		if (ch->wave != NULL) {
+			path = ch->wave->pathfile.c_str();
+			if (project)
+				path = gBasename(path).c_str();  // make it portable
+		}
+
+		fprintf(fp, "samplepath%d=%s\n",    i, path);
 		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
 		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
 		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
 		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
+		fprintf(fp, "chanMute_s%d=%d\n",    i, ch->mute_s);
+		fprintf(fp, "chanSolo%d=%d\n",      i, ch->solo);
 		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);
 		fprintf(fp, "chanmode%d=%d\n",      i, ch->mode);
 		fprintf(fp, "chanstart%d=%d\n",     i, ch->startTrue);       // true values, not pitched

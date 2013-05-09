@@ -13,6 +13,32 @@
 
 
 
+0.6.4 --- 2013 . 05 . 07
+- Resizable plugin parameter window
+- New and standard package name format <name>-<version>.<ext>
+- Implement RtAudio::getCompiledApi() to fetch compiled APIs
+- Implement audioMasterGetSampleRate, audioMasterGetLanguage VST opcodes
+- Add drop-down menu for buffer size values in config panel
+- Enhance project portability between OSes
+- Lots of fixes and improvements for VST strings and parameters
+- Avoid segfault when loading recs from a patch with files not found
+- Always remember selected program when shifting up/down plugins
+- Fix wrong size of single_press displayed in action editor
+- Fix volume actions resized with value set to zero
+- Fix volume envelope always over the cover area
+- Fix src package extracts to current dir
+- Fix segfault in loadpatch process if plugin GUIs are open
+- Fix segfault when closing patch with plugins in BAD status
+
+
+0.6.3 --- 2013 . 04 . 23
+- New 'solo' button
+- Portable project system
+- New 'Single Endless' channel mode
+- GUI enhancements for channels in WAIT or ENDING status
+- Minor fixes & cleanups
+
+
 0.6.2 --- 2013 . 04 . 05
 - New volume envelope widget
 - Zoom with mouse wheel in the action editor
