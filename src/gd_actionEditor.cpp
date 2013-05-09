@@ -94,18 +94,15 @@ gdActionEditor::gdActionEditor(channel *chan)
 	scroller->hscrollbar.labelcolor(COLOR_BD_1);
 	scroller->hscrollbar.slider(G_BOX);
 
-	/*
-	scroller->begin();
-		ac = new gActionChannel(scroller->x(), 36, this);
-		mc = new gMuteChannel  (scroller->x(), 84, this);
-	scroller->end();
-	*/
 	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
 	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
 	vc = new gEnvelopeChannel(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
 	scroller->add(ac);
+	scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 	scroller->add(mc);
+	scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
 	scroller->add(vc);
+	scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
 
 	end();
 
