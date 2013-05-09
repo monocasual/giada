@@ -268,6 +268,43 @@ public:
 /* ------------------------------------------------------------------ */
 
 
+/* gResizerBar
+ * 'resizer bar' between widgets Fl_Scroll. Thanks to Greg Ercolano from
+ * FLTK dev team. http://seriss.com/people/erco/fltk/
+ *
+ * Shows a resize cursor when hovered over.
+ * Assumes:
+ *     - Parent is an Fl_Scroll
+ *     - All children of Fl_Scroll are vertically arranged
+ *     - The widget above us has a bottom edge touching our top edge
+ *       ie. (w->y()+w->h() == this->y())
+ *
+ * When this widget is dragged:
+ *     - The widget above us (with a common edge) will be /resized/
+ *       vertically
+ *     - All children below us will be /moved/ vertically */
+
+class gResizerBar : public Fl_Box {
+private:
+	int orig_h;
+	int last_y;
+	int min_h;   // min height for widget above us
+
+	void HandleDrag(int diff);
+
+public:
+	gResizerBar(int x, int y, int w, int h);
+
+  void SetMinHeight(int val);
+  int  GetMinHeight();
+  int  handle(int e);
+  void resize(int x, int y, int w, int h);
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 class gSlider : public Fl_Slider {
 public:
 	gSlider(int x, int y, int w, int h, const char *l=0);
