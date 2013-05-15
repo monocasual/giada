@@ -88,7 +88,7 @@ bool canRec(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(int index, char type, int frame, int iValue, float fValue) {
+void rec(int index, int type, int frame, int iValue, float fValue) {
 
 	/* allocating the action */
 
