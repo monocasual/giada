@@ -73,7 +73,7 @@ struct action {
 	/* if VST store here a pointer to a vstEvent. */
 
 #ifdef WITH_VST
-	VstEvent *event;
+	VstMidiEvent *event;
 #endif
 };
 
@@ -113,6 +113,14 @@ bool canRec(channel *ch);
  * record an action. */
 
 void rec(int chan, int action, int frame, int iValue=0, float fValue=0.0f);
+
+/* addVstEvent
+ * available only with VST extension, alloc a new VST event for the
+ * action */
+
+#ifdef WITH_VST
+void addVstEvent(int event, action *act);
+#endif
 
 /* clearChan
  * clear all actions from a channel. */
