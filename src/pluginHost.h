@@ -102,6 +102,13 @@ public:
 
 	void processStackOffline(float *buffer, int stackType, struct channel *ch, int size);
 
+# if 0
+	/* addMidiEvent
+	 * take a composite MIDI event, decompose it and add it to channel. */
+
+	void addMidiEvent(int event, struct channel *ch);
+#endif
+
 	gVector <Plugin *> *getStack(int stackType, struct channel *ch=NULL);
 
 	Plugin *getPluginById(int id, int stackType, struct channel *ch=NULL);

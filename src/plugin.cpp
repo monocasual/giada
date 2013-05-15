@@ -370,6 +370,11 @@ void Plugin::processAudio(float **in, float **out, long frames) {
 	plugin->processReplacing(plugin, in, out, frames);
 }
 
+void Plugin::processEvents(VstEvents *events) {
+	plugin->dispatcher(plugin, effProcessEvents, 0, 0, events, 0.0);
+}
+
+
 void Plugin::resume() {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 1, 0, 0);
 	suspended = false;

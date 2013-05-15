@@ -126,7 +126,8 @@ public:
 	int   getGuiHeight();
 	void  idle();
 
-	void  processAudio(float **in, float **out, long frames);
+	void  processAudio (float **in, float **out, long frames);
+	void  processEvents(VstEvents *events);
 	void  resume();
 	void  suspend();
 	void  close();
