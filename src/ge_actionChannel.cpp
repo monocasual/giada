@@ -587,6 +587,11 @@ void gAction::addAction() {
 	}
 	else {
 		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
+
+		/** MIDI VST TEST */
+		recorder::rec(parent->chan->index, ACTION_MIDI, frame_a, 0);
+		/** MIDI VST TEST */
+
 		//printf("action added, [%d]\n", frame_a);
 	}
 

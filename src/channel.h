@@ -30,7 +30,24 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
+
 #include "utils.h"
+
+#if 0
+#ifdef WITH_VST
+
+/* before including aeffetx(x).h we must define __cdecl, otherwise VST
+ * headers can't be compiled correctly. In windows __cdecl is already
+ * defined. */
+
+	#ifdef __GNUC__
+		#ifndef _WIN32
+			#define __cdecl
+		#endif
+	#endif
+	#include "vst/aeffectx.h"
+#endif
+#endif
 
 
 struct channel {
@@ -77,6 +94,33 @@ struct channel {
   gVector <class Plugin *> plugins;
 
   class gChannel *guiChannel;
+
+#if 0
+#ifdef WITH_VST
+
+	/* VST struct containing MIDI events. When ready, events are sent to
+	 * each plugin in the channel.
+	 *
+	 * Anatomy of VstEvents
+	 * --------------------
+	 *
+	 * VstInt32  numEvents = number of Events in array
+	 * VstIntPtr reserved  = zero (Reserved for future use)
+	 * VstEvent *events[2] = event pointer array, variable size
+	 *
+	 * Note that by default VstEvents only holds three events- if you want
+	 * it to hold more, create an equivalent struct with a larger array,
+	 * and then cast it to a VstEvents object when you've populated it. */
+
+	struct gVstEvents {
+    int       numEvents;
+    int       reserved;
+    VstEvent *events[256];
+	} events;
+
+#endif
+#endif
+
 };
 
 

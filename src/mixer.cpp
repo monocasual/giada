@@ -235,6 +235,14 @@ void Mixer::initChannel(channel *ch) {
 
 	gVector <class Plugin *> p;
 	ch->plugins = p;
+
+#if 0
+#ifdef WITH_VST
+	memset(ch->events.events, 0, sizeof(VstEvent) * 256);
+	ch->events.numEvents = 0;
+	ch->events.reserved  = 0;
+#endif
+#endif
 }
 
 
@@ -551,7 +559,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				pthread_mutex_unlock(&mutex_chans);
 			}
 
-			/* reading all actions recorded */
+			/* reading all actions recorded. MIDI to VST: we must pass an array of
+			 * vstEvents structs, spanning through the whole frame */
 
 			pthread_mutex_lock(&mutex_recs);
 			for (unsigned y=0; y<recorder::frames.size; y++) {
@@ -577,6 +586,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 									mh_killChan(ch);
 									break;
 								}
+							case ACTION_MIDI:
+								break;
 							case ACTION_MUTEON:
 								mh_muteChan(ch, true);   // internal mute
 								break;
