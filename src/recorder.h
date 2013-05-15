@@ -35,6 +35,20 @@
 #include "const.h"
 #include "mixer.h"
 
+#ifdef WITH_VST
+
+/* before including aeffetx(x).h we must define __cdecl, otherwise VST
+ * headers can't be compiled correctly. In windows __cdecl is already
+ * defined. */
+
+	#ifdef __GNUC__
+		#ifndef _WIN32
+			#define __cdecl
+		#endif
+	#endif
+	#include "vst/aeffectx.h"
+#endif
+
 /*
  * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
  * [global1]-->[gVector<_action*>1]-->[a0][a1][a2]				1[frames2]
@@ -55,6 +69,12 @@ struct action {
 	int   frame;   // redundant info, used by helper functions
 	float fValue;  // used only for envelopes (volumes, vst params).
 	int   iValue;  // used only for MIDI events
+
+	/* if VST store here a pointer to a vstEvent. */
+
+#ifdef WITH_VST
+	VstEvent *event;
+#endif
 };
 
 /* composite
