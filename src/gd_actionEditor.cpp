@@ -32,6 +32,7 @@
 #include "ge_actionChannel.h"
 #include "ge_muteChannel.h"
 #include "ge_envelopeChannel.h"
+#include "ge_pianoRoll.h"
 #include "gui_utils.h"
 #include "mixer.h"
 #include "recorder.h"
@@ -92,12 +93,15 @@ gdActionEditor::gdActionEditor(channel *chan)
 	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
 	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
 	vc = new gEnvelopeChannel(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+	pr = new gPianoRoll      (scroller->x(), vc->y()+vc->h()+8, this);
 	scroller->add(ac);
 	scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 	scroller->add(mc);
 	scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
 	scroller->add(vc);
 	scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
+	scroller->add(pr);
+	scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
 
 	end();
 

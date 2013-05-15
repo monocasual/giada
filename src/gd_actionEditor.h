@@ -68,9 +68,10 @@ public:
 	class gClick    *zoomOut;
 	class gScroll   *scroller;       // widget container
 
-	class gActionChannel   *ac;      // action channel
-	class gMuteChannel     *mc;      // mute channel
-	class gEnvelopeChannel *vc;      // volume channel
+	class gActionChannel   *ac;
+	class gMuteChannel     *mc;
+	class gEnvelopeChannel *vc;
+	class gPianoRoll       *pr;
 
 	gVector <class gActionWidget*> widgets;
 
