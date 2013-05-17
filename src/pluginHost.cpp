@@ -612,65 +612,19 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 
 /* ------------------------------------------------------------------ */
 
-#if 0
-void PluginHost::addMidiEvent(int event, struct channel *ch) {
 
-	///
-	if (ch->events.numEvents > 0)
-		return;
-	///
+#ifdef WITH_VST
 
-	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
-
-
-	/* type = two types of events: MIDI event and MIDI system exclusive
-	 * (aka sysex, not implemented). */
-
-	e->type         = kVstMidiType;
-	e->byteSize     = sizeof(VstMidiEvent);
-
-	/* deltaFrames = sample frames related to the current block start
-	 * sample position. */
-
-	e->deltaFrames  = 0;
-
-	/* flags = kVstMidiEventIsRealtime means that this event is played
-	 * live (not in playback from a sequencer track). This allows the
-	 * Plug-In to handle these flagged events with higher priority,
-	 * especially when the Plug-In has a big latency */
-
-	e->flags        = kVstMidiEventIsRealtime;
-
-	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
-	/** todo */
-
-	if (event)
-		e->midiData[0]  = (char) 0x90;  /// note on
-	else
-		e->midiData[0]  = (char) 0x80;  /// note off
-	e->midiData[1]  = (char) 0x40;  /// ?
-	e->midiData[2]  = (char) 0x40;  /// ?
-
-	/* noteLength = (in sample frames) of entire note, if available,
-	 * else 0 */
-
-	e->noteLength   = 0;
-
-	/* noteOffset = offset (in sample frames) into note from note start
-	 * if available, else 0 */
-
-	e->noteOffset   = 0;
-
-	/* noteOffVelocity =  Note Off Velocity [0, 127]. */
-
-	e->noteOffVelocity = 0;
+void PluginHost::addVstMidiEvent(VstEvent *e, struct channel *ch) {
 
 	ch->events.events[0] = (VstEvent*) e;
 	ch->events.numEvents++;
 
 	printf("[pluginHost] new VstMidiEvent allocated, total = %d\n", ch->events.numEvents);
 }
+
 #endif
+
 
 /* ------------------------------------------------------------------ */
 

@@ -69,6 +69,7 @@
 #define MAX_BARS				   32
 #define MAX_PATCHNAME_LEN	 32
 #define DB_MIN_SCALE		   60.0f
+#define MAX_VST_EVENTS     32
 
 
 

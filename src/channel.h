@@ -33,7 +33,7 @@
 
 #include "utils.h"
 
-#if 0
+
 #ifdef WITH_VST
 
 /* before including aeffetx(x).h we must define __cdecl, otherwise VST
@@ -46,7 +46,6 @@
 		#endif
 	#endif
 	#include "vst/aeffectx.h"
-#endif
 #endif
 
 
@@ -95,7 +94,6 @@ struct channel {
 
   class gChannel *guiChannel;
 
-#if 0
 #ifdef WITH_VST
 
 	/* VST struct containing MIDI events. When ready, events are sent to
@@ -106,7 +104,7 @@ struct channel {
 	 *
 	 * VstInt32  numEvents = number of Events in array
 	 * VstIntPtr reserved  = zero (Reserved for future use)
-	 * VstEvent *events[2] = event pointer array, variable size
+	 * VstEvent *events[n] = event pointer array, variable size
 	 *
 	 * Note that by default VstEvents only holds three events- if you want
 	 * it to hold more, create an equivalent struct with a larger array,
@@ -115,10 +113,9 @@ struct channel {
 	struct gVstEvents {
     int       numEvents;
     int       reserved;
-    VstEvent *events[256];
+    VstEvent *events[MAX_VST_EVENTS];
 	} events;
 
-#endif
 #endif
 
 };

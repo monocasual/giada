@@ -236,12 +236,10 @@ void Mixer::initChannel(channel *ch) {
 	gVector <class Plugin *> p;
 	ch->plugins = p;
 
-#if 0
 #ifdef WITH_VST
-	memset(ch->events.events, 0, sizeof(VstEvent) * 256);
+	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
 	ch->events.numEvents = 0;
 	ch->events.reserved  = 0;
-#endif
 #endif
 }
 
