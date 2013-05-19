@@ -41,9 +41,10 @@
 extern gdMainWindow *mainWin;
 
 
-gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *parent)
- : gActionWidget(x, y, 200, 80, parent), draggedPoint(-1), selectedPoint(-1)
+gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *pParent)
+ : gActionWidget(x, y, 200, 80, pParent), draggedPoint(-1), selectedPoint(-1)
 {
+	size(pParent->totalWidth, h());
 	extractPoints();
 }
 
@@ -58,7 +59,7 @@ void gMuteChannel::draw() {
 	/* cover unused area */
 	/** FIXME - move this to base class gActionWidget::baseDraw() */
 
-	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 
 	/* print label */
 
@@ -114,7 +115,7 @@ void gMuteChannel::draw() {
 	/* last section */
 
 	py = y()+h()-5;
-	fl_line(pxNew+3, py, parent->coverX-1, py);
+	fl_line(pxNew+3, py, pParent->coverX-1, py);
 }
 
 
@@ -129,12 +130,12 @@ void gMuteChannel::extractPoints() {
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == parent->chan->index) {
+			if (recorder::global.at(i).at(j)->chan == pParent->chan->index) {
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
 					p.frame = recorder::frames.at(i);
 					p.type  = recorder::global.at(i).at(j)->type;
-					p.x     = p.frame / parent->zoom;
+					p.x     = p.frame / pParent->zoom;
 					points.add(p);
 					//printf("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
@@ -149,7 +150,7 @@ void gMuteChannel::extractPoints() {
 
 void gMuteChannel::updatePoints() {
 	for (unsigned i=0; i<points.size; i++)
-		points.at(i).x = points.at(i).frame / parent->zoom;
+		points.at(i).x = points.at(i).frame / pParent->zoom;
 }
 
 
@@ -199,7 +200,7 @@ int gMuteChannel::handle(int e) {
 
 					/* click on the grey area leads to nowhere */
 
-					if (mouseX > parent->coverX-x()) {
+					if (mouseX > pParent->coverX-x()) {
 						ret = 1;
 						break;
 					}
@@ -219,12 +220,12 @@ int gMuteChannel::handle(int e) {
 					/* next point odd = mute_on [click here] mute_off
 					 * next point even = mute_off [click here] mute_on */
 
-					int frame_a = mouseX * parent->zoom;
+					int frame_a = mouseX * pParent->zoom;
 					int frame_b = frame_a+2048;
 
-					if (parent->gridTool->isOn()) {
-						frame_a = parent->gridTool->getSnapFrame(mouseX);
-						frame_b = parent->gridTool->getSnapFrame(mouseX + parent->gridTool->getCellSize());
+					if (pParent->gridTool->isOn()) {
+						frame_a = pParent->gridTool->getSnapFrame(mouseX);
+						frame_b = pParent->gridTool->getSnapFrame(mouseX + pParent->gridTool->getCellSize());
 
 						/* with snap=on a point can fall onto another */
 
@@ -237,22 +238,22 @@ int gMuteChannel::handle(int e) {
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= parent->framesPerBeats) {
-						frame_b = parent->framesPerBeats;
+					if (frame_b >= pParent->framesPerBeats) {
+						frame_b = pParent->framesPerBeats;
 						frame_a = frame_b-2048;
 					}
 
 					if (nextPoint % 2 != 0) {
-						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_a);
-						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_b);
+						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
+						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
 						recorder::sortActions();
 					}
 					else {
-						recorder::rec(parent->chan->index, ACTION_MUTEON,  frame_a);
-						recorder::rec(parent->chan->index, ACTION_MUTEOFF, frame_b);
+						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
+						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
-					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -278,11 +279,11 @@ int gMuteChannel::handle(int e) {
 					//printf("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					recorder::deleteAction(parent->chan->index, points.at(a).frame,	points.at(a).type);
-					recorder::deleteAction(parent->chan->index,	points.at(b).frame,	points.at(b).type);
+					recorder::deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type);
+					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type);
 					recorder::sortActions();
 
-					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -300,15 +301,15 @@ int gMuteChannel::handle(int e) {
 				}
 				else {
 
-					int newFrame = points.at(draggedPoint).x * parent->zoom;
+					int newFrame = points.at(draggedPoint).x * pParent->zoom;
 
 					recorder::deleteAction(
-							parent->chan->index,
+							pParent->chan->index,
 							points.at(draggedPoint).frame,
 							points.at(draggedPoint).type);
 
 					recorder::rec(
-							parent->chan->index,
+							pParent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 
@@ -337,22 +338,22 @@ int gMuteChannel::handle(int e) {
 				if (draggedPoint == 0) {
 					prevPoint = 0;
 					nextPoint = points.at(draggedPoint+1).x - 1;
-					if (parent->gridTool->isOn())
-						nextPoint -= parent->gridTool->getCellSize();
+					if (pParent->gridTool->isOn())
+						nextPoint -= pParent->gridTool->getCellSize();
 				}
 				else
 				if ((unsigned) draggedPoint == points.size-1) {
 					prevPoint = points.at(draggedPoint-1).x + 1;
-					nextPoint = parent->coverX-x();
-					if (parent->gridTool->isOn())
-						prevPoint += parent->gridTool->getCellSize();
+					nextPoint = pParent->coverX-x();
+					if (pParent->gridTool->isOn())
+						prevPoint += pParent->gridTool->getCellSize();
 				}
 				else {
 					prevPoint = points.at(draggedPoint-1).x + 1;
 					nextPoint = points.at(draggedPoint+1).x - 1;
-					if (parent->gridTool->isOn()) {
-						prevPoint += parent->gridTool->getCellSize();
-						nextPoint -= parent->gridTool->getCellSize();
+					if (pParent->gridTool->isOn()) {
+						prevPoint += pParent->gridTool->getCellSize();
+						nextPoint -= pParent->gridTool->getCellSize();
 					}
 				}
 
@@ -362,8 +363,8 @@ int gMuteChannel::handle(int e) {
 				if (mouseX >= nextPoint)
 					points.at(draggedPoint).x = nextPoint;
 				else
-				if (parent->gridTool->isOn())
-					points.at(draggedPoint).x = parent->gridTool->getSnapPoint(mouseX)-1;
+				if (pParent->gridTool->isOn())
+					points.at(draggedPoint).x = pParent->gridTool->getSnapPoint(mouseX)-1;
 				else
 					points.at(draggedPoint).x = mouseX;
 

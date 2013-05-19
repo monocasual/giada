@@ -89,7 +89,7 @@ private:
 
 public:
 
-	gMuteChannel(int x, int y, class gdActionEditor *parent);
+	gMuteChannel(int x, int y, class gdActionEditor *pParent);
 	void draw();
 	int  handle(int e);
 

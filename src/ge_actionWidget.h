@@ -39,11 +39,11 @@
 class gActionWidget : public Fl_Group {
 
 protected:
-	class gdActionEditor *parent;
+	class gdActionEditor *pParent;
 	void  baseDraw();
 
 public:
-	gActionWidget(int x, int y, int w, int h, gdActionEditor *parent);
+	gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent);
 	~gActionWidget();
 };
 

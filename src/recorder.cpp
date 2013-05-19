@@ -88,7 +88,7 @@ bool canRec(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void rec(int index, int type, int frame, int iValue, float fValue) {
+void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 	/* allocating the action */
 
@@ -184,14 +184,11 @@ void addVstEvent(int event, action *act) {
 	e->flags        = kVstMidiEventIsRealtime;
 
 	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
-	/** todo */
 
-	if (event)
-		e->midiData[0]  = (char) 0x90;  /// note on, just a test!
-	else
-		e->midiData[0]  = (char) 0x80;  /// note off
-	e->midiData[1]  = (char) 0x40;  /// ?
-	e->midiData[2]  = (char) 0x40;  /// ?
+	e->midiData[0]  = (event >> 24) & 0xFF; //(char) 0x90;  /// note on/off + channel
+	e->midiData[1]  = (event >> 16) & 0xFF; //(char) 0x40;  /// note number
+	e->midiData[2]  = (event >> 8)  & 0xFF; //(char) 0x40;  /// velocity
+	e->midiData[3]  = 0;
 
 	/* noteLength = (in sample frames) of entire note, if available,
 	 * else 0 */
@@ -209,7 +206,7 @@ void addVstEvent(int event, action *act) {
 
 	act->event = e;
 
-	printf("[REC] add VstMidiEvent (val=%d) to action %p\n", event, (void*)act);
+	printf("[REC] add VstMidiEvent (val=%X) to action %p\n", event, (void*)act);
 }
 #endif
 
@@ -273,6 +270,7 @@ void clearAction(int index, char act) {
 void deleteAction(int chan, int frame, char type) {
 
 	/* find the frame 'frame' */
+	/** TO-DO: free VstEvent memory */
 
 	bool found = false;
 	for (unsigned i=0; i<frames.size && !found; i++) {
@@ -331,6 +329,9 @@ void deleteActions(int chan, int frame_a, int frame_b, char type) {
 
 
 void clearAll() {
+
+	/** TO-DO: free VstEvent memory */
+
 	while (global.size > 0) {
 		for (unsigned i=0; i<global.size; i++) {
 			for (unsigned k=0; k<global.at(i).size; k++)

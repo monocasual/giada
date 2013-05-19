@@ -26,22 +26,35 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GE_PIANOROLL_H
 #define GE_PIANOROLL_H
 
 #include <FL/Fl.H>
-#include <FL/Fl_Box.H>
+#include <FL/Fl_Scroll.H>
 #include "ge_actionWidget.h"
+
+
+class gPianoRollContainer : public Fl_Scroll {
+private:
+	class gdActionEditor *pParent;
+	class gPianoRoll     *pianoRoll;
+
+public:
+	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
+	int  handle(int e);
+	void draw();
+};
+
+
+/* ------------------------------------------------------------------ */
 
 
 class gPianoRoll : public gActionWidget {
 
 public:
-	gPianoRoll(int x, int y, class gdActionEditor *parent);
+	gPianoRoll(int x, int y, int w, class gdActionEditor *parent);
 	void draw();
-	//int  handle(int e);
-	//void updateActions();
 };
-
 
 #endif

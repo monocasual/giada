@@ -236,10 +236,8 @@ void Mixer::initChannel(channel *ch) {
 	gVector <class Plugin *> p;
 	ch->plugins = p;
 
-#ifdef WITH_VST
-	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
-	ch->events.numEvents = 0;
-	ch->events.reserved  = 0;
+#ifdef WITH_VST // init VstEvents stack
+	G_PluginHost.freeVstMidiEvents(ch, true);
 #endif
 }
 
@@ -568,7 +566,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 						channel *ch = getChannelByIndex(index);
 						if (ch->readActions == false)
 							continue;
-						switch (recorder::global.at(y).at(z)->type) {
+						recorder::action *a = recorder::global.at(y).at(z);
+						switch (a->type) {
 							case ACTION_KEYPRESS:
 								if (ch->mode & SINGLE_ANY) {
 									mh_startChan(ch, false);
@@ -585,6 +584,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 									break;
 								}
 							case ACTION_MIDI:
+#ifdef WITH_VST
+								G_PluginHost.addVstMidiEvent(a->event, ch);
+#endif
 								break;
 							case ACTION_MUTEON:
 								mh_muteChan(ch, true);   // internal mute
@@ -781,6 +783,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 #ifdef WITH_VST
 			pthread_mutex_lock(&mutex_plugins);
 			G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
+			G_PluginHost.freeVstMidiEvents(ch);
 			pthread_mutex_unlock(&mutex_plugins);
 #endif
 			for (unsigned j=0; j<bufferFrames; j+=2) {

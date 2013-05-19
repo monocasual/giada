@@ -104,10 +104,17 @@ public:
 
 #ifdef WITH_VST
 
-	/* addMidiEvent
+	/* addVstMidiEvent
 	 * take a composite MIDI event, decompose it and add it to channel. */
 
-	void addVstMidiEvent(struct VstEvent *e, struct channel *ch);
+	void addVstMidiEvent(struct VstMidiEvent *e, struct channel *ch);
+
+	/* freeVstMidiEvents
+	 * empty channel->vstEvents structure. Init: use the method for channel
+	 * initialization. */
+
+	void freeVstMidiEvents(struct channel *ch, bool init=false);
+
 #endif
 
 	gVector <Plugin *> *getStack(int stackType, struct channel *ch=NULL);

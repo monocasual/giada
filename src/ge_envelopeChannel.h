@@ -96,7 +96,7 @@ class gEnvelopeChannel : public gActionWidget {
 	int verticalPoint(const point &p);
 
 public:
-	gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range, const char *l);
+	gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l);
 	~gEnvelopeChannel();
 
 	/* addPoint

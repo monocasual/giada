@@ -64,11 +64,11 @@ namespace recorder {
  * floats with an inclusive range of 0.0 to 1.0 (fValue). */
 
 struct action {
-	int   chan;    // channel index, struct channel->index
- 	int   type;
-	int   frame;   // redundant info, used by helper functions
-	float fValue;  // used only for envelopes (volumes, vst params).
-	int   iValue;  // used only for MIDI events
+	int      chan;    // channel index, struct channel->index
+ 	int      type;
+	int      frame;   // redundant info, used by helper functions
+	float    fValue;  // used only for envelopes (volumes, vst params).
+	uint32_t iValue;  // used only for MIDI events
 
 	/* if VST store here a pointer to a vstEvent. */
 
@@ -112,7 +112,7 @@ bool canRec(channel *ch);
 /* rec
  * record an action. */
 
-void rec(int chan, int action, int frame, int iValue=0, float fValue=0.0f);
+void rec(int chan, int action, int frame, uint32_t iValue=0, float fValue=0.0f);
 
 /* addVstEvent
  * available only with VST extension, alloc a new VST event for the

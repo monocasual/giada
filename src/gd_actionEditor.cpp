@@ -90,10 +90,10 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
 
-	ac = new gActionChannel  (scroller->x(), upperArea->y()+upperArea->h()+8, this);
-	mc = new gMuteChannel    (scroller->x(), ac->y()+ac->h()+8, this);
-	vc = new gEnvelopeChannel(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
-	pr = new gPianoRoll      (scroller->x(), vc->y()+vc->h()+8, this);
+	ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+	mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
+	vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+	pr = new gPianoRollContainer(scroller->x(), vc->y()+vc->h()+8, this);
 	scroller->add(ac);
 	scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 	scroller->add(mc);
@@ -165,6 +165,11 @@ void gdActionEditor::__cb_zoomIn() {
 		zoom = (int) ceilf(totalFrames / (float) totalWidth);
 	}
 
+	ac->size(totalWidth, ac->h());
+	mc->size(totalWidth, mc->h());
+	vc->size(totalWidth, vc->h());
+	pr->size(totalWidth, pr->h());
+
 	ac->updateActions();
 	mc->updatePoints();
 	vc->updatePoints();
@@ -184,6 +189,11 @@ void gdActionEditor::__cb_zoomOut() {
 		totalWidth = scroller->w();
 		zoom = (int) ceilf(totalFrames / (float) totalWidth);
 	}
+
+	ac->size(totalWidth, ac->h());
+	mc->size(totalWidth, mc->h());
+	vc->size(totalWidth, vc->h());
+	pr->size(totalWidth, pr->h());
 
 	ac->updateActions();
 	mc->updatePoints();

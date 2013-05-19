@@ -32,6 +32,7 @@
 
 #include "pluginHost.h"
 #include "conf.h"
+#include "const.h"
 #include "mixer.h"
 #include "gd_mainWindow.h"
 #include "channel.h"
@@ -397,16 +398,13 @@ void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 			continue;
 		if (pStack->at(i)->bypass)
 			continue;
-		///if (ch) {   // process events if it's a channel stack
+		if (ch) {   // process events if it's a channel stack
 		///	printf("[pluginHost] send events to chan %d (%d)\n", ch->index, ch->events.events[0]->flags);
-		///	pStack->at(i)->processEvents((VstEvents*) &ch->events);
-		///}
+		pStack->at(i)->processEvents((VstEvents*) &ch->events);
+		}
 		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);
 		bufferI = bufferO;
 	}
-
-	/* free VstEvents */
-	/** TODO */
 
 	/* converting buffer from VST to Giada. A note for the future: if we
 	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
@@ -615,12 +613,26 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 
 #ifdef WITH_VST
 
-void PluginHost::addVstMidiEvent(VstEvent *e, struct channel *ch) {
+void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
+	if (ch->events.numEvents < MAX_VST_EVENTS) {
+		ch->events.events[0] = (VstEvent*) e;
+		ch->events.numEvents++;
+		printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
+	}
+	else
+		puts("[pluginHost] channel VstEvents > MAX_VST_EVENTS, nothing to do");
+}
 
-	ch->events.events[0] = (VstEvent*) e;
-	ch->events.numEvents++;
 
-	printf("[pluginHost] new VstMidiEvent allocated, total = %d\n", ch->events.numEvents);
+/* ------------------------------------------------------------------ */
+
+
+void PluginHost::freeVstMidiEvents(channel *ch, bool init) {
+	if (ch->events.numEvents == 0 && !init)
+		return;
+	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
+	ch->events.numEvents = 0;
+	ch->events.reserved  = 0;
 }
 
 #endif

@@ -4,7 +4,7 @@
  *
  * ge_envelopeWidget
  *
- * parent class of any envelope controller, from volume to VST parameter
+ * Parent class of any envelope controller, from volume to VST parameter
  * automations.
  *
  * ---------------------------------------------------------------------
@@ -43,10 +43,11 @@ extern Mixer         G_Mixer;
 extern gdMainWindow *mainWin;
 
 
-gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *parent, int type, int range, const char *l)
-	:	gActionWidget(x, y, 200, 80, parent), type(type), range(range),
+gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l)
+	:	gActionWidget(x, y, 200, 80, pParent), type(type), range(range),
 		selectedPoint(-1), draggedPoint(-1)
 {
+	size(pParent->totalWidth, h());
 	copy_label(l);
 }
 
@@ -78,7 +79,7 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 
 void gEnvelopeChannel::updatePoints() {
 	for (unsigned i=0; i<points.size; i++)
-		points.at(i).x = points.at(i).frame / parent->zoom;
+		points.at(i).x = points.at(i).frame / pParent->zoom;
 }
 
 
@@ -124,7 +125,7 @@ void gEnvelopeChannel::draw() {
 
 	/* cover unused area */
 
-	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 }
 
 
@@ -134,7 +135,7 @@ void gEnvelopeChannel::draw() {
 int gEnvelopeChannel::handle(int e) {
 
 	/* Adding an action: no further checks required, just record it on frame
-	 * mx*parent->zoom. Deleting action is trickier: find the active
+	 * mx*pParent->zoom. Deleting action is trickier: find the active
 	 * point and derive from it the corresponding frame. */
 
 	int ret = 0;
@@ -179,7 +180,7 @@ int gEnvelopeChannel::handle(int e) {
 					/* top & border fix */
 
 					if (my > h()-8) my = h()-8;
-					if (mx > parent->coverX-x()) mx = parent->coverX-x();
+					if (mx > pParent->coverX-x()) mx = pParent->coverX-x();
 
 					/* if this is the first point ever, add other two points at the beginning
 					 * and the end of the range */
@@ -188,24 +189,24 @@ int gEnvelopeChannel::handle(int e) {
 
 						if (points.size == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
-							recorder::rec(parent->chan->index, type, 0, 0, 1.0f);
-							addPoint(G_Mixer.totalFrames, 0, 1.0f, parent->coverX-x(), 1);
-							recorder::rec(parent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
+							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
+							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX-x(), 1);
+							recorder::rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
 
 						/* line between 2 points y = (x-a) / (b-a); a = h() - 8; b = 1 */
 
-						int frame   = mx * parent->zoom;
+						int frame   = mx * pParent->zoom;
 						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
-						recorder::rec(parent->chan->index, type, frame, 0, value);
+						recorder::rec(pParent->chan->index, type, frame, 0, value);
 						recorder::sortActions();
 						sortPoints();
 					}
 					else {
 						/// TODO
 					}
-					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
 					redraw();
 				}
 			}
@@ -215,15 +216,15 @@ int gEnvelopeChannel::handle(int e) {
 
 				if (selectedPoint != -1) {
 					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size-1) {
-						recorder::clearAction(parent->chan->index, type);
+						recorder::clearAction(pParent->chan->index, type);
 						points.clear();
 					}
 					else {
-						recorder::deleteAction(parent->chan->index, points.at(selectedPoint).frame, type);
+						recorder::deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type);
 						recorder::sortActions();
 						points.del(selectedPoint);
 					}
-					mainWin->keyboard->setChannelWithActions(parent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
 					redraw();
 				}
 			}
@@ -239,7 +240,7 @@ int gEnvelopeChannel::handle(int e) {
 					puts("nothing to do");
 				}
 				else {
-					int newFrame = points.at(draggedPoint).x * parent->zoom;
+					int newFrame = points.at(draggedPoint).x * pParent->zoom;
 
 					/* x edge correction */
 
@@ -256,11 +257,11 @@ int gEnvelopeChannel::handle(int e) {
 
 					/*  delete previous point and record a new one */
 
-					recorder::deleteAction(parent->chan->index,	points.at(draggedPoint).frame, type);
+					recorder::deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type);
 
 					if (range == RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
-						recorder::rec(parent->chan->index, type, newFrame, 0, value);
+						recorder::rec(pParent->chan->index, type, newFrame, 0, value);
 					}
 					else {
 						/// TODO
@@ -298,7 +299,7 @@ int gEnvelopeChannel::handle(int e) {
 					points.at(draggedPoint).x = x()-8;
 				else
 				if ((unsigned) draggedPoint == points.size-1)
-					points.at(draggedPoint).x = parent->coverX-x();
+					points.at(draggedPoint).x = pParent->coverX-x();
 				else {
 					int prevPoint = points.at(draggedPoint-1).x;
 					int nextPoint = points.at(draggedPoint+1).x;
@@ -310,8 +311,8 @@ int gEnvelopeChannel::handle(int e) {
 					//else
 					//	points.at(draggedPoint).x = mx;
 					else {
-						if (parent->gridTool->isOn())
-							points.at(draggedPoint).x = parent->gridTool->getSnapPoint(mx)-1;
+						if (pParent->gridTool->isOn())
+							points.at(draggedPoint).x = pParent->gridTool->getSnapPoint(mx)-1;
 						else
 							points.at(draggedPoint).x = mx;
 					}
@@ -387,13 +388,13 @@ void gEnvelopeChannel::fill() {
 	for (unsigned i=0; i<recorder::global.size; i++)
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
 			recorder::action *a = recorder::global.at(i).at(j);
-			if (a->type == type && a->chan == parent->chan->index) {
+			if (a->type == type && a->chan == pParent->chan->index) {
 				if (range == RANGE_FLOAT)
 					addPoint(
 						a->frame,                      // frame
 						0,                             // int value (unused)
 						a->fValue,                     // float value
-						a->frame / parent->zoom,       // x
+						a->frame / pParent->zoom,       // x
 						((1-h()+8)*a->fValue)+h()-8);  // y = (b-a)x + a (line between two points)
 				// else: TODO
 			}

@@ -32,6 +32,7 @@
 
 
 #include "utils.h"
+#include "const.h"
 
 
 #ifdef WITH_VST
@@ -46,6 +47,7 @@
 		#endif
 	#endif
 	#include "vst/aeffectx.h"
+
 #endif
 
 

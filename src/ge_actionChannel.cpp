@@ -44,15 +44,18 @@ extern Conf	         G_Conf;
 /* ------------------------------------------------------------------ */
 
 
-gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
- : gActionWidget(x, y, 200, 40, parent), selected(NULL)
+gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent)
+ : gActionWidget(x, y, 200, 40, pParent), selected(NULL)
 {
+	size(pParent->totalWidth, h());
+
 	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
-			if (recorder::global.at(i).at(j)->chan == parent->chan->index) {
+			recorder::action *ra = recorder::global.at(i).at(j);
+			if (ra->chan == pParent->chan->index) {
 
 				/* don't show actions > than the grey area */
 
@@ -63,8 +66,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				 * the end of a composite action (press+release). In that case, skip it to
 				 * the next event. */
 
-				if (parent->chan->mode == SINGLE_PRESS &&
-				    recorder::global.at(i).at(j)->type == ACTION_KEYREL)
+				if (pParent->chan->mode == SINGLE_PRESS && ra->type == ACTION_KEYREL)
 				{
 					continue;
 				}
@@ -72,28 +74,27 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *parent)
 				/* skip the killchan actions in a singlepress channel. They cannot be recorded
 				 * in such mode, but they can exist if you change from another mode to singlepress */
 
-				if (recorder::global.at(i).at(j)->type == ACTION_KILLCHAN &&
-						parent->chan->mode == SINGLE_PRESS)
+				if (ra->type == ACTION_KILLCHAN &&	pParent->chan->mode == SINGLE_PRESS)
 				{
 					continue;
 				}
 
-				/* we also skip mutes. There's a widget for that */
+				/* we also skip mutes and Midi. There's a widget for that */
 				/** FIXME - change overall logic: do something only if type & ACTION_KEYPRESS etc */
 
-				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME))
+				if (ra->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME | ACTION_MIDI))
 					continue;
 
-				int ax = x+((recorder::frames.at(i))/parent->zoom);
+				int ax = x+((recorder::frames.at(i))/pParent->zoom);
 				gAction *a = new gAction(
-						ax,                                   // x
-						y+4,                                  // y
-						h()-8,                                // h
-						recorder::frames.at(i),								// frame_a
-						i,                                    // n. of recordings
-						parent,                               // pointer to the parent window
-						false,                                // record = false: don't record it, we are just displaying it!
-						recorder::global.at(i).at(j)->type);  // type of action
+						ax,                       // x
+						y+4,                      // y
+						h()-8,                    // h
+						recorder::frames.at(i),	  // frame_a
+						i,                        // n. of recordings
+						pParent,                   // pointer to the pParent window
+						false,                    // record = false: don't record it, we are just displaying it!
+						ra->type);                // type of action
 				add(a);
 			}
 		}
@@ -129,10 +130,10 @@ void gActionChannel::updateActions() {
 	for (int i=0; i<children(); i++) {
 
 		a = (gAction*)child(i);
-		int newX = x() + (a->frame_a / parent->zoom);
+		int newX = x() + (a->frame_a / pParent->zoom);
 
-		if (parent->chan->mode == SINGLE_PRESS) {
-			int newW = ((a->frame_b - a->frame_a) / parent->zoom);
+		if (pParent->chan->mode == SINGLE_PRESS) {
+			int newW = ((a->frame_b - a->frame_a) / pParent->zoom);
 			if (newW < gAction::MIN_WIDTH)
 				newW = gAction::MIN_WIDTH;
 			a->resize(newX, a->y(), newW, a->h());
@@ -158,11 +159,11 @@ void gActionChannel::draw() {
 	fl_color(COLOR_BG_1);
 	fl_font(FL_HELVETICA, 12);
 	if (active())
-		fl_draw("actions", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw("actions", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
 	else
-		fl_draw("actions (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw("actions (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
 
-	fl_rectf(parent->coverX, y()+1, parent->totalWidth-parent->coverX+x(), h()-2, COLOR_BG_1);
+	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 
 	draw_children();
 }
@@ -202,8 +203,8 @@ int gActionChannel::handle(int e) {
 						if (Fl::event_x() < selected->x()+gAction::MIN_WIDTH)
 							aw = gAction::MIN_WIDTH;
 						else
-						if (Fl::event_x() > parent->coverX)
-							aw = parent->coverX-selected->x();
+						if (Fl::event_x() > pParent->coverX)
+							aw = pParent->coverX-selected->x();
 
 						selected->size(aw, ah);
 					}
@@ -234,11 +235,11 @@ int gActionChannel::handle(int e) {
 					if (real_x < x())                                  // don't go beyond the left border
 						selected->position(x(), selected->y());
 					else
-					if (real_x+selected->w() > parent->coverX)         // don't go beyond the right border
-						selected->position(parent->coverX-selected->w(), selected->y());
+					if (real_x+selected->w() > pParent->coverX)         // don't go beyond the right border
+						selected->position(pParent->coverX-selected->w(), selected->y());
 					else {
-						if (parent->gridTool->isOn()) {
-							int snpx = parent->gridTool->getSnapPoint(real_x-x()) + x() -1;
+						if (pParent->gridTool->isOn()) {
+							int snpx = pParent->gridTool->getSnapPoint(real_x-x()) + x() -1;
 							selected->position(snpx, selected->y());
 						}
 						else
@@ -265,7 +266,7 @@ int gActionChannel::handle(int e) {
 
 					/* avoid click on grey area */
 
-					if (Fl::event_x() >= parent->coverX) {
+					if (Fl::event_x() >= pParent->coverX) {
 						ret = 1;
 						break;
 					}
@@ -273,10 +274,10 @@ int gActionChannel::handle(int e) {
 					/* snap function, if enabled */
 
 					int ax = Fl::event_x();
-					int fx = (ax - x()) * parent->zoom;
-					if (parent->gridTool->isOn()) {
-						ax = parent->gridTool->getSnapPoint(ax-x()) + x() -1;
-						fx = parent->gridTool->getSnapFrame(ax-x());
+					int fx = (ax - x()) * pParent->zoom;
+					if (pParent->gridTool->isOn()) {
+						ax = pParent->gridTool->getSnapPoint(ax-x()) + x() -1;
+						fx = pParent->gridTool->getSnapFrame(ax-x());
 
 						/* with snap=on an action can fall onto another */
 
@@ -292,11 +293,11 @@ int gActionChannel::handle(int e) {
 							h()-8,                                // h
 							fx,																		// frame_a
 							recorder::frames.size-1,              // n. of actions recorded
-							parent,                               // parent window pointer
+							pParent,                               // pParent window pointer
 							true,                                 // record = true: record it!
-							parent->getActionType());             // type of action
+							pParent->getActionType());             // type of action
 					add(a);
-					mainWin->keyboard->setChannelWithActions(parent->chan); // mainWindow update
+					mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 					redraw();
 					ret = 1;
 				}
@@ -314,7 +315,7 @@ int gActionChannel::handle(int e) {
 					a->delAction();
 					remove(a);
 					delete a;
-					mainWin->keyboard->setChannelWithActions(parent->chan);
+					mainWin->keyboard->setChannelWithActions(pParent->chan);
 					redraw();
 					ret = 1;
 				}
@@ -334,7 +335,7 @@ int gActionChannel::handle(int e) {
 			bool noChanges = false;
 			if (actionOriginalX == selected->x())
 				noChanges = true;
-			if (parent->chan->mode == SINGLE_PRESS &&
+			if (pParent->chan->mode == SINGLE_PRESS &&
 					actionOriginalX+actionOriginalW != selected->x()+selected->w())
 				noChanges = false;
 
@@ -358,7 +359,7 @@ int gActionChannel::handle(int e) {
 
 				int action_x  = ((gAction*)child(i))->x();
 				int action_w  = ((gAction*)child(i))->w();
-				if (parent->chan->mode == SINGLE_PRESS) {
+				if (pParent->chan->mode == SINGLE_PRESS) {
 
 					/* when 2 segments overlap?
 					 * start = the highest value between the two starting points
@@ -388,8 +389,8 @@ int gActionChannel::handle(int e) {
 			 * the mouse button the dragging process ends. */
 
 			if (!overlap) {
-				if (parent->gridTool->isOn()) {
-					int f = parent->gridTool->getSnapFrame(selected->absx());
+				if (pParent->gridTool->isOn()) {
+					int f = pParent->gridTool->getSnapFrame(selected->absx());
 					selected->moveAction(f);
 				}
 				else
@@ -419,7 +420,7 @@ bool gActionChannel::actionCollides(int frame) {
 		if ( ((gAction*)child(i))->frame_a == frame)
 			collision = true;
 
-	if (parent->chan->mode == SINGLE_PRESS) {
+	if (pParent->chan->mode == SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
 			gAction *c = ((gAction*)child(i));
 			if (frame <= c->frame_b && frame >= c->frame_a)
@@ -588,9 +589,22 @@ void gAction::addAction() {
 	else {
 		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
 
-		/** MIDI VST TEST */
-		recorder::rec(parent->chan->index, ACTION_MIDI, frame_a, 0);
-		/** MIDI VST TEST */
+		/** MIDI VST TEST ----------------------------------------------- -*/
+		uint32_t event = 0;
+		if (parent->getActionType() == ACTION_KEYPRESS) {
+			event |= (0x90 << 24);   // note on
+			event |= (0x3C << 16);   // uknown note, maybe C
+			event |= (0x3F <<  8);   // max velocity
+			event |= (0x00);
+		}
+		if (parent->getActionType() == ACTION_KILLCHAN) {
+			event |= (0x80 << 24);   // note off
+			event |= (0x3C << 16);   // uknown note, maybe C
+			event |= (0x3F <<  8);   // max velocity
+			event |= (0x00);
+		}
+		recorder::rec(parent->chan->index, ACTION_MIDI, frame_a, event);
+		/** MIDI VST TEST ------------------------------------------------ */
 
 		//printf("action added, [%d]\n", frame_a);
 	}

@@ -4,7 +4,7 @@
  *
  * ge_actionWidget
  *
- * parent class of any widget inside the action editor.
+ * pParent class of any widget inside the action editor.
  *
  * ---------------------------------------------------------------------
  *
@@ -39,8 +39,8 @@
 extern Mixer G_Mixer;
 
 
-gActionWidget::gActionWidget(int x, int y, int w, int h, gdActionEditor *parent)
-	:	Fl_Group(x, y, w, h), parent(parent) {}
+gActionWidget::gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent)
+	:	Fl_Group(x, y, w, h), pParent(pParent) {}
 
 
 /* ------------------------------------------------------------------ */
@@ -54,18 +54,18 @@ gActionWidget::~gActionWidget() {}
 
 void gActionWidget::baseDraw() {
 
-	/* widen or narrow the widget */
+	/* widen or narrow the widget */ /** WHY ?!? */
 
-	w(parent->totalWidth);
+	//w(pParent->totalWidth);
 
 	/* clear the screen */
 
-	fl_rectf(x(), y(), parent->totalWidth, h(), COLOR_BG_MAIN);
+	fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
 
 	/* draw the container */
 
 	fl_color(COLOR_BD_0);
-	fl_rect(x(), y(), parent->totalWidth, h());
+	fl_rect(x(), y(), w(), h());
 
 	/* print beats and bars. The method is the same of the waveform in sample
 	 * editor. Take totalwidth (the width in pixel of the area to draw), knowing
@@ -79,17 +79,17 @@ void gActionWidget::baseDraw() {
 	/* don't draw beyond the hidden area. If 'end': stop drawing. */
 
 	if (G_Mixer.beats == 32)
-		parent->coverX = w()+x()-1;
+		pParent->coverX = w()+x()-1;
 	else
 		wantHidden = true;
 
 	/* grid drawing, if > 1 */
 
-	if (parent->gridTool->getValue() > 1) {
+	if (pParent->gridTool->getValue() > 1) {
 		fl_color(fl_rgb_color(54, 54, 54));
 		fl_line_style(FL_DASH, 0, NULL);
-		for (int i=0; i<(int) parent->gridTool->points.size; i++) {
-			int px = parent->gridTool->points.at(i)+x()-1;
+		for (int i=0; i<(int) pParent->gridTool->points.size; i++) {
+			int px = pParent->gridTool->points.at(i)+x()-1;
 			fl_line(px, y()+1, px, y()+h()-2);
 		}
 		fl_line_style(0);
@@ -97,23 +97,23 @@ void gActionWidget::baseDraw() {
 
 	/* box and beat separator drawing */
 
-	int wx1  = abs(x() - parent->scroller->x());
+	int wx1  = abs(x() - pParent->scroller->x());
 
-	for (int i=wx1; i<parent->totalWidth && !end; i++) {
-		int step = parent->zoom*i;
-		while (j < step && j <= parent->totalFrames) {
+	for (int i=wx1; i<w() && !end; i++) {
+		int step = pParent->zoom*i;
+		while (j < step && j <= pParent->totalFrames) {
 
-			if (wantHidden && j >= parent->framesPerBeats) {        // search for the start point
-				parent->coverX = i+x()-1;                             // of the hidden area
+			if (wantHidden && j >= pParent->framesPerBeats) {        // search for the start point
+				pParent->coverX = i+x()-1;                             // of the hidden area
 				end = true;
 			}
 
-			if (j % parent->framesPerBeat == 0) {                            // print each beat
+			if (j % pParent->framesPerBeat == 0) {                            // print each beat
 				fl_color(COLOR_BD_0);
 				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
 			}
 
-			if (j % parent->framesPerBar == 0 && i!=1 && i != parent->totalWidth) {    // print bar division
+			if (j % pParent->framesPerBar == 0 && i!=1 && i != w()) {    // print bar division
 				fl_color(COLOR_BG_2);
 				fl_line(i+x()-1, y()+1, i+x()-1, y()+h()-2);
 			}

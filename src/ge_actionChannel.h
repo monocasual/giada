@@ -117,7 +117,7 @@ private:
 	bool actionCollides(int frame);
 
 public:
-	gActionChannel(int x, int y, gdActionEditor *parent);
+	gActionChannel(int x, int y, gdActionEditor *pParent);
 	void draw();
 	int  handle(int e);
 	void updateActions();
