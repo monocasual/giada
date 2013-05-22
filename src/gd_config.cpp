@@ -424,13 +424,11 @@ void gdConfig::fetchSoundDevs() {
 
 		for (unsigned i=0; i<kernelAudio::numDevs; i++) {
 
-
 			/* escaping '/', very dangerous in FLTK (it creates a submenu) */
-			/** FIXME: escape also & and _*/
 
 			std::string tmp = kernelAudio::getDeviceName(i);
 			for (unsigned k=0; k<tmp.size(); k++)
-				if (tmp[k] == '/')
+				if (tmp[k] == '/' || tmp[k] == '|' || tmp[k] == '&' || tmp[k] == '_')
 					tmp[k] = '-';
 
 			/* add to list devices with at least 1 channel available. In this
