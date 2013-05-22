@@ -119,7 +119,7 @@ void rec(int chan, int action, int frame, uint32_t iValue=0, float fValue=0.0f);
  * action */
 
 #ifdef WITH_VST
-void addVstEvent(int event, action *act);
+void addVstEvent(action *act);
 #endif
 
 /* clearChan

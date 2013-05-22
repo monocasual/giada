@@ -30,6 +30,7 @@
 #include <FL/fl_draw.H>
 #include "ge_pianoRoll.h"
 #include "gd_actionEditor.h"
+#include "channel.h"
 #include "const.h"
 
 
@@ -73,14 +74,12 @@ int gPianoRollContainer::handle(int e) {
 	int ret = Fl_Group::handle(e);
 
 	switch (e) {
-		case FL_PUSH:	{
-			ret = 1;
-		}
+		case FL_PUSH:	ret = 1;
 		case FL_DRAG: {
-			if (Fl::event_button3()) {
-				scroll_to(xposition(), y()-Fl::event_y());
+			//if (Fl::event_button3()) {
+			//	scroll_to(xposition(), y()-Fl::event_y());
 				ret = 1;
-			}
+			//}
 		}
 	}
 
@@ -93,8 +92,8 @@ int gPianoRollContainer::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *parent)
- : gActionWidget(x, y, w, 40, parent)
+gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *pParent)
+ : gActionWidget(x, y, w, 40, pParent)
 {
 	size(w, 128 * 15);  // 128 MIDI channels * 15 px height
 }
@@ -158,4 +157,131 @@ void gPianoRoll::draw() {
 	}
 
 	fl_line_style(0);
+
+	draw_children();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gPianoRoll::handle(int e) {
+
+	int ret = Fl_Group::handle(e);
+
+	switch (e) {
+		case FL_PUSH:	{
+			if (Fl::event_button1()) {
+
+				gPianoItem *pItem = (gPianoItem*) Fl::belowmouse();
+				if (pItem)
+					printf("item below the mouse!\n");
+
+				/* ax is driven by grid, ay by the height in px of each note */
+
+				int ax = Fl::event_x();
+				int ay = Fl::event_y();
+
+				/* vertical snap */
+
+				int edge = (ay-y()-3) % 15;
+				if (edge != 0) ay -= edge;
+
+				/* horizontal snap (grid tool) TODO */
+
+				add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, pParent));
+				redraw();
+			}
+			ret = 1;
+		}
+	}
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, gdActionEditor *pParent)
+	: Fl_Box  (x, y, 20, 10),
+	  a       (a),
+		pParent (pParent),
+		selected(false)
+{
+	if (a)
+		puts("[gPianoItem] new gPianoItem, display mode");
+	else {
+		note    = 127 - (rel_y / 15);
+		frame_a = rel_x * pParent->zoom;
+		frame_b = frame_a + 4096;
+		printf("[gPianoItem] new gPianoItem, record mode, note %d, frame_a %d, frame_b %d\n", note, frame_a, frame_b);
+		record();
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gPianoItem::draw() {
+	fl_rectf(x(), y(), w(), h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gPianoItem::record() {
+
+	/* note on */
+
+	uint32_t event = 0;
+	event |= (0x90 << 24);   // note on
+	event |= (note << 16);   // note value
+	event |= (0x3F <<  8);   // velocity
+	event |= (0x00);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event);
+
+	/* note off */
+
+	event = 0;
+	event |= (0x80 << 24);   // note off
+	event |= (note << 16);   // note value
+	event |= (0x3F <<  8);   // velocity
+	event |= (0x00);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gPianoItem::handle(int e) {
+	int ret = 0;
+	switch (e) {
+		case FL_ENTER: {
+			selected = true;
+			ret = 1;
+			redraw();
+			break;
+		}
+		case FL_LEAVE: {
+			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
+			selected = false;
+			ret = 1;
+			redraw();
+			break;
+		}
+		case FL_PUSH: {
+			recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI);
+			recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI);
+			Fl::delete_widget(this);
+			((gPianoRoll*)parent())->redraw();
+			ret = 1;
+			break;
+		}
+	}
+	return ret;
 }

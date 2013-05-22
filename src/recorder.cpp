@@ -99,11 +99,6 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 	a->iValue = iValue;
 	a->fValue = fValue;
 
-#ifdef WITH_VST
-	if (type == ACTION_MIDI)
-		addVstEvent(iValue, a);
-#endif
-
 	/* check if the frame exists in the stack. If it exists, we don't extend
 	 * the stack, but we add (or push) a new action to it. */
 
@@ -143,6 +138,11 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 		global.at(frameToExpand).add(a);		// expand array
 	}
 
+#ifdef WITH_VST
+	if (type == ACTION_MIDI)
+		addVstEvent(a);
+#endif
+
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
 
@@ -151,7 +151,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 	sortedActions = false;
 
-	printf("[REC] action %d recorded on frame %d, chan %d, iValue=%d, fValue=%f\n", type, frame, index, iValue, fValue);
+	printf("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d, fValue=%f\n", type, frame, index, iValue, fValue);
 	//print();
 }
 
@@ -160,7 +160,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 
 #ifdef WITH_VST
-void addVstEvent(int event, action *act) {
+void addVstEvent(action *act) {
 
 	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
 
@@ -185,9 +185,9 @@ void addVstEvent(int event, action *act) {
 
 	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
 
-	e->midiData[0]  = (event >> 24) & 0xFF; //(char) 0x90;  /// note on/off + channel
-	e->midiData[1]  = (event >> 16) & 0xFF; //(char) 0x40;  /// note number
-	e->midiData[2]  = (event >> 8)  & 0xFF; //(char) 0x40;  /// velocity
+	e->midiData[0]  = (act->iValue >> 24) & 0xFF;  // note on/off + channel
+	e->midiData[1]  = (act->iValue >> 16) & 0xFF;  // note number
+	e->midiData[2]  = (act->iValue >> 8)  & 0xFF;  // velocity
 	e->midiData[3]  = 0;
 
 	/* noteLength = (in sample frames) of entire note, if available,
@@ -206,7 +206,7 @@ void addVstEvent(int event, action *act) {
 
 	act->event = e;
 
-	printf("[REC] add VstMidiEvent (val=%X) to action %p\n", event, (void*)act);
+	printf("[REC] add VstMidiEvent (val=%X) to action %p\n", act->iValue, (void*)act);
 }
 #endif
 

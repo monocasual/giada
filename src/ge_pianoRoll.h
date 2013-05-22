@@ -32,7 +32,9 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
+#include <FL/Fl_Box.H>
 #include "ge_actionWidget.h"
+#include "recorder.h"
 
 
 class gPianoRollContainer : public Fl_Scroll {
@@ -42,6 +44,7 @@ private:
 
 public:
 	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
+
 	int  handle(int e);
 	void draw();
 };
@@ -51,10 +54,42 @@ public:
 
 
 class gPianoRoll : public gActionWidget {
+public:
+	gPianoRoll(int x, int y, int w, class gdActionEditor *pParent);
+
+	void draw();
+	int  handle(int e);
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gPianoItem : public Fl_Box {
+private:
+	recorder::action *a;
+	class gdActionEditor *pParent;
+	bool selected;
+
+	/* MIDI note, start frame, end frame. Used only if it's a newly added
+	 * action */
+
+	int  note;
+	int  frame_a;
+	int  frame_b;
+
 
 public:
-	gPianoRoll(int x, int y, int w, class gdActionEditor *parent);
+
+	/* pianoItem ctor
+	 * if action *a == NULL, record a new action */
+
+	gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, class gdActionEditor *pParent);
+
 	void draw();
+	int  handle(int e);
+	void record();
+
 };
 
 #endif

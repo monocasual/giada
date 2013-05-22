@@ -615,7 +615,7 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 
 void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
 	if (ch->events.numEvents < MAX_VST_EVENTS) {
-		ch->events.events[0] = (VstEvent*) e;
+		ch->events.events[ch->events.numEvents] = (VstEvent*) e;
 		ch->events.numEvents++;
 		printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
 	}

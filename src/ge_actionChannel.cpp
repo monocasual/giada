@@ -589,7 +589,9 @@ void gAction::addAction() {
 	else {
 		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
 
-		/** MIDI VST TEST ----------------------------------------------- -*/
+
+#if 0
+		/* MIDI VST TEST ------------------------------------------------- */
 		uint32_t event = 0;
 		if (parent->getActionType() == ACTION_KEYPRESS) {
 			event |= (0x90 << 24);   // note on
@@ -604,7 +606,8 @@ void gAction::addAction() {
 			event |= (0x00);
 		}
 		recorder::rec(parent->chan->index, ACTION_MIDI, frame_a, event);
-		/** MIDI VST TEST ------------------------------------------------ */
+		/* MIDI VST TEST --------------------------------------------------- */
+#endif
 
 		//printf("action added, [%d]\n", frame_a);
 	}
