@@ -45,7 +45,9 @@ private:
 public:
 	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
 
+#if 0
 	int  handle(int e);
+#endif
 	void draw();
 };
 
@@ -54,6 +56,9 @@ public:
 
 
 class gPianoRoll : public gActionWidget {
+private:
+	int push_y;
+
 public:
 	gPianoRoll(int x, int y, int w, class gdActionEditor *pParent);
 

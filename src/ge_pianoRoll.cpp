@@ -68,23 +68,27 @@ void gPianoRollContainer::draw() {
 
 /* ------------------------------------------------------------------ */
 
-
+#if 0
 int gPianoRollContainer::handle(int e) {
 
 	int ret = Fl_Group::handle(e);
 
 	switch (e) {
-		case FL_PUSH:	ret = 1;
+		case FL_PUSH:	{
+			ret = 1;
+			break;
+		}
 		case FL_DRAG: {
-			//if (Fl::event_button3()) {
-			//	scroll_to(xposition(), y()-Fl::event_y());
-				ret = 1;
-			//}
+			if (Fl::event_button3())
+				scroll_to(xposition(), y()-Fl::event_y());
+			ret = 1;
+			break;
 		}
 	}
 
 	return ret;
 }
+#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -171,11 +175,10 @@ int gPianoRoll::handle(int e) {
 
 	switch (e) {
 		case FL_PUSH:	{
-			if (Fl::event_button1()) {
 
-				gPianoItem *pItem = (gPianoItem*) Fl::belowmouse();
-				if (pItem)
-					printf("item below the mouse!\n");
+			push_y = Fl::event_y() - y();
+
+			if (Fl::event_button1()) {
 
 				/* ax is driven by grid, ay by the height in px of each note */
 
@@ -193,6 +196,15 @@ int gPianoRoll::handle(int e) {
 				redraw();
 			}
 			ret = 1;
+			break;
+		}
+		case FL_DRAG: {
+			if (Fl::event_button3()) {
+				position(x(), Fl::event_y() - push_y);
+				((gPianoRollContainer*)parent())->redraw();
+			}
+			ret = 1;
+			break;
 		}
 	}
 	return ret;
