@@ -29,9 +29,13 @@
 
 #include <FL/fl_draw.H>
 #include "ge_pianoRoll.h"
+#include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
 #include "channel.h"
 #include "const.h"
+
+
+extern gdMainWindow *mainWin;
 
 
 gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)
@@ -100,6 +104,71 @@ gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *pParent)
  : gActionWidget(x, y, w, 40, pParent)
 {
 	size(w, 128 * 15);  // 128 MIDI channels * 15 px height
+	drawSurface();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gPianoRoll::drawSurface() {
+	surface = fl_create_offscreen(w(), h());
+	fl_begin_offscreen(surface);
+
+	/* warning: only w() and h() come from this widget, x and y coordinates
+	 * are absolute, since we are writing in a memory chunk */
+
+	fl_rectf(0, 0, w(), h(), COLOR_BG_MAIN);
+
+	fl_color(fl_rgb_color(54, 54, 54));
+	fl_line_style(FL_DASH, 0, NULL);
+	fl_font(FL_HELVETICA, 11);
+
+	int octave = 9;
+
+	for (int i=1; i<=128; i++) {
+
+		/* print key note label. C C# D D# E F F# G G# A A# B */
+
+		char note[6];
+		int  step = i % 12;
+
+		if      (step == 1)
+			sprintf(note, "%dG", octave);
+		else if (step == 2)
+			sprintf(note, "%dF#", octave);
+		else if (step == 3)
+			sprintf(note, "%dF", octave);
+		else if (step == 4)
+			sprintf(note, "%dE", octave);
+		else if (step == 5)
+			sprintf(note, "%dD#", octave);
+		else if (step == 6)
+			sprintf(note, "%dD", octave);
+		else if (step == 7)
+			sprintf(note, "%dC#", octave);
+		else if (step == 8)
+			sprintf(note, "%dC", octave);
+		else if (step == 9)
+			sprintf(note, "%dB", octave);
+		else if (step == 10)
+			sprintf(note, "%dA#", octave);
+		else if (step == 11)
+			sprintf(note, "%dA", octave);
+		else if (step == 0) {
+			sprintf(note, "%dG#", octave);
+			octave--;
+		}
+
+		fl_draw(note, 4, ((i-1)*15)+1, 30, 15, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+
+		/* print horizontal line */
+
+		if (i < 128)
+			fl_line(0, i*15, x()+w()-2, +i*15);
+	}
+	fl_line_style(0);
+	fl_end_offscreen();
 }
 
 
@@ -108,10 +177,9 @@ gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *pParent)
 
 void gPianoRoll::draw() {
 
-	baseDraw();
-
-	//gPianoRollContainer *grp = (gPianoRollContainer*) parent();
-
+	fl_copy_offscreen(x(), y(), w(), h(), surface, 0, 0);
+	baseDraw(false);
+# if 0
 	fl_color(fl_rgb_color(54, 54, 54));
 	fl_line_style(FL_DASH, 0, NULL);
 	fl_font(FL_HELVETICA, 11);
@@ -161,7 +229,7 @@ void gPianoRoll::draw() {
 	}
 
 	fl_line_style(0);
-
+# endif
 	draw_children();
 }
 
@@ -192,8 +260,10 @@ int gPianoRoll::handle(int e) {
 
 				/* horizontal snap (grid tool) TODO */
 
-				add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, pParent));
-				redraw();
+				if (!onItem()) {
+					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, pParent));
+					redraw();
+				}
 			}
 			ret = 1;
 			break;
@@ -210,6 +280,25 @@ int gPianoRoll::handle(int e) {
 	return ret;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
+bool gPianoRoll::onItem() {
+	int n = children();
+	for (int i=0; i<n; i++) {   // no scrollbars to skip
+		gPianoItem *p = (gPianoItem*) child(i);
+		if (Fl::event_x() >= p->x()          &&
+		    Fl::event_x() <= p->x() + p->w() &&
+		    Fl::event_y() >= p->y()          &&
+		    Fl::event_y() <= p->y() + p->h())
+		{
+			return true;
+		}
+
+	}
+	return false;
+}
 
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
@@ -230,6 +319,7 @@ gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, 
 		frame_b = frame_a + 4096;
 		printf("[gPianoItem] new gPianoItem, record mode, note %d, frame_a %d, frame_b %d\n", note, frame_a, frame_b);
 		record();
+		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
 }
 
@@ -271,7 +361,9 @@ void gPianoItem::record() {
 
 
 int gPianoItem::handle(int e) {
+
 	int ret = 0;
+
 	switch (e) {
 		case FL_ENTER: {
 			selected = true;
@@ -286,10 +378,52 @@ int gPianoItem::handle(int e) {
 			redraw();
 			break;
 		}
+		case FL_MOVE: {
+			onLeftEdge  = false;
+			onRightEdge = false;
+
+			if (Fl::event_x() >= x() && Fl::event_x() < x()+4) {
+				onLeftEdge = true;
+				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
+			}
+			else
+			if (Fl::event_x() >= x()+w()-4 && Fl::event_x() <= x()+w()) {
+				onRightEdge = true;
+				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
+			}
+			else
+				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
+
+			ret = 1;
+			break;
+		}
 		case FL_PUSH: {
-			recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI);
-			recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI);
-			Fl::delete_widget(this);
+			push_x = Fl::event_x() - x();
+
+			if (Fl::event_button3()) {
+				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
+				recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI);
+				recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI);
+				Fl::delete_widget(this);
+				mainWin->keyboard->setChannelWithActions(pParent->chan);  // update mainwin
+				((gPianoRoll*)parent())->redraw();
+			}
+			ret = 1;
+			break;
+		}
+		case FL_DRAG: {
+			if (onLeftEdge) {
+				resize(Fl::event_x(), y(), x()-Fl::event_x()+w(), h());
+			}
+			else
+			if (onRightEdge) {
+				size(Fl::event_x()-x(), h());
+			}
+			else {
+				position(Fl::event_x() - push_x, y());
+			}
+
+			redraw();
 			((gPianoRoll*)parent())->redraw();
 			ret = 1;
 			break;

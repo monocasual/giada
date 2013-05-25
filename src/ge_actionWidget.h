@@ -40,7 +40,7 @@ class gActionWidget : public Fl_Group {
 
 protected:
 	class gdActionEditor *pParent;
-	void  baseDraw();
+	void  baseDraw(bool clear=true);
 
 public:
 	gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent);

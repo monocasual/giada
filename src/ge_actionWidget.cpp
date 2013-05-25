@@ -52,7 +52,7 @@ gActionWidget::~gActionWidget() {}
 /* ------------------------------------------------------------------ */
 
 
-void gActionWidget::baseDraw() {
+void gActionWidget::baseDraw(bool clear) {
 
 	/* widen or narrow the widget */ /** WHY ?!? */
 
@@ -60,7 +60,8 @@ void gActionWidget::baseDraw() {
 
 	/* clear the screen */
 
-	fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
+	if (clear)
+		fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
 
 	/* draw the container */
 

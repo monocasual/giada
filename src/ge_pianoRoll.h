@@ -57,7 +57,22 @@ public:
 
 class gPianoRoll : public gActionWidget {
 private:
-	int push_y;
+
+	/* onItem
+	 * is curson on a gPianoItem? */
+
+	bool onItem();
+
+	/* drawSurface
+	 * generate a complex drawing in memory first and copy it to the
+	 * screen at a later point in time. Fl_Offscreen surface holds the
+	 * necessary data. */
+
+	void drawSurface();
+
+	int  push_y;
+	Fl_Offscreen surface;
+
 
 public:
 	gPianoRoll(int x, int y, int w, class gdActionEditor *pParent);
@@ -74,7 +89,9 @@ class gPianoItem : public Fl_Box {
 private:
 	recorder::action *a;
 	class gdActionEditor *pParent;
+
 	bool selected;
+	int  push_x;
 
 	/* MIDI note, start frame, end frame. Used only if it's a newly added
 	 * action */
@@ -82,6 +99,9 @@ private:
 	int  note;
 	int  frame_a;
 	int  frame_b;
+
+	bool onLeftEdge;
+	bool onRightEdge;
 
 
 public:
