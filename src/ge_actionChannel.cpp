@@ -54,7 +54,9 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent)
 
 	for (unsigned i=0; i<recorder::frames.size; i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+
 			recorder::action *ra = recorder::global.at(i).at(j);
+
 			if (ra->chan == pParent->chan->index) {
 
 				/* don't show actions > than the grey area */
@@ -62,40 +64,25 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent)
 				if (recorder::frames.at(i) > G_Mixer.totalFrames)
 					continue;
 
-				/* single_press channel? be careful: the nex action is the key_release, i.e.
-				 * the end of a composite action (press+release). In that case, skip it to
-				 * the next event. */
-
-				if (pParent->chan->mode == SINGLE_PRESS && ra->type == ACTION_KEYREL)
-				{
-					continue;
-				}
-
 				/* skip the killchan actions in a singlepress channel. They cannot be recorded
 				 * in such mode, but they can exist if you change from another mode to singlepress */
 
 				if (ra->type == ACTION_KILLCHAN &&	pParent->chan->mode == SINGLE_PRESS)
-				{
 					continue;
+
+				if (ra->type & (ACTION_KEYPRESS | ACTION_KEYREL	| ACTION_KILLCHAN))	{
+					int ax = x+((recorder::frames.at(i))/pParent->zoom);
+					gAction *a = new gAction(
+							ax,                       // x
+							y+4,                      // y
+							h()-8,                    // h
+							recorder::frames.at(i),	  // frame_a
+							i,                        // n. of recordings
+							pParent,                   // pointer to the pParent window
+							false,                    // record = false: don't record it, we are just displaying it!
+							ra->type);                // type of action
+					add(a);
 				}
-
-				/* we also skip mutes and Midi. There's a widget for that */
-				/** FIXME - change overall logic: do something only if type & ACTION_KEYPRESS etc */
-
-				if (ra->type & (ACTION_MUTEON | ACTION_MUTEOFF | ACTION_VOLUME | ACTION_MIDI))
-					continue;
-
-				int ax = x+((recorder::frames.at(i))/pParent->zoom);
-				gAction *a = new gAction(
-						ax,                       // x
-						y+4,                      // y
-						h()-8,                    // h
-						recorder::frames.at(i),	  // frame_a
-						i,                        // n. of recordings
-						pParent,                   // pointer to the pParent window
-						false,                    // record = false: don't record it, we are just displaying it!
-						ra->type);                // type of action
-				add(a);
 			}
 		}
 	}
