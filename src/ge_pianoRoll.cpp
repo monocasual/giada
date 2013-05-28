@@ -112,6 +112,9 @@ gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *pParent)
 
 
 void gPianoRoll::drawSurface() {
+
+	/** TODO - use parent->totalWidth instead of W() */
+
 	surface = fl_create_offscreen(w(), h());
 	fl_begin_offscreen(surface);
 
@@ -278,10 +281,6 @@ gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, 
 		note    = getNote(rel_y);
 		frame_a = rel_x * pParent->zoom;
 		frame_b = (rel_x + 20) * pParent->zoom;
-
-		/** TODO - resize this according to pParent->zoom and frame_a+frame_b*/
-
-		//printf("[gPianoItem] new gPianoItem, record mode, note %d, frame_a %d, frame_b %d\n", note, frame_a, frame_b);
 		record();
 		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
@@ -292,7 +291,8 @@ gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, 
 
 
 void gPianoItem::draw() {
-	fl_rectf(x(), y(), w(), h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+	int _w = w() > 4 ? w() : 4;
+	fl_rectf(x(), y(), _w, h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }
 
 
