@@ -151,7 +151,8 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 	sortedActions = false;
 
-	printf("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d, fValue=%f\n", type, frame, index, iValue, fValue);
+	printf("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d (%X), fValue=%f\n",
+		type, frame, index, iValue, iValue, fValue);
 	//print();
 }
 
@@ -222,8 +223,13 @@ void clearChan(int index) {
 		unsigned j=0;
 		while (true) {
 			if (j == global.at(i).size) break; 	  // for each action j of frame i
-			if (global.at(i).at(j)->chan == index)	{
-				free(global.at(i).at(j));
+			action *a = global.at(i).at(j);
+			if (a->chan == index)	{
+#ifdef WITH_VST
+				if (a->type == ACTION_MIDI)
+					free(a->event);
+#endif
+				free(a);
 				global.at(i).del(j);
 			}
 			else
@@ -248,8 +254,9 @@ void clearAction(int index, char act) {
 		while (true) {                                   // for each action j of frame i
 			if (j == global.at(i).size)
 				break;
-			if (global.at(i).at(j)->chan == index && (act & global.at(i).at(j)->type) == global.at(i).at(j)->type)	{ // bitmask
-				free(global.at(i).at(j));
+			action *a = global.at(i).at(j);
+			if (a->chan == index && (act & a->type) == a->type)	{ // bitmask
+				free(a);
 				global.at(i).del(j);
 			}
 			else
@@ -267,10 +274,9 @@ void clearAction(int index, char act) {
 /* ------------------------------------------------------------------ */
 
 
-void deleteAction(int chan, int frame, char type) {
+void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue) {
 
 	/* find the frame 'frame' */
-	/** TO-DO: free VstEvent memory */
 
 	bool found = false;
 	for (unsigned i=0; i<frames.size && !found; i++) {
@@ -279,22 +285,31 @@ void deleteAction(int chan, int frame, char type) {
 			/* find the action in frame i */
 
 			for (unsigned j=0; j<global.at(i).size; j++) {
-				//action *a = global.at(i).at(j);
-				//if (a->chan == chan && (type & a->type) == a->type)
-				if (global.at(i).at(j)->chan == chan && global.at(i).at(j)->type == type)
-				{
+				action *a = global.at(i).at(j);
+
+				/* action comparison logic */
+
+				bool doit = (a->chan == chan && a->type == (type & a->type));
+				if (checkValues)
+					doit &= (a->iValue == iValue && a->fValue == fValue);
+
+				if (doit) {
 					int lockStatus = 0;
 					while (lockStatus == 0) {
 						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
 						if (lockStatus == 0) {
-							free(global.at(i).at(j));
+#ifdef WITH_VST
+							if (type == ACTION_MIDI)
+								free(a->event);
+#endif
+							free(a);
 							global.at(i).del(j);
 							pthread_mutex_unlock(&G_Mixer.mutex_recs);
 							found = true;
 							break;
 						}
 						else
-							puts("[REC] waiting for mutex...");
+							puts("[REC] delete action: waiting for mutex...");
 					}
 				}
 			}
@@ -303,8 +318,12 @@ void deleteAction(int chan, int frame, char type) {
 	if (found) {
 		optimize();
 		chanHasEvents(chan);
-		printf("[REC] deleted action type=%d at frame %d from chan %d\n", type, frame, chan);
+		printf("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+			type, frame, chan, iValue, iValue, fValue);
 	}
+	else
+		printf("[REC] unable to find action! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+			type, frame, chan, iValue, iValue, fValue);
 }
 
 
@@ -321,7 +340,7 @@ void deleteActions(int chan, int frame_a, int frame_b, char type) {
 			dels.add(frames.at(i));
 
 	for (unsigned i=0; i<dels.size; i++)
-		deleteAction(chan, dels.at(i), type);
+		deleteAction(chan, dels.at(i), type, false); // false == don't check values
 }
 
 
@@ -329,13 +348,15 @@ void deleteActions(int chan, int frame_a, int frame_b, char type) {
 
 
 void clearAll() {
-
-	/** TO-DO: free VstEvent memory */
-
 	while (global.size > 0) {
 		for (unsigned i=0; i<global.size; i++) {
-			for (unsigned k=0; k<global.at(i).size; k++)
+			for (unsigned k=0; k<global.at(i).size; k++) {
+#ifdef WITH_VST
+				if (global.at(i).at(k)->type == ACTION_MIDI)
+					free(global.at(i).at(k)->event);
+#endif
 				free(global.at(i).at(k));									// free action
+			}
 			global.at(i).clear();												// free action container
 			global.del(i);
 		}
@@ -722,7 +743,7 @@ void stopOverdub(int frame) {
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
 		printf("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type);
+		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false); // false == don't check values
 	}
 
 	channel *ch = G_Mixer.getChannelByIndex(cmp.a2.chan);
@@ -745,7 +766,7 @@ void stopOverdub(int frame) {
 		if (res == 1) {
 			if (act->type == cmp.a2.type) {
 				printf("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
-				deleteAction(act->chan, act->frame, act->type);
+				deleteAction(act->chan, act->frame, act->type, false); // false == don't check values
 			}
 		}
 	}

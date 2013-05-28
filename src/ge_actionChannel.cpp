@@ -593,11 +593,11 @@ void gAction::delAction() {
 	 * actions. */
 
 	if (parent->chan->mode == SINGLE_PRESS) {
-		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS);
-		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL);
+		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS, false);
+		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL, false);
 	}
 	else
-		recorder::deleteAction(parent->chan->index, frame_a, type);
+		recorder::deleteAction(parent->chan->index, frame_a, type, false);
 
 	/* restore the initial cursor shape, in case you delete an action and
 	 * the double arrow (for resizing) is displayed */

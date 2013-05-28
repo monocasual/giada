@@ -220,7 +220,7 @@ int gEnvelopeChannel::handle(int e) {
 						points.clear();
 					}
 					else {
-						recorder::deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type);
+						recorder::deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type, false);
 						recorder::sortActions();
 						points.del(selectedPoint);
 					}
@@ -257,7 +257,7 @@ int gEnvelopeChannel::handle(int e) {
 
 					/*  delete previous point and record a new one */
 
-					recorder::deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type);
+					recorder::deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type, false);
 
 					if (range == RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);

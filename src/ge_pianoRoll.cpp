@@ -176,60 +176,8 @@ void gPianoRoll::drawSurface() {
 
 
 void gPianoRoll::draw() {
-
 	fl_copy_offscreen(x(), y(), w(), h(), surface, 0, 0);
 	baseDraw(false);
-# if 0
-	fl_color(fl_rgb_color(54, 54, 54));
-	fl_line_style(FL_DASH, 0, NULL);
-	fl_font(FL_HELVETICA, 11);
-
-	int octave = 9;
-
-	for (int i=1; i<=128; i++) {
-
-		/* print key note label. C C# D D# E F F# G G# A A# B */
-
-		char note[6];
-		int  step = i % 12;
-
-		if      (step == 1)
-			sprintf(note, "%dG", octave);
-		else if (step == 2)
-			sprintf(note, "%dF#", octave);
-		else if (step == 3)
-			sprintf(note, "%dF", octave);
-		else if (step == 4)
-			sprintf(note, "%dE", octave);
-		else if (step == 5)
-			sprintf(note, "%dD#", octave);
-		else if (step == 6)
-			sprintf(note, "%dD", octave);
-		else if (step == 7)
-			sprintf(note, "%dC#", octave);
-		else if (step == 8)
-			sprintf(note, "%dC", octave);
-		else if (step == 9)
-			sprintf(note, "%dB", octave);
-		else if (step == 10)
-			sprintf(note, "%dA#", octave);
-		else if (step == 11)
-			sprintf(note, "%dA", octave);
-		else if (step == 0) {
-			sprintf(note, "%dG#", octave);
-			octave--;
-		}
-
-		fl_draw(note, x()+4, y()+((i-1)*15)+1, 30, 15, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
-
-		/* print horizontal line */
-
-		if (i < 128)
-			fl_line(x()+1, y()+i*15, x()+w()-2, y()+i*15);
-	}
-
-	fl_line_style(0);
-# endif
 	draw_children();
 }
 
@@ -268,10 +216,20 @@ int gPianoRoll::handle(int e) {
 			ret = 1;
 			break;
 		}
-		case FL_DRAG: {
+		case FL_DRAG:	{
+
 			if (Fl::event_button3()) {
+
+				gPianoRollContainer *prc = (gPianoRollContainer*) parent();
 				position(x(), Fl::event_y() - push_y);
-				((gPianoRollContainer*)parent())->redraw();
+
+				if (y() > prc->y())
+					position(x(), prc->y());
+				else
+				if (y() < prc->y()+prc->h()-h())
+					position(x(), prc->y()+prc->h()-h());
+
+				prc->redraw();
 			}
 			ret = 1;
 			break;
@@ -309,15 +267,21 @@ gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, 
 	: Fl_Box  (x, y, 20, 10),
 	  a       (a),
 		pParent (pParent),
-		selected(false)
+		selected(false),
+		event_a (0x00),
+		event_b (0x00),
+		changed (false)
 {
 	if (a)
 		puts("[gPianoItem] new gPianoItem, display mode");
 	else {
-		note    = 127 - (rel_y / 15);
+		note    = getNote(rel_y);
 		frame_a = rel_x * pParent->zoom;
-		frame_b = frame_a + 4096;
-		printf("[gPianoItem] new gPianoItem, record mode, note %d, frame_a %d, frame_b %d\n", note, frame_a, frame_b);
+		frame_b = (rel_x + 20) * pParent->zoom;
+
+		/** TODO - resize this according to pParent->zoom and frame_a+frame_b*/
+
+		//printf("[gPianoItem] new gPianoItem, record mode, note %d, frame_a %d, frame_b %d\n", note, frame_a, frame_b);
 		record();
 		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
@@ -339,21 +303,28 @@ void gPianoItem::record() {
 
 	/* note on */
 
-	uint32_t event = 0;
-	event |= (0x90 << 24);   // note on
-	event |= (note << 16);   // note value
-	event |= (0x3F <<  8);   // velocity
-	event |= (0x00);
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event);
+	event_a |= (0x90 << 24);   // note on
+	event_a |= (note << 16);   // note value
+	event_a |= (0x3F <<  8);   // velocity
+	event_a |= (0x00);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
 
 	/* note off */
 
-	event = 0;
-	event |= (0x80 << 24);   // note off
-	event |= (note << 16);   // note value
-	event |= (0x3F <<  8);   // velocity
-	event |= (0x00);
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event);
+	event_b |= (0x80 << 24);   // note off
+	event_b |= (note << 16);   // note value
+	event_b |= (0x3F <<  8);   // velocity
+	event_b |= (0x00);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gPianoItem::remove() {
+	recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
+	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
 }
 
 
@@ -365,12 +336,14 @@ int gPianoItem::handle(int e) {
 	int ret = 0;
 
 	switch (e) {
+
 		case FL_ENTER: {
 			selected = true;
 			ret = 1;
 			redraw();
 			break;
 		}
+
 		case FL_LEAVE: {
 			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
 			selected = false;
@@ -378,6 +351,7 @@ int gPianoItem::handle(int e) {
 			redraw();
 			break;
 		}
+
 		case FL_MOVE: {
 			onLeftEdge  = false;
 			onRightEdge = false;
@@ -397,13 +371,14 @@ int gPianoItem::handle(int e) {
 			ret = 1;
 			break;
 		}
+
 		case FL_PUSH: {
+
 			push_x = Fl::event_x() - x();
 
 			if (Fl::event_button3()) {
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-				recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI);
-				recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI);
+				remove();
 				Fl::delete_widget(this);
 				mainWin->keyboard->setChannelWithActions(pParent->chan);  // update mainwin
 				((gPianoRoll*)parent())->redraw();
@@ -411,20 +386,69 @@ int gPianoItem::handle(int e) {
 			ret = 1;
 			break;
 		}
+
 		case FL_DRAG: {
+
+			changed = true;
+			gPianoRoll *pr = (gPianoRoll*) parent();
+			int nx, ny, nw;
+
 			if (onLeftEdge) {
-				resize(Fl::event_x(), y(), x()-Fl::event_x()+w(), h());
+				nx = Fl::event_x();
+				ny = y();
+				nw = x()-Fl::event_x()+w();
+				if (nx < pr->x()) {
+					nx = pr->x();
+					nw = w()+x()-pr->x();
+				}
+				else
+				if (nx > x()+w()-8) {
+					nx = x()+w()-8;
+					nw = 8;
+				}
+				resize(nx, ny, nw, h());
 			}
 			else
 			if (onRightEdge) {
-				size(Fl::event_x()-x(), h());
+				nw = Fl::event_x()-x();
+				if (Fl::event_x() < x()+8)
+					nw = 8;
+				else
+				if (Fl::event_x() > pParent->coverX)
+					nw = pParent->coverX-x();
+				size(nw, h());
 			}
 			else {
-				position(Fl::event_x() - push_x, y());
+				nx = Fl::event_x() - push_x;
+				if (nx < pr->x())
+					nx = pr->x();
+				else
+				if (nx+w() > pParent->coverX)
+					nx = pParent->coverX-w();
+				position(nx, y());
 			}
+
+			/* update screen */
 
 			redraw();
 			((gPianoRoll*)parent())->redraw();
+			ret = 1;
+			break;
+		}
+
+		case FL_RELEASE: {
+
+			/* delete & record the action */
+
+			if (changed) {
+				remove();
+				note    = getNote(getRelY());
+				frame_a = getRelX() * pParent->zoom;
+				frame_b = (getRelX()+w()) * pParent->zoom;
+				record();
+
+				changed = false;
+			}
 			ret = 1;
 			break;
 		}

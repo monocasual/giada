@@ -62,6 +62,8 @@ namespace recorder {
  * struct containing fields to describe an atomic action. Note from
  * VST sdk: parameter values, like all VST parameters, are declared as
  * floats with an inclusive range of 0.0 to 1.0 (fValue). */
+/** TODO - action should be a class with destructor which frees event
+ * pointer */
 
 struct action {
 	int      chan;    // channel index, struct channel->index
@@ -135,7 +137,7 @@ void clearAction(int chan, char action);
 /* deleteAction
  * delete ONE action. Useful in the action editor. 'type' can be a mask. */
 
-void deleteAction(int chan, int frame, char type);
+void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue=0, float fValue=0.0);
 
 /* deleteActions
  * delete A RANGE of actions from frame_a to frame_b in channel 'chan'.

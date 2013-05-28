@@ -279,8 +279,8 @@ int gMuteChannel::handle(int e) {
 					//printf("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					recorder::deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type);
-					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type);
+					recorder::deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
+					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
 					recorder::sortActions();
 
 					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
@@ -306,7 +306,8 @@ int gMuteChannel::handle(int e) {
 					recorder::deleteAction(
 							pParent->chan->index,
 							points.at(draggedPoint).frame,
-							points.at(draggedPoint).type);
+							points.at(draggedPoint).type,
+							false);  // don't check values
 
 					recorder::rec(
 							pParent->chan->index,
