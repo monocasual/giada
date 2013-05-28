@@ -89,8 +89,10 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	mute->type(FL_TOGGLE_BUTTON);
 	mute->callback(cb_mute, (void*)this);
 
-	solo->type(FL_TOGGLE_BUTTON);
-	solo->callback(cb_solo, (void*)this);
+	if (solo != 0x0) {
+		solo->type(FL_TOGGLE_BUTTON);
+		solo->callback(cb_solo, (void*)this);
+	}
 
 	sampleButton->callback(cb_openChanMenu, (void*)this);
 	vol->callback(cb_change_vol, (void*)this);
