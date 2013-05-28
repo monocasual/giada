@@ -66,7 +66,8 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 #else
 	sampleButton = new gClick  (status->x()+status->w()+4, y(), 261, 20, "-- no sample --");
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
-	vol          = new gDial   (mute->x()+mute->w()+4, y(), 20, 20);
+	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 	modeBox      = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20, ch);
 	readActions  = NULL; // no rec button at start
