@@ -67,7 +67,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent)
 				/* skip the killchan actions in a singlepress channel. They cannot be recorded
 				 * in such mode, but they can exist if you change from another mode to singlepress */
 
-				if (ra->type == ACTION_KILLCHAN &&	pParent->chan->mode == SINGLE_PRESS)
+				if (ra->type == ACTION_KILLCHAN && pParent->chan->mode == SINGLE_PRESS)
 					continue;
 
 				if (ra->type & (ACTION_KEYPRESS | ACTION_KEYREL	| ACTION_KILLCHAN))	{

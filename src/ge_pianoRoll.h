@@ -44,11 +44,8 @@ private:
 
 public:
 	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
-
-#if 0
-	int  handle(int e);
-#endif
 	void draw();
+	void updatePoints();
 };
 
 
@@ -79,6 +76,8 @@ public:
 
 	void draw();
 	int  handle(int e);
+
+	void updatePoints();
 };
 
 
@@ -101,8 +100,14 @@ private:
 
 	inline int getNote(int rel_y) { return 127 - (rel_y / 15); };
 
+	/* getY
+	 * from a note, return the y position on piano roll */
+
+	inline int getY(int note) { return (127 * 15) - (note * 15); };
+
 
 	recorder::action *a;
+	recorder::action *b;
 	class gdActionEditor *pParent;
 
 	bool selected;
@@ -136,12 +141,15 @@ public:
 	/* pianoItem ctor
 	 * if action *a == NULL, record a new action */
 
-	gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, class gdActionEditor *pParent);
+	gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, recorder::action *b, class gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);
 	void record();
 	void remove();
+
+	inline int getFrame_a() { return frame_a; }
+	inline int getFrame_b() { return frame_b; }
 
 };
 

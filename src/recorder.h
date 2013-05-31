@@ -93,7 +93,7 @@ extern gVector< gVector<action*> > global;	// container of containers of actions
 extern gVector<action*>  actions;				    // container of actions
 
 extern bool active;
-extern bool sortedActions;                  // actions are sorted via sortActions()?
+extern bool sortedActions;                  // are actions sorted via sortActions()?
 
 /* init
  * everything starts from here. */
@@ -156,7 +156,7 @@ void clearAll();
 void optimize();
 
 /* sortActions
- * sorts actions, asc mode. */
+ * sorts actions by frame, asc mode. */
 
 void sortActions();
 
@@ -195,10 +195,10 @@ int getEndActionFrame(int chan, char action, int frame);
 
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
- * from 'frame'. Action can be a bitmask. If inclusive, search from
- * [frame, else (frame. */
+ * from 'frame'. Action can be a bitmask. If note != -1 search for
+ * next action with note == note: useful for MIDI key_release. */
 
-int getNextAction(int chan, char action, int frame, struct action **out);
+int getNextAction(int chan, char action, int frame, struct action **out, int note=-1);
 
 /* getAction
  * return a pointer to action in chan 'chan' of type 'action' at frame

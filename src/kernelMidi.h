@@ -36,8 +36,8 @@
 
 namespace kernelMidi {
 
-inline int getNoteValue(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
 inline int getNoteOnOff(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
+inline int getNoteValue(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
 inline int getVelocity (uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
 }

@@ -173,6 +173,8 @@ void gdActionEditor::__cb_zoomIn() {
 	ac->updateActions();
 	mc->updatePoints();
 	vc->updatePoints();
+	pr->updatePoints();
+
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -196,8 +198,10 @@ void gdActionEditor::__cb_zoomOut() {
 	pr->size(totalWidth, pr->h());
 
 	ac->updateActions();
-	mc->updatePoints();
-	vc->updatePoints();
+	mc->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
+	vc->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
+	pr->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
+
 	gridTool->calc();
 	scroller->redraw();
 }

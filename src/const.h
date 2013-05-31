@@ -144,7 +144,7 @@
 
 
 /* -- actions ------------------------------------------------------- */
-#define ACTION_MIDI       0x00 // 0000 0000
+#define ACTION_MIDI       0x40 // 0000 0000 WHY NOT 0x40?
 #define ACTION_KEYPRESS		0x01 // 0000 0001
 #define ACTION_KEYREL			0x02 // 0000 0010
 #define ACTION_KILLCHAN		0x04 // 0000 0100

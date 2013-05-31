@@ -33,7 +33,7 @@ dataStorage.h			 dataStorage.cpp		  conf.h					     conf.cpp \
 gd_actionEditor.h	 gd_actionEditor.cpp  ge_muteChannel.h     ge_muteChannel.cpp \
 ge_actionChannel.h ge_actionChannel.cpp gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
 ge_actionWidget.h  ge_actionWidget.cpp  ge_envelopeChannel.h ge_envelopeChannel.cpp \
-ge_pianoRoll.h		 ge_pianoRoll.cpp
+ge_pianoRoll.h		 ge_pianoRoll.cpp     kernelMidi.h         kernelMidi.cpp
 
 
 # Check for environment: these vars are defined via AM_CONDITIONAL

@@ -35,6 +35,7 @@
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "kernelAudio.h"
+#include "kernelMidi.h"
 #include "utils.h"
 #include "patch.h"
 #include "conf.h"
@@ -206,8 +207,6 @@ void addVstEvent(action *act) {
 	e->noteOffVelocity = 0;
 
 	act->event = e;
-
-	printf("[REC] add VstMidiEvent (val=%X) to action %p\n", act->iValue, (void*)act);
 }
 #endif
 
@@ -640,7 +639,7 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out) {
+int getNextAction(int chan, char type, int frame, action **out, int note) {
 
 	sortActions();  // mandatory
 
@@ -654,8 +653,10 @@ int getNextAction(int chan, char type, int frame, action **out) {
 		for (unsigned j=0; j<global.at(i).size; j++) {
 			action *a = global.at(i).at(j);
 			if (a->chan == chan && (type & a->type) == a->type) {
-				*out = global.at(i).at(j);
-				return 1;
+				if (note == -1 || (note != -1 && kernelMidi::getNoteValue(a->iValue) == note)) {
+					*out = global.at(i).at(j);
+					return 1;
+				}
 			}
 		}
 

@@ -33,18 +33,28 @@
 #include "gd_actionEditor.h"
 #include "channel.h"
 #include "const.h"
+#include "kernelMidi.h"
 
 
 extern gdMainWindow *mainWin;
+extern Mixer         G_Mixer;
 
 
 gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)
- : Fl_Scroll(x, y, 200, 80), pParent(pParent)
+ : Fl_Scroll(x, y, 200, 211), pParent(pParent)
 {
 	size(pParent->totalWidth, h());
 	type(0); // no scrollbars
 
 	pianoRoll = new gPianoRoll(x, y, pParent->totalWidth, pParent);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gPianoRollContainer::updatePoints() {
+	pianoRoll->updatePoints();
 }
 
 
@@ -100,11 +110,68 @@ int gPianoRollContainer::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-gPianoRoll::gPianoRoll(int x, int y, int w, class gdActionEditor *pParent)
- : gActionWidget(x, y, w, 40, pParent)
+gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
+ : gActionWidget(X, Y, W, 40, pParent)
 {
-	size(w, 128 * 15);  // 128 MIDI channels * 15 px height
+	size(W, 128 * 15);  // 128 MIDI channels * 15 px height
 	drawSurface();
+
+	/* add actions when the window is opened. Position is zoom-based. MIDI
+	 * actions come always in pair: start + end. */
+
+	recorder::sortActions();
+
+	recorder::action *a2   = NULL;
+	recorder::action *prev = NULL;
+
+	for (unsigned i=0; i<recorder::frames.size; i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+
+			/* don't show actions > than the grey area */
+			/** FIXME - can we move this in the outer cycle? */
+
+			if (recorder::frames.at(i) > G_Mixer.totalFrames)
+				continue;
+
+			recorder::action *a1 = recorder::global.at(i).at(j);
+
+			if (a1->chan != pParent->chan->index)
+				continue;
+
+			/*
+			if (a->type == ACTION_MIDI) {
+
+				if (!a1) a1 = a;
+				else     a2 = a;
+
+				if (a1 && a2) {
+					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d\n",
+							a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue));
+					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
+					a1 = NULL;
+					a2 = NULL;
+				}
+			}
+			*/
+
+			if (a1->type == ACTION_MIDI) {
+				if (a1 == prev) {
+					printf("[gPianoRoll] ACTION_MIDI found, but skipping - was previous\n");
+					continue;
+				}
+				recorder::getNextAction(a1->chan, ACTION_MIDI, a1->frame,	&a2, kernelMidi::getNoteValue(a1->iValue));
+				if (a2) {
+					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d\n",
+						a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue));
+					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
+					prev = a2;
+				}
+
+			}
+		}
+	}
+
+	end();
 }
 
 
@@ -212,7 +279,7 @@ int gPianoRoll::handle(int e) {
 				/* horizontal snap (grid tool) TODO */
 
 				if (!onItem()) {
-					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, pParent));
+					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
 					redraw();
 				}
 			}
@@ -245,6 +312,35 @@ int gPianoRoll::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
+void gPianoRoll::updatePoints() {
+
+	/* when zooming, don't delete and re-add actions, just MOVE them. This
+	 * function shifts the action by a zoom factor. Those singlepress are
+	 * stretched, as well */
+
+	gPianoItem *i;
+	for (int k=0; k<children(); k++) {
+		i = (gPianoItem*) child(k);
+
+		printf("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+		/*
+		int newX = x() + (i->getFrame_a() / pParent->zoom);
+		int newW = ((i->getFrame_b() - i->getFrame_a()) / pParent->zoom);
+		if (newW < 8)
+			newW = 8;
+		i->resize(newX, i->y(), newW, i->h());
+		*/
+		i->resize(0, i->y(), 200, i->h());
+		i->redraw();
+
+		printf("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 bool gPianoRoll::onItem() {
 	int n = children();
 	for (int i=0; i<n; i++) {   // no scrollbars to skip
@@ -266,22 +362,42 @@ bool gPianoRoll::onItem() {
 /* ------------------------------------------------------------------ */
 
 
-gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, gdActionEditor *pParent)
-	: Fl_Box  (x, y, 20, 10),
+gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, recorder::action *b, gdActionEditor *pParent)
+	: Fl_Box  (X, Y, 20, 10),
 	  a       (a),
+	  b       (b),
 		pParent (pParent),
 		selected(false),
 		event_a (0x00),
 		event_b (0x00),
 		changed (false)
 {
-	if (a)
-		puts("[gPianoItem] new gPianoItem, display mode");
+
+	/* a is a pointer: action exists, needs to be displayed */
+
+	if (a) {
+		note    = kernelMidi::getNoteValue(a->iValue);
+		frame_a = a->frame;
+		frame_b = b->frame;
+		event_a = a->iValue;
+		event_b = b->iValue;
+		int newX = rel_x + (frame_a / pParent->zoom);
+		int newY = rel_y + getY(note);
+		int newW = (frame_b - frame_a) / pParent->zoom;
+		resize(newX, newY, newW, h());
+		printf("[gPianoItem] display mode, note=%d, x=%d y=%d, w=%d\n", note, x(), y(), w());
+	}
+
+	/* a is null: action needs to be recorded from scratch */
+
 	else {
 		note    = getNote(rel_y);
 		frame_a = rel_x * pParent->zoom;
 		frame_b = (rel_x + 20) * pParent->zoom;
 		record();
+
+		/// TODO - size(newW, h())
+
 		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
 }
@@ -292,6 +408,7 @@ gPianoItem::gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, 
 
 void gPianoItem::draw() {
 	int _w = w() > 4 ? w() : 4;
+	//printf("[gPianoItem] draw me (%p) at x=%d\n", (void*)this, x());
 	fl_rectf(x(), y(), _w, h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }
 
