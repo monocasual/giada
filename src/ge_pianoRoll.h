@@ -76,7 +76,7 @@ public:
 
 	void draw();
 	int  handle(int e);
-
+	//void resize(int x, int y, int w, int h);
 	void updatePoints();
 };
 

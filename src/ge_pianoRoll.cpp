@@ -113,6 +113,7 @@ int gPianoRollContainer::handle(int e) {
 gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : gActionWidget(X, Y, W, 40, pParent)
 {
+	resizable(NULL);             // don't resize children (i.e. pianoItem)
 	size(W, 128 * 15);           // 128 MIDI channels * 15 px height
 	position(x(), y()-(h()/2));  // center
 	drawSurface();
@@ -145,7 +146,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				 * checked it */
 
 				if (a1 == prev) {
-					printf("[gPianoRoll] ACTION_MIDI found, but skipping - was previous\n");
+					//printf("[gPianoRoll] ACTION_MIDI found, but skipping - was previous\n");
 					continue;
 				}
 
@@ -157,7 +158,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				int a1_velo = kernelMidi::getVelocity (a1->iValue);
 
 				if (a1_type == 0x80) {
-					printf("[gPianoRoll] ACTION_MIDI found, but skipping - was note off\n");
+					//printf("[gPianoRoll] ACTION_MIDI found, but skipping - was note off\n");
 					continue;
 				}
 
@@ -175,9 +176,9 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				/* next action note off found: add a new gPianoItem to piano roll */
 
 				if (a2) {
-					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
-						a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
-						kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
+					//printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
+					//	a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
+					//	kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
 					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
 					prev = a2;
 					a2 = NULL;
@@ -191,6 +192,14 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 	end();
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+//void gPianoRoll::resize(int X, int Y, int W, int H) {
+//	puts("resize");
+//}
 
 
 /* ------------------------------------------------------------------ */
@@ -342,18 +351,16 @@ void gPianoRoll::updatePoints() {
 	for (int k=0; k<children(); k++) {
 		i = (gPianoItem*) child(k);
 
-		printf("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
-		/*
+		//printf("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+
 		int newX = x() + (i->getFrame_a() / pParent->zoom);
 		int newW = ((i->getFrame_b() - i->getFrame_a()) / pParent->zoom);
 		if (newW < 8)
 			newW = 8;
 		i->resize(newX, i->y(), newW, i->h());
-		*/
-		i->resize(0, i->y(), 200, i->h());
 		i->redraw();
 
-		printf("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+		//printf("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 	}
 }
 
