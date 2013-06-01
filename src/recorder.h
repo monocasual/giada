@@ -195,10 +195,10 @@ int getEndActionFrame(int chan, char action, int frame);
 
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
- * from 'frame'. Action can be a bitmask. If note != -1 search for
- * next action with note == note: useful for MIDI key_release. */
+ * from 'frame'. Action can be a bitmask. If iValue != -1 search for
+ * next action with iValue == iValue: useful for MIDI key_release. */
 
-int getNextAction(int chan, char action, int frame, struct action **out, int note=-1);
+int getNextAction(int chan, char action, int frame, struct action **out, uint32_t iValue=0);
 
 /* getAction
  * return a pointer to action in chan 'chan' of type 'action' at frame

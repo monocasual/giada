@@ -639,7 +639,7 @@ int getEndActionFrame(int chan, char type, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out, int note) {
+int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue) {
 
 	sortActions();  // mandatory
 
@@ -653,7 +653,7 @@ int getNextAction(int chan, char type, int frame, action **out, int note) {
 		for (unsigned j=0; j<global.at(i).size; j++) {
 			action *a = global.at(i).at(j);
 			if (a->chan == chan && (type & a->type) == a->type) {
-				if (note == -1 || (note != -1 && kernelMidi::getNoteValue(a->iValue) == note)) {
+				if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
 					*out = global.at(i).at(j);
 					return 1;
 				}

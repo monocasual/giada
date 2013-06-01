@@ -113,7 +113,8 @@ int gPianoRollContainer::handle(int e) {
 gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : gActionWidget(X, Y, W, 40, pParent)
 {
-	size(W, 128 * 15);  // 128 MIDI channels * 15 px height
+	size(W, 128 * 15);           // 128 MIDI channels * 15 px height
+	position(x(), y()-(h()/2));  // center
 	drawSurface();
 
 	/* add actions when the window is opened. Position is zoom-based. MIDI
@@ -128,7 +129,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
 
 			/* don't show actions > than the grey area */
-			/** FIXME - can we move this in the outer cycle? */
+			/** FIXME - can we move this to the outer cycle? */
 
 			if (recorder::frames.at(i) > G_Mixer.totalFrames)
 				continue;
@@ -138,34 +139,51 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 			if (a1->chan != pParent->chan->index)
 				continue;
 
-			/*
-			if (a->type == ACTION_MIDI) {
-
-				if (!a1) a1 = a;
-				else     a2 = a;
-
-				if (a1 && a2) {
-					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d\n",
-							a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue));
-					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
-					a1 = NULL;
-					a2 = NULL;
-				}
-			}
-			*/
-
 			if (a1->type == ACTION_MIDI) {
+
+				/* if this action is == to previous one: skip it, we have already
+				 * checked it */
+
 				if (a1 == prev) {
 					printf("[gPianoRoll] ACTION_MIDI found, but skipping - was previous\n");
 					continue;
 				}
-				recorder::getNextAction(a1->chan, ACTION_MIDI, a1->frame,	&a2, kernelMidi::getNoteValue(a1->iValue));
+
+				/* extract MIDI infos from a1: if is note off skip it, we are looking
+				 * for note on only */
+
+				int a1_type = kernelMidi::getNoteOnOff(a1->iValue);
+				int a1_note = kernelMidi::getNoteValue(a1->iValue);
+				int a1_velo = kernelMidi::getVelocity (a1->iValue);
+
+				if (a1_type == 0x80) {
+					printf("[gPianoRoll] ACTION_MIDI found, but skipping - was note off\n");
+					continue;
+				}
+
+				/* search for the next action. Must have: same channel, ACTION_MIDI, greater
+				 * than a1->frame and with MIDI properties of note_off (0x80), same note
+				 * of a1, same velocity of a1 */
+
+				recorder::getNextAction(
+						a1->chan,
+						ACTION_MIDI,
+						a1->frame,
+						&a2,
+						kernelMidi::getIValue(0x80, a1_note, a1_velo));
+
+				/* next action note off found: add a new gPianoItem to piano roll */
+
 				if (a2) {
-					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d\n",
-						a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue));
+					printf("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
+						a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
+						kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
 					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
 					prev = a2;
+					a2 = NULL;
 				}
+				else
+					printf("[gPianoRoll] recorder didn't find action!\n");
 
 			}
 		}
@@ -237,6 +255,7 @@ void gPianoRoll::drawSurface() {
 		if (i < 128)
 			fl_line(0, i*15, x()+w()-2, +i*15);
 	}
+
 	fl_line_style(0);
 	fl_end_offscreen();
 }
@@ -248,6 +267,7 @@ void gPianoRoll::drawSurface() {
 void gPianoRoll::draw() {
 	fl_copy_offscreen(x(), y(), w(), h(), surface, 0, 0);
 	baseDraw(false);
+	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 	draw_children();
 }
 
@@ -395,9 +415,7 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 		frame_a = rel_x * pParent->zoom;
 		frame_b = (rel_x + 20) * pParent->zoom;
 		record();
-
-		/// TODO - size(newW, h())
-
+		size((frame_b - frame_a) / pParent->zoom, h());
 		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
 }

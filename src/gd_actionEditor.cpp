@@ -90,18 +90,19 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
 
-	ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+	pr = new gPianoRollContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
+	ac = new gActionChannel     (scroller->x(), pr->y()+pr->h()+8, this);
 	mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
 	vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
-	pr = new gPianoRollContainer(scroller->x(), vc->y()+vc->h()+8, this);
-	scroller->add(ac);
-	scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
-	scroller->add(mc);
-	scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
-	scroller->add(vc);
-	scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
+
 	scroller->add(pr);
 	scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
+	scroller->add(ac);
+	//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
+	scroller->add(mc);
+	//scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
+	scroller->add(vc);
+	//scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
 
 	end();
 
