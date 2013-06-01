@@ -412,7 +412,6 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 		int newY = rel_y + getY(note);
 		int newW = (frame_b - frame_a) / pParent->zoom;
 		resize(newX, newY, newW, h());
-		printf("[gPianoItem] display mode, note=%d, x=%d y=%d, w=%d\n", note, x(), y(), w());
 	}
 
 	/* a is null: action needs to be recorded from scratch */

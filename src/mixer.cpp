@@ -585,7 +585,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								}
 							case ACTION_MIDI:
 #ifdef WITH_VST
-								printf("ACTION_MIDI found @ %d\n", actualFrame);
+								//printf("ACTION_MIDI found @ %d\n", actualFrame);
 								G_PluginHost.addVstMidiEvent(a->event, ch);
 #endif
 								break;

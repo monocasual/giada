@@ -617,7 +617,7 @@ void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
 	if (ch->events.numEvents < MAX_VST_EVENTS) {
 		ch->events.events[ch->events.numEvents] = (VstEvent*) e;
 		ch->events.numEvents++;
-		printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
+		//printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
 	}
 	else
 		puts("[pluginHost] channel VstEvents > MAX_VST_EVENTS, nothing to do");
