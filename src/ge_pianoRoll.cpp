@@ -291,6 +291,14 @@ int gPianoRoll::handle(int e) {
 	switch (e) {
 		case FL_PUSH:	{
 
+			/* avoid click on grey area */
+
+			if (Fl::event_x() >= pParent->coverX) {
+				ret = 1;
+				break;
+			}
+
+
 			push_y = Fl::event_y() - y();
 
 			if (Fl::event_button1()) {
@@ -566,6 +574,14 @@ int gPianoItem::handle(int e) {
 				else
 				if (nx+w() > pParent->coverX)
 					nx = pParent->coverX-w();
+
+				/* snapping */
+
+				if (pParent->gridTool->isOn()) {
+					nx = pParent->gridTool->getSnapPoint(nx) + pr->x() - 1;
+
+				}
+
 				position(nx, y());
 			}
 
