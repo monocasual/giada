@@ -28,6 +28,7 @@
 
 
 #include "mixerHandler.h"
+#include "kernelMidi.h"
 #include "mixer.h"
 #include "const.h"
 #include "utils.h"
@@ -167,6 +168,7 @@ void mh_muteChan(channel *ch, bool internal) {
 				ch->mute_i = true;
 	}
 	else {
+		kernelMidi::send(0xB0, 0x07, 0x00, ch);
 		if (ch->mute_i)        // internal mute? don't waste time with fadeout,
 			ch->mute = true;     // just mute it globally
 		else
@@ -192,6 +194,7 @@ void mh_unmuteChan(channel *ch, bool internal) {
 				ch->mute_i = false;
 	}
 	else {
+		kernelMidi::send(0xB0, 0x07, 0x64, ch);
 		if (ch->mute_i)
 			ch->mute = false;
 		else
@@ -324,7 +327,8 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
 
-		channel *ch = glue_addChannel(G_Patch.getSide(i));
+		channel *ch = glue_addChannel(G_Patch.getSide(i), G_Patch.getType(i));
+
 		char smpPath[PATH_MAX];
 
 		/* projects < 0.6.3 version are not portable. Just use the regular
@@ -339,7 +343,15 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 		else
 			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
 
-		int res = mh_loadChan(smpPath, ch);
+		/* MIDI channel: no need to load samples, just return ok value */
+
+		int res;
+		if (ch->type == CHANNEL_SAMPLE)
+			res = mh_loadChan(smpPath, ch);
+		else {
+			res = SAMPLE_LOADED_OK;
+			ch->status = STATUS_OFF;
+		}
 
 		if (res == SAMPLE_LOADED_OK) {
 			ch->volume      = G_Patch.getVol(i);
@@ -355,9 +367,12 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 			ch->tracker     = ch->start;
 			ch->readActions = G_Patch.getRecActive(i);
 			ch->recStatus   = ch->readActions ? REC_READING : REC_STOPPED;
-			G_Mixer.setChanStart(ch, G_Patch.getStart(i));
-			G_Mixer.setChanEnd  (ch, G_Patch.getEnd(i, ch->wave->size));
-			G_Mixer.setPitch    (ch, G_Patch.getPitch(i));
+
+			if (ch->type == CHANNEL_SAMPLE) {
+				G_Mixer.setChanStart(ch, G_Patch.getStart(i));
+				G_Mixer.setChanEnd  (ch, G_Patch.getEnd(i, ch->wave->size));
+				G_Mixer.setPitch    (ch, G_Patch.getPitch(i));
+			}
 		}
 		else {
 			ch->volume = DEFAULT_VOL;

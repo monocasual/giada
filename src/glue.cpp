@@ -87,8 +87,8 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
-channel *glue_addChannel(int side) {
-	channel *ch    = G_Mixer.addChannel(side);
+channel *glue_addChannel(int side, int type) {
+	channel *ch    = G_Mixer.addChannel(side, type);
 	gChannel *gch  = mainWin->keyboard->addChannel(side, ch);
 	ch->guiChannel = gch;
 	return ch;

@@ -126,7 +126,7 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-channel *Mixer::addChannel(char side) {
+channel *Mixer::addChannel(char side, int type) {
 	channel *ch = (channel*) malloc(sizeof(channel));
 	if (!ch) {
 		printf("[mixer] unable to alloc memory for channel struct\n");
@@ -156,8 +156,9 @@ channel *Mixer::addChannel(char side) {
 
 	ch->index = getNewIndex();
 	ch->side  = side;
+	ch->type  = type;
 
-	printf("[mixer] channel index=%d added, total=%d\n", ch->index, channels.size);
+	printf("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size);
 
 	return ch;
 }
@@ -624,13 +625,30 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					tockPlay = true;
 			}
 		} // if (running)
+	}
 
+	/* process here VST instruments, so that they benefit from mute, fadeout
+	 * fadein from each channel. */
 
-		/* sum channels  */
+#ifdef WITH_VST
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size; k++) {
+		channel *ch = channels.at(k);
+		if (ch->type == CHANNEL_MIDI)
+			processPlugins(ch);
+	}
+	pthread_mutex_unlock(&mutex_chans);
+#endif
+
+	/* sum channels */
+
+	for (unsigned j=0; j<bufferFrames; j+=2) {
 
 		pthread_mutex_lock(&mutex_chans);
 		for (unsigned k=0; k<channels.size; k++) {
 			channel *ch = channels.at(k);
+
+			/** TODO - distinguish between CHANNEL_MIDI and CHANNEL_SAMPLE */
 
 			if (ch->wave == NULL)
 				continue;
@@ -664,7 +682,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					if (ch->fadeoutOn) {
 						if (ch->fadeoutVol >= 0.0f) { // fadeout ongoing
 
-							float v = ch->volume * ch->volume_i * ch->boost;
+							float v = ch->volume_i * ch->boost;
 
 							if (ch->fadeoutType == XFADE) {
 
@@ -715,7 +733,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					}  // no fadeout to do
 					else {
 						if (!ch->mute && !ch->mute_i) {
-							float v = ch->volume * ch->volume_i * ch->fadein * ch->boost;
+							float v = ch->volume_i * ch->fadein * ch->boost;
 							ch->vChan[j]   += ch->wave->data[ctp]   * v * ch->panLeft;
 							ch->vChan[j+1] += ch->wave->data[ctp+1] * v * ch->panRight;
 						}
@@ -775,22 +793,19 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		}
 	} // end loop J
 
-	/* final loop: sum virtual channels */
+	/* final loop: sum virtual channels and process plugins, only if channel
+	 * is CHANNEL_SAMPLE. MIDI events have been already processed before. */
 
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size; k++) {
 		channel *ch = channels.at(k);
-		if (ch->wave != NULL) {
 #ifdef WITH_VST
-			pthread_mutex_lock(&mutex_plugins);
-			G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
-			G_PluginHost.freeVstMidiEvents(ch);
-			pthread_mutex_unlock(&mutex_plugins);
+		if (ch->type == CHANNEL_SAMPLE)
+			processPlugins(ch);
 #endif
-			for (unsigned j=0; j<bufferFrames; j+=2) {
-				buffer[j]   += ch->vChan[j];
-				buffer[j+1] += ch->vChan[j+1];
-			}
+		for (unsigned j=0; j<bufferFrames; j+=2) {
+			buffer[j]   += ch->vChan[j]   * ch->volume;
+			buffer[j+1] += ch->vChan[j+1] * ch->volume;
 		}
 	}
 	pthread_mutex_unlock(&mutex_chans);
@@ -804,7 +819,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	pthread_mutex_unlock(&mutex_plugins);
 #endif
 
-	/* post processing fx of master + peak calculation. */
+	/* post processing master fx + peak calculation. */
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 
@@ -951,7 +966,7 @@ void Mixer::calcFadeoutStep(channel *ch) {
 	unsigned ctracker = ch->tracker * ch->pitch;
 
 	if (ch->end - ctracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
-		ch->fadeoutStep = ceil((ch->end - ctracker) / ch->volume) * 2;
+		ch->fadeoutStep = ceil((ch->end - ctracker) / ch->volume) * 2; /// or ch->volume_i ???
 	else
 		ch->fadeoutStep = DEFAULT_FADEOUT_STEP;
 }
@@ -1065,6 +1080,19 @@ bool Mixer::mergeVirtualInput() {
 bool Mixer::isPlaying(channel *ch) {
 	return ch->status == STATUS_PLAY || ch->status == STATUS_ENDING;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+void Mixer::processPlugins(channel *ch) {
+	pthread_mutex_lock(&mutex_plugins);
+	G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
+	G_PluginHost.freeVstMidiEvents(ch);
+	pthread_mutex_unlock(&mutex_plugins);
+}
+#endif
 
 
 /* ------------------------------------------------------------------ */

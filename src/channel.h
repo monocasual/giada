@@ -54,6 +54,7 @@
 struct channel {
 	class Wave *wave;
 
+	int    type;       // midi or sample
 	int    index;
 	float *vChan;	     // virtual channel
 	int    status;	   // status: see const.h

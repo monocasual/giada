@@ -172,17 +172,19 @@ void gu_update_controls() {
 
 		/** FIXME - move this to gChannel */
 
-		switch (ch->status) {
-			case STATUS_EMPTY:
-				ch->guiChannel->sampleButton->label("-- no sample --");
-				break;
-			case STATUS_MISSING:
-			case STATUS_WRONG:
-				ch->guiChannel->sampleButton->label("* file not found! *");
-				break;
-			default:
-				gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
-				break;
+		if (ch->type == CHANNEL_SAMPLE) {
+			switch (ch->status) {
+				case STATUS_EMPTY:
+					ch->guiChannel->sampleButton->label("-- no sample --");
+					break;
+				case STATUS_MISSING:
+				case STATUS_WRONG:
+					ch->guiChannel->sampleButton->label("* file not found! *");
+					break;
+				default:
+					gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
+					break;
+			}
 		}
 
 		char k[4];

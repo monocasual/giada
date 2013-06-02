@@ -41,7 +41,7 @@ extern Mixer         G_Mixer;
 
 
 gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)
- : Fl_Scroll(x, y, 200, 211), pParent(pParent)
+ : Fl_Scroll(x, y, 200, 422), pParent(pParent)
 {
 	size(pParent->totalWidth, h());
 	type(0); // no scrollbars

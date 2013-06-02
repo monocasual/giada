@@ -185,6 +185,12 @@
 
 
 
+/* -- channel types ------------------------------------------------- */
+#define CHANNEL_SAMPLE 0x01
+#define CHANNEL_MIDI   0x02
+
+
+
 /* -- unique IDs of mainWin's subwindows ---------------------------- */
 /* -- wid > 0 are reserved by gg_keyboard --------------------------- */
 #define WID_BEATS         -1

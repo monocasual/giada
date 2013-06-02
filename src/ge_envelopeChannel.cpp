@@ -182,10 +182,10 @@ int gEnvelopeChannel::handle(int e) {
 					if (my > h()-8) my = h()-8;
 					if (mx > pParent->coverX-x()) mx = pParent->coverX-x();
 
-					/* if this is the first point ever, add other two points at the beginning
-					 * and the end of the range */
-
 					if (range == RANGE_FLOAT) {
+
+						/* if this is the first point ever, add other two points at the beginning
+						 * and the end of the range */
 
 						if (points.size == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);

@@ -56,15 +56,41 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 {
 	begin();
 	button = new gButton (x(), y(), 20, 20);
-	status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
+
+	if (ch->type == CHANNEL_SAMPLE)
+		status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
+
+	const char *sampleLabel;
+	int sampleButton_x;
+	int sampleButton_w;
+
+	if (ch->type == CHANNEL_SAMPLE) {
+		sampleLabel = "-- no sample --";
+		sampleButton_x = status->x()+status->w()+4;
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
+		sampleButton_w = 213;
+#else
+		sampleButton_w = 245;
+#endif
+	}
+	else {
+		sampleLabel = "-- MIDI --";
+		sampleButton_x = button->x()+button->w()+4;
+#if defined(WITH_VST)
+		sampleButton_w = 237;
+#else
+		sampleButton_w = 185;
+#endif
+	}
+
+#if defined(WITH_VST)
+	sampleButton = new gClick  (sampleButton_x, y(), sampleButton_w, 20, sampleLabel);
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 	fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
 	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 261, 20, "-- no sample --");
+	sampleButton = new gClick  (sampleButton_x, y(), sampleButton_w, 20, sampleLabel);
 	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 	vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
@@ -164,10 +190,17 @@ void gChannel::reset() {
 	sampleButton->bgColor0 = COLOR_BG_0;
 	sampleButton->bdColor  = COLOR_BD_0;
 	sampleButton->txtColor = COLOR_TEXT_0;
-	sampleButton->label("-- no sample --");
+
+	if (ch->type == CHANNEL_SAMPLE)
+		sampleButton->label("-- no sample --");
+	else
+		sampleButton->label("-- MIDI --");
+
 	remActionButton();
 	sampleButton->redraw();
-	status->redraw();
+
+	if (ch->type == CHANNEL_SAMPLE)
+		status->redraw();
 }
 
 
@@ -218,10 +251,22 @@ void gChannel::__cb_openChanMenu() {
 		{0}
 	};
 
+	if (ch->type == CHANNEL_MIDI) {
+		rclick_menu[0].hide();
+		rclick_menu[1].hide();
+		rclick_menu[2].hide();
+		rclick_menu[3].hide();
+		rclick_menu[7].hide();
+		rclick_menu[8].hide();
+		rclick_menu[9].hide();
+		rclick_menu[11].hide();
+	}
+
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
 		rclick_menu[1].deactivate();
 		rclick_menu[3].deactivate();
-		rclick_menu[4].deactivate();
+		if (ch->type == CHANNEL_SAMPLE)
+			rclick_menu[4].deactivate();
 		rclick_menu[11].deactivate();
 	}
 
@@ -462,6 +507,34 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 /* ------------------------------------------------------------------ */
 
 
+int Keyboard::openChanTypeMenu() {
+
+	Fl_Menu_Item rclick_menu[] = {
+		{"Sample channel"},
+		{"MIDI channel"},
+		{0}
+	};
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_BOX);
+	b->textsize(11);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(COLOR_BG_0);
+
+	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	if (!m) return 0;
+
+	if (strcmp(m->label(), "Sample channel") == 0)
+		return CHANNEL_SAMPLE;
+	if (strcmp(m->label(), "MIDI channel") == 0)
+		return CHANNEL_MIDI;
+	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void Keyboard::fixRightColumn() {
 	if (!hasScrollbar())
 		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+32, gChannelsR->y());
@@ -583,12 +656,16 @@ bool Keyboard::hasScrollbar() {
 
 
 void Keyboard::__cb_addChannelL() {
-	glue_addChannel(0);
+	int type = openChanTypeMenu();
+	if (type)
+		glue_addChannel(0, type);
 }
 
 
 void Keyboard::__cb_addChannelR() {
-	glue_addChannel(1);
+	int type = openChanTypeMenu();
+	if (type)
+		glue_addChannel(1, type);
 }
 
 

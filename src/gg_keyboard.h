@@ -106,6 +106,8 @@ private:
 
 	void fixRightColumn();
 
+	int openChanTypeMenu();
+
 	bool bckspcPressed;
 	bool endPressed;
 	bool spacePressed;

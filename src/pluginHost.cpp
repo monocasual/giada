@@ -399,8 +399,7 @@ void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 		if (pStack->at(i)->bypass)
 			continue;
 		if (ch) {   // process events if it's a channel stack
-		///	printf("[pluginHost] send events to chan %d (%d)\n", ch->index, ch->events.events[0]->flags);
-		pStack->at(i)->processEvents((VstEvents*) &ch->events);
+			pStack->at(i)->processEvents((VstEvents*) &ch->events);
 		}
 		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);
 		bufferI = bufferO;
@@ -611,8 +610,6 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-#ifdef WITH_VST
-
 void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
 	if (ch->events.numEvents < MAX_VST_EVENTS) {
 		ch->events.events[ch->events.numEvents] = (VstEvent*) e;
@@ -620,7 +617,66 @@ void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
 		//printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
 	}
 	else
-		puts("[pluginHost] channel VstEvents > MAX_VST_EVENTS, nothing to do");
+		printf("[pluginHost] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", ch->index, ch->events.numEvents);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void PluginHost::addVstMidiEvent(uint32_t msg, channel *ch) {
+	addVstMidiEvent(createVstMidiEvent(msg), ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
+
+	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
+
+	/* type = two types of events: MIDI event and MIDI system exclusive
+	 * (aka sysex, not implemented). */
+
+	e->type         = kVstMidiType;
+	e->byteSize     = sizeof(VstMidiEvent);
+
+	/* deltaFrames = sample frames related to the current block start
+	 * sample position. */
+	/** FIXME - use real values */
+
+	e->deltaFrames  = 0;
+
+	/* flags = kVstMidiEventIsRealtime means that this event is played
+	 * live (not in playback from a sequencer track). This allows the
+	 * Plug-In to handle these flagged events with higher priority,
+	 * especially when the Plug-In has a big latency */
+
+	e->flags        = kVstMidiEventIsRealtime;
+
+	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
+
+	e->midiData[0]  = (msg >> 24) & 0xFF;  // note on/off + channel
+	e->midiData[1]  = (msg >> 16) & 0xFF;  // note number
+	e->midiData[2]  = (msg >> 8)  & 0xFF;  // velocity
+	e->midiData[3]  = 0;
+
+	/* noteLength = (in sample frames) of entire note, if available,
+	 * else 0 */
+
+	e->noteLength   = 0;
+
+	/* noteOffset = offset (in sample frames) into note from note start
+	 * if available, else 0 */
+
+	e->noteOffset   = 0;
+
+	/* noteOffVelocity =  Note Off Velocity [0, 127]. */
+
+	e->noteOffVelocity = 0;
+
+	return e;
 }
 
 
@@ -633,9 +689,8 @@ void PluginHost::freeVstMidiEvents(channel *ch, bool init) {
 	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
 	ch->events.numEvents = 0;
 	ch->events.reserved  = 0;
+	//printf("[PluginHost] Vst Midi Events freed\n");
 }
-
-#endif
 
 
 /* ------------------------------------------------------------------ */

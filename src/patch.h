@@ -70,6 +70,7 @@ public:
 	bool        getRecActive (int i);
 	char        getSide      (int i);
 	int         getIndex     (int i);
+	int         getType      (int i);
 	int         getKey       (int i);
 	float       getOutVol    ();
 	float       getInVol     ();

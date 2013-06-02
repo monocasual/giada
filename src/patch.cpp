@@ -205,6 +205,19 @@ int Patch::getSolo(int c) {
 /* ------------------------------------------------------------------ */
 
 
+int Patch::getType(int c) {
+	char tmp[16];
+	sprintf(tmp, "chanType%d", c);
+	int out = atoi(getValue(tmp).c_str());
+	if (out == 0)
+		return CHANNEL_SAMPLE;
+	return out;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int Patch::getStart(int c) {
 	char tmp[16];
 	sprintf(tmp, "chanstart%d", c);
@@ -522,6 +535,7 @@ int Patch::write(const char *file, const char *name, bool project) {
 
 		fprintf(fp, "samplepath%d=%s\n",    i, path);
 		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
+		fprintf(fp, "chanType%d=%d\n",      i, ch->type);
 		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
 		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
 		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);

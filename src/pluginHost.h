@@ -92,6 +92,8 @@ public:
 
 	int addPlugin(const char *fname, int stackType, struct channel *ch=NULL);
 
+	void processEvents(float *buffer, struct channel *ch);
+
 	/* processStack
 	 * apply the fx list to the buffer. */
 
@@ -102,20 +104,23 @@ public:
 
 	void processStackOffline(float *buffer, int stackType, struct channel *ch, int size);
 
-#ifdef WITH_VST
-
 	/* addVstMidiEvent
-	 * take a composite MIDI event, decompose it and add it to channel. */
+	 * take a composite MIDI event, decompose it and add it to channel. The
+	 * other version creates a VstMidiEvent on the fly. */
 
 	void addVstMidiEvent(struct VstMidiEvent *e, struct channel *ch);
+	void addVstMidiEvent(uint32_t msg, struct channel *ch);
+
+	/* createVstMidiEvent
+	 * return a pointer to a new VstMidiEvent structure. */
+
+	VstMidiEvent *createVstMidiEvent(uint32_t msg);
 
 	/* freeVstMidiEvents
 	 * empty channel->vstEvents structure. Init: use the method for channel
 	 * initialization. */
 
 	void freeVstMidiEvents(struct channel *ch, bool init=false);
-
-#endif
 
 	gVector <Plugin *> *getStack(int stackType, struct channel *ch=NULL);
 

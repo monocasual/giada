@@ -63,24 +63,32 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
+	if (chan->type == CHANNEL_SAMPLE) {
 	  actionType = new gChoice(8, 8, 80, 20);
 	  gridTool   = new gGridTool(actionType->x()+actionType->w()+4, 8, this);
+	}
+	else
+		gridTool   = new gGridTool(8, 8, this);
+
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
 		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "-");
 	upperArea->end();
 	upperArea->resizable(b1);
 
-	actionType->add("key press");
-	actionType->add("key release");
-	actionType->add("kill chan");
-	actionType->value(0);
+	if (chan->type == CHANNEL_SAMPLE) {
+		actionType->add("key press");
+		actionType->add("key release");
+		actionType->add("kill chan");
+		actionType->value(0);
+	}
 
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
 	gridTool->calc();
 
-	if (chan->mode == SINGLE_PRESS ||
-			chan->mode & LOOP_ANY)
+	if (chan->type == CHANNEL_SAMPLE &&
+	   (chan->mode == SINGLE_PRESS   ||
+			chan->mode & LOOP_ANY))
 		actionType->deactivate();
 
 	zoomIn->callback(cb_zoomIn, (void*)this);
@@ -90,31 +98,34 @@ gdActionEditor::gdActionEditor(channel *chan)
 
 	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
 
-	pr = new gPianoRollContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
-	ac = new gActionChannel     (scroller->x(), pr->y()+pr->h()+8, this);
-	mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
-	vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+	if (chan->type == CHANNEL_SAMPLE) {
+		ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+		mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
+		vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+		scroller->add(ac);
+		//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
+		scroller->add(mc);
+		//scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
+		scroller->add(vc);
+		//scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
 
-	scroller->add(pr);
-	scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
-	scroller->add(ac);
-	//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
-	scroller->add(mc);
-	//scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
-	scroller->add(vc);
-	//scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
+		/* fill volume envelope with actions from recorder */
+
+		vc->fill();
+
+		/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
+		 * hold keypress/keyrelease actions */
+
+		if (chan->mode & LOOP_ANY)
+			ac->deactivate();
+	}
+	else {
+		pr = new gPianoRollContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
+		scroller->add(pr);
+		scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
+	}
 
 	end();
-
-	/* fill volume envelope with actions from recorder */
-
-	vc->fill();
-
-	/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
-	 * hold keypress/keyrelease actions */
-
-	if (chan->mode & LOOP_ANY)
-		ac->deactivate();
 
 	gu_setFavicon(this);
 
@@ -166,15 +177,19 @@ void gdActionEditor::__cb_zoomIn() {
 		zoom = (int) ceilf(totalFrames / (float) totalWidth);
 	}
 
-	ac->size(totalWidth, ac->h());
-	mc->size(totalWidth, mc->h());
-	vc->size(totalWidth, vc->h());
-	pr->size(totalWidth, pr->h());
+	if (chan->type == CHANNEL_SAMPLE) {
+		ac->size(totalWidth, ac->h());
+		mc->size(totalWidth, mc->h());
+		vc->size(totalWidth, vc->h());
+		ac->updateActions();
+		mc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		vc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+	}
+	else {
+		pr->size(totalWidth, pr->h());
+		pr->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+	}
 
-	ac->updateActions();
-	mc->updatePoints();
-	vc->updatePoints();
-	pr->updatePoints();
 
 	gridTool->calc();
 	scroller->redraw();
@@ -193,15 +208,18 @@ void gdActionEditor::__cb_zoomOut() {
 		zoom = (int) ceilf(totalFrames / (float) totalWidth);
 	}
 
-	ac->size(totalWidth, ac->h());
-	mc->size(totalWidth, mc->h());
-	vc->size(totalWidth, vc->h());
-	pr->size(totalWidth, pr->h());
-
-	ac->updateActions();
-	mc->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
-	vc->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
-	pr->updatePoints();   /// TODO - change all to updateActions and make it virtual in gActionWidget
+	if (chan->type == CHANNEL_SAMPLE) {
+		ac->size(totalWidth, ac->h());
+		mc->size(totalWidth, mc->h());
+		vc->size(totalWidth, vc->h());
+		ac->updateActions();
+		mc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		vc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+	}
+	else {
+		pr->size(totalWidth, pr->h());
+		pr->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+	}
 
 	gridTool->calc();
 	scroller->redraw();

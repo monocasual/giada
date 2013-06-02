@@ -48,7 +48,7 @@ public:
 	/* addChannel
 	 * add a new channel without any wave inside of it. */
 
-	struct channel *addChannel(char side);
+	struct channel *addChannel(char side, int type);
 
 	int  deleteChannel(struct channel *ch);
 	void initChannel(struct channel *ch);
@@ -227,6 +227,14 @@ private:
 	 * compute new index value for new channels */
 
 	int getNewIndex();
+
+	/* processPlugins
+	 * call PluginHost to process all plugins from channel ch. */
+
+#ifdef WITH_VST
+	void processPlugins(struct channel *ch);
+#endif
+
 };
 
 #endif
