@@ -13,6 +13,14 @@
 
 
 
+0.7.0 --- 2013 . 06 . 05
+- Initial MIDI output implementation
+- Initial VSTi (instrument) support
+- New piano roll widget in action editor
+- New chan mode: MIDI vs SAMPLE
+- Fix E-MU Tracker Pre not correctly listed in audio in/output
+
+
 0.6.4 --- 2013 . 05 . 07
 - Resizable plugin parameter window
 - New and standard package name format <name>-<version>.<ext>

@@ -70,7 +70,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 #if defined(WITH_VST)
 		sampleButton_w = 213;
 #else
-		sampleButton_w = 245;
+		sampleButton_w = 237;
 #endif
 	}
 	else {
@@ -79,7 +79,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 #if defined(WITH_VST)
 		sampleButton_w = 237;
 #else
-		sampleButton_w = 185;
+		sampleButton_w = 261;
 #endif
 	}
 
