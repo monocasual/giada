@@ -66,7 +66,7 @@ endif
 
 
 libs:
-	cd RtAudio; echo "Building RtAudio..."; \
+	cd rtaudio; echo "Building RtAudio..."; \
 	./configure --with-jack --with-alsa --with-pulse; \
 	make;
 

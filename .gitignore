@@ -1,6 +1,9 @@
 *.o
 *.a
 *.so
+*.so.*
+src/rtaudio/librtaudio.pc
+src/rtaudio/rtaudio-config
 AUTHORS
 ERRORS
 README
