@@ -1,4 +1,6 @@
 *.o
+*.a
+*.so
 AUTHORS
 ERRORS
 README
