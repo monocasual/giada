@@ -1,12 +1,12 @@
 AUTOMAKE_OPTIONS = foreign
 
-AM_CXXFLAGS = -Wall -pedantic -Werror
-
 # aeffect.h (header from VST SDK) uses 'long long' which is not supported
 # in ISO C++ 1998 and -Werror flag breaks the compilation.
 # This is a workaround, fixes needed.
 if WINDOWS
 AM_CXXFLAGS = -Wall -pedantic
+else
+AM_CXXFLAGS = -Wall -pedantic -Werror
 endif
 
 bin_PROGRAMS = giada
@@ -39,8 +39,9 @@ ge_pianoRoll.h		 ge_pianoRoll.cpp     kernelMidi.h         kernelMidi.cpp
 # Check for environment: these vars are defined via AM_CONDITIONAL
 # inside configure.ac
 if LINUX
-giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -lrtaudio  \
-						  -ljack -lasound -lpthread -ldl -lpulse-simple -lsamplerate
+giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -Lrtaudio \
+							-l:librtaudio.a -ljack -lasound -lpthread -ldl \
+							-lpulse-simple -lsamplerate
 endif
 if WINDOWS
 giada_LDADD   = -lole32 -lrtaudio -ldsound -lwinmm -lwsock32 -lm       \
@@ -64,7 +65,15 @@ endif
 	windres $^ -o $@
 
 
+libs:
+	cd RtAudio; echo "Building RtAudio..."; \
+	./configure --with-jack --with-alsa --with-pulse; \
+	make;
+
+
+
 # rename the binaries
+
 if LINUX
 rename:
 	mv giada giada_lin

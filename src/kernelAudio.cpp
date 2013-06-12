@@ -78,6 +78,10 @@ int openDevice(
 		return 0;
 	}
 
+
+
+	//printf("[KA] %d\n", sizeof(system->rtapi_));
+
 	printf("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
 
 	numDevs = system->getDeviceCount();
@@ -373,4 +377,14 @@ bool hasAPI(int API) {
 	return false;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
+std::string getRtAudioVersion() {
+	return RtAudio::getVersion();
 }
+
+}
+
+

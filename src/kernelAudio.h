@@ -26,14 +26,23 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef KERNELAUDIO_H
 #define KERNELAUDIO_H
 
-#include <RtAudio.h>
+
 #include <stdio.h>
+#include "rtaudio/RtAudio.h"
 #include "mixer.h"
 #include "const.h"
 #include "utils.h"
+
+
+class MyRtAudio : public RtAudio {
+public:
+	inline RtApi *getRtApi() { return rtapi_; }
+};
+
 
 namespace kernelAudio {
 
@@ -63,6 +72,8 @@ namespace kernelAudio {
 	int         getDefaultOut  ();
 	int         getDefaultIn   ();
 	bool        hasAPI         (int API);
+
+	std::string getRtAudioVersion();
 
 	/* *** how to avoid multiple definition of ***
 	 * When you declare a variable in a header file, every source file that
