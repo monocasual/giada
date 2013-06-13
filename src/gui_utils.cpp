@@ -202,8 +202,10 @@ void gu_update_controls() {
 
 		/* updates modebox */
 
-		ch->guiChannel->modeBox->value(ch->mode);
-		ch->guiChannel->modeBox->redraw();
+		if (ch->type == CHANNEL_SAMPLE) {
+			ch->guiChannel->modeBox->value(ch->mode);
+			ch->guiChannel->modeBox->redraw();
+		}
 
 		/* update channels. If you load a patch with recorded actions, the 'R'
 		 * button must be shown. Moreover if the actions are active, the 'R'

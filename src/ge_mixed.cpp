@@ -382,13 +382,10 @@ gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
 	add("Loop . basic", 	   0, cb_change_chanmode, (void *)LOOP_BASIC);
 	add("Loop . once", 		   0, cb_change_chanmode, (void *)LOOP_ONCE);
 	add("Loop . repeat", 	   0, cb_change_chanmode, (void *)LOOP_REPEAT);
-
-	if (ch->type == CHANNEL_SAMPLE) {
-		add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
-		add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
-		add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-		add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
-	}
+	add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
+	add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
+	add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
+	add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
 }
 
 

@@ -57,46 +57,35 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	begin();
 	button = new gButton (x(), y(), 20, 20);
 
-	if (ch->type == CHANNEL_SAMPLE)
-		status = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
-
-	const char *sampleLabel;
-	int sampleButton_x;
-	int sampleButton_w;
-
 	if (ch->type == CHANNEL_SAMPLE) {
-		sampleLabel = "-- no sample --";
-		sampleButton_x = status->x()+status->w()+4;
+		status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 #if defined(WITH_VST)
-		sampleButton_w = 213;
+		sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
 #else
-		sampleButton_w = 237;
+		sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
 #endif
+		modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
+		mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	  solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 	}
 	else {
-		sampleLabel = "-- MIDI --";
-		sampleButton_x = button->x()+button->w()+4;
 #if defined(WITH_VST)
-		sampleButton_w = 237;
+		sampleButton = new gClick  (button->x()+button->w()+4, y(), 261, 20, "-- MIDI --");
 #else
-		sampleButton_w = 261;
+		sampleButton = new gClick  (button->x()+button->w()+4, y(), 285, 20, "-- MIDI --");
 #endif
+		mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	  solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 	}
 
 #if defined(WITH_VST)
-	sampleButton = new gClick  (sampleButton_x, y(), sampleButton_w, 20, sampleLabel);
-	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-	fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
-	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
+		fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
+		vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	sampleButton = new gClick  (sampleButton_x, y(), sampleButton_w, 20, sampleLabel);
-	mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20,  20, "", muteOff_xpm, muteOn_xpm);
-	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-	vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
+		vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
 #endif
-	modeBox      = new gModeBox(vol->x()+vol->w()+4, y(), 20, 20, ch);
-	readActions  = NULL; // no rec button at start
+
+	readActions    = NULL; // no rec button at start
 	end();
 
 	if (ch->wave)
