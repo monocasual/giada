@@ -474,6 +474,11 @@ void gPianoItem::record() {
 void gPianoItem::remove() {
 	recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
 	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
+
+	/* send a note-off in case we are deleting it in a middle of a key_on
+	 * key_off sequence */
+
+	kernelMidi::send(event_b, pParent->chan);
 }
 
 

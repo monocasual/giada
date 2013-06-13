@@ -43,7 +43,7 @@ namespace kernelMidi {
 
 	inline uint32_t getIValue (int type, int note, int vel) { return (type << 24) | (note << 16) | (vel << 8) | (0x00); }
 
-	//void send(uint32_t s, struct channel *ch);
+	void send(uint32_t s, struct channel *ch);
 
 	void send(int b1, int b2, int b3, channel *ch);
 }
