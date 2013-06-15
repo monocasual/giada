@@ -328,6 +328,10 @@ void glue_startSeq() {
 	G_Mixer.running = true;
 	mainWin->beat_stop->value(1);
 	mainWin->beat_stop->redraw();
+
+#ifdef __linux__
+	kernelAudio::jackStart();
+#endif
 }
 
 
@@ -379,6 +383,10 @@ void glue_stopSeq() {
 
 	mainWin->beat_stop->value(0);
 	mainWin->beat_stop->redraw();
+
+#ifdef __linux__
+	kernelAudio::jackStop();
+#endif
 }
 
 

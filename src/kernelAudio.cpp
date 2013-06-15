@@ -28,6 +28,7 @@
 
 
 #include <vector>
+#include "rtaudio/RtAudio.h"
 #include "kernelAudio.h"
 #include "conf.h"
 
@@ -384,6 +385,28 @@ bool hasAPI(int API) {
 std::string getRtAudioVersion() {
 	return RtAudio::getVersion();
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef __linux__
+#include <jack/jack.h>
+#include <jack/intclient.h>
+#include <jack/transport.h>
+
+void jackStart() {
+	jack_client_t *client = (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+	jack_transport_start(client);
+}
+
+
+void jackStop() {
+	jack_client_t *client = (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+	jack_transport_stop(client);
+}
+
+#endif
 
 }
 

@@ -47,6 +47,7 @@
 
 #include <string>
 #include <vector>
+#include <jack/jack.h>
 #include "RtError.h"
 
 // RtAudio version
@@ -508,7 +509,7 @@ class RtAudio
   //! Specify whether warning messages should be printed to stderr.
   void showWarnings( bool value = true ) throw();
 
- protected:
+//protected:
 
   void openRtApi( RtAudio::Api api );
   RtApi *rtapi_;
@@ -609,6 +610,12 @@ class S24 {
 class RtApi
 {
 public:
+
+  /* --- Monocasual HACK 2013 --------------------------------------- */
+
+  void *__HACK__getJackClient();
+
+	/* ---------------------------------------------------------------- */
 
   RtApi();
   virtual ~RtApi();

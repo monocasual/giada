@@ -150,6 +150,9 @@ gdActionEditor::~gdActionEditor() {
 	G_Conf.actionEditorW = w();
 	G_Conf.actionEditorH = h();
 	G_Conf.actionEditorZoom = zoom;
+
+	/** CHECKME - missing clear() ? */
+
 }
 
 

@@ -75,6 +75,11 @@ namespace kernelAudio {
 
 	std::string getRtAudioVersion();
 
+#ifdef __linux__
+	void jackStart();
+	void jackStop();
+#endif
+
 	/* *** how to avoid multiple definition of ***
 	 * When you declare a variable in a header file, every source file that
 	 * includes that header, either directly or indirectly, gets its own
@@ -87,7 +92,6 @@ namespace kernelAudio {
 	extern unsigned  numDevs;
 	extern bool 		 inputEnabled;
 	extern unsigned  realBufsize; 		// reale bufsize from the soundcard
-
 }
 
 #endif

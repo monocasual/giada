@@ -215,6 +215,7 @@ RtApi :: RtApi()
   showWarnings_ = true;
 }
 
+
 RtApi :: ~RtApi()
 {
   MUTEX_DESTROY( &stream_.mutex );
@@ -381,7 +382,7 @@ double RtApi :: getStreamTime( void )
   then = stream_.lastTickTimestamp;
   return stream_.streamTime +
     ((now.tv_sec + 0.000001 * now.tv_usec) -
-     (then.tv_sec + 0.000001 * then.tv_usec));     
+     (then.tv_sec + 0.000001 * then.tv_usec));
 #else
   return stream_.streamTime;
 #endif
@@ -1726,7 +1727,7 @@ bool RtApiCore :: callbackEvent( AudioDeviceID deviceId,
           channelsLeft -= streamChannels;
         }
       }
-      
+
       if ( stream_.doConvertBuffer[1] ) { // convert from our internal "device" buffer
         convertBuffer( stream_.userBuffer[1],
                        stream_.deviceBuffer,
@@ -1837,6 +1838,15 @@ struct JackHandle {
     :client(0), drainCounter(0), internalDrain(false) { ports[0] = 0; ports[1] = 0; xrun[0] = false; xrun[1] = false; }
 };
 
+/* --- Monocasual HACK 2013 ----------------------------------------- */
+
+void *RtApi :: __HACK__getJackClient() {
+	JackHandle *handle = (JackHandle *) stream_.apiHandle;
+	return (void*) handle->client;
+}
+
+/* ------------------------------------------------------------------ */
+
 static void jackSilentError( const char * ) {};
 
 RtApiJack :: RtApiJack()
@@ -1847,6 +1857,7 @@ RtApiJack :: RtApiJack()
   jack_set_error_function( &jackSilentError );
 #endif
 }
+
 
 RtApiJack :: ~RtApiJack()
 {
@@ -2610,7 +2621,7 @@ RtApiAsio :: RtApiAsio()
   // CoInitialize beforehand, but it must be for appartment threading
   // (in which case, CoInitilialize will return S_FALSE here).
   coInitialized_ = false;
-  HRESULT hr = CoInitialize( NULL ); 
+  HRESULT hr = CoInitialize( NULL );
   if ( FAILED(hr) ) {
     errorText_ = "RtApiAsio::ASIO requires a single-threaded appartment. Call CoInitializeEx(0,COINIT_APARTMENTTHREADED)";
     error( RtError::WARNING );
@@ -2969,7 +2980,7 @@ bool RtApiAsio :: probeDeviceOpen( unsigned int device, StreamMode mode, unsigne
       handle = new AsioHandle;
     }
     catch ( std::bad_alloc& ) {
-      //if ( handle == NULL ) {    
+      //if ( handle == NULL ) {
       drivers.removeCurrentDriver();
       errorText_ = "RtApiAsio::probeDeviceOpen: error allocating AsioHandle memory.";
       return FAILURE;
@@ -3505,13 +3516,13 @@ static long asioMessages( long selector, long value, void* message, double* opt 
 
 static const char* getAsioErrorString( ASIOError result )
 {
-  struct Messages 
+  struct Messages
   {
     ASIOError value;
     const char*message;
   };
 
-  static const Messages m[] = 
+  static const Messages m[] =
     {
       {   ASE_NotPresent,    "Hardware input or output is not present or available." },
       {   ASE_HWMalfunction,  "Hardware is malfunctioning." },
@@ -3534,7 +3545,7 @@ static const char* getAsioErrorString( ASIOError result )
 #if defined(__WINDOWS_DS__) // Windows DirectSound API
 
 // Modified by Robin Davies, October 2005
-// - Improvements to DirectX pointer chasing. 
+// - Improvements to DirectX pointer chasing.
 // - Bug fix for non-power-of-two Asio granularity used by Edirol PCR-A30.
 // - Auto-call CoInitialize for DSOUND and ASIO platforms.
 // Various revisions for RtAudio 4.0 by Gary Scavone, April 2007
@@ -3574,7 +3585,7 @@ struct DsHandle {
   void *id[2];
   void *buffer[2];
   bool xrun[2];
-  UINT bufferPointer[2];  
+  UINT bufferPointer[2];
   DWORD dsBufferSize[2];
   DWORD dsPointerLeadTime[2]; // the number of bytes ahead of the safe pointer to lead by.
   HANDLE condition;
@@ -4420,7 +4431,7 @@ void RtApiDs :: startStream()
   // Increase scheduler frequency on lesser windows (a side-effect of
   // increasing timer accuracy).  On greater windows (Win2K or later),
   // this is already in effect.
-  timeBeginPeriod( 1 ); 
+  timeBeginPeriod( 1 );
 
   buffersRolling = false;
   duplexPrerollBytes = 0;
@@ -4723,7 +4734,7 @@ void RtApiDs :: callbackEvent()
   }
 
   if ( stream_.mode == OUTPUT || stream_.mode == DUPLEX ) {
-    
+
     LPDIRECTSOUNDBUFFER dsBuffer = (LPDIRECTSOUNDBUFFER) handle->buffer[0];
 
     if ( handle->drainCounter > 1 ) { // write zeros to the output stream
@@ -4789,7 +4800,7 @@ void RtApiDs :: callbackEvent()
     }
 
     if ( dsPointerBetween( nextWritePointer, safeWritePointer, currentWritePointer, dsBufferSize )
-         || dsPointerBetween( endWrite, safeWritePointer, currentWritePointer, dsBufferSize ) ) { 
+         || dsPointerBetween( endWrite, safeWritePointer, currentWritePointer, dsBufferSize ) ) {
       // We've strayed into the forbidden zone ... resync the read pointer.
       handle->xrun[0] = true;
       nextWritePointer = safeWritePointer + handle->dsPointerLeadTime[0] - bufferBytes;
@@ -4859,14 +4870,14 @@ void RtApiDs :: callbackEvent()
     if ( safeReadPointer < (DWORD)nextReadPointer ) safeReadPointer += dsBufferSize; // unwrap offset
     DWORD endRead = nextReadPointer + bufferBytes;
 
-    // Handling depends on whether we are INPUT or DUPLEX. 
+    // Handling depends on whether we are INPUT or DUPLEX.
     // If we're in INPUT mode then waiting is a good thing. If we're in DUPLEX mode,
     // then a wait here will drag the write pointers into the forbidden zone.
-    // 
-    // In DUPLEX mode, rather than wait, we will back off the read pointer until 
-    // it's in a safe position. This causes dropouts, but it seems to be the only 
-    // practical way to sync up the read and write pointers reliably, given the 
-    // the very complex relationship between phase and increment of the read and write 
+    //
+    // In DUPLEX mode, rather than wait, we will back off the read pointer until
+    // it's in a safe position. This causes dropouts, but it seems to be the only
+    // practical way to sync up the read and write pointers reliably, given the
+    // the very complex relationship between phase and increment of the read and write
     // pointers.
     //
     // In order to minimize audible dropouts in DUPLEX mode, we will
@@ -4916,7 +4927,7 @@ void RtApiDs :: callbackEvent()
           error( RtError::SYSTEM_ERROR );
           return;
         }
-      
+
         if ( safeReadPointer < (DWORD)nextReadPointer ) safeReadPointer += dsBufferSize; // unwrap offset
       }
     }
@@ -6127,7 +6138,7 @@ void RtApiAlsa :: stopStream()
   AlsaHandle *apiInfo = (AlsaHandle *) stream_.apiHandle;
   snd_pcm_t **handle = (snd_pcm_t **) apiInfo->handles;
   if ( stream_.mode == OUTPUT || stream_.mode == DUPLEX ) {
-    if ( apiInfo->synchronized ) 
+    if ( apiInfo->synchronized )
       result = snd_pcm_drop( handle[0] );
     else
       result = snd_pcm_drain( handle[0] );
@@ -6590,7 +6601,7 @@ void RtApiPulse::callbackEvent( void )
     else
       bytes = stream_.nUserChannels[INPUT] * stream_.bufferSize *
         formatBytes( stream_.userFormat );
-            
+
     if ( pa_simple_read( pah->s_rec, pulse_in, bytes, &pa_error ) < 0 ) {
       errorStream_ << "RtApiPulse::callbackEvent: audio read error, " <<
         pa_strerror( pa_error ) << ".";
@@ -6853,7 +6864,7 @@ bool RtApiPulse::probeDeviceOpen( unsigned int device, StreamMode mode,
 
   stream_.state = STREAM_STOPPED;
   return true;
- 
+
  error:
   if ( pah && stream_.callbackInfo.isRunning ) {
     pthread_cond_destroy( &pah->runnable_cv );

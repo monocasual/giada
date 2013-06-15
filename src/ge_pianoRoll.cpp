@@ -38,15 +38,26 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
+extern Conf	         G_Conf;
 
 
 gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)
  : Fl_Scroll(x, y, 200, 422), pParent(pParent)
 {
-	size(pParent->totalWidth, h());
+	size(pParent->totalWidth, G_Conf.pianoRollH);
 	type(0); // no scrollbars
 
 	pianoRoll = new gPianoRoll(x, y, pParent->totalWidth, pParent);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gPianoRollContainer::~gPianoRollContainer() {
+	clear();
+	G_Conf.pianoRollH = h();
+	G_Conf.pianoRollY = pianoRoll->y();
 }
 
 
@@ -69,6 +80,8 @@ void gPianoRollContainer::draw() {
 	/* clear background */
 
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
+
+	/* clip pianoRoll to pianoRollContainer size */
 
 	fl_push_clip(x(), y(), w(), h());
 	draw_child(*pianoRoll);
@@ -113,9 +126,14 @@ int gPianoRollContainer::handle(int e) {
 gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : gActionWidget(X, Y, W, 40, pParent)
 {
-	resizable(NULL);             // don't resize children (i.e. pianoItem)
-	size(W, 128 * 15);           // 128 MIDI channels * 15 px height
-	position(x(), y()-(h()/2));  // center
+	resizable(NULL);               // don't resize children (i.e. pianoItem)
+	size(W, 128 * 15);             // 128 MIDI channels * 15 px height
+
+	if (G_Conf.pianoRollY == -1)
+		position(x(), y()-(h()/2));  // center
+	else
+		position(x(), G_Conf.pianoRollY);
+
 	drawSurface();
 
 	/* add actions when the window is opened. Position is zoom-based. MIDI
@@ -192,14 +210,6 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 	end();
 }
-
-
-/* ------------------------------------------------------------------ */
-
-
-//void gPianoRoll::resize(int X, int Y, int W, int H) {
-//	puts("resize");
-//}
 
 
 /* ------------------------------------------------------------------ */

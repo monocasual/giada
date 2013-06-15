@@ -44,6 +44,7 @@ private:
 
 public:
 	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
+	~gPianoRollContainer();
 	void draw();
 	void updatePoints();
 };

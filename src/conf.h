@@ -30,6 +30,7 @@
 #ifndef __CONF_H__
 #define __CONF_H__
 
+
 #include <stdlib.h>
 #include <limits.h>
 #include "dataStorage.h"
@@ -76,6 +77,7 @@ public:
 	int  actionEditorGridVal;
 	int  actionEditorGridOn;
 	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
+	int  pianoRollY, pianoRollH;
 	int  pluginListX, pluginListY;
 	int  configX, configY;
 	int  bpmX, bpmY;

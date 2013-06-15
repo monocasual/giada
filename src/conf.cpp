@@ -152,11 +152,8 @@ void Conf::setDefault() {
 	actionEditorGridOn  = false;
 	actionEditorGridVal = 1;
 
-	/**
-	int arkeys[MAX_NUM_CHAN] = DEFAULT_KEY_ARRAY;
-	for (int i=0; i<MAX_NUM_CHAN; i++)
-		keys[i] = arkeys[i];
-	*/
+	pianoRollY = -1;
+	pianoRollH = 422;
 }
 
 
@@ -166,15 +163,15 @@ void Conf::setDefault() {
 
 int Conf::read() {
 
+	setDefault();
+
 	if (!openFileForReading()) {
 		puts("[Conf] unreadable .conf file, using default parameters");
-		setDefault();
 		return 0;
 	}
 
 	if (getValue("header") != "GIADACFG") {
 		puts("[Conf] corrupted .conf file, using default parameters");
-		setDefault();
 		return -1;
 	}
 
@@ -221,6 +218,9 @@ int Conf::read() {
 	if (actionEditorZoom < 100) actionEditorZoom = 100;
 	if (actionEditorGridVal < 0) actionEditorGridVal = 0;
 	if (actionEditorGridOn < 0)  actionEditorGridOn = 0;
+
+	pianoRollY = atoi(getValue("pianoRollY").c_str());
+	pianoRollH = atoi(getValue("pianoRollH").c_str());
 
 	sampleEditorX    = atoi(getValue("sampleEditorX").c_str());
 	sampleEditorY    = atoi(getValue("sampleEditorY").c_str());
@@ -274,14 +274,6 @@ int Conf::read() {
 	strncpy(samplePath, p.c_str(), p.size());
 	samplePath[p.size()] = '\0';	// strncpy doesn't add '\0'
 
-	/**
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++) {
-		char tmp[16];
-		sprintf(tmp, "keys%d", i);
-		keys[i] = atoi(getValue(tmp).c_str());
-	}
-	*/
-
 	recsStopOnChanHalt = atoi(getValue("recsStopOnChanHalt").c_str());
 	chansStopOnSeqHalt = atoi(getValue("chansStopOnSeqHalt").c_str());
 	treatRecsAsLoops   = atoi(getValue("treatRecsAsLoops").c_str());
@@ -330,6 +322,9 @@ int Conf::write() {
 	fprintf(fp, "actionEditorZoom=%d\n",    actionEditorZoom);
 	fprintf(fp, "actionEditorGridOn=%d\n",  actionEditorGridOn);
 	fprintf(fp, "actionEditorGridVal=%d\n", actionEditorGridVal);
+
+	fprintf(fp, "pianoRollY=%d\n", pianoRollY);
+	fprintf(fp, "pianoRollH=%d\n", pianoRollH);
 
 	fprintf(fp, "sampleEditorX=%d\n", sampleEditorX);
 	fprintf(fp, "sampleEditorY=%d\n", sampleEditorY);

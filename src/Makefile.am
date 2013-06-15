@@ -1,8 +1,11 @@
 AUTOMAKE_OPTIONS = foreign
 
+
+
 # aeffect.h (header from VST SDK) uses 'long long' which is not supported
 # in ISO C++ 1998 and -Werror flag breaks the compilation.
 # This is a workaround, fixes needed.
+
 if WINDOWS
 AM_CXXFLAGS = -Wall -pedantic
 else
@@ -36,8 +39,10 @@ ge_actionWidget.h  ge_actionWidget.cpp  ge_envelopeChannel.h ge_envelopeChannel.
 ge_pianoRoll.h		 ge_pianoRoll.cpp     kernelMidi.h         kernelMidi.cpp
 
 
+
 # Check for environment: these vars are defined via AM_CONDITIONAL
 # inside configure.ac
+
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -Lrtaudio \
 							-l:librtaudio.a -ljack -lasound -lpthread -ldl \
@@ -58,17 +63,34 @@ giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
 endif
 
 
+
 # used only under MinGW to compile the resource.rc file (program icon)
+
 .rc.o:
 	windres $^ -o $@
 %.o : %.rc
 	windres $^ -o $@
 
 
+
+# compile libraries
+
 libs:
-	cd rtaudio; echo "Building RtAudio..."; \
+if LINUX
+	@cd rtaudio; echo "Building RtAudio for Linux..."; \
 	./configure --with-jack --with-alsa --with-pulse; \
 	make;
+endif
+if WINDOWS
+	@cd rtaudio; echo "Building RtAudio for Windows..."; \
+	./configure --with-asio --with-ds; \
+	make;
+endif
+if OSX
+	@cd rtaudio; echo "Building RtAudio for OS X..."; \
+	./configure --with-core; \
+	make;
+endif
 
 
 
