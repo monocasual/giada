@@ -76,8 +76,11 @@ namespace kernelAudio {
 	std::string getRtAudioVersion();
 
 #ifdef __linux__
+	jack_client_t *jackGetHandle();
 	void jackStart();
 	void jackStop();
+	void jackSetSyncCb();
+	int  jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
 #endif
 
 	/* *** how to avoid multiple definition of ***

@@ -67,8 +67,12 @@ void glue_keyRelease(struct channel *ch, bool ctrl=0, bool shift=0);
 void glue_setBpm(const char *v1, const char *v2);
 void glue_setBeats(int beats, int bars, bool expand);
 
-void glue_startSeq();
-void glue_stopSeq();
+/* start, stop, rewind sequencer
+ * if gui == true the signal comes from an internal interaction on the
+ * GUI, otherwise it's a MIDI/Jack/external signal. */
+
+void glue_startSeq (bool gui=true);
+void glue_stopSeq  (bool gui=true);
 void glue_rewindSeq();
 
 /* start/stopRec

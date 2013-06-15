@@ -30,6 +30,7 @@
 #include <vector>
 #include "rtaudio/RtAudio.h"
 #include "kernelAudio.h"
+#include "glue.h"
 #include "conf.h"
 
 
@@ -160,6 +161,12 @@ int openDevice(
 				&options);
 		}
 		G_audio_status = true;
+
+#if defined(__linux__)
+		if (api == SYS_API_JACK)
+			jackSetSyncCb();
+#endif
+
 		return 1;
 	}
 	catch (RtError &e) {
@@ -395,15 +402,55 @@ std::string getRtAudioVersion() {
 #include <jack/intclient.h>
 #include <jack/transport.h>
 
+jack_client_t *jackGetHandle() {
+	return (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+}
+
 void jackStart() {
-	jack_client_t *client = (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+	jack_client_t *client = jackGetHandle();
 	jack_transport_start(client);
 }
 
 
 void jackStop() {
-	jack_client_t *client = (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+	jack_client_t *client = jackGetHandle();
 	jack_transport_stop(client);
+}
+
+
+void jackSetSyncCb() {
+	jack_client_t *client = jackGetHandle();
+	jack_set_sync_callback(client, jackSyncCb, NULL);
+	//jack_set_sync_timeout(client, 8);
+}
+
+
+int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg) {
+
+	switch (state) {
+
+		case JackTransportStopped:
+			printf("[KA] Jack transport stopped, frame=%d\n", pos->frame);
+			glue_stopSeq(false);  // false = not from GUI
+			if (pos->frame == 0)
+				glue_rewindSeq();
+			break;
+
+		case JackTransportRolling:
+			printf("[KA] Jack transport rolling\n");
+			break;
+
+		case JackTransportStarting:
+			printf("[KA] Jack transport starting, frame=%d\n", pos->frame);
+			glue_startSeq(false);  // false = not from GUI
+			if (pos->frame == 0)
+				glue_rewindSeq();
+			break;
+
+		default:
+			printf("[KA] Jack transport [unknown]\n");
+	}
+	return 1;
 }
 
 #endif

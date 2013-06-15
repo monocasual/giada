@@ -324,13 +324,14 @@ void glue_setBeats(int beats, int bars, bool expand) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startSeq() {
+void glue_startSeq(bool gui) {
 	G_Mixer.running = true;
 	mainWin->beat_stop->value(1);
 	mainWin->beat_stop->redraw();
 
 #ifdef __linux__
-	kernelAudio::jackStart();
+	if (gui)
+		kernelAudio::jackStart();
 #endif
 }
 
@@ -338,7 +339,7 @@ void glue_startSeq() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_stopSeq() {
+void glue_stopSeq(bool gui) {
 
 	G_Mixer.running = false;
 
@@ -385,7 +386,8 @@ void glue_stopSeq() {
 	mainWin->beat_stop->redraw();
 
 #ifdef __linux__
-	kernelAudio::jackStop();
+	if (gui)
+		kernelAudio::jackStop();
 #endif
 }
 
