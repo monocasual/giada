@@ -50,6 +50,8 @@ void mh_freeChannel(struct channel *ch);
 
 void mh_stopSequencer();
 
+void mh_rewindSequencer();
+
 /* killChan
  * kill a chan abruptly, without checking LOOP_ENDING and such */
 
@@ -86,7 +88,5 @@ int mh_loadChan(const char *file, struct channel *ch);
 struct channel *mh_startInputRec();
 
 channel *mh_stopInputRec();
-
-void mh_rewind();
 
 #endif

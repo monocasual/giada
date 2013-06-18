@@ -295,7 +295,7 @@ void gdMainWindow::__cb_open_config_win() {
 
 
 void gdMainWindow::__cb_rewind_tracker() {
-	mh_rewind();
+	mh_rewindSequencer();
 }
 
 

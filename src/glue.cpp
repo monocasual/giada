@@ -376,7 +376,7 @@ void glue_stopSeq(bool gui) {
 
 
 void glue_rewindSeq() {
-	mh_rewind();
+	mh_rewindSequencer();
 }
 
 
