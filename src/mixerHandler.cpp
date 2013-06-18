@@ -205,7 +205,6 @@ void mh_muteChan(channel *ch, bool internal) {
 				ch->mute_i = true;
 	}
 	else {
-		kernelMidi::send(0xB0, 0x07, 0x00, ch);
 		if (ch->mute_i)        // internal mute? don't waste time with fadeout,
 			ch->mute = true;     // just mute it globally
 		else
@@ -213,6 +212,9 @@ void mh_muteChan(channel *ch, bool internal) {
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE);  // just mute it globally
 			else
 				ch->mute = true;
+
+		if (ch->type == CHANNEL_MIDI)
+			kernelMidi::send(0xB0, 0x07, 0x00, ch);
 	}
 }
 

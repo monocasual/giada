@@ -439,6 +439,10 @@ void glue_stopReadingRecs(channel *ch) {
 		ch->recStatus = REC_ENDING;
 	else
 		recorder::disableRead(ch);
+
+	/* send ALL NOTE OFF signal */
+
+	kernelMidi::send(0xB0, 0x7B, 0x00, ch);
 }
 
 
