@@ -145,7 +145,14 @@ void mh_stopSequencer() {
 				mh_killChan(c);
 		}
 	}
-	///kernelMidi::send();
+
+	/* send ALL notes OFF signal to each channel */
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *c = G_Mixer.channels.at(i);
+		if (c->type == CHANNEL_MIDI)
+			kernelMidi::send(0xB0, 0x7B, 0x00, c);
+	}
 }
 
 
