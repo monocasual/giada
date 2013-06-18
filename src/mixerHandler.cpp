@@ -122,6 +122,36 @@ void mh_startChan(channel *ch, bool do_quantize) {
 /* ------------------------------------------------------------------ */
 
 
+void mh_stopSequencer() {
+
+	G_Mixer.running = false;
+
+	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true */
+
+	if (G_Conf.chansStopOnSeqHalt) {
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+			channel *c = G_Mixer.channels.at(i);
+			if (c->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
+				mh_killChan(c);
+
+			/* when a channel has recs in play?
+			 * Recorder has events for that channel
+			 * G_Mixer has at least one sample in play
+			 * Recorder's channel is active (altrimenti può capitare che
+			 * si stoppino i sample suonati manualmente in un canale con rec
+			 * disattivate) */
+
+			if (c->hasActions && c->readActions && c->status == STATUS_PLAY)
+				mh_killChan(c);
+		}
+	}
+	///kernelMidi::send();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void mh_stopChan(channel *ch) {
 	if (ch == NULL)
 		return;

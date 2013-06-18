@@ -44,6 +44,12 @@ void mh_deleteChannel(struct channel *ch);
 void mh_freeChannel(struct channel *ch);
 
 
+/* stopSequencer
+ * stop the sequencer, with special case if samplesStopOnSeqHalt is
+ * true. */
+
+void mh_stopSequencer();
+
 /* killChan
  * kill a chan abruptly, without checking LOOP_ENDING and such */
 

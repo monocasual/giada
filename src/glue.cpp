@@ -47,6 +47,7 @@
 #include "gg_waveTools.h"
 #include "channel.h"
 #include "utils.h"
+#include "kernelMidi.h"
 
 
 extern gdMainWindow *mainWin;
@@ -341,28 +342,7 @@ void glue_startSeq(bool gui) {
 
 void glue_stopSeq(bool gui) {
 
-	G_Mixer.running = false;
-
-	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true */
-	/** TODO: mh_stopSeq() */
-
-	if (G_Conf.chansStopOnSeqHalt) {
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *c = G_Mixer.channels.at(i);
-			if (c->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-				mh_killChan(c);
-
-			/* when a channel has recs in play?
-			 * Recorder has events for that channel
-			 * G_Mixer has at least one sample in play
-			 * Recorder's channel is active (altrimenti può capitare che
-			 * si stoppino i sample suonati manualmente in un canale con rec
-			 * disattivate) */
-
-			if (c->hasActions && c->readActions && c->status == STATUS_PLAY)
-				mh_killChan(c);
-		}
-	}
+	mh_stopSequencer();
 
 	/* what to do if we stop the sequencer and some action recs are active?
 	 * Deactivate the button and delete any 'rec on' status */

@@ -425,10 +425,10 @@ void jackSetSyncCb() {
 }
 
 
-int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg) {
-
+int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
+		void *arg)
+{
 	switch (state) {
-
 		case JackTransportStopped:
 			printf("[KA] Jack transport stopped, frame=%d\n", pos->frame);
 			glue_stopSeq(false);  // false = not from GUI
