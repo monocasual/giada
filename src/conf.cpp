@@ -221,6 +221,8 @@ int Conf::read() {
 
 	pianoRollY = atoi(getValue("pianoRollY").c_str());
 	pianoRollH = atoi(getValue("pianoRollH").c_str());
+	if (pianoRollH <= 0)
+		pianoRollH = 422;
 
 	sampleEditorX    = atoi(getValue("sampleEditorX").c_str());
 	sampleEditorY    = atoi(getValue("sampleEditorY").c_str());
