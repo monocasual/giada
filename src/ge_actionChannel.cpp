@@ -146,9 +146,9 @@ void gActionChannel::draw() {
 	fl_color(COLOR_BG_1);
 	fl_font(FL_HELVETICA, 12);
 	if (active())
-		fl_draw("actions", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
+		fl_draw("start/stop", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
 	else
-		fl_draw("actions (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
+		fl_draw("start/stop (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
 
 	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 
@@ -431,8 +431,8 @@ const int gAction::MIN_WIDTH = 8;
 
 
 /** index is useless? */
-gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEditor *parent, bool record, char type)
-: Fl_Box     (x, y, MIN_WIDTH, h),
+gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEditor *parent, bool record, char type)
+: Fl_Box     (X, Y, MIN_WIDTH, H),
   selected   (false),
   index      (index),
   parent     (parent),
@@ -461,6 +461,13 @@ gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEdito
 		if (frame_b == -1)
 			frame_b = frame_a+4096;
 		w((frame_b - frame_a)/parent->zoom);
+
+	/* a singlepress action narrower than 8 pixel is useless. So check it.
+	 * Warning: if an action is 8 px narrow, it has no body space to drag
+	 * it. It's up to the user to zoom in and drag it. */
+
+		if (w() < MIN_WIDTH)
+			size(MIN_WIDTH, h());
 	}
 }
 
@@ -470,27 +477,20 @@ gAction::gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEdito
 
 void gAction::draw() {
 
-	/* a singlepress action narrower than 8 pixel is useless. So check it.
-	 * Warning: if an action is 8 px narrow, it has no body space to drag
-	 * it. It's up to the user to zoom in and drag it. */
-
-
-	if (parent->chan->mode == SINGLE_PRESS)
-		if (w() < MIN_WIDTH)
-			w(MIN_WIDTH);
-
-
 	int color;
 	if (selected)  /// && gActionChannel !disabled
 		color = COLOR_BD_1;
 	else
 		color = COLOR_BG_2;
 
-	if (type == ACTION_KILLCHAN)
-		fl_rect(x(), y(), w(), h(), (Fl_Color) color);
-	else {
+	if (parent->chan->mode == SINGLE_PRESS) {
 		fl_rectf(x(), y(), w(), h(), (Fl_Color) color);
-		if (parent->chan->mode != SINGLE_PRESS) { // don't do that for SINGLE PRESS
+	}
+	else {
+		if (type == ACTION_KILLCHAN)
+			fl_rect(x(), y(), MIN_WIDTH, h(), (Fl_Color) color);
+		else {
+			fl_rectf(x(), y(), MIN_WIDTH, h(), (Fl_Color) color);
 			if (type == ACTION_KEYPRESS)
 				fl_rectf(x()+3, y()+h()-11, 2, 8, COLOR_BD_0);
 			else
