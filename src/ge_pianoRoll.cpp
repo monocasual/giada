@@ -233,7 +233,7 @@ void gPianoRoll::drawSurface() {
 
 	int octave = 9;
 
-	for (int i=1; i<=128; i++) {
+	for (int i=1; i<=MAX_NOTES+1; i++) {
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
@@ -267,12 +267,12 @@ void gPianoRoll::drawSurface() {
 			octave--;
 		}
 
-		fl_draw(note, 4, ((i-1)*15)+1, 30, 15, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+		fl_draw(note, 4, ((i-1)*CELL_H)+1, 30, CELL_H, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 		/* print horizontal line */
 
 		if (i < 128)
-			fl_line(0, i*15, x()+w()-2, +i*15);
+			fl_line(0, i*CELL_H, x()+w()-2, +i*CELL_H);
 	}
 
 	fl_line_style(0);
@@ -408,7 +408,7 @@ bool gPianoRoll::onItem() {
 
 
 gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, recorder::action *b, gdActionEditor *pParent)
-	: Fl_Box  (X, Y, 20, 10),
+	: Fl_Box  (X, Y, 20, gPianoRoll::CELL_H-5),
 	  a       (a),
 	  b       (b),
 		pParent (pParent),
@@ -455,18 +455,19 @@ bool gPianoItem::overlap() {
 	 * end   = the lowest value between the two ending points
 	 * if start < end then there's an overlap of end-start pixels. */
 
-	for (int i=0; i<pParent->children(); i++) {
+	gPianoRoll *pPiano = (gPianoRoll*) parent();
 
-		/* never check against itself. */
+	for (int i=0; i<pPiano->children(); i++) {
 
-		if ((gPianoItem*)pParent->child(i) == this)
+		gPianoItem *pItem = (gPianoItem*) pPiano->child(i);
+
+		/* don't check against itself and with different y positions */
+
+		if (pItem == this || pItem->y() != y())
 			continue;
 
-		int that_x  = ((gPianoItem*)pParent->child(i))->x();
-		int that_w  = ((gPianoItem*)pParent->child(i))->w();
-
-		int start = that_x >= x() ? that_x : x();
-		int end   = that_x+that_w < x()+w() ? that_x+that_w : x()+w();
+		int start = pItem->x() >= x() ? pItem->x() : x();
+		int end   = pItem->x()+pItem->w() < x()+w() ? pItem->x()+pItem->w() : x()+w();
 		if (start < end)
 			return true;
 	}
@@ -640,7 +641,11 @@ int gPianoItem::handle(int e) {
 
 		case FL_RELEASE: {
 
-			/* delete & record the action */
+			/* delete & record the action, only if it doesn't overlap with
+			 * another one */
+
+			if (overlap())
+				puts("OVERLAP!");
 
 			if (changed) {
 				remove();

@@ -79,6 +79,8 @@ public:
 	int  handle(int e);
 	//void resize(int x, int y, int w, int h);
 	void updatePoints();
+
+	enum { MAX_NOTES = 127, CELL_H = 15 };
 };
 
 
@@ -99,12 +101,16 @@ private:
 	 * from a relative_y return the real MIDI note, range 0-127. 15 is
 	 * the hardcoded value for note height in pixels */
 
-	inline int getNote(int rel_y) { return 127 - (rel_y / 15); };
+	inline int getNote(int rel_y) {
+		return gPianoRoll::MAX_NOTES - (rel_y / gPianoRoll::CELL_H);
+	};
 
 	/* getY
 	 * from a note, return the y position on piano roll */
 
-	inline int getY(int note) { return (127 * 15) - (note * 15); };
+	inline int getY(int note) {
+		return (gPianoRoll::MAX_NOTES * gPianoRoll::CELL_H) - (note * gPianoRoll::CELL_H);
+	};
 
 	/* overlap
 	 * check if this item don't overlap with another one. */
@@ -156,6 +162,7 @@ public:
 
 	inline int getFrame_a() { return frame_a; }
 	inline int getFrame_b() { return frame_b; }
+	inline int getNote()    { return note;    }
 
 };
 
