@@ -126,7 +126,7 @@ void gActionChannel::updateActions() {
 			a->resize(newX, a->y(), newW, a->h());
 		}
 		else
-			a->position(newX, a->y());
+			a->resize(newX, a->y(), gAction::MIN_WIDTH, a->h());
 	}
 }
 
