@@ -219,13 +219,13 @@ void gPianoRoll::drawSurface() {
 
 	/** TODO - use parent->totalWidth instead of W() */
 
-	surface = fl_create_offscreen(w(), h());
+	surface = fl_create_offscreen(pParent->totalWidth, h());
 	fl_begin_offscreen(surface);
 
 	/* warning: only w() and h() come from this widget, x and y coordinates
 	 * are absolute, since we are writing in a memory chunk */
 
-	fl_rectf(0, 0, w(), h(), COLOR_BG_MAIN);
+	fl_rectf(0, 0, pParent->totalWidth, h(), COLOR_BG_MAIN);
 
 	fl_color(fl_rgb_color(54, 54, 54));
 	fl_line_style(FL_DASH, 0, NULL);
