@@ -126,8 +126,8 @@ int gPianoRollContainer::handle(int e) {
 gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : gActionWidget(X, Y, W, 40, pParent)
 {
-	resizable(NULL);               // don't resize children (i.e. pianoItem)
-	size(W, 128 * 15);             // 128 MIDI channels * 15 px height
+	resizable(NULL);                      // don't resize children (i.e. pianoItem)
+	size(W, (MAX_NOTES+1) * CELL_H);      // 128 MIDI channels * 15 px height
 
 	if (G_Conf.pianoRollY == -1)
 		position(x(), y()-(h()/2));  // center
@@ -217,8 +217,6 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 void gPianoRoll::drawSurface() {
 
-	/** TODO - use parent->totalWidth instead of W() */
-
 	surface = fl_create_offscreen(pParent->totalWidth, h());
 	fl_begin_offscreen(surface);
 
@@ -232,6 +230,9 @@ void gPianoRoll::drawSurface() {
 	fl_font(FL_HELVETICA, 11);
 
 	int octave = 9;
+
+	/** TODO change method, must be pixel-based (for i=0, i<h()... ) so
+	 * that we can draw only the visible part */
 
 	for (int i=1; i<=MAX_NOTES+1; i++) {
 
