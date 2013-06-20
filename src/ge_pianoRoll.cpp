@@ -448,6 +448,36 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 /* ------------------------------------------------------------------ */
 
 
+bool gPianoItem::overlap() {
+
+	/* when 2 segments overlap?
+	 * start = the highest value between the two starting points
+	 * end   = the lowest value between the two ending points
+	 * if start < end then there's an overlap of end-start pixels. */
+
+	for (int i=0; i<pParent->children(); i++) {
+
+		/* never check against itself. */
+
+		if ((gPianoItem*)pParent->child(i) == this)
+			continue;
+
+		int that_x  = ((gPianoItem*)pParent->child(i))->x();
+		int that_w  = ((gPianoItem*)pParent->child(i))->w();
+
+		int start = that_x >= x() ? that_x : x();
+		int end   = that_x+that_w < x()+w() ? that_x+that_w : x()+w();
+		if (start < end)
+			return true;
+	}
+
+	return false;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gPianoItem::draw() {
 	int _w = w() > 4 ? w() : 4;
 	//printf("[gPianoItem] draw me (%p) at x=%d\n", (void*)this, x());

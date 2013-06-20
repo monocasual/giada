@@ -106,6 +106,11 @@ private:
 
 	inline int getY(int note) { return (127 * 15) - (note * 15); };
 
+	/* overlap
+	 * check if this item don't overlap with another one. */
+
+	bool overlap();
+
 
 	recorder::action *a;
 	recorder::action *b;
