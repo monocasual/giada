@@ -147,6 +147,11 @@ private:
 	bool onLeftEdge;
 	bool onRightEdge;
 
+	/* old_x, old_w - store previous width and position while dragging
+	 * and moving, in order to restore it if overlap */
+
+	int old_x, old_w;
+
 
 public:
 

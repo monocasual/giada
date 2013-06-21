@@ -571,6 +571,8 @@ int gPianoItem::handle(int e) {
 		case FL_PUSH: {
 
 			push_x = Fl::event_x() - x();
+			old_x  = x();
+			old_w  = w();
 
 			if (Fl::event_button3()) {
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
@@ -587,6 +589,7 @@ int gPianoItem::handle(int e) {
 
 			changed = true;
 			gPianoRoll *pr = (gPianoRoll*) parent();
+
 			int nx, ny, nw;
 
 			if (onLeftEdge) {
@@ -645,18 +648,22 @@ int gPianoItem::handle(int e) {
 			/* delete & record the action, only if it doesn't overlap with
 			 * another one */
 
-			if (overlap())
-				puts("OVERLAP!");
-
+			if (overlap()) {
+				resize(old_x, y(), old_w, h());
+				redraw();
+			}
+			else
 			if (changed) {
 				remove();
 				note    = getNote(getRelY());
 				frame_a = getRelX() * pParent->zoom;
 				frame_b = (getRelX()+w()) * pParent->zoom;
 				record();
-
 				changed = false;
 			}
+
+			((gPianoRoll*)parent())->redraw();
+
 			ret = 1;
 			break;
 		}
