@@ -513,48 +513,10 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				pthread_mutex_unlock(&mutex_chans);
 			}
 
-
 			/* reset sample on beat 0 */
 
-			if (actualFrame == 0) {
-				pthread_mutex_lock(&mutex_chans);
-				for (unsigned k=0; k<channels.size; k++) {
-					channel *ch = channels.at(k);
-
-					if (ch->wave == NULL)
-						continue;
-
-					if (ch->mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) { // LOOP_REPEAT already done
-
-						/* do a crossfade if the sample is playing. Regular chanReset
-						 * instead if it's muted, otherwise a click occurs */
-
-						if (ch->status == STATUS_PLAY) {
-							if (ch->mute || ch->mute_i)
-								chanReset(ch);
-							else
-								xfade(ch);
-						}
-						else
-						if (ch->status == STATUS_ENDING)
-							chanStop(ch);
-					}
-
-					if (ch->status== STATUS_WAIT)
-						ch->status = STATUS_PLAY;
-
-					if (ch->recStatus == REC_ENDING) {
-						ch->recStatus = REC_STOPPED;
-						recorder::disableRead(ch);    // rec stop
-					}
-					else
-					if (ch->recStatus == REC_WAITING) {
-						ch->recStatus = REC_READING;
-						recorder::enableRead(ch);     // rec start
-					}
-				}
-				pthread_mutex_unlock(&mutex_chans);
-			}
+			if (actualFrame == 0)
+				updateChansOnSampleZero();
 
 			/* reading all actions recorded. MIDI to VST: we must pass an array of
 			 * vstEvents structs, spanning through the whole frame */
@@ -586,8 +548,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								}
 							case ACTION_MIDI:
 #ifdef WITH_VST
-								//printf("ACTION_MIDI found @ %d\n", actualFrame);
-								G_PluginHost.addVstMidiEvent(a->event, ch);
+								if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+									G_PluginHost.addVstMidiEvent(a->event, ch);
 #endif
 								break;
 							case ACTION_MUTEON:
@@ -1093,6 +1055,63 @@ void Mixer::processPlugins(channel *ch) {
 	pthread_mutex_unlock(&mutex_plugins);
 }
 #endif
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::updateChansOnSampleZero() {
+
+	pthread_mutex_lock(&mutex_chans);
+
+	for (unsigned k=0; k<channels.size; k++) {
+
+		channel *ch = channels.at(k);
+
+		if (ch->type == CHANNEL_SAMPLE) {
+
+			if (ch->wave == NULL)
+				continue;
+
+			if (ch->mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) {
+
+				/* do a crossfade if the sample is playing. Regular chanReset
+				 * instead if it's muted, otherwise a click occurs */
+
+				if (ch->status == STATUS_PLAY) {
+					if (ch->mute || ch->mute_i)
+						chanReset(ch);
+					else
+						xfade(ch);
+				}
+				else
+				if (ch->status == STATUS_ENDING)
+					chanStop(ch);
+			}
+
+			if (ch->status == STATUS_WAIT)
+				ch->status = STATUS_PLAY;
+
+			if (ch->recStatus == REC_ENDING) {
+				ch->recStatus = REC_STOPPED;
+				recorder::disableRead(ch);    // rec stop
+			}
+			else
+			if (ch->recStatus == REC_WAITING) {
+				ch->recStatus = REC_READING;
+				recorder::enableRead(ch);     // rec start
+			}
+		}
+		else {
+			if (ch->status == STATUS_ENDING)
+				ch->status = STATUS_OFF;
+			else
+			if (ch->status == STATUS_WAIT)
+				ch->status = STATUS_PLAY;
+		}
+	}
+	pthread_mutex_unlock(&mutex_chans);
+}
 
 
 /* ------------------------------------------------------------------ */

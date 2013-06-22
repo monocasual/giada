@@ -65,7 +65,7 @@ void mh_startChan(channel *ch, bool do_quantize) {
 
 		case STATUS_OFF:
 		{
-			if (ch->mode & LOOP_ANY)
+			if (ch->mode & LOOP_ANY || ch->type == CHANNEL_MIDI)
 				ch->status = STATUS_WAIT;
 			else
 				if (G_Mixer.quantize > 0 && G_Mixer.running && do_quantize)
@@ -89,7 +89,7 @@ void mh_startChan(channel *ch, bool do_quantize) {
 				else {
 
 					/* do a xfade only if the mute is off. An xfade on a mute channel
-					 * introduces some bad clics */
+					 * introduces some bad clicks */
 
 					if (ch->mute)
 						G_Mixer.chanReset(ch);

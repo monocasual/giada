@@ -98,12 +98,10 @@ void __gu_blinkChannel(gChannel *gch) {
 
 
 void __gu_refreshColumn(Fl_Group *col) {
+
 	for (int i=0; i<col->children(); i++) {
 
 		gChannel *gch = (gChannel *) col->child(i);
-
-		if (gch->ch->wave == NULL)
-			continue;
 
 		if (gch->ch->status == STATUS_OFF) {
 			gch->sampleButton->bgColor0 = COLOR_BG_0;
@@ -123,17 +121,23 @@ void __gu_refreshColumn(Fl_Group *col) {
 		if (gch->ch->recStatus & (REC_WAITING | REC_ENDING))
 			__gu_blinkChannel(gch);
 
-		if (G_Mixer.chanInput == gch->ch)
-			gch->sampleButton->bgColor0 = COLOR_BG_3;
+		/* SAMPLE_CHANNEL only */
 
-		if (recorder::active)
-			if (recorder::canRec(gch->ch)) {
-				gch->sampleButton->bgColor0 = COLOR_BG_4;
-				gch->sampleButton->txtColor = COLOR_TEXT_0;
-			}
+		if (gch->ch->type == CHANNEL_SAMPLE && gch->ch->wave != NULL) {
+
+			if (G_Mixer.chanInput == gch->ch)
+				gch->sampleButton->bgColor0 = COLOR_BG_3;
+
+			if (recorder::active)
+				if (recorder::canRec(gch->ch)) {
+					gch->sampleButton->bgColor0 = COLOR_BG_4;
+					gch->sampleButton->txtColor = COLOR_TEXT_0;
+				}
+
+			gch->status->redraw();
+		}
 
 		gch->sampleButton->redraw();
-		gch->status->redraw();
 	}
 }
 
@@ -185,6 +189,15 @@ void gu_update_controls() {
 					gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 					break;
 			}
+
+			/* update channels. If you load a patch with recorded actions, the 'R'
+			 * button must be shown. Moreover if the actions are active, the 'R'
+			 * button must be activated accordingly. */
+
+			if (ch->hasActions)
+				ch->guiChannel->addActionButton(ch->readActions);
+			else
+				ch->guiChannel->remActionButton();
 		}
 
 		char k[4];
@@ -206,15 +219,6 @@ void gu_update_controls() {
 			ch->guiChannel->modeBox->value(ch->mode);
 			ch->guiChannel->modeBox->redraw();
 		}
-
-		/* update channels. If you load a patch with recorded actions, the 'R'
-		 * button must be shown. Moreover if the actions are active, the 'R'
-		 * button must be activated accordingly. */
-
-		if (ch->hasActions)
-			ch->guiChannel->addActionButton(ch->readActions);
-		else
-			ch->guiChannel->remActionButton();
 	}
 
 	mainWin->outVol->value(G_Mixer.outVol);

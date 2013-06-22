@@ -213,13 +213,19 @@ public:
 
 private:
 
+	/* updateChansOnSampleZero
+	 * handle channels when actualFrame is 0, i.e. the sequencer returns
+	 * to beat 1 */
+
+	void updateChansOnSampleZero();
+
 	/* calcFadeoutStep
-	 * allows a fadeout even if the sample is almost finished */
+	 * allows a fadeout even if the sample is almost ended */
 
 	void calcFadeoutStep(struct channel *ch);
 
 	/* calcVolumeEnv
-	 * compute any changes in volume done viaenvelope tool */
+	 * compute any changes in volume done via envelope tool */
 
 	void calcVolumeEnv(struct channel *ch, int frame);
 

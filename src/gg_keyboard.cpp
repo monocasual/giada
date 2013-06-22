@@ -755,6 +755,12 @@ void Keyboard::clear() {
 
 
 void Keyboard::setChannelWithActions(channel *ch) {
+
+	/* nothing to do with MIDI channels, they don't have 'R' button */
+
+	if (ch->type == CHANNEL_MIDI)
+		return;
+
 	if (ch->hasActions) {
 		ch->readActions = true;   /// <---- move this to glue_stopRec
 		ch->guiChannel->addActionButton(true); // true = button on
