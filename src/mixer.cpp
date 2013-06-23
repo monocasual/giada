@@ -158,6 +158,11 @@ channel *Mixer::addChannel(char side, int type) {
 	ch->side  = side;
 	ch->type  = type;
 
+	if (type == CHANNEL_MIDI) {
+		ch->status = STATUS_OFF;  // for SAMPLES, init status is EMPTY
+		ch->readActions = true;
+	}
+
 	printf("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size);
 
 	return ch;
@@ -523,13 +528,19 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 			pthread_mutex_lock(&mutex_recs);
 			for (unsigned y=0; y<recorder::frames.size; y++) {
+
 				if (recorder::frames.at(y) == actualFrame) {
+
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
+
 						int index   = recorder::global.at(y).at(z)->chan;
 						channel *ch = getChannelByIndex(index);
-						if (ch->readActions == false)
+
+						if (ch->type == CHANNEL_SAMPLE && ch->readActions == false)
 							continue;
+
 						recorder::action *a = recorder::global.at(y).at(z);
+
 						switch (a->type) {
 							case ACTION_KEYPRESS:
 								if (ch->mode & SINGLE_ANY) {

@@ -126,13 +126,20 @@ void mh_stopSequencer() {
 
 	G_Mixer.running = false;
 
-	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true */
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		channel *c = G_Mixer.channels.at(i);
 
-	if (G_Conf.chansStopOnSeqHalt) {
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *c = G_Mixer.channels.at(i);
+		/* kill all MIDI channels, else kill loop channels and recs if
+		 * "samplesStopOnSeqHalt" == true */
+
+		if (c->type == CHANNEL_MIDI)
+			mh_killChan(c);
+		else
+		if (G_Conf.chansStopOnSeqHalt) {
 			if (c->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
 				mh_killChan(c);
+
+			/** FIXME - unify these */
 
 			/* when a channel has recs in play?
 			 * Recorder has events for that channel
@@ -146,13 +153,6 @@ void mh_stopSequencer() {
 		}
 	}
 
-	/* send ALL notes OFF signal to each channel */
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *c = G_Mixer.channels.at(i);
-		if (c->type == CHANNEL_MIDI)
-			kernelMidi::send(0xB0, 0x7B, 0x00, c);
-	}
 }
 
 
@@ -182,6 +182,12 @@ void mh_stopChan(channel *ch) {
 
 
 void mh_killChan(channel *ch) {
+	if (ch->type == CHANNEL_MIDI) {
+		if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+			kernelMidi::send(0xB0, 0x7B, 0x00, ch);  // all note off
+		ch->status = STATUS_OFF;
+	}
+	else
 	if (ch->wave != NULL && ch->status != STATUS_OFF) {
 		if (ch->mute || ch->mute_i)
 			G_Mixer.chanStop(ch);

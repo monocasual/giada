@@ -894,22 +894,27 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 	 *		else kill chan */
 	else
 	if (shift) {
-		if (recorder::active) {
-			if (G_Mixer.running) {
-				mh_killChan(c);
-				if (recorder::canRec(c) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
-					recorder::rec(c->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
-			}
+		if (c->type == CHANNEL_MIDI) {
+			mh_killChan(c);
 		}
 		else {
-			if (c->hasActions) {
-				if (G_Mixer.running || c->status == STATUS_OFF)
-					c->readActions ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
+			if (recorder::active) {
+				if (G_Mixer.running) {
+					mh_killChan(c);
+					if (recorder::canRec(c) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
+						recorder::rec(c->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
+				}
+			}
+			else {
+				if (c->hasActions) {
+					if (G_Mixer.running || c->status == STATUS_OFF)
+						c->readActions ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
+					else
+						mh_killChan(c);
+				}
 				else
 					mh_killChan(c);
 			}
-			else
-				mh_killChan(c);
 		}
 	}
 
@@ -920,7 +925,10 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Mixer.quantize == 0 && recorder::canRec(c) && !(c->mode & LOOP_ANY))
+		if (c->type == CHANNEL_SAMPLE &&
+	      G_Mixer.quantize == 0     &&
+	      recorder::canRec(c)       &&
+	      !(c->mode & LOOP_ANY))
 		{
 			if (c->mode == SINGLE_PRESS)
 				recorder::startOverdub(c->index, ACTION_KEYS, G_Mixer.actualFrame);
