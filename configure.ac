@@ -82,13 +82,13 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
-AC_LANG_PUSH([C++])
-AC_CHECK_HEADER(
-	[RtAudio.h],
-	[],
-	[AC_MSG_ERROR([library 'rtAudio' not found!])]
-)
-AC_LANG_POP
+#AC_LANG_PUSH([C++])
+#AC_CHECK_HEADER(
+#	[RtAudio.h],
+#	[],
+#	[AC_MSG_ERROR([library 'rtAudio' not found!])]
+#)
+#AC_LANG_POP
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
