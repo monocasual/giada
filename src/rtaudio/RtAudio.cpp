@@ -1840,10 +1840,12 @@ struct JackHandle {
 
 /* --- Monocasual HACK 2013 ----------------------------------------- */
 
+#ifdef __linux__
 void *RtApi :: __HACK__getJackClient() {
 	JackHandle *handle = (JackHandle *) stream_.apiHandle;
 	return (void*) handle->client;
 }
+#endif
 
 /* ------------------------------------------------------------------ */
 

@@ -47,7 +47,9 @@
 
 #include <string>
 #include <vector>
-#include <jack/jack.h>
+#if defined(__linux__)
+	#include <jack/jack.h>
+#endif
 #include "RtError.h"
 
 // RtAudio version
@@ -613,7 +615,9 @@ public:
 
   /* --- Monocasual HACK 2013 --------------------------------------- */
 
+#ifdef __linux__
   void *__HACK__getJackClient();
+#endif
 
 	/* ---------------------------------------------------------------- */
 

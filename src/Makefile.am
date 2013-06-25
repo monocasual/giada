@@ -44,20 +44,20 @@ ge_pianoRoll.h		 ge_pianoRoll.cpp     kernelMidi.h         kernelMidi.cpp
 # inside configure.ac
 
 if LINUX
-giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -Lrtaudio \
-							-l:librtaudio.a -ljack -lasound -lpthread -ldl \
+giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
+							rtaudio/librtaudio.a -ljack -lasound -lpthread -ldl \
 							-lpulse-simple -lsamplerate
 endif
 if WINDOWS
-giada_LDADD   = -lole32 -lrtaudio -ldsound -lwinmm -lwsock32 -lm       \
-  						  -lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32   \
-  						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32            \
-  						  -Lc:/mingw/lib -lsndfile -lsamplerate
+giada_LDADD   = -lole32  -ldsound -lwinmm -lwsock32 \
+								-lm -lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
+  						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -Lc:/mingw/lib \
+  						  -lsndfile -lsamplerate rtaudio/librtaudio.a
 giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
 if OSX
-giada_LDADD   = /usr/local/lib/libsndfile.a -lrtaudio -lm -lpthread -lfltk
+giada_LDADD   = /usr/local/lib/libsndfile.a -lm -lpthread -lfltk rtaudio/librtaudio.a
 giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
                 -lsamplerate
 endif
