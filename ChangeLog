@@ -13,6 +13,19 @@
 
 
 
+0.7.1 --- 2013 . 06 . 27
+- Initial Jack Transport support
+- Send global note off when sequencer is being stopped
+- Send note off when deleting notes in Piano Roll
+- Store position and size of Piano Roll in conf file
+- Avoid overlap MIDI notes in Piano Roll
+- MIDI channel refactoring
+- MIDI channels now behave like loop-mode ones
+- Fix graphical bugs in Action Editor, sample mode
+- Fix refresh issue in Piano Roll when deleting items
+- Lots of invisible cleanups and improvements
+
+
 0.7.0 --- 2013 . 06 . 05
 - Initial MIDI output implementation
 - Initial VSTi (instrument) support
