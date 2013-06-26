@@ -37,12 +37,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string>
-#if defined(_WIN32)			// getcwd (unix) or __getcwd (win)
-	#include <direct.h>
-	#include <windows.h>
-#else
-	#include <unistd.h>
-#endif
 #include <limits.h>
 #if defined(__APPLE__)
 	#include <libgen.h>     // basename unix

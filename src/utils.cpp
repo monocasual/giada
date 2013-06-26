@@ -28,6 +28,12 @@
 
 
 #include "utils.h"
+#if defined(_WIN32)			// getcwd (unix) or __getcwd (win)
+	#include <direct.h>
+	#include <windows.h>
+#else
+	#include <unistd.h>
+#endif
 
 
 bool gFileExists(const char *filename) {

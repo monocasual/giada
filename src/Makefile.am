@@ -49,10 +49,10 @@ giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
 							-lpulse-simple -lsamplerate
 endif
 if WINDOWS
-giada_LDADD   = -lole32  -ldsound -lwinmm -lwsock32 \
+giada_LDADD   = -lole32 rtaudio/librtaudio.a -ldsound -lwinmm -lwsock32 \
 								-lm -lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
   						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -Lc:/mingw/lib \
-  						  -lsndfile -lsamplerate rtaudio/librtaudio.a
+  						  -lsndfile -lsamplerate
 giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
