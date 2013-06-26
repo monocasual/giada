@@ -578,7 +578,6 @@ int gPianoItem::handle(int e) {
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
 				remove();
 				Fl::delete_widget(this);
-				mainWin->keyboard->setChannelWithActions(pParent->chan);  // update mainwin
 				((gPianoRoll*)parent())->redraw();
 			}
 			ret = 1;
