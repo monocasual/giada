@@ -577,6 +577,7 @@ int gPianoItem::handle(int e) {
 			if (Fl::event_button3()) {
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
 				remove();
+				hide();   // for Windows
 				Fl::delete_widget(this);
 				((gPianoRoll*)parent())->redraw();
 			}
