@@ -52,8 +52,17 @@
 #endif
 #include "RtError.h"
 
+/* --- Monocasual HACK 2013 --------------------------------------------
+ *
+ * on windows (MinGW) this definition messes with some other const
+ * defined in winnt.h. */
+
+#ifndef _WIN32
 // RtAudio version
 static const std::string RT_VERSION( "4.0.12 mod" );
+#endif
+
+/* --- Monocasual HACK 2013 ----------------------------------------- */
 
 /*! \typedef typedef unsigned long RtAudioFormat;
     \brief RtAudio data format type.
@@ -325,7 +334,16 @@ class RtAudio
   };
 
   //! A static function to determine the current RtAudio version.
+
+/* --- Monocasual HACK 2013 ----------------------------------------- */
+
+#if !defined(_WIN32)
   static std::string getVersion( void ) { return RT_VERSION; }
+#else
+	static std::string getVersion( void ) { return "4.0.12 mod"; }
+#endif
+
+/* --- Monocasual HACK 2013 ----------------------------------------- */
 
   //! A static function to determine the available compiled audio APIs.
   /*!
