@@ -41,13 +41,14 @@ extern bool	 G_audio_status;
 
 namespace kernelAudio {
 
-RtAudio  *system      = NULL;
-unsigned  numDevs     = 0;
-bool 		 inputEnabled = 0;
-unsigned  realBufsize = 0;
+RtAudio  *system       = NULL;
+unsigned  numDevs      = 0;
+bool 		  inputEnabled = 0;
+unsigned  realBufsize  = 0;
+int       api          = 0;
 
 int openDevice(
-	int api,
+	int _api,
 	int outDev,
 	int inDev,
 	int outChan,
@@ -55,6 +56,7 @@ int openDevice(
 	int samplerate,
 	int buffersize)
 {
+	api = _api;
 	printf("[KA] using system 0x%x\n", api);
 #if defined(__linux__)
 	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
@@ -407,14 +409,18 @@ jack_client_t *jackGetHandle() {
 }
 
 void jackStart() {
-	jack_client_t *client = jackGetHandle();
-	jack_transport_start(client);
+	if (api == SYS_API_JACK) {
+		jack_client_t *client = jackGetHandle();
+		jack_transport_start(client);
+	}
 }
 
 
 void jackStop() {
-	jack_client_t *client = jackGetHandle();
-	jack_transport_stop(client);
+	if (api == SYS_API_JACK) {
+		jack_client_t *client = jackGetHandle();
+		jack_transport_stop(client);
+	}
 }
 
 

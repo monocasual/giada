@@ -95,6 +95,7 @@ namespace kernelAudio {
 	extern unsigned  numDevs;
 	extern bool 		 inputEnabled;
 	extern unsigned  realBufsize; 		// reale bufsize from the soundcard
+	extern int       api;
 }
 
 #endif
