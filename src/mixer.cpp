@@ -588,7 +588,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				actualFrame = 0;
 				actualBeat  = 0;
 			}
-			else if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
+			else
+			if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
 				actualBeat++;
 
 				/* avoid tick and tock to overlap when a new bar has passed (which
@@ -598,6 +599,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					tockPlay = true;
 			}
 		} // if (running)
+
+#if 0  // --------------------------------------------------------------
+
 	}
 
 	/* process here VST instruments, so that they benefit from mute, fadeout
@@ -616,6 +620,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	/* sum channels */
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
+
+#endif // --------------------------------------------------------------
 
 		pthread_mutex_lock(&mutex_chans);
 		for (unsigned k=0; k<channels.size; k++) {
@@ -773,8 +779,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	for (unsigned k=0; k<channels.size; k++) {
 		channel *ch = channels.at(k);
 #ifdef WITH_VST
-		if (ch->type == CHANNEL_SAMPLE)
-			processPlugins(ch);
+		processPlugins(ch);
 #endif
 		for (unsigned j=0; j<bufferFrames; j+=2) {
 			buffer[j]   += ch->vChan[j]   * ch->volume;
