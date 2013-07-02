@@ -600,28 +600,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			}
 		} // if (running)
 
-#if 0  // --------------------------------------------------------------
-
-	}
-
-	/* process here VST instruments, so that they benefit from mute, fadeout
-	 * fadein from each channel. */
-
-#ifdef WITH_VST
-	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size; k++) {
-		channel *ch = channels.at(k);
-		if (ch->type == CHANNEL_MIDI)
-			processPlugins(ch);
-	}
-	pthread_mutex_unlock(&mutex_chans);
-#endif
-
 	/* sum channels */
-
-	for (unsigned j=0; j<bufferFrames; j+=2) {
-
-#endif // --------------------------------------------------------------
 
 		pthread_mutex_lock(&mutex_chans);
 		for (unsigned k=0; k<channels.size; k++) {
