@@ -233,14 +233,6 @@ private:
 	 * compute new index value for new channels */
 
 	int getNewIndex();
-
-	/* processPlugins
-	 * call PluginHost to process all plugins from channel ch. */
-
-#ifdef WITH_VST
-	void processPlugins(struct channel *ch);
-#endif
-
 };
 
 #endif

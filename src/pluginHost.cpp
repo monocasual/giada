@@ -423,8 +423,8 @@ void PluginHost::processStackOffline(float *buffer, int stackType, channel *ch, 
 	/* call processStack on the entire size of the buffer. How many cycles?
 	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
 
-	/* FIXME 1 - calling processStack is slow, due to its internal buffer
-	 * conversions. */
+	/** FIXME 1 - calling processStack is slow, due to its internal buffer
+	 * conversions. We should also call processOffline from VST sdk */
 
 	int index = 0;
 	int step  = kernelAudio::realBufsize*2;
@@ -434,7 +434,7 @@ void PluginHost::processStackOffline(float *buffer, int stackType, channel *ch, 
 		if (left < 0)
 			processStack(&buffer[index], stackType, ch);
 
-	/* FIXME 2 - we left out the last part of buffer, because size % step != 0.
+	/** FIXME 2 - we left out the last part of buffer, because size % step != 0.
 	 * we should process the last chunk in a separate buffer, padded with 0 */
 
 		//else

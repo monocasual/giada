@@ -758,7 +758,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	for (unsigned k=0; k<channels.size; k++) {
 		channel *ch = channels.at(k);
 #ifdef WITH_VST
-		processPlugins(ch);
+		G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
+		G_PluginHost.freeVstMidiEvents(ch);
 #endif
 		for (unsigned j=0; j<bufferFrames; j+=2) {
 			buffer[j]   += ch->vChan[j]   * ch->volume;
@@ -1037,19 +1038,6 @@ bool Mixer::mergeVirtualInput() {
 bool Mixer::isPlaying(channel *ch) {
 	return ch->status == STATUS_PLAY || ch->status == STATUS_ENDING;
 }
-
-
-/* ------------------------------------------------------------------ */
-
-
-#ifdef WITH_VST
-void Mixer::processPlugins(channel *ch) {
-	pthread_mutex_lock(&mutex_plugins);
-	G_PluginHost.processStack(ch->vChan, PluginHost::CHANNEL, ch);
-	G_PluginHost.freeVstMidiEvents(ch);
-	pthread_mutex_unlock(&mutex_plugins);
-}
-#endif
 
 
 /* ------------------------------------------------------------------ */
