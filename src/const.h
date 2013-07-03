@@ -211,4 +211,14 @@
 
 /** TODO - addo to PATCH_ serie the signals for saving/loading */
 
+
+
+/* -- MIDI signals -----------------------------------------------------
+ * all signals are set to channel 0. It's up to the caller to bitmask
+ * them with the proper channel number. */
+
+#define MIDI_ALL_NOTES_OFF (0xB0 << 24) | (0x7B << 16) | (0x00 << 8) | (0x00)
+#define MIDI_MUTE          (0xB0 << 24) | (0x07 << 16) | (0x00 << 8) | (0x00)
+
+
 #endif
