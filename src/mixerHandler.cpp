@@ -204,7 +204,7 @@ void mh_muteChan(channel *ch, bool internal) {
 
 	if (internal) {
 
-		/* global mute? don't waste time with fadeout, just mute it
+		/* global mute is on? don't waste time with fadeout, just mute it
 		 * internally */
 
 		if (ch->mute)
@@ -228,7 +228,7 @@ void mh_muteChan(channel *ch, bool internal) {
 
 			/* sample in play? fadeout needed. Else, just mute it globally */
 
-			if (G_Mixer.isPlaying(ch)&& ch->type == CHANNEL_SAMPLE )
+			if (G_Mixer.isPlaying(ch)&& ch->type == CHANNEL_SAMPLE)
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE);
 			else
 				ch->mute = true;
