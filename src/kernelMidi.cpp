@@ -41,7 +41,7 @@ extern PluginHost G_PluginHost;
 namespace kernelMidi {
 
 void send(uint32_t msg, channel *ch) {
-	printf("[KM] send msg=%x from channel %d\n", msg, ch->index);
+	printf("[KM] send msg=%X from channel %d\n", msg, ch->index);
 #ifdef WITH_VST
 	G_PluginHost.addVstMidiEvent(msg, ch);
 #endif
@@ -52,7 +52,7 @@ void send(uint32_t msg, channel *ch) {
 
 
 void send(int b1, int b2, int b3, channel *ch) {
-	printf("[KM] send msg=%x from channel %d\n", getIValue(b1, b2, b3), ch->index);
+	printf("[KM] send msg=%X from channel %d\n", getIValue(b1, b2, b3), ch->index);
 #ifdef WITH_VST
 	G_PluginHost.addVstMidiEvent(getIValue(b1, b2, b3), ch);
 #endif

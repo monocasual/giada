@@ -559,7 +559,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 								}
 							case ACTION_MIDI:
 #ifdef WITH_VST
-								if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+								if (ch->status & (STATUS_PLAY | STATUS_ENDING) && !ch->mute)
 									G_PluginHost.addVstMidiEvent(a->event, ch);
 #endif
 								break;

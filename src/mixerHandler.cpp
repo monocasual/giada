@@ -184,7 +184,7 @@ void mh_stopChan(channel *ch) {
 void mh_killChan(channel *ch) {
 	if (ch->type == CHANNEL_MIDI) {
 		if (ch->status & (STATUS_PLAY | STATUS_ENDING))
-			kernelMidi::send(0xB0, 0x7B, 0x00, ch);  // all note off
+			kernelMidi::send(MIDI_ALL_NOTES_OFF, ch);
 		ch->status = STATUS_OFF;
 	}
 	else
@@ -228,13 +228,13 @@ void mh_muteChan(channel *ch, bool internal) {
 
 			/* sample in play? fadeout needed. Else, just mute it globally */
 
-			if (G_Mixer.isPlaying(ch)&& ch->type == CHANNEL_SAMPLE)
+			if (G_Mixer.isPlaying(ch) && ch->type == CHANNEL_SAMPLE)
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE);
 			else
 				ch->mute = true;
 		}
 		if (ch->type == CHANNEL_MIDI)
-			kernelMidi::send(0xB0, 0x07, 0x00, ch);
+			kernelMidi::send(MIDI_ALL_NOTES_OFF, ch);
 	}
 }
 
@@ -262,8 +262,6 @@ void mh_unmuteChan(channel *ch, bool internal) {
 			else
 				ch->mute = false;
 		}
-		if (ch->type == CHANNEL_MIDI)
-			kernelMidi::send(0xB0, 0x07, 0x64, ch);
 	}
 }
 
