@@ -201,24 +201,38 @@ void mh_killChan(channel *ch) {
 
 
 void mh_muteChan(channel *ch, bool internal) {
+
 	if (internal) {
-		if (ch->mute)          // global mute? don't waste time with fadeout,
-			ch->mute_i = true;   // just mute it internally
-		else
+
+		/* global mute? don't waste time with fadeout, just mute it
+		 * internally */
+
+		if (ch->mute)
+			ch->mute_i = true;
+		else {
 			if (G_Mixer.isPlaying(ch))
 				G_Mixer.fadeout(ch, Mixer::DO_MUTE_I);
 			else
 				ch->mute_i = true;
+		}
 	}
 	else {
-		if (ch->mute_i)        // internal mute? don't waste time with fadeout,
-			ch->mute = true;     // just mute it globally
-		else
-			if (G_Mixer.isPlaying(ch))              // sample in play? fadeout needed. Else,
-				G_Mixer.fadeout(ch, Mixer::DO_MUTE);  // just mute it globally
+
+		/* internal mute is on? don't waste time with fadeout, just mute it
+		 * globally */
+
+		if (ch->mute_i)
+			ch->mute = true;
+
+		else {
+
+			/* sample in play? fadeout needed. Else, just mute it globally */
+
+			if (G_Mixer.isPlaying(ch)&& ch->type == CHANNEL_SAMPLE )
+				G_Mixer.fadeout(ch, Mixer::DO_MUTE);
 			else
 				ch->mute = true;
-
+		}
 		if (ch->type == CHANNEL_MIDI)
 			kernelMidi::send(0xB0, 0x07, 0x00, ch);
 	}
@@ -232,21 +246,24 @@ void mh_unmuteChan(channel *ch, bool internal) {
 	if (internal) {
 		if (ch->mute)
 			ch->mute_i = false;
-		else
+		else {
 			if (G_Mixer.isPlaying(ch))
 				G_Mixer.fadein(ch, internal);
 			else
 				ch->mute_i = false;
+		}
 	}
 	else {
-		kernelMidi::send(0xB0, 0x07, 0x64, ch);
 		if (ch->mute_i)
 			ch->mute = false;
-		else
-			if (G_Mixer.isPlaying(ch))
+		else {
+			if (G_Mixer.isPlaying(ch) && ch->type == CHANNEL_SAMPLE)
 				G_Mixer.fadein(ch, internal);
 			else
 				ch->mute = false;
+		}
+		if (ch->type == CHANNEL_MIDI)
+			kernelMidi::send(0xB0, 0x07, 0x64, ch);
 	}
 }
 
