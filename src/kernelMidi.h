@@ -37,11 +37,13 @@
 
 namespace kernelMidi {
 
-	inline int getNoteOnOff(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
-	inline int getNoteValue(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
-	inline int getVelocity (uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
+	inline int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
+	inline int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
+	inline int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
-	inline uint32_t getIValue (int type, int note, int vel) { return (type << 24) | (note << 16) | (vel << 8) | (0x00); }
+	inline uint32_t getIValue (int b1, int b2, int b3) {
+		return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
+	}
 
 	void send(uint32_t s, struct channel *ch);
 

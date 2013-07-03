@@ -171,9 +171,9 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				/* extract MIDI infos from a1: if is note off skip it, we are looking
 				 * for note on only */
 
-				int a1_type = kernelMidi::getNoteOnOff(a1->iValue);
-				int a1_note = kernelMidi::getNoteValue(a1->iValue);
-				int a1_velo = kernelMidi::getVelocity (a1->iValue);
+				int a1_type = kernelMidi::getB1(a1->iValue);
+				int a1_note = kernelMidi::getB2(a1->iValue);
+				int a1_velo = kernelMidi::getB3(a1->iValue);
 
 				if (a1_type == 0x80) {
 					//printf("[gPianoRoll] ACTION_MIDI found, but skipping - was note off\n");
@@ -422,7 +422,7 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 	/* a is a pointer: action exists, needs to be displayed */
 
 	if (a) {
-		note    = kernelMidi::getNoteValue(a->iValue);
+		note    = kernelMidi::getB2(a->iValue);
 		frame_a = a->frame;
 		frame_b = b->frame;
 		event_a = a->iValue;
