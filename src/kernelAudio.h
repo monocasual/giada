@@ -38,12 +38,6 @@
 #include "utils.h"
 
 
-class MyRtAudio : public RtAudio {
-public:
-	inline RtApi *getRtApi() { return rtapi_; }
-};
-
-
 namespace kernelAudio {
 
 	int openDevice(
