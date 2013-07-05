@@ -648,16 +648,16 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 								unsigned ftp = ch->fadeoutTracker * ch->pitch;
 
-								ch->vChan[j]   += ch->wave->data[ftp]   * ch->fadeoutVol * ch->panLeft  * v;
-								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->fadeoutVol * ch->panRight * v;
+								ch->vChan[j]   += ch->wave->data[ftp]   * ch->fadeoutVol * v;
+								ch->vChan[j+1] += ch->wave->data[ftp+1] * ch->fadeoutVol * v;
 
-								ch->vChan[j]   += ch->wave->data[ctp]   * ch->panLeft  * v;
-								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->panRight * v;
+								ch->vChan[j]   += ch->wave->data[ctp]   * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * v;
 
 							}
 							else { // FADEOUT
-								ch->vChan[j]   += ch->wave->data[ctp]   * ch->fadeoutVol * ch->panLeft  * v;
-								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->fadeoutVol * ch->panRight * v;
+								ch->vChan[j]   += ch->wave->data[ctp]   * ch->fadeoutVol * v;
+								ch->vChan[j+1] += ch->wave->data[ctp+1] * ch->fadeoutVol * v;
 							}
 
 							ch->fadeoutVol     -= ch->fadeoutStep;
@@ -692,8 +692,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					else {
 						if (!ch->mute && !ch->mute_i) {
 							float v = ch->volume_i * ch->fadein * ch->boost;
-							ch->vChan[j]   += ch->wave->data[ctp]   * v * ch->panLeft;
-							ch->vChan[j+1] += ch->wave->data[ctp+1] * v * ch->panRight;
+							ch->vChan[j]   += ch->wave->data[ctp]   * v;
+							ch->vChan[j+1] += ch->wave->data[ctp+1] * v;
 						}
 					}
 
@@ -762,8 +762,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		G_PluginHost.freeVstMidiEvents(ch);
 #endif
 		for (unsigned j=0; j<bufferFrames; j+=2) {
-			buffer[j]   += ch->vChan[j]   * ch->volume;
-			buffer[j+1] += ch->vChan[j+1] * ch->volume;
+			buffer[j]   += ch->vChan[j]   * ch->volume * ch->panLeft;
+			buffer[j+1] += ch->vChan[j+1] * ch->volume * ch->panRight;
 		}
 	}
 	pthread_mutex_unlock(&mutex_chans);
