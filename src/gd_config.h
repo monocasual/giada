@@ -37,54 +37,17 @@
 
 class gdConfig : public gWindow {
 private:
-	static void cb_get_key_chan       (Fl_Widget *w, void *p);
-	static void cb_open_grab_win      (Fl_Widget *w, void *p);
 	static void cb_save_config        (Fl_Widget *w, void *p);
-	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
-	static void cb_fetchInChans       (Fl_Widget *w, void *p);
-	static void cb_fetchOutChans      (Fl_Widget *w, void *p);
-	static void cb_radio_mutex        (Fl_Widget *w, void *p);
-	static void cb_showInputInfo      (Fl_Widget *w, void *p);
-	static void cb_showOutputInfo     (Fl_Widget *w, void *p);
 	static void cb_cancel             (Fl_Widget *w, void *p);
-	inline void __cb_get_key_chan();
-	inline void __cb_open_grab_win();
 	inline void __cb_save_config();
-	inline void __cb_deactivate_sounddev();
-	inline void __cb_fetchInChans();
-	inline void __cb_fetchOutChans();
-	inline void __cb_radio_mutex(Fl_Widget *w);
-	inline void __cb_showInputInfo();
-	inline void __cb_showOutputInfo();
 	inline void __cb_cancel();
-
-	void fetchSoundDevs();
-	void fetchInChans(int menuItem);
-	void fetchOutChans(int menuItem);
-	int  findMenuDevice(class gChoice *m, int device);
-
-	int soundsysInitValue;
 
 public:
 	gdConfig(int w, int h);
 	~gdConfig();
 
-	class gChoice 	*soundsys;
-	class gChoice 	*samplerate;
-	class gChoice 	*rsmpQuality;
-	class gChoice  	*sounddevIn;
-	class gClick  	*devInInfo;
-	class gChoice  	*channelsIn;
-	class gChoice  	*sounddevOut;
-	class gClick  	*devOutInfo;
-	class gChoice  	*channelsOut;
-	class gCheck    *limitOutput;
-	class gChoice   *buffersize;
-	class gInput    *delayComp;
-
-	class gBox		  *actualKey;
-	class gChoice		*listChans;
-	class gClick		*setKey;
+	class gTabAudio     *tabAudio;
+	class gTabBehaviors *tabBehaviors;
 
 	class gRadio    *recsStopOnChanHalt_1;
 	class gRadio    *recsStopOnChanHalt_0;
@@ -94,7 +57,74 @@ public:
 	class gCheck		*fullChanVolOnLoad;
 	class gClick 		*save;
 	class gClick 		*cancel;
-
 };
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gTabAudio : public Fl_Group {
+
+private:
+	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
+	static void cb_fetchInChans       (Fl_Widget *w, void *p);
+	static void cb_fetchOutChans      (Fl_Widget *w, void *p);
+	static void cb_showInputInfo      (Fl_Widget *w, void *p);
+	static void cb_showOutputInfo     (Fl_Widget *w, void *p);
+	inline void __cb_deactivate_sounddev();
+	inline void __cb_fetchInChans();
+	inline void __cb_fetchOutChans();
+	inline void __cb_showInputInfo();
+	inline void __cb_showOutputInfo();
+
+	void fetchSoundDevs();
+	void fetchInChans(int menuItem);
+	void fetchOutChans(int menuItem);
+	int  findMenuDevice(class gChoice *m, int device);
+
+	int soundsysInitValue;
+
+public:
+	class gChoice *soundsys;
+	class gChoice *samplerate;
+	class gChoice *rsmpQuality;
+	class gChoice *sounddevIn;
+	class gClick  *devInInfo;
+	class gChoice *channelsIn;
+	class gChoice *sounddevOut;
+	class gClick  *devOutInfo;
+	class gChoice *channelsOut;
+	class gCheck  *limitOutput;
+	class gChoice *buffersize;
+	class gInput  *delayComp;
+
+	gTabAudio(int x, int y, int w, int h);
+
+	void save();
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gTabBehaviors : public Fl_Group {
+
+private:
+	static void cb_radio_mutex  (Fl_Widget *w, void *p);
+	inline void __cb_radio_mutex(Fl_Widget *w);
+
+public:
+	class gRadio *recsStopOnChanHalt_1;
+	class gRadio *recsStopOnChanHalt_0;
+	class gRadio *chansStopOnSeqHalt_1;
+	class gRadio *chansStopOnSeqHalt_0;
+	class gCheck *treatRecsAsLoops;
+	class gCheck *fullChanVolOnLoad;
+
+	gTabBehaviors(int x, int y, int w, int h);
+
+	void save();
+};
+
 
 #endif
