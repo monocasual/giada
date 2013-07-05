@@ -46,7 +46,7 @@ ge_pianoRoll.h		 ge_pianoRoll.cpp     kernelMidi.h         kernelMidi.cpp
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
 							rtaudio/librtaudio.a -ljack -lasound -lpthread -ldl \
-							-lpulse-simple -lsamplerate
+							-lpulse-simple -lsamplerate -lrtmidi
 endif
 if WINDOWS
 giada_LDADD   = -lole32 rtaudio/librtaudio.a -ldsound -lwinmm -lwsock32 \
