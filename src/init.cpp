@@ -40,6 +40,7 @@
 #include "gd_mainWindow.h"
 #include "gui_utils.h"
 #include "gd_warnings.h"
+#include "kernelMidi.h"
 
 
 extern Mixer 			 G_Mixer;
@@ -49,6 +50,7 @@ extern bool		 		 G_audio_status;
 extern PluginHost	 G_PluginHost;
 #endif
 
+/** TODO - move these to main.cpp */
 
 Patch 	        G_Patch;
 Conf		        G_Conf;
@@ -78,6 +80,14 @@ void init_prepareKernelAudio() {
 		G_Conf.buffersize);
 	G_Mixer.init();
 	recorder::init();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void init_prepareKernelMIDI() {
+	kernelMidi::openDevice();
 }
 
 

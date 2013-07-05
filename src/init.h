@@ -6,7 +6,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2011 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2013 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -26,8 +26,10 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef INIT_H
 #define INIT_H
+
 
 #include <cstdio>
 #include <stdint.h>
@@ -39,6 +41,8 @@
 void init_prepareParser();
 void init_startGUI(int argc, char **argv);
 void init_prepareKernelAudio();
+void init_prepareKernelMIDI();
 void init_startKernelAudio();
+
 
 #endif

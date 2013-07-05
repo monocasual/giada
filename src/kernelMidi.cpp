@@ -40,6 +40,46 @@ extern PluginHost G_PluginHost;
 
 namespace kernelMidi {
 
+RtMidiOut *midiOut  = NULL;
+unsigned   numPorts = 0;
+
+
+/* ------------------------------------------------------------------ */
+
+
+int openDevice() {
+
+	try {
+    midiOut = new RtMidiOut();
+  }
+  catch (RtError &error) {
+    printf("[KM] open device error: %s\n", error.getMessage().c_str());
+    return 0;
+  }
+
+	numPorts = midiOut->getPortCount();
+
+  printf("[KM] %d output MIDI ports found\n", numPorts);
+
+  for (unsigned i=0; i<numPorts; i++)
+		printf("  %d) %s\n", i, getOutPortName(i));
+
+	return 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+const char *getOutPortName(unsigned p) {
+	try { return midiOut->getPortName(p).c_str(); }
+	catch (RtError &error) { return NULL; }
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void send(uint32_t msg, channel *ch) {
 	printf("[KM] send msg=%X from channel %d\n", msg, ch->index);
 #ifdef WITH_VST

@@ -4,7 +4,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2011 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2013 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -50,9 +50,9 @@ PluginHost 	G_PluginHost;
 #endif
 
 
-Mixer    G_Mixer;
-bool	   G_quit;
-bool	   G_audio_status;
+Mixer G_Mixer;
+bool	G_quit;
+bool	G_audio_status;
 
 
 int main(int argc, char **argv) {
@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
 
 	init_prepareParser();
 	init_prepareKernelAudio();
+	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);
 	Fl::lock();
 	pthread_create(&t_video, NULL, thread_video, NULL);

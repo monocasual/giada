@@ -32,6 +32,7 @@
 
 
 #include <stdint.h>
+#include <RtMidi.h>
 #include "channel.h"
 
 
@@ -45,9 +46,23 @@ namespace kernelMidi {
 		return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 	}
 
+	/* send
+	 * send a MIDI message 's' (uint32_t) to channel ch. */
+
 	void send(uint32_t s, struct channel *ch);
 
+	/* send (2)
+	 * send separate bytes of MIDI message to channel ch. */
+
 	void send(int b1, int b2, int b3, channel *ch);
+
+	int openDevice();
+	int closeDevice();
+
+	const char *getOutPortName(unsigned p);
+
+	extern RtMidiOut *midiOut;
+	extern unsigned   numPorts;
 }
 
 #endif
