@@ -305,6 +305,12 @@ void gdConfig::__cb_save_config() {
 	G_Conf.limitOutput    = limitOutput->value();
 	G_Conf.rsmpQuality    = rsmpQuality->value();
 
+	/* if sounddevOut is disabled (because of system change e.g. alsa ->
+	 * jack) its value is equal to -1. Change it! */
+
+	if (G_Conf.soundDeviceOut == -1)
+		G_Conf.soundDeviceOut = 0;
+
 	int bufsize = atoi(buffersize->text());
 	if (bufsize % 2 != 0) bufsize++;
 	if (bufsize < 8)		  bufsize = 8;
