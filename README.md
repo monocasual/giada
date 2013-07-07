@@ -17,6 +17,27 @@ sampler or yet as a plugin/effect host. Giada aims to be a compact and
 portable virtual device for Linux, Mac OS X and Windows for production
 use and live sets.
 
+Features:
+
+* Ultra-lightweight internal design.
+* Multi-thread/multi-core support.
+* 32-bit floating point audio engine.
+* ALSA, JACK + Transport, CoreAudio, ASIO and DirectSound full support.
+* Unlimited number of channels controlled via computer keyboard.
+* Different playback modes and combinations.
+* BPM and beat sync with sample-accurate loop engine.
+* Built-in wave editor.
+* VST and VSTi (instrument) plugin support.
+* Live sampler from external inputs.
+* Live quantizer.
+* Piano Roll editor.
+* Action recorder.
+* Patch-based system.
+* Support for all major uncompressed file formats.
+* A constant stage of development.
+* 100% open-source GPL.
+
+
 
 
 License
