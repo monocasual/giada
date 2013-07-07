@@ -140,6 +140,9 @@ void Conf::setDefault() {
 	limitOutput    = false;
 	rsmpQuality    = 0;
 
+	midiPortIn  = DEFAULT_MIDI_PORT_IN;
+	midiPortOut = DEFAULT_MIDI_PORT_OUT;
+
 	pluginPath[0]  = '\0';
 	patchPath [0]  = '\0';
 	samplePath[0]  = '\0';

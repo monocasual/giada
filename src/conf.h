@@ -63,6 +63,9 @@ public:
 	bool limitOutput;
 	int  rsmpQuality;
 
+	int  midiPortOut;
+	int  midiPortIn;
+
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
