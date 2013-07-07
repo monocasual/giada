@@ -97,7 +97,7 @@
 	#define DEFAULT_SOUNDSYS 	SYS_API_CORE
 #endif
 
-#define DEFAULT_SOUNDDEV_OUT -1      /// FIXME - please override with rtAudio::getDefaultDevice (or similar)
+#define DEFAULT_SOUNDDEV_OUT 0      /// FIXME - please override with rtAudio::getDefaultDevice (or similar)
 #define DEFAULT_SOUNDDEV_IN  -1			// no recording by default: input disabled
 #define DEFAULT_SAMPLERATE   44100
 #define DEFAULT_BUFSIZE		   1024
