@@ -53,6 +53,7 @@ PluginHost 	G_PluginHost;
 Mixer G_Mixer;
 bool	G_quit;
 bool	G_audio_status;
+bool  G_midiStatus;
 
 
 int main(int argc, char **argv) {

@@ -48,6 +48,7 @@ public:
 
 	class gTabAudio     *tabAudio;
 	class gTabBehaviors *tabBehaviors;
+	class gTabMidi      *tabMidi;
 
 	class gRadio    *recsStopOnChanHalt_1;
 	class gRadio    *recsStopOnChanHalt_0;
@@ -57,6 +58,25 @@ public:
 	class gCheck		*fullChanVolOnLoad;
 	class gClick 		*save;
 	class gClick 		*cancel;
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gTabMidi : public Fl_Group {
+
+private:
+	void fetchDevices();
+	void fetchOutPorts();
+
+public:
+	class gChoice *system;
+	class gChoice *portOut;
+
+	gTabMidi(int x, int y, int w, int h);
+
+	void save();
 };
 
 

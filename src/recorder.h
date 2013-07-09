@@ -62,8 +62,11 @@ namespace recorder {
  * struct containing fields to describe an atomic action. Note from
  * VST sdk: parameter values, like all VST parameters, are declared as
  * floats with an inclusive range of 0.0 to 1.0 (fValue). */
+
 /** TODO - action should be a class with destructor which frees event
  * pointer */
+
+/** TODO - why not add a channel* pointer to action? */
 
 struct action {
 	int      chan;    // channel index, struct channel->index

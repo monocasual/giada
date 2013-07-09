@@ -30,6 +30,8 @@
 #ifndef MIXERHANDLER_H
 #define MIXERHANDLER_H
 
+#include "recorder.h"
+
 
 /* startChan
  * starts a channel. do_quantize = false (don't quantize) when Mixer is
@@ -79,6 +81,10 @@ void mh_loadPatch(bool isProject, const char *projPath=0);
 
 int mh_loadChan(const char *file, struct channel *ch);
 
+/* sendMidi
+ * send MIDI out event, to devices and VST if enabled. */
+
+void mh_sendMidi(struct recorder::action *a, struct channel *ch);
 
 /* startInputRec - record from line in
  * creates a new empty wave in the first available channels and returns

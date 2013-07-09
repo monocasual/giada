@@ -38,6 +38,7 @@
 #include "conf.h"
 #include "mixerHandler.h"
 #include "channel.h"
+#include "kernelMidi.h"
 
 
 extern Mixer 			 G_Mixer;
@@ -523,61 +524,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			if (actualFrame == 0)
 				updateChansOnSampleZero();
 
-			/* reading all actions recorded. MIDI to VST: we must pass an array of
-			 * vstEvents structs, spanning through the whole frame */
+			/* reading all actions recorded */
 
-			pthread_mutex_lock(&mutex_recs);
-			for (unsigned y=0; y<recorder::frames.size; y++) {
-
-				if (recorder::frames.at(y) == actualFrame) {
-
-					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
-
-						int index   = recorder::global.at(y).at(z)->chan;
-						channel *ch = getChannelByIndex(index);
-
-						if (ch->type == CHANNEL_SAMPLE && ch->readActions == false)
-							continue;
-
-						recorder::action *a = recorder::global.at(y).at(z);
-
-						switch (a->type) {
-							case ACTION_KEYPRESS:
-								if (ch->mode & SINGLE_ANY) {
-									mh_startChan(ch, false);
-									break;
-								}
-							case ACTION_KEYREL:
-								if (ch->mode & SINGLE_ANY) {
-									mh_stopChan(ch);
-									break;
-								}
-							case ACTION_KILLCHAN:
-								if (ch->mode & SINGLE_ANY) {
-									mh_killChan(ch);
-									break;
-								}
-							case ACTION_MIDI:
-#ifdef WITH_VST
-								if (ch->status & (STATUS_PLAY | STATUS_ENDING) && !ch->mute)
-									G_PluginHost.addVstMidiEvent(a->event, ch);
-#endif
-								break;
-							case ACTION_MUTEON:
-								mh_muteChan(ch, true);   // internal mute
-								break;
-							case ACTION_MUTEOFF:
-								mh_unmuteChan(ch, true); // internal mute
-								break;
-							case ACTION_VOLUME:
-								calcVolumeEnv(ch, actualFrame);
-								break;
-						}
-					}
-					break;
-				}
-			}
-			pthread_mutex_unlock(&mutex_recs);
+			readActions();
 
 			actualFrame += 2;
 
@@ -810,6 +759,68 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	}
 
 	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::readActions() {
+
+	/* MIDI to VST: we must pass an array of vstEvents structs, spanning
+	 * through the whole frame */
+
+	pthread_mutex_lock(&mutex_recs);
+
+	for (unsigned y=0; y<recorder::frames.size; y++) {
+
+		if (recorder::frames.at(y) == actualFrame) {
+
+			for (unsigned z=0; z<recorder::global.at(y).size; z++) {
+
+				int index   = recorder::global.at(y).at(z)->chan;
+				channel *ch = getChannelByIndex(index);
+
+				if (ch->type == CHANNEL_SAMPLE && ch->readActions == false)
+					continue;
+
+				recorder::action *a = recorder::global.at(y).at(z);
+
+				switch (a->type) {
+					case ACTION_KEYPRESS:
+						if (ch->mode & SINGLE_ANY) {
+							mh_startChan(ch, false);
+							break;
+						}
+					case ACTION_KEYREL:
+						if (ch->mode & SINGLE_ANY) {
+							mh_stopChan(ch);
+							break;
+						}
+					case ACTION_KILLCHAN:
+						if (ch->mode & SINGLE_ANY) {
+							mh_killChan(ch);
+							break;
+						}
+					case ACTION_MIDI:
+						mh_sendMidi(a, ch);
+						break;
+					case ACTION_MUTEON:
+						mh_muteChan(ch, true);   // internal mute
+						break;
+					case ACTION_MUTEOFF:
+						mh_unmuteChan(ch, true); // internal mute
+						break;
+					case ACTION_VOLUME:
+						calcVolumeEnv(ch, actualFrame);
+						break;
+				}
+			}
+			break;
+		}
+	}
+
+	pthread_mutex_unlock(&mutex_recs);
 }
 
 

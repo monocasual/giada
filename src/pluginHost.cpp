@@ -639,38 +639,40 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 	/* type = two types of events: MIDI event and MIDI system exclusive
 	 * (aka sysex, not implemented). */
 
-	e->type         = kVstMidiType;
-	e->byteSize     = sizeof(VstMidiEvent);
+	e->type     = kVstMidiType;
+	e->byteSize = sizeof(VstMidiEvent);
 
 	/* deltaFrames = sample frames related to the current block start
 	 * sample position. */
 	/** FIXME - use real values */
 
-	e->deltaFrames  = 0;
+	e->deltaFrames = 0;
 
 	/* flags = kVstMidiEventIsRealtime means that this event is played
 	 * live (not in playback from a sequencer track). This allows the
 	 * Plug-In to handle these flagged events with higher priority,
 	 * especially when the Plug-In has a big latency */
 
-	e->flags        = kVstMidiEventIsRealtime;
+	e->flags = kVstMidiEventIsRealtime;
 
 	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
 
-	e->midiData[0]  = (msg >> 24) & 0xFF;  // note on/off + channel
-	e->midiData[1]  = (msg >> 16) & 0xFF;  // note number
-	e->midiData[2]  = (msg >> 8)  & 0xFF;  // velocity
-	e->midiData[3]  = 0;
+	/** TODO - use kernelMidi::getB1,2,3() */
+
+	e->midiData[0] = (msg >> 24) & 0xFF;  // note on/off + channel
+	e->midiData[1] = (msg >> 16) & 0xFF;  // note number
+	e->midiData[2] = (msg >> 8)  & 0xFF;  // velocity
+	e->midiData[3] = 0;
 
 	/* noteLength = (in sample frames) of entire note, if available,
 	 * else 0 */
 
-	e->noteLength   = 0;
+	e->noteLength = 0;
 
 	/* noteOffset = offset (in sample frames) into note from note start
 	 * if available, else 0 */
 
-	e->noteOffset   = 0;
+	e->noteOffset = 0;
 
 	/* noteOffVelocity =  Note Off Velocity [0, 127]. */
 

@@ -100,7 +100,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 gdPluginWindowGUI::~gdPluginWindowGUI() {
 	pPlugin->closeGui();
 #if defined(__APPLE__)
-	CFRelease(window);
+	CFRelease(window);    /// FIXME: ReleaseWindow (window); check if windows is NULL
 #endif
 }
 

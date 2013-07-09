@@ -219,6 +219,11 @@ private:
 
 	void updateChansOnSampleZero();
 
+	/* readActions
+	 * reading all recorded actions from Recorder. */
+
+	void readActions();
+
 	/* calcFadeoutStep
 	 * allows a fadeout even if the sample is almost ended */
 

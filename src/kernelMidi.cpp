@@ -33,6 +33,8 @@
 #include "pluginHost.h"
 
 
+extern bool G_midiStatus;
+
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
@@ -40,31 +42,71 @@ extern PluginHost G_PluginHost;
 
 namespace kernelMidi {
 
-RtMidiOut *midiOut  = NULL;
-unsigned   numPorts = 0;
+
+int        api         = 0;      // one api for both in & out
+RtMidiOut *midiOut     = NULL;
+RtMidiIn  *midiIn      = NULL;
+unsigned   numOutPorts = 0;
+unsigned   numInPorts  = 0;
+
+std::vector<unsigned char> msg(3, 0x00);
 
 
 /* ------------------------------------------------------------------ */
 
 
-int openDevice() {
+int openOutDevice(int _api, int port) {
+
+	api = _api;
+
+	printf("[KM] using system 0x%x\n", api);
 
 	try {
-    midiOut = new RtMidiOut();
+		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada Output Client");
+		G_midiStatus = true;
   }
   catch (RtError &error) {
-    printf("[KM] open device error: %s\n", error.getMessage().c_str());
+    printf("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
+    G_midiStatus = false;
     return 0;
   }
 
-	numPorts = midiOut->getPortCount();
+	/* print output ports */
 
-  printf("[KM] %d output MIDI ports found\n", numPorts);
-
-  for (unsigned i=0; i<numPorts; i++)
+	numOutPorts = midiOut->getPortCount();
+  printf("[KM] %d output MIDI ports found\n", numOutPorts);
+  for (unsigned i=0; i<numOutPorts; i++)
 		printf("  %d) %s\n", i, getOutPortName(i));
 
-	return 1;
+	/* try to open a port, if enabled */
+
+	if (port != -1 && numOutPorts > 0) {
+		try {
+			midiOut->openPort(port, getOutPortName(port));
+			printf("[KM] MIDI out port %d open\n", port);
+			return 1;
+		}
+		catch (RtError &error) {
+			printf("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
+			G_midiStatus = false;
+			return 0;
+		}
+	}
+	else
+		return 2;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool hasAPI(int API) {
+	std::vector<RtMidi::Api> APIs;
+	RtMidi::getCompiledApi(APIs);
+	for (unsigned i=0; i<APIs.size(); i++)
+		if (APIs.at(i) == API)
+			return true;
+	return false;
 }
 
 
@@ -80,11 +122,20 @@ const char *getOutPortName(unsigned p) {
 /* ------------------------------------------------------------------ */
 
 
-void send(uint32_t msg, channel *ch) {
-	printf("[KM] send msg=%X from channel %d\n", msg, ch->index);
+void send(uint32_t data, channel *ch) {
+
+	if (G_midiStatus) {
+		msg[0] = getB1(data);
+		msg[1] = getB2(data);
+		msg[2] = getB3(data);
+		midiOut->sendMessage(&msg);
+	}
+
 #ifdef WITH_VST
-	G_PluginHost.addVstMidiEvent(msg, ch);
+	G_PluginHost.addVstMidiEvent(data, ch);
 #endif
+
+	printf("[KM] send msg=0x%X, ch=%d\n", data, ch->index);
 }
 
 
@@ -92,12 +143,22 @@ void send(uint32_t msg, channel *ch) {
 
 
 void send(int b1, int b2, int b3, channel *ch) {
-	printf("[KM] send msg=%X from channel %d\n", getIValue(b1, b2, b3), ch->index);
+
+	if (G_midiStatus) {
+		msg[0] = b1;
+		msg[1] = b2;
+		msg[2] = b3;
+		midiOut->sendMessage(&msg);
+	}
+
 #ifdef WITH_VST
 	G_PluginHost.addVstMidiEvent(getIValue(b1, b2, b3), ch);
 #endif
+
+	printf("[KM] send msg=0x%X, ch=%d\n", getIValue(b1, b2, b3), ch->index);
 }
 
-}
+
+}  // namespace
 
 

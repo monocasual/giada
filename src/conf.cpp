@@ -198,6 +198,12 @@ int Conf::read() {
 	delayComp = atoi(getValue("delayComp").c_str());
 	if (delayComp < 0) delayComp = DEFAULT_DELAYCOMP;
 
+	midiSystem  = atoi(getValue("midiSystem").c_str());
+	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_SYSTEM;
+
+	midiPortOut = atoi(getValue("midiPortOut").c_str());
+	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_PORT_OUT;
+
 	browserX = atoi(getValue("browserX").c_str());
 	browserY = atoi(getValue("browserY").c_str());
 	browserW = atoi(getValue("browserW").c_str());
@@ -310,6 +316,10 @@ int Conf::write() {
 	fprintf(fp, "samplerate=%d\n",     samplerate);
 	fprintf(fp, "limitOutput=%d\n",    limitOutput);
 	fprintf(fp, "rsmpQuality=%d\n",    rsmpQuality);
+
+	fprintf(fp, "midiSystem=%d\n",  midiSystem);
+	fprintf(fp, "midiPortOut=%d\n", midiPortOut);
+	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
 
 	fprintf(fp, "pluginPath=%s\n", pluginPath);
 	fprintf(fp, "patchPath=%s\n",  patchPath);

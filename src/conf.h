@@ -63,6 +63,7 @@ public:
 	bool limitOutput;
 	int  rsmpQuality;
 
+	int  midiSystem;
 	int  midiPortOut;
 	int  midiPortIn;
 
@@ -86,8 +87,6 @@ public:
 	int  bpmX, bpmY;
 	int  beatsX, beatsY;
 	int  aboutX, aboutY;
-
-	///int  keys[MAX_NUM_CHAN];
 
 	int  read();
 	int  write();

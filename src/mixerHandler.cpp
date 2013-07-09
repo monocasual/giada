@@ -563,3 +563,16 @@ channel *mh_stopInputRec() {
 	G_Mixer.waitRec   = 0;					// if delay compensation is in use
 	return ch;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void mh_sendMidi(recorder::action *a, channel *ch) {
+	if (ch->status & (STATUS_PLAY | STATUS_ENDING) && !ch->mute) {
+		kernelMidi::send(a->iValue, ch);
+#ifdef WITH_VST
+		G_PluginHost.addVstMidiEvent(a->event, ch);
+#endif
+	}
+}

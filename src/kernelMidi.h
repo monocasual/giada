@@ -56,13 +56,16 @@ namespace kernelMidi {
 
 	void send(int b1, int b2, int b3, channel *ch);
 
-	int openDevice();
-	int closeDevice();
+	int openOutDevice(int api, int port);
+	int closeOutDevice();
 
 	const char *getOutPortName(unsigned p);
 
-	extern RtMidiOut *midiOut;
-	extern unsigned   numPorts;
+	bool hasAPI(int API);
+
+	extern int      api;      // one api for both in & out
+	extern unsigned numOutPorts;
+	extern unsigned numInPorts;
 }
 
 #endif

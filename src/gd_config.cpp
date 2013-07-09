@@ -35,6 +35,7 @@
 #include "gui_utils.h"
 #include "patch.h"
 #include "kernelAudio.h"
+#include "kernelMidi.h"
 
 
 extern Patch G_Patch;
@@ -53,15 +54,12 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	devOutInfo  = new gClick (x()+325, y()+65, 20,  20, "?");
 	channelsOut = new gChoice(x()+92,  y()+93, 55,  20, "Output channels");
 	limitOutput = new gCheck (x()+155, y()+97, 55,  20, "Limit output");
-
 	sounddevIn  = new gChoice(x()+92,  y()+121, 225, 20, "Input device");
 	devInInfo   = new gClick (x()+325, y()+121, 20,  20, "?");
 	channelsIn  = new gChoice(x()+92,  y()+149, 55,  20, "Input channels");
 	delayComp   = new gInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
-
 	rsmpQuality = new gChoice(x()+92, y()+177, 253, 20, "Resampling");
-
-	new gBox(x(), y()+220, w(), 50, "Restart Giada for the changes to take effect.");
+                new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92, "Restart Giada for the changes to take effect.");
 	end();
 	labelsize(11);
 
@@ -70,21 +68,21 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	if (kernelAudio::hasAPI(RtAudio::LINUX_ALSA))
 		soundsys->add("ALSA");
 	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
-		soundsys->add("JACK");
+		soundsys->add("Jack");
 	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
-		soundsys->add("PULSE");
+		soundsys->add("PulseAudio");
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_ALSA:
 			soundsys->show("ALSA");
 			break;
 		case SYS_API_JACK:
-			soundsys->show("JACK");
+			soundsys->show("Jack");
 			buffersize->deactivate();
 			samplerate->deactivate();
 			break;
 		case SYS_API_PULSE:
-			soundsys->show("PULSE");
+			soundsys->show("PulseAudio");
 			break;
 	}
 	soundsysInitValue = soundsys->value();
@@ -408,6 +406,9 @@ void gTabAudio::fetchSoundDevs() {
 
 
 void gTabAudio::save() {
+
+	/** FIXME - wrong, if API is missing! Right way in gTabMidi::save */
+
 #ifdef __linux__
 	if      (soundsys->value() == 0)	G_Conf.soundSystem = SYS_API_ALSA;
 	else if (soundsys->value() == 1)	G_Conf.soundSystem = SYS_API_JACK;
@@ -448,6 +449,108 @@ void gTabAudio::save() {
 	int _delayComp = atoi(delayComp->value());
 	if (_delayComp < 0) _delayComp = 0;
 	G_Conf.delayComp = _delayComp;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gTabMidi::gTabMidi(int X, int Y, int W, int H)
+	: Fl_Group(X, Y, W, H, "MIDI")
+{
+	begin();
+	system  = new gChoice(x()+92, y()+9, 253, 20, "System");
+	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
+	          new gBox(x(), portOut->y()+portOut->h()+8, w(), h()-56, "Restart Giada for the changes to take effect.");
+	end();
+	labelsize(11);
+
+	fetchDevices();
+	fetchOutPorts();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::fetchOutPorts() {
+
+	if (kernelMidi::numOutPorts == 0) {
+		portOut->add("-- no ports found --");
+		portOut->value(0);
+		portOut->deactivate();
+	}
+	else {
+
+		portOut->add("(disabled)");
+
+		for (unsigned i=0; i<kernelMidi::numOutPorts; i++) {
+			char *t = (char*) kernelMidi::getOutPortName(i);
+			for (int k=0; t[k] != '\0'; k++)
+				if (t[k] == '/' || t[k] == '|' || t[k] == '&' || t[k] == '_')
+					t[k] = '-';
+			portOut->add(t);
+		}
+
+		portOut->value(G_Conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::save() {
+
+	if      (!strcmp("ALSA", system->text(system->value())))
+		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
+	else if (!strcmp("Jack", system->text(system->value())))
+		G_Conf.midiSystem = RtMidi::UNIX_JACK;
+	else if (!strcmp("Multimedia MIDI", system->text(system->value())))
+		G_Conf.midiSystem = RtMidi::WINDOWS_MM;
+	else if (!strcmp("Kernel Streaming MIDI", system->text(system->value())))
+		G_Conf.midiSystem = RtMidi::WINDOWS_KS;
+	else if (!strcmp("OSX Core MIDI", system->text(system->value())))
+		G_Conf.midiSystem = RtMidi::MACOSX_CORE;
+
+	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::fetchDevices() {
+
+#if defined(__linux__)
+
+	if (kernelMidi::hasAPI(RtMidi::LINUX_ALSA))
+		system->add("ALSA");
+	if (kernelMidi::hasAPI(RtMidi::UNIX_JACK))
+		system->add("Jack");
+
+#elif defined(_WIN32)
+
+	if (kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
+		system->add("Multimedia MIDI");
+	if (kernelMidi::hasAPI(RtMidi::WINDOWS_KS))
+		system->add("Kernel Streaming MIDI");
+
+#elif defined (__APPLE__)
+
+	system->add("OSX Core MIDI");
+
+#endif
+
+	switch (G_Conf.midiSystem) {
+		case RtMidi::LINUX_ALSA:  system->show("ALSA"); break;
+		case RtMidi::UNIX_JACK:   system->show("Jack"); break;
+		case RtMidi::WINDOWS_MM:  system->show("Multimedia MIDI"); break;
+		case RtMidi::WINDOWS_KS:  system->show("Kernel Streaming MIDI"); break;
+		case RtMidi::MACOSX_CORE: system->show("OSX Core MIDI"); break;
+	}
 }
 
 
@@ -528,6 +631,7 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 
 	Fl_Tabs *tabs = new Fl_Tabs(8, 8, w-16, h-44);
 		tabAudio     = new gTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+		tabMidi      = new gTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabBehaviors = new gTabBehaviors(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 	tabs->end();
 
@@ -570,6 +674,7 @@ void gdConfig::cb_cancel     (Fl_Widget *w, void *p) { ((gdConfig*)p)->__cb_canc
 void gdConfig::__cb_save_config() {
 	tabAudio->save();
 	tabBehaviors->save();
+	tabMidi->save();
 	do_callback();
 }
 
