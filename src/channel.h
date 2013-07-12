@@ -95,7 +95,11 @@ struct channel {
 
   gVector <class Plugin *> plugins;
 
+	/* pointer to a gChannel object, part of the GUI */
+
   class gChannel *guiChannel;
+
+  int midiChan;
 
 #ifdef WITH_VST
 
