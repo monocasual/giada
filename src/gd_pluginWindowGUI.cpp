@@ -27,6 +27,56 @@
  * ------------------------------------------------------------------ */
 
 
+/* ---------------------------------------------------------------------
+ *
+ * Real how-to for OS X from audacity 2.0.3
+ * ------------------------------------------------------------------ */
+
+/*
+ struct
+   {
+      short top, left, bottom, right;
+   } *rect;
+
+   // Some effects like to have us get their rect before opening them.
+   mEffect->callDispatcher(effEditGetRect, 0, 0, &rect, 0.0);
+
+#if defined(__WXMAC__)
+   HIViewRef view;
+   WindowRef win = (WindowRef) MacGetTopLevelWindowRef();
+   HIViewFindByID(HIViewGetRoot(win), kHIViewWindowContentID, &view);
+
+   mEffect->callDispatcher(effEditOpen, 0, 0, win, 0.0);
+
+   HIViewRef subview = HIViewGetFirstSubview(view);
+   if (subview == NULL) {
+      mEffect->callDispatcher(effEditClose, 0, 0, win, 0.0);
+      mGui = false;
+      BuildPlain();
+      return;
+   }
+
+   HIViewPlaceInSuperviewAt(subview, pos.x, pos.y);
+
+   // Some VST effects do not work unless the default handler is removed since
+   // it captures many of the events that the plugins need.  But, it must be
+   // done last since proper window sizing will not occur otherwise.
+   ::RemoveEventHandler((EventHandlerRef)MacGetEventHandler());
+
+   // Install a bare minimum handler so we can capture the window close event.  If
+   // it's not captured, we will crash at Audacity termination since the window
+   // is still on the wxWidgets toplevel window lists, but it's already gone.
+   mHandlerUPP = NewEventHandlerUPP(EventHandler);
+   InstallWindowEventHandler(win,
+                             mHandlerUPP,
+                             GetEventTypeCount(eventList),
+                             eventList,
+                             this,
+                             &mHandlerRef);
+#endif
+*
+*/
+
 #ifdef WITH_VST
 
 #include "gd_pluginWindowGUI.h"
