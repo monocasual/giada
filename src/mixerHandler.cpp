@@ -379,6 +379,8 @@ int mh_loadChan(const char *file, struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
+/** TODO - revision needed: mh should not call glue_addChannel */
+
 void mh_loadPatch(bool isProject, const char *projPath) {
 
 	G_Mixer.init();
@@ -405,6 +407,8 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 
 		/* MIDI channel: no need to load samples, just return ok value */
 
+		/** TODO - bad design here */
+
 		int res;
 		if (ch->type == CHANNEL_SAMPLE)
 			res = mh_loadChan(smpPath, ch);
@@ -427,6 +431,9 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 			ch->tracker     = ch->start;
 			ch->readActions = G_Patch.getRecActive(i);
 			ch->recStatus   = ch->readActions ? REC_READING : REC_STOPPED;
+
+			ch->midiOut     = G_Patch.getMidiOut(i);
+			ch->midiOutChan = G_Patch.getMidiOutChan(i);
 
 			if (ch->type == CHANNEL_SAMPLE) {
 				G_Mixer.setChanStart(ch, G_Patch.getStart(i));
@@ -570,7 +577,7 @@ channel *mh_stopInputRec() {
 
 void mh_sendMidi(recorder::action *a, channel *ch) {
 	if (ch->status & (STATUS_PLAY | STATUS_ENDING) && !ch->mute) {
-		kernelMidi::send(a->iValue, ch);
+		kernelMidi::send(a->iValue | MIDI_CHANS[ch->midiOutChan], ch);
 #ifdef WITH_VST
 		G_PluginHost.addVstMidiEvent(a->event, ch);
 #endif

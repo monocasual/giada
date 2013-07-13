@@ -40,7 +40,8 @@
 
 
 class gChannel : public Fl_Group {
-private:
+
+protected:
 	static void cb_button        (Fl_Widget *v, void *p);
 	static void cb_mute          (Fl_Widget *v, void *p);
 	static void cb_solo          (Fl_Widget *v, void *p);
@@ -74,6 +75,13 @@ public:
 	void remActionButton();
 	int  keypress(int event);
 
+	/* updateSampleButton
+	 * update the label of sample button with the active MIDI channel if
+	 * MIDI, e.g.  -- MIDI (ch.8) --. If sample, update the label with
+	 * sample name. */
+
+	void updateSampleButton();
+
 	class gStatus     *status;
 	class gDial       *vol;
 	class gClick 	    *mute;
@@ -95,6 +103,7 @@ public:
 
 
 class Keyboard : public Fl_Scroll {
+
 private:
 	static void cb_addChannelL  (Fl_Widget *v, void *p);
 	static void cb_addChannelR  (Fl_Widget *v, void *p);

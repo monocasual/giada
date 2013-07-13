@@ -411,6 +411,26 @@ int Patch::getSamplerate() {
 /* ------------------------------------------------------------------ */
 
 
+bool Patch::getMidiOut(int c) {
+	char tmp[32];
+	sprintf(tmp, "chanMidiOut%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Patch::getMidiOutChan(int c) {
+	char tmp[32];
+	sprintf(tmp, "chanMidiOutChan%d", c);
+	return atoi(getValue(tmp).c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int Patch::readRecs() {
 
 	puts("[PATCH] Reading recs...");
@@ -550,6 +570,9 @@ int Patch::write(const char *file, const char *name, bool project) {
 		fprintf(fp, "chanPanRight%d=%f\n",  i, ch->panRight);
 		fprintf(fp, "chanRecActive%d=%d\n", i, ch->readActions);
 		fprintf(fp, "chanPitch%d=%f\n",     i, ch->pitch);
+
+		fprintf(fp, "chanMidiOut%d=%d\n",     i, ch->midiOut);
+		fprintf(fp, "chanMidiOutChan%d=%d\n", i, ch->midiOutChan);
 	}
 
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);

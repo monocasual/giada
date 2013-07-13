@@ -99,7 +99,10 @@ struct channel {
 
   class gChannel *guiChannel;
 
-  int midiChan;
+	/* midi stuff */
+
+  bool midiOut;           // enable midi output
+  int  midiOutChan;       // midi output channel
 
 #ifdef WITH_VST
 

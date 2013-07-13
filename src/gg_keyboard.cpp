@@ -43,6 +43,7 @@
 #include "pluginHost.h"
 #include "channel.h"
 #include "gd_keyGrabber.h"
+#include "gd_midiSetup.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -88,8 +89,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	readActions    = NULL; // no rec button at start
 	end();
 
-	if (ch->wave)
-		gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+	updateSampleButton();
 
 	button->callback(cb_button, (void*)this);
 	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
@@ -235,8 +235,9 @@ void gChannel::__cb_openChanMenu() {
 			{"Volume"},                               // 8
 			{"Start/Stop"},                           // 9
 			{0},                                      // 10
-		{"Free channel"},                           // 11
-		{"Delete channel"},                         // 12
+		{"setup MIDI output..."},                   // 11
+		{"Free channel"},                           // 12
+		{"Delete channel"},                         // 13
 		{0}
 	};
 
@@ -248,6 +249,9 @@ void gChannel::__cb_openChanMenu() {
 		rclick_menu[7].hide();
 		rclick_menu[8].hide();
 		rclick_menu[9].hide();
+		rclick_menu[12].hide();
+	}
+	else {
 		rclick_menu[11].hide();
 	}
 
@@ -256,7 +260,7 @@ void gChannel::__cb_openChanMenu() {
 		rclick_menu[3].deactivate();
 		if (ch->type == CHANNEL_SAMPLE)
 			rclick_menu[4].deactivate();
-		rclick_menu[11].deactivate();
+		rclick_menu[12].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
@@ -318,6 +322,8 @@ void gChannel::__cb_openChanMenu() {
 
 		/* delete any related subwindow */
 
+		/** FIXME - use gu_closeAllSubwindows() */
+
 		mainWin->delSubWindow(WID_FILE_BROWSER);
 		mainWin->delSubWindow(WID_ACTION_EDITOR);
 		mainWin->delSubWindow(WID_SAMPLE_EDITOR);
@@ -370,6 +376,12 @@ void gChannel::__cb_openChanMenu() {
 
 	if (strcmp(m->label(), "Edit actions...") == 0) {
 		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
+		return;
+	}
+
+	if (strcmp(m->label(), "setup MIDI output...") == 0) {
+		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
+		new gdMidiSetup(ch);
 		return;
 	}
 }
@@ -452,6 +464,26 @@ void gChannel::remActionButton() {
 
 void gChannel::__cb_readActions() {
 	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gChannel::updateSampleButton() {
+	if (ch->type == CHANNEL_MIDI) {
+		if (ch->midiOut) {
+			char tmp[32];
+			sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
+			sampleButton->copy_label(tmp);
+		}
+		else
+			sampleButton->label("-- MIDI --");
+	}
+	else {
+		if (ch->wave)
+			gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+	}
 }
 
 
@@ -560,7 +592,7 @@ void Keyboard::deleteChannel(struct channel *ch) {
 
 
 void Keyboard::updateChannel(struct channel *ch) {
-	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
+	ch->guiChannel->updateSampleButton();
 }
 
 

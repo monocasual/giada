@@ -241,7 +241,10 @@ void Mixer::initChannel(channel *ch) {
 	/** FIXME - is it really useful??? */
 
 	gVector <class Plugin *> p;
-	ch->plugins = p;
+	ch->plugins     = p;
+
+	ch->midiOut     = false;
+	ch->midiOutChan = MIDI_CHANS[0];
 
 #ifdef WITH_VST // init VstEvents stack
 	G_PluginHost.freeVstMidiEvents(ch, true);
