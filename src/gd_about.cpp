@@ -68,7 +68,7 @@ gdAbout::gdAbout()
 	  "Version " VERSIONE " (" __DATE__ ")\n\n"
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
-		"libsamplerate and libsndfile\n\n"
+		"RtMidi, libsamplerate and libsndfile\n\n"
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
