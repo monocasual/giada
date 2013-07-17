@@ -147,8 +147,10 @@ void __gu_refreshColumn(Fl_Group *col) {
 
 void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
-	/*** we should compute the length of the string in pixels, not in
+	/*** FIXME - we should compute the length of the string in pixels, not in
 	 * chars */
+
+	/** FIXME 2 - wrong function. Add it to gWidget base class */
 
 	if (strlen(str) < n)
 		w->copy_label(str);
