@@ -90,7 +90,7 @@ void gdMidiSetup::__cb_enableChanList() {
 void gdMidiSetup::__cb_save() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
-	ch->guiChannel->updateSampleButton();
+	ch->guiChannel->update();
 	do_callback();
 }
 
