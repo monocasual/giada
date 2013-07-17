@@ -89,7 +89,7 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	readActions    = NULL; // no rec button at start
 	end();
 
-	updateSampleButton();
+	update();
 
 	button->callback(cb_button, (void*)this);
 	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
@@ -470,7 +470,8 @@ void gChannel::__cb_readActions() {
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::updateSampleButton() {
+void gChannel::update() {
+
 	if (ch->type == CHANNEL_MIDI) {
 		if (ch->midiOut) {
 			char tmp[32];
@@ -481,9 +482,52 @@ void gChannel::updateSampleButton() {
 			sampleButton->label("-- MIDI --");
 	}
 	else {
-		if (ch->wave)
-			gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+
+		//if (ch->wave)
+		//	gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+
+		/* update sample button's label */
+
+		switch (ch->status) {
+			case STATUS_EMPTY:
+				sampleButton->label("-- no sample --");
+				break;
+			case STATUS_MISSING:
+			case STATUS_WRONG:
+				sampleButton->label("* file not found! *");
+				break;
+			default:
+				gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+				break;
+		}
+
+		/* update channels. If you load a patch with recorded actions, the 'R'
+		 * button must be shown. Moreover if the actions are active, the 'R'
+		 * button must be activated accordingly. */
+
+		if (ch->hasActions)
+			addActionButton(ch->readActions);
+		else
+			remActionButton();
+
+		/* update key box */
+
+		char k[4];
+		sprintf(k, "%c", ch->key);
+		button->copy_label(k);
+		button->redraw();
+
+		/* updates modebox */
+
+		modeBox->value(ch->mode);
+		modeBox->redraw();
 	}
+
+	/* update volumes+mute+solo */
+
+	vol->value(ch->volume);
+	mute->value(ch->mute);
+	solo->value(ch->solo);
 }
 
 
@@ -592,7 +636,7 @@ void Keyboard::deleteChannel(struct channel *ch) {
 
 
 void Keyboard::updateChannel(struct channel *ch) {
-	ch->guiChannel->updateSampleButton();
+	ch->guiChannel->update();
 }
 
 

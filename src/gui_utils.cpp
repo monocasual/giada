@@ -167,59 +167,8 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 
 void gu_update_controls() {
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-
-		/* update status box and sampleButton */
-
-		channel *ch = G_Mixer.channels.at(i);
-		ch->guiChannel->reset();
-
-		/** FIXME - move this to gChannel */
-
-		if (ch->type == CHANNEL_SAMPLE) {
-			switch (ch->status) {
-				case STATUS_EMPTY:
-					ch->guiChannel->sampleButton->label("-- no sample --");
-					break;
-				case STATUS_MISSING:
-				case STATUS_WRONG:
-					ch->guiChannel->sampleButton->label("* file not found! *");
-					break;
-				default:
-					gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
-					break;
-			}
-
-			/* update channels. If you load a patch with recorded actions, the 'R'
-			 * button must be shown. Moreover if the actions are active, the 'R'
-			 * button must be activated accordingly. */
-
-			if (ch->hasActions)
-				ch->guiChannel->addActionButton(ch->readActions);
-			else
-				ch->guiChannel->remActionButton();
-		}
-
-		char k[4];
-		sprintf(k, "%c", ch->key);
-		ch->guiChannel->button->copy_label(k);
-		ch->guiChannel->button->redraw();
-
-		ch->guiChannel->sampleButton->redraw();
-
-		/* update volumes+mute+solo */
-
-		ch->guiChannel->vol->value(ch->volume);
-		ch->guiChannel->mute->value(ch->mute);
-		ch->guiChannel->solo->value(ch->solo);
-
-		/* updates modebox */
-
-		if (ch->type == CHANNEL_SAMPLE) {
-			ch->guiChannel->modeBox->value(ch->mode);
-			ch->guiChannel->modeBox->redraw();
-		}
-	}
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		G_Mixer.channels.at(i)->guiChannel->update();
 
 	mainWin->outVol->value(G_Mixer.outVol);
 	mainWin->inVol->value(G_Mixer.inVol);

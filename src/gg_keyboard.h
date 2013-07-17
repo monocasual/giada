@@ -76,11 +76,10 @@ public:
 	int  keypress(int event);
 
 	/* updateSampleButton
-	 * update the label of sample button with the active MIDI channel if
-	 * MIDI, e.g.  -- MIDI (ch.8) --. If sample, update the label with
-	 * sample name. */
+	 * update the label of sample button and everything else such as 'R'
+	 * button, key box and so on, according to global values. */
 
-	void updateSampleButton();
+	void update();
 
 	class gStatus     *status;
 	class gDial       *vol;
