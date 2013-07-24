@@ -93,6 +93,8 @@ struct channel {
 
   int    key;
 
+  /** TODO - move plugins[] to #ifdef WITH_VST */
+
   gVector <class Plugin *> plugins;
 
 	/* pointer to a gChannel object, part of the GUI */
