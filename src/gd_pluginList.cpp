@@ -155,19 +155,11 @@ void gdPluginList::refreshList() {
 	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
 	int i = 0;
 
-printf("[pluginList]::refresh - %d plugins found\n", numPlugins);
-
 	while (i<numPlugins) {
 		Plugin   *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
-
-char n[256] = "\0";
-pPlugin->getName(n);
-printf("[pluginList]::refresh - adding plugin %d (%p) (id=%d n=%s)\n", i, (void*)pPlugin, pPlugin->getId(), n);
-
 		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
-printf("[pluginList]::refresh - done\n");
 	}
 
 	int addPlugY = numPlugins == 0 ? 90 : list->y()-list->yposition()+(i*24);
@@ -312,19 +304,8 @@ void gdPlugin::__cb_removePlugin() {
 	/* any subwindow linked to the plugin must be destroyed */
 
 	pParent->delSubWindow(pPlugin->getId()+1);
-
-puts("[pluginList] subWindow deleted");
-int id = pPlugin->getId();
-char n[256] = "\0";
-pPlugin->getName(n);
-
 	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
-
-printf("[pluginList] pluginHost free'd, id=%d name=%s\n", id, n);
-
 	pParent->refreshList();
-
-puts("[pluginList] list refreshed");
 }
 
 
