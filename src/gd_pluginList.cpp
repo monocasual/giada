@@ -155,11 +155,19 @@ void gdPluginList::refreshList() {
 	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
 	int i = 0;
 
+printf("[pluginList]::refresh - %d plugins found\n", numPlugins);
+
 	while (i<numPlugins) {
 		Plugin   *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
+
+char n[256] = "\0";
+pPlugin->getName(n);
+printf("[pluginList]::refresh - adding plugin %d (%p) (id=%d n=%s)\n", i, (void*)pPlugin, pPlugin->getId(), n);
+
 		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
+printf("[pluginList]::refresh - done\n");
 	}
 
 	int addPlugY = numPlugins == 0 ? 90 : list->y()-list->yposition()+(i*24);
@@ -305,9 +313,18 @@ void gdPlugin::__cb_removePlugin() {
 
 	pParent->delSubWindow(pPlugin->getId()+1);
 
+puts("[pluginList] subWindow deleted");
+int id = pPlugin->getId();
+char n[256] = "\0";
+pPlugin->getName(n);
+
 	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
 
+printf("[pluginList] pluginHost free'd, id=%d name=%s\n", id, n);
+
 	pParent->refreshList();
+
+puts("[pluginList] list refreshed");
 }
 
 
@@ -325,12 +342,18 @@ void gdPlugin::__cb_openPluginWindow() {
 	 *
 	 * gu_openSubWindow(this, new gdPluginWindow(pPlugin), WID_FX);
 	 *
-	 * instead of the following code. */
+	 * instead of the following code.
+	 *
+	 * EDIT 2 - having only 1 plugin window would be very uncomfortable */
 
 	if (!pParent->hasWindow(pPlugin->getId()+1)) {
 		gWindow *w;
 		if (pPlugin->hasGui())
+#ifdef __APPLE__
+			w = new gdPluginWindowGUImac(pPlugin);
+#else
 			w = new gdPluginWindowGUI(pPlugin);
+#endif
 		else
 			w = new gdPluginWindow(pPlugin);
 		w->setId(pPlugin->getId()+1);

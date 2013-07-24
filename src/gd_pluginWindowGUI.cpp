@@ -27,66 +27,13 @@
  * ------------------------------------------------------------------ */
 
 
-/* ---------------------------------------------------------------------
- *
- * Real how-to for OS X from audacity 2.0.3
- * ------------------------------------------------------------------ */
-
-/*
- struct
-   {
-      short top, left, bottom, right;
-   } *rect;
-
-   // Some effects like to have us get their rect before opening them.
-   mEffect->callDispatcher(effEditGetRect, 0, 0, &rect, 0.0);
-
-#if defined(__WXMAC__)
-   HIViewRef view;
-   WindowRef win = (WindowRef) MacGetTopLevelWindowRef();
-   HIViewFindByID(HIViewGetRoot(win), kHIViewWindowContentID, &view);
-
-   mEffect->callDispatcher(effEditOpen, 0, 0, win, 0.0);
-
-   HIViewRef subview = HIViewGetFirstSubview(view);
-   if (subview == NULL) {
-      mEffect->callDispatcher(effEditClose, 0, 0, win, 0.0);
-      mGui = false;
-      BuildPlain();
-      return;
-   }
-
-   HIViewPlaceInSuperviewAt(subview, pos.x, pos.y);
-
-   // Some VST effects do not work unless the default handler is removed since
-   // it captures many of the events that the plugins need.  But, it must be
-   // done last since proper window sizing will not occur otherwise.
-   ::RemoveEventHandler((EventHandlerRef)MacGetEventHandler());
-
-   // Install a bare minimum handler so we can capture the window close event.  If
-   // it's not captured, we will crash at Audacity termination since the window
-   // is still on the wxWidgets toplevel window lists, but it's already gone.
-   mHandlerUPP = NewEventHandlerUPP(EventHandler);
-   InstallWindowEventHandler(win,
-                             mHandlerUPP,
-                             GetEventTypeCount(eventList),
-                             eventList,
-                             this,
-                             &mHandlerRef);
-#endif
-*
-*/
-
 #ifdef WITH_VST
+
 
 #include "gd_pluginWindowGUI.h"
 #include "pluginHost.h"
 #include "ge_mixed.h"
 #include "gui_utils.h"
-
-#if defined(__APPLE__)
-static pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void* inUserData);
-#endif
 
 
 extern PluginHost G_PluginHost;
@@ -96,43 +43,21 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
 
-	/* on OSX VST uses a Carbon window, completely different from this
-	 * (type == Cocoa) */
+  /* some effects like to have us get their rect before opening them */
 
-#ifndef __APPLE__
+  ERect *rect;
+	pPlugin->getRect(&rect);
+
 	gu_setFavicon(this);
 	set_non_modal();
 	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiHeight());
 	show();
-#endif
-
-#if defined(__APPLE__)
-	Rect mRect = {0, 0, 300, 300};
-	OSStatus err = CreateNewWindow(kDocumentWindowClass, kWindowCloseBoxAttribute | kWindowCompositingAttribute | kWindowAsyncDragAttribute | kWindowStandardHandlerAttribute, &mRect, &window);
-	if (err != noErr)	{
-		puts("[pluginWindow] Unable to create mac window!");
-		return;
-	}
-	static EventTypeSpec eventTypes[] = {
-		{ kEventClassWindow, kEventWindowClose }
-	};
-	InstallWindowEventHandler(window, windowHandler, GetEventTypeCount (eventTypes), eventTypes, window, NULL);
-	pPlugin->openGui((void*)window);
-	Rect bounds;
-	GetWindowBounds(window, kWindowContentRgn, &bounds);
-	bounds.right = bounds.left + pPlugin->getGuiWidth();
-	bounds.bottom = bounds.top + pPlugin->getGuiHeight();
-	SetWindowBounds(window, kWindowContentRgn, &bounds);
-	RepositionWindow(window, NULL, kWindowCenterOnMainScreen);
-	ShowWindow(window);
-#else
 
 	/* Fl::check(): Waits until "something happens" and then returns. It's
 	 * mandatory on linux, otherwise X can't find 'this' window. */
 
 	Fl::check();
 	pPlugin->openGui((void*)fl_xid(this));
-#endif
 
 	char name[256];
 	pPlugin->getProduct(name);
@@ -146,27 +71,115 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 }
 
 
+/* ------------------------------------------------------------------ */
+
 
 gdPluginWindowGUI::~gdPluginWindowGUI() {
 	pPlugin->closeGui();
-#if defined(__APPLE__)
-	CFRelease(window);    /// FIXME: ReleaseWindow (window); check if windows is NULL
-#endif
 }
 
 
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
 #if defined(__APPLE__)
-pascal OSStatus windowHandler (EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void *inUserData) {
-	OSStatus result = eventNotHandledErr;
-	WindowRef window = (WindowRef) inUserData;
-	UInt32 eventClass = GetEventClass (inEvent);
-	UInt32 eventKind = GetEventKind (inEvent);
+
+
+static pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void* inUserData);
+
+
+gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
+ : gWindow(450, 300), pPlugin(pPlugin), window(NULL)
+{
+
+  /* some effects like to have us get their rect before opening them */
+
+  ERect *rect;
+	pPlugin->getRect(&rect);
+
+	/* window initialization */
+
+	Rect wRect;
+
+	wRect.top    = rect->top;
+	wRect.left   = rect->left;
+	wRect.bottom = rect->bottom;
+	wRect.right  = rect->right;
+
+  int winclass = kDocumentWindowClass;
+  int winattr  = kWindowStandardHandlerAttribute |
+                 kWindowCloseBoxAttribute        |
+                 kWindowCompositingAttribute     |
+                 kWindowAsyncDragAttribute;
+
+  // winattr &= GetAvailableWindowAttributes(winclass);	// make sure that the window will open
+
+  OSStatus status = CreateNewWindow(winclass, winattr, &wRect, &window);
+	if (status != noErr)	{
+		printf("[pluginWindowMac] Unable to create window! Status=%d\n", (int) status);
+		return;
+	}
+	else
+		printf("[pluginWindowMac] created window=%p\n", (void*)window);
+
+	/* install event handler, called when window is closed */
+
+	static EventTypeSpec eventTypes[] = {
+		{ kEventClassWindow, kEventWindowClose }
+	};
+	InstallWindowEventHandler(window, windowHandler, GetEventTypeCount(eventTypes), eventTypes, this, NULL);
+
+	/* open window, center it, show it and start the handler */
+
+	pPlugin->openGui((void*)window);
+	RepositionWindow(window, NULL, kWindowCenterOnMainScreen);
+	ShowWindow(window);
+}
+
+
+
+/* ------------------------------------------------------------------ */
+
+
+gdPluginWindowGUImac::~gdPluginWindowGUImac() {
+	printf("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)window);
+	pPlugin->closeGui();
+	if (window) {
+		puts("   window != null, dealloc needed");
+		CFRelease(window);
+	}
+	else
+		puts("   window is null");
+
+	//QuitAppModalLoopForWindow (window); ????
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void *inUserData) {
+	OSStatus result          = eventNotHandledErr;
+	gdPluginWindowGUImac *pW = (gdPluginWindowGUImac*) inUserData;
+	UInt32 eventClass        = GetEventClass(inEvent);
+	UInt32 eventKind         = GetEventKind(inEvent);
 
 	switch (eventClass)	{
 		case kEventClassWindow:	{
 			switch (eventKind) {
 				case kEventWindowClose:	{
-					QuitAppModalLoopForWindow (window);
+					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)pW, (void*)pW->getWindow());
+
+					/* DELETE WINDOW HERE:
+					 * how to do that without segfault?
+					 *
+					 * idea: parentOf(pw)->delSubWindow(pw); */
+
+					gWindow *pParent = pW->getParent();
+					pParent->delSubWindow(pW);
+
 					break;
 				}
 			}

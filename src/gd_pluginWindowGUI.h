@@ -27,7 +27,9 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifdef WITH_VST
+
 
 #ifndef __GD_PLUGINWINDOW_GUI_H__
 #define __GD_PLUGINWINDOW_GUI_H__
@@ -36,19 +38,15 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "ge_window.h"
-
-
 #if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
 #endif
+
 
 class gdPluginWindowGUI : public gWindow {
 private:
 
 	class Plugin *pPlugin;
-#if defined(__APPLE__)
-	WindowRef window;
-#endif
 
 public:
 
@@ -56,6 +54,28 @@ public:
 	~gdPluginWindowGUI();
 };
 
+
+/* ------------------------------------------------------------------ */
+
+#if defined(__APPLE__)
+
+class gdPluginWindowGUImac : public gWindow {
+
+private:
+	class Plugin *pPlugin;
+	WindowRef window;
+
+public:
+
+	gdPluginWindowGUImac(Plugin *pPlugin);
+	~gdPluginWindowGUImac();
+
+	inline WindowRef getWindow() { return window; }
+};
+
 #endif
+
+
+#endif // include guard
 
 #endif // #ifdef WITH_VST

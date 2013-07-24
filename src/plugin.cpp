@@ -245,13 +245,18 @@ AEffect *Plugin::getPlugin() {
 /* ------------------------------------------------------------------ */
 
 
-int Plugin::getId() {
-	return id;
-}
+int Plugin::getId() { return id; }
+
+
+/* ------------------------------------------------------------------ */
 
 int Plugin::getSDKVersion() {
 	return plugin->dispatcher(plugin, effGetVstVersion, 0, 0, 0, 0);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::getName(char *out) {
 	char tmp[128] = "\0";
@@ -260,12 +265,20 @@ void Plugin::getName(char *out) {
 	strncpy(out, tmp, kVstMaxEffectNameLen);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::getVendor(char *out) {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetVendorString, 0, 0, tmp, 0);
 	tmp[kVstMaxVendorStrLen-1] = '\0';
 	strncpy(out, tmp, kVstMaxVendorStrLen);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::getProduct(char *out) {
 	char tmp[128] = "\0";
@@ -274,9 +287,15 @@ void Plugin::getProduct(char *out) {
 	strncpy(out, tmp, kVstMaxProductStrLen);
 }
 
-int Plugin::getNumPrograms() {
-	return plugin->numPrograms;
-}
+
+/* ------------------------------------------------------------------ */
+
+
+int Plugin::getNumPrograms() { return plugin->numPrograms; }
+
+
+/* ------------------------------------------------------------------ */
+
 
 int Plugin::setProgram(int index) {
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
@@ -286,17 +305,27 @@ int Plugin::setProgram(int index) {
 	return plugin->dispatcher(plugin, effEndSetProgram, 0, 0, 0, 0);
 }
 
-int Plugin::getNumParams() {
-	return plugin->numParams;
-}
 
-int Plugin::getNumInputs() {
-	return plugin->numInputs;
-}
+/* ------------------------------------------------------------------ */
 
-int Plugin::getNumOutputs() {
-	return plugin->numOutputs;
-}
+
+int Plugin::getNumParams() { return plugin->numParams; }
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Plugin::getNumInputs() { return plugin->numInputs; }
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Plugin::getNumOutputs() {	return plugin->numOutputs; }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::getProgramName(int index, char *out) {
 	char tmp[128] = "\0";
@@ -305,12 +334,20 @@ void Plugin::getProgramName(int index, char *out) {
 	strncpy(out, tmp, kVstMaxProgNameLen);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::getParamName(int index, char *out) {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamName, index, 0, tmp, 0);
 	tmp[kVstMaxParamStrLen-1] = '\0';
 	strncpy(out, tmp, kVstMaxParamStrLen);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::getParamLabel(int index, char *out) {
 	char tmp[128] = "\0";
@@ -319,6 +356,10 @@ void Plugin::getParamLabel(int index, char *out) {
 	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::getParamDisplay(int index, char *out) {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
@@ -326,17 +367,33 @@ void Plugin::getParamDisplay(int index, char *out) {
 	strncpy(out, tmp, kVstMaxParamStrLen);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 float Plugin::getParam(int index) {
 	return plugin->getParameter(plugin, index);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::setParam(int index, float value) {
 	plugin->setParameter(plugin, index, value);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 bool Plugin::hasGui() {
 	return plugin->flags & effFlagsHasEditor;
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::openGui(void *w) {
 	long val = 0;
@@ -346,9 +403,17 @@ void Plugin::openGui(void *w) {
 	plugin->dispatcher(plugin, effEditOpen, 0, val, w, 0);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::closeGui() {
 	plugin->dispatcher(plugin, effEditClose, 0, 0, 0, 0);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 int Plugin::getGuiWidth() {
 	ERect *pErect = NULL;
@@ -356,23 +421,42 @@ int Plugin::getGuiWidth() {
 	return pErect->top + pErect->right;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 int Plugin::getGuiHeight() {
 	ERect *pErect = NULL;
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, &pErect, 0);
 	return pErect->top + pErect->bottom;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::idle() {
 	plugin->dispatcher(plugin, effEditIdle, 0, 0, NULL, 0);
 }
+
+
+/* ------------------------------------------------------------------ */
+
 
 void Plugin::processAudio(float **in, float **out, long frames) {
 	plugin->processReplacing(plugin, in, out, frames);
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::processEvents(VstEvents *events) {
 	plugin->dispatcher(plugin, effProcessEvents, 0, 0, events, 0.0);
 }
+
+
+/* ------------------------------------------------------------------ */
 
 
 void Plugin::resume() {
@@ -380,13 +464,29 @@ void Plugin::resume() {
 	suspended = false;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::suspend() {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 0, 0, 0);
 	suspended = true;
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
 void Plugin::close() {
 	plugin->dispatcher(plugin, effClose, 0, 0, 0, 0);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Plugin::getRect(ERect **out) {
+	plugin->dispatcher(plugin, effEditGetRect, 0, 0, out, 0);
 }
 
 

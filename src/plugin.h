@@ -117,6 +117,7 @@ public:
 	void  getParamLabel(int index, char *out);   // parameter's value(0, -39, ...)
 	void  getParamDisplay(int index, char *out); // parameter's unit measurement (dB, Pan, ...)
 	float getParam(int index);
+	void  getRect(ERect **out);
 	void  setParam(int index, float value);
 
 	bool  hasGui();
@@ -153,6 +154,7 @@ public:
 
 	/* pathfile
 	 * full filename path */
+
 	char pathfile[PATH_MAX];
 
 	/* window
