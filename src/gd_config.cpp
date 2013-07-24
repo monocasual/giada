@@ -465,10 +465,15 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	          new gBox(x(), portOut->y()+portOut->h()+8, w(), h()-56, "Restart Giada for the changes to take effect.");
 	end();
+
 	labelsize(11);
 
-	fetchDevices();
+	system->callback(cb_changeSystem, (void*)this);
+
+	fetchSystems();
 	fetchOutPorts();
+
+	systemInitValue = system->value();
 }
 
 
@@ -522,7 +527,7 @@ void gTabMidi::save() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::fetchDevices() {
+void gTabMidi::fetchSystems() {
 
 #if defined(__linux__)
 
@@ -550,7 +555,38 @@ void gTabMidi::fetchDevices() {
 		case RtMidi::WINDOWS_MM:  system->show("Multimedia MIDI"); break;
 		case RtMidi::WINDOWS_KS:  system->show("Kernel Streaming MIDI"); break;
 		case RtMidi::MACOSX_CORE: system->show("OSX Core MIDI"); break;
+		default: system->value(0); break;
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::cb_changeSystem(Fl_Widget *w, void *p) { ((gTabMidi*)p)->__cb_changeSystem(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::__cb_changeSystem() {
+
+	/* if the user changes MIDI device (eg ALSA->JACK) device menu deactivates.
+	 * If it returns to the original system, we re-fill the list by
+	 * querying kernelMidi. */
+
+	if (systemInitValue == system->value()) {
+		portOut->clear();
+		fetchOutPorts();
+		portOut->activate();
+	}
+	else {
+		portOut->deactivate();
+		portOut->clear();
+		portOut->add("-- restart to fetch device(s) --");
+		portOut->value(0);
+	}
+
 }
 
 

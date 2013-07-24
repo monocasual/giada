@@ -36,6 +36,7 @@
 
 
 class gdConfig : public gWindow {
+
 private:
 	static void cb_save_config        (Fl_Widget *w, void *p);
 	static void cb_cancel             (Fl_Widget *w, void *p);
@@ -67,8 +68,13 @@ public:
 class gTabMidi : public Fl_Group {
 
 private:
-	void fetchDevices();
+	void fetchSystems();
 	void fetchOutPorts();
+
+	static void cb_changeSystem  (Fl_Widget *w, void *p);
+	inline void __cb_changeSystem();
+
+	int systemInitValue;
 
 public:
 	class gChoice *system;
