@@ -53,8 +53,7 @@ Plugin::Plugin()
 
 
 Plugin::~Plugin() {
-	if (module)
-		unload();
+	unload();
 }
 
 
@@ -62,15 +61,37 @@ Plugin::~Plugin() {
 
 
 int Plugin::unload() {
+
+	if (module == NULL)
+		return 1;
+
 #if defined(_WIN32)
+
 	FreeLibrary((HMODULE)module); // FIXME - error checking
 	return 1;
+
 #elif defined(__linux__)
+
 	return dlclose(module) == 0 ? 1 : 0;
+
 #elif defined(__APPLE__)
-	CFBundleUnloadExecutable(module); // FIXME - error checking
-	CFRelease(module);
+
+	/* we must unload bundles but because bundles may be in use for other
+	plug-in types it is important (and mandatory on certain plug-ins,
+	e.g. Korg) to do a check on the retain count. */
+
+	CFIndex retainCount = CFGetRetainCount(module);
+
+	if (retainCount == 1) {
+		puts("[plugin] retainCount == 1, can unload dlyb");
+		CFBundleUnloadExecutable(module);
+		CFRelease(module);
+	}
+	else
+		printf("[plugin] retainCount > 1 (%d), leave dlyb alone\n", (int) retainCount);
+
 	return 1;
+
 #endif
 }
 
@@ -171,13 +192,21 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 
 	/* same also for Unix/OSX. */
 
-	void *tmp;
+	void *tmp = NULL;
 	tmp = CFBundleGetFunctionPointerForName(module, CFSTR("VSTPluginMain"));
-	if (!tmp)
-		tmp = CFBundleGetFunctionPointerForName(module, CFSTR("main_macho"));
-	if (!tmp)
+
+	if (!tmp) {
+		puts("[plugin] entryPoint 'VSTPluginMain' not found");
+		tmp = CFBundleGetFunctionPointerForName(module, CFSTR("main_macho"));  // VST SDK < 2.4
+	}
+	if (!tmp) {
+		puts("[plugin] entryPoint 'main_macho' not found");
 		tmp = CFBundleGetFunctionPointerForName(module, CFSTR("main"));
-	memcpy(&entryPoint, &tmp, sizeof(tmp));
+	}
+	if (tmp)
+		memcpy(&entryPoint, &tmp, sizeof(tmp));
+	else
+		puts("[plugin] entryPoint 'main' not found");
 
 #endif
 
@@ -189,13 +218,11 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 		plugin = entryPoint(HostCallback);
 		if (!plugin) {
 			puts("[plugin] failed to create effect instance!");
-			unload();
 			return 0;
 		}
 	}
 	else {
 		puts("[plugin] entryPoint not found, unable to proceed");
-		unload();
 		return 0;
 	}
 
