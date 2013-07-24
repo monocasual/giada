@@ -58,9 +58,10 @@ giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
 if OSX
-giada_LDADD   = /usr/local/lib/libsndfile.a -lm -lpthread -lfltk rtaudio/librtaudio.a
+giada_LDADD   = /usr/local/lib/libsndfile.a -lm -lpthread -lfltk -lrtmidi \
+                rtaudio/librtaudio.a
 giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
-                -lsamplerate
+                -lsamplerate -framework CoreMIDI -framework CoreFoundation
 endif
 
 
