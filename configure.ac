@@ -2,6 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 # prereq & init
+
 AC_PREREQ(2.60)
 AC_INIT([giada], [0.7], [info@giadamusic.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
@@ -12,6 +13,7 @@ AM_INIT_AUTOMAKE([giada], [0.7])
 # test the build environment. These vars are used in Makefile.am during
 # the linking of the libraries.
 # Usage: ./configure --target=[windows | linux | osx]
+
 if test "$target" = ""; then
 	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | osx>"])
 fi
@@ -54,7 +56,8 @@ AC_ARG_ENABLE(
 
 # ----------------------------------------------------------------------
 
-# Checks for programs.
+# Check for programs.
+
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -62,7 +65,8 @@ AC_PROG_MAKE_SET
 
 # ----------------------------------------------------------------------
 
-# Checks for libraries.
+# Check for libraries.
+
 AC_CHECK_LIB(
 	[pthread],
 	[pthread_exit],
@@ -72,8 +76,9 @@ AC_CHECK_LIB(
 
 # ----------------------------------------------------------------------
 
-# Checks for headers (fltk, rtaudio and libsndfile are static, we ask if
-# headers are available)
+# Check for generic headers (fltk, rtaudio and libsndfile are static,
+# we ask if headers are available)
+
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
 	[FL/Fl.H],
@@ -120,28 +125,40 @@ fi
 
 # ----------------------------------------------------------------------
 
-# Checks for header files.
-#AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
+# Check for linux header files.
 
-# ----------------------------------------------------------------------
+if test "x$os" = "xlinux"; then
 
-# Checks for typedefs, structures, and compiler characteristics.
-#AC_HEADER_STDBOOL
-#AC_C_INLINE
-#AC_TYPE_INT16_T
-#AC_TYPE_INT32_T
-#AC_TYPE_UINT32_T
-#AC_TYPE_UINT8_T
+# TODO
 
-# ----------------------------------------------------------------------
+#	AC_LANG_PUSH([C++])
+#	AC_CHECK_HEADER(
+#		[X11/extensions/Xext.h],
+#		[],
+#		[AC_MSG_ERROR([missing Xext.h, maybe you need to install the libxext-dev package?])]
+#	)
+#	AC_LANG_POP
 
-# Checks for library functions.
-#AC_FUNC_MALLOC
-#AC_FUNC_REALLOC
-#AC_CHECK_FUNCS([mkdir pow strstr])
+#	AC_LANG_PUSH([C++])
+#	AC_CHECK_HEADER(
+#		[X11/Xft.h],
+#		[],
+#		[AC_MSG_ERROR([missing Xft.h, maybe you need to install the libxft-dev package?])]
+#	)
+#	AC_LANG_POP
+
+	AC_LANG_PUSH([C++])
+	AC_CHECK_HEADER(
+		[X11/xpm.h],
+		[],
+		[AC_MSG_ERROR([missing xpm.h, maybe you need to install the libxpm-dev package?])]
+	)
+	AC_LANG_POP
+fi
 
 # ----------------------------------------------------------------------
 
 # finalizing
+
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
