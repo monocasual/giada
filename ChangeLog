@@ -13,6 +13,19 @@
 
 
 
+0.7.2 --- 2013 . 07 . 27
+- Initial MIDI output support
+- Mute now affects channels with VSTi signals
+- Lots of deb package improvements
+- Complete rewrite of VST GUI part on OS X
+- Don't send MIDI mute on sample channels
+- Send MIDI mute for MIDI channels in play mode
+- Fix wrong looping due to VST processing in mixer::masterPlay
+- Fix jack crashes when using Giada with ALSA
+- Fix VST random crashes on OSX, bus error
+- Fix input device set to -1 after a system change
+
+
 0.7.1 --- 2013 . 06 . 27
 - Initial Jack Transport support
 - Send global note off when sequencer is being stopped
