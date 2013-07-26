@@ -493,6 +493,7 @@ void gPianoItem::draw() {
 void gPianoItem::record() {
 
 	/* note on */
+	/** FIXME - use constants */
 
 	event_a |= (0x90 << 24);   // note on
 	event_a |= (note << 16);   // note value
