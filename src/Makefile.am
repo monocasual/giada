@@ -53,7 +53,8 @@ if WINDOWS
 giada_LDADD   = -lole32 rtaudio/librtaudio.a -ldsound -lwinmm -lwsock32 \
 								-lm -lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
   						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -Lc:/mingw/lib \
-  						  -lsndfile -lsamplerate
+  						  -lsndfile -lsamplerate -lrtmidi c:/mingw/lib/libwinmm.a \
+  						  c:/mingw/lib/libsetupapi.a c:/mingw/lib/libksuser.a
 giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
@@ -63,7 +64,6 @@ giada_LDADD   = /usr/local/lib/libsndfile.a -lm -lpthread -lfltk -lrtmidi \
 giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
                 -lsamplerate -framework CoreMIDI -framework CoreFoundation
 endif
-
 
 
 # used only under MinGW to compile the resource.rc file (program icon)
