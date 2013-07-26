@@ -47,7 +47,7 @@ gd_midiSetup.h     gd_midiSetup.cpp
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
 							rtaudio/librtaudio.a -ljack -lasound -lpthread -ldl \
-							-lpulse-simple -lsamplerate -lrtmidi
+							-lpulse-simple -lpulse -lsamplerate -lrtmidi
 endif
 if WINDOWS
 giada_LDADD   = -lole32 rtaudio/librtaudio.a -ldsound -lwinmm -lwsock32 \
