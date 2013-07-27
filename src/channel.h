@@ -51,7 +51,9 @@
 #endif
 
 
-struct channel {
+class channel {
+
+public:
 	class Wave *wave;
 
 	int    type;       // midi or sample
