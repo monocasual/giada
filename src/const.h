@@ -125,30 +125,31 @@
 
 
 
-/* -- status e mode Mixer ------------------------------------------- */
-#define LOOP_BASIC			0x01 // 0000 0001  chanMode
-#define LOOP_ONCE				0x02 //	0000 0010  chanMode
-#define	SINGLE_BASIC		0x04 //	0000 0100  chanMode
-#define SINGLE_PRESS		0x08 //	0000 1000	 chanMode
-#define SINGLE_RETRIG		0x10 //	0001 0000	 chanMode
-#define LOOP_REPEAT			0x20 // 0010 0000  chanMode
-#define SINGLE_ENDLESS  0x40 // 0100 0000  chanMode
+/* -- mixer statuses and modes -------------------------------------- */
+#define LOOP_BASIC			 0x01 // 0000 0001  chanMode
+#define LOOP_ONCE				 0x02 // 0000 0010  chanMode
+#define	SINGLE_BASIC		 0x04 // 0000 0100  chanMode
+#define SINGLE_PRESS		 0x08 // 0000 1000	 chanMode
+#define SINGLE_RETRIG		 0x10 // 0001 0000	 chanMode
+#define LOOP_REPEAT			 0x20 // 0010 0000  chanMode
+#define SINGLE_ENDLESS   0x40 // 0100 0000  chanMode
 
-#define LOOP_ANY				0x23 // 0010 0011  chanMode - any loop mode
-#define SINGLE_ANY		  0x5C // 0101 1100  chanMode - any single mode
+#define LOOP_ANY				 0x23 // 0010 0011  chanMode - any loop mode
+#define SINGLE_ANY		   0x5C // 0101 1100  chanMode - any single mode
 
-#define	STATUS_ENDING		0x01 // 0000 0001  chanStatus - ending            (loop mode only)
-#define	STATUS_WAIT			0x02 // 0000 0010  chanStatus - waiting for start (loop mode only)
-#define	STATUS_PLAY			0x04 // 0000 0100  chanStatus - playing
-#define STATUS_OFF			0x08 // 0000 1000  chanStatus - off
-#define STATUS_EMPTY	  0x10 // 0001 0000  chanStatus - not loaded (empty chan)
-#define STATUS_MISSING  0x20 // 0010 0000  chanStatus - not found
-#define STATUS_WRONG    0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
+#define	STATUS_ENDING		 0x01 // 0000 0001  chanStatus - ending            (loop mode only)
+#define	STATUS_WAIT			 0x02 // 0000 0010  chanStatus - waiting for start (loop mode only)
+#define	STATUS_PLAY			 0x04 // 0000 0100  chanStatus - playing
+#define STATUS_OFF			 0x08 // 0000 1000  chanStatus - off
+#define STATUS_EMPTY	   0x10 // 0001 0000  chanStatus - not loaded (empty chan)
+#define STATUS_MISSING   0x20 // 0010 0000  chanStatus - not found
+#define STATUS_WRONG     0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
+#define STATUS_BAD_VCHAN 0x80 // 0100 0000  chanStatus - wrong vChan alloc
 
-#define REC_WAITING			0x01 // 0000 0001
-#define REC_ENDING      0x02 // 0000 0010
-#define REC_READING     0x04 // 0000 0100
-#define REC_STOPPED     0x08 // 0000 1000
+#define REC_WAITING			 0x01 // 0000 0001
+#define REC_ENDING       0x02 // 0000 0010
+#define REC_READING      0x04 // 0000 0100
+#define REC_STOPPED      0x08 // 0000 1000
 
 
 
