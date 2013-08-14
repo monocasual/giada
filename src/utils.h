@@ -84,6 +84,14 @@ public:
 	}
 
 
+	int del(const T &item) {
+		for (unsigned i=0; i<size; i++)
+			if (s[i] == item)
+				return del(i);
+		return -1;
+	}
+
+
 	int del(unsigned p) {
 		if (p > size-1) printf("[vector] del() outside! requested=%d, size=%d\n", p, size);
 		T *tmp = new T[size-1];
