@@ -38,6 +38,7 @@
 
 
 class gPianoRollContainer : public Fl_Scroll {
+
 private:
 	class gdActionEditor *pParent;
 	class gPianoRoll     *pianoRoll;
@@ -54,6 +55,7 @@ public:
 
 
 class gPianoRoll : public gActionWidget {
+
 private:
 
 	/* onItem
@@ -88,6 +90,7 @@ public:
 
 
 class gPianoItem : public Fl_Box {
+
 private:
 
 	/* getRelX/Y
@@ -151,7 +154,6 @@ private:
 	 * and moving, in order to restore it if overlap */
 
 	int old_x, old_w;
-
 
 public:
 

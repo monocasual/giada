@@ -33,8 +33,8 @@
 
 
 gBrowser::gBrowser(int x, int y, int w, int h, const char *L)
-: Fl_Hold_Browser(x, y, w, h, L) {
-
+ : Fl_Hold_Browser(x, y, w, h, L)
+{
 	box(G_BOX);
 	textsize(11);
 	textcolor(COLOR_TEXT_0);
@@ -64,6 +64,8 @@ gBrowser::~gBrowser() {}
 
 void gBrowser::init(const char *init_path) {
 
+	printf("[gBrowser] init path = '%s'\n", init_path);
+
 	if (init_path == NULL || !gIsDir(init_path)) {
 #if defined(__linux__) || defined(__APPLE__)
 		path_obj->value("/home");
@@ -77,7 +79,7 @@ void gBrowser::init(const char *init_path) {
 		SHGetFolderPath(NULL, CSIDL_COMMON_DESKTOPDIRECTORY, NULL, 0, winRoot); // si parte dal Desktop
 		path_obj->value(winRoot);
 #endif
-		printf("init_path null or invalid, using default\n");
+		puts("[gBrowser] init_path null or invalid, using default");
 	}
 	else
 		path_obj->value(init_path);
@@ -135,7 +137,7 @@ void gBrowser::refresh() {
 		closedir(dp);
   }
   else
-    printf("[utils] Couldn't open the directory %s\n", path_obj->value());
+    printf("[gBrowser] Couldn't open the directory '%s'\n", path_obj->value());
 }
 
 

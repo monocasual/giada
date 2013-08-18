@@ -34,7 +34,7 @@
 #include "mixer.h"
 
 
-gWaveTools::gWaveTools(int x, int y, int w, int h, channel *ch, const char *l)
+gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
 	: Fl_Scroll(x, y, w, h, l)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);

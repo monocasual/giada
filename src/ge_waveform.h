@@ -54,8 +54,7 @@ private:
 	/* chan
 	 * chan in use. */
 
-	//int  chan;
-	struct channel *chan;
+	class SampleChannel *chan;
 
 	/* menuOpen
 	 * is the menu open? */
@@ -97,7 +96,7 @@ private:
 	bool smaller();
 
 public:
-	gWaveform(int x, int y, int w, int h, struct channel *ch, const char *l=0);
+	gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
 	~gWaveform();
 	void draw();
 	int  handle(int e);

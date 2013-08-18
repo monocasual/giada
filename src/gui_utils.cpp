@@ -102,7 +102,9 @@ void __gu_refreshColumn(Fl_Group *col) {
 	for (int i=0; i<col->children(); i++) {
 
 		gChannel *gch = (gChannel *) col->child(i);
+		gch->refresh();
 
+#if 0
 		if (gch->ch->status == STATUS_OFF) {
 			gch->sampleButton->bgColor0 = COLOR_BG_0;
 			gch->sampleButton->bdColor  = COLOR_BD_0;
@@ -123,7 +125,7 @@ void __gu_refreshColumn(Fl_Group *col) {
 
 		/* SAMPLE_CHANNEL only */
 
-		if (gch->ch->type == CHANNEL_SAMPLE && gch->ch->wave != NULL) {
+		if (gch->ch->type == CHANNEL_SAMPLE && gch->ch->getWave() != NULL) {
 
 			if (G_Mixer.chanInput == gch->ch)
 				gch->sampleButton->bgColor0 = COLOR_BG_3;
@@ -138,6 +140,7 @@ void __gu_refreshColumn(Fl_Group *col) {
 		}
 
 		gch->sampleButton->redraw();
+#endif
 	}
 }
 
@@ -255,7 +258,7 @@ void gu_refreshActionEditor() {
 
 	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
-		channel *chan = aeditor->chan;
+		Channel *chan = aeditor->chan;
 		mainWin->delSubWindow(WID_ACTION_EDITOR);
 		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
 	}

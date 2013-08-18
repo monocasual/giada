@@ -83,7 +83,7 @@ gdAbout::gdAbout()
 
 #ifdef WITH_VST
 	vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
-	vstLogo->position(vstLogo->x(), text->y()+text->h());
+	vstLogo->position(vstLogo->x(), text->y()+text->h()+8);
 	vstText->label(
 		"VST Plug-In Technology by Steinberg\n"
 		"VST is a trademark of Steinberg\nMedia Technologies GmbH"

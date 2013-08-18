@@ -220,7 +220,7 @@ int Patch::getType(int c) {
 
 int Patch::getStart(int c) {
 	char tmp[16];
-	sprintf(tmp, "chanstart%d", c);
+	sprintf(tmp, "chanBegin%d", c);
 	int out = atoi(getValue(tmp).c_str());
 	if (out < 0)
 		return 0;
@@ -470,7 +470,7 @@ int Patch::readRecs() {
 			if (frame % 2 != 0)
 				frame++;
 
-			channel *ch = G_Mixer.getChannelByIndex(chan);
+			Channel *ch = G_Mixer.getChannelByIndex(chan);
 			if (ch)
 				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY))
 					recorder::rec(ch->index, type, frame, iValue, fValue);
@@ -497,7 +497,7 @@ int Patch::readPlugins() {
 	/* channel plugins */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *ch = G_Mixer.channels.at(i);
+		Channel *ch = G_Mixer.channels.at(i);
 
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "chan%dPlugins", ch->index);
@@ -536,45 +536,9 @@ int Patch::write(const char *file, const char *name, bool project) {
 
 	fprintf(fp, "# --- Giada patch file --- \n");
 	fprintf(fp, "header=GIADAPTC\n");
-	fprintf(fp, "version=%s\n", VERSIONE);
-	fprintf(fp, "versionf=%f\n", VERSIONE_FLOAT);
-	fprintf(fp, "patchname=%s\n", name);
-	fprintf(fp, "channels=%d\n", G_Mixer.channels.size);
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-
-		fprintf(fp, "# --- channel %d --- \n", i);
-		channel *ch = G_Mixer.channels.at(i);
-
-		const char *path = "";
-		if (ch->wave != NULL) {
-			path = ch->wave->pathfile.c_str();
-			if (project)
-				path = gBasename(path).c_str();  // make it portable
-		}
-
-		fprintf(fp, "samplepath%d=%s\n",    i, path);
-		fprintf(fp, "chanSide%d=%d\n",      i, ch->side);
-		fprintf(fp, "chanType%d=%d\n",      i, ch->type);
-		fprintf(fp, "chanKey%d=%d\n",       i, ch->key);
-		fprintf(fp, "chanIndex%d=%d\n",     i, ch->index);
-		fprintf(fp, "chanmute%d=%d\n",      i, ch->mute);
-		fprintf(fp, "chanMute_s%d=%d\n",    i, ch->mute_s);
-		fprintf(fp, "chanSolo%d=%d\n",      i, ch->solo);
-		fprintf(fp, "chanvol%d=%f\n",       i, ch->volume);
-		fprintf(fp, "chanmode%d=%d\n",      i, ch->mode);
-		fprintf(fp, "chanstart%d=%d\n",     i, ch->startTrue);       // true values, not pitched
-		fprintf(fp, "chanend%d=%d\n",       i, ch->endTrue);         // true values, not pitched
-		fprintf(fp, "chanBoost%d=%f\n",     i, ch->boost);
-		fprintf(fp, "chanPanLeft%d=%f\n",   i, ch->panLeft);
-		fprintf(fp, "chanPanRight%d=%f\n",  i, ch->panRight);
-		fprintf(fp, "chanRecActive%d=%d\n", i, ch->readActions);
-		fprintf(fp, "chanPitch%d=%f\n",     i, ch->pitch);
-
-		fprintf(fp, "chanMidiOut%d=%d\n",     i, ch->midiOut);
-		fprintf(fp, "chanMidiOutChan%d=%d\n", i, ch->midiOutChan);
-	}
-
+	fprintf(fp, "version=%s\n",    VERSIONE);
+	fprintf(fp, "versionf=%f\n",   VERSIONE_FLOAT);
+	fprintf(fp, "patchname=%s\n",  name);
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
 	fprintf(fp, "bars=%d\n",       G_Mixer.bars);
 	fprintf(fp, "beats=%d\n",      G_Mixer.beats);
@@ -584,6 +548,12 @@ int Patch::write(const char *file, const char *name, bool project) {
 	fprintf(fp, "metronome=%d\n",  G_Mixer.metronome);
 	fprintf(fp, "lastTakeId=%d\n", lastTakeId);
 	fprintf(fp, "samplerate=%d\n", G_Conf.samplerate);	// original samplerate when the patch was saved
+	fprintf(fp, "channels=%d\n",   G_Mixer.channels.size);
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		fprintf(fp, "# --- channel %d --- \n", i);
+		G_Mixer.channels.at(i)->writePatch(fp, i, project);
+	}
 
 	/* writing recs. Warning: channel index is not mixer.channels.at(chan),
 	 * but mixer.channels.at(chan)->index! */
@@ -618,7 +588,7 @@ int Patch::write(const char *file, const char *name, bool project) {
 
 	fprintf(fp, "# --- VST / channels --- \n");
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *ch = G_Mixer.channels.at(i);
+		Channel *ch = G_Mixer.channels.at(i);
 		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch);
 		fprintf(fp, "chan%dPlugins=%d\n", ch->index, numPlugs);
 

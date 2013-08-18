@@ -441,7 +441,6 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 		frame_b = (rel_x + 20) * pParent->zoom;
 		record();
 		size((frame_b - frame_a) / pParent->zoom, h());
-		mainWin->keyboard->setChannelWithActions(pParent->chan); // mainWindow update
 	}
 }
 
@@ -521,7 +520,7 @@ void gPianoItem::remove() {
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence */
 
-	kernelMidi::send(event_b, pParent->chan);
+	kernelMidi::send(event_b, (MidiChannel*) pParent->chan);
 }
 
 

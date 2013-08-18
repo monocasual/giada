@@ -52,7 +52,7 @@ extern gdMainWindow	*mainWin;
 gdBrowser::gdBrowser(
 	const char *title,
 	const char *initPath,
-	channel *ch,
+	Channel *ch,
 	int type,
 	int stackType)
 :
@@ -113,7 +113,7 @@ gdBrowser::gdBrowser(
 	else
 	if (type == BROWSER_SAVE_SAMPLE) {
 		ok->callback(cb_save_sample, (void*)this);
-		name->value(ch->wave->name.c_str());
+		name->value(((SampleChannel*)ch)->wave->name.c_str());
 	}
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
@@ -239,7 +239,7 @@ void gdBrowser::__cb_save_sample() {
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_saveSample(ch->index, fullpath))
+	if (((SampleChannel*)ch)->save(fullpath))
 		do_callback();
 	else
 		gdAlert("Unable to save this sample!");
@@ -253,7 +253,7 @@ void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = glue_loadChannel(ch, browser->get_selected_item(), browser->path_obj->value());
+	int res = glue_loadChannel((SampleChannel*) ch, browser->get_selected_item(), browser->path_obj->value());
 
 	if (res == SAMPLE_LOADED_OK) {
 		do_callback();

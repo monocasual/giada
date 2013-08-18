@@ -38,7 +38,7 @@
 extern Conf	G_Conf;
 
 
-gdMidiSetup::gdMidiSetup(channel *ch)
+gdMidiSetup::gdMidiSetup(MidiChannel *ch)
 	: Fl_Window(300, 64, "Midi Output Setup"), ch(ch)
 {
 	begin();

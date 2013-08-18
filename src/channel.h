@@ -33,6 +33,7 @@
 
 #include "utils.h"
 #include "const.h"
+#include "recorder.h"
 
 
 #ifdef WITH_VST
@@ -51,34 +52,225 @@
 #endif
 
 
-class channel {
+class Channel {
 
 public:
-	class Wave *wave;
 
-	int    type;       // midi or sample
-	int    index;
-	float *vChan;	     // virtual channel
-	int    status;	   // status: see const.h
-	char   side;       // left or right column
-	int    tracker;    // chan position
-	int    start;
-	int    end;
-	int    startTrue;	 // chanStart NOT pitch affected
-	int    endTrue;	   // chanend   NOT pitch affected
-	float  volume;     // global volume
-	float  volume_i;   // internal volume
-	float  volume_d;   // delta volume (for envelope)
-  float  pitch;
-	float  boost;
+	Channel(int type, int status, char side);
+
+	/* loadByPatch
+	 * load a sample inside a patch. */
+
+	virtual int loadByPatch(const char *file, int i) = 0;
+
+	/* process
+	 * merge vChannels into buffer, plus plugin processing (if any). */
+
+	virtual void process(float *buffer, int size) = 0;
+
+	/* start
+	 * action to do when channel starts. doQuantize = false (don't
+	 * quantize) when Mixer is reading actions from Recorder::. */
+
+	virtual void start(bool doQuantize) = 0;
+
+	/* stop
+	 * action to do when channel is stopped normally (via key or MIDI). */
+
+	virtual void stop() = 0;
+
+	/* kill
+	 * action to do when channel stops abruptly. */
+
+	virtual void kill() = 0;
+
+	/* mute
+	 * action to do when channel is muted. If internal == true, set
+	 * internal mute without altering main mute. */
+
+	virtual void setMute  (bool internal) = 0;
+	virtual void unsetMute(bool internal) = 0;
+
+	/* empty
+	 * free any associated resources (e.g. waveform for SAMPLE). */
+
+	virtual void empty() = 0;
+
+	/* stopBySeq
+	 * action to do when channel is stopped by sequencer. */
+
+	virtual void stopBySeq() = 0;
+
+	/* writePatch
+	 * store values in patch, writing to *fp. */
+
+	virtual void writePatch(FILE *fp, int i, bool isProject) = 0;
+
+	/* quantize
+	 * start channel according to quantizer. Index = array index of
+	 * mixer::channels, used by recorder. Frame = actual frame from
+	 * mixer. */
+
+	virtual void quantize(int index, int frame) = 0;
+
+	/* onZero
+	 * action to do when frame goes to zero, i.e. sequencer restart. */
+
+	virtual void onZero() = 0;
+
+	/* onBar
+	 * action to do when a bar has passed. */
+
+	virtual void onBar() = 0;
+
+	/* parseAction
+	 * do something on a recorded action. Frame = actual frame in Mixer. */
+
+	virtual void parseAction(recorder::action *a, int frame) = 0;
+
+	/* ---------------------------------------------------------------- */
+
+	int    index;                // unique id
+	int    type;                 // midi or sample
+	int    status;	             // status: see const.h
+	char   side;                 // left or right column
+	float  volume;               // global volume
+	float  volume_i;             // internal volume
+	float  volume_d;             // delta volume (for envelope)
 	float  panLeft;
 	float  panRight;
-	int    mode;       // mode: see const.h
-	bool   mute_i;     // internal mute
-	bool 	 mute_s;     // previous mute status after being solo'd
-	bool   mute;       // global mute
+	bool   mute_i;               // internal mute
+	bool 	 mute_s;               // previous mute status after being solo'd
+	bool   mute;                 // global mute
 	bool   solo;
-	bool   qWait;      // quantizer wait
+  bool   hasActions;           // has something recorded
+	int 	 recStatus;            // status of recordings (waiting, ending, ...)
+	float *vChan;	               // virtual channel
+  class  gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
+
+#ifdef WITH_VST
+  gVector <class Plugin *> plugins;
+#endif
+
+	/* ---------------------------------------------------------------- */
+
+	/* isPlaying
+	 * tell wether the channel is playing or is stopped. */
+
+	bool isPlaying();
+
+	/* clear
+	 * call memset to empty each vChan available. Useless for MIDI. */
+
+	void clear(int bufSize);
+};
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+class SampleChannel : public Channel {
+
+private:
+
+	/* calcFadeoutStep
+	 * how many frames are left before the end of the sample? Is there
+	 * enough room for a complete fadeout? Should we shorten it? */
+
+	void calcFadeoutStep();
+
+public:
+
+	SampleChannel(char side);
+	~SampleChannel();
+
+	void  process    (float *buffer, int size);
+	void  start      (bool doQuantize);
+	void  kill       ();
+	void  empty      ();
+	void  stopBySeq  ();
+	void  stop       ();
+	void  setMute    (bool internal);
+	void  unsetMute  (bool internal);
+	void  reset      ();
+	int   load       (const char *file);
+	int   loadByPatch(const char *file, int i);
+	void  writePatch (FILE *fp, int i, bool isProject);
+	void  quantize   (int index, int frame);
+	void  onZero     ();
+	void  onBar      ();
+	void  parseAction(recorder::action *a, int frame);
+
+	/* fade methods
+	 * prepare channel for fade, mixer will take care of the process
+	 * during master play. */
+
+	void  setFadeIn  (bool internal);
+	void  setFadeOut (int actionPostFadeout);
+	void  setXFade   ();
+
+	/* pushWave
+	 * add a new wave to an existing channel. */
+
+	void pushWave(class Wave *w);
+
+	/* getPosition
+	 * returns the position of an active sample. If EMPTY o MISSING
+	 * returns -1. */
+
+	int getPosition();
+
+	/* sum
+	 * add sample frames to virtual channel. Frame = processed frame in
+	 * Mixer. Running = is Mixer in play? */
+
+	void sum(int frame, bool running);
+
+	/* setPitch
+	 * updates the pitch value and chanStart+chanEnd accordingly. */
+
+	void setPitch(float v);
+
+	/* setStart/end
+	 * change begin/end read points in sample. */
+
+	void setBegin(unsigned v);
+	void setEnd  (unsigned v);
+
+	/* save
+	 * save sample to file. */
+
+	int save(const char *path);
+
+	/* rewind
+	 * rewind channel when rewind button is pressed. */
+
+	void rewind();
+
+	/* allocEmpty
+	 * alloc an empty wave used in input recordings. */
+
+	bool allocEmpty(int frames, int takeId);
+
+	/* canInputRec
+	 * true if channel can host a new wave from input recording. */
+
+	bool  canInputRec();
+
+	/* ---------------------------------------------------------------- */
+
+	class  Wave *wave;
+	int    tracker;         // chan position
+	int    begin;
+	int    end;
+	int    beginTrue;	      // chanStart NOT pitch affected
+	int    endTrue;	        // chanend   NOT pitch affected
+  float  pitch;
+	float  boost;
+	int    mode;            // mode: see const.h
+	bool   qWait;           // quantizer wait
 	float  fadein;
 	bool   fadeoutOn;
 	float  fadeoutVol;      // fadeout volume
@@ -86,27 +278,74 @@ public:
 	float  fadeoutStep;     // fadeout decrease
   int    fadeoutType;     // xfade or fadeout
   int		 fadeoutEnd;      // what to do when fadeout ends
+  int    key;
 
 	/* recorder:: stuff */
 
-	int 	 recStatus;    // status of recordings (treat recs as loops)
-  bool   readActions;  // read actions or not
-  bool   hasActions;   // has something recorded
+  bool   readActions;     // read actions or not
 
-  int    key;
+	/* const - what to do when a fadeout ends */
 
-  /** TODO - move plugins[] to #ifdef WITH_VST */
+	enum {
+		DO_STOP   = 0x01,
+		DO_MUTE   = 0x02,
+		DO_MUTE_I = 0x04
+	};
 
-  gVector <class Plugin *> plugins;
+	/*  const - fade types */
 
-	/* pointer to a gChannel object, part of the GUI */
+	enum {
+		FADEOUT = 0x01,
+		XFADE   = 0x02
+	};
+};
 
-  class gChannel *guiChannel;
 
-	/* midi stuff */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+class MidiChannel : public Channel {
+
+public:
+
+	MidiChannel(char side);
+	~MidiChannel();
 
   bool midiOut;           // enable midi output
   int  midiOutChan;       // midi output channel
+
+	void  process    (float *buffer, int size);
+	void  start      (bool doQuantize);
+	void  kill       ();
+	void  empty      ();
+	void  stopBySeq  ();
+	void  stop       ();
+	void  setMute    (bool internal);
+	void  unsetMute  (bool internal);
+	int   loadByPatch(const char *file, int i);
+	void  writePatch (FILE *fp, int i, bool isProject);
+	void  quantize   (int index, int frame);
+	void  onZero     ();
+	void  onBar      ();
+	void  parseAction(recorder::action *a, int frame);
+
+	/* ---------------------------------------------------------------- */
+
+	/* sendMidi
+	 * send Midi event to the outside. */
+
+	void  sendMidi(recorder::action *a);
+
+	/* getVstEvents
+	 * return a pointer to gVstEvents. */
+
+#ifdef WITH_VST
+	VstEvents *getVstEvents();
+#endif
+
+	/* ---------------------------------------------------------------- */
 
 #ifdef WITH_VST
 
@@ -122,7 +361,8 @@ public:
 	 *
 	 * Note that by default VstEvents only holds three events- if you want
 	 * it to hold more, create an equivalent struct with a larger array,
-	 * and then cast it to a VstEvents object when you've populated it. */
+	 * and then cast it to a VstEvents object when you've populated it.
+	 * That's what we do with gVstEvents! */
 
 	struct gVstEvents {
     int       numEvents;

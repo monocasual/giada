@@ -42,43 +42,19 @@ public:
 
 	Mixer();
 	~Mixer();
+
 	void init();
 	int  close();
 
 	/* addChannel
 	 * add a new channel without any wave inside of it. */
 
-	struct channel *addChannel(char side, int type);
+	class Channel *addChannel(char side, int type);
 
-	int  deleteChannel(struct channel *ch);
-	void initChannel(struct channel *ch);
-	void freeChannel(struct channel *ch);
+	/* deleteChannel
+	 * completely remove a channel from the stack. */
 
-	/* pushChannel
-	 * add a new wave to an existing channel. */
-
-	void pushChannel(class Wave *w, struct channel *ch);
-
-	void chanStop(struct channel *ch);
-	void chanReset(struct channel *ch);
-
-	/* fadein
-	 * prepare for fade-in process. */
-
-	void fadein(channel *ch, bool internal);
-
-	/* fadeout
-	 * do a fadeout and eventually another action when finished. */
-
-	void fadeout(channel *ch, int actionPostFadeout=DO_STOP);
-
-	void xfade(struct channel *ch);
-
-	/* getChanPos
-	 * returns the position of an active sample. If EMPTY o MISSING
-	 * returns -1. */
-
-	int getChanPos(struct channel *ch);
+	int deleteChannel(class Channel *ch);
 
 	/* masterPlay
 	 * core method (callback) */
@@ -99,10 +75,8 @@ public:
 
 	bool isSilent();
 
-	/* isPlaying
-	 * is channel playing? */
-
-	bool isPlaying(struct channel *ch);
+	/* rewind
+	 * rewind sequencer to sample 0. */
 
 	void rewind();
 
@@ -121,25 +95,22 @@ public:
 
 	bool hasEditedSamples();
 
-	/* updatePitch
-	 * updates the pitch value and chanStart+chanEnd accordingly */
-
-	void setPitch(struct channel *ch, float val);
-
-	void setChanStart(struct channel *ch, unsigned val);
-	void setChanEnd  (struct channel *ch, unsigned val);
-
 	/* mergeVirtualInput
 	 * memcpy the virtual channel input in the channel designed for input
 	 * recording. Called by mixerHandler on stopInputRec() */
 
 	bool mergeVirtualInput();
 
-	int getChannelIndex(struct channel *ch);
+	int getChannelIndex(class Channel *ch);
 
-	channel *getChannelByIndex(int i);
+	Channel *getChannelByIndex(int i);
 
-	inline channel* getLastChannel() { return channels.at(channels.size-1); }
+	inline Channel* getLastChannel() { return channels.at(channels.size-1); }
+
+	/* calcVolumeEnv
+	 * compute any changes in volume done via envelope tool */
+
+	void calcVolumeEnv(class SampleChannel *ch, int frame);
 
 
 	/* ---------------------------------------------------------------- */
@@ -156,7 +127,7 @@ public:
 		XFADE   = 0x02
 	};
 
-	gVector<channel*> channels;
+	gVector<class Channel*> channels;
 
 	bool   running;
 	bool   ready;
@@ -193,7 +164,7 @@ public:
 	/* chanInput
 	 * the active channel during a recording. NULL = no channels active */
 
-	channel *chanInput;
+	SampleChannel *chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */
@@ -212,27 +183,6 @@ public:
 
 
 private:
-
-	/* updateChansOnSampleZero
-	 * handle channels when actualFrame is 0, i.e. the sequencer returns
-	 * to beat 1 */
-
-	void updateChansOnSampleZero();
-
-	/* readActions
-	 * reading all recorded actions from Recorder. */
-
-	void readActions();
-
-	/* calcFadeoutStep
-	 * allows a fadeout even if the sample is almost ended */
-
-	void calcFadeoutStep(struct channel *ch);
-
-	/* calcVolumeEnv
-	 * compute any changes in volume done via envelope tool */
-
-	void calcVolumeEnv(struct channel *ch, int frame);
 
 	/* getNewIndex
 	 * compute new index value for new channels */

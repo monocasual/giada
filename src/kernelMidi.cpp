@@ -122,7 +122,7 @@ const char *getOutPortName(unsigned p) {
 /* ------------------------------------------------------------------ */
 
 
-void send(uint32_t data, channel *ch) {
+void send(uint32_t data, MidiChannel *ch) {
 
 	if (G_midiStatus) {
 		msg[0] = getB1(data);
@@ -142,7 +142,7 @@ void send(uint32_t data, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void send(int b1, int b2, int b3, channel *ch) {
+void send(int b1, int b2, int b3, MidiChannel *ch) {
 
 	if (G_midiStatus) {
 		msg[0] = b1;

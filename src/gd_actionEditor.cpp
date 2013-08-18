@@ -45,7 +45,7 @@ extern Mixer G_Mixer;
 extern Conf	 G_Conf;
 
 
-gdActionEditor::gdActionEditor(channel *chan)
+gdActionEditor::gdActionEditor(Channel *chan)
 : gWindow(640, 284), chan(chan), zoom(100)
 {
 
@@ -86,10 +86,11 @@ gdActionEditor::gdActionEditor(channel *chan)
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
 	gridTool->calc();
 
-	if (chan->type == CHANNEL_SAMPLE &&
-	   (chan->mode == SINGLE_PRESS   ||
-			chan->mode & LOOP_ANY))
+	if (chan->type == CHANNEL_SAMPLE) {
+		SampleChannel *ch = (SampleChannel*) chan;
+		if (ch->mode == SINGLE_PRESS || ch->mode & LOOP_ANY)
 		actionType->deactivate();
+	}
 
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
@@ -99,7 +100,10 @@ gdActionEditor::gdActionEditor(channel *chan)
 	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
 
 	if (chan->type == CHANNEL_SAMPLE) {
-		ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this);
+
+		SampleChannel *ch = (SampleChannel*) chan;
+
+		ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this, ch);
 		mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
 		vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
 		scroller->add(ac);
@@ -116,7 +120,7 @@ gdActionEditor::gdActionEditor(channel *chan)
 		/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
 		 * hold keypress/keyrelease actions */
 
-		if (chan->mode & LOOP_ANY)
+		if (ch->mode & LOOP_ANY)
 			ac->deactivate();
 	}
 	else {

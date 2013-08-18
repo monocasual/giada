@@ -321,7 +321,7 @@ void gdMainWindow::__cb_rec() {
 void gdMainWindow::__cb_inputRec() {
 	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec())
-			gdAlert("No more channels available.");
+			gdAlert("No channels available for recording.");
 	}
 	else
 		glue_stopInputRec();
@@ -421,10 +421,11 @@ void gdMainWindow::__cb_open_edit_menu() {
 			break;
 		}
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		if (G_Mixer.channels.at(i)->wave != NULL) {
-			menu[0].activate();
-			break;
-		}
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != NULL) {
+				menu[0].activate();
+				break;
+			}
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);

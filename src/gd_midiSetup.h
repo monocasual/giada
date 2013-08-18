@@ -38,6 +38,7 @@
 class gdMidiSetup : public Fl_Window {
 
 private:
+
 	static void cb_save          (Fl_Widget *w, void *p);
 	static void cb_cancel        (Fl_Widget *w, void *p);
 	static void cb_enableChanList(Fl_Widget *w, void *p);
@@ -52,10 +53,11 @@ private:
 	class gButton *save;
 	class gButton *cancel;
 
-	struct channel *ch;
+	class MidiChannel *ch;
 
 public:
-	gdMidiSetup(struct channel *ch);
+
+	gdMidiSetup(class MidiChannel *ch);
 };
 
 #endif

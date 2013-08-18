@@ -47,7 +47,7 @@ extern Conf       G_Conf;
 extern PluginHost G_PluginHost;
 
 
-gdPluginList::gdPluginList(int stackType, struct channel *ch)
+gdPluginList::gdPluginList(int stackType, Channel *ch)
  : gWindow(468, 204), ch(ch), stackType(stackType)
 {
 

@@ -45,7 +45,7 @@ class gdActionEditor : public gWindow {
 
 public:
 
-	gdActionEditor(struct channel *chan);
+	gdActionEditor(class Channel *chan);
 	~gdActionEditor();
 
 	int handle(int e);
@@ -75,7 +75,7 @@ public:
 
 	gVector <class gActionWidget*> widgets;
 
-	struct channel *chan;
+	class Channel *chan;
 
 	int zoom;
 	int framesPerBar;

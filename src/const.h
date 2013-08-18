@@ -32,9 +32,9 @@
 
 
 /* -- version ------------------------------------------------------- */
-#define VERSIONE 				"0.7.2"
+#define VERSIONE 				"0.7.3"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	0.72f
+#define VERSIONE_FLOAT	0.73f
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -116,7 +116,7 @@
 #define gDEFAULT_PITCH			 1.0f   // ugly and temporary fix to avoid conflicts with wingdi.h (Windows only).
 #define DEFAULT_OUT_VOL  	   1.0f
 #define DEFAULT_IN_VOL  	   0.0f
-#define DEFAULT_CHANMODE	   LOOP_BASIC
+#define DEFAULT_CHANMODE	   SINGLE_BASIC
 #define DEFAULT_BPM				   120.0f
 #define DEFAULT_BEATS			   4
 #define DEFAULT_BARS			   1
@@ -144,7 +144,6 @@
 #define STATUS_EMPTY	   0x10 // 0001 0000  chanStatus - not loaded (empty chan)
 #define STATUS_MISSING   0x20 // 0010 0000  chanStatus - not found
 #define STATUS_WRONG     0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
-#define STATUS_BAD_VCHAN 0x80 // 0100 0000  chanStatus - wrong vChan alloc
 
 #define REC_WAITING			 0x01 // 0000 0001
 #define REC_ENDING       0x02 // 0000 0010

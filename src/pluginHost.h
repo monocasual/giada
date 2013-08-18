@@ -90,26 +90,27 @@ public:
 	static VstIntPtr VSTCALLBACK HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 	VstIntPtr gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 
-	int addPlugin(const char *fname, int stackType, struct channel *ch=NULL);
+	int addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
 
-	void processEvents(float *buffer, struct channel *ch);
+	void processEvents(float *buffer, class Channel *ch);
 
 	/* processStack
 	 * apply the fx list to the buffer. */
 
-	void processStack(float *buffer, int stackType, struct channel *ch=NULL);
+	void processStack(float *buffer, int stackType, class Channel *ch=NULL);
 
 	/* processStackOffline
 	 * apply the fx list to a longer chunk of data */
 
-	void processStackOffline(float *buffer, int stackType, struct channel *ch, int size);
+	void processStackOffline(float *buffer, int stackType, class Channel *ch, int size);
 
 	/* addVstMidiEvent
 	 * take a composite MIDI event, decompose it and add it to channel. The
 	 * other version creates a VstMidiEvent on the fly. */
+	/** TODO - move these to MidiChannel */
 
-	void addVstMidiEvent(struct VstMidiEvent *e, struct channel *ch);
-	void addVstMidiEvent(uint32_t msg, struct channel *ch);
+	void addVstMidiEvent(struct VstMidiEvent *e, class MidiChannel *ch);
+	void addVstMidiEvent(uint32_t msg, class MidiChannel *ch);
 
 	/* createVstMidiEvent
 	 * return a pointer to a new VstMidiEvent structure. */
@@ -119,26 +120,27 @@ public:
 	/* freeVstMidiEvents
 	 * empty channel->vstEvents structure. Init: use the method for channel
 	 * initialization. */
+	/** TODO - move this to MidiChannel */
 
-	void freeVstMidiEvents(struct channel *ch, bool init=false);
+	void freeVstMidiEvents(class MidiChannel *ch, bool init=false);
 
-	gVector <Plugin *> *getStack(int stackType, struct channel *ch=NULL);
+	gVector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 
-	Plugin *getPluginById(int id, int stackType, struct channel *ch=NULL);
+	Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
 
-	Plugin *getPluginByIndex(int index, int stackType, struct channel *ch=NULL);
+	Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
 
-	int getPluginIndex(int id, int stackType, struct channel *ch=NULL);
+	int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
 
-	unsigned countPlugins(int stackType, struct channel *ch=NULL);
+	unsigned countPlugins(int stackType, class Channel *ch=NULL);
 
-	void freeStack(int stackType, struct channel *ch=NULL);
+	void freeStack(int stackType, class Channel *ch=NULL);
 
 	void freeAllStacks();
 
-	void freePlugin(int id, int stackType, struct channel *ch=NULL);
+	void freePlugin(int id, int stackType, class Channel *ch=NULL);
 
-	void swapPlugin(unsigned indexA, unsigned indexB, int stackType, struct channel *ch=NULL);
+	void swapPlugin(unsigned indexA, unsigned indexB, int stackType, class Channel *ch=NULL);
 };
 #endif
 

@@ -206,7 +206,7 @@ int gEnvelopeChannel::handle(int e) {
 					else {
 						/// TODO
 					}
-					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}
@@ -224,7 +224,7 @@ int gEnvelopeChannel::handle(int e) {
 						recorder::sortActions();
 						points.del(selectedPoint);
 					}
-					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}

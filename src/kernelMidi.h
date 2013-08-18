@@ -49,12 +49,12 @@ namespace kernelMidi {
 	/* send
 	 * send a MIDI message 's' (uint32_t) to channel ch. */
 
-	void send(uint32_t s, struct channel *ch);
+	void send(uint32_t s, class MidiChannel *ch);
 
 	/* send (2)
 	 * send separate bytes of MIDI message to channel ch. */
 
-	void send(int b1, int b2, int b3, channel *ch);
+	void send(int b1, int b2, int b3, class MidiChannel *ch);
 
 	int openOutDevice(int api, int port);
 	int closeOutDevice();

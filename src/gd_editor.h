@@ -65,7 +65,7 @@ private:
 	inline void __cb_zoomOut();
 
 public:
-	gdEditor(struct channel *ch);
+	gdEditor(class SampleChannel *ch);
 	~gdEditor();
 
 	class gClick     *zoomIn;
@@ -86,7 +86,7 @@ public:
 	class gInput  	 *pitchNum;
 	class gClick     *close;
 
-	struct channel *ch;
+	class SampleChannel *ch;
 };
 
 #endif

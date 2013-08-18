@@ -45,7 +45,7 @@
 extern Mixer G_Mixer;
 
 
-gWaveform::gWaveform(int x, int y, int w, int h, struct channel *ch, const char *l)
+gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
 	chan(ch),
 	menuOpen(false),
@@ -162,7 +162,7 @@ void gWaveform::recalcPoints() {
 	selectionA = relativePoint(selectionA_abs);
 	selectionB = relativePoint(selectionB_abs);
 
-	chanStart  = relativePoint(chan->startTrue / 2);
+	chanStart  = relativePoint(chan->beginTrue / 2);
 
 	/* fix the rounding error when chanEnd is set on the very end of the
 	 * sample */
@@ -314,7 +314,7 @@ int gWaveform::handle(int e) {
 				break;
 			}
 
-			int realChanStart = chan->startTrue;
+			int realChanStart = chan->beginTrue;
 			int realChanEnd   = chan->endTrue;
 
 			if (chanStartLit)

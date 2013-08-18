@@ -53,326 +53,24 @@ extern PluginHost G_PluginHost;
 #endif
 
 
-void mh_startChan(channel *ch, bool do_quantize) {
-
-	switch (ch->status) {
-		case STATUS_EMPTY:
-		case STATUS_MISSING:
-		case STATUS_WRONG:
-		{
-			return;
-		}
-
-		case STATUS_OFF:
-		{
-			if (ch->mode & LOOP_ANY || ch->type == CHANNEL_MIDI)
-				ch->status = STATUS_WAIT;
-			else
-				if (G_Mixer.quantize > 0 && G_Mixer.running && do_quantize)
-					ch->qWait = true;
-				else
-					ch->status = STATUS_PLAY;
-			break;
-		}
-
-		case STATUS_PLAY:
-		{
-			if (ch->mode == SINGLE_BASIC) {
-				G_Mixer.fadeout(ch);
-			}
-			else
-			if (ch->mode == SINGLE_RETRIG) {
-
-				if (G_Mixer.quantize > 0 && G_Mixer.running && do_quantize) {
-					ch->qWait = true;
-				}
-				else {
-
-					/* do a xfade only if the mute is off. An xfade on a mute channel
-					 * introduces some bad clicks */
-
-					if (ch->mute)
-						G_Mixer.chanReset(ch);
-					else
-						G_Mixer.xfade(ch);
-				}
-			}
-			else
-			if (ch->mode & (LOOP_ANY | SINGLE_ENDLESS))
-				ch->status = STATUS_ENDING;
-
-			break;
-		}
-
-		case STATUS_WAIT:
-		{
-			ch->status = STATUS_OFF;
-			break;
-		}
-
-		case STATUS_ENDING:
-		{
-			ch->status = STATUS_PLAY;
-			break;
-		}
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void mh_stopSequencer() {
-
 	G_Mixer.running = false;
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *c = G_Mixer.channels.at(i);
-
-		/* kill all MIDI channels, else kill loop channels and recs if
-		 * "samplesStopOnSeqHalt" == true */
-
-		if (c->type == CHANNEL_MIDI)
-			mh_killChan(c);
-		else
-		if (G_Conf.chansStopOnSeqHalt) {
-			if (c->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-				mh_killChan(c);
-
-			/** FIXME - unify these */
-
-			/* when a channel has recs in play?
-			 * Recorder has events for that channel
-			 * G_Mixer has at least one sample in play
-			 * Recorder's channel is active (altrimenti può capitare che
-			 * si stoppino i sample suonati manualmente in un canale con rec
-			 * disattivate) */
-
-			if (c->hasActions && c->readActions && c->status == STATUS_PLAY)
-				mh_killChan(c);
-		}
-	}
-
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		G_Mixer.channels.at(i)->stopBySeq();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void mh_stopChan(channel *ch) {
-	if (ch == NULL)
-		return;
-
-	if (ch->status == STATUS_PLAY && ch->mode == SINGLE_PRESS) {
-		if (ch->mute || ch->mute_i)
-			G_Mixer.chanStop(ch);
-		else
-			G_Mixer.fadeout(ch, Mixer::DO_STOP);
-	}
-
-	/* stop a SINGLE_PRESS immediately, if the quantizer is on */
-
-	else
-	if (ch->mode == SINGLE_PRESS && ch->qWait == true)
-		ch->qWait = false;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_killChan(channel *ch) {
-	if (ch->type == CHANNEL_MIDI) {
-		if (ch->status & (STATUS_PLAY | STATUS_ENDING))
-			kernelMidi::send(MIDI_ALL_NOTES_OFF, ch);
-		ch->status = STATUS_OFF;
-	}
-	else
-	if (ch->wave != NULL && ch->status != STATUS_OFF) {
-		if (ch->mute || ch->mute_i)
-			G_Mixer.chanStop(ch);
-		else
-			G_Mixer.fadeout(ch, Mixer::DO_STOP);
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_muteChan(channel *ch, bool internal) {
-
-	if (internal) {
-
-		/* global mute is on? don't waste time with fadeout, just mute it
-		 * internally */
-
-		if (ch->mute)
-			ch->mute_i = true;
-		else {
-			if (G_Mixer.isPlaying(ch))
-				G_Mixer.fadeout(ch, Mixer::DO_MUTE_I);
-			else
-				ch->mute_i = true;
-		}
-	}
-	else {
-
-		/* internal mute is on? don't waste time with fadeout, just mute it
-		 * globally */
-
-		if (ch->mute_i)
-			ch->mute = true;
-
-		else {
-
-			/* sample in play? fadeout needed. Else, just mute it globally */
-
-			if (G_Mixer.isPlaying(ch) && ch->type == CHANNEL_SAMPLE)
-				G_Mixer.fadeout(ch, Mixer::DO_MUTE);
-			else
-				ch->mute = true;
-		}
-		if (ch->type == CHANNEL_MIDI)
-			kernelMidi::send(MIDI_ALL_NOTES_OFF, ch);
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_unmuteChan(channel *ch, bool internal) {
-	if (internal) {
-		if (ch->mute)
-			ch->mute_i = false;
-		else {
-			if (G_Mixer.isPlaying(ch))
-				G_Mixer.fadein(ch, internal);
-			else
-				ch->mute_i = false;
-		}
-	}
-	else {
-		if (ch->mute_i)
-			ch->mute = false;
-		else {
-			if (G_Mixer.isPlaying(ch) && ch->type == CHANNEL_SAMPLE)
-				G_Mixer.fadein(ch, internal);
-			else
-				ch->mute = false;
-		}
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_soloChan(channel *ch) {
-	ch->solo = !ch->solo;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-bool mh_uniqueSolo(channel *ch) {
+bool mh_uniqueSolo(Channel *ch) {
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *ch = G_Mixer.channels.at(i);
+		Channel *ch = G_Mixer.channels.at(i);
 		if (ch->solo) solos++;
 		if (solos > 1) return false;
 	}
 	return true;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_deleteChannel(channel *ch) {
-	int i = ch->index;
-	G_Mixer.deleteChannel(ch);
-	printf("[MH] channel %d freed\n", i);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void mh_freeChannel(channel *ch) {
-	G_Mixer.freeChannel(ch);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-int mh_loadChan(const char *file, struct channel *ch) {
-
-	if (strcmp(file, "") == 0 || gIsDir(file)) {
-		puts("[MH] file not specified");
-		return SAMPLE_LEFT_EMPTY;
-	}
-
-	if (strlen(file) > FILENAME_MAX)
-		return SAMPLE_PATH_TOO_LONG;
-
-	Wave *w = new Wave();
-
-	if(!w->open(file)) {
-		printf("[MH] %s: read error\n", file);
-		delete w;
-		return SAMPLE_READ_ERROR;
-	}
-
-	if (w->inHeader.channels > 2) {
-		printf("[MH] %s: unsupported multichannel wave\n", file);
-		delete w;
-		return SAMPLE_MULTICHANNEL;
-	}
-
-	if (!w->readData()) {
-		delete w;
-		return SAMPLE_READ_ERROR;
-	}
-
-	if (w->inHeader.channels == 1) /** FIXME: error checking  */
-		wfx_monoToStereo(w);
-
-	if (w->inHeader.samplerate != G_Conf.samplerate) {
-		printf("[MH] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
-		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
-	}
-
-	G_Mixer.pushChannel(w, ch);
-
-	/* sample name must be unique */
-
-	std::string sampleName = gBasename(stripExt(file).c_str());
-	int k = 0;
-	bool exists = false;
-	do {
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *thatCh = G_Mixer.channels.at(i);
-			if (thatCh->wave != NULL && thatCh->index != ch->index) {  // skip itself
-				if (ch->wave->name == thatCh->wave->name) {
-					char n[32];
-					sprintf(n, "%d", k);
-					ch->wave->name = sampleName + "-" + n;
-					exists = true;
-					break;
-				}
-			}
-			exists = false;
-		}
-		k++;
-	}
-	while (exists);
-
-	printf("[MH] %s loaded in channel %d\n", file, ch->index);
-	return SAMPLE_LOADED_OK;
 }
 
 
@@ -389,7 +87,7 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
 
-		channel *ch = glue_addChannel(G_Patch.getSide(i), G_Patch.getType(i));
+		Channel *ch = glue_addChannel(G_Patch.getSide(i), G_Patch.getType(i));
 
 		char smpPath[PATH_MAX];
 
@@ -405,54 +103,7 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 		else
 			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
 
-		/* MIDI channel: no need to load samples, just return ok value */
-
-		/** TODO - bad design here */
-
-		int res;
-		if (ch->type == CHANNEL_SAMPLE)
-			res = mh_loadChan(smpPath, ch);
-		else {
-			res = SAMPLE_LOADED_OK;
-			ch->status = STATUS_OFF;
-		}
-
-		if (res == SAMPLE_LOADED_OK) {
-			ch->volume      = G_Patch.getVol(i);
-			ch->key         = G_Patch.getKey(i);
-			ch->index       = G_Patch.getIndex(i);
-			ch->mode        = G_Patch.getMode(i);
-			ch->mute        = G_Patch.getMute(i);
-			ch->mute_s      = G_Patch.getMute_s(i);
-			ch->solo        = G_Patch.getSolo(i);
-			ch->boost       = G_Patch.getBoost(i);
-			ch->panLeft     = G_Patch.getPanLeft(i);
-			ch->panRight    = G_Patch.getPanRight(i);
-			ch->tracker     = ch->start;
-			ch->readActions = G_Patch.getRecActive(i);
-			ch->recStatus   = ch->readActions ? REC_READING : REC_STOPPED;
-
-			ch->midiOut     = G_Patch.getMidiOut(i);
-			ch->midiOutChan = G_Patch.getMidiOutChan(i);
-
-			if (ch->type == CHANNEL_SAMPLE) {
-				G_Mixer.setChanStart(ch, G_Patch.getStart(i));
-				G_Mixer.setChanEnd  (ch, G_Patch.getEnd(i, ch->wave->size));
-				G_Mixer.setPitch    (ch, G_Patch.getPitch(i));
-			}
-		}
-		else {
-			ch->volume = DEFAULT_VOL;
-			ch->mode   = DEFAULT_CHANMODE;
-			ch->status = STATUS_WRONG;
-			ch->key    = 0;
-
-			if (res == SAMPLE_LEFT_EMPTY)
-				ch->status = STATUS_EMPTY;
-			else
-			if (res == SAMPLE_READ_ERROR)
-				ch->status = STATUS_MISSING;
-		}
+		ch->loadByPatch(smpPath, i);
 	}
 
 	G_Mixer.outVol     = G_Patch.getOutVol();
@@ -488,9 +139,8 @@ void mh_rewindSequencer() {
 	/* send ALL notes OFF signal to each channel */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *c = G_Mixer.channels.at(i);
-		if (c->type == CHANNEL_MIDI)
-			kernelMidi::send(0xB0, 0x7B, 0x00, c);
+		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+			kernelMidi::send(0xB0, 0x7B, 0x00, (MidiChannel*) G_Mixer.channels.at(i));
 	}
 }
 
@@ -498,17 +148,15 @@ void mh_rewindSequencer() {
 /* ------------------------------------------------------------------ */
 
 
-channel *mh_startInputRec() {
-
-	if (!G_Mixer.running)
-		return NULL;
+SampleChannel *mh_startInputRec() {
 
 	/* search for the next available channel */
 
-	channel *chan = NULL;
+	SampleChannel *chan = NULL;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		if (G_Mixer.channels.at(i)->wave == NULL) {
-			chan = G_Mixer.channels.at(i);
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+			if (((SampleChannel*) G_Mixer.channels.at(i))->canInputRec()) {
+			chan = (SampleChannel*) G_Mixer.channels.at(i);
 			break;
 		}
 	}
@@ -518,31 +166,25 @@ channel *mh_startInputRec() {
 	if (chan == NULL)
 		return NULL;
 
+	/* pick up the very next __TAKE_(n+1)__ */
+
 	Wave *w = new Wave();
 	if (!w->allocEmpty(G_Mixer.totalFrames))
 		return NULL;
 
 	/* pick up the next __TAKE_(n+1)__ */
 
-	char buf[256];
-	sprintf(buf, "__TAKE_%d__", G_Patch.lastTakeId);
+	std::string newName;
+	char buf[4];
+	sprintf(buf, "%d", G_Patch.lastTakeId);
+	newName  = "__TAKE_";
+	newName += buf;
+	newName += "__";
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *ch = G_Mixer.channels.at(i);
-		if (ch->wave != NULL) {
-			if (strcmp(buf, ch->wave->name.c_str()) == 0)
-				G_Patch.lastTakeId += 1;
-			else
-				break;
-		}
-	}
-	sprintf(buf, "__TAKE_%d__", G_Patch.lastTakeId);
+	while (!mh_uniqueSamplename(chan, newName))
+		G_Patch.lastTakeId += 1;
 
-	w->pathfile = getCurrentPath()+"/"+buf;
-	w->name     = buf;
-	G_Patch.lastTakeId += 1;
-
-	G_Mixer.pushChannel(w, chan);
+	chan->allocEmpty(G_Mixer.totalFrames, G_Patch.lastTakeId);
 	G_Mixer.chanInput = chan;
 
 	/* start to write from the actualFrame, not the beginning */
@@ -562,10 +204,10 @@ channel *mh_startInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-channel *mh_stopInputRec() {
+SampleChannel *mh_stopInputRec() {
 	printf("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
-	channel *ch = G_Mixer.chanInput;
+	SampleChannel *ch = G_Mixer.chanInput;
 	G_Mixer.chanInput = NULL;
 	G_Mixer.waitRec   = 0;					// if delay compensation is in use
 	return ch;
@@ -575,11 +217,16 @@ channel *mh_stopInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-void mh_sendMidi(recorder::action *a, channel *ch) {
-	if (ch->status & (STATUS_PLAY | STATUS_ENDING) && !ch->mute) {
-		kernelMidi::send(a->iValue | MIDI_CHANS[ch->midiOutChan], ch);
-#ifdef WITH_VST
-		G_PluginHost.addVstMidiEvent(a->event, ch);
-#endif
+bool mh_uniqueSamplename(SampleChannel *ch, std::string &n) {
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		if (ch != G_Mixer.channels.at(i)) {
+			if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
+				SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+				if (ch->wave != NULL)
+					if (n == ch->wave->name)
+						return false;
+			}
+		}
 	}
+	return true;
 }

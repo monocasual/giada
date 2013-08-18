@@ -150,6 +150,7 @@ void Conf::setDefault() {
 	recsStopOnChanHalt = false;
 	chansStopOnSeqHalt = false;
 	treatRecsAsLoops   = false;
+	fullChanVolOnLoad  = true;
 
 	actionEditorZoom    = 100;
 	actionEditorGridOn  = false;

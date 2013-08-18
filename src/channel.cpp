@@ -34,6 +34,7 @@
 #include "patch.h"
 #include "wave.h"
 #include "mixer.h"
+#include "mixerHandler.h"
 #include "conf.h"
 #include "waveFx.h"
 
@@ -46,7 +47,7 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-channel::channel(int type, int status, char side)
+Channel::Channel(int type, int status, char side)
 	: type       (type),
 		status     (status),
 		side       (side),
@@ -59,21 +60,32 @@ channel::channel(int type, int status, char side)
 	  mute_s     (false),
 	  mute       (false),
 	  solo       (false),
-	  vChan      (NULL),
+	  hasActions (false),
 	  recStatus  (REC_STOPPED),
-	  readActions(false),
-	  hasActions (false)
+	  vChan      (NULL)
 {
 	gVector <class Plugin *> p; // call gVector constructor with p, and using it as the real gVector
 	plugins = p;                /// fixme - is it really useful?
+
+	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	if (!vChan)
+		printf("[Channel] unable to alloc memory for vChan\n");
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void channel::clear(int bufSize) {
+void Channel::clear(int bufSize) {
 	memset(vChan, 0, sizeof(float) * bufSize);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+bool Channel::isPlaying() {
+	return status == STATUS_PLAY || status == STATUS_ENDING;
 }
 
 
@@ -83,15 +95,88 @@ void channel::clear(int bufSize) {
 
 
 MidiChannel::MidiChannel(char side)
-	: channel    (CHANNEL_MIDI, STATUS_OFF, side),
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, side),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
-	readActions = true;
-
 #ifdef WITH_VST // init VstEvents stack
 	G_PluginHost.freeVstMidiEvents(this, true);
 #endif
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::onBar() {}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::stop() {}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::empty() {}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::quantize(int index, int frame) {}
+
+
+/* ------------------------------------------------------------------ */
+
+#ifdef WITH_VST
+
+VstEvents *MidiChannel::getVstEvents() {
+	return (VstEvents *) &events;
+}
+
+#endif
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::parseAction(recorder::action *a, int frame) {
+	if (a->type == ACTION_MIDI)
+		sendMidi(a);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::onZero() {
+	if (status == STATUS_ENDING)
+		status = STATUS_OFF;
+	else
+	if (status == STATUS_WAIT)
+		status = STATUS_PLAY;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::setMute(bool internal) {
+	// internal mute does not exist for midi (for now)
+	mute = true;
+	kernelMidi::send(MIDI_ALL_NOTES_OFF, this);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::unsetMute(bool internal) {
+	// internal mute does not exist for midi (for now)
+	mute = false;
 }
 
 
@@ -103,6 +188,11 @@ void MidiChannel::process(float *buffer, int size) {
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 	G_PluginHost.freeVstMidiEvents(this);
 #endif
+
+	for (int j=0; j<size; j+=2) {
+		buffer[j]   += vChan[j]   * volume; // * panLeft;   future?
+		buffer[j+1] += vChan[j+1] * volume; // * panRight;  future?
+	}
 }
 
 
@@ -135,23 +225,6 @@ void MidiChannel::kill() {
 /* ------------------------------------------------------------------ */
 
 
-int MidiChannel::load(const char *f) {
-	status = STATUS_OFF;
-	return SAMPLE_LOADED_OK;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void MidiChannel::stop() {
-	// nothing to do
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 int MidiChannel::loadByPatch(const char *f, int i) {
 	volume      = G_Patch.getVol(i);
 	index       = G_Patch.getIndex(i);
@@ -162,23 +235,7 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 	panRight    = G_Patch.getPanRight(i);
 	midiOut     = G_Patch.getMidiOut(i);
 	midiOutChan = G_Patch.getMidiOutChan(i);
-	return SAMPLE_LOADED_OK;  /// TODO - change name, is meaningless here
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-bool MidiChannel::canInputRec() {
-	return false;  // midi channel can't record input
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-Wave *MidiChannel::getWave() {
-	return NULL;
+	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 
 
@@ -219,9 +276,8 @@ void MidiChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 
 SampleChannel::SampleChannel(char side)
-	: channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
+	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
 		wave       (NULL),
-		index      (0),
 		tracker    (0),
 		begin      (0),
 		end        (0),
@@ -235,12 +291,9 @@ SampleChannel::SampleChannel(char side)
 		fadeoutOn  (false),
 		fadeoutVol (1.0f),
 		fadeoutStep(DEFAULT_FADEOUT_STEP),
-		key        (0)
-{
-	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
-	if (!vChan)
-		printf("[sampleChannel] unable to alloc memory for this vChan\n");
-}
+		key        (0),
+	  readActions(false)
+{}
 
 
 /* ------------------------------------------------------------------ */
@@ -252,6 +305,474 @@ SampleChannel::~SampleChannel() {
 		free(vChan);
 	if (wave)
 		delete wave;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::onBar() {
+	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
+		setXFade();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int SampleChannel::save(const char *path) {
+	return wave->writeData(path);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setBegin(unsigned v) {
+	if (v % 2 != 0)
+		v++;
+	beginTrue = v;
+	begin     = (unsigned) floorf(beginTrue / pitch);
+	tracker   = begin;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setEnd(unsigned v) {
+	if (v % 2 != 0)
+		v++;
+	endTrue = v;
+	end = (unsigned) floorf(endTrue / pitch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setPitch(float v) {
+
+	/* if the pitch changes also chanStart/chanEnd must change accordingly
+	 * and to do that we need the original (or previous) chanStart/chanEnd
+	 * values (chanStartTrue and chanEndTrue). Formula:
+	 *
+	 * chanStart{pitched} = chanStart{Original} / newpitch */
+
+	if (v == 1.0f) {
+		begin = beginTrue;
+		end   = endTrue;
+		pitch = 1.0f;
+		return;
+	}
+
+	begin = (unsigned) floorf(beginTrue / v);
+	end   = (unsigned) floorf(endTrue   / v);
+
+	pitch = v;
+
+	/* even values please */
+
+	if (begin % 2 != 0)	begin++;
+	if (end   % 2 != 0)	end++;
+
+	/* avoid overflow when changing pitch during play mode */
+
+	if (tracker > end)
+		tracker = end;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::rewind() {
+
+	/* rewind LOOP_ANY or SINGLE_ANY only if it's in read-record-mode */
+
+	if (wave != NULL) {
+		if ((mode & LOOP_ANY) || (recStatus == REC_READING && (mode & SINGLE_ANY)))
+			reset();
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::parseAction(recorder::action *a, int frame) {
+
+	if (readActions == false)
+		return;
+
+	switch (a->type) {
+		case ACTION_KEYPRESS:
+			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+				start(false);
+				break;
+			}
+		case ACTION_KEYREL:
+			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+				stop();
+				break;
+			}
+		case ACTION_KILLCHAN:
+			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+				kill();
+				break;
+			}
+		case ACTION_MUTEON:
+			setMute(true);  // internal mute
+			break;
+		case ACTION_MUTEOFF:
+			unsetMute(true); // internal mute
+			break;
+		case ACTION_VOLUME:
+			G_Mixer.calcVolumeEnv(this, frame);  /// REMOVE THIS!
+			break;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::sum(int frame, bool running) {
+
+	if (wave == NULL)
+		return;
+
+	if (status & (STATUS_PLAY | STATUS_ENDING)) {
+
+		if (tracker <= end) {
+
+			/* ctp is chanTracker, pitch affected */
+
+			unsigned ctp = tracker * pitch;
+
+			/* fade in */
+
+			if (fadein <= 1.0f)
+				fadein += 0.01f;		/// FIXME - remove the hardcoded value
+
+			/* volume envelope, only if seq is running */
+
+			if (running) {
+				volume_i += volume_d;
+				if (volume_i < 0.0f)
+					volume_i = 0.0f;
+				else
+				if (volume_i > 1.0f)
+					volume_i = 1.0f;
+			}
+
+			/* fadeout process (both fadeout and xfade) */
+
+			if (fadeoutOn) {
+				if (fadeoutVol >= 0.0f) { // fadeout ongoing
+
+					float v = volume_i * boost;
+
+					if (fadeoutType == XFADE) {
+
+						/* ftp is fadeoutTracker affected by pitch */
+
+						unsigned ftp = fadeoutTracker * pitch;
+
+						vChan[frame]   += wave->data[ftp]   * fadeoutVol * v;
+						vChan[frame+1] += wave->data[ftp+1] * fadeoutVol * v;
+
+						vChan[frame]   += wave->data[ctp]   * v;
+						vChan[frame+1] += wave->data[ctp+1] * v;
+
+					}
+					else { // FADEOUT
+						vChan[frame]   += wave->data[ctp]   * fadeoutVol * v;
+						vChan[frame+1] += wave->data[ctp+1] * fadeoutVol * v;
+					}
+
+					fadeoutVol     -= fadeoutStep;
+					fadeoutTracker += 2;
+				}
+				else {  // fadeout end
+					fadeoutOn  = false;
+					fadeoutVol = 1.0f;
+
+					/* QWait ends with the end of the xfade */
+
+					if (fadeoutType == XFADE) {
+						qWait = false;
+					}
+					else {
+						if (fadeoutEnd == DO_MUTE)
+							mute = true;
+						else
+						if (fadeoutEnd == DO_MUTE_I)
+							mute_i = true;
+						else              // DO_STOP
+							stop();
+					}
+
+					/* we must append another frame in the buffer when the fadeout
+					 * ends: there's a gap here which would clip otherwise */
+
+					vChan[frame]   = vChan[frame-2];
+					vChan[frame+1] = vChan[frame-1];
+				}
+			}  // no fadeout to do
+			else {
+				if (!mute && !mute_i) {
+					float v = volume_i * fadein * boost;
+					vChan[frame]   += wave->data[ctp]   * v;
+					vChan[frame+1] += wave->data[ctp+1] * v;
+				}
+			}
+
+			tracker += 2;
+
+			/* check for end of samples. SINGLE_ENDLESS runs forever unless
+			 * it's in ENDING mode */
+
+			if (tracker >= end) {
+
+				reset();
+
+				if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+					 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
+				{
+					status = STATUS_OFF;
+				}
+
+				/// FIXME - unify these
+				/* stop loops when the seq is off */
+
+				if ((mode & LOOP_ANY) && !running)
+					status = STATUS_OFF;
+
+				/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
+				 * would return in wait, losing the ENDING status */
+
+				if (mode == LOOP_ONCE && status != STATUS_ENDING)
+					status = STATUS_WAIT;
+			}
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::onZero() {
+
+	if (wave == NULL)
+		return;
+
+	if (mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) {
+
+		/* do a crossfade if the sample is playing. Regular chanReset
+		 * instead if it's muted, otherwise a click occurs */
+
+		if (status == STATUS_PLAY) {
+			if (mute || mute_i)
+				reset();
+			else
+				setXFade();
+		}
+		else
+		if (status == STATUS_ENDING)
+			stop();
+	}
+
+	if (status == STATUS_WAIT)
+		status = STATUS_PLAY;
+
+	if (recStatus == REC_ENDING) {
+		recStatus = REC_STOPPED;
+		recorder::disableRead(this);    // rec stop
+	}
+	else
+	if (recStatus == REC_WAITING) {
+		recStatus = REC_READING;
+		recorder::enableRead(this);     // rec start
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::quantize(int index, int frame) {
+
+	if ((mode & SINGLE_ANY) && qWait == true)	{
+
+		/* no fadeout if the sample starts for the first time (from a STATUS_OFF), it would
+		 * be meaningless. */
+
+		if (status == STATUS_OFF) {
+			status = STATUS_PLAY;
+			qWait  = false;
+		}
+		else
+			setXFade();
+
+		/* this is the moment in which we record the keypress, if the quantizer is on.
+		 * SINGLE_PRESS needs overdub */
+
+		if (recorder::canRec(this)) {
+			if (mode == SINGLE_PRESS)
+				recorder::startOverdub(index, ACTION_KEYS, frame);
+			else
+				recorder::rec(index, ACTION_KEYPRESS, frame);
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int SampleChannel::getPosition() {
+	if (status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF)) // if is not (...)
+		return tracker - begin;
+	else
+		return -1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setMute(bool internal) {
+
+	if (internal) {
+
+		/* global mute is on? don't waste time with fadeout, just mute it
+		 * internally */
+
+		if (mute)
+			mute_i = true;
+		else {
+			if (isPlaying())
+				setFadeOut(DO_MUTE_I);
+			else
+				mute_i = true;
+		}
+	}
+	else {
+
+		/* internal mute is on? don't waste time with fadeout, just mute it
+		 * globally */
+
+		if (mute_i)
+			mute = true;
+		else {
+
+			/* sample in play? fadeout needed. Else, just mute it globally */
+
+			if (isPlaying())
+				setFadeOut(DO_MUTE);
+			else
+				mute = true;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::unsetMute(bool internal) {
+	if (internal) {
+		if (mute)
+			mute_i = false;
+		else {
+			if (isPlaying())
+				setFadeIn(internal);
+			else
+				mute_i = false;
+		}
+	}
+	else {
+		if (mute_i)
+			mute = false;
+		else {
+			if (isPlaying())
+				setFadeIn(internal);
+			else
+				mute = false;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::calcFadeoutStep() {
+	unsigned ctracker = tracker * pitch;
+	if (end - ctracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
+		fadeoutStep = ceil((end - ctracker) / volume) * 2; /// or volume_i ???
+	else
+		fadeoutStep = DEFAULT_FADEOUT_STEP;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setFadeIn(bool internal) {
+	if (internal) mute_i = false;  // remove mute before fading in
+	else          mute   = false;
+	fadein = 0.0f;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setFadeOut(int actionPostFadeout) {
+	calcFadeoutStep();
+	fadeoutOn   = true;
+	fadeoutVol  = 1.0f;
+	fadeoutType = FADEOUT;
+	fadeoutEnd	= actionPostFadeout;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setXFade() {
+	calcFadeoutStep();
+	fadeoutOn      = true;
+	fadeoutVol     = 1.0f;
+	fadeoutTracker = tracker;
+	fadeoutType    = XFADE;
+	reset();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::reset() {
+	tracker = begin;
+	mute_i  = false;
+}
+
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::empty() {
+	status = STATUS_OFF;
+	if (wave) {
+		delete wave;
+		wave = NULL;
+	}
+	status = STATUS_EMPTY;
 }
 
 
@@ -312,20 +833,12 @@ void SampleChannel::process(float *buffer, int size) {
 /* ------------------------------------------------------------------ */
 
 
-Wave *SampleChannel::getWave() {
-	return wave;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void SampleChannel::kill() {
 	if (wave != NULL && status != STATUS_OFF) {
 		if (mute || mute_i)
-			G_Mixer.chanStop(this);  /// remove!
+			stop();
 		else
-			G_Mixer.fadeout(this, Mixer::DO_STOP);
+			setFadeOut(DO_STOP);
 	}
 }
 
@@ -363,10 +876,12 @@ void SampleChannel::stopBySeq() {
 
 void SampleChannel::stop() {
 	if (status == STATUS_PLAY && mode == SINGLE_PRESS) {
-		if (mute || mute_i)
-			G_Mixer.chanStop(this);  /// remove!
+		if (mute || mute_i) {
+			status = STATUS_OFF;
+			reset();
+		}
 		else
-			G_Mixer.fadeout(this, Mixer::DO_STOP);
+			setFadeOut(DO_STOP);
 	}
 	else  // stop a SINGLE_PRESS immediately, if the quantizer is on
 	if (mode == SINGLE_PRESS && qWait == true)
@@ -410,35 +925,24 @@ int SampleChannel::load(const char *file) {
 		wfx_monoToStereo(w);
 
 	if (w->inHeader.samplerate != G_Conf.samplerate) {
-		printf("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n", w->inHeader.samplerate, G_Conf.samplerate);
+		printf("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
+				w->inHeader.samplerate, G_Conf.samplerate);
 		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
 	}
 
 	pushWave(w);
 
-	/* sample name must be unique */
-	/** TODO - use mh_uniqueSamplename */
+	/* sample name must be unique. Start from k = 1, zero is too nerdy */
 
-	std::string sampleName = gBasename(stripExt(file).c_str());
-	int k = 0;
-	bool exists = false;
-	do {
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *thatCh = G_Mixer.channels.at(i);
-			if (thatCh->getWave() && thatCh->index != index) {  // skip itself
-				if (wave->name == thatCh->getWave()->name) {
-					char n[32];
-					sprintf(n, "%d", k);
-					wave->name = sampleName + "-" + n;
-					exists = true;
-					break;
-				}
-			}
-			exists = false;
-		}
+	std::string oldName = wave->name;
+	int k = 1;
+
+	while (!mh_uniqueSamplename(this, wave->name)) {
+		char buf[4];
+		sprintf(buf, "%d", k);
+		wave->name = oldName + "-" + buf;
 		k++;
 	}
-	while (exists);
 
 	printf("[SampleChannel] %s loaded in channel %d\n", file, index);
 	return SAMPLE_LOADED_OK;
@@ -466,9 +970,9 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		readActions = G_Patch.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
-		G_Mixer.setChanStart(this, G_Patch.getStart(i));
-		G_Mixer.setChanEnd  (this, G_Patch.getEnd(i, wave->size));
-		G_Mixer.setPitch    (this, G_Patch.getPitch(i));
+		setBegin(G_Patch.getStart(i));
+		setEnd  (G_Patch.getEnd(i, wave->size));
+		setPitch(G_Patch.getPitch(i));
 	}
 	else {
 		volume = DEFAULT_VOL;
@@ -492,14 +996,6 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 
 bool SampleChannel::canInputRec() {
 	return wave == NULL;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void SampleChannel::sendMidi(recorder::action *a) {
-	return;
 }
 
 
@@ -531,7 +1027,7 @@ void SampleChannel::start(bool doQuantize) {
 		case STATUS_PLAY:
 		{
 			if (mode == SINGLE_BASIC) {
-				G_Mixer.fadeout(this);
+				setFadeOut(DO_STOP);
 			}
 			else
 			if (mode == SINGLE_RETRIG) {
@@ -545,9 +1041,9 @@ void SampleChannel::start(bool doQuantize) {
 					 * introduces some bad clicks */
 
 					if (mute)
-						G_Mixer.chanReset(this);
+						reset();
 					else
-						G_Mixer.xfade(this);
+						setXFade();
 				}
 			}
 			else

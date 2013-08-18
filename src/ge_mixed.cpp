@@ -61,7 +61,7 @@ gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff,
 /* ------------------------------------------------------------------ */
 
 
-gStatus::gStatus(int x, int y, int w, int h, channel *ch, const char *L)
+gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 : Fl_Box(x, y, w, h, L), ch(ch) {}
 
 void gStatus::draw() {
@@ -91,12 +91,12 @@ void gStatus::draw() {
 		/* equation for the progress bar:
 		 * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 
-		int mixerPos = G_Mixer.getChanPos(ch);
-		if (mixerPos == -1)
-			mixerPos = 0;
+		int pos = ch->getPosition();
+		if (pos == -1)
+			pos = 0;
 		else
-			mixerPos = (mixerPos * (w()-1)) / (ch->end - ch->start);
-		fl_rectf(x()+1, y()+1, mixerPos, h()-2, COLOR_BG_2);
+			pos = (pos * (w()-1)) / (ch->end - ch->begin);
+		fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
 	}
 }
 
@@ -371,7 +371,7 @@ void gBeatMeter::draw() {
 
 //int gModeBox::id_generator = 0;
 
-gModeBox::gModeBox(int x, int y, int w, int h, channel *ch, const char *L)
+gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 	: Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {
 	box(G_BOX);

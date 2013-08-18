@@ -48,7 +48,7 @@ extern gdMainWindow *mainWin;
 extern Conf	         G_Conf;
 
 
-gdEditor::gdEditor(channel *ch) : gWindow(640, 480), ch(ch) {
+gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 	set_non_modal();
 
 	if (G_Conf.sampleEditorX)
@@ -85,7 +85,7 @@ gdEditor::gdEditor(channel *ch) : gWindow(640, 480), ch(ch) {
 	tools->resizable(new gBox(chanStart->x()+chanStart->w()+4, tools->y(), 80, tools->h()));
 
 	char buf[16];
-	sprintf(buf, "%d", ch->startTrue / 2); // divided by 2 because stereo
+	sprintf(buf, "%d", ch->beginTrue / 2); // divided by 2 because stereo
 	chanStart->value(buf);
 	chanStart->type(FL_INT_INPUT);
 	chanStart->callback(cb_setChanPos, this);
@@ -306,7 +306,7 @@ void gdEditor::__cb_reload() {
 
 	/* no need for glue_loadChan, there's no gui to refresh */
 
-	mh_loadChan(ch->wave->pathfile.c_str(), ch);
+	ch->load(ch->wave->pathfile.c_str());
 
 	glue_setBoost(this, ch, DEFAULT_BOOST, true);
 	glue_setPitch(this, ch, gDEFAULT_PITCH, true);

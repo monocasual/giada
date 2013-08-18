@@ -66,17 +66,17 @@ static bool __soloSession__ = false;
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
+int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath) {
 
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
 	G_Conf.setPath(G_Conf.samplePath, fpath);
 
-	int result = mh_loadChan(fname, ch);
+	int result = ch->load(fname);
 
 	if (result == SAMPLE_LOADED_OK)
-		mainWin->keyboard->updateChannel(ch);
+		mainWin->keyboard->updateChannel(ch->guiChannel);
 
 	if (G_Conf.fullChanVolOnLoad)
 		glue_setVol(ch, 1.0);
@@ -88,8 +88,8 @@ int glue_loadChannel(struct channel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
-channel *glue_addChannel(int side, int type) {
-	channel *ch    = G_Mixer.addChannel(side, type);
+Channel *glue_addChannel(int side, int type) {
+	Channel *ch    = G_Mixer.addChannel(side, type);
 	gChannel *gch  = mainWin->keyboard->addChannel(side, ch);
 	ch->guiChannel = gch;
 	return ch;
@@ -202,38 +202,24 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_saveSample(int ch, const char *fullpath) {
-	if (G_Mixer.channels.at(ch)->wave->writeData(fullpath)) {
-		printf("[glue] sample %s saved\n", fullpath);
-		return 1;
-	}
-	else {
-		printf("[glue] error while saving sample %s!\n", fullpath);
-		return 0;
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void glue_deleteChannel(channel *ch) {
+void glue_deleteChannel(Channel *ch) {
 	int index = ch->index;
 	int side  = ch->side;
 	recorder::clearChan(index);
-	mainWin->keyboard->deleteChannel(ch);
-	mh_deleteChannel(ch);
+	mainWin->keyboard->deleteChannel(ch->guiChannel);
+	G_Mixer.deleteChannel(ch);
 	mainWin->keyboard->updateChannels(side);
+	/// TODO: print channel deleted
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_freeChannel(channel *ch) {
-	mainWin->keyboard->freeChannel(ch);
+void glue_freeChannel(Channel *ch) {
+	mainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
-	mh_freeChannel(ch);
+	ch->empty();
 }
 
 
@@ -405,7 +391,14 @@ void glue_stopRec() {
 	recorder::sortActions();
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		mainWin->keyboard->setChannelWithActions(G_Mixer.channels.at(i));
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
+			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+			if (ch->hasActions)
+				ch->readActions = true;
+			else
+				ch->readActions = false;
+			mainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel);
+		}
 
 	mainWin->beat_rec->value(0);
 	mainWin->beat_rec->redraw();
@@ -419,7 +412,7 @@ void glue_stopRec() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startReadingRecs(channel *ch) {
+void glue_startReadingRecs(SampleChannel *ch) {
 	if (G_Conf.treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
 	else
@@ -430,7 +423,7 @@ void glue_startReadingRecs(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_stopReadingRecs(channel *ch) {
+void glue_stopReadingRecs(SampleChannel *ch) {
 
 	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
 	 * the channel in REC_ENDING status */
@@ -454,7 +447,7 @@ void glue_quantize(int val) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setVol(channel *ch, float v) {
+void glue_setVol(Channel *ch, float v) {
 	ch->volume = v;
 	ch->guiChannel->vol->value(v);
 }
@@ -463,11 +456,11 @@ void glue_setVol(channel *ch, float v) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setVolMainWin(channel *ch, float v) {
+void glue_setVolMainWin(Channel *ch, float v) {
 	ch->volume = v;
 	gdEditor *editor = (gdEditor*) gu_getSubwindow(mainWin, WID_SAMPLE_EDITOR);
 	if (editor) {
-		glue_setVolEditor(editor, ch, v, false);
+		glue_setVolEditor(editor, (SampleChannel*) ch, v, false);
 		editor->volume->value(v);
 	}
 }
@@ -495,7 +488,7 @@ void glue_setInVol(float val) {
 void glue_clearAllSamples() {
 	G_Mixer.running = false;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		mh_freeChannel(G_Mixer.channels.at(i));
+		G_Mixer.channels.at(i)->empty();
 		G_Mixer.channels.at(i)->guiChannel->reset();
 	}
 	recorder::init();
@@ -519,7 +512,7 @@ void glue_resetToInitState(bool resetGui) {
 	G_Mixer.running = false;
 	G_Mixer.ready   = false;
 	while (G_Mixer.channels.size > 0)
-		mh_deleteChannel(G_Mixer.channels.at(0));
+		G_Mixer.channels.del(0U);  // unsigned
 	mainWin->keyboard->clear();
 	recorder::init();
 	G_Patch.setDefault();
@@ -543,7 +536,8 @@ void glue_startStopMetronome() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool recalc, bool check) {
+void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e, bool recalc, bool check)
+{
 	if (check) {
 		if (e > ch->wave->size)
 			e = ch->wave->size;
@@ -552,8 +546,8 @@ void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool reca
 		if (b > ch->wave->size)
 			b = ch->wave->size-2;
 		if (b >= ch->endTrue)
-			b = ch->start;
-		if (e <= ch->startTrue)
+			b = ch->begin;
+		if (e <= ch->beginTrue)
 			e = ch->end;
 	}
 
@@ -567,8 +561,8 @@ void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool reca
 	sprintf(tmp, "%d", e/2);
 	win->chanEnd->value(tmp);
 
-	G_Mixer.setChanStart(ch, b);
-	G_Mixer.setChanEnd  (ch, e);
+	ch->setBegin(b);
+	ch->setEnd(e);
 
 	/* recalc is not needed when the user drags the bars directly over the waveform */
 
@@ -582,7 +576,7 @@ void glue_setBeginEndChannel(gdEditor *win, channel *ch, int b, int e, bool reca
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBoost(gdEditor *win, channel *ch, float val, bool numeric) {
+void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric) {
 	if (numeric) {
 		if (val > 20.0f)
 			val = 20.0f;
@@ -614,7 +608,7 @@ void glue_setBoost(gdEditor *win, channel *ch, float val, bool numeric) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric) {
+void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool numeric) {
 	if (numeric) {
 		if (val > 0.0f)
 			val = 0.0f;
@@ -661,53 +655,51 @@ void glue_setVolEditor(class gdEditor *win, channel *ch, float val, bool numeric
 /* ------------------------------------------------------------------ */
 
 
-void glue_setMute(channel *ch) {
-
-	bool muted = ch->mute ? true : false;  /// FIXME - useless
+void glue_setMute(Channel *ch) {
 
 	if (recorder::active && recorder::canRec(ch)) {
-		if (!muted)
+		if (!ch->mute)
 			recorder::startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
 		else
 		 recorder::stopOverdub(G_Mixer.actualFrame);
 	}
 
-	muted ? mh_unmuteChan(ch) : mh_muteChan(ch);
+	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
 
-	ch->guiChannel->mute->value(!muted);
+	//ch->guiChannel->mute->value(!ch->mute);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOn(channel *ch) {
+void glue_setSoloOn(Channel *ch) {
 
 	/* if there's no solo session, store mute configuration of all chans
 	 * and start the session */
 
 	if (!__soloSession__) {
 		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *och = G_Mixer.channels.at(i);
+			Channel *och = G_Mixer.channels.at(i);
 			och->mute_s  = och->mute;
 		}
 		__soloSession__ = true;
 	}
 
-	mh_soloChan(ch);
+	ch->solo = !ch->solo;
 
 	/* mute all other channels and unmute this (if muted) */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *och = G_Mixer.channels.at(i);
+		Channel *och = G_Mixer.channels.at(i);
 		if (!och->solo && !och->mute) {
-			mh_muteChan(och);
+			och->setMute(false);
 			och->guiChannel->mute->value(true);
 		}
 	}
 
 	if (ch->mute) {
-		mh_unmuteChan(ch);
+		ch->unsetMute(false);
 		ch->guiChannel->mute->value(false);
 	}
 }
@@ -716,7 +708,7 @@ void glue_setSoloOn(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOff(channel *ch) {
+void glue_setSoloOff(Channel *ch) {
 
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
@@ -724,31 +716,31 @@ void glue_setSoloOff(channel *ch) {
 	if (mh_uniqueSolo(ch)) {
 		__soloSession__ = false;
 		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-			channel *och = G_Mixer.channels.at(i);
+			Channel *och = G_Mixer.channels.at(i);
 			if (och->mute_s) {
-				mh_muteChan(och);
+				och->setMute(false);
 				och->guiChannel->mute->value(true);
 			}
 			else {
-				mh_unmuteChan(och);
+				och->unsetMute(false);
 				och->guiChannel->mute->value(false);
 			}
 			och->mute_s = false;
 		}
 	}
 	else {
-		mh_muteChan(ch);
+		ch->setMute(false);
 		ch->guiChannel->mute->value(true);
 	}
 
-	mh_soloChan(ch);
+	ch->solo = !ch->solo;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_setPanning(class gdEditor *win, channel *ch, float val) {
+void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val) {
 	if (val < 1.0f) {
 		ch->panLeft = 1.0f;
 		ch->panRight= 0.0f + val;
@@ -785,14 +777,17 @@ int glue_startInputRec() {
 	if (G_Mixer.chanInput != NULL)			// if there's another recording active
 		return 1;
 
+	SampleChannel *ch = mh_startInputRec();
+	if (ch == NULL)	{                  // no chans available
+		mainWin->input_rec->value(0);
+		mainWin->input_rec->redraw();
+		return 0;
+	}
+
 	if (!G_Mixer.running) {
 		glue_startSeq();
 		mainWin->beat_stop->value(1);
 	}
-
-	channel *ch = mh_startInputRec();
-	if (ch == NULL)	                    // no chans available
-		return 0;
 
 	glue_setVol(ch, 1.0f);
 
@@ -811,10 +806,10 @@ int glue_startInputRec() {
 
 int glue_stopInputRec() {
 
-	channel *ch = mh_stopInputRec();
+	SampleChannel *ch = mh_stopInputRec();
 
 	if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		mh_startChan(ch);
+		ch->start(true);
 
 	mainWin->input_rec->value(0);
 	mainWin->input_rec->redraw();
@@ -840,25 +835,29 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 	 * via glue_saveSample() */
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		channel *c = G_Mixer.channels.at(i);
 
-		if (c->wave == NULL)
-			continue;
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
 
-		/* update the new samplePath: everything now comes from the project folder */
+			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 
-		char samplePath[PATH_MAX];
+			if (ch->wave == NULL)
+				continue;
+
+			/* update the new samplePath: everything now comes from the project folder */
+
+			char samplePath[PATH_MAX];
 #if defined(_WIN32)
-		sprintf(samplePath, "%s\\%s.wav", folderPath, c->wave->name.c_str());
+			sprintf(samplePath, "%s\\%s.wav", folderPath, ch->wave->name.c_str());
 #else
-		sprintf(samplePath, "%s/%s.wav", folderPath, c->wave->name.c_str());
+			sprintf(samplePath, "%s/%s.wav", folderPath, ch->wave->name.c_str());
 #endif
-		/* remove any existing file */
+			/* remove any existing file */
 
-		if (gFileExists(samplePath))
-			remove(samplePath);
-		if (glue_saveSample(i, samplePath))
-			c->wave->pathfile = samplePath;
+			if (gFileExists(samplePath))
+				remove(samplePath);
+			if (ch->save(samplePath))
+				ch->wave->pathfile = samplePath;
+		}
 	}
 
 	std::string projNameClean = stripExt(projName);
@@ -877,14 +876,29 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyPress(channel *c, bool ctrl, bool shift) {
-
-	/* -- case CTRL --------------------------------------------------- */
+void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift) {
 	if (ctrl)
-		//glue_writeMute(c, false);
-		glue_setMute(c);
+		glue_setMute(ch);
+	else
+	if (shift)
+		ch->kill();
+	else
+		ch->start(true);
+}
 
-	/* -- case SHIFT------------------------------------------------------
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift) {
+
+	/* case CTRL */
+
+	if (ctrl)
+		glue_setMute(ch);
+
+	/* case SHIFT
+	 *
 	 * action recording on:
 	 * 		if seq is playing, rec a killchan
 	 * action recording off:
@@ -892,51 +906,47 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 	 * 		|	 if seq is playing OR channel 'c' is stopped, de/activate recs
 	 * 		|	 else kill chan
 	 *		else kill chan */
+
 	else
 	if (shift) {
-		if (c->type == CHANNEL_MIDI) {
-			mh_killChan(c);
+		if (recorder::active) {
+			if (G_Mixer.running) {
+				ch->kill();
+				if (recorder::canRec(ch) && !(ch->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
+					recorder::rec(ch->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
+			}
 		}
 		else {
-			if (recorder::active) {
-				if (G_Mixer.running) {
-					mh_killChan(c);
-					if (recorder::canRec(c) && !(c->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
-						recorder::rec(c->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
-				}
-			}
-			else {
-				if (c->hasActions) {
-					if (G_Mixer.running || c->status == STATUS_OFF)
-						c->readActions ? glue_stopReadingRecs(c) : glue_startReadingRecs(c);
-					else
-						mh_killChan(c);
-				}
+			if (ch->hasActions) {
+				if (G_Mixer.running || ch->status == STATUS_OFF)
+					ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
 				else
-					mh_killChan(c);
+					ch->kill();
 			}
+			else
+				ch->kill();
 		}
 	}
 
-	/* -- case no modifier -------------------------------------------- */
+	/* case no modifier */
+
 	else {
 
 		/* record now if the quantizer is off, otherwise let mixer to handle it
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (c->type == CHANNEL_SAMPLE &&
-	      G_Mixer.quantize == 0     &&
-	      recorder::canRec(c)       &&
-	      !(c->mode & LOOP_ANY))
+		if (G_Mixer.quantize == 0 &&
+		    recorder::canRec(ch)  &&
+	      !(ch->mode & LOOP_ANY))
 		{
-			if (c->mode == SINGLE_PRESS)
-				recorder::startOverdub(c->index, ACTION_KEYS, G_Mixer.actualFrame);
+			if (ch->mode == SINGLE_PRESS)
+				recorder::startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame);
 			else
-				recorder::rec(c->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
+				recorder::rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
 
-		mh_startChan(c);
+		ch->start(true);
 	}
 
 	/* the GUI update is done by gui_refresh() */
@@ -946,15 +956,15 @@ void glue_keyPress(channel *c, bool ctrl, bool shift) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyRelease(channel *c, bool ctrl, bool shift) {
+void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift) {
 
 	if (!ctrl && !shift) {
-		mh_stopChan(c);
+		ch->stop();
 
 		/* record a key release only if channel is single_press. For any
 		 * other mode the KEY REL is meaningless. */
 
-		if (c->mode == SINGLE_PRESS && recorder::canRec(c))
+		if (ch->mode == SINGLE_PRESS && recorder::canRec(ch))
 			recorder::stopOverdub(G_Mixer.actualFrame);
 	}
 
@@ -966,7 +976,8 @@ void glue_keyRelease(channel *c, bool ctrl, bool shift) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setPitch(class gdEditor *win, channel *ch, float val, bool numeric) {
+void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numeric)
+{
 	if (numeric) {
 		if (val <= 0.0f)
 			val = 0.1000f;
@@ -975,7 +986,7 @@ void glue_setPitch(class gdEditor *win, channel *ch, float val, bool numeric) {
 		win->pitch->value(val);
 	}
 
-	G_Mixer.setPitch(ch, val);
+	ch->setPitch(val);
 
 	char buf[16];
 	sprintf(buf, "%.4f", val);

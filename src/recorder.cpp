@@ -77,7 +77,7 @@ void init() {
 /* ------------------------------------------------------------------ */
 
 
-bool canRec(channel *ch) {
+bool canRec(Channel *ch) {
 
 	/* NO recording if:
 	 * recorder is inactive
@@ -85,7 +85,7 @@ bool canRec(channel *ch) {
 	 * mixer is recording a take in this channel ch
 	 * channel is empty */
 
-	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || ch->wave == NULL)
+	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || (ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL))
 		return 0;
 	return 1;
 }
@@ -152,7 +152,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 	/* don't activate the channel (chanActive[c] == false), it's up to
 	 * the other layers */
 
-	channel *ch = G_Mixer.getChannelByIndex(index);
+	Channel *ch = G_Mixer.getChannelByIndex(index);
 	ch->hasActions = true;
 
 	sortedActions = false;
@@ -188,7 +188,7 @@ void clearChan(int index) {
 		}
 	}
 
-	channel *ch = G_Mixer.getChannelByIndex(index);
+	Channel *ch = G_Mixer.getChannelByIndex(index);
 	ch->hasActions = false;
 	optimize();
 	//print();
@@ -214,7 +214,7 @@ void clearAction(int index, char act) {
 				j++;
 		}
 	}
-	channel *ch = G_Mixer.getChannelByIndex(index);
+	Channel *ch = G_Mixer.getChannelByIndex(index);
 	ch->hasActions = false;
 	optimize();
 	chanHasEvents(index);
@@ -315,7 +315,8 @@ void clearAll() {
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		G_Mixer.channels.at(i)->hasActions  = false;
-		G_Mixer.channels.at(i)->readActions = false;
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+			((SampleChannel*)G_Mixer.channels.at(i))->readActions = false;
 	}
 
 	global.clear();
@@ -504,7 +505,7 @@ void shrink(int new_fpb) {
 /* ------------------------------------------------------------------ */
 
 
-void enableRead(channel *ch) {
+void enableRead(SampleChannel *ch) {
 	ch->readActions = true;
 }
 
@@ -512,10 +513,10 @@ void enableRead(channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void disableRead(channel *ch) {
+void disableRead(SampleChannel *ch) {
 	ch->readActions = false;
 	if (G_Conf.recsStopOnChanHalt)
-		mh_killChan(ch);
+		ch->kill();
 }
 
 
@@ -523,7 +524,7 @@ void disableRead(channel *ch) {
 
 
 void chanHasEvents(int index) {
-	channel *ch = G_Mixer.getChannelByIndex(index);
+	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
 		ch->hasActions = false;
 		return;
@@ -670,7 +671,7 @@ void startOverdub(int index, char actionMask, int frame) {
 		}
 	}
 
-	channel *ch = G_Mixer.getChannelByIndex(index);
+	SampleChannel *ch = (SampleChannel*) G_Mixer.getChannelByIndex(index);
 	ch->readActions = false;   // don't use disableRead()
 }
 
@@ -699,7 +700,7 @@ void stopOverdub(int frame) {
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false); // false == don't check values
 	}
 
-	channel *ch = G_Mixer.getChannelByIndex(cmp.a2.chan);
+	SampleChannel *ch = (SampleChannel*) G_Mixer.getChannelByIndex(cmp.a2.chan);
 	ch->readActions = false;      // don't use disableRead()
 
 	/* remove any nested action between keypress----keyrel, then record */

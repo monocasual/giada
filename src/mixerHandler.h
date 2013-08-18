@@ -33,19 +33,6 @@
 #include "recorder.h"
 
 
-/* startChan
- * starts a channel. do_quantize = false (don't quantize) when Mixer is
- * reading actions from Recorder::.  */
-
-void mh_startChan(struct channel *ch, bool do_quantize=true);
-
-void mh_stopChan(struct channel *ch);
-
-void mh_deleteChannel(struct channel *ch);
-
-void mh_freeChannel(struct channel *ch);
-
-
 /* stopSequencer
  * stop the sequencer, with special case if samplesStopOnSeqHalt is
  * true. */
@@ -54,24 +41,10 @@ void mh_stopSequencer();
 
 void mh_rewindSequencer();
 
-/* killChan
- * kill a chan abruptly, without checking LOOP_ENDING and such */
-
-void mh_killChan(struct channel *ch);
-
-
-/* (un)muteChan
- * if internal == true, set internal mute without altering main mute. */
-
-void mh_muteChan(channel *ch, bool internal=false);
-void mh_unmuteChan(channel *ch, bool internal=false);
-
-void mh_soloChan(channel *ch);
-
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 
-bool mh_uniqueSolo(channel *ch);
+bool mh_uniqueSolo(class Channel *ch);
 
 /* loadPatch
  * load a path or a project (if isProject) into Mixer. If isProject, path
@@ -79,20 +52,19 @@ bool mh_uniqueSolo(channel *ch);
 
 void mh_loadPatch(bool isProject, const char *projPath=0);
 
-int mh_loadChan(const char *file, struct channel *ch);
-
-/* sendMidi
- * send MIDI out event, to devices and VST if enabled. */
-
-void mh_sendMidi(struct recorder::action *a, struct channel *ch);
-
 /* startInputRec - record from line in
  * creates a new empty wave in the first available channels and returns
  * the chan number chosen, otherwise -1 if there are no more empty
  * channels available. */
 
-struct channel *mh_startInputRec();
+SampleChannel *mh_startInputRec();
 
-channel *mh_stopInputRec();
+SampleChannel *mh_stopInputRec();
+
+/* uniqueSamplename
+ * return true if samplename 'n' is unique. Requires SampleChannel *ch
+ * in order to skip check against itself. */
+
+bool mh_uniqueSamplename(class SampleChannel *ch, std::string &n);
 
 #endif

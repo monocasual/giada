@@ -39,10 +39,10 @@ class gdKeyGrabber : public Fl_Window {
 private:
 	class gBox     *text;
 	//class gdConfig *w;     // parent window for refresh when done
-	struct channel *ch;
+	class SampleChannel *ch;
 
 public:
-	gdKeyGrabber(struct channel *ch);
+	gdKeyGrabber(class SampleChannel *ch);
 	int handle(int e);
 };
 

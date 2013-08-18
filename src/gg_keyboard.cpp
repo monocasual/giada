@@ -52,50 +52,47 @@ extern Patch 		     G_Patch;
 extern gdMainWindow *mainWin;
 
 
-gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
-: Fl_Group(X, Y, W, H, L), ch(ch)
+gChannel::gChannel(int X, int Y, int W, int H)
+ : Fl_Group(X, Y, W, H, NULL)
+{
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *ch)
+	: gChannel(X, Y, W, H), ch(ch)
 {
 	begin();
-	button = new gButton (x(), y(), 20, 20);
 
-	if (ch->type == CHANNEL_SAMPLE) {
-		status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
-#if defined(WITH_VST)
-		sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
-#else
-		sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
-#endif
-		modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
-		mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	  solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-	}
-	else {
-#if defined(WITH_VST)
-		sampleButton = new gClick  (button->x()+button->w()+4, y(), 261, 20, "-- MIDI --");
-#else
-		sampleButton = new gClick  (button->x()+button->w()+4, y(), 285, 20, "-- MIDI --");
-#endif
-		mute         = new gClick  (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	  solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-	}
+	button       = new gButton (x(), y(), 20, 20);
+	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 
 #if defined(WITH_VST)
-		fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
-		vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
 #else
-		vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
+#endif
+	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
+	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+
+#if defined(WITH_VST)
+	fx           = new gButton (solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
+	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
+#else
+	vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 
-	readActions    = NULL; // no rec button at start
+	readActions  = NULL; // no 'R' button
+
 	end();
 
 	update();
 
 	button->callback(cb_button, (void*)this);
 	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
-
-	char buf[2]; sprintf(buf, "%c", ch->key);
-	button->copy_label(buf);
 
 #ifdef WITH_VST
 	fx->callback(cb_openFxWindow, (void*)this);
@@ -107,8 +104,8 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
-	sampleButton->callback(cb_openChanMenu, (void*)this);
-	vol->callback(cb_change_vol, (void*)this);
+	sampleButton->callback(cb_openMenu, (void*)this);
+	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
 }
@@ -117,44 +114,55 @@ gChannel::gChannel(int X, int Y, int W, int H, const char* L, channel *ch)
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::cb_button      (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_button(); }
-void gChannel::cb_mute        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_mute(); }
-void gChannel::cb_solo        (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_solo(); }
-void gChannel::cb_openChanMenu(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openChanMenu(); }
-void gChannel::cb_change_vol  (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_change_vol(); }
-void gChannel::cb_readActions (Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_readActions(); }
+void gSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_button(); }
+void gSampleChannel::cb_mute        (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_mute(); }
+void gSampleChannel::cb_solo        (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_solo(); }
+void gSampleChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_openMenu(); }
+void gSampleChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_changeVol(); }
+void gSampleChannel::cb_readActions (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_readActions(); }
 #ifdef WITH_VST
-void gChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gChannel*)p)->__cb_openFxWindow(); }
+void gSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_openFxWindow(); }
 #endif
 
 
 /* ------------------------------------------------------------------ */
 
-int gChannel::keypress(int e) {
-	int ret;
-	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
-		ret = 1;
-	else
-	if (Fl::event_key() == ch->key && !button->value()) {
-		button->take_focus();                                              // move focus to this button
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-		button->do_callback();                                             // invoke the button's callback
-		ret = 1;
-	}
-	else
-		ret = 0;
 
-	if (Fl::event_key() == ch->key)
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-
-	return ret;
+void gSampleChannel::__cb_mute() {
+	glue_setMute(ch);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::__cb_button() {
+void gSampleChannel::__cb_solo() {
+	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gSampleChannel::__cb_changeVol() {
+	glue_setVolMainWin(ch, vol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+void gSampleChannel::__cb_openFxWindow() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+}
+#endif
+
+/* ------------------------------------------------------------------ */
+
+
+
+void gSampleChannel::__cb_button() {
 	if (button->value())    // pushed
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 	else                    // released
@@ -165,54 +173,7 @@ void gChannel::__cb_button() {
 /* ------------------------------------------------------------------ */
 
 
-#ifdef WITH_VST
-void gChannel::__cb_openFxWindow() {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
-}
-#endif
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gChannel::reset() {
-	sampleButton->bgColor0 = COLOR_BG_0;
-	sampleButton->bdColor  = COLOR_BD_0;
-	sampleButton->txtColor = COLOR_TEXT_0;
-
-	if (ch->type == CHANNEL_SAMPLE)
-		sampleButton->label("-- no sample --");
-	else
-		sampleButton->label("-- MIDI --");
-
-	remActionButton();
-	sampleButton->redraw();
-
-	if (ch->type == CHANNEL_SAMPLE)
-		status->redraw();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gChannel::__cb_mute() {
-	glue_setMute(ch);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gChannel::__cb_solo() {
-	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gChannel::__cb_openChanMenu() {
+void gSampleChannel::__cb_openMenu() {
 
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
@@ -235,32 +196,15 @@ void gChannel::__cb_openChanMenu() {
 			{"Volume"},                               // 8
 			{"Start/Stop"},                           // 9
 			{0},                                      // 10
-		{"setup MIDI output..."},                   // 11
-		{"Free channel"},                           // 12
-		{"Delete channel"},                         // 13
+		{"Free channel"},                           // 11
+		{"Delete channel"},                         // 12
 		{0}
 	};
-
-	if (ch->type == CHANNEL_MIDI) {
-		rclick_menu[0].hide();
-		rclick_menu[1].hide();
-		rclick_menu[2].hide();
-		rclick_menu[3].hide();
-		rclick_menu[7].hide();
-		rclick_menu[8].hide();
-		rclick_menu[9].hide();
-		rclick_menu[12].hide();
-	}
-	else {
-		rclick_menu[11].hide();
-	}
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
 		rclick_menu[1].deactivate();
 		rclick_menu[3].deactivate();
-		if (ch->type == CHANNEL_SAMPLE)
-			rclick_menu[4].deactivate();
-		rclick_menu[12].deactivate();
+		rclick_menu[11].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
@@ -337,7 +281,7 @@ void gChannel::__cb_openChanMenu() {
 			return;
 		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
 		if (!ch->hasActions)
-			remActionButton();
+			delActionButton();
 
 		/* TODO - set mute=false */
 
@@ -350,7 +294,7 @@ void gChannel::__cb_openChanMenu() {
 			return;
 		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
 		if (!ch->hasActions)
-			remActionButton();
+			delActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -360,7 +304,7 @@ void gChannel::__cb_openChanMenu() {
 			return;
 		recorder::clearAction(ch->index, ACTION_VOLUME);
 		if (!ch->hasActions)
-			remActionButton();
+			delActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -369,7 +313,7 @@ void gChannel::__cb_openChanMenu() {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		recorder::clearChan(ch->index);
-		remActionButton();
+		delActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}
@@ -378,19 +322,21 @@ void gChannel::__cb_openChanMenu() {
 		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
 		return;
 	}
-
-	if (strcmp(m->label(), "setup MIDI output...") == 0) {
-		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
-		new gdMidiSetup(ch);
-		return;
-	}
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::openBrowser(int type) {
+void gSampleChannel::__cb_readActions() {
+	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gSampleChannel::openBrowser(int type) {
 	const char *title = "";
 	switch (type) {
 		case BROWSER_LOAD_SAMPLE:
@@ -411,15 +357,134 @@ void gChannel::openBrowser(int type) {
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::__cb_change_vol() {
-	glue_setVolMainWin(ch, vol->value());
+void gSampleChannel::refresh() {
+
+	if (ch->status == STATUS_OFF) {
+		sampleButton->bgColor0 = COLOR_BG_0;
+		sampleButton->bdColor  = COLOR_BD_0;
+		sampleButton->txtColor = COLOR_TEXT_0;
+	}
+	else
+	if (ch->status == STATUS_PLAY) {
+		sampleButton->bgColor0 = COLOR_BG_2;
+		sampleButton->bdColor  = COLOR_BD_1;
+		sampleButton->txtColor = COLOR_TEXT_1;
+	}
+	else
+	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
+		__gu_blinkChannel(this);    /// move to gChannel::blink
+
+	if (ch->recStatus & (REC_WAITING | REC_ENDING))
+		__gu_blinkChannel(this);    /// move to gChannel::blink
+
+	if (ch->wave != NULL) {
+
+		if (G_Mixer.chanInput == ch)
+			sampleButton->bgColor0 = COLOR_BG_3;
+
+		if (recorder::active) {
+			if (recorder::canRec(ch)) {
+				sampleButton->bgColor0 = COLOR_BG_4;
+				sampleButton->txtColor = COLOR_TEXT_0;
+			}
+		}
+		status->redraw();
+	}
+	sampleButton->redraw();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::addActionButton(bool status) {
+void gSampleChannel::reset() {
+	sampleButton->bgColor0 = COLOR_BG_0;
+	sampleButton->bdColor  = COLOR_BD_0;
+	sampleButton->txtColor = COLOR_TEXT_0;
+	sampleButton->label("-- no sample --");
+	delActionButton();
+	sampleButton->redraw();
+	status->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gSampleChannel::update() {
+
+	/* update sample button's label */
+
+	switch (ch->status) {
+		case STATUS_EMPTY:
+			sampleButton->label("-- no sample --");
+			break;
+		case STATUS_MISSING:
+		case STATUS_WRONG:
+			sampleButton->label("* file not found! *");
+			break;
+		default:
+			gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+			break;
+	}
+
+	/* update channels. If you load a patch with recorded actions, the 'R'
+	 * button must be shown. Moreover if the actions are active, the 'R'
+	 * button must be activated accordingly. */
+
+	if (ch->hasActions)
+		addActionButton(ch->readActions);
+	else
+		delActionButton();
+
+	/* update key box */
+
+	char k[4];
+	sprintf(k, "%c", ch->key);
+	button->copy_label(k);
+	button->redraw();
+
+	/* updates modebox */
+
+	modeBox->value(ch->mode);
+	modeBox->redraw();
+
+	/* update volumes+mute+solo */
+
+	vol->value(ch->volume);
+	mute->value(ch->mute);
+	solo->value(ch->solo);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gSampleChannel::keyPress(int e) {
+	int ret;
+	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
+		ret = 1;
+	else
+	if (Fl::event_key() == ch->key && !button->value()) {
+		button->take_focus();                                              // move focus to this button
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+		button->do_callback();                                             // invoke the button's callback
+		ret = 1;
+	}
+	else
+		ret = 0;
+
+	if (Fl::event_key() == ch->key)
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gSampleChannel::addActionButton(bool status) {
 
 	/* quit if 'R' exists yet. */
 
@@ -446,7 +511,7 @@ void gChannel::addActionButton(bool status) {
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::remActionButton() {
+void gSampleChannel::delActionButton() {
 	if (readActions == NULL)
 		return;
 
@@ -460,74 +525,232 @@ void gChannel::remActionButton() {
 
 
 /* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
 
 
-void gChannel::__cb_readActions() {
-	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
+	: gChannel(X, Y, W, H), ch(ch)
+{
+	begin();
+
+	button       = new gButton (x(), y(), 20, 20);
+
+#if defined(WITH_VST)
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 261, 20, "-- MIDI --");
+#else
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 285, 20, "-- MIDI --");
+#endif
+
+	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo         = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+
+#if defined(WITH_VST)
+	fx           = new gButton(solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
+	vol          = new gDial  (fx->x()+fx->w()+4, y(), 20, 20);
+#else
+	vol          = new gDial  (solo->x()+solo->w()+4, y(), 20, 20);
+#endif
+
+	end();
+
+	update();
+
+	button->callback(cb_button, (void*)this);
+	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
+
+#ifdef WITH_VST
+	fx->callback(cb_openFxWindow, (void*)this);
+#endif
+
+	mute->type(FL_TOGGLE_BUTTON);
+	mute->callback(cb_mute, (void*)this);
+
+	solo->type(FL_TOGGLE_BUTTON);
+	solo->callback(cb_solo, (void*)this);
+
+	sampleButton->callback(cb_openMenu, (void*)this);
+	vol->callback(cb_changeVol, (void*)this);
+
+	ch->guiChannel = this;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gChannel::update() {
+void gMidiChannel::cb_button      (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_button(); }
+void gMidiChannel::cb_mute        (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_mute(); }
+void gMidiChannel::cb_solo        (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_solo(); }
+void gMidiChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_openMenu(); }
+void gMidiChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_changeVol(); }
+#ifdef WITH_VST
+void gMidiChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_openFxWindow(); }
+#endif
 
-	if (ch->type == CHANNEL_MIDI) {
-		if (ch->midiOut) {
-			char tmp[32];
-			sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
-			sampleButton->copy_label(tmp);
-		}
-		else
-			sampleButton->label("-- MIDI --");
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::__cb_mute() {
+	glue_setMute(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::__cb_solo() {
+	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::__cb_changeVol() {
+	glue_setVolMainWin(ch, vol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+void gMidiChannel::__cb_openFxWindow() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+}
+#endif
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::__cb_button() {
+	if (button->value())
+		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::__cb_openMenu() {
+
+	Fl_Menu_Item rclick_menu[] = {
+		{"Edit actions..."},                        // 0
+		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 1
+			{"All"},                                  // 2
+			{0},                                      // 3
+		{"setup MIDI output..."},                   // 4
+		{"Delete channel"},                         // 5
+		{0}
+	};
+
+	/* no 'clear actions' if there are no actions */
+
+	if (!ch->hasActions)
+		rclick_menu[1].deactivate();
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_BOX);
+	b->textsize(11);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(COLOR_BG_0);
+
+	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	if (!m) return;
+
+	if (strcmp(m->label(), "Delete channel") == 0) {
+		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
+			return;
+		glue_deleteChannel(ch);
+		return;
 	}
-	else {
 
-		//if (ch->wave)
-		//	gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
-
-		/* update sample button's label */
-
-		switch (ch->status) {
-			case STATUS_EMPTY:
-				sampleButton->label("-- no sample --");
-				break;
-			case STATUS_MISSING:
-			case STATUS_WRONG:
-				sampleButton->label("* file not found! *");
-				break;
-			default:
-				gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
-				break;
-		}
-
-		/* update channels. If you load a patch with recorded actions, the 'R'
-		 * button must be shown. Moreover if the actions are active, the 'R'
-		 * button must be activated accordingly. */
-
-		if (ch->hasActions)
-			addActionButton(ch->readActions);
-		else
-			remActionButton();
-
-		/* update key box */
-
-		char k[4];
-		sprintf(k, "%c", ch->key);
-		button->copy_label(k);
-		button->redraw();
-
-		/* updates modebox */
-
-		modeBox->value(ch->mode);
-		modeBox->redraw();
+	if (strcmp(m->label(), "All") == 0) {
+		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+			return;
+		recorder::clearChan(ch->index);
+		gu_refreshActionEditor(); // refresh a.editor window, it could be open
+		return;
 	}
 
-	/* update volumes+mute+solo */
+	if (strcmp(m->label(), "Edit actions...") == 0) {
+		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
+		return;
+	}
+
+	if (strcmp(m->label(), "setup MIDI output...") == 0) {
+		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
+		new gdMidiSetup(ch);
+		return;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::refresh() {
+
+	if (ch->status == STATUS_OFF) {
+		sampleButton->bgColor0 = COLOR_BG_0;
+		sampleButton->bdColor  = COLOR_BD_0;
+		sampleButton->txtColor = COLOR_TEXT_0;
+	}
+	else
+	if (ch->status == STATUS_PLAY) {
+		sampleButton->bgColor0 = COLOR_BG_2;
+		sampleButton->bdColor  = COLOR_BD_1;
+		sampleButton->txtColor = COLOR_TEXT_1;
+	}
+	else
+	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
+		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
+
+	if (ch->recStatus & (REC_WAITING | REC_ENDING))
+		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
+
+	sampleButton->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::reset() {
+	sampleButton->bgColor0 = COLOR_BG_0;
+	sampleButton->bdColor  = COLOR_BD_0;
+	sampleButton->txtColor = COLOR_TEXT_0;
+	sampleButton->label("-- MIDI --");
+	sampleButton->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::update() {
+
+	if (ch->midiOut) {
+		char tmp[32];
+		sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
+		sampleButton->copy_label(tmp);
+	}
+	else
+		sampleButton->label("-- MIDI --");
 
 	vol->value(ch->volume);
 	mute->value(ch->mute);
 	solo->value(ch->solo);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gMidiChannel::keyPress(int e) {
+	return 1; // does nothing for MidiChannel
 }
 
 
@@ -612,21 +835,21 @@ void Keyboard::fixRightColumn() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::freeChannel(struct channel *ch) {
-	ch->guiChannel->reset();
+void Keyboard::freeChannel(gChannel *gch) {
+	gch->reset();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::deleteChannel(struct channel *ch) {
+void Keyboard::deleteChannel(gChannel *gch) {
 	Fl::lock();
-	ch->guiChannel->hide();
-	gChannelsR->remove(ch->guiChannel);
-	gChannelsL->remove(ch->guiChannel);
-	delete ch->guiChannel;
-	ch->guiChannel = NULL;
+	gch->hide();
+	gChannelsR->remove(gch);
+	gChannelsL->remove(gch);
+	delete gch;
+	//ch->guiChannel = NULL; old stuff: still required?
 	Fl::unlock();
 	fixRightColumn();
 }
@@ -635,8 +858,8 @@ void Keyboard::deleteChannel(struct channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::updateChannel(struct channel *ch) {
-	ch->guiChannel->update();
+void Keyboard::updateChannel(gChannel *gch) {
+	gch->update();
 }
 
 
@@ -680,11 +903,11 @@ void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addC
 /* ------------------------------------------------------------------ */
 
 
-gChannel *Keyboard::addChannel(char side, channel *ch) {
+gChannel *Keyboard::addChannel(char side, Channel *ch) {
 	Fl_Group *group;
 	gClick   *add;
 
-	if (side == 0)	{
+	if (side == 0) {
 		group = gChannelsL;
 		add   = addChannelL;
 	}
@@ -693,7 +916,22 @@ gChannel *Keyboard::addChannel(char side, channel *ch) {
 		add   = addChannelR;
 	}
 
-	gChannel *gch = new gChannel(group->x(), group->y() + group->children() * 24, group->w(), 20, NULL, ch);
+	gChannel *gch = NULL;
+
+	if (ch->type == CHANNEL_SAMPLE)
+		gch = (gSampleChannel*) new gSampleChannel(
+				group->x(),
+				group->y() + group->children() * 24,
+				group->w(),
+				20,
+				(SampleChannel*) ch);
+	else
+		gch = (gMidiChannel*) new gMidiChannel(
+				group->x(),
+				group->y() + group->children() * 24,
+				group->w(),
+				20,
+				(MidiChannel*) ch);
 
 	group->add(gch);
 	group->size(group->w(), group->children() * 24);
@@ -793,9 +1031,9 @@ int Keyboard::handle(int e) {
 			 * and invoke that button's callback() */
 
 			for (int i=0; i<gChannelsL->children(); i++)
-				ret &= ((gChannel*)gChannelsL->child(i))->keypress(e);
+				ret &= ((gChannel*)gChannelsL->child(i))->keyPress(e);
 			for (int i=0; i<gChannelsR->children(); i++)
-				ret &= ((gChannel*)gChannelsR->child(i))->keypress(e);
+				ret &= ((gChannel*)gChannelsR->child(i))->keyPress(e);
 			break;
 		}
 	}
@@ -830,20 +1068,10 @@ void Keyboard::clear() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::setChannelWithActions(channel *ch) {
-
-	/* nothing to do with MIDI channels, they don't have 'R' button */
-
-	if (ch->type == CHANNEL_MIDI)
-		return;
-
-	if (ch->hasActions) {
-		ch->readActions = true;   /// <---- move this to glue_stopRec
-		ch->guiChannel->addActionButton(true); // true = button on
-	}
-	else {
-		ch->readActions = false;  /// <---- move this to glue_stopRec
-		ch->guiChannel->remActionButton();
-	}
+void Keyboard::setChannelWithActions(gSampleChannel *gch) {
+	if (gch->readActions == NULL)
+		gch->addActionButton(true); // true = button on
+	else
+		gch->delActionButton();
 }
 

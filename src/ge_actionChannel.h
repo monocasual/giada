@@ -38,14 +38,19 @@
 
 
 class gAction : public Fl_Box {
+
 private:
+
 	bool                  selected;
 	unsigned              index;
   class gdActionEditor *parent;   // pointer to parent (gActionEditor)
+	class SampleChannel  *ch;
   char                  type;     // type of action
 
 public:
-	gAction(int x, int y, int h, int frame_a, unsigned index, gdActionEditor *parent, bool record, char type);
+	gAction(int x, int y, int h, int frame_a, unsigned index,
+				  gdActionEditor *parent, class SampleChannel *ch, bool record,
+			    char type);
 	void draw();
 	int  handle(int e);
 	void addAction();
@@ -83,7 +88,10 @@ public:
 
 
 class gActionChannel : public gActionWidget {
+
 private:
+
+	class SampleChannel *ch;
 
 	/* getSelectedAction
 	 * get the action under the mouse. NULL if nothing found. */
@@ -117,7 +125,7 @@ private:
 	bool actionCollides(int frame);
 
 public:
-	gActionChannel(int x, int y, gdActionEditor *pParent);
+	gActionChannel(int x, int y, gdActionEditor *pParent, class SampleChannel *ch);
 	void draw();
 	int  handle(int e);
 	void updateActions();

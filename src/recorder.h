@@ -112,7 +112,7 @@ void chanHasEvents(int chan);
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
 
-bool canRec(channel *ch);
+bool canRec(Channel *ch);
 
 /* rec
  * record an action. */
@@ -173,8 +173,8 @@ void shrink(int new_fpb);
  * if enabled  = read actions from channel chan
  * if disabled = don't read actions from channel chan. */
 
-void enableRead(channel *ch);
-void disableRead(channel *ch);
+void enableRead(SampleChannel *ch);   /// FIXME - move to SampleChannel
+void disableRead(SampleChannel *ch);  /// FIXME - move to SampleChannel
 
 /* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +

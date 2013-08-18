@@ -39,7 +39,7 @@
 extern Conf	G_Conf;
 
 
-gdKeyGrabber::gdKeyGrabber(channel *ch)
+gdKeyGrabber::gdKeyGrabber(SampleChannel *ch)
 : Fl_Window(300, 100, "Key configuration"), ch(ch) {
 	set_modal();
 	text = new gBox(10, 10, 280, 80, "Press a key (esc to quit):");

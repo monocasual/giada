@@ -253,7 +253,7 @@ int gMuteChannel::handle(int e) {
 						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
 						recorder::sortActions();
 					}
-					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -283,7 +283,7 @@ int gMuteChannel::handle(int e) {
 					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
 					recorder::sortActions();
 
-					mainWin->keyboard->setChannelWithActions(pParent->chan); // update mainWindow
+					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}

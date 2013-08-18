@@ -189,7 +189,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 					window = masterIn.at(i)->window;
 
 			for (unsigned i=0; i<G_Mixer.channels.size && !window; i++) {
-				channel *ch = G_Mixer.channels.at(i);
+				Channel *ch = G_Mixer.channels.at(i);
 				for (unsigned j=0; j<ch->plugins.size && !window; j++)
 					if (ch->plugins.at(j)->getPlugin() == effect)
 						window = ch->plugins.at(j)->window;
@@ -304,7 +304,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 /* ------------------------------------------------------------------ */
 
 
-int PluginHost::addPlugin(const char *fname, int stackType, channel *ch) {
+int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 
 	Plugin *p    = new Plugin();
 	bool success = true;
@@ -368,7 +368,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
+void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
@@ -399,7 +399,8 @@ void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 		if (pStack->at(i)->bypass)
 			continue;
 		if (ch) {   // process events if it's a channel stack
-			pStack->at(i)->processEvents((VstEvents*) &ch->events);
+			if (ch->type == CHANNEL_MIDI)
+				pStack->at(i)->processEvents(((MidiChannel*)ch)->getVstEvents());
 		}
 		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);
 		bufferI = bufferO;
@@ -418,7 +419,7 @@ void PluginHost::processStack(float *buffer, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::processStackOffline(float *buffer, int stackType, channel *ch, int size) {
+void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size) {
 
 	/* call processStack on the entire size of the buffer. How many cycles?
 	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
@@ -449,7 +450,7 @@ void PluginHost::processStackOffline(float *buffer, int stackType, channel *ch, 
 /* ------------------------------------------------------------------ */
 
 
-Plugin *PluginHost::getPluginById(int id, int stackType, channel *ch) {
+Plugin *PluginHost::getPluginById(int id, int stackType, Channel *ch) {
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 	for (unsigned i=0; i<pStack->size; i++) {
 		if (pStack->at(i)->getId() == id)
@@ -462,7 +463,7 @@ Plugin *PluginHost::getPluginById(int id, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-Plugin *PluginHost::getPluginByIndex(int index, int stackType, channel *ch) {
+Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch) {
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 	if (pStack->size == 0)
 		return NULL;
@@ -475,7 +476,7 @@ Plugin *PluginHost::getPluginByIndex(int index, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::freeStack(int stackType, channel *ch) {
+void PluginHost::freeStack(int stackType, Channel *ch) {
 
 	gVector <Plugin *> *pStack;
 	pStack = getStack(stackType, ch);
@@ -517,7 +518,7 @@ void PluginHost::freeAllStacks() {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::freePlugin(int id, int stackType, channel *ch) {
+void PluginHost::freePlugin(int id, int stackType, Channel *ch) {
 
 	gVector <Plugin *> *pStack;
 	pStack = getStack(stackType, ch);
@@ -557,7 +558,7 @@ void PluginHost::freePlugin(int id, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, channel *ch) {
+void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Channel *ch) {
 
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
@@ -579,7 +580,7 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, cha
 /* ------------------------------------------------------------------ */
 
 
-int PluginHost::getPluginIndex(int id, int stackType, channel *ch) {
+int PluginHost::getPluginIndex(int id, int stackType, Channel *ch) {
 
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
@@ -593,7 +594,7 @@ int PluginHost::getPluginIndex(int id, int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
+gVector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch) {
 	switch(stackType) {
 		case MASTER_OUT:
 			return &masterOut;
@@ -610,7 +611,7 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
+void PluginHost::addVstMidiEvent(VstMidiEvent *e, MidiChannel *ch) {
 	if (ch->events.numEvents < MAX_VST_EVENTS) {
 		ch->events.events[ch->events.numEvents] = (VstEvent*) e;
 		ch->events.numEvents++;
@@ -624,7 +625,7 @@ void PluginHost::addVstMidiEvent(VstMidiEvent *e, channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::addVstMidiEvent(uint32_t msg, channel *ch) {
+void PluginHost::addVstMidiEvent(uint32_t msg, MidiChannel *ch) {
 	addVstMidiEvent(createVstMidiEvent(msg), ch);
 }
 
@@ -685,7 +686,7 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::freeVstMidiEvents(channel *ch, bool init) {
+void PluginHost::freeVstMidiEvents(MidiChannel *ch, bool init) {
 	if (ch->events.numEvents == 0 && !init)
 		return;
 	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
@@ -698,7 +699,7 @@ void PluginHost::freeVstMidiEvents(channel *ch, bool init) {
 /* ------------------------------------------------------------------ */
 
 
-unsigned PluginHost::countPlugins(int stackType, channel *ch) {
+unsigned PluginHost::countPlugins(int stackType, Channel *ch) {
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 	return pStack->size;
 }
