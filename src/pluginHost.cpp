@@ -611,28 +611,6 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void PluginHost::addVstMidiEvent(VstMidiEvent *e, MidiChannel *ch) {
-	if (ch->events.numEvents < MAX_VST_EVENTS) {
-		ch->events.events[ch->events.numEvents] = (VstEvent*) e;
-		ch->events.numEvents++;
-		//printf("[pluginHost] VstMidiEvent added to channel %d, total = %d\n", ch->index, ch->events.numEvents);
-	}
-	else
-		printf("[pluginHost] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", ch->index, ch->events.numEvents);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void PluginHost::addVstMidiEvent(uint32_t msg, MidiChannel *ch) {
-	addVstMidiEvent(createVstMidiEvent(msg), ch);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 
 	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
@@ -680,19 +658,6 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 	e->noteOffVelocity = 0;
 
 	return e;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void PluginHost::freeVstMidiEvents(MidiChannel *ch, bool init) {
-	if (ch->events.numEvents == 0 && !init)
-		return;
-	memset(ch->events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
-	ch->events.numEvents = 0;
-	ch->events.reserved  = 0;
-	//printf("[PluginHost] Vst Midi Events freed\n");
 }
 
 

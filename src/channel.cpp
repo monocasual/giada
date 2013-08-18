@@ -100,9 +100,55 @@ MidiChannel::MidiChannel(char side)
 	  midiOutChan(MIDI_CHANS[0])
 {
 #ifdef WITH_VST // init VstEvents stack
-	G_PluginHost.freeVstMidiEvents(this, true);
+	freeVstMidiEvents(true);
 #endif
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+
+void MidiChannel::freeVstMidiEvents(bool init) {
+	if (events.numEvents == 0 && !init)
+		return;
+	memset(events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
+	events.numEvents = 0;
+	events.reserved  = 0;
+}
+
+#endif
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+
+void MidiChannel::addVstMidiEvent(uint32_t msg) {
+	addVstMidiEvent(G_PluginHost.createVstMidiEvent(msg));
+}
+
+#endif
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+
+void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
+	if (events.numEvents < MAX_VST_EVENTS) {
+		events.events[events.numEvents] = (VstEvent*) e;
+		events.numEvents++;
+		//printf("[MidiChannel] VstMidiEvent added to channel %d, total = %d\n", index, events.numEvents);
+	}
+	else
+		printf("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
+}
+
+#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -186,7 +232,7 @@ void MidiChannel::unsetMute(bool internal) {
 void MidiChannel::process(float *buffer, int size) {
 #ifdef WITH_VST
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
-	G_PluginHost.freeVstMidiEvents(this);
+	freeVstMidiEvents();
 #endif
 
 	for (int j=0; j<size; j+=2) {
@@ -246,7 +292,7 @@ void MidiChannel::sendMidi(recorder::action *a) {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan], this);
 #ifdef WITH_VST
-		G_PluginHost.addVstMidiEvent(a->event, this);
+		addVstMidiEvent(a->event);
 #endif
 	}
 }

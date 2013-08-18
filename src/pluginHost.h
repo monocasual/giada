@@ -104,25 +104,10 @@ public:
 
 	void processStackOffline(float *buffer, int stackType, class Channel *ch, int size);
 
-	/* addVstMidiEvent
-	 * take a composite MIDI event, decompose it and add it to channel. The
-	 * other version creates a VstMidiEvent on the fly. */
-	/** TODO - move these to MidiChannel */
-
-	void addVstMidiEvent(struct VstMidiEvent *e, class MidiChannel *ch);
-	void addVstMidiEvent(uint32_t msg, class MidiChannel *ch);
-
 	/* createVstMidiEvent
 	 * return a pointer to a new VstMidiEvent structure. */
 
 	VstMidiEvent *createVstMidiEvent(uint32_t msg);
-
-	/* freeVstMidiEvents
-	 * empty channel->vstEvents structure. Init: use the method for channel
-	 * initialization. */
-	/** TODO - move this to MidiChannel */
-
-	void freeVstMidiEvents(class MidiChannel *ch, bool init=false);
 
 	gVector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 

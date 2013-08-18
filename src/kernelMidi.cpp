@@ -132,7 +132,7 @@ void send(uint32_t data, MidiChannel *ch) {
 	}
 
 #ifdef WITH_VST
-	G_PluginHost.addVstMidiEvent(data, ch);
+	ch->addVstMidiEvent(data);
 #endif
 
 	printf("[KM] send msg=0x%X, ch=%d\n", data, ch->index);
@@ -152,7 +152,7 @@ void send(int b1, int b2, int b3, MidiChannel *ch) {
 	}
 
 #ifdef WITH_VST
-	G_PluginHost.addVstMidiEvent(getIValue(b1, b2, b3), ch);
+	ch->addVstMidiEvent(getIValue(b1, b2, b3));
 #endif
 
 	printf("[KM] send msg=0x%X, ch=%d\n", getIValue(b1, b2, b3), ch->index);

@@ -338,11 +338,26 @@ public:
 
 	void  sendMidi(recorder::action *a);
 
+#ifdef WITH_VST
+
 	/* getVstEvents
 	 * return a pointer to gVstEvents. */
 
-#ifdef WITH_VST
 	VstEvents *getVstEvents();
+
+	/* freeVstMidiEvents
+	 * empty vstEvents structure. Init: use the method for channel
+	 * initialization. */
+
+	void freeVstMidiEvents(bool init=false);
+
+	/* addVstMidiEvent
+	 * take a composite MIDI event, decompose it and add it to channel. The
+	 * other version creates a VstMidiEvent on the fly. */
+
+	void addVstMidiEvent(struct VstMidiEvent *e);
+	void addVstMidiEvent(uint32_t msg);
+
 #endif
 
 	/* ---------------------------------------------------------------- */
