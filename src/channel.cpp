@@ -357,6 +357,15 @@ SampleChannel::~SampleChannel() {
 /* ------------------------------------------------------------------ */
 
 
+void SampleChannel::hardStop() {
+	status = STATUS_OFF;
+	reset();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void SampleChannel::onBar() {
 	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
 		setXFade();
@@ -555,10 +564,8 @@ void SampleChannel::sum(int frame, bool running) {
 						else
 						if (fadeoutEnd == DO_MUTE_I)
 							mute_i = true;
-						else {             // DO_STOP
-							status = STATUS_OFF;
-							reset();
-						}
+						else             // DO_STOP
+							hardStop();
 					}
 
 					/* we must append another frame in the buffer when the fadeout
@@ -629,7 +636,7 @@ void SampleChannel::onZero() {
 		}
 		else
 		if (status == STATUS_ENDING)
-			stop();
+			hardStop();
 	}
 
 	if (status == STATUS_WAIT)

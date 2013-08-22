@@ -249,6 +249,11 @@ public:
 
 	void rewind();
 
+	/* hardStop
+	 * stop the channel immediately, no further checks. */
+
+	void hardStop();
+
 	/* allocEmpty
 	 * alloc an empty wave used in input recordings. */
 
