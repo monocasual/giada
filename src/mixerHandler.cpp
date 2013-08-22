@@ -128,20 +128,10 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 
 
 void mh_rewindSequencer() {
-
-	/* rewind quantization */
-
-	if (G_Mixer.quantize > 0 && G_Mixer.running)
+	if (G_Mixer.quantize > 0 && G_Mixer.running)   // quantize rewind
 		G_Mixer.rewindWait = true;
 	else
 		G_Mixer.rewind();
-
-	/* send ALL notes OFF signal to each channel */
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
-			kernelMidi::send(0xB0, 0x7B, 0x00, (MidiChannel*) G_Mixer.channels.at(i));
-	}
 }
 
 

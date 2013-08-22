@@ -128,6 +128,11 @@ public:
 
 	virtual void parseAction(recorder::action *a, int frame) = 0;
 
+	/* rewind
+	 * rewind channel when rewind button is pressed. */
+
+	virtual void rewind() = 0;
+
 	/* ---------------------------------------------------------------- */
 
 	int    index;                // unique id
@@ -192,6 +197,7 @@ public:
 	void  empty      ();
 	void  stopBySeq  ();
 	void  stop       ();
+	void  rewind     ();
 	void  setMute    (bool internal);
 	void  unsetMute  (bool internal);
 	void  reset      ();
@@ -243,11 +249,6 @@ public:
 	 * save sample to file. */
 
 	int save(const char *path);
-
-	/* rewind
-	 * rewind channel when rewind button is pressed. */
-
-	void rewind();
 
 	/* hardStop
 	 * stop the channel immediately, no further checks. */
@@ -327,6 +328,7 @@ public:
 	void  empty      ();
 	void  stopBySeq  ();
 	void  stop       ();
+	void  rewind     ();
 	void  setMute    (bool internal);
 	void  unsetMute  (bool internal);
 	int   loadByPatch(const char *file, int i);
@@ -339,9 +341,10 @@ public:
 	/* ---------------------------------------------------------------- */
 
 	/* sendMidi
-	 * send Midi event to the outside. */
+	 * send Midi event to the outside world. */
 
-	void  sendMidi(recorder::action *a);
+	void sendMidi(recorder::action *a);
+	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST
 

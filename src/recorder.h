@@ -63,13 +63,8 @@ namespace recorder {
  * VST sdk: parameter values, like all VST parameters, are declared as
  * floats with an inclusive range of 0.0 to 1.0 (fValue). */
 
-/** TODO - action should be a class with destructor which frees event
- * pointer */
-
-/** TODO - why not add a channel* pointer to action? */
-
 struct action {
-	int      chan;    // channel index, struct channel->index
+	int      chan;    // channel index, i.e. Channel->index
  	int      type;
 	int      frame;   // redundant info, used by helper functions
 	float    fValue;  // used only for envelopes (volumes, vst params).
@@ -111,6 +106,7 @@ void chanHasEvents(int chan);
 
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */
+/** TODO - move to Channel */
 
 bool canRec(Channel *ch);
 
@@ -173,8 +169,8 @@ void shrink(int new_fpb);
  * if enabled  = read actions from channel chan
  * if disabled = don't read actions from channel chan. */
 
-void enableRead(SampleChannel *ch);   /// FIXME - move to SampleChannel
-void disableRead(SampleChannel *ch);  /// FIXME - move to SampleChannel
+void enableRead(SampleChannel *ch);   /// TODO - move to SampleChannel
+void disableRead(SampleChannel *ch);  /// TODO - move to SampleChannel
 
 /* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +

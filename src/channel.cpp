@@ -213,7 +213,7 @@ void MidiChannel::onZero() {
 void MidiChannel::setMute(bool internal) {
 	// internal mute does not exist for midi (for now)
 	mute = true;
-	kernelMidi::send(MIDI_ALL_NOTES_OFF, this);
+	kernelMidi::send(MIDI_ALL_NOTES_OFF);
 }
 
 
@@ -263,7 +263,7 @@ void MidiChannel::stopBySeq() {
 
 void MidiChannel::kill() {
 	if (status & (STATUS_PLAY | STATUS_ENDING))
-		kernelMidi::send(MIDI_ALL_NOTES_OFF, this);
+		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 	status = STATUS_OFF;
 }
 
@@ -290,11 +290,35 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 
 void MidiChannel::sendMidi(recorder::action *a) {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
-		kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan], this);
+		if (midiOut)
+			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
 #ifdef WITH_VST
 		addVstMidiEvent(a->event);
 #endif
 	}
+}
+
+
+void MidiChannel::sendMidi(uint32_t data) {
+	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
+		if (midiOut)
+			kernelMidi::send(data | MIDI_CHANS[midiOutChan]);
+#ifdef WITH_VST
+		addVstMidiEvent(data);
+#endif
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void MidiChannel::rewind() {
+	if (midiOut)
+		kernelMidi::send(MIDI_ALL_NOTES_OFF);
+#ifdef WITH_VST
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+#endif
 }
 
 
@@ -931,10 +955,8 @@ void SampleChannel::stopBySeq() {
 
 void SampleChannel::stop() {
 	if (status == STATUS_PLAY && mode == SINGLE_PRESS) {
-		if (mute || mute_i) {
-			status = STATUS_OFF;
-			reset();
-		}
+		if (mute || mute_i)
+			hardStop();
 		else
 			setFadeOut(DO_STOP);
 	}

@@ -122,40 +122,28 @@ const char *getOutPortName(unsigned p) {
 /* ------------------------------------------------------------------ */
 
 
-void send(uint32_t data, MidiChannel *ch) {
-
-	if (G_midiStatus) {
-		msg[0] = getB1(data);
-		msg[1] = getB2(data);
-		msg[2] = getB3(data);
-		midiOut->sendMessage(&msg);
-	}
-
-#ifdef WITH_VST
-	ch->addVstMidiEvent(data);
-#endif
-
-	printf("[KM] send msg=0x%X, ch=%d\n", data, ch->index);
+void send(uint32_t data) {
+	if (!G_midiStatus)
+		return;
+	msg[0] = getB1(data);
+	msg[1] = getB2(data);
+	msg[2] = getB3(data);
+	midiOut->sendMessage(&msg);
+	printf("[KM] send msg=0x%X\n", data);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void send(int b1, int b2, int b3, MidiChannel *ch) {
-
-	if (G_midiStatus) {
+void send(int b1, int b2, int b3) {
+	if (!G_midiStatus)
+		return;
 		msg[0] = b1;
 		msg[1] = b2;
 		msg[2] = b3;
 		midiOut->sendMessage(&msg);
-	}
-
-#ifdef WITH_VST
-	ch->addVstMidiEvent(getIValue(b1, b2, b3));
-#endif
-
-	printf("[KM] send msg=0x%X, ch=%d\n", getIValue(b1, b2, b3), ch->index);
+	printf("[KM] send msg=0x%X\n", getIValue(b1, b2, b3));
 }
 
 

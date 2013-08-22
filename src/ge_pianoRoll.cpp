@@ -520,7 +520,7 @@ void gPianoItem::remove() {
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence */
 
-	kernelMidi::send(event_b, (MidiChannel*) pParent->chan);
+	((MidiChannel*) pParent->chan)->sendMidi(event_b);
 }
 
 

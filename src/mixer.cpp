@@ -509,8 +509,7 @@ void Mixer::rewind() {
 
 	if (running)
 		for (unsigned i=0; i<channels.size; i++)
-		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)channels.at(i))->rewind();
+			channels.at(i)->rewind();
 }
 
 
