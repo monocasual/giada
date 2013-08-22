@@ -101,7 +101,8 @@ public:
 
 	bool mergeVirtualInput();
 
-	int getChannelIndex(class Channel *ch);
+	/* getChannelByIndex
+	 * return channel with given index 'i'. */
 
 	Channel *getChannelByIndex(int i);
 
@@ -109,6 +110,7 @@ public:
 
 	/* calcVolumeEnv
 	 * compute any changes in volume done via envelope tool */
+	/** TODO - move to SampleChannel */
 
 	void calcVolumeEnv(class SampleChannel *ch, int frame);
 

@@ -555,8 +555,10 @@ void SampleChannel::sum(int frame, bool running) {
 						else
 						if (fadeoutEnd == DO_MUTE_I)
 							mute_i = true;
-						else              // DO_STOP
-							stop();
+						else {             // DO_STOP
+							status = STATUS_OFF;
+							reset();
+						}
 					}
 
 					/* we must append another frame in the buffer when the fadeout

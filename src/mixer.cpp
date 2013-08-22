@@ -191,17 +191,6 @@ int Mixer::deleteChannel(Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::getChannelIndex(Channel *ch) {
-	for (unsigned i=0; i<channels.size; i++)
-		if (channels.at(i)->index == ch->index)
-			return i;
-	return -1;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 Channel *Mixer::getChannelByIndex(int index) {
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->index == index)
