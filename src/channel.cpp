@@ -211,9 +211,12 @@ void MidiChannel::onZero() {
 
 
 void MidiChannel::setMute(bool internal) {
-	// internal mute does not exist for midi (for now)
-	mute = true;
-	kernelMidi::send(MIDI_ALL_NOTES_OFF);
+	mute = true;  	// internal mute does not exist for midi (for now)
+	if (midiOut)
+		kernelMidi::send(MIDI_ALL_NOTES_OFF);
+#ifdef WITH_VST
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+#endif
 }
 
 
@@ -221,8 +224,7 @@ void MidiChannel::setMute(bool internal) {
 
 
 void MidiChannel::unsetMute(bool internal) {
-	// internal mute does not exist for midi (for now)
-	mute = false;
+	mute = false;  	// internal mute does not exist for midi (for now)
 }
 
 
@@ -246,7 +248,18 @@ void MidiChannel::process(float *buffer, int size) {
 
 
 void MidiChannel::start(bool doQuantize) {
-	status = STATUS_WAIT;
+	switch (status) {
+		case STATUS_PLAY:
+			status = STATUS_ENDING;
+			break;
+		case STATUS_ENDING:
+		case STATUS_WAIT:
+			status = STATUS_OFF;
+			break;
+		case STATUS_OFF:
+			status = STATUS_WAIT;
+			break;
+	}
 }
 
 
@@ -262,8 +275,13 @@ void MidiChannel::stopBySeq() {
 
 
 void MidiChannel::kill() {
-	if (status & (STATUS_PLAY | STATUS_ENDING))
-		kernelMidi::send(MIDI_ALL_NOTES_OFF);
+	if (status & (STATUS_PLAY | STATUS_ENDING)) {
+		if (midiOut)
+			kernelMidi::send(MIDI_ALL_NOTES_OFF);
+#ifdef WITH_VST
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+#endif
+	}
 	status = STATUS_OFF;
 }
 
