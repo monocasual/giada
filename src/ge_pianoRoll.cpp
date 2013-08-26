@@ -225,7 +225,6 @@ void gPianoRoll::drawSurface1() {
 
 	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
 
-	fl_color(fl_rgb_color(54, 54, 54));
 	fl_line_style(FL_DASH, 0, NULL);
 	fl_font(FL_HELVETICA, 11);
 
@@ -238,35 +237,52 @@ void gPianoRoll::drawSurface1() {
 		char note[6];
 		int  step = i % 12;
 
-		if      (step == 1)
-			sprintf(note, "%dG", octave);
-		else if (step == 2) {
-			//fl_rectf(0, i*CELL_H+1, 40, CELL_H-2, COLOR_BG_MAIN);
-			sprintf(note, "%dF#", octave);
-		}
-		else if (step == 3)
-			sprintf(note, "%dF", octave);
-		else if (step == 4)
-			sprintf(note, "%dE", octave);
-		else if (step == 5)
-			sprintf(note, "%dD#", octave);
-		else if (step == 6)
-			sprintf(note, "%dD", octave);
-		else if (step == 7)
-			sprintf(note, "%dC#", octave);
-		else if (step == 8)
-			sprintf(note, "%dC", octave);
-		else if (step == 9)
-			sprintf(note, "%dB", octave);
-		else if (step == 10)
-			sprintf(note, "%dA#", octave);
-		else if (step == 11)
-			sprintf(note, "%dA", octave);
-		else if (step == 0) {
-			sprintf(note, "%dG#", octave);
-			octave--;
+		switch (step) {
+			case 1:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				sprintf(note, "%dG", octave);
+				break;
+			case 2:
+				sprintf(note, "%dF#", octave);
+				break;
+			case 3:
+				sprintf(note, "%dF", octave);
+				break;
+			case 4:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				sprintf(note, "%dE", octave);
+				break;
+			case 5:
+				sprintf(note, "%dD#", octave);
+				break;
+			case 6:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				sprintf(note, "%dD", octave);
+				break;
+			case 7:
+				sprintf(note, "%dC#", octave);
+				break;
+			case 8:
+				sprintf(note, "%dC", octave);
+				break;
+			case 9:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				sprintf(note, "%dB", octave);
+				break;
+			case 10:
+				sprintf(note, "%dA#", octave);
+				break;
+			case 11:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				sprintf(note, "%dA", octave);
+				break;
+			case 0:
+				sprintf(note, "%dG#", octave);
+				octave--;
+				break;
 		}
 
+		fl_color(fl_rgb_color(54, 54, 54));
 		fl_draw(note, 4, ((i-1)*CELL_H)+1, 30, CELL_H, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 		/* print horizontal line */
@@ -290,8 +306,20 @@ void gPianoRoll::drawSurface2() {
 	fl_color(fl_rgb_color(54, 54, 54));
 	fl_line_style(FL_DASH, 0, NULL);
 	for (int i=1; i<=MAX_NOTES+1; i++) {
-		if (i < 128)
+		int  step = i % 12;
+		switch (step) {
+			case 1:
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+				break;
+		}
+		if (i < 128) {
+			fl_color(fl_rgb_color(54, 54, 54));
 			fl_line(0, i*CELL_H, 40, +i*CELL_H);
+		}
 	}
 	fl_line_style(0);
 	fl_end_offscreen();
