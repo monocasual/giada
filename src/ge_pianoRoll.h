@@ -68,10 +68,12 @@ private:
 	 * screen at a later point in time. Fl_Offscreen surface holds the
 	 * necessary data. */
 
-	void drawSurface();
+	void drawSurface1();
+	void drawSurface2();
 
 	int  push_y;
-	Fl_Offscreen surface;
+	Fl_Offscreen surface1;  // notes, no repeat
+	Fl_Offscreen surface2;  // lines, x-repeat
 
 
 public:

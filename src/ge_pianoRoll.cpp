@@ -76,7 +76,6 @@ void gPianoRollContainer::draw() {
 
 	pianoRoll->size(this->w(), pianoRoll->h());  /// <--- not optimal
 
-
 	/* clear background */
 
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
@@ -134,7 +133,8 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 	else
 		position(x(), G_Conf.pianoRollY);
 
-	drawSurface();
+	drawSurface1();
+	drawSurface2();
 
 	/* add actions when the window is opened. Position is zoom-based. MIDI
 	 * actions come always in pair: start + end. */
@@ -215,24 +215,21 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 /* ------------------------------------------------------------------ */
 
 
-void gPianoRoll::drawSurface() {
+void gPianoRoll::drawSurface1() {
 
-	surface = fl_create_offscreen(pParent->totalWidth, h());
-	fl_begin_offscreen(surface);
+	surface1 = fl_create_offscreen(40, h());
+	fl_begin_offscreen(surface1);
 
 	/* warning: only w() and h() come from this widget, x and y coordinates
 	 * are absolute, since we are writing in a memory chunk */
 
-	fl_rectf(0, 0, pParent->totalWidth, h(), COLOR_BG_MAIN);
+	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
 
 	fl_color(fl_rgb_color(54, 54, 54));
 	fl_line_style(FL_DASH, 0, NULL);
 	fl_font(FL_HELVETICA, 11);
 
 	int octave = 9;
-
-	/** TODO change method, must be pixel-based (for i=0, i<h()... ) so
-	 * that we can draw only the visible part */
 
 	for (int i=1; i<=MAX_NOTES+1; i++) {
 
@@ -284,8 +281,28 @@ void gPianoRoll::drawSurface() {
 /* ------------------------------------------------------------------ */
 
 
+void gPianoRoll::drawSurface2() {
+	surface2 = fl_create_offscreen(40, h());
+	fl_begin_offscreen(surface2);
+	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
+	fl_color(fl_rgb_color(54, 54, 54));
+	fl_line_style(FL_DASH, 0, NULL);
+	for (int i=1; i<=MAX_NOTES+1; i++) {
+		if (i < 128)
+			fl_line(0, i*CELL_H, x()+w()-2, +i*CELL_H);
+	}
+	fl_line_style(0);
+	fl_end_offscreen();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gPianoRoll::draw() {
-	fl_copy_offscreen(x(), y(), w(), h(), surface, 0, 0);
+	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
+	for (int i=40; i<pParent->totalWidth; i+=40)
+		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 0, 0);
 	baseDraw(false);
 	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 	draw_children();
