@@ -240,8 +240,10 @@ void gPianoRoll::drawSurface1() {
 
 		if      (step == 1)
 			sprintf(note, "%dG", octave);
-		else if (step == 2)
+		else if (step == 2) {
+			//fl_rectf(0, i*CELL_H+1, 40, CELL_H-2, COLOR_BG_MAIN);
 			sprintf(note, "%dF#", octave);
+		}
 		else if (step == 3)
 			sprintf(note, "%dF", octave);
 		else if (step == 4)
@@ -270,7 +272,7 @@ void gPianoRoll::drawSurface1() {
 		/* print horizontal line */
 
 		if (i < 128)
-			fl_line(0, i*CELL_H, x()+w()-2, +i*CELL_H);
+			fl_line(0, i*CELL_H, 40, +i*CELL_H);
 	}
 
 	fl_line_style(0);
@@ -289,7 +291,7 @@ void gPianoRoll::drawSurface2() {
 	fl_line_style(FL_DASH, 0, NULL);
 	for (int i=1; i<=MAX_NOTES+1; i++) {
 		if (i < 128)
-			fl_line(0, i*CELL_H, x()+w()-2, +i*CELL_H);
+			fl_line(0, i*CELL_H, 40, +i*CELL_H);
 	}
 	fl_line_style(0);
 	fl_end_offscreen();
