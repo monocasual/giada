@@ -186,6 +186,11 @@ private:
 
 	void calcFadeoutStep();
 
+	/* calcVolumeEnv
+	 * compute any changes in volume done via envelope tool */
+
+	void calcVolumeEnv(int frame);
+
 public:
 
 	SampleChannel(char side);

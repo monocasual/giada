@@ -399,6 +399,39 @@ SampleChannel::~SampleChannel() {
 /* ------------------------------------------------------------------ */
 
 
+void SampleChannel::calcVolumeEnv(int frame) {
+
+	/* method: check this frame && next frame, then calculate delta */
+
+	recorder::action *a0 = NULL;
+	recorder::action *a1 = NULL;
+	int res;
+
+	/* get this action on frame 'frame'. It's unlikely that the action
+	 * is not found. */
+
+	res = recorder::getAction(index, ACTION_VOLUME, frame, &a0);
+	if (res == 0)
+		return;
+
+	/* get the action next to this one.
+	 * res == -1: a1 not found, this is the last one. Rewind the search
+	 * and use action at frame number 0 (actions[0]).
+	 * res == -2 ACTION_VOLUME not found. This should never happen */
+
+	res = recorder::getNextAction(index, ACTION_VOLUME, frame, &a1);
+
+	if (res == -1)
+		res = recorder::getAction(index, ACTION_VOLUME, 0, &a1);
+
+	volume_i = a0->fValue;
+	volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void SampleChannel::hardStop() {
 	status = STATUS_OFF;
 	reset();
@@ -504,28 +537,25 @@ void SampleChannel::parseAction(recorder::action *a, int frame) {
 
 	switch (a->type) {
 		case ACTION_KEYPRESS:
-			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+			if (mode & SINGLE_ANY)
 				start(false);
-				break;
-			}
+			break;
 		case ACTION_KEYREL:
-			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+			if (mode & SINGLE_ANY)
 				stop();
-				break;
-			}
+			break;
 		case ACTION_KILLCHAN:
-			if (mode & SINGLE_ANY) {    /// FIXME: break outside if
+			if (mode & SINGLE_ANY)
 				kill();
-				break;
-			}
+			break;
 		case ACTION_MUTEON:
-			setMute(true);  // internal mute
+			setMute(true);   // internal mute
 			break;
 		case ACTION_MUTEOFF:
 			unsetMute(true); // internal mute
 			break;
 		case ACTION_VOLUME:
-			G_Mixer.calcVolumeEnv(this, frame);  /// REMOVE THIS!
+			calcVolumeEnv(frame);
 			break;
 	}
 }
@@ -550,7 +580,7 @@ void SampleChannel::sum(int frame, bool running) {
 			/* fade in */
 
 			if (fadein <= 1.0f)
-				fadein += 0.01f;		/// FIXME - remove the hardcoded value
+				fadein += 0.01f;		/// TODO - remove the hardcoded value
 
 			/* volume envelope, only if seq is running */
 
@@ -1065,7 +1095,7 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		readActions = G_Patch.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
-		setBegin(G_Patch.getStart(i));
+		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));
 		setPitch(G_Patch.getPitch(i));
 	}

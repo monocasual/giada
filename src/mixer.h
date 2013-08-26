@@ -108,12 +108,6 @@ public:
 
 	inline Channel* getLastChannel() { return channels.at(channels.size-1); }
 
-	/* calcVolumeEnv
-	 * compute any changes in volume done via envelope tool */
-	/** TODO - move to SampleChannel */
-
-	void calcVolumeEnv(class SampleChannel *ch, int frame);
-
 
 	/* ---------------------------------------------------------------- */
 
@@ -166,7 +160,7 @@ public:
 	/* chanInput
 	 * the active channel during a recording. NULL = no channels active */
 
-	SampleChannel *chanInput;
+	class SampleChannel *chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */
