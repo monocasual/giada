@@ -61,7 +61,7 @@ public:
 	int         getMute       (int i);
 	int         getMute_s     (int i);
 	int         getSolo       (int i);
-	int         getStart      (int i);
+	int         getBegin      (int i);
 	int         getEnd        (int i, unsigned sampleSize);
 	float       getBoost      (int i);
 	float       getPanLeft    (int i);

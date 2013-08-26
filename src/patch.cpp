@@ -218,9 +218,12 @@ int Patch::getType(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getStart(int c) {
+int Patch::getBegin(int c) {
 	char tmp[16];
-	sprintf(tmp, "chanBegin%d", c);
+	if (version < 0.73f)
+		sprintf(tmp, "chanstart%d", c);
+	else
+		sprintf(tmp, "chanBegin%d", c);
 	int out = atoi(getValue(tmp).c_str());
 	if (out < 0)
 		return 0;
