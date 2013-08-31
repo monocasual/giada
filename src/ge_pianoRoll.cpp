@@ -45,8 +45,6 @@ gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pPa
  : Fl_Scroll(x, y, 200, 422), pParent(pParent)
 {
 	size(pParent->totalWidth, G_Conf.pianoRollH);
-	type(0); // no scrollbars
-
 	pianoRoll = new gPianoRoll(x, y, pParent->totalWidth, pParent);
 }
 
