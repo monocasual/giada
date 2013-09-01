@@ -98,11 +98,11 @@ extern bool sortedActions;                  // are actions sorted via sortAction
 
 void init();
 
-/* chanHasEvents
+/* chanHasActions
  * Check if the channel has at least one action recorded. If false, sets
- * chanEvents[ch] = false. Used after an action deletion. */
+ * ch->hasActions = false. Used after an action deletion. */
 
-void chanHasEvents(int chan);
+void chanHasActions(int chan);
 
 /* canRec
  * can we rec an action? Call this one BEFORE rec(). */

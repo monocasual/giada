@@ -215,9 +215,9 @@ void clearAction(int index, char act) {
 		}
 	}
 	Channel *ch = G_Mixer.getChannelByIndex(index);
-	ch->hasActions = false;
+	ch->hasActions = false;   /// FIXME - why this? Isn't it useless if we call chanHasActions?
 	optimize();
-	chanHasEvents(index);
+	chanHasActions(index);    /// FIXME
 	//print();
 }
 
@@ -268,7 +268,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 	}
 	if (found) {
 		optimize();
-		chanHasEvents(chan);
+		chanHasActions(chan);
 		printf("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 	}
@@ -523,7 +523,7 @@ void disableRead(SampleChannel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void chanHasEvents(int index) {
+void chanHasActions(int index) {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
 		ch->hasActions = false;
@@ -599,7 +599,7 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 	unsigned i=0;
 	while (i < frames.size && frames.at(i) <= frame) i++;
 
-	if (i == frames.size)   // no further actions
+	if (i == frames.size)   // no further actions past 'frame'
 		return -1;
 
 	for (; i<global.size; i++)

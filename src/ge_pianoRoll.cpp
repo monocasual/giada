@@ -369,9 +369,14 @@ int gPianoRoll::handle(int e) {
 				int edge = (ay-y()-3) % 15;
 				if (edge != 0) ay -= edge;
 
-				/* horizontal snap (grid tool) TODO */
+				/* if no overlap, add new piano item. Also check that it doesn't
+				 * overflow on the gray area, by shifting it to the left if
+				 * necessary. */
 
-				if (!onItem()) {
+				if (!onItem(ax, ay-y()-3)) {
+					int greyover = ax+20 - pParent->coverX;
+					if (greyover > 0)
+						ax -= greyover;
 					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
 					redraw();
 				}
@@ -432,18 +437,32 @@ void gPianoRoll::updatePoints() {
 /* ------------------------------------------------------------------ */
 
 
-bool gPianoRoll::onItem() {
+bool gPianoRoll::onItem(int rel_x, int rel_y) {
+
+	if (!pParent->chan->hasActions)
+		return false;
+
+	int note = MAX_NOTES - (rel_y / CELL_H);
+
 	int n = children();
 	for (int i=0; i<n; i++) {   // no scrollbars to skip
-		gPianoItem *p = (gPianoItem*) child(i);
-		if (Fl::event_x() >= p->x()          &&
-		    Fl::event_x() <= p->x() + p->w() &&
-		    Fl::event_y() >= p->y()          &&
-		    Fl::event_y() <= p->y() + p->h())
-		{
-			return true;
-		}
 
+		gPianoItem *p = (gPianoItem*) child(i);
+		if (p->getNote() != note)
+			continue;
+
+		/* when 2 segments overlap?
+		 * start = the highest value between the two starting points
+		 * end   = the lowest value between the two ending points
+		 * if start < end then there's an overlap of end-start pixels. We
+		 * also add 1 px to the edges in order to gain some space:
+		 * [   ][   ]  ---> no
+		 * [   ] [   ] ---> yes! */
+
+		int start = p->x() > rel_x ? p->x() : rel_x-1;
+		int end   = p->x()+p->w() < rel_x + 20 ? p->x()+p->w() : rel_x + 21;
+		if (start < end)
+			return true;
 	}
 	return false;
 }

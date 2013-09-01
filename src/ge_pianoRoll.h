@@ -61,7 +61,7 @@ private:
 	/* onItem
 	 * is curson on a gPianoItem? */
 
-	bool onItem();
+	bool onItem(int rel_x, int rel_y);
 
 	/* drawSurface
 	 * generate a complex drawing in memory first and copy it to the
@@ -81,7 +81,6 @@ public:
 
 	void draw();
 	int  handle(int e);
-	//void resize(int x, int y, int w, int h);
 	void updatePoints();
 
 	enum { MAX_NOTES = 127, CELL_H = 15 };
