@@ -224,10 +224,12 @@
 
 /* -- MIDI signals -----------------------------------------------------
  * all signals are set to channel 0. It's up to the caller to bitmask
- * them with the proper channel number. */
+ * them with the proper channel number */
 
 #define MIDI_ALL_NOTES_OFF (0xB0 << 24) | (0x7B << 16) | (0x00 << 8) | (0x00)
 #define MIDI_MUTE          (0xB0 << 24) | (0x07 << 16) | (0x00 << 8) | (0x00)
+#define MIDI_NOTE_ON       (0x90 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
+#define MIDI_NOTE_OFF      (0x80 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
 
 #define MIDI_CHAN_0        (0x00 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
 #define MIDI_CHAN_1        (0x01 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
