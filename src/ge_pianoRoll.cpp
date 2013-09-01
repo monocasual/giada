@@ -377,6 +377,10 @@ int gPianoRoll::handle(int e) {
 			ret = 1;
 			break;
 		}
+		case FL_MOUSEWHEEL: {   // nothing to do, just avoid small internal scroll
+			ret = 1;
+			break;
+		}
 	}
 	return ret;
 }

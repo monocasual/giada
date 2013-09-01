@@ -63,12 +63,22 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
 	upperArea->begin();
+
 	if (chan->type == CHANNEL_SAMPLE) {
 	  actionType = new gChoice(8, 8, 80, 20);
 	  gridTool   = new gGridTool(actionType->x()+actionType->w()+4, 8, this);
+		actionType->add("key press");
+		actionType->add("key release");
+		actionType->add("kill chan");
+		actionType->value(0);
+
+		SampleChannel *ch = (SampleChannel*) chan;
+		if (ch->mode == SINGLE_PRESS || ch->mode & LOOP_ANY)
+		actionType->deactivate();
 	}
-	else
-		gridTool   = new gGridTool(8, 8, this);
+	else {
+		gridTool = new gGridTool(8, 8, this);
+	}
 
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "+");
@@ -76,21 +86,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	upperArea->end();
 	upperArea->resizable(b1);
 
-	if (chan->type == CHANNEL_SAMPLE) {
-		actionType->add("key press");
-		actionType->add("key release");
-		actionType->add("kill chan");
-		actionType->value(0);
-	}
-
 	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
 	gridTool->calc();
-
-	if (chan->type == CHANNEL_SAMPLE) {
-		SampleChannel *ch = (SampleChannel*) chan;
-		if (ch->mode == SINGLE_PRESS || ch->mode & LOOP_ANY)
-		actionType->deactivate();
-	}
 
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
@@ -171,32 +168,33 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 
 
 void gdActionEditor::__cb_zoomIn() {
-	if (zoom <= 8)
+
+	/* zoom 50: empiric value, to avoid a totalWidth > > 16 bit signed
+	 * (32767 max), unsupported by FLTK 1.3.x */
+
+	if (zoom <= 50)
 		return;
+
 	zoom /= 2;
 	totalWidth = (int) ceilf(totalFrames / (float) zoom);
-
-	/* FLTK 1.3.x doesn't seem to support widget width > 16 bit signed
-	 * (32767 max) */
-
-	if (totalWidth > 32767) {
-		totalWidth = 32760;
-		zoom = (int) ceilf(totalFrames / (float) totalWidth);
-	}
 
 	if (chan->type == CHANNEL_SAMPLE) {
 		ac->size(totalWidth, ac->h());
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());
 		ac->updateActions();
-		mc->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
-		vc->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		mc->updateActions();
+		vc->updateActions();
 	}
 	else {
 		pr->size(totalWidth, pr->h());
-		pr->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		pr->updateActions();
 	}
 
+	/* scroll to pointer */
+
+	int shift = Fl::event_x() + scroller->xposition();
+	scroller->scroll_to(scroller->xposition() + shift, scroller->yposition());
 
 	gridTool->calc();
 	scroller->redraw();
@@ -228,6 +226,13 @@ void gdActionEditor::__cb_zoomOut() {
 		pr->updateActions();
 	}
 
+	/* scroll to pointer */
+
+	int shift = (Fl::event_x() + scroller->xposition()) / -2;
+	if (scroller->xposition() + shift < 0)
+			shift = 0;
+	scroller->scroll_to(scroller->xposition() + shift, scroller->yposition());
+
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -253,8 +258,7 @@ int gdActionEditor::handle(int e) {
 	int ret = Fl_Group::handle(e);
 	switch (e) {
 		case FL_MOUSEWHEEL: {
-			if (Fl::event_dy() == -1) __cb_zoomIn();
-			else __cb_zoomOut();
+			Fl::event_dy() == -1 ? __cb_zoomIn() : __cb_zoomOut();
 			ret = 1;
 			break;
 		}
