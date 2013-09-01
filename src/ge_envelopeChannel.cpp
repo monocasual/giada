@@ -77,7 +77,7 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::updatePoints() {
+void gEnvelopeChannel::updateActions() {
 	for (unsigned i=0; i<points.size; i++)
 		points.at(i).x = points.at(i).frame / pParent->zoom;
 }

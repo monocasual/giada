@@ -148,7 +148,7 @@ void gMuteChannel::extractPoints() {
 /* ------------------------------------------------------------------ */
 
 
-void gMuteChannel::updatePoints() {
+void gMuteChannel::updateActions() {
 	for (unsigned i=0; i<points.size; i++)
 		points.at(i).x = points.at(i).frame / pParent->zoom;
 }

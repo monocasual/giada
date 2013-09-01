@@ -62,8 +62,8 @@ gPianoRollContainer::~gPianoRollContainer() {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoRollContainer::updatePoints() {
-	pianoRoll->updatePoints();
+void gPianoRollContainer::updateActions() {
+	pianoRoll->updateActions();
 }
 
 
@@ -88,31 +88,6 @@ void gPianoRollContainer::draw() {
 	fl_line_style(0);
 	fl_rect(x(), y(), pParent->totalWidth, h());
 }
-
-
-/* ------------------------------------------------------------------ */
-
-#if 0
-int gPianoRollContainer::handle(int e) {
-
-	int ret = Fl_Group::handle(e);
-
-	switch (e) {
-		case FL_PUSH:	{
-			ret = 1;
-			break;
-		}
-		case FL_DRAG: {
-			if (Fl::event_button3())
-				scroll_to(xposition(), y()-Fl::event_y());
-			ret = 1;
-			break;
-		}
-	}
-
-	return ret;
-}
-#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -410,7 +385,7 @@ int gPianoRoll::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoRoll::updatePoints() {
+void gPianoRoll::updateActions() {
 
 	/* when zooming, don't delete and re-add actions, just MOVE them. This
 	 * function shifts the action by a zoom factor. Those singlepress are
@@ -693,7 +668,6 @@ int gPianoItem::handle(int e) {
 
 				if (pParent->gridTool->isOn()) {
 					nx = pParent->gridTool->getSnapPoint(nx) + pr->x() - 1;
-
 				}
 
 				position(nx, y());

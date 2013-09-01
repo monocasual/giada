@@ -104,7 +104,7 @@ public:
 
 	void addPoint(int frame, int iValue=0, float fValue=0.0f, int x=-1, int y=-1);
 
-	void updatePoints();
+	void updateActions();
 
 	/* fill
 	 * parse recorder's stack and fill the widget with points. It's up to

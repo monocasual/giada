@@ -28,6 +28,7 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef __GE_ACTIONWIDGET_H__
 #define __GE_ACTIONWIDGET_H__
 
@@ -43,6 +44,8 @@ protected:
 	void  baseDraw(bool clear=true);
 
 public:
+	virtual void updateActions() = 0;
+
 	gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent);
 	~gActionWidget();
 };

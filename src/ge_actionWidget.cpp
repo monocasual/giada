@@ -54,10 +54,6 @@ gActionWidget::~gActionWidget() {}
 
 void gActionWidget::baseDraw(bool clear) {
 
-	/* widen or narrow the widget */ /** WHY ?!? */
-
-	//w(pParent->totalWidth);
-
 	/* clear the screen */
 
 	if (clear)

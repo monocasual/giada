@@ -189,12 +189,12 @@ void gdActionEditor::__cb_zoomIn() {
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());
 		ac->updateActions();
-		mc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
-		vc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		mc->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		vc->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
 	}
 	else {
 		pr->size(totalWidth, pr->h());
-		pr->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		pr->updateActions();  /// TODO - change all to updateActions and make it virtual in gActionWidget
 	}
 
 
@@ -220,12 +220,12 @@ void gdActionEditor::__cb_zoomOut() {
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());
 		ac->updateActions();
-		mc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
-		vc->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		mc->updateActions();
+		vc->updateActions();
 	}
 	else {
 		pr->size(totalWidth, pr->h());
-		pr->updatePoints();  /// TODO - change all to updateActions and make it virtual in gActionWidget
+		pr->updateActions();
 	}
 
 	gridTool->calc();

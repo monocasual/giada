@@ -47,7 +47,7 @@ public:
 	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
 	~gPianoRollContainer();
 	void draw();
-	void updatePoints();
+	void updateActions();
 };
 
 
@@ -81,7 +81,7 @@ public:
 
 	void draw();
 	int  handle(int e);
-	void updatePoints();
+	void updateActions();
 
 	enum { MAX_NOTES = 127, CELL_H = 15 };
 };

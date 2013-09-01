@@ -93,11 +93,11 @@ public:
 	void draw();
 	int  handle(int e);
 
-	/* updatePoints
+	/* updateActions
 	 * calculates new points affected by the zoom. Call this one after
 	 * each zoom update. */
 
-	void updatePoints();
+	void updateActions();
 };
 
 #endif
