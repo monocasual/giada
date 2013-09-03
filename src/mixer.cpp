@@ -449,10 +449,11 @@ void Mixer::updateFrameBars() {
 	 * framesPerBar .. n. of frames within a bar
 	 * framesPerBeat . n. of frames within a beat */
 
-	float seconds   = (60.0f / bpm) * beats;
-	totalFrames     = G_Conf.samplerate * seconds * 2;
-	framesPerBar    = totalFrames / bars;
-	framesPerBeat   = totalFrames / beats;
+	float seconds  = (60.0f / bpm) * beats;
+	totalFrames    = G_Conf.samplerate * seconds * 2;
+	framesPerBar   = totalFrames / bars;
+	framesPerBeat  = totalFrames / beats;
+	framesPerBeats = framesPerBeat * beats;
 
 	/* big troubles if frames are odd. */
 
@@ -462,6 +463,8 @@ void Mixer::updateFrameBars() {
 		framesPerBar--;
 	if (framesPerBeat % 2 != 0)
 		framesPerBeat--;
+	if (framesPerBeats % 2 != 0)
+		framesPerBeats--;
 
 	updateQuanto();
 

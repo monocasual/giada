@@ -140,13 +140,14 @@ public:
 	float  bpm;
 	int    bars;
 	int    beats;
-	int    waitRec; // delayComp guard
+	int    waitRec;      // delayComp guard
 
-	bool docross;			// crossfade guard
-	bool rewindWait;	// rewind guard, if quantized
+	bool docross;			   // crossfade guard
+	bool rewindWait;	   // rewind guard, if quantized
 
-	int framesPerBar;
-	int framesPerBeat;
+	int framesPerBar;    // frames in one bar
+	int framesPerBeat;   // frames in one beat
+	int framesPerBeats;  // frames in all beats
 	int totalFrames;
 	int actualFrame;
 	int actualBeat;
