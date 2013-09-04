@@ -64,9 +64,6 @@ Channel::Channel(int type, int status, char side)
 	  recStatus  (REC_STOPPED),
 	  vChan      (NULL)
 {
-	gVector <class Plugin *> p; // call gVector constructor with p, and using it as the real gVector
-	plugins = p;                /// fixme - is it really useful?
-
 	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 	if (!vChan)
 		printf("[Channel] unable to alloc memory for vChan\n");

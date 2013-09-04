@@ -538,7 +538,6 @@ void gPianoItem::record() {
 
 	int overflow = frame_b - G_Mixer.totalFrames;
 	if (overflow > 0) {
-		printf("overflow! frame_b=%d, mixer.totalFrames=%d over=%d\n", frame_b, G_Mixer.totalFrames, overflow);
 		frame_b -= overflow;
 		frame_a -= overflow;
 	}
