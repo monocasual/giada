@@ -418,10 +418,8 @@ int gGridTool::getSnapPoint(int v) {
 		int gp  = points.at(i);
 		int gpn = points.at(i+1);
 
-		if (v >= gp && v < gpn) {
-			printf("snap: v=%d, p=%d gp=%d\n", v, i, gp);
+		if (v >= gp && v < gpn)
 			return gp;
-		}
 	}
 	return v;  // default value
 }
