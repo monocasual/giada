@@ -145,10 +145,10 @@ public:
 	bool docross;			   // crossfade guard
 	bool rewindWait;	   // rewind guard, if quantized
 
-	int framesPerBar;    // frames in one bar
-	int framesPerBeat;   // frames in one beat
-	int framesPerBeats;  // frames in all beats
-	int totalFrames;
+	int framesPerBar;      // frames in one bar
+	int framesPerBeat;     // frames in one beat
+	int framesInSequencer; // frames in the whole sequencer
+	int totalFrames;       // frames in the selected range (e.g. 4/4)
 	int actualFrame;
 	int actualBeat;
 
