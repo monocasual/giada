@@ -46,7 +46,7 @@ extern Conf	 G_Conf;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)
-: gWindow(640, 284), chan(chan), zoom(100)
+: gWindow(640, 284), chan(chan), zoom(100), coverX(0)
 {
 
 	if (G_Conf.actionEditorW) {
@@ -54,14 +54,13 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	/* compute values */
-
-	calc();
+	totalWidth = (int) ceilf(G_Mixer.framesInSequencer / (float) zoom);
 
 	/* container with zoom buttons and the action type selector. Scheme of
 	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
 
 	Fl_Group *upperArea = new Fl_Group(8, 8, w()-16, 20);
+
 	upperArea->begin();
 
 	if (chan->type == CHANNEL_SAMPLE) {
@@ -86,15 +85,12 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	upperArea->end();
 	upperArea->resizable(b1);
 
-	gridTool->init(G_Conf.actionEditorGridVal, G_Conf.actionEditorGridOn);
-	gridTool->calc();
-
 	zoomIn->callback(cb_zoomIn, (void*)this);
 	zoomOut->callback(cb_zoomOut, (void*)this);
 
 	/* main scroller: contains all widgets */
 
-	scroller = new gScroll(8, 36, this->w()-16, this->h()-44);
+	scroller = new gScroll(8, 36, w()-16, h()-44);
 
 	if (chan->type == CHANNEL_SAMPLE) {
 
@@ -127,6 +123,11 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	}
 
 	end();
+
+	/* compute values */
+
+	update();
+	gridTool->calc();
 
 	gu_setFavicon(this);
 
@@ -169,14 +170,15 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 
 void gdActionEditor::__cb_zoomIn() {
 
-	/* zoom 50: empiric value, to avoid a totalWidth > > 16 bit signed
+	/* zoom 50: empirical value, to avoid a totalWidth > 16 bit signed
 	 * (32767 max), unsupported by FLTK 1.3.x */
 
 	if (zoom <= 50)
 		return;
 
 	zoom /= 2;
-	totalWidth = (int) ceilf(totalFrames / (float) zoom);
+
+	update();
 
 	if (chan->type == CHANNEL_SAMPLE) {
 		ac->size(totalWidth, ac->h());
@@ -196,6 +198,8 @@ void gdActionEditor::__cb_zoomIn() {
 	int shift = Fl::event_x() + scroller->xposition();
 	scroller->scroll_to(scroller->xposition() + shift, scroller->yposition());
 
+	/* update all underlying widgets */
+
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -205,13 +209,10 @@ void gdActionEditor::__cb_zoomIn() {
 
 
 void gdActionEditor::__cb_zoomOut() {
-	zoom *= 2;
-	totalWidth = (int) ceilf(totalFrames / (float) zoom);
 
-	if (totalWidth < scroller->w()) {
-		totalWidth = scroller->w();
-		zoom = (int) ceilf(totalFrames / (float) totalWidth);
-	}
+	zoom *= 2;
+
+	update();
 
 	if (chan->type == CHANNEL_SAMPLE) {
 		ac->size(totalWidth, ac->h());
@@ -233,6 +234,8 @@ void gdActionEditor::__cb_zoomOut() {
 			shift = 0;
 	scroller->scroll_to(scroller->xposition() + shift, scroller->yposition());
 
+	/* update all underlying widgets */
+
 	gridTool->calc();
 	scroller->redraw();
 }
@@ -241,13 +244,13 @@ void gdActionEditor::__cb_zoomOut() {
 /* ------------------------------------------------------------------ */
 
 
-void gdActionEditor::calc() {
-	framesPerBar   = G_Mixer.framesPerBar;      // we do care about stereo infos, no /2 division
-	framesPerBeat  = G_Mixer.framesPerBeat;
-	framesPerBeats = framesPerBeat * G_Mixer.beats;
-	totalFrames    = framesPerBeat * MAX_BEATS;
-	beatWidth      = framesPerBeat / zoom;
-	totalWidth     = (int) ceilf(totalFrames / (float) zoom);
+void gdActionEditor::update() {
+	totalWidth = (int) ceilf(G_Mixer.framesInSequencer / (float) zoom);
+	if (totalWidth < scroller->w()) {
+		totalWidth = scroller->w();
+		zoom = (int) ceilf(G_Mixer.framesInSequencer / (float) totalWidth);
+		scroller->scroll_to(0, scroller->yposition());
+	}
 }
 
 
@@ -305,6 +308,10 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 	gridType->callback(cb_changeType, (void*)this);
 
 	active = new gCheck (x+44, y+4, 12, 12);
+
+	gridType->value(G_Conf.actionEditorGridVal);
+	active->value(G_Conf.actionEditorGridOn);
+
 	end();
 }
 
@@ -344,15 +351,6 @@ bool gGridTool::isOn() {
 /* ------------------------------------------------------------------ */
 
 
-void gGridTool::init(int v, bool b) {
-	gridType->value(v);
-	active->value(b);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 int gGridTool::getValue() {
 	switch (gridType->value()) {
 		case 0:	return 1;
@@ -375,21 +373,31 @@ void gGridTool::calc() {
 
 	points.clear();
 	frames.clear();
+	bars.clear();
+	beats.clear();
 
-	/* same algorithm used in ge_actionWidget::draw() and wave display */
+	/* find beats, bars and grid. The method is the same of the waveform in sample
+	 * editor. Take totalwidth (the width in pixel of the area to draw), knowing
+	 * that totalWidth = totalFrames / zoom. Then, for each pixel of totalwidth,
+	 * put a concentrate of each block (which is totalFrames / zoom) */
 
-	bool end = false;
 	int  j   = 0;
-	int fpgc = floor(parent->framesPerBeat / getValue());  // frames per grid cell
+	int fpgc = floor(G_Mixer.framesPerBeat / getValue());  // frames per grid cell
 
-	for (int i=1; i<parent->totalWidth && !end; i++) {   // if i=0, step=0 -> useless cycle
+	for (int i=1; i<parent->totalWidth; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
-		while (j < step && j < parent->framesPerBeats) {
+		while (j < step && j < G_Mixer.totalFrames) {
 			if (j % fpgc == 0) {
-				//printf("   grid frame found at %d, pixel %d\n", j, i);
 				points.add(i);
 				frames.add(j);
 			}
+			if (j % G_Mixer.framesPerBeat == 0)
+				beats.add(i);
+			if (j % G_Mixer.framesPerBar == 0 && i != 1)
+				bars.add(i);
+			if (j == G_Mixer.totalFrames-1)
+				//parent->coverX = i - parent->scroller->xposition() + parent->scroller->x();
+				parent->coverX = i;
 			j++;
 		}
 		j = step;
@@ -401,6 +409,7 @@ void gGridTool::calc() {
 
 
 int gGridTool::getSnapPoint(int v) {
+
 	for (int i=0; i<(int)points.size; i++) {
 
 		if (i == (int) points.size-1)
@@ -410,10 +419,8 @@ int gGridTool::getSnapPoint(int v) {
 		int gpn = points.at(i+1);
 
 		if (v >= gp && v < gpn) {
-			if (v < gpn) {
-				return gp;
-				break;
-			}
+			printf("snap: v=%d, p=%d gp=%d\n", v, i, gp);
+			return gp;
 		}
 	}
 	return v;  // default value

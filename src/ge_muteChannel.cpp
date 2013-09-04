@@ -39,6 +39,7 @@
 
 
 extern gdMainWindow *mainWin;
+extern Mixer         G_Mixer;
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *pParent)
@@ -59,7 +60,7 @@ void gMuteChannel::draw() {
 	/* cover unused area */
 	/** FIXME - move this to base class gActionWidget::baseDraw() */
 
-	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
+	//fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 
 	/* print label */
 
@@ -238,8 +239,8 @@ int gMuteChannel::handle(int e) {
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= pParent->framesPerBeats) {
-						frame_b = pParent->framesPerBeats;
+					if (frame_b >= G_Mixer.totalFrames) {
+						frame_b = G_Mixer.totalFrames;
 						frame_a = frame_b-2048;
 					}
 

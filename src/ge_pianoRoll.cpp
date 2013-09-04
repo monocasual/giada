@@ -307,7 +307,7 @@ void gPianoRoll::draw() {
 	for (int i=40; i<pParent->totalWidth; i+=40)
 		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 0, 0);
 	baseDraw(false);
-	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
+	fl_rectf(pParent->coverX+x(), y()+1, pParent->totalWidth-pParent->coverX, h()-2, COLOR_BG_1);
 	draw_children();
 }
 
@@ -345,11 +345,11 @@ int gPianoRoll::handle(int e) {
 				if (edge != 0) ay -= edge;
 
 				/* if no overlap, add new piano item. Also check that it doesn't
-				 * overflow on the gray area, by shifting it to the left if
+				 * overflow on the grey area, by shifting it to the left if
 				 * necessary. */
 
 				if (!onItem(ax, ay-y()-3)) {
-					int greyover = ax+20 - pParent->coverX;
+					int greyover = ax+20 - pParent->coverX-x();
 					if (greyover > 0)
 						ax -= greyover;
 					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
@@ -534,21 +534,28 @@ void gPianoItem::draw() {
 
 void gPianoItem::record() {
 
-	/* note on */
-	/** FIXME - use constants */
+	/* avoid frame overflow */
 
-	event_a |= (0x90 << 24);   // note on
-	event_a |= (note << 16);   // note value
-	event_a |= (0x3F <<  8);   // velocity
-	event_a |= (0x00);
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
+	int overflow = frame_b - G_Mixer.totalFrames;
+	if (overflow > 0) {
+		printf("overflow! frame_b=%d, mixer.totalFrames=%d over=%d\n", frame_b, G_Mixer.totalFrames, overflow);
+		frame_b -= overflow;
+		frame_a -= overflow;
+	}
 
 	/* note off */
 
-	event_b |= (0x80 << 24);   // note off
+	event_a |= (0x90 << 24);   // note on 	/** FIXME - use constants */
+	event_a |= (note << 16);   // note value
+	event_a |= (0x3F <<  8);   // velocity
+	event_a |= (0x00);
+
+	event_b |= (0x80 << 24);   // note off 	/** FIXME - use constants */
 	event_b |= (note << 16);   // note value
 	event_b |= (0x3F <<  8);   // velocity
 	event_b |= (0x00);
+
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
 	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
 }
 
@@ -631,8 +638,9 @@ int gPianoItem::handle(int e) {
 		case FL_DRAG: {
 
 			changed = true;
-			gPianoRoll *pr = (gPianoRoll*) parent();
 
+			gPianoRoll *pr = (gPianoRoll*) parent();
+			int coverX     = pParent->coverX + pr->x(); // relative coverX
 			int nx, ny, nw;
 
 			if (onLeftEdge) {
@@ -656,8 +664,8 @@ int gPianoItem::handle(int e) {
 				if (Fl::event_x() < x()+8)
 					nw = 8;
 				else
-				if (Fl::event_x() > pParent->coverX)
-					nw = pParent->coverX-x();
+				if (Fl::event_x() > coverX)
+					nw = coverX-x();
 				size(nw, h());
 			}
 			else {
@@ -665,13 +673,13 @@ int gPianoItem::handle(int e) {
 				if (nx < pr->x())
 					nx = pr->x();
 				else
-				if (nx+w() > pParent->coverX)
-					nx = pParent->coverX-w();
+				if (nx+w() > coverX)
+					nx = coverX-w();
 
 				/* snapping */
 
 				if (pParent->gridTool->isOn()) {
-					nx = pParent->gridTool->getSnapPoint(nx) + pr->x() - 1;
+					nx = pParent->gridTool->getSnapPoint(nx-pr->x()) + pr->x() - 1;
 				}
 
 				position(nx, y());

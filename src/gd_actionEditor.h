@@ -43,6 +43,13 @@
 
 class gdActionEditor : public gWindow {
 
+private:
+
+	/* update
+	 * compute total width, in pixel. */
+
+	void update();
+
 public:
 
 	gdActionEditor(class Channel *chan);
@@ -51,11 +58,6 @@ public:
 	int handle(int e);
 
 	int getActionType();
-
-	/* calc
-	 * do its own calculations on frames, zoom, bpm and so on. */
-
-	void calc();
 
 	static void cb_zoomIn(Fl_Widget *w, void *p);
 	static void cb_zoomOut(Fl_Widget *w, void *p);
@@ -78,13 +80,8 @@ public:
 	class Channel *chan;
 
 	int zoom;
-	int framesPerBar;
-	int framesPerBeat;
-	int framesPerBeats;
-	int totalFrames;
-	int totalWidth;      // total width of the widget, in pixel (zoom affected)
-	int beatWidth;       // total width of a beat cell, in pixel (zoom affected)
-	int coverX; 				 // x1 of the unused area (x2 = totalWidth)
+	int totalWidth;  // total width of the widget, in pixel (zoom affected)
+	int coverX; 		 // x1 of the unused area (x2 = totalWidth)
 };
 
 
@@ -108,7 +105,6 @@ public:
 	~gGridTool();
 
 	int  getValue();
-	void init(int val, bool on);
 	bool isOn();
 	void calc();
 
@@ -126,6 +122,9 @@ public:
 
 	gVector<int> points;   // points of the grid
 	gVector<int> frames;   // frames of the grid
+
+	gVector<int> bars;
+	gVector<int> beats;
 };
 
 
