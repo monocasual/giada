@@ -73,6 +73,16 @@ Channel::Channel(int type, int status, char side)
 /* ------------------------------------------------------------------ */
 
 
+Channel::~Channel() {
+	status = STATUS_OFF;
+	if (vChan)
+		free(vChan);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void Channel::clear(int bufSize) {
 	memset(vChan, 0, sizeof(float) * bufSize);
 }
@@ -100,6 +110,12 @@ MidiChannel::MidiChannel(char side)
 	freeVstMidiEvents(true);
 #endif
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+MidiChannel::~MidiChannel() {}
 
 
 /* ------------------------------------------------------------------ */
@@ -385,9 +401,6 @@ SampleChannel::SampleChannel(char side)
 
 
 SampleChannel::~SampleChannel() {
-	status = STATUS_OFF;
-	if (vChan)
-		free(vChan);
 	if (wave)
 		delete wave;
 }

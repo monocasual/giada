@@ -179,6 +179,7 @@ int Mixer::deleteChannel(Channel *ch) {
 		lockStatus = pthread_mutex_trylock(&mutex_chans);
 		if (lockStatus == 0) {
 			channels.del(ch);
+			delete ch;
 			pthread_mutex_unlock(&mutex_chans);
 			return 1;
 		}

@@ -57,6 +57,7 @@ class Channel {
 public:
 
 	Channel(int type, int status, char side);
+	virtual ~Channel();
 
 	/* loadByPatch
 	 * load a sample inside a patch. */
