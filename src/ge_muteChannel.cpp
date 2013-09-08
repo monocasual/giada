@@ -57,11 +57,6 @@ void gMuteChannel::draw() {
 
 	baseDraw();
 
-	/* cover unused area */
-	/** FIXME - move this to base class gActionWidget::baseDraw() */
-
-	//fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
-
 	/* print label */
 
 	fl_color(COLOR_BG_1);
@@ -116,7 +111,7 @@ void gMuteChannel::draw() {
 	/* last section */
 
 	py = y()+h()-5;
-	fl_line(pxNew+3, py, pParent->coverX-1, py);
+	fl_line(pxNew+3, py, pParent->coverX+x()-1, py);
 }
 
 
@@ -201,7 +196,7 @@ int gMuteChannel::handle(int e) {
 
 					/* click on the grey area leads to nowhere */
 
-					if (mouseX > pParent->coverX-x()) {
+					if (mouseX > pParent->coverX) {
 						ret = 1;
 						break;
 					}

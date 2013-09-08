@@ -44,11 +44,10 @@ extern gdMainWindow *mainWin;
 
 
 gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l)
-	:	gActionWidget(x, y, 200, 80, pParent), type(type), range(range),
+	:	gActionWidget(x, y, 200, 80, pParent), l(l), type(type), range(range),
 		selectedPoint(-1), draggedPoint(-1)
 {
 	size(pParent->totalWidth, h());
-	copy_label(l);
 }
 
 
@@ -94,7 +93,7 @@ void gEnvelopeChannel::draw() {
 
 	fl_color(COLOR_BG_1);
 	fl_font(FL_HELVETICA, 12);
-	fl_draw(label(), x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+	fl_draw(l, x()+4, y(), 80, h(), (Fl_Align) (FL_ALIGN_LEFT));
 
 	int pxOld = x()-3;
 	int pyOld = y()+1;
@@ -122,10 +121,6 @@ void gEnvelopeChannel::draw() {
 		pxOld = pxNew;
 		pyOld = pyNew;
 	}
-
-	/* cover unused area */
-
-	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
 }
 
 
@@ -190,7 +185,7 @@ int gEnvelopeChannel::handle(int e) {
 						if (points.size == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
-							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX-x(), 1);
+							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX, 1);
 							recorder::rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
 
@@ -299,7 +294,7 @@ int gEnvelopeChannel::handle(int e) {
 					points.at(draggedPoint).x = x()-8;
 				else
 				if ((unsigned) draggedPoint == points.size-1)
-					points.at(draggedPoint).x = pParent->coverX-x();
+					points.at(draggedPoint).x = pParent->coverX;
 				else {
 					int prevPoint = points.at(draggedPoint-1).x;
 					int nextPoint = points.at(draggedPoint+1).x;

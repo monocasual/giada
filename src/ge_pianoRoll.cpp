@@ -304,10 +304,9 @@ void gPianoRoll::drawSurface2() {
 
 void gPianoRoll::draw() {
 	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
-	for (int i=40; i<pParent->totalWidth; i+=40)
+	for (int i=40; i<pParent->totalWidth; i+=40)   /// TODO: i < pParent->coverX is faster
 		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 0, 0);
 	baseDraw(false);
-	fl_rectf(pParent->coverX+x(), y()+1, pParent->totalWidth-pParent->coverX, h()-2, COLOR_BG_1);
 	draw_children();
 }
 

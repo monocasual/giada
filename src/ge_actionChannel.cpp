@@ -151,8 +151,6 @@ void gActionChannel::draw() {
 	else
 		fl_draw("start/stop (disabled)", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!
 
-	fl_rectf(pParent->coverX, y()+1, pParent->totalWidth-pParent->coverX+x(), h()-2, COLOR_BG_1);
-
 	draw_children();
 }
 
@@ -223,8 +221,8 @@ int gActionChannel::handle(int e) {
 					if (real_x < x())                                  // don't go beyond the left border
 						selected->position(x(), selected->y());
 					else
-					if (real_x+selected->w() > pParent->coverX)         // don't go beyond the right border
-						selected->position(pParent->coverX-selected->w(), selected->y());
+					if (real_x+selected->w() > pParent->coverX+x())         // don't go beyond the right border
+						selected->position(pParent->coverX+x()-selected->w(), selected->y());
 					else {
 						if (pParent->gridTool->isOn()) {
 							int snpx = pParent->gridTool->getSnapPoint(real_x-x()) + x() -1;

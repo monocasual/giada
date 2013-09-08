@@ -91,4 +91,8 @@ void gActionWidget::baseDraw(bool clear) {
 		int px = pParent->gridTool->bars.at(i)+x()-1;
 		fl_line(px, y()+1, px, y()+h()-2);
 	}
+
+	/* cover unused area */
+
+	fl_rectf(pParent->coverX+x(), y()+1, pParent->totalWidth-pParent->coverX, h()-2, COLOR_BG_1);
 }

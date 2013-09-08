@@ -40,12 +40,9 @@
 
 class gEnvelopeChannel : public gActionWidget {
 
-	/* channel, type
-	 * channel and type of action */
-
-	//struct channel *ch;
-	int    type;
-	int    range;
+	const char *l;      // internal label
+	int         type;   // type of action
+	int         range;
 
 	/* point
 	 * a single dot in the graph. x = relative frame, y = relative value */
