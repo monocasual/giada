@@ -231,6 +231,11 @@ int gMuteChannel::handle(int e) {
 						}
 					}
 
+					/* ensure frame parity */
+
+					if (frame_a % 2 != 0) frame_a++;
+					if (frame_b % 2 != 0) frame_b++;
+
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
@@ -242,13 +247,13 @@ int gMuteChannel::handle(int e) {
 					if (nextPoint % 2 != 0) {
 						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
 						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
-						recorder::sortActions();
 					}
 					else {
 						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
 						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
-						recorder::sortActions();
 					}
+					recorder::sortActions();
+
 					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
