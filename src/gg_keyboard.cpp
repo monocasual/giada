@@ -248,7 +248,7 @@ void gSampleChannel::__cb_openMenu() {
 	}
 
 	if (strcmp(m->label(), "Delete channel") == 0) {
-		if (ch->wave != NULL && !gdConfirmWin("Warning", "Delete channel: are you sure?"))
+		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
 			return;
 		glue_deleteChannel(ch);
 		return;
