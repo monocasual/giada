@@ -284,7 +284,7 @@ int gActionChannel::handle(int e) {
 							true,                                 // record = true: record it!
 							pParent->getActionType());            // type of action
 					add(a);
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // mainWindow update
+					mainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel); // mainWindow update
 					redraw();
 					ret = 1;
 				}

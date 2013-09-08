@@ -149,7 +149,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 		a->event = G_PluginHost.createVstMidiEvent(a->iValue);
 #endif
 
-	/* don't activate the channel (chanActive[c] == false), it's up to
+	/* don't activate the channel (readActions == false), it's up to
 	 * the other layers */
 
 	Channel *ch = G_Mixer.getChannelByIndex(index);

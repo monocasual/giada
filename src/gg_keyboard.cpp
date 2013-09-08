@@ -512,11 +512,11 @@ void gSampleChannel::addActionButton(bool status) {
 
 
 void gSampleChannel::delActionButton() {
-	if (readActions == NULL)
+	if (readActions == NULL || ch->hasActions)
 		return;
 
 	remove(readActions);		// delete from Keyboard group (FLTK)
-	//delete readActions[c];  // delete (C++)
+	delete readActions;     // delete (C++)
 	readActions = NULL;
 
 	sampleButton->size(sampleButton->w()+24, sampleButton->h());
@@ -1069,9 +1069,13 @@ void Keyboard::clear() {
 
 
 void Keyboard::setChannelWithActions(gSampleChannel *gch) {
-	if (gch->readActions == NULL)
+	if (gch->readActions == NULL) {
 		gch->addActionButton(true); // true = button on
-	else
+		puts("readActions == NULL");
+	}
+	else {
 		gch->delActionButton();
+		puts("readActions NOT NULL");
+	}
 }
 
