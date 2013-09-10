@@ -62,15 +62,18 @@ public:
 class gdPluginWindowGUImac : public gWindow {
 
 private:
+
+	static pascal OSStatus windowHandler(EventHandlerCallRef ehc, EventRef e, void *data);
+	inline pascal OSStatus __wh(EventHandlerCallRef ehc, EventRef e);
+
 	class Plugin *pPlugin;
-	WindowRef window;
+	WindowRef carbonWindow;
+	bool open;
 
 public:
 
 	gdPluginWindowGUImac(Plugin *pPlugin);
 	~gdPluginWindowGUImac();
-
-	inline WindowRef getWindow() { return window; }
 };
 
 #endif

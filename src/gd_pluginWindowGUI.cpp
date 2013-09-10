@@ -87,11 +87,46 @@ gdPluginWindowGUI::~gdPluginWindowGUI() {
 #if defined(__APPLE__)
 
 
-static pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void* inUserData);
+pascal OSStatus gdPluginWindowGUImac::windowHandler(EventHandlerCallRef ehc, EventRef e, void *data) {
+	return ((gdPluginWindowGUImac*)data)->__wh(ehc, e);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+pascal OSStatus gdPluginWindowGUImac::__wh(EventHandlerCallRef inHandlerCallRef, EventRef inEvent) {
+	OSStatus result   = eventNotHandledErr;     // let the Carbon Event Manager close the window
+	UInt32 eventClass = GetEventClass(inEvent);
+	UInt32 eventKind  = GetEventKind(inEvent);
+
+	switch (eventClass)	{
+		case kEventClassWindow:	{
+			switch (eventKind) {
+				case kEventWindowClose:	{
+					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
+					show();
+					break;
+				}
+				case kEventWindowClosed: {
+					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClosed for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
+					open = false;
+					result = noErr;
+					break;
+				}
+			}
+			break;
+		}
+	}
+	return result;
+}
+
+
+/* ------------------------------------------------------------------ */
 
 
 gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
- : gWindow(450, 300), pPlugin(pPlugin), window(NULL)
+ : gWindow(450, 300), pPlugin(pPlugin), carbonWindow(NULL)
 {
 
   /* some effects like to have us get their rect before opening them */
@@ -116,26 +151,28 @@ gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
 
   // winattr &= GetAvailableWindowAttributes(winclass);	// make sure that the window will open
 
-  OSStatus status = CreateNewWindow(winclass, winattr, &wRect, &window);
+  OSStatus status = CreateNewWindow(winclass, winattr, &wRect, &carbonWindow);
 	if (status != noErr)	{
 		printf("[pluginWindowMac] Unable to create window! Status=%d\n", (int) status);
 		return;
 	}
 	else
-		printf("[pluginWindowMac] created window=%p\n", (void*)window);
+		printf("[pluginWindowMac] created window=%p\n", (void*)carbonWindow);
 
 	/* install event handler, called when window is closed */
 
 	static EventTypeSpec eventTypes[] = {
-		{ kEventClassWindow, kEventWindowClose }
+		{ kEventClassWindow, kEventWindowClose },
+		{ kEventClassWindow, kEventWindowClosed }
 	};
-	InstallWindowEventHandler(window, windowHandler, GetEventTypeCount(eventTypes), eventTypes, this, NULL);
+	InstallWindowEventHandler(carbonWindow, windowHandler, GetEventTypeCount(eventTypes), eventTypes, this, NULL);
 
 	/* open window, center it, show it and start the handler */
 
-	pPlugin->openGui((void*)window);
-	RepositionWindow(window, NULL, kWindowCenterOnMainScreen);
-	ShowWindow(window);
+	pPlugin->openGui((void*)carbonWindow);
+	RepositionWindow(carbonWindow, NULL, kWindowCenterOnMainScreen);
+	ShowWindow(carbonWindow);
+	open = true;
 }
 
 
@@ -144,50 +181,12 @@ gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
 
 
 gdPluginWindowGUImac::~gdPluginWindowGUImac() {
-	printf("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)window);
+	printf("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)carbonWindow);
 	pPlugin->closeGui();
-	if (window) {
-		puts("   window != null, dealloc needed");
-		CFRelease(window);
-	}
-	else
-		puts("   window is null");
-
-	//QuitAppModalLoopForWindow (window); ????
+	if (open)
+		DisposeWindow(carbonWindow);
 }
 
-
-/* ------------------------------------------------------------------ */
-
-
-pascal OSStatus windowHandler(EventHandlerCallRef inHandlerCallRef, EventRef inEvent, void *inUserData) {
-	OSStatus result          = eventNotHandledErr;
-	gdPluginWindowGUImac *pW = (gdPluginWindowGUImac*) inUserData;
-	UInt32 eventClass        = GetEventClass(inEvent);
-	UInt32 eventKind         = GetEventKind(inEvent);
-
-	switch (eventClass)	{
-		case kEventClassWindow:	{
-			switch (eventKind) {
-				case kEventWindowClose:	{
-					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)pW, (void*)pW->getWindow());
-
-					/* DELETE WINDOW HERE:
-					 * how to do that without segfault?
-					 *
-					 * idea: parentOf(pw)->delSubWindow(pw); */
-
-					gWindow *pParent = pW->getParent();
-					pParent->delSubWindow(pW);
-
-					break;
-				}
-			}
-			break;
-		}
-	}
-	return result;
-}
 #endif
 
 #endif // #ifdef WITH_VST
