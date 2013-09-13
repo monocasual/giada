@@ -13,6 +13,21 @@
 
 
 
+0.7.3 --- 2013 . 09 . 14
+- Experimental 64 bit compilation (Linux only)
+- Massive internal cleanup of channel/gui channel layers
+- Set default mode to full volume on sample load
+- Set default mode to oneshot basic
+- Faster drawings in piano roll
+- Visual aids in piano roll
+- Scroll to pointer in piano roll
+- Several minor improvements in piano roll's usability
+- Revised VST Carbon window popup system
+- Minor improvements in startInputRec/stopInputRec procedure
+- Fix compile error using local type Plugin* in Channel's constructor
+- Fix segfault in OSX when working with VST windows
+
+
 0.7.2 --- 2013 . 07 . 27
 - Initial MIDI output support
 - Mute now affects channels with VSTi signals
