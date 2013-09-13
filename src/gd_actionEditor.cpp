@@ -410,6 +410,8 @@ void gGridTool::calc() {
 
 int gGridTool::getSnapPoint(int v) {
 
+	if (v == 0) return 0;
+
 	for (int i=0; i<(int)points.size; i++) {
 
 		if (i == (int) points.size-1)

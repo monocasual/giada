@@ -303,9 +303,17 @@ void gPianoRoll::drawSurface2() {
 
 
 void gPianoRoll::draw() {
+
 	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
-	for (int i=40; i<pParent->totalWidth; i+=40)   /// TODO: i < pParent->coverX is faster
+
+#if defined(__APPLE__)
+	for (int i=36; i<pParent->totalWidth; i+=36) /// TODO: i < pParent->coverX is faster
+		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 1, 0);
+#else
+	for (int i=40; i<pParent->totalWidth; i+=40) /// TODO: i < pParent->coverX is faster
 		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 0, 0);
+#endif
+
 	baseDraw(false);
 	draw_children();
 }
@@ -668,8 +676,8 @@ int gPianoItem::handle(int e) {
 			}
 			else {
 				nx = Fl::event_x() - push_x;
-				if (nx < pr->x())
-					nx = pr->x();
+				if (nx < pr->x()+1)
+					nx = pr->x()+1;
 				else
 				if (nx+w() > coverX)
 					nx = coverX-w();
@@ -678,6 +686,7 @@ int gPianoItem::handle(int e) {
 
 				if (pParent->gridTool->isOn()) {
 					nx = pParent->gridTool->getSnapPoint(nx-pr->x()) + pr->x() - 1;
+					printf("in=%d out=%d\n", nx-pr->x(), nx);
 				}
 
 				position(nx, y());
