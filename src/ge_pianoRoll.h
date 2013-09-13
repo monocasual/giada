@@ -63,12 +63,19 @@ private:
 
 	bool onItem(int rel_x, int rel_y);
 
-	/* drawSurface
+	/* drawSurface*
 	 * generate a complex drawing in memory first and copy it to the
 	 * screen at a later point in time. Fl_Offscreen surface holds the
 	 * necessary data. */
 
+	/* drawSurface1
+	 * draw first tile of note values. */
+
 	void drawSurface1();
+
+	/* drawSurface2
+	 * draw the rest of the piano roll. */
+
 	void drawSurface2();
 
 	int  push_y;
