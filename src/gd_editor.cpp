@@ -131,7 +131,7 @@ gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 	pan->range(0.0f, 2.0f);
 	pan->callback(cb_panning, (void*)this);
 
-	pitch->range(0.1f, 2.0f);
+	pitch->range(0.01f, 4.0f);
 	pitch->value(ch->pitch);
 	pitch->callback(cb_setPitch, (void*)this);
 
