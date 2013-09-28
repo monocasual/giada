@@ -325,8 +325,10 @@ public:
 	MidiChannel(char side);
 	~MidiChannel();
 
-  bool midiOut;           // enable midi output
-  int  midiOutChan;       // midi output channel
+  bool    midiOut;           // enable midi output
+  bool    midiIn;            // enable midi output
+  uint8_t midiOutChan;       // midi output channel
+  uint8_t midiInChan;        // midi input channel
 
 	void  process    (float *buffer, int size);
 	void  start      (bool doQuantize);

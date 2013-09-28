@@ -104,7 +104,9 @@ bool Channel::isPlaying() {
 MidiChannel::MidiChannel(char side)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, side),
 	  midiOut    (false),
-	  midiOutChan(MIDI_CHANS[0])
+	  midiIn     (false),
+	  midiOutChan(MIDI_CHANS[0]),
+	  midiInChan (MIDI_CHANS[0])
 {
 #ifdef WITH_VST // init VstEvents stack
 	freeVstMidiEvents(true);
