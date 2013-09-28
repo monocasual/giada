@@ -611,7 +611,7 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 		chansStopOnSeqHalt_0 = new gRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
 
-	treatRecsAsLoops  = new gCheck(x(), y()+155, 280, 20, "Treat recorded channels as loops");
+	treatRecsAsLoops  = new gCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
 	fullChanVolOnLoad = new gCheck(x(), y()+185, 280, 20, "Bring channels to full volume on sample load");
 	end();
 	labelsize(11);
