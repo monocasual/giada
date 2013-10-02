@@ -48,21 +48,28 @@ extern PluginHost  G_PluginHost;
 
 
 Channel::Channel(int type, int status, char side)
-	: type       (type),
-		status     (status),
-		side       (side),
-	  volume     (DEFAULT_VOL),
-	  volume_i   (1.0f),
-	  volume_d   (0.0f),
-	  panLeft    (1.0f),
-	  panRight   (1.0f),
-	  mute_i     (false),
-	  mute_s     (false),
-	  mute       (false),
-	  solo       (false),
-	  hasActions (false),
-	  recStatus  (REC_STOPPED),
-	  vChan      (NULL)
+	: type      (type),
+		status    (status),
+		side      (side),
+	  volume    (DEFAULT_VOL),
+	  volume_i  (1.0f),
+	  volume_d  (0.0f),
+	  panLeft   (1.0f),
+	  panRight  (1.0f),
+	  mute_i    (false),
+	  mute_s    (false),
+	  mute      (false),
+	  solo      (false),
+	  hasActions(false),
+	  recStatus (REC_STOPPED),
+	  vChan     (NULL),
+	  guiChannel(NULL),
+	  midiIn        (false),
+	  midiInKeyPress(0),
+	  midiInKeyRel  (0),
+	  midiInVolume  (0),
+	  midiInMute    (0),
+	  midiInSolo    (0)
 {
 	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 	if (!vChan)
@@ -77,6 +84,29 @@ Channel::~Channel() {
 	status = STATUS_OFF;
 	if (vChan)
 		free(vChan);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Channel::readPatchMidiIn(int i) {
+	midiIn         = G_Patch.getMidiValue(i, "In");
+	midiInKeyPress = G_Patch.getMidiValue(i, "InKeyPress");
+	midiInKeyRel   = G_Patch.getMidiValue(i, "InKeyRel");
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Channel::writePatchMidiIn(FILE *fp, int i) {
+	fprintf(fp, "chanMidiIn%d=%u\n",         i, midiIn);
+	fprintf(fp, "chanMidiInKeyPress%d=%u\n", i, midiInKeyPress);
+	fprintf(fp, "chanMidiInKeyRel%d=%u\n",   i, midiInKeyRel);
+	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
+	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
+	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
 }
 
 
@@ -104,9 +134,7 @@ bool Channel::isPlaying() {
 MidiChannel::MidiChannel(char side)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, side),
 	  midiOut    (false),
-	  midiIn     (false),
-	  midiOutChan(MIDI_CHANS[0]),
-	  midiInChan (MIDI_CHANS[0])
+	  midiOutChan(MIDI_CHANS[0])
 {
 #ifdef WITH_VST // init VstEvents stack
 	freeVstMidiEvents(true);
@@ -312,8 +340,12 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 	solo        = G_Patch.getSolo(i);
 	panLeft     = G_Patch.getPanLeft(i);
 	panRight    = G_Patch.getPanRight(i);
-	midiOut     = G_Patch.getMidiOut(i);
-	midiOutChan = G_Patch.getMidiOutChan(i);
+
+	midiOut     = G_Patch.getMidiValue(i, "Out");
+	midiOutChan = G_Patch.getMidiValue(i, "OutChan");
+
+	readPatchMidiIn(i);
+
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 
@@ -359,17 +391,22 @@ void MidiChannel::rewind() {
 
 
 void MidiChannel::writePatch(FILE *fp, int i, bool isProject) {
-	fprintf(fp, "chanSide%d=%d\n",        i, side);
-	fprintf(fp, "chanType%d=%d\n",        i, type);
-	fprintf(fp, "chanIndex%d=%d\n",       i, index);
-	fprintf(fp, "chanmute%d=%d\n",        i, mute);
-	fprintf(fp, "chanMute_s%d=%d\n",      i, mute_s);
-	fprintf(fp, "chanSolo%d=%d\n",        i, solo);
-	fprintf(fp, "chanvol%d=%f\n",         i, volume);
-	fprintf(fp, "chanPanLeft%d=%f\n",     i, panLeft);
-	fprintf(fp, "chanPanRight%d=%f\n",    i, panRight);
-	fprintf(fp, "chanMidiOut%d=%d\n",     i, midiOut);
-	fprintf(fp, "chanMidiOutChan%d=%d\n", i, midiOutChan);
+	fprintf(fp, "chanSide%d=%d\n",           i, side);
+	fprintf(fp, "chanType%d=%d\n",           i, type);
+	fprintf(fp, "chanIndex%d=%d\n",          i, index);
+	fprintf(fp, "chanmute%d=%d\n",           i, mute);
+	fprintf(fp, "chanMute_s%d=%d\n",         i, mute_s);
+	fprintf(fp, "chanSolo%d=%d\n",           i, solo);
+	fprintf(fp, "chanvol%d=%f\n",            i, volume);
+	fprintf(fp, "chanPanLeft%d=%f\n",        i, panLeft);
+	fprintf(fp, "chanPanRight%d=%f\n",       i, panRight);
+
+	/* all values printed as unsigned */
+
+	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
+	fprintf(fp, "chanMidiOutChan%d=%u\n",    i, midiOutChan);
+
+	writePatchMidiIn(fp, i);
 }
 
 
@@ -1107,6 +1144,8 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		readActions = G_Patch.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
+		readPatchMidiIn(i);
+
 		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));
 		setPitch(G_Patch.getPitch(i));
@@ -1217,22 +1256,25 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 			path = gBasename(path).c_str();  // make it portable
 	}
 
-	fprintf(fp, "samplepath%d=%s\n",    i, path);
-	fprintf(fp, "chanSide%d=%d\n",      i, side);
-	fprintf(fp, "chanType%d=%d\n",      i, type);
-	fprintf(fp, "chanKey%d=%d\n",       i, key);
-	fprintf(fp, "chanIndex%d=%d\n",     i, index);
-	fprintf(fp, "chanmute%d=%d\n",      i, mute);
-	fprintf(fp, "chanMute_s%d=%d\n",    i, mute_s);
-	fprintf(fp, "chanSolo%d=%d\n",      i, solo);
-	fprintf(fp, "chanvol%d=%f\n",       i, volume);
-	fprintf(fp, "chanmode%d=%d\n",      i, mode);
-	fprintf(fp, "chanBegin%d=%d\n",     i, beginTrue);       // true values, not pitched
-	fprintf(fp, "chanend%d=%d\n",       i, endTrue);         // true values, not pitched
-	fprintf(fp, "chanBoost%d=%f\n",     i, boost);
-	fprintf(fp, "chanPanLeft%d=%f\n",   i, panLeft);
-	fprintf(fp, "chanPanRight%d=%f\n",  i, panRight);
-	fprintf(fp, "chanRecActive%d=%d\n", i, readActions);
-	fprintf(fp, "chanPitch%d=%f\n",     i, pitch);
+	fprintf(fp, "samplepath%d=%s\n",     i, path);
+
+	fprintf(fp, "chanSide%d=%d\n",       i, side);
+	fprintf(fp, "chanType%d=%d\n",       i, type);
+	fprintf(fp, "chanKey%d=%d\n",        i, key);
+	fprintf(fp, "chanIndex%d=%d\n",      i, index);
+	fprintf(fp, "chanmute%d=%d\n",       i, mute);
+	fprintf(fp, "chanMute_s%d=%d\n",     i, mute_s);
+	fprintf(fp, "chanSolo%d=%d\n",       i, solo);
+	fprintf(fp, "chanvol%d=%f\n",        i, volume);
+	fprintf(fp, "chanmode%d=%d\n",       i, mode);
+	fprintf(fp, "chanBegin%d=%d\n",      i, beginTrue);       // true values, not pitched
+	fprintf(fp, "chanend%d=%d\n",        i, endTrue);         // true values, not pitched
+	fprintf(fp, "chanBoost%d=%f\n",      i, boost);
+	fprintf(fp, "chanPanLeft%d=%f\n",    i, panLeft);
+	fprintf(fp, "chanPanRight%d=%f\n",   i, panRight);
+	fprintf(fp, "chanRecActive%d=%d\n",  i, readActions);
+	fprintf(fp, "chanPitch%d=%f\n",      i, pitch);
+
+	writePatchMidiIn(fp, i);
 }
 

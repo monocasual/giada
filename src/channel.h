@@ -136,27 +136,36 @@ public:
 
 	/* ---------------------------------------------------------------- */
 
-	int    index;                // unique id
-	int    type;                 // midi or sample
-	int    status;	             // status: see const.h
-	char   side;                 // left or right column
-	float  volume;               // global volume
-	float  volume_i;             // internal volume
-	float  volume_d;             // delta volume (for envelope)
-	float  panLeft;
-	float  panRight;
-	bool   mute_i;               // internal mute
-	bool 	 mute_s;               // previous mute status after being solo'd
-	bool   mute;                 // global mute
-	bool   solo;
-  bool   hasActions;           // has something recorded
-	int 	 recStatus;            // status of recordings (waiting, ending, ...)
-	float *vChan;	               // virtual channel
-  class  gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
+	int     index;                // unique id
+	int     type;                 // midi or sample
+	int     status;	              // status: see const.h
+	char    side;                 // left or right column
+	float   volume;               // global volume
+	float   volume_i;             // internal volume
+	float   volume_d;             // delta volume (for envelope)
+	float   panLeft;
+	float   panRight;
+	bool    mute_i;               // internal mute
+	bool 	  mute_s;               // previous mute status after being solo'd
+	bool    mute;                 // global mute
+	bool    solo;
+  bool    hasActions;           // has something recorded
+	int 	  recStatus;            // status of recordings (waiting, ending, ...)
+	float  *vChan;	              // virtual channel
+  class   gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
+
+  bool     midiIn;              // enable midi output
+  uint32_t midiInKeyPress;
+  uint32_t midiInKeyRel;
+  uint32_t midiInVolume;
+  uint32_t midiInMute;
+  uint32_t midiInSolo;
 
 #ifdef WITH_VST
   gVector <class Plugin *> plugins;
 #endif
+
+
 
 	/* ---------------------------------------------------------------- */
 
@@ -169,6 +178,13 @@ public:
 	 * call memset to empty each vChan available. Useless for MIDI. */
 
 	void clear(int bufSize);
+
+	/* read/writePatchMidiIn
+	 * read and write to patch all midi-related parameters such as
+	 * keypress, mute and so on. */
+
+	void readPatchMidiIn(int i);
+	void writePatchMidiIn(FILE *fp, int i);
 };
 
 
@@ -326,9 +342,7 @@ public:
 	~MidiChannel();
 
   bool    midiOut;           // enable midi output
-  bool    midiIn;            // enable midi output
   uint8_t midiOutChan;       // midi output channel
-  uint8_t midiInChan;        // midi input channel
 
 	void  process    (float *buffer, int size);
 	void  start      (bool doQuantize);
