@@ -226,45 +226,37 @@
  * all signals are set to channel 0. It's up to the caller to bitmask
  * them with the proper channel number */
 
-#define MIDI_ALL_NOTES_OFF (0xB0 << 24) | (0x7B << 16) | (0x00 << 8) | (0x00)
-#define MIDI_MUTE          (0xB0 << 24) | (0x07 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_NOTE_ON       (0x90 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_NOTE_OFF      (0x80 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
+/* channel voices messages - 0xB0 = Controller Change */
 
-#define MIDI_CHAN_0        (0x00 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_1        (0x01 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_2        (0x02 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_3        (0x03 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_4        (0x04 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_5        (0x05 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_6        (0x06 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_7        (0x07 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_8        (0x08 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_9        (0x09 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_10       (0x0A << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_11       (0x0B << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_12       (0x0C << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_13       (0x0D << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_14       (0x0E << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
-#define MIDI_CHAN_15       (0x0F << 24) | (0x00 << 16) | (0x00 << 8) | (0x00)
+#define MIDI_ALL_NOTES_OFF (0xB0 << 24) | (0x7B << 16)
+#define MIDI_VOLUME        (0xB0 << 24) | (0x07 << 16)
+#define MIDI_NOTE_ON        0x90 << 24
+#define MIDI_NOTE_OFF       0x80 << 24
+
+/* channels */
+
+#define MIDI_CHAN_0         0x00 << 24
+#define MIDI_CHAN_1         0x01 << 24
+#define MIDI_CHAN_2         0x02 << 24
+#define MIDI_CHAN_3         0x03 << 24
+#define MIDI_CHAN_4         0x04 << 24
+#define MIDI_CHAN_5         0x05 << 24
+#define MIDI_CHAN_6         0x06 << 24
+#define MIDI_CHAN_7         0x07 << 24
+#define MIDI_CHAN_8         0x08 << 24
+#define MIDI_CHAN_9         0x09 << 24
+#define MIDI_CHAN_10        0x0A << 24
+#define MIDI_CHAN_11        0x0B << 24
+#define MIDI_CHAN_12        0x0C << 24
+#define MIDI_CHAN_13        0x0D << 24
+#define MIDI_CHAN_14        0x0E << 24
+#define MIDI_CHAN_15        0x0F << 24
 
 const int MIDI_CHANS[16] = {
-	(0x00 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x01 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x02 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x03 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x04 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x05 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x06 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x07 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x08 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x09 << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0A << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0B << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0C << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0D << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0E << 24) | (0x00 << 16) | (0x00 << 8) | (0x00),
-	(0x0F << 24) | (0x00 << 16) | (0x00 << 8) | (0x00) };
+	0x00 << 24,	0x01 << 24,	0x02 << 24,	0x03 << 24,
+	0x04 << 24,	0x05 << 24,	0x06 << 24,	0x07 << 24,
+	0x08 << 24,	0x09 << 24,	0x0A << 24,	0x0B << 24,
+	0x0C << 24,	0x0D << 24,	0x0E << 24,	0x0F << 24 };
 
 
 #endif
