@@ -49,18 +49,12 @@ extern PluginHost    G_PluginHost;
 extern gdMainWindow	*mainWin;
 
 
-gdBrowser::gdBrowser(
-	const char *title,
-	const char *initPath,
-	Channel *ch,
-	int type,
-	int stackType)
-:
-	gWindow(396, 302, title),
-	ch(ch),
-	type(type),
-	stackType(stackType) {
-
+gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int type, int stackType)
+	:	gWindow  (396, 302, title),
+		ch       (ch),
+		type     (type),
+		stackType(stackType)
+{
 	set_non_modal();
 
 	browser = new gBrowser(8, 36, 380, 230);

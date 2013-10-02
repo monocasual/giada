@@ -876,6 +876,26 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 /* ------------------------------------------------------------------ */
 
 
+void glue_keyPress(Channel *ch, bool ctrl, bool shift) {
+	if (ch->type == CHANNEL_SAMPLE)
+		glue_keyPress((SampleChannel*)ch, ctrl, shift);
+	else
+		glue_keyPress((MidiChannel*)ch, ctrl, shift);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_keyRelease(Channel *ch, bool ctrl, bool shift) {
+	if (ch->type == CHANNEL_SAMPLE)
+		glue_keyRelease((SampleChannel*)ch, ctrl, shift);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift) {
 	if (ctrl)
 		glue_setMute(ch);

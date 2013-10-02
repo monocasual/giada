@@ -58,8 +58,10 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject);
  * is true it means that the event comes from the main window (mouse,
  * keyb or MIDI), otherwise the event comes from the action recorder. */
 
+void glue_keyPress  (class Channel       *ch, bool ctrl=0, bool shift=0);
 void glue_keyPress  (class SampleChannel *ch, bool ctrl=0, bool shift=0);
 void glue_keyPress  (class MidiChannel   *ch, bool ctrl=0, bool shift=0);
+void glue_keyRelease(class Channel       *ch, bool ctrl=0, bool shift=0);
 void glue_keyRelease(class SampleChannel *ch, bool ctrl=0, bool shift=0);
 
 void glue_setBpm(const char *v1, const char *v2);

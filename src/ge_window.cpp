@@ -71,7 +71,7 @@ void gWindow::cb_closeChild(Fl_Widget *v, void *p) {
 
 void gWindow::addSubWindow(gWindow *w) {
 
-	/** useless: delete ----------------------------------------------- */
+	/** TODO - useless: delete ---------------------------------------- */
 	for (unsigned i=0; i<subWindows.size; i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
 			//printf("[gWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());

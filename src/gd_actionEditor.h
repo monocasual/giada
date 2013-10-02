@@ -26,6 +26,7 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GD_ACTIONEDITOR_H
 #define GD_ACTIONEDITOR_H
 
@@ -33,7 +34,6 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 #include "ge_window.h"
-
 
 
 /* gActionEditor

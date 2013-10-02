@@ -46,9 +46,11 @@ extern Conf	 G_Conf;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)
-: gWindow(640, 284), chan(chan), zoom(100), coverX(0)
+	:	gWindow(640, 284),
+		chan   (chan),
+		zoom   (100),
+		coverX (0)
 {
-
 	if (G_Conf.actionEditorW) {
 		resize(G_Conf.actionEditorX, G_Conf.actionEditorY, G_Conf.actionEditorW, G_Conf.actionEditorH);
 		zoom = G_Conf.actionEditorZoom;
