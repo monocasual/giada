@@ -72,8 +72,7 @@ public:
 	int         getIndex      (int i);
 	int         getType       (int i);
 	int         getKey        (int i);
-	bool        getMidiOut    (int i);
-	int         getMidiOutChan(int i);
+	uint32_t    getMidiValue  (int i, const char *c);
 	float       getOutVol     ();
 	float       getInVol      ();
 	float       getBpm        ();

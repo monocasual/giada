@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include <stdint.h>
 #include "patch.h"
 #include "init.h"
 #include "recorder.h"
@@ -414,20 +415,11 @@ int Patch::getSamplerate() {
 /* ------------------------------------------------------------------ */
 
 
-bool Patch::getMidiOut(int c) {
+uint32_t Patch::getMidiValue(int i, const char *c) {
 	char tmp[32];
-	sprintf(tmp, "chanMidiOut%d", c);
-	return atoi(getValue(tmp).c_str());
-}
+	sprintf(tmp, "chanMidi%s%d", c, i);
+	return strtoul(getValue(tmp).c_str(), NULL, 10);
 
-
-/* ------------------------------------------------------------------ */
-
-
-int Patch::getMidiOutChan(int c) {
-	char tmp[32];
-	sprintf(tmp, "chanMidiOutChan%d", c);
-	return atoi(getValue(tmp).c_str());
 }
 
 
