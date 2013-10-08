@@ -226,12 +226,14 @@
  * all signals are set to channel 0. It's up to the caller to bitmask
  * them with the proper channel number */
 
-/* channel voices messages - 0xB0 = Controller Change */
+/* channel voices messages - controller (0xB0) is a special subset of
+ * this family: it drives knobs, volume, faders and such. */
 
-#define MIDI_ALL_NOTES_OFF (0xB0 << 24) | (0x7B << 16)
-#define MIDI_VOLUME        (0xB0 << 24) | (0x07 << 16)
+#define MIDI_CONTROLLER     0xB0 << 24
 #define MIDI_NOTE_ON        0x90 << 24
 #define MIDI_NOTE_OFF       0x80 << 24
+#define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
+#define MIDI_VOLUME        (MIDI_CONTROLLER) | (0x07 << 16)
 
 /* channels */
 
