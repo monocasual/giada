@@ -64,7 +64,7 @@ Channel::Channel(int type, int status, char side)
 	  recStatus (REC_STOPPED),
 	  vChan     (NULL),
 	  guiChannel(NULL),
-	  midiIn        (false),
+	  midiIn        (true),
 	  midiInKeyPress(0),
 	  midiInKeyRel  (0),
 	  midiInVolume  (0),
