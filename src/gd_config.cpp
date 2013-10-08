@@ -463,7 +463,8 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	begin();
 	system  = new gChoice(x()+92, y()+9, 253, 20, "System");
 	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
-	          new gBox(x(), portOut->y()+portOut->h()+8, w(), h()-56, "Restart Giada for the changes to take effect.");
+	portIn  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
+	new gBox(x(), portIn->y()+portIn->h()+8, w(), h()-76, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
@@ -472,6 +473,7 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 
 	fetchSystems();
 	fetchOutPorts();
+	fetchInPorts();
 
 	systemInitValue = system->value();
 }
@@ -503,6 +505,32 @@ void gTabMidi::fetchOutPorts() {
 	}
 }
 
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::fetchInPorts() {
+
+	if (kernelMidi::numInPorts == 0) {
+		portIn->add("-- no ports found --");
+		portIn->value(0);
+		portIn->deactivate();
+	}
+	else {
+
+		portIn->add("(disabled)");
+
+		for (unsigned i=0; i<kernelMidi::numInPorts; i++) {
+			char *t = (char*) kernelMidi::getInPortName(i);
+			for (int k=0; t[k] != '\0'; k++)
+				if (t[k] == '/' || t[k] == '|' || t[k] == '&' || t[k] == '_')
+					t[k] = '-';
+			portIn->add(t);
+		}
+
+		portIn->value(G_Conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
+	}
+}
+
 
 /* ------------------------------------------------------------------ */
 
@@ -521,6 +549,7 @@ void gTabMidi::save() {
 		G_Conf.midiSystem = RtMidi::MACOSX_CORE;
 
 	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
+	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 }
 
 

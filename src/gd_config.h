@@ -70,6 +70,7 @@ class gTabMidi : public Fl_Group {
 private:
 	void fetchSystems();
 	void fetchOutPorts();
+	void fetchInPorts();
 
 	static void cb_changeSystem  (Fl_Widget *w, void *p);
 	inline void __cb_changeSystem();
@@ -79,6 +80,7 @@ private:
 public:
 	class gChoice *system;
 	class gChoice *portOut;
+	class gChoice *portIn;
 
 	gTabMidi(int x, int y, int w, int h);
 
