@@ -34,12 +34,17 @@
 
 
 gdMidiGrabber::gdMidiGrabber(Channel *ch)
-	:	gWindow(300, 100, "MIDI input setup"),
+	:	gWindow(300, 150, "MIDI input setup"),
 		ch(ch)
 {
 	set_modal();
-	text = new gBox(10, 10, 280, 80, "[msg here...]");
-	kernelMidi::addMidiLearnCb(cb_midiLearn, (void*)this);
+
+	new gLearn(8,  30, w()-16, "key press/release", ch, cb_learnKeyPressRel);
+	new gLearn(8,  54, w()-16, "key kill", ch, cb_learnKeyPressRel);
+	new gLearn(8,  78, w()-16, "mute", ch, cb_learnKeyPressRel);
+	new gLearn(8, 102, w()-16, "solo", ch, cb_learnKeyPressRel);
+	new gLearn(8, 126, w()-16, "volume", ch, cb_learnKeyPressRel);
+
 	gu_setFavicon(this);
 	show();
 }
@@ -56,18 +61,52 @@ gdMidiGrabber::~gdMidiGrabber() {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::cb_midiLearn(void *data) {
-	((gdMidiGrabber*)data)->__cb_midiLearn();
+void gdMidiGrabber::cb_learnKeyPressRel(uint32_t msg, void *data) { ((gdMidiGrabber*)data)->__cb_learnKeyPressRel(msg); }
+
+void gdMidiGrabber::__cb_learnKeyPressRel(uint32_t msg) {
+
+	printf("[gdMidiGrabber] MIDI learn - message=0x%X\n", msg);
+
+	ch->midiInKeyPress = msg;
+	ch->midiInKeyRel   = msg & 0x8FFFFFFF;
+
+	kernelMidi::delMidiLearnCb();  // learn done, remove callback
+
+	printf("[gdMidiGrabber] MIDI learn - done\n");
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gLearn::gLearn(int X, int Y, int W, const char *l, class Channel *ch, kernelMidi::cb_midiLearn *cb)
+	: Fl_Group(X, Y, W, 20),
+		ch      (ch),
+		callback(cb)
+{
+	begin();
+	text   = new gBox(x(), y(), w()-44, 20, l);
+	button = new gButton(x()+w()-40, y(), 40, 20, "learn");
+	end();
+
+	text->box(G_BOX);
+	text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	button->callback(cb_button, (void*)this);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::__cb_midiLearn() {
-	text->label("ok");
+void gLearn::cb_button(Fl_Widget *v, void *p) { ((gLearn*)p)->__cb_button(); }
 
-	/** TODO - store channel::midiIn[...] */
+
+/* ------------------------------------------------------------------ */
+
+
+void gLearn::__cb_button() {
+	puts("learn on");
+	kernelMidi::addMidiLearnCb(callback, (void*)this);
 }
-
-

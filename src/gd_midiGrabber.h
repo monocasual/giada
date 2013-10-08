@@ -32,20 +32,50 @@
 
 
 #include "ge_window.h"
+#include "kernelMidi.h"
+#include "utils.h"
+
+
+class gLearn : public Fl_Group {
+
+private:
+
+	class Channel *ch;
+
+	kernelMidi::cb_midiLearn *callback;
+
+	class gBox    *text;
+	class gButton *button;
+
+	static void cb_button(Fl_Widget *v, void *p);
+	inline void __cb_button();
+
+public:
+
+	gLearn(int x, int y, int w, const char *l, class Channel *ch, kernelMidi::cb_midiLearn *cb);
+};
+
+
+/* ------------------------------------------------------------------ */
 
 
 class gdMidiGrabber : public gWindow {
 
 private:
 
-	class gBox    *text;
 	class Channel *ch;
 
-	/* cb_midiLearn
-	 * callback called by kernelMidi when midi learn is done. */
+	gVector <gLearn *> items;
 
-	static void cb_midiLearn(void *data);
-	inline void __cb_midiLearn();
+
+	/* cb_learnKeyPressRel
+	 * callback attached to kernelMidi to learn key press and key release
+	 * actions. */
+
+	static void cb_learnKeyPressRel(uint32_t msg, void *data);
+	inline void __cb_learnKeyPressRel(uint32_t msg);
+
+	/** other callbacks here */
 
 public:
 
