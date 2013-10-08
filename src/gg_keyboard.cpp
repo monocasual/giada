@@ -43,6 +43,7 @@
 #include "pluginHost.h"
 #include "channel.h"
 #include "gd_keyGrabber.h"
+#include "gd_midiGrabber.h"
 #include "gd_midiSetup.h"
 
 
@@ -188,35 +189,36 @@ void gSampleChannel::__cb_openMenu() {
 		{"Load new sample..."},                     // 0
 		{"Export sample to file..."},               // 1
 		{"Set key..."},                             // 2
-		{"Edit sample..."},                         // 3
-		{"Edit actions..."},                        // 4
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 5
-			{"All"},                                  // 6
-			{"Mute"},                                 // 7
-			{"Volume"},                               // 8
-			{"Start/Stop"},                           // 9
-			{0},                                      // 10
-		{"Free channel"},                           // 11
-		{"Delete channel"},                         // 12
+		{"Setup MIDI input..."},                    // 3
+		{"Edit sample..."},                         // 4
+		{"Edit actions..."},                        // 5
+		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 6
+			{"All"},                                  // 7
+			{"Mute"},                                 // 8
+			{"Volume"},                               // 9
+			{"Start/Stop"},                           // 10
+			{0},                                      // 11
+		{"Free channel"},                           // 12
+		{"Delete channel"},                         // 13
 		{0}
 	};
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
 		rclick_menu[1].deactivate();
-		rclick_menu[3].deactivate();
-		rclick_menu[11].deactivate();
+		rclick_menu[4].deactivate();
+		rclick_menu[12].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
 
 	if (!ch->hasActions)
-		rclick_menu[5].deactivate();
+		rclick_menu[6].deactivate();
 
 	/* no 'clear start/stop actions' for those channels in loop mode:
 	 * they cannot have start/stop actions. */
 
 	if (ch->mode & LOOP_ANY)
-		rclick_menu[9].deactivate();
+		rclick_menu[10].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);
@@ -233,7 +235,12 @@ void gSampleChannel::__cb_openMenu() {
 	}
 
 	if (strcmp(m->label(), "Set key...") == 0) {
-		new gdKeyGrabber(ch);
+		new gdKeyGrabber(ch); /// FIXME - use gu_openSubWindow
+		return;
+	}
+
+	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
+		gu_openSubWindow(mainWin, new gdMidiGrabber(ch), 0);
 		return;
 	}
 
@@ -682,7 +689,7 @@ void gMidiChannel::__cb_openMenu() {
 
 	if (strcmp(m->label(), "setup MIDI output...") == 0) {
 		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
-		new gdMidiSetup(ch);
+		new gdMidiSetup(ch); /// FIXME - use gu_openSubWindow
 		return;
 	}
 }
