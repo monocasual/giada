@@ -205,6 +205,9 @@ int Conf::read() {
 	midiPortOut = atoi(getValue("midiPortOut").c_str());
 	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_PORT_OUT;
 
+	midiPortIn = atoi(getValue("midiPortIn").c_str());
+	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
+
 	browserX = atoi(getValue("browserX").c_str());
 	browserY = atoi(getValue("browserY").c_str());
 	browserW = atoi(getValue("browserW").c_str());
