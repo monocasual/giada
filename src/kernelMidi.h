@@ -38,11 +38,28 @@
 
 namespace kernelMidi {
 
+	extern int      api;      // one api for both in & out
+	extern unsigned numOutPorts;
+	extern unsigned numInPorts;
+
+	typedef void (cb_midiLearn) (uint32_t, void *);
+
+	/* cb_learn
+	 * callback prepared by the gdMidiGrabber window and called by
+	 * kernelMidi. It contains things to do once the midi message has been
+	 * stored. */
+
+	extern cb_midiLearn *cb_learn;
+	extern void         *cb_data;
+
+	void addMidiLearnCb(cb_midiLearn *cb, void *data);
+	void delMidiLearnCb();
+
 	inline int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
 	inline int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
 	inline int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
-	inline uint32_t getIValue (int b1, int b2, int b3) {
+	inline uint32_t getIValue(int b1, int b2, int b3) {
 		return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 	}
 
@@ -56,16 +73,30 @@ namespace kernelMidi {
 
 	void send(int b1, int b2, int b3);
 
-	int openOutDevice(int api, int port);
+	/* setApi
+	 * set the Api in use for both in & out messages. */
+
+	void setApi(int api);
+
+	/* open/close/in/outDevice */
+
+	int openOutDevice(int port);
+	int openInDevice(int port);
+	int closeInDevice();
 	int closeOutDevice();
 
+	/* getIn/OutPortName
+	 * return the name of the port 'p'. */
+
+	const char *getInPortName(unsigned p);
 	const char *getOutPortName(unsigned p);
 
 	bool hasAPI(int API);
 
-	extern int      api;      // one api for both in & out
-	extern unsigned numOutPorts;
-	extern unsigned numInPorts;
+	/* callback
+	 * master callback for input events. */
+
+	void callback(double t, std::vector<unsigned char> *msg, void *data);
 }
 
 #endif

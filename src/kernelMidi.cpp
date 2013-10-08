@@ -29,11 +29,14 @@
 
 #include <stdio.h>
 #include "kernelMidi.h"
+#include "glue.h"
+#include "mixer.h"
 #include "channel.h"
 #include "pluginHost.h"
 
 
-extern bool G_midiStatus;
+extern bool  G_midiStatus;
+extern Mixer G_Mixer;
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -49,20 +52,46 @@ RtMidiIn  *midiIn      = NULL;
 unsigned   numOutPorts = 0;
 unsigned   numInPorts  = 0;
 
+cb_midiLearn *cb_learn = NULL;
+void         *cb_data  = NULL;
+
 std::vector<unsigned char> msg(3, 0x00);
 
 
 /* ------------------------------------------------------------------ */
 
 
-int openOutDevice(int _api, int port) {
+void addMidiLearnCb(cb_midiLearn *cb, void *data) {
+	cb_learn = cb;
+	cb_data  = data;
+}
 
-	api = _api;
 
+/* ------------------------------------------------------------------ */
+
+
+void delMidiLearnCb() {
+	cb_learn = NULL;
+	cb_data  = NULL;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void setApi(int _api) {
+	api = api;
 	printf("[KM] using system 0x%x\n", api);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int openOutDevice(int port) {
 
 	try {
-		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada Output Client");
+		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
 		G_midiStatus = true;
   }
   catch (RtError &error) {
@@ -100,6 +129,48 @@ int openOutDevice(int _api, int port) {
 /* ------------------------------------------------------------------ */
 
 
+int openInDevice(int port) {
+
+	try {
+		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
+		G_midiStatus = true;
+  }
+  catch (RtError &error) {
+    printf("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
+    G_midiStatus = false;
+    return 0;
+  }
+
+	/* print input ports */
+
+	numInPorts = midiIn->getPortCount();
+  printf("[KM] %d input MIDI ports found\n", numInPorts);
+  for (unsigned i=0; i<numInPorts; i++)
+		printf("  %d) %s\n", i, getInPortName(i));
+
+	/* try to open a port, if enabled */
+
+	if (port != -1 && numInPorts > 0) {
+		try {
+			midiIn->openPort(port, getInPortName(port));
+			printf("[KM] MIDI in port %d open\n", port);
+			midiIn->setCallback(&callback);
+			return 1;
+		}
+		catch (RtError &error) {
+			printf("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
+			G_midiStatus = false;
+			return 0;
+		}
+	}
+	else
+		return 2;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 bool hasAPI(int API) {
 	std::vector<RtMidi::Api> APIs;
 	RtMidi::getCompiledApi(APIs);
@@ -115,6 +186,11 @@ bool hasAPI(int API) {
 
 const char *getOutPortName(unsigned p) {
 	try { return midiOut->getPortName(p).c_str(); }
+	catch (RtError &error) { return NULL; }
+}
+
+const char *getInPortName(unsigned p) {
+	try { return midiIn->getPortName(p).c_str(); }
 	catch (RtError &error) { return NULL; }
 }
 
@@ -146,6 +222,52 @@ void send(int b1, int b2, int b3) {
 	printf("[KM] send msg=0x%X\n", getIValue(b1, b2, b3));
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
+void callback(double t, std::vector<unsigned char> *msg, void *data) {
+
+	/* in this place we want to catch two things: a) note on/note off
+	 * from a keyboard and b) knob/wheel/slider movements from a
+	 * controller */
+
+	uint32_t input = getIValue(msg->at(0), msg->at(1), msg->at(2));
+	//uint32_t type  = input & 0xF0000000;
+	uint32_t chan  = input & 0x0F000000;
+	uint32_t pure  = input & 0xFFFF0000;   // input without 'value' byte
+
+	printf("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
+
+	/** process master events */
+
+	/* process channels */
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+
+		Channel *ch = (Channel*) G_Mixer.channels.at(i);
+
+		if (!ch->midiIn) continue;
+
+		/* if MIDI learn is enabled (cb_learn != NULL) start learning process
+		 * otherwise dispatch events and then call glue. */
+
+		if (cb_learn)
+			cb_learn(pure, cb_data);
+		else {
+			if      (pure == ch->midiInKeyPress) {
+				printf("[KM]  keyPress (pure=0x%X)\n", pure);
+				glue_keyPress(ch, false, false);
+			}
+			else if (pure == ch->midiInKeyRel) {
+				printf("[KM]  keyRel (pure=0x%X)\n", pure);
+				glue_keyRelease(ch, false, false);
+			}
+		}
+
+
+	}
+}
 
 }  // namespace
 
