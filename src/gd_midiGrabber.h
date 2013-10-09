@@ -68,14 +68,20 @@ private:
 	gVector <gLearn *> items;
 
 
-	/* cb_learnKeyPressRel
-	 * callback attached to kernelMidi to learn key press and key release
-	 * actions. */
+	/* cb_*
+	 * list of callbacks attached to kernelMidi to learn various actions. */
 
-	static void cb_learnKeyPressRel(uint32_t msg, void *data);
+	static void cb_learnKeyPressRel  (uint32_t msg, void *data);
+	static void cb_learnKill         (uint32_t msg, void *data);
+	static void cb_learnMute         (uint32_t msg, void *data);
+	static void cb_learnSolo         (uint32_t msg, void *data);
+	static void cb_learnVolume       (uint32_t msg, void *data);
 	inline void __cb_learnKeyPressRel(uint32_t msg);
+	inline void __cb_learnKill       (uint32_t msg);
+	inline void __cb_learnMute       (uint32_t msg);
+	inline void __cb_learnSolo       (uint32_t msg);
+	inline void __cb_learnVolume     (uint32_t msg);
 
-	/** other callbacks here */
 
 public:
 
