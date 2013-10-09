@@ -134,7 +134,11 @@ void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val, bool
  /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
 
-void glue_setMute(class Channel *ch);
+/* mute
+ * set mute on or off. If gui == true the signal comes from an internal
+ * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
+
+void glue_setMute(class Channel *ch, bool gui=true);
 
 void glue_setSoloOn (class Channel *ch);
 void glue_setSoloOff(class Channel *ch);

@@ -655,7 +655,7 @@ void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool n
 /* ------------------------------------------------------------------ */
 
 
-void glue_setMute(Channel *ch) {
+void glue_setMute(Channel *ch, bool gui) {
 
 	if (recorder::active && recorder::canRec(ch)) {
 		if (!ch->mute)
@@ -666,7 +666,8 @@ void glue_setMute(Channel *ch) {
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
 
-	//ch->guiChannel->mute->value(!ch->mute);
+	if (!gui)
+		ch->guiChannel->mute->value(ch->mute);
 }
 
 
