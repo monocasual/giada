@@ -263,6 +263,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 				printf("[KM]  keyRel (pure=0x%X)\n", pure);
 				glue_keyRelease(ch, false, false);
 			}
+			else if (pure == ch->midiInMute) {
+				printf("[KM]  mute (pure=0x%X)\n", pure);
+				glue_setMute(ch, false); // false = update gui
+			}
 		}
 
 
