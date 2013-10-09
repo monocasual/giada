@@ -98,49 +98,9 @@ void __gu_blinkChannel(gChannel *gch) {
 
 
 void __gu_refreshColumn(Fl_Group *col) {
-
-	for (int i=0; i<col->children(); i++) {
-
+	for (int i=0; i<col->children(); i++)	{
 		gChannel *gch = (gChannel *) col->child(i);
 		gch->refresh();
-
-#if 0
-		if (gch->ch->status == STATUS_OFF) {
-			gch->sampleButton->bgColor0 = COLOR_BG_0;
-			gch->sampleButton->bdColor  = COLOR_BD_0;
-			gch->sampleButton->txtColor = COLOR_TEXT_0;
-		}
-		else
-		if (gch->ch->status == STATUS_PLAY) {
-			gch->sampleButton->bgColor0 = COLOR_BG_2;
-			gch->sampleButton->bdColor  = COLOR_BD_1;
-			gch->sampleButton->txtColor = COLOR_TEXT_1;
-		}
-		else
-		if (gch->ch->status & (STATUS_WAIT | STATUS_ENDING))
-			__gu_blinkChannel(gch);
-
-		if (gch->ch->recStatus & (REC_WAITING | REC_ENDING))
-			__gu_blinkChannel(gch);
-
-		/* SAMPLE_CHANNEL only */
-
-		if (gch->ch->type == CHANNEL_SAMPLE && gch->ch->getWave() != NULL) {
-
-			if (G_Mixer.chanInput == gch->ch)
-				gch->sampleButton->bgColor0 = COLOR_BG_3;
-
-			if (recorder::active)
-				if (recorder::canRec(gch->ch)) {
-					gch->sampleButton->bgColor0 = COLOR_BG_4;
-					gch->sampleButton->txtColor = COLOR_TEXT_0;
-				}
-
-			gch->status->redraw();
-		}
-
-		gch->sampleButton->redraw();
-#endif
 	}
 }
 
