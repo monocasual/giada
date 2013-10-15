@@ -223,8 +223,8 @@
 
 
 /* -- MIDI signals -----------------------------------------------------
- * all signals are set to channel 0. It's up to the caller to bitmask
- * them with the proper channel number */
+ * all signals are set to channel 0 (where channels are considered).
+ * It's up to the caller to bitmask them with the proper channel number. */
 
 /* channel voices messages - controller (0xB0) is a special subset of
  * this family: it drives knobs, volume, faders and such. */
@@ -234,6 +234,13 @@
 #define MIDI_NOTE_OFF       0x80 << 24
 #define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
 #define MIDI_VOLUME        (MIDI_CONTROLLER) | (0x07 << 16)
+
+/* system common / real-time messages */
+
+#define MIDI_TIMING_CLOCK   0xF8 << 24
+#define MIDI_START          0xFA << 24
+#define MIDI_CONTINUE       0xFB << 24
+#define MIDI_STOP           0xFC << 24
 
 /* channels */
 
@@ -255,10 +262,10 @@
 #define MIDI_CHAN_15        0x0F << 24
 
 const int MIDI_CHANS[16] = {
-	0x00 << 24,	0x01 << 24,	0x02 << 24,	0x03 << 24,
-	0x04 << 24,	0x05 << 24,	0x06 << 24,	0x07 << 24,
-	0x08 << 24,	0x09 << 24,	0x0A << 24,	0x0B << 24,
-	0x0C << 24,	0x0D << 24,	0x0E << 24,	0x0F << 24 };
-
+	MIDI_CHAN_0,  MIDI_CHAN_1,	MIDI_CHAN_2,  MIDI_CHAN_3,
+	MIDI_CHAN_4,  MIDI_CHAN_5,	MIDI_CHAN_6,  MIDI_CHAN_7,
+	MIDI_CHAN_8,  MIDI_CHAN_9,	MIDI_CHAN_10, MIDI_CHAN_11,
+	MIDI_CHAN_12, MIDI_CHAN_13,	MIDI_CHAN_14, MIDI_CHAN_15
+};
 
 #endif
