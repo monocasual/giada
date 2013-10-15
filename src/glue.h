@@ -140,8 +140,12 @@ void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val, 
 
 void glue_setMute(class Channel *ch, bool gui=true);
 
-void glue_setSoloOn (class Channel *ch);
-void glue_setSoloOff(class Channel *ch);
+/* solo on/off
+ * set solo on and off. If gui == true the signal comes from an internal
+ * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
+
+void glue_setSoloOn (class Channel *ch, bool gui=true);
+void glue_setSoloOff(class Channel *ch, bool gui=true);
 
 /** FIXME - noboy will call this via MIDI/keyb/mouse! */
 int glue_saveProject(const char *folderPath, const char *projName);

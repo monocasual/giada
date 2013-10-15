@@ -674,7 +674,7 @@ void glue_setMute(Channel *ch, bool gui) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOn(Channel *ch) {
+void glue_setSoloOn(Channel *ch, bool gui) {
 
 	/* if there's no solo session, store mute configuration of all chans
 	 * and start the session */
@@ -703,13 +703,16 @@ void glue_setSoloOn(Channel *ch) {
 		ch->unsetMute(false);
 		ch->guiChannel->mute->value(false);
 	}
+
+	if (!gui)
+		ch->guiChannel->solo->value(1);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOff(Channel *ch) {
+void glue_setSoloOff(Channel *ch, bool gui) {
 
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
@@ -735,6 +738,9 @@ void glue_setSoloOff(Channel *ch) {
 	}
 
 	ch->solo = !ch->solo;
+
+	if (!gui)
+		ch->guiChannel->solo->value(0);
 }
 
 
