@@ -44,7 +44,7 @@
 #include "channel.h"
 #include "gd_keyGrabber.h"
 #include "gd_midiGrabber.h"
-#include "gd_midiSetup.h"
+#include "gd_midiInputSetup.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -690,7 +690,7 @@ void gMidiChannel::__cb_openMenu() {
 
 	if (strcmp(m->label(), "setup MIDI output...") == 0) {
 		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
-		new gdMidiSetup(ch); /// FIXME - use gu_openSubWindow
+		new gdMidiInputSetup(ch); /// FIXME - use gu_openSubWindow
 		return;
 	}
 
