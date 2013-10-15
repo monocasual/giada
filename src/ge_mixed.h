@@ -195,6 +195,7 @@ public:
 
 /* ------------------------------------------------------------------ */
 
+/** TODO - move this to ggKeyboard */
 
 class gModeBox : public Fl_Menu_Button {
 private:
@@ -226,6 +227,7 @@ public:
 
 /* ------------------------------------------------------------------ */
 
+/** TODO - move this to ggKeyboard */
 
 /* Status
  * The chan status. */
