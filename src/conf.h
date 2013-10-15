@@ -33,6 +33,7 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include <stdint.h>
 #include "dataStorage.h"
 #include "const.h"
 
@@ -66,6 +67,16 @@ public:
 	int  midiSystem;
 	int  midiPortOut;
 	int  midiPortIn;
+
+	uint32_t midiInRewind;
+	uint32_t midiInStartStop;
+	uint32_t midiInActionRec;
+	uint32_t midiInInputRec;
+	uint32_t midiInVolumeIn;
+	uint32_t midiInVolumeOut;
+	uint32_t midiInBeatDouble;
+	uint32_t midiInBeatHalf;
+	uint32_t midiInMetronome;
 
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;

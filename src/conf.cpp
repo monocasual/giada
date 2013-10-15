@@ -143,6 +143,16 @@ void Conf::setDefault() {
 	midiPortIn  = DEFAULT_MIDI_PORT_IN;
 	midiPortOut = DEFAULT_MIDI_PORT_OUT;
 
+	midiInRewind     = 0x0;
+	midiInStartStop  = 0x0;
+	midiInActionRec  = 0x0;
+	midiInInputRec   = 0x0;
+	midiInVolumeIn   = 0x0;
+	midiInVolumeOut  = 0x0;
+	midiInBeatDouble = 0x0;
+	midiInBeatHalf   = 0x0;
+	midiInMetronome  = 0x0;
+
 	pluginPath[0]  = '\0';
 	patchPath [0]  = '\0';
 	samplePath[0]  = '\0';
