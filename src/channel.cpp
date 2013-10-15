@@ -67,6 +67,7 @@ Channel::Channel(int type, int status, char side)
 	  midiIn        (true),
 	  midiInKeyPress(0),
 	  midiInKeyRel  (0),
+	  midiInKill    (0),
 	  midiInVolume  (0),
 	  midiInMute    (0),
 	  midiInSolo    (0)
