@@ -52,8 +52,8 @@ namespace kernelMidi {
 	extern cb_midiLearn *cb_learn;
 	extern void         *cb_data;
 
-	void addMidiLearnCb(cb_midiLearn *cb, void *data);
-	void delMidiLearnCb();
+	void startMidiLearn(cb_midiLearn *cb, void *data);
+	void stopMidiLearn();
 
 	inline int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
 	inline int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }

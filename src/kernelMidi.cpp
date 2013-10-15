@@ -61,7 +61,7 @@ std::vector<unsigned char> msg(3, 0x00);
 /* ------------------------------------------------------------------ */
 
 
-void addMidiLearnCb(cb_midiLearn *cb, void *data) {
+void startMidiLearn(cb_midiLearn *cb, void *data) {
 	cb_learn = cb;
 	cb_data  = data;
 }
@@ -70,7 +70,7 @@ void addMidiLearnCb(cb_midiLearn *cb, void *data) {
 /* ------------------------------------------------------------------ */
 
 
-void delMidiLearnCb() {
+void stopMidiLearn() {
 	cb_learn = NULL;
 	cb_data  = NULL;
 }
@@ -153,6 +153,7 @@ int openInDevice(int port) {
 	if (port != -1 && numInPorts > 0) {
 		try {
 			midiIn->openPort(port, getInPortName(port));
+			midiIn->ignoreTypes(true, true, true); // ignore all system/time msgs, for now
 			printf("[KM] MIDI in port %d open\n", port);
 			midiIn->setCallback(&callback);
 			return 1;
@@ -233,28 +234,34 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 	 * controller */
 
 	uint32_t input = getIValue(msg->at(0), msg->at(1), msg->at(2));
-	//uint32_t type  = input & 0xF0000000;
 	uint32_t chan  = input & 0x0F000000;
+	uint32_t value = input & 0x0000FF00;
 	uint32_t pure  = input & 0xFFFF0000;   // input without 'value' byte
 
 	printf("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
 
-	/** process master events */
+	/* start dispatcher. If midi learn is on don't parse channels, just
+	 * learn incoming midi signal. Otherwise process master events first,
+	 * then each channel in the stack. This way incoming signals don't
+	 * get processed by glue_* when midi learning is on. */
 
-	/* process channels */
+	if (cb_learn)	{
+		cb_learn(pure, cb_data);
+	}
+	else {
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		/* process master events */
 
-		Channel *ch = (Channel*) G_Mixer.channels.at(i);
+		/** TODO */
 
-		if (!ch->midiIn) continue;
+		/* process channels */
 
-		/* if MIDI learn is enabled (cb_learn != NULL) start learning process
-		 * otherwise dispatch events and then call glue. */
+		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
-		if (cb_learn)
-			cb_learn(pure, cb_data);
-		else {
+			Channel *ch = (Channel*) G_Mixer.channels.at(i);
+
+			if (!ch->midiIn) continue;
+
 			if      (pure == ch->midiInKeyPress) {
 				printf("[KM]  keyPress (pure=0x%X)\n", pure);
 				glue_keyPress(ch, false, false);
@@ -267,9 +274,14 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 				printf("[KM]  mute (pure=0x%X)\n", pure);
 				glue_setMute(ch, false); // false = update gui
 			}
+			else if (pure == ch->midiInSolo) {
+				printf("[KM]  solo (pure=0x%X)\n", pure);
+				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false); // false = update gui
+			}
+			else if (pure == ch->midiInVolume) {
+				printf("[KM]  volume (pure=0x%X, value=%d)\n", pure, value >> 8);
+			}
 		}
-
-
 	}
 }
 
