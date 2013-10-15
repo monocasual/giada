@@ -32,10 +32,10 @@
 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include "ge_window.h"
 
 
-class gdMidiInputSetup : public Fl_Window {
+class gdMidiInputSetup : public gWindow {
 
 private:
 

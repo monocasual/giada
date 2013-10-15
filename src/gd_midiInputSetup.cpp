@@ -39,7 +39,7 @@ extern Conf	G_Conf;
 
 
 gdMidiInputSetup::gdMidiInputSetup(MidiChannel *ch)
-	: Fl_Window(300, 64, "Midi Output Setup"), ch(ch)
+	: gWindow(300, 64, "Midi Output Setup"), ch(ch)
 {
 	begin();
 	enableOut      = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");

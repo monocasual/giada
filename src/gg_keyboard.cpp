@@ -689,8 +689,7 @@ void gMidiChannel::__cb_openMenu() {
 	}
 
 	if (strcmp(m->label(), "setup MIDI output...") == 0) {
-		//gu_openSubWindow(mainWin, new gdMidiSetup(ch),	WID_ACTION_EDITOR);
-		new gdMidiInputSetup(ch); /// FIXME - use gu_openSubWindow
+		gu_openSubWindow(mainWin, new gdMidiInputSetup(ch), 0);
 		return;
 	}
 
