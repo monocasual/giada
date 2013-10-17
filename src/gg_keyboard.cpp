@@ -648,8 +648,8 @@ void gMidiChannel::__cb_openMenu() {
 		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 1
 			{"All"},                                  // 2
 			{0},                                      // 3
-		{"setup MIDI output..."},                   // 4
-		{"setup MIDI input..."},                    // 5
+		{"Setup MIDI output..."},                   // 4
+		{"Setup MIDI input..."},                    // 5
 		{"Delete channel"},                         // 6
 		{0}
 	};
@@ -688,12 +688,12 @@ void gMidiChannel::__cb_openMenu() {
 		return;
 	}
 
-	if (strcmp(m->label(), "setup MIDI output...") == 0) {
+	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
 		gu_openSubWindow(mainWin, new gdMidiInputSetup(ch), 0);
 		return;
 	}
 
-	if (strcmp(m->label(), "setup MIDI input...") == 0) {
+	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
 		gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch), 0);
 		return;
 	}
