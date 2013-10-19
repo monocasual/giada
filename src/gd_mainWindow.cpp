@@ -296,7 +296,7 @@ void gdMainWindow::__cb_open_config_win() {
 
 
 void gdMainWindow::__cb_rewind_tracker() {
-	mh_rewindSequencer();
+	mh_rewindSequencer(); /** FIXME - call glue_* */
 }
 
 
