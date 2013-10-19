@@ -37,6 +37,7 @@
 #include "mixerHandler.h"
 #include "pluginHost.h"
 #include "channel.h"
+#include "gd_midiGrabber.h"
 
 
 extern Mixer	   		 G_Mixer;
@@ -407,6 +408,7 @@ void gdMainWindow::__cb_open_edit_menu() {
 		{"Clear all samples"},
 		{"Clear all actions"},
 		{"Reset to init state"},
+		{"Setup global MIDI input..."},
 		{0}
 	};
 
@@ -455,6 +457,10 @@ void gdMainWindow::__cb_open_edit_menu() {
 			return;
 		gu_closeAllSubwindows();
 		glue_resetToInitState();
+		return;
+	}
+	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
+		gu_openSubWindow(mainWin, new gdMidiGrabberMaster(), 0);
 		return;
 	}
 }

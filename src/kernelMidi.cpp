@@ -33,9 +33,11 @@
 #include "mixer.h"
 #include "channel.h"
 #include "pluginHost.h"
+#include "conf.h"
 
 
 extern bool  G_midiStatus;
+extern Conf  G_Conf;
 extern Mixer G_Mixer;
 
 #ifdef WITH_VST
@@ -252,7 +254,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 
 		/* process master events */
 
-		/** TODO */
+		if (pure == G_Conf.midiInRewind) {
+				printf("[KM]  rewind (global) (pure=0x%X)\n", pure);
+				glue_rewindSeq();
+		}
 
 		/* process channels */
 

@@ -31,6 +31,10 @@
 #include "ge_mixed.h"
 #include "gui_utils.h"
 #include "kernelMidi.h"
+#include "conf.h"
+
+
+extern Conf G_Conf;
 
 
 gdMidiGrabber::gdMidiGrabber()
@@ -181,8 +185,8 @@ gdMidiGrabberMaster::gdMidiGrabberMaster()
 {
 	set_modal();
 
-	//new gLearner(8,  30, w()-16, "master rewind", );
-	//new gLearner(8,  54, w()-16, "master play/stop", );
+	new gLearner(8,  30, w()-16, "rewind",    &cb_learnRewind,    &G_Conf.midiInRewind);
+	new gLearner(8,  54, w()-16, "play/stop", &cb_learnStartStop, &G_Conf.midiInStartStop);
 
 	gu_setFavicon(this);
 	show();
@@ -201,9 +205,27 @@ void gdMidiGrabberMaster::cb_learnRewind(uint32_t msg, void *d) {
 }
 
 void gdMidiGrabberMaster::__cb_learnRewind(uint32_t msg, gLearner *l) {
-	//ch->midiInKill = msg;
+	G_Conf.midiInRewind = msg;
 	stopMidiLearn(l);
 	printf("[gdMidiGrabberMaster] MIDI learn rewind - done with message=0x%X\n", msg);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabberMaster::cb_learnStartStop(uint32_t msg, void *d) {
+	cbData *data = (cbData*) d;
+	gdMidiGrabberMaster *grabber = (gdMidiGrabberMaster*) data->grabber;
+	gLearner            *learner = data->learner;
+	grabber->__cb_learnStartStop(msg, learner);
+	free(data);
+}
+
+void gdMidiGrabberMaster::__cb_learnStartStop(uint32_t msg, gLearner *l) {
+	G_Conf.midiInStartStop = msg;
+	stopMidiLearn(l);
+	printf("[gdMidiGrabberMaster] MIDI learn start/stop - done with message=0x%X\n", msg);
 }
 
 

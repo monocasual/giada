@@ -312,14 +312,16 @@ void glue_setBeats(int beats, int bars, bool expand) {
 
 
 void glue_startSeq(bool gui) {
+
 	G_Mixer.running = true;
 	mainWin->beat_stop->value(1);
 	mainWin->beat_stop->redraw();
 
+	if (gui) {
 #ifdef __linux__
-	if (gui)
 		kernelAudio::jackStart();
 #endif
+	}
 }
 
 
