@@ -71,9 +71,10 @@ void glue_setBeats(int beats, int bars, bool expand);
  * if gui == true the signal comes from an internal interaction on the
  * GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startSeq (bool gui=true);
-void glue_stopSeq  (bool gui=true);
-void glue_rewindSeq();
+void glue_startStopSeq(bool gui=true);
+void glue_startSeq    (bool gui=true);
+void glue_stopSeq     (bool gui=true);
+void glue_rewindSeq   ();
 
 /* start/stopRec
  * handle the action recording. */
@@ -95,8 +96,7 @@ void glue_stopReadingRecs(class SampleChannel *ch);
 
 void glue_quantize(int val);
 
-void glue_setVol(class Channel *ch, float v);
-void glue_setVolMainWin(class Channel *ch, float v);
+void glue_setChanVol(class Channel *ch, float v, bool gui=true);
 void glue_setOutVol(float v);
 void glue_setInVol(float v);
 

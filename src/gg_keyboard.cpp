@@ -146,7 +146,7 @@ void gSampleChannel::__cb_solo() {
 
 
 void gSampleChannel::__cb_changeVol() {
-	glue_setVolMainWin(ch, vol->value());
+	glue_setChanVol(ch, vol->value());
 }
 
 
@@ -616,7 +616,7 @@ void gMidiChannel::__cb_solo() {
 
 
 void gMidiChannel::__cb_changeVol() {
-	glue_setVolMainWin(ch, vol->value());
+	glue_setChanVol(ch, vol->value());
 }
 
 

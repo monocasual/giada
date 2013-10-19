@@ -79,7 +79,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath) {
 		mainWin->keyboard->updateChannel(ch->guiChannel);
 
 	if (G_Conf.fullChanVolOnLoad)
-		glue_setVol(ch, 1.0);
+		glue_setChanVol(ch, 1.0, false); // false = not from gui click
 
 	return result;
 }
@@ -311,6 +311,14 @@ void glue_setBeats(int beats, int bars, bool expand) {
 /* ------------------------------------------------------------------ */
 
 
+void glue_startStopSeq(bool gui) {
+	G_Mixer.running ? glue_stopSeq(gui) : glue_startSeq(gui);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void glue_startSeq(bool gui) {
 
 	G_Mixer.running = true;
@@ -449,22 +457,20 @@ void glue_quantize(int val) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setVol(Channel *ch, float v) {
+void glue_setChanVol(Channel *ch, float v, bool gui) {
+
 	ch->volume = v;
-	ch->guiChannel->vol->value(v);
-}
 
+	/* also update wave editor if it's shown */
 
-/* ------------------------------------------------------------------ */
-
-
-void glue_setVolMainWin(Channel *ch, float v) {
-	ch->volume = v;
 	gdEditor *editor = (gdEditor*) gu_getSubwindow(mainWin, WID_SAMPLE_EDITOR);
 	if (editor) {
 		glue_setVolEditor(editor, (SampleChannel*) ch, v, false);
 		editor->volume->value(v);
 	}
+
+	if (!gui)
+		ch->guiChannel->vol->value(v);
 }
 
 
@@ -798,7 +804,7 @@ int glue_startInputRec() {
 		mainWin->beat_stop->value(1);
 	}
 
-	glue_setVol(ch, 1.0f);
+	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
 
 	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 
