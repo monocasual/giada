@@ -126,8 +126,12 @@ private:
 
 	static void cb_learnRewind      (uint32_t msg, void *data);
 	static void cb_learnStartStop   (uint32_t msg, void *data);
+	static void cb_learnActionRec   (uint32_t msg, void *data);
+	static void cb_learnInputRec    (uint32_t msg, void *data);
 	inline void __cb_learnRewind    (uint32_t msg, gLearner *l);
 	inline void __cb_learnStartStop (uint32_t msg, gLearner *l);
+	inline void __cb_learnActionRec (uint32_t msg, gLearner *l);
+	inline void __cb_learnInputRec  (uint32_t msg, gLearner *l);
 
 public:
 

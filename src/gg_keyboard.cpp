@@ -1016,7 +1016,7 @@ int Keyboard::handle(int e) {
 				}
 				else if (Fl::event_key() == FL_Enter && !enterPressed) {
 					enterPressed = true;
-					recorder::active ? glue_stopRec() : glue_startRec();
+					glue_startStopActionRec();
 					ret = 1;
 					break;
 				}

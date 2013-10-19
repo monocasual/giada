@@ -379,7 +379,15 @@ void glue_rewindSeq() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startRec() {
+void glue_startStopActionRec() {
+	recorder::active ? glue_stopActionRec() : glue_startActionRec();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_startActionRec() {
 	if (G_audio_status == false)
 		return;
 	if (!G_Mixer.running)
@@ -393,7 +401,7 @@ void glue_startRec() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_stopRec() {
+void glue_stopActionRec() {
 
 	/* stop the recorder and sort new actions */
 

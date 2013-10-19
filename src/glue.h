@@ -76,11 +76,12 @@ void glue_startSeq    (bool gui=true);
 void glue_stopSeq     (bool gui=true);
 void glue_rewindSeq   ();
 
-/* start/stopRec
+/* start/stopActionRec
  * handle the action recording. */
 
-void glue_startRec();
-void glue_stopRec();
+void glue_startStopActionRec();
+void glue_startActionRec();
+void glue_stopActionRec();
 
 /* start/stopInputRec
  * handle the input recording (take). */

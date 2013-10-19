@@ -312,7 +312,7 @@ void gdMainWindow::__cb_startstop() {
 
 
 void gdMainWindow::__cb_rec() {
-	recorder::active ? glue_stopRec() : glue_startRec();
+	glue_startStopActionRec();
 }
 
 
