@@ -254,9 +254,13 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 
 		/* process master events */
 
-		if (pure == G_Conf.midiInRewind) {
-				printf("[KM]  rewind (global) (pure=0x%X)\n", pure);
-				glue_rewindSeq();
+		if      (pure == G_Conf.midiInRewind) {
+			printf("[KM]  rewind (global) (pure=0x%X)\n", pure);
+			glue_rewindSeq();
+		}
+		else if (pure == G_Conf.midiInStartStop) {
+			printf("[KM]  startStop (global) (pure=0x%X)\n", pure);
+			glue_startStopSeq();
 		}
 
 		/* process channels */
@@ -284,7 +288,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false); // false = update gui
 			}
 			else if (pure == ch->midiInVolume) {
-				printf("[KM]  volume (pure=0x%X, value=%d)\n", pure, value >> 8);
+				int v    = value >> 8;
+				float vf = v/127.0f;
+				printf("[KM]  volume (pure=0x%X, value=%d, float=%f)\n", pure, v, vf);
+				glue_setChanVol(ch, vf, false); // false = update gui
 			}
 		}
 	}
