@@ -111,7 +111,7 @@ void glue_clearAllRecs();
 
 void glue_resetToInitState(bool resetGui=true);
 
-void glue_startStopMetronome();
+void glue_startStopMetronome(bool gui=true);
 
 /* setBeginEndChannel
  * sets start/end points in the sample editor.

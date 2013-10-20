@@ -231,6 +231,17 @@ void send(int b1, int b2, int b3) {
 
 void callback(double t, std::vector<unsigned char> *msg, void *data) {
 
+	/* 0.8.0 - for now we handle other midi signals (common and real-time
+	 * messages) as unknown, for debugging purposes */
+
+	if (msg->size() < 3) {
+		printf("[KM] MIDI received - unkown signal - size=%d, value=0x", msg->size());
+		for (unsigned i=0; i<msg->size(); i++)
+			printf("%X", (int) msg->at(i));
+		printf("\n");
+		return;
+	}
+
 	/* in this place we want to catch two things: a) note on/note off
 	 * from a keyboard and b) knob/wheel/slider movements from a
 	 * controller */
@@ -240,7 +251,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 	uint32_t value = input & 0x0000FF00;
 	uint32_t pure  = input & 0xFFFF0000;   // input without 'value' byte
 
-	printf("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
+	printf("[KM] MIDI received - 0x%X (chan %d)", input, chan >> 24);
 
 	/* start dispatcher. If midi learn is on don't parse channels, just
 	 * learn incoming midi signal. Otherwise process master events first,
@@ -248,6 +259,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 	 * get processed by glue_* when midi learning is on. */
 
 	if (cb_learn)	{
+		printf("\n");
 		cb_learn(pure, cb_data);
 	}
 	else {
@@ -255,12 +267,20 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 		/* process master events */
 
 		if      (pure == G_Conf.midiInRewind) {
-			printf("[KM]  rewind (global) (pure=0x%X)\n", pure);
+			printf(" >>> rewind (global) (pure=0x%X)", pure);
 			glue_rewindSeq();
 		}
 		else if (pure == G_Conf.midiInStartStop) {
-			printf("[KM]  startStop (global) (pure=0x%X)\n", pure);
+			printf(" >>> startStop (global) (pure=0x%X)", pure);
 			glue_startStopSeq();
+		}
+		else if (pure == G_Conf.midiInActionRec) {
+			printf(" >>> actionRec (global) (pure=0x%X)", pure);
+			glue_startStopActionRec();
+		}
+		else if (pure == G_Conf.midiInMetronome) {
+			printf(" >>> metronome (global) (pure=0x%X)", pure);
+			glue_startStopMetronome(false);  // update gui
 		}
 
 		/* process channels */
@@ -272,28 +292,29 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 			if (!ch->midiIn) continue;
 
 			if      (pure == ch->midiInKeyPress) {
-				printf("[KM]  keyPress (pure=0x%X)\n", pure);
+				printf(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
 				glue_keyPress(ch, false, false);
 			}
 			else if (pure == ch->midiInKeyRel) {
-				printf("[KM]  keyRel (pure=0x%X)\n", pure);
+				printf(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
 				glue_keyRelease(ch, false, false);
 			}
 			else if (pure == ch->midiInMute) {
-				printf("[KM]  mute (pure=0x%X)\n", pure);
+				printf(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
 				glue_setMute(ch, false); // false = update gui
 			}
 			else if (pure == ch->midiInSolo) {
-				printf("[KM]  solo (pure=0x%X)\n", pure);
+				printf(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
 				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false); // false = update gui
 			}
 			else if (pure == ch->midiInVolume) {
 				int v    = value >> 8;
 				float vf = v/127.0f;
-				printf("[KM]  volume (pure=0x%X, value=%d, float=%f)\n", pure, v, vf);
+				printf(" >>>  volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, v, vf);
 				glue_setChanVol(ch, vf, false); // false = update gui
 			}
 		}
+		printf("\n");
 	}
 }
 

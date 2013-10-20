@@ -544,8 +544,10 @@ void glue_resetToInitState(bool resetGui) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startStopMetronome() {
+void glue_startStopMetronome(bool gui) {
 	G_Mixer.metronome = !G_Mixer.metronome;
+	if (!gui)
+		mainWin->metronome->value(G_Mixer.metronome);
 }
 
 
