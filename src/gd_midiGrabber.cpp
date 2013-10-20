@@ -61,6 +61,16 @@ void gdMidiGrabber::stopMidiLearn(gLearner *learner) {
 
 
 /* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabber::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
+	*param = msg;
+	stopMidiLearn(l);
+	printf("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
+}
+
+
+/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
@@ -76,12 +86,12 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 	set_modal();
 
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
-	new gLearner(8,  30, w()-16, "key press", cb_learnKeyPress, &ch->midiInKeyPress);
-	new gLearner(8,  54, w()-16, "key release", cb_learnKeyRelease, &ch->midiInKeyRel);
-	new gLearner(8,  78, w()-16, "key kill", cb_learnKill, &ch->midiInKill);
-	new gLearner(8, 102, w()-16, "mute", cb_learnMute, &ch->midiInMute);
-	new gLearner(8, 126, w()-16, "solo", cb_learnSolo, &ch->midiInSolo);
-	new gLearner(8, 150, w()-16, "volume", cb_learnVolume, &ch->midiInVolume);
+	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
+	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
+	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
+	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
+	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
+	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
 
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
@@ -108,104 +118,13 @@ void gdMidiGrabberChannel::__cb_enable() {
 /* ------------------------------------------------------------------ */
 
 
-/* all callbacks are ultra-condensed. Real code:
- *
- * cbData *data = (cbData*) d;
- * gdMidiGrabberChannel *grabber = (gdMidiGrabberChannel*) data->grabber;
- * gLearner             *learner = data->learner;
- * grabber->__cb_learn[something](msg, learner);
- * free(data); */
-
-void gdMidiGrabberChannel::cb_learnKeyPress(uint32_t msg, void *d) {
+void gdMidiGrabberChannel::cb_learn(uint32_t msg, void *d) {
 	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnKeyPress(msg, (gLearner *)data->learner);
+	gdMidiGrabberChannel *grabber = (gdMidiGrabberChannel*) data->grabber;
+	gLearner             *learner = data->learner;
+	uint32_t             *param   = learner->param;
+	grabber->__cb_learn(param, msg, learner);
 	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnKeyPress(uint32_t msg, gLearner *l) {
-	ch->midiInKeyPress = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn keypress - done with message=0x%X\n", msg);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learnKeyRelease(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnKeyRelease(msg, (gLearner *)data->learner);
-	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnKeyRelease(uint32_t msg, gLearner *l) {
-	ch->midiInKeyRel = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn keyrelease - done with message=0x%X\n", msg);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learnMute(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnMute(msg, (gLearner *)data->learner);
-	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnMute(uint32_t msg, gLearner *l) {
-	ch->midiInMute = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn mute - done with message=0x%X\n", msg);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learnKill(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnKill(msg, (gLearner *)data->learner);
-	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnKill(uint32_t msg, gLearner *l) {
-	ch->midiInKill = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn kill - done with message=0x%X\n", msg);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learnSolo(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnSolo(msg, (gLearner *)data->learner);
-	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnSolo(uint32_t msg, gLearner *l) {
-	ch->midiInSolo = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn solo - done with message=0x%X\n", msg);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learnVolume(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberChannel*)data->grabber)->__cb_learnVolume(msg, (gLearner *)data->learner);
-	free(data);
-}
-
-void gdMidiGrabberChannel::__cb_learnVolume(uint32_t msg, gLearner *l) {
-	ch->midiInVolume = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberChannel] MIDI learn volume - done with message=0x%X\n", msg);
 }
 
 
@@ -219,13 +138,13 @@ gdMidiGrabberMaster::gdMidiGrabberMaster()
 {
 	set_modal();
 
-	new gLearner(8,  30, w()-16, "rewind",    &cb_learnRewind,    &G_Conf.midiInRewind);
-	new gLearner(8,  54, w()-16, "play/stop", &cb_learnStartStop, &G_Conf.midiInStartStop);
-	new gLearner(8,  78, w()-16, "action recording", &cb_learnActionRec, &G_Conf.midiInActionRec);
-	new gLearner(8, 102, w()-16, "input recording",  &cb_learnInputRec, &G_Conf.midiInInputRec);
-	new gLearner(8, 126, w()-16, "metronome",  &cb_learnMetronome, &G_Conf.midiInMetronome);
-	new gLearner(8, 150, w()-16, "input volume",  &cb_learnVolumeIn, &G_Conf.midiInVolumeIn);
-	new gLearner(8, 174, w()-16, "output volume",  &cb_learnVolumeOut, &G_Conf.midiInVolumeOut);
+	new gLearner(8,  30, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
+	new gLearner(8,  54, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
+	new gLearner(8,  78, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
+	new gLearner(8, 102, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
+	new gLearner(8, 126, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
+	new gLearner(8, 150, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
+	new gLearner(8, 174, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
 
 	gu_setFavicon(this);
 	show();
@@ -235,73 +154,14 @@ gdMidiGrabberMaster::gdMidiGrabberMaster()
 /* ------------------------------------------------------------------ */
 
 
-/* all callbacks are ultra-condensed. Real code:
- *
- * cbData *data = (cbData*) d;
- * gdMidiGrabberMaster *grabber = (gdMidiGrabberMaster*) data->grabber;
- * gLearner            *learner = data->learner;
- * grabber->__cb_learn(param, msg, learner);
- * free(data); */
-
-
-void gdMidiGrabberMaster::cb_learnRewind(uint32_t msg, void *d) {
+void gdMidiGrabberMaster::cb_learn(uint32_t msg, void *d) {
 	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInRewind, msg, (gLearner*)data->learner);
+	gdMidiGrabberMaster *grabber = (gdMidiGrabberMaster*) data->grabber;
+	gLearner            *learner = data->learner;
+	uint32_t            *param   = learner->param;
+	grabber->__cb_learn(param, msg, learner);
 	free(data);
 }
-
-
-void gdMidiGrabberMaster::cb_learnStartStop(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInStartStop, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-void gdMidiGrabberMaster::cb_learnActionRec(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInActionRec, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-void gdMidiGrabberMaster::cb_learnInputRec(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInInputRec, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-void gdMidiGrabberMaster::cb_learnMetronome(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInMetronome, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-void gdMidiGrabberMaster::cb_learnVolumeIn(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInVolumeIn, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-void gdMidiGrabberMaster::cb_learnVolumeOut(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	((gdMidiGrabberMaster*)data->grabber)->__cb_learn(&G_Conf.midiInVolumeOut, msg, (gLearner*)data->learner);
-	free(data);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberMaster::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
-	*param = msg;
-	stopMidiLearn(l);
-	printf("[gdMidiGrabberMaster] MIDI learn done - message=0x%X\n", msg);
-}
-
 
 
 /* ------------------------------------------------------------------ */
@@ -309,10 +169,10 @@ void gdMidiGrabberMaster::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l)
 /* ------------------------------------------------------------------ */
 
 
-gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *midiValue)
-	: Fl_Group (X, Y, W, 20),
-		midiValue(midiValue),
-		callback (cb)
+gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *param)
+	: Fl_Group(X, Y, W, 20),
+		callback(cb),
+		param   (param)
 {
 	begin();
 	text   = new gBox(x(), y(), 156, 20, l);
@@ -336,9 +196,9 @@ gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn 
 
 
 void gLearner::updateValue() {
-	if (*midiValue != 0) {
+	if (*param != 0) {
 		char buf[9];
-		snprintf(buf, 9, "0x%X", *midiValue);
+		snprintf(buf, 9, "0x%X", *param);
 		value->copy_label(buf);
 		button->value(0);
 	}

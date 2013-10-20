@@ -41,11 +41,6 @@ class gLearner : public Fl_Group {
 
 private:
 
-	/* midiValue
-	 * pointer to ch->midiIn[value] */
-
-	uint32_t *midiValue;
-
 	/* callback
 	 * cb to pass to kernelMidi. Requires two parameters:
 	 * uint32_t msg - MIDI message
@@ -64,7 +59,12 @@ private:
 
 public:
 
-	gLearner(int x, int y, int w, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *midiValue);
+	/* param
+	 * pointer to ch->midiIn[value] */
+
+	uint32_t *param;
+
+	gLearner(int x, int y, int w, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *param);
 
 	void updateValue();
 };
@@ -78,6 +78,7 @@ class gdMidiGrabber : public gWindow {
 protected:
 
 	void stopMidiLearn(gLearner *l);
+	void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
 
 public:
 
@@ -99,21 +100,10 @@ private:
 
 	//gVector <gLearner *> items; for future use, with vst parameters
 
-	/* cb_*
-	 * list of callbacks attached to kernelMidi to learn various actions. */
+	/* cb_learn
+	 * callback attached to kernelMidi to learn various actions. */
 
-	static void cb_learnKeyPress     (uint32_t msg, void *data);
-	static void cb_learnKeyRelease   (uint32_t msg, void *data);
-	static void cb_learnKill         (uint32_t msg, void *data);
-	static void cb_learnMute         (uint32_t msg, void *data);
-	static void cb_learnSolo         (uint32_t msg, void *data);
-	static void cb_learnVolume       (uint32_t msg, void *data);
-	inline void __cb_learnKeyPress   (uint32_t msg, gLearner *l);
-	inline void __cb_learnKeyRelease (uint32_t msg, gLearner *l);
-	inline void __cb_learnKill       (uint32_t msg, gLearner *l);
-	inline void __cb_learnMute       (uint32_t msg, gLearner *l);
-	inline void __cb_learnSolo       (uint32_t msg, gLearner *l);
-	inline void __cb_learnVolume     (uint32_t msg, gLearner *l);
+	static void cb_learn(uint32_t msg, void *data);
 
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
@@ -131,15 +121,10 @@ class gdMidiGrabberMaster : public gdMidiGrabber {
 
 private:
 
-	static void cb_learnRewind      (uint32_t msg, void *data);
-	static void cb_learnStartStop   (uint32_t msg, void *data);
-	static void cb_learnActionRec   (uint32_t msg, void *data);
-	static void cb_learnInputRec    (uint32_t msg, void *data);
-	static void cb_learnMetronome   (uint32_t msg, void *data);
-	static void cb_learnVolumeIn    (uint32_t msg, void *data);
-	static void cb_learnVolumeOut   (uint32_t msg, void *data);
+	/* cb_learn
+	 * callback attached to kernelMidi to learn various actions. */
 
-	inline void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
+	static void cb_learn(uint32_t msg, void *data);
 
 public:
 
