@@ -171,8 +171,10 @@ SampleChannel *mh_startInputRec() {
 	newName += buf;
 	newName += "__";
 
+	/** FIXME - BUG HERE */
 	while (!mh_uniqueSamplename(chan, newName))
 		G_Patch.lastTakeId += 1;
+		/** FIXME - BUG HERE */
 
 	chan->allocEmpty(G_Mixer.totalFrames, G_Patch.lastTakeId);
 	G_Mixer.chanInput = chan;

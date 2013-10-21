@@ -71,6 +71,19 @@ void gdMidiGrabber::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 
 
 /* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabber::cb_learn(uint32_t msg, void *d) {
+	cbData *data = (cbData*) d;
+	gdMidiGrabber *grabber = (gdMidiGrabber*) data->grabber;
+	gLearner      *learner = data->learner;
+	uint32_t      *param   = learner->param;
+	grabber->__cb_learn(param, msg, learner);
+	free(data);
+}
+
+
+/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
@@ -116,51 +129,25 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 /* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberChannel::cb_learn(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	gdMidiGrabberChannel *grabber = (gdMidiGrabberChannel*) data->grabber;
-	gLearner             *learner = data->learner;
-	uint32_t             *param   = learner->param;
-	grabber->__cb_learn(param, msg, learner);
-	free(data);
-}
-
-
-/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
 
 gdMidiGrabberMaster::gdMidiGrabberMaster()
-	: gdMidiGrabber(300, 200, "MIDI Input Setup (global)")
+	: gdMidiGrabber(300, 178, "MIDI Input Setup (global)")
 {
 	set_modal();
 
-	new gLearner(8,  30, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
-	new gLearner(8,  54, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
-	new gLearner(8,  78, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
-	new gLearner(8, 102, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
-	new gLearner(8, 126, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
-	new gLearner(8, 150, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
-	new gLearner(8, 174, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
+	new gLearner(8,   8, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
+	new gLearner(8,  32, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
+	new gLearner(8,  56, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
+	new gLearner(8,  80, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
+	new gLearner(8, 104, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
+	new gLearner(8, 128, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
+	new gLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
 
 	gu_setFavicon(this);
 	show();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMidiGrabberMaster::cb_learn(uint32_t msg, void *d) {
-	cbData *data = (cbData*) d;
-	gdMidiGrabberMaster *grabber = (gdMidiGrabberMaster*) data->grabber;
-	gLearner            *learner = data->learner;
-	uint32_t            *param   = learner->param;
-	grabber->__cb_learn(param, msg, learner);
-	free(data);
 }
 
 
@@ -176,7 +163,7 @@ gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn 
 {
 	begin();
 	text   = new gBox(x(), y(), 156, 20, l);
-	value  = new gBox(text->x()+text->w()+4, y(), 80, 20, "(not set)");
+	value  = new gClick(text->x()+text->w()+4, y(), 80, 20, "(not set)");
 	button = new gButton(value->x()+value->w()+4, y(), 40, 20, "learn");
 	end();
 
@@ -185,6 +172,7 @@ gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn 
 
 	value->box(G_BOX);
 	value->callback(cb_value, (void*)this);
+	value->when(FL_WHEN_RELEASE);
 	updateValue();
 
 	button->type(FL_TOGGLE_BUTTON);
@@ -196,12 +184,13 @@ gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn 
 
 
 void gLearner::updateValue() {
-	if (*param != 0) {
-		char buf[9];
+	char buf[16];
+	if (*param != 0x0)
 		snprintf(buf, 9, "0x%X", *param);
-		value->copy_label(buf);
-		button->value(0);
-	}
+	else
+		snprintf(buf, 16, "(not set)");
+	value->copy_label(buf);
+	button->value(0);
 }
 
 
@@ -216,7 +205,12 @@ void gLearner::cb_value(Fl_Widget *v, void *p) { ((gLearner*)p)->__cb_value(); }
 
 
 void gLearner::__cb_value() {
-	printf("click\n");
+	if (Fl::event_button() == FL_RIGHT_MOUSE) {
+		printf("%X\n", *param);
+		*param = 0x0;
+		updateValue();
+	}
+	// elif (LEFT_MOUSE) : insert values by hand
 }
 
 

@@ -49,7 +49,7 @@ private:
 	kernelMidi::cb_midiLearn *callback;
 
 	class gBox    *text;
-	class gBox    *value;
+	class gClick  *value;
 	class gButton *button;
 
 	static void cb_button(Fl_Widget *v, void *p);
@@ -78,7 +78,12 @@ class gdMidiGrabber : public gWindow {
 protected:
 
 	void stopMidiLearn(gLearner *l);
-	void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
+
+	/* cb_learn
+	 * callback attached to kernelMidi to learn various actions. */
+
+	static void cb_learn(uint32_t msg, void *data);
+	inline void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
 
 public:
 
@@ -100,11 +105,6 @@ private:
 
 	//gVector <gLearner *> items; for future use, with vst parameters
 
-	/* cb_learn
-	 * callback attached to kernelMidi to learn various actions. */
-
-	static void cb_learn(uint32_t msg, void *data);
-
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
 
@@ -118,13 +118,6 @@ public:
 
 
 class gdMidiGrabberMaster : public gdMidiGrabber {
-
-private:
-
-	/* cb_learn
-	 * callback attached to kernelMidi to learn various actions. */
-
-	static void cb_learn(uint32_t msg, void *data);
 
 public:
 
