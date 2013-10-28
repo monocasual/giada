@@ -206,11 +206,10 @@ void gLearner::cb_value(Fl_Widget *v, void *p) { ((gLearner*)p)->__cb_value(); }
 
 void gLearner::__cb_value() {
 	if (Fl::event_button() == FL_RIGHT_MOUSE) {
-		printf("%X\n", *param);
 		*param = 0x0;
 		updateValue();
 	}
-	// elif (LEFT_MOUSE) : insert values by hand
+	/// TODO - elif (LEFT_MOUSE) : insert values by hand
 }
 
 

@@ -218,6 +218,16 @@ int Conf::read() {
 	midiPortIn = atoi(getValue("midiPortIn").c_str());
 	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
 
+	midiInRewind     = strtoul(getValue("midiInRewind").c_str(), NULL, 10);
+  midiInStartStop  = strtoul(getValue("midiInStartStop").c_str(), NULL, 10);
+  midiInActionRec  = strtoul(getValue("midiInActionRec").c_str(), NULL, 10);
+  midiInInputRec   = strtoul(getValue("midiInInputRec").c_str(), NULL, 10);
+  midiInMetronome  = strtoul(getValue("midiInMetronome").c_str(), NULL, 10);
+  midiInVolumeIn   = strtoul(getValue("midiInVolumeIn").c_str(), NULL, 10);
+  midiInVolumeOut  = strtoul(getValue("midiInVolumeOut").c_str(), NULL, 10);
+  midiInBeatDouble = strtoul(getValue("midiInBeatDouble").c_str(), NULL, 10);
+  midiInBeatHalf   = strtoul(getValue("midiInBeatHalf").c_str(), NULL, 10);
+
 	browserX = atoi(getValue("browserX").c_str());
 	browserY = atoi(getValue("browserY").c_str());
 	browserW = atoi(getValue("browserW").c_str());
@@ -335,6 +345,16 @@ int Conf::write() {
 	fprintf(fp, "midiPortOut=%d\n", midiPortOut);
 	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
 
+	fprintf(fp, "midiInRewind=%u\n",     midiInRewind);
+	fprintf(fp, "midiInStartStop=%u\n",  midiInStartStop);
+	fprintf(fp, "midiInActionRec=%u\n",  midiInActionRec);
+	fprintf(fp, "midiInInputRec=%u\n",   midiInInputRec);
+	fprintf(fp, "midiInMetronome=%u\n",  midiInMetronome);
+	fprintf(fp, "midiInVolumeIn=%u\n",   midiInVolumeIn);
+	fprintf(fp, "midiInVolumeOut=%u\n",  midiInVolumeOut);
+	fprintf(fp, "midiInBeatDouble=%u\n", midiInBeatDouble);
+	fprintf(fp, "midiInBeatHalf=%u\n",   midiInBeatHalf);
+
 	fprintf(fp, "pluginPath=%s\n", pluginPath);
 	fprintf(fp, "patchPath=%s\n",  patchPath);
 	fprintf(fp, "samplePath=%s\n", samplePath);
@@ -374,11 +394,6 @@ int Conf::write() {
 
 	fprintf(fp, "aboutX=%d\n", aboutX);
 	fprintf(fp, "aboutY=%d\n", aboutY);
-
-	/**
-	for (unsigned i=0; i<MAX_NUM_CHAN; i++)
-		fprintf(fp, "keys%d=%d\n", i, keys[i]);
-	*/
 
 	fprintf(fp, "recsStopOnChanHalt=%d\n", recsStopOnChanHalt);
 	fprintf(fp, "chansStopOnSeqHalt=%d\n", chansStopOnSeqHalt);

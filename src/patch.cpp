@@ -419,7 +419,6 @@ uint32_t Patch::getMidiValue(int i, const char *c) {
 	char tmp[32];
 	sprintf(tmp, "chanMidi%s%d", c, i);
 	return strtoul(getValue(tmp).c_str(), NULL, 10);
-
 }
 
 

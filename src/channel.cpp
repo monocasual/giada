@@ -95,6 +95,10 @@ void Channel::readPatchMidiIn(int i) {
 	midiIn         = G_Patch.getMidiValue(i, "In");
 	midiInKeyPress = G_Patch.getMidiValue(i, "InKeyPress");
 	midiInKeyRel   = G_Patch.getMidiValue(i, "InKeyRel");
+  midiInKill     = G_Patch.getMidiValue(i, "InKill");
+  midiInVolume   = G_Patch.getMidiValue(i, "InVolume");
+  midiInMute     = G_Patch.getMidiValue(i, "InMute");
+  midiInSolo     = G_Patch.getMidiValue(i, "InSolo");
 }
 
 
@@ -105,6 +109,7 @@ void Channel::writePatchMidiIn(FILE *fp, int i) {
 	fprintf(fp, "chanMidiIn%d=%u\n",         i, midiIn);
 	fprintf(fp, "chanMidiInKeyPress%d=%u\n", i, midiInKeyPress);
 	fprintf(fp, "chanMidiInKeyRel%d=%u\n",   i, midiInKeyRel);
+	fprintf(fp, "chanMidiInKill%d=%u\n",     i, midiInKill);
 	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
