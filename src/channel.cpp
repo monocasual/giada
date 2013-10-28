@@ -976,7 +976,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 		return false;
 
 	char wname[32];
-	sprintf(wname, "__TAKE_%d__", takeId);
+	sprintf(wname, "TAKE-%d", takeId);
 
 	w->pathfile = getCurrentPath()+"/"+wname;
 	w->name     = wname;
@@ -1112,7 +1112,7 @@ int SampleChannel::load(const char *file) {
 	std::string oldName = wave->name;
 	int k = 1;
 
-	while (!mh_uniqueSamplename(this, wave->name)) {
+	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
 		char buf[4];
 		sprintf(buf, "%d", k);
 		wave->name = oldName + "-" + buf;

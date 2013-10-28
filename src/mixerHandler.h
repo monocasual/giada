@@ -66,6 +66,6 @@ SampleChannel *mh_stopInputRec();
  * return true if samplename 'n' is unique. Requires SampleChannel *ch
  * in order to skip check against itself. */
 
-bool mh_uniqueSamplename(class SampleChannel *ch, std::string &n);
+bool mh_uniqueSamplename(class SampleChannel *ch, const char *name);
 
 #endif

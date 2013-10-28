@@ -156,25 +156,18 @@ SampleChannel *mh_startInputRec() {
 	if (chan == NULL)
 		return NULL;
 
-	/* pick up the very next __TAKE_(n+1)__ */
-
 	Wave *w = new Wave();
 	if (!w->allocEmpty(G_Mixer.totalFrames))
 		return NULL;
 
-	/* pick up the next __TAKE_(n+1)__ */
+	/* increase lastTakeId until the sample name TAKE-[n] is unique */
 
-	std::string newName;
-	char buf[4];
-	sprintf(buf, "%d", G_Patch.lastTakeId);
-	newName  = "__TAKE_";
-	newName += buf;
-	newName += "__";
-
-	/** FIXME - BUG HERE */
-	while (!mh_uniqueSamplename(chan, newName))
-		G_Patch.lastTakeId += 1;
-		/** FIXME - BUG HERE */
+	char name[32];
+	sprintf(name, "TAKE-%d", G_Patch.lastTakeId);
+	while (!mh_uniqueSamplename(chan, name)) {
+		G_Patch.lastTakeId++;
+		sprintf(name, "TAKE-%d", G_Patch.lastTakeId);
+	}
 
 	chan->allocEmpty(G_Mixer.totalFrames, G_Patch.lastTakeId);
 	G_Mixer.chanInput = chan;
@@ -209,13 +202,13 @@ SampleChannel *mh_stopInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-bool mh_uniqueSamplename(SampleChannel *ch, std::string &n) {
+bool mh_uniqueSamplename(SampleChannel *ch, const char *name) {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		if (ch != G_Mixer.channels.at(i)) {
 			if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
-				SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
-				if (ch->wave != NULL)
-					if (n == ch->wave->name)
+				SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
+				if (other->wave != NULL)
+					if (!strcmp(name, other->wave->name.c_str()))
 						return false;
 			}
 		}
