@@ -1081,13 +1081,9 @@ void Keyboard::clear() {
 
 
 void Keyboard::setChannelWithActions(gSampleChannel *gch) {
-	if (gch->readActions == NULL) {
-		gch->addActionButton(true); // true = button on
-		puts("readActions == NULL");
-	}
-	else {
+	if (gch->ch->hasActions)
+		gch->addActionButton(true);  // true == button on
+	else
 		gch->delActionButton();
-		puts("readActions NOT NULL");
-	}
 }
 

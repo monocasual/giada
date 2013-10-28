@@ -118,7 +118,8 @@ public:
 	int  keyPress       (int event);
 
 	/* add/delActionButton
-	 * add or remove 'R' button when actions are available. */
+	 * add or remove 'R' button when actions are available. 'Status' is
+	 * the initial status of the button: on or off. */
 
 	void addActionButton(bool status);
 	void delActionButton();

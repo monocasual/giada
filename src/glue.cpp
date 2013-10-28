@@ -421,7 +421,7 @@ void glue_stopActionRec() {
 	mainWin->beat_rec->value(0);
 	mainWin->beat_rec->redraw();
 
-	/* if acton editor is on */
+	/* in case acton editor is on, refresh it */
 
 	gu_refreshActionEditor();
 }
