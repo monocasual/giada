@@ -786,8 +786,8 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 
 	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-16, 0);
 	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+32, y(), (w()/2)-16, 0);
-	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new Left Channel");
-	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new Right Channel");
+	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new channel");
+	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new channel");
 
 	/* begin() - end() don't work well here, with sub-Fl_Group */
 
