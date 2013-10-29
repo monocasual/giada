@@ -70,7 +70,10 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 				if (ra->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)
 					continue;
 
-				if (ra->type & (ACTION_KEYPRESS | ACTION_KEYREL	| ACTION_KILLCHAN))	{
+				/* also filter out ACTION_KEYREL: it's up to gAction to find the other piece
+				 * (namely frame_b) */
+
+				if (ra->type & (ACTION_KEYPRESS | ACTION_KILLCHAN))	{
 					int ax = x+(ra->frame/pParent->zoom);
 					gAction *a = new gAction(
 							ax,           // x
@@ -462,11 +465,12 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
 		recorder::action *a2 = NULL;
 		recorder::getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
-		int frame_b = a2->frame;
-
-		if (frame_b == -1)
-			frame_b = frame_a+4096;
-		w((frame_b - frame_a)/parent->zoom);
+		if (a2) {
+			frame_b = a2->frame;
+			w((frame_b - frame_a)/parent->zoom);
+		}
+		else
+			printf("[gActionChannel] frame_b not found! [%d:???]\n", frame_a);
 
 	/* a singlepress action narrower than 8 pixel is useless. So check it.
 	 * Warning: if an action is 8 px narrow, it has no body space to drag
