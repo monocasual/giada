@@ -119,10 +119,11 @@ public:
 
 	/* add/delActionButton
 	 * add or remove 'R' button when actions are available. 'Status' is
-	 * the initial status of the button: on or off. */
+	 * the initial status of the button: on or off.
+	 * If force==true remove the button with no further checks. */
 
 	void addActionButton(bool status);
-	void delActionButton();
+	void delActionButton(bool force=false);
 
 	class gModeBox *modeBox;
 	class gClick 	 *readActions;

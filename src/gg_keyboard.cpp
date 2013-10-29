@@ -409,8 +409,8 @@ void gSampleChannel::reset() {
 	sampleButton->bdColor  = COLOR_BD_0;
 	sampleButton->txtColor = COLOR_TEXT_0;
 	sampleButton->label("-- no sample --");
-	delActionButton();
-	sampleButton->redraw();
+	delActionButton(true); // force==true, don't check, just remove it
+ 	sampleButton->redraw();
 	status->redraw();
 }
 
@@ -518,8 +518,8 @@ void gSampleChannel::addActionButton(bool status) {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::delActionButton() {
-	if (readActions == NULL || ch->hasActions)
+void gSampleChannel::delActionButton(bool force) {
+	if (!force && (readActions == NULL || ch->hasActions))
 		return;
 
 	remove(readActions);		// delete from Keyboard group (FLTK)
