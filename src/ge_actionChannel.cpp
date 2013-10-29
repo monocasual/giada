@@ -71,17 +71,17 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 					continue;
 
 				if (ra->type & (ACTION_KEYPRESS | ACTION_KEYREL	| ACTION_KILLCHAN))	{
-					int ax = x+((recorder::frames.at(i))/pParent->zoom);
+					int ax = x+(ra->frame/pParent->zoom);
 					gAction *a = new gAction(
-							ax,                       // x
-							y+4,                      // y
-							h()-8,                    // h
-							recorder::frames.at(i),	  // frame_a
-							i,                        // n. of recordings
-							pParent,                  // pointer to the pParent window
-							ch,                       // pointer to SampleChannel
-							false,                    // record = false: don't record it, we are just displaying it!
-							ra->type);                // type of action
+							ax,           // x
+							y+4,          // y
+							h()-8,        // h
+							ra->frame,	  // frame_a
+							i,            // n. of recordings
+							pParent,      // pointer to the pParent window
+							ch,           // pointer to SampleChannel
+							false,        // record = false: don't record it, we are just displaying it!
+							ra->type);    // type of action
 					add(a);
 				}
 			}
@@ -431,9 +431,7 @@ const int gAction::MIN_WIDTH = 8;
 
 
 /** index is useless? */
-gAction::gAction(int X, int Y, int H, int frame_a, unsigned index,
-                 gdActionEditor *parent, SampleChannel *ch, bool record,
-                 char type)
+gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEditor *parent, SampleChannel *ch, bool record, char type)
 : Fl_Box     (X, Y, MIN_WIDTH, H),
   selected   (false),
   index      (index),
