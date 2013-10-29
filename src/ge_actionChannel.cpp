@@ -430,7 +430,9 @@ const int gAction::MIN_WIDTH = 8;
 /* ------------------------------------------------------------------ */
 
 
-/** index is useless? */
+/** TODO - index is useless?
+ *  TODO - pass a record::action pointer and let gAction compute values */
+
 gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEditor *parent, SampleChannel *ch, bool record, char type)
 : Fl_Box     (X, Y, MIN_WIDTH, H),
   selected   (false),
@@ -457,8 +459,11 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 	 * do that after the possible recording, otherwise we don't know which
 	 * key_release is associated. */
 
-	if (ch->mode == SINGLE_PRESS) {
-		frame_b = recorder::getEndActionFrame(ch->index, ACTION_KEYREL, frame_a);
+	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
+		recorder::action *a2 = NULL;
+		recorder::getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
+		int frame_b = a2->frame;
+
 		if (frame_b == -1)
 			frame_b = frame_a+4096;
 		w((frame_b - frame_a)/parent->zoom);

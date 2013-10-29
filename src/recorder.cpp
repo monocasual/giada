@@ -572,26 +572,6 @@ int getStartActionFrame(int chan, char action, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int getEndActionFrame(int chan, char type, int frame) {
-
-	for (unsigned i=0; i<frames.size; i++)
-		for (unsigned j=0; j<global.at(i).size; j++)
-			if (global.at(i).at(j)->chan == chan &&
-					global.at(i).at(j)->type == type &&
-					frames.at(i) > frame)
-			{
-				//printf("[REC] end Action frame found | frame=%d, index=%d\n", frames.at(i), i);
-				return frames.at(i);
-			}
-
-	//puts("[REC] end Action frame NOT found, suspected ring loop!");
-	return -1;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue) {
 
 	sortActions();  // mandatory

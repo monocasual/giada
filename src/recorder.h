@@ -179,11 +179,6 @@ void disableRead(SampleChannel *ch);  /// TODO - move to SampleChannel
 
 int getStartActionFrame(int chan, char action, int frame);
 
-/* getEndActionFrame ------- DEPRECATED!
- * same as getStartActionFrame but searches the B-frame. */
-
-int getEndActionFrame(int chan, char action, int frame);
-
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
  * from 'frame'. Action can be a bitmask. If iValue != -1 search for
