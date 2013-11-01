@@ -209,7 +209,6 @@ void glue_deleteChannel(Channel *ch) {
 	mainWin->keyboard->deleteChannel(ch->guiChannel);
 	G_Mixer.deleteChannel(ch);
 	mainWin->keyboard->updateChannels(side);
-	/// TODO: print channel deleted
 }
 
 

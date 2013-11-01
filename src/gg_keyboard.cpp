@@ -440,7 +440,7 @@ void gSampleChannel::update() {
 	 * button must be activated accordingly. */
 
 	if (ch->hasActions)
-		addActionButton(ch->readActions);
+		addActionButton();
 	else
 		delActionButton();
 
@@ -491,7 +491,7 @@ int gSampleChannel::keyPress(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::addActionButton(bool status) {
+void gSampleChannel::addActionButton() {
 
 	/* quit if 'R' exists yet. */
 
@@ -504,7 +504,7 @@ void gSampleChannel::addActionButton(bool status) {
 
 	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4, sampleButton->y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
 	readActions->type(FL_TOGGLE_BUTTON);
-	readActions->value(status);
+	readActions->value(ch->readActions);
 	readActions->callback(cb_readActions, (void*)this);
 	add(readActions);
 
@@ -1082,7 +1082,7 @@ void Keyboard::clear() {
 
 void Keyboard::setChannelWithActions(gSampleChannel *gch) {
 	if (gch->ch->hasActions)
-		gch->addActionButton(true);  // true == button on
+		gch->addActionButton();
 	else
 		gch->delActionButton();
 }

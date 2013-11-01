@@ -122,7 +122,7 @@ public:
 	 * the initial status of the button: on or off.
 	 * If force==true remove the button with no further checks. */
 
-	void addActionButton(bool status);
+	void addActionButton();
 	void delActionButton(bool force=false);
 
 	class gModeBox *modeBox;
