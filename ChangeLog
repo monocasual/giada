@@ -13,6 +13,17 @@
 
 
 
+0.8.0 --- 2013 . 11 . _
+- Initial MIDI input support
+- Fix freeze when recording audio inputs on a second channel
+- Fix 'R' button to show up even if the channel has no actions
+- Fix weird drawings of keypress actions in action editor
+- Free channel: delete 'R' button as well
+- Shift+key does not kill loop mode channels in a wait status
+- Fix issue with 'R' button and newly added actions
+- Remove "left"/"right" labels from main buttons
+
+
 0.7.3 --- 2013 . 09 . 14
 - Experimental 64 bit compilation (Linux only)
 - Massive internal cleanup of channel/gui channel layers
