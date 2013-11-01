@@ -65,12 +65,12 @@ Channel::Channel(int type, int status, char side)
 	  vChan     (NULL),
 	  guiChannel(NULL),
 	  midiIn        (true),
-	  midiInKeyPress(0),
-	  midiInKeyRel  (0),
-	  midiInKill    (0),
-	  midiInVolume  (0),
-	  midiInMute    (0),
-	  midiInSolo    (0)
+	  midiInKeyPress(0x0),
+	  midiInKeyRel  (0x0),
+	  midiInKill    (0x0),
+	  midiInVolume  (0x0),
+	  midiInMute    (0x0),
+	  midiInSolo    (0x0)
 {
 	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 	if (!vChan)
@@ -438,7 +438,8 @@ SampleChannel::SampleChannel(char side)
 		fadeoutVol (1.0f),
 		fadeoutStep(DEFAULT_FADEOUT_STEP),
 		key        (0),
-	  readActions(false)
+	  readActions(true),
+	  midiInReadActions(0x0)
 {}
 
 
@@ -1018,7 +1019,10 @@ void SampleChannel::process(float *buffer, int size) {
 void SampleChannel::kill() {
 	if (wave != NULL && status != STATUS_OFF) {
 		if (mute || mute_i)
-			stop();
+			stop();   /// FIXME - hardStop() is enough
+		else
+		if (status == STATUS_WAIT && mode & LOOP_ANY)
+			hardStop();
 		else
 			setFadeOut(DO_STOP);
 	}
@@ -1057,7 +1061,7 @@ void SampleChannel::stopBySeq() {
 
 
 void SampleChannel::stop() {
-	if (status == STATUS_PLAY && mode == SINGLE_PRESS) {
+	if (mode == SINGLE_PRESS && status == STATUS_PLAY) {
 		if (mute || mute_i)
 			hardStop();
 		else

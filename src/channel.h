@@ -313,6 +313,10 @@ public:
 
   bool   readActions;     // read actions or not
 
+	/* midi stuff */
+
+  uint32_t midiInReadActions;
+
 	/* const - what to do when a fadeout ends */
 
 	enum {

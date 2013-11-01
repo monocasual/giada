@@ -106,6 +106,11 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
 	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
 
+	if (ch->type == CHANNEL_SAMPLE) {
+		size(300, 202);
+		new gLearner(8, 174, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+	}
+
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
 
