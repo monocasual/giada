@@ -313,6 +313,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 				printf(" >>>  volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, v, vf);
 				glue_setChanVol(ch, vf, false); // false = update gui
 			}
+			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
+				printf(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
+				glue_startStopReadingRecs((SampleChannel*)ch, false);              // false = update gui
+			}
 		}
 		printf("\n");
 	}
