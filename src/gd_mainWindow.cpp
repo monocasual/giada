@@ -296,7 +296,7 @@ void gdMainWindow::__cb_open_config_win() {
 
 
 void gdMainWindow::__cb_rewind_tracker() {
-	mh_rewindSequencer(); /** FIXME - call glue_* */
+	glue_rewindSeq();
 }
 
 
@@ -304,7 +304,7 @@ void gdMainWindow::__cb_rewind_tracker() {
 
 
 void gdMainWindow::__cb_startstop() {
-	G_Mixer.running ? glue_stopSeq() : glue_startSeq();
+	glue_startStopSeq();
 }
 
 
