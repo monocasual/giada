@@ -90,10 +90,13 @@ int glue_startInputRec();
 int glue_stopInputRec();
 
 /* start/stopReadingRecs
- * handle the 'R' button. */
+ * handle the 'R' button. If gui == true the signal comes from an
+ * internal interaction on the GUI, otherwise it's a MIDI/Jack/external
+ * signal. */
 
-void glue_startReadingRecs(class SampleChannel *ch);
-void glue_stopReadingRecs(class SampleChannel *ch);
+void glue_startStopReadingRecs(class SampleChannel *ch, bool gui=true);
+void glue_startReadingRecs    (class SampleChannel *ch, bool gui=true);
+void glue_stopReadingRecs     (class SampleChannel *ch, bool gui=true);
 
 void glue_quantize(int val);
 

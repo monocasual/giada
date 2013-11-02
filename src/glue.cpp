@@ -349,7 +349,7 @@ void glue_stopSeq(bool gui) {
 	}
 
 	/* if input recs are active (who knows why) we must deactivate them.
-	 * Someone might stop the sequencer while an input rec is running. */
+	 * One might stop the sequencer while an input rec is running. */
 
 	if (G_Mixer.chanInput != NULL) {
 		mh_stopInputRec();
@@ -429,18 +429,31 @@ void glue_stopActionRec() {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startReadingRecs(SampleChannel *ch) {
-	if (G_Conf.treatRecsAsLoops)
-		ch->recStatus = REC_WAITING;
+void glue_startStopReadingRecs(SampleChannel *ch, bool gui) {
+	if (ch->readActions)
+		glue_stopReadingRecs(ch, gui);
 	else
-		recorder::enableRead(ch);
+		glue_startReadingRecs(ch, gui);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_stopReadingRecs(SampleChannel *ch) {
+void glue_startReadingRecs(SampleChannel *ch, bool gui) {
+	if (G_Conf.treatRecsAsLoops)
+		ch->recStatus = REC_WAITING;
+	else
+		recorder::enableRead(ch);
+	if (!gui)
+		((gSampleChannel*)ch->guiChannel)->readActions->value(1);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
 
 	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
 	 * the channel in REC_ENDING status */
@@ -449,6 +462,8 @@ void glue_stopReadingRecs(SampleChannel *ch) {
 		ch->recStatus = REC_ENDING;
 	else
 		recorder::disableRead(ch);
+	if (!gui)
+		((gSampleChannel*)ch->guiChannel)->readActions->value(0);
 }
 
 
