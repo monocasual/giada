@@ -13,7 +13,7 @@
 
 
 
-0.8.0 --- 2013 . 11 . _
+0.8.0 --- 2013 . 11 . 03
 - Initial MIDI input support
 - Fix freeze when recording audio inputs on a second channel
 - Fix 'R' button to show up even if the channel has no actions

@@ -28,6 +28,7 @@ Features:
 * BPM and beat sync with sample-accurate loop engine.
 * Built-in wave editor.
 * VST and VSTi (instrument) plugin support.
+* MIDI input and output support.
 * Live sampler from external inputs.
 * Live quantizer.
 * Piano Roll editor.
