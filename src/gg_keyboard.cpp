@@ -1010,7 +1010,7 @@ int Keyboard::handle(int e) {
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					G_Mixer.chanInput == NULL ? glue_startInputRec() : glue_stopInputRec();
+					glue_startStopInputRec(false);  // update gui
 					ret = 1;
 					break;
 				}

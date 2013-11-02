@@ -278,6 +278,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 			printf(" >>> actionRec (global) (pure=0x%X)", pure);
 			glue_startStopActionRec();
 		}
+		else if (pure == G_Conf.midiInInputRec) {
+			printf(" >>> inputRec (global) (pure=0x%X)", pure);
+			glue_startStopInputRec(false, false);   // update gui, no popup messages
+		}
 		else if (pure == G_Conf.midiInMetronome) {
 			printf(" >>> metronome (global) (pure=0x%X)", pure);
 			glue_startStopMetronome(false);  // update gui

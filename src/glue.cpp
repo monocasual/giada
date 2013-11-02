@@ -808,13 +808,25 @@ void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_startInputRec() {
+void glue_startStopInputRec(bool gui, bool alert) {
+	if (G_Mixer.chanInput == NULL) {
+		if (!glue_startInputRec(gui)) {
+			if (alert) gdAlert("No channels available for recording.");
+			else       puts("[glue] no channels available for recording");
+		}
+	}
+	else
+		glue_stopInputRec(gui);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int glue_startInputRec(bool gui) {
 
 	if (G_audio_status == false)
 		return -1;
-
-	if (G_Mixer.chanInput != NULL)			// if there's another recording active
-		return 1;
 
 	SampleChannel *ch = mh_startInputRec();
 	if (ch == NULL)	{                  // no chans available
@@ -826,15 +838,18 @@ int glue_startInputRec() {
 	if (!G_Mixer.running) {
 		glue_startSeq();
 		mainWin->beat_stop->value(1);
+		mainWin->beat_stop->redraw();
 	}
 
 	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
 
 	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
 
-	mainWin->input_rec->value(1);
-	mainWin->input_rec->redraw();
-	mainWin->beat_stop->redraw();
+	if (!gui) {
+		mainWin->input_rec->value(1);
+		mainWin->input_rec->redraw();
+	}
+
 	return 1;
 
 }
@@ -843,15 +858,18 @@ int glue_startInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-int glue_stopInputRec() {
+int glue_stopInputRec(bool gui) {
 
 	SampleChannel *ch = mh_stopInputRec();
 
 	if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
 		ch->start(true);
 
-	mainWin->input_rec->value(0);
-	mainWin->input_rec->redraw();
+	if (!gui) {
+		mainWin->input_rec->value(0);
+		mainWin->input_rec->redraw();
+	}
+
 	return 1;
 }
 

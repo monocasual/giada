@@ -320,12 +320,7 @@ void gdMainWindow::__cb_rec() {
 
 
 void gdMainWindow::__cb_inputRec() {
-	if (G_Mixer.chanInput == NULL) {
-		if (!glue_startInputRec())
-			gdAlert("No channels available for recording.");
-	}
-	else
-		glue_stopInputRec();
+	glue_startStopInputRec();
 }
 
 
