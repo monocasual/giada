@@ -105,8 +105,8 @@ void glue_stopReadingRecs     (class SampleChannel *ch, bool gui=true);
 void glue_quantize(int val);
 
 void glue_setChanVol(class Channel *ch, float v, bool gui=true);
-void glue_setOutVol(float v);
-void glue_setInVol(float v);
+void glue_setOutVol (float v, bool gui=true);
+void glue_setInVol  (float v, bool gui=true);
 
 void glue_setPanning(class gdEditor *win, class SampleChannel *ch, float val);
 

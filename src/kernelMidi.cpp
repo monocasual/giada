@@ -284,7 +284,17 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 		}
 		else if (pure == G_Conf.midiInMetronome) {
 			printf(" >>> metronome (global) (pure=0x%X)", pure);
-			glue_startStopMetronome(false);  // update gui
+			glue_startStopMetronome(false);
+		}
+		else if (pure == G_Conf.midiInVolumeIn) {
+			float vf = (value >> 8)/127.0f;
+			printf(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			glue_setInVol(vf, false);
+		}
+		else if (pure == G_Conf.midiInVolumeOut) {
+			float vf = (value >> 8)/127.0f;
+			printf(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			glue_setOutVol(vf, false);
 		}
 
 		/* process channels */
@@ -305,21 +315,20 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 			}
 			else if (pure == ch->midiInMute) {
 				printf(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
-				glue_setMute(ch, false); // false = update gui
+				glue_setMute(ch, false);
 			}
 			else if (pure == ch->midiInSolo) {
 				printf(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
-				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false); // false = update gui
+				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
 			}
 			else if (pure == ch->midiInVolume) {
-				int v    = value >> 8;
-				float vf = v/127.0f;
-				printf(" >>>  volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, v, vf);
-				glue_setChanVol(ch, vf, false); // false = update gui
+				float vf = (value >> 8)/127.0f;
+				printf(" >>>  volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				glue_setChanVol(ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
 				printf(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
-				glue_startStopReadingRecs((SampleChannel*)ch, false);              // false = update gui
+				glue_startStopReadingRecs((SampleChannel*)ch, false);
 			}
 		}
 		printf("\n");

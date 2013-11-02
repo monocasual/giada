@@ -499,16 +499,20 @@ void glue_setChanVol(Channel *ch, float v, bool gui) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setOutVol(float val) {
-	G_Mixer.outVol = val;
+void glue_setOutVol(float v, bool gui) {
+	G_Mixer.outVol = v;
+	if (!gui)
+		mainWin->outVol->value(v);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_setInVol(float val) {
-	G_Mixer.inVol = val;
+void glue_setInVol(float v, bool gui) {
+	G_Mixer.inVol = v;
+	if (!gui)
+		mainWin->inVol->value(v);
 }
 
 
