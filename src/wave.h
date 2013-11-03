@@ -50,9 +50,10 @@ public:
 	SF_INFO  inHeader;
 	SF_INFO  outHeader;
 	float   *data;
-	int      size;			// wave size (size in stereo: size / 2)
-	bool     isLogical; // memory only (a take)
-	bool     isEdited;  // edited via editor
+	int      size;			  // wave size (size in stereo: size / 2)
+	bool     isLogical;   // memory only (a take)
+	bool     isEdited;    // edited via editor
+	int      initRate;    // original freq., used for pitch shifting
 
 	inline int getRate() { return inHeader.samplerate; }
 

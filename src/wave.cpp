@@ -69,6 +69,7 @@ int Wave::open(const char *f) {
 	}
 	isLogical = false;
 	isEdited  = false;
+	initRate  = getRate();
 
 	return 1;
 }

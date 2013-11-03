@@ -136,6 +136,7 @@ gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 	pitch->range(0.01f, 4.0f);
 	pitch->value(ch->pitch);
 	pitch->callback(cb_setPitch, (void*)this);
+	pitch->when(FL_WHEN_RELEASE);
 
 	sprintf(buf, "%.4f", ch->pitch); // 4 digits
 	pitchNum->value(buf);

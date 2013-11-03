@@ -1064,8 +1064,8 @@ void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numer
 	if (numeric) {
 		if (val <= 0.0f)
 			val = 0.1000f;
-		if (val > 2.0f)
-			val = 2.0000f;
+		if (val > 4.0f)
+			val = 4.0000f;
 		win->pitch->value(val);
 	}
 

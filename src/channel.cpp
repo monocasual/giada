@@ -541,37 +541,35 @@ void SampleChannel::setEnd(unsigned v) {
 
 void SampleChannel::setPitch(float v) {
 
-#if 0
-	/* if the pitch changes also chanStart/chanEnd must change accordingly
-	 * and to do that we need the original (or previous) chanStart/chanEnd
-	 * values (chanStartTrue and chanEndTrue). Formula:
-	 *
-	 * chanStart{pitched} = chanStart{Original} / newpitch */
+	/* a change in pitch requires new waveform, because pitching up
+	 * and down the same memory buffer would bring terrible audio
+	 * quality over time. So reload the sample from disk for each pitch
+	 * change. We also restore the previous status, mode and tracker. */
 
-	if (v == 1.0f) {
-		begin = beginTrue;
-		end   = endTrue;
-		pitch = 1.0f;
-		return;
+	int prevStatus  = status;
+	int prevMode    = mode;
+	//int prevTracker = tracker;
+
+	pitch = v;
+	load(wave->pathfile.c_str());
+
+	status  = prevStatus;
+	mode    = prevMode;
+
+	if (pitch != 1.00) {
+		begin   = begin / pitch;
+		end     = end / pitch;
+		tracker = begin;
+		//tracker = prevTracker / pitch;
+
+		if (begin % 2 != 0)	begin++;
+		if (end   % 2 != 0)	end++;
+
+		wave->resample(2, wave->initRate/pitch);
 	}
 
-	begin = (unsigned) floorf(beginTrue / v);
-	end   = (unsigned) floorf(endTrue   / v);
+	printf("[SampleChannel] new pitch=%f, begin=%d end=%d\n", pitch, begin, end);
 
-	pitch = v;
-
-	/* even values please */
-
-	if (begin % 2 != 0)	begin++;
-	if (end   % 2 != 0)	end++;
-
-	/* avoid overflow when changing pitch during play mode */
-
-	if (tracker > end)
-		tracker = end;
-# endif
-
-	pitch = v;
 }
 
 
