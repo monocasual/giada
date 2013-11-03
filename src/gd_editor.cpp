@@ -85,7 +85,8 @@ gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 	tools->resizable(new gBox(chanStart->x()+chanStart->w()+4, tools->y(), 80, tools->h()));
 
 	char buf[16];
-	sprintf(buf, "%d", ch->beginTrue / 2); // divided by 2 because stereo
+	///sprintf(buf, "%d", ch->beginTrue / 2); // divided by 2 because stereo
+	sprintf(buf, "%d", ch->begin / 2); // divided by 2 because stereo
 	chanStart->value(buf);
 	chanStart->type(FL_INT_INPUT);
 	chanStart->callback(cb_setChanPos, this);
@@ -95,7 +96,8 @@ gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 	chanStart->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 	chanEnd  ->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	sprintf(buf, "%d", ch->endTrue / 2);	// divided by 2 because stereo
+	///sprintf(buf, "%d", ch->endTrue / 2);	// divided by 2 because stereo
+	sprintf(buf, "%d", ch->end / 2);  // divided by 2 because stereo
 	chanEnd->value(buf);
 	chanEnd->type(FL_INT_INPUT);
 	chanEnd->callback(cb_setChanPos, this);

@@ -162,15 +162,18 @@ void gWaveform::recalcPoints() {
 	selectionA = relativePoint(selectionA_abs);
 	selectionB = relativePoint(selectionB_abs);
 
-	chanStart  = relativePoint(chan->beginTrue / 2);
+	///chanStart  = relativePoint(chan->beginTrue / 2);
+	chanStart  = relativePoint(chan->begin / 2);
 
 	/* fix the rounding error when chanEnd is set on the very end of the
 	 * sample */
 
-	if (chan->endTrue == chan->wave->size)
+	///if (chan->endTrue == chan->wave->size)
+	if (chan->end == chan->wave->size)
 		chanEnd = data.size - 2; // 2 px border
 	else
-		chanEnd = relativePoint(chan->endTrue / 2);
+		///chanEnd = relativePoint(chan->endTrue / 2);
+		chanEnd = relativePoint(chan->end / 2);
 }
 
 
@@ -314,8 +317,10 @@ int gWaveform::handle(int e) {
 				break;
 			}
 
-			int realChanStart = chan->beginTrue;
-			int realChanEnd   = chan->endTrue;
+			///int realChanStart = chan->beginTrue;
+			///int realChanEnd   = chan->endTrue;
+			int realChanStart = chan->begin;
+			int realChanEnd   = chan->end;
 
 			if (chanStartLit)
 				realChanStart = absolutePoint(chanStart)*2;

@@ -581,9 +581,11 @@ void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e, boo
 			b = 0;
 		if (b > ch->wave->size)
 			b = ch->wave->size-2;
-		if (b >= ch->endTrue)
+		///if (b >= ch->endTrue)
+		if (b >= ch->end)
 			b = ch->begin;
-		if (e <= ch->beginTrue)
+		///if (e <= ch->beginTrue)
+		if (e <= ch->begin)
 			e = ch->end;
 	}
 

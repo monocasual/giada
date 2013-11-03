@@ -294,8 +294,8 @@ public:
 	int    tracker;         // chan position
 	int    begin;
 	int    end;
-	int    beginTrue;	      // chanStart NOT pitch affected
-	int    endTrue;	        // chanend   NOT pitch affected
+	//int    beginTrue;	      // chanStart NOT pitch affected
+	//int    endTrue;	        // chanend   NOT pitch affected
   float  pitch;
 	float  boost;
 	int    mode;            // mode: see const.h

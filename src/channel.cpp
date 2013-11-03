@@ -427,8 +427,8 @@ SampleChannel::SampleChannel(char side)
 		tracker    (0),
 		begin      (0),
 		end        (0),
-		beginTrue  (0),
-		endTrue    (0),
+		//beginTrue  (0),
+		//endTrue    (0),
 		pitch      (gDEFAULT_PITCH),
 		boost      (1.0f),
 		mode       (DEFAULT_CHANMODE),
@@ -517,8 +517,9 @@ int SampleChannel::save(const char *path) {
 void SampleChannel::setBegin(unsigned v) {
 	if (v % 2 != 0)
 		v++;
-	beginTrue = v;
-	begin     = (unsigned) floorf(beginTrue / pitch);
+	///beginTrue = v;
+	///begin     = (unsigned) floorf(beginTrue / pitch);
+	begin     = (unsigned) floorf(begin / pitch);
 	tracker   = begin;
 }
 
@@ -529,8 +530,9 @@ void SampleChannel::setBegin(unsigned v) {
 void SampleChannel::setEnd(unsigned v) {
 	if (v % 2 != 0)
 		v++;
-	endTrue = v;
-	end = (unsigned) floorf(endTrue / pitch);
+	///endTrue = v;
+	///end = (unsigned) floorf(endTrue / pitch);
+	end = (unsigned) floorf(end / pitch);
 }
 
 
@@ -539,6 +541,7 @@ void SampleChannel::setEnd(unsigned v) {
 
 void SampleChannel::setPitch(float v) {
 
+#if 0
 	/* if the pitch changes also chanStart/chanEnd must change accordingly
 	 * and to do that we need the original (or previous) chanStart/chanEnd
 	 * values (chanStartTrue and chanEndTrue). Formula:
@@ -566,6 +569,9 @@ void SampleChannel::setPitch(float v) {
 
 	if (tracker > end)
 		tracker = end;
+# endif
+
+	pitch = v;
 }
 
 
@@ -629,10 +635,6 @@ void SampleChannel::sum(int frame, bool running) {
 
 		if (tracker <= end) {
 
-			/* ctp is chanTracker, pitch affected */
-
-			unsigned ctp = tracker * pitch;
-
 			/* fade in */
 
 			if (fadein <= 1.0f)
@@ -660,18 +662,16 @@ void SampleChannel::sum(int frame, bool running) {
 
 						/* ftp is fadeoutTracker affected by pitch */
 
-						unsigned ftp = fadeoutTracker * pitch;
+						vChan[frame]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
+						vChan[frame+1] += wave->data[fadeoutTracker+1] * fadeoutVol * v;
 
-						vChan[frame]   += wave->data[ftp]   * fadeoutVol * v;
-						vChan[frame+1] += wave->data[ftp+1] * fadeoutVol * v;
-
-						vChan[frame]   += wave->data[ctp]   * v;
-						vChan[frame+1] += wave->data[ctp+1] * v;
+						vChan[frame]   += wave->data[tracker]   * v;
+						vChan[frame+1] += wave->data[tracker+1] * v;
 
 					}
 					else { // FADEOUT
-						vChan[frame]   += wave->data[ctp]   * fadeoutVol * v;
-						vChan[frame+1] += wave->data[ctp+1] * fadeoutVol * v;
+						vChan[frame]   += wave->data[tracker]   * fadeoutVol * v;
+						vChan[frame+1] += wave->data[tracker+1] * fadeoutVol * v;
 					}
 
 					fadeoutVol     -= fadeoutStep;
@@ -706,8 +706,8 @@ void SampleChannel::sum(int frame, bool running) {
 			else {
 				if (!mute && !mute_i) {
 					float v = volume_i * fadein * boost;
-					vChan[frame]   += wave->data[ctp]   * v;
-					vChan[frame+1] += wave->data[ctp+1] * v;
+					vChan[frame]   += wave->data[tracker]   * v;
+					vChan[frame+1] += wave->data[tracker+1] * v;
 				}
 			}
 
@@ -966,9 +966,9 @@ void SampleChannel::pushWave(Wave *w) {
 	wave      = w;
 	status    = STATUS_OFF;
 	begin     = 0;
-	beginTrue = 0;
+	//beginTrue = 0;
 	end       = wave->size;
-	endTrue   = wave->size;
+	//endTrue   = wave->size;
 }
 
 
@@ -989,9 +989,9 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	wave        = w;
 	status      = STATUS_OFF;
 	begin       = 0;
-	beginTrue   = 0;
+	//beginTrue   = 0;
 	end         = wave->size;
-	endTrue     = wave->size;
+	//endTrue     = wave->size;
 
 	return true;
 }
@@ -1277,8 +1277,8 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 	fprintf(fp, "chanSolo%d=%d\n",       i, solo);
 	fprintf(fp, "chanvol%d=%f\n",        i, volume);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);
-	fprintf(fp, "chanBegin%d=%d\n",      i, beginTrue);       // true values, not pitched
-	fprintf(fp, "chanend%d=%d\n",        i, endTrue);         // true values, not pitched
+	//fprintf(fp, "chanBegin%d=%d\n",      i, beginTrue);       // true values, not pitched
+	//fprintf(fp, "chanend%d=%d\n",        i, endTrue);         // true values, not pitched
 	fprintf(fp, "chanBoost%d=%f\n",      i, boost);
 	fprintf(fp, "chanPanLeft%d=%f\n",    i, panLeft);
 	fprintf(fp, "chanPanRight%d=%f\n",   i, panRight);
