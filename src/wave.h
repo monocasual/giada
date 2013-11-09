@@ -37,6 +37,15 @@
 
 
 class Wave {
+
+private:
+
+	SNDFILE   *fileIn;
+	SNDFILE   *fileOut;
+	SF_INFO    inHeader;
+	SF_INFO    outHeader;
+	SRC_STATE *srcState;  // libsamplerate struct for live resampling
+
 public:
 
 	Wave();
@@ -45,17 +54,17 @@ public:
 	std::string pathfile; // full path + sample name
 	std::string name;			// sample name (changeable)
 
-	SNDFILE *fileIn;
-	SNDFILE *fileOut;
-	SF_INFO  inHeader;
-	SF_INFO  outHeader;
-	float   *data;
-	int      size;			  // wave size (size in stereo: size / 2)
-	bool     isLogical;   // memory only (a take)
-	bool     isEdited;    // edited via editor
-	int      initRate;    // original freq., used for pitch shifting
+	float     *data;
+	int        size;			   // wave size (size in stereo: size / 2)
+	bool       isLogical;   // memory only (a take)
+	bool       isEdited;    // edited via editor
 
-	inline int getRate() { return inHeader.samplerate; }
+	inline int  rate    () { return inHeader.samplerate; }
+	inline int  channels() { return inHeader.channels; }
+	inline int  frames  () { return inHeader.frames; }
+	inline void rate    (int v) { inHeader.samplerate = v; }
+	inline void channels(int v) { inHeader.channels = v; }
+	inline void frames  (int v) { inHeader.frames = v; }
 
 	int open(const char *f);
 	int readData();
@@ -67,7 +76,15 @@ public:
 
 	int allocEmpty(unsigned size);
 
-	int resample(int quality, int newRate);
+	/* resample
+	 * simple algorithm for one-shot resampling. */
+
+	int resample    (int quality, int newRate);
+
+	/* resampleProc
+	 * advanced, chunk-based algorithm for live manipulation. */
+
+	int resampleProc(int quality, int newRate);
 
 };
 

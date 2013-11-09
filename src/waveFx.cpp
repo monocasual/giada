@@ -76,8 +76,8 @@ bool wfx_monoToStereo(Wave *w) {
 	free(w->data);
 	w->data = dataNew;
 	w->size = newSize;
-	w->inHeader.frames *= 2;
-	w->inHeader.channels = 2;
+	w->frames(w->frames()*2);
+	w->channels(2);
 
 	return 1;
 }
@@ -137,7 +137,8 @@ int wfx_cut(Wave *w, int a, int b) {
 	free(w->data);
 	w->data = temp;
 	w->size = newSize;
-	w->inHeader.frames -= b-a;
+	//w->inHeader.frames -= b-a;
+	w->frames(w->frames() - b - a);
 	w->isEdited = true;
 
 	puts("[wfx] cutting done");
@@ -171,7 +172,8 @@ int wfx_trim(Wave *w, int a, int b) {
 	free(w->data);
 	w->data = temp;
 	w->size = newSize;
-	w->inHeader.frames = b-a;
+	//w->inHeader.frames = b-a;
+	w->frames(b - a);
  	w->isEdited = true;
 
 	return 1;

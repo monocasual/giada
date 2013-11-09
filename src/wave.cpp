@@ -69,7 +69,7 @@ int Wave::open(const char *f) {
 	}
 	isLogical = false;
 	isEdited  = false;
-	initRate  = getRate();
+	///initRate  = getRate();
 
 	return 1;
 }
@@ -211,5 +211,13 @@ int Wave::resample(int quality, int newRate) {
 	data = tmp;
 	size = newSize;
 	inHeader.samplerate = newRate;
+	return 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int Wave::resampleProc(int quality, int newRate) {
 	return 1;
 }
