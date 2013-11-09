@@ -198,6 +198,12 @@ class SampleChannel : public Channel {
 
 private:
 
+	/* tmpChan
+	 * another buffer used as a temporary storage, during pitch operations
+	 * and future stuff. */
+
+	float *tmpChan;
+
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
 	 * enough room for a complete fadeout? Should we shorten it? */
@@ -261,6 +267,11 @@ public:
 	 * updates the pitch value and chanStart+chanEnd accordingly. */
 
 	void setPitch(float v);
+
+	/* processPitch
+	 * call wave->resampleProc and resample the internal virtual channel. */
+
+	void processPitch();
 
 	/* setStart/end
 	 * change begin/end read points in sample. */

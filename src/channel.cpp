@@ -423,12 +423,11 @@ void MidiChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 SampleChannel::SampleChannel(char side)
 	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
+		tmpChan    (NULL),
 		wave       (NULL),
 		tracker    (0),
 		begin      (0),
 		end        (0),
-		//beginTrue  (0),
-		//endTrue    (0),
 		pitch      (gDEFAULT_PITCH),
 		boost      (1.0f),
 		mode       (DEFAULT_CHANMODE),
@@ -440,7 +439,11 @@ SampleChannel::SampleChannel(char side)
 		key        (0),
 	  readActions(true),
 	  midiInReadActions(0x0)
-{}
+{
+	tmpChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	if (!tmpChan)
+		puts("[SampleChannel] unable to alloc memory for tmpChan!");
+}
 
 
 /* ------------------------------------------------------------------ */
@@ -449,6 +452,8 @@ SampleChannel::SampleChannel(char side)
 SampleChannel::~SampleChannel() {
 	if (wave)
 		delete wave;
+	if (tmpChan)
+		free(tmpChan);
 }
 
 
@@ -543,7 +548,7 @@ void SampleChannel::setPitch(float v) {
 
 	pitch = v;
 
-	if (pitch != 1.00) {
+	if (pitch != 1.0f) {
 		begin   = begin / pitch;
 		end     = end / pitch;
 		///tracker = prevTracker / pitch;
@@ -556,6 +561,15 @@ void SampleChannel::setPitch(float v) {
 
 	printf("[SampleChannel] new pitch=%f, begin=%d end=%d\n", pitch, begin, end);
 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::processPitch() {
+	if (pitch != 1.0f)
+		wave->resampleProc(1, pitch);
 }
 
 
@@ -696,8 +710,6 @@ void SampleChannel::sum(int frame, bool running) {
 			}
 
 			tracker += 2;
-			//if (pitch != 1.0f)
-			//	tracker *= pitch;
 
 			/* check for end of samples. SINGLE_ENDLESS runs forever unless
 			 * it's in ENDING mode */
@@ -1080,7 +1092,7 @@ int SampleChannel::load(const char *file) {
 		return SAMPLE_READ_ERROR;
 	}
 
-	if (w->inHeader.channels > 2) {
+	if (w->channels() > 2) {
 		printf("[SampleChannel] %s: unsupported multichannel wave\n", file);
 		delete w;
 		return SAMPLE_MULTICHANNEL;
@@ -1091,12 +1103,12 @@ int SampleChannel::load(const char *file) {
 		return SAMPLE_READ_ERROR;
 	}
 
-	if (w->inHeader.channels == 1) /** FIXME: error checking  */
+	if (w->channels() == 1) /** FIXME: error checking  */
 		wfx_monoToStereo(w);
 
-	if (w->inHeader.samplerate != G_Conf.samplerate) {
+	if (w->rate() != G_Conf.samplerate) {
 		printf("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
-				w->inHeader.samplerate, G_Conf.samplerate);
+				w->rate(), G_Conf.samplerate);
 		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
 	}
 
