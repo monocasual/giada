@@ -36,7 +36,9 @@
 
 
 class gdEditor : public gWindow {
+
 private:
+
 	static void cb_setChanPos   (Fl_Widget *w, void *p);
 	static void cb_resetStartEnd(Fl_Widget *w, void *p);
 	static void cb_setVolume    (Fl_Widget *w, void *p);
@@ -65,6 +67,7 @@ private:
 	inline void __cb_zoomOut();
 
 public:
+
 	gdEditor(class SampleChannel *ch);
 	~gdEditor();
 

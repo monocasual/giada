@@ -541,31 +541,17 @@ void SampleChannel::setEnd(unsigned v) {
 
 void SampleChannel::setPitch(float v) {
 
-	/* a change in pitch requires new waveform, because pitching up
-	 * and down the same memory buffer would bring terrible audio
-	 * quality over time. So reload the sample from disk for each pitch
-	 * change. We also restore the previous status, mode and tracker. */
-
-	int prevStatus  = status;
-	int prevMode    = mode;
-	//int prevTracker = tracker;
-
 	pitch = v;
-	load(wave->pathfile.c_str());
-
-	status  = prevStatus;
-	mode    = prevMode;
 
 	if (pitch != 1.00) {
 		begin   = begin / pitch;
 		end     = end / pitch;
-		tracker = begin;
-		//tracker = prevTracker / pitch;
+		///tracker = prevTracker / pitch;
+
+		if (tracker > end) tracker = end;
 
 		if (begin % 2 != 0)	begin++;
 		if (end   % 2 != 0)	end++;
-
-		wave->resample(2, wave->initRate/pitch);
 	}
 
 	printf("[SampleChannel] new pitch=%f, begin=%d end=%d\n", pitch, begin, end);
@@ -710,6 +696,8 @@ void SampleChannel::sum(int frame, bool running) {
 			}
 
 			tracker += 2;
+			//if (pitch != 1.0f)
+			//	tracker *= pitch;
 
 			/* check for end of samples. SINGLE_ENDLESS runs forever unless
 			 * it's in ENDING mode */
@@ -1275,8 +1263,8 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 	fprintf(fp, "chanSolo%d=%d\n",       i, solo);
 	fprintf(fp, "chanvol%d=%f\n",        i, volume);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);
-	//fprintf(fp, "chanBegin%d=%d\n",      i, beginTrue);       // true values, not pitched
-	//fprintf(fp, "chanend%d=%d\n",        i, endTrue);         // true values, not pitched
+	fprintf(fp, "chanBegin%d=%d\n",      i, begin);
+	fprintf(fp, "chanend%d=%d\n",        i, end);
 	fprintf(fp, "chanBoost%d=%f\n",      i, boost);
 	fprintf(fp, "chanPanLeft%d=%f\n",    i, panLeft);
 	fprintf(fp, "chanPanRight%d=%f\n",   i, panRight);

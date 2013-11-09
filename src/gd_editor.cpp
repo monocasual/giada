@@ -48,7 +48,10 @@ extern gdMainWindow *mainWin;
 extern Conf	         G_Conf;
 
 
-gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
+gdEditor::gdEditor(SampleChannel *ch)
+	: gWindow(640, 480),
+		ch(ch)
+{
 	set_non_modal();
 
 	if (G_Conf.sampleEditorX)
@@ -67,20 +70,21 @@ gdEditor::gdEditor(SampleChannel *ch) : gWindow(640, 480), ch(ch) {
 
 	Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
 	tools->begin();
-		volume        = new gDial (60,	tools->y(), 20, 20, "Volume");
-		volumeNum     = new gInput(84,	tools->y(), 45, 20, "dB");
-		boost         = new gDial (60,	volume->y()+volume->h()+4, 20, 20, "Boost");
-		boostNum      = new gInput(84,	boost->y(), 45, 20, "dB");
-		normalize     = new gClick(60,  boostNum->y()+boostNum->h()+4, 69, 20, "Normalize");
+		volume         = new gDial (tools->x()+52,	                   tools->y(), 20, 20, "Volume");
+		volumeNum      = new gInput(volume->x()+volume->w()+4,        tools->y(), 46, 20, "dB");
+		boost          = new gDial (volumeNum->x()+volumeNum->w()+80, tools->y(), 20, 20, "Boost");
+		boostNum       = new gInput(boost->x()+boost->w()+4,          tools->y(), 46, 20, "dB");
+		normalize      = new gClick(boostNum->x()+boostNum->w()+80,   tools->y(), 70, 20, "Normalize");
+		pan 				   = new gDial (normalize->x()+normalize->w()+80, tools->y(), 20, 20, "Pan");
+		panNum    	   = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
 
-		pitch					= new gDial (volumeNum->x()+volumeNum->w()+80,	tools->y(), 20, 20, "Pitch");
-		pitchNum		  = new gInput(pitch->x()+24,	tools->y(), 45, 20);
-		pan 					= new gDial (pitch->x(), pitch->y()+pitch->h()+4, 20, 20, "Pan");
-		panNum    		= new gInput(pitch->x()+24,	pan->y(), 45, 20, "%");
+		pitch				   = new gDial  (tools->x()+52,	                volume->y()+volume->h()+4, 20, 20, "Pitch");
+		pitchNum		   = new gInput (pitch->x()+pitch->w()+4,	      volume->y()+volume->h()+4, 46, 20);
 
-		chanStart     = new gInput(pitchNum->x()+pitchNum->w()+80, tools->y(), 70, 20, "Start");
-		chanEnd       = new gInput(chanStart->x(), chanStart->y()+chanStart->h()+4, 70, 20, "End");
-		resetStartEnd = new gClick(chanStart->x(), chanEnd->y()+chanEnd->h()+4, 69, 20, "Reset");
+		chanStart      = new gInput(tools->x()+52,                    pitch->y()+pitch->h()+4, 70, 20, "Start");
+		chanEnd        = new gInput(chanStart->x()+chanStart->w()+80, pitch->y()+pitch->h()+4, 70, 20, "End");
+		resetStartEnd  = new gClick(chanEnd->x()+chanEnd->w()+80,     pitch->y()+pitch->h()+4, 69, 20, "Reset");
+
 	tools->end();
 	tools->resizable(new gBox(chanStart->x()+chanStart->w()+4, tools->y(), 80, tools->h()));
 
