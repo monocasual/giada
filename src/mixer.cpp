@@ -219,15 +219,15 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	if (!ready)
 		return 0;
 
-	float *buffer  = ((float *) out_buf);
-	float *inBuf   = ((float *) in_buf);
-	bufferFrames  *= 2;     // stereo
-	peakOut        = 0.0f;  // reset peak calculator
-	peakIn         = 0.0f;  // reset peak calculator
+	float *outBuf = ((float *) out_buf);
+	float *inBuf  = ((float *) in_buf);
+	bufferFrames *= 2;     // stereo
+	peakOut       = 0.0f;  // reset peak calculator
+	peakIn        = 0.0f;  // reset peak calculator
 
 	/* always clean each buffer */
 
-	memset(buffer, 0, sizeof(float) * bufferFrames);         // out
+	memset(outBuf, 0, sizeof(float) * bufferFrames);         // out
 	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
 
 	pthread_mutex_lock(&mutex_chans);
@@ -367,8 +367,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		/** FIXME - move this one after the peak meter calculation */
 
 		if (tockPlay) {
-			buffer[j]   += tock[tockTracker];
-			buffer[j+1] += tock[tockTracker];
+			outBuf[j]   += tock[tockTracker];
+			outBuf[j+1] += tock[tockTracker];
 			tockTracker++;
 			if (tockTracker >= TICKSIZE-1) {
 				tockPlay    = false;
@@ -376,8 +376,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			}
 		}
 		if (tickPlay) {
-			buffer[j]   += tick[tickTracker];
-			buffer[j+1] += tick[tickTracker];
+			outBuf[j]   += tick[tickTracker];
+			outBuf[j+1] += tick[tickTracker];
 			tickTracker++;
 			if (tickTracker >= TICKSIZE-1) {
 				tickPlay    = false;
@@ -386,18 +386,20 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		}
 	} // end loop J
 
+	/** resample if channel[i]->pitch != 1.0f */
+
 	/* final loop: sum virtual channels and process plugins. */
 
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size; k++)
-		channels.at(k)->process(buffer, bufferFrames);
+		channels.at(k)->process(outBuf, bufferFrames);
 	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */
 
 #ifdef WITH_VST
 	pthread_mutex_lock(&mutex_plugins);
-	G_PluginHost.processStack(buffer, PluginHost::MASTER_OUT);
+	G_PluginHost.processStack(outBuf, PluginHost::MASTER_OUT);
 	G_PluginHost.processStack(vChanInToOut, PluginHost::MASTER_IN);
 	pthread_mutex_unlock(&mutex_plugins);
 #endif
@@ -409,28 +411,28 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		/* merging vChanInToOut, if enabled */
 
 		if (inToOut) {
-			buffer[j]   += vChanInToOut[j];
-			buffer[j+1] += vChanInToOut[j+1];
+			outBuf[j]   += vChanInToOut[j];
+			outBuf[j+1] += vChanInToOut[j+1];
 		}
 
-		buffer[j]   *= outVol;
-		buffer[j+1] *= outVol;
+		outBuf[j]   *= outVol;
+		outBuf[j+1] *= outVol;
 
 		/* computes the peak for the left channel (so far). */
 
-		if (buffer[j] > peakOut)
-			peakOut = buffer[j];
+		if (outBuf[j] > peakOut)
+			peakOut = outBuf[j];
 
 		if (G_Conf.limitOutput) {
-			if (buffer[j] > 1.0f)
-				buffer[j] = 1.0f;
-			else if (buffer[j] < -1.0f)
-				buffer[j] = -1.0f;
+			if (outBuf[j] > 1.0f)
+				outBuf[j] = 1.0f;
+			else if (outBuf[j] < -1.0f)
+				outBuf[j] = -1.0f;
 
-			if (buffer[j+1] > 1.0f)
-				buffer[j+1] = 1.0f;
-			else if (buffer[j+1] < -1.0f)
-				buffer[j+1] = -1.0f;
+			if (outBuf[j+1] > 1.0f)
+				outBuf[j+1] = 1.0f;
+			else if (outBuf[j+1] < -1.0f)
+				outBuf[j+1] = -1.0f;
 		}
 	}
 
