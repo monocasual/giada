@@ -117,7 +117,7 @@ public:
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
 
-	virtual void onZero() = 0;
+	virtual void onZero(int frame) = 0;
 
 	/* onBar
 	 * action to do when a bar has passed. */
@@ -198,11 +198,12 @@ class SampleChannel : public Channel {
 
 private:
 
-	/* tmpChan
-	 * another buffer used as a temporary storage, during pitch operations
-	 * and future stuff. */
+	/* frameStart
+	 * the exact frame in which the channel has been started, taken from
+	 * G_Mixer.actualFrame. */
 
-	float *tmpChan;
+	int frameStart;
+	/** frameKill */
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -234,7 +235,7 @@ public:
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     ();
+	void  onZero     (int frame);
 	void  onBar      ();
 	void  parseAction(recorder::action *a, int frame);
 
@@ -262,6 +263,10 @@ public:
 	 * Mixer. Running = is Mixer in play? */
 
 	void sum(int frame, bool running);
+
+	/** experimental */
+	void sum2(int bufferSize, bool running);
+	/** experimental */
 
 	/* setPitch
 	 * updates the pitch value and chanStart+chanEnd accordingly. */
@@ -370,7 +375,7 @@ public:
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     ();
+	void  onZero     (int frame);
 	void  onBar      ();
 	void  parseAction(recorder::action *a, int frame);
 

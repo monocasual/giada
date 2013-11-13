@@ -247,7 +247,7 @@ void MidiChannel::parseAction(recorder::action *a, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::onZero() {
+void MidiChannel::onZero(int frame) {
 	if (status == STATUS_ENDING)
 		status = STATUS_OFF;
 	else
@@ -423,7 +423,7 @@ void MidiChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 SampleChannel::SampleChannel(char side)
 	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
-		tmpChan    (NULL),
+		frameStart (0),
 		wave       (NULL),
 		tracker    (0),
 		begin      (0),
@@ -440,9 +440,6 @@ SampleChannel::SampleChannel(char side)
 	  readActions(true),
 	  midiInReadActions(0x0)
 {
-	tmpChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
-	if (!tmpChan)
-		puts("[SampleChannel] unable to alloc memory for tmpChan!");
 }
 
 
@@ -452,8 +449,6 @@ SampleChannel::SampleChannel(char side)
 SampleChannel::~SampleChannel() {
 	if (wave)
 		delete wave;
-	if (tmpChan)
-		free(tmpChan);
 }
 
 
@@ -744,7 +739,135 @@ void SampleChannel::sum(int frame, bool running) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::onZero() {
+void SampleChannel::sum2(int bufferSize, bool running) {
+
+	if (wave == NULL)
+		return;
+
+	bool isPlaying = status & (STATUS_PLAY | STATUS_ENDING);
+
+	if (!isPlaying)
+		return;
+
+	printf("play! tracker=%d startFrame=%d\n", tracker, frameStart);
+
+	for (int i=0; i<bufferSize; i+=2) {
+
+		if (fadein <= 1.0f)
+			fadein += 0.01f;
+
+		/* things to do when the sequencer is on: volume envelopes, check
+		 * for loop rewind on beat 0 */
+
+		if (running) {
+			volume_i += volume_d;
+			if (volume_i < 0.0f)
+				volume_i = 0.0f;
+			else
+			if (volume_i > 1.0f)
+				volume_i = 1.0f;
+
+			if (frameStart + i >= G_Mixer.totalFrames)
+				puts("rewind?");
+		}
+
+		/* fadeout process (both fadeout and xfade) */
+
+		if (fadeoutOn) {
+
+			if (fadeoutVol >= 0.0f) { // fadeout ongoing
+
+				float v = volume_i * boost;
+
+				if (fadeoutType == XFADE) {
+
+					vChan[i]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
+					vChan[i+1] += wave->data[fadeoutTracker+1] * fadeoutVol * v;
+
+					vChan[i]   += wave->data[tracker]   * v;
+					vChan[i+1] += wave->data[tracker+1] * v;
+
+				}
+				else {
+					vChan[i]   += wave->data[tracker]   * fadeoutVol * v;
+					vChan[i+1] += wave->data[tracker+1] * fadeoutVol * v;
+				}
+
+				fadeoutVol     -= fadeoutStep;
+				fadeoutTracker += 2;     // pitch-independent
+			}
+			else {  // fadeout end
+
+				fadeoutOn  = false;
+				fadeoutVol = 1.0f;
+
+				/* QWait ends with the end of the xfade */
+
+				if (fadeoutType == XFADE) {
+					qWait = false;
+				}
+				else {
+					if (fadeoutEnd == DO_MUTE)
+						mute = true;
+					else
+					if (fadeoutEnd == DO_MUTE_I)
+						mute_i = true;
+					else             // DO_STOP
+						hardStop();
+				}
+
+				/* we must append another frame in the buffer when the fadeout
+				 * ends: there's a gap here which would clip otherwise */
+
+				vChan[i]   = vChan[i-2];
+				vChan[i+1] = vChan[i-1];
+			}
+		}
+
+		/* no fadeout to do */
+
+		else {
+			float v = volume_i * fadein * boost;
+			vChan[i]   += wave->data[tracker]   * v;
+			vChan[i+1] += wave->data[tracker+1] * v;
+		}
+
+		tracker += 2;  /// todo: pitch effect
+
+		/* check for sample boundaries: what to do when the tracker reaches
+		 * the end of the sample (or the selected portion) */
+
+		if (tracker > end) {
+
+			reset();
+
+			/* SINGLE_ENDLESS runs forever unless in ENDING mode */
+
+			if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+				 (mode == SINGLE_ENDLESS && status == STATUS_ENDING)   ||
+				 ((mode & LOOP_ANY) && !running))
+			{
+				status = STATUS_OFF;
+			}
+
+			/* temporarily stop LOOP_ONCE not in ENDING status, otherwise they
+			 * would return in WAIT, losing the ENDING status */
+
+			if (mode == LOOP_ONCE && status != STATUS_ENDING)
+				status = STATUS_WAIT;
+
+			/* break the loop, don't write data anymore */
+
+			break;
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::onZero(int frame) {
 
 	if (wave == NULL)
 		return;
@@ -791,8 +914,9 @@ void SampleChannel::quantize(int index, int frame) {
 		 * be meaningless. */
 
 		if (status == STATUS_OFF) {
-			status = STATUS_PLAY;
-			qWait  = false;
+			status     = STATUS_PLAY;
+			frameStart = G_Mixer.actualFrame;
+			qWait      = false;
 		}
 		else
 			setXFade();
@@ -1203,8 +1327,10 @@ void SampleChannel::start(bool doQuantize) {
 			else
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
-				else
-					status = STATUS_PLAY;
+				else {
+					status     = STATUS_PLAY;
+					frameStart = G_Mixer.actualFrame;
+				}
 			break;
 		}
 
@@ -1245,7 +1371,8 @@ void SampleChannel::start(bool doQuantize) {
 
 		case STATUS_ENDING:
 		{
-			status = STATUS_PLAY;
+			status     = STATUS_PLAY;
+			frameStart = G_Mixer.actualFrame;
 			break;
 		}
 	}
