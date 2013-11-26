@@ -153,7 +153,7 @@ void MidiChannel::parseAction(recorder::action *a, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::onZero(int frame) {
+void MidiChannel::onZero() {
 	if (status == STATUS_ENDING)
 		status = STATUS_OFF;
 	else

@@ -32,6 +32,7 @@
 #include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
 #include "channel.h"
+#include "midiChannel.h"
 #include "const.h"
 #include "kernelMidi.h"
 

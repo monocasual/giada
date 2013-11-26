@@ -39,6 +39,7 @@
 #include "conf.h"
 #include "ge_mixed.h"
 #include "channel.h"
+#include "sampleChannel.h"
 
 
 extern Mixer G_Mixer;

@@ -63,6 +63,8 @@ SampleChannel::SampleChannel(char side)
 	  readActions(true),
 	  midiInReadActions(0x0)
 {
+	converter  = src_new(1, 2, NULL);
+	_procChan_ = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 }
 
 
@@ -72,6 +74,7 @@ SampleChannel::SampleChannel(char side)
 SampleChannel::~SampleChannel() {
 	if (wave)
 		delete wave;
+	converter = src_delete(converter);
 }
 
 
@@ -184,12 +187,12 @@ void SampleChannel::setPitch(float v) {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void SampleChannel::processPitch() {
 	if (pitch != 1.0f)
 		wave->resampleProc(1, pitch);
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
@@ -362,117 +365,7 @@ void SampleChannel::sum(int frame, bool running) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::sum2(int bufferSize, bool running) {
-
-	if (wave == NULL)
-		return;
-
-	if (!running && !isPlaying())
-		return;
-
-	if (!isPlaying() && !bufferHasMixerEvents(bufferSize))
-		return;
-
-	printf("sum2, bufferSize=%d\n", bufferSize);
-
-	tracker += wave->chunkToBuffer(vChan, tracker, bufferSize, true);
-
-	for (int i=0; i<bufferSize; i+=2) {
-
-		if (fadein <= 1.0f)
-			fadein += 0.01f;
-
-		/* things to do when the sequencer is on: volume envelopes, check
-		 * for loop rewind on beat 0 */
-
-		if (running) {
-
-			volume_i += volume_d;
-			if (volume_i < 0.0f)
-				volume_i = 0.0f;
-			else
-			if (volume_i > 1.0f)
-				volume_i = 1.0f;
-
-			/* check various frame actions */
-
-			if (i == frameStart) {
-
-				if (mode & (LOOP_ANY)) {
-
-					/* do a crossfade if the sample is playing. Regular chanReset
-					 * instead if it's muted, otherwise a click occurs */
-
-					if (status == STATUS_PLAY) {
-						reset();
-						///if (mute || mute_i)
-						///	reset();
-						///else
-						///	setXFade();
-					}
-					else
-					if (status == STATUS_ENDING)
-						hardStop();
-					else
-					if (status == STATUS_WAIT)
-						status = STATUS_PLAY;
-				}
-
-				frameStart = -1;   // reset frameStart to a meaningless value
-			}
-			else
-			if (i == frameBar) {
-				if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-					reset();
-					///setXFade();
-				frameBar = -1;
-			}
-
-		}
-
-		if (isPlaying()) {
-
-			///float v = volume_i * fadein * boost;
-			///vChan[i]   += wave->data[tracker]   * v;
-			///vChan[i+1] += wave->data[tracker+1] * v;
-			///tracker    += 2;  /// todo: pitch effect
-
-			/* check for sample boundaries: what to do when the tracker reaches
-			 * the end of the sample (or the selected portion) */
-
-			if (tracker > end) {
-
-				reset();
-
-				/* SINGLE_ENDLESS runs forever unless in ENDING mode */
-
-				if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
-					 (mode == SINGLE_ENDLESS && status == STATUS_ENDING)   ||
-					 ((mode & LOOP_ANY) && !running))
-				{
-					status = STATUS_OFF;
-					break;   // no more data to write
-				}
-
-				/* temporarily stop LOOP_ONCE not in ENDING status, otherwise they
-				 * would return in WAIT, losing the ENDING status */
-
-				if (mode == LOOP_ONCE && status != STATUS_ENDING) {
-					status = STATUS_WAIT;
-					break;   // no more data to write
-				}
-			}
-		}
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void SampleChannel::onZero(int frame) {
-#if 0
-	frameStart = frame;
+void SampleChannel::onZero() {
 
 	if (wave == NULL)
 		return;
@@ -505,7 +398,6 @@ void SampleChannel::onZero(int frame) {
 		recStatus = REC_READING;
 		recorder::enableRead(this);     // rec start
 	}
-#endif
 }
 
 
@@ -668,7 +560,6 @@ void SampleChannel::setXFade() {
 
 
 void SampleChannel::reset() {
-	puts("reset");
 	tracker = begin;
 	mute_i  = false;
 }
@@ -1020,10 +911,16 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 /* ------------------------------------------------------------------ */
 
-
-bool SampleChannel::bufferHasMixerEvents(int bufferSize) {
-	for (int i=0; i<bufferSize; i++)
-		if (i == frameStart)
-			return true;
-	return false;
+void SampleChannel::processPitch() {
+	data.data_in       = vChan;
+	data.input_frames  = kernelAudio::realBufsize; /// TODO - use private var
+	data.data_out      = _procChan_;
+	data.output_frames = kernelAudio::realBufsize; /// TODO - use private var
+	data.end_of_input  = false;
+	data.src_ratio     = 0.5;
+	data = data;
+	int res = src_process(converter, &data);
+	printf("[sampleChannel] process pitch --- frames_used=%lu frames_gen=%lu res=%d\n", data.input_frames_used, data.output_frames_gen, res);
+	memcpy(vChan, _procChan_, kernelAudio::realBufsize * 2 * sizeof(float));
+	src_reset(converter);
 }

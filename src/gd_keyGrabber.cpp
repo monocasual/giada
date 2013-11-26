@@ -33,6 +33,8 @@
 #include "gui_utils.h"
 #include "gd_config.h"
 #include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 #include "gg_keyboard.h"
 
 

@@ -40,6 +40,7 @@
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "sampleChannel.h"
 
 
 extern Mixer G_Mixer;

@@ -44,7 +44,6 @@ private:
 	SNDFILE   *fileOut;
 	SF_INFO    inHeader;
 	SF_INFO    outHeader;
-	SRC_STATE *srcState;  // libsamplerate struct for live resampling
 
 public:
 
@@ -80,12 +79,6 @@ public:
 	 * simple algorithm for one-shot resampling. */
 
 	int resample    (int quality, int newRate);
-
-	/* resampleProc
-	 * advanced, chunk-based algorithm for live manipulation. */
-
-	int resampleProc(int quality, int newRate);
-
 };
 
 #endif

@@ -117,7 +117,7 @@ public:
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
 
-	virtual void onZero(int frame) = 0;
+	virtual void onZero() = 0;
 
 	/* onBar
 	 * action to do when a bar has passed. */

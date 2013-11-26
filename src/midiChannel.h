@@ -69,7 +69,7 @@ public:
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     (int frame);
+	void  onZero     ();
 	void  onBar      ();
 	void  parseAction(recorder::action *a, int frame);
 

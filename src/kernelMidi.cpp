@@ -32,6 +32,7 @@
 #include "glue.h"
 #include "mixer.h"
 #include "channel.h"
+#include "sampleChannel.h"
 #include "pluginHost.h"
 #include "conf.h"
 

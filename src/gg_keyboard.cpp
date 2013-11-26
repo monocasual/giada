@@ -42,6 +42,8 @@
 #include "gd_warnings.h"
 #include "pluginHost.h"
 #include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 #include "gd_keyGrabber.h"
 #include "gd_midiGrabber.h"
 #include "gd_midiInputSetup.h"

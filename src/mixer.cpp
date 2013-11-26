@@ -38,6 +38,8 @@
 #include "conf.h"
 #include "mixerHandler.h"
 #include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 #include "kernelMidi.h"
 
 
@@ -386,13 +388,17 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 		}
 	} // end loop J
 
-	/** resample if channel[i]->pitch != 1.0f */
 
 	/* final loop: sum virtual channels and process plugins. */
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size; k++)
+	for (unsigned k=0; k<channels.size; k++) {
+		/** pitch test */
+		if (channels.at(k)->type == CHANNEL_SAMPLE)
+			((SampleChannel*)channels.at(k))->processPitch();
+		/** pitch test */
 		channels.at(k)->process(outBuf, bufferFrames);
+	}
 	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */

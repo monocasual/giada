@@ -37,6 +37,7 @@
 #include "mixerHandler.h"
 #include "pluginHost.h"
 #include "channel.h"
+#include "sampleChannel.h"
 #include "gd_midiGrabber.h"
 
 

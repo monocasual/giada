@@ -41,6 +41,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "channel.h"
+#include "sampleChannel.h"
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;

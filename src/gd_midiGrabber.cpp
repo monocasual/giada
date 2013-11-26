@@ -32,6 +32,7 @@
 #include "gui_utils.h"
 #include "kernelMidi.h"
 #include "conf.h"
+#include "sampleChannel.h"
 
 
 extern Conf G_Conf;

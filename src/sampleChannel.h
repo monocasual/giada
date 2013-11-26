@@ -31,12 +31,17 @@
 #define SAMPLE_CHANNEL_H
 
 
+#include <samplerate.h>
 #include "channel.h"
 
 
 class SampleChannel : public Channel {
 
 private:
+
+	SRC_STATE *converter;
+	SRC_DATA data;
+	float *_procChan_;
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -48,12 +53,6 @@ private:
 	 * compute any changes in volume done via envelope tool */
 
 	void calcVolumeEnv(int frame);
-
-	/* bufferHasMixerEvents
-	 * check if buffer contains any mixer-driven events such as frameStop
-	 * and others. */
-
-	bool bufferHasMixerEvents(int bufferSize);
 
 public:
 
@@ -74,7 +73,7 @@ public:
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     (int frame);
+	void  onZero     ();
 	void  onBar      ();
 	void  parseAction(recorder::action *a, int frame);
 
@@ -103,17 +102,13 @@ public:
 
 	void sum(int frame, bool running);
 
-	/** experimental */
-	void sum2(int bufferSize, bool running);
-	/** experimental */
-
 	/* setPitch
 	 * updates the pitch value and chanStart+chanEnd accordingly. */
 
 	void setPitch(float v);
 
 	/* processPitch
-	 * call wave->resampleProc and resample the internal virtual channel. */
+	 * resample the internal virtual channel. */
 
 	void processPitch();
 

@@ -213,11 +213,3 @@ int Wave::resample(int quality, int newRate) {
 	inHeader.samplerate = newRate;
 	return 1;
 }
-
-
-/* ------------------------------------------------------------------ */
-
-
-int Wave::resampleProc(int quality, int newRate) {
-	return 1;
-}

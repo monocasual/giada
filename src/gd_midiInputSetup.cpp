@@ -32,6 +32,7 @@
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
 #include "channel.h"
+#include "midiChannel.h"
 #include "gui_utils.h"
 
 

@@ -38,6 +38,7 @@
 #include "glue.h"
 #include "pluginHost.h"
 #include "channel.h"
+#include "sampleChannel.h"
 
 
 extern Patch         G_Patch;

@@ -36,6 +36,8 @@
 #include "mixer.h"
 #include "gd_mainWindow.h"
 #include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 
 
 extern Conf          G_Conf;

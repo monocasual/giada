@@ -41,6 +41,7 @@
 #include "patch.h"
 #include "recorder.h"
 #include "channel.h"
+#include "sampleChannel.h"
 #include "wave.h"
 
 

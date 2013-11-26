@@ -46,6 +46,8 @@
 #include "pluginHost.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 #include "utils.h"
 #include "kernelMidi.h"
 

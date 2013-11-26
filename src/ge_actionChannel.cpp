@@ -34,6 +34,7 @@
 #include "gd_actionEditor.h"
 #include "conf.h"
 #include "channel.h"
+#include "sampleChannel.h"
 
 
 extern gdMainWindow *mainWin;

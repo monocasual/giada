@@ -39,6 +39,7 @@
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
 #include "channel.h"
+#include "sampleChannel.h"
 #include "mixer.h"
 #include "wave.h"
 
