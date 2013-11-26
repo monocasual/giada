@@ -162,15 +162,6 @@ public:
   uint32_t midiInMute;
   uint32_t midiInSolo;
 
-
-	/* frameStart
-	 * the exact frame in which the channel has been started, taken from
-	 * G_Mixer.actualFrame. */
-
-	int frameStart;
-	int frameBar;
-	/** frameKill */
-
 #ifdef WITH_VST
   gVector <class Plugin *> plugins;
 #endif
@@ -182,11 +173,6 @@ public:
 	 * tell wether the channel is playing or is stopped. */
 
 	bool isPlaying();
-
-	/* clear
-	 * call memset to empty each vChan available. Useless for MIDI. */
-
-	void clear(int bufSize);
 
 	/* read/writePatchMidiIn
 	 * read and write to patch all midi-related parameters such as

@@ -59,6 +59,7 @@ public:
 	SampleChannel(char side);
 	~SampleChannel();
 
+	void  clear      (int bufSize);
 	void  process    (float *buffer, int size);
 	void  start      (bool doQuantize);
 	void  kill       ();

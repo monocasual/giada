@@ -70,8 +70,7 @@ Channel::Channel(int type, int status, char side)
 	  midiInKill    (0x0),
 	  midiInVolume  (0x0),
 	  midiInMute    (0x0),
-	  midiInSolo    (0x0),
-	  frameStart(-1)
+	  midiInSolo    (0x0)
 {
 	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 	if (!vChan)
@@ -114,14 +113,6 @@ void Channel::writePatchMidiIn(FILE *fp, int i) {
 	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void Channel::clear(int bufSize) {
-	memset(vChan, 0, sizeof(float) * bufSize);
 }
 
 

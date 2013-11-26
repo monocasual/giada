@@ -81,6 +81,16 @@ SampleChannel::~SampleChannel() {
 /* ------------------------------------------------------------------ */
 
 
+void SampleChannel::clear(int bufSize) {
+	memset(vChan, 0, sizeof(float) * bufSize);
+	pitch=1.0f;
+	printf("[sampleChannel] pitch=%f, pChan=%d\n", pitch, (int)(kernelAudio::realBufsize * pitch));
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void SampleChannel::calcVolumeEnv(int frame) {
 
 	/* method: check this frame && next frame, then calculate delta */
@@ -412,9 +422,8 @@ void SampleChannel::quantize(int index, int frame) {
 		 * be meaningless. */
 
 		if (status == STATUS_OFF) {
-			status     = STATUS_PLAY;
-			frameStart = G_Mixer.actualFrame;
-			qWait      = false;
+			status = STATUS_PLAY;
+			qWait  = false;
 		}
 		else
 			setXFade();
@@ -912,15 +921,15 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 void SampleChannel::processPitch() {
-	data.data_in       = vChan;
-	data.input_frames  = kernelAudio::realBufsize; /// TODO - use private var
+	data.data_in       = wave->data + tracker;
+	data.input_frames  = kernelAudio::realBufsize * pitch; /// TODO - use private var
 	data.data_out      = _procChan_;
 	data.output_frames = kernelAudio::realBufsize; /// TODO - use private var
 	data.end_of_input  = false;
-	data.src_ratio     = 0.5;
+	data.src_ratio     = 1/pitch;
 	data = data;
 	int res = src_process(converter, &data);
-	printf("[sampleChannel] process pitch --- frames_used=%lu frames_gen=%lu res=%d\n", data.input_frames_used, data.output_frames_gen, res);
+	printf("[sampleChannel] process pitch --- ratio=%f, frames_used=%lu frames_gen=%lu res=%d\n", data.src_ratio, data.input_frames_used, data.output_frames_gen, res);
 	memcpy(vChan, _procChan_, kernelAudio::realBufsize * 2 * sizeof(float));
 	src_reset(converter);
 }

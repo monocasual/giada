@@ -234,7 +234,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size; i++)
-		channels.at(i)->clear(bufferFrames);
+		if (channels.at(i)->type == CHANNEL_SAMPLE)
+			((SampleChannel*)channels.at(i))->clear(bufferFrames);
 	pthread_mutex_unlock(&mutex_chans);
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
@@ -392,13 +393,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	/* final loop: sum virtual channels and process plugins. */
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size; k++) {
-		/** pitch test */
-		if (channels.at(k)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)channels.at(k))->processPitch();
-		/** pitch test */
+	for (unsigned k=0; k<channels.size; k++)
 		channels.at(k)->process(outBuf, bufferFrames);
-	}
 	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */
