@@ -202,7 +202,7 @@ void MidiChannel::process(float *buffer, int size) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::start(bool doQuantize) {
+void MidiChannel::start(int frame, bool doQuantize) {
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;

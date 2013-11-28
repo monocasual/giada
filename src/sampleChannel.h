@@ -40,8 +40,8 @@ class SampleChannel : public Channel {
 private:
 
 	SRC_STATE *converter;
-	SRC_DATA data;
-	float *_procChan_;
+	SRC_DATA   data;
+	float     *pChan;
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -61,7 +61,7 @@ public:
 
 	void  clear      (int bufSize);
 	void  process    (float *buffer, int size);
-	void  start      (bool doQuantize);
+	void  start      (int frame, bool doQuantize);
 	void  kill       ();
 	void  empty      ();
 	void  stopBySeq  ();
@@ -111,7 +111,7 @@ public:
 	/* processPitch
 	 * resample the internal virtual channel. */
 
-	void processPitch();
+	int processPitch();
 
 	/* setStart/end
 	 * change begin/end read points in sample. */

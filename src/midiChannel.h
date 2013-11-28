@@ -58,7 +58,7 @@ public:
   uint8_t midiOutChan;       // midi output channel
 
 	void  process    (float *buffer, int size);
-	void  start      (bool doQuantize);
+	void  start      (int frame, bool doQuantize);
 	void  kill       ();
 	void  empty      ();
 	void  stopBySeq  ();

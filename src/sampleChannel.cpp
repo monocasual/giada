@@ -63,8 +63,8 @@ SampleChannel::SampleChannel(char side)
 	  readActions(true),
 	  midiInReadActions(0x0)
 {
-	converter  = src_new(1, 2, NULL);
-	_procChan_ = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	converter = src_new(1, 2, NULL);
+	pChan     = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 }
 
 
@@ -83,8 +83,7 @@ SampleChannel::~SampleChannel() {
 
 void SampleChannel::clear(int bufSize) {
 	memset(vChan, 0, sizeof(float) * bufSize);
-	pitch=1.0f;
-	printf("[sampleChannel] pitch=%f, pChan=%d\n", pitch, (int)(kernelAudio::realBufsize * pitch));
+	memset(pChan, 0, sizeof(float) * bufSize);
 }
 
 
@@ -180,6 +179,14 @@ void SampleChannel::setPitch(float v) {
 	pitch = v;
 
 	if (pitch != 1.0f) {
+
+		printf("[sampleChannel] pitch=%f, vChan=%d, procChan=%d, ratio=%f\n",
+			pitch,
+			kernelAudio::realBufsize * 2,
+			(int)(kernelAudio::realBufsize * 2 * pitch),
+			1/pitch);
+
+/*
 		begin   = begin / pitch;
 		end     = end / pitch;
 		///tracker = prevTracker / pitch;
@@ -188,10 +195,8 @@ void SampleChannel::setPitch(float v) {
 
 		if (begin % 2 != 0)	begin++;
 		if (end   % 2 != 0)	end++;
+*/
 	}
-
-	printf("[SampleChannel] new pitch=%f, begin=%d end=%d\n", pitch, begin, end);
-
 }
 
 
@@ -229,7 +234,7 @@ void SampleChannel::parseAction(recorder::action *a, int frame) {
 	switch (a->type) {
 		case ACTION_KEYPRESS:
 			if (mode & SINGLE_ANY)
-				start(false);
+				start(frame, false);
 			break;
 		case ACTION_KEYREL:
 			if (mode & SINGLE_ANY)
@@ -817,7 +822,12 @@ bool SampleChannel::canInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::start(bool doQuantize) {
+void SampleChannel::start(int frame, bool doQuantize) {
+
+	/** TODO - if pitch != 0 ... */
+
+	//if (tracker + bufSize <= wave->size)
+	printf("fill pChan, offset=%d\n", frame);
 
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -920,16 +930,15 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 /* ------------------------------------------------------------------ */
 
-void SampleChannel::processPitch() {
+int SampleChannel::processPitch() {
 	data.data_in       = wave->data + tracker;
-	data.input_frames  = kernelAudio::realBufsize * pitch; /// TODO - use private var
-	data.data_out      = _procChan_;
+	data.input_frames  = wave->size;
+	data.data_out      = pChan;
 	data.output_frames = kernelAudio::realBufsize; /// TODO - use private var
 	data.end_of_input  = false;
 	data.src_ratio     = 1/pitch;
 	data = data;
 	int res = src_process(converter, &data);
 	printf("[sampleChannel] process pitch --- ratio=%f, frames_used=%lu frames_gen=%lu res=%d\n", data.src_ratio, data.input_frames_used, data.output_frames_gen, res);
-	memcpy(vChan, _procChan_, kernelAudio::realBufsize * 2 * sizeof(float));
-	src_reset(converter);
+	return tracker += data.input_frames_used;
 }

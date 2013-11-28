@@ -73,7 +73,7 @@ public:
 	 * action to do when channel starts. doQuantize = false (don't
 	 * quantize) when Mixer is reading actions from Recorder::. */
 
-	virtual void start(bool doQuantize) = 0;
+	virtual void start(int frame, bool doQuantize) = 0;
 
 	/* stop
 	 * action to do when channel is stopped normally (via key or MIDI). */
