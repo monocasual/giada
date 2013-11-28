@@ -113,6 +113,7 @@ void Mixer::init() {
 
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
+	/** TODO - set kernelAudio::realBufsize * 2 as private member */
 
 	vChanInput   = NULL;
 	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
@@ -133,7 +134,7 @@ Channel *Mixer::addChannel(char side, int type) {
 
 	Channel *ch;
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(side);
+		ch = new SampleChannel(kernelAudio::realBufsize*2, side);
 	else
 		ch = new MidiChannel(side);
 
@@ -235,7 +236,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)channels.at(i))->clear(bufferFrames);
+			((SampleChannel*)channels.at(i))->clear();
 	pthread_mutex_unlock(&mutex_chans);
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {

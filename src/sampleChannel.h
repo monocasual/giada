@@ -42,6 +42,10 @@ private:
 	SRC_STATE *converter;
 	SRC_DATA   data;
 	float     *pChan;
+	bool       pChanFull;
+	int        bufferSize;
+
+	int fillPChan(int frame);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -56,10 +60,10 @@ private:
 
 public:
 
-	SampleChannel(char side);
+	SampleChannel(int bufferSize, char side);
 	~SampleChannel();
 
-	void  clear      (int bufSize);
+	void  clear      ();
 	void  process    (float *buffer, int size);
 	void  start      (int frame, bool doQuantize);
 	void  kill       ();

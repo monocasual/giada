@@ -45,8 +45,9 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-SampleChannel::SampleChannel(char side)
+SampleChannel::SampleChannel(int bufferSize, char side)
 	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
+		bufferSize (bufferSize),
 		wave       (NULL),
 		tracker    (0),
 		begin      (0),
@@ -81,9 +82,10 @@ SampleChannel::~SampleChannel() {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::clear(int bufSize) {
-	memset(vChan, 0, sizeof(float) * bufSize);
-	memset(pChan, 0, sizeof(float) * bufSize);
+void SampleChannel::clear() {
+	memset(vChan, 0, sizeof(float) * bufferSize);
+	memset(pChan, 0, sizeof(float) * bufferSize);
+	pChanFull = false;
 }
 
 
@@ -826,8 +828,9 @@ void SampleChannel::start(int frame, bool doQuantize) {
 
 	/** TODO - if pitch != 0 ... */
 
-	//if (tracker + bufSize <= wave->size)
-	printf("fill pChan, offset=%d\n", frame);
+	if (!pChanFull)
+		if (tracker + bufferSize <= wave->size)
+			printf("fill pChan, offset=%d\n", frame);
 
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -929,6 +932,16 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 
 /* ------------------------------------------------------------------ */
+
+
+int SampleChannel::fillPChan(int frame) {
+	pChanFull = true;
+	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
 
 int SampleChannel::processPitch() {
 	data.data_in       = wave->data + tracker;
