@@ -86,6 +86,7 @@ void SampleChannel::clear() {
 	memset(vChan, 0, sizeof(float) * bufferSize);
 	memset(pChan, 0, sizeof(float) * bufferSize);
 	pChanFull = false;
+	/// fillPChan(tracker);
 }
 
 
@@ -827,10 +828,9 @@ bool SampleChannel::canInputRec() {
 void SampleChannel::start(int frame, bool doQuantize) {
 
 	/** TODO - if pitch != 0 ... */
-
 	if (!pChanFull)
 		if (tracker + bufferSize <= wave->size)
-			printf("fill pChan, offset=%d\n", frame);
+			fillPChan(frame);
 
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -935,6 +935,7 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 
 int SampleChannel::fillPChan(int frame) {
+	printf("fill pChan from frame=%d, size=%d]\n", frame, bufferSize);
 	pChanFull = true;
 	return 0;
 }
