@@ -86,7 +86,9 @@ void SampleChannel::clear() {
 	memset(vChan, 0, sizeof(float) * bufferSize);
 	memset(pChan, 0, sizeof(float) * bufferSize);
 	pChanFull = false;
-	/// fillPChan(tracker);
+
+	if (status & (STATUS_PLAY | STATUS_ENDING))
+		fillPChan(tracker);
 }
 
 
@@ -288,6 +290,7 @@ void SampleChannel::sum(int frame, bool running) {
 					volume_i = 1.0f;
 			}
 
+#if 0 /// TEMPORARY REMOVE FADEOUT PROCESS -----------------------------
 			/* fadeout process (both fadeout and xfade) */
 
 			if (fadeoutOn) {
@@ -340,11 +343,14 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame+1] = vChan[frame-1];
 				}
 			}  // no fadeout to do
+#endif /// TEMPORARY REMOVE FADEOUT PROCESS ----------------------------
 			else {
 				if (!mute && !mute_i) {
 					float v = volume_i * fadein * boost;
-					vChan[frame]   += wave->data[tracker]   * v;
-					vChan[frame+1] += wave->data[tracker+1] * v;
+					//vChan[frame]   += wave->data[tracker]   * v;
+					//vChan[frame+1] += wave->data[tracker+1] * v;
+					vChan[frame]   += pChan[frame]   * v;
+					vChan[frame+1] += pChan[frame+1] * v;
 				}
 			}
 
@@ -935,9 +941,20 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 
 int SampleChannel::fillPChan(int frame) {
-	printf("fill pChan from frame=%d, size=%d]\n", frame, bufferSize);
+
+	/** if pitch != 0 ... use libsamplerate */
+
+	int t = frame+bufferSize;
+	if (t <= end) {
+		printf("[channel::fillPChan] no overflow - start=%d, copied, tracker=%d\n", frame, t);
+		memcpy(vChan, wave->data+frame, bufferSize*sizeof(float));
+	}
+	else {
+		printf("[channel::fillPChan] overflow! - start=%d, tracker=%d, empty=%d\n", frame, t, end - frame);
+		memcpy(vChan, wave->data+frame, (end-frame)*sizeof(float));
+	}
 	pChanFull = true;
-	return 0;
+	return t;
 }
 
 
