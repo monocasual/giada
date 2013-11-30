@@ -187,22 +187,15 @@ void SampleChannel::setPitch(float v) {
 
 	if (pitch != 1.0f) {
 
-		printf("[sampleChannel] pitch=%f, vChan=%d, procChan=%d, ratio=%f\n",
-			pitch,
-			kernelAudio::realBufsize * 2,
-			(int)(kernelAudio::realBufsize * 2 * pitch),
-			1/pitch);
+		printf("[sampleChannel] pitch=%f, ratio=%f\n",	pitch, 1/pitch);
 
-/*
 		begin   = begin / pitch;
 		end     = end / pitch;
-		///tracker = prevTracker / pitch;
-
+		///tracker = prevTracker / pitch; ???
 		if (tracker > end) tracker = end;
 
 		if (begin % 2 != 0)	begin++;
 		if (end   % 2 != 0)	end++;
-*/
 	}
 }
 
@@ -357,41 +350,36 @@ void SampleChannel::sum(int frame, bool running) {
 			else {
 				if (!mute && !mute_i) {
 					float v = volume_i * fadein * boost;
-					//vChan[frame]   += wave->data[tracker]   * v;
-					//vChan[frame+1] += wave->data[tracker+1] * v;
 					vChan[frame]   += pChan[frame]   * v;
 					vChan[frame+1] += pChan[frame+1] * v;
 				}
 			}
-
 			tracker += 2;
+		}
+		else {
 
 			/* check for end of samples. SINGLE_ENDLESS runs forever unless
 			 * it's in ENDING mode */
-			/** FIXME - this could be 'else' of initial 'if tracker <= end' */
 
-			if (tracker >= end) {
+			reset(frame);
 
-				reset(frame);
-
-				if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
-					 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
-				{
-					status = STATUS_OFF;
-				}
-
-				/// FIXME - unify these
-				/* stop loops when the seq is off */
-
-				if ((mode & LOOP_ANY) && !running)
-					status = STATUS_OFF;
-
-				/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
-				 * would return in wait, losing the ENDING status */
-
-				if (mode == LOOP_ONCE && status != STATUS_ENDING)
-					status = STATUS_WAIT;
+			if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+				 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
+			{
+				status = STATUS_OFF;
 			}
+
+			/// FIXME - unify these
+			/* stop loops when the seq is off */
+
+			if ((mode & LOOP_ANY) && !running)
+				status = STATUS_OFF;
+
+			/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
+			 * would return in wait, losing the ENDING status */
+
+			if (mode == LOOP_ONCE && status != STATUS_ENDING)
+				status = STATUS_WAIT;
 		}
 	}
 }
@@ -875,7 +863,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					qWait = true;
 				else {
 					status = STATUS_PLAY;
-					if (frame > 0)
+					if (frame > 0)   // can be > 0 with recorded actions
 						fillPChan(tracker, frame);
 				}
 			}
