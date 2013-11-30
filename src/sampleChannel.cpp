@@ -983,7 +983,7 @@ void SampleChannel::fillPChan(int start, int offset) {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 int SampleChannel::processPitch() {
 	data.data_in       = wave->data + tracker;
 	data.input_frames  = wave->size;
@@ -996,3 +996,4 @@ int SampleChannel::processPitch() {
 	printf("[sampleChannel] process pitch --- ratio=%f, frames_used=%lu frames_gen=%lu res=%d\n", data.src_ratio, data.input_frames_used, data.output_frames_gen, res);
 	return tracker += data.input_frames_used;
 }
+*/

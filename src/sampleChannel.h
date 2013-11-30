@@ -112,11 +112,6 @@ public:
 
 	void setPitch(float v);
 
-	/* processPitch
-	 * resample the internal virtual channel. */
-
-	int processPitch();
-
 	/* setStart/end
 	 * change begin/end read points in sample. */
 
