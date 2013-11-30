@@ -402,7 +402,7 @@ void SampleChannel::onZero(int frame) {
 			if (mute || mute_i)
 				reset(frame);
 			else
-				setXFade(frame);
+				reset(frame); ///FIXME - test, old call = setXFade(frame);
 		}
 		else
 		if (status == STATUS_ENDING)
@@ -581,8 +581,8 @@ void SampleChannel::setXFade(int frame) {
 /* ------------------------------------------------------------------ */
 
 
-/* on reset, if frame > 0, fill again pChan to create something like
- * this:
+/* on reset, if frame > 0 and in play, fill again pChan to create
+ * something like this:
  *
  * |abcdefabcdefab*abcdefabcde|
  * [old data-----]*[new data--]
@@ -593,7 +593,7 @@ void SampleChannel::setXFade(int frame) {
 void SampleChannel::reset(int frame) {
 	tracker = begin;
 	mute_i  = false;
-	if (frame > 0)
+	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
 		fillPChan(tracker, frame);
 }
 
