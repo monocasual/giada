@@ -599,7 +599,7 @@ void SampleChannel::setXFade(int frame) {
  * |abcdefabcdefab*abcdefabcde|
  * [old data-----]*[new data--]
  *
- * start  = begin -> start to write from wave->data[0]
+ * start  = begin -> fill pChan with data from wave->data[begin=0]
  * offset = frame -> fill pChan from the reset point */
 
 void SampleChannel::reset(int frame) {
