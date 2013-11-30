@@ -59,7 +59,7 @@ public:
 
 	void  process    (float *buffer, int size);
 	void  start      (int frame, bool doQuantize);
-	void  kill       ();
+	void  kill       (int frame);
 	void  empty      ();
 	void  stopBySeq  ();
 	void  stop       ();
@@ -69,9 +69,9 @@ public:
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     ();
-	void  onBar      ();
-	void  parseAction(recorder::action *a, int frame);
+	void  onZero     (int frame);
+	void  onBar      (int frame);
+	void  parseAction(recorder::action *a, int localFrame, int globalFrame);
 
 	/* ---------------------------------------------------------------- */
 

@@ -45,7 +45,7 @@ private:
 	bool       pChanFull;
 	int        bufferSize;
 
-	int fillPChan(int frame);
+	void fillPChan(int frame, int offset);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -66,21 +66,21 @@ public:
 	void  clear      ();
 	void  process    (float *buffer, int size);   /** TODO - remove size and use internal bufferSize */
 	void  start      (int frame, bool doQuantize);
-	void  kill       ();
+	void  kill       (int frame);
 	void  empty      ();
 	void  stopBySeq  ();
 	void  stop       ();
 	void  rewind     ();
 	void  setMute    (bool internal);
 	void  unsetMute  (bool internal);
-	void  reset      ();
+	void  reset      (int frame);
 	int   load       (const char *file);
 	int   loadByPatch(const char *file, int i);
 	void  writePatch (FILE *fp, int i, bool isProject);
 	void  quantize   (int index, int frame);
-	void  onZero     ();
-	void  onBar      ();
-	void  parseAction(recorder::action *a, int frame);
+	void  onZero     (int frame);
+	void  onBar      (int frame);
+	void  parseAction(recorder::action *a, int localFrame, int globalFrame);
 
 	/* fade methods
 	 * prepare channel for fade, mixer will take care of the process
@@ -88,7 +88,7 @@ public:
 
 	void  setFadeIn  (bool internal);
 	void  setFadeOut (int actionPostFadeout);
-	void  setXFade   ();
+	void  setXFade   (int frame);
 
 	/* pushWave
 	 * add a new wave to an existing channel. */
@@ -131,7 +131,7 @@ public:
 	/* hardStop
 	 * stop the channel immediately, no further checks. */
 
-	void hardStop();
+	void hardStop(int frame);
 
 	/* allocEmpty
 	 * alloc an empty wave used in input recordings. */

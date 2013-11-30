@@ -966,7 +966,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift) {
 		glue_setMute(ch);
 	else
 	if (shift)
-		ch->kill();
+		ch->kill(0);        // on frame 0: user-generated event
 	else
 		ch->start(0, true); // on frame 0: user-generated event
 }
@@ -996,7 +996,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift) {
 	if (shift) {
 		if (recorder::active) {
 			if (G_Mixer.running) {
-				ch->kill();
+				ch->kill(0); // on frame 0: user-generated event
 				if (recorder::canRec(ch) && !(ch->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
 					recorder::rec(ch->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
 			}
@@ -1006,10 +1006,10 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift) {
 				if (G_Mixer.running || ch->status == STATUS_OFF)
 					ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
 				else
-					ch->kill();
+					ch->kill(0);  // on frame 0: user-generated event
 			}
 			else
-				ch->kill();
+				ch->kill(0);    // on frame 0: user-generated event
 		}
 	}
 

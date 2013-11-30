@@ -83,7 +83,7 @@ public:
 	/* kill
 	 * action to do when channel stops abruptly. */
 
-	virtual void kill() = 0;
+	virtual void kill(int frame) = 0;
 
 	/* mute
 	 * action to do when channel is muted. If internal == true, set
@@ -117,17 +117,17 @@ public:
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
 
-	virtual void onZero() = 0;
+	virtual void onZero(int frame) = 0;
 
 	/* onBar
 	 * action to do when a bar has passed. */
 
-	virtual void onBar() = 0;
+	virtual void onBar(int frame) = 0;
 
 	/* parseAction
 	 * do something on a recorded action. Frame = actual frame in Mixer. */
 
-	virtual void parseAction(recorder::action *a, int frame) = 0;
+	virtual void parseAction(recorder::action *a, int localFrame, int globalFrame) = 0;
 
 	/* rewind
 	 * rewind channel when rewind button is pressed. */

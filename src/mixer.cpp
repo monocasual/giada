@@ -307,7 +307,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 				pthread_mutex_lock(&mutex_chans);
 				for (unsigned k=0; k<channels.size; k++)
-					channels.at(k)->onBar();
+					channels.at(k)->onBar(j);
 				pthread_mutex_unlock(&mutex_chans);
 			}
 
@@ -316,7 +316,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			if (actualFrame == 0) {
 				pthread_mutex_lock(&mutex_chans);
 				for (unsigned k=0; k<channels.size; k++)
-					channels.at(k)->onZero();
+					channels.at(k)->onZero(j);
 				pthread_mutex_unlock(&mutex_chans);
 			}
 
@@ -328,7 +328,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
 						int index   = recorder::global.at(y).at(z)->chan;
 						Channel *ch = getChannelByIndex(index);
-						ch->parseAction(recorder::global.at(y).at(z), actualFrame);
+						ch->parseAction(recorder::global.at(y).at(z), j, actualFrame);
 					}
 					break;
 				}

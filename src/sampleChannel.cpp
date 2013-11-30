@@ -87,8 +87,10 @@ void SampleChannel::clear() {
 	memset(pChan, 0, sizeof(float) * bufferSize);
 	pChanFull = false;
 
+	//puts("clear");
+
 	if (status & (STATUS_PLAY | STATUS_ENDING))
-		fillPChan(tracker);
+		fillPChan(tracker, 0);
 }
 
 
@@ -128,18 +130,18 @@ void SampleChannel::calcVolumeEnv(int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::hardStop() {
+void SampleChannel::hardStop(int frame) {
 	status = STATUS_OFF;
-	reset();
+	reset(frame);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::onBar() {
+void SampleChannel::onBar(int frame) {
 	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-		setXFade();
+		setXFade(frame);
 }
 
 
@@ -223,7 +225,7 @@ void SampleChannel::rewind() {
 
 	if (wave != NULL) {
 		if ((mode & LOOP_ANY) || (recStatus == REC_READING && (mode & SINGLE_ANY)))
-			reset();
+			reset(0);  // rewind is user-generated events, always on frame 0
 	}
 }
 
@@ -231,7 +233,7 @@ void SampleChannel::rewind() {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::parseAction(recorder::action *a, int frame) {
+void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalFrame) {
 
 	if (readActions == false)
 		return;
@@ -239,7 +241,7 @@ void SampleChannel::parseAction(recorder::action *a, int frame) {
 	switch (a->type) {
 		case ACTION_KEYPRESS:
 			if (mode & SINGLE_ANY)
-				start(frame, false);
+				start(localFrame, false);
 			break;
 		case ACTION_KEYREL:
 			if (mode & SINGLE_ANY)
@@ -247,7 +249,7 @@ void SampleChannel::parseAction(recorder::action *a, int frame) {
 			break;
 		case ACTION_KILLCHAN:
 			if (mode & SINGLE_ANY)
-				kill();
+				kill(localFrame);
 			break;
 		case ACTION_MUTEON:
 			setMute(true);   // internal mute
@@ -256,7 +258,7 @@ void SampleChannel::parseAction(recorder::action *a, int frame) {
 			unsetMute(true); // internal mute
 			break;
 		case ACTION_VOLUME:
-			calcVolumeEnv(frame);
+			calcVolumeEnv(globalFrame);
 			break;
 	}
 }
@@ -274,6 +276,8 @@ void SampleChannel::sum(int frame, bool running) {
 
 		if (tracker <= end) {
 
+#if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
+
 			/* fade in */
 
 			if (fadein <= 1.0f)
@@ -290,10 +294,14 @@ void SampleChannel::sum(int frame, bool running) {
 					volume_i = 1.0f;
 			}
 
-#if 0 /// TEMPORARY REMOVE FADEOUT PROCESS -----------------------------
+#endif /// TEMPORARY REMOVE FADE PROCESSES -----------------------------
+
 			/* fadeout process (both fadeout and xfade) */
 
 			if (fadeoutOn) {
+
+#if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
+
 				if (fadeoutVol >= 0.0f) { // fadeout ongoing
 
 					float v = volume_i * boost;
@@ -342,8 +350,10 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame]   = vChan[frame-2];
 					vChan[frame+1] = vChan[frame-1];
 				}
+
+#endif /// TEMPORARY REMOVE FADE PROCESSES -----------------------------
+
 			}  // no fadeout to do
-#endif /// TEMPORARY REMOVE FADEOUT PROCESS ----------------------------
 			else {
 				if (!mute && !mute_i) {
 					float v = volume_i * fadein * boost;
@@ -358,10 +368,11 @@ void SampleChannel::sum(int frame, bool running) {
 
 			/* check for end of samples. SINGLE_ENDLESS runs forever unless
 			 * it's in ENDING mode */
+			/** FIXME - this could be 'else' of initial 'if tracker <= end' */
 
 			if (tracker >= end) {
 
-				reset();
+				reset(frame);
 
 				if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
 					 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
@@ -389,7 +400,7 @@ void SampleChannel::sum(int frame, bool running) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::onZero() {
+void SampleChannel::onZero(int frame) {
 
 	if (wave == NULL)
 		return;
@@ -401,13 +412,13 @@ void SampleChannel::onZero() {
 
 		if (status == STATUS_PLAY) {
 			if (mute || mute_i)
-				reset();
+				reset(frame);
 			else
-				setXFade();
+				setXFade(frame);
 		}
 		else
 		if (status == STATUS_ENDING)
-			hardStop();
+			hardStop(frame);
 	}
 
 	if (status == STATUS_WAIT) /// FIXME - should be inside previous if!
@@ -440,7 +451,7 @@ void SampleChannel::quantize(int index, int frame) {
 			qWait  = false;
 		}
 		else
-			setXFade();
+			setXFade(frame);  /// WARNING - WRONG FRAME: this is the GLOBAL ONE!
 
 		/* this is the moment in which we record the keypress, if the quantizer is on.
 		 * SINGLE_PRESS needs overdub */
@@ -569,22 +580,33 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::setXFade() {
+void SampleChannel::setXFade(int frame) {
 	calcFadeoutStep();
 	fadeoutOn      = true;
 	fadeoutVol     = 1.0f;
 	fadeoutTracker = tracker;
 	fadeoutType    = XFADE;
-	reset();
+	reset(frame);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::reset() {
+/* on reset, if frame > 0, fill again pChan to create something like
+ * this:
+ *
+ * |abcdefabcdefab*abcdefabcde|
+ * [old data-----]*[new data--]
+ *
+ * start  = begin -> start to write from wave->data[0]
+ * offset = frame -> fill pChan from the reset point */
+
+void SampleChannel::reset(int frame) {
 	tracker = begin;
 	mute_i  = false;
+	if (frame > 0)
+		fillPChan(tracker, frame);
 }
 
 
@@ -659,13 +681,13 @@ void SampleChannel::process(float *buffer, int size) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::kill() {
+void SampleChannel::kill(int frame) {
 	if (wave != NULL && status != STATUS_OFF) {
 		if (mute || mute_i)
 			stop();   /// FIXME - hardStop() is enough
 		else
 		if (status == STATUS_WAIT && mode & LOOP_ANY)
-			hardStop();
+			hardStop(frame);
 		else
 			setFadeOut(DO_STOP);
 	}
@@ -684,7 +706,7 @@ void SampleChannel::stopBySeq() {
 		return;
 
 	if (mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		kill();
+		kill(0);  /// FIXME - wrong frame value
 
 	/** FIXME - unify these */
 
@@ -696,7 +718,7 @@ void SampleChannel::stopBySeq() {
 	 * disattivate) */
 
 	if (hasActions && readActions && status == STATUS_PLAY)
-		kill();
+		kill(0);  /// FIXME - wrong frame value
 }
 
 
@@ -706,7 +728,7 @@ void SampleChannel::stopBySeq() {
 void SampleChannel::stop() {
 	if (mode == SINGLE_PRESS && status == STATUS_PLAY) {
 		if (mute || mute_i)
-			hardStop();
+			hardStop(0);  /// FIXME - wrong frame value
 		else
 			setFadeOut(DO_STOP);
 	}
@@ -833,10 +855,7 @@ bool SampleChannel::canInputRec() {
 
 void SampleChannel::start(int frame, bool doQuantize) {
 
-	/** TODO - if pitch != 0 ... */
-	if (!pChanFull)
-		if (tracker + bufferSize <= wave->size)
-			fillPChan(frame);
+	printf("start! frame/offset=%d\n", frame);
 
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -848,13 +867,18 @@ void SampleChannel::start(int frame, bool doQuantize) {
 
 		case STATUS_OFF:
 		{
-			if (mode & LOOP_ANY)
+			if (mode & LOOP_ANY) {
 				status = STATUS_WAIT;
-			else
+			}
+			else {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
-				else
+				else {
 					status = STATUS_PLAY;
+					if (frame > 0)
+						fillPChan(tracker, frame);
+				}
+			}
 			break;
 		}
 
@@ -875,9 +899,9 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					 * introduces some bad clicks */
 
 					if (mute)
-						reset();
+						reset(frame);
 					else
-						setXFade();
+						reset(frame); ///FIXME - test, old call = setXFade(frame);
 				}
 			}
 			else
@@ -940,21 +964,20 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
-int SampleChannel::fillPChan(int frame) {
+void SampleChannel::fillPChan(int start, int offset) {
 
 	/** if pitch != 0 ... use libsamplerate */
 
-	int t = frame+bufferSize;
+	int t = start+bufferSize-offset;
 	if (t <= end) {
-		printf("[channel::fillPChan] no overflow - start=%d, copied, tracker=%d\n", frame, t);
-		memcpy(vChan, wave->data+frame, bufferSize*sizeof(float));
+		printf("[channel::fillPChan] no overflow - start=%d, offset=%d, tracker=%d\n", start, offset, t);
+		memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
 	}
 	else {
-		printf("[channel::fillPChan] overflow! - start=%d, tracker=%d, empty=%d\n", frame, t, end - frame);
-		memcpy(vChan, wave->data+frame, (end-frame)*sizeof(float));
+		printf("[channel::fillPChan] overflow! - start=%d, offset=%d, tracker=%d, empty=%d\n", start, offset, t, end - start);
+		memcpy(pChan+offset, wave->data+start, (end-start-offset)*sizeof(float));
 	}
 	pChanFull = true;
-	return t;
 }
 
 

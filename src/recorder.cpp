@@ -517,7 +517,7 @@ void enableRead(SampleChannel *ch) {
 void disableRead(SampleChannel *ch) {
 	ch->readActions = false;
 	if (G_Conf.recsStopOnChanHalt)
-		ch->kill();
+		ch->kill(0);  /// FIXME - wrong frame value
 }
 
 

@@ -109,7 +109,7 @@ void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::onBar() {}
+void MidiChannel::onBar(int frame) {}
 
 
 /* ------------------------------------------------------------------ */
@@ -144,7 +144,7 @@ VstEvents *MidiChannel::getVstEvents() {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::parseAction(recorder::action *a, int frame) {
+void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFrame) {
 	if (a->type == ACTION_MIDI)
 		sendMidi(a);
 }
@@ -153,7 +153,7 @@ void MidiChannel::parseAction(recorder::action *a, int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::onZero() {
+void MidiChannel::onZero(int frame) {
 	if (status == STATUS_ENDING)
 		status = STATUS_OFF;
 	else
@@ -222,14 +222,14 @@ void MidiChannel::start(int frame, bool doQuantize) {
 
 
 void MidiChannel::stopBySeq() {
-	kill();
+	kill(0);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::kill() {
+void MidiChannel::kill(int frame) {
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		if (midiOut)
 			kernelMidi::send(MIDI_ALL_NOTES_OFF);
