@@ -267,7 +267,7 @@ void SampleChannel::sum(int frame, bool running) {
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 
-		if (tracker <= end) {
+		if (tracker <= wave->size) {
 
 #if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
 
@@ -959,13 +959,13 @@ void SampleChannel::fillPChan(int start, int offset) {
 	/** if pitch != 0 ... use libsamplerate */
 
 	int t = start+bufferSize-offset;
-	if (t <= end) {
+	if (t <= wave->size) {
 		printf("[channel::fillPChan] no overflow - start=%d, offset=%d, tracker=%d\n", start, offset, t);
 		memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
 	}
 	else {
 		printf("[channel::fillPChan] overflow! - start=%d, offset=%d, tracker=%d, empty=%d\n", start, offset, t, end - start);
-		memcpy(pChan+offset, wave->data+start, (end-start-offset)*sizeof(float));
+		memcpy(pChan+offset, wave->data+start, (wave->size-start-offset)*sizeof(float));
 	}
 	pChanFull = true;
 }

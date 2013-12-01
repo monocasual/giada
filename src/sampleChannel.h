@@ -142,8 +142,8 @@ public:
 
 	class  Wave *wave;
 	int    tracker;         // chan position
-	int    begin;
-	int    end;
+	int    begin;           /// TODO - set it private + inline getter
+	int    end;             /// TODO - set it private + inline getter (== wave->size)
   float  pitch;
 	float  boost;
 	int    mode;            // mode: see const.h
