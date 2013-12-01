@@ -39,11 +39,15 @@ class SampleChannel : public Channel {
 
 private:
 
+	/**/
+
 	SRC_STATE *converter;
 	SRC_DATA   data;
 	float     *pChan;
 	bool       pChanFull;
 	int        bufferSize;
+
+	/**/
 
 	void fillPChan(int frame, int offset);
 
@@ -142,8 +146,8 @@ public:
 
 	class  Wave *wave;
 	int    tracker;         // chan position
-	int    begin;           /// TODO - set it private + inline getter
-	int    end;             /// TODO - set it private + inline getter (== wave->size)
+	int    begin;
+	int    end;
   float  pitch;
 	float  boost;
 	int    mode;            // mode: see const.h
