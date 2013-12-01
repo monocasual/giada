@@ -64,7 +64,7 @@ SampleChannel::SampleChannel(int bufferSize, char side)
 	  readActions(true),
 	  midiInReadActions(0x0)
 {
-	converter = src_new(1, 2, NULL);
+	converter = src_new(SRC_LINEAR, 2, NULL);
 	pChan     = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 }
 
@@ -263,7 +263,7 @@ void SampleChannel::sum(int frame, bool running) {
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 
-		if (tracker <= end) {
+		if (tracker < end) {
 
 #if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
 
@@ -350,7 +350,12 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame+1] += pChan[frame+1] * v;
 				}
 			}
-			tracker += 2;
+
+			/* increment global tracker, pitch affected (low pitch => slower
+			 * tracker, high pitch, faster tracker) */
+
+			tracker += 2 * pitch;
+			//printf("%d\n", tracker);
 		}
 		else {
 
@@ -952,8 +957,6 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 void SampleChannel::fillPChan(int start, int offset) {
 
-	/** if pitch != 0 ... use libsamplerate */
-
 	if (pitch == 1.0f) {
 		if (start+bufferSize-offset <= end) {
 			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - start=%d, offset=%d\n", begin, end, start, offset);
@@ -965,7 +968,16 @@ void SampleChannel::fillPChan(int start, int offset) {
 		}
 	}
 	else {
-		printf("[channel::fillPChan] PITCH!!!\n");
+		data.data_in       = wave->data+start;   // source data
+		data.input_frames  = wave->size;         // how many bytes can read
+		data.data_out      = pChan+offset;       // destination (processed data)
+		data.output_frames = bufferSize;         // how many bytes to process
+		data.end_of_input  = false;              /// TODO
+		data.src_ratio     = 1/pitch;
+		src_process(converter, &data);
+		printf("[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
+		begin, end, start, offset, data.output_frames_gen, data.input_frames_used
+		);
 	}
 	pChanFull = true;
 }

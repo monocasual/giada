@@ -145,7 +145,7 @@ public:
 	/* ---------------------------------------------------------------- */
 
 	class  Wave *wave;
-	int    tracker;         // chan position
+	float  tracker;         // chan position
 	int    begin;
 	int    end;
   float  pitch;
