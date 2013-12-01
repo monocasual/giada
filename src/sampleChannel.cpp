@@ -354,7 +354,7 @@ void SampleChannel::sum(int frame, bool running) {
 			/* increment global tracker, pitch affected (low pitch => slower
 			 * tracker, high pitch, faster tracker) */
 
-			tracker += 2 * pitch;
+			//tracker += 2 * pitch;
 			//printf("%d\n", tracker);
 		}
 		else {
@@ -961,10 +961,12 @@ void SampleChannel::fillPChan(int start, int offset) {
 		if (start+bufferSize-offset <= end) {
 			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - start=%d, offset=%d\n", begin, end, start, offset);
 			memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
+			tracker = start+bufferSize-offset;
 		}
 		else {
 			printf("[channel::fillPChan] wave[%d,%d] *** overflow! - start=%d, offset=%d, empty=%d\n", begin, end, start, offset, end - start);
 			memcpy(pChan+offset, wave->data+start, (end-start-offset)*sizeof(float));
+			tracker = end;
 		}
 	}
 	else {
@@ -975,8 +977,10 @@ void SampleChannel::fillPChan(int start, int offset) {
 		data.end_of_input  = false;              /// TODO
 		data.src_ratio     = 1/pitch;
 		src_process(converter, &data);
-		printf("[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
-		begin, end, start, offset, data.output_frames_gen, data.input_frames_used
+		tracker = tracker + data.input_frames_used;
+		printf(
+			"[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
+			begin, end, start, offset, data.output_frames_gen, data.input_frames_used
 		);
 	}
 	pChanFull = true;
