@@ -409,8 +409,10 @@ void SampleChannel::onZero(int frame) {
 			hardStop(frame);
 	}
 
-	if (status == STATUS_WAIT) /// FIXME - should be inside previous if!
+	if (status == STATUS_WAIT) { /// FIXME - should be inside previous if!
 		status = STATUS_PLAY;
+		fillPChan(0, frame);
+	}
 
 	if (recStatus == REC_ENDING) {
 		recStatus = REC_STOPPED;
@@ -677,7 +679,7 @@ void SampleChannel::kill(int frame) {
 		if (status == STATUS_WAIT && mode & LOOP_ANY)
 			hardStop(frame);
 		else
-			setFadeOut(DO_STOP);
+			hardStop(frame); /// FIXME - test, old call = setFadeOut(DO_STOP);
 	}
 }
 
@@ -718,7 +720,7 @@ void SampleChannel::stop() {
 		if (mute || mute_i)
 			hardStop(0);  /// FIXME - wrong frame value
 		else
-			setFadeOut(DO_STOP);
+			hardStop(0);  /// FIXME - wrong frame value - test, old call = setFadeOut(DO_STOP);
 	}
 	else  // stop a SINGLE_PRESS immediately, if the quantizer is on
 	if (mode == SINGLE_PRESS && qWait == true)
@@ -873,7 +875,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 		case STATUS_PLAY:
 		{
 			if (mode == SINGLE_BASIC) {
-				setFadeOut(DO_STOP);
+				hardStop(frame); ///FIXME - test, old call = setFadeOut(DO_STOP);
 			}
 			else
 			if (mode == SINGLE_RETRIG) {
