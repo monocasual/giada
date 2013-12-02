@@ -967,6 +967,9 @@ void SampleChannel::fillPChan(int start, int offset) {
 		}
 	}
 	else {
+
+		frameRewind = -1;
+
 		data.data_in       = wave->data+start;       // source data
 		data.input_frames  = (wave->size-start)/2;   // how many readable bytes
 		data.data_out      = pChan+offset;           // destination (processed data)
@@ -977,9 +980,6 @@ void SampleChannel::fillPChan(int start, int offset) {
 		src_process(converter, &data);
 
 		tracker += data.input_frames_used*2;        /// TODO: offset!
-
-		if (tracker % 2 != 0)
-			tracker++;
 
 		printf(
 			"[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
