@@ -204,15 +204,6 @@ void SampleChannel::setPitch(float v) {
 
 /* ------------------------------------------------------------------ */
 
-/*
-void SampleChannel::processPitch() {
-	if (pitch != 1.0f)
-		wave->resampleProc(1, pitch);
-}
-*/
-
-/* ------------------------------------------------------------------ */
-
 
 void SampleChannel::rewind() {
 
