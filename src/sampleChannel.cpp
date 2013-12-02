@@ -185,14 +185,19 @@ void SampleChannel::setPitch(float v) {
 
 		printf("[sampleChannel] pitch=%f, ratio=%f\n",	pitch, 1/pitch);
 
-		begin   = begin / pitch;
-		end     = end / pitch;
+		/// TODO - begin   = begin / pitch;
+		begin = 0;
+		end   = wave->size / pitch;
 
 		//tracker = prevTracker / pitch; ???
 		//if (tracker > end) tracker = end;
 
 		if (begin % 2 != 0)	begin++;
 		if (end   % 2 != 0)	end++;
+	}
+	else {
+		begin = 0;
+		end   = wave->size;
 	}
 }
 
@@ -970,16 +975,16 @@ void SampleChannel::fillPChan(int start, int offset) {
 		}
 	}
 	else {
-		data.data_in       = wave->data+start;   // source data
-		data.input_frames  = wave->size;         // how many readable bytes
-		data.data_out      = pChan+offset;       // destination (processed data)
-		data.output_frames = bufferSize;         // how many bytes to process
-		data.end_of_input  = false;              /// TODO
+		data.data_in       = wave->data+start;       // source data
+		data.input_frames  = (wave->size-start)/2;   // how many readable bytes
+		data.data_out      = pChan+offset;           // destination (processed data)
+		data.output_frames = bufferSize/2;           // how many bytes to process
+		data.end_of_input  = false;                  /// TODO
 		data.src_ratio     = 1/pitch;
 
 		src_process(converter, &data);
 
-		tracker += data.input_frames_used;   /// offset!
+		tracker += data.input_frames_used*2;        /// TODO: offset!
 
 		if (tracker % 2 != 0)
 			tracker++;
