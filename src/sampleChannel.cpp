@@ -48,6 +48,7 @@ extern PluginHost  G_PluginHost;
 SampleChannel::SampleChannel(int bufferSize, char side)
 	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
 		bufferSize (bufferSize),
+		frameRewind(-1),
 		wave       (NULL),
 		tracker    (0),
 		begin      (0),
@@ -76,7 +77,7 @@ SampleChannel::~SampleChannel() {
 	if (wave)
 		delete wave;
 	converter = src_delete(converter);
-	/** TODO - free pChan */
+	free(pChan);
 }
 
 
