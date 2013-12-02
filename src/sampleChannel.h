@@ -46,6 +46,7 @@ private:
 	float     *pChan;
 	bool       pChanFull;
 	int        bufferSize;
+	int        frameRewind;
 
 	/**/
 
@@ -145,7 +146,7 @@ public:
 	/* ---------------------------------------------------------------- */
 
 	class  Wave *wave;
-	float  tracker;         // chan position
+	int    tracker;         // chan position
 	int    begin;
 	int    end;
   float  pitch;

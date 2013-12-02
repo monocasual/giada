@@ -187,8 +187,9 @@ void SampleChannel::setPitch(float v) {
 
 		begin   = begin / pitch;
 		end     = end / pitch;
-		///tracker = prevTracker / pitch; ???
-		if (tracker > end) tracker = end;
+
+		//tracker = prevTracker / pitch; ???
+		//if (tracker > end) tracker = end;
 
 		if (begin % 2 != 0)	begin++;
 		if (end   % 2 != 0)	end++;
@@ -263,7 +264,7 @@ void SampleChannel::sum(int frame, bool running) {
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 
-		if (tracker < end) {
+		if (frame != frameRewind) {
 
 #if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
 
@@ -350,19 +351,8 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame+1] += pChan[frame+1] * v;
 				}
 			}
-
-			/* increment global tracker, pitch affected (low pitch => slower
-			 * tracker, high pitch, faster tracker) */
-
-			//tracker += 2 * pitch;
-			//printf("%d\n", tracker);
 		}
 		else {
-
-			/* check for end of samples. SINGLE_ENDLESS runs forever unless
-			 * it's in ENDING mode */
-
-			reset(frame);
 
 			if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
 				 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
@@ -381,6 +371,11 @@ void SampleChannel::sum(int frame, bool running) {
 
 			if (mode == LOOP_ONCE && status != STATUS_ENDING)
 				status = STATUS_WAIT;
+
+			/* check for end of samples. SINGLE_ENDLESS runs forever unless
+			 * it's in ENDING mode */
+
+			reset(frame);
 		}
 	}
 }
@@ -594,6 +589,9 @@ void SampleChannel::setXFade(int frame) {
  * offset = frame -> fill pChan from the reset point */
 
 void SampleChannel::reset(int frame) {
+
+	printf("reset! frame/offset=%d\n", frame);
+
 	tracker = begin;
 	mute_i  = false;
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
@@ -962,22 +960,30 @@ void SampleChannel::fillPChan(int start, int offset) {
 			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - start=%d, offset=%d\n", begin, end, start, offset);
 			memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
 			tracker = start+bufferSize-offset;
+			frameRewind = -1;
 		}
 		else {
 			printf("[channel::fillPChan] wave[%d,%d] *** overflow! - start=%d, offset=%d, empty=%d\n", begin, end, start, offset, end - start);
 			memcpy(pChan+offset, wave->data+start, (end-start-offset)*sizeof(float));
 			tracker = end;
+			frameRewind = end-start-offset;
 		}
 	}
 	else {
 		data.data_in       = wave->data+start;   // source data
-		data.input_frames  = wave->size;         // how many bytes can read
+		data.input_frames  = wave->size;         // how many readable bytes
 		data.data_out      = pChan+offset;       // destination (processed data)
 		data.output_frames = bufferSize;         // how many bytes to process
 		data.end_of_input  = false;              /// TODO
 		data.src_ratio     = 1/pitch;
+
 		src_process(converter, &data);
-		tracker = tracker + data.input_frames_used;
+
+		tracker += data.input_frames_used;   /// offset!
+
+		if (tracker % 2 != 0)
+			tracker++;
+
 		printf(
 			"[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
 			begin, end, start, offset, data.output_frames_gen, data.input_frames_used
