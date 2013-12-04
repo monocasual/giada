@@ -181,7 +181,7 @@ void SampleChannel::setEnd(unsigned v) {
 void SampleChannel::setPitch(float v) {
 
 	pitch = v;
-
+#if 0
 	if (pitch != 1.0f) {
 
 		printf("[sampleChannel] pitch=%f, ratio=%f\n",	pitch, 1/pitch);
@@ -200,6 +200,7 @@ void SampleChannel::setPitch(float v) {
 		begin = 0;
 		end   = wave->size;
 	}
+#endif
 }
 
 
@@ -968,7 +969,7 @@ void SampleChannel::fillPChan(int start, int offset) {
 	}
 	else {
 
-		frameRewind = -1;
+		//frameRewind = -1;
 
 		data.data_in       = wave->data+start;       // source data
 		data.input_frames  = (wave->size-start)/2;   // how many readable bytes
@@ -981,10 +982,22 @@ void SampleChannel::fillPChan(int start, int offset) {
 
 		tracker += data.input_frames_used*2;        /// TODO: offset!
 
-		printf(
-			"[channel::fillPChan] PITCH!!! wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
-			begin, end, start, offset, data.output_frames_gen, data.input_frames_used
-		);
+		if (data.output_frames_gen*2 == bufferSize) {
+			frameRewind = -1;
+			printf(
+				"[channel::fillPChan] PITCH --- wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
+				begin, end, start, offset, data.output_frames_gen, data.input_frames_used
+			);
+		}
+		else {
+			frameRewind = end;
+			printf(
+				"[channel::fillPChan] PITCH --- wave[%d,%d] *** overflow! - start=%d, offset=%d, generated=%lu, used=%lu\n",
+				begin, end, start, offset, data.output_frames_gen, data.input_frames_used
+			);
+		}
+
+
 	}
 	pChanFull = true;
 }
