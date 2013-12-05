@@ -65,8 +65,8 @@ SampleChannel::SampleChannel(int bufferSize, char side)
 	  readActions(true),
 	  midiInReadActions(0x0)
 {
-	converter = src_new(SRC_LINEAR, 2, NULL);
-	pChan     = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	rsmp_state = src_new(SRC_LINEAR, 2, NULL);
+	pChan      = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
 }
 
 
@@ -76,7 +76,7 @@ SampleChannel::SampleChannel(int bufferSize, char side)
 SampleChannel::~SampleChannel() {
 	if (wave)
 		delete wave;
-	converter = src_delete(converter);
+	src_delete(rsmp_state);
 	free(pChan);
 }
 
@@ -950,35 +950,35 @@ void SampleChannel::fillPChan(int start, int offset) {
 
 		int data_in = tracker;
 
-		data.data_in       = wave->data+tracker;       // source data
-		data.input_frames  = (wave->size-tracker)/2;   // how many readable bytes
-		data.data_out      = pChan+offset;           // destination (processed data)
-		data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
-		data.src_ratio     = 1/pitch;
-		data.end_of_input  = false;
+		rsmp_data.data_in       = wave->data+tracker;       // source data
+		rsmp_data.input_frames  = (wave->size-tracker)/2;   // how many readable bytes
+		rsmp_data.data_out      = pChan+offset;           // destination (processed data)
+		rsmp_data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
+		rsmp_data.src_ratio     = 1/pitch;
+		rsmp_data.end_of_input  = false;
 
-		src_process(converter, &data);
+		src_process(rsmp_state, &rsmp_data);
 
-		tracker += data.input_frames_used * 2;
+		tracker += rsmp_data.input_frames_used * 2;
 
-		if (data.output_frames_gen * 2 == bufferSize - offset) {
+		if (rsmp_data.output_frames_gen * 2 == bufferSize - offset) {
 			frameRewind = -1;
 		}
 		else {
-			frameRewind = data.output_frames_gen * 2;
+			frameRewind = rsmp_data.output_frames_gen * 2;
 		}
 
 		printf("[%d:%d] data_in/tracker_prev=%d, input_frames=%lu, data_out/offset=%d, output_frames=%lu, input_frames_used=%lu, output_frames_generated=%lu, tracker_now=%d%s\n",
 		begin,
 		end,
 		data_in,
-		data.input_frames*2,
+		rsmp_data.input_frames*2,
 		offset,
-		data.output_frames*2,
-		data.input_frames_used*2,
-		data.output_frames_gen*2,
+		rsmp_data.output_frames*2,
+		rsmp_data.input_frames_used*2,
+		rsmp_data.output_frames_gen*2,
 		tracker,
-		data.output_frames_gen*2 != bufferSize-offset ? " - OVERFLOW" : "");
+		rsmp_data.output_frames_gen*2 != bufferSize-offset ? " - OVERFLOW" : "");
 
 	}
 	pChanFull = true;

@@ -41,8 +41,9 @@ private:
 
 	/**/
 
-	SRC_STATE *converter;
-	SRC_DATA   data;
+	SRC_STATE *rsmp_state;
+	SRC_DATA   rsmp_data;
+
 	float     *pChan;
 	bool       pChanFull;
 	int        bufferSize;
