@@ -460,7 +460,7 @@ void SampleChannel::setMute(bool internal) {
 			mute_i = true;
 		else {
 			if (isPlaying())
-				setFadeOut(DO_MUTE_I);
+				mute_i = true; ///FIXME - test, old call = setFadeOut(DO_MUTE_I);
 			else
 				mute_i = true;
 		}
@@ -477,7 +477,7 @@ void SampleChannel::setMute(bool internal) {
 			/* sample in play? fadeout needed. Else, just mute it globally */
 
 			if (isPlaying())
-				setFadeOut(DO_MUTE);
+				mute_i = true; ///FIXME - test, old call = setFadeOut(DO_MUTE);
 			else
 				mute = true;
 		}
@@ -494,7 +494,7 @@ void SampleChannel::unsetMute(bool internal) {
 			mute_i = false;
 		else {
 			if (isPlaying())
-				setFadeIn(internal);
+				mute_i = false;  ///FIXME - test, old call = setFadeIn(internal);
 			else
 				mute_i = false;
 		}
@@ -504,7 +504,7 @@ void SampleChannel::unsetMute(bool internal) {
 			mute = false;
 		else {
 			if (isPlaying())
-				setFadeIn(internal);
+				mute = false;    ///FIXME - test, old call = setFadeIn(internal);
 			else
 				mute = false;
 		}
