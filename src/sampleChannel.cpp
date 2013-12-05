@@ -950,7 +950,7 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 /* ------------------------------------------------------------------ */
 
-
+/** TODO - start might be useless, use tracker */
 void SampleChannel::fillPChan(int start, int offset) {
 
 	if (pitch == 1.0f) {
@@ -969,34 +969,41 @@ void SampleChannel::fillPChan(int start, int offset) {
 	}
 	else {
 
-		//frameRewind = -1;
+		int data_in = tracker;
 
-		data.data_in       = wave->data+start;       // source data
-		data.input_frames  = (wave->size-start)/2;   // how many readable bytes
+		data.data_in       = wave->data+tracker;       // source data
+		data.input_frames  = (wave->size-tracker)/2;   // how many readable bytes
 		data.data_out      = pChan+offset;           // destination (processed data)
-		data.output_frames = bufferSize/2;           // how many bytes to process
-		data.end_of_input  = false;                  /// TODO
+		data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
 		data.src_ratio     = 1/pitch;
+		data.end_of_input  = false;
 
 		src_process(converter, &data);
 
-		tracker += data.input_frames_used*2;        /// TODO: offset!
+		tracker =  tracker + (data.input_frames_used*2); // - offset;
 
-		if (data.output_frames_gen*2 == bufferSize) {
+		if (data.output_frames_gen*2 == bufferSize-offset) {
 			frameRewind = -1;
-			printf(
-				"[channel::fillPChan] PITCH --- wave[%d,%d] *** no overflow - start=%d, offset=%d, generated=%lu, used=%lu\n",
-				begin, end, start, offset, data.output_frames_gen, data.input_frames_used
-			);
+			/*
+			printf("[channel::fillPChan] PITCH --- wave[%d,%d] no overflow, tracker=%d, buffer=%d, data_in=%d, byte to process=%lu, used=%lu, generated=%lu, offset=%d\n", begin, end, tracker, bufferSize, data_in, data.output_frames, (data.input_frames_used*2) - offset, (data.output_frames_gen*2), offset);*/
 		}
 		else {
-			frameRewind = end;
-			printf(
-				"[channel::fillPChan] PITCH --- wave[%d,%d] *** overflow! - start=%d, offset=%d, generated=%lu, used=%lu\n",
-				begin, end, start, offset, data.output_frames_gen, data.input_frames_used
-			);
+			frameRewind = (data.output_frames_gen*2); // - offset;
+			/*
+			printf("[channel::fillPChan] PITCH --- wave[%d,%d] overflow!!! tracker=%d, buffer=%d, data_in=%d, byte to process=%lu, used=%lu, generated=%lu, offset=%d, rewind=%d\n", begin, end, tracker, bufferSize, data_in, data.output_frames, (data.input_frames_used*2) - offset, (data.output_frames_gen*2), offset, frameRewind);*/
 		}
 
+		printf("[%d:%d] data_in/tracker_prev=%d, input_frames=%lu, data_out/offset=%d, output_frames=%lu, input_frames_used=%lu, output_frames_generated=%lu, tracker_now=%d%s\n",
+		begin,
+		end,
+		data_in,
+		data.input_frames*2,
+		offset,
+		data.output_frames*2,
+		data.input_frames_used*2,
+		data.output_frames_gen*2,
+		tracker,
+		data.output_frames_gen*2 != bufferSize-offset ? " - OVERFLOW" : "");
 
 	}
 	pChanFull = true;
