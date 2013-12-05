@@ -179,28 +179,7 @@ void SampleChannel::setEnd(unsigned v) {
 
 
 void SampleChannel::setPitch(float v) {
-
 	pitch = v;
-#if 0
-	if (pitch != 1.0f) {
-
-		printf("[sampleChannel] pitch=%f, ratio=%f\n",	pitch, 1/pitch);
-
-		/// TODO - begin   = begin / pitch;
-		begin = 0;
-		end   = wave->size / pitch;
-
-		//tracker = prevTracker / pitch; ???
-		//if (tracker > end) tracker = end;
-
-		if (begin % 2 != 0)	begin++;
-		if (end   % 2 != 0)	end++;
-	}
-	else {
-		begin = 0;
-		end   = wave->size;
-	}
-#endif
 }
 
 
@@ -980,17 +959,13 @@ void SampleChannel::fillPChan(int start, int offset) {
 
 		src_process(converter, &data);
 
-		tracker =  tracker + (data.input_frames_used*2); // - offset;
+		tracker += data.input_frames_used * 2;
 
-		if (data.output_frames_gen*2 == bufferSize-offset) {
+		if (data.output_frames_gen * 2 == bufferSize - offset) {
 			frameRewind = -1;
-			/*
-			printf("[channel::fillPChan] PITCH --- wave[%d,%d] no overflow, tracker=%d, buffer=%d, data_in=%d, byte to process=%lu, used=%lu, generated=%lu, offset=%d\n", begin, end, tracker, bufferSize, data_in, data.output_frames, (data.input_frames_used*2) - offset, (data.output_frames_gen*2), offset);*/
 		}
 		else {
-			frameRewind = (data.output_frames_gen*2); // - offset;
-			/*
-			printf("[channel::fillPChan] PITCH --- wave[%d,%d] overflow!!! tracker=%d, buffer=%d, data_in=%d, byte to process=%lu, used=%lu, generated=%lu, offset=%d, rewind=%d\n", begin, end, tracker, bufferSize, data_in, data.output_frames, (data.input_frames_used*2) - offset, (data.output_frames_gen*2), offset, frameRewind);*/
+			frameRewind = data.output_frames_gen * 2;
 		}
 
 		printf("[%d:%d] data_in/tracker_prev=%d, input_frames=%lu, data_out/offset=%d, output_frames=%lu, input_frames_used=%lu, output_frames_generated=%lu, tracker_now=%d%s\n",
