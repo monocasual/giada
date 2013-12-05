@@ -930,15 +930,13 @@ void SampleChannel::fillPChan(int offset) {
 
 	if (pitch == 1.0f) {
 		if (tracker+bufferSize-offset <= end) {
-			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - tracker=%d, offset=%d\n", begin, end, tracker, offset);
 			memcpy(pChan+offset, wave->data+tracker, (bufferSize-offset)*sizeof(float));
 			tracker = tracker+bufferSize-offset;
 			frameRewind = -1;
 		}
 		else {
-			printf("[channel::fillPChan] wave[%d,%d] *** overflow! - tracker=%d, offset=%d, empty=%d\n", begin, end, tracker, offset, end - tracker);
-			memcpy(pChan+offset, wave->data+tracker, (end-tracker-offset)*sizeof(float));
 			frameRewind = end-tracker-offset;
+			memcpy(pChan+offset, wave->data+tracker, frameRewind*sizeof(float));
 			tracker = end;
 		}
 	}
@@ -958,21 +956,8 @@ void SampleChannel::fillPChan(int offset) {
 			frameRewind = -1;
 		else
 			frameRewind = gen;
-
-		/*
-		printf("[%d:%d] input_frames=%lu, data_out/offset=%d, output_frames=%lu, input_frames_used=%lu, output_frames_generated=%lu, tracker_now=%d%s\n",
-		begin,
-		end,
-		rsmp_data.input_frames*2,
-		offset,
-		rsmp_data.output_frames*2,
-		rsmp_data.input_frames_used*2,
-		rsmp_data.output_frames_gen*2,
-		tracker,
-		rsmp_data.output_frames_gen*2 != bufferSize-offset ? " - OVERFLOW" : "");
-		*/
-
 	}
+
 	pChanFull = true;
 }
 
