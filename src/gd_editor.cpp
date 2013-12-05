@@ -154,6 +154,10 @@ gdEditor::gdEditor(SampleChannel *ch)
 	pitchNum->callback(cb_setPitchNum, (void*)this);
 	pitchNum->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
+	pitchToBar->callback(cb_setPitchToBar, (void*)this);
+	pitchToSong->callback(cb_setPitchToSong, (void*)this);
+	pitchReset->callback(cb_resetPitch, (void*)this);
+
 	reload->callback(cb_reload, (void*)this);
 
 	zoomOut->callback(cb_zoomOut, (void*)this);
@@ -209,19 +213,46 @@ gdEditor::~gdEditor() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::cb_setChanPos   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setChanPos(); }
-void gdEditor::cb_resetStartEnd(Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetStartEnd(); }
-void gdEditor::cb_setVolume    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolume(); }
-void gdEditor::cb_setVolumeNum (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolumeNum(); }
-void gdEditor::cb_setBoost     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoost(); }
-void gdEditor::cb_setBoostNum  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoostNum(); }
-void gdEditor::cb_normalize    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_normalize(); }
-void gdEditor::cb_panning      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_panning(); }
-void gdEditor::cb_reload       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
-void gdEditor::cb_setPitch     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
-void gdEditor::cb_setPitchNum  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
-void gdEditor::cb_zoomIn       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
-void gdEditor::cb_zoomOut      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
+void gdEditor::cb_setChanPos    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setChanPos(); }
+void gdEditor::cb_resetStartEnd (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetStartEnd(); }
+void gdEditor::cb_setVolume     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolume(); }
+void gdEditor::cb_setVolumeNum  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolumeNum(); }
+void gdEditor::cb_setBoost      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoost(); }
+void gdEditor::cb_setBoostNum   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoostNum(); }
+void gdEditor::cb_normalize     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_normalize(); }
+void gdEditor::cb_panning       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_panning(); }
+void gdEditor::cb_reload        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
+void gdEditor::cb_setPitch      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
+void gdEditor::cb_setPitchToBar (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToBar(); }
+void gdEditor::cb_setPitchToSong(Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToSong(); }
+void gdEditor::cb_resetPitch    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetPitch(); }
+void gdEditor::cb_setPitchNum   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
+void gdEditor::cb_zoomIn        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
+void gdEditor::cb_zoomOut       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_setPitchToBar() {
+	glue_setPitch(this, ch, ch->end/(float)G_Mixer.framesPerBar, true);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_setPitchToSong() {
+	glue_setPitch(this, ch, ch->end/(float)G_Mixer.totalFrames, true);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_resetPitch() {
+	glue_setPitch(this, ch, 1.0f, true);
+}
 
 
 /* ------------------------------------------------------------------ */

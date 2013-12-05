@@ -39,19 +39,22 @@ class gdEditor : public gWindow {
 
 private:
 
-	static void cb_setChanPos   (Fl_Widget *w, void *p);
-	static void cb_resetStartEnd(Fl_Widget *w, void *p);
-	static void cb_setVolume    (Fl_Widget *w, void *p);
-	static void cb_setVolumeNum (Fl_Widget *w, void *p);
-	static void cb_setBoost     (Fl_Widget *w, void *p);
-	static void cb_setBoostNum  (Fl_Widget *w, void *p);
-	static void cb_normalize    (Fl_Widget *w, void *p);
-	static void cb_panning      (Fl_Widget *w, void *p);
-	static void cb_reload       (Fl_Widget *w, void *p);
-	static void cb_setPitch     (Fl_Widget *w, void *p);
-	static void cb_setPitchNum  (Fl_Widget *w, void *p);
-	static void cb_zoomIn       (Fl_Widget *w, void *p);
-	static void cb_zoomOut      (Fl_Widget *w, void *p);
+	static void cb_setChanPos    (Fl_Widget *w, void *p);
+	static void cb_resetStartEnd (Fl_Widget *w, void *p);
+	static void cb_setVolume     (Fl_Widget *w, void *p);
+	static void cb_setVolumeNum  (Fl_Widget *w, void *p);
+	static void cb_setBoost      (Fl_Widget *w, void *p);
+	static void cb_setBoostNum   (Fl_Widget *w, void *p);
+	static void cb_normalize     (Fl_Widget *w, void *p);
+	static void cb_panning       (Fl_Widget *w, void *p);
+	static void cb_reload        (Fl_Widget *w, void *p);
+	static void cb_setPitch      (Fl_Widget *w, void *p);
+	static void cb_setPitchToBar (Fl_Widget *w, void *p);
+	static void cb_setPitchToSong(Fl_Widget *w, void *p);
+	static void cb_resetPitch    (Fl_Widget *w, void *p);
+	static void cb_setPitchNum   (Fl_Widget *w, void *p);
+	static void cb_zoomIn        (Fl_Widget *w, void *p);
+	static void cb_zoomOut       (Fl_Widget *w, void *p);
 	inline void __cb_setChanPos();
 	inline void __cb_resetStartEnd();
 	inline void __cb_setVolume();
@@ -62,6 +65,9 @@ private:
 	inline void __cb_panning();
 	inline void __cb_reload();
 	inline void __cb_setPitch();
+	inline void __cb_setPitchToBar();
+	inline void __cb_setPitchToSong();
+	inline void __cb_resetPitch();
 	inline void __cb_setPitchNum();
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
