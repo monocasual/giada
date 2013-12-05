@@ -85,7 +85,10 @@ SampleChannel::~SampleChannel() {
 
 
 void SampleChannel::clear() {
-	/** TODO - TEST - do memset only if play or ending */
+
+	/** TODO - these memsets can be done only if status PLAY (if below),
+	 * but it would require another clear up when hard stop */
+
 	memset(vChan, 0, sizeof(float) * bufferSize);
 	memset(pChan, 0, sizeof(float) * bufferSize);
 	pChanFull = false;
@@ -142,7 +145,7 @@ void SampleChannel::hardStop(int frame) {
 
 void SampleChannel::onBar(int frame) {
 	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-		setXFade(frame);
+		reset(frame); ///FIXME - test, old call = setXFade(frame);
 }
 
 
@@ -563,13 +566,9 @@ void SampleChannel::setXFade(int frame) {
  * |abcdefabcdefab*abcdefabcde|
  * [old data-----]*[new data--]
  *
- * start  = begin -> fill pChan with data from wave->data[begin=0]
  * offset = frame -> fill pChan from the reset point */
 
 void SampleChannel::reset(int frame) {
-
-	printf("reset! frame/offset=%d\n", frame);
-
 	tracker = begin;
 	mute_i  = false;
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
