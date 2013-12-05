@@ -161,7 +161,8 @@ int SampleChannel::save(const char *path) {
 
 
 void SampleChannel::setBegin(unsigned v) {
-	begin = (unsigned) floorf(v / pitch);
+	//begin = (unsigned) floorf(v / pitch);
+	begin = v;
 	if (begin % 2 != 0)
 		begin++;
 	tracker = begin;
@@ -172,7 +173,8 @@ void SampleChannel::setBegin(unsigned v) {
 
 
 void SampleChannel::setEnd(unsigned v) {
-	end = (unsigned) floorf(v / pitch);
+	//end = (unsigned) floorf(v / pitch);
+	end = v;
 	if (end % 2 != 0)
 		end++;
 }
@@ -939,7 +941,7 @@ void SampleChannel::fillPChan(int offset) {
 	}
 	else {
 		rsmp_data.data_in       = wave->data+tracker;     // source data
-		rsmp_data.input_frames  = (wave->size-tracker)/2; // how many readable bytes
+		rsmp_data.input_frames  = (end-tracker)/2;        // how many readable bytes
 		rsmp_data.data_out      = pChan+offset;           // destination (processed data)
 		rsmp_data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
 		rsmp_data.end_of_input  = false;
