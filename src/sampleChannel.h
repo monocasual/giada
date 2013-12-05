@@ -115,7 +115,6 @@ public:
 
 	/* setPitch
 	 * updates the pitch value and chanStart+chanEnd accordingly. */
-	/** TODO - remove, useless */
 
 	void setPitch(float v);
 

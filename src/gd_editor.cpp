@@ -71,20 +71,25 @@ gdEditor::gdEditor(SampleChannel *ch)
 
 	Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
 	tools->begin();
-		volume         = new gDial (tools->x()+52,	                   tools->y(), 20, 20, "Volume");
-		volumeNum      = new gInput(volume->x()+volume->w()+4,        tools->y(), 46, 20, "dB");
-		boost          = new gDial (volumeNum->x()+volumeNum->w()+80, tools->y(), 20, 20, "Boost");
-		boostNum       = new gInput(boost->x()+boost->w()+4,          tools->y(), 46, 20, "dB");
-		normalize      = new gClick(boostNum->x()+boostNum->w()+80,   tools->y(), 70, 20, "Normalize");
-		pan 				   = new gDial (normalize->x()+normalize->w()+80, tools->y(), 20, 20, "Pan");
-		panNum    	   = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
+		volume        = new gDial (tools->x()+42,	                   tools->y(), 20, 20, "Volume");
+		volumeNum     = new gInput(volume->x()+volume->w()+4,        tools->y(), 46, 20, "dB");
 
-		pitch				   = new gDial  (tools->x()+52,	                volume->y()+volume->h()+4, 20, 20, "Pitch");
-		pitchNum		   = new gInput (pitch->x()+pitch->w()+4,	      volume->y()+volume->h()+4, 46, 20);
+		boost         = new gDial (volumeNum->x()+volumeNum->w()+80, tools->y(), 20, 20, "Boost");
+		boostNum      = new gInput(boost->x()+boost->w()+4,          tools->y(), 46, 20, "dB");
 
-		chanStart      = new gInput(tools->x()+52,                    pitch->y()+pitch->h()+4, 70, 20, "Start");
-		chanEnd        = new gInput(chanStart->x()+chanStart->w()+80, pitch->y()+pitch->h()+4, 70, 20, "End");
-		resetStartEnd  = new gClick(chanEnd->x()+chanEnd->w()+80,     pitch->y()+pitch->h()+4, 69, 20, "Reset");
+		normalize     = new gClick(boostNum->x()+boostNum->w()+40,   tools->y(), 70, 20, "Normalize");
+		pan 				  = new gDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
+		panNum    	  = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
+
+		pitch				  = new gDial  (tools->x()+42,	                     volume->y()+volume->h()+4, 20, 20, "Pitch");
+		pitchNum		  = new gInput (pitch->x()+pitch->w()+4,	           volume->y()+volume->h()+4, 46, 20);
+		pitchToBar    = new gClick (pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 46, 20, "To bar");
+		pitchToSong   = new gClick (pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 46, 20, "To song");
+		pitchReset    = new gClick (pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
+
+		chanStart     = new gInput(tools->x()+52,                    pitch->y()+pitch->h()+4, 60, 20, "Start");
+		chanEnd       = new gInput(chanStart->x()+chanStart->w()+40, pitch->y()+pitch->h()+4, 60, 20, "End");
+		resetStartEnd = new gClick(chanEnd->x()+chanEnd->w()+4,      pitch->y()+pitch->h()+4, 46, 20, "Reset");
 
 	tools->end();
 	tools->resizable(new gBox(chanStart->x()+chanStart->w()+4, tools->y(), 80, tools->h()));

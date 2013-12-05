@@ -87,6 +87,9 @@ public:
 	class gClick		 *reload;
 	class gDial  		 *pitch;
 	class gInput  	 *pitchNum;
+	class gClick  	 *pitchToBar;
+	class gClick  	 *pitchToSong;
+	class gClick  	 *pitchReset;
 	class gClick     *close;
 
 	class SampleChannel *ch;
