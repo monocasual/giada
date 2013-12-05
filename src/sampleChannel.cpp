@@ -245,7 +245,7 @@ void SampleChannel::sum(int frame, bool running) {
 	if (wave == NULL)
 		return;
 
-	if (status & (STATUS_PLAY | STATUS_ENDING)) {
+	if (status & (STATUS_PLAY | STATUS_ENDING)) {  /// TODO - link this to the previous return
 
 		if (frame != frameRewind) {
 
@@ -477,7 +477,7 @@ void SampleChannel::setMute(bool internal) {
 			/* sample in play? fadeout needed. Else, just mute it globally */
 
 			if (isPlaying())
-				mute_i = true; ///FIXME - test, old call = setFadeOut(DO_MUTE);
+				mute = true; ///FIXME - test, old call = setFadeOut(DO_MUTE);
 			else
 				mute = true;
 		}
