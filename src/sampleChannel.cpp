@@ -594,12 +594,10 @@ void SampleChannel::empty() {
 
 
 void SampleChannel::pushWave(Wave *w) {
-	wave      = w;
-	status    = STATUS_OFF;
-	begin     = 0;
-	//beginTrue = 0;
-	end       = wave->size;
-	//endTrue   = wave->size;
+	wave   = w;
+	status = STATUS_OFF;
+	begin  = 0;
+	end    = wave->size;
 }
 
 
@@ -620,9 +618,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	wave        = w;
 	status      = STATUS_OFF;
 	begin       = 0;
-	//beginTrue   = 0;
 	end         = wave->size;
-	//endTrue     = wave->size;
 
 	return true;
 }
