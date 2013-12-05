@@ -91,7 +91,7 @@ void SampleChannel::clear() {
 	pChanFull = false;
 
 	if (status & (STATUS_PLAY | STATUS_ENDING))
-		fillPChan(tracker, 0);
+		fillPChan(0);
 }
 
 
@@ -385,7 +385,7 @@ void SampleChannel::onZero(int frame) {
 
 	if (status == STATUS_WAIT) { /// FIXME - should be inside previous if!
 		status = STATUS_PLAY;
-		fillPChan(0, frame);
+		fillPChan(frame);
 	}
 
 	if (recStatus == REC_ENDING) {
@@ -573,7 +573,7 @@ void SampleChannel::reset(int frame) {
 	tracker = begin;
 	mute_i  = false;
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
-		fillPChan(tracker, frame);
+		fillPChan(frame);
 }
 
 
@@ -838,7 +838,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 				else {
 					status = STATUS_PLAY;
 					if (frame > 0)   // can be > 0 with recorded actions
-						fillPChan(tracker, frame);
+						fillPChan(frame);
 				}
 			}
 			break;
@@ -925,21 +925,21 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 /* ------------------------------------------------------------------ */
 
-/** TODO - start might be useless, use tracker */
-void SampleChannel::fillPChan(int start, int offset) {
+
+void SampleChannel::fillPChan(int offset) {
 
 	if (pitch == 1.0f) {
-		if (start+bufferSize-offset <= end) {
-			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - start=%d, offset=%d\n", begin, end, start, offset);
-			memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
-			tracker = start+bufferSize-offset;
+		if (tracker+bufferSize-offset <= end) {
+			printf("[channel::fillPChan] wave[%d,%d] *** no overflow - tracker=%d, offset=%d\n", begin, end, tracker, offset);
+			memcpy(pChan+offset, wave->data+tracker, (bufferSize-offset)*sizeof(float));
+			tracker = tracker+bufferSize-offset;
 			frameRewind = -1;
 		}
 		else {
-			printf("[channel::fillPChan] wave[%d,%d] *** overflow! - start=%d, offset=%d, empty=%d\n", begin, end, start, offset, end - start);
-			memcpy(pChan+offset, wave->data+start, (end-start-offset)*sizeof(float));
+			printf("[channel::fillPChan] wave[%d,%d] *** overflow! - tracker=%d, offset=%d, empty=%d\n", begin, end, tracker, offset, end - tracker);
+			memcpy(pChan+offset, wave->data+tracker, (end-tracker-offset)*sizeof(float));
+			frameRewind = end-tracker-offset;
 			tracker = end;
-			frameRewind = end-start-offset;
 		}
 	}
 	else {

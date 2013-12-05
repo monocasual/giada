@@ -51,7 +51,7 @@ private:
 
 	/**/
 
-	void fillPChan(int frame, int offset);
+	void fillPChan(int offset);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
