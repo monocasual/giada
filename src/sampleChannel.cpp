@@ -816,8 +816,6 @@ bool SampleChannel::canInputRec() {
 
 void SampleChannel::start(int frame, bool doQuantize) {
 
-	printf("start! frame/offset=%d\n", frame);
-
 	switch (status)	{
 		case STATUS_EMPTY:
 		case STATUS_MISSING:
