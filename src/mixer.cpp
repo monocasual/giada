@@ -133,10 +133,12 @@ void Mixer::init() {
 Channel *Mixer::addChannel(char side, int type) {
 
 	Channel *ch;
+	int bufferSize = kernelAudio::realBufsize*2;
+
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(kernelAudio::realBufsize*2, side);
+		ch = new SampleChannel(bufferSize, side);
 	else
-		ch = new MidiChannel(side);
+		ch = new MidiChannel(bufferSize, side);
 
 	while (true) {
 		int lockStatus = pthread_mutex_trylock(&mutex_chans);
@@ -395,7 +397,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size; k++)
-		channels.at(k)->process(outBuf, bufferFrames);
+		channels.at(k)->process(outBuf);
 	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */

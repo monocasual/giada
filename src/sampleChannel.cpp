@@ -46,8 +46,7 @@ extern PluginHost  G_PluginHost;
 
 
 SampleChannel::SampleChannel(int bufferSize, char side)
-	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side),
-		bufferSize (bufferSize),
+	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side, bufferSize),
 		frameRewind(-1),
 		wave       (NULL),
 		tracker    (0),
@@ -628,13 +627,13 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::process(float *buffer, int size) {
+void SampleChannel::process(float *buffer) {
 
 #ifdef WITH_VST
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 #endif
 
-	for (int j=0; j<size; j+=2) {
+	for (int j=0; j<bufferSize; j+=2) {
 		buffer[j]   += vChan[j]   * volume * panLeft;
 		buffer[j+1] += vChan[j+1] * volume * panRight;
 	}

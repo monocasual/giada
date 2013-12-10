@@ -43,8 +43,8 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-MidiChannel::MidiChannel(char side)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, side),
+MidiChannel::MidiChannel(int bufferSize, char side)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, side, bufferSize),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
@@ -186,13 +186,13 @@ void MidiChannel::unsetMute(bool internal) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::process(float *buffer, int size) {
+void MidiChannel::process(float *buffer) {
 #ifdef WITH_VST
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 	freeVstMidiEvents();
 #endif
 
-	for (int j=0; j<size; j+=2) {
+	for (int j=0; j<bufferSize; j+=2) {
 		buffer[j]   += vChan[j]   * volume; // * panLeft;   future?
 		buffer[j+1] += vChan[j+1] * volume; // * panRight;  future?
 	}

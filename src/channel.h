@@ -54,9 +54,16 @@
 
 class Channel {
 
+protected:
+
+	/* bufferSize
+	 * size of every buffer in this channel (vChan, pChan) */
+
+	int bufferSize;
+
 public:
 
-	Channel(int type, int status, char side);
+	Channel(int type, int status, char side, int bufferSize);
 	virtual ~Channel();
 
 	/* loadByPatch
@@ -67,7 +74,7 @@ public:
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */
 
-	virtual void process(float *buffer, int size) = 0;
+	virtual void process(float *buffer) = 0;
 
 	/* start
 	 * action to do when channel starts. doQuantize = false (don't

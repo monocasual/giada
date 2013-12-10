@@ -47,8 +47,9 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-Channel::Channel(int type, int status, char side)
-	: type      (type),
+Channel::Channel(int type, int status, char side, int bufferSize)
+	: bufferSize(bufferSize),
+	  type      (type),
 		status    (status),
 		side      (side),
 	  volume    (DEFAULT_VOL),

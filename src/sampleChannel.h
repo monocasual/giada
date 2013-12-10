@@ -51,11 +51,6 @@ private:
 	float *pChan;
 	bool   pChanFull;
 
-	/* bufferSize
-	 * size of every buffer in this channel (vChan, pChan) */
-
-	int bufferSize;
-
 	/* frameRewind
 	 * exact frame in which a rewind occurs */
 
@@ -84,7 +79,7 @@ public:
 	~SampleChannel();
 
 	void  clear      ();
-	void  process    (float *buffer, int size);   /** TODO - remove size and use internal bufferSize */
+	void  process    (float *buffer);
 	void  start      (int frame, bool doQuantize);
 	void  kill       (int frame);
 	void  empty      ();

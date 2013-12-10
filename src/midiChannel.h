@@ -51,13 +51,13 @@ class MidiChannel : public Channel {
 
 public:
 
-	MidiChannel(char side);
+	MidiChannel(int bufferSize, char side);
 	~MidiChannel();
 
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
-	void  process    (float *buffer, int size);
+	void  process    (float *buffer);
 	void  start      (int frame, bool doQuantize);
 	void  kill       (int frame);
 	void  empty      ();
