@@ -178,8 +178,14 @@ void SampleChannel::setEnd(unsigned v) {
 
 
 void SampleChannel::setPitch(float v) {
+
 	pitch = v;
 	rsmp_data.src_ratio = 1/pitch;
+
+	/* if status is off don't slide between frequencies */
+
+	if (status & (STATUS_OFF | STATUS_WAIT))
+		src_set_ratio(rsmp_state, 1/pitch);
 }
 
 
