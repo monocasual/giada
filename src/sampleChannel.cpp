@@ -900,7 +900,6 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 	}
 
 	fprintf(fp, "samplepath%d=%s\n",     i, path);
-
 	fprintf(fp, "chanSide%d=%d\n",       i, side);
 	fprintf(fp, "chanType%d=%d\n",       i, type);
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
@@ -959,20 +958,3 @@ void SampleChannel::fillPChan(int offset) {
 
 	pChanFull = true;
 }
-
-
-/* ------------------------------------------------------------------ */
-
-/*
-int SampleChannel::processPitch() {
-	data.data_in       = wave->data + tracker;
-	data.input_frames  = wave->size;
-	data.data_out      = pChan;
-	data.output_frames = kernelAudio::realBufsize; /// TODO - use private var
-	data.end_of_input  = false;
-	data.src_ratio     = 1/pitch;
-	int res = src_process(converter, &data);
-	printf("[sampleChannel] process pitch --- ratio=%f, frames_used=%lu frames_gen=%lu res=%d\n", data.src_ratio, data.input_frames_used, data.output_frames_gen, res);
-	return tracker += data.input_frames_used;
-}
-*/
