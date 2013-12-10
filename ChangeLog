@@ -13,6 +13,14 @@
 
 
 
+0.8.1 --- 2013 . 12 . 09
+- New, high-quality pitch control based on libsamplerate
+- New set of functions 'spread sample to beat/song'
+[known issues]
+- Internal crossfades have been temporarily disabled. Some clicks may
+	occur
+
+
 0.8.0 --- 2013 . 11 . 03
 - Initial MIDI input support
 - Fix freeze when recording audio inputs on a second channel
