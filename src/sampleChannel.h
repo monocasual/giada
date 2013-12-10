@@ -39,17 +39,31 @@ class SampleChannel : public Channel {
 
 private:
 
-	/**/
+	/* rsmp_state, rsmp_data
+	 * structs from libsamplerate */
 
 	SRC_STATE *rsmp_state;
 	SRC_DATA   rsmp_data;
 
-	float     *pChan;
-	bool       pChanFull;
-	int        bufferSize;
-	int        frameRewind;
+	/* pChan
+	 * extra virtual channel for processing resampled data.  */
 
-	/**/
+	float *pChan;
+	bool   pChanFull;
+
+	/* bufferSize
+	 * size of every buffer in this channel (vChan, pChan) */
+
+	int bufferSize;
+
+	/* frameRewind
+	 * exact frame in which a rewind occurs */
+
+	int frameRewind;
+
+	/* fillPChan
+	 * copy from wave to pChan and resample data from wave. Start to fill
+	 * pChan from byte 'offset'. */
 
 	void fillPChan(int offset);
 
