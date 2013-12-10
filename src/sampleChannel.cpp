@@ -161,10 +161,7 @@ int SampleChannel::save(const char *path) {
 
 
 void SampleChannel::setBegin(unsigned v) {
-	//begin = (unsigned) floorf(v / pitch);
-	begin = v;
-	if (begin % 2 != 0)
-		begin++;
+	begin   = v;
 	tracker = begin;
 }
 
@@ -173,10 +170,7 @@ void SampleChannel::setBegin(unsigned v) {
 
 
 void SampleChannel::setEnd(unsigned v) {
-	//end = (unsigned) floorf(v / pitch);
 	end = v;
-	if (end % 2 != 0)
-		end++;
 }
 
 
