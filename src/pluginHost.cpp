@@ -38,6 +38,7 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
+#include "kernelMidi.h"
 
 
 extern Conf          G_Conf;
@@ -375,6 +376,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 	gVector <Plugin *> *pStack = getStack(stackType, ch);
 
 	/* empty stack, stack not found or mixer not ready: do nothing */
+	/// TODO - join evaluation
 
 	if (!G_Mixer.ready)
 		return;
@@ -394,6 +396,8 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 	 * the N-th plugin will process the result of the plugin N-1. */
 
 	for (unsigned i=0; i<pStack->size; i++) {
+		/// TODO - join evaluation
+
 		if (pStack->at(i)->status != 1)
 			continue;
 		if (pStack->at(i)->suspended)
@@ -401,8 +405,10 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 		if (pStack->at(i)->bypass)
 			continue;
 		if (ch) {   // process events if it's a channel stack
-			if (ch->type == CHANNEL_MIDI)
+			if (ch->type == CHANNEL_MIDI) {
+				printf("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
 				pStack->at(i)->processEvents(((MidiChannel*)ch)->getVstEvents());
+			}
 		}
 		pStack->at(i)->processAudio(bufferI, bufferO, kernelAudio::realBufsize);
 		bufferI = bufferO;
@@ -638,11 +644,9 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 
 	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
 
-	/** TODO - use kernelMidi::getB1,2,3() */
-
-	e->midiData[0] = (msg >> 24) & 0xFF;  // note on/off + channel
-	e->midiData[1] = (msg >> 16) & 0xFF;  // note number
-	e->midiData[2] = (msg >> 8)  & 0xFF;  // velocity
+	e->midiData[0] = kernelMidi::getB1(msg); // (msg >> 24) & 0xFF;  // note on/off + channel
+	e->midiData[1] = kernelMidi::getB2(msg); // (msg >> 16) & 0xFF;  // note number
+	e->midiData[2] = kernelMidi::getB3(msg); // (msg >> 8)  & 0xFF;  // velocity
 	e->midiData[3] = 0;
 
 	/* noteLength = (in sample frames) of entire note, if available,
