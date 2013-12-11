@@ -29,7 +29,6 @@
 
 #include "channel.h"
 #include "pluginHost.h"
-#include "kernelAudio.h"
 #include "kernelMidi.h"
 #include "patch.h"
 #include "wave.h"
@@ -73,7 +72,7 @@ Channel::Channel(int type, int status, char side, int bufferSize)
 	  midiInMute    (0x0),
 	  midiInSolo    (0x0)
 {
-	vChan = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
 		printf("[Channel] unable to alloc memory for vChan\n");
 }
