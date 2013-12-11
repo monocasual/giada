@@ -685,10 +685,8 @@ int gPianoItem::handle(int e) {
 
 				/* snapping */
 
-				if (pParent->gridTool->isOn()) {
+				if (pParent->gridTool->isOn())
 					nx = pParent->gridTool->getSnapPoint(nx-pr->x()) + pr->x() - 1;
-					printf("in=%d out=%d\n", nx-pr->x(), nx);
-				}
 
 				position(nx, y());
 			}
