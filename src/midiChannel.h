@@ -78,7 +78,7 @@ public:
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(recorder::action *a);
+	void sendMidi(recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST

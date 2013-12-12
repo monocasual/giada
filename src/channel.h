@@ -132,7 +132,10 @@ public:
 	virtual void onBar(int frame) = 0;
 
 	/* parseAction
-	 * do something on a recorded action. Frame = actual frame in Mixer. */
+	 * do something on a recorded action. Parameters:
+	 * action *a   - action to parse
+	 * localFrame  - frame number of the processed buffer
+	 * globalFrame - actual frame in Mixer */
 
 	virtual void parseAction(recorder::action *a, int localFrame, int globalFrame) = 0;
 

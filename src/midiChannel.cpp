@@ -97,7 +97,7 @@ void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
 	if (events.numEvents < MAX_VST_EVENTS) {
 		events.events[events.numEvents] = (VstEvent*) e;
 		events.numEvents++;
-		//printf("[MidiChannel] VstMidiEvent added to channel %d, total = %d\n", index, events.numEvents);
+		//printf("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d\n", events.numEvents, e->deltaFrames);
 	}
 	else
 		printf("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
@@ -146,7 +146,7 @@ VstEvents *MidiChannel::getVstEvents() {
 
 void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFrame) {
 	if (a->type == ACTION_MIDI)
-		sendMidi(a);
+		sendMidi(a, localFrame/2);
 }
 
 
@@ -265,11 +265,14 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::sendMidi(recorder::action *a) {
+void MidiChannel::sendMidi(recorder::action *a, int localFrame) {
+
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
 			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
+
 #ifdef WITH_VST
+		a->event->deltaFrames = localFrame;
 		addVstMidiEvent(a->event);
 #endif
 	}

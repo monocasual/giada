@@ -406,7 +406,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 			continue;
 		if (ch) {   // process events if it's a channel stack
 			if (ch->type == CHANNEL_MIDI) {
-				printf("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
+				///printf("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
 				pStack->at(i)->processEvents(((MidiChannel*)ch)->getVstEvents());
 			}
 		}
@@ -631,7 +631,6 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 
 	/* deltaFrames = sample frames related to the current block start
 	 * sample position. */
-	/** FIXME - use real values */
 
 	e->deltaFrames = 0;
 
@@ -644,9 +643,9 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
 
 	/* midiData = 1 to 3 MIDI bytes; midiData[3] is reserved (zero) */
 
-	e->midiData[0] = kernelMidi::getB1(msg); // (msg >> 24) & 0xFF;  // note on/off + channel
-	e->midiData[1] = kernelMidi::getB2(msg); // (msg >> 16) & 0xFF;  // note number
-	e->midiData[2] = kernelMidi::getB3(msg); // (msg >> 8)  & 0xFF;  // velocity
+	e->midiData[0] = kernelMidi::getB1(msg); // note on/off + channel
+	e->midiData[1] = kernelMidi::getB2(msg); // note number
+	e->midiData[2] = kernelMidi::getB3(msg); // velocity
 	e->midiData[3] = 0;
 
 	/* noteLength = (in sample frames) of entire note, if available,

@@ -551,13 +551,13 @@ void gPianoItem::record() {
 	}
 
 	/* note off */
-
-	event_a |= (0x90 << 24);   // note on 	/** FIXME - use constants */
+	/** FIXME - use constants */
+	event_a |= (0x90 << 24);   // note on
 	event_a |= (note << 16);   // note value
 	event_a |= (0x3F <<  8);   // velocity
 	event_a |= (0x00);
 
-	event_b |= (0x80 << 24);   // note off 	/** FIXME - use constants */
+	event_b |= (0x80 << 24);   // note off
 	event_b |= (note << 16);   // note value
 	event_b |= (0x3F <<  8);   // velocity
 	event_b |= (0x00);
@@ -575,7 +575,7 @@ void gPianoItem::remove() {
 	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on
-	 * key_off sequence */
+	 * key_off sequence. */
 
 	((MidiChannel*) pParent->chan)->sendMidi(event_b);
 }

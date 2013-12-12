@@ -145,6 +145,10 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 		global.at(frameToExpand).add(a);		// expand array
 	}
 
+	/* if WITH_VST create a new VST event and attach it to our action.
+	 * Nota bene: the VST event occurs on localFrame=0: this is a
+	 * user-generated event after all! */
+
 #ifdef WITH_VST
 	if (type == ACTION_MIDI)
 		a->event = G_PluginHost.createVstMidiEvent(a->iValue);
