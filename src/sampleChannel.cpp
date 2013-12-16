@@ -783,6 +783,8 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
 		readPatchMidiIn(i);
+		midiInReadActions = G_Patch.getMidiValue(i, "InReadActions");
+		midiInPitch       = G_Patch.getMidiValue(i, "InPitch");
 
 		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));
@@ -918,6 +920,8 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 	fprintf(fp, "chanPitch%d=%f\n",      i, pitch);
 
 	writePatchMidiIn(fp, i);
+	fprintf(fp, "chanMidiInReadActions%d=%u\n", i, midiInReadActions);
+	fprintf(fp, "chanMidiInPitch%d=%u\n",       i, midiInPitch);
 }
 
 
