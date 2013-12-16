@@ -179,6 +179,7 @@ public:
 	/* midi stuff */
 
   uint32_t midiInReadActions;
+  uint32_t midiInPitch;
 
 	/* const - what to do when a fadeout ends */
 

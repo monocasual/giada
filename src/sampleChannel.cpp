@@ -62,7 +62,8 @@ SampleChannel::SampleChannel(int bufferSize, char side)
 		fadeoutStep(DEFAULT_FADEOUT_STEP),
 		key        (0),
 	  readActions(true),
-	  midiInReadActions(0x0)
+	  midiInReadActions(0x0),
+	  midiInPitch      (0x0)
 {
 	rsmp_state = src_new(SRC_LINEAR, 2, NULL);
 	pChan      = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
