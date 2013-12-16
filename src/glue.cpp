@@ -447,8 +447,11 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui) {
 		ch->recStatus = REC_WAITING;
 	else
 		recorder::enableRead(ch);
-	if (!gui)
-		((gSampleChannel*)ch->guiChannel)->readActions->value(1);
+	if (!gui) {
+		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
+		if (gch->readActions)  // if button exists
+			gch->readActions->value(1);
+	}
 }
 
 
@@ -464,8 +467,11 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
 		ch->recStatus = REC_ENDING;
 	else
 		recorder::disableRead(ch);
-	if (!gui)
-		((gSampleChannel*)ch->guiChannel)->readActions->value(0);
+	if (!gui) {
+		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
+		if (gch->readActions)  // if button exists
+			gch->readActions->value(0);
+	}
 }
 
 
