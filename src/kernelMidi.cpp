@@ -324,8 +324,13 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 			}
 			else if (pure == ch->midiInVolume) {
 				float vf = (value >> 8)/127.0f;
-				printf(" >>>  volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				printf(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
 				glue_setChanVol(ch, vf, false);
+			}
+			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
+				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
+				printf(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
 				printf(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);

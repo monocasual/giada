@@ -1074,15 +1074,18 @@ void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numer
 			val = 0.1000f;
 		if (val > 4.0f)
 			val = 4.0000f;
-		win->pitch->value(val);
+		if (win)
+			win->pitch->value(val);
 	}
 
 	ch->setPitch(val);
 
-	char buf[16];
-	sprintf(buf, "%.4f", val);
-	win->pitchNum->value(buf);
-	win->pitchNum->redraw();
+	if (win) {
+		char buf[16];
+		sprintf(buf, "%.4f", val);
+		win->pitchNum->value(buf);
+		win->pitchNum->redraw();
+	}
 }
 
 
