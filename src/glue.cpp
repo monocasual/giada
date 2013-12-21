@@ -1080,6 +1080,8 @@ void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numer
 
 	ch->setPitch(val);
 
+	/** FIXME - fast win updates crash X11... thread locking needed? */
+
 	if (win) {
 		char buf[16];
 		sprintf(buf, "%.4f", val);

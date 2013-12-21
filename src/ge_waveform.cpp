@@ -535,6 +535,9 @@ void gWaveform::openEditMenu() {
 		{"Cut"},
 		{"Trim"},
 		{"Silence"},
+		{"Fade in"},
+		{"Fade out"},
+		{"Smooth edges"},
 		{"Set start/end here"},
 		{0}
 	};
@@ -635,6 +638,33 @@ void gWaveform::openEditMenu() {
 		stretchToWindow();
 		menuOpen = false;
 		redraw();
+		return;
+	}
+
+	if (!strcmp(m->label(), "Fade in") || !strcmp(m->label(), "Fade out")) {
+
+		int type = !strcmp(m->label(), "Fade in") ? 0 : 1;
+		wfx_fade(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB), type);
+
+		selectionA = 0;
+		selectionB = 0;
+
+		stretchToWindow();
+		redraw();
+		menuOpen = false;
+		return;
+	}
+
+	if (!strcmp(m->label(), "Smooth edges")) {
+
+		wfx_smooth(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+
+		selectionA = 0;
+		selectionB = 0;
+
+		stretchToWindow();
+		redraw();
+		menuOpen = false;
 		return;
 	}
 }

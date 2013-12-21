@@ -30,12 +30,10 @@
 #ifndef WAVEFX_H
 #define WAVEFX_H
 
-#include <math.h>
-
 
 /* normalizeSoft
  * normalize the wave by returning the dB value for the boost volume. It
- * doesn't touch the memory. */
+ * doesn't deal with data in memory. */
 
 float wfx_normalizeSoft(class Wave *w);
 
@@ -46,5 +44,16 @@ void wfx_silence(class Wave *w, int a, int b);
 int wfx_cut(class Wave *w, int a, int b);
 
 int wfx_trim(class Wave *w, int a, int b);
+
+/* fade
+ * fade in or fade out selection. Fade In = type 0, Fade Out = type 1 */
+
+void wfx_fade(class Wave *w, int a, int b, int type);
+
+/* smooth
+ * smooth edges of selection. */
+
+void wfx_smooth(class Wave *w, int a, int b);
+
 
 #endif

@@ -145,6 +145,8 @@ public:
 
 	/* selectionA/B  = portion of the selected wave
 	 * " " "" " _abs = selectionA/B not affected by zoom */
+	/** TODO - change selectionA to selectionA_rel
+	    TODO - change selectionB to selectionB_rel */
 	int selectionA;
 	int selectionB;
 	int selectionA_abs;

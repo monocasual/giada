@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include <math.h>
 #include "waveFx.h"
 #include "channel.h"
 #include "mixer.h"
@@ -177,4 +178,46 @@ int wfx_trim(Wave *w, int a, int b) {
  	w->isEdited = true;
 
 	return 1;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void wfx_fade(Wave *w, int a, int b, int type) {
+
+	float m = type == 0 ? 0.0f : 1.0f;
+	float d = 1.0f/(float)(b-a);
+	if (type == 1)
+		d = -d;
+
+	a *= 2;
+	b *= 2;
+
+	for (int i=a; i<b; i+=2) {
+		w->data[i]   *= m;
+		w->data[i+1] *= m;
+		m += d;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void wfx_smooth(Wave *w, int a, int b) {
+
+	int d = 32;  // 64 if stereo data
+
+	/* do nothing if fade edges (both of 32 samples) are > than selected
+	 * portion of wave. d*2 => count both edges, (b-a)*2 => stereo
+	 * values. */
+
+	if (d*2 > (b-a)*2) {
+		puts("[WFX] selection is too small, nothing to do");
+		return;
+	}
+
+	wfx_fade(w, a, a+d, 0);
+	wfx_fade(w, b-d, b, 1);
 }
