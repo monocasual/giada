@@ -931,14 +931,22 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 void SampleChannel::fillPChan(int offset) {
 
 	if (pitch == 1.0f) {
+
+		/* case 1: pChan lies within the original sample boundaries (start-
+		 * end) */
+
 		if (tracker+bufferSize-offset <= end) {
 			memcpy(pChan+offset, wave->data+tracker, (bufferSize-offset)*sizeof(float));
-			tracker = tracker+bufferSize-offset;
 			frameRewind = -1;
+			tracker = tracker+bufferSize-offset;
 		}
+
+		/* case2: pChan lies outside the end of the sample, OR the sample
+		 * is smaller than pChan */
+
 		else {
-			frameRewind = end-tracker-offset;
-			memcpy(pChan+offset, wave->data+tracker, frameRewind*sizeof(float));
+			memcpy(pChan+offset, wave->data+tracker, (end-tracker)*sizeof(float));
+			frameRewind = end-tracker+offset;
 			tracker = end;
 		}
 	}
@@ -957,7 +965,7 @@ void SampleChannel::fillPChan(int offset) {
 		if (gen == bufferSize-offset)
 			frameRewind = -1;
 		else
-			frameRewind = gen;
+			frameRewind = gen+offset;
 	}
 
 	pChanFull = true;
