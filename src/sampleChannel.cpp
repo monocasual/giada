@@ -249,8 +249,6 @@ void SampleChannel::sum(int frame, bool running) {
 
 		if (frame != frameRewind) {
 
-#if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
-
 			/* fade in */
 
 			if (fadein <= 1.0f)
@@ -267,13 +265,9 @@ void SampleChannel::sum(int frame, bool running) {
 					volume_i = 1.0f;
 			}
 
-#endif /// TEMPORARY REMOVE FADE PROCESSES -----------------------------
-
 			/* fadeout process (both fadeout and xfade) */
 
 			if (fadeoutOn) {
-
-#if 0 /// TEMPORARY REMOVE FADE PROCESSES ------------------------------
 
 				if (fadeoutVol >= 0.0f) { // fadeout ongoing
 
@@ -281,18 +275,20 @@ void SampleChannel::sum(int frame, bool running) {
 
 					if (fadeoutType == XFADE) {
 
-						/* ftp is fadeoutTracker affected by pitch */
+						puts("XFADE - work in progress");
 
+						/**
 						vChan[frame]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
 						vChan[frame+1] += wave->data[fadeoutTracker+1] * fadeoutVol * v;
 
 						vChan[frame]   += wave->data[tracker]   * v;
 						vChan[frame+1] += wave->data[tracker+1] * v;
+						*/
 
 					}
 					else { // FADEOUT
-						vChan[frame]   += wave->data[tracker]   * fadeoutVol * v;
-						vChan[frame+1] += wave->data[tracker+1] * fadeoutVol * v;
+						vChan[frame]   += pChan[frame]   * fadeoutVol * v;
+						vChan[frame+1] += pChan[frame+1] * fadeoutVol * v;
 					}
 
 					fadeoutVol     -= fadeoutStep;
@@ -314,7 +310,7 @@ void SampleChannel::sum(int frame, bool running) {
 						if (fadeoutEnd == DO_MUTE_I)
 							mute_i = true;
 						else             // DO_STOP
-							hardStop();
+							hardStop(frame);
 					}
 
 					/* we must append another frame in the buffer when the fadeout
@@ -323,8 +319,6 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame]   = vChan[frame-2];
 					vChan[frame+1] = vChan[frame-1];
 				}
-
-#endif /// TEMPORARY REMOVE FADE PROCESSES -----------------------------
 
 			}  // no fadeout to do
 			else {
@@ -460,7 +454,7 @@ void SampleChannel::setMute(bool internal) {
 			mute_i = true;
 		else {
 			if (isPlaying())
-				mute_i = true; ///FIXME - test, old call = setFadeOut(DO_MUTE_I);
+				setFadeOut(DO_MUTE_I);
 			else
 				mute_i = true;
 		}
@@ -477,7 +471,7 @@ void SampleChannel::setMute(bool internal) {
 			/* sample in play? fadeout needed. Else, just mute it globally */
 
 			if (isPlaying())
-				mute = true; ///FIXME - test, old call = setFadeOut(DO_MUTE);
+				setFadeOut(DO_MUTE);
 			else
 				mute = true;
 		}
@@ -494,7 +488,7 @@ void SampleChannel::unsetMute(bool internal) {
 			mute_i = false;
 		else {
 			if (isPlaying())
-				mute_i = false;  ///FIXME - test, old call = setFadeIn(internal);
+				setFadeIn(internal);
 			else
 				mute_i = false;
 		}
@@ -504,7 +498,7 @@ void SampleChannel::unsetMute(bool internal) {
 			mute = false;
 		else {
 			if (isPlaying())
-				mute = false;    ///FIXME - test, old call = setFadeIn(internal);
+				setFadeIn(internal);
 			else
 				mute = false;
 		}
@@ -516,9 +510,8 @@ void SampleChannel::unsetMute(bool internal) {
 
 
 void SampleChannel::calcFadeoutStep() {
-	unsigned ctracker = tracker * pitch;
-	if (end - ctracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
-		fadeoutStep = ceil((end - ctracker) / volume) * 2; /// or volume_i ???
+	if (end - tracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
+		fadeoutStep = ceil((end - tracker) / volume) * 2; /// or volume_i ???
 	else
 		fadeoutStep = DEFAULT_FADEOUT_STEP;
 }
@@ -568,7 +561,7 @@ void SampleChannel::setXFade(int frame) {
  * |abcdefabcdefab*abcdefabcde|
  * [old data-----]*[new data--]
  *
- * offset = frame -> fill pChan from the reset point */
+ * */
 
 void SampleChannel::reset(int frame) {
 	tracker = begin;
@@ -646,13 +639,10 @@ void SampleChannel::process(float *buffer) {
 
 void SampleChannel::kill(int frame) {
 	if (wave != NULL && status != STATUS_OFF) {
-		if (mute || mute_i)
-			stop();   /// FIXME - hardStop() is enough
+		if (mute || mute_i || (status == STATUS_WAIT && mode & LOOP_ANY))
+			hardStop(0);
 		else
-		if (status == STATUS_WAIT && mode & LOOP_ANY)
-			hardStop(frame);
-		else
-			hardStop(frame); /// FIXME - test, old call = setFadeOut(DO_STOP);
+			setFadeOut(DO_STOP);
 	}
 }
 
@@ -663,15 +653,16 @@ void SampleChannel::kill(int frame) {
 void SampleChannel::stopBySeq() {
 
 	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true,
-	 * else do nothing and return */
+	 * else do nothing and return. Always kill at frame=0, this is a
+	 * user-generated event. */
 
 	if (!G_Conf.chansStopOnSeqHalt)
 		return;
 
 	if (mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		kill(0);  /// FIXME - wrong frame value
+		kill(0);
 
-	/** FIXME - unify these */
+	/** FIXME - merge these */
 
 	/* when a channel has recs in play?
 	 * Recorder has events for that channel
@@ -681,7 +672,7 @@ void SampleChannel::stopBySeq() {
 	 * disattivate) */
 
 	if (hasActions && readActions && status == STATUS_PLAY)
-		kill(0);  /// FIXME - wrong frame value
+		kill(0);
 }
 
 
