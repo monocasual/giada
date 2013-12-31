@@ -275,7 +275,14 @@ void SampleChannel::sum(int frame, bool running) {
 
 					if (fadeoutType == XFADE) {
 
-						puts("XFADE - work in progress");
+						/* on each frame 0 copy a chunk of the older sample: this is
+						 * the faded out part */
+
+						if (frame == 0)
+							printf("[xFade] xfade in progress --- frame=0\n");
+
+						vChan[frame]   = 1.0f;
+						vChan[frame+1] = 1.0f;
 
 						/**
 						vChan[frame]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
@@ -543,6 +550,7 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 
 
 void SampleChannel::setXFade(int frame) {
+	printf("[xFade] do xFade from frame=%d\n", frame);
 	calcFadeoutStep();
 	fadeoutOn      = true;
 	fadeoutVol     = 1.0f;
@@ -855,7 +863,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					if (mute)
 						reset(frame);
 					else
-						reset(frame); ///FIXME - test, old call = setXFade(frame);
+						setXFade(frame);
 				}
 			}
 			else
@@ -919,7 +927,9 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::fillPChan(int offset) {
+void SampleChannel::fillPChan(int start, int offset) {
+
+	int pos;  // return value: the new position
 
 	if (pitch == 1.0f) {
 

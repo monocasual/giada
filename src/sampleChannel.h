@@ -58,9 +58,9 @@ private:
 
 	/* fillPChan
 	 * copy from wave to pChan and resample data from wave. Start to fill
-	 * pChan from byte 'offset'. */
+	 * pChan from byte 'offset'. Returns new sample position, in frames */
 
-	void fillPChan(int offset);
+	int fillPChan(int start, int offset);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
