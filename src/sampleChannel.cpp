@@ -56,7 +56,8 @@ SampleChannel::SampleChannel(int bufferSize, char side)
 		boost      (1.0f),
 		mode       (DEFAULT_CHANMODE),
 		qWait	     (false),
-		fadein     (1.0f),
+		fadeinOn   (false),
+		fadeinVol  (1.0f),
 		fadeoutOn  (false),
 		fadeoutVol (1.0f),
 		fadeoutStep(DEFAULT_FADEOUT_STEP),
@@ -91,7 +92,6 @@ void SampleChannel::clear() {
 
 	memset(vChan, 0, sizeof(float) * bufferSize);
 	memset(pChan, 0, sizeof(float) * bufferSize);
-	pChanFull = false;
 
 	if (status & (STATUS_PLAY | STATUS_ENDING))
 		tracker = fillPChan(tracker, 0);
@@ -135,6 +135,11 @@ void SampleChannel::calcVolumeEnv(int frame) {
 
 
 void SampleChannel::hardStop(int frame) {
+
+	if (frame != 0) {  // clear data in range [frame, bufferSize-1]
+		printf("[hardStop] frame=%d!=0, clearChan needed\n", frame);
+		clearPChan(frame);
+	}
 	status = STATUS_OFF;
 	reset(frame);
 }
@@ -242,125 +247,108 @@ void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalF
 
 void SampleChannel::sum(int frame, bool running) {
 
-	if (wave == NULL)
+	if (wave == NULL || status & ~(STATUS_PLAY | STATUS_ENDING))
 		return;
 
-	if (status & (STATUS_PLAY | STATUS_ENDING)) {  /// TODO - link this to the previous return
+	if (frame != frameRewind) {
 
-		if (frame != frameRewind) {
+		/* volume envelope, only if seq is running */
 
-			/* fade in */
+		if (running) {
+			volume_i += volume_d;
+			if (volume_i < 0.0f)
+				volume_i = 0.0f;
+			else
+			if (volume_i > 1.0f)
+				volume_i = 1.0f;
+		}
 
-			if (fadein <= 1.0f)
-				fadein += 0.01f;		/// TODO - remove the hardcoded value
+		/* fadein or fadeout processes. If mute, delete any signal. */
 
-			/* volume envelope, only if seq is running */
-
-			if (running) {
-				volume_i += volume_d;
-				if (volume_i < 0.0f)
-					volume_i = 0.0f;
-				else
-				if (volume_i > 1.0f)
-					volume_i = 1.0f;
+		if (mute || mute_i) {
+			vChan[frame]   = 0.0f;
+			vChan[frame+1] = 0.0f;
+		}
+		else
+		if (fadeinOn) {
+			if (fadeinVol < 1.0f) {
+				printf("[xFade] fadein in progress --- frame=%d\n", frame);
+				vChan[frame]   *= fadeinVol;
+				vChan[frame+1] *= fadeinVol;
+				fadeinVol += 0.01f;
 			}
-
-			/* fadeout process (both fadeout and xfade) */
-
-			if (fadeoutOn) {
-
-				if (fadeoutVol >= 0.0f) { // fadeout ongoing
-
-					float v = volume_i * boost;
-
-					if (fadeoutType == XFADE) {
-
-						/* on each frame 0 copy a chunk of the older sample: this is
-						 * the faded out part */
-
-						printf("[xFade] xfade in progress --- frame=%d\n", frame);
-
-						vChan[frame]   = 0.0f;
-						vChan[frame+1] = 0.0f;
-
-
-						/**
-						vChan[frame]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
-						vChan[frame+1] += wave->data[fadeoutTracker+1] * fadeoutVol * v;
-
-						vChan[frame]   += wave->data[tracker]   * v;
-						vChan[frame+1] += wave->data[tracker+1] * v;
-						*/
-
-					}
-					else { // FADEOUT
-						vChan[frame]   += pChan[frame]   * fadeoutVol * v;
-						vChan[frame+1] += pChan[frame+1] * fadeoutVol * v;
-					}
-
-					fadeoutVol     -= fadeoutStep;
-					fadeoutTracker += 2;
-				}
-				else {  // fadeout end
-					fadeoutOn  = false;
-					fadeoutVol = 1.0f;
-
-					/* QWait ends with the end of the xfade */
-
-					if (fadeoutType == XFADE) {
-						qWait = false;
-					}
-					else {
-						if (fadeoutEnd == DO_MUTE)
-							mute = true;
-						else
-						if (fadeoutEnd == DO_MUTE_I)
-							mute_i = true;
-						else             // DO_STOP
-							hardStop(frame);
-					}
-
-					/* we must append another frame in the buffer when the fadeout
-					 * ends: there's a gap here which would clip otherwise */
-
-					vChan[frame]   = vChan[frame-2];
-					vChan[frame+1] = vChan[frame-1];
-				}
-
-			}  // no fadeout to do
 			else {
-				if (!mute && !mute_i) {
-					float v = volume_i * fadein * boost;
-					vChan[frame]   += pChan[frame]   * v;
-					vChan[frame+1] += pChan[frame+1] * v;
+				fadeinOn  = false;
+				fadeinVol = 1.0f;
+			}
+		}
+		else
+		if (fadeoutOn) {
+			if (fadeoutVol >= 0.0f) { // fadeout ongoing
+				if (fadeoutType == XFADE) {
+					printf("[xFade] xfade in progress --- frame=%d\n", frame);
+					vChan[frame]   = -1.0f;
+					vChan[frame+1] = -1.0f;
 				}
+				else {
+					printf("fadeout in progres --- frame=%d\n", frame);
+					vChan[frame]   *= fadeoutVol;
+					vChan[frame+1] *= fadeoutVol;
+				}
+				fadeoutVol     -= fadeoutStep;
+				fadeoutTracker += 2;
+			}
+			else {  // fadeout end
+				fadeoutOn  = false;
+				fadeoutVol = 1.0f;
+
+				/* QWait ends with the end of the xfade */
+
+				if (fadeoutType == XFADE) {
+					qWait = false;
+				}
+				else {
+					if (fadeoutEnd == DO_MUTE)
+						mute = true;
+					else
+					if (fadeoutEnd == DO_MUTE_I)
+						mute_i = true;
+					else             // DO_STOP
+						hardStop(frame);
+				}
+
+				/* we must append another frame in the buffer when the fadeout
+				 * ends: there's a gap here which would clip otherwise */
+
+				///vChan[frame]   = vChan[frame-2];
+				///vChan[frame+1] = vChan[frame-1];
 			}
 		}
-		else {
+	}
+	else {
 
-			if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
-				 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
-			{
-				status = STATUS_OFF;
-			}
-
-			/// FIXME - unify these
-			/* stop loops when the seq is off */
-
-			if ((mode & LOOP_ANY) && !running)
-				status = STATUS_OFF;
-
-			/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
-			 * would return in wait, losing the ENDING status */
-
-			if (mode == LOOP_ONCE && status != STATUS_ENDING)
-				status = STATUS_WAIT;
-
-			/* check for end of samples. SINGLE_ENDLESS runs forever unless
-			 * it's in ENDING mode */
-
-			reset(frame);
+		if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
+			 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
+		{
+			status = STATUS_OFF;
 		}
+
+		/// FIXME - unify these
+		/* stop loops when the seq is off */
+
+		if ((mode & LOOP_ANY) && !running)
+			status = STATUS_OFF;
+
+		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
+		 * would return in wait, losing the ENDING status */
+
+		if (mode == LOOP_ONCE && status != STATUS_ENDING)
+			status = STATUS_WAIT;
+
+		/* check for end of samples. SINGLE_ENDLESS runs forever unless
+		 * it's in ENDING mode */
+
+		reset(frame);
 	}
 }
 
@@ -530,7 +518,8 @@ void SampleChannel::calcFadeoutStep() {
 void SampleChannel::setFadeIn(bool internal) {
 	if (internal) mute_i = false;  // remove mute before fading in
 	else          mute   = false;
-	fadein = 0.0f;
+	fadeinOn  = true;
+	fadeinVol = 0.0f;
 }
 
 
@@ -927,6 +916,15 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
+void SampleChannel::clearPChan(int start) {
+	for (int i=start; i<bufferSize; i+=2)
+		vChan[i] = vChan[i+1] = 0.0f;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int SampleChannel::fillPChan(int start, int offset) {
 
 	int position;  // return value: the new position
@@ -937,7 +935,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 		 * end) */
 
 		if (start+bufferSize-offset <= end) {
-			memcpy(pChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
+			memcpy(vChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
 			frameRewind = -1;
 			position    = start+bufferSize-offset;
 		}
@@ -946,7 +944,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 		 * is smaller than pChan */
 
 		else {
-			memcpy(pChan+offset, wave->data+start, (end-start)*sizeof(float));
+			memcpy(vChan+offset, wave->data+start, (end-start)*sizeof(float));
 			frameRewind = end-start+offset;
 			position    = end;
 		}
@@ -954,7 +952,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 	else {
 		rsmp_data.data_in       = wave->data+start;       // source data
 		rsmp_data.input_frames  = (end-start)/2;          // how many readable bytes
-		rsmp_data.data_out      = pChan+offset;           // destination (processed data)
+		rsmp_data.data_out      = vChan+offset;           // destination (processed data)
 		rsmp_data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
 		rsmp_data.end_of_input  = false;
 
@@ -968,7 +966,5 @@ int SampleChannel::fillPChan(int start, int offset) {
 		else
 			frameRewind = gen+offset;
 	}
-
-	pChanFull = true;
 	return position;
 }

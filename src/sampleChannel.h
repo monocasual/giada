@@ -49,7 +49,6 @@ private:
 	 * extra virtual channel for processing resampled data.  */
 
 	float *pChan;
-	bool   pChanFull;
 
 	/* frameRewind
 	 * exact frame in which a rewind occurs */
@@ -61,6 +60,8 @@ private:
 	 * pChan from byte 'offset'. Returns new sample position, in frames */
 
 	int fillPChan(int start, int offset);
+
+	void clearPChan(int start);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -163,7 +164,8 @@ public:
 	float  boost;
 	int    mode;            // mode: see const.h
 	bool   qWait;           // quantizer wait
-	float  fadein;
+	bool   fadeinOn;
+	float  fadeinVol;
 	bool   fadeoutOn;
 	float  fadeoutVol;      // fadeout volume
 	int    fadeoutTracker;  // tracker fadeout, xfade only
