@@ -683,7 +683,7 @@ void SampleChannel::stop() {
 		if (mute || mute_i)
 			hardStop(0);  /// FIXME - wrong frame value
 		else
-			hardStop(0);  /// FIXME - wrong frame value - test, old call = setFadeOut(DO_STOP);
+			setFadeOut(DO_STOP);
 	}
 	else  // stop a SINGLE_PRESS immediately, if the quantizer is on
 	if (mode == SINGLE_PRESS && qWait == true)
@@ -837,30 +837,18 @@ void SampleChannel::start(int frame, bool doQuantize) {
 
 		case STATUS_PLAY:
 		{
-			if (mode == SINGLE_BASIC) {
-				hardStop(frame); ///FIXME - test, old call = setFadeOut(DO_STOP);
-			}
+			if (mode == SINGLE_BASIC)
+				setFadeOut(DO_STOP);
 			else
 			if (mode == SINGLE_RETRIG) {
-
-				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize) {
+				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
-				}
-				else {
-
-					/* do a xfade only if the mute is off. An xfade on a mute channel
-					 * introduces some bad clicks */
-
-					if (mute)
-						reset(frame);
-					else
-						setXFade(frame);
-				}
+				else
+					mute ? reset(frame) : setXFade(frame); // do xfade only if not muted in order to avoid clicks
 			}
 			else
 			if (mode & (LOOP_ANY | SINGLE_ENDLESS))
 				status = STATUS_ENDING;
-
 			break;
 		}
 
