@@ -88,13 +88,13 @@ SampleChannel::~SampleChannel() {
 void SampleChannel::clear() {
 
 	/** TODO - these memsets can be done only if status PLAY (if below),
-	 * but it would require another clear up when hard stop */
+	 * but it would require extra clearPChan calls when samples stop */
 
-	memset(vChan, 0, sizeof(float) * bufferSize);
-	memset(pChan, 0, sizeof(float) * bufferSize);
+		memset(vChan, 0, sizeof(float) * bufferSize);
+		memset(pChan, 0, sizeof(float) * bufferSize);
 
 	if (status & (STATUS_PLAY | STATUS_ENDING))
-		tracker = fillPChan(tracker, 0);
+		tracker = fillChan(vChan, tracker, 0);
 }
 
 
@@ -135,11 +135,8 @@ void SampleChannel::calcVolumeEnv(int frame) {
 
 
 void SampleChannel::hardStop(int frame) {
-
-	if (frame != 0) {  // clear data in range [frame, bufferSize-1]
-		printf("[hardStop] frame=%d!=0, clearChan needed\n", frame);
-		clearPChan(frame);
-	}
+	if (frame != 0)        // clear data in range [frame, bufferSize-1]
+		clearChan(vChan, frame);
 	status = STATUS_OFF;
 	reset(frame);
 }
@@ -150,7 +147,7 @@ void SampleChannel::hardStop(int frame) {
 
 void SampleChannel::onBar(int frame) {
 	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-		reset(frame); ///FIXME - test, old call = setXFade(frame);
+		setXFade(frame);
 }
 
 
@@ -372,7 +369,7 @@ void SampleChannel::onZero(int frame) {
 			if (mute || mute_i)
 				reset(frame);
 			else
-				reset(frame); ///FIXME - test, old call = setXFade(frame);
+				setXFade(frame);
 		}
 		else
 		if (status == STATUS_ENDING)
@@ -380,8 +377,8 @@ void SampleChannel::onZero(int frame) {
 	}
 
 	if (status == STATUS_WAIT) { /// FIXME - should be inside previous if!
-		status = STATUS_PLAY;
-		tracker = fillPChan(tracker, frame);
+		status  = STATUS_PLAY;
+		tracker = fillChan(vChan, tracker, frame);
 	}
 
 	if (recStatus == REC_ENDING) {
@@ -566,7 +563,7 @@ void SampleChannel::reset(int frame) {
 	tracker = begin;
 	mute_i  = false;
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
-		tracker = fillPChan(tracker, frame);
+		tracker = fillChan(vChan, tracker, frame);
 }
 
 
@@ -829,7 +826,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 				else {
 					status = STATUS_PLAY;
 					if (frame > 0)   // can be > 0 with recorded actions
-						tracker = fillPChan(tracker, frame);
+						tracker = fillChan(vChan, tracker, frame);
 				}
 			}
 			break;
@@ -906,16 +903,15 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::clearPChan(int start) {
-	for (int i=start; i<bufferSize; i+=2)
-		vChan[i] = vChan[i+1] = 0.0f;
+void SampleChannel::clearChan(float *dest, int start) {
+	memset(dest+start, 0, sizeof(float)*(bufferSize-start));
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-int SampleChannel::fillPChan(int start, int offset) {
+int SampleChannel::fillChan(float *dest, int start, int offset) {
 
 	int position;  // return value: the new position
 
@@ -925,7 +921,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 		 * end) */
 
 		if (start+bufferSize-offset <= end) {
-			memcpy(vChan+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
+			memcpy(dest+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
 			frameRewind = -1;
 			position    = start+bufferSize-offset;
 		}
@@ -934,7 +930,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 		 * is smaller than pChan */
 
 		else {
-			memcpy(vChan+offset, wave->data+start, (end-start)*sizeof(float));
+			memcpy(dest+offset, wave->data+start, (end-start)*sizeof(float));
 			frameRewind = end-start+offset;
 			position    = end;
 		}
@@ -942,7 +938,7 @@ int SampleChannel::fillPChan(int start, int offset) {
 	else {
 		rsmp_data.data_in       = wave->data+start;       // source data
 		rsmp_data.input_frames  = (end-start)/2;          // how many readable bytes
-		rsmp_data.data_out      = vChan+offset;           // destination (processed data)
+		rsmp_data.data_out      = dest+offset;           // destination (processed data)
 		rsmp_data.output_frames = (bufferSize-offset)/2;  // how many bytes to process
 		rsmp_data.end_of_input  = false;
 

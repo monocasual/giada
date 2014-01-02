@@ -55,13 +55,17 @@ private:
 
 	int frameRewind;
 
-	/* fillPChan
-	 * copy from wave to pChan and resample data from wave. Start to fill
-	 * pChan from byte 'offset'. Returns new sample position, in frames */
+	/* fillChan
+	 * copy from wave to *dest and resample data from wave, if necessary.
+	 * Start to fill pChan from byte 'offset'. Returns new sample
+	 * position, in frames */
 
-	int fillPChan(int start, int offset);
+	int fillChan(float *dest, int start, int offset);
 
-	void clearPChan(int start);
+	/* clearChan
+	 * set data to zero from start to bufferSize-1. */
+
+	void clearChan(float *dest, int start);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
