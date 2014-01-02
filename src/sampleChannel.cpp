@@ -278,11 +278,11 @@ void SampleChannel::sum(int frame, bool running) {
 						/* on each frame 0 copy a chunk of the older sample: this is
 						 * the faded out part */
 
-						if (frame == 0)
-							printf("[xFade] xfade in progress --- frame=0\n");
+						printf("[xFade] xfade in progress --- frame=%d\n", frame);
 
-						vChan[frame]   = 1.0f;
-						vChan[frame+1] = 1.0f;
+						vChan[frame]   = 0.0f;
+						vChan[frame+1] = 0.0f;
+
 
 						/**
 						vChan[frame]   += wave->data[fadeoutTracker]   * fadeoutVol * v;
