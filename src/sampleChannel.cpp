@@ -265,6 +265,10 @@ void SampleChannel::sum(int frame, bool running) {
 
 		/* fadein or fadeout processes. If mute, delete any signal. */
 
+		/** TODO - big issue: fade[in/out]Vol * internal_volume might be a
+		 * bad choice: it causes glitches when muting on and off during a
+		 * volume envelope. */
+
 		if (mute || mute_i) {
 			vChan[frame]   = 0.0f;
 			vChan[frame+1] = 0.0f;
@@ -272,14 +276,13 @@ void SampleChannel::sum(int frame, bool running) {
 		else
 		if (fadeinOn) {
 			if (fadeinVol < 1.0f) {
-				printf("[xFade] fadein in progress --- frame=%d\n", frame);
-				vChan[frame]   *= fadeinVol;
-				vChan[frame+1] *= fadeinVol;
+				vChan[frame]   *= fadeinVol * volume_i;
+				vChan[frame+1] *= fadeinVol * volume_i;
 				fadeinVol += 0.01f;
 			}
 			else {
 				fadeinOn  = false;
-				fadeinVol = 1.0f;
+				fadeinVol = 0.0f;
 			}
 		}
 		else
@@ -291,9 +294,8 @@ void SampleChannel::sum(int frame, bool running) {
 					vChan[frame+1] = -1.0f;
 				}
 				else {
-					printf("fadeout in progres --- frame=%d\n", frame);
-					vChan[frame]   *= fadeoutVol;
-					vChan[frame+1] *= fadeoutVol;
+					vChan[frame]   *= fadeoutVol * volume_i;
+					vChan[frame+1] *= fadeoutVol * volume_i;
 				}
 				fadeoutVol     -= fadeoutStep;
 				fadeoutTracker += 2;
@@ -317,27 +319,27 @@ void SampleChannel::sum(int frame, bool running) {
 						hardStop(frame);
 				}
 
-				/* we must append another frame in the buffer when the fadeout
-				 * ends: there's a gap here which would clip otherwise */
+				/* another frame in the buffer when the fadeout ends is needed:
+				 * there's a gap here which would clip otherwise due to rounding
+				 * error in float comparison (fadoutVol >= 0.0f) */
 
-				///vChan[frame]   = vChan[frame-2];
-				///vChan[frame+1] = vChan[frame-1];
+				vChan[frame]   = vChan[frame-2];
+				vChan[frame+1] = vChan[frame-1];
 			}
+		}
+		else {
+			vChan[frame]   *= volume_i;
+			vChan[frame+1] *= volume_i;
 		}
 	}
 	else {
 
 		if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
-			 (mode == SINGLE_ENDLESS && status == STATUS_ENDING))
+			 (mode == SINGLE_ENDLESS && status == STATUS_ENDING)   ||
+			 (mode & LOOP_ANY && !running))     // stop loops when the seq is off
 		{
 			status = STATUS_OFF;
 		}
-
-		/// FIXME - unify these
-		/* stop loops when the seq is off */
-
-		if ((mode & LOOP_ANY) && !running)
-			status = STATUS_OFF;
 
 		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
 		 * would return in wait, losing the ENDING status */
