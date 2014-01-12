@@ -286,9 +286,11 @@ void SampleChannel::sum(int frame, bool running) {
 		if (fadeoutOn) {
 			if (fadeoutVol >= 0.0f) { // fadeout ongoing
 				if (fadeoutType == XFADE) {
+					/** To be done in 0.8.3
 					printf("[xFade] xfade in progress --- frame=%d\n", frame);
 					vChan[frame]   = -1.0f;
 					vChan[frame+1] = -1.0f;
+					*/
 				}
 				else {
 					vChan[frame]   *= fadeoutVol * volume_i;
