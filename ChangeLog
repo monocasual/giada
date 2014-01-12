@@ -13,6 +13,21 @@
 
 
 
+0.8.2 --- 2014 . 01 . 13
+- Pitch control exposed via MIDI
+- New tools in aSmple Editor (linear fade in/out, smooth edges)
+- Implemented vstEvent->deltaFrames, gaining more precision with vst
+	MIDI events
+- Add Fl::lock/Fl::unlock dynamics to glue_ calls where needed
+- Avoid pitch sliding when changing pitch of a sample in status OFF
+- Update copyright info in source files
+- Internal fade in and fade out restored
+- Add 'Giada' keyword to desktop file
+- Fix annoying glitches when playing very short samples
+- Fix random crashes when controlling giada via MIDI
+- Fix missing MIDI mapping for read-actions button
+
+
 0.8.1 --- 2013 . 12 . 09
 - New, high-quality pitch control based on libsamplerate
 - New set of functions 'spread sample to beat/song'
