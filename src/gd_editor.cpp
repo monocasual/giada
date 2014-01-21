@@ -85,7 +85,9 @@ gdEditor::gdEditor(SampleChannel *ch)
 		pitchNum		  = new gInput (pitch->x()+pitch->w()+4,	           volume->y()+volume->h()+4, 46, 20);
 		pitchToBar    = new gClick (pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 46, 20, "To bar");
 		pitchToSong   = new gClick (pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 46, 20, "To song");
-		pitchReset    = new gClick (pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
+		pitchHalf     = new gClick (pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 21, 20, "÷");
+		pitchDouble   = new gClick (pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 21, 20, "×");
+		pitchReset    = new gClick (pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
 
 		chanStart     = new gInput(tools->x()+52,                    pitch->y()+pitch->h()+4, 60, 20, "Start");
 		chanEnd       = new gInput(chanStart->x()+chanStart->w()+40, pitch->y()+pitch->h()+4, 60, 20, "End");
@@ -156,6 +158,8 @@ gdEditor::gdEditor(SampleChannel *ch)
 
 	pitchToBar->callback(cb_setPitchToBar, (void*)this);
 	pitchToSong->callback(cb_setPitchToSong, (void*)this);
+	pitchHalf->callback(cb_setPitchHalf, (void*)this);
+	pitchDouble->callback(cb_setPitchDouble, (void*)this);
 	pitchReset->callback(cb_resetPitch, (void*)this);
 
 	reload->callback(cb_reload, (void*)this);
@@ -213,22 +217,24 @@ gdEditor::~gdEditor() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::cb_setChanPos    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setChanPos(); }
-void gdEditor::cb_resetStartEnd (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetStartEnd(); }
-void gdEditor::cb_setVolume     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolume(); }
-void gdEditor::cb_setVolumeNum  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolumeNum(); }
-void gdEditor::cb_setBoost      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoost(); }
-void gdEditor::cb_setBoostNum   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoostNum(); }
-void gdEditor::cb_normalize     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_normalize(); }
-void gdEditor::cb_panning       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_panning(); }
-void gdEditor::cb_reload        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
-void gdEditor::cb_setPitch      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
-void gdEditor::cb_setPitchToBar (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToBar(); }
-void gdEditor::cb_setPitchToSong(Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToSong(); }
-void gdEditor::cb_resetPitch    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetPitch(); }
-void gdEditor::cb_setPitchNum   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
-void gdEditor::cb_zoomIn        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
-void gdEditor::cb_zoomOut       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
+void gdEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setChanPos(); }
+void gdEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetStartEnd(); }
+void gdEditor::cb_setVolume       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolume(); }
+void gdEditor::cb_setVolumeNum    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolumeNum(); }
+void gdEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoost(); }
+void gdEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoostNum(); }
+void gdEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_normalize(); }
+void gdEditor::cb_panning         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_panning(); }
+void gdEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
+void gdEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
+void gdEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToBar(); }
+void gdEditor::cb_setPitchToSong  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToSong(); }
+void gdEditor::cb_setPitchHalf    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchHalf(); }
+void gdEditor::cb_setPitchDouble  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchDouble(); }
+void gdEditor::cb_resetPitch      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetPitch(); }
+void gdEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
+void gdEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
+void gdEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -380,6 +386,22 @@ void gdEditor::__cb_setPitch() {
 
 void gdEditor::__cb_setPitchNum() {
 	glue_setPitch(this, ch, atof(pitchNum->value()), true);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_setPitchHalf() {
+	glue_setPitch(this, ch, pitch->value()/2, true);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_setPitchDouble() {
+	glue_setPitch(this, ch, pitch->value()*2, true);
 }
 
 

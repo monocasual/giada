@@ -51,6 +51,8 @@ private:
 	static void cb_setPitch      (Fl_Widget *w, void *p);
 	static void cb_setPitchToBar (Fl_Widget *w, void *p);
 	static void cb_setPitchToSong(Fl_Widget *w, void *p);
+	static void cb_setPitchHalf  (Fl_Widget *w, void *p);
+	static void cb_setPitchDouble(Fl_Widget *w, void *p);
 	static void cb_resetPitch    (Fl_Widget *w, void *p);
 	static void cb_setPitchNum   (Fl_Widget *w, void *p);
 	static void cb_zoomIn        (Fl_Widget *w, void *p);
@@ -67,6 +69,8 @@ private:
 	inline void __cb_setPitch();
 	inline void __cb_setPitchToBar();
 	inline void __cb_setPitchToSong();
+	inline void __cb_setPitchHalf();
+	inline void __cb_setPitchDouble();
 	inline void __cb_resetPitch();
 	inline void __cb_setPitchNum();
 	inline void __cb_zoomIn();
@@ -95,6 +99,8 @@ public:
 	class gInput  	 *pitchNum;
 	class gClick  	 *pitchToBar;
 	class gClick  	 *pitchToSong;
+	class gClick  	 *pitchHalf;
+	class gClick  	 *pitchDouble;
 	class gClick  	 *pitchReset;
 	class gClick     *close;
 
