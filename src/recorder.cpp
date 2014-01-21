@@ -701,7 +701,7 @@ void stopOverdub(int frame) {
 		* composite action */
 
 		action *act = NULL;
-		int res = getNextAction(cmp.a2.chan, cmp.a2.type | cmp.a2.type, cmp.a2.frame, &act);
+		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1) {
 			if (act->type == cmp.a2.type) {
 				printf("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
