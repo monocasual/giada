@@ -235,12 +235,13 @@
 #define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
 #define MIDI_VOLUME        (MIDI_CONTROLLER) | (0x07 << 16)
 
-/* system common / real-time messages */
+/* system common / real-time messages. Single bytes */
 
-#define MIDI_TIMING_CLOCK   0xF8 << 24
-#define MIDI_START          0xFA << 24
-#define MIDI_CONTINUE       0xFB << 24
-#define MIDI_STOP           0xFC << 24
+#define MIDI_POSITION_PTR   0xF2
+#define MIDI_CLOCK          0xF8
+#define MIDI_START          0xFA
+#define MIDI_CONTINUE       0xFB
+#define MIDI_STOP           0xFC
 
 /* channels */
 

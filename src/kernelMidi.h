@@ -71,7 +71,7 @@ namespace kernelMidi {
 	/* send (2)
 	 * send separate bytes of MIDI message. */
 
-	void send(int b1, int b2, int b3);
+	void send(int b1, int b2=-1, int b3=-1);
 
 	/* setApi
 	 * set the Api in use for both in & out messages. */

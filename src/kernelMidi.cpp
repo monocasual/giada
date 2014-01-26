@@ -58,8 +58,6 @@ unsigned   numInPorts  = 0;
 cb_midiLearn *cb_learn = NULL;
 void         *cb_data  = NULL;
 
-std::vector<unsigned char> msg(3, 0x00);
-
 
 /* ------------------------------------------------------------------ */
 
@@ -156,7 +154,7 @@ int openInDevice(int port) {
 	if (port != -1 && numInPorts > 0) {
 		try {
 			midiIn->openPort(port, getInPortName(port));
-			midiIn->ignoreTypes(true, true, true); // ignore all system/time msgs, for now
+			midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
 			printf("[KM] MIDI in port %d open\n", port);
 			midiIn->setCallback(&callback);
 			return 1;
@@ -203,13 +201,17 @@ const char *getInPortName(unsigned p) {
 
 
 void send(uint32_t data) {
+
 	if (!G_midiStatus)
 		return;
+
+	std::vector<unsigned char> msg(1, 0x00);
 	msg[0] = getB1(data);
 	msg[1] = getB2(data);
 	msg[2] = getB3(data);
+
 	midiOut->sendMessage(&msg);
-	printf("[KM] send msg=0x%X\n", data);
+	printf("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
@@ -217,13 +219,19 @@ void send(uint32_t data) {
 
 
 void send(int b1, int b2, int b3) {
+
 	if (!G_midiStatus)
 		return;
-		msg[0] = b1;
-		msg[1] = b2;
-		msg[2] = b3;
-		midiOut->sendMessage(&msg);
-	printf("[KM] send msg=0x%X\n", getIValue(b1, b2, b3));
+
+	std::vector<unsigned char> msg(1, b1);
+
+	if (b2 != -1)
+		msg.push_back(b2);
+	if (b3 != -1)
+		msg.push_back(b3);
+
+	midiOut->sendMessage(&msg);
+	printf("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
 

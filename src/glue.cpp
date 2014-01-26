@@ -324,16 +324,21 @@ void glue_startSeq(bool gui) {
 
 	G_Mixer.running = true;
 
-	Fl::lock();
-	mainWin->beat_stop->value(1);
-	mainWin->beat_stop->redraw();
-	Fl::unlock();
-
 	if (gui) {
 #ifdef __linux__
 		kernelAudio::jackStart();
 #endif
 	}
+
+	if (G_Conf.midiClock == 1) {    // master
+		kernelMidi::send(MIDI_START, -1, -1);
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+	}
+
+	Fl::lock();
+	mainWin->beat_stop->value(1);
+	mainWin->beat_stop->redraw();
+	Fl::unlock();
 }
 
 
@@ -343,6 +348,14 @@ void glue_startSeq(bool gui) {
 void glue_stopSeq(bool gui) {
 
 	mh_stopSequencer();
+
+	if (G_Conf.midiClock == 1)     // master
+		kernelMidi::send(MIDI_STOP, -1, -1);
+
+#ifdef __linux__
+	if (gui)
+		kernelAudio::jackStop();
+#endif
 
 	/* what to do if we stop the sequencer and some action recs are active?
 	 * Deactivate the button and delete any 'rec on' status */
@@ -370,11 +383,6 @@ void glue_stopSeq(bool gui) {
 	mainWin->beat_stop->value(0);
 	mainWin->beat_stop->redraw();
 	Fl::unlock();
-
-#ifdef __linux__
-	if (gui)
-		kernelAudio::jackStop();
-#endif
 }
 
 
@@ -383,6 +391,8 @@ void glue_stopSeq(bool gui) {
 
 void glue_rewindSeq() {
 	mh_rewindSequencer();
+	if (G_Conf.midiClock == 1)   // master
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
 
