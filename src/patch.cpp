@@ -464,11 +464,6 @@ int Patch::readRecs() {
 
 //printf("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
 
-			/* backward compatibility < 0.4.1 */
-
-			if (frame % 2 != 0)
-				frame++;
-
 			Channel *ch = G_Mixer.getChannelByIndex(chan);
 			if (ch)
 				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY)) {
