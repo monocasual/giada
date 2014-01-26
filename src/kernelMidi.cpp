@@ -297,6 +297,14 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 			printf(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
 			glue_setOutVol(vf, false);
 		}
+		else if (pure == G_Conf.midiInBeatDouble) {
+			printf(" >>> sequencer x2 (global) (pure=0x%X)", pure);
+			glue_beatsMultiply();
+		}
+		else if (pure == G_Conf.midiInBeatHalf) {
+			printf(" >>> sequencer /2 (global) (pure=0x%X)", pure);
+			glue_beatsDivide();
+		}
 
 		/* process channels */
 

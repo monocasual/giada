@@ -141,7 +141,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 gdMidiGrabberMaster::gdMidiGrabberMaster()
-	: gdMidiGrabber(300, 178, "MIDI Input Setup (global)")
+	: gdMidiGrabber(300, 228, "MIDI Input Setup (global)")
 {
 	set_modal();
 
@@ -152,6 +152,8 @@ gdMidiGrabberMaster::gdMidiGrabberMaster()
 	new gLearner(8, 104, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
 	new gLearner(8, 128, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
 	new gLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
+	new gLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
+	new gLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
 
 	gu_setFavicon(this);
 	show();
