@@ -67,6 +67,7 @@ public:
 	int  midiSystem;
 	int  midiPortOut;
 	int  midiPortIn;
+	int  midiClock;  // 0=disabled, 1=Out, 2=in (unused in 0.8.3)
 
 	uint32_t midiInRewind;
 	uint32_t midiInStartStop;

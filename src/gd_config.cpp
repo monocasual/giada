@@ -464,7 +464,8 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	system  = new gChoice(x()+92, y()+9, 253, 20, "System");
 	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
-	new gBox(x(), portIn->y()+portIn->h()+8, w(), h()-76, "Restart Giada for the changes to take effect.");
+	clock   = new gChoice(x()+92, portIn->y()+portIn->h()+8, 253, 20, "MIDI clock");
+	new gBox(x(), clock->y()+clock->h()+8, w(), h()-100, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
@@ -474,6 +475,10 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	fetchSystems();
 	fetchOutPorts();
 	fetchInPorts();
+
+	clock->add("(disabled)");
+	clock->add("Output (master)");
+	clock->value(G_Conf.midiClock);
 
 	systemInitValue = system->value();
 }
@@ -550,6 +555,7 @@ void gTabMidi::save() {
 
 	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
+	G_Conf.midiClock   = clock->value();
 }
 
 
