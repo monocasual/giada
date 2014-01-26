@@ -435,6 +435,7 @@ int Patch::readRecs() {
 		int frame, recPerFrame;
 
 		/* parsing 'dddddd d': [framenumber] [num. recs for that frame]  */
+
 		char tmpbuf[16];
 		sprintf(tmpbuf, "recframe%d", i);
 		sscanf(getValue(tmpbuf).c_str(), "%d %d", &frame, &recPerFrame);
@@ -442,22 +443,26 @@ int Patch::readRecs() {
 //printf("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
 
 		for (int k=0; k<recPerFrame; k++) {
-			int   chan = 0;
-			int   type = 0;
-			float fValue = 0.0f;
-			int   iValue = 0;
+			int      chan = 0;
+			int      type = 0;
+			float    fValue = 0.0f;
+			int      iValue_fix = 0;
+			uint32_t iValue = 0;
 
 			/* reading info for each frame: %d|%d */
 
 			char tmpbuf[16];
 			sprintf(tmpbuf, "f%da%d", i, k);
 
-			if (version < 0.61f) // no float and int values
+			if (version < 0.61f)    // no float and int values
 				sscanf(getValue(tmpbuf).c_str(), "%d|%d", &chan, &type);
 			else
-				sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%d", &chan, &type, &fValue, &iValue);
+				if (version < 0.83f)  // iValues were stored as signed int (wrong)
+					sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%d", &chan, &type, &fValue, &iValue_fix);
+				else
+					sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%u", &chan, &type, &fValue, &iValue);
 
-//printf("  loading chan=%d, type=%d, fValue=%f, iValue=%d\n", chan, type, fValue, iValue);
+//printf("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
 
 			/* backward compatibility < 0.4.1 */
 
@@ -466,8 +471,12 @@ int Patch::readRecs() {
 
 			Channel *ch = G_Mixer.getChannelByIndex(chan);
 			if (ch)
-				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY))
-					recorder::rec(ch->index, type, frame, iValue, fValue);
+				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY)) {
+					if (version < 0.83f)
+						recorder::rec(ch->index, type, frame, iValue_fix, fValue);
+					else
+						recorder::rec(ch->index, type, frame, iValue, fValue);
+				}
 		}
 	}
 	return 1;
@@ -557,7 +566,7 @@ int Patch::write(const char *file, const char *name, bool project) {
 	for (unsigned i=0; i<recorder::global.size; i++) {
 		fprintf(fp, "recframe%d=%d %d\n", i, recorder::frames.at(i), recorder::global.at(i).size);
 		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
-			fprintf(fp, "f%da%d=%d|%d|%f|%d\n",
+			fprintf(fp, "f%da%d=%d|%d|%f|%u\n",
 				i, k,
 				recorder::global.at(i).at(k)->chan,
 				recorder::global.at(i).at(k)->type,
