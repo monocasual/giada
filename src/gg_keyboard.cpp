@@ -190,7 +190,7 @@ void gSampleChannel::__cb_openMenu() {
 	Fl_Menu_Item rclick_menu[] = {
 		{"Load new sample..."},                     // 0
 		{"Export sample to file..."},               // 1
-		{"Set key..."},                             // 2
+		{"Setup keyboard input..."},                // 2
 		{"Setup MIDI input..."},                    // 3
 		{"Edit sample..."},                         // 4
 		{"Edit actions..."},                        // 5
@@ -236,7 +236,7 @@ void gSampleChannel::__cb_openMenu() {
 		return;
 	}
 
-	if (strcmp(m->label(), "Set key...") == 0) {
+	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
 		new gdKeyGrabber(ch); /// FIXME - use gu_openSubWindow
 		return;
 	}
