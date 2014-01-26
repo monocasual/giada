@@ -528,37 +528,6 @@ void chanHasActions(int index) {
 /* ------------------------------------------------------------------ */
 
 
-int getStartActionFrame(int chan, char action, int frame) {
-
-	/* since 'frame' holds the position of the B-action (e.g. MUTE_ON(A) +
-	 * MUTE_OFF(B)) we look in the stack for the frame lower than 'frame'.
-	 * If frame_a == frame_b returns -2.
-	 * If frame_a == not found returns -1 (suspected ring loop). */
-
-	for (unsigned i=frames.size; i>0; i--)
-		for (unsigned j=0; j<global.at(i-1).size; j++)
-			if (global.at(i-1).at(j)->chan == chan &&
-					global.at(i-1).at(j)->type == action)
-			{
-				if (frames.at(i-1) < frame) {
-					//printf("[REC] start Action frame found = %d\n", frames.at(i-1));
-					return frames.at(i-1);
-				}
-				else
-				if (frames.at(i-1) == frame) {
-					//printf("[REC start Action & end Action collision at %d!\n", frame);
-					return -2;
-				}
-			}
-
-	//puts("[REC] start Action frame NOT found, suspected ring loop!");
-	return -1;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue) {
 
 	sortActions();  // mandatory

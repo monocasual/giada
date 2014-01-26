@@ -164,13 +164,6 @@ void updateSamplerate(int systemRate, int patchRate);
 void expand(int old_fpb, int new_fpb);
 void shrink(int new_fpb);
 
-/* getStartActionFrame ------- DEPRECATED!
- * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +
- * MUTE_ON(b). Returns the MUTE_OFF frame, if any. 'action' is the
- * action to look for. */
-
-int getStartActionFrame(int chan, char action, int frame);
-
 /* getNextAction
  * return the nearest action in chan 'chan' of type 'action' starting
  * from 'frame'. Action can be a bitmask. If iValue != -1 search for
