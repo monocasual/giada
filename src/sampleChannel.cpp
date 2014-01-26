@@ -385,12 +385,12 @@ void SampleChannel::onZero(int frame) {
 
 	if (recStatus == REC_ENDING) {
 		recStatus = REC_STOPPED;
-		recorder::disableRead(this);    // rec stop
+		setReadActions(false);  // rec stop
 	}
 	else
 	if (recStatus == REC_WAITING) {
 		recStatus = REC_READING;
-		recorder::enableRead(this);     // rec start
+		setReadActions(true);   // rec start
 	}
 }
 
@@ -510,6 +510,20 @@ void SampleChannel::calcFadeoutStep() {
 		fadeoutStep = ceil((end - tracker) / volume) * 2; /// or volume_i ???
 	else
 		fadeoutStep = DEFAULT_FADEOUT_STEP;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void SampleChannel::setReadActions(bool v) {
+	if (v)
+		readActions = true;
+	else {
+		readActions = false;
+		if (G_Conf.recsStopOnChanHalt)
+			kill(0);  /// FIXME - wrong frame value
+	}
 }
 
 

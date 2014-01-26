@@ -190,6 +190,7 @@ public:
 
 	void readPatchMidiIn(int i);
 	void writePatchMidiIn(FILE *fp, int i);
+
 };
 
 

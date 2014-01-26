@@ -158,6 +158,11 @@ public:
 
 	bool  canInputRec();
 
+	/* setReadActions
+	 * if enabled, recorder will read actions from this channel */
+
+	void setReadActions(bool v);
+
 	/* ---------------------------------------------------------------- */
 
 	class  Wave *wave;

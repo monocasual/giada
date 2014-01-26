@@ -105,8 +105,7 @@ void init();
 void chanHasActions(int chan);
 
 /* canRec
- * can we rec an action? Call this one BEFORE rec(). */
-/** TODO - move to Channel */
+ * can a channel rec an action? Call this one BEFORE rec(). */
 
 bool canRec(Channel *ch);
 
@@ -164,13 +163,6 @@ void updateSamplerate(int systemRate, int patchRate);
 
 void expand(int old_fpb, int new_fpb);
 void shrink(int new_fpb);
-
-/* enable/disableRead
- * if enabled  = read actions from channel chan
- * if disabled = don't read actions from channel chan. */
-
-void enableRead(SampleChannel *ch);   /// TODO - move to SampleChannel
-void disableRead(SampleChannel *ch);  /// TODO - move to SampleChannel
 
 /* getStartActionFrame ------- DEPRECATED!
  * search for the A-frame of a pair of actions, e.g. MUTE_OFF(a) +

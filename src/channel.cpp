@@ -122,3 +122,6 @@ void Channel::writePatchMidiIn(FILE *fp, int i) {
 bool Channel::isPlaying() {
 	return status & (STATUS_PLAY | STATUS_ENDING);
 }
+
+
+/* ------------------------------------------------------------------ */

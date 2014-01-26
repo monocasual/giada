@@ -510,24 +510,6 @@ void shrink(int new_fpb) {
 /* ------------------------------------------------------------------ */
 
 
-void enableRead(SampleChannel *ch) {
-	ch->readActions = true;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void disableRead(SampleChannel *ch) {
-	ch->readActions = false;
-	if (G_Conf.recsStopOnChanHalt)
-		ch->kill(0);  /// FIXME - wrong frame value
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void chanHasActions(int index) {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
