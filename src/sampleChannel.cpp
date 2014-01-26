@@ -652,7 +652,7 @@ void SampleChannel::process(float *buffer) {
 void SampleChannel::kill(int frame) {
 	if (wave != NULL && status != STATUS_OFF) {
 		if (mute || mute_i || (status == STATUS_WAIT && mode & LOOP_ANY))
-			hardStop(0);
+			hardStop(frame);
 		else
 			setFadeOut(DO_STOP);
 	}
