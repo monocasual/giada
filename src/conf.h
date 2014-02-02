@@ -64,10 +64,11 @@ public:
 	bool limitOutput;
 	int  rsmpQuality;
 
-	int  midiSystem;
-	int  midiPortOut;
-	int  midiPortIn;
-	int  midiSync;  // see const.h
+	int   midiSystem;
+	int   midiPortOut;
+	int   midiPortIn;
+	int   midiSync;  // see const.h
+	float midiTCfps;
 
 	uint32_t midiInRewind;
 	uint32_t midiInStartStop;
