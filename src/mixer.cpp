@@ -358,6 +358,11 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 				if (metronome && !tickPlay)
 					tockPlay = true;
 			}
+
+			if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
+				if (actualFrame % (framesPerBeat/24) == 0)
+					kernelMidi::send(MIDI_CLOCK, -1, -1);
+
 		} // if (running)
 
 		/* sum channels, CHANNEL_SAMPLE only */

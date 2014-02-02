@@ -330,7 +330,7 @@ void glue_startSeq(bool gui) {
 #endif
 	}
 
-	if (G_Conf.midiClock == 1) {    // master
+	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
 		kernelMidi::send(MIDI_START, -1, -1);
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 	}
@@ -349,7 +349,7 @@ void glue_stopSeq(bool gui) {
 
 	mh_stopSequencer();
 
-	if (G_Conf.midiClock == 1)     // master
+	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_STOP, -1, -1);
 
 #ifdef __linux__
@@ -391,7 +391,7 @@ void glue_stopSeq(bool gui) {
 
 void glue_rewindSeq() {
 	mh_rewindSequencer();
-	if (G_Conf.midiClock == 1)   // master
+	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 

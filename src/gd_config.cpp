@@ -464,8 +464,8 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	system  = new gChoice(x()+92, y()+9, 253, 20, "System");
 	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
-	clock   = new gChoice(x()+92, portIn->y()+portIn->h()+8, 253, 20, "MIDI clock");
-	new gBox(x(), clock->y()+clock->h()+8, w(), h()-100, "Restart Giada for the changes to take effect.");
+	sync    = new gChoice(x()+92, portIn->y()+portIn->h()+8, 253, 20, "MIDI sync");
+	new gBox(x(), sync->y()+sync->h()+8, w(), h()-100, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
@@ -476,9 +476,18 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	fetchOutPorts();
 	fetchInPorts();
 
-	clock->add("(disabled)");
-	clock->add("Output (master)");
-	clock->value(G_Conf.midiClock);
+	sync->add("(disabled)");
+	sync->add("Clock (master)");
+	if      (G_Conf.midiSync == MIDI_SYNC_NONE)
+		sync->value(0);
+	else if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
+		sync->value(1);
+	else if (G_Conf.midiSync == MIDI_SYNC_CLOCK_S)
+		sync->value(2);
+	else if (G_Conf.midiSync == MIDI_SYNC_MTC_M)
+		sync->value(3);
+	else if (G_Conf.midiSync == MIDI_SYNC_MTC_S)
+		sync->value(4);
 
 	systemInitValue = system->value();
 }
@@ -555,7 +564,17 @@ void gTabMidi::save() {
 
 	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
-	G_Conf.midiClock   = clock->value();
+
+	if      (sync->value() == 0)
+		G_Conf.midiSync = MIDI_SYNC_NONE;
+	else if (sync->value() == 1)
+		G_Conf.midiSync = MIDI_SYNC_CLOCK_M;
+	else if (sync->value() == 2)
+		G_Conf.midiSync = MIDI_SYNC_CLOCK_S;
+	else if (sync->value() == 3)
+		G_Conf.midiSync = MIDI_SYNC_MTC_M;
+	else if (sync->value() == 4)
+		G_Conf.midiSync = MIDI_SYNC_MTC_S;
 }
 
 

@@ -142,7 +142,7 @@ void Conf::setDefault() {
 
 	midiPortIn  = DEFAULT_MIDI_PORT_IN;
 	midiPortOut = DEFAULT_MIDI_PORT_OUT;
-	midiClock   = 0;
+	midiSync    = MIDI_SYNC_NONE;
 
 	midiInRewind     = 0x0;
 	midiInStartStop  = 0x0;
@@ -219,7 +219,7 @@ int Conf::read() {
 	midiPortIn = atoi(getValue("midiPortIn").c_str());
 	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
 
-	midiClock = atoi(getValue("midiClock").c_str());
+	midiSync = atoi(getValue("midiSync").c_str());
 
 	midiInRewind     = strtoul(getValue("midiInRewind").c_str(), NULL, 10);
   midiInStartStop  = strtoul(getValue("midiInStartStop").c_str(), NULL, 10);
@@ -347,7 +347,7 @@ int Conf::write() {
 	fprintf(fp, "midiSystem=%d\n",  midiSystem);
 	fprintf(fp, "midiPortOut=%d\n", midiPortOut);
 	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
-	fprintf(fp, "midiClock=%d\n",   midiClock);
+	fprintf(fp, "midiSync=%d\n",    midiSync);
 
 	fprintf(fp, "midiInRewind=%u\n",     midiInRewind);
 	fprintf(fp, "midiInStartStop=%u\n",  midiInStartStop);

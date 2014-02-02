@@ -81,7 +81,7 @@ public:
 	class gChoice *system;
 	class gChoice *portOut;
 	class gChoice *portIn;
-	class gChoice *clock;
+	class gChoice *sync;
 
 	gTabMidi(int x, int y, int w, int h);
 

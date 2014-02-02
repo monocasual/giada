@@ -46,23 +46,24 @@ extern PluginHost  G_PluginHost;
 
 
 SampleChannel::SampleChannel(int bufferSize, char side)
-	: Channel    (CHANNEL_SAMPLE, STATUS_EMPTY, side, bufferSize),
-		frameRewind(-1),
-		wave       (NULL),
-		tracker    (0),
-		begin      (0),
-		end        (0),
-		pitch      (gDEFAULT_PITCH),
-		boost      (1.0f),
-		mode       (DEFAULT_CHANMODE),
-		qWait	     (false),
-		fadeinOn   (false),
-		fadeinVol  (1.0f),
-		fadeoutOn  (false),
-		fadeoutVol (1.0f),
-		fadeoutStep(DEFAULT_FADEOUT_STEP),
-		key        (0),
-	  readActions(true),
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, side, bufferSize),
+		frameRewind      (-1),
+		wave             (NULL),
+		tracker          (0),
+		begin            (0),
+		end              (0),
+		pitch            (gDEFAULT_PITCH),
+		boost            (1.0f),
+		mode             (DEFAULT_CHANMODE),
+		qWait	           (false),
+		fadeinOn         (false),
+		fadeinVol        (1.0f),
+		fadeoutOn        (false),
+		fadeoutVol       (1.0f),
+		fadeoutTracker   (0),
+		fadeoutStep      (DEFAULT_FADEOUT_STEP),
+		key              (0),
+	  readActions      (true),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {
@@ -93,8 +94,11 @@ void SampleChannel::clear() {
 		memset(vChan, 0, sizeof(float) * bufferSize);
 		memset(pChan, 0, sizeof(float) * bufferSize);
 
-	if (status & (STATUS_PLAY | STATUS_ENDING))
+	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);
+		if (fadeoutOn && fadeoutType == XFADE)
+			fadeoutTracker = fillChan(pChan, fadeoutTracker, 0);
+	}
 }
 
 
@@ -286,18 +290,19 @@ void SampleChannel::sum(int frame, bool running) {
 		if (fadeoutOn) {
 			if (fadeoutVol >= 0.0f) { // fadeout ongoing
 				if (fadeoutType == XFADE) {
-					/** To be done in 0.8.3
-					printf("[xFade] xfade in progress --- frame=%d\n", frame);
-					vChan[frame]   = -1.0f;
-					vChan[frame+1] = -1.0f;
-					*/
+
+					vChan[frame]   *= volume_i;
+					vChan[frame+1] *= volume_i;
+
+					vChan[frame]   += pChan[frame]   * fadeoutVol;
+					vChan[frame+1] += pChan[frame+1] * fadeoutVol;
+
 				}
 				else {
 					vChan[frame]   *= fadeoutVol * volume_i;
 					vChan[frame+1] *= fadeoutVol * volume_i;
 				}
-				fadeoutVol     -= fadeoutStep;
-				fadeoutTracker += 2;
+				fadeoutVol -= fadeoutStep;
 			}
 			else {  // fadeout end
 				fadeoutOn  = false;
@@ -576,6 +581,7 @@ void SampleChannel::setXFade(int frame) {
  * */
 
 void SampleChannel::reset(int frame) {
+	fadeoutTracker = tracker;   // store old frame number for xfade
 	tracker = begin;
 	mute_i  = false;
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))

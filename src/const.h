@@ -269,4 +269,12 @@ const int MIDI_CHANS[16] = {
 	MIDI_CHAN_12, MIDI_CHAN_13,	MIDI_CHAN_14, MIDI_CHAN_15
 };
 
+/* midi sync constants */
+
+#define MIDI_SYNC_NONE      0x00
+#define MIDI_SYNC_CLOCK_M   0x01
+#define MIDI_SYNC_CLOCK_S   0x02
+#define MIDI_SYNC_MTC_M     0x04
+#define MIDI_SYNC_MTC_S     0x08
+
 #endif
