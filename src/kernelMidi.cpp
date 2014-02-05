@@ -211,7 +211,7 @@ void send(uint32_t data) {
 	msg[2] = getB3(data);
 
 	midiOut->sendMessage(&msg);
-	printf("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	//printf("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
@@ -231,7 +231,7 @@ void send(int b1, int b2, int b3) {
 		msg.push_back(b3);
 
 	midiOut->sendMessage(&msg);
-	printf("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
+	//printf("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
 

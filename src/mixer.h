@@ -38,6 +38,7 @@
 
 
 class Mixer {
+
 public:
 
 	Mixer();
@@ -181,10 +182,22 @@ public:
 
 private:
 
+	int midiTCstep;      // part of MTC to send (0 to 7)
+	int midiTCrate;      // send MTC data every midiTCrate frames
+	int midiTCframes;
+	int midiTCseconds;
+	int midiTCminutes;
+	int midiTChours;
+
 	/* getNewIndex
 	 * compute new index value for new channels */
 
 	int getNewIndex();
+
+	/* sendMIDIsync
+	 * generate MIDI sync output data */
+
+	void sendMIDIsync();
 };
 
 #endif

@@ -109,7 +109,14 @@ void Mixer::init() {
 	chanInput    = NULL;
 	inputTracker = 0;
 
-	actualBeat   = 0;
+	actualBeat    = 0;
+
+	midiTCstep    = 0;
+	midiTCrate    = (G_Conf.samplerate / G_Conf.midiTCfps) * 2;  // dealing with stereo vals
+	midiTCframes  = 0;
+	midiTCseconds = 0;
+	midiTCminutes = 0;
+	midiTChours   = 0;
 
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
@@ -203,6 +210,72 @@ Channel *Mixer::getChannelByIndex(int index) {
 			return channels.at(i);
 	printf("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
 	return NULL;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::sendMIDIsync() {
+
+	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
+		if (actualFrame % (framesPerBeat/24) == 0)
+			kernelMidi::send(MIDI_CLOCK, -1, -1);
+	}
+	else
+	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
+
+		/* check if a new timecode frame has passed. If so, send MIDI TC
+		 * quarter frames. 8 quarter frames, divided in two branches:
+		 * 1-4 and 5-8. We check timecode frame's parity: if even, send
+		 * range 1-4, if odd send 5-8. */
+
+		if (actualFrame % midiTCrate == 0) {
+
+			/* frame low nibble
+			 * frame high nibble
+			 * seconds low nibble
+			 * seconds high nibble */
+
+			if (midiTCframes % 2 == 0) {
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
+			}
+
+			/* minutes low nibble
+			 * minutes high nibble
+			 * hours low nibble
+			 * hours high nibble SMPTE frame rate */
+
+			else {
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
+				kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
+			}
+
+			midiTCframes++;
+
+			/* check if total timecode frames are greater than timecode fps:
+			 * if so, a second has passed */
+
+			if (midiTCframes > G_Conf.midiTCfps) {
+				midiTCframes = 0;
+				midiTCseconds++;
+				if (midiTCseconds >= 60) {
+					midiTCminutes++;
+					midiTCseconds = 0;
+					if (midiTCminutes >= 60) {
+						midiTChours++;
+						midiTCminutes = 0;
+					}
+				}
+				printf("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
+			}
+		}
+	}
 }
 
 
@@ -359,9 +432,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					tockPlay = true;
 			}
 
-			if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
-				if (actualFrame % (framesPerBeat/24) == 0)
-					kernelMidi::send(MIDI_CLOCK, -1, -1);
+			sendMIDIsync();
 
 		} // if (running)
 
@@ -518,8 +589,11 @@ bool Mixer::isSilent() {
 
 void Mixer::rewind() {
 
-	actualFrame = 0;
-	actualBeat  = 0;
+	actualFrame   = 0;
+	actualBeat    = 0;
+	midiTCseconds = 0;
+	midiTCminutes = 0;
+	midiTChours   = 0;
 
 	if (running)
 		for (unsigned i=0; i<channels.size; i++)

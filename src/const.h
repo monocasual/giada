@@ -237,6 +237,7 @@
 
 /* system common / real-time messages. Single bytes */
 
+#define MIDI_MTC_QUARTER    0xF1
 #define MIDI_POSITION_PTR   0xF2
 #define MIDI_CLOCK          0xF8
 #define MIDI_START          0xFA
