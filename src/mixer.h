@@ -198,6 +198,12 @@ private:
 	 * generate MIDI sync output data */
 
 	void sendMIDIsync();
+
+	/* sendMIDIrewind
+	 * rewind timecode to beat 0 and also send a MTC full frame to cue
+	 * the slave */
+
+	void sendMIDIrewind();
 };
 
 #endif

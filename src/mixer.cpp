@@ -272,12 +272,35 @@ void Mixer::sendMIDIsync() {
 						midiTCminutes = 0;
 					}
 				}
-				printf("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
+				//printf("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
 			}
 		}
 	}
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::sendMIDIrewind() {
+
+	midiTCframes  = 0;
+	midiTCseconds = 0;
+	midiTCminutes = 0;
+	midiTChours   = 0;
+
+	/* For cueing the slave to a particular start point, Quarter Frame
+	 * messages are not used. Instead, an MTC Full Frame message should
+	 * be sent. The Full Frame is a SysEx message that encodes the entire
+	 * SMPTE time in one message */
+
+	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
+		kernelMidi::send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
+		kernelMidi::send(0x01, 0x01, 0x00);        // hours 0
+		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0
+		kernelMidi::send(MIDI_EOX, -1, -1);        // end of sysex
+	}
+}
 
 /* ------------------------------------------------------------------ */
 
@@ -589,16 +612,14 @@ bool Mixer::isSilent() {
 
 void Mixer::rewind() {
 
-	actualFrame   = 0;
-	actualBeat    = 0;
-	midiTCframes  = 0;
-	midiTCseconds = 0;
-	midiTCminutes = 0;
-	midiTChours   = 0;
+	actualFrame = 0;
+	actualBeat  = 0;
 
 	if (running)
 		for (unsigned i=0; i<channels.size; i++)
 			channels.at(i)->rewind();
+
+	sendMIDIrewind();
 }
 
 
