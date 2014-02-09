@@ -237,12 +237,14 @@
 
 /* system common / real-time messages. Single bytes */
 
+#define MIDI_SYSEX          0xF0
 #define MIDI_MTC_QUARTER    0xF1
 #define MIDI_POSITION_PTR   0xF2
 #define MIDI_CLOCK          0xF8
 #define MIDI_START          0xFA
 #define MIDI_CONTINUE       0xFB
 #define MIDI_STOP           0xFC
+#define MIDI_EOX            0xF7  // end of sysex
 
 /* channels */
 
