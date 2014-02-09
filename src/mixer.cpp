@@ -591,6 +591,7 @@ void Mixer::rewind() {
 
 	actualFrame   = 0;
 	actualBeat    = 0;
+	midiTCframes  = 0;
 	midiTCseconds = 0;
 	midiTCminutes = 0;
 	midiTChours   = 0;
