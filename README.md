@@ -66,7 +66,7 @@ http://www.giadamusic.com/forum
 
 Copyright
 ---------
-Giada is copyright (C) 2010-2013 by Giovanni A. Zuliani | Monocasual
+Giada is copyright (C) 2010-2014 by Giovanni A. Zuliani | Monocasual
 
 Giada - Your Hardcore Loopmachine is free software: you can
 redistribute it and/or modify it under the terms of the GNU General
