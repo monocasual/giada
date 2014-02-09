@@ -399,12 +399,16 @@ void gGridTool::calc() {
 			if (j % G_Mixer.framesPerBar == 0 && i != 1)
 				bars.add(i);
 			if (j == G_Mixer.totalFrames-1)
-				//parent->coverX = i - parent->scroller->xposition() + parent->scroller->x();
 				parent->coverX = i;
 			j++;
 		}
 		j = step;
 	}
+
+	/* fix coverX if == 0, which means G_Mixer.beats == 32 */
+
+	if (G_Mixer.beats == 32)
+		parent->coverX = parent->totalWidth;
 }
 
 

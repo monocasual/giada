@@ -15,30 +15,30 @@ endif
 bin_PROGRAMS = giada
 
 giada_SOURCES = \
-const.h             gd_keyGrabber.h       glue.h               mixerHandler.cpp \
-gd_about.cpp        gd_mainWindow.cpp     graphics.cpp         mixerHandler.h \
-gd_about.h          gd_mainWindow.h       graphics.h           patch.cpp \
-gd_beatsInput.cpp   gd_warnings.cpp       ge_mixed.cpp         patch.h \
-gd_beatsInput.h     gd_warnings.h         ge_mixed.h           recorder.cpp \
-gd_bpmInput.cpp     ge_waveform.cpp       gui_utils.cpp        recorder.h \
-gd_bpmInput.h       ge_waveform.h         gui_utils.h          utils.cpp \
-gd_browser.cpp      init.cpp              channel.h            utils.h \
-gd_browser.h        init.h  				      gd_config.cpp        channel.cpp \
-gg_keyboard.cpp     kernelAudio.cpp       wave.cpp  	         gd_config.h \
-gg_keyboard.h       kernelAudio.h         waveFx.cpp 		       gd_editor.cpp \
-gg_waveTools.cpp    main.cpp              waveFx.h				     gd_editor.h \
-gg_waveTools.h      mixer.cpp             wave.h  				     gd_keyGrabber.cpp \
-glue.cpp            mixer.h						    ge_browser.h		     ge_browser.cpp \
-gd_devInfo.cpp		  gd_devInfo.h          plugin.h             plugin.cpp \
-pluginHost.h			  pluginHost.cpp        gd_pluginList.h	     gd_pluginList.cpp \
-gd_pluginWindow.h	  gd_pluginWindow.cpp   ge_window.h			     ge_window.cpp \
-dataStorage.h			  dataStorage.cpp		    conf.h					     conf.cpp \
-gd_actionEditor.h	  gd_actionEditor.cpp   ge_muteChannel.h     ge_muteChannel.cpp \
-ge_actionChannel.h  ge_actionChannel.cpp  gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
-ge_actionWidget.h   ge_actionWidget.cpp   ge_envelopeChannel.h ge_envelopeChannel.cpp \
-ge_pianoRoll.h		  ge_pianoRoll.cpp      kernelMidi.h         kernelMidi.cpp \
-gd_midiInputSetup.h gd_midiInputSetup.cpp gd_midiGrabber.h     gd_midiGrabber.cpp \
-sampleChannel.h     sampleChannel.cpp     midiChannel.cpp      midiChannel.h
+const.h              gd_keyGrabber.h        glue.h               mixerHandler.cpp \
+gd_about.cpp         gd_mainWindow.cpp      graphics.cpp         mixerHandler.h \
+gd_about.h           gd_mainWindow.h        graphics.h           patch.cpp \
+gd_beatsInput.cpp    gd_warnings.cpp        ge_mixed.cpp         patch.h \
+gd_beatsInput.h      gd_warnings.h          ge_mixed.h           recorder.cpp \
+gd_bpmInput.cpp      ge_waveform.cpp        gui_utils.cpp        recorder.h \
+gd_bpmInput.h        ge_waveform.h          gui_utils.h          utils.cpp \
+gd_browser.cpp       init.cpp               channel.h            utils.h \
+gd_browser.h         init.h  				        gd_config.cpp        channel.cpp \
+gg_keyboard.cpp      kernelAudio.cpp        wave.cpp  	         gd_config.h \
+gg_keyboard.h        kernelAudio.h          waveFx.cpp 		       gd_editor.cpp \
+gg_waveTools.cpp     main.cpp               waveFx.h				     gd_editor.h \
+gg_waveTools.h       mixer.cpp              wave.h  				     gd_keyGrabber.cpp \
+glue.cpp             mixer.h						    ge_browser.h		     ge_browser.cpp \
+gd_devInfo.cpp		   gd_devInfo.h           plugin.h             plugin.cpp \
+pluginHost.h			   pluginHost.cpp         gd_pluginList.h	     gd_pluginList.cpp \
+gd_pluginWindow.h	   gd_pluginWindow.cpp    ge_window.h			     ge_window.cpp \
+dataStorage.h			   dataStorage.cpp		    conf.h					     conf.cpp \
+gd_actionEditor.h	   gd_actionEditor.cpp    ge_muteChannel.h     ge_muteChannel.cpp \
+ge_actionChannel.h   ge_actionChannel.cpp   gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
+ge_actionWidget.h    ge_actionWidget.cpp    ge_envelopeChannel.h ge_envelopeChannel.cpp \
+ge_pianoRoll.h		   ge_pianoRoll.cpp       kernelMidi.h         kernelMidi.cpp \
+gd_midiOutputSetup.h gd_midiOutputSetup.cpp gd_midiGrabber.h     gd_midiGrabber.cpp \
+sampleChannel.h      sampleChannel.cpp      midiChannel.cpp      midiChannel.h
 
 
 

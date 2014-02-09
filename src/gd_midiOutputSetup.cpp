@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiInputSetup
+ * gd_midiOutputSetup
  *
  * ---------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "gd_midiInputSetup.h"
+#include "gd_midiOutputSetup.h"
 #include "conf.h"
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
@@ -39,7 +39,7 @@
 extern Conf	G_Conf;
 
 
-gdMidiInputSetup::gdMidiInputSetup(MidiChannel *ch)
+gdMidiOutputSetup::gdMidiOutputSetup(MidiChannel *ch)
 	: gWindow(300, 64, "Midi Output Setup"), ch(ch)
 {
 	begin();
@@ -72,15 +72,15 @@ gdMidiInputSetup::gdMidiInputSetup(MidiChannel *ch)
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiInputSetup::cb_save          (Fl_Widget *w, void *p) { ((gdMidiInputSetup*)p)->__cb_save(); }
-void gdMidiInputSetup::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiInputSetup*)p)->__cb_cancel(); }
-void gdMidiInputSetup::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiInputSetup*)p)->__cb_enableChanList(); }
+void gdMidiOutputSetup::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_save(); }
+void gdMidiOutputSetup::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_cancel(); }
+void gdMidiOutputSetup::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_enableChanList(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiInputSetup::__cb_enableChanList() {
+void gdMidiOutputSetup::__cb_enableChanList() {
 	enableOut->value() ? chanListOut->activate() : chanListOut->deactivate();
 }
 
@@ -88,7 +88,7 @@ void gdMidiInputSetup::__cb_enableChanList() {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiInputSetup::__cb_save() {
+void gdMidiOutputSetup::__cb_save() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
 	ch->guiChannel->update();
@@ -99,13 +99,13 @@ void gdMidiInputSetup::__cb_save() {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiInputSetup::__cb_cancel() { do_callback(); }
+void gdMidiOutputSetup::__cb_cancel() { do_callback(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiInputSetup::fillChanMenu(gChoice *m) {
+void gdMidiOutputSetup::fillChanMenu(gChoice *m) {
 	m->add("Channel 1");
 	m->add("Channel 2");
 	m->add("Channel 3");

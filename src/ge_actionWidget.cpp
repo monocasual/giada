@@ -92,7 +92,10 @@ void gActionWidget::baseDraw(bool clear) {
 		fl_line(px, y()+1, px, y()+h()-2);
 	}
 
-	/* cover unused area */
+	/* cover unused area. Avoid drawing cover if width == 0 (i.e. beats
+	 * are 32) */
 
-	fl_rectf(pParent->coverX+x(), y()+1, pParent->totalWidth-pParent->coverX, h()-2, COLOR_BG_1);
+	int coverWidth = pParent->totalWidth-pParent->coverX;
+	if (coverWidth != 0)
+		fl_rectf(pParent->coverX+x(), y()+1, coverWidth, h()-2, COLOR_BG_1);
 }
