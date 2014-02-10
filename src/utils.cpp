@@ -133,7 +133,7 @@ std::string gBasename(const char *fullpath) {
 	char ext[_MAX_EXT];
 	char buffer[FILENAME_MAX];
 	_splitpath(fullpath, NULL, NULL, file, ext);
-	sprintf(buffer, "%s%s", file, ext);
+	sprintf(buffer, "%s.%s", file, ext);
 #endif
 	std::string out = buffer;
 	return out;
@@ -182,7 +182,7 @@ std::string gGetExt(const char *file) {
 	if (pos==0)
 		return "";
 	std::string out = file;
-	return out.substr(pos, len);
+	return out.substr(pos+1, len);
 }
 
 
@@ -209,7 +209,7 @@ bool gIsProject(const char *path) {
 
 	/* FIXME - checks too weak */
 
-	if (gGetExt(path) == ".gprj" && gDirExists(path))
+	if (gGetExt(path) == "gprj" && gDirExists(path))
 		return 1;
 	return 0;
 }
@@ -219,7 +219,7 @@ bool gIsProject(const char *path) {
 
 
 bool gIsPatch(const char *path) {
-	if (gGetExt(path) == ".gptc")
+	if (gGetExt(path) == "gptc")
 		return 1;
 	return 0;
 }
