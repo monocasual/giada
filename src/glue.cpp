@@ -989,7 +989,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 			 * project folder (folderPath) */
 
 			char samplePath[PATH_MAX];
-			sprintf(samplePath, "%s%c%s.%s", folderPath, gGetSlash(), ch->wave->basename().c_str(), ch->wave->extension().c_str());
+			sprintf(samplePath, "%s%s%s.%s", folderPath, gGetSlash().c_str(), ch->wave->basename().c_str(), ch->wave->extension().c_str());
 
 			/* remove any existing file */
 
@@ -1001,7 +1001,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 	}
 
 	char gptcPath[PATH_MAX];
-	sprintf(gptcPath, "%s%c%s.gptc", folderPath, gGetSlash(), gStripExt(projName).c_str());
+	sprintf(gptcPath, "%s%s%s.gptc", folderPath, gGetSlash().c_str(), gStripExt(projName).c_str());
 	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;

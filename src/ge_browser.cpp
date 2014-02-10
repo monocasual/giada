@@ -110,12 +110,14 @@ void gBrowser::refresh() {
 					 * a '/' (on Windows seems useless, though) */
 
 					std::string file = path_obj->value();
-
+/*
 #if defined(__linux__) || defined(__APPLE__)
 					file.insert(file.size(),"/");
 #elif defined(_WIN32)
 					file.insert(file.size(),"\\");
 #endif
+**/
+					file.insert(file.size(), gGetSlash());
 					file += ep->d_name;
 
 					if (gIsDir(file.c_str())) {
