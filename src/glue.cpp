@@ -989,11 +989,8 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 			 * project folder (folderPath) */
 
 			char samplePath[PATH_MAX];
-#if defined(_WIN32)
-			sprintf(samplePath, "%s\\%s.wav", folderPath, ch->wave->name.c_str());
-#else
-			sprintf(samplePath, "%s/%s.wav", folderPath, ch->wave->name.c_str());
-#endif
+			sprintf(samplePath, "%s%c%s.%s", folderPath, gGetSlash(), ch->wave->basename().c_str(), ch->wave->extension().c_str());
+
 			/* remove any existing file */
 
 			if (gFileExists(samplePath))
@@ -1003,13 +1000,8 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 		}
 	}
 
-	std::string projNameClean = gStripExt(projName);
 	char gptcPath[PATH_MAX];
-#if defined(_WIN32)
-	sprintf(gptcPath, "%s\\%s.gptc", folderPath, projNameClean.c_str());
-#else
-	sprintf(gptcPath, "%s/%s.gptc", folderPath, projNameClean.c_str());
-#endif
+	sprintf(gptcPath, "%s%c%s.gptc", folderPath, gGetSlash(), gStripExt(projName).c_str());
 	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;
