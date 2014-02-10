@@ -65,10 +65,10 @@ public:
 	inline void channels(int v) { inHeader.channels = v; }
 	inline void frames  (int v) { inHeader.frames = v; }
 
-	int open(const char *f);
-	int readData();
+	int open     (const char *f);
+	int readData ();
 	int	writeData(const char *f);
-	void clear();
+	void clear   ();
 
 	/* allocEmpty
 	 * alloc an empty waveform. */
@@ -78,7 +78,7 @@ public:
 	/* resample
 	 * simple algorithm for one-shot resampling. */
 
-	int resample    (int quality, int newRate);
+	int resample(int quality, int newRate);
 };
 
 #endif
