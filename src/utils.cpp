@@ -173,16 +173,16 @@ std::string getCurrentPath() {
 
 std::string getExt(const char *file) {
 	int len = strlen(file);
-	int i   = len;
-	while (i>0) {
-		if (file[i] == '.')
+	int pos = len;
+	while (pos>0) {
+		if (file[pos] == '.')
 			break;
-		i--;
+		pos--;
 	}
-	if (i==0)
+	if (pos==0)
 		return "";
 	std::string out = file;
-	return out.substr(i, len);
+	return out.substr(pos, len);
 }
 
 
@@ -191,14 +191,14 @@ std::string getExt(const char *file) {
 
 std::string stripExt(const char *file) {
 	int len = strlen(file);
-	for (int i=len-1; i>=0; i--)
+	int pos = -1;
+	for (int i=0; i<len; i++)
 		if (file[i] == '.') {
-			len = i;
+			pos = i;
 			break;
 		}
 	std::string out = file;
-	out.resize(len);
-	return out;
+	return pos == -1 ? out : out.substr(0, pos);
 }
 
 
