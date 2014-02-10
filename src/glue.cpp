@@ -985,7 +985,8 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 			if (ch->wave == NULL)
 				continue;
 
-			/* update the new samplePath: everything now comes from the project folder */
+			/* update the new samplePath: everything now comes from the
+			 * project folder (folderPath) */
 
 			char samplePath[PATH_MAX];
 #if defined(_WIN32)
@@ -1002,7 +1003,7 @@ int glue_saveProject(const char *folderPath, const char *projName) {
 		}
 	}
 
-	std::string projNameClean = stripExt(projName);
+	std::string projNameClean = gStripExt(projName);
 	char gptcPath[PATH_MAX];
 #if defined(_WIN32)
 	sprintf(gptcPath, "%s\\%s.gptc", folderPath, projNameClean.c_str());

@@ -155,7 +155,7 @@ std::string gDirname(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string getCurrentPath() {
+std::string gGetCurrentPath() {
  char buf[PATH_MAX];
 #if defined(__WIN32)
 	if (_getcwd(buf, PATH_MAX) != NULL)
@@ -171,7 +171,7 @@ std::string getCurrentPath() {
 /* ------------------------------------------------------------------ */
 
 
-std::string getExt(const char *file) {
+std::string gGetExt(const char *file) {
 	int len = strlen(file);
 	int pos = len;
 	while (pos>0) {
@@ -189,7 +189,7 @@ std::string getExt(const char *file) {
 /* ------------------------------------------------------------------ */
 
 
-std::string stripExt(const char *file) {
+std::string gStripExt(const char *file) {
 	int len = strlen(file);
 	int pos = -1;
 	for (int i=0; i<len; i++)
@@ -209,7 +209,7 @@ bool gIsProject(const char *path) {
 
 	/* FIXME - checks too weak */
 
-	if (getExt(path) == ".gprj" && gDirExists(path))
+	if (gGetExt(path) == ".gprj" && gDirExists(path))
 		return 1;
 	return 0;
 }
@@ -219,7 +219,7 @@ bool gIsProject(const char *path) {
 
 
 bool gIsPatch(const char *path) {
-	if (getExt(path) == ".gptc")
+	if (gGetExt(path) == ".gptc")
 		return 1;
 	return 0;
 }
@@ -228,9 +228,9 @@ bool gIsPatch(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string getProjectName(const char *path) {
+std::string gGetProjectName(const char *path) {
 	std::string out;
-	out = stripExt(path);
+	out = gStripExt(path);
 
 	int i = out.size();
 	while (i>=0) {

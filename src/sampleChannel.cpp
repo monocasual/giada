@@ -625,7 +625,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	char wname[32];
 	sprintf(wname, "TAKE-%d", takeId);
 
-	w->pathfile = getCurrentPath()+"/"+wname;
+	w->pathfile = gGetCurrentPath()+"/"+wname;
 	w->name     = wname;
 	wave        = w;
 	status      = STATUS_OFF;

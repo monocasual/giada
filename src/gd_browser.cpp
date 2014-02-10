@@ -113,7 +113,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
 		ok->callback(cb_save_project, (void*)this);
-		name->value(stripExt(G_Patch.name).c_str());
+		name->value(gStripExt(G_Patch.name).c_str());
 	}
 #ifdef WITH_VST
 	else
@@ -182,7 +182,7 @@ void gdBrowser::__cb_load_patch() {
 	bool        isProject;
 
 	if (gIsProject(browser->get_selected_item())) {
-		std::string patchName = getProjectName(browser->get_selected_item());
+		std::string patchName = gGetProjectName(browser->get_selected_item());
 #if defined(__linux__) || defined(__APPLE__)
 		patchFile = patchFile+"/"+patchName+".gptc";
 #elif defined(_WIN32)
@@ -226,7 +226,7 @@ void gdBrowser::__cb_save_sample() {
 
 	/* bruteforce check extension. */
 
-	std::string filename = stripExt(name->value());
+	std::string filename = gStripExt(name->value());
 	char fullpath[PATH_MAX];
 	sprintf(fullpath, "%s/%s.wav", where->value(), filename.c_str());
 

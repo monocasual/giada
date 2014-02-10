@@ -162,12 +162,12 @@ std::string gBasename(const char *path);
 
 std::string gDirname(const char *path);
 
-std::string getCurrentPath();
+std::string gGetCurrentPath();
 
-std::string getExt(const char *filename);
+std::string gGetExt(const char *filename);
 
-std::string stripExt(const char *filename);
+std::string gStripExt(const char *filename);
 
-std::string getProjectName(const char *path);
+std::string gGetProjectName(const char *path);
 
 #endif

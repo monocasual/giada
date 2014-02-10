@@ -58,7 +58,7 @@ int Wave::open(const char *f) {
 	pathfile = f;
 	name   = gBasename(f);
 #if defined(__linux__)
-	name   = stripExt(name.c_str());  // in linux gBasename doesn't strip
+	name   = gStripExt(name.c_str());  // in linux gBasename doesn't strip
 #endif
 	fileIn = sf_open(f, SFM_READ, &inHeader);
 	if (fileIn == NULL) {
@@ -218,9 +218,9 @@ int Wave::resample(int quality, int newRate) {
 /* ------------------------------------------------------------------ */
 
 std::string Wave::basename() {
-	return stripExt(gBasename(pathfile.c_str()).c_str());
+	return gStripExt(gBasename(pathfile.c_str()).c_str());
 }
 
 std::string Wave::extension() {
-	return getExt(pathfile.c_str());
+	return gGetExt(pathfile.c_str());
 }
