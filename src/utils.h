@@ -170,4 +170,6 @@ std::string gStripExt(const char *filename);
 
 std::string gGetProjectName(const char *path);
 
+char gGetSlash();
+
 #endif

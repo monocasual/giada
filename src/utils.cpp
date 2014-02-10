@@ -246,3 +246,15 @@ std::string gGetProjectName(const char *path) {
 	out.erase(0, i+1);	// includes the '/' (or '\' on windows)
 	return out;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+char gGetSlash() {
+#if defined(_WIN32)
+	return '\\';
+#else
+	return '/';
+#endif
+}
