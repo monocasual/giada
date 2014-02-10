@@ -213,3 +213,14 @@ int Wave::resample(int quality, int newRate) {
 	inHeader.samplerate = newRate;
 	return 1;
 }
+
+
+/* ------------------------------------------------------------------ */
+
+std::string Wave::basename() {
+	return stripExt(gBasename(pathfile.c_str()).c_str());
+}
+
+std::string Wave::extension() {
+	return getExt(pathfile.c_str());
+}

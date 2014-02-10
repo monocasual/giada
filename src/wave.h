@@ -54,7 +54,7 @@ public:
 	std::string name;			// sample name (changeable)
 
 	float     *data;
-	int        size;			   // wave size (size in stereo: size / 2)
+	int        size;			  // wave size (size in stereo: size / 2)
 	bool       isLogical;   // memory only (a take)
 	bool       isEdited;    // edited via editor
 
@@ -65,10 +65,13 @@ public:
 	inline void channels(int v) { inHeader.channels = v; }
 	inline void frames  (int v) { inHeader.frames = v; }
 
-	int open     (const char *f);
-	int readData ();
-	int	writeData(const char *f);
-	void clear   ();
+	std::string basename();
+	std::string extension();
+
+	int  open     (const char *f);
+	int  readData ();
+	int	 writeData(const char *f);
+	void clear    ();
 
 	/* allocEmpty
 	 * alloc an empty waveform. */
