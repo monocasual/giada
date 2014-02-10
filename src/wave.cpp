@@ -55,21 +55,20 @@ Wave::~Wave() {
 
 
 int Wave::open(const char *f) {
+
 	pathfile = f;
-	name   = gBasename(f);
-#if defined(__linux__)
-	name   = gStripExt(name.c_str());  // in linux gBasename doesn't strip
-#endif
-	fileIn = sf_open(f, SFM_READ, &inHeader);
+	name     = gStripExt(gBasename(f).c_str());
+	fileIn   = sf_open(f, SFM_READ, &inHeader);
+
 	if (fileIn == NULL) {
 		printf("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
 		pathfile = "";
 		name     = "";
 		return 0;
 	}
+
 	isLogical = false;
 	isEdited  = false;
-	///initRate  = getRate();
 
 	return 1;
 }
