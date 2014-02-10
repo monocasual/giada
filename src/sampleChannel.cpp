@@ -646,8 +646,8 @@ void SampleChannel::process(float *buffer) {
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {
-		buffer[j]   += vChan[j]   * volume * panLeft;
-		buffer[j+1] += vChan[j+1] * volume * panRight;
+		buffer[j]   += vChan[j]   * volume * panLeft  * boost;
+		buffer[j+1] += vChan[j+1] * volume * panRight * boost;
 	}
 }
 
