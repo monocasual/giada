@@ -75,6 +75,7 @@ Channel::Channel(int type, int status, char side, int bufferSize)
 	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
 		printf("[Channel] unable to alloc memory for vChan\n");
+	memset(vChan, 0, bufferSize * sizeof(float));
 }
 
 
