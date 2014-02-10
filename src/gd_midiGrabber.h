@@ -77,13 +77,18 @@ class gdMidiGrabber : public gWindow {
 
 protected:
 
+	gClick *ok;
+
 	void stopMidiLearn(gLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
-	static void cb_learn(uint32_t msg, void *data);
+	static void cb_learn  (uint32_t msg, void *data);
 	inline void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
+
+	static void cb_close  (Fl_Widget *w, void *p);
+	inline void __cb_close();
 
 public:
 
@@ -102,6 +107,7 @@ private:
 	class Channel *ch;
 
 	gCheck *enable;
+
 
 	//gVector <gLearner *> items; for future use, with vst parameters
 

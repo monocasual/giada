@@ -85,12 +85,26 @@ void gdMidiGrabber::cb_learn(uint32_t msg, void *d) {
 
 
 /* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabber::cb_close(Fl_Widget *w, void *p)  { ((gdMidiGrabber*)p)->__cb_close(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabber::__cb_close() {
+	do_callback();
+}
+
+
+/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
 
 gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
-	:	gdMidiGrabber(300, 178, "MIDI Input Setup"),
+	:	gdMidiGrabber(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
 	char title[64];
@@ -106,12 +120,17 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
 	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
 	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+	int yy = 178;
 
 	if (ch->type == CHANNEL_SAMPLE) {
-		size(300, 226);
+		size(300, 254);
 		new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
 		new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+		yy = 226;
 	}
+
+	ok = new gButton(w()-88, yy, 80, 20, "Ok");
+	ok->callback(cb_close, (void*)this);
 
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
@@ -141,7 +160,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 gdMidiGrabberMaster::gdMidiGrabberMaster()
-	: gdMidiGrabber(300, 228, "MIDI Input Setup (global)")
+	: gdMidiGrabber(300, 256, "MIDI Input Setup (global)")
 {
 	set_modal();
 
@@ -154,6 +173,9 @@ gdMidiGrabberMaster::gdMidiGrabberMaster()
 	new gLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
 	new gLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
 	new gLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
+	ok = new gButton(w()-88, 228, 80, 20, "Ok");
+
+	ok->callback(cb_close, (void*)this);
 
 	gu_setFavicon(this);
 	show();
