@@ -35,6 +35,20 @@
 	#include <unistd.h>
 #endif
 
+#include <cstdarg>
+#include <sys/stat.h>   // stat (gDirExists)
+#include <errno.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string>
+#include <string.h>
+#include <sstream>
+#include <limits.h>
+#if defined(__APPLE__)
+	#include <libgen.h>     // basename unix
+#endif
+
+
 
 bool gFileExists(const char *filename) {
 	FILE *fh = fopen(filename, "rb");
@@ -257,4 +271,14 @@ std::string gGetSlash() {
 #else
 	return "/";
 #endif
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string gItoa(int i) {
+	std::stringstream out;
+	out << i;
+	return out.str();
 }

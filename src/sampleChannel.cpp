@@ -756,12 +756,12 @@ int SampleChannel::load(const char *file) {
 	/* sample name must be unique. Start from k = 1, zero is too nerdy */
 
 	std::string oldName = wave->name;
+	std::string newName = "";
 	int k = 1;
 
 	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
-		char buf[4];
-		sprintf(buf, "%d", k);
-		wave->name = oldName + "-" + buf;
+		newName = oldName + "-" + gItoa(k);
+		wave->updateName(newName.c_str());
 		k++;
 	}
 

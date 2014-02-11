@@ -26,21 +26,13 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <string.h>
-#include <stdio.h>
-#include <cstdarg>
-#include <sys/stat.h>   // stat (gDirExists)
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
+
 #include <string>
-#include <limits.h>
-#if defined(__APPLE__)
-	#include <libgen.h>     // basename unix
-#endif
+#include <cstdio>
 
 
 /* gVector
@@ -171,5 +163,7 @@ std::string gStripExt(const char *filename);
 std::string gGetProjectName(const char *path);
 
 std::string gGetSlash();
+
+std::string gItoa(int i);
 
 #endif

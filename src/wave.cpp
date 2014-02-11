@@ -216,10 +216,23 @@ int Wave::resample(int quality, int newRate) {
 
 /* ------------------------------------------------------------------ */
 
+
 std::string Wave::basename() {
 	return gStripExt(gBasename(pathfile.c_str()).c_str());
 }
 
 std::string Wave::extension() {
 	return gGetExt(pathfile.c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Wave::updateName(const char *n) {
+
+	std::string ext = gGetExt(pathfile.c_str());
+
+	name     = gStripExt(gBasename(n).c_str());
+	pathfile = gDirname(pathfile.c_str()) + gGetSlash() + name + "." + ext;
 }

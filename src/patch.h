@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <stdint.h>
 #include "dataStorage.h"
 #include "const.h"
 

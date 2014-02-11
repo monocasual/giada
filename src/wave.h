@@ -65,13 +65,14 @@ public:
 	inline void channels(int v) { inHeader.channels = v; }
 	inline void frames  (int v) { inHeader.frames = v; }
 
-	std::string basename();
+	std::string basename ();
 	std::string extension();
 
-	int  open     (const char *f);
-	int  readData ();
-	int	 writeData(const char *f);
-	void clear    ();
+	void updateName(const char *n);
+	int  open      (const char *f);
+	int  readData  ();
+	int	 writeData (const char *f);
+	void clear     ();
 
 	/* allocEmpty
 	 * alloc an empty waveform. */
