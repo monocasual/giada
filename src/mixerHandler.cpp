@@ -96,11 +96,7 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 		 * samplePath */
 
 		if (isProject && G_Patch.version >= 0.63f)
-#if defined(_WIN32)
-			sprintf(smpPath, "%s\\%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
-#else
-			sprintf(smpPath, "%s/%s", gDirname(projPath).c_str(), G_Patch.getSamplePath(i).c_str());
-#endif
+			sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch.getSamplePath(i).c_str());
 		else
 			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
 
