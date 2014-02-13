@@ -13,6 +13,23 @@
 
 
 
+0.8.3 --- 2014 . 02 . 14
+- Experimental MIDI timing output with MTC and MIDI clock
+- Expose Sequencer x2 and /2 via MIDI
+- New pitch operators x2 and /2
+- Internal xfade process restored
+- "set key..." becomes "setup keyboard input" for sample channels
+- MIDI events are now saved as unsigned int in patch
+- Same expression on both sides of '|' in recorder.cpp (fixed)
+- Muted channels leak some glitches on 'kill' event (fixed)
+- Piano roll can't be edited anymore if beats == 32 (fixed)
+- Noise when adding new MIDI channel (fixed)
+- Boost and Normalize not working (fixed)
+- Multiple copies of every file used by the patch (fixed)
+- Samples with -1, -2, ... -n suffix are not included in patch (fixed)
+- Segfaults when quantizing samples (fixed)
+
+
 0.8.2 --- 2014 . 01 . 13
 - Pitch control exposed via MIDI
 - New tools in Sample Editor (linear fade in/out, smooth edges)
