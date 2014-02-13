@@ -392,7 +392,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 					}
 					pthread_mutex_lock(&mutex_chans);
 					for (unsigned k=0; k<channels.size; k++)
-						channels.at(k)->quantize(k, actualFrame);
+						channels.at(k)->quantize(k, j, actualFrame);  // j == localFrame
 					pthread_mutex_unlock(&mutex_chans);
 				}
 			}

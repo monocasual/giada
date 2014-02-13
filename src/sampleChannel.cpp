@@ -403,29 +403,32 @@ void SampleChannel::onZero(int frame) {
 /* ------------------------------------------------------------------ */
 
 
-void SampleChannel::quantize(int index, int frame) {
+void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 
-	if ((mode & SINGLE_ANY) && qWait == true)	{
+	/* skip if LOOP_ANY or not in quantizer-wait mode */
 
-		/* no fadeout if the sample starts for the first time (from a STATUS_OFF), it would
-		 * be meaningless. */
+	if ((mode & LOOP_ANY) || !qWait)
+		return;
 
-		if (status == STATUS_OFF) {
-			status = STATUS_PLAY;
-			qWait  = false;
-		}
+	/* no fadeout if the sample starts for the first time (from a
+	 * STATUS_OFF), it would be meaningless. */
+
+	if (status == STATUS_OFF) {
+		status  = STATUS_PLAY;
+		qWait   = false;
+		tracker = fillChan(vChan, tracker, localFrame);
+	}
+	else
+		setXFade(localFrame);
+
+	/* this is the moment in which we record the keypress, if the
+	 * quantizer is on. SINGLE_PRESS needs overdub */
+
+	if (recorder::canRec(this)) {
+		if (mode == SINGLE_PRESS)
+			recorder::startOverdub(index, ACTION_KEYS, globalFrame);
 		else
-			setXFade(frame);  /// WARNING - WRONG FRAME: this is the GLOBAL ONE!
-
-		/* this is the moment in which we record the keypress, if the quantizer is on.
-		 * SINGLE_PRESS needs overdub */
-
-		if (recorder::canRec(this)) {
-			if (mode == SINGLE_PRESS)
-				recorder::startOverdub(index, ACTION_KEYS, frame);
-			else
-				recorder::rec(index, ACTION_KEYPRESS, frame);
-		}
+			recorder::rec(index, ACTION_KEYPRESS, globalFrame);
 	}
 }
 
@@ -559,7 +562,6 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 
 
 void SampleChannel::setXFade(int frame) {
-	printf("[xFade] do xFade from frame=%d\n", frame);
 	calcFadeoutStep();
 	fadeoutOn      = true;
 	fadeoutVol     = 1.0f;

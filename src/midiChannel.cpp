@@ -127,7 +127,7 @@ void MidiChannel::empty() {}
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::quantize(int index, int frame) {}
+void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 
 
 /* ------------------------------------------------------------------ */
