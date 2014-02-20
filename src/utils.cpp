@@ -158,10 +158,9 @@ std::string gBasename(const char *fullpath) {
 
 
 std::string gDirname(const char *path) {
-	std::string base = gBasename(path);
-	std::string full = path;
-	size_t i = full.find(base);
-	return full.erase(i-1, full.size());  // i-1 trims '/'
+	std::string out = path;
+	out.erase(out.find_last_of(gGetSlash().c_str()));
+	return out;
 }
 
 
