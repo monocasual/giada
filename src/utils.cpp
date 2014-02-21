@@ -134,22 +134,9 @@ bool gMkdir(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gBasename(const char *fullpath) {
-#if defined(__linux__)
-	const char *buffer;
-	buffer = basename(fullpath);
-#elif defined(__APPLE__)
-	char path[PATH_MAX];
-	sprintf(path, "%s", fullpath);
-	char *buffer = basename(path);
-#elif defined(_WIN32)
-	char file[_MAX_FNAME];
-	char ext[_MAX_EXT];
-	char buffer[FILENAME_MAX];
-	_splitpath(fullpath, NULL, NULL, file, ext);
-	sprintf(buffer, "%s.%s", file, ext);
-#endif
-	std::string out = buffer;
+std::string gBasename(const char *path) {
+	std::string out = path;
+	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
 	return out;
 }
 
@@ -162,7 +149,6 @@ std::string gDirname(const char *path) {
 	out.erase(out.find_last_of(gGetSlash().c_str()));
 	return out;
 }
-
 
 
 /* ------------------------------------------------------------------ */
