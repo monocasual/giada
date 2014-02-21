@@ -318,8 +318,6 @@ int gWaveform::handle(int e) {
 				break;
 			}
 
-			///int realChanStart = chan->beginTrue;
-			///int realChanEnd   = chan->endTrue;
 			int realChanStart = chan->begin;
 			int realChanEnd   = chan->end;
 
@@ -328,6 +326,8 @@ int gWaveform::handle(int e) {
 			else
 			if (chanEndLit)
 				realChanEnd = absolutePoint(chanEnd)*2;
+
+			printf("%d %d\n", realChanStart, realChanEnd);
 
 			glue_setBeginEndChannel((gdEditor *) window(), chan, realChanStart, realChanEnd, false);
 
