@@ -210,6 +210,7 @@ void glue_deleteChannel(Channel *ch) {
 	recorder::clearChan(index);
 	mainWin->keyboard->deleteChannel(ch->guiChannel);
 	G_Mixer.deleteChannel(ch);
+	gu_closeAllSubwindows();
 	mainWin->keyboard->updateChannels(side);
 }
 
