@@ -108,7 +108,7 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 		ch(ch)
 {
 	char title[64];
-	sprintf(title, "MIDI Input Setup (channel %d)", ch->index);
+	sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
 	label(title);
 
 	set_modal();
