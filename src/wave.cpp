@@ -40,7 +40,11 @@
 extern Conf G_Conf;
 
 
-Wave::Wave() : data(NULL), size(0), isLogical(0), isEdited(0) {}
+Wave::Wave()
+	: data     (NULL),
+		size     (0),
+		isLogical(0),
+		isEdited (0) {}
 
 
 /* ------------------------------------------------------------------ */
@@ -230,7 +234,6 @@ std::string Wave::extension() {
 
 
 void Wave::updateName(const char *n) {
-
 	std::string ext = gGetExt(pathfile.c_str());
 
 	name     = gStripExt(gBasename(n).c_str());
