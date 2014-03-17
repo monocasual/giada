@@ -153,7 +153,8 @@ void SampleChannel::hardStop(int frame) {
 
 void SampleChannel::onBar(int frame) {
 	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-		setXFade(frame);
+		//setXFade(frame);
+		reset(frame);
 }
 
 
@@ -292,14 +293,10 @@ void SampleChannel::sum(int frame, bool running) {
 		if (fadeoutOn) {
 			if (fadeoutVol > 0.0f) { // fadeout ongoing
 				if (fadeoutType == XFADE) {
-
-					///vChan[frame]   *= volume_i;
-					///vChan[frame+1] *= volume_i;
-
-					///printf("%f --- %f\n", vChan[frame], vChan[frame+1]);
-
-					vChan[frame]   = pChan[frame]  ; //* fadeoutVol * volume_i;
-					vChan[frame+1] = pChan[frame+1]; //* fadeoutVol * volume_i;
+					vChan[frame]   *= volume_i;
+					vChan[frame+1] *= volume_i;
+					vChan[frame]    = pChan[frame]   * fadeoutVol * volume_i;
+					vChan[frame+1]  = pChan[frame+1] * fadeoutVol * volume_i;
 				}
 				else {
 					vChan[frame]   *= fadeoutVol * volume_i;
@@ -372,7 +369,8 @@ void SampleChannel::onZero(int frame) {
 			if (mute || mute_i)
 				reset(frame);
 			else
-				setXFade(frame);
+				//setXFade(frame);
+				reset(frame);
 		}
 		else
 		if (status == STATUS_ENDING)
@@ -412,10 +410,11 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 	if (status == STATUS_OFF) {
 		status  = STATUS_PLAY;
 		qWait   = false;
-		tracker = fillChan(vChan, tracker, localFrame);
+		tracker = fillChan(vChan, tracker, localFrame); /// FIXME: ???
 	}
 	else
-		setXFade(localFrame);
+		//setXFade(localFrame);
+		reset(frame);
 
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
@@ -559,19 +558,14 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 
 void SampleChannel::setXFade(int frame) {
 
+	printf("[xFade] frame=%d tracker=%d\n", frame, tracker);
+
 	calcFadeoutStep();
 	fadeoutOn      = true;
 	fadeoutVol     = 1.0f;
-	//fadeoutTracker = tracker;
 	fadeoutType    = XFADE;
-
-	printf("[xFade] frame=%d tracker=%d\n", frame, tracker);
-
 	fadeoutTracker = fillChan(pChan, tracker, 0, false);
-
 	reset(frame);
-
-	//printf("        [xFade] frame=%d tracker=%d\n", frame, tracker);
 }
 
 
@@ -866,7 +860,8 @@ void SampleChannel::start(int frame, bool doQuantize) {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
 				else
-					mute ? reset(frame) : setXFade(frame); // do xfade only if not muted in order to avoid clicks
+					//mute ? reset(frame) : setXFade(frame); // do xfade only if not muted in order to avoid clicks
+					reset(frame);
 			}
 			else
 			if (mode & (LOOP_ANY | SINGLE_ENDLESS))
