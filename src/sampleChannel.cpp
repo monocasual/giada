@@ -414,7 +414,7 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 	}
 	else
 		//setXFade(localFrame);
-		reset(frame);
+		reset(localFrame);
 
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
