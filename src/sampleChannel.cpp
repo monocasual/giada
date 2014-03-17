@@ -982,7 +982,5 @@ int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind) {
 				frameRewind = gen+offset;
 		}
 	}
-	dest[0] = 1.0f;
-	dest[1] = 1.0f;
 	return position;
 }
