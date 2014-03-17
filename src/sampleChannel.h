@@ -57,10 +57,10 @@ private:
 
 	/* fillChan
 	 * copy from wave to *dest and resample data from wave, if necessary.
-	 * Start to fill pChan from byte 'offset'. Returns new sample
-	 * position, in frames */
+	 * Start to fill pChan from byte 'offset'. If rewind=false don't
+	 * rewind internal tracker. Returns new sample position, in frames */
 
-	int fillChan(float *dest, int start, int offset);
+	int fillChan(float *dest, int start, int offset, bool rewind=true);
 
 	/* clearChan
 	 * set data to zero from start to bufferSize-1. */
