@@ -843,9 +843,8 @@ void SampleChannel::start(int frame, bool doQuantize) {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
 				else {
-					status = STATUS_PLAY;
-					if (frame > 0)   // can be > 0 with recorded actions
-						tracker = fillChan(vChan, tracker, frame);
+					status  = STATUS_PLAY;
+					tracker = fillChan(vChan, tracker, frame);  /// FIXME - check if frame == 0, possible duplicated fillChan call
 				}
 			}
 			break;
