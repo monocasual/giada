@@ -109,7 +109,6 @@ int gWaveform::alloc(int datasize) {
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
-
 	for (int i=0; i<data.size; i++) {
 
 		int pp;  // point prev
