@@ -34,6 +34,7 @@ extern const char *giada_logo_xpm[];
 extern const char *loopRepeat_xpm[];
 extern const char *loopBasic_xpm[];
 extern const char *loopOnce_xpm[];
+extern const char *loopOnceBar_xpm[];
 extern const char *oneshotBasic_xpm[];
 extern const char *oneshotRetrig_xpm[];
 extern const char *oneshotPress_xpm[];
