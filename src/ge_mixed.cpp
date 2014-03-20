@@ -382,6 +382,7 @@ gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 
 	add("Loop . basic", 	   0, cb_change_chanmode, (void *)LOOP_BASIC);
 	add("Loop . once", 		   0, cb_change_chanmode, (void *)LOOP_ONCE);
+	add("Loop . once . bar", 0, cb_change_chanmode, (void *)LOOP_ONCE_BAR);
 	add("Loop . repeat", 	   0, cb_change_chanmode, (void *)LOOP_REPEAT);
 	add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
 	add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
@@ -398,6 +399,9 @@ void gModeBox::draw() {
 			break;
 		case LOOP_ONCE:
 			fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
+			break;
+		case LOOP_ONCE_BAR:
+			fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
 			break;
 		case LOOP_REPEAT:
 			fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
