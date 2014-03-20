@@ -129,12 +129,13 @@
 #define LOOP_BASIC			 0x01 // 0000 0001  chanMode
 #define LOOP_ONCE				 0x02 // 0000 0010  chanMode
 #define	SINGLE_BASIC		 0x04 // 0000 0100  chanMode
-#define SINGLE_PRESS		 0x08 // 0000 1000	 chanMode
-#define SINGLE_RETRIG		 0x10 // 0001 0000	 chanMode
+#define SINGLE_PRESS		 0x08 // 0000 1000	chanMode
+#define SINGLE_RETRIG		 0x10 // 0001 0000	chanMode
 #define LOOP_REPEAT			 0x20 // 0010 0000  chanMode
 #define SINGLE_ENDLESS   0x40 // 0100 0000  chanMode
+#define LOOP_ONCE_BAR    0x80 // 1000 0000  chanMode
 
-#define LOOP_ANY				 0x23 // 0010 0011  chanMode - any loop mode
+#define LOOP_ANY				 0xA3 // 1010 0011  chanMode - any loop mode
 #define SINGLE_ANY		   0x5C // 0101 1100  chanMode - any single mode
 
 #define	STATUS_ENDING		 0x01 // 0000 0001  chanStatus - ending            (loop mode only)
