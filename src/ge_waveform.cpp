@@ -326,8 +326,6 @@ int gWaveform::handle(int e) {
 			if (chanEndLit)
 				realChanEnd = absolutePoint(chanEnd)*2;
 
-			printf("%d %d\n", realChanStart, realChanEnd);
-
 			glue_setBeginEndChannel((gdEditor *) window(), chan, realChanStart, realChanEnd, false);
 
 			pushed  = false;
