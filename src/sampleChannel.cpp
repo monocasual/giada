@@ -152,9 +152,22 @@ void SampleChannel::hardStop(int frame) {
 
 
 void SampleChannel::onBar(int frame) {
-	if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-		//setXFade(frame);
-		reset(frame);
+	///if (mode == LOOP_REPEAT && status == STATUS_PLAY)
+	///	//setXFade(frame);
+	///	reset(frame);
+
+	if (mode == LOOP_REPEAT) {
+		if (status == STATUS_PLAY)
+			//setXFade(frame);
+			reset(frame);
+	}
+	else
+	if (mode == LOOP_ONCE_BAR) {
+		if (status == STATUS_WAIT) {
+			status  = STATUS_PLAY;
+			tracker = fillChan(vChan, tracker, frame);
+		}
+	}
 }
 
 
@@ -341,7 +354,8 @@ void SampleChannel::sum(int frame, bool running) {
 		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
 		 * would return in wait, losing the ENDING status */
 
-		if (mode == LOOP_ONCE && status != STATUS_ENDING)
+		//if (mode == LOOP_ONCE && status != STATUS_ENDING)
+		if ((mode & (LOOP_ONCE | LOOP_ONCE_BAR)) && status != STATUS_ENDING)
 			status = STATUS_WAIT;
 
 		/* check for end of samples. SINGLE_ENDLESS runs forever unless
@@ -360,17 +374,19 @@ void SampleChannel::onZero(int frame) {
 	if (wave == NULL)
 		return;
 
-	if (mode & (LOOP_ONCE | LOOP_BASIC | LOOP_REPEAT)) {
+	if (mode & LOOP_ANY) {
 
 		/* do a crossfade if the sample is playing. Regular chanReset
 		 * instead if it's muted, otherwise a click occurs */
 
 		if (status == STATUS_PLAY) {
+			/*
 			if (mute || mute_i)
 				reset(frame);
 			else
-				//setXFade(frame);
-				reset(frame);
+				setXFade(frame);
+			*/
+			reset(frame);
 		}
 		else
 		if (status == STATUS_ENDING)
