@@ -13,6 +13,16 @@
 
 
 
+0.8.4 --- 2014 . 03 . 27
+- New mode 'Loop Bar Once'
+- Several small improvements and cleanups to internal utils functions
+- Fixed missing title in several subwindows
+- (win) Fix runtime error when loading a new project
+- Fix chan reset when clicking on waveform
+- Properly close subwindows after a channel has been deleted
+- Fix 'reload' button not working for samples with updated names
+
+
 0.8.3 --- 2014 . 02 . 14
 - Experimental MIDI timing output with MTC and MIDI clock
 - Expose Sequencer x2 and /2 via MIDI
