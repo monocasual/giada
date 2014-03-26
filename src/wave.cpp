@@ -235,7 +235,10 @@ std::string Wave::extension() {
 
 void Wave::updateName(const char *n) {
 	std::string ext = gGetExt(pathfile.c_str());
+	name      = gStripExt(gBasename(n).c_str());
+	pathfile  = gDirname(pathfile.c_str()) + gGetSlash() + name + "." + ext;
+	isLogical = true;
 
-	name     = gStripExt(gBasename(n).c_str());
-	pathfile = gDirname(pathfile.c_str()) + gGetSlash() + name + "." + ext;
+	/* a wave with updated name must become logical, since the underlying
+	 * file does not exist yet. */
 }
