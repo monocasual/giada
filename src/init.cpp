@@ -28,6 +28,7 @@
 
 
 #include "init.h"
+#include "log.h"
 #include "mixer.h"
 #include "wave.h"
 #include "const.h"
@@ -45,6 +46,7 @@
 
 extern Mixer 			 G_Mixer;
 extern bool		 		 G_audio_status;
+extern bool		 		 G_quit;
 
 #ifdef WITH_VST
 extern PluginHost	 G_PluginHost;
@@ -58,11 +60,11 @@ gdMainWindow   *mainWin;
 
 
 void init_prepareParser() {
-
-	puts("Giada "VERSIONE" setup...");
-	puts("[INIT] loading configuration file...");
 	G_Conf.read();
 	G_Patch.setDefault();
+	gLog_init(LOG_MODE_STDOUT); /// TODO - use G_Conf values
+	gLog("[init] Giada "VERSIONE"\n");
+	gLog("[init] configuration file ready\n");
 }
 
 
@@ -131,4 +133,46 @@ void init_startKernelAudio() {
 #ifdef WITH_VST
 	G_PluginHost.allocBuffers();
 #endif
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void init_shutdown() {
+
+	G_quit = true;
+
+	/* close any open subwindow, especially before cleaning PluginHost to
+	 * avoid mess */
+
+	gu_closeAllSubwindows();
+	gLog("[init] all subwindows closed\n");
+
+	/* write configuration file */
+
+	if (!G_Conf.write())
+		gLog("[init] error while saving configuration file!\n");
+	else
+		gLog("[init] configuration saved\n");
+
+	/* if G_audio_status we close the kernelAudio FIRST, THEN the mixer.
+	 * The opposite could cause random segfaults (even now with RtAudio?). */
+
+	if (G_audio_status) {
+		kernelAudio::closeDevice();
+		G_Mixer.close();
+		gLog("[init] Mixer closed\n");
+	}
+
+	recorder::clearAll();
+	gLog("[init] Recorder cleaned up\n");
+
+#ifdef WITH_VST
+	G_PluginHost.freeAllStacks();
+	gLog("[init] Plugin Host cleaned up\n");
+#endif
+
+	gLog("[init] Giada "VERSIONE" closed.\n");
+	gLog_close();
 }

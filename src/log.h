@@ -33,6 +33,6 @@
 
 int  gLog_init (int mode);
 void gLog_close();
-void gLog(const char *txt);
+void gLog(const char *format, ...);
 
 #endif

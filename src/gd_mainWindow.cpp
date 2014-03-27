@@ -190,46 +190,10 @@ void gdMainWindow::cb_inToOut        (Fl_Widget *v, void *p)    { mainWin->__cb_
 
 
 void gdMainWindow::__cb_endprogram() {
-
 	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
-
-	G_quit = true;
-
-	/* close any open subwindow, especially before cleaning PluginHost to
-	 * avoid mess */
-
-	puts("GUI closing...");
-	gu_closeAllSubwindows();
-
-	/* write configuration file */
-
-	if (!G_Conf.write())
-		puts("Error while saving configuration file!");
-	else
-		puts("Configuration saved");
-
-	puts("Mixer cleanup...");
-
-	/* if G_audio_status we close the kernelAudio FIRST, THEN the mixer.
-	 * The opposite could cause random segfaults (even now with RtAudio?). */
-
-	if (G_audio_status) {
-		kernelAudio::closeDevice();
-		G_Mixer.close();
-	}
-
-	puts("Recorder cleanup...");
-	recorder::clearAll();
-
-#ifdef WITH_VST
-	puts("Plugin Host cleanup...");
-	G_PluginHost.freeAllStacks();
-#endif
-
-	puts("Giada "VERSIONE" closed.");
+	init_shutdown();
 	hide();
-
 	delete this;
 }
 
