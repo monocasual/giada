@@ -44,19 +44,16 @@
 #include "kernelMidi.h"
 
 
-extern Mixer 			 G_Mixer;
-extern bool		 		 G_audio_status;
-extern bool		 		 G_quit;
+extern Mixer 			   G_Mixer;
+extern bool		 		   G_audio_status;
+extern bool		 		   G_quit;
+extern Patch     	   G_Patch;
+extern Conf          G_Conf;
+extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-extern PluginHost	 G_PluginHost;
+extern PluginHost	   G_PluginHost;
 #endif
-
-/** TODO - move these to main.cpp */
-
-Patch 	        G_Patch;
-Conf		        G_Conf;
-gdMainWindow   *mainWin;
 
 
 void init_prepareParser() {

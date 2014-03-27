@@ -31,29 +31,36 @@
 #endif
 #include "init.h"
 #include "const.h"
+#include "patch.h"
+#include "conf.h"
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "kernelAudio.h"
 #include "recorder.h"
 #include "gui_utils.h"
+#include "gd_mainWindow.h"
 #ifdef WITH_VST
 #include "pluginHost.h"
 #endif
 
 
-pthread_t t_video;
+/* global variables. Yeah, we are nasty */
 
-void *thread_video(void *arg);
+pthread_t     t_video;
+Mixer         G_Mixer;
+bool          G_quit;
+bool	        G_audio_status;
+bool          G_midiStatus;
+Patch 	      G_Patch;
+Conf		      G_Conf;
+gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-PluginHost 	G_PluginHost;
+PluginHost    G_PluginHost;
 #endif
 
 
-Mixer G_Mixer;
-bool	G_quit;
-bool	G_audio_status;
-bool  G_midiStatus;
+void *thread_video(void *arg);
 
 
 int main(int argc, char **argv) {
