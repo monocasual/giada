@@ -170,6 +170,6 @@ void init_shutdown() {
 	gLog("[init] Plugin Host cleaned up\n");
 #endif
 
-	gLog("[init] Giada "VERSIONE" closed.\n");
+	gLog("[init] Giada "VERSIONE" closed\n");
 	gLog_close();
 }
