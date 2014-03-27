@@ -185,6 +185,13 @@
 
 
 
+/* -- log modes ----------------------------------------------------- */
+#define LOG_MODE_STDOUT 0x01
+#define LOG_MODE_FILE   0x02
+#define LOG_MODE_MUTE   0x04
+
+
+
 /* -- browser types ------------------------------------------------- */
 #define BROWSER_LOAD_PATCH   0x00
 #define BROWSER_LOAD_SAMPLE  0x01
