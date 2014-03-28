@@ -45,7 +45,7 @@ int gLog_init(int m) {
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
 		std::string fpath = gGetHomePath() + "/giada.log";
-		f = fopen(fpath.c_str(), "w");
+		f = fopen(fpath.c_str(), "a");
 		if (!f) {
 			stat = false;
 			return 0;
