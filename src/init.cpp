@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include <ctime>
 #include "init.h"
 #include "log.h"
 #include "mixer.h"
@@ -61,7 +62,9 @@ void init_prepareParser() {
 	G_Patch.setDefault();
 	if (!gLog_init(LOG_MODE_STDOUT)) /// TODO - use G_Conf values
 		gLog("[init] log init failed! Using default stdout\n");
-	gLog("[init] Giada "VERSIONE"\n");
+  time_t t;
+  time (&t);
+	gLog("[init] Giada "VERSIONE" - %s", ctime(&t));
 	gLog("[init] configuration file ready\n");
 }
 
@@ -171,6 +174,6 @@ void init_shutdown() {
 	gLog("[init] Plugin Host cleaned up\n");
 #endif
 
-	gLog("[init] Giada "VERSIONE" closed\n");
+	gLog("[init] Giada "VERSIONE" closed\n\n");
 	gLog_close();
 }
