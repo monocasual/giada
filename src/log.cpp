@@ -29,8 +29,10 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include <string>
 #include "log.h"
 #include "const.h"
+#include "utils.h"
 
 
 static FILE *f;
@@ -42,7 +44,8 @@ int gLog_init(int m) {
 	mode = m;
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
-		f = fopen("giada.log", "w");
+		std::string fpath = gGetHomePath() + "/giada.log";
+		f = fopen(fpath.c_str(), "w");
 		if (!f) {
 			stat = false;
 			return 0;
