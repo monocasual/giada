@@ -35,14 +35,18 @@
 
 static FILE *f;
 static int   mode;
+static bool  stat;
 
 
 int gLog_init(int m) {
 	mode = m;
+	stat = true;
 	if (mode == LOG_MODE_FILE) {
 		f = fopen("giada.log", "w");
-		if (!f)
+		if (!f) {
+			stat = false;
 			return 0;
+		}
 	}
 	return 1;
 }
@@ -65,7 +69,7 @@ void gLog(const char *format, ...) {
 		return;
   va_list args;
   va_start(args, format);
-  if (mode == LOG_MODE_FILE)
+  if (mode == LOG_MODE_FILE && stat == true)
 		vfprintf(f, format, args);
   else
 		vprintf(format, args);

@@ -59,7 +59,8 @@ extern PluginHost	   G_PluginHost;
 void init_prepareParser() {
 	G_Conf.read();
 	G_Patch.setDefault();
-	gLog_init(LOG_MODE_STDOUT); /// TODO - use G_Conf values
+	if (!gLog_init(LOG_MODE_STDOUT)) /// TODO - use G_Conf values
+		gLog("[init] unable to init logger! Using default stdout\n");
 	gLog("[init] Giada "VERSIONE"\n");
 	gLog("[init] configuration file ready\n");
 }
