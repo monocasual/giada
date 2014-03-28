@@ -157,6 +157,8 @@ std::string gDirname(const char *path);
 
 std::string gGetCurrentPath();
 
+std::string gGetHomePath();
+
 std::string gGetExt(const char *filename);
 
 std::string gStripExt(const char *filename);

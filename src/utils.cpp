@@ -206,7 +206,7 @@ std::string gStripExt(const char *file) {
 
 bool gIsProject(const char *path) {
 
-	/* FIXME - checks too weak */
+	/** FIXME - checks too weak */
 
 	if (gGetExt(path) == "gprj" && gDirExists(path))
 		return 1;
@@ -232,7 +232,7 @@ std::string gGetProjectName(const char *path) {
 	out = gStripExt(path);
 
 	int i = out.size();
-	while (i>=0) {
+	while (i>=0) { /// TODO - use gGetSlash()
 #if defined(__linux__) || defined(__APPLE__)
 		if (out[i] == '/')
 #elif defined(_WIN32)
@@ -266,4 +266,37 @@ std::string gItoa(int i) {
 	std::stringstream out;
 	out << i;
 	return out.str();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string gGetHomePath() {
+
+	char path[PATH_MAX];
+
+#if   defined(__linux__)
+
+	snprintf(path, PATH_MAX, "%s/.giada", getenv("HOME"));
+
+#elif defined(_WIN32)
+
+	snprintf(path, PATH_MAX, ".");
+
+#elif defined(__APPLE__)
+
+	struct passwd *p = getpwuid(getuid());
+	if (p == NULL) {
+		gLog("[gGetHomePath] unable to fetch user infos\n");
+		return "";
+	}
+	else {
+		const char *home = p->pw_dir;
+		snprintf(path, PATH_MAX, "%s/Library/Application Support/Giada", home);
+	}
+
+#endif
+
+	return std::string(path);
 }
