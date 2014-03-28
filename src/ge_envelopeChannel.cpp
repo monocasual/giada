@@ -232,7 +232,7 @@ int gEnvelopeChannel::handle(int e) {
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
-					puts("nothing to do");
+					//gLog("nothing to do\n");
 				}
 				else {
 					int newFrame = points.at(draggedPoint).x * pParent->zoom;

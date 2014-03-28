@@ -31,6 +31,7 @@
 #include "ge_browser.h"
 #include "const.h"
 #include "utils.h"
+#include "log.h"
 
 
 gBrowser::gBrowser(int x, int y, int w, int h, const char *L)
@@ -65,7 +66,7 @@ gBrowser::~gBrowser() {}
 
 void gBrowser::init(const char *init_path) {
 
-	printf("[gBrowser] init path = '%s'\n", init_path);
+	gLog("[gBrowser] init path = '%s'\n", init_path);
 
 	if (init_path == NULL || !gIsDir(init_path)) {
 #if defined(__linux__) || defined(__APPLE__)
@@ -80,7 +81,7 @@ void gBrowser::init(const char *init_path) {
 		SHGetFolderPath(NULL, CSIDL_COMMON_DESKTOPDIRECTORY, NULL, 0, winRoot); // si parte dal Desktop
 		path_obj->value(winRoot);
 #endif
-		puts("[gBrowser] init_path null or invalid, using default");
+		gLog("[gBrowser] init_path null or invalid, using default\n");
 	}
 	else
 		path_obj->value(init_path);
@@ -133,7 +134,7 @@ void gBrowser::refresh() {
 		closedir(dp);
   }
   else
-    printf("[gBrowser] Couldn't open the directory '%s'\n", path_obj->value());
+    gLog("[gBrowser] Couldn't open the directory '%s'\n", path_obj->value());
 }
 
 

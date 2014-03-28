@@ -39,6 +39,7 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "kernelMidi.h"
+#include "log.h"
 
 
 extern Conf          G_Conf;
@@ -102,7 +103,7 @@ int PluginHost::allocBuffers() {
 	memset(bufferO[0], 0, bufSize);
 	memset(bufferO[1], 0, bufSize);
 
-	printf("[pluginHost] buffers allocated, buffersize = %d\n", 2*kernelAudio::realBufsize);
+	gLog("[pluginHost] buffers allocated, buffersize = %d\n", 2*kernelAudio::realBufsize);
 
 	//printOpcodes();
 
@@ -199,15 +200,15 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			}
 
 			if (window) {
-				printf("[pluginHost] audioMasterSizeWindow: resizing window from plugin %p\n", (void*) effect);
+				gLog("[pluginHost] audioMasterSizeWindow: resizing window from plugin %p\n", (void*) effect);
 				if (index == 1 || value == 1)
-					puts("[pluginHost] warning: non-sense values!");
+					gLog("[pluginHost] warning: non-sense values!\n");
 				else
 					window->size((int)index, (int)value);
 				return 1;
 			}
 			else {
-				printf("[pluginHost] audioMasterSizeWindow: window from plugin %p not found\n", (void*) effect);
+				gLog("[pluginHost] audioMasterSizeWindow: window from plugin %p not found\n", (void*) effect);
 				return 0;
 			}
 		}
@@ -223,11 +224,11 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			return kernelAudio::realBufsize;
 
 		case audioMasterGetInputLatency:
-			printf("[pluginHost] requested opcode 'audioMasterGetInputLatency' (%d)\n", opcode);
+			gLog("[pluginHost] requested opcode 'audioMasterGetInputLatency' (%d)\n", opcode);
 			return 0;
 
 		case audioMasterGetOutputLatency:
-			printf("[pluginHost] requested opcode 'audioMasterGetOutputLatency' (%d)\n", opcode);
+			gLog("[pluginHost] requested opcode 'audioMasterGetOutputLatency' (%d)\n", opcode);
 			return 0;
 
 		/* 23 - wants to know what kind of process is that.
@@ -258,7 +259,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 37 - Plugin asks Host if it implements the feature text. */
 
 		case audioMasterCanDo:
-			printf("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
+			gLog("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
 			if (!strcmp((char*)ptr, "sizeWindow")       ||
 					!strcmp((char*)ptr, "sendVstTimeInfo")  ||
 					!strcmp((char*)ptr, "sendVstMidiEvent") ||
@@ -280,7 +281,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* ?? */
 
 		case audioMasterGetAutomationState:
-			printf("[pluginHost] requested opcode 'audioMasterGetAutomationState' (%d)\n", opcode);
+			gLog("[pluginHost] requested opcode 'audioMasterGetAutomationState' (%d)\n", opcode);
 			return 0;
 
 		/* 43 - It tells the Host that if it needs to, it has to record
@@ -298,7 +299,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			return 0;
 
 		default:
-			printf("[pluginHost] FIXME: host callback called with opcode %d\n", opcode);
+			gLog("[pluginHost] FIXME: host callback called with opcode %d\n", opcode);
 			return 0;
 	}
 }
@@ -357,7 +358,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 		}
 
 		char name[256]; p->getName(name);
-		printf("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n", p->getId(), name, stackType, pStack->size);
+		gLog("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n", p->getId(), name, stackType, pStack->size);
 
 		/* p->resume() is suggested. Who knows... */
 
@@ -406,7 +407,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch) {
 			continue;
 		if (ch) {   // process events if it's a channel stack
 			if (ch->type == CHANNEL_MIDI) {
-				///printf("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
+				///gLog("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
 				pStack->at(i)->processEvents(((MidiChannel*)ch)->getVstEvents());
 			}
 		}
@@ -447,7 +448,7 @@ void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, 
 	 * we should process the last chunk in a separate buffer, padded with 0 */
 
 		//else
-		//	printf("chunk of buffer left, size=%d\n", left);
+		//	gLog("chunk of buffer left, size=%d\n", left);
 
 		index+=step;
 	}
@@ -551,15 +552,15 @@ void PluginHost::freePlugin(int id, int stackType, Channel *ch) {
 						delete pStack->at(i);
 						pStack->del(i);
 						pthread_mutex_unlock(&G_Mixer.mutex_plugins);
-						printf("[pluginHost] plugin id=%d removed\n", id);
+						gLog("[pluginHost] plugin id=%d removed\n", id);
 						return;
 					}
 					//else
-						//puts("[pluginHost] waiting for mutex...");
+						//gLog("[pluginHost] waiting for mutex...\n");
 				}
 			}
 		}
-	printf("[pluginHost] plugin id=%d not found\n", id);
+	gLog("[pluginHost] plugin id=%d not found\n", id);
 }
 
 
@@ -576,11 +577,11 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Cha
 		if (lockStatus == 0) {
 			pStack->swap(indexA, indexB);
 			pthread_mutex_unlock(&G_Mixer.mutex_plugins);
-			printf("[pluginHost] plugin at index %d and %d swapped\n", indexA, indexB);
+			gLog("[pluginHost] plugin at index %d and %d swapped\n", indexA, indexB);
 			return;
 		}
 		//else
-			//puts("[pluginHost] waiting for mutex...");
+			//gLog("[pluginHost] waiting for mutex...\n");
 	}
 }
 

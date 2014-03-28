@@ -36,6 +36,7 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "gg_keyboard.h"
+#include "log.h"
 
 
 extern Conf	G_Conf;
@@ -66,7 +67,7 @@ int gdKeyGrabber::handle(int e) {
 			    && x != FL_End
 			    && x != ' ')
 			{
-				printf("set key '%c' (%d) for channel %d\n", x, x, ch->index);
+				gLog("set key '%c' (%d) for channel %d\n", x, x, ch->index);
 
 				char tmp[2]; sprintf(tmp, "%c", x);
 				ch->guiChannel->button->copy_label(tmp);
@@ -75,7 +76,7 @@ int gdKeyGrabber::handle(int e) {
 				break;
 			}
 			else
-				printf("invalid key\n");
+				gLog("invalid key\n");
 		}
 	}
 	return(ret);

@@ -28,6 +28,7 @@
 
 
 #include "ge_window.h"
+#include "log.h"
 
 
 gWindow::gWindow(int x, int y, int w, int h, const char *title, int id)
@@ -74,7 +75,7 @@ void gWindow::addSubWindow(gWindow *w) {
 	/** TODO - useless: delete ---------------------------------------- */
 	for (unsigned i=0; i<subWindows.size; i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
-			//printf("[gWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
+			//gLog("[gWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
 			delete w;
 			return;
 		}
@@ -137,10 +138,10 @@ void gWindow::setId(int id) {
 
 
 void gWindow::debug() {
-	printf("---- window stack (id=%d): ----\n", getId());
+	gLog("---- window stack (id=%d): ----\n", getId());
 	for (unsigned i=0; i<subWindows.size; i++)
-		printf("[gWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
-	puts("----");
+		gLog("[gWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
+	gLog("----\n");
 }
 
 

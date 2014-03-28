@@ -33,6 +33,7 @@
 
 #include <string>
 #include <cstdio>
+#include "log.h"
 
 
 /* gVector
@@ -85,7 +86,7 @@ public:
 
 
 	int del(unsigned p) {
-		if (p > size-1) printf("[vector] del() outside! requested=%d, size=%d\n", p, size);
+		if (p > size-1) gLog("[vector] del() outside! requested=%d, size=%d\n", p, size);
 		T *tmp = new T[size-1];
 		unsigned i=0;
 		unsigned j=0;
@@ -120,7 +121,7 @@ public:
 
 
 	T &at(unsigned p) {
-		if (p > size-1)	printf("[vector] at() outside! requested=%d, size=%d\n", p, size);
+		if (p > size-1)	gLog("[vector] at() outside! requested=%d, size=%d\n", p, size);
 		return s[p];
 	}
 

@@ -33,6 +33,7 @@
 #include "kernelMidi.h"
 #include "conf.h"
 #include "sampleChannel.h"
+#include "log.h"
 
 
 extern Conf G_Conf;
@@ -67,7 +68,7 @@ void gdMidiGrabber::stopMidiLearn(gLearner *learner) {
 void gdMidiGrabber::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 	*param = msg;
 	stopMidiLearn(l);
-	printf("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
+	gLog("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
 }
 
 

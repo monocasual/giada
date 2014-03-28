@@ -43,6 +43,7 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "wave.h"
+#include "log.h"
 
 
 extern Mixer 		  G_Mixer;
@@ -174,7 +175,7 @@ SampleChannel *mh_startInputRec() {
 
 	G_Mixer.inputTracker = G_Mixer.actualFrame;
 
-	printf(
+	gLog(
 		"[mh] start input recs using chan %d with size %d, frame=%d\n",
 		chan->index, G_Mixer.totalFrames, G_Mixer.inputTracker
 	);
@@ -187,7 +188,7 @@ SampleChannel *mh_startInputRec() {
 
 
 SampleChannel *mh_stopInputRec() {
-	printf("[mh] stop input recs\n");
+	gLog("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
 	SampleChannel *ch = G_Mixer.chanInput;
 	G_Mixer.chanInput = NULL;

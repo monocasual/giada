@@ -42,6 +42,8 @@
 #include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"
+#include "log.h"
+
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -162,7 +164,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 	sortedActions = false;
 
-	printf("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d (%X), fValue=%f\n",
+	gLog("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d (%X), fValue=%f\n",
 		type, frame, index, iValue, iValue, fValue);
 	//print();
 }
@@ -173,7 +175,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue) {
 
 void clearChan(int index) {
 
-	printf("[REC] clearing chan %d...\n", index);
+	gLog("[REC] clearing chan %d...\n", index);
 
 	for (unsigned i=0; i<global.size; i++) {	// for each frame i
 		unsigned j=0;
@@ -204,7 +206,7 @@ void clearChan(int index) {
 
 
 void clearAction(int index, char act) {
-	printf("[REC] clearing action %d from chan %d...\n", act, index);
+	gLog("[REC] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size; i++) {						// for each frame i
 		unsigned j=0;
 		while (true) {                                   // for each action j of frame i
@@ -265,7 +267,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 							break;
 						}
 						else
-							puts("[REC] delete action: waiting for mutex...");
+							gLog("[REC] delete action: waiting for mutex...\n");
 					}
 				}
 			}
@@ -274,11 +276,11 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 	if (found) {
 		optimize();
 		chanHasActions(chan);
-		printf("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		gLog("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 	}
 	else
-		printf("[REC] unable to find action! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		gLog("[REC] unable to find action! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 }
 
@@ -420,12 +422,12 @@ void updateSamplerate(int systemRate, int patchRate) {
 	if (systemRate == patchRate)
 		return;
 
-	printf("[REC] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
+	gLog("[REC] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
 
 	float ratio = systemRate / (float) patchRate;
 	for (unsigned i=0; i<frames.size; i++) {
 
-		printf("[REC]    oldFrame = %d", frames.at(i));
+		gLog("[REC]    oldFrame = %d", frames.at(i));
 
 		float newFrame = frames.at(i);
 		newFrame = floorf(newFrame * ratio);
@@ -435,7 +437,7 @@ void updateSamplerate(int systemRate, int patchRate) {
 		if (frames.at(i) % 2 != 0)
 			frames.at(i)++;
 
-		printf(", newFrame = %d\n", frames.at(i));
+		gLog(", newFrame = %d\n", frames.at(i));
 	}
 
 	/* update structs */
@@ -475,7 +477,7 @@ void expand(int old_fpb, int new_fpb) {
 			}
 		}
 	}
-	printf("[REC] expanded recs\n");
+	gLog("[REC] expanded recs\n");
 	//print();
 }
 
@@ -502,7 +504,7 @@ void shrink(int new_fpb) {
 			i++;
 	}
 	optimize();
-	printf("[REC] shrinked recs\n");
+	gLog("[REC] shrinked recs\n");
 	//print();
 }
 
@@ -602,7 +604,7 @@ void startOverdub(int index, char actionMask, int frame) {
 			int truncFrame = cmp.a1.frame-kernelAudio::realBufsize;
 			if (truncFrame < 0)
 				truncFrame = 0;
-			printf("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
+			gLog("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
 			rec(index, cmp.a2.type, truncFrame);
 		}
 	}
@@ -626,13 +628,13 @@ void stopOverdub(int frame) {
 
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
-		printf("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		gLog("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		rec(cmp.a2.chan, cmp.a2.type, G_Mixer.totalFrames); 	// record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
-		printf("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		gLog("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false); // false == don't check values
 	}
 
@@ -655,7 +657,7 @@ void stopOverdub(int frame) {
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1) {
 			if (act->type == cmp.a2.type) {
-				printf("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
+				gLog("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
 				deleteAction(act->chan, act->frame, act->type, false); // false == don't check values
 			}
 		}
@@ -667,11 +669,11 @@ void stopOverdub(int frame) {
 
 
 void print() {
-	printf("[REC] ** print debug **\n");
+	gLog("[REC] ** print debug **\n");
 	for (unsigned i=0; i<global.size; i++) {
-		printf("  frame %d\n", frames.at(i));
+		gLog("  frame %d\n", frames.at(i));
 		for (unsigned j=0; j<global.at(i).size; j++) {
-			printf("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
+			gLog("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
 		}
 	}
 }

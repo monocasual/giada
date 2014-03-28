@@ -32,6 +32,7 @@
 #include "kernelAudio.h"
 #include "glue.h"
 #include "conf.h"
+#include "log.h"
 
 
 extern Mixer G_Mixer;
@@ -57,7 +58,7 @@ int openDevice(
 	int buffersize)
 {
 	api = _api;
-	printf("[KA] using system 0x%x\n", api);
+	gLog("[KA] using system 0x%x\n", api);
 #if defined(__linux__)
 	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		system = new RtAudio(RtAudio::UNIX_JACK);
@@ -84,22 +85,22 @@ int openDevice(
 
 
 
-	//printf("[KA] %d\n", sizeof(system->rtapi_));
+	//gLog("[KA] %d\n", sizeof(system->rtapi_));
 
-	printf("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
+	gLog("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
 
 	numDevs = system->getDeviceCount();
 
 	if (numDevs < 1) {
-		printf("[KA] no devices found with this API\n");
+		gLog("[KA] no devices found with this API\n");
 		closeDevice();
 		G_audio_status = false;
 		return 0;
 	}
 	else {
-		printf("[KA] %d device(s) found\n", numDevs);
+		gLog("[KA] %d device(s) found\n", numDevs);
 		for (unsigned i=0; i<numDevs; i++)
-			printf("  %d) %s\n", i, getDeviceName(i));
+			gLog("  %d) %s\n", i, getDeviceName(i));
 	}
 
 
@@ -134,7 +135,7 @@ int openDevice(
 #if defined(__linux__) || defined(__APPLE__)
 	if (api == SYS_API_JACK) {
 		samplerate = getFreq(outDev, 0);
-		printf("[KA] JACK in use, freq = %d\n", samplerate);
+		gLog("[KA] JACK in use, freq = %d\n", samplerate);
 		G_Conf.samplerate = samplerate;
 	}
 #endif
@@ -172,7 +173,7 @@ int openDevice(
 		return 1;
 	}
 	catch (RtError &e) {
-		printf("[KA] system init error: %s\n", e.getMessage().c_str());
+		gLog("[KA] system init error: %s\n", e.getMessage().c_str());
 		closeDevice();
 		G_audio_status = false;
 		return 0;
@@ -186,11 +187,11 @@ int openDevice(
 int startStream() {
 	try {
 		system->startStream();
-		printf("[KA] latency = %lu\n", system->getStreamLatency());
+		gLog("[KA] latency = %lu\n", system->getStreamLatency());
 		return 1;
 	}
 	catch (RtError &e) {
-		printf("[KA] Start stream error\n");
+		gLog("[KA] Start stream error\n");
 		return 0;
 	}
 }
@@ -205,7 +206,7 @@ int stopStream() {
 		return 1;
 	}
 	catch (RtError &e) {
-		printf("[KA] Stop stream error\n");
+		gLog("[KA] Stop stream error\n");
 		return 0;
 	}
 }
@@ -219,7 +220,7 @@ const char *getDeviceName(unsigned dev) {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name.c_str();
 	}
 	catch (RtError &e) {
-		printf("[KA] invalid device ID = %d\n", dev);
+		gLog("[KA] invalid device ID = %d\n", dev);
 		return NULL;
 	}
 }
@@ -254,7 +255,7 @@ unsigned getMaxInChans(int dev) {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).inputChannels;
 	}
 	catch (RtError &e) {
-		puts("[KA] Unable to get input channels");
+		gLog("[KA] Unable to get input channels\n");
 		return 0;
 	}
 }
@@ -268,7 +269,7 @@ unsigned getMaxOutChans(unsigned dev) {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
 	}
 	catch (RtError &e) {
-		puts("[KA] Unable to get output channels");
+		gLog("[KA] Unable to get output channels\n");
 		return 0;
 	}
 }
@@ -436,25 +437,25 @@ int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 {
 	switch (state) {
 		case JackTransportStopped:
-			printf("[KA] Jack transport stopped, frame=%d\n", pos->frame);
+			gLog("[KA] Jack transport stopped, frame=%d\n", pos->frame);
 			glue_stopSeq(false);  // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq();
 			break;
 
 		case JackTransportRolling:
-			printf("[KA] Jack transport rolling\n");
+			gLog("[KA] Jack transport rolling\n");
 			break;
 
 		case JackTransportStarting:
-			printf("[KA] Jack transport starting, frame=%d\n", pos->frame);
+			gLog("[KA] Jack transport starting, frame=%d\n", pos->frame);
 			glue_startSeq(false);  // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq();
 			break;
 
 		default:
-			printf("[KA] Jack transport [unknown]\n");
+			gLog("[KA] Jack transport [unknown]\n");
 	}
 	return 1;
 }

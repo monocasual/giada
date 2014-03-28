@@ -29,6 +29,7 @@
 
 #include "conf.h"
 #include "utils.h"
+#include "log.h"
 
 
 int Conf::openFileForReading() {
@@ -42,7 +43,7 @@ int Conf::openFileForReading() {
 #elif defined(__APPLE__)
 	struct passwd *p = getpwuid(getuid());
 	if (p == NULL) {
-		puts("[Conf::openFile] unable to fetch user infos.");
+		gLog("[Conf::openFile] unable to fetch user infos\n");
 		return 0;
 	}
 	else {
@@ -53,7 +54,7 @@ int Conf::openFileForReading() {
 
 	fp = fopen(path, "r");
 	if (fp == NULL) {
-		puts("[Conf::openFile] unable to open conf file for reading.");
+		gLog("[Conf::openFile] unable to open conf file for reading\n");
 		return 0;
 	}
 	return 1;
@@ -68,14 +69,14 @@ int Conf::createConfigFolder(const char *path) {
 	if (gDirExists(path))
 		return 1;
 
-	puts(".giada folder not present. Updating...");
+	gLog("[Conf] .giada folder not present. Updating...\n");
 
 	if (gMkdir(path)) {
-		puts("status: ok");
+		gLog("[Conf] status: ok\n");
 		return 1;
 	}
 	else {
-		puts("status: error!");
+		gLog("[Conf] status: error!\n");
 		return 0;
 	}
 }
@@ -182,12 +183,12 @@ int Conf::read() {
 	setDefault();
 
 	if (!openFileForReading()) {
-		puts("[Conf] unreadable .conf file, using default parameters");
+		gLog("[Conf] unreadable .conf file, using default parameters\n");
 		return 0;
 	}
 
 	if (getValue("header") != "GIADACFG") {
-		puts("[Conf] corrupted .conf file, using default parameters");
+		gLog("[Conf] corrupted .conf file, using default parameters\n");
 		return -1;
 	}
 

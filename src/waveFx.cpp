@@ -32,6 +32,7 @@
 #include "channel.h"
 #include "mixer.h"
 #include "wave.h"
+#include "log.h"
 
 
 extern Mixer G_Mixer;
@@ -64,7 +65,7 @@ bool wfx_monoToStereo(Wave *w) {
 	unsigned newSize = w->size * 2;
 	float *dataNew = (float *) malloc(newSize * sizeof(float));
 	if (dataNew == NULL) {
-		printf("[wfx] unable to allocate memory for mono>stereo conversion\n");
+		gLog("[wfx] unable to allocate memory for mono>stereo conversion\n");
 		return 0;
 	}
 
@@ -93,7 +94,7 @@ void wfx_silence(Wave *w, int a, int b) {
 	a = a * 2;
 	b = b * 2;
 
-	printf("[wfx] silencing from %d to %d\n", a, b);
+	gLog("[wfx] silencing from %d to %d\n", a, b);
 
 	for (int i=a; i<b; i+=2) {
 		w->data[i]   = 0.0f;
@@ -122,11 +123,11 @@ int wfx_cut(Wave *w, int a, int b) {
 	unsigned newSize = w->size-(b-a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == NULL) {
-		puts("[wfx] unable to allocate memory for cutting");
+		gLog("[wfx] unable to allocate memory for cutting\n");
 		return 0;
 	}
 
-	printf("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", a, b, newSize, newSize/2);
+	gLog("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", a, b, newSize, newSize/2);
 
 	for (int i=0, k=0; i<w->size; i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep
@@ -142,7 +143,7 @@ int wfx_cut(Wave *w, int a, int b) {
 	w->frames(w->frames() - b - a);
 	w->isEdited = true;
 
-	puts("[wfx] cutting done");
+	gLog("[wfx] cutting done\n");
 
 	return 1;
 }
@@ -161,11 +162,11 @@ int wfx_trim(Wave *w, int a, int b) {
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == NULL) {
-		puts("[wfx] unable to allocate memory for trimming");
+		gLog("[wfx] unable to allocate memory for trimming\n");
 		return 0;
 	}
 
-	printf("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
+	gLog("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
 	for (int i=a, k=0; i<b; i++, k++)
 		temp[k] = w->data[i];
@@ -214,7 +215,7 @@ void wfx_smooth(Wave *w, int a, int b) {
 	 * values. */
 
 	if (d*2 > (b-a)*2) {
-		puts("[WFX] selection is too small, nothing to do");
+		gLog("[WFX] selection is too small, nothing to do\n");
 		return;
 	}
 

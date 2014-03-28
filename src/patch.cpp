@@ -37,6 +37,7 @@
 #include "wave.h"
 #include "mixer.h"
 #include "channel.h"
+#include "log.h"
 
 
 extern Mixer 		  G_Mixer;
@@ -55,9 +56,9 @@ int Patch::open(const char *file) {
 		return PATCH_INVALID;
 
 	version = atof(getValue("versionf").c_str());
-	printf("[PATCH] open patch version %f\n", version);
+	gLog("[PATCH] open patch version %f\n", version);
 	if (version == 0.0)
-		puts("[PATCH] patch < 0.6.1, backward compatibility mode");
+		gLog("[PATCH] patch < 0.6.1, backward compatibility mode\n");
 
 	return PATCH_OPEN_OK;
 }
@@ -427,7 +428,7 @@ uint32_t Patch::getMidiValue(int i, const char *c) {
 
 int Patch::readRecs() {
 
-	puts("[PATCH] Reading recs...");
+	gLog("[PATCH] Reading recs...\n");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
 
@@ -440,7 +441,7 @@ int Patch::readRecs() {
 		sprintf(tmpbuf, "recframe%d", i);
 		sscanf(getValue(tmpbuf).c_str(), "%d %d", &frame, &recPerFrame);
 
-//printf("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
+//gLog("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
 
 		for (int k=0; k<recPerFrame; k++) {
 			int      chan = 0;
@@ -462,7 +463,7 @@ int Patch::readRecs() {
 				else
 					sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%u", &chan, &type, &fValue, &iValue);
 
-//printf("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
+//gLog("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
 
 			Channel *ch = G_Mixer.getChannelByIndex(chan);
 			if (ch)
@@ -483,7 +484,8 @@ int Patch::readRecs() {
 
 #ifdef WITH_VST
 int Patch::readPlugins() {
-	puts("[PATCH] Reading plugins...");
+
+	gLog("[PATCH] Reading plugins...\n");
 
 	int globalOut = 1;
 

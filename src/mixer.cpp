@@ -41,6 +41,7 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "kernelMidi.h"
+#include "log.h"
 
 
 extern Mixer 			 G_Mixer;
@@ -157,7 +158,7 @@ Channel *Mixer::addChannel(char side, int type) {
 	}
 
 	ch->index = getNewIndex();
-	printf("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size);
+	gLog("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size);
 	return ch;
 }
 
@@ -196,7 +197,7 @@ int Mixer::deleteChannel(Channel *ch) {
 			return 1;
 		}
 		//else
-		//	puts("[mixer::deleteChannel] waiting for mutex...");
+		//	gLog("[mixer::deleteChannel] waiting for mutex...\n");
 	}
 }
 
@@ -208,7 +209,7 @@ Channel *Mixer::getChannelByIndex(int index) {
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
-	printf("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
+	gLog("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
 	return NULL;
 }
 
@@ -272,7 +273,7 @@ void Mixer::sendMIDIsync() {
 						midiTCminutes = 0;
 					}
 				}
-				//printf("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
+				//gLog("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
 			}
 		}
 	}
@@ -579,7 +580,7 @@ void Mixer::updateFrameBars() {
 		free(vChanInput);
 	vChanInput = (float*) malloc(totalFrames * sizeof(float));
 	if (!vChanInput)
-		printf("[Mixer] vChanInput realloc error!");
+		gLog("[Mixer] vChanInput realloc error!\n");
 }
 
 
@@ -668,7 +669,7 @@ bool Mixer::hasEditedSamples() {
 
 bool Mixer::mergeVirtualInput() {
 	if (vChanInput == NULL) {
-		puts("[Mixer] virtual input channel not alloc'd");
+		gLog("[Mixer] virtual input channel not alloc'd\n");
 		return false;
 	}
 	else {

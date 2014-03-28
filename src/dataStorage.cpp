@@ -28,6 +28,7 @@
 
 
 #include "dataStorage.h"
+#include "log.h"
 
 
 std::string DataStorage::getValue(const char *in) {
@@ -43,7 +44,7 @@ std::string DataStorage::getValue(const char *in) {
 
 		char buffer[MAX_LINE_LEN];
 		if (fgets(buffer, MAX_LINE_LEN, fp) == NULL) {
-			printf("[PATCH] get_value error (key=%s)\n", in);
+			gLog("[PATCH] get_value error (key=%s)\n", in);
 			return "";
 		}
 

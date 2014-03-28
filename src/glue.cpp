@@ -50,6 +50,7 @@
 #include "midiChannel.h"
 #include "utils.h"
 #include "kernelMidi.h"
+#include "log.h"
 
 
 extern gdMainWindow *mainWin;
@@ -173,7 +174,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 
 	G_Conf.setPath(G_Conf.patchPath, fpath);
 
-	printf("[glue] patch %s loaded\n", fname);
+	gLog("[glue] patch %s loaded\n", fname);
 
 #ifdef WITH_VST
 	if (resPlugins != 1)
@@ -193,7 +194,7 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
 		strcpy(G_Patch.name, name);
 		G_Patch.name[strlen(name)] = '\0';
 		gu_update_win_label(name);
-		printf("[glue] patch saved as %s\n", fullpath);
+		gLog("[glue] patch saved as %s\n", fullpath);
 		return 1;
 	}
 	else
@@ -252,7 +253,7 @@ void glue_setBpm(const char *v1, const char *v2) {
 	gu_refreshActionEditor();
 
 	mainWin->bpm->copy_label(buf);
-	printf("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
+	gLog("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }
 
 
@@ -893,7 +894,7 @@ void glue_startStopInputRec(bool gui, bool alert) {
 	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec(gui)) {
 			if (alert) gdAlert("No channels available for recording.");
-			else       puts("[glue] no channels available for recording");
+			else       gLog("[glue] no channels available for recording\n");
 		}
 	}
 	else
@@ -969,11 +970,11 @@ int glue_stopInputRec(bool gui) {
 int glue_saveProject(const char *folderPath, const char *projName) {
 
 	if (gIsProject(folderPath)) {
-		puts("[glue] the project folder already exists");
+		gLog("[glue] the project folder already exists\n");
 		// don't exit
 	}
 	else if (!gMkdir(folderPath)) {
-		puts("[glue] unable to make project directory!");
+		gLog("[glue] unable to make project directory!\n");
 		return 0;
 	}
 

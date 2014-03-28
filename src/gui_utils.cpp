@@ -37,6 +37,7 @@
 #include "recorder.h"
 #include "wave.h"
 #include "channel.h"
+#include "log.h"
 
 
 extern Mixer 	       G_Mixer;
@@ -201,7 +202,7 @@ void gu_setFavicon(Fl_Window *w) {
 
 void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
 	if (parent->hasWindow(id)) {
-		printf("[GU] parent has subwindow with id=%d, deleting\n", id);
+		gLog("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
 	}
 	child->setId(id);

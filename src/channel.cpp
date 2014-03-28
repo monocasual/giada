@@ -36,6 +36,7 @@
 #include "mixerHandler.h"
 #include "conf.h"
 #include "waveFx.h"
+#include "log.h"
 
 
 extern Patch       G_Patch;
@@ -74,7 +75,7 @@ Channel::Channel(int type, int status, char side, int bufferSize)
 {
 	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
-		printf("[Channel] unable to alloc memory for vChan\n");
+		gLog("[Channel] unable to alloc memory for vChan\n");
 	memset(vChan, 0, bufferSize * sizeof(float));
 }
 

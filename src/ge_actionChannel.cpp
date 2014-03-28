@@ -35,6 +35,7 @@
 #include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"
+#include "log.h"
 
 
 extern gdMainWindow *mainWin;
@@ -471,7 +472,7 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 			w((frame_b - frame_a)/parent->zoom);
 		}
 		else
-			printf("[gActionChannel] frame_b not found! [%d:???]\n", frame_a);
+			gLog("[gActionChannel] frame_b not found! [%d:???]\n", frame_a);
 
 	/* a singlepress action narrower than 8 pixel is useless. So check it.
 	 * Warning: if an action is 8 px narrow, it has no body space to drag
@@ -582,11 +583,11 @@ void gAction::addAction() {
 	if (ch->mode == SINGLE_PRESS) {
 		recorder::rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
 		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
-		//printf("action added, [%d, %d]\n", frame_a, frame_a+4096);
+		//gLog("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
 		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
-		//printf("action added, [%d]\n", frame_a);
+		//gLog("action added, [%d]\n", frame_a);
 	}
 
 	recorder::sortActions();

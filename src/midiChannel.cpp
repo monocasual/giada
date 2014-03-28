@@ -33,6 +33,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "kernelMidi.h"
+#include "log.h"
 
 
 extern Patch       G_Patch;
@@ -97,10 +98,10 @@ void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
 	if (events.numEvents < MAX_VST_EVENTS) {
 		events.events[events.numEvents] = (VstEvent*) e;
 		events.numEvents++;
-		//printf("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d\n", events.numEvents, e->deltaFrames);
+		//gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d\n", events.numEvents, e->deltaFrames);
 	}
 	else
-		printf("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
+		gLog("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
 }
 
 #endif

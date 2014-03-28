@@ -34,6 +34,7 @@
 #include "pluginHost.h"
 #include "ge_mixed.h"
 #include "gui_utils.h"
+#include "log.h"
 
 
 extern PluginHost G_PluginHost;
@@ -104,12 +105,12 @@ pascal OSStatus gdPluginWindowGUImac::__wh(EventHandlerCallRef inHandlerCallRef,
 		case kEventClassWindow:	{
 			switch (eventKind) {
 				case kEventWindowClose:	{
-					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
+					gLog("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
 					show();
 					break;
 				}
 				case kEventWindowClosed: {
-					printf("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClosed for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
+					gLog("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClosed for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
 					open = false;
 					result = noErr;
 					break;
@@ -153,11 +154,11 @@ gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
 
   OSStatus status = CreateNewWindow(winclass, winattr, &wRect, &carbonWindow);
 	if (status != noErr)	{
-		printf("[pluginWindowMac] Unable to create window! Status=%d\n", (int) status);
+		gLog("[pluginWindowMac] Unable to create window! Status=%d\n", (int) status);
 		return;
 	}
 	else
-		printf("[pluginWindowMac] created window=%p\n", (void*)carbonWindow);
+		gLog("[pluginWindowMac] created window=%p\n", (void*)carbonWindow);
 
 	/* install event handler, called when window is closed */
 
@@ -181,7 +182,7 @@ gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
 
 
 gdPluginWindowGUImac::~gdPluginWindowGUImac() {
-	printf("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)carbonWindow);
+	gLog("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)carbonWindow);
 	pPlugin->closeGui();
 	if (open)
 		DisposeWindow(carbonWindow);

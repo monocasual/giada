@@ -36,6 +36,7 @@
 #include "mixer.h"
 #include "glue.h"
 #include "channel.h"
+#include "log.h"
 
 
 extern gdMainWindow *mainWin;
@@ -133,7 +134,7 @@ void gMuteChannel::extractPoints() {
 					p.type  = recorder::global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
 					points.add(p);
-					//printf("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
+					//gLog("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
 			}
 		}
@@ -277,7 +278,7 @@ int gMuteChannel::handle(int e) {
 						b = selectedPoint+1;
 					}
 
-					//printf("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
+					//gLog("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
 					recorder::deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
@@ -298,7 +299,7 @@ int gMuteChannel::handle(int e) {
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
-					//puts("nothing to do");
+					//gLog("nothing to do\n");
 				}
 				else {
 

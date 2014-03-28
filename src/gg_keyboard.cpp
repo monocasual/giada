@@ -47,6 +47,7 @@
 #include "gd_keyGrabber.h"
 #include "gd_midiGrabber.h"
 #include "gd_midiOutputSetup.h"
+#include "log.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -894,7 +895,7 @@ void Keyboard::updateChannels(char side) {
 		add   = addChannelR;
 	}
 
-	//printf("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
+	//gLog("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
 
 	for (int i=0; i<group->children(); i++) {
 		gChannel *gch = (gChannel*) group->child(i);

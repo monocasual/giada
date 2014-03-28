@@ -25,11 +25,11 @@
  * ------------------------------------------------------------------ */
 
 
-
-
 #ifdef WITH_VST
 
+
 #include "plugin.h"
+#include "log.h"
 
 
 int Plugin::id_generator = 0;
@@ -83,12 +83,12 @@ int Plugin::unload() {
 	CFIndex retainCount = CFGetRetainCount(module);
 
 	if (retainCount == 1) {
-		puts("[plugin] retainCount == 1, can unload dlyb");
+		gLog("[plugin] retainCount == 1, can unload dlyb\n");
 		CFBundleUnloadExecutable(module);
 		CFRelease(module);
 	}
 	else
-		printf("[plugin] retainCount > 1 (%d), leave dlyb alone\n", (int) retainCount);
+		gLog("[plugin] retainCount > 1 (%d), leave dlyb alone\n", (int) retainCount);
 
 	return 1;
 
@@ -120,7 +120,7 @@ int Plugin::load(const char *fname) {
   CFStringRef pathStr   = CFStringCreateWithCString(NULL, pathfile, kCFStringEncodingASCII);
   CFURLRef    bundleUrl = CFURLCreateWithFileSystemPath(kCFAllocatorDefault,	pathStr, kCFURLPOSIXPathStyle, true);
   if(bundleUrl == NULL) {
-    puts("[plugin] unable to create URL reference for plugin");
+    gLog("[plugin] unable to create URL reference for plugin\n");
     status = 0;
     return 0;
   }
@@ -144,15 +144,15 @@ int Plugin::load(const char *fname) {
 
 #if defined(_WIN32)
 
-		printf("[plugin] unable to load %s, error: %d\n", fname, (int) GetLastError());
+		gLog("[plugin] unable to load %s, error: %d\n", fname, (int) GetLastError());
 
 #elif defined(__linux__)
 
-		printf("[plugin] unable to load %s, error: %s\n", fname, dlerror());
+		gLog("[plugin] unable to load %s, error: %s\n", fname, dlerror());
 
 #elif defined(__APPLE__)
 
-    puts("[plugin] unable to create bundle reference");
+    gLog("[plugin] unable to create bundle reference\n");
     CFRelease(pathStr);
     CFRelease(bundleUrl);
 
@@ -196,17 +196,17 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 	tmp = CFBundleGetFunctionPointerForName(module, CFSTR("VSTPluginMain"));
 
 	if (!tmp) {
-		puts("[plugin] entryPoint 'VSTPluginMain' not found");
+		gLog("[plugin] entryPoint 'VSTPluginMain' not found\n");
 		tmp = CFBundleGetFunctionPointerForName(module, CFSTR("main_macho"));  // VST SDK < 2.4
 	}
 	if (!tmp) {
-		puts("[plugin] entryPoint 'main_macho' not found");
+		gLog("[plugin] entryPoint 'main_macho' not found\n");
 		tmp = CFBundleGetFunctionPointerForName(module, CFSTR("main"));
 	}
 	if (tmp)
 		memcpy(&entryPoint, &tmp, sizeof(tmp));
 	else
-		puts("[plugin] entryPoint 'main' not found");
+		gLog("[plugin] entryPoint 'main' not found\n");
 
 #endif
 
@@ -214,15 +214,15 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 	 * in other words bind the callback to the plugin. */
 
 	if (entryPoint) {
-		puts("[plugin] entryPoint found");
+		gLog("[plugin] entryPoint found\n");
 		plugin = entryPoint(HostCallback);
 		if (!plugin) {
-			puts("[plugin] failed to create effect instance!");
+			gLog("[plugin] failed to create effect instance!\n");
 			return 0;
 		}
 	}
 	else {
-		puts("[plugin] entryPoint not found, unable to proceed");
+		gLog("[plugin] entryPoint not found, unable to proceed\n");
 		return 0;
 	}
 
@@ -231,11 +231,11 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 	/** WARNING: on Windows one can load any DLL! Why!?! */
 
   if(plugin->magic == kEffectMagic) {
-		puts("[plugin] magic number OK");
+		gLog("[plugin] magic number OK\n");
 		return 1;
 	}
 	else {
-    puts("[plugin] magic number is bad");
+    gLog("[plugin] magic number is bad\n");
     return 0;
   }
 }
@@ -255,7 +255,7 @@ int Plugin::setup(int samplerate, int frames) {
 	/* check SDK compatibility */
 
 	if (getSDKVersion() != kVstVersion)
-		printf("[plugin] warning: different VST version (host: %d, plugin: %d)\n", kVstVersion, getSDKVersion());
+		gLog("[plugin] warning: different VST version (host: %d, plugin: %d)\n", kVstVersion, getSDKVersion());
 
 	return 1;
 }
@@ -327,7 +327,7 @@ int Plugin::getNumPrograms() { return plugin->numPrograms; }
 int Plugin::setProgram(int index) {
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
 	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
-	printf("[plugin] program changed, index %d\n", index);
+	gLog("[plugin] program changed, index %d\n", index);
 	program = index;
 	return plugin->dispatcher(plugin, effEndSetProgram, 0, 0, 0, 0);
 }

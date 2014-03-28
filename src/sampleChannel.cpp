@@ -35,6 +35,7 @@
 #include "pluginHost.h"
 #include "waveFx.h"
 #include "mixerHandler.h"
+#include "log.h"
 
 
 extern Patch       G_Patch;
@@ -97,7 +98,7 @@ void SampleChannel::clear() {
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);
 		if (fadeoutOn && fadeoutType == XFADE) {
-			printf("[clear] filling pChan fadeoutTracker=%d\n", fadeoutTracker);
+			gLog("[clear] filling pChan fadeoutTracker=%d\n", fadeoutTracker);
 			fadeoutTracker = fillChan(pChan, fadeoutTracker, 0);
 		}
 	}
@@ -574,7 +575,7 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 
 void SampleChannel::setXFade(int frame) {
 
-	printf("[xFade] frame=%d tracker=%d\n", frame, tracker);
+	gLog("[xFade] frame=%d tracker=%d\n", frame, tracker);
 
 	calcFadeoutStep();
 	fadeoutOn      = true;
@@ -732,7 +733,7 @@ void SampleChannel::stop() {
 int SampleChannel::load(const char *file) {
 
 	if (strcmp(file, "") == 0 || gIsDir(file)) {
-		puts("[SampleChannel] file not specified");
+		gLog("[SampleChannel] file not specified\n");
 		return SAMPLE_LEFT_EMPTY;
 	}
 
@@ -742,13 +743,13 @@ int SampleChannel::load(const char *file) {
 	Wave *w = new Wave();
 
 	if (!w->open(file)) {
-		printf("[SampleChannel] %s: read error\n", file);
+		gLog("[SampleChannel] %s: read error\n", file);
 		delete w;
 		return SAMPLE_READ_ERROR;
 	}
 
 	if (w->channels() > 2) {
-		printf("[SampleChannel] %s: unsupported multichannel wave\n", file);
+		gLog("[SampleChannel] %s: unsupported multichannel wave\n", file);
 		delete w;
 		return SAMPLE_MULTICHANNEL;
 	}
@@ -762,7 +763,7 @@ int SampleChannel::load(const char *file) {
 		wfx_monoToStereo(w);
 
 	if (w->rate() != G_Conf.samplerate) {
-		printf("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
+		gLog("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
 				w->rate(), G_Conf.samplerate);
 		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
 	}
@@ -778,7 +779,7 @@ int SampleChannel::load(const char *file) {
 		k++;
 	}
 
-	printf("[SampleChannel] %s loaded in channel %d\n", file, index);
+	gLog("[SampleChannel] %s loaded in channel %d\n", file, index);
 	return SAMPLE_LOADED_OK;
 }
 

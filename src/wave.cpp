@@ -35,6 +35,7 @@
 #include "utils.h"
 #include "conf.h"
 #include "init.h"
+#include "log.h"
 
 
 extern Conf G_Conf;
@@ -65,7 +66,7 @@ int Wave::open(const char *f) {
 	fileIn   = sf_open(f, SFM_READ, &inHeader);
 
 	if (fileIn == NULL) {
-		printf("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
+		gLog("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
 		pathfile = "";
 		name     = "";
 		return 0;
@@ -98,12 +99,12 @@ int Wave::readData() {
 	size = inHeader.frames * inHeader.channels;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {
-		puts("[wave] unable to allocate memory");
+		gLog("[wave] unable to allocate memory\n");
 		return 0;
 	}
 
 	if (sf_read_float(fileIn, data, size) != size)
-		puts("[wave] warning: incomplete read!");
+		gLog("[wave] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 	return 1;
@@ -123,13 +124,13 @@ int Wave::writeData(const char *f) {
 
 	fileOut = sf_open(f, SFM_WRITE, &outHeader);
 	if (fileOut == NULL) {
-		printf("[wave] unable to open %s for exporting\n", f);
+		gLog("[wave] unable to open %s for exporting\n", f);
 		return 0;
 	}
 
 	int out = sf_write_float(fileOut, data, size);
 	if (out != (int) size) {
-		printf("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
+		gLog("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
 		return 0;
 	}
 
@@ -164,7 +165,7 @@ int Wave::allocEmpty(unsigned __size) {
 	size = __size;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {
-		puts("[wave] unable to allocate memory");
+		gLog("[wave] unable to allocate memory\n");
 		return 0;
 	}
 
@@ -191,7 +192,7 @@ int Wave::resample(int quality, int newRate) {
 
 	float *tmp = (float *) malloc(newSize * sizeof(float));
 	if (!tmp) {
-		puts("[wave] unable to allocate memory for resampling");
+		gLog("[wave] unable to allocate memory for resampling\n");
 		return -1;
 	}
 
@@ -202,11 +203,11 @@ int Wave::resample(int quality, int newRate) {
 	src_data.output_frames = newSize/2;  // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
 
-	printf("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
+	gLog("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
 
 	int ret = src_simple(&src_data, quality, 2);
 	if (ret != 0) {
-		printf("[wave] resampling error: %s\n", src_strerror(ret));
+		gLog("[wave] resampling error: %s\n", src_strerror(ret));
 		return 0;
 	}
 
