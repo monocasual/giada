@@ -60,6 +60,8 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	Fl::background(25, 25, 25);
 	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
 
+	size_range(GUI_WIDTH, GUI_HEIGHT);
+
 	begin();
 
 	menu_file 	= new gClick(8,   -1, 70, 21, "file");
