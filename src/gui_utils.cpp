@@ -56,11 +56,11 @@ void gu_refresh() {
 
 	/* update dynamic elements */
 
-	mainWin->outMeter->mixerPeak = G_Mixer.peakOut;
-	mainWin->inMeter->mixerPeak  = G_Mixer.peakIn;
-	mainWin->outMeter->redraw();
-	mainWin->inMeter->redraw();
-	mainWin->beatMeter->redraw();
+	///mainWin->outMeter->mixerPeak = G_Mixer.peakOut;
+	///mainWin->inMeter->mixerPeak  = G_Mixer.peakIn;
+	///mainWin->outMeter->redraw();
+	///mainWin->inMeter->redraw();
+	///mainWin->beatMeter->redraw();
 
 	/* update channels */
 
@@ -136,8 +136,8 @@ void gu_update_controls() {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->guiChannel->update();
 
-	mainWin->outVol->value(G_Mixer.outVol);
-	mainWin->inVol->value(G_Mixer.inVol);
+	mainWin->inOut->setOutVol(G_Mixer.outVol);
+	mainWin->inOut->setInVol(G_Mixer.inVol);
 
 	/* if you reset to init state while the seq is in play: it's better to
 	 * update the button status */

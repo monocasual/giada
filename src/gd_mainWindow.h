@@ -54,6 +54,13 @@
 #endif
 
 
+
+
+
+
+/* ------------------------------------------------------------------ */
+
+
 class gdMainWindow : public gWindow {
 
 private:
@@ -68,18 +75,12 @@ private:
 	static void cb_rec             (Fl_Widget *v, void *p);
 	static void cb_inputRec        (Fl_Widget *v, void *p);
 	static void cb_quantize        (Fl_Widget *v, void *p);
-	static void cb_outVol          (Fl_Widget *v, void *p);
-	static void cb_inVol           (Fl_Widget *v, void *p);
 	static void cb_open_file_menu  (Fl_Widget *v, void *p);
 	static void cb_open_edit_menu  (Fl_Widget *v, void *p);
 	static void cb_metronome       (Fl_Widget *v, void *p);
 	static void cb_beatsMultiply   (Fl_Widget *v, void *p);
 	static void cb_beatsDivide     (Fl_Widget *v, void *p);
-#ifdef WITH_VST
-	static void cb_openMasterFxOut (Fl_Widget *v, void *p);
-	static void cb_openMasterFxIn  (Fl_Widget *v, void *p);
-	static void cb_inToOut         (Fl_Widget *v, void *p);
-#endif
+
 	inline void __cb_endprogram();
 	inline void __cb_change_bpm();
 	inline void __cb_change_batt();
@@ -93,18 +94,11 @@ private:
 	inline void __cb_rec();
 	inline void __cb_inputRec();
 	inline void __cb_quantize(int v);
-	inline void __cb_outVol();
-	inline void __cb_inVol();
 	inline void __cb_open_file_menu();
 	inline void __cb_open_edit_menu();
 	inline void __cb_metronome();
 	inline void __cb_beatsMultiply();
 	inline void __cb_beatsDivide();
-#ifdef WITH_VST
-	inline void __cb_openMasterFxOut();
-	inline void __cb_openMasterFxIn();
-	inline void __cb_inToOut();
-#endif
 
 public:
 
@@ -116,8 +110,6 @@ public:
 	class gSoundMeter *outMeter;
 	class gSoundMeter *inMeter;
 	class gBeatMeter  *beatMeter;
-	class gDial				*outVol;
-	class gDial				*inVol;
 	class gClick      *beat_rew;
 	class gClick      *beat_stop;
 	class gClick      *beat_rec;
@@ -128,18 +120,14 @@ public:
 	class gClick      *menu_about;
 	class gChoice     *quantize;
 	class gClick      *metronome;
-#ifdef WITH_VST
-	class gButton			*masterFxOut;
-	class gButton			*masterFxIn;
-	class gClick      *inToOut;
-#endif
+	class gInOut      *inOut;
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
 	~gdMainWindow();
 };
 
 
-/* ------------------------------------------------------------------ */
+
 
 
 class gInOut : public Fl_Group {
@@ -173,7 +161,15 @@ private:
 	inline void __cb_inToOut        ();
 #endif
 
+public:
+
 	gInOut(int x, int y);
+
+	inline void setOutVol(float v) { outVol->value(v); }
+	inline void setInVol (float v) { inVol->value(v); }
 };
+
+
+
 
 #endif

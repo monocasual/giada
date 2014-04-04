@@ -548,7 +548,7 @@ void glue_setOutVol(float v, bool gui) {
 	G_Mixer.outVol = v;
 	if (!gui) {
 		Fl::lock();
-		mainWin->outVol->value(v);
+		mainWin->inOut->setOutVol(v);
 		Fl::unlock();
 	}
 }
@@ -561,7 +561,7 @@ void glue_setInVol(float v, bool gui) {
 	G_Mixer.inVol = v;
 	if (!gui) {
 		Fl::lock();
-		mainWin->inVol->value(v);
+		mainWin->inOut->setInVol(v);
 		Fl::unlock();
 	}
 }

@@ -74,22 +74,7 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	beats       = new gClick(724,  49, 40, 15, "4/1");
 	beats_mul   = new gClick(768,  49, 15, 15, "×");
 	beats_div   = new gClick(787,  49, 15, 15, "÷");
-
-#if defined(WITH_VST)
-	masterFxIn  = new gButton(408, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
-	inVol		    = new gDial  (432, 8, 20, 20);
-	inMeter     = new gSoundMeter(456, 13, 140, 10);
-	inToOut     = new gClick (600, 13, 10, 10, "");
-	outMeter    = new gSoundMeter(614, 13, 140, 10);
-	outVol		  = new gDial  (758, 8, 20, 20);
-	masterFxOut = new gButton(782, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
-#else
-	outMeter    = new gSoundMeter(638, 13, 140, 10);
-	inMeter     = new gSoundMeter(494, 13, 140, 10);
-	outVol		  = new gDial(782, 8, 20, 20);
-	inVol		    = new gDial(470, 8, 20, 20);
-#endif
-
+	inOut       = new gInOut(408, 8);
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
 
 	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
@@ -114,18 +99,6 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	menu_file->callback(cb_open_file_menu);
 	menu_edit->callback(cb_open_edit_menu);
 	menu_config->callback(cb_open_config_win);
-
-	outVol->callback(cb_outVol);
-	outVol->value(G_Mixer.outVol);
-	inVol->callback(cb_inVol);
-	inVol->value(G_Mixer.inVol);
-#ifdef WITH_VST
-	masterFxOut->callback(cb_openMasterFxOut);
-	masterFxIn->callback(cb_openMasterFxIn);
-	inToOut->callback(cb_inToOut);
-	inToOut->type(FL_TOGGLE_BUTTON);
-#endif
-
 	beat_rew->callback(cb_rewind_tracker);
 	beat_stop->callback(cb_startstop);
 	beat_stop->type(FL_TOGGLE_BUTTON);
@@ -173,18 +146,11 @@ void gdMainWindow::cb_startstop      (Fl_Widget *v, void *p)  	{ mainWin->__cb_s
 void gdMainWindow::cb_rec            (Fl_Widget *v, void *p) 		{ mainWin->__cb_rec(); }
 void gdMainWindow::cb_inputRec       (Fl_Widget *v, void *p) 		{ mainWin->__cb_inputRec(); }
 void gdMainWindow::cb_quantize       (Fl_Widget *v, void *p)  	{ mainWin->__cb_quantize((intptr_t)p); }
-void gdMainWindow::cb_outVol         (Fl_Widget *v, void *p)  	{ mainWin->__cb_outVol(); }
-void gdMainWindow::cb_inVol          (Fl_Widget *v, void *p)  	{ mainWin->__cb_inVol(); }
 void gdMainWindow::cb_open_file_menu (Fl_Widget *v, void *p)  	{ mainWin->__cb_open_file_menu(); }
 void gdMainWindow::cb_open_edit_menu (Fl_Widget *v, void *p)  	{ mainWin->__cb_open_edit_menu(); }
 void gdMainWindow::cb_metronome      (Fl_Widget *v, void *p)    { mainWin->__cb_metronome(); }
 void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_beatsMultiply(); }
 void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
-#ifdef WITH_VST
-void gdMainWindow::cb_openMasterFxOut(Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxOut(); }
-void gdMainWindow::cb_openMasterFxIn (Fl_Widget *v, void *p)    { mainWin->__cb_openMasterFxIn(); }
-void gdMainWindow::cb_inToOut        (Fl_Widget *v, void *p)    { mainWin->__cb_inToOut(); }
-#endif
 
 
 /* ------------------------------------------------------------------ */
@@ -295,22 +261,6 @@ void gdMainWindow::__cb_inputRec() {
 
 void gdMainWindow::__cb_quantize(int v) {
 	glue_quantize(v);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_outVol() {
-	glue_setOutVol(outVol->value());
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_inVol() {
-	glue_setInVol(inVol->value());
 }
 
 
@@ -452,24 +402,6 @@ void gdMainWindow::__cb_beatsDivide() {
 
 
 /* ------------------------------------------------------------------ */
-
-
-#ifdef WITH_VST
-void gdMainWindow::__cb_openMasterFxOut() {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
-}
-
-void gdMainWindow::__cb_openMasterFxIn() {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
-}
-
-void gdMainWindow::__cb_inToOut() {
-	G_Mixer.inToOut = inToOut->value();
-}
-#endif
-
-
-/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
@@ -477,19 +409,38 @@ void gdMainWindow::__cb_inToOut() {
 gInOut::gInOut(int x, int y)
 	: Fl_Group(x, y, 200, 20)
 {
+	resizable(NULL);
+	begin();
+
 #if defined(WITH_VST)
-	masterFxIn  = new gButton(408, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
-	inVol		    = new gDial  (432, 8, 20, 20);
-	inMeter     = new gSoundMeter(456, 13, 140, 10);
-	inToOut     = new gClick (600, 13, 10, 10, "");
-	outMeter    = new gSoundMeter(614, 13, 140, 10);
-	outVol		  = new gDial  (758, 8, 20, 20);
-	masterFxOut = new gButton(782, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	masterFxIn  = new gButton    (x, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
+	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 10);
+	inToOut     = new gClick     (inMeter->x()+inMeter->w()+4, y+5, 10, 10, "");
+	outMeter    = new gSoundMeter(inToOut->x()+inToOut->w()+4, y+5, 140, 10);
+	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
+	masterFxOut = new gButton    (outVol->x()+outVol->w()+4, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	size(394, 20);
 #else
-	outMeter    = new gSoundMeter(638, 13, 140, 10);
-	inMeter     = new gSoundMeter(494, 13, 140, 10);
-	outVol		  = new gDial(782, 8, 20, 20);
-	inVol		    = new gDial(470, 8, 20, 20);
+	outMeter    = new gSoundMeter(x, y+5, 140, 10);
+	inMeter     = new gSoundMeter(outMeter->x()+outMeter->w()+4, y+5, 140, 10);
+	outVol		  = new gDial      (inMeter->x()+inMeter->w()+4, y, 20, 20);
+	inVol		    = new gDial      (outVol->x()+outVol->w()+4, y, 20, 20);
+	size(356, 20);
+#endif
+
+	end();
+
+	outVol->callback(cb_outVol, (void*)this);
+	outVol->value(G_Mixer.outVol);
+	inVol->callback(cb_inVol, (void*)this);
+	inVol->value(G_Mixer.inVol);
+
+#ifdef WITH_VST
+	masterFxOut->callback(cb_openMasterFxOut, (void*)this);
+	masterFxIn->callback(cb_openMasterFxIn, (void*)this);
+	inToOut->callback(cb_inToOut, (void*)this);
+	inToOut->type(FL_TOGGLE_BUTTON);
 #endif
 }
 
