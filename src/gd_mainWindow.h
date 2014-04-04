@@ -25,8 +25,10 @@
  *
  * ------------------------------------------------------------------ */
 
+
 #ifndef GD_MAINWINDOW_H
 #define GD_MAINWINDOW_H
+
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -53,7 +55,9 @@
 
 
 class gdMainWindow : public gWindow {
+
 private:
+
 	static void cb_endprogram      (Fl_Widget *v, void *p);
 	static void cb_change_bpm      (Fl_Widget *v, void *p);
 	static void cb_change_batt     (Fl_Widget *v, void *p);
@@ -103,6 +107,7 @@ private:
 #endif
 
 public:
+
 	class gClick      *bpm;
 	class gClick      *beats;
 	class gClick      *beats_mul;
@@ -131,6 +136,44 @@ public:
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
 	~gdMainWindow();
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gInOut : public Fl_Group {
+
+private:
+
+	class gSoundMeter *outMeter;
+	class gSoundMeter *inMeter;
+	class gBeatMeter  *beatMeter;
+	class gDial				*outVol;
+	class gDial				*inVol;
+#ifdef WITH_VST
+	class gButton			*masterFxOut;
+	class gButton			*masterFxIn;
+	class gClick      *inToOut;
+#endif
+
+	static void cb_outVol         (Fl_Widget *v, void *p);
+	static void cb_inVol          (Fl_Widget *v, void *p);
+#ifdef WITH_VST
+	static void cb_openMasterFxOut(Fl_Widget *v, void *p);
+	static void cb_openMasterFxIn (Fl_Widget *v, void *p);
+	static void cb_inToOut        (Fl_Widget *v, void *p);
+#endif
+
+	inline void __cb_outVol         ();
+	inline void __cb_inVol          ();
+#ifdef WITH_VST
+	inline void __cb_openMasterFxOut();
+	inline void __cb_openMasterFxIn ();
+	inline void __cb_inToOut        ();
+#endif
+
+	gInOut(int x, int y);
 };
 
 #endif

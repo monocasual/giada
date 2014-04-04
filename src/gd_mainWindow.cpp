@@ -163,7 +163,6 @@ gdMainWindow::~gdMainWindow() {}
 /* ------------------------------------------------------------------ */
 
 
-
 void gdMainWindow::cb_endprogram     (Fl_Widget *v, void *p)    { mainWin->__cb_endprogram(); }
 void gdMainWindow::cb_change_bpm     (Fl_Widget *v, void *p)    { mainWin->__cb_change_bpm(); }
 void gdMainWindow::cb_change_batt    (Fl_Widget *v, void *p) 		{ mainWin->__cb_change_batt(); }
@@ -469,3 +468,73 @@ void gdMainWindow::__cb_inToOut() {
 }
 #endif
 
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gInOut::gInOut(int x, int y)
+	: Fl_Group(x, y, 200, 20)
+{
+#if defined(WITH_VST)
+	masterFxIn  = new gButton(408, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	inVol		    = new gDial  (432, 8, 20, 20);
+	inMeter     = new gSoundMeter(456, 13, 140, 10);
+	inToOut     = new gClick (600, 13, 10, 10, "");
+	outMeter    = new gSoundMeter(614, 13, 140, 10);
+	outVol		  = new gDial  (758, 8, 20, 20);
+	masterFxOut = new gButton(782, 8, 20, 20, "", fxOff_xpm, fxOn_xpm);
+#else
+	outMeter    = new gSoundMeter(638, 13, 140, 10);
+	inMeter     = new gSoundMeter(494, 13, 140, 10);
+	outVol		  = new gDial(782, 8, 20, 20);
+	inVol		    = new gDial(470, 8, 20, 20);
+#endif
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gInOut::cb_outVol         (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_outVol(); }
+void gInOut::cb_inVol          (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_inVol(); }
+#ifdef WITH_VST
+void gInOut::cb_openMasterFxOut(Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_openMasterFxOut(); }
+void gInOut::cb_openMasterFxIn (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_openMasterFxIn(); }
+void gInOut::cb_inToOut        (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_inToOut(); }
+#endif
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gInOut::__cb_outVol() {
+	glue_setOutVol(outVol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gInOut::__cb_inVol() {
+	glue_setInVol(inVol->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+#ifdef WITH_VST
+void gInOut::__cb_openMasterFxOut() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
+}
+
+void gInOut::__cb_openMasterFxIn() {
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
+}
+
+void gInOut::__cb_inToOut() {
+	G_Mixer.inToOut = inToOut->value();
+}
+#endif
