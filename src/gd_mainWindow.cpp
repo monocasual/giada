@@ -64,11 +64,7 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 
 	begin();
 
-	menu_file 	= new gClick(8,   -1, 70, 21, "file");
-	menu_edit	  = new gClick(82,  -1, 70, 21, "edit");
-	menu_config	= new gClick(156, -1, 70, 21, "config");
-	menu_about	= new gClick(230, -1, 70, 21, "about");
-
+	menu        = new gMenu(8, -1);
 	quantize    = new gChoice(632, 49, 40, 15, "", false);
 	bpm         = new gClick(676,  49, 40, 15);
 	beats       = new gClick(724,  49, 40, 15, "4/1");
@@ -86,31 +82,21 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 
 	keyboard    = new Keyboard(8, 122, w()-16, 380);
 
-	//keyboard->box(FL_BORDER_BOX);
-
 	end();
 
 	char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);
 	bpm->copy_label(buf_bpm);
 	bpm->callback(cb_change_bpm);
 	beats->callback(cb_change_batt);
-
-	menu_about->callback(cb_open_about_win);
-	menu_file->callback(cb_open_file_menu);
-	menu_edit->callback(cb_open_edit_menu);
-	menu_config->callback(cb_open_config_win);
 	beat_rew->callback(cb_rewind_tracker);
 	beat_stop->callback(cb_startstop);
 	beat_stop->type(FL_TOGGLE_BUTTON);
-
 	beat_rec->callback(cb_rec);
 	beat_rec->type(FL_TOGGLE_BUTTON);
 	input_rec->callback(cb_inputRec);
 	input_rec->type(FL_TOGGLE_BUTTON);
-
 	beats_mul->callback(cb_beatsMultiply);
 	beats_div->callback(cb_beatsDivide);
-
 	metronome->type(FL_TOGGLE_BUTTON);
 	metronome->callback(cb_metronome);
 
@@ -139,15 +125,11 @@ gdMainWindow::~gdMainWindow() {}
 void gdMainWindow::cb_endprogram     (Fl_Widget *v, void *p)    { mainWin->__cb_endprogram(); }
 void gdMainWindow::cb_change_bpm     (Fl_Widget *v, void *p)    { mainWin->__cb_change_bpm(); }
 void gdMainWindow::cb_change_batt    (Fl_Widget *v, void *p) 		{ mainWin->__cb_change_batt(); }
-void gdMainWindow::cb_open_about_win (Fl_Widget *v, void *p) 		{ mainWin->__cb_open_about_win(); }
 void gdMainWindow::cb_rewind_tracker (Fl_Widget *v, void *p) 		{ mainWin->__cb_rewind_tracker(); }
-void gdMainWindow::cb_open_config_win(Fl_Widget *v, void *p) 		{ mainWin->__cb_open_config_win(); }
 void gdMainWindow::cb_startstop      (Fl_Widget *v, void *p)  	{ mainWin->__cb_startstop(); }
 void gdMainWindow::cb_rec            (Fl_Widget *v, void *p) 		{ mainWin->__cb_rec(); }
 void gdMainWindow::cb_inputRec       (Fl_Widget *v, void *p) 		{ mainWin->__cb_inputRec(); }
 void gdMainWindow::cb_quantize       (Fl_Widget *v, void *p)  	{ mainWin->__cb_quantize((intptr_t)p); }
-void gdMainWindow::cb_open_file_menu (Fl_Widget *v, void *p)  	{ mainWin->__cb_open_file_menu(); }
-void gdMainWindow::cb_open_edit_menu (Fl_Widget *v, void *p)  	{ mainWin->__cb_open_edit_menu(); }
 void gdMainWindow::cb_metronome      (Fl_Widget *v, void *p)    { mainWin->__cb_metronome(); }
 void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_beatsMultiply(); }
 void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
@@ -178,49 +160,6 @@ void gdMainWindow::__cb_change_bpm() {
 
 void gdMainWindow::__cb_change_batt() {
 	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_about_win() {
-	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_loadpatch_win() {
-	gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath, 0, BROWSER_LOAD_PATCH);
-	gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_savepatch_win() {
-	gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath, 0, BROWSER_SAVE_PATCH);
-	gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_saveproject_win() {
-	gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath, 0, BROWSER_SAVE_PROJECT);
-	gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_config_win() {
-	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
 }
 
 
@@ -261,119 +200,6 @@ void gdMainWindow::__cb_inputRec() {
 
 void gdMainWindow::__cb_quantize(int v) {
 	glue_quantize(v);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_file_menu() {
-
-	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
-
-	Fl_Menu_Item menu[] = {
-		{"Open patch or project..."},
-		{"Save patch..."},
-		{"Save project..."},
-		{"Quit Giada"},
-		{0}
-	};
-
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
-	b->textsize(11);
-	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
-
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
-	if (!m) return;
-
-
-	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		__cb_open_loadpatch_win();
-		return;
-	}
-	if (strcmp(m->label(), "Save patch...") == 0) {
-		if (G_Mixer.hasLogicalSamples() || G_Mixer.hasEditedSamples())
-			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
-				return;
-		__cb_open_savepatch_win();
-		return;
-	}
-	if (strcmp(m->label(), "Save project...") == 0) {
-		__cb_open_saveproject_win();
-		return;
-	}
-	if (strcmp(m->label(), "Quit Giada") == 0) {
-		__cb_endprogram();
-		return;
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_open_edit_menu() {
-	Fl_Menu_Item menu[] = {
-		{"Clear all samples"},
-		{"Clear all actions"},
-		{"Reset to init state"},
-		{"Setup global MIDI input..."},
-		{0}
-	};
-
-	/* clear all actions disabled if no recs, clear all samples disabled
-	 * if no samples. */
-
-	menu[1].deactivate();
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		if (G_Mixer.channels.at(i)->hasActions) {
-			menu[1].activate();
-			break;
-		}
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != NULL) {
-				menu[0].activate();
-				break;
-			}
-
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
-	b->textsize(11);
-	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
-
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
-	if (!m) return;
-
-	if (strcmp(m->label(), "Clear all samples") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all samples: are you sure?"))
-			return;
-		delSubWindow(WID_SAMPLE_EDITOR);
-		glue_clearAllSamples();
-		return;
-	}
-	if (strcmp(m->label(), "Clear all actions") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-			return;
-		delSubWindow(WID_ACTION_EDITOR);
-		glue_clearAllRecs();
-		return;
-	}
-	if (strcmp(m->label(), "Reset to init state") == 0) {
-		if (!gdConfirmWin("Warning", "Reset to init state: are you sure?"))
-			return;
-		gu_closeAllSubwindows();
-		glue_resetToInitState();
-		return;
-	}
-	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiGrabberMaster(), 0);
-		return;
-	}
 }
 
 
@@ -489,3 +315,171 @@ void gInOut::__cb_inToOut() {
 	G_Mixer.inToOut = inToOut->value();
 }
 #endif
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gMenu::gMenu(int x, int y)
+	: Fl_Group(x, y, 300, 20)
+{
+	begin();
+
+	file   = new gClick(x,   y, 70, 21, "file");
+	edit   = new gClick(file->x()+file->w()+4,  y, 70, 21, "edit");
+	config = new gClick(edit->x()+edit->w()+4, y, 70, 21, "config");
+	about	 = new gClick(config->x()+config->w()+4, y, 70, 21, "about");
+	size(about->x()+about->w()-x, 20);
+
+	end();
+
+	about->callback(cb_openAboutWin, (void*)this);
+	file->callback(cb_openFileMenu, (void*)this);
+	edit->callback(cb_openEditMenu, (void*)this);
+	config->callback(cb_openConfigWin, (void*)this);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMenu::cb_openAboutWin (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openAboutWin(); }
+void gMenu::cb_openConfigWin(Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openConfigWin(); }
+void gMenu::cb_openFileMenu (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openFileMenu(); }
+void gMenu::cb_openEditMenu (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openEditMenu(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMenu::__cb_openAboutWin() {
+	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMenu::__cb_openConfigWin() {
+	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMenu::__cb_openFileMenu() {
+
+	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
+
+	Fl_Menu_Item menu[] = {
+		{"Open patch or project..."},
+		{"Save patch..."},
+		{"Save project..."},
+		{"Quit Giada"},
+		{0}
+	};
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_BOX);
+	b->textsize(11);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(COLOR_BG_0);
+
+	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
+	if (!m) return;
+
+
+	if (strcmp(m->label(), "Open patch or project...") == 0) {
+		gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath, 0, BROWSER_LOAD_PATCH);
+		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		return;
+	}
+	if (strcmp(m->label(), "Save patch...") == 0) {
+		if (G_Mixer.hasLogicalSamples() || G_Mixer.hasEditedSamples())
+			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
+				return;
+		gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath, 0, BROWSER_SAVE_PATCH);
+		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		return;
+	}
+	if (strcmp(m->label(), "Save project...") == 0) {
+		gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath, 0, BROWSER_SAVE_PROJECT);
+		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		return;
+	}
+	if (strcmp(m->label(), "Quit Giada") == 0) {
+		///__cb_endprogram();
+		mainWin->do_callback();
+		return;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMenu::__cb_openEditMenu() {
+
+	Fl_Menu_Item menu[] = {
+		{"Clear all samples"},
+		{"Clear all actions"},
+		{"Reset to init state"},
+		{"Setup global MIDI input..."},
+		{0}
+	};
+
+	/* clear all actions disabled if no recs, clear all samples disabled
+	 * if no samples. */
+
+	menu[1].deactivate();
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		if (G_Mixer.channels.at(i)->hasActions) {
+			menu[1].activate();
+			break;
+		}
+	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != NULL) {
+				menu[0].activate();
+				break;
+			}
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_BOX);
+	b->textsize(11);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(COLOR_BG_0);
+
+	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
+	if (!m) return;
+
+	if (strcmp(m->label(), "Clear all samples") == 0) {
+		if (!gdConfirmWin("Warning", "Clear all samples: are you sure?"))
+			return;
+		mainWin->delSubWindow(WID_SAMPLE_EDITOR);
+		glue_clearAllSamples();
+		return;
+	}
+	if (strcmp(m->label(), "Clear all actions") == 0) {
+		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+			return;
+		mainWin->delSubWindow(WID_ACTION_EDITOR);
+		glue_clearAllRecs();
+		return;
+	}
+	if (strcmp(m->label(), "Reset to init state") == 0) {
+		if (!gdConfirmWin("Warning", "Reset to init state: are you sure?"))
+			return;
+		gu_closeAllSubwindows();
+		glue_resetToInitState();
+		return;
+	}
+	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
+		gu_openSubWindow(mainWin, new gdMidiGrabberMaster(), 0);
+		return;
+	}
+}

@@ -68,15 +68,11 @@ private:
 	static void cb_endprogram      (Fl_Widget *v, void *p);
 	static void cb_change_bpm      (Fl_Widget *v, void *p);
 	static void cb_change_batt     (Fl_Widget *v, void *p);
-	static void cb_open_about_win  (Fl_Widget *v, void *p);
 	static void cb_rewind_tracker  (Fl_Widget *v, void *p);
-	static void cb_open_config_win (Fl_Widget *v, void *p);
 	static void cb_startstop       (Fl_Widget *v, void *p);
 	static void cb_rec             (Fl_Widget *v, void *p);
 	static void cb_inputRec        (Fl_Widget *v, void *p);
 	static void cb_quantize        (Fl_Widget *v, void *p);
-	static void cb_open_file_menu  (Fl_Widget *v, void *p);
-	static void cb_open_edit_menu  (Fl_Widget *v, void *p);
 	static void cb_metronome       (Fl_Widget *v, void *p);
 	static void cb_beatsMultiply   (Fl_Widget *v, void *p);
 	static void cb_beatsDivide     (Fl_Widget *v, void *p);
@@ -84,18 +80,11 @@ private:
 	inline void __cb_endprogram();
 	inline void __cb_change_bpm();
 	inline void __cb_change_batt();
-	inline void __cb_open_about_win();
 	inline void __cb_rewind_tracker();
-	inline void __cb_open_loadpatch_win();
-	inline void __cb_open_savepatch_win();
-	inline void __cb_open_saveproject_win();
-	inline void __cb_open_config_win();
 	inline void __cb_startstop();
 	inline void __cb_rec();
 	inline void __cb_inputRec();
 	inline void __cb_quantize(int v);
-	inline void __cb_open_file_menu();
-	inline void __cb_open_edit_menu();
 	inline void __cb_metronome();
 	inline void __cb_beatsMultiply();
 	inline void __cb_beatsDivide();
@@ -114,10 +103,7 @@ public:
 	class gClick      *beat_stop;
 	class gClick      *beat_rec;
 	class gClick      *input_rec;
-	class gClick      *menu_file;
-	class gClick      *menu_edit;
-	class	gClick      *menu_config;
-	class gClick      *menu_about;
+	class gMenu       *menu;
 	class gChoice     *quantize;
 	class gClick      *metronome;
 	class gInOut      *inOut;
@@ -127,7 +113,7 @@ public:
 };
 
 
-
+/* ------------------------------------------------------------------ */
 
 
 class gInOut : public Fl_Group {
@@ -170,6 +156,32 @@ public:
 };
 
 
+/* ------------------------------------------------------------------ */
 
+
+class gMenu : public Fl_Group {
+
+private:
+
+	class gClick *file;
+	class gClick *edit;
+	class	gClick *config;
+	class gClick *about;
+
+	static void cb_openAboutWin (Fl_Widget *v, void *p);
+	static void cb_openConfigWin(Fl_Widget *v, void *p);
+	static void cb_openFileMenu (Fl_Widget *v, void *p);
+	static void cb_openEditMenu (Fl_Widget *v, void *p);
+
+	inline void __cb_openAboutWin ();
+	inline void __cb_openConfigWin();
+	inline void __cb_openFileMenu ();
+	inline void __cb_openEditMenu ();
+
+public:
+
+	gMenu(int x, int y);
+
+};
 
 #endif
