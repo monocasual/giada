@@ -1475,6 +1475,7 @@ EOF
 	    ###################
 	    # automake, retry #
 	    ###################
+	    ALT_AUTOMAKE_OPTIONS="$ALT_AUTOMAKE_OPTIONS --add-missing"
 	    $VERBOSE_ECHO
 	    $VERBOSE_ECHO "$AUTOMAKE $ALT_AUTOMAKE_OPTIONS"
 	    # retry without the -f
