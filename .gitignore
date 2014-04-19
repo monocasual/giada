@@ -2,6 +2,8 @@
 *.a
 *.so
 *.so.*
+*.orig
+*.rej
 src/rtaudio/librtaudio.pc
 src/rtaudio/rtaudio-config
 AUTHORS
@@ -14,7 +16,9 @@ NEWS
 aclocal.m4
 autom4te.cache/
 config.log
+config.guess
 config.status
+config.sub
 depcomp
 install-sh
 configure
@@ -30,3 +34,7 @@ src/*.o
 src/giada.conf
 src/.deps
 src/Makefile.in
+compile
+debian/*.log
+debian/autoreconf.after
+debian/autoreconf.before
