@@ -40,6 +40,7 @@
 #include "sampleChannel.h"
 #include "gd_midiGrabber.h"
 
+#include "init.h"
 
 extern Mixer	   		 G_Mixer;
 extern Patch     		 G_Patch;
