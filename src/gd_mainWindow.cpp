@@ -75,7 +75,7 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	inOut       = new gInOut(408, 8);
 	controller  = new gController(8, 39);
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-	keyboard    = new Keyboard(8, 122, w()-16, 380);
+	keyboard    = new gKeyboard(8, 122, w()-16, 380);
 
 	end();
 

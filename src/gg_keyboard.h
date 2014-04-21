@@ -174,7 +174,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class Keyboard : public Fl_Scroll {
+class gKeyboard : public Fl_Scroll {
 
 private:
 
@@ -200,7 +200,7 @@ private:
 
 public:
 
-	Keyboard(int X,int Y,int W,int H,const char *L=0);
+	gKeyboard(int X,int Y,int W,int H,const char *L=0);
 	int handle(int e);
 
 	/* addChannel

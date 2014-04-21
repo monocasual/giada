@@ -774,7 +774,7 @@ int gMidiChannel::keyPress(int e) {
 /* ------------------------------------------------------------------ */
 
 
-Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
+gKeyboard::gKeyboard(int X, int Y, int W, int H, const char *L)
 : Fl_Scroll(X, Y, W, H, L),
 	bckspcPressed(false),
 	endPressed(false),
@@ -810,7 +810,7 @@ Keyboard::Keyboard(int X, int Y, int W, int H, const char *L)
 /* ------------------------------------------------------------------ */
 
 
-int Keyboard::openChanTypeMenu() {
+int gKeyboard::openChanTypeMenu() {
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Sample channel"},
@@ -838,7 +838,7 @@ int Keyboard::openChanTypeMenu() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::fixRightColumn() {
+void gKeyboard::fixRightColumn() {
 	if (!hasScrollbar())
 		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+32, gChannelsR->y());
 	else
@@ -850,7 +850,7 @@ void Keyboard::fixRightColumn() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::freeChannel(gChannel *gch) {
+void gKeyboard::freeChannel(gChannel *gch) {
 	gch->reset();
 }
 
@@ -858,7 +858,7 @@ void Keyboard::freeChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::deleteChannel(gChannel *gch) {
+void gKeyboard::deleteChannel(gChannel *gch) {
 	Fl::lock();
 	gch->hide();
 	gChannelsR->remove(gch);
@@ -873,7 +873,7 @@ void Keyboard::deleteChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::updateChannel(gChannel *gch) {
+void gKeyboard::updateChannel(gChannel *gch) {
 	gch->update();
 }
 
@@ -881,7 +881,7 @@ void Keyboard::updateChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::updateChannels(char side) {
+void gKeyboard::updateChannels(char side) {
 
 	Fl_Group *group;
 	gClick   *add;
@@ -911,14 +911,14 @@ void Keyboard::updateChannels(char side) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::cb_addChannelL(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelL(); }
-void Keyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((Keyboard*)p)->__cb_addChannelR(); }
+void gKeyboard::cb_addChannelL(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addChannelL(); }
+void gKeyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addChannelR(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-gChannel *Keyboard::addChannel(char side, Channel *ch) {
+gChannel *gKeyboard::addChannel(char side, Channel *ch) {
 	Fl_Group *group;
 	gClick   *add;
 
@@ -961,7 +961,7 @@ gChannel *Keyboard::addChannel(char side, Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-bool Keyboard::hasScrollbar() {
+bool gKeyboard::hasScrollbar() {
 	if (24 * (gChannelsL->children()) > h())
 		return true;
 	if (24 * (gChannelsR->children()) > h())
@@ -973,14 +973,14 @@ bool Keyboard::hasScrollbar() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::__cb_addChannelL() {
+void gKeyboard::__cb_addChannelL() {
 	int type = openChanTypeMenu();
 	if (type)
 		glue_addChannel(0, type);
 }
 
 
-void Keyboard::__cb_addChannelR() {
+void gKeyboard::__cb_addChannelR() {
 	int type = openChanTypeMenu();
 	if (type)
 		glue_addChannel(1, type);
@@ -990,7 +990,7 @@ void Keyboard::__cb_addChannelR() {
 /* ------------------------------------------------------------------ */
 
 
-int Keyboard::handle(int e) {
+int gKeyboard::handle(int e) {
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_FOCUS:
@@ -1059,7 +1059,7 @@ int Keyboard::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::clear() {
+void gKeyboard::clear() {
 	Fl::lock();
 	gChannelsL->clear();
 	gChannelsR->clear();
@@ -1083,7 +1083,7 @@ void Keyboard::clear() {
 /* ------------------------------------------------------------------ */
 
 
-void Keyboard::setChannelWithActions(gSampleChannel *gch) {
+void gKeyboard::setChannelWithActions(gSampleChannel *gch) {
 	if (gch->ch->hasActions)
 		gch->addActionButton();
 	else

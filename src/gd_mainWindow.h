@@ -81,12 +81,11 @@ public:
 	class gClick      *beats;
 	class gClick      *beats_mul;
 	class gClick      *beats_div;
+	class gChoice     *quantize;
 
-	class Keyboard    *keyboard;		/// FIXME - rename class to gKeyboard
-
+	class gKeyboard   *keyboard;
 	class gBeatMeter  *beatMeter;
 	class gMenu       *menu;
-	class gChoice     *quantize;
 	class gInOut      *inOut;
 	class gController *controller;
 
