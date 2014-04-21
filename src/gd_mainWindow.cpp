@@ -65,21 +65,16 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	begin();
 
 	menu        = new gMenu(8, -1);
-	quantize    = new gChoice(632, 49, 40, 15, "", false);
-	bpm         = new gClick(676,  49, 40, 15);
-	beats       = new gClick(724,  49, 40, 15, "4/1");
-	beats_mul   = new gClick(768,  49, 15, 15, "×");
-	beats_div   = new gClick(787,  49, 15, 15, "÷");
+
+				quantize    = new gChoice(632, 49, 40, 15, "", false);
+				bpm         = new gClick(676,  49, 40, 15);
+				beats       = new gClick(724,  49, 40, 15, "4/1");
+				beats_mul   = new gClick(768,  49, 15, 15, "×");
+				beats_div   = new gClick(787,  49, 15, 15, "÷");
+
 	inOut       = new gInOut(408, 8);
+	controller  = new gController(8, 39);
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-
-	beat_rew		= new gClick(8,  39, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-	beat_stop		= new gClick(37, 39, 25, 25, "", play_xpm, pause_xpm);
-	beat_rec		= new gClick(66, 39, 25, 25, "", recOff_xpm, recOn_xpm);
-	input_rec		= new gClick(95, 39, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
-
-	metronome   = new gClick(124, 49, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
-
 	keyboard    = new Keyboard(8, 122, w()-16, 380);
 
 	end();
@@ -88,17 +83,8 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	bpm->copy_label(buf_bpm);
 	bpm->callback(cb_change_bpm);
 	beats->callback(cb_change_batt);
-	beat_rew->callback(cb_rewind_tracker);
-	beat_stop->callback(cb_startstop);
-	beat_stop->type(FL_TOGGLE_BUTTON);
-	beat_rec->callback(cb_rec);
-	beat_rec->type(FL_TOGGLE_BUTTON);
-	input_rec->callback(cb_inputRec);
-	input_rec->type(FL_TOGGLE_BUTTON);
 	beats_mul->callback(cb_beatsMultiply);
 	beats_div->callback(cb_beatsDivide);
-	metronome->type(FL_TOGGLE_BUTTON);
-	metronome->callback(cb_metronome);
 
 	callback(cb_endprogram);
 
@@ -125,12 +111,7 @@ gdMainWindow::~gdMainWindow() {}
 void gdMainWindow::cb_endprogram     (Fl_Widget *v, void *p)    { mainWin->__cb_endprogram(); }
 void gdMainWindow::cb_change_bpm     (Fl_Widget *v, void *p)    { mainWin->__cb_change_bpm(); }
 void gdMainWindow::cb_change_batt    (Fl_Widget *v, void *p) 		{ mainWin->__cb_change_batt(); }
-void gdMainWindow::cb_rewind_tracker (Fl_Widget *v, void *p) 		{ mainWin->__cb_rewind_tracker(); }
-void gdMainWindow::cb_startstop      (Fl_Widget *v, void *p)  	{ mainWin->__cb_startstop(); }
-void gdMainWindow::cb_rec            (Fl_Widget *v, void *p) 		{ mainWin->__cb_rec(); }
-void gdMainWindow::cb_inputRec       (Fl_Widget *v, void *p) 		{ mainWin->__cb_inputRec(); }
 void gdMainWindow::cb_quantize       (Fl_Widget *v, void *p)  	{ mainWin->__cb_quantize((intptr_t)p); }
-void gdMainWindow::cb_metronome      (Fl_Widget *v, void *p)    { mainWin->__cb_metronome(); }
 void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_beatsMultiply(); }
 void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
 
@@ -166,48 +147,8 @@ void gdMainWindow::__cb_change_batt() {
 /* ------------------------------------------------------------------ */
 
 
-void gdMainWindow::__cb_rewind_tracker() {
-	glue_rewindSeq();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_startstop() {
-	glue_startStopSeq();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_rec() {
-	glue_startStopActionRec();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_inputRec() {
-	glue_startStopInputRec();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void gdMainWindow::__cb_quantize(int v) {
 	glue_quantize(v);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gdMainWindow::__cb_metronome() {
-	glue_startStopMetronome();
 }
 
 
@@ -327,7 +268,7 @@ gMenu::gMenu(int x, int y)
 {
 	begin();
 
-	file   = new gClick(x,   y, 70, 21, "file");
+	file   = new gClick(x, y, 70, 21, "file");
 	edit   = new gClick(file->x()+file->w()+4,  y, 70, 21, "edit");
 	config = new gClick(edit->x()+edit->w()+4, y, 70, 21, "config");
 	about	 = new gClick(config->x()+config->w()+4, y, 70, 21, "about");
@@ -482,4 +423,124 @@ void gMenu::__cb_openEditMenu() {
 		gu_openSubWindow(mainWin, new gdMidiGrabberMaster(), 0);
 		return;
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gController::gController(int x, int y)
+	: Fl_Group(x, y, 300, 20)
+{
+	begin();
+
+	rewind    = new gClick(x,  y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+	play      = new gClick(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
+	recAction = new gClick(play->x()+play->w()+4, y, 25, 25, "", recOff_xpm, recOn_xpm);
+	recInput  = new gClick(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
+	metronome = new gClick(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+
+	end();
+
+	rewind->callback(cb_rewind, (void*)this);
+
+	play->callback(cb_play);
+	play->type(FL_TOGGLE_BUTTON);
+
+	recAction->callback(cb_recAction, (void*)this);
+	recAction->type(FL_TOGGLE_BUTTON);
+
+	recInput->callback(cb_recInput, (void*)this);
+	recInput->type(FL_TOGGLE_BUTTON);
+
+	metronome->callback(cb_metronome);
+	metronome->type(FL_TOGGLE_BUTTON);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::cb_rewind   (Fl_Widget *v, void *p) { ((gController*)p)->__cb_rewind(); }
+void gController::cb_play     (Fl_Widget *v, void *p) { ((gController*)p)->__cb_play(); }
+void gController::cb_recAction(Fl_Widget *v, void *p) { ((gController*)p)->__cb_recAction(); }
+void gController::cb_recInput (Fl_Widget *v, void *p) { ((gController*)p)->__cb_recInput(); }
+void gController::cb_metronome(Fl_Widget *v, void *p) { ((gController*)p)->__cb_metronome(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::__cb_rewind() {
+	glue_rewindSeq();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::__cb_play() {
+	glue_startStopSeq();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::__cb_recAction() {
+	glue_startStopActionRec();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::__cb_recInput() {
+	glue_startStopInputRec();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::__cb_metronome() {
+	glue_startStopMetronome();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::updatePlay(int v) {
+	play->value(v);
+	play->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::updateMetronome(int v) {
+	metronome->value(v);
+	metronome->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::updateRecInput(int v) {
+	recInput->value(v);
+	recInput->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gController::updateRecAction(int v) {
+	recAction->value(v);
+	recAction->redraw();
 }

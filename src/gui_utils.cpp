@@ -56,6 +56,7 @@ void gu_refresh() {
 
 	/* update dynamic elements */
 
+	/// TODO
 	///mainWin->outMeter->mixerPeak = G_Mixer.peakOut;
 	///mainWin->inMeter->mixerPeak  = G_Mixer.peakIn;
 	///mainWin->outMeter->redraw();
@@ -142,7 +143,7 @@ void gu_update_controls() {
 	/* if you reset to init state while the seq is in play: it's better to
 	 * update the button status */
 
-	mainWin->beat_stop->value(G_Mixer.running);
+	mainWin->controller->updatePlay(G_Mixer.running);
 
 	/* update bpm and beats. If bpm < 99.9 show just 4 digits (+ escape),
 	 * otherwise a bad looking 0 remains */
@@ -160,8 +161,7 @@ void gu_update_controls() {
 	else if (G_Mixer.quantize == 8)		mainWin->quantize->value(6);
 	else		mainWin->quantize->value(G_Mixer.quantize);
 
-	mainWin->metronome->value(0);
-	mainWin->metronome->redraw();
+	mainWin->controller->updateMetronome(0);
 }
 
 

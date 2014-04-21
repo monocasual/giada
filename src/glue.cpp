@@ -338,8 +338,7 @@ void glue_startSeq(bool gui) {
 	}
 
 	Fl::lock();
-	mainWin->beat_stop->value(1);
-	mainWin->beat_stop->redraw();
+	mainWin->controller->updatePlay(1);
 	Fl::unlock();
 }
 
@@ -365,8 +364,7 @@ void glue_stopSeq(bool gui) {
 	if (recorder::active) {
 		recorder::active = false;
 		Fl::lock();
-		mainWin->beat_rec->value(0);
-		mainWin->beat_rec->redraw();
+		mainWin->controller->updateRecAction(0);
 		Fl::unlock();
 	}
 
@@ -376,14 +374,12 @@ void glue_stopSeq(bool gui) {
 	if (G_Mixer.chanInput != NULL) {
 		mh_stopInputRec();
 		Fl::lock();
-		mainWin->input_rec->value(0);
-		mainWin->input_rec->redraw();
+		mainWin->controller->updateRecInput(0);
 		Fl::unlock();
 	}
 
 	Fl::lock();
-	mainWin->beat_stop->value(0);
-	mainWin->beat_stop->redraw();
+	mainWin->controller->updatePlay(0);
 	Fl::unlock();
 }
 
@@ -417,8 +413,7 @@ void glue_startActionRec() {
 	recorder::active = true;
 
 	Fl::lock();
-	mainWin->beat_rec->value(1);
-	mainWin->beat_rec->redraw();
+	mainWin->controller->updateRecAction(1);
 	Fl::unlock();
 }
 
@@ -444,8 +439,7 @@ void glue_stopActionRec() {
 		}
 
 	Fl::lock();
-	mainWin->beat_rec->value(0);
-	mainWin->beat_rec->redraw();
+	mainWin->controller->updateRecAction(0);
 	Fl::unlock();
 
 	/* in case acton editor is on, refresh it */
@@ -617,7 +611,7 @@ void glue_startStopMetronome(bool gui) {
 	G_Mixer.metronome = !G_Mixer.metronome;
 	if (!gui) {
 		Fl::lock();
-		mainWin->metronome->value(G_Mixer.metronome);
+		mainWin->controller->updateMetronome(G_Mixer.metronome);
 		Fl::unlock();
 	}
 }
@@ -913,8 +907,7 @@ int glue_startInputRec(bool gui) {
 	SampleChannel *ch = mh_startInputRec();
 	if (ch == NULL)	{                  // no chans available
 		Fl::lock();
-		mainWin->input_rec->value(0);
-		mainWin->input_rec->redraw();
+		mainWin->controller->updateRecInput(0);
 		Fl::unlock();
 		return 0;
 	}
@@ -922,8 +915,7 @@ int glue_startInputRec(bool gui) {
 	if (!G_Mixer.running) {
 		glue_startSeq();
 		Fl::lock();
-		mainWin->beat_stop->value(1);
-		mainWin->beat_stop->redraw();
+		mainWin->controller->updatePlay(1);
 		Fl::unlock();
 	}
 
@@ -933,8 +925,7 @@ int glue_startInputRec(bool gui) {
 
 	if (!gui) {
 		Fl::lock();
-		mainWin->input_rec->value(1);
-		mainWin->input_rec->redraw();
+		mainWin->controller->updateRecInput(1);
 		Fl::unlock();
 	}
 
@@ -955,8 +946,7 @@ int glue_stopInputRec(bool gui) {
 
 	if (!gui) {
 		Fl::lock();
-		mainWin->input_rec->value(0);
-		mainWin->input_rec->redraw();
+		mainWin->controller->updateRecInput(0);
 		Fl::unlock();
 	}
 

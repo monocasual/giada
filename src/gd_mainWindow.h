@@ -54,10 +54,6 @@
 #endif
 
 
-
-
-
-
 /* ------------------------------------------------------------------ */
 
 
@@ -68,24 +64,14 @@ private:
 	static void cb_endprogram      (Fl_Widget *v, void *p);
 	static void cb_change_bpm      (Fl_Widget *v, void *p);
 	static void cb_change_batt     (Fl_Widget *v, void *p);
-	static void cb_rewind_tracker  (Fl_Widget *v, void *p);
-	static void cb_startstop       (Fl_Widget *v, void *p);
-	static void cb_rec             (Fl_Widget *v, void *p);
-	static void cb_inputRec        (Fl_Widget *v, void *p);
 	static void cb_quantize        (Fl_Widget *v, void *p);
-	static void cb_metronome       (Fl_Widget *v, void *p);
 	static void cb_beatsMultiply   (Fl_Widget *v, void *p);
 	static void cb_beatsDivide     (Fl_Widget *v, void *p);
 
 	inline void __cb_endprogram();
 	inline void __cb_change_bpm();
 	inline void __cb_change_batt();
-	inline void __cb_rewind_tracker();
-	inline void __cb_startstop();
-	inline void __cb_rec();
-	inline void __cb_inputRec();
 	inline void __cb_quantize(int v);
-	inline void __cb_metronome();
 	inline void __cb_beatsMultiply();
 	inline void __cb_beatsDivide();
 
@@ -95,18 +81,14 @@ public:
 	class gClick      *beats;
 	class gClick      *beats_mul;
 	class gClick      *beats_div;
-	class Keyboard    *keyboard;		// Fl_Group
-	class gSoundMeter *outMeter;
-	class gSoundMeter *inMeter;
+
+	class Keyboard    *keyboard;		/// FIXME - rename class to gKeyboard
+
 	class gBeatMeter  *beatMeter;
-	class gClick      *beat_rew;
-	class gClick      *beat_stop;
-	class gClick      *beat_rec;
-	class gClick      *input_rec;
 	class gMenu       *menu;
 	class gChoice     *quantize;
-	class gClick      *metronome;
 	class gInOut      *inOut;
+	class gController *controller;
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
 	~gdMainWindow();
@@ -181,7 +163,42 @@ private:
 public:
 
 	gMenu(int x, int y);
+};
 
+
+/* ------------------------------------------------------------------ */
+
+
+class gController : public Fl_Group {
+
+private:
+
+	class gClick *rewind;
+	class gClick *play;
+	class gClick *recAction;
+	class gClick *recInput;
+	class gClick *metronome;
+
+	static void cb_rewind   (Fl_Widget *v, void *p);
+	static void cb_play     (Fl_Widget *v, void *p);
+	static void cb_recAction(Fl_Widget *v, void *p);
+	static void cb_recInput (Fl_Widget *v, void *p);
+	static void cb_metronome(Fl_Widget *v, void *p);
+
+	inline void __cb_rewind   ();
+	inline void __cb_play     ();
+	inline void __cb_recAction();
+	inline void __cb_recInput ();
+	inline void __cb_metronome();
+
+public:
+
+	gController(int x, int y);
+
+	void updatePlay     (int v);
+	void updateMetronome(int v);
+	void updateRecInput (int v);
+	void updateRecAction(int v);
 };
 
 #endif
