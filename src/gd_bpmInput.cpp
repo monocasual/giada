@@ -41,7 +41,7 @@ extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 
-gdBpmInput::gdBpmInput()
+gdBpmInput::gdBpmInput(const char *label)
 : gWindow(144, 36, "Bpm") {
 
 	if (G_Conf.bpmX)
@@ -57,9 +57,9 @@ gdBpmInput::gdBpmInput()
 	char   a[4];
 	snprintf(a, 4, "%d", (int) G_Mixer.bpm);
 	char   b[2];
-	for (unsigned i=0; i<strlen(mainWin->bpm->label()); i++)	// looking for the dot
-		if (mainWin->bpm->label()[i] == '.') {
-			snprintf(b, 2, "%c", mainWin->bpm->label()[i+1]);
+	for (unsigned i=0; i<strlen(label); i++)	// looking for the dot
+		if (label[i] == '.') {
+			snprintf(b, 2, "%c", label[i+1]);
 			break;
 		}
 

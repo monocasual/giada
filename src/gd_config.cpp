@@ -554,8 +554,8 @@ void gTabMidi::save() {
 		G_Conf.midiSystem = RtMidi::UNIX_JACK;
 	else if (!strcmp("Multimedia MIDI", system->text(system->value())))
 		G_Conf.midiSystem = RtMidi::WINDOWS_MM;
-	else if (!strcmp("Kernel Streaming MIDI", system->text(system->value())))
-		G_Conf.midiSystem = RtMidi::WINDOWS_KS;
+	//else if (!strcmp("Kernel Streaming MIDI", system->text(system->value())))
+	//	G_Conf.midiSystem = RtMidi::WINDOWS_KS;
 	else if (!strcmp("OSX Core MIDI", system->text(system->value())))
 		G_Conf.midiSystem = RtMidi::MACOSX_CORE;
 
@@ -600,7 +600,7 @@ void gTabMidi::fetchSystems() {
 		case RtMidi::LINUX_ALSA:  system->show("ALSA"); break;
 		case RtMidi::UNIX_JACK:   system->show("Jack"); break;
 		case RtMidi::WINDOWS_MM:  system->show("Multimedia MIDI"); break;
-		case RtMidi::WINDOWS_KS:  system->show("Kernel Streaming MIDI"); break;
+		//case RtMidi::WINDOWS_KS:  system->show("Kernel Streaming MIDI"); break;
 		case RtMidi::MACOSX_CORE: system->show("OSX Core MIDI"); break;
 		default: system->value(0); break;
 	}

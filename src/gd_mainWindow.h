@@ -61,28 +61,30 @@ class gdMainWindow : public gWindow {
 
 private:
 
-	static void cb_endprogram      (Fl_Widget *v, void *p);
-	static void cb_change_bpm      (Fl_Widget *v, void *p);
-	static void cb_change_batt     (Fl_Widget *v, void *p);
-	static void cb_quantize        (Fl_Widget *v, void *p);
-	static void cb_beatsMultiply   (Fl_Widget *v, void *p);
-	static void cb_beatsDivide     (Fl_Widget *v, void *p);
-
+	static void cb_endprogram  (Fl_Widget *v, void *p);
 	inline void __cb_endprogram();
-	inline void __cb_change_bpm();
-	inline void __cb_change_batt();
-	inline void __cb_quantize(int v);
-	inline void __cb_beatsMultiply();
-	inline void __cb_beatsDivide();
 
+/*
+					static void cb_change_bpm      (Fl_Widget *v, void *p);
+					static void cb_change_batt     (Fl_Widget *v, void *p);
+					static void cb_quantize        (Fl_Widget *v, void *p);
+					static void cb_beatsMultiply   (Fl_Widget *v, void *p);
+					static void cb_beatsDivide     (Fl_Widget *v, void *p);
+
+					inline void __cb_change_bpm();
+					inline void __cb_change_batt();
+					inline void __cb_quantize(int v);
+					inline void __cb_beatsMultiply();
+					inline void __cb_beatsDivide();
+*/
 public:
-
-	class gClick      *bpm;
-	class gClick      *beats;
-	class gClick      *beats_mul;
-	class gClick      *beats_div;
-	class gChoice     *quantize;
-
+/*
+					class gClick      *bpm;
+					class gClick      *beats;
+					class gClick      *beats_mul;
+					class gClick      *beats_div;
+					class gChoice     *quantize;
+*/
 	class gKeyboard   *keyboard;
 	class gBeatMeter  *beatMeter;
 	class gMenu       *menu;
@@ -90,7 +92,7 @@ public:
 	class gController *controller;
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
-	~gdMainWindow();
+	~gdMainWindow(); /// TODO - destructor might be unecessary (and wrong)
 };
 
 
@@ -112,20 +114,20 @@ private:
 	class gClick      *inToOut;
 #endif
 
-	static void cb_outVol         (Fl_Widget *v, void *p);
-	static void cb_inVol          (Fl_Widget *v, void *p);
+	static void cb_outVol     (Fl_Widget *v, void *p);
+	static void cb_inVol      (Fl_Widget *v, void *p);
 #ifdef WITH_VST
-	static void cb_openMasterFxOut(Fl_Widget *v, void *p);
-	static void cb_openMasterFxIn (Fl_Widget *v, void *p);
-	static void cb_inToOut        (Fl_Widget *v, void *p);
+	static void cb_masterFxOut(Fl_Widget *v, void *p);
+	static void cb_masterFxIn (Fl_Widget *v, void *p);
+	static void cb_inToOut    (Fl_Widget *v, void *p);
 #endif
 
-	inline void __cb_outVol         ();
-	inline void __cb_inVol          ();
+	inline void __cb_outVol     ();
+	inline void __cb_inVol      ();
 #ifdef WITH_VST
-	inline void __cb_openMasterFxOut();
-	inline void __cb_openMasterFxIn ();
-	inline void __cb_inToOut        ();
+	inline void __cb_masterFxOut();
+	inline void __cb_masterFxIn ();
+	inline void __cb_inToOut    ();
 #endif
 
 public:
@@ -149,15 +151,15 @@ private:
 	class	gClick *config;
 	class gClick *about;
 
-	static void cb_openAboutWin (Fl_Widget *v, void *p);
-	static void cb_openConfigWin(Fl_Widget *v, void *p);
-	static void cb_openFileMenu (Fl_Widget *v, void *p);
-	static void cb_openEditMenu (Fl_Widget *v, void *p);
+	static void cb_about (Fl_Widget *v, void *p);
+	static void cb_config(Fl_Widget *v, void *p);
+	static void cb_file  (Fl_Widget *v, void *p);
+	static void cb_edit  (Fl_Widget *v, void *p);
 
-	inline void __cb_openAboutWin ();
-	inline void __cb_openConfigWin();
-	inline void __cb_openFileMenu ();
-	inline void __cb_openEditMenu ();
+	inline void __cb_about ();
+	inline void __cb_config();
+	inline void __cb_file  ();
+	inline void __cb_edit  ();
 
 public:
 
@@ -199,5 +201,37 @@ public:
 	void updateRecInput (int v);
 	void updateRecAction(int v);
 };
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gTiming : public Fl_Group {
+
+private:
+
+	class gClick   *bpm;
+	class gClick   *meter;
+	class gChoice  *quantizer;
+	class gClick   *multiplier;
+	class gClick   *divider;
+
+	static void cb_bpm       (Fl_Widget *v, void *p);
+	static void cb_meter     (Fl_Widget *v, void *p);
+	static void cb_quantizer (Fl_Widget *v, void *p);
+	static void cb_multiplier(Fl_Widget *v, void *p);
+	static void cb_divider   (Fl_Widget *v, void *p);
+
+	inline void __cb_bpm();
+	inline void __cb_meter();
+	inline void __cb_quantizer();
+	inline void __cb_multiplier();
+	inline void __cb_divider();
+
+public:
+
+	gTiming(int x, int y);
+};
+
 
 #endif

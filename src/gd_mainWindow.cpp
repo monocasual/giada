@@ -65,38 +65,38 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	begin();
 
 	menu        = new gMenu(8, -1);
-
-				quantize    = new gChoice(632, 49, 40, 15, "", false);
-				bpm         = new gClick(676,  49, 40, 15);
-				beats       = new gClick(724,  49, 40, 15, "4/1");
-				beats_mul   = new gClick(768,  49, 15, 15, "×");
-				beats_div   = new gClick(787,  49, 15, 15, "÷");
-
+/*
+						quantize    = new gChoice(632, 49, 40, 15, "", false);
+						bpm         = new gClick(676,  49, 40, 15);
+						beats       = new gClick(724,  49, 40, 15, "4/1");
+						beats_mul   = new gClick(768,  49, 15, 15, "×");
+						beats_div   = new gClick(787,  49, 15, 15, "÷");
+*/
 	inOut       = new gInOut(408, 8);
 	controller  = new gController(8, 39);
 	beatMeter   = new gBeatMeter(100, 83, 609, 20);
 	keyboard    = new gKeyboard(8, 122, w()-16, 380);
 
 	end();
-
-	char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);
-	bpm->copy_label(buf_bpm);
-	bpm->callback(cb_change_bpm);
-	beats->callback(cb_change_batt);
-	beats_mul->callback(cb_beatsMultiply);
-	beats_div->callback(cb_beatsDivide);
-
+/*
+						char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);
+						bpm->copy_label(buf_bpm);
+						bpm->callback(cb_change_bpm);
+						beats->callback(cb_change_batt);
+						beats_mul->callback(cb_beatsMultiply);
+						beats_div->callback(cb_beatsDivide);
+*/
 	callback(cb_endprogram);
-
-	quantize->add("off", 0, cb_quantize, (void*)0);
-	quantize->add("1b",  0, cb_quantize, (void*)1);
-	quantize->add("2b",  0, cb_quantize, (void*)2);
-	quantize->add("3b",  0, cb_quantize, (void*)3);
-	quantize->add("4b",  0, cb_quantize, (void*)4);
-	quantize->add("6b",  0, cb_quantize, (void*)6);
-	quantize->add("8b",  0, cb_quantize, (void*)8);
-	quantize->value(0); //  "off" by default
-
+/*
+						quantize->add("off", 0, cb_quantize, (void*)0);
+						quantize->add("1b",  0, cb_quantize, (void*)1);
+						quantize->add("2b",  0, cb_quantize, (void*)2);
+						quantize->add("3b",  0, cb_quantize, (void*)3);
+						quantize->add("4b",  0, cb_quantize, (void*)4);
+						quantize->add("6b",  0, cb_quantize, (void*)6);
+						quantize->add("8b",  0, cb_quantize, (void*)8);
+						quantize->value(0); //  "off" by default
+*/
 	gu_setFavicon(this);
 	show(argc, argv);
 }
@@ -109,12 +109,13 @@ gdMainWindow::~gdMainWindow() {}
 
 
 void gdMainWindow::cb_endprogram     (Fl_Widget *v, void *p)    { mainWin->__cb_endprogram(); }
+/*
 void gdMainWindow::cb_change_bpm     (Fl_Widget *v, void *p)    { mainWin->__cb_change_bpm(); }
 void gdMainWindow::cb_change_batt    (Fl_Widget *v, void *p) 		{ mainWin->__cb_change_batt(); }
 void gdMainWindow::cb_quantize       (Fl_Widget *v, void *p)  	{ mainWin->__cb_quantize((intptr_t)p); }
 void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_beatsMultiply(); }
 void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
@@ -130,43 +131,43 @@ void gdMainWindow::__cb_endprogram() {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gdMainWindow::__cb_change_bpm() {
 	gu_openSubWindow(mainWin, new gdBpmInput(), WID_BPM);
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gdMainWindow::__cb_change_batt() {
 	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
-}
+}*/
 
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gdMainWindow::__cb_quantize(int v) {
 	glue_quantize(v);
-}
+}*/
 
 
 /* ------------------------------------------------------------------ */
-
+/*
 
 void gdMainWindow::__cb_beatsMultiply() {
 	glue_beatsMultiply();
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gdMainWindow::__cb_beatsDivide() {
 	glue_beatsDivide();
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
@@ -204,8 +205,8 @@ gInOut::gInOut(int x, int y)
 	inVol->value(G_Mixer.inVol);
 
 #ifdef WITH_VST
-	masterFxOut->callback(cb_openMasterFxOut, (void*)this);
-	masterFxIn->callback(cb_openMasterFxIn, (void*)this);
+	masterFxOut->callback(cb_masterFxOut, (void*)this);
+	masterFxIn->callback(cb_masterFxIn, (void*)this);
 	inToOut->callback(cb_inToOut, (void*)this);
 	inToOut->type(FL_TOGGLE_BUTTON);
 #endif
@@ -215,12 +216,12 @@ gInOut::gInOut(int x, int y)
 /* ------------------------------------------------------------------ */
 
 
-void gInOut::cb_outVol         (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_outVol(); }
-void gInOut::cb_inVol          (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_inVol(); }
+void gInOut::cb_outVol     (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_outVol(); }
+void gInOut::cb_inVol      (Fl_Widget *v, void *p)  	{ ((gInOut*)p)->__cb_inVol(); }
 #ifdef WITH_VST
-void gInOut::cb_openMasterFxOut(Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_openMasterFxOut(); }
-void gInOut::cb_openMasterFxIn (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_openMasterFxIn(); }
-void gInOut::cb_inToOut        (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_inToOut(); }
+void gInOut::cb_masterFxOut(Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_masterFxOut(); }
+void gInOut::cb_masterFxIn (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_masterFxIn(); }
+void gInOut::cb_inToOut    (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_inToOut(); }
 #endif
 
 
@@ -244,11 +245,11 @@ void gInOut::__cb_inVol() {
 
 
 #ifdef WITH_VST
-void gInOut::__cb_openMasterFxOut() {
+void gInOut::__cb_masterFxOut() {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
-void gInOut::__cb_openMasterFxIn() {
+void gInOut::__cb_masterFxIn() {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 
@@ -276,26 +277,26 @@ gMenu::gMenu(int x, int y)
 
 	end();
 
-	about->callback(cb_openAboutWin, (void*)this);
-	file->callback(cb_openFileMenu, (void*)this);
-	edit->callback(cb_openEditMenu, (void*)this);
-	config->callback(cb_openConfigWin, (void*)this);
+	about->callback(cb_about, (void*)this);
+	file->callback(cb_file, (void*)this);
+	edit->callback(cb_edit, (void*)this);
+	config->callback(cb_config, (void*)this);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::cb_openAboutWin (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openAboutWin(); }
-void gMenu::cb_openConfigWin(Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openConfigWin(); }
-void gMenu::cb_openFileMenu (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openFileMenu(); }
-void gMenu::cb_openEditMenu (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_openEditMenu(); }
+void gMenu::cb_about (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_about(); }
+void gMenu::cb_config(Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_config(); }
+void gMenu::cb_file  (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_file(); }
+void gMenu::cb_edit  (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_edit(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_openAboutWin() {
+void gMenu::__cb_about() {
 	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
 }
 
@@ -303,7 +304,7 @@ void gMenu::__cb_openAboutWin() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_openConfigWin() {
+void gMenu::__cb_config() {
 	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
 }
 
@@ -311,7 +312,7 @@ void gMenu::__cb_openConfigWin() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_openFileMenu() {
+void gMenu::__cb_file() {
 
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
@@ -362,7 +363,7 @@ void gMenu::__cb_openFileMenu() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_openEditMenu() {
+void gMenu::__cb_edit() {
 
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
@@ -543,4 +544,93 @@ void gController::updateRecInput(int v) {
 void gController::updateRecAction(int v) {
 	recAction->value(v);
 	recAction->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gTiming::gTiming(int x, int y)
+	: Fl_Group(x, y, 300, 20)
+{
+	begin();
+
+	quantizer  = new gChoice(x, y, 40, 15, "", false);
+	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
+	meter      = new gClick (bpm->x()+bpm->w()+8,  49, 40, 15, "4/1");
+	multiplier = new gClick (meter->x()+meter->w()+4, 49, 15, 15, "×");
+	divider    = new gClick (multiplier->x()+multiplier->w()+4,  49, 15, 15, "÷");
+
+	end();
+
+	char buf[6]; snprintf(buf, 6, "%f", G_Mixer.bpm);
+	bpm->copy_label(buf);
+	bpm->callback(cb_bpm, (void*)this);
+
+	meter->callback(cb_meter, (void*)this);
+
+	multiplier->callback(cb_multiplier, (void*)this);
+
+	divider->callback(cb_divider, (void*)this);
+
+	quantizer->add("off", 0, cb_quantizer, (void*)this);
+	quantizer->add("1b",  0, cb_quantizer, (void*)this);
+	quantizer->add("2b",  0, cb_quantizer, (void*)this);
+	quantizer->add("3b",  0, cb_quantizer, (void*)this);
+	quantizer->add("4b",  0, cb_quantizer, (void*)this);
+	quantizer->add("6b",  0, cb_quantizer, (void*)this);
+	quantizer->add("8b",  0, cb_quantizer, (void*)this);
+	quantizer->value(0); //  "off" by default
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::cb_bpm       (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_bpm(); }
+void gTiming::cb_meter     (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_meter(); }
+void gTiming::cb_quantizer (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_quantizer(); }
+void gTiming::cb_multiplier(Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_multiplier(); }
+void gTiming::cb_divider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_divider(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_bpm() {
+	gu_openSubWindow(mainWin, new gdBpmInput(bpm->label()), WID_BPM);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_meter() {
+	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_quantizer() {
+	glue_quantize(quantizer->value());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_multiplier() {
+	glue_beatsMultiply();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_divider() {
+	glue_beatsDivide();
 }

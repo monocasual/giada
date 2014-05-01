@@ -252,7 +252,7 @@ void glue_setBpm(const char *v1, const char *v2) {
 	recorder::updateBpm(old_bpm, value, G_Mixer.quanto);
 	gu_refreshActionEditor();
 
-	mainWin->bpm->copy_label(buf);
+	///mainWin->bpm->copy_label(buf);
 	gLog("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }
 
@@ -303,7 +303,7 @@ void glue_setBeats(int beats, int bars, bool expand) {
 
 	char buf_batt[8];
 	sprintf(buf_batt, "%d/%d", G_Mixer.beats, G_Mixer.bars);
-	mainWin->beats->copy_label(buf_batt);
+	///mainWin->beats->copy_label(buf_batt);
 
 	/* in case the action editor is open */
 

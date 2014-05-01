@@ -44,7 +44,7 @@ private:
 	class gClick *ok;
 
 public:
-	gdBpmInput();
+	gdBpmInput(const char *label); // pointer to mainWin->timing->bpm->label()
 	~gdBpmInput();
 };
 

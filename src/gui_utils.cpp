@@ -148,6 +148,7 @@ void gu_update_controls() {
 	/* update bpm and beats. If bpm < 99.9 show just 4 digits (+ escape),
 	 * otherwise a bad looking 0 remains */
 
+	/**
 	int size = G_Mixer.bpm < 100.0f ? 5 : 6;
 	char buf_bpm[6];
 	snprintf(buf_bpm, size, "%f", G_Mixer.bpm);
@@ -160,7 +161,8 @@ void gu_update_controls() {
 	if 			(G_Mixer.quantize == 6)		mainWin->quantize->value(5);
 	else if (G_Mixer.quantize == 8)		mainWin->quantize->value(6);
 	else		mainWin->quantize->value(G_Mixer.quantize);
-
+	*/
+	
 	mainWin->controller->updateMetronome(0);
 }
 
