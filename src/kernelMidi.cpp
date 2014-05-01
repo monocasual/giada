@@ -96,7 +96,7 @@ int openOutDevice(int port) {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
 		G_midiStatus = true;
   }
-  catch (RtError &error) {
+  catch (RtMidiError &error) {
     gLog("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
     G_midiStatus = false;
     return 0;
@@ -117,7 +117,7 @@ int openOutDevice(int port) {
 			gLog("[KM] MIDI out port %d open\n", port);
 			return 1;
 		}
-		catch (RtError &error) {
+		catch (RtMidiError &error) {
 			gLog("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
 			G_midiStatus = false;
 			return 0;
@@ -137,7 +137,7 @@ int openInDevice(int port) {
 		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
 		G_midiStatus = true;
   }
-  catch (RtError &error) {
+  catch (RtMidiError &error) {
     gLog("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
     G_midiStatus = false;
     return 0;
@@ -160,7 +160,7 @@ int openInDevice(int port) {
 			midiIn->setCallback(&callback);
 			return 1;
 		}
-		catch (RtError &error) {
+		catch (RtMidiError &error) {
 			gLog("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
 			G_midiStatus = false;
 			return 0;
@@ -189,12 +189,12 @@ bool hasAPI(int API) {
 
 const char *getOutPortName(unsigned p) {
 	try { return midiOut->getPortName(p).c_str(); }
-	catch (RtError &error) { return NULL; }
+	catch (RtMidiError &error) { return NULL; }
 }
 
 const char *getInPortName(unsigned p) {
 	try { return midiIn->getPortName(p).c_str(); }
-	catch (RtError &error) { return NULL; }
+	catch (RtMidiError &error) { return NULL; }
 }
 
 
