@@ -68,12 +68,10 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	Fl_Group *zone1 = new Fl_Group(8, 8, W, 100);
 	menu  = new gMenu(8, -1);
 	inOut = new gInOut(408, 8);
-	//Fl_Box *m = ;
 	zone1->add(menu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(inOut);
 	zone1->end();
-	
 	resizable(zone1);
 	
 	controller = new gController(8, 39);
@@ -384,6 +382,7 @@ gController::gController(int x, int y)
 	metronome = new gClick(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
+	resizable(0);
 
 	rewind->callback(cb_rewind, (void*)this);
 
