@@ -191,7 +191,7 @@ int startStream() {
 		return 1;
 	}
 	catch (RtError &e) {
-		gLog("[KA] Start stream error\n");
+		gLog("[KA] Start stream error: %s\n", e.getMessage().c_str());
 		return 0;
 	}
 }
