@@ -65,39 +65,24 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 
 	begin();
 
-	menu        = new gMenu(8, -1);
-/*
-						quantize    = new gChoice(632, 49, 40, 15, "", false);
-						bpm         = new gClick(676,  49, 40, 15);
-						beats       = new gClick(724,  49, 40, 15, "4/1");
-						beats_mul   = new gClick(768,  49, 15, 15, "×");
-						beats_div   = new gClick(787,  49, 15, 15, "÷");
-*/
-	inOut       = new gInOut(408, 8);
-	controller  = new gController(8, 39);
-	beatMeter   = new gBeatMeter(100, 83, 609, 20);
-	keyboard    = new gKeyboard(8, 122, w()-16, 380);
+	Fl_Group *zone1 = new Fl_Group(8, 8, W, 100);
+	menu  = new gMenu(8, -1);
+	inOut = new gInOut(408, 8);
+	//Fl_Box *m = ;
+	zone1->add(menu);
+	zone1->resizable(new Fl_Box(300, 8, 80, 20));
+	zone1->add(inOut);
+	zone1->end();
+	
+	resizable(zone1);
+	
+	controller = new gController(8, 39);
+	beatMeter  = new gBeatMeter(100, 83, 609, 20);
+	keyboard   = new gKeyboard(8, 122, w()-16, 380);
 
 	end();
-/*
-						char buf_bpm[6]; snprintf(buf_bpm, 6, "%f", G_Mixer.bpm);
-						bpm->copy_label(buf_bpm);
-						bpm->callback(cb_change_bpm);
-						beats->callback(cb_change_batt);
-						beats_mul->callback(cb_beatsMultiply);
-						beats_div->callback(cb_beatsDivide);
-*/
+
 	callback(cb_endprogram);
-/*
-						quantize->add("off", 0, cb_quantize, (void*)0);
-						quantize->add("1b",  0, cb_quantize, (void*)1);
-						quantize->add("2b",  0, cb_quantize, (void*)2);
-						quantize->add("3b",  0, cb_quantize, (void*)3);
-						quantize->add("4b",  0, cb_quantize, (void*)4);
-						quantize->add("6b",  0, cb_quantize, (void*)6);
-						quantize->add("8b",  0, cb_quantize, (void*)8);
-						quantize->value(0); //  "off" by default
-*/
 	gu_setFavicon(this);
 	show(argc, argv);
 }
@@ -109,14 +94,8 @@ gdMainWindow::~gdMainWindow() {}
 /* ------------------------------------------------------------------ */
 
 
-void gdMainWindow::cb_endprogram     (Fl_Widget *v, void *p)    { mainWin->__cb_endprogram(); }
-/*
-void gdMainWindow::cb_change_bpm     (Fl_Widget *v, void *p)    { mainWin->__cb_change_bpm(); }
-void gdMainWindow::cb_change_batt    (Fl_Widget *v, void *p) 		{ mainWin->__cb_change_batt(); }
-void gdMainWindow::cb_quantize       (Fl_Widget *v, void *p)  	{ mainWin->__cb_quantize((intptr_t)p); }
-void gdMainWindow::cb_beatsMultiply  (Fl_Widget *v, void *p)    { mainWin->__cb_beatsMultiply(); }
-void gdMainWindow::cb_beatsDivide    (Fl_Widget *v, void *p)    { mainWin->__cb_beatsDivide(); }
-*/
+void gdMainWindow::cb_endprogram(Fl_Widget *v, void *p) { mainWin->__cb_endprogram(); }
+
 
 /* ------------------------------------------------------------------ */
 
@@ -129,46 +108,6 @@ void gdMainWindow::__cb_endprogram() {
 	delete this;
 }
 
-
-/* ------------------------------------------------------------------ */
-
-/*
-void gdMainWindow::__cb_change_bpm() {
-	gu_openSubWindow(mainWin, new gdBpmInput(), WID_BPM);
-}
-*/
-
-/* ------------------------------------------------------------------ */
-
-/*
-void gdMainWindow::__cb_change_batt() {
-	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
-}*/
-
-
-/* ------------------------------------------------------------------ */
-
-/*
-void gdMainWindow::__cb_quantize(int v) {
-	glue_quantize(v);
-}*/
-
-
-/* ------------------------------------------------------------------ */
-/*
-
-void gdMainWindow::__cb_beatsMultiply() {
-	glue_beatsMultiply();
-}
-*/
-
-/* ------------------------------------------------------------------ */
-
-/*
-void gdMainWindow::__cb_beatsDivide() {
-	glue_beatsDivide();
-}
-*/
 
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
@@ -277,6 +216,7 @@ gMenu::gMenu(int x, int y)
 	size(about->x()+about->w()-x, 20);
 
 	end();
+	resizable(0); // no widget can be resized
 
 	about->callback(cb_about, (void*)this);
 	file->callback(cb_file, (void*)this);
@@ -354,7 +294,6 @@ void gMenu::__cb_file() {
 		return;
 	}
 	if (strcmp(m->label(), "Quit Giada") == 0) {
-		///__cb_endprogram();
 		mainWin->do_callback();
 		return;
 	}
