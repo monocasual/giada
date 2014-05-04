@@ -55,39 +55,50 @@ extern PluginHost  	 G_PluginHost;
 
 
 gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int argc, char **argv)
-: gWindow(X, Y, W, H, title) {
-
+	: gWindow(X, Y, W, H, title)
+{
 	Fl::visible_focus(0);
 	Fl::background(25, 25, 25);
 	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
 
 	size_range(GUI_WIDTH, GUI_HEIGHT);
 
-	begin();
-
-	Fl_Group *zone1 = new Fl_Group(8, 8, W, 100);
-	menu  = new gMenu(8, -1);
-	inOut = new gInOut(408, 8);
+	menu       = new gMenu(8, -1);
+	inOut      = new gInOut(408, 8);	
+	controller = new gController(8, 39);
+	timing     = new gTiming(632, 39);
+	beatMeter  = new gBeatMeter(100, 83, 609, 20);
+	keyboard   = new gKeyboard(8, 122, w()-16, 380);
+	
+	Fl_Group *zone1 = new Fl_Group(8, 8, W-16, 20);	
 	zone1->add(menu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(inOut);
-	zone1->end();
-	resizable(zone1);
+	//zone1->box(FL_BORDER_BOX);
+	// ................. resizable(zone1);
+
+	Fl_Group *zone2 = new Fl_Group(8, controller->y(), W-16, controller->h());	
+	zone2->add(controller);
+	zone2->resizable(new Fl_Box(controller->x()+controller->w()+4, zone2->y(), 80, 20));
+	zone2->add(timing);
+	//zone2->box(FL_BORDER_BOX);
+	resizable(zone2);
 	
-	controller = new gController(8, 39);
-	beatMeter  = new gBeatMeter(100, 83, 609, 20);
-	keyboard   = new gKeyboard(8, 122, w()-16, 380);
-
-	end();
-
+	//Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, 500);	
+	
+	add(zone1);
+	add(zone2);
+	//add(zone3);
+	add(beatMeter);
+	add(keyboard);
 	callback(cb_endprogram);
 	gu_setFavicon(this);
 	show(argc, argv);
 }
 
-
+/*
 gdMainWindow::~gdMainWindow() {}
-
+*/
 
 /* ------------------------------------------------------------------ */
 
@@ -113,11 +124,10 @@ void gdMainWindow::__cb_endprogram() {
 
 
 gInOut::gInOut(int x, int y)
-	: Fl_Group(x, y, 200, 20)
+	: Fl_Group(x, y, 400, 20)
 {
-	resizable(NULL);
 	begin();
-
+	
 #if defined(WITH_VST)
 	masterFxIn  = new gButton    (x, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
 	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
@@ -126,16 +136,16 @@ gInOut::gInOut(int x, int y)
 	outMeter    = new gSoundMeter(inToOut->x()+inToOut->w()+4, y+5, 140, 10);
 	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 	masterFxOut = new gButton    (outVol->x()+outVol->w()+4, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
-	size(394, 20);
 #else
 	outMeter    = new gSoundMeter(x, y+5, 140, 10);
 	inMeter     = new gSoundMeter(outMeter->x()+outMeter->w()+4, y+5, 140, 10);
 	outVol		  = new gDial      (inMeter->x()+inMeter->w()+4, y, 20, 20);
 	inVol		    = new gDial      (outVol->x()+outVol->w()+4, y, 20, 20);
-	size(356, 20);
 #endif
 
 	end();
+	
+	resizable(NULL);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
 	outVol->value(G_Mixer.outVol);
@@ -211,10 +221,10 @@ gMenu::gMenu(int x, int y)
 	edit   = new gClick(file->x()+file->w()+4,  y, 70, 21, "edit");
 	config = new gClick(edit->x()+edit->w()+4, y, 70, 21, "config");
 	about	 = new gClick(config->x()+config->w()+4, y, 70, 21, "about");
-	size(about->x()+about->w()-x, 20);
 
 	end();
-	resizable(0); // no widget can be resized
+
+	resizable(NULL);   // don't resize any widget
 
 	about->callback(cb_about, (void*)this);
 	file->callback(cb_file, (void*)this);
@@ -371,7 +381,7 @@ void gMenu::__cb_edit() {
 
 
 gController::gController(int x, int y)
-	: Fl_Group(x, y, 300, 20)
+	: Fl_Group(x, y, 131, 25)
 {
 	begin();
 
@@ -382,7 +392,8 @@ gController::gController(int x, int y)
 	metronome = new gClick(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
-	resizable(0);
+
+	resizable(NULL);   // don't resize any widget
 
 	rewind->callback(cb_rewind, (void*)this);
 
@@ -492,26 +503,26 @@ void gController::updateRecAction(int v) {
 
 
 gTiming::gTiming(int x, int y)
-	: Fl_Group(x, y, 300, 20)
+	: Fl_Group(x, y, 170, 15)
 {
 	begin();
 
 	quantizer  = new gChoice(x, y, 40, 15, "", false);
 	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
-	meter      = new gClick (bpm->x()+bpm->w()+8,  49, 40, 15, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, 49, 15, 15, "×");
-	divider    = new gClick (multiplier->x()+multiplier->w()+4,  49, 15, 15, "÷");
+	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 15, "4/1");
+	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "×");
+	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷");
 
 	end();
+	
+	resizable(NULL);   // don't resize any widget
 
 	char buf[6]; snprintf(buf, 6, "%f", G_Mixer.bpm);
 	bpm->copy_label(buf);
+	
 	bpm->callback(cb_bpm, (void*)this);
-
 	meter->callback(cb_meter, (void*)this);
-
 	multiplier->callback(cb_multiplier, (void*)this);
-
 	divider->callback(cb_divider, (void*)this);
 
 	quantizer->add("off", 0, cb_quantizer, (void*)this);

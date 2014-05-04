@@ -64,35 +64,17 @@ private:
 	static void cb_endprogram  (Fl_Widget *v, void *p);
 	inline void __cb_endprogram();
 
-/*
-					static void cb_change_bpm      (Fl_Widget *v, void *p);
-					static void cb_change_batt     (Fl_Widget *v, void *p);
-					static void cb_quantize        (Fl_Widget *v, void *p);
-					static void cb_beatsMultiply   (Fl_Widget *v, void *p);
-					static void cb_beatsDivide     (Fl_Widget *v, void *p);
-
-					inline void __cb_change_bpm();
-					inline void __cb_change_batt();
-					inline void __cb_quantize(int v);
-					inline void __cb_beatsMultiply();
-					inline void __cb_beatsDivide();
-*/
 public:
-/*
-					class gClick      *bpm;
-					class gClick      *beats;
-					class gClick      *beats_mul;
-					class gClick      *beats_div;
-					class gChoice     *quantize;
-*/
+
 	class gKeyboard   *keyboard;
 	class gBeatMeter  *beatMeter;
 	class gMenu       *menu;
 	class gInOut      *inOut;
 	class gController *controller;
+	class gTiming     *timing;
 
 	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
-	~gdMainWindow(); /// TODO - destructor might be unecessary (and wrong)
+	//~gdMainWindow(); /// TODO - destructor might be unecessary (and wrong)
 };
 
 

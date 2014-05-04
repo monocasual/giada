@@ -101,8 +101,8 @@ void __gu_blinkChannel(gChannel *gch) {
 
 void __gu_refreshColumn(Fl_Group *col) {
 	for (int i=0; i<col->children(); i++)	{
-		gChannel *gch = (gChannel *) col->child(i);
-		gch->refresh();
+		///gChannel *gch = (gChannel *) col->child(i);
+		///gch->refresh();
 	}
 }
 

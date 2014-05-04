@@ -382,10 +382,10 @@ void gSampleChannel::refresh() {
 	}
 	else
 	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
-		__gu_blinkChannel(this);    /// move to gChannel::blink
+		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
 
 	if (ch->recStatus & (REC_WAITING | REC_ENDING))
-		__gu_blinkChannel(this);    /// move to gChannel::blink
+		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
 
 	if (ch->wave != NULL) {
 
