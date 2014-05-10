@@ -70,26 +70,35 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	beatMeter  = new gBeatMeter(100, 83, 609, 20);
 	keyboard   = new gKeyboard(8, 122, w()-16, 380);
 	
+	/* zone 1 - menus, and I/O tools */
+	
 	Fl_Group *zone1 = new Fl_Group(8, 8, W-16, 20);	
 	zone1->add(menu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(inOut);
-	//zone1->box(FL_BORDER_BOX);
-	// ................. resizable(zone1);
 
+	/* zone 2 - controller and timing tools */
+	
 	Fl_Group *zone2 = new Fl_Group(8, controller->y(), W-16, controller->h());	
 	zone2->add(controller);
 	zone2->resizable(new Fl_Box(controller->x()+controller->w()+4, zone2->y(), 80, 20));
 	zone2->add(timing);
-	//zone2->box(FL_BORDER_BOX);
-	resizable(zone2);
+
+	/* zone 3 - beat meter */
 	
-	//Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, 500);	
+	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());	
+	zone3->add(beatMeter);
+	zone3->box(FL_BORDER_BOX);
+	
+	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
+	 * a group by itself) */
+
+	keyboard->box(FL_BORDER_BOX);
+	resizable(keyboard);
 	
 	add(zone1);
 	add(zone2);
-	//add(zone3);
-	add(beatMeter);
+	add(zone3);
 	add(keyboard);
 	callback(cb_endprogram);
 	gu_setFavicon(this);

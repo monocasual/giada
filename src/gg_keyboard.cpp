@@ -110,6 +110,10 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 
 	sampleButton->callback(cb_openMenu, (void*)this);
 	vol->callback(cb_changeVol, (void*)this);
+	
+	///
+	resizable(sampleButton);
+	///
 
 	ch->guiChannel = this;
 }
@@ -775,10 +779,10 @@ int gMidiChannel::keyPress(int e) {
 
 
 gKeyboard::gKeyboard(int X, int Y, int W, int H, const char *L)
-: Fl_Scroll(X, Y, W, H, L),
+: Fl_Scroll    (X, Y, W, H, L),
 	bckspcPressed(false),
-	endPressed(false),
-	spacePressed(false)
+	endPressed   (false),
+	spacePressed (false)
 {
 	color(COLOR_BG_MAIN);
 	type(Fl_Scroll::VERTICAL);
@@ -791,14 +795,20 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H, const char *L)
 	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+32, y(), (w()/2)-16, 0);
 	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new channel");
 	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new channel");
-
+	
 	/* begin() - end() don't work well here, with sub-Fl_Group */
 
 	add(addChannelL);
 	add(addChannelR);
 	add(gChannelsL);
 	add(gChannelsR);
-
+	
+	///
+	gChannelsL->box(FL_BORDER_BOX);
+	gChannelsR->box(FL_BORDER_BOX);
+	resizable(gChannelsL);
+	///
+	
 	gChannelsL->resizable(NULL);
 	gChannelsR->resizable(NULL);
 
