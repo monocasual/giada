@@ -200,7 +200,8 @@ private:
 
 public:
 
-	gKeyboard(int X,int Y,int W,int H,const char *L=0);
+	gKeyboard(int X, int Y, int W, int H);
+	
 	int handle(int e);
 
 	/* addChannel

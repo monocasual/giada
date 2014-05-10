@@ -93,7 +93,6 @@ gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int ar
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
 	 * a group by itself) */
 
-	keyboard->box(FL_BORDER_BOX);
 	resizable(keyboard);
 	
 	add(zone1);
