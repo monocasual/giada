@@ -91,9 +91,9 @@ int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
-Channel *glue_addChannel(int side, int type) {
-	Channel *ch    = G_Mixer.addChannel(side, type);
-	gChannel *gch  = mainWin->keyboard->addChannel(side, ch);
+Channel *glue_addChannel(int column, int type) {
+	Channel *ch    = G_Mixer.addChannel(column, type);
+	gChannel *gch  = mainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel = gch;
 	return ch;
 }

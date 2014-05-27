@@ -30,12 +30,10 @@
 #ifndef GG_KEYBOARD_H
 #define GG_KEYBOARD_H
 
-#include <stdio.h>
-#include <stdint.h>          // for intptr_t
+
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Group.H>
-#include "const.h"
 #include "utils.h"
 
 
@@ -78,7 +76,7 @@ public:
 
 };
 
-
+	
 /* ------------------------------------------------------------------ */
 
 
@@ -174,21 +172,50 @@ public:
 /* ------------------------------------------------------------------ */
 
 
+class gColumn : public Fl_Group {
+
+private:
+
+	static void cb_addChannel  (Fl_Widget *v, void *p);
+	inline void __cb_addChannel();
+
+	int openTypeMenu();
+
+	class gClick *addChannel;
+	
+	static int index;
+
+public:
+	
+	//~ void deleteChannel(gChannel *gch);
+
+	gColumn(int x, int y, int w, int h);
+	
+	inline int  getIndex()      { return index; }
+	inline void setIndex(int i) { index = i; }
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 class gKeyboard : public Fl_Scroll {
 
 private:
 
-	static void cb_addChannelL  (Fl_Widget *v, void *p);
+	/*static void cb_addChannelL  (Fl_Widget *v, void *p);
 	static void cb_addChannelR  (Fl_Widget *v, void *p);
 	inline void __cb_addChannelL();
-	inline void __cb_addChannelR();
+	inline void __cb_addChannelR();*/
+	static void cb_addColumn  (Fl_Widget *v, void *p);
+	inline void __cb_addColumn();
 
 	/* fixRightColumn
 	 * shift right column if scrollbar doesn't show up */
 
 	void fixRightColumn();
 
-	int openChanTypeMenu();
+	//int openChanTypeMenu();
 
 	bool bckspcPressed;
 	bool endPressed;
@@ -197,6 +224,12 @@ private:
 
 	class gClick *addChannelL;
 	class gClick *addChannelR;
+	class gClick *addColumnBtn;
+
+	/* columns
+	 * a vector of columns which in turn contain channels. */
+	
+	gVector<gColumn*> columns;	
 
 public:
 
@@ -241,5 +274,6 @@ public:
 	Fl_Group *gChannelsL;
 	Fl_Group *gChannelsR;
 };
+
 
 #endif

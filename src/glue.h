@@ -38,7 +38,7 @@
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
-class Channel *glue_addChannel(int side, int type);
+class Channel *glue_addChannel(int column, int type);
 
 /* loadChannel
  * fill an existing channel with a wave. */
@@ -49,7 +49,7 @@ void glue_deleteChannel(class Channel *ch);
 
 void glue_freeChannel(class Channel *ch);
 
-/** FIXME - noboy will call these via MIDI/keyb/mouse! */
+/** FIXME - nobody will call these via MIDI/keyb/mouse! */
 int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
 int glue_savePatch(const char *fullpath, const char *name, bool isProject);
 
@@ -125,11 +125,11 @@ void glue_startStopMetronome(bool gui=true);
  * Recalc=false: don't recalc internal position
  * check=true: check the points' consistency */
 
-/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+/** FIXME - nobody will call this via MIDI/keyb/mouse! */
 void glue_setBeginEndChannel(class gdEditor *win, class SampleChannel *ch, int b, int e,
 														 bool recalc=false, bool check=true);
 
-/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+/** FIXME - nobody will call this via MIDI/keyb/mouse! */
 void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
 
 void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
@@ -139,7 +139,7 @@ void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val, bool
  * numeric flag tells if we want to handle the dial or the numeric input
  * field. */
 
- /** FIXME - noboy will call this via MIDI/keyb/mouse! */
+ /** FIXME - nobody will call this via MIDI/keyb/mouse! */
 void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
 
 /* mute
@@ -155,7 +155,7 @@ void glue_setMute(class Channel *ch, bool gui=true);
 void glue_setSoloOn (class Channel *ch, bool gui=true);
 void glue_setSoloOff(class Channel *ch, bool gui=true);
 
-/** FIXME - noboy will call this via MIDI/keyb/mouse! */
+/** FIXME - nobody will call this via MIDI/keyb/mouse! */
 int glue_saveProject(const char *folderPath, const char *projName);
 
 

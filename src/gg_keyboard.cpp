@@ -782,45 +782,47 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll    (X, Y, W, H),
 	bckspcPressed(false),
 	endPressed   (false),
-	spacePressed (false)
+	spacePressed (false),
+	addColumnBtn (NULL)
 {
-	box(FL_BORDER_BOX);
 	color(COLOR_BG_MAIN);
-	type(Fl_Scroll::VERTICAL);
+	type(Fl_Scroll::BOTH_ALWAYS);
 	scrollbar.color(COLOR_BG_0);
 	scrollbar.selection_color(COLOR_BG_1);
 	scrollbar.labelcolor(COLOR_BD_1);
 	scrollbar.slider(G_BOX);
+	hscrollbar.color(COLOR_BG_0);
+	hscrollbar.selection_color(COLOR_BG_1);
+	hscrollbar.labelcolor(COLOR_BD_1);
+	hscrollbar.slider(G_BOX);
+	
+	__cb_addColumn();
+	//addColumnBtn = new gClick(x()+400, y(), 200, 20, "Add new column");
+	//addColumnBtn->callback(cb_addColumn, (void*) this);
 
+	/*
 	gChannelsL  = new Fl_Group(x(), y(), (w()/2)-16, 0);
 	gChannelsR  = new Fl_Group(gChannelsL->x()+gChannelsL->w()+32, y(), (w()/2)-16, 0);
 	addChannelL = new gClick(gChannelsL->x(), gChannelsL->y()+gChannelsL->h(), gChannelsL->w(), 20, "Add new channel");
 	addChannelR = new gClick(gChannelsR->x(), gChannelsR->y()+gChannelsR->h(), gChannelsR->w(), 20, "Add new channel");
-
-	/* begin() - end() don't work well here, with sub-Fl_Group */
 
 	add(addChannelL);
 	add(addChannelR);
 	add(gChannelsL);
 	add(gChannelsR);
 	
-	///
-	gChannelsL->box(FL_BORDER_BOX);
-	gChannelsR->box(FL_BORDER_BOX);
-	resizable(gChannelsL);
-	///
-	
 	gChannelsL->resizable(NULL);
 	gChannelsR->resizable(NULL);
 
 	addChannelL->callback(cb_addChannelL, (void*) this);
 	addChannelR->callback(cb_addChannelR, (void*) this);
+	*/
 }
 
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 int gKeyboard::openChanTypeMenu() {
 
 	Fl_Menu_Item rclick_menu[] = {
@@ -844,7 +846,7 @@ int gKeyboard::openChanTypeMenu() {
 		return CHANNEL_MIDI;
 	return 0;
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
@@ -921,9 +923,10 @@ void gKeyboard::updateChannels(char side) {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gKeyboard::cb_addChannelL(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addChannelL(); }
-void gKeyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addChannelR(); }
+void gKeyboard::cb_addChannelR(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addChannelR(); }*/
+void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)   { ((gKeyboard*)p)->__cb_addColumn(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -983,7 +986,7 @@ bool gKeyboard::hasScrollbar() {
 
 /* ------------------------------------------------------------------ */
 
-
+/*
 void gKeyboard::__cb_addChannelL() {
 	int type = openChanTypeMenu();
 	if (type)
@@ -995,7 +998,7 @@ void gKeyboard::__cb_addChannelR() {
 	int type = openChanTypeMenu();
 	if (type)
 		glue_addChannel(1, type);
-}
+}*/
 
 
 /* ------------------------------------------------------------------ */
@@ -1101,3 +1104,101 @@ void gKeyboard::setChannelWithActions(gSampleChannel *gch) {
 		gch->delActionButton();
 }
 
+
+/* ------------------------------------------------------------------ */
+
+
+void gKeyboard::__cb_addColumn()
+{
+	int colx;
+	int colxw;
+	int colw = 360;
+	if (columns.size == 0) {
+		colx  = x();
+		colxw = colx + colw; 
+		addColumnBtn = new gClick(colxw + 16, y(), 200, 20, "Add new column");
+		addColumnBtn->callback(cb_addColumn, (void*) this);
+	}
+	else {
+		gColumn *prev = columns.last();
+		colx  = prev->x()+prev->w() + 16;
+		colxw = colx + colw;
+		addColumnBtn->position(colxw + 16, y());
+	}
+	gColumn *gc = new gColumn(colx, y(), colw, 40);
+	add(gc);
+	columns.add(gc);
+	redraw();
+	
+	gLog("[gKeyboard] new column added (index = %d), total count = %d\n", gc->getIndex(), columns.size);
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+int gColumn::index = 0;
+
+
+/* ------------------------------------------------------------------ */
+
+
+gColumn::gColumn(int X, int Y, int W, int H)
+	: Fl_Group(X, Y, W, H)
+{
+	begin();
+	addChannel = new gClick(x(), y(), w(), 20, "Add new channel");
+	end();
+	
+	addChannel->callback(cb_addChannel, (void*)this);
+	box(FL_BORDER_BOX);
+	
+	index++;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChannel(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::__cb_addChannel() {
+	gLog("add channel\n");
+	int type = openTypeMenu();
+	if (type)
+		glue_addChannel(0, type);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gColumn::openTypeMenu() {
+
+	Fl_Menu_Item rclick_menu[] = {
+		{"Sample channel"},
+		{"MIDI channel"},
+		{0}
+	};
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_BOX);
+	b->textsize(11);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(COLOR_BG_0);
+
+	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	if (!m) return 0;
+
+	if (strcmp(m->label(), "Sample channel") == 0)
+		return CHANNEL_SAMPLE;
+	if (strcmp(m->label(), "MIDI channel") == 0)
+		return CHANNEL_MIDI;
+	return 0;
+}
