@@ -59,6 +59,7 @@ extern gdMainWindow *mainWin;
 gChannel::gChannel(int X, int Y, int W, int H)
  : Fl_Group(X, Y, W, H, NULL)
 {
+	box(FL_BORDER_BOX);
 }
 
 
@@ -74,9 +75,9 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 213, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 193, 20, "-- no sample --");
 #else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 237, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 217, 20, "-- no sample --");
 #endif
 	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
 	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -110,10 +111,6 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 
 	sampleButton->callback(cb_openMenu, (void*)this);
 	vol->callback(cb_changeVol, (void*)this);
-	
-	///
-	resizable(sampleButton);
-	///
 
 	ch->guiChannel = this;
 }
@@ -136,7 +133,8 @@ void gSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gSampleChannel*)
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::__cb_mute() {
+void gSampleChannel::__cb_mute()
+{
 	glue_setMute(ch);
 }
 
@@ -144,7 +142,8 @@ void gSampleChannel::__cb_mute() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::__cb_solo() {
+void gSampleChannel::__cb_solo()
+{
 	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
 }
 
@@ -152,7 +151,8 @@ void gSampleChannel::__cb_solo() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::__cb_changeVol() {
+void gSampleChannel::__cb_changeVol()
+{
 	glue_setChanVol(ch, vol->value());
 }
 
@@ -161,7 +161,8 @@ void gSampleChannel::__cb_changeVol() {
 
 
 #ifdef WITH_VST
-void gSampleChannel::__cb_openFxWindow() {
+void gSampleChannel::__cb_openFxWindow()
+{
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
@@ -170,7 +171,8 @@ void gSampleChannel::__cb_openFxWindow() {
 
 
 
-void gSampleChannel::__cb_button() {
+void gSampleChannel::__cb_button()
+{
 	if (button->value())    // pushed
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 	else                    // released
@@ -181,8 +183,8 @@ void gSampleChannel::__cb_button() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::__cb_openMenu() {
-
+void gSampleChannel::__cb_openMenu()
+{
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
 
@@ -551,9 +553,9 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 	button       = new gButton (x(), y(), 20, 20);
 
 #if defined(WITH_VST)
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 261, 20, "-- MIDI --");
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 241, 20, "-- MIDI --");
 #else
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 285, 20, "-- MIDI --");
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 265, 20, "-- MIDI --");
 #endif
 
 	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -606,7 +608,8 @@ void gMidiChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gMidiChannel*)p)->
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::__cb_mute() {
+void gMidiChannel::__cb_mute()
+{
 	glue_setMute(ch);
 }
 
@@ -614,7 +617,8 @@ void gMidiChannel::__cb_mute() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::__cb_solo() {
+void gMidiChannel::__cb_solo()
+{
 	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
 }
 
@@ -622,7 +626,8 @@ void gMidiChannel::__cb_solo() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::__cb_changeVol() {
+void gMidiChannel::__cb_changeVol()
+{
 	glue_setChanVol(ch, vol->value());
 }
 
@@ -631,7 +636,8 @@ void gMidiChannel::__cb_changeVol() {
 
 
 #ifdef WITH_VST
-void gMidiChannel::__cb_openFxWindow() {
+void gMidiChannel::__cb_openFxWindow()
+{
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
@@ -639,7 +645,8 @@ void gMidiChannel::__cb_openFxWindow() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::__cb_button() {
+void gMidiChannel::__cb_button()
+{
 	if (button->value())
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 }
@@ -648,8 +655,8 @@ void gMidiChannel::__cb_button() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::__cb_openMenu() {
-
+void gMidiChannel::__cb_openMenu()
+{
 	Fl_Menu_Item rclick_menu[] = {
 		{"Edit actions..."},                        // 0
 		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 1
@@ -710,8 +717,8 @@ void gMidiChannel::__cb_openMenu() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::refresh() {
-
+void gMidiChannel::refresh()
+{
 	if (ch->status == STATUS_OFF) {
 		sampleButton->bgColor0 = COLOR_BG_0;
 		sampleButton->bdColor  = COLOR_BD_0;
@@ -737,7 +744,8 @@ void gMidiChannel::refresh() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::reset() {
+void gMidiChannel::reset()
+{
 	sampleButton->bgColor0 = COLOR_BG_0;
 	sampleButton->bdColor  = COLOR_BD_0;
 	sampleButton->txtColor = COLOR_TEXT_0;
@@ -749,7 +757,8 @@ void gMidiChannel::reset() {
 /* ------------------------------------------------------------------ */
 
 
-void gMidiChannel::update() {
+void gMidiChannel::update()
+{
 
 	if (ch->midiOut) {
 		char tmp[32];
@@ -768,7 +777,8 @@ void gMidiChannel::update() {
 /* ------------------------------------------------------------------ */
 
 
-int gMidiChannel::keyPress(int e) {
+int gMidiChannel::keyPress(int e)
+{
 	return 1; // does nothing for MidiChannel
 }
 
@@ -850,20 +860,22 @@ int gKeyboard::openChanTypeMenu() {
 
 /* ------------------------------------------------------------------ */
 
-
-void gKeyboard::fixRightColumn() {
+/*
+void gKeyboard::fixRightColumn()
+{
 	if (!hasScrollbar())
 		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+32, gChannelsR->y());
 	else
 		gChannelsR->position(gChannelsL->x()+gChannelsL->w()+8, gChannelsR->y());
 	addChannelR->position(gChannelsR->x(), addChannelR->y());
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::freeChannel(gChannel *gch) {
+void gKeyboard::freeChannel(gChannel *gch)
+{
 	gch->reset();
 }
 
@@ -871,22 +883,23 @@ void gKeyboard::freeChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::deleteChannel(gChannel *gch) {
-	Fl::lock();
-	gch->hide();
-	gChannelsR->remove(gch);
-	gChannelsL->remove(gch);
-	delete gch;
-	//ch->guiChannel = NULL; old stuff: still required?
-	Fl::unlock();
-	fixRightColumn();
+void gKeyboard::deleteChannel(gChannel *gch)
+{
+	for (unsigned i=0; i<columns.size; i++) {
+		int k = columns.at(i)->find(gch);
+		if (k != columns.at(i)->children()) {
+			columns.at(i)->deleteChannel(gch);
+			return;
+		}
+	}
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::updateChannel(gChannel *gch) {
+void gKeyboard::updateChannel(gChannel *gch)
+{
 	gch->update();
 }
 
@@ -894,29 +907,28 @@ void gKeyboard::updateChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::updateChannels(char side)
+void gKeyboard::updateColumns()
 {
-	Fl_Group *group;
-	gClick   *add;
-
-	if (side == 0)	{
-		group = gChannelsL;
-		add   = addChannelL;
+	gLog("[gKeyboard] %d columns here\n", columns.size);
+	
+	/* if only one column exists don't cleanup: the initial column must
+	 * stay here. */
+	 
+	if (columns.size == 1)
+		return;
+		
+	/* otherwise delete all empty columns */
+		
+	for (unsigned i=columns.size-1; i>=1; i--) {
+		if (columns.at(i)->isEmpty()) {
+			delete columns.at(i);
+			columns.del(i);
+		}
 	}
-	else {
-		group = gChannelsR;
-		add   = addChannelR;
-	}
-
-	//gLog("[keyboard::updateChannels] side %d has %d widgets\n", side, group->children());
-
-	for (int i=0; i<group->children(); i++) {
-		gChannel *gch = (gChannel*) group->child(i);
-		gch->position(gch->x(), group->y()+(i*24));
-	}
-	group->size(group->w(), group->children()*24);
-	add->position(add->x(), group->y()+group->h());
-
+		
+	/** TODO - reposition columns and addColumnBtn 
+	addColumnBtn->position(columns.at(0)->x() + columns.at(0)->w() + 16, y());
+	*/
 	redraw();
 }
 
@@ -951,45 +963,6 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch)
 	gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	
 	return col->addChannel(ch);
-	
-	/*
-	Fl_Group *group;
-	gClick   *add;
-
-	if (column == 0) {
-		group = gChannelsL;
-		add   = addChannelL;
-	}
-	else {
-		group = gChannelsR;
-		add   = addChannelR;
-	}
-
-	gChannel *gch = NULL;
-
-	if (ch->type == CHANNEL_SAMPLE)
-		gch = (gSampleChannel*) new gSampleChannel(
-				group->x(),
-				group->y() + group->children() * 24,
-				group->w(),
-				20,
-				(SampleChannel*) ch);
-	else
-		gch = (gMidiChannel*) new gMidiChannel(
-				group->x(),
-				group->y() + group->children() * 24,
-				group->w(),
-				20,
-				(MidiChannel*) ch);
-
-	group->add(gch);
-	group->size(group->w(), group->children() * 24);
-	add->position(group->x(), group->y()+group->h());
-	fixRightColumn();
-	redraw();
-
-	return gch;
-	*/
 }
 
 
@@ -1176,7 +1149,7 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	resizable(NULL);
 	
 	addChannelBtn->callback(cb_addChannel, (void*)this);
-	box(FL_BORDER_BOX);
+	/**box(FL_BORDER_BOX);*/
 	
 	index = indexGenerator++;
 }
@@ -1194,7 +1167,7 @@ void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChan
 gChannel *gColumn::addChannel(class Channel *ch)
 {
 	gChannel *gch = NULL;
-
+	
 	if (ch->type == CHANNEL_SAMPLE)
 		gch = (gSampleChannel*) new gSampleChannel(
 				x(),
@@ -1213,8 +1186,36 @@ gChannel *gColumn::addChannel(class Channel *ch)
 	add(gch);
 	size(w(), children() * 24);
 	redraw();
-	
+
+	ch->column = index;	
 	return gch;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::deleteChannel(gChannel *gch)
+{
+	gch->hide();
+	remove(gch);
+	delete gch;
+	
+	/* if not empty, reposition all other channels and resize this group.
+	 * Otherwise call gKeyboard which cleans up the empty columns. */
+	
+	if (isEmpty()) {
+		gLog("[gColumn::deleteChannel] this column is empty, please clean up\n");
+		((gKeyboard*)parent())->updateColumns();
+	}
+	else {
+		for (int i=0; i<children(); i++) {
+			gch = (gChannel*) child(i);
+			gch->position(gch->x(), y()+(i*24));
+		}
+		size(w(), children()*24);
+		redraw();
+	}
 }
 
 

@@ -149,7 +149,10 @@ public:
 	int     index;                // unique id
 	int     type;                 // midi or sample
 	int     status;	              // status: see const.h
+	int     column;               // column index
+	/**/
 	char    side;                 // left or right column
+	/**/
 	float   volume;               // global volume
 	float   volume_i;             // internal volume
 	float   volume_d;             // delta volume (for envelope)

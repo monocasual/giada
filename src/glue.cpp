@@ -189,8 +189,8 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 /* ------------------------------------------------------------------ */
 
 
-int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
-
+int glue_savePatch(const char *fullpath, const char *name, bool isProject)
+{
 	if (G_Patch.write(fullpath, name, isProject) == 1) {
 		strcpy(G_Patch.name, name);
 		G_Patch.name[strlen(name)] = '\0';
@@ -206,21 +206,23 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_deleteChannel(Channel *ch) {
+void glue_deleteChannel(Channel *ch)
+{
 	int index = ch->index;
-	int side  = ch->side;
 	recorder::clearChan(index);
+	Fl::lock();
 	mainWin->keyboard->deleteChannel(ch->guiChannel);
+	Fl::unlock();
 	G_Mixer.deleteChannel(ch);
 	gu_closeAllSubwindows();
-	mainWin->keyboard->updateChannels(side);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_freeChannel(Channel *ch) {
+void glue_freeChannel(Channel *ch)
+{
 	mainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
 	ch->empty();
@@ -230,7 +232,8 @@ void glue_freeChannel(Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBpm(const char *v1, const char *v2) {
+void glue_setBpm(const char *v1, const char *v2)
+{
 	char  buf[6];
 	float value = atof(v1) + (atof(v2)/10);
 	if (value < 20.0f)	{
@@ -261,8 +264,8 @@ void glue_setBpm(const char *v1, const char *v2) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBeats(int beats, int bars, bool expand) {
-
+void glue_setBeats(int beats, int bars, bool expand)
+{
 	/* temp vars to store old data (they are necessary) */
 
 	int      oldvalue = G_Mixer.beats;
@@ -315,7 +318,8 @@ void glue_setBeats(int beats, int bars, bool expand) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startStopSeq(bool gui) {
+void glue_startStopSeq(bool gui)
+{
 	G_Mixer.running ? glue_stopSeq(gui) : glue_startSeq(gui);
 }
 
@@ -323,8 +327,8 @@ void glue_startStopSeq(bool gui) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_startSeq(bool gui) {
-
+void glue_startSeq(bool gui)
+{
 	G_Mixer.running = true;
 
 	if (gui) {

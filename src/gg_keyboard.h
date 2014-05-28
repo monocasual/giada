@@ -192,10 +192,11 @@ public:
 	
 	gChannel *addChannel(class Channel *ch);
 	
-	//~ void deleteChannel(gChannel *gch);
+	void deleteChannel(gChannel *gch);
 	
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
+	inline bool isEmpty()       { return children() == 1; }
 };
 
 
@@ -216,7 +217,7 @@ private:
 	/* fixRightColumn
 	 * shift right column if scrollbar doesn't show up */
 
-	void fixRightColumn();
+	/*void fixRightColumn();*/
 
 	//int openChanTypeMenu();
 
@@ -260,7 +261,10 @@ public:
 
 	void updateChannel(gChannel *gch);
 
-	void updateChannels(char side);
+	/* updateColumns
+	 * reorganize columns layout by removing empty gaps. */
+	 
+	void updateColumns();
 
 	/* clear
 	 * delete all channels and groups */
