@@ -69,8 +69,8 @@ static bool __soloSession__ = false;
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath) {
-
+int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath)
+{
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
@@ -91,7 +91,8 @@ int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath) {
 /* ------------------------------------------------------------------ */
 
 
-Channel *glue_addChannel(int column, int type) {
+Channel *glue_addChannel(int column, int type)
+{
 	Channel *ch    = G_Mixer.addChannel(column, type);
 	gChannel *gch  = mainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel = gch;
@@ -102,8 +103,8 @@ Channel *glue_addChannel(int column, int type) {
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject) {
-
+int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject)
+{
 	/* update browser's status bar with % 0.1 */
 
 	status->show();

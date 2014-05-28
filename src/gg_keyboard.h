@@ -181,15 +181,18 @@ private:
 
 	int openTypeMenu();
 
-	class gClick *addChannel;
+	class gClick *addChannelBtn;
 	
-	static int index;
+	static int indexGenerator;
+	int index;
 
 public:
 	
-	//~ void deleteChannel(gChannel *gch);
-
 	gColumn(int x, int y, int w, int h);
+	
+	gChannel *addChannel(class Channel *ch);
+	
+	//~ void deleteChannel(gChannel *gch);
 	
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
@@ -241,7 +244,7 @@ public:
 	 * add a new channel to gChannels[l/r]. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). */
 
-	gChannel *addChannel(char side, class Channel *ch);
+	gChannel *addChannel(int column, class Channel *ch);
 
 	/* deleteChannel
 	 * delete a channel from gChannels<> where gChannel->ch == ch and remove

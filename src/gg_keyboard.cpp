@@ -894,8 +894,8 @@ void gKeyboard::updateChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::updateChannels(char side) {
-
+void gKeyboard::updateChannels(char side)
+{
 	Fl_Group *group;
 	gClick   *add;
 
@@ -932,11 +932,31 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)   { ((gKeyboard*)p)->__cb_ad
 /* ------------------------------------------------------------------ */
 
 
-gChannel *gKeyboard::addChannel(char side, Channel *ch) {
+gChannel *gKeyboard::addChannel(int colIndex, Channel *ch)
+{
+	/* search column by index */
+	
+	gColumn *col = NULL;
+	for (unsigned i=0; i<columns.size; i++)
+		if (columns.at(i)->getIndex() == colIndex) {
+			col = columns.at(i);
+			break;
+		}
+	
+	if (!col) {
+		gLog("[gKeyboard::addChannel] column not found!\n");
+		return NULL;
+	}
+	
+	gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+	
+	return col->addChannel(ch);
+	
+	/*
 	Fl_Group *group;
 	gClick   *add;
 
-	if (side == 0) {
+	if (column == 0) {
 		group = gChannelsL;
 		add   = addChannelL;
 	}
@@ -969,6 +989,7 @@ gChannel *gKeyboard::addChannel(char side, Channel *ch) {
 	redraw();
 
 	return gch;
+	*/
 }
 
 
@@ -1139,7 +1160,7 @@ void gKeyboard::__cb_addColumn()
 /* ------------------------------------------------------------------ */
 
 
-int gColumn::index = 0;
+int gColumn::indexGenerator = 0;
 
 
 /* ------------------------------------------------------------------ */
@@ -1149,13 +1170,15 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H)
 {
 	begin();
-	addChannel = new gClick(x(), y(), w(), 20, "Add new channel");
+	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 	
-	addChannel->callback(cb_addChannel, (void*)this);
+	resizable(NULL);
+	
+	addChannelBtn->callback(cb_addChannel, (void*)this);
 	box(FL_BORDER_BOX);
 	
-	index++;
+	index = indexGenerator++;
 }
 
 
@@ -1168,19 +1191,50 @@ void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChan
 /* ------------------------------------------------------------------ */
 
 
-void gColumn::__cb_addChannel() {
-	gLog("add channel\n");
-	int type = openTypeMenu();
-	if (type)
-		glue_addChannel(0, type);
+gChannel *gColumn::addChannel(class Channel *ch)
+{
+	gChannel *gch = NULL;
+
+	if (ch->type == CHANNEL_SAMPLE)
+		gch = (gSampleChannel*) new gSampleChannel(
+				x(),
+				y() + children() * 24,
+				w(),
+				20,
+				(SampleChannel*) ch);
+	else
+		gch = (gMidiChannel*) new gMidiChannel(
+				x(),
+				y() + children() * 24,
+				w(),
+				20,
+				(MidiChannel*) ch);	
+	
+	add(gch);
+	size(w(), children() * 24);
+	redraw();
+	
+	return gch;
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-int gColumn::openTypeMenu() {
+void gColumn::__cb_addChannel()
+{
+	gLog("[gColumn::__cb_addChannel] index = %d\n", index);
+	int type = openTypeMenu();
+	if (type)
+		glue_addChannel(index, type);
+}
 
+
+/* ------------------------------------------------------------------ */
+
+
+int gColumn::openTypeMenu()
+{
 	Fl_Menu_Item rclick_menu[] = {
 		{"Sample channel"},
 		{"MIDI channel"},
