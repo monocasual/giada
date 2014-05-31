@@ -909,8 +909,6 @@ void gKeyboard::updateChannel(gChannel *gch)
 
 void gKeyboard::updateColumns()
 {
-	gLog("[gKeyboard] %d columns here\n", columns.size);
-	
 	/* if only one column exists don't cleanup: the initial column must
 	 * stay here. */
 	 
@@ -925,6 +923,13 @@ void gKeyboard::updateColumns()
 			columns.del(i);
 		}
 	}
+	
+	/* compact column, avoid empty spaces */
+	
+	for (unsigned i=1; i<columns.size; i++)
+		columns.at(i)->position(columns.at(i-1)->x() + columns.at(i-1)->w() + 16, y());
+	
+	addColumnBtn->position(columns.last()->x() + columns.last()->w() + 16, y());
 		
 	/** TODO - reposition columns and addColumnBtn 
 	addColumnBtn->position(columns.at(0)->x() + columns.at(0)->w() + 16, y());
