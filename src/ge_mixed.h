@@ -213,8 +213,10 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gChoice : public Fl_Choice {
+class gChoice : public Fl_Choice
+{
 public:
+
 	gChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
 	void draw();
 
@@ -232,7 +234,8 @@ public:
 /* Status
  * The chan status. */
 
-class gStatus : public Fl_Box {
+class gStatus : public Fl_Box
+{
 public:
 	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
 	void draw();
@@ -258,7 +261,8 @@ void gDrawBox(int x, int y, int w, int h, Fl_Color c);
  * resized. Thanks to Greg Ercolano from FLTK dev team.
  * http://seriss.com/people/erco/fltk/ */
 
-class gLiquidScroll : public Fl_Scroll {
+class gLiquidScroll : public Fl_Scroll
+{
 public:
 	gLiquidScroll(int x, int y, int w, int h, const char *l=0);
 	void resize(int x, int y, int w, int h);
@@ -271,7 +275,8 @@ public:
 /* gScroll
  * custom scroll with nice scrollbars and something else. */
 
-class gScroll : public Fl_Scroll {
+class gScroll : public Fl_Scroll
+{
 public:
 	gScroll(int x, int y, int w, int h, int type=Fl_Scroll::BOTH);
 };

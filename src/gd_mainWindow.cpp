@@ -324,6 +324,7 @@ void gMenu::__cb_edit() {
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
 		{"Clear all actions"},
+		{"Remove empty columns"},
 		{"Reset to init state"},
 		{"Setup global MIDI input..."},
 		{0}
@@ -374,6 +375,10 @@ void gMenu::__cb_edit() {
 			return;
 		gu_closeAllSubwindows();
 		glue_resetToInitState();
+		return;
+	}
+	if (strcmp(m->label(), "Remove empty columns") == 0) {
+		mainWin->keyboard->updateColumns();
 		return;
 	}
 	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {

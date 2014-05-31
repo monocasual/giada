@@ -59,7 +59,6 @@ extern gdMainWindow *mainWin;
 gChannel::gChannel(int X, int Y, int W, int H)
  : Fl_Group(X, Y, W, H, NULL)
 {
-	box(FL_BORDER_BOX);
 }
 
 
@@ -75,9 +74,9 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
 
 #if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 193, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 192, 20, "-- no sample --");
 #else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 217, 20, "-- no sample --");
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), 216, 20, "-- no sample --");
 #endif
 	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
 	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -553,9 +552,9 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 	button       = new gButton (x(), y(), 20, 20);
 
 #if defined(WITH_VST)
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 241, 20, "-- MIDI --");
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 240, 20, "-- MIDI --");
 #else
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 265, 20, "-- MIDI --");
+	sampleButton = new gClick (button->x()+button->w()+4, y(), 264, 20, "-- MIDI --");
 #endif
 
 	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -806,7 +805,15 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_BOX);
 	
+	/* add 6 empty columns as init layout */
+	
 	__cb_addColumn();
+	__cb_addColumn();
+	__cb_addColumn();
+	__cb_addColumn();
+	__cb_addColumn();
+	__cb_addColumn();
+	
 	//addColumnBtn = new gClick(x()+400, y(), 200, 20, "Add new column");
 	//addColumnBtn->callback(cb_addColumn, (void*) this);
 
@@ -930,10 +937,7 @@ void gKeyboard::updateColumns()
 		columns.at(i)->position(columns.at(i-1)->x() + columns.at(i-1)->w() + 16, y());
 	
 	addColumnBtn->position(columns.last()->x() + columns.last()->w() + 16, y());
-		
-	/** TODO - reposition columns and addColumnBtn 
-	addColumnBtn->position(columns.at(0)->x() + columns.at(0)->w() + 16, y());
-	*/
+
 	redraw();
 }
 
@@ -1124,7 +1128,7 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw, 40);
+	gColumn *gc = new gColumn(colx, y(), colw, 2000);
 	add(gc);
 	columns.add(gc);
 	redraw();
@@ -1152,11 +1156,21 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	end();
 	
 	resizable(NULL);
-	
+
 	addChannelBtn->callback(cb_addChannel, (void*)this);
-	/**box(FL_BORDER_BOX);*/
 	
 	index = indexGenerator++;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::draw()
+{
+	fl_color(fl_rgb_color(27, 27, 27));
+	fl_rectf(x(), y(), w(), h());
+	Fl_Group::draw();
 }
 
 
@@ -1206,21 +1220,14 @@ void gColumn::deleteChannel(gChannel *gch)
 	remove(gch);
 	delete gch;
 	
-	/* if not empty, reposition all other channels and resize this group.
-	 * Otherwise call gKeyboard which cleans up the empty columns. */
-	
-	if (isEmpty()) {
-		gLog("[gColumn::deleteChannel] this column is empty, please clean up\n");
-		((gKeyboard*)parent())->updateColumns();
+	/* reposition all other channels and resize this group */
+
+	for (int i=0; i<children(); i++) {
+		gch = (gChannel*) child(i);
+		gch->position(gch->x(), y()+(i*24));
 	}
-	else {
-		for (int i=0; i<children(); i++) {
-			gch = (gChannel*) child(i);
-			gch->position(gch->x(), y()+(i*24));
-		}
-		size(w(), children()*24);
-		redraw();
-	}
+	size(w(), children()*24);
+	redraw();
 }
 
 

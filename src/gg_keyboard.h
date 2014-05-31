@@ -194,6 +194,8 @@ public:
 	
 	void deleteChannel(gChannel *gch);
 	
+	void draw();
+	
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
