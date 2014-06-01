@@ -37,8 +37,8 @@
 #include "utils.h"
 
 
-class gChannel : public Fl_Group {
-
+class gChannel : public Fl_Group
+{
 public:
 
 	gChannel(int x, int y, int w, int h);
@@ -80,8 +80,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gSampleChannel : public gChannel {
-
+class gSampleChannel : public gChannel
+{
 private:
 
 	static void cb_button        (Fl_Widget *v, void *p);
@@ -133,8 +133,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gMidiChannel : public gChannel {
-
+class gMidiChannel : public gChannel
+{
 private:
 
 	static void cb_button        (Fl_Widget *v, void *p);
@@ -172,8 +172,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gColumn : public Fl_Group {
-
+class gColumn : public Fl_Group
+{
 private:
 
 	static void cb_addChannel  (Fl_Widget *v, void *p);
@@ -190,9 +190,21 @@ public:
 	
 	gColumn(int x, int y, int w, int h);
 	
+	/* addChannel
+	 * add a new channel in this column and set the internal pointer
+	 * to channel to 'ch'. */
+	 
 	gChannel *addChannel(class Channel *ch);
 	
+	/* deleteChannel
+	 * remove the channel 'gch' from this column. */
+	 
 	void deleteChannel(gChannel *gch);
+	
+	/* refreshChannels
+	 * update channels' graphical statues. Called on each GUI cycle. */
+	 
+	void refreshChannels();
 	
 	void draw();
 	
@@ -205,14 +217,10 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gKeyboard : public Fl_Scroll {
-
+class gKeyboard : public Fl_Scroll
+{
 private:
 
-	/*static void cb_addChannelL  (Fl_Widget *v, void *p);
-	static void cb_addChannelR  (Fl_Widget *v, void *p);
-	inline void __cb_addChannelL();
-	inline void __cb_addChannelR();*/
 	static void cb_addColumn  (Fl_Widget *v, void *p);
 	inline void __cb_addColumn();
 
@@ -263,10 +271,15 @@ public:
 
 	void updateChannel(gChannel *gch);
 
-	/* updateColumns
+	/* organizeColumns
 	 * reorganize columns layout by removing empty gaps. */
 	 
-	void updateColumns();
+	void organizeColumns();
+	
+	/* refreshColumns
+	 * refresh each column's channel, called on each GUI cycle. */
+	 
+	void refreshColumns();
 
 	/* clear
 	 * delete all channels and groups */
@@ -278,7 +291,7 @@ public:
 
 	void setChannelWithActions(gSampleChannel *gch);
 
-	bool hasScrollbar();
+	/*bool hasScrollbar();*/
 
 	Fl_Group *gChannelsL;
 	Fl_Group *gChannelsR;

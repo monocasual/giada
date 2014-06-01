@@ -231,6 +231,18 @@ void gInOut::__cb_inToOut() {
 
 
 /* ------------------------------------------------------------------ */
+
+
+void gInOut::refresh()
+{
+	outMeter->mixerPeak = G_Mixer.peakOut;
+	inMeter->mixerPeak  = G_Mixer.peakIn;
+	outMeter->redraw();
+	inMeter->redraw();		
+}
+
+
+/* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 /* ------------------------------------------------------------------ */
 
@@ -393,7 +405,7 @@ void gMenu::__cb_edit() {
 		return;
 	}
 	if (strcmp(m->label(), "Remove empty columns") == 0) {
-		mainWin->keyboard->updateColumns();
+		mainWin->keyboard->organizeColumns();
 		return;
 	}
 	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {

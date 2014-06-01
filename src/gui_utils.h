@@ -46,14 +46,12 @@
 #endif
 
 
+void __gu_blinkChannel(class gChannel *gch);
+
 /* refresh
  * refresh all GUI elements. */
 
 void gu_refresh();
-
-void __gu_refreshColumn(Fl_Group *col);
-
-void __gu_blinkChannel(class gChannel *gch);
 
 /* trim_label
  * trim a string C to N chars, and apply it to label W. */

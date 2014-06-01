@@ -348,7 +348,8 @@ void gSampleChannel::__cb_openMenu()
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::__cb_readActions() {
+void gSampleChannel::__cb_readActions()
+{
 	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
 }
 
@@ -356,7 +357,8 @@ void gSampleChannel::__cb_readActions() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::openBrowser(int type) {
+void gSampleChannel::openBrowser(int type)
+{
 	const char *title = "";
 	switch (type) {
 		case BROWSER_LOAD_SAMPLE:
@@ -377,8 +379,8 @@ void gSampleChannel::openBrowser(int type) {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::refresh() {
-
+void gSampleChannel::refresh()
+{
 	if (ch->status == STATUS_OFF) {
 		sampleButton->bgColor0 = COLOR_BG_0;
 		sampleButton->bdColor  = COLOR_BD_0;
@@ -417,7 +419,8 @@ void gSampleChannel::refresh() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::reset() {
+void gSampleChannel::reset()
+{
 	sampleButton->bgColor0 = COLOR_BG_0;
 	sampleButton->bdColor  = COLOR_BD_0;
 	sampleButton->txtColor = COLOR_TEXT_0;
@@ -431,8 +434,8 @@ void gSampleChannel::reset() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::update() {
-
+void gSampleChannel::update()
+{
 	/* update sample button's label */
 
 	switch (ch->status) {
@@ -480,7 +483,8 @@ void gSampleChannel::update() {
 /* ------------------------------------------------------------------ */
 
 
-int gSampleChannel::keyPress(int e) {
+int gSampleChannel::keyPress(int e)
+{
 	int ret;
 	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
 		ret = 1;
@@ -504,8 +508,8 @@ int gSampleChannel::keyPress(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::addActionButton() {
-
+void gSampleChannel::addActionButton()
+{
 	/* quit if 'R' exists yet. */
 
 	if (readActions != NULL)
@@ -531,7 +535,8 @@ void gSampleChannel::addActionButton() {
 /* ------------------------------------------------------------------ */
 
 
-void gSampleChannel::delActionButton(bool force) {
+void gSampleChannel::delActionButton(bool force)
+{
 	if (!force && (readActions == NULL || ch->hasActions))
 		return;
 
@@ -919,7 +924,7 @@ void gKeyboard::updateChannel(gChannel *gch)
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::updateColumns()
+void gKeyboard::organizeColumns()
 {
 	/* if only one column exists don't cleanup: the initial column must
 	 * stay here. */
@@ -983,6 +988,16 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch)
 /* ------------------------------------------------------------------ */
 
 
+void gKeyboard::refreshColumns()
+{
+	for (unsigned i=0; i<columns.size; i++)
+		columns.at(i)->refreshChannels();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+/*
 bool gKeyboard::hasScrollbar() {
 	if (24 * (gChannelsL->children()) > h())
 		return true;
@@ -990,7 +1005,7 @@ bool gKeyboard::hasScrollbar() {
 		return true;
 	return false;
 }
-
+*/
 
 /* ------------------------------------------------------------------ */
 
@@ -1165,6 +1180,16 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 	
 	index = indexGenerator++;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::refreshChannels()
+{
+	for (int i=1; i<children(); i++)
+		((gChannel*) child(i))->refresh();
 }
 
 

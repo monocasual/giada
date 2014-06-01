@@ -96,6 +96,8 @@ private:
 public:
 
 	gInOut(int x, int y);
+	
+	void refresh();
 
 	inline void setOutVol(float v) { outVol->value(v); }
 	inline void setInVol (float v) { inVol->value(v); }

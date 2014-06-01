@@ -54,22 +54,18 @@ extern gdMainWindow *mainWin;
 static int blinker = 0;
 
 
-void gu_refresh() {
+void gu_refresh()
+{
 	Fl::lock();
 
-	/* update dynamic elements */
+	/* update dynamic elements: in and out meters, beat meter and
+	 * each channel */
 
-	/// TODO
-	///mainWin->outMeter->mixerPeak = G_Mixer.peakOut;
-	///mainWin->inMeter->mixerPeak  = G_Mixer.peakIn;
-	///mainWin->outMeter->redraw();
-	///mainWin->inMeter->redraw();
-	///mainWin->beatMeter->redraw();
-
-	/* update channels */
-
-	__gu_refreshColumn(mainWin->keyboard->gChannelsL);
-	__gu_refreshColumn(mainWin->keyboard->gChannelsR);
+	mainWin->inOut->refresh();
+	mainWin->beatMeter->redraw();
+	mainWin->keyboard->refreshColumns();
+	
+	/* compute timer for blinker */
 
 	blinker++;
 	if (blinker > 12)
@@ -85,7 +81,8 @@ void gu_refresh() {
 /* ------------------------------------------------------------------ */
 
 
-void __gu_blinkChannel(gChannel *gch) {
+void __gu_blinkChannel(gChannel *gch)
+{
 	if (blinker > 6) {
 		gch->sampleButton->bgColor0 = COLOR_BG_2;
 		gch->sampleButton->bdColor  = COLOR_BD_1;
@@ -102,18 +99,8 @@ void __gu_blinkChannel(gChannel *gch) {
 /* ------------------------------------------------------------------ */
 
 
-void __gu_refreshColumn(Fl_Group *col) {
-	for (int i=0; i<col->children(); i++)	{
-		///gChannel *gch = (gChannel *) col->child(i);
-		///gch->refresh();
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
+void gu_trim_label(const char *str, unsigned n, Fl_Widget *w)
+{
 
 	/*** FIXME - we should compute the length of the string in pixels, not in
 	 * chars */
@@ -135,8 +122,8 @@ void gu_trim_label(const char *str, unsigned n, Fl_Widget *w) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_update_controls() {
-
+void gu_update_controls()
+{
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->guiChannel->update();
 
@@ -173,7 +160,8 @@ void gu_update_controls() {
 /* ------------------------------------------------------------------ */
 
 
-void gu_update_win_label(const char *c) {
+void gu_update_win_label(const char *c)
+{
 	std::string out = VERSIONE_STR;
 	out += " - ";
 	out += c;
@@ -184,7 +172,8 @@ void gu_update_win_label(const char *c) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_setFavicon(Fl_Window *w) {
+void gu_setFavicon(Fl_Window *w)
+{
 #if defined(__linux__)
 	fl_open_display();
 	Pixmap p, mask;
@@ -205,7 +194,8 @@ void gu_setFavicon(Fl_Window *w) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
+void gu_openSubWindow(gWindow *parent, gWindow *child, int id)
+{
 	if (parent->hasWindow(id)) {
 		gLog("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
@@ -218,8 +208,8 @@ void gu_openSubWindow(gWindow *parent, gWindow *child, int id) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_refreshActionEditor() {
-
+void gu_refreshActionEditor()
+{
 	/** TODO - why don't we simply call WID_ACTION_EDITOR->redraw()? */
 
 	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
@@ -234,7 +224,8 @@ void gu_refreshActionEditor() {
 /* ------------------------------------------------------------------ */
 
 
-gWindow *gu_getSubwindow(gWindow *parent, int id) {
+gWindow *gu_getSubwindow(gWindow *parent, int id)
+{
 	if (parent->hasWindow(id))
 		return parent->getChild(id);
 	else
@@ -245,8 +236,8 @@ gWindow *gu_getSubwindow(gWindow *parent, int id) {
 /* ------------------------------------------------------------------ */
 
 
-void gu_closeAllSubwindows() {
-
+void gu_closeAllSubwindows()
+{
 	/* don't close WID_FILE_BROWSER, because it's the caller of this
 	 * function */
 
