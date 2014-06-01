@@ -34,10 +34,13 @@
 #include "gd_warnings.h"
 #include "ge_window.h"
 #include "gd_mainWindow.h"
+#include "gg_keyboard.h"
+#include "gd_actionEditor.h"
 #include "recorder.h"
 #include "wave.h"
 #include "channel.h"
 #include "log.h"
+#include "conf.h"
 
 
 extern Mixer 	       G_Mixer;

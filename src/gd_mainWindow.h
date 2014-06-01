@@ -32,33 +32,15 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
-#include <FL/Fl_Double_Window.H>
-#include <stdint.h>         // for intptr_t
-#include "gd_bpmInput.h"
-#include "gd_beatsInput.h"
-#include "gd_actionEditor.h"
-#include "gd_config.h"
-#include "gg_keyboard.h"
 #include "ge_mixed.h"
-#include "gd_about.h"
-
-#ifdef WITH_VST
-#include "gd_pluginList.h"
-#endif
-
-#include "patch.h"
-#include "conf.h"
-
-#ifdef __linux__
-	#include <sys/stat.h>			// for mkdir
-#endif
+#include "ge_window.h"
 
 
 /* ------------------------------------------------------------------ */
 
 
-class gdMainWindow : public gWindow {
-
+class gdMainWindow : public gWindow
+{
 private:
 
 	static void cb_endprogram  (Fl_Widget *v, void *p);
@@ -73,16 +55,15 @@ public:
 	class gController *controller;
 	class gTiming     *timing;
 
-	gdMainWindow(int x, int y, int w, int h, const char *title, int argc, char **argv);
-	//~gdMainWindow(); /// TODO - destructor might be unecessary (and wrong)
+	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
 };
 
 
 /* ------------------------------------------------------------------ */
 
 
-class gInOut : public Fl_Group {
-
+class gInOut : public Fl_Group
+{
 private:
 
 	class gSoundMeter *outMeter;
@@ -124,8 +105,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gMenu : public Fl_Group {
-
+class gMenu : public Fl_Group
+{
 private:
 
 	class gClick *file;
@@ -152,8 +133,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gController : public Fl_Group {
-
+class gController : public Fl_Group
+{
 private:
 
 	class gClick *rewind;
@@ -188,8 +169,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTiming : public Fl_Group {
-
+class gTiming : public Fl_Group
+{
 private:
 
 	class gClick   *bpm;

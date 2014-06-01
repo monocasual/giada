@@ -32,6 +32,7 @@
 #include "gd_actionEditor.h"
 #include "ge_actionWidget.h"
 #include "gd_mainWindow.h"
+#include "gg_keyboard.h"
 #include "recorder.h"
 #include "mixer.h"
 #include "glue.h"

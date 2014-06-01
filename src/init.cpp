@@ -57,7 +57,8 @@ extern PluginHost	   G_PluginHost;
 #endif
 
 
-void init_prepareParser() {
+void init_prepareParser()
+{
 	G_Conf.read();
 	G_Patch.setDefault();
 	if (!gLog_init(LOG_MODE_STDOUT)) /// TODO - use G_Conf values
@@ -72,7 +73,8 @@ void init_prepareParser() {
 /* ------------------------------------------------------------------ */
 
 
-void init_prepareKernelAudio() {
+void init_prepareKernelAudio()
+{
 	kernelAudio::openDevice(
 		G_Conf.soundSystem,
 		G_Conf.soundDeviceOut,
@@ -89,7 +91,8 @@ void init_prepareKernelAudio() {
 /* ------------------------------------------------------------------ */
 
 
-void init_prepareKernelMIDI() {
+void init_prepareKernelMIDI()
+{
 	kernelMidi::setApi(G_Conf.midiSystem);
 	kernelMidi::openOutDevice(G_Conf.midiPortOut);
 	kernelMidi::openInDevice(G_Conf.midiPortIn);
@@ -99,17 +102,15 @@ void init_prepareKernelMIDI() {
 /* ------------------------------------------------------------------ */
 
 
-void init_startGUI(int argc, char **argv) {
-
-	int x = (Fl::w() / 2) - (GUI_WIDTH / 2);
-	int y = (Fl::h() / 2) - (GUI_HEIGHT / 2);
-
+void init_startGUI(int argc, char **argv)
+{
 	char win_label[32];
 	sprintf(win_label, "%s - %s",
 					VERSIONE_STR,
 					!strcmp(G_Patch.name, "") ? "(default patch)" : G_Patch.name);
 
-	mainWin = new gdMainWindow(x, y, GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
+	mainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
+	mainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW, G_Conf.mainWindowH);
 
 	/* never update the GUI elements if G_audio_status is bad, segfaults
 	 * are around the corner */
@@ -127,7 +128,8 @@ void init_startGUI(int argc, char **argv) {
 /* ------------------------------------------------------------------ */
 
 
-void init_startKernelAudio() {
+void init_startKernelAudio()
+{
 	if (G_audio_status)
 		kernelAudio::startStream();
 
@@ -140,9 +142,16 @@ void init_startKernelAudio() {
 /* ------------------------------------------------------------------ */
 
 
-void init_shutdown() {
-
+void init_shutdown()
+{
 	G_quit = true;
+	
+	/* store position and size of the main window for the next startup */
+	
+	G_Conf.mainWindowX = mainWin->x();
+	G_Conf.mainWindowY = mainWin->y();
+	G_Conf.mainWindowW = mainWin->w();
+	G_Conf.mainWindowH = mainWin->h();
 
 	/* close any open subwindow, especially before cleaning PluginHost to
 	 * avoid mess */

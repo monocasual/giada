@@ -31,11 +31,9 @@
 #define __CONF_H__
 
 
-#include <stdlib.h>
 #include <limits.h>
 #include <stdint.h>
 #include "dataStorage.h"
-#include "const.h"
 
 
 #if defined(__APPLE__)
@@ -43,8 +41,8 @@
 #endif
 
 
-class Conf : public DataStorage {
-
+class Conf : public DataStorage
+{
 private:
 
 	int openFileForReading();
@@ -89,6 +87,7 @@ public:
 	char patchPath [FILENAME_MAX];
 	char samplePath[FILENAME_MAX];
 
+	int  mainWindowX, mainWindowY, mainWindowW, mainWindowH;
 	int  browserX, browserY, browserW, browserH;
 	int  actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
 	int  actionEditorGridVal;
@@ -112,7 +111,6 @@ public:
 	void setPath(char *path, const char *p);
 
 	void close();
-
 };
 
 #endif

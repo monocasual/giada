@@ -28,11 +28,12 @@
 
 
 #include "gd_beatsInput.h"
-#include "patch.h"
 #include "gd_mainWindow.h"
 #include "gui_utils.h"
+#include "patch.h"
 #include "glue.h"
 #include "mixer.h"
+#include "conf.h"
 
 
 extern Mixer				 G_Mixer;

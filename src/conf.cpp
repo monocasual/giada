@@ -27,13 +27,15 @@
  * ------------------------------------------------------------------ */
 
 
+#include <stdlib.h>
+#include "const.h"
 #include "conf.h"
 #include "utils.h"
 #include "log.h"
 
 
-int Conf::openFileForReading() {
-
+int Conf::openFileForReading()
+{
 	char path[PATH_MAX];
 
 #if defined(__linux__)
@@ -64,8 +66,8 @@ int Conf::openFileForReading() {
 /* ------------------------------------------------------------------ */
 
 
-int Conf::createConfigFolder(const char *path) {
-
+int Conf::createConfigFolder(const char *path)
+{
 	if (gDirExists(path))
 		return 1;
 
@@ -85,8 +87,8 @@ int Conf::createConfigFolder(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-int Conf::openFileForWriting() {
-
+int Conf::openFileForWriting()
+{
 	/* writing config file. In windows is in the same dir of the .exe,
 	 * in Linux and OS X in home */
 
@@ -131,7 +133,8 @@ int Conf::openFileForWriting() {
 /* ------------------------------------------------------------------ */
 
 
-void Conf::setDefault() {
+void Conf::setDefault()
+{
 	soundSystem    = DEFAULT_SOUNDSYS;
 	soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
 	soundDeviceIn  = DEFAULT_SOUNDDEV_IN;
@@ -168,6 +171,11 @@ void Conf::setDefault() {
 	actionEditorZoom    = 100;
 	actionEditorGridOn  = false;
 	actionEditorGridVal = 1;
+	
+	mainWindowX = 0;
+	mainWindowY = 0;
+	mainWindowW = GUI_WIDTH;
+	mainWindowH = GUI_HEIGHT;
 
 	pianoRollY = -1;
 	pianoRollH = 422;
@@ -178,8 +186,8 @@ void Conf::setDefault() {
 /* ------------------------------------------------------------------ */
 
 
-int Conf::read() {
-
+int Conf::read()
+{
 	setDefault();
 
 	if (!openFileForReading()) {
@@ -234,6 +242,11 @@ int Conf::read() {
   midiInBeatDouble = strtoul(getValue("midiInBeatDouble").c_str(), NULL, 10);
   midiInBeatHalf   = strtoul(getValue("midiInBeatHalf").c_str(), NULL, 10);
 
+	mainWindowX = atoi(getValue("mainWindowX").c_str());
+	mainWindowY = atoi(getValue("mainWindowY").c_str());
+	mainWindowW = atoi(getValue("mainWindowW").c_str());
+	mainWindowH = atoi(getValue("mainWindowH").c_str());
+	
 	browserX = atoi(getValue("browserX").c_str());
 	browserY = atoi(getValue("browserY").c_str());
 	browserW = atoi(getValue("browserW").c_str());
@@ -328,7 +341,8 @@ int Conf::read() {
 /* ------------------------------------------------------------------ */
 
 
-int Conf::write() {
+int Conf::write()
+{
 	if (!openFileForWriting())
 		return 0;
 
@@ -367,6 +381,11 @@ int Conf::write() {
 	fprintf(fp, "patchPath=%s\n",  patchPath);
 	fprintf(fp, "samplePath=%s\n", samplePath);
 
+	fprintf(fp, "mainWindowX=%d\n", mainWindowX);
+	fprintf(fp, "mainWindowY=%d\n", mainWindowY);
+	fprintf(fp, "mainWindowW=%d\n", mainWindowW);
+	fprintf(fp, "mainWindowH=%d\n", mainWindowH);
+	
 	fprintf(fp, "browserX=%d\n", browserX);
 	fprintf(fp, "browserY=%d\n", browserY);
 	fprintf(fp, "browserW=%d\n", browserW);
@@ -417,7 +436,8 @@ int Conf::write() {
 /* ------------------------------------------------------------------ */
 
 
-void Conf::close() {
+void Conf::close()
+{
 	if (fp != NULL)
 		fclose(fp);
 }
@@ -426,7 +446,8 @@ void Conf::close() {
 /* ------------------------------------------------------------------ */
 
 
-void Conf::setPath(char *path, const char *p) {
+void Conf::setPath(char *path, const char *p)
+{
 	path[0] = '\0';
 	strncpy(path, p, strlen(p));
 	path[strlen(p)] = '\0';

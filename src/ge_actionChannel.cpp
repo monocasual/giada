@@ -32,6 +32,7 @@
 #include "ge_actionChannel.h"
 #include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
+#include "gg_keyboard.h"
 #include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"

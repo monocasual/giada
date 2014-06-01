@@ -42,8 +42,6 @@
 extern Mixer 		     G_Mixer;
 extern unsigned 		 G_beats;
 extern bool  		     G_audio_status;
-extern Patch 		     f_patch;
-extern Conf  		     f_conf;
 extern gdMainWindow *mainWin;
 
 

@@ -29,16 +29,18 @@
 
 #include "gd_browser.h"
 #include "ge_browser.h"
-#include "mixer.h"
 #include "gd_pluginList.h"
 #include "gd_mainWindow.h"
-#include "graphics.h"
 #include "gd_warnings.h"
+#include "mixer.h"
+#include "graphics.h"
 #include "wave.h"
 #include "glue.h"
 #include "pluginHost.h"
 #include "channel.h"
 #include "sampleChannel.h"
+#include "patch.h"
+#include "conf.h"
 
 
 extern Patch         G_Patch;

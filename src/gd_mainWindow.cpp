@@ -27,20 +27,35 @@
  * ------------------------------------------------------------------ */
 
 
+#ifdef __linux__
+	#include <sys/stat.h>			// for mkdir
+#endif
+
 #include "gd_mainWindow.h"
-#include "graphics.h"
 #include "gd_warnings.h"
+#include "gd_bpmInput.h"
+#include "gd_beatsInput.h"
+#include "gd_midiGrabber.h"
+#include "gg_keyboard.h"
+#include "gd_about.h"
+#include "gd_config.h"
+#include "gd_browser.h"
+#include "graphics.h"
 #include "glue.h"
 #include "mixer.h"
 #include "recorder.h"
-#include "gd_browser.h"
 #include "mixerHandler.h"
 #include "pluginHost.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "gd_midiGrabber.h"
-
 #include "init.h"
+#include "patch.h"
+#include "conf.h"
+
+#ifdef WITH_VST
+#include "gd_pluginList.h"
+#endif
+
 
 extern Mixer	   		 G_Mixer;
 extern Patch     		 G_Patch;
@@ -54,8 +69,8 @@ extern PluginHost  	 G_PluginHost;
 #endif
 
 
-gdMainWindow::gdMainWindow(int X, int Y, int W, int H, const char *title, int argc, char **argv)
-	: gWindow(X, Y, W, H, title)
+gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **argv)
+	: gWindow(W, H, title)
 {
 	Fl::visible_focus(0);
 	Fl::background(25, 25, 25);

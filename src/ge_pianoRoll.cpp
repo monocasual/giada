@@ -36,6 +36,7 @@
 #include "const.h"
 #include "kernelMidi.h"
 #include "log.h"
+#include "conf.h"
 
 
 extern gdMainWindow *mainWin;
