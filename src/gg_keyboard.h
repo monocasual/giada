@@ -224,13 +224,6 @@ private:
 	static void cb_addColumn  (Fl_Widget *v, void *p);
 	inline void __cb_addColumn();
 
-	/* fixRightColumn
-	 * shift right column if scrollbar doesn't show up */
-
-	/*void fixRightColumn();*/
-
-	//int openChanTypeMenu();
-
 	bool bckspcPressed;
 	bool endPressed;
 	bool spacePressed;
@@ -268,6 +261,9 @@ public:
 	 * are deleted */
 
 	void freeChannel(gChannel *gch);
+	
+	/* updateChannel
+	 * wrapper function to call gch->update(). */
 
 	void updateChannel(gChannel *gch);
 
