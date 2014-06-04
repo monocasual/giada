@@ -234,10 +234,6 @@ private:
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
-/*
-	class gClick *addChannelL;
-	class gClick *addChannelR;
-*/
 	class gClick *addColumnBtn;
 
 	/* columns
@@ -294,11 +290,6 @@ public:
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
 	void setChannelWithActions(gSampleChannel *gch);
-
-	/*bool hasScrollbar();*/
-
-	//Fl_Group *gChannelsL;
-	//Fl_Group *gChannelsR;
 };
 
 

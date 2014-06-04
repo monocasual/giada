@@ -1016,21 +1016,9 @@ int gKeyboard::handle(int e) {
 
 void gKeyboard::clear() {
 	Fl::lock();
-	//gChannelsL->clear();
-	//gChannelsR->clear();
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->guiChannel = NULL;
 	Fl::unlock();
-
-	//gChannelsR->size(gChannelsR->w(), 0);
-	//gChannelsL->size(gChannelsL->w(), 0);
-
-	//gChannelsL->resizable(NULL);
-	//gChannelsR->resizable(NULL);
-
-	//addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
-	//addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
-
 	redraw();
 }
 
