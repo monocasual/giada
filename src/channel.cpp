@@ -83,7 +83,8 @@ Channel::Channel(int type, int status, char side, int bufferSize)
 /* ------------------------------------------------------------------ */
 
 
-Channel::~Channel() {
+Channel::~Channel()
+{
 	status = STATUS_OFF;
 	if (vChan)
 		free(vChan);
@@ -93,7 +94,8 @@ Channel::~Channel() {
 /* ------------------------------------------------------------------ */
 
 
-void Channel::readPatchMidiIn(int i) {
+void Channel::readPatchMidiIn(int i)
+{
 	midiIn         = G_Patch.getMidiValue(i, "In");
 	midiInKeyPress = G_Patch.getMidiValue(i, "InKeyPress");
 	midiInKeyRel   = G_Patch.getMidiValue(i, "InKeyRel");
@@ -107,7 +109,27 @@ void Channel::readPatchMidiIn(int i) {
 /* ------------------------------------------------------------------ */
 
 
-void Channel::writePatchMidiIn(FILE *fp, int i) {
+bool Channel::isPlaying()
+{
+	return status & (STATUS_PLAY | STATUS_ENDING);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Channel::writePatch(FILE *fp, int i, bool isProject)
+{
+	fprintf(fp, "chanSide%d=%d\n",     i, side);
+	fprintf(fp, "chanType%d=%d\n",     i, type);	
+	fprintf(fp, "chanIndex%d=%d\n",    i, index);
+	fprintf(fp, "chanmute%d=%d\n",     i, mute);
+	fprintf(fp, "chanMute_s%d=%d\n",   i, mute_s);
+	fprintf(fp, "chanSolo%d=%d\n",     i, solo);
+	fprintf(fp, "chanvol%d=%f\n",      i, volume);
+	fprintf(fp, "chanPanLeft%d=%f\n",  i, panLeft);
+	fprintf(fp, "chanPanRight%d=%f\n", i, panRight);
+
 	fprintf(fp, "chanMidiIn%d=%u\n",         i, midiIn);
 	fprintf(fp, "chanMidiInKeyPress%d=%u\n", i, midiInKeyPress);
 	fprintf(fp, "chanMidiInKeyRel%d=%u\n",   i, midiInKeyRel);
@@ -116,14 +138,3 @@ void Channel::writePatchMidiIn(FILE *fp, int i) {
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
 }
-
-
-/* ------------------------------------------------------------------ */
-
-
-bool Channel::isPlaying() {
-	return status & (STATUS_PLAY | STATUS_ENDING);
-}
-
-
-/* ------------------------------------------------------------------ */

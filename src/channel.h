@@ -66,6 +66,11 @@ public:
 	Channel(int type, int status, char side, int bufferSize);
 	virtual ~Channel();
 
+	/* writePatch
+	 * store values in patch, writing to *fp. */
+
+	virtual void writePatch(FILE *fp, int i, bool isProject);
+
 	/* loadByPatch
 	 * load a sample inside a patch. */
 
@@ -108,11 +113,6 @@ public:
 	 * action to do when channel is stopped by sequencer. */
 
 	virtual void stopBySeq() = 0;
-
-	/* writePatch
-	 * store values in patch, writing to *fp. */
-
-	virtual void writePatch(FILE *fp, int i, bool isProject) = 0;
 
 	/* quantize
 	 * start channel according to quantizer. Index = array index of
@@ -187,12 +187,11 @@ public:
 
 	bool isPlaying();
 
-	/* read/writePatchMidiIn
-	 * read and write to patch all midi-related parameters such as
-	 * keypress, mute and so on. */
+	/* readPatchMidiIn
+	 * read from patch all midi-related parameters such as keypress, mute 
+	 * and so on. */
 
 	void readPatchMidiIn(int i);
-	void writePatchMidiIn(FILE *fp, int i);
 
 };
 

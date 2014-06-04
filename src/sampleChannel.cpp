@@ -905,32 +905,25 @@ void SampleChannel::start(int frame, bool doQuantize) {
 
 void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
+	Channel::writePatch(fp, i, isProject);
+	
 	const char *path = "";
 	if (wave != NULL) {
 		path = wave->pathfile.c_str();
 		if (isProject)
 			path = gBasename(path).c_str();  // make it portable
 	}
-
+	
 	fprintf(fp, "samplepath%d=%s\n",     i, path);
-	fprintf(fp, "chanSide%d=%d\n",       i, side);
-	fprintf(fp, "chanType%d=%d\n",       i, type);
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
-	fprintf(fp, "chanIndex%d=%d\n",      i, index);
-	fprintf(fp, "chanmute%d=%d\n",       i, mute);
-	fprintf(fp, "chanMute_s%d=%d\n",     i, mute_s);
-	fprintf(fp, "chanSolo%d=%d\n",       i, solo);
-	fprintf(fp, "chanvol%d=%f\n",        i, volume);
+	fprintf(fp, "columnIndex%d=%d\n",    i, index);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);
 	fprintf(fp, "chanBegin%d=%d\n",      i, begin);
 	fprintf(fp, "chanend%d=%d\n",        i, end);
 	fprintf(fp, "chanBoost%d=%f\n",      i, boost);
-	fprintf(fp, "chanPanLeft%d=%f\n",    i, panLeft);
-	fprintf(fp, "chanPanRight%d=%f\n",   i, panRight);
 	fprintf(fp, "chanRecActive%d=%d\n",  i, readActions);
 	fprintf(fp, "chanPitch%d=%f\n",      i, pitch);
 
-	writePatchMidiIn(fp, i);
 	fprintf(fp, "chanMidiInReadActions%d=%u\n", i, midiInReadActions);
 	fprintf(fp, "chanMidiInPitch%d=%u\n",       i, midiInPitch);
 }

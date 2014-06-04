@@ -306,21 +306,10 @@ void MidiChannel::rewind() {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::writePatch(FILE *fp, int i, bool isProject) {
-	fprintf(fp, "chanSide%d=%d\n",           i, side);
-	fprintf(fp, "chanType%d=%d\n",           i, type);
-	fprintf(fp, "chanIndex%d=%d\n",          i, index);
-	fprintf(fp, "chanmute%d=%d\n",           i, mute);
-	fprintf(fp, "chanMute_s%d=%d\n",         i, mute_s);
-	fprintf(fp, "chanSolo%d=%d\n",           i, solo);
-	fprintf(fp, "chanvol%d=%f\n",            i, volume);
-	fprintf(fp, "chanPanLeft%d=%f\n",        i, panLeft);
-	fprintf(fp, "chanPanRight%d=%f\n",       i, panRight);
-
-	/* all values printed as unsigned */
+void MidiChannel::writePatch(FILE *fp, int i, bool isProject)
+{
+	Channel::writePatch(fp, i, isProject);
 
 	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
 	fprintf(fp, "chanMidiOutChan%d=%u\n",    i, midiOutChan);
-
-	writePatchMidiIn(fp, i);
 }
