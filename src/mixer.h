@@ -50,7 +50,7 @@ public:
 	/* addChannel
 	 * add a new channel without any wave inside of it. */
 
-	class Channel *addChannel(char side, int type);
+	class Channel *addChannel(int type);
 
 	/* deleteChannel
 	 * completely remove a channel from the stack. */

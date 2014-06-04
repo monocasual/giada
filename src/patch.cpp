@@ -47,7 +47,8 @@ extern PluginHost G_PluginHost;
 #endif
 
 
-int Patch::open(const char *file) {
+int Patch::open(const char *file)
+{
 	fp = fopen(file, "r");
 	if (fp == NULL)
 		return PATCH_UNREADABLE;
@@ -67,7 +68,8 @@ int Patch::open(const char *file) {
 /* ------------------------------------------------------------------ */
 
 
-void Patch::setDefault() {
+void Patch::setDefault() 
+{
 	name[0]    = '\0';
   lastTakeId = 0;
   samplerate = DEFAULT_SAMPLERATE;
@@ -77,7 +79,8 @@ void Patch::setDefault() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::close() {
+int Patch::close() 
+{
 	return fclose(fp);
 }
 
@@ -85,7 +88,8 @@ int Patch::close() {
 /* ------------------------------------------------------------------ */
 
 
-void Patch::getName() {
+void Patch::getName() 
+{
 	std::string out = getValue("patchname");
 	strncpy(name, out.c_str(), MAX_PATCHNAME_LEN);
 }
@@ -94,7 +98,8 @@ void Patch::getName() {
 /* ------------------------------------------------------------------ */
 
 
-std::string Patch::getSamplePath(int c) {
+std::string Patch::getSamplePath(int c) 
+{
 	char tmp[16];
 	sprintf(tmp, "samplepath%d", c);
 	return getValue(tmp);
@@ -104,7 +109,8 @@ std::string Patch::getSamplePath(int c) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getPitch(int c) {
+float Patch::getPitch(int c) 
+{
 	char tmp[16];
 	sprintf(tmp, "chanPitch%d", c);
 	float out = atof(getValue(tmp).c_str());
@@ -117,7 +123,8 @@ float Patch::getPitch(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getNumChans() {
+int Patch::getNumChans() 
+{
 	if (version == 0.0)      // backward compatibility with version < 0.6.1
 		return 32;
 	return atoi(getValue("channels").c_str());
@@ -127,18 +134,21 @@ int Patch::getNumChans() {
 /* ------------------------------------------------------------------ */
 
 
-char Patch::getSide(int c) {
+int Patch::getColumn(int c)
+{
 	if (version == 0.0)      // backward compatibility with version < 0.6.1
 		return 0;
 	char tmp[16];
-	sprintf(tmp, "chanSide%d", c);
+	sprintf(tmp, "chanColumn%d", c);
 	return atoi(getValue(tmp).c_str());
 }
+
 
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getIndex(int c) {
+int Patch::getIndex(int c)
+{
 	if (version == 0.0)      // backward compatibility with version < 0.6.1
 		return c;
 
@@ -151,7 +161,8 @@ int Patch::getIndex(int c) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getVol(int c) {
+float Patch::getVol(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanvol%d", c);
 	float out = atof(getValue(tmp).c_str());
@@ -164,7 +175,8 @@ float Patch::getVol(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getMode(int c) {
+int Patch::getMode(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanmode%d", c);
 	int out = atoi(getValue(tmp).c_str());
@@ -177,9 +189,10 @@ int Patch::getMode(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getMute(int c) {
+int Patch::getMute(int c)
+{
 	char tmp[16];
-	sprintf(tmp, "chanmute%d", c);
+	sprintf(tmp, "chanMute%d", c);
 	return atoi(getValue(tmp).c_str());
 }
 
@@ -187,7 +200,8 @@ int Patch::getMute(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getMute_s(int c) {
+int Patch::getMute_s(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanMute_s%d", c);
 	return atoi(getValue(tmp).c_str());
@@ -197,7 +211,8 @@ int Patch::getMute_s(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getSolo(int c) {
+int Patch::getSolo(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanSolo%d", c);
 	return atoi(getValue(tmp).c_str());
@@ -207,7 +222,8 @@ int Patch::getSolo(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getType(int c) {
+int Patch::getType(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanType%d", c);
 	int out = atoi(getValue(tmp).c_str());
@@ -220,7 +236,8 @@ int Patch::getType(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getBegin(int c) {
+int Patch::getBegin(int c)
+{
 	char tmp[16];
 	if (version < 0.73f)
 		sprintf(tmp, "chanstart%d", c);
@@ -236,7 +253,8 @@ int Patch::getBegin(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getEnd(int c, unsigned size) {
+int Patch::getEnd(int c, unsigned size)
+{
 	char tmp[16];
 	sprintf(tmp, "chanend%d", c);
 
@@ -257,7 +275,8 @@ int Patch::getEnd(int c, unsigned size) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getBoost(int c) {
+float Patch::getBoost(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanBoost%d", c);
 	float out = atof(getValue(tmp).c_str());
@@ -270,7 +289,8 @@ float Patch::getBoost(int c) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getPanLeft(int c) {
+float Patch::getPanLeft(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanPanLeft%d", c);
 	std::string val = getValue(tmp);
@@ -287,7 +307,8 @@ float Patch::getPanLeft(int c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getKey(int c) {
+int Patch::getKey(int c)
+{
 	if (version == 0.0)      // backward compatibility with version < 0.6.1
 		return 0;
 	char tmp[16];
@@ -299,7 +320,8 @@ int Patch::getKey(int c) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getPanRight(int c) {
+float Patch::getPanRight(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanPanRight%d", c);
 	std::string val = getValue(tmp);
@@ -316,7 +338,8 @@ float Patch::getPanRight(int c) {
 /* ------------------------------------------------------------------ */
 
 
-bool Patch::getRecActive(int c) {
+bool Patch::getRecActive(int c)
+{
 	char tmp[16];
 	sprintf(tmp, "chanRecActive%d", c);
 	return atoi(getValue(tmp).c_str());
@@ -326,7 +349,8 @@ bool Patch::getRecActive(int c) {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getOutVol() {
+float Patch::getOutVol()
+{
 	return atof(getValue("outVol").c_str());
 }
 
@@ -334,7 +358,8 @@ float Patch::getOutVol() {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getInVol() {
+float Patch::getInVol()
+{
 	return atof(getValue("inVol").c_str());
 }
 
@@ -342,7 +367,8 @@ float Patch::getInVol() {
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getBpm() {
+float Patch::getBpm() 
+{
 	float out = atof(getValue("bpm").c_str());
 	if (out < 20.0f || out > 999.0f)
 		return DEFAULT_BPM;
@@ -353,7 +379,8 @@ float Patch::getBpm() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getBars() {
+int Patch::getBars() 
+{
 	int out = atoi(getValue("bars").c_str());
 	if (out <= 0 || out > 32)
 		return DEFAULT_BARS;
@@ -364,7 +391,8 @@ int Patch::getBars() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getBeats() {
+int Patch::getBeats() 
+{
 	int out = atoi(getValue("beats").c_str());
 	if (out <= 0 || out > 32)
 		return DEFAULT_BEATS;
@@ -375,7 +403,8 @@ int Patch::getBeats() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getQuantize() {
+int Patch::getQuantize() 
+{
 	int out = atoi(getValue("quantize").c_str());
 	if (out < 0 || out > 8)
 		return DEFAULT_QUANTIZE;
@@ -386,7 +415,8 @@ int Patch::getQuantize() {
 /* ------------------------------------------------------------------ */
 
 
-bool Patch::getMetronome() {
+bool Patch::getMetronome() 
+{
 	bool out = atoi(getValue("metronome").c_str());
 	if (out != true || out != false)
 		return false;
@@ -397,7 +427,8 @@ bool Patch::getMetronome() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getLastTakeId() {
+int Patch::getLastTakeId() 
+{
 	return atoi(getValue("lastTakeId").c_str());
 }
 
@@ -405,7 +436,8 @@ int Patch::getLastTakeId() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getSamplerate() {
+int Patch::getSamplerate() 
+{
 	int out = atoi(getValue("samplerate").c_str());
 	if (out <= 0)
 		return DEFAULT_SAMPLERATE;
@@ -416,7 +448,8 @@ int Patch::getSamplerate() {
 /* ------------------------------------------------------------------ */
 
 
-uint32_t Patch::getMidiValue(int i, const char *c) {
+uint32_t Patch::getMidiValue(int i, const char *c) 
+{
 	char tmp[32];
 	sprintf(tmp, "chanMidi%s%d", c, i);
 	return strtoul(getValue(tmp).c_str(), NULL, 10);
@@ -426,8 +459,8 @@ uint32_t Patch::getMidiValue(int i, const char *c) {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::readRecs() {
-
+int Patch::readRecs() 
+{
 	gLog("[PATCH] Reading recs...\n");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
@@ -483,8 +516,8 @@ int Patch::readRecs() {
 
 
 #ifdef WITH_VST
-int Patch::readPlugins() {
-
+int Patch::readPlugins() 
+{
 	gLog("[PATCH] Reading plugins...\n");
 
 	int globalOut = 1;
@@ -529,7 +562,8 @@ int Patch::readPlugins() {
 /* ------------------------------------------------------------------ */
 
 
-int Patch::write(const char *file, const char *name, bool project) {
+int Patch::write(const char *file, const char *name, bool project) 
+{
 	fp = fopen(file, "w");
 	if (fp == NULL)
 		return 0;
@@ -615,8 +649,8 @@ int Patch::write(const char *file, const char *name, bool project) {
 
 #ifdef WITH_VST
 
-int Patch::readMasterPlugins(int type) {
-
+int Patch::readMasterPlugins(int type) 
+{
 	int  nmp;
 	char chr;
 	int  res = 1;
@@ -656,8 +690,8 @@ int Patch::readMasterPlugins(int type) {
 /* ------------------------------------------------------------------ */
 
 
-void Patch::writeMasterPlugins(int type) {
-
+void Patch::writeMasterPlugins(int type) 
+{
 	char chr;
 
 	if (type == PluginHost::MASTER_IN) {

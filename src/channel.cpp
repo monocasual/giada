@@ -28,6 +28,7 @@
 
 
 #include "channel.h"
+#include "gg_keyboard.h"
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch.h"
@@ -47,11 +48,10 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-Channel::Channel(int type, int status, char side, int bufferSize)
+Channel::Channel(int type, int status, int bufferSize)
 	: bufferSize(bufferSize),
 	  type      (type),
 		status    (status),
-		side      (side),
 	  volume    (DEFAULT_VOL),
 	  volume_i  (1.0f),
 	  volume_d  (0.0f),
@@ -120,10 +120,10 @@ bool Channel::isPlaying()
 
 void Channel::writePatch(FILE *fp, int i, bool isProject)
 {
-	fprintf(fp, "chanSide%d=%d\n",     i, side);
 	fprintf(fp, "chanType%d=%d\n",     i, type);	
 	fprintf(fp, "chanIndex%d=%d\n",    i, index);
-	fprintf(fp, "chanmute%d=%d\n",     i, mute);
+	fprintf(fp, "chanColumn%d=%d\n",   i, guiChannel->getColumnIndex());
+	fprintf(fp, "chanMute%d=%d\n",     i, mute);
 	fprintf(fp, "chanMute_s%d=%d\n",   i, mute_s);
 	fprintf(fp, "chanSolo%d=%d\n",     i, solo);
 	fprintf(fp, "chanvol%d=%f\n",      i, volume);

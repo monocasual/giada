@@ -80,7 +80,7 @@ private:
 
 public:
 
-	SampleChannel(int bufferSize, char side);
+	SampleChannel(int bufferSize);
 	~SampleChannel();
 
 	void  clear      ();

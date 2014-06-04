@@ -70,6 +70,15 @@ gChannel::gChannel(int X, int Y, int W, int H)
 /* ------------------------------------------------------------------ */
 
 
+int gChannel::getColumnIndex()
+{
+	return ((gColumn*)parent())->getIndex();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *ch)
 	: gChannel(X, Y, W, H), ch(ch)
 {
@@ -899,24 +908,27 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)   { ((gKeyboard*)p)->__cb_ad
 /* ------------------------------------------------------------------ */
 
 
-gChannel *gKeyboard::addChannel(int colIndex, Channel *ch)
+gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
-	/* search column by index */
-	
 	gColumn *col = NULL;
-	for (unsigned i=0; i<columns.size; i++)
-		if (columns.at(i)->getIndex() == colIndex) {
-			col = columns.at(i);
-			break;
-		}
 	
-	if (!col) {
-		gLog("[gKeyboard::addChannel] column not found!\n");
-		return NULL;
+	if (build) {
+		__cb_addColumn();
+		col = columns.last();
+		col->setIndex(colIndex);
 	}
-	
-	gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
-	
+	else {
+		for (unsigned i=0; i<columns.size; i++)
+			if (columns.at(i)->getIndex() == colIndex) {
+				col = columns.at(i);
+				break;
+			}
+		if (!col) {
+			gLog("[gKeyboard::addChannel] column not found!\n");
+			return NULL;
+		}	
+		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+	}
 	return col->addChannel(ch);
 }
 
@@ -1004,20 +1016,20 @@ int gKeyboard::handle(int e) {
 
 void gKeyboard::clear() {
 	Fl::lock();
-	gChannelsL->clear();
-	gChannelsR->clear();
+	//gChannelsL->clear();
+	//gChannelsR->clear();
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->guiChannel = NULL;
 	Fl::unlock();
 
-	gChannelsR->size(gChannelsR->w(), 0);
-	gChannelsL->size(gChannelsL->w(), 0);
+	//gChannelsR->size(gChannelsR->w(), 0);
+	//gChannelsL->size(gChannelsL->w(), 0);
 
-	gChannelsL->resizable(NULL);
-	gChannelsR->resizable(NULL);
+	//gChannelsL->resizable(NULL);
+	//gChannelsR->resizable(NULL);
 
-	addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
-	addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
+	//addChannelL->position(gChannelsL->x(), gChannelsL->y()+gChannelsL->h());
+	//addChannelR->position(gChannelsR->x(), gChannelsR->y()+gChannelsR->h());
 
 	redraw();
 }
@@ -1142,7 +1154,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 	size(w(), children() * 24);
 	redraw();
 
-	ch->column = index;	
+	//~ ch->column = index;	
 	return gch;
 }
 

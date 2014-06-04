@@ -55,7 +55,8 @@ extern PluginHost G_PluginHost;
 #endif
 
 
-void mh_stopSequencer() {
+void mh_stopSequencer()
+{
 	G_Mixer.running = false;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->stopBySeq();
@@ -65,7 +66,8 @@ void mh_stopSequencer() {
 /* ------------------------------------------------------------------ */
 
 
-bool mh_uniqueSolo(Channel *ch) {
+bool mh_uniqueSolo(Channel *ch)
+{
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		Channel *ch = G_Mixer.channels.at(i);
@@ -81,15 +83,15 @@ bool mh_uniqueSolo(Channel *ch) {
 
 /** TODO - revision needed: mh should not call glue_addChannel */
 
-void mh_loadPatch(bool isProject, const char *projPath) {
-
+void mh_loadPatch(bool isProject, const char *projPath)
+{
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
 
 	int numChans = G_Patch.getNumChans();
 	for (int i=0; i<numChans; i++) {
 
-		Channel *ch = glue_addChannel(G_Patch.getSide(i), G_Patch.getType(i));
+		Channel *ch = glue_addChannel(G_Patch.getColumn(i), G_Patch.getType(i));
 
 		char smpPath[PATH_MAX];
 
@@ -125,7 +127,8 @@ void mh_loadPatch(bool isProject, const char *projPath) {
 /* ------------------------------------------------------------------ */
 
 
-void mh_rewindSequencer() {
+void mh_rewindSequencer()
+{
 	if (G_Mixer.quantize > 0 && G_Mixer.running)   // quantize rewind
 		G_Mixer.rewindWait = true;
 	else
@@ -136,8 +139,8 @@ void mh_rewindSequencer() {
 /* ------------------------------------------------------------------ */
 
 
-SampleChannel *mh_startInputRec() {
-
+SampleChannel *mh_startInputRec()
+{
 	/* search for the next available channel */
 
 	SampleChannel *chan = NULL;
@@ -187,7 +190,8 @@ SampleChannel *mh_startInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-SampleChannel *mh_stopInputRec() {
+SampleChannel *mh_stopInputRec()
+{
 	gLog("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
 	SampleChannel *ch = G_Mixer.chanInput;
@@ -200,7 +204,8 @@ SampleChannel *mh_stopInputRec() {
 /* ------------------------------------------------------------------ */
 
 
-bool mh_uniqueSamplename(SampleChannel *ch, const char *name) {
+bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
+{
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		if (ch != G_Mixer.channels.at(i)) {
 			if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {

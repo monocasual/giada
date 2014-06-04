@@ -46,8 +46,8 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-SampleChannel::SampleChannel(int bufferSize, char side)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, side, bufferSize),
+SampleChannel::SampleChannel(int bufferSize)
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
 		wave             (NULL),
 		tracker          (0),

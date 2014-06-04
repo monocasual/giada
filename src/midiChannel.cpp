@@ -44,8 +44,8 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-MidiChannel::MidiChannel(int bufferSize, char side)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, side, bufferSize),
+MidiChannel::MidiChannel(int bufferSize)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {

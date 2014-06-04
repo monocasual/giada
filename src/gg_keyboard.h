@@ -63,6 +63,12 @@ public:
 	 * what to do when the corresponding key is pressed. */
 
 	virtual int keyPress(int event) = 0;
+	
+	/* getColumnIndex
+	 * return the numeric index of the column in which this channel is
+	 * located. */
+	
+	int getColumnIndex();
 
 	class gButton *button;
 	class gStatus *status;
@@ -228,9 +234,10 @@ private:
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
-
+/*
 	class gClick *addChannelL;
 	class gClick *addChannelR;
+*/
 	class gClick *addColumnBtn;
 
 	/* columns
@@ -246,9 +253,10 @@ public:
 
 	/* addChannel
 	 * add a new channel to gChannels[l/r]. Used by callbacks and during
-	 * patch loading. Requires Channel (and not gChannel). */
+	 * patch loading. Requires Channel (and not gChannel). If build is
+	 * set to true, also generate the equivalent column.*/
 
-	gChannel *addChannel(int column, class Channel *ch);
+	gChannel *addChannel(int column, class Channel *ch, bool build=false);
 
 	/* deleteChannel
 	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
@@ -289,8 +297,8 @@ public:
 
 	/*bool hasScrollbar();*/
 
-	Fl_Group *gChannelsL;
-	Fl_Group *gChannelsR;
+	//Fl_Group *gChannelsL;
+	//Fl_Group *gChannelsR;
 };
 
 

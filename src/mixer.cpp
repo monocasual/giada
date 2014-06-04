@@ -138,15 +138,15 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-Channel *Mixer::addChannel(char side, int type) {
+Channel *Mixer::addChannel(int type) {
 
 	Channel *ch;
 	int bufferSize = kernelAudio::realBufsize*2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, side);
+		ch = new SampleChannel(bufferSize);
 	else
-		ch = new MidiChannel(bufferSize, side);
+		ch = new MidiChannel(bufferSize);
 
 	while (true) {
 		int lockStatus = pthread_mutex_trylock(&mutex_chans);
