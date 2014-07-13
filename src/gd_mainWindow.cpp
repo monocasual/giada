@@ -103,7 +103,6 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 	
 	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());	
 	zone3->add(beatMeter);
-	zone3->box(FL_BORDER_BOX);
 	
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
 	 * a group by itself) */
