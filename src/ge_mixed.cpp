@@ -340,7 +340,8 @@ gBeatMeter::gBeatMeter(int x, int y, int w, int h, const char *L)
 
 void gBeatMeter::draw() {
 
-	int cursorW = (w()/MAX_BEATS);
+	int cursorW = w() / MAX_BEATS;
+	int greyX   = G_Mixer.beats * cursorW;
 
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);													      // border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);  						// bg
@@ -361,7 +362,7 @@ void gBeatMeter::draw() {
 
 	/* unused grey area */
 
-	fl_rectf(x()+(G_Mixer.beats*cursorW)+1, y()+1, ((MAX_BEATS-G_Mixer.beats)*cursorW)-1, h()-2, COLOR_BG_1);
+	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
 }
 
 
