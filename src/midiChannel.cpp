@@ -95,10 +95,17 @@ void MidiChannel::addVstMidiEvent(uint32_t msg) {
 #ifdef WITH_VST
 
 void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
-	if (events.numEvents < MAX_VST_EVENTS) {
+	if (events.numEvents < MAX_VST_EVENTS) {	
 		events.events[events.numEvents] = (VstEvent*) e;
 		events.numEvents++;
-		//gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d\n", events.numEvents, e->deltaFrames);
+		/*
+		gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d note=%d number=%d velo=%d\n", 
+			events.numEvents, 
+			e->deltaFrames,
+			e->midiData[0],
+			e->midiData[1],
+			e->midiData[2]
+		);*/
 	}
 	else
 		gLog("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
@@ -266,8 +273,8 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::sendMidi(recorder::action *a, int localFrame) {
-
+void MidiChannel::sendMidi(recorder::action *a, int localFrame) 
+{
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
 			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
@@ -280,7 +287,8 @@ void MidiChannel::sendMidi(recorder::action *a, int localFrame) {
 }
 
 
-void MidiChannel::sendMidi(uint32_t data) {
+void MidiChannel::sendMidi(uint32_t data) 
+{
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
 			kernelMidi::send(data | MIDI_CHANS[midiOutChan]);

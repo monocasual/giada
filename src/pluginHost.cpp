@@ -620,8 +620,8 @@ gVector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg) {
-
+VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg)
+{
 	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
 
 	/* type = two types of events: MIDI event and MIDI system exclusive

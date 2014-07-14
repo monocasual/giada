@@ -45,7 +45,8 @@ extern bool  		     G_audio_status;
 extern gdMainWindow *mainWin;
 
 
-void __cb_window_closer(Fl_Widget *v, void *p) {
+void __cb_window_closer(Fl_Widget *v, void *p) 
+{
 	delete (Fl_Window*)p;
 }
 
@@ -63,8 +64,8 @@ gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff,
 gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 : Fl_Box(x, y, w, h, L), ch(ch) {}
 
-void gStatus::draw() {
-
+void gStatus::draw()
+{
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		          // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
 
@@ -112,8 +113,8 @@ gClick::gClick(int x, int y, int w, int h, const char *L, const char **imgOff, c
 	bdColor(COLOR_BD_0),
 	txtColor(COLOR_TEXT_0)	{}
 
-void gClick::draw() {
-
+void gClick::draw() 
+{
 	if (!active()) txtColor = bdColor;
 	else 					 txtColor = COLOR_TEXT_0;
 
@@ -144,7 +145,8 @@ void gClick::draw() {
 gClickRepeat::gClickRepeat(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
 : Fl_Repeat_Button(x, y, w, h, L), imgOff(imgOff), imgOn(imgOn) {}
 
-void gClickRepeat::draw() {
+void gClickRepeat::draw() 
+{
 	if (value()) {															 // -- clicked
 		fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
 		if (imgOn != NULL)
@@ -169,7 +171,8 @@ void gClickRepeat::draw() {
 
 
 gInput::gInput(int x, int y, int w, int h, const char *L)
-: Fl_Input(x, y, w, h, L) {
+: Fl_Input(x, y, w, h, L) 
+{
 	//Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
 	box(G_BOX);
 	labelsize(11);
@@ -187,7 +190,8 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
 
 
 gDial::gDial(int x, int y, int w, int h, const char *L)
-: Fl_Dial(x, y, w, h, L) {
+: Fl_Dial(x, y, w, h, L) 
+{
 	labelsize(11);
 	labelcolor(COLOR_TEXT_0);
 	align(FL_ALIGN_LEFT);
@@ -197,7 +201,8 @@ gDial::gDial(int x, int y, int w, int h, const char *L)
 	selection_color(COLOR_BG_1);   // selection
 }
 
-void gDial::draw() {
+void gDial::draw() 
+{
 	double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
 
 	fl_color(COLOR_BG_0);
@@ -212,7 +217,8 @@ void gDial::draw() {
 
 
 gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
-: Fl_Box(x, y, w, h, L) {
+: Fl_Box(x, y, w, h, L)
+{
 	labelsize(11);
 	box(FL_NO_BOX);
 	labelcolor(COLOR_TEXT_0);
@@ -227,8 +233,8 @@ gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
 gCheck::gCheck(int x, int y, int w, int h, const char *L)
 : Fl_Check_Button(x, y, w, h, L) {}
 
-void gCheck::draw() {
-
+void gCheck::draw()
+{
 	int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
 
 	if (value()) {
@@ -253,8 +259,8 @@ void gCheck::draw() {
 gRadio::gRadio(int x, int y, int w, int h, const char *L)
 : Fl_Radio_Button(x, y, w, h, L) {}
 
-void gRadio::draw() {
-
+void gRadio::draw()
+{
 	int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
 
 	if (value()) {
@@ -296,8 +302,8 @@ gSoundMeter::gSoundMeter(int x, int y, int w, int h, const char *L)
 		db_level(0.0f),
 		db_level_old(0.0f) {}
 
-void gSoundMeter::draw() {
-
+void gSoundMeter::draw() 
+{
 	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
 	/* peak = the highest value inside the frame */
@@ -338,8 +344,8 @@ void gSoundMeter::draw() {
 gBeatMeter::gBeatMeter(int x, int y, int w, int h, const char *L)
 	: Fl_Box(x, y, w, h, L) {}
 
-void gBeatMeter::draw() {
-
+void gBeatMeter::draw()
+{
 	int cursorW = w() / MAX_BEATS;
 	int greyX   = G_Mixer.beats * cursorW;
 
@@ -424,7 +430,8 @@ void gModeBox::draw() {
 void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
 
 
-void gModeBox::__cb_change_chanmode(int mode) {
+void gModeBox::__cb_change_chanmode(int mode)
+{
 	ch->mode = mode;
 
 	/* what to do when the channel is playing and you change the mode?
@@ -439,7 +446,8 @@ void gModeBox::__cb_change_chanmode(int mode) {
 
 
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
-	: Fl_Choice(x, y, w, h, l), angle(ang) {
+	: Fl_Choice(x, y, w, h, l), angle(ang)
+{
 	labelsize(11);
 	labelcolor(COLOR_TEXT_0);
 	box(FL_BORDER_BOX);
@@ -449,7 +457,8 @@ gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
 }
 
 
-void gChoice::draw() {
+void gChoice::draw()
+{
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);              // bg
 	fl_rect(x(), y(), w(), h(), (Fl_Color) COLOR_BD_0);    // border
 	if (angle)
@@ -481,7 +490,8 @@ void gChoice::draw() {
 /* ------------------------------------------------------------------ */
 
 
-void gDrawBox(int x, int y, int w, int h, Fl_Color c) {
+void gDrawBox(int x, int y, int w, int h, Fl_Color c)
+{
 	fl_color(c);
   fl_rectf(x, y, w, h);
   fl_color(COLOR_BD_0);
@@ -503,7 +513,8 @@ gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
 }
 
 
-void gLiquidScroll::resize(int X, int Y, int W, int H) {
+void gLiquidScroll::resize(int X, int Y, int W, int H)
+{
 	int nc = children()-2;                // skip hscrollbar and vscrollbar
 	for ( int t=0; t<nc; t++) {					  // tell children to resize to our new width
 		Fl_Widget *c = child(t);
@@ -586,7 +597,8 @@ void gResizerBar::SetMinHeight(int val) { min_h = val; }
 int  gResizerBar::GetMinHeight() { return min_h; }
 
 
-int gResizerBar::handle(int e) {
+int gResizerBar::handle(int e)
+{
 	int ret = 0;
 	int this_y = Fl::event_y_root();
 	switch (e) {
@@ -605,7 +617,8 @@ int gResizerBar::handle(int e) {
 }
 
 
-void gResizerBar::resize(int X,int Y,int W,int H) {
+void gResizerBar::resize(int X,int Y,int W,int H)
+{
 	Fl_Box::resize(X,Y,W,orig_h);                                // height of resizer stays constant size
 }
 

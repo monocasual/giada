@@ -123,8 +123,8 @@ public:
 	 * That's what we do with gVstEvents! */
 
 	struct gVstEvents {
-    int       numEvents;
-    int       reserved;
+    VstInt32  numEvents;
+    VstIntPtr reserved;
     VstEvent *events[MAX_VST_EVENTS];
 	} events;
 
