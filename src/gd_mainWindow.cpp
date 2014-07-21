@@ -645,3 +645,23 @@ void gTiming::__cb_divider()
 {
 	glue_beatsDivide();
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::setBpm(const char *v) 
+{ 
+	bpm->copy_label(v); 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::setMeter(int beats, int bars)
+{
+	char buf[8];
+	sprintf(buf, "%d/%d", beats, bars);
+	meter->copy_label(buf);
+}

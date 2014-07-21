@@ -197,7 +197,8 @@ public:
 
 	gTiming(int x, int y);
 	
-	inline void setBpm(const char *v) { bpm->copy_label(v); }
+	void setBpm(const char *v);
+	void setMeter(int beats, int bars);
 };
 
 

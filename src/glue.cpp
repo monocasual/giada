@@ -308,13 +308,8 @@ void glue_setBeats(int beats, int bars, bool expand)
 		//	recorder::shrink(G_Mixer.totalFrames);
 	}
 
-	char buf_batt[8];
-	sprintf(buf_batt, "%d/%d", G_Mixer.beats, G_Mixer.bars);
-	///mainWin->beats->copy_label(buf_batt);
-
-	/* in case the action editor is open */
-
-	gu_refreshActionEditor();
+	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
+	gu_refreshActionEditor();  // in case the action editor is open
 }
 
 
