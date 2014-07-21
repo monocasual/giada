@@ -131,7 +131,8 @@ void gdMainWindow::cb_endprogram(Fl_Widget *v, void *p) { mainWin->__cb_endprogr
 /* ------------------------------------------------------------------ */
 
 
-void gdMainWindow::__cb_endprogram() {
+void gdMainWindow::__cb_endprogram()
+{
 	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
 	init_shutdown();
@@ -198,7 +199,8 @@ void gInOut::cb_inToOut    (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_inToO
 /* ------------------------------------------------------------------ */
 
 
-void gInOut::__cb_outVol() {
+void gInOut::__cb_outVol() 
+{
 	glue_setOutVol(outVol->value());
 }
 
@@ -206,7 +208,8 @@ void gInOut::__cb_outVol() {
 /* ------------------------------------------------------------------ */
 
 
-void gInOut::__cb_inVol() {
+void gInOut::__cb_inVol() 
+{
 	glue_setInVol(inVol->value());
 }
 
@@ -215,15 +218,18 @@ void gInOut::__cb_inVol() {
 
 
 #ifdef WITH_VST
-void gInOut::__cb_masterFxOut() {
+void gInOut::__cb_masterFxOut() 
+{
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
-void gInOut::__cb_masterFxIn() {
+void gInOut::__cb_masterFxIn() 
+{
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 
-void gInOut::__cb_inToOut() {
+void gInOut::__cb_inToOut() 
+{
 	G_Mixer.inToOut = inToOut->value();
 }
 #endif
@@ -279,7 +285,8 @@ void gMenu::cb_edit  (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_edit(); }
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_about() {
+void gMenu::__cb_about() 
+{
 	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
 }
 
@@ -287,7 +294,8 @@ void gMenu::__cb_about() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_config() {
+void gMenu::__cb_config() 
+{
 	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
 }
 
@@ -295,8 +303,8 @@ void gMenu::__cb_config() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_file() {
-
+void gMenu::__cb_file() 
+{
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
 	Fl_Menu_Item menu[] = {
@@ -345,8 +353,8 @@ void gMenu::__cb_file() {
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_edit() {
-
+void gMenu::__cb_edit() 
+{
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
 		{"Clear all actions"},
@@ -463,7 +471,8 @@ void gController::cb_metronome(Fl_Widget *v, void *p) { ((gController*)p)->__cb_
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_rewind() {
+void gController::__cb_rewind() 
+{
 	glue_rewindSeq();
 }
 
@@ -471,7 +480,8 @@ void gController::__cb_rewind() {
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_play() {
+void gController::__cb_play() 
+{
 	glue_startStopSeq();
 }
 
@@ -479,7 +489,8 @@ void gController::__cb_play() {
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_recAction() {
+void gController::__cb_recAction() 
+{
 	glue_startStopActionRec();
 }
 
@@ -487,7 +498,8 @@ void gController::__cb_recAction() {
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_recInput() {
+void gController::__cb_recInput() 
+{
 	glue_startStopInputRec();
 }
 
@@ -495,7 +507,8 @@ void gController::__cb_recInput() {
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_metronome() {
+void gController::__cb_metronome() 
+{
 	glue_startStopMetronome();
 }
 
@@ -503,7 +516,8 @@ void gController::__cb_metronome() {
 /* ------------------------------------------------------------------ */
 
 
-void gController::updatePlay(int v) {
+void gController::updatePlay(int v) 
+{
 	play->value(v);
 	play->redraw();
 }
@@ -512,7 +526,8 @@ void gController::updatePlay(int v) {
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateMetronome(int v) {
+void gController::updateMetronome(int v) 
+{
 	metronome->value(v);
 	metronome->redraw();
 }
@@ -521,7 +536,8 @@ void gController::updateMetronome(int v) {
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateRecInput(int v) {
+void gController::updateRecInput(int v) 
+{
 	recInput->value(v);
 	recInput->redraw();
 }
@@ -530,7 +546,8 @@ void gController::updateRecInput(int v) {
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateRecAction(int v) {
+void gController::updateRecAction(int v) 
+{
 	recAction->value(v);
 	recAction->redraw();
 }
@@ -588,7 +605,8 @@ void gTiming::cb_divider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_divider
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_bpm() {
+void gTiming::__cb_bpm() 
+{
 	gu_openSubWindow(mainWin, new gdBpmInput(bpm->label()), WID_BPM);
 }
 
@@ -596,7 +614,8 @@ void gTiming::__cb_bpm() {
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_meter() {
+void gTiming::__cb_meter() 
+{
 	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
 }
 
@@ -604,7 +623,8 @@ void gTiming::__cb_meter() {
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_quantizer() {
+void gTiming::__cb_quantizer() 
+{
 	glue_quantize(quantizer->value());
 }
 
@@ -612,7 +632,8 @@ void gTiming::__cb_quantizer() {
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_multiplier() {
+void gTiming::__cb_multiplier() 
+{
 	glue_beatsMultiply();
 }
 
@@ -620,6 +641,7 @@ void gTiming::__cb_multiplier() {
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_divider() {
+void gTiming::__cb_divider() 
+{
 	glue_beatsDivide();
 }

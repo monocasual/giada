@@ -259,7 +259,7 @@ void glue_setBpm(const char *v1, const char *v2)
 	recorder::updateBpm(old_bpm, value, G_Mixer.quanto);
 	gu_refreshActionEditor();
 
-	///mainWin->bpm->copy_label(buf);
+	mainWin->timing->setBpm(buf);
 	gLog("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }
 
