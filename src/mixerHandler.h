@@ -42,6 +42,11 @@ void mh_stopSequencer();
 
 void mh_rewindSequencer();
 
+/* clear
+ * stop everything and clear all channels. */
+ 
+void mh_clear();
+
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 

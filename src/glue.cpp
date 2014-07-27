@@ -595,10 +595,9 @@ void glue_clearAllRecs()
 
 void glue_resetToInitState(bool resetGui)
 {
-	G_Mixer.running = false;
-	G_Mixer.ready   = false;
-	while (G_Mixer.channels.size > 0)
-		G_Mixer.channels.del(0U);  // unsigned
+	G_Mixer.ready = false;
+	
+	mh_clear();
 	mainWin->keyboard->clear();
 	recorder::init();
 	G_Patch.setDefault();
@@ -606,7 +605,10 @@ void glue_resetToInitState(bool resetGui)
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks();
 #endif
-	if (resetGui)	gu_update_controls();
+
+	if (resetGui)	
+		gu_update_controls();
+	
 	G_Mixer.ready = true;
 }
 

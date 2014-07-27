@@ -66,6 +66,17 @@ void mh_stopSequencer()
 /* ------------------------------------------------------------------ */
 
 
+void mh_clear()
+{
+	G_Mixer.running = false;
+	while (G_Mixer.channels.size > 0)
+		G_Mixer.channels.del(0U);  // unsigned	
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 bool mh_uniqueSolo(Channel *ch)
 {
 	int solos = 0;

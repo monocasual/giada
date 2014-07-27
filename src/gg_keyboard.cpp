@@ -70,15 +70,6 @@ gChannel::gChannel(int X, int Y, int W, int H)
 /* ------------------------------------------------------------------ */
 
 
-gChannel::~gChannel()
-{
-	puts("gChannel deleted");
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 int gChannel::getColumnIndex()
 {
 	return ((gColumn*)parent())->getIndex();
@@ -815,6 +806,12 @@ int gMidiChannel::keyPress(int e)
 /* ------------------------------------------------------------------ */
 
 
+int gKeyboard::indexColumn = 0;
+
+
+/* ------------------------------------------------------------------ */
+
+
 gKeyboard::gKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll    (X, Y, W, H),
 	bckspcPressed(false),
@@ -1035,32 +1032,10 @@ int gKeyboard::handle(int e)
 
 
 void gKeyboard::clear() 
-{
-	/*
-	printf("[gKeyboard::clear] %d columns to be cleared up\n", columns.size);
-	
-	for (unsigned i=0; i<columns.size; i++) {
-		printf("[gKeyboard::clear]    clearing column %d\n", i);
-		columns.at(i)->hide();
-		columns.at(i)->clear(true);
-		remove(columns.at(i));
-		delete columns.at(i);
-	}
-	
-	columns.clear();
-	delete addColumnBtn;
-	addColumnBtn = NULL;
-	
-	
-	printf("[gKeyboard::clear] %d columns available\n", columns.size);
-	
-	init();
-	**/
-	
+{	
 	Fl_Scroll::clear();
 	columns.clear();
-	printf("[gKeyboard::clear] %d columns available\n", columns.size);
-	
+	indexColumn = 0;     // new columns will start from index=0
 	init();
 }
 
@@ -1101,7 +1076,8 @@ void gKeyboard::__cb_addColumn()
 		addColumnBtn->position(colxw + 16, y());
 		printf("[gKeyboard::__cb_addColumn]     addButton x=%d\n", addColumnBtn->x());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw, 2000);
+	gColumn *gc = new gColumn(colx, y(), colw, 2000, indexColumn);
+	indexColumn++;
 	add(gc);
 	columns.add(gc);
 	redraw();
@@ -1115,14 +1091,8 @@ void gKeyboard::__cb_addColumn()
 /* ------------------------------------------------------------------ */
 
 
-int gColumn::indexGenerator = 0;
-
-
-/* ------------------------------------------------------------------ */
-
-
-gColumn::gColumn(int X, int Y, int W, int H)
-	: Fl_Group(X, Y, W, H)
+gColumn::gColumn(int X, int Y, int W, int H, int index)
+	: Fl_Group(X, Y, W, H), index(index)
 {
 	begin();
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
@@ -1131,17 +1101,6 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	resizable(NULL);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
-	
-	index = indexGenerator++;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-gColumn::~gColumn()
-{
-	puts("gColumn deleted");
 }
 
 

@@ -42,7 +42,6 @@ class gChannel : public Fl_Group
 public:
 
 	gChannel(int x, int y, int w, int h);
-	~gChannel();
 
 	/* reset
 	 * reset channel to initial status. */
@@ -189,14 +188,12 @@ private:
 	int openTypeMenu();
 
 	class gClick *addChannelBtn;
-	
-	static int indexGenerator;
+
 	int index;
 
 public:
 	
-	gColumn(int x, int y, int w, int h);
-	~gColumn();
+	gColumn(int x, int y, int w, int h, int index);
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
@@ -243,6 +240,9 @@ private:
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
+	
+	static int indexColumn;
+	
 	class gClick *addColumnBtn;
 
 	/* columns
