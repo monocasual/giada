@@ -70,6 +70,15 @@ gChannel::gChannel(int X, int Y, int W, int H)
 /* ------------------------------------------------------------------ */
 
 
+gChannel::~gChannel()
+{
+	puts("gChannel deleted");
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int gChannel::getColumnIndex()
 {
 	return ((gColumn*)parent())->getIndex();
@@ -823,7 +832,16 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 	hscrollbar.selection_color(COLOR_BG_1);
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_BOX);
-	
+
+	init();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gKeyboard::init()
+{
 	/* add 6 empty columns as init layout */
 	
 	__cb_addColumn();
@@ -880,6 +898,7 @@ void gKeyboard::organizeColumns()
 		return;
 		
 	/* otherwise delete all empty columns */
+	/** FIXME - this for loop might not work correctly! */
 		
 	for (unsigned i=columns.size-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
@@ -902,7 +921,7 @@ void gKeyboard::organizeColumns()
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)   { ((gKeyboard*)p)->__cb_addColumn(); }
+void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addColumn(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -946,7 +965,8 @@ void gKeyboard::refreshColumns()
 /* ------------------------------------------------------------------ */
 
 
-int gKeyboard::handle(int e) {
+int gKeyboard::handle(int e) 
+{
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_FOCUS:
@@ -1014,19 +1034,42 @@ int gKeyboard::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::clear() {
-	Fl::lock();
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
-		G_Mixer.channels.at(i)->guiChannel = NULL;
-	Fl::unlock();
-	redraw();
+void gKeyboard::clear() 
+{
+	/*
+	printf("[gKeyboard::clear] %d columns to be cleared up\n", columns.size);
+	
+	for (unsigned i=0; i<columns.size; i++) {
+		printf("[gKeyboard::clear]    clearing column %d\n", i);
+		columns.at(i)->hide();
+		columns.at(i)->clear(true);
+		remove(columns.at(i));
+		delete columns.at(i);
+	}
+	
+	columns.clear();
+	delete addColumnBtn;
+	addColumnBtn = NULL;
+	
+	
+	printf("[gKeyboard::clear] %d columns available\n", columns.size);
+	
+	init();
+	**/
+	
+	Fl_Scroll::clear();
+	columns.clear();
+	printf("[gKeyboard::clear] %d columns available\n", columns.size);
+	
+	init();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::setChannelWithActions(gSampleChannel *gch) {
+void gKeyboard::setChannelWithActions(gSampleChannel *gch) 
+{
 	if (gch->ch->hasActions)
 		gch->addActionButton();
 	else
@@ -1043,23 +1086,27 @@ void gKeyboard::__cb_addColumn()
 	int colxw;
 	int colw = 360;
 	if (columns.size == 0) {
-		colx  = x();
+		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + colw; 
+		printf("[gKeyboard::__cb_addColumn] 0 columns, adding from x=%d (offset=%d)\n", colx, xposition());
 		addColumnBtn = new gClick(colxw + 16, y(), 200, 20, "Add new column");
 		addColumnBtn->callback(cb_addColumn, (void*) this);
+		add(addColumnBtn);
 	}
 	else {
 		gColumn *prev = columns.last();
 		colx  = prev->x()+prev->w() + 16;
 		colxw = colx + colw;
+		printf("[gKeyboard::__cb_addColumn] N columns, adding from x=%d (offset=%d)\n", colx, xposition());
 		addColumnBtn->position(colxw + 16, y());
+		printf("[gKeyboard::__cb_addColumn]     addButton x=%d\n", addColumnBtn->x());
 	}
 	gColumn *gc = new gColumn(colx, y(), colw, 2000);
 	add(gc);
 	columns.add(gc);
 	redraw();
 	
-	gLog("[gKeyboard] new column added (index = %d), total count = %d\n", gc->getIndex(), columns.size);
+	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n", gc->getIndex(), columns.size, addColumnBtn->x());
 }
 
 
@@ -1086,6 +1133,15 @@ gColumn::gColumn(int X, int Y, int W, int H)
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 	
 	index = indexGenerator++;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gColumn::~gColumn()
+{
+	puts("gColumn deleted");
 }
 
 
@@ -1157,7 +1213,10 @@ void gColumn::deleteChannel(gChannel *gch)
 	delete gch;
 	
 	/* reposition all other channels and resize this group */
-
+	/** TODO
+	 * reposition is useless when called by gColumn::clear(). Add a new
+	 * parameter to skip the operation */
+	 
 	for (int i=0; i<children(); i++) {
 		gch = (gChannel*) child(i);
 		gch->position(gch->x(), y()+(i*24));
@@ -1204,4 +1263,22 @@ int gColumn::openTypeMenu()
 	if (strcmp(m->label(), "MIDI channel") == 0)
 		return CHANNEL_MIDI;
 	return 0;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::clear(bool full)
+{
+	if (full)
+		Fl_Group::clear();
+	else {
+		printf("[gColumn::clear]      %d channels to be cleared up\n", children());
+		while (children() >= 2) {  // skip "add new channel" btn
+			int i = children()-1;
+			printf("[gColumn::clear]         clearing channel=%d\n", i);
+			deleteChannel((gChannel*)child(i));
+		}
+	}
 }

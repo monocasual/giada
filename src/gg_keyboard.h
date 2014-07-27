@@ -42,6 +42,7 @@ class gChannel : public Fl_Group
 public:
 
 	gChannel(int x, int y, int w, int h);
+	~gChannel();
 
 	/* reset
 	 * reset channel to initial status. */
@@ -195,7 +196,8 @@ private:
 public:
 	
 	gColumn(int x, int y, int w, int h);
-	
+	~gColumn();
+
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
 	 * to channel to 'ch'. */
@@ -211,6 +213,13 @@ public:
 	 * update channels' graphical statues. Called on each GUI cycle. */
 	 
 	void refreshChannels();
+	
+	/* clear
+	 * remove all channels from the column. If full==true, delete also the
+	 * "add new channel" button. This method ovverrides the inherited one 
+	 * from Fl_Group. */
+
+	void clear(bool full=false);
 	
 	void draw();
 	
@@ -247,6 +256,11 @@ public:
 	
 	int handle(int e);
 
+	/* init
+	 * build the initial setup of empty channels. */
+	 
+	void init();
+	
 	/* addChannel
 	 * add a new channel to gChannels[l/r]. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). If build is
@@ -282,7 +296,7 @@ public:
 	void refreshColumns();
 
 	/* clear
-	 * delete all channels and groups */
+	 * delete all channels and groups. */
 
 	void clear();
 
