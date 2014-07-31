@@ -1068,7 +1068,6 @@ void gKeyboard::__cb_addColumn()
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + colw; 
-		printf("[gKeyboard::__cb_addColumn] 0 columns, adding from x=%d (offset=%d)\n", colx, xposition());
 		addColumnBtn = new gClick(colxw + 16, y(), 200, 20, "Add new column");
 		addColumnBtn->callback(cb_addColumn, (void*) this);
 		add(addColumnBtn);
@@ -1077,9 +1076,7 @@ void gKeyboard::__cb_addColumn()
 		gColumn *prev = columns.last();
 		colx  = prev->x()+prev->w() + 16;
 		colxw = colx + colw;
-		printf("[gKeyboard::__cb_addColumn] N columns, adding from x=%d (offset=%d)\n", colx, xposition());
 		addColumnBtn->position(colxw + 16, y());
-		printf("[gKeyboard::__cb_addColumn]     addButton x=%d\n", addColumnBtn->x());
 	}
 	gColumn *gc = new gColumn(colx, y(), colw, 2000, indexColumn);
 	indexColumn++;
@@ -1238,10 +1235,8 @@ void gColumn::clear(bool full)
 	if (full)
 		Fl_Group::clear();
 	else {
-		printf("[gColumn::clear]      %d channels to be cleared up\n", children());
 		while (children() >= 2) {  // skip "add new channel" btn
 			int i = children()-1;
-			printf("[gColumn::clear]         clearing channel=%d\n", i);
 			deleteChannel((gChannel*)child(i));
 		}
 	}

@@ -61,7 +61,7 @@ void init_prepareParser()
 {
 	G_Conf.read();
 	G_Patch.setDefault();
-	if (!gLog_init(LOG_MODE_STDOUT)) /// TODO - use G_Conf values
+	if (!gLog_init(G_Conf.logMode))
 		gLog("[init] log init failed! Using default stdout\n");
   time_t t;
   time (&t);
