@@ -35,8 +35,8 @@
 #include "ge_window.h"
 
 
-class gdConfig : public gWindow {
-
+class gdConfig : public gWindow 
+{
 private:
 	static void cb_save_config        (Fl_Widget *w, void *p);
 	static void cb_cancel             (Fl_Widget *w, void *p);
@@ -50,6 +50,7 @@ public:
 	class gTabAudio     *tabAudio;
 	class gTabBehaviors *tabBehaviors;
 	class gTabMidi      *tabMidi;
+	class gTabMisc      *tabMisc;
 
 	class gRadio    *recsStopOnChanHalt_1;
 	class gRadio    *recsStopOnChanHalt_0;
@@ -65,8 +66,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabMidi : public Fl_Group {
-
+class gTabMidi : public Fl_Group 
+{
 private:
 	void fetchSystems();
 	void fetchOutPorts();
@@ -92,8 +93,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabAudio : public Fl_Group {
-
+class gTabAudio : public Fl_Group 
+{
 private:
 	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
 	static void cb_fetchInChans       (Fl_Widget *w, void *p);
@@ -136,8 +137,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabBehaviors : public Fl_Group {
-
+class gTabBehaviors : public Fl_Group 
+{
 private:
 	static void cb_radio_mutex  (Fl_Widget *w, void *p);
 	inline void __cb_radio_mutex(Fl_Widget *w);
@@ -151,6 +152,20 @@ public:
 	class gCheck *fullChanVolOnLoad;
 
 	gTabBehaviors(int x, int y, int w, int h);
+
+	void save();
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gTabMisc : public Fl_Group 
+{
+public:
+	class gChoice *debugMsg;	
+
+	gTabMisc(int x, int y, int w, int h);
 
 	void save();
 };

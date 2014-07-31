@@ -51,6 +51,8 @@ private:
 
 public:
 
+	int logMode;
+
 	int  soundSystem;
 	int  soundDeviceOut;
 	int  soundDeviceIn;

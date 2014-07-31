@@ -32,6 +32,7 @@
 #include "gd_devInfo.h"
 #include "ge_mixed.h"
 #include "conf.h"
+#include "log.h"
 #include "gui_utils.h"
 #include "patch.h"
 #include "kernelAudio.h"
@@ -41,6 +42,60 @@
 extern Patch G_Patch;
 extern Conf	 G_Conf;
 extern bool  G_audio_status;
+
+
+/* ------------------------------------------------------------------ */
+
+
+gTabMisc::gTabMisc(int X, int Y, int W, int H)
+	: Fl_Group(X, Y, W, H, "Misc")
+{
+	begin();
+	debugMsg = new gChoice(x()+92,  y()+9,  253, 20, "Debug messages");
+	end();	
+	
+	debugMsg->add("Disabled"); 
+	debugMsg->add("To standard output"); 
+	debugMsg->add("To file"); 
+	
+	labelsize(11);
+
+	switch (G_Conf.logMode) {
+		case LOG_MODE_MUTE:
+			debugMsg->value(0);
+			break;
+		case LOG_MODE_STDOUT:
+			debugMsg->value(1);
+			break;
+		case LOG_MODE_FILE:
+			debugMsg->value(2);
+			break;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMisc::save()
+{
+	switch(debugMsg->value()) {
+		case 0:
+			G_Conf.logMode = LOG_MODE_MUTE;
+			break;
+		case 1:
+			G_Conf.logMode = LOG_MODE_STDOUT;
+			break;
+		case 2:
+			G_Conf.logMode = LOG_MODE_FILE;
+			break;			
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
 
 
 gTabAudio::gTabAudio(int X, int Y, int W, int H)
@@ -174,7 +229,8 @@ void gTabAudio::cb_showOutputInfo(Fl_Widget *w, void *p)      { ((gTabAudio*)p)-
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_fetchInChans() {
+void gTabAudio::__cb_fetchInChans() 
+{
 	fetchInChans(sounddevIn->value());
 	channelsIn->value(0);
 }
@@ -183,7 +239,8 @@ void gTabAudio::__cb_fetchInChans() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_fetchOutChans() {
+void gTabAudio::__cb_fetchOutChans() 
+{
 	fetchOutChans(sounddevOut->value());
 	channelsOut->value(0);
 }
@@ -191,7 +248,9 @@ void gTabAudio::__cb_fetchOutChans() {
 
 /* ------------------------------------------------------------------ */
 
-void gTabAudio::__cb_showInputInfo() {
+
+void gTabAudio::__cb_showInputInfo() 
+{
 	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
 	new gdDevInfo(dev);
 }
@@ -200,7 +259,8 @@ void gTabAudio::__cb_showInputInfo() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_showOutputInfo() {
+void gTabAudio::__cb_showOutputInfo() 
+{
 	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
 	new gdDevInfo(dev);
 }
@@ -209,8 +269,8 @@ void gTabAudio::__cb_showOutputInfo() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_deactivate_sounddev() {
-
+void gTabAudio::__cb_deactivate_sounddev()
+{
 	/* if the user changes sound system (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original sound system, we re-fill the list by
 	 * querying kernelAudio. */
@@ -252,8 +312,8 @@ void gTabAudio::__cb_deactivate_sounddev() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchInChans(int menuItem) {
-
+void gTabAudio::fetchInChans(int menuItem) 
+{
 	/* if menuItem==0 device in input is disabled. */
 
 	if (menuItem == 0) {
@@ -289,8 +349,8 @@ void gTabAudio::fetchInChans(int menuItem) {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchOutChans(int menuItem) {
-
+void gTabAudio::fetchOutChans(int menuItem) 
+{
 	channelsOut->clear();
 
 	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
@@ -313,8 +373,8 @@ void gTabAudio::fetchOutChans(int menuItem) {
 /* ------------------------------------------------------------------ */
 
 
-int gTabAudio::findMenuDevice(gChoice *m, int device) {
-
+int gTabAudio::findMenuDevice(gChoice *m, int device) 
+{
 	if (device == -1)
 		return 0;
 
@@ -337,8 +397,8 @@ int gTabAudio::findMenuDevice(gChoice *m, int device) {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchSoundDevs() {
-
+void gTabAudio::fetchSoundDevs() 
+{
 	if (kernelAudio::numDevs == 0) {
 		sounddevOut->add("-- no devices found --");
 		sounddevOut->value(0);
@@ -405,8 +465,8 @@ void gTabAudio::fetchSoundDevs() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::save() {
-
+void gTabAudio::save() 
+{
 	/** FIXME - wrong, if API is missing! Right way in gTabMidi::save */
 
 #ifdef __linux__
@@ -519,8 +579,8 @@ void gTabMidi::fetchOutPorts() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::fetchInPorts() {
-
+void gTabMidi::fetchInPorts() 
+{
 	if (kernelMidi::numInPorts == 0) {
 		portIn->add("-- no ports found --");
 		portIn->value(0);
@@ -546,8 +606,8 @@ void gTabMidi::fetchInPorts() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::save() {
-
+void gTabMidi::save() 
+{
 	if      (!strcmp("ALSA", system->text(system->value())))
 		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
 	else if (!strcmp("Jack", system->text(system->value())))
@@ -574,8 +634,8 @@ void gTabMidi::save() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::fetchSystems() {
-
+void gTabMidi::fetchSystems() 
+{
 #if defined(__linux__)
 
 	if (kernelMidi::hasAPI(RtMidi::LINUX_ALSA))
@@ -616,8 +676,8 @@ void gTabMidi::cb_changeSystem(Fl_Widget *w, void *p) { ((gTabMidi*)p)->__cb_cha
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::__cb_changeSystem() {
-
+void gTabMidi::__cb_changeSystem() 
+{
 	/* if the user changes MIDI device (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original system, we re-fill the list by
 	 * querying kernelMidi. */
@@ -684,7 +744,8 @@ void gTabBehaviors::cb_radio_mutex(Fl_Widget *w, void *p) { ((gTabBehaviors*)p)-
 /* ------------------------------------------------------------------ */
 
 
-void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w) {
+void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w) 
+{
 	((Fl_Button *)w)->type(FL_RADIO_BUTTON);
 }
 
@@ -692,7 +753,8 @@ void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w) {
 /* ------------------------------------------------------------------ */
 
 
-void gTabBehaviors::save() {
+void gTabBehaviors::save() 
+{
 	G_Conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
@@ -716,6 +778,7 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 		tabAudio     = new gTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabMidi      = new gTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabBehaviors = new gTabBehaviors(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+		tabMisc      = new gTabMisc(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 	tabs->end();
 
 	save 	 = new gClick (w-88, h-28, 80, 20, "Save");
@@ -738,7 +801,8 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 /* ------------------------------------------------------------------ */
 
 
-gdConfig::~gdConfig() {
+gdConfig::~gdConfig() 
+{
 	G_Conf.configX = x();
 	G_Conf.configY = y();
 }
@@ -754,10 +818,12 @@ void gdConfig::cb_cancel     (Fl_Widget *w, void *p) { ((gdConfig*)p)->__cb_canc
 /* ------------------------------------------------------------------ */
 
 
-void gdConfig::__cb_save_config() {
+void gdConfig::__cb_save_config() 
+{
 	tabAudio->save();
 	tabBehaviors->save();
 	tabMidi->save();
+	tabMisc->save();
 	do_callback();
 }
 
@@ -765,6 +831,7 @@ void gdConfig::__cb_save_config() {
 /* ------------------------------------------------------------------ */
 
 
-void gdConfig::__cb_cancel() {
+void gdConfig::__cb_cancel() 
+{
 	do_callback();
 }

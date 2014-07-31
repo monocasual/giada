@@ -31,8 +31,15 @@
 #define __LOG_H__
 
 
+/* init
+ * init logger. Mode defines where to write the output: LOG_MODE_STDOUT,
+ * LOG_MODE_FILE and LOG_MODE_MUTE. */
+ 
 int  gLog_init (int mode);
+
 void gLog_close();
+
 void gLog(const char *format, ...);
+
 
 #endif

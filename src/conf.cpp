@@ -135,6 +135,8 @@ int Conf::openFileForWriting()
 
 void Conf::setDefault()
 {
+	logMode = LOG_MODE_MUTE;
+	
 	soundSystem    = DEFAULT_SOUNDSYS;
 	soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
 	soundDeviceIn  = DEFAULT_SOUNDDEV_IN;
@@ -199,6 +201,8 @@ int Conf::read()
 		gLog("[Conf] corrupted .conf file, using default parameters\n");
 		return -1;
 	}
+	
+	logMode = atoi(getValue("logMode").c_str());
 
 	soundSystem = atoi(getValue("soundSystem").c_str());
 	if (!soundSystem & (SYS_API_ANY)) soundSystem = DEFAULT_SOUNDSYS;
@@ -350,6 +354,8 @@ int Conf::write()
 	fprintf(fp, "header=GIADACFG\n");
 	fprintf(fp, "version=%s\n", VERSIONE);
 
+	fprintf(fp, "logMode=%d\n",    logMode);
+	
 	fprintf(fp, "soundSystem=%d\n",    soundSystem);
 	fprintf(fp, "soundDeviceOut=%d\n", soundDeviceOut);
 	fprintf(fp, "soundDeviceIn=%d\n",  soundDeviceIn);
