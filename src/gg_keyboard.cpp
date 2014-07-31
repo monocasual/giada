@@ -546,9 +546,14 @@ void gSampleChannel::addActionButton()
 
 void gSampleChannel::delActionButton(bool force)
 {
+	if (readActions == NULL)
+		return;
+	
+	/* TODO - readActions check is useless here */
+	
 	if (!force && (readActions == NULL || ch->hasActions))
 		return;
-
+		
 	remove(readActions);		// delete from Keyboard group (FLTK)
 	delete readActions;     // delete (C++)
 	readActions = NULL;
