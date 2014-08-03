@@ -28,8 +28,9 @@
 
 
 #include <vector>
-#include "rtaudio/RtAudio.h"
 #include "kernelAudio.h"
+#include "RtAudio.h"
+#include "mixer.h"
 #include "glue.h"
 #include "conf.h"
 #include "log.h"
@@ -172,7 +173,7 @@ int openDevice(
 
 		return 1;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] system init error: %s\n", e.getMessage().c_str());
 		closeDevice();
 		G_audio_status = false;
@@ -190,7 +191,7 @@ int startStream() {
 		gLog("[KA] latency = %lu\n", system->getStreamLatency());
 		return 1;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] Start stream error: %s\n", e.getMessage().c_str());
 		return 0;
 	}
@@ -205,7 +206,7 @@ int stopStream() {
 		system->stopStream();
 		return 1;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] Stop stream error\n");
 		return 0;
 	}
@@ -219,7 +220,7 @@ const char *getDeviceName(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name.c_str();
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] invalid device ID = %d\n", dev);
 		return NULL;
 	}
@@ -254,7 +255,7 @@ unsigned getMaxInChans(int dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).inputChannels;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] Unable to get input channels\n");
 		return 0;
 	}
@@ -268,7 +269,7 @@ unsigned getMaxOutChans(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		gLog("[KA] Unable to get output channels\n");
 		return 0;
 	}
@@ -282,7 +283,7 @@ bool isProbed(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).probed;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }
@@ -295,7 +296,7 @@ unsigned getDuplexChans(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).duplexChannels;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }
@@ -308,7 +309,7 @@ bool isDefaultIn(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultInput;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }
@@ -321,7 +322,7 @@ bool isDefaultOut(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultOutput;
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }
@@ -334,7 +335,7 @@ int getTotalFreqs(unsigned dev) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.size();
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }
@@ -347,7 +348,7 @@ int	getFreq(unsigned dev, int i) {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.at(i);
 	}
-	catch (RtError &e) {
+	catch (RtAudioError &e) {
 		return 0;
 	}
 }

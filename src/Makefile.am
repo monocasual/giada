@@ -48,7 +48,7 @@ log.h                log.cpp
 
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
-							rtaudio/librtaudio.a -ljack -lasound -lpthread -ldl \
+							-lrtaudio -ljack -lasound -lpthread -ldl \
 							-lpulse-simple -lpulse -lsamplerate -lrtmidi
 endif
 if WINDOWS

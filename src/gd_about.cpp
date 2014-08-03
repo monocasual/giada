@@ -29,6 +29,7 @@
 
 #include "gd_about.h"
 #include "conf.h"
+#include "const.h"
 #include "kernelAudio.h"
 #include "ge_mixed.h"
 #include "graphics.h"

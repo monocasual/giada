@@ -31,11 +31,7 @@
 #define KERNELAUDIO_H
 
 
-#include <stdio.h>
-#include "rtaudio/RtAudio.h"
-#include "mixer.h"
-#include "const.h"
-#include "utils.h"
+#include "RtAudio.h"
 
 
 namespace kernelAudio {
