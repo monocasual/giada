@@ -54,7 +54,7 @@ gTabMisc::gTabMisc(int X, int Y, int W, int H)
 	debugMsg = new gChoice(x()+92,  y()+9,  253, 20, "Debug messages");
 	end();	
 	
-	debugMsg->add("Disabled"); 
+	debugMsg->add("(disabled)"); 
 	debugMsg->add("To standard output"); 
 	debugMsg->add("To file"); 
 	
