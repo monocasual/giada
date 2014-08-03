@@ -77,24 +77,23 @@ endif
 
 
 
-# compile libraries
-
-libs:
-if LINUX
-	@cd rtaudio; echo "Building RtAudio for Linux..."; \
-	./configure --with-jack --with-alsa --with-pulse; \
-	make;
-endif
-if WINDOWS
-	@cd rtaudio; echo "Building RtAudio for Windows..."; \
-	./configure --with-asio --with-ds; \
-	make;
-endif
-if OSX
-	@cd rtaudio; echo "Building RtAudio for OS X..."; \
-	./configure --with-core; \
-	make;
-endif
+#~ compile libraries
+#~ libs:
+#~ if LINUX
+#~ 	@cd rtaudio; echo "Building RtAudio for Linux..."; \
+#~ 	./configure --with-jack --with-alsa --with-pulse; \
+#~ 	make;
+#~ endif
+#~ if WINDOWS
+#~ 	@cd rtaudio; echo "Building RtAudio for Windows..."; \
+#~ 	./configure --with-asio --with-ds; \
+#~ 	make;
+#~ endif
+#~ if OSX
+#~ 	@cd rtaudio; echo "Building RtAudio for OS X..."; \
+#~ 	./configure --with-core; \
+#~ 	make;
+#~ endif
 
 
 
