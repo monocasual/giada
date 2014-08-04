@@ -31,6 +31,7 @@
 #include "conf.h"
 #include "const.h"
 #include "kernelAudio.h"
+#include "kernelMidi.h"
 #include "ge_mixed.h"
 #include "graphics.h"
 #include "gui_utils.h"
@@ -69,12 +70,14 @@ gdAbout::gdAbout()
 	  "Version " VERSIONE " (" __DATE__ ")\n\n"
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
-		"RtMidi, libsamplerate and libsndfile\n\n"
+		"RtMidi (%s), libsamplerate and libsndfile\n\n"
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
-		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION, kernelAudio::getRtAudioVersion().c_str());
+		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION, 
+		kernelAudio::getRtAudioVersion().c_str(),
+		kernelMidi::getRtMidiVersion().c_str());
 
 	int tw = 0;
 	int th = 0;

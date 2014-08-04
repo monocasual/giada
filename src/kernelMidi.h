@@ -97,6 +97,8 @@ namespace kernelMidi {
 	 * master callback for input events. */
 
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
+	
+	std::string getRtMidiVersion();
 }
 
 #endif

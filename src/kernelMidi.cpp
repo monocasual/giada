@@ -47,8 +47,8 @@ extern PluginHost G_PluginHost;
 #endif
 
 
-namespace kernelMidi {
-
+namespace kernelMidi 
+{
 
 int        api         = 0;      // one api for both in & out
 RtMidiOut *midiOut     = NULL;
@@ -63,7 +63,8 @@ void         *cb_data  = NULL;
 /* ------------------------------------------------------------------ */
 
 
-void startMidiLearn(cb_midiLearn *cb, void *data) {
+void startMidiLearn(cb_midiLearn *cb, void *data) 
+{
 	cb_learn = cb;
 	cb_data  = data;
 }
@@ -72,7 +73,8 @@ void startMidiLearn(cb_midiLearn *cb, void *data) {
 /* ------------------------------------------------------------------ */
 
 
-void stopMidiLearn() {
+void stopMidiLearn() 
+{
 	cb_learn = NULL;
 	cb_data  = NULL;
 }
@@ -81,7 +83,8 @@ void stopMidiLearn() {
 /* ------------------------------------------------------------------ */
 
 
-void setApi(int _api) {
+void setApi(int _api) 
+{
 	api = api;
 	gLog("[KM] using system 0x%x\n", api);
 }
@@ -90,8 +93,8 @@ void setApi(int _api) {
 /* ------------------------------------------------------------------ */
 
 
-int openOutDevice(int port) {
-
+int openOutDevice(int port) 
+{
 	try {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
 		G_midiStatus = true;
@@ -131,8 +134,8 @@ int openOutDevice(int port) {
 /* ------------------------------------------------------------------ */
 
 
-int openInDevice(int port) {
-
+int openInDevice(int port)
+{
 	try {
 		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
 		G_midiStatus = true;
@@ -174,7 +177,8 @@ int openInDevice(int port) {
 /* ------------------------------------------------------------------ */
 
 
-bool hasAPI(int API) {
+bool hasAPI(int API) 
+{
 	std::vector<RtMidi::Api> APIs;
 	RtMidi::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
@@ -187,12 +191,14 @@ bool hasAPI(int API) {
 /* ------------------------------------------------------------------ */
 
 
-const char *getOutPortName(unsigned p) {
+const char *getOutPortName(unsigned p) 
+{
 	try { return midiOut->getPortName(p).c_str(); }
 	catch (RtMidiError &error) { return NULL; }
 }
 
-const char *getInPortName(unsigned p) {
+const char *getInPortName(unsigned p) 
+{
 	try { return midiIn->getPortName(p).c_str(); }
 	catch (RtMidiError &error) { return NULL; }
 }
@@ -201,8 +207,8 @@ const char *getInPortName(unsigned p) {
 /* ------------------------------------------------------------------ */
 
 
-void send(uint32_t data) {
-
+void send(uint32_t data) 
+{
 	if (!G_midiStatus)
 		return;
 
@@ -219,8 +225,8 @@ void send(uint32_t data) {
 /* ------------------------------------------------------------------ */
 
 
-void send(int b1, int b2, int b3) {
-
+void send(int b1, int b2, int b3) 
+{
 	if (!G_midiStatus)
 		return;
 
@@ -239,8 +245,8 @@ void send(int b1, int b2, int b3) {
 /* ------------------------------------------------------------------ */
 
 
-void callback(double t, std::vector<unsigned char> *msg, void *data) {
-
+void callback(double t, std::vector<unsigned char> *msg, void *data) 
+{
 	/* 0.8.0 - for now we handle other midi signals (common and real-time
 	 * messages) as unknown, for debugging purposes */
 
@@ -357,6 +363,16 @@ void callback(double t, std::vector<unsigned char> *msg, void *data) {
 		gLog("\n");
 	}
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string getRtMidiVersion()
+{
+	return midiOut->getVersion();
+}
+
 
 }  // namespace
 
