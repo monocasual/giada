@@ -46,6 +46,7 @@
 #include <limits.h>
 #if defined(__APPLE__)
 	#include <libgen.h>     // basename unix
+	#include <pwd.h>        // getpwuid
 #endif
 
 
