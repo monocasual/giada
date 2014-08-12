@@ -47,16 +47,15 @@ log.h                log.cpp
 # inside configure.ac
 
 if LINUX
-giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm  \
+giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
 							-lrtaudio -ljack -lasound -lpthread -ldl \
 							-lpulse-simple -lpulse -lsamplerate -lrtmidi
 endif
 if WINDOWS
-giada_LDADD   = -lole32 -lrtaudio -ldsound -lwinmm -lwsock32 -lm \
-								-lpthread -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
-  						  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -Lc:/mingw/lib \
-  						  -lsndfile -lsamplerate -lrtmidi c:/mingw/lib/libwinmm.a \
-  						  c:/mingw/lib/libsetupapi.a c:/mingw/lib/libksuser.a
+giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lpthread \
+								-lfltk -lwininet -lgdi32 -lshell32 -lvfw32 -lrpcrt4 \
+								-luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
+								-lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser
 giada_LDFLAGS = -mwindows -mno-cygwin -static
 giada_SOURCES += resource.rc
 endif
