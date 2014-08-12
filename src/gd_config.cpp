@@ -647,8 +647,8 @@ void gTabMidi::fetchSystems()
 
 	if (kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
 		system->add("Multimedia MIDI");
-	if (kernelMidi::hasAPI(RtMidi::WINDOWS_KS))
-		system->add("Kernel Streaming MIDI");
+	//if (kernelMidi::hasAPI(RtMidi::WINDOWS_KS))
+	//	system->add("Kernel Streaming MIDI");
 
 #elif defined (__APPLE__)
 
