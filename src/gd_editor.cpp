@@ -95,10 +95,9 @@ gdEditor::gdEditor(SampleChannel *ch)
 		resetStartEnd = new gClick(chanEnd->x()+chanEnd->w()+4,      pitch->y()+pitch->h()+4, 46, 20, "Reset");
 
 	tools->end();
-	tools->resizable(new gBox(chanStart->x()+chanStart->w()+4, tools->y(), 80, tools->h()));
+	tools->resizable(new gBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
 
 	char buf[16];
-	///sprintf(buf, "%d", ch->beginTrue / 2); // divided by 2 because stereo
 	sprintf(buf, "%d", ch->begin / 2); // divided by 2 because stereo
 	chanStart->value(buf);
 	chanStart->type(FL_INT_INPUT);
@@ -109,7 +108,6 @@ gdEditor::gdEditor(SampleChannel *ch)
 	chanStart->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 	chanEnd  ->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
 
-	///sprintf(buf, "%d", ch->endTrue / 2);	// divided by 2 because stereo
 	sprintf(buf, "%d", ch->end / 2);  // divided by 2 because stereo
 	chanEnd->value(buf);
 	chanEnd->type(FL_INT_INPUT);
@@ -207,7 +205,8 @@ gdEditor::gdEditor(SampleChannel *ch)
 /* ------------------------------------------------------------------ */
 
 
-gdEditor::~gdEditor() {
+gdEditor::~gdEditor() 
+{
 	G_Conf.sampleEditorX = x();
 	G_Conf.sampleEditorY = y();
 	G_Conf.sampleEditorW = w();
@@ -241,7 +240,8 @@ void gdEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchToBar() {
+void gdEditor::__cb_setPitchToBar() 
+{
 	glue_setPitch(this, ch, ch->end/(float)G_Mixer.framesPerBar, true);
 }
 
@@ -249,7 +249,8 @@ void gdEditor::__cb_setPitchToBar() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchToSong() {
+void gdEditor::__cb_setPitchToSong() 
+{
 	glue_setPitch(this, ch, ch->end/(float)G_Mixer.totalFrames, true);
 }
 
@@ -257,7 +258,8 @@ void gdEditor::__cb_setPitchToSong() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_resetPitch() {
+void gdEditor::__cb_resetPitch() 
+{
 	glue_setPitch(this, ch, 1.0f, true);
 }
 
@@ -265,7 +267,8 @@ void gdEditor::__cb_resetPitch() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setChanPos() {
+void gdEditor::__cb_setChanPos() 
+{
 	glue_setBeginEndChannel(
 		this,
 		ch,
@@ -279,7 +282,8 @@ void gdEditor::__cb_setChanPos() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_resetStartEnd() {
+void gdEditor::__cb_resetStartEnd() 
+{
 	glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 }
 
@@ -287,7 +291,8 @@ void gdEditor::__cb_resetStartEnd() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setVolume() {
+void gdEditor::__cb_setVolume() 
+{
 	glue_setVolEditor(this, ch, volume->value(), false);
 }
 
@@ -295,7 +300,8 @@ void gdEditor::__cb_setVolume() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setVolumeNum() {
+void gdEditor::__cb_setVolumeNum() 
+{
 	glue_setVolEditor(this, ch, atof(volumeNum->value()), true);
 }
 
@@ -303,7 +309,8 @@ void gdEditor::__cb_setVolumeNum() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setBoost() {
+void gdEditor::__cb_setBoost() 
+{
 	if (Fl::event() == FL_DRAG)
 		glue_setBoost(this, ch, boost->value(), false);
 	else if (Fl::event() == FL_RELEASE) {
@@ -316,7 +323,8 @@ void gdEditor::__cb_setBoost() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setBoostNum() {
+void gdEditor::__cb_setBoostNum() 
+{
 	glue_setBoost(this, ch, atof(boostNum->value()), true);
 	waveTools->updateWaveform();
 }
@@ -325,7 +333,8 @@ void gdEditor::__cb_setBoostNum() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_normalize() {
+void gdEditor::__cb_normalize() 
+{
 	float val = wfx_normalizeSoft(ch->wave);
 	glue_setBoost(this, ch, val, false); // we pretend that a fake user turns the dial (numeric=false)
 	if (val < 0.0f)
@@ -342,7 +351,8 @@ void gdEditor::__cb_normalize() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_panning() {
+void gdEditor::__cb_panning() 
+{
 	glue_setPanning(this, ch, pan->value());
 }
 
@@ -350,8 +360,8 @@ void gdEditor::__cb_panning() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_reload() {
-
+void gdEditor::__cb_reload() 
+{
 	if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
 		return;
 
@@ -377,7 +387,8 @@ void gdEditor::__cb_reload() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitch() {
+void gdEditor::__cb_setPitch() 
+{
 	glue_setPitch(this, ch, pitch->value(), false);
 }
 
@@ -385,7 +396,8 @@ void gdEditor::__cb_setPitch() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchNum() {
+void gdEditor::__cb_setPitchNum() 
+{
 	glue_setPitch(this, ch, atof(pitchNum->value()), true);
 }
 
@@ -393,7 +405,8 @@ void gdEditor::__cb_setPitchNum() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchHalf() {
+void gdEditor::__cb_setPitchHalf() 
+{
 	glue_setPitch(this, ch, pitch->value()/2, true);
 }
 
@@ -401,7 +414,8 @@ void gdEditor::__cb_setPitchHalf() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchDouble() {
+void gdEditor::__cb_setPitchDouble() 
+{
 	glue_setPitch(this, ch, pitch->value()*2, true);
 }
 
@@ -409,7 +423,8 @@ void gdEditor::__cb_setPitchDouble() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_zoomIn() {
+void gdEditor::__cb_zoomIn() 
+{
 	waveTools->waveform->setZoom(-1);
 	waveTools->redraw();
 }
@@ -418,7 +433,8 @@ void gdEditor::__cb_zoomIn() {
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_zoomOut() {
+void gdEditor::__cb_zoomOut() 
+{
 	waveTools->waveform->setZoom(0);
 	waveTools->redraw();
 }
