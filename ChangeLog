@@ -13,6 +13,20 @@
 
 
 
+0.9.0 --- 2014 . 08 . 18
+- New full-screen GUI
+- Multi-column support
+- Advanced logging system
+- Upgrade to RtAudio 4.1.1 and RtMidi 2.1.0
+- Removed embedded RtAudio (thanks to Arty)
+- Fix wrong processing of VST MIDI events on 64 bit version
+- Fix stretched buttons when resizing sample editor window
+- "Clear all samples" destroys channels (fixed)
+- "Free channel" messes up loop / mute buttons (fixes)
+- Fix potential recordings with odd frames
+
+
+
 0.8.4 --- 2014 . 03 . 27
 - New mode 'Loop Bar Once'
 - Several small improvements and cleanups to internal utils functions
