@@ -83,7 +83,6 @@ public:
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
-	bool fullChanVolOnLoad;
 
 	char pluginPath[FILENAME_MAX];
 	char patchPath [FILENAME_MAX];

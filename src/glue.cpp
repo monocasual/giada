@@ -84,9 +84,6 @@ int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath)
 	if (result == SAMPLE_LOADED_OK)
 		mainWin->keyboard->updateChannel(ch->guiChannel);
 
-	if (G_Conf.fullChanVolOnLoad)
-		glue_setChanVol(ch, 1.0, false); // false = not from gui click
-
 	return result;
 }
 
@@ -99,6 +96,7 @@ Channel *glue_addChannel(int column, int type)
 	Channel *ch    = G_Mixer.addChannel(type);
 	gChannel *gch  = mainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel = gch;
+	glue_setChanVol(ch, 1.0, false); // false = not from gui click
 	return ch;
 }
 

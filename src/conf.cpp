@@ -168,7 +168,6 @@ void Conf::setDefault()
 	recsStopOnChanHalt = false;
 	chansStopOnSeqHalt = false;
 	treatRecsAsLoops   = false;
-	fullChanVolOnLoad  = true;
 
 	actionEditorZoom    = 100;
 	actionEditorGridOn  = false;
@@ -335,7 +334,6 @@ int Conf::read()
 	recsStopOnChanHalt = atoi(getValue("recsStopOnChanHalt").c_str());
 	chansStopOnSeqHalt = atoi(getValue("chansStopOnSeqHalt").c_str());
 	treatRecsAsLoops   = atoi(getValue("treatRecsAsLoops").c_str());
-	fullChanVolOnLoad  = atoi(getValue("fullChanVolOnLoad").c_str());
 
 	close();
 	return 1;
@@ -431,7 +429,6 @@ int Conf::write()
 	fprintf(fp, "recsStopOnChanHalt=%d\n", recsStopOnChanHalt);
 	fprintf(fp, "chansStopOnSeqHalt=%d\n", chansStopOnSeqHalt);
 	fprintf(fp, "treatRecsAsLoops=%d\n",   treatRecsAsLoops);
-	fprintf(fp, "fullChanVolOnLoad=%d\n",  fullChanVolOnLoad);
 
 	close();
 	return 1;

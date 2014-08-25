@@ -51,15 +51,8 @@ public:
 	class gTabBehaviors *tabBehaviors;
 	class gTabMidi      *tabMidi;
 	class gTabMisc      *tabMisc;
-
-	class gRadio    *recsStopOnChanHalt_1;
-	class gRadio    *recsStopOnChanHalt_0;
-	class gRadio    *chansStopOnSeqHalt_1;
-	class gRadio    *chansStopOnSeqHalt_0;
-	class gCheck		*treatRecsAsLoops;
-	class gCheck		*fullChanVolOnLoad;
-	class gClick 		*save;
-	class gClick 		*cancel;
+	class gClick 	      *save;
+	class gClick 	      *cancel;
 };
 
 
@@ -149,7 +142,6 @@ public:
 	class gRadio *chansStopOnSeqHalt_1;
 	class gRadio *chansStopOnSeqHalt_0;
 	class gCheck *treatRecsAsLoops;
-	class gCheck *fullChanVolOnLoad;
 
 	gTabBehaviors(int x, int y, int w, int h);
 

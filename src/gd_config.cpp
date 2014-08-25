@@ -719,14 +719,13 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 	radioGrp_2->end();
 
 	treatRecsAsLoops  = new gCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
-	fullChanVolOnLoad = new gCheck(x(), y()+185, 280, 20, "Bring channels to full volume on sample load");
+
 	end();
 	labelsize(11);
 
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
 	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
-	G_Conf.fullChanVolOnLoad  == 1 ? fullChanVolOnLoad->value(1) : fullChanVolOnLoad->value(0);
 
 	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
 	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -758,7 +757,6 @@ void gTabBehaviors::save()
 	G_Conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
-	G_Conf.fullChanVolOnLoad  = fullChanVolOnLoad->value() == 1 ? 1 : 0;
 }
 
 
