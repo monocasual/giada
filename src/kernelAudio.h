@@ -31,7 +31,10 @@
 #define KERNELAUDIO_H
 
 
-#include "RtAudio.h"
+#include "rtaudio-mod/RtAudio.h"
+#if defined(__linux__)
+	#include <jack/jack.h>
+#endif
 
 
 namespace kernelAudio {

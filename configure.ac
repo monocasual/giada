@@ -103,13 +103,13 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
-AC_LANG_PUSH([C++])
-AC_CHECK_HEADER(
-	[RtAudio.h],
-	[],
-	[AC_MSG_ERROR([library 'RtAudio' not found!])]
-)
-AC_LANG_POP
+#~ AC_LANG_PUSH([C++])
+#~ AC_CHECK_HEADER(
+	#~ [RtAudio.h],
+	#~ [],
+	#~ [AC_MSG_ERROR([library 'RtAudio' not found!])]
+#~ )
+#~ AC_LANG_POP
 
 # brutal and temporary hack for OS X: don't use pkg-config
 

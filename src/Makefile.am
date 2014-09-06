@@ -48,7 +48,7 @@ log.h                log.cpp
 
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
-							-lrtaudio -ljack -lasound -lpthread -ldl \
+							rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
 							-lpulse-simple -lpulse -lsamplerate -lrtmidi
 endif
 if WINDOWS
@@ -76,23 +76,24 @@ endif
 
 
 
-#~ compile libraries
-#~ libs:
-#~ if LINUX
-#~ 	@cd rtaudio; echo "Building RtAudio for Linux..."; \
-#~ 	./configure --with-jack --with-alsa --with-pulse; \
-#~ 	make;
-#~ endif
-#~ if WINDOWS
-#~ 	@cd rtaudio; echo "Building RtAudio for Windows..."; \
-#~ 	./configure --with-asio --with-ds; \
-#~ 	make;
-#~ endif
-#~ if OSX
-#~ 	@cd rtaudio; echo "Building RtAudio for OS X..."; \
-#~ 	./configure --with-core; \
-#~ 	make;
-#~ endif
+#compile libraries
+
+libs:
+if LINUX
+	@cd rtaudio-mod; echo "Building RtAudio for Linux..."; \
+	./configure --with-jack --with-alsa --with-pulse; \
+	make;
+endif
+if WINDOWS
+	@cd rtaudio-mod; echo "Building RtAudio for Windows..."; \
+	./configure --with-asio --with-ds; \
+	make;
+endif
+if OSX
+	@cd rtaudio-mod; echo "Building RtAudio for OS X..."; \
+	./configure --with-core; \
+	make;
+endif
 
 
 

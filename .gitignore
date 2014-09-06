@@ -4,8 +4,8 @@
 *.so.*
 *.orig
 *.rej
-src/rtaudio/librtaudio.pc
-src/rtaudio/rtaudio-config
+src/rtaudio-mod/librtaudio.pc
+src/rtaudio-mod/rtaudio-config
 AUTHORS
 ERRORS
 README
@@ -27,6 +27,7 @@ misc/
 missing
 release/
 script/
+patch/
 src/giada
 src/giada_lin
 src/giada_osx
