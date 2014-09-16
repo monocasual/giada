@@ -27,6 +27,10 @@
  * ------------------------------------------------------------------ */
 
 
+#include <jack/jack.h>
+#include <jack/intclient.h>
+#include <jack/transport.h>
+
 #include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "mixer.h"
