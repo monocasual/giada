@@ -34,6 +34,8 @@
 #include "rtaudio-mod/RtAudio.h"
 #if defined(__linux__)
 	#include <jack/jack.h>
+	#include <jack/intclient.h>
+	#include <jack/transport.h>
 #endif
 
 
