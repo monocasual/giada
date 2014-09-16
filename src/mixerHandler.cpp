@@ -27,9 +27,11 @@
  * ------------------------------------------------------------------ */
 
 
-#include <jack/jack.h>
-#include <jack/intclient.h>
-#include <jack/transport.h>
+#if defined(__linux__)
+	#include <jack/jack.h>
+	#include <jack/intclient.h>
+	#include <jack/transport.h>
+#endif
 
 #include "mixerHandler.h"
 #include "kernelMidi.h"
