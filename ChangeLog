@@ -13,6 +13,14 @@
 
 
 
+0.9.1 --- 2014 . 09 . 24
+- Bring back custom version of rtAudio in source package
+- Automatically turn up volume when adding new channel
+- Updated 'misc' tab in configuration panel
+- Fix startup crash on OS X
+- Fix missing jack headers
+
+
 0.9.0 --- 2014 . 08 . 18
 - New full-screen GUI
 - Multi-column support
@@ -24,7 +32,6 @@
 - "Clear all samples" destroys channels (fixed)
 - "Free channel" messes up loop / mute buttons (fixes)
 - Fix potential recordings with odd frames
-
 
 
 0.8.4 --- 2014 . 03 . 27
