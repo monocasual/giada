@@ -78,7 +78,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 		boost         = new gDial (volumeNum->x()+volumeNum->w()+80, tools->y(), 20, 20, "Boost");
 		boostNum      = new gInput(boost->x()+boost->w()+4,          tools->y(), 46, 20, "dB");
 
-		normalize     = new gClick(boostNum->x()+boostNum->w()+40,   tools->y(), 70, 20, "Normalize");
+		normalize     = new gClick(boostNum->x()+boostNum->w()+54,   tools->y(), 70, 20, "Normalize");
 		pan 				  = new gDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
 		panNum    	  = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
 
