@@ -1109,6 +1109,30 @@ gColumn::gColumn(int X, int Y, int W, int H, int index)
 /* ------------------------------------------------------------------ */
 
 
+int gColumn::handle(int e)
+{
+	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
+	switch (e) {
+		case FL_DND_ENTER:         	// return(1) for these events to 'accept' dnd
+		case FL_DND_DRAG: 
+		case FL_DND_RELEASE: {
+			gLog("dnd release\n");
+			ret = 1;
+			break;
+		}
+		case FL_PASTE: {            // handle actual drop (paste) operation
+			gLog("Paste event: %s\n", Fl::event_text());
+			ret = 1;
+			break;			
+		}
+	}
+	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gColumn::refreshChannels()
 {
 	for (int i=1; i<children(); i++)
@@ -1156,7 +1180,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				(MidiChannel*) ch);	
 	
 	add(gch);
-	size(w(), children() * 24);
+	size(w(), children() * 24); // TODO - add some space for drag n drop
 	redraw();
 
 	//~ ch->column = index;	

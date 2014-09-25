@@ -201,6 +201,10 @@ public:
 	 
 	gChannel *addChannel(class Channel *ch);
 	
+	/* handle */
+	
+	int handle(int e);
+	
 	/* deleteChannel
 	 * remove the channel 'gch' from this column. */
 	 
