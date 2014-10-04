@@ -139,7 +139,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-bool gFileExists(const char *filename);
+bool gFileExists(const char *path);
 
 bool gDirExists(const char *path);
 
@@ -155,13 +155,18 @@ std::string gBasename(const char *path);
 
 std::string gDirname(const char *path);
 
+std::string gTrim(const char *path);
+std::string gTrim(const std::string &s);
+
 std::string gGetCurrentPath();
 
 std::string gGetHomePath();
 
-std::string gGetExt(const char *filename);
+std::string gStripFileUrl(const char *path);
 
-std::string gStripExt(const char *filename);
+std::string gGetExt(const char *path);
+
+std::string gStripExt(const char *path);
 
 std::string gGetProjectName(const char *path);
 

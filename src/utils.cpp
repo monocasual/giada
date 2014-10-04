@@ -66,7 +66,8 @@ bool gFileExists(const char *filename) {
 /* ------------------------------------------------------------------ */
 
 
-bool gIsDir(const char *path) {
+bool gIsDir(const char *path) 
+{
 	bool ret;
 
 #if defined(__linux__)
@@ -110,7 +111,8 @@ bool gIsDir(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-bool gDirExists(const char *path) {
+bool gDirExists(const char *path)
+{
 	struct stat st;
 	if (stat(path, &st) != 0 && errno == ENOENT)
 		return false;
@@ -121,7 +123,8 @@ bool gDirExists(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-bool gMkdir(const char *path) {
+bool gMkdir(const char *path) 
+{
 #if defined(__linux__) || defined(__APPLE__)
 	if (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
 #else
@@ -135,7 +138,8 @@ bool gMkdir(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gBasename(const char *path) {
+std::string gBasename(const char *path)
+{
 	std::string out = path;
 	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
 	return out;
@@ -145,7 +149,8 @@ std::string gBasename(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gDirname(const char *path) {
+std::string gDirname(const char *path)
+{
 	std::string out = path;
 	out.erase(out.find_last_of(gGetSlash().c_str()));
 	return out;
@@ -155,7 +160,8 @@ std::string gDirname(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gGetCurrentPath() {
+std::string gGetCurrentPath() 
+{
  char buf[PATH_MAX];
 #if defined(__WIN32)
 	if (_getcwd(buf, PATH_MAX) != NULL)
@@ -171,7 +177,8 @@ std::string gGetCurrentPath() {
 /* ------------------------------------------------------------------ */
 
 
-std::string gGetExt(const char *file) {
+std::string gGetExt(const char *file) 
+{
 	int len = strlen(file);
 	int pos = len;
 	while (pos>0) {
@@ -189,7 +196,8 @@ std::string gGetExt(const char *file) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gStripExt(const char *file) {
+std::string gStripExt(const char *file) 
+{
 	int len = strlen(file);
 	int pos = -1;
 	for (int i=0; i<len; i++)
@@ -205,8 +213,8 @@ std::string gStripExt(const char *file) {
 /* ------------------------------------------------------------------ */
 
 
-bool gIsProject(const char *path) {
-
+bool gIsProject(const char *path) 
+{
 	/** FIXME - checks too weak */
 
 	if (gGetExt(path) == "gprj" && gDirExists(path))
@@ -218,7 +226,8 @@ bool gIsProject(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-bool gIsPatch(const char *path) {
+bool gIsPatch(const char *path)
+{
 	if (gGetExt(path) == "gptc")
 		return 1;
 	return 0;
@@ -228,7 +237,8 @@ bool gIsPatch(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gGetProjectName(const char *path) {
+std::string gGetProjectName(const char *path)
+{
 	std::string out;
 	out = gStripExt(path);
 
@@ -251,7 +261,8 @@ std::string gGetProjectName(const char *path) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gGetSlash() {
+std::string gGetSlash() // TODO - create SLASH macro or constant 
+{
 #if defined(_WIN32)
 	return "\\";
 #else
@@ -263,7 +274,8 @@ std::string gGetSlash() {
 /* ------------------------------------------------------------------ */
 
 
-std::string gItoa(int i) {
+std::string gItoa(int i)
+{
 	std::stringstream out;
 	out << i;
 	return out.str();
@@ -273,8 +285,36 @@ std::string gItoa(int i) {
 /* ------------------------------------------------------------------ */
 
 
-std::string gGetHomePath() {
+std::string gTrim(const char *f)
+{
+	std::string out = f;
+	return gTrim(out);
+}
 
+
+std::string gTrim(const std::string &s)
+{
+	std::size_t first = s.find_first_not_of(" \n\t");	
+	std::size_t last  = s.find_last_not_of(" \n\t");
+	return s.substr(first, last-first+1);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string gStripFileUrl(const char *f)
+{
+	std::string out = f;
+	return out.replace(0, strlen("file://"), "");
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+std::string gGetHomePath()
+{
 	char path[PATH_MAX];
 
 #if   defined(__linux__)
