@@ -1113,18 +1113,18 @@ int gColumn::handle(int e)
 {
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
-		case FL_DND_ENTER:         	// return(1) for these events to 'accept' dnd
+		case FL_DND_ENTER:           	// return(1) for these events to 'accept' dnd
 		case FL_DND_DRAG: 
 		case FL_DND_RELEASE: {
 			ret = 1;
 			break;
 		}
-		case FL_PASTE: {            // handle actual drop (paste) operation
-			gLog("Paste event: %s\n", Fl::event_text());
-			glue_addChannel(index, CHANNEL_SAMPLE);
-			//addChannel(c);
+		case FL_PASTE: {              // handle actual drop (paste) operation
+			gLog("[gColumn] dnd file: %s\n", Fl::event_text());
+			SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
+			glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
 			ret = 1;
-			break;			
+			break;
 		}
 	}
 	return ret;
