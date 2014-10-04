@@ -4,6 +4,7 @@
 *.so.*
 *.orig
 *.rej
+*.swp
 src/rtaudio-mod/librtaudio.pc
 src/rtaudio-mod/rtaudio-config
 AUTHORS
