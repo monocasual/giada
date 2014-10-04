@@ -72,12 +72,12 @@ static bool __soloSession__ = false;
 /* ------------------------------------------------------------------ */
 
 
-int glue_loadChannel(SampleChannel *ch, const char *fname, const char *fpath)
+int glue_loadChannel(SampleChannel *ch, const char *fname)
 {
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
-	G_Conf.setPath(G_Conf.samplePath, fpath);
+	G_Conf.setPath(G_Conf.samplePath, gDirname(fname).c_str());
 
 	int result = ch->load(fname);
 

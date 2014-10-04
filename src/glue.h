@@ -43,7 +43,7 @@ class Channel *glue_addChannel(int column, int type);
 /* loadChannel
  * fill an existing channel with a wave. */
 
-int glue_loadChannel(class SampleChannel *ch, const char *fname, const char *fpath);
+int glue_loadChannel(class SampleChannel *ch, const char *fname);
 
 void glue_deleteChannel(class Channel *ch);
 

@@ -266,7 +266,7 @@ public:
 	void init();
 	
 	/* addChannel
-	 * add a new channel to gChannels[l/r]. Used by callbacks and during
+	 * add a new channel to gChannels. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). If build is
 	 * set to true, also generate the equivalent column.*/
 

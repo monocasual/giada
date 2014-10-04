@@ -1116,12 +1116,13 @@ int gColumn::handle(int e)
 		case FL_DND_ENTER:         	// return(1) for these events to 'accept' dnd
 		case FL_DND_DRAG: 
 		case FL_DND_RELEASE: {
-			gLog("dnd release\n");
 			ret = 1;
 			break;
 		}
 		case FL_PASTE: {            // handle actual drop (paste) operation
 			gLog("Paste event: %s\n", Fl::event_text());
+			glue_addChannel(index, CHANNEL_SAMPLE);
+			//addChannel(c);
 			ret = 1;
 			break;			
 		}

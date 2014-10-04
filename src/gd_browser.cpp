@@ -250,7 +250,7 @@ void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = glue_loadChannel((SampleChannel*) ch, browser->get_selected_item(), browser->path_obj->value());
+	int res = glue_loadChannel((SampleChannel*) ch, browser->get_selected_item());
 
 	if (res == SAMPLE_LOADED_OK) {
 		do_callback();
