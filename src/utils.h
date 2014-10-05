@@ -153,6 +153,8 @@ bool gMkdir(const char *path);
 
 std::string gBasename(const char *path);
 
+std::string gReplace(std::string in, const std::string& search, const std::string& replace);
+
 std::string gDirname(const char *path);
 
 std::string gTrim(const char *path);

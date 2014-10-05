@@ -303,10 +303,26 @@ std::string gTrim(const std::string &s)
 /* ------------------------------------------------------------------ */
 
 
+std::string gReplace(std::string in, const std::string& search, const std::string& replace)
+{
+	size_t pos = 0;
+	while ((pos = in.find(search, pos)) != std::string::npos) {
+		in.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return in;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 std::string gStripFileUrl(const char *f)
 {
 	std::string out = f;
-	return out.replace(0, strlen("file://"), "");
+	out = gReplace(out, "file://", "");
+	out = gReplace(out, "%20", " ");
+	return out;
 }
 
 
