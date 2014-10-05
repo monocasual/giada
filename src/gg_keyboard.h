@@ -308,6 +308,12 @@ public:
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
 	void setChannelWithActions(gSampleChannel *gch);
+
+	/* printChannelMessage
+	 * given any output by glue_loadChannel, print the message on screen
+	 * on a gdAlert subwindow. */
+
+	void printChannelMessage(int res);
 };
 
 

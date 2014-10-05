@@ -1061,6 +1061,29 @@ void gKeyboard::setChannelWithActions(gSampleChannel *gch)
 /* ------------------------------------------------------------------ */
 
 
+void gKeyboard::printChannelMessage(int res)
+{
+	if      (res == SAMPLE_NOT_VALID)
+		gdAlert("This is not a valid WAVE file.");
+	else if (res == SAMPLE_MULTICHANNEL)
+		gdAlert("Multichannel samples not supported.");
+	else if (res == SAMPLE_WRONG_BIT)
+		gdAlert("This sample has an\nunsupported bit-depth (> 32 bit).");
+	else if (res == SAMPLE_WRONG_ENDIAN)
+		gdAlert("This sample has a wrong\nbyte order (not little-endian).");
+	else if (res == SAMPLE_WRONG_FORMAT)
+		gdAlert("This sample is encoded in\nan unsupported audio format.");
+	else if (res == SAMPLE_READ_ERROR)
+		gdAlert("Unable to read this sample.");
+	else if (res == SAMPLE_PATH_TOO_LONG)
+		gdAlert("File path too long.");
+	else
+		gdAlert("Unknown error.");
+}
+
+/* ------------------------------------------------------------------ */
+
+
 void gKeyboard::__cb_addColumn()
 {
 	int colx;
@@ -1121,9 +1144,12 @@ int gColumn::handle(int e)
 			break;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
-			gLog("[gColumn] dnd file: %s\n", Fl::event_text());
 			SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-			glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+			int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+			if (result != SAMPLE_LOADED_OK) {
+				deleteChannel(c->guiChannel);
+				((gKeyboard *)parent())->printChannelMessage(result);
+			}
 			ret = 1;
 			break;
 		}

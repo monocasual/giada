@@ -31,6 +31,7 @@
 #include "ge_browser.h"
 #include "gd_pluginList.h"
 #include "gd_mainWindow.h"
+#include "gg_keyboard.h"
 #include "gd_warnings.h"
 #include "mixer.h"
 #include "graphics.h"
@@ -256,6 +257,9 @@ void gdBrowser::__cb_load_sample() {
 		do_callback();
 		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
+	else 
+		mainWin->keyboard->printChannelMessage(res);
+	/*
 	else if (res == SAMPLE_NOT_VALID)
 		gdAlert("This is not a valid WAVE file.");
 	else if (res == SAMPLE_MULTICHANNEL)
@@ -271,7 +275,7 @@ void gdBrowser::__cb_load_sample() {
 	else if (res == SAMPLE_PATH_TOO_LONG)
 		gdAlert("File path too long.");
 	else
-		gdAlert("Unknown error.");
+		gdAlert("Unknown error.");*/
 }
 
 
