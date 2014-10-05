@@ -1184,6 +1184,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 	add(gch);
 	size(w(), children() * 24 + 100); // add some bottom space for drag n drop
 	redraw();
+	parent()->redraw();               // redraw Keyboard
 
 	//~ ch->column = index;	
 	return gch;
