@@ -180,6 +180,7 @@ void gSampleChannel::__cb_openFxWindow()
 }
 #endif
 
+
 /* ------------------------------------------------------------------ */
 
 
@@ -1181,7 +1182,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				(MidiChannel*) ch);	
 	
 	add(gch);
-	size(w(), children() * 24); // TODO - add some space for drag n drop
+	size(w(), children() * 24 + 100); // add some bottom space for drag n drop
 	redraw();
 
 	//~ ch->column = index;	
