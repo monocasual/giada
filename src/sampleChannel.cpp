@@ -946,8 +946,6 @@ void SampleChannel::clearChan(float *dest, int start) {
 
 int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind) {
 
-	gLog(">>> start=%d offset=%d\n", start, offset);
-
 	int position;  // return value: the new position
 
 	if (pitch == 1.0f) {
