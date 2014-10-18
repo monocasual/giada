@@ -1235,7 +1235,7 @@ void gColumn::deleteChannel(gChannel *gch)
 		gch = (gChannel*) child(i);
 		gch->position(gch->x(), y()+(i*24));
 	}
-	size(w(), children()*24);
+	size(w(), children() * 24 + 66);  // evil space for drag n drop
 	redraw();
 }
 
