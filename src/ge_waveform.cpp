@@ -66,7 +66,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 
 	// TODO - temporary grid values
 	grid.snap  = false;
-	grid.level = 1;
+	grid.level = 4;
 	// TODO 
 
 	stretchToWindow();
@@ -115,7 +115,16 @@ int gWaveform::alloc(int datasize) {
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
+	/* grid frequency: store a grid point every 'gridFreq' pixel */
+
+	int gridFreq = data.size / grid.level; 
+
 	for (int i=0; i<data.size; i++) {
+
+		/* store grid points for later drawing */
+
+		if (i % gridFreq == 0 && i != 0)
+			grid.points.add(i);
 
 		int pp;  // point prev
 		int pn;  // point next
@@ -155,6 +164,8 @@ int gWaveform::alloc(int datasize) {
 		if (data.sup[i] < y())       data.sup[i] = y();
 		if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
 	}
+
+	gLog("grid.points=%d\n", grid.points.size);
 	recalcPoints();
 	return 1;
 }
