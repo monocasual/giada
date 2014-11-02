@@ -161,18 +161,14 @@ void gWaveform::recalcPoints() {
 
 	selectionA = relativePoint(selectionA_abs);
 	selectionB = relativePoint(selectionB_abs);
-
-	///chanStart  = relativePoint(chan->beginTrue / 2);
 	chanStart  = relativePoint(chan->begin / 2);
 
 	/* fix the rounding error when chanEnd is set on the very end of the
 	 * sample */
 
-	///if (chan->endTrue == chan->wave->size)
 	if (chan->end == chan->wave->size)
 		chanEnd = data.size - 2; // 2 px border
 	else
-		///chanEnd = relativePoint(chan->endTrue / 2);
 		chanEnd = relativePoint(chan->end / 2);
 }
 
@@ -205,7 +201,8 @@ void gWaveform::draw() {
 	}
 
 	/* draw waveform from x1 (offset driven by the scrollbar) to x2
-	 * (width of parent window) */
+	 * (width of parent window). We don't draw the entire waveform,
+	 * only the visibile part. */
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // sample zero (-inf dB)

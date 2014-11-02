@@ -91,11 +91,18 @@ private:
 
 	void straightSel();
 
+	/* freeData
+	 * destroy any graphical buffer */
+
 	void freeData();
+
+	/* smaller
+	 * is the waveform smaller than the parent window? */
 
 	bool smaller();
 
 public:
+
 	gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
 	~gWaveform();
 	void draw();
@@ -111,9 +118,12 @@ public:
 
 	void recalcPoints();
 
+	/* openEditMenu
+	 * show edit menu on right-click */
+	
 	void openEditMenu();
 
-	/* displayRadio
+	/* displayRatio
 	 * how much of the waveform is being displayed on screen */
 
 	inline float displayRatio() { return 1.0f / (data.size / (float) w()); };
@@ -151,6 +161,13 @@ public:
 	int selectionB;
 	int selectionA_abs;
 	int selectionB_abs;
+
+	/* gridEnabled, gridLevel
+	 * set level of grid and enable/disable snapping. If
+	 * gridLevel == 0 the grid becomes invisible. */
+
+	bool gridEnabled;
+	int  gridLevel;
 };
 
 
