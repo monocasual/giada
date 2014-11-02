@@ -35,6 +35,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <math.h>
+#include "utils.h"
 
 #define  FLAG_WIDTH  14
 #define  FLAG_HEIGHT 12
@@ -45,11 +46,22 @@ class gWaveform : public Fl_Widget {
 
 private:
 
+	/* data
+	 * real graphic stuff from the underlying waveform */
+	
 	struct data {
 		int *sup;
 		int *inf;
 		int  size;
 	} data;
+
+	/* grid */
+
+	struct grid {
+		bool snap;
+		int  level;
+		gVector<int> points;
+	} grid;
 
 	/* chan
 	 * chan in use. */
@@ -161,13 +173,6 @@ public:
 	int selectionB;
 	int selectionA_abs;
 	int selectionB_abs;
-
-	/* gridEnabled, gridLevel
-	 * set level of grid and enable/disable snapping. If
-	 * gridLevel == 0 the grid becomes invisible. */
-
-	bool gridEnabled;
-	int  gridLevel;
 };
 
 

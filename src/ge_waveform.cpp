@@ -64,6 +64,11 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 	data.inf  = NULL;
 	data.size = 0;
 
+	// TODO - temporary grid values
+	grid.snap  = false;
+	grid.level = 1;
+	// TODO 
+
 	stretchToWindow();
 }
 
@@ -87,6 +92,7 @@ void gWaveform::freeData() {
 		data.inf  = NULL;
 		data.size = 0;
 	}
+	grid.points.clear();
 }
 
 
