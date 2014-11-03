@@ -231,10 +231,23 @@ void gWaveform::draw() {
 
 	fl_color(0, 0, 0);
 	for (int i=wx1; i<wx2; i++) {
-			fl_color(0, 0, 0);
-			fl_line(i+x(), zero, i+x(), data.sup[i]);
-			fl_line(i+x(), zero, i+x(), data.inf[i]);
+		fl_line(i+x(), zero, i+x(), data.sup[i]);
+		fl_line(i+x(), zero, i+x(), data.inf[i]);
+		
+		/* print grid */
+
+		for (unsigned k=0; k<grid.points.size; k++) {
+			if (grid.points.at(k) == i) {
+				//gLog("draw grid line at %d\n", i);
+				fl_color(fl_rgb_color(54, 54, 54));
+				fl_line_style(FL_DASH, 0, NULL);
+				fl_line(i+x(), y(), i+x(), y()+h());
+				fl_color(0, 0, 0);
+				fl_line_style(FL_SOLID, 0, NULL);
+				break;
+			}
 		}
+	}
 
 	/* border box */
 
