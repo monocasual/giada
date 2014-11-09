@@ -106,6 +106,7 @@ public:
 	class gClick  	 *pitchReset;
 	class gClick     *close;
 	class gChoice    *grid;
+	class gCheck     *snap;
 
 	class SampleChannel *ch;
 };

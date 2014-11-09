@@ -64,6 +64,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 	Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
 	bar->begin();
 		grid    = new gChoice(bar->x(), bar->y(), 50, 20);
+		snap    = new gCheck(grid->x()+grid->w()+4, bar->y()+4, 12, 12);
 		zoomOut = new gClick(bar->x()+bar->w()-20, bar->y(), 20, 20, "-");
 		zoomIn  = new gClick(zoomOut->x()-24, bar->y(), 20, 20, "+");
 	bar->end();

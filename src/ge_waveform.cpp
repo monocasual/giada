@@ -117,10 +117,15 @@ int gWaveform::alloc(int datasize)
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
-	/* grid frequency: store a grid point every 'gridFreq' pixel */
+	/* grid frequency: store a grid point every 'gridFreq' pixel. Must be
+	 * even, as always */
 
-	int gridFreq = grid.level != 0 ? (chan->wave->size/2) / grid.level : 0; 
-	gLog("wave.size=%d grid.level=%d gridFreq=%d\n", chan->wave->size/2, grid.level, gridFreq);
+	int gridFreq = 0;
+	if (grid.level != 0) {
+		gridFreq = chan->wave->size / grid.level; 
+		if (gridFreq % 2 != 0)
+			gridFreq--;
+	}
 
 	for (int i=0; i<data.size; i++) {
 
@@ -148,17 +153,18 @@ int gWaveform::alloc(int datasize)
 
 		int k = pp;
 		while (k < pn) {
+
 			if (chan->wave->data[k] > peaksup)
 				peaksup = chan->wave->data[k];    // FIXME - Left data only
 			else
 			if (chan->wave->data[k] <= peakinf)
 				peakinf = chan->wave->data[k];    // FIXME - Left data only
 
+			/* print grid */
+
 			if (gridFreq != 0)
-				if (k % gridFreq == 0 && k != 0) {
+				if (k % gridFreq == 0 && k != 0)
 					grid.points.add(i);
-					gLog("print grid at %d - k=%d\n", i, k);
-				}
 			
 			k += 2;
 		}
@@ -795,6 +801,7 @@ bool gWaveform::smaller()
 
 void gWaveform::setGridLevel(int l)
 {
+	grid.points.clear();	
 	grid.level = l;
 	alloc(data.size);
 	redraw();
