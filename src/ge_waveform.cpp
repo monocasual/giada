@@ -66,7 +66,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 
 	// TODO - temporary grid values
 	grid.snap  = false;
-	grid.level = 4;
+	grid.level = 0;
 	// TODO 
 
 	stretchToWindow();
@@ -76,7 +76,8 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 /* ------------------------------------------------------------------ */
 
 
-gWaveform::~gWaveform() {
+gWaveform::~gWaveform() 
+{
 	freeData();
 }
 
@@ -84,7 +85,8 @@ gWaveform::~gWaveform() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::freeData() {
+void gWaveform::freeData() 
+{
 	if (data.sup != NULL) {
 		free(data.sup);
 		free(data.inf);
@@ -99,8 +101,8 @@ void gWaveform::freeData() {
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::alloc(int datasize) {
-
+int gWaveform::alloc(int datasize)
+{
 	ratio = chan->wave->size / (float) datasize;
 
 	if (ratio < 2)
@@ -117,14 +119,16 @@ int gWaveform::alloc(int datasize) {
 
 	/* grid frequency: store a grid point every 'gridFreq' pixel */
 
-	int gridFreq = data.size / grid.level; 
+	int gridFreq = grid.level != 0 ? data.size / grid.level : 0; 
+	gLog("data.size=%d grid.level=%d gridFreq=%d\n", data.size, grid.level, gridFreq);
 
 	for (int i=0; i<data.size; i++) {
 
 		/* store grid points for later drawing */
-
-		if (i % gridFreq == 0 && i != 0)
-			grid.points.add(i);
+		
+		if (gridFreq != 0)
+			if (i % gridFreq == 0 && i != 0)
+				grid.points.add(i);
 
 		int pp;  // point prev
 		int pn;  // point next
@@ -165,7 +169,6 @@ int gWaveform::alloc(int datasize) {
 		if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
 	}
 
-	gLog("grid.points=%d\n", grid.points.size);
 	recalcPoints();
 	return 1;
 }
@@ -174,8 +177,8 @@ int gWaveform::alloc(int datasize) {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::recalcPoints() {
-
+void gWaveform::recalcPoints() 
+{
 	selectionA = relativePoint(selectionA_abs);
 	selectionB = relativePoint(selectionB_abs);
 	chanStart  = relativePoint(chan->begin / 2);
@@ -193,8 +196,8 @@ void gWaveform::recalcPoints() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::draw() {
-
+void gWaveform::draw() 
+{
 	/* blank canvas */
 
 	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
@@ -295,8 +298,8 @@ void gWaveform::draw() {
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::handle(int e) {
-
+int gWaveform::handle(int e) 
+{
 	int ret = 0;
 
 	switch (e) {
@@ -486,7 +489,8 @@ int gWaveform::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnStart() {
+bool gWaveform::mouseOnStart() 
+{
 	return mouseX-10 >  chanStart + x() - BORDER              &&
 				 mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
 				 mouseY    >  h() + y() - FLAG_HEIGHT;
@@ -496,7 +500,8 @@ bool gWaveform::mouseOnStart() {
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnEnd() {
+bool gWaveform::mouseOnEnd() 
+{
 	return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
 				 mouseX-10 <= chanEnd + x() - BORDER              &&
 				 mouseY    <= y() + FLAG_HEIGHT + 1;
@@ -506,7 +511,8 @@ bool gWaveform::mouseOnEnd() {
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnSelectionA() {
+bool gWaveform::mouseOnSelectionA() 
+{
 	if (selectionA == selectionB)
 		return false;
 	return mouseX >= selectionA-5+x() && mouseX <= selectionA+5+x();
@@ -516,7 +522,8 @@ bool gWaveform::mouseOnSelectionA() {
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnSelectionB() {
+bool gWaveform::mouseOnSelectionB() 
+{
 	if (selectionA == selectionB)
 		return false;
 	return mouseX >= selectionB-5+x() && mouseX <= selectionB+5+x();
@@ -526,7 +533,8 @@ bool gWaveform::mouseOnSelectionB() {
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::absolutePoint(int p) {
+int gWaveform::absolutePoint(int p) 
+{
 	if (p <= 0)
 		return 0;
 
@@ -540,7 +548,8 @@ int gWaveform::absolutePoint(int p) {
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::relativePoint(int p) {
+int gWaveform::relativePoint(int p) 
+{
 	return (ceilf(p / ratio)) * 2;
 }
 
@@ -548,8 +557,8 @@ int gWaveform::relativePoint(int p) {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::openEditMenu() {
-
+void gWaveform::openEditMenu() 
+{
 	if (selectionA == selectionB)
 		return;
 
@@ -697,7 +706,8 @@ void gWaveform::openEditMenu() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::straightSel() {
+void gWaveform::straightSel() 
+{
 	if (selectionA > selectionB) {
 		unsigned tmp = selectionB;
 		selectionB = selectionA;
@@ -709,8 +719,8 @@ void gWaveform::straightSel() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::setZoom(int type) {
-
+void gWaveform::setZoom(int type) 
+{
 	int newSize;
 	if (type == -1) newSize = data.size*2;  // zoom in
 	else            newSize = data.size/2;  // zoom out
@@ -759,7 +769,8 @@ void gWaveform::setZoom(int type) {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::stretchToWindow() {
+void gWaveform::stretchToWindow() 
+{
 	int s = ((gWaveTools*)parent())->w();
 	alloc(s);
 	position(BORDER, y());
@@ -770,6 +781,18 @@ void gWaveform::stretchToWindow() {
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::smaller() {
+bool gWaveform::smaller() 
+{
 	return w() < ((gWaveTools*)parent())->w();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gWaveform::setGridLevel(int l)
+{
+	grid.level = l;
+	alloc(data.size);
+	redraw();
 }

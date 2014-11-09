@@ -59,16 +59,22 @@ gdEditor::gdEditor(SampleChannel *ch)
 	if (G_Conf.sampleEditorX)
 		resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, G_Conf.sampleEditorW, G_Conf.sampleEditorH);
 
+	/* top bar: grid and zoom tools */
+
 	Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
 	bar->begin();
-		reload  = new gClick(bar->x(), bar->y(), 50, 20, "Reload");
+		grid    = new gChoice(bar->x(), bar->y(), 50, 20);
 		zoomOut = new gClick(bar->x()+bar->w()-20, bar->y(), 20, 20, "-");
 		zoomIn  = new gClick(zoomOut->x()-24, bar->y(), 20, 20, "+");
 	bar->end();
-	bar->resizable(new gBox(reload->x()+reload->w()+4, bar->y(), 80, bar->h()));
+	bar->resizable(new gBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
+
+	/* waveform */
 
 	waveTools = new gWaveTools(8, 36, w()-16, h()-120, ch);
 	waveTools->end();
+
+	/* other tools */
 
 	Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
 	tools->begin();
@@ -82,13 +88,14 @@ gdEditor::gdEditor(SampleChannel *ch)
 		pan 				  = new gDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
 		panNum    	  = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
 
-		pitch				  = new gDial  (tools->x()+42,	                     volume->y()+volume->h()+4, 20, 20, "Pitch");
-		pitchNum		  = new gInput (pitch->x()+pitch->w()+4,	           volume->y()+volume->h()+4, 46, 20);
-		pitchToBar    = new gClick (pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 46, 20, "To bar");
-		pitchToSong   = new gClick (pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 46, 20, "To song");
-		pitchHalf     = new gClick (pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 21, 20, "÷");
-		pitchDouble   = new gClick (pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 21, 20, "×");
-		pitchReset    = new gClick (pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
+		pitch				  = new gDial (tools->x()+42,	                      volume->y()+volume->h()+4, 20, 20, "Pitch");
+		pitchNum		  = new gInput(pitch->x()+pitch->w()+4,	            volume->y()+volume->h()+4, 46, 20);
+		pitchToBar    = new gClick(pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 46, 20, "To bar");
+		pitchToSong   = new gClick(pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 46, 20, "To song");
+		pitchHalf     = new gClick(pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 21, 20, "÷");
+		pitchDouble   = new gClick(pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 21, 20, "×");
+		pitchReset    = new gClick(pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
+		reload        = new gClick(pitchReset->x()+pitchReset->w()+4,   volume->y()+volume->h()+4, 70, 20, "Reload");
 
 		chanStart     = new gInput(tools->x()+52,                    pitch->y()+pitch->h()+4, 60, 20, "Start");
 		chanEnd       = new gInput(chanStart->x()+chanStart->w()+40, pitch->y()+pitch->h()+4, 60, 20, "End");
@@ -96,6 +103,20 @@ gdEditor::gdEditor(SampleChannel *ch)
 
 	tools->end();
 	tools->resizable(new gBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
+	
+	/* grid tool setup */
+
+	grid->add("(off)");
+	grid->add("2");
+	grid->add("3");
+	grid->add("4");
+	grid->add("6");
+	grid->add("8");
+	grid->add("16");
+	grid->add("32");
+	grid->add("64");
+	grid->value(0);
+	grid->callback(cb_changeGrid, (void*)this);
 
 	char buf[16];
 	sprintf(buf, "%d", ch->begin / 2); // divided by 2 because stereo
@@ -235,6 +256,7 @@ void gdEditor::cb_resetPitch      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb
 void gdEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
 void gdEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
 void gdEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
+void gdEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_changeGrid(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -438,3 +460,13 @@ void gdEditor::__cb_zoomOut()
 	waveTools->waveform->setZoom(0);
 	waveTools->redraw();
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_changeGrid() 
+{
+	waveTools->waveform->setGridLevel(atoi(grid->text()));
+}
+

@@ -54,7 +54,8 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::updateWaveform() {
+void gWaveTools::updateWaveform() 
+{
 	waveform->alloc(w());
 	waveform->redraw();
 }
@@ -63,7 +64,8 @@ void gWaveTools::updateWaveform() {
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::resize(int x, int y, int w, int h) {
+void gWaveTools::resize(int x, int y, int w, int h) 
+{
 	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
 		Fl_Widget::resize(x, y, w, h);
 		waveform->resize(x, y, waveform->w(), h-24);
@@ -85,7 +87,8 @@ void gWaveTools::resize(int x, int y, int w, int h) {
 /* ------------------------------------------------------------------ */
 
 
-int gWaveTools::handle(int e) {
+int gWaveTools::handle(int e) 
+{
 	int ret = Fl_Group::handle(e);
 	switch (e) {
 		case FL_MOUSEWHEEL: {

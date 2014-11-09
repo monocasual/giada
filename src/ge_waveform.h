@@ -149,6 +149,11 @@ public:
 	 * shrink or enlarge the waveform to match parent's width (gWaveTools) */
 
 	void stretchToWindow();
+	
+	/* setGridLevel
+	 * set a new frequency level for the grid. 0 means disabled. */
+
+	void setGridLevel(int l);
 
 	inline int getSize() { return data.size; }
 

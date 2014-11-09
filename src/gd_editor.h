@@ -57,6 +57,7 @@ private:
 	static void cb_setPitchNum   (Fl_Widget *w, void *p);
 	static void cb_zoomIn        (Fl_Widget *w, void *p);
 	static void cb_zoomOut       (Fl_Widget *w, void *p);
+	static void cb_changeGrid    (Fl_Widget *w, void *p);
 	inline void __cb_setChanPos();
 	inline void __cb_resetStartEnd();
 	inline void __cb_setVolume();
@@ -75,6 +76,7 @@ private:
 	inline void __cb_setPitchNum();
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
+	inline void __cb_changeGrid();
 
 public:
 
@@ -103,6 +105,7 @@ public:
 	class gClick  	 *pitchDouble;
 	class gClick  	 *pitchReset;
 	class gClick     *close;
+	class gChoice    *grid;
 
 	class SampleChannel *ch;
 };
