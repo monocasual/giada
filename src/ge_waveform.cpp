@@ -119,16 +119,10 @@ int gWaveform::alloc(int datasize)
 
 	/* grid frequency: store a grid point every 'gridFreq' pixel */
 
-	int gridFreq = grid.level != 0 ? data.size / grid.level : 0; 
-	gLog("data.size=%d grid.level=%d gridFreq=%d\n", data.size, grid.level, gridFreq);
+	int gridFreq = grid.level != 0 ? (chan->wave->size/2) / grid.level : 0; 
+	gLog("wave.size=%d grid.level=%d gridFreq=%d\n", chan->wave->size/2, grid.level, gridFreq);
 
 	for (int i=0; i<data.size; i++) {
-
-		/* store grid points for later drawing */
-		
-		if (gridFreq != 0)
-			if (i % gridFreq == 0 && i != 0)
-				grid.points.add(i);
 
 		int pp;  // point prev
 		int pn;  // point next
@@ -150,13 +144,22 @@ int gWaveform::alloc(int datasize)
 		float peaksup = 0.0f;
 		float peakinf = 0.0f;
 
+		/* scan the original data in chunks */
+
 		int k = pp;
 		while (k < pn) {
 			if (chan->wave->data[k] > peaksup)
-				peaksup = chan->wave->data[k];    // Left data only
+				peaksup = chan->wave->data[k];    // FIXME - Left data only
 			else
 			if (chan->wave->data[k] <= peakinf)
-				peakinf = chan->wave->data[k];    // Left data only
+				peakinf = chan->wave->data[k];    // FIXME - Left data only
+
+			if (gridFreq != 0)
+				if (k % gridFreq == 0 && k != 0) {
+					grid.points.add(i);
+					gLog("print grid at %d - k=%d\n", i, k);
+				}
+			
 			k += 2;
 		}
 
