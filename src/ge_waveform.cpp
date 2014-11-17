@@ -460,16 +460,24 @@ int gWaveform::handle(int e)
 
 			/* here the mouse is on the waveform, i.e. a selection */
 
-			else
+      else
 			if (dragged) {
 
 				selectionB = Fl::event_x() - x();
 
+        //gLog("%d\n", selectionB);
+  
 				if (selectionB >= data.size)
 					selectionB = data.size;
 
 				if (selectionB <= 0)
 					selectionB = 0;
+       
+        if (grid.snap) { 
+          int snapRange = getSnapRange(selectionB);
+          if (snapRange != -1)
+            selectionB = snapRange;
+        }
 
 				selectionB_abs = absolutePoint(selectionB);
 				redraw();
@@ -492,6 +500,20 @@ int gWaveform::handle(int e)
 		}
 	}
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int gWaveform::getSnapRange(int pos)
+{
+  for (unsigned i=0; i<grid.points.size; i++) {
+    if (pos >= grid.points.at(i) - 10 &&
+        pos <= grid.points.at(i) + 10)
+      return grid.points.at(i);
+  }
+  return -1;
 }
 
 

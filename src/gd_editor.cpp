@@ -118,6 +118,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 	grid->add("64");
 	grid->value(0);
 	grid->callback(cb_changeGrid, (void*)this);
+  snap->callback(cb_enableSnap, (void*)this);
 
 	char buf[16];
 	sprintf(buf, "%d", ch->begin / 2); // divided by 2 because stereo
@@ -258,6 +259,16 @@ void gdEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb
 void gdEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
 void gdEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
 void gdEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_changeGrid(); }
+void gdEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_enableSnap(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdEditor::__cb_enableSnap()
+{
+  waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
+}
 
 
 /* ------------------------------------------------------------------ */

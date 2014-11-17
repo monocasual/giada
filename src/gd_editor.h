@@ -58,6 +58,7 @@ private:
 	static void cb_zoomIn        (Fl_Widget *w, void *p);
 	static void cb_zoomOut       (Fl_Widget *w, void *p);
 	static void cb_changeGrid    (Fl_Widget *w, void *p);
+	static void cb_enableSnap    (Fl_Widget *w, void *p);
 	inline void __cb_setChanPos();
 	inline void __cb_resetStartEnd();
 	inline void __cb_setVolume();
@@ -77,6 +78,7 @@ private:
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 	inline void __cb_changeGrid();
+	inline void __cb_enableSnap();
 
 public:
 

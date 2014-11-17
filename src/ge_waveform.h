@@ -113,6 +113,12 @@ private:
 
 	bool smaller();
 
+  /* getSnapRange
+   * return whether an element position (in pixel) is in a snappable area, 
+   * near a grid line */
+
+  int getSnapRange(int px);
+
 public:
 
 	gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
@@ -155,6 +161,9 @@ public:
 
 	void setGridLevel(int l);
 
+  inline void setSnap(bool v) { grid.snap = v; }
+  inline bool getSnap()       { return grid.snap; }
+    
 	inline int getSize() { return data.size; }
 
 	int  chanStart;
