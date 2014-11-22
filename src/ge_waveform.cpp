@@ -473,19 +473,21 @@ int gWaveform::handle(int e)
 				if (selectionB <= 0)
 					selectionB = 0;
        
-        if (grid.snap) { 
-          int snapRange = getSnapRange(selectionB);
-          if (snapRange != -1)
-            selectionB = snapRange;
-        }
+        if (grid.snap)
+          selectionB = applySnap(selectionB);
 
 				selectionB_abs = absolutePoint(selectionB);
 				redraw();
 			}
+
+      /* here the mouse is on a selection boundary i.e. resize */
+      
 			else
 			if (resized) {
 				if (mouseOnSelectionA()) {
-					selectionA     = Fl::event_x() - x();
+					selectionA = Fl::event_x() - x();
+          if (grid.snap)
+            selectionA = applySnap(selectionA);
 					selectionA_abs = absolutePoint(selectionA);
 				}
 				else {
@@ -506,16 +508,18 @@ int gWaveform::handle(int e)
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::getSnapRange(int pos)
+int gWaveform::applySnap(int pos)
 {
   for (unsigned i=0; i<grid.points.size; i++) {
     if (pos >= grid.points.at(i) - 10 &&
         pos <= grid.points.at(i) + 10)
+    {
+      gLog("snap at %d\n", pos);
       return grid.points.at(i);
+    }
   }
-  return -1;
+  return pos;
 }
-
 
 /* ------------------------------------------------------------------ */
 

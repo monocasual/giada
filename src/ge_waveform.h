@@ -113,11 +113,10 @@ private:
 
 	bool smaller();
 
-  /* getSnapRange
-   * return whether an element position (in pixel) is in a snappable area, 
-   * near a grid line */
+  /* applySnap
+   * snap a point at 'pos' pixel */
 
-  int getSnapRange(int px);
+  int applySnap(int pos);
 
 public:
 
