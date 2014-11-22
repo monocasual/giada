@@ -18,12 +18,10 @@ compile
 aclocal.m4
 autom4te.cache/
 config.log
-config.guess
 config.status
-config.sub
 depcomp
 install-sh
-configure
+/configure
 misc/
 missing
 release/
