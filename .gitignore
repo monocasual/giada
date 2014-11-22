@@ -1,3 +1,4 @@
+# --- patterns
 *.o
 *.a
 *.so
@@ -5,14 +6,18 @@
 *.orig
 *.rej
 *.swp
+
+# --- rtaudio stuff
 src/rtaudio-mod/librtaudio.pc
 src/rtaudio-mod/rtaudio-config
+src/rtaudio-mod/tests
+
+# --- misc
 AUTHORS
 ERRORS
 README
 INSTALL
 Makefile
-Makefile.in
 NEWS
 compile
 aclocal.m4
@@ -35,6 +40,7 @@ src/*.o
 src/giada.conf
 src/.deps
 src/Makefile.in
+/Makefile.in
 compile
 debian/*.log
 debian/autoreconf.after
