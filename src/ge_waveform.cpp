@@ -404,7 +404,6 @@ int gWaveform::handle(int e)
 				redraw();
 			}
 
-
 			if (mouseOnEnd()) {
 				chanEndLit = true;
 				redraw();
@@ -415,16 +414,13 @@ int gWaveform::handle(int e)
 				redraw();
 			}
 
-			if (mouseOnSelectionA()) {
+			if (mouseOnSelectionA())
 				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
-			}
 			else
-			if (mouseOnSelectionB()) {
+			if (mouseOnSelectionB())
 				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
-			}
-			else {
+			else
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-			}
 
 			ret = 1;
 			break;
@@ -438,7 +434,7 @@ int gWaveform::handle(int e)
 
 				if (chanStart < 0)
 					chanStart = 0;
-
+        else
 				if (chanStart >= chanEnd)
 					chanStart = chanEnd-2;
 
@@ -451,7 +447,7 @@ int gWaveform::handle(int e)
 
 				if (chanEnd >= data.size - 2)
 					chanEnd = data.size - 2;
-
+        else
 				if (chanEnd <= chanStart)
 					chanEnd = chanStart + 2;
 
