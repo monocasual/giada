@@ -465,8 +465,6 @@ int gWaveform::handle(int e)
 
 				selectionB = Fl::event_x() - x();
 
-        //gLog("%d\n", selectionB);
-  
 				if (selectionB >= data.size)
 					selectionB = data.size;
 
@@ -484,16 +482,16 @@ int gWaveform::handle(int e)
       
 			else
 			if (resized) {
+        int pos = Fl::event_x() - x();
 				if (mouseOnSelectionA()) {
-					selectionA = Fl::event_x() - x();
-          if (grid.snap)
-            selectionA = applySnap(selectionA);
+					selectionA     = grid.snap ? applySnap(pos) : pos;
 					selectionA_abs = absolutePoint(selectionA);
 				}
-				else {
-					selectionB     = Fl::event_x() - x();
+				else
+        if (mouseOnSelectionB()) {
+					selectionB     = grid.snap ? applySnap(pos) : pos;
 					selectionB_abs = absolutePoint(selectionB);
-				}
+        }
 				redraw();
 			}
 			mouseX = Fl::event_x();
@@ -507,6 +505,9 @@ int gWaveform::handle(int e)
 
 /* ------------------------------------------------------------------ */
 
+/* pixel snap disances (10px) must be equal to those defined in 
+ * gWaveform::mouseOnSelectionA() and gWaverfrom::mouseOnSelectionB() */
+/* TODO - use constant for 10px */
 
 int gWaveform::applySnap(int pos)
 {
@@ -520,6 +521,7 @@ int gWaveform::applySnap(int pos)
   }
   return pos;
 }
+
 
 /* ------------------------------------------------------------------ */
 
@@ -545,23 +547,22 @@ bool gWaveform::mouseOnEnd()
 
 /* ------------------------------------------------------------------ */
 
+/* pixel boundaries (10px) must be equal to the snap factor distance
+ * defined in gWaveform::applySnap() */
 
 bool gWaveform::mouseOnSelectionA() 
 {
 	if (selectionA == selectionB)
 		return false;
-	return mouseX >= selectionA-5+x() && mouseX <= selectionA+5+x();
+	return mouseX >= selectionA-10+x() && mouseX <= selectionA+10+x();
 }
-
-
-/* ------------------------------------------------------------------ */
 
 
 bool gWaveform::mouseOnSelectionB() 
 {
 	if (selectionA == selectionB)
 		return false;
-	return mouseX >= selectionB-5+x() && mouseX <= selectionB+5+x();
+	return mouseX >= selectionB-10+x() && mouseX <= selectionB+10+x();
 }
 
 
