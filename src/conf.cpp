@@ -283,10 +283,14 @@ int Conf::read()
 	sampleEditorY    = atoi(getValue("sampleEditorY").c_str());
 	sampleEditorW    = atoi(getValue("sampleEditorW").c_str());
 	sampleEditorH    = atoi(getValue("sampleEditorH").c_str());
-	if (sampleEditorX < 0)   sampleEditorX = 0;
+	sampleEditorGridVal = atoi(getValue("sampleEditorGridVal").c_str());
+	sampleEditorGridOn  = atoi(getValue("sampleEditorGridOn").c_str());
+  if (sampleEditorX < 0)   sampleEditorX = 0;
 	if (sampleEditorY < 0)   sampleEditorY = 0;
 	if (sampleEditorW < 500) sampleEditorW = 500;
 	if (sampleEditorH < 292) sampleEditorH = 292;
+	if (sampleEditorGridVal < 0) sampleEditorGridVal = 0;
+	if (sampleEditorGridOn < 0)  sampleEditorGridOn = 0;
 
 	configX = atoi(getValue("configX").c_str());
 	configY = atoi(getValue("configY").c_str());
@@ -410,6 +414,8 @@ int Conf::write()
 	fprintf(fp, "sampleEditorY=%d\n", sampleEditorY);
 	fprintf(fp, "sampleEditorW=%d\n", sampleEditorW);
 	fprintf(fp, "sampleEditorH=%d\n", sampleEditorH);
+	fprintf(fp, "sampleEditorGridOn=%d\n",  sampleEditorGridOn);
+	fprintf(fp, "sampleEditorGridVal=%d\n", sampleEditorGridVal);
 
 	fprintf(fp, "configX=%d\n", configX);
 	fprintf(fp, "configY=%d\n", configY);
