@@ -1,5 +1,5 @@
 
-------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 
   Giada - Your Hardcore Loopmachine.
@@ -9,8 +9,17 @@
   www.giadamusic.com
 
   CHANGELOG
-------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
+
+
+0.9.2 --- 
+- Load samples via drag n drop
+- Add new utility functions: gTrim and gStripFileUrl
+- Fix "normalize" button position in Sample Editor
+- Finor waveform drawing optimizations
+- Add missing files for RtAudio-mod compilation
+- All one-shot mode, if fired manually, get the first frame truncated (fixed
 
 
 0.9.1 --- 2014 . 09 . 24
