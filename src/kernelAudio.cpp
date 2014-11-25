@@ -29,7 +29,6 @@
 
 #include <vector>
 #include "kernelAudio.h"
-#include "RtAudio.h"
 #include "mixer.h"
 #include "glue.h"
 #include "conf.h"
