@@ -48,28 +48,28 @@ extern Mixer G_Mixer;
 
 gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
-	chan(ch),
-	menuOpen(false),
-	chanStart(0),
-	chanStartLit(false),
-	chanEnd(0),
-	chanEndLit(false),
-	ratio(0.0f),
-	selectionA(0),
-	selectionB(0),
-	selectionA_abs(0),
-	selectionB_abs(0)
+  chan(ch),
+  menuOpen(false),
+  chanStart(0),
+  chanStartLit(false),
+  chanEnd(0),
+  chanEndLit(false),
+  ratio(0.0f),
+  selectionA(0),
+  selectionB(0),
+  selectionA_abs(0),
+  selectionB_abs(0)
 {
-	data.sup  = NULL;
-	data.inf  = NULL;
-	data.size = 0;
+  data.sup  = NULL;
+  data.inf  = NULL;
+  data.size = 0;
 
-	// TODO - temporary grid values
-	grid.snap  = false;
-	grid.level = 0;
-	// TODO 
+  // TODO - temporary grid values
+  grid.snap  = false;
+  grid.level = 0;
+  // TODO 
 
-	stretchToWindow();
+  stretchToWindow();
 }
 
 
@@ -78,7 +78,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 
 gWaveform::~gWaveform() 
 {
-	freeData();
+  freeData();
 }
 
 
@@ -87,14 +87,14 @@ gWaveform::~gWaveform()
 
 void gWaveform::freeData() 
 {
-	if (data.sup != NULL) {
-		free(data.sup);
-		free(data.inf);
-		data.sup  = NULL;
-		data.inf  = NULL;
-		data.size = 0;
-	}
-	grid.points.clear();
+  if (data.sup != NULL) {
+    free(data.sup);
+    free(data.inf);
+    data.sup  = NULL;
+    data.inf  = NULL;
+    data.size = 0;
+  }
+  grid.points.clear();
 }
 
 
@@ -103,83 +103,83 @@ void gWaveform::freeData()
 
 int gWaveform::alloc(int datasize)
 {
-	ratio = chan->wave->size / (float) datasize;
+  ratio = chan->wave->size / (float) datasize;
 
-	if (ratio < 2)
-		return 0;
+  if (ratio < 2)
+    return 0;
 
-	freeData();
+  freeData();
 
-	data.size = datasize;
-	data.sup  = (int*) malloc(data.size * sizeof(int));
-	data.inf  = (int*) malloc(data.size * sizeof(int));
+  data.size = datasize;
+  data.sup  = (int*) malloc(data.size * sizeof(int));
+  data.inf  = (int*) malloc(data.size * sizeof(int));
 
-	int offset = h() / 2;
-	int zero   = y() + offset; // center, zero amplitude (-inf dB)
+  int offset = h() / 2;
+  int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
-	/* grid frequency: store a grid point every 'gridFreq' pixel. Must be
-	 * even, as always */
+  /* grid frequency: store a grid point every 'gridFreq' pixel. Must be
+   * even, as always */
 
-	int gridFreq = 0;
-	if (grid.level != 0) {
-		gridFreq = chan->wave->size / grid.level; 
-		if (gridFreq % 2 != 0)
-			gridFreq--;
-	}
+  int gridFreq = 0;
+  if (grid.level != 0) {
+    gridFreq = chan->wave->size / grid.level; 
+    if (gridFreq % 2 != 0)
+      gridFreq--;
+  }
 
-	for (int i=0; i<data.size; i++) {
+  for (int i=0; i<data.size; i++) {
 
-		int pp;  // point prev
-		int pn;  // point next
+    int pp;  // point prev
+    int pn;  // point next
 
-		/* resampling the waveform, hardcore way. Many thanks to
-		 * http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html
-		 * Note: we use
-		 * 	 p = j * (m-1 / n)
-		 * instead of
-		 * 	 p = j * (m-1 / n-1)
-		 * in order to obtain 'datasize' cells to parse (and not datasize-1) */
+    /* resampling the waveform, hardcore way. Many thanks to
+     * http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html
+     * Note: we use
+     *   p = j * (m-1 / n)
+     * instead of
+     *   p = j * (m-1 / n-1)
+     * in order to obtain 'datasize' cells to parse (and not datasize-1) */
 
-		pp = i * ((chan->wave->size - 1) / (float) datasize);
-		pn = (i+1) * ((chan->wave->size - 1) / (float) datasize);
+    pp = i * ((chan->wave->size - 1) / (float) datasize);
+    pn = (i+1) * ((chan->wave->size - 1) / (float) datasize);
 
-		if (pp % 2 != 0) pp -= 1;
-		if (pn % 2 != 0) pn -= 1;
+    if (pp % 2 != 0) pp -= 1;
+    if (pn % 2 != 0) pn -= 1;
 
-		float peaksup = 0.0f;
-		float peakinf = 0.0f;
+    float peaksup = 0.0f;
+    float peakinf = 0.0f;
 
-		/* scan the original data in chunks */
+    /* scan the original data in chunks */
 
-		int k = pp;
-		while (k < pn) {
+    int k = pp;
+    while (k < pn) {
 
-			if (chan->wave->data[k] > peaksup)
-				peaksup = chan->wave->data[k];    // FIXME - Left data only
-			else
-			if (chan->wave->data[k] <= peakinf)
-				peakinf = chan->wave->data[k];    // FIXME - Left data only
+      if (chan->wave->data[k] > peaksup)
+        peaksup = chan->wave->data[k];    // FIXME - Left data only
+      else
+      if (chan->wave->data[k] <= peakinf)
+        peakinf = chan->wave->data[k];    // FIXME - Left data only
 
-			/* print grid */
+      /* print grid */
 
-			if (gridFreq != 0)
-				if (k % gridFreq == 0 && k != 0)
-					grid.points.add(i);
-			
-			k += 2;
-		}
+      if (gridFreq != 0)
+        if (k % gridFreq == 0 && k != 0)
+          grid.points.add(i);
+      
+      k += 2;
+    }
 
-		data.sup[i] = zero - (peaksup * chan->boost * offset);
-		data.inf[i] = zero - (peakinf * chan->boost * offset);
+    data.sup[i] = zero - (peaksup * chan->boost * offset);
+    data.inf[i] = zero - (peakinf * chan->boost * offset);
 
-		// avoid window overflow
+    // avoid window overflow
 
-		if (data.sup[i] < y())       data.sup[i] = y();
-		if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
-	}
+    if (data.sup[i] < y())       data.sup[i] = y();
+    if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
+  }
 
-	recalcPoints();
-	return 1;
+  recalcPoints();
+  return 1;
 }
 
 
@@ -188,17 +188,17 @@ int gWaveform::alloc(int datasize)
 
 void gWaveform::recalcPoints() 
 {
-	selectionA = relativePoint(selectionA_abs);
-	selectionB = relativePoint(selectionB_abs);
-	chanStart  = relativePoint(chan->begin / 2);
+  selectionA = relativePoint(selectionA_abs);
+  selectionB = relativePoint(selectionB_abs);
+  chanStart  = relativePoint(chan->begin / 2);
 
-	/* fix the rounding error when chanEnd is set on the very end of the
-	 * sample */
+  /* fix the rounding error when chanEnd is set on the very end of the
+   * sample */
 
-	if (chan->end == chan->wave->size)
-		chanEnd = data.size - 2; // 2 px border
-	else
-		chanEnd = relativePoint(chan->end / 2);
+  if (chan->end == chan->wave->size)
+    chanEnd = data.size - 2; // 2 px border
+  else
+    chanEnd = relativePoint(chan->end / 2);
 }
 
 
@@ -207,100 +207,100 @@ void gWaveform::recalcPoints()
 
 void gWaveform::draw() 
 {
-	/* blank canvas */
+  /* blank canvas */
 
-	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
+  fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
 
-	/* draw selection (if any) */
+  /* draw selection (if any) */
 
-	if (selectionA != selectionB) {
+  if (selectionA != selectionB) {
 
-		int a_x = selectionA + x() - BORDER; // - start;
-		int b_x = selectionB + x() - BORDER; //  - start;
+    int a_x = selectionA + x() - BORDER; // - start;
+    int b_x = selectionB + x() - BORDER; //  - start;
 
-		if (a_x < 0)
-			a_x = 0;
-		if (b_x >= w()-1)
-			b_x = w()-1;
+    if (a_x < 0)
+      a_x = 0;
+    if (b_x >= w()-1)
+      b_x = w()-1;
 
-		if (selectionA < selectionB)
-			fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), COLOR_BD_0);
-		else
-			fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
-	}
+    if (selectionA < selectionB)
+      fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), COLOR_BD_0);
+    else
+      fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
+  }
 
-	/* draw waveform from x1 (offset driven by the scrollbar) to x2
-	 * (width of parent window). We don't draw the entire waveform,
-	 * only the visibile part. */
+  /* draw waveform from x1 (offset driven by the scrollbar) to x2
+   * (width of parent window). We don't draw the entire waveform,
+   * only the visibile part. */
 
-	int offset = h() / 2;
-	int zero   = y() + offset; // sample zero (-inf dB)
+  int offset = h() / 2;
+  int zero   = y() + offset; // sample zero (-inf dB)
 
-	int wx1 = abs(x() - ((gWaveTools*)parent())->x());
-	int wx2 = wx1 + ((gWaveTools*)parent())->w();
-	if (x()+w() < ((gWaveTools*)parent())->w())
-		wx2 = x() + w() - BORDER;
+  int wx1 = abs(x() - ((gWaveTools*)parent())->x());
+  int wx2 = wx1 + ((gWaveTools*)parent())->w();
+  if (x()+w() < ((gWaveTools*)parent())->w())
+    wx2 = x() + w() - BORDER;
 
-	fl_color(0, 0, 0);
-	for (int i=wx1; i<wx2; i++) {
-		fl_line(i+x(), zero, i+x(), data.sup[i]);
-		fl_line(i+x(), zero, i+x(), data.inf[i]);
-		
-		/* print grid */
+  fl_color(0, 0, 0);
+  for (int i=wx1; i<wx2; i++) {
+    fl_line(i+x(), zero, i+x(), data.sup[i]);
+    fl_line(i+x(), zero, i+x(), data.inf[i]);
+    
+    /* print grid */
 
-		for (unsigned k=0; k<grid.points.size; k++) {
-			if (grid.points.at(k) == i) {
-				//gLog("draw grid line at %d\n", i);
-				fl_color(fl_rgb_color(54, 54, 54));
-				fl_line_style(FL_DASH, 0, NULL);
-				fl_line(i+x(), y(), i+x(), y()+h());
-				fl_color(0, 0, 0);
-				fl_line_style(FL_SOLID, 0, NULL);
-				break;
-			}
-		}
-	}
+    for (unsigned k=0; k<grid.points.size; k++) {
+      if (grid.points.at(k) == i) {
+        //gLog("draw grid line at %d\n", i);
+        fl_color(fl_rgb_color(54, 54, 54));
+        fl_line_style(FL_DASH, 0, NULL);
+        fl_line(i+x(), y(), i+x(), y()+h());
+        fl_color(0, 0, 0);
+        fl_line_style(FL_SOLID, 0, NULL);
+        break;
+      }
+    }
+  }
 
-	/* border box */
+  /* border box */
 
-	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
-	/* print chanStart */
+  /* print chanStart */
 
-	int lineX = x()+chanStart+1;
+  int lineX = x()+chanStart+1;
 
-	if (chanStartLit) fl_color(COLOR_BD_1);
-	else              fl_color(COLOR_BD_0);
+  if (chanStartLit) fl_color(COLOR_BD_1);
+  else              fl_color(COLOR_BD_0);
 
-	/* vertical line */
+  /* vertical line */
 
-	fl_line(lineX, y()+1, lineX, y()+h()-2);
+  fl_line(lineX, y()+1, lineX, y()+h()-2);
 
-	/* print flag and avoid overflow */
+  /* print flag and avoid overflow */
 
-	if (lineX+FLAG_WIDTH > w()+x()-2)
-		fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, w()-lineX+x()-1, FLAG_HEIGHT);
-	else  {
-		fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
-		fl_color(255, 255, 255);
-		fl_draw("s", lineX+4, y()+h()-3);
-	}
+  if (lineX+FLAG_WIDTH > w()+x()-2)
+    fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, w()-lineX+x()-1, FLAG_HEIGHT);
+  else  {
+    fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
+    fl_color(255, 255, 255);
+    fl_draw("s", lineX+4, y()+h()-3);
+  }
 
-	/* print chanEnd */
+  /* print chanEnd */
 
-	lineX = x()+chanEnd;
-	if (chanEndLit)	fl_color(COLOR_BD_1);
-	else            fl_color(COLOR_BD_0);
+  lineX = x()+chanEnd;
+  if (chanEndLit) fl_color(COLOR_BD_1);
+  else            fl_color(COLOR_BD_0);
 
-	fl_line(lineX, y()+1, lineX, y()+h()-2);
+  fl_line(lineX, y()+1, lineX, y()+h()-2);
 
-	if (lineX-FLAG_WIDTH < x())
-		fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
-	else {
-		fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
-		fl_color(255, 255, 255);
-		fl_draw("e", lineX-10, y()+10);
-	}
+  if (lineX-FLAG_WIDTH < x())
+    fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
+  else {
+    fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
+    fl_color(255, 255, 255);
+    fl_draw("e", lineX-10, y()+10);
+  }
 }
 
 
@@ -309,193 +309,201 @@ void gWaveform::draw()
 
 int gWaveform::handle(int e) 
 {
-	int ret = 0;
+  int ret = 0;
 
-	switch (e) {
+  switch (e) {
 
-		case FL_PUSH: {
+    case FL_PUSH: {
 
-			mouseX = Fl::event_x();
-			pushed = true;
+      mouseX = Fl::event_x();
+      pushed = true;
 
-			if (!mouseOnEnd() && !mouseOnStart()) {
+      if (!mouseOnEnd() && !mouseOnStart()) {
 
-				/* right button? show the menu. Don't set selectionA,B,etc */
+        /* right button? show the menu. Don't set selectionA,B,etc */
 
-				if (Fl::event_button3()) {
-					openEditMenu();
-				}
-				else
-				if (mouseOnSelectionA() || mouseOnSelectionB()) {
-					resized = true;
-				}
-				else {
-					dragged = true;
-					selectionA = Fl::event_x() - x();
-
-					if (selectionA >= data.size) selectionA = data.size;
-
-					selectionB = selectionA;
-					selectionA_abs = absolutePoint(selectionA);
-					selectionB_abs = selectionA_abs;
-				}
-			}
-
-			ret = 1;
-			break;
-		}
-
-		case FL_RELEASE: {
-
-			/* don't recompute points if something is selected */
-
-			if (selectionA != selectionB) {
-				pushed  = false;
-				dragged = false;
-				ret = 1;
-				break;
-			}
-
-			int realChanStart = chan->begin;
-			int realChanEnd   = chan->end;
-
-			if (chanStartLit)
-				realChanStart = absolutePoint(chanStart)*2;
-			else
-			if (chanEndLit)
-				realChanEnd = absolutePoint(chanEnd)*2;
-
-			glue_setBeginEndChannel((gdEditor *) window(), chan, realChanStart, realChanEnd, false);
-
-			pushed  = false;
-			dragged = false;
-
-			redraw();
-			ret = 1;
-			break;
-		}
-
-		case FL_ENTER: {  // enables FL_DRAG
-			ret = 1;
-			break;
-		}
-
-		case FL_LEAVE: {
-			if (chanStartLit || chanEndLit) {
-				chanStartLit = false;
-				chanEndLit   = false;
-				redraw();
-			}
-			ret = 1;
-			break;
-		}
-
-		case FL_MOVE: {
-			mouseX = Fl::event_x();
-			mouseY = Fl::event_y();
-
-			if (mouseOnStart()) {
-				chanStartLit = true;
-				redraw();
-			}
-			else
-			if (chanStartLit) {
-				chanStartLit = false;
-				redraw();
-			}
-
-			if (mouseOnEnd()) {
-				chanEndLit = true;
-				redraw();
-			}
-			else
-			if (chanEndLit) {
-				chanEndLit = false;
-				redraw();
-			}
-
-			if (mouseOnSelectionA())
-				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
-			else
-			if (mouseOnSelectionB())
-				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
-			else
-				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-
-			ret = 1;
-			break;
-		}
-
-		case FL_DRAG: {
-
-			if (chanStartLit && pushed)	{
-
-				chanStart += Fl::event_x() - mouseX;
-
-				if (chanStart < 0)
-					chanStart = 0;
+        if (Fl::event_button3()) {
+          openEditMenu();
+        }
         else
-				if (chanStart >= chanEnd)
-					chanStart = chanEnd-2;
+        if (mouseOnSelectionA() || mouseOnSelectionB()) {
+          resized = true;
+        }
+        else {
+          dragged = true;
+          selectionA = Fl::event_x() - x();
 
-				redraw();
-			}
-			else
-			if (chanEndLit && pushed) {
+          if (selectionA >= data.size) selectionA = data.size;
 
-				chanEnd += Fl::event_x() - mouseX;
+          selectionB = selectionA;
+          selectionA_abs = absolutePoint(selectionA);
+          selectionB_abs = selectionA_abs;
+        }
+      }
 
-				if (chanEnd >= data.size - 2)
-					chanEnd = data.size - 2;
+      ret = 1;
+      break;
+    }
+
+    case FL_RELEASE: {
+
+      /* don't recompute points if something is selected */
+
+      if (selectionA != selectionB) {
+        pushed  = false;
+        dragged = false;
+        ret = 1;
+        break;
+      }
+
+      int realChanStart = chan->begin;
+      int realChanEnd   = chan->end;
+
+      if (chanStartLit)
+        realChanStart = absolutePoint(chanStart)*2;
+      else
+      if (chanEndLit)
+        realChanEnd = absolutePoint(chanEnd)*2;
+
+      glue_setBeginEndChannel((gdEditor *) window(), chan, realChanStart, realChanEnd, false);
+
+      pushed  = false;
+      dragged = false;
+
+      redraw();
+      ret = 1;
+      break;
+    }
+
+    case FL_ENTER: {  // enables FL_DRAG
+      ret = 1;
+      break;
+    }
+
+    case FL_LEAVE: {
+      if (chanStartLit || chanEndLit) {
+        chanStartLit = false;
+        chanEndLit   = false;
+        redraw();
+      }
+      ret = 1;
+      break;
+    }
+
+    case FL_MOVE: {
+      mouseX = Fl::event_x();
+      mouseY = Fl::event_y();
+
+      if (mouseOnStart()) {
+        chanStartLit = true;
+        redraw();
+      }
+      else
+      if (chanStartLit) {
+        chanStartLit = false;
+        redraw();
+      }
+
+      if (mouseOnEnd()) {
+        chanEndLit = true;
+        redraw();
+      }
+      else
+      if (chanEndLit) {
+        chanEndLit = false;
+        redraw();
+      }
+
+      if (mouseOnSelectionA())
+        fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
+      else
+      if (mouseOnSelectionB())
+        fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
+      else
+        fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
+
+      ret = 1;
+      break;
+    }
+
+    case FL_DRAG: {
+
+      /* here the mouse is on the chanStart tool */
+
+      if (chanStartLit && pushed) {
+
+        chanStart = Fl::event_x() - x();
+      
+        if (grid.snap) 
+          chanStart = applySnap(chanStart);
+
+        if (chanStart < 0)
+          chanStart = 0;
         else
-				if (chanEnd <= chanStart)
-					chanEnd = chanStart + 2;
+        if (chanStart >= chanEnd)
+          chanStart = chanEnd-2;
+        
+        redraw();
+      }
+      else
+      if (chanEndLit && pushed) {
 
-				redraw();
-			}
+        chanEnd = Fl::event_x() - x();
 
-			/* here the mouse is on the waveform, i.e. a selection */
+        if (grid.snap) 
+          chanEnd = applySnap(chanEnd);
+
+        if (chanEnd >= data.size - 2)
+          chanEnd = data.size - 2;
+        else
+        if (chanEnd <= chanStart)
+          chanEnd = chanStart + 2;
+
+        redraw();
+      }
+
+      /* here the mouse is on the waveform, i.e. a selection */
 
       else
-			if (dragged) {
+      if (dragged) {
 
-				selectionB = Fl::event_x() - x();
+        selectionB = Fl::event_x() - x();
 
-				if (selectionB >= data.size)
-					selectionB = data.size;
+        if (selectionB >= data.size)
+          selectionB = data.size;
 
-				if (selectionB <= 0)
-					selectionB = 0;
+        if (selectionB <= 0)
+          selectionB = 0;
        
         if (grid.snap)
           selectionB = applySnap(selectionB);
 
-				selectionB_abs = absolutePoint(selectionB);
-				redraw();
-			}
+        selectionB_abs = absolutePoint(selectionB);
+        redraw();
+      }
 
       /* here the mouse is on a selection boundary i.e. resize */
       
-			else
-			if (resized) {
+      else
+      if (resized) {
         int pos = Fl::event_x() - x();
-				if (mouseOnSelectionA()) {
-					selectionA     = grid.snap ? applySnap(pos) : pos;
-					selectionA_abs = absolutePoint(selectionA);
-				}
-				else
-        if (mouseOnSelectionB()) {
-					selectionB     = grid.snap ? applySnap(pos) : pos;
-					selectionB_abs = absolutePoint(selectionB);
+        if (mouseOnSelectionA()) {
+          selectionA     = grid.snap ? applySnap(pos) : pos;
+          selectionA_abs = absolutePoint(selectionA);
         }
-				redraw();
-			}
-			mouseX = Fl::event_x();
-			ret = 1;
-			break;
-		}
-	}
-	return ret;
+        else
+        if (mouseOnSelectionB()) {
+          selectionB     = grid.snap ? applySnap(pos) : pos;
+          selectionB_abs = absolutePoint(selectionB);
+        }
+        redraw();
+      }
+      mouseX = Fl::event_x();
+      ret = 1;
+      break;
+    }
+  }
+  return ret;
 }
 
 
@@ -524,9 +532,9 @@ int gWaveform::applySnap(int pos)
 
 bool gWaveform::mouseOnStart() 
 {
-	return mouseX-10 >  chanStart + x() - BORDER              &&
-				 mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
-				 mouseY    >  h() + y() - FLAG_HEIGHT;
+  return mouseX-10 >  chanStart + x() - BORDER              &&
+         mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
+         mouseY    >  h() + y() - FLAG_HEIGHT;
 }
 
 
@@ -535,9 +543,9 @@ bool gWaveform::mouseOnStart()
 
 bool gWaveform::mouseOnEnd() 
 {
-	return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
-				 mouseX-10 <= chanEnd + x() - BORDER              &&
-				 mouseY    <= y() + FLAG_HEIGHT + 1;
+  return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
+         mouseX-10 <= chanEnd + x() - BORDER              &&
+         mouseY    <= y() + FLAG_HEIGHT + 1;
 }
 
 
@@ -548,17 +556,17 @@ bool gWaveform::mouseOnEnd()
 
 bool gWaveform::mouseOnSelectionA() 
 {
-	if (selectionA == selectionB)
-		return false;
-	return mouseX >= selectionA-10+x() && mouseX <= selectionA+10+x();
+  if (selectionA == selectionB)
+    return false;
+  return mouseX >= selectionA-10+x() && mouseX <= selectionA+10+x();
 }
 
 
 bool gWaveform::mouseOnSelectionB() 
 {
-	if (selectionA == selectionB)
-		return false;
-	return mouseX >= selectionB-10+x() && mouseX <= selectionB+10+x();
+  if (selectionA == selectionB)
+    return false;
+  return mouseX >= selectionB-10+x() && mouseX <= selectionB+10+x();
 }
 
 
@@ -567,13 +575,13 @@ bool gWaveform::mouseOnSelectionB()
 
 int gWaveform::absolutePoint(int p) 
 {
-	if (p <= 0)
-		return 0;
+  if (p <= 0)
+    return 0;
 
-	if (p > data.size)
-		return chan->wave->size / 2;
+  if (p > data.size)
+    return chan->wave->size / 2;
 
-	return (p * ratio) / 2;
+  return (p * ratio) / 2;
 }
 
 
@@ -582,7 +590,7 @@ int gWaveform::absolutePoint(int p)
 
 int gWaveform::relativePoint(int p) 
 {
-	return (ceilf(p / ratio)) * 2;
+  return (ceilf(p / ratio)) * 2;
 }
 
 
@@ -591,147 +599,147 @@ int gWaveform::relativePoint(int p)
 
 void gWaveform::openEditMenu() 
 {
-	if (selectionA == selectionB)
-		return;
+  if (selectionA == selectionB)
+    return;
 
-	menuOpen = true;
+  menuOpen = true;
 
-	Fl_Menu_Item menu[] = {
-		{"Cut"},
-		{"Trim"},
-		{"Silence"},
-		{"Fade in"},
-		{"Fade out"},
-		{"Smooth edges"},
-		{"Set start/end here"},
-		{0}
-	};
+  Fl_Menu_Item menu[] = {
+    {"Cut"},
+    {"Trim"},
+    {"Silence"},
+    {"Fade in"},
+    {"Fade out"},
+    {"Smooth edges"},
+    {"Set start/end here"},
+    {0}
+  };
 
-	if (chan->status == STATUS_PLAY) {
-		menu[0].deactivate();
-		menu[1].deactivate();
-	}
+  if (chan->status == STATUS_PLAY) {
+    menu[0].deactivate();
+    menu[1].deactivate();
+  }
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
-	b->textsize(11);
-	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
+  Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+  b->box(G_BOX);
+  b->textsize(11);
+  b->textcolor(COLOR_TEXT_0);
+  b->color(COLOR_BG_0);
 
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (!m) {
-		menuOpen = false;
-		return;
-	}
+  const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+  if (!m) {
+    menuOpen = false;
+    return;
+  }
 
-	/* straightSel() to ensure that point A is always lower than B */
+  /* straightSel() to ensure that point A is always lower than B */
 
-	straightSel();
+  straightSel();
 
-	if (strcmp(m->label(), "Silence") == 0) {
-		wfx_silence(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+  if (strcmp(m->label(), "Silence") == 0) {
+    wfx_silence(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
-		selectionA = 0;
-		selectionB = 0;
+    selectionA = 0;
+    selectionB = 0;
 
-		stretchToWindow();
-		redraw();
-		menuOpen = false;
-		return;
-	}
+    stretchToWindow();
+    redraw();
+    menuOpen = false;
+    return;
+  }
 
-	if (strcmp(m->label(), "Set start/end here") == 0) {
+  if (strcmp(m->label(), "Set start/end here") == 0) {
 
-		glue_setBeginEndChannel(
-				(gdEditor *) window(), // parent
-				chan,
-				absolutePoint(selectionA) * 2,  // stereo!
-				absolutePoint(selectionB) * 2,  // stereo!
-				false, // no recalc (we do it here)
-				false  // don't check
-				);
+    glue_setBeginEndChannel(
+        (gdEditor *) window(), // parent
+        chan,
+        absolutePoint(selectionA) * 2,  // stereo!
+        absolutePoint(selectionB) * 2,  // stereo!
+        false, // no recalc (we do it here)
+        false  // don't check
+        );
 
-		selectionA     = 0;
-		selectionB     = 0;
-		selectionA_abs = 0;
-		selectionB_abs = 0;
+    selectionA     = 0;
+    selectionB     = 0;
+    selectionA_abs = 0;
+    selectionB_abs = 0;
 
-		recalcPoints();
-		redraw();
-		menuOpen = false;
-		return;
-	}
+    recalcPoints();
+    redraw();
+    menuOpen = false;
+    return;
+  }
 
-	if (strcmp(m->label(), "Cut") == 0) {
-		wfx_cut(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+  if (strcmp(m->label(), "Cut") == 0) {
+    wfx_cut(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
-		/* for convenience reset start/end points */
+    /* for convenience reset start/end points */
 
-		glue_setBeginEndChannel(
-			(gdEditor *) window(),
-			chan,
-			0,
-			chan->wave->size,
-			false);
+    glue_setBeginEndChannel(
+      (gdEditor *) window(),
+      chan,
+      0,
+      chan->wave->size,
+      false);
 
-		selectionA     = 0;
-		selectionB     = 0;
-		selectionA_abs = 0;
-		selectionB_abs = 0;
+    selectionA     = 0;
+    selectionB     = 0;
+    selectionA_abs = 0;
+    selectionB_abs = 0;
 
-		setZoom(0);
+    setZoom(0);
 
-		menuOpen = false;
-		return;
-	}
+    menuOpen = false;
+    return;
+  }
 
-	if (strcmp(m->label(), "Trim") == 0) {
-		wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+  if (strcmp(m->label(), "Trim") == 0) {
+    wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
-		glue_setBeginEndChannel(
-			(gdEditor *) window(),
-			chan,
-			0,
-			chan->wave->size,
-			false);
+    glue_setBeginEndChannel(
+      (gdEditor *) window(),
+      chan,
+      0,
+      chan->wave->size,
+      false);
 
-		selectionA     = 0;
-		selectionB     = 0;
-		selectionA_abs = 0;
-		selectionB_abs = 0;
+    selectionA     = 0;
+    selectionB     = 0;
+    selectionA_abs = 0;
+    selectionB_abs = 0;
 
-		stretchToWindow();
-		menuOpen = false;
-		redraw();
-		return;
-	}
+    stretchToWindow();
+    menuOpen = false;
+    redraw();
+    return;
+  }
 
-	if (!strcmp(m->label(), "Fade in") || !strcmp(m->label(), "Fade out")) {
+  if (!strcmp(m->label(), "Fade in") || !strcmp(m->label(), "Fade out")) {
 
-		int type = !strcmp(m->label(), "Fade in") ? 0 : 1;
-		wfx_fade(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB), type);
+    int type = !strcmp(m->label(), "Fade in") ? 0 : 1;
+    wfx_fade(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB), type);
 
-		selectionA = 0;
-		selectionB = 0;
+    selectionA = 0;
+    selectionB = 0;
 
-		stretchToWindow();
-		redraw();
-		menuOpen = false;
-		return;
-	}
+    stretchToWindow();
+    redraw();
+    menuOpen = false;
+    return;
+  }
 
-	if (!strcmp(m->label(), "Smooth edges")) {
+  if (!strcmp(m->label(), "Smooth edges")) {
 
-		wfx_smooth(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+    wfx_smooth(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
-		selectionA = 0;
-		selectionB = 0;
+    selectionA = 0;
+    selectionB = 0;
 
-		stretchToWindow();
-		redraw();
-		menuOpen = false;
-		return;
-	}
+    stretchToWindow();
+    redraw();
+    menuOpen = false;
+    return;
+  }
 }
 
 
@@ -740,11 +748,11 @@ void gWaveform::openEditMenu()
 
 void gWaveform::straightSel() 
 {
-	if (selectionA > selectionB) {
-		unsigned tmp = selectionB;
-		selectionB = selectionA;
-		selectionA = tmp;
-	}
+  if (selectionA > selectionB) {
+    unsigned tmp = selectionB;
+    selectionB = selectionA;
+    selectionA = tmp;
+  }
 }
 
 
@@ -753,48 +761,48 @@ void gWaveform::straightSel()
 
 void gWaveform::setZoom(int type) 
 {
-	int newSize;
-	if (type == -1) newSize = data.size*2;  // zoom in
-	else            newSize = data.size/2;  // zoom out
+  int newSize;
+  if (type == -1) newSize = data.size*2;  // zoom in
+  else            newSize = data.size/2;  // zoom out
 
-	if (alloc(newSize)) {
-		size(data.size, h());
+  if (alloc(newSize)) {
+    size(data.size, h());
 
-		/* zoom to pointer */
+    /* zoom to pointer */
 
-		int shift;
-		if (x() > 0)
-			shift = Fl::event_x() - x();
-		else
-		if (type == -1)
-			shift = Fl::event_x() + abs(x());
-		else
-			shift = (Fl::event_x() + abs(x())) / -2;
+    int shift;
+    if (x() > 0)
+      shift = Fl::event_x() - x();
+    else
+    if (type == -1)
+      shift = Fl::event_x() + abs(x());
+    else
+      shift = (Fl::event_x() + abs(x())) / -2;
 
-		if (x() - shift > BORDER)
-			shift = 0;
+    if (x() - shift > BORDER)
+      shift = 0;
 
-		position(x() - shift, y());
+    position(x() - shift, y());
 
 
-		/* avoid overflow when zooming out with scrollbar like that:
-		 * |----------[scrollbar]|
-		 *
-		 * offset vs smaller:
-		 * |[wave------------| offset > 0  smaller = false
-		 * |[wave----]       | offset < 0, smaller = true
-		 * |-------------]   | offset < 0, smaller = false  */
+    /* avoid overflow when zooming out with scrollbar like that:
+     * |----------[scrollbar]|
+     *
+     * offset vs smaller:
+     * |[wave------------| offset > 0  smaller = false
+     * |[wave----]       | offset < 0, smaller = true
+     * |-------------]   | offset < 0, smaller = false  */
 
-		int  parentW = ((gWaveTools*)parent())->w();
-		int  thisW   = x() + w() - BORDER;           // visible width, not full width
+    int  parentW = ((gWaveTools*)parent())->w();
+    int  thisW   = x() + w() - BORDER;           // visible width, not full width
 
-		if (thisW < parentW)
-			position(x() + parentW - thisW, y());
-		if (smaller())
-			stretchToWindow();
+    if (thisW < parentW)
+      position(x() + parentW - thisW, y());
+    if (smaller())
+      stretchToWindow();
 
-		redraw();
-	}
+    redraw();
+  }
 }
 
 
@@ -803,10 +811,10 @@ void gWaveform::setZoom(int type)
 
 void gWaveform::stretchToWindow() 
 {
-	int s = ((gWaveTools*)parent())->w();
-	alloc(s);
-	position(BORDER, y());
-	size(s, h());
+  int s = ((gWaveTools*)parent())->w();
+  alloc(s);
+  position(BORDER, y());
+  size(s, h());
 }
 
 
@@ -815,7 +823,7 @@ void gWaveform::stretchToWindow()
 
 bool gWaveform::smaller() 
 {
-	return w() < ((gWaveTools*)parent())->w();
+  return w() < ((gWaveTools*)parent())->w();
 }
 
 
@@ -824,8 +832,8 @@ bool gWaveform::smaller()
 
 void gWaveform::setGridLevel(int l)
 {
-	grid.points.clear();	
-	grid.level = l;
-	alloc(data.size);
-	redraw();
+  grid.points.clear();  
+  grid.level = l;
+  alloc(data.size);
+  redraw();
 }
