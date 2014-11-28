@@ -34,6 +34,7 @@
 #include "ge_waveform.h"
 #include "gd_editor.h"
 #include "wave.h"
+#include "conf.h"
 #include "glue.h"
 #include "mixer.h"
 #include "waveFx.h"
@@ -44,6 +45,7 @@
 
 
 extern Mixer G_Mixer;
+extern Conf  G_Conf;
 
 
 gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)
@@ -64,11 +66,9 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
   data.inf  = NULL;
   data.size = 0;
 
-  // TODO - temporary grid values
-  grid.snap  = false;
-  grid.level = 0;
-  // TODO 
-
+  grid.snap  = G_Conf.sampleEditorGridOn;
+  grid.level = G_Conf.sampleEditorGridVal;
+  
   stretchToWindow();
 }
 
@@ -519,7 +519,6 @@ int gWaveform::applySnap(int pos)
     if (pos >= grid.points.at(i) - 10 &&
         pos <= grid.points.at(i) + 10)
     {
-      gLog("snap at %d\n", pos);
       return grid.points.at(i);
     }
   }

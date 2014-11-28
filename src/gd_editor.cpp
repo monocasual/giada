@@ -118,10 +118,10 @@ gdEditor::gdEditor(SampleChannel *ch)
   grid->add("64");
   grid->value(G_Conf.sampleEditorGridVal);
   grid->callback(cb_changeGrid, (void*)this);
-  
+
   snap->value(G_Conf.sampleEditorGridOn);
   snap->callback(cb_enableSnap, (void*)this);
-
+  
   /* TODO - redraw grid if != (off) */
 
   char buf[16];
