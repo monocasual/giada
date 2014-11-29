@@ -13,7 +13,7 @@
 
 
 
-0.9.2 --- 
+0.9.2 --- 2014 . 11 . 29 
 - New grid layout in Sample Editor
 - Load samples via drag n drop
 - Add new utility functions: gTrim and gStripFileUrl
