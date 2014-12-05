@@ -32,9 +32,9 @@
 
 
 /* -- version ------------------------------------------------------- */
-#define VERSIONE 				"0.9.2"
+#define VERSIONE 				"0.9.3"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	0.92f
+#define VERSIONE_FLOAT	0.93f
 
 #define CONF_FILENAME		"giada.conf"
 
