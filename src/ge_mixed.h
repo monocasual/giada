@@ -303,14 +303,15 @@ public:
 
 class gResizerBar : public Fl_Box {
 private:
-	int orig_h;
-	int last_y;
-	int min_h;   // min height for widget above us
+  bool vertical;
+	int  orig_h;
+	int  last_y;
+	int  min_h;   // min height for widget above us
 
 	void HandleDrag(int diff);
 
 public:
-	gResizerBar(int x, int y, int w, int h);
+	gResizerBar(int x, int y, int w, int h, bool vertical=true);
 
   void SetMinHeight(int val);
   int  GetMinHeight();

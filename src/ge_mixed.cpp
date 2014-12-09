@@ -39,15 +39,15 @@
 #include "sampleChannel.h"
 
 
-extern Mixer 		     G_Mixer;
-extern unsigned 		 G_beats;
-extern bool  		     G_audio_status;
+extern Mixer         G_Mixer;
+extern unsigned      G_beats;
+extern bool          G_audio_status;
 extern gdMainWindow *mainWin;
 
 
 void __cb_window_closer(Fl_Widget *v, void *p) 
 {
-	delete (Fl_Window*)p;
+  delete (Fl_Window*)p;
 }
 
 
@@ -55,7 +55,7 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 
 
 gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
-	: gClick(X, Y, W, H, L, imgOff, imgOn) {}
+  : gClick(X, Y, W, H, L, imgOff, imgOn) {}
 
 
 /* ------------------------------------------------------------------ */
@@ -66,38 +66,38 @@ gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 
 void gStatus::draw()
 {
-	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		          // reset border
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);		  // reset background
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background
 
-	if (ch != NULL) {
-		if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
-				ch->recStatus & (REC_WAITING | REC_ENDING))
-		{
-			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-		}
-		else
-		if (ch->status == STATUS_PLAY)
-			fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-		else
-			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
+  if (ch != NULL) {
+    if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
+        ch->recStatus & (REC_WAITING | REC_ENDING))
+    {
+      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+    }
+    else
+    if (ch->status == STATUS_PLAY)
+      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+    else
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
 
 
-		if (G_Mixer.chanInput == ch)
-			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);	    // take in progress
-		else
-		if (recorder::active && recorder::canRec(ch))
-			fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
+    if (G_Mixer.chanInput == ch)
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
+    else
+    if (recorder::active && recorder::canRec(ch))
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
-		/* equation for the progress bar:
-		 * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
+    /* equation for the progress bar:
+     * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 
-		int pos = ch->getPosition();
-		if (pos == -1)
-			pos = 0;
-		else
-			pos = (pos * (w()-1)) / (ch->end - ch->begin);
-		fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
-	}
+    int pos = ch->getPosition();
+    if (pos == -1)
+      pos = 0;
+    else
+      pos = (pos * (w()-1)) / (ch->end - ch->begin);
+    fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
+  }
 }
 
 
@@ -106,36 +106,36 @@ void gStatus::draw()
 
 gClick::gClick(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
 : Fl_Button(x, y, w, h, L),
-	imgOff(imgOff),
-	imgOn(imgOn),
-	bgColor0(COLOR_BG_0),
-	bgColor1(COLOR_BG_1),
-	bdColor(COLOR_BD_0),
-	txtColor(COLOR_TEXT_0)	{}
+  imgOff(imgOff),
+  imgOn(imgOn),
+  bgColor0(COLOR_BG_0),
+  bgColor1(COLOR_BG_1),
+  bdColor(COLOR_BD_0),
+  txtColor(COLOR_TEXT_0)  {}
 
 void gClick::draw() 
 {
-	if (!active()) txtColor = bdColor;
-	else 					 txtColor = COLOR_TEXT_0;
+  if (!active()) txtColor = bdColor;
+  else           txtColor = COLOR_TEXT_0;
 
-	fl_rect(x(), y(), w(), h(), bdColor);             // borders
-	if (value()) {													          // -- clicked
-		if (imgOn != NULL)
-			fl_draw_pixmap(imgOn, x()+1, y()+1);
-		else
-			fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
-	}
-	else {                                            // -- not clicked
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
-		if (imgOff != NULL)
-			fl_draw_pixmap(imgOff, x()+1, y()+1);
-	}
-	if (!active())
-		fl_color(FL_INACTIVE_COLOR);
+  fl_rect(x(), y(), w(), h(), bdColor);             // borders
+  if (value()) {                                    // -- clicked
+    if (imgOn != NULL)
+      fl_draw_pixmap(imgOn, x()+1, y()+1);
+    else
+      fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
+  }
+  else {                                            // -- not clicked
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
+    if (imgOff != NULL)
+      fl_draw_pixmap(imgOff, x()+1, y()+1);
+  }
+  if (!active())
+    fl_color(FL_INACTIVE_COLOR);
 
-	fl_color(txtColor);
-	fl_font(FL_HELVETICA, 11);
-	fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+  fl_color(txtColor);
+  fl_font(FL_HELVETICA, 11);
+  fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
 }
 
 
@@ -147,23 +147,23 @@ gClickRepeat::gClickRepeat(int x, int y, int w, int h, const char *L, const char
 
 void gClickRepeat::draw() 
 {
-	if (value()) {															 // -- clicked
-		fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
-		if (imgOn != NULL)
-			fl_draw_pixmap(imgOn, x()+1, y()+1);
-	}
-	else {                                       // -- not clicked
-		fl_rectf(x(), y(), w(), h(), COLOR_BG_0);  // bg
-		fl_rect(x(), y(), w(), h(), COLOR_BD_0);   // border
-		if (imgOff != NULL)
-			fl_draw_pixmap(imgOff, x()+1, y()+1);
-	}
-	if (!active())
-		fl_color(FL_INACTIVE_COLOR);
+  if (value()) {                               // -- clicked
+    fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
+    if (imgOn != NULL)
+      fl_draw_pixmap(imgOn, x()+1, y()+1);
+  }
+  else {                                       // -- not clicked
+    fl_rectf(x(), y(), w(), h(), COLOR_BG_0);  // bg
+    fl_rect(x(), y(), w(), h(), COLOR_BD_0);   // border
+    if (imgOff != NULL)
+      fl_draw_pixmap(imgOff, x()+1, y()+1);
+  }
+  if (!active())
+    fl_color(FL_INACTIVE_COLOR);
 
-	fl_color(COLOR_TEXT_0);
-	fl_font(FL_HELVETICA, 11);
-	fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+  fl_color(COLOR_TEXT_0);
+  fl_font(FL_HELVETICA, 11);
+  fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
 }
 
 
@@ -173,15 +173,15 @@ void gClickRepeat::draw()
 gInput::gInput(int x, int y, int w, int h, const char *L)
 : Fl_Input(x, y, w, h, L) 
 {
-	//Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
-	box(G_BOX);
-	labelsize(11);
-	labelcolor(COLOR_TEXT_0);
-	color(COLOR_BG_DARK);
-	textcolor(COLOR_TEXT_0);
-	cursor_color(COLOR_TEXT_0);
-	selection_color(COLOR_BD_0);
-	textsize(11);
+  //Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
+  box(G_BOX);
+  labelsize(11);
+  labelcolor(COLOR_TEXT_0);
+  color(COLOR_BG_DARK);
+  textcolor(COLOR_TEXT_0);
+  cursor_color(COLOR_TEXT_0);
+  selection_color(COLOR_BD_0);
+  textsize(11);
 
 }
 
@@ -192,25 +192,25 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
 gDial::gDial(int x, int y, int w, int h, const char *L)
 : Fl_Dial(x, y, w, h, L) 
 {
-	labelsize(11);
-	labelcolor(COLOR_TEXT_0);
-	align(FL_ALIGN_LEFT);
-	type(FL_FILL_DIAL);
-	angles(0, 360);
-	color(COLOR_BG_0);            // background
-	selection_color(COLOR_BG_1);   // selection
+  labelsize(11);
+  labelcolor(COLOR_TEXT_0);
+  align(FL_ALIGN_LEFT);
+  type(FL_FILL_DIAL);
+  angles(0, 360);
+  color(COLOR_BG_0);            // background
+  selection_color(COLOR_BG_1);   // selection
 }
 
 void gDial::draw() 
 {
-	double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
+  double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
 
-	fl_color(COLOR_BG_0);
-	fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
+  fl_color(COLOR_BG_0);
+  fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
 
-	fl_color(COLOR_BD_0);
-	fl_arc(x(), y(), w(), h(), 0, 360);
-	fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
+  fl_color(COLOR_BD_0);
+  fl_arc(x(), y(), w(), h(), 0, 360);
+  fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
 }
 
 /* ------------------------------------------------------------------ */
@@ -219,11 +219,11 @@ void gDial::draw()
 gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
 : Fl_Box(x, y, w, h, L)
 {
-	labelsize(11);
-	box(FL_NO_BOX);
-	labelcolor(COLOR_TEXT_0);
-	if (al != 0)
-		align(al | FL_ALIGN_INSIDE);
+  labelsize(11);
+  box(FL_NO_BOX);
+  labelcolor(COLOR_TEXT_0);
+  if (al != 0)
+    align(al | FL_ALIGN_INSIDE);
 }
 
 
@@ -235,21 +235,21 @@ gCheck::gCheck(int x, int y, int w, int h, const char *L)
 
 void gCheck::draw()
 {
-	int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
+  int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
 
-	if (value()) {
-		fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-		fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
-	}
-	else {
-		fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
-		fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-	}
+  if (value()) {
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+    fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
+  }
+  else {
+    fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+  }
 
-	fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
-	fl_font(FL_HELVETICA, 11);
-	fl_color(COLOR_TEXT_0);
-	fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
+  fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
+  fl_font(FL_HELVETICA, 11);
+  fl_color(COLOR_TEXT_0);
+  fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }
 
 
@@ -261,21 +261,21 @@ gRadio::gRadio(int x, int y, int w, int h, const char *L)
 
 void gRadio::draw()
 {
-	int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
+  int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
 
-	if (value()) {
-		fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-		fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
-	}
-	else {
-		fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
-		fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-	}
+  if (value()) {
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+    fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
+  }
+  else {
+    fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+  }
 
-	fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
-	fl_font(FL_HELVETICA, 11);
-	fl_color(COLOR_TEXT_0);
-	fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
+  fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
+  fl_font(FL_HELVETICA, 11);
+  fl_color(COLOR_TEXT_0);
+  fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }
 
 
@@ -284,8 +284,8 @@ void gRadio::draw()
 
 gProgress::gProgress(int x, int y, int w, int h, const char *L)
 : Fl_Progress(x, y, w, h, L) {
-	color(COLOR_BG_0, COLOR_BD_0);
-	box(G_BOX);
+  color(COLOR_BG_0, COLOR_BD_0);
+  box(G_BOX);
 
 }
 
@@ -294,81 +294,81 @@ gProgress::gProgress(int x, int y, int w, int h, const char *L)
 
 
 gSoundMeter::gSoundMeter(int x, int y, int w, int h, const char *L)
-	: Fl_Box(x, y, w, h, L),
-		clip(false),
-		mixerPeak(0.0f),
-		peak(0.0f),
-		peak_old(0.0f),
-		db_level(0.0f),
-		db_level_old(0.0f) {}
+  : Fl_Box(x, y, w, h, L),
+    clip(false),
+    mixerPeak(0.0f),
+    peak(0.0f),
+    peak_old(0.0f),
+    db_level(0.0f),
+    db_level_old(0.0f) {}
 
 void gSoundMeter::draw() 
 {
-	fl_rect(x(), y(), w(), h(), COLOR_BD_0);
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
-	/* peak = the highest value inside the frame */
+  /* peak = the highest value inside the frame */
 
-	peak = 0.0f;
-	float tmp_peak = 0.0f;
+  peak = 0.0f;
+  float tmp_peak = 0.0f;
 
-	tmp_peak = fabs(mixerPeak);
-	if (tmp_peak > peak)
-		peak = tmp_peak;
+  tmp_peak = fabs(mixerPeak);
+  if (tmp_peak > peak)
+    peak = tmp_peak;
 
-	clip = peak >= 1.0f ? true : false; // 1.0f is considered clip
+  clip = peak >= 1.0f ? true : false; // 1.0f is considered clip
 
 
-	/*  dBFS (full scale) calculation, plus decay of -2dB per frame */
+  /*  dBFS (full scale) calculation, plus decay of -2dB per frame */
 
-	db_level = 20 * log10(peak);
-	if (db_level < db_level_old)
-		if (db_level_old > -DB_MIN_SCALE)
-			db_level = db_level_old - 2.0f;
+  db_level = 20 * log10(peak);
+  if (db_level < db_level_old)
+    if (db_level_old > -DB_MIN_SCALE)
+      db_level = db_level_old - 2.0f;
 
-	db_level_old = db_level;
+  db_level_old = db_level;
 
-	/* graphical part */
+  /* graphical part */
 
-	float px_level = 0.0f;
-	if (db_level < 0.0f)
-		px_level = ((w()/DB_MIN_SCALE) * db_level) + w();
-	else
-		px_level = w();
+  float px_level = 0.0f;
+  if (db_level < 0.0f)
+    px_level = ((w()/DB_MIN_SCALE) * db_level) + w();
+  else
+    px_level = w();
 
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);
-	fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !G_audio_status ? COLOR_ALERT : COLOR_BD_0);
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);
+  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !G_audio_status ? COLOR_ALERT : COLOR_BD_0);
 }
 
 /* ------------------------------------------------------------------ */
 
 gBeatMeter::gBeatMeter(int x, int y, int w, int h, const char *L)
-	: Fl_Box(x, y, w, h, L) {}
+  : Fl_Box(x, y, w, h, L) {}
 
 void gBeatMeter::draw()
 {
-	int cursorW = w() / MAX_BEATS;
-	int greyX   = G_Mixer.beats * cursorW;
+  int cursorW = w() / MAX_BEATS;
+  int greyX   = G_Mixer.beats * cursorW;
 
-	fl_rect(x(), y(), w(), h(), COLOR_BD_0);													      // border
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);  						// bg
-	fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);                                // border
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);              // bg
+  fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
 
-	/* beat cells */
+  /* beat cells */
 
-	fl_color(COLOR_BD_0);
-	for (int i=1; i<=G_Mixer.beats; i++)
-		fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
+  fl_color(COLOR_BD_0);
+  for (int i=1; i<=G_Mixer.beats; i++)
+    fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
 
-	/* bar line */
+  /* bar line */
 
-	fl_color(COLOR_BG_2);
-	int delta = G_Mixer.beats / G_Mixer.bars;
-	for (int i=1; i<G_Mixer.bars; i++)
-		fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
+  fl_color(COLOR_BG_2);
+  int delta = G_Mixer.beats / G_Mixer.bars;
+  for (int i=1; i<G_Mixer.bars; i++)
+    fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
 
-	/* unused grey area */
+  /* unused grey area */
 
-	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
+  fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
 }
 
 
@@ -378,52 +378,52 @@ void gBeatMeter::draw()
 //int gModeBox::id_generator = 0;
 
 gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
-	: Fl_Menu_Button(x, y, w, h, L), ch(ch)
+  : Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {
-	box(G_BOX);
-	textsize(11);
-	textcolor(COLOR_TEXT_0);
-	color(COLOR_BG_0);
+  box(G_BOX);
+  textsize(11);
+  textcolor(COLOR_TEXT_0);
+  color(COLOR_BG_0);
 
-	add("Loop . basic", 	   0, cb_change_chanmode, (void *)LOOP_BASIC);
-	add("Loop . once", 		   0, cb_change_chanmode, (void *)LOOP_ONCE);
-	add("Loop . once . bar", 0, cb_change_chanmode, (void *)LOOP_ONCE_BAR);
-	add("Loop . repeat", 	   0, cb_change_chanmode, (void *)LOOP_REPEAT);
-	add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
-	add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
-	add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-	add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
+  add("Loop . basic",      0, cb_change_chanmode, (void *)LOOP_BASIC);
+  add("Loop . once",       0, cb_change_chanmode, (void *)LOOP_ONCE);
+  add("Loop . once . bar", 0, cb_change_chanmode, (void *)LOOP_ONCE_BAR);
+  add("Loop . repeat",     0, cb_change_chanmode, (void *)LOOP_REPEAT);
+  add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
+  add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
+  add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
+  add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
 }
 
 
 void gModeBox::draw() {
-	fl_rect(x(), y(), w(), h(), COLOR_BD_0);		// border
-	switch (ch->mode) {
-		case LOOP_BASIC:
-			fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
-			break;
-		case LOOP_ONCE:
-			fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
-			break;
-		case LOOP_ONCE_BAR:
-			fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
-			break;
-		case LOOP_REPEAT:
-			fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
-			break;
-		case SINGLE_BASIC:
-			fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
-			break;
-		case SINGLE_PRESS:
-			fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
-			break;
-		case SINGLE_RETRIG:
-			fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
-			break;
-		case SINGLE_ENDLESS:
-			fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
-			break;
-	}
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);    // border
+  switch (ch->mode) {
+    case LOOP_BASIC:
+      fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
+      break;
+    case LOOP_ONCE:
+      fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
+      break;
+    case LOOP_ONCE_BAR:
+      fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
+      break;
+    case LOOP_REPEAT:
+      fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
+      break;
+    case SINGLE_BASIC:
+      fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
+      break;
+    case SINGLE_PRESS:
+      fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
+      break;
+    case SINGLE_RETRIG:
+      fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
+      break;
+    case SINGLE_ENDLESS:
+      fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
+      break;
+  }
 }
 
 
@@ -432,13 +432,13 @@ void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_
 
 void gModeBox::__cb_change_chanmode(int mode)
 {
-	ch->mode = mode;
+  ch->mode = mode;
 
-	/* what to do when the channel is playing and you change the mode?
-	 * Nothing, since v0.5.3. Just refresh the action editor window, in
-	 * case it's open */
+  /* what to do when the channel is playing and you change the mode?
+   * Nothing, since v0.5.3. Just refresh the action editor window, in
+   * case it's open */
 
-	gu_refreshActionEditor();
+  gu_refreshActionEditor();
 }
 
 
@@ -446,44 +446,44 @@ void gModeBox::__cb_change_chanmode(int mode)
 
 
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
-	: Fl_Choice(x, y, w, h, l), angle(ang)
+  : Fl_Choice(x, y, w, h, l), angle(ang)
 {
-	labelsize(11);
-	labelcolor(COLOR_TEXT_0);
-	box(FL_BORDER_BOX);
-	textsize(11);
-	textcolor(COLOR_TEXT_0);
-	color(COLOR_BG_0);
+  labelsize(11);
+  labelcolor(COLOR_TEXT_0);
+  box(FL_BORDER_BOX);
+  textsize(11);
+  textcolor(COLOR_TEXT_0);
+  color(COLOR_BG_0);
 }
 
 
 void gChoice::draw()
 {
-	fl_rectf(x(), y(), w(), h(), COLOR_BG_0);              // bg
-	fl_rect(x(), y(), w(), h(), (Fl_Color) COLOR_BD_0);    // border
-	if (angle)
-		fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
+  fl_rectf(x(), y(), w(), h(), COLOR_BG_0);              // bg
+  fl_rect(x(), y(), w(), h(), (Fl_Color) COLOR_BD_0);    // border
+  if (angle)
+    fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
 
-	/* pick up the text() from the selected item (value()) and print it in
-	 * the box and avoid overflows */
+  /* pick up the text() from the selected item (value()) and print it in
+   * the box and avoid overflows */
 
-	fl_color(!active() ? COLOR_BD_0 : COLOR_TEXT_0);
-	if (value() != -1) {
-		if (fl_width(text(value())) < w()-8) {
-			fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);
-		}
-		else {
-			std::string tmp = text(value());
-			int size        = tmp.size();
-			while (fl_width(tmp.c_str()) >= w()-16) {
-				tmp.resize(size);
-				size--;
-			}
-			tmp += "...";
-			fl_draw(tmp.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
-		}
+  fl_color(!active() ? COLOR_BD_0 : COLOR_TEXT_0);
+  if (value() != -1) {
+    if (fl_width(text(value())) < w()-8) {
+      fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);
+    }
+    else {
+      std::string tmp = text(value());
+      int size        = tmp.size();
+      while (fl_width(tmp.c_str()) >= w()-16) {
+        tmp.resize(size);
+        size--;
+      }
+      tmp += "...";
+      fl_draw(tmp.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+    }
 
-	}
+  }
 }
 
 
@@ -492,7 +492,7 @@ void gChoice::draw()
 
 void gDrawBox(int x, int y, int w, int h, Fl_Color c)
 {
-	fl_color(c);
+  fl_color(c);
   fl_rectf(x, y, w, h);
   fl_color(COLOR_BD_0);
   fl_rect(x, y, w, h);
@@ -503,25 +503,25 @@ void gDrawBox(int x, int y, int w, int h, Fl_Color c)
 
 
 gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
-	: Fl_Scroll(x, y, w, h, l)
+  : Fl_Scroll(x, y, w, h, l)
 {
-	type(Fl_Scroll::VERTICAL);
-	scrollbar.color(COLOR_BG_0);
-	scrollbar.selection_color(COLOR_BG_1);
-	scrollbar.labelcolor(COLOR_BD_1);
-	scrollbar.slider(G_BOX);
+  type(Fl_Scroll::VERTICAL);
+  scrollbar.color(COLOR_BG_0);
+  scrollbar.selection_color(COLOR_BG_1);
+  scrollbar.labelcolor(COLOR_BD_1);
+  scrollbar.slider(G_BOX);
 }
 
 
 void gLiquidScroll::resize(int X, int Y, int W, int H)
 {
-	int nc = children()-2;                // skip hscrollbar and vscrollbar
-	for ( int t=0; t<nc; t++) {					  // tell children to resize to our new width
-		Fl_Widget *c = child(t);
-		c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
-	}
-	init_sizes();		// tell scroll children changed in size
-	Fl_Scroll::resize(X,Y,W,H);
+  int nc = children()-2;                // skip hscrollbar and vscrollbar
+  for ( int t=0; t<nc; t++) {           // tell children to resize to our new width
+    Fl_Widget *c = child(t);
+    c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
+  }
+  init_sizes();   // tell scroll children changed in size
+  Fl_Scroll::resize(X,Y,W,H);
 }
 
 
@@ -529,68 +529,102 @@ void gLiquidScroll::resize(int X, int Y, int W, int H)
 
 
 gSlider::gSlider(int x, int y, int w, int h, const char *l)
-	: Fl_Slider(x, y, w, h, l)
+  : Fl_Slider(x, y, w, h, l)
 {
-	type(FL_HOR_FILL_SLIDER);
+  type(FL_HOR_FILL_SLIDER);
 
-	labelsize(11);
-	align(FL_ALIGN_LEFT);
-	labelcolor(COLOR_TEXT_0);
+  labelsize(11);
+  align(FL_ALIGN_LEFT);
+  labelcolor(COLOR_TEXT_0);
 
-	box(G_BOX);
-	color(COLOR_BG_0);
-	selection_color(COLOR_BD_0);
+  box(G_BOX);
+  color(COLOR_BG_0);
+  selection_color(COLOR_BD_0);
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-gResizerBar::gResizerBar(int X,int Y,int W,int H)
-	: Fl_Box(X,Y,W,H)
+gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
+  : Fl_Box(X,Y,W,H), vertical(vertical)
 {
-	orig_h = H;
-	last_y = 0;
-	min_h  = 30;
-	align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
-	labelfont(FL_COURIER);
-	labelsize(H);
-	visible_focus(0);
-	box(FL_FLAT_BOX);
+  last_y = 0;
+  min_h  = 30;
+  if (vertical) {
+    orig_h = H;
+    labelsize(H);
+  }
+  else {
+    orig_h = W;
+    labelsize(W);
+  }
+  align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
+  labelfont(FL_COURIER);
+  visible_focus(0);
+  box(FL_BORDER_BOX);
 }
 
 
 void gResizerBar::HandleDrag(int diff) 
 {
-	Fl_Scroll *grp = (Fl_Scroll*)parent();
-	int top = y();
-	int bot = y()+h();
+  Fl_Scroll *grp = (Fl_Scroll*)parent();
+  int top;
+  int bot;
+  if (vertical) {
+    top = y();
+    bot = y()+h();
+  }
+  else {
+    top = x();
+    bot = x()+w();
+  }
 
-	// First pass: find widget directly above us with common edge
-	//    Possibly clamp 'diff' if widget would get too small..
+  // First pass: find widget directly above us with common edge
+  //    Possibly clamp 'diff' if widget would get too small..
 
-	for (int t=0; t<grp->children(); t++) {
-		Fl_Widget *w = grp->child(t);
-		if ((w->y()+w->h()) == top) {                           // found widget directly above?
-			if ((w->h()+diff) < min_h) diff = w->h() - min_h;     // clamp
-			w->resize(w->x(), w->y(), w->w(), w->h()+diff);       // change height
-			break;                                                // done with first pass
-		}
-	}
+  for (int t=0; t<grp->children(); t++) {
+    Fl_Widget *wd = grp->child(t);
+    if (vertical) {
+      if ((wd->y()+wd->h()) == top) {                           // found widget directly above?
+        if ((wd->h()+diff) < min_h) 
+          diff = wd->h() - min_h;                              // clamp
+        wd->resize(wd->x(), wd->y(), wd->w(), wd->h()+diff);       // change height
+        break;                                                // done with first pass
+      }
+    }
+    else {
+      if ((wd->x()+wd->w()) == top) {                           // found widget directly above?
+        if ((wd->w()+diff) < min_h) 
+          diff = wd->w() - min_h;                              // clamp
+        wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());       // change height
+        break;                                                // done with first pass    
+      }
+    }
+  }
 
-	// Second pass: find widgets below us, move based on clamped diff
+  // Second pass: find widgets below us, move based on clamped diff
 
-	for (int t=0; t<grp->children(); t++) {
-		Fl_Widget *w = grp->child(t);
-		if (w->y() >= bot)                                     // found widget below us?
-			w->resize(w->x(), w->y()+diff, w->w(), w->h());      // change position
-	}
+  for (int t=0; t<grp->children(); t++) {
+    Fl_Widget *wd = grp->child(t);
+    if (vertical) {
+      if (wd->y() >= bot)                                     // found widget below us?
+        wd->resize(wd->x(), wd->y()+diff, wd->w(), wd->h());      // change position
+    }
+    else {
+      if (wd->x() >= bot)
+        wd->resize(wd->x()+diff, wd->y(), wd->w(), wd->h()); 
+    }
+  }
 
-	// Change our position last
+  // Change our position last
 
-	resize(x(),y()+diff,w(),h());
-	grp->init_sizes();
-	grp->redraw();
+  if (vertical)
+    resize(x(), y()+diff, w(), h());
+  else
+    resize(x()+diff, y(), w(), h());
+  grp->init_sizes();
+  grp->redraw();
 }
 
 
@@ -600,27 +634,34 @@ int  gResizerBar::GetMinHeight() { return min_h; }
 
 int gResizerBar::handle(int e)
 {
-	int ret = 0;
-	int this_y = Fl::event_y_root();
-	switch (e) {
-		case FL_FOCUS: ret = 1; break;
-		case FL_ENTER: ret = 1; fl_cursor(FL_CURSOR_NS);      break;
-		case FL_LEAVE: ret = 1; fl_cursor(FL_CURSOR_DEFAULT); break;
-		case FL_PUSH:  ret = 1; last_y = this_y;              break;
-		case FL_DRAG:
-			HandleDrag(this_y-last_y);
-			last_y = this_y;
-			ret = 1;
-			break;
-		default: break;
-	}
-	return(Fl_Box::handle(e) | ret);
+  int ret = 0;
+  int this_y;
+  if (vertical)
+    this_y = Fl::event_y_root();
+  else
+    this_y = Fl::event_x_root();
+  switch (e) {
+    case FL_FOCUS: ret = 1; break;
+    case FL_ENTER: ret = 1; fl_cursor(FL_CURSOR_NS);      break;
+    case FL_LEAVE: ret = 1; fl_cursor(FL_CURSOR_DEFAULT); break;
+    case FL_PUSH:  ret = 1; last_y = this_y;              break;
+    case FL_DRAG:
+      HandleDrag(this_y-last_y);
+      last_y = this_y;
+      ret = 1;
+      break;
+    default: break;
+  }
+  return(Fl_Box::handle(e) | ret);
 }
 
 
 void gResizerBar::resize(int X,int Y,int W,int H)
 {
-	Fl_Box::resize(X,Y,W,orig_h);                                // height of resizer stays constant size
+  if (vertical)
+    Fl_Box::resize(X,Y,W,orig_h);                                // height of resizer stays constant size
+  else
+    Fl_Box::resize(X,Y,orig_h,H);
 }
 
 
@@ -628,17 +669,17 @@ void gResizerBar::resize(int X,int Y,int W,int H)
 
 
 gScroll::gScroll(int x, int y, int w, int h, int t)
-	: Fl_Scroll(x, y, w, h)
+  : Fl_Scroll(x, y, w, h)
 {
-	type(t);
+  type(t);
 
-	scrollbar.color(COLOR_BG_0);
-	scrollbar.selection_color(COLOR_BG_1);
-	scrollbar.labelcolor(COLOR_BD_1);
-	scrollbar.slider(G_BOX);
+  scrollbar.color(COLOR_BG_0);
+  scrollbar.selection_color(COLOR_BG_1);
+  scrollbar.labelcolor(COLOR_BD_1);
+  scrollbar.slider(G_BOX);
 
-	hscrollbar.color(COLOR_BG_0);
-	hscrollbar.selection_color(COLOR_BG_1);
-	hscrollbar.labelcolor(COLOR_BD_1);
-	hscrollbar.slider(G_BOX);
+  hscrollbar.color(COLOR_BG_0);
+  hscrollbar.selection_color(COLOR_BG_1);
+  hscrollbar.labelcolor(COLOR_BD_1);
+  hscrollbar.slider(G_BOX);
 }
