@@ -784,7 +784,8 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 
 	end();
 
-	tabs->box(G_BOX);
+	tabs->box(FL_FLAT_BOX); // TODO - G_BOX crashes FLTK 1.3.3
+
 	tabs->labelcolor(COLOR_TEXT_0);
 
 	save->callback(cb_save_config, (void*)this);

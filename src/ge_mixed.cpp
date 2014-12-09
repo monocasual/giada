@@ -560,7 +560,8 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H)
 }
 
 
-void gResizerBar::HandleDrag(int diff) {
+void gResizerBar::HandleDrag(int diff) 
+{
 	Fl_Scroll *grp = (Fl_Scroll*)parent();
 	int top = y();
 	int bot = y()+h();
