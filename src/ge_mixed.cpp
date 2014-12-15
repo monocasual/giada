@@ -623,6 +623,7 @@ void gResizerBar::HandleDrag(int diff)
     resize(x(), y()+diff, w(), h());
   else
     resize(x()+diff, y(), w(), h());
+  
   grp->init_sizes();
   grp->redraw();
 }

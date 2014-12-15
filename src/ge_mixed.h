@@ -311,6 +311,10 @@ private:
 	void HandleDrag(int diff);
 
 public:
+
+  /* 'vertical' defines the bar movement. Vertical=true: the bar moves
+   * vertically (up and down). */
+
 	gResizerBar(int x, int y, int w, int h, bool vertical=true);
 
   void SetMinHeight(int val);

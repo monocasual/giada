@@ -1102,9 +1102,10 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw, 2000, indexColumn);
+	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
 	indexColumn++;
 	add(gc);
+  add(new gResizerBar(gc->x()+gc->w()-20, gc->y(), 20, 2000, false));
 	columns.add(gc);
 	redraw();
 	
