@@ -1125,7 +1125,8 @@ gColumn::gColumn(int X, int Y, int W, int H, int index)
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 	
-	resizable(NULL);
+	// XXX - resizable(addChannelBtn);
+	resizable(0);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 }
@@ -1192,7 +1193,7 @@ void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChan
 gChannel *gColumn::addChannel(class Channel *ch)
 {
 	gChannel *gch = NULL;
-	
+
 	if (ch->type == CHANNEL_SAMPLE)
 		gch = (gSampleChannel*) new gSampleChannel(
 				x(),
@@ -1212,6 +1213,8 @@ gChannel *gColumn::addChannel(class Channel *ch)
 	size(w(), children() * 24 + 66);  // evil space for drag n drop
 	redraw();
 	parent()->redraw();               // redraw Keyboard
+
+  gLog("%d\n", children());
 
 	//~ ch->column = index;	
 	return gch;
