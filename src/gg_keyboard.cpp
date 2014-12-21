@@ -107,6 +107,8 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 
 	end();
 
+  resizable(sampleButton);
+
 	update();
 
 	button->callback(cb_button, (void*)this);
@@ -593,6 +595,8 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 #endif
 
 	end();
+
+  resizable(sampleButton);
 
 	update();
 
@@ -1088,7 +1092,7 @@ void gKeyboard::__cb_addColumn()
 {
 	int colx;
 	int colxw;
-	int colw = 360;
+	int colw = 380;
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + colw; 
@@ -1102,10 +1106,10 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
+	gColumn *gc = new gColumn(colx, y(), colw-20, 200, indexColumn);
 	indexColumn++;
 	add(gc);
-  add(new gResizerBar(gc->x()+gc->w()-20, gc->y(), 20, 2000, false));
+  add(new gResizerBar(gc->x()+gc->w(), gc->y(), 15, 2000, false));
 	columns.add(gc);
 	redraw();
 	
@@ -1125,10 +1129,11 @@ gColumn::gColumn(int X, int Y, int W, int H, int index)
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 	
-	// XXX - resizable(addChannelBtn);
-	resizable(0);
+	resizable(addChannelBtn);
+	// XXX - resizable(0);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
+
 }
 
 
@@ -1210,11 +1215,9 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				(MidiChannel*) ch);	
 	
 	add(gch);
-	size(w(), children() * 24 + 66);  // evil space for drag n drop
-	redraw();
+	//XXX - size(w(), children() * 24 + 66);  // evil space for drag n drop
+  redraw();
 	parent()->redraw();               // redraw Keyboard
-
-  gLog("%d\n", children());
 
 	//~ ch->column = index;	
 	return gch;
