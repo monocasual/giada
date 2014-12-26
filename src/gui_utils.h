@@ -53,11 +53,6 @@ void __gu_blinkChannel(class gChannel *gch);
 
 void gu_refresh();
 
-/* trim_label
- * trim a string C to N chars, and apply it to label W. */
-
-void gu_trim_label(const char *c, unsigned n, Fl_Widget *w);
-
 /* update controls
  * update attributes of control elements (sample names, volumes, ...).
  * Useful when loading a new patch. */

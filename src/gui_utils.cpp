@@ -64,7 +64,7 @@ void gu_refresh()
 	mainWin->inOut->refresh();
 	mainWin->beatMeter->redraw();
 	mainWin->keyboard->refreshColumns();
-	
+
 	/* compute timer for blinker */
 
 	blinker++;
@@ -99,29 +99,6 @@ void __gu_blinkChannel(gChannel *gch)
 /* ------------------------------------------------------------------ */
 
 
-void gu_trim_label(const char *str, unsigned n, Fl_Widget *w)
-{
-
-	/*** FIXME - we should compute the length of the string in pixels, not in
-	 * chars */
-
-	/** FIXME 2 - wrong function. Add it to gWidget base class */
-
-	if (strlen(str) < n)
-		w->copy_label(str);
-	else {
-		char out[FILENAME_MAX];
-		strncpy(out, str, n);
-		out[n] = '\0';
-		strcat(out, "...");
-		w->copy_label(out);
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
 void gu_update_controls()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
@@ -134,25 +111,6 @@ void gu_update_controls()
 	 * update the button status */
 
 	mainWin->controller->updatePlay(G_Mixer.running);
-
-	/* update bpm and beats. If bpm < 99.9 show just 4 digits (+ escape),
-	 * otherwise a bad looking 0 remains */
-
-	/**
-	int size = G_Mixer.bpm < 100.0f ? 5 : 6;
-	char buf_bpm[6];
-	snprintf(buf_bpm, size, "%f", G_Mixer.bpm);
-	mainWin->bpm->copy_label(buf_bpm);
-
-	char buf_batt[8];
-	sprintf(buf_batt, "%d/%d", G_Mixer.beats, G_Mixer.bars);
-	mainWin->beats->copy_label(buf_batt);
-
-	if 			(G_Mixer.quantize == 6)		mainWin->quantize->value(5);
-	else if (G_Mixer.quantize == 8)		mainWin->quantize->value(6);
-	else		mainWin->quantize->value(G_Mixer.quantize);
-	*/
-	
 	mainWin->controller->updateMetronome(0);
 }
 
