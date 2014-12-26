@@ -34,6 +34,8 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Button.H>
 #include "utils.h"
 
 
@@ -232,6 +234,34 @@ public:
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gStatus : public Fl_Box
+{
+public:
+	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
+	void draw();
+	class SampleChannel *ch;
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
+class gModeBox : public Fl_Menu_Button {
+private:
+	static void cb_change_chanmode(Fl_Widget *v, void *p);
+	inline void __cb_change_chanmode(int mode);
+
+	class SampleChannel *ch;
+
+public:
+	gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
+	void draw();
 };
 
 
