@@ -552,7 +552,7 @@ void glue_setOutVol(float v, bool gui) {
 /* ------------------------------------------------------------------ */
 
 
-void glue_setInVol(float v, bool gui) 
+void glue_setInVol(float v, bool gui)
 {
 	G_Mixer.inVol = v;
 	if (!gui) {
@@ -566,7 +566,7 @@ void glue_setInVol(float v, bool gui)
 /* ------------------------------------------------------------------ */
 
 
-void glue_clearAllSamples() 
+void glue_clearAllSamples()
 {
 	G_Mixer.running = false;
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
@@ -581,7 +581,7 @@ void glue_clearAllSamples()
 /* ------------------------------------------------------------------ */
 
 
-void glue_clearAllRecs() 
+void glue_clearAllRecs()
 {
 	recorder::init();
 	gu_update_controls();
@@ -594,7 +594,7 @@ void glue_clearAllRecs()
 void glue_resetToInitState(bool resetGui)
 {
 	G_Mixer.ready = false;
-	
+
 	mh_clear();
 	mainWin->keyboard->clear();
 	recorder::init();
@@ -604,9 +604,9 @@ void glue_resetToInitState(bool resetGui)
 	G_PluginHost.freeAllStacks();
 #endif
 
-	if (resetGui)	
+	if (resetGui)
 		gu_update_controls();
-	
+
 	G_Mixer.ready = true;
 }
 
@@ -614,7 +614,7 @@ void glue_resetToInitState(bool resetGui)
 /* ------------------------------------------------------------------ */
 
 
-void glue_startStopMetronome(bool gui) 
+void glue_startStopMetronome(bool gui)
 {
 	G_Mixer.metronome = !G_Mixer.metronome;
 	if (!gui) {
@@ -673,7 +673,7 @@ void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e, boo
 /* ------------------------------------------------------------------ */
 
 
-void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric) 
+void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val > 20.0f)
@@ -706,7 +706,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 /* ------------------------------------------------------------------ */
 
 
-void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool numeric) 
+void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val > 0.0f)
@@ -754,7 +754,7 @@ void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool n
 /* ------------------------------------------------------------------ */
 
 
-void glue_setMute(Channel *ch, bool gui) 
+void glue_setMute(Channel *ch, bool gui)
 {
 	if (recorder::active && recorder::canRec(ch)) {
 		if (!ch->mute)
@@ -776,7 +776,7 @@ void glue_setMute(Channel *ch, bool gui)
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOn(Channel *ch, bool gui) 
+void glue_setSoloOn(Channel *ch, bool gui)
 {
 	/* if there's no solo session, store mute configuration of all chans
 	 * and start the session */
@@ -821,7 +821,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 /* ------------------------------------------------------------------ */
 
 
-void glue_setSoloOff(Channel *ch, bool gui) 
+void glue_setSoloOff(Channel *ch, bool gui)
 {
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
@@ -865,7 +865,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 /* ------------------------------------------------------------------ */
 
 
-void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val) 
+void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
 {
 	if (val < 1.0f) {
 		ch->panLeft = 1.0f;
@@ -895,7 +895,7 @@ void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
 /* ------------------------------------------------------------------ */
 
 
-void glue_startStopInputRec(bool gui, bool alert) 
+void glue_startStopInputRec(bool gui, bool alert)
 {
 	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec(gui)) {
@@ -911,7 +911,7 @@ void glue_startStopInputRec(bool gui, bool alert)
 /* ------------------------------------------------------------------ */
 
 
-int glue_startInputRec(bool gui) 
+int glue_startInputRec(bool gui)
 {
 	if (G_audio_status == false)
 		return -1;
@@ -933,7 +933,7 @@ int glue_startInputRec(bool gui)
 
 	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
 
-	gu_trim_label(ch->wave->name.c_str(), 28, ch->guiChannel->sampleButton);
+	ch->guiChannel->sampleButton->label(ch->wave->name.c_str());
 
 	if (!gui) {
 		Fl::lock();
@@ -949,7 +949,7 @@ int glue_startInputRec(bool gui)
 /* ------------------------------------------------------------------ */
 
 
-int glue_stopInputRec(bool gui) 
+int glue_stopInputRec(bool gui)
 {
 	SampleChannel *ch = mh_stopInputRec();
 
@@ -969,7 +969,7 @@ int glue_stopInputRec(bool gui)
 /* ------------------------------------------------------------------ */
 
 
-int glue_saveProject(const char *folderPath, const char *projName) 
+int glue_saveProject(const char *folderPath, const char *projName)
 {
 	if (gIsProject(folderPath)) {
 		gLog("[glue] the project folder already exists\n");
@@ -1018,7 +1018,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyPress(Channel *ch, bool ctrl, bool shift) 
+void glue_keyPress(Channel *ch, bool ctrl, bool shift)
 {
 	if (ch->type == CHANNEL_SAMPLE)
 		glue_keyPress((SampleChannel*)ch, ctrl, shift);
@@ -1040,7 +1040,7 @@ void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift) 
+void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 {
 	if (ctrl)
 		glue_setMute(ch);
@@ -1055,7 +1055,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift) 
+void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 {
 	/* case CTRL */
 
@@ -1121,7 +1121,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 /* ------------------------------------------------------------------ */
 
 
-void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift) 
+void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 {
 	if (!ctrl && !shift) {
 		ch->stop();
@@ -1171,12 +1171,12 @@ void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numer
 /* never expand or shrink recordings (last param of setBeats = false):
  * this is live manipulation */
 
-void glue_beatsMultiply() 
+void glue_beatsMultiply()
 {
 	glue_setBeats(G_Mixer.beats*2, G_Mixer.bars, false);
 }
 
-void glue_beatsDivide() 
+void glue_beatsDivide()
 {
 	glue_setBeats(G_Mixer.beats/2, G_Mixer.bars, false);
 }

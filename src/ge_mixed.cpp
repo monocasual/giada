@@ -45,7 +45,7 @@ extern bool          G_audio_status;
 extern gdMainWindow *mainWin;
 
 
-void __cb_window_closer(Fl_Widget *v, void *p) 
+void __cb_window_closer(Fl_Widget *v, void *p)
 {
   delete (Fl_Window*)p;
 }
@@ -62,7 +62,7 @@ gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff,
 
 
 gClick::gClick(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
-: Fl_Button(x, y, w, h, L),
+: gBaseButton(x, y, w, h, L),
   imgOff(imgOff),
   imgOn(imgOn),
   bgColor0(COLOR_BG_0),
@@ -70,7 +70,7 @@ gClick::gClick(int x, int y, int w, int h, const char *L, const char **imgOff, c
   bdColor(COLOR_BD_0),
   txtColor(COLOR_TEXT_0)  {}
 
-void gClick::draw() 
+void gClick::draw()
 {
   if (!active()) txtColor = bdColor;
   else           txtColor = COLOR_TEXT_0;
@@ -102,7 +102,7 @@ void gClick::draw()
 gClickRepeat::gClickRepeat(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
 : Fl_Repeat_Button(x, y, w, h, L), imgOff(imgOff), imgOn(imgOn) {}
 
-void gClickRepeat::draw() 
+void gClickRepeat::draw()
 {
   if (value()) {                               // -- clicked
     fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
@@ -128,7 +128,7 @@ void gClickRepeat::draw()
 
 
 gInput::gInput(int x, int y, int w, int h, const char *L)
-: Fl_Input(x, y, w, h, L) 
+: Fl_Input(x, y, w, h, L)
 {
   //Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
   box(G_BOX);
@@ -147,7 +147,7 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
 
 
 gDial::gDial(int x, int y, int w, int h, const char *L)
-: Fl_Dial(x, y, w, h, L) 
+: Fl_Dial(x, y, w, h, L)
 {
   labelsize(11);
   labelcolor(COLOR_TEXT_0);
@@ -158,7 +158,7 @@ gDial::gDial(int x, int y, int w, int h, const char *L)
   selection_color(COLOR_BG_1);   // selection
 }
 
-void gDial::draw() 
+void gDial::draw()
 {
   double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
 
@@ -259,7 +259,7 @@ gSoundMeter::gSoundMeter(int x, int y, int w, int h, const char *L)
     db_level(0.0f),
     db_level_old(0.0f) {}
 
-void gSoundMeter::draw() 
+void gSoundMeter::draw()
 {
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);
 
@@ -453,7 +453,7 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
 }
 
 
-void gResizerBar::HandleDrag(int diff) 
+void gResizerBar::HandleDrag(int diff)
 {
   Fl_Scroll *grp = (Fl_Scroll*)parent();
   int top;
@@ -474,7 +474,7 @@ void gResizerBar::HandleDrag(int diff)
     Fl_Widget *wd = grp->child(t);
     if (vertical) {
       if ((wd->y()+wd->h()) == top) {                           // found widget directly above?
-        if ((wd->h()+diff) < min_h) 
+        if ((wd->h()+diff) < min_h)
           diff = wd->h() - min_h;                              // clamp
         wd->resize(wd->x(), wd->y(), wd->w(), wd->h()+diff);       // change height
         break;                                                // done with first pass
@@ -482,10 +482,10 @@ void gResizerBar::HandleDrag(int diff)
     }
     else {
       if ((wd->x()+wd->w()) == top) {                           // found widget directly above?
-        if ((wd->w()+diff) < min_h) 
+        if ((wd->w()+diff) < min_h)
           diff = wd->w() - min_h;                              // clamp
         wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());       // change height
-        break;                                                // done with first pass    
+        break;                                                // done with first pass
       }
     }
   }
@@ -500,7 +500,7 @@ void gResizerBar::HandleDrag(int diff)
     }
     else {
       if (wd->x() >= bot)
-        wd->resize(wd->x()+diff, wd->y(), wd->w(), wd->h()); 
+        wd->resize(wd->x()+diff, wd->y(), wd->w(), wd->h());
     }
   }
 
@@ -510,7 +510,7 @@ void gResizerBar::HandleDrag(int diff)
     resize(x(), y()+diff, w(), h());
   else
     resize(x()+diff, y(), w(), h());
-  
+
   grp->init_sizes();
   grp->redraw();
 }
@@ -570,4 +570,65 @@ gScroll::gScroll(int x, int y, int w, int h, int t)
   hscrollbar.selection_color(COLOR_BG_1);
   hscrollbar.labelcolor(COLOR_BD_1);
   hscrollbar.slider(G_BOX);
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
+gBaseButton::gBaseButton(int x, int y, int w, int h, const char *l)
+  : Fl_Button(x, y, w, h, l)
+{
+  initLabel = l ? l : "";
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gBaseButton::trimLabel()
+{
+  if (initLabel.empty())
+    return;
+
+  std::string out;
+  if (w() >= 20) {
+    out = initLabel;
+    int len = initLabel.size();
+    while (fl_width(out.c_str(), out.size()) > w()) {
+      out = initLabel.substr(0, len) + "...";
+      len--;
+    }
+  }
+  else
+    out = "";
+    copy_label(out.c_str());
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gBaseButton::label(const char *l)
+{
+  Fl_Button::label(l);
+  initLabel = l;
+  trimLabel();
+}
+
+const char *gBaseButton::label()
+{
+  return Fl_Button::label();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gBaseButton::resize(int X, int Y, int W, int H)
+{
+  trimLabel();
+  Fl_Button::resize(X, Y, W, H);
 }

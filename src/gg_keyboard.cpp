@@ -460,7 +460,7 @@ void gSampleChannel::update()
 			sampleButton->label("* file not found! *");
 			break;
 		default:
-			gu_trim_label(ch->wave->name.c_str(), 28, sampleButton);
+			sampleButton->label(ch->wave->name.c_str());
 			break;
 	}
 
@@ -552,12 +552,12 @@ void gSampleChannel::delActionButton(bool force)
 {
 	if (readActions == NULL)
 		return;
-	
+
 	/* TODO - readActions check is useless here */
-	
+
 	if (!force && (readActions == NULL || ch->hasActions))
 		return;
-		
+
 	remove(readActions);		// delete from Keyboard group (FLTK)
 	delete readActions;     // delete (C++)
 	readActions = NULL;
@@ -974,7 +974,7 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 void gKeyboard::init()
 {
 	/* add 6 empty columns as init layout */
-	
+
 	__cb_addColumn();
 	__cb_addColumn();
 	__cb_addColumn();
@@ -1024,25 +1024,25 @@ void gKeyboard::organizeColumns()
 {
 	/* if only one column exists don't cleanup: the initial column must
 	 * stay here. */
-	 
+
 	if (columns.size == 1)
 		return;
-		
+
 	/* otherwise delete all empty columns */
 	/** FIXME - this for loop might not work correctly! */
-		
+
 	for (unsigned i=columns.size-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
 			delete columns.at(i);
 			columns.del(i);
 		}
 	}
-	
+
 	/* compact column, avoid empty spaces */
-	
+
 	for (unsigned i=1; i<columns.size; i++)
 		columns.at(i)->position(columns.at(i-1)->x() + columns.at(i-1)->w() + 16, y());
-	
+
 	addColumnBtn->position(columns.last()->x() + columns.last()->w() + 16, y());
 
 	redraw();
@@ -1061,7 +1061,7 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addC
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
 	gColumn *col = NULL;
-	
+
 	if (build) {
 		__cb_addColumn();
 		col = columns.last();
@@ -1076,7 +1076,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		if (!col) {
 			gLog("[gKeyboard::addChannel] column not found!\n");
 			return NULL;
-		}	
+		}
 		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	}
 	return col->addChannel(ch);
@@ -1096,7 +1096,7 @@ void gKeyboard::refreshColumns()
 /* ------------------------------------------------------------------ */
 
 
-int gKeyboard::handle(int e) 
+int gKeyboard::handle(int e)
 {
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
@@ -1165,8 +1165,8 @@ int gKeyboard::handle(int e)
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::clear() 
-{	
+void gKeyboard::clear()
+{
 	Fl_Scroll::clear();
 	columns.clear();
 	indexColumn = 0;     // new columns will start from index=0
@@ -1177,7 +1177,7 @@ void gKeyboard::clear()
 /* ------------------------------------------------------------------ */
 
 
-void gKeyboard::setChannelWithActions(gSampleChannel *gch) 
+void gKeyboard::setChannelWithActions(gSampleChannel *gch)
 {
 	if (gch->ch->hasActions)
 		gch->addActionButton();
@@ -1219,7 +1219,7 @@ void gKeyboard::__cb_addColumn()
 	int colw = 380;
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
-		colxw = colx + colw; 
+		colxw = colx + colw;
 		addColumnBtn = new gClick(colxw + 16, y(), 200, 20, "Add new column");
 		addColumnBtn->callback(cb_addColumn, (void*) this);
 		add(addColumnBtn);
@@ -1236,7 +1236,7 @@ void gKeyboard::__cb_addColumn()
   add(new gResizerBar(gc->x()+gc->w(), gc->y(), 16, 200, false));
 	columns.add(gc);
 	redraw();
-	
+
 	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n", gc->getIndex(), columns.size, addColumnBtn->x());
 }
 
@@ -1252,7 +1252,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index)
 	begin();
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
-	
+
 	//resizable(addChannelBtn);
   box(FL_BORDER_BOX);
 	//resizable(0);
@@ -1270,7 +1270,7 @@ int gColumn::handle(int e)
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_DND_ENTER:           	// return(1) for these events to 'accept' dnd
-		case FL_DND_DRAG: 
+		case FL_DND_DRAG:
 		case FL_DND_RELEASE: {
 			ret = 1;
 			break;
@@ -1298,7 +1298,7 @@ void gColumn::resize(int X, int Y, int W, int H)
   int ch = children();
   for (int i=0; i<ch; i++) {
     Fl_Widget *c = child(i);
-    c->resize(X, Y + (i * (c->h() + 4)), W, c->h());     
+    c->resize(X, Y + (i * (c->h() + 4)), W, c->h());
   }
   x(X); y(Y); w(W); h(H);
 }
@@ -1351,15 +1351,15 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				y() + children() * 24,
 				w(),
 				20,
-				(MidiChannel*) ch);	
+				(MidiChannel*) ch);
 
-  gch->box(FL_BORDER_BOX); 
+  gch->box(FL_BORDER_BOX);
 	add(gch);
-  resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop 
+  resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
   redraw();
 	parent()->redraw();               // redraw Keyboard
 
-	//~ ch->column = index;	
+	//~ ch->column = index;
 	return gch;
 }
 
@@ -1372,12 +1372,12 @@ void gColumn::deleteChannel(gChannel *gch)
 	gch->hide();
 	remove(gch);
 	delete gch;
-	
+
 	/* reposition all other channels and resize this group */
 	/** TODO
 	 * reposition is useless when called by gColumn::clear(). Add a new
 	 * parameter to skip the operation */
-	 
+
 	for (int i=0; i<children(); i++) {
 		gch = (gChannel*) child(i);
 		gch->position(gch->x(), y()+(i*24));

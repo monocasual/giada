@@ -66,10 +66,29 @@ void __cb_window_closer(Fl_Widget *v, void *p);
 /* ------------------------------------------------------------------ */
 
 
+class gBaseButton : public Fl_Button
+{
+private:
+	std::string initLabel;
+
+	void trimLabel();
+
+public:
+  gBaseButton(int x, int y, int w, int h, const char *l=0);
+  void resize(int x, int y, int w, int h);
+	void label(const char *l);
+	const char *label();
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 /* gClick
  * a normal button. */
 
-class gClick : public Fl_Button {
+class gClick : public gBaseButton
+{
 public:
 	gClick(int x, int y, int w, int h, const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
 	void draw();
@@ -85,7 +104,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gClickRepeat : public Fl_Repeat_Button {
+class gClickRepeat : public Fl_Repeat_Button
+{
 public:
 	gClickRepeat(int x, int y, int w, int h, const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
 	void draw();
@@ -101,7 +121,8 @@ public:
  * exactly as gClick but with a unique id inside of it. Used for the
  * channels */
 
-class gButton : public gClick {
+class gButton : public gClick
+{
 public:
 	gButton(int X,int Y,int W,int H,const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
 	int key;
@@ -112,7 +133,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gInput : public Fl_Input {
+class gInput : public Fl_Input
+{
 public:
 	gInput(int x, int y, int w, int h, const char *L=0);
 };
@@ -121,7 +143,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gDial : public Fl_Dial {
+class gDial : public Fl_Dial
+{
 public:
 	gDial(int x, int y, int w, int h, const char *L=0);
 	void draw();
@@ -131,7 +154,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gBox : public Fl_Box {
+class gBox : public Fl_Box
+{
 public:
 	gBox(int x, int y, int w, int h, const char *L=0, Fl_Align al=FL_ALIGN_CENTER);
 };
@@ -140,7 +164,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gCheck : public Fl_Check_Button {
+class gCheck : public Fl_Check_Button
+{
 public:
 	gCheck(int x, int y, int w, int h, const char *L=0);
 	void draw();
@@ -150,7 +175,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gRadio : public Fl_Radio_Button {
+class gRadio : public Fl_Radio_Button
+{
 public:
 	gRadio(int x, int y, int w, int h, const char *L=0);
 	void draw();
@@ -160,7 +186,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gProgress : public Fl_Progress {
+class gProgress : public Fl_Progress
+{
 public:
 	gProgress(int x, int y, int w, int h, const char *L=0);
 };
@@ -169,7 +196,8 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gSoundMeter : public Fl_Box {
+class gSoundMeter : public Fl_Box
+{
 public:
 	gSoundMeter(int X,int Y,int W,int H,const char *L=0);
 	void draw();
@@ -186,7 +214,8 @@ private:
 /* ------------------------------------------------------------------ */
 
 
-class gBeatMeter : public Fl_Box {
+class gBeatMeter : public Fl_Box
+{
 public:
 	gBeatMeter(int X,int Y,int W,int H,const char *L=0);
 	void draw();
@@ -268,7 +297,8 @@ public:
  *       vertically
  *     - All children below us will be /moved/ vertically */
 
-class gResizerBar : public Fl_Box {
+class gResizerBar : public Fl_Box
+{
 private:
   bool vertical;
 	int  orig_h;
@@ -294,10 +324,12 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gSlider : public Fl_Slider {
+class gSlider : public Fl_Slider
+{
 public:
 	gSlider(int x, int y, int w, int h, const char *l=0);
 	int id;
 };
+
 
 #endif
