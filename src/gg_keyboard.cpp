@@ -84,14 +84,15 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 {
 	begin();
 
+#if defined(WITH_VST)
+  int delta = 168; // (7 widgets * 20) + (7 paddings * 4)
+#else
+	int delta = 144; // (6 widgets * 20) + (6 paddings * 4)
+#endif
+
 	button       = new gButton (x(), y(), 20, 20);
 	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
-
-#if defined(WITH_VST)
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 192, 20, "-- no sample --");
-#else
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), 216, 20, "-- no sample --");
-#endif
+	sampleButton = new gClick  (status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
 	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
@@ -576,17 +577,16 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 {
 	begin();
 
-	button       = new gButton (x(), y(), 20, 20);
-
 #if defined(WITH_VST)
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 240, 20, "-- MIDI --");
+  int delta = 120; // (5 widgets * 20) + (5 paddings * 4)
 #else
-	sampleButton = new gClick (button->x()+button->w()+4, y(), 264, 20, "-- MIDI --");
+	int delta = 96; // (4 widgets * 20) + (4 paddings * 4)
 #endif
 
+	button       = new gButton (x(), y(), 20, 20);
+	sampleButton = new gClick (button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-
 #if defined(WITH_VST)
 	fx           = new gButton(solo->x()+solo->w()+4, y(), 20, 20, "", fxOff_xpm, fxOn_xpm);
 	vol          = new gDial  (fx->x()+fx->w()+4, y(), 20, 20);
@@ -1229,8 +1229,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				20,
 				(MidiChannel*) ch);	
 
-  gLog("%d\n", gch->y());
-  
+  gch->box(FL_BORDER_BOX); 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop 
   redraw();
