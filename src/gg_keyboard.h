@@ -204,6 +204,11 @@ public:
 	/* handle */
 	
 	int handle(int e);
+
+  /* resize
+   * custom resize behavior. */
+
+  void resize(int x, int y, int w, int h);
 	
 	/* deleteChannel
 	 * remove the channel 'gch' from this column. */

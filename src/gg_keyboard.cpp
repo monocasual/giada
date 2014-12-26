@@ -1106,10 +1106,10 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw-20, 200, indexColumn);
+	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
 	indexColumn++;
 	add(gc);
-  add(new gResizerBar(gc->x()+gc->w(), gc->y(), 15, 2000, false));
+  add(new gResizerBar(gc->x()+gc->w(), gc->y(), 16, 200, false));
 	columns.add(gc);
 	redraw();
 	
@@ -1129,8 +1129,9 @@ gColumn::gColumn(int X, int Y, int W, int H, int index)
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 	
-	resizable(addChannelBtn);
-	// XXX - resizable(0);
+	//resizable(addChannelBtn);
+  box(FL_BORDER_BOX);
+	//resizable(0);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 
@@ -1162,6 +1163,20 @@ int gColumn::handle(int e)
 		}
 	}
 	return ret;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gColumn::resize(int X, int Y, int W, int H)
+{
+  int ch = children();
+  for (int i=0; i<ch; i++) {
+    Fl_Widget *c = child(i);
+    c->resize(X, Y + (i * (c->h() + 4)), W, c->h());     
+  }
+  x(X); y(Y); w(W); h(H);
 }
 
 
@@ -1213,9 +1228,11 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				w(),
 				20,
 				(MidiChannel*) ch);	
-	
+
+  gLog("%d\n", gch->y());
+  
 	add(gch);
-	//XXX - size(w(), children() * 24 + 66);  // evil space for drag n drop
+  resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop 
   redraw();
 	parent()->redraw();               // redraw Keyboard
 
