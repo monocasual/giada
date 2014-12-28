@@ -280,7 +280,6 @@ public:
 
 /* ------------------------------------------------------------------ */
 
-
 /* gResizerBar
  * 'resizer bar' between widgets Fl_Scroll. Thanks to Greg Ercolano from
  * FLTK dev team. http://seriss.com/people/erco/fltk/
@@ -296,6 +295,9 @@ public:
  *     - The widget above us (with a common edge) will be /resized/
  *       vertically
  *     - All children below us will be /moved/ vertically */
+
+/* TODO - use more general variable names
+ * (last_y -> last_?, min_h -> min_?, ...) */
 
 class gResizerBar : public Fl_Box
 {
@@ -314,8 +316,9 @@ public:
 
 	gResizerBar(int x, int y, int w, int h, bool vertical=true);
 
-  void SetMinHeight(int val);
-  int  GetMinHeight();
+  inline void setMinSize(int val) { min_h = val; }
+  inline int  getMinSize()        { return min_h; }
+
   int  handle(int e);
   void resize(int x, int y, int w, int h);
 };

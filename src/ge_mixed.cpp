@@ -516,10 +516,6 @@ void gResizerBar::HandleDrag(int diff)
 }
 
 
-void gResizerBar::SetMinHeight(int val) { min_h = val; }
-int  gResizerBar::GetMinHeight() { return min_h; }
-
-
 int gResizerBar::handle(int e)
 {
   int ret = 0;

@@ -394,6 +394,9 @@ void gSampleChannel::openBrowser(int type)
 
 void gSampleChannel::refresh()
 {
+  if (!sampleButton->visible()) // sampleButton invisible? status too (see below)
+    return;
+
 	if (ch->status == STATUS_OFF) {
 		sampleButton->bgColor0 = COLOR_BG_0;
 		sampleButton->bdColor  = COLOR_BD_0;
@@ -423,7 +426,7 @@ void gSampleChannel::refresh()
 				sampleButton->txtColor = COLOR_TEXT_0;
 			}
 		}
-		status->redraw();
+		status->redraw(); // status invisible? sampleButton too (see below)
 	}
 	sampleButton->redraw();
 }
@@ -564,6 +567,19 @@ void gSampleChannel::delActionButton(bool force)
 
 	sampleButton->size(sampleButton->w()+24, sampleButton->h());
 	sampleButton->redraw();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gSampleChannel::resize(int X, int Y, int W, int H)
+{
+  gLog("%d\n", w());
+  w() < 164 ? status->hide()  : status->show();
+  w() < 140 ? modeBox->hide() : modeBox->show();
+  sampleButton->w() < 20 ? sampleButton->hide() : sampleButton->show();
+  gChannel::resize(X, Y, W, H);
 }
 
 
@@ -799,6 +815,16 @@ void gMidiChannel::update()
 	vol->value(ch->volume);
 	mute->value(ch->mute);
 	solo->value(ch->solo);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gMidiChannel::resize(int X, int Y, int W, int H)
+{
+  sampleButton->w() < 20 ? sampleButton->hide() : sampleButton->show();
+  gChannel::resize(X, Y, W, H);
 }
 
 
@@ -1230,10 +1256,12 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
-	indexColumn++;
-	add(gc);
-  add(new gResizerBar(gc->x()+gc->w(), gc->y(), 16, 200, false));
+	gColumn     *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
+	gResizerBar *rb = new gResizerBar(gc->x()+gc->w(), gc->y(), 16, 200, false);
+	rb->setMinSize(116);
+  add(gc);
+  add(rb);
+  indexColumn++;
 	columns.add(gc);
 	redraw();
 

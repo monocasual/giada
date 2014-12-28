@@ -65,11 +65,11 @@ public:
 	 * what to do when the corresponding key is pressed. */
 
 	virtual int keyPress(int event) = 0;
-	
+
 	/* getColumnIndex
 	 * return the numeric index of the column in which this channel is
 	 * located. */
-	
+
 	int getColumnIndex();
 
 	class gButton *button;
@@ -84,7 +84,7 @@ public:
 
 };
 
-	
+
 /* ------------------------------------------------------------------ */
 
 
@@ -118,10 +118,11 @@ public:
 
 	gSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
 
-	void reset          ();
-	void update         ();
-	void refresh        ();
-	int  keyPress       (int event);
+	void reset   ();
+	void update  ();
+	void refresh ();
+	int  keyPress(int event);
+	void resize  (int x, int y, int w, int h);
 
 	/* add/delActionButton
 	 * add or remove 'R' button when actions are available. 'Status' is
@@ -168,10 +169,11 @@ public:
 
 	gMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);
 
-	void reset          ();
-	void update         ();
-	void refresh        ();
-	int  keyPress       (int event);
+	void reset   ();
+	void update  ();
+	void refresh ();
+	int  keyPress(int event);
+	void resize  (int x, int y, int w, int h);
 
 	class MidiChannel *ch;
 };
@@ -194,43 +196,43 @@ private:
 	int index;
 
 public:
-	
+
 	gColumn(int x, int y, int w, int h, int index);
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
 	 * to channel to 'ch'. */
-	 
+
 	gChannel *addChannel(class Channel *ch);
-	
+
 	/* handle */
-	
+
 	int handle(int e);
 
   /* resize
    * custom resize behavior. */
 
   void resize(int x, int y, int w, int h);
-	
+
 	/* deleteChannel
 	 * remove the channel 'gch' from this column. */
-	 
+
 	void deleteChannel(gChannel *gch);
-	
+
 	/* refreshChannels
 	 * update channels' graphical statues. Called on each GUI cycle. */
-	 
+
 	void refreshChannels();
-	
+
 	/* clear
 	 * remove all channels from the column. If full==true, delete also the
-	 * "add new channel" button. This method ovverrides the inherited one 
+	 * "add new channel" button. This method ovverrides the inherited one
 	 * from Fl_Group. */
 
 	void clear(bool full=false);
-	
+
 	void draw();
-	
+
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
@@ -279,27 +281,27 @@ private:
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
-	
+
 	static int indexColumn;
-	
+
 	class gClick *addColumnBtn;
 
 	/* columns
 	 * a vector of columns which in turn contain channels. */
-	
-	gVector<gColumn*> columns;	
+
+	gVector<gColumn*> columns;
 
 public:
 
 	gKeyboard(int X, int Y, int W, int H);
-	
+
 	int handle(int e);
 
 	/* init
 	 * build the initial setup of empty channels. */
-	 
+
 	void init();
-	
+
 	/* addChannel
 	 * add a new channel to gChannels. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). If build is
@@ -318,7 +320,7 @@ public:
 	 * are deleted */
 
 	void freeChannel(gChannel *gch);
-	
+
 	/* updateChannel
 	 * wrapper function to call gch->update(). */
 
@@ -326,12 +328,12 @@ public:
 
 	/* organizeColumns
 	 * reorganize columns layout by removing empty gaps. */
-	 
+
 	void organizeColumns();
-	
+
 	/* refreshColumns
 	 * refresh each column's channel, called on each GUI cycle. */
-	 
+
 	void refreshColumns();
 
 	/* clear
