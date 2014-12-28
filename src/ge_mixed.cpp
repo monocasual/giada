@@ -529,10 +529,21 @@ int gResizerBar::handle(int e)
   else
     this_y = Fl::event_x_root();
   switch (e) {
-    case FL_FOCUS: ret = 1; break;
-    case FL_ENTER: ret = 1; fl_cursor(FL_CURSOR_NS);      break;
-    case FL_LEAVE: ret = 1; fl_cursor(FL_CURSOR_DEFAULT); break;
-    case FL_PUSH:  ret = 1; last_y = this_y;              break;
+    case FL_FOCUS:
+      ret = 1;
+      break;
+    case FL_ENTER:
+      ret = 1;
+      fl_cursor(vertical ? FL_CURSOR_NS : FL_CURSOR_WE);
+      break;
+    case FL_LEAVE:
+      ret = 1;
+      fl_cursor(FL_CURSOR_DEFAULT);
+      break;
+    case FL_PUSH:
+      ret = 1;
+      last_y = this_y;
+      break;
     case FL_DRAG:
       HandleDrag(this_y-last_y);
       last_y = this_y;
