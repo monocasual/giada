@@ -1274,6 +1274,20 @@ void gKeyboard::__cb_addColumn()
 /* ------------------------------------------------------------------ */
 
 
+gColumnGroup::gColumnGroup(int X, int Y, int W, int H, int index)
+  : Fl_Group(X, Y, W, H)
+{
+  column  = new gColumn(X, Y, W-20, H, index);
+  resizer = new gResizerBar(column->x()+column->w(), column->y(), 16, 200, false);
+  end();
+}
+
+
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+
+
 gColumn::gColumn(int X, int Y, int W, int H, int index)
 	: Fl_Group(X, Y, W, H), index(index)
 {

@@ -181,6 +181,24 @@ public:
 
 /* ------------------------------------------------------------------ */
 
+/* gColumnGroup
+ * contains a column + vertical resizer bar. */
+
+class gColumnGroup : public Fl_Group
+{
+private:
+
+	class gColumn     *column;
+	class gResizerBar *resizer;
+
+public:
+
+	gColumnGroup(int x, int y, int w, int h, int index);
+};
+
+
+/* ------------------------------------------------------------------ */
+
 
 class gColumn : public Fl_Group
 {
