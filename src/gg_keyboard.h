@@ -181,24 +181,6 @@ public:
 
 /* ------------------------------------------------------------------ */
 
-/* gColumnGroup
- * contains a column + vertical resizer bar. */
-
-class gColumnGroup : public Fl_Group
-{
-private:
-
-	class gColumn     *column;
-	class gResizerBar *resizer;
-
-public:
-
-	gColumnGroup(int x, int y, int w, int h, int index);
-};
-
-
-/* ------------------------------------------------------------------ */
-
 
 class gColumn : public Fl_Group
 {
@@ -209,13 +191,14 @@ private:
 
 	int openTypeMenu();
 
-	class gClick *addChannelBtn;
+	class gClick      *addChannelBtn;
+	class gResizerBar *resizer;
 
 	int index;
 
 public:
 
-	gColumn(int x, int y, int w, int h, int index);
+	gColumn(int x, int y, int w, int h, int index, class gKeyboard *parent);
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer

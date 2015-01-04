@@ -575,7 +575,6 @@ void gSampleChannel::delActionButton(bool force)
 
 void gSampleChannel::resize(int X, int Y, int W, int H)
 {
-  gLog("%d\n", w());
   w() < 164 ? status->hide()  : status->show();
   w() < 140 ? modeBox->hide() : modeBox->show();
   sampleButton->w() < 20 ? sampleButton->hide() : sampleButton->show();
@@ -1256,11 +1255,8 @@ void gKeyboard::__cb_addColumn()
 		colxw = colx + colw;
 		addColumnBtn->position(colxw + 16, y());
 	}
-	gColumn     *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn);
-	gResizerBar *rb = new gResizerBar(gc->x()+gc->w(), gc->y(), 16, 200, false);
-	rb->setMinSize(116);
+	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn, this);
   add(gc);
-  add(rb);
   indexColumn++;
 	columns.add(gc);
 	redraw();
@@ -1274,30 +1270,21 @@ void gKeyboard::__cb_addColumn()
 /* ------------------------------------------------------------------ */
 
 
-gColumnGroup::gColumnGroup(int X, int Y, int W, int H, int index)
-  : Fl_Group(X, Y, W, H)
-{
-  column  = new gColumn(X, Y, W-20, H, index);
-  resizer = new gResizerBar(column->x()+column->w(), column->y(), 16, 200, false);
-  end();
-}
-
-
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-
-
-gColumn::gColumn(int X, int Y, int W, int H, int index)
+gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 	: Fl_Group(X, Y, W, H), index(index)
 {
 	begin();
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 
-	//resizable(addChannelBtn);
+  resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
+  resizer->setMinSize(116);
+  parent->add(resizer);
+
+  /* parent() can be NULL: at this point gColumn is still detached from any
+   * parent. We use a custom gKeyboard *parent instead. */
+
   box(FL_BORDER_BOX);
-	//resizable(0);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 
@@ -1337,11 +1324,20 @@ int gColumn::handle(int e)
 
 void gColumn::resize(int X, int Y, int W, int H)
 {
+  /* resize all children */
+
   int ch = children();
   for (int i=0; i<ch; i++) {
     Fl_Widget *c = child(i);
     c->resize(X, Y + (i * (c->h() + 4)), W, c->h());
   }
+
+  /* resize resizerBar */
+
+  resizer->size(16, H);
+
+  /* resize group itself */
+
   x(X); y(Y); w(W); h(H);
 }
 
