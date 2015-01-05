@@ -106,13 +106,16 @@ private:
 
 	class Channel *ch;
 
-	gCheck *enable;
+	gCheck *enable, *enableTunnel;
 
 
 	//gVector <gLearner *> items; for future use, with vst parameters
 
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
+
+	static void cb_enableTunnel  (Fl_Widget *w, void *p);
+	inline void __cb_enableTunnel();
 
 public:
 
