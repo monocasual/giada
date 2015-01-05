@@ -114,8 +114,8 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 
 	set_modal();
 
-	enable = new gCheck(8, 6, 120, 20, "enable MIDI input");
-	enableTunnel = new gCheck(8, 20, 120, 20, "enable MIDI tunnelling");
+	enable = new gCheck(8, 2, 120, 20, "enable MIDI input");
+	enableTunnel = new gCheck(8, 16, 120, 20, "enable MIDI tunnelling");
 	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
 	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
 	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
