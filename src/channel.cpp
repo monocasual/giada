@@ -65,7 +65,8 @@ Channel::Channel(int type, int status, int bufferSize)
 	  recStatus (REC_STOPPED),
 	  vChan     (NULL),
 	  guiChannel(NULL),
-	  midiIn        (true),
+	  tunnelIn      (true),
+	  midiIn        (false),
 	  midiInKeyPress(0x0),
 	  midiInKeyRel  (0x0),
 	  midiInKill    (0x0),
@@ -96,6 +97,7 @@ Channel::~Channel()
 
 void Channel::readPatchMidiIn(int i)
 {
+	tunnelIn       = G_Patch.getMidiValue(i, "Tunnel");
 	midiIn         = G_Patch.getMidiValue(i, "In");
 	midiInKeyPress = G_Patch.getMidiValue(i, "InKeyPress");
 	midiInKeyRel   = G_Patch.getMidiValue(i, "InKeyRel");
@@ -130,6 +132,7 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanPanLeft%d=%f\n",  i, panLeft);
 	fprintf(fp, "chanPanRight%d=%f\n", i, panRight);
 
+	fprintf(fp, "chanMidiTunnel%d=%u\n",     i, tunnelIn);
 	fprintf(fp, "chanMidiIn%d=%u\n",         i, midiIn);
 	fprintf(fp, "chanMidiInKeyPress%d=%u\n", i, midiInKeyPress);
 	fprintf(fp, "chanMidiInKeyRel%d=%u\n",   i, midiInKeyRel);
