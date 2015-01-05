@@ -32,6 +32,7 @@
 #include "glue.h"
 #include "mixer.h"
 #include "channel.h"
+#include "midiChannel.h"
 #include "sampleChannel.h"
 #include "pluginHost.h"
 #include "conf.h"
@@ -331,38 +332,43 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 
 			Channel *ch = (Channel*) G_Mixer.channels.at(i);
 
-			if (!ch->midiIn) continue;
+			if (ch->midiIn) {
 
-			if      (pure == ch->midiInKeyPress) {
-				gLog(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
-				glue_keyPress(ch, false, false);
+				if      (pure == ch->midiInKeyPress) {
+					gLog(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
+					glue_keyPress(ch, false, false);
+				}
+				else if (pure == ch->midiInKeyRel) {
+					gLog(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
+					glue_keyRelease(ch, false, false);
+				}
+				else if (pure == ch->midiInMute) {
+					gLog(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
+					glue_setMute(ch, false);
+				}
+				else if (pure == ch->midiInSolo) {
+					gLog(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
+					ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
+				}
+				else if (pure == ch->midiInVolume) {
+					float vf = (value >> 8)/127.0f;
+					gLog(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+					glue_setChanVol(ch, vf, false);
+				}
+				else if (pure == ((SampleChannel*)ch)->midiInPitch) {
+					float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
+					gLog(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+					glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
+				}
+				else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
+					gLog(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
+					glue_startStopReadingRecs((SampleChannel*)ch, false);
+				}
 			}
-			else if (pure == ch->midiInKeyRel) {
-				gLog(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
-				glue_keyRelease(ch, false, false);
-			}
-			else if (pure == ch->midiInMute) {
-				gLog(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
-				glue_setMute(ch, false);
-			}
-			else if (pure == ch->midiInSolo) {
-				gLog(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
-				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
-			}
-			else if (pure == ch->midiInVolume) {
-				float vf = (value >> 8)/127.0f;
-				gLog(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
-				glue_setChanVol(ch, vf, false);
-			}
-			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
-				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
-				gLog(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
-				glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
-			}
-			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
-				gLog(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
-				glue_startStopReadingRecs((SampleChannel*)ch, false);
-			}
+		       if( ch->tunnelIn && recorder::active ) {
+        		       gLog(" >>> tunnel ch=%d (input=0x%X)", ch->index, input);
+        		       ((MidiChannel*)ch)->recvMidi(input);
+			}	
 		}
 		gLog("\n");
 	}
