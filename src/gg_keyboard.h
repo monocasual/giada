@@ -199,6 +199,7 @@ private:
 public:
 
 	gColumn(int x, int y, int w, int h, int index, class gKeyboard *parent);
+	~gColumn();
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
@@ -306,7 +307,7 @@ public:
 	/* addChannel
 	 * add a new channel to gChannels. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). If build is
-	 * set to true, also generate the equivalent column.*/
+	 * set to true, also generate the corresponding column.*/
 
 	gChannel *addChannel(int column, class Channel *ch, bool build=false);
 

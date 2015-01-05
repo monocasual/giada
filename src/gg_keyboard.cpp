@@ -535,7 +535,9 @@ void gSampleChannel::addActionButton()
 
 	redraw();
 
-	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4, sampleButton->y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
+	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4,
+                           sampleButton->y(), 20, 20, "", readActionOff_xpm,
+                           readActionOn_xpm);
 	readActions->type(FL_TOGGLE_BUTTON);
 	readActions->value(ch->readActions);
 	readActions->callback(cb_readActions, (void*)this);
@@ -1104,6 +1106,12 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		}
 		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	}
+  //
+  // TODO - resize column if too small, to avoid FLTK issues with invisible
+  // widgets
+  //
+  // col->resize(col->x(), col->y(), 400, col->h());
+  //
 	return col->addChannel(ch);
 }
 
@@ -1253,7 +1261,7 @@ void gKeyboard::__cb_addColumn()
 		gColumn *prev = columns.last();
 		colx  = prev->x()+prev->w() + 16;
 		colxw = colx + colw;
-		addColumnBtn->position(colxw + 16, y());
+		addColumnBtn->position(colxw-4, y());
 	}
 	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn, this);
   add(gc);
@@ -1288,6 +1296,16 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+gColumn::~gColumn()
+{
+  //delete resizer;   //FIXME - segfault on quit!!!
+  //resizer = NULL;   //FIXME - segfault on quit!!!
 }
 
 
@@ -1332,13 +1350,13 @@ void gColumn::resize(int X, int Y, int W, int H)
     c->resize(X, Y + (i * (c->h() + 4)), W, c->h());
   }
 
-  /* resize resizerBar */
-
-  resizer->size(16, H);
-
   /* resize group itself */
 
   x(X); y(Y); w(W); h(H);
+
+  /* resize resizerBar */
+
+  resizer->size(16, H);
 }
 
 
