@@ -114,7 +114,8 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 
 	set_modal();
 
-	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
+	enable = new gCheck(8, 6, 120, 20, "enable MIDI input");
+	enableTunnel = new gCheck(8, 20, 120, 20, "enable MIDI tunnelling");
 	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
 	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
 	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
@@ -135,6 +136,8 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
+	enableTunnel->value(ch->tunnelIn);
+	enableTunnel->callback(cb_enableTunnel, (void*)this);
 
 	gu_setFavicon(this);
 	show();
@@ -146,12 +149,22 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
 
 void gdMidiGrabberChannel::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiGrabberChannel*)p)->__cb_enable(); }
 
+void gdMidiGrabberChannel::cb_enableTunnel(Fl_Widget *w, void *p)  { ((gdMidiGrabberChannel*)p)->__cb_enableTunnel(); }
+
 
 /* ------------------------------------------------------------------ */
 
 
 void gdMidiGrabberChannel::__cb_enable() {
 	ch->midiIn = enable->value();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdMidiGrabberChannel::__cb_enableTunnel() {
+	ch->tunnelIn = enable->value();
 }
 
 
