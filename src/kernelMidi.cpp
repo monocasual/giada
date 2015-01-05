@@ -212,10 +212,14 @@ void send(uint32_t data)
 	if (!G_midiStatus)
 		return;
 
-	std::vector<unsigned char> msg(1, 0x00);
-	msg[0] = getB1(data);
-	msg[1] = getB2(data);
-	msg[2] = getB3(data);
+	//std::vector<unsigned char> msg(1, 0x00);
+	//msg[0] = getB1(data);
+	//msg[1] = getB2(data);
+	//msg[2] = getB3(data);
+
+  std::vector<unsigned char> msg(1, getB1(data));
+  msg.push_back(getB2(data));
+  msg.push_back(getB3(data));
 
 	midiOut->sendMessage(&msg);
 	//gLog("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
