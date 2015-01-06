@@ -28,10 +28,11 @@
 
 
 #include "gd_midiOutputSetup.h"
-#include "conf.h"
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
+#include "ge_channel.h"
 #include "channel.h"
+#include "conf.h"
 #include "midiChannel.h"
 #include "gui_utils.h"
 

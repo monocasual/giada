@@ -34,6 +34,7 @@
 #include "gg_waveTools.h"
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
+#include "ge_channel.h"
 #include "waveFx.h"
 #include "conf.h"
 #include "gui_utils.h"
@@ -104,7 +105,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 
   tools->end();
   tools->resizable(new gBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
-  
+
   /* grid tool setup */
 
   grid->add("(off)");
@@ -121,7 +122,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 
   snap->value(G_Conf.sampleEditorGridOn);
   snap->callback(cb_enableSnap, (void*)this);
-  
+
   /* TODO - redraw grid if != (off) */
 
   char buf[16];
@@ -232,14 +233,14 @@ gdEditor::gdEditor(SampleChannel *ch)
 /* ------------------------------------------------------------------ */
 
 
-gdEditor::~gdEditor() 
+gdEditor::~gdEditor()
 {
   G_Conf.sampleEditorX = x();
   G_Conf.sampleEditorY = y();
   G_Conf.sampleEditorW = w();
   G_Conf.sampleEditorH = h();
-  G_Conf.sampleEditorGridVal = grid->value(); 
-  G_Conf.sampleEditorGridOn  = snap->value(); 
+  G_Conf.sampleEditorGridVal = grid->value();
+  G_Conf.sampleEditorGridOn  = snap->value();
 }
 
 
@@ -280,7 +281,7 @@ void gdEditor::__cb_enableSnap()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchToBar() 
+void gdEditor::__cb_setPitchToBar()
 {
   glue_setPitch(this, ch, ch->end/(float)G_Mixer.framesPerBar, true);
 }
@@ -289,7 +290,7 @@ void gdEditor::__cb_setPitchToBar()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchToSong() 
+void gdEditor::__cb_setPitchToSong()
 {
   glue_setPitch(this, ch, ch->end/(float)G_Mixer.totalFrames, true);
 }
@@ -298,7 +299,7 @@ void gdEditor::__cb_setPitchToSong()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_resetPitch() 
+void gdEditor::__cb_resetPitch()
 {
   glue_setPitch(this, ch, 1.0f, true);
 }
@@ -307,7 +308,7 @@ void gdEditor::__cb_resetPitch()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setChanPos() 
+void gdEditor::__cb_setChanPos()
 {
   glue_setBeginEndChannel(
     this,
@@ -322,7 +323,7 @@ void gdEditor::__cb_setChanPos()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_resetStartEnd() 
+void gdEditor::__cb_resetStartEnd()
 {
   glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 }
@@ -331,7 +332,7 @@ void gdEditor::__cb_resetStartEnd()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setVolume() 
+void gdEditor::__cb_setVolume()
 {
   glue_setVolEditor(this, ch, volume->value(), false);
 }
@@ -340,7 +341,7 @@ void gdEditor::__cb_setVolume()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setVolumeNum() 
+void gdEditor::__cb_setVolumeNum()
 {
   glue_setVolEditor(this, ch, atof(volumeNum->value()), true);
 }
@@ -349,7 +350,7 @@ void gdEditor::__cb_setVolumeNum()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setBoost() 
+void gdEditor::__cb_setBoost()
 {
   if (Fl::event() == FL_DRAG)
     glue_setBoost(this, ch, boost->value(), false);
@@ -363,7 +364,7 @@ void gdEditor::__cb_setBoost()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setBoostNum() 
+void gdEditor::__cb_setBoostNum()
 {
   glue_setBoost(this, ch, atof(boostNum->value()), true);
   waveTools->updateWaveform();
@@ -373,7 +374,7 @@ void gdEditor::__cb_setBoostNum()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_normalize() 
+void gdEditor::__cb_normalize()
 {
   float val = wfx_normalizeSoft(ch->wave);
   glue_setBoost(this, ch, val, false); // we pretend that a fake user turns the dial (numeric=false)
@@ -391,7 +392,7 @@ void gdEditor::__cb_normalize()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_panning() 
+void gdEditor::__cb_panning()
 {
   glue_setPanning(this, ch, pan->value());
 }
@@ -400,7 +401,7 @@ void gdEditor::__cb_panning()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_reload() 
+void gdEditor::__cb_reload()
 {
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
     return;
@@ -427,7 +428,7 @@ void gdEditor::__cb_reload()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitch() 
+void gdEditor::__cb_setPitch()
 {
   glue_setPitch(this, ch, pitch->value(), false);
 }
@@ -436,7 +437,7 @@ void gdEditor::__cb_setPitch()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchNum() 
+void gdEditor::__cb_setPitchNum()
 {
   glue_setPitch(this, ch, atof(pitchNum->value()), true);
 }
@@ -445,7 +446,7 @@ void gdEditor::__cb_setPitchNum()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchHalf() 
+void gdEditor::__cb_setPitchHalf()
 {
   glue_setPitch(this, ch, pitch->value()/2, true);
 }
@@ -454,7 +455,7 @@ void gdEditor::__cb_setPitchHalf()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_setPitchDouble() 
+void gdEditor::__cb_setPitchDouble()
 {
   glue_setPitch(this, ch, pitch->value()*2, true);
 }
@@ -463,7 +464,7 @@ void gdEditor::__cb_setPitchDouble()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_zoomIn() 
+void gdEditor::__cb_zoomIn()
 {
   waveTools->waveform->setZoom(-1);
   waveTools->redraw();
@@ -473,7 +474,7 @@ void gdEditor::__cb_zoomIn()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_zoomOut() 
+void gdEditor::__cb_zoomOut()
 {
   waveTools->waveform->setZoom(0);
   waveTools->redraw();
@@ -483,8 +484,7 @@ void gdEditor::__cb_zoomOut()
 /* ------------------------------------------------------------------ */
 
 
-void gdEditor::__cb_changeGrid() 
+void gdEditor::__cb_changeGrid()
 {
   waveTools->waveform->setGridLevel(atoi(grid->text()));
 }
-

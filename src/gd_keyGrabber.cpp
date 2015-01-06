@@ -28,14 +28,15 @@
 
 
 #include "gd_keyGrabber.h"
+#include "gg_keyboard.h"
 #include "ge_mixed.h"
-#include "conf.h"
-#include "gui_utils.h"
 #include "gd_config.h"
+#include "ge_channel.h"
+#include "gui_utils.h"
+#include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
-#include "gg_keyboard.h"
 #include "log.h"
 
 

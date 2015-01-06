@@ -28,7 +28,7 @@
 
 
 #include "channel.h"
-#include "gg_keyboard.h"
+#include "ge_channel.h"
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch.h"
@@ -120,7 +120,7 @@ bool Channel::isPlaying()
 
 void Channel::writePatch(FILE *fp, int i, bool isProject)
 {
-	fprintf(fp, "chanType%d=%d\n",     i, type);	
+	fprintf(fp, "chanType%d=%d\n",     i, type);
 	fprintf(fp, "chanIndex%d=%d\n",    i, index);
 	fprintf(fp, "chanColumn%d=%d\n",   i, guiChannel->getColumnIndex());
 	fprintf(fp, "chanMute%d=%d\n",     i, mute);

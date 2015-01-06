@@ -33,6 +33,7 @@
 #include "graphics.h"
 #include "gd_warnings.h"
 #include "ge_window.h"
+#include "ge_channel.h"
 #include "gd_mainWindow.h"
 #include "gg_keyboard.h"
 #include "gd_actionEditor.h"

@@ -40,6 +40,7 @@
 #include "gg_waveTools.h"
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
+#include "ge_channel.h"
 #include "gui_utils.h"
 #include "mixerHandler.h"
 #include "mixer.h"

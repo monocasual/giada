@@ -79,36 +79,36 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 	size_range(GUI_WIDTH, GUI_HEIGHT);
 
 	menu       = new gMenu(8, -1);
-	inOut      = new gInOut(408, 8);	
+	inOut      = new gInOut(408, 8);
 	controller = new gController(8, 39);
 	timing     = new gTiming(632, 39);
 	beatMeter  = new gBeatMeter(100, 83, 609, 20);
 	keyboard   = new gKeyboard(8, 122, w()-16, 380);
-	
+
 	/* zone 1 - menus, and I/O tools */
-	
-	Fl_Group *zone1 = new Fl_Group(8, 8, W-16, 20);	
+
+	Fl_Group *zone1 = new Fl_Group(8, 8, W-16, 20);
 	zone1->add(menu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(inOut);
 
 	/* zone 2 - controller and timing tools */
-	
-	Fl_Group *zone2 = new Fl_Group(8, controller->y(), W-16, controller->h());	
+
+	Fl_Group *zone2 = new Fl_Group(8, controller->y(), W-16, controller->h());
 	zone2->add(controller);
 	zone2->resizable(new Fl_Box(controller->x()+controller->w()+4, zone2->y(), 80, 20));
 	zone2->add(timing);
 
 	/* zone 3 - beat meter */
-	
-	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());	
+
+	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());
 	zone3->add(beatMeter);
-	
+
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
 	 * a group by itself) */
 
 	resizable(keyboard);
-	
+
 	add(zone1);
 	add(zone2);
 	add(zone3);
@@ -150,7 +150,7 @@ gInOut::gInOut(int x, int y)
 	: Fl_Group(x, y, 400, 20)
 {
 	begin();
-	
+
 #if defined(WITH_VST)
 	masterFxIn  = new gButton    (x, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
 	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
@@ -167,7 +167,7 @@ gInOut::gInOut(int x, int y)
 #endif
 
 	end();
-	
+
 	resizable(NULL);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
@@ -199,7 +199,7 @@ void gInOut::cb_inToOut    (Fl_Widget *v, void *p)    { ((gInOut*)p)->__cb_inToO
 /* ------------------------------------------------------------------ */
 
 
-void gInOut::__cb_outVol() 
+void gInOut::__cb_outVol()
 {
 	glue_setOutVol(outVol->value());
 }
@@ -208,7 +208,7 @@ void gInOut::__cb_outVol()
 /* ------------------------------------------------------------------ */
 
 
-void gInOut::__cb_inVol() 
+void gInOut::__cb_inVol()
 {
 	glue_setInVol(inVol->value());
 }
@@ -218,17 +218,17 @@ void gInOut::__cb_inVol()
 
 
 #ifdef WITH_VST
-void gInOut::__cb_masterFxOut() 
+void gInOut::__cb_masterFxOut()
 {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
-void gInOut::__cb_masterFxIn() 
+void gInOut::__cb_masterFxIn()
 {
 	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 
-void gInOut::__cb_inToOut() 
+void gInOut::__cb_inToOut()
 {
 	G_Mixer.inToOut = inToOut->value();
 }
@@ -243,7 +243,7 @@ void gInOut::refresh()
 	outMeter->mixerPeak = G_Mixer.peakOut;
 	inMeter->mixerPeak  = G_Mixer.peakIn;
 	outMeter->redraw();
-	inMeter->redraw();		
+	inMeter->redraw();
 }
 
 
@@ -285,7 +285,7 @@ void gMenu::cb_edit  (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_edit(); }
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_about() 
+void gMenu::__cb_about()
 {
 	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
 }
@@ -294,7 +294,7 @@ void gMenu::__cb_about()
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_config() 
+void gMenu::__cb_config()
 {
 	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
 }
@@ -303,7 +303,7 @@ void gMenu::__cb_config()
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_file() 
+void gMenu::__cb_file()
 {
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
@@ -353,7 +353,7 @@ void gMenu::__cb_file()
 /* ------------------------------------------------------------------ */
 
 
-void gMenu::__cb_edit() 
+void gMenu::__cb_edit()
 {
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
@@ -471,7 +471,7 @@ void gController::cb_metronome(Fl_Widget *v, void *p) { ((gController*)p)->__cb_
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_rewind() 
+void gController::__cb_rewind()
 {
 	glue_rewindSeq();
 }
@@ -480,7 +480,7 @@ void gController::__cb_rewind()
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_play() 
+void gController::__cb_play()
 {
 	glue_startStopSeq();
 }
@@ -489,7 +489,7 @@ void gController::__cb_play()
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_recAction() 
+void gController::__cb_recAction()
 {
 	glue_startStopActionRec();
 }
@@ -498,7 +498,7 @@ void gController::__cb_recAction()
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_recInput() 
+void gController::__cb_recInput()
 {
 	glue_startStopInputRec();
 }
@@ -507,7 +507,7 @@ void gController::__cb_recInput()
 /* ------------------------------------------------------------------ */
 
 
-void gController::__cb_metronome() 
+void gController::__cb_metronome()
 {
 	glue_startStopMetronome();
 }
@@ -516,7 +516,7 @@ void gController::__cb_metronome()
 /* ------------------------------------------------------------------ */
 
 
-void gController::updatePlay(int v) 
+void gController::updatePlay(int v)
 {
 	play->value(v);
 	play->redraw();
@@ -526,7 +526,7 @@ void gController::updatePlay(int v)
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateMetronome(int v) 
+void gController::updateMetronome(int v)
 {
 	metronome->value(v);
 	metronome->redraw();
@@ -536,7 +536,7 @@ void gController::updateMetronome(int v)
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateRecInput(int v) 
+void gController::updateRecInput(int v)
 {
 	recInput->value(v);
 	recInput->redraw();
@@ -546,7 +546,7 @@ void gController::updateRecInput(int v)
 /* ------------------------------------------------------------------ */
 
 
-void gController::updateRecAction(int v) 
+void gController::updateRecAction(int v)
 {
 	recAction->value(v);
 	recAction->redraw();
@@ -570,12 +570,12 @@ gTiming::gTiming(int x, int y)
 	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷");
 
 	end();
-	
+
 	resizable(NULL);   // don't resize any widget
 
 	char buf[6]; snprintf(buf, 6, "%f", G_Mixer.bpm);
 	bpm->copy_label(buf);
-	
+
 	bpm->callback(cb_bpm, (void*)this);
 	meter->callback(cb_meter, (void*)this);
 	multiplier->callback(cb_multiplier, (void*)this);
@@ -605,7 +605,7 @@ void gTiming::cb_divider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_divider
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_bpm() 
+void gTiming::__cb_bpm()
 {
 	gu_openSubWindow(mainWin, new gdBpmInput(bpm->label()), WID_BPM);
 }
@@ -614,7 +614,7 @@ void gTiming::__cb_bpm()
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_meter() 
+void gTiming::__cb_meter()
 {
 	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
 }
@@ -623,7 +623,7 @@ void gTiming::__cb_meter()
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_quantizer() 
+void gTiming::__cb_quantizer()
 {
 	glue_quantize(quantizer->value());
 }
@@ -632,7 +632,7 @@ void gTiming::__cb_quantizer()
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_multiplier() 
+void gTiming::__cb_multiplier()
 {
 	glue_beatsMultiply();
 }
@@ -641,7 +641,7 @@ void gTiming::__cb_multiplier()
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::__cb_divider() 
+void gTiming::__cb_divider()
 {
 	glue_beatsDivide();
 }
@@ -650,9 +650,9 @@ void gTiming::__cb_divider()
 /* ------------------------------------------------------------------ */
 
 
-void gTiming::setBpm(const char *v) 
-{ 
-	bpm->copy_label(v); 
+void gTiming::setBpm(const char *v)
+{
+	bpm->copy_label(v);
 }
 
 
