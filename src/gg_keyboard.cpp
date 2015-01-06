@@ -523,8 +523,8 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 
 gColumn::~gColumn()
 {
-  //delete resizer;   //FIXME - segfault on quit!!!
-  //resizer = NULL;   //FIXME - segfault on quit!!!
+  Fl::delete_widget(resizer);
+  resizer = NULL;
 }
 
 
