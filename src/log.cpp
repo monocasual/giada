@@ -75,6 +75,6 @@ void gLog(const char *format, ...) {
   if (mode == LOG_MODE_FILE && stat == true)
 		vfprintf(f, format, args);
   else
-		vprintf(format, args);
+		vfprintf(stderr, format, args);
   va_end(args);
 }

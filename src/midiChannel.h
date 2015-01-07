@@ -80,6 +80,7 @@ public:
 
 	void sendMidi(recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
+	void recvMidi(uint32_t data);
 
 #ifdef WITH_VST
 
