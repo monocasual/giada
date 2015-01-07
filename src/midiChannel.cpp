@@ -301,6 +301,17 @@ void MidiChannel::sendMidi(uint32_t data)
 
 /* ------------------------------------------------------------------ */
 
+extern Mixer	G_Mixer;
+
+void MidiChannel::recvMidi(uint32_t data) 
+{
+
+	recorder::rec(this->index, ACTION_MIDI, G_Mixer.actualFrame, data);
+
+}
+
+
+/* ------------------------------------------------------------------ */
 
 void MidiChannel::rewind() {
 	if (midiOut)
