@@ -511,8 +511,6 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
   /* parent() can be NULL: at this point gColumn is still detached from any
    * parent. We use a custom gKeyboard *parent instead. */
 
-  box(FL_BORDER_BOX);
-
 	addChannelBtn->callback(cb_addChannel, (void*)this);
 
 }
@@ -628,7 +626,6 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				20,
 				(MidiChannel*) ch);
 
-  gch->box(FL_BORDER_BOX);
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
   redraw();
