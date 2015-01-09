@@ -142,9 +142,11 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
 
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
-	enableTunnel->value(ch->tunnelIn);
-	enableTunnel->callback(cb_enableTunnel, (void*)this);
-
+	if( midichannel ) {
+		enableTunnel->value(ch->tunnelIn);
+		enableTunnel->callback(cb_enableTunnel, (void*)this);
+	}
+	
 	gu_setFavicon(this);
 	show();
 }
