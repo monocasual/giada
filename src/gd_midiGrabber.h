@@ -119,7 +119,7 @@ private:
 
 public:
 
-	gdMidiGrabberChannel(class Channel *ch);
+	gdMidiGrabberChannel(class Channel *ch, bool midichannel=false);
 };
 
 
