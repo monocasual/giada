@@ -540,7 +540,7 @@ void chanHasActions(int index)
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue) 
+int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue, uint32_t iValue2) 
 {
 	sortActions();  // mandatory
 
@@ -554,7 +554,7 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 		for (unsigned j=0; j<global.at(i).size; j++) {
 			action *a = global.at(i).at(j);
 			if (a->chan == chan && (type & a->type) == a->type) {
-				if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
+				if (iValue == 0 || a->iValue == iValue || (iValue2 != 0 && a->iValue == iValue2)) {
 					*out = global.at(i).at(j);
 					return 1;
 				}
