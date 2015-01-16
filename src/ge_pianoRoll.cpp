@@ -165,7 +165,8 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 						ACTION_MIDI,
 						a1->frame,
 						&a2,
-						kernelMidi::getIValue(0x80, a1_note, a1_velo));
+						kernelMidi::getIValue(0x80, a1_note, a1_velo),
+						kernelMidi::getIValue(0x80, a1_note, 0x40));
 
 				/* next action note off found: add a new gPianoItem to piano roll */
 
