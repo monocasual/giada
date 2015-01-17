@@ -45,3 +45,9 @@ compile
 debian/*.log
 debian/autoreconf.after
 debian/autoreconf.before
+giada.config
+giada.creator
+giada.creator.user
+giada.files
+giada.includes
+
