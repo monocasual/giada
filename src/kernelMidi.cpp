@@ -284,6 +284,14 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	}
 	else {
 
+		/* Setting is set that device does not send Note Off
+		 * We will consider that Note On with Velocity 0
+		 * is the Note Off */
+		if (G_Conf.noNoteOff && value == 0x0) {
+			gLog(" >>> noNoteOff set - Midi ignored\n");
+			return;
+		}
+
 		/* process master events */
 
 		if      (pure == G_Conf.midiInRewind) {
