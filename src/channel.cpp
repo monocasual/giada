@@ -71,7 +71,11 @@ Channel::Channel(int type, int status, int bufferSize)
 	  midiInKill    (0x0),
 	  midiInVolume  (0x0),
 	  midiInMute    (0x0),
-	  midiInSolo    (0x0)
+	  midiInSolo    (0x0),
+	  midiOut       (true),
+	  midiOutPlaying(0x0),
+	  midiOutMute   (0x0),
+	  midiOutSolo   (0x0)
 {
 	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)

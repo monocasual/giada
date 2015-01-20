@@ -118,6 +118,9 @@ int openOutDevice(int port)
 		try {
 			midiOut->openPort(port, getOutPortName(port));
 			gLog("[KM] MIDI out port %d open\n", port);
+
+			init();
+
 			return 1;
 		}
 		catch (RtMidiError &error) {
@@ -201,6 +204,94 @@ const char *getInPortName(unsigned p)
 {
 	try { return midiIn->getPortName(p).c_str(); }
 	catch (RtMidiError &error) { return NULL; }
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void init()
+{
+	uint32_t event = 0x00;
+	event |= (0xB0 << 24);					// controller
+	event |= (0x00 << 16);					// controller value
+	event |= (0x00 << 8);					// value
+
+	gLog("[KM] MIDI send (midi_init - Reset) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
+
+	event = 0x00;
+	event |= (0xB0 << 24);					// controller
+	event |= (0x00 << 16);					// controller value
+	event |= (0x28 << 8);					// value
+
+	gLog("[KM] MIDI send (midi_init - Init Blinking) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
+}
+
+void midi_turnLedOn(uint32_t note)
+{
+	/*
+	 * Color Code:
+	 * Green 0x3C
+	 * Red   0x0F
+	 * Amber 0x3F
+	 */
+	uint32_t event = 0x00;
+	event |= (0x90 << 24);					// note on
+	event |= (((note >> 16) & 0xFF) << 16);	// note value
+	event |= (0x3F  << 8);					// velocity
+
+	gLog("[KM] MIDI send (turnLedOn) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
+}
+
+void midi_turnLedOff(uint32_t note)
+{
+	/*
+	 * Off   0x0C
+	 */
+	uint32_t event = 0x00;
+	event |= (0x90 << 24);					// note on
+	event |= ((note >> 16) & 0xFF) << 16;   // note value
+	event |= (0x0C << 8);					// velocity
+
+	gLog("[KM] MIDI send (turnLedOff) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
+}
+
+void midi_startBlink(uint32_t note)
+{
+	/*
+	 * Color Code (blinking):
+	 * Green 0x38 (solid 0x3C)
+	 * Red   0x0B (solid 0x0F)
+	 * Amber 0x3B (solid 0x3F)
+	 */
+	uint32_t event = 0x00;
+	event |= (0x90 << 24);					// note on
+	event |= (((note >> 16) & 0xFF) << 16);	// note value
+	event |= (0x0B  << 8);					// velocity
+
+	gLog("[KM] MIDI send (midi_startBlink) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
+}
+
+void midi_stopBlink(uint32_t note)
+{
+	uint32_t event = 0x00;
+	event |= (0x90 << 24);					// note on
+	event |= ((note >> 16) & 0xFF) << 16;   // note value
+	event |= (0x0C << 8);					// velocity
+
+	gLog("[KM] MIDI send (midi_stopBlink) - Event 0x%X\n", event);
+
+	send(event | MIDI_CHANS[0]);
 }
 
 

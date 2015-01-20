@@ -35,6 +35,7 @@
 #include "pluginHost.h"
 #include "waveFx.h"
 #include "mixerHandler.h"
+#include "kernelMidi.h"
 #include "log.h"
 
 
@@ -460,6 +461,9 @@ int SampleChannel::getPosition() {
 
 
 void SampleChannel::setMute(bool internal) {
+	if (midiOut && midiOutMute != 0x0) {
+		kernelMidi::midi_startBlink(midiOutMute);
+	}
 
 	if (internal) {
 
@@ -499,6 +503,10 @@ void SampleChannel::setMute(bool internal) {
 
 
 void SampleChannel::unsetMute(bool internal) {
+	if (midiOut && midiOutMute != 0x0) {
+		kernelMidi::midi_stopBlink(midiOutMute);
+	}
+
 	if (internal) {
 		if (mute)
 			mute_i = false;
