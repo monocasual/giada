@@ -854,6 +854,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 	}
 
 	ch->solo = !ch->solo;
+	ch->refreshMidiSoloLed();
 
 	if (!gui) {
 		Fl::lock();

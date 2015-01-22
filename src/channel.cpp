@@ -109,6 +109,14 @@ void Channel::readPatchMidiIn(int i)
   midiInSolo     = G_Patch.getMidiValue(i, "InSolo");
 }
 
+void Channel::readPatchMidiOut(int i)
+{
+	midiOut        = G_Patch.getMidiValue(i, "Out");
+	midiOutPlaying = G_Patch.getMidiValue(i, "OutPlaying");
+	midiOutMute    = G_Patch.getMidiValue(i, "OutMute");
+	midiOutSolo    = G_Patch.getMidiValue(i, "OutSolo");
+}
+
 
 /* ------------------------------------------------------------------ */
 
@@ -141,4 +149,71 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
+
+	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
+	fprintf(fp, "chanMidiOutPlaying%d=%u\n", i, midiOutPlaying);
+	fprintf(fp, "chanMidiOutMute%d=%u\n",    i, midiOutMute);
+	fprintf(fp, "chanMidiOutSolo%d=%u\n",    i, midiOutSolo);
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Channel::refreshMidiMuteLed()
+{
+	if (midiOut && midiOutSolo != 0x0) {
+		if (status == mute)
+		kernelMidi::midi_turnLedOn(midiOutMute, 0x3F);
+		else
+			kernelMidi::midi_turnLedOff(midiOutMute);
+	}
+}
+
+void Channel::refreshMidiSoloLed()
+{
+	if (midiOut && midiOutSolo != 0x0) {
+		if (status == solo)
+			kernelMidi::midi_turnLedOn(midiOutSolo, 0x0F);
+		else
+			kernelMidi::midi_turnLedOff(midiOutSolo);
+	}
+}
+
+void Channel::refreshMidiPlayLed()
+{
+	if (midiOut && midiOutPlaying != 0x0) {
+		if (status == STATUS_OFF)
+			kernelMidi::midi_turnLedOff(midiOutPlaying);
+		else if (status == STATUS_PLAY)
+			kernelMidi::midi_turnLedOn(midiOutPlaying, 0x3C);
+		else if (status  == STATUS_WAIT)
+			kernelMidi::midi_startBlink(midiOutPlaying, 0x38);
+		else if (status == STATUS_ENDING)
+			kernelMidi::midi_startBlink(midiOutPlaying, 0x3B);
+
+		/*
+		if (recStatus == REC_WAITING)
+			kernelMidi::midi_startBlink(midiOutPlaying, 0x38);
+		else if (recStatus == REC_ENDING)
+			kernelMidi::midi_startBlink(midiOutPlaying, 0x3B);
+			*/
+
+		/*
+		if (wave != NULL) {
+
+			if (G_Mixer.chanInput == ch)
+				sampleButton->bgColor0 = COLOR_BG_3;
+
+			if (recorder::active) {
+				if (recorder::canRec(ch)) {
+					sampleButton->bgColor0 = COLOR_BG_4;
+					sampleButton->txtColor = COLOR_TEXT_0;
+				}
+			}
+			*/
+	}
+}
+
+
+

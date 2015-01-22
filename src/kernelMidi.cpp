@@ -231,7 +231,7 @@ void init()
 	send(event | MIDI_CHANS[0]);
 }
 
-void midi_turnLedOn(uint32_t note)
+void midi_turnLedOn(uint32_t note, uint32_t color)
 {
 	/*
 	 * Color Code:
@@ -240,9 +240,9 @@ void midi_turnLedOn(uint32_t note)
 	 * Amber 0x3F
 	 */
 	uint32_t event = 0x00;
-	event |= (0x90 << 24);					// note on
+	event |= (0x90                  << 24);	// note on
 	event |= (((note >> 16) & 0xFF) << 16);	// note value
-	event |= (0x3F  << 8);					// velocity
+	event |= (color                 << 8);	// velocity
 
 	gLog("[KM] MIDI send (turnLedOn) - Event 0x%X\n", event);
 
@@ -255,16 +255,16 @@ void midi_turnLedOff(uint32_t note)
 	 * Off   0x0C
 	 */
 	uint32_t event = 0x00;
-	event |= (0x90 << 24);					// note on
-	event |= ((note >> 16) & 0xFF) << 16;   // note value
-	event |= (0x0C << 8);					// velocity
+	event |= (0x90                  << 24);	// note on
+	event |= (((note >> 16) & 0xFF) << 16); // note value
+	event |= (0x0C                  << 8);	// velocity
 
 	gLog("[KM] MIDI send (turnLedOff) - Event 0x%X\n", event);
 
 	send(event | MIDI_CHANS[0]);
 }
 
-void midi_startBlink(uint32_t note)
+void midi_startBlink(uint32_t note, uint32_t color)
 {
 	/*
 	 * Color Code (blinking):
@@ -273,9 +273,9 @@ void midi_startBlink(uint32_t note)
 	 * Amber 0x3B (solid 0x3F)
 	 */
 	uint32_t event = 0x00;
-	event |= (0x90 << 24);					// note on
+	event |= (0x90                  << 24);	// note on
 	event |= (((note >> 16) & 0xFF) << 16);	// note value
-	event |= (0x0B  << 8);					// velocity
+	event |= (color                 << 8);	// velocity
 
 	gLog("[KM] MIDI send (midi_startBlink) - Event 0x%X\n", event);
 
@@ -285,9 +285,9 @@ void midi_startBlink(uint32_t note)
 void midi_stopBlink(uint32_t note)
 {
 	uint32_t event = 0x00;
-	event |= (0x90 << 24);					// note on
-	event |= ((note >> 16) & 0xFF) << 16;   // note value
-	event |= (0x0C << 8);					// velocity
+	event |= (0x90                  << 24);	// note on
+	event |= (((note >> 16) & 0xFF) << 16); // note value
+	event |= (0x0C                  << 8);	// velocity
 
 	gLog("[KM] MIDI send (midi_stopBlink) - Event 0x%X\n", event);
 

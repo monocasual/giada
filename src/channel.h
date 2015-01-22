@@ -193,7 +193,11 @@ public:
 	 * and so on. */
 
 	void readPatchMidiIn(int i);
+	void readPatchMidiOut(int i);
 
+	void refreshMidiMuteLed();
+	void refreshMidiSoloLed();
+	void refreshMidiPlayLed();
 };
 
 

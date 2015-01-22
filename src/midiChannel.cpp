@@ -162,11 +162,15 @@ void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFra
 
 
 void MidiChannel::onZero(int frame) {
-	if (status == STATUS_ENDING)
+	if (status == STATUS_ENDING) {
 		status = STATUS_OFF;
+		refreshMidiPlayLed();
+	}
 	else
-	if (status == STATUS_WAIT)
+	if (status == STATUS_WAIT) {
 		status = STATUS_PLAY;
+		refreshMidiPlayLed();
+	}
 }
 
 
@@ -214,13 +218,16 @@ void MidiChannel::start(int frame, bool doQuantize) {
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;
+			refreshMidiPlayLed();
 			break;
 		case STATUS_ENDING:
 		case STATUS_WAIT:
 			status = STATUS_OFF;
+			refreshMidiPlayLed();
 			break;
 		case STATUS_OFF:
 			status = STATUS_WAIT;
+			refreshMidiPlayLed();
 			break;
 	}
 }
@@ -246,6 +253,7 @@ void MidiChannel::kill(int frame) {
 #endif
 	}
 	status = STATUS_OFF;
+	refreshMidiPlayLed();
 }
 
 
@@ -265,6 +273,7 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 	midiOutChan = G_Patch.getMidiValue(i, "OutChan");
 
 	readPatchMidiIn(i);
+	readPatchMidiOut(i);
 
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }

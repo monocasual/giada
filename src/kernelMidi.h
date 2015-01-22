@@ -104,9 +104,9 @@ namespace kernelMidi {
 	 * send Midi event to the outside world. */
 
 	void init();
-	void midi_turnLedOn(uint32_t note);
+	void midi_turnLedOn(uint32_t note, uint32_t color);
 	void midi_turnLedOff(uint32_t note);
-	void midi_startBlink(uint32_t note);
+	void midi_startBlink(uint32_t note, uint32_t color);
 	void midi_stopBlink(uint32_t note);
 }
 
