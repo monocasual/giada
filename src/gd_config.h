@@ -75,6 +75,7 @@ public:
 	class gChoice *system;
 	class gChoice *portOut;
 	class gChoice *portIn;
+	class gCheck  *noNoteOff;
 	class gChoice *sync;
 
 	gTabMidi(int x, int y, int w, int h);

@@ -147,6 +147,7 @@ void Conf::setDefault()
 	rsmpQuality    = 0;
 
 	midiPortIn  = DEFAULT_MIDI_PORT_IN;
+	noNoteOff   = false;
 	midiPortOut = DEFAULT_MIDI_PORT_OUT;
 	midiSync    = MIDI_SYNC_NONE;
 	midiTCfps   = 25.0f;
@@ -231,6 +232,8 @@ int Conf::read()
 
 	midiPortIn = atoi(getValue("midiPortIn").c_str());
 	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
+
+	noNoteOff = atoi(getValue("noNoteOff").c_str());
 
 	midiSync  = atoi(getValue("midiSync").c_str());
 	midiTCfps = atof(getValue("midiTCfps").c_str());
@@ -372,6 +375,7 @@ int Conf::write()
 	fprintf(fp, "midiSystem=%d\n",  midiSystem);
 	fprintf(fp, "midiPortOut=%d\n", midiPortOut);
 	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
+	fprintf(fp, "noNoteOff=%d\n",   noNoteOff);
 	fprintf(fp, "midiSync=%d\n",    midiSync);
 	fprintf(fp, "midiTCfps=%f\n",   midiTCfps);
 

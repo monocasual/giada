@@ -521,10 +521,11 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "MIDI")
 {
 	begin();
-	system  = new gChoice(x()+92, y()+9, 253, 20, "System");
-	portOut = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
-	portIn  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
-	sync    = new gChoice(x()+92, portIn->y()+portIn->h()+8, 253, 20, "Sync");
+	system	  = new gChoice(x()+92, y()+9, 253, 20, "System");
+	portOut	  = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
+	portIn	  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
+	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
+	sync	  = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h()+8, 253, 20, "Sync");
 	new gBox(x(), sync->y()+sync->h()+8, w(), h()-100, "Restart Giada for the changes to take effect.");
 	end();
 
@@ -535,6 +536,8 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	fetchSystems();
 	fetchOutPorts();
 	fetchInPorts();
+
+	noNoteOff->value(G_Conf.noNoteOff);
 
 	sync->add("(disabled)");
 	sync->add("MIDI Clock (master)");
@@ -621,6 +624,8 @@ void gTabMidi::save()
 
 	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
+
+	G_Conf.noNoteOff   = noNoteOff->value();
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;

@@ -269,7 +269,11 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	uint32_t input = getIValue(msg->at(0), msg->at(1), msg->at(2));
 	uint32_t chan  = input & 0x0F000000;
 	uint32_t value = input & 0x0000FF00;
-	uint32_t pure  = input & 0xFFFF0000;   // input without 'value' byte
+	uint32_t pure  = 0x00;
+	if (!G_Conf.noNoteOff)
+		pure  = input & 0xFFFF0000;   // input without 'value' byte
+	else
+		pure  = input & 0xFFFFFF00;   // input with 'value' byte
 
 	gLog("[KM] MIDI received - 0x%X (chan %d)", input, chan >> 24);
 
