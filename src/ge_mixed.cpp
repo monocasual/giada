@@ -607,7 +607,7 @@ void gBaseButton::trimLabel()
     return;
 
   std::string out;
-  if (w() >= 20) {
+  if (w() > 20) {
     out = initLabel;
     int len = initLabel.size();
     while (fl_width(out.c_str(), out.size()) > w()) {

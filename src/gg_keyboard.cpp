@@ -390,7 +390,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
-  resizer->setMinSize(116);
+  resizer->setMinSize(140);
   parent->add(resizer);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);

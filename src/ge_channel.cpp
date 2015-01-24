@@ -576,9 +576,15 @@ void gSampleChannel::delActionButton(bool force)
 
 void gSampleChannel::resize(int X, int Y, int W, int H)
 {
-  w() < 164 ? status->hide()  : status->show();
-  w() < 140 ? modeBox->hide() : modeBox->show();
-  sampleButton->w() < 20 ? sampleButton->hide() : sampleButton->show();
+  gLog("%d\n", w());
+  //w() < 164 ? status->hide()  : status->show();
+  if (readActions) {
+    if (w() < 188) readActions->hide();
+    else readActions->show();
+  }
+
+  w() < 164 ? modeBox->hide() : modeBox->show();
+  //sampleButton->w() < 20 ? sampleButton->hide() : sampleButton->show();
   gChannel::resize(X, Y, W, H);
 }
 
