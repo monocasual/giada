@@ -578,7 +578,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 {
   if (readActions)
     w() < 188 ? readActions->hide() : readActions->show();
-    
+
   w() < 164 ? modeBox->hide() : modeBox->show();
   gChannel::resize(X, Y, W, H);
 }

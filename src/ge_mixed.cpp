@@ -449,7 +449,6 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
   align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
   labelfont(FL_COURIER);
   visible_focus(0);
-  box(FL_BORDER_BOX);
 }
 
 /*

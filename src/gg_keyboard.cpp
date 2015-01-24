@@ -202,12 +202,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		}
 		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	}
-  //
-  // TODO - resize column if too small, to avoid FLTK issues with invisible
-  // widgets
-  //
-  // col->resize(col->x(), col->y(), 400, col->h());
-  //
+
 	return col->addChannel(ch);
 }
 
@@ -365,7 +360,8 @@ void gKeyboard::__cb_addColumn()
 	columns.add(gc);
 	redraw();
 
-	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n", gc->getIndex(), columns.size, addColumnBtn->x());
+	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n",
+		gc->getIndex(), columns.size, addColumnBtn->x());
 }
 
 
@@ -403,7 +399,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 
 gColumn::~gColumn()
 {
-  /* FIXME / TODO - this could actually cause a memory leak. resizer is
+  /* FIXME - this could actually cause a memory leak. resizer is
   just removed, not deleted. But we cannot delete it right now. */
 
   parent->remove(resizer);
@@ -506,7 +502,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 		gch = (gSampleChannel*) new gSampleChannel(
 				x(),
 				y() + children() * 24,
-				w(),
+				600, // (1) see notes below
 				20,
 				(SampleChannel*) ch);
 	else
@@ -516,6 +512,12 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				w(),
 				20,
 				(MidiChannel*) ch);
+
+	/* (1) we create a new sample channel with a fake width, instead of w() (i.e.
+	the column width), in case the column is too narrow to display all widgets.
+	This workaround prevents the widgets to disappear if they have an initial
+	negative width. MidiChannel does not need such hack because it already fits
+	nicely in a collapsed column. */
 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
