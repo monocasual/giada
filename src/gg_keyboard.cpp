@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gg_keyboard
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gg_keyboard.h"
@@ -155,7 +155,7 @@ void gKeyboard::organizeColumns()
 
 	for (unsigned i=columns.size-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
-			delete columns.at(i);
+			Fl::delete_widget(columns.at(i));
 			columns.del(i);
 		}
 	}
@@ -374,8 +374,17 @@ void gKeyboard::__cb_addColumn()
 
 
 gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
-	: Fl_Group(X, Y, W, H), index(index)
+	: Fl_Group(X, Y, W, H), parent(parent), index(index)
 {
+  /* gColumn does a bit of a mess: we pass a pointer to its parent (gKeyboard) and
+  the gColumn itself deals with the creation of another widget, outside gColumn
+  and inside gKeyboard, which handles the vertical resize bar (gResizerBar).
+  The resizer cannot stay inside gColumn: it needs a broader view on the other
+  side widgets. The view can be obtained from gKeyboard only (the upper level).
+  Unfortunately, parent() can be NULL: at this point (i.e the constructor)
+  gColumn is still detached from any parent. We use a custom gKeyboard *parent
+  instead. */
+
 	begin();
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
@@ -384,11 +393,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
   resizer->setMinSize(116);
   parent->add(resizer);
 
-  /* parent() can be NULL: at this point gColumn is still detached from any
-   * parent. We use a custom gKeyboard *parent instead. */
-
 	addChannelBtn->callback(cb_addChannel, (void*)this);
-
 }
 
 
@@ -397,9 +402,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 
 gColumn::~gColumn()
 {
-  gLog("%p\n", resizer);
-  //Fl::delete_widget(resizer);
-  resizer = NULL;
+  parent->remove(resizer);
 }
 
 
@@ -421,7 +424,8 @@ int gColumn::handle(int e)
 			int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK) {
 				deleteChannel(c->guiChannel);
-				((gKeyboard *)parent())->printChannelMessage(result);
+				//((gKeyboard *)parent())->printChannelMessage(result);
+				parent->printChannelMessage(result);
 			}
 			ret = 1;
 			break;
@@ -506,7 +510,8 @@ gChannel *gColumn::addChannel(class Channel *ch)
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
   redraw();
-	parent()->redraw();               // redraw Keyboard
+	//parent()->redraw();               // redraw Keyboard
+	parent->redraw();
 
 	//~ ch->column = index;
 	return gch;

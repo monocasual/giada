@@ -452,6 +452,12 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
   box(FL_BORDER_BOX);
 }
 
+/*
+gResizerBar::~gResizerBar()
+{
+  gLog("------ resizerbar %p destroyed\n", (void*)this);
+}
+*/
 
 void gResizerBar::HandleDrag(int diff)
 {

@@ -50,6 +50,7 @@ private:
 
 	class gClick      *addChannelBtn;
 	class gResizerBar *resizer;
+	class gKeyboard   *parent;
 
 	int index;
 
