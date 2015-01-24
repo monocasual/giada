@@ -62,134 +62,10 @@ extern Patch 		     G_Patch;
 extern gdMainWindow *mainWin;
 
 
-gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
-: Fl_Box(x, y, w, h, L), ch(ch) {}
-
-void gStatus::draw()
-{
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background
-
-  if (ch != NULL) {
-    if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
-        ch->recStatus & (REC_WAITING | REC_ENDING))
-    {
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-    }
-    else
-    if (ch->status == STATUS_PLAY)
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-    else
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
-
-
-    if (G_Mixer.chanInput == ch)
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
-    else
-    if (recorder::active && recorder::canRec(ch))
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
-
-    /* equation for the progress bar:
-     * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-
-    int pos = ch->getPosition();
-    if (pos == -1)
-      pos = 0;
-    else
-      pos = (pos * (w()-1)) / (ch->end - ch->begin);
-    fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
-  }
-}
-
-
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-
-
-gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
-  : Fl_Menu_Button(x, y, w, h, L), ch(ch)
-{
-  box(G_BOX);
-  textsize(11);
-  textcolor(COLOR_TEXT_0);
-  color(COLOR_BG_0);
-
-  add("Loop . basic",      0, cb_change_chanmode, (void *)LOOP_BASIC);
-  add("Loop . once",       0, cb_change_chanmode, (void *)LOOP_ONCE);
-  add("Loop . once . bar", 0, cb_change_chanmode, (void *)LOOP_ONCE_BAR);
-  add("Loop . repeat",     0, cb_change_chanmode, (void *)LOOP_REPEAT);
-  add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
-  add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
-  add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-  add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::draw() {
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);    // border
-  switch (ch->mode) {
-    case LOOP_BASIC:
-      fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
-      break;
-    case LOOP_ONCE:
-      fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
-      break;
-    case LOOP_ONCE_BAR:
-      fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
-      break;
-    case LOOP_REPEAT:
-      fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_BASIC:
-      fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_PRESS:
-      fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_RETRIG:
-      fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_ENDLESS:
-      fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
-      break;
-  }
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::__cb_change_chanmode(int mode)
-{
-  ch->mode = mode;
-
-  /* what to do when the channel is playing and you change the mode?
-   * Nothing, since v0.5.3. Just refresh the action editor window, in
-   * case it's open */
-
-  gu_refreshActionEditor();
-}
-
-
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-
-
 int gKeyboard::indexColumn = 0;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gKeyboard::gKeyboard(int X, int Y, int W, int H)
@@ -214,7 +90,7 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::init()
@@ -230,7 +106,7 @@ void gKeyboard::init()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::freeChannel(gChannel *gch)
@@ -239,7 +115,7 @@ void gKeyboard::freeChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::deleteChannel(gChannel *gch)
@@ -254,7 +130,7 @@ void gKeyboard::deleteChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::updateChannel(gChannel *gch)
@@ -263,7 +139,7 @@ void gKeyboard::updateChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::organizeColumns()
@@ -295,13 +171,13 @@ void gKeyboard::organizeColumns()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addColumn(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
@@ -335,7 +211,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::refreshColumns()
@@ -345,7 +221,7 @@ void gKeyboard::refreshColumns()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gKeyboard::handle(int e)
@@ -414,7 +290,7 @@ int gKeyboard::handle(int e)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::clear()
@@ -426,7 +302,7 @@ void gKeyboard::clear()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::setChannelWithActions(gSampleChannel *gch)
@@ -438,7 +314,7 @@ void gKeyboard::setChannelWithActions(gSampleChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::printChannelMessage(int res)
@@ -461,7 +337,7 @@ void gKeyboard::printChannelMessage(int res)
 		gdAlert("Unknown error.");
 }
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::__cb_addColumn()
@@ -492,9 +368,9 @@ void gKeyboard::__cb_addColumn()
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
@@ -516,17 +392,18 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gColumn::~gColumn()
 {
-  Fl::delete_widget(resizer);
+  gLog("%p\n", resizer);
+  //Fl::delete_widget(resizer);
   resizer = NULL;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gColumn::handle(int e)
@@ -554,7 +431,7 @@ int gColumn::handle(int e)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::resize(int X, int Y, int W, int H)
@@ -577,7 +454,7 @@ void gColumn::resize(int X, int Y, int W, int H)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::refreshChannels()
@@ -587,7 +464,7 @@ void gColumn::refreshChannels()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::draw()
@@ -598,13 +475,13 @@ void gColumn::draw()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChannel(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gChannel *gColumn::addChannel(class Channel *ch)
@@ -636,7 +513,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::deleteChannel(gChannel *gch)
@@ -659,7 +536,7 @@ void gColumn::deleteChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::__cb_addChannel()
@@ -671,7 +548,7 @@ void gColumn::__cb_addChannel()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gColumn::openTypeMenu()
@@ -699,7 +576,7 @@ int gColumn::openTypeMenu()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::clear(bool full)
