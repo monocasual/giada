@@ -155,7 +155,8 @@ void gKeyboard::organizeColumns()
 
 	for (unsigned i=columns.size-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
-			Fl::delete_widget(columns.at(i));
+			//Fl::delete_widget(columns.at(i));
+			delete columns.at(i);
 			columns.del(i);
 		}
 	}
@@ -402,6 +403,9 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 
 gColumn::~gColumn()
 {
+  /* FIXME / TODO - this could actually cause a memory leak. resizer is
+  just removed, not deleted. But we cannot delete it right now. */
+
   parent->remove(resizer);
 }
 
@@ -424,7 +428,6 @@ int gColumn::handle(int e)
 			int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK) {
 				deleteChannel(c->guiChannel);
-				//((gKeyboard *)parent())->printChannelMessage(result);
 				parent->printChannelMessage(result);
 			}
 			ret = 1;
@@ -475,7 +478,14 @@ void gColumn::draw()
 {
 	fl_color(fl_rgb_color(27, 27, 27));
 	fl_rectf(x(), y(), w(), h());
-	Fl_Group::draw();
+
+  /* call draw and then redraw in order to avoid channel corruption when
+  scrolling horizontally */
+
+  for (int i=0; i<children(); i++) {
+    child(i)->draw();
+    child(i)->redraw();
+  }
 }
 
 
@@ -509,11 +519,8 @@ gChannel *gColumn::addChannel(class Channel *ch)
 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
-  redraw();
-	//parent()->redraw();               // redraw Keyboard
-	parent->redraw();
-
-	//~ ch->column = index;
+  gch->redraw();    // avoid corruption
+	parent->redraw(); // redraw Keyboard
 	return gch;
 }
 
