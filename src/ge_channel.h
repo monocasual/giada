@@ -38,6 +38,18 @@
 
 class gChannel : public Fl_Group
 {
+protected:
+
+	/* define some breakpoints for dynamic resize */
+
+#ifdef WITH_VST
+	static const int BREAK_READ_ACTIONS = 188;
+	static const int BREAK_MODE_BOX     = 164;
+#else
+	static const int BREAK_READ_ACTIONS = 164;
+	static const int BREAK_MODE_BOX     = 140;
+#endif
+
 public:
 
 	gChannel(int x, int y, int w, int h);

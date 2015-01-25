@@ -197,7 +197,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 				break;
 			}
 		if (!col) {
-			gLog("[gKeyboard::addChannel] column not found!\n");
+			gLog("[gKeyboard::addChannel] column with index %d not found!\n", colIndex);
 			return NULL;
 		}
 		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
