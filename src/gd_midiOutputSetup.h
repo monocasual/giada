@@ -42,10 +42,14 @@ private:
 	static void cb_save          (Fl_Widget *w, void *p);
 	static void cb_cancel        (Fl_Widget *w, void *p);
 	static void cb_enableChanList(Fl_Widget *w, void *p);
+	static void cb_enableProgChg(Fl_Widget *w, void *p);
+	static void cb_enableBankChg(Fl_Widget *w, void *p);
 	inline void __cb_save          ();
 	inline void __cb_cancel        ();
 	inline void __cb_enableChanList();
-
+	inline void __cb_enableProgChg();
+	inline void __cb_enableBankChg();
+	
 	void fillChanMenu(class gChoice *m);
 
 	class gCheck  *enableOut;
