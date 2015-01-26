@@ -41,11 +41,16 @@ extern Conf	G_Conf;
 
 
 gdMidiOutputSetup::gdMidiOutputSetup(MidiChannel *ch)
-	: gWindow(300, 64, "Midi Output Setup"), ch(ch)
+	: gWindow(310, 80, "Midi Output Setup"), ch(ch)
 {
 	begin();
 	enableOut      = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
 	chanListOut    = new gChoice(w()-108, y()+8, 100, 20);
+
+	enableProgChg  = new gCheck(x()+8, h()+2-50, 20, 20);
+	enableBankChg  = new gCheck(x()+8, h()+2-25, 20, 20);
+	progChange     = new gValue(x()+100, h()-50, 20, 20, "Prog Change");
+	bankChange     = new gValue(x()+100, h()-25, 20, 20, "Bank Change");
 
 	save   = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Save");
 	cancel = new gButton(w()-88-save->w()-8, save->y(), 80, 20, "Cancel");
@@ -53,14 +58,24 @@ gdMidiOutputSetup::gdMidiOutputSetup(MidiChannel *ch)
 
 	fillChanMenu(chanListOut);
 
-	if (ch->midiOut)
+	if (ch->midiOut) {
 		enableOut->value(1);
-	else
+		if( ch->midiOutProg ) enableProgChg->value(1);
+		if( ch->midiOutBank ) enableBankChg->value(1);
+	} else {
 		chanListOut->deactivate();
+		progChange->deactivate();
+		bankChange->deactivate();
+	}
 
 	chanListOut->value(ch->midiOutChan);
+	progChange->value(ch->midiProgChg);
+	bankChange->value(ch->midiBankChg);
 
 	enableOut->callback(cb_enableChanList, (void*)this);
+	enableProgChg->callback(cb_enableProgChg, (void*)this);
+	enableBankChg->callback(cb_enableBankChg, (void*)this);
+
 	save->callback(cb_save, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
 
@@ -76,6 +91,8 @@ gdMidiOutputSetup::gdMidiOutputSetup(MidiChannel *ch)
 void gdMidiOutputSetup::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_save(); }
 void gdMidiOutputSetup::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_cancel(); }
 void gdMidiOutputSetup::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_enableChanList(); }
+void gdMidiOutputSetup::cb_enableProgChg(Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_enableProgChg(); }
+void gdMidiOutputSetup::cb_enableBankChg(Fl_Widget *w, void *p) { ((gdMidiOutputSetup*)p)->__cb_enableBankChg(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -89,9 +106,29 @@ void gdMidiOutputSetup::__cb_enableChanList() {
 /* ------------------------------------------------------------------ */
 
 
+void gdMidiOutputSetup::__cb_enableProgChg() {
+	enableProgChg->value() ? progChange->activate() : progChange->deactivate();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gdMidiOutputSetup::__cb_enableBankChg() {
+	enableBankChg->value() ? bankChange->activate() : bankChange->deactivate();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gdMidiOutputSetup::__cb_save() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
+	ch->midiOutProg = enableProgChg->value();
+	ch->midiOutBank = enableBankChg->value();
+	ch->midiProgChg = progChange->value();
+	ch->midiBankChg = bankChange->value();
 	ch->guiChannel->update();
 	do_callback();
 }
