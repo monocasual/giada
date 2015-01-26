@@ -105,7 +105,7 @@ void gdMidiGrabber::__cb_close() {
 
 
 gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
-	:	gdMidiGrabber(300, 206, "MIDI Input Setup"),
+	:	gdMidiGrabber(300, 220, "MIDI Input Setup"),
 		ch(ch)
 {
 	char title[64];
@@ -122,13 +122,14 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
 		enableTunnel = NULL;
 	}
 	
-	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
-	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
-	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
-	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
-	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
-	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
-	int yy = 178;
+	int y = enableTunnel->y() + 20;
+	new gLearner(8, y+0,   w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
+	new gLearner(8, y+24,  w()-16, "key release", cb_learn, &ch->midiInKeyRel);
+	new gLearner(8, y+48,  w()-16, "key kill",    cb_learn, &ch->midiInKill);
+	new gLearner(8, y+72,  w()-16, "mute",        cb_learn, &ch->midiInMute);
+	new gLearner(8, y+96,  w()-16, "solo",        cb_learn, &ch->midiInSolo);
+	new gLearner(8, y+120, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+	int yy = y+150;
 
 	if (ch->type == CHANNEL_SAMPLE) {
 		size(300, 254);
