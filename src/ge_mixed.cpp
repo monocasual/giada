@@ -6,7 +6,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2014 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -449,9 +449,14 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
   align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
   labelfont(FL_COURIER);
   visible_focus(0);
-  box(FL_BORDER_BOX);
 }
 
+/*
+gResizerBar::~gResizerBar()
+{
+  gLog("------ resizerbar %p destroyed\n", (void*)this);
+}
+*/
 
 void gResizerBar::HandleDrag(int diff)
 {
@@ -601,7 +606,7 @@ void gBaseButton::trimLabel()
     return;
 
   std::string out;
-  if (w() >= 20) {
+  if (w() > 20) {
     out = initLabel;
     int len = initLabel.size();
     while (fl_width(out.c_str(), out.size()) > w()) {

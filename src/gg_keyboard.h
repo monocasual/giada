@@ -6,7 +6,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2014 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -50,6 +50,7 @@ private:
 
 	class gClick      *addChannelBtn;
 	class gResizerBar *resizer;
+	class gKeyboard   *parent;
 
 	int index;
 
@@ -95,34 +96,6 @@ public:
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
-};
-
-
-/* ------------------------------------------------------------------ */
-
-
-class gStatus : public Fl_Box
-{
-public:
-	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
-	void draw();
-	class SampleChannel *ch;
-};
-
-
-/* ------------------------------------------------------------------ */
-
-
-class gModeBox : public Fl_Menu_Button {
-private:
-	static void cb_change_chanmode(Fl_Widget *v, void *p);
-	inline void __cb_change_chanmode(int mode);
-
-	class SampleChannel *ch;
-
-public:
-	gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
-	void draw();
 };
 
 

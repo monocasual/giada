@@ -1,12 +1,12 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gg_keyboard
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2014 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gg_keyboard.h"
@@ -62,134 +62,10 @@ extern Patch 		     G_Patch;
 extern gdMainWindow *mainWin;
 
 
-gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
-: Fl_Box(x, y, w, h, L), ch(ch) {}
-
-void gStatus::draw()
-{
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background
-
-  if (ch != NULL) {
-    if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
-        ch->recStatus & (REC_WAITING | REC_ENDING))
-    {
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-    }
-    else
-    if (ch->status == STATUS_PLAY)
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
-    else
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
-
-
-    if (G_Mixer.chanInput == ch)
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
-    else
-    if (recorder::active && recorder::canRec(ch))
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
-
-    /* equation for the progress bar:
-     * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-
-    int pos = ch->getPosition();
-    if (pos == -1)
-      pos = 0;
-    else
-      pos = (pos * (w()-1)) / (ch->end - ch->begin);
-    fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
-  }
-}
-
-
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-
-
-gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
-  : Fl_Menu_Button(x, y, w, h, L), ch(ch)
-{
-  box(G_BOX);
-  textsize(11);
-  textcolor(COLOR_TEXT_0);
-  color(COLOR_BG_0);
-
-  add("Loop . basic",      0, cb_change_chanmode, (void *)LOOP_BASIC);
-  add("Loop . once",       0, cb_change_chanmode, (void *)LOOP_ONCE);
-  add("Loop . once . bar", 0, cb_change_chanmode, (void *)LOOP_ONCE_BAR);
-  add("Loop . repeat",     0, cb_change_chanmode, (void *)LOOP_REPEAT);
-  add("Oneshot . basic",   0, cb_change_chanmode, (void *)SINGLE_BASIC);
-  add("Oneshot . press",   0, cb_change_chanmode, (void *)SINGLE_PRESS);
-  add("Oneshot . retrig",  0, cb_change_chanmode, (void *)SINGLE_RETRIG);
-  add("Oneshot . endless", 0, cb_change_chanmode, (void *)SINGLE_ENDLESS);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::draw() {
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);    // border
-  switch (ch->mode) {
-    case LOOP_BASIC:
-      fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
-      break;
-    case LOOP_ONCE:
-      fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
-      break;
-    case LOOP_ONCE_BAR:
-      fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
-      break;
-    case LOOP_REPEAT:
-      fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_BASIC:
-      fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_PRESS:
-      fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_RETRIG:
-      fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
-      break;
-    case SINGLE_ENDLESS:
-      fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
-      break;
-  }
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::cb_change_chanmode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_change_chanmode((intptr_t)p); }
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gModeBox::__cb_change_chanmode(int mode)
-{
-  ch->mode = mode;
-
-  /* what to do when the channel is playing and you change the mode?
-   * Nothing, since v0.5.3. Just refresh the action editor window, in
-   * case it's open */
-
-  gu_refreshActionEditor();
-}
-
-
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-
-
 int gKeyboard::indexColumn = 0;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gKeyboard::gKeyboard(int X, int Y, int W, int H)
@@ -214,7 +90,7 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::init()
@@ -230,7 +106,7 @@ void gKeyboard::init()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::freeChannel(gChannel *gch)
@@ -239,7 +115,7 @@ void gKeyboard::freeChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::deleteChannel(gChannel *gch)
@@ -254,7 +130,7 @@ void gKeyboard::deleteChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::updateChannel(gChannel *gch)
@@ -263,7 +139,7 @@ void gKeyboard::updateChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::organizeColumns()
@@ -279,6 +155,7 @@ void gKeyboard::organizeColumns()
 
 	for (unsigned i=columns.size-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
+			//Fl::delete_widget(columns.at(i));
 			delete columns.at(i);
 			columns.del(i);
 		}
@@ -295,13 +172,13 @@ void gKeyboard::organizeColumns()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addColumn(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
@@ -325,17 +202,12 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		}
 		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	}
-  //
-  // TODO - resize column if too small, to avoid FLTK issues with invisible
-  // widgets
-  //
-  // col->resize(col->x(), col->y(), 400, col->h());
-  //
+
 	return col->addChannel(ch);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::refreshColumns()
@@ -345,7 +217,7 @@ void gKeyboard::refreshColumns()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gKeyboard::handle(int e)
@@ -414,7 +286,7 @@ int gKeyboard::handle(int e)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::clear()
@@ -426,7 +298,7 @@ void gKeyboard::clear()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::setChannelWithActions(gSampleChannel *gch)
@@ -438,7 +310,7 @@ void gKeyboard::setChannelWithActions(gSampleChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::printChannelMessage(int res)
@@ -461,7 +333,7 @@ void gKeyboard::printChannelMessage(int res)
 		gdAlert("Unknown error.");
 }
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gKeyboard::__cb_addColumn()
@@ -488,45 +360,53 @@ void gKeyboard::__cb_addColumn()
 	columns.add(gc);
 	redraw();
 
-	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n", gc->getIndex(), columns.size, addColumnBtn->x());
+	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n",
+		gc->getIndex(), columns.size, addColumnBtn->x());
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
-	: Fl_Group(X, Y, W, H), index(index)
+	: Fl_Group(X, Y, W, H), parent(parent), index(index)
 {
+  /* gColumn does a bit of a mess: we pass a pointer to its parent (gKeyboard) and
+  the gColumn itself deals with the creation of another widget, outside gColumn
+  and inside gKeyboard, which handles the vertical resize bar (gResizerBar).
+  The resizer cannot stay inside gColumn: it needs a broader view on the other
+  side widgets. The view can be obtained from gKeyboard only (the upper level).
+  Unfortunately, parent() can be NULL: at this point (i.e the constructor)
+  gColumn is still detached from any parent. We use a custom gKeyboard *parent
+  instead. */
+
 	begin();
 	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
-  resizer->setMinSize(116);
+  resizer->setMinSize(140);
   parent->add(resizer);
 
-  /* parent() can be NULL: at this point gColumn is still detached from any
-   * parent. We use a custom gKeyboard *parent instead. */
-
 	addChannelBtn->callback(cb_addChannel, (void*)this);
-
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gColumn::~gColumn()
 {
-  Fl::delete_widget(resizer);
-  resizer = NULL;
+  /* FIXME - this could actually cause a memory leak. resizer is
+  just removed, not deleted. But we cannot delete it right now. */
+
+  parent->remove(resizer);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gColumn::handle(int e)
@@ -544,7 +424,7 @@ int gColumn::handle(int e)
 			int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK) {
 				deleteChannel(c->guiChannel);
-				((gKeyboard *)parent())->printChannelMessage(result);
+				parent->printChannelMessage(result);
 			}
 			ret = 1;
 			break;
@@ -554,7 +434,7 @@ int gColumn::handle(int e)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::resize(int X, int Y, int W, int H)
@@ -577,7 +457,7 @@ void gColumn::resize(int X, int Y, int W, int H)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::refreshChannels()
@@ -587,24 +467,31 @@ void gColumn::refreshChannels()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::draw()
 {
 	fl_color(fl_rgb_color(27, 27, 27));
 	fl_rectf(x(), y(), w(), h());
-	Fl_Group::draw();
+
+  /* call draw and then redraw in order to avoid channel corruption when
+  scrolling horizontally */
+
+  for (int i=0; i<children(); i++) {
+    child(i)->draw();
+    child(i)->redraw();
+  }
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChannel(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gChannel *gColumn::addChannel(class Channel *ch)
@@ -615,7 +502,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 		gch = (gSampleChannel*) new gSampleChannel(
 				x(),
 				y() + children() * 24,
-				w(),
+				600, // (1) see notes below
 				20,
 				(SampleChannel*) ch);
 	else
@@ -626,17 +513,21 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				20,
 				(MidiChannel*) ch);
 
+	/* (1) we create a new sample channel with a fake width, instead of w() (i.e.
+	the column width), in case the column is too narrow to display all widgets.
+	This workaround prevents the widgets to disappear if they have an initial
+	negative width. MidiChannel does not need such hack because it already fits
+	nicely in a collapsed column. */
+
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
-  redraw();
-	parent()->redraw();               // redraw Keyboard
-
-	//~ ch->column = index;
+  gch->redraw();    // avoid corruption
+	parent->redraw(); // redraw Keyboard
 	return gch;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::deleteChannel(gChannel *gch)
@@ -659,7 +550,7 @@ void gColumn::deleteChannel(gChannel *gch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::__cb_addChannel()
@@ -671,7 +562,7 @@ void gColumn::__cb_addChannel()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gColumn::openTypeMenu()
@@ -699,7 +590,7 @@ int gColumn::openTypeMenu()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gColumn::clear(bool full)
