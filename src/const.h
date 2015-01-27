@@ -237,6 +237,7 @@
 /* channel voices messages - controller (0xB0) is a special subset of
  * this family: it drives knobs, volume, faders and such. */
 
+#define MIDI_PROGRAM        0xC0 << 24
 #define MIDI_CONTROLLER     0xB0 << 24
 #define MIDI_NOTE_ON        0x90 << 24
 #define MIDI_NOTE_OFF       0x80 << 24
