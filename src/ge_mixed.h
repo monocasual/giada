@@ -66,6 +66,17 @@ void __cb_window_closer(Fl_Widget *v, void *p);
 /* ------------------------------------------------------------------ */
 
 
+class gValue : public Fl_Value_Input
+{
+  public:
+	 gValue(int x, int y, int w, int h, const char *l=0);
+
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 class gBaseButton : public Fl_Button
 {
 private:
