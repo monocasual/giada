@@ -115,8 +115,8 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
 	set_modal();
 
 	if( midichannel ) {
-		enable = new gCheck(8, 2, 120, 20, "enable MIDI input");
-		enableTunnel = new gCheck(8, 16, 120, 20, "enable MIDI tunnelling");
+		enable = new gCheck(8, 4, 120, 20, "enable MIDI input");
+		enableTunnel = new gCheck(8, 24, 120, 20, "enable MIDI tunnelling");
 	} else {
 		enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 		enableTunnel = NULL;
