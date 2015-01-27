@@ -51,6 +51,7 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Scroll.H>
+#include <FL/Fl_Value_Input.H>
 
 #ifdef _WIN32
 	#include <shlobj.h>  // for SHGetFolderPath
