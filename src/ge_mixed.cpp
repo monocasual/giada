@@ -54,6 +54,23 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* ------------------------------------------------------------------ */
 
 
+gValue::gValue(int x, int y, int w, int h, const char *L)
+: Fl_Value_Input(x, y, w, h, L)
+{
+  //Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
+  labelsize(11);
+  labelcolor(COLOR_TEXT_0);
+  color(COLOR_BG_DARK);
+  textcolor(COLOR_TEXT_0);
+  cursor_color(COLOR_TEXT_0);
+  selection_color(COLOR_BD_0);
+  textsize(11);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
   : gClick(X, Y, W, H, L, imgOff, imgOn) {}
 
