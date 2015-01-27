@@ -55,9 +55,9 @@ public:
 	~MidiChannel();
 
   bool    midiOut;           // enable midi output
+  uint8_t midiOutChan;       // midi output channel
   bool    midiOutProg;       // enable program change
   bool    midiOutBank;       // enable bank change
-  uint8_t midiOutChan;       // midi output channel
   uint8_t midiProgChg;       // program change value
   uint8_t midiBankChg;       // bank change value
 
