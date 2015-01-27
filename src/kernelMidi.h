@@ -100,14 +100,21 @@ namespace kernelMidi {
 	
 	std::string getRtMidiVersion();
 
-	/* sendMidi
-	 * send Midi event to the outside world. */
+	/* send midi to device
+	 * to init and control lights
+	 */
 
 	void init();
-	void midi_turnLedOn(uint32_t note, uint32_t color);
-	void midi_turnLedOff(uint32_t note);
-	void midi_startBlink(uint32_t note, uint32_t color);
-	void midi_stopBlink(uint32_t note);
+	void midi_mute_on(uint32_t note);
+	void midi_mute_off(uint32_t note);
+	void midi_solo_on(uint32_t note);
+	void midi_solo_off(uint32_t note);
+	void midi_waiting(uint32_t note);
+	void midi_playing(uint32_t note);
+	void midi_stopping(uint32_t note);
+	void midi_stopped(uint32_t note);
+
+	void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int NotePos);
 }
 
 #endif

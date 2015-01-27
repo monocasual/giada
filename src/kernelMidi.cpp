@@ -35,12 +35,13 @@
 #include "sampleChannel.h"
 #include "pluginHost.h"
 #include "conf.h"
+#include "midiMapConf.h"
 #include "log.h"
 
 
-extern bool  G_midiStatus;
-extern Conf  G_Conf;
-extern Mixer G_Mixer;
+extern bool     G_midiStatus;
+extern Conf     G_Conf;
+extern Mixer    G_Mixer;
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -58,6 +59,8 @@ unsigned   numInPorts  = 0;
 
 cb_midiLearn *cb_learn = NULL;
 void         *cb_data  = NULL;
+
+MidiMapConf  midimap;
 
 
 /* ------------------------------------------------------------------ */
@@ -118,6 +121,8 @@ int openOutDevice(int port)
 		try {
 			midiOut->openPort(port, getOutPortName(port));
 			gLog("[KM] MIDI out port %d open\n", port);
+
+			midimap.read();
 
 			init();
 
@@ -212,86 +217,97 @@ const char *getInPortName(unsigned p)
 
 void init()
 {
-	uint32_t event = 0x00;
-	event |= (0xB0 << 24);					// controller
-	event |= (0x00 << 16);					// controller value
-	event |= (0x00 << 8);					// value
-
-	gLog("[KM] MIDI send (midi_init - Reset) - Event 0x%X\n", event);
-
-	send(event | MIDI_CHANS[0]);
-
-	event = 0x00;
-	event |= (0xB0 << 24);					// controller
-	event |= (0x00 << 16);					// controller value
-	event |= (0x28 << 8);					// value
-
-	gLog("[KM] MIDI send (midi_init - Init Blinking) - Event 0x%X\n", event);
-
-	send(event | MIDI_CHANS[0]);
+	for(int i=0; i<MAXINITCOMMANDS; i++) {
+		if (midimap.init_messages[i] != 0x0 && midimap.init_channels[i] != -1) {
+			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", midimap.init_channels[i], midimap.init_messages[i]);
+			send(midimap.init_messages[i] | MIDI_CHANS[midimap.init_channels[i]]);
+		}
+	}
 }
 
-void midi_turnLedOn(uint32_t note, uint32_t color)
+void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int NotePos)
 {
-	/*
-	 * Color Code:
-	 * Green 0x3C
-	 * Red   0x0F
-	 * Amber 0x3F
-	 */
 	uint32_t event = 0x00;
-	event |= (0x90                  << 24);	// note on
-	event |= (((note >> 16) & 0xFF) << 16);	// note value
-	event |= (color                 << 8);	// velocity
+	uint32_t noteFilt = note >> 16;
 
-	gLog("[KM] MIDI send (turnLedOn) - Event 0x%X\n", event);
+	switch (NotePos) {
+		case 0:
+			event |= (noteFilt   << 24);
+			event |= (message[1] << 16);
+			event |= (message[2] << 8);
+			event |=  message[3];
+			break;
+		case 1:
+			event |= (message[0] << 24);
+			event |= (noteFilt   << 16);
+			event |= (message[2] << 8);
+			event |=  message[3];
+			break;
+		case 2:
+			event |= (message[0] << 24);
+			event |= (message[1] << 16);
+			event |= (noteFilt   << 8);
+			event |=  message[3];
+			break;
+		case 3:
+			event |= (message[0] << 24);
+			event |= (message[1] << 16);
+			event |= (message[2] << 8);
+			event |=  noteFilt;
+			break;
+	}
 
-	send(event | MIDI_CHANS[0]);
+	gLog(" - Channel %x - Event 0x%X\n", Channel, event);
+
+	send(event | MIDI_CHANS[Channel]);
 }
 
-void midi_turnLedOff(uint32_t note)
+void midi_mute_on(uint32_t note)
 {
-	/*
-	 * Off   0x0C
-	 */
-	uint32_t event = 0x00;
-	event |= (0x90                  << 24);	// note on
-	event |= (((note >> 16) & 0xFF) << 16); // note value
-	event |= (0x0C                  << 8);	// velocity
-
-	gLog("[KM] MIDI send (turnLedOff) - Event 0x%X\n", event);
-
-	send(event | MIDI_CHANS[0]);
+	gLog("[KM] Midi Signal - Mute On ");
+	midi_gen_messages(note, midimap.mute_on_channel, midimap.mute_on, midimap.mute_on_notePos);
 }
 
-void midi_startBlink(uint32_t note, uint32_t color)
+void midi_mute_off(uint32_t note)
 {
-	/*
-	 * Color Code (blinking):
-	 * Green 0x38 (solid 0x3C)
-	 * Red   0x0B (solid 0x0F)
-	 * Amber 0x3B (solid 0x3F)
-	 */
-	uint32_t event = 0x00;
-	event |= (0x90                  << 24);	// note on
-	event |= (((note >> 16) & 0xFF) << 16);	// note value
-	event |= (color                 << 8);	// velocity
-
-	gLog("[KM] MIDI send (midi_startBlink) - Event 0x%X\n", event);
-
-	send(event | MIDI_CHANS[0]);
+	gLog("[KM] Midi Signal - Mute Off");
+	midi_gen_messages(note, midimap.mute_off_channel, midimap.mute_off, midimap.mute_off_notePos);
 }
 
-void midi_stopBlink(uint32_t note)
+void midi_solo_on(uint32_t note)
 {
-	uint32_t event = 0x00;
-	event |= (0x90                  << 24);	// note on
-	event |= (((note >> 16) & 0xFF) << 16); // note value
-	event |= (0x0C                  << 8);	// velocity
+	gLog("[KM] Midi Signal - Solo On");
+	midi_gen_messages(note, midimap.solo_on_channel, midimap.solo_on, midimap.solo_on_notePos);
+}
 
-	gLog("[KM] MIDI send (midi_stopBlink) - Event 0x%X\n", event);
+void midi_solo_off(uint32_t note)
+{
+	gLog("[KM] Midi Signal - Solo Off");
+	midi_gen_messages(note, midimap.solo_off_channel, midimap.solo_off, midimap.solo_off_notePos);
+}
 
-	send(event | MIDI_CHANS[0]);
+void midi_waiting(uint32_t note)
+{
+	gLog("[KM] Midi Signal - Waiting");
+	midi_gen_messages(note, midimap.waiting_channel, midimap.waiting, midimap.waiting_notePos);
+}
+
+void midi_playing(uint32_t note)
+{
+	gLog("[KM] Midi Signal - Playing");
+	midi_gen_messages(note, midimap.playing_channel, midimap.playing, midimap.playing_notePos);
+}
+
+void midi_stopping(uint32_t note)
+{
+	gLog("[KM] Midi Signal - Stopping");
+	midi_gen_messages(note, midimap.stopping_channel, midimap.stopping, midimap.stopping_notePos);
+}
+
+void midi_stopped(uint32_t note)
+{
+	gLog("[KM] Midi Signal - Stopped");
+	midi_gen_messages(note, midimap.stopped_channel, midimap.stopped, midimap.stopped_notePos);
 }
 
 

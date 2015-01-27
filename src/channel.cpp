@@ -162,21 +162,21 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 
 void Channel::refreshMidiMuteLed()
 {
-	if (midiOut && midiOutSolo != 0x0) {
-		if (status == mute)
-		kernelMidi::midi_turnLedOn(midiOutMute, 0x3F);
+	if (midiOut && midiOutMute != 0x0) {
+		if (mute)
+			kernelMidi::midi_mute_on(midiOutMute);
 		else
-			kernelMidi::midi_turnLedOff(midiOutMute);
+			kernelMidi::midi_mute_off(midiOutMute);
 	}
 }
 
 void Channel::refreshMidiSoloLed()
 {
 	if (midiOut && midiOutSolo != 0x0) {
-		if (status == solo)
-			kernelMidi::midi_turnLedOn(midiOutSolo, 0x0F);
+		if (solo)
+			kernelMidi::midi_solo_on(midiOutSolo);
 		else
-			kernelMidi::midi_turnLedOff(midiOutSolo);
+			kernelMidi::midi_solo_off(midiOutSolo);
 	}
 }
 
@@ -184,34 +184,13 @@ void Channel::refreshMidiPlayLed()
 {
 	if (midiOut && midiOutPlaying != 0x0) {
 		if (status == STATUS_OFF)
-			kernelMidi::midi_turnLedOff(midiOutPlaying);
+			kernelMidi::midi_stopped(midiOutPlaying);
 		else if (status == STATUS_PLAY)
-			kernelMidi::midi_turnLedOn(midiOutPlaying, 0x3C);
+			kernelMidi::midi_playing(midiOutPlaying);
 		else if (status  == STATUS_WAIT)
-			kernelMidi::midi_startBlink(midiOutPlaying, 0x38);
+			kernelMidi::midi_waiting(midiOutPlaying);
 		else if (status == STATUS_ENDING)
-			kernelMidi::midi_startBlink(midiOutPlaying, 0x3B);
-
-		/*
-		if (recStatus == REC_WAITING)
-			kernelMidi::midi_startBlink(midiOutPlaying, 0x38);
-		else if (recStatus == REC_ENDING)
-			kernelMidi::midi_startBlink(midiOutPlaying, 0x3B);
-			*/
-
-		/*
-		if (wave != NULL) {
-
-			if (G_Mixer.chanInput == ch)
-				sampleButton->bgColor0 = COLOR_BG_3;
-
-			if (recorder::active) {
-				if (recorder::canRec(ch)) {
-					sampleButton->bgColor0 = COLOR_BG_4;
-					sampleButton->txtColor = COLOR_TEXT_0;
-				}
-			}
-			*/
+			kernelMidi::midi_stopping(midiOutPlaying);
 	}
 }
 
