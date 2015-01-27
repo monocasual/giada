@@ -53,7 +53,10 @@ private:
 	void fillChanMenu(class gChoice *m);
 
 	class gCheck  *enableOut;
+	class gCheck  *enableProgChg, *enableBankChg;
 	class gChoice *chanListOut;
+	class gValue  *progChange, *bankChange;
+
 	class gButton *save;
 	class gButton *cancel;
 
