@@ -47,7 +47,11 @@ extern PluginHost  G_PluginHost;
 MidiChannel::MidiChannel(int bufferSize)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
 	  midiOut    (false),
-	  midiOutChan(MIDI_CHANS[0])
+	  midiOutChan(MIDI_CHANS[0]),
+	  midiOutProg      (false),
+	  midiOutBank      (false),
+	  midiProgChg      (0),
+	  midiBankChg      (0)
 {
 #ifdef WITH_VST // init VstEvents stack
 	freeVstMidiEvents(true);
@@ -214,6 +218,10 @@ void MidiChannel::start(int frame, bool doQuantize) {
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;
+			if( midiOutBank )  
+				kernelMidi::send((uint32_t) (MIDI_CHANS[midiOutChan] | MIDI_CONTROLLER | midiBankChg) );
+			if( midiOutProg ) 
+				kernelMidi::send( (MIDI_CHANS[midiOutChan] | MIDI_PROGRAM) >>24, midiProgChg, -1  );
 			break;
 		case STATUS_ENDING:
 		case STATUS_WAIT:
@@ -263,6 +271,10 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 
 	midiOut     = G_Patch.getMidiValue(i, "Out");
 	midiOutChan = G_Patch.getMidiValue(i, "OutChan");
+	midiOutProg = G_Patch.getMidiValue(i, "OutProg");
+	midiOutBank = G_Patch.getMidiValue(i, "OutBank");
+	midiProgChg = G_Patch.getMidiValue(i, "ProgChg");
+	midiBankChg = G_Patch.getMidiValue(i, "BankChg");
 
 	readPatchMidiIn(i);
 
@@ -331,4 +343,8 @@ void MidiChannel::writePatch(FILE *fp, int i, bool isProject)
 
 	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
 	fprintf(fp, "chanMidiOutChan%d=%u\n",    i, midiOutChan);
+	fprintf(fp, "chanMidiOutProg%d=%u\n",    i, midiOutProg);
+	fprintf(fp, "chanMidiOutBank%d=%u\n",    i, midiOutBank);
+	fprintf(fp, "chanMidiProgChg%d=%u\n",    i, midiProgChg);
+	fprintf(fp, "chanMidiBankChg%d=%u\n",    i, midiBankChg);
 }
