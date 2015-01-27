@@ -1,12 +1,12 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_channel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2014 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GE_CHANNEL_H
@@ -32,6 +32,8 @@
 
 
 #include <FL/Fl_Scroll.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Button.H>
 
 
 class gChannel : public Fl_Group
@@ -80,7 +82,7 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gSampleChannel : public gChannel
@@ -134,7 +136,7 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gMidiChannel : public gChannel
@@ -173,5 +175,32 @@ public:
 	class MidiChannel *ch;
 };
 
+
+/* -------------------------------------------------------------------------- */
+
+
+class gStatus : public Fl_Box
+{
+public:
+	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
+	void draw();
+	class SampleChannel *ch;
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gModeBox : public Fl_Menu_Button {
+private:
+	static void cb_change_chanmode(Fl_Widget *v, void *p);
+	inline void __cb_change_chanmode(int mode);
+
+	class SampleChannel *ch;
+
+public:
+	gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
+	void draw();
+};
 
 #endif
