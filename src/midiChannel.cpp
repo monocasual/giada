@@ -180,9 +180,9 @@ void MidiChannel::onZero(int frame) {
 void MidiChannel::setMute(bool internal) {
 	mute = true;  	// internal mute does not exist for midi (for now)
 	if (midiOut)
-		kernelMidi::send(MIDI_ALL_NOTES_OFF);
+		kernelMidi::send((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #endif
 }
 
@@ -248,9 +248,9 @@ void MidiChannel::stopBySeq() {
 void MidiChannel::kill(int frame) {
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		if (midiOut)
-			kernelMidi::send(MIDI_ALL_NOTES_OFF);
+			kernelMidi::send((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #endif
 	}
 	status = STATUS_OFF;
@@ -327,9 +327,9 @@ void MidiChannel::recvMidi(uint32_t data)
 
 void MidiChannel::rewind() {
 	if (midiOut)
-		kernelMidi::send(MIDI_ALL_NOTES_OFF);
+		kernelMidi::send((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent((uint32_t) MIDI_CHANS[midiOutChan] | MIDI_ALL_NOTES_OFF);
 #endif
 }
 
