@@ -52,7 +52,7 @@ gdMidiOutputSetup::gdMidiOutputSetup(MidiChannel *ch)
 	progChange     = new gValue(x()+100, h()-50, 20, 20, "Prog Change");
 	bankChange     = new gValue(x()+100, h()-25, 20, 20, "Bank Change");
 
-	save   = new gButton(w()-88, bankChange->y()+bankChange->h()+8, 80, 20, "Save");
+	save   = new gButton(w()-88, bankChange->y(), 80, 20, "Save");
 	cancel = new gButton(w()-88-save->w()-8, save->y(), 80, 20, "Cancel");
 	end();
 
