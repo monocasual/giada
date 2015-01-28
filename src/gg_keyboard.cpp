@@ -187,26 +187,19 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addC
 
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
-	gColumn *col = NULL;
+	gColumn *col = getColumn(colIndex);
 
-	if (build) {
+	/* no column with index 'colIndex' found? Just create it and set its index
+	to 'colIndex'. */
+
+	if (!col) {
 		__cb_addColumn();
 		col = columns.last();
 		col->setIndex(colIndex);
-	}
-	else {
-		for (unsigned i=0; i<columns.size; i++)
-			if (columns.at(i)->getIndex() == colIndex) {
-				col = columns.at(i);
-				break;
-			}
-		if (!col) {
-			gLog("[gKeyboard::addChannel] column with index %d not found!\n", colIndex);
-			return NULL;
-		}
-		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+		gLog("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
 
+	gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	return col->addChannel(ch);
 }
 
@@ -218,6 +211,18 @@ void gKeyboard::refreshColumns()
 {
 	for (unsigned i=0; i<columns.size; i++)
 		columns.at(i)->refreshChannels();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gColumn *gKeyboard::getColumn(int index)
+{
+	for (unsigned i=0; i<columns.size; i++)
+		if (columns.at(i)->getIndex() == index)
+			return columns.at(i);
+	return NULL;
 }
 
 
@@ -368,7 +373,7 @@ void gKeyboard::__cb_addColumn()
 	addColumnBtn->position(colxw-4, y());
 	redraw();
 
-	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n",
+	gLog("[gKeyboard::__cb_addColumn] new column added (index = %d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), columns.size, addColumnBtn->x());
 }
 
