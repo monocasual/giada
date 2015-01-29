@@ -134,6 +134,19 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	//Fl::check();
 	Fl::wait(0);
 
+	// -----------
+/*
+	int numChans = G_Patch.getNumChans();
+	for (int i=0; i<numChans; i++) {
+		int columnIndex = G_Patch.getColumn(i);
+		gLog("add channel %d in column with index %d\n", i, columnIndex);
+		if (!mainWin->keyboard->hasColumn(columnIndex))
+			gLog("   the column does not exist in keyboard!\n");
+	}
+	return 1;
+*/
+	// -----------
+
 	/* mixerHandler will update the samples inside Mixer */
 
 	mh_loadPatch(isProject, fname);
@@ -598,6 +611,7 @@ void glue_resetToInitState(bool resetGui)
 
 	mh_clear();
 	mainWin->keyboard->clear();
+	mainWin->keyboard->init();
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();

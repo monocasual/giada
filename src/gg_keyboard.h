@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gg_keyboard
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GG_KEYBOARD_H
@@ -99,7 +99,7 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gKeyboard : public Fl_Scroll
@@ -113,6 +113,9 @@ private:
 	bool endPressed;
 	bool spacePressed;
 	bool enterPressed;
+
+	/* indexColumn
+	 * the last index used for column. */
 
 	static int indexColumn;
 
@@ -167,6 +170,11 @@ public:
 	 * refresh each column's channel, called on each GUI cycle. */
 
 	void refreshColumns();
+
+	/* getColumn
+	 * return the column with index 'index', or NULL if not found. */
+
+	gColumn *getColumn(int index);
 
 	/* clear
 	 * delete all channels and groups. */

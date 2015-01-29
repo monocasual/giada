@@ -68,7 +68,7 @@ int Patch::open(const char *file)
 /* ------------------------------------------------------------------ */
 
 
-void Patch::setDefault() 
+void Patch::setDefault()
 {
 	name[0]    = '\0';
   lastTakeId = 0;
@@ -79,7 +79,7 @@ void Patch::setDefault()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::close() 
+int Patch::close()
 {
 	return fclose(fp);
 }
@@ -88,7 +88,7 @@ int Patch::close()
 /* ------------------------------------------------------------------ */
 
 
-void Patch::getName() 
+void Patch::getName()
 {
 	std::string out = getValue("patchname");
 	strncpy(name, out.c_str(), MAX_PATCHNAME_LEN);
@@ -98,7 +98,7 @@ void Patch::getName()
 /* ------------------------------------------------------------------ */
 
 
-std::string Patch::getSamplePath(int c) 
+std::string Patch::getSamplePath(int c)
 {
 	char tmp[16];
 	sprintf(tmp, "samplepath%d", c);
@@ -109,7 +109,7 @@ std::string Patch::getSamplePath(int c)
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getPitch(int c) 
+float Patch::getPitch(int c)
 {
 	char tmp[16];
 	sprintf(tmp, "chanPitch%d", c);
@@ -123,7 +123,7 @@ float Patch::getPitch(int c)
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getNumChans() 
+int Patch::getNumChans()
 {
 	if (version == 0.0)      // backward compatibility with version < 0.6.1
 		return 32;
@@ -367,7 +367,7 @@ float Patch::getInVol()
 /* ------------------------------------------------------------------ */
 
 
-float Patch::getBpm() 
+float Patch::getBpm()
 {
 	float out = atof(getValue("bpm").c_str());
 	if (out < 20.0f || out > 999.0f)
@@ -379,7 +379,7 @@ float Patch::getBpm()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getBars() 
+int Patch::getBars()
 {
 	int out = atoi(getValue("bars").c_str());
 	if (out <= 0 || out > 32)
@@ -391,7 +391,7 @@ int Patch::getBars()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getBeats() 
+int Patch::getBeats()
 {
 	int out = atoi(getValue("beats").c_str());
 	if (out <= 0 || out > 32)
@@ -403,7 +403,7 @@ int Patch::getBeats()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getQuantize() 
+int Patch::getQuantize()
 {
 	int out = atoi(getValue("quantize").c_str());
 	if (out < 0 || out > 8)
@@ -415,7 +415,7 @@ int Patch::getQuantize()
 /* ------------------------------------------------------------------ */
 
 
-bool Patch::getMetronome() 
+bool Patch::getMetronome()
 {
 	bool out = atoi(getValue("metronome").c_str());
 	if (out != true || out != false)
@@ -427,7 +427,7 @@ bool Patch::getMetronome()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getLastTakeId() 
+int Patch::getLastTakeId()
 {
 	return atoi(getValue("lastTakeId").c_str());
 }
@@ -436,7 +436,7 @@ int Patch::getLastTakeId()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::getSamplerate() 
+int Patch::getSamplerate()
 {
 	int out = atoi(getValue("samplerate").c_str());
 	if (out <= 0)
@@ -448,7 +448,7 @@ int Patch::getSamplerate()
 /* ------------------------------------------------------------------ */
 
 
-uint32_t Patch::getMidiValue(int i, const char *c) 
+uint32_t Patch::getMidiValue(int i, const char *c)
 {
 	char tmp[32];
 	sprintf(tmp, "chanMidi%s%d", c, i);
@@ -459,7 +459,7 @@ uint32_t Patch::getMidiValue(int i, const char *c)
 /* ------------------------------------------------------------------ */
 
 
-int Patch::readRecs() 
+int Patch::readRecs()
 {
 	gLog("[PATCH] Reading recs...\n");
 
@@ -516,7 +516,7 @@ int Patch::readRecs()
 
 
 #ifdef WITH_VST
-int Patch::readPlugins() 
+int Patch::readPlugins()
 {
 	gLog("[PATCH] Reading plugins...\n");
 
@@ -562,7 +562,7 @@ int Patch::readPlugins()
 /* ------------------------------------------------------------------ */
 
 
-int Patch::write(const char *file, const char *name, bool project) 
+int Patch::write(const char *file, const char *name, bool project)
 {
 	fp = fopen(file, "w");
 	if (fp == NULL)
@@ -628,6 +628,10 @@ int Patch::write(const char *file, const char *name, bool project)
 
 		for (int j=0; j<numPlugs; j++) {
 			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
+			if (!pPlugin->status) {
+				gLog("[PATCH] Plugin %d is in a bad status, skip writing params\n", i);
+				continue;
+			}
 			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
 			fprintf(fp, "chan%d_p%dbypass=%d\n",   ch->index, j, pPlugin->bypass);
 			numParams = pPlugin->getNumParams();
@@ -649,7 +653,7 @@ int Patch::write(const char *file, const char *name, bool project)
 
 #ifdef WITH_VST
 
-int Patch::readMasterPlugins(int type) 
+int Patch::readMasterPlugins(int type)
 {
 	int  nmp;
 	char chr;
@@ -690,7 +694,7 @@ int Patch::readMasterPlugins(int type)
 /* ------------------------------------------------------------------ */
 
 
-void Patch::writeMasterPlugins(int type) 
+void Patch::writeMasterPlugins(int type)
 {
 	char chr;
 
@@ -707,7 +711,13 @@ void Patch::writeMasterPlugins(int type)
 	fprintf(fp, "master%cPlugins=%d\n", chr, nmp);
 
 	for (int i=0; i<nmp; i++) {
+
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
+		if (!pPlugin->status) {
+			gLog("[PATCH] Plugin %d is in a bad status, skip writing params\n", i);
+			continue;
+		}
+
 		fprintf(fp, "master%c_p%dpathfile=%s\n", chr, i, pPlugin->pathfile);
 		fprintf(fp, "master%c_p%dbypass=%d\n", chr, i, pPlugin->bypass);
 		int numParams = pPlugin->getNumParams();
