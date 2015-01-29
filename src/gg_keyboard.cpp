@@ -86,6 +86,10 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_BOX);
 
+	addColumnBtn = new gClick(8, y(), 200, 20, "Add new column");
+	addColumnBtn->callback(cb_addColumn, (void*) this);
+	add(addColumnBtn);
+
 	init();
 }
 
@@ -183,26 +187,19 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addC
 
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
-	gColumn *col = NULL;
+	gColumn *col = getColumn(colIndex);
 
-	if (build) {
+	/* no column with index 'colIndex' found? Just create it and set its index
+	to 'colIndex'. */
+
+	if (!col) {
 		__cb_addColumn();
 		col = columns.last();
 		col->setIndex(colIndex);
-	}
-	else {
-		for (unsigned i=0; i<columns.size; i++)
-			if (columns.at(i)->getIndex() == colIndex) {
-				col = columns.at(i);
-				break;
-			}
-		if (!col) {
-			gLog("[gKeyboard::addChannel] column not found!\n");
-			return NULL;
-		}
-		gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+		gLog("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
 
+	gLog("[ggKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	return col->addChannel(ch);
 }
 
@@ -214,6 +211,18 @@ void gKeyboard::refreshColumns()
 {
 	for (unsigned i=0; i<columns.size; i++)
 		columns.at(i)->refreshChannels();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gColumn *gKeyboard::getColumn(int index)
+{
+	for (unsigned i=0; i<columns.size; i++)
+		if (columns.at(i)->getIndex() == index)
+			return columns.at(i);
+	return NULL;
 }
 
 
@@ -291,10 +300,11 @@ int gKeyboard::handle(int e)
 
 void gKeyboard::clear()
 {
-	Fl_Scroll::clear();
+	for (unsigned i=0; i<columns.size; i++)
+		delete columns.at(i);
 	columns.clear();
 	indexColumn = 0;     // new columns will start from index=0
-	init();
+	addColumnBtn->position(8, y());
 }
 
 
@@ -344,23 +354,26 @@ void gKeyboard::__cb_addColumn()
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + colw;
-		addColumnBtn = new gClick(colxw + 16, y(), 200, 20, "Add new column");
-		addColumnBtn->callback(cb_addColumn, (void*) this);
-		add(addColumnBtn);
 	}
 	else {
 		gColumn *prev = columns.last();
 		colx  = prev->x()+prev->w() + 16;
 		colxw = colx + colw;
-		addColumnBtn->position(colxw-4, y());
 	}
+
+	/* add gColumn to gKeyboard and to columns vector */
+
 	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn, this);
   add(gc);
-  indexColumn++;
 	columns.add(gc);
+	indexColumn++;
+
+	/* move addColumn button */
+
+	addColumnBtn->position(colxw-4, y());
 	redraw();
 
-	gLog("[gKeyboard] new column added (index = %d), total count=%d, addColumn=%d\n",
+	gLog("[gKeyboard::__cb_addColumn] new column added (index = %d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), columns.size, addColumnBtn->x());
 }
 

@@ -76,7 +76,7 @@ void mh_clear()
 {
 	G_Mixer.running = false;
 	while (G_Mixer.channels.size > 0)
-		G_Mixer.channels.del(0U);  // unsigned	
+		G_Mixer.channels.del(0U);  // unsigned
 }
 
 
