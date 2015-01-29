@@ -4,7 +4,7 @@
 
   Giada - Your Hardcore Loopmachine.
 
-  Developed by Monocasual
+  Developed by Monocasual Laboratories
 
   www.giadamusic.com
 
@@ -17,6 +17,7 @@
 - New GUI improvement: fluid, resizable columns
 - Upgrade to FLTK 1.3.3
 - More robust column handling mechanism
+- Add compatibility with MIDI devices without note-off
 - Fix segfaults when saving a patch with missing plugins
 - Fix many minor graphical bugs
 - Fix wrong vector assignment in MIDI send event
