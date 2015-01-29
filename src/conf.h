@@ -67,6 +67,7 @@ public:
 	int   midiSystem;
 	int   midiPortOut;
 	int   midiPortIn;
+	bool  noNoteOff;
 	int   midiSync;  // see const.h
 	float midiTCfps;
 
