@@ -611,6 +611,7 @@ void glue_resetToInitState(bool resetGui)
 
 	mh_clear();
 	mainWin->keyboard->clear();
+	mainWin->keyboard->init();
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();
