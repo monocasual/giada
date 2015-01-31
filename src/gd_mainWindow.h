@@ -96,7 +96,7 @@ private:
 public:
 
 	gInOut(int x, int y);
-	
+
 	void refresh();
 
 	inline void setOutVol(float v) { outVol->value(v); }
@@ -196,8 +196,9 @@ private:
 public:
 
 	gTiming(int x, int y);
-	
+
 	void setBpm(const char *v);
+	void setBpm(float v);
 	void setMeter(int beats, int bars);
 };
 

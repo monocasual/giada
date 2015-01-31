@@ -100,13 +100,16 @@ void __gu_blinkChannel(gChannel *gch)
 /* ------------------------------------------------------------------ */
 
 
-void gu_update_controls()
+void gu_updateControls()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++)
 		G_Mixer.channels.at(i)->guiChannel->update();
 
 	mainWin->inOut->setOutVol(G_Mixer.outVol);
 	mainWin->inOut->setInVol(G_Mixer.inVol);
+
+	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
+	mainWin->timing->setBpm(G_Mixer.bpm);
 
 	/* if you reset to init state while the seq is in play: it's better to
 	 * update the button status */

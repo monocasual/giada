@@ -134,19 +134,6 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	//Fl::check();
 	Fl::wait(0);
 
-	// -----------
-/*
-	int numChans = G_Patch.getNumChans();
-	for (int i=0; i<numChans; i++) {
-		int columnIndex = G_Patch.getColumn(i);
-		gLog("add channel %d in column with index %d\n", i, columnIndex);
-		if (!mainWin->keyboard->hasColumn(columnIndex))
-			gLog("   the column does not exist in keyboard!\n");
-	}
-	return 1;
-*/
-	// -----------
-
 	/* mixerHandler will update the samples inside Mixer */
 
 	mh_loadPatch(isProject, fname);
@@ -179,7 +166,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 
 	/* update gui */
 
-	gu_update_controls();
+	gu_updateControls();
 
 	status->value(1.0f);  // progress status: 1.0 (done)
 	//Fl::check();
@@ -194,7 +181,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 
 #ifdef WITH_VST
 	if (resPlugins != 1)
-		gdAlert("Some VST files were not loaded successfully.");
+		gdAlert("Some VST plugins were not loaded successfully.");
 #endif
 
 	return res;
@@ -598,7 +585,7 @@ void glue_clearAllSamples()
 void glue_clearAllRecs()
 {
 	recorder::init();
-	gu_update_controls();
+	gu_updateControls();
 }
 
 
@@ -620,7 +607,7 @@ void glue_resetToInitState(bool resetGui)
 #endif
 
 	if (resetGui)
-		gu_update_controls();
+		gu_updateControls();
 
 	G_Mixer.ready = true;
 }

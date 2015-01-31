@@ -653,6 +653,14 @@ void gTiming::setBpm(const char *v)
 }
 
 
+void gTiming::setBpm(float v)
+{
+	char buf[6];
+	sprintf(buf, "%.01f", v);  // only 1 decimal place (e.g. 120.0)
+	bpm->copy_label(buf);
+}
+
+
 /* ------------------------------------------------------------------ */
 
 
