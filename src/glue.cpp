@@ -126,9 +126,10 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	if (res)
 		gu_closeAllSubwindows();
 
-	/* reset the system. False = don't update the gui right now */
+	/* reset the system. False(1): don't update the gui right now. False(2): do
+	 * not create empty columns. */
 
-	glue_resetToInitState(false);
+	glue_resetToInitState(false, false);
 
 	status->value(0.2f);  // progress status: % 0.2
 	//Fl::check();
@@ -592,13 +593,14 @@ void glue_clearAllRecs()
 /* ------------------------------------------------------------------ */
 
 
-void glue_resetToInitState(bool resetGui)
+void glue_resetToInitState(bool resetGui, bool createColumns)
 {
 	G_Mixer.ready = false;
 
 	mh_clear();
 	mainWin->keyboard->clear();
-	mainWin->keyboard->init();
+	if (createColumns)
+		mainWin->keyboard->init();
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();
