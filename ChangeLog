@@ -17,7 +17,7 @@
 - New GUI improvement: responsive and resizable columns
 - Upgrade to FLTK 1.3.3
 - More robust column handling mechanism
-- Add compatibility with MIDI devices without note-off message (@blablack)
+- Support for MIDI devices without note-off message (@blablack)
 - Fix segfaults when saving a patch with missing plugins
 - Fix many minor graphical bugs
 - Fix wrong vector assignment in MIDI send event
