@@ -563,8 +563,8 @@ gTiming::gTiming(int x, int y)
 	quantizer  = new gChoice(x, y, 40, 15, "", false);
 	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
 	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 15, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "×");
-	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷");
+	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "", beatsMultiplyOff_xpm, beatsMultiplyOn_xpm);
+	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷", beatsDivideOff_xpm, beatsDivideOn_xpm);
 
 	end();
 
