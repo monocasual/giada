@@ -495,18 +495,6 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, 
 		record();
 		size((frame_b - frame_a) / pParent->zoom, h());
 	}
-
-  fixFramesParity();  // always make sure frames are even
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gPianoItem::fixFramesParity()
-{
-  if (frame_a % 2 != 0) frame_a++;
-  if (frame_b % 2 != 0) frame_b++;
 }
 
 
@@ -728,7 +716,6 @@ int gPianoItem::handle(int e) {
 				note    = getNote(getRelY());
 				frame_a = getRelX() * pParent->zoom;
 				frame_b = (getRelX()+w()) * pParent->zoom;
-        fixFramesParity();  // always make sure frames are even
 				record();
 				changed = false;
 			}

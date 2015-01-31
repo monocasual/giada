@@ -128,15 +128,6 @@ private:
 
 	bool overlap();
 
-	/* fixFramesParity
-	 * recorded frames MUST ALWAYS BE EVEN. Even if recorder itself takes care of
-	 * frame parity, we need to check against odd frames anyway in case the parent
-	 * widget remains open and we have just added an action with an odd frame. The
-	 * error would be fixed in recorder (model) but not in the view (gPianoRoll)!
-	 * Call this funcion wherever you add or shift an action. */
-
-	void fixFramesParity();
-
 	recorder::action *a;
 	recorder::action *b;
 	class gdActionEditor *pParent;

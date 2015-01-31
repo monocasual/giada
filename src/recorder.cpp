@@ -241,6 +241,11 @@ void clearAction(int index, char act)
 
 void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue)
 {
+	/* make sure frame is even */
+
+	if (frame % 2 != 0)
+		frame++;
+		
 	/* find the frame 'frame' */
 
 	bool found = false;
