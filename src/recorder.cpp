@@ -171,7 +171,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 	sortedActions = false;
 
 	gLog("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
-		type, frame, index, iValue, iValue, fValue);
+		a->type, a->frame, a->chan, a->iValue, a->iValue, a->fValue);
 	//print();
 }
 
