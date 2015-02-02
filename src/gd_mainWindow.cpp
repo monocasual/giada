@@ -118,9 +118,6 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 	show(argc, argv);
 }
 
-/*
-gdMainWindow::~gdMainWindow() {}
-*/
 
 /* ------------------------------------------------------------------ */
 
@@ -147,7 +144,7 @@ void gdMainWindow::__cb_endprogram()
 
 
 gInOut::gInOut(int x, int y)
-	: Fl_Group(x, y, 400, 20)
+	: Fl_Group(x, y, 394, 20)
 {
 	begin();
 
@@ -160,10 +157,10 @@ gInOut::gInOut(int x, int y)
 	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 	masterFxOut = new gButton    (outVol->x()+outVol->w()+4, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
 #else
-	outMeter    = new gSoundMeter(x, y+5, 140, 10);
-	inMeter     = new gSoundMeter(outMeter->x()+outMeter->w()+4, y+5, 140, 10);
-	outVol		  = new gDial      (inMeter->x()+inMeter->w()+4, y, 20, 20);
-	inVol		    = new gDial      (outVol->x()+outVol->w()+4, y, 20, 20);
+	inVol		    = new gDial      (x+62, y, 20, 20);
+	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 10);
+	outMeter    = new gSoundMeter(inMeter->x()+inMeter->w()+4, y+5, 140, 10);
+	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 #endif
 
 	end();
@@ -566,8 +563,8 @@ gTiming::gTiming(int x, int y)
 	quantizer  = new gChoice(x, y, 40, 15, "", false);
 	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
 	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 15, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "×");
-	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷");
+	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "", beatsMultiplyOff_xpm, beatsMultiplyOn_xpm);
+	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷", beatsDivideOff_xpm, beatsDivideOn_xpm);
 
 	end();
 
@@ -653,6 +650,14 @@ void gTiming::__cb_divider()
 void gTiming::setBpm(const char *v)
 {
 	bpm->copy_label(v);
+}
+
+
+void gTiming::setBpm(float v)
+{
+	char buf[6];
+	sprintf(buf, "%.01f", v);  // only 1 decimal place (e.g. 120.0)
+	bpm->copy_label(buf);
 }
 
 

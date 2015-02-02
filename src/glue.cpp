@@ -126,26 +126,14 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 	if (res)
 		gu_closeAllSubwindows();
 
-	/* reset the system. False = don't update the gui right now */
+	/* reset the system. False(1): don't update the gui right now. False(2): do
+	 * not create empty columns. */
 
-	glue_resetToInitState(false);
+	glue_resetToInitState(false, false);
 
 	status->value(0.2f);  // progress status: % 0.2
 	//Fl::check();
 	Fl::wait(0);
-
-	// -----------
-/*
-	int numChans = G_Patch.getNumChans();
-	for (int i=0; i<numChans; i++) {
-		int columnIndex = G_Patch.getColumn(i);
-		gLog("add channel %d in column with index %d\n", i, columnIndex);
-		if (!mainWin->keyboard->hasColumn(columnIndex))
-			gLog("   the column does not exist in keyboard!\n");
-	}
-	return 1;
-*/
-	// -----------
 
 	/* mixerHandler will update the samples inside Mixer */
 
@@ -179,7 +167,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 
 	/* update gui */
 
-	gu_update_controls();
+	gu_updateControls();
 
 	status->value(1.0f);  // progress status: 1.0 (done)
 	//Fl::check();
@@ -194,7 +182,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 
 #ifdef WITH_VST
 	if (resPlugins != 1)
-		gdAlert("Some VST files were not loaded successfully.");
+		gdAlert("Some VST plugins were not loaded successfully.");
 #endif
 
 	return res;
@@ -598,20 +586,21 @@ void glue_clearAllSamples()
 void glue_clearAllRecs()
 {
 	recorder::init();
-	gu_update_controls();
+	gu_updateControls();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void glue_resetToInitState(bool resetGui)
+void glue_resetToInitState(bool resetGui, bool createColumns)
 {
 	G_Mixer.ready = false;
 
 	mh_clear();
 	mainWin->keyboard->clear();
-	mainWin->keyboard->init();
+	if (createColumns)
+		mainWin->keyboard->init();
 	recorder::init();
 	G_Patch.setDefault();
 	G_Mixer.init();
@@ -620,7 +609,7 @@ void glue_resetToInitState(bool resetGui)
 #endif
 
 	if (resetGui)
-		gu_update_controls();
+		gu_updateControls();
 
 	G_Mixer.ready = true;
 }
