@@ -52,12 +52,12 @@ gTabMisc::gTabMisc(int X, int Y, int W, int H)
 {
 	begin();
 	debugMsg = new gChoice(x()+92,  y()+9,  253, 20, "Debug messages");
-	end();	
-	
-	debugMsg->add("(disabled)"); 
-	debugMsg->add("To standard output"); 
-	debugMsg->add("To file"); 
-	
+	end();
+
+	debugMsg->add("(disabled)");
+	debugMsg->add("To standard output");
+	debugMsg->add("To file");
+
 	labelsize(11);
 
 	switch (G_Conf.logMode) {
@@ -88,7 +88,7 @@ void gTabMisc::save()
 			break;
 		case 2:
 			G_Conf.logMode = LOG_MODE_FILE;
-			break;			
+			break;
 	}
 }
 
@@ -229,7 +229,7 @@ void gTabAudio::cb_showOutputInfo(Fl_Widget *w, void *p)      { ((gTabAudio*)p)-
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_fetchInChans() 
+void gTabAudio::__cb_fetchInChans()
 {
 	fetchInChans(sounddevIn->value());
 	channelsIn->value(0);
@@ -239,7 +239,7 @@ void gTabAudio::__cb_fetchInChans()
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_fetchOutChans() 
+void gTabAudio::__cb_fetchOutChans()
 {
 	fetchOutChans(sounddevOut->value());
 	channelsOut->value(0);
@@ -249,7 +249,7 @@ void gTabAudio::__cb_fetchOutChans()
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_showInputInfo() 
+void gTabAudio::__cb_showInputInfo()
 {
 	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
 	new gdDevInfo(dev);
@@ -259,7 +259,7 @@ void gTabAudio::__cb_showInputInfo()
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::__cb_showOutputInfo() 
+void gTabAudio::__cb_showOutputInfo()
 {
 	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
 	new gdDevInfo(dev);
@@ -312,7 +312,7 @@ void gTabAudio::__cb_deactivate_sounddev()
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchInChans(int menuItem) 
+void gTabAudio::fetchInChans(int menuItem)
 {
 	/* if menuItem==0 device in input is disabled. */
 
@@ -349,7 +349,7 @@ void gTabAudio::fetchInChans(int menuItem)
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchOutChans(int menuItem) 
+void gTabAudio::fetchOutChans(int menuItem)
 {
 	channelsOut->clear();
 
@@ -373,7 +373,7 @@ void gTabAudio::fetchOutChans(int menuItem)
 /* ------------------------------------------------------------------ */
 
 
-int gTabAudio::findMenuDevice(gChoice *m, int device) 
+int gTabAudio::findMenuDevice(gChoice *m, int device)
 {
 	if (device == -1)
 		return 0;
@@ -397,7 +397,7 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::fetchSoundDevs() 
+void gTabAudio::fetchSoundDevs()
 {
 	if (kernelAudio::numDevs == 0) {
 		sounddevOut->add("-- no devices found --");
@@ -465,7 +465,7 @@ void gTabAudio::fetchSoundDevs()
 /* ------------------------------------------------------------------ */
 
 
-void gTabAudio::save() 
+void gTabAudio::save()
 {
 	/** FIXME - wrong, if API is missing! Right way in gTabMidi::save */
 
@@ -525,8 +525,8 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	portOut	  = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn	  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
 	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
-	sync	  = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h()+8, 253, 20, "Sync");
-	new gBox(x(), sync->y()+sync->h()+8, w(), h()-100, "Restart Giada for the changes to take effect.");
+	sync	    = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Sync");
+	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
@@ -582,7 +582,7 @@ void gTabMidi::fetchOutPorts() {
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::fetchInPorts() 
+void gTabMidi::fetchInPorts()
 {
 	if (kernelMidi::numInPorts == 0) {
 		portIn->add("-- no ports found --");
@@ -609,7 +609,7 @@ void gTabMidi::fetchInPorts()
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::save() 
+void gTabMidi::save()
 {
 	if      (!strcmp("ALSA", system->text(system->value())))
 		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
@@ -639,7 +639,7 @@ void gTabMidi::save()
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::fetchSystems() 
+void gTabMidi::fetchSystems()
 {
 #if defined(__linux__)
 
@@ -681,7 +681,7 @@ void gTabMidi::cb_changeSystem(Fl_Widget *w, void *p) { ((gTabMidi*)p)->__cb_cha
 /* ------------------------------------------------------------------ */
 
 
-void gTabMidi::__cb_changeSystem() 
+void gTabMidi::__cb_changeSystem()
 {
 	/* if the user changes MIDI device (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original system, we re-fill the list by
@@ -748,7 +748,7 @@ void gTabBehaviors::cb_radio_mutex(Fl_Widget *w, void *p) { ((gTabBehaviors*)p)-
 /* ------------------------------------------------------------------ */
 
 
-void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w) 
+void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w)
 {
 	((Fl_Button *)w)->type(FL_RADIO_BUTTON);
 }
@@ -757,7 +757,7 @@ void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w)
 /* ------------------------------------------------------------------ */
 
 
-void gTabBehaviors::save() 
+void gTabBehaviors::save()
 {
 	G_Conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	G_Conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
@@ -805,7 +805,7 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 /* ------------------------------------------------------------------ */
 
 
-gdConfig::~gdConfig() 
+gdConfig::~gdConfig()
 {
 	G_Conf.configX = x();
 	G_Conf.configY = y();
@@ -822,7 +822,7 @@ void gdConfig::cb_cancel     (Fl_Widget *w, void *p) { ((gdConfig*)p)->__cb_canc
 /* ------------------------------------------------------------------ */
 
 
-void gdConfig::__cb_save_config() 
+void gdConfig::__cb_save_config()
 {
 	tabAudio->save();
 	tabBehaviors->save();
@@ -835,7 +835,7 @@ void gdConfig::__cb_save_config()
 /* ------------------------------------------------------------------ */
 
 
-void gdConfig::__cb_cancel() 
+void gdConfig::__cb_cancel()
 {
 	do_callback();
 }

@@ -55,7 +55,7 @@ extern Patch f_patch;
 extern Conf	 G_Conf;
 
 
-namespace recorder 
+namespace recorder
 {
 gVector<int> frames;
 gVector< gVector<action*> > global;
@@ -70,7 +70,7 @@ composite cmp;
 /* ------------------------------------------------------------------ */
 
 
-void init() 
+void init()
 {
 	sortedActions = false;
 	active = false;
@@ -81,7 +81,7 @@ void init()
 /* ------------------------------------------------------------------ */
 
 
-bool canRec(Channel *ch) 
+bool canRec(Channel *ch)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -101,10 +101,10 @@ bool canRec(Channel *ch)
 void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 {
 	/* make sure frame is even */
-	
+
 	if (frame % 2 != 0)
 		frame++;
-		
+
 	/* allocating the action */
 
 	action *a = (action*) malloc(sizeof(action));
@@ -170,8 +170,8 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 
 	sortedActions = false;
 
-	gLog("[REC] action type=%d recorded on frame=%d, chan=%d, iValue=%d (%X), fValue=%f\n",
-		type, frame, index, iValue, iValue, fValue);
+	gLog("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		a->type, a->frame, a->chan, a->iValue, a->iValue, a->fValue);
 	//print();
 }
 
@@ -179,7 +179,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 /* ------------------------------------------------------------------ */
 
 
-void clearChan(int index) 
+void clearChan(int index)
 {
 	gLog("[REC] clearing chan %d...\n", index);
 
@@ -211,7 +211,7 @@ void clearChan(int index)
 /* ------------------------------------------------------------------ */
 
 
-void clearAction(int index, char act) 
+void clearAction(int index, char act)
 {
 	gLog("[REC] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size; i++) {						// for each frame i
@@ -239,8 +239,13 @@ void clearAction(int index, char act)
 /* ------------------------------------------------------------------ */
 
 
-void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue) 
+void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue)
 {
+	/* make sure frame is even */
+
+	if (frame % 2 != 0)
+		frame++;
+		
 	/* find the frame 'frame' */
 
 	bool found = false;
@@ -287,7 +292,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 			type, frame, chan, iValue, iValue, fValue);
 	}
 	else
-		gLog("[REC] unable to find action! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		gLog("[REC] unable to delete action, not found! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 }
 
@@ -295,7 +300,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 /* ------------------------------------------------------------------ */
 
 
-void deleteActions(int chan, int frame_a, int frame_b, char type) 
+void deleteActions(int chan, int frame_a, int frame_b, char type)
 {
 	sortActions();
 	gVector<int> dels;
@@ -312,7 +317,7 @@ void deleteActions(int chan, int frame_a, int frame_b, char type)
 /* ------------------------------------------------------------------ */
 
 
-void clearAll() 
+void clearAll()
 {
 	while (global.size > 0) {
 		for (unsigned i=0; i<global.size; i++) {
@@ -342,7 +347,7 @@ void clearAll()
 /* ------------------------------------------------------------------ */
 
 
-void optimize() 
+void optimize()
 {
 	/* do something until the i frame is empty. */
 
@@ -364,7 +369,7 @@ void optimize()
 /* ------------------------------------------------------------------ */
 
 
-void sortActions() 
+void sortActions()
 {
 	if (sortedActions)
 		return;
@@ -382,7 +387,7 @@ void sortActions()
 /* ------------------------------------------------------------------ */
 
 
-void updateBpm(float oldval, float newval, int oldquanto) 
+void updateBpm(float oldval, float newval, int oldquanto)
 {
 	for (unsigned i=0; i<frames.size; i++) {
 
@@ -423,7 +428,7 @@ void updateBpm(float oldval, float newval, int oldquanto)
 /* ------------------------------------------------------------------ */
 
 
-void updateSamplerate(int systemRate, int patchRate) 
+void updateSamplerate(int systemRate, int patchRate)
 {
 	/* diff ratio: systemRate / patchRate
 	 * e.g.  44100 / 96000 = 0.4... */
@@ -463,7 +468,7 @@ void updateSamplerate(int systemRate, int patchRate)
 /* ------------------------------------------------------------------ */
 
 
-void expand(int old_fpb, int new_fpb) 
+void expand(int old_fpb, int new_fpb)
 {
 	/* this algorithm requires multiple passages if we expand from e.g. 2
 	 * to 16 beats, precisely 16 / 2 - 1 = 7 times (-1 is the first group,
@@ -494,7 +499,7 @@ void expand(int old_fpb, int new_fpb)
 /* ------------------------------------------------------------------ */
 
 
-void shrink(int new_fpb) 
+void shrink(int new_fpb)
 {
 	/* easier than expand(): here we delete eveything beyond old_framesPerBars. */
 
@@ -521,7 +526,7 @@ void shrink(int new_fpb)
 /* ------------------------------------------------------------------ */
 
 
-void chanHasActions(int index) 
+void chanHasActions(int index)
 {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size == 0) {
@@ -540,7 +545,7 @@ void chanHasActions(int index)
 /* ------------------------------------------------------------------ */
 
 
-int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue) 
+int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 {
 	sortActions();  // mandatory
 
@@ -568,7 +573,7 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 /* ------------------------------------------------------------------ */
 
 
-int getAction(int chan, char action, int frame, struct action **out) 
+int getAction(int chan, char action, int frame, struct action **out)
 {
 	for (unsigned i=0; i<global.size; i++)
 		for (unsigned j=0; j<global.at(i).size; j++)
@@ -586,7 +591,7 @@ int getAction(int chan, char action, int frame, struct action **out)
 /* ------------------------------------------------------------------ */
 
 
-void startOverdub(int index, char actionMask, int frame) 
+void startOverdub(int index, char actionMask, int frame)
 {
 	/* prepare the composite struct */
 
@@ -628,7 +633,7 @@ void startOverdub(int index, char actionMask, int frame)
 /* ------------------------------------------------------------------ */
 
 
-void stopOverdub(int frame) 
+void stopOverdub(int frame)
 {
 	cmp.a2.frame  = frame;
 	bool ringLoop = false;
@@ -679,7 +684,7 @@ void stopOverdub(int frame)
 /* ------------------------------------------------------------------ */
 
 
-void print() 
+void print()
 {
 	gLog("[REC] ** print debug **\n");
 	for (unsigned i=0; i<global.size; i++) {

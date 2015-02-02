@@ -11,7 +11,7 @@
  *
  * ---------------------------------------------------------------------
  *
- * Copyright (C) 2010-2011 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -114,9 +114,10 @@ void glue_clearAllSamples();
 void glue_clearAllRecs();
 
 /* resetToInitState
- * reset Giada to init state. */
+ * reset Giada to init state. If resetGui also refresh all widgets. If
+ * createColumns also build initial empty columns. */
 
-void glue_resetToInitState(bool resetGui=true);
+void glue_resetToInitState(bool resetGui=true, bool createColumns=true);
 
 void glue_startStopMetronome(bool gui=true);
 

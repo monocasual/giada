@@ -116,7 +116,7 @@ void init_startGUI(int argc, char **argv)
 	 * are around the corner */
 
 	if (G_audio_status)
-		gu_update_controls();
+		gu_updateControls();
 
 	if (!G_audio_status)
 		gdAlert(
@@ -145,9 +145,9 @@ void init_startKernelAudio()
 void init_shutdown()
 {
 	G_quit = true;
-	
+
 	/* store position and size of the main window for the next startup */
-	
+
 	G_Conf.mainWindowX = mainWin->x();
 	G_Conf.mainWindowY = mainWin->y();
 	G_Conf.mainWindowW = mainWin->w();

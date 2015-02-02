@@ -128,7 +128,6 @@ private:
 
 	bool overlap();
 
-
 	recorder::action *a;
 	recorder::action *b;
 	class gdActionEditor *pParent;

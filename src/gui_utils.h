@@ -53,11 +53,11 @@ void __gu_blinkChannel(class gChannel *gch);
 
 void gu_refresh();
 
-/* update controls
+/* updateControls
  * update attributes of control elements (sample names, volumes, ...).
  * Useful when loading a new patch. */
 
-void gu_update_controls();
+void gu_updateControls();
 
 /* update_win_label
  * update the name of the main window */
