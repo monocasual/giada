@@ -49,6 +49,7 @@ private:
 public:
 
 	class gKeyboard   *keyboard;
+	class gSongMeter  *songMeter;
 	class gBeatMeter  *beatMeter;
 	class gMenu       *menu;
 	class gInOut      *inOut;
