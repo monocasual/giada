@@ -1197,3 +1197,17 @@ void glue_beatsDivide()
 {
 	glue_setBeats(G_Mixer.beats/2, G_Mixer.bars, false);
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_breaksMultiply()
+{
+	glue_setBreaks(G_Mixer.breaks*2, false);
+}
+
+void glue_breaksDivide()
+{
+	glue_setBreaks(G_Mixer.breaks/2, false);
+}
