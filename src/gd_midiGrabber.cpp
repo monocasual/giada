@@ -173,7 +173,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 void gdMidiGrabberChannel::__cb_enableTunnel() {
-	ch->tunnelIn = enable->value();
+	ch->tunnelIn = enableTunnel->value();
 }
 
 
