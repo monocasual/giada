@@ -1204,10 +1204,10 @@ void glue_beatsDivide()
 
 void glue_breaksMultiply()
 {
-	glue_setBreaks(G_Mixer.breaks*2, false);
+	glue_setBreaks(G_Mixer.breaks*2);
 }
 
 void glue_breaksDivide()
 {
-	glue_setBreaks(G_Mixer.breaks/2, false);
+	glue_setBreaks(G_Mixer.breaks/2);
 }
