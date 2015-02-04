@@ -109,6 +109,16 @@ public:
 
 	inline Channel* getLastChannel() { return channels.at(channels.size-1); }
 
+	/* enterMBreak
+	 * enter a new music break (section) by number */
+
+	void enterMBreak(int n);
+
+	/* advance
+	 * advance the actualBreak by one and check for break changes */
+
+	void advance();
+
 
 	/* ---------------------------------------------------------------- */
 
@@ -141,6 +151,7 @@ public:
 	float  bpm;
 	int    bars;
 	int    beats;
+	int    breaks;
 	int    waitRec;      // delayComp guard
 
 	bool docross;			   // crossfade guard
@@ -152,6 +163,7 @@ public:
 	int totalFrames;       // frames in the selected range (e.g. 4/4)
 	int actualFrame;
 	int actualBeat;
+	int actualBreak;
 
 #define TICKSIZE 38
 	static float tock[TICKSIZE];
