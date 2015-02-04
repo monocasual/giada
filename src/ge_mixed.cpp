@@ -348,6 +348,62 @@ void gBeatMeter::draw()
 
 /* ------------------------------------------------------------------ */
 
+const char *gSongMeter::columnNames[] = {
+"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R",
+"S","T","U","V","W","X","Y","Z","a","b","c","d","e","f"
+};
+
+gSongMeter::gSongMeter(int x, int y, int w, int h, const char *L)
+  : Fl_Box(x, y, w, h ) { }
+
+int gSongMeter::handle(int e) {
+    int cursorW = w() / MAX_BREAKS;
+	int xpos;
+	switch(e) {
+		case FL_RELEASE:
+			xpos = Fl::event_x();
+			for (int i=0; i<G_Mixer.breaks; i++)
+    			if( xpos >= x()+cursorW*i && (i == G_Mixer.breaks-1 || xpos <= x()+cursorW*(i+1) )) { 
+					gLog("SongMeter click in %d\n", i);
+					//G_Mixer.breakId[i]++;
+					if( ++G_Mixer.breakId[i] >= G_Mixer.breaks ) G_Mixer.breakId[i] = -1;
+					break;
+				}
+			break;
+
+		default: return Fl_Box::handle(e);
+	}
+	return 1;
+}
+
+void gSongMeter::draw()
+{
+  int cursorW = w() / MAX_BREAKS;
+  int greyX   = G_Mixer.breaks * cursorW;
+
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);                                // border
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);              // bg
+  fl_rectf(x()+(G_Mixer.actualBreak*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
+
+  /* break cells */
+
+  fl_color(COLOR_BD_0);
+  int n;
+  for ( int i=0; i<G_Mixer.breaks; i++) {
+    fl_line(x()+cursorW*(i+1), y()+1, x()+cursorW*(i+1), y()+h()-2);
+    if( (n = G_Mixer.breakId[i]) < 0 ) {
+        fl_draw(" ", x()+4+cursorW*i, y()+4+(h()/2) );
+    } else
+		fl_draw(columnNames[n], x()+4+cursorW*i, y()+4+(h()/2) );
+  }
+
+  /* unused grey area */
+
+  fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
+}
+
+/* ------------------------------------------------------------------ */
+
 
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
   : Fl_Choice(x, y, w, h, l), angle(ang)
