@@ -102,7 +102,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 
 	/* zone 3 - song meter and beat meter */
 
-	Fl_Group *zone3 = new Fl_Group(8, songmeter->y(), W-16, songMeter->h()+beatMeter->h());
+	Fl_Group *zone3 = new Fl_Group(8, songMeter->y(), W-16, songMeter->h()+beatMeter->h());
 	zone3->add(songMeter);
 	zone3->add(beatMeter);
 
