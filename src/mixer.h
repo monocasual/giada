@@ -164,6 +164,8 @@ public:
 	int actualFrame;
 	int actualBeat;
 	int actualBreak;
+	int breakId[MAX_BREAKS];
+	bool suspend; 
 
 #define TICKSIZE 38
 	static float tock[TICKSIZE];
