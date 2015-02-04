@@ -315,6 +315,25 @@ void glue_setBeats(int beats, int bars, bool expand)
 /* ------------------------------------------------------------------ */
 
 
+void glue_setBreaks(int breaks)
+{
+	/* temp vars to store old data (they are necessary) */
+
+	int      oldvalue = G_Mixer.breaks;
+
+	if (breaks > MAX_BREAKS)
+		G_Mixer.breaks = MAX_BREAKS;
+	else if (breaks < 1)
+		G_Mixer.breaks = 1;
+	else
+		G_Mixer.breaks = breaks;
+
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void glue_startStopSeq(bool gui)
 {
 	G_Mixer.running ? glue_stopSeq(gui) : glue_startSeq(gui);
