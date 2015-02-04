@@ -727,7 +727,6 @@ void SampleChannel::stop() {
 	else
 	if ( status == STATUS_PLAY )
 		status = STATUS_ENDING;
-	}
 
 }
 
