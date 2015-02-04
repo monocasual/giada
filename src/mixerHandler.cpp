@@ -128,6 +128,7 @@ void mh_loadPatch(bool isProject, const char *projPath)
 	G_Mixer.bpm        = G_Patch.getBpm();
 	G_Mixer.bars       = G_Patch.getBars();
 	G_Mixer.beats      = G_Patch.getBeats();
+	G_Mixer.breaks     = G_Patch.getBreaks();
 	G_Mixer.quantize   = G_Patch.getQuantize();
 	G_Mixer.metronome  = G_Patch.getMetronome();
 	G_Patch.lastTakeId = G_Patch.getLastTakeId();
