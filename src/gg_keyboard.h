@@ -36,6 +36,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
+#include <FL/Fl_Check_Button.H>
 #include "utils.h"
 
 
@@ -52,6 +53,7 @@ private:
 	class gResizerBar *resizer;
 
 	int index;
+	static const char *columnNames[];
 
 public:
 
