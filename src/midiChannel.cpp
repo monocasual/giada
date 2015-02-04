@@ -127,7 +127,24 @@ void MidiChannel::onBar(int frame) {}
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::stop() {}
+void MidiChannel::stop() {
+
+	switch (status) {
+		case STATUS_PLAY:
+			status = STATUS_ENDING;
+			break;
+		case STATUS_ENDING:
+			status = STATUS_OFF;
+			break;
+		case STATUS_WAIT:
+			status = STATUS_OFF;
+			break;
+		case STATUS_OFF:
+			status = STATUS_WAIT;
+			break;
+	}
+}
+
 
 
 /* ------------------------------------------------------------------ */
@@ -215,13 +232,16 @@ void MidiChannel::process(float *buffer) {
 
 
 void MidiChannel::start(int frame, bool doQuantize) {
+	// send these anytime we hit the play button and midiOut is enabled
+	if( midiOut ) {
+		if( midiOutBank )  
+			kernelMidi::send((uint32_t) (MIDI_CHANS[midiOutChan] | MIDI_CONTROLLER | midiBankChg) );
+		if( midiOutProg ) 
+			kernelMidi::send( (MIDI_CHANS[midiOutChan] | MIDI_PROGRAM) >>24, midiProgChg, -1  );
+	}
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;
-			if( midiOutBank )  
-				kernelMidi::send((uint32_t) (MIDI_CHANS[midiOutChan] | MIDI_CONTROLLER | midiBankChg) );
-			if( midiOutProg ) 
-				kernelMidi::send( (MIDI_CHANS[midiOutChan] | MIDI_PROGRAM) >>24, midiProgChg, -1  );
 			break;
 		case STATUS_ENDING:
 		case STATUS_WAIT:
