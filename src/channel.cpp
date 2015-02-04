@@ -51,7 +51,8 @@ extern PluginHost  G_PluginHost;
 Channel::Channel(int type, int status, int bufferSize)
 	: bufferSize(bufferSize),
 	  type      (type),
-		status    (status),
+	  mbreak    (-1),
+	  status    (status),
 	  volume    (DEFAULT_VOL),
 	  volume_i  (1.0f),
 	  volume_d  (0.0f),
