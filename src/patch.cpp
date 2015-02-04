@@ -403,6 +403,18 @@ int Patch::getBeats()
 /* ------------------------------------------------------------------ */
 
 
+int Patch::getBreaks() 
+{
+	int out = atoi(getValue("breaks").c_str());
+	if (out <= 0 || out > 32)
+		return DEFAULT_BREAKS;
+	return out;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 int Patch::getQuantize() 
 {
 	int out = atoi(getValue("quantize").c_str());
@@ -576,6 +588,7 @@ int Patch::write(const char *file, const char *name, bool project)
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
 	fprintf(fp, "bars=%d\n",       G_Mixer.bars);
 	fprintf(fp, "beats=%d\n",      G_Mixer.beats);
+	fprintf(fp, "breaks=%d\n",     G_Mixer.breaks);
 	fprintf(fp, "quantize=%d\n",   G_Mixer.quantize);
 	fprintf(fp, "outVol=%f\n",     G_Mixer.outVol);
 	fprintf(fp, "inVol=%f\n",      G_Mixer.inVol);
