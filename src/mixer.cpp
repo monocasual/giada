@@ -727,7 +727,7 @@ void Mixer::enterMBreak(int n) {
 		} 
 		else 
 		if( mbreak >= 0  ) {
-			if( ch->status == STATUS_PLAY 
+			if( ch->status == STATUS_PLAY )
 				channels.at(i)->stop();
 		}
 	}
