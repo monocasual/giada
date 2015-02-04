@@ -148,6 +148,7 @@ public:
 
 	int     index;                // unique id
 	int     type;                 // midi or sample
+	int     mbreak;               // musical break number
 	int     status;	              // status: see const.h
 	float   volume;               // global volume
 	float   volume_i;             // internal volume
