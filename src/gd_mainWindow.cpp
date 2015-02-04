@@ -78,11 +78,12 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 
 	size_range(GUI_WIDTH, GUI_HEIGHT);
 
-	menu       = new gMenu(8, -1);
+	menu       = new gMenu(8, 8);
 	inOut      = new gInOut(408, 8);
-	controller = new gController(8, 39);
-	timing     = new gTiming(632, 39);
-	beatMeter  = new gBeatMeter(100, 83, 609, 20);
+	controller = new gController(8, 37);
+	timing     = new gTiming(632, 37);
+	songMeter  = new gSongMeter(100, 73, 609, 20);
+	beatMeter  = new gBeatMeter(100, 93, 609, 20);
 	keyboard   = new gKeyboard(8, 122, w()-16, 380);
 
 	/* zone 1 - menus, and I/O tools */
@@ -94,14 +95,15 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 
 	/* zone 2 - controller and timing tools */
 
-	Fl_Group *zone2 = new Fl_Group(8, controller->y(), W-16, controller->h());
+	Fl_Group *zone2 = new Fl_Group(8, timing->y(), W-16, timing->h());
 	zone2->add(controller);
 	zone2->resizable(new Fl_Box(controller->x()+controller->w()+4, zone2->y(), 80, 20));
 	zone2->add(timing);
 
-	/* zone 3 - beat meter */
+	/* zone 3 - song meter and beat meter */
 
-	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());
+	Fl_Group *zone3 = new Fl_Group(8, songmeter->y(), W-16, songMeter->h()+beatMeter->h());
+	zone3->add(songMeter);
 	zone3->add(beatMeter);
 
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
@@ -453,7 +455,7 @@ gController::gController(int x, int y)
 	recInput->callback(cb_recInput, (void*)this);
 	recInput->type(FL_TOGGLE_BUTTON);
 
-	metronome->callback(cb_metronome);
+	metronome->callback(cb_metronome, (void*)this);
 	metronome->type(FL_TOGGLE_BUTTON);
 }
 
@@ -559,15 +561,20 @@ void gController::updateRecAction(int v)
 
 
 gTiming::gTiming(int x, int y)
-	: Fl_Group(x, y, 170, 15)
+	: Fl_Group(x, y, 170, 50)
 {
 	begin();
 
 	quantizer  = new gChoice(x, y, 40, 15, "", false);
 	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
-	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 15, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "×");
-	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷");
+	meter      = new gClick (bpm->x()+bpm->w()+8,  y+20, 40, 15, "4/1");
+	multiplier = new gClick (meter->x()+meter->w()+4, y+20, 15, 15, "×");
+	divider    = new gClick (multiplier->x()+multiplier->w()+4, y+20, 15, 15, "÷");
+	
+	suspend    = new gCheck (bpm->x()+bpm->w()+8, y, 15, 15 );
+	advance    = new gClick (suspend->x()+suspend->w()+5, y, 20, 15, ">>");
+	songmultiplier = new gClick (advance->x()+advance->w()+4, y, 15, 15, "X");
+	songdivider    = new gClick (songmultiplier->x()+songmultiplier->w()+4, y, 15, 15, "/");
 
 	end();
 
@@ -580,6 +587,12 @@ gTiming::gTiming(int x, int y)
 	meter->callback(cb_meter, (void*)this);
 	multiplier->callback(cb_multiplier, (void*)this);
 	divider->callback(cb_divider, (void*)this);
+	
+	songmultiplier->callback(cb_songmultiplier, (void*)this);
+ 	songdivider->callback(cb_songdivider, (void*)this);
+ 	advance->callback(cb_advance, (void*)this);
+ 	suspend->callback(cb_suspend, (void*)this);
+ 	suspend->value(1);
 
 	quantizer->add("off", 0, cb_quantizer, (void*)this);
 	quantizer->add("1b",  0, cb_quantizer, (void*)this);
@@ -600,6 +613,10 @@ void gTiming::cb_meter     (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_meter()
 void gTiming::cb_quantizer (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_quantizer(); }
 void gTiming::cb_multiplier(Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_multiplier(); }
 void gTiming::cb_divider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_divider(); }
+void gTiming::cb_songmultiplier(Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_songmultiplier(); }
+void gTiming::cb_songdivider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_songdivider(); }
+void gTiming::cb_advance       (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_advance(); }
+void gTiming::cb_suspend       (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_suspend(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -650,6 +667,42 @@ void gTiming::__cb_divider()
 /* ------------------------------------------------------------------ */
 
 
+void gTiming::__cb_songmultiplier()
+{
+	glue_breaksMultiply();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_songdivider()
+{
+	glue_breaksDivide();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_advance()
+{
+	G_Mixer.advance();
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTiming::__cb_suspend()
+{
+	G_Mixer.suspend = !G_Mixer.suspend;
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gTiming::setBpm(const char *v)
 {
 	bpm->copy_label(v);
@@ -665,3 +718,4 @@ void gTiming::setMeter(int beats, int bars)
 	sprintf(buf, "%d/%d", beats, bars);
 	meter->copy_label(buf);
 }
+
