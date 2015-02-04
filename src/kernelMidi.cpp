@@ -365,9 +365,16 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 					glue_startStopReadingRecs((SampleChannel*)ch, false);
 				}
 			}
-		       if( ch->tunnelIn && recorder::active ) {
-        		       gLog(" >>> tunnel ch=%d (input=0x%X)", ch->index, input);
-        		       ((MidiChannel*)ch)->recvMidi(input);
+			if( ch->tunnelIn ) {
+				if( recorder::active ) {
+        				gLog(" >>> tunnel ch=%d (input=0x%X)", ch->index, input);
+        				((MidiChannel*)ch)->recvMidi(input);
+				} 
+				else 
+				if( ((MidiChannel*)ch)->midiOut ) {
+        				gLog(" >>> echo ch=%d (input=0x%X)", ch->index, input);
+					send((uint32_t)(input & MIDI_CHANNEL_MASK) | MIDI_CHANS[((MidiChannel*)ch)->midiOutChan] );
+				}
 			}	
 		}
 		gLog("\n");
