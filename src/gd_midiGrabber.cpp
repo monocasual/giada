@@ -104,40 +104,67 @@ void gdMidiGrabber::__cb_close() {
 /* ------------------------------------------------------------------ */
 
 
-gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch)
+gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, GrabberDirection grabDirection)
 	:	gdMidiGrabber(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
-	char title[64];
-	sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
-	label(title);
+	if (grabDirection == GrabForInput) {
+		char title[64];
+		sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
+		label(title);
 
-	set_modal();
+		set_modal();
 
-	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
-	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
-	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
-	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
-	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
-	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
-	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
-	int yy = 178;
+		enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
+		new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
+		new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
+		new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
+		new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
+		new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
+		new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+		int yy = 178;
 
-	if (ch->type == CHANNEL_SAMPLE) {
-		size(300, 254);
-		new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-		new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
-		yy = 226;
+		if (ch->type == CHANNEL_SAMPLE) {
+			size(300, 254);
+			new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+			new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+			yy = 226;
+		}
+
+		ok = new gButton(w()-88, yy, 80, 20, "Ok");
+		ok->callback(cb_close, (void*)this);
+
+		enable->value(ch->midiIn);
+		enable->callback(cb_enable, (void*)this);
+
+		gu_setFavicon(this);
+		show();
 	}
+	else if (grabDirection == GrabForOutput) {
+		size(300, 134);
 
-	ok = new gButton(w()-88, yy, 80, 20, "Ok");
-	ok->callback(cb_close, (void*)this);
+		char title[64];
+		sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
+		label(title);
 
-	enable->value(ch->midiIn);
-	enable->callback(cb_enable, (void*)this);
+		set_modal();
 
-	gu_setFavicon(this);
-	show();
+		enable = new gCheck(8, 8, 120, 20, "enable output output");
+		new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
+		new gLearner(8,  54, w()-16, "mute",    cb_learn, &ch->midiOutMute);
+		new gLearner(8,  78, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
+		int yy = 102;
+
+
+		ok = new gButton(w()-88, yy, 80, 20, "Ok");
+		ok->callback(cb_close, (void*)this);
+
+		enable->value(ch->midiOut);
+		enable->callback(cb_enable, (void*)this);
+
+		gu_setFavicon(this);
+		show();
+	}
 }
 
 
