@@ -95,6 +95,7 @@ void Mixer::init() {
 	bpm 		    = DEFAULT_BPM;
 	bars		    = DEFAULT_BARS;
 	beats		    = DEFAULT_BEATS;
+	breaks	            = DEFAULT_BREAKS;
 	quantize    = DEFAULT_QUANTIZE;
 	metronome   = false;
 
@@ -111,6 +112,9 @@ void Mixer::init() {
 	inputTracker = 0;
 
 	actualBeat    = 0;
+	actualBreak   = 0;
+	for( int i = 0; i < MAX_BREAKS; i++ ) breakId[i] = -1;
+	suspend = false;
 
 	midiTCstep    = 0;
 	midiTCrate    = (G_Conf.samplerate / G_Conf.midiTCfps) * 2;  // dealing with stereo vals
@@ -444,6 +448,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 			if (actualFrame > totalFrames) {
 				actualFrame = 0;
 				actualBeat  = 0;
+				if (!suspend) advance();
 			}
 			else
 			if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
@@ -615,6 +620,7 @@ void Mixer::rewind() {
 
 	actualFrame = 0;
 	actualBeat  = 0;
+	actualBreak = 0;
 
 	if (running)
 		for (unsigned i=0; i<channels.size; i++)
@@ -681,4 +687,64 @@ bool Mixer::mergeVirtualInput() {
 		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
 	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::enterMBreak(int n) {
+
+	/* enter mbreak number n;  if n == -1 restore all numbered breaks */
+ 
+	int mbreak;
+	Channel *ch;
+
+	gLog("[MBreak] enter %d\n", n);
+
+	if (n < 0) {
+		// not a numbered break ( == -1 )
+		//   enable all channels with mbreak >= 0 unless they are already playing 
+		//   channels with mbreak == -1 are always enabled
+		for (int i = 0; i < (int)channels.size; i++ ) {
+			
+			ch = channels.at(i);
+			if (ch->mbreak >= 0 && (ch->status != STATUS_PLAY) ) 
+				ch->start(0, false);
+			
+		}
+		return;
+	}
+
+	for (int i = 0; i < (int)channels.size; i++ ) {
+		// numbered break - enable next break
+		//   deactivate unused channels and activate used channels
+		ch = channels.at(i);
+		mbreak = ch->mbreak;
+		if (mbreak == n) {
+			if (ch->status != STATUS_PLAY ) 
+				channels.at(i)->start(0, false);
+		} 
+		else 
+		if( mbreak >= 0  ) {
+			if( ch->status == STATUS_PLAY )
+				channels.at(i)->stop();
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Mixer::advance() {
+
+	// advance to the next song break (section)
+	int lastBreakId = breakId[actualBreak++];
+
+	/* check limits and call break entry code if necessary */
+	if( actualBreak >= breaks ) actualBreak = 0;
+
+	if( lastBreakId != breakId[actualBreak] )
+		enterMBreak( breakId[actualBreak] );
 }

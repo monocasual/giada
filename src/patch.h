@@ -79,6 +79,7 @@ public:
 	float       getBpm        ();
 	int         getBars       ();
 	int         getBeats      ();
+	int         getBreaks     ();
 	int         getQuantize   ();
 	bool        getMetronome  ();
 	int         getLastTakeId ();

@@ -315,6 +315,22 @@ void glue_setBeats(int beats, int bars, bool expand)
 /* ------------------------------------------------------------------ */
 
 
+void glue_setBreaks(int breaks)
+{
+
+	if (breaks > MAX_BREAKS)
+		G_Mixer.breaks = MAX_BREAKS;
+	else if (breaks < 1)
+		G_Mixer.breaks = 1;
+	else
+		G_Mixer.breaks = breaks;
+
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void glue_startStopSeq(bool gui)
 {
 	G_Mixer.running ? glue_stopSeq(gui) : glue_startSeq(gui);
@@ -1180,4 +1196,18 @@ void glue_beatsMultiply()
 void glue_beatsDivide()
 {
 	glue_setBeats(G_Mixer.beats/2, G_Mixer.bars, false);
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void glue_breaksMultiply()
+{
+	glue_setBreaks(G_Mixer.breaks*2);
+}
+
+void glue_breaksDivide()
+{
+	glue_setBreaks(G_Mixer.breaks/2);
 }

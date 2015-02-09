@@ -109,6 +109,7 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
 		ch(ch)
 {
 	char title[64];
+	int y;
 	sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
 	label(title);
 
@@ -117,12 +118,13 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, bool midichannel)
 	if( midichannel ) {
 		enable = new gCheck(8, 4, 120, 20, "enable MIDI input");
 		enableTunnel = new gCheck(8, 24, 120, 20, "enable MIDI tunnelling");
+		y = enableTunnel->y() + 20;
 	} else {
 		enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 		enableTunnel = NULL;
+		y = enable->y() + 20;
 	}
 	
-	int y = enableTunnel->y() + 20;
 	new gLearner(8, y+0,   w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
 	new gLearner(8, y+24,  w()-16, "key release", cb_learn, &ch->midiInKeyRel);
 	new gLearner(8, y+48,  w()-16, "key kill",    cb_learn, &ch->midiInKill);
@@ -173,7 +175,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 void gdMidiGrabberChannel::__cb_enableTunnel() {
-	ch->tunnelIn = enable->value();
+	ch->tunnelIn = enableTunnel->value();
 }
 
 

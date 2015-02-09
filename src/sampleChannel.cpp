@@ -724,6 +724,10 @@ void SampleChannel::stop() {
 	else  // stop a SINGLE_PRESS immediately, if the quantizer is on
 	if (mode == SINGLE_PRESS && qWait == true)
 		qWait = false;
+	else
+	if ( status == STATUS_PLAY )
+		status = STATUS_ENDING;
+
 }
 
 

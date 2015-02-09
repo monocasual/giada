@@ -66,6 +66,7 @@ void glue_keyRelease(class SampleChannel *ch, bool ctrl=0, bool shift=0);
 
 void glue_setBpm(const char *v1, const char *v2);
 void glue_setBeats(int beats, int bars, bool expand);
+void glue_setBreaks(int breaks);
 
 /* start, stop, rewind sequencer
  * if gui == true the signal comes from an internal interaction on the
@@ -164,5 +165,7 @@ int glue_saveProject(const char *folderPath, const char *projName);
 
 void glue_beatsMultiply();
 void glue_beatsDivide();
+void glue_breaksMultiply();
+void glue_breaksDivide();
 
 #endif

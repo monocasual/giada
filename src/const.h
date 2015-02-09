@@ -67,6 +67,7 @@
 /* -- MIN/MAX values ------------------------------------------------ */
 #define MAX_BEATS				   32
 #define MAX_BARS				   32
+#define MAX_BREAKS				   32
 #define MAX_PATCHNAME_LEN	 32
 #define DB_MIN_SCALE		   60.0f
 #define MAX_VST_EVENTS     32
@@ -120,6 +121,7 @@
 #define DEFAULT_BPM				   120.0f
 #define DEFAULT_BEATS			   4
 #define DEFAULT_BARS			   1
+#define DEFAULT_BREAKS			   4
 #define DEFAULT_QUANTIZE     0		  // quantizer off
 #define DEFAULT_FADEOUT_STEP 0.01f  // micro-fadeout speed
 
@@ -243,6 +245,7 @@
 #define MIDI_NOTE_OFF       0x80 << 24
 #define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
 #define MIDI_VOLUME        (MIDI_CONTROLLER) | (0x07 << 16)
+#define MIDI_CHANNEL_MASK   0xF0FFFFFF
 
 /* system common / real-time messages. Single bytes */
 

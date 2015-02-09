@@ -49,6 +49,7 @@ private:
 public:
 
 	class gKeyboard   *keyboard;
+	class gSongMeter  *songMeter;
 	class gBeatMeter  *beatMeter;
 	class gMenu       *menu;
 	class gInOut      *inOut;
@@ -180,18 +181,30 @@ private:
 	class gChoice  *quantizer;
 	class gClick   *multiplier;
 	class gClick   *divider;
+	class gClick   *songmultiplier;
+	class gClick   *songdivider;
+	class gClick   *advance;
+	class gCheck   *suspend;
 
 	static void cb_bpm       (Fl_Widget *v, void *p);
 	static void cb_meter     (Fl_Widget *v, void *p);
 	static void cb_quantizer (Fl_Widget *v, void *p);
 	static void cb_multiplier(Fl_Widget *v, void *p);
 	static void cb_divider   (Fl_Widget *v, void *p);
+	static void cb_songmultiplier(Fl_Widget *v, void *p);
+	static void cb_songdivider   (Fl_Widget *v, void *p);
+	static void cb_advance   (Fl_Widget *v, void *p);
+	static void cb_suspend   (Fl_Widget *v, void *p);
 
 	inline void __cb_bpm();
 	inline void __cb_meter();
 	inline void __cb_quantizer();
 	inline void __cb_multiplier();
 	inline void __cb_divider();
+	inline void __cb_songmultiplier();
+	inline void __cb_songdivider();
+	inline void __cb_advance();
+	inline void __cb_suspend();
 
 public:
 

@@ -497,11 +497,23 @@ void gKeyboard::__cb_addColumn()
 /* ------------------------------------------------------------------ */
 
 
+const char *gColumn::columnNames[] = {
+	"** A ** Add new channel",
+	"** B ** Add new channel",
+	"** C ** Add new channel",
+	"** D ** Add new channel",
+	"** E ** Add new channel",
+	"** F ** Add new channel" };
+
+
 gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 	: Fl_Group(X, Y, W, H), index(index)
 {
 	begin();
-	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
+	if( index == 0 || index > 6 ) 
+		addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
+	else
+		addChannelBtn = new gClick(x(), y(), w(), 20, columnNames[index-1]);
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
@@ -626,6 +638,9 @@ gChannel *gColumn::addChannel(class Channel *ch)
 				20,
 				(MidiChannel*) ch);
 
+	// set the music break number = column-1 except for column 0 
+	if( index > 0 ) 
+		ch->mbreak = index-1;
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
   redraw();

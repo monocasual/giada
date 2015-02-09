@@ -237,6 +237,19 @@ public:
 /* ------------------------------------------------------------------ */
 
 
+class gSongMeter : public Fl_Box
+{
+public:
+	gSongMeter(int X,int Y,int W,int H,const char *L=0);
+	void draw();
+	int handle(int);
+	static const char *columnNames[];
+};
+
+
+/* ------------------------------------------------------------------ */
+
+
 class gChoice : public Fl_Choice
 {
 public:

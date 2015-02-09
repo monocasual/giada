@@ -64,6 +64,7 @@ void gu_refresh()
 
 	mainWin->inOut->refresh();
 	mainWin->beatMeter->redraw();
+	mainWin->songMeter->redraw();
 	mainWin->keyboard->refreshColumns();
 
 	/* compute timer for blinker */
