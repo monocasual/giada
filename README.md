@@ -17,6 +17,8 @@ sampler or yet as a plugin/effect host. Giada aims to be a compact and
 portable virtual device for Linux, Mac OS X and Windows for production
 use and live sets.
 
+![Giada Loop Machine screenshot](http://giadamusic.com/public/img/screenshots/giada-loop-machine-screenshot-14-carousel.jpg)
+
 Features:
 
 * Ultra-lightweight internal design.
