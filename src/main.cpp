@@ -33,6 +33,7 @@
 #include "const.h"
 #include "patch.h"
 #include "conf.h"
+#include "midiMapConf.h"
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "kernelAudio.h"
@@ -53,6 +54,7 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch 	      G_Patch;
 Conf		      G_Conf;
+MidiMapConf       G_MidiMap;
 gdMainWindow *mainWin;
 
 #ifdef WITH_VST

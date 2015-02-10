@@ -59,7 +59,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 		type     (type),
 		stackType(stackType)
 {
-	set_non_modal();
+	set_modal();
 
 	browser = new gBrowser(8, 36, 380, 230);
 	Fl_Group *group_btn = new Fl_Group(8, 274, 380, 20);

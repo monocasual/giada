@@ -30,8 +30,10 @@
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
+#include "gd_browser.h"
 #include "ge_mixed.h"
 #include "conf.h"
+#include "midiMapConf.h"
 #include "log.h"
 #include "gui_utils.h"
 #include "patch.h"
@@ -42,6 +44,7 @@
 extern Patch G_Patch;
 extern Conf	 G_Conf;
 extern bool  G_audio_status;
+extern MidiMapConf G_MidiMap;
 
 
 /* ------------------------------------------------------------------ */
@@ -525,17 +528,20 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	portOut	  = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn	  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
 	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
-	sync	    = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Sync");
+	midiMap	  = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
+	sync	    = new gChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
 	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
 
+	midiMap->callback(cb_browseMidiMap, (void*)this);
 	system->callback(cb_changeSystem, (void*)this);
 
 	fetchSystems();
 	fetchOutPorts();
 	fetchInPorts();
+	fetchMidiMaps();
 
 	noNoteOff->value(G_Conf.noNoteOff);
 
@@ -609,6 +615,22 @@ void gTabMidi::fetchInPorts()
 /* ------------------------------------------------------------------ */
 
 
+void gTabMidi::fetchMidiMaps()
+{
+	midiMap->add("Generic");
+
+	for (unsigned i=0; i<G_MidiMap.numBundles; i++) {
+		midiMap->add(G_MidiMap.bundles[i][0].c_str());
+	}
+
+	midiMap->add("--------------------------------");
+	midiMap->add("Browse...");
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gTabMidi::save()
 {
 	if      (!strcmp("ALSA", system->text(system->value())))
@@ -626,6 +648,9 @@ void gTabMidi::save()
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	G_Conf.noNoteOff   = noNoteOff->value();
+
+	if      (!strcmp("Generic", midiMap->text(midiMap->value())))
+		G_Conf.setPath(G_Conf.midiMapPath, "\0");
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;
@@ -699,6 +724,33 @@ void gTabMidi::__cb_changeSystem()
 		portOut->value(0);
 	}
 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::cb_browseMidiMap(Fl_Widget *w, void *p) { ((gTabMidi*)p)->__cb_browseMidiMap(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::__cb_browseMidiMap()
+{
+	if (!strcmp("Generic", midiMap->text(midiMap->value())))
+	{
+	}
+	else if (!strcmp("--------------------------------", midiMap->text(midiMap->value())))
+	{
+		midiMap->value(0); //User is trying to be clever ; set it back to Generic
+	}
+	else if (!strcmp("Browse...", midiMap->text(midiMap->value())))
+	{
+		gWindow *childWin = new gdBrowser("Load Midi Map", G_Conf.midiMapPath, 0, BROWSER_LOAD_PATCH);
+		gu_openSubWindow((gWindow*)this->window(), childWin, WID_FILE_BROWSER);
+		return;
+	}
 }
 
 

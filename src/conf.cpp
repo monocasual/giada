@@ -148,6 +148,7 @@ void Conf::setDefault()
 
 	midiPortIn  = DEFAULT_MIDI_PORT_IN;
 	noNoteOff   = false;
+	midiMapPath[0] = '\0';
 	midiPortOut = DEFAULT_MIDI_PORT_OUT;
 	midiSync    = MIDI_SYNC_NONE;
 	midiTCfps   = 25.0f;
@@ -234,6 +235,10 @@ int Conf::read()
 	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
 
 	noNoteOff = atoi(getValue("noNoteOff").c_str());
+
+	std::string tmpMidiMapPath = getValue("midiMapPath");
+	strncpy(midiMapPath, tmpMidiMapPath.c_str(), tmpMidiMapPath.size());
+	midiMapPath[tmpMidiMapPath.size()] = '\0';	// strncpy doesn't add '\0'
 
 	midiSync  = atoi(getValue("midiSync").c_str());
 	midiTCfps = atof(getValue("midiTCfps").c_str());
@@ -376,6 +381,7 @@ int Conf::write()
 	fprintf(fp, "midiPortOut=%d\n", midiPortOut);
 	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
 	fprintf(fp, "noNoteOff=%d\n",   noNoteOff);
+	fprintf(fp, "midiMapPath=%s\n", midiMapPath);
 	fprintf(fp, "midiSync=%d\n",    midiSync);
 	fprintf(fp, "midiTCfps=%f\n",   midiTCfps);
 

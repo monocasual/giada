@@ -42,6 +42,7 @@
 extern bool     G_midiStatus;
 extern Conf     G_Conf;
 extern Mixer    G_Mixer;
+extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -59,8 +60,6 @@ unsigned   numInPorts  = 0;
 
 cb_midiLearn *cb_learn = NULL;
 void         *cb_data  = NULL;
-
-MidiMapConf  midimap;
 
 
 /* ------------------------------------------------------------------ */
@@ -98,6 +97,7 @@ void setApi(int _api)
 
 int openOutDevice(int port) 
 {
+	G_MidiMap.initBundles();
 	try {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
 		G_midiStatus = true;
@@ -122,7 +122,10 @@ int openOutDevice(int port)
 			midiOut->openPort(port, getOutPortName(port));
 			gLog("[KM] MIDI out port %d open\n", port);
 
-			midimap.read();
+			if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0)
+				G_MidiMap.readFromBundle(G_Conf.midiMapPath);
+			else if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0)
+				G_MidiMap.readFromFile(G_Conf.midiMapPath);
 
 			init();
 
@@ -218,9 +221,9 @@ const char *getInPortName(unsigned p)
 void init()
 {
 	for(int i=0; i<MAXINITCOMMANDS; i++) {
-		if (midimap.init_messages[i] != 0x0 && midimap.init_channels[i] != -1) {
-			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", midimap.init_channels[i], midimap.init_messages[i]);
-			send(midimap.init_messages[i] | MIDI_CHANS[midimap.init_channels[i]]);
+		if (G_MidiMap.init_messages[i] != 0x0 && G_MidiMap.init_channels[i] != -1) {
+			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", G_MidiMap.init_channels[i], G_MidiMap.init_messages[i]);
+			send(G_MidiMap.init_messages[i] | MIDI_CHANS[G_MidiMap.init_channels[i]]);
 		}
 	}
 }
@@ -265,49 +268,49 @@ void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int Note
 void midi_mute_on(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Mute On ");
-	midi_gen_messages(note, midimap.mute_on_channel, midimap.mute_on, midimap.mute_on_notePos);
+	midi_gen_messages(note, G_MidiMap.mute_on_channel, G_MidiMap.mute_on, G_MidiMap.mute_on_notePos);
 }
 
 void midi_mute_off(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Mute Off");
-	midi_gen_messages(note, midimap.mute_off_channel, midimap.mute_off, midimap.mute_off_notePos);
+	midi_gen_messages(note, G_MidiMap.mute_off_channel, G_MidiMap.mute_off, G_MidiMap.mute_off_notePos);
 }
 
 void midi_solo_on(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Solo On");
-	midi_gen_messages(note, midimap.solo_on_channel, midimap.solo_on, midimap.solo_on_notePos);
+	midi_gen_messages(note, G_MidiMap.solo_on_channel, G_MidiMap.solo_on, G_MidiMap.solo_on_notePos);
 }
 
 void midi_solo_off(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Solo Off");
-	midi_gen_messages(note, midimap.solo_off_channel, midimap.solo_off, midimap.solo_off_notePos);
+	midi_gen_messages(note, G_MidiMap.solo_off_channel, G_MidiMap.solo_off, G_MidiMap.solo_off_notePos);
 }
 
 void midi_waiting(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Waiting");
-	midi_gen_messages(note, midimap.waiting_channel, midimap.waiting, midimap.waiting_notePos);
+	midi_gen_messages(note, G_MidiMap.waiting_channel, G_MidiMap.waiting, G_MidiMap.waiting_notePos);
 }
 
 void midi_playing(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Playing");
-	midi_gen_messages(note, midimap.playing_channel, midimap.playing, midimap.playing_notePos);
+	midi_gen_messages(note, G_MidiMap.playing_channel, G_MidiMap.playing, G_MidiMap.playing_notePos);
 }
 
 void midi_stopping(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Stopping");
-	midi_gen_messages(note, midimap.stopping_channel, midimap.stopping, midimap.stopping_notePos);
+	midi_gen_messages(note, G_MidiMap.stopping_channel, G_MidiMap.stopping, G_MidiMap.stopping_notePos);
 }
 
 void midi_stopped(uint32_t note)
 {
 	gLog("[KM] Midi Signal - Stopped");
-	midi_gen_messages(note, midimap.stopped_channel, midimap.stopped, midimap.stopped_notePos);
+	midi_gen_messages(note, G_MidiMap.stopped_channel, G_MidiMap.stopped, G_MidiMap.stopped_notePos);
 }
 
 
