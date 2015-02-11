@@ -52,7 +52,7 @@ gdBeatsInput::gdBeatsInput()
 	beats     = new gInput(8,  8,  35, 20);
 	bars      = new gInput(47, 8,  35, 20);
 	ok 		    = new gClick(86, 8,  70, 20, "Ok");
-	resizeRec = new gCheck(8,  40, 12, 12, "resize recordings");
+	resizeRec = new gCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 
 	char buf_bars[3]; sprintf(buf_bars, "%d", G_Mixer.bars);
