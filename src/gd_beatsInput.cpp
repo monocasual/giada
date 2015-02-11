@@ -49,10 +49,10 @@ gdBeatsInput::gdBeatsInput()
 
 	set_modal();
 
-	beats   = new gInput(8,  8,  35, 20);
-	bars    = new gInput(47, 8,  35, 20);
-	ok 		  = new gClick(86, 8,  70, 20, "Ok");
-	exp 	  = new gCheck(8,  40, 12, 12, "resize recordings");
+	beats     = new gInput(8,  8,  35, 20);
+	bars      = new gInput(47, 8,  35, 20);
+	ok 		    = new gClick(86, 8,  70, 20, "Ok");
+	resizeRec = new gCheck(8,  40, 12, 12, "resize recordings");
 	end();
 
 	char buf_bars[3]; sprintf(buf_bars, "%d", G_Mixer.bars);
@@ -65,7 +65,7 @@ gdBeatsInput::gdBeatsInput()
 	bars->type(FL_INT_INPUT);
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update_batt, (void*)this);
-	exp->value(1); // checked by default
+	resizeRec->value(1); // checked by default
 
 	gu_setFavicon(this);
 	setId(WID_BEATS);
@@ -76,7 +76,8 @@ gdBeatsInput::gdBeatsInput()
 /* ------------------------------------------------------------------ */
 
 
-gdBeatsInput::~gdBeatsInput() {
+gdBeatsInput::~gdBeatsInput()
+{
 	G_Conf.beatsX = x();
 	G_Conf.beatsY = y();
 }
@@ -91,9 +92,10 @@ void gdBeatsInput::cb_update_batt(Fl_Widget *w, void *p) { ((gdBeatsInput*)p)->_
 /* ------------------------------------------------------------------ */
 
 
-void gdBeatsInput::__cb_update_batt() {
+void gdBeatsInput::__cb_update_batt()
+{
 	if (!strcmp(beats->value(), "") || !strcmp(bars->value(), ""))
 		return;
-	glue_setBeats(atoi(beats->value()), atoi(bars->value()), exp->value());
+	glue_setBeats(atoi(beats->value()), atoi(bars->value()), resizeRec->value());
 	do_callback();
 }
