@@ -65,7 +65,7 @@ gdBeatsInput::gdBeatsInput()
 	bars->type(FL_INT_INPUT);
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update_batt, (void*)this);
-	resizeRec->value(1); // checked by default
+	resizeRec->value(G_Conf.resizeRecordings);
 
 	gu_setFavicon(this);
 	setId(WID_BEATS);
@@ -80,6 +80,7 @@ gdBeatsInput::~gdBeatsInput()
 {
 	G_Conf.beatsX = x();
 	G_Conf.beatsY = y();
+	G_Conf.resizeRecordings =	resizeRec->value();
 }
 
 
