@@ -45,6 +45,7 @@ private:
 	static void cb_save_sample (Fl_Widget *v, void *p);
 	static void cb_load_patch  (Fl_Widget *v, void *p);
 	static void cb_save_patch  (Fl_Widget *v, void *p);
+	static void cb_load_midimap(Fl_Widget *v, void *p);
 	static void cb_save_project(Fl_Widget *v, void *p);
 	static void cb_close       (Fl_Widget *w, void *p);
 #ifdef WITH_VST
@@ -58,6 +59,7 @@ private:
 	inline void __cb_save_project();
 	inline void __cb_load_patch();
 	inline void __cb_save_patch();
+	inline void __cb_load_midimap();
 	inline void __cb_close();
 #ifdef WITH_VST
 	inline void __cb_loadPlugin();
@@ -87,9 +89,13 @@ private:
 
 	int stackType;
 
+	char selectedFile[FILENAME_MAX];
+
 public:
 	gdBrowser(const char *title, const char *initPath, class Channel *ch, int type, int stackType=0);
 	~gdBrowser();
+
+	char* SelectedFile();
 };
 
 #endif

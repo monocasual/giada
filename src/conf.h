@@ -69,6 +69,7 @@ public:
 	int   midiPortIn;
 	bool  noNoteOff;
 	char  midiMapPath[FILENAME_MAX];
+	char  lastFileMap[FILENAME_MAX];
 	int   midiSync;  // see const.h
 	float midiTCfps;
 

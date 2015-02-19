@@ -47,7 +47,6 @@ void MidiMapConf::initBundles()
 	bundles[0] = new string[2];
 	bundles[0][0] = "Novation Launchpad S";
 	bundles[0][1] = "novation_launchpads.giadamap";
-
 }
 
 
@@ -106,6 +105,8 @@ void MidiMapConf::setDefault()
 
 int MidiMapConf::readFromBundle(std::string BundleName)
 {
+	gLog("[MidiConf] Midi map bundle %s\n", BundleName.c_str());
+
 	bool p_found = false;
 	char path[PATH_MAX];
 
@@ -120,7 +121,7 @@ int MidiMapConf::readFromBundle(std::string BundleName)
 		return readFromFile(path);
 	}
 	else {
-		gLog("[MidiConf] Cannot fine bundle %s\n", BundleName.c_str());
+		gLog("[MidiConf] Cannot find bundle %s\n", BundleName.c_str());
 		return 0;
 	}
 }
@@ -131,7 +132,7 @@ int MidiMapConf::readFromBundle(std::string BundleName)
 
 int MidiMapConf::readFromFile(std::string MapFile)
 {
-	setDefault();
+	gLog("[MidiConf] Reading midi map file %s\n", MapFile.c_str());
 
 	if (!openFileForReading(MapFile)) {
 		gLog("[MidiConf] unreadable .giadamap file\n");

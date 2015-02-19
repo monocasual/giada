@@ -75,6 +75,9 @@ private:
 
 	int systemInitValue;
 
+	char  midiMapPath[FILENAME_MAX];
+	char  lastFileMap[FILENAME_MAX];
+
 public:
 	class gChoice *system;
 	class gChoice *portOut;

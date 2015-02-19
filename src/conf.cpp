@@ -240,6 +240,10 @@ int Conf::read()
 	strncpy(midiMapPath, tmpMidiMapPath.c_str(), tmpMidiMapPath.size());
 	midiMapPath[tmpMidiMapPath.size()] = '\0';	// strncpy doesn't add '\0'
 
+	std::string tmplastFileMap = getValue("lastFileMap");
+	strncpy(lastFileMap, tmplastFileMap.c_str(), tmplastFileMap.size());
+	lastFileMap[tmplastFileMap.size()] = '\0';	// strncpy doesn't add '\0'
+
 	midiSync  = atoi(getValue("midiSync").c_str());
 	midiTCfps = atof(getValue("midiTCfps").c_str());
 
@@ -382,6 +386,7 @@ int Conf::write()
 	fprintf(fp, "midiPortIn=%d\n",  midiPortIn);
 	fprintf(fp, "noNoteOff=%d\n",   noNoteOff);
 	fprintf(fp, "midiMapPath=%s\n", midiMapPath);
+	fprintf(fp, "lastFileMap=%s\n", lastFileMap);
 	fprintf(fp, "midiSync=%d\n",    midiSync);
 	fprintf(fp, "midiTCfps=%f\n",   midiTCfps);
 

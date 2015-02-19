@@ -48,7 +48,6 @@ class MidiMapConf : public DataStorage
 {
 	private:
 		int openFileForReading(std::string MapFile);
-		void setDefault();
 		void close();
 
 		void parse(string Config, int* Channel, uint32_t* Message, int* NotePos);
@@ -96,6 +95,7 @@ class MidiMapConf : public DataStorage
 		int stopped_notePos;
 		uint32_t stopped[4];
 
+		void setDefault();
 		int readFromBundle(std::string BundleName);
 		int readFromFile(std::string MapFile);
 		void initBundles();

@@ -122,10 +122,15 @@ int openOutDevice(int port)
 			midiOut->openPort(port, getOutPortName(port));
 			gLog("[KM] MIDI out port %d open\n", port);
 
-			if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0)
-				G_MidiMap.readFromBundle(G_Conf.midiMapPath);
-			else if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0)
-				G_MidiMap.readFromFile(G_Conf.midiMapPath);
+			G_MidiMap.setDefault();
+			if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0) {
+				std::string tmp(G_Conf.midiMapPath);
+				G_MidiMap.readFromBundle(tmp.substr(8).c_str());
+			}
+			else if ((strstr(G_Conf.midiMapPath, "file::") - G_Conf.midiMapPath) == 0) {
+				std::string tmp(G_Conf.midiMapPath);
+				G_MidiMap.readFromFile(tmp.substr(6).c_str());
+			}
 
 			init();
 
