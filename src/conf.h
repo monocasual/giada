@@ -87,6 +87,8 @@ public:
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
 
+	bool resizeRecordings;
+
 	char pluginPath[FILENAME_MAX];
 	char patchPath [FILENAME_MAX];
 	char samplePath[FILENAME_MAX];
