@@ -136,7 +136,7 @@ int Conf::openFileForWriting()
 void Conf::setDefault()
 {
 	logMode = LOG_MODE_MUTE;
-	
+
 	soundSystem    = DEFAULT_SOUNDSYS;
 	soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
 	soundDeviceIn  = DEFAULT_SOUNDDEV_IN;
@@ -170,10 +170,12 @@ void Conf::setDefault()
 	chansStopOnSeqHalt = false;
 	treatRecsAsLoops   = false;
 
+	resizeRecordings = true;
+
 	actionEditorZoom    = 100;
 	actionEditorGridOn  = false;
 	actionEditorGridVal = 1;
-	
+
 	mainWindowX = 0;
 	mainWindowY = 0;
 	mainWindowW = GUI_WIDTH;
@@ -201,7 +203,7 @@ int Conf::read()
 		gLog("[Conf] corrupted .conf file, using default parameters\n");
 		return -1;
 	}
-	
+
 	logMode = atoi(getValue("logMode").c_str());
 
 	soundSystem = atoi(getValue("soundSystem").c_str());
@@ -252,7 +254,7 @@ int Conf::read()
 	mainWindowY = atoi(getValue("mainWindowY").c_str());
 	mainWindowW = atoi(getValue("mainWindowW").c_str());
 	mainWindowH = atoi(getValue("mainWindowH").c_str());
-	
+
 	browserX = atoi(getValue("browserX").c_str());
 	browserY = atoi(getValue("browserY").c_str());
 	browserW = atoi(getValue("browserW").c_str());
@@ -342,6 +344,8 @@ int Conf::read()
 	chansStopOnSeqHalt = atoi(getValue("chansStopOnSeqHalt").c_str());
 	treatRecsAsLoops   = atoi(getValue("treatRecsAsLoops").c_str());
 
+	resizeRecordings = atoi(getValue("resizeRecordings").c_str());
+
 	close();
 	return 1;
 }
@@ -360,7 +364,7 @@ int Conf::write()
 	fprintf(fp, "version=%s\n", VERSIONE);
 
 	fprintf(fp, "logMode=%d\n",    logMode);
-	
+
 	fprintf(fp, "soundSystem=%d\n",    soundSystem);
 	fprintf(fp, "soundDeviceOut=%d\n", soundDeviceOut);
 	fprintf(fp, "soundDeviceIn=%d\n",  soundDeviceIn);
@@ -397,7 +401,7 @@ int Conf::write()
 	fprintf(fp, "mainWindowY=%d\n", mainWindowY);
 	fprintf(fp, "mainWindowW=%d\n", mainWindowW);
 	fprintf(fp, "mainWindowH=%d\n", mainWindowH);
-	
+
 	fprintf(fp, "browserX=%d\n", browserX);
 	fprintf(fp, "browserY=%d\n", browserY);
 	fprintf(fp, "browserW=%d\n", browserW);
@@ -439,6 +443,8 @@ int Conf::write()
 	fprintf(fp, "recsStopOnChanHalt=%d\n", recsStopOnChanHalt);
 	fprintf(fp, "chansStopOnSeqHalt=%d\n", chansStopOnSeqHalt);
 	fprintf(fp, "treatRecsAsLoops=%d\n",   treatRecsAsLoops);
+
+	fprintf(fp, "resizeRecordings=%d\n", resizeRecordings);
 
 	close();
 	return 1;

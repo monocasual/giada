@@ -34,18 +34,20 @@
 #include "ge_window.h"
 
 
-class gdBeatsInput : public gWindow {
+class gdBeatsInput : public gWindow
+{
 private:
+
 	static void cb_update_batt(Fl_Widget *w, void *p);
 	inline void __cb_update_batt();
 
 	class gInput *beats;
 	class gInput *bars;
 	class gClick *ok;
-	class gCheck *exp;
-	class gBox   *exp_txt;
+	class gCheck *resizeRec;
 
 public:
+
 	gdBeatsInput();
 	~gdBeatsInput();
 };
