@@ -823,6 +823,7 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		readPatchMidiIn(i);
 		midiInReadActions = G_Patch.getMidiValue(i, "InReadActions");
 		midiInPitch       = G_Patch.getMidiValue(i, "InPitch");
+		readPatchMidiOut(i);
 
 		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));

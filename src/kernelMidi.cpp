@@ -406,41 +406,41 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 		/* process master events */
 
 		if      (pure == G_Conf.midiInRewind) {
-			gLog(" >>> rewind (global) (pure=0x%X)", pure);
+			gLog(" >>> rewind (global) (pure=0x%X)\n", pure);
 			glue_rewindSeq();
 		}
 		else if (pure == G_Conf.midiInStartStop) {
-			gLog(" >>> startStop (global) (pure=0x%X)", pure);
+			gLog(" >>> startStop (global) (pure=0x%X)\n", pure);
 			glue_startStopSeq();
 		}
 		else if (pure == G_Conf.midiInActionRec) {
-			gLog(" >>> actionRec (global) (pure=0x%X)", pure);
+			gLog(" >>> actionRec (global) (pure=0x%X)\n", pure);
 			glue_startStopActionRec();
 		}
 		else if (pure == G_Conf.midiInInputRec) {
-			gLog(" >>> inputRec (global) (pure=0x%X)", pure);
+			gLog(" >>> inputRec (global) (pure=0x%X)\n", pure);
 			glue_startStopInputRec(false, false);   // update gui, no popup messages
 		}
 		else if (pure == G_Conf.midiInMetronome) {
-			gLog(" >>> metronome (global) (pure=0x%X)", pure);
+			gLog(" >>> metronome (global) (pure=0x%X)\n", pure);
 			glue_startStopMetronome(false);
 		}
 		else if (pure == G_Conf.midiInVolumeIn) {
 			float vf = (value >> 8)/127.0f;
-			gLog(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			gLog(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)\n", pure, value >> 8, vf);
 			glue_setInVol(vf, false);
 		}
 		else if (pure == G_Conf.midiInVolumeOut) {
 			float vf = (value >> 8)/127.0f;
-			gLog(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			gLog(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)\n", pure, value >> 8, vf);
 			glue_setOutVol(vf, false);
 		}
 		else if (pure == G_Conf.midiInBeatDouble) {
-			gLog(" >>> sequencer x2 (global) (pure=0x%X)", pure);
+			gLog(" >>> sequencer x2 (global) (pure=0x%X)\n", pure);
 			glue_beatsMultiply();
 		}
 		else if (pure == G_Conf.midiInBeatHalf) {
-			gLog(" >>> sequencer /2 (global) (pure=0x%X)", pure);
+			gLog(" >>> sequencer /2 (global) (pure=0x%X)\n", pure);
 			glue_beatsDivide();
 		}
 
@@ -453,37 +453,36 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 			if (!ch->midiIn) continue;
 
 			if      (pure == ch->midiInKeyPress) {
-				gLog(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
+				gLog(" >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
 				glue_keyPress(ch, false, false);
 			}
 			else if (pure == ch->midiInKeyRel) {
-				gLog(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
+				gLog(" >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);
 				glue_keyRelease(ch, false, false);
 			}
 			else if (pure == ch->midiInMute) {
-				gLog(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
+				gLog(" >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
 				glue_setMute(ch, false);
 			}
 			else if (pure == ch->midiInSolo) {
-				gLog(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
+				gLog(" >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
 				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
 			}
 			else if (pure == ch->midiInVolume) {
 				float vf = (value >> 8)/127.0f;
-				gLog(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				gLog(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n", ch->index, pure, value >> 8, vf);
 				glue_setChanVol(ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
 				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
-				gLog(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				gLog(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n", ch->index, pure, value >> 8, vf);
 				glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
-				gLog(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
+				gLog(" >>> start/stop read actions ch=%d (pure=0x%X)\n", ch->index, pure);
 				glue_startStopReadingRecs((SampleChannel*)ch, false);
 			}
 		}
-		gLog("\n");
 	}
 }
 
