@@ -112,7 +112,11 @@ int MidiMapConf::readFromBundle(std::string BundleName)
 
 	for ( unsigned i = 0 ; i < numBundles ; i++) {
 		if (!strcmp(BundleName.c_str(), bundles[0][0].c_str())) {
-			snprintf(path, PATH_MAX, "%s/%s", "/home/blablack/src/giada/midimaps", bundles[0][1].c_str());
+#if defined(_WIN32)
+			sprintf(path, PATH_MAX, "%s\\%s\\%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
+#else
+			snprintf(path, PATH_MAX, "%s/%s/%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
+#endif
 			p_found = true;
 		}
 	}
