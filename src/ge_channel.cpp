@@ -986,13 +986,15 @@ int gChannelButton::handle(int e)
 			break;
 		}
 		case FL_PASTE: {
-
-      //((gChannel*)parent())->ch;
-
-      /*
-      int result = glue_loadChannel(pr->ch, gTrim(gStripFileUrl(Fl::event_text())).c_str());
-			if (result != SAMPLE_LOADED_OK)
-				mainWin->keyboard->printChannelMessage(result);*/
+      gChannel *p = (gChannel*) parent();   // parent is g[Sample|Midi]Channel
+      if (p->type == CHANNEL_SAMPLE) {
+        SampleChannel *c = ((gSampleChannel*)p)->ch;
+        int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+  			if (result != SAMPLE_LOADED_OK)
+  				mainWin->keyboard->printChannelMessage(result);
+      }
+      // else dnd on a MIDI channel, nothing to do so far (load MIDI tab in
+      // the future)
 			ret = 1;
 			break;
 		}
