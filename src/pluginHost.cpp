@@ -286,7 +286,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 
 		/* 43 - It tells the Host that if it needs to, it has to record
 		 * automation data for this control. In other words this opcode is fired
-		 * when the user start to tweak a parameter with the mouse.
+		 * when the user starts to tweak a parameter with the mouse.
 		 * Useful when the plugin actions will be recorded. */
 
 		case audioMasterBeginEdit:
