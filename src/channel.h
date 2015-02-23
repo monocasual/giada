@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * channel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef CHANNEL_H
@@ -144,7 +144,7 @@ public:
 
 	virtual void rewind() = 0;
 
-	/* ---------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------ */
 
 	int     index;                // unique id
 	int     type;                 // midi or sample
@@ -176,7 +176,7 @@ public:
 #endif
 
 
-	/* ---------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------ */
 
 	/* isPlaying
 	 * tell wether the channel is playing or is stopped. */
@@ -184,11 +184,10 @@ public:
 	bool isPlaying();
 
 	/* readPatchMidiIn
-	 * read from patch all midi-related parameters such as keypress, mute 
+	 * read from patch all midi-related parameters such as keypress, mute
 	 * and so on. */
 
 	void readPatchMidiIn(int i);
-
 };
 
 

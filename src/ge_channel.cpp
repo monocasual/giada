@@ -60,13 +60,13 @@ extern Patch 		     G_Patch;
 extern gdMainWindow *mainWin;
 
 
-gChannel::gChannel(int X, int Y, int W, int H)
- : Fl_Group(X, Y, W, H, NULL)
+gChannel::gChannel(int X, int Y, int W, int H, int type)
+ : Fl_Group(X, Y, W, H, NULL), type(type)
 {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int gChannel::getColumnIndex()
@@ -75,11 +75,11 @@ int gChannel::getColumnIndex()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *ch)
-	: gChannel(X, Y, W, H), ch(ch)
+	: gChannel(X, Y, W, H, CHANNEL_SAMPLE), ch(ch)
 {
 	begin();
 
@@ -91,7 +91,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 
 	button       = new gButton (x(), y(), 20, 20);
 	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
-	sampleButton = new gClick  (status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
+	sampleButton = new gChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
 	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
@@ -131,7 +131,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_button(); }
@@ -145,7 +145,7 @@ void gSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gSampleChannel*)
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::__cb_mute()
@@ -154,7 +154,7 @@ void gSampleChannel::__cb_mute()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::__cb_solo()
@@ -163,7 +163,7 @@ void gSampleChannel::__cb_solo()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::__cb_changeVol()
@@ -172,7 +172,7 @@ void gSampleChannel::__cb_changeVol()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
@@ -183,7 +183,7 @@ void gSampleChannel::__cb_openFxWindow()
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 
@@ -196,7 +196,7 @@ void gSampleChannel::__cb_button()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::__cb_openMenu()
@@ -591,7 +591,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 
 
 gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
-	: gChannel(X, Y, W, H), ch(ch)
+	: gChannel(X, Y, W, H, CHANNEL_MIDI), ch(ch)
 {
 	begin();
 
@@ -602,7 +602,7 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 #endif
 
 	button       = new gButton (x(), y(), 20, 20);
-	sampleButton = new gClick (button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
+	sampleButton = new gChannelButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
@@ -960,4 +960,44 @@ void gModeBox::__cb_change_chanmode(int mode)
    * case it's open */
 
   gu_refreshActionEditor();
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gChannelButton::gChannelButton(int x, int y, int w, int h, const char *L)
+  : gClick(x, y, w, h, L) {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gChannelButton::handle(int e)
+{
+	int ret = gClick::handle(e);
+	switch (e) {
+		case FL_DND_ENTER:
+		case FL_DND_DRAG:
+		case FL_DND_RELEASE: {
+			ret = 1;
+			break;
+		}
+		case FL_PASTE: {
+      gChannel *p = (gChannel*) parent();   // parent is g[Sample|Midi]Channel
+      if (p->type == CHANNEL_SAMPLE) {
+        SampleChannel *c = ((gSampleChannel*)p)->ch;
+        int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+  			if (result != SAMPLE_LOADED_OK)
+  				mainWin->keyboard->printChannelMessage(result);
+      }
+      // else dnd on a MIDI channel, nothing to do so far (load MIDI tab in
+      // the future)
+			ret = 1;
+			break;
+		}
+	}
+	return ret;
 }
