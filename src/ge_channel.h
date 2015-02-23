@@ -34,6 +34,7 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
+#include "ge_mixed.h"
 
 
 class gChannel : public Fl_Group
@@ -52,7 +53,7 @@ protected:
 
 public:
 
-	gChannel(int x, int y, int w, int h);
+	gChannel(int x, int y, int w, int h, int type);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -83,7 +84,7 @@ public:
 
 	class gButton *button;
 	class gStatus *status;
-	class gClick  *sampleButton;
+	class gChannelButton *sampleButton;
 	class gDial   *vol;
 	class gClick 	*mute;
 	class gClick 	*solo;
@@ -91,6 +92,7 @@ public:
 	class gButton *fx;
 #endif
 
+	int type;
 };
 
 
@@ -203,7 +205,8 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gModeBox : public Fl_Menu_Button {
+class gModeBox : public Fl_Menu_Button
+{
 private:
 	static void cb_change_chanmode(Fl_Widget *v, void *p);
 	inline void __cb_change_chanmode(int mode);
@@ -213,6 +216,20 @@ private:
 public:
 	gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
 	void draw();
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+/* gChannelButton
+ * main channel button which handles drag and drop events. */
+
+class gChannelButton : public gClick
+{
+public:
+	gChannelButton(int x, int y, int w, int h, const char *L=0);
+	int handle(int e);
 };
 
 #endif

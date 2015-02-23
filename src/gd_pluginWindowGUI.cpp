@@ -51,8 +51,11 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 	gu_setFavicon(this);
 	set_non_modal();
-	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiHeight());
+	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiWidth());
 	show();
+
+  gLog("[gdPluginWindowGUI] open window, w=%d h=%d\n",
+      pPlugin->getGuiWidth(), pPlugin->getGuiWidth());
 
 	/* Fl::check(): Waits until "something happens" and then returns. It's
 	 * mandatory on linux, otherwise X can't find 'this' window. */
