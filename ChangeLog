@@ -13,8 +13,12 @@
 
 
 
-0.9.3 --- 2015 .
+0.9.4 --- 2015 . 02 . 24
+- Drag-n-drop now works also in existing channels
 - Store 'resize recordings' flag in giada.conf
+- Better management of duplicate samples
+- Add more VST debug information
+- Minor fixes and tweaks
 
 
 0.9.3 --- 2015 . 02 . 01
@@ -541,7 +545,7 @@
 - Fixed retrig for backspace key (rewind)
 - Enhanced rewind with quantization support
 - Main and alert windows now appear centered on screen
-- Sanity check against old patches without metronome informations
+- Sanity check against old patches without metronome information
 - Rewind now affects loops in rec-reading mode
 
 
@@ -732,7 +736,7 @@
 - the "save patch" panel now shows the actual patchname in use
 - alphabetic sort into the file browser
 - fixed an annoying gui flickering
-- patch volume informations are now handled correctly
+- patch volume information are now handled correctly
 - minor internal optimizations
 - fixed a memory leak when loading a new patch
 - other memory optimizations
@@ -752,7 +756,7 @@
 - New internal sample-accurate loop engine
 - Ability to configure the period size through ini file
 - First implementation of the double click startup
-- Debug informations are now properly tagged, reporting the interested layer
+- Debug information are now properly tagged, reporting the interested layer
 
 
 0.0.3 --- 2010 . 10 . 02
@@ -766,7 +770,7 @@
 - (giada) ALSA layer now tells if an underrun occurs
 - (giada) Internal memory allocation improvements
 - (giada) Fixed an unallocated hardware parameter into ALSA configuration
-- (wa) Informations about wave endianness
+- (wa) Information about wave endianness
 - Added a "Requirements" section to the readme file
 
 
@@ -783,7 +787,7 @@
 - (giada) The sample name is now trucated to fit into its box, preventing overflow
 - (giada) Other minor GUI tweaks
 - (giada) Internal memory improvements to prevent a bad bug of allocation with malformed wave files
-- (wa) More informations about sample size
+- (wa) More information about sample size
 - (wa) Added calculations and comparison between data sizes
 
 
