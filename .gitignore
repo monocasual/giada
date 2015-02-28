@@ -40,6 +40,7 @@ src/*.o
 src/giada.conf
 src/.deps
 src/Makefile.in
+midimaps/Makefile.in
 /Makefile.in
 compile
 debian/*.log
@@ -50,4 +51,3 @@ giada.creator
 giada.creator.user
 giada.files
 giada.includes
-

@@ -68,6 +68,8 @@ public:
 	int   midiPortOut;
 	int   midiPortIn;
 	bool  noNoteOff;
+	char  midiMapPath[FILENAME_MAX];
+	char  lastFileMap[FILENAME_MAX];
 	int   midiSync;  // see const.h
 	float midiTCfps;
 
@@ -84,6 +86,8 @@ public:
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
+
+	bool resizeRecordings;
 
 	char pluginPath[FILENAME_MAX];
 	char patchPath [FILENAME_MAX];

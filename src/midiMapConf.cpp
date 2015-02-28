@@ -36,28 +36,26 @@
 #include "utils.h"
 #include "log.h"
 
-int MidiMapConf::openFileForReading()
+
+void MidiMapConf::initBundles()
 {
-	char path[PATH_MAX];
+	gLog("[MidiConf] Init Bundles\n");
+	numBundles = 1;
 
-#if defined(__linux__)
-	//snprintf(path, PATH_MAX, "%s/.giada/%s", getenv("HOME"), CONF_FILENAME);
-	snprintf(path, PATH_MAX, "/home/blablack/src/giada/midimaps/novation_launchpads.giadamap");
-#elif defined(_WIN32)
-	snprintf(path, PATH_MAX, "%s", CONF_FILENAME);
-#elif defined(__APPLE__)
-	struct passwd *p = getpwuid(getuid());
-	if (p == NULL) {
-		gLog("[Conf::openFile] unable to fetch user infos\n");
-		return 0;
-	}
-	else {
-		const char *home = p->pw_dir;
-		snprintf(path, PATH_MAX, "%s/Library/Application Support/Giada/giada.conf", home);
-	}
-#endif
+	bundles = new string*[numBundles];
 
-	fp = fopen(path, "r");
+	bundles[0] = new string[2];
+	bundles[0][0] = "Novation Launchpad S";
+	bundles[0][1] = "novation_launchpads.giadamap";
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int MidiMapConf::openFileForReading(std::string MapFile)
+{
+	fp = fopen(MapFile.c_str(), "r");
 	if (fp == NULL) {
 		gLog("[MidiConf::openFile] unable to open conf file for reading\n");
 		return 0;
@@ -105,11 +103,42 @@ void MidiMapConf::setDefault()
 /* ------------------------------------------------------------------ */
 
 
-int MidiMapConf::read()
+int MidiMapConf::readFromBundle(std::string BundleName)
 {
-	setDefault();
+	gLog("[MidiConf] Midi map bundle %s\n", BundleName.c_str());
 
-	if (!openFileForReading()) {
+	bool p_found = false;
+	char path[PATH_MAX];
+
+	for ( unsigned i = 0 ; i < numBundles ; i++) {
+		if (!strcmp(BundleName.c_str(), bundles[0][0].c_str())) {
+#if defined(_WIN32)
+			sprintf(path, PATH_MAX, "%s\\%s\\%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
+#else
+			snprintf(path, PATH_MAX, "%s/%s/%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
+#endif
+			p_found = true;
+		}
+	}
+
+	if (p_found) {
+		return readFromFile(path);
+	}
+	else {
+		gLog("[MidiConf] Cannot find bundle %s\n", BundleName.c_str());
+		return 0;
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+int MidiMapConf::readFromFile(std::string MapFile)
+{
+	gLog("[MidiConf] Reading midi map file %s\n", MapFile.c_str());
+
+	if (!openFileForReading(MapFile)) {
 		gLog("[MidiConf] unreadable .giadamap file\n");
 		return 0;
 	}
@@ -141,7 +170,7 @@ int MidiMapConf::read()
 	parse("mute_off",        &mute_off_channel,        mute_off,        &mute_off_notePos);
 	parse("solo_on",         &solo_on_channel,         solo_on,         &solo_on_notePos);
 	parse("solo_off",        &solo_off_channel,        solo_off,        &solo_off_notePos);
-	parse("waiting", &waiting_channel, waiting, &waiting_notePos);
+	parse("waiting",         &waiting_channel,         waiting,         &waiting_notePos);
 	parse("playing",         &playing_channel,         playing,         &playing_notePos);
 	parse("stopping",        &stopping_channel,        stopping,        &stopping_notePos);
 	parse("stopped",         &stopped_channel,         stopped,         &stopped_notePos);
@@ -158,6 +187,7 @@ void MidiMapConf::close()
 {
 	if (fp != NULL)
 		fclose(fp);
+	fp = NULL;
 }
 
 

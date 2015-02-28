@@ -47,14 +47,15 @@ using namespace std;
 class MidiMapConf : public DataStorage
 {
 	private:
-
-		int openFileForReading();
-		void setDefault();
+		int openFileForReading(std::string MapFile);
 		void close();
 
-		//string* split(string &sourceStr, char &delimiter, int Size);
+		void parse(string Config, int* Channel, uint32_t* Message, int* NotePos);
 
 	public:
+		unsigned numBundles;
+		string** bundles;
+
 
 		std::string brand;
 		std::string device;
@@ -94,8 +95,10 @@ class MidiMapConf : public DataStorage
 		int stopped_notePos;
 		uint32_t stopped[4];
 
-		int read();
-		void parse(string Config, int* Channel, uint32_t* Message, int* NotePos);
+		void setDefault();
+		int readFromBundle(std::string BundleName);
+		int readFromFile(std::string MapFile);
+		void initBundles();
 };
 
 #endif

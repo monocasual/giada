@@ -30,8 +30,10 @@
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
+#include "gd_browser.h"
 #include "ge_mixed.h"
 #include "conf.h"
+#include "midiMapConf.h"
 #include "log.h"
 #include "gui_utils.h"
 #include "patch.h"
@@ -42,6 +44,7 @@
 extern Patch G_Patch;
 extern Conf	 G_Conf;
 extern bool  G_audio_status;
+extern MidiMapConf G_MidiMap;
 
 
 /* ------------------------------------------------------------------ */
@@ -525,17 +528,20 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	portOut	  = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn	  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
 	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
-	sync	    = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Sync");
+	midiMap	  = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
+	sync	    = new gChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
 	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(11);
 
+	midiMap->callback(cb_browseMidiMap, (void*)this);
 	system->callback(cb_changeSystem, (void*)this);
 
 	fetchSystems();
 	fetchOutPorts();
 	fetchInPorts();
+	fetchMidiMaps();
 
 	noNoteOff->value(G_Conf.noNoteOff);
 
@@ -609,6 +615,50 @@ void gTabMidi::fetchInPorts()
 /* ------------------------------------------------------------------ */
 
 
+void gTabMidi::fetchMidiMaps()
+{
+	strcpy(midiMapPath, G_Conf.midiMapPath);
+	strcpy(lastFileMap, G_Conf.lastFileMap);
+
+	int p_count = 0;
+	midiMap->add("Generic");
+
+	for (unsigned i=0; i<G_MidiMap.numBundles; i++) {
+		p_count++;
+		midiMap->add(G_MidiMap.bundles[i][0].c_str());
+	}
+
+	p_count += 3;
+	midiMap->add("--------------------------------");
+	midiMap->add("Browse...");
+
+	if (strcmp(G_Conf.lastFileMap, "\0")) {
+		p_count++;
+		midiMap->add(G_Conf.lastFileMap);
+	}
+
+	if (!strcmp(midiMapPath, "\0")) {
+		midiMap->value(0);
+	}
+	else {
+		std::string tmp(G_Conf.midiMapPath);
+		if ((strstr(G_Conf.midiMapPath, "bundle::") - G_Conf.midiMapPath) == 0)
+			tmp = tmp.substr(8);
+		else if ((strstr(G_Conf.midiMapPath, "file::") - G_Conf.midiMapPath) == 0)
+			tmp = tmp.substr(6);
+
+		for (int i = 0 ; i < p_count ; i++) {
+			if (!strcmp(midiMap->text(i), tmp.c_str())) {
+				midiMap->value(i);
+			}
+		}
+	}
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
 void gTabMidi::save()
 {
 	if      (!strcmp("ALSA", system->text(system->value())))
@@ -626,6 +676,12 @@ void gTabMidi::save()
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	G_Conf.noNoteOff   = noNoteOff->value();
+
+	strcpy(G_Conf.midiMapPath, midiMapPath);
+	strcpy(G_Conf.lastFileMap, lastFileMap);
+
+	if      (!strcmp("Generic", midiMap->text(midiMap->value())))
+		G_Conf.setPath(G_Conf.midiMapPath, "\0");
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;
@@ -699,6 +755,68 @@ void gTabMidi::__cb_changeSystem()
 		portOut->value(0);
 	}
 
+}
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::cb_browseMidiMap(Fl_Widget *w, void *p) { ((gTabMidi*)p)->__cb_browseMidiMap(); }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void gTabMidi::__cb_browseMidiMap()
+{
+	gLog("%d - %d\n",midiMap->size(), midiMap->value() );
+	if (!strcmp("Generic", midiMap->text(midiMap->value()))) {
+		strcpy(midiMapPath, "\0");
+	}
+	else if (!strcmp("--------------------------------", midiMap->text(midiMap->value()))) {
+		midiMap->value(0); //User is trying to be clever ; set it back to Generic
+	}
+	else if (!strcmp("Browse...", midiMap->text(midiMap->value()))) {
+		gdBrowser *childWin = new gdBrowser("Load Midi Map", NULL, 0, BROWSER_LOAD_MIDIMAP);
+		gu_openSubWindow((gWindow*)this->window(), childWin, WID_FILE_BROWSER);
+
+		while (childWin->shown()) Fl::wait();
+
+		if (!strcmp(childWin->SelectedFile(), "\0")) {
+			midiMap->value(0);
+			return;
+		}
+
+		strcpy(midiMapPath, childWin->SelectedFile());
+
+		if (midiMap->size() == (int)G_MidiMap.numBundles + 5) {
+			midiMap->replace(midiMap->size() - 2, midiMapPath);
+		}
+		else {
+			midiMap->add(midiMapPath);
+		}
+
+		strcpy(lastFileMap, midiMapPath);
+
+		midiMap->value(midiMap->size() - 2);
+
+		char *Type = new char[FILENAME_MAX];
+		strcpy( Type, "file::" );
+		strcat( Type, midiMap->text(midiMap->value()) );
+		strcpy( midiMapPath, Type );
+	}
+	else if (midiMap->value() == midiMap->size() - 2) {
+		char *Type = new char[FILENAME_MAX];
+		strcpy( Type, "file::" );
+		strcat( Type, midiMap->text(midiMap->value()) );
+		strcpy( midiMapPath, Type );
+	}
+	else if (midiMap->value() >= 1 && (unsigned)midiMap->value() <= G_MidiMap.numBundles) {
+		char *Type = new char[FILENAME_MAX];
+		strcpy( Type, "bundle::" );
+		strcat( Type, midiMap->text(midiMap->value()) );
+		strcpy( midiMapPath, Type );
+	}
 }
 
 
