@@ -6,7 +6,7 @@
 AC_PREREQ(2.60)
 AC_INIT([giada], [0.9], [giadaloopmachine@gmail.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
-AM_INIT_AUTOMAKE([giada], [0.9])
+AM_INIT_AUTOMAKE
 
 # ----------------------------------------------------------------------
 
