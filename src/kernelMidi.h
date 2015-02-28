@@ -99,6 +99,22 @@ namespace kernelMidi {
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
 	
 	std::string getRtMidiVersion();
+
+	/* send midi to device
+	 * to init and control lights
+	 */
+
+	void init();
+	void midi_mute_on(uint32_t note);
+	void midi_mute_off(uint32_t note);
+	void midi_solo_on(uint32_t note);
+	void midi_solo_off(uint32_t note);
+	void midi_waiting(uint32_t note);
+	void midi_playing(uint32_t note);
+	void midi_stopping(uint32_t note);
+	void midi_stopped(uint32_t note);
+
+	void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int NotePos);
 }
 
 #endif

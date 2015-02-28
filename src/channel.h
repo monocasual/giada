@@ -163,13 +163,18 @@ public:
 	float  *vChan;	              // virtual channel
   class   gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
 
-  bool     midiIn;              // enable midi output
+  bool     midiIn;              // enable midi input
   uint32_t midiInKeyPress;
   uint32_t midiInKeyRel;
   uint32_t midiInKill;
   uint32_t midiInVolume;
   uint32_t midiInMute;
   uint32_t midiInSolo;
+
+  bool     midiOut;              // enable midi output
+  uint32_t midiOutPlaying;
+  uint32_t midiOutMute;
+  uint32_t midiOutSolo;
 
 #ifdef WITH_VST
   gVector <class Plugin *> plugins;
@@ -188,6 +193,11 @@ public:
 	 * and so on. */
 
 	void readPatchMidiIn(int i);
+	void readPatchMidiOut(int i);
+
+	void refreshMidiMuteLed();
+	void refreshMidiSoloLed();
+	void refreshMidiPlayLed();
 };
 
 

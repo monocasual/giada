@@ -65,17 +65,25 @@ private:
 	void fetchSystems();
 	void fetchOutPorts();
 	void fetchInPorts();
+	void fetchMidiMaps();
 
 	static void cb_changeSystem  (Fl_Widget *w, void *p);
 	inline void __cb_changeSystem();
 
+	static void cb_browseMidiMap (Fl_Widget *w, void *p);
+	inline void __cb_browseMidiMap();
+
 	int systemInitValue;
+
+	char  midiMapPath[FILENAME_MAX];
+	char  lastFileMap[FILENAME_MAX];
 
 public:
 	class gChoice *system;
 	class gChoice *portOut;
 	class gChoice *portIn;
 	class gCheck  *noNoteOff;
+	class gChoice *midiMap;
 	class gChoice *sync;
 
 	gTabMidi(int x, int y, int w, int h);

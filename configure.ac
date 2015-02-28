@@ -175,5 +175,10 @@ fi
 
 # finalizing
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+CPPFLAGS="$CPPFLAGS -DDATA_PATH=\\\"\$(pkgdatadir)\\\""
+ 
+dnl FC_EXPAND_DIR(PKGDATADIR, [$datadir/aptitude])
+dnl AC_DEFINE_UNQUOTED(PKGDATADIR, "$PKGDATADIR", [The location in which the program data is placed])
+
+AC_CONFIG_FILES([Makefile src/Makefile midimaps/Makefile])
 AC_OUTPUT

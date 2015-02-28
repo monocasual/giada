@@ -71,7 +71,11 @@ Channel::Channel(int type, int status, int bufferSize)
 	  midiInKill    (0x0),
 	  midiInVolume  (0x0),
 	  midiInMute    (0x0),
-	  midiInSolo    (0x0)
+	  midiInSolo    (0x0),
+	  midiOut       (true),
+	  midiOutPlaying(0x0),
+	  midiOutMute   (0x0),
+	  midiOutSolo   (0x0)
 {
 	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
@@ -103,6 +107,14 @@ void Channel::readPatchMidiIn(int i)
   midiInVolume   = G_Patch.getMidiValue(i, "InVolume");
   midiInMute     = G_Patch.getMidiValue(i, "InMute");
   midiInSolo     = G_Patch.getMidiValue(i, "InSolo");
+}
+
+void Channel::readPatchMidiOut(int i)
+{
+	midiOut        = G_Patch.getMidiValue(i, "Out");
+	midiOutPlaying = G_Patch.getMidiValue(i, "OutPlaying");
+	midiOutMute    = G_Patch.getMidiValue(i, "OutMute");
+	midiOutSolo    = G_Patch.getMidiValue(i, "OutSolo");
 }
 
 
@@ -137,4 +149,50 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
+
+	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
+	fprintf(fp, "chanMidiOutPlaying%d=%u\n", i, midiOutPlaying);
+	fprintf(fp, "chanMidiOutMute%d=%u\n",    i, midiOutMute);
+	fprintf(fp, "chanMidiOutSolo%d=%u\n",    i, midiOutSolo);
 }
+
+
+/* ------------------------------------------------------------------ */
+
+
+void Channel::refreshMidiMuteLed()
+{
+	if (midiOut && midiOutMute != 0x0) {
+		if (mute)
+			kernelMidi::midi_mute_on(midiOutMute);
+		else
+			kernelMidi::midi_mute_off(midiOutMute);
+	}
+}
+
+void Channel::refreshMidiSoloLed()
+{
+	if (midiOut && midiOutSolo != 0x0) {
+		if (solo)
+			kernelMidi::midi_solo_on(midiOutSolo);
+		else
+			kernelMidi::midi_solo_off(midiOutSolo);
+	}
+}
+
+void Channel::refreshMidiPlayLed()
+{
+	if (midiOut && midiOutPlaying != 0x0) {
+		if (status == STATUS_OFF)
+			kernelMidi::midi_stopped(midiOutPlaying);
+		else if (status == STATUS_PLAY)
+			kernelMidi::midi_playing(midiOutPlaying);
+		else if (status  == STATUS_WAIT)
+			kernelMidi::midi_waiting(midiOutPlaying);
+		else if (status == STATUS_ENDING)
+			kernelMidi::midi_stopping(midiOutPlaying);
+	}
+}
+
+
+

@@ -35,6 +35,7 @@
 #include "pluginHost.h"
 #include "waveFx.h"
 #include "mixerHandler.h"
+#include "kernelMidi.h"
 #include "log.h"
 
 
@@ -145,6 +146,7 @@ void SampleChannel::hardStop(int frame) {
 	if (frame != 0)        // clear data in range [frame, bufferSize-1]
 		clearChan(vChan, frame);
 	status = STATUS_OFF;
+	refreshMidiPlayLed();
 	reset(frame);
 }
 
@@ -167,6 +169,7 @@ void SampleChannel::onBar(int frame) {
 		if (status == STATUS_WAIT) {
 			status  = STATUS_PLAY;
 			tracker = fillChan(vChan, tracker, frame);
+			refreshMidiPlayLed();
 		}
 	}
 }
@@ -350,14 +353,17 @@ void SampleChannel::sum(int frame, bool running) {
 			 (mode & LOOP_ANY && !running))     // stop loops when the seq is off
 		{
 			status = STATUS_OFF;
+			refreshMidiPlayLed();
 		}
 
 		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
 		 * would return in wait, losing the ENDING status */
 
 		//if (mode == LOOP_ONCE && status != STATUS_ENDING)
-		if ((mode & (LOOP_ONCE | LOOP_ONCE_BAR)) && status != STATUS_ENDING)
+		if ((mode & (LOOP_ONCE | LOOP_ONCE_BAR)) && status != STATUS_ENDING) {
 			status = STATUS_WAIT;
+			refreshMidiPlayLed();
+		}
 
 		/* check for end of samples. SINGLE_ENDLESS runs forever unless
 		 * it's in ENDING mode. */
@@ -396,6 +402,7 @@ void SampleChannel::onZero(int frame) {
 
 	if (status == STATUS_WAIT) { /// FIXME - should be inside previous if!
 		status  = STATUS_PLAY;
+		refreshMidiPlayLed();
 		tracker = fillChan(vChan, tracker, frame);
 	}
 
@@ -426,6 +433,7 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 
 	if (status == STATUS_OFF) {
 		status  = STATUS_PLAY;
+		refreshMidiPlayLed();
 		qWait   = false;
 		tracker = fillChan(vChan, tracker, localFrame); /// FIXME: ???
 	}
@@ -460,7 +468,6 @@ int SampleChannel::getPosition() {
 
 
 void SampleChannel::setMute(bool internal) {
-
 	if (internal) {
 
 		/* global mute is on? don't waste time with fadeout, just mute it
@@ -492,6 +499,8 @@ void SampleChannel::setMute(bool internal) {
 				mute = true;
 		}
 	}
+
+	refreshMidiMuteLed();
 }
 
 
@@ -519,6 +528,8 @@ void SampleChannel::unsetMute(bool internal) {
 				mute = false;
 		}
 	}
+
+	refreshMidiMuteLed();
 }
 
 
@@ -616,6 +627,7 @@ void SampleChannel::empty() {
 		wave = NULL;
 	}
 	status = STATUS_EMPTY;
+	refreshMidiPlayLed();
 }
 
 
@@ -625,6 +637,7 @@ void SampleChannel::empty() {
 void SampleChannel::pushWave(Wave *w) {
 	wave   = w;
 	status = STATUS_OFF;
+	refreshMidiPlayLed();
 	begin  = 0;
 	end    = wave->size;
 }
@@ -648,6 +661,8 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	status      = STATUS_OFF;
 	begin       = 0;
 	end         = wave->size;
+
+	refreshMidiPlayLed();
 
 	return true;
 }
@@ -808,6 +823,7 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		readPatchMidiIn(i);
 		midiInReadActions = G_Patch.getMidiValue(i, "InReadActions");
 		midiInPitch       = G_Patch.getMidiValue(i, "InPitch");
+		readPatchMidiOut(i);
 
 		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));
@@ -824,6 +840,7 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		else
 		if (res == SAMPLE_READ_ERROR)
 			status = STATUS_MISSING;
+		refreshMidiPlayLed();
 	}
 
 	return res;
@@ -855,6 +872,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 		{
 			if (mode & LOOP_ANY) {
 				status = STATUS_WAIT;
+				refreshMidiPlayLed();
 			}
 			else {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
@@ -865,6 +883,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					 * a duplicate call to fillChan occurs with loss of data. */
 					
 					status = STATUS_PLAY;
+					refreshMidiPlayLed();
 					if (frame != 0)
 						tracker = fillChan(vChan, tracker, frame); 
 				}
@@ -884,20 +903,24 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					reset(frame);
 			}
 			else
-			if (mode & (LOOP_ANY | SINGLE_ENDLESS))
+			if (mode & (LOOP_ANY | SINGLE_ENDLESS)) {
 				status = STATUS_ENDING;
+				refreshMidiPlayLed();
+			}
 			break;
 		}
 
 		case STATUS_WAIT:
 		{
 			status = STATUS_OFF;
+			refreshMidiPlayLed();
 			break;
 		}
 
 		case STATUS_ENDING:
 		{
 			status = STATUS_PLAY;
+			refreshMidiPlayLed();
 			break;
 		}
 	}
