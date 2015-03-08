@@ -791,7 +791,6 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 
 	int res = load(f);
 
-	if (res == SAMPLE_LOADED_OK) {
 		volume      = G_Patch.getVol(i);
 		key         = G_Patch.getKey(i);
 		index       = G_Patch.getIndex(i);
@@ -809,15 +808,16 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		midiInReadActions = G_Patch.getMidiValue(i, "InReadActions");
 		midiInPitch       = G_Patch.getMidiValue(i, "InPitch");
 
+	if (res == SAMPLE_LOADED_OK) {
 		setBegin(G_Patch.getBegin(i));
 		setEnd  (G_Patch.getEnd(i, wave->size));
 		setPitch(G_Patch.getPitch(i));
 	}
 	else {
-		volume = DEFAULT_VOL;
-		mode   = DEFAULT_CHANMODE;
-		status = STATUS_WRONG;
-		key    = 0;
+		// volume = DEFAULT_VOL;
+		// mode   = DEFAULT_CHANMODE;
+		// status = STATUS_WRONG;
+		// key    = 0;
 
 		if (res == SAMPLE_LEFT_EMPTY)
 			status = STATUS_EMPTY;
@@ -860,13 +860,13 @@ void SampleChannel::start(int frame, bool doQuantize) {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
 					qWait = true;
 				else {
-					
+
 					/* fillChan only if frame != 0. If you call fillChan on frame == 0
 					 * a duplicate call to fillChan occurs with loss of data. */
-					
+
 					status = STATUS_PLAY;
 					if (frame != 0)
-						tracker = fillChan(vChan, tracker, frame); 
+						tracker = fillChan(vChan, tracker, frame);
 				}
 			}
 			break;
@@ -910,14 +910,14 @@ void SampleChannel::start(int frame, bool doQuantize) {
 void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 	Channel::writePatch(fp, i, isProject);
-	
+
 	const char *path = "";
 	if (wave != NULL) {
 		path = wave->pathfile.c_str();
 		if (isProject)
 			path = gBasename(path).c_str();  // make it portable
 	}
-	
+
 	fprintf(fp, "samplepath%d=%s\n",     i, path);
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
 	fprintf(fp, "columnIndex%d=%d\n",    i, index);
