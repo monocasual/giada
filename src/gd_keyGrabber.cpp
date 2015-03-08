@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_keyGrabber
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gd_keyGrabber.h"
@@ -44,18 +44,62 @@ extern Conf	G_Conf;
 
 
 gdKeyGrabber::gdKeyGrabber(SampleChannel *ch)
-: Fl_Window(300, 100, "Key configuration"), ch(ch) {
+	: Fl_Window(300, 126, "Key configuration"), ch(ch)
+{
 	set_modal();
-	text = new gBox(10, 10, 280, 80, "Press a key (esc to quit):");
+	text   = new gBox(8, 8, 284, 80, "Press a key (esc to quit):");
+	clear  = new gClick(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
+	cancel = new gClick(clear->x()-88, clear->y(), 80, 20, "Cancel");
+	end();
+
+	clear->callback(cb_clear, (void*)this);
+	cancel->callback(cb_cancel, (void*)this);
+
 	gu_setFavicon(this);
 	show();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gdKeyGrabber::handle(int e) {
+void gdKeyGrabber::cb_clear (Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_clear(); }
+void gdKeyGrabber::cb_cancel(Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_cancel(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::__cb_cancel()
+{
+	do_callback();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::__cb_clear()
+{
+	setButtonLabel(0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::setButtonLabel(int key)
+{
+	char tmp[2]; sprintf(tmp, "%c", key);
+	ch->guiChannel->button->copy_label(tmp);
+	ch->key = key;
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+int gdKeyGrabber::handle(int e)
+{
 	int ret = Fl_Group::handle(e);
 	switch(e) {
 		case FL_KEYUP: {
@@ -69,10 +113,7 @@ int gdKeyGrabber::handle(int e) {
 			    && x != ' ')
 			{
 				gLog("set key '%c' (%d) for channel %d\n", x, x, ch->index);
-
-				char tmp[2]; sprintf(tmp, "%c", x);
-				ch->guiChannel->button->copy_label(tmp);
-				ch->key = x;
+				setButtonLabel(x);
 				Fl::delete_widget(this);
 				break;
 			}

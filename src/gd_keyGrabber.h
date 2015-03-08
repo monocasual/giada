@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_keyGrabber
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GD_KEYGRABBER_H
@@ -35,13 +35,25 @@
 #include <FL/Fl_Window.H>
 
 
-class gdKeyGrabber : public Fl_Window {
+class gdKeyGrabber : public Fl_Window
+{
 private:
-	class gBox     *text;
-	//class gdConfig *w;     // parent window for refresh when done
+
 	class SampleChannel *ch;
 
+	class gBox   *text;
+	class gClick *clear;
+	class gClick *cancel;
+
+	static void cb_clear (Fl_Widget *w, void *p);
+	static void cb_cancel(Fl_Widget *w, void *p);
+	inline void __cb_clear ();
+	inline void __cb_cancel();
+
+	void setButtonLabel(int key);
+
 public:
+
 	gdKeyGrabber(class SampleChannel *ch);
 	int handle(int e);
 };
