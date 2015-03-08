@@ -50,10 +50,50 @@ gdKeyGrabber::gdKeyGrabber(SampleChannel *ch)
 	text   = new gBox(8, 8, 284, 80, "Press a key (esc to quit):");
 	clear  = new gClick(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
 	cancel = new gClick(clear->x()-88, clear->y(), 80, 20, "Cancel");
+	end();
+
+	clear->callback(cb_clear, (void*)this);
+	cancel->callback(cb_cancel, (void*)this);
+
 	gu_setFavicon(this);
 	show();
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::cb_clear (Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_clear(); }
+void gdKeyGrabber::cb_cancel(Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_cancel(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::__cb_cancel()
+{
+	do_callback();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::__cb_clear()
+{
+	setButtonLabel(0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::setButtonLabel(int key)
+{
+	char tmp[2]; sprintf(tmp, "%c", key);
+	ch->guiChannel->button->copy_label(tmp);
+	ch->key = key;
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -73,10 +113,7 @@ int gdKeyGrabber::handle(int e)
 			    && x != ' ')
 			{
 				gLog("set key '%c' (%d) for channel %d\n", x, x, ch->index);
-
-				char tmp[2]; sprintf(tmp, "%c", x);
-				ch->guiChannel->button->copy_label(tmp);
-				ch->key = x;
+				setButtonLabel(x);
 				Fl::delete_widget(this);
 				break;
 			}

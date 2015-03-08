@@ -45,6 +45,13 @@ private:
 	class gClick *clear;
 	class gClick *cancel;
 
+	static void cb_clear (Fl_Widget *w, void *p);
+	static void cb_cancel(Fl_Widget *w, void *p);
+	inline void __cb_clear ();
+	inline void __cb_cancel();
+
+	void setButtonLabel(int key);
+
 public:
 
 	gdKeyGrabber(class SampleChannel *ch);
