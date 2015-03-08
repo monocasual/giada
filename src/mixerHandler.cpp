@@ -114,6 +114,7 @@ void mh_loadPatch(bool isProject, const char *projPath)
 
 		/* projects < 0.6.3 version are not portable. Just use the regular
 		 * samplePath */
+		/* TODO version >= 0.10.0 - old stuff, remove backward compatibility */
 
 		if (isProject && G_Patch.version >= 0.63f)
 			sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch.getSamplePath(i).c_str());

@@ -154,13 +154,13 @@
 
 
 /* -- actions ------------------------------------------------------- */
-#define ACTION_MIDI       0x40 // 0000 0000 WHY NOT 0x40?
 #define ACTION_KEYPRESS		0x01 // 0000 0001
 #define ACTION_KEYREL			0x02 // 0000 0010
 #define ACTION_KILLCHAN		0x04 // 0000 0100
 #define ACTION_MUTEON			0x08 // 0000 1000
 #define ACTION_MUTEOFF		0x10 // 0001 0000
 #define ACTION_VOLUME     0x20 // 0010 0000
+#define ACTION_MIDI       0x40 // 0100 0000
 
 #define ACTION_KEYS       0x03 // 0000 0011 any key
 #define ACTION_MUTES      0x24 // 0001 1000 any mute
@@ -171,15 +171,15 @@
 
 
 /* -- mixerHandler signals ------------------------------------------ */
-#define SAMPLE_LOADED_OK      1
-#define SAMPLE_LEFT_EMPTY     0
-#define SAMPLE_NOT_VALID     -1
-#define SAMPLE_MULTICHANNEL  -2
-#define SAMPLE_WRONG_BIT     -4
-#define SAMPLE_WRONG_ENDIAN  -5
-#define SAMPLE_WRONG_FORMAT  -6
-#define SAMPLE_READ_ERROR    -8
-#define SAMPLE_PATH_TOO_LONG -9
+#define SAMPLE_LOADED_OK      0x01
+#define SAMPLE_LEFT_EMPTY     0x02
+#define SAMPLE_NOT_VALID      0x04
+#define SAMPLE_MULTICHANNEL   0x08
+#define SAMPLE_WRONG_BIT      0x10
+#define SAMPLE_WRONG_ENDIAN   0x20
+#define SAMPLE_WRONG_FORMAT   0x40
+#define SAMPLE_READ_ERROR     0x80
+#define SAMPLE_PATH_TOO_LONG  0x100
 
 /** FIXME - add to SAMPLE_ series those for when exporting */
 
