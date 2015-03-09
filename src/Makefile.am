@@ -39,7 +39,8 @@ ge_actionWidget.h    ge_actionWidget.cpp    ge_envelopeChannel.h ge_envelopeChan
 ge_pianoRoll.h		   ge_pianoRoll.cpp       kernelMidi.h         kernelMidi.cpp \
 gd_midiOutputSetup.h gd_midiOutputSetup.cpp gd_midiGrabber.h     gd_midiGrabber.cpp \
 sampleChannel.h      sampleChannel.cpp      midiChannel.cpp      midiChannel.h \
-ge_channel.h         ge_channel.cpp         log.h                log.cpp
+ge_channel.h         ge_channel.cpp         log.h                log.cpp \
+ge_column.h          ge_column.cpp
 
 
 
