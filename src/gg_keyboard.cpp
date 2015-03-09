@@ -29,31 +29,18 @@
 
 #include "gg_keyboard.h"
 #include "gd_browser.h"
-#include "gd_keyGrabber.h"
-#include "gd_midiGrabber.h"
-#include "gd_midiOutputSetup.h"
-#include "gd_actionEditor.h"
-#include "gd_warnings.h"
 #include "gd_mainWindow.h"
 #include "gd_editor.h"
 #include "ge_channel.h"
-#include "const.h"
 #include "mixer.h"
-#include "wave.h"
 #include "conf.h"
-#include "patch.h"
-#include "graphics.h"
+#include "const.h"
 #include "glue.h"
-#include "recorder.h"
-#include "pluginHost.h"
+#include "patch.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "midiChannel.h"
+#include "gd_warnings.h"
 #include "log.h"
-
-#ifdef WITH_VST
-#include "gd_pluginList.h"
-#endif
 
 
 extern Mixer 		     G_Mixer;
