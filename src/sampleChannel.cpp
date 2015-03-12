@@ -642,7 +642,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	char wname[32];
 	sprintf(wname, "TAKE-%d", takeId);
 
-	w->pathfile = gGetCurrentPath()+"/"+wname;
+	w->pathfile = gGetCurrentPath()+"/"+wname; // FIXME - use gGetSlash() in utils.h
 	w->name     = wname;
 	wave        = w;
 	status      = STATUS_OFF;
@@ -920,7 +920,7 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 
 	fprintf(fp, "samplepath%d=%s\n",     i, path);
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
-	fprintf(fp, "columnIndex%d=%d\n",    i, index);
+	//fprintf(fp, "columnIndex%d=%d\n",    i, index);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);
 	fprintf(fp, "chanBegin%d=%d\n",      i, begin);
 	fprintf(fp, "chanend%d=%d\n",        i, end);
