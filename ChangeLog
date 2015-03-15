@@ -14,6 +14,7 @@
 
 
 0.9.5 --- 2015 . [dev]
+- Better column resize algorithm
 - New patch loading system with permanent MIDI mapping
 - Ability to clear assigned keys (keyboard mode)
 - Fix deprecation warning in configure.ac
