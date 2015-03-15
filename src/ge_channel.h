@@ -46,6 +46,7 @@ protected:
 #ifdef WITH_VST
 	static const int BREAK_READ_ACTIONS = 212; //188;
 	static const int BREAK_MODE_BOX     = 188; //164;
+	static const int BREAK_FX           = 164; //164;
 #else
 	static const int BREAK_READ_ACTIONS = 164;
 	static const int BREAK_MODE_BOX     = 140;

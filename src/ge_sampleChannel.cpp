@@ -573,13 +573,31 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
   }
 
   if (w() < BREAK_MODE_BOX) {
-  //if (w() < 188) {
-    gLog("BREAK_MODE_BOX: sampleButton ---> x=%d w=%d\n", sampleButton->x(), sampleButton->w());
+    //gLog("BREAK_MODE_BOX (%d) --- channel(w=%d) sampleButton(x=%d w=%d)\n",
+		//BREAK_MODE_BOX, w(), sampleButton->x(), sampleButton->w());
+
     modeBox->hide();
     sampleButton->size(W-144, sampleButton->h());
+
+		if (w() < BREAK_FX) {
+	    //gLog("BREAK_FX (%d) --- channel(w=%d) sampleButton(x=%d w=%d)\n",
+			//BREAK_MODE_BOX, w(), sampleButton->x(), sampleButton->w());
+
+			fx->hide();
+			sampleButton->size(W-120, sampleButton->h());
+			mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+			solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
+		}
+		else {
+			fx->show();
+			sampleButton->size(W-144, sampleButton->h());
+			mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+			solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
+		}
+
   }
   else {
-    gLog("regular mode\n");
+    //gLog("regular mode\n");
     modeBox->show();
     sampleButton->size(W-168, sampleButton->h());
     modeBox->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
