@@ -32,6 +32,7 @@
 #include "gd_mainWindow.h"
 #include "gd_editor.h"
 #include "ge_channel.h"
+#include "ge_sampleChannel.h"
 #include "mixer.h"
 #include "conf.h"
 #include "const.h"

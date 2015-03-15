@@ -30,6 +30,9 @@
 #include "ge_column.h"
 #include "gd_mainWindow.h"
 #include "gg_keyboard.h"
+#include "ge_channel.h"
+#include "ge_sampleChannel.h"
+#include "ge_midiChannel.h"
 #include "mixer.h"
 #include "conf.h"
 #include "log.h"
@@ -38,7 +41,6 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
-#include "ge_channel.h"
 
 #ifdef WITH_VST
 	#include "gd_pluginList.h"
