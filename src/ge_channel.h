@@ -48,8 +48,9 @@ protected:
 	static const int BREAK_MODE_BOX     = 188; //164;
 	static const int BREAK_FX           = 164; //164;
 #else
-	static const int BREAK_READ_ACTIONS = 164;
-	static const int BREAK_MODE_BOX     = 140;
+	static const int BREAK_READ_ACTIONS = 164;  //164
+	static const int BREAK_MODE_BOX     = 140;  //140
+	static const int BREAK_FX           = 140;
 #endif
 
 public:
