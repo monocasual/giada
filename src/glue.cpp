@@ -41,6 +41,7 @@
 #include "ge_mixed.h"
 #include "gg_keyboard.h"
 #include "ge_channel.h"
+#include "ge_sampleChannel.h"
 #include "gui_utils.h"
 #include "mixerHandler.h"
 #include "mixer.h"

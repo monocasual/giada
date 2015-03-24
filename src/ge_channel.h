@@ -44,11 +44,13 @@ protected:
 	/* define some breakpoints for dynamic resize */
 
 #ifdef WITH_VST
-	static const int BREAK_READ_ACTIONS = 188;
-	static const int BREAK_MODE_BOX     = 164;
+	static const int BREAK_READ_ACTIONS = 212; //188;
+	static const int BREAK_MODE_BOX     = 188; //164;
+	static const int BREAK_FX           = 164; //164;
 #else
-	static const int BREAK_READ_ACTIONS = 164;
-	static const int BREAK_MODE_BOX     = 140;
+	static const int BREAK_READ_ACTIONS = 164;  //164
+	static const int BREAK_MODE_BOX     = 140;  //140
+	static const int BREAK_FX           = 140;
 #endif
 
 public:
@@ -93,100 +95,6 @@ public:
 #endif
 
 	int type;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gSampleChannel : public gChannel
-{
-private:
-
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_mute          (Fl_Widget *v, void *p);
-	static void cb_solo          (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_changeVol     (Fl_Widget *v, void *p);
-	static void cb_readActions   (Fl_Widget *v, void *p);
-#ifdef WITH_VST
-	static void cb_openFxWindow  (Fl_Widget *v, void *p);
-#endif
-
-	inline void __cb_mute        ();
-	inline void __cb_solo        ();
-	inline void __cb_changeVol   ();
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
-#ifdef WITH_VST
-	inline void __cb_openFxWindow();
-#endif
-
-	void openBrowser(int type);
-
-public:
-
-	gSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
-
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);
-	void resize  (int x, int y, int w, int h);
-
-	/* add/delActionButton
-	 * add or remove 'R' button when actions are available. 'Status' is
-	 * the initial status of the button: on or off.
-	 * If force==true remove the button with no further checks. */
-
-	void addActionButton();
-	void delActionButton(bool force=false);
-
-	class gModeBox *modeBox;
-	class gClick 	 *readActions;
-
-	class SampleChannel *ch;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gMidiChannel : public gChannel
-{
-private:
-
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_mute          (Fl_Widget *v, void *p);
-	static void cb_solo          (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_changeVol     (Fl_Widget *v, void *p);
-#ifdef WITH_VST
-	static void cb_openFxWindow  (Fl_Widget *v, void *p);
-#endif
-
-	inline void __cb_mute        ();
-	inline void __cb_solo        ();
-	inline void __cb_changeVol   ();
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
-#ifdef WITH_VST
-	inline void __cb_openFxWindow();
-#endif
-
-public:
-
-	gMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);
-
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);
-	void resize  (int x, int y, int w, int h);
-
-	class MidiChannel *ch;
 };
 
 

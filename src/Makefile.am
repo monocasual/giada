@@ -40,7 +40,8 @@ ge_pianoRoll.h		   ge_pianoRoll.cpp       kernelMidi.h         kernelMidi.cpp \
 gd_midiOutputSetup.h gd_midiOutputSetup.cpp gd_midiGrabber.h     gd_midiGrabber.cpp \
 sampleChannel.h      sampleChannel.cpp      midiChannel.cpp      midiChannel.h \
 midiMapConf.cpp      midiMapConf.h          ge_channel.h         ge_channel.cpp \
-log.h                log.cpp
+log.h                log.cpp                ge_column.h          ge_column.cpp \
+ge_sampleChannel.h   ge_sampleChannel.cpp   ge_midiChannel.h     ge_midiChannel.cpp
 
 
 
