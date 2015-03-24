@@ -220,13 +220,13 @@ void gMidiChannel::__cb_openMenu()
 		return;
 	}
 
-	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiOutputSetup(ch), 0);
+	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
+		gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForInput), 0);
 		return;
 	}
 
-	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch), 0);
+	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
+		gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
 		return;
 	}
 }
