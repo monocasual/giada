@@ -44,9 +44,11 @@ protected:
 	/* define some breakpoints for dynamic resize */
 
 #ifdef WITH_VST
-	static const int BREAK_READ_ACTIONS = 212; //188;
-	static const int BREAK_MODE_BOX     = 188; //164;
-	static const int BREAK_FX           = 164; //164;
+	static const int BREAK_READ_ACTIONS = 212;
+	static const int BREAK_MODE_BOX     = 188;
+	static const int BREAK_FX           = 164;
+	static const int BREAK_DELTA        = 120;
+	static const int BREAK_UNIT         = 24;
 #else
 	static const int BREAK_READ_ACTIONS = 164;  //164
 	static const int BREAK_MODE_BOX     = 140;  //140
