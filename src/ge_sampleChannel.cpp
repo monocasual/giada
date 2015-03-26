@@ -561,7 +561,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
   gChannel::resize(X, Y, W, H);
 
 	if (w() < BREAK_FX) {
-		gLog("w() < BREAK_FX\n");
+		//gLog("w() < BREAK_FX\n");
 		fx->hide();
 		sampleButton->size(w() - BREAK_DELTA, sampleButton->h());
 		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
@@ -569,7 +569,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 	}
 	else
 	if (w() < BREAK_MODE_BOX) {
-		gLog("w() < BREAK_MODE_BOX\n");
+		//gLog("w() < BREAK_MODE_BOX\n");
 		fx->show();
 		sampleButton->size(w() - (BREAK_DELTA + BREAK_UNIT), sampleButton->h());
 		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
@@ -578,7 +578,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 	}
 	else
 	if (w() < BREAK_READ_ACTIONS) {
-		gLog("w() < BREAK_READ_ACTIONS\n");
+		//gLog("w() < BREAK_READ_ACTIONS\n");
     modeBox->show();
     sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), sampleButton->h());
     modeBox->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
@@ -587,7 +587,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 		}
 	}
 	else {
-		gLog("w() FULL\n");
+		//gLog("w() FULL\n");
 		if (readActions) {
       sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), sampleButton->h());
       readActions->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
