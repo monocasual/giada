@@ -565,60 +565,40 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 {
   gChannel::resize(X, Y, W, H);
 
-	/* break point on fx button */
-
 	if (w() < BREAK_FX) {
-    //gLog("BREAK_FX (%d) --- channel(w=%d) sampleButton(x=%d w=%d)\n",
-		//BREAK_MODE_BOX, w(), sampleButton->x(), sampleButton->w());
-
+#ifdef WITH_VST
 		fx->hide();
-		sampleButton->size(W-120, sampleButton->h());
+#endif
+		sampleButton->size(w() - BREAK_DELTA, sampleButton->h());
 		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
 		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
-
-		gChannel::init_sizes();
-		return;
+	}
+	else
+	if (w() < BREAK_MODE_BOX) {
+#ifdef WITH_VST
+		fx->show();
+#endif
+		sampleButton->size(w() - (BREAK_DELTA + BREAK_UNIT), sampleButton->h());
+		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
+    modeBox->hide();
+	}
+	else
+	if (w() < BREAK_READ_ACTIONS) {
+    modeBox->show();
+    sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), sampleButton->h());
+    modeBox->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+		if (readActions) {
+      readActions->hide();
+		}
 	}
 	else {
-		fx->show();
-		sampleButton->size(W-144, sampleButton->h());
-		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
-		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
-	}
-
-	/* break point on mode box */
-
-  if (w() < BREAK_MODE_BOX) {
-    //gLog("BREAK_MODE_BOX (%d) --- channel(w=%d) sampleButton(x=%d w=%d)\n",
-		//BREAK_MODE_BOX, w(), sampleButton->x(), sampleButton->w());
-
-    modeBox->hide();
-    sampleButton->size(W-144, sampleButton->h());
-
-		gChannel::init_sizes();
-		return;
-  }
-  else {
-    //gLog("regular mode\n");
-    modeBox->show();
-    sampleButton->size(W-168, sampleButton->h());
-    modeBox->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
-  }
-
-	/* breakpoint on read actions (if exists) */
-
-  if (readActions) {
-    if (w() < BREAK_READ_ACTIONS) {
-      readActions->hide();
-      sampleButton->size(W-168, sampleButton->h());
-
-			gChannel::init_sizes();
-			return;
-    }
-    else {
-      sampleButton->size(W-192, sampleButton->h());
+		if (readActions) {
+      sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), sampleButton->h());
       readActions->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
       readActions->show();
-    }
-  }
+		}
+	}
+
+	gChannel::init_sizes();
 }
