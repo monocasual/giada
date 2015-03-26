@@ -560,7 +560,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 {
   gChannel::resize(X, Y, W, H);
 
-	/* delta: how much to subtract from sampleButton in order to shrink it */s
+	/* delta: how much to subtract from sampleButton in order to shrink it */
 
 	int delta = w() - sampleButton->w();
 
