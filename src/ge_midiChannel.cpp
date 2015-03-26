@@ -299,19 +299,24 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 {
   gChannel::resize(X, Y, W, H);
 
+	/* this stuff makes sense only with FX button available. Do nothing
+	 * otherwise */
+
+#ifdef WITH_VST
 	if (w() < BREAK_FX) {
 		fx->hide();
+
 		sampleButton->size(w() - (BREAK_DELTA - BREAK_UNIT), sampleButton->h());
 	}
 	else {
 		fx->show();
 		sampleButton->size(w() - BREAK_DELTA, sampleButton->h());
 	}
-
 	mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
 	solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
 
 	gChannel::init_sizes();
+#endif
 }
 
 
