@@ -37,6 +37,7 @@
 #include "ge_channel.h"
 #include "waveFx.h"
 #include "conf.h"
+#include "graphics.h"
 #include "gui_utils.h"
 #include "glue.h"
 #include "mixerHandler.h"
@@ -66,8 +67,8 @@ gdEditor::gdEditor(SampleChannel *ch)
   bar->begin();
     grid    = new gChoice(bar->x(), bar->y(), 50, 20);
     snap    = new gCheck(grid->x()+grid->w()+4, bar->y()+4, 12, 12);
-    zoomOut = new gClick(bar->x()+bar->w()-20, bar->y(), 20, 20, "-");
-    zoomIn  = new gClick(zoomOut->x()-24, bar->y(), 20, 20, "+");
+    zoomOut = new gClick(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+    zoomIn  = new gClick(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
   bar->resizable(new gBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
 

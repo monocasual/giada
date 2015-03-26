@@ -597,10 +597,6 @@ int Patch::write(const char *file, const char *name, bool project)
 	fprintf(fp, "channels=%d\n",   G_Mixer.channels.size);
 	fprintf(fp, "columns=%d\n",    mainWin->keyboard->getTotalColumns());
 
-	//for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
-	//	fprintf(fp, "columnSize%d=%d\n", i, mainWin->keyboard->getColumnWidth(i));
-	//}
-
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		fprintf(fp, "# --- channel %d --- \n", i);
 		G_Mixer.channels.at(i)->writePatch(fp, i, project);
