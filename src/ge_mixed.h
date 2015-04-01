@@ -118,8 +118,8 @@ public:
 
 
 /* gButton
- * exactly as gClick but with a unique id inside of it. Used for the
- * channels */
+ * exactly as gClick but with a unique id inside of it. Used for the buttons in
+ * channels and for FXs. */
 
 class gButton : public gClick
 {
@@ -333,6 +333,22 @@ class gSlider : public Fl_Slider
 public:
 	gSlider(int x, int y, int w, int h, const char *l=0);
 	int id;
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+/* gFxButton
+ * a simple gClick with 'full' parameter (i.e. has plugins). If 'full' is true,
+ * draw something somewhere. */
+
+class gFxButton : public gClick
+{
+public:
+	gFxButton(int x, int y, int w, int h, const char **imgOff=NULL, const char **imgOn=NULL);
+	void draw();
+	bool full;
 };
 
 

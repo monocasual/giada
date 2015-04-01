@@ -149,13 +149,13 @@ gInOut::gInOut(int x, int y)
 	begin();
 
 #if defined(WITH_VST)
-	masterFxIn  = new gButton    (x, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	masterFxIn  = new gFxButton  (x, y, 20, 20, fxOff_xpm, fxOn_xpm);
 	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
 	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 10);
 	inToOut     = new gClick     (inMeter->x()+inMeter->w()+4, y+5, 10, 10, "");
 	outMeter    = new gSoundMeter(inToOut->x()+inToOut->w()+4, y+5, 140, 10);
 	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
-	masterFxOut = new gButton    (outVol->x()+outVol->w()+4, y, 20, 20, "", fxOff_xpm, fxOn_xpm);
+	masterFxOut = new gFxButton  (outVol->x()+outVol->w()+4, y, 20, 20, fxOff_xpm, fxOn_xpm);
 #else
 	inVol		    = new gDial      (x+62, y, 20, 20);
 	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 10);

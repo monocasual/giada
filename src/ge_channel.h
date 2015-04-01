@@ -94,7 +94,7 @@ public:
 	class gClick 	*mute;
 	class gClick 	*solo;
 #ifdef WITH_VST
-	class gButton *fx;
+	class gFxButton *fx;
 #endif
 
 	int type;

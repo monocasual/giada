@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * const.h
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,23 +24,22 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 #ifndef CONST_H
 #define CONST_H
 
 
-
-/* -- version ------------------------------------------------------- */
-#define VERSIONE 				"0.9.5"
+/* -- version --------------------------------------------------------------- */
+#define VERSIONE 				"0.9.6"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	0.95f
+#define VERSIONE_FLOAT	0.96f
 
 #define CONF_FILENAME		"giada.conf"
 
 
 
-/* -- GUI ----------------------------------------------------------- */
+/* -- GUI ------------------------------------------------------------------- */
 #ifdef _WIN32
 	#define GUI_SLEEP			1000/24
 #else
@@ -64,7 +63,7 @@
 
 
 
-/* -- MIN/MAX values ------------------------------------------------ */
+/* -- MIN/MAX values -------------------------------------------------------- */
 #define MAX_BEATS				   32
 #define MAX_BARS				   32
 #define MAX_PATCHNAME_LEN	 32
@@ -73,7 +72,7 @@
 
 
 
-/* -- kernel audio -------------------------------------------------- */
+/* -- kernel audio ---------------------------------------------------------- */
 #define SYS_API_JACK		0x01  // 0000 0001
 #define SYS_API_ALSA		0x02  // 0000 0010
 #define SYS_API_DS			0x04  // 0000 0100
@@ -88,13 +87,13 @@
 
 
 
-/* -- kernel midi --------------------------------------------------- */
+/* -- kernel midi ----------------------------------------------------------- */
 #define MIDI_API_JACK		0x01  // 0000 0001
 #define MIDI_API_ALSA		0x02  // 0000 0010
 
 
 
-/* -- default system ------------------------------------------------ */
+/* -- default system -------------------------------------------------------- */
 #if defined(__linux__)
 	#define DEFAULT_SOUNDSYS	SYS_API_ALSA
 #elif defined(_WIN32)
@@ -125,7 +124,7 @@
 
 
 
-/* -- mixer statuses and modes -------------------------------------- */
+/* -- mixer statuses and modes ---------------------------------------------- */
 #define LOOP_BASIC			 0x01 // 0000 0001  chanMode
 #define LOOP_ONCE				 0x02 // 0000 0010  chanMode
 #define	SINGLE_BASIC		 0x04 // 0000 0100  chanMode
@@ -153,7 +152,7 @@
 
 
 
-/* -- actions ------------------------------------------------------- */
+/* -- actions --------------------------------------------------------------- */
 #define ACTION_KEYPRESS		0x01 // 0000 0001
 #define ACTION_KEYREL			0x02 // 0000 0010
 #define ACTION_KILLCHAN		0x04 // 0000 0100
@@ -170,7 +169,7 @@
 
 
 
-/* -- mixerHandler signals ------------------------------------------ */
+/* -- mixerHandler signals -------------------------------------------------- */
 #define SAMPLE_LOADED_OK      0x01
 #define SAMPLE_LEFT_EMPTY     0x02
 #define SAMPLE_NOT_VALID      0x04
@@ -185,14 +184,14 @@
 
 
 
-/* -- log modes ----------------------------------------------------- */
+/* -- log modes ------------------------------------------------------------- */
 #define LOG_MODE_STDOUT 0x01
 #define LOG_MODE_FILE   0x02
 #define LOG_MODE_MUTE   0x04
 
 
 
-/* -- browser types ------------------------------------------------- */
+/* -- browser types --------------------------------------------------------- */
 #define BROWSER_LOAD_PATCH   0x00
 #define BROWSER_LOAD_SAMPLE  0x01
 #define BROWSER_SAVE_PATCH   0x02
@@ -203,14 +202,14 @@
 
 
 
-/* -- channel types ------------------------------------------------- */
+/* -- channel types --------------------------------------------------------- */
 #define CHANNEL_SAMPLE 0x01
 #define CHANNEL_MIDI   0x02
 
 
 
-/* -- unique IDs of mainWin's subwindows ---------------------------- */
-/* -- wid > 0 are reserved by gg_keyboard --------------------------- */
+/* -- unique IDs of mainWin's subwindows ------------------------------------ */
+/* -- wid > 0 are reserved by gg_keyboard ----------------------------------- */
 #define WID_BEATS         -1
 #define WID_BPM           -2
 #define WID_ABOUT         -3
@@ -222,7 +221,7 @@
 #define WID_FX            -9
 
 
-/* -- patch signals ------------------------------------------------- */
+/* -- patch signals --------------------------------------------------------- */
 #define PATCH_UNREADABLE  0
 #define PATCH_INVALID    -1
 #define PATCH_OPEN_OK     1
@@ -231,7 +230,7 @@
 
 
 
-/* -- MIDI signals -----------------------------------------------------
+/* -- MIDI signals -------------------------------------------------------------
  * all signals are set to channel 0 (where channels are considered).
  * It's up to the caller to bitmask them with the proper channel number. */
 
