@@ -72,8 +72,8 @@ private:
 	class gDial				*outVol;
 	class gDial				*inVol;
 #ifdef WITH_VST
-	class gButton			*masterFxOut;
-	class gButton			*masterFxIn;
+	class gFxButton 	*masterFxOut;
+	class gFxButton		*masterFxIn;
 	class gClick      *inToOut;
 #endif
 
@@ -101,6 +101,10 @@ public:
 
 	inline void setOutVol(float v) { outVol->value(v); }
 	inline void setInVol (float v) { inVol->value(v); }
+#ifdef WITH_VST
+	inline void setMasterFxOutFull(bool v) { masterFxOut->full = v; masterFxOut->redraw(); }
+	inline void setMasterFxInFull(bool v)  { masterFxIn->full = v; masterFxIn->redraw(); }
+#endif
 };
 
 

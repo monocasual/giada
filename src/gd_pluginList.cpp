@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_pluginList
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,27 +24,30 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
 
 #include "gd_pluginList.h"
-#include "utils.h"
 #include "gd_pluginWindow.h"
 #include "gd_pluginWindowGUI.h"
-#include "conf.h"
-#include "gui_utils.h"
 #include "gd_browser.h"
+#include "gd_mainWindow.h"
+#include "ge_mixed.h"
+#include "gui_utils.h"
+#include "utils.h"
+#include "conf.h"
 #include "graphics.h"
 #include "pluginHost.h"
-#include "ge_mixed.h"
 #include "mixer.h"
 #include "channel.h"
+#include "ge_channel.h"
 
 
-extern Conf       G_Conf;
-extern PluginHost G_PluginHost;
+extern Conf          G_Conf;
+extern PluginHost    G_PluginHost;
+extern gdMainWindow *mainWin;
 
 
 gdPluginList::gdPluginList(int stackType, Channel *ch)
@@ -68,6 +71,9 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	end();
 	set_non_modal();
 
+  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
+  gdPluginListMaster */
+
 	if (stackType == PluginHost::MASTER_OUT)
 		label("Master Out Plugins");
 	else
@@ -84,22 +90,37 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gdPluginList::~gdPluginList() {
 	G_Conf.pluginListX = x();
 	G_Conf.pluginListY = y();
+
+  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
+  gdPluginListMaster */
+
+	if (stackType == PluginHost::MASTER_OUT) {
+    mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+  }
+	else
+	if (stackType == PluginHost::MASTER_IN) {
+    mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+  }
+	else {
+    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->redraw();
+  }
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPluginList::cb_addPlugin(Fl_Widget *v, void *p)   { ((gdPluginList*)p)->__cb_addPlugin(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPluginList::cb_refreshList(Fl_Widget *v, void *p) {
@@ -121,7 +142,7 @@ void gdPluginList::cb_refreshList(Fl_Widget *v, void *p) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPluginList::__cb_addPlugin() {
@@ -138,7 +159,7 @@ void gdPluginList::__cb_addPlugin() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPluginList::refreshList() {
@@ -179,9 +200,9 @@ void gdPluginList::refreshList() {
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
@@ -244,7 +265,7 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_removePlugin(); }
@@ -255,7 +276,7 @@ void gdPlugin::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->_
 void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setProgram(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_shiftUp() {
@@ -275,7 +296,7 @@ void gdPlugin::__cb_shiftUp() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_shiftDown() {
@@ -296,7 +317,7 @@ void gdPlugin::__cb_shiftDown() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_removePlugin() {
@@ -317,7 +338,7 @@ void gdPlugin::__cb_removePlugin() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_openPluginWindow() {
@@ -351,7 +372,7 @@ void gdPlugin::__cb_openPluginWindow() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_setBypass() {
@@ -359,13 +380,12 @@ void gdPlugin::__cb_setBypass() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdPlugin::__cb_setProgram() {
 	pPlugin->setProgram(program->value());
 }
-
 
 
 #endif // #ifdef WITH_VST
