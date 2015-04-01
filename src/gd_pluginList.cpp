@@ -96,21 +96,6 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 gdPluginList::~gdPluginList() {
 	G_Conf.pluginListX = x();
 	G_Conf.pluginListY = y();
-
-  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
-  gdPluginListMaster */
-
-	if (stackType == PluginHost::MASTER_OUT) {
-    mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(stackType, ch) > 0);
-  }
-	else
-	if (stackType == PluginHost::MASTER_IN) {
-    mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(stackType, ch) > 0);
-  }
-	else {
-    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
-    ch->guiChannel->fx->redraw();
-  }
 }
 
 
@@ -197,6 +182,23 @@ void gdPluginList::refreshList() {
 		size(468, h());
 
 	redraw();
+
+  /* set 'full' flag to FX button */
+  
+  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
+  gdPluginListMaster */
+
+	if (stackType == PluginHost::MASTER_OUT) {
+    mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+  }
+	else
+	if (stackType == PluginHost::MASTER_IN) {
+    mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+  }
+	else {
+    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->redraw();
+  }
 }
 
 
