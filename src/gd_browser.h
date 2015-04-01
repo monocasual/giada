@@ -36,6 +36,9 @@
 #include "ge_window.h"
 
 
+/* TODO - this class must be subclassed into gdPluginBrowser, gdFileBrowser,
+ * and so on. It's a real mess right now. */
+
 class gdBrowser : public gWindow {
 
 private:
