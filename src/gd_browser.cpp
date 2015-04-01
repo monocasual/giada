@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_browser
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gd_browser.h"
@@ -33,6 +33,7 @@
 #include "gd_mainWindow.h"
 #include "gg_keyboard.h"
 #include "gd_warnings.h"
+#include "ge_channel.h"
 #include "mixer.h"
 #include "graphics.h"
 #include "wave.h"
@@ -147,7 +148,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gdBrowser::~gdBrowser() {
@@ -158,7 +159,7 @@ gdBrowser::~gdBrowser() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::cb_load_patch  (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_load_patch();  }
@@ -175,7 +176,7 @@ void gdBrowser::cb_loadPlugin  (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_load_patch() {
@@ -224,7 +225,7 @@ void gdBrowser::__cb_load_patch() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_load_midimap() {
@@ -274,7 +275,7 @@ void gdBrowser::__cb_save_sample() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_load_sample() {
@@ -287,29 +288,12 @@ void gdBrowser::__cb_load_sample() {
 		do_callback();
 		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
-	else 
-		mainWin->keyboard->printChannelMessage(res);
-	/*
-	else if (res == SAMPLE_NOT_VALID)
-		gdAlert("This is not a valid WAVE file.");
-	else if (res == SAMPLE_MULTICHANNEL)
-		gdAlert("Multichannel samples not supported.");
-	else if (res == SAMPLE_WRONG_BIT)
-		gdAlert("This sample has an\nunsupported bit-depth (> 32 bit).");
-	else if (res == SAMPLE_WRONG_ENDIAN)
-		gdAlert("This sample has a wrong\nbyte order (not little-endian).");
-	else if (res == SAMPLE_WRONG_FORMAT)
-		gdAlert("This sample is encoded in\nan unsupported audio format.");
-	else if (res == SAMPLE_READ_ERROR)
-		gdAlert("Unable to read this sample.");
-	else if (res == SAMPLE_PATH_TOO_LONG)
-		gdAlert("File path too long.");
 	else
-		gdAlert("Unknown error.");*/
+		mainWin->keyboard->printChannelMessage(res);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_down() {
@@ -337,7 +321,7 @@ void gdBrowser::__cb_down() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_up() {
@@ -347,7 +331,7 @@ void gdBrowser::__cb_up() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_save_patch() {
@@ -376,7 +360,7 @@ void gdBrowser::__cb_save_patch() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_save_project() {
@@ -409,7 +393,7 @@ void gdBrowser::__cb_save_project() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
@@ -433,7 +417,7 @@ void gdBrowser::__cb_loadPlugin() {
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBrowser::__cb_close() {
