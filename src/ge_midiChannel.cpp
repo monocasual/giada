@@ -68,22 +68,21 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 {
 	begin();
 
-// TODO - move these to ge_channel.h (with a proper name)
 #if defined(WITH_VST)
   int delta = 120; // (5 widgets * 20) + (5 paddings * 4)
 #else
 	int delta = 96; // (4 widgets * 20) + (4 paddings * 4)
 #endif
 
-	button     = new gButton (x(), y(), 20, 20);
+	button     = new gButton(x(), y(), 20, 20);
 	mainButton = new gMidiMainButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
-	mute       = new gClick (mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo       = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	mute       = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo       = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
 	fx         = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol        = new gDial  (fx->x()+fx->w()+4, y(), 20, 20);
+	vol        = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	vol        = new gDial  (solo->x()+solo->w()+4, y(), 20, 20);
+	vol        = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 
 	end();

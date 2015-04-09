@@ -141,7 +141,8 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-/* gOperator */
+/* gMainButton
+ * base main button for MIDI and Sample Channels. */
 
 class gMainButton : public gClick
 {
