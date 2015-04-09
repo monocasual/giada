@@ -661,9 +661,6 @@ gFxButton::gFxButton(int x, int y, int w, int h, const char **imgOff, const char
 void gFxButton::draw()
 {
   gClick::draw();
-  if (full) {
-    //fl_color(COLOR_BD_0);
+  if (full)
     fl_rectf(x(), y()+16, w(), 4, COLOR_BD_0);
-    //fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
-  }
 }
