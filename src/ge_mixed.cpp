@@ -662,7 +662,8 @@ void gFxButton::draw()
 {
   gClick::draw();
   if (full) {
-    fl_color(COLOR_BD_0);
-    fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
+    //fl_color(COLOR_BD_0);
+    fl_rectf(x(), y()+16, w(), 4, COLOR_BD_0);
+    //fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
   }
 }
