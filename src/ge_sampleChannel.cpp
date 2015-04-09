@@ -71,25 +71,24 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	int delta = 144; // (6 widgets * 20) + (6 paddings * 4)
 #endif
 
-	button       = new gButton (x(), y(), 20, 20);
-	status       = new gStatus (button->x()+button->w()+4, y(), 20, 20, ch);
-	sampleButton = new gChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
-	modeBox      = new gModeBox(sampleButton->x()+sampleButton->w()+4, y(), 20, 20, ch);
-	mute         = new gClick  (modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo         = new gClick  (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	button       = new gButton(x(), y(), 20, 20);
+	status       = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
+	mainButton   = new gSampleMainButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
+	modeBox      = new gModeBox(mainButton->x()+mainButton->w()+4, y(), 20, 20, ch);
+	mute         = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo         = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	readActions  = NULL; // no 'R' button
 
 #if defined(WITH_VST)
 	fx           = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol          = new gDial   (fx->x()+fx->w()+4, y(), 20, 20);
+	vol          = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	vol          = new gDial   (solo->x()+solo->w()+4, y(), 20, 20);
+	vol          = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
 #endif
-
-	readActions  = NULL; // no 'R' button
 
 	end();
 
-  resizable(sampleButton);
+  resizable(mainButton);
 
 	update();
 
@@ -106,7 +105,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
-	sampleButton->callback(cb_openMenu, (void*)this);
+	mainButton->callback(cb_openMenu, (void*)this);
 	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
@@ -375,19 +374,19 @@ void gSampleChannel::openBrowser(int type)
 
 void gSampleChannel::refresh()
 {
-  if (!sampleButton->visible()) // sampleButton invisible? status too (see below)
+  if (!mainButton->visible()) // mainButton invisible? status too (see below)
     return;
 
 	if (ch->status == STATUS_OFF) {
-		sampleButton->bgColor0 = COLOR_BG_0;
-		sampleButton->bdColor  = COLOR_BD_0;
-		sampleButton->txtColor = COLOR_TEXT_0;
+		mainButton->bgColor0 = COLOR_BG_0;
+		mainButton->bdColor  = COLOR_BD_0;
+		mainButton->txtColor = COLOR_TEXT_0;
 	}
 	else
 	if (ch->status == STATUS_PLAY) {
-		sampleButton->bgColor0 = COLOR_BG_2;
-		sampleButton->bdColor  = COLOR_BD_1;
-		sampleButton->txtColor = COLOR_TEXT_1;
+		mainButton->bgColor0 = COLOR_BG_2;
+		mainButton->bdColor  = COLOR_BD_1;
+		mainButton->txtColor = COLOR_TEXT_1;
 	}
 	else
 	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
@@ -399,17 +398,17 @@ void gSampleChannel::refresh()
 	if (ch->wave != NULL) {
 
 		if (G_Mixer.chanInput == ch)
-			sampleButton->bgColor0 = COLOR_BG_3;
+			mainButton->bgColor0 = COLOR_BG_3;
 
 		if (recorder::active) {
 			if (recorder::canRec(ch)) {
-				sampleButton->bgColor0 = COLOR_BG_4;
-				sampleButton->txtColor = COLOR_TEXT_0;
+				mainButton->bgColor0 = COLOR_BG_4;
+				mainButton->txtColor = COLOR_TEXT_0;
 			}
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)
 	}
-	sampleButton->redraw();
+	mainButton->redraw();
 }
 
 
@@ -418,12 +417,12 @@ void gSampleChannel::refresh()
 
 void gSampleChannel::reset()
 {
-	sampleButton->bgColor0 = COLOR_BG_0;
-	sampleButton->bdColor  = COLOR_BD_0;
-	sampleButton->txtColor = COLOR_TEXT_0;
-	sampleButton->label("-- no sample --");
+	mainButton->bgColor0 = COLOR_BG_0;
+	mainButton->bdColor  = COLOR_BD_0;
+	mainButton->txtColor = COLOR_TEXT_0;
+	mainButton->label("-- no sample --");
 	delActionButton(true); // force==true, don't check, just remove it
- 	sampleButton->redraw();
+ 	mainButton->redraw();
 	status->redraw();
 }
 
@@ -437,14 +436,14 @@ void gSampleChannel::update()
 
 	switch (ch->status) {
 		case STATUS_EMPTY:
-			sampleButton->label("-- no sample --");
+			mainButton->label("-- no sample --");
 			break;
 		case STATUS_MISSING:
 		case STATUS_WRONG:
-			sampleButton->label("* file not found! *");
+			mainButton->label("* file not found! *");
 			break;
 		default:
-			sampleButton->label(ch->wave->name.c_str());
+			mainButton->label(ch->wave->name.c_str());
 			break;
 	}
 
@@ -512,12 +511,12 @@ void gSampleChannel::addActionButton()
 	if (readActions != NULL)
 		return;
 
-	sampleButton->size(sampleButton->w()-24, sampleButton->h());
+	mainButton->size(mainButton->w()-24, mainButton->h());
 
 	redraw();
 
-	readActions = new gClick(sampleButton->x() + sampleButton->w() + 4,
-                           sampleButton->y(), 20, 20, "", readActionOff_xpm,
+	readActions = new gClick(mainButton->x() + mainButton->w() + 4,
+                           mainButton->y(), 20, 20, "", readActionOff_xpm,
                            readActionOn_xpm);
 	readActions->type(FL_TOGGLE_BUTTON);
 	readActions->value(ch->readActions);
@@ -548,8 +547,8 @@ void gSampleChannel::delActionButton(bool force)
 	delete readActions;     // delete (C++)
 	readActions = NULL;
 
-	sampleButton->size(sampleButton->w()+24, sampleButton->h());
-	sampleButton->redraw();
+	mainButton->size(mainButton->w()+24, mainButton->h());
+	mainButton->redraw();
 }
 
 
@@ -564,8 +563,8 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 #ifdef WITH_VST
 		fx->hide();
 #endif
-		sampleButton->size(w() - BREAK_DELTA, sampleButton->h());
-		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+		mainButton->size(w() - BREAK_DELTA, mainButton->h());
+		mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
 	}
 	else
@@ -573,27 +572,63 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 #ifdef WITH_VST
 		fx->show();
 #endif
-		sampleButton->size(w() - (BREAK_DELTA + BREAK_UNIT), sampleButton->h());
-		mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+		mainButton->size(w() - (BREAK_DELTA + BREAK_UNIT), mainButton->h());
+		mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
     modeBox->hide();
 	}
 	else
 	if (w() < BREAK_READ_ACTIONS) {
     modeBox->show();
-    sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), sampleButton->h());
-    modeBox->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+    mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), mainButton->h());
+    modeBox->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 		if (readActions) {
       readActions->hide();
 		}
 	}
 	else {
 		if (readActions) {
-      sampleButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), sampleButton->h());
-      readActions->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+      mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), mainButton->h());
+      readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
       readActions->show();
 		}
 	}
 
 	gChannel::init_sizes();
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gSampleMainButton::gSampleMainButton(int x, int y, int w, int h, const char *l)
+	: gMainButton(x, y, w, h, l) {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gSampleMainButton::handle(int e)
+{
+	int ret = gClick::handle(e);
+	switch (e) {
+		case FL_DND_ENTER:
+		case FL_DND_DRAG:
+		case FL_DND_RELEASE: {
+			ret = 1;
+			break;
+		}
+		case FL_PASTE: {
+      gSampleChannel *gch = (gSampleChannel*) parent();   // parent is gSampleChannel
+      SampleChannel  *ch  = gch->ch;
+      int result = glue_loadChannel(ch, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+			if (result != SAMPLE_LOADED_OK)
+				mainWin->keyboard->printChannelMessage(result);
+			ret = 1;
+			break;
+		}
+	}
+	return ret;
 }

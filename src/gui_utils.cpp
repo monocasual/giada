@@ -85,14 +85,14 @@ void gu_refresh()
 void __gu_blinkChannel(gChannel *gch)
 {
 	if (blinker > 6) {
-		gch->sampleButton->bgColor0 = COLOR_BG_2;
-		gch->sampleButton->bdColor  = COLOR_BD_1;
-		gch->sampleButton->txtColor = COLOR_TEXT_1;
+		gch->mainButton->bgColor0 = COLOR_BG_2;
+		gch->mainButton->bdColor  = COLOR_BD_1;
+		gch->mainButton->txtColor = COLOR_TEXT_1;
 	}
 	else {
-		gch->sampleButton->bgColor0 = COLOR_BG_0;
-		gch->sampleButton->bdColor  = COLOR_BD_0;
-		gch->sampleButton->txtColor = COLOR_TEXT_0;
+		gch->mainButton->bgColor0 = COLOR_BG_0;
+		gch->mainButton->bdColor  = COLOR_BD_0;
+		gch->mainButton->txtColor = COLOR_TEXT_0;
 	}
 }
 

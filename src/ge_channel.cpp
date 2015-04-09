@@ -218,36 +218,5 @@ void gModeBox::__cb_change_chanmode(int mode)
 /* -------------------------------------------------------------------------- */
 
 
-gChannelButton::gChannelButton(int x, int y, int w, int h, const char *L)
-  : gClick(x, y, w, h, L) {}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gChannelButton::handle(int e)
-{
-	int ret = gClick::handle(e);
-	switch (e) {
-		case FL_DND_ENTER:
-		case FL_DND_DRAG:
-		case FL_DND_RELEASE: {
-			ret = 1;
-			break;
-		}
-		case FL_PASTE: {
-      gChannel *p = (gChannel*) parent();   // parent is g[Sample|Midi]Channel
-      if (p->type == CHANNEL_SAMPLE) {
-        SampleChannel *c = ((gSampleChannel*)p)->ch;
-        int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
-  			if (result != SAMPLE_LOADED_OK)
-  				mainWin->keyboard->printChannelMessage(result);
-      }
-      // else dnd on a MIDI channel, nothing to do so far (load MIDI tab in
-      // the future)
-			ret = 1;
-			break;
-		}
-	}
-	return ret;
-}
+gMainButton::gMainButton(int x, int y, int w, int h, const char *l)
+  : gClick(x, y, w, h, l) {}

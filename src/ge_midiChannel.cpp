@@ -68,26 +68,27 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 {
 	begin();
 
+// TODO - move these to ge_channel.h (with a proper name)
 #if defined(WITH_VST)
   int delta = 120; // (5 widgets * 20) + (5 paddings * 4)
 #else
 	int delta = 96; // (4 widgets * 20) + (4 paddings * 4)
 #endif
 
-	button       = new gButton (x(), y(), 20, 20);
-	sampleButton = new gChannelButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
-	mute         = new gClick (sampleButton->x()+sampleButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo         = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	button     = new gButton (x(), y(), 20, 20);
+	mainButton = new gMidiMainButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
+	mute       = new gClick (mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo       = new gClick (mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
-	fx           = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol          = new gDial  (fx->x()+fx->w()+4, y(), 20, 20);
+	fx         = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
+	vol        = new gDial  (fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	vol          = new gDial  (solo->x()+solo->w()+4, y(), 20, 20);
+	vol        = new gDial  (solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 
 	end();
 
-  resizable(sampleButton);
+  resizable(mainButton);
 
 	update();
 
@@ -104,7 +105,7 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
-	sampleButton->callback(cb_openMenu, (void*)this);
+	mainButton->callback(cb_openMenu, (void*)this);
 	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
@@ -245,15 +246,15 @@ void gMidiChannel::__cb_openMenu()
 void gMidiChannel::refresh()
 {
 	if (ch->status == STATUS_OFF) {
-		sampleButton->bgColor0 = COLOR_BG_0;
-		sampleButton->bdColor  = COLOR_BD_0;
-		sampleButton->txtColor = COLOR_TEXT_0;
+		mainButton->bgColor0 = COLOR_BG_0;
+		mainButton->bdColor  = COLOR_BD_0;
+		mainButton->txtColor = COLOR_TEXT_0;
 	}
 	else
 	if (ch->status == STATUS_PLAY) {
-		sampleButton->bgColor0 = COLOR_BG_2;
-		sampleButton->bdColor  = COLOR_BD_1;
-		sampleButton->txtColor = COLOR_TEXT_1;
+		mainButton->bgColor0 = COLOR_BG_2;
+		mainButton->bdColor  = COLOR_BD_1;
+		mainButton->txtColor = COLOR_TEXT_1;
 	}
 	else
 	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
@@ -262,7 +263,7 @@ void gMidiChannel::refresh()
 	if (ch->recStatus & (REC_WAITING | REC_ENDING))
 		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
 
-	sampleButton->redraw();
+	mainButton->redraw();
 }
 
 
@@ -271,11 +272,11 @@ void gMidiChannel::refresh()
 
 void gMidiChannel::reset()
 {
-	sampleButton->bgColor0 = COLOR_BG_0;
-	sampleButton->bdColor  = COLOR_BD_0;
-	sampleButton->txtColor = COLOR_TEXT_0;
-	sampleButton->label("-- MIDI --");
-	sampleButton->redraw();
+	mainButton->bgColor0 = COLOR_BG_0;
+	mainButton->bdColor  = COLOR_BD_0;
+	mainButton->txtColor = COLOR_TEXT_0;
+	mainButton->label("-- MIDI --");
+	mainButton->redraw();
 }
 
 
@@ -288,10 +289,10 @@ void gMidiChannel::update()
 	if (ch->midiOut) {
 		char tmp[32];
 		sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
-		sampleButton->copy_label(tmp);
+		mainButton->copy_label(tmp);
 	}
 	else
-		sampleButton->label("-- MIDI --");
+		mainButton->label("-- MIDI --");
 
 	vol->value(ch->volume);
 	mute->value(ch->mute);
@@ -313,13 +314,13 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 	if (w() < BREAK_FX) {
 		fx->hide();
 
-		sampleButton->size(w() - (BREAK_DELTA - BREAK_UNIT), sampleButton->h());
+		mainButton->size(w() - (BREAK_DELTA - BREAK_UNIT), mainButton->h());
 	}
 	else {
 		fx->show();
-		sampleButton->size(w() - BREAK_DELTA, sampleButton->h());
+		mainButton->size(w() - BREAK_DELTA, mainButton->h());
 	}
-	mute->resize(sampleButton->x()+sampleButton->w()+4, y(), 20, 20);
+	mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 	solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
 
 	gChannel::init_sizes();
@@ -333,4 +334,23 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 int gMidiChannel::keyPress(int e)
 {
 	return 1; // does nothing for MidiChannel
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gMidiMainButton::gMidiMainButton(int x, int y, int w, int h, const char *l)
+	: gMainButton(x, y, w, h, l) {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gMidiMainButton::handle(int e)
+{
+	// MIDI drag-n-drop does nothing so far.
+	return gClick::handle(e);
 }

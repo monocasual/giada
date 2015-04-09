@@ -938,7 +938,7 @@ int glue_startInputRec(bool gui)
 
 	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
 
-	ch->guiChannel->sampleButton->label(ch->wave->name.c_str());
+	ch->guiChannel->mainButton->label(ch->wave->name.c_str());
 
 	if (!gui) {
 		Fl::lock();
