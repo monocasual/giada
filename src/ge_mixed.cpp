@@ -662,5 +662,5 @@ void gFxButton::draw()
 {
   gClick::draw();
   if (full)
-    fl_rectf(x(), y()+16, w(), 4, COLOR_BD_0);
+    fl_draw_pixmap(imgOn, x()+1, y()+1, COLOR_BD_0);
 }

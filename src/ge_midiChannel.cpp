@@ -37,6 +37,7 @@
 #include "gd_actionEditor.h"
 #include "gd_warnings.h"
 #include "gd_browser.h"
+#include "gd_keyGrabber.h"
 #include "gd_midiOutputSetup.h"
 #include "gg_keyboard.h"
 #include "pluginHost.h"
@@ -180,9 +181,10 @@ void gMidiChannel::__cb_openMenu()
 		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 1
 			{"All"},                                  // 2
 			{0},                                      // 3
-		{"Setup MIDI output..."},                   // 4
-		{"Setup MIDI input..."},                    // 5
-		{"Delete channel"},                         // 6
+		{"Setup keyboard input..."},                // 5
+		{"Setup MIDI input..."},                    // 6
+		{"Setup MIDI output..."},                   // 7
+		{"Delete channel"},                         // 8
 		{0}
 	};
 
@@ -204,6 +206,11 @@ void gMidiChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
 			return;
 		glue_deleteChannel(ch);
+		return;
+	}
+
+	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
+		gu_openSubWindow(mainWin, new gdKeyGrabber(ch),	WID_KEY_GRABBER);
 		return;
 	}
 
