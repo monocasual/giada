@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -9,7 +9,7 @@
  * new action will ever be called via MIDI or keyboard/mouse. If yes,
  * put it here.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -29,7 +29,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "glue.h"
@@ -71,7 +71,7 @@ extern PluginHost		 G_PluginHost;
 static bool __soloSession__ = false;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_loadChannel(SampleChannel *ch, const char *fname)
@@ -90,7 +90,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 Channel *glue_addChannel(int column, int type)
@@ -103,7 +103,7 @@ Channel *glue_addChannel(int column, int type)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject)
@@ -190,7 +190,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
@@ -207,7 +207,7 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_deleteChannel(Channel *ch)
@@ -222,7 +222,7 @@ void glue_deleteChannel(Channel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_freeChannel(Channel *ch)
@@ -233,7 +233,7 @@ void glue_freeChannel(Channel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setBpm(const char *v1, const char *v2)
@@ -265,7 +265,7 @@ void glue_setBpm(const char *v1, const char *v2)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setBeats(int beats, int bars, bool expand)
@@ -314,7 +314,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startStopSeq(bool gui)
@@ -323,7 +323,7 @@ void glue_startStopSeq(bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startSeq(bool gui)
@@ -347,7 +347,7 @@ void glue_startSeq(bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_stopSeq(bool gui) {
@@ -388,7 +388,7 @@ void glue_stopSeq(bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_rewindSeq() {
@@ -398,7 +398,7 @@ void glue_rewindSeq() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startStopActionRec() {
@@ -406,7 +406,7 @@ void glue_startStopActionRec() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startActionRec() {
@@ -422,7 +422,7 @@ void glue_startActionRec() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_stopActionRec() {
@@ -452,7 +452,7 @@ void glue_stopActionRec() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startStopReadingRecs(SampleChannel *ch, bool gui) {
@@ -463,7 +463,7 @@ void glue_startStopReadingRecs(SampleChannel *ch, bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startReadingRecs(SampleChannel *ch, bool gui) {
@@ -482,7 +482,7 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
@@ -505,7 +505,7 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_quantize(int val) {
@@ -514,7 +514,7 @@ void glue_quantize(int val) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setChanVol(Channel *ch, float v, bool gui) {
@@ -539,7 +539,7 @@ void glue_setChanVol(Channel *ch, float v, bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setOutVol(float v, bool gui) {
@@ -552,7 +552,7 @@ void glue_setOutVol(float v, bool gui) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setInVol(float v, bool gui)
@@ -566,7 +566,7 @@ void glue_setInVol(float v, bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_clearAllSamples()
@@ -581,7 +581,7 @@ void glue_clearAllSamples()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_clearAllRecs()
@@ -591,7 +591,7 @@ void glue_clearAllRecs()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_resetToInitState(bool resetGui, bool createColumns)
@@ -616,7 +616,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startStopMetronome(bool gui)
@@ -630,7 +630,7 @@ void glue_startStopMetronome(bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e, bool recalc, bool check)
@@ -675,7 +675,7 @@ void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e, boo
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
@@ -708,7 +708,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool numeric)
@@ -756,7 +756,7 @@ void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool n
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setMute(Channel *ch, bool gui)
@@ -778,7 +778,7 @@ void glue_setMute(Channel *ch, bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setSoloOn(Channel *ch, bool gui)
@@ -824,7 +824,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setSoloOff(Channel *ch, bool gui)
@@ -869,7 +869,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
@@ -899,7 +899,7 @@ void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_startStopInputRec(bool gui, bool alert)
@@ -915,7 +915,7 @@ void glue_startStopInputRec(bool gui, bool alert)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_startInputRec(bool gui)
@@ -940,7 +940,7 @@ int glue_startInputRec(bool gui)
 
 	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
 
-	ch->guiChannel->sampleButton->label(ch->wave->name.c_str());
+	ch->guiChannel->mainButton->label(ch->wave->name.c_str());
 
 	if (!gui) {
 		Fl::lock();
@@ -953,7 +953,7 @@ int glue_startInputRec(bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_stopInputRec(bool gui)
@@ -973,7 +973,7 @@ int glue_stopInputRec(bool gui)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int glue_saveProject(const char *folderPath, const char *projName)
@@ -1022,7 +1022,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_keyPress(Channel *ch, bool ctrl, bool shift)
@@ -1034,7 +1034,7 @@ void glue_keyPress(Channel *ch, bool ctrl, bool shift)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
@@ -1044,7 +1044,7 @@ void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
@@ -1059,7 +1059,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
@@ -1125,7 +1125,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
@@ -1145,7 +1145,7 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numeric)
@@ -1172,7 +1172,7 @@ void glue_setPitch(class gdEditor *win, SampleChannel *ch, float val, bool numer
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 /* never expand or shrink recordings (last param of setBeats = false):

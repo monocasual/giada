@@ -219,6 +219,7 @@
 #define WID_ACTION_EDITOR -7
 #define WID_SAMPLE_EDITOR -8
 #define WID_FX            -9
+#define WID_KEY_GRABBER   -10
 
 
 /* -- patch signals --------------------------------------------------------- */

@@ -181,7 +181,6 @@ public:
 	float  fadeoutStep;     // fadeout decrease
   int    fadeoutType;     // xfade or fadeout
   int		 fadeoutEnd;      // what to do when fadeout ends
-  int    key;
 
 	/* recorder:: stuff */
 

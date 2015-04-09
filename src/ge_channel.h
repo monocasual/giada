@@ -87,9 +87,17 @@ public:
 
 	int getColumnIndex();
 
+#ifdef WITH_VST
+
+	/* lightUpFx
+	 * light up the FX button if the channel has some fx's loaded. */
+
+	void lightUpFx();
+#endif
+
 	class gButton *button;
 	class gStatus *status;
-	class gChannelButton *sampleButton;
+	class gMainButton *mainButton;
 	class gDial   *vol;
 	class gClick 	*mute;
 	class gClick 	*solo;
@@ -133,14 +141,14 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-/* gChannelButton
- * main channel button which handles drag and drop events. */
+/* gOperator */
 
-class gChannelButton : public gClick
+class gMainButton : public gClick
 {
 public:
-	gChannelButton(int x, int y, int w, int h, const char *L=0);
-	int handle(int e);
+	gMainButton(int x, int y, int w, int h, const char *l=0);
+	virtual int handle(int e) = 0;
 };
+
 
 #endif

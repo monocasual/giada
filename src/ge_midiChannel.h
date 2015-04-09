@@ -65,6 +65,8 @@ public:
 
 	gMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);
 
+	class gMidiMainButton *mainButton;
+
 	void reset   ();
 	void update  ();
 	void refresh ();
@@ -72,6 +74,17 @@ public:
 	void resize  (int x, int y, int w, int h);
 
 	class MidiChannel *ch;
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gMidiMainButton : public gMainButton
+{
+public:
+	gMidiMainButton(int x, int y, int w, int h, const char *l=0);
+	int handle(int e);
 };
 
 

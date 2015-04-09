@@ -32,14 +32,14 @@
 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include "ge_window.h"
 
 
-class gdKeyGrabber : public Fl_Window
+class gdKeyGrabber : public gWindow
 {
 private:
 
-	class SampleChannel *ch;
+	class Channel *ch;
 
 	class gBox   *text;
 	class gClick *clear;
@@ -54,7 +54,7 @@ private:
 
 public:
 
-	gdKeyGrabber(class SampleChannel *ch);
+	gdKeyGrabber(class Channel *ch);
 	int handle(int e);
 };
 
