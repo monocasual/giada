@@ -257,10 +257,9 @@ void gMidiChannel::refresh()
 	}
 	else
 	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
-		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
-
+		blink();
 	if (ch->recStatus & (REC_WAITING | REC_ENDING))
-		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
+		blink();
 
 	mainButton->redraw();
 }

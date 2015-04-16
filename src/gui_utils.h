@@ -46,12 +46,15 @@
 #endif
 
 
-void __gu_blinkChannel(class gChannel *gch);
-
 /* refresh
  * refresh all GUI elements. */
 
 void gu_refresh();
+
+/* getBlinker
+*  return blinker value, used to make widgets blink. */
+
+int gu_getBlinker();
 
 /* updateControls
  * update attributes of control elements (sample names, volumes, ...).

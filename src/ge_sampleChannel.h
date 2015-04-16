@@ -82,9 +82,8 @@ public:
 	void addActionButton();
 	void delActionButton(bool force=false);
 
-	class gModeBox          *modeBox;
-	class gSampleMainButton *mainButton;
-	class gClick 	          *readActions;
+	class gModeBox *modeBox;
+	class gClick 	 *readActions;
 
 	class SampleChannel *ch;
 };
