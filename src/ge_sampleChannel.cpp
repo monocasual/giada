@@ -338,7 +338,7 @@ void gSampleChannel::__cb_openMenu()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::__cb_readActions()
@@ -347,7 +347,7 @@ void gSampleChannel::__cb_readActions()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gSampleChannel::openBrowser(int type)
@@ -390,10 +390,9 @@ void gSampleChannel::refresh()
 	}
 	else
 	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
-		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
-
+		blink();
 	if (ch->recStatus & (REC_WAITING | REC_ENDING))
-		__gu_blinkChannel(this);    /// TODO - move to gChannel::blink
+		blink();
 
 	if (ch->wave != NULL) {
 

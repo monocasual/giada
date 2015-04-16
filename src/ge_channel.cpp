@@ -62,9 +62,7 @@ extern gdMainWindow *mainWin;
 
 
 gChannel::gChannel(int X, int Y, int W, int H, int type)
- : Fl_Group(X, Y, W, H, NULL), type(type)
-{
-}
+ : Fl_Group(X, Y, W, H, NULL), type(type) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -73,6 +71,24 @@ gChannel::gChannel(int X, int Y, int W, int H, int type)
 int gChannel::getColumnIndex()
 {
 	return ((gColumn*)parent())->getIndex();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gChannel::blink()
+{
+	if (gu_getBlinker() > 6) {
+		mainButton->bgColor0 = COLOR_BG_2;
+		mainButton->bdColor  = COLOR_BD_1;
+		mainButton->txtColor = COLOR_TEXT_1;
+	}
+	else {
+		mainButton->bgColor0 = COLOR_BG_0;
+		mainButton->bdColor  = COLOR_BD_0;
+		mainButton->txtColor = COLOR_TEXT_0;
+	}
 }
 
 

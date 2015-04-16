@@ -65,8 +65,6 @@ public:
 
 	gMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);
 
-	class gMidiMainButton *mainButton;
-
 	void reset   ();
 	void update  ();
 	void refresh ();

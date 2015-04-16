@@ -56,6 +56,11 @@ protected:
 #endif
 	static const int BREAK_UNIT         = 24;
 
+	/* blink
+	 * blink button when channel is in wait/ending status. */
+
+	void blink();
+
 public:
 
 	gChannel(int x, int y, int w, int h, int type);
