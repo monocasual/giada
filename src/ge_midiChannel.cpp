@@ -331,7 +331,7 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 
 int gMidiChannel::keyPress(int e)
 {
-	return 1; // does nothing for MidiChannel
+	return handleKey(e, ch->key);
 }
 
 

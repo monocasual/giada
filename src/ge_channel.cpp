@@ -95,6 +95,31 @@ void gChannel::blink()
 /* -------------------------------------------------------------------------- */
 
 
+int gChannel::handleKey(int e, int key)
+{
+	int ret;
+	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
+		ret = 1;
+	else
+	if (Fl::event_key() == key && !button->value()) {
+		button->take_focus();                                              // move focus to this button
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+		button->do_callback();                                             // invoke the button's callback
+		ret = 1;
+	}
+	else
+		ret = 0;
+
+	if (Fl::event_key() == key)
+		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
+
+	return ret;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef WITH_VST
 
 void gChannel::lightUpFx()
