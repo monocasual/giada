@@ -485,23 +485,7 @@ void gSampleChannel::update()
 
 int gSampleChannel::keyPress(int e)
 {
-	int ret;
-	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
-		ret = 1;
-	else
-	if (Fl::event_key() == ch->key && !button->value()) {
-		button->take_focus();                                              // move focus to this button
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-		button->do_callback();                                             // invoke the button's callback
-		ret = 1;
-	}
-	else
-		ret = 0;
-
-	if (Fl::event_key() == ch->key)
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-
-	return ret;
+	return handleKey(e, ch->key);
 }
 
 

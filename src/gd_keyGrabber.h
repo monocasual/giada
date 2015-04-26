@@ -52,6 +52,8 @@ private:
 
 	void setButtonLabel(int key);
 
+	void updateText(int key);
+
 public:
 
 	gdKeyGrabber(class Channel *ch);

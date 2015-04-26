@@ -61,6 +61,11 @@ protected:
 
 	void blink();
 
+	/* handleKey
+	 * method wrapped by virtual handle(int e). */
+
+	int handleKey(int e, int key);
+
 public:
 
 	gChannel(int x, int y, int w, int h, int type);

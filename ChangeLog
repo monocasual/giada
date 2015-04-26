@@ -13,6 +13,12 @@
 
 
 
+0.9.6 --- [dev]
+- Keyboard binding for MIDI channels
+- Small improvements to Keyboard grabber widget
+- Code refactoring
+
+
 0.9.5 --- 2015 . 03 . 28
 - Better column resize algorithm
 - New patch loading system with permanent MIDI mapping
