@@ -16,6 +16,7 @@
 0.9.6 --- [dev]
 - Keyboard binding for MIDI channels
 - Small improvements to Keyboard grabber widget
+- Fix random crashes with Jack enabled
 - Code refactoring
 
 
