@@ -341,9 +341,9 @@ void glue_startSeq(bool gui)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 	}
 
-	Fl::lock();
+	if (gui) Fl::lock();
 	mainWin->controller->updatePlay(1);
-	Fl::unlock();
+	if (gui) Fl::unlock();
 }
 
 
@@ -367,9 +367,9 @@ void glue_stopSeq(bool gui) {
 
 	if (recorder::active) {
 		recorder::active = false;
-		Fl::lock();
+		if (gui) Fl::lock();
 		mainWin->controller->updateRecAction(0);
-		Fl::unlock();
+		if (gui) Fl::unlock();
 	}
 
 	/* if input recs are active (who knows why) we must deactivate them.
@@ -377,14 +377,14 @@ void glue_stopSeq(bool gui) {
 
 	if (G_Mixer.chanInput != NULL) {
 		mh_stopInputRec();
-		Fl::lock();
+		if (gui) Fl::lock();
 		mainWin->controller->updateRecInput(0);
-		Fl::unlock();
+		if (gui) Fl::unlock();
 	}
 
-	Fl::lock();
+	if (gui) Fl::lock();
 	mainWin->controller->updatePlay(0);
-	Fl::unlock();
+	if (gui) Fl::unlock();
 }
 
 
