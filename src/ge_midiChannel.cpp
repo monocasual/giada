@@ -210,7 +210,8 @@ void gMidiChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
-		gu_openSubWindow(mainWin, new gdKeyGrabber(ch),	WID_KEY_GRABBER);
+		gu_openSubWindow(mainWin, new gdKeyGrabber(ch),	0);
+		//new gdKeyGrabber(ch);
 		return;
 	}
 

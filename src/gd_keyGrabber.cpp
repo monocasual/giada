@@ -32,6 +32,7 @@
 #include "ge_mixed.h"
 #include "gd_config.h"
 #include "ge_channel.h"
+#include "gd_mainWindow.h"
 #include "gui_utils.h"
 #include "conf.h"
 #include "channel.h"
@@ -40,20 +41,23 @@
 #include "log.h"
 
 
-extern Conf	G_Conf;
+extern Conf	         G_Conf;
+extern gdMainWindow *mainWin;
 
 
 gdKeyGrabber::gdKeyGrabber(Channel *ch)
 	: gWindow(300, 126, "Key configuration"), ch(ch)
 {
 	set_modal();
-	text   = new gBox(8, 8, 284, 80, "Press a key (esc to quit):");
+	text   = new gBox(8, 8, 284, 80, "");
 	clear  = new gClick(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
-	cancel = new gClick(clear->x()-88, clear->y(), 80, 20, "Cancel");
+	cancel = new gClick(clear->x()-88, clear->y(), 80, 20, "Close");
 	end();
 
 	clear->callback(cb_clear, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
+
+	updateText(ch->key);
 
 	gu_setFavicon(this);
 	show();
@@ -81,6 +85,7 @@ void gdKeyGrabber::__cb_cancel()
 
 void gdKeyGrabber::__cb_clear()
 {
+	updateText(0);
 	setButtonLabel(0);
 }
 
@@ -94,6 +99,20 @@ void gdKeyGrabber::setButtonLabel(int key)
 	ch->guiChannel->button->copy_label(tmp);
 	ch->key = key;
 }
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::updateText(int key)
+{
+	char tmp2[64];
+	if (key != 0)
+		sprintf(tmp2, "Press a key.\n\nCurrent binding: %c", key);
+	else
+		sprintf(tmp2, "Press a key.\n\nCurrent binding: [none]");
+	text->copy_label(tmp2);
+}
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -114,7 +133,7 @@ int gdKeyGrabber::handle(int e)
 			{
 				gLog("set key '%c' (%d) for channel %d\n", x, x, ch->index);
 				setButtonLabel(x);
-				Fl::delete_widget(this);
+				updateText(x);
 				break;
 			}
 			else
