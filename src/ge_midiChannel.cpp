@@ -284,7 +284,6 @@ void gMidiChannel::reset()
 
 void gMidiChannel::update()
 {
-
 	if (ch->midiOut) {
 		char tmp[32];
 		sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
@@ -296,6 +295,10 @@ void gMidiChannel::update()
 	vol->value(ch->volume);
 	mute->value(ch->mute);
 	solo->value(ch->solo);
+
+#ifdef WITH_VST
+	fx->full = ch->plugins.size > 0;
+#endif
 }
 
 

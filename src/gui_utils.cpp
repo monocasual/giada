@@ -39,6 +39,7 @@
 #include "gd_actionEditor.h"
 #include "recorder.h"
 #include "wave.h"
+#include "pluginHost.h"
 #include "channel.h"
 #include "log.h"
 #include "conf.h"
@@ -51,6 +52,10 @@ extern Patch         G_patch;
 extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
+#ifdef WITH_VST
+extern PluginHost		 G_PluginHost;
+#endif
+
 
 static int blinker = 0;
 
@@ -98,6 +103,10 @@ void gu_updateControls()
 
 	mainWin->inOut->setOutVol(G_Mixer.outVol);
 	mainWin->inOut->setInVol(G_Mixer.inVol);
+#ifdef WITH_VST
+	mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(PluginHost::MASTER_OUT));
+	mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(PluginHost::MASTER_IN));
+#endif
 
 	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
 	mainWin->timing->setBpm(G_Mixer.bpm);

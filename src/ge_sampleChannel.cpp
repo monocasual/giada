@@ -472,6 +472,10 @@ void gSampleChannel::update()
 	vol->value(ch->volume);
 	mute->value(ch->mute);
 	solo->value(ch->solo);
+
+#ifdef WITH_VST
+	fx->full = ch->plugins.size > 0;
+#endif
 }
 
 
