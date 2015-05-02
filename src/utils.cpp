@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * utils
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "utils.h"
@@ -63,10 +63,10 @@ bool gFileExists(const char *filename) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gIsDir(const char *path) 
+bool gIsDir(const char *path)
 {
 	bool ret;
 
@@ -108,7 +108,7 @@ bool gIsDir(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 bool gDirExists(const char *path)
@@ -120,10 +120,10 @@ bool gDirExists(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gMkdir(const char *path) 
+bool gMkdir(const char *path)
 {
 #if defined(__linux__) || defined(__APPLE__)
 	if (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
@@ -135,7 +135,7 @@ bool gMkdir(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gBasename(const char *path)
@@ -146,7 +146,7 @@ std::string gBasename(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gDirname(const char *path)
@@ -157,10 +157,10 @@ std::string gDirname(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string gGetCurrentPath() 
+std::string gGetCurrentPath()
 {
  char buf[PATH_MAX];
 #if defined(__WIN32)
@@ -174,10 +174,10 @@ std::string gGetCurrentPath()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string gGetExt(const char *file) 
+std::string gGetExt(const char *file)
 {
 	int len = strlen(file);
 	int pos = len;
@@ -193,10 +193,10 @@ std::string gGetExt(const char *file)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string gStripExt(const char *file) 
+std::string gStripExt(const char *file)
 {
 	int len = strlen(file);
 	int pos = -1;
@@ -210,10 +210,10 @@ std::string gStripExt(const char *file)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gIsProject(const char *path) 
+bool gIsProject(const char *path)
 {
 	/** FIXME - checks too weak */
 
@@ -223,7 +223,7 @@ bool gIsProject(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 bool gIsPatch(const char *path)
@@ -234,7 +234,7 @@ bool gIsPatch(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gGetProjectName(const char *path)
@@ -258,10 +258,10 @@ std::string gGetProjectName(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string gGetSlash() // TODO - create SLASH macro or constant 
+std::string gGetSlash() // TODO - create SLASH macro or constant
 {
 #if defined(_WIN32)
 	return "\\";
@@ -271,7 +271,7 @@ std::string gGetSlash() // TODO - create SLASH macro or constant
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gItoa(int i)
@@ -282,7 +282,7 @@ std::string gItoa(int i)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gTrim(const char *f)
@@ -294,13 +294,13 @@ std::string gTrim(const char *f)
 
 std::string gTrim(const std::string &s)
 {
-	std::size_t first = s.find_first_not_of(" \n\t");	
+	std::size_t first = s.find_first_not_of(" \n\t");
 	std::size_t last  = s.find_last_not_of(" \n\t");
 	return s.substr(first, last-first+1);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gReplace(std::string in, const std::string& search, const std::string& replace)
@@ -314,7 +314,7 @@ std::string gReplace(std::string in, const std::string& search, const std::strin
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gStripFileUrl(const char *f)
@@ -326,7 +326,7 @@ std::string gStripFileUrl(const char *f)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 std::string gGetHomePath()
@@ -356,4 +356,24 @@ std::string gGetHomePath()
 #endif
 
 	return std::string(path);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gSplit(std::string in, std::string sep, gVector<std::string> *v)
+{
+	std::string full  = in;
+	std::string token = "";
+	size_t curr = 0;
+	size_t next = -1;
+	do {
+	  curr  = next + 1;
+	  next  = full.find_first_of(sep, curr);
+		token = full.substr(curr, next - curr);
+		if (token != "")
+			v->add(token);
+	}
+	while (next != std::string::npos);
 }

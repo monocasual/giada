@@ -15,7 +15,9 @@
 
 0.9.6 --- [dev]
 - Keyboard binding for MIDI channels
+- Support for multiple files in drag-n-drop operations
 - Small improvements to Keyboard grabber widget
+- Fix random crashes with Jack enabled
 - Code refactoring
 
 

@@ -103,11 +103,15 @@ int gColumn::handle(int e)
 			break;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
-			SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-			int result = glue_loadChannel(c, gTrim(gStripFileUrl(Fl::event_text())).c_str());
-			if (result != SAMPLE_LOADED_OK) {
-				deleteChannel(c->guiChannel);
-				parent->printChannelMessage(result);
+			gVector<std::string> paths;
+			gSplit(Fl::event_text(), "\n", &paths);
+			for (unsigned i=0; i<paths.size; i++) {
+				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
+				int result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
+				if (result != SAMPLE_LOADED_OK) {
+					deleteChannel(c->guiChannel);
+					parent->printChannelMessage(result);
+				}
 			}
 			ret = 1;
 			break;
