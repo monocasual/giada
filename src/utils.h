@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * utils
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef UTILS_H
@@ -39,9 +39,9 @@
 /* gVector
  * lightweight template class. */
 
-template <class T> class gVector {
+template <class T> class gVector
+{
 public:
-
 
 	/* gVector()
 	 * default constructor, no parameters */
@@ -53,7 +53,8 @@ public:
 	 * Default constructor doesn't copy referenced ojbects, so we need
 	 * to re-allocate the internal stack for the copied object */
 
-	gVector(const gVector &other) {
+	gVector(const gVector &other)
+	{
 		s = new T[other.size];
 		for (unsigned i=0; i<other.size; i++)
 			s[i] = other.s[i];
@@ -61,12 +62,14 @@ public:
 	}
 
 
-	~gVector() {
+	~gVector()
+	{
 		/// FIXME empty s with clear()?!?
 	}
 
 
-	void add(const T &item) {
+	void add(const T &item)
+	{
 		T *tmp = new T[size+1];  /// TODO: chunk increment (size+N), N ~= 16
 		for (unsigned i=0; i<size; i++)
 			tmp[i] = s[i];
@@ -77,7 +80,8 @@ public:
 	}
 
 
-	int del(const T &item) {
+	int del(const T &item)
+	{
 		for (unsigned i=0; i<size; i++)
 			if (s[i] == item)
 				return del(i);
@@ -85,7 +89,8 @@ public:
 	}
 
 
-	int del(unsigned p) {
+	int del(unsigned p)
+	{
 		if (p > size-1) gLog("[vector] del() outside! requested=%d, size=%d\n", p, size);
 		T *tmp = new T[size-1];
 		unsigned i=0;
@@ -104,7 +109,8 @@ public:
 	}
 
 
-	void clear() {
+	void clear()
+	{
 		if (size > 0) {
 			delete [] s;
 			s = NULL;
@@ -113,20 +119,23 @@ public:
 	}
 
 
-	void swap(unsigned x, unsigned y) {
+	void swap(unsigned x, unsigned y)
+	{
 		T tmp = s[x];
 		s[x] = s[y];
 		s[y] = tmp;
 	}
 
 
-	T &at(unsigned p) {
+	T &at(unsigned p)
+	{
 		if (p > size-1)	gLog("[vector] at() outside! requested=%d, size=%d\n", p, size);
 		return s[p];
 	}
 
 
-	T &last() {
+	T &last()
+	{
 		return s[size-1];
 	}
 
@@ -175,5 +184,7 @@ std::string gGetProjectName(const char *path);
 std::string gGetSlash();
 
 std::string gItoa(int i);
+
+void gSplit(std::string in, std::string sep, gVector<std::string> *v);
 
 #endif
