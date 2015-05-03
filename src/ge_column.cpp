@@ -29,6 +29,7 @@
 
 #include "ge_column.h"
 #include "gd_mainWindow.h"
+#include "gd_warnings.h"
 #include "gg_keyboard.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
@@ -105,13 +106,21 @@ int gColumn::handle(int e)
 		case FL_PASTE: {              // handle actual drop (paste) operation
 			gVector<std::string> paths;
 			gSplit(Fl::event_text(), "\n", &paths);
+			bool fails = false;
+			int result = 0;
 			for (unsigned i=0; i<paths.size; i++) {
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-				int result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
+				result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
 				if (result != SAMPLE_LOADED_OK) {
 					deleteChannel(c->guiChannel);
-					parent->printChannelMessage(result);
+					fails = true;
 				}
+			}
+			if (fails) {
+				if (paths.size > 1)
+					gdAlert("Some files were not loaded successfully.");
+				else
+					parent->printChannelMessage(result);
 			}
 			ret = 1;
 			break;
