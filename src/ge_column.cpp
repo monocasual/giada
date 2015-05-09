@@ -29,6 +29,7 @@
 
 #include "ge_column.h"
 #include "gd_mainWindow.h"
+#include "gd_warnings.h"
 #include "gg_keyboard.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
@@ -94,30 +95,40 @@ gColumn::~gColumn()
 
 int gColumn::handle(int e)
 {
-	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_DND_ENTER:           	// return(1) for these events to 'accept' dnd
 		case FL_DND_DRAG:
 		case FL_DND_RELEASE: {
-			ret = 1;
-			break;
+			return 1;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
 			gVector<std::string> paths;
 			gSplit(Fl::event_text(), "\n", &paths);
+			bool fails = false;
+			int result = 0;
 			for (unsigned i=0; i<paths.size; i++) {
+				gLog("[gColumn::handle] loading %s...\n", paths.at(i).c_str());
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-				int result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
+				result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
 				if (result != SAMPLE_LOADED_OK) {
 					deleteChannel(c->guiChannel);
-					parent->printChannelMessage(result);
+					fails = true;
 				}
 			}
-			ret = 1;
-			break;
+			if (fails) {
+				if (paths.size > 1)
+					gdAlert("Some files were not loaded successfully.");
+				else
+					parent->printChannelMessage(result);
+			}
+			return 1;
 		}
 	}
-	return ret;
+
+	/* we return fl_Group::handle only if none of the cases above are fired. That
+	is because we don't want to propagate a dnd drop to all the sub widgets. */
+
+	return Fl_Group::handle(e);
 }
 
 

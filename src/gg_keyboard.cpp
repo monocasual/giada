@@ -31,6 +31,7 @@
 #include "gd_browser.h"
 #include "gd_mainWindow.h"
 #include "gd_editor.h"
+#include "gd_warnings.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
 #include "mixer.h"
@@ -40,7 +41,6 @@
 #include "patch.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "gd_warnings.h"
 #include "log.h"
 
 
@@ -253,7 +253,7 @@ int gKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == ' ' && !spacePressed) {
 					spacePressed = true;
-					G_Mixer.running ? glue_stopSeq() : glue_startSeq();
+					G_Mixer.running ? glue_stopSeq() : glue_startSeq(); // TODO - glue_startStopSeq, no core logic here
 					ret = 1;
 					break;
 				}
