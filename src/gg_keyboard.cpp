@@ -253,7 +253,7 @@ int gKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == ' ' && !spacePressed) {
 					spacePressed = true;
-					G_Mixer.running ? glue_stopSeq() : glue_startSeq();
+					G_Mixer.running ? glue_stopSeq() : glue_startSeq(); // TODO - glue_startStopSeq, no core logic here
 					ret = 1;
 					break;
 				}
