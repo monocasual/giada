@@ -97,14 +97,6 @@ public:
 
 	int getColumnIndex();
 
-#ifdef WITH_VST
-
-	/* lightUpFx
-	 * light up the FX button if the channel has some fx's loaded. */
-
-	void lightUpFx();
-#endif
-
 	class gButton *button;
 	class gStatus *status;
 	class gMainButton *mainButton;
