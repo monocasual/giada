@@ -245,23 +245,7 @@ void gMidiChannel::__cb_openMenu()
 
 void gMidiChannel::refresh()
 {
-	if (ch->status == STATUS_OFF) {
-		mainButton->bgColor0 = COLOR_BG_0;
-		mainButton->bdColor  = COLOR_BD_0;
-		mainButton->txtColor = COLOR_TEXT_0;
-	}
-	else
-	if (ch->status == STATUS_PLAY) {
-		mainButton->bgColor0 = COLOR_BG_2;
-		mainButton->bdColor  = COLOR_BD_1;
-		mainButton->txtColor = COLOR_TEXT_1;
-	}
-	else
-	if (ch->status & (STATUS_WAIT | STATUS_ENDING))
-		blink();
-	if (ch->recStatus & (REC_WAITING | REC_ENDING))
-		blink();
-
+	setColorsByStatus(ch->status, ch->recStatus);
 	mainButton->redraw();
 }
 

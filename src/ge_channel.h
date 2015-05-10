@@ -61,6 +61,11 @@ protected:
 
 	void blink();
 
+	/* setColorByStatus
+	 * update colors depending on channel status. */
+
+	void setColorsByStatus(int playStatus, int recStatus);
+
 	/* handleKey
 	 * method wrapped by virtual handle(int e). */
 
@@ -96,14 +101,6 @@ public:
 	 * located. */
 
 	int getColumnIndex();
-
-#ifdef WITH_VST
-
-	/* lightUpFx
-	 * light up the FX button if the channel has some fx's loaded. */
-
-	void lightUpFx();
-#endif
 
 	class gButton *button;
 	class gStatus *status;
