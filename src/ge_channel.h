@@ -61,6 +61,11 @@ protected:
 
 	void blink();
 
+	/* setColorByStatus
+	 * update colors depending on channel status. */
+
+	void setColorsByStatus(int playStatus, int recStatus);
+
 	/* handleKey
 	 * method wrapped by virtual handle(int e). */
 

@@ -95,6 +95,41 @@ void gChannel::blink()
 /* -------------------------------------------------------------------------- */
 
 
+void gChannel::setColorsByStatus(int playStatus, int recStatus)
+{
+  switch (playStatus) {
+    case STATUS_OFF:
+  		mainButton->bgColor0 = COLOR_BG_0;
+  		mainButton->bdColor  = COLOR_BD_0;
+  		mainButton->txtColor = COLOR_TEXT_0;
+      break;
+    case STATUS_PLAY:
+  		mainButton->bgColor0 = COLOR_BG_2;
+  		mainButton->bdColor  = COLOR_BD_1;
+  		mainButton->txtColor = COLOR_TEXT_1;
+      break;
+    case STATUS_WAIT:
+      blink();
+      break;
+    case STATUS_ENDING:
+      mainButton->bgColor0 = COLOR_BD_0;
+      break;
+  }
+
+  switch (recStatus) {
+    case REC_WAITING:
+      blink();
+      break;
+    case REC_ENDING:
+      mainButton->bgColor0 = COLOR_BD_0;
+      break;
+  }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int gChannel::handleKey(int e, int key)
 {
 	int ret;

@@ -57,7 +57,7 @@
 #define COLOR_BG_4     fl_rgb_color(113, 31,  31)     // bg action rec
 #define COLOR_ALERT    fl_rgb_color(239, 75,  53)     // peak meter alert
 #define COLOR_TEXT_0   fl_rgb_color(200, 200, 200)
-#define COLOR_TEXT_1   fl_rgb_color(25,  25,  25)
+#define COLOR_TEXT_1   fl_rgb_color(25,  25,  25)      // TODO - duplicate!
 #define COLOR_BG_MAIN  fl_rgb_color(25,  25,  25)		   // windows background
 #define COLOR_BG_DARK  fl_rgb_color(0,   0,   0)		   // inputs background
 
