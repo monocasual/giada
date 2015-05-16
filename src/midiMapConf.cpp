@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * midiMapConf
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <stdlib.h>
@@ -37,47 +37,30 @@
 #include "log.h"
 
 
-void MidiMapConf::initBundles()
+
+void MidiMapConf::init()
 {
-	gLog("[MidiConf] Init Bundles\n");
-	numBundles = 1;
-
-	bundles = new std::string*[numBundles];
-
-	bundles[0] = new std::string[2];
-	bundles[0][0] = "Novation Launchpad S";
-	bundles[0][1] = "novation_launchpads.giadamap";
+	// TODO - scan dir of midi maps and load the filenames into <>maps. 
 }
 
 
-/* ------------------------------------------------------------------ */
-
-
-int MidiMapConf::openFileForReading(std::string MapFile)
-{
-	fp = fopen(MapFile.c_str(), "r");
-	if (fp == NULL) {
-		gLog("[MidiConf::openFile] unable to open conf file for reading\n");
-		return 0;
-	}
-	return 1;
-}
-
-
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiMapConf::setDefault()
 {
-	brand = "";
+	/* TODO - this is just a test, remove it asap */
+	maps.add("novation_launchpads.giadamap");
+
+	brand  = "";
 	device = "";
 
-	for (int i = 0; i < 32; i++) {
+	for (int i=0; i<MAX_INIT_COMMANDS; i++) {
 		init_channels[i] = -1;
 		init_messages[i] = 0x00;
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i=0; i<4; i++) {
 		mute_on_channel = -1;
 		mute_on[i] = 0x00;
 		mute_off_channel = -1;
@@ -100,53 +83,25 @@ void MidiMapConf::setDefault()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int MidiMapConf::readFromBundle(std::string BundleName)
+int MidiMapConf::readMap(std::string file)
 {
-	gLog("[MidiConf] Midi map bundle %s\n", BundleName.c_str());
+	gLog("[MidiMapConf::readFromFile] Reading midi map file '%s'\n", file.c_str());
 
-	bool p_found = false;
-	char path[PATH_MAX];
+	std::string path = "/home/mcl/.giada/midimaps/" + file;
 
-	for ( unsigned i = 0 ; i < numBundles ; i++) {
-		if (!strcmp(BundleName.c_str(), bundles[0][0].c_str())) {
-#if defined(_WIN32)
-			sprintf(path, PATH_MAX, "%s\\%s\\%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
-#else
-			snprintf(path, PATH_MAX, "%s/%s/%s", DATA_PATH, "midimaps", bundles[0][1].c_str());
-#endif
-			p_found = true;
-		}
-	}
-
-	if (p_found) {
-		return readFromFile(path);
-	}
-	else {
-		gLog("[MidiConf] Cannot find bundle %s\n", BundleName.c_str());
-		return 0;
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-int MidiMapConf::readFromFile(std::string MapFile)
-{
-	gLog("[MidiConf] Reading midi map file %s\n", MapFile.c_str());
-
-	if (!openFileForReading(MapFile)) {
-		gLog("[MidiConf] unreadable .giadamap file\n");
+	fp = fopen(path.c_str(), "r");
+	if (fp == NULL) {
+		gLog("[MidiMapConf::readFromFile] unreadable .giadamap file\n");
 		return 0;
 	}
 
 	brand = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiConf] Reading map for %s - %s\n", brand.c_str(), device.c_str());
+	gLog("[MidiMapConf::readFromFile] Reading map for %s - %s\n", brand.c_str(), device.c_str());
 
 	std::istringstream StrStream(getValue("init_commands"));
 	int i=0;
@@ -160,7 +115,7 @@ int MidiMapConf::readFromFile(std::string MapFile)
 			init_channels[i] = atoi(Token.substr(0, Token.find(':')).c_str());
 			init_messages[i] = strtoul(Token.substr(Token.find(':')+3, 10).c_str(), NULL, 16);
 
-			gLog("[MidiConf] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
+			gLog("[MidiMapConf::readFromFile] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
 		}
 
 		i++;
@@ -180,7 +135,7 @@ int MidiMapConf::readFromFile(std::string MapFile)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiMapConf::close()
@@ -191,29 +146,29 @@ void MidiMapConf::close()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::parse(std::string Config, int* Channel, uint32_t* Message, int* NotePos)
+void MidiMapConf::parse(std::string config, int *channel, uint32_t *message, int *notePos)
 {
-	//gLog("[MidiConf] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
-	gLog("[MidiConf] Command %s - ", Config.c_str());
-	std::string p_config = getValue(Config.c_str());
+	//gLog("[MidiMapConf] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
+	gLog("[MidiMapConf::parse] Command %s - ", config.c_str());
+	std::string p_config = getValue(config.c_str());
 
-	*Channel = atoi(p_config.substr(0, p_config.find(':')).c_str());
-	gLog("Channel %x - ", *Channel);
+	*channel = atoi(p_config.substr(0, p_config.find(':')).c_str());
+	gLog("channel %x - ", *channel);
 
 	std::string p_midiParts = p_config.substr(p_config.find(':')+3, 10);
 	if (p_midiParts.find("nn") != std::string::npos)
-		*NotePos = p_midiParts.find("nn")/2;
+		*notePos = p_midiParts.find("nn")/2;
 	else
-		*NotePos = -1;
+		*notePos = -1;
 
-	for (int i=0 ; i<4 ; i++) {
-		if (i!=*NotePos) {
+	for (int i=0; i<4; i++) {
+		if (i != *notePos) {
 			std::string p_bit = p_midiParts.substr(i*2, 2);
-			Message[i] = strtoul(p_bit.c_str(), NULL, 16);
-			gLog("0x%X ", Message[i]);
+			message[i] = strtoul(p_bit.c_str(), NULL, 16);
+			gLog("0x%X ", message[i]);
 		}
 		else {
 			gLog("Note ");

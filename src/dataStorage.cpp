@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * dataStorage
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,10 +24,13 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
+#include <stdlib.h>
+#include <limits.h>
 #include "dataStorage.h"
+#include "const.h"
 #include "log.h"
 
 
@@ -65,8 +68,3 @@ std::string DataStorage::getValue(const char *in) {
 	}
 	return out;
 }
-
-
-
-
-

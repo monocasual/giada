@@ -34,68 +34,87 @@
 #include <limits.h>
 #include <stdint.h>
 #include "dataStorage.h"
+#include "utils.h"
 #if defined(__APPLE__)
 #include <pwd.h>
 #endif
 
-#define	MAXINITCOMMANDS	32
-
 
 class MidiMapConf : public DataStorage
 {
-	private:
-		int openFileForReading(std::string MapFile);
-		void close();
+private:
 
-		void parse(std::string Config, int* Channel, uint32_t* Message, int* NotePos);
+	void close();
+	void parse(std::string config, int *channel, uint32_t *message, int *notePos);
 
-	public:
-		unsigned numBundles;
-		std::string** bundles;
+public:
 
+	/* MAX_INIT_COMMANDS */
 
-		std::string brand;
-		std::string device;
+	static const int MAX_INIT_COMMANDS = 32;
 
-		int init_channels[MAXINITCOMMANDS];
-		uint32_t init_messages[MAXINITCOMMANDS];
+	/* Maps are the available .giadamap files. Each element of the vector
+	represents a .giadamap filename. */
 
-		int mute_on_channel;
-		int mute_on_notePos;
-		uint32_t mute_on[4];
+	gVector<std::string> maps;
 
-		int mute_off_channel;
-		int mute_off_notePos;
-		uint32_t mute_off[4];
+	std::string brand;
+	std::string device;
 
-		int solo_on_channel;
-		int solo_on_notePos;
-		uint32_t solo_on[4];
+	/* init_commands. These messages are sent to the physical device as a
+	wake up signal. */
 
-		int solo_off_channel;
-		int solo_off_notePos;
-		uint32_t solo_off[4];
+	int      init_channels[MAX_INIT_COMMANDS];
+	uint32_t init_messages[MAX_INIT_COMMANDS];
 
-		int waiting_channel;
-		int waiting_notePos;
-		uint32_t waiting[4];
+	/* events */
 
-		int playing_channel;
-		int playing_notePos;
-		uint32_t playing[4];
+	int mute_on_channel;
+	int mute_on_notePos;
+	uint32_t mute_on[4];
 
-		int stopping_channel;
-		int stopping_notePos;
-		uint32_t stopping[4];
+	int mute_off_channel;
+	int mute_off_notePos;
+	uint32_t mute_off[4];
 
-		int stopped_channel;
-		int stopped_notePos;
-		uint32_t stopped[4];
+	int solo_on_channel;
+	int solo_on_notePos;
+	uint32_t solo_on[4];
 
-		void setDefault();
-		int readFromBundle(std::string BundleName);
-		int readFromFile(std::string MapFile);
-		void initBundles();
+	int solo_off_channel;
+	int solo_off_notePos;
+	uint32_t solo_off[4];
+
+	int waiting_channel;
+	int waiting_notePos;
+	uint32_t waiting[4];
+
+	int playing_channel;
+	int playing_notePos;
+	uint32_t playing[4];
+
+	int stopping_channel;
+	int stopping_notePos;
+	uint32_t stopping[4];
+
+	int stopped_channel;
+	int stopped_notePos;
+	uint32_t stopped[4];
+
+	/* init
+	Parse the midi maps folders and find the available maps. */
+	
+	void init();
+
+	/* setDefault
+	Set default values in case no maps are available/choosen. */
+
+	void setDefault();
+
+	/* readMap
+	Read a midi map from file 'file'. */
+
+	int readMap(std::string file);
 };
 
 #endif

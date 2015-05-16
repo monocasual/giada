@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
 	G_quit = false;
 
 	init_prepareParser();
+	init_prepareMidiMap();
 	init_prepareKernelAudio();
 	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);

@@ -1,1 +1,1 @@
-SUBDIRS=src midimaps
+SUBDIRS=src

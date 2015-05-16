@@ -97,14 +97,13 @@ namespace kernelMidi {
 	 * master callback for input events. */
 
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
-	
+
 	std::string getRtMidiVersion();
 
 	/* send midi to device
 	 * to init and control lights
 	 */
 
-	void init();
 	void midi_mute_on(uint32_t note);
 	void midi_mute_off(uint32_t note);
 	void midi_solo_on(uint32_t note);

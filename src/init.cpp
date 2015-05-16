@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * init
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <ctime>
@@ -39,6 +39,7 @@
 #include "conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
+#include "midiMapConf.h"
 #include "gd_mainWindow.h"
 #include "gui_utils.h"
 #include "gd_warnings.h"
@@ -50,6 +51,7 @@ extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch     	   G_Patch;
 extern Conf          G_Conf;
+extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
@@ -70,7 +72,7 @@ void init_prepareParser()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void init_prepareKernelAudio()
@@ -88,7 +90,7 @@ void init_prepareKernelAudio()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void init_prepareKernelMIDI()
@@ -99,7 +101,18 @@ void init_prepareKernelMIDI()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+
+
+void init_prepareMidiMap()
+{
+	G_MidiMap.init();
+	G_MidiMap.setDefault();
+	G_MidiMap.readMap(G_Conf.midiMapPath);
+}
+
+
+/* -------------------------------------------------------------------------- */
 
 
 void init_startGUI(int argc, char **argv)
@@ -125,7 +138,7 @@ void init_startGUI(int argc, char **argv)
 		);
 }
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void init_startKernelAudio()
@@ -139,7 +152,7 @@ void init_startKernelAudio()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void init_shutdown()

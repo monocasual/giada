@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * conf
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <stdlib.h>
@@ -36,25 +36,8 @@
 
 int Conf::openFileForReading()
 {
-	char path[PATH_MAX];
-
-#if defined(__linux__)
-	snprintf(path, PATH_MAX, "%s/.giada/%s", getenv("HOME"), CONF_FILENAME);
-#elif defined(_WIN32)
-	snprintf(path, PATH_MAX, "%s", CONF_FILENAME);
-#elif defined(__APPLE__)
-	struct passwd *p = getpwuid(getuid());
-	if (p == NULL) {
-		gLog("[Conf::openFile] unable to fetch user infos\n");
-		return 0;
-	}
-	else {
-		const char *home = p->pw_dir;
-		snprintf(path, PATH_MAX, "%s/Library/Application Support/Giada/giada.conf", home);
-	}
-#endif
-
-	fp = fopen(path, "r");
+	std::string path = gGetHomePath() + "/" + CONF_FILENAME;
+	fp = fopen(path.c_str(), "r");
 	if (fp == NULL) {
 		gLog("[Conf::openFile] unable to open conf file for reading\n");
 		return 0;
@@ -63,7 +46,7 @@ int Conf::openFileForReading()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Conf::createConfigFolder(const char *path)
@@ -84,7 +67,7 @@ int Conf::createConfigFolder(const char *path)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Conf::openFileForWriting()
@@ -130,7 +113,7 @@ int Conf::openFileForWriting()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void Conf::setDefault()
@@ -188,7 +171,7 @@ void Conf::setDefault()
 
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Conf::read()
@@ -360,7 +343,7 @@ int Conf::read()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Conf::write()
@@ -463,7 +446,7 @@ int Conf::write()
 
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void Conf::close()
@@ -473,7 +456,7 @@ void Conf::close()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void Conf::setPath(char *path, const char *p)

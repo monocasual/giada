@@ -60,13 +60,13 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 		type     (type),
 		stackType(stackType)
 {
-	set_modal();
+	set_non_modal();
 
 	browser = new gBrowser(8, 36, 380, 230);
 	Fl_Group *group_btn = new Fl_Group(8, 274, 380, 20);
 		gBox *b = new gBox(8, 274, 204, 20); 					        // spacer window border <-> buttons
 		ok  	  = new gClick(308, 274, 80, 20);
-		cancel  = new gClick(220, 274, 80, 20, "Cancel")	;
+		cancel  = new gClick(220, 274, 80, 20, "Cancel");
 		status  = new gProgress(8, 274, 204, 20);
 		status->minimum(0);
 		status->maximum(1);
@@ -104,9 +104,6 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	if (type == BROWSER_LOAD_SAMPLE)
 		ok->callback(cb_load_sample, (void*)this);
 	else
-	if (type == BROWSER_LOAD_MIDIMAP)
-		ok->callback(cb_load_midimap, (void*)this);
-	else
 	if (type == BROWSER_SAVE_PATCH) {
 		ok->callback(cb_save_patch, (void*)this);
 		name->value(G_Patch.name[0] == '\0' ? "my_patch.gptc" : G_Patch.name);
@@ -141,9 +138,6 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 		resize(G_Conf.browserX, G_Conf.browserY, G_Conf.browserW, G_Conf.browserH);
 
 	gu_setFavicon(this);
-
-	strcpy(selectedFile, "\0");
-
 	show();
 }
 
@@ -164,7 +158,6 @@ gdBrowser::~gdBrowser() {
 
 void gdBrowser::cb_load_patch  (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_load_patch();  }
 void gdBrowser::cb_load_sample (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_load_sample(); }
-void gdBrowser::cb_load_midimap(Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_load_midimap(); }
 void gdBrowser::cb_save_sample (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_save_sample(); }
 void gdBrowser::cb_save_patch  (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_save_patch(); }
 void gdBrowser::cb_save_project(Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_save_project(); }
@@ -226,29 +219,6 @@ void gdBrowser::__cb_load_patch() {
 
 
 /* -------------------------------------------------------------------------- */
-
-
-void gdBrowser::__cb_load_midimap() {
-
-	if (browser->text(browser->value()) == NULL)
-		return;
-
-	strcpy(selectedFile, browser->get_selected_item());
-
-	do_callback();
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-char* gdBrowser::SelectedFile()
-{
-	return selectedFile;
-}
-
-
-/* ------------------------------------------------------------------ */
 
 
 void gdBrowser::__cb_save_sample() {

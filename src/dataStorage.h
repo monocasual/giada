@@ -43,7 +43,6 @@ protected:
 
 	FILE *fp;
 	std::string getValue(const char *in);
-
 };
 
 #endif

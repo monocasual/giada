@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * init
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef INIT_H
@@ -42,6 +42,7 @@ void init_prepareParser();
 void init_startGUI(int argc, char **argv);
 void init_prepareKernelAudio();
 void init_prepareKernelMIDI();
+void init_prepareMidiMap();
 void init_startKernelAudio();
 void init_shutdown();
 

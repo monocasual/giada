@@ -35,7 +35,7 @@
 #include "ge_window.h"
 
 
-class gdConfig : public gWindow 
+class gdConfig : public gWindow
 {
 private:
 	static void cb_save_config        (Fl_Widget *w, void *p);
@@ -59,9 +59,10 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabMidi : public Fl_Group 
+class gTabMidi : public Fl_Group
 {
 private:
+
 	void fetchSystems();
 	void fetchOutPorts();
 	void fetchInPorts();
@@ -70,15 +71,10 @@ private:
 	static void cb_changeSystem  (Fl_Widget *w, void *p);
 	inline void __cb_changeSystem();
 
-	static void cb_browseMidiMap (Fl_Widget *w, void *p);
-	inline void __cb_browseMidiMap();
-
 	int systemInitValue;
 
-	char  midiMapPath[FILENAME_MAX];
-	char  lastFileMap[FILENAME_MAX];
-
 public:
+	
 	class gChoice *system;
 	class gChoice *portOut;
 	class gChoice *portIn;
@@ -95,7 +91,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabAudio : public Fl_Group 
+class gTabAudio : public Fl_Group
 {
 private:
 	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
@@ -139,7 +135,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabBehaviors : public Fl_Group 
+class gTabBehaviors : public Fl_Group
 {
 private:
 	static void cb_radio_mutex  (Fl_Widget *w, void *p);
@@ -161,10 +157,10 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gTabMisc : public Fl_Group 
+class gTabMisc : public Fl_Group
 {
 public:
-	class gChoice *debugMsg;	
+	class gChoice *debugMsg;
 
 	gTabMisc(int x, int y, int w, int h);
 
