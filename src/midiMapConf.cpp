@@ -42,9 +42,9 @@ void MidiMapConf::initBundles()
 	gLog("[MidiConf] Init Bundles\n");
 	numBundles = 1;
 
-	bundles = new string*[numBundles];
+	bundles = new std::string*[numBundles];
 
-	bundles[0] = new string[2];
+	bundles[0] = new std::string[2];
 	bundles[0][0] = "Novation Launchpad S";
 	bundles[0][1] = "novation_launchpads.giadamap";
 }
@@ -148,11 +148,11 @@ int MidiMapConf::readFromFile(std::string MapFile)
 
 	gLog("[MidiConf] Reading map for %s - %s\n", brand.c_str(), device.c_str());
 
-	istringstream StrStream(getValue("init_commands"));
+	std::istringstream StrStream(getValue("init_commands"));
 	int i=0;
 	while (StrStream)
 	{
-		string Token;
+		std::string Token;
 		getline(StrStream, Token, ';');
 
 		if (Token.length() > 0)
@@ -194,16 +194,16 @@ void MidiMapConf::close()
 /* ------------------------------------------------------------------ */
 
 
-void MidiMapConf::parse(string Config, int* Channel, uint32_t* Message, int* NotePos)
+void MidiMapConf::parse(std::string Config, int* Channel, uint32_t* Message, int* NotePos)
 {
 	//gLog("[MidiConf] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
 	gLog("[MidiConf] Command %s - ", Config.c_str());
-	string p_config = getValue(Config.c_str());
+	std::string p_config = getValue(Config.c_str());
 
 	*Channel = atoi(p_config.substr(0, p_config.find(':')).c_str());
 	gLog("Channel %x - ", *Channel);
 
-	string p_midiParts = p_config.substr(p_config.find(':')+3, 10);
+	std::string p_midiParts = p_config.substr(p_config.find(':')+3, 10);
 	if (p_midiParts.find("nn") != std::string::npos)
 		*NotePos = p_midiParts.find("nn")/2;
 	else
@@ -211,7 +211,7 @@ void MidiMapConf::parse(string Config, int* Channel, uint32_t* Message, int* Not
 
 	for (int i=0 ; i<4 ; i++) {
 		if (i!=*NotePos) {
-			string p_bit = p_midiParts.substr(i*2, 2);
+			std::string p_bit = p_midiParts.substr(i*2, 2);
 			Message[i] = strtoul(p_bit.c_str(), NULL, 16);
 			gLog("0x%X ", Message[i]);
 		}
@@ -221,4 +221,3 @@ void MidiMapConf::parse(string Config, int* Channel, uint32_t* Message, int* Not
 	}
 	gLog("\n");
 }
-

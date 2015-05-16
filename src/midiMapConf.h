@@ -34,15 +34,12 @@
 #include <limits.h>
 #include <stdint.h>
 #include "dataStorage.h"
-
-
 #if defined(__APPLE__)
 #include <pwd.h>
 #endif
 
 #define	MAXINITCOMMANDS	32
 
-using namespace std;
 
 class MidiMapConf : public DataStorage
 {
@@ -50,11 +47,11 @@ class MidiMapConf : public DataStorage
 		int openFileForReading(std::string MapFile);
 		void close();
 
-		void parse(string Config, int* Channel, uint32_t* Message, int* NotePos);
+		void parse(std::string Config, int* Channel, uint32_t* Message, int* NotePos);
 
 	public:
 		unsigned numBundles;
-		string** bundles;
+		std::string** bundles;
 
 
 		std::string brand;
