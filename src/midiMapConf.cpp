@@ -116,10 +116,9 @@ int MidiMapConf::readMap(std::string file)
 		return 0;
 	}
 
-	gLog("[MidiMapConf::readFromFile] Reading midimap file '%s'\n", file.c_str());
+	gLog("[MidiMapConf::readFromFile] reading midimap file '%s'\n", file.c_str());
 
 	std::string path = midimapsPath + file;
-
 	fp = fopen(path.c_str(), "r");
 	if (!fp) {
 		gLog("[MidiMapConf::readFromFile] unreadable midimap file\n");
@@ -129,7 +128,7 @@ int MidiMapConf::readMap(std::string file)
 	brand  = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiMapConf::readFromFile] reading midimap for %s - %s\n",
+	gLog("[MidiMapConf::readFromFile] reading midimap for %s %s\n",
 			brand.c_str(), device.c_str());
 
 	/* parse init commands */
