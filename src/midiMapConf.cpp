@@ -126,30 +126,23 @@ int MidiMapConf::readMap(std::string file)
 		return 0;
 	}
 
-	brand = getValue("brand");
+	brand  = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiMapConf::readFromFile] Reading midimap for %s - %s\n",
+	gLog("[MidiMapConf::readFromFile] reading midimap for %s - %s\n",
 			brand.c_str(), device.c_str());
 
-	/* TODO - use internal tokenizer from utils */
-	std::istringstream StrStream(getValue("init_commands"));
-	int i=0;
-	while (StrStream)
-	{
-		std::string Token;
-		getline(StrStream, Token, ';');
+	/* parse init commands */
 
-		if (Token.length() > 0)
-		{
-			init_channels[i] = atoi(Token.substr(0, Token.find(':')).c_str());
-			init_messages[i] = strtoul(Token.substr(Token.find(':')+3, 10).c_str(), NULL, 16);
-
-			gLog("[MidiMapConf::readFromFile] Init Command %x - Channel %x - Message 0x%X\n",
-					i+1, init_channels[i], init_messages[i]);
-		}
-		i++;
+	gVector<std::string> ic;
+	gSplit(getValue("init_commands"), ";", &ic);
+	for (unsigned i=0; i<MAX_INIT_COMMANDS && i<ic.size; i++) {
+		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
+		gLog("[MidiMapConf::readFromFile] init command %d - channel %d - message 0x%X\n",
+				i, init_channels[i], init_messages[i]);
 	}
+
+	/* parse messages */
 
 	parse("mute_on",  &mute_on_channel,  mute_on,  &mute_on_notePos);
 	parse("mute_off", &mute_off_channel, mute_off, &mute_off_notePos);
