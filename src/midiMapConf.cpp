@@ -31,16 +31,42 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "const.h"
+#include <dirent.h>
 #include "midiMapConf.h"
+#include "const.h"
 #include "utils.h"
 #include "log.h"
 
 
-
 void MidiMapConf::init()
 {
-	// TODO - scan dir of midi maps and load the filenames into <>maps.
+	midimapsPath = gGetHomePath() + "/midimaps/";
+
+	/* scan dir of midi maps and load the filenames into <>maps. */
+
+	gLog("[MidiMapConf::init] scanning midimaps directory...\n");
+
+  DIR    *dp;
+  dirent *ep;
+  dp = opendir(midimapsPath.c_str());
+
+	if (!dp) {
+		gLog("[MidiMapConf::init] unable to scan midimaps directory!\n");
+		return;
+	}
+
+	while ((ep = readdir(dp))) {
+		if (!strcmp(ep->d_name, ".") || !strcmp(ep->d_name, ".."))
+			continue;
+
+		// TODO - check if is a valid midimap file (verify headers)
+
+		gLog("[MidiMapConf::init] found midimap '%s'\n", ep->d_name);
+
+		maps.add(ep->d_name);
+	}
+
+	closedir(dp);
 }
 
 
@@ -95,7 +121,8 @@ int MidiMapConf::readMap(std::string file)
 
 	gLog("[MidiMapConf::readFromFile] Reading midimap file '%s'\n", file.c_str());
 
-	std::string path = "/home/mcl/.giada/midimaps/" + file;
+
+	std::string path = midimapsPath + file;
 
 	fp = fopen(path.c_str(), "r");
 	if (!fp) {
