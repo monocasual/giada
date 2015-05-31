@@ -173,8 +173,7 @@ void MidiMapConf::close()
 
 void MidiMapConf::parse(std::string config, int *channel, uint32_t *message, int *notePos)
 {
-	//gLog("[MidiMapConf] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
-	gLog("[MidiMapConf::parse] Command %s - ", config.c_str());
+	gLog("[MidiMapConf::parse] command %s - ", config.c_str());
 	std::string p_config = getValue(config.c_str());
 
 	*channel = atoi(p_config.substr(0, p_config.find(':')).c_str());
@@ -193,7 +192,7 @@ void MidiMapConf::parse(std::string config, int *channel, uint32_t *message, int
 			gLog("0x%X ", message[i]);
 		}
 		else {
-			gLog("Note ");
+			gLog("[note] ");
 		}
 	}
 	gLog("\n");
