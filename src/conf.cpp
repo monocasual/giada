@@ -129,12 +129,12 @@ void Conf::setDefault()
 	limitOutput    = false;
 	rsmpQuality    = 0;
 
-	midiPortIn  = DEFAULT_MIDI_PORT_IN;
-	noNoteOff   = false;
+	midiPortIn     = DEFAULT_MIDI_PORT_IN;
+	noNoteOff      = false;
 	midiMapPath[0] = '\0';
-	midiPortOut = DEFAULT_MIDI_PORT_OUT;
-	midiSync    = MIDI_SYNC_NONE;
-	midiTCfps   = 25.0f;
+	midiPortOut    = DEFAULT_MIDI_PORT_OUT;
+	midiSync       = MIDI_SYNC_NONE;
+	midiTCfps      = 25.0f;
 
 	midiInRewind     = 0x0;
 	midiInStartStop  = 0x0;
