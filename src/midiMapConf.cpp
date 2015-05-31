@@ -40,7 +40,7 @@
 
 void MidiMapConf::init()
 {
-	// TODO - scan dir of midi maps and load the filenames into <>maps. 
+	// TODO - scan dir of midi maps and load the filenames into <>maps.
 }
 
 
@@ -88,20 +88,25 @@ void MidiMapConf::setDefault()
 
 int MidiMapConf::readMap(std::string file)
 {
-	gLog("[MidiMapConf::readFromFile] Reading midi map file '%s'\n", file.c_str());
+	if (file.empty()) {
+		gLog("[MidiMapConf::readFromFile] midimap not specified, nothing to do\n");
+		return 0;
+	}
+
+	gLog("[MidiMapConf::readFromFile] Reading midimap file '%s'\n", file.c_str());
 
 	std::string path = "/home/mcl/.giada/midimaps/" + file;
 
 	fp = fopen(path.c_str(), "r");
-	if (fp == NULL) {
-		gLog("[MidiMapConf::readFromFile] unreadable .giadamap file\n");
+	if (!fp) {
+		gLog("[MidiMapConf::readFromFile] unreadable midimap file\n");
 		return 0;
 	}
 
 	brand = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiMapConf::readFromFile] Reading map for %s - %s\n", brand.c_str(), device.c_str());
+	gLog("[MidiMapConf::readFromFile] Reading midimap for %s - %s\n", brand.c_str(), device.c_str());
 
 	std::istringstream StrStream(getValue("init_commands"));
 	int i=0;
