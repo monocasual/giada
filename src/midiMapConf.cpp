@@ -108,6 +108,7 @@ int MidiMapConf::readMap(std::string file)
 
 	gLog("[MidiMapConf::readFromFile] Reading midimap for %s - %s\n", brand.c_str(), device.c_str());
 
+	/* TODO - use internal tokenizer from utils */
 	std::istringstream StrStream(getValue("init_commands"));
 	int i=0;
 	while (StrStream)
