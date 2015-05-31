@@ -129,7 +129,8 @@ int MidiMapConf::readMap(std::string file)
 	brand = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiMapConf::readFromFile] Reading midimap for %s - %s\n", brand.c_str(), device.c_str());
+	gLog("[MidiMapConf::readFromFile] Reading midimap for %s - %s\n",
+			brand.c_str(), device.c_str());
 
 	/* TODO - use internal tokenizer from utils */
 	std::istringstream StrStream(getValue("init_commands"));
@@ -144,20 +145,20 @@ int MidiMapConf::readMap(std::string file)
 			init_channels[i] = atoi(Token.substr(0, Token.find(':')).c_str());
 			init_messages[i] = strtoul(Token.substr(Token.find(':')+3, 10).c_str(), NULL, 16);
 
-			gLog("[MidiMapConf::readFromFile] Init Command %x - Channel %x - Message 0x%X\n", i+1, init_channels[i], init_messages[i]);
+			gLog("[MidiMapConf::readFromFile] Init Command %x - Channel %x - Message 0x%X\n",
+					i+1, init_channels[i], init_messages[i]);
 		}
-
 		i++;
 	}
 
-	parse("mute_on",         &mute_on_channel,         mute_on,         &mute_on_notePos);
-	parse("mute_off",        &mute_off_channel,        mute_off,        &mute_off_notePos);
-	parse("solo_on",         &solo_on_channel,         solo_on,         &solo_on_notePos);
-	parse("solo_off",        &solo_off_channel,        solo_off,        &solo_off_notePos);
-	parse("waiting",         &waiting_channel,         waiting,         &waiting_notePos);
-	parse("playing",         &playing_channel,         playing,         &playing_notePos);
-	parse("stopping",        &stopping_channel,        stopping,        &stopping_notePos);
-	parse("stopped",         &stopped_channel,         stopped,         &stopped_notePos);
+	parse("mute_on",  &mute_on_channel,  mute_on,  &mute_on_notePos);
+	parse("mute_off", &mute_off_channel, mute_off, &mute_off_notePos);
+	parse("solo_on",  &solo_on_channel,  solo_on,  &solo_on_notePos);
+	parse("solo_off", &solo_off_channel, solo_off, &solo_off_notePos);
+	parse("waiting",  &waiting_channel,  waiting,  &waiting_notePos);
+	parse("playing",  &playing_channel,  playing,  &playing_notePos);
+	parse("stopping", &stopping_channel, stopping, &stopping_notePos);
+	parse("stopped",  &stopped_channel,  stopped,  &stopped_notePos);
 
 	close();
 	return 1;
