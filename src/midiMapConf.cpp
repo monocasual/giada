@@ -75,9 +75,6 @@ void MidiMapConf::init()
 
 void MidiMapConf::setDefault()
 {
-	/* TODO - this is just a test, remove it asap */
-	maps.add("novation_launchpads.giadamap");
-
 	brand  = "";
 	device = "";
 
@@ -120,7 +117,6 @@ int MidiMapConf::readMap(std::string file)
 	}
 
 	gLog("[MidiMapConf::readFromFile] Reading midimap file '%s'\n", file.c_str());
-
 
 	std::string path = midimapsPath + file;
 
