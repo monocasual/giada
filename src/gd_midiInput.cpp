@@ -104,11 +104,11 @@ void gdMidiInput::__cb_close() {
 /* ------------------------------------------------------------------ */
 
 
-gdMidiInputChannel::gdMidiInputChannel(Channel *ch, GrabberDirection grabDirection)
+gdMidiInputChannel::gdMidiInputChannel(Channel *ch/*, GrabberDirection grabDirection*/)
 	:	gdMidiInput(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
-	if (grabDirection == GrabForInput) {
+	//if (grabDirection == GrabForInput) {
 		char title[64];
 		sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
 		label(title);
@@ -139,7 +139,8 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch, GrabberDirection grabDirecti
 
 		gu_setFavicon(this);
 		show();
-	}
+	//}
+	/*
 	else if (grabDirection == GrabForOutput) {
 		size(300, 134);
 
@@ -164,7 +165,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch, GrabberDirection grabDirecti
 
 		gu_setFavicon(this);
 		show();
-	}
+	}*/
 }
 
 

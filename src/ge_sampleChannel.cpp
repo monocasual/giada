@@ -196,23 +196,24 @@ void gSampleChannel::__cb_openMenu()
 		{"Export sample to file..."},               // 1
 		{"Setup keyboard input..."},                // 2
 		{"Setup MIDI input..."},                    // 3
-		{"Edit sample..."},                         // 4
-		{"Edit actions..."},                        // 5
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 6
-			{"All"},                                  // 7
-			{"Mute"},                                 // 8
-			{"Volume"},                               // 9
-			{"Start/Stop"},                           // 10
-			{0},                                      // 11
-		{"Free channel"},                           // 12
-		{"Delete channel"},                         // 13
+		{"Setup MIDI output..."},                   // 4
+		{"Edit sample..."},                         // 5
+		{"Edit actions..."},                        // 6
+		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 7
+			{"All"},                                  // 8
+			{"Mute"},                                 // 9
+			{"Volume"},                               // 10
+			{"Start/Stop"},                           // 11
+			{0},                                      // 12
+		{"Free channel"},                           // 13
+		{"Delete channel"},                         // 14
 		{0}
 	};
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
 		rclick_menu[1].deactivate();
-		rclick_menu[4].deactivate();
-		rclick_menu[12].deactivate();
+		rclick_menu[5].deactivate();
+		rclick_menu[13].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
@@ -246,13 +247,14 @@ void gSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiInputChannel(ch, GrabForInput), 0);
+		gu_openSubWindow(mainWin, new gdMidiInputChannel(ch), 0);
 		return;
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiInputChannel(ch, GrabForOutput), 0);
-		return;
+		// TODO
+		//gu_openSubWindow(mainWin, new gdMidiInputChannel(ch), 0);
+		//return;
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
