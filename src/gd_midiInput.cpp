@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_midiInput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gd_midiInput.h"
@@ -46,7 +46,7 @@ gdMidiInput::gdMidiInput(int w, int h, const char *title)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gdMidiInput::~gdMidiInput() {
@@ -54,7 +54,7 @@ gdMidiInput::~gdMidiInput() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInput::stopMidiLearn(gLearner *learner) {
@@ -63,7 +63,7 @@ void gdMidiInput::stopMidiLearn(gLearner *learner) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
@@ -73,7 +73,7 @@ void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInput::cb_learn(uint32_t msg, void *d) {
@@ -86,13 +86,13 @@ void gdMidiInput::cb_learn(uint32_t msg, void *d) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInput::cb_close(Fl_Widget *w, void *p)  { ((gdMidiInput*)p)->__cb_close(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInput::__cb_close() {
@@ -100,83 +100,55 @@ void gdMidiInput::__cb_close() {
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
-gdMidiInputChannel::gdMidiInputChannel(Channel *ch/*, GrabberDirection grabDirection*/)
+gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	:	gdMidiInput(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
-	//if (grabDirection == GrabForInput) {
-		char title[64];
-		sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
-		label(title);
+	char title[64];
+	sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
+	label(title);
 
-		set_modal();
+	set_modal();
 
-		enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
-		new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
-		new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
-		new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
-		new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
-		new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
-		new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
-		int yy = 178;
+	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
+	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
+	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
+	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
+	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
+	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
+	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+	int yy = 178;
 
-		if (ch->type == CHANNEL_SAMPLE) {
-			size(300, 254);
-			new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-			new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
-			yy = 226;
-		}
+	if (ch->type == CHANNEL_SAMPLE) {
+		size(300, 254);
+		new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+		new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+		yy = 226;
+	}
 
-		ok = new gButton(w()-88, yy, 80, 20, "Ok");
-		ok->callback(cb_close, (void*)this);
+	ok = new gButton(w()-88, yy, 80, 20, "Ok");
+	ok->callback(cb_close, (void*)this);
 
-		enable->value(ch->midiIn);
-		enable->callback(cb_enable, (void*)this);
+	enable->value(ch->midiIn);
+	enable->callback(cb_enable, (void*)this);
 
-		gu_setFavicon(this);
-		show();
-	//}
-	/*
-	else if (grabDirection == GrabForOutput) {
-		size(300, 134);
-
-		char title[64];
-		sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
-		label(title);
-
-		set_modal();
-
-		enable = new gCheck(8, 8, 120, 20, "enable output output");
-		new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
-		new gLearner(8,  54, w()-16, "mute",    cb_learn, &ch->midiOutMute);
-		new gLearner(8,  78, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
-		int yy = 102;
-
-
-		ok = new gButton(w()-88, yy, 80, 20, "Ok");
-		ok->callback(cb_close, (void*)this);
-
-		enable->value(ch->midiOut);
-		enable->callback(cb_enable, (void*)this);
-
-		gu_setFavicon(this);
-		show();
-	}*/
+	gu_setFavicon(this);
+	show();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInputChannel::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiInputChannel*)p)->__cb_enable(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdMidiInputChannel::__cb_enable() {
@@ -184,9 +156,9 @@ void gdMidiInputChannel::__cb_enable() {
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 gdMidiInputMaster::gdMidiInputMaster()
