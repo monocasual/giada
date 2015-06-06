@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiOutputSetup
+ * gd_midiOutput
  *
  * ---------------------------------------------------------------------
  *
@@ -27,15 +27,15 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef GD_MIDI_OUTPUT_SETUP_H
-#define GD_MIDI_OUTPUT_SETUP_H
+#ifndef GD_MIDI_OUTPUT_H
+#define GD_MIDI_OUTPUT_H
 
 
 #include <FL/Fl.H>
 #include "ge_window.h"
 
 
-class gdMidiOutputSetup : public gWindow {
+class gdMidiOutput : public gWindow {
 
 private:
 
@@ -57,7 +57,7 @@ private:
 
 public:
 
-	gdMidiOutputSetup(class MidiChannel *ch);
+	gdMidiOutput(class MidiChannel *ch);
 };
 
 #endif

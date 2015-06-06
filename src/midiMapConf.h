@@ -54,7 +54,7 @@ public:
 	static const int MAX_INIT_COMMANDS = 32;
 
 	/* path of midimap files, different between OSes. */
-	 
+
 	std::string midimapsPath;
 
 	/* Maps are the available .giadamap files. Each element of the vector

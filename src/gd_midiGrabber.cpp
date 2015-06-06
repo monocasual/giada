@@ -285,4 +285,3 @@ void gLearner::__cb_button() {
 	else
 		kernelMidi::stopMidiLearn();
 }
-

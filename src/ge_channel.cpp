@@ -36,7 +36,7 @@
 #include "gd_actionEditor.h"
 #include "gd_warnings.h"
 #include "gd_browser.h"
-#include "gd_midiOutputSetup.h"
+#include "gd_midiOutput.h"
 #include "gg_keyboard.h"
 #include "pluginHost.h"
 #include "mixer.h"
