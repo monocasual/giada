@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_midiOutput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "gd_midiOutput.h"
@@ -40,12 +40,23 @@
 extern Conf	G_Conf;
 
 
-gdMidiOutput::gdMidiOutput(MidiChannel *ch)
-	: gWindow(300, 64, "Midi Output Setup"), ch(ch)
+gdMidiOutput::gdMidiOutput()
+	: gWindow(300, 64, "Midi Output Setup")
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gdMidiOutputMidiChannel::gdMidiOutputMidiChannel(MidiChannel *ch)
+	: gdMidiOutput(), ch(ch)
 {
 	begin();
-	enableOut      = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
-	chanListOut    = new gChoice(w()-108, y()+8, 100, 20);
+	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
+	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
 
 	save   = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Save");
 	cancel = new gButton(w()-88-save->w()-8, save->y(), 80, 20, "Cancel");
@@ -70,26 +81,26 @@ gdMidiOutput::gdMidiOutput(MidiChannel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutput*)p)->__cb_save(); }
-void gdMidiOutput::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutput*)p)->__cb_cancel(); }
-void gdMidiOutput::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutput*)p)->__cb_enableChanList(); }
+void gdMidiOutputMidiChannel::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_save(); }
+void gdMidiOutputMidiChannel::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_cancel(); }
+void gdMidiOutputMidiChannel::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_enableChanList(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_enableChanList() {
+void gdMidiOutputMidiChannel::__cb_enableChanList() {
 	enableOut->value() ? chanListOut->activate() : chanListOut->deactivate();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_save() {
+void gdMidiOutputMidiChannel::__cb_save() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
 	ch->guiChannel->update();
@@ -97,16 +108,16 @@ void gdMidiOutput::__cb_save() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_cancel() { do_callback(); }
+void gdMidiOutputMidiChannel::__cb_cancel() { do_callback(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::fillChanMenu(gChoice *m) {
+void gdMidiOutputMidiChannel::fillChanMenu(gChoice *m) {
 	m->add("Channel 1");
 	m->add("Channel 2");
 	m->add("Channel 3");

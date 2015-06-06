@@ -35,8 +35,23 @@
 #include "ge_window.h"
 
 
-class gdMidiOutput : public gWindow {
+/* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
+output master is managed by the configuration window, hence gdMidiOutput deals
+only with channels. */
 
+class gdMidiOutput : public gWindow
+{
+public:
+
+	gdMidiOutput();
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdMidiOutputMidiChannel : public gdMidiOutput
+{
 private:
 
 	static void cb_save          (Fl_Widget *w, void *p);
@@ -57,7 +72,7 @@ private:
 
 public:
 
-	gdMidiOutput(class MidiChannel *ch);
+	gdMidiOutputMidiChannel(class MidiChannel *ch);
 };
 
 #endif
