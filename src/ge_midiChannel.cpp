@@ -235,7 +235,7 @@ void gMidiChannel::__cb_openMenu()
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
 		//gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
-		gu_openSubWindow(mainWin, new gdMidiOutputMidiChannel(ch), 0);
+		gu_openSubWindow(mainWin, new gdMidiOutputMidiCh(ch), 0);
 		return;
 	}
 }

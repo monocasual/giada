@@ -29,9 +29,11 @@
 
 #include "gd_midiOutput.h"
 #include "ge_mixed.h"
-#include "gg_keyboard.h"
 #include "ge_channel.h"
+#include "ge_learner.h"
+#include "gg_keyboard.h"
 #include "channel.h"
+#include "sampleChannel.h"
 #include "conf.h"
 #include "midiChannel.h"
 #include "gui_utils.h"
@@ -47,11 +49,57 @@ gdMidiOutput::gdMidiOutput()
 
 
 /* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::stopMidiLearn(gLearner *learner) {
+	kernelMidi::stopMidiLearn();
+	learner->updateValue();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
+	*param = msg;
+	stopMidiLearn(l);
+	gLog("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::cb_learn(uint32_t msg, void *d) {
+	cbData *data = (cbData*) d;
+	gdMidiOutput  *grabber = (gdMidiOutput*) data->grabber;
+	gLearner      *learner = data->learner;
+	uint32_t      *param   = learner->param;
+	grabber->__cb_learn(param, msg, learner);
+	free(data);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::cb_close(Fl_Widget *w, void *p)  { ((gdMidiOutput*)p)->__cb_close(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::__cb_close() {
+	do_callback();
+}
+
+
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
-gdMidiOutputMidiChannel::gdMidiOutputMidiChannel(MidiChannel *ch)
+gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	: gdMidiOutput(), ch(ch)
 {
 	begin();
@@ -84,15 +132,15 @@ gdMidiOutputMidiChannel::gdMidiOutputMidiChannel(MidiChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiChannel::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_save(); }
-void gdMidiOutputMidiChannel::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_cancel(); }
-void gdMidiOutputMidiChannel::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiChannel*)p)->__cb_enableChanList(); }
+void gdMidiOutputMidiCh::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_save(); }
+void gdMidiOutputMidiCh::cb_cancel        (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_cancel(); }
+void gdMidiOutputMidiCh::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_enableChanList(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiChannel::__cb_enableChanList() {
+void gdMidiOutputMidiCh::__cb_enableChanList() {
 	enableOut->value() ? chanListOut->activate() : chanListOut->deactivate();
 }
 
@@ -100,7 +148,7 @@ void gdMidiOutputMidiChannel::__cb_enableChanList() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiChannel::__cb_save() {
+void gdMidiOutputMidiCh::__cb_save() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
 	ch->guiChannel->update();
@@ -111,13 +159,13 @@ void gdMidiOutputMidiChannel::__cb_save() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiChannel::__cb_cancel() { do_callback(); }
+void gdMidiOutputMidiCh::__cb_cancel() { do_callback(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiChannel::fillChanMenu(gChoice *m) {
+void gdMidiOutputMidiCh::fillChanMenu(gChoice *m) {
 	m->add("Channel 1");
 	m->add("Channel 2");
 	m->add("Channel 3");
@@ -135,4 +183,52 @@ void gdMidiOutputMidiChannel::fillChanMenu(gChoice *m) {
 	m->add("Channel 15");
 	m->add("Channel 16");
 	m->value(0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
+	: gdMidiOutput(), ch(ch)
+{
+	size(300, 134);
+
+	//char title[64];
+	//sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
+	//label(title);
+
+	set_modal();
+
+	enable = new gCheck(8, 8, 120, 20, "enable MIDI lightning output");
+	new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
+	new gLearner(8,  54, w()-16, "mute",    cb_learn, &ch->midiOutMute);
+	new gLearner(8,  78, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
+	int yy = 102;
+
+
+	ok = new gButton(w()-88, yy, 80, 20, "Ok");
+	ok->callback(cb_close, (void*)this);
+
+	enable->value(ch->midiOut);
+	enable->callback(cb_enable, (void*)this);
+
+	set_modal();
+	gu_setFavicon(this);
+	show();
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutputSampleCh::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiOutputSampleCh*)p)->__cb_enable(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutputSampleCh::__cb_enable() {
+	ch->midiIn = enable->value();
 }

@@ -37,49 +37,13 @@
 #include "ge_mixed.h"
 
 
-class gLearner : public Fl_Group {
-
-private:
-
-	/* callback
-	 * cb to pass to kernelMidi. Requires two parameters:
-	 * uint32_t msg - MIDI message
-	 * void   *data - extra data */
-
-	kernelMidi::cb_midiLearn *callback;
-
-	class gBox    *text;
-	class gClick  *value;
-	class gButton *button;
-
-	static void cb_button(Fl_Widget *v, void *p);
-	static void cb_value (Fl_Widget *v, void *p);
-	inline void __cb_button();
-	inline void __cb_value();
-
-public:
-
-	/* param
-	 * pointer to ch->midiIn[value] */
-
-	uint32_t *param;
-
-	gLearner(int x, int y, int w, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *param);
-
-	void updateValue();
-};
-
-
-/* ------------------------------------------------------------------ */
-
-
 class gdMidiInput : public gWindow {
 
 protected:
 
 	gClick *ok;
 
-	void stopMidiLearn(gLearner *l);
+	void stopMidiLearn(class gLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
@@ -131,22 +95,6 @@ public:
 
 	gdMidiInputMaster();
 };
-
-
-/* ------------------------------------------------------------------ */
-
-
-/* cbData
- * struct we pass to kernelMidi as extra parameter. Local scope made
- * with unnamed namespace. Infos:
- * http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static */
-
-namespace {
-	struct cbData {
-		gdMidiInput *grabber;
-		gLearner    *learner;
-	};
-}
 
 
 #endif

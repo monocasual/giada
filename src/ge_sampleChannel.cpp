@@ -252,9 +252,8 @@ void gSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		// TODO
-		//gu_openSubWindow(mainWin, new gdMidiInputChannel(ch), 0);
-		//return;
+		gu_openSubWindow(mainWin, new gdMidiOutputSampleCh(ch), 0);
+		return;
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {

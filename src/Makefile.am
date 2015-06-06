@@ -41,7 +41,8 @@ gd_midiOutput.h      gd_midiOutput.cpp      gd_midiInput.h       gd_midiInput.cp
 sampleChannel.h      sampleChannel.cpp      midiChannel.cpp      midiChannel.h \
 midiMapConf.cpp      midiMapConf.h          ge_channel.h         ge_channel.cpp \
 log.h                log.cpp                ge_column.h          ge_column.cpp \
-ge_sampleChannel.h   ge_sampleChannel.cpp   ge_midiChannel.h     ge_midiChannel.cpp
+ge_sampleChannel.h   ge_sampleChannel.cpp   ge_midiChannel.h     ge_midiChannel.cpp \
+ge_learner.h         ge_learner.cpp
 
 
 

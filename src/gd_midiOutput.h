@@ -32,6 +32,7 @@
 
 
 #include <FL/Fl.H>
+#include <stdint.h>
 #include "ge_window.h"
 
 
@@ -41,6 +42,22 @@ only with channels. */
 
 class gdMidiOutput : public gWindow
 {
+protected:
+
+	class gClick *ok;
+	class gCheck *enable;
+
+	void stopMidiLearn(class gLearner *l);
+
+	/* cb_learn
+	 * callback attached to kernelMidi to learn various actions. */
+
+	static void cb_learn  (uint32_t msg, void *data);
+	inline void __cb_learn(uint32_t *param, uint32_t msg, class gLearner *l);
+
+	static void cb_close  (Fl_Widget *w, void *p);
+	inline void __cb_close();
+
 public:
 
 	gdMidiOutput();
@@ -50,7 +67,7 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gdMidiOutputMidiChannel : public gdMidiOutput
+class gdMidiOutputMidiCh : public gdMidiOutput
 {
 private:
 
@@ -72,7 +89,25 @@ private:
 
 public:
 
-	gdMidiOutputMidiChannel(class MidiChannel *ch);
+	gdMidiOutputMidiCh(class MidiChannel *ch);
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdMidiOutputSampleCh : public gdMidiOutput
+{
+private:
+
+	class SampleChannel *ch;
+
+	static void cb_enable  (Fl_Widget *w, void *p);
+	inline void __cb_enable();
+
+public:
+
+	gdMidiOutputSampleCh(class SampleChannel *ch);
 };
 
 #endif
