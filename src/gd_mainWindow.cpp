@@ -413,7 +413,7 @@ void gMenu::__cb_edit()
 		return;
 	}
 	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiGrabberMaster(), 0);
+		gu_openSubWindow(mainWin, new gdMidiInputMaster(), 0);
 		return;
 	}
 }

@@ -102,7 +102,7 @@ public:
 
 enum GrabberDirection{ GrabForInput, GrabForOutput };
 
-class gdMidiGrabberChannel : public gdMidiInput {
+class gdMidiInputChannel : public gdMidiInput {
 
 private:
 
@@ -118,18 +118,18 @@ private:
 
 public:
 
-	gdMidiGrabberChannel(class Channel *ch, enum GrabberDirection grabDirection);
+	gdMidiInputChannel(class Channel *ch, enum GrabberDirection grabDirection);
 };
 
 
 /* ------------------------------------------------------------------ */
 
 
-class gdMidiGrabberMaster : public gdMidiInput {
+class gdMidiInputMaster : public gdMidiInput {
 
 public:
 
-	gdMidiGrabberMaster();
+	gdMidiInputMaster();
 };
 
 

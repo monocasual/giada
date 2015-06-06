@@ -104,7 +104,7 @@ void gdMidiInput::__cb_close() {
 /* ------------------------------------------------------------------ */
 
 
-gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, GrabberDirection grabDirection)
+gdMidiInputChannel::gdMidiInputChannel(Channel *ch, GrabberDirection grabDirection)
 	:	gdMidiInput(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
@@ -171,13 +171,13 @@ gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, GrabberDirection grabDir
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabberChannel::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiGrabberChannel*)p)->__cb_enable(); }
+void gdMidiInputChannel::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiInputChannel*)p)->__cb_enable(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabberChannel::__cb_enable() {
+void gdMidiInputChannel::__cb_enable() {
 	ch->midiIn = enable->value();
 }
 
@@ -187,7 +187,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 /* ------------------------------------------------------------------ */
 
 
-gdMidiGrabberMaster::gdMidiGrabberMaster()
+gdMidiInputMaster::gdMidiInputMaster()
 	: gdMidiInput(300, 256, "MIDI Input Setup (global)")
 {
 	set_modal();
