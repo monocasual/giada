@@ -32,7 +32,7 @@
 #include "ge_sampleChannel.h"
 #include "gd_mainWindow.h"
 #include "gd_keyGrabber.h"
-#include "gd_midiGrabber.h"
+#include "gd_midiInput.h"
 #include "gd_editor.h"
 #include "gd_actionEditor.h"
 #include "gd_warnings.h"
@@ -234,7 +234,8 @@ void gMidiChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
+		//gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
+		gu_openSubWindow(mainWin, new gdMidiOutput(ch), 0);
 		return;
 	}
 }

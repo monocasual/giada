@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiGrabber
+ * gd_midiInput
  *
  * ---------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "gd_midiGrabber.h"
+#include "gd_midiInput.h"
 #include "ge_mixed.h"
 #include "gui_utils.h"
 #include "kernelMidi.h"
@@ -39,7 +39,7 @@
 extern Conf G_Conf;
 
 
-gdMidiGrabber::gdMidiGrabber(int w, int h, const char *title)
+gdMidiInput::gdMidiInput(int w, int h, const char *title)
 	: gWindow(w, h, title)
 {
 }
@@ -48,7 +48,7 @@ gdMidiGrabber::gdMidiGrabber(int w, int h, const char *title)
 /* ------------------------------------------------------------------ */
 
 
-gdMidiGrabber::~gdMidiGrabber() {
+gdMidiInput::~gdMidiInput() {
 	kernelMidi::stopMidiLearn();
 }
 
@@ -56,7 +56,7 @@ gdMidiGrabber::~gdMidiGrabber() {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::stopMidiLearn(gLearner *learner) {
+void gdMidiInput::stopMidiLearn(gLearner *learner) {
 	kernelMidi::stopMidiLearn();
 	learner->updateValue();
 }
@@ -65,7 +65,7 @@ void gdMidiGrabber::stopMidiLearn(gLearner *learner) {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
+void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 	*param = msg;
 	stopMidiLearn(l);
 	gLog("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
@@ -75,9 +75,9 @@ void gdMidiGrabber::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::cb_learn(uint32_t msg, void *d) {
+void gdMidiInput::cb_learn(uint32_t msg, void *d) {
 	cbData *data = (cbData*) d;
-	gdMidiGrabber *grabber = (gdMidiGrabber*) data->grabber;
+	gdMidiInput   *grabber = (gdMidiInput*) data->grabber;
 	gLearner      *learner = data->learner;
 	uint32_t      *param   = learner->param;
 	grabber->__cb_learn(param, msg, learner);
@@ -88,13 +88,13 @@ void gdMidiGrabber::cb_learn(uint32_t msg, void *d) {
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::cb_close(Fl_Widget *w, void *p)  { ((gdMidiGrabber*)p)->__cb_close(); }
+void gdMidiInput::cb_close(Fl_Widget *w, void *p)  { ((gdMidiInput*)p)->__cb_close(); }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gdMidiGrabber::__cb_close() {
+void gdMidiInput::__cb_close() {
 	do_callback();
 }
 
@@ -105,7 +105,7 @@ void gdMidiGrabber::__cb_close() {
 
 
 gdMidiGrabberChannel::gdMidiGrabberChannel(Channel *ch, GrabberDirection grabDirection)
-	:	gdMidiGrabber(300, 206, "MIDI Input Setup"),
+	:	gdMidiInput(300, 206, "MIDI Input Setup"),
 		ch(ch)
 {
 	if (grabDirection == GrabForInput) {
@@ -188,7 +188,7 @@ void gdMidiGrabberChannel::__cb_enable() {
 
 
 gdMidiGrabberMaster::gdMidiGrabberMaster()
-	: gdMidiGrabber(300, 256, "MIDI Input Setup (global)")
+	: gdMidiInput(300, 256, "MIDI Input Setup (global)")
 {
 	set_modal();
 
@@ -278,7 +278,7 @@ void gLearner::__cb_value() {
 void gLearner::__cb_button() {
 	if (button->value() == 1) {
 		cbData *data  = (cbData*) malloc(sizeof(cbData));
-		data->grabber = (gdMidiGrabber*) parent();  // parent = gdMidiGrabberChannel
+		data->grabber = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel
 		data->learner = this;
 		kernelMidi::startMidiLearn(callback, (void*)data);
 	}

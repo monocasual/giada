@@ -30,7 +30,7 @@
 #include "ge_sampleChannel.h"
 #include "gd_mainWindow.h"
 #include "gd_keyGrabber.h"
-#include "gd_midiGrabber.h"
+#include "gd_midiInput.h"
 #include "gd_editor.h"
 #include "gd_actionEditor.h"
 #include "gd_warnings.h"

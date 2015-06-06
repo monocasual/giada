@@ -37,7 +37,7 @@ gd_actionEditor.h	   gd_actionEditor.cpp    ge_muteChannel.h     ge_muteChannel.
 ge_actionChannel.h   ge_actionChannel.cpp   gd_pluginWindowGUI.h gd_pluginWindowGUI.cpp \
 ge_actionWidget.h    ge_actionWidget.cpp    ge_envelopeChannel.h ge_envelopeChannel.cpp \
 ge_pianoRoll.h		   ge_pianoRoll.cpp       kernelMidi.h         kernelMidi.cpp \
-gd_midiOutput.h      gd_midiOutput.cpp      gd_midiGrabber.h     gd_midiGrabber.cpp \
+gd_midiOutput.h      gd_midiOutput.cpp      gd_midiInput.h       gd_midiInput.cpp \
 sampleChannel.h      sampleChannel.cpp      midiChannel.cpp      midiChannel.h \
 midiMapConf.cpp      midiMapConf.h          ge_channel.h         ge_channel.cpp \
 log.h                log.cpp                ge_column.h          ge_column.cpp \

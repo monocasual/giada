@@ -35,7 +35,7 @@
 #include "gd_warnings.h"
 #include "gd_bpmInput.h"
 #include "gd_beatsInput.h"
-#include "gd_midiGrabber.h"
+#include "gd_midiInput.h"
 #include "gg_keyboard.h"
 #include "gd_about.h"
 #include "gd_config.h"

@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiGrabber
+ * gd_midiInput
  *
  * ---------------------------------------------------------------------
  *
@@ -27,8 +27,8 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef GD_MIDIGRABBER_H
-#define GD_MIDIGRABBER_H
+#ifndef GD_MIDI_INPUT_H
+#define GD_MIDI_INPUT_H
 
 
 #include "ge_window.h"
@@ -73,7 +73,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gdMidiGrabber : public gWindow {
+class gdMidiInput : public gWindow {
 
 protected:
 
@@ -92,8 +92,8 @@ protected:
 
 public:
 
-	gdMidiGrabber(int w, int h, const char *title);
-	~gdMidiGrabber();
+	gdMidiInput(int w, int h, const char *title);
+	~gdMidiInput();
 };
 
 
@@ -102,7 +102,7 @@ public:
 
 enum GrabberDirection{ GrabForInput, GrabForOutput };
 
-class gdMidiGrabberChannel : public gdMidiGrabber {
+class gdMidiGrabberChannel : public gdMidiInput {
 
 private:
 
@@ -125,7 +125,7 @@ public:
 /* ------------------------------------------------------------------ */
 
 
-class gdMidiGrabberMaster : public gdMidiGrabber {
+class gdMidiGrabberMaster : public gdMidiInput {
 
 public:
 
@@ -143,8 +143,8 @@ public:
 
 namespace {
 	struct cbData {
-		gdMidiGrabber *grabber;
-		gLearner      *learner;
+		gdMidiInput *grabber;
+		gLearner    *learner;
 	};
 }
 
