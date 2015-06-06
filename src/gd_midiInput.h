@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_midiInput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GD_MIDI_INPUT_H
@@ -37,8 +37,8 @@
 #include "ge_mixed.h"
 
 
-class gdMidiInput : public gWindow {
-
+class gdMidiInput : public gWindow
+{
 protected:
 
 	gClick *ok;
@@ -61,11 +61,11 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-class gdMidiInputChannel : public gdMidiInput {
-
+class gdMidiInputChannel : public gdMidiInput
+{
 private:
 
 	class Channel *ch;
@@ -84,11 +84,11 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-class gdMidiInputMaster : public gdMidiInput {
-
+class gdMidiInputMaster : public gdMidiInput
+{
 public:
 
 	gdMidiInputMaster();
