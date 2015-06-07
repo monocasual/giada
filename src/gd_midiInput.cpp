@@ -131,7 +131,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 		yy = 226;
 	}
 
-	ok = new gButton(w()-88, yy, 80, 20, "Save");
+	ok = new gButton(w()-88, yy, 80, 20, "Close");
 	ok->callback(cb_close, (void*)this);
 
 	enable->value(ch->midiIn);
@@ -175,7 +175,7 @@ gdMidiInputMaster::gdMidiInputMaster()
 	new gLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
 	new gLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
 	new gLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
-	ok = new gButton(w()-88, 228, 80, 20, "Save");
+	ok = new gButton(w()-88, 228, 80, 20, "Close");
 
 	ok->callback(cb_close, (void*)this);
 

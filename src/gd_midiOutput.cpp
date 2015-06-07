@@ -123,7 +123,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	begin();
 	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
 	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
-	save        = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Save");
+	save        = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Close");
 	end();
 
 	chanListOut->add("Channel 1");
@@ -207,7 +207,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	int yy = 102;
 
 
-	ok = new gButton(w()-88, yy, 80, 20, "Save");
+	ok = new gButton(w()-88, yy, 80, 20, "Close");
 	ok->callback(cb_close, (void*)this);
 
 	enableLightning->value(ch->midiOut);
