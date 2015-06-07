@@ -51,6 +51,7 @@ class gdMidiOutput : public gWindow
 protected:
 
 	class gClick *ok;
+	class gCheck *enableLightning;
 
 	void stopMidiLearn(class gLearner *l);
 
@@ -62,6 +63,9 @@ protected:
 
 	static void cb_close  (Fl_Widget *w, void *p);
 	inline void __cb_close();
+
+	static void cb_enableLightning  (Fl_Widget *w, void *p);
+	inline void __cb_enableLightning();
 
 public:
 
@@ -105,12 +109,7 @@ class gdMidiOutputSampleCh : public gdMidiOutput
 {
 private:
 
-	class gCheck *enableLightning;
-
 	class SampleChannel *ch;
-
-	static void cb_enableLightning  (Fl_Widget *w, void *p);
-	inline void __cb_enableLightning();
 
 public:
 
