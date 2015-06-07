@@ -126,9 +126,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
 
 	enableLightning = new gCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutPlaying);
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutMute);
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);
 
 	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 
@@ -208,9 +208,9 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	//label(title);
 
 	enableLightning = new gCheck(8, 8, 120, 20, "Enable MIDI lightning output");
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutMute);
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutSolo);
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutLmute);
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutLsolo);
 
 	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 	close->callback(cb_close, (void*)this);

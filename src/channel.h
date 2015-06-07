@@ -173,9 +173,11 @@ public:
   uint32_t midiInSolo;
 
   bool     midiOut;              // enable midi output
-  uint32_t midiOutPlaying;
-  uint32_t midiOutMute;
-  uint32_t midiOutSolo;
+	bool     midiOutL;             // enable midi lightning output
+
+  uint32_t midiOutLplaying;      // set of midi lighting event sent to a device
+  uint32_t midiOutLmute;
+  uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
   gVector <class Plugin *> plugins;

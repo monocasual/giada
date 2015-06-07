@@ -66,17 +66,18 @@ Channel::Channel(int type, int status, int bufferSize)
 	  recStatus (REC_STOPPED),
 	  vChan     (NULL),
 	  guiChannel(NULL),
-	  midiIn        (true),
-	  midiInKeyPress(0x0),
-	  midiInKeyRel  (0x0),
-	  midiInKill    (0x0),
-	  midiInVolume  (0x0),
-	  midiInMute    (0x0),
-	  midiInSolo    (0x0),
-	  midiOut       (true),
-	  midiOutPlaying(0x0),
-	  midiOutMute   (0x0),
-	  midiOutSolo   (0x0)
+	  midiIn         (true),
+	  midiInKeyPress (0x0),
+	  midiInKeyRel   (0x0),
+	  midiInKill     (0x0),
+	  midiInVolume   (0x0),
+	  midiInMute     (0x0),
+	  midiInSolo     (0x0),
+	  midiOut        (true),
+	  midiOutL       (true),
+	  midiOutLplaying(0x0),
+	  midiOutLmute   (0x0),
+	  midiOutLsolo   (0x0)
 {
 	vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
@@ -112,10 +113,11 @@ void Channel::readPatchMidiIn(int i)
 
 void Channel::readPatchMidiOut(int i)
 {
-	midiOut        = G_Patch.getMidiValue(i, "Out");
-	midiOutPlaying = G_Patch.getMidiValue(i, "OutPlaying");
-	midiOutMute    = G_Patch.getMidiValue(i, "OutMute");
-	midiOutSolo    = G_Patch.getMidiValue(i, "OutSolo");
+	midiOut         = G_Patch.getMidiValue(i, "Out");
+	midiOutL        = G_Patch.getMidiValue(i, "OutL");
+	midiOutLplaying = G_Patch.getMidiValue(i, "OutLplaying");
+	midiOutLmute    = G_Patch.getMidiValue(i, "OutLmute");
+	midiOutLsolo    = G_Patch.getMidiValue(i, "OutLsolo");
 }
 
 
@@ -151,10 +153,11 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
 
-	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
-	fprintf(fp, "chanMidiOutPlaying%d=%u\n", i, midiOutPlaying);
-	fprintf(fp, "chanMidiOutMute%d=%u\n",    i, midiOutMute);
-	fprintf(fp, "chanMidiOutSolo%d=%u\n",    i, midiOutSolo);
+	fprintf(fp, "chanMidiOut%d=%u\n",         i, midiOut);
+	fprintf(fp, "chanMidiOutL%d=%u\n",        i, midiOutL);
+	fprintf(fp, "chanMidiOutLplaying%d=%u\n", i, midiOutLplaying);
+	fprintf(fp, "chanMidiOutLmute%d=%u\n",    i, midiOutLmute);
+	fprintf(fp, "chanMidiOutLsolo%d=%u\n",    i, midiOutLsolo);
 }
 
 
@@ -163,37 +166,34 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 
 void Channel::refreshMidiMuteLed()
 {
-	if (midiOut && midiOutMute != 0x0) {
+	if (midiOutL && midiOutLmute != 0x0) {
 		if (mute)
-			kernelMidi::midi_mute_on(midiOutMute);
+			kernelMidi::midi_mute_on(midiOutLmute);
 		else
-			kernelMidi::midi_mute_off(midiOutMute);
+			kernelMidi::midi_mute_off(midiOutLmute);
 	}
 }
 
 void Channel::refreshMidiSoloLed()
 {
-	if (midiOut && midiOutSolo != 0x0) {
+	if (midiOutL && midiOutLsolo != 0x0) {
 		if (solo)
-			kernelMidi::midi_solo_on(midiOutSolo);
+			kernelMidi::midi_solo_on(midiOutLsolo);
 		else
-			kernelMidi::midi_solo_off(midiOutSolo);
+			kernelMidi::midi_solo_off(midiOutLsolo);
 	}
 }
 
 void Channel::refreshMidiPlayLed()
 {
-	if (midiOut && midiOutPlaying != 0x0) {
+	if (midiOutL && midiOutLplaying != 0x0) {
 		if (status == STATUS_OFF)
-			kernelMidi::midi_stopped(midiOutPlaying);
+			kernelMidi::midi_stopped(midiOutLplaying);
 		else if (status == STATUS_PLAY)
-			kernelMidi::midi_playing(midiOutPlaying);
+			kernelMidi::midi_playing(midiOutLplaying);
 		else if (status  == STATUS_WAIT)
-			kernelMidi::midi_waiting(midiOutPlaying);
+			kernelMidi::midi_waiting(midiOutLplaying);
 		else if (status == STATUS_ENDING)
-			kernelMidi::midi_stopping(midiOutPlaying);
+			kernelMidi::midi_stopping(midiOutLplaying);
 	}
 }
-
-
-
