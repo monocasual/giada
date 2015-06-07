@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -38,14 +38,16 @@
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
 output master is managed by the configuration window, hence gdMidiOutput deals
-only with channels. */
+only with channels.
+
+Both MidiOutputMidiCh and MidiOutputSampleCh have the MIDI lighting widget set.
+In addition MidiOutputMidiCh has the MIDI message output box. */
 
 class gdMidiOutput : public gWindow
 {
 protected:
 
 	class gClick *ok;
-	class gCheck *enable;
 
 	void stopMidiLearn(class gLearner *l);
 
@@ -99,6 +101,8 @@ public:
 class gdMidiOutputSampleCh : public gdMidiOutput
 {
 private:
+
+	class gCheck *enable;
 
 	class SampleChannel *ch;
 
