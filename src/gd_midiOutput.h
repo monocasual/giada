@@ -43,6 +43,9 @@ only with channels.
 Both MidiOutputMidiCh and MidiOutputSampleCh have the MIDI lighting widget set.
 In addition MidiOutputMidiCh has the MIDI message output box. */
 
+/* TODO - gdMidiOutput is almost the same thing of gdMidiInput. Create another
+parent class gdMidiIO to inherit from */
+
 class gdMidiOutput : public gWindow
 {
 protected:
@@ -102,12 +105,12 @@ class gdMidiOutputSampleCh : public gdMidiOutput
 {
 private:
 
-	class gCheck *enable;
+	class gCheck *enableLightning;
 
 	class SampleChannel *ch;
 
-	static void cb_enable  (Fl_Widget *w, void *p);
-	inline void __cb_enable();
+	static void cb_enableLightning  (Fl_Widget *w, void *p);
+	inline void __cb_enableLightning();
 
 public:
 

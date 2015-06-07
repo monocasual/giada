@@ -202,7 +202,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 
 	set_modal();
 
-	enable = new gCheck(8, 8, 120, 20, "enable MIDI lightning output");
+	enableLightning = new gCheck(8, 8, 120, 20, "enable MIDI lightning output");
 	new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
 	new gLearner(8,  54, w()-16, "mute",    cb_learn, &ch->midiOutMute);
 	new gLearner(8,  78, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
@@ -212,8 +212,8 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	ok = new gButton(w()-88, yy, 80, 20, "Ok");
 	ok->callback(cb_close, (void*)this);
 
-	enable->value(ch->midiOut);
-	enable->callback(cb_enable, (void*)this);
+	enableLightning->value(ch->midiOut);
+	enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
 	gu_setFavicon(this);
@@ -223,12 +223,15 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputSampleCh::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiOutputSampleCh*)p)->__cb_enable(); }
+void gdMidiOutputSampleCh::cb_enableLightning(Fl_Widget *w, void *p)  {
+	((gdMidiOutputSampleCh*)p)->__cb_enableLightning();
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputSampleCh::__cb_enable() {
-	ch->midiIn = enable->value();
+void gdMidiOutputSampleCh::__cb_enableLightning() {
+	// TODO
+	//ch->midiOut = enableLightning->value();
 }
