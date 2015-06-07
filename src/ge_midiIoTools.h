@@ -37,8 +37,8 @@
 #include "kernelMidi.h"
 
 
-class gLearner : public Fl_Group {
-
+class gLearner : public Fl_Group
+{
 private:
 
 	/* callback
@@ -77,6 +77,9 @@ public:
  * struct we pass to kernelMidi as extra parameter. Local scope made
  * with unnamed namespace. Infos:
  * http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static */
+
+/* TODO - instead of the unnamed namespace, why don't we make the struct as a
+(static) member of gLearner? */
 
 namespace {
 	struct cbData {

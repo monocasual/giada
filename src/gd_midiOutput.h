@@ -86,9 +86,13 @@ class gdMidiOutputMidiCh : public gdMidiOutput
 {
 private:
 
-	static void cb_enableChanList(Fl_Widget *w, void *p);
-	inline void __cb_close         ();
+	static void cb_enableChanList  (Fl_Widget *w, void *p);
 	inline void __cb_enableChanList();
+
+	/* __cb_close
+	override parent method, we need to do more stuff on close. */
+
+	inline void __cb_close();
 
 	class gCheck  *enableOut;
 	class gChoice *chanListOut;

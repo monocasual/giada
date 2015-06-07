@@ -118,12 +118,20 @@ void gdMidiOutput::__cb_enableLightning() {
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	: gdMidiOutput(), ch(ch)
 {
-	size(300, 500);
+	size(300, 168);
 
 	begin();
+
 	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
 	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
-	close       = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Close");
+
+	enableLightning = new gCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutPlaying);
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutMute);
+	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
+
+	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
+
 	end();
 
 	chanListOut->add("Channel 1");
@@ -193,20 +201,18 @@ void gdMidiOutputMidiCh::__cb_close() {
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	: gdMidiOutput(), ch(ch)
 {
-	size(300, 134);
+	size(300, 140);
 
 	//char title[64];
 	//sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
 	//label(title);
 
-	enableLightning = new gCheck(8, 8, 120, 20, "enable MIDI lightning output");
-	new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
-	new gLearner(8,  54, w()-16, "mute",    cb_learn, &ch->midiOutMute);
-	new gLearner(8,  78, w()-16, "solo",    cb_learn, &ch->midiOutSolo);
-	int yy = 102;
+	enableLightning = new gCheck(8, 8, 120, 20, "Enable MIDI lightning output");
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutPlaying);
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutMute);
+	new gLearner(8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutSolo);
 
-
-	close = new gButton(w()-88, yy, 80, 20, "Close");
+	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 	close->callback(cb_close, (void*)this);
 
 	enableLightning->value(ch->midiOut);
