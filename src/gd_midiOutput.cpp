@@ -72,10 +72,10 @@ void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 
 void gdMidiOutput::cb_learn(uint32_t msg, void *d) {
 	cbData *data = (cbData*) d;
-	gdMidiOutput  *grabber = (gdMidiOutput*) data->grabber;
+	gdMidiOutput  *window  = (gdMidiOutput*) data->window;
 	gLearner      *learner = data->learner;
 	uint32_t      *param   = learner->param;
-	grabber->__cb_learn(param, msg, learner);
+	window->__cb_learn(param, msg, learner);
 	free(data);
 }
 
@@ -207,8 +207,6 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	//char title[64];
 	//sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
 	//label(title);
-
-	set_modal();
 
 	enableLightning = new gCheck(8, 8, 120, 20, "enable MIDI lightning output");
 	new gLearner(8,  30, w()-16, "playing", cb_learn, &ch->midiOutPlaying);

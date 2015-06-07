@@ -94,7 +94,7 @@ void gLearner::__cb_value() {
 void gLearner::__cb_button() {
 	if (button->value() == 1) {
 		cbData *data  = (cbData*) malloc(sizeof(cbData));
-		data->grabber = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel
+		data->window  = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel
 		data->learner = this;
 		kernelMidi::startMidiLearn(callback, (void*)data);
 	}

@@ -80,7 +80,7 @@ public:
 
 namespace {
 	struct cbData {
-		gdMidiInput *grabber;
+		gdMidiInput *window;
 		gLearner    *learner;
 	};
 }
