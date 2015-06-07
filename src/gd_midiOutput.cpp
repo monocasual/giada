@@ -95,6 +95,22 @@ void gdMidiOutput::__cb_close() {
 
 
 /* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::cb_enableLightning(Fl_Widget *w, void *p)  {
+	((gdMidiOutput*)p)->__cb_enableLightning();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::__cb_enableLightning() {
+	// TODO
+}
+
+
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
@@ -110,7 +126,23 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	cancel = new gButton(w()-88-save->w()-8, save->y(), 80, 20, "Cancel");
 	end();
 
-	fillChanMenu(chanListOut);
+	chanListOut->add("Channel 1");
+	chanListOut->add("Channel 2");
+	chanListOut->add("Channel 3");
+	chanListOut->add("Channel 4");
+	chanListOut->add("Channel 5");
+	chanListOut->add("Channel 6");
+	chanListOut->add("Channel 7");
+	chanListOut->add("Channel 8");
+	chanListOut->add("Channel 9");
+	chanListOut->add("Channel 10");
+	chanListOut->add("Channel 11");
+	chanListOut->add("Channel 12");
+	chanListOut->add("Channel 13");
+	chanListOut->add("Channel 14");
+	chanListOut->add("Channel 15");
+	chanListOut->add("Channel 16");
+	chanListOut->value(0);
 
 	if (ch->midiOut)
 		enableOut->value(1);
@@ -163,30 +195,6 @@ void gdMidiOutputMidiCh::__cb_cancel() { do_callback(); }
 
 
 /* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputMidiCh::fillChanMenu(gChoice *m) {
-	m->add("Channel 1");
-	m->add("Channel 2");
-	m->add("Channel 3");
-	m->add("Channel 4");
-	m->add("Channel 5");
-	m->add("Channel 6");
-	m->add("Channel 7");
-	m->add("Channel 8");
-	m->add("Channel 9");
-	m->add("Channel 10");
-	m->add("Channel 11");
-	m->add("Channel 12");
-	m->add("Channel 13");
-	m->add("Channel 14");
-	m->add("Channel 15");
-	m->add("Channel 16");
-	m->value(0);
-}
-
-
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
@@ -218,20 +226,4 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	set_modal();
 	gu_setFavicon(this);
 	show();
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputSampleCh::cb_enableLightning(Fl_Widget *w, void *p)  {
-	((gdMidiOutputSampleCh*)p)->__cb_enableLightning();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputSampleCh::__cb_enableLightning() {
-	// TODO
-	//ch->midiOut = enableLightning->value();
 }

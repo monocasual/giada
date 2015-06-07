@@ -61,8 +61,14 @@ protected:
 	static void cb_learn  (uint32_t msg, void *data);
 	inline void __cb_learn(uint32_t *param, uint32_t msg, class gLearner *l);
 
+	/* cb_close
+	close current window. */
+
 	static void cb_close  (Fl_Widget *w, void *p);
 	inline void __cb_close();
+
+	/* cb_enableLightning
+	enable MIDI lightning output. */
 
 	static void cb_enableLightning  (Fl_Widget *w, void *p);
 	inline void __cb_enableLightning();
@@ -86,8 +92,6 @@ private:
 	inline void __cb_save          ();
 	inline void __cb_cancel        ();
 	inline void __cb_enableChanList();
-
-	void fillChanMenu(class gChoice *m);
 
 	class gCheck  *enableOut;
 	class gChoice *chanListOut;
