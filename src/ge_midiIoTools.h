@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_learner
+ * ge_midiIoTools
  *
  * -----------------------------------------------------------------------------
  *

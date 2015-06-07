@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_learner
+ * ge_midiIoTools
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "ge_learner.h"
+#include "ge_midiIoTools.h"
 #include "ge_mixed.h"
 
 

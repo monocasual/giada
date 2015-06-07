@@ -30,7 +30,7 @@
 #include "gd_midiOutput.h"
 #include "ge_mixed.h"
 #include "ge_channel.h"
-#include "ge_learner.h"
+#include "ge_midiIoTools.h"
 #include "gg_keyboard.h"
 #include "channel.h"
 #include "sampleChannel.h"

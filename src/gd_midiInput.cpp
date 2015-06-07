@@ -29,7 +29,7 @@
 
 #include "gd_midiInput.h"
 #include "ge_mixed.h"
-#include "ge_learner.h"
+#include "ge_midiIoTools.h"
 #include "gui_utils.h"
 #include "kernelMidi.h"
 #include "conf.h"
