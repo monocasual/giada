@@ -123,7 +123,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	begin();
 	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
 	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
-	save        = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Close");
+	close       = new gButton(w()-88, chanListOut->y()+chanListOut->h()+8, 80, 20, "Close");
 	end();
 
 	chanListOut->add("Channel 1");
@@ -152,7 +152,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	chanListOut->value(ch->midiOutChan);
 
 	enableOut->callback(cb_enableChanList, (void*)this);
-	save->callback(cb_save, (void*)this);
+	close->callback(cb_close, (void*)this);
 
 	set_modal();
 	gu_setFavicon(this);
@@ -163,7 +163,6 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::cb_save          (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_save(); }
 void gdMidiOutputMidiCh::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_enableChanList(); }
 
 
@@ -178,7 +177,7 @@ void gdMidiOutputMidiCh::__cb_enableChanList() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::__cb_save() {
+void gdMidiOutputMidiCh::__cb_close() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
 	ch->guiChannel->update();
@@ -207,8 +206,8 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	int yy = 102;
 
 
-	ok = new gButton(w()-88, yy, 80, 20, "Close");
-	ok->callback(cb_close, (void*)this);
+	close = new gButton(w()-88, yy, 80, 20, "Close");
+	close->callback(cb_close, (void*)this);
 
 	enableLightning->value(ch->midiOut);
 	enableLightning->callback(cb_enableLightning, (void*)this);

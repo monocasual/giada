@@ -50,7 +50,7 @@ class gdMidiOutput : public gWindow
 {
 protected:
 
-	class gClick *ok;
+	class gClick *close;
 	class gCheck *enableLightning;
 
 	void stopMidiLearn(class gLearner *l);
@@ -86,14 +86,12 @@ class gdMidiOutputMidiCh : public gdMidiOutput
 {
 private:
 
-	static void cb_save          (Fl_Widget *w, void *p);
 	static void cb_enableChanList(Fl_Widget *w, void *p);
-	inline void __cb_save          ();
+	inline void __cb_close         ();
 	inline void __cb_enableChanList();
 
 	class gCheck  *enableOut;
 	class gChoice *chanListOut;
-	class gButton *save;
 
 	class MidiChannel *ch;
 
