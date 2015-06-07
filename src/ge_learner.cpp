@@ -91,6 +91,8 @@ void gLearner::__cb_value() {
 /* -------------------------------------------------------------------------- */
 
 
+/* FIXME - do not malloc on each callback! do it on the constructor! */
+
 void gLearner::__cb_button() {
 	if (button->value() == 1) {
 		cbData *data  = (cbData*) malloc(sizeof(cbData));
