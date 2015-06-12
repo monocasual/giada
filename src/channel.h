@@ -164,6 +164,8 @@ public:
 	float  *vChan;	              // virtual channel
   class   gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
 
+	// TODO - midi structs, please
+
   bool     midiIn;              // enable midi input
   uint32_t midiInKeyPress;
   uint32_t midiInKeyRel;
