@@ -171,6 +171,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
+void gdMidiOutputMidiCh::cb_close         (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_close(); }
 void gdMidiOutputMidiCh::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->__cb_enableChanList(); }
 
 
