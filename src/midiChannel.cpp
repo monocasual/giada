@@ -95,12 +95,12 @@ void MidiChannel::addVstMidiEvent(uint32_t msg) {
 #ifdef WITH_VST
 
 void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
-	if (events.numEvents < MAX_VST_EVENTS) {	
+	if (events.numEvents < MAX_VST_EVENTS) {
 		events.events[events.numEvents] = (VstEvent*) e;
 		events.numEvents++;
 		/*
-		gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d note=%d number=%d velo=%d\n", 
-			events.numEvents, 
+		gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d note=%d number=%d velo=%d\n",
+			events.numEvents,
 			e->deltaFrames,
 			e->midiData[0],
 			e->midiData[1],
@@ -164,12 +164,12 @@ void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFra
 void MidiChannel::onZero(int frame) {
 	if (status == STATUS_ENDING) {
 		status = STATUS_OFF;
-		refreshMidiPlayLed();
+		sendMidiLplay();
 	}
 	else
 	if (status == STATUS_WAIT) {
 		status = STATUS_PLAY;
-		refreshMidiPlayLed();
+		sendMidiLplay();
 	}
 }
 
@@ -218,16 +218,16 @@ void MidiChannel::start(int frame, bool doQuantize) {
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 			break;
 		case STATUS_ENDING:
 		case STATUS_WAIT:
 			status = STATUS_OFF;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 			break;
 		case STATUS_OFF:
 			status = STATUS_WAIT;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 			break;
 	}
 }
@@ -253,7 +253,7 @@ void MidiChannel::kill(int frame) {
 #endif
 	}
 	status = STATUS_OFF;
-	refreshMidiPlayLed();
+	sendMidiLplay();
 }
 
 
@@ -282,7 +282,7 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 /* ------------------------------------------------------------------ */
 
 
-void MidiChannel::sendMidi(recorder::action *a, int localFrame) 
+void MidiChannel::sendMidi(recorder::action *a, int localFrame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
@@ -296,7 +296,7 @@ void MidiChannel::sendMidi(recorder::action *a, int localFrame)
 }
 
 
-void MidiChannel::sendMidi(uint32_t data) 
+void MidiChannel::sendMidi(uint32_t data)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)

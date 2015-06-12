@@ -165,7 +165,7 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::refreshMidiMuteLed()
+void Channel::sendMidiLmute()
 {
 	if (midiOutL && midiOutLmute != 0x0) {
 		if (mute)
@@ -175,7 +175,7 @@ void Channel::refreshMidiMuteLed()
 	}
 }
 
-void Channel::refreshMidiSoloLed()
+void Channel::sendMidiLsolo()
 {
 	if (midiOutL && midiOutLsolo != 0x0) {
 		if (solo)
@@ -185,7 +185,7 @@ void Channel::refreshMidiSoloLed()
 	}
 }
 
-void Channel::refreshMidiPlayLed()
+void Channel::sendMidiLplay()
 {
 	if (midiOutL && midiOutLplaying != 0x0) {
 		if (status == STATUS_OFF)

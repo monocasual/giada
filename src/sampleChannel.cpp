@@ -145,7 +145,7 @@ void SampleChannel::hardStop(int frame) {
 	if (frame != 0)        // clear data in range [frame, bufferSize-1]
 		clearChan(vChan, frame);
 	status = STATUS_OFF;
-	refreshMidiPlayLed();
+	sendMidiLplay();
 	reset(frame);
 }
 
@@ -168,7 +168,7 @@ void SampleChannel::onBar(int frame) {
 		if (status == STATUS_WAIT) {
 			status  = STATUS_PLAY;
 			tracker = fillChan(vChan, tracker, frame);
-			refreshMidiPlayLed();
+			sendMidiLplay();
 		}
 	}
 }
@@ -352,7 +352,7 @@ void SampleChannel::sum(int frame, bool running) {
 			 (mode & LOOP_ANY && !running))     // stop loops when the seq is off
 		{
 			status = STATUS_OFF;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 		}
 
 		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
@@ -361,7 +361,7 @@ void SampleChannel::sum(int frame, bool running) {
 		//if (mode == LOOP_ONCE && status != STATUS_ENDING)
 		if ((mode & (LOOP_ONCE | LOOP_ONCE_BAR)) && status != STATUS_ENDING) {
 			status = STATUS_WAIT;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 		}
 
 		/* check for end of samples. SINGLE_ENDLESS runs forever unless
@@ -401,7 +401,7 @@ void SampleChannel::onZero(int frame) {
 
 	if (status == STATUS_WAIT) { /// FIXME - should be inside previous if!
 		status  = STATUS_PLAY;
-		refreshMidiPlayLed();
+		sendMidiLplay();
 		tracker = fillChan(vChan, tracker, frame);
 	}
 
@@ -432,7 +432,7 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 
 	if (status == STATUS_OFF) {
 		status  = STATUS_PLAY;
-		refreshMidiPlayLed();
+		sendMidiLplay();
 		qWait   = false;
 		tracker = fillChan(vChan, tracker, localFrame); /// FIXME: ???
 	}
@@ -499,7 +499,7 @@ void SampleChannel::setMute(bool internal) {
 		}
 	}
 
-	refreshMidiMuteLed();
+	sendMidiLmute();
 }
 
 
@@ -528,7 +528,7 @@ void SampleChannel::unsetMute(bool internal) {
 		}
 	}
 
-	refreshMidiMuteLed();
+	sendMidiLmute();
 }
 
 
@@ -626,7 +626,7 @@ void SampleChannel::empty() {
 		wave = NULL;
 	}
 	status = STATUS_EMPTY;
-	refreshMidiPlayLed();
+	sendMidiLplay();
 }
 
 
@@ -636,7 +636,7 @@ void SampleChannel::empty() {
 void SampleChannel::pushWave(Wave *w) {
 	wave   = w;
 	status = STATUS_OFF;
-	refreshMidiPlayLed();
+	sendMidiLplay();
 	begin  = 0;
 	end    = wave->size;
 }
@@ -661,7 +661,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 	begin       = 0;
 	end         = wave->size;
 
-	refreshMidiPlayLed();
+	sendMidiLplay();
 
 	return true;
 }
@@ -839,7 +839,7 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 		else
 		if (res == SAMPLE_READ_ERROR)
 			status = STATUS_MISSING;
-		refreshMidiPlayLed();
+		sendMidiLplay();
 	}
 
 	return res;
@@ -871,7 +871,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 		{
 			if (mode & LOOP_ANY) {
 				status = STATUS_WAIT;
-				refreshMidiPlayLed();
+				sendMidiLplay();
 			}
 			else {
 				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
@@ -882,7 +882,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 					 * a duplicate call to fillChan occurs with loss of data. */
 
 					status = STATUS_PLAY;
-					refreshMidiPlayLed();
+					sendMidiLplay();
 					if (frame != 0)
 						tracker = fillChan(vChan, tracker, frame);
 				}
@@ -904,7 +904,7 @@ void SampleChannel::start(int frame, bool doQuantize) {
 			else
 			if (mode & (LOOP_ANY | SINGLE_ENDLESS)) {
 				status = STATUS_ENDING;
-				refreshMidiPlayLed();
+				sendMidiLplay();
 			}
 			break;
 		}
@@ -912,14 +912,14 @@ void SampleChannel::start(int frame, bool doQuantize) {
 		case STATUS_WAIT:
 		{
 			status = STATUS_OFF;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 			break;
 		}
 
 		case STATUS_ENDING:
 		{
 			status = STATUS_PLAY;
-			refreshMidiPlayLed();
+			sendMidiLplay();
 			break;
 		}
 	}

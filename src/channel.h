@@ -200,12 +200,12 @@ public:
 	void readPatchMidiIn(int i);
 	void readPatchMidiOut(int i);
 
-	/* refreshMIDI*
+	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */
 
-	void refreshMidiMuteLed();
-	void refreshMidiSoloLed();
-	void refreshMidiPlayLed();
+	void sendMidiLmute();
+	void sendMidiLsolo();
+	void sendMidiLplay();
 };
 
 
