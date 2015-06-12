@@ -154,6 +154,7 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
 
 	fprintf(fp, "chanMidiOut%d=%u\n",         i, midiOut);
+
 	fprintf(fp, "chanMidiOutL%d=%u\n",        i, midiOutL);
 	fprintf(fp, "chanMidiOutLplaying%d=%u\n", i, midiOutLplaying);
 	fprintf(fp, "chanMidiOutLmute%d=%u\n",    i, midiOutLmute);
@@ -161,7 +162,7 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void Channel::refreshMidiMuteLed()
