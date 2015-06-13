@@ -177,7 +177,10 @@ public:
   bool     midiOut;              // enable midi output
 	bool     midiOutL;             // enable midi lightning output
 
-  uint32_t midiOutLplaying;      // set of midi lighting event sent to a device
+	/*  midiOutL*
+	 * set of midi lighting event sent to a device. */
+
+  uint32_t midiOutLplaying;
   uint32_t midiOutLmute;
   uint32_t midiOutLsolo;
 

@@ -28,7 +28,6 @@
 
 
 #include "channel.h"
-#include "ge_channel.h"
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch.h"
@@ -38,11 +37,14 @@
 #include "conf.h"
 #include "waveFx.h"
 #include "log.h"
+#include "midiMapConf.h"
+#include "ge_channel.h"
 
 
 extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
+extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
 #endif
@@ -167,34 +169,64 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 
 void Channel::sendMidiLmute()
 {
-	if (midiOutL && midiOutLmute != 0x0) {
-		if (mute)
-			kernelMidi::midi_mute_on(midiOutLmute);
-		else
-			kernelMidi::midi_mute_off(midiOutLmute);
-	}
+	if (!midiOutL || midiOutLmute == 0x0)
+		return;
+
+	gLog("[channel] send MIDI lightning 'mute' - \n");
+
+	if (mute)
+		kernelMidi::midi_gen_messages(midiOutLmute, G_MidiMap.mute_on_channel, G_MidiMap.mute_on, G_MidiMap.mute_on_notePos);
+	else
+		kernelMidi::midi_gen_messages(midiOutLmute, G_MidiMap.mute_off_channel, G_MidiMap.mute_off, G_MidiMap.mute_off_notePos);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
 
 void Channel::sendMidiLsolo()
 {
-	if (midiOutL && midiOutLsolo != 0x0) {
-		if (solo)
-			kernelMidi::midi_solo_on(midiOutLsolo);
-		else
-			kernelMidi::midi_solo_off(midiOutLsolo);
-	}
+	if (!midiOutL || midiOutLsolo == 0x0)
+		return;
+
+	gLog("[channel] send MIDI lightning 'solo' - \n");
+
+	if (solo)
+		kernelMidi::midi_gen_messages(midiOutLsolo, G_MidiMap.solo_on_channel, G_MidiMap.solo_on, G_MidiMap.solo_on_notePos);
+	else
+		kernelMidi::midi_gen_messages(midiOutLsolo, G_MidiMap.solo_off_channel, G_MidiMap.solo_off, G_MidiMap.solo_off_notePos);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
 
 void Channel::sendMidiLplay()
 {
-	if (midiOutL && midiOutLplaying != 0x0) {
-		if (status == STATUS_OFF)
-			kernelMidi::midi_stopped(midiOutLplaying);
-		else if (status == STATUS_PLAY)
-			kernelMidi::midi_playing(midiOutLplaying);
-		else if (status  == STATUS_WAIT)
-			kernelMidi::midi_waiting(midiOutLplaying);
-		else if (status == STATUS_ENDING)
-			kernelMidi::midi_stopping(midiOutLplaying);
+	if (!midiOutL || midiOutLplaying == 0x0)
+		return;
+
+	gLog("[channel] send MIDI lightning 'playing' - ");
+
+	switch (status) {
+		case STATUS_OFF:
+			gLog("STATUS_OFF - learn=%#x, chan=%d\n",
+					midiOutLplaying, G_MidiMap.stopped_channel);
+			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.stopped_channel, G_MidiMap.stopped, G_MidiMap.stopped_notePos);
+			break;
+		case STATUS_PLAY:
+			gLog("STATUS_PLAY - learn=%#x, chan=%d\n",
+					midiOutLplaying, G_MidiMap.playing_channel);
+			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.playing_channel, G_MidiMap.playing, G_MidiMap.playing_notePos);
+			break;
+		case STATUS_WAIT:
+			gLog("STATUS_WAIT - learn=%#x, chan=%d\n",
+					midiOutLplaying, G_MidiMap.waiting_channel);
+			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.waiting_channel, G_MidiMap.waiting, G_MidiMap.waiting_notePos);
+			break;
+		case STATUS_ENDING:
+			gLog("STATUS_ENDING - learn=%#x, chan=%d\n",
+					midiOutLplaying, G_MidiMap.stopping_channel);
+			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.stopping_channel, G_MidiMap.stopping, G_MidiMap.stopping_notePos);
 	}
 }

@@ -254,57 +254,9 @@ void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int Note
 			break;
 	}
 
-	gLog(" - Channel %x - Event 0x%X\n", Channel, event);
+	gLog("       - Channel %x - Event 0x%X\n", Channel, event);
 
 	send(event | MIDI_CHANS[Channel]);
-}
-
-void midi_mute_on(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Mute On ");
-	midi_gen_messages(note, G_MidiMap.mute_on_channel, G_MidiMap.mute_on, G_MidiMap.mute_on_notePos);
-}
-
-void midi_mute_off(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Mute Off");
-	midi_gen_messages(note, G_MidiMap.mute_off_channel, G_MidiMap.mute_off, G_MidiMap.mute_off_notePos);
-}
-
-void midi_solo_on(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Solo On");
-	midi_gen_messages(note, G_MidiMap.solo_on_channel, G_MidiMap.solo_on, G_MidiMap.solo_on_notePos);
-}
-
-void midi_solo_off(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Solo Off");
-	midi_gen_messages(note, G_MidiMap.solo_off_channel, G_MidiMap.solo_off, G_MidiMap.solo_off_notePos);
-}
-
-void midi_waiting(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Waiting");
-	midi_gen_messages(note, G_MidiMap.waiting_channel, G_MidiMap.waiting, G_MidiMap.waiting_notePos);
-}
-
-void midi_playing(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Playing");
-	midi_gen_messages(note, G_MidiMap.playing_channel, G_MidiMap.playing, G_MidiMap.playing_notePos);
-}
-
-void midi_stopping(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Stopping");
-	midi_gen_messages(note, G_MidiMap.stopping_channel, G_MidiMap.stopping, G_MidiMap.stopping_notePos);
-}
-
-void midi_stopped(uint32_t note)
-{
-	gLog("[KM] Midi Signal - Stopped");
-	midi_gen_messages(note, G_MidiMap.stopped_channel, G_MidiMap.stopped, G_MidiMap.stopped_notePos);
 }
 
 
