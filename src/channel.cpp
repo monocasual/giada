@@ -75,7 +75,6 @@ Channel::Channel(int type, int status, int bufferSize)
 	  midiInVolume   (0x0),
 	  midiInMute     (0x0),
 	  midiInSolo     (0x0),
-	  midiOut        (true),
 	  midiOutL       (true),
 	  midiOutLplaying(0x0),
 	  midiOutLmute   (0x0),
@@ -115,7 +114,6 @@ void Channel::readPatchMidiIn(int i)
 
 void Channel::readPatchMidiOut(int i)
 {
-	midiOut         = G_Patch.getMidiValue(i, "Out");
 	midiOutL        = G_Patch.getMidiValue(i, "OutL");
 	midiOutLplaying = G_Patch.getMidiValue(i, "OutLplaying");
 	midiOutLmute    = G_Patch.getMidiValue(i, "OutLmute");
@@ -154,8 +152,6 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
 	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
 	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
-
-	fprintf(fp, "chanMidiOut%d=%u\n",         i, midiOut);
 
 	fprintf(fp, "chanMidiOutL%d=%u\n",        i, midiOutL);
 	fprintf(fp, "chanMidiOutLplaying%d=%u\n", i, midiOutLplaying);

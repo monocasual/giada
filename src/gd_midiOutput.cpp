@@ -157,6 +157,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	else
 		chanListOut->deactivate();
 
+	if (ch->midiOutL)
+		enableLightning->value(1);
+
 	chanListOut->value(ch->midiOutChan);
 
 	enableOut->callback(cb_enableChanList, (void*)this);
@@ -189,6 +192,7 @@ void gdMidiOutputMidiCh::__cb_enableChanList() {
 void gdMidiOutputMidiCh::__cb_close() {
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
+	ch->midiOutL    = enableLightning->value();
 	ch->guiChannel->update();
 	do_callback();
 }
@@ -216,7 +220,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 	close->callback(cb_close, (void*)this);
 
-	enableLightning->value(ch->midiOut);
+	enableLightning->value(ch->midiOutL);
 	enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
