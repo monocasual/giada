@@ -75,7 +75,7 @@ Channel::Channel(int type, int status, int bufferSize)
 	  midiInVolume   (0x0),
 	  midiInMute     (0x0),
 	  midiInSolo     (0x0),
-	  midiOutL       (true),
+	  midiOutL       (false),
 	  midiOutLplaying(0x0),
 	  midiOutLmute   (0x0),
 	  midiOutLsolo   (0x0)
