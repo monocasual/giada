@@ -49,61 +49,66 @@ private:
 
 public:
 
-	/* MAX_INIT_COMMANDS */
-
 	static const int MAX_INIT_COMMANDS = 32;
+	static const int MAX_MIDI_BYTES = 4;
 
-	/* path of midimap files, different between OSes. */
+	/* midimapsPath
+	 * path of midimap files, different between OSes. */
 
 	std::string midimapsPath;
 
-	/* Maps are the available .giadamap files. Each element of the vector
-	represents a .giadamap filename. */
+	/* maps
+	 * Maps are the available .giadamap files. Each element of the vector
+	 * represents a .giadamap filename. */
 
 	gVector<std::string> maps;
 
 	std::string brand;
 	std::string device;
 
-	/* init_commands. These messages are sent to the physical device as a
-	wake up signal. */
+	/* init_*
+	 * init_commands. These messages are sent to the physical device as a wake up
+	 * signal. */
 
 	int      init_channels[MAX_INIT_COMMANDS];
 	uint32_t init_messages[MAX_INIT_COMMANDS];
 
-	/* events */
+	/* events
+	 * [event]Channel: the MIDI output channel to send the event to
+	 * [event]notePos: the byte where the note is stored ('nn' placeholder)
+	 * [event][MIDI_BYTES]: the actual MIDI message split in 4 single bytes */
 
 	int mute_on_channel;
 	int mute_on_notePos;
-	uint32_t mute_on[4];
+	uint32_t mute_on[MAX_MIDI_BYTES];
 
 	int mute_off_channel;
 	int mute_off_notePos;
-	uint32_t mute_off[4];
+	uint32_t mute_off[MAX_MIDI_BYTES];
 
 	int solo_on_channel;
 	int solo_on_notePos;
-	uint32_t solo_on[4];
+	uint32_t solo_on[MAX_MIDI_BYTES];
 
 	int solo_off_channel;
 	int solo_off_notePos;
-	uint32_t solo_off[4];
+	uint32_t solo_off[MAX_MIDI_BYTES];
 
 	int waiting_channel;
 	int waiting_notePos;
-	uint32_t waiting[4];
+	uint32_t waiting[MAX_MIDI_BYTES];
 
 	int playing_channel;
 	int playing_notePos;
-	uint32_t playing[4];
+	uint32_t playing[MAX_MIDI_BYTES];
 
 	int stopping_channel;
 	int stopping_notePos;
-	uint32_t stopping[4];
+	uint32_t stopping[MAX_MIDI_BYTES];
 
 	int stopped_channel;
 	int stopped_notePos;
-	uint32_t stopped[4];
+	uint32_t stopped[MAX_MIDI_BYTES];
 
 	/* init
 	Parse the midi maps folders and find the available maps. */

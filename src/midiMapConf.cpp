@@ -171,24 +171,35 @@ void MidiMapConf::close()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::parse(std::string config, int *channel, uint32_t *message, int *notePos)
+void MidiMapConf::parse(std::string key, int *channel, uint32_t *message, int *notePos)
 {
-	gLog("[MidiMapConf::parse] command %s - ", config.c_str());
-	std::string p_config = getValue(config.c_str());
+	gLog("[MidiMapConf::parse] command %s - ", key.c_str());
+	std::string value = getValue(key.c_str());
 
-	*channel = atoi(p_config.substr(0, p_config.find(':')).c_str());
+	/* grab channel part, i.e. [channel]:*/
+
+	*channel = atoi(value.substr(0, value.find(':')).c_str());
 	gLog("channel %x - ", *channel);
 
-	std::string p_midiParts = p_config.substr(p_config.find(':')+3, 10);
-	if (p_midiParts.find("nn") != std::string::npos)
-		*notePos = p_midiParts.find("nn")/2;
+	/* grab MIDI part :[midi-message] and search for 'nn' note placeholder within.
+	 * Note: when using 'std::string::npos' as the value for a len (or sublen)
+	 * parameter in string's member functions, means "until the end of the
+	 * string". */
+
+	std::string midiParts = value.substr(value.find(':')+3, std::string::npos);
+
+	if (midiParts.find("nn") != std::string::npos)
+		*notePos = midiParts.find("nn")/2;
 	else
 		*notePos = -1;
 
-	for (int i=0; i<4; i++) {
+	/* fill message[MAX_MIDI_BYTES] with each byte in the message. Skip 'nn' if
+	 * found. */
+
+	for (int i=0; i<MAX_MIDI_BYTES; i++) {
 		if (i != *notePos) {
-			std::string p_bit = p_midiParts.substr(i*2, 2);
-			message[i] = strtoul(p_bit.c_str(), NULL, 16);
+			std::string bit = midiParts.substr(i*2, 2);
+			message[i] = strtoul(bit.c_str(), NULL, 16);
 			gLog("0x%X ", message[i]);
 		}
 		else {
