@@ -222,12 +222,12 @@ const char *getInPortName(unsigned p)
 /* -------------------------------------------------------------------------- */
 
 
-void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int NotePos)
+void midi_gen_messages(uint32_t note, int channel, uint32_t message[4], int notePos)
 {
 	uint32_t event = 0x00;
 	uint32_t noteFilt = note >> 16;
 
-	switch (NotePos) {
+	switch (notePos) {
 		case 0:
 			event |= (noteFilt   << 24);
 			event |= (message[1] << 16);
@@ -254,9 +254,9 @@ void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int Note
 			break;
 	}
 
-	gLog("       - Channel %x - Event 0x%X\n", Channel, event);
+	gLog("       - Channel %x - Event 0x%X\n", channel, event);
 
-	send(event | MIDI_CHANS[Channel]);
+	send(event | MIDI_CHANS[channel]);
 }
 
 
