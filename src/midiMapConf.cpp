@@ -38,6 +38,9 @@
 #include "log.h"
 
 
+using std::string;
+
+
 void MidiMapConf::init()
 {
 	midimapsPath = gGetHomePath() + "/midimaps/";
@@ -109,7 +112,7 @@ void MidiMapConf::setDefault()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiMapConf::readMap(std::string file)
+int MidiMapConf::readMap(string file)
 {
 	if (file.empty()) {
 		gLog("[MidiMapConf::readFromFile] midimap not specified, nothing to do\n");
@@ -118,7 +121,7 @@ int MidiMapConf::readMap(std::string file)
 
 	gLog("[MidiMapConf::readFromFile] reading midimap file '%s'\n", file.c_str());
 
-	std::string path = midimapsPath + file;
+	string path = midimapsPath + file;
 	fp = fopen(path.c_str(), "r");
 	if (!fp) {
 		gLog("[MidiMapConf::readFromFile] unreadable midimap file\n");
@@ -133,7 +136,7 @@ int MidiMapConf::readMap(std::string file)
 
 	/* parse init commands */
 
-	gVector<std::string> ic;
+	gVector<string> ic;
 	gSplit(getValue("init_commands"), ";", &ic);
 	for (unsigned i=0; i<MAX_INIT_COMMANDS && i<ic.size; i++) {
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
@@ -151,6 +154,15 @@ int MidiMapConf::readMap(std::string file)
 	parse("playing",  &playing_channel,  playing,  &playing_notePos);
 	parse("stopping", &stopping_channel, stopping, &stopping_notePos);
 	parse("stopped",  &stopped_channel,  stopped,  &stopped_notePos);
+
+	parse2("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
+	parse2("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
+	parse2("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
+	parse2("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
+	parse2("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
+	parse2("playing",  &playingChan,  &playingMsg,  &playingOffset);
+	parse2("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
+	parse2("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
 
 	close();
 	return 1;
@@ -171,10 +183,10 @@ void MidiMapConf::close()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::parse(std::string key, int *channel, uint32_t *message, int *notePos)
+void MidiMapConf::parse(string key, int *channel, uint32_t *message, int *notePos)
 {
 	gLog("[MidiMapConf::parse] command %s - ", key.c_str());
-	std::string value = getValue(key.c_str());
+	string value = getValue(key.c_str());
 
 	/* grab channel part, i.e. [channel]:*/
 
@@ -182,13 +194,13 @@ void MidiMapConf::parse(std::string key, int *channel, uint32_t *message, int *n
 	gLog("channel %x - ", *channel);
 
 	/* grab MIDI part :[midi-message] and search for 'nn' note placeholder within.
-	 * Note: when using 'std::string::npos' as the value for a len (or sublen)
+	 * Note: when using 'string::npos' as the value for a len (or sublen)
 	 * parameter in string's member functions, means "until the end of the
 	 * string". */
 
-	std::string midiParts = value.substr(value.find(':')+3, std::string::npos);
+	string midiParts = value.substr(value.find(':')+3, string::npos);
 
-	if (midiParts.find("nn") != std::string::npos)
+	if (midiParts.find("nn") != string::npos)
 		*notePos = midiParts.find("nn")/2;
 	else
 		*notePos = -1;
@@ -198,7 +210,7 @@ void MidiMapConf::parse(std::string key, int *channel, uint32_t *message, int *n
 
 	for (int i=0; i<MAX_MIDI_BYTES; i++) {
 		if (i != *notePos) {
-			std::string bit = midiParts.substr(i*2, 2);
+			string bit = midiParts.substr(i*2, 2);
 			message[i] = strtoul(bit.c_str(), NULL, 16);
 			gLog("0x%X ", message[i]);
 		}
@@ -207,4 +219,39 @@ void MidiMapConf::parse(std::string key, int *channel, uint32_t *message, int *n
 		}
 	}
 	gLog("\n");
+}
+
+
+void MidiMapConf::parse2(string key, int *chan, uint32_t *msg, int *offset)
+{
+	gLog("[MidiMapConf::parse2] command %s - ", key.c_str());
+	string value = getValue(key.c_str());
+
+	/* grab channel part, i.e. [channel]:*/
+
+	*chan = atoi(value.substr(0, value.find(':')).c_str());
+
+	/* grab MIDI part :[midi-message] and search for 'nn' note placeholder within.
+	 * Note: when using 'string::npos' as the value for a len (or sublen)
+	 * parameter in string's member functions, means "until the end of the
+	 * string". */
+
+	string midiParts = value.substr(value.find(':')+3, string::npos);
+
+	char strmsg[MAX_MIDI_NIBBLES];
+	*offset = -1;
+
+	for (unsigned i=0, p=24; i<MAX_MIDI_NIBBLES; i++, p-=4) {
+		if (midiParts[i] == 'n') {
+			strmsg[i] = '0';
+			if (*offset == -1)
+				*offset = p;
+		}
+		else
+			strmsg[i] = midiParts[i];
+	}
+
+	*msg = strtoul(strmsg, NULL, 16);
+
+	gLog("chan=%d value=%s msg=%#x, offset=%d\n", *chan, midiParts.c_str(), *msg, *offset);
 }
