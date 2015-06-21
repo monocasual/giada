@@ -73,9 +73,14 @@ protected:
 	static void cb_enableLightning  (Fl_Widget *w, void *p);
 	inline void __cb_enableLightning();
 
+	/* setTitle
+	 * set window title. */
+
+	void setTitle(int chanNum);
+
 public:
 
-	gdMidiOutput();
+	gdMidiOutput(int w, int h);
 };
 
 

@@ -42,8 +42,9 @@
 extern Conf	G_Conf;
 
 
-gdMidiOutput::gdMidiOutput()
-	: gWindow(300, 64, "Midi Output Setup")
+gdMidiOutput::gdMidiOutput(int w, int h)
+	//: gWindow(300, 64, "Midi Output Setup")
+	: gWindow(w, h, "Midi Output Setup")
 {
 }
 
@@ -105,8 +106,17 @@ void gdMidiOutput::cb_enableLightning(Fl_Widget *w, void *p)  {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_enableLightning() {
-	// TODO
+void gdMidiOutput::__cb_enableLightning() {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutput::setTitle(int chanNum)
+{
+	char title[64];
+	sprintf(title, "MIDI Output Setup (channel %d)", chanNum);
+	copy_label(title);
 }
 
 
@@ -116,10 +126,9 @@ void gdMidiOutput::__cb_enableLightning() {
 
 
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
-	: gdMidiOutput(), ch(ch)
+	: gdMidiOutput(300, 168), ch(ch)
 {
-	size(300, 168);
-
+	setTitle(ch->index+1);
 	begin();
 
 	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
@@ -204,13 +213,9 @@ void gdMidiOutputMidiCh::__cb_close() {
 
 
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
-	: gdMidiOutput(), ch(ch)
+	: gdMidiOutput(300, 140), ch(ch)
 {
-	size(300, 140);
-
-	//char title[64];
-	//sprintf(title, "MIDI Output Setup (channel %d)", ch->index+1);
-	//label(title);
+	setTitle(ch->index+1);
 
 	enableLightning = new gCheck(8, 8, 120, 20, "Enable MIDI lightning output");
 	new gLearner(8,  enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
