@@ -86,26 +86,37 @@ void MidiMapConf::setDefault()
 		init_messages[i] = 0x00;
 	}
 
-	for (int i=0; i<4; i++) {
-		mute_on_channel = -1;
-		mute_on[i] = 0x00;
-		mute_off_channel = -1;
-		mute_off[i] = 0x00;
+	muteOnChan     = 0;
+	muteOnOffset   = 0;
+	muteOnMsg      = 0;
 
-		solo_on_channel = -1;
-		solo_on[i] = 0x00;
-		solo_off_channel = -1;
-		solo_off[i] = 0x00;
+	muteOffChan    = 0;
+	muteOffOffset  = 0;
+	muteOffMsg     = 0;
 
-		waiting_channel = -1;
-		waiting[i] = 0x00;
-		playing_channel = -1;
-		playing[i] = 0x00;
-		stopping_channel = -1;
-		stopping[i] = 0x00;
-		stopped_channel = -1;
-		stopped[i] = 0x00;
-	}
+	soloOnChan     = 0;
+	soloOnOffset   = 0;
+	soloOnMsg      = 0;
+
+	soloOffChan    = 0;
+	soloOffOffset  = 0;
+	soloOffMsg     = 0;
+
+	waitingChan    = 0;
+	waitingOffset  = 0;
+	waitingMsg     = 0;
+
+	playingChan    = 0;
+	playingOffset  = 0;
+	playingMsg     = 0;
+
+	stoppingChan   = 0;
+	stoppingOffset = 0;
+	stoppingMsg    = 0;
+	
+	stoppedChan    = 0;
+	stoppedOffset  = 0;
+	stoppedMsg     = 0;
 }
 
 
@@ -145,15 +156,6 @@ int MidiMapConf::readMap(string file)
 	}
 
 	/* parse messages */
-
-	parse("mute_on",  &mute_on_channel,  mute_on,  &mute_on_notePos);
-	parse("mute_off", &mute_off_channel, mute_off, &mute_off_notePos);
-	parse("solo_on",  &solo_on_channel,  solo_on,  &solo_on_notePos);
-	parse("solo_off", &solo_off_channel, solo_off, &solo_off_notePos);
-	parse("waiting",  &waiting_channel,  waiting,  &waiting_notePos);
-	parse("playing",  &playing_channel,  playing,  &playing_notePos);
-	parse("stopping", &stopping_channel, stopping, &stopping_notePos);
-	parse("stopped",  &stopped_channel,  stopped,  &stopped_notePos);
 
 	parse2("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
 	parse2("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);

@@ -81,60 +81,36 @@ public:
 	/* events
 	 * [event]Channel: the MIDI output channel to send the event to
 	 * [event]notePos: the byte where the note is stored ('nn' placeholder)
-	 * [event][MIDI_BYTES]: the actual MIDI message split in 4 single bytes */
+	 * [event]offset:  the note offset (i.e. of 'nn' placeholder) */
 
-	int mute_on_channel;
-	int mute_on_notePos;
-	uint32_t mute_on[MAX_MIDI_BYTES];
 	int      muteOnChan;
 	int      muteOnOffset;
 	uint32_t muteOnMsg;
 
-	int mute_off_channel;
-	int mute_off_notePos;
-	uint32_t mute_off[MAX_MIDI_BYTES];
 	int      muteOffChan;
 	int      muteOffOffset;
 	uint32_t muteOffMsg;
 
-	int solo_on_channel;
-	int solo_on_notePos;
-	uint32_t solo_on[MAX_MIDI_BYTES];
 	int      soloOnChan;
 	int      soloOnOffset;
 	uint32_t soloOnMsg;
 
-	int solo_off_channel;
-	int solo_off_notePos;
-	uint32_t solo_off[MAX_MIDI_BYTES];
 	int      soloOffChan;
 	int      soloOffOffset;
 	uint32_t soloOffMsg;
 
-	int waiting_channel;
-	int waiting_notePos;
-	uint32_t waiting[MAX_MIDI_BYTES];
 	int      waitingChan;
 	int      waitingOffset;
 	uint32_t waitingMsg;
 
-	int playing_channel;
-	int playing_notePos;
-	uint32_t playing[MAX_MIDI_BYTES];
 	int      playingChan;
 	int      playingOffset;
 	uint32_t playingMsg;
 
-	int stopping_channel;
-	int stopping_notePos;
-	uint32_t stopping[MAX_MIDI_BYTES];
 	int      stoppingChan;
 	int      stoppingOffset;
 	uint32_t stoppingMsg;
 
-	int stopped_channel;
-	int stopped_notePos;
-	uint32_t stopped[MAX_MIDI_BYTES];
 	int      stoppedChan;
 	int      stoppedOffset;
 	uint32_t stoppedMsg;
