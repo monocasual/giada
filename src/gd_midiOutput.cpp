@@ -227,3 +227,18 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	gu_setFavicon(this);
 	show();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutputSampleCh::cb_close(Fl_Widget *w, void *p) { ((gdMidiOutputSampleCh*)p)->__cb_close(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiOutputSampleCh::__cb_close() {
+	ch->midiOutL = enableLightning->value();
+	do_callback();
+}

@@ -115,6 +115,12 @@ private:
 
 	class SampleChannel *ch;
 
+	/* __cb_close
+	override parent method, we need to do more stuff on close. */
+
+	static void cb_close  (Fl_Widget *w, void *p);
+	inline void __cb_close();
+
 public:
 
 	gdMidiOutputSampleCh(class SampleChannel *ch);
