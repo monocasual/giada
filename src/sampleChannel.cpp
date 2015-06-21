@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * channel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <math.h>
@@ -73,10 +73,11 @@ SampleChannel::SampleChannel(int bufferSize)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-SampleChannel::~SampleChannel() {
+SampleChannel::~SampleChannel()
+{
 	if (wave)
 		delete wave;
 	src_delete(rsmp_state);
@@ -84,11 +85,11 @@ SampleChannel::~SampleChannel() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::clear() {
-
+void SampleChannel::clear()
+{
 	/** TODO - these memsets can be done only if status PLAY (if below),
 	 * but it would require extra clearPChan calls when samples stop */
 
@@ -105,11 +106,11 @@ void SampleChannel::clear() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::calcVolumeEnv(int frame) {
-
+void SampleChannel::calcVolumeEnv(int frame)
+{
 	/* method: check this frame && next frame, then calculate delta */
 
 	recorder::action *a0 = NULL;
@@ -138,10 +139,11 @@ void SampleChannel::calcVolumeEnv(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::hardStop(int frame) {
+void SampleChannel::hardStop(int frame)
+{
 	if (frame != 0)        // clear data in range [frame, bufferSize-1]
 		clearChan(vChan, frame);
 	status = STATUS_OFF;
@@ -150,10 +152,11 @@ void SampleChannel::hardStop(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::onBar(int frame) {
+void SampleChannel::onBar(int frame)
+{
 	///if (mode == LOOP_REPEAT && status == STATUS_PLAY)
 	///	//setXFade(frame);
 	///	reset(frame);
@@ -174,36 +177,39 @@ void SampleChannel::onBar(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::save(const char *path) {
+int SampleChannel::save(const char *path)
+{
 	return wave->writeData(path);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setBegin(unsigned v) {
+void SampleChannel::setBegin(unsigned v)
+{
 	begin   = v;
 	tracker = begin;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setEnd(unsigned v) {
+void SampleChannel::setEnd(unsigned v)
+{
 	end = v;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setPitch(float v) {
-
+void SampleChannel::setPitch(float v)
+{
 	pitch = v;
 	rsmp_data.src_ratio = 1/pitch;
 
@@ -214,11 +220,11 @@ void SampleChannel::setPitch(float v) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::rewind() {
-
+void SampleChannel::rewind()
+{
 	/* rewind LOOP_ANY or SINGLE_ANY only if it's in read-record-mode */
 
 	if (wave != NULL) {
@@ -228,11 +234,11 @@ void SampleChannel::rewind() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalFrame) {
-
+void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalFrame)
+{
 	if (readActions == false)
 		return;
 
@@ -262,11 +268,11 @@ void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalF
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::sum(int frame, bool running) {
-
+void SampleChannel::sum(int frame, bool running)
+{
 	if (wave == NULL || status & ~(STATUS_PLAY | STATUS_ENDING))
 		return;
 
@@ -372,11 +378,11 @@ void SampleChannel::sum(int frame, bool running) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::onZero(int frame) {
-
+void SampleChannel::onZero(int frame)
+{
 	if (wave == NULL)
 		return;
 
@@ -417,11 +423,11 @@ void SampleChannel::onZero(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
-
+void SampleChannel::quantize(int index, int localFrame, int globalFrame)
+{
 	/* skip if LOOP_ANY or not in quantizer-wait mode */
 
 	if ((mode & LOOP_ANY) || !qWait)
@@ -452,10 +458,11 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::getPosition() {
+int SampleChannel::getPosition()
+{
 	if (status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF)) // if is not (...)
 		return tracker - begin;
 	else
@@ -463,10 +470,11 @@ int SampleChannel::getPosition() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setMute(bool internal) {
+void SampleChannel::setMute(bool internal)
+{
 	if (internal) {
 
 		/* global mute is on? don't waste time with fadeout, just mute it
@@ -503,10 +511,11 @@ void SampleChannel::setMute(bool internal) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::unsetMute(bool internal) {
+void SampleChannel::unsetMute(bool internal)
+{
 	if (internal) {
 		if (mute)
 			mute_i = false;
@@ -532,10 +541,11 @@ void SampleChannel::unsetMute(bool internal) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::calcFadeoutStep() {
+void SampleChannel::calcFadeoutStep()
+{
 	if (end - tracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
 		fadeoutStep = ceil((end - tracker) / volume) * 2; /// or volume_i ???
 	else
@@ -543,10 +553,11 @@ void SampleChannel::calcFadeoutStep() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setReadActions(bool v) {
+void SampleChannel::setReadActions(bool v)
+{
 	if (v)
 		readActions = true;
 	else {
@@ -557,10 +568,11 @@ void SampleChannel::setReadActions(bool v) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setFadeIn(bool internal) {
+void SampleChannel::setFadeIn(bool internal)
+{
 	if (internal) mute_i = false;  // remove mute before fading in
 	else          mute   = false;
 	fadeinOn  = true;
@@ -568,10 +580,11 @@ void SampleChannel::setFadeIn(bool internal) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setFadeOut(int actionPostFadeout) {
+void SampleChannel::setFadeOut(int actionPostFadeout)
+{
 	calcFadeoutStep();
 	fadeoutOn   = true;
 	fadeoutVol  = 1.0f;
@@ -580,11 +593,11 @@ void SampleChannel::setFadeOut(int actionPostFadeout) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setXFade(int frame) {
-
+void SampleChannel::setXFade(int frame)
+{
 	gLog("[xFade] frame=%d tracker=%d\n", frame, tracker);
 
 	calcFadeoutStep();
@@ -596,7 +609,7 @@ void SampleChannel::setXFade(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 /* on reset, if frame > 0 and in play, fill again pChan to create
@@ -607,7 +620,8 @@ void SampleChannel::setXFade(int frame) {
  *
  * */
 
-void SampleChannel::reset(int frame) {
+void SampleChannel::reset(int frame)
+{
 	//fadeoutTracker = tracker;   // store old frame number for xfade
 	tracker = begin;
 	mute_i  = false;
@@ -616,10 +630,11 @@ void SampleChannel::reset(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::empty() {
+void SampleChannel::empty()
+{
 	status = STATUS_OFF;
 	if (wave) {
 		delete wave;
@@ -630,10 +645,11 @@ void SampleChannel::empty() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(Wave *w) {
+void SampleChannel::pushWave(Wave *w)
+{
 	wave   = w;
 	status = STATUS_OFF;
 	sendMidiLplay();
@@ -642,11 +658,11 @@ void SampleChannel::pushWave(Wave *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool SampleChannel::allocEmpty(int frames, int takeId) {
-
+bool SampleChannel::allocEmpty(int frames, int takeId)
+{
 	Wave *w = new Wave();
 	if (!w->allocEmpty(frames))
 		return false;
@@ -667,11 +683,11 @@ bool SampleChannel::allocEmpty(int frames, int takeId) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(float *buffer) {
-
+void SampleChannel::process(float *buffer)
+{
 #ifdef WITH_VST
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 #endif
@@ -683,10 +699,11 @@ void SampleChannel::process(float *buffer) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::kill(int frame) {
+void SampleChannel::kill(int frame)
+{
 	if (wave != NULL && status != STATUS_OFF) {
 		if (mute || mute_i || (status == STATUS_WAIT && mode & LOOP_ANY))
 			hardStop(frame);
@@ -696,11 +713,11 @@ void SampleChannel::kill(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::stopBySeq() {
-
+void SampleChannel::stopBySeq()
+{
 	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true,
 	 * else do nothing and return. Always kill at frame=0, this is a
 	 * user-generated event. */
@@ -725,10 +742,11 @@ void SampleChannel::stopBySeq() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::stop() {
+void SampleChannel::stop()
+{
 	if (mode == SINGLE_PRESS && status == STATUS_PLAY) {
 		if (mute || mute_i)
 			hardStop(0);  /// FIXME - wrong frame value
@@ -741,11 +759,11 @@ void SampleChannel::stop() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::load(const char *file) {
-
+int SampleChannel::load(const char *file)
+{
 	if (strcmp(file, "") == 0 || gIsDir(file)) {
 		gLog("[SampleChannel] file not specified\n");
 		return SAMPLE_LEFT_EMPTY;
@@ -798,11 +816,11 @@ int SampleChannel::load(const char *file) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::loadByPatch(const char *f, int i) {
-
+int SampleChannel::loadByPatch(const char *f, int i)
+{
 	int res = load(f);
 
 		volume      = G_Patch.getVol(i);
@@ -846,19 +864,20 @@ int SampleChannel::loadByPatch(const char *f, int i) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool SampleChannel::canInputRec() {
+bool SampleChannel::canInputRec()
+	{
 	return wave == NULL;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::start(int frame, bool doQuantize) {
-
+void SampleChannel::start(int frame, bool doQuantize)
+{
 	switch (status)	{
 		case STATUS_EMPTY:
 		case STATUS_MISSING:
@@ -926,11 +945,11 @@ void SampleChannel::start(int frame, bool doQuantize) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
-
+void SampleChannel::writePatch(FILE *fp, int i, bool isProject)
+{
 	Channel::writePatch(fp, i, isProject);
 
 	const char *path = "";
@@ -955,19 +974,20 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::clearChan(float *dest, int start) {
+void SampleChannel::clearChan(float *dest, int start)
+{
 	memset(dest+start, 0, sizeof(float)*(bufferSize-start));
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind) {
-
+int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
+{
 	int position;  // return value: the new position
 
 	if (pitch == 1.0f) {

@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * channel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "channel.h"
@@ -55,18 +55,19 @@ MidiChannel::MidiChannel(int bufferSize)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 MidiChannel::~MidiChannel() {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
 
-void MidiChannel::freeVstMidiEvents(bool init) {
+void MidiChannel::freeVstMidiEvents(bool init)
+{
 	if (events.numEvents == 0 && !init)
 		return;
 	memset(events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
@@ -77,24 +78,26 @@ void MidiChannel::freeVstMidiEvents(bool init) {
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
 
-void MidiChannel::addVstMidiEvent(uint32_t msg) {
+void MidiChannel::addVstMidiEvent(uint32_t msg)
+{
 	addVstMidiEvent(G_PluginHost.createVstMidiEvent(msg));
 }
 
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
 
-void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
+void MidiChannel::addVstMidiEvent(VstMidiEvent *e)
+{
 	if (events.numEvents < MAX_VST_EVENTS) {
 		events.events[events.numEvents] = (VstEvent*) e;
 		events.numEvents++;
@@ -114,54 +117,57 @@ void MidiChannel::addVstMidiEvent(VstMidiEvent *e) {
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::onBar(int frame) {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::stop() {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::empty() {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 #ifdef WITH_VST
 
-VstEvents *MidiChannel::getVstEvents() {
+VstEvents *MidiChannel::getVstEvents()
+{
 	return (VstEvents *) &events;
 }
 
 #endif
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFrame) {
+void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFrame)
+{
 	if (a->type == ACTION_MIDI)
 		sendMidi(a, localFrame/2);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::onZero(int frame) {
+void MidiChannel::onZero(int frame)
+{
 	if (status == STATUS_ENDING) {
 		status = STATUS_OFF;
 		sendMidiLplay();
@@ -174,31 +180,36 @@ void MidiChannel::onZero(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::setMute(bool internal) {
+void MidiChannel::setMute(bool internal)
+{
 	mute = true;  	// internal mute does not exist for midi (for now)
 	if (midiOut)
 		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
 		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
 #endif
+	sendMidiLmute();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::unsetMute(bool internal) {
+void MidiChannel::unsetMute(bool internal)
+{
 	mute = false;  	// internal mute does not exist for midi (for now)
+	sendMidiLmute();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(float *buffer) {
+void MidiChannel::process(float *buffer)
+{
 #ifdef WITH_VST
 	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 	freeVstMidiEvents();
@@ -211,10 +222,11 @@ void MidiChannel::process(float *buffer) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::start(int frame, bool doQuantize) {
+void MidiChannel::start(int frame, bool doQuantize)
+{
 	switch (status) {
 		case STATUS_PLAY:
 			status = STATUS_ENDING;
@@ -233,18 +245,20 @@ void MidiChannel::start(int frame, bool doQuantize) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::stopBySeq() {
+void MidiChannel::stopBySeq()
+{
 	kill(0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::kill(int frame) {
+void MidiChannel::kill(int frame)
+{
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		if (midiOut)
 			kernelMidi::send(MIDI_ALL_NOTES_OFF);
@@ -257,10 +271,11 @@ void MidiChannel::kill(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::loadByPatch(const char *f, int i) {
+int MidiChannel::loadByPatch(const char *f, int i)
+{
 	volume      = G_Patch.getVol(i);
 	index       = G_Patch.getIndex(i);
 	mute        = G_Patch.getMute(i);
@@ -279,7 +294,7 @@ int MidiChannel::loadByPatch(const char *f, int i) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::sendMidi(recorder::action *a, int localFrame)
@@ -308,10 +323,11 @@ void MidiChannel::sendMidi(uint32_t data)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::rewind() {
+void MidiChannel::rewind()
+{
 	if (midiOut)
 		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
@@ -320,7 +336,7 @@ void MidiChannel::rewind() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void MidiChannel::writePatch(FILE *fp, int i, bool isProject)

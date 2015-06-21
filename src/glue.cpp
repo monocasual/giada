@@ -795,7 +795,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 	}
 
 	ch->solo = !ch->solo;
-	ch->sendMidiLmute();
+	ch->sendMidiLsolo();
 
 	/* mute all other channels and unmute this (if muted) */
 
@@ -859,7 +859,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 	}
 
 	ch->solo = !ch->solo;
-	ch->sendMidiLmute();
+	ch->sendMidiLsolo();
 
 	if (!gui) {
 		Fl::lock();
