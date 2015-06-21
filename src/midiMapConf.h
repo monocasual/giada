@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * midiMapConf
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef __MIDIMAPCONF_H__
@@ -48,8 +48,7 @@ class MidiMapConf : public DataStorage
 private:
 
 	void close();
-	void parse(string key, int *channel, uint32_t *message, int *notePos);
-	void parse2(string key, int *chan, uint32_t *msg, int *offset);
+	void parse(string key, int *chan, uint32_t *msg, int *offset);
 
 public:
 

@@ -113,7 +113,7 @@ void MidiMapConf::setDefault()
 	stoppingChan   = 0;
 	stoppingOffset = 0;
 	stoppingMsg    = 0;
-	
+
 	stoppedChan    = 0;
 	stoppedOffset  = 0;
 	stoppedMsg     = 0;
@@ -157,14 +157,14 @@ int MidiMapConf::readMap(string file)
 
 	/* parse messages */
 
-	parse2("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
-	parse2("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
-	parse2("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
-	parse2("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
-	parse2("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
-	parse2("playing",  &playingChan,  &playingMsg,  &playingOffset);
-	parse2("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
-	parse2("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
+	parse("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
+	parse("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
+	parse("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
+	parse("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
+	parse("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
+	parse("playing",  &playingChan,  &playingMsg,  &playingOffset);
+	parse("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
+	parse("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
 
 	close();
 	return 1;
@@ -185,46 +185,7 @@ void MidiMapConf::close()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::parse(string key, int *channel, uint32_t *message, int *notePos)
-{
-	gLog("[MidiMapConf::parse] command %s - ", key.c_str());
-	string value = getValue(key.c_str());
-
-	/* grab channel part, i.e. [channel]:*/
-
-	*channel = atoi(value.substr(0, value.find(':')).c_str());
-	gLog("channel %x - ", *channel);
-
-	/* grab MIDI part :[midi-message] and search for 'nn' note placeholder within.
-	 * Note: when using 'string::npos' as the value for a len (or sublen)
-	 * parameter in string's member functions, means "until the end of the
-	 * string". */
-
-	string midiParts = value.substr(value.find(':')+3, string::npos);
-
-	if (midiParts.find("nn") != string::npos)
-		*notePos = midiParts.find("nn")/2;
-	else
-		*notePos = -1;
-
-	/* fill message[MAX_MIDI_BYTES] with each byte in the message. Skip 'nn' if
-	 * found. */
-
-	for (int i=0; i<MAX_MIDI_BYTES; i++) {
-		if (i != *notePos) {
-			string bit = midiParts.substr(i*2, 2);
-			message[i] = strtoul(bit.c_str(), NULL, 16);
-			gLog("0x%X ", message[i]);
-		}
-		else {
-			gLog("[note] ");
-		}
-	}
-	gLog("\n");
-}
-
-
-void MidiMapConf::parse2(string key, int *chan, uint32_t *msg, int *offset)
+void MidiMapConf::parse(string key, int *chan, uint32_t *msg, int *offset)
 {
 	gLog("[MidiMapConf::parse2] command %s - ", key.c_str());
 	string value = getValue(key.c_str());
@@ -241,19 +202,22 @@ void MidiMapConf::parse2(string key, int *chan, uint32_t *msg, int *offset)
 	string midiParts = value.substr(value.find(':')+3, string::npos);
 
 	char strmsg[MAX_MIDI_NIBBLES];
-	*offset = -1;
+	*offset = 0;
+
+	/* build the message as a string, for each char (i.e. nibble) in the
+	 * original string. Substitute 'n' with zeros. */
 
 	for (unsigned i=0, p=24; i<MAX_MIDI_NIBBLES; i++, p-=4) {
 		if (midiParts[i] == 'n') {
 			strmsg[i] = '0';
-			if (*offset == -1)
+			if (*offset == 0)
 				*offset = p;
 		}
 		else
 			strmsg[i] = midiParts[i];
 	}
 
-	*msg = strtoul(strmsg, NULL, 16);
+	*msg = strtoul(strmsg, NULL, 16);  // from string to uint32_t
 
 	gLog("chan=%d value=%s msg=%#x, offset=%d\n", *chan, midiParts.c_str(), *msg, *offset);
 }
