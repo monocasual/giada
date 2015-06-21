@@ -101,6 +101,29 @@ Channel::~Channel()
 /* -------------------------------------------------------------------------- */
 
 
+void Channel::sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offset)
+{
+	gLog("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
+		learn, chan, msg, offset);
+
+	uint32_t out;
+
+	/* isolate 'channel' from learnt message and offset it as requested by 'nn'
+	 * in the midimap configuration file. */
+
+	out  = ((learn & 0x00FF0000) >> 16) << offset;
+
+	/* merge the previously prepared channel into final message, and finally
+	 * send it. */
+
+	out |= msg | (chan << 24);
+	kernelMidi::send(out);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void Channel::readPatchMidiIn(int i)
 {
 	midiIn         = G_Patch.getMidiValue(i, "In");
@@ -167,13 +190,10 @@ void Channel::sendMidiLmute()
 {
 	if (!midiOutL || midiOutLmute == 0x0)
 		return;
-
-	gLog("[channel] send MIDI lightning 'mute' - \n");
-
 	if (mute)
-		kernelMidi::midi_gen_messages(midiOutLmute, G_MidiMap.mute_on_channel, G_MidiMap.mute_on, G_MidiMap.mute_on_notePos);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOnChan, G_MidiMap.muteOnMsg, G_MidiMap.muteOnOffset);
 	else
-		kernelMidi::midi_gen_messages(midiOutLmute, G_MidiMap.mute_off_channel, G_MidiMap.mute_off, G_MidiMap.mute_off_notePos);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOffChan, G_MidiMap.muteOffMsg, G_MidiMap.muteOffOffset);
 }
 
 
@@ -184,13 +204,10 @@ void Channel::sendMidiLsolo()
 {
 	if (!midiOutL || midiOutLsolo == 0x0)
 		return;
-
-	gLog("[channel] send MIDI lightning 'solo' - \n");
-
 	if (solo)
-		kernelMidi::midi_gen_messages(midiOutLsolo, G_MidiMap.solo_on_channel, G_MidiMap.solo_on, G_MidiMap.solo_on_notePos);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOnChan, G_MidiMap.soloOnMsg, G_MidiMap.soloOnOffset);
 	else
-		kernelMidi::midi_gen_messages(midiOutLsolo, G_MidiMap.solo_off_channel, G_MidiMap.solo_off, G_MidiMap.solo_off_notePos);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOffChan, G_MidiMap.soloOffMsg, G_MidiMap.soloOffOffset);
 }
 
 
@@ -201,28 +218,17 @@ void Channel::sendMidiLplay()
 {
 	if (!midiOutL || midiOutLplaying == 0x0)
 		return;
-
-	gLog("[channel] send MIDI lightning 'playing' - ");
-
 	switch (status) {
 		case STATUS_OFF:
-			gLog("STATUS_OFF - learn=%#x, chan=%d\n",
-					midiOutLplaying, G_MidiMap.stopped_channel);
-			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.stopped_channel, G_MidiMap.stopped, G_MidiMap.stopped_notePos);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.stoppedChan, G_MidiMap.stoppedMsg, G_MidiMap.stoppedOffset);
 			break;
 		case STATUS_PLAY:
-			gLog("STATUS_PLAY - learn=%#x, chan=%d\n",
-					midiOutLplaying, G_MidiMap.playing_channel);
-			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.playing_channel, G_MidiMap.playing, G_MidiMap.playing_notePos);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.playingChan, G_MidiMap.playingMsg, G_MidiMap.playingOffset);
 			break;
 		case STATUS_WAIT:
-			gLog("STATUS_WAIT - learn=%#x, chan=%d\n",
-					midiOutLplaying, G_MidiMap.waiting_channel);
-			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.waiting_channel, G_MidiMap.waiting, G_MidiMap.waiting_notePos);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.waitingChan, G_MidiMap.waitingMsg, G_MidiMap.waitingOffset);
 			break;
 		case STATUS_ENDING:
-			gLog("STATUS_ENDING - learn=%#x, chan=%d\n",
-					midiOutLplaying, G_MidiMap.stopping_channel);
-			kernelMidi::midi_gen_messages(midiOutLplaying, G_MidiMap.stopping_channel, G_MidiMap.stopping, G_MidiMap.stopping_notePos);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.stoppingChan, G_MidiMap.stoppingMsg, G_MidiMap.stoppingOffset);
 	}
 }

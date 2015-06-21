@@ -61,6 +61,12 @@ protected:
 
 	int bufferSize;
 
+	/* sendMidiLMessage
+	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
+	 * it to KernelMidi. */
+
+	void sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offset);
+
 public:
 
 	Channel(int type, int status, int bufferSize);
@@ -175,8 +181,9 @@ public:
   uint32_t midiInSolo;
 
 	/*  midiOutL*
-	 * Enable MIDI lightning output, plus a set of midi lighting event sent to a
-	 * device. */
+	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent
+	 * to a device. Those events basically contains the MIDI channel, everything
+	 * else gets stripped out. */
 
 	bool     midiOutL;
   uint32_t midiOutLplaying;

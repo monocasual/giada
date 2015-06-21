@@ -99,8 +99,6 @@ namespace kernelMidi {
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
 
 	std::string getRtMidiVersion();
-
-	void midi_gen_messages(uint32_t note, int Channel, uint32_t message[4], int NotePos);
 }
 
 #endif

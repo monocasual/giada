@@ -222,63 +222,17 @@ const char *getInPortName(unsigned p)
 /* -------------------------------------------------------------------------- */
 
 
-void midi_gen_messages(uint32_t note, int channel, uint32_t message[4], int notePos)
-{
-	uint32_t event = 0x00;
-	uint32_t noteFilt = note >> 16;
-
-	switch (notePos) {
-		case 0:
-			event |= (noteFilt   << 24);
-			event |= (message[1] << 16);
-			event |= (message[2] << 8);
-			event |=  message[3];
-			break;
-		case 1:
-			event |= (message[0] << 24);
-			event |= (noteFilt   << 16);
-			event |= (message[2] << 8);
-			event |=  message[3];
-			break;
-		case 2:
-			event |= (message[0] << 24);
-			event |= (message[1] << 16);
-			event |= (noteFilt   << 8);
-			event |=  message[3];
-			break;
-		case 3:
-			event |= (message[0] << 24);
-			event |= (message[1] << 16);
-			event |= (message[2] << 8);
-			event |=  noteFilt;
-			break;
-	}
-
-	gLog("       - Channel %x - Event 0x%X\n", channel, event);
-
-	send(event | MIDI_CHANS[channel]);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void send(uint32_t data)
 {
 	if (!G_midiStatus)
 		return;
-
-	//std::vector<unsigned char> msg(1, 0x00);
-	//msg[0] = getB1(data);
-	//msg[1] = getB2(data);
-	//msg[2] = getB3(data);
 
   std::vector<unsigned char> msg(1, getB1(data));
   msg.push_back(getB2(data));
   msg.push_back(getB3(data));
 
 	midiOut->sendMessage(&msg);
-	//gLog("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	gLog("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
