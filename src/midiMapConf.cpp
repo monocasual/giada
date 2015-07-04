@@ -149,7 +149,7 @@ int MidiMapConf::readMap(string file)
 
 	gVector<string> ic;
 	gSplit(getValue("init_commands"), ";", &ic);
-	for (unsigned i=0; i<MAX_INIT_COMMANDS && i<ic.size; i++) {
+	for (unsigned i=0; i<(unsigned)MAX_INIT_COMMANDS && i<ic.size; i++) {
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
 		gLog("[MidiMapConf::readFromFile] init command %d - channel %d - message 0x%X\n",
 				i, init_channels[i], init_messages[i]);
@@ -207,7 +207,7 @@ void MidiMapConf::parse(string key, int *chan, uint32_t *msg, int *offset)
 	/* build the message as a string, for each char (i.e. nibble) in the
 	 * original string. Substitute 'n' with zeros. */
 
-	for (unsigned i=0, p=24; i<MAX_MIDI_NIBBLES; i++, p-=4) {
+	for (unsigned i=0, p=24; i<(unsigned)MAX_MIDI_NIBBLES; i++, p-=4) {
 		if (midiParts[i] == 'n') {
 			strmsg[i] = '0';
 			if (*offset == 0)
