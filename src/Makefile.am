@@ -59,7 +59,7 @@ giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lpthread \
 								-lfltk -lwininet -lgdi32 -lshell32 -lvfw32 -lrpcrt4 \
 								-luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
 								-lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser
-giada_LDFLAGS = -mwindows -mno-cygwin -static
+giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
 if OSX
