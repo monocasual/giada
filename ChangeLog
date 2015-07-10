@@ -13,6 +13,11 @@
 
 
 
+0.10.1 --- 2015 . ? . ?
+- Small fixes and cleanup in Makefile.am
+
+
+
 0.10.0 --- 2015 . 07 . 05
 - MIDI lightning output
 - Other minor fixes
