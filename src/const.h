@@ -31,9 +31,9 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define VERSIONE 				"0.10.0"
+#define VERSIONE 				"0.10.1"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	1.0f
+#define VERSIONE_FLOAT	1.01f
 
 #define CONF_FILENAME		"giada.conf"
 
