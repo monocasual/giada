@@ -45,10 +45,10 @@ giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
 							-lpulse-simple -lpulse -lsamplerate -lrtmidi
 endif
 if WINDOWS
-giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lpthread \
-								-lfltk -lwininet -lgdi32 -lshell32 -lvfw32 -lrpcrt4 \
-								-luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
-								-lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser
+giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
+                -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 \
+                -lsndfile -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser \	
+                -lpthreadGC2
 giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
