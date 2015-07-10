@@ -78,9 +78,7 @@ if LINUX
 	make;
 endif
 if WINDOWS
-	@cd rtaudio-mod; echo "Building RtAudio for Windows..."; \
-	./configure --with-asio --with-ds; \
-	make;
+	echo "Building RtAudio for Windows: nothing to do"
 endif
 if OSX
 	@cd rtaudio-mod; echo "Building RtAudio for OS X..."; \
