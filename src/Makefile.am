@@ -1,16 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
 
-
-
-# aeffect.h (header from VST SDK) uses 'long long' which is not supported
-# in ISO C++ 1998 and -Werror flag breaks the compilation.
-# This is a workaround, fixes needed.
-
-if WINDOWS
-AM_CXXFLAGS = -Wall -pedantic
-else
 AM_CXXFLAGS = -Wall -pedantic -Werror
-endif
 
 bin_PROGRAMS = giada
 
