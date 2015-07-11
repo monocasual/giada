@@ -191,7 +191,7 @@ int Conf::read()
 	logMode = atoi(getValue("logMode").c_str());
 
 	soundSystem = atoi(getValue("soundSystem").c_str());
-	if (!soundSystem & (SYS_API_ANY)) soundSystem = DEFAULT_SOUNDSYS;
+	if (!(soundSystem & SYS_API_ANY)) soundSystem = DEFAULT_SOUNDSYS;
 
 	soundDeviceOut = atoi(getValue("soundDeviceOut").c_str());
 	if (soundDeviceOut < 0) soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
