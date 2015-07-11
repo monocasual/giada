@@ -15,6 +15,7 @@
 
 0.10.1 --- 2015 . ? . ?
 - Small fixes and cleanup in Makefile.am
+- Fix check for configured soundsystem (breaks compilation on g++5)
 
 
 
