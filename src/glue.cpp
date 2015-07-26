@@ -48,14 +48,14 @@
 #include "recorder.h"
 #include "wave.h"
 #include "pluginHost.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "utils.h"
 #include "kernelMidi.h"
 #include "log.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 
 
 extern gdMainWindow *mainWin;

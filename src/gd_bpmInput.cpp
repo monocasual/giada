@@ -29,7 +29,7 @@
 
 #include "gd_bpmInput.h"
 #include "gd_mainWindow.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "ge_mixed.h"
 #include "mixer.h"
 #include "gui_utils.h"

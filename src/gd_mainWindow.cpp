@@ -46,11 +46,11 @@
 #include "recorder.h"
 #include "mixerHandler.h"
 #include "pluginHost.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "init.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 
 #ifdef WITH_VST
 #include "gd_pluginList.h"

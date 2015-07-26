@@ -35,11 +35,11 @@
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
 #include "mixer.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "const.h"
 #include "glue.h"
 #include "patch.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "log.h"
 

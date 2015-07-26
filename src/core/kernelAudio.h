@@ -31,7 +31,7 @@
 #define KERNELAUDIO_H
 
 
-#include "rtaudio-mod/RtAudio.h"
+#include "../deps/rtaudio-mod/RtAudio.h"
 #if defined(__linux__)
 	#include <jack/jack.h>
 	#include <jack/intclient.h>

@@ -39,10 +39,10 @@
 #include "wave.h"
 #include "glue.h"
 #include "pluginHost.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 
 
 extern Patch         G_Patch;

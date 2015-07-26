@@ -29,7 +29,7 @@
 
 #include "gd_devInfo.h"
 #include "ge_mixed.h"
-#include "kernelAudio.h"
+#include "core/kernelAudio.h"
 #include "gui_utils.h"
 
 

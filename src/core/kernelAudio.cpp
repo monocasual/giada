@@ -29,10 +29,10 @@
 
 #include <vector>
 #include "kernelAudio.h"
-#include "mixer.h"
-#include "glue.h"
+#include "../mixer.h"
+#include "../glue.h"
 #include "conf.h"
-#include "log.h"
+#include "../log.h"
 
 
 extern Mixer G_Mixer;

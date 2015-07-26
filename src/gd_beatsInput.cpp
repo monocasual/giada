@@ -33,7 +33,7 @@
 #include "patch.h"
 #include "glue.h"
 #include "mixer.h"
-#include "conf.h"
+#include "core/conf.h"
 
 
 extern Mixer				 G_Mixer;

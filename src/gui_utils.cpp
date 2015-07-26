@@ -40,9 +40,9 @@
 #include "recorder.h"
 #include "wave.h"
 #include "pluginHost.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "log.h"
-#include "conf.h"
+#include "core/conf.h"
 
 
 extern Mixer 	       G_Mixer;

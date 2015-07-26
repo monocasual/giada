@@ -32,12 +32,12 @@
 #include "gd_devInfo.h"
 #include "gd_browser.h"
 #include "ge_mixed.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "midiMapConf.h"
 #include "log.h"
 #include "gui_utils.h"
 #include "patch.h"
-#include "kernelAudio.h"
+#include "core/kernelAudio.h"
 #include "kernelMidi.h"
 
 

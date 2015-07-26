@@ -31,10 +31,10 @@
 #include "kernelMidi.h"
 #include "glue.h"
 #include "mixer.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "pluginHost.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "midiMapConf.h"
 #include "log.h"
 

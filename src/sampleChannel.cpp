@@ -30,7 +30,7 @@
 #include <math.h>
 #include "sampleChannel.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "wave.h"
 #include "pluginHost.h"
 #include "waveFx.h"

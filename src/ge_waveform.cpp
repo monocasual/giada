@@ -34,13 +34,13 @@
 #include "ge_waveform.h"
 #include "gd_editor.h"
 #include "wave.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "glue.h"
 #include "mixer.h"
 #include "waveFx.h"
 #include "ge_mixed.h"
 #include "gg_waveTools.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 
 

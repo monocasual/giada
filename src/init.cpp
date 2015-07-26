@@ -36,7 +36,7 @@
 #include "utils.h"
 #include "mixerHandler.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"

@@ -27,11 +27,11 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "channel.h"
+#include "core/channel.h"
 #include "midiChannel.h"
 #include "pluginHost.h"
 #include "patch.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "kernelMidi.h"
 #include "log.h"
 

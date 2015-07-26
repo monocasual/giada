@@ -35,7 +35,7 @@
 #include "graphics.h"
 #include "recorder.h"
 #include "gui_utils.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 
 

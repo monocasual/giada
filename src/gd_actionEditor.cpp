@@ -37,9 +37,9 @@
 #include "graphics.h"
 #include "mixer.h"
 #include "recorder.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "ge_mixed.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 
 

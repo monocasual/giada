@@ -32,7 +32,7 @@
 #include "ge_midiIoTools.h"
 #include "gui_utils.h"
 #include "kernelMidi.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "sampleChannel.h"
 #include "log.h"
 

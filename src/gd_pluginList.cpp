@@ -37,11 +37,11 @@
 #include "ge_mixed.h"
 #include "gui_utils.h"
 #include "utils.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "graphics.h"
 #include "pluginHost.h"
 #include "mixer.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "ge_channel.h"
 
 

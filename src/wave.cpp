@@ -33,7 +33,7 @@
 #include <math.h>
 #include "wave.h"
 #include "utils.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "init.h"
 #include "log.h"
 

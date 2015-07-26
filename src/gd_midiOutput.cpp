@@ -32,9 +32,9 @@
 #include "ge_channel.h"
 #include "ge_midiIoTools.h"
 #include "gg_keyboard.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "midiChannel.h"
 #include "gui_utils.h"
 

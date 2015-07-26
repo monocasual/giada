@@ -28,17 +28,17 @@
 
 
 #include "channel.h"
-#include "pluginHost.h"
-#include "kernelMidi.h"
-#include "patch.h"
-#include "wave.h"
-#include "mixer.h"
-#include "mixerHandler.h"
+#include "../pluginHost.h"
+#include "../kernelMidi.h"
+#include "../patch.h"
+#include "../wave.h"
+#include "../mixer.h"
+#include "../mixerHandler.h"
 #include "conf.h"
-#include "waveFx.h"
-#include "log.h"
-#include "midiMapConf.h"
-#include "ge_channel.h"
+#include "../waveFx.h"
+#include "../log.h"
+#include "../midiMapConf.h"
+#include "../ge_channel.h"
 
 
 extern Patch       G_Patch;

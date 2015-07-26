@@ -31,12 +31,12 @@
 #include "ge_pianoRoll.h"
 #include "gd_mainWindow.h"
 #include "gd_actionEditor.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "midiChannel.h"
 #include "const.h"
 #include "kernelMidi.h"
 #include "log.h"
-#include "conf.h"
+#include "core/conf.h"
 
 
 extern gdMainWindow *mainWin;

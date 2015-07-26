@@ -43,7 +43,7 @@
 	#endif
 #endif
 
-#include "vst/aeffectx.h"
+#include "deps/vst/aeffectx.h"
 
 #if defined(_WIN32)
 	#include <windows.h>

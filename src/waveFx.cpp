@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include "waveFx.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "mixer.h"
 #include "wave.h"
 #include "log.h"

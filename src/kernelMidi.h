@@ -33,7 +33,7 @@
 
 #include <stdint.h>
 #include <RtMidi.h>
-#include "channel.h"
+#include "core/channel.h"
 
 
 namespace kernelMidi {

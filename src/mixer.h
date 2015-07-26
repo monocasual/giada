@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include "const.h"
-#include "kernelAudio.h"
+#include "core/kernelAudio.h"
 #include "utils.h"
 
 

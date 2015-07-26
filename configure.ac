@@ -6,9 +6,9 @@
 AC_PREREQ(2.60)
 AC_INIT([giada], [0.10], [giadaloopmachine@gmail.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # test the build environment. These vars are used in Makefile.am during
 # the linking of the libraries.
@@ -36,7 +36,7 @@ AM_CONDITIONAL(LINUX,   test "x$os" = "xlinux")
 AM_CONDITIONAL(WINDOWS, test "x$os" = "xwindows")
 AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # --enable-vst. VST compilation is disabled by default
 #
@@ -54,16 +54,21 @@ AC_ARG_ENABLE(
   [AC_DEFINE(WITH_VST)]
 )
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-# Check for programs.
+# Check for C++ compiler
 
 AC_PROG_CXX
+
+# Check for C compiler (TODO - is that really needed?)
+
 AC_PROG_CC
-AC_PROG_INSTALL
+
+# Check for make
+
 AC_PROG_MAKE_SET
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Check for libraries.
 
@@ -74,7 +79,7 @@ AC_CHECK_LIB(
 	[AC_MSG_ERROR([error: library 'pthread' not found!])]
 )
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Check for generic headers (fltk, rtaudio and libsndfile are static,
 # we ask if headers are available)
@@ -138,29 +143,11 @@ else
 fi
 
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Check for linux header files.
 
 if test "x$os" = "xlinux"; then
-
-# TODO
-
-#	AC_LANG_PUSH([C++])
-#	AC_CHECK_HEADER(
-#		[X11/extensions/Xext.h],
-#		[],
-#		[AC_MSG_ERROR([missing Xext.h, maybe you need to install the libxext-dev package?])]
-#	)
-#	AC_LANG_POP
-
-#	AC_LANG_PUSH([C++])
-#	AC_CHECK_HEADER(
-#		[X11/Xft.h],
-#		[],
-#		[AC_MSG_ERROR([missing Xft.h, maybe you need to install the libxft-dev package?])]
-#	)
-#	AC_LANG_POP
 
 	AC_LANG_PUSH([C++])
 	AC_CHECK_HEADER(
@@ -171,9 +158,9 @@ if test "x$os" = "xlinux"; then
 	AC_LANG_POP
 fi
 
-# ----------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # finalizing
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

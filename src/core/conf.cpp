@@ -28,10 +28,10 @@
 
 
 #include <stdlib.h>
-#include "const.h"
 #include "conf.h"
-#include "utils.h"
-#include "log.h"
+#include "../const.h"
+#include "../utils.h"
+#include "../log.h"
 
 
 int Conf::openFileForReading()

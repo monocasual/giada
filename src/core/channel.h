@@ -31,9 +31,9 @@
 #define CHANNEL_H
 
 
-#include "utils.h"
-#include "const.h"
-#include "recorder.h"
+#include "../utils.h"
+#include "../const.h"
+#include "../recorder.h"
 
 
 #ifdef WITH_VST
@@ -47,7 +47,7 @@
 			#define __cdecl
 		#endif
 	#endif
-	#include "vst/aeffectx.h"
+	#include "../deps/vst/aeffectx.h"
 
 #endif
 

@@ -31,11 +31,11 @@
 
 
 #include "pluginHost.h"
-#include "conf.h"
+#include "core/conf.h"
 #include "const.h"
 #include "mixer.h"
 #include "gd_mainWindow.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "kernelMidi.h"

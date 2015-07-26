@@ -36,7 +36,7 @@
 #include "recorder.h"
 #include "mixer.h"
 #include "glue.h"
-#include "channel.h"
+#include "core/channel.h"
 #include "log.h"
 
 

@@ -32,7 +32,7 @@
 
 
 #include <samplerate.h>
-#include "channel.h"
+#include "core/channel.h"
 
 
 class SampleChannel : public Channel {

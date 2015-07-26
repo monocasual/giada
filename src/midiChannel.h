@@ -42,7 +42,7 @@
 			#define __cdecl
 		#endif
 	#endif
-	#include "vst/aeffectx.h"
+	#include "deps/vst/aeffectx.h"
 
 #endif
 
