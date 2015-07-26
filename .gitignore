@@ -6,6 +6,7 @@
 *.orig
 *.rej
 *.swp
+*.dirstamp
 
 # --- rtaudio stuff
 src/rtaudio-mod/librtaudio.pc
@@ -49,4 +50,3 @@ giada.creator
 giada.creator.user
 giada.files
 giada.includes
-/src/.dirstamp
