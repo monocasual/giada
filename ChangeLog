@@ -14,9 +14,9 @@
 
 
 0.10.1 --- 2015 . ? . ?
+- Source folders refactoring
 - Small fixes and cleanup in Makefile.am
-- Fix check for configured soundsystem (breaks compilation on g++5)
-
+- Fix check for configured soundsystem (would break compilation on g++5)
 
 
 0.10.0 --- 2015 . 07 . 05
