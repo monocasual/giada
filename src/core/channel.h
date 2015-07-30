@@ -31,9 +31,9 @@
 #define CHANNEL_H
 
 
-#include "../utils.h"
-#include "../const.h"
-#include "../recorder.h"
+#include "../utils/utils.h"
+#include "const.h"
+#include "recorder.h"
 
 
 #ifdef WITH_VST

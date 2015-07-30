@@ -29,9 +29,9 @@
 
 #include <stdlib.h>
 #include "conf.h"
-#include "../const.h"
-#include "../utils.h"
-#include "../log.h"
+#include "const.h"
+#include "../utils/utils.h"
+#include "../utils/log.h"
 
 
 int Conf::openFileForReading()

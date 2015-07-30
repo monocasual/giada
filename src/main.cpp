@@ -29,19 +29,19 @@
 #if defined(__linux__) || defined(__APPLE__)
 	#include <unistd.h>
 #endif
-#include "init.h"
-#include "const.h"
-#include "patch.h"
+#include "core/init.h"
+#include "core/const.h"
+#include "core/patch.h"
 #include "core/conf.h"
-#include "midiMapConf.h"
-#include "mixer.h"
-#include "mixerHandler.h"
+#include "core/midiMapConf.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
 #include "core/kernelAudio.h"
-#include "recorder.h"
-#include "gui_utils.h"
-#include "gd_mainWindow.h"
+#include "core/recorder.h"
+#include "utils/gui_utils.h"
+#include "gui/dialogs/gd_mainWindow.h"
 #ifdef WITH_VST
-#include "pluginHost.h"
+#include "core/pluginHost.h"
 #endif
 
 

@@ -4,43 +4,117 @@ AM_CXXFLAGS = -Wall -pedantic -Werror
 
 bin_PROGRAMS = giada
 
-giada_SOURCES =              \
-src/core/channel.h           \
-src/core/channel.cpp         \
-src/core/conf.h              \
-src/core/conf.cpp            \
-src/core/kernelAudio.h       \
-src/core/kernelAudio.cpp     \
-src/const.h              src/gd_keyGrabber.h        src/glue.h               src/mixerHandler.cpp \
-src/gd_about.cpp         src/gd_mainWindow.cpp      src/graphics.cpp         src/mixerHandler.h \
-src/gd_about.h           src/gd_mainWindow.h        src/graphics.h           src/patch.cpp \
-src/gd_beatsInput.cpp    src/gd_warnings.cpp        src/ge_mixed.cpp         src/patch.h \
-src/gd_beatsInput.h      src/gd_warnings.h          src/ge_mixed.h           src/recorder.cpp \
-src/gd_bpmInput.cpp      src/ge_waveform.cpp        src/gui_utils.cpp        src/recorder.h \
-src/gd_bpmInput.h        src/ge_waveform.h          src/gui_utils.h          src/utils.cpp \
-src/gd_browser.cpp       src/init.cpp               src/utils.h \
-src/gd_browser.h         src/init.h  				        src/gd_config.cpp         \
-src/gg_keyboard.cpp              src/wave.cpp  	         src/gd_config.h \
-src/gg_keyboard.h                 src/waveFx.cpp 		       src/gd_editor.cpp \
-src/gg_waveTools.cpp     src/main.cpp               src/waveFx.h				     src/gd_editor.h \
-src/gg_waveTools.h       src/mixer.cpp              src/wave.h  				     src/gd_keyGrabber.cpp \
-src/glue.cpp             src/mixer.h						    src/ge_browser.h		     src/ge_browser.cpp \
-src/gd_devInfo.cpp		   src/gd_devInfo.h           src/plugin.h             src/plugin.cpp \
-src/pluginHost.h			   src/pluginHost.cpp         src/gd_pluginList.h	     src/gd_pluginList.cpp \
-src/gd_pluginWindow.h	   src/gd_pluginWindow.cpp    src/ge_window.h			     src/ge_window.cpp \
-src/dataStorage.h			   src/dataStorage.cpp		     \
-src/gd_actionEditor.h	   src/gd_actionEditor.cpp    src/ge_muteChannel.h     src/ge_muteChannel.cpp \
-src/ge_actionChannel.h   src/ge_actionChannel.cpp   src/gd_pluginWindowGUI.h src/gd_pluginWindowGUI.cpp \
-src/ge_actionWidget.h    src/ge_actionWidget.cpp    src/ge_envelopeChannel.h src/ge_envelopeChannel.cpp \
-src/ge_pianoRoll.h		   src/ge_pianoRoll.cpp       src/kernelMidi.h         src/kernelMidi.cpp \
-src/gd_midiOutput.h      src/gd_midiOutput.cpp      src/gd_midiInput.h       src/gd_midiInput.cpp \
-src/sampleChannel.h      src/sampleChannel.cpp      src/midiChannel.cpp      src/midiChannel.h \
-src/midiMapConf.cpp      src/midiMapConf.h          src/ge_channel.h         src/ge_channel.cpp \
-src/log.h                src/log.cpp                src/ge_column.h          src/ge_column.cpp \
-src/ge_sampleChannel.h   src/ge_sampleChannel.cpp   src/ge_midiChannel.h     src/ge_midiChannel.cpp \
-src/ge_midiIoTools.h     src/ge_midiIoTools.cpp
-
-
+giada_SOURCES =                        \
+src/main.cpp                           \
+src/core/const.h                       \
+src/core/channel.h                     \
+src/core/channel.cpp                   \
+src/core/sampleChannel.h               \
+src/core/sampleChannel.cpp             \
+src/core/midiChannel.h                 \
+src/core/midiChannel.cpp               \
+src/core/midiMapConf.h                 \
+src/core/midiMapConf.cpp               \
+src/core/conf.h                        \
+src/core/conf.cpp                      \
+src/core/kernelAudio.h                 \
+src/core/kernelAudio.cpp               \
+src/core/pluginHost.h			             \
+src/core/pluginHost.cpp                \
+src/core/mixerHandler.h                \
+src/core/mixerHandler.cpp              \
+src/core/init.h                        \
+src/core/init.cpp                      \
+src/core/plugin.h                      \
+src/core/plugin.cpp                    \
+src/core/wave.h                        \
+src/core/wave.cpp                      \
+src/core/waveFx.h                      \
+src/core/waveFx.cpp                    \
+src/core/kernelMidi.h                  \
+src/core/kernelMidi.cpp                \
+src/core/graphics.h                    \
+src/core/graphics.cpp                  \
+src/core/patch.h                       \
+src/core/patch.cpp                     \
+src/core/recorder.h                    \
+src/core/recorder.cpp                  \
+src/core/mixer.h                       \
+src/core/mixer.cpp                     \
+src/core/dataStorage.h	               \
+src/core/dataStorage.cpp               \
+src/glue/glue.h                        \
+src/glue/glue.cpp                      \
+src/gui/dialogs/gd_keyGrabber.h        \
+src/gui/dialogs/gd_keyGrabber.cpp      \
+src/gui/dialogs/gd_about.h             \
+src/gui/dialogs/gd_about.cpp           \
+src/gui/dialogs/gd_mainWindow.h        \
+src/gui/dialogs/gd_mainWindow.cpp      \
+src/gui/dialogs/gd_beatsInput.h        \
+src/gui/dialogs/gd_beatsInput.cpp      \
+src/gui/dialogs/gd_warnings.h          \
+src/gui/dialogs/gd_warnings.cpp        \
+src/gui/dialogs/gd_bpmInput.h          \
+src/gui/dialogs/gd_bpmInput.cpp        \
+src/gui/dialogs/gd_browser.h           \
+src/gui/dialogs/gd_browser.cpp         \
+src/gui/dialogs/gd_config.h      			 \
+src/gui/dialogs/gd_config.cpp          \
+src/gui/dialogs/gd_devInfo.h           \
+src/gui/dialogs/gd_devInfo.cpp		     \
+src/gui/dialogs/gd_pluginList.h	       \
+src/gui/dialogs/gd_pluginList.cpp      \
+src/gui/dialogs/gd_pluginWindow.h	     \
+src/gui/dialogs/gd_pluginWindow.cpp    \
+src/gui/dialogs/gd_editor.h            \
+src/gui/dialogs/gd_editor.cpp          \
+src/gui/dialogs/gd_pluginWindowGUI.h   \
+src/gui/dialogs/gd_pluginWindowGUI.cpp \
+src/gui/dialogs/gd_midiOutput.h        \
+src/gui/dialogs/gd_midiOutput.cpp      \
+src/gui/dialogs/gd_midiInput.h         \
+src/gui/dialogs/gd_midiInput.cpp       \
+src/gui/dialogs/gd_actionEditor.h	     \
+src/gui/dialogs/gd_actionEditor.cpp    \
+src/gui/elems/ge_column.h              \
+src/gui/elems/ge_column.cpp            \
+src/gui/elems/ge_sampleChannel.h       \
+src/gui/elems/ge_sampleChannel.cpp     \
+src/gui/elems/ge_midiChannel.h         \
+src/gui/elems/ge_midiChannel.cpp       \
+src/gui/elems/ge_midiIoTools.h         \
+src/gui/elems/ge_midiIoTools.cpp       \
+src/gui/elems/ge_mixed.h               \
+src/gui/elems/ge_mixed.cpp             \
+src/gui/elems/ge_waveform.h            \
+src/gui/elems/ge_waveform.cpp          \
+src/gui/elems/ge_browser.h		         \
+src/gui/elems/ge_browser.cpp           \
+src/gui/elems/ge_actionWidget.h        \
+src/gui/elems/ge_actionWidget.cpp      \
+src/gui/elems/ge_envelopeChannel.h     \
+src/gui/elems/ge_envelopeChannel.cpp   \
+src/gui/elems/ge_pianoRoll.h		       \
+src/gui/elems/ge_pianoRoll.cpp         \
+src/gui/elems/ge_channel.h             \
+src/gui/elems/ge_channel.cpp           \
+src/gui/elems/ge_muteChannel.h         \
+src/gui/elems/ge_muteChannel.cpp       \
+src/gui/elems/ge_actionChannel.h       \
+src/gui/elems/ge_actionChannel.cpp     \
+src/gui/elems/ge_window.h			         \
+src/gui/elems/ge_window.cpp            \
+src/gui/groups/gg_keyboard.h           \
+src/gui/groups/gg_keyboard.cpp         \
+src/gui/groups/gg_waveTools.h          \
+src/gui/groups/gg_waveTools.cpp        \
+src/utils/log.h                        \
+src/utils/log.cpp                      \
+src/utils/gui_utils.h                  \
+src/utils/gui_utils.cpp                \
+src/utils/utils.h                      \
+src/utils/utils.cpp
 
 # Check for environment: these vars are defined via AM_CONDITIONAL
 # inside configure.ac
