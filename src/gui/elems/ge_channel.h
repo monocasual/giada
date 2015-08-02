@@ -119,23 +119,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gModeBox : public Fl_Menu_Button
-{
-private:
-	static void cb_change_chanmode(Fl_Widget *v, void *p);
-	inline void __cb_change_chanmode(int mode);
-
-	class SampleChannel *ch;
-
-public:
-	gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
-	void draw();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 /* gMainButton
  * base main button for MIDI and Sample Channels. */
 

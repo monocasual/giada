@@ -49,6 +49,7 @@
 #include "ge_keyboard.h"
 #include "ge_sampleChannel.h"
 #include "ge_status.h"
+#include "ge_modeBox.h"
 
 #ifdef WITH_VST
 #include "../dialogs/gd_pluginList.h"
