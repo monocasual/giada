@@ -47,7 +47,7 @@
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_keyGrabber.h"
 #include "../dialogs/gd_midiOutput.h"
-#include "../groups/gg_keyboard.h"
+#include "ge_keyboard.h"
 #include "ge_midiChannel.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"

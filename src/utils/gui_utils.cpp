@@ -38,7 +38,7 @@
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_actionEditor.h"
-#include "../gui/groups/gg_keyboard.h"
+#include "../gui/elems/ge_keyboard.h"
 #include "../gui/elems/ge_window.h"
 #include "../gui/elems/ge_channel.h"
 #include "gui_utils.h"

@@ -43,7 +43,7 @@
 #include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
-#include "../groups/gg_keyboard.h"
+#include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"
 #include "gd_bpmInput.h"
 #include "gd_beatsInput.h"

@@ -33,9 +33,9 @@
 #include "../../core/sampleChannel.h"
 #include "../../glue/glue.h"
 #include "../../utils/log.h"
-#include "../groups/gg_keyboard.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"
+#include "ge_keyboard.h"
 #include "ge_actionChannel.h"
 
 

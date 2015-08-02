@@ -36,7 +36,7 @@
 #include "../../core/mixer.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
-#include "../groups/gg_keyboard.h"
+#include "ge_keyboard.h"
 #include "ge_envelopeChannel.h"
 
 

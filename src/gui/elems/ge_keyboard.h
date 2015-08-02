@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GG_KEYBOARD_H
-#define GG_KEYBOARD_H
+#ifndef GE_KEYBOARD_H
+#define GE_KEYBOARD_H
 
 
 #include <FL/Fl.H>

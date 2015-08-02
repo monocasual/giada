@@ -31,7 +31,7 @@
 #include "../utils/log.h"
 #include "../utils/utils.h"
 #include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/groups/gg_keyboard.h"
+#include "../gui/elems/ge_keyboard.h"
 #include "patch.h"
 #include "init.h"
 #include "recorder.h"

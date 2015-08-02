@@ -39,7 +39,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../glue/glue.h"
 #include "../dialogs/gd_editor.h"
-#include "../groups/gg_waveTools.h"
+#include "ge_waveTools.h"
 #include "ge_mixed.h"
 #include "ge_waveform.h"
 

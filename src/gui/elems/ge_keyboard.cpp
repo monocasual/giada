@@ -39,9 +39,9 @@
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_editor.h"
 #include "../dialogs/gd_warnings.h"
-#include "../elems/ge_channel.h"
-#include "../elems/ge_sampleChannel.h"
-#include "gg_keyboard.h"
+#include "ge_channel.h"
+#include "ge_sampleChannel.h"
+#include "ge_keyboard.h"
 
 
 extern Mixer 		     G_Mixer;

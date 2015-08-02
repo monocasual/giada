@@ -33,7 +33,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"
 #include "../../utils/log.h"
-#include "../groups/gg_keyboard.h"
+#include "../elems/ge_keyboard.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
 #include "gd_keyGrabber.h"

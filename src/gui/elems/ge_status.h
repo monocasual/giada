@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gg_waveTools
+ * ge_status
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,26 +24,25 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#ifndef GG_WAVETOOLS_H
-#define GG_WAVETOOLS_H
-
-#include <FL/Fl.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Scroll.H>
+#ifndef GE_STATUS_H
+#define GE_STATUS_H
 
 
-class gWaveTools : public Fl_Scroll {
+#include <FL/Fl_Box.H>
+#include "../../core/sampleChannel.h"
+#include "ge_mixed.h"
+
+
+class gStatus : public Fl_Box
+{
 public:
-	class gWaveform *waveform;
-
-	gWaveTools(int X,int Y,int W, int H, class SampleChannel *ch, const char *L=0);
-	void resize(int x, int y, int w, int h);
-	int  handle(int e);
-
-	void updateWaveform();
+	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
+	void draw();
+	class SampleChannel *ch;
 };
+
 
 #endif

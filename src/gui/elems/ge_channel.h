@@ -119,18 +119,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gStatus : public Fl_Box
-{
-public:
-	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
-	void draw();
-	class SampleChannel *ch;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 class gModeBox : public Fl_Menu_Button
 {
 private:

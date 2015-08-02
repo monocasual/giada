@@ -105,10 +105,12 @@ src/gui/elems/ge_actionChannel.h       \
 src/gui/elems/ge_actionChannel.cpp     \
 src/gui/elems/ge_window.h			         \
 src/gui/elems/ge_window.cpp            \
-src/gui/groups/gg_keyboard.h           \
-src/gui/groups/gg_keyboard.cpp         \
-src/gui/groups/gg_waveTools.h          \
-src/gui/groups/gg_waveTools.cpp        \
+src/gui/elems/ge_status.h              \
+src/gui/elems/ge_status.cpp            \
+src/gui/elems/ge_keyboard.h            \
+src/gui/elems/ge_keyboard.cpp          \
+src/gui/elems/ge_waveTools.h           \
+src/gui/elems/ge_waveTools.cpp         \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui_utils.h                  \

@@ -37,7 +37,7 @@
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_warnings.h"
-#include "../groups/gg_keyboard.h"
+#include "../elems/ge_keyboard.h"
 #include "ge_column.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"

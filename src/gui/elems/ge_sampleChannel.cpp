@@ -46,8 +46,9 @@
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_midiOutput.h"
-#include "../groups/gg_keyboard.h"
+#include "ge_keyboard.h"
 #include "ge_sampleChannel.h"
+#include "ge_status.h"
 
 #ifdef WITH_VST
 #include "../dialogs/gd_pluginList.h"

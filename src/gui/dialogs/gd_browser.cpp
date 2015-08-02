@@ -38,7 +38,7 @@
 #include "../../glue/glue.h"
 #include "../elems/ge_browser.h"
 #include "../elems/ge_channel.h"
-#include "../groups/gg_keyboard.h"
+#include "../elems/ge_keyboard.h"
 #include "gd_browser.h"
 #include "gd_pluginList.h"
 #include "gd_mainWindow.h"

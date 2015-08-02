@@ -31,7 +31,7 @@
 #include "../../core/mixer.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_waveform.h"
-#include "gg_waveTools.h"
+#include "ge_waveTools.h"
 
 
 gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
