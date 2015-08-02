@@ -34,6 +34,7 @@
 #include <FL/x.H>
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_window.h"
+#include "../elems/ge_controller.h"
 
 
 /* ------------------------------------------------------------------ */
@@ -133,42 +134,6 @@ private:
 public:
 
 	gMenu(int x, int y);
-};
-
-
-/* ------------------------------------------------------------------ */
-
-
-class gController : public Fl_Group
-{
-private:
-
-	class gClick *rewind;
-	class gClick *play;
-	class gClick *recAction;
-	class gClick *recInput;
-	class gClick *metronome;
-
-	static void cb_rewind   (Fl_Widget *v, void *p);
-	static void cb_play     (Fl_Widget *v, void *p);
-	static void cb_recAction(Fl_Widget *v, void *p);
-	static void cb_recInput (Fl_Widget *v, void *p);
-	static void cb_metronome(Fl_Widget *v, void *p);
-
-	inline void __cb_rewind   ();
-	inline void __cb_play     ();
-	inline void __cb_recAction();
-	inline void __cb_recInput ();
-	inline void __cb_metronome();
-
-public:
-
-	gController(int x, int y);
-
-	void updatePlay     (int v);
-	void updateMetronome(int v);
-	void updateRecInput (int v);
-	void updateRecAction(int v);
 };
 
 
