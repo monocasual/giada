@@ -102,14 +102,14 @@ public:
 
 	int getColumnIndex();
 
-	class gButton *button;
-	class gStatus *status;
+	class gButton     *button;
+	class gStatus     *status;
 	class gMainButton *mainButton;
-	class gDial   *vol;
-	class gClick 	*mute;
-	class gClick 	*solo;
+	class gDial       *vol;
+	class gClick 	    *mute;
+	class gClick 	    *solo;
 #ifdef WITH_VST
-	class gFxButton *fx;
+	class gFxButton  *fx;
 #endif
 
 	int type;
