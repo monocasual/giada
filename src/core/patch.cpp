@@ -60,9 +60,7 @@ int Patch::open(const char *file)
 		return PATCH_INVALID;
 
 	version = atof(getValue("versionf").c_str());
-	gLog("[PATCH] open patch version %f\n", version);
-	if (version == 0.0)
-		gLog("[PATCH] patch < 0.6.1, backward compatibility mode\n");
+	gLog("[patch] open patch version %f\n", version);
 
 	return PATCH_OPEN_OK;
 }
@@ -429,10 +427,7 @@ int Patch::getQuantize()
 
 bool Patch::getMetronome()
 {
-	bool out = atoi(getValue("metronome").c_str());
-	if (out != true || out != false)
-		return false;
-	return out;
+	return atoi(getValue("metronome").c_str());
 }
 
 
@@ -473,7 +468,7 @@ uint32_t Patch::getMidiValue(int i, const char *c)
 
 int Patch::readRecs()
 {
-	gLog("[PATCH] Reading recs...\n");
+	gLog("[patch] Reading recs...\n");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
 
@@ -530,7 +525,7 @@ int Patch::readRecs()
 #ifdef WITH_VST
 int Patch::readPlugins()
 {
-	gLog("[PATCH] Reading plugins...\n");
+	gLog("[patch] Reading plugins...\n");
 
 	int globalOut = 1;
 
@@ -642,7 +637,7 @@ int Patch::write(const char *file, const char *name, bool project)
 		for (int j=0; j<numPlugs; j++) {
 			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
 			if (!pPlugin->status) {
-				gLog("[PATCH] Plugin %d is in a bad status, skip writing params\n", i);
+				gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
 				continue;
 			}
 			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
@@ -727,7 +722,7 @@ void Patch::writeMasterPlugins(int type)
 
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
 		if (!pPlugin->status) {
-			gLog("[PATCH] Plugin %d is in a bad status, skip writing params\n", i);
+			gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
 			continue;
 		}
 
