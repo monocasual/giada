@@ -73,7 +73,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	int delta = 144; // (6 widgets * 20) + (6 paddings * 4)
 #endif
 
-	button       = new gButton(x(), y(), 20, 20);
+	button       = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	status       = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
 	mainButton   = new gSampleMainButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	modeBox      = new gModeBox(mainButton->x()+mainButton->w()+4, y(), 20, 20, ch);
@@ -388,10 +388,8 @@ void gSampleChannel::refresh()
 	setColorsByStatus(ch->status, ch->recStatus);
 
 	if (ch->wave != NULL) {
-
 		if (G_Mixer.chanInput == ch)
 			mainButton->bgColor0 = COLOR_BG_3;
-
 		if (recorder::active) {
 			if (recorder::canRec(ch)) {
 				mainButton->bgColor0 = COLOR_BG_4;

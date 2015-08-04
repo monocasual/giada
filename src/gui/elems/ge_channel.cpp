@@ -102,11 +102,13 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
   		mainButton->bgColor0 = COLOR_BG_0;
   		mainButton->bdColor  = COLOR_BD_0;
   		mainButton->txtColor = COLOR_TEXT_0;
+      button->value(0);
       break;
     case STATUS_PLAY:
   		mainButton->bgColor0 = COLOR_BG_2;
   		mainButton->bdColor  = COLOR_BD_1;
   		mainButton->txtColor = COLOR_TEXT_1;
+      button->value(1);
       break;
     case STATUS_WAIT:
       blink();

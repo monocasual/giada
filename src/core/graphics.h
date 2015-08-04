@@ -82,6 +82,9 @@ extern const char *soloOn_xpm[];
 extern const char *readActionOn_xpm[];
 extern const char *readActionOff_xpm[];
 
+extern const char *channelStop_xpm[];
+extern const char *channelPlay_xpm[];
+
 #ifdef WITH_VST
 extern const char *fxOff_xpm[];
 extern const char *fxOn_xpm[];
