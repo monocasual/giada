@@ -74,7 +74,7 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 	int delta = 96; // (4 widgets * 20) + (4 paddings * 4)
 #endif
 
-	button     = new gButton(x(), y(), 20, 20);
+	button     = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	mainButton = new gMidiMainButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute       = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo       = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
