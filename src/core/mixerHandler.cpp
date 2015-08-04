@@ -111,15 +111,7 @@ void mh_loadPatch(bool isProject, const char *projPath)
 		Channel *ch = glue_addChannel(G_Patch.getColumn(i), G_Patch.getType(i));
 
 		char smpPath[PATH_MAX];
-
-		/* projects < 0.6.3 version are not portable. Just use the regular
-		 * samplePath */
-		/* TODO version >= 0.10.0 - old stuff, remove backward compatibility */
-
-		if (isProject && G_Patch.version >= 0.63f)
-			sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch.getSamplePath(i).c_str());
-		else
-			sprintf(smpPath, "%s", G_Patch.getSamplePath(i).c_str());
+		sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch.getSamplePath(i).c_str());
 
 		ch->loadByPatch(smpPath, i);
 	}
