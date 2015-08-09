@@ -115,6 +115,8 @@ src/gui/elems/ge_modeBox.h             \
 src/gui/elems/ge_modeBox.cpp           \
 src/gui/elems/ge_controller.h          \
 src/gui/elems/ge_controller.cpp        \
+src/gui/elems/ge_channelButton.h       \
+src/gui/elems/ge_channelButton.cpp     \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui_utils.h                  \

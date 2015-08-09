@@ -75,7 +75,7 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 #endif
 
 	button     = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	mainButton = new gMidiMainButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
+	mainButton = new gMidiChannelButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute       = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo       = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
@@ -256,10 +256,7 @@ void gMidiChannel::refresh()
 
 void gMidiChannel::reset()
 {
-	mainButton->bgColor0 = COLOR_BG_0;
-	mainButton->bdColor  = COLOR_BD_0;
-	mainButton->txtColor = COLOR_TEXT_0;
-	mainButton->label("-- MIDI --");
+	mainButton->setDefaultMode("-- MIDI --");
 	mainButton->redraw();
 }
 
@@ -329,14 +326,14 @@ int gMidiChannel::keyPress(int e)
 /* -------------------------------------------------------------------------- */
 
 
-gMidiMainButton::gMidiMainButton(int x, int y, int w, int h, const char *l)
-	: gMainButton(x, y, w, h, l) {}
+gMidiChannelButton::gMidiChannelButton(int x, int y, int w, int h, const char *l)
+	: gChannelButton(x, y, w, h, l) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int gMidiMainButton::handle(int e)
+int gMidiChannelButton::handle(int e)
 {
 	// MIDI drag-n-drop does nothing so far.
 	return gClick::handle(e);

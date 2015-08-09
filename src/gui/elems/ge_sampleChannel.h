@@ -35,6 +35,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
 #include "ge_channel.h"
+#include "ge_channelButton.h"
 #include "ge_mixed.h"
 
 
@@ -92,10 +93,10 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gSampleMainButton : public gMainButton
+class gSampleChannelButton : public gChannelButton
 {
 public:
-	gSampleMainButton(int x, int y, int w, int h, const char *l=0);
+	gSampleChannelButton(int x, int y, int w, int h, const char *l=0);
 	int handle(int e);
 };
 

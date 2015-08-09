@@ -102,31 +102,17 @@ public:
 
 	int getColumnIndex();
 
-	class gButton     *button;
-	class gStatus     *status;
-	class gMainButton *mainButton;
-	class gDial       *vol;
-	class gClick 	    *mute;
-	class gClick 	    *solo;
+	class gButton        *button;
+	class gStatus        *status;
+	class gChannelButton *mainButton;
+	class gDial          *vol;
+	class gClick 	       *mute;
+	class gClick 	       *solo;
 #ifdef WITH_VST
-	class gFxButton  *fx;
+	class gFxButton      *fx;
 #endif
 
 	int type;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-/* gMainButton
- * base main button for MIDI and Sample Channels. */
-
-class gMainButton : public gClick
-{
-public:
-	gMainButton(int x, int y, int w, int h, const char *l=0);
-	virtual int handle(int e) = 0;
 };
 
 

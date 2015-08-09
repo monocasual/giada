@@ -36,6 +36,7 @@
 #include "../elems/ge_keyboard.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
+#include "../elems/ge_channelButton.h"
 #include "gd_keyGrabber.h"
 #include "gd_config.h"
 #include "gd_mainWindow.h"
@@ -97,6 +98,7 @@ void gdKeyGrabber::setButtonLabel(int key)
 {
 	char tmp[2]; sprintf(tmp, "%c", key);
 	ch->guiChannel->button->copy_label(tmp);
+	ch->guiChannel->mainButton->setKey(tmp);
 	ch->key = key;
 }
 

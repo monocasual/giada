@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_channel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "../../core/pluginHost.h"
@@ -79,16 +79,10 @@ int gChannel::getColumnIndex()
 
 void gChannel::blink()
 {
-	if (gu_getBlinker() > 6) {
-		mainButton->bgColor0 = COLOR_BG_2;
-		mainButton->bdColor  = COLOR_BD_1;
-		mainButton->txtColor = COLOR_TEXT_1;
-	}
-	else {
-		mainButton->bgColor0 = COLOR_BG_0;
-		mainButton->bdColor  = COLOR_BD_0;
-		mainButton->txtColor = COLOR_TEXT_0;
-	}
+	if (gu_getBlinker() > 6)
+		mainButton->setPlayMode();
+	else
+    mainButton->setDefaultMode();
 }
 
 
@@ -99,18 +93,14 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
 {
   switch (playStatus) {
     case STATUS_OFF:
-  		mainButton->bgColor0 = COLOR_BG_0;
-  		mainButton->bdColor  = COLOR_BD_0;
-  		mainButton->txtColor = COLOR_TEXT_0;
+  		mainButton->setDefaultMode();
       mainButton->redraw();
       button->imgOn  = channelPlay_xpm;
       button->imgOff = channelStop_xpm;
       button->redraw();
       break;
     case STATUS_PLAY:
-  		mainButton->bgColor0 = COLOR_BG_2;
-  		mainButton->bdColor  = COLOR_BD_1;
-  		mainButton->txtColor = COLOR_TEXT_1;
+      mainButton->setPlayMode();
       mainButton->redraw();
       button->imgOn  = channelStop_xpm;
       button->imgOff = channelPlay_xpm;
@@ -120,7 +110,7 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
       blink();
       break;
     case STATUS_ENDING:
-      mainButton->bgColor0 = COLOR_BD_0;
+      mainButton->setEndingMode();
       break;
   }
 
@@ -129,7 +119,7 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
       blink();
       break;
     case REC_ENDING:
-      mainButton->bgColor0 = COLOR_BD_0;
+      mainButton->setEndingMode();
       break;
   }
 }
@@ -158,12 +148,3 @@ int gChannel::handleKey(int e, int key)
 
 	return ret;
 }
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-gMainButton::gMainButton(int x, int y, int w, int h, const char *l)
-  : gClick(x, y, w, h, l) {}

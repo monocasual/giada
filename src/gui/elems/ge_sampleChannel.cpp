@@ -75,7 +75,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 
 	button       = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	status       = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
-	mainButton   = new gSampleMainButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
+	mainButton   = new gSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	modeBox      = new gModeBox(mainButton->x()+mainButton->w()+4, y(), 20, 20, ch);
 	mute         = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo         = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
@@ -389,12 +389,10 @@ void gSampleChannel::refresh()
 
 	if (ch->wave != NULL) {
 		if (G_Mixer.chanInput == ch)
-			mainButton->bgColor0 = COLOR_BG_3;
+			mainButton->setInputRecordMode();
 		if (recorder::active) {
-			if (recorder::canRec(ch)) {
-				mainButton->bgColor0 = COLOR_BG_4;
-				mainButton->txtColor = COLOR_TEXT_0;
-			}
+			if (recorder::canRec(ch))
+				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)
 	}
@@ -407,11 +405,8 @@ void gSampleChannel::refresh()
 
 void gSampleChannel::reset()
 {
-	mainButton->bgColor0 = COLOR_BG_0;
-	mainButton->bdColor  = COLOR_BD_0;
-	mainButton->txtColor = COLOR_TEXT_0;
-	mainButton->label("-- no sample --");
 	delActionButton(true); // force==true, don't check, just remove it
+	mainButton->setDefaultMode("-- no sample --");
  	mainButton->redraw();
 	status->redraw();
 }
@@ -581,14 +576,14 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-gSampleMainButton::gSampleMainButton(int x, int y, int w, int h, const char *l)
-	: gMainButton(x, y, w, h, l) {}
+gSampleChannelButton::gSampleChannelButton(int x, int y, int w, int h, const char *l)
+	: gChannelButton(x, y, w, h, l) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int gSampleMainButton::handle(int e)
+int gSampleChannelButton::handle(int e)
 {
 	int ret = gClick::handle(e);
 	switch (e) {
