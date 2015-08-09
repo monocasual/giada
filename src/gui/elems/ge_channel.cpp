@@ -94,14 +94,12 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
   switch (playStatus) {
     case STATUS_OFF:
   		mainButton->setDefaultMode();
-      mainButton->redraw();
       button->imgOn  = channelPlay_xpm;
       button->imgOff = channelStop_xpm;
       button->redraw();
       break;
     case STATUS_PLAY:
       mainButton->setPlayMode();
-      mainButton->redraw();
       button->imgOn  = channelStop_xpm;
       button->imgOff = channelPlay_xpm;
       button->redraw();
