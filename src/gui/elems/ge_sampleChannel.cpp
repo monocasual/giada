@@ -441,13 +441,6 @@ void gSampleChannel::update()
 	else
 		delActionButton();
 
-	/* update key box */
-
-	char k[4];
-	sprintf(k, "%c", ch->key);
-	button->copy_label(k);
-	button->redraw();
-
 	/* updates modebox */
 
 	modeBox->value(ch->mode);

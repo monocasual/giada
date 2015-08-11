@@ -92,7 +92,7 @@ void gClick::draw()
 
   fl_color(txtColor);
   fl_font(FL_HELVETICA, 11);
-  fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
+  fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
 }
 
 

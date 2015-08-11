@@ -32,7 +32,7 @@
 
 
 gChannelButton::gChannelButton(int x, int y, int w, int h, const char *l)
-  : gClick(x, y, w, h, l) {}
+  : gClick(x, y, w, h, l), key("") {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -50,9 +50,19 @@ void gChannelButton::setKey(const char *k)
 void gChannelButton::draw()
 {
   gClick::draw();
+
+  if (key == "")
+    return;
+
+  /* draw background */
+
+  fl_rectf(x()+1, y()+1, 18, h()-2, bgColor0);
+
+  /* draw key */
+
   fl_color(COLOR_TEXT_0);
   fl_font(FL_HELVETICA, 11);
-  fl_draw(key.c_str(), x(), y(), 20, h(), FL_ALIGN_CENTER);
+  fl_draw(key.c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
 }
 
 

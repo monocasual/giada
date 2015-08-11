@@ -97,7 +97,6 @@ void gdKeyGrabber::__cb_clear()
 void gdKeyGrabber::setButtonLabel(int key)
 {
 	char tmp[2]; sprintf(tmp, "%c", key);
-	ch->guiChannel->button->copy_label(tmp);
 	ch->guiChannel->mainButton->setKey(tmp);
 	ch->key = key;
 }
