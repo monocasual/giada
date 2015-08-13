@@ -37,10 +37,10 @@
 	#include <libgen.h>	// in osx, for basename() (but linux?)
 #endif
 
-/* including stuff for the favicon (or whatever called) */
+/* including stuff for the favicon */
 
 #if defined(_WIN32)
-	#include "resource.h"
+	#include "../ext/resource.h"
 #elif defined(__linux__)
 	#include <X11/xpm.h>
 #endif

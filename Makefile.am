@@ -151,11 +151,8 @@ endif
 
 # used only under MinGW to compile the resource.rc file (program icon)
 
-.rc.o:
-	windres $^ -o $@
-%.o : %.rc
-	windres $^ -o $@
-
+resource.o:
+	windres src/ext/resource.rc -o resource.o 
 
 
 #compile libraries
