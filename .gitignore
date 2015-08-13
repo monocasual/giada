@@ -39,7 +39,7 @@ midimaps/Makefile.in
 /Makefile.in
 /giada
 /giada_lin
-/giada_win
+/giada_win.exe
 /giada_osx
 /compile
 debian/*.log
