@@ -14,11 +14,11 @@
 
 
 0.10.1 --- 2015 . ? . ?
-- Remove backward compatibility from patch loading system
+- Remove support for patches created with Giada < 0.6.x
+- Massive source folders refactoring
 - Improved usability of "play" buttons for channels
-- Source folders refactoring
-- Small fixes and cleanup in Makefile.am
 - Fix check for configured soundsystem (would break compilation on g++5)
+- Small fixes and cleanup in Makefile.am
 
 
 0.10.0 --- 2015 . 07 . 05
