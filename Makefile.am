@@ -142,9 +142,10 @@ giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
 if OSX
-giada_LDADD   = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
-								-lsamplerate
-giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
+giada_LDADD    = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
+								 -lsamplerate
+giada_CXXFLAGS = -m32
+giada_LDFLAGS  = -m32 -framework CoreAudio -framework Cocoa -framework Carbon \
                 -framework CoreMIDI -framework CoreFoundation
 endif
 
