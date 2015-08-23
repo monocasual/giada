@@ -60,7 +60,10 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 	/* Fl::check(): Waits until "something happens" and then returns. It's
 	 * mandatory on linux, otherwise X can't find 'this' window. */
 
+#ifndef __APPLE__
 	Fl::check();
+#endif
+
 	pPlugin->openGui((void*)fl_xid(this));
 
 	char name[256];
