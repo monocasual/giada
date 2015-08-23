@@ -38,9 +38,9 @@ src/giada.conf
 midimaps/Makefile.in
 /Makefile.in
 /giada
-/giada_lin
-/giada_win.exe
-/giada_osx
+giada_lin
+giada_win.exe
+giada_osx
 /compile
 debian/*.log
 debian/autoreconf.after
