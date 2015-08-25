@@ -13,10 +13,10 @@
 
 
 
-0.10.1 --- 2015 . ? . ?
-- Remove support for patches created with Giada < 0.6.x
+0.10.1 --- 2015 . 08 . 26
 - Massive source folders refactoring
 - Improved usability of "play" buttons for channels
+- Remove support for patches created with Giada < 0.6.x
 - Fix check for configured soundsystem (would break compilation on g++5)
 - Small fixes and cleanup in Makefile.am
 
