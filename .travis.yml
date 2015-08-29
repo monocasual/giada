@@ -13,6 +13,7 @@ before_script:
   - cd ..
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
+  - sudo ldconfig -v
 
 script: make
 
