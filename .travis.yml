@@ -9,7 +9,7 @@ before_install:
 before_script: 
   - wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.0.tar.gz
   - tar -xvf rtmidi-2.1.0.tar.gz
-  - cd rtmidi-2.1.0 && ./configure && make && sudo make install
+  - cd rtmidi-2.1.0 && ./configure && make && sudo make install || true 
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
 
