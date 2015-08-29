@@ -3,9 +3,7 @@
 Giada - Your Hardcore Loopmachine
 =================================
 
-http://www.giadamusic.com
-
-[![Build Status](https://travis-ci.org/monocasual/giada.svg?branch=master)](https://travis-ci.org/monocasual/giada)
+Official website: http://www.giadamusic.com | Travis CI status: [![Build Status](https://travis-ci.org/monocasual/giada.svg?branch=master)](https://travis-ci.org/monocasual/giada)
 
 What is Giada?
 --------------
