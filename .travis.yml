@@ -7,6 +7,9 @@ before_install:
   - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev librtmidi-dev libxpm-dev
 
 before_script: 
+  - wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.0.tar.gz
+  - tar -xvf rtmidi-2.1.0.tar.gz
+  - cd rtmidi-2.1.0 && ./configure && make && sudo make install
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
 
