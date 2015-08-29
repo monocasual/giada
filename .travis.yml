@@ -4,7 +4,7 @@ compiler: gcc
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev librtmidi-dev libxpm-dev libpulse-dev libjack-dev
+  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libxpm-dev libpulse-dev libjack-dev
 
 before_script: 
   - wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.0.tar.gz
@@ -13,7 +13,6 @@ before_script:
   - cd ..
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
-  - sudo ldconfig -v
 
 script: make
 
