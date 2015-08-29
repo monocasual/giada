@@ -2,6 +2,13 @@ language: cpp
 
 compiler: gcc
 
+notifications: 
+  email:
+    recipients:
+      - giadaloopmachine@gmail.com
+    on_success: never
+    on_failure: always
+
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev
@@ -15,4 +22,3 @@ before_script:
   - ./configure --target=linux --enable-vst
 
 script: make
-
