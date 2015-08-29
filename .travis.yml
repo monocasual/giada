@@ -6,7 +6,9 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev librtmidi-dev
 
-install: ./autogen.sh
+before_script: 
+  - ./autogen.sh
+  - ./configure --target=linux --enable-vst
 
-script: && ./configure --target=linux --enable-vst && make
+script: make
 
