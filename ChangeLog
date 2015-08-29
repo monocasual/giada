@@ -13,6 +13,10 @@
 
 
 
+0.10.2 --- 
+- Setup for Travis CI automated builds
+
+
 0.10.1 --- 2015 . 08 . 26
 - Massive source folders refactoring
 - Improved usability of "play" buttons for channels
