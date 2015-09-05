@@ -168,14 +168,12 @@ TESTS = giada_tests
 check_PROGRAMS = giada_tests
 giada_tests_SOURCES =    \
 tests/main.cpp           \
-tests/recorder.cpp       \
-tests/mixer.cpp          \
-tests/kernelAudio.cpp    \
 tests/conf.cpp           \
+tests/utils.cpp          \
 src/core/conf.cpp        \
-src/core/dataStorage.cpp \  
-src/utils/utils.cpp      \ 
-src/utils/log.cpp 
+src/core/dataStorage.cpp \
+src/utils/utils.cpp      \
+src/utils/log.cpp        
 
 # make rename ------------------------------------------------------------------
 
