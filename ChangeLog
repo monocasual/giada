@@ -15,6 +15,7 @@
 
 0.10.2 --- 
 - Setup for Travis CI automated builds
+- Add base framework for unit testing (with Catch)
 
 
 0.10.1 --- 2015 . 08 . 26
