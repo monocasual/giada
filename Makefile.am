@@ -2,6 +2,8 @@ AUTOMAKE_OPTIONS = foreign
 
 AM_CXXFLAGS = -Wall -pedantic -Werror
 
+# make giada -------------------------------------------------------------------
+
 bin_PROGRAMS = giada
 
 giada_SOURCES =                        \
@@ -131,7 +133,6 @@ if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
 							src/deps/rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
 							-lpulse-simple -lpulse -lsamplerate -lrtmidi
-#giada_LDFLAGS = -DWITH_VST
 endif
 if WINDOWS
 giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
@@ -149,36 +150,34 @@ giada_LDFLAGS  = -m32 -framework CoreAudio -framework Cocoa -framework Carbon \
                 -framework CoreMIDI -framework CoreFoundation
 endif
 
-
 # used only under MinGW to compile the resource.rc file (program icon)
 
 resource.o:
 	windres src/ext/resource.rc -o resource.o 
 
-
-#compile libraries
-
-#libs:
-#if LINUX
-#	@cd rtaudio-mod; echo "Building RtAudio for Linux..."; \
-#	./configure --with-jack --with-alsa --with-pulse; \
-#	make;
-#endif
-#if WINDOWS
-#	echo "Building RtAudio for Windows: nothing to do"
-#endif
-#if OSX
-#	@cd rtaudio-mod; echo "Building RtAudio for OS X..."; \
-#	./configure --with-core; \
-#	make;
-#endif
+# custom rtaudio
 
 src/deps/rtaudio-mod/librtaudio.a:
 	@cd src/deps/rtaudio-mod; echo "Building RtAudio for Linux..."; \
 	./configure --with-jack --with-alsa --with-pulse; \
 	make;
+	
+# make test --------------------------------------------------------------------
 
-# rename the binaries
+TESTS = giada_tests
+check_PROGRAMS = giada_tests
+giada_tests_SOURCES =    \
+tests/main.cpp           \
+tests/recorder.cpp       \
+tests/mixer.cpp          \
+tests/kernelAudio.cpp    \
+tests/conf.cpp           \
+src/core/conf.cpp        \
+src/core/dataStorage.cpp \  
+src/utils/utils.cpp      \ 
+src/utils/log.cpp 
+
+# make rename ------------------------------------------------------------------
 
 if LINUX
 rename:
