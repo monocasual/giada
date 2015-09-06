@@ -20,5 +20,6 @@ before_script:
   - cd ..
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
+  - export CXXFLAGS="-Wno-parenteses"
 
 script: make && make check
