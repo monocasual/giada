@@ -175,6 +175,8 @@ src/core/dataStorage.cpp \
 src/utils/utils.cpp      \
 src/utils/log.cpp   
 
+# Ancient gcc on Travis complains about missing parentheses. 
+
 giada_tests_CXXFLAGS = -Wno-parentheses     
 
 # make rename ------------------------------------------------------------------
