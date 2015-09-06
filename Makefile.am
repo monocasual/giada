@@ -173,7 +173,9 @@ tests/utils.cpp          \
 src/core/conf.cpp        \
 src/core/dataStorage.cpp \
 src/utils/utils.cpp      \
-src/utils/log.cpp        
+src/utils/log.cpp   
+
+giada_tests_CXXFLAGS = -Wno-parentheses     
 
 # make rename ------------------------------------------------------------------
 
