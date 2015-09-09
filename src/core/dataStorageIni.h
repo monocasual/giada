@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * dataStorage
+ * dataStorageIni
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,11 +24,11 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#ifndef __DATA_STORAGE_H__
-#define __DATA_STORAGE_H__
+#ifndef __DATA_STORAGE_INI_H__
+#define __DATA_STORAGE_INI_H__
 
 #include <stdio.h>
 #include <string>
@@ -37,7 +37,7 @@
 #define MAX_LINE_LEN 1024
 
 
-class DataStorage {
+class DataStorageIni {
 
 protected:
 

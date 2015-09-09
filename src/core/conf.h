@@ -33,7 +33,7 @@
 
 #include <limits.h>
 #include <stdint.h>
-#include "dataStorage.h"
+#include "dataStorageIni.h"
 
 
 #if defined(__APPLE__)
@@ -41,7 +41,7 @@
 #endif
 
 
-class Conf : public DataStorage
+class Conf : public DataStorageIni
 {
 private:
 

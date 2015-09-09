@@ -33,11 +33,11 @@
 #include <stdio.h>
 #include <string>
 #include <stdint.h>
-#include "dataStorage.h"
+#include "dataStorageIni.h"
 #include "const.h"
 
 
-class Patch : public DataStorage {
+class Patch : public DataStorageIni {
 
 private:
 	int  readMasterPlugins(int type);

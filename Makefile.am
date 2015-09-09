@@ -43,8 +43,8 @@ src/core/recorder.h                    \
 src/core/recorder.cpp                  \
 src/core/mixer.h                       \
 src/core/mixer.cpp                     \
-src/core/dataStorage.h	               \
-src/core/dataStorage.cpp               \
+src/core/dataStorageIni.h	             \
+src/core/dataStorageIni.cpp            \
 src/glue/glue.h                        \
 src/glue/glue.cpp                      \
 src/gui/dialogs/gd_keyGrabber.h        \
@@ -166,13 +166,13 @@ src/deps/rtaudio-mod/librtaudio.a:
 
 TESTS = giada_tests
 check_PROGRAMS = giada_tests
-giada_tests_SOURCES =    \
-tests/main.cpp           \
-tests/conf.cpp           \
-tests/utils.cpp          \
-src/core/conf.cpp        \
-src/core/dataStorage.cpp \
-src/utils/utils.cpp      \
+giada_tests_SOURCES =       \
+tests/main.cpp              \
+tests/conf.cpp              \
+tests/utils.cpp             \
+src/core/conf.cpp           \
+src/core/dataStorageIni.cpp \
+src/utils/utils.cpp         \
 src/utils/log.cpp   
 
 # Ancient gcc on Travis complains about missing parentheses. 
