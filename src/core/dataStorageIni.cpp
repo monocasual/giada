@@ -34,8 +34,8 @@
 #include "const.h"
 
 
-std::string DataStorageIni::getValue(const char *in) {
-
+std::string DataStorageIni::getValue(const char *in) 
+{
 	/* on each call reset the pointe to the beginning of the file. Not so
 	 * good but necessary if you want to pick up random values from the
 	 * file. */

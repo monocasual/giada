@@ -37,8 +37,8 @@
 #define MAX_LINE_LEN 1024
 
 
-class DataStorageIni {
-
+class DataStorageIni 
+{
 protected:
 
 	FILE *fp;
