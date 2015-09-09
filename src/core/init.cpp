@@ -38,7 +38,7 @@
 #include "wave.h"
 #include "const.h"
 #include "mixerHandler.h"
-#include "patch.h"
+#include "patch_DEPR_.h"
 #include "conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
@@ -49,7 +49,7 @@
 extern Mixer 			   G_Mixer;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
-extern Patch     	   G_Patch;
+extern Patch_DEPR_   G_Patch;
 extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;

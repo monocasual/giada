@@ -29,7 +29,7 @@
 
 #include "../../core/conf.h"
 #include "../../core/midiMapConf.h"
-#include "../../core/patch.h"
+#include "../../core/patch_DEPR_.h"
 #include "../../core/kernelAudio.h"
 #include "../../core/kernelMidi.h"
 #include "../../utils/gui_utils.h"
@@ -41,9 +41,9 @@
 #include "gd_browser.h"
 
 
-extern Patch G_Patch;
-extern Conf	 G_Conf;
-extern bool  G_audio_status;
+extern Patch_DEPR_ G_Patch;
+extern Conf	       G_Conf;
+extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
 

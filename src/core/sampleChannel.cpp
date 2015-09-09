@@ -30,7 +30,7 @@
 #include <math.h>
 #include "../utils/log.h"
 #include "sampleChannel.h"
-#include "patch.h"
+#include "patch_DEPR_.h"
 #include "conf.h"
 #include "wave.h"
 #include "pluginHost.h"
@@ -39,7 +39,7 @@
 #include "kernelMidi.h"
 
 
-extern Patch       G_Patch;
+extern Patch_DEPR_ G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST

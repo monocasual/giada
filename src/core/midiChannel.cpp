@@ -31,12 +31,12 @@
 #include "midiChannel.h"
 #include "channel.h"
 #include "pluginHost.h"
-#include "patch.h"
+#include "patch_DEPR_.h"
 #include "conf.h"
 #include "kernelMidi.h"
 
 
-extern Patch       G_Patch;
+extern Patch_DEPR_ G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST

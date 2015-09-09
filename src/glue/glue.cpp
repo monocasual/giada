@@ -53,14 +53,14 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/kernelMidi.h"
-#include "../core/patch.h"
+#include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
 #include "glue.h"
 
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
-extern Patch     		 G_Patch;
+extern Patch_DEPR_   G_Patch;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST

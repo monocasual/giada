@@ -28,7 +28,7 @@
 
 
 #include "../core/mixer.h"
-#include "../core/patch.h"
+#include "../core/patch_DEPR_.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
 #include "../core/pluginHost.h"
@@ -48,7 +48,7 @@
 extern Mixer 	       G_Mixer;
 extern unsigned      G_beats;
 extern bool 		     G_audio_status;
-extern Patch         G_patch;
+extern Patch_DEPR_   G_patch;
 extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;

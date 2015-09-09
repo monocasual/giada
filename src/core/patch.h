@@ -33,14 +33,18 @@
 #include <stdio.h>
 #include <string>
 #include <stdint.h>
-#include "dataStorageIni.h"
+#include "dataStorageJson.h"
 #include "const.h"
 
 
-class Patch : public DataStorageIni {
+using std::string;
 
+
+class Patch_ : public DataStorageJson
+{
 private:
-	int  readMasterPlugins(int type);
+
+	int  readMasterPlugins (int type);
 	void writeMasterPlugins(int type);
 
 public:
@@ -50,45 +54,43 @@ public:
 	int   lastTakeId;
 	int   samplerate;
 
-	int         open(const char *file);
-	void        setDefault();
-	int         close();
-
-	void				getName       ();
-	int         getNumChans   ();
-	int					getNumColumns ();
-	std::string getSamplePath (int i);
-	float       getVol        (int i);
-	int         getMode       (int i);
-	int         getMute       (int i);
-	int         getMute_s     (int i);
-	int         getSolo       (int i);
-	int         getBegin      (int i);
-	int         getEnd        (int i, unsigned sampleSize);
-	float       getBoost      (int i);
-	float       getPanLeft    (int i);
-	float       getPanRight   (int i);
-	float       getPitch      (int i);
-	bool        getRecActive  (int i);
-	int         getColumn     (int i);
-	int         getIndex      (int i);
-	int         getType       (int i);
-	int         getKey        (int i);
-	uint32_t    getMidiValue  (int i, const char *c);
-	float       getOutVol     ();
-	float       getInVol      ();
-	float       getBpm        ();
-	int         getBars       ();
-	int         getBeats      ();
-	int         getQuantize   ();
-	bool        getMetronome  ();
-	int         getLastTakeId ();
-	int         getSamplerate ();
-
-	int         write(const char *file, const char *name, bool isProject);
-	int         readRecs();
+	int      open(const char *file);
+	void     setDefault();
+	int      close();
+	void	   getName       ();
+	int      getNumChans   ();
+	int		   getNumColumns ();
+	string   getSamplePath (int i);
+	float    getVol        (int i);
+	int      getMode       (int i);
+	int      getMute       (int i);
+	int      getMute_s     (int i);
+	int      getSolo       (int i);
+	int      getBegin      (int i);
+	int      getEnd        (int i, unsigned sampleSize);
+	float    getBoost      (int i);
+	float    getPanLeft    (int i);
+	float    getPanRight   (int i);
+	float    getPitch      (int i);
+	bool     getRecActive  (int i);
+	int      getColumn     (int i);
+	int      getIndex      (int i);
+	int      getType       (int i);
+	int      getKey        (int i);
+	uint32_t getMidiValue  (int i, const char *c);
+	float    getOutVol     ();
+	float    getInVol      ();
+	float    getBpm        ();
+	int      getBars       ();
+	int      getBeats      ();
+	int      getQuantize   ();
+	bool     getMetronome  ();
+	int      getLastTakeId ();
+	int      getSamplerate ();
+	int      write         (const char *file, const char *name, bool isProject);
+	int      readRecs      ();
 #ifdef WITH_VST
-	int         readPlugins();
+	int      readPlugins   ();
 #endif
 };
 
