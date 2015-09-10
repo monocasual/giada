@@ -51,7 +51,7 @@ extern gdMainWindow *mainWin;
 
 
 
-int Patch::write(const char *file, const char *name, bool project)
+int Patch::write(const char *file, const char *name)
 {
 	FILE *fp = fopen(file, "w");
 	if (fp == NULL) {
