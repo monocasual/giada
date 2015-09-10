@@ -39,6 +39,8 @@ src/core/graphics.h                    \
 src/core/graphics.cpp                  \
 src/core/patch_DEPR_.h                 \
 src/core/patch_DEPR_.cpp               \
+src/core/patch.h                       \
+src/core/patch.cpp                     \
 src/core/recorder.h                    \
 src/core/recorder.cpp                  \
 src/core/mixer.h                       \
@@ -134,19 +136,19 @@ src/utils/utils.cpp
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
 							src/deps/rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
-							-lpulse-simple -lpulse -lsamplerate -lrtmidi
+							-lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson
 endif
 if WINDOWS
 giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
                 -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 \
                 -lsndfile -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser \
-                -lpthreadGC2
+                -lpthreadGC2 -ljansson
 giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
 if OSX
 giada_LDADD    = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
-								 -lsamplerate
+								 -lsamplerate -ljansson
 giada_CXXFLAGS = -m32
 giada_LDFLAGS  = -m32 -framework CoreAudio -framework Cocoa -framework Carbon \
                 -framework CoreMIDI -framework CoreFoundation
@@ -168,14 +170,19 @@ src/deps/rtaudio-mod/librtaudio.a:
 
 TESTS = giada_tests
 check_PROGRAMS = giada_tests
-giada_tests_SOURCES =       \
-tests/main.cpp              \
-tests/conf.cpp              \
-tests/utils.cpp             \
-src/core/conf.cpp           \
-src/core/dataStorageIni.cpp \
-src/utils/utils.cpp         \
+giada_tests_SOURCES =        \
+tests/main.cpp               \
+tests/conf.cpp               \
+tests/patch.cpp              \
+tests/utils.cpp              \
+src/core/conf.cpp            \
+src/core/patch.cpp           \
+src/core/dataStorageIni.cpp  \
+src/core/dataStorageJson.cpp \
+src/utils/utils.cpp          \
 src/utils/log.cpp   
+
+giada_tests_LDADD = -ljansson
 
 # Ancient gcc on Travis complains about missing parentheses. 
 
