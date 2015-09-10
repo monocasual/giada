@@ -40,58 +40,78 @@
 using std::string;
 
 
-class Patch_ : public DataStorageJson
+class Patch : public DataStorageJson
 {
-private:
-
-	int  readMasterPlugins (int type);
-	void writeMasterPlugins(int type);
-
 public:
 
-	char  name[MAX_PATCHNAME_LEN];
 	float version;
 	int   lastTakeId;
-	int   samplerate;
 
-	int      open(const char *file);
-	void     setDefault();
-	int      close();
-	void	   getName       ();
-	int      getNumChans   ();
-	int		   getNumColumns ();
-	string   getSamplePath (int i);
-	float    getVol        (int i);
-	int      getMode       (int i);
-	int      getMute       (int i);
-	int      getMute_s     (int i);
-	int      getSolo       (int i);
-	int      getBegin      (int i);
-	int      getEnd        (int i, unsigned sampleSize);
-	float    getBoost      (int i);
-	float    getPanLeft    (int i);
-	float    getPanRight   (int i);
-	float    getPitch      (int i);
-	bool     getRecActive  (int i);
-	int      getColumn     (int i);
-	int      getIndex      (int i);
-	int      getType       (int i);
-	int      getKey        (int i);
-	uint32_t getMidiValue  (int i, const char *c);
-	float    getOutVol     ();
-	float    getInVol      ();
-	float    getBpm        ();
-	int      getBars       ();
-	int      getBeats      ();
-	int      getQuantize   ();
-	bool     getMetronome  ();
-	int      getLastTakeId ();
-	int      getSamplerate ();
-	int      write         (const char *file, const char *name, bool isProject);
-	int      readRecs      ();
+  const char *header;
+  const char *version;
+  float       versionF;
+  const char *name;
+  
+  int bpm;
+  int bars;
+  int beats;
+  int quantize;
+  int masterVolIn;
+  int masterVolOut;
+  int metronome;
+  int lastTakeId;
+  int samplerate;
+  int numChannels; // not needed anymore
+  int numColumns;  // not needed anymore
+  
+  struct channel 
+  {
+    int   type;
+    int   index;
+    int   column;
+    int   mute;
+    int   mute_s;
+    int   solo;
+    float vol;
+    float panLeft;
+    float panRight;
+    
+    bool     midiIn;
+    uint32_t midiInKeyPress;
+    uint32_t midiInKeyRel;
+    uint32_t midiInKill;
+    uint32_t midiInVolume;
+    uint32_t midiInMute;
+    uint32_t midiInSolo;
+    
+    bool     midiOutL;
+    uint32_t midiOutLplaying;
+    uint32_t midiOutLmute;
+    uint32_t midiOutLsolo;
+  };
+  
+  struct action
+  {
+    int      channel;
+    int      type;
+    int      frame;
+    float    fValue;
+    uint32_t iValue;
+  };
+
 #ifdef WITH_VST
-	int      readPlugins   ();
+
+  struct plugin
+  {
+    int         type;      // master in, master out, channel
+    const char *path;
+    int         bypass;
+    int         numParams; // not needed anymore
+  };
+  
 #endif
+  
+  int write(const char *file, const char *name, bool isProject);
 };
 
 #endif
