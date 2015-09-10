@@ -36,7 +36,7 @@
 
 class DataStorageJson
 {
-private:
+protected:
 
   json_t       *root;
   json_error_t  error;
