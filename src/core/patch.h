@@ -44,55 +44,22 @@ class Patch : public DataStorageJson
 {
 public:
 
-	float version;
-	int   lastTakeId;
-
   const char *header;
   const char *version;
   float       versionF;
   const char *name;
-  
-  int bpm;
-  int bars;
-  int beats;
-  int quantize;
-  int masterVolIn;
-  int masterVolOut;
-  int metronome;
-  int lastTakeId;
-  int samplerate;
-  int numChannels; // not needed anymore
-  int numColumns;  // not needed anymore
-  
-  struct channel 
-  {
-    int   type;
-    int   index;
-    int   column;
-    int   mute;
-    int   mute_s;
-    int   solo;
-    float vol;
-    float panLeft;
-    float panRight;
-    
-    bool     midiIn;
-    uint32_t midiInKeyPress;
-    uint32_t midiInKeyRel;
-    uint32_t midiInKill;
-    uint32_t midiInVolume;
-    uint32_t midiInMute;
-    uint32_t midiInSolo;
-    
-    bool     midiOutL;
-    uint32_t midiOutLplaying;
-    uint32_t midiOutLmute;
-    uint32_t midiOutLsolo;
-  };
+  int         bpm;
+  int         bars;
+  int         beats;
+  int         quantize;
+  int         masterVolIn;
+  int         masterVolOut;
+  int         metronome;
+  int         lastTakeId;
+  int         samplerate;
   
   struct action
   {
-    int      channel;
     int      type;
     int      frame;
     float    fValue;
@@ -103,13 +70,61 @@ public:
 
   struct plugin
   {
-    int         type;      // master in, master out, channel
     const char *path;
     int         bypass;
-    int         numParams; // not needed anymore
   };
   
 #endif
+
+  struct channel 
+  {
+    int         type;
+    int         index;
+    int         column;
+    int         mute;
+    int         mute_s;
+    int         solo;
+    float       vol;
+    float       panLeft;
+    float       panRight;
+    bool        midiIn;
+    uint32_t    midiInKeyPress;
+    uint32_t    midiInKeyRel;
+    uint32_t    midiInKill;
+    uint32_t    midiInVolume;
+    uint32_t    midiInMute;
+    uint32_t    midiInSolo;
+    bool        midiOutL;
+    uint32_t    midiOutLplaying;
+    uint32_t    midiOutLmute;
+    uint32_t    midiOutLsolo;
+    // sample channel
+    const char *samplePath;
+    int         key;
+    int         mode;
+    int         begin;
+    int         end;
+    float       boost;
+    int         recActive;
+    float       pitch;
+    uint32_t    midiInReadActions;
+    uint32_t    midiInPitch;    
+    // midi channel
+    uint32_t    midiOut;
+    uint32_t    midiOutChan;
+    
+    gVector<action> actions;
+#ifdef WITH_VST
+    gVector<plugin> plugins;
+#endif
+  };
+  
+  struct column 
+  {
+    int index;
+    int width;
+    gVector<channel> channels;
+  };
   
   int write(const char *file, const char *name, bool isProject);
 };
