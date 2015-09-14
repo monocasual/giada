@@ -76,7 +76,7 @@ public:
   
 #endif
 
-  struct channel 
+  struct channel
   {
     int         type;
     int         index;
@@ -125,6 +125,12 @@ public:
     int width;
     gVector<channel> channels;
   };
+  
+  gVector<column> columns;
+#ifdef WITH_VST
+  gVector<plugin> masterInPlugins;
+  gVector<plugin> masterOutPlugins;
+#endif
   
   int write(const char *file, const char *name, bool isProject);
 };
