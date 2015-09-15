@@ -79,7 +79,11 @@ public:
 	 * update channels' graphical statues. Called on each GUI cycle. */
 
 	void refreshChannels();
+  
+  /* getChannel */
 
+  Channel *getChannel(int i);
+  
 	/* clear
 	 * remove all channels from the column. If full==true, delete also the
 	 * "add new channel" button. This method ovverrides the inherited one
@@ -93,6 +97,7 @@ public:
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
   inline int  countChannels() { return children(); }
+  
 };
 
 

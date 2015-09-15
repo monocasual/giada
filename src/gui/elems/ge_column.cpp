@@ -302,3 +302,16 @@ void gColumn::clear(bool full)
 		}
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Channel *gColumn::getChannel(int i)
+{
+  gChannel *gch = (gChannel*) child(i); 
+  if (gch->type == CHANNEL_SAMPLE)
+    return ((gSampleChannel*) child(i))->ch;
+  else
+    return ((gMidiChannel*) child(i))->ch;
+}
