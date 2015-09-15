@@ -92,6 +92,7 @@ public:
 	inline int  getIndex()      { return index; }
 	inline void setIndex(int i) { index = i; }
 	inline bool isEmpty()       { return children() == 1; }
+  inline int  countChannels() { return children(); }
 };
 
 
