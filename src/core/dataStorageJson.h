@@ -38,8 +38,8 @@ class DataStorageJson
 {
 protected:
 
-  json_t       *root;
-  json_error_t  error;
+  json_t       *jRoot;
+  json_error_t  jError;
 };
 
 #endif

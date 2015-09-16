@@ -59,21 +59,21 @@ int Patch::write(const char *file, const char *name, bool isProject)
 		return 0;
   }
 
-  root = json_object();
+  jRoot = json_object();
   
-  json_object_set_new(root, "header",         json_string(header));
-  json_object_set_new(root, "version",        json_string(version));
-  json_object_set_new(root, "version_float",  json_real(versionFloat));
-  json_object_set_new(root, "name",           json_string(name));
-  json_object_set_new(root, "bpm",            json_integer(bpm));
-  json_object_set_new(root, "bars",           json_integer(bars));
-  json_object_set_new(root, "beats",          json_integer(beats));
-  json_object_set_new(root, "quantize",       json_integer(quantize));
-  json_object_set_new(root, "master_vol_in",  json_integer(masterVolIn));
-  json_object_set_new(root, "master_vol_out", json_integer(masterVolOut));
-	json_object_set_new(root, "metronome",      json_integer(metronome));
-	json_object_set_new(root, "last_take_id",   json_integer(lastTakeId));
-	json_object_set_new(root, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved
+  json_object_set_new(jRoot, "header",         json_string(header));
+  json_object_set_new(jRoot, "version",        json_string(version));
+  json_object_set_new(jRoot, "version_float",  json_real(versionFloat));
+  json_object_set_new(jRoot, "name",           json_string(name));
+  json_object_set_new(jRoot, "bpm",            json_integer(bpm));
+  json_object_set_new(jRoot, "bars",           json_integer(bars));
+  json_object_set_new(jRoot, "beats",          json_integer(beats));
+  json_object_set_new(jRoot, "quantize",       json_integer(quantize));
+  json_object_set_new(jRoot, "master_vol_in",  json_integer(masterVolIn));
+  json_object_set_new(jRoot, "master_vol_out", json_integer(masterVolOut));
+	json_object_set_new(jRoot, "metronome",      json_integer(metronome));
+	json_object_set_new(jRoot, "last_take_id",   json_integer(lastTakeId));
+	json_object_set_new(jRoot, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved
 
   /* columns */
   
@@ -91,9 +91,13 @@ int Patch::write(const char *file, const char *name, bool isProject)
     json_object_set_new(jColumn, "channels", jChannels);
     json_array_append_new(jColumns, jColumn);
   }
-  json_object_set_new(root, "columns", jColumns);
+  json_object_set_new(jRoot, "columns", jColumns);
   
-  char *out = json_dumps(root, 0);
+  /* channels */
+  
+  json_t *jChannels = json_array();
+  
+  char *out = json_dumps(jRoot, 0);
   fputs(out, fp);
   fclose(fp);
   free(out);
