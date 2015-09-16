@@ -61,25 +61,38 @@ int Patch::write(const char *file, const char *name, bool isProject)
 
   root = json_object();
   
-  json_object_set_new(root, "header",         json_string("GIADAPTC"));
-  json_object_set_new(root, "version",        json_string(VERSIONE));
-  json_object_set_new(root, "version_float",  json_real(VERSIONE_FLOAT));
-  json_object_set_new(root, "patch_name",     json_string(name));
-  
-#if 0
-  json_object_set_new(root, "bpm",            json_integer(G_Mixer.bpm));
-  json_object_set_new(root, "bars",           json_integer(G_Mixer.bars));
-  json_object_set_new(root, "beats",          json_integer(G_Mixer.beats));
-  json_object_set_new(root, "quantize",       json_integer(G_Mixer.beats));
-  json_object_set_new(root, "master_vol_in",  json_integer(G_Mixer.outVol));
-  json_object_set_new(root, "master_vol_out", json_integer(G_Mixer.inVol));
-	json_object_set_new(root, "metronome",      json_integer(G_Mixer.metronome));
+  json_object_set_new(root, "header",         json_string(header));
+  json_object_set_new(root, "version",        json_string(version));
+  json_object_set_new(root, "version_float",  json_real(versionFloat));
+  json_object_set_new(root, "name",           json_string(name));
+  json_object_set_new(root, "bpm",            json_integer(bpm));
+  json_object_set_new(root, "bars",           json_integer(bars));
+  json_object_set_new(root, "beats",          json_integer(beats));
+  json_object_set_new(root, "quantize",       json_integer(quantize));
+  json_object_set_new(root, "master_vol_in",  json_integer(masterVolIn));
+  json_object_set_new(root, "master_vol_out", json_integer(masterVolOut));
+	json_object_set_new(root, "metronome",      json_integer(metronome));
 	json_object_set_new(root, "last_take_id",   json_integer(lastTakeId));
-	json_object_set_new(root, "samplerate",     json_integer(G_Conf.samplerate)); // original samplerate when the patch was saved
-	json_object_set_new(root, "channels",       json_integer(G_Mixer.channels.size));
-	json_object_set_new(root, "columns",        json_integer(mainWin->keyboard->getTotalColumns()));
-#endif
+	json_object_set_new(root, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved
 
+  /* columns */
+  
+  json_t *jColumns = json_array();
+  for (unsigned i=0; i<columns.size; i++) {
+    json_t *jColumn = json_object();
+    json_object_set_new(jColumn, "index", json_integer(columns.at(i).index));
+    json_object_set_new(jColumn, "width", json_integer(columns.at(i).width));
+    
+    /* channels */
+    json_t *jChannels = json_array();
+    for (unsigned k=0; k<columns.at(i).channels.size; k++) {
+      json_array_append_new(jChannels, json_integer(columns.at(i).channels.at(k)));
+    }
+    json_object_set_new(jColumn, "channels", jChannels);
+    json_array_append_new(jColumns, jColumn);
+  }
+  json_object_set_new(root, "columns", jColumns);
+  
   char *out = json_dumps(root, 0);
   fputs(out, fp);
   fclose(fp);

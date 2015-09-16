@@ -30,9 +30,10 @@
 #ifndef __PATCH_H__
 #define __PATCH_H__
 
-#include <stdio.h>
+
 #include <string>
 #include <stdint.h>
+#include "../utils/utils.h"
 #include "dataStorageJson.h"
 #include "const.h"
 
@@ -46,7 +47,7 @@ public:
 
   const char *header;
   const char *version;
-  float       versionF;
+  float       versionFloat;
   const char *name;
   int         bpm;
   int         bars;
@@ -123,10 +124,12 @@ public:
   {
     int index;
     int width;
-    gVector<channel> channels;
+    gVector<int> channels;
   };
   
-  gVector<column> columns;
+  gVector<column>  columns;
+  gVector<channel> channels;
+  
 #ifdef WITH_VST
   gVector<plugin> masterInPlugins;
   gVector<plugin> masterOutPlugins;
