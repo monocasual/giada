@@ -29,7 +29,12 @@
 
 
 #include "../gui/elems/ge_column.h"
+#include "../gui/elems/ge_keyboard.h"
+#include "../gui/dialogs/gd_mainWindow.h"
 #include "storage.h"
+
+
+extern gdMainWindow *mainWin;
 
 
 int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject)
