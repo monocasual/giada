@@ -50,7 +50,6 @@ extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
-
 int Patch::write(const char *file, const char *name, bool isProject)
 {
 	FILE *fp = fopen(file, "w");
@@ -79,14 +78,16 @@ int Patch::write(const char *file, const char *name, bool isProject)
   
   json_t *jColumns = json_array();
   for (unsigned i=0; i<columns.size; i++) {
-    json_t *jColumn = json_object();
-    json_object_set_new(jColumn, "index", json_integer(columns.at(i).index));
-    json_object_set_new(jColumn, "width", json_integer(columns.at(i).width));
+    json_t   *jColumn = json_object();
+    column_t  column  = columns.at(i); 
+    json_object_set_new(jColumn, "index", json_integer(column.index));
+    json_object_set_new(jColumn, "width", json_integer(column.width));
     
     /* channels */
+    
     json_t *jChannels = json_array();
     for (unsigned k=0; k<columns.at(i).channels.size; k++) {
-      json_array_append_new(jChannels, json_integer(columns.at(i).channels.at(k)));
+      json_array_append_new(jChannels, json_integer(column.channels.at(k)));
     }
     json_object_set_new(jColumn, "channels", jChannels);
     json_array_append_new(jColumns, jColumn);
@@ -97,95 +98,25 @@ int Patch::write(const char *file, const char *name, bool isProject)
   
   json_t *jChannels = json_array();
   for (unsigned i=0; i<channels.size; i++) {
-    json_t *jChannel = json_object();
+    json_t    *jChannel = json_object();
+    channel_t  channel  = channels.at(i);
+    json_object_set_new(jChannel, "type",      json_integer(channel.type));
+    json_object_set_new(jChannel, "index",     json_integer(channel.index));
+    json_object_set_new(jChannel, "column",    json_integer(channel.column));
+    json_object_set_new(jChannel, "mute",      json_integer(channel.mute));
+    json_object_set_new(jChannel, "mute_s",    json_integer(channel.mute_s));
+    json_object_set_new(jChannel, "solo",      json_integer(channel.solo));
+    json_object_set_new(jChannel, "volume",    json_real(channel.volume));
+    json_object_set_new(jChannel, "pan_left",  json_real(channel.panLeft));
+    json_object_set_new(jChannel, "pan_left",  json_real(channel.panRight));
+    json_object_set_new(jChannel, "midi_in",   json_boolean(channel.midiIn));
+    // ...
+    json_array_append_new(jChannels, jChannel);
   }
+  json_object_set_new(jRoot, "channels", jChannels);
   
   char *out = json_dumps(jRoot, 0);
   fputs(out, fp);
   fclose(fp);
   free(out);
-
-#if 0  
-  
-	fprintf(fp, "# --- Giada patch file --- \n");
-	fprintf(fp, "header=GIADAPTC\n");
-	fprintf(fp, "version=%s\n",    VERSIONE);
-	fprintf(fp, "versionf=%f\n",   VERSIONE_FLOAT);
-	fprintf(fp, "patchname=%s\n",  name);
-	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
-	fprintf(fp, "bars=%d\n",       G_Mixer.bars);
-	fprintf(fp, "beats=%d\n",      G_Mixer.beats);
-	fprintf(fp, "quantize=%d\n",   G_Mixer.quantize);
-	fprintf(fp, "outVol=%f\n",     G_Mixer.outVol);
-	fprintf(fp, "inVol=%f\n",      G_Mixer.inVol);
-	fprintf(fp, "metronome=%d\n",  G_Mixer.metronome);
-	fprintf(fp, "lastTakeId=%d\n", lastTakeId);
-	fprintf(fp, "samplerate=%d\n", G_Conf.samplerate);	// original samplerate when the patch was saved
-	fprintf(fp, "channels=%d\n",   G_Mixer.channels.size);
-	fprintf(fp, "columns=%d\n",    mainWin->keyboard->getTotalColumns());
-
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		fprintf(fp, "# --- channel %d --- \n", i);
-		G_Mixer.channels.at(i)->writePatch(fp, i, project);
-	}
-
-	/* writing recs. Warning: channel index is not mixer.channels.at(chan),
-	 * but mixer.channels.at(chan)->index! */
-
-	fprintf(fp, "# --- actions --- \n");
-	fprintf(fp, "numrecs=%d\n", recorder::global.size);
-	for (unsigned i=0; i<recorder::global.size; i++) {
-		fprintf(fp, "recframe%d=%d %d\n", i, recorder::frames.at(i), recorder::global.at(i).size);
-		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
-			fprintf(fp, "f%da%d=%d|%d|%f|%u\n",
-				i, k,
-				recorder::global.at(i).at(k)->chan,
-				recorder::global.at(i).at(k)->type,
-				recorder::global.at(i).at(k)->fValue,
-				recorder::global.at(i).at(k)->iValue);
-		}
-	}
-
-#ifdef WITH_VST
-
-	/* writing master VST parameters */
-
-	writeMasterPlugins(PluginHost::MASTER_IN);
-	writeMasterPlugins(PluginHost::MASTER_OUT);
-
-	/* writing VST parameters, channels. chan%d is mixer::channels.at(%d)->index,
-	 * not mixer::chanels.at(%d)! */
-
-	int numPlugs;
-	int numParams;
-	Plugin *pPlugin;
-
-	fprintf(fp, "# --- VST / channels --- \n");
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		Channel *ch = G_Mixer.channels.at(i);
-		numPlugs    = G_PluginHost.countPlugins(PluginHost::CHANNEL, ch);
-		fprintf(fp, "chan%dPlugins=%d\n", ch->index, numPlugs);
-
-		for (int j=0; j<numPlugs; j++) {
-			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
-			if (!pPlugin->status) {
-				gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
-				continue;
-			}
-			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
-			fprintf(fp, "chan%d_p%dbypass=%d\n",   ch->index, j, pPlugin->bypass);
-			numParams = pPlugin->getNumParams();
-			fprintf(fp, "chan%d_p%dnumParams=%d\n", ch->index, j, numParams);
-
-			for (int k=0; k<numParams; k++)
-				fprintf(fp, "chan%d_p%dparam%dvalue=%f\n", ch->index, j, k, pPlugin->getParam(k));
-		}
-	}
-
-#endif
-
-	fclose(fp);
-	return 1;
-
-#endif // if 0
 }

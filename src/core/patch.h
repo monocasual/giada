@@ -57,7 +57,7 @@ public:
   int         masterVolOut;
   int         metronome;
   int         lastTakeId;
-  int         samplerate;
+  int         samplerate;   // original samplerate when the patch was saved
   
   struct action_t
   {
@@ -85,7 +85,7 @@ public:
     int         mute;
     int         mute_s;
     int         solo;
-    float       vol;
+    float       volume;
     float       panLeft;
     float       panRight;
     bool        midiIn;
