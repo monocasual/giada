@@ -59,7 +59,7 @@ public:
   int         lastTakeId;
   int         samplerate;
   
-  struct action
+  struct action_t
   {
     int      type;
     int      frame;
@@ -69,7 +69,7 @@ public:
 
 #ifdef WITH_VST
 
-  struct plugin
+  struct plugin_t
   {
     const char *path;
     int         bypass;
@@ -77,7 +77,7 @@ public:
   
 #endif
 
-  struct channel
+  struct channel_t
   {
     int         type;
     int         index;
@@ -114,25 +114,25 @@ public:
     uint32_t    midiOut;
     uint32_t    midiOutChan;
     
-    gVector<action> actions;
+    gVector<action_t> actions;
 #ifdef WITH_VST
-    gVector<plugin> plugins;
+    gVector<plugin_t> plugins;
 #endif
   };
   
-  struct column 
+  struct column_t
   {
     int index;
     int width;
     gVector<int> channels;
   };
   
-  gVector<column>  columns;
-  gVector<channel> channels;
+  gVector<column_t>  columns;
+  gVector<channel_t> channels;
   
 #ifdef WITH_VST
-  gVector<plugin> masterInPlugins;
-  gVector<plugin> masterOutPlugins;
+  gVector<plugin_t> masterInPlugins;
+  gVector<plugin_t> masterOutPlugins;
 #endif
   
   int write(const char *file, const char *name, bool isProject);

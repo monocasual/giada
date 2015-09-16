@@ -96,6 +96,9 @@ int Patch::write(const char *file, const char *name, bool isProject)
   /* channels */
   
   json_t *jChannels = json_array();
+  for (unsigned i=0; i<channels.size; i++) {
+    json_t *jChannel = json_object();
+  }
   
   char *out = json_dumps(jRoot, 0);
   fputs(out, fp);

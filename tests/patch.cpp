@@ -6,12 +6,12 @@
 TEST_CASE("Test Patch class: write patch") 
 {
   Patch patch;
-  Patch::action  action1;
-  Patch::action  action2;
+  Patch::action_t  action1;
+  Patch::action_t  action2;
   //Patch::plugin  plugin; requires WITH_
-  Patch::channel channel1;
-  Patch::channel channel2;
-  Patch::column  column;
+  Patch::channel_t channel1;
+  Patch::channel_t channel2;
+  Patch::column_t  column;
   
   action1.type   = 0;
   action1.frame  = 50000;
