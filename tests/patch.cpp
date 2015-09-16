@@ -28,7 +28,7 @@ TEST_CASE("Test Patch class: write patch")
   channel1.mute              = 0;
   channel1.mute_s            = 0;
   channel1.solo              = 0;
-  channel1.vol               = 1.0f;
+  channel1.volume            = 1.0f;
   channel1.panLeft           = 0.5f;
   channel1.panRight          = 0.5f;
   channel1.midiIn            = 0;
