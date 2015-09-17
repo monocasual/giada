@@ -159,7 +159,7 @@ endif
 # used only under MinGW to compile the resource.rc file (program icon)
 
 resource.o:
-	windres src/ext/resource.rc -o resource.o 
+	windres src/ext/resource.rc -o resource.o
 
 # custom rtaudio
 
@@ -167,7 +167,7 @@ src/deps/rtaudio-mod/librtaudio.a:
 	@cd src/deps/rtaudio-mod; echo "Building RtAudio for Linux..."; \
 	./configure --with-jack --with-alsa --with-pulse; \
 	make;
-	
+
 # make test --------------------------------------------------------------------
 
 TESTS = giada_tests
@@ -182,13 +182,14 @@ src/core/patch.cpp           \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
 src/utils/utils.cpp          \
-src/utils/log.cpp   
+src/utils/log.cpp
 
 giada_tests_LDADD = -ljansson
 
-# Ancient gcc on Travis complains about missing parentheses. 
+# Ancient gcc on Travis complains about missing parentheses.
+# Catch also goes crazy with GCC 5.x (https://github.com/philsquared/Catch/issues/487)
 
-giada_tests_CXXFLAGS = -Wno-parentheses     
+giada_tests_CXXFLAGS = -Wno-parentheses --std=c++11
 
 # make rename ------------------------------------------------------------------
 
