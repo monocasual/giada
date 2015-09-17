@@ -83,7 +83,7 @@ int Patch::write(const char *file, const char *name, bool isProject)
     json_object_set_new(jColumn, "index", json_integer(column.index));
     json_object_set_new(jColumn, "width", json_integer(column.width));
     
-    /* channels */
+    /* channels' pointers */
     
     json_t *jChannels = json_array();
     for (unsigned k=0; k<columns.at(i).channels.size; k++) {
@@ -100,18 +100,77 @@ int Patch::write(const char *file, const char *name, bool isProject)
   for (unsigned i=0; i<channels.size; i++) {
     json_t    *jChannel = json_object();
     channel_t  channel  = channels.at(i);
-    json_object_set_new(jChannel, "type",      json_integer(channel.type));
-    json_object_set_new(jChannel, "index",     json_integer(channel.index));
-    json_object_set_new(jChannel, "column",    json_integer(channel.column));
-    json_object_set_new(jChannel, "mute",      json_integer(channel.mute));
-    json_object_set_new(jChannel, "mute_s",    json_integer(channel.mute_s));
-    json_object_set_new(jChannel, "solo",      json_integer(channel.solo));
-    json_object_set_new(jChannel, "volume",    json_real(channel.volume));
-    json_object_set_new(jChannel, "pan_left",  json_real(channel.panLeft));
-    json_object_set_new(jChannel, "pan_left",  json_real(channel.panRight));
-    json_object_set_new(jChannel, "midi_in",   json_boolean(channel.midiIn));
-    // ...
+    json_object_set_new(jChannel, "type",                 json_integer(channel.type));
+    json_object_set_new(jChannel, "index",                json_integer(channel.index));
+    json_object_set_new(jChannel, "column",               json_integer(channel.column));
+    json_object_set_new(jChannel, "mute",                 json_integer(channel.mute));
+    json_object_set_new(jChannel, "mute_s",               json_integer(channel.mute_s));
+    json_object_set_new(jChannel, "solo",                 json_integer(channel.solo));
+    json_object_set_new(jChannel, "volume",               json_real(channel.volume));
+    json_object_set_new(jChannel, "pan_left",             json_real(channel.panLeft));
+    json_object_set_new(jChannel, "pan_left",             json_real(channel.panRight));
+    json_object_set_new(jChannel, "midi_in",              json_boolean(channel.midiIn));
+    json_object_set_new(jChannel, "midi_in_keypress",     json_integer(channel.midiInKeyPress));
+    json_object_set_new(jChannel, "midi_in_keyrel",       json_integer(channel.midiInKeyRel));
+    json_object_set_new(jChannel, "midi_in_kill",         json_integer(channel.midiInKill));
+    json_object_set_new(jChannel, "midi_in_volume",       json_integer(channel.midiInVolume));
+    json_object_set_new(jChannel, "midi_in_mute",         json_integer(channel.midiInMute));
+    json_object_set_new(jChannel, "midi_in_solo",         json_integer(channel.midiInSolo));
+    json_object_set_new(jChannel, "midi_out_l",           json_boolean(channel.midiOutL));
+    json_object_set_new(jChannel, "midi_out_l_playing",   json_integer(channel.midiOutLplaying));
+    json_object_set_new(jChannel, "midi_out_l_mute",      json_integer(channel.midiOutLmute));
+    json_object_set_new(jChannel, "midi_out_l_solo",      json_integer(channel.midiOutLsolo));
+    json_object_set_new(jChannel, "sample_path",          json_string(channel.samplePath));
+    json_object_set_new(jChannel, "key",                  json_integer(channel.key));
+    json_object_set_new(jChannel, "mode",                 json_integer(channel.mode));
+    json_object_set_new(jChannel, "begin",                json_integer(channel.begin));
+    json_object_set_new(jChannel, "end",                  json_integer(channel.end));
+    json_object_set_new(jChannel, "boost",                json_real(channel.boost));
+    json_object_set_new(jChannel, "rec_active",           json_integer(channel.recActive));
+    json_object_set_new(jChannel, "pitch",                json_real(channel.pitch));
+    json_object_set_new(jChannel, "midi_in_read_actions", json_integer(channel.midiInReadActions));
+    json_object_set_new(jChannel, "midi_in_pitch",        json_integer(channel.midiInPitch));
+    json_object_set_new(jChannel, "midi_out",             json_integer(channel.midiOut));
+    json_object_set_new(jChannel, "midi_out_chan",        json_integer(channel.midiOutChan));
     json_array_append_new(jChannels, jChannel);
+    
+    /* actions */
+    
+    json_t *jActions = json_array();
+    for (unsigned k=0; k<channel.actions.size; k++) {
+      json_t   *jAction = json_object();
+      action_t  action  = channel.actions.at(k);
+      json_object_set_new(jAction, "type",    json_integer(action.type));
+      json_object_set_new(jAction, "frame",   json_integer(action.frame));
+      json_object_set_new(jAction, "f_value", json_real(action.fValue));
+      json_object_set_new(jAction, "i_value", json_integer(action.iValue));
+      json_array_append_new(jActions, jAction);
+    }
+    json_object_set_new(jChannel, "actions", jActions);
+
+#ifdef WITH_VST
+
+    /* plugins */
+    
+    json_t *jPlugins = json_array();
+    for (unsigned j=0; j<channel.plugins.size; j++) {
+      json_t   *jPlugin = json_object();
+      plugin_t  plugin  = channel.plugins.at(j);
+      json_object_set_new(jPlugin, "path",     json_string(plugin.path));
+      json_object_set_new(jPlugin, "bypass",   json_boolean(plugin.bypass));
+      json_array_append_new(jPlugins, jPlugin);
+      
+      /* plugin params */
+      
+      json_t *jPluginParams = json_array();
+      for (unsigned z=0; z<plugin.params.size; z++) {
+        json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
+      }
+      json_object_set_new(jPlugin, "params", jPluginParams);
+    }
+    json_object_set_new(jChannel, "plugins", jPlugins);
+    
+#endif
   }
   json_object_set_new(jRoot, "channels", jChannels);
   

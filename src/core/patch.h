@@ -71,8 +71,9 @@ public:
 
   struct plugin_t
   {
-    const char *path;
-    int         bypass;
+    const char    *path;
+    int            bypass;
+    gVector<float> params;
   };
   
 #endif
