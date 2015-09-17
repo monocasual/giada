@@ -8,10 +8,14 @@ TEST_CASE("Test Patch class: write patch")
   Patch patch;
   Patch::action_t  action1;
   Patch::action_t  action2;
-  //Patch::plugin  plugin; requires WITH_
   Patch::channel_t channel1;
   Patch::channel_t channel2;
   Patch::column_t  column;
+#ifdef WITH_VST
+  Patch::plugin_t  plugin1; 
+  Patch::plugin_t  plugin2; 
+  Patch::plugin_t  plugin3; 
+#endif
   
   action1.type   = 0;
   action1.frame  = 50000;
@@ -21,7 +25,18 @@ TEST_CASE("Test Patch class: write patch")
   action2.frame  = 589;
   action2.fValue = 1.0f;
   action2.iValue = 130;
-  
+  channel1.actions.add(action1);
+  channel1.actions.add(action2);
+
+#ifdef WITH_VST
+  plugin1.path   = "/path/to/plugin1";
+  plugin1.bypass = false;
+  plugin1.params.add(0.0f);
+  plugin1.params.add(0.1f);
+  plugin1.params.add(0.2f);
+  channel1.plugins.add(plugin1);
+#endif
+
   channel1.type              = CHANNEL_SAMPLE;
   channel1.index             = 666;
   channel1.column            = 0;
@@ -42,7 +57,7 @@ TEST_CASE("Test Patch class: write patch")
   channel1.midiOutLplaying   = 0;
   channel1.midiOutLmute      = 0;
   channel1.midiOutLsolo      = 0;
-  channel1.samplePath        = 0;
+  channel1.samplePath        = "/tmp/test.wav";
   channel1.key               = 0;
   channel1.mode              = 0;
   channel1.begin             = 0;
@@ -52,8 +67,6 @@ TEST_CASE("Test Patch class: write patch")
   channel1.pitch             = 0;
   channel1.midiInReadActions = 0;
   channel1.midiInPitch       = 0;
-  channel1.actions.add(action1);
-  channel1.actions.add(action2);
   patch.channels.add(channel1);
 
   column.index = 0;
@@ -76,7 +89,7 @@ TEST_CASE("Test Patch class: write patch")
   patch.samplerate   = 44100;
   
   REQUIRE(1 == 1);
-  patch.write("./test-patch", "test-patch", false);
+  patch.write("./test-patch.json", "test-patch", false);
 }
 
 
