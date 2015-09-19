@@ -952,14 +952,14 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject)
 {
 	Channel::writePatch(fp, i, isProject);
 
-	const char *path = "";
+	std::string path;
 	if (wave != NULL) {
-		path = wave->pathfile.c_str();
+		path = wave->pathfile;
 		if (isProject)
-			path = gBasename(path).c_str();  // make it portable
+			path = gBasename(path);  // make it portable
 	}
 
-	fprintf(fp, "samplepath%d=%s\n",     i, path);
+	fprintf(fp, "samplepath%d=%s\n",     i, path.c_str());
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
 	//fprintf(fp, "columnIndex%d=%d\n",    i, index);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);
