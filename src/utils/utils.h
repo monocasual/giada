@@ -161,6 +161,7 @@ bool gIsPatch(const char *path);
 bool gMkdir(const char *path);
 
 std::string gBasename(const char *path);
+std::string gBasename(const std::string &s);
 
 std::string gReplace(std::string in, const std::string& search, const std::string& replace);
 
