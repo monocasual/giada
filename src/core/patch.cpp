@@ -152,8 +152,8 @@ void Patch::writeCommons(json_t *jContainer)
   json_object_set_new(jContainer, "bars",           json_integer(bars));
   json_object_set_new(jContainer, "beats",          json_integer(beats));
   json_object_set_new(jContainer, "quantize",       json_integer(quantize));
-  json_object_set_new(jContainer, "master_vol_in",  json_integer(masterVolIn));
-  json_object_set_new(jContainer, "master_vol_out", json_integer(masterVolOut));
+  json_object_set_new(jContainer, "master_vol_in",  json_real(masterVolIn));
+  json_object_set_new(jContainer, "master_vol_out", json_real(masterVolOut));
 	json_object_set_new(jContainer, "metronome",      json_integer(metronome));
 	json_object_set_new(jContainer, "last_take_id",   json_integer(lastTakeId));
 	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate));

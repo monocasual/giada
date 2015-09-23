@@ -50,8 +50,8 @@ public:
   int         bars;
   int         beats;
   int         quantize;
-  int         masterVolIn;  // TODO - should be float
-  int         masterVolOut; // TODO - should be float
+  float       masterVolIn;
+  float       masterVolOut; 
   int         metronome;
   int         lastTakeId;
   int         samplerate;   // original samplerate when the patch was saved

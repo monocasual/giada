@@ -93,8 +93,8 @@ TEST_CASE("Test Patch class: write patch")
   patch.bars         = 4;
   patch.beats        = 23;
   patch.quantize     = 1;
-  patch.masterVolIn  = 1;
-  patch.masterVolOut = 1;
+  patch.masterVolIn  = 1.0f;
+  patch.masterVolOut = 0.2f;
   patch.metronome    = 0;
   patch.lastTakeId   = 0;
   patch.samplerate   = 44100;
