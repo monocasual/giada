@@ -38,9 +38,6 @@
 #include "const.h"
 
 
-using std::string;
-
-
 class Patch : public DataStorageJson
 {
 public:
@@ -53,12 +50,12 @@ public:
   int         bars;
   int         beats;
   int         quantize;
-  int         masterVolIn;
-  int         masterVolOut;
+  int         masterVolIn;  // TODO - should be float
+  int         masterVolOut; // TODO - should be float
   int         metronome;
   int         lastTakeId;
   int         samplerate;   // original samplerate when the patch was saved
-  
+
   struct action_t
   {
     int      type;
@@ -75,7 +72,7 @@ public:
     int            bypass;
     gVector<float> params;
   };
-  
+
 #endif
 
   struct channel_t
@@ -110,45 +107,41 @@ public:
     int         recActive;
     float       pitch;
     uint32_t    midiInReadActions;
-    uint32_t    midiInPitch;    
+    uint32_t    midiInPitch;
     // midi channel
     uint32_t    midiOut;
     uint32_t    midiOutChan;
-    
+
     gVector<action_t> actions;
 #ifdef WITH_VST
     gVector<plugin_t> plugins;
 #endif
   };
-  
+
   struct column_t
   {
     int index;
     int width;
     gVector<int> channels;
   };
-  
+
   gVector<column_t>  columns;
   gVector<channel_t> channels;
-  
+
 #ifdef WITH_VST
   gVector<plugin_t> masterInPlugins;
   gVector<plugin_t> masterOutPlugins;
 #endif
-  
+
   int write(const char *file, const char *name, bool isProject);
 
 private:
 
-  void writeCommons(json_t *jContainer);
-  
+  void writeCommons (json_t *jContainer);
   void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
-  
-  void writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
-  
-  void writeActions(json_t *jContainer, gVector<action_t> *actions);
-  
-  void writeColumns(json_t *jContainer, gVector<column_t> *columns);
+  void writePlugins (json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
+  void writeActions (json_t *jContainer, gVector<action_t> *actions);
+  void writeColumns (json_t *jContainer, gVector<column_t> *columns);
 };
 
 #endif
