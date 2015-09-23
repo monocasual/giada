@@ -9,16 +9,17 @@
 *.dirstamp
 
 # --- rtaudio stuff
-src/rtaudio-mod/librtaudio.pc
-src/rtaudio-mod/rtaudio-config
-src/rtaudio-mod/tests
+/src/rtaudio-mod/librtaudio.pc
+/src/rtaudio-mod/rtaudio-config
+/src/rtaudio-mod/tests
 
 # --- test files
-giada_tests
-giada_tests.log
-giada_tests.trs
-test-driver
-test-suite.log
+/giada_tests
+/giada_tests.log
+/giada_tests.trs
+/test-driver
+/test-patch.json
+/test-suite.log
 
 # --- misc
 AUTHORS
