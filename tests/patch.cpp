@@ -3,7 +3,7 @@
 #include "catch.hpp"
 
 
-TEST_CASE("Test Patch class: write patch") 
+TEST_CASE("Test Patch class: write patch")
 {
   Patch patch;
   Patch::action_t  action1;
@@ -12,11 +12,11 @@ TEST_CASE("Test Patch class: write patch")
   Patch::channel_t channel2;
   Patch::column_t  column;
 #ifdef WITH_VST
-  Patch::plugin_t  plugin1; 
-  Patch::plugin_t  plugin2; 
-  Patch::plugin_t  plugin3; 
+  Patch::plugin_t  plugin1;
+  Patch::plugin_t  plugin2;
+  Patch::plugin_t  plugin3;
 #endif
-  
+
   action1.type   = 0;
   action1.frame  = 50000;
   action1.fValue = 0.3f;
@@ -35,6 +35,17 @@ TEST_CASE("Test Patch class: write patch")
   plugin1.params.add(0.1f);
   plugin1.params.add(0.2f);
   channel1.plugins.add(plugin1);
+
+  plugin2.path   = "/another/path/to/plugin2";
+  plugin2.bypass = true;
+  plugin2.params.add(0.6f);
+  plugin2.params.add(0.6f);
+  plugin2.params.add(0.6f);
+  plugin2.params.add(0.0f);
+  plugin2.params.add(1.0f);
+  plugin2.params.add(1.0f);
+  plugin2.params.add(0.333f);
+  channel1.plugins.add(plugin2);
 #endif
 
   channel1.type              = CHANNEL_SAMPLE;
@@ -73,7 +84,7 @@ TEST_CASE("Test Patch class: write patch")
   column.width = 500;
   column.channels.add(666);
   patch.columns.add(column);
-  
+
   patch.header       = "GPTCH";
   patch.version      = "1.0";
   patch.versionFloat = 1.0f;
@@ -87,11 +98,10 @@ TEST_CASE("Test Patch class: write patch")
   patch.metronome    = 0;
   patch.lastTakeId   = 0;
   patch.samplerate   = 44100;
-  
+
   patch.masterInPlugins.add(plugin1);
-  
+  patch.masterOutPlugins.add(plugin2);
+
   REQUIRE(1 == 1);
   patch.write("./test-patch.json", "test-patch", false);
 }
-
-
