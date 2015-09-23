@@ -50,7 +50,7 @@ extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
-int Patch::write(const char *file, const char *name)
+int Patch::write(const char *file)
 {
   jRoot = json_object();
 

@@ -136,7 +136,7 @@ public:
   gVector<plugin_t> masterOutPlugins;
 #endif
 
-  int write(const char *file, const char *name);
+  int write(const char *file);
 
 private:
 

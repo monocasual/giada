@@ -88,7 +88,7 @@ TEST_CASE("Test Patch class: write patch")
   patch.header       = "GPTCH";
   patch.version      = "1.0";
   patch.versionFloat = 1.0f;
-  patch.name         = "patch";
+  patch.name         = "test patch";
   patch.bpm          = 100;
   patch.bars         = 4;
   patch.beats        = 23;
@@ -102,5 +102,5 @@ TEST_CASE("Test Patch class: write patch")
   patch.masterInPlugins.add(plugin1);
   patch.masterOutPlugins.add(plugin2);
 
-  REQUIRE(patch.write("./test-patch.json", "test-patch") == 1);
+  REQUIRE(patch.write("./test-patch.json") == 1);
 }
