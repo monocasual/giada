@@ -88,6 +88,8 @@ TEST_CASE("Test Patch class: write patch")
   patch.lastTakeId   = 0;
   patch.samplerate   = 44100;
   
+  patch.masterInPlugins.add(plugin1);
+  
   REQUIRE(1 == 1);
   patch.write("./test-patch.json", "test-patch", false);
 }
