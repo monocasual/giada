@@ -38,23 +38,26 @@
 #include "const.h"
 
 
+using std::string;
+
+
 class Patch : public DataStorageJson
 {
 public:
 
-  const char *header;
-  const char *version;
-  float       versionFloat;
-  const char *name;
-  int         bpm;
-  int         bars;
-  int         beats;
-  int         quantize;
-  float       masterVolIn;
-  float       masterVolOut;
-  int         metronome;
-  int         lastTakeId;
-  int         samplerate;   // original samplerate when the patch was saved
+  string header;
+  string version;
+  float  versionFloat;
+  string name;
+  int    bpm;
+  int    bars;
+  int    beats;
+  int    quantize;
+  float  masterVolIn;
+  float  masterVolOut;
+  int    metronome;
+  int    lastTakeId;
+  int    samplerate;   // original samplerate when the patch was saved
 
   struct action_t
   {
@@ -68,7 +71,7 @@ public:
 
   struct plugin_t
   {
-    const char    *path;
+    string         path;
     int            bypass;
     gVector<float> params;
   };
@@ -98,7 +101,7 @@ public:
     uint32_t    midiOutLmute;
     uint32_t    midiOutLsolo;
     // sample channel
-    const char *samplePath;
+    string      samplePath;
     int         key;
     int         mode;
     int         begin;

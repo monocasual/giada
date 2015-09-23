@@ -79,7 +79,7 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const c
   for (unsigned j=0; j<plugins->size; j++) {
     json_t   *jPlugin = json_object();
     plugin_t  plugin  = plugins->at(j);
-    json_object_set_new(jPlugin, "path",     json_string(plugin.path));
+    json_object_set_new(jPlugin, "path",     json_string(plugin.path.c_str()));
     json_object_set_new(jPlugin, "bypass",   json_boolean(plugin.bypass));
     json_array_append_new(jPlugins, jPlugin);
 
@@ -144,10 +144,10 @@ void Patch::writeActions(json_t *jContainer, gVector<action_t> *actions)
 
 void Patch::writeCommons(json_t *jContainer)
 {
-  json_object_set_new(jContainer, "header",         json_string(header));
-  json_object_set_new(jContainer, "version",        json_string(version));
+  json_object_set_new(jContainer, "header",         json_string(header.c_str()));
+  json_object_set_new(jContainer, "version",        json_string(version.c_str()));
   json_object_set_new(jContainer, "version_float",  json_real(versionFloat));
-  json_object_set_new(jContainer, "name",           json_string(name));
+  json_object_set_new(jContainer, "name",           json_string(name.c_str()));
   json_object_set_new(jContainer, "bpm",            json_integer(bpm));
   json_object_set_new(jContainer, "bars",           json_integer(bars));
   json_object_set_new(jContainer, "beats",          json_integer(beats));
@@ -189,7 +189,7 @@ void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
     json_object_set_new(jChannel, "midi_out_l_playing",   json_integer(channel.midiOutLplaying));
     json_object_set_new(jChannel, "midi_out_l_mute",      json_integer(channel.midiOutLmute));
     json_object_set_new(jChannel, "midi_out_l_solo",      json_integer(channel.midiOutLsolo));
-    json_object_set_new(jChannel, "sample_path",          json_string(channel.samplePath));
+    json_object_set_new(jChannel, "sample_path",          json_string(channel.samplePath.c_str()));
     json_object_set_new(jChannel, "key",                  json_integer(channel.key));
     json_object_set_new(jChannel, "mode",                 json_integer(channel.mode));
     json_object_set_new(jChannel, "begin",                json_integer(channel.begin));
