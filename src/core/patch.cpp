@@ -53,7 +53,7 @@ extern gdMainWindow *mainWin;
 int Patch::write(const char *file, const char *name, bool isProject)
 {
   jRoot = json_object();
-  
+
   writeCommons(jRoot);
   writeColumns(jRoot, &columns);
   writeChannels(jRoot, &channels);
@@ -78,16 +78,16 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const c
     json_object_set_new(jPlugin, "path",     json_string(plugin.path));
     json_object_set_new(jPlugin, "bypass",   json_boolean(plugin.bypass));
     json_array_append_new(jPlugins, jPlugin);
-    
+
     /* plugin params */
-    
+
     json_t *jPluginParams = json_array();
     for (unsigned z=0; z<plugin.params.size; z++) {
       json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
     }
     json_object_set_new(jPlugin, "params", jPluginParams);
   }
-  json_object_set_new(jContainer, key, jPlugins);  
+  json_object_set_new(jContainer, key, jPlugins);
 }
 
 
@@ -99,12 +99,12 @@ void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
   json_t *jColumns = json_array();
   for (unsigned i=0; i<columns->size; i++) {
     json_t   *jColumn = json_object();
-    column_t  column  = columns->at(i); 
+    column_t  column  = columns->at(i);
     json_object_set_new(jColumn, "index", json_integer(column.index));
     json_object_set_new(jColumn, "width", json_integer(column.width));
-    
+
     /* channels' pointers */
-    
+
     json_t *jChannels = json_array();
     for (unsigned k=0; k<column.channels.size; k++) {
       json_array_append_new(jChannels, json_integer(column.channels.at(k)));
@@ -152,7 +152,7 @@ void Patch::writeCommons(json_t *jContainer)
   json_object_set_new(jContainer, "master_vol_out", json_integer(masterVolOut));
 	json_object_set_new(jContainer, "metronome",      json_integer(metronome));
 	json_object_set_new(jContainer, "last_take_id",   json_integer(lastTakeId));
-	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved  
+	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate)); 
 }
 
 
@@ -198,13 +198,13 @@ void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
     json_object_set_new(jChannel, "midi_out",             json_integer(channel.midiOut));
     json_object_set_new(jChannel, "midi_out_chan",        json_integer(channel.midiOutChan));
     json_array_append_new(jChannels, jChannel);
-    
+
     writeActions(jChannel, &channel.actions);
 
 #ifdef WITH_VST
 
     writePlugins(jChannel, &channel.plugins, "plugins");
-    
+
 #endif
   }
   json_object_set_new(jContainer, "channels", jChannels);
