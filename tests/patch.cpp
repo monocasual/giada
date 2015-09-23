@@ -102,6 +102,5 @@ TEST_CASE("Test Patch class: write patch")
   patch.masterInPlugins.add(plugin1);
   patch.masterOutPlugins.add(plugin2);
 
-  REQUIRE(1 == 1);
-  patch.write("./test-patch.json", "test-patch", false);
+  REQUIRE(patch.write("./test-patch.json", "test-patch") == 1);
 }

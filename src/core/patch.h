@@ -51,7 +51,7 @@ public:
   int         beats;
   int         quantize;
   float       masterVolIn;
-  float       masterVolOut; 
+  float       masterVolOut;
   int         metronome;
   int         lastTakeId;
   int         samplerate;   // original samplerate when the patch was saved
@@ -133,7 +133,7 @@ public:
   gVector<plugin_t> masterOutPlugins;
 #endif
 
-  int write(const char *file, const char *name, bool isProject);
+  int write(const char *file, const char *name);
 
 private:
 
