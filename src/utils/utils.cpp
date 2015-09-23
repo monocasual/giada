@@ -145,6 +145,13 @@ std::string gBasename(const char *path)
 	return out;
 }
 
+std::string gBasename(const std::string &s)
+{
+	std::string out = s;
+	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
+	return out;
+}
+
 
 /* -------------------------------------------------------------------------- */
 

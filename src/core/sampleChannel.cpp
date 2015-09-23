@@ -351,7 +351,7 @@ void SampleChannel::sum(int frame, bool running)
 			vChan[frame+1] *= volume_i;
 		}
 	}
-	else {
+	else { // at this point the sample has reached the end */
 
 		if (mode & (SINGLE_BASIC | SINGLE_PRESS | SINGLE_RETRIG) ||
 			 (mode == SINGLE_ENDLESS && status == STATUS_ENDING)   ||
@@ -361,13 +361,16 @@ void SampleChannel::sum(int frame, bool running)
 			sendMidiLplay();
 		}
 
-		/* temporary stop LOOP_ONCE not in ENDING status, otherwise they
-		 * would return in wait, losing the ENDING status */
+		/* LOOP_ONCE or LOOP_ONCE_BAR: if ending (i.e. the user requested their
+		 * termination), kill 'em. Let them wait otherwise. But don't put back in
+		 * wait mode those already stopped by the conditionals above. */
 
-		//if (mode == LOOP_ONCE && status != STATUS_ENDING)
-		if ((mode & (LOOP_ONCE | LOOP_ONCE_BAR)) && status != STATUS_ENDING) {
-			status = STATUS_WAIT;
-			sendMidiLplay();
+		if (mode & (LOOP_ONCE | LOOP_ONCE_BAR)) {
+			if (status == STATUS_ENDING)
+				status = STATUS_OFF;
+			else
+			if (status != STATUS_OFF)
+				status = STATUS_WAIT;
 		}
 
 		/* check for end of samples. SINGLE_ENDLESS runs forever unless
@@ -718,27 +721,29 @@ void SampleChannel::kill(int frame)
 
 void SampleChannel::stopBySeq()
 {
-	/* kill loop channels and recs if "samplesStopOnSeqHalt" == true,
-	 * else do nothing and return. Always kill at frame=0, this is a
-	 * user-generated event. */
+  /* Loop-mode samples in wait status get stopped right away. */
 
-	if (!G_Conf.chansStopOnSeqHalt)
-		return;
+	if (mode & LOOP_ANY && status == STATUS_WAIT) {
+		status = STATUS_OFF;
+    return;
+  }
 
-	if (mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		kill(0);
+  /* When to kill samples on StopSeq:
+   *  - when chansStopOnSeqHalt == true (run the sample to end otherwise)
+   *  - when a channel has recs in play (1)
+   *
+   * Always kill at frame=0, this is a user-generated event.
+   *
+   * (1) a channel has recs in play when:
+   *  - Recorder has events for that channel
+   *  - G_Mixer has at least one sample in play
+   *  - Recorder's channel is active (altrimenti può capitare che si stoppino i
+   *    sample suonati manualmente in un canale con rec disattivate) */
 
-	/** FIXME - merge these */
-
-	/* when a channel has recs in play?
-	 * Recorder has events for that channel
-	 * G_Mixer has at least one sample in play
-	 * Recorder's channel is active (altrimenti può capitare che
-	 * si stoppino i sample suonati manualmente in un canale con rec
-	 * disattivate) */
-
-	if (hasActions && readActions && status == STATUS_PLAY)
-		kill(0);
+	if (G_Conf.chansStopOnSeqHalt) {
+    if ((mode & LOOP_ANY) || (hasActions && readActions && status == STATUS_PLAY))
+      kill(0);
+  }
 }
 
 
@@ -952,14 +957,14 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject)
 {
 	Channel::writePatch(fp, i, isProject);
 
-	const char *path = "";
+	std::string path;
 	if (wave != NULL) {
-		path = wave->pathfile.c_str();
+		path = wave->pathfile;
 		if (isProject)
-			path = gBasename(path).c_str();  // make it portable
+			path = gBasename(path);  // make it portable
 	}
 
-	fprintf(fp, "samplepath%d=%s\n",     i, path);
+	fprintf(fp, "samplepath%d=%s\n",     i, path.c_str());
 	fprintf(fp, "chanKey%d=%d\n",        i, key);
 	//fprintf(fp, "columnIndex%d=%d\n",    i, index);
 	fprintf(fp, "chanmode%d=%d\n",       i, mode);

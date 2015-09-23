@@ -31,7 +31,7 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define VERSIONE 				"0.10.1"
+#define VERSIONE 				"0.10.2"
 #define VERSIONE_STR 		"Giada"
 #define VERSIONE_FLOAT	1.01f
 
