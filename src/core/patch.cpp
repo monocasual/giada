@@ -62,7 +62,11 @@ int Patch::write(const char *file, const char *name, bool isProject)
   writePlugins(jRoot, &masterOutPlugins, "master_out_plugins");
 #endif
 
-  json_dump_file(jRoot, file, JSON_INDENT(2));
+  if (json_dump_file(jRoot, file, JSON_INDENT(2)) != 0) {
+    gLog("[Patch::write] unable to write patch file!\n");
+    return 0;
+  }
+  return 1;
 }
 
 
@@ -152,7 +156,7 @@ void Patch::writeCommons(json_t *jContainer)
   json_object_set_new(jContainer, "master_vol_out", json_integer(masterVolOut));
 	json_object_set_new(jContainer, "metronome",      json_integer(metronome));
 	json_object_set_new(jContainer, "last_take_id",   json_integer(lastTakeId));
-	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate)); 
+	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate));
 }
 
 
