@@ -144,7 +144,7 @@ private:
   
   void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
   
-  void writePlugins(json_t *jContainer, gVector<plugin_t> *plugins);
+  void writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
   
   void writeActions(json_t *jContainer, gVector<action_t> *actions);
   

@@ -57,7 +57,11 @@ int Patch::write(const char *file, const char *name, bool isProject)
   writeCommons(jRoot);
   writeColumns(jRoot, &columns);
   writeChannels(jRoot, &channels);
-  
+#ifdef WITH_VST
+  writePlugins(jRoot, &masterInPlugins, "master_in_plugins");
+  writePlugins(jRoot, &masterOutPlugins, "master_out_plugins");
+#endif
+
   json_dump_file(jRoot, file, JSON_INDENT(2));
 }
 
@@ -65,7 +69,7 @@ int Patch::write(const char *file, const char *name, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins)
+void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const char *key)
 {
   json_t *jPlugins = json_array();
   for (unsigned j=0; j<plugins->size; j++) {
@@ -83,7 +87,7 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins)
     }
     json_object_set_new(jPlugin, "params", jPluginParams);
   }
-  json_object_set_new(jContainer, "plugins", jPlugins);  
+  json_object_set_new(jContainer, key, jPlugins);  
 }
 
 
@@ -199,7 +203,7 @@ void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
 
 #ifdef WITH_VST
 
-    writePlugins(jChannel, &channel.plugins);
+    writePlugins(jChannel, &channel.plugins, "plugins");
     
 #endif
   }
