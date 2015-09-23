@@ -16,7 +16,8 @@
 0.10.2 ---
 - Setup for Travis CI automated builds
 - Add base framework for unit testing (with Catch)
-- Fix empty sample path in sample channels when saving a Project 
+- Fix empty sample path in sample channels when saving a Project
+- Improve behavior of Loop Once family when the sequencer is halted
 
 
 0.10.1 --- 2015 . 08 . 26
