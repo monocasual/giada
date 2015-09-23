@@ -137,6 +137,18 @@ public:
 #endif
   
   int write(const char *file, const char *name, bool isProject);
+
+private:
+
+  void writeCommons(json_t *jContainer);
+  
+  void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
+  
+  void writePlugins(json_t *jContainer, gVector<plugin_t> *plugins);
+  
+  void writeActions(json_t *jContainer, gVector<action_t> *actions);
+  
+  void writeColumns(json_t *jContainer, gVector<column_t> *columns);
 };
 
 #endif

@@ -52,54 +52,115 @@ extern gdMainWindow *mainWin;
 
 int Patch::write(const char *file, const char *name, bool isProject)
 {
-	FILE *fp = fopen(file, "w");
-	if (fp == NULL) {
-    gLog("[patch::write] unable to read file\n");
-		return 0;
-  }
-
   jRoot = json_object();
   
-  json_object_set_new(jRoot, "header",         json_string(header));
-  json_object_set_new(jRoot, "version",        json_string(version));
-  json_object_set_new(jRoot, "version_float",  json_real(versionFloat));
-  json_object_set_new(jRoot, "name",           json_string(name));
-  json_object_set_new(jRoot, "bpm",            json_integer(bpm));
-  json_object_set_new(jRoot, "bars",           json_integer(bars));
-  json_object_set_new(jRoot, "beats",          json_integer(beats));
-  json_object_set_new(jRoot, "quantize",       json_integer(quantize));
-  json_object_set_new(jRoot, "master_vol_in",  json_integer(masterVolIn));
-  json_object_set_new(jRoot, "master_vol_out", json_integer(masterVolOut));
-	json_object_set_new(jRoot, "metronome",      json_integer(metronome));
-	json_object_set_new(jRoot, "last_take_id",   json_integer(lastTakeId));
-	json_object_set_new(jRoot, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved
-
-  /* columns */
+  writeCommons(jRoot);
+  writeColumns(jRoot, &columns);
+  writeChannels(jRoot, &channels);
   
+  json_dump_file(jRoot, file, JSON_INDENT(2));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins)
+{
+  json_t *jPlugins = json_array();
+  for (unsigned j=0; j<plugins->size; j++) {
+    json_t   *jPlugin = json_object();
+    plugin_t  plugin  = plugins->at(j);
+    json_object_set_new(jPlugin, "path",     json_string(plugin.path));
+    json_object_set_new(jPlugin, "bypass",   json_boolean(plugin.bypass));
+    json_array_append_new(jPlugins, jPlugin);
+    
+    /* plugin params */
+    
+    json_t *jPluginParams = json_array();
+    for (unsigned z=0; z<plugin.params.size; z++) {
+      json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
+    }
+    json_object_set_new(jPlugin, "params", jPluginParams);
+  }
+  json_object_set_new(jContainer, "plugins", jPlugins);  
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
+{
   json_t *jColumns = json_array();
-  for (unsigned i=0; i<columns.size; i++) {
+  for (unsigned i=0; i<columns->size; i++) {
     json_t   *jColumn = json_object();
-    column_t  column  = columns.at(i); 
+    column_t  column  = columns->at(i); 
     json_object_set_new(jColumn, "index", json_integer(column.index));
     json_object_set_new(jColumn, "width", json_integer(column.width));
     
     /* channels' pointers */
     
     json_t *jChannels = json_array();
-    for (unsigned k=0; k<columns.at(i).channels.size; k++) {
+    for (unsigned k=0; k<column.channels.size; k++) {
       json_array_append_new(jChannels, json_integer(column.channels.at(k)));
     }
     json_object_set_new(jColumn, "channels", jChannels);
     json_array_append_new(jColumns, jColumn);
   }
-  json_object_set_new(jRoot, "columns", jColumns);
-  
-  /* channels */
-  
+  json_object_set_new(jContainer, "columns", jColumns);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::writeActions(json_t *jContainer, gVector<action_t> *actions)
+{
+  json_t *jActions = json_array();
+  for (unsigned k=0; k<actions->size; k++) {
+    json_t   *jAction = json_object();
+    action_t  action  = actions->at(k);
+    json_object_set_new(jAction, "type",    json_integer(action.type));
+    json_object_set_new(jAction, "frame",   json_integer(action.frame));
+    json_object_set_new(jAction, "f_value", json_real(action.fValue));
+    json_object_set_new(jAction, "i_value", json_integer(action.iValue));
+    json_array_append_new(jActions, jAction);
+  }
+  json_object_set_new(jContainer, "actions", jActions);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::writeCommons(json_t *jContainer)
+{
+  json_object_set_new(jContainer, "header",         json_string(header));
+  json_object_set_new(jContainer, "version",        json_string(version));
+  json_object_set_new(jContainer, "version_float",  json_real(versionFloat));
+  json_object_set_new(jContainer, "name",           json_string(name));
+  json_object_set_new(jContainer, "bpm",            json_integer(bpm));
+  json_object_set_new(jContainer, "bars",           json_integer(bars));
+  json_object_set_new(jContainer, "beats",          json_integer(beats));
+  json_object_set_new(jContainer, "quantize",       json_integer(quantize));
+  json_object_set_new(jContainer, "master_vol_in",  json_integer(masterVolIn));
+  json_object_set_new(jContainer, "master_vol_out", json_integer(masterVolOut));
+	json_object_set_new(jContainer, "metronome",      json_integer(metronome));
+	json_object_set_new(jContainer, "last_take_id",   json_integer(lastTakeId));
+	json_object_set_new(jContainer, "samplerate",     json_integer(samplerate)); // original samplerate when the patch was saved  
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
+{
   json_t *jChannels = json_array();
-  for (unsigned i=0; i<channels.size; i++) {
+  for (unsigned i=0; i<channels->size; i++) {
     json_t    *jChannel = json_object();
-    channel_t  channel  = channels.at(i);
+    channel_t  channel  = channels->at(i);
     json_object_set_new(jChannel, "type",                 json_integer(channel.type));
     json_object_set_new(jChannel, "index",                json_integer(channel.index));
     json_object_set_new(jChannel, "column",               json_integer(channel.column));
@@ -134,48 +195,13 @@ int Patch::write(const char *file, const char *name, bool isProject)
     json_object_set_new(jChannel, "midi_out_chan",        json_integer(channel.midiOutChan));
     json_array_append_new(jChannels, jChannel);
     
-    /* actions */
-    
-    json_t *jActions = json_array();
-    for (unsigned k=0; k<channel.actions.size; k++) {
-      json_t   *jAction = json_object();
-      action_t  action  = channel.actions.at(k);
-      json_object_set_new(jAction, "type",    json_integer(action.type));
-      json_object_set_new(jAction, "frame",   json_integer(action.frame));
-      json_object_set_new(jAction, "f_value", json_real(action.fValue));
-      json_object_set_new(jAction, "i_value", json_integer(action.iValue));
-      json_array_append_new(jActions, jAction);
-    }
-    json_object_set_new(jChannel, "actions", jActions);
+    writeActions(jChannel, &channel.actions);
 
 #ifdef WITH_VST
 
-    /* plugins */
-    
-    json_t *jPlugins = json_array();
-    for (unsigned j=0; j<channel.plugins.size; j++) {
-      json_t   *jPlugin = json_object();
-      plugin_t  plugin  = channel.plugins.at(j);
-      json_object_set_new(jPlugin, "path",     json_string(plugin.path));
-      json_object_set_new(jPlugin, "bypass",   json_boolean(plugin.bypass));
-      json_array_append_new(jPlugins, jPlugin);
-      
-      /* plugin params */
-      
-      json_t *jPluginParams = json_array();
-      for (unsigned z=0; z<plugin.params.size; z++) {
-        json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
-      }
-      json_object_set_new(jPlugin, "params", jPluginParams);
-    }
-    json_object_set_new(jChannel, "plugins", jPlugins);
+    writePlugins(jChannel, &channel.plugins);
     
 #endif
   }
-  json_object_set_new(jRoot, "channels", jChannels);
-  
-  char *out = json_dumps(jRoot, 0);
-  fputs(out, fp);
-  fclose(fp);
-  free(out);
+  json_object_set_new(jContainer, "channels", jChannels);
 }
