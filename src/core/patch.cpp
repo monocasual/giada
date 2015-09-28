@@ -69,6 +69,18 @@ int Patch::write(const char *file)
   return 1;
 }
 
+/* -------------------------------------------------------------------------- */
+
+
+int Patch::read(const char *file)
+{
+  jRoot = json_load_file(file, 0, &jError);
+  if (!jRoot) {
+    gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
+    return 0;
+  }
+  return 1;
+}
 
 /* -------------------------------------------------------------------------- */
 

@@ -137,6 +137,7 @@ public:
 #endif
 
   int write(const char *file);
+  int read (const char *file);
 
 private:
 
