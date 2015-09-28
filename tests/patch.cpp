@@ -104,3 +104,10 @@ TEST_CASE("Test Patch class: write patch")
 
   REQUIRE(patch.write("./test-patch.json") == 1);
 }
+
+
+TEST_CASE("Test Patch class: read patch")
+{
+  Patch patch;
+  REQUIRE(patch.read("./test-patch.json") == 1);
+}
