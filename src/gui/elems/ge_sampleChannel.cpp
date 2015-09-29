@@ -221,13 +221,13 @@ void gSampleChannel::__cb_openMenu()
 	/* no 'clear actions' if there are no actions */
 
 	if (!ch->hasActions)
-		rclick_menu[6].deactivate();
+		rclick_menu[7].deactivate();
 
 	/* no 'clear start/stop actions' for those channels in loop mode:
 	 * they cannot have start/stop actions. */
 
 	if (ch->mode & LOOP_ANY)
-		rclick_menu[10].deactivate();
+		rclick_menu[11].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_BOX);
