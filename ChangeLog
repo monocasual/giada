@@ -18,6 +18,7 @@
 - Add base framework for unit testing (with Catch)
 - Fix empty sample path in sample channels when saving a Project
 - Improve behavior of Loop Once family when the sequencer is halted
+- Unable to edit actions for sample channels (fixed)
 
 
 0.10.1 --- 2015 . 08 . 26
