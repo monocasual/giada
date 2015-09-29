@@ -79,6 +79,23 @@ int Patch::read(const char *file)
     gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
     return 0;
   }
+  if (!json_is_object(jRoot)) {
+    gLog("[Patch::read] malformed root JSON\n"); 
+    json_decref(jRoot);
+    return 0;
+  }
+  
+  /* read commons */
+  
+  json_t *header = json_object_get(jRoot, "header");
+  if (!json_is_string(header)) {
+    gLog("[Patch::read] 'header' is not a string!\n"); 
+    json_decref(jRoot);
+    return 0;
+  }
+  header = json_string_value(header);
+  
+  json_decref(jRoot);
   return 1;
 }
 

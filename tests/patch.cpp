@@ -111,5 +111,6 @@ TEST_CASE("Test Patch class")
   SECTION("test read")
   { 
     REQUIRE(patch.read("./test-patch.json") == 1);
+    REQUIRE(patch.header == "GPTCH");
   }
 }
