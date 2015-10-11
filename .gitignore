@@ -14,19 +14,20 @@ src/rtaudio-mod/rtaudio-config
 src/rtaudio-mod/tests
 
 # --- test files
-giada_tests
-giada_tests.log
-giada_tests.trs
-test-driver
-test-suite.log
+/giada_tests
+/giada_tests.log
+/giada_tests.trs
+/test-driver
+/test-suite.log
+/test-patch.json
 
 # --- misc
-AUTHORS
-ERRORS
-README
-INSTALL
+/AUTHORS
+/ERRORS
+/README
+/INSTALL
 Makefile
-NEWS
+/NEWS
 compile
 aclocal.m4
 autom4te.cache/
@@ -35,6 +36,7 @@ config.status
 depcomp
 install-sh
 /configure
+/nbproject
 misc/
 missing
 release/
