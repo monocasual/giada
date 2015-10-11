@@ -27,5 +27,54 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <string>
+#include "../utils/log.h"
 #include "dataStorageJson.h"
 
+
+using std::string;
+
+
+bool DataStorageJson::setString(json_t *jRoot, const char *key, string &output)
+{
+  json_t *jObject = json_object_get(jRoot, key);
+  if (!json_is_string(jObject)) {
+    gLog("[dataStorageJson::setString] %s is not a string!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  output = json_string_value(jObject);
+  return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool DataStorageJson::setFloat(json_t *jRoot, const char *key, float &output)
+{
+  json_t *jObject = json_object_get(jRoot, key);
+  if (!json_is_real(jObject)) {
+    gLog("[dataStorageJson::setString] %s is not a float!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  output = json_real_value(jObject);
+  return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool DataStorageJson::setInt(json_t *jRoot, const char *key, uint32_t &output)
+{
+  json_t *jObject = json_object_get(jRoot, key);
+  if (!json_is_integer(jObject)) {
+    gLog("[dataStorageJson::setString] %d is not an integer!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  output = json_integer_value(jObject);
+  return true;
+}

@@ -31,7 +31,11 @@
 #define __DATA_STORAGE_JSON_H__
 
 
+#include <stdint.h>
 #include <jansson.h>
+
+
+using std::string;
 
 
 class DataStorageJson
@@ -40,6 +44,10 @@ protected:
 
   json_t       *jRoot;
   json_error_t  jError;
+
+  bool setString(json_t *jRoot, const char *key, string &output);
+  bool setFloat(json_t *jRoot, const char *key, float &output);
+  bool setInt(json_t *jRoot, const char *key, uint32_t &output);
 };
 
 #endif
