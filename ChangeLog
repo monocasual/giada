@@ -14,11 +14,12 @@
 
 
 0.10.2 ---
-- Setup for Travis CI automated builds
+- Setup Travis CI automated builds
 - Add base framework for unit testing (with Catch)
-- Fix empty sample path in sample channels when saving a Project
 - Improve behavior of Loop Once family when the sequencer is halted
-- Unable to edit actions for sample channels (fixed)
+- Fix empty sample path in sample channels when saving a Project
+- Fix disabled "edit actions" for sample channels
+- Fix missing pthreadGC2.dll in Windows build
 
 
 0.10.1 --- 2015 . 08 . 26
