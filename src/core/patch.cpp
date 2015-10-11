@@ -81,21 +81,17 @@ int Patch::read(const char *file)
     return 0;
   }
   if (!json_is_object(jRoot)) {
-    gLog("[Patch::read] malformed root JSON\n"); 
+    gLog("[Patch::read] malformed root JSON\n");
     json_decref(jRoot);
     return 0;
   }
-  
+
   /* read commons */
-  
-  json_t *j_header = json_object_get(jRoot, PATCH_KEY_HEADER);
-  if (!json_is_string(j_header)) {
-    gLog("[Patch::read] " PATCH_KEY_HEADER " is not a string!\n"); 
-    json_decref(jRoot);
-    return 0;
-  }
-  header = json_string_value(j_header);
-  
+
+  if (!setString(jRoot, PATCH_KEY_HEADER, header))  return 0;
+  if (!setString(jRoot, PATCH_KEY_VERSION, version)) return 0;
+  if (!setFloat(jRoot, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
+
   json_decref(jRoot);
   return 1;
 }

@@ -6,7 +6,7 @@
 TEST_CASE("Test Patch class")
 {
   Patch patch;
-  
+
   SECTION("test write")
   {
     Patch::action_t  action1;
@@ -107,10 +107,12 @@ TEST_CASE("Test Patch class")
 
     REQUIRE(patch.write("./test-patch.json") == 1);
   }
-  
+
   SECTION("test read")
-  { 
+  {
     REQUIRE(patch.read("./test-patch.json") == 1);
     REQUIRE(patch.header == "GPTCH");
+    REQUIRE(patch.version == "1.0");
+    REQUIRE(patch.versionFloat == 1.0);
   }
 }
