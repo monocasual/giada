@@ -114,5 +114,15 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.header == "GPTCH");
     REQUIRE(patch.version == "1.0");
     REQUIRE(patch.versionFloat == 1.0);
+    REQUIRE(patch.name == "test patch");
+    REQUIRE(patch.bpm == 100);
+    REQUIRE(patch.bars == 4);
+    REQUIRE(patch.beats == 23);
+    REQUIRE(patch.quantize == 1);
+    REQUIRE(patch.masterVolIn == 1.0f);
+    REQUIRE(patch.masterVolOut == 0.2f);
+    REQUIRE(patch.metronome == 0);
+    REQUIRE(patch.lastTakeId == 0);
+    REQUIRE(patch.samplerate == 44100);
   }
 }

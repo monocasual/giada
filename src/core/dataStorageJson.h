@@ -47,7 +47,8 @@ protected:
 
   bool setString(json_t *jRoot, const char *key, string &output);
   bool setFloat(json_t *jRoot, const char *key, float &output);
-  bool setInt(json_t *jRoot, const char *key, uint32_t &output);
+  bool setUint32(json_t *jRoot, const char *key, uint32_t &output);
+  bool setInt(json_t *jRoot, const char *key, int &output);
 };
 
 #endif

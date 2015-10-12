@@ -67,7 +67,7 @@ bool DataStorageJson::setFloat(json_t *jRoot, const char *key, float &output)
 /* -------------------------------------------------------------------------- */
 
 
-bool DataStorageJson::setInt(json_t *jRoot, const char *key, uint32_t &output)
+bool DataStorageJson::setUint32(json_t *jRoot, const char *key, uint32_t &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!json_is_integer(jObject)) {
@@ -77,4 +77,13 @@ bool DataStorageJson::setInt(json_t *jRoot, const char *key, uint32_t &output)
   }
   output = json_integer_value(jObject);
   return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool DataStorageJson::setInt(json_t *jRoot, const char *key, int &output)
+{
+  return setUint32(jRoot, key, (uint32_t&) output);
 }

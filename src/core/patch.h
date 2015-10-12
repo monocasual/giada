@@ -143,7 +143,9 @@ private:
 
   void writeCommons (json_t *jContainer);
   void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
+#ifdef WITH_VST
   void writePlugins (json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
+#endif
   void writeActions (json_t *jContainer, gVector<action_t> *actions);
   void writeColumns (json_t *jContainer, gVector<column_t> *columns);
 };

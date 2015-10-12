@@ -90,7 +90,17 @@ int Patch::read(const char *file)
 
   if (!setString(jRoot, PATCH_KEY_HEADER, header))  return 0;
   if (!setString(jRoot, PATCH_KEY_VERSION, version)) return 0;
-  if (!setFloat(jRoot, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
+  if (!setFloat (jRoot, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
+  if (!setString(jRoot, PATCH_KEY_NAME, name)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_BPM, bpm)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_BARS, bars)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_BEATS, beats)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_QUANTIZE, quantize)) return 0;
+  if (!setFloat (jRoot, PATCH_KEY_MASTER_VOL_IN, masterVolIn)) return 0;
+  if (!setFloat (jRoot, PATCH_KEY_MASTER_VOL_OUT, masterVolOut)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_METRONOME, metronome)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_LAST_TAKE_ID, lastTakeId)) return 0;
+  if (!setInt   (jRoot, PATCH_KEY_SAMPLERATE, samplerate)) return 0;
 
   json_decref(jRoot);
   return 1;
@@ -98,6 +108,7 @@ int Patch::read(const char *file)
 
 /* -------------------------------------------------------------------------- */
 
+#ifdef WITH_VST
 
 void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const char *key)
 {
@@ -119,6 +130,8 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const c
   }
   json_object_set_new(jContainer, key, jPlugins);
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */
