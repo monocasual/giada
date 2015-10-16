@@ -87,3 +87,31 @@ bool DataStorageJson::setInt(json_t *jRoot, const char *key, int &output)
 {
   return setUint32(jRoot, key, (uint32_t&) output);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool DataStorageJson::checkObject(json_t *jRoot, const char *key)
+{
+  if (!json_is_object(jRoot)) {
+    gLog("[DataStorageJson::checkObject] malformed json: %s is not an object!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool DataStorageJson::checkArray(json_t *jRoot, const char *key)
+{
+  if (!json_is_array(jRoot)) {
+    gLog("[DataStorageJson::checkObject] malformed json: %s is not an array!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  return true;
+}
