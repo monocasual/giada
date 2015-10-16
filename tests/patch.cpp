@@ -86,6 +86,8 @@ TEST_CASE("Test Patch class")
     column.index = 0;
     column.width = 500;
     column.channels.add(666);
+    column.channels.add(555);
+    column.channels.add(123);
     patch.columns.add(column);
 
     patch.header       = "GPTCH";
@@ -124,5 +126,13 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.metronome == 0);
     REQUIRE(patch.lastTakeId == 0);
     REQUIRE(patch.samplerate == 44100);
+
+
+    Patch::column_t column0 = patch.columns.at(0);
+    REQUIRE(column0.index == 0);
+    REQUIRE(column0.width == 500);
+    REQUIRE(column0.channels.at(0) == 666);
+    REQUIRE(column0.channels.at(1) == 555);
+    REQUIRE(column0.channels.at(2) == 123);
   }
 }
