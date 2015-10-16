@@ -70,6 +70,7 @@ int Patch::write(const char *file)
   return 1;
 }
 
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -80,27 +81,11 @@ int Patch::read(const char *file)
     gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
     return 0;
   }
-  if (!json_is_object(jRoot)) {
-    gLog("[Patch::read] malformed root JSON\n");
-    json_decref(jRoot);
+  if (!checkObject(jRoot, "root element"))
     return 0;
-  }
 
-  /* read commons */
-
-  if (!setString(jRoot, PATCH_KEY_HEADER, header))  return 0;
-  if (!setString(jRoot, PATCH_KEY_VERSION, version)) return 0;
-  if (!setFloat (jRoot, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
-  if (!setString(jRoot, PATCH_KEY_NAME, name)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_BPM, bpm)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_BARS, bars)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_BEATS, beats)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_QUANTIZE, quantize)) return 0;
-  if (!setFloat (jRoot, PATCH_KEY_MASTER_VOL_IN, masterVolIn)) return 0;
-  if (!setFloat (jRoot, PATCH_KEY_MASTER_VOL_OUT, masterVolOut)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_METRONOME, metronome)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_LAST_TAKE_ID, lastTakeId)) return 0;
-  if (!setInt   (jRoot, PATCH_KEY_SAMPLERATE, samplerate)) return 0;
+  readCommons(jRoot);
+  readColumns(jRoot);
 
   json_decref(jRoot);
   return 1;
@@ -251,4 +236,63 @@ void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
 #endif
   }
   json_object_set_new(jContainer, PATCH_KEY_CHANNELS, jChannels);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Patch::readCommons(json_t *jContainer)
+{
+  if (!setString(jContainer, PATCH_KEY_HEADER, header))  return 0;
+  if (!setString(jContainer, PATCH_KEY_VERSION, version)) return 0;
+  if (!setFloat (jContainer, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
+  if (!setString(jContainer, PATCH_KEY_NAME, name)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_BPM, bpm)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_BARS, bars)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_BEATS, beats)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_QUANTIZE, quantize)) return 0;
+  if (!setFloat (jContainer, PATCH_KEY_MASTER_VOL_IN, masterVolIn)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_METRONOME, metronome)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_LAST_TAKE_ID, lastTakeId)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_SAMPLERATE, samplerate)) return 0;
+  return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Patch::readColumns(json_t *jContainer)
+{
+  json_t *jColumns = json_object_get(jContainer, PATCH_KEY_COLUMNS);
+  if (!checkArray(jColumns, PATCH_KEY_COLUMNS))
+    return 0;
+
+  size_t columnIndex;
+  json_t *jColumn;
+  json_array_foreach(jColumns, columnIndex, jColumn) {
+
+    if (!checkObject(jColumn, ""))
+      return 0;
+
+    column_t column;
+    if (!setInt(jColumn, PATCH_KEY_COLUMN_INDEX, column.index)) return 0;
+    if (!setInt(jColumn, PATCH_KEY_COLUMN_WIDTH, column.width)) return 0;
+
+    /* read columns channels */
+
+    json_t *jChannels = json_object_get(jColumn, PATCH_KEY_COLUMN_CHANNELS);
+    if (!checkArray(jChannels, PATCH_KEY_COLUMN_CHANNELS)) return 0;
+
+    size_t channelIndex;
+    json_t *jChannel;
+    json_array_foreach(jChannels, columnIndex, jChannel)
+      column.channels.add(json_integer_value(jChannel));
+
+    json_decref(jChannels);
+    columns.add(column);
+    json_decref(jColumn);
+  }
+  return 1;
 }

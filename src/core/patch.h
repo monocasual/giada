@@ -141,6 +141,13 @@ public:
 
 private:
 
+  /* readers */
+
+  bool readCommons (json_t *jContainer);
+  bool readColumns (json_t *jContainer);
+
+  /* writers */
+  
   void writeCommons (json_t *jContainer);
   void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
 #ifdef WITH_VST
