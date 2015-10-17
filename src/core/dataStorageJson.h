@@ -49,6 +49,7 @@ protected:
   bool setFloat(json_t *jRoot, const char *key, float &output);
   bool setUint32(json_t *jRoot, const char *key, uint32_t &output);
   bool setInt(json_t *jRoot, const char *key, int &output);
+  bool setBool(json_t *jRoot, const char *key, bool &output);
 
   /* checkObject
   check whether the jRoot object is a valid json object {} */

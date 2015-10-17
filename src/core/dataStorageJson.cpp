@@ -83,6 +83,22 @@ bool DataStorageJson::setUint32(json_t *jRoot, const char *key, uint32_t &output
 /* -------------------------------------------------------------------------- */
 
 
+bool DataStorageJson::setBool(json_t *jRoot, const char *key, bool &output)
+{
+  json_t *jObject = json_object_get(jRoot, key);
+  if (!json_is_boolean(jObject)) {
+    gLog("[dataStorageJson::setString] %d is not a boolean!\n", key);
+    json_decref(jRoot);
+    return false;
+  }
+  output = json_boolean_value(jObject);
+  return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool DataStorageJson::setInt(json_t *jRoot, const char *key, int &output)
 {
   return setUint32(jRoot, key, (uint32_t&) output);
