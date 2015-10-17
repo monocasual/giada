@@ -60,17 +60,17 @@ TEST_CASE("Test Patch class")
     channel1.volume            = 1.0f;
     channel1.panLeft           = 0.5f;
     channel1.panRight          = 0.5f;
-    channel1.midiIn            = 0;
-    channel1.midiInKeyPress    = 0;
-    channel1.midiInKeyRel      = 0;
-    channel1.midiInKill        = 0;
-    channel1.midiInVolume      = 0;
-    channel1.midiInMute        = 0;
-    channel1.midiInSolo        = 0;
-    channel1.midiOutL          = 0;
-    channel1.midiOutLplaying   = 0;
-    channel1.midiOutLmute      = 0;
-    channel1.midiOutLsolo      = 0;
+    channel1.midiIn            = true;
+    channel1.midiInKeyPress    = UINT32_MAX;  // check maximum value
+    channel1.midiInKeyRel      = 1;
+    channel1.midiInKill        = 2;
+    channel1.midiInVolume      = 3;
+    channel1.midiInMute        = 4;
+    channel1.midiInSolo        = 5;
+    channel1.midiOutL          = true;
+    channel1.midiOutLplaying   = 7;
+    channel1.midiOutLmute      = 8;
+    channel1.midiOutLsolo      = 9;
     channel1.samplePath        = "/tmp/test.wav";
     channel1.key               = 0;
     channel1.mode              = 0;
@@ -81,6 +81,8 @@ TEST_CASE("Test Patch class")
     channel1.pitch             = 0;
     channel1.midiInReadActions = 0;
     channel1.midiInPitch       = 0;
+    channel1.midiOut           = 0;
+    channel1.midiOutChan       = 5;
     patch.channels.add(channel1);
 
     column.index = 0;
@@ -127,12 +129,77 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.lastTakeId == 0);
     REQUIRE(patch.samplerate == 44100);
 
-
     Patch::column_t column0 = patch.columns.at(0);
     REQUIRE(column0.index == 0);
     REQUIRE(column0.width == 500);
     REQUIRE(column0.channels.at(0) == 666);
     REQUIRE(column0.channels.at(1) == 555);
     REQUIRE(column0.channels.at(2) == 123);
+
+    Patch::channel_t channel0 = patch.channels.at(0);
+    REQUIRE(channel0.type == CHANNEL_SAMPLE);
+    REQUIRE(channel0.index == 666);
+    REQUIRE(channel0.column == 0);
+    REQUIRE(channel0.mute == 0);
+    REQUIRE(channel0.mute_s == 0);
+    REQUIRE(channel0.solo == 0);
+    REQUIRE(channel0.volume == 1.0f);
+    REQUIRE(channel0.panLeft == 0.5f);
+    REQUIRE(channel0.panRight == 0.5f);
+    REQUIRE(channel0.midiIn == true);
+    REQUIRE(channel0.midiInKeyPress == UINT32_MAX);
+    REQUIRE(channel0.midiInKeyRel == 1);
+    REQUIRE(channel0.midiInKill == 2);
+    REQUIRE(channel0.midiInVolume == 3);
+    REQUIRE(channel0.midiInMute == 4);
+    REQUIRE(channel0.midiInSolo == 5);
+    REQUIRE(channel0.midiOutL == true);
+    REQUIRE(channel0.midiOutLplaying == 7);
+    REQUIRE(channel0.midiOutLmute == 8);
+    REQUIRE(channel0.midiOutLsolo == 9);
+    REQUIRE(channel0.samplePath == "/tmp/test.wav");
+    REQUIRE(channel0.key == 0);
+    REQUIRE(channel0.mode == 0);
+    REQUIRE(channel0.begin == 0);
+    REQUIRE(channel0.end == 0);
+    REQUIRE(channel0.boost == 0);
+    REQUIRE(channel0.recActive == 0);
+    REQUIRE(channel0.pitch == 0);
+    REQUIRE(channel0.midiInReadActions == 0);
+    REQUIRE(channel0.midiInPitch == 0);
+    REQUIRE(channel0.midiOut == 0);
+    REQUIRE(channel0.midiOutChan == 5);
+
+    Patch::action_t action0 = channel0.actions.at(0);
+    REQUIRE(action0.type == 0);
+    REQUIRE(action0.frame == 50000);
+    REQUIRE(action0.fValue == 0.3f);
+    REQUIRE(action0.iValue == 1000);
+
+    Patch::action_t action1 = channel0.actions.at(1);
+    REQUIRE(action1.type == 2);
+    REQUIRE(action1.frame == 589);
+    REQUIRE(action1.fValue == 1.0f);
+    REQUIRE(action1.iValue == 130);
+
+#ifdef WITH_VST
+    Patch::plugin_t plugin0 = channel0.plugins.at(0);
+    REQUIRE(plugin0.path   == "/path/to/plugin1");
+    REQUIRE(plugin0.bypass == false);
+    REQUIRE(plugin0.params.at(0) == 0.0f);
+    REQUIRE(plugin0.params.at(1) == 0.1f);
+    REQUIRE(plugin0.params.at(2) == 0.2f);
+
+    Patch::plugin_t plugin1 = channel0.plugins.at(1);
+    REQUIRE(plugin1.path == "/another/path/to/plugin2");
+    REQUIRE(plugin1.bypass == true);
+    REQUIRE(plugin1.params.at(0) == 0.6f);
+    REQUIRE(plugin1.params.at(1) == 0.6f);
+    REQUIRE(plugin1.params.at(2) == 0.6f);
+    REQUIRE(plugin1.params.at(3) == 0.0f);
+    REQUIRE(plugin1.params.at(4) == 1.0f);
+    REQUIRE(plugin1.params.at(5) == 1.0f);
+    REQUIRE(plugin1.params.at(6) == 0.333f);
+#endif
   }
 }

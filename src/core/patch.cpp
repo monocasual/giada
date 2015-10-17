@@ -84,8 +84,9 @@ int Patch::read(const char *file)
   if (!checkObject(jRoot, "root element"))
     return 0;
 
-  readCommons(jRoot);
-  readColumns(jRoot);
+  if (!readCommons(jRoot)) return 0;
+  if (!readColumns(jRoot)) return 0;
+  if (!readChannels(jRoot)) return 0;
 
   json_decref(jRoot);
   return 1;
@@ -273,7 +274,7 @@ bool Patch::readColumns(json_t *jContainer)
   json_t *jColumn;
   json_array_foreach(jColumns, columnIndex, jColumn) {
 
-    if (!checkObject(jColumn, ""))
+    if (!checkObject(jColumn, "")) // TODO pass columnIndex as string
       return 0;
 
     column_t column;
@@ -296,3 +297,138 @@ bool Patch::readColumns(json_t *jContainer)
   }
   return 1;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Patch::readChannels(json_t *jContainer)
+{
+  json_t *jChannels = json_object_get(jContainer, PATCH_KEY_CHANNELS);
+  if (!checkArray(jChannels, PATCH_KEY_CHANNELS))
+    return 0;
+
+  size_t channelIndex;
+  json_t *jChannel;
+  json_array_foreach(jChannels, channelIndex, jChannel) {
+
+    if (!checkObject(jChannel, "")) // TODO pass channelIndex as string
+      return 0;
+
+    channel_t channel;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_TYPE,                 channel.type)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_INDEX,                channel.index)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_COLUMN,               channel.column)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE,                 channel.mute)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE_S,               channel.mute_s)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_SOLO,                 channel.solo)) return 0;
+    if (!setFloat (jChannel, PATCH_KEY_CHANNEL_VOLUME,               channel.volume)) return 0;
+    if (!setFloat (jChannel, PATCH_KEY_CHANNEL_PAN_LEFT,             channel.panRight)) return 0;
+    if (!setFloat (jChannel, PATCH_KEY_CHANNEL_PAN_RIGHT,            channel.panLeft)) return 0;
+    if (!setBool  (jChannel, PATCH_KEY_CHANNEL_MIDI_IN,              channel.midiIn)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     channel.midiInKeyPress)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       channel.midiInKeyRel)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KILL,         channel.midiInKill)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       channel.midiInVolume)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         channel.midiInMute)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         channel.midiInSolo)) return 0;
+    if (!setBool  (jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L,           channel.midiOutL)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING,   channel.midiOutLplaying)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,      channel.midiOutLmute)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO,      channel.midiOutLsolo)) return 0;
+    if (!setString(jChannel, PATCH_KEY_CHANNEL_SAMPLE_PATH,          channel.samplePath)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_KEY,                  channel.key)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_MODE,                 channel.mode)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_BEGIN,                channel.begin)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_END,                  channel.end)) return 0;
+    if (!setFloat (jChannel, PATCH_KEY_CHANNEL_BOOST,                channel.boost)) return 0;
+    if (!setInt   (jChannel, PATCH_KEY_CHANNEL_REC_ACTIVE,           channel.recActive)) return 0;
+    if (!setFloat (jChannel, PATCH_KEY_CHANNEL_PITCH,                channel.pitch)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, channel.midiInReadActions)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        channel.midiInPitch)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             channel.midiOut)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        channel.midiOutChan)) return 0;
+
+    readActions(jChannel, &channel);
+#ifdef WITH_VST
+    readPlugins(jChannel, &channel, PATCH_KEY_CHANNEL_PLUGINS);
+#endif
+    channels.add(channel);
+    json_decref(jChannel);
+  }
+
+  // FIXME - json_decref(jChannels) ???
+
+  return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Patch::readActions(json_t *jContainer, channel_t *channel)
+{
+  json_t *jActions = json_object_get(jContainer, PATCH_KEY_CHANNEL_ACTIONS);
+  if (!checkArray(jActions, PATCH_KEY_CHANNEL_ACTIONS))
+    return 0;
+
+  size_t actionIndex;
+  json_t *jAction;
+  json_array_foreach(jActions, actionIndex, jAction) {
+
+    if (!checkObject(jAction, "")) // TODO pass actionIndex as string
+      return 0;
+
+    action_t action;
+    if (!setInt   (jAction, PATCH_KEY_ACTION_TYPE,    action.type)) return 0;
+    if (!setInt   (jAction, PATCH_KEY_ACTION_FRAME,   action.frame)) return 0;
+    if (!setFloat (jAction, PATCH_KEY_ACTION_F_VALUE, action.fValue)) return 0;
+    if (!setUint32(jAction, PATCH_KEY_ACTION_I_VALUE, action.iValue)) return 0;
+    channel->actions.add(action);
+
+    json_decref(jAction);
+  }
+  return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+bool Patch::readPlugins(json_t *jContainer, channel_t *channel, const char *key)
+{
+  json_t *jPlugins = json_object_get(jContainer, key);
+  if (!checkArray(jPlugins, key))
+    return 0;
+
+  size_t pluginIndex;
+  json_t *jPlugin;
+  json_array_foreach(jPlugins, pluginIndex, jPlugin) {
+
+    if (!checkObject(jPlugin, "")) // TODO pass pluginIndex as string
+      return 0;
+
+    plugin_t plugin;
+    if (!setString (jPlugin, PATCH_KEY_PLUGIN_PATH,   plugin.path)) return 0;
+    if (!setBool   (jPlugin, PATCH_KEY_PLUGIN_BYPASS, plugin.bypass)) return 0;
+
+    /* read plugin params */
+
+    json_t *jParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_PARAMS);
+    if (!checkArray(jParams, PATCH_KEY_PLUGIN_PARAMS)) return 0;
+
+    size_t paramIndex;
+    json_t *jParam;
+    json_array_foreach(jParams, paramIndex, jParam)
+      plugin.params.add(json_real_value(jParam));
+
+    json_decref(jParams);
+    channel->plugins.add(plugin);
+    json_decref(jPlugin);
+  }
+  return 1;
+}
+
+#endif

@@ -72,7 +72,7 @@ public:
   struct plugin_t
   {
     string         path;
-    int            bypass;
+    bool           bypass;
     gVector<float> params;
   };
 
@@ -144,10 +144,15 @@ private:
   /* readers */
 
   bool readCommons (json_t *jContainer);
+  bool readChannels(json_t *jContainer);
+#ifdef WITH_VST
+  bool readPlugins (json_t *jContainer, channel_t *channel, const char* key);
+#endif
+  bool readActions (json_t *jContainer, channel_t *channel);
   bool readColumns (json_t *jContainer);
 
   /* writers */
-  
+
   void writeCommons (json_t *jContainer);
   void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
 #ifdef WITH_VST
