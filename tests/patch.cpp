@@ -200,6 +200,24 @@ TEST_CASE("Test Patch class")
     REQUIRE(plugin1.params.at(4) == 1.0f);
     REQUIRE(plugin1.params.at(5) == 1.0f);
     REQUIRE(plugin1.params.at(6) == 0.333f);
+
+    Patch::plugin_t masterPlugin0 = patch.masterInPlugins.at(0);
+    REQUIRE(masterPlugin0.path   == "/path/to/plugin1");
+    REQUIRE(masterPlugin0.bypass == false);
+    REQUIRE(masterPlugin0.params.at(0) == 0.0f);
+    REQUIRE(masterPlugin0.params.at(1) == 0.1f);
+    REQUIRE(masterPlugin0.params.at(2) == 0.2f);
+
+    Patch::plugin_t masterPlugin1 = patch.masterOutPlugins.at(0);
+    REQUIRE(masterPlugin1.path == "/another/path/to/plugin2");
+    REQUIRE(masterPlugin1.bypass == true);
+    REQUIRE(masterPlugin1.params.at(0) == 0.6f);
+    REQUIRE(masterPlugin1.params.at(1) == 0.6f);
+    REQUIRE(masterPlugin1.params.at(2) == 0.6f);
+    REQUIRE(masterPlugin1.params.at(3) == 0.0f);
+    REQUIRE(masterPlugin1.params.at(4) == 1.0f);
+    REQUIRE(masterPlugin1.params.at(5) == 1.0f);
+    REQUIRE(masterPlugin1.params.at(6) == 0.333f);
 #endif
   }
 }

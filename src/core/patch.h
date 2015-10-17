@@ -146,7 +146,7 @@ private:
   bool readCommons (json_t *jContainer);
   bool readChannels(json_t *jContainer);
 #ifdef WITH_VST
-  bool readPlugins (json_t *jContainer, channel_t *channel, const char* key);
+  bool readPlugins (json_t *jContainer, gVector<plugin_t> *container, const char* key);
 #endif
   bool readActions (json_t *jContainer, channel_t *channel);
   bool readColumns (json_t *jContainer);

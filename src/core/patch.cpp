@@ -87,7 +87,10 @@ int Patch::read(const char *file)
   if (!readCommons(jRoot)) return 0;
   if (!readColumns(jRoot)) return 0;
   if (!readChannels(jRoot)) return 0;
-
+#ifdef WITH_VST
+  readPlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS);
+  readPlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS);
+#endif
   json_decref(jRoot);
   return 1;
 }
@@ -351,7 +354,7 @@ bool Patch::readChannels(json_t *jContainer)
 
     readActions(jChannel, &channel);
 #ifdef WITH_VST
-    readPlugins(jChannel, &channel, PATCH_KEY_CHANNEL_PLUGINS);
+    readPlugins(jChannel, &channel.plugins, PATCH_KEY_CHANNEL_PLUGINS);
 #endif
     channels.add(channel);
     json_decref(jChannel);
@@ -397,7 +400,7 @@ bool Patch::readActions(json_t *jContainer, channel_t *channel)
 
 #ifdef WITH_VST
 
-bool Patch::readPlugins(json_t *jContainer, channel_t *channel, const char *key)
+bool Patch::readPlugins(json_t *jContainer, gVector<plugin_t> *container, const char *key)
 {
   json_t *jPlugins = json_object_get(jContainer, key);
   if (!checkArray(jPlugins, key))
@@ -425,7 +428,7 @@ bool Patch::readPlugins(json_t *jContainer, channel_t *channel, const char *key)
       plugin.params.add(json_real_value(jParam));
 
     json_decref(jParams);
-    channel->plugins.add(plugin);
+    container->add(plugin);
     json_decref(jPlugin);
   }
   return 1;
