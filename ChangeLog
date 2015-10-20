@@ -13,7 +13,7 @@
 
 
 
-0.10.2 --- 2015 . 10 . 20
+0.10.2 --- 2015 . 10 . 21
 - Setup Travis CI automated builds
 - Add base framework for unit testing (with Catch)
 - Improve behavior of Loop Once family when the sequencer is halted
