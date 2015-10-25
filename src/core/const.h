@@ -31,9 +31,9 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define VERSIONE 				"0.10.2"
+#define VERSIONE 				"0.11.0"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	1.01f
+#define VERSIONE_FLOAT	1.011f
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -287,5 +287,69 @@ const int MIDI_CHANS[16] = {
 #define MIDI_SYNC_CLOCK_S   0x02
 #define MIDI_SYNC_MTC_M     0x04
 #define MIDI_SYNC_MTC_S     0x08
+
+/* JSON patch keys */
+
+#define PATCH_KEY_HEADER                       "header"
+#define PATCH_KEY_VERSION                      "version"
+#define PATCH_KEY_VERSION_FLOAT                "version_float"
+#define PATCH_KEY_NAME                         "name"
+#define PATCH_KEY_BPM                          "bpm"
+#define PATCH_KEY_BARS                         "bars"
+#define PATCH_KEY_BEATS                        "beats"
+#define PATCH_KEY_QUANTIZE                     "quantize"
+#define PATCH_KEY_MASTER_VOL_IN                "master_vol_in"
+#define PATCH_KEY_MASTER_VOL_OUT               "master_vol_out"
+#define PATCH_KEY_METRONOME                    "metronome"
+#define PATCH_KEY_LAST_TAKE_ID                 "last_take_id"
+#define PATCH_KEY_SAMPLERATE                   "samplerate"
+#define PATCH_KEY_COLUMNS                      "columns"
+#define PATCH_KEY_MASTER_OUT_PLUGINS           "master_out_plugins"
+#define PATCH_KEY_MASTER_IN_PLUGINS            "master_in_plugins"
+#define PATCH_KEY_CHANNELS                     "channels"
+#define PATCH_KEY_CHANNEL_TYPE                 "type"
+#define PATCH_KEY_CHANNEL_INDEX                "index"
+#define PATCH_KEY_CHANNEL_COLUMN               "column"
+#define PATCH_KEY_CHANNEL_MUTE                 "mute"
+#define PATCH_KEY_CHANNEL_MUTE_S               "mute_s"
+#define PATCH_KEY_CHANNEL_SOLO                 "solo"
+#define PATCH_KEY_CHANNEL_VOLUME               "volume"
+#define PATCH_KEY_CHANNEL_PAN_LEFT             "pan_left"
+#define PATCH_KEY_CHANNEL_PAN_RIGHT            "pan_right"
+#define PATCH_KEY_CHANNEL_MIDI_IN              "midi_in"
+#define PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS     "midi_in_keypress"
+#define PATCH_KEY_CHANNEL_MIDI_IN_KEYREL       "midi_in_keyrel"
+#define PATCH_KEY_CHANNEL_MIDI_IN_KILL         "midi_in_kill"
+#define PATCH_KEY_CHANNEL_MIDI_IN_VOLUME       "midi_in_volume"
+#define PATCH_KEY_CHANNEL_MIDI_IN_MUTE         "midi_in_mute"
+#define PATCH_KEY_CHANNEL_MIDI_IN_SOLO         "midi_in_solo"
+#define PATCH_KEY_CHANNEL_MIDI_OUT_L           "midi_out_l"
+#define PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING   "midi_out_l_playing"
+#define PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE      "midi_out_l_mute"
+#define PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO      "midi_out_l_solo"
+#define PATCH_KEY_CHANNEL_SAMPLE_PATH          "sample_path"
+#define PATCH_KEY_CHANNEL_KEY                  "key"
+#define PATCH_KEY_CHANNEL_MODE                 "mode"
+#define PATCH_KEY_CHANNEL_BEGIN                "begin"
+#define PATCH_KEY_CHANNEL_END                  "end"
+#define PATCH_KEY_CHANNEL_BOOST                "boost"
+#define PATCH_KEY_CHANNEL_REC_ACTIVE           "rec_active"
+#define PATCH_KEY_CHANNEL_PITCH                "pitch"
+#define PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS "midi_in_read_actions"
+#define PATCH_KEY_CHANNEL_MIDI_IN_PITCH        "midi_in_pitch"
+#define PATCH_KEY_CHANNEL_MIDI_OUT             "midi_out"
+#define PATCH_KEY_CHANNEL_MIDI_OUT_CHAN        "midi_out_chan"
+#define PATCH_KEY_CHANNEL_PLUGINS              "plugins"
+#define PATCH_KEY_CHANNEL_ACTIONS              "actions"
+#define PATCH_KEY_ACTION_TYPE                  "type"
+#define PATCH_KEY_ACTION_FRAME                 "frame"
+#define PATCH_KEY_ACTION_F_VALUE               "f_value"
+#define PATCH_KEY_ACTION_I_VALUE               "i_value"
+#define PATCH_KEY_PLUGIN_PATH                  "path"
+#define PATCH_KEY_PLUGIN_BYPASS                "bypass"
+#define PATCH_KEY_PLUGIN_PARAMS                "params"
+#define PATCH_KEY_COLUMN_INDEX                 "index"
+#define PATCH_KEY_COLUMN_WIDTH                 "width"
+#define PATCH_KEY_COLUMN_CHANNELS              "channels"
 
 #endif

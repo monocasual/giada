@@ -30,66 +30,136 @@
 #ifndef __PATCH_H__
 #define __PATCH_H__
 
-#include <stdio.h>
+
 #include <string>
 #include <stdint.h>
-#include "dataStorage.h"
+#include "../utils/utils.h"
+#include "dataStorageJson.h"
 #include "const.h"
 
 
-class Patch : public DataStorage {
+using std::string;
 
-private:
-	int  readMasterPlugins(int type);
-	void writeMasterPlugins(int type);
 
+class Patch : public DataStorageJson
+{
 public:
 
-	char  name[MAX_PATCHNAME_LEN];
-	float version;
-	int   lastTakeId;
-	int   samplerate;
+  string header;
+  string version;
+  float  versionFloat;
+  string name;
+  int    bpm;
+  int    bars;
+  int    beats;
+  int    quantize;
+  float  masterVolIn;
+  float  masterVolOut;
+  int    metronome;
+  int    lastTakeId;
+  int    samplerate;   // original samplerate when the patch was saved
 
-	int         open(const char *file);
-	void        setDefault();
-	int         close();
+  struct action_t
+  {
+    int      type;
+    int      frame;
+    float    fValue;
+    uint32_t iValue;
+  };
 
-	void				getName       ();
-	int         getNumChans   ();
-	int					getNumColumns ();
-	std::string getSamplePath (int i);
-	float       getVol        (int i);
-	int         getMode       (int i);
-	int         getMute       (int i);
-	int         getMute_s     (int i);
-	int         getSolo       (int i);
-	int         getBegin      (int i);
-	int         getEnd        (int i, unsigned sampleSize);
-	float       getBoost      (int i);
-	float       getPanLeft    (int i);
-	float       getPanRight   (int i);
-	float       getPitch      (int i);
-	bool        getRecActive  (int i);
-	int         getColumn     (int i);
-	int         getIndex      (int i);
-	int         getType       (int i);
-	int         getKey        (int i);
-	uint32_t    getMidiValue  (int i, const char *c);
-	float       getOutVol     ();
-	float       getInVol      ();
-	float       getBpm        ();
-	int         getBars       ();
-	int         getBeats      ();
-	int         getQuantize   ();
-	bool        getMetronome  ();
-	int         getLastTakeId ();
-	int         getSamplerate ();
-
-	int         write(const char *file, const char *name, bool isProject);
-	int         readRecs();
 #ifdef WITH_VST
-	int         readPlugins();
+
+  struct plugin_t
+  {
+    string         path;
+    bool           bypass;
+    gVector<float> params;
+  };
+
 #endif
+
+  struct channel_t
+  {
+    int         type;
+    int         index;
+    int         column;
+    int         mute;
+    int         mute_s;
+    int         solo;
+    float       volume;
+    float       panLeft;
+    float       panRight;
+    bool        midiIn;
+    uint32_t    midiInKeyPress;
+    uint32_t    midiInKeyRel;
+    uint32_t    midiInKill;
+    uint32_t    midiInVolume;
+    uint32_t    midiInMute;
+    uint32_t    midiInSolo;
+    bool        midiOutL;
+    uint32_t    midiOutLplaying;
+    uint32_t    midiOutLmute;
+    uint32_t    midiOutLsolo;
+    // sample channel
+    string      samplePath;
+    int         key;
+    int         mode;
+    int         begin;
+    int         end;
+    float       boost;
+    int         recActive;
+    float       pitch;
+    uint32_t    midiInReadActions;
+    uint32_t    midiInPitch;
+    // midi channel
+    uint32_t    midiOut;
+    uint32_t    midiOutChan;
+
+    gVector<action_t> actions;
+#ifdef WITH_VST
+    gVector<plugin_t> plugins;
+#endif
+  };
+
+  struct column_t
+  {
+    int index;
+    int width;
+    gVector<int> channels;
+  };
+
+  gVector<column_t>  columns;
+  gVector<channel_t> channels;
+
+#ifdef WITH_VST
+  gVector<plugin_t> masterInPlugins;
+  gVector<plugin_t> masterOutPlugins;
+#endif
+
+  int write(const char *file);
+  int read (const char *file);
+
+private:
+
+  /* readers */
+
+  bool readCommons (json_t *jContainer);
+  bool readChannels(json_t *jContainer);
+#ifdef WITH_VST
+  bool readPlugins (json_t *jContainer, gVector<plugin_t> *container, const char* key);
+#endif
+  bool readActions (json_t *jContainer, channel_t *channel);
+  bool readColumns (json_t *jContainer);
+
+  /* writers */
+
+  void writeCommons (json_t *jContainer);
+  void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
+#ifdef WITH_VST
+  void writePlugins (json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
+#endif
+  void writeActions (json_t *jContainer, gVector<action_t> *actions);
+  void writeColumns (json_t *jContainer, gVector<column_t> *columns);
 };
 
 #endif

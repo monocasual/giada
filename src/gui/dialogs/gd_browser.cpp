@@ -33,7 +33,7 @@
 #include "../../core/pluginHost.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../core/patch.h"
+#include "../../core/patch_DEPR_.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "../elems/ge_browser.h"
@@ -45,7 +45,7 @@
 #include "gd_warnings.h"
 
 
-extern Patch         G_Patch;
+extern Patch_DEPR_   G_Patch;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
 #ifdef WITH_VST

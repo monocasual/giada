@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * dataStorage
+ * dataStorageIni
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,44 +27,22 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <stdlib.h>
-#include <limits.h>
-#include "../utils/log.h"
-#include "dataStorage.h"
-#include "const.h"
+#ifndef __DATA_STORAGE_INI_H__
+#define __DATA_STORAGE_INI_H__
+
+#include <stdio.h>
+#include <string>
+#include <string.h>
+
+#define MAX_LINE_LEN 1024
 
 
-std::string DataStorage::getValue(const char *in) {
+class DataStorageIni 
+{
+protected:
 
-	/* on each call reset the pointe to the beginning of the file. Not so
-	 * good but necessary if you want to pick up random values from the
-	 * file. */
+	FILE *fp;
+	std::string getValue(const char *in);
+};
 
-	fseek(fp, 0L, SEEK_SET);
-	std::string out = "";
-
-	while (!feof(fp)) {
-
-		char buffer[MAX_LINE_LEN];
-		if (fgets(buffer, MAX_LINE_LEN, fp) == NULL) {
-			gLog("[PATCH] get_value error (key=%s)\n", in);
-			return "";
-		}
-
-		if (buffer[0] == '#')
-			continue;
-
-		unsigned len = strlen(in);
-		if (strncmp(buffer, in, len) == 0) {
-
-			for (unsigned i=len+1; i<MAX_LINE_LEN; i++) {
-				if (buffer[i] == '\0' || buffer[i] == '\n' || buffer[i] == '\r')
-					break;
-				out += buffer[i];
-			}
-
-			break; // string found
-		}
-	}
-	return out;
-}
+#endif

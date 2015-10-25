@@ -35,7 +35,7 @@
 #include "wave.h"
 #include "recorder.h"
 #include "pluginHost.h"
-#include "patch.h"
+#include "patch_DEPR_.h"
 #include "conf.h"
 #include "mixerHandler.h"
 #include "channel.h"
@@ -45,7 +45,7 @@
 
 
 extern Mixer 			 G_Mixer;
-extern Patch		 	 G_Patch;
+extern Patch_DEPR_ G_Patch;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;

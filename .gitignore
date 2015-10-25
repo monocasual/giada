@@ -9,9 +9,9 @@
 *.dirstamp
 
 # --- rtaudio stuff
-src/rtaudio-mod/librtaudio.pc
-src/rtaudio-mod/rtaudio-config
-src/rtaudio-mod/tests
+/src/rtaudio-mod/librtaudio.pc
+/src/rtaudio-mod/rtaudio-config
+/src/rtaudio-mod/tests
 
 # --- test files
 /giada_tests

@@ -2,7 +2,7 @@ language: cpp
 
 compiler: gcc
 
-notifications: 
+notifications:
   email:
     recipients:
       - giadaloopmachine@gmail.com
@@ -13,10 +13,15 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev
 
-before_script: 
+before_script:
   - wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.0.tar.gz
   - tar -xvf rtmidi-2.1.0.tar.gz
-  - cd rtmidi-2.1.0 && ./configure --with-jack --with-alsa && make && sudo make install || true 
+  - cd rtmidi-2.1.0 && ./configure --with-jack --with-alsa && make && sudo make install || true
+  - cd ..
+  - wget http://www.digip.org/jansson/releases/jansson-2.7.tar.gz
+  - tar -xvf jansson-2.7.tar.gz
+  - cd jansson-2.7 && ./configure && make && sudo make install || true
+  - sudo ldconfig
   - cd ..
   - ./autogen.sh
   - ./configure --target=linux --enable-vst

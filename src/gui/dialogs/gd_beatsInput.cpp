@@ -28,7 +28,6 @@
 
 
 #include "../../utils/gui_utils.h"
-#include "../../core/patch.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"

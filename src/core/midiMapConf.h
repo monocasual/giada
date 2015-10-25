@@ -33,7 +33,7 @@
 
 #include <limits.h>
 #include <stdint.h>
-#include "dataStorage.h"
+#include "dataStorageIni.h"
 #include "../utils/utils.h"
 #if defined(__APPLE__)
 #include <pwd.h>
@@ -43,7 +43,7 @@
 using std::string;
 
 
-class MidiMapConf : public DataStorage
+class MidiMapConf : public DataStorageIni
 {
 private:
 

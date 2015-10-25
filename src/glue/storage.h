@@ -1,10 +1,11 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * dataStorage
- *
- * ---------------------------------------------------------------------
+ * glue
+ * Intermediate layer GUI <-> CORE.
+ * 
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,25 +25,18 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#ifndef __DATA_STORAGE_H__
-#define __DATA_STORAGE_H__
-
-#include <stdio.h>
-#include <string>
-#include <string.h>
-
-#define MAX_LINE_LEN 1024
+#ifndef GLUE_STORAGE_H
+#define GLUE_STORAGE_H
 
 
-class DataStorage {
+//int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
 
-protected:
+int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject);
 
-	FILE *fp;
-	std::string getValue(const char *in);
-};
+//int glue_saveProject(const char *folderPath, const char *projName);
+
 
 #endif
