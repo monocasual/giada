@@ -188,8 +188,9 @@ giada_tests_LDADD = -ljansson
 
 # Ancient gcc on Travis complains about missing parentheses.
 # Catch also goes crazy with GCC 5.x (https://github.com/philsquared/Catch/issues/487)
+# --std=c++11
 
-giada_tests_CXXFLAGS = -Wno-parentheses --std=c++11
+giada_tests_CXXFLAGS = -Wno-parentheses -std=c++0x
 
 # make rename ------------------------------------------------------------------
 
