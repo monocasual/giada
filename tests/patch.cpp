@@ -117,14 +117,14 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.read("./test-patch.json") == 1);
     REQUIRE(patch.header == "GPTCH");
     REQUIRE(patch.version == "1.0");
-    REQUIRE(patch.versionFloat == 1.0);
+    REQUIRE(patch.versionFloat == Approx(1.0));
     REQUIRE(patch.name == "test patch");
     REQUIRE(patch.bpm == 100);
     REQUIRE(patch.bars == 4);
     REQUIRE(patch.beats == 23);
     REQUIRE(patch.quantize == 1);
-    REQUIRE(patch.masterVolIn == 1.0f);
-    REQUIRE(patch.masterVolOut == 0.2f);
+    REQUIRE(patch.masterVolIn == Approx(1.0f));
+    REQUIRE(patch.masterVolOut == Approx(0.2f));
     REQUIRE(patch.metronome == 0);
     REQUIRE(patch.lastTakeId == 0);
     REQUIRE(patch.samplerate == 44100);
@@ -143,9 +143,9 @@ TEST_CASE("Test Patch class")
     REQUIRE(channel0.mute == 0);
     REQUIRE(channel0.mute_s == 0);
     REQUIRE(channel0.solo == 0);
-    REQUIRE(channel0.volume == 1.0f);
-    REQUIRE(channel0.panLeft == 0.5f);
-    REQUIRE(channel0.panRight == 0.5f);
+    REQUIRE(channel0.volume == Approx(1.0f));
+    REQUIRE(channel0.panLeft == Approx(0.5f));
+    REQUIRE(channel0.panRight == Approx(0.5f));
     REQUIRE(channel0.midiIn == true);
     REQUIRE(channel0.midiInKeyPress == UINT32_MAX);
     REQUIRE(channel0.midiInKeyRel == 1);
@@ -173,51 +173,51 @@ TEST_CASE("Test Patch class")
     Patch::action_t action0 = channel0.actions.at(0);
     REQUIRE(action0.type == 0);
     REQUIRE(action0.frame == 50000);
-    REQUIRE(action0.fValue == 0.3f);
+    REQUIRE(action0.fValue == Approx(0.3f));
     REQUIRE(action0.iValue == 1000);
 
     Patch::action_t action1 = channel0.actions.at(1);
     REQUIRE(action1.type == 2);
     REQUIRE(action1.frame == 589);
-    REQUIRE(action1.fValue == 1.0f);
+    REQUIRE(action1.fValue == Approx(1.0f));
     REQUIRE(action1.iValue == 130);
 
 #ifdef WITH_VST
     Patch::plugin_t plugin0 = channel0.plugins.at(0);
     REQUIRE(plugin0.path   == "/path/to/plugin1");
     REQUIRE(plugin0.bypass == false);
-    REQUIRE(plugin0.params.at(0) == 0.0f);
-    REQUIRE(plugin0.params.at(1) == 0.1f);
-    REQUIRE(plugin0.params.at(2) == 0.2f);
+    REQUIRE(plugin0.params.at(0) == Approx(0.0f));
+    REQUIRE(plugin0.params.at(1) == Approx(0.1f));
+    REQUIRE(plugin0.params.at(2) == Approx(0.2f));
 
     Patch::plugin_t plugin1 = channel0.plugins.at(1);
     REQUIRE(plugin1.path == "/another/path/to/plugin2");
     REQUIRE(plugin1.bypass == true);
-    REQUIRE(plugin1.params.at(0) == 0.6f);
-    REQUIRE(plugin1.params.at(1) == 0.6f);
-    REQUIRE(plugin1.params.at(2) == 0.6f);
-    REQUIRE(plugin1.params.at(3) == 0.0f);
-    REQUIRE(plugin1.params.at(4) == 1.0f);
-    REQUIRE(plugin1.params.at(5) == 1.0f);
-    REQUIRE(plugin1.params.at(6) == 0.333f);
+    REQUIRE(plugin1.params.at(0) == Approx(0.6f));
+    REQUIRE(plugin1.params.at(1) == Approx(0.6f));
+    REQUIRE(plugin1.params.at(2) == Approx(0.6f));
+    REQUIRE(plugin1.params.at(3) == Approx(0.0f));
+    REQUIRE(plugin1.params.at(4) == Approx(1.0f));
+    REQUIRE(plugin1.params.at(5) == Approx(1.0f));
+    REQUIRE(plugin1.params.at(6) == Approx(0.333f));
 
     Patch::plugin_t masterPlugin0 = patch.masterInPlugins.at(0);
     REQUIRE(masterPlugin0.path   == "/path/to/plugin1");
     REQUIRE(masterPlugin0.bypass == false);
-    REQUIRE(masterPlugin0.params.at(0) == 0.0f);
-    REQUIRE(masterPlugin0.params.at(1) == 0.1f);
-    REQUIRE(masterPlugin0.params.at(2) == 0.2f);
+    REQUIRE(masterPlugin0.params.at(0) == Approx(0.0f));
+    REQUIRE(masterPlugin0.params.at(1) == Approx(0.1f));
+    REQUIRE(masterPlugin0.params.at(2) == Approx(0.2f));
 
     Patch::plugin_t masterPlugin1 = patch.masterOutPlugins.at(0);
     REQUIRE(masterPlugin1.path == "/another/path/to/plugin2");
     REQUIRE(masterPlugin1.bypass == true);
-    REQUIRE(masterPlugin1.params.at(0) == 0.6f);
-    REQUIRE(masterPlugin1.params.at(1) == 0.6f);
-    REQUIRE(masterPlugin1.params.at(2) == 0.6f);
-    REQUIRE(masterPlugin1.params.at(3) == 0.0f);
-    REQUIRE(masterPlugin1.params.at(4) == 1.0f);
-    REQUIRE(masterPlugin1.params.at(5) == 1.0f);
-    REQUIRE(masterPlugin1.params.at(6) == 0.333f);
+    REQUIRE(masterPlugin1.params.at(0) == Approx(0.6f));
+    REQUIRE(masterPlugin1.params.at(1) == Approx(0.6f));
+    REQUIRE(masterPlugin1.params.at(2) == Approx(0.6f));
+    REQUIRE(masterPlugin1.params.at(3) == Approx(0.0f));
+    REQUIRE(masterPlugin1.params.at(4) == Approx(1.0f));
+    REQUIRE(masterPlugin1.params.at(5) == Approx(1.0f));
+    REQUIRE(masterPlugin1.params.at(6) == Approx(0.333f));
 #endif
   }
 }
