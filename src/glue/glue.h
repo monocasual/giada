@@ -156,10 +156,6 @@ void glue_setMute(class Channel *ch, bool gui=true);
 void glue_setSoloOn (class Channel *ch, bool gui=true);
 void glue_setSoloOff(class Channel *ch, bool gui=true);
 
-/** FIXME - nobody will call this via MIDI/keyb/mouse! */
-int glue_saveProject(const char *folderPath, const char *projName);
-
-
 /* beatsDivide/Multiply
  * shrinks or enlarges the number of beats by 2. */
 

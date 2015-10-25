@@ -31,12 +31,68 @@
 #include "../gui/elems/ge_column.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
+#include "../core/mixer.h"
+#include "../core/channel.h"
+#include "../core/sampleChannel.h"
+#include "../core/midiChannel.h"
+#include "../core/wave.h"
+#include "glue.h" // TODO - remove, used only for DEPR calls
 #include "storage.h"
 
 
 extern gdMainWindow *mainWin;
+extern Mixer	   		 G_Mixer;
 
 
 int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject)
 {
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int glue_saveProject(const char *folderPath, const char *projName)
+{
+	if (gIsProject(folderPath)) {
+		gLog("[glue] the project folder already exists\n");
+		// don't exit
+	}
+	else if (!gMkdir(folderPath)) {
+		gLog("[glue] unable to make project directory!\n");
+		return 0;
+	}
+
+	/* copy all samples inside the folder. Takes and logical ones are saved
+	 * via glue_saveSample() */
+
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
+
+			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+
+			if (ch->wave == NULL)
+				continue;
+
+			/* update the new samplePath: everything now comes from the
+			 * project folder (folderPath) */
+
+			char samplePath[PATH_MAX];
+			sprintf(samplePath, "%s%s%s.%s", folderPath, gGetSlash().c_str(), ch->wave->basename().c_str(), ch->wave->extension().c_str());
+
+			/* remove any existing file */
+
+			if (gFileExists(samplePath))
+				remove(samplePath);
+			if (ch->save(samplePath))
+				ch->wave->pathfile = samplePath;
+		}
+	}
+
+	char gptcPath[PATH_MAX];
+	sprintf(gptcPath, "%s%s%s.gptc", folderPath, gGetSlash().c_str(), gStripExt(projName).c_str());
+	glue_savePatch__DEPR__(gptcPath, projName, true); // true == it's a project
+
+	return 1;
 }

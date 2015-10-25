@@ -4,7 +4,7 @@
  *
  * glue
  * Intermediate layer GUI <-> CORE.
- * 
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
@@ -36,7 +36,6 @@
 
 int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject);
 
-//int glue_saveProject(const char *folderPath, const char *projName);
-
+int glue_saveProject(const char *folderPath, const char *projName);
 
 #endif

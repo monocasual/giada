@@ -36,6 +36,7 @@
 #include "../../core/patch_DEPR_.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
+#include "../../glue/storage.h"
 #include "../elems/ge_browser.h"
 #include "../elems/ge_channel.h"
 #include "../elems/ge_keyboard.h"
