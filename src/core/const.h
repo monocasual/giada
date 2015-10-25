@@ -31,9 +31,9 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define VERSIONE 				"0.10.2"
+#define VERSIONE 				"0.11.0"
 #define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	1.01f
+#define VERSIONE_FLOAT	1.011f
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -340,7 +340,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_MIDI_OUT             "midi_out"
 #define PATCH_KEY_CHANNEL_MIDI_OUT_CHAN        "midi_out_chan"
 #define PATCH_KEY_CHANNEL_PLUGINS              "plugins"
-#define PATCH_KEY_CHANNEL_ACTIONS              "actions" 
+#define PATCH_KEY_CHANNEL_ACTIONS              "actions"
 #define PATCH_KEY_ACTION_TYPE                  "type"
 #define PATCH_KEY_ACTION_FRAME                 "frame"
 #define PATCH_KEY_ACTION_F_VALUE               "f_value"
