@@ -31,11 +31,8 @@
 #ifndef GLUE_STORAGE_H
 #define GLUE_STORAGE_H
 
-
 //int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
-
-int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject);
-
+int glue_savePatch  (const char *fullpath, const char *name, bool isProject);
 int glue_saveProject(const char *folderPath, const char *projName);
 
 #endif

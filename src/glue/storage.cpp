@@ -44,7 +44,7 @@ extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 
 
-int glue_savePatch_NEW_(const char *fullpath, const char *name, bool isProject)
+int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
 }
 
