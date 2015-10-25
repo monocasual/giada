@@ -197,7 +197,7 @@ void gdBrowser::__cb_load_patch() {
 	else
 		isProject = false;
 
-	int res = glue_loadPatch(patchFile.c_str(),	browser->path_obj->value(),	status, isProject);
+	int res = glue_loadPatch__DEPR__(patchFile.c_str(),	browser->path_obj->value(),	status, isProject);
 
 	if (res == PATCH_UNREADABLE) {
 		status->hide();
@@ -323,7 +323,7 @@ void gdBrowser::__cb_save_patch() {
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_savePatch(fullpath, name->value(), false)) // false == not a project
+	if (glue_savePatch__DEPR__(fullpath, name->value(), false)) // false == not a project
 		do_callback();
 	else
 		gdAlert("Unable to save the patch!");

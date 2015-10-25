@@ -50,8 +50,8 @@ void glue_deleteChannel(class Channel *ch);
 void glue_freeChannel(class Channel *ch);
 
 /** FIXME - nobody will call these via MIDI/keyb/mouse! */
-int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
-int glue_savePatch(const char *fullpath, const char *name, bool isProject);
+int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress *status, bool isProject);
+int glue_savePatch__DEPR__(const char *fullpath, const char *name, bool isProject);
 
 /* keyPress / keyRelease
  * handle the key pressure, either via mouse/keyboard or MIDI. If gui

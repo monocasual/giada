@@ -106,7 +106,7 @@ Channel *glue_addChannel(int column, int type)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool isProject)
+int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *status, bool isProject)
 {
 	/* update browser's status bar with % 0.1 */
 
@@ -193,7 +193,7 @@ int glue_loadPatch(const char *fname, const char *fpath, gProgress *status, bool
 /* -------------------------------------------------------------------------- */
 
 
-int glue_savePatch(const char *fullpath, const char *name, bool isProject)
+int glue_savePatch__DEPR__(const char *fullpath, const char *name, bool isProject)
 {
 	if (G_Patch.write(fullpath, name, isProject) == 1) {
 		strcpy(G_Patch.name, name);
@@ -1016,7 +1016,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 
 	char gptcPath[PATH_MAX];
 	sprintf(gptcPath, "%s%s%s.gptc", folderPath, gGetSlash().c_str(), gStripExt(projName).c_str());
-	glue_savePatch(gptcPath, projName, true); // true == it's a project
+	glue_savePatch__DEPR__(gptcPath, projName, true); // true == it's a project
 
 	return 1;
 }
