@@ -257,6 +257,7 @@ bool Patch::readCommons(json_t *jContainer)
   if (!setInt   (jContainer, PATCH_KEY_BEATS, beats)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_QUANTIZE, quantize)) return 0;
   if (!setFloat (jContainer, PATCH_KEY_MASTER_VOL_IN, masterVolIn)) return 0;
+  if (!setFloat (jContainer, PATCH_KEY_MASTER_VOL_OUT, masterVolOut)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_METRONOME, metronome)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_LAST_TAKE_ID, lastTakeId)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_SAMPLERATE, samplerate)) return 0;

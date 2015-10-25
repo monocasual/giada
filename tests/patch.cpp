@@ -101,7 +101,7 @@ TEST_CASE("Test Patch class")
     patch.beats        = 23;
     patch.quantize     = 1;
     patch.masterVolIn  = 1.0f;
-    //patch.masterVolOut = 0.7f;
+    patch.masterVolOut = 0.7f;
     patch.metronome    = 0;
     patch.lastTakeId   = 0;
     patch.samplerate   = 44100;
@@ -124,7 +124,7 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.beats == 23);
     REQUIRE(patch.quantize == 1);
     REQUIRE(patch.masterVolIn == Approx(1.0f));
-    //REQUIRE(patch.masterVolOut == Approx(0.7f));
+    REQUIRE(patch.masterVolOut == Approx(0.7f));
     REQUIRE(patch.metronome == 0);
     REQUIRE(patch.lastTakeId == 0);
     REQUIRE(patch.samplerate == 44100);
