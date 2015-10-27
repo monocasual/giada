@@ -60,7 +60,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
-extern Patch_DEPR_   G_Patch;
+extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
@@ -117,7 +117,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* is it a valid patch? */
 
-	int res = G_Patch.open(fname);
+	int res = G_Patch_DEPR_.open(fname);
 	if (res != PATCH_OPEN_OK)
 		return res;
 
@@ -142,20 +142,20 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* take the patch name and update the main window's title */
 
-	G_Patch.getName();
-	gu_update_win_label(G_Patch.name);
+	G_Patch_DEPR_.getName();
+	gu_update_win_label(G_Patch_DEPR_.name);
 
 	status->value(0.4f);  // progress status: 0.4
 	//Fl::check();
 	Fl::wait(0);
 
-	G_Patch.readRecs();
+	G_Patch_DEPR_.readRecs();
 	status->value(0.6f);  // progress status: 0.6
 	//Fl::check();
 	Fl::wait(0);
 
 #ifdef WITH_VST
-	int resPlugins = G_Patch.readPlugins();
+	int resPlugins = G_Patch_DEPR_.readPlugins();
 	status->value(0.8f);  // progress status: 0.8
 	//Fl::check();
 	Fl::wait(0);
@@ -164,7 +164,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* this one is vital: let recorder recompute the actions' positions if
 	 * the current samplerate != patch samplerate */
 
-	recorder::updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
+	recorder::updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
 
 	/* update gui */
 
@@ -195,9 +195,9 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 int glue_savePatch__DEPR__(const char *fullpath, const char *name, bool isProject)
 {
-	if (G_Patch.write(fullpath, name, isProject) == 1) {
-		strcpy(G_Patch.name, name);
-		G_Patch.name[strlen(name)] = '\0';
+	if (G_Patch_DEPR_.write(fullpath, name, isProject) == 1) {
+		strcpy(G_Patch_DEPR_.name, name);
+		G_Patch_DEPR_.name[strlen(name)] = '\0';
 		gu_update_win_label(name);
 		gLog("[glue] patch saved as %s\n", fullpath);
 		return 1;
@@ -603,7 +603,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	if (createColumns)
 		mainWin->keyboard->init();
 	recorder::init();
-	G_Patch.setDefault();
+	G_Patch_DEPR_.setDefault();
 	G_Mixer.init();
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks();

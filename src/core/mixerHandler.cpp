@@ -53,7 +53,7 @@
 
 
 extern Mixer 		   G_Mixer;
-extern Patch_DEPR_ G_Patch;
+extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf 		   G_Conf;
 
 #ifdef WITH_VST
@@ -105,26 +105,26 @@ void mh_loadPatch(bool isProject, const char *projPath)
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
 
-	int numChans = G_Patch.getNumChans();
+	int numChans = G_Patch_DEPR_.getNumChans();
 	for (int i=0; i<numChans; i++) {
 
-		Channel *ch = glue_addChannel(G_Patch.getColumn(i), G_Patch.getType(i));
+		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
 
 		char smpPath[PATH_MAX];
-		sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch.getSamplePath(i).c_str());
+		sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch_DEPR_.getSamplePath(i).c_str());
 
 		ch->loadByPatch(smpPath, i);
 	}
 
-	G_Mixer.outVol     = G_Patch.getOutVol();
-	G_Mixer.inVol      = G_Patch.getInVol();
-	G_Mixer.bpm        = G_Patch.getBpm();
-	G_Mixer.bars       = G_Patch.getBars();
-	G_Mixer.beats      = G_Patch.getBeats();
-	G_Mixer.quantize   = G_Patch.getQuantize();
-	G_Mixer.metronome  = G_Patch.getMetronome();
-	G_Patch.lastTakeId = G_Patch.getLastTakeId();
-	G_Patch.samplerate = G_Patch.getSamplerate();
+	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();
+	G_Mixer.inVol      = G_Patch_DEPR_.getInVol();
+	G_Mixer.bpm        = G_Patch_DEPR_.getBpm();
+	G_Mixer.bars       = G_Patch_DEPR_.getBars();
+	G_Mixer.beats      = G_Patch_DEPR_.getBeats();
+	G_Mixer.quantize   = G_Patch_DEPR_.getQuantize();
+	G_Mixer.metronome  = G_Patch_DEPR_.getMetronome();
+	G_Patch_DEPR_.lastTakeId = G_Patch_DEPR_.getLastTakeId();
+	G_Patch_DEPR_.samplerate = G_Patch_DEPR_.getSamplerate();
 
 	/* rewind and update frames in Mixer (it's vital) */
 
@@ -174,13 +174,13 @@ SampleChannel *mh_startInputRec()
 	/* increase lastTakeId until the sample name TAKE-[n] is unique */
 
 	char name[32];
-	sprintf(name, "TAKE-%d", G_Patch.lastTakeId);
+	sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
 	while (!mh_uniqueSamplename(chan, name)) {
-		G_Patch.lastTakeId++;
-		sprintf(name, "TAKE-%d", G_Patch.lastTakeId);
+		G_Patch_DEPR_.lastTakeId++;
+		sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
 	}
 
-	chan->allocEmpty(G_Mixer.totalFrames, G_Patch.lastTakeId);
+	chan->allocEmpty(G_Mixer.totalFrames, G_Patch_DEPR_.lastTakeId);
 	G_Mixer.chanInput = chan;
 
 	/* start to write from the actualFrame, not the beginning */

@@ -49,7 +49,7 @@
 extern Mixer 			   G_Mixer;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
-extern Patch_DEPR_   G_Patch;
+extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
@@ -62,7 +62,7 @@ extern PluginHost	   G_PluginHost;
 void init_prepareParser()
 {
 	G_Conf.read();
-	G_Patch.setDefault();
+	G_Patch_DEPR_.setDefault();
 	if (!gLog_init(G_Conf.logMode))
 		gLog("[init] log init failed! Using default stdout\n");
   time_t t;
@@ -120,7 +120,7 @@ void init_startGUI(int argc, char **argv)
 	char win_label[32];
 	sprintf(win_label, "%s - %s",
 					VERSIONE_STR,
-					!strcmp(G_Patch.name, "") ? "(default patch)" : G_Patch.name);
+					!strcmp(G_Patch_DEPR_.name, "") ? "(default patch)" : G_Patch_DEPR_.name);
 
 	mainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
 	mainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW, G_Conf.mainWindowH);

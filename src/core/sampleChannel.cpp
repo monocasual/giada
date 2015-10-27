@@ -39,7 +39,7 @@
 #include "kernelMidi.h"
 
 
-extern Patch_DEPR_ G_Patch;
+extern Patch_DEPR_ G_Patch_DEPR_;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
@@ -828,28 +828,28 @@ int SampleChannel::loadByPatch(const char *f, int i)
 {
 	int res = load(f);
 
-		volume      = G_Patch.getVol(i);
-		key         = G_Patch.getKey(i);
-		index       = G_Patch.getIndex(i);
-		mode        = G_Patch.getMode(i);
-		mute        = G_Patch.getMute(i);
-		mute_s      = G_Patch.getMute_s(i);
-		solo        = G_Patch.getSolo(i);
-		boost       = G_Patch.getBoost(i);
-		panLeft     = G_Patch.getPanLeft(i);
-		panRight    = G_Patch.getPanRight(i);
-		readActions = G_Patch.getRecActive(i);
+		volume      = G_Patch_DEPR_.getVol(i);
+		key         = G_Patch_DEPR_.getKey(i);
+		index       = G_Patch_DEPR_.getIndex(i);
+		mode        = G_Patch_DEPR_.getMode(i);
+		mute        = G_Patch_DEPR_.getMute(i);
+		mute_s      = G_Patch_DEPR_.getMute_s(i);
+		solo        = G_Patch_DEPR_.getSolo(i);
+		boost       = G_Patch_DEPR_.getBoost(i);
+		panLeft     = G_Patch_DEPR_.getPanLeft(i);
+		panRight    = G_Patch_DEPR_.getPanRight(i);
+		readActions = G_Patch_DEPR_.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
 		readPatchMidiIn(i);
-		midiInReadActions = G_Patch.getMidiValue(i, "InReadActions");
-		midiInPitch       = G_Patch.getMidiValue(i, "InPitch");
+		midiInReadActions = G_Patch_DEPR_.getMidiValue(i, "InReadActions");
+		midiInPitch       = G_Patch_DEPR_.getMidiValue(i, "InPitch");
 		readPatchMidiOut(i);
 
 	if (res == SAMPLE_LOADED_OK) {
-		setBegin(G_Patch.getBegin(i));
-		setEnd  (G_Patch.getEnd(i, wave->size));
-		setPitch(G_Patch.getPitch(i));
+		setBegin(G_Patch_DEPR_.getBegin(i));
+		setEnd  (G_Patch_DEPR_.getEnd(i, wave->size));
+		setPitch(G_Patch_DEPR_.getPitch(i));
 	}
 	else {
 		// volume = DEFAULT_VOL;

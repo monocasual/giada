@@ -41,7 +41,7 @@
 #include "midiMapConf.h"
 
 
-extern Patch_DEPR_ G_Patch;
+extern Patch_DEPR_ G_Patch_DEPR_;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
@@ -126,21 +126,21 @@ void Channel::sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offse
 
 void Channel::readPatchMidiIn(int i)
 {
-	midiIn         = G_Patch.getMidiValue(i, "In");
-	midiInKeyPress = G_Patch.getMidiValue(i, "InKeyPress");
-	midiInKeyRel   = G_Patch.getMidiValue(i, "InKeyRel");
-  midiInKill     = G_Patch.getMidiValue(i, "InKill");
-  midiInVolume   = G_Patch.getMidiValue(i, "InVolume");
-  midiInMute     = G_Patch.getMidiValue(i, "InMute");
-  midiInSolo     = G_Patch.getMidiValue(i, "InSolo");
+	midiIn         = G_Patch_DEPR_.getMidiValue(i, "In");
+	midiInKeyPress = G_Patch_DEPR_.getMidiValue(i, "InKeyPress");
+	midiInKeyRel   = G_Patch_DEPR_.getMidiValue(i, "InKeyRel");
+  midiInKill     = G_Patch_DEPR_.getMidiValue(i, "InKill");
+  midiInVolume   = G_Patch_DEPR_.getMidiValue(i, "InVolume");
+  midiInMute     = G_Patch_DEPR_.getMidiValue(i, "InMute");
+  midiInSolo     = G_Patch_DEPR_.getMidiValue(i, "InSolo");
 }
 
 void Channel::readPatchMidiOut(int i)
 {
-	midiOutL        = G_Patch.getMidiValue(i, "OutL");
-	midiOutLplaying = G_Patch.getMidiValue(i, "OutLplaying");
-	midiOutLmute    = G_Patch.getMidiValue(i, "OutLmute");
-	midiOutLsolo    = G_Patch.getMidiValue(i, "OutLsolo");
+	midiOutL        = G_Patch_DEPR_.getMidiValue(i, "OutL");
+	midiOutLplaying = G_Patch_DEPR_.getMidiValue(i, "OutLplaying");
+	midiOutLmute    = G_Patch_DEPR_.getMidiValue(i, "OutLmute");
+	midiOutLsolo    = G_Patch_DEPR_.getMidiValue(i, "OutLsolo");
 }
 
 

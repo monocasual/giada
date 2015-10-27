@@ -46,7 +46,7 @@
 #include "gd_warnings.h"
 
 
-extern Patch_DEPR_   G_Patch;
+extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
 #ifdef WITH_VST
@@ -107,7 +107,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	else
 	if (type == BROWSER_SAVE_PATCH) {
 		ok->callback(cb_save_patch, (void*)this);
-		name->value(G_Patch.name[0] == '\0' ? "my_patch.gptc" : G_Patch.name);
+		name->value(G_Patch_DEPR_.name[0] == '\0' ? "my_patch.gptc" : G_Patch_DEPR_.name);
 		name->maximum_size(MAX_PATCHNAME_LEN+5); // +5 for ".gptc"
 	}
 	else
@@ -118,7 +118,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
 		ok->callback(cb_save_project, (void*)this);
-		name->value(gStripExt(G_Patch.name).c_str());
+		name->value(gStripExt(G_Patch_DEPR_.name).c_str());
 	}
 #ifdef WITH_VST
 	else

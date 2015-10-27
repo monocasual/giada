@@ -46,6 +46,9 @@ extern Mixer	   		 G_Mixer;
 
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
+	/* TODO make all components fill the patch */
+
+	
 }
 
 

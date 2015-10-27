@@ -45,7 +45,7 @@
 
 
 extern Mixer 			 G_Mixer;
-extern Patch_DEPR_ G_Patch;
+extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;

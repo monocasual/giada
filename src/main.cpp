@@ -1,8 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -22,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <pthread.h>
@@ -32,6 +32,7 @@
 #include "core/init.h"
 #include "core/const.h"
 #include "core/patch_DEPR_.h"
+#include "core/patch.h"
 #include "core/conf.h"
 #include "core/midiMapConf.h"
 #include "core/mixer.h"
@@ -52,8 +53,9 @@ Mixer         G_Mixer;
 bool          G_quit;
 bool	        G_audio_status;
 bool          G_midiStatus;
-Patch_DEPR_   G_Patch;
-Conf		      G_Conf;
+Patch_DEPR_   G_Patch_DEPR_;
+Patch         G_Patch;
+Conf          G_Conf;
 MidiMapConf   G_MidiMap;
 gdMainWindow *mainWin;
 

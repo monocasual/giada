@@ -36,7 +36,7 @@
 #include "kernelMidi.h"
 
 
-extern Patch_DEPR_ G_Patch;
+extern Patch_DEPR_ G_Patch_DEPR_;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
@@ -276,16 +276,16 @@ void MidiChannel::kill(int frame)
 
 int MidiChannel::loadByPatch(const char *f, int i)
 {
-	volume      = G_Patch.getVol(i);
-	index       = G_Patch.getIndex(i);
-	mute        = G_Patch.getMute(i);
-	mute_s      = G_Patch.getMute_s(i);
-	solo        = G_Patch.getSolo(i);
-	panLeft     = G_Patch.getPanLeft(i);
-	panRight    = G_Patch.getPanRight(i);
+	volume      = G_Patch_DEPR_.getVol(i);
+	index       = G_Patch_DEPR_.getIndex(i);
+	mute        = G_Patch_DEPR_.getMute(i);
+	mute_s      = G_Patch_DEPR_.getMute_s(i);
+	solo        = G_Patch_DEPR_.getSolo(i);
+	panLeft     = G_Patch_DEPR_.getPanLeft(i);
+	panRight    = G_Patch_DEPR_.getPanRight(i);
 
-	midiOut     = G_Patch.getMidiValue(i, "Out");
-	midiOutChan = G_Patch.getMidiValue(i, "OutChan");
+	midiOut     = G_Patch_DEPR_.getMidiValue(i, "Out");
+	midiOutChan = G_Patch_DEPR_.getMidiValue(i, "OutChan");
 
 	readPatchMidiIn(i);
 	readPatchMidiOut(i);
