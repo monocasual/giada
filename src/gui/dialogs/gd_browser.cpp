@@ -324,7 +324,8 @@ void gdBrowser::__cb_save_patch() {
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_savePatch__DEPR__(fullpath, name->value(), false)) // false == not a project
+	//if (glue_savePatch__DEPR__(fullpath, name->value(), false)) // false == not a project
+        if (glue_savePatch(fullpath, name->value(), false)) // false == not a project
 		do_callback();
 	else
 		gdAlert("Unable to save the patch!");

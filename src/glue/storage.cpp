@@ -33,22 +33,34 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../core/mixer.h"
 #include "../core/channel.h"
+#include "../core/patch.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/wave.h"
+#include "../utils/gui_utils.h"
 #include "glue.h" // TODO - remove, used only for DEPR calls
 #include "storage.h"
 
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
+extern Patch         G_Patch;
 
 
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
-	/* TODO make all components fill the patch */
+	/* TODO make all components fill the patch:
+	- columns (and channels)
+	- mixerHandler */
 
-	
+	G_Patch.name = name;
+
+	if (G_Patch.write(fullpath)) {
+		gu_update_win_label(name);
+		gLog("[glue] patch saved as %s\n", fullpath);
+		return 1;
+	}
+	return 0;
 }
 
 
@@ -95,7 +107,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 
 	char gptcPath[PATH_MAX];
 	sprintf(gptcPath, "%s%s%s.gptc", folderPath, gGetSlash().c_str(), gStripExt(projName).c_str());
-	glue_savePatch__DEPR__(gptcPath, projName, true); // true == it's a project
+	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;
 }
