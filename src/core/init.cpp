@@ -39,6 +39,7 @@
 #include "const.h"
 #include "mixerHandler.h"
 #include "patch_DEPR_.h"
+#include "patch.h"
 #include "conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
@@ -50,6 +51,7 @@ extern Mixer 			   G_Mixer;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
+extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
@@ -63,6 +65,7 @@ void init_prepareParser()
 {
 	G_Conf.read();
 	G_Patch_DEPR_.setDefault();
+	G_Patch.setDefault();
 	if (!gLog_init(G_Conf.logMode))
 		gLog("[init] log init failed! Using default stdout\n");
   time_t t;

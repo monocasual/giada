@@ -46,6 +46,7 @@
 #include "waveFx.h"
 #include "conf.h"
 #include "patch_DEPR_.h"
+#include "patch.h"
 #include "recorder.h"
 #include "channel.h"
 #include "sampleChannel.h"
@@ -54,6 +55,7 @@
 
 extern Mixer 		   G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
+extern Patch       G_Patch;
 extern Conf 		   G_Conf;
 
 #ifdef WITH_VST
@@ -177,6 +179,7 @@ SampleChannel *mh_startInputRec()
 	sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
 	while (!mh_uniqueSamplename(chan, name)) {
 		G_Patch_DEPR_.lastTakeId++;
+		G_Patch.lastTakeId++;
 		sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
 	}
 
