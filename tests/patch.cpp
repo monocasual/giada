@@ -96,7 +96,7 @@ TEST_CASE("Test Patch class")
     patch.version      = "1.0";
     patch.versionFloat = 1.0f;
     patch.name         = "test patch";
-    patch.bpm          = 100;
+    patch.bpm          = 100.0f;
     patch.bars         = 4;
     patch.beats        = 23;
     patch.quantize     = 1;
@@ -119,7 +119,7 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.version == "1.0");
     REQUIRE(patch.versionFloat == Approx(1.0));
     REQUIRE(patch.name == "test patch");
-    REQUIRE(patch.bpm == 100);
+    REQUIRE(patch.bpm == Approx(100.0f));
     REQUIRE(patch.bars == 4);
     REQUIRE(patch.beats == 23);
     REQUIRE(patch.quantize == 1);
