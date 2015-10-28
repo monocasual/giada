@@ -49,11 +49,22 @@ extern Patch         G_Patch;
 
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
-	/* TODO make all components fill the patch:
-	- columns (and channels)
-	- mixerHandler */
+	G_Patch.version      = VERSIONE;
+	G_Patch.versionFloat = VERSIONE_FLOAT;
+	G_Patch.name         = name;
+	G_Patch.bpm          = G_Mixer.bpm;
+	G_Patch.bars         = G_Mixer.bars;
+	G_Patch.beats        = G_Mixer.beats;
+	G_Patch.quantize     = G_Mixer.quantize;
+	G_Patch.masterVolIn  = G_Mixer.inVol;
+  G_Patch.masterVolOut = G_Mixer.outVol;
+  G_Patch.metronome    = G_Mixer.metronome;
 
-	G_Patch.name = name;
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		// G_Mixer.channels.at(i).fillPatch();
+	}
+
+	/* TODO - for each column ... */
 
 	if (G_Patch.write(fullpath)) {
 		gu_update_win_label(name);
