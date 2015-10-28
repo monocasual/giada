@@ -51,6 +51,17 @@ extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
+void Patch::setDefault()
+{
+  header     = "GIADAPTC";
+  lastTakeId = 0;
+  samplerate = DEFAULT_SAMPLERATE;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int Patch::write(const char *file)
 {
   jRoot = json_object();
@@ -176,7 +187,7 @@ void Patch::writeCommons(json_t *jContainer)
   json_object_set_new(jContainer, PATCH_KEY_VERSION,        json_string(version.c_str()));
   json_object_set_new(jContainer, PATCH_KEY_VERSION_FLOAT,  json_real(versionFloat));
   json_object_set_new(jContainer, PATCH_KEY_NAME,           json_string(name.c_str()));
-  json_object_set_new(jContainer, PATCH_KEY_BPM,            json_integer(bpm));
+  json_object_set_new(jContainer, PATCH_KEY_BPM,            json_real(bpm));
   json_object_set_new(jContainer, PATCH_KEY_BARS,           json_integer(bars));
   json_object_set_new(jContainer, PATCH_KEY_BEATS,          json_integer(beats));
   json_object_set_new(jContainer, PATCH_KEY_QUANTIZE,       json_integer(quantize));
@@ -252,7 +263,7 @@ bool Patch::readCommons(json_t *jContainer)
   if (!setString(jContainer, PATCH_KEY_VERSION, version)) return 0;
   if (!setFloat (jContainer, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
   if (!setString(jContainer, PATCH_KEY_NAME, name)) return 0;
-  if (!setInt   (jContainer, PATCH_KEY_BPM, bpm)) return 0;
+  if (!setFloat (jContainer, PATCH_KEY_BPM, bpm)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_BARS, bars)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_BEATS, beats)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_QUANTIZE, quantize)) return 0;

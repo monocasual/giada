@@ -49,7 +49,7 @@ public:
   string version;
   float  versionFloat;
   string name;
-  int    bpm;
+  float  bpm;
   int    bars;
   int    beats;
   int    quantize;
@@ -136,8 +136,16 @@ public:
   gVector<plugin_t> masterOutPlugins;
 #endif
 
-  int write(const char *file);
-  int read (const char *file);
+  /* setDefault
+   * Init Patch with default values. */
+
+  void setDefault();
+
+  /* read/write
+   * Read/write patch to/from file. */
+   
+  int  write(const char *file);
+  int  read (const char *file);
 
 private:
 
