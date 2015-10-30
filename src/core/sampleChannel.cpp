@@ -31,6 +31,7 @@
 #include "../utils/log.h"
 #include "sampleChannel.h"
 #include "patch_DEPR_.h"
+#include "patch.h"
 #include "conf.h"
 #include "wave.h"
 #include "pluginHost.h"
@@ -976,6 +977,36 @@ void SampleChannel::writePatch(FILE *fp, int i, bool isProject)
 
 	fprintf(fp, "chanMidiInReadActions%d=%u\n", i, midiInReadActions);
 	fprintf(fp, "chanMidiInPitch%d=%u\n",       i, midiInPitch);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::fillPatch(Patch *p, int i, bool isProject)
+{
+	int pchIndex = Channel::fillPatch(p, i, isProject);
+	Patch::channel_t *pch = &p->channels.at(pchIndex);
+
+	if (wave != NULL) {
+		pch->samplePath = wave->pathfile;
+		if (isProject)
+			pch->samplePath = gBasename(wave->pathfile);  // make it portable
+	}
+	else
+		pch->samplePath = "";
+
+	pch->key               = key;
+	pch->mode              = mode;
+	pch->begin             = begin;
+	pch->end               = end;
+	pch->boost             = boost;
+	pch->recActive         = readActions;
+	pch->pitch             = pitch;
+	pch->midiInReadActions = midiInReadActions;
+	pch->midiInPitch       = midiInPitch;
+	
+	return 0;
 }
 
 

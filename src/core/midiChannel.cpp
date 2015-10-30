@@ -32,6 +32,7 @@
 #include "channel.h"
 #include "pluginHost.h"
 #include "patch_DEPR_.h"
+#include "patch.h"
 #include "conf.h"
 #include "kernelMidi.h"
 
@@ -345,4 +346,19 @@ void MidiChannel::writePatch(FILE *fp, int i, bool isProject)
 
 	fprintf(fp, "chanMidiOut%d=%u\n",        i, midiOut);
 	fprintf(fp, "chanMidiOutChan%d=%u\n",    i, midiOutChan);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int MidiChannel::fillPatch(class Patch *p, int i, bool isProject)
+{
+	int pchIndex = Channel::fillPatch(p, i, isProject);
+	Patch::channel_t *pch = &p->channels.at(pchIndex);
+
+	pch->midiOut     = midiOut;
+	pch->midiOutChan = midiOutChan;
+
+	return 0;
 }

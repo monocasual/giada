@@ -51,8 +51,14 @@ extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
-void Patch::setDefault()
+void Patch::init()
 {
+  columns.clear();
+  channels.clear();
+#ifdef WITH_VST
+  masterInPlugins.clear();
+  masterOutPlugins.clear();
+#endif
   header     = "GIADAPTC";
   lastTakeId = 0;
   samplerate = DEFAULT_SAMPLERATE;

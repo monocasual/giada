@@ -83,24 +83,25 @@ public:
 	SampleChannel(int bufferSize);
 	~SampleChannel();
 
-	void  clear      ();
-	void  process    (float *buffer);
-	void  start      (int frame, bool doQuantize);
-	void  kill       (int frame);
-	void  empty      ();
-	void  stopBySeq  ();
-	void  stop       ();
-	void  rewind     ();
-	void  setMute    (bool internal);
-	void  unsetMute  (bool internal);
-	void  reset      (int frame);
-	int   load       (const char *file);
-	int   loadByPatch(const char *file, int i);
-	void  writePatch (FILE *fp, int i, bool isProject);
-	void  quantize   (int index, int localFrame, int globalFrame);
-	void  onZero     (int frame);
-	void  onBar      (int frame);
-	void  parseAction(recorder::action *a, int localFrame, int globalFrame);
+	void clear      ();
+	void process    (float *buffer);
+	void start      (int frame, bool doQuantize);
+	void kill       (int frame);
+	void empty      ();
+	void stopBySeq  ();
+	void stop       ();
+	void rewind     ();
+	void setMute    (bool internal);
+	void unsetMute  (bool internal);
+	void reset      (int frame);
+	int  load       (const char *file);
+	int  loadByPatch(const char *file, int i);
+	void writePatch (FILE *fp, int i, bool isProject);
+	int  fillPatch  (class Patch *p, int i, bool isProject);
+	void quantize   (int index, int localFrame, int globalFrame);
+	void onZero     (int frame);
+	void onBar      (int frame);
+	void parseAction(recorder::action *a, int localFrame, int globalFrame);
 
 	/* fade methods
 	 * prepare channel for fade, mixer will take care of the process

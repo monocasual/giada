@@ -33,10 +33,12 @@
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
+#include "patch.h"
 #include "wave.h"
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "conf.h"
+#include "patch.h"
 #include "waveFx.h"
 #include "midiMapConf.h"
 
@@ -180,6 +182,38 @@ void Channel::writePatch(FILE *fp, int i, bool isProject)
 	fprintf(fp, "chanMidiOutLplaying%d=%u\n", i, midiOutLplaying);
 	fprintf(fp, "chanMidiOutLmute%d=%u\n",    i, midiOutLmute);
 	fprintf(fp, "chanMidiOutLsolo%d=%u\n",    i, midiOutLsolo);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Channel::fillPatch(Patch *p, int i, bool isProject)
+{
+	Patch::channel_t pch;
+	pch.type            = type;
+	pch.index           = index;
+	pch.column          = guiChannel->getColumnIndex();
+	pch.mute            = mute;
+	pch.mute_s          = mute_s;
+	pch.solo            = solo;
+	pch.volume          = volume;
+	pch.panLeft         = panLeft;
+	pch.panRight        = panRight;
+	pch.midiIn          = midiIn;
+	pch.midiInKeyPress  = midiInKeyPress;
+	pch.midiInKeyRel    = midiInKeyRel;
+	pch.midiInKill      = midiInKill;
+	pch.midiInVolume    = midiInVolume;
+	pch.midiInMute      = midiInMute;
+	pch.midiInSolo      = midiInSolo;
+	pch.midiOutL        = midiOutL;
+	pch.midiOutLplaying = midiOutLplaying;
+	pch.midiOutLmute    = midiOutLmute;
+	pch.midiOutLsolo    = midiOutLsolo;
+	p->channels.add(pch);
+
+	return p->channels.size - 1;
 }
 
 

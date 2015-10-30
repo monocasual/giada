@@ -49,6 +49,8 @@ extern Patch         G_Patch;
 
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
+	G_Patch.init();
+	
 	G_Patch.version      = VERSIONE;
 	G_Patch.versionFloat = VERSIONE_FLOAT;
 	G_Patch.name         = name;
@@ -61,7 +63,7 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject)
   G_Patch.metronome    = G_Mixer.metronome;
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		// G_Mixer.channels.at(i).fillPatch();
+		G_Mixer.channels.at(i)->fillPatch(&G_Patch, i, isProject);
 	}
 
 	/* TODO - for each column ... */

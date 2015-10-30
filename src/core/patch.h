@@ -136,14 +136,14 @@ public:
   gVector<plugin_t> masterOutPlugins;
 #endif
 
-  /* setDefault
+  /* init
    * Init Patch with default values. */
 
-  void setDefault();
+  void init();
 
   /* read/write
    * Read/write patch to/from file. */
-   
+
   int  write(const char *file);
   int  read (const char *file);
 

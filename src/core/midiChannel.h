@@ -60,21 +60,22 @@ public:
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
-	void  process    (float *buffer);
-	void  start      (int frame, bool doQuantize);
-	void  kill       (int frame);
-	void  empty      ();
-	void  stopBySeq  ();
-	void  stop       ();
-	void  rewind     ();
-	void  setMute    (bool internal);
-	void  unsetMute  (bool internal);
-	int   loadByPatch(const char *file, int i);
-	void  writePatch (FILE *fp, int i, bool isProject);
-	void  quantize   (int index, int localFrame, int globalFrame);
-	void  onZero     (int frame);
-	void  onBar      (int frame);
-	void  parseAction(recorder::action *a, int localFrame, int globalFrame);
+	void process    (float *buffer);
+	void start      (int frame, bool doQuantize);
+	void kill       (int frame);
+	void empty      ();
+	void stopBySeq  ();
+	void stop       ();
+	void rewind     ();
+	void setMute    (bool internal);
+	void unsetMute  (bool internal);
+	int  loadByPatch(const char *file, int i);
+	void writePatch (FILE *fp, int i, bool isProject);
+	int  fillPatch  (class Patch *p, int i, bool isProject);
+	void quantize   (int index, int localFrame, int globalFrame);
+	void onZero     (int frame);
+	void onBar      (int frame);
+	void parseAction(recorder::action *a, int localFrame, int globalFrame);
 
 	/* ---------------------------------------------------------------- */
 

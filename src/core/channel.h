@@ -77,6 +77,12 @@ public:
 
 	virtual void writePatch(FILE *fp, int i, bool isProject);
 
+	/* fillPatch
+	 * Fill a patch with channel values. Returns the index of the last
+	 * Patch::channel_t added. */
+	
+	virtual int fillPatch(class Patch *p, int i, bool isProject);
+
 	/* loadByPatch
 	 * load a sample inside a patch. */
 
