@@ -211,6 +211,43 @@ int Channel::fillPatch(Patch *p, int i, bool isProject)
 	pch.midiOutLplaying = midiOutLplaying;
 	pch.midiOutLmute    = midiOutLmute;
 	pch.midiOutLsolo    = midiOutLsolo;
+
+	for (unsigned i=0; i<recorder::global.size; i++) {
+		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
+			recorder::action *action = recorder::global.at(i).at(k);
+			if (action->chan == index) {
+				Patch::action_t pac;
+				pac.type   = action->type;
+		    pac.frame  = action->frame;
+		    pac.fValue = action->fValue;
+		    pac.iValue = action->iValue;
+				pch.actions.add(pac);
+			}
+		}
+	}
+
+#ifdef WITH_VST
+
+	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
+	for (int i=0; i<numPlugs; i++) {
+		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
+		if (!pPlugin->status) {
+			gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
+			continue;
+		}
+		Patch::plugin_t pp;
+		pp.path   = pPlugin->pathfile;
+    pp.bypass = pPlugin->bypass;
+
+		int numParams = pPlugin->getNumParams();
+		for (int k=0; k<numParams; k++)
+			pp.params.add(pPlugin->getParam(k));
+
+		pch.plugins.add(pp);
+	}
+
+#endif
+
 	p->channels.add(pch);
 
 	return p->channels.size - 1;
