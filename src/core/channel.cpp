@@ -231,19 +231,14 @@ int Channel::fillPatch(Patch *p, int i, bool isProject)
 	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
 	for (int i=0; i<numPlugs; i++) {
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
-		if (!pPlugin->status) {
-			gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
-			continue;
+		if (pPlugin->status) {
+			Patch::plugin_t pp;
+			pp.path   = pPlugin->pathfile;
+	    pp.bypass = pPlugin->bypass;
+			for (int k=0; k<pPlugin->getNumParams(); k++)
+				pp.params.add(pPlugin->getParam(k));
+			pch.plugins.add(pp);
 		}
-		Patch::plugin_t pp;
-		pp.path   = pPlugin->pathfile;
-    pp.bypass = pPlugin->bypass;
-
-		int numParams = pPlugin->getNumParams();
-		for (int k=0; k<numParams; k++)
-			pp.params.add(pPlugin->getParam(k));
-
-		pch.plugins.add(pp);
 	}
 
 #endif
