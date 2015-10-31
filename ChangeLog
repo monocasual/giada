@@ -13,6 +13,10 @@
 
 
 
+0.11.0 ---
+- Port all const char* strings to std::string in patch/project glue functions
+
+
 0.10.2 --- 2015 . 10 . 21
 - Setup Travis CI automated builds
 - Add base framework for unit testing (with Catch)
