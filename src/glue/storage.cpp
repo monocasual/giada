@@ -126,11 +126,7 @@ void __fillPatchColumns__()
 
 int glue_saveProject(const char *folderPath, const char *projName)
 {
-	if (gIsProject(folderPath)) {
-		gLog("[glue] the project folder already exists\n");
-		// don't exit
-	}
-	else if (!gMkdir(folderPath)) {
+	if (!gMkdir(folderPath)) {
 		gLog("[glue] unable to make project directory!\n");
 		return 0;
 	}
@@ -144,7 +140,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 			continue;
 
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
-		
+
 		if (ch->wave == NULL)
 			continue;
 
