@@ -312,7 +312,7 @@ void gdBrowser::__cb_save_patch()
 		return;
 	}
 
-	string fullpath = where->value() + gGetSlash() + gStripExt(name->value());
+	string fullpath = where->value() + gGetSlash() + gStripExt(name->value()) + ".gptc";
 
 	if (gFileExists(fullpath.c_str()))
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
