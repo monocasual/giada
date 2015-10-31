@@ -144,6 +144,7 @@ int glue_saveProject(const char *folderPath, const char *projName)
 			continue;
 
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		
 		if (ch->wave == NULL)
 			continue;
 
