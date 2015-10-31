@@ -124,9 +124,9 @@ void __fillPatchColumns__()
 /* -------------------------------------------------------------------------- */
 
 
-int glue_saveProject(const char *folderPath, const char *projName)
+int glue_saveProject(string &folderPath, const char *projName)
 {
-	if (!gMkdir(folderPath)) {
+	if (!gMkdir(folderPath.c_str())) {
 		gLog("[glue] unable to make project directory!\n");
 		return 0;
 	}

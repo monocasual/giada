@@ -335,20 +335,9 @@ void gdBrowser::__cb_save_project()
 		return;
 	}
 
-	/* check if name->value() contains ".gprj" */
+	string fullpath = where->value() + gGetSlash() + gStripExt(name->value()) + ".gprj";
 
-	char ext[6] = ".gprj";
-	if (strstr(name->value(), ".gprj") != NULL)
-		ext[0] = '\0';
-
-	char fullpath[PATH_MAX];
-#if defined(_WIN32)
-	sprintf(fullpath, "%s\\%s%s", where->value(), name->value(), ext);
-#else
-	sprintf(fullpath, "%s/%s%s", where->value(), name->value(), ext);
-#endif
-
-	if (gIsProject(fullpath) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (gIsProject(fullpath.c_str()) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
 	if (glue_saveProject(fullpath, name->value()))
