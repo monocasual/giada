@@ -268,7 +268,7 @@ std::string gGetProjectName(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetSlash() // TODO - create SLASH macro or constant
+std::string gGetSlash()
 {
 #if defined(_WIN32)
 	return "\\";
