@@ -109,10 +109,15 @@ public:
 
 	void refreshColumns();
 
-	/* getColumn
+	/* getColumnByIndex
 	 * return the column with index 'index', or NULL if not found. */
 
-	gColumn *getColumn(int index);
+	gColumn *getColumnByIndex(int index);
+
+	/* getColumn
+	 * return the column with from columns->at(i). */
+
+	inline gColumn *getColumn(int i) { return columns.at(i); }
 
 	/* clear
 	 * delete all channels and groups. */
@@ -138,7 +143,7 @@ public:
 	 * return the width in pixel of i-th column. Warning: 'i' is the i-th column
 	 * in the column array, NOT the index. */
 
-	inline int getColumnWidth(int i) { return getColumn(i)->w(); }
+	inline int getColumnWidth(int i) { return getColumnByIndex(i)->w(); }
 };
 
 

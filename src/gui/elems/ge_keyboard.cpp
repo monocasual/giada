@@ -175,7 +175,7 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addC
 
 gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
-	gColumn *col = getColumn(colIndex);
+	gColumn *col = getColumnByIndex(colIndex);
 
 	/* no column with index 'colIndex' found? Just create it and set its index
 	to 'colIndex'. */
@@ -205,7 +205,7 @@ void gKeyboard::refreshColumns()
 /* -------------------------------------------------------------------------- */
 
 
-gColumn *gKeyboard::getColumn(int index)
+gColumn *gKeyboard::getColumnByIndex(int index)
 {
 	for (unsigned i=0; i<columns.size; i++)
 		if (columns.at(i)->getIndex() == index)
