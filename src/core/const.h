@@ -37,6 +37,12 @@
 
 #define CONF_FILENAME		"giada.conf"
 
+#ifdef _WIN32
+	#define G_SLASH "\\"
+#else
+	#define G_SLASH "/"
+#endif
+
 
 
 /* -- GUI ------------------------------------------------------------------- */
