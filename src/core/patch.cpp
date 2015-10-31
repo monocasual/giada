@@ -68,7 +68,7 @@ void Patch::init()
 /* -------------------------------------------------------------------------- */
 
 
-int Patch::write(const char *file)
+int Patch::write(string &file)
 {
   jRoot = json_object();
 
@@ -80,7 +80,7 @@ int Patch::write(const char *file)
   writePlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS);
 #endif
 
-  if (json_dump_file(jRoot, file, JSON_INDENT(2)) != 0) {
+  if (json_dump_file(jRoot, file.c_str(), JSON_INDENT(2)) != 0) {
     gLog("[Patch::write] unable to write patch file!\n");
     return 0;
   }

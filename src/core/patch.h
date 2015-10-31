@@ -144,7 +144,7 @@ public:
   /* read/write
    * Read/write patch to/from file. */
 
-  int  write(const char *file);
+  int  write(string &file);
   int  read (const char *file);
 
 private:

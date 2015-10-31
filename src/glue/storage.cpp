@@ -42,12 +42,15 @@
 #include "storage.h"
 
 
+using std::string;
+
+
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
 
 
-int glue_savePatch(const char *fullpath, const char *name, bool isProject)
+int glue_savePatch(string &fullpath, const char *name, bool isProject)
 {
 	G_Patch.init();
 
@@ -57,7 +60,7 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 
 	if (G_Patch.write(fullpath)) {
 		gu_update_win_label(name);
-		gLog("[glue] patch saved as %s\n", fullpath);
+		gLog("[glue] patch saved as %s\n", fullpath.c_str());
 		return 1;
 	}
 	return 0;
@@ -137,30 +140,25 @@ int glue_saveProject(const char *folderPath, const char *projName)
 
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
+		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+			continue;
 
-			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		if (ch->wave == NULL)
+			continue;
 
-			if (ch->wave == NULL)
-				continue;
+		/* update the new samplePath: everything now comes from the project
+		 * folder (folderPath). Also remove any existing file. */
 
-			/* update the new samplePath: everything now comes from the
-			 * project folder (folderPath) */
+		string samplePath = folderPath + gGetSlash() + ch->wave->basename() + "." + ch->wave->extension();
 
-			char samplePath[PATH_MAX];
-			sprintf(samplePath, "%s%s%s.%s", folderPath, gGetSlash().c_str(), ch->wave->basename().c_str(), ch->wave->extension().c_str());
-
-			/* remove any existing file */
-
-			if (gFileExists(samplePath))
-				remove(samplePath);
-			if (ch->save(samplePath))
-				ch->wave->pathfile = samplePath;
-		}
+		if (gFileExists(samplePath.c_str()))
+			remove(samplePath.c_str());
+		if (ch->save(samplePath.c_str()))
+			ch->wave->pathfile = samplePath;
 	}
 
-	char gptcPath[PATH_MAX];
-	sprintf(gptcPath, "%s%s%s.gptc", folderPath, gGetSlash().c_str(), gStripExt(projName).c_str());
+	string gptcPath = folderPath + gGetSlash() + gStripExt(projName) + ".gptc";
 	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;

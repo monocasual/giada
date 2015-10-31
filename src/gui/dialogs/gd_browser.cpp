@@ -305,27 +305,20 @@ void gdBrowser::__cb_up() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowser::__cb_save_patch() {
-
+void gdBrowser::__cb_save_patch()
+{
 	if (strcmp(name->value(), "") == 0) {  /// FIXME glue business
 		gdAlert("Please choose a file name.");
 		return;
 	}
 
-	/* if name->value() contains ".gptc" */
+	string fullpath = where->value() + gGetSlash() + gStripExt(name->value());
 
-	char ext[6] = ".gptc";
-	if (strstr(name->value(), ".gptc") != NULL)
-		ext[0] = '\0';
-
-	char fullpath[PATH_MAX];
-	sprintf(fullpath, "%s/%s%s", where->value(), name->value(), ext);
-	if (gFileExists(fullpath))
+	if (gFileExists(fullpath.c_str()))
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	//if (glue_savePatch__DEPR__(fullpath, name->value(), false)) // false == not a project
-        if (glue_savePatch(fullpath, name->value(), false)) // false == not a project
+  if (glue_savePatch(fullpath, name->value(), false)) // false == not a project
 		do_callback();
 	else
 		gdAlert("Unable to save the patch!");
@@ -335,8 +328,8 @@ void gdBrowser::__cb_save_patch() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowser::__cb_save_project() {
-
+void gdBrowser::__cb_save_project()
+{
 	if (strcmp(name->value(), "") == 0) {    /// FIXME glue business
 		gdAlert("Please choose a project name.");
 		return;
