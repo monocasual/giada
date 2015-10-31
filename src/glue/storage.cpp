@@ -50,7 +50,25 @@ extern Patch         G_Patch;
 int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 {
 	G_Patch.init();
-	
+
+	__fillPatchGlobals__(name);
+	__fillPatchChannels__(isProject);
+	__fillPatchColumns__();
+
+	if (G_Patch.write(fullpath)) {
+		gu_update_win_label(name);
+		gLog("[glue] patch saved as %s\n", fullpath);
+		return 1;
+	}
+	return 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void __fillPatchGlobals__(const char *name)
+{
 	G_Patch.version      = VERSIONE;
 	G_Patch.versionFloat = VERSIONE_FLOAT;
 	G_Patch.name         = name;
@@ -61,19 +79,42 @@ int glue_savePatch(const char *fullpath, const char *name, bool isProject)
 	G_Patch.masterVolIn  = G_Mixer.inVol;
   G_Patch.masterVolOut = G_Mixer.outVol;
   G_Patch.metronome    = G_Mixer.metronome;
+}
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void __fillPatchChannels__(bool isProject)
+{
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		G_Mixer.channels.at(i)->fillPatch(&G_Patch, i, isProject);
 	}
+}
 
-	/* TODO - for each column ... */
 
-	if (G_Patch.write(fullpath)) {
-		gu_update_win_label(name);
-		gLog("[glue] patch saved as %s\n", fullpath);
-		return 1;
+/* -------------------------------------------------------------------------- */
+
+
+void __fillPatchColumns__()
+{
+	for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
+		gColumn *gCol = mainWin->keyboard->getColumn(i);
+		Patch::column_t pCol;
+		pCol.index = gCol->getIndex();
+		pCol.width = gCol->w();
+		for (unsigned k=0; k<gCol->countChannels(); k++) {
+			Channel *colChannel = gCol->getChannel(k);
+			for (unsigned j=0; j<G_Mixer.channels.size; j++) {
+				Channel *mixerChannel = G_Mixer.channels.at(j);
+				if (colChannel == mixerChannel) {
+					pCol.channels.add(mixerChannel->index);
+					break;
+				}
+			}
+		}
+		G_Patch.columns.add(pCol);
 	}
-	return 0;
 }
 
 

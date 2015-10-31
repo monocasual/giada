@@ -35,4 +35,8 @@
 int glue_savePatch  (const char *fullpath, const char *name, bool isProject);
 int glue_saveProject(const char *folderPath, const char *projName);
 
+static void __fillPatchGlobals__(const char *name);
+static void __fillPatchChannels__(bool isProject);
+static void __fillPatchColumns__();
+
 #endif
