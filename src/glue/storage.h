@@ -36,7 +36,7 @@ using std::string;
 
 
 //int glue_loadPatch(const char *fname, const char *fpath, class gProgress *status, bool isProject);
-int glue_savePatch  (string &fullpath, const char *name, bool isProject);
+int glue_savePatch  (string &fullPath, const char *name, bool isProject);
 int glue_saveProject(const char *folderPath, const char *projName);
 
 static void __fillPatchGlobals__(const char *name);

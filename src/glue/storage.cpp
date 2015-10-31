@@ -50,7 +50,7 @@ extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
 
 
-int glue_savePatch(string &fullpath, const char *name, bool isProject)
+int glue_savePatch(string &fullPath, const char *name, bool isProject)
 {
 	G_Patch.init();
 
@@ -58,9 +58,9 @@ int glue_savePatch(string &fullpath, const char *name, bool isProject)
 	__fillPatchChannels__(isProject);
 	__fillPatchColumns__();
 
-	if (G_Patch.write(fullpath)) {
+	if (G_Patch.write(fullPath)) {
 		gu_update_win_label(name);
-		gLog("[glue] patch saved as %s\n", fullpath.c_str());
+		gLog("[glue] patch saved as %s\n", fullPath.c_str());
 		return 1;
 	}
 	return 0;
