@@ -129,6 +129,7 @@ src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui_utils.h                  \
 src/utils/gui_utils.cpp                \
+src/utils/gvector.h                    \
 src/utils/utils.h                      \
 src/utils/utils.cpp
 
