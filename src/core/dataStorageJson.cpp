@@ -39,7 +39,7 @@ bool DataStorageJson::setString(json_t *jRoot, const char *key, string &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!json_is_string(jObject)) {
-    gLog("[dataStorageJson::setString] %s is not a string!\n", key);
+    gLog("[dataStorageJson::setString] key '%s' is not a string!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -54,8 +54,13 @@ bool DataStorageJson::setString(json_t *jRoot, const char *key, string &output)
 bool DataStorageJson::setFloat(json_t *jRoot, const char *key, float &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
+  if (!jObject) {
+    gLog("[dataStorageJson::setFloat] key '%s' not found, using default value\n", key);
+    output = 0.0f;
+    return true;
+  }
   if (!json_is_real(jObject)) {
-    gLog("[dataStorageJson::setString] %s is not a float!\n", key);
+    gLog("[dataStorageJson::setFloat] key '%s' is not a float!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -70,8 +75,13 @@ bool DataStorageJson::setFloat(json_t *jRoot, const char *key, float &output)
 bool DataStorageJson::setUint32(json_t *jRoot, const char *key, uint32_t &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
+  if (!jObject) {
+    gLog("[dataStorageJson::setUint32] key '%s' not found, using default value\n", key);
+    output = 0;
+    return true;
+  }
   if (!json_is_integer(jObject)) {
-    gLog("[dataStorageJson::setString] %d is not an integer!\n", key);
+    gLog("[dataStorageJson::setUint32] key '%s' is not an integer!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -86,8 +96,13 @@ bool DataStorageJson::setUint32(json_t *jRoot, const char *key, uint32_t &output
 bool DataStorageJson::setBool(json_t *jRoot, const char *key, bool &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
+  if (!jObject) {
+    gLog("[dataStorageJson::setBool] key '%s' not found, using default value\n", key);
+    output = false;
+    return true;
+  }
   if (!json_is_boolean(jObject)) {
-    gLog("[dataStorageJson::setString] %d is not a boolean!\n", key);
+    gLog("[dataStorageJson::setBool] key '%s' is not a boolean!\n", key);
     json_decref(jRoot);
     return false;
   }
