@@ -47,8 +47,8 @@ public:
 	gVector() : size(0), s(NULL) {}
 
 	/* gVector(const &)
-	 * copy-constructor, when gVector a = b (where b is gVector).
-	 * Default constructor doesn't copy referenced ojbects, so we need
+	 * copy-constructor, when gVector a = b (where b is another gVector).
+	 * Default constructor doesn't copy referenced objects, so we need
 	 * to re-allocate the internal stack for the copied object */
 
 	gVector(const gVector &other)
