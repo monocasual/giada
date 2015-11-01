@@ -26,12 +26,13 @@
  *
  * -------------------------------------------------------------------------- */
 
+
 #ifndef CONST_H
 #define CONST_H
 
 
 /* -- version --------------------------------------------------------------- */
-#define VERSIONE 				"0.11.0"
+#define G_VERSION_STR   "0.11.0"
 #define G_APP_NAME      "Giada"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 11

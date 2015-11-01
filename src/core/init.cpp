@@ -70,7 +70,7 @@ void init_prepareParser()
 		gLog("[init] log init failed! Using default stdout\n");
   time_t t;
   time (&t);
-	gLog("[init] Giada "VERSIONE" - %s", ctime(&t));
+	gLog("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
 	gLog("[init] configuration file ready\n");
 }
 
@@ -199,6 +199,6 @@ void init_shutdown()
 	gLog("[init] Plugin Host cleaned up\n");
 #endif
 
-	gLog("[init] Giada "VERSIONE" closed\n\n");
+	gLog("[init] Giada " G_VERSION_STR " closed\n\n");
 	gLog_close();
 }

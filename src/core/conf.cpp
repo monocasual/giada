@@ -353,7 +353,7 @@ int Conf::write()
 
 	fprintf(fp, "# --- Giada configuration file --- \n");
 	fprintf(fp, "header=GIADACFG\n");
-	fprintf(fp, "version=%s\n", VERSIONE);
+	fprintf(fp, "version=%s\n", G_VERSION_STR);
 
 	fprintf(fp, "logMode=%d\n",    logMode);
 

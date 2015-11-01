@@ -67,7 +67,7 @@ gdAbout::gdAbout()
 	char message[512];
 	sprintf(
 	  message,
-	  "Version " VERSIONE " (" __DATE__ ")\n\n"
+	  "Version " G_VERSION_STR " (" __DATE__ ")\n\n"
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
 		"RtMidi (%s), libsamplerate and libsndfile\n\n"
