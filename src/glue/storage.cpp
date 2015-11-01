@@ -78,6 +78,17 @@ int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 
 int glue_loadPatch(const string &fname, const string &fpath, class gProgress *status, bool isProject)
 {
+	__setProgressBar__(status, 0.1f);
+
+	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
+	* one. */
+
+	int res = G_Patch.read(fname);
+	if (!res) {
+		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated one...\n");
+		return glue_loadPatch__DEPR__(fname.c_str(), fpath.c_str(), status, isProject);
+	}
+
 	return 1;
 }
 
@@ -135,6 +146,17 @@ void __fillPatchColumns__()
 		}
 		G_Patch.columns.add(pCol);
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void __setProgressBar__(class gProgress *status, float v)
+{
+	status->value(v);
+	//Fl::check();
+	Fl::wait(0);
 }
 
 

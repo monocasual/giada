@@ -96,20 +96,21 @@ int Patch::read(const string &file)
   jRoot = json_load_file(file.c_str(), 0, &jError);
   if (!jRoot) {
     gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
-    return 0;
+    return PATCH_UNREADABLE;
   }
   if (!checkObject(jRoot, "root element"))
-    return 0;
+    return PATCH_INVALID;
 
-  if (!readCommons(jRoot)) return 0;
-  if (!readColumns(jRoot)) return 0;
-  if (!readChannels(jRoot)) return 0;
+  if (!readCommons(jRoot))  return PATCH_INVALID;
+  if (!readColumns(jRoot))  return PATCH_INVALID;
+  if (!readChannels(jRoot)) return PATCH_INVALID;
 #ifdef WITH_VST
-  readPlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS);
-  readPlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS);
+  if (!readPlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS))   return PATCH_INVALID;
+  if (!readPlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS)) return PATCH_INVALID;
 #endif
+
   json_decref(jRoot);
-  return 1;
+  return PATCH_OPEN_OK;
 }
 
 /* -------------------------------------------------------------------------- */

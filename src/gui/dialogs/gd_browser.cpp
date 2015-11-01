@@ -46,6 +46,9 @@
 #include "gd_warnings.h"
 
 
+using std::string;
+
+
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
@@ -180,25 +183,17 @@ void gdBrowser::__cb_load_patch() {
 
 	/* patchFile is the file to open.
 	 * For patches:  browser->get_selected_item()
-	 * for projects: browser->get_selected_item() without extention +
-	 *               patch name appended */
+	 * for projects: basename(browser->get_selected_item()) + patch name */
 
-	std::string patchFile = browser->get_selected_item();;
-	bool        isProject;
+	string patchFile = browser->get_selected_item();
+	bool   isProject = false;
 
 	if (gIsProject(browser->get_selected_item())) {
-		std::string patchName = gGetProjectName(browser->get_selected_item());
-#if defined(__linux__) || defined(__APPLE__)
-		patchFile = patchFile+"/"+patchName+".gptc";
-#elif defined(_WIN32)
-		patchFile = patchFile+"\\"+patchName+".gptc";
-#endif
+		patchFile += gGetSlash() + gGetProjectName(browser->get_selected_item()) + ".gptc";
 		isProject = true;
 	}
-	else
-		isProject = false;
 
-	int res = glue_loadPatch__DEPR__(patchFile.c_str(),	browser->path_obj->value(),	status, isProject);
+	int res = glue_loadPatch(patchFile, browser->path_obj->value(), status, isProject);
 
 	if (res == PATCH_UNREADABLE) {
 		status->hide();
@@ -207,7 +202,8 @@ void gdBrowser::__cb_load_patch() {
 		else
 			gdAlert("This patch is unreadable.");
 	}
-	else if (res == PATCH_INVALID) {
+	else
+	if (res == PATCH_INVALID) {
 		status->hide();
 		if (isProject)
 			gdAlert("This project is not valid.");
@@ -231,7 +227,7 @@ void gdBrowser::__cb_save_sample() {
 
 	/* bruteforce check extension. */
 
-	std::string filename = gStripExt(name->value());
+	string filename = gStripExt(name->value());
 	char fullpath[PATH_MAX];
 	sprintf(fullpath, "%s/%s.wav", where->value(), filename.c_str());
 
@@ -277,7 +273,7 @@ void gdBrowser::__cb_down() {
 
 		if (type == BROWSER_SAVE_PATCH || type == BROWSER_SAVE_SAMPLE || type == BROWSER_SAVE_PROJECT) {
 			if (gIsProject(path)) {
-				std::string tmp = browser->text(browser->value());
+				string tmp = browser->text(browser->value());
 				tmp.erase(0, 4);
 				name->value(tmp.c_str());
 			}
