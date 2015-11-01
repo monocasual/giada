@@ -82,6 +82,11 @@ public:
 
 	gChannel *addChannel(int column, class Channel *ch, bool build=false);
 
+	/* addColumn
+	 * add a new column to the top of the stack. */
+
+	void addColumn(int width=380);
+
 	/* deleteChannel
 	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
 	 * it from the stack. */

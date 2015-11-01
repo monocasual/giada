@@ -331,6 +331,7 @@ void gKeyboard::printChannelMessage(int res)
 		gdAlert("Unknown error.");
 }
 
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -363,4 +364,13 @@ void gKeyboard::__cb_addColumn()
 
 	gLog("[gKeyboard::__cb_addColumn] new column added (index = %d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), columns.size, addColumnBtn->x());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gKeyboard::addColumn(int width)
+{
+	__cb_addColumn();
 }
