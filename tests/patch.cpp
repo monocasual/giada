@@ -3,9 +3,13 @@
 #include "catch.hpp"
 
 
+using std::string;
+
+
 TEST_CASE("Test Patch class")
 {
   Patch patch;
+  string filename = "./test-patch.json";
 
   SECTION("test write")
   {
@@ -109,12 +113,12 @@ TEST_CASE("Test Patch class")
     patch.masterInPlugins.add(plugin1);
     patch.masterOutPlugins.add(plugin2);
 
-    REQUIRE(patch.write("./test-patch.json") == 1);
+    REQUIRE(patch.write(filename) == 1);
   }
 
   SECTION("test read")
   {
-    REQUIRE(patch.read("./test-patch.json") == 1);
+    REQUIRE(patch.read(filename) == 1);
     REQUIRE(patch.header == "GPTCH");
     REQUIRE(patch.version == "1.0");
     REQUIRE(patch.versionFloat == Approx(1.0));
