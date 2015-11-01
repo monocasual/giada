@@ -193,23 +193,6 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 /* -------------------------------------------------------------------------- */
 
 
-int glue_savePatch__DEPR__(const char *fullpath, const char *name, bool isProject)
-{
-	if (G_Patch_DEPR_.write(fullpath, name, isProject) == 1) {
-		strcpy(G_Patch_DEPR_.name, name);
-		G_Patch_DEPR_.name[strlen(name)] = '\0';
-		gu_update_win_label(name);
-		gLog("[glue] patch saved as %s\n", fullpath);
-		return 1;
-	}
-	else
-		return 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void glue_deleteChannel(Channel *ch)
 {
 	int index = ch->index;
