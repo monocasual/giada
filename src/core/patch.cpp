@@ -91,9 +91,9 @@ int Patch::write(const string &file)
 /* -------------------------------------------------------------------------- */
 
 
-int Patch::read(const char *file)
+int Patch::read(const string &file)
 {
-  jRoot = json_load_file(file, 0, &jError);
+  jRoot = json_load_file(file.c_str(), 0, &jError);
   if (!jRoot) {
     gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
     return 0;
