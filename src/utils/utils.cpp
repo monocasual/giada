@@ -50,6 +50,8 @@
 #endif
 
 
+using std::string;
+
 
 bool gFileExists(const char *filename) {
 	FILE *fh = fopen(filename, "rb");
@@ -90,7 +92,7 @@ bool gIsDir(const char *path)
 		 * FIXME - consider native functions CFBundle... */
 
 		if (ret) {
-			std::string tmp = path;
+			string tmp = path;
 			tmp += "/Contents/Info.plist";
 			if (gFileExists(tmp.c_str()))
 				ret = false;
@@ -138,16 +140,16 @@ bool gMkdir(const char *path)
 /* -------------------------------------------------------------------------- */
 
 /* TODO - avoid this shit, just wrap the other call */
-std::string gBasename(const char *path)
+string gBasename(const char *path)
 {
-	std::string out = path;
+	string out = path;
 	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
 	return out;
 }
 
-std::string gBasename(const std::string &s)
+string gBasename(const string &s)
 {
-	std::string out = s;
+	string out = s;
 	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
 	return out;
 }
@@ -156,9 +158,9 @@ std::string gBasename(const std::string &s)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gDirname(const char *path)
+string gDirname(const char *path)
 {
-	std::string out = path;
+	string out = path;
 	out.erase(out.find_last_of(gGetSlash().c_str()));
 	return out;
 }
@@ -167,7 +169,7 @@ std::string gDirname(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetCurrentPath()
+string gGetCurrentPath()
 {
  char buf[PATH_MAX];
 #if defined(__WIN32)
@@ -184,7 +186,7 @@ std::string gGetCurrentPath()
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetExt(const char *file)
+string gGetExt(const char *file)
 {
 	int len = strlen(file);
 	int pos = len;
@@ -195,7 +197,7 @@ std::string gGetExt(const char *file)
 	}
 	if (pos==0)
 		return "";
-	std::string out = file;
+	string out = file;
 	return out.substr(pos+1, len);
 }
 
@@ -203,7 +205,7 @@ std::string gGetExt(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gStripExt(const char *file)
+string gStripExt(const char *file)
 {
 	int len = strlen(file);
 	int pos = -1;
@@ -212,7 +214,7 @@ std::string gStripExt(const char *file)
 			pos = i;
 			break;
 		}
-	std::string out = file;
+	string out = file;
 	return pos == -1 ? out : out.substr(0, pos);
 }
 
@@ -244,9 +246,9 @@ bool gIsPatch(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetProjectName(const char *path)
+string gGetProjectName(const char *path)
 {
-	std::string out;
+	string out;
 	out = gStripExt(path);
 
 	int i = out.size();
@@ -268,7 +270,7 @@ std::string gGetProjectName(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetSlash()
+string gGetSlash()
 {
 #if defined(_WIN32)
 	return "\\";
@@ -281,7 +283,7 @@ std::string gGetSlash()
 /* -------------------------------------------------------------------------- */
 
 
-std::string gItoa(int i)
+string gItoa(int i)
 {
 	std::stringstream out;
 	out << i;
@@ -292,14 +294,14 @@ std::string gItoa(int i)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gTrim(const char *f)
+string gTrim(const char *f)
 {
-	std::string out = f;
+	string out = f;
 	return gTrim(out);
 }
 
 
-std::string gTrim(const std::string &s)
+string gTrim(const string &s)
 {
 	std::size_t first = s.find_first_not_of(" \n\t");
 	std::size_t last  = s.find_last_not_of(" \n\t");
@@ -310,10 +312,10 @@ std::string gTrim(const std::string &s)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gReplace(std::string in, const std::string& search, const std::string& replace)
+string gReplace(string in, const string& search, const string& replace)
 {
 	size_t pos = 0;
-	while ((pos = in.find(search, pos)) != std::string::npos) {
+	while ((pos = in.find(search, pos)) != string::npos) {
 		in.replace(pos, search.length(), replace);
 		pos += replace.length();
 	}
@@ -324,9 +326,9 @@ std::string gReplace(std::string in, const std::string& search, const std::strin
 /* -------------------------------------------------------------------------- */
 
 
-std::string gStripFileUrl(const char *f)
+string gStripFileUrl(const char *f)
 {
-	std::string out = f;
+	string out = f;
 	out = gReplace(out, "file://", "");
 	out = gReplace(out, "%20", " ");
 	return out;
@@ -336,7 +338,7 @@ std::string gStripFileUrl(const char *f)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gGetHomePath()
+string gGetHomePath()
 {
 	char path[PATH_MAX];
 
@@ -362,17 +364,17 @@ std::string gGetHomePath()
 
 #endif
 
-	return std::string(path);
+	return string(path);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gSplit(std::string in, std::string sep, gVector<std::string> *v)
+void gSplit(string in, string sep, gVector<string> *v)
 {
-	std::string full  = in;
-	std::string token = "";
+	string full  = in;
+	string token = "";
 	size_t curr = 0;
 	size_t next = -1;
 	do {
@@ -382,5 +384,5 @@ void gSplit(std::string in, std::string sep, gVector<std::string> *v)
 		if (token != "")
 			v->add(token);
 	}
-	while (next != std::string::npos);
+	while (next != string::npos);
 }

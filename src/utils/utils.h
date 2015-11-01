@@ -36,6 +36,9 @@
 #include "log.h"
 
 
+using std::string;
+
+
 /* gVector
  * lightweight template class. */
 
@@ -160,32 +163,32 @@ bool gIsPatch(const char *path);
 
 bool gMkdir(const char *path);
 
-std::string gBasename(const char *path);
-std::string gBasename(const std::string &s);
+string gBasename(const char *path);
+string gBasename(const string &s);
 
-std::string gReplace(std::string in, const std::string& search, const std::string& replace);
+string gReplace(string in, const string& search, const string& replace);
 
-std::string gDirname(const char *path);
+string gDirname(const char *path);
 
-std::string gTrim(const char *path);
-std::string gTrim(const std::string &s);
+string gTrim(const char *path);
+string gTrim(const string &s);
 
-std::string gGetCurrentPath();
+string gGetCurrentPath();
 
-std::string gGetHomePath();
+string gGetHomePath();
 
-std::string gStripFileUrl(const char *path);
+string gStripFileUrl(const char *path);
 
-std::string gGetExt(const char *path);
+string gGetExt(const char *path);
 
-std::string gStripExt(const char *path);
+string gStripExt(const char *path);
 
-std::string gGetProjectName(const char *path); // TODO - useless!
+string gGetProjectName(const char *path); // TODO - useless!
 
-std::string gGetSlash();
+string gGetSlash();
 
-std::string gItoa(int i);
+string gItoa(int i);
 
-void gSplit(std::string in, std::string sep, gVector<std::string> *v);
+void gSplit(string in, string sep, gVector<string> *v);
 
 #endif
