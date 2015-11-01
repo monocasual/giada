@@ -98,7 +98,9 @@ TEST_CASE("Test Patch class")
 
     patch.header       = "GPTCH";
     patch.version      = "1.0";
-    patch.versionFloat = 1.0f;
+    patch.versionMajor = 6;
+    patch.versionMinor = 6;
+    patch.versionPatch = 6;
     patch.name         = "test patch";
     patch.bpm          = 100.0f;
     patch.bars         = 4;
@@ -121,7 +123,9 @@ TEST_CASE("Test Patch class")
     REQUIRE(patch.read(filename) == 1);
     REQUIRE(patch.header == "GPTCH");
     REQUIRE(patch.version == "1.0");
-    REQUIRE(patch.versionFloat == Approx(1.0));
+    REQUIRE(patch.versionMajor == 6);
+    REQUIRE(patch.versionMinor == 6);
+    REQUIRE(patch.versionPatch == 6);
     REQUIRE(patch.name == "test patch");
     REQUIRE(patch.bpm == Approx(100.0f));
     REQUIRE(patch.bars == 4);

@@ -253,7 +253,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 		/* 33 - product version */
 
 		case audioMasterGetVendorVersion:
-			return (int) VERSIONE_FLOAT * 100;
+			return (int) (G_VERSION_MAJOR * 100) + (G_VERSION_MINOR * 10) + G_VERSION_PATCH;
 
 
 		/* 37 - Plugin asks Host if it implements the feature text. */

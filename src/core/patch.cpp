@@ -191,7 +191,9 @@ void Patch::writeCommons(json_t *jContainer)
 {
   json_object_set_new(jContainer, PATCH_KEY_HEADER,         json_string(header.c_str()));
   json_object_set_new(jContainer, PATCH_KEY_VERSION,        json_string(version.c_str()));
-  json_object_set_new(jContainer, PATCH_KEY_VERSION_FLOAT,  json_real(versionFloat));
+  json_object_set_new(jContainer, PATCH_KEY_VERSION_MAJOR,  json_integer(versionMajor));
+  json_object_set_new(jContainer, PATCH_KEY_VERSION_MINOR,  json_integer(versionMinor));
+  json_object_set_new(jContainer, PATCH_KEY_VERSION_PATCH,  json_integer(versionPatch));
   json_object_set_new(jContainer, PATCH_KEY_NAME,           json_string(name.c_str()));
   json_object_set_new(jContainer, PATCH_KEY_BPM,            json_real(bpm));
   json_object_set_new(jContainer, PATCH_KEY_BARS,           json_integer(bars));
@@ -267,7 +269,9 @@ bool Patch::readCommons(json_t *jContainer)
 {
   if (!setString(jContainer, PATCH_KEY_HEADER, header))  return 0;
   if (!setString(jContainer, PATCH_KEY_VERSION, version)) return 0;
-  if (!setFloat (jContainer, PATCH_KEY_VERSION_FLOAT, versionFloat)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_VERSION_MAJOR, versionMajor)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_VERSION_MINOR, versionMinor)) return 0;
+  if (!setInt   (jContainer, PATCH_KEY_VERSION_PATCH, versionPatch)) return 0;
   if (!setString(jContainer, PATCH_KEY_NAME, name)) return 0;
   if (!setFloat (jContainer, PATCH_KEY_BPM, bpm)) return 0;
   if (!setInt   (jContainer, PATCH_KEY_BARS, bars)) return 0;

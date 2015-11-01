@@ -47,7 +47,9 @@ public:
 
   string header;
   string version;
-  float  versionFloat;
+  int    versionMajor;
+  int    versionMinor;
+  int    versionPatch;
   string name;
   float  bpm;
   int    bars;

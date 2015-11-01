@@ -32,8 +32,10 @@
 
 /* -- version --------------------------------------------------------------- */
 #define VERSIONE 				"0.11.0"
-#define VERSIONE_STR 		"Giada"
-#define VERSIONE_FLOAT	1.011f
+#define G_APP_NAME      "Giada"
+#define G_VERSION_MAJOR 0
+#define G_VERSION_MINOR 11
+#define G_VERSION_PATCH 0
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -292,7 +294,9 @@ const int MIDI_CHANS[16] = {
 
 #define PATCH_KEY_HEADER                       "header"
 #define PATCH_KEY_VERSION                      "version"
-#define PATCH_KEY_VERSION_FLOAT                "version_float"
+#define PATCH_KEY_VERSION_MAJOR                "version_major"
+#define PATCH_KEY_VERSION_MINOR                "version_minor"
+#define PATCH_KEY_VERSION_PATCH                "version_patch"
 #define PATCH_KEY_NAME                         "name"
 #define PATCH_KEY_BPM                          "bpm"
 #define PATCH_KEY_BARS                         "bars"

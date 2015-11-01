@@ -578,7 +578,7 @@ int Patch_DEPR_::write(const char *file, const char *name, bool project)
 	fprintf(fp, "# --- Giada patch file --- \n");
 	fprintf(fp, "header=GIADAPTC\n");
 	fprintf(fp, "version=%s\n",    VERSIONE);
-	fprintf(fp, "versionf=%f\n",   VERSIONE_FLOAT);
+	fprintf(fp, "versionf=%f\n",   0.0);  // deprecated
 	fprintf(fp, "patchname=%s\n",  name);
 	fprintf(fp, "bpm=%f\n",        G_Mixer.bpm);
 	fprintf(fp, "bars=%d\n",       G_Mixer.bars);

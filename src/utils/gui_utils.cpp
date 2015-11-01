@@ -124,7 +124,7 @@ void gu_updateControls()
 
 void gu_update_win_label(const char *c)
 {
-	std::string out = VERSIONE_STR;
+	std::string out = G_APP_NAME;
 	out += " - ";
 	out += c;
 	mainWin->copy_label(out.c_str());

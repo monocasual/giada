@@ -88,7 +88,9 @@ int glue_loadPatch(const string &fname, const string &fpath, class gProgress *st
 void __fillPatchGlobals__(const string &name)
 {
 	G_Patch.version      = VERSIONE;
-	G_Patch.versionFloat = VERSIONE_FLOAT;
+	G_Patch.versionMajor = G_VERSION_MAJOR;
+	G_Patch.versionMinor = G_VERSION_MINOR;
+	G_Patch.versionPatch = G_VERSION_PATCH;
 	G_Patch.name         = name;
 	G_Patch.bpm          = G_Mixer.bpm;
 	G_Patch.bars         = G_Mixer.bars;

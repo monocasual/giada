@@ -122,7 +122,7 @@ void init_startGUI(int argc, char **argv)
 {
 	char win_label[32];
 	sprintf(win_label, "%s - %s",
-					VERSIONE_STR,
+					G_APP_NAME,
 					!strcmp(G_Patch_DEPR_.name, "") ? "(default patch)" : G_Patch_DEPR_.name);
 
 	mainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
