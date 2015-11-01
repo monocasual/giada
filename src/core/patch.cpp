@@ -68,7 +68,7 @@ void Patch::init()
 /* -------------------------------------------------------------------------- */
 
 
-int Patch::write(string &file)
+int Patch::write(const string &file)
 {
   jRoot = json_object();
 
