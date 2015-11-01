@@ -60,7 +60,7 @@ int Patch_DEPR_::open(const char *file)
 		return PATCH_INVALID;
 
 	version = atof(getValue("versionf").c_str());
-	gLog("[patch] open patch version %f\n", version);
+	gLog("[patch_DEPR_] open patch version %f\n", version);
 
 	return PATCH_OPEN_OK;
 }
@@ -468,7 +468,7 @@ uint32_t Patch_DEPR_::getMidiValue(int i, const char *c)
 
 int Patch_DEPR_::readRecs()
 {
-	gLog("[patch] Reading recs...\n");
+	gLog("[patch_DEPR_] Reading recs...\n");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
 
@@ -525,7 +525,7 @@ int Patch_DEPR_::readRecs()
 #ifdef WITH_VST
 int Patch_DEPR_::readPlugins()
 {
-	gLog("[patch] Reading plugins...\n");
+	gLog("[patch_DEPR_] Reading plugins...\n");
 
 	int globalOut = 1;
 
@@ -637,7 +637,7 @@ int Patch_DEPR_::write(const char *file, const char *name, bool project)
 		for (int j=0; j<numPlugs; j++) {
 			pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
 			if (!pPlugin->status) {
-				gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
+				gLog("[patch_DEPR_] Plugin %d is in a bad status, skip writing params\n", i);
 				continue;
 			}
 			fprintf(fp, "chan%d_p%dpathfile=%s\n", ch->index, j, pPlugin->pathfile);
@@ -722,7 +722,7 @@ void Patch_DEPR_::writeMasterPlugins(int type)
 
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
 		if (!pPlugin->status) {
-			gLog("[patch] Plugin %d is in a bad status, skip writing params\n", i);
+			gLog("[patch_DEPR_] Plugin %d is in a bad status, skip writing params\n", i);
 			continue;
 		}
 
