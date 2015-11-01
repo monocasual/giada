@@ -180,7 +180,7 @@ std::string gGetExt(const char *path);
 
 std::string gStripExt(const char *path);
 
-std::string gGetProjectName(const char *path);
+std::string gGetProjectName(const char *path); // TODO - useless!
 
 std::string gGetSlash();
 

@@ -109,13 +109,8 @@ void mh_loadPatch(bool isProject, const char *projPath)
 
 	int numChans = G_Patch_DEPR_.getNumChans();
 	for (int i=0; i<numChans; i++) {
-
 		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
-
-		char smpPath[PATH_MAX];
-		sprintf(smpPath, "%s%s%s", gDirname(projPath).c_str(), gGetSlash().c_str(), G_Patch_DEPR_.getSamplePath(i).c_str());
-
-		ch->loadByPatch(smpPath, i);
+		ch->loadByPatch(G_Patch_DEPR_.getSamplePath(i).c_str(), i);
 	}
 
 	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();

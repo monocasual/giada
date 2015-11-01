@@ -137,7 +137,7 @@ bool gMkdir(const char *path)
 
 /* -------------------------------------------------------------------------- */
 
-
+/* TODO - avoid this shit, just wrap the other call */
 std::string gBasename(const char *path)
 {
 	std::string out = path;

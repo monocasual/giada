@@ -76,20 +76,151 @@ int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_loadPatch(const string &fname, const string &fpath, class gProgress *status, bool isProject)
+int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProject)
 {
 	__setProgressBar__(status, 0.1f);
 
 	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
 	* one. */
 
-	int res = G_Patch.read(fname);
-	if (!res) {
+	int res = G_Patch.read(fullPath);
+	if (res == PATCH_UNREADABLE) {
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated one...\n");
-		return glue_loadPatch__DEPR__(fname.c_str(), fpath.c_str(), status, isProject);
+		return glue_loadPatch__DEPR__(gBasename(fullPath).c_str(), fullPath.c_str(), status, isProject);
 	}
 
-	return 1;
+	if (res != PATCH_OPEN_OK)
+		return res;
+
+	/* close all other windows. This prevents segfault if plugin
+	 * windows GUIs are on. */
+
+	gu_closeAllSubwindows();
+
+	/* reset the system. False(1): don't update the gui right now. False(2): do
+	 * not create empty columns. */
+
+	glue_resetToInitState(false, false);
+
+	__setProgressBar__(status, 0.2f);
+
+	/* TODO - add channels */
+
+	__setProgressBar__(status, 0.4f);
+
+	/* TODO - add recordings */
+	/* let recorder recompute the actions' positions if the current
+	 * samplerate != patch samplerate */
+
+	recorder::updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
+
+	__setProgressBar__(status, 0.6f);
+
+#ifdef WITH_VST
+	// TODO - add plugins */
+	__setProgressBar__(status, 0.8f);
+#endif
+
+	/* refresh GUI */
+
+	gu_updateControls();
+	gu_update_win_label(G_Patch.name.c_str());
+
+	__setProgressBar__(status, 1.0f);
+
+	/* save patchPath by taking the last dir of the broswer, in order to
+	 * reuse it the next time */
+
+	G_Conf.setPath(G_Conf.patchPath, gDirname(fullPath.c_str()).c_str());
+
+	return res;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *status, bool isProject)
+{
+	/* update browser's status bar with % 0.1 */
+
+	status->show();
+	status->value(0.1f);
+	//Fl::check();
+	Fl::wait(0);
+
+	/* is it a valid patch? */
+
+	int res = G_Patch_DEPR_.open(fpath);
+	if (res != PATCH_OPEN_OK)
+		return res;
+
+	/* close all other windows. This prevents segfault if plugin windows
+	 * GUI are on. */
+
+	if (res)
+		gu_closeAllSubwindows();
+
+	/* reset the system. False(1): don't update the gui right now. False(2): do
+	 * not create empty columns. */
+
+	glue_resetToInitState(false, false);
+
+	status->value(0.2f);  // progress status: % 0.2
+	//Fl::check();
+	Fl::wait(0);
+
+	/* mixerHandler will update the samples inside Mixer */
+
+	mh_loadPatch(isProject, fpath);
+
+	/* take the patch name and update the main window's title */
+
+	G_Patch_DEPR_.getName();
+	gu_update_win_label(G_Patch_DEPR_.name);
+
+	status->value(0.4f);  // progress status: 0.4
+	//Fl::check();
+	Fl::wait(0);
+
+	G_Patch_DEPR_.readRecs();
+	status->value(0.6f);  // progress status: 0.6
+	//Fl::check();
+	Fl::wait(0);
+
+#ifdef WITH_VST
+	int resPlugins = G_Patch_DEPR_.readPlugins();
+	status->value(0.8f);  // progress status: 0.8
+	//Fl::check();
+	Fl::wait(0);
+#endif
+
+	/* this one is vital: let recorder recompute the actions' positions if
+	 * the current samplerate != patch samplerate */
+
+	recorder::updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
+
+	/* update gui */
+
+	gu_updateControls();
+
+	status->value(1.0f);  // progress status: 1.0 (done)
+	//Fl::check();
+	Fl::wait(0);
+
+	/* save patchPath by taking the last dir of the broswer, in order to
+	 * reuse it the next time */
+
+	G_Conf.setPath(G_Conf.patchPath, gDirname(fpath).c_str());
+
+	gLog("[glue] patch %s loaded\n", fname);
+
+#ifdef WITH_VST
+	if (resPlugins != 1)
+		gdAlert("Some VST plugins were not loaded successfully.");
+#endif
+
+	return res;
 }
 
 
@@ -198,91 +329,4 @@ int glue_saveProject(const string &folderPath, const string &projName)
 	glue_savePatch(gptcPath, projName, true); // true == it's a project
 
 	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *status, bool isProject)
-{
-	/* update browser's status bar with % 0.1 */
-
-	status->show();
-	status->value(0.1f);
-	//Fl::check();
-	Fl::wait(0);
-
-	/* is it a valid patch? */
-
-	int res = G_Patch_DEPR_.open(fname);
-	if (res != PATCH_OPEN_OK)
-		return res;
-
-	/* close all other windows. This prevents segfault if plugin windows
-	 * GUI are on. */
-
-	if (res)
-		gu_closeAllSubwindows();
-
-	/* reset the system. False(1): don't update the gui right now. False(2): do
-	 * not create empty columns. */
-
-	glue_resetToInitState(false, false);
-
-	status->value(0.2f);  // progress status: % 0.2
-	//Fl::check();
-	Fl::wait(0);
-
-	/* mixerHandler will update the samples inside Mixer */
-
-	mh_loadPatch(isProject, fname);
-
-	/* take the patch name and update the main window's title */
-
-	G_Patch_DEPR_.getName();
-	gu_update_win_label(G_Patch_DEPR_.name);
-
-	status->value(0.4f);  // progress status: 0.4
-	//Fl::check();
-	Fl::wait(0);
-
-	G_Patch_DEPR_.readRecs();
-	status->value(0.6f);  // progress status: 0.6
-	//Fl::check();
-	Fl::wait(0);
-
-#ifdef WITH_VST
-	int resPlugins = G_Patch_DEPR_.readPlugins();
-	status->value(0.8f);  // progress status: 0.8
-	//Fl::check();
-	Fl::wait(0);
-#endif
-
-	/* this one is vital: let recorder recompute the actions' positions if
-	 * the current samplerate != patch samplerate */
-
-	recorder::updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
-
-	/* update gui */
-
-	gu_updateControls();
-
-	status->value(1.0f);  // progress status: 1.0 (done)
-	//Fl::check();
-	Fl::wait(0);
-
-	/* save patchPath by taking the last dir of the broswer, in order to
-	 * reuse it the next time */
-
-	G_Conf.setPath(G_Conf.patchPath, fpath);
-
-	gLog("[glue] patch %s loaded\n", fname);
-
-#ifdef WITH_VST
-	if (resPlugins != 1)
-		gdAlert("Some VST plugins were not loaded successfully.");
-#endif
-
-	return res;
 }

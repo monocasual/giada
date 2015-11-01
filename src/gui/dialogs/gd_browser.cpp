@@ -181,19 +181,8 @@ void gdBrowser::__cb_load_patch() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	/* patchFile is the file to open.
-	 * For patches:  browser->get_selected_item()
-	 * for projects: basename(browser->get_selected_item()) + patch name */
-
-	string patchFile = browser->get_selected_item();
-	bool   isProject = false;
-
-	if (gIsProject(browser->get_selected_item())) {
-		patchFile += gGetSlash() + gGetProjectName(browser->get_selected_item()) + ".gptc";
-		isProject = true;
-	}
-
-	int res = glue_loadPatch(patchFile, browser->path_obj->value(), status, isProject);
+	bool isProject = gIsProject(browser->get_selected_item());
+	int res = glue_loadPatch(browser->get_selected_item(), status, isProject);
 
 	if (res == PATCH_UNREADABLE) {
 		status->hide();
