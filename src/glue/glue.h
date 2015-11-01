@@ -49,9 +49,6 @@ void glue_deleteChannel(class Channel *ch);
 
 void glue_freeChannel(class Channel *ch);
 
-/** FIXME - nobody will call these via MIDI/keyb/mouse! */
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress *status, bool isProject);
-
 /* keyPress / keyRelease
  * handle the key pressure, either via mouse/keyboard or MIDI. If gui
  * is true it means that the event comes from the main window (mouse,
