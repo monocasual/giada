@@ -300,7 +300,8 @@ bool Patch::readColumns(json_t *jContainer)
   json_t *jColumn;
   json_array_foreach(jColumns, columnIndex, jColumn) {
 
-    if (!checkObject(jColumn, "")) // TODO pass columnIndex as string
+    string columnIndexStr = "column " + gItoa(columnIndex);
+    if (!checkObject(jColumn, columnIndexStr.c_str()))
       return 0;
 
     column_t column;
