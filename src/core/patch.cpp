@@ -98,6 +98,7 @@ int Patch::read(const string &file)
     gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
     return PATCH_UNREADABLE;
   }
+
   if (!checkObject(jRoot, "root element"))
     return PATCH_INVALID;
 
@@ -155,11 +156,12 @@ void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
 
     /* channels' pointers */
 
+    /*
     json_t *jChannels = json_array();
     for (unsigned k=0; k<column.channels.size; k++) {
       json_array_append_new(jChannels, json_integer(column.channels.at(k)));
     }
-    json_object_set_new(jColumn, PATCH_KEY_COLUMN_CHANNELS, jChannels);
+    json_object_set_new(jColumn, PATCH_KEY_COLUMN_CHANNELS, jChannels);*/
     json_array_append_new(jColumns, jColumn);
   }
   json_object_set_new(jContainer, PATCH_KEY_COLUMNS, jColumns);
@@ -310,17 +312,14 @@ bool Patch::readColumns(json_t *jContainer)
 
     /* read columns channels */
 
-    json_t *jChannels = json_object_get(jColumn, PATCH_KEY_COLUMN_CHANNELS);
+    /*json_t *jChannels = json_object_get(jColumn, PATCH_KEY_COLUMN_CHANNELS);
     if (!checkArray(jChannels, PATCH_KEY_COLUMN_CHANNELS)) return 0;
 
     size_t channelIndex;
     json_t *jChannel;
     json_array_foreach(jChannels, columnIndex, jChannel)
-      column.channels.add(json_integer_value(jChannel));
-
-    json_decref(jChannels);
+      column.channels.add(json_integer_value(jChannel));*/
     columns.add(column);
-    json_decref(jColumn);
   }
   return 1;
 }
@@ -339,10 +338,12 @@ bool Patch::readChannels(json_t *jContainer)
   json_t *jChannel;
   json_array_foreach(jChannels, channelIndex, jChannel) {
 
-    if (!checkObject(jChannel, "")) // TODO pass channelIndex as string
+    string channelIndexStr = "channel " + gItoa(channelIndex);
+    if (!checkObject(jChannel, channelIndexStr.c_str()))
       return 0;
 
     channel_t channel;
+
     if (!setInt   (jChannel, PATCH_KEY_CHANNEL_TYPE,                 channel.type)) return 0;
     if (!setInt   (jChannel, PATCH_KEY_CHANNEL_INDEX,                channel.index)) return 0;
     if (!setInt   (jChannel, PATCH_KEY_CHANNEL_COLUMN,               channel.column)) return 0;
@@ -377,15 +378,12 @@ bool Patch::readChannels(json_t *jContainer)
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        channel.midiOutChan)) return 0;
 
     readActions(jChannel, &channel);
+
 #ifdef WITH_VST
     readPlugins(jChannel, &channel.plugins, PATCH_KEY_CHANNEL_PLUGINS);
 #endif
     channels.add(channel);
-    json_decref(jChannel);
   }
-
-  // FIXME - json_decref(jChannels) ???
-
   return 1;
 }
 
@@ -412,8 +410,6 @@ bool Patch::readActions(json_t *jContainer, channel_t *channel)
     if (!setFloat (jAction, PATCH_KEY_ACTION_F_VALUE, action.fValue)) return 0;
     if (!setUint32(jAction, PATCH_KEY_ACTION_I_VALUE, action.iValue)) return 0;
     channel->actions.add(action);
-
-    json_decref(jAction);
   }
   return 1;
 }
@@ -451,9 +447,7 @@ bool Patch::readPlugins(json_t *jContainer, gVector<plugin_t> *container, const 
     json_array_foreach(jParams, paramIndex, jParam)
       plugin.params.add(json_real_value(jParam));
 
-    json_decref(jParams);
     container->add(plugin);
-    json_decref(jPlugin);
   }
   return 1;
 }
