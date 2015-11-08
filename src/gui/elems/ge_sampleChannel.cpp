@@ -454,6 +454,7 @@ void gSampleChannel::update()
 
 #ifdef WITH_VST
 	fx->full = ch->plugins.size > 0;
+	fx->redraw();
 #endif
 }
 

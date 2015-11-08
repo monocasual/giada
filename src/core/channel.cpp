@@ -245,6 +245,21 @@ int Channel::readPatch(int i)
 	midiOutLplaying = pch->midiOutLplaying;
 	midiOutLmute    = pch->midiOutLmute;
 	midiOutLsolo    = pch->midiOutLsolo;
+
+#ifdef WITH_VST
+
+	for (unsigned k=0; k<pch->plugins.size; k++) {
+		Patch::plugin_t *ppl = &pch->plugins.at(k);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost::CHANNEL, this);
+		if (plugin != NULL) {
+			plugin->bypass = ppl->bypass;
+			for (unsigned j=0; j<ppl->params.size; j++)
+				plugin->setParam(j, ppl->params.at(j));
+		}
+	}
+
+#endif
+
 	return 1;
 }
 

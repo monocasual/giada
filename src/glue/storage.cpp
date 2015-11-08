@@ -111,7 +111,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(k);
-				// TODO - fill ch with real data
+				/* TODO - notify if plugins went wrong
 			}
 		}
 	}
@@ -125,11 +125,6 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	recorder::updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
 
 	__setProgressBar__(status, 0.6f);
-
-#ifdef WITH_VST
-	// TODO - add plugins */
-	__setProgressBar__(status, 0.8f);
-#endif
 
 	/* refresh GUI */
 

@@ -98,8 +98,9 @@ int gu_getBlinker()
 
 void gu_updateControls()
 {
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		G_Mixer.channels.at(i)->guiChannel->update();
+	}
 
 	mainWin->inOut->setOutVol(G_Mixer.outVol);
 	mainWin->inOut->setInVol(G_Mixer.inVol);
