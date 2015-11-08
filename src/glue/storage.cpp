@@ -85,10 +85,9 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	int res = G_Patch.read(fullPath);
 	if (res == PATCH_UNREADABLE) {
-		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated one...\n");
+		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
 		return glue_loadPatch__DEPR__(gBasename(fullPath).c_str(), fullPath.c_str(), status, isProject);
 	}
-
 	if (res != PATCH_OPEN_OK)
 		return res;
 
@@ -104,7 +103,17 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	__setProgressBar__(status, 0.2f);
 
-	/* TODO - add channels */
+	/* add columns and channels */
+
+	for (unsigned i=0; i<G_Patch.columns.size; i++) {
+		mainWin->keyboard->addColumn();
+		for (unsigned k=0; k<G_Patch.channels.size; k++) {
+			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
+				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
+				// TODO - fill ch with real data
+			}
+		}
+	}
 
 	__setProgressBar__(status, 0.4f);
 
