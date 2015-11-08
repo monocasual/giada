@@ -299,7 +299,7 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(int i)
+int MidiChannel::readPatchCommon(int i)
 {
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	volume      = pch->volume;

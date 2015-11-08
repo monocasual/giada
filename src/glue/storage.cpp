@@ -111,7 +111,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(k);
-				/* TODO - notify if plugins went wrong
+				/* TODO - notify if plugins went wrong */
 			}
 		}
 	}

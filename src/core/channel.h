@@ -82,7 +82,7 @@ public:
 	 * Fill channel with data from patch. */
 
 	virtual int readPatch_DEPR_(const char *file, int i) = 0;
-	virtual int readPatch(int i);
+	virtual int readPatchCommon(int i);
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */

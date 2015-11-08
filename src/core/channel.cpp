@@ -223,7 +223,7 @@ int Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(int i)
+int Channel::readPatchCommon(int i)
 {
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	type            = pch->type;
