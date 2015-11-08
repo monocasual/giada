@@ -78,7 +78,8 @@ public:
 	/* addChannel
 	 * add a new channel to gChannels. Used by callbacks and during
 	 * patch loading. Requires Channel (and not gChannel). If build is
-	 * set to true, also generate the corresponding column.*/
+	 * set to true, also generate the corresponding column if column (index) does
+	 * not exist yet. */
 
 	gChannel *addChannel(int column, class Channel *ch, bool build=false);
 
