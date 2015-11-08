@@ -52,8 +52,21 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-Mixer::Mixer() 	{}
+Mixer::Mixer()
+	: vChanInput(NULL),
+		vChanInToOut(NULL)
+{
+	gLog("[mixer] construct\n");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Mixer::~Mixer() {}
+
+
+/* -------------------------------------------------------------------------- */
 
 
 #define TICKSIZE 38
@@ -84,7 +97,8 @@ float Mixer::tick[TICKSIZE] = {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::init() {
+void Mixer::init()
+{
 	quanto      = 1;
 	docross     = false;
 	rewindWait  = false;
@@ -138,8 +152,8 @@ void Mixer::init() {
 /* ------------------------------------------------------------------ */
 
 
-Channel *Mixer::addChannel(int type) {
-
+Channel *Mixer::addChannel(int type)
+{
 	Channel *ch;
 	int bufferSize = kernelAudio::realBufsize*2;
 
@@ -166,8 +180,8 @@ Channel *Mixer::addChannel(int type) {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::getNewIndex() {
-
+int Mixer::getNewIndex()
+{
 	/* always skip last channel: it's the last one just added */
 
 	if (channels.size == 1)
@@ -186,7 +200,8 @@ int Mixer::getNewIndex() {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::deleteChannel(Channel *ch) {
+int Mixer::deleteChannel(Channel *ch)
+{
 	int lockStatus;
 	while (true) {
 		lockStatus = pthread_mutex_trylock(&mutex_chans);
@@ -205,7 +220,8 @@ int Mixer::deleteChannel(Channel *ch) {
 /* ------------------------------------------------------------------ */
 
 
-Channel *Mixer::getChannelByIndex(int index) {
+Channel *Mixer::getChannelByIndex(int index)
+{
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
@@ -217,8 +233,8 @@ Channel *Mixer::getChannelByIndex(int index) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::sendMIDIsync() {
-
+void Mixer::sendMIDIsync()
+{
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
 		if (actualFrame % (framesPerBeat/24) == 0)
 			kernelMidi::send(MIDI_CLOCK, -1, -1);
@@ -283,8 +299,8 @@ void Mixer::sendMIDIsync() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::sendMIDIrewind() {
-
+void Mixer::sendMIDIrewind()
+{
 	midiTCframes  = 0;
 	midiTCseconds = 0;
 	midiTCminutes = 0;
@@ -308,7 +324,8 @@ void Mixer::sendMIDIrewind() {
 
 int Mixer::masterPlay(
 	void *out_buf, void *in_buf, unsigned n_frames,
-	double streamTime, RtAudioStreamStatus status, void *userData) {
+	double streamTime, RtAudioStreamStatus status, void *userData)
+{
 	return G_Mixer.__masterPlay(out_buf, in_buf, n_frames);
 }
 
@@ -316,8 +333,8 @@ int Mixer::masterPlay(
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
-
+int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
+{
 	if (!ready)
 		return 0;
 
@@ -548,8 +565,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames) {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::updateFrameBars() {
-
+void Mixer::updateFrameBars()
+{
 	/* seconds ....... total time of play (in seconds) of the whole
 	 *                 sequencer. 60 / bpm == how many seconds lasts one bpm
 	 * totalFrames ... number of frames in the whole sequencer, x2 because
@@ -587,12 +604,20 @@ void Mixer::updateFrameBars() {
 /* ------------------------------------------------------------------ */
 
 
-int Mixer::close() {
+int Mixer::close()
+{
 	running = false;
 	while (channels.size > 0)
 		deleteChannel(channels.at(0));
-	free(vChanInput);
-	free(vChanInToOut);
+
+	if (vChanInput) {
+		free(vChanInput);
+		vChanInput = NULL;
+	}
+	if (vChanInToOut) {
+		free(vChanInToOut);
+		vChanInToOut = NULL;
+	}
 	return 1;
 }
 
@@ -600,7 +625,8 @@ int Mixer::close() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::isSilent() {
+bool Mixer::isSilent()
+{
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->status == STATUS_PLAY)
 			return false;
@@ -611,8 +637,8 @@ bool Mixer::isSilent() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::rewind() {
-
+void Mixer::rewind()
+{
 	actualFrame = 0;
 	actualBeat  = 0;
 
@@ -627,8 +653,8 @@ void Mixer::rewind() {
 /* ------------------------------------------------------------------ */
 
 
-void Mixer::updateQuanto() {
-
+void Mixer::updateQuanto()
+{
 	/* big troubles if frames are odd. */
 
 	if (quantize != 0)
@@ -641,7 +667,8 @@ void Mixer::updateQuanto() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::hasLogicalSamples() {
+bool Mixer::hasLogicalSamples()
+{
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*)channels.at(i))->wave)
@@ -654,7 +681,8 @@ bool Mixer::hasLogicalSamples() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::hasEditedSamples() {
+bool Mixer::hasEditedSamples()
+{
 	for (unsigned i=0; i<channels.size; i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*)channels.at(i))->wave)
@@ -667,7 +695,8 @@ bool Mixer::hasEditedSamples() {
 /* ------------------------------------------------------------------ */
 
 
-bool Mixer::mergeVirtualInput() {
+bool Mixer::mergeVirtualInput()
+{
 	if (vChanInput == NULL) {
 		gLog("[Mixer] virtual input channel not alloc'd\n");
 		return false;
