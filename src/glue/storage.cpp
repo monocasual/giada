@@ -259,7 +259,7 @@ void __fillPatchGlobals__(const string &name)
 void __fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
-		G_Mixer.channels.at(i)->fillPatch(&G_Patch, i, isProject);
+		G_Mixer.channels.at(i)->fillPatch(i, isProject);
 	}
 }
 

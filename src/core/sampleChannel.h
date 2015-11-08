@@ -96,8 +96,7 @@ public:
 	void reset      (int frame);
 	int  load       (const char *file);
 	int  loadByPatch_DEPR_(const char *file, int i);
-	void writePatch (FILE *fp, int i, bool isProject);
-	int  fillPatch  (class Patch *p, int i, bool isProject);
+	int  fillPatch  (int i, bool isProject);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);

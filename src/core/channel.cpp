@@ -44,6 +44,7 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
+extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
@@ -158,37 +159,7 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::writePatch(FILE *fp, int i, bool isProject)
-{
-	fprintf(fp, "chanType%d=%d\n",     i, type);
-	fprintf(fp, "chanIndex%d=%d\n",    i, index);
-	fprintf(fp, "chanColumn%d=%d\n",   i, guiChannel->getColumnIndex());
-	fprintf(fp, "chanMute%d=%d\n",     i, mute);
-	fprintf(fp, "chanMute_s%d=%d\n",   i, mute_s);
-	fprintf(fp, "chanSolo%d=%d\n",     i, solo);
-	fprintf(fp, "chanvol%d=%f\n",      i, volume);
-	fprintf(fp, "chanPanLeft%d=%f\n",  i, panLeft);
-	fprintf(fp, "chanPanRight%d=%f\n", i, panRight);
-
-	fprintf(fp, "chanMidiIn%d=%u\n",         i, midiIn);
-	fprintf(fp, "chanMidiInKeyPress%d=%u\n", i, midiInKeyPress);
-	fprintf(fp, "chanMidiInKeyRel%d=%u\n",   i, midiInKeyRel);
-	fprintf(fp, "chanMidiInKill%d=%u\n",     i, midiInKill);
-	fprintf(fp, "chanMidiInVolume%d=%u\n",   i, midiInVolume);
-	fprintf(fp, "chanMidiInMute%d=%u\n",     i, midiInMute);
-	fprintf(fp, "chanMidiInSolo%d=%u\n",     i, midiInSolo);
-
-	fprintf(fp, "chanMidiOutL%d=%u\n",        i, midiOutL);
-	fprintf(fp, "chanMidiOutLplaying%d=%u\n", i, midiOutLplaying);
-	fprintf(fp, "chanMidiOutLmute%d=%u\n",    i, midiOutLmute);
-	fprintf(fp, "chanMidiOutLsolo%d=%u\n",    i, midiOutLsolo);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Channel::fillPatch(Patch *p, int i, bool isProject)
+int Channel::fillPatch(int i, bool isProject)
 {
 	Patch::channel_t pch;
 	pch.type            = type;
@@ -243,9 +214,9 @@ int Channel::fillPatch(Patch *p, int i, bool isProject)
 
 #endif
 
-	p->channels.add(pch);
+	G_Patch.channels.add(pch);
 
-	return p->channels.size - 1;
+	return G_Patch.channels.size - 1;
 }
 
 

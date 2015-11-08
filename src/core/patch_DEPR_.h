@@ -37,11 +37,11 @@
 #include "const.h"
 
 
-class Patch_DEPR_ : public DataStorageIni {
-
+class Patch_DEPR_ : public DataStorageIni
+{
 private:
-	int  readMasterPlugins(int type);
-	void writeMasterPlugins(int type);
+
+	int readMasterPlugins(int type);
 
 public:
 
@@ -85,7 +85,6 @@ public:
 	int         getLastTakeId ();
 	int         getSamplerate ();
 
-	int         write(const char *file, const char *name, bool isProject);
 	int         readRecs();
 #ifdef WITH_VST
 	int         readPlugins();

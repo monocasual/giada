@@ -41,6 +41,7 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
+extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
@@ -954,39 +955,10 @@ void SampleChannel::start(int frame, bool doQuantize)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::writePatch(FILE *fp, int i, bool isProject)
+int SampleChannel::fillPatch(int i, bool isProject)
 {
-	Channel::writePatch(fp, i, isProject);
-
-	std::string path;
-	if (wave != NULL) {
-		path = wave->pathfile;
-		if (isProject)
-			path = gBasename(path);  // make it portable
-	}
-
-	fprintf(fp, "samplepath%d=%s\n",     i, path.c_str());
-	fprintf(fp, "chanKey%d=%d\n",        i, key);
-	//fprintf(fp, "columnIndex%d=%d\n",    i, index);
-	fprintf(fp, "chanmode%d=%d\n",       i, mode);
-	fprintf(fp, "chanBegin%d=%d\n",      i, begin);
-	fprintf(fp, "chanend%d=%d\n",        i, end);
-	fprintf(fp, "chanBoost%d=%f\n",      i, boost);
-	fprintf(fp, "chanRecActive%d=%d\n",  i, readActions);
-	fprintf(fp, "chanPitch%d=%f\n",      i, pitch);
-
-	fprintf(fp, "chanMidiInReadActions%d=%u\n", i, midiInReadActions);
-	fprintf(fp, "chanMidiInPitch%d=%u\n",       i, midiInPitch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::fillPatch(Patch *p, int i, bool isProject)
-{
-	int pchIndex = Channel::fillPatch(p, i, isProject);
-	Patch::channel_t *pch = &p->channels.at(pchIndex);
+	int pchIndex = Channel::fillPatch(i, isProject);
+	Patch::channel_t *pch = &G_Patch.channels.at(pchIndex);
 
 	if (wave != NULL) {
 		pch->samplePath = wave->pathfile;
