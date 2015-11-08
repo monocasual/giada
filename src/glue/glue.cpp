@@ -492,15 +492,16 @@ void glue_clearAllRecs()
 
 void glue_resetToInitState(bool resetGui, bool createColumns)
 {
-	G_Mixer.ready = false;
+	//G_Mixer.ready = false;
+	G_Mixer.close();
+	G_Mixer.init();
 
-	mh_clear();
+	//mh_clear();
 	mainWin->keyboard->clear();
 	if (createColumns)
 		mainWin->keyboard->init();
 	recorder::init();
 	G_Patch_DEPR_.setDefault();
-	G_Mixer.init();
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks();
 #endif
