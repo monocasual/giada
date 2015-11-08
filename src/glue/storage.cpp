@@ -110,6 +110,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		for (unsigned k=0; k<G_Patch.channels.size; k++) {
 			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
+				ch->readPatch(k);
 				// TODO - fill ch with real data
 			}
 		}

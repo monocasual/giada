@@ -127,7 +127,7 @@ void Channel::sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offse
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::readPatchMidiIn(int i)
+void Channel::readPatchMidiIn_DEPR_(int i)
 {
 	midiIn         = G_Patch_DEPR_.getMidiValue(i, "In");
 	midiInKeyPress = G_Patch_DEPR_.getMidiValue(i, "InKeyPress");
@@ -138,7 +138,7 @@ void Channel::readPatchMidiIn(int i)
   midiInSolo     = G_Patch_DEPR_.getMidiValue(i, "InSolo");
 }
 
-void Channel::readPatchMidiOut(int i)
+void Channel::readPatchMidiOut_DEPR_(int i)
 {
 	midiOutL        = G_Patch_DEPR_.getMidiValue(i, "OutL");
 	midiOutLplaying = G_Patch_DEPR_.getMidiValue(i, "OutLplaying");
@@ -217,6 +217,35 @@ int Channel::writePatch(int i, bool isProject)
 	G_Patch.channels.add(pch);
 
 	return G_Patch.channels.size - 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Channel::readPatch(int i)
+{
+	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	type            = pch->type;
+	index           = pch->index;
+	mute            = pch->mute;
+	mute_s          = pch->mute_s;
+	solo            = pch->solo;
+	volume          = pch->volume;
+	panLeft         = pch->panLeft;
+	panRight        = pch->panRight;
+	midiIn          = pch->midiIn;
+	midiInKeyPress  = pch->midiInKeyPress;
+	midiInKeyRel    = pch->midiInKeyRel;
+  midiInKill      = pch->midiInKill;
+  midiInVolume    = pch->midiInVolume;
+  midiInMute      = pch->midiInMute;
+  midiInSolo      = pch->midiInSolo;
+	midiOutL        = pch->midiOutL;
+	midiOutLplaying = pch->midiOutLplaying;
+	midiOutLmute    = pch->midiOutLmute;
+	midiOutLsolo    = pch->midiOutLsolo;
+	return 1;
 }
 
 

@@ -50,8 +50,8 @@
 #endif
 
 
-class MidiChannel : public Channel {
-
+class MidiChannel : public Channel
+{
 public:
 
 	MidiChannel(int bufferSize);
@@ -69,7 +69,8 @@ public:
 	void rewind     ();
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
-	int  readPatch  (const char *file, int i);
+	int  readPatch_DEPR_  (const char *file, int i);
+	int  readPatch  (int i);
 	int  writePatch (int i, bool isProject);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);

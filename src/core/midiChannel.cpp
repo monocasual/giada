@@ -276,7 +276,7 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const char *f, int i)
+int MidiChannel::readPatch_DEPR_(const char *f, int i)
 {
 	volume      = G_Patch_DEPR_.getVol(i);
 	index       = G_Patch_DEPR_.getIndex(i);
@@ -289,9 +289,28 @@ int MidiChannel::readPatch(const char *f, int i)
 	midiOut     = G_Patch_DEPR_.getMidiValue(i, "Out");
 	midiOutChan = G_Patch_DEPR_.getMidiValue(i, "OutChan");
 
-	readPatchMidiIn(i);
-	readPatchMidiOut(i);
+	readPatchMidiIn_DEPR_(i);
+	readPatchMidiOut_DEPR_(i);
 
+	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int MidiChannel::readPatch(int i)
+{
+	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	volume      = pch->volume;
+	index       = pch->index;
+	mute        = pch->mute;
+	mute_s      = pch->mute_s;
+	solo        = pch->solo;
+	panLeft     = pch->panLeft;
+	panRight    = pch->panRight;
+	midiOut     = pch->midiOut;
+	midiOutChan = pch->midiOutChan; 
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 

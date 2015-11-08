@@ -826,7 +826,7 @@ int SampleChannel::load(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const char *f, int i)
+int SampleChannel::readPatch_DEPR_(const char *f, int i)
 {
 	int res = load(f);
 
@@ -843,10 +843,10 @@ int SampleChannel::readPatch(const char *f, int i)
 		readActions = G_Patch_DEPR_.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
-		readPatchMidiIn(i);
+		readPatchMidiIn_DEPR_(i);
 		midiInReadActions = G_Patch_DEPR_.getMidiValue(i, "InReadActions");
 		midiInPitch       = G_Patch_DEPR_.getMidiValue(i, "InPitch");
-		readPatchMidiOut(i);
+		readPatchMidiOut_DEPR_(i);
 
 	if (res == SAMPLE_LOADED_OK) {
 		setBegin(G_Patch_DEPR_.getBegin(i));
@@ -865,6 +865,45 @@ int SampleChannel::readPatch(const char *f, int i)
 		if (res == SAMPLE_READ_ERROR)
 			status = STATUS_MISSING;
 		sendMidiLplay();
+	}
+
+	return res;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::readPatch(int i)
+{
+	/* load channel's data first: if the sample is missing or wrong, the channel
+	 * is not completely blank. */
+
+	Channel::readPatch(i);
+
+	Patch::channel_t *pch = &G_Patch.channels.at(i);
+
+	key               = pch->key;
+	mode              = pch->mode;
+	boost             = pch->boost;
+	readActions       = pch->recActive;
+	recStatus         = readActions ? REC_READING : REC_STOPPED;
+	midiInReadActions = pch->midiInReadActions;
+	midiInPitch       = pch->midiInPitch;
+
+	int res = load(pch->samplePath.c_str());
+	if (res == SAMPLE_LOADED_OK) {
+		setBegin(pch->begin);
+		setEnd  (pch->end);
+		setPitch(pch->pitch);
+	}
+	else {
+		if (res == SAMPLE_LEFT_EMPTY)
+			status = STATUS_EMPTY;
+		else
+		if (res == SAMPLE_READ_ERROR)
+			status = STATUS_MISSING;
+		sendMidiLplay();  // FIXME - why sending MIDI lightning if sample status is wrong?
 	}
 
 	return res;
