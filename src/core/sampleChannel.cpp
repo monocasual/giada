@@ -826,7 +826,7 @@ int SampleChannel::load(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::loadByPatch_DEPR_(const char *f, int i)
+int SampleChannel::readPatch(const char *f, int i)
 {
 	int res = load(f);
 
@@ -955,9 +955,9 @@ void SampleChannel::start(int frame, bool doQuantize)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillPatch(int i, bool isProject)
+int SampleChannel::writePatch(int i, bool isProject)
 {
-	int pchIndex = Channel::fillPatch(i, isProject);
+	int pchIndex = Channel::writePatch(i, isProject);
 	Patch::channel_t *pch = &G_Patch.channels.at(pchIndex);
 
 	if (wave != NULL) {

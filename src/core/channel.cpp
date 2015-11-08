@@ -159,7 +159,7 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::fillPatch(int i, bool isProject)
+int Channel::writePatch(int i, bool isProject)
 {
 	Patch::channel_t pch;
 	pch.type            = type;

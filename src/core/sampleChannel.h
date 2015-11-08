@@ -95,8 +95,8 @@ public:
 	void unsetMute  (bool internal);
 	void reset      (int frame);
 	int  load       (const char *file);
-	int  loadByPatch_DEPR_(const char *file, int i);
-	int  fillPatch  (int i, bool isProject);
+	int  readPatch  (const char *file, int i);
+	int  writePatch (int i, bool isProject);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);
