@@ -104,6 +104,8 @@ int Patch::read(const string &file)
 
   init();
 
+  /* TODO json_decref also when PATCH_INVALID */
+
   if (!readCommons(jRoot))  return PATCH_INVALID;
   if (!readColumns(jRoot))  return PATCH_INVALID;
   if (!readChannels(jRoot)) return PATCH_INVALID;
