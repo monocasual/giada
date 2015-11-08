@@ -90,7 +90,11 @@ public:
 	static VstIntPtr VSTCALLBACK HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 	VstIntPtr gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt);
 
-	int addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
+	/* addPlugin
+	 * Add a new plugin to the stack. If the operation goes well, returns a pointer
+	 * to the newly inserted plugin. */
+
+	Plugin *addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
 
 	void processEvents(float *buffer, class Channel *ch);
 

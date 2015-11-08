@@ -308,7 +308,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 /* ------------------------------------------------------------------ */
 
 
-int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
+Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 
 	Plugin *p    = new Plugin();
 	bool success = true;
@@ -327,7 +327,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 
 	if (!success) {
 		pStack->add(p);
-		return 0;
+		return NULL;
 	}
 
 	/* otherwise let's try to initialize it. */
@@ -338,7 +338,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 
 		if (!p->init(&PluginHost::HostCallback)) {
 			delete p;
-			return 0;
+			return NULL;
 		}
 
 		/* plugin setup */
@@ -364,7 +364,7 @@ int PluginHost::addPlugin(const char *fname, int stackType, Channel *ch) {
 
 		p->resume();
 
-		return 1;
+		return p;
 	}
 }
 

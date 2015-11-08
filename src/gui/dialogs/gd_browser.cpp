@@ -15,7 +15,7 @@
  * Public License as published by the Free Software Foundation, either
  * version 3 of the License, or (at your option) any later version.
  *
- * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * Giada - Your Hardcore Loopmacghine is distributed in the hope that it
  * will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU General Public License for more details.
@@ -341,14 +341,14 @@ void gdBrowser::__cb_loadPlugin() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch);
+	Plugin *p = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch);
 
 	/* store the folder path inside G_Conf, in order to reuse it the
 	 * next time. */
 
 	G_Conf.setPath(G_Conf.pluginPath, where->value());
 
-	if (res)
+	if (p != NULL)
 		do_callback();
 	else
 		gdAlert("Unable to load the selected plugin!");
