@@ -245,9 +245,19 @@ int Channel::readPatchCommon(int i)
 	midiOutLplaying = pch->midiOutLplaying;
 	midiOutLmute    = pch->midiOutLmute;
 	midiOutLsolo    = pch->midiOutLsolo;
+	return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
 
 #ifdef WITH_VST
 
+int Channel::readPatchPlugins(int i)
+{
+	int ret = 1;
+	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	for (unsigned k=0; k<pch->plugins.size; k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost::CHANNEL, this);
@@ -255,13 +265,15 @@ int Channel::readPatchCommon(int i)
 			plugin->bypass = ppl->bypass;
 			for (unsigned j=0; j<ppl->params.size; j++)
 				plugin->setParam(j, ppl->params.at(j));
+			ret &= 1;
 		}
+		else
+			ret &= 0;
 	}
+	return ret;
+}
 
 #endif
-
-	return 1;
-}
 
 
 /* -------------------------------------------------------------------------- */

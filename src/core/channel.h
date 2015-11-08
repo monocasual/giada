@@ -83,6 +83,9 @@ public:
 
 	virtual int readPatch_DEPR_(const char *file, int i) = 0;
 	virtual int readPatchCommon(int i);
+#ifdef WITH_VST
+	virtual int readPatchPlugins(int i);
+#endif
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */

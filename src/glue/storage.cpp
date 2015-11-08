@@ -104,14 +104,18 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	__setProgressBar__(status, 0.2f);
 
 	/* add columns and channels */
+	/* TODO - update press bar from 0.2 to 0.8 (0.6 / G_Patch.channels.size) */
 
 	for (unsigned i=0; i<G_Patch.columns.size; i++) {
 		mainWin->keyboard->addColumn();
 		for (unsigned k=0; k<G_Patch.channels.size; k++) {
 			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
-				ch->readPatch(k);
-				/* TODO - notify if plugins went wrong */
+				ch->readPatchCommon(k);
+#ifdef WITH_VST
+				ch->readPatchPlugins(k);
+				// TODO - grab return value and notify bad blugins
+#endif
 			}
 		}
 	}
