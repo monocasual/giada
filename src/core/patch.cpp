@@ -99,6 +99,8 @@ int Patch::read(const string &file)
     return PATCH_UNREADABLE;
   }
 
+  init();
+
   if (!checkObject(jRoot, "root element"))
     return PATCH_INVALID;
 

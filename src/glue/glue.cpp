@@ -54,7 +54,6 @@
 #include "../core/midiChannel.h"
 #include "../core/kernelMidi.h"
 #include "../core/patch_DEPR_.h"
-#include "../core/patch.h"
 #include "../core/conf.h"
 #include "glue.h"
 
@@ -62,7 +61,6 @@
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern Patch         G_Patch;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
@@ -494,7 +492,6 @@ void glue_clearAllRecs()
 
 void glue_resetToInitState(bool resetGui, bool createColumns)
 {
-	G_Patch.init();
 	G_Patch_DEPR_.setDefault();
 	G_Mixer.close();
 	G_Mixer.init();
