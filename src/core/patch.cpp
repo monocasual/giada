@@ -153,15 +153,6 @@ void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
     column_t  column  = columns->at(i);
     json_object_set_new(jColumn, PATCH_KEY_COLUMN_INDEX, json_integer(column.index));
     json_object_set_new(jColumn, PATCH_KEY_COLUMN_WIDTH, json_integer(column.width));
-
-    /* channels' pointers */
-
-    /*
-    json_t *jChannels = json_array();
-    for (unsigned k=0; k<column.channels.size; k++) {
-      json_array_append_new(jChannels, json_integer(column.channels.at(k)));
-    }
-    json_object_set_new(jColumn, PATCH_KEY_COLUMN_CHANNELS, jChannels);*/
     json_array_append_new(jColumns, jColumn);
   }
   json_object_set_new(jContainer, PATCH_KEY_COLUMNS, jColumns);
@@ -310,15 +301,6 @@ bool Patch::readColumns(json_t *jContainer)
     if (!setInt(jColumn, PATCH_KEY_COLUMN_INDEX, column.index)) return 0;
     if (!setInt(jColumn, PATCH_KEY_COLUMN_WIDTH, column.width)) return 0;
 
-    /* read columns channels */
-
-    /*json_t *jChannels = json_object_get(jColumn, PATCH_KEY_COLUMN_CHANNELS);
-    if (!checkArray(jChannels, PATCH_KEY_COLUMN_CHANNELS)) return 0;
-
-    size_t channelIndex;
-    json_t *jChannel;
-    json_array_foreach(jChannels, columnIndex, jChannel)
-      column.channels.add(json_integer_value(jChannel));*/
     columns.add(column);
   }
   return 1;
