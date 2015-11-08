@@ -34,7 +34,7 @@
 #include "const.h"
 
 
-std::string DataStorageIni::getValue(const char *in) 
+std::string DataStorageIni::getValue(const char *in)
 {
 	/* on each call reset the pointe to the beginning of the file. Not so
 	 * good but necessary if you want to pick up random values from the
@@ -47,7 +47,7 @@ std::string DataStorageIni::getValue(const char *in)
 
 		char buffer[MAX_LINE_LEN];
 		if (fgets(buffer, MAX_LINE_LEN, fp) == NULL) {
-			gLog("[PATCH] get_value error (key=%s)\n", in);
+			gLog("[DataStorageIni::getValue] key %s' not found\n", in);
 			return "";
 		}
 
