@@ -825,7 +825,7 @@ int SampleChannel::load(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::loadByPatch(const char *f, int i)
+int SampleChannel::loadByPatch_DEPR_(const char *f, int i)
 {
 	int res = load(f);
 
@@ -1005,7 +1005,7 @@ int SampleChannel::fillPatch(Patch *p, int i, bool isProject)
 	pch->pitch             = pitch;
 	pch->midiInReadActions = midiInReadActions;
 	pch->midiInPitch       = midiInPitch;
-	
+
 	return 0;
 }
 

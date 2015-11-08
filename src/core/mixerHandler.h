@@ -51,7 +51,7 @@ bool mh_uniqueSolo(class Channel *ch);
  * load a path or a project (if isProject) into Mixer. If isProject, path
  * must contain the address of the project folder. */
 
-void mh_loadPatch(bool isProject, const char *projPath=0);
+void mh_loadPatch_DEPR_(bool isProject, const char *projPath=0);
 
 /* startInputRec - record from line in
  * creates a new empty wave in the first available channels and returns

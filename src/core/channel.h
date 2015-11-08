@@ -80,13 +80,13 @@ public:
 	/* fillPatch
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
-	
+
 	virtual int fillPatch(class Patch *p, int i, bool isProject);
 
 	/* loadByPatch
 	 * load a sample inside a patch. */
 
-	virtual int loadByPatch(const char *file, int i) = 0;
+	virtual int loadByPatch_DEPR_(const char *file, int i) = 0;
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */

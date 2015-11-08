@@ -181,7 +181,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch(isProject, fpath);
+	mh_loadPatch_DEPR_(isProject, fpath);
 
 	/* take the patch name and update the main window's title */
 

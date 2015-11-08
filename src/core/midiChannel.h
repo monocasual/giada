@@ -69,7 +69,7 @@ public:
 	void rewind     ();
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
-	int  loadByPatch(const char *file, int i);
+	int  loadByPatch_DEPR_(const char *file, int i);
 	void writePatch (FILE *fp, int i, bool isProject);
 	int  fillPatch  (class Patch *p, int i, bool isProject);
 	void quantize   (int index, int localFrame, int globalFrame);

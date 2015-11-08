@@ -275,7 +275,7 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::loadByPatch(const char *f, int i)
+int MidiChannel::loadByPatch_DEPR_(const char *f, int i)
 {
 	volume      = G_Patch_DEPR_.getVol(i);
 	index       = G_Patch_DEPR_.getIndex(i);
