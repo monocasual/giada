@@ -16,6 +16,7 @@
 0.11.0 ---
 - Port all const char* strings to std::string in patch/project glue functions
 - Switch to SemVer-like internal versioning system
+- Fix memory leak in Mixer
 - More source code reorganization
 
 
