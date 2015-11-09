@@ -117,7 +117,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	}
 
 	/* fill Mixer */
-	
+
 	mh_readPatch();
 
 	/* let recorder recompute the actions' positions if the current
@@ -125,17 +125,17 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	recorder::updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
 
+	/* save patchPath by taking the last dir of the broswer, in order to
+	 * reuse it the next time */
+
+	G_Conf.setPath(G_Conf.patchPath, gDirname(fullPath.c_str()).c_str());
+
 	/* refresh GUI */
 
 	gu_updateControls();
 	gu_update_win_label(G_Patch.name.c_str());
 
 	__setProgressBar__(status, 1.0f);
-
-	/* save patchPath by taking the last dir of the broswer, in order to
-	 * reuse it the next time */
-
-	G_Conf.setPath(G_Conf.patchPath, gDirname(fullPath.c_str()).c_str());
 
 	return res;
 }
