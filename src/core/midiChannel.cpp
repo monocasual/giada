@@ -299,8 +299,10 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatchCommon(int i)
+int MidiChannel::readPatch(int i)
 {
+	Channel::readPatch(i);
+	
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	volume      = pch->volume;
 	index       = pch->index;
@@ -310,7 +312,7 @@ int MidiChannel::readPatchCommon(int i)
 	panLeft     = pch->panLeft;
 	panRight    = pch->panRight;
 	midiOut     = pch->midiOut;
-	midiOutChan = pch->midiOutChan; 
+	midiOutChan = pch->midiOutChan;
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 

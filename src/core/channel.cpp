@@ -223,8 +223,9 @@ int Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatchCommon(int i)
+int Channel::readPatch(int i)
 {
+	int ret = 1;
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	type            = pch->type;
 	index           = pch->index;
@@ -245,19 +246,14 @@ int Channel::readPatchCommon(int i)
 	midiOutLplaying = pch->midiOutLplaying;
 	midiOutLmute    = pch->midiOutLmute;
 	midiOutLsolo    = pch->midiOutLsolo;
-	return 1;
-}
 
-
-/* -------------------------------------------------------------------------- */
-
+	for (unsigned k=0; k<pch->actions.size; k++) {
+		Patch::action_t *ac = &pch->actions.at(k);
+		recorder::rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
+	}
 
 #ifdef WITH_VST
 
-int Channel::readPatchPlugins(int i)
-{
-	int ret = 1;
-	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	for (unsigned k=0; k<pch->plugins.size; k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost::CHANNEL, this);
@@ -270,10 +266,11 @@ int Channel::readPatchPlugins(int i)
 		else
 			ret &= 0;
 	}
-	return ret;
-}
 
 #endif
+
+	return ret;
+}
 
 
 /* -------------------------------------------------------------------------- */

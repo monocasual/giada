@@ -874,12 +874,12 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatchCommon(int i)
+int SampleChannel::readPatch(int i)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatchCommon(i);
+	Channel::readPatch(i);
 
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 

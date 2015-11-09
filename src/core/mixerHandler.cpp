@@ -123,6 +123,30 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 /* -------------------------------------------------------------------------- */
 
 
+void mh_readPatch()
+{
+	G_Mixer.ready = false;
+	
+	G_Mixer.outVol     = G_Patch.masterVolOut;
+	G_Mixer.inVol      = G_Patch.masterVolIn;
+	G_Mixer.bpm        = G_Patch.bpm;
+	G_Mixer.bars       = G_Patch.bars;
+	G_Mixer.beats      = G_Patch.beats;
+	G_Mixer.quantize   = G_Patch.quantize;
+	G_Mixer.metronome  = G_Patch.metronome;
+
+	/* rewind and update frames in Mixer (it's vital) */
+
+	G_Mixer.rewind();
+	G_Mixer.updateFrameBars();
+
+	G_Mixer.ready = true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void mh_rewindSequencer()
 {
 	if (G_Mixer.quantize > 0 && G_Mixer.running)   // quantize rewind
