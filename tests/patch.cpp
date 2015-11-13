@@ -109,8 +109,12 @@ TEST_CASE("Test Patch class")
     patch.lastTakeId   = 0;
     patch.samplerate   = 44100;
 
+#ifdef WITH_VST
+
     patch.masterInPlugins.add(plugin1);
     patch.masterOutPlugins.add(plugin2);
+
+#endif
 
     REQUIRE(patch.write(filename) == 1);
   }
