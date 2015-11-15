@@ -35,6 +35,7 @@
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
+#include "../core/pluginHost.h"
 #include "../core/conf.h"
 #include "../core/patch.h"
 #include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
@@ -54,15 +55,18 @@ extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
+#ifdef WITH_VST
+extern PluginHost		 G_PluginHost;
+#endif
 
 
 int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 {
 	G_Patch.init();
 
-	__fillPatchGlobals__(name);
-	__fillPatchChannels__(isProject);
-	__fillPatchColumns__();
+	__glue_fillPatchGlobals__(name);
+	__glue_fillPatchChannels__(isProject);
+	__glue_fillPatchColumns__();
 
 	if (G_Patch.write(fullPath)) {
 		gu_update_win_label(name.c_str());
@@ -231,7 +235,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 /* -------------------------------------------------------------------------- */
 
 
-void __fillPatchGlobals__(const string &name)
+void __glue_fillPatchGlobals__(const string &name)
 {
 	G_Patch.version      = G_VERSION_STR;
 	G_Patch.versionMajor = G_VERSION_MAJOR;
@@ -245,13 +249,42 @@ void __fillPatchGlobals__(const string &name)
 	G_Patch.masterVolIn  = G_Mixer.inVol;
   G_Patch.masterVolOut = G_Mixer.outVol;
   G_Patch.metronome    = G_Mixer.metronome;
+
+#ifdef WITH_VST
+
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterIn, &G_Patch.masterInPlugins);
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterOut, &G_Patch.masterOutPlugins);
+
+#endif
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void __fillPatchChannels__(bool isProject)
+#ifdef WITH_VST
+
+void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::plugin_t> *patch)
+{
+	for (unsigned i=0; i<host->size; i++) {
+		Plugin *pl = host->at(i);
+		Patch::plugin_t ppl;
+		ppl.path = pl->pathfile;
+		ppl.bypass = pl->bypass;
+		int numParams = pl->getNumParams();
+		for (unsigned k=0; k<numParams; k++)
+			ppl.params.add(pl->getParam(k));
+		patch->add(ppl);
+	}
+}
+
+#endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void __glue_fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
 		G_Mixer.channels.at(i)->writePatch(i, isProject);
@@ -262,7 +295,7 @@ void __fillPatchChannels__(bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void __fillPatchColumns__()
+void __glue_fillPatchColumns__()
 {
 	for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
 		gColumn *gCol = mainWin->keyboard->getColumn(i);

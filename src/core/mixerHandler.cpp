@@ -126,7 +126,7 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 void mh_readPatch()
 {
 	G_Mixer.ready = false;
-	
+
 	G_Mixer.outVol     = G_Patch.masterVolOut;
 	G_Mixer.inVol      = G_Patch.masterVolIn;
 	G_Mixer.bpm        = G_Patch.bpm;
@@ -135,7 +135,14 @@ void mh_readPatch()
 	G_Mixer.quantize   = G_Patch.quantize;
 	G_Mixer.metronome  = G_Patch.metronome;
 
-	/* rewind and update frames in Mixer (it's vital) */
+#ifdef WITH_VST
+
+	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
+	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
+
+#endif
+
+	/* rewind and update frames in Mixer (it's essential) */
 
 	G_Mixer.rewind();
 	G_Mixer.updateFrameBars();
@@ -239,3 +246,29 @@ bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
 	}
 	return true;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+int __mh_readPatchPlugins__(gVector<Patch::plugin_t> *list, int type)
+{
+	int ret = 1;
+	for (unsigned i=0; i<list->size; i++) {
+		Patch::plugin_t *ppl = &list->at(i);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
+		if (plugin != NULL) {
+			plugin->bypass = ppl->bypass;
+			for (unsigned j=0; j<ppl->params.size; j++)
+				plugin->setParam(j, ppl->params.at(j));
+			ret &= 1;
+		}
+		else
+			ret &= 0;
+	}
+	return ret;
+}
+
+#endif

@@ -32,6 +32,9 @@
 #define GLUE_STORAGE_H
 
 
+#include "../core/patch.h"
+
+
 using std::string;
 
 
@@ -40,9 +43,14 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress
 int glue_savePatch  (const string &fullPath, const string &name, bool isProject);
 int glue_saveProject(const string &folderPath, const string &projName);
 
-static void __fillPatchGlobals__(const string &name);
-static void __fillPatchChannels__(bool isProject);
-static void __fillPatchColumns__();
+static void __glue_fillPatchGlobals__(const string &name);
+static void __glue_fillPatchChannels__(bool isProject);
+static void __glue_fillPatchColumns__();
+
+#ifdef WITH_VST
+static void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::plugin_t> *patch);
+#endif
+
 static void __setProgressBar__(class gProgress *status, float v);
 
 #endif
