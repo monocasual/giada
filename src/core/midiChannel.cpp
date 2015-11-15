@@ -299,10 +299,10 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(int i)
+int MidiChannel::readPatch(const string &basePath, int i)
 {
-	Channel::readPatch(i);
-	
+	Channel::readPatch("", i);
+
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 	volume      = pch->volume;
 	index       = pch->index;

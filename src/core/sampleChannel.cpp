@@ -874,12 +874,12 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(int i)
+int SampleChannel::readPatch(const string &basePath, int i)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatch(i);
+	Channel::readPatch("", i);
 
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 
@@ -891,7 +891,7 @@ int SampleChannel::readPatch(int i)
 	midiInReadActions = pch->midiInReadActions;
 	midiInPitch       = pch->midiInPitch;
 
-	int res = load(pch->samplePath.c_str());
+	int res = load((basePath + pch->samplePath).c_str());
 	if (res == SAMPLE_LOADED_OK) {
 		setBegin(pch->begin);
 		setEnd  (pch->end);

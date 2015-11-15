@@ -223,7 +223,7 @@ int Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(int i)
+int Channel::readPatch(const string &path, int i)
 {
 	int ret = 1;
 	Patch::channel_t *pch = &G_Patch.channels.at(i);

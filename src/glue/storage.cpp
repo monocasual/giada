@@ -82,15 +82,22 @@ int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 
 int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProject)
 {
-	__setProgressBar__(status, 0.1f);
-
 	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
 	* one. */
 
-	int res = G_Patch.read(fullPath);
+	gLog("[glue] loading %s...\n", fullPath.c_str());
+
+	string fileToLoad = fullPath;  // patch file to read from
+	string basePath   = "";        // base path, in case of reading from a project
+	if (isProject) {
+		fileToLoad = fullPath + gGetSlash() + gStripExt(gBasename(fullPath)) + ".gptc";
+		basePath   = fullPath.c_str() + gGetSlash();
+	}
+
+	int res = G_Patch.read(fileToLoad);
 	if (res == PATCH_UNREADABLE) {
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
-		return glue_loadPatch__DEPR__(gBasename(fullPath).c_str(), fullPath.c_str(), status, isProject);
+		return glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(), status, isProject);
 	}
 	if (res != PATCH_OPEN_OK)
 		return res;
@@ -115,7 +122,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		for (unsigned k=0; k<G_Patch.channels.size; k++) {
 			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
-				ch->readPatch(k);	// TODO - grab return value and notify bad blugins
+				ch->readPatch(basePath, k); // TODO - grab return value and notify bad blugins
 			}
 		}
 	}
@@ -140,6 +147,8 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	gu_update_win_label(G_Patch.name.c_str());
 
 	__setProgressBar__(status, 1.0f);
+
+	gLog("[glue] patch loaded successfully\n");
 
 	return res;
 }
@@ -180,7 +189,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch_DEPR_(isProject, fpath);
+	mh_loadPatch_DEPR_(isProject, gDirname(fpath).c_str());
 
 	/* take the patch name and update the main window's title */
 
@@ -333,7 +342,7 @@ void __setProgressBar__(class gProgress *status, float v)
 
 int glue_saveProject(const string &folderPath, const string &projName)
 {
-	if (!gMkdir(folderPath.c_str())) {
+	if (!gDirExists(folderPath.c_str()) && !gMkdir(folderPath.c_str())) {
 		gLog("[glue] unable to make project directory!\n");
 		return 0;
 	}
