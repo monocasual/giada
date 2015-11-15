@@ -71,6 +71,7 @@ string gStripFileUrl(const char *path);
 string gGetExt(const char *path);
 
 string gStripExt(const char *path);
+string gStripExt(const string &s);
 
 string gGetProjectName(const char *path); // TODO - useless!
 

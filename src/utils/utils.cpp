@@ -219,6 +219,12 @@ string gStripExt(const char *file)
 }
 
 
+string gStripExt(const string &s)
+{
+	return s.substr(0, s.find_last_of("."));
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
