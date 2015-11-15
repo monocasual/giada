@@ -72,6 +72,7 @@
 #define MAX_PATCHNAME_LEN	 32
 #define DB_MIN_SCALE		   60.0f
 #define MAX_VST_EVENTS     32
+#define MIN_COLUMN_WIDTH   140
 
 
 
@@ -124,6 +125,7 @@
 #define DEFAULT_BARS			   1
 #define DEFAULT_QUANTIZE     0		  // quantizer off
 #define DEFAULT_FADEOUT_STEP 0.01f  // micro-fadeout speed
+#define DEFAULT_COLUMN_WIDTH 380
 
 
 
