@@ -47,7 +47,7 @@ std::string DataStorageIni::getValue(const char *in)
 
 		char buffer[MAX_LINE_LEN];
 		if (fgets(buffer, MAX_LINE_LEN, fp) == NULL) {
-			gLog("[DataStorageIni::getValue] key %s' not found\n", in);
+			gLog("[DataStorageIni::getValue] key '%s' not found\n", in);
 			return "";
 		}
 
