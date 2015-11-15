@@ -34,6 +34,7 @@
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/patch_DEPR_.h"
+#include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "../../glue/storage.h"
@@ -50,6 +51,7 @@ using std::string;
 
 
 extern Patch_DEPR_   G_Patch_DEPR_;
+extern Patch         G_Patch;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
 #ifdef WITH_VST
@@ -110,7 +112,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	else
 	if (type == BROWSER_SAVE_PATCH) {
 		ok->callback(cb_save_patch, (void*)this);
-		name->value(G_Patch_DEPR_.name[0] == '\0' ? "my_patch.gptc" : G_Patch_DEPR_.name);
+		name->value(G_Patch.name == "" ? "my_patch.gptc" : G_Patch.name.c_str());
 		name->maximum_size(MAX_PATCHNAME_LEN+5); // +5 for ".gptc"
 	}
 	else
@@ -121,7 +123,7 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
 		ok->callback(cb_save_project, (void*)this);
-		name->value(gStripExt(G_Patch_DEPR_.name).c_str());
+		name->value(gStripExt(G_Patch.name).c_str());
 	}
 #ifdef WITH_VST
 	else
