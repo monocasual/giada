@@ -45,22 +45,6 @@ class Patch : public DataStorageJson
 {
 public:
 
-  string header;
-  string version;
-  int    versionMajor;
-  int    versionMinor;
-  int    versionPatch;
-  string name;
-  float  bpm;
-  int    bars;
-  int    beats;
-  int    quantize;
-  float  masterVolIn;
-  float  masterVolOut;
-  int    metronome;
-  int    lastTakeId;
-  int    samplerate;   // original samplerate when the patch was saved
-
   struct action_t
   {
     int      type;
@@ -70,14 +54,12 @@ public:
   };
 
 #ifdef WITH_VST
-
   struct plugin_t
   {
     string         path;
     bool           bypass;
     gVector<float> params;
   };
-
 #endif
 
   struct channel_t
@@ -118,6 +100,7 @@ public:
     uint32_t    midiOutChan;
 
     gVector<action_t> actions;
+
 #ifdef WITH_VST
     gVector<plugin_t> plugins;
 #endif
@@ -129,6 +112,22 @@ public:
     int width;
     gVector<int> channels;
   };
+
+  string header;
+  string version;
+  int    versionMajor;
+  int    versionMinor;
+  int    versionPatch;
+  string name;
+  float  bpm;
+  int    bars;
+  int    beats;
+  int    quantize;
+  float  masterVolIn;
+  float  masterVolOut;
+  int    metronome;
+  int    lastTakeId;
+  int    samplerate;   // original samplerate when the patch was saved
 
   gVector<column_t>  columns;
   gVector<channel_t> channels;
@@ -150,6 +149,11 @@ public:
   int  read (const string &file);
 
 private:
+
+  /* sanitize
+   * Internal sanity check. */
+
+  void sanitize();
 
   /* readers */
 

@@ -115,6 +115,9 @@ int Patch::read(const string &file)
 #endif
 
   json_decref(jRoot);
+
+  sanitize();
+
   return PATCH_OPEN_OK;
 }
 
@@ -439,3 +442,33 @@ bool Patch::readPlugins(json_t *jContainer, gVector<plugin_t> *container, const 
 }
 
 #endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Patch::sanitize()
+{
+  bpm          = bpm < 20.0f || bpm > 999.0f ? DEFAULT_BPM : bpm;
+  bars         = bars <= 0 || bars > 32 ? DEFAULT_BARS : bars;
+  beats        = beats <= 0 || beats > 32 ? DEFAULT_BEATS : beats;
+  quantize     = quantize < 0 || quantize > 8 ? DEFAULT_QUANTIZE : quantize;
+  masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? DEFAULT_VOL : masterVolIn;
+  masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? DEFAULT_VOL : masterVolOut;
+  samplerate   = samplerate <= 0 ? DEFAULT_SAMPLERATE : samplerate;
+
+  for (unsigned i=0; i<columns.size; i++) {
+    column_t *col = &columns.at(i);
+    col->index = col->index < 0 ? 0 : col->index;
+    col->width = col->width < MIN_COLUMN_WIDTH ? MIN_COLUMN_WIDTH : col->width;
+  }
+
+  for (unsigned i=0; i<channels.size; i++) {
+    channel_t *ch = &channels.at(i);
+    ch->volume   = ch->volume < 0.0f || ch->volume > 1.0f ? DEFAULT_VOL : ch->volume;
+    ch->panLeft  = ch->panLeft < 0.0f || ch->panLeft > 1.0f ? 1.0f : ch->panLeft;
+    ch->panRight = ch->panRight < 0.0f || ch->panRight > 1.0f ? 1.0f : ch->panRight;
+    ch->boost    = ch->boost < 1.0f ? DEFAULT_BOOST : ch->boost;
+    ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? gDEFAULT_PITCH : ch->pitch;
+  }
+}
