@@ -14,10 +14,12 @@
 
 
 0.11.0 ---
+- New JSON-based patch system
 - Port all const char* strings to std::string in patch/project glue functions
 - Switch to SemVer-like internal versioning system
-- Fix memory leak in Mixer
+- Fix potential memory leaks in Mixer
 - More source code reorganization
+- Unable to store pitch values > 2.0 (fixed)
 
 
 0.10.2 --- 2015 . 10 . 21
