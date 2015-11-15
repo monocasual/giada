@@ -71,7 +71,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
-  resizer->setMinSize(140);
+  resizer->setMinSize(MIN_COLUMN_WIDTH);
   parent->add(resizer);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
@@ -309,7 +309,7 @@ void gColumn::clear(bool full)
 
 Channel *gColumn::getChannel(int i)
 {
-  gChannel *gch = (gChannel*) child(i); 
+  gChannel *gch = (gChannel*) child(i);
   if (gch->type == CHANNEL_SAMPLE)
     return ((gSampleChannel*) child(i))->ch;
   else

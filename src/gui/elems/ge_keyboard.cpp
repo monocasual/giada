@@ -339,7 +339,7 @@ void gKeyboard::__cb_addColumn()
 {
 	int colx;
 	int colxw;
-	int colw = 380;
+	int colw = DEFAULT_COLUMN_WIDTH;
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + colw;
