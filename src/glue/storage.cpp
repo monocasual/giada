@@ -115,15 +115,17 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	__setProgressBar__(status, 0.1f);
 
 	/* add common stuff, columns and channels */
-	/* TODO - update press bar from 0.1 to 0.9 (0.8 / G_Patch.channels.size) */
 
+	float steps = 0.8 / G_Patch.channels.size;
 	for (unsigned i=0; i<G_Patch.columns.size; i++) {
-		mainWin->keyboard->addColumn();
+		Patch::column_t *col = &G_Patch.columns.at(i);
+		mainWin->keyboard->addColumn(col->width);
 		for (unsigned k=0; k<G_Patch.channels.size; k++) {
-			if (G_Patch.channels.at(k).column == G_Patch.columns.at(i).index) {
+			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(basePath, k); // TODO - grab return value and notify bad blugins
 			}
+			__setProgressBar__(status, steps);
 		}
 	}
 
@@ -331,7 +333,7 @@ void __glue_fillPatchColumns__()
 
 void __setProgressBar__(class gProgress *status, float v)
 {
-	status->value(v);
+	status->value(status->value() + v);
 	//Fl::check();
 	Fl::wait(0);
 }

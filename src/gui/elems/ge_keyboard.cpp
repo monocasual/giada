@@ -167,7 +167,10 @@ void gKeyboard::organizeColumns()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::cb_addColumn(Fl_Widget *v, void *p) { ((gKeyboard*)p)->__cb_addColumn(); }
+void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)
+{
+	((gKeyboard*)p)->__cb_addColumn(DEFAULT_COLUMN_WIDTH);
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -335,35 +338,35 @@ void gKeyboard::printChannelMessage(int res)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::__cb_addColumn()
+void gKeyboard::__cb_addColumn(int width)
 {
 	int colx;
 	int colxw;
-	int colw = DEFAULT_COLUMN_WIDTH;
+	int gap = 16;
 	if (columns.size == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
-		colxw = colx + colw;
+		colxw = colx + width;
 	}
 	else {
 		gColumn *prev = columns.last();
-		colx  = prev->x()+prev->w() + 16;
-		colxw = colx + colw;
+		colx  = prev->x()+prev->w() + gap;
+		colxw = colx + width;
 	}
 
 	/* add gColumn to gKeyboard and to columns vector */
 
-	gColumn *gc = new gColumn(colx, y(), colw-20, 2000, indexColumn, this);
+	gColumn *gc = new gColumn(colx, y(), width, 2000, indexColumn, this);
   add(gc);
 	columns.add(gc);
 	indexColumn++;
 
 	/* move addColumn button */
 
-	addColumnBtn->position(colxw-4, y());
+	addColumnBtn->position(colxw + gap, y());
 	redraw();
 
-	gLog("[gKeyboard::__cb_addColumn] new column added (index = %d), total count=%d, addColumn(x)=%d\n",
-		gc->getIndex(), columns.size, addColumnBtn->x());
+	gLog("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
+		gc->getIndex(), width, columns.size, addColumnBtn->x());
 }
 
 
@@ -372,5 +375,5 @@ void gKeyboard::__cb_addColumn()
 
 void gKeyboard::addColumn(int width)
 {
-	__cb_addColumn();
+	__cb_addColumn(width);
 }

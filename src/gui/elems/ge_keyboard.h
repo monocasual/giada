@@ -37,6 +37,7 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
 #include "../elems/ge_column.h"
+#include "../../core/const.h"
 #include "../../utils/utils.h"
 
 
@@ -45,7 +46,7 @@ class gKeyboard : public Fl_Scroll
 private:
 
 	static void cb_addColumn  (Fl_Widget *v, void *p);
-	inline void __cb_addColumn();
+	inline void __cb_addColumn(int width=DEFAULT_COLUMN_WIDTH);
 
 	bool bckspcPressed;
 	bool endPressed;
