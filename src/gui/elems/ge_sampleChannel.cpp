@@ -533,6 +533,13 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 		mainButton->size(w() - BREAK_DELTA, mainButton->h());
 		mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
+
+		/* The followings are useless on manual resizing, but useful when a channel
+		 * is added from a patch with a small width. */
+
+	  modeBox->hide();
+		if (readActions)
+      readActions->hide();
 	}
 	else
 	if (w() < BREAK_MODE_BOX) {
@@ -549,9 +556,8 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
     modeBox->show();
     mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), mainButton->h());
     modeBox->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-		if (readActions) {
+		if (readActions)
       readActions->hide();
-		}
 	}
 	else {
 		if (readActions) {

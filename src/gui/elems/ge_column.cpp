@@ -195,28 +195,12 @@ void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChan
 
 gChannel *gColumn::addChannel(class Channel *ch)
 {
+	int currentY = y() + children() * 24;
 	gChannel *gch = NULL;
-
 	if (ch->type == CHANNEL_SAMPLE)
-		gch = (gSampleChannel*) new gSampleChannel(
-				x(),
-				y() + children() * 24,
-				600, // (1) see notes below
-				20,
-				(SampleChannel*) ch);
+		gch = (gSampleChannel*) new gSampleChannel(x(), currentY, w(), 20, (SampleChannel*) ch);
 	else
-		gch = (gMidiChannel*) new gMidiChannel(
-				x(),
-				y() + children() * 24,
-				w(),
-				20,
-				(MidiChannel*) ch);
-
-	/* (1) we create a new sample channel with a fake width, instead of w() (i.e.
-	the column width), in case the column is too narrow to display all widgets.
-	This workaround prevents the widgets to disappear if they have an initial
-	negative width. MidiChannel does not need such hack because it already fits
-	nicely in a collapsed column. */
+		gch = (gMidiChannel*) new gMidiChannel(x(),	currentY, w(), 20, (MidiChannel*) ch);
 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop

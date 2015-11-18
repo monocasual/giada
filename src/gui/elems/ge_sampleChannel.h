@@ -82,7 +82,7 @@ public:
 
 	void addActionButton();
 	void delActionButton(bool force=false);
-
+	
 	class gModeBox *modeBox;
 	class gClick 	 *readActions;
 
