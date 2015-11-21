@@ -20,6 +20,7 @@
 - Fix potential memory leaks in Mixer
 - More source code reorganization
 - Unable to store pitch values > 2.0 (fixed)
+- Missing assigned key after opening patch (fixed)
 
 
 0.10.2 --- 2015 . 10 . 21
