@@ -155,6 +155,11 @@ private:
 
   void sanitize();
 
+  /* setInvalid
+   * Helper function used to return invalid status while reading. */
+
+  int setInvalid();
+
   /* readers */
 
   bool readCommons (json_t *jContainer);

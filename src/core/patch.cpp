@@ -106,12 +106,12 @@ int Patch::read(const string &file)
 
   /* TODO json_decref also when PATCH_INVALID */
 
-  if (!readCommons(jRoot))  return PATCH_INVALID;
-  if (!readColumns(jRoot))  return PATCH_INVALID;
-  if (!readChannels(jRoot)) return PATCH_INVALID;
+  if (!readCommons(jRoot))  return setInvalid();
+  if (!readColumns(jRoot))  return setInvalid();
+  if (!readChannels(jRoot)) return setInvalid();
 #ifdef WITH_VST
-  if (!readPlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS))   return PATCH_INVALID;
-  if (!readPlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS)) return PATCH_INVALID;
+  if (!readPlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS))   return setInvalid();
+  if (!readPlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS)) return setInvalid();
 #endif
 
   json_decref(jRoot);
@@ -471,4 +471,14 @@ void Patch::sanitize()
     ch->boost    = ch->boost < 1.0f ? DEFAULT_BOOST : ch->boost;
     ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? gDEFAULT_PITCH : ch->pitch;
   }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Patch::setInvalid()
+{
+  json_decref(jRoot);
+  return PATCH_INVALID;
 }
