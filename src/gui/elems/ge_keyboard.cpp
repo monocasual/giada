@@ -160,6 +160,10 @@ void gKeyboard::organizeColumns()
 
 	addColumnBtn->position(columns.last()->x() + columns.last()->w() + 16, y());
 
+	/* recompute col indexes */
+
+	refreshColIndexes();
+
 	redraw();
 }
 
@@ -367,6 +371,10 @@ void gKeyboard::__cb_addColumn(int width)
 
 	gLog("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), width, columns.size, addColumnBtn->x());
+
+	/* recompute col indexes */
+
+	refreshColIndexes();
 }
 
 
@@ -376,4 +384,14 @@ void gKeyboard::__cb_addColumn(int width)
 void gKeyboard::addColumn(int width)
 {
 	__cb_addColumn(width);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gKeyboard::refreshColIndexes()
+{
+	for (unsigned i=0; i<columns.size; i++)
+		columns.at(i)->setIndex(i);
 }

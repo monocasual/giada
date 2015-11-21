@@ -45,6 +45,12 @@ class gKeyboard : public Fl_Scroll
 {
 private:
 
+	/* refreshColIndexes
+	 * Recompute all column indexes in order to avoid any gaps between them.
+	 * Indexes must always be contiguous! */
+	 
+	void refreshColIndexes();
+
 	static void cb_addColumn  (Fl_Widget *v, void *p);
 	inline void __cb_addColumn(int width=DEFAULT_COLUMN_WIDTH);
 
