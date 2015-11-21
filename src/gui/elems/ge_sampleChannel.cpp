@@ -108,6 +108,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	solo->callback(cb_solo, (void*)this);
 
 	mainButton->callback(cb_openMenu, (void*)this);
+
 	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
@@ -451,6 +452,8 @@ void gSampleChannel::update()
 	vol->value(ch->volume);
 	mute->value(ch->mute);
 	solo->value(ch->solo);
+
+	mainButton->setKey(ch->key);
 
 #ifdef WITH_VST
 	fx->full = ch->plugins.size > 0;

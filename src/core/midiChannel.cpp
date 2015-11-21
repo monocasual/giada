@@ -304,15 +304,10 @@ int MidiChannel::readPatch(const string &basePath, int i)
 	Channel::readPatch("", i);
 
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
-	volume      = pch->volume;
-	index       = pch->index;
-	mute        = pch->mute;
-	mute_s      = pch->mute_s;
-	solo        = pch->solo;
-	panLeft     = pch->panLeft;
-	panRight    = pch->panRight;
+
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
+	
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 

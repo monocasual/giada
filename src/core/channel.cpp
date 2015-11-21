@@ -163,6 +163,7 @@ int Channel::writePatch(int i, bool isProject)
 {
 	Patch::channel_t pch;
 	pch.type            = type;
+	pch.key             = key;
 	pch.index           = index;
 	pch.column          = guiChannel->getColumnIndex();
 	pch.mute            = mute;
@@ -227,6 +228,7 @@ int Channel::readPatch(const string &path, int i)
 {
 	int ret = 1;
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	key             = pch->key;
 	type            = pch->type;
 	index           = pch->index;
 	mute            = pch->mute;

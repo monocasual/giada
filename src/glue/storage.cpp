@@ -114,7 +114,8 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	__setProgressBar__(status, 0.1f);
 
-	/* add common stuff, columns and channels */
+	/* Add common stuff, columns and channels. Also increment the progress bar
+	 * by 0.8 / total_channels steps.  */
 
 	float steps = 0.8 / G_Patch.channels.size;
 	for (unsigned i=0; i<G_Patch.columns.size; i++) {
@@ -124,6 +125,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(basePath, k); // TODO - grab return value and notify bad blugins
+				printf("-----> %d\n", ch->key);
 			}
 			__setProgressBar__(status, steps);
 		}

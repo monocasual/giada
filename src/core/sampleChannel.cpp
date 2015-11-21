@@ -883,7 +883,6 @@ int SampleChannel::readPatch(const string &basePath, int i)
 
 	Patch::channel_t *pch = &G_Patch.channels.at(i);
 
-	key               = pch->key;
 	mode              = pch->mode;
 	boost             = pch->boost;
 	readActions       = pch->recActive;
@@ -1007,7 +1006,6 @@ int SampleChannel::writePatch(int i, bool isProject)
 	else
 		pch->samplePath = "";
 
-	pch->key               = key;
 	pch->mode              = mode;
 	pch->begin             = begin;
 	pch->end               = end;

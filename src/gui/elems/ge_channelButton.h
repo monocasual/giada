@@ -34,11 +34,14 @@
 #include "ge_mixed.h"
 
 
+using std::string;
+
+
 class gChannelButton : public gClick
 {
 private:
 
-	std::string key;
+	string key;
 
 public:
 
@@ -47,7 +50,8 @@ public:
 	virtual int handle(int e) = 0;
 
 	void draw();
-	void setKey(const char *k);
+	void setKey(const string &k);
+	void setKey(int k);
 	void setPlayMode();
 	void setEndingMode();
 	void setDefaultMode(const char *l=0);

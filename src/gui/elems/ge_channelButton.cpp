@@ -28,7 +28,11 @@
 
 
 #include "../../core/const.h"
+#include "../../utils/utils.h"
 #include "ge_channelButton.h"
+
+
+using std::string;
 
 
 gChannelButton::gChannelButton(int x, int y, int w, int h, const char *l)
@@ -38,9 +42,24 @@ gChannelButton::gChannelButton(int x, int y, int w, int h, const char *l)
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setKey(const char *k)
+void gChannelButton::setKey(const string &k)
 {
   key = k;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gChannelButton::setKey(int k)
+{
+  if (k == 0)
+    key = "";
+  else {
+    // FIXME - this crap won't work with unicode/utf-8
+    char c = (char) k;
+    key = c;
+  }
 }
 
 
