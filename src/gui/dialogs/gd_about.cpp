@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_about
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,9 +24,10 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
+#include <jansson.h>
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../core/kernelAudio.h"
@@ -42,9 +43,11 @@ extern Conf G_Conf;
 
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gWindow(340, 405, "About Giada") {
+: gWindow(340, 405, "About Giada")
+{
 #else
-: gWindow(340, 320, "About Giada") {
+: gWindow(340, 320, "About Giada")
+{
 #endif
 
 	if (G_Conf.aboutX)
@@ -70,14 +73,16 @@ gdAbout::gdAbout()
 	  "Version " G_VERSION_STR " (" __DATE__ ")\n\n"
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
-		"RtMidi (%s), libsamplerate and libsndfile\n\n"
+		"RtMidi (%s), libsamplerate, Jansson (%s) \n"
+		"and libsndfile\n\n"
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
-		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION, 
+		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
 		kernelAudio::getRtAudioVersion().c_str(),
-		kernelMidi::getRtMidiVersion().c_str());
+		kernelMidi::getRtMidiVersion().c_str(),
+		JANSSON_VERSION);
 
 	int tw = 0;
 	int th = 0;
@@ -103,24 +108,26 @@ gdAbout::gdAbout()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gdAbout::~gdAbout() {
+gdAbout::~gdAbout()
+{
 	G_Conf.aboutX = x();
 	G_Conf.aboutY = y();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdAbout::cb_close(Fl_Widget *w, void *p) { ((gdAbout*)p)->__cb_close(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdAbout::__cb_close() {
+void gdAbout::__cb_close()
+{
 	do_callback();
 }
