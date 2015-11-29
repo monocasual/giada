@@ -121,7 +121,7 @@ TEST_CASE("Test Patch class")
 
   SECTION("test read")
   {
-    REQUIRE(patch.read(filename) == 1);
+    REQUIRE(patch.read(filename) == PATCH_READ_OK);
     REQUIRE(patch.header == "GPTCH");
     REQUIRE(patch.version == "1.0");
     REQUIRE(patch.versionMajor == 6);

@@ -100,7 +100,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
 		return glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(), status, isProject);
 	}
-	if (res != PATCH_OPEN_OK)
+	if (res != PATCH_READ_OK)
 		return res;
 
 	/* close all other windows. This prevents segfault if plugin
@@ -173,7 +173,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* is it a valid patch? */
 
 	int res = G_Patch_DEPR_.open(fpath);
-	if (res != PATCH_OPEN_OK)
+	if (res != PATCH_READ_OK)
 		return res;
 
 	/* close all other windows. This prevents segfault if plugin windows

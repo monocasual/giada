@@ -62,7 +62,7 @@ int Patch_DEPR_::open(const char *file)
 	version = atof(getValue("versionf").c_str());
 	gLog("[patch_DEPR_] open patch version %f\n", version);
 
-	return PATCH_OPEN_OK;
+	return PATCH_READ_OK;
 }
 
 

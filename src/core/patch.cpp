@@ -118,7 +118,7 @@ int Patch::read(const string &file)
 
   sanitize();
 
-  return PATCH_OPEN_OK;
+  return PATCH_READ_OK;
 }
 
 /* -------------------------------------------------------------------------- */
