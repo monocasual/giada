@@ -15,6 +15,7 @@
 
 0.11.0 ---
 - New JSON-based patch system
+- Properly save column width in patch
 - Port all const char* strings to std::string in patch/project glue functions
 - Switch to SemVer-like internal versioning system
 - Fix potential memory leaks in Mixer
