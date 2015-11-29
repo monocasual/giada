@@ -227,11 +227,11 @@
 
 
 /* -- patch signals --------------------------------------------------------- */
-#define PATCH_UNREADABLE            0
-#define PATCH_INVALID              -1
-#define PATCH_OPEN_OK               1
-#define PATCH_OPEN_OK_WRONG_PLUGINS 2
-#define PATCH_OPEN_OK_WRONG_SAMPLES 3
+#define PATCH_UNREADABLE    0x01
+#define PATCH_INVALID       0x02
+#define PATCH_OPEN_OK       0x04
+#define PATCH_WRONG_PLUGINS 0x08  // currently unused
+#define PATCH_WRONG_SAMPLES 0x10  // currently unused
 
 /** TODO - addo to PATCH_ serie the signals for saving/loading */
 
