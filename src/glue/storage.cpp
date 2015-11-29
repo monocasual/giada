@@ -95,6 +95,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	}
 
 	int res = G_Patch.read(fileToLoad);
+
 	if (res == PATCH_UNREADABLE) {
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
 		return glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(), status, isProject);
@@ -124,8 +125,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		for (unsigned k=0; k<G_Patch.channels.size; k++) {
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
-				ch->readPatch(basePath, k); // TODO - grab return value and notify bad blugins
-				printf("-----> %d\n", ch->key);
+				ch->readPatch(basePath, k);
 			}
 			__setProgressBar__(status, steps);
 		}
