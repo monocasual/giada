@@ -102,6 +102,14 @@ AC_LANG_POP
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
+	[jansson.h],
+	[],
+	[AC_MSG_ERROR([library 'Jansson' not found!])]
+)
+AC_LANG_POP
+
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER(
 	[sndfile.h],
 	[],
 	[AC_MSG_ERROR([library 'libsndfile' not found!])]
