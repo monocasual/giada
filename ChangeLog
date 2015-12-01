@@ -13,13 +13,14 @@
 
 
 
-0.11.0 ---
+0.11.0 --- 2015 . 12 .02
 - New JSON-based patch system
-- Properly save column width in patch
-- Port all const char* strings to std::string in patch/project glue functions
+- Properly store column width in patch
+- Port all const char* strings to std::string in patch/project glue layer
 - Switch to SemVer-like internal versioning system
-- Fix potential memory leaks in Mixer
 - More source code reorganization
+- Fix potential memory leaks in Mixer
+- Fix missing static link of RtMidi on Linux
 - Unable to store pitch values > 2.0 (fixed)
 - Missing assigned key after opening patch (fixed)
 
