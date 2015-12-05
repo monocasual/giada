@@ -46,13 +46,13 @@ private:
 	string confFilePath;
 	string confDirPath;
 
-	int createConfigFolder();
-
 	void sanitize();
 
 public:
 
 	Conf();
+
+	int createConfigFolder();
 
 	/* init
    * Init Conf with default values. */

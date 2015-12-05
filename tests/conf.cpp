@@ -9,6 +9,7 @@ using std::string;
 TEST_CASE("Test Conf class")
 {
   Conf conf;
+  conf.createConfigFolder();
 
   SECTION("test write")
   {
