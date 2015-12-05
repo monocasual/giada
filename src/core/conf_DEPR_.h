@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __CONF_H__
-#define __CONF_H__
+#ifndef __CONF_DEPR_H__
+#define __CONF_DEPR_H__
 
 
 #include <limits.h>
