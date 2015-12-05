@@ -649,7 +649,7 @@ void gTabMidi::save()
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	G_Conf.noNoteOff   = noNoteOff->value();
-	G_Conf.midiMapPath = midiMap->text(midiMap->value());
+	G_Conf.midiMapPath = G_MidiMap.maps.size == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;
