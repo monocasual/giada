@@ -47,7 +47,7 @@ Conf::Conf()
 	confFilePath = gGetHomePath() + gGetSlash() + CONF_FILENAME;
 	confDirPath  = gGetHomePath() + gGetSlash();
 
-#elif defined__(_WIN32)
+#elif defined(_WIN32)
 
 	confFilePath = CONF_FILENAME;
 	confDirPath  = "";
