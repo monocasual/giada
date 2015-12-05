@@ -139,12 +139,26 @@ void Conf::init()
 }
 
 
-
 /* -------------------------------------------------------------------------- */
 
 
 int Conf::read()
 {
+	jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
+  if (!jRoot) {
+    gLog("[Conf::read] unable to read configuration file! Error on line %d: %s\n", jError.line, jError.text);
+    return 0;
+  }
+
+  if (!checkObject(jRoot, "root element")) {
+		json_decref(jRoot);
+    return 0;
+	}
+
+	// ... read ...
+
+	json_decref(jRoot);
+
 	return 1;
 }
 
@@ -226,7 +240,7 @@ int Conf::write()
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));
 
-  if (json_dump_file(jRoot, confFilePath.c_str(), JSON_COMPACT) != 0) {
+  if (json_dump_file(jRoot, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
     gLog("[Conf::write] unable to write configuration file!\n");
     return 0;
   }
