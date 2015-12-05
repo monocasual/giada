@@ -46,7 +46,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	int  lines = 0;
 
 	bufTxt  = "Device name: ";
-	bufTxt += +kernelAudio::getDeviceName(dev);
+	bufTxt += kernelAudio::getDeviceName(dev);
 	bufTxt += "\n";
 	lines++;
 
