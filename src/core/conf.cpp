@@ -155,7 +155,76 @@ int Conf::read()
     return 0;
 	}
 
-	// ... read ...
+	if (!setString(jRoot, CONF_KEY_HEADER, header)) return 0;
+	if (!setInt(jRoot, CONF_KEY_LOG_MODE, logMode)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SOUND_SYSTEM, soundSystem)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SOUND_DEVICE_OUT, soundDeviceOut)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SOUND_DEVICE_IN, soundDeviceIn)) return 0;
+	if (!setInt(jRoot, CONF_KEY_CHANNELS_OUT, channelsOut)) return 0;
+	if (!setInt(jRoot, CONF_KEY_CHANNELS_IN, channelsIn)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLERATE, samplerate)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BUFFER_SIZE, buffersize)) return 0;
+	if (!setInt(jRoot, CONF_KEY_DELAY_COMPENSATION, delayComp)) return 0;
+	if (!setBool(jRoot, CONF_KEY_LIMIT_OUTPUT, limitOutput)) return 0;
+	if (!setInt(jRoot, CONF_KEY_RESAMPLE_QUALITY, rsmpQuality)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MIDI_SYSTEM, midiSystem)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MIDI_PORT_OUT, midiPortOut)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MIDI_PORT_IN, midiPortIn)) return 0;
+	if (!setBool(jRoot, CONF_KEY_NO_NOTE_OFF, noNoteOff)) return 0;
+	if (!setString(jRoot, CONF_KEY_MIDIMAP_PATH, midiMapPath)) return 0;
+	if (!setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
+	if (!setFloat(jRoot, CONF_KEY_MIDI_TC_FPS, midiTCfps)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_REWIND, midiInRewind)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_START_STOP, midiInStartStop)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_ACTION_REC, midiInActionRec)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_INPUT_REC, midiInInputRec)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_METRONOME, midiInMetronome)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_IN, midiInVolumeIn)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_OUT, midiInVolumeOut)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_DOUBLE, midiInBeatDouble)) return 0;
+	if (!setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_HALF, midiInBeatHalf)) return 0;
+	if (!setBool(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT, recsStopOnChanHalt)) return 0;
+	if (!setBool(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT, chansStopOnSeqHalt)) return 0;
+	if (!setBool(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS, treatRecsAsLoops)) return 0;
+	if (!setBool(jRoot, CONF_KEY_RESIZE_RECORDINGS, resizeRecordings)) return 0;
+	if (!setString(jRoot, CONF_KEY_PLUGINS_PATH, pluginPath)) return 0;
+	if (!setString(jRoot, CONF_KEY_PATCHES_PATH, patchPath)) return 0;
+	if (!setString(jRoot, CONF_KEY_SAMPLES_PATH, samplePath)) return 0;
+
+	if (!setInt(jRoot, CONF_KEY_MAIN_WINDOW_X, mainWindowX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MAIN_WINDOW_Y, mainWindowY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MAIN_WINDOW_W, mainWindowW)) return 0;
+	if (!setInt(jRoot, CONF_KEY_MAIN_WINDOW_H, mainWindowH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_X, browserX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_Y, browserY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_W, browserW)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_H, browserH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_X, actionEditorX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_Y, actionEditorY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_W, actionEditorW)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_H, actionEditorH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_ZOOM, actionEditorZoom)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_GRID_VAL, actionEditorGridVal)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_GRID_ON, actionEditorGridOn)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_X, sampleEditorX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_Y, sampleEditorY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_W, sampleEditorW)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_H, sampleEditorH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_VAL, sampleEditorGridVal)) return 0;
+	if (!setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_ON, sampleEditorGridOn)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PIANO_ROLL_Y, pianoRollY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PIANO_ROLL_H, pianoRollH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_LIST_X, pluginListX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_LIST_Y, pluginListY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_CONFIG_X, configX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_CONFIG_Y, configY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BPM_X, bpmX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BPM_Y, bpmY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BEATS_X, beatsX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BEATS_Y, beatsY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
 
 	json_decref(jRoot);
 
