@@ -209,3 +209,16 @@ void gu_closeAllSubwindows()
 	mainWin->delSubWindow(WID_FX_LIST);
 	mainWin->delSubWindow(WID_FX);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gu_removeFltkChars(const string &s)
+{
+	string out = gReplace(s, "/", "-");
+	out = gReplace(out, "|", "-");
+	out = gReplace(out, "&", "-");
+	out = gReplace(out, "_", "-");
+	return out;
+}

@@ -46,6 +46,9 @@
 #endif
 
 
+using std::string;
+
+
 /* refresh
  * refresh all GUI elements. */
 
@@ -89,5 +92,10 @@ void gu_closeAllSubwindows();
  * return a pointer to an open subwindow, otherwise NULL. */
 
 gWindow *gu_getSubwindow(class gWindow *parent, int id);
+
+/* removeFltkChars
+ * Strip special chars used by FLTK to split menus into sub-menus. */
+
+string gu_removeFltkChars(const string &s);
 
 #endif
