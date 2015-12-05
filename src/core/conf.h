@@ -109,7 +109,7 @@ public:
 	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
   int  sampleEditorGridVal;
   int  sampleEditorGridOn;
-	int  pianoRollY, pianoRollH;  // something wrong here
+	int  pianoRollY, pianoRollH;
 	int  pluginListX, pluginListY;
 	int  configX, configY;
 	int  bpmX, bpmY;
