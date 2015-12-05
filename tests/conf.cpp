@@ -9,7 +9,11 @@ using std::string;
 TEST_CASE("Test Conf class")
 {
   Conf conf;
-  conf.createConfigFolder();
+
+  SECTION("test config folder creation")
+  {
+    REQUIRE(conf.createConfigFolder() == 1);
+  }
 
   SECTION("test write")
   {
