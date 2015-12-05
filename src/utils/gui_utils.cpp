@@ -33,7 +33,7 @@
 #include "../core/wave.h"
 #include "../core/pluginHost.h"
 #include "../core/channel.h"
-#include "../core/conf.h"
+#include "../core/conf_DEPR_.h"
 #include "../core/graphics.h"
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/gd_mainWindow.h"

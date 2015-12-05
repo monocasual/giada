@@ -33,7 +33,7 @@
 #include "kernelAudio.h"
 #include "mixer.h"
 
-#include "conf.h"
+#include "conf_DEPR_.h"
 
 
 extern Mixer G_Mixer;

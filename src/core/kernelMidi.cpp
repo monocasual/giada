@@ -35,7 +35,7 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "pluginHost.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "midiMapConf.h"
 
 

@@ -29,7 +29,7 @@
 
 #include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/graphics.h"
 #include "../../core/channel.h"

@@ -30,7 +30,7 @@
 #include "../../utils/gui_utils.h"
 #include "../../glue/glue.h"
 #include "../../core/waveFx.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/graphics.h"
 #include "../../core/mixerHandler.h"
 #include "../../core/channel.h"

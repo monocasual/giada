@@ -36,7 +36,7 @@
 #include "recorder.h"
 #include "pluginHost.h"
 #include "patch_DEPR_.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "mixerHandler.h"
 #include "channel.h"
 #include "sampleChannel.h"

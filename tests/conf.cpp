@@ -1,4 +1,4 @@
-#include "../src/core/conf.h"
+#include "../src/core/conf_DEPR_.h"
 #include "catch.hpp"
 
 

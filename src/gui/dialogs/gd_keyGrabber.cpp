@@ -28,7 +28,7 @@
 
 
 #include "../../utils/gui_utils.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"

@@ -29,7 +29,7 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../core/kernelMidi.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/sampleChannel.h"
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"

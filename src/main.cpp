@@ -33,7 +33,7 @@
 #include "core/const.h"
 #include "core/patch_DEPR_.h"
 #include "core/patch.h"
-#include "core/conf.h"
+#include "core/conf_DEPR_.h"
 #include "core/midiMapConf.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"

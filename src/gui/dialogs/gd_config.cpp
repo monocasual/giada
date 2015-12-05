@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/midiMapConf.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/kernelAudio.h"

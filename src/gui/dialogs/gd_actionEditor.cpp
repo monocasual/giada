@@ -32,7 +32,7 @@
 #include "../../core/graphics.h"
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../elems/ge_actionChannel.h"

@@ -36,7 +36,7 @@
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
 #include "../core/pluginHost.h"
-#include "../core/conf.h"
+#include "../core/conf_DEPR_.h"
 #include "../core/patch.h"
 #include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
 #include "../core/sampleChannel.h"

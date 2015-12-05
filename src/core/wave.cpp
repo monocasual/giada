@@ -34,7 +34,7 @@
 #include "../utils/utils.h"
 #include "../utils/log.h"
 #include "wave.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "init.h"
 
 

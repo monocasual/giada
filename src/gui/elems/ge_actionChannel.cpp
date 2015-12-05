@@ -28,7 +28,7 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../glue/glue.h"

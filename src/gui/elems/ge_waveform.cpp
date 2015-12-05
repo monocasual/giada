@@ -32,7 +32,7 @@
 #include <FL/Fl_Menu_Button.H>
 #include <samplerate.h>
 #include "../../core/wave.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/mixer.h"
 #include "../../core/waveFx.h"
 #include "../../core/channel.h"

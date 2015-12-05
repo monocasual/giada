@@ -44,7 +44,7 @@
 #include "pluginHost.h"
 #include "plugin.h"
 #include "waveFx.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "recorder.h"

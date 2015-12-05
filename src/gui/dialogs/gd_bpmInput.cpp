@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/mixer.h"
 #include "../../glue/glue.h"
 #include "../../utils/gui_utils.h"

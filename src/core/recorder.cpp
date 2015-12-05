@@ -37,7 +37,7 @@
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "../utils/log.h"

@@ -32,7 +32,7 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../utils/utils.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../core/graphics.h"
 #include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
@@ -185,7 +185,7 @@ void gdPluginList::refreshList() {
 	redraw();
 
   /* set 'full' flag to FX button */
-  
+
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 

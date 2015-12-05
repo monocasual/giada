@@ -35,7 +35,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/patch.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../glue/glue.h"
 #include "../../glue/storage.h"
 #include "../elems/ge_browser.h"

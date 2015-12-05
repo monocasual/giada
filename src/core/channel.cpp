@@ -37,7 +37,7 @@
 #include "wave.h"
 #include "mixer.h"
 #include "mixerHandler.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "patch.h"
 #include "waveFx.h"
 #include "midiMapConf.h"

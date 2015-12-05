@@ -36,7 +36,7 @@
 #include "const.h"
 #include "init.h"
 #include "recorder.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "pluginHost.h"
 #include "wave.h"
 #include "mixer.h"

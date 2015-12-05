@@ -32,7 +32,7 @@
 #include "sampleChannel.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "wave.h"
 #include "pluginHost.h"
 #include "waveFx.h"

@@ -41,7 +41,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/init.h"
 #include "../../core/patch_DEPR_.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../glue/glue.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"

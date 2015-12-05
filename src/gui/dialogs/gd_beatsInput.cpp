@@ -29,7 +29,7 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../core/mixer.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../glue/glue.h"
 #include "gd_beatsInput.h"
 #include "gd_mainWindow.h"

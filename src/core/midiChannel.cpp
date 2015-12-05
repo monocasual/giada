@@ -33,7 +33,7 @@
 #include "pluginHost.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "kernelMidi.h"
 
 

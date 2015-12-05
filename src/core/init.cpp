@@ -40,7 +40,7 @@
 #include "mixerHandler.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"

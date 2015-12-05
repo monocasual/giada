@@ -32,7 +32,7 @@
 #include "../../core/midiChannel.h"
 #include "../../core/const.h"
 #include "../../core/kernelMidi.h"
-#include "../../core/conf.h"
+#include "../../core/conf_DEPR_.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"

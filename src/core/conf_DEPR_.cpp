@@ -28,7 +28,7 @@
 
 
 #include <stdlib.h>
-#include "conf.h"
+#include "conf_DEPR_.h"
 #include "const.h"
 #include "../utils/utils.h"
 #include "../utils/log.h"
