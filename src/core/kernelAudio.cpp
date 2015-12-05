@@ -102,7 +102,7 @@ int openDevice(
 	else {
 		gLog("[KA] %d device(s) found\n", numDevs);
 		for (unsigned i=0; i<numDevs; i++)
-			gLog("  %d) %s\n", i, getDeviceName(i));
+			gLog("  %d) %s\n", i, getDeviceName(i).c_str());
 	}
 
 

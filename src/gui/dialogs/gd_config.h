@@ -35,6 +35,9 @@
 #include "../elems/ge_window.h"
 
 
+using std::string;
+
+
 class gdConfig : public gWindow
 {
 private:
@@ -74,7 +77,7 @@ private:
 	int systemInitValue;
 
 public:
-	
+
 	class gChoice *system;
 	class gChoice *portOut;
 	class gChoice *portIn;

@@ -573,11 +573,13 @@ void gTabMidi::fetchOutPorts() {
 		portOut->add("(disabled)");
 
 		for (unsigned i=0; i<kernelMidi::numOutPorts; i++) {
+			portOut->add(gu_removeFltkChars(kernelMidi::getOutPortName(i)).c_str());
+			/*
 			char *t = (char*) kernelMidi::getOutPortName(i);
 			for (int k=0; t[k] != '\0'; k++)
 				if (t[k] == '/' || t[k] == '|' || t[k] == '&' || t[k] == '_')
 					t[k] = '-';
-			portOut->add(t);
+			portOut->add(t);*/
 		}
 
 		portOut->value(G_Conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
@@ -599,11 +601,13 @@ void gTabMidi::fetchInPorts()
 		portIn->add("(disabled)");
 
 		for (unsigned i=0; i<kernelMidi::numInPorts; i++) {
+			portIn->add(gu_removeFltkChars(kernelMidi::getInPortName(i)).c_str());
+			/*
 			char *t = (char*) kernelMidi::getInPortName(i);
 			for (int k=0; t[k] != '\0'; k++)
 				if (t[k] == '/' || t[k] == '|' || t[k] == '&' || t[k] == '_')
 					t[k] = '-';
-			portIn->add(t);
+			portIn->add(t);*/
 		}
 
 		portIn->value(G_Conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'

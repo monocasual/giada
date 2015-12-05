@@ -49,6 +49,9 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
+using std::string;
+
+
 namespace kernelMidi
 {
 
@@ -112,7 +115,7 @@ int openOutDevice(int port)
 	numOutPorts = midiOut->getPortCount();
   gLog("[KM] %d output MIDI ports found\n", numOutPorts);
   for (unsigned i=0; i<numOutPorts; i++)
-		gLog("  %d) %s\n", i, getOutPortName(i));
+		gLog("  %d) %s\n", i, getOutPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
@@ -166,7 +169,7 @@ int openInDevice(int port)
 	numInPorts = midiIn->getPortCount();
   gLog("[KM] %d input MIDI ports found\n", numInPorts);
   for (unsigned i=0; i<numInPorts; i++)
-		gLog("  %d) %s\n", i, getInPortName(i));
+		gLog("  %d) %s\n", i, getInPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
@@ -206,16 +209,16 @@ bool hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-const char *getOutPortName(unsigned p)
+string getOutPortName(unsigned p)
 {
-	try { return midiOut->getPortName(p).c_str(); }
-	catch (RtMidiError &error) { return NULL; }
+	try { return midiOut->getPortName(p); }
+	catch (RtMidiError &error) { return ""; }
 }
 
-const char *getInPortName(unsigned p)
+string getInPortName(unsigned p)
 {
-	try { return midiIn->getPortName(p).c_str(); }
-	catch (RtMidiError &error) { return NULL; }
+	try { return midiIn->getPortName(p); }
+	catch (RtMidiError &error) { return ""; }
 }
 
 

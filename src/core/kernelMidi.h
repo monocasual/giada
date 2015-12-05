@@ -36,6 +36,9 @@
 #include "channel.h"
 
 
+using std::string;
+
+
 namespace kernelMidi {
 
 	extern int      api;      // one api for both in & out
@@ -88,8 +91,8 @@ namespace kernelMidi {
 	/* getIn/OutPortName
 	 * return the name of the port 'p'. */
 
-	const char *getInPortName(unsigned p);
-	const char *getOutPortName(unsigned p);
+	string getInPortName(unsigned p);
+	string getOutPortName(unsigned p);
 
 	bool hasAPI(int API);
 
@@ -98,7 +101,7 @@ namespace kernelMidi {
 
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
 
-	std::string getRtMidiVersion();
+	string getRtMidiVersion();
 }
 
 #endif
