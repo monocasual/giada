@@ -385,11 +385,11 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 		return 0;
 
 	for (int i=0; i<m->size(); i++) {
-		if (kernelAudio::getDeviceName(device) == NULL)
+		if (kernelAudio::getDeviceName(device) == "")
 			continue;
 		if (m->text(i) == NULL)
 			continue;
-		if (strcmp(m->text(i), kernelAudio::getDeviceName(device))==0)
+		if (m->text(i) == kernelAudio::getDeviceName(device))
 			return i;
 	}
 

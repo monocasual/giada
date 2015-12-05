@@ -217,13 +217,13 @@ int stopStream() {
 /* ------------------------------------------------------------------ */
 
 
-const char *getDeviceName(unsigned dev) {
+string getDeviceName(unsigned dev) {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name.c_str();
+		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name;
 	}
 	catch (RtAudioError &e) {
 		gLog("[KA] invalid device ID = %d\n", dev);
-		return NULL;
+		return "";
 	}
 }
 
@@ -372,7 +372,7 @@ int getDefaultOut() {
 
 int	getDeviceByName(const char *name) {
 	for (unsigned i=0; i<numDevs; i++)
-		if (strcmp(name, getDeviceName(i))==0)
+		if (name == getDeviceName(i))
 			return i;
 	return -1;
 }

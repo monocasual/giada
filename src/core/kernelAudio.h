@@ -39,6 +39,9 @@
 #endif
 
 
+using std::string;
+
+
 namespace kernelAudio {
 
 	int openDevice(
@@ -54,21 +57,20 @@ namespace kernelAudio {
 	int startStream();
 	int stopStream();
 
-	bool			  isProbed       (unsigned dev);
-	bool		    isDefaultIn    (unsigned dev);
-	bool			  isDefaultOut   (unsigned dev);
-	const char *getDeviceName  (unsigned dev);
-	unsigned    getMaxInChans  (int dev);
-	unsigned    getMaxOutChans (unsigned dev);
-	unsigned    getDuplexChans (unsigned dev);
-	int         getTotalFreqs  (unsigned dev);
-	int					getFreq        (unsigned dev, int i);
-	int					getDeviceByName(const char *name);
-	int         getDefaultOut  ();
-	int         getDefaultIn   ();
-	bool        hasAPI         (int API);
-
-	std::string getRtAudioVersion();
+	bool			  isProbed         (unsigned dev);
+	bool		    isDefaultIn      (unsigned dev);
+	bool			  isDefaultOut     (unsigned dev);
+	string      getDeviceName    (unsigned dev);
+	unsigned    getMaxInChans    (int dev);
+	unsigned    getMaxOutChans   (unsigned dev);
+	unsigned    getDuplexChans   (unsigned dev);
+	int         getTotalFreqs    (unsigned dev);
+	int					getFreq          (unsigned dev, int i);
+	int					getDeviceByName  (const char *name);
+	int         getDefaultOut    ();
+	int         getDefaultIn     ();
+	bool        hasAPI           (int API);
+	string      getRtAudioVersion();
 
 #ifdef __linux__
 	jack_client_t *jackGetHandle();
