@@ -13,6 +13,10 @@
 
 
 
+0.11.1 ---
+- New JSON-based configuration file
+
+
 0.11.0 --- 2015 . 12 .02
 - New JSON-based patch system
 - Properly store column width in patch
