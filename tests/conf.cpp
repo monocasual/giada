@@ -10,11 +10,6 @@ TEST_CASE("Test Conf class")
 {
   Conf conf;
 
-  SECTION("test config folder creation")
-  {
-    REQUIRE(conf.createConfigFolder() == 1);
-  }
-
   SECTION("test write")
   {
     conf.header = "GIADACONFTEST";

@@ -48,11 +48,11 @@ private:
 
 	void sanitize();
 
+	int createConfigFolder();
+
 public:
 
 	Conf();
-
-	int createConfigFolder();
 
 	/* init
    * Init Conf with default values. */

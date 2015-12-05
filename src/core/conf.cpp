@@ -237,6 +237,9 @@ int Conf::read()
 
 int Conf::write()
 {
+	if (!createConfigFolder())
+		return 0;
+
 	jRoot = json_object();
 
 	json_object_set_new(jRoot, CONF_KEY_HEADER,                    json_string(header.c_str()));
