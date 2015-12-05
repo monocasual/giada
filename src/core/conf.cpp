@@ -144,6 +144,8 @@ void Conf::init()
 
 int Conf::read()
 {
+	init();
+	
 	jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
   if (!jRoot) {
     gLog("[Conf::read] unable to read configuration file! Error on line %d: %s\n", jError.line, jError.text);

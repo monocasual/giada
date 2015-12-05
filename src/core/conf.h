@@ -46,18 +46,25 @@ private:
 	string confFilePath;
 	string confDirPath;
 
+	/* init
+   * Init Conf with default values. */
+
+  void init();
+
+	/* sanitize
+	 * Avoid funky values from config file. */
+
 	void sanitize();
 
+	/* createConfigFolder
+	 * Create local folder where to put the configuration file. Path differs from
+	 * OS to OS. */
+	 
 	int createConfigFolder();
 
 public:
 
 	Conf();
-
-	/* init
-   * Init Conf with default values. */
-
-  void init();
 
 	string header;
 
