@@ -29,8 +29,12 @@
 
 #include "../../core/kernelAudio.h"
 #include "../../utils/gui_utils.h"
+#include "../../utils/utils.h"
 #include "../elems/ge_mixed.h"
 #include "gd_devInfo.h"
+
+
+using std::string;
 
 
 gdDevInfo::gdDevInfo(unsigned dev)
@@ -41,62 +45,34 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	close = new gClick(252, h()-28, 80, 20, "Close");
 	end();
 
-	std::string bufTxt;
-	char bufNum[128];
-	int  lines = 0;
+	string body  = "";
+	int    lines = 7;
 
-	bufTxt  = "Device name: ";
-	bufTxt += kernelAudio::getDeviceName(dev);
-	bufTxt += "\n";
-	lines++;
-
-	bufTxt += "Total output(s): ";
-	sprintf(bufNum, "%d\n", kernelAudio::getMaxOutChans(dev));
-	bufTxt += bufNum;
-	lines++;
-
-	bufTxt += "Total intput(s): ";
-	sprintf(bufNum, "%d\n", kernelAudio::getMaxInChans(dev));
-	bufTxt += bufNum;
-	lines++;
-
-	bufTxt += "Duplex channel(s): ";
-	sprintf(bufNum, "%d\n", kernelAudio::getDuplexChans(dev));
-	bufTxt += bufNum;
-	lines++;
-
-	bufTxt += "Default output: ";
-	sprintf(bufNum, "%s\n", kernelAudio::isDefaultOut(dev) ? "yes" : "no");
-	bufTxt += bufNum;
-	lines++;
-
-	bufTxt += "Default input: ";
-	sprintf(bufNum, "%s\n", kernelAudio::isDefaultIn(dev) ? "yes" : "no");
-	bufTxt += bufNum;
-	lines++;
+	body  = "Device name: " + kernelAudio::getDeviceName(dev) + "\n";
+	body += "Total output(s): " + gItoa(kernelAudio::getMaxOutChans(dev)) + "\n";
+	body += "Total intput(s): " + gItoa(kernelAudio::getMaxInChans(dev)) + "\n";
+	body += "Duplex channel(s): " + gItoa(kernelAudio::getDuplexChans(dev)) + "\n";
+	body += "Default output: " + string(kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
+	body += "Default input: " + string(kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
 
 	int totalFreq = kernelAudio::getTotalFreqs(dev);
-	bufTxt += "Supported frequencies: ";
-	sprintf(bufNum, "%d", totalFreq);
-	bufTxt += bufNum;
-	lines++;
+	body += "Supported frequencies: " + gItoa(totalFreq);
 
 	for (int i=0; i<totalFreq; i++) {
-		sprintf(bufNum, "%d  ", kernelAudio::getFreq(dev, i));
-		if (i%6 == 0) {    // new line each X printed freqs AND on the first line (i%0 != 0)
-			bufTxt += "\n    ";
+		if (i % 6 == 0) {
+			body += "\n    ";  // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
-		bufTxt += bufNum;
+		body += gItoa( kernelAudio::getFreq(dev, i)) + "  ";
 	}
 
-	text->copy_label(bufTxt.c_str());
+	text->copy_label(body.c_str());
 
 	/* resize the window to fit the content. fl_height() returns the height
 	 * of a line. fl_height() * total lines + margins + button size */
 
-	resize(x(), y(), w(), lines*fl_height() + 8 + 8 + 8 + 20);
-	close->position(close->x(), lines*fl_height() + 8 + 8);
+	resize(x(), y(), w(), (lines * fl_height()) + 8 + 8 + 8 + 20);
+	close->position(close->x(), (lines * fl_height()) + 8 + 8);
 
 	close->callback(__cb_window_closer, (void*)this);
 	gu_setFavicon(this);
