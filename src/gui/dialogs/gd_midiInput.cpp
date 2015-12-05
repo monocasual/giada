@@ -37,7 +37,7 @@
 #include "gd_midiInput.h"
 
 
-extern Conf G_Conf;
+extern Conf_DEPR_ G_Conf;
 
 
 gdMidiInput::gdMidiInput(int w, int h, const char *title)

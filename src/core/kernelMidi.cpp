@@ -40,7 +40,7 @@
 
 
 extern bool        G_midiStatus;
-extern Conf        G_Conf;
+extern Conf_DEPR_        G_Conf;
 extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
 

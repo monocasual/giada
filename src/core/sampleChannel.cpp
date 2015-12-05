@@ -43,7 +43,7 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Mixer       G_Mixer;
-extern Conf        G_Conf;
+extern Conf_DEPR_        G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
 #endif

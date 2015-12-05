@@ -2,7 +2,7 @@
 #include "catch.hpp"
 
 
-Conf c;
+Conf_DEPR_ c;
   
 TEST_CASE("Write conf file") 
 {

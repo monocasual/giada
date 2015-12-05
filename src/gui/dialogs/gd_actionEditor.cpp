@@ -44,7 +44,7 @@
 
 
 extern Mixer G_Mixer;
-extern Conf	 G_Conf;
+extern Conf_DEPR_	 G_Conf;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)

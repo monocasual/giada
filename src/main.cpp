@@ -55,7 +55,7 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Conf          G_Conf;
+Conf_DEPR_          G_Conf;
 MidiMapConf   G_MidiMap;
 gdMainWindow *mainWin;
 

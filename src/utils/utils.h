@@ -43,6 +43,7 @@ using std::string;
 bool gFileExists(const char *path);
 
 bool gDirExists(const char *path);
+bool gDirExists(const string &path);
 
 bool gIsDir(const char *path);
 
@@ -51,6 +52,7 @@ bool gIsProject(const char *path);
 bool gIsPatch(const char *path);
 
 bool gMkdir(const char *path);
+bool gMkdir(const string &path);
 
 string gBasename(const char *path);
 string gBasename(const string &s);

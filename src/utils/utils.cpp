@@ -122,6 +122,12 @@ bool gDirExists(const char *path)
 }
 
 
+bool gDirExists(const string &path)
+{
+	return gDirExists(path.c_str());
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -134,6 +140,12 @@ bool gMkdir(const char *path)
 #endif
 		return true;
 	return false;
+}
+
+
+bool gMkdir(const string &path)
+{
+	return gMkdir(path.c_str());
 }
 
 

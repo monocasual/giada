@@ -34,7 +34,7 @@
 #include "../utils/log.h"
 
 
-int Conf::openFileForReading()
+int Conf_DEPR_::openFileForReading()
 {
 	std::string path = gGetHomePath() + "/" + CONF_FILENAME;
 	fp = fopen(path.c_str(), "r");
@@ -49,7 +49,7 @@ int Conf::openFileForReading()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf::createConfigFolder(const char *path)
+int Conf_DEPR_::createConfigFolder(const char *path)
 {
 	if (gDirExists(path))
 		return 1;
@@ -70,7 +70,7 @@ int Conf::createConfigFolder(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-int Conf::openFileForWriting()
+int Conf_DEPR_::openFileForWriting()
 {
 	/* writing config file. In windows is in the same dir of the .exe,
 	 * in Linux and OS X in home */
@@ -116,7 +116,7 @@ int Conf::openFileForWriting()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf::setDefault()
+void Conf_DEPR_::setDefault()
 {
 	logMode = LOG_MODE_MUTE;
 
@@ -174,7 +174,7 @@ void Conf::setDefault()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf::read()
+int Conf_DEPR_::read()
 {
 	setDefault();
 
@@ -346,7 +346,7 @@ int Conf::read()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf::write()
+int Conf_DEPR_::write()
 {
 	if (!openFileForWriting())
 		return 0;
@@ -449,7 +449,7 @@ int Conf::write()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf::close()
+void Conf_DEPR_::close()
 {
 	if (fp != NULL)
 		fclose(fp);
@@ -459,7 +459,7 @@ void Conf::close()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf::setPath(char *path, const char *p)
+void Conf_DEPR_::setPath(char *path, const char *p)
 {
 	path[0] = '\0';
 	strncpy(path, p, strlen(p));

@@ -53,7 +53,7 @@ using std::string;
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
-extern Conf          G_Conf;
+extern Conf_DEPR_    G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost		 G_PluginHost;

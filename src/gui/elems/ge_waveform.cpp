@@ -45,7 +45,7 @@
 
 
 extern Mixer G_Mixer;
-extern Conf  G_Conf;
+extern Conf_DEPR_  G_Conf;
 
 
 gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)

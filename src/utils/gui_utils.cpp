@@ -49,7 +49,7 @@ extern Mixer 	       G_Mixer;
 extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
-extern Conf          G_conf;
+extern Conf_DEPR_          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 #ifdef WITH_VST

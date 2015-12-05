@@ -41,7 +41,7 @@
 #endif
 
 
-class Conf : public DataStorageIni
+class Conf_DEPR_ : public DataStorageIni
 {
 private:
 

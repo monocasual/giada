@@ -51,7 +51,7 @@ extern PluginHost G_PluginHost;
 
 extern Mixer       G_Mixer;
 extern Patch_DEPR_ f_patch;
-extern Conf	       G_Conf;
+extern Conf_DEPR_	       G_Conf;
 
 
 namespace recorder

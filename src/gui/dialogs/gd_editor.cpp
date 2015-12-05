@@ -49,7 +49,7 @@
 
 extern Mixer         G_Mixer;
 extern gdMainWindow *mainWin;
-extern Conf          G_Conf;
+extern Conf_DEPR_          G_Conf;
 
 
 gdEditor::gdEditor(SampleChannel *ch)
