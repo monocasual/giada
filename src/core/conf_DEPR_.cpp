@@ -28,13 +28,13 @@
 
 
 #include <stdlib.h>
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "const.h"
 #include "../utils/utils.h"
 #include "../utils/log.h"
 
 
-int Conf_DEPR_::openFileForReading()
+int Conf::openFileForReading()
 {
 	std::string path = gGetHomePath() + "/" + CONF_FILENAME;
 	fp = fopen(path.c_str(), "r");
@@ -49,7 +49,7 @@ int Conf_DEPR_::openFileForReading()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf_DEPR_::createConfigFolder(const char *path)
+int Conf::createConfigFolder(const char *path)
 {
 	if (gDirExists(path))
 		return 1;
@@ -70,7 +70,7 @@ int Conf_DEPR_::createConfigFolder(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-int Conf_DEPR_::openFileForWriting()
+int Conf::openFileForWriting()
 {
 	/* writing config file. In windows is in the same dir of the .exe,
 	 * in Linux and OS X in home */
@@ -116,7 +116,7 @@ int Conf_DEPR_::openFileForWriting()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf_DEPR_::setDefault()
+void Conf::setDefault()
 {
 	logMode = LOG_MODE_MUTE;
 
@@ -174,7 +174,7 @@ void Conf_DEPR_::setDefault()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf_DEPR_::read()
+int Conf::read()
 {
 	setDefault();
 
@@ -346,7 +346,7 @@ int Conf_DEPR_::read()
 /* -------------------------------------------------------------------------- */
 
 
-int Conf_DEPR_::write()
+int Conf::write()
 {
 	if (!openFileForWriting())
 		return 0;
@@ -449,7 +449,7 @@ int Conf_DEPR_::write()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf_DEPR_::close()
+void Conf::close()
 {
 	if (fp != NULL)
 		fclose(fp);
@@ -459,7 +459,7 @@ void Conf_DEPR_::close()
 /* -------------------------------------------------------------------------- */
 
 
-void Conf_DEPR_::setPath(char *path, const char *p)
+void Conf::setPath(char *path, const char *p)
 {
 	path[0] = '\0';
 	strncpy(path, p, strlen(p));

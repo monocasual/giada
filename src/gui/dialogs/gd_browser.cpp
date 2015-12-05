@@ -35,7 +35,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/patch.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "../../glue/storage.h"
 #include "../elems/ge_browser.h"
@@ -52,7 +52,7 @@ using std::string;
 
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
-extern Conf_DEPR_	         G_Conf;
+extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
@@ -348,7 +348,7 @@ void gdBrowser::__cb_loadPlugin() {
 	/* store the folder path inside G_Conf, in order to reuse it the
 	 * next time. */
 
-	G_Conf.setPath(G_Conf.pluginPath, where->value());
+	G_Conf.pluginPath = where->value();
 
 	if (p != NULL)
 		do_callback();

@@ -32,7 +32,7 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../utils/utils.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/graphics.h"
 #include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
@@ -46,7 +46,7 @@
 #include "gd_mainWindow.h"
 
 
-extern Conf_DEPR_          G_Conf;
+extern Conf          G_Conf;
 extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
@@ -138,7 +138,7 @@ void gdPluginList::__cb_addPlugin() {
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdBrowser. It does exactly what we need. */
 
-	gdBrowser *b = new gdBrowser("Browse Plugin", G_Conf.pluginPath, ch, BROWSER_LOAD_PLUGIN, stackType);
+	gdBrowser *b = new gdBrowser("Browse Plugin", G_Conf.pluginPath.c_str(), ch, BROWSER_LOAD_PLUGIN, stackType);
 	addSubWindow(b);
 	b->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
 

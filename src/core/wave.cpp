@@ -34,11 +34,11 @@
 #include "../utils/utils.h"
 #include "../utils/log.h"
 #include "wave.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "init.h"
 
 
-extern Conf_DEPR_ G_Conf;
+extern Conf G_Conf;
 
 
 Wave::Wave()

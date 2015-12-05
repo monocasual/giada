@@ -32,7 +32,7 @@
 #include "../../core/midiChannel.h"
 #include "../../core/const.h"
 #include "../../core/kernelMidi.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"
@@ -41,7 +41,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
-extern Conf_DEPR_	         G_Conf;
+extern Conf	         G_Conf;
 
 
 gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)

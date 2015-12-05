@@ -54,14 +54,14 @@
 #include "../core/midiChannel.h"
 #include "../core/kernelMidi.h"
 #include "../core/patch_DEPR_.h"
-#include "../core/conf_DEPR_.h"
+#include "../core/conf.h"
 #include "glue.h"
 
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern Conf_DEPR_	 	   		 G_Conf;
+extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
 extern PluginHost		 G_PluginHost;
@@ -79,7 +79,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
-	G_Conf.setPath(G_Conf.samplePath, gDirname(fname).c_str());
+	G_Conf.samplePath = gDirname(fname);
 
 	int result = ch->load(fname);
 

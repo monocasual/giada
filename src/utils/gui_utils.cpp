@@ -33,7 +33,7 @@
 #include "../core/wave.h"
 #include "../core/pluginHost.h"
 #include "../core/channel.h"
-#include "../core/conf_DEPR_.h"
+#include "../core/conf.h"
 #include "../core/graphics.h"
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/gd_mainWindow.h"
@@ -49,7 +49,7 @@ extern Mixer 	       G_Mixer;
 extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
-extern Conf_DEPR_          G_conf;
+extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 #ifdef WITH_VST

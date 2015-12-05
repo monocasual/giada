@@ -29,14 +29,14 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../core/mixer.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "gd_beatsInput.h"
 #include "gd_mainWindow.h"
 
 
 extern Mixer				 G_Mixer;
-extern Conf_DEPR_          G_Conf;
+extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 

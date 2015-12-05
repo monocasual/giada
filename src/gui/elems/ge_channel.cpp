@@ -29,7 +29,7 @@
 
 #include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/graphics.h"
 #include "../../core/channel.h"
@@ -56,7 +56,7 @@
 
 
 extern Mixer 		     G_Mixer;
-extern Conf_DEPR_  		     G_Conf;
+extern Conf  		     G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *mainWin;
 

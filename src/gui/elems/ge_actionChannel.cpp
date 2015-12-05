@@ -28,7 +28,7 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../glue/glue.h"
@@ -41,7 +41,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
-extern Conf_DEPR_	         G_Conf;
+extern Conf	         G_Conf;
 
 
 /* ------------------------------------------------------------------ */

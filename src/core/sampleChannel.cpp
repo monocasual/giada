@@ -32,7 +32,7 @@
 #include "sampleChannel.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "wave.h"
 #include "pluginHost.h"
 #include "waveFx.h"
@@ -43,7 +43,7 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Mixer       G_Mixer;
-extern Conf_DEPR_        G_Conf;
+extern Conf        G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
 #endif

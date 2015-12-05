@@ -33,7 +33,7 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../utils/log.h"
 #include "pluginHost.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "const.h"
 #include "mixer.h"
 #include "channel.h"
@@ -42,7 +42,7 @@
 #include "kernelMidi.h"
 
 
-extern Conf_DEPR_          G_Conf;
+extern Conf          G_Conf;
 extern Mixer         G_Mixer;
 extern PluginHost    G_PluginHost;
 extern unsigned      G_beats;

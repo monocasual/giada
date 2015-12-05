@@ -32,7 +32,7 @@
 #include <FL/Fl_Menu_Button.H>
 #include <samplerate.h>
 #include "../../core/wave.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/mixer.h"
 #include "../../core/waveFx.h"
 #include "../../core/channel.h"
@@ -45,7 +45,7 @@
 
 
 extern Mixer G_Mixer;
-extern Conf_DEPR_  G_Conf;
+extern Conf  G_Conf;
 
 
 gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)

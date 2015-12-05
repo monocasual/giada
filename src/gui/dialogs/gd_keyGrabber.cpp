@@ -28,7 +28,7 @@
 
 
 #include "../../utils/gui_utils.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"
@@ -42,7 +42,7 @@
 #include "gd_mainWindow.h"
 
 
-extern Conf_DEPR_	         G_Conf;
+extern Conf	         G_Conf;
 extern gdMainWindow *mainWin;
 
 

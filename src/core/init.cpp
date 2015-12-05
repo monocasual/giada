@@ -40,7 +40,7 @@
 #include "mixerHandler.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"
@@ -52,7 +52,7 @@ extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
-extern Conf_DEPR_          G_Conf;
+extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
 
@@ -63,14 +63,17 @@ extern PluginHost	   G_PluginHost;
 
 void init_prepareParser()
 {
+	time_t t;
+  time (&t);
+	gLog("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
+
 	G_Conf.read();
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
+
 	if (!gLog_init(G_Conf.logMode))
 		gLog("[init] log init failed! Using default stdout\n");
-  time_t t;
-  time (&t);
-	gLog("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
+
 	gLog("[init] configuration file ready\n");
 }
 

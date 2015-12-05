@@ -28,16 +28,17 @@
 
 
 #include <vector>
+#include <cstring>
 #include "../utils/log.h"
 #include "../glue/glue.h"
 #include "kernelAudio.h"
 #include "mixer.h"
 
-#include "conf_DEPR_.h"
+#include "conf.h"
 
 
 extern Mixer G_Mixer;
-extern Conf_DEPR_  G_Conf;
+extern Conf  G_Conf;
 extern bool	 G_audio_status;
 
 
@@ -464,5 +465,3 @@ int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 #endif
 
 }
-
-

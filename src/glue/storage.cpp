@@ -36,7 +36,7 @@
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
 #include "../core/pluginHost.h"
-#include "../core/conf_DEPR_.h"
+#include "../core/conf.h"
 #include "../core/patch.h"
 #include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
 #include "../core/sampleChannel.h"
@@ -53,7 +53,7 @@ using std::string;
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
-extern Conf_DEPR_    G_Conf;
+extern Conf    G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost		 G_PluginHost;
@@ -143,7 +143,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.setPath(G_Conf.patchPath, gDirname(fullPath.c_str()).c_str());
+	G_Conf.patchPath = gDirname(fullPath.c_str());
 
 	/* refresh GUI */
 
@@ -232,7 +232,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.setPath(G_Conf.patchPath, gDirname(fpath).c_str());
+	G_Conf.patchPath = gDirname(fpath).c_str();
 
 	gLog("[glue] patch %s loaded\n", fname);
 

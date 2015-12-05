@@ -29,7 +29,7 @@
 
 #include "../../utils/gui_utils.h"
 #include "../../core/kernelMidi.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/sampleChannel.h"
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"
@@ -37,7 +37,7 @@
 #include "gd_midiInput.h"
 
 
-extern Conf_DEPR_ G_Conf;
+extern Conf G_Conf;
 
 
 gdMidiInput::gdMidiInput(int w, int h, const char *title)

@@ -41,7 +41,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/init.h"
 #include "../../core/patch_DEPR_.h"
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"
@@ -61,7 +61,7 @@
 
 extern Mixer	   		 G_Mixer;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern Conf_DEPR_	 	   		 G_Conf;
+extern Conf	 	   		 G_Conf;
 extern gdMainWindow *mainWin;
 extern bool	 		 		 G_quit;
 extern bool 		 		 G_audio_status;
@@ -325,7 +325,7 @@ void gMenu::__cb_file()
 
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath, 0, BROWSER_LOAD_PATCH);
+		gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath.c_str(), 0, BROWSER_LOAD_PATCH);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -333,12 +333,12 @@ void gMenu::__cb_file()
 		if (G_Mixer.hasLogicalSamples() || G_Mixer.hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
-		gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath, 0, BROWSER_SAVE_PATCH);
+		gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PATCH);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
-		gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath, 0, BROWSER_SAVE_PROJECT);
+		gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PROJECT);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

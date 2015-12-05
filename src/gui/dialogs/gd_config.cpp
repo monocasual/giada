@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/midiMapConf.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/kernelAudio.h"
@@ -42,7 +42,7 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern Conf_DEPR_	       G_Conf;
+extern Conf	       G_Conf;
 extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
@@ -625,7 +625,7 @@ void gTabMidi::fetchMidiMaps()
 	for (unsigned i=0; i<G_MidiMap.maps.size; i++) {
 		const char *imap = G_MidiMap.maps.at(i).c_str();
 		midiMap->add(imap);
-		if (strcmp(G_Conf.midiMapPath, imap) == 0)
+		if (G_Conf.midiMapPath == imap)
 			midiMap->value(i);
 	}
 }
@@ -649,8 +649,7 @@ void gTabMidi::save()
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	G_Conf.noNoteOff   = noNoteOff->value();
-
-	G_Conf.setPath(G_Conf.midiMapPath, midiMap->text(midiMap->value()));
+	G_Conf.midiMapPath = midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;

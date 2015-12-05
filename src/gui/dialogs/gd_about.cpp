@@ -28,7 +28,7 @@
 
 
 #include <jansson.h>
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../core/kernelAudio.h"
 #include "../../core/kernelMidi.h"
@@ -38,7 +38,7 @@
 #include "gd_about.h"
 
 
-extern Conf_DEPR_ G_Conf;
+extern Conf G_Conf;
 
 
 gdAbout::gdAbout()

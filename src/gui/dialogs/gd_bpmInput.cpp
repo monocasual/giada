@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "../../core/conf_DEPR_.h"
+#include "../../core/conf.h"
 #include "../../core/mixer.h"
 #include "../../glue/glue.h"
 #include "../../utils/gui_utils.h"
@@ -37,7 +37,7 @@
 
 
 extern Mixer     		 G_Mixer;
-extern Conf_DEPR_          G_Conf;
+extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 

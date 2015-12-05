@@ -17,8 +17,6 @@ src/core/midiChannel.h                 \
 src/core/midiChannel.cpp               \
 src/core/midiMapConf.h                 \
 src/core/midiMapConf.cpp               \
-src/core/conf_DEPR_.h                  \
-src/core/conf_DEPR_.cpp                \
 src/core/conf.h                        \
 src/core/conf.cpp                      \
 src/core/kernelAudio.h                 \

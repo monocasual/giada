@@ -36,7 +36,7 @@
 #include "const.h"
 #include "init.h"
 #include "recorder.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "pluginHost.h"
 #include "wave.h"
 #include "mixer.h"
@@ -44,7 +44,7 @@
 
 
 extern Mixer 		     G_Mixer;
-extern Conf_DEPR_ 		     G_Conf;
+extern Conf 		     G_Conf;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif

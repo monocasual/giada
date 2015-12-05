@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __CONF_DEPR_H__
-#define __CONF_DEPR_H__
+#ifndef __ConfH__
+#define __ConfH__
 
 
 #include <limits.h>
@@ -41,7 +41,7 @@
 #endif
 
 
-class Conf_DEPR_ : public DataStorageIni
+class Conf : public DataStorageIni
 {
 private:
 

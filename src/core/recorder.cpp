@@ -37,7 +37,7 @@
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "../utils/log.h"
@@ -51,7 +51,7 @@ extern PluginHost G_PluginHost;
 
 extern Mixer       G_Mixer;
 extern Patch_DEPR_ f_patch;
-extern Conf_DEPR_	       G_Conf;
+extern Conf	       G_Conf;
 
 
 namespace recorder

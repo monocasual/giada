@@ -33,7 +33,7 @@
 #include "core/const.h"
 #include "core/patch_DEPR_.h"
 #include "core/patch.h"
-#include "core/conf_DEPR_.h"
+#include "core/conf.h"
 #include "core/midiMapConf.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
@@ -55,7 +55,7 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Conf_DEPR_          G_Conf;
+Conf          G_Conf;
 MidiMapConf   G_MidiMap;
 gdMainWindow *mainWin;
 

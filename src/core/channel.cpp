@@ -37,7 +37,7 @@
 #include "wave.h"
 #include "mixer.h"
 #include "mixerHandler.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "patch.h"
 #include "waveFx.h"
 #include "midiMapConf.h"
@@ -46,7 +46,7 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Mixer       G_Mixer;
-extern Conf_DEPR_        G_Conf;
+extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;

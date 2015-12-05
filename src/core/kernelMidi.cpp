@@ -35,12 +35,12 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "pluginHost.h"
-#include "conf_DEPR_.h"
+#include "conf.h"
 #include "midiMapConf.h"
 
 
 extern bool        G_midiStatus;
-extern Conf_DEPR_        G_Conf;
+extern Conf        G_Conf;
 extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
 
