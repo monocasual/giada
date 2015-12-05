@@ -145,7 +145,7 @@ void Conf::init()
 int Conf::read()
 {
 	init();
-	
+
 	jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
   if (!jRoot) {
     gLog("[Conf::read] unable to read configuration file! Error on line %d: %s\n", jError.line, jError.text);
@@ -327,5 +327,43 @@ int Conf::write()
 
 void Conf::sanitize()
 {
-
+	if (!(soundSystem & SYS_API_ANY)) soundSystem = DEFAULT_SOUNDSYS;
+	if (soundDeviceOut < 0) soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
+	if (soundDeviceIn < -1) soundDeviceIn = DEFAULT_SOUNDDEV_IN;
+	if (channelsOut < 0) channelsOut = 0;
+	if (channelsIn < 0)  channelsIn  = 0;
+	if (buffersize < 8) buffersize = DEFAULT_BUFSIZE;
+	if (delayComp < 0) delayComp = DEFAULT_DELAYCOMP;
+	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_SYSTEM;
+	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_PORT_OUT;
+	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
+	if (browserX < 0) browserX = 0;
+	if (browserY < 0) browserY = 0;
+	if (browserW < 396) browserW = 396;
+	if (browserH < 302) browserH = 302;
+	if (actionEditorX < 0) actionEditorX = 0;
+	if (actionEditorY < 0) actionEditorY = 0;
+	if (actionEditorW < 640) actionEditorW = 640;
+	if (actionEditorH < 176) actionEditorH = 176;
+	if (actionEditorZoom < 100) actionEditorZoom = 100;
+	if (actionEditorGridVal < 0) actionEditorGridVal = 0;
+	if (actionEditorGridOn < 0) actionEditorGridOn = 0;
+	if (pianoRollH <= 0) pianoRollH = 422;
+  if (sampleEditorX < 0) sampleEditorX = 0;
+	if (sampleEditorY < 0) sampleEditorY = 0;
+	if (sampleEditorW < 500) sampleEditorW = 500;
+	if (sampleEditorH < 292) sampleEditorH = 292;
+	if (sampleEditorGridVal < 0) sampleEditorGridVal = 0;
+	if (sampleEditorGridOn < 0) sampleEditorGridOn = 0;
+	if (configX < 0) configX = 0;
+	if (configY < 0) configY = 0;
+	if (pluginListX < 0) pluginListX = 0;
+	if (pluginListY < 0) pluginListY = 0;
+	if (bpmX < 0) bpmX = 0;
+	if (bpmY < 0) bpmY = 0;
+	if (beatsX < 0) beatsX = 0;
+	if (beatsY < 0) beatsY = 0;
+	if (aboutX < 0) aboutX = 0;
+	if (aboutY < 0) aboutY = 0;
+	if (samplerate < 8000) samplerate = DEFAULT_SAMPLERATE;
 }
