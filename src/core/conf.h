@@ -48,13 +48,18 @@ private:
 
 	int createConfigFolder();
 
-	void sainitize();
-
-	void setDefault();
+	void sanitize();
 
 public:
 
 	Conf();
+
+	/* init
+   * Init Conf with default values. */
+
+  void init();
+
+	string header;
 
 	int  logMode;
 	int  soundSystem;
@@ -90,7 +95,6 @@ public:
 	bool recsStopOnChanHalt;
 	bool chansStopOnSeqHalt;
 	bool treatRecsAsLoops;
-
 	bool resizeRecordings;
 
 	string pluginPath;
@@ -105,7 +109,7 @@ public:
 	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
   int  sampleEditorGridVal;
   int  sampleEditorGridOn;
-	int  pianoRollY, pianoRollH;
+	int  pianoRollY, pianoRollH;  // something wrong here
 	int  pluginListX, pluginListY;
 	int  configX, configY;
 	int  bpmX, bpmY;
