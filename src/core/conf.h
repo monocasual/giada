@@ -118,13 +118,6 @@ public:
 
 	int  read();
 	int  write();
-
-	/* setPath
-	 * updates one of the following values: plugin, patch or sample.
-	 * Pass it a pointer to one of these (path) and the string to save (p).
-	 TODO - what is this for?? */
-
-	void setPath(char *path, const char *p);
 };
 
 #endif

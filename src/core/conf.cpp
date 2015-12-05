@@ -327,15 +327,3 @@ void Conf::sanitize()
 {
 
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Conf::setPath(char *path, const char *p)
-{
-	/*
-	path[0] = '\0';
-	strncpy(path, p, strlen(p));
-	path[strlen(p)] = '\0';*/
-}
