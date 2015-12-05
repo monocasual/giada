@@ -16,6 +16,7 @@
 0.11.1 ---
 - New JSON-based configuration file
 - Fix garbage text in device info window
+- Fix wrong config value if no midimaps are available
 
 
 0.11.0 --- 2015 . 12 .02
