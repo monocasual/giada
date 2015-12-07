@@ -113,7 +113,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	glue_resetToInitState(false, false);
 
-	__setProgressBar__(status, 0.1f);
+	__glue_setProgressBar__(status, 0.1f);
 
 	/* Add common stuff, columns and channels. Also increment the progress bar
 	 * by 0.8 / total_channels steps.  */
@@ -127,7 +127,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(basePath, k);
 			}
-			__setProgressBar__(status, steps);
+			__glue_setProgressBar__(status, steps);
 		}
 	}
 
@@ -150,7 +150,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	gu_updateControls();
 	gu_update_win_label(G_Patch.name.c_str());
 
-	__setProgressBar__(status, 1.0f);
+	__glue_setProgressBar__(status, 1.0f);
 
 	gLog("[glue] patch loaded successfully\n");
 
@@ -333,7 +333,7 @@ void __glue_fillPatchColumns__()
 /* -------------------------------------------------------------------------- */
 
 
-void __setProgressBar__(class gProgress *status, float v)
+void __glue_setProgressBar__(class gProgress *status, float v)
 {
 	status->value(status->value() + v);
 	//Fl::check();

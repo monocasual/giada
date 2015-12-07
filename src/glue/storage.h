@@ -51,6 +51,6 @@ static void __glue_fillPatchColumns__();
 static void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::plugin_t> *patch);
 #endif
 
-static void __setProgressBar__(class gProgress *status, float v);
+static void __glue_setProgressBar__(class gProgress *status, float v);
 
 #endif
