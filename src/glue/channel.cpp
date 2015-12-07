@@ -38,7 +38,7 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "glue.h"
-#include "mixer.h"
+#include "channel.h"
 
 
 extern gdMainWindow *mainWin;

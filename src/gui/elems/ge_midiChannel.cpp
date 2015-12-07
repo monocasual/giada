@@ -36,7 +36,7 @@
 #include "../../core/wave.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"
-#include "../../glue/mixer.h"
+#include "../../glue/channel.h"
 #include "../../glue/glue.h"
 #include "../../utils/gui_utils.h"
 #include "../dialogs/gd_mainWindow.h"

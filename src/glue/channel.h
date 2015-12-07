@@ -28,8 +28,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_MIXER_H
-#define GLUE_MIXER_H
+#ifndef GLUE_CHANNEL_H
+#define GLUE_CHANNEL_H
 
 
 #include "../core/patch.h"
@@ -55,7 +55,7 @@ void glue_deleteChannel(class Channel *ch);
 
 /* freeChannel
  * Unload the sample from a sample channel. */
- 
+
 void glue_freeChannel(class Channel *ch);
 
 int glue_cloneChannel();

@@ -36,7 +36,7 @@
 #include "../utils/utils.h"
 #include "../utils/log.h"
 #include "../glue/glue.h"
-#include "../glue/mixer.h"
+#include "../glue/channel.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "mixer.h"
