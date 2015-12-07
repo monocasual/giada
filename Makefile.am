@@ -53,6 +53,8 @@ src/glue/glue.h                        \
 src/glue/glue.cpp                      \
 src/glue/storage.h                     \
 src/glue/storage.cpp                   \
+src/glue/mixer.h                       \
+src/glue/mixer.cpp                     \
 src/gui/dialogs/gd_keyGrabber.h        \
 src/gui/dialogs/gd_keyGrabber.cpp      \
 src/gui/dialogs/gd_about.h             \
