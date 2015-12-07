@@ -30,6 +30,7 @@
 
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/elems/ge_keyboard.h"
+#include "../gui/elems/ge_channel.h"
 #include "../utils/gui_utils.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -101,4 +102,16 @@ void glue_freeChannel(Channel *ch)
 	mainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
 	ch->empty();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int glue_cloneChannel(Channel *src)
+{
+	Channel *ch    = G_Mixer.addChannel(src->type);
+	gChannel *gch  = mainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
+	ch->guiChannel = gch;
+	return true;
 }

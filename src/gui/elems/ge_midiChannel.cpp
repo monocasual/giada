@@ -187,6 +187,7 @@ void gMidiChannel::__cb_openMenu()
 		{"Setup MIDI input..."},                    // 6
 		{"Setup MIDI output..."},                   // 7
 		{"Delete channel"},                         // 8
+		{"Clone channel"},                          // 9
 		{0}
 	};
 
@@ -208,6 +209,11 @@ void gMidiChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
 			return;
 		glue_deleteChannel(ch);
+		return;
+	}
+
+	if (strcmp(m->label(), "Clone channel") == 0) {
+		glue_cloneChannel(ch);
 		return;
 	}
 

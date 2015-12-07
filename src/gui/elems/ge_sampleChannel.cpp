@@ -211,6 +211,7 @@ void gSampleChannel::__cb_openMenu()
 			{0},                                      // 12
 		{"Free channel"},                           // 13
 		{"Delete channel"},                         // 14
+		{"Clone channel"},                          // 15
 		{0}
 	};
 
@@ -296,6 +297,11 @@ void gSampleChannel::__cb_openMenu()
 		mainWin->delSubWindow(WID_SAMPLE_EDITOR);
 		mainWin->delSubWindow(WID_FX_LIST);
 
+		return;
+	}
+	
+	if (strcmp(m->label(), "Clone channel") == 0) {
+		glue_cloneChannel(ch);
 		return;
 	}
 
