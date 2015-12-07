@@ -35,19 +35,6 @@
 #ifndef GLUE_H
 #define GLUE_H
 
-/* addChannel
- * add an empty new channel to the stack. Returns the new channel. */
-
-class Channel *glue_addChannel(int column, int type);
-
-/* loadChannel
- * fill an existing channel with a wave. */
-
-int glue_loadChannel(class SampleChannel *ch, const char *fname);
-
-void glue_deleteChannel(class Channel *ch);
-
-void glue_freeChannel(class Channel *ch);
 
 /* keyPress / keyRelease
  * handle the key pressure, either via mouse/keyboard or MIDI. If gui

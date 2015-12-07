@@ -71,67 +71,6 @@ extern PluginHost		 G_PluginHost;
 static bool __soloSession__ = false;
 
 
-/* -------------------------------------------------------------------------- */
-
-
-int glue_loadChannel(SampleChannel *ch, const char *fname)
-{
-	/* save the patch and take the last browser's dir in order to re-use it
-	 * the next time */
-
-	G_Conf.samplePath = gDirname(fname);
-
-	int result = ch->load(fname);
-
-	if (result == SAMPLE_LOADED_OK)
-		mainWin->keyboard->updateChannel(ch->guiChannel);
-
-	return result;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Channel *glue_addChannel(int column, int type)
-{
-	Channel *ch    = G_Mixer.addChannel(type);
-	gChannel *gch  = mainWin->keyboard->addChannel(column, ch);
-	ch->guiChannel = gch;
-	glue_setChanVol(ch, 1.0, false); // false = not from gui click
-	return ch;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_deleteChannel(Channel *ch)
-{
-	int index = ch->index;
-	recorder::clearChan(index);
-	Fl::lock();
-	mainWin->keyboard->deleteChannel(ch->guiChannel);
-	Fl::unlock();
-	G_Mixer.deleteChannel(ch);
-	gu_closeAllSubwindows();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_freeChannel(Channel *ch)
-{
-	mainWin->keyboard->freeChannel(ch->guiChannel);
-	recorder::clearChan(ch->index);
-	ch->empty();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void glue_setBpm(const char *v1, const char *v2)
 {
 	char  buf[6];

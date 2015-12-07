@@ -44,6 +44,7 @@
 #include "../core/wave.h"
 #include "../utils/gui_utils.h"
 #include "glue.h" // TODO - remove, used only for DEPR calls
+#include "mixer.h"
 #include "storage.h"
 
 
@@ -53,7 +54,7 @@ using std::string;
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
 extern Patch         G_Patch;
-extern Conf    G_Conf;
+extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost		 G_PluginHost;

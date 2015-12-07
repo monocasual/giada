@@ -37,6 +37,7 @@
 #include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
+#include "../../glue/mixer.h"
 #include "../../glue/storage.h"
 #include "../elems/ge_browser.h"
 #include "../elems/ge_channel.h"
