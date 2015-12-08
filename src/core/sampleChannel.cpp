@@ -109,7 +109,8 @@ void SampleChannel::copy(const Channel *_src)
 	fadeoutStep     = src->fadeoutStep;
 	fadeoutType     = src->fadeoutType;
 	fadeoutEnd      = src->fadeoutEnd;
-	// TODO - wave
+	if (src->wave)
+		load(src->wave->pathfile.c_str());
 }
 
 
