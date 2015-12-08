@@ -130,7 +130,13 @@ void Channel::copy(const Channel *src)
   midiOutLmute    = src->midiOutLmute;
   midiOutLsolo    = src->midiOutLsolo;
 
-  // TODO - plugins
+#ifdef WITH_VST
+  for (unsigned i=0; i<src->plugins.size; i++) {
+    Plugin *p = src->plugins.at(i);
+    G_PluginHost.addPlugin(p->pathfile, PluginHost::CHANNEL, this);
+  }
+#endif
+
   // TODO - recs
 }
 
