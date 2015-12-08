@@ -60,6 +60,7 @@ public:
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
+	void copy       (const Channel *src);
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize);
 	void kill       (int frame);

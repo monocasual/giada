@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * sampleChannel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef SAMPLE_CHANNEL_H
@@ -35,8 +35,8 @@
 #include "channel.h"
 
 
-class SampleChannel : public Channel {
-
+class SampleChannel : public Channel
+{
 private:
 
 	/* rsmp_state, rsmp_data
@@ -83,6 +83,7 @@ public:
 	SampleChannel(int bufferSize);
 	~SampleChannel();
 
+	void copy       (const Channel *src);
 	void clear      ();
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize);

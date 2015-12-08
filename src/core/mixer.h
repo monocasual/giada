@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * mixer
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef MIXER_H
@@ -37,8 +37,8 @@
 #include "../utils/utils.h"
 
 
-class Mixer {
-
+class Mixer
+{
 public:
 
 	Mixer();
@@ -178,7 +178,6 @@ public:
 	pthread_mutex_t mutex_recs;
 	pthread_mutex_t mutex_chans;
 	pthread_mutex_t mutex_plugins;
-
 
 private:
 

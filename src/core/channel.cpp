@@ -54,38 +54,38 @@ extern PluginHost  G_PluginHost;
 
 
 Channel::Channel(int type, int status, int bufferSize)
-	: bufferSize(bufferSize),
-	  type      (type),
-		status    (status),
-		key       (0),
-	  volume    (DEFAULT_VOL),
-	  volume_i  (1.0f),
-	  volume_d  (0.0f),
-	  panLeft   (1.0f),
-	  panRight  (1.0f),
-	  mute_i    (false),
-	  mute_s    (false),
-	  mute      (false),
-	  solo      (false),
-	  hasActions(false),
-	  recStatus (REC_STOPPED),
-	  vChan     (NULL),
-	  guiChannel(NULL),
-	  midiIn         (true),
-	  midiInKeyPress (0x0),
-	  midiInKeyRel   (0x0),
-	  midiInKill     (0x0),
-	  midiInVolume   (0x0),
-	  midiInMute     (0x0),
-	  midiInSolo     (0x0),
-	  midiOutL       (false),
-	  midiOutLplaying(0x0),
-	  midiOutLmute   (0x0),
-	  midiOutLsolo   (0x0)
+: bufferSize(bufferSize),
+  type      (type),
+	status    (status),
+	key       (0),
+  volume    (DEFAULT_VOL),
+  volume_i  (1.0f),
+  volume_d  (0.0f),
+  panLeft   (1.0f),
+  panRight  (1.0f),
+  mute_i    (false),
+  mute_s    (false),
+  mute      (false),
+  solo      (false),
+  hasActions(false),
+  recStatus (REC_STOPPED),
+  vChan     (NULL),
+  guiChannel(NULL),
+  midiIn         (true),
+  midiInKeyPress (0x0),
+  midiInKeyRel   (0x0),
+  midiInKill     (0x0),
+  midiInVolume   (0x0),
+  midiInMute     (0x0),
+  midiInSolo     (0x0),
+  midiOutL       (false),
+  midiOutLplaying(0x0),
+  midiOutLmute   (0x0),
+  midiOutLsolo   (0x0)
 {
-	vChan = (float *) malloc(bufferSize * sizeof(float));
+  vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
-		gLog("[Channel] unable to alloc memory for vChan\n");
+		gLog("[Channel::allocVchan] unable to alloc memory for vChan\n");
 	memset(vChan, 0, bufferSize * sizeof(float));
 }
 
@@ -98,6 +98,40 @@ Channel::~Channel()
 	status = STATUS_OFF;
 	if (vChan)
 		free(vChan);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::copy(const Channel *src)
+{
+  key             = src->key;
+  volume          = src->volume;
+  volume_i        = src->volume_i;
+  volume_d        = src->volume_d;
+  panLeft         = src->panLeft;
+  panRight        = src->panRight;
+  mute_i          = src->mute_i;
+  mute_s          = src->mute_s;
+  mute            = src->mute;
+  solo            = src->solo;
+  hasActions      = src->hasActions;
+  recStatus       = src->recStatus;
+  midiIn          = src->midiIn;
+  midiInKeyPress  = src->midiInKeyPress;
+  midiInKeyRel    = src->midiInKeyRel;
+  midiInKill      = src->midiInKill;
+  midiInVolume    = src->midiInVolume;
+  midiInMute      = src->midiInMute;
+  midiInSolo      = src->midiInSolo;
+  midiOutL        = src->midiOutL;
+  midiOutLplaying = src->midiOutLplaying;
+  midiOutLmute    = src->midiOutLmute;
+  midiOutLsolo    = src->midiOutLsolo;
+
+  // TODO - plugins
+  // TODO - recs
 }
 
 

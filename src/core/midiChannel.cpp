@@ -66,6 +66,18 @@ MidiChannel::~MidiChannel() {}
 /* -------------------------------------------------------------------------- */
 
 
+void MidiChannel::copy(const Channel *_src)
+{
+	Channel::copy(_src);
+	MidiChannel *src = (MidiChannel *) _src;
+	midiOut     = src->midiOut;
+	midiOutChan = src->midiOutChan;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef WITH_VST
 
 void MidiChannel::freeVstMidiEvents(bool init)
@@ -307,7 +319,7 @@ int MidiChannel::readPatch(const string &basePath, int i)
 
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
-	
+
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 

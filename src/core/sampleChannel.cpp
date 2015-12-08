@@ -90,6 +90,32 @@ SampleChannel::~SampleChannel()
 /* -------------------------------------------------------------------------- */
 
 
+void SampleChannel::copy(const Channel *_src)
+{
+	Channel::copy(_src);
+	SampleChannel *src = (SampleChannel *) _src;
+	tracker         = src->tracker;
+	begin           = src->begin;
+	end             = src->end;
+	pitch           = src->pitch;
+	boost           = src->boost;
+	mode            = src->mode;
+	qWait           = src->qWait;
+	fadeinOn        = src->fadeinOn;
+	fadeinVol       = src->fadeinVol;
+	fadeoutOn       = src->fadeoutOn;
+	fadeoutVol      = src->fadeoutVol;
+	fadeoutTracker  = src->fadeoutTracker;
+	fadeoutStep     = src->fadeoutStep;
+	fadeoutType     = src->fadeoutType;
+	fadeoutEnd      = src->fadeoutEnd;
+	// TODO - wave
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void SampleChannel::clear()
 {
 	/** TODO - these memsets can be done only if status PLAY (if below),

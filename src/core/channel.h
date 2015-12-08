@@ -55,8 +55,8 @@
 using std::string;
 
 
-class Channel {
-
+class Channel
+{
 protected:
 
 	/* bufferSize
@@ -73,7 +73,13 @@ protected:
 public:
 
 	Channel(int type, int status, int bufferSize);
+
 	virtual ~Channel();
+
+	/* copy
+	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
+
+	virtual void copy(const Channel *src) = 0;
 
 	/* writePatch
 	 * Fill a patch with channel values. Returns the index of the last

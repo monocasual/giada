@@ -112,6 +112,10 @@ int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = G_Mixer.addChannel(src->type);
 	gChannel *gch  = mainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
+
 	ch->guiChannel = gch;
+	ch->copy(src);
+
+	mainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;
 }
