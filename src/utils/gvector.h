@@ -125,7 +125,7 @@ public:
 	}
 
 
-	T &at(unsigned p)
+	T &at(unsigned p) const // Member functions that do not modify the class instance should be declared as const
 	{
 		if (p > size-1)	gLog("[vector] at() outside! requested=%d, size=%d\n", p, size);
 		return s[p];
