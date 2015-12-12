@@ -178,16 +178,18 @@ check_PROGRAMS = giada_tests
 giada_tests_SOURCES =        \
 tests/main.cpp               \
 tests/conf.cpp               \
+tests/wave.cpp               \
 tests/patch.cpp              \
 tests/utils.cpp              \
 src/core/conf.cpp            \
+src/core/wave.cpp            \
 src/core/patch.cpp           \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
 src/utils/utils.cpp          \
 src/utils/log.cpp
 
-giada_tests_LDADD = -ljansson
+giada_tests_LDADD = -ljansson -lsndfile -lsamplerate
 
 # Ancient gcc on Travis complains about missing parentheses.
 # Catch also goes crazy with GCC 5.x (https://github.com/philsquared/Catch/issues/487)
