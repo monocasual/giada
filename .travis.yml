@@ -23,6 +23,13 @@ before_script:
   - cd jansson-2.7 && ./configure && make && sudo make install || true
   - sudo ldconfig
   - cd ..
+
+  # Download wave for test purposes
+
+  wget http://download.wavetlan.com/SVV/Media/HTTP/WAV/Media-Convert/Media-Convert_test3_PCM_Stereo_VBR_16SS_11025Hz.wav -O test.wav
+
+  # Build Giada
+
   - ./autogen.sh
   - ./configure --target=linux --enable-vst
 
