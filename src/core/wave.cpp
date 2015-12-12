@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * wave
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <stdio.h>
@@ -34,33 +34,46 @@
 #include "../utils/utils.h"
 #include "../utils/log.h"
 #include "wave.h"
-#include "conf.h"
 #include "init.h"
 
 
-extern Conf G_Conf;
-
-
 Wave::Wave()
-	: data     (NULL),
-		size     (0),
-		isLogical(0),
-		isEdited (0) {}
+: data     (NULL),
+	size     (0),
+	isLogical(0),
+	isEdited (0) {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-Wave::~Wave() {
+Wave::~Wave()
+{
 	clear();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Wave::open(const char *f) {
+Wave::Wave(const Wave &other)
+: data     (NULL),
+	size     (0),
+	isLogical(false),
+	isEdited (false)
+{
+	size = other.size;
+	data = new float[size];
+	memcpy(data, other.data, size * sizeof(float));
+	memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
+	isLogical = true;
+}
 
+/* -------------------------------------------------------------------------- */
+
+
+int Wave::open(const char *f)
+{
 	pathfile = f;
 	name     = gStripExt(gBasename(f).c_str());
 	fileIn   = sf_open(f, SFM_READ, &inHeader);
@@ -79,7 +92,7 @@ int Wave::open(const char *f) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 /* how to read and write with libsndfile:
  *
@@ -95,7 +108,8 @@ int Wave::open(const char *f) {
  * 	...
  */
 
-int Wave::readData() {
+int Wave::readData()
+{
 	size = inHeader.frames * inHeader.channels;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {
@@ -111,11 +125,11 @@ int Wave::readData() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Wave::writeData(const char *f) {
-
+int Wave::writeData(const char *f)
+{
 	/* prepare the header for output file */
 
 	outHeader.samplerate = inHeader.samplerate;
@@ -141,10 +155,11 @@ int Wave::writeData(const char *f) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Wave::clear() {
+void Wave::clear()
+{
 	if (data != NULL) {
 		free(data);
 		data     = NULL;
@@ -154,11 +169,11 @@ void Wave::clear() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Wave::allocEmpty(unsigned __size) {
-
+int Wave::allocEmpty(unsigned __size, unsigned samplerate)
+{
 	/* the caller must pass a __size for stereo values */
 
 	/// FIXME - this way if malloc fails size becomes wrong
@@ -171,7 +186,7 @@ int Wave::allocEmpty(unsigned __size) {
 
 	memset(data, 0, sizeof(float) * size); /// FIXME - is it useful?
 
-	inHeader.samplerate = G_Conf.samplerate;
+	inHeader.samplerate = samplerate;
 	inHeader.channels   = 2;
 	inHeader.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT; // wave only
 
@@ -180,11 +195,11 @@ int Wave::allocEmpty(unsigned __size) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Wave::resample(int quality, int newRate) {
-
+int Wave::resample(int quality, int newRate)
+{
 	float ratio = newRate / (float) inHeader.samplerate;
 	int newSize = ceil(size * ratio);
 	if (newSize % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
@@ -219,22 +234,25 @@ int Wave::resample(int quality, int newRate) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string Wave::basename() {
+std::string Wave::basename()
+{
 	return gStripExt(gBasename(pathfile.c_str()).c_str());
 }
 
-std::string Wave::extension() {
+std::string Wave::extension()
+{
 	return gGetExt(pathfile.c_str());
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Wave::updateName(const char *n) {
+void Wave::updateName(const char *n)
+{
 	std::string ext = gGetExt(pathfile.c_str());
 	name      = gStripExt(gBasename(n).c_str());
 	pathfile  = gDirname(pathfile.c_str()) + gGetSlash() + name + "." + ext;

@@ -187,7 +187,7 @@ SampleChannel *mh_startInputRec()
 		return NULL;
 
 	Wave *w = new Wave();
-	if (!w->allocEmpty(G_Mixer.totalFrames))
+	if (!w->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate))
 		return NULL;
 
 	/* increase lastTakeId until the sample name TAKE-[n] is unique */

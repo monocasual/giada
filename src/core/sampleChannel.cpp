@@ -696,7 +696,7 @@ void SampleChannel::pushWave(Wave *w)
 bool SampleChannel::allocEmpty(int frames, int takeId)
 {
 	Wave *w = new Wave();
-	if (!w->allocEmpty(frames))
+	if (!w->allocEmpty(frames, G_Conf.samplerate))
 		return false;
 
 	char wname[32];

@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * wave
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef WAVE_H
@@ -36,8 +36,8 @@
 #include <string>
 
 
-class Wave {
-
+class Wave
+{
 private:
 
 	SNDFILE   *fileIn;
@@ -45,10 +45,12 @@ private:
 	SF_INFO    inHeader;
 	SF_INFO    outHeader;
 
+
 public:
 
 	Wave();
 	~Wave();
+	Wave(const Wave &other);
 
 	std::string pathfile; // full path + sample name
 	std::string name;			// sample name (changeable)
@@ -77,7 +79,7 @@ public:
 	/* allocEmpty
 	 * alloc an empty waveform. */
 
-	int allocEmpty(unsigned size);
+	int allocEmpty(unsigned size, unsigned samplerate);
 
 	/* resample
 	 * simple algorithm for one-shot resampling. */
