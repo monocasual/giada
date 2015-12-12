@@ -20,6 +20,8 @@
 /test-driver
 /test-suite.log
 /test-patch.json
+/test.wav
+/test-write.wav
 
 # --- misc
 /AUTHORS
