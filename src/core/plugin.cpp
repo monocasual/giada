@@ -1,8 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -22,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
@@ -35,33 +35,34 @@
 int Plugin::id_generator = 0;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 Plugin::Plugin()
-	: module    (NULL),
-	  entryPoint(NULL),
-	  plugin    (NULL),
-	  id        (id_generator++),
-	  program   (-1),
-	  bypass    (false),
-	  suspended (false)
+: module    (NULL),
+  entryPoint(NULL),
+  plugin    (NULL),
+  id        (id_generator++),
+  program   (-1),
+  bypass    (false),
+  suspended (false)
 {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-Plugin::~Plugin() {
+Plugin::~Plugin()
+{
 	unload();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::unload() {
-
+int Plugin::unload()
+{
 	if (module == NULL)
 		return 1;
 
@@ -96,11 +97,11 @@ int Plugin::unload() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::load(const char *fname) {
-
+int Plugin::load(const char *fname)
+{
 	strcpy(pathfile, fname);
 
 #if defined(_WIN32)
@@ -163,11 +164,11 @@ int Plugin::load(const char *fname) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt)) {
-
+int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt))
+{
 #if defined(_WIN32)
 
 	entryPoint = (vstPluginFuncPtr) GetProcAddress((HMODULE)module, "VSTPluginMain");
@@ -241,11 +242,11 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::setup(int samplerate, int frames) {
-
+int Plugin::setup(int samplerate, int frames)
+{
   /* init plugin through the dispatcher with some basic infos */
 
   plugin->dispatcher(plugin, effOpen, 0, 0, 0, 0);
@@ -261,31 +262,35 @@ int Plugin::setup(int samplerate, int frames) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-AEffect *Plugin::getPlugin() {
+AEffect *Plugin::getPlugin()
+{
 	return plugin;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Plugin::getId() { return id; }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
-int Plugin::getSDKVersion() {
+
+int Plugin::getSDKVersion()
+{
 	return plugin->dispatcher(plugin, effGetVstVersion, 0, 0, 0, 0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getName(char *out) {
+void Plugin::getName(char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetEffectName, 0, 0, tmp, 0);
 	tmp[kVstMaxEffectNameLen-1] = '\0';
@@ -293,10 +298,11 @@ void Plugin::getName(char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getVendor(char *out) {
+void Plugin::getVendor(char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetVendorString, 0, 0, tmp, 0);
 	tmp[kVstMaxVendorStrLen-1] = '\0';
@@ -304,10 +310,11 @@ void Plugin::getVendor(char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getProduct(char *out) {
+void Plugin::getProduct(char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProductString, 0, 0, tmp, 0);
 	tmp[kVstMaxProductStrLen-1] = '\0';
@@ -315,16 +322,17 @@ void Plugin::getProduct(char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Plugin::getNumPrograms() { return plugin->numPrograms; }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::setProgram(int index) {
+int Plugin::setProgram(int index)
+{
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
 	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
 	gLog("[plugin] program changed, index %d\n", index);
@@ -333,28 +341,29 @@ int Plugin::setProgram(int index) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Plugin::getNumParams() { return plugin->numParams; }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Plugin::getNumInputs() { return plugin->numInputs; }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int Plugin::getNumOutputs() {	return plugin->numOutputs; }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getProgramName(int index, char *out) {
+void Plugin::getProgramName(int index, char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
 	tmp[kVstMaxProgNameLen-1] = '\0';
@@ -362,10 +371,11 @@ void Plugin::getProgramName(int index, char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamName(int index, char *out) {
+void Plugin::getParamName(int index, char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamName, index, 0, tmp, 0);
 	tmp[kVstMaxParamStrLen-1] = '\0';
@@ -373,10 +383,11 @@ void Plugin::getParamName(int index, char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamLabel(int index, char *out) {
+void Plugin::getParamLabel(int index, char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamLabel, index, 0, tmp, 0);
 	tmp[kVstMaxParamStrLen-1] = '\0';
@@ -384,10 +395,11 @@ void Plugin::getParamLabel(int index, char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamDisplay(int index, char *out) {
+void Plugin::getParamDisplay(int index, char *out)
+{
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
 	tmp[kVstMaxParamStrLen-1] = '\0';
@@ -395,34 +407,38 @@ void Plugin::getParamDisplay(int index, char *out) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-float Plugin::getParam(int index) {
+float Plugin::getParam(int index)
+{
 	return plugin->getParameter(plugin, index);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::setParam(int index, float value) {
+void Plugin::setParam(int index, float value)
+{
 	plugin->setParameter(plugin, index, value);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool Plugin::hasGui() {
+bool Plugin::hasGui()
+{
 	return plugin->flags & effFlagsHasEditor;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::openGui(void *w) {
+void Plugin::openGui(void *w)
+{
 	long val = 0;
 #ifdef __linux__
   val = (long) w;
@@ -431,88 +447,98 @@ void Plugin::openGui(void *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::closeGui() {
+void Plugin::closeGui()
+{
 	plugin->dispatcher(plugin, effEditClose, 0, 0, 0, 0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::getGuiWidth() {
+int Plugin::getGuiWidth()
+{
 	ERect *pErect = NULL;
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, &pErect, 0);
 	return pErect->top + pErect->right;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int Plugin::getGuiHeight() {
+int Plugin::getGuiHeight()
+{
 	ERect *pErect = NULL;
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, &pErect, 0);
 	return pErect->top + pErect->bottom;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::idle() {
+void Plugin::idle()
+{
 	plugin->dispatcher(plugin, effEditIdle, 0, 0, NULL, 0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::processAudio(float **in, float **out, long frames) {
+void Plugin::processAudio(float **in, float **out, long frames)
+{
 	plugin->processReplacing(plugin, in, out, frames);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::processEvents(VstEvents *events) {
+void Plugin::processEvents(VstEvents *events)
+{
 	plugin->dispatcher(plugin, effProcessEvents, 0, 0, events, 0.0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::resume() {
+void Plugin::resume()
+{
 	plugin->dispatcher(plugin, effMainsChanged, 0, 1, 0, 0);
 	suspended = false;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::suspend() {
+void Plugin::suspend()
+{
 	plugin->dispatcher(plugin, effMainsChanged, 0, 0, 0, 0);
 	suspended = true;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::close() {
+void Plugin::close()
+{
 	plugin->dispatcher(plugin, effClose, 0, 0, 0, 0);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void Plugin::getRect(ERect **out) {
+void Plugin::getRect(ERect **out)
+{
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, out, 0);
 }
 

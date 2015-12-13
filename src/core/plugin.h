@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * plugin
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 #ifdef WITH_VST
 
@@ -61,8 +61,8 @@
 typedef AEffect* (*vstPluginFuncPtr)(audioMasterCallback host);
 
 
-class Plugin {
-
+class Plugin
+{
 private:
 
 #if defined(_WIN32) || defined(__linux__)
@@ -90,6 +90,7 @@ private:
 	int unload();
 
 public:
+
 	Plugin();
 	~Plugin();
 
