@@ -24,7 +24,7 @@ before_script:
   - sudo ldconfig
   - cd ..
 
-  # Download wave for test purposes
+  # Download wav file for testing purposes
 
   - wget http://download.wavetlan.com/SVV/Media/HTTP/WAV/Media-Convert/Media-Convert_test3_PCM_Stereo_VBR_16SS_11025Hz.wav -O test.wav
 
