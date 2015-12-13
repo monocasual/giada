@@ -49,6 +49,9 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
+using std::string;
+
+
 SampleChannel::SampleChannel(int bufferSize)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
@@ -109,8 +112,26 @@ void SampleChannel::copy(const Channel *_src)
 	fadeoutStep     = src->fadeoutStep;
 	fadeoutType     = src->fadeoutType;
 	fadeoutEnd      = src->fadeoutEnd;
-	if (src->wave)
-		load(src->wave->pathfile.c_str());
+
+	if (src->wave) {
+		Wave *w = new Wave(*src->wave); // invoke Wave's copy constructor
+		pushWave(w);
+		generateUniqueSampleName();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleChannel::generateUniqueSampleName()
+{
+	string oldName = wave->name;
+	int k = 1; // Start from k = 1, zero is too nerdy
+	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
+		wave->updateName((oldName + "-" + gItoa(k)).c_str());
+		k++;
+	}
 }
 
 
@@ -835,15 +856,7 @@ int SampleChannel::load(const char *file)
 	}
 
 	pushWave(w);
-
-	/* sample name must be unique. Start from k = 1, zero is too nerdy */
-
-	std::string oldName = wave->name;
-	int k = 1;
-	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
-		wave->updateName((oldName + "-" + gItoa(k)).c_str());
-		k++;
-	}
+	generateUniqueSampleName();
 
 	gLog("[SampleChannel] %s loaded in channel %d\n", file, index);
 	return SAMPLE_LOADED_OK;

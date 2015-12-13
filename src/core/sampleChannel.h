@@ -78,6 +78,12 @@ private:
 
 	void calcVolumeEnv(int frame);
 
+	/* generateUniqueSampleName
+	 * Sample name must be unique. Generate a new samplename with the "-[n]"
+	 * suffix. */
+	 
+	void generateUniqueSampleName();
+
 public:
 
 	SampleChannel(int bufferSize);
