@@ -132,8 +132,11 @@ void Channel::copy(const Channel *src)
 
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size; i++) {
-    Plugin *p = src->plugins.at(i);
-    G_PluginHost.addPlugin(p->pathfile, PluginHost::CHANNEL, this);
+    Plugin *curP = src->plugins.at(i);
+    Plugin *newP = G_PluginHost.addPlugin(curP->pathfile, PluginHost::CHANNEL, this);
+    for (unsigned k=0; k<curP->getNumParams(); k++) {
+      newP->setParam(k, curP->getParam(k));
+    }
   }
 #endif
 
