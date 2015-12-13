@@ -130,12 +130,22 @@ void Channel::copy(const Channel *src)
   midiOutLmute    = src->midiOutLmute;
   midiOutLsolo    = src->midiOutLsolo;
 
+  /* clone plugins */
+
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size; i++)
     G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost::CHANNEL, this);
 #endif
 
-  // TODO - recs
+  /* clone actions */
+  
+  for (unsigned i=0; i<recorder::global.size; i++) {
+    for (unsigned k=0; k<recorder::global.at(i).size; k++) {
+      recorder::action *a = recorder::global.at(i).at(k);
+      if (a->chan == src->index)
+        recorder::rec(index, a->type, a->frame, a->iValue, a->fValue);
+    }
+  }
 }
 
 
