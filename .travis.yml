@@ -26,7 +26,7 @@ before_script:
 
   # Download wave for test purposes
 
-  wget http://download.wavetlan.com/SVV/Media/HTTP/WAV/Media-Convert/Media-Convert_test3_PCM_Stereo_VBR_16SS_11025Hz.wav -O test.wav
+  - wget http://download.wavetlan.com/SVV/Media/HTTP/WAV/Media-Convert/Media-Convert_test3_PCM_Stereo_VBR_16SS_11025Hz.wav -O test.wav
 
   # Build Giada
 
