@@ -67,8 +67,8 @@ public:
 	inline void channels(int v) { inHeader.channels = v; }
 	inline void frames  (int v) { inHeader.frames = v; }
 
-	std::string basename ();
-	std::string extension();
+	std::string basename () const;
+	std::string extension() const;
 
 	void updateName(const char *n);
 	int  open      (const char *f);

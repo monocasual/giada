@@ -66,6 +66,8 @@ Wave::Wave(const Wave &other)
 	data = new float[size];
 	memcpy(data, other.data, size * sizeof(float));
 	memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
+	pathfile = other.pathfile;
+	name = other.name;
 	isLogical = true;
 }
 
@@ -237,12 +239,12 @@ int Wave::resample(int quality, int newRate)
 /* -------------------------------------------------------------------------- */
 
 
-std::string Wave::basename()
+std::string Wave::basename() const
 {
 	return gStripExt(gBasename(pathfile.c_str()).c_str());
 }
 
-std::string Wave::extension()
+std::string Wave::extension() const
 {
 	return gGetExt(pathfile.c_str());
 }
