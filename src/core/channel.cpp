@@ -131,13 +131,8 @@ void Channel::copy(const Channel *src)
   midiOutLsolo    = src->midiOutLsolo;
 
 #ifdef WITH_VST
-  for (unsigned i=0; i<src->plugins.size; i++) {
-    Plugin *curP = src->plugins.at(i);
-    Plugin *newP = G_PluginHost.addPlugin(curP->pathfile, PluginHost::CHANNEL, this);
-    for (unsigned k=0; k<curP->getNumParams(); k++) {
-      newP->setParam(k, curP->getParam(k));
-    }
-  }
+  for (unsigned i=0; i<src->plugins.size; i++)
+    G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost::CHANNEL, this);
 #endif
 
   // TODO - recs

@@ -110,14 +110,14 @@ public:
 	void  getProduct(char *out);
 	int   getNumPrograms();        // list all programs
 	int   setProgram(int index);   // load a program
-	int   getNumParams();
+	int   getNumParams() const;
 	int   getNumInputs();
 	int   getNumOutputs();
 	void  getProgramName(int index, char *out);  // program = preset
 	void  getParamName(int index, char *out);
 	void  getParamLabel(int index, char *out);   // parameter's value(0, -39, ...)
 	void  getParamDisplay(int index, char *out); // parameter's unit measurement (dB, Pan, ...)
-	float getParam(int index);
+	float getParam(int index) const;
 	void  getRect(ERect **out);
 	void  setParam(int index, float value);
 

@@ -344,7 +344,7 @@ int Plugin::setProgram(int index)
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumParams() { return plugin->numParams; }
+int Plugin::getNumParams() const { return plugin->numParams; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -410,7 +410,7 @@ void Plugin::getParamDisplay(int index, char *out)
 /* -------------------------------------------------------------------------- */
 
 
-float Plugin::getParam(int index)
+float Plugin::getParam(int index) const
 {
 	return plugin->getParameter(plugin, index);
 }

@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * pluginHost
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 #ifdef WITH_VST
 
@@ -38,8 +38,8 @@
 #include "const.h"
 
 
-class PluginHost {
-
+class PluginHost
+{
 private:
 
 	/* VSTs have a different buffer model:
@@ -74,6 +74,8 @@ public:
 
 	PluginHost();
 	~PluginHost();
+
+	int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
 
 	int allocBuffers();
 
