@@ -100,7 +100,6 @@ void SampleChannel::copy(const Channel *_src)
 	tracker         = src->tracker;
 	begin           = src->begin;
 	end             = src->end;
-	pitch           = src->pitch;
 	boost           = src->boost;
 	mode            = src->mode;
 	qWait           = src->qWait;
@@ -112,6 +111,7 @@ void SampleChannel::copy(const Channel *_src)
 	fadeoutStep     = src->fadeoutStep;
 	fadeoutType     = src->fadeoutType;
 	fadeoutEnd      = src->fadeoutEnd;
+	setPitch(src->pitch);
 
 	if (src->wave) {
 		Wave *w = new Wave(*src->wave); // invoke Wave's copy constructor
