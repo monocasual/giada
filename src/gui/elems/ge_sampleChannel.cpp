@@ -209,16 +209,16 @@ void gSampleChannel::__cb_openMenu()
 			{"Volume"},                               // 10
 			{"Start/Stop"},                           // 11
 			{0},                                      // 12
-		{"Free channel"},                           // 13
-		{"Delete channel"},                         // 14
-		{"Clone channel"},                          // 15
+			{"Clone channel"},                        // 13
+		{"Free channel"},                           // 14
+		{"Delete channel"},                         // 15
 		{0}
 	};
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
 		rclick_menu[1].deactivate();
 		rclick_menu[5].deactivate();
-		rclick_menu[13].deactivate();
+		rclick_menu[14].deactivate();
 	}
 
 	/* no 'clear actions' if there are no actions */
@@ -299,7 +299,7 @@ void gSampleChannel::__cb_openMenu()
 
 		return;
 	}
-	
+
 	if (strcmp(m->label(), "Clone channel") == 0) {
 		glue_cloneChannel(ch);
 		return;

@@ -186,8 +186,8 @@ void gMidiChannel::__cb_openMenu()
 		{"Setup keyboard input..."},                // 5
 		{"Setup MIDI input..."},                    // 6
 		{"Setup MIDI output..."},                   // 7
-		{"Delete channel"},                         // 8
-		{"Clone channel"},                          // 9
+		{"Clone channel"},                          // 8
+		{"Delete channel"},                         // 9
 		{0}
 	};
 
