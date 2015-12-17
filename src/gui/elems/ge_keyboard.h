@@ -36,9 +36,13 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
+#include <vector>
 #include "../elems/ge_column.h"
 #include "../../core/const.h"
 #include "../../utils/utils.h"
+
+
+using std::vector;
 
 
 class gKeyboard : public Fl_Scroll
@@ -48,7 +52,7 @@ private:
 	/* refreshColIndexes
 	 * Recompute all column indexes in order to avoid any gaps between them.
 	 * Indexes must always be contiguous! */
-	 
+
 	void refreshColIndexes();
 
 	static void cb_addColumn  (Fl_Widget *v, void *p);
@@ -69,7 +73,7 @@ private:
 	/* columns
 	 * a vector of columns which in turn contain channels. */
 
-	gVector<gColumn*> columns;
+	vector<gColumn*> columns;
 
 public:
 
@@ -150,7 +154,7 @@ public:
 
 	/* getTotalColumns */
 
-	inline unsigned getTotalColumns() { return columns.size; }
+	inline unsigned getTotalColumns() { return columns.size(); }
 
 	/* getColumnWidth
 	 * return the width in pixel of i-th column. Warning: 'i' is the i-th column

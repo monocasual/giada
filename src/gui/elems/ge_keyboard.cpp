@@ -112,7 +112,7 @@ void gKeyboard::freeChannel(gChannel *gch)
 
 void gKeyboard::deleteChannel(gChannel *gch)
 {
-	for (unsigned i=0; i<columns.size; i++) {
+	for (unsigned i=0; i<columns.size(); i++) {
 		int k = columns.at(i)->find(gch);
 		if (k != columns.at(i)->children()) {
 			columns.at(i)->deleteChannel(gch);
@@ -139,26 +139,26 @@ void gKeyboard::organizeColumns()
 	/* if only one column exists don't cleanup: the initial column must
 	 * stay here. */
 
-	if (columns.size == 1)
+	if (columns.size() == 1)
 		return;
 
 	/* otherwise delete all empty columns */
 	/** FIXME - this for loop might not work correctly! */
 
-	for (unsigned i=columns.size-1; i>=1; i--) {
+	for (unsigned i=columns.size()-1; i>=1; i--) {
 		if (columns.at(i)->isEmpty()) {
 			//Fl::delete_widget(columns.at(i));
 			delete columns.at(i);
-			columns.del(i);
+			columns.erase(columns.begin() + i);
 		}
 	}
 
 	/* compact column, avoid empty spaces */
 
-	for (unsigned i=1; i<columns.size; i++)
+	for (unsigned i=1; i<columns.size(); i++)
 		columns.at(i)->position(columns.at(i-1)->x() + columns.at(i-1)->w() + 16, y());
 
-	addColumnBtn->position(columns.last()->x() + columns.last()->w() + 16, y());
+	addColumnBtn->position(columns.back()->x() + columns.back()->w() + 16, y());
 
 	/* recompute col indexes */
 
@@ -189,7 +189,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 
 	if (!col) {
 		__cb_addColumn();
-		col = columns.last();
+		col = columns.back();
 		col->setIndex(colIndex);
 		gLog("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
@@ -204,7 +204,7 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 
 void gKeyboard::refreshColumns()
 {
-	for (unsigned i=0; i<columns.size; i++)
+	for (unsigned i=0; i<columns.size(); i++)
 		columns.at(i)->refreshChannels();
 }
 
@@ -214,7 +214,7 @@ void gKeyboard::refreshColumns()
 
 gColumn *gKeyboard::getColumnByIndex(int index)
 {
-	for (unsigned i=0; i<columns.size; i++)
+	for (unsigned i=0; i<columns.size(); i++)
 		if (columns.at(i)->getIndex() == index)
 			return columns.at(i);
 	return NULL;
@@ -280,7 +280,7 @@ int gKeyboard::handle(int e)
 			 * If found, set that button's value() based on up/down event,
 			 * and invoke that button's callback() */
 
-			for (unsigned i=0; i<columns.size; i++)
+			for (unsigned i=0; i<columns.size(); i++)
 				for (int k=1; k<columns.at(i)->children(); k++)
 					ret &= ((gChannel*)columns.at(i)->child(k))->keyPress(e);
 			break;
@@ -295,7 +295,7 @@ int gKeyboard::handle(int e)
 
 void gKeyboard::clear()
 {
-	for (unsigned i=0; i<columns.size; i++)
+	for (unsigned i=0; i<columns.size(); i++)
 		delete columns.at(i);
 	columns.clear();
 	indexColumn = 0;     // new columns will start from index=0
@@ -347,12 +347,12 @@ void gKeyboard::__cb_addColumn(int width)
 	int colx;
 	int colxw;
 	int gap = 16;
-	if (columns.size == 0) {
+	if (columns.size() == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + width;
 	}
 	else {
-		gColumn *prev = columns.last();
+		gColumn *prev = columns.back();
 		colx  = prev->x()+prev->w() + gap;
 		colxw = colx + width;
 	}
@@ -361,7 +361,7 @@ void gKeyboard::__cb_addColumn(int width)
 
 	gColumn *gc = new gColumn(colx, y(), width, 2000, indexColumn, this);
   add(gc);
-	columns.add(gc);
+	columns.push_back(gc);
 	indexColumn++;
 
 	/* move addColumn button */
@@ -370,7 +370,7 @@ void gKeyboard::__cb_addColumn(int width)
 	redraw();
 
 	gLog("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
-		gc->getIndex(), width, columns.size, addColumnBtn->x());
+		gc->getIndex(), width, columns.size(), addColumnBtn->x());
 
 	/* recompute col indexes */
 
@@ -392,6 +392,6 @@ void gKeyboard::addColumn(int width)
 
 void gKeyboard::refreshColIndexes()
 {
-	for (unsigned i=0; i<columns.size; i++)
+	for (unsigned i=0; i<columns.size(); i++)
 		columns.at(i)->setIndex(i);
 }

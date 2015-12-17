@@ -58,6 +58,9 @@ void glue_deleteChannel(class Channel *ch);
 
 void glue_freeChannel(class Channel *ch);
 
+/* cloneChannel
+ * Make an exact copy of Channel *ch. */
+ 
 int glue_cloneChannel(class Channel *ch);
 
 
