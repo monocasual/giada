@@ -209,7 +209,7 @@ int Mixer::deleteChannel(Channel *ch)
 	}
 
 	if (index == -1) {
-		gLog("[Mixer::deleteChanne] unable to find Channel %d for deletion!\n", ch->index);
+		gLog("[Mixer::deleteChannel] unable to find Channel %d for deletion!\n", ch->index);
 		return 0;
 	}
 
