@@ -344,7 +344,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 
 		/* process channels */
 
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 
 			Channel *ch = (Channel*) G_Mixer.channels.at(i);
 

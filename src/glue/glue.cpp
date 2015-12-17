@@ -267,7 +267,7 @@ void glue_stopActionRec() {
 	recorder::active = false;
 	recorder::sortActions();
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
 			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 			if (ch->hasActions)
@@ -407,7 +407,7 @@ void glue_setInVol(float v, bool gui)
 void glue_clearAllSamples()
 {
 	G_Mixer.running = false;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		G_Mixer.channels.at(i)->empty();
 		G_Mixer.channels.at(i)->guiChannel->reset();
 	}
@@ -619,7 +619,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 	 * and start the session */
 
 	if (!__soloSession__) {
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 			Channel *och = G_Mixer.channels.at(i);
 			och->mute_s  = och->mute;
 		}
@@ -631,7 +631,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 
 	/* mute all other channels and unmute this (if muted) */
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		Channel *och = G_Mixer.channels.at(i);
 		if (!och->solo && !och->mute) {
 			och->setMute(false);
@@ -666,7 +666,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 
 	if (mh_uniqueSolo(ch)) {
 		__soloSession__ = false;
-		for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 			Channel *och = G_Mixer.channels.at(i);
 			if (och->mute_s) {
 				och->setMute(false);

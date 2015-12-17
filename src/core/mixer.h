@@ -32,9 +32,13 @@
 
 #include <stdlib.h>
 #include <pthread.h>
+#include <vector>
 #include "const.h"
 #include "kernelAudio.h"
 #include "../utils/utils.h"
+
+
+using std::vector;
 
 
 class Mixer
@@ -107,7 +111,10 @@ public:
 
 	Channel *getChannelByIndex(int i);
 
-	inline Channel* getLastChannel() { return channels.at(channels.size-1); }
+	/* getLastChannel
+	 * Return last channel in the stack. */
+
+	inline Channel* getLastChannel() { return channels.back(); }
 
 
 	/* ---------------------------------------------------------------- */
@@ -124,7 +131,7 @@ public:
 		XFADE   = 0x02
 	};
 
-	gVector<class Channel*> channels;
+	vector<class Channel*> channels;
 
 	bool   running;
 	bool   ready;

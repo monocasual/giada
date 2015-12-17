@@ -536,7 +536,7 @@ int Patch_DEPR_::readPlugins()
 
 	/* channel plugins */
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		Channel *ch = G_Mixer.channels.at(i);
 
 		char tmp[MAX_LINE_LEN];

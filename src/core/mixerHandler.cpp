@@ -67,7 +67,7 @@ extern PluginHost  G_PluginHost;
 void mh_stopSequencer()
 {
 	G_Mixer.running = false;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		G_Mixer.channels.at(i)->stopBySeq();
 }
 
@@ -78,7 +78,7 @@ void mh_stopSequencer()
 bool mh_uniqueSolo(Channel *ch)
 {
 	int solos = 0;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		Channel *ch = G_Mixer.channels.at(i);
 		if (ch->solo) solos++;
 		if (solos > 1) return false;
@@ -173,7 +173,7 @@ SampleChannel *mh_startInputRec()
 	/* search for the next available channel */
 
 	SampleChannel *chan = NULL;
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*) G_Mixer.channels.at(i))->canInputRec()) {
 			chan = (SampleChannel*) G_Mixer.channels.at(i);
@@ -236,7 +236,7 @@ SampleChannel *mh_stopInputRec()
 
 bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
 {
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (ch != G_Mixer.channels.at(i)) {
 			if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
 				SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);

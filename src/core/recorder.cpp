@@ -244,7 +244,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 
 	if (frame % 2 != 0)
 		frame++;
-		
+
 	/* find the frame 'frame' */
 
 	bool found = false;
@@ -332,7 +332,7 @@ void clearAll()
 		}
 	}
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		G_Mixer.channels.at(i)->hasActions  = false;
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
 			((SampleChannel*)G_Mixer.channels.at(i))->readActions = false;

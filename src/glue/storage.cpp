@@ -300,7 +300,7 @@ void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::p
 
 void __glue_fillPatchChannels__(bool isProject)
 {
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		G_Mixer.channels.at(i)->writePatch(i, isProject);
 	}
 }
@@ -318,7 +318,7 @@ void __glue_fillPatchColumns__()
 		pCol.width = gCol->w();
 		for (unsigned k=0; k<gCol->countChannels(); k++) {
 			Channel *colChannel = gCol->getChannel(k);
-			for (unsigned j=0; j<G_Mixer.channels.size; j++) {
+			for (unsigned j=0; j<G_Mixer.channels.size(); j++) {
 				Channel *mixerChannel = G_Mixer.channels.at(j);
 				if (colChannel == mixerChannel) {
 					pCol.channels.add(mixerChannel->index);
@@ -355,7 +355,7 @@ int glue_saveProject(const string &folderPath, const string &projName)
 	/* copy all samples inside the folder. Takes and logical ones are saved
 	 * via glue_saveSample() */
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 
 		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
 			continue;

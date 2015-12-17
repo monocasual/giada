@@ -210,7 +210,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 				if (masterIn.at(i)->getPlugin() == effect)
 					window = masterIn.at(i)->window;
 
-			for (unsigned i=0; i<G_Mixer.channels.size && !window; i++) {
+			for (unsigned i=0; i<G_Mixer.channels.size() && !window; i++) {
 				Channel *ch = G_Mixer.channels.at(i);
 				for (unsigned j=0; j<ch->plugins.size && !window; j++)
 					if (ch->plugins.at(j)->getPlugin() == effect)
@@ -540,7 +540,7 @@ void PluginHost::freeAllStacks()
 {
 	freeStack(PluginHost::MASTER_OUT);
 	freeStack(PluginHost::MASTER_IN);
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		freeStack(PluginHost::CHANNEL, G_Mixer.channels.at(i));
 }
 

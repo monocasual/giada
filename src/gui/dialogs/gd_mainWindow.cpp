@@ -368,12 +368,12 @@ void gMenu::__cb_edit()
 
 	menu[1].deactivate();
 
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->hasActions) {
 			menu[1].activate();
 			break;
 		}
-	for (unsigned i=0; i<G_Mixer.channels.size; i++)
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != NULL) {
 				menu[0].activate();

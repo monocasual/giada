@@ -163,14 +163,14 @@ Channel *Mixer::addChannel(int type)
 	while (true) {
 		int lockStatus = pthread_mutex_trylock(&mutex_chans);
 		if (lockStatus == 0) {
-			channels.add(ch);
+			channels.push_back(ch);
 			pthread_mutex_unlock(&mutex_chans);
 			break;
 		}
 	}
 
 	ch->index = getNewIndex();
-	gLog("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size);
+	gLog("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size());
 	return ch;
 }
 
@@ -182,11 +182,11 @@ int Mixer::getNewIndex()
 {
 	/* always skip last channel: it's the last one just added */
 
-	if (channels.size == 1)
+	if (channels.size() == 1)
 		return 0;
 
 	int index = 0;
-	for (unsigned i=0; i<channels.size-1; i++) {
+	for (unsigned i=0; i<channels.size()-1; i++) {
 		if (channels.at(i)->index > index)
 			index = channels.at(i)->index;
 		}
@@ -200,11 +200,24 @@ int Mixer::getNewIndex()
 
 int Mixer::deleteChannel(Channel *ch)
 {
+	int index = -1;
+	for (unsigned i=0; i<channels.size(); i++) {
+		if (channels.at(i) == ch) {
+			index = i;
+			break;
+		}
+	}
+
+	if (index == -1) {
+		gLog("[Mixer::deleteChanne] unable to find Channel %d for deletion!\n", ch->index);
+		return 0;
+	}
+
 	int lockStatus;
 	while (true) {
 		lockStatus = pthread_mutex_trylock(&mutex_chans);
 		if (lockStatus == 0) {
-			channels.del(ch);
+			channels.erase(channels.begin() + index);
 			delete ch;
 			pthread_mutex_unlock(&mutex_chans);
 			return 1;
@@ -220,7 +233,7 @@ int Mixer::deleteChannel(Channel *ch)
 
 Channel *Mixer::getChannelByIndex(int index)
 {
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
 	gLog("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
@@ -348,7 +361,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
 			((SampleChannel*)channels.at(i))->clear();
 	pthread_mutex_unlock(&mutex_chans);
@@ -407,7 +420,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 						rewind();
 					}
 					pthread_mutex_lock(&mutex_chans);
-					for (unsigned k=0; k<channels.size; k++)
+					for (unsigned k=0; k<channels.size(); k++)
 						channels.at(k)->quantize(k, j, actualFrame);  // j == localFrame
 					pthread_mutex_unlock(&mutex_chans);
 				}
@@ -420,7 +433,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 					tickPlay = true;
 
 				pthread_mutex_lock(&mutex_chans);
-				for (unsigned k=0; k<channels.size; k++)
+				for (unsigned k=0; k<channels.size(); k++)
 					channels.at(k)->onBar(j);
 				pthread_mutex_unlock(&mutex_chans);
 			}
@@ -429,7 +442,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 
 			if (actualFrame == 0) {
 				pthread_mutex_lock(&mutex_chans);
-				for (unsigned k=0; k<channels.size; k++)
+				for (unsigned k=0; k<channels.size(); k++)
 					channels.at(k)->onZero(j);
 				pthread_mutex_unlock(&mutex_chans);
 			}
@@ -478,7 +491,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 		/* sum channels, CHANNEL_SAMPLE only */
 
 		pthread_mutex_lock(&mutex_chans);
-		for (unsigned k=0; k<channels.size; k++) {
+		for (unsigned k=0; k<channels.size(); k++) {
 			if (channels.at(k)->type == CHANNEL_SAMPLE)
 				((SampleChannel*)channels.at(k))->sum(j, running);
 		}
@@ -511,7 +524,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 	/* final loop: sum virtual channels and process plugins. */
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size; k++)
+	for (unsigned k=0; k<channels.size(); k++)
 		channels.at(k)->process(outBuf);
 	pthread_mutex_unlock(&mutex_chans);
 
@@ -605,7 +618,7 @@ void Mixer::updateFrameBars()
 int Mixer::close()
 {
 	running = false;
-	while (channels.size > 0)
+	while (channels.size() > 0)
 		deleteChannel(channels.at(0));
 
 	if (vChanInput) {
@@ -625,7 +638,7 @@ int Mixer::close()
 
 bool Mixer::isSilent()
 {
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->status == STATUS_PLAY)
 			return false;
 	return true;
@@ -641,7 +654,7 @@ void Mixer::rewind()
 	actualBeat  = 0;
 
 	if (running)
-		for (unsigned i=0; i<channels.size; i++)
+		for (unsigned i=0; i<channels.size(); i++)
 			channels.at(i)->rewind();
 
 	sendMIDIrewind();
@@ -667,7 +680,7 @@ void Mixer::updateQuanto()
 
 bool Mixer::hasLogicalSamples()
 {
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*)channels.at(i))->wave)
 				if (((SampleChannel*)channels.at(i))->wave->isLogical)
@@ -681,7 +694,7 @@ bool Mixer::hasLogicalSamples()
 
 bool Mixer::hasEditedSamples()
 {
-	for (unsigned i=0; i<channels.size; i++)
+	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
 			if (((SampleChannel*)channels.at(i))->wave)
 				if (((SampleChannel*)channels.at(i))->wave->isEdited)
