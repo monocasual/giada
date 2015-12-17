@@ -2,6 +2,9 @@
 #include "catch.hpp"
 
 
+using std::vector;
+
+
 TEST_CASE("Test filesystem utils")
 {
   REQUIRE(gFileExists("giada_tests") == true);
@@ -23,9 +26,9 @@ TEST_CASE("Test string utils")
   REQUIRE(gTrim("   Giada is cool       ") == "Giada is cool");
   REQUIRE(gItoa(666) == "666");
 
-  gVector<std::string> v;
+  vector<std::string> v;
   gSplit("Giada is cool", " ", &v);
-  REQUIRE(v.size == 3);
+  REQUIRE(v.size() == 3);
   REQUIRE(v.at(0) == "Giada");
   REQUIRE(v.at(1) == "is");
   REQUIRE(v.at(2) == "cool");

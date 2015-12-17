@@ -4,6 +4,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 TEST_CASE("Test Patch class")
@@ -32,27 +33,27 @@ TEST_CASE("Test Patch class")
     action2.frame  = 589;
     action2.fValue = 1.0f;
     action2.iValue = 130;
-    channel1.actions.add(action1);
-    channel1.actions.add(action2);
+    channel1.actions.push_back(action1);
+    channel1.actions.push_back(action2);
 
 #ifdef WITH_VST
     plugin1.path   = "/path/to/plugin1";
     plugin1.bypass = false;
-    plugin1.params.add(0.0f);
-    plugin1.params.add(0.1f);
-    plugin1.params.add(0.2f);
-    channel1.plugins.add(plugin1);
+    plugin1.params.push_back(0.0f);
+    plugin1.params.push_back(0.1f);
+    plugin1.params.push_back(0.2f);
+    channel1.plugins.push_back(plugin1);
 
     plugin2.path   = "/another/path/to/plugin2";
     plugin2.bypass = true;
-    plugin2.params.add(0.6f);
-    plugin2.params.add(0.6f);
-    plugin2.params.add(0.6f);
-    plugin2.params.add(0.0f);
-    plugin2.params.add(1.0f);
-    plugin2.params.add(1.0f);
-    plugin2.params.add(0.333f);
-    channel1.plugins.add(plugin2);
+    plugin2.params.push_back(0.6f);
+    plugin2.params.push_back(0.6f);
+    plugin2.params.push_back(0.6f);
+    plugin2.params.push_back(0.0f);
+    plugin2.params.push_back(1.0f);
+    plugin2.params.push_back(1.0f);
+    plugin2.params.push_back(0.333f);
+    channel1.plugins.push_back(plugin2);
 #endif
 
     channel1.type              = CHANNEL_SAMPLE;
@@ -87,11 +88,11 @@ TEST_CASE("Test Patch class")
     channel1.midiInPitch       = 0;
     channel1.midiOut           = 0;
     channel1.midiOutChan       = 5;
-    patch.channels.add(channel1);
+    patch.channels.push_back(channel1);
 
     column.index = 0;
     column.width = 500;
-    patch.columns.add(column);
+    patch.columns.push_back(column);
 
     patch.header       = "GPTCH";
     patch.version      = "1.0";
@@ -111,8 +112,8 @@ TEST_CASE("Test Patch class")
 
 #ifdef WITH_VST
 
-    patch.masterInPlugins.add(plugin1);
-    patch.masterOutPlugins.add(plugin2);
+    patch.masterInPlugins.push_back(plugin1);
+    patch.masterOutPlugins.push_back(plugin2);
 
 #endif
 
