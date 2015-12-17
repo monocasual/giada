@@ -31,11 +31,15 @@
 #ifndef __PLUGIN_HOST_
 #define __PLUGIN_HOST_
 
+#include <vector>
 #include "../utils/utils.h"
 #include "../gui/elems/ge_window.h"
 #include "plugin.h"
 #include "init.h"
 #include "const.h"
+
+
+using std::vector;
 
 
 class PluginHost
@@ -69,8 +73,8 @@ public:
 
 	/* stack of Plugins */
 
-	gVector <Plugin *> masterOut;
-	gVector <Plugin *> masterIn;
+	vector <Plugin *> masterOut;
+	vector <Plugin *> masterIn;
 
 	PluginHost();
 	~PluginHost();
@@ -115,7 +119,7 @@ public:
 
 	VstMidiEvent *createVstMidiEvent(uint32_t msg);
 
-	gVector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
+	vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 
 	Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
 

@@ -49,7 +49,7 @@ gWindow::~gWindow() {
 
 	/* delete all subwindows in order to empty the stack */
 
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		delete subWindows.at(i);
 	subWindows.clear();
 }
@@ -73,7 +73,7 @@ void gWindow::cb_closeChild(Fl_Widget *v, void *p) {
 void gWindow::addSubWindow(gWindow *w) {
 
 	/** TODO - useless: delete ---------------------------------------- */
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
 			//gLog("[gWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
 			delete w;
@@ -83,7 +83,7 @@ void gWindow::addSubWindow(gWindow *w) {
 
 	w->setParent(this);
 	w->callback(cb_closeChild); // you can pass params: w->callback(cb_closeChild, (void*)params)
-	subWindows.add(w);
+	subWindows.push_back(w);
 	//debug();
 }
 
@@ -92,10 +92,10 @@ void gWindow::addSubWindow(gWindow *w) {
 
 
 void gWindow::delSubWindow(gWindow *w) {
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
 			delete subWindows.at(i);
-			subWindows.del(i);
+			subWindows.erase(subWindows.begin() + i);
 			//debug();
 			return;
 		}
@@ -107,10 +107,10 @@ void gWindow::delSubWindow(gWindow *w) {
 
 
 void gWindow::delSubWindow(int id) {
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		if (subWindows.at(i)->getId() == id) {
 			delete subWindows.at(i);
-			subWindows.del(i);
+			subWindows.erase(subWindows.begin() + i);
 			//debug();
 			return;
 		}
@@ -139,7 +139,7 @@ void gWindow::setId(int id) {
 
 void gWindow::debug() {
 	gLog("---- window stack (id=%d): ----\n", getId());
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		gLog("[gWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
 	gLog("----\n");
 }
@@ -165,7 +165,7 @@ void gWindow::setParent(gWindow *w) {
 
 
 bool gWindow::hasWindow(int id) {
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		if (id == subWindows.at(i)->getId())
 			return true;
 	return false;
@@ -176,7 +176,7 @@ bool gWindow::hasWindow(int id) {
 
 
 gWindow *gWindow::getChild(int id) {
-	for (unsigned i=0; i<subWindows.size; i++)
+	for (unsigned i=0; i<subWindows.size(); i++)
 		if (id == subWindows.at(i)->getId())
 			return subWindows.at(i);
 	return NULL;

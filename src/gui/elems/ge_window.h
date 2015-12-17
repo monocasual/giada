@@ -32,14 +32,18 @@
 #define __GE_WINDOW_H__
 
 
+#include <vector>
 #include <FL/Fl_Double_Window.H>
 #include "../../utils/utils.h"
+
+
+using std::vector;
 
 
 class gWindow : public Fl_Double_Window {
 
 protected:
-	gVector <gWindow *> subWindows;
+	vector <gWindow *> subWindows;
 	int id;
 	gWindow *parent;
 

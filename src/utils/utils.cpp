@@ -51,6 +51,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 bool gFileExists(const char *filename) {
@@ -389,7 +390,7 @@ string gGetHomePath()
 /* -------------------------------------------------------------------------- */
 
 
-void gSplit(string in, string sep, gVector<string> *v)
+void gSplit(string in, string sep, vector<string> *v)
 {
 	string full  = in;
 	string token = "";
@@ -400,7 +401,7 @@ void gSplit(string in, string sep, gVector<string> *v)
 	  next  = full.find_first_of(sep, curr);
 		token = full.substr(curr, next - curr);
 		if (token != "")
-			v->add(token);
+			v->push_back(token);
 	}
 	while (next != string::npos);
 }

@@ -30,6 +30,7 @@
 #ifdef WITH_VST
 
 
+#include <vector>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../utils/log.h"
 #include "pluginHost.h"
@@ -47,6 +48,9 @@ extern Mixer         G_Mixer;
 extern PluginHost    G_PluginHost;
 extern unsigned      G_beats;
 extern gdMainWindow *mainWin;
+
+
+using std::vector;
 
 
 PluginHost::PluginHost()
@@ -202,17 +206,17 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 
 		case audioMasterSizeWindow: {
 			gWindow *window = NULL;
-			for (unsigned i=0; i<masterOut.size && !window; i++)
+			for (unsigned i=0; i<masterOut.size() && !window; i++)
 				if (masterOut.at(i)->getPlugin() == effect)
 					window = masterOut.at(i)->window;
 
-			for (unsigned i=0; i<masterIn.size && !window; i++)
+			for (unsigned i=0; i<masterIn.size() && !window; i++)
 				if (masterIn.at(i)->getPlugin() == effect)
 					window = masterIn.at(i)->window;
 
 			for (unsigned i=0; i<G_Mixer.channels.size() && !window; i++) {
 				Channel *ch = G_Mixer.channels.at(i);
-				for (unsigned j=0; j<ch->plugins.size && !window; j++)
+				for (unsigned j=0; j<ch->plugins.size() && !window; j++)
 					if (ch->plugins.at(j)->getPlugin() == effect)
 						window = ch->plugins.at(j)->window;
 			}
@@ -331,7 +335,7 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 	Plugin *p    = new Plugin();
 	bool success = true;
 
-	gVector <Plugin *> *pStack;
+	vector <Plugin *> *pStack;
 	pStack = getStack(stackType, ch);
 
 	if (!p->load(fname)) {
@@ -344,7 +348,7 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 	 * useful to report a missing plugin. */
 
 	if (!success) {
-		pStack->add(p);
+		pStack->push_back(p);
 		return NULL;
 	}
 
@@ -369,14 +373,15 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 		while (true) {
 			lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 			if (lockStatus == 0) {
-				pStack->add(p);
+				pStack->push_back(p);
 				pthread_mutex_unlock(&G_Mixer.mutex_plugins);
 				break;
 			}
 		}
 
 		char name[256]; p->getName(name);
-		gLog("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n", p->getId(), name, stackType, pStack->size);
+		gLog("[pluginHost] plugin id=%d loaded (%s), stack type=%d, stack size=%d\n",
+			p->getId(), name, stackType, pStack->size());
 
 		/* p->resume() is suggested. Who knows... */
 
@@ -392,7 +397,7 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 
 void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin *> *pStack = getStack(stackType, ch);
 
 	/* empty stack, stack not found or mixer not ready: do nothing */
 	/// TODO - join evaluation
@@ -401,7 +406,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 		return;
 	if (pStack == NULL)
 		return;
-	if (pStack->size == 0)
+	if (pStack->size() == 0)
 		return;
 
 	/* converting buffer from Giada to VST */
@@ -414,7 +419,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 	/* hardcore processing. At the end we swap input and output, so that
 	 * the N-th plugin will process the result of the plugin N-1. */
 
-	for (unsigned i=0; i<pStack->size; i++) {
+	for (unsigned i=0; i<pStack->size(); i++) {
 		/// TODO - join evaluation
 
 		if (pStack->at(i)->status != 1)
@@ -479,8 +484,8 @@ void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, 
 
 Plugin *PluginHost::getPluginById(int id, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
-	for (unsigned i=0; i<pStack->size; i++) {
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	for (unsigned i=0; i<pStack->size(); i++) {
 		if (pStack->at(i)->getId() == id)
 			return pStack->at(i);
 	}
@@ -493,10 +498,10 @@ Plugin *PluginHost::getPluginById(int id, int stackType, Channel *ch)
 
 Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
-	if (pStack->size == 0)
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	if (pStack->size() == 0)
 		return NULL;
-	if ((unsigned) index >= pStack->size)
+	if ((unsigned) index >= pStack->size())
 		return NULL;
 	return pStack->at(index);
 }
@@ -507,17 +512,17 @@ Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
 
 void PluginHost::freeStack(int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack;
+	vector <Plugin *> *pStack;
 	pStack = getStack(stackType, ch);
 
-	if (pStack->size == 0)
+	if (pStack->size() == 0)
 		return;
 
 	int lockStatus;
 	while (true) {
 		lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 		if (lockStatus == 0) {
-			for (unsigned i=0; i<pStack->size; i++) {
+			for (unsigned i=0; i<pStack->size(); i++) {
 				if (pStack->at(i)->status == 1) {  // only if plugin is ok
 					pStack->at(i)->suspend();
 					pStack->at(i)->close();
@@ -550,17 +555,17 @@ void PluginHost::freeAllStacks()
 
 void PluginHost::freePlugin(int id, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack;
+	vector <Plugin *> *pStack;
 	pStack = getStack(stackType, ch);
 
 	/* try to delete the plugin until succeed. G_Mixer has priority. */
 
-	for (unsigned i=0; i<pStack->size; i++)
+	for (unsigned i=0; i<pStack->size(); i++)
 		if (pStack->at(i)->getId() == id) {
 
 			if (pStack->at(i)->status == 0) { // no frills if plugin is missing
 				delete pStack->at(i);
-				pStack->del(i);
+				pStack->erase(pStack->begin() + i);
 				return;
 			}
 			else {
@@ -571,7 +576,7 @@ void PluginHost::freePlugin(int id, int stackType, Channel *ch)
 						pStack->at(i)->suspend();
 						pStack->at(i)->close();
 						delete pStack->at(i);
-						pStack->del(i);
+						pStack->erase(pStack->begin() + i);
 						pthread_mutex_unlock(&G_Mixer.mutex_plugins);
 						gLog("[pluginHost] plugin id=%d removed\n", id);
 						return;
@@ -590,13 +595,14 @@ void PluginHost::freePlugin(int id, int stackType, Channel *ch)
 
 void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin *> *pStack = getStack(stackType, ch);
 
 	int lockStatus;
 	while (true) {
 		lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_plugins);
 		if (lockStatus == 0) {
-			pStack->swap(indexA, indexB);
+			//pStack->swap(indexA, indexB);
+			std::swap(pStack->at(indexA), pStack->at(indexB)); // FIXME - will it work???
 			pthread_mutex_unlock(&G_Mixer.mutex_plugins);
 			gLog("[pluginHost] plugin at index %d and %d swapped\n", indexA, indexB);
 			return;
@@ -612,9 +618,9 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Cha
 
 int PluginHost::getPluginIndex(int id, int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin *> *pStack = getStack(stackType, ch);
 
-	for (unsigned i=0; i<pStack->size; i++)
+	for (unsigned i=0; i<pStack->size(); i++)
 		if (pStack->at(i)->getId() == id)
 			return i;
 	return -1;
@@ -624,7 +630,7 @@ int PluginHost::getPluginIndex(int id, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-gVector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
+vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
 {
 	switch(stackType) {
 		case MASTER_OUT:
@@ -694,8 +700,8 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg)
 
 unsigned PluginHost::countPlugins(int stackType, Channel *ch)
 {
-	gVector <Plugin *> *pStack = getStack(stackType, ch);
-	return pStack->size;
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	return pStack->size();
 }
 
 

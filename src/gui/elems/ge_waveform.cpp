@@ -68,7 +68,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 
   grid.snap  = G_Conf.sampleEditorGridOn;
   grid.level = G_Conf.sampleEditorGridVal;
-  
+
   stretchToWindow();
 }
 
@@ -76,7 +76,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 /* ------------------------------------------------------------------ */
 
 
-gWaveform::~gWaveform() 
+gWaveform::~gWaveform()
 {
   freeData();
 }
@@ -85,7 +85,7 @@ gWaveform::~gWaveform()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::freeData() 
+void gWaveform::freeData()
 {
   if (data.sup != NULL) {
     free(data.sup);
@@ -122,7 +122,7 @@ int gWaveform::alloc(int datasize)
 
   int gridFreq = 0;
   if (grid.level != 0) {
-    gridFreq = chan->wave->size / grid.level; 
+    gridFreq = chan->wave->size / grid.level;
     if (gridFreq % 2 != 0)
       gridFreq--;
   }
@@ -164,8 +164,8 @@ int gWaveform::alloc(int datasize)
 
       if (gridFreq != 0)
         if (k % gridFreq == 0 && k != 0)
-          grid.points.add(i);
-      
+          grid.points.push_back(i);
+
       k += 2;
     }
 
@@ -186,7 +186,7 @@ int gWaveform::alloc(int datasize)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::recalcPoints() 
+void gWaveform::recalcPoints()
 {
   selectionA = relativePoint(selectionA_abs);
   selectionB = relativePoint(selectionB_abs);
@@ -205,7 +205,7 @@ void gWaveform::recalcPoints()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::draw() 
+void gWaveform::draw()
 {
   /* blank canvas */
 
@@ -245,10 +245,10 @@ void gWaveform::draw()
   for (int i=wx1; i<wx2; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
-    
+
     /* print grid */
 
-    for (unsigned k=0; k<grid.points.size; k++) {
+    for (unsigned k=0; k<grid.points.size(); k++) {
       if (grid.points.at(k) == i) {
         //gLog("draw grid line at %d\n", i);
         fl_color(fl_rgb_color(54, 54, 54));
@@ -307,7 +307,7 @@ void gWaveform::draw()
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::handle(int e) 
+int gWaveform::handle(int e)
 {
   int ret = 0;
 
@@ -433,8 +433,8 @@ int gWaveform::handle(int e)
       if (chanStartLit && pushed) {
 
         chanStart = Fl::event_x() - x();
-      
-        if (grid.snap) 
+
+        if (grid.snap)
           chanStart = applySnap(chanStart);
 
         if (chanStart < 0)
@@ -442,7 +442,7 @@ int gWaveform::handle(int e)
         else
         if (chanStart >= chanEnd)
           chanStart = chanEnd-2;
-        
+
         redraw();
       }
       else
@@ -450,7 +450,7 @@ int gWaveform::handle(int e)
 
         chanEnd = Fl::event_x() - x();
 
-        if (grid.snap) 
+        if (grid.snap)
           chanEnd = applySnap(chanEnd);
 
         if (chanEnd >= data.size - 2)
@@ -474,7 +474,7 @@ int gWaveform::handle(int e)
 
         if (selectionB <= 0)
           selectionB = 0;
-       
+
         if (grid.snap)
           selectionB = applySnap(selectionB);
 
@@ -483,7 +483,7 @@ int gWaveform::handle(int e)
       }
 
       /* here the mouse is on a selection boundary i.e. resize */
-      
+
       else
       if (resized) {
         int pos = Fl::event_x() - x();
@@ -509,13 +509,13 @@ int gWaveform::handle(int e)
 
 /* ------------------------------------------------------------------ */
 
-/* pixel snap disances (10px) must be equal to those defined in 
+/* pixel snap disances (10px) must be equal to those defined in
  * gWaveform::mouseOnSelectionA() and gWaverfrom::mouseOnSelectionB() */
 /* TODO - use constant for 10px */
 
 int gWaveform::applySnap(int pos)
 {
-  for (unsigned i=0; i<grid.points.size; i++) {
+  for (unsigned i=0; i<grid.points.size(); i++) {
     if (pos >= grid.points.at(i) - 10 &&
         pos <= grid.points.at(i) + 10)
     {
@@ -529,7 +529,7 @@ int gWaveform::applySnap(int pos)
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnStart() 
+bool gWaveform::mouseOnStart()
 {
   return mouseX-10 >  chanStart + x() - BORDER              &&
          mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
@@ -540,7 +540,7 @@ bool gWaveform::mouseOnStart()
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnEnd() 
+bool gWaveform::mouseOnEnd()
 {
   return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
          mouseX-10 <= chanEnd + x() - BORDER              &&
@@ -553,7 +553,7 @@ bool gWaveform::mouseOnEnd()
 /* pixel boundaries (10px) must be equal to the snap factor distance
  * defined in gWaveform::applySnap() */
 
-bool gWaveform::mouseOnSelectionA() 
+bool gWaveform::mouseOnSelectionA()
 {
   if (selectionA == selectionB)
     return false;
@@ -561,7 +561,7 @@ bool gWaveform::mouseOnSelectionA()
 }
 
 
-bool gWaveform::mouseOnSelectionB() 
+bool gWaveform::mouseOnSelectionB()
 {
   if (selectionA == selectionB)
     return false;
@@ -572,7 +572,7 @@ bool gWaveform::mouseOnSelectionB()
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::absolutePoint(int p) 
+int gWaveform::absolutePoint(int p)
 {
   if (p <= 0)
     return 0;
@@ -587,7 +587,7 @@ int gWaveform::absolutePoint(int p)
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::relativePoint(int p) 
+int gWaveform::relativePoint(int p)
 {
   return (ceilf(p / ratio)) * 2;
 }
@@ -596,7 +596,7 @@ int gWaveform::relativePoint(int p)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::openEditMenu() 
+void gWaveform::openEditMenu()
 {
   if (selectionA == selectionB)
     return;
@@ -745,7 +745,7 @@ void gWaveform::openEditMenu()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::straightSel() 
+void gWaveform::straightSel()
 {
   if (selectionA > selectionB) {
     unsigned tmp = selectionB;
@@ -758,7 +758,7 @@ void gWaveform::straightSel()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::setZoom(int type) 
+void gWaveform::setZoom(int type)
 {
   int newSize;
   if (type == -1) newSize = data.size*2;  // zoom in
@@ -808,7 +808,7 @@ void gWaveform::setZoom(int type)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::stretchToWindow() 
+void gWaveform::stretchToWindow()
 {
   int s = ((gWaveTools*)parent())->w();
   alloc(s);
@@ -820,7 +820,7 @@ void gWaveform::stretchToWindow()
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::smaller() 
+bool gWaveform::smaller()
 {
   return w() < ((gWaveTools*)parent())->w();
 }
@@ -831,7 +831,7 @@ bool gWaveform::smaller()
 
 void gWaveform::setGridLevel(int l)
 {
-  grid.points.clear();  
+  grid.points.clear();
   grid.level = l;
   alloc(data.size);
   redraw();

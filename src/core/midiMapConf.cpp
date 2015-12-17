@@ -28,6 +28,7 @@
 
 
 #include <stdlib.h>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -39,6 +40,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 void MidiMapConf::init()
@@ -66,7 +68,7 @@ void MidiMapConf::init()
 
 		gLog("[MidiMapConf::init] found midimap '%s'\n", ep->d_name);
 
-		maps.add(ep->d_name);
+		maps.push_back(ep->d_name);
 	}
 
 	closedir(dp);
@@ -147,9 +149,9 @@ int MidiMapConf::readMap(string file)
 
 	/* parse init commands */
 
-	gVector<string> ic;
+	vector<string> ic;
 	gSplit(getValue("init_commands"), ";", &ic);
-	for (unsigned i=0; i<(unsigned)MAX_INIT_COMMANDS && i<ic.size; i++) {
+	for (unsigned i=0; i<(unsigned)MAX_INIT_COMMANDS && i<ic.size(); i++) {
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
 		gLog("[MidiMapConf::readFromFile] init command %d - channel %d - message 0x%X\n",
 				i, init_channels[i], init_messages[i]);

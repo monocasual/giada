@@ -310,7 +310,7 @@ void gdPlugin::__cb_shiftDown() {
 		return;
 
 	unsigned pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
-	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size;
+	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size();
 
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;

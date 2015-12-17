@@ -82,7 +82,7 @@ void gMuteChannel::draw() {
 	int py    = y()+h()-5;
 	int pyDot = py-6;
 
-	for (unsigned i=0; i<points.size; i++) {
+	for (unsigned i=0; i<points.size(); i++) {
 
 		/* next px */
 
@@ -126,15 +126,15 @@ void gMuteChannel::extractPoints() {
 
 	/* actions are already sorted by recorder::sortActions() */
 
-	for (unsigned i=0; i<recorder::frames.size; i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 			if (recorder::global.at(i).at(j)->chan == pParent->chan->index) {
 				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
 					p.frame = recorder::frames.at(i);
 					p.type  = recorder::global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
-					points.add(p);
+					points.push_back(p);
 					//gLog("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
 			}
@@ -147,7 +147,7 @@ void gMuteChannel::extractPoints() {
 
 
 void gMuteChannel::updateActions() {
-	for (unsigned i=0; i<points.size; i++)
+	for (unsigned i=0; i<points.size(); i++)
 		points.at(i).x = points.at(i).frame / pParent->zoom;
 }
 
@@ -207,8 +207,8 @@ int gMuteChannel::handle(int e) {
 					 * must be added in reverse: first mute_off then mute_on. Let's find the
 					 * next point from here. */
 
-					unsigned nextPoint = points.size;
-					for (unsigned i=0; i<points.size; i++) {
+					unsigned nextPoint = points.size();
+					for (unsigned i=0; i<points.size(); i++) {
 						if (mouseX < points.at(i).x) {
 							nextPoint = i;
 							break;
@@ -346,7 +346,7 @@ int gMuteChannel::handle(int e) {
 						nextPoint -= pParent->gridTool->getCellSize();
 				}
 				else
-				if ((unsigned) draggedPoint == points.size-1) {
+				if ((unsigned) draggedPoint == points.size()-1) {
 					prevPoint = points.at(draggedPoint-1).x + 1;
 					nextPoint = pParent->coverX-x();
 					if (pParent->gridTool->isOn())
@@ -388,7 +388,7 @@ int gMuteChannel::handle(int e) {
 
 
 bool gMuteChannel::pointCollides(int frame) {
-	for (unsigned i=0; i<points.size; i++)
+	for (unsigned i=0; i<points.size(); i++)
 		if (frame == points.at(i).frame)
 			return true;
 	return false;
@@ -402,7 +402,7 @@ int gMuteChannel::getSelectedPoint() {
 
 	/* point is a 7x7 dot */
 
-	for (unsigned i=0; i<points.size; i++) {
+	for (unsigned i=0; i<points.size(); i++) {
 		if (Fl::event_x() >= points.at(i).x+x()-3 &&
 				Fl::event_x() <= points.at(i).x+x()+3)
 		return i;

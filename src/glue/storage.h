@@ -32,10 +32,12 @@
 #define GLUE_STORAGE_H
 
 
+#include <vector>
 #include "../core/patch.h"
 
 
 using std::string;
+using std::vector;
 
 
 int glue_loadPatch  (const string &fullPath, class gProgress *status, bool isProject);
@@ -48,7 +50,7 @@ static void __glue_fillPatchChannels__(bool isProject);
 static void __glue_fillPatchColumns__();
 
 #ifdef WITH_VST
-static void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::plugin_t> *patch);
+static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch);
 #endif
 
 static void __glue_setProgressBar__(class gProgress *status, float v);

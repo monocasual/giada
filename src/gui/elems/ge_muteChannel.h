@@ -31,6 +31,8 @@
 #ifndef GE_MUTECHANNEL_H
 #define GE_MUTECHANNEL_H
 
+
+#include <vector>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
@@ -38,8 +40,11 @@
 #include "ge_actionWidget.h"
 
 
-class gMuteChannel : public gActionWidget {
+using std::vector;
 
+
+class gMuteChannel : public gActionWidget
+{
 private:
 
 	/* point
@@ -54,7 +59,7 @@ private:
 	/* points
 	 * array of on/off points, in frames */
 
-	gVector<point> points;
+	vector<point> points;
 
 	/* draggedPoint
 	 * which point we are dragging? */
@@ -73,7 +78,7 @@ private:
 
 	/* extractPoints
 	 * va a leggere l'array di azioni di Recorder ed estrae tutti i punti
-	 * interessanti mute_on o mute_off. Li mette poi nel gVector points. */
+	 * interessanti mute_on o mute_off. Li mette poi nel vector points. */
 	void extractPoints();
 
 	/* getSelectedPoint

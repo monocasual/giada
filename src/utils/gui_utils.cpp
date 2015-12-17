@@ -105,8 +105,8 @@ void gu_updateControls()
 	mainWin->inOut->setOutVol(G_Mixer.outVol);
 	mainWin->inOut->setInVol(G_Mixer.inVol);
 #ifdef WITH_VST
-	mainWin->inOut->setMasterFxOutFull(G_PluginHost.masterOut.size > 0);
-	mainWin->inOut->setMasterFxInFull(G_PluginHost.masterIn.size > 0);
+	mainWin->inOut->setMasterFxOutFull(G_PluginHost.masterOut.size() > 0);
+	mainWin->inOut->setMasterFxInFull(G_PluginHost.masterIn.size() > 0);
 #endif
 
 	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);

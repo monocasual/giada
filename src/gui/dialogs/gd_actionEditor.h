@@ -30,10 +30,14 @@
 #ifndef GD_ACTIONEDITOR_H
 #define GD_ACTIONEDITOR_H
 
+#include <vector>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 #include "../elems/ge_window.h"
+
+
+using std::vector;
 
 
 /* gActionEditor
@@ -75,7 +79,7 @@ public:
 	class gEnvelopeChannel    *vc;
 	class gPianoRollContainer *pr;
 
-	gVector <class gActionWidget*> widgets;
+	vector <class gActionWidget*> widgets;
 
 	class Channel *chan;
 
@@ -120,11 +124,11 @@ public:
 
 	int getCellSize();
 
-	gVector<int> points;   // points of the grid
-	gVector<int> frames;   // frames of the grid
+	vector<int> points;   // points of the grid
+	vector<int> frames;   // frames of the grid
 
-	gVector<int> bars;
-	gVector<int> beats;
+	vector<int> bars;
+	vector<int> beats;
 };
 
 

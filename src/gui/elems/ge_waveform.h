@@ -31,11 +31,16 @@
 #ifndef GE_WAVEFORM_H
 #define GE_WAVEFORM_H
 
+
+#include <vector>
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <math.h>
 #include "../../utils/utils.h"
+
+
+using std::vector;
 
 
 #define  FLAG_WIDTH  14
@@ -49,7 +54,7 @@ private:
 
 	/* data
 	 * real graphic stuff from the underlying waveform */
-	
+
 	struct data {
 		int *sup;
 		int *inf;
@@ -61,7 +66,7 @@ private:
 	struct grid {
 		bool snap;
 		int  level;
-		gVector<int> points;
+		vector<int> points;
 	} grid;
 
 	/* chan
@@ -138,7 +143,7 @@ public:
 
 	/* openEditMenu
 	 * show edit menu on right-click */
-	
+
 	void openEditMenu();
 
 	/* displayRatio
@@ -155,7 +160,7 @@ public:
 	 * shrink or enlarge the waveform to match parent's width (gWaveTools) */
 
 	void stretchToWindow();
-	
+
 	/* setGridLevel
 	 * set a new frequency level for the grid. 0 means disabled. */
 
@@ -163,7 +168,7 @@ public:
 
   inline void setSnap(bool v) { grid.snap = v; }
   inline bool getSnap()       { return grid.snap; }
-    
+
 	inline int getSize() { return data.size; }
 
 	int  chanStart;
@@ -175,7 +180,7 @@ public:
 	bool resized;
 
 	float ratio;
-  
+
   /* TODO - useless! use Fl::mouse_x() and Fl::mouse_y() instead */
 	int  mouseX;					 // mouse pos for drag.n.drop
 	int  mouseY;

@@ -125,10 +125,10 @@ int Patch::read(const string &file)
 
 #ifdef WITH_VST
 
-void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const char *key)
+void Patch::writePlugins(json_t *jContainer, vector<plugin_t> *plugins, const char *key)
 {
   json_t *jPlugins = json_array();
-  for (unsigned j=0; j<plugins->size; j++) {
+  for (unsigned j=0; j<plugins->size(); j++) {
     json_t   *jPlugin = json_object();
     plugin_t  plugin  = plugins->at(j);
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PATH,     json_string(plugin.path.c_str()));
@@ -138,7 +138,7 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const c
     /* plugin params */
 
     json_t *jPluginParams = json_array();
-    for (unsigned z=0; z<plugin.params.size; z++) {
+    for (unsigned z=0; z<plugin.params.size(); z++) {
       json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
     }
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PARAMS, jPluginParams);
@@ -152,10 +152,10 @@ void Patch::writePlugins(json_t *jContainer, gVector<plugin_t> *plugins, const c
 /* -------------------------------------------------------------------------- */
 
 
-void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
+void Patch::writeColumns(json_t *jContainer, vector<column_t> *columns)
 {
   json_t *jColumns = json_array();
-  for (unsigned i=0; i<columns->size; i++) {
+  for (unsigned i=0; i<columns->size(); i++) {
     json_t   *jColumn = json_object();
     column_t  column  = columns->at(i);
     json_object_set_new(jColumn, PATCH_KEY_COLUMN_INDEX, json_integer(column.index));
@@ -169,10 +169,10 @@ void Patch::writeColumns(json_t *jContainer, gVector<column_t> *columns)
 /* -------------------------------------------------------------------------- */
 
 
-void Patch::writeActions(json_t *jContainer, gVector<action_t> *actions)
+void Patch::writeActions(json_t *jContainer, vector<action_t> *actions)
 {
   json_t *jActions = json_array();
-  for (unsigned k=0; k<actions->size; k++) {
+  for (unsigned k=0; k<actions->size(); k++) {
     json_t   *jAction = json_object();
     action_t  action  = actions->at(k);
     json_object_set_new(jAction, PATCH_KEY_ACTION_TYPE,    json_integer(action.type));
@@ -211,10 +211,10 @@ void Patch::writeCommons(json_t *jContainer)
 /* -------------------------------------------------------------------------- */
 
 
-void Patch::writeChannels(json_t *jContainer, gVector<channel_t> *channels)
+void Patch::writeChannels(json_t *jContainer, vector<channel_t> *channels)
 {
   json_t *jChannels = json_array();
-  for (unsigned i=0; i<channels->size; i++) {
+  for (unsigned i=0; i<channels->size(); i++) {
     json_t    *jChannel = json_object();
     channel_t  channel  = channels->at(i);
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_TYPE,                 json_integer(channel.type));
@@ -308,7 +308,7 @@ bool Patch::readColumns(json_t *jContainer)
     if (!setInt(jColumn, PATCH_KEY_COLUMN_INDEX, column.index)) return 0;
     if (!setInt(jColumn, PATCH_KEY_COLUMN_WIDTH, column.width)) return 0;
 
-    columns.add(column);
+    columns.push_back(column);
   }
   return 1;
 }
@@ -371,7 +371,7 @@ bool Patch::readChannels(json_t *jContainer)
 #ifdef WITH_VST
     readPlugins(jChannel, &channel.plugins, PATCH_KEY_CHANNEL_PLUGINS);
 #endif
-    channels.add(channel);
+    channels.push_back(channel);
   }
   return 1;
 }
@@ -398,7 +398,7 @@ bool Patch::readActions(json_t *jContainer, channel_t *channel)
     if (!setInt   (jAction, PATCH_KEY_ACTION_FRAME,   action.frame)) return 0;
     if (!setFloat (jAction, PATCH_KEY_ACTION_F_VALUE, action.fValue)) return 0;
     if (!setUint32(jAction, PATCH_KEY_ACTION_I_VALUE, action.iValue)) return 0;
-    channel->actions.add(action);
+    channel->actions.push_back(action);
   }
   return 1;
 }
@@ -409,7 +409,7 @@ bool Patch::readActions(json_t *jContainer, channel_t *channel)
 
 #ifdef WITH_VST
 
-bool Patch::readPlugins(json_t *jContainer, gVector<plugin_t> *container, const char *key)
+bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const char *key)
 {
   json_t *jPlugins = json_object_get(jContainer, key);
   if (!checkArray(jPlugins, key))
@@ -434,9 +434,9 @@ bool Patch::readPlugins(json_t *jContainer, gVector<plugin_t> *container, const 
     size_t paramIndex;
     json_t *jParam;
     json_array_foreach(jParams, paramIndex, jParam)
-      plugin.params.add(json_real_value(jParam));
+      plugin.params.push_back(json_real_value(jParam));
 
-    container->add(plugin);
+    container->push_back(plugin);
   }
   return 1;
 }
@@ -457,13 +457,13 @@ void Patch::sanitize()
   masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? DEFAULT_VOL : masterVolOut;
   samplerate   = samplerate <= 0 ? DEFAULT_SAMPLERATE : samplerate;
 
-  for (unsigned i=0; i<columns.size; i++) {
+  for (unsigned i=0; i<columns.size(); i++) {
     column_t *col = &columns.at(i);
     col->index = col->index < 0 ? 0 : col->index;
     col->width = col->width < MIN_COLUMN_WIDTH ? MIN_COLUMN_WIDTH : col->width;
   }
 
-  for (unsigned i=0; i<channels.size; i++) {
+  for (unsigned i=0; i<channels.size(); i++) {
     channel_t *ch = &channels.at(i);
     ch->volume   = ch->volume < 0.0f || ch->volume > 1.0f ? DEFAULT_VOL : ch->volume;
     ch->panLeft  = ch->panLeft < 0.0f || ch->panLeft > 1.0f ? 1.0f : ch->panLeft;

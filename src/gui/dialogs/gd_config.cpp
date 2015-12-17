@@ -606,13 +606,13 @@ void gTabMidi::fetchInPorts()
 
 void gTabMidi::fetchMidiMaps()
 {
-	if (G_MidiMap.maps.size == 0) {
+	if (G_MidiMap.maps.size() == 0) {
 		midiMap->add("(no MIDI maps available)");
 		midiMap->value(0);
 		midiMap->deactivate();
 		return;
 	}
-	for (unsigned i=0; i<G_MidiMap.maps.size; i++) {
+	for (unsigned i=0; i<G_MidiMap.maps.size(); i++) {
 		const char *imap = G_MidiMap.maps.at(i).c_str();
 		midiMap->add(imap);
 		if (G_Conf.midiMapPath == imap)
@@ -639,7 +639,7 @@ void gTabMidi::save()
 	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	G_Conf.noNoteOff   = noNoteOff->value();
-	G_Conf.midiMapPath = G_MidiMap.maps.size == 0 ? "" : midiMap->text(midiMap->value());
+	G_Conf.midiMapPath = G_MidiMap.maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
 		G_Conf.midiSync = MIDI_SYNC_NONE;

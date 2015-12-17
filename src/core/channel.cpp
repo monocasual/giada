@@ -133,14 +133,14 @@ void Channel::copy(const Channel *src)
   /* clone plugins */
 
 #ifdef WITH_VST
-  for (unsigned i=0; i<src->plugins.size; i++)
+  for (unsigned i=0; i<src->plugins.size(); i++)
     G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost::CHANNEL, this);
 #endif
 
   /* clone actions */
-  
-  for (unsigned i=0; i<recorder::global.size; i++) {
-    for (unsigned k=0; k<recorder::global.at(i).size; k++) {
+
+  for (unsigned i=0; i<recorder::global.size(); i++) {
+    for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
       recorder::action *a = recorder::global.at(i).at(k);
       if (a->chan == src->index)
         recorder::rec(index, a->type, a->frame, a->iValue, a->fValue);
@@ -232,8 +232,8 @@ int Channel::writePatch(int i, bool isProject)
 	pch.midiOutLmute    = midiOutLmute;
 	pch.midiOutLsolo    = midiOutLsolo;
 
-	for (unsigned i=0; i<recorder::global.size; i++) {
-		for (unsigned k=0; k<recorder::global.at(i).size; k++) {
+	for (unsigned i=0; i<recorder::global.size(); i++) {
+		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
 			recorder::action *action = recorder::global.at(i).at(k);
 			if (action->chan == index) {
 				Patch::action_t pac;
@@ -241,7 +241,7 @@ int Channel::writePatch(int i, bool isProject)
 		    pac.frame  = action->frame;
 		    pac.fValue = action->fValue;
 		    pac.iValue = action->iValue;
-				pch.actions.add(pac);
+				pch.actions.push_back(pac);
 			}
 		}
 	}
@@ -256,16 +256,16 @@ int Channel::writePatch(int i, bool isProject)
 			pp.path   = pPlugin->pathfile;
 	    pp.bypass = pPlugin->bypass;
 			for (int k=0; k<pPlugin->getNumParams(); k++)
-				pp.params.add(pPlugin->getParam(k));
-			pch.plugins.add(pp);
+				pp.params.push_back(pPlugin->getParam(k));
+			pch.plugins.push_back(pp);
 		}
 	}
 
 #endif
 
-	G_Patch.channels.add(pch);
+	G_Patch.channels.push_back(pch);
 
-	return G_Patch.channels.size - 1;
+	return G_Patch.channels.size() - 1;
 }
 
 
@@ -297,19 +297,19 @@ int Channel::readPatch(const string &path, int i)
 	midiOutLmute    = pch->midiOutLmute;
 	midiOutLsolo    = pch->midiOutLsolo;
 
-	for (unsigned k=0; k<pch->actions.size; k++) {
+	for (unsigned k=0; k<pch->actions.size(); k++) {
 		Patch::action_t *ac = &pch->actions.at(k);
 		recorder::rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
 	}
 
 #ifdef WITH_VST
 
-	for (unsigned k=0; k<pch->plugins.size; k++) {
+	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost::CHANNEL, this);
 		if (plugin != NULL) {
 			plugin->bypass = ppl->bypass;
-			for (unsigned j=0; j<ppl->params.size; j++)
+			for (unsigned j=0; j<ppl->params.size(); j++)
 				plugin->setParam(j, ppl->params.at(j));
 			ret &= 1;
 		}

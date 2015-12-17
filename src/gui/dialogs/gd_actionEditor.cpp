@@ -392,13 +392,13 @@ void gGridTool::calc() {
 		int step = parent->zoom*i;
 		while (j < step && j < G_Mixer.totalFrames) {
 			if (j % fpgc == 0) {
-				points.add(i);
-				frames.add(j);
+				points.push_back(i);
+				frames.push_back(j);
 			}
 			if (j % G_Mixer.framesPerBeat == 0)
-				beats.add(i);
+				beats.push_back(i);
 			if (j % G_Mixer.framesPerBar == 0 && i != 1)
-				bars.add(i);
+				bars.push_back(i);
 			if (j == G_Mixer.totalFrames-1)
 				parent->coverX = i;
 			j++;
@@ -420,9 +420,9 @@ int gGridTool::getSnapPoint(int v) {
 
 	if (v == 0) return 0;
 
-	for (int i=0; i<(int)points.size; i++) {
+	for (int i=0; i<(int)points.size(); i++) {
 
-		if (i == (int) points.size-1)
+		if (i == (int) points.size()-1)
 			return points.at(i);
 
 		int gp  = points.at(i);
@@ -442,9 +442,9 @@ int gGridTool::getSnapFrame(int v) {
 
 	v *= parent->zoom;  // transformation pixel -> frame
 
-	for (int i=0; i<(int)frames.size; i++) {
+	for (int i=0; i<(int)frames.size(); i++) {
 
-		if (i == (int) frames.size-1)
+		if (i == (int) frames.size()-1)
 			return frames.at(i);
 
 		int gf  = frames.at(i);     // grid frame

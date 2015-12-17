@@ -71,7 +71,7 @@ void gActionWidget::baseDraw(bool clear) {
 		fl_color(fl_rgb_color(54, 54, 54));
 		fl_line_style(FL_DASH, 0, NULL);
 
-		for (int i=0; i<(int) pParent->gridTool->points.size; i++) {
+		for (int i=0; i<(int) pParent->gridTool->points.size(); i++) {
 			int px = pParent->gridTool->points.at(i)+x()-1;
 			fl_line(px, y()+1, px, y()+h()-2);
 		}
@@ -81,13 +81,13 @@ void gActionWidget::baseDraw(bool clear) {
 	/* bars and beats drawing */
 
 	fl_color(COLOR_BD_0);
-	for (int i=0; i<(int) pParent->gridTool->beats.size; i++) {
+	for (int i=0; i<(int) pParent->gridTool->beats.size(); i++) {
 		int px = pParent->gridTool->beats.at(i)+x()-1;
 		fl_line(px, y()+1, px, y()+h()-2);
 	}
 
 	fl_color(COLOR_BG_2);
-	for (int i=0; i<(int) pParent->gridTool->bars.size; i++) {
+	for (int i=0; i<(int) pParent->gridTool->bars.size(); i++) {
 		int px = pParent->gridTool->bars.at(i)+x()-1;
 		fl_line(px, y()+1, px, y()+h()-2);
 	}

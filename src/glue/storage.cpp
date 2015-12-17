@@ -119,11 +119,11 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	/* Add common stuff, columns and channels. Also increment the progress bar
 	 * by 0.8 / total_channels steps.  */
 
-	float steps = 0.8 / G_Patch.channels.size;
-	for (unsigned i=0; i<G_Patch.columns.size; i++) {
+	float steps = 0.8 / G_Patch.channels.size();
+	for (unsigned i=0; i<G_Patch.columns.size(); i++) {
 		Patch::column_t *col = &G_Patch.columns.at(i);
 		mainWin->keyboard->addColumn(col->width);
-		for (unsigned k=0; k<G_Patch.channels.size; k++) {
+		for (unsigned k=0; k<G_Patch.channels.size(); k++) {
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
 				ch->readPatch(basePath, k);
@@ -278,17 +278,17 @@ void __glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-void __glue_fillPatchGlobalsPlugins__(gVector <Plugin *> *host, gVector<Patch::plugin_t> *patch)
+void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
 {
-	for (unsigned i=0; i<host->size; i++) {
+	for (unsigned i=0; i<host->size(); i++) {
 		Plugin *pl = host->at(i);
 		Patch::plugin_t ppl;
 		ppl.path = pl->pathfile;
 		ppl.bypass = pl->bypass;
 		int numParams = pl->getNumParams();
 		for (unsigned k=0; k<numParams; k++)
-			ppl.params.add(pl->getParam(k));
-		patch->add(ppl);
+			ppl.params.push_back(pl->getParam(k));
+		patch->push_back(ppl);
 	}
 }
 
@@ -321,12 +321,12 @@ void __glue_fillPatchColumns__()
 			for (unsigned j=0; j<G_Mixer.channels.size(); j++) {
 				Channel *mixerChannel = G_Mixer.channels.at(j);
 				if (colChannel == mixerChannel) {
-					pCol.channels.add(mixerChannel->index);
+					pCol.channels.push_back(mixerChannel->index);
 					break;
 				}
 			}
 		}
-		G_Patch.columns.add(pCol);
+		G_Patch.columns.push_back(pCol);
 	}
 }
 

@@ -32,14 +32,19 @@
 #ifndef __GE_ENVELOPECHANNEL_H__
 #define __GE_ENVELOPECHANNEL_H__
 
+
+#include <vector>
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include "../../utils/utils.h"
 #include "ge_actionWidget.h"
 
 
-class gEnvelopeChannel : public gActionWidget {
+using std::vector;
 
+
+class gEnvelopeChannel : public gActionWidget
+{
 	const char *l;      // internal label
 	int         type;   // type of action
 	int         range;
@@ -58,7 +63,7 @@ class gEnvelopeChannel : public gActionWidget {
 	/* points
 	 * array of points, filled by fillPoints() */
 
-	gVector<point> points;
+	vector<point> points;
 
 	/* selectedPoint
 	 * which point we are selecting? */

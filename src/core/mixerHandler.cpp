@@ -33,6 +33,7 @@
 	#include <jack/transport.h>
 #endif
 
+#include <vector>
 #include "../utils/utils.h"
 #include "../utils/log.h"
 #include "../glue/glue.h"
@@ -62,6 +63,9 @@ extern Conf 		   G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
 #endif
+
+
+using std::vector;
 
 
 void mh_stopSequencer()
@@ -255,15 +259,15 @@ bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
 
 #ifdef WITH_VST
 
-int __mh_readPatchPlugins__(gVector<Patch::plugin_t> *list, int type)
+int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 {
 	int ret = 1;
-	for (unsigned i=0; i<list->size; i++) {
+	for (unsigned i=0; i<list->size(); i++) {
 		Patch::plugin_t *ppl = &list->at(i);
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
 		if (plugin != NULL) {
 			plugin->bypass = ppl->bypass;
-			for (unsigned j=0; j<ppl->params.size; j++)
+			for (unsigned j=0; j<ppl->params.size(); j++)
 				plugin->setParam(j, ppl->params.at(j));
 			ret &= 1;
 		}

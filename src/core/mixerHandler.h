@@ -31,8 +31,12 @@
 #define MIXERHANDLER_H
 
 
+#include <vector>
 #include "recorder.h"
 #include "patch.h"
+
+
+using std::vector;
 
 
 /* stopSequencer
@@ -72,7 +76,7 @@ bool mh_uniqueSamplename(class SampleChannel *ch, const char *name);
 
 #ifdef WITH_VST
 
-static int __mh_readPatchPlugins__(gVector<Patch::plugin_t> *list, int type);
+static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type);
 
 #endif
 

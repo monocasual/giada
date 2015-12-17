@@ -56,9 +56,9 @@ extern Conf	       G_Conf;
 
 namespace recorder
 {
-gVector<int> frames;
-gVector< gVector<action*> > global;
-gVector<action*>  actions;
+vector<int> frames;
+vector< vector<action*> > global;
+vector<action*>  actions;
 
 bool active = false;
 bool sortedActions = false;
@@ -116,7 +116,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 	/* check if the frame exists in the stack. If it exists, we don't extend
 	 * the stack, but we add (or push) a new action to it. */
 
-	int frameToExpand = frames.size;
+	int frameToExpand = frames.size();
 	for (int i=0; i<frameToExpand; i++)
 		if (frames.at(i) == frame) {
 			frameToExpand = i;
@@ -124,22 +124,22 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 		}
 
 	/* espansione dello stack frames nel caso l'azione ricada in frame
-	 * non precedentemente memorizzati (frameToExpand == frames.size).
+	 * non precedentemente memorizzati (frameToExpand == frames.size()).
 	 * Espandere frames è facile, basta aggiungere un frame in coda.
 	 * Espandere global è più complesso: bisogna prima allocare una
 	 * cella in global (per renderlo parallelo a frames) e poi
 	 * inizializzare il suo sub-stack (di action). */
 
-	if (frameToExpand == (int) frames.size) {
-		frames.add(frame);
-		global.add(actions);							// array of actions added
-		global.at(global.size-1).add(a);	// action added
+	if (frameToExpand == (int) frames.size()) {
+		frames.push_back(frame);
+		global.push_back(actions);               // array of actions added
+		global.at(global.size()-1).push_back(a); // action added
 	}
 	else {
 
 		/* no duplicates, please */
 
-		for (unsigned t=0; t<global.at(frameToExpand).size; t++) {
+		for (unsigned t=0; t<global.at(frameToExpand).size(); t++) {
 			action *ac = global.at(frameToExpand).at(t);
 			if (ac->chan   == index  &&
 			    ac->type   == type   &&
@@ -149,7 +149,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 				return;
 		}
 
-		global.at(frameToExpand).add(a);		// expand array
+		global.at(frameToExpand).push_back(a);		// expand array
 	}
 
 	/* if WITH_VST create a new VST event and attach it to our action.
@@ -182,10 +182,10 @@ void clearChan(int index)
 {
 	gLog("[REC] clearing chan %d...\n", index);
 
-	for (unsigned i=0; i<global.size; i++) {	// for each frame i
+	for (unsigned i=0; i<global.size(); i++) {	// for each frame i
 		unsigned j=0;
 		while (true) {
-			if (j == global.at(i).size) break; 	  // for each action j of frame i
+			if (j == global.at(i).size()) break; 	  // for each action j of frame i
 			action *a = global.at(i).at(j);
 			if (a->chan == index)	{
 #ifdef WITH_VST
@@ -193,7 +193,7 @@ void clearChan(int index)
 					free(a->event);
 #endif
 				free(a);
-				global.at(i).del(j);
+				global.at(i).erase(global.at(i).begin() + j);
 			}
 			else
 				j++;
@@ -213,15 +213,15 @@ void clearChan(int index)
 void clearAction(int index, char act)
 {
 	gLog("[REC] clearing action %d from chan %d...\n", act, index);
-	for (unsigned i=0; i<global.size; i++) {						// for each frame i
+	for (unsigned i=0; i<global.size(); i++) {						// for each frame i
 		unsigned j=0;
 		while (true) {                                   // for each action j of frame i
-			if (j == global.at(i).size)
+			if (j == global.at(i).size())
 				break;
 			action *a = global.at(i).at(j);
 			if (a->chan == index && (act & a->type) == a->type)	{ // bitmask
 				free(a);
-				global.at(i).del(j);
+				global.at(i).erase(global.at(i).begin() + j);
 			}
 			else
 				j++;
@@ -248,12 +248,12 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 	/* find the frame 'frame' */
 
 	bool found = false;
-	for (unsigned i=0; i<frames.size && !found; i++) {
+	for (unsigned i=0; i<frames.size() && !found; i++) {
 		if (frames.at(i) == frame) {
 
 			/* find the action in frame i */
 
-			for (unsigned j=0; j<global.at(i).size; j++) {
+			for (unsigned j=0; j<global.at(i).size(); j++) {
 				action *a = global.at(i).at(j);
 
 				/* action comparison logic */
@@ -272,7 +272,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 								free(a->event);
 #endif
 							free(a);
-							global.at(i).del(j);
+							global.at(i).erase(global.at(i).begin() + j);
 							pthread_mutex_unlock(&G_Mixer.mutex_recs);
 							found = true;
 							break;
@@ -302,13 +302,13 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 void deleteActions(int chan, int frame_a, int frame_b, char type)
 {
 	sortActions();
-	gVector<int> dels;
+	vector<int> dels;
 
-	for (unsigned i=0; i<frames.size; i++)
+	for (unsigned i=0; i<frames.size(); i++)
 		if (frames.at(i) > frame_a && frames.at(i) < frame_b)
-			dels.add(frames.at(i));
+			dels.push_back(frames.at(i));
 
-	for (unsigned i=0; i<dels.size; i++)
+	for (unsigned i=0; i<dels.size(); i++)
 		deleteAction(chan, dels.at(i), type, false); // false == don't check values
 }
 
@@ -318,9 +318,9 @@ void deleteActions(int chan, int frame_a, int frame_b, char type)
 
 void clearAll()
 {
-	while (global.size > 0) {
-		for (unsigned i=0; i<global.size; i++) {
-			for (unsigned k=0; k<global.at(i).size; k++) {
+	while (global.size() > 0) {
+		for (unsigned i=0; i<global.size(); i++) {
+			for (unsigned k=0; k<global.at(i).size(); k++) {
 #ifdef WITH_VST
 				if (global.at(i).at(k)->type == ACTION_MIDI)
 					free(global.at(i).at(k)->event);
@@ -328,7 +328,7 @@ void clearAll()
 				free(global.at(i).at(k));									// free action
 			}
 			global.at(i).clear();												// free action container
-			global.del(i);
+			global.erase(global.begin() + i);
 		}
 	}
 
@@ -352,10 +352,10 @@ void optimize()
 
 	unsigned i = 0;
 	while (true) {
-		if (i == global.size) return;
-		if (global.at(i).size == 0) {
-			global.del(i);
-			frames.del(i);
+		if (i == global.size()) return;
+		if (global.at(i).size() == 0) {
+			global.erase(global.begin() + i);
+			frames.erase(frames.begin() + i);
 		}
 		else
 			i++;
@@ -372,11 +372,11 @@ void sortActions()
 {
 	if (sortedActions)
 		return;
-	for (unsigned i=0; i<frames.size; i++)
-		for (unsigned j=0; j<frames.size; j++)
+	for (unsigned i=0; i<frames.size(); i++)
+		for (unsigned j=0; j<frames.size(); j++)
 			if (frames.at(j) > frames.at(i)) {
-				frames.swap(j, i);
-				global.swap(j, i);
+				std::swap(frames.at(j), frames.at(i));
+				std::swap(global.at(j), global.at(i));
 			}
 	sortedActions = true;
 	//print();
@@ -388,7 +388,7 @@ void sortActions()
 
 void updateBpm(float oldval, float newval, int oldquanto)
 {
-	for (unsigned i=0; i<frames.size; i++) {
+	for (unsigned i=0; i<frames.size(); i++) {
 
 		float frame  = ((float) frames.at(i)/newval) * oldval;
 		frames.at(i) = (int) frame;
@@ -413,8 +413,8 @@ void updateBpm(float oldval, float newval, int oldquanto)
 
 	/* update structs */
 
-	for (unsigned i=0; i<frames.size; i++) {
-		for (unsigned j=0; j<global.at(i).size; j++) {
+	for (unsigned i=0; i<frames.size(); i++) {
+		for (unsigned j=0; j<global.at(i).size(); j++) {
 			action *a = global.at(i).at(j);
 			a->frame = frames.at(i);
 		}
@@ -438,7 +438,7 @@ void updateSamplerate(int systemRate, int patchRate)
 	gLog("[REC] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
 
 	float ratio = systemRate / (float) patchRate;
-	for (unsigned i=0; i<frames.size; i++) {
+	for (unsigned i=0; i<frames.size(); i++) {
 
 		gLog("[REC]    oldFrame = %d", frames.at(i));
 
@@ -455,8 +455,8 @@ void updateSamplerate(int systemRate, int patchRate)
 
 	/* update structs */
 
-	for (unsigned i=0; i<frames.size; i++) {
-		for (unsigned j=0; j<global.at(i).size; j++) {
+	for (unsigned i=0; i<frames.size(); i++) {
+		for (unsigned j=0; j<global.at(i).size(); j++) {
 			action *a = global.at(i).at(j);
 			a->frame = frames.at(i);
 		}
@@ -477,14 +477,14 @@ void expand(int old_fpb, int new_fpb)
 	unsigned pass = (int) (new_fpb / old_fpb) - 1;
 	if (pass == 0) pass = 1;
 
-	unsigned init_fs = frames.size;
+	unsigned init_fs = frames.size();
 
 	for (unsigned z=1; z<=pass; z++) {
 		for (unsigned i=0; i<init_fs; i++) {
 			unsigned newframe = frames.at(i) + (old_fpb*z);
-			frames.add(newframe);
-			global.add(actions);
-			for (unsigned k=0; k<global.at(i).size; k++) {
+			frames.push_back(newframe);
+			global.push_back(actions);
+			for (unsigned k=0; k<global.at(i).size(); k++) {
 				action *a = global.at(i).at(k);
 				rec(a->chan, a->type, newframe, a->iValue, a->fValue);
 			}
@@ -504,14 +504,14 @@ void shrink(int new_fpb)
 
 	unsigned i=0;
 	while (true) {
-		if (i == frames.size) break;
+		if (i == frames.size()) break;
 
 		if (frames.at(i) >= new_fpb) {
-			for (unsigned k=0; k<global.at(i).size; k++)
-				free(global.at(i).at(k));			// free action
+			for (unsigned k=0; k<global.at(i).size(); k++)
+				free(global.at(i).at(k));		      // free action
 			global.at(i).clear();								// free action container
-			global.del(i);											// shrink global
-			frames.del(i);											// shrink frames
+			global.erase(global.begin() + i);   // shrink global
+			frames.erase(frames.begin() + i);   // shrink frames
 		}
 		else
 			i++;
@@ -528,12 +528,12 @@ void shrink(int new_fpb)
 void chanHasActions(int index)
 {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
-	if (global.size == 0) {
+	if (global.size() == 0) {
 		ch->hasActions = false;
 		return;
 	}
-	for (unsigned i=0; i<global.size && !ch->hasActions; i++) {
-		for (unsigned j=0; j<global.at(i).size && !ch->hasActions; j++) {
+	for (unsigned i=0; i<global.size() && !ch->hasActions; i++) {
+		for (unsigned j=0; j<global.at(i).size() && !ch->hasActions; j++) {
 			if (global.at(i).at(j)->chan == index)
 				ch->hasActions = true;
 		}
@@ -549,13 +549,13 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 	sortActions();  // mandatory
 
 	unsigned i=0;
-	while (i < frames.size && frames.at(i) <= frame) i++;
+	while (i < frames.size() && frames.at(i) <= frame) i++;
 
-	if (i == frames.size)   // no further actions past 'frame'
+	if (i == frames.size())   // no further actions past 'frame'
 		return -1;
 
-	for (; i<global.size; i++)
-		for (unsigned j=0; j<global.at(i).size; j++) {
+	for (; i<global.size(); i++)
+		for (unsigned j=0; j<global.at(i).size(); j++) {
 			action *a = global.at(i).at(j);
 			if (a->chan == chan && (type & a->type) == a->type) {
 				if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
@@ -574,8 +574,8 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 
 int getAction(int chan, char action, int frame, struct action **out)
 {
-	for (unsigned i=0; i<global.size; i++)
-		for (unsigned j=0; j<global.at(i).size; j++)
+	for (unsigned i=0; i<global.size(); i++)
+		for (unsigned j=0; j<global.at(i).size(); j++)
 			if (frame  == global.at(i).at(j)->frame &&
 					action == global.at(i).at(j)->type &&
 					chan   == global.at(i).at(j)->chan)
@@ -686,9 +686,9 @@ void stopOverdub(int frame)
 void print()
 {
 	gLog("[REC] ** print debug **\n");
-	for (unsigned i=0; i<global.size; i++) {
+	for (unsigned i=0; i<global.size(); i++) {
 		gLog("  frame %d\n", frames.at(i));
-		for (unsigned j=0; j<global.at(i).size; j++) {
+		for (unsigned j=0; j<global.at(i).size(); j++) {
 			gLog("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
 		}
 	}

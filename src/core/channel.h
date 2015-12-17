@@ -31,9 +31,13 @@
 #define CHANNEL_H
 
 
+#include <vector>
 #include "../utils/utils.h"
 #include "const.h"
 #include "recorder.h"
+
+
+using std::vector;
 
 
 #ifdef WITH_VST
@@ -202,7 +206,7 @@ public:
   uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  gVector <class Plugin *> plugins;
+  vector <class Plugin *> plugins;
 #endif
 
 

@@ -55,8 +55,8 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
-	for (unsigned i=0; i<recorder::frames.size; i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
 			recorder::action *ra = recorder::global.at(i).at(j);
 
@@ -284,7 +284,7 @@ int gActionChannel::handle(int e) {
 							y()+4,                                // y
 							h()-8,                                // h
 							fx,																		// frame_a
-							recorder::frames.size-1,              // n. of actions recorded
+							recorder::frames.size()-1,            // n. of actions recorded
 							pParent,                              // pParent window pointer
 							ch,                                   // pointer to SampleChannel
 							true,                                 // record = true: record it!

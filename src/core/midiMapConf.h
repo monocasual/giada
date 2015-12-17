@@ -33,6 +33,7 @@
 
 #include <limits.h>
 #include <stdint.h>
+#include <vector>
 #include "dataStorageIni.h"
 #include "../utils/utils.h"
 #if defined(__APPLE__)
@@ -41,6 +42,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 class MidiMapConf : public DataStorageIni
@@ -65,7 +67,7 @@ public:
 	 * Maps are the available .giadamap files. Each element of the vector
 	 * represents a .giadamap filename. */
 
-	gVector<string> maps;
+	vector<string> maps;
 
 	string brand;
 	string device;

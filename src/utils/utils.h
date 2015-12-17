@@ -33,11 +33,12 @@
 
 #include <string>
 #include <cstdio>
+#include <vector>
 #include "log.h"
-#include "gvector.h"
 
 
 using std::string;
+using std::vector;
 
 
 bool gFileExists(const char *path);
@@ -81,6 +82,6 @@ string gGetSlash();
 
 string gItoa(int i);
 
-void gSplit(string in, string sep, gVector<string> *v);
+void gSplit(string in, string sep, vector<string> *v);
 
 #endif

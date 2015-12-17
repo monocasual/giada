@@ -120,8 +120,8 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 	recorder::action *a2   = NULL;
 	recorder::action *prev = NULL;
 
-	for (unsigned i=0; i<recorder::frames.size; i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size; j++) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
 			/* don't show actions > than the grey area */
 			/** FIXME - can we move this to the outer cycle? */

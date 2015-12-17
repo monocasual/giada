@@ -450,9 +450,9 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 			/* reading all actions recorded */
 
 			pthread_mutex_lock(&mutex_recs);
-			for (unsigned y=0; y<recorder::frames.size; y++) {
+			for (unsigned y=0; y<recorder::frames.size(); y++) {
 				if (recorder::frames.at(y) == actualFrame) {
-					for (unsigned z=0; z<recorder::global.at(y).size; z++) {
+					for (unsigned z=0; z<recorder::global.at(y).size(); z++) {
 						int index   = recorder::global.at(y).at(z)->chan;
 						Channel *ch = getChannelByIndex(index);
 						ch->parseAction(recorder::global.at(y).at(z), j, actualFrame);

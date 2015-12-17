@@ -104,11 +104,11 @@ int gColumn::handle(int e)
 			return 1;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
-			gVector<std::string> paths;
+			vector<std::string> paths;
 			gSplit(Fl::event_text(), "\n", &paths);
 			bool fails = false;
 			int result = 0;
-			for (unsigned i=0; i<paths.size; i++) {
+			for (unsigned i=0; i<paths.size(); i++) {
 				gLog("[gColumn::handle] loading %s...\n", paths.at(i).c_str());
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
 				result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
@@ -118,7 +118,7 @@ int gColumn::handle(int e)
 				}
 			}
 			if (fails) {
-				if (paths.size > 1)
+				if (paths.size() > 1)
 					gdAlert("Some files were not loaded successfully.");
 				else
 					parent->printChannelMessage(result);

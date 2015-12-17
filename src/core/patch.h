@@ -32,6 +32,7 @@
 
 
 #include <string>
+#include <vector>
 #include <stdint.h>
 #include "../utils/utils.h"
 #include "dataStorageJson.h"
@@ -39,6 +40,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 class Patch : public DataStorageJson
@@ -56,9 +58,9 @@ public:
 #ifdef WITH_VST
   struct plugin_t
   {
-    string         path;
-    bool           bypass;
-    gVector<float> params;
+    string        path;
+    bool          bypass;
+    vector<float> params;
   };
 #endif
 
@@ -99,10 +101,10 @@ public:
     uint32_t    midiOut;
     uint32_t    midiOutChan;
 
-    gVector<action_t> actions;
+    vector<action_t> actions;
 
 #ifdef WITH_VST
-    gVector<plugin_t> plugins;
+    vector<plugin_t> plugins;
 #endif
   };
 
@@ -110,7 +112,7 @@ public:
   {
     int index;
     int width;
-    gVector<int> channels;
+    vector<int> channels;
   };
 
   string header;
@@ -129,12 +131,12 @@ public:
   int    lastTakeId;
   int    samplerate;   // original samplerate when the patch was saved
 
-  gVector<column_t>  columns;
-  gVector<channel_t> channels;
+  vector<column_t>  columns;
+  vector<channel_t> channels;
 
 #ifdef WITH_VST
-  gVector<plugin_t> masterInPlugins;
-  gVector<plugin_t> masterOutPlugins;
+  vector<plugin_t> masterInPlugins;
+  vector<plugin_t> masterOutPlugins;
 #endif
 
   /* init
@@ -165,7 +167,7 @@ private:
   bool readCommons (json_t *jContainer);
   bool readChannels(json_t *jContainer);
 #ifdef WITH_VST
-  bool readPlugins (json_t *jContainer, gVector<plugin_t> *container, const char* key);
+  bool readPlugins (json_t *jContainer, vector<plugin_t> *container, const char* key);
 #endif
   bool readActions (json_t *jContainer, channel_t *channel);
   bool readColumns (json_t *jContainer);
@@ -173,12 +175,12 @@ private:
   /* writers */
 
   void writeCommons (json_t *jContainer);
-  void writeChannels(json_t *jContainer, gVector<channel_t> *channels);
+  void writeChannels(json_t *jContainer, vector<channel_t> *channels);
 #ifdef WITH_VST
-  void writePlugins (json_t *jContainer, gVector<plugin_t> *plugins, const char* key);
+  void writePlugins (json_t *jContainer, vector<plugin_t> *plugins, const char* key);
 #endif
-  void writeActions (json_t *jContainer, gVector<action_t> *actions);
-  void writeColumns (json_t *jContainer, gVector<column_t> *columns);
+  void writeActions (json_t *jContainer, vector<action_t> *actions);
+  void writeColumns (json_t *jContainer, vector<column_t> *columns);
 };
 
 #endif

@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #include "../utils/utils.h"
 #include "const.h"
 #include "mixer.h"
@@ -49,11 +50,15 @@
 	#include "../deps/vst/aeffectx.h"
 #endif
 
+
+using std::vector;
+
+
 /*
- * [global0]-->[gVector<_action*>0]-->[a0][a1][a2]				0[frames1]
- * [global1]-->[gVector<_action*>1]-->[a0][a1][a2]				1[frames2]
- * [global2]-->[gVector<_action*>2]-->[a0][a1][a2]				2[frames3]
- * [global3]-->[gVector<_action*>3]-->[a0][a1][a2]				3[frames4]
+ * [global0]-->[vector<_action*>0]-->[a0][a1][a2]				0[frames1]
+ * [global1]-->[vector<_action*>1]-->[a0][a1][a2]				1[frames2]
+ * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
+ * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4]
  * */
 
 namespace recorder {
@@ -86,9 +91,9 @@ struct composite {
 	action a2;
 };
 
-extern gVector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
-extern gVector< gVector<action*> > global;	// container of containers of actions
-extern gVector<action*>  actions;				    // container of actions
+extern vector<int>  frames;					      // frame counter (sentinel) frames.size == global.size
+extern vector< vector<action*> > global;	// container of containers of actions
+extern vector<action*>  actions;				    // container of actions
 
 extern bool active;
 extern bool sortedActions;                  // are actions sorted via sortActions()?
