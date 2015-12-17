@@ -20,6 +20,7 @@
 - Fix wrong config value if no midimaps are available
 - Fix garbage text while printing device and port names
 - Deactivate all other MIDI fields when changing MIDI system in Config window
+- Update Travis CI environment to Ubuntu Trusty
 
 
 0.11.0 --- 2015 . 12 .02
