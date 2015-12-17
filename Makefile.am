@@ -191,6 +191,8 @@ src/utils/log.cpp
 
 giada_tests_LDADD = -ljansson -lsndfile -lsamplerate
 
+giada_tests_CXXFLAGS = -std=c++11
+
 # make rename ------------------------------------------------------------------
 
 if LINUX
