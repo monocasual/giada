@@ -47,7 +47,7 @@ extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
 
-/* -------------------------------------------------------------------------- */
+using std::string;
 
 
 gTabMisc::gTabMisc(int X, int Y, int W, int H)
@@ -117,9 +117,12 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	channelsIn  = new gChoice(x()+92,  y()+149, 55,  20, "Input channels");
 	delayComp   = new gInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
 	rsmpQuality = new gChoice(x()+92, y()+177, 253, 20, "Resampling");
-                new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92, "Restart Giada for the changes to take effect.");
+                new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
+										"Restart Giada for the changes to take effect.");
 	end();
 	labelsize(11);
+
+	soundsys->add("(none)");
 
 #if defined(__linux__)
 
@@ -131,6 +134,9 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("PulseAudio");
 
 	switch (G_Conf.soundSystem) {
+		case SYS_API_NONE:
+			soundsys->show("(none)");
+			break;
 		case SYS_API_ALSA:
 			soundsys->show("ALSA");
 			break;
@@ -143,7 +149,6 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 			soundsys->show("PulseAudio");
 			break;
 	}
-	soundsysInitValue = soundsys->value();
 
 #elif defined(_WIN32)
 
@@ -151,17 +156,36 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("DirectSound");
 	if (kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO))
 		soundsys->add("ASIO");
-	soundsys->show(G_Conf.soundSystem == SYS_API_DS ? "DirectSound" : "ASIO");
-	soundsysInitValue = soundsys->value();
+
+	switch (G_Conf.soundSystem) {
+		case SYS_API_NONE:
+			soundsys->show("(none)");
+			break;
+		case SYS_API_DS:
+			soundsys->show("DirectSound");
+			break;
+		case SYS_API_ASIO:
+			soundsys->show("ASIO");
+			break;
+	}
 
 #elif defined (__APPLE__)
 
 	if (kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
-	soundsys->show("CoreAudio");
-	soundsysInitValue = soundsys->value();
+
+	switch (G_Conf.soundSystem) {
+		case SYS_API_NONE:
+			soundsys->show("(none)");
+			break;
+		case SYS_API_CORE:
+			soundsys->show("CoreAudio");
+			break;
+	}
 
 #endif
+
+	soundsysInitValue = soundsys->value();
 
 	sounddevIn->callback(cb_fetchInChans, this);
 	sounddevOut->callback(cb_fetchOutChans, this);
@@ -169,10 +193,22 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	devOutInfo->callback(cb_showOutputInfo, this);
 	devInInfo->callback(cb_showInputInfo, this);
 
-	fetchSoundDevs();
+	if (G_Conf.soundSystem != SYS_API_NONE) {
+		fetchSoundDevs();
+		fetchOutChans(sounddevOut->value());
+		fetchInChans(sounddevIn->value());
 
-	fetchOutChans(sounddevOut->value());
-	fetchInChans(sounddevIn->value());
+		/* fill frequency dropdown menu */
+		/* TODO - add fetchFrequencies() */
+
+		int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
+		for (int i=0; i<nfreq; i++) {
+			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
+			samplerate->add(gItoa(freq).c_str());
+			if (freq == G_Conf.samplerate)
+				samplerate->value(i);
+		}
+	}
 
 	buffersize->add("8");
 	buffersize->add("16");
@@ -184,22 +220,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-
-	char buf[8];
-	sprintf(buf, "%d", G_Conf.buffersize);
-	buffersize->show(buf);
-
-	/* fill frequency dropdown menu */
-
-	int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
-	for (int i=0; i<nfreq; i++) {
-		char buf[16];
-		int  freq = kernelAudio::getFreq(sounddevOut->value(), i);
-		sprintf(buf, "%d", freq);
-		samplerate->add(buf);
-		if (freq == G_Conf.samplerate)
-			samplerate->value(i);
-	}
+	buffersize->show(gItoa(G_Conf.buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -208,9 +229,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(G_Conf.rsmpQuality);
 
-	buf[0] = '\0';
-	sprintf(buf, "%d", G_Conf.delayComp);
-	delayComp->value(buf);
+	delayComp->value(gItoa(G_Conf.delayComp).c_str());
 	delayComp->type(FL_INT_INPUT);
 	delayComp->maximum_size(5);
 
@@ -424,7 +443,7 @@ void gTabAudio::fetchSoundDevs()
 
 			/* escaping '/', very dangerous in FLTK (it creates a submenu) */
 
-			std::string tmp = kernelAudio::getDeviceName(i);
+			string tmp = kernelAudio::getDeviceName(i);
 			for (unsigned k=0; k<tmp.size(); k++)
 				if (tmp[k] == '/' || tmp[k] == '|' || tmp[k] == '&' || tmp[k] == '_')
 					tmp[k] = '-';
@@ -470,17 +489,34 @@ void gTabAudio::fetchSoundDevs()
 
 void gTabAudio::save()
 {
-	/** FIXME - wrong, if API is missing! Right way in gTabMidi::save */
+	string text = soundsys->text(soundsys->value());
 
-#ifdef __linux__
-	if      (soundsys->value() == 0)	G_Conf.soundSystem = SYS_API_ALSA;
-	else if (soundsys->value() == 1)	G_Conf.soundSystem = SYS_API_JACK;
-	else if (soundsys->value() == 2)	G_Conf.soundSystem = SYS_API_PULSE;
-#else
-#ifdef _WIN32
-	if 			(soundsys->value() == 0)	G_Conf.soundSystem = SYS_API_DS;
-	else if (soundsys->value() == 1)  G_Conf.soundSystem = SYS_API_ASIO;
-#endif
+	if (text == "(none)") {
+		G_Conf.soundSystem = SYS_API_NONE;
+		return;
+	}
+
+#if defined(__linux__)
+
+	else if (text == "ALSA")
+		G_Conf.soundSystem = SYS_API_ALSA;
+	else if (text == "Jack")
+		G_Conf.soundSystem = SYS_API_JACK;
+	else if (text == "PulseAudio")
+		G_Conf.soundSystem = SYS_API_PULSE;
+
+#elif defined(_WIN32)
+
+	else if (text == "DirectSound")
+		G_Conf.soundSystem = SYS_API_DS;
+	else if (text == "ASIO")
+		G_Conf.soundSystem = SYS_API_ASIO;
+
+#elif defined (__APPLE__)
+
+	else if (text == "CoreAudio")
+		G_Conf.soundSystem = SYS_API_CORE;
+
 #endif
 
 	/* use the device name to search into the drop down menu's */
@@ -509,9 +545,7 @@ void gTabAudio::save()
 	if (i)
 		G_Conf.samplerate = atoi(i->label());
 
-	int _delayComp = atoi(delayComp->value());
-	if (_delayComp < 0) _delayComp = 0;
-	G_Conf.delayComp = _delayComp;
+	G_Conf.delayComp = atoi(delayComp->value());
 }
 
 

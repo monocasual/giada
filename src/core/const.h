@@ -77,6 +77,7 @@
 
 
 /* -- kernel audio ---------------------------------------------------------- */
+#define SYS_API_NONE		0x00  // 0000 0000
 #define SYS_API_JACK		0x01  // 0000 0001
 #define SYS_API_ALSA		0x02  // 0000 0010
 #define SYS_API_DS			0x04  // 0000 0100
@@ -99,7 +100,7 @@
 
 /* -- default system -------------------------------------------------------- */
 #if defined(__linux__)
-	#define DEFAULT_SOUNDSYS	SYS_API_ALSA
+	#define DEFAULT_SOUNDSYS	SYS_API_NONE
 #elif defined(_WIN32)
 	#define DEFAULT_SOUNDSYS 	SYS_API_DS
 #elif defined(__APPLE__)
