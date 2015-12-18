@@ -187,6 +187,8 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 	soundsysInitValue = soundsys->value();
 
+	soundsys->callback(cb_deactivate_sounddev, (void*)this);
+
 	sounddevIn->callback(cb_fetchInChans, this);
 	sounddevOut->callback(cb_fetchOutChans, this);
 
@@ -234,7 +236,6 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	delayComp->maximum_size(5);
 
 	limitOutput->value(G_Conf.limitOutput);
-	soundsys->callback(cb_deactivate_sounddev, (void*)this);
 }
 
 
@@ -313,6 +314,7 @@ void gTabAudio::__cb_deactivate_sounddev()
 
 		fetchInChans(sounddevIn->value());
 		sounddevIn->activate();
+		samplerate->activate();
 	}
 	else {
 		sounddevOut->deactivate();
@@ -321,6 +323,7 @@ void gTabAudio::__cb_deactivate_sounddev()
 		sounddevOut->value(0);
 		channelsOut->deactivate();
 		devOutInfo->deactivate();
+		samplerate->deactivate();
 
 		sounddevIn->deactivate();
 		sounddevIn->clear();
