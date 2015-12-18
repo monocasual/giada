@@ -230,6 +230,8 @@ int Conf::read()
 
 	json_decref(jRoot);
 
+	sanitize();
+
 	return 1;
 }
 
@@ -332,7 +334,7 @@ void Conf::sanitize()
 	if (soundDeviceIn < -1) soundDeviceIn = DEFAULT_SOUNDDEV_IN;
 	if (channelsOut < 0) channelsOut = 0;
 	if (channelsIn < 0)  channelsIn  = 0;
-	if (buffersize < 8) buffersize = DEFAULT_BUFSIZE;
+	if (buffersize < 8 || buffersize > 4096) buffersize = DEFAULT_BUFSIZE;
 	if (delayComp < 0) delayComp = DEFAULT_DELAYCOMP;
 	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_SYSTEM;
 	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_PORT_OUT;
@@ -366,4 +368,5 @@ void Conf::sanitize()
 	if (aboutX < 0) aboutX = 0;
 	if (aboutY < 0) aboutY = 0;
 	if (samplerate < 8000) samplerate = DEFAULT_SAMPLERATE;
+	if (rsmpQuality < 0 || rsmpQuality > 4) rsmpQuality = 0;
 }
