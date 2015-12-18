@@ -95,11 +95,11 @@ TEST_CASE("Test Conf class")
     REQUIRE(conf.soundDeviceIn == 4);
     REQUIRE(conf.channelsOut == 5);
     REQUIRE(conf.channelsIn == 6);
-    REQUIRE(conf.samplerate == 7);
+    REQUIRE(conf.samplerate == 44100);  // sanitized
     REQUIRE(conf.buffersize == 8);
     REQUIRE(conf.delayComp == 9);
     REQUIRE(conf.limitOutput == true);
-    REQUIRE(conf.rsmpQuality == 10);
+    REQUIRE(conf.rsmpQuality == 0); // sanitized
     REQUIRE(conf.midiSystem == 11);
     REQUIRE(conf.midiPortOut == 12);
     REQUIRE(conf.midiPortIn == 13);
@@ -136,7 +136,7 @@ TEST_CASE("Test Conf class")
     REQUIRE(conf.actionEditorY == 0);
     REQUIRE(conf.actionEditorW == 800);
     REQUIRE(conf.actionEditorH == 600);
-    REQUIRE(conf.actionEditorZoom == 1);
+    REQUIRE(conf.actionEditorZoom == 100);  // sanitized
     REQUIRE(conf.actionEditorGridVal == 10);
     REQUIRE(conf.actionEditorGridOn == 1);
     REQUIRE(conf.sampleEditorX == 0);
