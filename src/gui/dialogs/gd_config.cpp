@@ -211,6 +211,15 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 				samplerate->value(i);
 		}
 	}
+	else {
+		sounddevIn->deactivate();
+		sounddevOut->deactivate();
+		channelsIn->deactivate();
+		channelsOut->deactivate();
+		devOutInfo->deactivate();
+		devInInfo->deactivate();
+		samplerate->deactivate();
+	}
 
 	buffersize->add("8");
 	buffersize->add("16");
@@ -296,9 +305,10 @@ void gTabAudio::__cb_deactivate_sounddev()
 {
 	/* if the user changes sound system (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original sound system, we re-fill the list by
-	 * querying kernelAudio. */
+	 * querying kernelAudio. Watch out if soundsysInitValue == 0: you don't want
+	 * to query kernelAudio for '(none)' soundsystem! */
 
-	if (soundsysInitValue == soundsys->value()) {
+	if (soundsysInitValue == soundsys->value() && soundsysInitValue != 0) {
 		sounddevOut->clear();
 		sounddevIn->clear();
 
@@ -664,7 +674,7 @@ void gTabMidi::fetchMidiMaps()
 void gTabMidi::save()
 {
 	string text = system->text(system->value());
-	
+
 	if      (text == "ALSA")
 		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
 	else if (text == "Jack")
