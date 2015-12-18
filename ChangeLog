@@ -22,7 +22,9 @@
 - Deactivate all other MIDI fields when changing MIDI system in Config window
 - Update Travis CI environment to Ubuntu Trusty
 - Port all vectors from old gVector to std::vector
+- Assume 'none' as default sound system
 - Fix missing sanitization after reading configuration file
+- Minor optimizations in configuration panel, Audio tab
 
 
 0.11.0 --- 2015 . 12 .02
