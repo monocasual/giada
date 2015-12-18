@@ -663,13 +663,15 @@ void gTabMidi::fetchMidiMaps()
 
 void gTabMidi::save()
 {
-	if      (!strcmp("ALSA", system->text(system->value())))
+	string text = system->text(system->value());
+	
+	if      (text == "ALSA")
 		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
-	else if (!strcmp("Jack", system->text(system->value())))
+	else if (text == "Jack")
 		G_Conf.midiSystem = RtMidi::UNIX_JACK;
-	else if (!strcmp("Multimedia MIDI", system->text(system->value())))
+	else if (text == "Multimedia MIDI")
 		G_Conf.midiSystem = RtMidi::WINDOWS_MM;
-	else if (!strcmp("OSX Core MIDI", system->text(system->value())))
+	else if (text == "OSX Core MIDI")
 		G_Conf.midiSystem = RtMidi::MACOSX_CORE;
 
 	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
