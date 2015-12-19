@@ -6,7 +6,7 @@ Official website: http://www.giadamusic.com | Travis CI status: [![Build Status]
 
 Giada is a free, minimal, hardcore audio tool for DJs, live performers and electronic musicians. How does it work? Just pick up your channel, fill it with samples or MIDI events and start the show by using this tiny piece of software as a loop machine, drum machine, sequencer, live sampler or yet as a plugin/effect host. Giada aims to be a compact and portable virtual device for Linux, Mac OS X and Windows for production use and live sets.
 
-### ➔ [See Giada in action!](http://www.youtube.com/user/GiadaLoopMachine)
+➔ [See Giada in action!](http://www.youtube.com/user/GiadaLoopMachine)
 
 ![Giada Loop Machine screenshot](http://giadamusic.com/public/img/screenshots/giada-loop-machine-screenshot-14-carousel.jpg)
 
