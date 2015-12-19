@@ -16,9 +16,9 @@
 0.11.1 ---
 - Ability to clone channels
 - New JSON-based configuration file
+- Port all vectors from old gVector to std::vector
 - Deactivate all other MIDI fields when changing MIDI system in Config window
 - Minor optimizations in configuration panel, Audio tab
-- Port all vectors from old gVector to std::vector
 - Assume 'none' as default sound system
 - Include Catch header file in source package
 - Update Travis CI environment to Ubuntu Trusty
