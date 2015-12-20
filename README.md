@@ -26,7 +26,7 @@ Giada is a free, minimal, hardcore audio tool for DJs, live performers and elect
 * live sampler from external inputs;
 * live action recorder with automatic quantizer;
 * piano Roll editor;
-* portable patch storage system;
+* portable patch storage system, based on super-hackable JSON files;
 * support for all major uncompressed file formats;
 * test-driven development style supported by [Travis CI](https://travis-ci.org/monocasual/giada) and [Catch](https://github.com/philsquared/Catch)
 * under a constant stage of development;
