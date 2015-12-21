@@ -13,7 +13,7 @@
 
 
 
-0.11.1 ---
+0.11.1 --- 2015 . 12 . 22
 - Ability to clone channels
 - New JSON-based configuration file
 - Port all vectors from old gVector to std::vector
@@ -28,7 +28,7 @@
 - Fix garbage text while printing device and port names
 
 
-0.11.0 --- 2015 . 12 .02
+0.11.0 --- 2015 . 12 . 02
 - New JSON-based patch system
 - Properly store column width in patch
 - Port all const char* strings to std::string in patch/project glue layer
