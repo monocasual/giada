@@ -90,7 +90,7 @@ void stopMidiLearn()
 
 void setApi(int _api)
 {
-	api = api;
+	api = _api;
 	gLog("[KM] using system 0x%x\n", api);
 }
 
