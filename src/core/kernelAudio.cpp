@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * KernelAudio
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2015 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <vector>
@@ -42,8 +42,8 @@ extern Conf  G_Conf;
 extern bool	 G_audio_status;
 
 
-namespace kernelAudio {
-
+namespace kernelAudio
+{
 RtAudio  *system       = NULL;
 unsigned  numDevs      = 0;
 bool 		  inputEnabled = 0;
@@ -143,28 +143,15 @@ int openDevice(
 #endif
 
 	try {
-		if (inDev != -1) {
-			system->openStream(
-				&outParams, 					// output params
-				&inParams, 			  		// input params
-				RTAUDIO_FLOAT32,			// audio format
-				samplerate, 					// sample rate
-				&realBufsize, 				// buffer size in byte
-				&G_Mixer.masterPlay,  // audio callback
-				NULL,									// user data (unused)
-				&options);
-		}
-		else {
-			system->openStream(
-				&outParams, 					// output params
-				NULL, 	     		  		// input params
-				RTAUDIO_FLOAT32,			// audio format
-				samplerate, 					// sample rate
-				&realBufsize, 				// buffer size in byte
-				&G_Mixer.masterPlay,  // audio callback
-				NULL,									// user data (unused)
-				&options);
-		}
+		system->openStream(
+			&outParams, 					          // output params
+			inDev != -1 ? &inParams : NULL, // input params if inDevice is selected
+			RTAUDIO_FLOAT32,			          // audio format
+			samplerate, 					          // sample rate
+			&realBufsize, 				          // buffer size in byte
+			&G_Mixer.masterPlay,            // audio callback
+			NULL,									          // user data (unused)
+			&options);
 		G_audio_status = true;
 
 #if defined(__linux__)
@@ -183,10 +170,11 @@ int openDevice(
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int startStream() {
+int startStream()
+{
 	try {
 		system->startStream();
 		gLog("[KA] latency = %lu\n", system->getStreamLatency());
@@ -199,10 +187,11 @@ int startStream() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int stopStream() {
+int stopStream()
+{
 	try {
 		system->stopStream();
 		return 1;
@@ -214,10 +203,11 @@ int stopStream() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-string getDeviceName(unsigned dev) {
+string getDeviceName(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name;
 	}
@@ -228,10 +218,11 @@ string getDeviceName(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int closeDevice() {
+int closeDevice()
+{
 	if (system->isStreamOpen()) {
 #if defined(__linux__) || defined(__APPLE__)
 		system->abortStream(); // stopStream seems to lock the thread
@@ -246,11 +237,11 @@ int closeDevice() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-unsigned getMaxInChans(int dev) {
-
+unsigned getMaxInChans(int dev)
+{
 	if (dev == -1) return 0;
 
 	try {
@@ -263,10 +254,11 @@ unsigned getMaxInChans(int dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-unsigned getMaxOutChans(unsigned dev) {
+unsigned getMaxOutChans(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
 	}
@@ -277,10 +269,11 @@ unsigned getMaxOutChans(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool isProbed(unsigned dev) {
+bool isProbed(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).probed;
 	}
@@ -290,10 +283,11 @@ bool isProbed(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-unsigned getDuplexChans(unsigned dev) {
+unsigned getDuplexChans(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).duplexChannels;
 	}
@@ -303,10 +297,11 @@ unsigned getDuplexChans(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool isDefaultIn(unsigned dev) {
+bool isDefaultIn(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultInput;
 	}
@@ -316,10 +311,11 @@ bool isDefaultIn(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool isDefaultOut(unsigned dev) {
+bool isDefaultOut(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultOutput;
 	}
@@ -329,10 +325,11 @@ bool isDefaultOut(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int getTotalFreqs(unsigned dev) {
+int getTotalFreqs(unsigned dev)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.size();
 	}
@@ -342,10 +339,11 @@ int getTotalFreqs(unsigned dev) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int	getFreq(unsigned dev, int i) {
+int	getFreq(unsigned dev, int i)
+{
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.at(i);
 	}
@@ -355,22 +353,25 @@ int	getFreq(unsigned dev, int i) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int getDefaultIn() {
+int getDefaultIn()
+{
 	return system->getDefaultInputDevice();
 }
 
-int getDefaultOut() {
+int getDefaultOut()
+{
 	return system->getDefaultOutputDevice();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int	getDeviceByName(const char *name) {
+int	getDeviceByName(const char *name)
+{
 	for (unsigned i=0; i<numDevs; i++)
 		if (name == getDeviceName(i))
 			return i;
@@ -378,10 +379,11 @@ int	getDeviceByName(const char *name) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool hasAPI(int API) {
+bool hasAPI(int API)
+{
 	std::vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
@@ -391,15 +393,16 @@ bool hasAPI(int API) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-std::string getRtAudioVersion() {
+std::string getRtAudioVersion()
+{
 	return RtAudio::getVersion();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef __linux__
@@ -407,11 +410,13 @@ std::string getRtAudioVersion() {
 #include <jack/intclient.h>
 #include <jack/transport.h>
 
-jack_client_t *jackGetHandle() {
+jack_client_t *jackGetHandle()
+{
 	return (jack_client_t*) system->rtapi_->__HACK__getJackClient();
 }
 
-void jackStart() {
+void jackStart()
+{
 	if (api == SYS_API_JACK) {
 		jack_client_t *client = jackGetHandle();
 		jack_transport_start(client);
@@ -419,7 +424,8 @@ void jackStart() {
 }
 
 
-void jackStop() {
+void jackStop()
+{
 	if (api == SYS_API_JACK) {
 		jack_client_t *client = jackGetHandle();
 		jack_transport_stop(client);
@@ -427,7 +433,8 @@ void jackStop() {
 }
 
 
-void jackSetSyncCb() {
+void jackSetSyncCb()
+{
 	jack_client_t *client = jackGetHandle();
 	jack_set_sync_callback(client, jackSyncCb, NULL);
 	//jack_set_sync_timeout(client, 8);
