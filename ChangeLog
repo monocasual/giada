@@ -12,6 +12,9 @@
 --------------------------------------------------------------------------------
 
 
+0.11.2
+- Fix a bug that prevented MIDI Jack from being selected on Linux
+
 
 0.11.1 --- 2015 . 12 . 22
 - Ability to clone channels
