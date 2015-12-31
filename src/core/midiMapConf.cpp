@@ -43,7 +43,7 @@ using std::string;
 using std::vector;
 
 
-void MidiMapConf::init()
+void MidiMapConf::init_DEPR_()
 {
 	midimapsPath = gGetHomePath() + "/midimaps/";
 
@@ -78,7 +78,7 @@ void MidiMapConf::init()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::setDefault()
+void MidiMapConf::setDefault_DEPR_()
 {
 	brand  = "";
 	device = "";
@@ -125,7 +125,7 @@ void MidiMapConf::setDefault()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiMapConf::readMap(string file)
+int MidiMapConf::readMap_DEPR_(string file)
 {
 	if (file.empty()) {
 		gLog("[MidiMapConf::readFromFile] midimap not specified, nothing to do\n");
@@ -159,16 +159,16 @@ int MidiMapConf::readMap(string file)
 
 	/* parse messages */
 
-	parse("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
-	parse("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
-	parse("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
-	parse("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
-	parse("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
-	parse("playing",  &playingChan,  &playingMsg,  &playingOffset);
-	parse("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
-	parse("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
+	parse_DEPR_("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
+	parse_DEPR_("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
+	parse_DEPR_("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
+	parse_DEPR_("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
+	parse_DEPR_("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
+	parse_DEPR_("playing",  &playingChan,  &playingMsg,  &playingOffset);
+	parse_DEPR_("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
+	parse_DEPR_("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
 
-	close();
+	close_DEPR_();
 	return 1;
 }
 
@@ -176,7 +176,7 @@ int MidiMapConf::readMap(string file)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::close()
+void MidiMapConf::close_DEPR_()
 {
 	if (fp != NULL)
 		fclose(fp);
@@ -187,7 +187,7 @@ void MidiMapConf::close()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiMapConf::parse(string key, int *chan, uint32_t *msg, int *offset)
+void MidiMapConf::parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset)
 {
 	gLog("[MidiMapConf::parse2] command %s - ", key.c_str());
 	string value = getValue(key.c_str());

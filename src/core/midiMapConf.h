@@ -49,10 +49,28 @@ class MidiMapConf : public DataStorageIni
 {
 private:
 
-	void close();
-	void parse(string key, int *chan, uint32_t *msg, int *offset);
+	void close_DEPR_();
+	void parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset);
 
 public:
+
+	struct message_t
+  {
+    int      channel;
+    uint32_t value;
+  };
+
+	string brand;
+        string device;
+	vector<message_t> initCommands;
+	message_t muteOn;
+	message_t muteOff;
+	message_t soloOn;
+	message_t soloOff;
+	message_t waiting;
+	message_t playing;
+	message_t stopping;
+	message_t stopped;
 
 	static const int MAX_INIT_COMMANDS = 32;
 	static const int MAX_MIDI_BYTES = 4;
@@ -68,9 +86,6 @@ public:
 	 * represents a .giadamap filename. */
 
 	vector<string> maps;
-
-	string brand;
-	string device;
 
 	/* init_*
 	 * init_commands. These messages are sent to the physical device as a wake up
@@ -119,17 +134,17 @@ public:
 	/* init
 	Parse the midi maps folders and find the available maps. */
 
-	void init();
+	void init_DEPR_();
 
 	/* setDefault
 	Set default values in case no maps are available/choosen. */
 
-	void setDefault();
+	void setDefault_DEPR_();
 
 	/* readMap
 	Read a midi map from file 'file'. */
 
-	int readMap(string file);
+	int readMap_DEPR_(string file);
 };
 
 #endif

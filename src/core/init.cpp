@@ -112,9 +112,9 @@ void init_prepareKernelMIDI()
 
 void init_prepareMidiMap()
 {
-	G_MidiMap.init();
-	G_MidiMap.setDefault();
-	G_MidiMap.readMap(G_Conf.midiMapPath);
+	G_MidiMap.init_DEPR_();
+	G_MidiMap.setDefault_DEPR_();
+	G_MidiMap.readMap_DEPR_(G_Conf.midiMapPath);
 }
 
 
