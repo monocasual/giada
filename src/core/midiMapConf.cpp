@@ -43,7 +43,8 @@ using std::string;
 using std::vector;
 
 
-void MidiMapConf::init_DEPR_()
+
+void MidiMapConf::init()
 {
 	midimapsPath = gGetHomePath() + "/midimaps/";
 
@@ -72,6 +73,133 @@ void MidiMapConf::init_DEPR_()
 	}
 
 	closedir(dp);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MidiMapConf::setDefault()
+{
+	brand  = "";
+	device = "";
+	muteOn.channel = 0;
+	muteOn.value = "";
+	muteOn.offset = 0;
+	muteOff.channel = 0;
+	muteOff.value = "";
+	muteOff.offset = 0;
+	soloOn.channel = 0;
+	soloOn.value = "";
+	soloOn.offset = 0;
+	soloOff.channel = 0;
+	soloOff.value = "";
+	soloOff.offset = 0;
+	waiting.channel = 0;
+	waiting.value = "";
+	waiting.offset = 0;
+	playing.channel = 0;
+	playing.value = "";
+	playing.offset = 0;
+	stopping.channel = 0;
+	stopping.value = "";
+	stopping.offset = 0;
+	stopped.channel = 0;
+	stopped.value = "";
+	stopped.offset = 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int MidiMapConf::read(const string &file)
+{
+	if (file.empty()) {
+		gLog("[MidiMapConf::read] midimap not specified, nothing to do\n");
+		return MIDIMAP_NOT_SPECIFIED;
+	}
+
+	gLog("[MidiMapConf::read] reading midimap file '%s'\n", file.c_str());
+
+	string path = midimapsPath + file;
+	jRoot = json_load_file(path.c_str(), 0, &jError);
+	if (!jRoot) {
+    gLog("[MidiMapConf::read] unreadable midimap file\n");
+    return MIDIMAP_UNREADABLE;
+  }
+
+	if (!setString(jRoot, "brand", brand))  return MIDIMAP_UNREADABLE;
+  if (!setString(jRoot, "device", device)) return MIDIMAP_UNREADABLE;
+	if (!readInitCommands(jRoot)) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &muteOn, "mute_on")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &muteOff, "mute_off")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &soloOn, "solo_on")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &soloOff, "solo_off")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &waiting, "waiting")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &playing, "playing")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &stopping, "stopping")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &stopped, "stopped")) return MIDIMAP_UNREADABLE;
+
+#if 0
+
+	/* parse messages */
+
+	parse_DEPR_("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
+	parse_DEPR_("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
+	parse_DEPR_("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
+	parse_DEPR_("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
+	parse_DEPR_("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
+	parse_DEPR_("playing",  &playingChan,  &playingMsg,  &playingOffset);
+	parse_DEPR_("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
+	parse_DEPR_("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
+
+#endif
+
+	return MIDIMAP_READ_OK;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool MidiMapConf::readInitCommands(json_t *jContainer)
+{
+	json_t *jInitCommands = json_object_get(jContainer, "init_commands");
+  if (!checkArray(jInitCommands, "init_commands"))
+    return 0;
+
+	size_t commandIndex;
+	json_t *jInitCommand;
+	json_array_foreach(jInitCommands, commandIndex, jInitCommand) {
+
+		string indexStr = "init command " + gItoa(commandIndex);
+		if (!checkObject(jInitCommand, indexStr.c_str()))
+			return 0;
+
+		message_t message;
+    if (!setInt(jInitCommand, "channel", message.channel)) return 0;
+    if (!setString(jInitCommand, "message", message.value)) return 0;
+
+    initCommands.push_back(message);
+	}
+
+	return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool MidiMapConf::readCommand(json_t *jContainer, message_t *msg, const string &key)
+{
+	json_t *jCommand = json_object_get(jContainer, key.c_str());
+  if (!checkObject(jCommand, key.c_str()))
+    return 0;
+
+  if (!setInt(jCommand, "channel", msg->channel)) return 0;
+  if (!setString(jCommand, "message", msg->value)) return 0;
+
 }
 
 
@@ -128,23 +256,28 @@ void MidiMapConf::setDefault_DEPR_()
 int MidiMapConf::readMap_DEPR_(string file)
 {
 	if (file.empty()) {
-		gLog("[MidiMapConf::readFromFile] midimap not specified, nothing to do\n");
-		return 0;
+		gLog("[MidiMapConf::readMap_DEPR_] midimap not specified, nothing to do\n");
+		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	gLog("[MidiMapConf::readFromFile] reading midimap file '%s'\n", file.c_str());
+	gLog("[MidiMapConf::readMap_DEPR_] reading midimap file '%s'\n", file.c_str());
 
 	string path = midimapsPath + file;
 	fp = fopen(path.c_str(), "r");
 	if (!fp) {
-		gLog("[MidiMapConf::readFromFile] unreadable midimap file\n");
-		return 0;
+		gLog("[MidiMapConf::readMap_DEPR_] unreadable midimap file\n");
+		return MIDIMAP_UNREADABLE;
 	}
 
 	brand  = getValue("brand");
 	device = getValue("device");
 
-	gLog("[MidiMapConf::readFromFile] reading midimap for %s %s\n",
+	if (brand.empty() || device.empty()) {
+		gLog("[MidiMapConf::readMap_DEPR_] invalid midimap file\n");
+		return MIDIMAP_INVALID;
+	}
+
+	gLog("[MidiMapConf::readMap_DEPR_] reading midimap for %s %s\n",
 			brand.c_str(), device.c_str());
 
 	/* parse init commands */
@@ -153,7 +286,7 @@ int MidiMapConf::readMap_DEPR_(string file)
 	gSplit(getValue("init_commands"), ";", &ic);
 	for (unsigned i=0; i<(unsigned)MAX_INIT_COMMANDS && i<ic.size(); i++) {
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
-		gLog("[MidiMapConf::readFromFile] init command %d - channel %d - message 0x%X\n",
+		gLog("[MidiMapConf::readMap_DEPR_] init command %d - channel %d - message 0x%X\n",
 				i, init_channels[i], init_messages[i]);
 	}
 
@@ -169,7 +302,7 @@ int MidiMapConf::readMap_DEPR_(string file)
 	parse_DEPR_("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
 
 	close_DEPR_();
-	return 1;
+	return MIDIMAP_READ_OK;
 }
 
 
@@ -189,7 +322,7 @@ void MidiMapConf::close_DEPR_()
 
 void MidiMapConf::parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset)
 {
-	gLog("[MidiMapConf::parse2] command %s - ", key.c_str());
+	gLog("[MidiMapConf::parse_DEPR_] command %s - ", key.c_str());
 	string value = getValue(key.c_str());
 
 	/* grab channel part, i.e. [channel]:*/

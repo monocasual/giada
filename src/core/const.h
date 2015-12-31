@@ -237,6 +237,14 @@
 
 
 
+/* -- midimap signals ------------------------------------------------------- */
+#define MIDIMAP_NOT_SPECIFIED 0x00
+#define MIDIMAP_UNREADABLE    0x01
+#define MIDIMAP_INVALID       0x02
+#define MIDIMAP_READ_OK       0x04
+
+
+
 /* -- MIDI signals -------------------------------------------------------------
  * all signals are set to channel 0 (where channels are considered).
  * It's up to the caller to bitmask them with the proper channel number. */

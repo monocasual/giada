@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <vector>
 #include "dataStorageIni.h"
+#include "dataStorageJson.h"
 #include "../utils/utils.h"
 #if defined(__APPLE__)
 #include <pwd.h>
@@ -45,23 +46,19 @@ using std::string;
 using std::vector;
 
 
-class MidiMapConf : public DataStorageIni
+class MidiMapConf : public DataStorageIni, public DataStorageJson
 {
-private:
-
-	void close_DEPR_();
-	void parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset);
-
 public:
 
 	struct message_t
   {
-    int      channel;
-    uint32_t value;
+    int    channel;
+    string value;
+		int    offset;
   };
 
 	string brand;
-        string device;
+  string device;
 	vector<message_t> initCommands;
 	message_t muteOn;
 	message_t muteOff;
@@ -71,6 +68,25 @@ public:
 	message_t playing;
 	message_t stopping;
 	message_t stopped;
+
+	/* init
+	Parse the midi maps folders and find the available maps. */
+
+	void init();
+
+	/* setDefault
+	Set default values in case no maps are available/choosen. */
+
+	void setDefault();
+
+	/* read
+	Read a midi map from file 'file'. */
+
+	int read(const string &file);
+
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
 
 	static const int MAX_INIT_COMMANDS = 32;
 	static const int MAX_MIDI_BYTES = 4;
@@ -131,11 +147,6 @@ public:
 	int      stoppedOffset;
 	uint32_t stoppedMsg;
 
-	/* init
-	Parse the midi maps folders and find the available maps. */
-
-	void init_DEPR_();
-
 	/* setDefault
 	Set default values in case no maps are available/choosen. */
 
@@ -145,6 +156,18 @@ public:
 	Read a midi map from file 'file'. */
 
 	int readMap_DEPR_(string file);
+
+private:
+
+	bool readInitCommands(json_t *jContainer);
+	bool readCommand(json_t *jContainer, message_t *msg, const string &key);
+
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
+	/* --- DEPRECATED STUFF --------------------------------------------------- */
+
+	void close_DEPR_();
+	void parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset);
 };
 
 #endif
