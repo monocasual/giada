@@ -84,29 +84,37 @@ void MidiMapConf::setDefault()
 	brand  = "";
 	device = "";
 	muteOn.channel = 0;
-	muteOn.value = "";
-	muteOn.offset = 0;
+	muteOn.valueStr = "";
+	muteOn.offset = -1;
+	muteOn.value = 0;
 	muteOff.channel = 0;
-	muteOff.value = "";
-	muteOff.offset = 0;
+	muteOff.valueStr = "";
+	muteOff.offset = -1;
+	muteOff.value = 0;
 	soloOn.channel = 0;
-	soloOn.value = "";
-	soloOn.offset = 0;
+	soloOn.valueStr = "";
+	soloOn.offset = -1;
+	soloOn.value = 0;
 	soloOff.channel = 0;
-	soloOff.value = "";
-	soloOff.offset = 0;
+	soloOff.valueStr = "";
+	soloOff.offset = -1;
+	soloOff.value = 0;
 	waiting.channel = 0;
-	waiting.value = "";
-	waiting.offset = 0;
+	waiting.valueStr = "";
+	waiting.offset = -1;
+	waiting.value = 0;
 	playing.channel = 0;
-	playing.value = "";
-	playing.offset = 0;
+	playing.valueStr = "";
+	playing.offset = -1;
+	playing.value = 0;
 	stopping.channel = 0;
-	stopping.value = "";
-	stopping.offset = 0;
+	stopping.valueStr = "";
+	stopping.offset = -1;
+	stopping.value = 0;
 	stopped.channel = 0;
-	stopped.value = "";
-	stopped.offset = 0;
+	stopped.valueStr = "";
+	stopped.offset = -1;
+	stopped.value = 0;
 }
 
 
@@ -141,20 +149,16 @@ int MidiMapConf::read(const string &file)
 	if (!readCommand(jRoot, &stopping, "stopping")) return MIDIMAP_UNREADABLE;
 	if (!readCommand(jRoot, &stopped, "stopped")) return MIDIMAP_UNREADABLE;
 
-#if 0
-
 	/* parse messages */
 
-	parse_DEPR_("mute_on",  &muteOnChan,   &muteOnMsg,   &muteOnOffset);
-	parse_DEPR_("mute_off", &muteOffChan,  &muteOffMsg,  &muteOffOffset);
-	parse_DEPR_("solo_on",  &soloOnChan,   &soloOnMsg,   &soloOnOffset);
-	parse_DEPR_("solo_off", &soloOffChan,  &soloOffMsg,  &soloOffOffset);
-	parse_DEPR_("waiting",  &waitingChan,  &waitingMsg,  &waitingOffset);
-	parse_DEPR_("playing",  &playingChan,  &playingMsg,  &playingOffset);
-	parse_DEPR_("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
-	parse_DEPR_("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
-
-#endif
+	parse(&muteOn);
+	parse(&muteOff);
+	parse(&soloOn);
+	parse(&soloOff);
+	parse(&waiting);
+	parse(&playing);
+	parse(&stopping);
+	parse(&stopped);
 
 	return MIDIMAP_READ_OK;
 }
@@ -179,7 +183,7 @@ bool MidiMapConf::readInitCommands(json_t *jContainer)
 
 		message_t message;
     if (!setInt(jInitCommand, "channel", message.channel)) return 0;
-    if (!setString(jInitCommand, "message", message.value)) return 0;
+    if (!setString(jInitCommand, "message", message.valueStr)) return 0;
 
     initCommands.push_back(message);
 	}
@@ -198,8 +202,41 @@ bool MidiMapConf::readCommand(json_t *jContainer, message_t *msg, const string &
     return 0;
 
   if (!setInt(jCommand, "channel", msg->channel)) return 0;
-  if (!setString(jCommand, "message", msg->value)) return 0;
+  if (!setString(jCommand, "message", msg->valueStr)) return 0;
 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MidiMapConf::parse(message_t *message)
+{
+	/* Remove '0x' part from the original string. */
+
+	string input = message->valueStr.replace(0, 2, "");
+
+	/* Then transform string value into the actual uint32_t value, by parsing
+	 * each char (i.e. nibble) in the original string. Substitute 'n' with
+	 * zeros. */
+
+	string output;
+	for (unsigned i=0, p=24; i<input.length(); i++, p-=4) {
+		if (input[i] == 'n') {
+			output += '0';
+			if (message->offset == -1) // do it once
+				message->offset = p;
+		}
+		else
+			output += input[i];
+	}
+
+	/* from string to uint32_t */
+
+	message->value = strtoul(output.c_str(), NULL, 16);
+
+	gLog("[MidiMapConf::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
+			message->channel, message->valueStr.c_str(), message->value, message->offset);
 }
 
 

@@ -52,9 +52,10 @@ public:
 
 	struct message_t
   {
-    int    channel;
-    string value;
-		int    offset;
+    int      channel;
+    string   valueStr;
+		int      offset;
+		uint32_t value;
   };
 
 	string brand;
@@ -160,7 +161,10 @@ public:
 private:
 
 	bool readInitCommands(json_t *jContainer);
+
 	bool readCommand(json_t *jContainer, message_t *msg, const string &key);
+
+	void parse(message_t *message);
 
 	/* --- DEPRECATED STUFF --------------------------------------------------- */
 	/* --- DEPRECATED STUFF --------------------------------------------------- */
