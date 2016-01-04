@@ -184,6 +184,7 @@ bool MidiMapConf::readInitCommands(json_t *jContainer)
 		message_t message;
     if (!setInt(jInitCommand, "channel", message.channel)) return 0;
     if (!setString(jInitCommand, "message", message.valueStr)) return 0;
+		message.value = strtoul(message.valueStr.c_str(), NULL, 16);
 
     initCommands.push_back(message);
 	}
