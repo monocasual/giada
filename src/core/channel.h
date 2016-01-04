@@ -33,6 +33,7 @@
 
 #include <vector>
 #include "../utils/utils.h"
+#include "midiMapConf.h"
 #include "const.h"
 #include "recorder.h"
 
@@ -72,7 +73,7 @@ protected:
 	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
 	 * it to KernelMidi. */
 
-	void sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offset);
+	void sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg);
 
 public:
 

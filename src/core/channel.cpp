@@ -152,22 +152,20 @@ void Channel::copy(const Channel *src)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::sendMidiLmessage(uint32_t learn, int chan, uint32_t msg, int offset)
+void Channel::sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg)
 {
 	gLog("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
-		learn, chan, msg, offset);
-
-	uint32_t out;
+		learn, msg.channel, msg.value, msg.offset);
 
 	/* isolate 'channel' from learnt message and offset it as requested by 'nn'
 	 * in the midimap configuration file. */
 
-	out  = ((learn & 0x00FF0000) >> 16) << offset;
+		uint32_t out = ((learn & 0x00FF0000) >> 16) << msg.offset;
 
 	/* merge the previously prepared channel into final message, and finally
 	 * send it. */
 
-	out |= msg | (chan << 24);
+	out |= msg.value | (msg.channel << 24);
 	kernelMidi::send(out);
 }
 
@@ -331,9 +329,9 @@ void Channel::sendMidiLmute()
 	if (!midiOutL || midiOutLmute == 0x0)
 		return;
 	if (mute)
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOnChan, G_MidiMap.muteOnMsg, G_MidiMap.muteOnOffset);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOn);
 	else
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOffChan, G_MidiMap.muteOffMsg, G_MidiMap.muteOffOffset);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOff);
 }
 
 
@@ -345,9 +343,9 @@ void Channel::sendMidiLsolo()
 	if (!midiOutL || midiOutLsolo == 0x0)
 		return;
 	if (solo)
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOnChan, G_MidiMap.soloOnMsg, G_MidiMap.soloOnOffset);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOn);
 	else
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOffChan, G_MidiMap.soloOffMsg, G_MidiMap.soloOffOffset);
+		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOff);
 }
 
 
@@ -360,15 +358,15 @@ void Channel::sendMidiLplay()
 		return;
 	switch (status) {
 		case STATUS_OFF:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.stoppedChan, G_MidiMap.stoppedMsg, G_MidiMap.stoppedOffset);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.stopped);
 			break;
 		case STATUS_PLAY:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.playingChan, G_MidiMap.playingMsg, G_MidiMap.playingOffset);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.playing);
 			break;
 		case STATUS_WAIT:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.waitingChan, G_MidiMap.waitingMsg, G_MidiMap.waitingOffset);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.waiting);
 			break;
 		case STATUS_ENDING:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.stoppingChan, G_MidiMap.stoppingMsg, G_MidiMap.stoppingOffset);
+			sendMidiLmessage(midiOutLplaying, G_MidiMap.stopping);
 	}
 }
