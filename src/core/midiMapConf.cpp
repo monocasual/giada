@@ -83,38 +83,38 @@ void MidiMapConf::setDefault()
 {
 	brand  = "";
 	device = "";
-	muteOn.channel = 0;
-	muteOn.valueStr = "";
-	muteOn.offset = -1;
-	muteOn.value = 0;
-	muteOff.channel = 0;
-	muteOff.valueStr = "";
-	muteOff.offset = -1;
-	muteOff.value = 0;
-	soloOn.channel = 0;
-	soloOn.valueStr = "";
-	soloOn.offset = -1;
-	soloOn.value = 0;
-	soloOff.channel = 0;
-	soloOff.valueStr = "";
-	soloOff.offset = -1;
-	soloOff.value = 0;
-	waiting.channel = 0;
-	waiting.valueStr = "";
-	waiting.offset = -1;
-	waiting.value = 0;
-	playing.channel = 0;
-	playing.valueStr = "";
-	playing.offset = -1;
-	playing.value = 0;
-	stopping.channel = 0;
+	muteOn.channel    = 0;
+	muteOn.valueStr   = "";
+	muteOn.offset     = -1;
+	muteOn.value      = 0;
+	muteOff.channel   = 0;
+	muteOff.valueStr  = "";
+	muteOff.offset    = -1;
+	muteOff.value     = 0;
+	soloOn.channel    = 0;
+	soloOn.valueStr   = "";
+	soloOn.offset     = -1;
+	soloOn.value      = 0;
+	soloOff.channel   = 0;
+	soloOff.valueStr  = "";
+	soloOff.offset    = -1;
+	soloOff.value     = 0;
+	waiting.channel   = 0;
+	waiting.valueStr  = "";
+	waiting.offset    = -1;
+	waiting.value     = 0;
+	playing.channel   = 0;
+	playing.valueStr  = "";
+	playing.offset    = -1;
+	playing.value     = 0;
+	stopping.channel  = 0;
 	stopping.valueStr = "";
-	stopping.offset = -1;
-	stopping.value = 0;
-	stopped.channel = 0;
-	stopped.valueStr = "";
-	stopped.offset = -1;
-	stopped.value = 0;
+	stopping.offset   = -1;
+	stopping.value    = 0;
+	stopped.channel   = 0;
+	stopped.valueStr  = "";
+	stopped.offset    = -1;
+	stopped.value     = 0;
 }
 
 
@@ -338,6 +338,34 @@ int MidiMapConf::readMap_DEPR_(string file)
 	parse_DEPR_("playing",  &playingChan,  &playingMsg,  &playingOffset);
 	parse_DEPR_("stopping", &stoppingChan, &stoppingMsg, &stoppingOffset);
 	parse_DEPR_("stopped",  &stoppedChan,  &stoppedMsg,  &stoppedOffset);
+
+	/* forward compatibility with new JSON-based midimaps. This stuff will be
+	wiped out soon. */
+
+	muteOn.channel   = muteOnChan;
+	muteOn.offset    = muteOnOffset;
+	muteOn.value     = muteOnMsg;
+	muteOff.channel  = muteOffChan;
+	muteOff.offset   = muteOffOffset;
+	muteOff.value    = muteOffMsg;
+	soloOn.channel   = soloOnChan;
+	soloOn.offset    = soloOnOffset;
+	soloOn.value     = soloOnMsg;
+	soloOff.channel  = soloOffChan;
+	soloOff.offset   = soloOffOffset;
+	soloOff.value    = soloOffMsg;
+	waiting.channel  = waitingChan;
+	waiting.offset   = waitingOffset;
+	waiting.value    = waitingMsg;
+	playing.channel  = playingChan;
+	playing.offset   = playingOffset;
+	playing.value    = playingMsg;
+	stopping.channel = stoppingChan;
+	stopping.offset  = stoppingOffset;
+	stopping.value   = stoppingMsg;
+	stopped.channel  = stoppedChan;
+	stopped.offset   = stoppedOffset;
+	stopped.value    = stoppedMsg;
 
 	close_DEPR_();
 	return MIDIMAP_READ_OK;
