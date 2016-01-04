@@ -54,7 +54,6 @@ using std::string;
 
 namespace kernelMidi
 {
-
 int        api         = 0;      // one api for both in & out
 RtMidiOut *midiOut     = NULL;
 RtMidiIn  *midiIn      = NULL;
@@ -63,6 +62,18 @@ unsigned   numInPorts  = 0;
 
 cb_midiLearn *cb_learn = NULL;
 void         *cb_data  = NULL;
+
+
+void __sendMidiLightningInitMsgs__()
+{
+	for(int i=0; i<G_MidiMap.initCommands.size(); i++) {
+		MidiMapConf::message_t msg = G_MidiMap.initCommands.at(i);
+		if (msg.value != 0x0 && msg.channel != -1) {
+			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
+			send(msg.value | MIDI_CHANS[msg.channel]);
+		}
+	}
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -124,18 +135,10 @@ int openOutDevice(int port)
 			midiOut->openPort(port, getOutPortName(port));
 			gLog("[KM] MIDI out port %d open\n", port);
 
-			/* for each init command of MidiMap, send the init commands to the
-			external world. TODO 1 - we shold do that only if there is a map loaded
-			and available in MidiMap.
-			TODO 2 - move the map initialization to another function */
+			/* TODO - it shold send midiLightning message only if there is a map loaded
+			and available in G_MidiMap. */
 
-			for(int i=0; i<G_MidiMap.MAX_INIT_COMMANDS; i++) {
-				if (G_MidiMap.init_messages[i] != 0x0 && G_MidiMap.init_channels[i] != -1) {
-					gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", G_MidiMap.init_channels[i], G_MidiMap.init_messages[i]);
-					send(G_MidiMap.init_messages[i] | MIDI_CHANS[G_MidiMap.init_channels[i]]);
-				}
-			}
-
+			__sendMidiLightningInitMsgs__();
 			return 1;
 		}
 		catch (RtMidiError &error) {
@@ -393,6 +396,9 @@ std::string getRtMidiVersion()
 {
 	return midiOut->getVersion();
 }
+
+
+/* -------------------------------------------------------------------------- */
 
 
 }  // namespace
