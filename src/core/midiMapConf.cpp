@@ -138,17 +138,17 @@ int MidiMapConf::read(const string &file)
     return MIDIMAP_UNREADABLE;
   }
 
-	if (!setString(jRoot, "brand", brand))  return MIDIMAP_UNREADABLE;
-  if (!setString(jRoot, "device", device)) return MIDIMAP_UNREADABLE;
+	if (!setString(jRoot, MIDIMAP_KEY_BRAND, brand))   return MIDIMAP_UNREADABLE;
+  if (!setString(jRoot, MIDIMAP_KEY_DEVICE, device)) return MIDIMAP_UNREADABLE;
 	if (!readInitCommands(jRoot)) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &muteOn, "mute_on")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &muteOff, "mute_off")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &soloOn, "solo_on")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &soloOff, "solo_off")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &waiting, "waiting")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &playing, "playing")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &stopping, "stopping")) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &stopped, "stopped")) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &muteOn,   MIDIMAP_KEY_MUTE_ON))  return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &muteOff,  MIDIMAP_KEY_MUTE_OFF)) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &soloOn,   MIDIMAP_KEY_SOLO_ON))  return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &soloOff,  MIDIMAP_KEY_SOLO_OFF)) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &waiting,  MIDIMAP_KEY_WAITING))  return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &playing,  MIDIMAP_KEY_PLAYING))  return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &stopping, MIDIMAP_KEY_STOPPING)) return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &stopped,  MIDIMAP_KEY_STOPPED))  return MIDIMAP_UNREADABLE;
 
 	/* parse messages */
 
@@ -170,8 +170,8 @@ int MidiMapConf::read(const string &file)
 
 bool MidiMapConf::readInitCommands(json_t *jContainer)
 {
-	json_t *jInitCommands = json_object_get(jContainer, "init_commands");
-  if (!checkArray(jInitCommands, "init_commands"))
+	json_t *jInitCommands = json_object_get(jContainer, MIDIMAP_KEY_INIT_COMMANDS);
+  if (!checkArray(jInitCommands, MIDIMAP_KEY_INIT_COMMANDS))
     return 0;
 
 	size_t commandIndex;
@@ -183,8 +183,8 @@ bool MidiMapConf::readInitCommands(json_t *jContainer)
 			return 0;
 
 		message_t message;
-    if (!setInt(jInitCommand, "channel", message.channel)) return 0;
-    if (!setString(jInitCommand, "message", message.valueStr)) return 0;
+    if (!setInt(jInitCommand, MIDIMAP_KEY_CHANNEL, message.channel)) return 0;
+    if (!setString(jInitCommand, MIDIMAP_KEY_MESSAGE, message.valueStr)) return 0;
 		message.value = strtoul(message.valueStr.c_str(), NULL, 16);
 
     initCommands.push_back(message);
@@ -203,8 +203,8 @@ bool MidiMapConf::readCommand(json_t *jContainer, message_t *msg, const string &
   if (!checkObject(jCommand, key.c_str()))
     return 0;
 
-  if (!setInt(jCommand, "channel", msg->channel)) return 0;
-  if (!setString(jCommand, "message", msg->valueStr)) return 0;
+  if (!setInt(jCommand, MIDIMAP_KEY_CHANNEL, msg->channel)) return 0;
+  if (!setString(jCommand, MIDIMAP_KEY_MESSAGE, msg->valueStr)) return 0;
 
 }
 

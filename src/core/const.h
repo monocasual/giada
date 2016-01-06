@@ -441,4 +441,20 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_ABOUT_X                  "about_x"
 #define CONF_KEY_ABOUT_Y                  "about_y"
 
+/* JSON midimaps keys */
+
+#define MIDIMAP_KEY_BRAND          "brand"
+#define MIDIMAP_KEY_DEVICE         "device"
+#define MIDIMAP_KEY_INIT_COMMANDS  "init_commands"
+#define MIDIMAP_KEY_MUTE_ON        "mute_on"
+#define MIDIMAP_KEY_MUTE_OFF       "mute_off"
+#define MIDIMAP_KEY_SOLO_ON        "solo_on"
+#define MIDIMAP_KEY_SOLO_OFF       "solo_off"
+#define MIDIMAP_KEY_WAITING        "waiting"
+#define MIDIMAP_KEY_PLAYING        "playing"
+#define MIDIMAP_KEY_STOPPING       "stopping"
+#define MIDIMAP_KEY_STOPPED        "stopped"
+#define MIDIMAP_KEY_CHANNEL        "channel"
+#define MIDIMAP_KEY_MESSAGE        "message"
+
 #endif
