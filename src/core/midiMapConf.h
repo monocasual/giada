@@ -70,6 +70,17 @@ public:
 	message_t stopping;
 	message_t stopped;
 
+	/* midimapsPath
+	 * path of midimap files, different between OSes. */
+
+	string midimapsPath;
+
+	/* maps
+	 * Maps are the available .giadamap files. Each element of the vector
+	 * represents a .giadamap filename. */
+
+	vector<string> maps;
+
 	/* init
 	Parse the midi maps folders and find the available maps. */
 
@@ -92,17 +103,6 @@ public:
 	static const int MAX_INIT_COMMANDS = 32;
 	static const int MAX_MIDI_BYTES = 4;
 	static const int MAX_MIDI_NIBBLES = 8;
-
-	/* midimapsPath
-	 * path of midimap files, different between OSes. */
-
-	string midimapsPath;
-
-	/* maps
-	 * Maps are the available .giadamap files. Each element of the vector
-	 * represents a .giadamap filename. */
-
-	vector<string> maps;
 
 	/* init_*
 	 * init_commands. These messages are sent to the physical device as a wake up
