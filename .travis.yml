@@ -52,4 +52,4 @@ before_script:
 
 script: make && make check
 
-after_failure: cat /home/travis/builds/monocasual/giada/test-suite.log
+after_failure: cat /home/travis/monocasual/giada/test-suite.log
