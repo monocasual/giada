@@ -46,7 +46,7 @@ using std::vector;
 
 void MidiMapConf::init()
 {
-	midimapsPath = gGetHomePath() + "/midimaps/";
+	midimapsPath = gGetHomePath() + gGetSlash() + "midimaps" + gGetSlash();
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
@@ -72,6 +72,7 @@ void MidiMapConf::init()
 		maps.push_back(ep->d_name);
 	}
 
+	gLog("[MidiMapConf::init] total midimaps found: %d\n", maps.size());
 	closedir(dp);
 }
 
@@ -133,7 +134,7 @@ int MidiMapConf::read(const string &file)
 	string path = midimapsPath + file;
 	jRoot = json_load_file(path.c_str(), 0, &jError);
 	if (!jRoot) {
-    gLog("[MidiMapConf::read] unreadable midimap file\n");
+    gLog("[MidiMapConf::read] unreadable midimap file. Error on line %d: %s\n", jError.line, jError.text);
     return MIDIMAP_UNREADABLE;
   }
 
