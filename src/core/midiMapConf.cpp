@@ -327,6 +327,12 @@ int MidiMapConf::readMap_DEPR_(string file)
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
 		gLog("[MidiMapConf::readMap_DEPR_] init command %d - channel %d - message 0x%X\n",
 				i, init_channels[i], init_messages[i]);
+
+		/* forward compatibility */
+		message_t message;
+		message.channel = init_channels[i];
+		message.value   = init_messages[i];
+		initCommands.push_back(message);
 	}
 
 	/* parse messages */
