@@ -53,8 +53,16 @@ TEST_CASE("Test MidiMapConf class")
   {
     midimap.init();
     midimap.setDefault();
+
+    /* try with deprecated mode */
+
+    int res = midimap.read("akai-lpd8.giadamap");
+    if (res != MIDIMAP_READ_OK)
+      res = midimap.read_DEPR_("akai-lpd8.giadamap"):
+
+    REQUIRE(res == MIDIMAP_READ_OK);
+
     REQUIRE(midimap.maps.size() >= 2);
-    REQUIRE(midimap.read("akai-lpd8.giadamap") == MIDIMAP_READ_OK);
 
     REQUIRE(midimap.brand == "AKAI");
     REQUIRE(midimap.device == "LPD8");
