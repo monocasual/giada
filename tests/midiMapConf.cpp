@@ -58,7 +58,7 @@ TEST_CASE("Test MidiMapConf class")
 
     int res = midimap.read("akai-lpd8.giadamap");
     if (res != MIDIMAP_READ_OK)
-      res = midimap.readMap_DEPR_("akai-lpd8.giadamap"):
+      res = midimap.readMap_DEPR_("akai-lpd8.giadamap");
 
     REQUIRE(res == MIDIMAP_READ_OK);
 
