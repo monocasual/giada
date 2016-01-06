@@ -52,4 +52,4 @@ before_script:
 
 script: make && make check
 
-after_failure: cat /home/travis/monocasual/giada/test-suite.log
+after_failure: cat $TRAVIS_BUILD_DIR/test-suite.log
