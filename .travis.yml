@@ -42,8 +42,8 @@ before_script:
 
   - wget https://github.com/monocasual/giada-midimaps/archive/master.zip -O giada-midimaps-master.zip
   - unzip giada-midimaps-master.zip
-  - mkdir -p ~/.giada/midimaps
-  - cp giada-midimaps-master/midimaps/* ~/.giada/midimaps
+  - mkdir -p /home/travis/.giada/midimaps
+  - cp giada-midimaps-master/midimaps/* /home/travis/.giada/midimaps
 
   # Build Giada
 
@@ -51,3 +51,5 @@ before_script:
   - ./configure --target=linux --enable-vst
 
 script: make && make check
+
+after_failure: cat /home/travis/builds/monocasual/giada/test-suite.log
