@@ -180,9 +180,11 @@ tests/main.cpp               \
 tests/conf.cpp               \
 tests/wave.cpp               \
 tests/patch.cpp              \
+tests/midiMapConf.cpp        \
 tests/utils.cpp              \
 src/core/conf.cpp            \
 src/core/wave.cpp            \
+src/core/midiMapConf.cpp     \
 src/core/patch.cpp           \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
