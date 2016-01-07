@@ -13,6 +13,7 @@
 
 
 0.11.2
+- New JSON-based midimap files
 - Fix a bug that prevented MIDI Jack from being selected on Linux
 
 
