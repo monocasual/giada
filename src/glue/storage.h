@@ -45,14 +45,4 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress
 int glue_savePatch  (const string &fullPath, const string &name, bool isProject);
 int glue_saveProject(const string &folderPath, const string &projName);
 
-static void __glue_fillPatchGlobals__(const string &name);
-static void __glue_fillPatchChannels__(bool isProject);
-static void __glue_fillPatchColumns__();
-
-#ifdef WITH_VST
-static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch);
-#endif
-
-static void __glue_setProgressBar__(class gProgress *status, float v);
-
 #endif

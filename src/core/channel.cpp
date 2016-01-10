@@ -247,7 +247,7 @@ int Channel::writePatch(int i, bool isProject)
 #ifdef WITH_VST
 
 	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
-	for (int i=0; i<numPlugs; i++) {
+	for (unsigned i=0; i<numPlugs; i++) {
 		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
 		if (pPlugin->status) {
 			Patch::plugin_t pp;

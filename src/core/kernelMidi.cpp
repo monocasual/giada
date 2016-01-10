@@ -66,7 +66,7 @@ void         *cb_data  = NULL;
 
 void __sendMidiLightningInitMsgs__()
 {
-	for(int i=0; i<G_MidiMap.initCommands.size(); i++) {
+	for(unsigned i=0; i<G_MidiMap.initCommands.size(); i++) {
 		MidiMapConf::message_t msg = G_MidiMap.initCommands.at(i);
 		if (msg.value != 0x0 && msg.channel != -1) {
 			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);

@@ -61,6 +61,102 @@ extern PluginHost		 G_PluginHost;
 #endif
 
 
+static void __glue_setProgressBar__(class gProgress *status, float v)
+{
+	status->value(status->value() + v);
+	//Fl::check();
+	Fl::wait(0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
+{
+	for (unsigned i=0; i<host->size(); i++) {
+		Plugin *pl = host->at(i);
+		Patch::plugin_t ppl;
+		ppl.path = pl->pathfile;
+		ppl.bypass = pl->bypass;
+		int numParams = pl->getNumParams();
+		for (int k=0; k<numParams; k++)
+			ppl.params.push_back(pl->getParam(k));
+		patch->push_back(ppl);
+	}
+}
+
+#endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+static void __glue_fillPatchColumns__()
+{
+	for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
+		gColumn *gCol = mainWin->keyboard->getColumn(i);
+		Patch::column_t pCol;
+		pCol.index = gCol->getIndex();
+		pCol.width = gCol->w();
+		for (int k=0; k<gCol->countChannels(); k++) {
+			Channel *colChannel = gCol->getChannel(k);
+			for (unsigned j=0; j<G_Mixer.channels.size(); j++) {
+				Channel *mixerChannel = G_Mixer.channels.at(j);
+				if (colChannel == mixerChannel) {
+					pCol.channels.push_back(mixerChannel->index);
+					break;
+				}
+			}
+		}
+		G_Patch.columns.push_back(pCol);
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+static void __glue_fillPatchChannels__(bool isProject)
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		G_Mixer.channels.at(i)->writePatch(i, isProject);
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+static void __glue_fillPatchGlobals__(const string &name)
+{
+	G_Patch.version      = G_VERSION_STR;
+	G_Patch.versionMajor = G_VERSION_MAJOR;
+	G_Patch.versionMinor = G_VERSION_MINOR;
+	G_Patch.versionPatch = G_VERSION_PATCH;
+	G_Patch.name         = name;
+	G_Patch.bpm          = G_Mixer.bpm;
+	G_Patch.bars         = G_Mixer.bars;
+	G_Patch.beats        = G_Mixer.beats;
+	G_Patch.quantize     = G_Mixer.quantize;
+	G_Patch.masterVolIn  = G_Mixer.inVol;
+  G_Patch.masterVolOut = G_Mixer.outVol;
+  G_Patch.metronome    = G_Mixer.metronome;
+
+#ifdef WITH_VST
+
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterIn, &G_Patch.masterInPlugins);
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterOut, &G_Patch.masterOutPlugins);
+
+#endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 {
 	G_Patch.init();
@@ -243,102 +339,6 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 #endif
 
 	return res;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void __glue_fillPatchGlobals__(const string &name)
-{
-	G_Patch.version      = G_VERSION_STR;
-	G_Patch.versionMajor = G_VERSION_MAJOR;
-	G_Patch.versionMinor = G_VERSION_MINOR;
-	G_Patch.versionPatch = G_VERSION_PATCH;
-	G_Patch.name         = name;
-	G_Patch.bpm          = G_Mixer.bpm;
-	G_Patch.bars         = G_Mixer.bars;
-	G_Patch.beats        = G_Mixer.beats;
-	G_Patch.quantize     = G_Mixer.quantize;
-	G_Patch.masterVolIn  = G_Mixer.inVol;
-  G_Patch.masterVolOut = G_Mixer.outVol;
-  G_Patch.metronome    = G_Mixer.metronome;
-
-#ifdef WITH_VST
-
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterIn, &G_Patch.masterInPlugins);
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterOut, &G_Patch.masterOutPlugins);
-
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
-{
-	for (unsigned i=0; i<host->size(); i++) {
-		Plugin *pl = host->at(i);
-		Patch::plugin_t ppl;
-		ppl.path = pl->pathfile;
-		ppl.bypass = pl->bypass;
-		int numParams = pl->getNumParams();
-		for (unsigned k=0; k<numParams; k++)
-			ppl.params.push_back(pl->getParam(k));
-		patch->push_back(ppl);
-	}
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void __glue_fillPatchChannels__(bool isProject)
-{
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->writePatch(i, isProject);
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void __glue_fillPatchColumns__()
-{
-	for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
-		gColumn *gCol = mainWin->keyboard->getColumn(i);
-		Patch::column_t pCol;
-		pCol.index = gCol->getIndex();
-		pCol.width = gCol->w();
-		for (unsigned k=0; k<gCol->countChannels(); k++) {
-			Channel *colChannel = gCol->getChannel(k);
-			for (unsigned j=0; j<G_Mixer.channels.size(); j++) {
-				Channel *mixerChannel = G_Mixer.channels.at(j);
-				if (colChannel == mixerChannel) {
-					pCol.channels.push_back(mixerChannel->index);
-					break;
-				}
-			}
-		}
-		G_Patch.columns.push_back(pCol);
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void __glue_setProgressBar__(class gProgress *status, float v)
-{
-	status->value(status->value() + v);
-	//Fl::check();
-	Fl::wait(0);
 }
 
 

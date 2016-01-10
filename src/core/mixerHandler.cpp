@@ -68,6 +68,32 @@ extern PluginHost  G_PluginHost;
 using std::vector;
 
 
+#ifdef WITH_VST
+
+static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+{
+	int ret = 1;
+	for (unsigned i=0; i<list->size(); i++) {
+		Patch::plugin_t *ppl = &list->at(i);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
+		if (plugin != NULL) {
+			plugin->bypass = ppl->bypass;
+			for (unsigned j=0; j<ppl->params.size(); j++)
+				plugin->setParam(j, ppl->params.at(j));
+			ret &= 1;
+		}
+		else
+			ret &= 0;
+	}
+	return ret;
+}
+
+#endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void mh_stopSequencer()
 {
 	G_Mixer.running = false;
@@ -252,29 +278,3 @@ bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
 	}
 	return true;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
-{
-	int ret = 1;
-	for (unsigned i=0; i<list->size(); i++) {
-		Patch::plugin_t *ppl = &list->at(i);
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
-		if (plugin != NULL) {
-			plugin->bypass = ppl->bypass;
-			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParam(j, ppl->params.at(j));
-			ret &= 1;
-		}
-		else
-			ret &= 0;
-	}
-	return ret;
-}
-
-#endif

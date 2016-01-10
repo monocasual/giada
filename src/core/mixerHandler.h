@@ -74,10 +74,4 @@ SampleChannel *mh_stopInputRec();
 
 bool mh_uniqueSamplename(class SampleChannel *ch, const char *name);
 
-#ifdef WITH_VST
-
-static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type);
-
-#endif
-
 #endif

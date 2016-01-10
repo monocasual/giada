@@ -91,7 +91,7 @@ int PluginHost::clonePlugin(const Plugin &src, int stackType, Channel *ch)
 		gLog("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
 		return 0;
 	}
-	for (unsigned k=0; k<src.getNumParams(); k++) {
+	for (int k=0; k<src.getNumParams(); k++) {
 		p->setParam(k, src.getParam(k));
 	}
 	return 1;

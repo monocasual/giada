@@ -206,6 +206,7 @@ bool MidiMapConf::readCommand(json_t *jContainer, message_t *msg, const string &
   if (!setInt(jCommand, MIDIMAP_KEY_CHANNEL, msg->channel)) return 0;
   if (!setString(jCommand, MIDIMAP_KEY_MESSAGE, msg->valueStr)) return 0;
 
+	return 1;
 }
 
 
