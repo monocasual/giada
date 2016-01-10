@@ -152,11 +152,13 @@ giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
 if OSX
+# for 32 bit compilation: 
+# export CXXFLAGS="-m32"
+# export LDFLAGS="-m32"
 giada_LDADD    = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
 								 -lsamplerate -ljansson
-giada_CXXFLAGS = -m32
-giada_LDFLAGS  = -m32 -framework CoreAudio -framework Cocoa -framework Carbon \
-                -framework CoreMIDI -framework CoreFoundation
+giada_LDFLAGS  = -framework CoreAudio -framework Cocoa -framework Carbon \
+                 -framework CoreMIDI -framework CoreFoundation
 endif
 
 # used only under MinGW to compile the resource.rc file (program icon)
