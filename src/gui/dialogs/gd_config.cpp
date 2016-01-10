@@ -135,18 +135,18 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_NONE:
-			soundsys->show("(none)");
+			soundsys->showItem("(none)");
 			break;
 		case SYS_API_ALSA:
-			soundsys->show("ALSA");
+			soundsys->showItem("ALSA");
 			break;
 		case SYS_API_JACK:
-			soundsys->show("Jack");
+			soundsys->showItem("Jack");
 			buffersize->deactivate();
 			samplerate->deactivate();
 			break;
 		case SYS_API_PULSE:
-			soundsys->show("PulseAudio");
+			soundsys->showItem("PulseAudio");
 			break;
 	}
 
@@ -231,7 +231,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->show(gItoa(G_Conf.buffersize).c_str());
+	buffersize->showItem(gItoa(G_Conf.buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -723,10 +723,10 @@ void gTabMidi::fetchSystems()
 #endif
 
 	switch (G_Conf.midiSystem) {
-		case RtMidi::LINUX_ALSA:  system->show("ALSA"); break;
-		case RtMidi::UNIX_JACK:   system->show("Jack"); break;
-		case RtMidi::WINDOWS_MM:  system->show("Multimedia MIDI"); break;
-		case RtMidi::MACOSX_CORE: system->show("OSX Core MIDI"); break;
+		case RtMidi::LINUX_ALSA:  system->showItem("ALSA"); break;
+		case RtMidi::UNIX_JACK:   system->showItem("Jack"); break;
+		case RtMidi::WINDOWS_MM:  system->showItem("Multimedia MIDI"); break;
+		case RtMidi::MACOSX_CORE: system->showItem("OSX Core MIDI"); break;
 		default: system->value(0); break;
 	}
 }
