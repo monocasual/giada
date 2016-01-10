@@ -159,13 +159,13 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_NONE:
-			soundsys->show("(none)");
+			soundsys->showItem("(none)");
 			break;
 		case SYS_API_DS:
-			soundsys->show("DirectSound");
+			soundsys->showItem("DirectSound");
 			break;
 		case SYS_API_ASIO:
-			soundsys->show("ASIO");
+			soundsys->showItem("ASIO");
 			break;
 	}
 
@@ -176,10 +176,10 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_NONE:
-			soundsys->show("(none)");
+			soundsys->showItem("(none)");
 			break;
 		case SYS_API_CORE:
-			soundsys->show("CoreAudio");
+			soundsys->showItem("CoreAudio");
 			break;
 	}
 

@@ -255,7 +255,6 @@ gSoundMeter::gSoundMeter(int x, int y, int w, int h, const char *L)
     clip(false),
     mixerPeak(0.0f),
     peak(0.0f),
-    peak_old(0.0f),
     db_level(0.0f),
     db_level_old(0.0f) {}
 

@@ -69,7 +69,6 @@ private:
 
 	class gSoundMeter *outMeter;
 	class gSoundMeter *inMeter;
-	class gBeatMeter  *beatMeter;
 	class gDial				*outVol;
 	class gDial				*inVol;
 #ifdef WITH_VST

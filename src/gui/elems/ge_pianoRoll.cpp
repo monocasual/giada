@@ -461,10 +461,10 @@ bool gPianoRoll::onItem(int rel_x, int rel_y) {
 /* ------------------------------------------------------------------ */
 
 
-gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *a, recorder::action *b, gdActionEditor *pParent)
+gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a, recorder::action *_b, gdActionEditor *pParent)
 	: Fl_Box  (X, Y, 20, gPianoRoll::CELL_H-5),
-	  a       (a),
-	  b       (b),
+	  a       (_a),
+	  b       (_b),
 		pParent (pParent),
 		selected(false),
 		event_a (0x00),

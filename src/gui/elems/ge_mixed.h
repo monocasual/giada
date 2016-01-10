@@ -205,7 +205,6 @@ public:
 	float mixerPeak;	// peak from mixer
 private:
 	float peak;
-	float peak_old;
 	float db_level;
 	float db_level_old;
 };
