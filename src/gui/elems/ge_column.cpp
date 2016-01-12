@@ -98,6 +98,12 @@ gColumn::~gColumn()
 int gColumn::handle(int e)
 {
 	switch (e) {
+		case FL_RELEASE: {
+			if (Fl::event_button() == FL_RIGHT_MOUSE) {
+				__cb_addChannel();
+				return 1;
+			}
+		}
 		case FL_DND_ENTER:           	// return(1) for these events to 'accept' dnd
 		case FL_DND_DRAG:
 		case FL_DND_RELEASE: {
