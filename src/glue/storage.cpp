@@ -338,6 +338,8 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 		gdAlert("Some VST plugins were not loaded successfully.");
 #endif
 
+	gdAlert("This patch is using a deprecated format.\nPlease save it again to store it properly.");
+
 	return res;
 }
 
