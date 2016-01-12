@@ -17,6 +17,7 @@
 - Fix a bug that prevented MIDI Jack from being selected on Linux
 - Do not force 32 bit compilation on OS X
 - Fix warnings and errors on GCC 5.3
+- Add new channel by right-clicking anywhere on a column
 
 
 0.11.1 --- 2015 . 12 . 22
