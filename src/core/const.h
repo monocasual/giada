@@ -32,11 +32,11 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define G_VERSION_STR   "0.11.2"
+#define G_VERSION_STR   "0.12.0"
 #define G_APP_NAME      "Giada"
 #define G_VERSION_MAJOR 0
-#define G_VERSION_MINOR 11
-#define G_VERSION_PATCH 2
+#define G_VERSION_MINOR 12
+#define G_VERSION_PATCH 0
 
 #define CONF_FILENAME		"giada.conf"
 
