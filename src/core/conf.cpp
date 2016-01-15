@@ -77,6 +77,10 @@ int Conf::createConfigFolder()
 		return 0;
 	}
 
+#else // windows
+
+	return 1;
+
 #endif
 }
 
