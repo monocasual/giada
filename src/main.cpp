@@ -42,7 +42,7 @@
 #include "utils/gui_utils.h"
 #include "gui/dialogs/gd_mainWindow.h"
 #ifdef WITH_VST
-#include "core/pluginHost.h"
+#include "core/pluginHost_DEPR_.h"
 #endif
 
 

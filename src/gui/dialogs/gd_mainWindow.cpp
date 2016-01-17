@@ -36,7 +36,7 @@
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
 #include "../../core/mixerHandler.h"
-#include "../../core/pluginHost.h"
+#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/init.h"

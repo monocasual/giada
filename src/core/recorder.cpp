@@ -34,7 +34,7 @@
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "kernelAudio.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "conf.h"

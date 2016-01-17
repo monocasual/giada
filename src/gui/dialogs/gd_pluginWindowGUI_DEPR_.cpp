@@ -32,9 +32,9 @@
 
 #include "../../utils/log.h"
 #include "../../utils/gui_utils.h"
-#include "../../core/pluginHost.h"
+#include "../../core/pluginHost_DEPR_.h"
 #include "../elems/ge_mixed.h"
-#include "gd_pluginWindowGUI.h"
+#include "gd_pluginWindowGUI_DEPR_.h"
 
 
 extern PluginHost G_PluginHost;

@@ -21,14 +21,14 @@ src/core/conf.h                        \
 src/core/conf.cpp                      \
 src/core/kernelAudio.h                 \
 src/core/kernelAudio.cpp               \
-src/core/pluginHost.h			             \
-src/core/pluginHost.cpp                \
+src/core/pluginHost_DEPR_.h		         \
+src/core/pluginHost_DEPR_.cpp          \
 src/core/mixerHandler.h                \
 src/core/mixerHandler.cpp              \
 src/core/init.h                        \
 src/core/init.cpp                      \
-src/core/plugin.h                      \
-src/core/plugin.cpp                    \
+src/core/plugin_DEPR_.h                \
+src/core/plugin_DEPR_.cpp              \
 src/core/wave.h                        \
 src/core/wave.cpp                      \
 src/core/waveFx.h                      \
@@ -79,8 +79,8 @@ src/gui/dialogs/gd_pluginWindow.h	     \
 src/gui/dialogs/gd_pluginWindow.cpp    \
 src/gui/dialogs/gd_editor.h            \
 src/gui/dialogs/gd_editor.cpp          \
-src/gui/dialogs/gd_pluginWindowGUI.h   \
-src/gui/dialogs/gd_pluginWindowGUI.cpp \
+src/gui/dialogs/gd_pluginWindowGUI_DEPR_.h   \
+src/gui/dialogs/gd_pluginWindowGUI_DEPR_.cpp \
 src/gui/dialogs/gd_midiOutput.h        \
 src/gui/dialogs/gd_midiOutput.cpp      \
 src/gui/dialogs/gd_midiInput.h         \
@@ -152,7 +152,7 @@ giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
 if OSX
-# for 32 bit compilation: 
+# for 32 bit compilation:
 # export CXXFLAGS="-m32"
 # export LDFLAGS="-m32"
 giada_LDADD    = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \

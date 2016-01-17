@@ -30,7 +30,7 @@
 #include "../utils/log.h"
 #include "../gui/elems/ge_channel.h"
 #include "channel.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "patch.h"

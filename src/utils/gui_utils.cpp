@@ -31,7 +31,7 @@
 #include "../core/patch_DEPR_.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
-#include "../core/pluginHost.h"
+#include "../core/pluginHost_DEPR_.h"
 #include "../core/channel.h"
 #include "../core/conf.h"
 #include "../core/graphics.h"

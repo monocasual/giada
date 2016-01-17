@@ -34,7 +34,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "wave.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "waveFx.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"

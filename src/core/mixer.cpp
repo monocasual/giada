@@ -34,7 +34,7 @@
 #include "init.h"
 #include "wave.h"
 #include "recorder.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "patch_DEPR_.h"
 #include "conf.h"
 #include "mixerHandler.h"

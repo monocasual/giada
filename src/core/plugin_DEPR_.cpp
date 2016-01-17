@@ -29,7 +29,7 @@
 
 
 #include "../utils/log.h"
-#include "plugin.h"
+#include "plugin_DEPR_.h"
 
 
 int Plugin::id_generator = 0;

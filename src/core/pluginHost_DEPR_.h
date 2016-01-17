@@ -34,7 +34,7 @@
 #include <vector>
 #include "../utils/utils.h"
 #include "../gui/elems/ge_window.h"
-#include "plugin.h"
+#include "plugin_DEPR_.h"
 #include "init.h"
 #include "const.h"
 

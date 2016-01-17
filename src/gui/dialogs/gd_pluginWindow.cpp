@@ -32,7 +32,7 @@
 
 #include <FL/Fl_Scroll.H>
 #include "../../utils/gui_utils.h"
-#include "../../core/pluginHost.h"
+#include "../../core/pluginHost_DEPR_.h"
 #include "../elems/ge_mixed.h"
 #include "gd_pluginWindow.h"
 

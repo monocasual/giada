@@ -41,7 +41,7 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "recorder.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"

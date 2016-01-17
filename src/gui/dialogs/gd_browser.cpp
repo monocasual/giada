@@ -30,7 +30,7 @@
 #include "../../core/mixer.h"
 #include "../../core/graphics.h"
 #include "../../core/wave.h"
-#include "../../core/pluginHost.h"
+#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/patch_DEPR_.h"

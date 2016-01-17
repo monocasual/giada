@@ -34,7 +34,7 @@
 #include "mixer.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "conf.h"
 #include "midiMapConf.h"
 

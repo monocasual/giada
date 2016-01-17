@@ -33,7 +33,7 @@
 #include <vector>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../utils/log.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "conf.h"
 #include "const.h"
 #include "mixer.h"

@@ -30,7 +30,7 @@
 #include "../utils/log.h"
 #include "midiChannel.h"
 #include "channel.h"
-#include "pluginHost.h"
+#include "pluginHost_DEPR_.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
