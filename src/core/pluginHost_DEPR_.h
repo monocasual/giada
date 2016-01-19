@@ -28,8 +28,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __PLUGIN_HOST_
-#define __PLUGIN_HOST_
+#ifndef __PLUGIN_HOST_DEPR_H__
+#define __PLUGIN_HOST_DEPR_H__
 
 #include <vector>
 #include "../utils/utils.h"

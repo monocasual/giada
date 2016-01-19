@@ -1,6 +1,9 @@
+/* Note: CPPFLAGS ---> C preprocessor, while CXXFLAGS ---> C++ compiler.
+
 channelAUTOMAKOPTIONS = foreign
 
-AM_CXXFLAGS = -Wall -pedantic -Werror
+AM_CPPFLAGS = -I ./src/deps/juce
+AM_CXXFLAGS = -std=c++11 -Wall -pedantic -Werror
 
 # make giada -------------------------------------------------------------------
 
@@ -23,6 +26,8 @@ src/core/kernelAudio.h                 \
 src/core/kernelAudio.cpp               \
 src/core/pluginHost_DEPR_.h		         \
 src/core/pluginHost_DEPR_.cpp          \
+src/core/pluginHost.h		               \
+src/core/pluginHost.cpp                \
 src/core/mixerHandler.h                \
 src/core/mixerHandler.cpp              \
 src/core/init.h                        \

@@ -28,8 +28,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __PLUGIN_H
-#define __PLUGIN_H
+#ifndef __PLUGIN_DEPR_H__
+#define __PLUGIN_DEPR_H__
 
 #include <cstdio>
 
