@@ -40,7 +40,7 @@ AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
 
 # --enable-vst. VST compilation is disabled by default
 #
-# WITH_VST will be passed to gcc as -DWITH_VST
+# WITH_VST, if present, will be passed to gcc as -DWITH_VST
 #
 # AC_ARG_ENABLE (
 # feature,                [--enable-] + [feature], eg --enable-vst
@@ -49,9 +49,10 @@ AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
 # [action-if-not-given])  not used here
 
 AC_ARG_ENABLE(
-	vst,
+	[vst],
 	AS_HELP_STRING([--enable-vst], [enable vst support]),
-  [AC_DEFINE(WITH_VST)]
+  [AC_DEFINE(WITH_VST) AM_CONDITIONAL(WITH_VST, true)],
+	[AM_CONDITIONAL(WITH_VST, false)]
 )
 
 # ------------------------------------------------------------------------------
