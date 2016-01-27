@@ -39,7 +39,7 @@ depcomp
 install-sh
 /configure
 /nbproject
-misc/
+/misc/
 missing
 release/
 script/
