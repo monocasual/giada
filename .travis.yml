@@ -45,10 +45,11 @@ before_script:
   - mkdir -p $HOME/.giada/midimaps
   - cp giada-midimaps-master/midimaps/* $HOME/.giada/midimaps
 
-  # Build Giada
+  # Build Giada. Note the CFLAGS: optimization levels are set to O1 in order
+  # not to throw up nasty errors from JUCE modules.
 
   - ./autogen.sh
-  - ./configure --target=linux --enable-vst
+  - ./configure CFLAGS='-g -O1' CXXFLAGS='-g -O1' --target=linux --enable-vst
 
 script: make && make check
 
