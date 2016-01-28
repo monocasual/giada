@@ -15,7 +15,7 @@ notifications:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev libxrandr-dev
+  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev libxrandr-dev libx11-dev libxinerama-dev
 
 before_script:
 
