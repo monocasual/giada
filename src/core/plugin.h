@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * pluginHost
+ * plugin
  *
  * -----------------------------------------------------------------------------
  *
@@ -28,11 +28,10 @@
 
 #ifdef WITH_VST
 
-#ifndef __PLUGIN_HOST_H__
-#define __PLUGIN_HOST_H__
+#ifndef __PLUGIN_H__
+#define __PLUGIN_H__
 
 
-//#include "../deps/juce/AppConfig.h"
 #include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
 #include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
 #include "../deps/juce/juce_core/juce_core.h"
@@ -43,65 +42,13 @@
 #include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
 
 
-using std::string;
-using std::vector;
-
-
-class PluginHost
+class Plugin : public juce::AudioProcessor
 {
 private:
 
-  string pluginDir;
-
-  vector<juce::AudioProcessor *> masterOut;
-  vector<juce::AudioProcessor *> masterIn;
-
 public:
-
-  int scanDir();
-
-#if 0
-  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
-
-  Plugin *addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
-
-  void processEvents(float *buffer, class Channel *ch);
-
-  /* processStack
-   * apply the fx list to the buffer. */
-
-  void processStack(float *buffer, int stackType, class Channel *ch=NULL);
-
-  /* processStackOffline
-   * apply the fx list to a longer chunk of data */
-
-  void processStackOffline(float *buffer, int stackType, class Channel *ch, int size);
-
-  /* createVstMidiEvent
-   * return a pointer to a new VstMidiEvent structure. */
-
-  VstMidiEvent *createVstMidiEvent(uint32_t msg);
-
-  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
-
-  Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
-
-  Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
-
-  int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
-
-  unsigned countPlugins(int stackType, class Channel *ch=NULL);
-
-  void freeStack(int stackType, class Channel *ch=NULL);
-
-  void freeAllStacks();
-
-  void freePlugin(int id, int stackType, class Channel *ch=NULL);
-
-  void swapPlugin(unsigned indexA, unsigned indexB, int stackType, class Channel *ch=NULL);
-
-#endif
 };
+
 #endif
 
 #endif // #ifdef WITH_VST
