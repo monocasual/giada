@@ -32,13 +32,13 @@
 #include "plugin_DEPR_.h"
 
 
-int Plugin::id_generator = 0;
+int Plugin_DEPR_::id_generator = 0;
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::Plugin()
+Plugin_DEPR_::Plugin_DEPR_()
 : module    (NULL),
   entryPoint(NULL),
   plugin    (NULL),
@@ -52,7 +52,7 @@ Plugin::Plugin()
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::~Plugin()
+Plugin_DEPR_::~Plugin_DEPR_()
 {
 	unload();
 }
@@ -61,7 +61,7 @@ Plugin::~Plugin()
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::unload()
+int Plugin_DEPR_::unload()
 {
 	if (module == NULL)
 		return 1;
@@ -100,7 +100,7 @@ int Plugin::unload()
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::load(const char *fname)
+int Plugin_DEPR_::load(const char *fname)
 {
 	strcpy(pathfile, fname);
 
@@ -167,7 +167,7 @@ int Plugin::load(const char *fname)
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt))
+int Plugin_DEPR_::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void* ptr, float opt))
 {
 #if defined(_WIN32)
 
@@ -245,7 +245,7 @@ int Plugin::init(VstIntPtr VSTCALLBACK (*HostCallback) (AEffect* effect, VstInt3
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::setup(int samplerate, int frames)
+int Plugin_DEPR_::setup(int samplerate, int frames)
 {
   /* init plugin through the dispatcher with some basic infos */
 
@@ -265,7 +265,7 @@ int Plugin::setup(int samplerate, int frames)
 /* -------------------------------------------------------------------------- */
 
 
-AEffect *Plugin::getPlugin()
+AEffect *Plugin_DEPR_::getPlugin()
 {
 	return plugin;
 }
@@ -274,13 +274,13 @@ AEffect *Plugin::getPlugin()
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getId() { return id; }
+int Plugin_DEPR_::getId() { return id; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getSDKVersion()
+int Plugin_DEPR_::getSDKVersion()
 {
 	return plugin->dispatcher(plugin, effGetVstVersion, 0, 0, 0, 0);
 }
@@ -289,7 +289,7 @@ int Plugin::getSDKVersion()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getName(char *out)
+void Plugin_DEPR_::getName(char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetEffectName, 0, 0, tmp, 0);
@@ -301,7 +301,7 @@ void Plugin::getName(char *out)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getVendor(char *out)
+void Plugin_DEPR_::getVendor(char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetVendorString, 0, 0, tmp, 0);
@@ -313,7 +313,7 @@ void Plugin::getVendor(char *out)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getProduct(char *out)
+void Plugin_DEPR_::getProduct(char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProductString, 0, 0, tmp, 0);
@@ -325,13 +325,13 @@ void Plugin::getProduct(char *out)
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumPrograms() { return plugin->numPrograms; }
+int Plugin_DEPR_::getNumPrograms() { return plugin->numPrograms; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::setProgram(int index)
+int Plugin_DEPR_::setProgram(int index)
 {
 	plugin->dispatcher(plugin, effBeginSetProgram, 0, 0, 0, 0);
 	plugin->dispatcher(plugin, effSetProgram, 0, index, 0, 0);
@@ -344,25 +344,25 @@ int Plugin::setProgram(int index)
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumParams() const { return plugin->numParams; }
+int Plugin_DEPR_::getNumParams() const { return plugin->numParams; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumInputs() { return plugin->numInputs; }
+int Plugin_DEPR_::getNumInputs() { return plugin->numInputs; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumOutputs() {	return plugin->numOutputs; }
+int Plugin_DEPR_::getNumOutputs() {	return plugin->numOutputs; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getProgramName(int index, char *out)
+void Plugin_DEPR_::getProgramName(int index, char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetProgramNameIndexed, index, 0, tmp, 0);
@@ -374,7 +374,7 @@ void Plugin::getProgramName(int index, char *out)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamName(int index, char *out)
+void Plugin_DEPR_::getParamName(int index, char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamName, index, 0, tmp, 0);
@@ -386,7 +386,7 @@ void Plugin::getParamName(int index, char *out)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamLabel(int index, char *out)
+void Plugin_DEPR_::getParamLabel(int index, char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamLabel, index, 0, tmp, 0);
@@ -398,7 +398,7 @@ void Plugin::getParamLabel(int index, char *out)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getParamDisplay(int index, char *out)
+void Plugin_DEPR_::getParamDisplay(int index, char *out)
 {
 	char tmp[128] = "\0";
 	plugin->dispatcher(plugin, effGetParamDisplay, index, 0, tmp, 0);
@@ -410,7 +410,7 @@ void Plugin::getParamDisplay(int index, char *out)
 /* -------------------------------------------------------------------------- */
 
 
-float Plugin::getParam(int index) const
+float Plugin_DEPR_::getParam(int index) const
 {
 	return plugin->getParameter(plugin, index);
 }
@@ -419,7 +419,7 @@ float Plugin::getParam(int index) const
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::setParam(int index, float value)
+void Plugin_DEPR_::setParam(int index, float value)
 {
 	plugin->setParameter(plugin, index, value);
 }
@@ -428,7 +428,7 @@ void Plugin::setParam(int index, float value)
 /* -------------------------------------------------------------------------- */
 
 
-bool Plugin::hasGui()
+bool Plugin_DEPR_::hasGui()
 {
 	return plugin->flags & effFlagsHasEditor;
 }
@@ -437,7 +437,7 @@ bool Plugin::hasGui()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::openGui(void *w)
+void Plugin_DEPR_::openGui(void *w)
 {
 	long val = 0;
 #ifdef __linux__
@@ -450,7 +450,7 @@ void Plugin::openGui(void *w)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::closeGui()
+void Plugin_DEPR_::closeGui()
 {
 	plugin->dispatcher(plugin, effEditClose, 0, 0, 0, 0);
 }
@@ -459,7 +459,7 @@ void Plugin::closeGui()
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getGuiWidth()
+int Plugin_DEPR_::getGuiWidth()
 {
 	ERect *pErect = NULL;
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, &pErect, 0);
@@ -470,7 +470,7 @@ int Plugin::getGuiWidth()
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getGuiHeight()
+int Plugin_DEPR_::getGuiHeight()
 {
 	ERect *pErect = NULL;
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, &pErect, 0);
@@ -481,7 +481,7 @@ int Plugin::getGuiHeight()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::idle()
+void Plugin_DEPR_::idle()
 {
 	plugin->dispatcher(plugin, effEditIdle, 0, 0, NULL, 0);
 }
@@ -490,7 +490,7 @@ void Plugin::idle()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::processAudio(float **in, float **out, long frames)
+void Plugin_DEPR_::processAudio(float **in, float **out, long frames)
 {
 	plugin->processReplacing(plugin, in, out, frames);
 }
@@ -499,7 +499,7 @@ void Plugin::processAudio(float **in, float **out, long frames)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::processEvents(VstEvents *events)
+void Plugin_DEPR_::processEvents(VstEvents *events)
 {
 	plugin->dispatcher(plugin, effProcessEvents, 0, 0, events, 0.0);
 }
@@ -508,7 +508,7 @@ void Plugin::processEvents(VstEvents *events)
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::resume()
+void Plugin_DEPR_::resume()
 {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 1, 0, 0);
 	suspended = false;
@@ -518,7 +518,7 @@ void Plugin::resume()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::suspend()
+void Plugin_DEPR_::suspend()
 {
 	plugin->dispatcher(plugin, effMainsChanged, 0, 0, 0, 0);
 	suspended = true;
@@ -528,7 +528,7 @@ void Plugin::suspend()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::close()
+void Plugin_DEPR_::close()
 {
 	plugin->dispatcher(plugin, effClose, 0, 0, 0, 0);
 }
@@ -537,7 +537,7 @@ void Plugin::close()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::getRect(ERect **out)
+void Plugin_DEPR_::getRect(ERect **out)
 {
 	plugin->dispatcher(plugin, effEditGetRect, 0, 0, out, 0);
 }

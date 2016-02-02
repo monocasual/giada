@@ -37,10 +37,10 @@
 #include "gd_pluginWindowGUI_DEPR_.h"
 
 
-extern PluginHost G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 
 
-gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
+gdPluginWindowGUI::gdPluginWindowGUI(Plugin_DEPR_ *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
 
@@ -132,7 +132,7 @@ pascal OSStatus gdPluginWindowGUImac::__wh(EventHandlerCallRef inHandlerCallRef,
 /* ------------------------------------------------------------------ */
 
 
-gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
+gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin_DEPR_ *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin), carbonWindow(NULL)
 {
 

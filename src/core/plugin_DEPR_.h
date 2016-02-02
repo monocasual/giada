@@ -57,11 +57,11 @@
 #include <limits.h>  // PATH_MAX
 
 
-// Plugin's entry point
+// Plugin_DEPR_'s entry point
 typedef AEffect* (*vstPluginFuncPtr)(audioMasterCallback host);
 
 
-class Plugin
+class Plugin_DEPR_
 {
 private:
 
@@ -91,8 +91,8 @@ private:
 
 public:
 
-	Plugin();
-	~Plugin();
+	Plugin_DEPR_();
+	~Plugin_DEPR_();
 
 	int  load(const char *fname);
 	int  init(VstIntPtr VSTCALLBACK (*HostCallback)(AEffect*, VstInt32, VstInt32, VstIntPtr, void*, float));

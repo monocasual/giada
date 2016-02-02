@@ -47,7 +47,7 @@
 
 
 extern Conf          G_Conf;
-extern PluginHost    G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
@@ -75,10 +75,10 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost::MASTER_OUT)
+	if (stackType == PluginHost_DEPR_::MASTER_OUT)
 		label("Master Out Plugins");
 	else
-	if (stackType == PluginHost::MASTER_IN)
+	if (stackType == PluginHost_DEPR_::MASTER_IN)
 		label("Master In Plugins");
 	else {
 		char tmp[32];
@@ -138,7 +138,7 @@ void gdPluginList::__cb_addPlugin() {
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdBrowser. It does exactly what we need. */
 
-	gdBrowser *b = new gdBrowser("Browse Plugin", G_Conf.pluginPath.c_str(), ch, BROWSER_LOAD_PLUGIN, stackType);
+	gdBrowser *b = new gdBrowser("Browse Plugin_DEPR_", G_Conf.pluginPath.c_str(), ch, BROWSER_LOAD_PLUGIN, stackType);
 	addSubWindow(b);
 	b->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
 
@@ -163,7 +163,7 @@ void gdPluginList::refreshList() {
 	int i = 0;
 
 	while (i<numPlugins) {
-		Plugin   *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
+		Plugin_DEPR_ *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
 		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
@@ -189,11 +189,11 @@ void gdPluginList::refreshList() {
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost::MASTER_OUT) {
+	if (stackType == PluginHost_DEPR_::MASTER_OUT) {
     mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else
-	if (stackType == PluginHost::MASTER_IN) {
+	if (stackType == PluginHost_DEPR_::MASTER_IN) {
     mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else {
@@ -208,7 +208,7 @@ void gdPluginList::refreshList() {
 /* -------------------------------------------------------------------------- */
 
 
-gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
+gdPlugin::gdPlugin(gdPluginList *gdp, Plugin_DEPR_ *p, int X, int Y, int W)
 	: Fl_Group(X, Y, W, 20), pParent(gdp), pPlugin (p)
 {
 	begin();

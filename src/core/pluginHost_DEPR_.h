@@ -42,7 +42,7 @@
 using std::vector;
 
 
-class PluginHost
+class PluginHost_DEPR_
 {
 private:
 
@@ -73,13 +73,13 @@ public:
 
 	/* stack of Plugins */
 
-	vector <Plugin *> masterOut;
-	vector <Plugin *> masterIn;
+	vector <Plugin_DEPR_ *> masterOut;
+	vector <Plugin_DEPR_ *> masterIn;
 
-	PluginHost();
-	~PluginHost();
+	PluginHost_DEPR_();
+	~PluginHost_DEPR_();
 
-	int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
+	int clonePlugin(const Plugin_DEPR_ &src, int stackType, class Channel *ch);
 
 	int allocBuffers();
 
@@ -100,7 +100,7 @@ public:
 	 * Add a new plugin to the stack. If the operation goes well, returns a pointer
 	 * to the newly inserted plugin. */
 
-	Plugin *addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
+	Plugin_DEPR_ *addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
 
 	void processEvents(float *buffer, class Channel *ch);
 
@@ -119,11 +119,11 @@ public:
 
 	VstMidiEvent *createVstMidiEvent(uint32_t msg);
 
-	vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
+	vector <Plugin_DEPR_ *> *getStack(int stackType, class Channel *ch=NULL);
 
-	Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
+	Plugin_DEPR_ *getPluginById(int id, int stackType, class Channel *ch=NULL);
 
-	Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
+	Plugin_DEPR_ *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
 
 	int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
 

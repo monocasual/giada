@@ -46,11 +46,11 @@
 class gdPluginWindowGUI : public gWindow {
 private:
 
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 public:
 
-	gdPluginWindowGUI(Plugin *pPlugin);
+	gdPluginWindowGUI(Plugin_DEPR_ *pPlugin);
 	~gdPluginWindowGUI();
 };
 
@@ -66,13 +66,13 @@ private:
 	static pascal OSStatus windowHandler(EventHandlerCallRef ehc, EventRef e, void *data);
 	inline pascal OSStatus __wh(EventHandlerCallRef ehc, EventRef e);
 
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 	WindowRef carbonWindow;
 	bool open;
 
 public:
 
-	gdPluginWindowGUImac(Plugin *pPlugin);
+	gdPluginWindowGUImac(Plugin_DEPR_ *pPlugin);
 	~gdPluginWindowGUImac();
 };
 

@@ -38,10 +38,10 @@
 
 
 
-extern PluginHost G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 
 
-Parameter::Parameter(int id, Plugin *p, int X, int Y, int W)
+Parameter::Parameter(int id, Plugin_DEPR_ *p, int X, int Y, int W)
 	: Fl_Group(X,Y,W-24,20), id(id), pPlugin(p)
 {
 	begin();
@@ -102,7 +102,7 @@ void Parameter::__cb_setValue() {
 /* ------------------------------------------------------------------ */
 
 
-gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
+gdPluginWindow::gdPluginWindow(Plugin_DEPR_ *pPlugin)
  : gWindow(400, 156), pPlugin(pPlugin) // 350
 {
 	set_non_modal();

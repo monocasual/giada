@@ -61,7 +61,7 @@ extern Patch       G_Patch;
 extern Conf 		   G_Conf;
 
 #ifdef WITH_VST
-extern PluginHost  G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 
@@ -75,7 +75,7 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
 		Patch::plugin_t *ppl = &list->at(i);
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
+		Plugin_DEPR_ *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
 		if (plugin != NULL) {
 			plugin->bypass = ppl->bypass;
 			for (unsigned j=0; j<ppl->params.size(); j++)
@@ -169,8 +169,8 @@ void mh_readPatch()
 
 #ifdef WITH_VST
 
-	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
-	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
+	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost_DEPR_::MASTER_IN);
+	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost_DEPR_::MASTER_OUT);
 
 #endif
 

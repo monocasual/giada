@@ -60,7 +60,7 @@ MidiMapConf   G_MidiMap;
 gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-PluginHost    G_PluginHost;
+PluginHost_DEPR_ G_PluginHost;
 #endif
 
 

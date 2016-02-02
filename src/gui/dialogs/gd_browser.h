@@ -86,7 +86,7 @@ private:
 		 * }; */
 	int type;
 
-	/* PluginHost stack type. Used only when loading plugins */
+	/* PluginHost_DEPR_ stack type. Used only when loading plugins */
 
 	int stackType;
 

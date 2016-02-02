@@ -57,7 +57,7 @@ extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
-extern PluginHost		 G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 
@@ -74,10 +74,10 @@ static void __glue_setProgressBar__(class gProgress *status, float v)
 
 #ifdef WITH_VST
 
-static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
+static void __glue_fillPatchGlobalsPlugins__(vector <Plugin_DEPR_ *> *host, vector<Patch::plugin_t> *patch)
 {
 	for (unsigned i=0; i<host->size(); i++) {
-		Plugin *pl = host->at(i);
+		Plugin_DEPR_ *pl = host->at(i);
 		Patch::plugin_t ppl;
 		ppl.path = pl->pathfile;
 		ppl.bypass = pl->bypass;

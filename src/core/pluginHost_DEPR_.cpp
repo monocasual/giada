@@ -45,7 +45,7 @@
 
 extern Conf          G_Conf;
 extern Mixer         G_Mixer;
-extern PluginHost    G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 extern unsigned      G_beats;
 extern gdMainWindow *mainWin;
 
@@ -53,7 +53,7 @@ extern gdMainWindow *mainWin;
 using std::vector;
 
 
-PluginHost::PluginHost()
+PluginHost_DEPR_::PluginHost_DEPR_()
 {
 	/* initially we fill vstTimeInfo with trash. Only when the plugin requests
 	 * the opcode we load the right infos from G_Mixer. */
@@ -78,17 +78,17 @@ PluginHost::PluginHost()
 /* -------------------------------------------------------------------------- */
 
 
-PluginHost::~PluginHost() {}
+PluginHost_DEPR_::~PluginHost_DEPR_() {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int PluginHost::clonePlugin(const Plugin &src, int stackType, Channel *ch)
+int PluginHost_DEPR_::clonePlugin(const Plugin_DEPR_ &src, int stackType, Channel *ch)
 {
-	Plugin *p = addPlugin(src.pathfile, stackType, ch);
+	Plugin_DEPR_ *p = addPlugin(src.pathfile, stackType, ch);
 	if (!p) {
-		gLog("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
+		gLog("[PluginHost_DEPR_::clonePlugin] unable to add new plugin to stack!\n");
 		return 0;
 	}
 	for (int k=0; k<src.getNumParams(); k++) {
@@ -101,7 +101,7 @@ int PluginHost::clonePlugin(const Plugin &src, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-int PluginHost::allocBuffers()
+int PluginHost_DEPR_::allocBuffers()
 {
 	/** FIXME - ERROR CHECKING! */
 
@@ -135,7 +135,7 @@ int PluginHost::allocBuffers()
 /* -------------------------------------------------------------------------- */
 
 
-VstIntPtr VSTCALLBACK PluginHost::HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
+VstIntPtr VSTCALLBACK PluginHost_DEPR_::HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
 {
 	return G_PluginHost.gHostCallback(effect, opcode, index, value, ptr, opt);
 }
@@ -144,7 +144,7 @@ VstIntPtr VSTCALLBACK PluginHost::HostCallback(AEffect *effect, VstInt32 opcode,
 /* -------------------------------------------------------------------------- */
 
 
-VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
+VstIntPtr PluginHost_DEPR_::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
 {
 	/* warning: VST headers compiled with DECLARE_VST_DEPRECATED. */
 
@@ -278,7 +278,7 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 			return (int) (G_VERSION_MAJOR * 100) + (G_VERSION_MINOR * 10) + G_VERSION_PATCH;
 
 
-		/* 37 - Plugin asks Host if it implements the feature text. */
+		/* 37 - Plugin_DEPR_ asks Host if it implements the feature text. */
 
 		case audioMasterCanDo:
 			gLog("[pluginHost] audioMasterCanDo: %s\n", (char*)ptr);
@@ -330,12 +330,12 @@ VstIntPtr PluginHost::gHostCallback(AEffect *effect, VstInt32 opcode, VstInt32 i
 /* -------------------------------------------------------------------------- */
 
 
-Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
+Plugin_DEPR_ *PluginHost_DEPR_::addPlugin(const char *fname, int stackType, Channel *ch)
 {
-	Plugin *p    = new Plugin();
+	Plugin_DEPR_ *p    = new Plugin_DEPR_();
 	bool success = true;
 
-	vector <Plugin *> *pStack;
+	vector <Plugin_DEPR_ *> *pStack;
 	pStack = getStack(stackType, ch);
 
 	if (!p->load(fname)) {
@@ -358,7 +358,7 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 
 		/* try to init the plugin. If fails, delete it and return error. */
 
-		if (!p->init(&PluginHost::HostCallback)) {
+		if (!p->init(&PluginHost_DEPR_::HostCallback)) {
 			delete p;
 			return NULL;
 		}
@@ -395,9 +395,9 @@ Plugin *PluginHost::addPlugin(const char *fname, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
+void PluginHost_DEPR_::processStack(float *buffer, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 
 	/* empty stack, stack not found or mixer not ready: do nothing */
 	/// TODO - join evaluation
@@ -451,7 +451,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
+void PluginHost_DEPR_::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
 {
 	/* call processStack on the entire size of the buffer. How many cycles?
 	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
@@ -482,9 +482,9 @@ void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, 
 /* -------------------------------------------------------------------------- */
 
 
-Plugin *PluginHost::getPluginById(int id, int stackType, Channel *ch)
+Plugin_DEPR_ *PluginHost_DEPR_::getPluginById(int id, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 	for (unsigned i=0; i<pStack->size(); i++) {
 		if (pStack->at(i)->getId() == id)
 			return pStack->at(i);
@@ -496,9 +496,9 @@ Plugin *PluginHost::getPluginById(int id, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
+Plugin_DEPR_ *PluginHost_DEPR_::getPluginByIndex(int index, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 	if (pStack->size() == 0)
 		return NULL;
 	if ((unsigned) index >= pStack->size())
@@ -510,9 +510,9 @@ Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::freeStack(int stackType, Channel *ch)
+void PluginHost_DEPR_::freeStack(int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack;
+	vector <Plugin_DEPR_ *> *pStack;
 	pStack = getStack(stackType, ch);
 
 	if (pStack->size() == 0)
@@ -541,21 +541,21 @@ void PluginHost::freeStack(int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::freeAllStacks()
+void PluginHost_DEPR_::freeAllStacks()
 {
-	freeStack(PluginHost::MASTER_OUT);
-	freeStack(PluginHost::MASTER_IN);
+	freeStack(PluginHost_DEPR_::MASTER_OUT);
+	freeStack(PluginHost_DEPR_::MASTER_IN);
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		freeStack(PluginHost::CHANNEL, G_Mixer.channels.at(i));
+		freeStack(PluginHost_DEPR_::CHANNEL, G_Mixer.channels.at(i));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::freePlugin(int id, int stackType, Channel *ch)
+void PluginHost_DEPR_::freePlugin(int id, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack;
+	vector <Plugin_DEPR_ *> *pStack;
 	pStack = getStack(stackType, ch);
 
 	/* try to delete the plugin until succeed. G_Mixer has priority. */
@@ -593,9 +593,9 @@ void PluginHost::freePlugin(int id, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Channel *ch)
+void PluginHost_DEPR_::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 
 	int lockStatus;
 	while (true) {
@@ -616,9 +616,9 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType, Cha
 /* -------------------------------------------------------------------------- */
 
 
-int PluginHost::getPluginIndex(int id, int stackType, Channel *ch)
+int PluginHost_DEPR_::getPluginIndex(int id, int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 
 	for (unsigned i=0; i<pStack->size(); i++)
 		if (pStack->at(i)->getId() == id)
@@ -630,7 +630,7 @@ int PluginHost::getPluginIndex(int id, int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
+vector <Plugin_DEPR_ *> *PluginHost_DEPR_::getStack(int stackType, Channel *ch)
 {
 	switch(stackType) {
 		case MASTER_OUT:
@@ -648,7 +648,7 @@ vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg)
+VstMidiEvent *PluginHost_DEPR_::createVstMidiEvent(uint32_t msg)
 {
 	VstMidiEvent *e = (VstMidiEvent*) malloc(sizeof(VstMidiEvent));
 
@@ -698,9 +698,9 @@ VstMidiEvent *PluginHost::createVstMidiEvent(uint32_t msg)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned PluginHost::countPlugins(int stackType, Channel *ch)
+unsigned PluginHost_DEPR_::countPlugins(int stackType, Channel *ch)
 {
-	vector <Plugin *> *pStack = getStack(stackType, ch);
+	vector <Plugin_DEPR_ *> *pStack = getStack(stackType, ch);
 	return pStack->size();
 }
 

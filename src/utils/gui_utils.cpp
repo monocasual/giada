@@ -53,7 +53,7 @@ extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 #ifdef WITH_VST
-extern PluginHost		 G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 

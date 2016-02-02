@@ -53,8 +53,8 @@ private:
 
   string pluginDir;
 
-  vector<juce::AudioProcessor *> masterOut;
-  vector<juce::AudioProcessor *> masterIn;
+  vector<class Plugin*> masterOut;
+  vector<class Plugin*> masterIn;
 
 public:
 

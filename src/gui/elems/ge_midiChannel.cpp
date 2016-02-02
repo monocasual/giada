@@ -159,7 +159,7 @@ void gMidiChannel::__cb_changeVol()
 #ifdef WITH_VST
 void gMidiChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 

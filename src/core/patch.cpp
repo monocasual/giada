@@ -46,7 +46,7 @@
 extern Mixer 		     G_Mixer;
 extern Conf 		     G_Conf;
 #ifdef WITH_VST
-extern PluginHost    G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 extern gdMainWindow *mainWin;
 

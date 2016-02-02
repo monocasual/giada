@@ -57,7 +57,7 @@ extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-extern PluginHost	   G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 
@@ -181,7 +181,7 @@ void init_shutdown()
 	G_Conf.mainWindowW = mainWin->w();
 	G_Conf.mainWindowH = mainWin->h();
 
-	/* close any open subwindow, especially before cleaning PluginHost to
+	/* close any open subwindow, especially before cleaning PluginHost_DEPR_ to
 	 * avoid mess */
 
 	gu_closeAllSubwindows();
@@ -208,7 +208,7 @@ void init_shutdown()
 
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks();
-	gLog("[init] Plugin Host cleaned up\n");
+	gLog("[init] Plugin_DEPR_ Host cleaned up\n");
 #endif
 
 	gLog("[init] Giada " G_VERSION_STR " closed\n\n");

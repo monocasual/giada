@@ -40,12 +40,12 @@
 class gdPluginWindow : public gWindow {
 
 private:
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 public:
 	int id;
 
-	gdPluginWindow(Plugin *pPlugin);
+	gdPluginWindow(Plugin_DEPR_ *pPlugin);
 	~gdPluginWindow();
 };
 
@@ -57,7 +57,7 @@ class Parameter : public Fl_Group {
 
 private:
 	int   id;
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 	static void cb_setValue(Fl_Widget *v, void *p);
 	inline void __cb_setValue();
@@ -67,7 +67,7 @@ public:
 	class gSlider *slider;
 	class gBox    *value;
 
-	Parameter(int id, class Plugin *p, int x, int y, int w);
+	Parameter(int id, class Plugin_DEPR_ *p, int x, int y, int w);
 };
 
 

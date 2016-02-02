@@ -74,7 +74,7 @@ class gdPlugin : public Fl_Group {
 private:
 
 	class  gdPluginList *pParent;
-	class  Plugin       *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 	static void cb_removePlugin       (Fl_Widget *v, void *p);
 	static void cb_openPluginWindow   (Fl_Widget *v, void *p);
@@ -98,7 +98,7 @@ public:
 	class gButton *shiftDown;
 	class gButton *remove;
 
-	gdPlugin(gdPluginList *gdp, class Plugin *p, int x, int y, int w);
+	gdPlugin(gdPluginList *gdp, class Plugin_DEPR_ *p, int x, int y, int w);
 
 };
 

@@ -45,7 +45,7 @@ extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
-extern PluginHost  G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 

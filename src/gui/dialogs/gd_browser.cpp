@@ -56,7 +56,7 @@ extern Patch         G_Patch;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
 #ifdef WITH_VST
-extern PluginHost    G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 extern gdMainWindow	*mainWin;
 
@@ -344,7 +344,7 @@ void gdBrowser::__cb_loadPlugin() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	Plugin *p = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch);
+	Plugin_DEPR_ *p = G_PluginHost.addPlugin(browser->get_selected_item(), stackType, ch);
 
 	/* store the folder path inside G_Conf, in order to reuse it the
 	 * next time. */

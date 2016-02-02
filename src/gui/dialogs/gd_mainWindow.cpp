@@ -67,7 +67,7 @@ extern bool	 		 		 G_quit;
 extern bool 		 		 G_audio_status;
 
 #if defined(WITH_VST)
-extern PluginHost  	 G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 
@@ -219,12 +219,12 @@ void gInOut::__cb_inVol()
 #ifdef WITH_VST
 void gInOut::__cb_masterFxOut()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::MASTER_OUT), WID_FX_LIST);
 }
 
 void gInOut::__cb_masterFxIn()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::MASTER_IN), WID_FX_LIST);
 }
 
 void gInOut::__cb_inToOut()

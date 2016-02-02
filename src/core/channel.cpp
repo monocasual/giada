@@ -49,7 +49,7 @@ extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
-extern PluginHost  G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost;
 #endif
 
 
@@ -134,7 +134,7 @@ void Channel::copy(const Channel *src)
 
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size(); i++)
-    G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost::CHANNEL, this);
+    G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost_DEPR_::CHANNEL, this);
 #endif
 
   /* clone actions */
@@ -246,9 +246,9 @@ int Channel::writePatch(int i, bool isProject)
 
 #ifdef WITH_VST
 
-	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
+	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost_DEPR_::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
+		Plugin_DEPR_ *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost_DEPR_::CHANNEL, this);
 		if (pPlugin->status) {
 			Patch::plugin_t pp;
 			pp.path   = pPlugin->pathfile;
@@ -304,7 +304,7 @@ int Channel::readPatch(const string &path, int i)
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost::CHANNEL, this);
+		Plugin_DEPR_ *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), PluginHost_DEPR_::CHANNEL, this);
 		if (plugin != NULL) {
 			plugin->bypass = ppl->bypass;
 			for (unsigned j=0; j<ppl->params.size(); j++)
