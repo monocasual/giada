@@ -29,4 +29,69 @@
 
 #ifdef WITH_VST
 
+
+#include "../utils/log.h"
+#include "../utils/utils.h"
+#include "pluginHost.h"
+
+
+using std::string;
+
+
+PluginHost::PluginHost()
+{
+  /* TODO - use real paths! */
+
+  #if defined(__linux__)
+    pluginDirs = "/usr/local/lib/vst/linux";
+  #elif defined(_WIN32)
+    pluginDirs = "c:\\Users\\mcl\\giada\\vst";
+  #else
+    pluginDirs = "/home/mcl/.vst";
+  #endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int PluginHost::scanDir()
+{
+  gLog("[PluginHost::scanDir] plugin directory = '%s'\n", pluginDirs.c_str());
+
+  juce::VSTPluginFormat format;
+  juce::FileSearchPath path(pluginDirs);
+  juce::PluginDirectoryScanner scanner(knownPluginList, format, path, false, juce::File::nonexistent);
+  juce::String name;
+
+  bool cont = true;
+  while (cont) {
+    cont = scanner.scanNextFile(false, name);
+  }
+
+  gLog("[PluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());
+
+  return knownPluginList.getNumTypes();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int PluginHost::saveList(const string &filepath)
+{
+  knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
+  return gFileExists(filepath.c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Plugin *PluginHost::addPlugin(int index, int stackType, class Channel *ch)
+{
+  //pluginFormat.createInstanceFromDescription(*pl.getType(PLUGIN_TO_OPEN), 44100, 1024);
+  return NULL;
+}
+
 #endif // #ifdef WITH_VST

@@ -51,14 +51,45 @@ class PluginHost
 {
 private:
 
-  string pluginDir;
+  /* pluginFormat
+   * Plugin format manager. */
+
+  juce::VSTPluginFormat pluginFormat;
+
+  /* knownPuginList
+   * List of known (i.e. scanned) plugins. */
+
+  juce::KnownPluginList knownPluginList;
+
+  /* pluginDirs
+   * Directory where all plugins are stored. */
+
+  string pluginDirs;
 
   vector<class Plugin*> masterOut;
   vector<class Plugin*> masterIn;
 
+
 public:
 
+  enum stackType {
+		MASTER_OUT,
+		MASTER_IN,
+		CHANNEL
+	};
+
+  PluginHost();
+  //~PluginHost();
+
   int scanDir();
+
+  /* saveList
+   * Save knownPluginList in an XML file. */
+
+  int saveList(const string &path);
+
+  /* TODO - not index, but a descriptor */
+  Plugin *addPlugin(int index, int stackType, class Channel *ch=NULL);
 
 #if 0
   int clonePlugin(const Plugin &src, int stackType, class Channel *ch);

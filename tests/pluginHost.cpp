@@ -10,6 +10,7 @@ TEST_CASE("Test PluginHost class")
   SECTION("test read & write")
   {
     REQUIRE(ph.scanDir() > 0);
+    REQUIRE(ph.saveList("test-plugin-list.xml") == 1);
   }
 }
 
