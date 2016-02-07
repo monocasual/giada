@@ -61,14 +61,14 @@ private:
 
   juce::KnownPluginList knownPluginList;
 
-  /* pluginDirs
-   * Directory where all plugins are stored. */
-
-  string pluginDirs;
-
   vector<class Plugin*> masterOut;
   vector<class Plugin*> masterIn;
 
+  /* getStack
+   * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
+   * a pointer to Channel is also required. */
+
+  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 
 public:
 
@@ -78,23 +78,34 @@ public:
 		CHANNEL
 	};
 
-  PluginHost();
-  //~PluginHost();
+  /* scanDir
+   * Parse plugin directory and store list in knownPluginList. */
 
-  int scanDir();
+  int scanDir(const string &path);
 
-  /* saveList
-   * Save knownPluginList in an XML file. */
+  /* (save|load)List
+   * (Save|Load) knownPluginList (in|from) an XML file. */
 
   int saveList(const string &path);
+  int loadList(const string &path);
 
-  /* TODO - not index, but a descriptor */
-  Plugin *addPlugin(int index, int stackType, class Channel *ch=NULL);
+  /* addPlugin
+   * Add a new plugin to 'stackType' by unique id or by index in knownPluginList
+   * vector. Requires:
+   * fid - plugin unique file id (i.e. path to dynamic library)
+   * stackType - which stack to add plugin to
+   * mutex - Mixer.mutex_plugin
+   * freq - current audio frequency
+   * bufSize - buffer size
+   * ch - if stackType == CHANNEL. */
+
+  Plugin *addPlugin(const string &fid, int stackType, pthread_mutex_t *mutex,
+    int freq, int bufSize, class Channel *ch=NULL);
+  Plugin *addPlugin(int index, int stackType, pthread_mutex_t *mutex,
+    int freq, int bufSize, class Channel *ch=NULL);
 
 #if 0
   int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
-
-  Plugin *addPlugin(const char *fname, int stackType, class Channel *ch=NULL);
 
   void processEvents(float *buffer, class Channel *ch);
 

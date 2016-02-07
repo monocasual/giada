@@ -32,35 +32,21 @@
 
 #include "../utils/log.h"
 #include "../utils/utils.h"
+#include "mixer.h"
+#include "channel.h"
+#include "plugin.h"
 #include "pluginHost.h"
 
 
 using std::string;
 
 
-PluginHost::PluginHost()
+int PluginHost::scanDir(const string &dirpath)
 {
-  /* TODO - use real paths! */
-
-  #if defined(__linux__)
-    pluginDirs = "/usr/local/lib/vst/linux";
-  #elif defined(_WIN32)
-    pluginDirs = "c:\\Users\\mcl\\giada\\vst";
-  #else
-    pluginDirs = "/home/mcl/.vst";
-  #endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int PluginHost::scanDir()
-{
-  gLog("[PluginHost::scanDir] plugin directory = '%s'\n", pluginDirs.c_str());
+  gLog("[PluginHost::scanDir] plugin directory = '%s'\n", dirpath.c_str());
 
   juce::VSTPluginFormat format;
-  juce::FileSearchPath path(pluginDirs);
+  juce::FileSearchPath path(dirpath);
   juce::PluginDirectoryScanner scanner(knownPluginList, format, path, false, juce::File::nonexistent);
   juce::String name;
 
@@ -80,18 +66,105 @@ int PluginHost::scanDir()
 
 int PluginHost::saveList(const string &filepath)
 {
-  knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
-  return gFileExists(filepath.c_str());
+  return knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Plugin *PluginHost::addPlugin(int index, int stackType, class Channel *ch)
+int PluginHost::loadList(const string &filepath)
 {
-  //pluginFormat.createInstanceFromDescription(*pl.getType(PLUGIN_TO_OPEN), 44100, 1024);
-  return NULL;
+  juce::XmlElement *elem = juce::XmlDocument::parse(juce::File(filepath));
+  if (elem) {
+    knownPluginList.recreateFromXml(*elem);
+    delete elem;
+    return 1;
+  }
+  return 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Plugin *PluginHost::addPlugin(const string &fid, int stackType,
+  pthread_mutex_t *mutex, int freq, int bufSize, class Channel *ch)
+{
+  /* Get the proper stack to add the plugin to */
+
+  vector <Plugin *> *pStack;
+	pStack = getStack(stackType, ch);
+
+  /* Initialize plugin */
+
+  juce::PluginDescription *pd = knownPluginList.getTypeForFile(fid);
+  if (!pd) {
+    gLog("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
+    return NULL;
+  }
+
+  Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, freq, bufSize);
+  if (!p) {
+    gLog("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
+    return NULL;
+  }
+
+  gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
+
+  /* Try to inject the plugin as soon as possible. */
+
+  int lockStatus;
+  while (true) {
+    lockStatus = pthread_mutex_trylock(mutex);
+    if (lockStatus == 0) {
+      pStack->push_back(p);
+      pthread_mutex_unlock(mutex);
+      break;
+    }
+  }
+
+  gLog("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
+    fid.c_str(), p->getName().toRawUTF8(), stackType, pStack->size());
+
+  return p;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
+  int freq, int bufSize, class Channel *ch)
+{
+  juce::PluginDescription *pd = knownPluginList.getType(index);
+  if (pd) {
+    gLog("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
+      pd->fileOrIdentifier.toRawUTF8(), pd->name.toRawUTF8());
+    return addPlugin(pd->fileOrIdentifier.toRawUTF8(), stackType, mutex, freq, bufSize, ch);
+  }
+  else {
+    gLog("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
+    return NULL;
+  }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
+{
+	switch(stackType) {
+		case MASTER_OUT:
+			return &masterOut;
+		case MASTER_IN:
+			return &masterIn;
+		case CHANNEL:
+			return &ch->plugins;
+		default:
+			return NULL;
+	}
 }
 
 #endif // #ifdef WITH_VST

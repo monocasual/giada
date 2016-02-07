@@ -133,8 +133,8 @@ void Channel::copy(const Channel *src)
   /* clone plugins */
 
 #ifdef WITH_VST
-  for (unsigned i=0; i<src->plugins.size(); i++)
-    G_PluginHost.clonePlugin(*src->plugins.at(i), PluginHost_DEPR_::CHANNEL, this);
+  for (unsigned i=0; i<src->plugins_DEPR_.size(); i++)
+    G_PluginHost.clonePlugin(*src->plugins_DEPR_.at(i), PluginHost_DEPR_::CHANNEL, this);
 #endif
 
   /* clone actions */

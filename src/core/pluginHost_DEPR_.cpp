@@ -216,9 +216,9 @@ VstIntPtr PluginHost_DEPR_::gHostCallback(AEffect *effect, VstInt32 opcode, VstI
 
 			for (unsigned i=0; i<G_Mixer.channels.size() && !window; i++) {
 				Channel *ch = G_Mixer.channels.at(i);
-				for (unsigned j=0; j<ch->plugins.size() && !window; j++)
-					if (ch->plugins.at(j)->getPlugin() == effect)
-						window = ch->plugins.at(j)->window;
+				for (unsigned j=0; j<ch->plugins_DEPR_.size() && !window; j++)
+					if (ch->plugins_DEPR_.at(j)->getPlugin() == effect)
+						window = ch->plugins_DEPR_.at(j)->window;
 			}
 
 			if (window) {
@@ -638,7 +638,7 @@ vector <Plugin_DEPR_ *> *PluginHost_DEPR_::getStack(int stackType, Channel *ch)
 		case MASTER_IN:
 			return &masterIn;
 		case CHANNEL:
-			return &ch->plugins;
+			return &ch->plugins_DEPR_;
 		default:
 			return NULL;
 	}

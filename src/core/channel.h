@@ -207,7 +207,8 @@ public:
   uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  vector <class Plugin_DEPR_ *> plugins;
+  vector <class Plugin_DEPR_ *> plugins_DEPR_;
+  vector <class Plugin *> plugins;
 #endif
 
 
