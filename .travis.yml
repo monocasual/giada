@@ -47,10 +47,10 @@ before_script:
 
   # Download vst plugin for testing purposes
 
-  - wget http://downloads.sourceforge.net/project/distrho/2014-08-26/dexed-linux64bit-fixed.tar.xz?r=http%3A%2F%2Fdistrho.sourceforge.net%2Fports&ts=1454876566&use_mirror=freefr -O dexed.tar.xz
+  - wget 'http://downloads.sourceforge.net/project/distrho/2014-08-26/dexed-linux64bit-fixed.tar.xz?r=http%3A%2F%2Fdistrho.sourceforge.net%2Fports&ts=1454876566&use_mirror=freefr' -O dexed.tar.xz
   - tar xf dexed.tar.xz dexed-linux64bit/Dexed.so
   - cp dexed-linux64bit/Dexed.so .
-  
+
   # Build Giada. Note the CFLAGS: optimization levels are set to O1 in order
   # not to throw up nasty errors from JUCE modules.
 
