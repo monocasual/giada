@@ -64,6 +64,12 @@ private:
   vector<class Plugin*> masterOut;
   vector<class Plugin*> masterIn;
 
+  /* Audio|MidiBuffer
+   * Dynamic buffers. */
+
+  juce::AudioBuffer<float> audioBuffer;
+  juce::MidiBuffer         midiBuffer;
+
   /* getStack
    * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
    * a pointer to Channel is also required. */
@@ -77,6 +83,8 @@ public:
 		MASTER_IN,
 		CHANNEL
 	};
+
+  void init(int bufSize);
 
   /* scanDir
    * Parse plugin directory and store list in knownPluginList. */
@@ -104,15 +112,26 @@ public:
   Plugin *addPlugin(int index, int stackType, pthread_mutex_t *mutex,
     int freq, int bufSize, class Channel *ch=NULL);
 
-#if 0
-  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
+  /* countPlugins
+   * Return size of 'stackType'. */
 
-  void processEvents(float *buffer, class Channel *ch);
+  unsigned countPlugins(int stackType, class Channel *ch=NULL);
+
+  /* freeStack
+   * free plugin stack of type 'stackType'. */
+
+  void freeStack(int stackType, pthread_mutex_t *mutex, class Channel *ch=NULL);
 
   /* processStack
    * apply the fx list to the buffer. */
 
-  void processStack(float *buffer, int stackType, class Channel *ch=NULL);
+  void processStack(bool isMixerReady, float *buffer, unsigned bufSize,
+    int stackType, class Channel *ch=NULL);
+
+#if 0
+  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
+
+  void processEvents(float *buffer, class Channel *ch);
 
   /* processStackOffline
    * apply the fx list to a longer chunk of data */
@@ -124,17 +143,11 @@ public:
 
   VstMidiEvent *createVstMidiEvent(uint32_t msg);
 
-  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
-
   Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
 
   Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
 
   int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
-
-  unsigned countPlugins(int stackType, class Channel *ch=NULL);
-
-  void freeStack(int stackType, class Channel *ch=NULL);
 
   void freeAllStacks();
 

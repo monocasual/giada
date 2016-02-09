@@ -45,11 +45,15 @@
 class Plugin : public juce::AudioProcessor
 {
 private:
+
   juce::AudioProcessorEditor *ui;     // gui
   juce::AudioProcessor       *proc;   // core
   juce::MessageManager       *mm;     // FIXME - useless
 
 public:
+
+  bool bypass;
+  bool status;
 };
 
 #endif

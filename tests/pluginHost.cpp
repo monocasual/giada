@@ -16,6 +16,10 @@ TEST_CASE("Test PluginHost class")
     REQUIRE(ph.saveList("test-plugin-list.xml") == 1);
     REQUIRE(ph.loadList("test-plugin-list.xml") == 1);
     REQUIRE(ph.addPlugin(0, PluginHost::MASTER_IN, &mutex, 44100, 1024) != NULL);
+    REQUIRE(ph.countPlugins(PluginHost::MASTER_IN) == 1);
+
+    ph.freeStack(PluginHost::MASTER_IN, &mutex);
+    REQUIRE(ph.countPlugins(PluginHost::MASTER_IN) == 0);
   }
 }
 

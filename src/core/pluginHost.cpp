@@ -41,6 +41,15 @@
 using std::string;
 
 
+void PluginHost::init(int bufSize)
+{
+  audioBuffer.setSize(2, bufSize);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int PluginHost::scanDir(const string &dirpath)
 {
   gLog("[PluginHost::scanDir] plugin directory = '%s'\n", dirpath.c_str());
@@ -166,5 +175,88 @@ vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
 			return NULL;
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+unsigned PluginHost::countPlugins(int stackType, Channel *ch)
+{
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	return pStack->size();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
+{
+	vector <Plugin *> *pStack;
+	pStack = getStack(stackType, ch);
+
+	if (pStack->size() == 0)
+		return;
+
+	int lockStatus;
+	while (true) {
+		lockStatus = pthread_mutex_trylock(mutex);
+		if (lockStatus == 0) {
+			for (unsigned i=0; i<pStack->size(); i++) {
+				//TODO - what to do here with JUCE?
+        // if (pStack->at(i)->status == 1) {  // only if plugin is ok
+					//pStack->at(i)->suspend();
+					//pStack->at(i)->close();
+				//}
+				delete pStack->at(i);
+			}
+			pStack->clear();
+			pthread_mutex_unlock(mutex);
+			break;
+		}
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::processStack(bool isMixerReady, float *buffer, unsigned bufSize,
+  int stackType, Channel *ch)
+{
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+
+	/* empty stack, stack not found or mixer not ready: do nothing
+  TODO - move isMixerReady to the caller */
+
+	if (isMixerReady || pStack == NULL || pStack->size() == 0)
+		return;
+
+	/* converting buffer from Giada to Juce */
+
+	for (unsigned i=0; i<bufSize; i++) {
+    audioBuffer.setSample(0, i, buffer[i*2]);
+    audioBuffer.setSample(1, i, buffer[(i*2)+1]);
+	}
+
+	/* hardcore processing. At the end we swap input and output, so that
+	 * the N-th plugin will process the result of the plugin N-1. */
+
+	for (unsigned i=0; i<pStack->size(); i++) {
+    Plugin *plugin = pStack->at(i);
+		if (plugin->status != 1 || plugin->isSuspended() || plugin->bypass)
+			continue;
+		plugin->processBlock(audioBuffer, midiBuffer);
+  }
+
+	/* converting buffer from VST to Giada. A note for the future: if we
+	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
+
+	for (unsigned i=0; i<bufSize; i++) {
+		buffer[i*2]     = audioBuffer.getSample(0, i);
+		buffer[(i*2)+1] = audioBuffer.getSample(1, i);
+	}
+}
+
 
 #endif // #ifdef WITH_VST
