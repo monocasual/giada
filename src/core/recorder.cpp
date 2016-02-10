@@ -45,7 +45,7 @@
 
 
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -158,7 +158,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 
 #ifdef WITH_VST
 	if (type == ACTION_MIDI)
-		a->event = G_PluginHost.createVstMidiEvent(a->iValue);
+		a->event = G_PluginHost_DEPR_.createVstMidiEvent(a->iValue);
 #endif
 
 	/* don't activate the channel (readActions == false), it's up to

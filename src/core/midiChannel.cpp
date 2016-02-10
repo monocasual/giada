@@ -42,7 +42,7 @@ extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -99,7 +99,7 @@ void MidiChannel::freeVstMidiEvents(bool init)
 
 void MidiChannel::addVstMidiEvent(uint32_t msg)
 {
-	addVstMidiEvent(G_PluginHost.createVstMidiEvent(msg));
+	addVstMidiEvent(G_PluginHost_DEPR_.createVstMidiEvent(msg));
 }
 
 #endif
@@ -225,7 +225,7 @@ void MidiChannel::unsetMute(bool internal)
 void MidiChannel::process(float *buffer)
 {
 #ifdef WITH_VST
-	G_PluginHost.processStack(vChan, PluginHost_DEPR_::CHANNEL, this);
+	G_PluginHost_DEPR_.processStack(vChan, PluginHost_DEPR_::CHANNEL, this);
 	freeVstMidiEvents();
 #endif
 

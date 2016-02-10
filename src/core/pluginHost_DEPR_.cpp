@@ -45,7 +45,7 @@
 
 extern Conf          G_Conf;
 extern Mixer         G_Mixer;
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 extern unsigned      G_beats;
 extern gdMainWindow *mainWin;
 
@@ -137,7 +137,7 @@ int PluginHost_DEPR_::allocBuffers()
 
 VstIntPtr VSTCALLBACK PluginHost_DEPR_::HostCallback(AEffect *effect, VstInt32 opcode, VstInt32 index, VstIntPtr value, void *ptr, float opt)
 {
-	return G_PluginHost.gHostCallback(effect, opcode, index, value, ptr, opt);
+	return G_PluginHost_DEPR_.gHostCallback(effect, opcode, index, value, ptr, opt);
 }
 
 

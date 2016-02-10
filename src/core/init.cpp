@@ -57,7 +57,7 @@ extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -162,7 +162,7 @@ void init_startKernelAudio()
 		kernelAudio::startStream();
 
 #ifdef WITH_VST
-	G_PluginHost.allocBuffers();
+	G_PluginHost_DEPR_.allocBuffers();
 #endif
 }
 
@@ -207,7 +207,7 @@ void init_shutdown()
 	gLog("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks();
+	G_PluginHost_DEPR_.freeAllStacks();
 	gLog("[init] Plugin_DEPR_ Host cleaned up\n");
 #endif
 

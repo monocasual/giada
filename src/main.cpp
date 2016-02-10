@@ -43,6 +43,7 @@
 #include "gui/dialogs/gd_mainWindow.h"
 #ifdef WITH_VST
 #include "core/pluginHost_DEPR_.h"
+#include "core/pluginHost.h"
 #endif
 
 
@@ -60,7 +61,8 @@ MidiMapConf   G_MidiMap;
 gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-PluginHost_DEPR_ G_PluginHost;
+PluginHost_DEPR_ G_PluginHost_DEPR_;
+PluginHost G_PluginHost;
 #endif
 
 

@@ -32,6 +32,7 @@
 #include "../../core/patch_DEPR_.h"
 #include "../../core/kernelAudio.h"
 #include "../../core/kernelMidi.h"
+#include "../../core/pluginHost.h"
 #include "../../utils/gui_utils.h"
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"
@@ -45,6 +46,10 @@ extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf	       G_Conf;
 extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
+
+#ifdef WITH_VST
+extern PluginHost G_PluginHost;
+#endif
 
 
 using std::string;
@@ -841,6 +846,44 @@ void gTabBehaviors::save()
 /* -------------------------------------------------------------------------- */
 
 
+#ifdef WITH_VST
+
+gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
+	: Fl_Group(X, Y, W, H, "Plugins")
+{
+	folderPath = new gInput(x()+8, y()+8, 200, 20);
+	scanButton = new gClick(x()+8, y()+40, 80, 20, "scan");
+	end();
+
+	labelsize(11);
+
+	scanButton->callback(cb_scan, (void*) this);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((gTabPlugins*)p)->__cb_scan(w); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gTabPlugins::__cb_scan(Fl_Widget *w)
+{
+	//G_PluginHost.scanDir(folderPath->value());
+	G_PluginHost.scanDir(".");
+}
+
+#endif // if WITH_VST
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 {
 	set_modal();
@@ -853,6 +896,10 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 		tabMidi      = new gTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabBehaviors = new gTabBehaviors(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabMisc      = new gTabMisc(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+#ifdef WITH_VST
+		tabPlugins   = new gTabPlugins(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
+#endif
+
 	tabs->end();
 
 	save 	 = new gClick (w-88, h-28, 80, 20, "Save");

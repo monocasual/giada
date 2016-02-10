@@ -37,7 +37,7 @@
 #include "gd_pluginWindowGUI_DEPR_.h"
 
 
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 
 
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin_DEPR_ *pPlugin)

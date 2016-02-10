@@ -12,6 +12,7 @@ TEST_CASE("Test PluginHost class")
 
   SECTION("test read & write")
   {
+    REQUIRE(ph.countPlugins(PluginHost::MASTER_IN) == 0);
     REQUIRE(ph.scanDir(".") > 0);
     REQUIRE(ph.saveList("test-plugin-list.xml") == 1);
     REQUIRE(ph.loadList("test-plugin-list.xml") == 1);

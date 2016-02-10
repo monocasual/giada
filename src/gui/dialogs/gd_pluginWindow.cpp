@@ -38,7 +38,7 @@
 
 
 
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 
 
 Parameter::Parameter(int id, Plugin_DEPR_ *p, int X, int Y, int W)

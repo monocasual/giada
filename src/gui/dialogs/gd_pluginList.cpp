@@ -47,7 +47,7 @@
 
 
 extern Conf          G_Conf;
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 extern gdMainWindow *mainWin;
 
 
@@ -159,11 +159,11 @@ void gdPluginList::refreshList() {
 	 * the 'add new' button. Warning: if ch == NULL we are working with
 	 * master in/master out stacks. */
 
-	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
+	int numPlugins = G_PluginHost_DEPR_.countPlugins(stackType, ch);
 	int i = 0;
 
 	while (i<numPlugins) {
-		Plugin_DEPR_ *pPlugin  = G_PluginHost.getPluginByIndex(i, stackType, ch);
+		Plugin_DEPR_ *pPlugin  = G_PluginHost_DEPR_.getPluginByIndex(i, stackType, ch);
 		gdPlugin *gdp      = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
@@ -190,14 +190,16 @@ void gdPluginList::refreshList() {
   gdPluginListMaster */
 
 	if (stackType == PluginHost_DEPR_::MASTER_OUT) {
-    mainWin->inOut->setMasterFxOutFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+    mainWin->inOut->setMasterFxOutFull(
+			G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0);
   }
 	else
 	if (stackType == PluginHost_DEPR_::MASTER_IN) {
-    mainWin->inOut->setMasterFxInFull(G_PluginHost.countPlugins(stackType, ch) > 0);
+    mainWin->inOut->setMasterFxInFull(
+			G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0);
   }
 	else {
-    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->full = G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0;
     ch->guiChannel->fx->redraw();
   }
 }
@@ -286,15 +288,15 @@ void gdPlugin::__cb_shiftUp() {
 
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (G_PluginHost_DEPR_.countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	int pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	int pluginIndex = G_PluginHost_DEPR_.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
 
 	if (pluginIndex == 0)  // first of the stack, do nothing
 		return;
 
-	G_PluginHost.swapPlugin(pluginIndex, pluginIndex-1, pParent->stackType, pParent->ch);
+	G_PluginHost_DEPR_.swapPlugin(pluginIndex, pluginIndex - 1, pParent->stackType, pParent->ch);
 	pParent->refreshList();
 }
 
@@ -306,16 +308,16 @@ void gdPlugin::__cb_shiftDown() {
 
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (G_PluginHost_DEPR_.countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	unsigned pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
-	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size();
+	unsigned pluginIndex = G_PluginHost_DEPR_.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	unsigned stackSize   = (G_PluginHost_DEPR_.getStack(pParent->stackType, pParent->ch))->size();
 
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
-	G_PluginHost.swapPlugin(pluginIndex, pluginIndex+1, pParent->stackType, pParent->ch);
+	G_PluginHost_DEPR_.swapPlugin(pluginIndex, pluginIndex + 1, pParent->stackType, pParent->ch);
 	pParent->refreshList();
 }
 
@@ -336,7 +338,7 @@ void gdPlugin::__cb_removePlugin() {
 	/* any subwindow linked to the plugin must be destroyed */
 
 	pParent->delSubWindow(pPlugin->getId()+1);
-	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
+	G_PluginHost_DEPR_.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
 	pParent->refreshList();
 }
 

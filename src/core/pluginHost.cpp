@@ -54,13 +54,18 @@ int PluginHost::scanDir(const string &dirpath)
 {
   gLog("[PluginHost::scanDir] plugin directory = '%s'\n", dirpath.c_str());
 
+  /* clear up previous plugins */
+  //knownPluginList.clear();
+  gLog("[PluginHost::scanDir] current plugins = %d\n", knownPluginList.getNumTypes());
+
   juce::VSTPluginFormat format;
   juce::FileSearchPath path(dirpath);
   juce::PluginDirectoryScanner scanner(knownPluginList, format, path, false, juce::File::nonexistent);
-  juce::String name;
 
   bool cont = true;
+  juce::String name;
   while (cont) {
+    gLog("[PluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
     cont = scanner.scanNextFile(false, name);
   }
 

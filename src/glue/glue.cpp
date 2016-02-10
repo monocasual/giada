@@ -64,7 +64,7 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -436,7 +436,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	G_Mixer.init();
 	recorder::init();
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks();
+	G_PluginHost_DEPR_.freeAllStacks();
 #endif
 
 	mainWin->keyboard->clear();

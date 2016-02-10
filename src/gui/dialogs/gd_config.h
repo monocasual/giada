@@ -41,12 +41,14 @@ using std::string;
 class gdConfig : public gWindow
 {
 private:
+
 	static void cb_save_config        (Fl_Widget *w, void *p);
 	static void cb_cancel             (Fl_Widget *w, void *p);
 	inline void __cb_save_config();
 	inline void __cb_cancel();
 
 public:
+
 	gdConfig(int w, int h);
 	~gdConfig();
 
@@ -54,12 +56,15 @@ public:
 	class gTabBehaviors *tabBehaviors;
 	class gTabMidi      *tabMidi;
 	class gTabMisc      *tabMisc;
+#ifdef WITH_VST
+	class gTabPlugins   *tabPlugins;
+#endif
 	class gClick 	      *save;
 	class gClick 	      *cancel;
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gTabMidi : public Fl_Group
@@ -91,12 +96,13 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gTabAudio : public Fl_Group
 {
 private:
+
 	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
 	static void cb_fetchInChans       (Fl_Widget *w, void *p);
 	static void cb_fetchOutChans      (Fl_Widget *w, void *p);
@@ -116,6 +122,7 @@ private:
 	int soundsysInitValue;
 
 public:
+
 	class gChoice *soundsys;
 	class gChoice *samplerate;
 	class gChoice *rsmpQuality;
@@ -135,16 +142,18 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gTabBehaviors : public Fl_Group
 {
 private:
+
 	static void cb_radio_mutex  (Fl_Widget *w, void *p);
 	inline void __cb_radio_mutex(Fl_Widget *w);
 
 public:
+
 	class gRadio *recsStopOnChanHalt_1;
 	class gRadio *recsStopOnChanHalt_0;
 	class gRadio *chansStopOnSeqHalt_1;
@@ -157,12 +166,13 @@ public:
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 class gTabMisc : public Fl_Group
 {
 public:
+
 	class gChoice *debugMsg;
 
 	gTabMisc(int x, int y, int w, int h);
@@ -170,5 +180,27 @@ public:
 	void save();
 };
 
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+class gTabPlugins : public Fl_Group
+{
+private:
+
+	static void cb_scan  (Fl_Widget *w, void *p);
+	inline void __cb_scan(Fl_Widget *w);
+
+public:
+
+	class gInput *folderPath;
+	class gClick *scanButton;
+
+	gTabPlugins(int x, int y, int w, int h);
+};
+
+#endif
 
 #endif

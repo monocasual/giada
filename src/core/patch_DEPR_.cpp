@@ -45,7 +45,7 @@
 extern Mixer 		     G_Mixer;
 extern Conf    G_Conf;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 extern gdMainWindow *mainWin;
 
@@ -545,11 +545,11 @@ int Patch_DEPR_::readPlugins()
 
 		for (int j=0; j<np; j++) {
 			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
-			Plugin_DEPR_ *plugin = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost_DEPR_::CHANNEL, ch);
+			Plugin_DEPR_ *plugin = G_PluginHost_DEPR_.addPlugin(getValue(tmp).c_str(), PluginHost_DEPR_::CHANNEL, ch);
 			if (plugin != NULL) {
 				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
-				Plugin_DEPR_ *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost_DEPR_::CHANNEL, ch);
+				Plugin_DEPR_ *pPlugin = G_PluginHost_DEPR_.getPluginByIndex(j, PluginHost_DEPR_::CHANNEL, ch);
 				sprintf(tmp, "chan%d_p%dbypass", ch->index, j);
 				pPlugin->bypass = atoi(getValue(tmp).c_str());
 				for (int k=0; k<nparam; k++) {
@@ -590,9 +590,9 @@ int Patch_DEPR_::readMasterPlugins(int type)
 	for (int i=0; i<nmp; i++) {
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "master%c_p%dpathfile", chr, i);
-		Plugin_DEPR_ *p = G_PluginHost.addPlugin(getValue(tmp).c_str(), type);
+		Plugin_DEPR_ *p = G_PluginHost_DEPR_.addPlugin(getValue(tmp).c_str(), type);
 		if (p != NULL) {
-			Plugin_DEPR_ *pPlugin = G_PluginHost.getPluginByIndex(i, type);
+			Plugin_DEPR_ *pPlugin = G_PluginHost_DEPR_.getPluginByIndex(i, type);
 			sprintf(tmp, "master%c_p%dbypass", chr, i);
 			pPlugin->bypass = atoi(getValue(tmp).c_str());
 			sprintf(tmp, "master%c_p%dnumParams", chr, i);

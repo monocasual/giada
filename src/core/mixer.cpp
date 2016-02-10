@@ -48,7 +48,7 @@ extern Mixer 			 G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -532,8 +532,8 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 
 #ifdef WITH_VST
 	pthread_mutex_lock(&mutex_plugins);
-	G_PluginHost.processStack(outBuf, PluginHost_DEPR_::MASTER_OUT);
-	G_PluginHost.processStack(vChanInToOut, PluginHost_DEPR_::MASTER_IN);
+	G_PluginHost_DEPR_.processStack(outBuf, PluginHost_DEPR_::MASTER_OUT);
+	G_PluginHost_DEPR_.processStack(vChanInToOut, PluginHost_DEPR_::MASTER_IN);
 	pthread_mutex_unlock(&mutex_plugins);
 #endif
 
@@ -714,7 +714,7 @@ bool Mixer::mergeVirtualInput()
 	}
 	else {
 #ifdef WITH_VST
-		G_PluginHost.processStackOffline(vChanInput, PluginHost_DEPR_::MASTER_IN, 0, totalFrames);
+		G_PluginHost_DEPR_.processStackOffline(vChanInput, PluginHost_DEPR_::MASTER_IN, 0, totalFrames);
 #endif
 		int numFrames = totalFrames*sizeof(float);
 		memcpy(chanInput->wave->data, vChanInput, numFrames);

@@ -57,7 +57,7 @@ extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 
@@ -147,8 +147,8 @@ static void __glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterIn, &G_Patch.masterInPlugins);
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost.masterOut, &G_Patch.masterOutPlugins);
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost_DEPR_.masterIn, &G_Patch.masterInPlugins);
+	__glue_fillPatchGlobalsPlugins__(&G_PluginHost_DEPR_.masterOut, &G_Patch.masterOutPlugins);
 
 #endif
 }

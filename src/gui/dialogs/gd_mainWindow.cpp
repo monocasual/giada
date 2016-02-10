@@ -67,7 +67,7 @@ extern bool	 		 		 G_quit;
 extern bool 		 		 G_audio_status;
 
 #if defined(WITH_VST)
-extern PluginHost_DEPR_ G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 #endif
 
 

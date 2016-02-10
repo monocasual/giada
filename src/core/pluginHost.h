@@ -83,7 +83,7 @@ public:
 		MASTER_IN,
 		CHANNEL
 	};
-
+  
   void init(int bufSize);
 
   /* scanDir
