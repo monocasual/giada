@@ -45,7 +45,7 @@
 #include "ge_midiChannel.h"
 
 #ifdef WITH_VST
-	#include "../dialogs/gd_pluginList.h"
+	#include "../dialogs/gd_pluginList_DEPR_.h"
 #endif
 
 

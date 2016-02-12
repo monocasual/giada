@@ -39,7 +39,7 @@
 #include "../../core/channel.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
-#include "gd_pluginList.h"
+#include "gd_pluginList_DEPR_.h"
 #include "gd_pluginWindow.h"
 #include "gd_pluginWindowGUI_DEPR_.h"
 #include "gd_browser.h"

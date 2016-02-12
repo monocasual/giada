@@ -48,7 +48,7 @@
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_midiOutput.h"
-#include "../dialogs/gd_pluginList.h"
+#include "../dialogs/gd_pluginList_DEPR_.h"
 #include "../dialogs/gd_pluginChooser.h"
 #include "ge_keyboard.h"
 #include "ge_sampleChannel.h"

@@ -43,7 +43,7 @@
 #include "../elems/ge_channel.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_browser.h"
-#include "gd_pluginList.h"
+#include "gd_pluginList_DEPR_.h"
 #include "gd_mainWindow.h"
 #include "gd_warnings.h"
 
