@@ -28,6 +28,7 @@
 
 
 #include "../../core/pluginHost_DEPR_.h"
+#include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
@@ -47,14 +48,12 @@
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_midiOutput.h"
+#include "../dialogs/gd_pluginList.h"
+#include "../dialogs/gd_pluginChooser.h"
 #include "ge_keyboard.h"
 #include "ge_sampleChannel.h"
 #include "ge_status.h"
 #include "ge_modeBox.h"
-
-#ifdef WITH_VST
-#include "../dialogs/gd_pluginList.h"
-#endif
 
 
 extern Mixer 		     G_Mixer;

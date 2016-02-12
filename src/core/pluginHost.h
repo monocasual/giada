@@ -70,12 +70,6 @@ private:
   juce::AudioBuffer<float> audioBuffer;
   juce::MidiBuffer         midiBuffer;
 
-  /* getStack
-   * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
-   * a pointer to Channel is also required. */
-
-  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
-
 public:
 
   enum stackType {
@@ -83,7 +77,7 @@ public:
 		MASTER_IN,
 		CHANNEL
 	};
-  
+
   void init(int bufSize);
 
   /* scanDir
@@ -127,6 +121,12 @@ public:
 
   void processStack(bool isMixerReady, float *buffer, unsigned bufSize,
     int stackType, class Channel *ch=NULL);
+
+  /* getStack
+  * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
+  * a pointer to Channel is also required. */
+
+  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 
 #if 0
   int clonePlugin(const Plugin &src, int stackType, class Channel *ch);

@@ -872,8 +872,7 @@ void gTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((gTabPlugins*)p)->__cb_scan(
 
 void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
-	//G_PluginHost.scanDir(folderPath->value());
-	G_PluginHost.scanDir(".");
+	G_PluginHost.scanDir(folderPath->value());
 }
 
 #endif // if WITH_VST

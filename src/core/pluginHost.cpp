@@ -52,11 +52,10 @@ void PluginHost::init(int bufSize)
 
 int PluginHost::scanDir(const string &dirpath)
 {
-  gLog("[PluginHost::scanDir] plugin directory = '%s'\n", dirpath.c_str());
+  gLog("[PluginHost::scanDir] requested directory: '%s'\n", dirpath.c_str());
+  gLog("[PluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
 
-  /* clear up previous plugins */
-  //knownPluginList.clear();
-  gLog("[PluginHost::scanDir] current plugins = %d\n", knownPluginList.getNumTypes());
+  knownPluginList.clear();   // clear up previous plugins
 
   juce::VSTPluginFormat format;
   juce::FileSearchPath path(dirpath);
@@ -70,7 +69,6 @@ int PluginHost::scanDir(const string &dirpath)
   }
 
   gLog("[PluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());
-
   return knownPluginList.getNumTypes();
 }
 
