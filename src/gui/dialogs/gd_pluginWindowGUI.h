@@ -1,10 +1,11 @@
-/* -----------------------------------------------------------------------------
+
+/* ---------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginWindow
+ * gd_pluginWindowGUI
  *
- * -----------------------------------------------------------------------------
+ * ---------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,52 +25,61 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * -------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------ */
+
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGIN_WINDOW_H__
-#define __GD_PLUGIN_WINDOW_H__
+
+#ifndef __GD_PLUGIN_WINDOW_GUI_H__
+#define __GD_PLUGIN_WINDOW_GUI_H__
 
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "../elems/ge_window.h"
+#if defined(__APPLE__)
+	#include <Carbon/Carbon.h>
+#endif
 
 
-class gdPluginWindow : public gWindow
+class gdPluginWindowGUI : public gWindow
 {
 private:
+
 	class Plugin *pPlugin;
 
 public:
-	int id;
 
-	gdPluginWindow(Plugin *pPlugin);
+	gdPluginWindowGUI(Plugin *pPlugin);
+	~gdPluginWindowGUI();
 };
 
 
 /* -------------------------------------------------------------------------- */
 
+#if defined(__APPLE__)
 
-class Parameter : public Fl_Group
+class gdPluginWindowGUImac : public gWindow
 {
 private:
-	int   id;
-	class Plugin *pPlugin;
 
-	static void cb_setValue(Fl_Widget *v, void *p);
-	inline void __cb_setValue();
+	static pascal OSStatus windowHandler(EventHandlerCallRef ehc, EventRef e, void *data);
+	inline pascal OSStatus __wh(EventHandlerCallRef ehc, EventRef e);
+
+	class Plugin *pPlugin;
+	WindowRef carbonWindow;
+	bool open;
 
 public:
-	class gBox    *label;
-	class gSlider *slider;
-	class gBox    *value;
 
-	Parameter(int id, class Plugin *p, int x, int y, int w);
+	gdPluginWindowGUImac(Plugin *pPlugin);
+	~gdPluginWindowGUImac();
 };
 
-
 #endif
+
+
+#endif // include guard
 
 #endif // #ifdef WITH_VST

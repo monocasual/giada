@@ -50,10 +50,19 @@ private:
   juce::AudioProcessor       *proc;   // core
   juce::MessageManager       *mm;     // FIXME - useless
 
+  static int idGenerator;
+  int    id;
+  bool   bypass;
+  bool   status;
+
 public:
 
-  bool bypass;
-  bool status;
+  Plugin();
+
+  inline int  getId() { return id; }
+  inline bool getStatus() { return status; }
+  inline bool isBypassed() { return bypass; }
+  inline void toggleBypass() { bypass = !bypass; }
 };
 
 #endif

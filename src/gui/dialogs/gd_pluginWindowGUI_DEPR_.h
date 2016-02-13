@@ -43,15 +43,15 @@
 #endif
 
 
-class gdPluginWindowGUI : public gWindow {
+class gdPluginWindowGUI_DEPR_ : public gWindow {
 private:
 
 	class Plugin_DEPR_ *pPlugin;
 
 public:
 
-	gdPluginWindowGUI(Plugin_DEPR_ *pPlugin);
-	~gdPluginWindowGUI();
+	gdPluginWindowGUI_DEPR_(Plugin_DEPR_ *pPlugin);
+	~gdPluginWindowGUI_DEPR_();
 };
 
 
@@ -59,7 +59,7 @@ public:
 
 #if defined(__APPLE__)
 
-class gdPluginWindowGUImac : public gWindow {
+class gdPluginWindowGUImac_DEPR_ : public gWindow {
 
 private:
 
@@ -72,8 +72,8 @@ private:
 
 public:
 
-	gdPluginWindowGUImac(Plugin_DEPR_ *pPlugin);
-	~gdPluginWindowGUImac();
+	gdPluginWindowGUImac_DEPR_(Plugin_DEPR_ *pPlugin);
+	~gdPluginWindowGUImac_DEPR_();
 };
 
 #endif

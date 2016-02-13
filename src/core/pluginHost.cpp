@@ -137,7 +137,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   }
 
   gLog("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
-    fid.c_str(), p->getName().toRawUTF8(), stackType, pStack->size());
+    fid.c_str(), p->getName().toStdString().c_str(), stackType, pStack->size());
 
   return p;
 }
@@ -152,8 +152,8 @@ Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
   juce::PluginDescription *pd = knownPluginList.getType(index);
   if (pd) {
     gLog("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
-      pd->fileOrIdentifier.toRawUTF8(), pd->name.toRawUTF8());
-    return addPlugin(pd->fileOrIdentifier.toRawUTF8(), stackType, mutex, freq, bufSize, ch);
+      pd->fileOrIdentifier.toRawUTF8(), pd->name.toStdString());
+    return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, freq, bufSize, ch);
   }
   else {
     gLog("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
@@ -247,7 +247,7 @@ void PluginHost::processStack(bool isMixerReady, float *buffer, unsigned bufSize
 
 	for (unsigned i=0; i<pStack->size(); i++) {
     Plugin *plugin = pStack->at(i);
-		if (plugin->status != 1 || plugin->isSuspended() || plugin->bypass)
+		if (plugin->getStatus() != 1 || plugin->isSuspended() || plugin->isBypassed())
 			continue;
 		plugin->processBlock(audioBuffer, midiBuffer);
   }
@@ -260,6 +260,97 @@ void PluginHost::processStack(bool isMixerReady, float *buffer, unsigned bufSize
 		buffer[(i*2)+1] = audioBuffer.getSample(1, i);
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
+{
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	if (pStack->size() == 0)
+		return NULL;
+	if ((unsigned) index >= pStack->size())
+		return NULL;
+	return pStack->at(index);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int PluginHost::getPluginIndex(int id, int stackType, Channel *ch)
+{
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	for (unsigned i=0; i<pStack->size(); i++)
+		if (pStack->at(i)->getId() == id)
+			return i;
+	return -1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType,
+  pthread_mutex_t *mutex, Channel *ch)
+{
+	vector <Plugin *> *pStack = getStack(stackType, ch);
+	int lockStatus;
+	while (true) {
+		lockStatus = pthread_mutex_trylock(mutex);
+		if (lockStatus == 0) {
+			std::swap(pStack->at(indexA), pStack->at(indexB));
+			pthread_mutex_unlock(mutex);
+			gLog("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
+			return;
+		}
+		//else
+			//gLog("[pluginHost] waiting for mutex...\n");
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
+  Channel *ch)
+{
+	vector <Plugin *> *pStack;
+	pStack = getStack(stackType, ch);
+
+	/* try to delete the plugin until succeed. G_Mixer has priority. */
+
+	for (unsigned i=0; i<pStack->size(); i++)
+		if (pStack->at(i)->getId() == id) {
+
+			if (pStack->at(i)->getStatus() == 0) { // no frills if plugin is missing
+				delete pStack->at(i);
+				pStack->erase(pStack->begin() + i);
+				return;
+			}
+			else {
+				int lockStatus;
+				while (true) {
+					lockStatus = pthread_mutex_trylock(mutex);
+					if (lockStatus == 0) {
+						// TODO - what to do with Juce? pStack->at(i)->suspend();
+						// TODO - what to do with Juce? pStack->at(i)->close();
+						delete pStack->at(i);
+						pStack->erase(pStack->begin() + i);
+						pthread_mutex_unlock(mutex);
+						gLog("[pluginHost::freePlugin] plugin id=%d removed\n", id);
+						return;
+					}
+					//else
+						//gLog("[pluginHost] waiting for mutex...\n");
+				}
+			}
+		}
+	gLog("[pluginHost::freePlugin] plugin id=%d not found\n", id);
+}
+
 
 
 #endif // #ifdef WITH_VST

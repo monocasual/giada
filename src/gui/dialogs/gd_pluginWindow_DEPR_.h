@@ -1,10 +1,10 @@
-/* -----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_pluginWindow
  *
- * -----------------------------------------------------------------------------
+ * ---------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,12 +24,12 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * -------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------ */
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGIN_WINDOW_H__
-#define __GD_PLUGIN_WINDOW_H__
+#ifndef __GD_PLUGIN_WINDOW_DEPR_H__
+#define __GD_PLUGIN_WINDOW_DEPR_H__
 
 
 #include <FL/Fl.H>
@@ -37,26 +37,26 @@
 #include "../elems/ge_window.h"
 
 
-class gdPluginWindow : public gWindow
-{
+class gdPluginWindow_DEPR_ : public gWindow {
+
 private:
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 public:
 	int id;
 
-	gdPluginWindow(Plugin *pPlugin);
+	gdPluginWindow_DEPR_(Plugin_DEPR_ *pPlugin);
 };
 
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 
-class Parameter : public Fl_Group
-{
+class Parameter_DEPR_ : public Fl_Group {
+
 private:
 	int   id;
-	class Plugin *pPlugin;
+	class Plugin_DEPR_ *pPlugin;
 
 	static void cb_setValue(Fl_Widget *v, void *p);
 	inline void __cb_setValue();
@@ -66,7 +66,7 @@ public:
 	class gSlider *slider;
 	class gBox    *value;
 
-	Parameter(int id, class Plugin *p, int x, int y, int w);
+	Parameter_DEPR_(int id, class Plugin_DEPR_ *p, int x, int y, int w);
 };
 
 

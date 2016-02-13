@@ -28,4 +28,14 @@
 #ifdef WITH_VST
 
 
+#include "plugin.h"
+
+
+int Plugin::idGenerator = 1;
+
+
+Plugin::Plugin() : id(idGenerator++)
+{
+}
+
 #endif

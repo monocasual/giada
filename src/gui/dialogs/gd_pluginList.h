@@ -29,33 +29,31 @@
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGIN_LIST_DEPR_H__
-#define __GD_PLUGIN_LIST_DEPR_H__
+#ifndef __GD_PLUGINLIST_H__
+#define __GD_PLUGINLIST_H__
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include "../elems/ge_window.h"
 
 
-class gdPluginList_DEPR_ : public gWindow {
-
+class gdPluginList : public gWindow
+{
 private:
 
  	class gClick *addPlugin;
 	Fl_Scroll    *list;
 
-	//gVector<class gdPluginWindow_DEPR_ *> subWindows;
-
-	static void cb_addPlugin          (Fl_Widget *v, void *p);
-	inline void __cb_addPlugin        ();
+	static void cb_addPlugin  (Fl_Widget *v, void *p);
+	inline void __cb_addPlugin();
 
 public:
 
 	class Channel *ch;      // ch == NULL ? masterOut
 	int   stackType;
 
-	gdPluginList_DEPR_(int stackType, class Channel *ch=NULL);
-	~gdPluginList_DEPR_();
+	gdPluginList(int stackType, class Channel *ch=NULL);
+	~gdPluginList();
 
 	/* special callback, passed to browser. When closed (i.e. plugin
 	 * has been selected) the same browser will refresh this window. */
@@ -69,12 +67,12 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gdPlugin_DEPR_ : public Fl_Group {
-
+class gdPlugin : public Fl_Group
+{
 private:
 
-	class  gdPluginList_DEPR_ *pParent;
-	class Plugin_DEPR_ *pPlugin;
+	class  gdPluginList *pParent;
+	class Plugin        *pPlugin;
 
 	static void cb_removePlugin       (Fl_Widget *v, void *p);
 	static void cb_openPluginWindow   (Fl_Widget *v, void *p);
@@ -98,8 +96,7 @@ public:
 	class gButton *shiftDown;
 	class gButton *remove;
 
-	gdPlugin_DEPR_(gdPluginList_DEPR_ *gdp, class Plugin_DEPR_ *p, int x, int y, int w);
-
+	gdPlugin(gdPluginList *gdp, class Plugin *p, int x, int y, int w);
 };
 
 #endif

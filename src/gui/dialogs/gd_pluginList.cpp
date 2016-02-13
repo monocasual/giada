@@ -34,27 +34,31 @@
 #include "../../utils/utils.h"
 #include "../../core/conf.h"
 #include "../../core/graphics.h"
-#include "../../core/pluginHost_DEPR_.h"
+#include "../../core/pluginHost.h"
+#include "../../core/plugin.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
-#include "gd_pluginList_DEPR_.h"
-#include "gd_pluginWindow_DEPR_.h"
-#include "gd_pluginWindowGUI_DEPR_.h"
+#include "gd_pluginList.h"
+#include "gd_pluginWindow.h"
+#include "gd_pluginWindowGUI.h"
 #include "gd_browser.h"
 #include "gd_mainWindow.h"
 
 
 extern Conf          G_Conf;
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern Mixer         G_Mixer;
+extern PluginHost    G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
-gdPluginList_DEPR_::gdPluginList_DEPR_(int stackType, Channel *ch)
- : gWindow(468, 204), ch(ch), stackType(stackType)
-{
+using std::string;
 
+
+gdPluginList::gdPluginList(int stackType, Channel *ch)
+  : gWindow(468, 204), ch(ch), stackType(stackType)
+{
 	if (G_Conf.pluginListX)
 		resize(G_Conf.pluginListX, G_Conf.pluginListY, w(), h());
 
@@ -75,15 +79,14 @@ gdPluginList_DEPR_::gdPluginList_DEPR_(int stackType, Channel *ch)
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost_DEPR_::MASTER_OUT)
+	if (stackType == PluginHost::MASTER_OUT)
 		label("Master Out Plugins");
 	else
-	if (stackType == PluginHost_DEPR_::MASTER_IN)
+	if (stackType == PluginHost::MASTER_IN)
 		label("Master In Plugins");
 	else {
-		char tmp[32];
-		sprintf(tmp, "Channel %d Plugins", ch->index+1);
-		copy_label(tmp);
+    string l = "Channel " + gItoa(ch->index+1) + " Plugins";
+    copy_label(l.c_str());
 	}
 
 	gu_setFavicon(this);
@@ -94,7 +97,7 @@ gdPluginList_DEPR_::gdPluginList_DEPR_(int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-gdPluginList_DEPR_::~gdPluginList_DEPR_() {
+gdPluginList::~gdPluginList() {
 	G_Conf.pluginListX = x();
 	G_Conf.pluginListY = y();
 }
@@ -103,13 +106,13 @@ gdPluginList_DEPR_::~gdPluginList_DEPR_() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList_DEPR_::cb_addPlugin(Fl_Widget *v, void *p)   { ((gdPluginList_DEPR_*)p)->__cb_addPlugin(); }
+void gdPluginList::cb_addPlugin(Fl_Widget *v, void *p)   { ((gdPluginList*)p)->__cb_addPlugin(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList_DEPR_::cb_refreshList(Fl_Widget *v, void *p) {
+void gdPluginList::cb_refreshList(Fl_Widget *v, void *p) {
 
 	/* note: this callback is fired by gdBrowser. Close its window first,
 	 * by calling the parent (pluginList) and telling it to delete its
@@ -123,15 +126,15 @@ void gdPluginList_DEPR_::cb_refreshList(Fl_Widget *v, void *p) {
 	 * This callback works even when you click 'x' to close the window...
 	 * well, who cares */
 
-	((gdPluginList_DEPR_*)p)->refreshList();
-	((gdPluginList_DEPR_*)p)->redraw();
+	((gdPluginList*)p)->refreshList();
+	((gdPluginList*)p)->redraw();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList_DEPR_::__cb_addPlugin() {
+void gdPluginList::__cb_addPlugin() {
 
 	/* the usual callback that gWindow adds to each subwindow in this case
 	 * is not enough, because when we close the browser the plugin list
@@ -148,7 +151,7 @@ void gdPluginList_DEPR_::__cb_addPlugin() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList_DEPR_::refreshList() {
+void gdPluginList::refreshList() {
 
 	/* delete the previous list */
 
@@ -159,12 +162,12 @@ void gdPluginList_DEPR_::refreshList() {
 	 * the 'add new' button. Warning: if ch == NULL we are working with
 	 * master in/master out stacks. */
 
-	int numPlugins = G_PluginHost_DEPR_.countPlugins(stackType, ch);
+	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
 	int i = 0;
 
 	while (i<numPlugins) {
-		Plugin_DEPR_ *pPlugin  = G_PluginHost_DEPR_.getPluginByIndex(i, stackType, ch);
-		gdPlugin_DEPR_ *gdp    = new gdPlugin_DEPR_(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
+		Plugin   *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, ch);
+		gdPlugin *gdp     = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
 	}
@@ -189,17 +192,17 @@ void gdPluginList_DEPR_::refreshList() {
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost_DEPR_::MASTER_OUT) {
+	if (stackType == PluginHost::MASTER_OUT) {
     mainWin->inOut->setMasterFxOutFull(
-			G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0);
+			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else
-	if (stackType == PluginHost_DEPR_::MASTER_IN) {
+	if (stackType == PluginHost::MASTER_IN) {
     mainWin->inOut->setMasterFxInFull(
-			G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0);
+			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else {
-    ch->guiChannel->fx->full = G_PluginHost_DEPR_.countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
     ch->guiChannel->fx->redraw();
   }
 }
@@ -210,7 +213,7 @@ void gdPluginList_DEPR_::refreshList() {
 /* -------------------------------------------------------------------------- */
 
 
-gdPlugin_DEPR_::gdPlugin_DEPR_(gdPluginList_DEPR_ *gdp, Plugin_DEPR_ *p, int X, int Y, int W)
+gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 	: Fl_Group(X, Y, W, 20), pParent(gdp), pPlugin (p)
 {
 	begin();
@@ -222,46 +225,31 @@ gdPlugin_DEPR_::gdPlugin_DEPR_(gdPluginList_DEPR_ *gdp, Plugin_DEPR_ *p, int X, 
 	remove    = new gButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 	end();
 
-	if (pPlugin->status != 1) {  // bad state
-		char name[256];
-		sprintf(name, "* %s *", gBasename(pPlugin->pathfile).c_str());
-		button->copy_label(name);
+	if (pPlugin->getStatus() != 1) {  // bad state
+    string l = "* " + pPlugin->getName().toStdString() + " *";
+		button->copy_label(l.c_str());
 	}
 	else {
-		char name[256];
-		pPlugin->getProduct(name);
-		if (strcmp(name, " ")==0)
-			pPlugin->getName(name);
-
-		button->copy_label(name);
+		button->copy_label(pPlugin->getName().toStdString().c_str());
 		button->callback(cb_openPluginWindow, (void*)this);
 
 		program->callback(cb_setProgram, (void*)this);
 
-		/* loading vst programs */
-		/* FIXME - max programs = 128 (unknown source) */
+    for (int i=0; i<pPlugin->getNumPrograms(); i++) {
+      string name = gu_removeFltkChars(pPlugin->getProgramName(i).toStdString());
+      program->add(name.c_str());
+    }
 
-		for (int i=0; i<64; i++) {
-			char out[kVstMaxProgNameLen];
-			pPlugin->getProgramName(i, out);
-			for (int j=0; j<kVstMaxProgNameLen; j++)  // escape FLTK special chars
-				if (out[j] == '/' || out[j] == '\\' || out[j] == '&' || out[j] == '_')
-					out[j] = '-';
-			if (strlen(out) > 0)
-				program->add(out);
-		}
 		if (program->size() == 0) {
 			program->add("-- no programs --\0");
 			program->deactivate();
 		}
-		if (pPlugin->getProgram() == -1)
-			program->value(0);
-		else
-			program->value(pPlugin->getProgram());
+    else
+      program->value(pPlugin->getCurrentProgram());
 
 		bypass->callback(cb_setBypass, (void*)this);
 		bypass->type(FL_TOGGLE_BUTTON);
-		bypass->value(pPlugin->bypass ? 0 : 1);
+		bypass->value(pPlugin->isBypassed() ? 0 : 1);
 	}
 
 	shiftUp->callback(cb_shiftUp, (void*)this);
@@ -273,30 +261,31 @@ gdPlugin_DEPR_::gdPlugin_DEPR_(gdPluginList_DEPR_ *gdp, Plugin_DEPR_ *p, int X, 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_removePlugin(); }
-void gdPlugin_DEPR_::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_openPluginWindow(); }
-void gdPlugin_DEPR_::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_setBypass(); }
-void gdPlugin_DEPR_::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_shiftUp(); }
-void gdPlugin_DEPR_::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_shiftDown(); }
-void gdPlugin_DEPR_::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin_DEPR_*)p)->__cb_setProgram(); }
+void gdPlugin::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_removePlugin(); }
+void gdPlugin::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_openPluginWindow(); }
+void gdPlugin::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setBypass(); }
+void gdPlugin::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftUp(); }
+void gdPlugin::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftDown(); }
+void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setProgram(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_shiftUp() {
+void gdPlugin::__cb_shiftUp() {
 
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost_DEPR_.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	int pluginIndex = G_PluginHost_DEPR_.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	int pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
 
 	if (pluginIndex == 0)  // first of the stack, do nothing
 		return;
 
-	G_PluginHost_DEPR_.swapPlugin(pluginIndex, pluginIndex - 1, pParent->stackType, pParent->ch);
+	G_PluginHost.swapPlugin(pluginIndex, pluginIndex - 1, pParent->stackType,
+    &G_Mixer.mutex_plugins, pParent->ch);
 	pParent->refreshList();
 }
 
@@ -304,20 +293,21 @@ void gdPlugin_DEPR_::__cb_shiftUp() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_shiftDown() {
+void gdPlugin::__cb_shiftDown() {
 
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost_DEPR_.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	unsigned pluginIndex = G_PluginHost_DEPR_.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
-	unsigned stackSize   = (G_PluginHost_DEPR_.getStack(pParent->stackType, pParent->ch))->size();
+	unsigned pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size();
 
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
-	G_PluginHost_DEPR_.swapPlugin(pluginIndex, pluginIndex + 1, pParent->stackType, pParent->ch);
+	G_PluginHost.swapPlugin(pluginIndex, pluginIndex + 1, pParent->stackType,
+    &G_Mixer.mutex_plugins, pParent->ch);
 	pParent->refreshList();
 }
 
@@ -325,7 +315,7 @@ void gdPlugin_DEPR_::__cb_shiftDown() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_removePlugin() {
+void gdPlugin::__cb_removePlugin() {
 
 	/* os x hack: show window before deleting it */
 
@@ -337,16 +327,18 @@ void gdPlugin_DEPR_::__cb_removePlugin() {
 
 	/* any subwindow linked to the plugin must be destroyed */
 
-	pParent->delSubWindow(pPlugin->getId()+1);
-	G_PluginHost_DEPR_.freePlugin(pPlugin->getId(), pParent->stackType, pParent->ch);
-	pParent->refreshList();
+	pParent->delSubWindow(pPlugin->getId());
+	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType,
+    &G_Mixer.mutex_plugins, pParent->ch);
+
+  pParent->refreshList();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_openPluginWindow() {
+void gdPlugin::__cb_openPluginWindow() {
 
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	 * for the window 'add plugin'. */
@@ -355,7 +347,7 @@ void gdPlugin_DEPR_::__cb_openPluginWindow() {
 	 * This is not consistent with the rest of the gui. You can avoid this by
 	 * calling
 	 *
-	 * gu_openSubWindow(this, new gdPluginWindow_DEPR_(pPlugin), WID_FX);
+	 * gu_openSubWindow(this, new gdPluginWindow(pPlugin), WID_FX);
 	 *
 	 * instead of the following code.
 	 *
@@ -363,14 +355,14 @@ void gdPlugin_DEPR_::__cb_openPluginWindow() {
 
 	if (!pParent->hasWindow(pPlugin->getId()+1)) {
 		gWindow *w;
-		if (pPlugin->hasGui())
+		if (pPlugin->hasEditor())
 #ifdef __APPLE__
-			w = new gdPluginWindowGUImac_DEPR_(pPlugin);
+			w = new gdPluginWindowGUImac(pPlugin);
 #else
-			w = new gdPluginWindowGUI_DEPR_(pPlugin);
+			w = new gdPluginWindowGUI(pPlugin);
 #endif
 		else
-			w = new gdPluginWindow_DEPR_(pPlugin);
+			w = new gdPluginWindow(pPlugin);
 		w->setId(pPlugin->getId()+1);
 		pParent->addSubWindow(w);
 	}
@@ -380,16 +372,16 @@ void gdPlugin_DEPR_::__cb_openPluginWindow() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_setBypass() {
-	pPlugin->bypass = !pPlugin->bypass;
+void gdPlugin::__cb_setBypass() {
+	pPlugin->toggleBypass();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin_DEPR_::__cb_setProgram() {
-	pPlugin->setProgram(program->value());
+void gdPlugin::__cb_setProgram() {
+	pPlugin->setCurrentProgram(program->value());
 }
 
 

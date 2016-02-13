@@ -1,10 +1,10 @@
-/* -----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_pluginWindow
  *
- * -----------------------------------------------------------------------------
+ * ---------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * -------------------------------------------------------------------------- */
+ * ------------------------------------------------------------------ */
 
 
 #ifdef WITH_VST
@@ -32,21 +32,19 @@
 
 #include <FL/Fl_Scroll.H>
 #include "../../utils/gui_utils.h"
-#include "../../core/pluginHost.h"
+#include "../../core/pluginHost_DEPR_.h"
 #include "../elems/ge_mixed.h"
-#include "gd_pluginWindow.h"
+#include "gd_pluginWindow_DEPR_.h"
 
 
 
-extern PluginHost G_PluginHost;
+extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 
 
-Parameter::Parameter(int id, Plugin *p, int X, int Y, int W)
+Parameter_DEPR_::Parameter_DEPR_(int id, Plugin_DEPR_ *p, int X, int Y, int W)
 	: Fl_Group(X,Y,W-24,20), id(id), pPlugin(p)
 {
 	begin();
-
-#if 0
 
 		label = new gBox(x(), y(), 60, 20);
 		char name[kVstMaxParamStrLen];
@@ -70,23 +68,22 @@ Parameter::Parameter(int id, Plugin *p, int X, int Y, int W)
 		value->box(G_BOX);
 
 		resizable(slider);
-#endif
+
 	end();
 }
 
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 
-void Parameter::cb_setValue(Fl_Widget *v, void *p)  { ((Parameter*)p)->__cb_setValue(); }
+void Parameter_DEPR_::cb_setValue(Fl_Widget *v, void *p)  { ((Parameter_DEPR_*)p)->__cb_setValue(); }
 
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 
-void Parameter::__cb_setValue()
-{
-#if 0
+void Parameter_DEPR_::__cb_setValue() {
+
 	pPlugin->setParam(id, slider->value());
 
 	char disp[256];
@@ -99,25 +96,24 @@ void Parameter::__cb_setValue()
 
 	value->copy_label(str);
 	value->redraw();
-#endif
 }
 
 
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 
-gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
+gdPluginWindow_DEPR_::gdPluginWindow_DEPR_(Plugin_DEPR_ *pPlugin)
  : gWindow(400, 156), pPlugin(pPlugin) // 350
 {
 	set_non_modal();
-#if 0
+
 	gLiquidScroll *list = new gLiquidScroll(8, 8, w()-16, h()-16);
 	list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	list->begin();
 
 	int numParams = pPlugin->getNumParams();
 	for (int i=0; i<numParams; i++)
-		new Parameter(i, pPlugin, list->x(), list->y()+(i*24), list->w());
+		new Parameter_DEPR_(i, pPlugin, list->x(), list->y()+(i*24), list->w());
 	list->end();
 
 	end();
@@ -130,7 +126,7 @@ gdPluginWindow::gdPluginWindow(Plugin *pPlugin)
 
 	size_range(400, (24*1)+12);
 	resizable(list);
-#endif
+
 	gu_setFavicon(this);
 	show();
 

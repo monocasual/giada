@@ -128,6 +128,24 @@ public:
 
   vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
 
+  /* getPluginByIndex */
+
+  Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
+
+  /* getPluginIndex */
+
+  int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
+
+  /* swapPlugin */
+
+  void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
+    pthread_mutex_t *mutex, class Channel *ch=NULL);
+
+  /* freePlugin */
+
+  void freePlugin(int id, int stackType, pthread_mutex_t *mutex,
+    class Channel *ch=NULL);
+
 #if 0
   int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
 
@@ -145,15 +163,7 @@ public:
 
   Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
 
-  Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
-
-  int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
-
   void freeAllStacks();
-
-  void freePlugin(int id, int stackType, class Channel *ch=NULL);
-
-  void swapPlugin(unsigned indexA, unsigned indexB, int stackType, class Channel *ch=NULL);
 
 #endif
 };

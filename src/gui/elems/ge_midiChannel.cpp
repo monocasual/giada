@@ -55,6 +55,7 @@
 
 #ifdef WITH_VST
 #include "../dialogs/gd_pluginList_DEPR_.h"
+#include "../dialogs/gd_pluginList.h"
 #endif
 
 

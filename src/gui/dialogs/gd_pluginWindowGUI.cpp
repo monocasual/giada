@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_pluginWindowGUI
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
@@ -32,20 +32,21 @@
 
 #include "../../utils/log.h"
 #include "../../utils/gui_utils.h"
-#include "../../core/pluginHost_DEPR_.h"
+#include "../../core/pluginHost.h"
 #include "../elems/ge_mixed.h"
-#include "gd_pluginWindowGUI_DEPR_.h"
+#include "gd_pluginWindowGUI.h"
 
 
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost G_PluginHost;
 
 
-gdPluginWindowGUI_DEPR_::gdPluginWindowGUI_DEPR_(Plugin_DEPR_ *pPlugin)
+gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
 
   /* some effects like to have us get their rect before opening them */
 
+#if 0
   ERect *rect;
 	pPlugin->getRect(&rect);
 
@@ -75,34 +76,41 @@ gdPluginWindowGUI_DEPR_::gdPluginWindowGUI_DEPR_(Plugin_DEPR_ *pPlugin)
 	pPlugin->window = this;
 
 	pPlugin->idle();
+#endif
+
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gdPluginWindowGUI_DEPR_::~gdPluginWindowGUI_DEPR_() {
+gdPluginWindowGUI::~gdPluginWindowGUI()
+{
+#if 0
 	pPlugin->closeGui();
+#endif
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 #if defined(__APPLE__)
 
 
-pascal OSStatus gdPluginWindowGUImac_DEPR_::windowHandler(EventHandlerCallRef ehc, EventRef e, void *data) {
+pascal OSStatus gdPluginWindowGUImac::windowHandler(EventHandlerCallRef ehc, EventRef e, void *data)
+{
 	return ((gdPluginWindowGUImac*)data)->__wh(ehc, e);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-pascal OSStatus gdPluginWindowGUImac_DEPR_::__wh(EventHandlerCallRef inHandlerCallRef, EventRef inEvent) {
+pascal OSStatus gdPluginWindowGUImac::__wh(EventHandlerCallRef inHandlerCallRef, EventRef inEvent)
+{
 	OSStatus result   = eventNotHandledErr;     // let the Carbon Event Manager close the window
 	UInt32 eventClass = GetEventClass(inEvent);
 	UInt32 eventKind  = GetEventKind(inEvent);
@@ -129,10 +137,10 @@ pascal OSStatus gdPluginWindowGUImac_DEPR_::__wh(EventHandlerCallRef inHandlerCa
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gdPluginWindowGUImac_DEPR_::gdPluginWindowGUImac_DEPR_(Plugin_DEPR_ *pPlugin)
+gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin), carbonWindow(NULL)
 {
 
@@ -184,10 +192,11 @@ gdPluginWindowGUImac_DEPR_::gdPluginWindowGUImac_DEPR_(Plugin_DEPR_ *pPlugin)
 
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gdPluginWindowGUImac_DEPR_::~gdPluginWindowGUImac_DEPR_() {
+gdPluginWindowGUImac::~gdPluginWindowGUImac()
+{
 	gLog("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)carbonWindow);
 	pPlugin->closeGui();
 	if (open)
