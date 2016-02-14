@@ -30,21 +30,35 @@
 #ifdef WITH_VST
 
 
+#include "../../core/plugin.h"
+#include "../../core/pluginHost.h"
 #include "ge_pluginBrowser.h"
+
+
+extern PluginHost G_PluginHost;
+
+
+using std::vector;
 
 
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	: Fl_Browser(x, y, w, h)
 {
-	// http://seriss.com/people/erco/fltk/#Fl_Browser
+	// http://seriss.com/people/erco/fltk/#BrowserColumns
 
-	int widths[] = {100, 100, 0}; // widths for each column
+	int widths[] = {300, 300, 0}; // widths for each column
   column_widths(widths);
   column_char('\t');       // tabs as column delimiters
   type(FL_MULTI_BROWSER);
-  add("USER\tPID\tXXX");        // lines of tab delimited data
-  add("abc\tdef\tghi");         // lines of tab delimited data
-	box(FL_BORDER_BOX);
+
+	add("ID\tNAME\tCATEGORY");        // lines of tab delimited data
+	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
+		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
+		string s = pi.uid + "\t" + pi.name + "\t" + pi.category;
+		add(s.c_str());
+	}
+	//box(FL_BORDER_BOX);
+	end();
 }
 
 

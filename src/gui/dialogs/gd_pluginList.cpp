@@ -41,6 +41,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
 #include "gd_pluginList.h"
+#include "gd_pluginChooser.h"
 #include "gd_pluginWindow.h"
 #include "gd_pluginWindowGUI.h"
 #include "gd_browser.h"
@@ -139,12 +140,17 @@ void gdPluginList::__cb_addPlugin() {
 	/* the usual callback that gWindow adds to each subwindow in this case
 	 * is not enough, because when we close the browser the plugin list
 	 * must be redrawn. We have a special callback, cb_refreshList, which
-	 * we add to gdBrowser. It does exactly what we need. */
+	 * we add to gdPluginChooser. It does exactly what we need. */
 
+  gdPluginChooser *pc = new gdPluginChooser(0, 0, 640, 480);
+  addSubWindow(pc);
+  pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
+
+#if 0
 	gdBrowser *b = new gdBrowser("Browse Plugin_DEPR_", G_Conf.pluginPath.c_str(), ch, BROWSER_LOAD_PLUGIN, stackType);
 	addSubWindow(b);
 	b->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
-
+#endif
 }
 
 
@@ -338,8 +344,15 @@ void gdPlugin::__cb_removePlugin() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_openPluginWindow() {
-
+void gdPlugin::__cb_openPluginWindow()
+{
+  gWindow *w;
+  if (pPlugin->hasEditor()) {
+    w = new gdPluginWindowGUI(pPlugin);
+    w->setId(pPlugin->getId()+1);
+		pParent->addSubWindow(w);
+  }
+#if 0
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	 * for the window 'add plugin'. */
 
@@ -366,6 +379,7 @@ void gdPlugin::__cb_openPluginWindow() {
 		w->setId(pPlugin->getId()+1);
 		pParent->addSubWindow(w);
 	}
+#endif
 }
 
 

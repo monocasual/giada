@@ -139,7 +139,6 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
   cursor_color(COLOR_TEXT_0);
   selection_color(COLOR_BD_0);
   textsize(11);
-
 }
 
 

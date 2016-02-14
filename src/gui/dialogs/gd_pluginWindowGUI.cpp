@@ -44,6 +44,8 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
 
+  show();
+  
   /* some effects like to have us get their rect before opening them */
 
 #if 0

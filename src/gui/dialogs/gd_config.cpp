@@ -857,6 +857,8 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 
 	labelsize(11);
 
+	folderPath->value(G_Conf.pluginPath.c_str());
+
 	scanButton->callback(cb_scan, (void*) this);
 }
 
@@ -874,6 +876,16 @@ void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
 	G_PluginHost.scanDir(folderPath->value());
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gTabPlugins::save()
+{
+	G_Conf.pluginPath = folderPath->value();
+}
+
 
 #endif // if WITH_VST
 
@@ -945,6 +957,9 @@ void gdConfig::__cb_save_config()
 	tabBehaviors->save();
 	tabMidi->save();
 	tabMisc->save();
+#ifdef WITH_VST
+	tabPlugins->save();
+#endif
 	do_callback();
 }
 

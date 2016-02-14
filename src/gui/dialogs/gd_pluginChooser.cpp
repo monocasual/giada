@@ -30,17 +30,23 @@
 #ifdef WITH_VST
 
 
+#include "../../utils/gui_utils.h"
+#include "../../core/channel.h"
+#include "../../core/pluginHost.h"
 #include "../elems/ge_pluginBrowser.h"
 #include "gd_pluginChooser.h"
+
+
+extern PluginHost G_PluginHost;
 
 
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H)
   : gWindow(X, W, W, H, "Available plugins")
 {
   browser = new gePluginBrowser(8, 8, w()-16, 200);
-  end();
   resizable(browser);
-
+  end();
+	gu_setFavicon(this);
   show();
 }
 

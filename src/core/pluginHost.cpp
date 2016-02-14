@@ -41,9 +41,11 @@
 using std::string;
 
 
-void PluginHost::init(int bufSize)
+void PluginHost::init(int _buffersize, int _samplerate)
 {
-  audioBuffer.setSize(2, bufSize);
+  audioBuffer.setSize(2, _buffersize);
+  samplerate = _samplerate;
+  buffersize = _buffersize;
 }
 
 
@@ -101,7 +103,7 @@ int PluginHost::loadList(const string &filepath)
 
 
 Plugin *PluginHost::addPlugin(const string &fid, int stackType,
-  pthread_mutex_t *mutex, int freq, int bufSize, class Channel *ch)
+  pthread_mutex_t *mutex, class Channel *ch)
 {
   /* Get the proper stack to add the plugin to */
 
@@ -116,7 +118,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     return NULL;
   }
 
-  Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, freq, bufSize);
+  Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
   if (!p) {
     gLog("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
     return NULL;
@@ -147,13 +149,13 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
 
 
 Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
-  int freq, int bufSize, class Channel *ch)
+  class Channel *ch)
 {
   juce::PluginDescription *pd = knownPluginList.getType(index);
   if (pd) {
     gLog("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
       pd->fileOrIdentifier.toRawUTF8(), pd->name.toStdString());
-    return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, freq, bufSize, ch);
+    return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, ch);
   }
   else {
     gLog("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
@@ -187,6 +189,37 @@ unsigned PluginHost::countPlugins(int stackType, Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
 	return pStack->size();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int PluginHost::countAvailablePlugins()
+{
+  return knownPluginList.getNumTypes();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
+{
+  juce::PluginDescription *pd = knownPluginList.getType(i);
+  PluginInfo pi;
+  pi.uid = pd->fileOrIdentifier.toStdString();
+  pi.name = pd->name.toStdString();
+  pi.category = pd->category.toStdString();
+  pi.manufacturerName = pd->manufacturerName.toStdString();
+  pi.isInstrument = pd->isInstrument;
+/*
+  if (!p) {
+    gLog("[PluginHost::getAvailablePlugin] unable to create plugin instance!\n");
+    return NULL;
+  }
+  */
+  return pi;
 }
 
 

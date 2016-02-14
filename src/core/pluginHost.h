@@ -70,6 +70,9 @@ private:
   juce::AudioBuffer<float> audioBuffer;
   juce::MidiBuffer         midiBuffer;
 
+  int samplerate;
+  int buffersize;
+
 public:
 
   enum stackType {
@@ -78,7 +81,15 @@ public:
 		CHANNEL
 	};
 
-  void init(int bufSize);
+  struct PluginInfo {
+    string uid;
+    string name;
+    string category;
+    string manufacturerName;
+    bool isInstrument;
+  };
+
+  void init(int bufSize, int frequency);
 
   /* scanDir
    * Parse plugin directory and store list in knownPluginList. */
@@ -102,14 +113,25 @@ public:
    * ch - if stackType == CHANNEL. */
 
   Plugin *addPlugin(const string &fid, int stackType, pthread_mutex_t *mutex,
-    int freq, int bufSize, class Channel *ch=NULL);
+    class Channel *ch=NULL);
   Plugin *addPlugin(int index, int stackType, pthread_mutex_t *mutex,
-    int freq, int bufSize, class Channel *ch=NULL);
+    class Channel *ch=NULL);
 
   /* countPlugins
    * Return size of 'stackType'. */
 
   unsigned countPlugins(int stackType, class Channel *ch=NULL);
+
+  /* countAvailablePlugins
+  * Return size of knownPluginList. */
+
+  int countAvailablePlugins();
+
+  /* getAvailablePluginInfo
+  * Return the available plugin information (name, type, ...) from
+  * knownPluginList at index 'index'. */
+
+  PluginInfo getAvailablePluginInfo(int index);
 
   /* freeStack
    * free plugin stack of type 'stackType'. */

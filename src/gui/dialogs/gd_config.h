@@ -199,6 +199,8 @@ public:
 	class gClick *scanButton;
 
 	gTabPlugins(int x, int y, int w, int h);
+
+	void save();
 };
 
 #endif

@@ -42,6 +42,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "pluginHost_DEPR_.h"
+#include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"
@@ -58,6 +59,7 @@ extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
 extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost G_PluginHost;
 #endif
 
 
@@ -70,6 +72,10 @@ void init_prepareParser()
 	G_Conf.read();
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
+#ifdef WITH_VST
+	G_PluginHost.init(G_Conf.samplerate, G_Conf.buffersize);
+#endif
+
 
 	if (!gLog_init(G_Conf.logMode))
 		gLog("[init] log init failed! Using default stdout\n");
