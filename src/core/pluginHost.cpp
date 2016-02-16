@@ -43,6 +43,7 @@ using std::string;
 
 void PluginHost::init(int _buffersize, int _samplerate)
 {
+  messageManager = juce::MessageManager::getInstance();
   audioBuffer.setSize(2, _buffersize);
   samplerate = _samplerate;
   buffersize = _buffersize;
@@ -156,7 +157,7 @@ Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
   juce::PluginDescription *pd = knownPluginList.getType(index);
   if (pd) {
     gLog("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
-      pd->fileOrIdentifier.toRawUTF8(), pd->name.toStdString());
+      pd->fileOrIdentifier.toStdString().c_str(), pd->name.toStdString().c_str());
     return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, ch);
   }
   else {
@@ -386,6 +387,14 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 	gLog("[pluginHost::freePlugin] plugin id=%d not found\n", id);
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::runDispatchLoop()
+{
+  messageManager->runDispatchLoopUntil(10);
+}
 
 
 #endif // #ifdef WITH_VST

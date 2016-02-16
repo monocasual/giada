@@ -33,6 +33,8 @@
 #include "../../utils/log.h"
 #include "../../utils/gui_utils.h"
 #include "../../core/pluginHost.h"
+#include "../../core/plugin.h"
+#include "../../core/const.h"
 #include "../elems/ge_mixed.h"
 #include "gd_pluginWindowGUI.h"
 
@@ -43,43 +45,45 @@ extern PluginHost G_PluginHost;
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
-
+  juce::initialiseJuce_GUI();
   show();
-  
-  /* some effects like to have us get their rect before opening them */
+  Fl::check();
+  pPlugin->initEditor((void*) fl_xid(this));
+  resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
 
-#if 0
-  ERect *rect;
-	pPlugin->getRect(&rect);
+  Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-	gu_setFavicon(this);
-	set_non_modal();
-	resize(x(), y(), pPlugin->getGuiWidth(), pPlugin->getGuiWidth());
-	show();
+  gLog("[gdPluginWindowGUI::__cb_close] GUI ready, pointer=%p, xid=%d\n",
+    (void*) this, fl_xid(this));
+}
 
-  gLog("[gdPluginWindowGUI] open window, w=%d h=%d\n",
-      pPlugin->getGuiWidth(), pPlugin->getGuiWidth());
 
-	/* Fl::check(): Waits until "something happens" and then returns. It's
-	 * mandatory on linux, otherwise X can't find 'this' window. */
+/* -------------------------------------------------------------------------- */
 
-#ifndef __APPLE__
-	Fl::check();
-#endif
 
-	pPlugin->openGui((void*)fl_xid(this));
+void gdPluginWindowGUI::cb_close(Fl_Widget *v, void *p)   { ((gdPluginWindowGUI*)p)->__cb_close(); }
+void gdPluginWindowGUI::cb_refresh(void *data) { ((gdPluginWindowGUI*)data)->__cb_refresh(); }
 
-	char name[256];
-	pPlugin->getProduct(name);
-	copy_label(name);
 
-	/* add a pointer to this window to plugin */
+/* -------------------------------------------------------------------------- */
 
-	pPlugin->window = this;
 
-	pPlugin->idle();
-#endif
+void gdPluginWindowGUI::__cb_close()
+{
+  Fl::remove_timeout(cb_refresh);
+  pPlugin->closeEditor();
+  juce::shutdownJuce_GUI();
+  gLog("[gdPluginWindowGUI::__cb_close] GUI closed, %p\n", (void*) this);
+}
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdPluginWindowGUI::__cb_refresh()
+{
+  G_PluginHost.runDispatchLoop();
+  Fl::repeat_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }
 
 
@@ -88,9 +92,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 gdPluginWindowGUI::~gdPluginWindowGUI()
 {
-#if 0
-	pPlugin->closeGui();
-#endif
+  __cb_close();
 }
 
 

@@ -346,6 +346,9 @@ void gdPlugin::__cb_removePlugin() {
 
 void gdPlugin::__cb_openPluginWindow()
 {
+  /* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
+  * for the parent window 'add plugin'. */
+
   gWindow *w;
   if (pPlugin->hasEditor()) {
     w = new gdPluginWindowGUI(pPlugin);
@@ -353,8 +356,6 @@ void gdPlugin::__cb_openPluginWindow()
 		pParent->addSubWindow(w);
   }
 #if 0
-	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
-	 * for the window 'add plugin'. */
 
 	/* TODO - at the moment you can open a window for each plugin in the stack.
 	 * This is not consistent with the rest of the gui. You can avoid this by

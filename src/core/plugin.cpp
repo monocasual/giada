@@ -34,8 +34,28 @@
 int Plugin::idGenerator = 1;
 
 
-Plugin::Plugin() : id(idGenerator++)
+Plugin::Plugin() : id(idGenerator++) {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::initEditor(void *parent)
 {
+  ui = createEditor();
+  ui->setOpaque(true);
+  ui->setVisible(true);
+  ui->addToDesktop(0, parent);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::closeEditor()
+{
+  ui->setVisible(false);
+  ui->removeFromDesktop();
 }
 
 #endif

@@ -49,7 +49,6 @@ private:
 
   juce::AudioProcessorEditor *ui;     // gui
   juce::AudioProcessor       *proc;   // core
-  juce::MessageManager       *mm;     // FIXME - useless
 
   static int idGenerator;
   int    id;
@@ -60,12 +59,26 @@ public:
 
   Plugin();
 
+  /* initEditor
+   * Prepare plugin GUI. 'parent' is a void pointer to the parent window that
+   * will contain it. */
+
+  void initEditor(void *parent);
+
+  /* closeEditor
+   * Shut down plugin GUI. */
+
+  void closeEditor();
+
   inline int  getId() { return id; }
   inline bool getStatus() { return status; }
   inline bool isBypassed() { return bypass; }
-  inline void toggleBypass() { bypass = !bypass; }
+  inline int  getEditorW() { return ui->getWidth(); }
+  inline int  getEditorH() { return ui->getHeight(); }
 
+  inline void toggleBypass() { bypass = !bypass; }
   inline void setStatus(int s) { status = s; }
+
 };
 
 #endif

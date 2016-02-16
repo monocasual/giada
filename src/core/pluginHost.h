@@ -51,6 +51,8 @@ class PluginHost
 {
 private:
 
+  juce::MessageManager *messageManager;
+
   /* pluginFormat
    * Plugin format manager. */
 
@@ -167,6 +169,9 @@ public:
 
   void freePlugin(int id, int stackType, pthread_mutex_t *mutex,
     class Channel *ch=NULL);
+
+  
+  void runDispatchLoop();
 
 #if 0
   int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
