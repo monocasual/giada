@@ -133,6 +133,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   }
 
   p->setStatus(1);
+  p->setId();
 
   gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
 

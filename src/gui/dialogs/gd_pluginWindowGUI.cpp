@@ -73,10 +73,8 @@ void gdPluginWindowGUI::cb_refresh(void *data) { ((gdPluginWindowGUI*)data)->__c
 
 void gdPluginWindowGUI::__cb_close()
 {
-  //G_PluginHost.stopDispatchLoop();
   Fl::remove_timeout(cb_refresh);
   pPlugin->closeEditor();
-  //juce::shutdownJuce_GUI();
   gLog("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 

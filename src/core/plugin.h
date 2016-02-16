@@ -57,8 +57,6 @@ private:
 
 public:
 
-  Plugin();
-
   /* initEditor
    * Prepare plugin GUI. 'parent' is a void pointer to the parent window that
    * will contain it. */
@@ -74,6 +72,7 @@ public:
 
   bool isEditorOpen();
 
+  inline void setId() { id = idGenerator++; }
   inline int  getId() { return id; }
   inline bool getStatus() { return status; }
   inline bool isBypassed() { return bypass; }
