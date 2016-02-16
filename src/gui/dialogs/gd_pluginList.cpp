@@ -351,9 +351,22 @@ void gdPlugin::__cb_openPluginWindow()
 
   gWindow *w;
   if (pPlugin->hasEditor()) {
+    if (pPlugin->isEditorOpen()) {
+      gLog("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
+      return;
+    }
+
+    int pwid = pPlugin->getId()+1;
+
+    gLog("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
+
+    if (pParent->hasWindow(pwid))
+      pParent->delSubWindow(pwid);
     w = new gdPluginWindowGUI(pPlugin);
-    w->setId(pPlugin->getId()+1);
+    w->setId(pwid);
 		pParent->addSubWindow(w);
+
+    //gu_openSubWindow(pParent, new gdPluginWindowGUI(pPlugin), WID_FX);
   }
 #if 0
 

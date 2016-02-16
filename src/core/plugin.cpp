@@ -28,13 +28,17 @@
 #ifdef WITH_VST
 
 
+#include "../utils/log.h"
 #include "plugin.h"
 
 
 int Plugin::idGenerator = 1;
 
 
-Plugin::Plugin() : id(idGenerator++) {}
+Plugin::Plugin() : id(idGenerator++)
+{
+  gLog("[Plugin] new plugin, id=%d\n", id);
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -46,6 +50,15 @@ void Plugin::initEditor(void *parent)
   ui->setOpaque(true);
   ui->setVisible(true);
   ui->addToDesktop(0, parent);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Plugin::isEditorOpen()
+{
+  return ui->isVisible();
 }
 
 

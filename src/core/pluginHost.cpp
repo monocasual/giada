@@ -47,6 +47,10 @@ void PluginHost::init(int _buffersize, int _samplerate)
   audioBuffer.setSize(2, _buffersize);
   samplerate = _samplerate;
   buffersize = _buffersize;
+
+  // TODO
+
+  loadList(gGetHomePath() + gGetSlash() + "plugins.xml");
 }
 
 
@@ -81,7 +85,10 @@ int PluginHost::scanDir(const string &dirpath)
 
 int PluginHost::saveList(const string &filepath)
 {
-  return knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
+  int out = knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
+  if (!out)
+    gLog("[PluginHost::saveList] unable to save plugin list to %s\n", filepath.c_str());
+  return out;
 }
 
 

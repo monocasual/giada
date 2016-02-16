@@ -63,6 +63,7 @@ public:
 
 /* -------------------------------------------------------------------------- */
 
+#if 0
 #if defined(__APPLE__)
 
 class gdPluginWindowGUImac : public gWindow
@@ -83,7 +84,7 @@ public:
 };
 
 #endif
-
+#endif
 
 #endif // include guard
 

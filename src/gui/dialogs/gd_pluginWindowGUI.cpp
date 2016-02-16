@@ -45,15 +45,20 @@ extern PluginHost G_PluginHost;
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
+  /* initialize JUCE GUI; show(); Fl::check(). Warning: order matters! */
+
   juce::initialiseJuce_GUI();
   show();
   Fl::check();
+
   pPlugin->initEditor((void*) fl_xid(this));
   resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
 
   Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-  gLog("[gdPluginWindowGUI::__cb_close] GUI ready, pointer=%p, xid=%d\n",
+  copy_label(pPlugin->getName().toStdString().c_str());
+
+  gLog("[gdPluginWindowGUI] GUI ready, this=%p, xid=%d\n",
     (void*) this, fl_xid(this));
 }
 
@@ -73,7 +78,7 @@ void gdPluginWindowGUI::__cb_close()
   Fl::remove_timeout(cb_refresh);
   pPlugin->closeEditor();
   juce::shutdownJuce_GUI();
-  gLog("[gdPluginWindowGUI::__cb_close] GUI closed, %p\n", (void*) this);
+  gLog("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 
 
@@ -100,7 +105,7 @@ gdPluginWindowGUI::~gdPluginWindowGUI()
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-
+#if 0
 #if defined(__APPLE__)
 
 
@@ -207,6 +212,7 @@ gdPluginWindowGUImac::~gdPluginWindowGUImac()
 		DisposeWindow(carbonWindow);
 }
 
+#endif
 #endif
 
 #endif // #ifdef WITH_VST

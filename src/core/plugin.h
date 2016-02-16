@@ -70,6 +70,10 @@ public:
 
   void closeEditor();
 
+  /* isEditorOpen */
+  
+  bool isEditorOpen();
+
   inline int  getId() { return id; }
   inline bool getStatus() { return status; }
   inline bool isBypassed() { return bypass; }
