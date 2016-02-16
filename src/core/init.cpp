@@ -73,7 +73,7 @@ void init_prepareParser()
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
 #ifdef WITH_VST
-	G_PluginHost.init(G_Conf.samplerate, G_Conf.buffersize);
+	G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
 #endif
 
 
@@ -214,7 +214,8 @@ void init_shutdown()
 
 #ifdef WITH_VST
 	G_PluginHost_DEPR_.freeAllStacks();
-	gLog("[init] Plugin_DEPR_ Host cleaned up\n");
+	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
+	gLog("[init] PluginHost cleaned up\n");
 #endif
 
 	gLog("[init] Giada " G_VERSION_STR " closed\n\n");

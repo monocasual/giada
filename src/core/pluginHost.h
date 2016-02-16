@@ -143,8 +143,7 @@ public:
   /* processStack
    * apply the fx list to the buffer. */
 
-  void processStack(bool isMixerReady, float *buffer, unsigned bufSize,
-    int stackType, class Channel *ch=NULL);
+  void processStack(float *buffer, int stackType, class Channel *ch=NULL);
 
   /* getStack
   * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
@@ -171,17 +170,25 @@ public:
     class Channel *ch=NULL);
 
 
+  /* runDispatchLoop
+   * Wake up plugins' GUI manager for N milliseconds. */
+
   void runDispatchLoop();
-
-#if 0
-  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
-
-  void processEvents(float *buffer, class Channel *ch);
 
   /* processStackOffline
    * apply the fx list to a longer chunk of data */
 
   void processStackOffline(float *buffer, int stackType, class Channel *ch, int size);
+
+  /* freeAllStacks
+   * Free everything. */
+
+  void freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mutex);
+
+#if 0
+  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
+
+  void processEvents(float *buffer, class Channel *ch);
 
   /* createVstMidiEvent
    * return a pointer to a new VstMidiEvent structure. */
@@ -189,9 +196,6 @@ public:
   VstMidiEvent *createVstMidiEvent(uint32_t msg);
 
   Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
-
-  void freeAllStacks();
-
 #endif
 };
 #endif

@@ -43,13 +43,13 @@ using std::string;
 
 void PluginHost::init(int _buffersize, int _samplerate)
 {
+  gLog("[PluginHost::init] initialize with buffersize=%d, samplerate=%d\n",
+    _buffersize, _samplerate);
+
   messageManager = juce::MessageManager::getInstance();
   audioBuffer.setSize(2, _buffersize);
   samplerate = _samplerate;
   buffersize = _buffersize;
-
-  // TODO
-
   loadList(gGetHomePath() + gGetSlash() + "plugins.xml");
 }
 
@@ -134,6 +134,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
 
   p->setStatus(1);
   p->setId();
+  p->prepareToPlay(samplerate, buffersize);
 
   gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
 
@@ -268,20 +269,18 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::processStack(bool isMixerReady, float *buffer, unsigned bufSize,
-  int stackType, Channel *ch)
+void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
 
-	/* empty stack, stack not found or mixer not ready: do nothing
-  TODO - move isMixerReady to the caller */
+	/* empty stack, stack not found or mixer not ready: do nothing */
 
-	if (isMixerReady || pStack == NULL || pStack->size() == 0)
+	if (pStack == NULL || pStack->size() == 0)
 		return;
 
 	/* converting buffer from Giada to Juce */
 
-	for (unsigned i=0; i<bufSize; i++) {
+	for (int i=0; i<buffersize; i++) {
     audioBuffer.setSample(0, i, buffer[i*2]);
     audioBuffer.setSample(1, i, buffer[(i*2)+1]);
 	}
@@ -296,10 +295,10 @@ void PluginHost::processStack(bool isMixerReady, float *buffer, unsigned bufSize
 		plugin->processBlock(audioBuffer, midiBuffer);
   }
 
-	/* converting buffer from VST to Giada. A note for the future: if we
+	/* converting buffer from Juce to Giada. A note for the future: if we
 	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
 
-	for (unsigned i=0; i<bufSize; i++) {
+	for (int i=0; i<buffersize; i++) {
 		buffer[i*2]     = audioBuffer.getSample(0, i);
 		buffer[(i*2)+1] = audioBuffer.getSample(1, i);
 	}
@@ -403,6 +402,50 @@ void PluginHost::runDispatchLoop()
 {
   int r = messageManager->runDispatchLoopUntil(10);
   gLog("[PluginHost::runDispatchLoop] %d, hasStopMessageBeenSent=%d\n", r, messageManager->hasStopMessageBeenSent());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mutex)
+{
+	freeStack(PluginHost::MASTER_OUT, mutex);
+	freeStack(PluginHost::MASTER_IN, mutex);
+	for (unsigned i=0; i<channels->size(); i++)
+		freeStack(PluginHost::CHANNEL, mutex, channels->at(i));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
+{
+#if 0
+	/* call processStack on the entire size of the buffer. How many cycles?
+	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
+
+	/** FIXME 1 - calling processStack is slow, due to its internal buffer
+	 * conversions. We should also call processOffline from VST sdk */
+
+	int index = 0;
+	int step  = kernelAudio::realBufsize*2;
+
+	while (index <= size) {
+		int left = index+step-size;
+		if (left < 0)
+			processStack(&buffer[index], stackType, ch);
+
+	/** FIXME 2 - we left out the last part of buffer, because size % step != 0.
+	 * we should process the last chunk in a separate buffer, padded with 0 */
+
+		//else
+		//	gLog("chunk of buffer left, size=%d\n", left);
+
+		index+=step;
+	}
+#endif
 }
 
 

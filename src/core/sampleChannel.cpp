@@ -34,7 +34,7 @@
 #include "patch.h"
 #include "conf.h"
 #include "wave.h"
-#include "pluginHost_DEPR_.h"
+#include "pluginHost.h"
 #include "waveFx.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"
@@ -45,7 +45,7 @@ extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost G_PluginHost;
 #endif
 
 
@@ -742,7 +742,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId)
 void SampleChannel::process(float *buffer)
 {
 #ifdef WITH_VST
-	G_PluginHost_DEPR_.processStack(vChan, PluginHost_DEPR_::CHANNEL, this);
+	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {
