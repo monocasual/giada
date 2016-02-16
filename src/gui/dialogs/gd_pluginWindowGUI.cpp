@@ -45,11 +45,11 @@ extern PluginHost G_PluginHost;
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
-  /* initialize JUCE GUI; show(); Fl::check(). Warning: order matters! */
-
-  juce::initialiseJuce_GUI();
   show();
   Fl::check();
+
+  gLog("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
+    (void*) this, (void*) fl_xid(this));
 
   pPlugin->initEditor((void*) fl_xid(this));
   resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
@@ -58,8 +58,6 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
   copy_label(pPlugin->getName().toStdString().c_str());
 
-  gLog("[gdPluginWindowGUI] GUI ready, this=%p, xid=%d\n",
-    (void*) this, fl_xid(this));
 }
 
 
@@ -75,9 +73,10 @@ void gdPluginWindowGUI::cb_refresh(void *data) { ((gdPluginWindowGUI*)data)->__c
 
 void gdPluginWindowGUI::__cb_close()
 {
+  //G_PluginHost.stopDispatchLoop();
   Fl::remove_timeout(cb_refresh);
   pPlugin->closeEditor();
-  juce::shutdownJuce_GUI();
+  //juce::shutdownJuce_GUI();
   gLog("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 
@@ -87,6 +86,7 @@ void gdPluginWindowGUI::__cb_close()
 
 void gdPluginWindowGUI::__cb_refresh()
 {
+  //gLog("[gdPluginWindowGUI::__cb_refresh] refresh!\n");
   G_PluginHost.runDispatchLoop();
   Fl::repeat_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }
@@ -99,120 +99,5 @@ gdPluginWindowGUI::~gdPluginWindowGUI()
 {
   __cb_close();
 }
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-#if 0
-#if defined(__APPLE__)
-
-
-pascal OSStatus gdPluginWindowGUImac::windowHandler(EventHandlerCallRef ehc, EventRef e, void *data)
-{
-	return ((gdPluginWindowGUImac*)data)->__wh(ehc, e);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-pascal OSStatus gdPluginWindowGUImac::__wh(EventHandlerCallRef inHandlerCallRef, EventRef inEvent)
-{
-	OSStatus result   = eventNotHandledErr;     // let the Carbon Event Manager close the window
-	UInt32 eventClass = GetEventClass(inEvent);
-	UInt32 eventKind  = GetEventKind(inEvent);
-
-	switch (eventClass)	{
-		case kEventClassWindow:	{
-			switch (eventKind) {
-				case kEventWindowClose:	{
-					gLog("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClose for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
-					show();
-					break;
-				}
-				case kEventWindowClosed: {
-					gLog("[pluginWindowMac] <<< CALLBACK >>> kEventWindowClosed for gWindow=%p, window=%p\n", (void*)this, (void*)carbonWindow);
-					open = false;
-					result = noErr;
-					break;
-				}
-			}
-			break;
-		}
-	}
-	return result;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdPluginWindowGUImac::gdPluginWindowGUImac(Plugin *pPlugin)
- : gWindow(450, 300), pPlugin(pPlugin), carbonWindow(NULL)
-{
-
-  /* some effects like to have us get their rect before opening them */
-
-  ERect *rect;
-	pPlugin->getRect(&rect);
-
-	/* window initialization */
-
-	Rect wRect;
-
-	wRect.top    = rect->top;
-	wRect.left   = rect->left;
-	wRect.bottom = rect->bottom;
-	wRect.right  = rect->right;
-
-  int winclass = kDocumentWindowClass;
-  int winattr  = kWindowStandardHandlerAttribute |
-                 kWindowCloseBoxAttribute        |
-                 kWindowCompositingAttribute     |
-                 kWindowAsyncDragAttribute;
-
-  // winattr &= GetAvailableWindowAttributes(winclass);	// make sure that the window will open
-
-  OSStatus status = CreateNewWindow(winclass, winattr, &wRect, &carbonWindow);
-	if (status != noErr)	{
-		gLog("[pluginWindowMac] Unable to create window! Status=%d\n", (int) status);
-		return;
-	}
-	else
-		gLog("[pluginWindowMac] created window=%p\n", (void*)carbonWindow);
-
-	/* install event handler, called when window is closed */
-
-	static EventTypeSpec eventTypes[] = {
-		{ kEventClassWindow, kEventWindowClose },
-		{ kEventClassWindow, kEventWindowClosed }
-	};
-	InstallWindowEventHandler(carbonWindow, windowHandler, GetEventTypeCount(eventTypes), eventTypes, this, NULL);
-
-	/* open window, center it, show it and start the handler */
-
-	pPlugin->openGui((void*)carbonWindow);
-	RepositionWindow(carbonWindow, NULL, kWindowCenterOnMainScreen);
-	ShowWindow(carbonWindow);
-	open = true;
-}
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdPluginWindowGUImac::~gdPluginWindowGUImac()
-{
-	gLog("[pluginWindowMac] [[[ destructor ]]] gWindow=%p deleted, window=%p deleted\n", (void*)this, (void*)carbonWindow);
-	pPlugin->closeGui();
-	if (open)
-		DisposeWindow(carbonWindow);
-}
-
-#endif
-#endif
 
 #endif // #ifdef WITH_VST

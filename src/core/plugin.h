@@ -71,7 +71,7 @@ public:
   void closeEditor();
 
   /* isEditorOpen */
-  
+
   bool isEditorOpen();
 
   inline int  getId() { return id; }

@@ -400,7 +400,8 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 
 void PluginHost::runDispatchLoop()
 {
-  messageManager->runDispatchLoopUntil(10);
+  int r = messageManager->runDispatchLoopUntil(10);
+  gLog("[PluginHost::runDispatchLoop] %d, hasStopMessageBeenSent=%d\n", r, messageManager->hasStopMessageBeenSent());
 }
 
 

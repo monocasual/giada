@@ -50,7 +50,7 @@
 #endif
 #define GUI_WIDTH				810
 #define GUI_HEIGHT			510
-#define GUI_PLUGIN_RATE 0.04
+#define GUI_PLUGIN_RATE 0.1
 
 #define COLOR_BD_0     fl_rgb_color(78,  78,  78)			// border off
 #define COLOR_BD_1     fl_rgb_color(188, 188, 188)    // border on

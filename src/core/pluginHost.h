@@ -170,7 +170,7 @@ public:
   void freePlugin(int id, int stackType, pthread_mutex_t *mutex,
     class Channel *ch=NULL);
 
-  
+
   void runDispatchLoop();
 
 #if 0

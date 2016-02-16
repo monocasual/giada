@@ -82,7 +82,11 @@ int main(int argc, char **argv) {
 	pthread_create(&t_video, NULL, thread_video, NULL);
 	init_startKernelAudio();
 
+	juce::initialiseJuce_GUI();
+
 	int ret = Fl::run();
+
+	juce::shutdownJuce_GUI();
 
 	pthread_join(t_video, NULL);
 	return ret;

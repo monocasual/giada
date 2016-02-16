@@ -37,7 +37,6 @@ int Plugin::idGenerator = 1;
 
 Plugin::Plugin() : id(idGenerator++)
 {
-  gLog("[Plugin] new plugin, id=%d\n", id);
 }
 
 
@@ -46,7 +45,15 @@ Plugin::Plugin() : id(idGenerator++)
 
 void Plugin::initEditor(void *parent)
 {
+  if (getActiveEditor() != NULL) {
+    gLog("[Plugin::initEditor] plugin has an already active editor!\n");
+    return;
+  }
   ui = createEditor();
+  if (ui == NULL) {
+    gLog("[Plugin::initEditor] unable to create editor!\n");
+    return;
+  }
   ui->setOpaque(true);
   ui->setVisible(true);
   ui->addToDesktop(0, parent);
@@ -67,6 +74,8 @@ bool Plugin::isEditorOpen()
 
 void Plugin::closeEditor()
 {
+  if (ui == NULL)
+    return;
   ui->setVisible(false);
   ui->removeFromDesktop();
 }
