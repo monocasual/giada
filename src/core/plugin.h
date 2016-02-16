@@ -42,7 +42,8 @@
 #include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
 
 
-class Plugin : public juce::AudioProcessor
+//class Plugin : public juce::AudioProcessor
+class Plugin : public juce::AudioPluginInstance
 {
 private:
 
@@ -63,6 +64,8 @@ public:
   inline bool getStatus() { return status; }
   inline bool isBypassed() { return bypass; }
   inline void toggleBypass() { bypass = !bypass; }
+
+  inline void setStatus(int s) { status = s; }
 };
 
 #endif

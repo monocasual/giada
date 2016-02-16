@@ -124,6 +124,8 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     return NULL;
   }
 
+  p->setStatus(1);
+
   gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
 
   /* Try to inject the plugin as soon as possible. */

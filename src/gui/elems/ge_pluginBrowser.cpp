@@ -31,7 +31,9 @@
 
 
 #include "../../core/plugin.h"
+#include "../../core/const.h"
 #include "../../core/pluginHost.h"
+#include "ge_mixed.h"
 #include "ge_pluginBrowser.h"
 
 
@@ -44,21 +46,58 @@ using std::vector;
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	: Fl_Browser(x, y, w, h)
 {
-	// http://seriss.com/people/erco/fltk/#BrowserColumns
+	box(G_BOX);
+	textsize(12);
+	textcolor(COLOR_TEXT_0);
+	selection_color(COLOR_BG_1);
+	color(COLOR_BG_0);
 
-	int widths[] = {300, 300, 0}; // widths for each column
+	this->scrollbar.color(COLOR_BG_0);
+	this->scrollbar.selection_color(COLOR_BG_1);
+	this->scrollbar.labelcolor(COLOR_BD_1);
+	this->scrollbar.slider(G_BOX);
+
+	this->hscrollbar.color(COLOR_BG_0);
+	this->hscrollbar.selection_color(COLOR_BG_1);
+	this->hscrollbar.labelcolor(COLOR_BD_1);
+	this->hscrollbar.slider(G_BOX);
+
+	type(FL_HOLD_BROWSER);
+
+	computeWidths();
+
   column_widths(widths);
   column_char('\t');       // tabs as column delimiters
-  type(FL_MULTI_BROWSER);
 
-	add("ID\tNAME\tCATEGORY");        // lines of tab delimited data
+	add("NAME\tMANUFACTURER\tCATEGORY\tID");
+	add("---\t---\t---\t---");
 	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
 		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
-		string s = pi.uid + "\t" + pi.name + "\t" + pi.category;
+		string s = pi.name + "\t" + pi.manufacturerName + "\t" + pi.category + "\t" + pi.uid;
 		add(s.c_str());
 	}
-	//box(FL_BORDER_BOX);
+
 	end();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePluginBrowser::computeWidths()
+{
+	int w0, w1;
+	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
+		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
+		w0 = (int) fl_width(pi.name.c_str());
+		w1 = (int) fl_width(pi.manufacturerName.c_str());
+		if (w0 > widths[0]) widths[0] = w0;
+		if (w1 > widths[1]) widths[1] = w1;
+	}
+	widths[0] += 60;
+	widths[1] += 60;
+	widths[2] = fl_width("CATEGORY") + 60;
+	widths[3] = 0;
 }
 
 

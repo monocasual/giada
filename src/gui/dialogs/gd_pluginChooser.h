@@ -41,12 +41,21 @@ class gdPluginChooser : public gWindow {
 
 private:
 
-  class gClick          *addPlugin;
+  class Channel *ch;      // ch == NULL ? masterOut
+	int   stackType;
+
+  class gClick          *addBtn;
+  class gClick          *cancelBtn;
 	class gePluginBrowser *browser;
 
+	static void cb_close(Fl_Widget *w, void *p);
+	static void cb_add  (Fl_Widget *w, void *p);
+  inline void __cb_close();
+  inline void __cb_add  ();
+  
 public:
 
-	gdPluginChooser(int x, int y, int w, int h);
+	gdPluginChooser(int x, int y, int w, int h, int stackType, class Channel *ch=NULL);
 };
 
 

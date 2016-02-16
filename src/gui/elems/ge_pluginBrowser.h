@@ -43,6 +43,12 @@ using std::vector;
 
 class gePluginBrowser : public Fl_Browser
 {
+private:
+
+	int widths[4] = {0};
+
+	void computeWidths();
+
 public:
 
 	gePluginBrowser(int x, int y, int w, int h);

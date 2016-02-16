@@ -142,7 +142,7 @@ void gdPluginList::__cb_addPlugin() {
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdPluginChooser. It does exactly what we need. */
 
-  gdPluginChooser *pc = new gdPluginChooser(0, 0, 640, 480);
+  gdPluginChooser *pc = new gdPluginChooser(0, 0, 640, 480, stackType, ch);
   addSubWindow(pc);
   pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
 
