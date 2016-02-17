@@ -38,7 +38,7 @@ gBrowser::gBrowser(int x, int y, int w, int h, const char *L)
  : Fl_Hold_Browser(x, y, w, h, L)
 {
 	box(G_BOX);
-	textsize(11);
+	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
 	color(COLOR_BG_0);

@@ -47,7 +47,7 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	: Fl_Browser(x, y, w, h)
 {
 	box(G_BOX);
-	textsize(12);
+	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
 	color(COLOR_BG_0);

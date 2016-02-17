@@ -621,7 +621,7 @@ void gWaveform::openEditMenu()
 
   Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
   b->box(G_BOX);
-  b->textsize(11);
+  b->textsize(GUI_FONT_SIZE_BASE);
   b->textcolor(COLOR_TEXT_0);
   b->color(COLOR_BG_0);
 

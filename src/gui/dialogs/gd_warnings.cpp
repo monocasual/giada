@@ -27,6 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include "../../core/const.h"
 #include "gd_warnings.h"
 
 
@@ -40,7 +41,7 @@ void gdAlert(const char *c) {
 		gBox *box = new gBox(10, 10, 280, 40, c);
 		gClick *b = new gClick(210, 60, 80, 20, "Close");
 	modal->end();
-	box->labelsize(11);
+	box->labelsize(GUI_FONT_SIZE_BASE);
 	b->callback(__cb_window_closer, (void *)modal);
 	b->shortcut(FL_Enter);
 	gu_setFavicon(modal);

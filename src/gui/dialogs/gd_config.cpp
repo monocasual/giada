@@ -66,7 +66,7 @@ gTabMisc::gTabMisc(int X, int Y, int W, int H)
 	debugMsg->add("To standard output");
 	debugMsg->add("To file");
 
-	labelsize(11);
+	labelsize(GUI_FONT_SIZE_BASE);
 
 	switch (G_Conf.logMode) {
 		case LOG_MODE_MUTE:
@@ -125,7 +125,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
                 new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();
-	labelsize(11);
+	labelsize(GUI_FONT_SIZE_BASE);
 
 	soundsys->add("(none)");
 
@@ -585,7 +585,7 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
-	labelsize(11);
+	labelsize(GUI_FONT_SIZE_BASE);
 
 	system->callback(cb_changeSystem, (void*)this);
 
@@ -802,7 +802,7 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 	treatRecsAsLoops  = new gCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
 
 	end();
-	labelsize(11);
+	labelsize(GUI_FONT_SIZE_BASE);
 
 	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
@@ -855,7 +855,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 	scanButton = new gClick(x()+8, y()+40, 80, 20, "scan");
 	end();
 
-	labelsize(11);
+	labelsize(GUI_FONT_SIZE_BASE);
 
 	folderPath->value(G_Conf.pluginPath.c_str());
 

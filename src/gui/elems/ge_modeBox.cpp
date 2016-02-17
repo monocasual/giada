@@ -39,7 +39,7 @@ gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
   : Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {
   box(G_BOX);
-  textsize(11);
+  textsize(GUI_FONT_SIZE_BASE);
   textcolor(COLOR_TEXT_0);
   color(COLOR_BG_0);
 

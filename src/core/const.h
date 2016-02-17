@@ -48,9 +48,10 @@
 #else
 	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
 #endif
-#define GUI_WIDTH				810
-#define GUI_HEIGHT			510
-#define GUI_PLUGIN_RATE 0.1
+#define GUI_WIDTH				   816
+#define GUI_HEIGHT			   510
+#define GUI_PLUGIN_RATE    0.1  // refresh rate for plugin GUIs
+#define GUI_FONT_SIZE_BASE 12
 
 #define COLOR_BD_0     fl_rgb_color(78,  78,  78)			// border off
 #define COLOR_BD_1     fl_rgb_color(188, 188, 188)    // border on

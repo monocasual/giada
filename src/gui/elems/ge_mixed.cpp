@@ -91,7 +91,7 @@ void gClick::draw()
     fl_color(FL_INACTIVE_COLOR);
 
   fl_color(txtColor);
-  fl_font(FL_HELVETICA, 11);
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
   fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
 }
 
@@ -119,7 +119,7 @@ void gClickRepeat::draw()
     fl_color(FL_INACTIVE_COLOR);
 
   fl_color(COLOR_TEXT_0);
-  fl_font(FL_HELVETICA, 11);
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
   fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
 }
 
@@ -132,13 +132,13 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
 {
   //Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
   box(G_BOX);
-  labelsize(11);
+  labelsize(GUI_FONT_SIZE_BASE);
   labelcolor(COLOR_TEXT_0);
   color(COLOR_BG_DARK);
   textcolor(COLOR_TEXT_0);
   cursor_color(COLOR_TEXT_0);
   selection_color(COLOR_BD_0);
-  textsize(11);
+  textsize(GUI_FONT_SIZE_BASE);
 }
 
 
@@ -148,7 +148,7 @@ gInput::gInput(int x, int y, int w, int h, const char *L)
 gDial::gDial(int x, int y, int w, int h, const char *L)
 : Fl_Dial(x, y, w, h, L)
 {
-  labelsize(11);
+  labelsize(GUI_FONT_SIZE_BASE);
   labelcolor(COLOR_TEXT_0);
   align(FL_ALIGN_LEFT);
   type(FL_FILL_DIAL);
@@ -175,7 +175,7 @@ void gDial::draw()
 gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
 : Fl_Box(x, y, w, h, L)
 {
-  labelsize(11);
+  labelsize(GUI_FONT_SIZE_BASE);
   box(FL_NO_BOX);
   labelcolor(COLOR_TEXT_0);
   if (al != 0)
@@ -203,7 +203,7 @@ void gCheck::draw()
   }
 
   fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
-  fl_font(FL_HELVETICA, 11);
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
   fl_color(!active() ? FL_INACTIVE_COLOR : COLOR_TEXT_0);
   fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }
@@ -229,7 +229,7 @@ void gRadio::draw()
   }
 
   fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
-  fl_font(FL_HELVETICA, 11);
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
   fl_color(COLOR_TEXT_0);
   fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }
@@ -333,10 +333,10 @@ void gBeatMeter::draw()
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
   : Fl_Choice(x, y, w, h, l), angle(ang)
 {
-  labelsize(11);
+  labelsize(GUI_FONT_SIZE_BASE);
   labelcolor(COLOR_TEXT_0);
   box(FL_BORDER_BOX);
-  textsize(11);
+  textsize(GUI_FONT_SIZE_BASE);
   textcolor(COLOR_TEXT_0);
   color(COLOR_BG_0);
 }
@@ -418,7 +418,7 @@ gSlider::gSlider(int x, int y, int w, int h, const char *l)
 {
   type(FL_HOR_FILL_SLIDER);
 
-  labelsize(11);
+  labelsize(GUI_FONT_SIZE_BASE);
   align(FL_ALIGN_LEFT);
   labelcolor(COLOR_TEXT_0);
 
