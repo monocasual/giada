@@ -33,6 +33,7 @@
 
 
 //#include "../deps/juce/AppConfig.h"
+// TODO - can we move this stuff to a separate file?
 #include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
 #include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
 #include "../deps/juce/juce_core/juce_core.h"
@@ -70,7 +71,6 @@ private:
    * Dynamic buffers. */
 
   juce::AudioBuffer<float> audioBuffer;
-  juce::MidiBuffer         midiBuffer;
 
   int samplerate;
   int buffersize;

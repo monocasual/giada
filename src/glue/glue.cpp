@@ -48,7 +48,7 @@
 #include "../core/mixer.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
-#include "../core/pluginHost_DEPR_.h"
+#include "../core/pluginHost.h"
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
@@ -64,7 +64,7 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost    G_PluginHost;
 #endif
 
 
@@ -436,7 +436,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	G_Mixer.init();
 	recorder::init();
 #ifdef WITH_VST
-	G_PluginHost_DEPR_.freeAllStacks();
+	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
 #endif
 
 	mainWin->keyboard->clear();

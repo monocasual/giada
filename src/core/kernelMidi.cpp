@@ -34,7 +34,6 @@
 #include "mixer.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "pluginHost_DEPR_.h"
 #include "conf.h"
 #include "midiMapConf.h"
 
@@ -43,10 +42,6 @@ extern bool        G_midiStatus;
 extern Conf        G_Conf;
 extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
-
-#ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
-#endif
 
 
 using std::string;

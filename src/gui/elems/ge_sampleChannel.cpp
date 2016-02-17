@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
@@ -48,7 +47,6 @@
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_midiOutput.h"
-#include "../dialogs/gd_pluginList_DEPR_.h"
 #include "../dialogs/gd_pluginList.h"
 #include "../dialogs/gd_pluginChooser.h"
 #include "ge_keyboard.h"
@@ -163,7 +161,7 @@ void gSampleChannel::__cb_changeVol()
 #ifdef WITH_VST
 void gSampleChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 

@@ -37,7 +37,6 @@
 #include "init.h"
 #include "recorder.h"
 #include "conf.h"
-#include "pluginHost_DEPR_.h"
 #include "wave.h"
 #include "mixer.h"
 #include "channel.h"
@@ -45,9 +44,6 @@
 
 extern Mixer 		     G_Mixer;
 extern Conf 		     G_Conf;
-#ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
-#endif
 extern gdMainWindow *mainWin;
 
 

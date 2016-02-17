@@ -35,7 +35,8 @@
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
-#include "../core/pluginHost_DEPR_.h"
+#include "../core/pluginHost.h"
+#include "../core/plugin.h"
 #include "../core/conf.h"
 #include "../core/patch.h"
 #include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
@@ -57,7 +58,7 @@ extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost    G_PluginHost;
 #endif
 
 
@@ -74,16 +75,16 @@ static void __glue_setProgressBar__(class gProgress *status, float v)
 
 #ifdef WITH_VST
 
-static void __glue_fillPatchGlobalsPlugins__(vector <Plugin_DEPR_ *> *host, vector<Patch::plugin_t> *patch)
+static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
 {
 	for (unsigned i=0; i<host->size(); i++) {
-		Plugin_DEPR_ *pl = host->at(i);
+		Plugin *pl = host->at(i);
 		Patch::plugin_t ppl;
-		ppl.path = pl->pathfile;
-		ppl.bypass = pl->bypass;
-		int numParams = pl->getNumParams();
+		ppl.path = pl->getUniqueId();
+		ppl.bypass = pl->isBypassed();
+		int numParams = pl->getNumParameters();
 		for (int k=0; k<numParams; k++)
-			ppl.params.push_back(pl->getParam(k));
+			ppl.params.push_back(pl->getParameter(k));
 		patch->push_back(ppl);
 	}
 }
@@ -147,8 +148,10 @@ static void __glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost_DEPR_.masterIn, &G_Patch.masterInPlugins);
-	__glue_fillPatchGlobalsPlugins__(&G_PluginHost_DEPR_.masterOut, &G_Patch.masterOutPlugins);
+	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_IN),
+			&G_Patch.masterInPlugins);
+	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_OUT),
+			&G_Patch.masterOutPlugins);
 
 #endif
 }

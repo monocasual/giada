@@ -50,9 +50,6 @@ private:
 	static void cb_save_patch  (Fl_Widget *v, void *p);
 	static void cb_save_project(Fl_Widget *v, void *p);
 	static void cb_close       (Fl_Widget *w, void *p);
-#ifdef WITH_VST
-	static void cb_loadPlugin  (Fl_Widget *v, void *p);
-#endif
 
 	inline void __cb_down();
 	inline void __cb_up();
@@ -62,10 +59,7 @@ private:
 	inline void __cb_load_patch();
 	inline void __cb_save_patch();
 	inline void __cb_close();
-#ifdef WITH_VST
-	inline void __cb_loadPlugin();
-#endif
-
+	
 	class gBrowser  *browser;
 	class gClick    *ok;
 	class gClick    *cancel;

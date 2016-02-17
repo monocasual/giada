@@ -74,12 +74,6 @@ struct action {
 	int      frame;   // redundant info, used by helper functions
 	float    fValue;  // used only for envelopes (volumes, vst params).
 	uint32_t iValue;  // used only for MIDI events
-
-	/* if VST store here a pointer to a vstEvent. */
-
-#ifdef WITH_VST
-	VstMidiEvent *event;
-#endif
 };
 
 /* composite

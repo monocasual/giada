@@ -34,6 +34,7 @@
 #include "../utils/utils.h"
 #include "mixer.h"
 #include "channel.h"
+#include "midiChannel.h"
 #include "plugin.h"
 #include "pluginHost.h"
 
@@ -293,6 +294,11 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
     Plugin *plugin = pStack->at(i);
 		if (plugin->getStatus() != 1 || plugin->isSuspended() || plugin->isBypassed())
 			continue;
+    juce::MidiBuffer midiBuffer;
+    if (ch && ch->type == CHANNEL_MIDI) { // process events if it's a channel stack
+      ///gLog("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
+      midiBuffer = ((MidiChannel*)ch)->getPluginMidiEvents();
+    }
 		plugin->processBlock(audioBuffer, midiBuffer);
   }
 

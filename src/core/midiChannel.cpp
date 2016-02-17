@@ -30,7 +30,7 @@
 #include "../utils/log.h"
 #include "midiChannel.h"
 #include "channel.h"
-#include "pluginHost_DEPR_.h"
+#include "pluginHost.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
@@ -42,7 +42,7 @@ extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost  G_PluginHost;
 #endif
 
 
@@ -82,11 +82,7 @@ void MidiChannel::copy(const Channel *_src)
 
 void MidiChannel::freeVstMidiEvents(bool init)
 {
-	if (events.numEvents == 0 && !init)
-		return;
-	memset(events.events, 0, sizeof(VstEvent*) * MAX_VST_EVENTS);
-	events.numEvents = 0;
-	events.reserved  = 0;
+	midiBuffer.clear();
 }
 
 #endif
@@ -97,35 +93,14 @@ void MidiChannel::freeVstMidiEvents(bool init)
 
 #ifdef WITH_VST
 
-void MidiChannel::addVstMidiEvent(uint32_t msg)
+void MidiChannel::addVstMidiEvent(uint32_t msg, int localFrame)
 {
-	addVstMidiEvent(G_PluginHost_DEPR_.createVstMidiEvent(msg));
-}
+	juce::MidiMessage message = juce::MidiMessage(
+		kernelMidi::getB1(msg),
+		kernelMidi::getB2(msg),
+		kernelMidi::getB3(msg));
 
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-void MidiChannel::addVstMidiEvent(VstMidiEvent *e)
-{
-	if (events.numEvents < MAX_VST_EVENTS) {
-		events.events[events.numEvents] = (VstEvent*) e;
-		events.numEvents++;
-		/*
-		gLog("[MidiChannel] VstMidiEvent added - numEvents=%d offset=%d note=%d number=%d velo=%d\n",
-			events.numEvents,
-			e->deltaFrames,
-			e->midiData[0],
-			e->midiData[1],
-			e->midiData[2]
-		);*/
-	}
-	else
-		gLog("[MidiChannel] channel %d VstEvents = %d > MAX_VST_EVENTS, nothing to do\n", index, events.numEvents);
+	midiBuffer.addEvent(message, localFrame);
 }
 
 #endif
@@ -161,7 +136,15 @@ void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 
 VstEvents *MidiChannel::getVstEvents()
 {
+#if 0
 	return (VstEvents *) &events;
+#endif
+	return NULL;
+}
+
+juce::MidiBuffer &MidiChannel::getPluginMidiEvents()
+{
+	return midiBuffer;
 }
 
 #endif
@@ -203,7 +186,7 @@ void MidiChannel::setMute(bool internal)
 	if (midiOut)
 		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif
 	sendMidiLmute();
 }
@@ -225,7 +208,7 @@ void MidiChannel::unsetMute(bool internal)
 void MidiChannel::process(float *buffer)
 {
 #ifdef WITH_VST
-	G_PluginHost_DEPR_.processStack(vChan, PluginHost_DEPR_::CHANNEL, this);
+	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
 	freeVstMidiEvents();
 #endif
 
@@ -277,7 +260,7 @@ void MidiChannel::kill(int frame)
 		if (midiOut)
 			kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif
 	}
 	status = STATUS_OFF;
@@ -334,8 +317,7 @@ void MidiChannel::sendMidi(recorder::action *a, int localFrame)
 			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
 
 #ifdef WITH_VST
-		a->event->deltaFrames = localFrame;
-		addVstMidiEvent(a->event);
+		addVstMidiEvent(a->iValue, localFrame);
 #endif
 	}
 }
@@ -347,7 +329,7 @@ void MidiChannel::sendMidi(uint32_t data)
 		if (midiOut)
 			kernelMidi::send(data | MIDI_CHANS[midiOutChan]);
 #ifdef WITH_VST
-		addVstMidiEvent(data);
+		addVstMidiEvent(data, 0);
 #endif
 	}
 }
@@ -361,7 +343,7 @@ void MidiChannel::rewind()
 	if (midiOut)
 		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
-		addVstMidiEvent(MIDI_ALL_NOTES_OFF);
+		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif
 }
 

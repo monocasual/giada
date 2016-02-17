@@ -36,12 +36,12 @@
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
 #include "../../core/mixerHandler.h"
-#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/init.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/conf.h"
+#include "../../core/pluginHost.h"
 #include "../../glue/glue.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"
@@ -52,12 +52,7 @@
 #include "gd_config.h"
 #include "gd_browser.h"
 #include "gd_mainWindow.h"
-
-
-#ifdef WITH_VST
-#include "gd_pluginList_DEPR_.h"
 #include "gd_pluginList.h"
-#endif
 
 
 extern Mixer	   		 G_Mixer;
@@ -66,10 +61,6 @@ extern Conf	 	   		 G_Conf;
 extern gdMainWindow *mainWin;
 extern bool	 		 		 G_quit;
 extern bool 		 		 G_audio_status;
-
-#if defined(WITH_VST)
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
-#endif
 
 
 gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **argv)
@@ -220,12 +211,12 @@ void gInOut::__cb_inVol()
 #ifdef WITH_VST
 void gInOut::__cb_masterFxOut()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::MASTER_OUT), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
 void gInOut::__cb_masterFxIn()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::MASTER_IN), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 
 void gInOut::__cb_inToOut()

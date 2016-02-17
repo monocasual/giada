@@ -30,7 +30,6 @@
 #include "../../core/mixer.h"
 #include "../../core/graphics.h"
 #include "../../core/wave.h"
-#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/patch_DEPR_.h"
@@ -43,7 +42,6 @@
 #include "../elems/ge_channel.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_browser.h"
-#include "gd_pluginList_DEPR_.h"
 #include "gd_mainWindow.h"
 #include "gd_warnings.h"
 
@@ -55,9 +53,6 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
 extern Conf	         G_Conf;
 extern Mixer         G_Mixer;
-#ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
-#endif
 extern gdMainWindow	*mainWin;
 
 
@@ -126,12 +121,6 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 		ok->callback(cb_save_project, (void*)this);
 		name->value(gStripExt(G_Patch.name).c_str());
 	}
-#ifdef WITH_VST
-	else
-	if (type == BROWSER_LOAD_PLUGIN) {
-		ok->callback(cb_loadPlugin, (void*)this);
-	}
-#endif
 
 	ok->shortcut(FL_Enter);
 
@@ -171,9 +160,6 @@ void gdBrowser::cb_save_project(Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_
 void gdBrowser::cb_down        (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_down(); }
 void gdBrowser::cb_up          (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_up(); }
 void gdBrowser::cb_close       (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_close(); }
-#ifdef WITH_VST
-void gdBrowser::cb_loadPlugin  (Fl_Widget *v, void *p)  { ((gdBrowser*)p)->__cb_loadPlugin(); }
-#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -333,30 +319,6 @@ void gdBrowser::__cb_save_project()
 	else
 		gdAlert("Unable to save the project!");
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-void gdBrowser::__cb_loadPlugin() {
-
-	if (browser->text(browser->value()) == NULL)
-		return;
-
-	Plugin_DEPR_ *p = G_PluginHost_DEPR_.addPlugin(browser->get_selected_item(), stackType, ch);
-
-	/* store the folder path inside G_Conf, in order to reuse it the
-	 * next time. */
-
-	G_Conf.pluginPath = where->value();
-
-	if (p != NULL)
-		do_callback();
-	else
-		gdAlert("Unable to load the selected plugin!");
-}
-#endif
 
 
 /* -------------------------------------------------------------------------- */

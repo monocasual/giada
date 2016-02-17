@@ -31,7 +31,7 @@
 #include "../core/patch_DEPR_.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
-#include "../core/pluginHost_DEPR_.h"
+#include "../core/pluginHost.h"
 #include "../core/channel.h"
 #include "../core/conf.h"
 #include "../core/graphics.h"
@@ -53,7 +53,7 @@ extern Conf          G_conf;
 extern uint32_t      G_time;
 extern gdMainWindow *mainWin;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost    G_PluginHost;
 #endif
 
 
@@ -105,8 +105,8 @@ void gu_updateControls()
 	mainWin->inOut->setOutVol(G_Mixer.outVol);
 	mainWin->inOut->setInVol(G_Mixer.inVol);
 #ifdef WITH_VST
-	mainWin->inOut->setMasterFxOutFull(G_PluginHost_DEPR_.masterOut.size() > 0);
-	mainWin->inOut->setMasterFxInFull(G_PluginHost_DEPR_.masterIn.size() > 0);
+	mainWin->inOut->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
+	mainWin->inOut->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
 #endif
 
 	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);

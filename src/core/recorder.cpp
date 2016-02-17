@@ -34,7 +34,6 @@
 #include "mixer.h"
 #include "mixerHandler.h"
 #include "kernelAudio.h"
-#include "pluginHost_DEPR_.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "conf.h"
@@ -44,9 +43,6 @@
 #include "../utils/utils.h"
 
 
-#ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
-#endif
 
 
 extern Mixer       G_Mixer;
@@ -152,15 +148,6 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 		global.at(frameToExpand).push_back(a);		// expand array
 	}
 
-	/* if WITH_VST create a new VST event and attach it to our action.
-	 * Nota bene: the VST event occurs on localFrame=0: this is a
-	 * user-generated event after all! */
-
-#ifdef WITH_VST
-	if (type == ACTION_MIDI)
-		a->event = G_PluginHost_DEPR_.createVstMidiEvent(a->iValue);
-#endif
-
 	/* don't activate the channel (readActions == false), it's up to
 	 * the other layers */
 
@@ -189,8 +176,10 @@ void clearChan(int index)
 			action *a = global.at(i).at(j);
 			if (a->chan == index)	{
 #ifdef WITH_VST
+#if 0
 				if (a->type == ACTION_MIDI)
 					free(a->event);
+#endif
 #endif
 				free(a);
 				global.at(i).erase(global.at(i).begin() + j);
@@ -268,8 +257,10 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
 						if (lockStatus == 0) {
 #ifdef WITH_VST
+#if 0
 							if (type == ACTION_MIDI)
 								free(a->event);
+#endif
 #endif
 							free(a);
 							global.at(i).erase(global.at(i).begin() + j);
@@ -322,8 +313,10 @@ void clearAll()
 		for (unsigned i=0; i<global.size(); i++) {
 			for (unsigned k=0; k<global.at(i).size(); k++) {
 #ifdef WITH_VST
+#if 0
 				if (global.at(i).at(k)->type == ACTION_MIDI)
 					free(global.at(i).at(k)->event);
+#endif
 #endif
 				free(global.at(i).at(k));									// free action
 			}

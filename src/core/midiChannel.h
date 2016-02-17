@@ -31,23 +31,16 @@
 #define MIDI_CHANNEL_H
 
 
+// TODO - can we move this stuff to a separate file?
+#include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
+#include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
+#include "../deps/juce/juce_core/juce_core.h"
+#include "../deps/juce/juce_data_structures/juce_data_structures.h"
+#include "../deps/juce/juce_events/juce_events.h"
+#include "../deps/juce/juce_graphics/juce_graphics.h"
+#include "../deps/juce/juce_gui_basics/juce_gui_basics.h"
+#include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
 #include "channel.h"
-
-
-#ifdef WITH_VST
-
-/* before including aeffetx(x).h we must define __cdecl, otherwise VST
- * headers can't be compiled correctly. In windows __cdecl is already
- * defined. */
-
-	#ifdef __GNUC__
-		#ifndef _WIN32
-			#define __cdecl
-		#endif
-	#endif
-	#include "../deps/vst/aeffectx.h"
-
-#endif
 
 
 class MidiChannel : public Channel
@@ -93,6 +86,11 @@ public:
 
 	VstEvents *getVstEvents();
 
+	/* getPluginMidiEvents
+	 * Return a reference to midiBuffer stack. */
+
+	juce::MidiBuffer &getPluginMidiEvents();
+
 	/* freeVstMidiEvents
 	 * empty vstEvents structure. Init: use the method for channel
 	 * initialization. */
@@ -100,11 +98,11 @@ public:
 	void freeVstMidiEvents(bool init=false);
 
 	/* addVstMidiEvent
-	 * take a composite MIDI event, decompose it and add it to channel. The
-	 * other version creates a VstMidiEvent on the fly. */
+	 * Add a new Midi event to the midiEvent stack fom a composite uint32_t raw
+	 * Midi event. LocalFrame is the offset: it tells where to put the event
+	 * inside the buffer. */
 
-	void addVstMidiEvent(struct VstMidiEvent *e);
-	void addVstMidiEvent(uint32_t msg);
+	void addVstMidiEvent(uint32_t msg, int localFrame);
 
 #endif
 
@@ -112,26 +110,10 @@ public:
 
 #ifdef WITH_VST
 
-	/* VST struct containing MIDI events. When ready, events are sent to
-	 * each plugin in the channel.
-	 *
-	 * Anatomy of VstEvents
-	 * --------------------
-	 *
-	 * VstInt32  numEvents = number of Events in array
-	 * VstIntPtr reserved  = zero (Reserved for future use)
-	 * VstEvent *events[n] = event pointer array, variable size
-	 *
-	 * Note that by default VstEvents only holds three events- if you want
-	 * it to hold more, create an equivalent struct with a larger array,
-	 * and then cast it to a VstEvents object when you've populated it.
-	 * That's what we do with gVstEvents! */
+	/* MidiBuffer contains MIDI events. When ready, events are sent to
+	 * each plugin in the channel. */
 
-	struct gVstEvents {
-    VstInt32  numEvents;
-    VstIntPtr reserved;
-    VstEvent *events[MAX_VST_EVENTS];
-	} events;
+	juce::MidiBuffer midiBuffer;
 
 #endif
 

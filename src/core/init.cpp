@@ -41,7 +41,6 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
-#include "pluginHost_DEPR_.h"
 #include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"
@@ -58,7 +57,6 @@ extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *mainWin;
 
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
 extern PluginHost G_PluginHost;
 #endif
 
@@ -166,10 +164,6 @@ void init_startKernelAudio()
 {
 	if (G_audio_status)
 		kernelAudio::startStream();
-
-#ifdef WITH_VST
-	G_PluginHost_DEPR_.allocBuffers();
-#endif
 }
 
 
@@ -213,7 +207,6 @@ void init_shutdown()
 	gLog("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST
-	G_PluginHost_DEPR_.freeAllStacks();
 	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
 	gLog("[init] PluginHost cleaned up\n");
 #endif

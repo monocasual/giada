@@ -44,10 +44,6 @@
 #include "ge_sampleChannel.h"
 #include "ge_midiChannel.h"
 
-#ifdef WITH_VST
-	#include "../dialogs/gd_pluginList_DEPR_.h"
-#endif
-
 
 extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;

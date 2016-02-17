@@ -43,8 +43,8 @@
 #include "mixer.h"
 #include "const.h"
 #include "init.h"
-#include "pluginHost_DEPR_.h"
-#include "plugin_DEPR_.h"
+#include "pluginHost.h"
+#include "plugin.h"
 #include "waveFx.h"
 #include "conf.h"
 #include "patch_DEPR_.h"
@@ -61,7 +61,7 @@ extern Patch       G_Patch;
 extern Conf 		   G_Conf;
 
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost  G_PluginHost;
 #endif
 
 
@@ -75,11 +75,11 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
 		Patch::plugin_t *ppl = &list->at(i);
-		Plugin_DEPR_ *plugin = G_PluginHost_DEPR_.addPlugin(ppl->path.c_str(), type, NULL);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
 		if (plugin != NULL) {
-			plugin->bypass = ppl->bypass;
+			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParam(j, ppl->params.at(j));
+				plugin->setParameter(j, ppl->params.at(j));
 			ret &= 1;
 		}
 		else
@@ -169,8 +169,8 @@ void mh_readPatch()
 
 #ifdef WITH_VST
 
-	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost_DEPR_::MASTER_IN);
-	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost_DEPR_::MASTER_OUT);
+	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
+	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
 
 #endif
 

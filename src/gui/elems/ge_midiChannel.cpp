@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/pluginHost_DEPR_.h"
+#include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
@@ -52,11 +52,7 @@
 #include "ge_midiChannel.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
-
-#ifdef WITH_VST
-#include "../dialogs/gd_pluginList_DEPR_.h"
 #include "../dialogs/gd_pluginList.h"
-#endif
 
 
 extern Mixer 		     G_Mixer;
@@ -160,7 +156,7 @@ void gMidiChannel::__cb_changeVol()
 #ifdef WITH_VST
 void gMidiChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost_DEPR_::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 

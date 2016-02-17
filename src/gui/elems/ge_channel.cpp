@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/pluginHost_DEPR_.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
@@ -49,10 +48,6 @@
 #include "ge_keyboard.h"
 #include "ge_channel.h"
 #include "ge_sampleChannel.h"
-
-#ifdef WITH_VST
-#include "../dialogs/gd_pluginList_DEPR_.h"
-#endif
 
 
 extern Mixer 		     G_Mixer;
