@@ -88,6 +88,7 @@ public:
     string name;
     string category;
     string manufacturerName;
+    string format;
     bool isInstrument;
   };
 

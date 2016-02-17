@@ -45,7 +45,7 @@ class gePluginBrowser : public Fl_Browser
 {
 private:
 
-	int widths[4] = {0};
+	int widths[5] = {0};
 
 	void computeWidths();
 

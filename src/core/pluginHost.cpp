@@ -224,6 +224,7 @@ PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
   pi.name = pd->name.toStdString();
   pi.category = pd->category.toStdString();
   pi.manufacturerName = pd->manufacturerName.toStdString();
+  pi.format = pd->pluginFormatName.toStdString();
   pi.isInstrument = pd->isInstrument;
 /*
   if (!p) {

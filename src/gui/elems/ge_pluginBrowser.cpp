@@ -69,11 +69,12 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
   column_widths(widths);
   column_char('\t');       // tabs as column delimiters
 
-	add("NAME\tMANUFACTURER\tCATEGORY\tID");
-	add("---\t---\t---\t---");
+	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
+	add("---\t---\t---\t---\t---");
 	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
 		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
-		string s = pi.name + "\t" + pi.manufacturerName + "\t" + pi.category + "\t" + pi.uid;
+		string s = pi.name + "\t" + pi.manufacturerName + "\t" + pi.category +
+			"\t" +pi.format + "\t" + pi.uid;
 		add(s.c_str());
 	}
 
@@ -86,18 +87,21 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 
 void gePluginBrowser::computeWidths()
 {
-	int w0, w1;
+	int w0, w1, w3;
 	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
 		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
 		w0 = (int) fl_width(pi.name.c_str());
 		w1 = (int) fl_width(pi.manufacturerName.c_str());
+		w3 = (int) fl_width(pi.format.c_str());
 		if (w0 > widths[0]) widths[0] = w0;
 		if (w1 > widths[1]) widths[1] = w1;
+		if (w3 > widths[3]) widths[3] = w3;
 	}
 	widths[0] += 60;
 	widths[1] += 60;
 	widths[2] = fl_width("CATEGORY") + 60;
-	widths[3] = 0;
+	widths[3] += 60;
+	widths[4] = 0;
 }
 
 
