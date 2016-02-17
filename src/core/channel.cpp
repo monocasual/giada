@@ -30,7 +30,8 @@
 #include "../utils/log.h"
 #include "../gui/elems/ge_channel.h"
 #include "channel.h"
-#include "pluginHost_DEPR_.h"
+#include "pluginHost.h"
+#include "plugin.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
@@ -49,7 +50,7 @@ extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
-extern PluginHost_DEPR_ G_PluginHost_DEPR_;
+extern PluginHost  G_PluginHost;
 #endif
 
 
@@ -133,8 +134,9 @@ void Channel::copy(const Channel *src)
   /* clone plugins */
 
 #ifdef WITH_VST
-  for (unsigned i=0; i<src->plugins_DEPR_.size(); i++)
-    G_PluginHost_DEPR_.clonePlugin(*src->plugins_DEPR_.at(i), PluginHost_DEPR_::CHANNEL, this);
+  for (unsigned i=0; i<src->plugins.size(); i++)
+    G_PluginHost.clonePlugin(src->plugins.at(i), PluginHost::CHANNEL,
+      &G_Mixer.mutex_plugins, this);
 #endif
 
   /* clone actions */
@@ -246,15 +248,15 @@ int Channel::writePatch(int i, bool isProject)
 
 #ifdef WITH_VST
 
-	unsigned numPlugs = G_PluginHost_DEPR_.countPlugins(PluginHost_DEPR_::CHANNEL, this);
+	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin_DEPR_ *pPlugin = G_PluginHost_DEPR_.getPluginByIndex(i, PluginHost_DEPR_::CHANNEL, this);
-		if (pPlugin->status) {
+		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
+		if (pPlugin->getStatus()) {
 			Patch::plugin_t pp;
-			pp.path   = pPlugin->pathfile;
-	    pp.bypass = pPlugin->bypass;
-			for (int k=0; k<pPlugin->getNumParams(); k++)
-				pp.params.push_back(pPlugin->getParam(k));
+			pp.path   = pPlugin->getUniqueId();
+	    pp.bypass = pPlugin->isBypassed();
+			for (int k=0; k<pPlugin->getNumParameters(); k++)
+				pp.params.push_back(pPlugin->getParameter(k));
 			pch.plugins.push_back(pp);
 		}
 	}
@@ -304,11 +306,12 @@ int Channel::readPatch(const string &path, int i)
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
-		Plugin_DEPR_ *plugin = G_PluginHost_DEPR_.addPlugin(ppl->path.c_str(), PluginHost_DEPR_::CHANNEL, this);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path, PluginHost::CHANNEL,
+      &G_Mixer.mutex_plugins, this);
 		if (plugin != NULL) {
-			plugin->bypass = ppl->bypass;
+			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParam(j, ppl->params.at(j));
+				plugin->setParameter(j, ppl->params.at(j));
 			ret &= 1;
 		}
 		else

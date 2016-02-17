@@ -420,6 +420,25 @@ void PluginHost::freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mut
 /* -------------------------------------------------------------------------- */
 
 
+int PluginHost::clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
+  Channel *ch)
+{
+  juce::PluginDescription pd = src->getPluginDescription();
+	Plugin *p = addPlugin(pd.fileOrIdentifier.toStdString(), stackType, mutex, ch);
+	if (!p) {
+		gLog("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
+		return 0;
+	}
+	for (int k=0; k<src->getNumParameters(); k++) {
+		p->setParameter(k, src->getParameter(k));
+	}
+	return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
 {
 #if 0

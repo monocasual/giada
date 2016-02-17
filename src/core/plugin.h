@@ -42,7 +42,9 @@
 #include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
 
 
-//class Plugin : public juce::AudioProcessor
+using std::string;
+
+
 class Plugin : public juce::AudioPluginInstance
 {
 private:
@@ -72,6 +74,11 @@ public:
 
   bool isEditorOpen();
 
+  /* getUniqueId
+   * Return a string-based UID. */
+
+  string getUniqueId();
+
   inline void setId() { id = idGenerator++; }
   inline int  getId() { return id; }
   inline bool getStatus() { return status; }
@@ -81,6 +88,7 @@ public:
 
   inline void toggleBypass() { bypass = !bypass; }
   inline void setStatus(int s) { status = s; }
+  inline void setBypass(bool b) { bypass = b; }
 
 };
 

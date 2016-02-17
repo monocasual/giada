@@ -32,6 +32,9 @@
 #include "plugin.h"
 
 
+using std::string;
+
+
 int Plugin::idGenerator = 1;
 
 
@@ -61,6 +64,15 @@ void Plugin::initEditor(void *parent)
 bool Plugin::isEditorOpen()
 {
   return ui->isVisible();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getUniqueId()
+{
+  return getPluginDescription().fileOrIdentifier.toStdString();
 }
 
 

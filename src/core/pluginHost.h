@@ -185,8 +185,12 @@ public:
 
   void freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mutex);
 
+  /* clonePlugin */
+
+  int clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
+    class Channel *ch);
+
 #if 0
-  int clonePlugin(const Plugin &src, int stackType, class Channel *ch);
 
   void processEvents(float *buffer, class Channel *ch);
 
