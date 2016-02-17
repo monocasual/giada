@@ -12,6 +12,11 @@
 --------------------------------------------------------------------------------
 
 
+0.12.0 ---
+- Use new constant for global font size
+- Increase global font size
+
+
 0.11.2 --- 2016 . 01 . 16
 - New JSON-based midimap files
 - Add new channel by right-clicking anywhere on a column
