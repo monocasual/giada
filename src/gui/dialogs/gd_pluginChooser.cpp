@@ -58,6 +58,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, clas
   end();
 
   addBtn->callback(cb_add, (void*) this);
+  addBtn->shortcut(FL_Enter);
   cancelBtn->callback(cb_close, (void*) this);
 
   resizable(browser);
@@ -89,6 +90,7 @@ void gdPluginChooser::__cb_add() {
   if (index >= 0) {
     printf("loading %d\n", index);
     G_PluginHost.addPlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+    do_callback();
   }
 }
 
