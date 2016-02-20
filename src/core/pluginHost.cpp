@@ -255,11 +255,7 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 		lockStatus = pthread_mutex_trylock(mutex);
 		if (lockStatus == 0) {
 			for (unsigned i=0; i<pStack->size(); i++) {
-				//TODO - what to do here with JUCE?
-        // if (pStack->at(i)->status == 1) {  // only if plugin is ok
-					//pStack->at(i)->suspend();
-					//pStack->at(i)->close();
-				//}
+        pStack->at(i)->releaseResources();
 				delete pStack->at(i);
 			}
 			pStack->clear();
@@ -387,8 +383,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 				while (true) {
 					lockStatus = pthread_mutex_trylock(mutex);
 					if (lockStatus == 0) {
-						// TODO - what to do with Juce? pStack->at(i)->suspend();
-						// TODO - what to do with Juce? pStack->at(i)->close();
+            pStack->at(i)->releaseResources();
 						delete pStack->at(i);
 						pStack->erase(pStack->begin() + i);
 						pthread_mutex_unlock(mutex);
