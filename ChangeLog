@@ -18,9 +18,6 @@
 - Increase global font size
 - (todo) more pluginHost tests
 - (todo) fix dispatcher issues when opening two plugin GUIs
-- (todo) close pluginlist when plugin has been selected
-- (todo) add plugin on enter press
-- (todo) better layout in config->plugins
 
 
 0.11.2 --- 2016 . 01 . 16
