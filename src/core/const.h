@@ -40,6 +40,9 @@
 
 #define CONF_FILENAME		"giada.conf"
 
+#ifndef BUILD_DATE
+# define BUILD_DATE __DATE__
+#endif
 
 
 /* -- GUI ------------------------------------------------------------------- */
