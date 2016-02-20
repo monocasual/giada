@@ -851,14 +851,18 @@ void gTabBehaviors::save()
 gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Plugins")
 {
-	folderPath = new gInput(x()+8, y()+8, 200, 20);
-	scanButton = new gClick(x()+8, y()+40, 80, 20, "scan");
+	folderPath = new gInput(x()+w()-250, y()+8, 250, 20);
+	scanButton = new gClick(x()+w()-80, folderPath->y()+folderPath->h()+8, 80, 20);
+
 	end();
 
 	labelsize(GUI_FONT_SIZE_BASE);
 
 	folderPath->value(G_Conf.pluginPath.c_str());
+	folderPath->label("Plugins folder");
 
+	string scanLabel = "Scan (" + gItoa(G_PluginHost.countAvailablePlugins()) + ")";
+	scanButton->label(scanLabel.c_str());
 	scanButton->callback(cb_scan, (void*) this);
 }
 
@@ -872,9 +876,18 @@ void gTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((gTabPlugins*)p)->__cb_scan(
 /* -------------------------------------------------------------------------- */
 
 
+void gTabPlugins::cb_onScan()
+{
+	Fl::wait();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
-	G_PluginHost.scanDir(folderPath->value());
+	G_PluginHost.scanDir(folderPath->value(), cb_onScan);
 	G_PluginHost.saveList(gGetHomePath() + gGetSlash() + "plugins.xml");
 }
 
