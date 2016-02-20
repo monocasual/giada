@@ -365,8 +365,9 @@ void gdPlugin::__cb_openPluginWindow()
     w = new gdPluginWindowGUI(pPlugin);
     w->setId(pwid);
 		pParent->addSubWindow(w);
-
-    //gu_openSubWindow(pParent, new gdPluginWindowGUI(pPlugin), WID_FX);
+  }
+  else {
+    w = new gdPluginWindow(pPlugin);
   }
 #if 0
 

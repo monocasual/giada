@@ -55,18 +55,20 @@ public:
 class Parameter : public Fl_Group
 {
 private:
-	int   id;
+	int   paramIndex;
 	class Plugin *pPlugin;
 
 	static void cb_setValue(Fl_Widget *v, void *p);
 	inline void __cb_setValue();
+
+	void updateValue();
 
 public:
 	class gBox    *label;
 	class gSlider *slider;
 	class gBox    *value;
 
-	Parameter(int id, class Plugin *p, int x, int y, int w);
+	Parameter(int paramIndex, class Plugin *p, int x, int y, int w);
 };
 
 
