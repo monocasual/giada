@@ -266,7 +266,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	 * messages) as unknown, for debugging purposes */
 
 	if (msg->size() < 3) {
-		gLog("[KM] MIDI received - unkown signal - size=%d, value=0x", (int) msg->size());
+		gLog("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
 		for (unsigned i=0; i<msg->size(); i++)
 			gLog("%X", (int) msg->at(i));
 		gLog("\n");
