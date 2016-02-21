@@ -43,10 +43,10 @@ extern Conf G_Conf;
 
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gWindow(340, 405, "About Giada")
+: gWindow(340, 435, "About Giada")
 {
 #else
-: gWindow(340, 320, "About Giada")
+: gWindow(340, 350, "About Giada")
 {
 #endif
 

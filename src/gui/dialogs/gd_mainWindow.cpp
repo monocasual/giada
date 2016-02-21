@@ -73,9 +73,9 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 	size_range(GUI_WIDTH, GUI_HEIGHT);
 
 	menu       = new gMenu(8, -1);
-	inOut      = new gInOut(408, 8);
+	inOut      = new gInOut(414, 8);
 	controller = new gController(8, 39);
-	timing     = new gTiming(632, 39);
+	timing     = new gTiming(628, 44);
 	beatMeter  = new gBeatMeter(100, 83, 609, 20);
 	keyboard   = new gKeyboard(8, 122, w()-16, 380);
 
@@ -419,15 +419,15 @@ void gMenu::__cb_edit()
 
 
 gTiming::gTiming(int x, int y)
-	: Fl_Group(x, y, 170, 15)
+	: Fl_Group(x, y, 180, 20)
 {
 	begin();
 
-	quantizer  = new gChoice(x, y, 40, 15, "", false);
-	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 15);
-	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 15, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, y, 15, 15, "", beatsMultiplyOff_xpm, beatsMultiplyOn_xpm);
-	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 15, 15, "÷", beatsDivideOff_xpm, beatsDivideOn_xpm);
+	quantizer  = new gChoice(x, y, 40, 20, "", false);
+	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 20);
+	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
+	multiplier = new gClick (meter->x()+meter->w()+4, y, 20, 20, "", beatsMultiplyOff_xpm, beatsMultiplyOn_xpm);
+	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 20, 20, "", beatsDivideOff_xpm, beatsDivideOn_xpm);
 
 	end();
 
