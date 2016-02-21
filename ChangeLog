@@ -14,9 +14,9 @@
 
 0.12.0 ---
 - Port to Juce for audio plugin management
-- Use new constant for global font size
 - Increase global font size
-- (todo) more pluginHost tests
+- Minor UI fixes and improvements
+- Use new constant for global font size
 - (todo) fix dispatcher issues when opening two plugin GUIs
 
 
