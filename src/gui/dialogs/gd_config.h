@@ -194,10 +194,13 @@ private:
 	static void cb_onScan();
 	inline void __cb_scan(Fl_Widget *w);
 
+	void updateCount();
+
 public:
 
 	class gInput *folderPath;
 	class gClick *scanButton;
+	class gBox   *info;
 
 	gTabPlugins(int x, int y, int w, int h);
 
