@@ -1,3 +1,5 @@
+#ifdef RUN_TESTS_WITH_LOCAL_FILES
+
 #include "../src/core/wave.h"
 #include "catch.hpp"
 
@@ -43,3 +45,5 @@ TEST_CASE("Test Wave class")
     REQUIRE(w3.writeData("test-write.wav") == true);
   }
 }
+
+#endif // #ifdef RUN_TESTS_WITH_LOCAL_FILES

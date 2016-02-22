@@ -49,6 +49,8 @@ TEST_CASE("Test MidiMapConf class")
   	REQUIRE(midimap.stopped.value     == 0);
   }
 
+#ifdef RUN_TESTS_WITH_LOCAL_FILES
+
   SECTION("test read")
   {
     midimap.init();
@@ -117,4 +119,6 @@ TEST_CASE("Test MidiMapConf class")
     REQUIRE(midimap.stopped.offset == 16);
     REQUIRE(midimap.stopped.value == 0x80007f00);
   }
+
+#endif // #ifdef RUN_TESTS_WITH_LOCAL_FILES
 }

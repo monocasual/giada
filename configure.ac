@@ -57,6 +57,15 @@ AC_ARG_ENABLE(
 
 # ------------------------------------------------------------------------------
 
+# test if files needed for Travis CI are present. If so, define a new macro
+# RUN_TESTS_WITH_LOCAL_FILES used during the test suite
+
+if test -f "./test.wav" && test -f "giada-midimaps-master.zip" && test -f "dexed.tar.xz" ; then
+  AC_DEFINE(RUN_TESTS_WITH_LOCAL_FILES)
+fi
+
+# ------------------------------------------------------------------------------
+
 # Check for C++ compiler
 
 AC_PROG_CXX
