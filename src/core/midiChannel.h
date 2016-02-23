@@ -31,6 +31,7 @@
 #define MIDI_CHANNEL_H
 
 
+#ifdef WITH_VST
 // TODO - can we move this stuff to a separate file?
 #include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
 #include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
@@ -40,6 +41,8 @@
 #include "../deps/juce/juce_graphics/juce_graphics.h"
 #include "../deps/juce/juce_gui_basics/juce_gui_basics.h"
 #include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
+#endif
+
 #include "channel.h"
 
 

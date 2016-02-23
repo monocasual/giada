@@ -78,11 +78,15 @@ int main(int argc, char **argv) {
 	pthread_create(&t_video, NULL, thread_video, NULL);
 	init_startKernelAudio();
 
+#ifdef WITH_VST
 	juce::initialiseJuce_GUI();
+#endif
 
 	int ret = Fl::run();
 
+#ifdef WITH_VST
 	juce::shutdownJuce_GUI();
+#endif
 
 	pthread_join(t_video, NULL);
 	return ret;
