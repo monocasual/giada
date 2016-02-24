@@ -39,24 +39,6 @@
 
 
 using std::vector;
-
-
-#ifdef WITH_VST
-
-/* before including aeffetx(x).h we must define __cdecl, otherwise VST
- * headers can't be compiled correctly. In windows __cdecl is already
- * defined. */
-
-	#ifdef __GNUC__
-		#ifndef _WIN32
-			#define __cdecl
-		#endif
-	#endif
-	#include "../deps/vst/aeffectx.h"
-
-#endif
-
-
 using std::string;
 
 
