@@ -32,6 +32,7 @@
 #define __PLUGIN_HOST_H__
 
 
+#include <pthread.h>
 //#include "../deps/juce/AppConfig.h"
 // TODO - can we move this stuff to a separate file?
 #include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
