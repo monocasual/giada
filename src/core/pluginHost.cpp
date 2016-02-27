@@ -264,7 +264,7 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 			break;
 		}
 	}
-  gLog("[PluginHost::freeStack] stack %d freed\n", stackType);
+  gLog("[PluginHost::freeStack] stack type=%d freed\n", stackType);
 }
 
 
