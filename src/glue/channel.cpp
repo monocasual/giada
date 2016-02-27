@@ -34,6 +34,7 @@
 #include "../utils/gui_utils.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
+#include "../core/pluginHost.h"
 #include "../core/conf.h"
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
@@ -45,6 +46,9 @@
 extern gdMainWindow *mainWin;
 extern Conf          G_Conf;
 extern Mixer	   		 G_Mixer;
+#ifdef WITH_VST
+extern PluginHost G_PluginHost;
+#endif
 
 
 using std::string;
@@ -85,6 +89,9 @@ Channel *glue_addChannel(int column, int type)
 void glue_deleteChannel(Channel *ch)
 {
 	recorder::clearChan(ch->index);
+#ifdef WITH_VST
+	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
+#endif
 	Fl::lock();
 	mainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();
@@ -98,6 +105,9 @@ void glue_deleteChannel(Channel *ch)
 
 void glue_freeChannel(Channel *ch)
 {
+#ifdef WITH_VST
+	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
+#endif
 	mainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
 	ch->empty();
