@@ -84,8 +84,7 @@ Channel *glue_addChannel(int column, int type)
 
 void glue_deleteChannel(Channel *ch)
 {
-	int index = ch->index;
-	recorder::clearChan(index);
+	recorder::clearChan(ch->index);
 	Fl::lock();
 	mainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();

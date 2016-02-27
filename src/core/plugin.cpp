@@ -83,7 +83,6 @@ void Plugin::closeEditor()
 {
   if (ui == NULL)
     return;
-  ui->setVisible(false);
   ui->removeFromDesktop();
 }
 

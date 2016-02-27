@@ -255,6 +255,7 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 		lockStatus = pthread_mutex_trylock(mutex);
 		if (lockStatus == 0) {
 			for (unsigned i=0; i<pStack->size(); i++) {
+        pStack->at(i)->suspendProcessing(true);
         pStack->at(i)->releaseResources();
 				delete pStack->at(i);
 			}
@@ -263,6 +264,7 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 			break;
 		}
 	}
+  gLog("[PluginHost::freeStack] stack %d freed\n", stackType);
 }
 
 
@@ -383,6 +385,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 				while (true) {
 					lockStatus = pthread_mutex_trylock(mutex);
 					if (lockStatus == 0) {
+            pStack->at(i)->suspendProcessing(true);
             pStack->at(i)->releaseResources();
 						delete pStack->at(i);
 						pStack->erase(pStack->begin() + i);
