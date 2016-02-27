@@ -378,6 +378,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 			if (pStack->at(i)->getStatus() == 0) { // no frills if plugin is missing
 				delete pStack->at(i);
 				pStack->erase(pStack->begin() + i);
+        gLog("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
 				return;
 			}
 			else {
