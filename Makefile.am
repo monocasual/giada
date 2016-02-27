@@ -164,17 +164,17 @@ giada_CXXFLAGS = -std=c++11 -Wall -Werror
 
 if WITH_VST
 giada_CPPFLAGS = -I./src/deps/juce -I./src/deps/vst -I/usr/include \
-                 -I/usr/include/freetype2
+  -I/usr/include/freetype2
 endif
 
 if LINUX
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
-							src/deps/rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
-							-lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson -lfreetype
+	src/deps/rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
+	-lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson -lfreetype
 endif
 
 if WINDOWS
-giada_LDADD   = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
+giada_LDADD = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
   -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
   -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser -lpthreadGC2 -ljansson \
   -limm32 -lglu32 -lshell32 -lversion -lopengl32 -loleaut32 -lshlwapi
@@ -186,10 +186,13 @@ if OSX
 # for 32 bit compilation:
 # export CXXFLAGS="-m32"
 # export LDFLAGS="-m32"
-giada_LDADD    = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
-								 -lsamplerate -ljansson
-giada_LDFLAGS  = -framework CoreAudio -framework Cocoa -framework Carbon \
-                 -framework CoreMIDI -framework CoreFoundation
+# Juce requires to build some Objective C code
+giada_CXXFLAGS += -ObjC++
+giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
+	-lsamplerate -ljansson
+giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
+  -framework CoreMIDI -framework CoreFoundation -framework Accelerate \
+  -framework WebKit -framework QuartzCore -framework IOKit
 endif
 
 # used only under MinGW to compile the resource.rc file (program icon)

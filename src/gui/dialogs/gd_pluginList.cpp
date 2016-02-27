@@ -323,14 +323,6 @@ void gdPlugin::__cb_shiftDown() {
 
 void gdPlugin::__cb_removePlugin() {
 
-	/* os x hack: show window before deleting it */
-
-#ifdef __APPLE__
-	gdPluginWindowGUImac* w = (gdPluginWindowGUImac*) pParent->getChild(pPlugin->getId()+1);
-	if (w)
-		w->show();
-#endif
-
 	/* any subwindow linked to the plugin must be destroyed */
 
 	pParent->delSubWindow(pPlugin->getId());

@@ -46,7 +46,10 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
   show();
+  
+#ifndef __APPLE__
   Fl::check();
+#endif
 
   gLog("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
     (void*) this, (void*) fl_xid(this));

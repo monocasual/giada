@@ -50,7 +50,6 @@ class Plugin : public juce::AudioPluginInstance
 private:
 
   juce::AudioProcessorEditor *ui;     // gui
-  juce::AudioProcessor       *proc;   // core
 
   static int idGenerator;
   int    id;
