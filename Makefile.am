@@ -186,7 +186,8 @@ if OSX
 # for 32 bit compilation:
 # export CXXFLAGS="-m32"
 # export LDFLAGS="-m32"
-# Juce requires to build some Objective C code
+# -ObjC++: Juce requires to build some Objective C code
+giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h
 giada_CXXFLAGS += -ObjC++
 giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
 	-lsamplerate -ljansson

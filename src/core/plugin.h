@@ -62,7 +62,9 @@ public:
    * Prepare plugin GUI. 'parent' is a void pointer to the parent window that
    * will contain it. */
 
-  void initEditor(void *parent);
+  void initEditor();
+
+  void showEditor(void *parent);
 
   /* closeEditor
    * Shut down plugin GUI. */

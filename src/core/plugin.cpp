@@ -41,7 +41,7 @@ int Plugin::idGenerator = 1;
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::initEditor(void *parent)
+void Plugin::initEditor()
 {
   if (getActiveEditor() != NULL) {
     gLog("[Plugin::initEditor] plugin has an already active editor!\n");
@@ -52,6 +52,14 @@ void Plugin::initEditor(void *parent)
     gLog("[Plugin::initEditor] unable to create editor!\n");
     return;
   }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::showEditor(void *parent)
+{
   ui->setOpaque(true);
   ui->setVisible(true);
   ui->addToDesktop(0, parent);

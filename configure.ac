@@ -70,6 +70,10 @@ fi
 
 AC_PROG_CXX
 
+# Check for Objective-C++ compiler
+
+AC_PROG_OBJCXX
+
 # Check for C compiler (TODO - is that really needed?)
 
 AC_PROG_CC

@@ -38,6 +38,10 @@
 #include "../elems/ge_mixed.h"
 #include "gd_pluginWindowGUI.h"
 
+#ifdef __APPLE__
+#import "../../utils/cocoa.h" // objective-c
+#endif
+
 
 extern PluginHost G_PluginHost;
 
@@ -46,7 +50,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
  : gWindow(450, 300), pPlugin(pPlugin)
 {
   show();
-  
+
 #ifndef __APPLE__
   Fl::check();
 #endif
@@ -54,7 +58,16 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
   gLog("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
     (void*) this, (void*) fl_xid(this));
 
-  pPlugin->initEditor((void*) fl_xid(this));
+  pPlugin->initEditor();
+
+#if defined(__APPLE__)
+  void *cocoaWindow = (void*) fl_xid(this);
+  cocoa_setWindowSize(cocoaWindow, pPlugin->getEditorW(), pPlugin->getEditorH());
+  pPlugin->showEditor(cocoa_getViewFromWindow(cocoaWindow));
+#else
+  pPlugin->showEditor((void*) fl_xid(this));
+#endif
+
   resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
 
   Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
