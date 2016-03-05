@@ -60,6 +60,10 @@ void Plugin::initEditor()
 
 void Plugin::showEditor(void *parent)
 {
+  if (ui == NULL) {
+    gLog("[Plugin::showEditor] can't show editor!\n");
+    return;
+  }
   ui->setOpaque(true);
   ui->setVisible(true);
   ui->addToDesktop(0, parent);
