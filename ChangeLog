@@ -12,14 +12,14 @@
 --------------------------------------------------------------------------------
 
 
-0.12.0 --- WIP
-- Port to Juce for audio plugin management
+0.12.0 --- 2016 . 03 . 07
+- Port to JUCE Framework for audio plugin management
 - Increase global font size
-- Minor UI fixes and improvements
-- Use new constant for global font size
+- Minor UI fixes and cleanups
 - Add ability to run tests outside Travis CI
-- Switch to C++11 version
-- (todo) fix dispatcher issues when opening two plugin GUIs
+- Switch to C++11
+- 64 bit binaries for OS X
+- Use new constant for global font size
 
 
 0.11.2 --- 2016 . 01 . 16
