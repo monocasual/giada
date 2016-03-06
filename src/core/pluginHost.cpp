@@ -67,7 +67,8 @@ int PluginHost::scanDir(const string &dirpath, void (*callback)())
 
   juce::VSTPluginFormat format;
   juce::FileSearchPath path(dirpath);
-  juce::PluginDirectoryScanner scanner(knownPluginList, format, path, false, juce::File::nonexistent);
+  juce::PluginDirectoryScanner scanner(knownPluginList, format, path,
+      true, juce::File::nonexistent); // true: recursive
 
   bool cont = true;
   juce::String name;
