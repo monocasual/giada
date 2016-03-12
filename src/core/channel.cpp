@@ -44,7 +44,6 @@
 #include "midiMapConf.h"
 
 
-extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
@@ -103,7 +102,7 @@ Channel::~Channel()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::copy(const Channel *src)
+void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 {
   key             = src->key;
   volume          = src->volume;
@@ -134,7 +133,7 @@ void Channel::copy(const Channel *src)
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size(); i++)
     G_PluginHost.clonePlugin(src->plugins.at(i), PluginHost::CHANNEL,
-      &G_Mixer.mutex_plugins, this);
+      pluginMutex, this);
 #endif
 
   /* clone actions */
@@ -270,7 +269,8 @@ int Channel::writePatch(int i, bool isProject, Patch &patch)
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string &path, int i, Patch &patch)
+int Channel::readPatch(const string &path, int i, Patch &patch,
+    pthread_mutex_t *pluginMutex)
 {
 	int ret = 1;
 	Patch::channel_t *pch = &patch.channels.at(i);
@@ -305,7 +305,7 @@ int Channel::readPatch(const string &path, int i, Patch &patch)
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path, PluginHost::CHANNEL,
-      &G_Mixer.mutex_plugins, this);
+      pluginMutex, this);
 		if (plugin != NULL) {
 			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)

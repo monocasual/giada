@@ -66,9 +66,9 @@ MidiChannel::~MidiChannel() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::copy(const Channel *_src)
+void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 {
-	Channel::copy(_src);
+	Channel::copy(_src, pluginMutex);
 	MidiChannel *src = (MidiChannel *) _src;
 	midiOut     = src->midiOut;
 	midiOutChan = src->midiOutChan;
@@ -294,9 +294,10 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string &basePath, int i, Patch &patch)
+int MidiChannel::readPatch(const string &basePath, int i, Patch &patch,
+		pthread_mutex_t *pluginMutex)
 {
-	Channel::readPatch("", i, patch);
+	Channel::readPatch("", i, patch, pluginMutex);
 
 	Patch::channel_t *pch = &patch.channels.at(i);
 

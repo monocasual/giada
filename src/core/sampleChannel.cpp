@@ -93,9 +93,9 @@ SampleChannel::~SampleChannel()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel *_src)
+void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 {
-	Channel::copy(_src);
+	Channel::copy(_src, pluginMutex);
 	SampleChannel *src = (SampleChannel *) _src;
 	tracker         = src->tracker;
 	begin           = src->begin;
@@ -914,12 +914,13 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string &basePath, int i, Patch &patch)
+int SampleChannel::readPatch(const string &basePath, int i, Patch &patch,
+		pthread_mutex_t *pluginMutex)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatch("", i, patch);
+	Channel::readPatch("", i, patch, pluginMutex);
 
 	Patch::channel_t *pch = &patch.channels.at(i);
 

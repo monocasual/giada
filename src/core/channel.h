@@ -66,7 +66,7 @@ public:
 	/* copy
 	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
 
-	virtual void copy(const Channel *src) = 0;
+	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex) = 0;
 
 	/* writePatch
 	 * Fill a patch with channel values. Returns the index of the last
@@ -78,7 +78,8 @@ public:
 	 * Fill channel with data from patch. */
 
 	virtual int readPatch_DEPR_(const char *file, int i) = 0;
-	virtual int readPatch(const string &basePath, int i, class Patch &patch);
+	virtual int readPatch(const string &basePath, int i, class Patch &patch,
+			pthread_mutex_t *pluginMutex);
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */
