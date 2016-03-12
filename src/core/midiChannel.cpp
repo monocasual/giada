@@ -38,8 +38,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern Patch       G_Patch;
-extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -153,7 +151,8 @@ juce::MidiBuffer &MidiChannel::getPluginMidiEvents()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::parseAction(recorder::action *a, int localFrame, int globalFrame)
+void MidiChannel::parseAction(recorder::action *a, int localFrame,
+		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (a->type == ACTION_MIDI)
 		sendMidi(a, localFrame/2);
@@ -222,7 +221,8 @@ void MidiChannel::process(float *buffer)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::start(int frame, bool doQuantize)
+void MidiChannel::start(int frame, bool doQuantize, int quantize,
+		bool mixerIsRunning)
 {
 	switch (status) {
 		case STATUS_PLAY:

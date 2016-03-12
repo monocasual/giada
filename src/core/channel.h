@@ -90,7 +90,8 @@ public:
 	 * action to do when channel starts. doQuantize = false (don't
 	 * quantize) when Mixer is reading actions from Recorder::. */
 
-	virtual void start(int frame, bool doQuantize) = 0;
+	virtual void start(int frame, bool doQuantize, int quantize,
+			bool mixerIsRunning) = 0;
 
 	/* stop
 	 * action to do when channel is stopped normally (via key or MIDI). */
@@ -142,7 +143,8 @@ public:
 	 * localFrame  - frame number of the processed buffer
 	 * globalFrame - actual frame in Mixer */
 
-	virtual void parseAction(recorder::action *a, int localFrame, int globalFrame) = 0;
+	virtual void parseAction(recorder::action *a, int localFrame, int globalFrame,
+			int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind
 	 * rewind channel when rewind button is pressed. */

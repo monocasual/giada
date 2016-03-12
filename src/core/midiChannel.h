@@ -58,7 +58,7 @@ public:
 
 	void copy       (const Channel *src, pthread_mutex_t *pluginMutex);
 	void process    (float *buffer);
-	void start      (int frame, bool doQuantize);
+	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
 	void kill       (int frame);
 	void empty      ();
 	void stopBySeq  ();
@@ -73,7 +73,8 @@ public:
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);
-	void parseAction(recorder::action *a, int localFrame, int globalFrame);
+	void parseAction(recorder::action *a, int localFrame, int globalFrame,
+			int quantize, bool mixerIsRunning);
 
 	/* ---------------------------------------------------------------- */
 

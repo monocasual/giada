@@ -455,7 +455,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 					for (unsigned z=0; z<recorder::global.at(y).size(); z++) {
 						int index   = recorder::global.at(y).at(z)->chan;
 						Channel *ch = getChannelByIndex(index);
-						ch->parseAction(recorder::global.at(y).at(z), j, actualFrame);
+						ch->parseAction(recorder::global.at(y).at(z), j, actualFrame, quantize, running);
 					}
 					break;
 				}

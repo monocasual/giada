@@ -42,7 +42,6 @@
 
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
-extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -287,7 +286,8 @@ void SampleChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalFrame)
+void SampleChannel::parseAction(recorder::action *a, int localFrame,
+		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (readActions == false)
 		return;
@@ -295,7 +295,7 @@ void SampleChannel::parseAction(recorder::action *a, int localFrame, int globalF
 	switch (a->type) {
 		case ACTION_KEYPRESS:
 			if (mode & SINGLE_ANY)
-				start(localFrame, false);
+				start(localFrame, false, quantize, mixerIsRunning);
 			break;
 		case ACTION_KEYREL:
 			if (mode & SINGLE_ANY)
@@ -962,7 +962,8 @@ bool SampleChannel::canInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::start(int frame, bool doQuantize)
+void SampleChannel::start(int frame, bool doQuantize, int quantize,
+		bool mixerIsRunning)
 {
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -979,7 +980,7 @@ void SampleChannel::start(int frame, bool doQuantize)
 				sendMidiLplay();
 			}
 			else {
-				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
+				if (quantize > 0 && mixerIsRunning && doQuantize)
 					qWait = true;
 				else {
 
@@ -1001,7 +1002,7 @@ void SampleChannel::start(int frame, bool doQuantize)
 				setFadeOut(DO_STOP);
 			else
 			if (mode == SINGLE_RETRIG) {
-				if (G_Mixer.quantize > 0 && G_Mixer.running && doQuantize)
+				if (quantize > 0 && mixerIsRunning && doQuantize)
 					qWait = true;
 				else
 					reset(frame);

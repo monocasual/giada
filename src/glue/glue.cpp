@@ -793,7 +793,7 @@ int glue_stopInputRec(bool gui)
 	SampleChannel *ch = mh_stopInputRec();
 
 	if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		ch->start(0, true);  // on frame 0: user-generated event
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running);  // on frame 0: user-generated event
 
 	if (!gui) {
 		Fl::lock();
@@ -838,7 +838,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 	if (shift)
 		ch->kill(0);        // on frame 0: user-generated event
 	else
-		ch->start(0, true); // on frame 0: user-generated event
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running); // on frame 0: user-generated event
 }
 
 
@@ -901,7 +901,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 				recorder::rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
 
-		ch->start(0, true); // on frame 0: user-generated event
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running); // on frame 0: user-generated event
 	}
 
 	/* the GUI update is done by gui_refresh() */

@@ -44,7 +44,6 @@
 #include "midiMapConf.h"
 
 
-extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
