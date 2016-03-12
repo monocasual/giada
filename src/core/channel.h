@@ -72,13 +72,13 @@ public:
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject);
+	virtual int writePatch(int i, bool isProject, class Patch &patch);
 
 	/* readPatch
 	 * Fill channel with data from patch. */
 
 	virtual int readPatch_DEPR_(const char *file, int i) = 0;
-	virtual int readPatch(const string &basePath, int i);
+	virtual int readPatch(const string &basePath, int i, class Patch &patch);
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */
@@ -205,8 +205,8 @@ public:
 	 * read from patch all midi-related parameters such as keypress, mute
 	 * and so on. */
 
-	void readPatchMidiIn_DEPR_(int i);
-	void readPatchMidiOut_DEPR_(int i);
+	void readPatchMidiIn_DEPR_(int i, class Patch_DEPR_ &patch);
+	void readPatchMidiOut_DEPR_(int i, class Patch_DEPR_ &patch);
 
 	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */

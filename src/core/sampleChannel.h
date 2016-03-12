@@ -81,7 +81,7 @@ private:
 	/* generateUniqueSampleName
 	 * Sample name must be unique. Generate a new samplename with the "-[n]"
 	 * suffix. */
-	 
+
 	void generateUniqueSampleName();
 
 public:
@@ -103,8 +103,8 @@ public:
 	void reset      (int frame);
 	int  load       (const char *file);
 	int  readPatch_DEPR_  (const char *file, int i);
-  int  readPatch  (const string &basePath, int i);
-	int  writePatch (int i, bool isProject);
+  int  readPatch  (const string &basePath, int i, class Patch &patch);
+	int  writePatch (int i, bool isProject, class Patch &patch);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);

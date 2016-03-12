@@ -44,8 +44,6 @@
 #include "midiMapConf.h"
 
 
-extern Patch_DEPR_ G_Patch_DEPR_;
-extern Patch       G_Patch;
 extern Mixer       G_Mixer;
 extern Conf        G_Conf;
 extern MidiMapConf G_MidiMap;
@@ -175,23 +173,23 @@ void Channel::sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::readPatchMidiIn_DEPR_(int i)
+void Channel::readPatchMidiIn_DEPR_(int i, Patch_DEPR_ &patch)
 {
-	midiIn         = G_Patch_DEPR_.getMidiValue(i, "In");
-	midiInKeyPress = G_Patch_DEPR_.getMidiValue(i, "InKeyPress");
-	midiInKeyRel   = G_Patch_DEPR_.getMidiValue(i, "InKeyRel");
-  midiInKill     = G_Patch_DEPR_.getMidiValue(i, "InKill");
-  midiInVolume   = G_Patch_DEPR_.getMidiValue(i, "InVolume");
-  midiInMute     = G_Patch_DEPR_.getMidiValue(i, "InMute");
-  midiInSolo     = G_Patch_DEPR_.getMidiValue(i, "InSolo");
+	midiIn         = patch.getMidiValue(i, "In");
+	midiInKeyPress = patch.getMidiValue(i, "InKeyPress");
+	midiInKeyRel   = patch.getMidiValue(i, "InKeyRel");
+  midiInKill     = patch.getMidiValue(i, "InKill");
+  midiInVolume   = patch.getMidiValue(i, "InVolume");
+  midiInMute     = patch.getMidiValue(i, "InMute");
+  midiInSolo     = patch.getMidiValue(i, "InSolo");
 }
 
-void Channel::readPatchMidiOut_DEPR_(int i)
+void Channel::readPatchMidiOut_DEPR_(int i, Patch_DEPR_ &patch)
 {
-	midiOutL        = G_Patch_DEPR_.getMidiValue(i, "OutL");
-	midiOutLplaying = G_Patch_DEPR_.getMidiValue(i, "OutLplaying");
-	midiOutLmute    = G_Patch_DEPR_.getMidiValue(i, "OutLmute");
-	midiOutLsolo    = G_Patch_DEPR_.getMidiValue(i, "OutLsolo");
+	midiOutL        = patch.getMidiValue(i, "OutL");
+	midiOutLplaying = patch.getMidiValue(i, "OutLplaying");
+	midiOutLmute    = patch.getMidiValue(i, "OutLmute");
+	midiOutLsolo    = patch.getMidiValue(i, "OutLsolo");
 }
 
 
@@ -207,7 +205,7 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::writePatch(int i, bool isProject)
+int Channel::writePatch(int i, bool isProject, Patch &patch)
 {
 	Patch::channel_t pch;
 	pch.type            = type;
@@ -263,19 +261,19 @@ int Channel::writePatch(int i, bool isProject)
 
 #endif
 
-	G_Patch.channels.push_back(pch);
+	patch.channels.push_back(pch);
 
-	return G_Patch.channels.size() - 1;
+	return patch.channels.size() - 1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string &path, int i)
+int Channel::readPatch(const string &path, int i, Patch &patch)
 {
 	int ret = 1;
-	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	Patch::channel_t *pch = &patch.channels.at(i);
 	key             = pch->key;
 	type            = pch->type;
 	index           = pch->index;

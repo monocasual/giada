@@ -284,8 +284,8 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 	midiOut     = G_Patch_DEPR_.getMidiValue(i, "Out");
 	midiOutChan = G_Patch_DEPR_.getMidiValue(i, "OutChan");
 
-	readPatchMidiIn_DEPR_(i);
-	readPatchMidiOut_DEPR_(i);
+	readPatchMidiIn_DEPR_(i, G_Patch_DEPR_);
+	readPatchMidiOut_DEPR_(i, G_Patch_DEPR_);
 
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
@@ -294,11 +294,11 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string &basePath, int i)
+int MidiChannel::readPatch(const string &basePath, int i, Patch &patch)
 {
-	Channel::readPatch("", i);
+	Channel::readPatch("", i, patch);
 
-	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	Patch::channel_t *pch = &patch.channels.at(i);
 
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
@@ -351,10 +351,10 @@ void MidiChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::writePatch(int i, bool isProject)
+int MidiChannel::writePatch(int i, bool isProject, Patch &patch)
 {
-	int pchIndex = Channel::writePatch(i, isProject);
-	Patch::channel_t *pch = &G_Patch.channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject, patch);
+	Patch::channel_t *pch = &patch.channels.at(pchIndex);
 
 	pch->midiOut     = midiOut;
 	pch->midiOutChan = midiOutChan;

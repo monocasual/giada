@@ -883,10 +883,10 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 		readActions = G_Patch_DEPR_.getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
-		readPatchMidiIn_DEPR_(i);
+		readPatchMidiIn_DEPR_(i, G_Patch_DEPR_);
 		midiInReadActions = G_Patch_DEPR_.getMidiValue(i, "InReadActions");
 		midiInPitch       = G_Patch_DEPR_.getMidiValue(i, "InPitch");
-		readPatchMidiOut_DEPR_(i);
+		readPatchMidiOut_DEPR_(i, G_Patch_DEPR_);
 
 	if (res == SAMPLE_LOADED_OK) {
 		setBegin(G_Patch_DEPR_.getBegin(i));
@@ -914,14 +914,14 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string &basePath, int i)
+int SampleChannel::readPatch(const string &basePath, int i, Patch &patch)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatch("", i);
+	Channel::readPatch("", i, patch);
 
-	Patch::channel_t *pch = &G_Patch.channels.at(i);
+	Patch::channel_t *pch = &patch.channels.at(i);
 
 	mode              = pch->mode;
 	boost             = pch->boost;
@@ -1033,10 +1033,10 @@ void SampleChannel::start(int frame, bool doQuantize)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::writePatch(int i, bool isProject)
+int SampleChannel::writePatch(int i, bool isProject, Patch &patch)
 {
-	int pchIndex = Channel::writePatch(i, isProject);
-	Patch::channel_t *pch = &G_Patch.channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject, patch);
+	Patch::channel_t *pch = &patch.channels.at(pchIndex);
 
 	if (wave != NULL) {
 		pch->samplePath = wave->pathfile;

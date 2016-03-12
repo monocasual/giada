@@ -67,8 +67,8 @@ public:
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
 	int  readPatch_DEPR_  (const char *file, int i);
-	int  readPatch  (const string &basePath, int i);
-	int  writePatch (int i, bool isProject);
+	int  readPatch  (const string &basePath, int i, class Patch &patch);
+	int  writePatch (int i, bool isProject, class Patch &patch);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);
