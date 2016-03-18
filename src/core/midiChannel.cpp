@@ -64,9 +64,10 @@ MidiChannel::~MidiChannel() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
+void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex,
+	PluginHost *pluginHost)
 {
-	Channel::copy(_src, pluginMutex);
+	Channel::copy(_src, pluginMutex, pluginHost);
 	MidiChannel *src = (MidiChannel *) _src;
 	midiOut     = src->midiOut;
 	midiOutChan = src->midiOutChan;
@@ -294,12 +295,12 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string &basePath, int i, Patch &patch,
+int MidiChannel::readPatch(const string &basePath, int i, Patch *patch,
 		pthread_mutex_t *pluginMutex)
 {
 	Channel::readPatch("", i, patch, pluginMutex);
 
-	Patch::channel_t *pch = &patch.channels.at(i);
+	Patch::channel_t *pch = &patch->channels.at(i);
 
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
@@ -352,10 +353,11 @@ void MidiChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::writePatch(int i, bool isProject, Patch &patch)
+int MidiChannel::writePatch(int i, bool isProject, Patch *patch,
+	PluginHost *pluginHost)
 {
-	int pchIndex = Channel::writePatch(i, isProject, patch);
-	Patch::channel_t *pch = &patch.channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject, patch, pluginHost);
+	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 
 	pch->midiOut     = midiOut;
 	pch->midiOutChan = midiOutChan;

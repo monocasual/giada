@@ -66,19 +66,21 @@ public:
 	/* copy
 	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
 
-	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex) = 0;
+	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex,
+			class PluginHost *pluginHost) = 0;
 
 	/* writePatch
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject, class Patch &patch);
+	virtual int writePatch(int i, bool isProject, class Patch *patch,
+			class PluginHost *pluginHost);
 
 	/* readPatch
 	 * Fill channel with data from patch. */
 
 	virtual int readPatch_DEPR_(const char *file, int i) = 0;
-	virtual int readPatch(const string &basePath, int i, class Patch &patch,
+	virtual int readPatch(const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
 
 	/* process

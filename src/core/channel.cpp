@@ -101,7 +101,8 @@ Channel::~Channel()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
+void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex,
+  PluginHost *pluginHost)
 {
   key             = src->key;
   volume          = src->volume;
@@ -131,7 +132,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size(); i++)
-    G_PluginHost.clonePlugin(src->plugins.at(i), PluginHost::CHANNEL,
+    pluginHost->clonePlugin(src->plugins.at(i), PluginHost::CHANNEL,
       pluginMutex, this);
 #endif
 
@@ -203,7 +204,8 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::writePatch(int i, bool isProject, Patch &patch)
+int Channel::writePatch(int i, bool isProject, Patch *patch,
+  PluginHost *pluginHost)
 {
 	Patch::channel_t pch;
 	pch.type            = type;
@@ -259,20 +261,20 @@ int Channel::writePatch(int i, bool isProject, Patch &patch)
 
 #endif
 
-	patch.channels.push_back(pch);
+	patch->channels.push_back(pch);
 
-	return patch.channels.size() - 1;
+	return patch->channels.size() - 1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string &path, int i, Patch &patch,
+int Channel::readPatch(const string &path, int i, Patch *patch,
     pthread_mutex_t *pluginMutex)
 {
 	int ret = 1;
-	Patch::channel_t *pch = &patch.channels.at(i);
+	Patch::channel_t *pch = &patch->channels.at(i);
 	key             = pch->key;
 	type            = pch->type;
 	index           = pch->index;

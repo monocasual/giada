@@ -123,7 +123,7 @@ static void __glue_fillPatchColumns__()
 static void __glue_fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->writePatch(i, isProject, G_Patch);
+		G_Mixer.channels.at(i)->writePatch(i, isProject, &G_Patch, &G_PluginHost);
 	}
 }
 
@@ -225,7 +225,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		for (unsigned k=0; k<G_Patch.channels.size(); k++) {
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
-				ch->readPatch(basePath, k, G_Patch, &G_Mixer.mutex_plugins);
+				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins);
 			}
 			__glue_setProgressBar__(status, steps);
 		}

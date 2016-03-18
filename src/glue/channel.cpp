@@ -123,7 +123,7 @@ int glue_cloneChannel(Channel *src)
 	gChannel *gch  = mainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;
-	ch->copy(src, &G_Mixer.mutex_plugins);
+	ch->copy(src, &G_Mixer.mutex_plugins, &G_PluginHost);
 
 	mainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;

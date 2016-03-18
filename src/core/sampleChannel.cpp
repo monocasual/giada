@@ -92,9 +92,10 @@ SampleChannel::~SampleChannel()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
+void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex,
+	PluginHost *pluginHost)
 {
-	Channel::copy(_src, pluginMutex);
+	Channel::copy(_src, pluginMutex, pluginHost);
 	SampleChannel *src = (SampleChannel *) _src;
 	tracker         = src->tracker;
 	begin           = src->begin;
@@ -914,7 +915,7 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string &basePath, int i, Patch &patch,
+int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
 		pthread_mutex_t *pluginMutex)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
@@ -922,7 +923,7 @@ int SampleChannel::readPatch(const string &basePath, int i, Patch &patch,
 
 	Channel::readPatch("", i, patch, pluginMutex);
 
-	Patch::channel_t *pch = &patch.channels.at(i);
+	Patch::channel_t *pch = &patch->channels.at(i);
 
 	mode              = pch->mode;
 	boost             = pch->boost;
@@ -1035,10 +1036,11 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::writePatch(int i, bool isProject, Patch &patch)
+int SampleChannel::writePatch(int i, bool isProject, Patch *patch,
+	PluginHost *pluginHost)
 {
-	int pchIndex = Channel::writePatch(i, isProject, patch);
-	Patch::channel_t *pch = &patch.channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject, patch, pluginHost);
+	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 
 	if (wave != NULL) {
 		pch->samplePath = wave->pathfile;

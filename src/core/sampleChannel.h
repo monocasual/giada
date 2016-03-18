@@ -89,7 +89,9 @@ public:
 	SampleChannel(int bufferSize);
 	~SampleChannel();
 
-	void copy       (const Channel *src, pthread_mutex_t *pluginMutex);
+	void copy(const Channel *src, pthread_mutex_t *pluginMutex,
+			class PluginHost *pluginHost);
+
 	void clear      ();
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
@@ -103,9 +105,10 @@ public:
 	void reset      (int frame);
 	int  load       (const char *file);
 	int  readPatch_DEPR_  (const char *file, int i);
-  int  readPatch  (const string &basePath, int i, class Patch &patch,
+  int  readPatch  (const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
-	int  writePatch (int i, bool isProject, class Patch &patch);
+	int  writePatch (int i, bool isProject, class Patch *patch,
+			PluginHost *pluginHost);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);
