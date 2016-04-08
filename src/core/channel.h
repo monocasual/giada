@@ -46,6 +46,10 @@ class Channel
 {
 protected:
 
+#ifdef WITH_VST
+	class PluginHost *pluginHost;
+#endif
+
 	/* bufferSize
 	 * size of every buffer in this channel (vChan, pChan) */
 
@@ -66,15 +70,13 @@ public:
 	/* copy
 	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
 
-	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex,
-			class PluginHost *pluginHost) = 0;
+	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex) = 0;
 
 	/* writePatch
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject, class Patch *patch,
-			class PluginHost *pluginHost);
+	virtual int writePatch(int i, bool isProject, class Patch *patch);
 
 	/* readPatch
 	 * Fill channel with data from patch. */
@@ -219,6 +221,16 @@ public:
 	void sendMidiLmute();
 	void sendMidiLsolo();
 	void sendMidiLplay();
+
+#ifdef WITH_VST
+
+	/* SetPluginHost
+	 * A neat trick to avoid duplicated constructors (with and without pointer
+	 * to PluginHost). */
+
+	void setPluginHost(class PluginHost *pluginHost);
+
+#endif
 };
 
 

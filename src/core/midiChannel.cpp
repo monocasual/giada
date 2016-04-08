@@ -39,9 +39,6 @@
 
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf        G_Conf;
-#ifdef WITH_VST
-extern PluginHost  G_PluginHost;
-#endif
 
 
 MidiChannel::MidiChannel(int bufferSize)
@@ -64,10 +61,9 @@ MidiChannel::~MidiChannel() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex,
-	PluginHost *pluginHost)
+void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 {
-	Channel::copy(_src, pluginMutex, pluginHost);
+	Channel::copy(_src, pluginMutex);
 	MidiChannel *src = (MidiChannel *) _src;
 	midiOut     = src->midiOut;
 	midiOutChan = src->midiOutChan;
@@ -208,7 +204,7 @@ void MidiChannel::unsetMute(bool internal)
 void MidiChannel::process(float *buffer)
 {
 #ifdef WITH_VST
-	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
+	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
 	freeVstMidiEvents();
 #endif
 
@@ -353,10 +349,9 @@ void MidiChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::writePatch(int i, bool isProject, Patch *patch,
-	PluginHost *pluginHost)
+int MidiChannel::writePatch(int i, bool isProject, Patch *patch)
 {
-	int pchIndex = Channel::writePatch(i, isProject, patch, pluginHost);
+	int pchIndex = Channel::writePatch(i, isProject, patch);
 	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 
 	pch->midiOut     = midiOut;

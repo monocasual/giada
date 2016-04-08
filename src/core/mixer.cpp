@@ -160,6 +160,10 @@ Channel *Mixer::addChannel(int type)
 	else
 		ch = new MidiChannel(bufferSize);
 
+#ifdef WITH_VST
+	ch->setPluginHost(&G_PluginHost);
+#endif
+
 	while (true) {
 		int lockStatus = pthread_mutex_trylock(&mutex_chans);
 		if (lockStatus == 0) {

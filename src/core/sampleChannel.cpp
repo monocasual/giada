@@ -43,9 +43,6 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Conf        G_Conf;
-#ifdef WITH_VST
-extern PluginHost G_PluginHost;
-#endif
 
 
 using std::string;
@@ -92,10 +89,9 @@ SampleChannel::~SampleChannel()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex,
-	PluginHost *pluginHost)
+void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 {
-	Channel::copy(_src, pluginMutex, pluginHost);
+	Channel::copy(_src, pluginMutex);
 	SampleChannel *src = (SampleChannel *) _src;
 	tracker         = src->tracker;
 	begin           = src->begin;
@@ -743,7 +739,7 @@ bool SampleChannel::allocEmpty(int frames, int takeId)
 void SampleChannel::process(float *buffer)
 {
 #ifdef WITH_VST
-	G_PluginHost.processStack(vChan, PluginHost::CHANNEL, this);
+	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {
@@ -1036,10 +1032,9 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::writePatch(int i, bool isProject, Patch *patch,
-	PluginHost *pluginHost)
+int SampleChannel::writePatch(int i, bool isProject, Patch *patch)
 {
-	int pchIndex = Channel::writePatch(i, isProject, patch, pluginHost);
+	int pchIndex = Channel::writePatch(i, isProject, patch);
 	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 
 	if (wave != NULL) {

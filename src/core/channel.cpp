@@ -45,13 +45,15 @@
 
 
 extern MidiMapConf G_MidiMap;
-#ifdef WITH_VST
-extern PluginHost  G_PluginHost;
-#endif
 
 
 Channel::Channel(int type, int status, int bufferSize)
-: bufferSize(bufferSize),
+#if defined(WITH_VST)
+: pluginHost(NULL),
+#else
+:
+#endif
+  bufferSize(bufferSize),
   type      (type),
 	status    (status),
 	key       (0),
@@ -101,8 +103,7 @@ Channel::~Channel()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex,
-  PluginHost *pluginHost)
+void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 {
   key             = src->key;
   volume          = src->volume;
@@ -204,8 +205,7 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::writePatch(int i, bool isProject, Patch *patch,
-  PluginHost *pluginHost)
+int Channel::writePatch(int i, bool isProject, Patch *patch)
 {
 	Patch::channel_t pch;
 	pch.type            = type;
@@ -246,9 +246,9 @@ int Channel::writePatch(int i, bool isProject, Patch *patch,
 
 #ifdef WITH_VST
 
-	unsigned numPlugs = G_PluginHost.countPlugins(PluginHost::CHANNEL, this);
+	unsigned numPlugs = pluginHost->countPlugins(PluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, this);
+		Plugin *pPlugin = pluginHost->getPluginByIndex(i, PluginHost::CHANNEL, this);
 		if (pPlugin->getStatus()) {
 			Patch::plugin_t pp;
 			pp.path   = pPlugin->getUniqueId();
@@ -305,7 +305,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path, PluginHost::CHANNEL,
+		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
       pluginMutex, this);
 		if (plugin != NULL) {
 			plugin->setBypass(ppl->bypass);
@@ -372,3 +372,14 @@ void Channel::sendMidiLplay()
 			sendMidiLmessage(midiOutLplaying, G_MidiMap.stopping);
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+void Channel::setPluginHost(PluginHost *pluginHost)
+{
+  this->pluginHost = pluginHost;
+}
+#endif

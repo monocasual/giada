@@ -56,8 +56,8 @@ public:
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
-	void copy(const Channel *src, pthread_mutex_t *pluginMutex,
-			class PluginHost *pluginHost);
+	void copy(const Channel *src, pthread_mutex_t *pluginMutex);
+	
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
 	void kill       (int frame);
@@ -70,8 +70,7 @@ public:
 	int  readPatch_DEPR_  (const char *file, int i);
 	int  readPatch  (const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
-	int  writePatch (int i, bool isProject, class Patch *patch,
-			class PluginHost *pluginHost);
+	int  writePatch (int i, bool isProject, class Patch *patch);
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame);
 	void onBar      (int frame);

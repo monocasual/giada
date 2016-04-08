@@ -123,7 +123,7 @@ static void __glue_fillPatchColumns__()
 static void __glue_fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->writePatch(i, isProject, &G_Patch, &G_PluginHost);
+		G_Mixer.channels.at(i)->writePatch(i, isProject, &G_Patch);
 	}
 }
 
