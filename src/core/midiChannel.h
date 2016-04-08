@@ -50,14 +50,14 @@ class MidiChannel : public Channel
 {
 public:
 
-	MidiChannel(int bufferSize);
+	MidiChannel(int bufferSize, class MidiMapConf *midiMapConf);
 	~MidiChannel();
 
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex);
-	
+
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
 	void kill       (int frame);

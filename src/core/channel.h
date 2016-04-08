@@ -50,6 +50,8 @@ protected:
 	class PluginHost *pluginHost;
 #endif
 
+	class MidiMapConf *midiMapConf;
+
 	/* bufferSize
 	 * size of every buffer in this channel (vChan, pChan) */
 
@@ -63,7 +65,7 @@ protected:
 
 public:
 
-	Channel(int type, int status, int bufferSize);
+	Channel(int type, int status, int bufferSize, class MidiMapConf *midiMapConf);
 
 	virtual ~Channel();
 

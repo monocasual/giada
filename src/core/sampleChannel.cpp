@@ -48,8 +48,8 @@ extern Conf        G_Conf;
 using std::string;
 
 
-SampleChannel::SampleChannel(int bufferSize)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
+SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
 		frameRewind      (-1),
 		wave             (NULL),
 		tracker          (0),

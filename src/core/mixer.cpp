@@ -45,6 +45,7 @@
 
 
 extern Mixer 			 G_Mixer;
+extern MidiMapConf G_MidiMap;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
@@ -156,9 +157,9 @@ Channel *Mixer::addChannel(int type)
 	int bufferSize = kernelAudio::realBufsize*2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize);
+		ch = new SampleChannel(bufferSize, &G_MidiMap);
 	else
-		ch = new MidiChannel(bufferSize);
+		ch = new MidiChannel(bufferSize, &G_MidiMap);
 
 #ifdef WITH_VST
 	ch->setPluginHost(&G_PluginHost);

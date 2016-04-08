@@ -44,32 +44,30 @@
 #include "midiMapConf.h"
 
 
-extern MidiMapConf G_MidiMap;
-
-
-Channel::Channel(int type, int status, int bufferSize)
+Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
 #if defined(WITH_VST)
 : pluginHost(NULL),
 #else
 :
 #endif
-  bufferSize(bufferSize),
-  type      (type),
-	status    (status),
-	key       (0),
-  volume    (DEFAULT_VOL),
-  volume_i  (1.0f),
-  volume_d  (0.0f),
-  panLeft   (1.0f),
-  panRight  (1.0f),
-  mute_i    (false),
-  mute_s    (false),
-  mute      (false),
-  solo      (false),
-  hasActions(false),
-  recStatus (REC_STOPPED),
-  vChan     (NULL),
-  guiChannel(NULL),
+  midiMapConf    (midiMapConf),
+  bufferSize     (bufferSize),
+  type           (type),
+	status         (status),
+	key            (0),
+  volume         (DEFAULT_VOL),
+  volume_i       (1.0f),
+  volume_d       (0.0f),
+  panLeft        (1.0f),
+  panRight       (1.0f),
+  mute_i         (false),
+  mute_s         (false),
+  mute           (false),
+  solo           (false),
+  hasActions     (false),
+  recStatus      (REC_STOPPED),
+  vChan          (NULL),
+  guiChannel     (NULL),
   midiIn         (true),
   midiInKeyPress (0x0),
   midiInKeyRel   (0x0),
@@ -331,9 +329,9 @@ void Channel::sendMidiLmute()
 	if (!midiOutL || midiOutLmute == 0x0)
 		return;
 	if (mute)
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOn);
+		sendMidiLmessage(midiOutLsolo, midiMapConf->muteOn);
 	else
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.muteOff);
+		sendMidiLmessage(midiOutLsolo, midiMapConf->muteOff);
 }
 
 
@@ -345,9 +343,9 @@ void Channel::sendMidiLsolo()
 	if (!midiOutL || midiOutLsolo == 0x0)
 		return;
 	if (solo)
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOn);
+		sendMidiLmessage(midiOutLsolo, midiMapConf->soloOn);
 	else
-		sendMidiLmessage(midiOutLsolo, G_MidiMap.soloOff);
+		sendMidiLmessage(midiOutLsolo, midiMapConf->soloOff);
 }
 
 
@@ -360,16 +358,16 @@ void Channel::sendMidiLplay()
 		return;
 	switch (status) {
 		case STATUS_OFF:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.stopped);
+			sendMidiLmessage(midiOutLplaying, midiMapConf->stopped);
 			break;
 		case STATUS_PLAY:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.playing);
+			sendMidiLmessage(midiOutLplaying, midiMapConf->playing);
 			break;
 		case STATUS_WAIT:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.waiting);
+			sendMidiLmessage(midiOutLplaying, midiMapConf->waiting);
 			break;
 		case STATUS_ENDING:
-			sendMidiLmessage(midiOutLplaying, G_MidiMap.stopping);
+			sendMidiLmessage(midiOutLplaying, midiMapConf->stopping);
 	}
 }
 

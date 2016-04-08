@@ -38,11 +38,10 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern Conf        G_Conf;
 
 
-MidiChannel::MidiChannel(int bufferSize)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
+MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
