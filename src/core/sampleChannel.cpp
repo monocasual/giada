@@ -863,32 +863,32 @@ int SampleChannel::load(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch_DEPR_(const char *f, int i)
+int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
 {
 	int res = load(f);
 
-		volume      = G_Patch_DEPR_.getVol(i);
-		key         = G_Patch_DEPR_.getKey(i);
-		index       = G_Patch_DEPR_.getIndex(i);
-		mode        = G_Patch_DEPR_.getMode(i);
-		mute        = G_Patch_DEPR_.getMute(i);
-		mute_s      = G_Patch_DEPR_.getMute_s(i);
-		solo        = G_Patch_DEPR_.getSolo(i);
-		boost       = G_Patch_DEPR_.getBoost(i);
-		panLeft     = G_Patch_DEPR_.getPanLeft(i);
-		panRight    = G_Patch_DEPR_.getPanRight(i);
-		readActions = G_Patch_DEPR_.getRecActive(i);
+		volume      = patch->getVol(i);
+		key         = patch->getKey(i);
+		index       = patch->getIndex(i);
+		mode        = patch->getMode(i);
+		mute        = patch->getMute(i);
+		mute_s      = patch->getMute_s(i);
+		solo        = patch->getSolo(i);
+		boost       = patch->getBoost(i);
+		panLeft     = patch->getPanLeft(i);
+		panRight    = patch->getPanRight(i);
+		readActions = patch->getRecActive(i);
 		recStatus   = readActions ? REC_READING : REC_STOPPED;
 
-		readPatchMidiIn_DEPR_(i, G_Patch_DEPR_);
-		midiInReadActions = G_Patch_DEPR_.getMidiValue(i, "InReadActions");
-		midiInPitch       = G_Patch_DEPR_.getMidiValue(i, "InPitch");
-		readPatchMidiOut_DEPR_(i, G_Patch_DEPR_);
+		readPatchMidiIn_DEPR_(i, *patch);
+		midiInReadActions = patch->getMidiValue(i, "InReadActions");
+		midiInPitch       = patch->getMidiValue(i, "InPitch");
+		readPatchMidiOut_DEPR_(i, *patch);
 
 	if (res == SAMPLE_LOADED_OK) {
-		setBegin(G_Patch_DEPR_.getBegin(i));
-		setEnd  (G_Patch_DEPR_.getEnd(i, wave->size));
-		setPitch(G_Patch_DEPR_.getPitch(i));
+		setBegin(patch->getBegin(i));
+		setEnd  (patch->getEnd(i, wave->size));
+		setPitch(patch->getPitch(i));
 	}
 	else {
 		// volume = DEFAULT_VOL;

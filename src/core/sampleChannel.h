@@ -103,7 +103,7 @@ public:
 	void unsetMute  (bool internal);
 	void reset      (int frame);
 	int  load       (const char *file);
-	int  readPatch_DEPR_  (const char *file, int i);
+	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch);
   int  readPatch  (const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
 	int  writePatch (int i, bool isProject, class Patch *patch);

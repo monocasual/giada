@@ -67,7 +67,7 @@ public:
 	void rewind     ();
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
-	int  readPatch_DEPR_  (const char *file, int i);
+	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch);
 	int  readPatch  (const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
 	int  writePatch (int i, bool isProject, class Patch *patch);

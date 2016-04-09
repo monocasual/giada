@@ -37,9 +37,6 @@
 #include "kernelMidi.h"
 
 
-extern Patch_DEPR_ G_Patch_DEPR_;
-
-
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
 	  midiOut    (false),
@@ -267,21 +264,21 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch_DEPR_(const char *f, int i)
+int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
 {
-	volume      = G_Patch_DEPR_.getVol(i);
-	index       = G_Patch_DEPR_.getIndex(i);
-	mute        = G_Patch_DEPR_.getMute(i);
-	mute_s      = G_Patch_DEPR_.getMute_s(i);
-	solo        = G_Patch_DEPR_.getSolo(i);
-	panLeft     = G_Patch_DEPR_.getPanLeft(i);
-	panRight    = G_Patch_DEPR_.getPanRight(i);
+	volume      = patch->getVol(i);
+	index       = patch->getIndex(i);
+	mute        = patch->getMute(i);
+	mute_s      = patch->getMute_s(i);
+	solo        = patch->getSolo(i);
+	panLeft     = patch->getPanLeft(i);
+	panRight    = patch->getPanRight(i);
 
-	midiOut     = G_Patch_DEPR_.getMidiValue(i, "Out");
-	midiOutChan = G_Patch_DEPR_.getMidiValue(i, "OutChan");
+	midiOut     = patch->getMidiValue(i, "Out");
+	midiOutChan = patch->getMidiValue(i, "OutChan");
 
-	readPatchMidiIn_DEPR_(i, G_Patch_DEPR_);
-	readPatchMidiOut_DEPR_(i, G_Patch_DEPR_);
+	readPatchMidiIn_DEPR_(i, *patch);
+	readPatchMidiOut_DEPR_(i, *patch);
 
 	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }

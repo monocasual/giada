@@ -83,7 +83,7 @@ public:
 	/* readPatch
 	 * Fill channel with data from patch. */
 
-	virtual int readPatch_DEPR_(const char *file, int i) = 0;
+	virtual int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch) = 0;
 	virtual int readPatch(const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex);
 

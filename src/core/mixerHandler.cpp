@@ -131,7 +131,7 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 	for (int i=0; i<numChans; i++) {
 		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
 		string samplePath = isProject ? projPath + gGetSlash() + G_Patch_DEPR_.getSamplePath(i) : "";
-		ch->readPatch_DEPR_(samplePath.c_str(), i);
+		ch->readPatch_DEPR_(samplePath.c_str(), i, &G_Patch_DEPR_);
 	}
 
 	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();
