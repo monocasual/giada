@@ -191,7 +191,7 @@ class gTabPlugins : public Fl_Group
 private:
 
 	static void cb_scan  (Fl_Widget *w, void *p);
-	static void cb_onScan();
+	static void cb_onScan(float progress, void *p);
 	inline void __cb_scan(Fl_Widget *w);
 
 	void updateCount();

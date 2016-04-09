@@ -67,7 +67,8 @@ void PluginHost::init(int _buffersize, int _samplerate)
 /* -------------------------------------------------------------------------- */
 
 
-int PluginHost::scanDir(const string &dirpath, void (*callback)())
+int PluginHost::scanDir(const string &dirpath, void (*callback)(float progress, void *p),
+    void *p)
 {
   gLog("[PluginHost::scanDir] requested directory: '%s'\n", dirpath.c_str());
   gLog("[PluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
@@ -85,7 +86,7 @@ int PluginHost::scanDir(const string &dirpath, void (*callback)())
     gLog("[PluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
     cont = scanner.scanNextFile(false, name);
     if (callback)
-      callback();
+      callback(scanner.getProgress(), p);
   }
 
   gLog("[PluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());

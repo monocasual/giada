@@ -99,11 +99,11 @@ public:
   void init(int bufSize, int frequency);
 
   /* scanDir
-   * Parse plugin directory and store list in knownPluginList. The opional
-   * callback is called on each plugin found. Used to update the main window
-   * from the GUI thread. */
+   * Parse plugin directory and store list in knownPluginList. The callback is
+   * called on each plugin found. Used to update the main window from the GUI
+   * thread. */
 
-  int scanDir(const string &path, void (*callback)()=NULL);
+  int scanDir(const string &path, void (*callback)(float progress, void *p), void *p);
 
   /* (save|load)List
    * (Save|Load) knownPluginList (in|from) an XML file. */

@@ -890,8 +890,10 @@ void gTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((gTabPlugins*)p)->__cb_scan(
 /* -------------------------------------------------------------------------- */
 
 
-void gTabPlugins::cb_onScan()
+void gTabPlugins::cb_onScan(float progress, void *p)
 {
+	string l = "Scan in progress (" + std::to_string((int)(progress*100)) + "%). Please wait...";
+	((gTabPlugins *)p)->info->label(l.c_str());
 	Fl::wait();
 }
 
@@ -902,7 +904,7 @@ void gTabPlugins::cb_onScan()
 void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
 	info->show();
-	G_PluginHost.scanDir(folderPath->value(), cb_onScan);
+	G_PluginHost.scanDir(folderPath->value(), cb_onScan, (void*) this);
 	G_PluginHost.saveList(gGetHomePath() + gGetSlash() + "plugins.xml");
 	info->hide();
 	updateCount();
