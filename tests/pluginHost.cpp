@@ -1,11 +1,10 @@
 #ifdef WITH_VST
 #ifdef RUN_TESTS_WITH_LOCAL_FILES
 
-#if 0
+
 #include "../src/core/pluginHost.h"
-#include "../src/core/midiChannel.h"
-#include "../src/core/patch.h"
 #include "catch.hpp"
+
 
 TEST_CASE("Test PluginHost class")
 {
@@ -26,7 +25,6 @@ TEST_CASE("Test PluginHost class")
     REQUIRE(ph.countPlugins(PluginHost::MASTER_IN) == 0);
   }
 }
-#endif
 
 #endif
 #endif
