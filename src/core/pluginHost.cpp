@@ -42,6 +42,15 @@
 using std::string;
 
 
+PluginHost::~PluginHost()
+{
+  messageManager->deleteInstance();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void PluginHost::init(int _buffersize, int _samplerate)
 {
   gLog("[PluginHost::init] initialize with buffersize=%d, samplerate=%d\n",

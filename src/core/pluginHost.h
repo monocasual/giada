@@ -93,6 +93,9 @@ public:
     bool isInstrument;
   };
 
+
+  ~PluginHost();
+
   void init(int bufSize, int frequency);
 
   /* scanDir
