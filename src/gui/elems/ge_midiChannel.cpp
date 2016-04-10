@@ -286,7 +286,8 @@ void gMidiChannel::update()
 	mainButton->setKey(ch->key);
 
 #ifdef WITH_VST
-	fx->full = ch->plugins_DEPR_.size() > 0;
+	fx->full = ch->plugins.size() > 0;
+	fx->redraw();
 #endif
 }
 
