@@ -306,12 +306,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 		if (plugin->getStatus() != 1 || plugin->isSuspended() || plugin->isBypassed())
 			continue;
     juce::MidiBuffer midiBuffer;
-    /*
-    if (ch && ch->type == CHANNEL_MIDI) { // process events if it's a channel stack
-      ///gLog("events: %d\n", (((MidiChannel*)ch)->getVstEvents())->numEvents);
-      midiBuffer = ((MidiChannel*)ch)->getPluginMidiEvents();
-    }*/
-    if (ch)
+    if (ch) // ch might be null if stackType is MASTER_IN or MASTER_OUT 
       midiBuffer = ch->getPluginMidiEvents();
 		plugin->processBlock(audioBuffer, midiBuffer);
   }
