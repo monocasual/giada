@@ -75,7 +75,8 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
 		Patch::plugin_t *ppl = &list->at(i);
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type, NULL);
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
+				&G_Mixer.mutex_plugins, NULL);
 		if (plugin != NULL) {
 			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
