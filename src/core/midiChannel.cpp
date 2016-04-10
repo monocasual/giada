@@ -123,26 +123,6 @@ void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 
 /* -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
-
-VstEvents *MidiChannel::getVstEvents()
-{
-#if 0
-	return (VstEvents *) &events;
-#endif
-	return NULL;
-}
-
-juce::MidiBuffer &MidiChannel::getPluginMidiEvents()
-{
-	return midiBuffer;
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
 
 void MidiChannel::parseAction(recorder::action *a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)

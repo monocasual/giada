@@ -37,6 +37,17 @@
 #include "const.h"
 #include "recorder.h"
 
+#ifdef WITH_VST
+// TODO - can we move this stuff to a separate file?
+#include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
+#include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
+#include "../deps/juce/juce_core/juce_core.h"
+#include "../deps/juce/juce_data_structures/juce_data_structures.h"
+#include "../deps/juce/juce_events/juce_events.h"
+#include "../deps/juce/juce_graphics/juce_graphics.h"
+#include "../deps/juce/juce_gui_basics/juce_gui_basics.h"
+#include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
+#endif
 
 using std::vector;
 using std::string;
@@ -47,7 +58,15 @@ class Channel
 protected:
 
 #ifdef WITH_VST
+
 	class PluginHost *pluginHost;
+
+	/* MidiBuffer contains MIDI events. When ready, events are sent to
+	 * each plugin in the channel. This is available for any kind of
+	 * channel, but it makes sense only for MIDI channels. */
+
+	juce::MidiBuffer midiBuffer;
+
 #endif
 
 	class MidiMapConf *midiMapConf;
@@ -230,6 +249,12 @@ public:
 	 * to PluginHost). */
 
 	void setPluginHost(class PluginHost *pluginHost);
+
+	/* getPluginMidiEvents
+	 * Return a reference to midiBuffer stack. This is available for any kind of
+	 * channel, but it makes sense only for MIDI channels. */
+
+	juce::MidiBuffer &getPluginMidiEvents() { return midiBuffer; };
 
 #endif
 };

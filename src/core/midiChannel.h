@@ -87,11 +87,6 @@ public:
 
 #ifdef WITH_VST
 
-	/* getVstEvents
-	 * return a pointer to gVstEvents. */
-
-	VstEvents *getVstEvents();
-
 	/* getPluginMidiEvents
 	 * Return a reference to midiBuffer stack. */
 
@@ -111,18 +106,6 @@ public:
 	void addVstMidiEvent(uint32_t msg, int localFrame);
 
 #endif
-
-	/* ---------------------------------------------------------------- */
-
-#ifdef WITH_VST
-
-	/* MidiBuffer contains MIDI events. When ready, events are sent to
-	 * each plugin in the channel. */
-
-	juce::MidiBuffer midiBuffer;
-
-#endif
-
 };
 
 
