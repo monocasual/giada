@@ -87,11 +87,6 @@ public:
 
 #ifdef WITH_VST
 
-	/* getPluginMidiEvents
-	 * Return a reference to midiBuffer stack. */
-
-	juce::MidiBuffer &getPluginMidiEvents();
-
 	/* freeVstMidiEvents
 	 * empty vstEvents structure. Init: use the method for channel
 	 * initialization. */
