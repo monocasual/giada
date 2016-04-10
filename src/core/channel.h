@@ -59,6 +59,9 @@ protected:
 
 #ifdef WITH_VST
 
+	/* pluginHost
+	 * Pointer to PluginHost class, which manages and processes plugins. */
+
 	class PluginHost *pluginHost;
 
 	/* MidiBuffer contains MIDI events. When ready, events are sent to
@@ -68,6 +71,9 @@ protected:
 	juce::MidiBuffer midiBuffer;
 
 #endif
+
+	/* MidiMapConf
+	 * Pointer to MidiMapConf. It deals with Midi lightning operations. */
 
 	class MidiMapConf *midiMapConf;
 
