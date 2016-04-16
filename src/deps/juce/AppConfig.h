@@ -15,10 +15,10 @@
 #define JUCE_MODULE_AVAILABLE_juce_gui_basics       1
 #define JUCE_MODULE_AVAILABLE_juce_gui_extra        1
 
-#define JUCE_STANDALONE_APPLICATION 1
-#define JUCE_PLUGINHOST_VST 1
-#define JUCE_PLUGINHOST_VST3 0
-#define JUCE_PLUGINHOST_AU 0
+#define JUCE_STANDALONE_APPLICATION 0
+#define JUCE_PLUGINHOST_VST         1
+#define JUCE_PLUGINHOST_VST3        0
+#define JUCE_PLUGINHOST_AU          0
 /*
 #include "juce_audio_basics/juce_audio_basics.h"
 #include "juce_audio_processors/juce_audio_processors.h"
