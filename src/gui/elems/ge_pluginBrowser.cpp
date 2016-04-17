@@ -71,10 +71,12 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
+
 	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
 		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
-		string s = pi.name + "\t" + pi.manufacturerName + "\t" + pi.category +
-			"\t" +pi.format + "\t" + pi.uid;
+		string m = G_PluginHost.doesPluginExist(pi.uid) ? "" : "@-";
+		string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
+				pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
 		add(s.c_str());
 	}
 

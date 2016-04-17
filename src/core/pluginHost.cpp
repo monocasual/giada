@@ -60,6 +60,7 @@ void PluginHost::init(int _buffersize, int _samplerate)
   audioBuffer.setSize(2, _buffersize);
   samplerate = _samplerate;
   buffersize = _buffersize;
+  missingPlugins = false;
   loadList(gGetHomePath() + gGetSlash() + "plugins.xml");
 }
 
@@ -137,12 +138,14 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   juce::PluginDescription *pd = knownPluginList.getTypeForFile(fid);
   if (!pd) {
     gLog("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
+    missingPlugins = true;
     return NULL;
   }
 
   Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
   if (!p) {
     gLog("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
+    missingPlugins = true;
     return NULL;
   }
 
@@ -434,6 +437,7 @@ void PluginHost::freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mut
 	freeStack(PluginHost::MASTER_IN, mutex);
 	for (unsigned i=0; i<channels->size(); i++)
 		freeStack(PluginHost::CHANNEL, mutex, channels->at(i));
+  missingPlugins = false;
 }
 
 
@@ -453,6 +457,15 @@ int PluginHost::clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
 		p->setParameter(k, src->getParameter(k));
 	}
 	return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool PluginHost::doesPluginExist(const string &fid)
+{
+  return pluginFormat.doesPluginStillExist(*knownPluginList.getTypeForFile(fid));
 }
 
 

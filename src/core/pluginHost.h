@@ -76,6 +76,11 @@ private:
   int samplerate;
   int buffersize;
 
+  /* missingPlugins
+   * If some plugins from any stack are missing. */
+
+  bool missingPlugins;
+
 public:
 
   enum stackType {
@@ -92,7 +97,6 @@ public:
     string format;
     bool isInstrument;
   };
-
 
   ~PluginHost();
 
@@ -198,17 +202,11 @@ public:
   int clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
     class Channel *ch);
 
-#if 0
+  /* doesPluginExist */
 
-  void processEvents(float *buffer, class Channel *ch);
+  bool doesPluginExist(const string &fid);
 
-  /* createVstMidiEvent
-   * return a pointer to a new VstMidiEvent structure. */
-
-  VstMidiEvent *createVstMidiEvent(uint32_t msg);
-
-  Plugin *getPluginById(int id, int stackType, class Channel *ch=NULL);
-#endif
+  bool hasMissingPlugins() { return missingPlugins; };
 };
 #endif
 

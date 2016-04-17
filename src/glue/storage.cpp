@@ -254,6 +254,13 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	gLog("[glue] patch loaded successfully\n");
 
+#ifdef WITH_VST
+
+	if (G_PluginHost.hasMissingPlugins())
+		gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
+
+#endif
+
 	return res;
 }
 
