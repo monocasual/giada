@@ -87,8 +87,7 @@ void gdPluginChooser::__cb_close() {
 
 void gdPluginChooser::__cb_add() {
   int index = browser->value() - 3; // subtract header lines
-  if (index >= 0) {
-    printf("loading %d\n", index);
+  if (index >= 0 && index < G_PluginHost.countAvailablePlugins()) {
     G_PluginHost.addPlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
     do_callback();
   }

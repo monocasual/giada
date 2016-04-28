@@ -65,6 +65,11 @@ private:
 
   juce::KnownPluginList knownPluginList;
 
+  /* unknownPluginList
+   * List of unrecognized plugins found in a patch. */
+
+  vector<string> unknownPluginList;
+
   vector<class Plugin*> masterOut;
   vector<class Plugin*> masterIn;
 
@@ -137,15 +142,22 @@ public:
   unsigned countPlugins(int stackType, class Channel *ch=NULL);
 
   /* countAvailablePlugins
-  * Return size of knownPluginList. */
+   * Return size of knownPluginList. */
 
   int countAvailablePlugins();
 
+  /* countUnknownPlugins
+   * Return size of unknownPluginList. */
+
+  unsigned countUnknownPlugins();
+
   /* getAvailablePluginInfo
-  * Return the available plugin information (name, type, ...) from
-  * knownPluginList at index 'index'. */
+   * Return the available plugin information (name, type, ...) from
+   * knownPluginList at index 'index'. */
 
   PluginInfo getAvailablePluginInfo(int index);
+
+  string getUnknownPluginInfo(int index);
 
   /* freeStack
    * free plugin stack of type 'stackType'. */

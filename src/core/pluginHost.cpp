@@ -61,6 +61,7 @@ void PluginHost::init(int _buffersize, int _samplerate)
   samplerate = _samplerate;
   buffersize = _buffersize;
   missingPlugins = false;
+  //unknownPluginList.empty();
   loadList(gGetHomePath() + gGetSlash() + "plugins.xml");
 }
 
@@ -139,6 +140,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   if (!pd) {
     gLog("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
     missingPlugins = true;
+    unknownPluginList.push_back(fid);
     return NULL;
   }
 
@@ -233,6 +235,15 @@ int PluginHost::countAvailablePlugins()
 /* -------------------------------------------------------------------------- */
 
 
+unsigned PluginHost::countUnknownPlugins()
+{
+  return unknownPluginList.size();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
 {
   juce::PluginDescription *pd = knownPluginList.getType(i);
@@ -250,6 +261,15 @@ PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
   }
   */
   return pi;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string PluginHost::getUnknownPluginInfo(int i)
+{
+  return unknownPluginList.at(i);
 }
 
 
@@ -438,6 +458,7 @@ void PluginHost::freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mut
 	for (unsigned i=0; i<channels->size(); i++)
 		freeStack(PluginHost::CHANNEL, mutex, channels->at(i));
   missingPlugins = false;
+  unknownPluginList.clear();
 }
 
 

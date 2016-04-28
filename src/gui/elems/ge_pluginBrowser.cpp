@@ -80,6 +80,11 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 		add(s.c_str());
 	}
 
+	for (unsigned i=0; i<G_PluginHost.countUnknownPlugins(); i++) {
+		string s = "?\t?\t?\t?\t? " + G_PluginHost.getUnknownPluginInfo(i) + " ?";
+		add(s.c_str());
+	}
+
 	end();
 }
 
