@@ -135,9 +135,7 @@ src/utils/gui_utils.h                  \
 src/utils/gui_utils.cpp                \
 src/utils/gvector.h                    \
 src/utils/utils.h                      \
-src/utils/utils.cpp                    \
-src/deps/rtaudio-mod/RtAudio.h                     \
-src/deps/rtaudio-mod/RtAudio.cpp
+src/utils/utils.cpp
 
 if WITH_VST
 giada_SOURCES +=                                              \
@@ -151,9 +149,9 @@ src/deps/juce/juce_gui_basics/juce_gui_basics.cpp             \
 src/deps/juce/juce_gui_extra/juce_gui_extra.cpp
 endif
 
-# Check for environment: these vars are defined via AM_CONDITIONAL
-# inside configure.ac
-# Note: CPPFLAGS ---> C preprocessor, while CXXFLAGS ---> C++ compiler.
+# Check for environment: WITH_VST, LINUX, WINDOWS and OSX are varibles defined
+# via AM_CONDITIONAL inside configure.ac.
+# Note: CPPFLAGS = C preprocessor flags, CXXFLAGS = C++ compiler flags.
 
 giada_CXXFLAGS = -std=c++11 -Wall -Werror
 giada_CPPFLAGS =
@@ -171,6 +169,7 @@ giada_CPPFLAGS += -I./src/deps/juce -I./src/deps/vst -I/usr/include \
 endif
 
 if LINUX
+giada_SOURCES += src/deps/rtaudio-mod/RtAudio.h src/deps/rtaudio-mod/RtAudio.cpp
 # mute rtAudio error on variable length array
 giada_CXXFLAGS += -Wno-error=vla
 giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
