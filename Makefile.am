@@ -135,7 +135,9 @@ src/utils/gui_utils.h                  \
 src/utils/gui_utils.cpp                \
 src/utils/gvector.h                    \
 src/utils/utils.h                      \
-src/utils/utils.cpp
+src/utils/utils.cpp                    \
+src/deps/rtaudio-mod/RtAudio.h                     \
+src/deps/rtaudio-mod/RtAudio.cpp
 
 if WITH_VST
 giada_SOURCES +=                                              \
@@ -154,6 +156,7 @@ endif
 # Note: CPPFLAGS ---> C preprocessor, while CXXFLAGS ---> C++ compiler.
 
 giada_CXXFLAGS = -std=c++11 -Wall -Werror
+giada_CPPFLAGS =
 
 # TODO - these are flags for Linux only!
 # Also, JUCE makes GCC complain if compiled with optimization set to -O2.
@@ -163,14 +166,17 @@ giada_CXXFLAGS = -std=c++11 -Wall -Werror
 #
 
 if WITH_VST
-giada_CPPFLAGS = -I./src/deps/juce -I./src/deps/vst -I/usr/include \
+giada_CPPFLAGS += -I./src/deps/juce -I./src/deps/vst -I/usr/include \
   -I/usr/include/freetype2
 endif
 
 if LINUX
-giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm \
-	src/deps/rtaudio-mod/librtaudio.a -ljack -lasound -lpthread -ldl \
-	-lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson -lfreetype
+# mute rtAudio error on variable length array
+giada_CXXFLAGS += -Wno-error=vla
+giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
+giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
+  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
+  -lfreetype
 endif
 
 if WINDOWS
@@ -200,13 +206,6 @@ endif
 
 resource.o:
 	windres src/ext/resource.rc -o resource.o
-
-# custom rtaudio
-
-src/deps/rtaudio-mod/librtaudio.a:
-	@cd src/deps/rtaudio-mod; echo "Building RtAudio for Linux..."; \
-	./configure --with-jack --with-alsa --with-pulse; \
-	make;
 
 # make test --------------------------------------------------------------------
 
