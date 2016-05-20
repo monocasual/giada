@@ -15,6 +15,7 @@
 0.12.2 --- ...
 - Update RtAudio to version 4.1.2
 - Simplify custom RtAudio build and inclusion on Linux
+- Untangle Channels' code from global variables
 
 
 0.12.1 --- 2016 . 05 . 06
