@@ -52,10 +52,11 @@ private:
 	static void cb_add  (Fl_Widget *w, void *p);
   inline void __cb_close();
   inline void __cb_add  ();
-  
+
 public:
 
 	gdPluginChooser(int x, int y, int w, int h, int stackType, class Channel *ch=NULL);
+  ~gdPluginChooser();
 };
 
 

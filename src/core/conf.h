@@ -59,7 +59,7 @@ private:
 	/* createConfigFolder
 	 * Create local folder where to put the configuration file. Path differs from
 	 * OS to OS. */
-	 
+
 	int createConfigFolder();
 
 public:
@@ -122,6 +122,12 @@ public:
 	int  bpmX, bpmY;
 	int  beatsX, beatsY;
 	int  aboutX, aboutY;
+
+#ifdef WITH_VST
+
+	int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
+
+#endif
 
 	int  read();
 	int  write();

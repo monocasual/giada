@@ -33,6 +33,7 @@
 #include "../../utils/gui_utils.h"
 #include "../../core/channel.h"
 #include "../../core/mixer.h"
+#include "../../core/conf.h"
 #include "../../core/pluginHost.h"
 #include "../elems/ge_pluginBrowser.h"
 #include "../elems/ge_mixed.h"
@@ -41,10 +42,11 @@
 
 extern PluginHost G_PluginHost;
 extern Mixer      G_Mixer;
+extern Conf       G_Conf;
 
 
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, class Channel *ch)
-  : gWindow(640, 480, "Available plugins"), ch(ch), stackType(stackType)
+  : gWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(stackType)
 {
   browser = new gePluginBrowser(8, 8, w()-16, h()-44);
 
@@ -64,6 +66,18 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, clas
   resizable(browser);
 	gu_setFavicon(this);
   show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gdPluginChooser::~gdPluginChooser()
+{
+  G_Conf.pluginChooserX = x();
+  G_Conf.pluginChooserY = y();
+  G_Conf.pluginChooserW = w();
+  G_Conf.pluginChooserH = h();  
 }
 
 

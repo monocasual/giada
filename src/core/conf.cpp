@@ -140,6 +140,15 @@ void Conf::init()
 
 	pianoRollY = -1;
 	pianoRollH = 422;
+
+	#ifdef WITH_VST
+
+	pluginChooserX = 0;
+	pluginChooserY = 0;
+	pluginChooserW = 640;
+	pluginChooserH = 480;
+
+	#endif
 }
 
 
@@ -232,6 +241,15 @@ int Conf::read()
 	if (!setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
 
+#ifdef WITH_VST
+
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_X, pluginChooserX)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y, pluginChooserY)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_W, pluginChooserW)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_H, pluginChooserH)) return 0;
+
+#endif
+
 	json_decref(jRoot);
 
 	sanitize();
@@ -319,6 +337,15 @@ int Conf::write()
 	json_object_set_new(jRoot, CONF_KEY_BEATS_Y,                   json_integer(beatsY));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));
+
+#ifdef WITH_VST
+
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_X,          json_integer(pluginChooserX));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y,          json_integer(pluginChooserY));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_W,          json_integer(pluginChooserW));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_H,          json_integer(pluginChooserH));
+
+#endif
 
   if (json_dump_file(jRoot, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
     gLog("[Conf::write] unable to write configuration file!\n");

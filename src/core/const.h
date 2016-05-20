@@ -445,6 +445,10 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_BEATS_Y                  "beats_y"
 #define CONF_KEY_ABOUT_X                  "about_x"
 #define CONF_KEY_ABOUT_Y                  "about_y"
+#define CONF_KEY_PLUGIN_CHOOSER_X         "plugin_chooser_x"
+#define CONF_KEY_PLUGIN_CHOOSER_Y         "plugin_chooser_y"
+#define CONF_KEY_PLUGIN_CHOOSER_W         "plugin_chooser_w"
+#define CONF_KEY_PLUGIN_CHOOSER_H         "plugin_chooser_h"
 
 /* JSON midimaps keys */
 
