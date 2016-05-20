@@ -96,19 +96,20 @@ public:
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
 	void kill       (int frame);
 	void empty      ();
-	void stopBySeq  ();
+	void stopBySeq  (bool chansStopOnSeqHalt);
 	void stop       ();
 	void rewind     ();
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
 	void reset      (int frame);
-	int  load       (const char *file);
-	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch);
+	int  load       (const char *file, int samplerate, int rsmpQuality);
+	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch,
+			int samplerate, int rsmpQuality);
   int  readPatch  (const string &basePath, int i, class Patch *patch,
-			pthread_mutex_t *pluginMutex);
+			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 	int  writePatch (int i, bool isProject, class Patch *patch);
 	void quantize   (int index, int localFrame, int globalFrame);
-	void onZero     (int frame);
+	void onZero     (int frame, bool recsStopOnChanHalt);
 	void onBar      (int frame);
 	void parseAction(recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning);
@@ -162,7 +163,7 @@ public:
 	/* allocEmpty
 	 * alloc an empty wave used in input recordings. */
 
-	bool allocEmpty(int frames, int takeId);
+	bool allocEmpty(int frames, int samplerate, int takeId);
 
 	/* canInputRec
 	 * true if channel can host a new wave from input recording. */
@@ -170,11 +171,12 @@ public:
 	bool  canInputRec();
 
 	/* setReadActions
-	 * if enabled, recorder will read actions from this channel */
+	 * if enabled, recorder will read actions from this channel. If
+	 * recsStopOnChanHalt == true, stop reading actions right away. */
 
-	void setReadActions(bool v);
+	void setReadActions(bool v, bool recsStopOnChanHalt);
 
-	/* ---------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------ */
 
 	class  Wave *wave;
 	int    tracker;         // chan position

@@ -409,7 +409,7 @@ void gdEditor::__cb_reload()
 
   /* no need for glue_loadChan, there's no gui to refresh */
 
-  ch->load(ch->wave->pathfile.c_str());
+  ch->load(ch->wave->pathfile.c_str(), G_Conf.samplerate, G_Conf.rsmpQuality);
 
   glue_setBoost(this, ch, DEFAULT_BOOST, true);
   glue_setPitch(this, ch, gDEFAULT_PITCH, true);

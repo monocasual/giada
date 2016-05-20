@@ -224,8 +224,10 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 		mainWin->keyboard->addColumn(col->width);
 		for (unsigned k=0; k<G_Patch.channels.size(); k++) {
 			if (G_Patch.channels.at(k).column == col->index) {
-				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column, G_Patch.channels.at(k).type);
-				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins);
+				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column,
+						G_Patch.channels.at(k).type);
+				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins,
+						G_Conf.samplerate, G_Conf.rsmpQuality);
 			}
 			__glue_setProgressBar__(status, steps);
 		}

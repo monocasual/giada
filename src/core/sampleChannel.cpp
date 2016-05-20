@@ -40,11 +40,6 @@
 #include "kernelMidi.h"
 
 
-extern Patch_DEPR_ G_Patch_DEPR_;
-extern Patch       G_Patch;
-extern Conf        G_Conf;
-
-
 using std::string;
 
 
@@ -431,7 +426,7 @@ void SampleChannel::sum(int frame, bool running)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::onZero(int frame)
+void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 {
 	if (wave == NULL)
 		return;
@@ -463,12 +458,12 @@ void SampleChannel::onZero(int frame)
 
 	if (recStatus == REC_ENDING) {
 		recStatus = REC_STOPPED;
-		setReadActions(false);  // rec stop
+		setReadActions(false, recsStopOnChanHalt);  // rec stop
 	}
 	else
 	if (recStatus == REC_WAITING) {
 		recStatus = REC_READING;
-		setReadActions(true);   // rec start
+		setReadActions(true, recsStopOnChanHalt);   // rec start
 	}
 }
 
@@ -606,13 +601,13 @@ void SampleChannel::calcFadeoutStep()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setReadActions(bool v)
+void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
 {
 	if (v)
 		readActions = true;
 	else {
 		readActions = false;
-		if (G_Conf.recsStopOnChanHalt)
+		if (recsStopOnChanHalt)
 			kill(0);  /// FIXME - wrong frame value
 	}
 }
@@ -711,16 +706,16 @@ void SampleChannel::pushWave(Wave *w)
 /* -------------------------------------------------------------------------- */
 
 
-bool SampleChannel::allocEmpty(int frames, int takeId)
+bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 {
 	Wave *w = new Wave();
-	if (!w->allocEmpty(frames, G_Conf.samplerate))
+	if (!w->allocEmpty(frames, samplerate))
 		return false;
 
 	char wname[32];
 	sprintf(wname, "TAKE-%d", takeId);
 
-	w->pathfile = gGetCurrentPath()+"/"+wname; // FIXME - use gGetSlash() in utils.h
+	w->pathfile = gGetCurrentPath() + "/" + wname; // FIXME - use gGetSlash() in utils.h
 	w->name     = wname;
 	wave        = w;
 	status      = STATUS_OFF;
@@ -766,7 +761,7 @@ void SampleChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::stopBySeq()
+void SampleChannel::stopBySeq(bool chansStopOnSeqHalt)
 {
   /* Loop-mode samples in wait status get stopped right away. */
 
@@ -787,7 +782,7 @@ void SampleChannel::stopBySeq()
    *  - Recorder's channel is active (altrimenti può capitare che si stoppino i
    *    sample suonati manualmente in un canale con rec disattivate) */
 
-	if (G_Conf.chansStopOnSeqHalt) {
+	if (chansStopOnSeqHalt) {
     if ((mode & LOOP_ANY) || (hasActions && readActions && status == STATUS_PLAY))
       kill(0);
   }
@@ -814,7 +809,7 @@ void SampleChannel::stop()
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::load(const char *file)
+int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 {
 	if (strcmp(file, "") == 0 || gIsDir(file)) {
 		gLog("[SampleChannel] file not specified\n");
@@ -846,10 +841,10 @@ int SampleChannel::load(const char *file)
 	if (w->channels() == 1) /** FIXME: error checking  */
 		wfx_monoToStereo(w);
 
-	if (w->rate() != G_Conf.samplerate) {
+	if (w->rate() != samplerate) {
 		gLog("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
-				w->rate(), G_Conf.samplerate);
-		w->resample(G_Conf.rsmpQuality, G_Conf.samplerate);
+				w->rate(), samplerate);
+		w->resample(rsmpQuality, samplerate);
 	}
 
 	pushWave(w);
@@ -863,9 +858,10 @@ int SampleChannel::load(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
+int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
+		int samplerate, int rsmpQuality)
 {
-	int res = load(f);
+	int res = load(f, samplerate, rsmpQuality);
 
 		volume      = patch->getVol(i);
 		key         = patch->getKey(i);
@@ -912,12 +908,12 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
 
 
 int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
-		pthread_mutex_t *pluginMutex)
+		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatch("", i, patch, pluginMutex);
+	Channel::readPatch("", i, patch, pluginMutex, samplerate, rsmpQuality);
 
 	Patch::channel_t *pch = &patch->channels.at(i);
 
@@ -928,7 +924,7 @@ int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
 	midiInReadActions = pch->midiInReadActions;
 	midiInPitch       = pch->midiInPitch;
 
-	int res = load((basePath + pch->samplePath).c_str());
+	int res = load((basePath + pch->samplePath).c_str(), samplerate, rsmpQuality);
 	if (res == SAMPLE_LOADED_OK) {
 		setBegin(pch->begin);
 		setEnd  (pch->end);

@@ -269,7 +269,7 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 
 
 int Channel::readPatch(const string &path, int i, Patch *patch,
-    pthread_mutex_t *pluginMutex)
+    pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
 	int ret = 1;
 	Patch::channel_t *pch = &patch->channels.at(i);

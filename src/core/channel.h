@@ -108,9 +108,10 @@ public:
 	/* readPatch
 	 * Fill channel with data from patch. */
 
-	virtual int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch) = 0;
+	virtual int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch,
+			int samplerate, int rsmpQuality) = 0;
 	virtual int readPatch(const string &basePath, int i, class Patch *patch,
-			pthread_mutex_t *pluginMutex);
+			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */
@@ -149,7 +150,7 @@ public:
 	/* stopBySeq
 	 * action to do when channel is stopped by sequencer. */
 
-	virtual void stopBySeq() = 0;
+	virtual void stopBySeq(bool chansStopOnSeqHalt) = 0;
 
 	/* quantize
 	 * start channel according to quantizer. Index = array index of
@@ -161,7 +162,7 @@ public:
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
 
-	virtual void onZero(int frame) = 0;
+	virtual void onZero(int frame, bool recsStopOnChanHalt) = 0;
 
 	/* onBar
 	 * action to do when a bar has passed. */

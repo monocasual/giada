@@ -61,7 +61,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 
 	G_Conf.samplePath = gDirname(fname);
 
-	int result = ch->load(fname);
+	int result = ch->load(fname, G_Conf.samplerate, G_Conf.rsmpQuality);
 
 	if (result == SAMPLE_LOADED_OK)
 		mainWin->keyboard->updateChannel(ch->guiChannel);

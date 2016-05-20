@@ -135,7 +135,7 @@ void MidiChannel::parseAction(recorder::action *a, int localFrame,
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::onZero(int frame)
+void MidiChannel::onZero(int frame, bool recsStopOnChanHalt)
 {
 	if (status == STATUS_ENDING) {
 		status = STATUS_OFF;
@@ -218,7 +218,7 @@ void MidiChannel::start(int frame, bool doQuantize, int quantize,
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::stopBySeq()
+void MidiChannel::stopBySeq(bool chansStopOnSeqHalt)
 {
 	kill(0);
 }
@@ -244,7 +244,8 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
+int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
+		int samplerate, int rsmpQuality)
 {
 	volume      = patch->getVol(i);
 	index       = patch->getIndex(i);
@@ -268,9 +269,9 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch)
 
 
 int MidiChannel::readPatch(const string &basePath, int i, Patch *patch,
-		pthread_mutex_t *pluginMutex)
+		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
-	Channel::readPatch("", i, patch, pluginMutex);
+	Channel::readPatch("", i, patch, pluginMutex, samplerate, rsmpQuality);
 
 	Patch::channel_t *pch = &patch->channels.at(i);
 

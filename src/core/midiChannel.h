@@ -62,17 +62,18 @@ public:
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning);
 	void kill       (int frame);
 	void empty      ();
-	void stopBySeq  ();
+	void stopBySeq  (bool chansStopOnSeqHalt);
 	void stop       ();
 	void rewind     ();
 	void setMute    (bool internal);
 	void unsetMute  (bool internal);
-	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch);
+	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch,
+			int samplerate, int rsmpQuality);
 	int  readPatch  (const string &basePath, int i, class Patch *patch,
-			pthread_mutex_t *pluginMutex);
+			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 	int  writePatch (int i, bool isProject, class Patch *patch);
 	void quantize   (int index, int localFrame, int globalFrame);
-	void onZero     (int frame);
+	void onZero     (int frame, bool recsStopOnChanHalt);
 	void onBar      (int frame);
 	void parseAction(recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning);
