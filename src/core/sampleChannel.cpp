@@ -712,11 +712,8 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 	if (!w->allocEmpty(frames, samplerate))
 		return false;
 
-	char wname[32];
-	sprintf(wname, "TAKE-%d", takeId);
-
-	w->pathfile = gGetCurrentPath() + "/" + wname; // FIXME - use gGetSlash() in utils.h
-	w->name     = wname;
+	w->name     = "TAKE-" + gItoa(takeId);
+	w->pathfile = gGetCurrentPath() + gGetSlash() + w->name;
 	wave        = w;
 	status      = STATUS_OFF;
 	begin       = 0;
