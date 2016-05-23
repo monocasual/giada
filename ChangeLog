@@ -14,6 +14,7 @@
 
 0.12.2 --- ...
 - Update RtAudio to version 4.1.2
+- Sortable plugins list
 - Simplify custom RtAudio build and inclusion on Linux
 - Store position and size of Available Plugins window
 - Untangle Channels' code from global variables
