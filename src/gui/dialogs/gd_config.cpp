@@ -161,6 +161,8 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("DirectSound");
 	if (kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO))
 		soundsys->add("ASIO");
+	if (kernelAudio::hasAPI(RtAudio::WINDOWS_WASAPI))
+		soundsys->add("WASAPI");
 
 	switch (G_Conf.soundSystem) {
 		case SYS_API_NONE:
@@ -171,6 +173,9 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 			break;
 		case SYS_API_ASIO:
 			soundsys->showItem("ASIO");
+			break;
+		case SYS_API_WASAPI:
+			soundsys->showItem("WASAPI");
 			break;
 	}
 

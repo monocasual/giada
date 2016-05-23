@@ -76,7 +76,6 @@
 #define MAX_BARS				   32
 #define MAX_PATCHNAME_LEN	 32
 #define DB_MIN_SCALE		   60.0f
-#define MAX_VST_EVENTS     32
 #define MIN_COLUMN_WIDTH   140
 
 
@@ -89,7 +88,8 @@
 #define SYS_API_ASIO		0x08  // 0000 1000
 #define SYS_API_CORE		0x10  // 0001 0000
 #define SYS_API_PULSE   0x20  // 0010 0000
-#define SYS_API_ANY     0x3F  // 0011 1111
+#define SYS_API_WASAPI  0x40  // 0100 0000
+#define SYS_API_ANY     0x7F  // 0111 1111
 
 #define KERNEL_OK					 0
 #define KERNEL_UNDERRUN	  -1

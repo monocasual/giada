@@ -61,7 +61,9 @@ int openDevice(
 {
 	api = _api;
 	gLog("[KA] using system 0x%x\n", api);
+
 #if defined(__linux__)
+
 	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		system = new RtAudio(RtAudio::UNIX_JACK);
 	else
@@ -70,16 +72,25 @@ int openDevice(
 	else
 	if (api == SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
 		system = new RtAudio(RtAudio::LINUX_PULSE);
+
 #elif defined(_WIN32)
+
 	if (api == SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
 		system = new RtAudio(RtAudio::WINDOWS_DS);
 	else
 	if (api == SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
 		system = new RtAudio(RtAudio::WINDOWS_ASIO);
+	else
+	if (api == SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
+		system = new RtAudio(RtAudio::WINDOWS_WASAPI);
+
 #elif defined(__APPLE__)
+
 	if (api == SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
 		system = new RtAudio(RtAudio::MACOSX_CORE);
+		
 #endif
+
 	else {
 		G_audio_status = false;
 		return 0;
