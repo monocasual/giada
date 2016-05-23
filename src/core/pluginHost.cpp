@@ -493,6 +493,27 @@ bool PluginHost::doesPluginExist(const string &fid)
 /* -------------------------------------------------------------------------- */
 
 
+void PluginHost::sortPlugins(int method)
+{
+  switch (method) {
+    case sortMethod::NAME:
+      knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, true);
+      break;
+    case sortMethod::CATEGORY:
+      knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, true);
+      break;
+    case sortMethod::MANUFACTURER:
+      knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, true);
+      break;
+    case sortMethod::FORMAT:
+      knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, true);
+      break;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+
+
 void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
 {
 #if 0

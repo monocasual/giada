@@ -126,6 +126,7 @@ public:
 #ifdef WITH_VST
 
 	int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
+	int pluginSortMethod;
 
 #endif
 

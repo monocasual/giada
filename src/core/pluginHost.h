@@ -94,6 +94,13 @@ public:
 		CHANNEL
 	};
 
+  enum sortMethod {
+    NAME,
+    CATEGORY,
+    MANUFACTURER,
+    FORMAT
+  };
+
   struct PluginInfo {
     string uid;
     string name;
@@ -219,6 +226,8 @@ public:
   bool doesPluginExist(const string &fid);
 
   bool hasMissingPlugins() { return missingPlugins; };
+
+  void sortPlugins(int sortMethod);
 };
 #endif
 

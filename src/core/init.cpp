@@ -70,8 +70,12 @@ void init_prepareParser()
 	G_Conf.read();
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
+
 #ifdef WITH_VST
+
 	G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
+	G_PluginHost.sortPlugins(G_Conf.pluginSortMethod);
+
 #endif
 
 

@@ -52,6 +52,8 @@ private:
 public:
 
 	gePluginBrowser(int x, int y, int w, int h);
+
+	void refresh();
 };
 
 #endif

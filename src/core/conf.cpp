@@ -147,6 +147,7 @@ void Conf::init()
 	pluginChooserY = 0;
 	pluginChooserW = 640;
 	pluginChooserH = 480;
+	pluginSortMethod = 0;
 
 	#endif
 }
@@ -247,6 +248,7 @@ int Conf::read()
 	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y, pluginChooserY)) return 0;
 	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_W, pluginChooserW)) return 0;
 	if (!setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_H, pluginChooserH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_PLUGIN_SORT_METHOD, pluginSortMethod)) return 0;
 
 #endif
 
@@ -340,10 +342,11 @@ int Conf::write()
 
 #ifdef WITH_VST
 
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_X,          json_integer(pluginChooserX));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y,          json_integer(pluginChooserY));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_W,          json_integer(pluginChooserW));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_H,          json_integer(pluginChooserH));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_X,   json_integer(pluginChooserX));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y,   json_integer(pluginChooserY));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_W,   json_integer(pluginChooserW));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_H,   json_integer(pluginChooserH));
+	json_object_set_new(jRoot, CONF_KEY_PLUGIN_SORT_METHOD, json_integer(pluginSortMethod));
 
 #endif
 

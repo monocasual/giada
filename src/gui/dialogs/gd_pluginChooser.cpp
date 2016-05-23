@@ -48,16 +48,31 @@ extern Conf       G_Conf;
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, class Channel *ch)
   : gWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(stackType)
 {
-  browser = new gePluginBrowser(8, 8, w()-16, h()-44);
+  /* top area */
+  Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);
+  sortMethod = new gChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
+    gBox *b1 = new gBox(sortMethod->x()+sortMethod->w(), group_top->y(), 100, 20); 	// spacer window border <-> menu
+  group_top->resizable(b1);
+  group_top->end();
 
+  /* center browser */
+  browser = new gePluginBrowser(8, 36, w()-16, h()-70);
+
+  /* ok/cancel buttons */
   Fl_Group *group_btn = new Fl_Group(8, browser->y()+browser->h()+8, w()-16, h()-browser->h()-16);
-    gBox *b = new gBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
+    gBox *b2 = new gBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
     addBtn = new gClick(w()-88, group_btn->y(), 80, 20, "Add");
     cancelBtn = new gClick(addBtn->x()-88, group_btn->y(), 80, 20, "Cancel");
-  group_btn->resizable(b);
+  group_btn->resizable(b2);
   group_btn->end();
 
   end();
+
+  sortMethod->add("Name");
+  sortMethod->add("Category");
+  sortMethod->add("Manufacturer");
+  sortMethod->callback(cb_sort, (void*) this);
+  sortMethod->value(G_Conf.pluginSortMethod);
 
   addBtn->callback(cb_add, (void*) this);
   addBtn->shortcut(FL_Enter);
@@ -77,15 +92,17 @@ gdPluginChooser::~gdPluginChooser()
   G_Conf.pluginChooserX = x();
   G_Conf.pluginChooserY = y();
   G_Conf.pluginChooserW = w();
-  G_Conf.pluginChooserH = h();  
+  G_Conf.pluginChooserH = h();
+  G_Conf.pluginSortMethod = sortMethod->value();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::cb_close(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->__cb_close(); }
-void gdPluginChooser::cb_add(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->__cb_add(); }
+void gdPluginChooser::cb_close(Fl_Widget *v, void *p) { ((gdPluginChooser*)p)->__cb_close(); }
+void gdPluginChooser::cb_add(Fl_Widget *v, void *p)   { ((gdPluginChooser*)p)->__cb_add(); }
+void gdPluginChooser::cb_sort(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->__cb_sort(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -93,6 +110,15 @@ void gdPluginChooser::cb_add(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->__
 
 void gdPluginChooser::__cb_close() {
 	do_callback();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdPluginChooser::__cb_sort() {
+	G_PluginHost.sortPlugins(sortMethod->value());
+  browser->refresh();
 }
 
 

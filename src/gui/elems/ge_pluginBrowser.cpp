@@ -69,6 +69,19 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
   column_widths(widths);
   column_char('\t');       // tabs as column delimiters
 
+	refresh();
+
+	end();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePluginBrowser::refresh()
+{
+	clear();
+	
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
 
@@ -84,8 +97,6 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 		string s = "?\t?\t?\t?\t? " + G_PluginHost.getUnknownPluginInfo(i) + " ?";
 		add(s.c_str());
 	}
-
-	end();
 }
 
 

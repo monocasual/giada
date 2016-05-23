@@ -44,14 +44,17 @@ private:
   class Channel *ch;      // ch == NULL ? masterOut
 	int   stackType;
 
+  class gChoice         *sortMethod;
   class gClick          *addBtn;
   class gClick          *cancelBtn;
 	class gePluginBrowser *browser;
 
 	static void cb_close(Fl_Widget *w, void *p);
 	static void cb_add  (Fl_Widget *w, void *p);
+	static void cb_sort (Fl_Widget *w, void *p);
   inline void __cb_close();
   inline void __cb_add  ();
+  inline void __cb_sort ();
 
 public:
 
