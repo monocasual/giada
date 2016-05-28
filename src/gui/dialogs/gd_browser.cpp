@@ -126,9 +126,6 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 
 	updir->callback(cb_up, (void*) this);
 	cancel->callback(cb_close, (void*) this);
-	//browser->callback(cb_down, this);
-	//browser->__DEPR__path = where;
-	//browser->__DEPR__init(initPath);
 
 	browser->callback(cb_down, (void*) this);
 	browser->loadDir(initPath);
@@ -253,16 +250,11 @@ void gdBrowser::__cb_down()
 
 	if (gIsDir(path))
 		browser->loadDir(path);
-	else
-		printf("path is file, TODO\n");
-
-#if 0
-	if (!gIsDir(path)) {
-
+	else {
 		/* set the name of the patch/sample/project as the selected item */
 
 		if (type == BROWSER_SAVE_PATCH || type == BROWSER_SAVE_SAMPLE || type == BROWSER_SAVE_PROJECT) {
-			if (gIsProject(path)) {
+			if (gIsProject(path.c_str())) {
 				string tmp = browser->text(browser->value());
 				tmp.erase(0, 4);
 				name->value(tmp.c_str());
@@ -270,12 +262,7 @@ void gdBrowser::__cb_down()
 			else
 				name->value(browser->text(browser->value()));
 		}
-		return;
 	}
-	browser->clear();
-	browser->__DEPR__down_dir(path);
-	browser->sort();
-#endif
 }
 
 
