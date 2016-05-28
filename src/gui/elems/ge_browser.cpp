@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_browser
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <limits.h>
@@ -34,14 +34,15 @@
 #include "ge_browser.h"
 
 
-gBrowser::gBrowser(int x, int y, int w, int h, const char *L)
- : Fl_Hold_Browser(x, y, w, h, L)
+gBrowser::gBrowser(int x, int y, int w, int h)
+ : Fl_File_Browser(x, y, w, h)
 {
 	box(G_BOX);
 	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
 	color(COLOR_BG_0);
+  type(FL_HOLD_BROWSER); // single selection
 
 	this->scrollbar.color(COLOR_BG_0);
 	this->scrollbar.selection_color(COLOR_BG_1);
@@ -52,25 +53,57 @@ gBrowser::gBrowser(int x, int y, int w, int h, const char *L)
 	this->hscrollbar.selection_color(COLOR_BG_1);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
 	this->hscrollbar.slider(G_BOX);
+
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gBrowser::~gBrowser() {}
+void gBrowser::loadDir(const string &dir)
+{
+  printf("loading: %s\n", dir.c_str());
+  currentDir = dir;
+  load(dir.c_str());
+}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gBrowser::init(const char *init_path) {
+string gBrowser::getSelectedItem()
+{
+  string currentValue = text(value());
+  string out;
+  if (currentValue[0] == G_SLASH)
+    out = currentDir + text(value());
+  else
+    out = currentDir + (currentDir.back() != G_SLASH ? G_SLASH_STR : "") + text(value());
+
+  printf("currentDir=%s, val=%s ", currentDir.c_str(), text(value()));
+  printf("out=%s\n", out.c_str());
+
+  return gGetRealPath(out);
+}
+
+
+/* DEPRECATED STUFF ------------------------------------------------------- */
+/* DEPRECATED STUFF ------------------------------------------------------- */
+/* DEPRECATED STUFF ------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+
+
+void gBrowser::__DEPR__init(const char *init_path) {
 
 	gLog("[gBrowser] init path = '%s'\n", init_path);
 
 	if (init_path == NULL || !gIsDir(init_path)) {
+
 #if defined(__linux__) || defined(__APPLE__)
-		path_obj->value("/home");
+
+		__DEPR__path->value("/home");
+
 #elif defined(_WIN32)
 
 		/* SHGetFolderPath is deprecated. We should use SHGetKnownFolderPath
@@ -79,25 +112,27 @@ void gBrowser::init(const char *init_path) {
 
 		char winRoot[1024];
 		SHGetFolderPath(NULL, CSIDL_COMMON_DESKTOPDIRECTORY, NULL, 0, winRoot); // si parte dal Desktop
-		path_obj->value(winRoot);
+		path->value(winRoot);
+
 #endif
+
 		gLog("[gBrowser] init_path null or invalid, using default\n");
 	}
 	else
-		path_obj->value(init_path);
+		__DEPR__path->value(init_path);
 
-	refresh();
+	__DEPR__refresh();
 	sort();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gBrowser::refresh() {
+void gBrowser::__DEPR__refresh() {
   DIR *dp;
   struct dirent *ep;
-  dp = opendir(path_obj->value());
+  dp = opendir(__DEPR__path->value());
   if (dp != NULL) {
 		while ((ep = readdir(dp))) {
 
@@ -111,7 +146,7 @@ void gBrowser::refresh() {
 					/* is it a folder? add square brackets. Is it a file? Append
 					 * a '/' (on Windows seems useless, though) */
 
-					std::string file = path_obj->value();
+					std::string file = __DEPR__path->value();
 					file.insert(file.size(), gGetSlash());
 					file += ep->d_name;
 
@@ -134,43 +169,32 @@ void gBrowser::refresh() {
 		closedir(dp);
   }
   else
-    gLog("[gBrowser] Couldn't open the directory '%s'\n", path_obj->value());
+    gLog("[gBrowser] Couldn't open the directory '%s'\n", __DEPR__path->value());
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gBrowser::sort() {
-	for (int t=1; t<=size(); t++)
-		for (int r=t+1; r<=size(); r++)
-			if (strcmp(text(t), text(r)) > 0)
-				swap(t,r);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void gBrowser::up_dir() {
+void gBrowser::__DEPR__up_dir() {
 
 	/* updir = remove last folder from the path. Start from strlen(-1) to
 	 * skip the trailing slash */
 
-	int i = strlen(path_obj->value())-1;
+	int i = strlen(__DEPR__path->value())-1;
 
 	/* on Windows an updir from the path "X:\" (3 chars long) must redirect
 	 * to the list of available devices. */
 
 #if defined(_WIN32)
-	if (i <= 3 || !strcmp(path_obj->value(), "All drives")) {
-		path_obj->value("All drives");
+	if (i <= 3 || !strcmp(__DEPR__path->value(), "All drives")) {
+		path->value("All drives");
 		showDrives();
 		return;
 	}
 	else {
 		while (i >= 0) {
-			if (path_obj->value()[i] == '\\')
+			if (__DEPR__path->value()[i] == '\\')
 				break;
 			i--;
 		}
@@ -178,7 +202,7 @@ void gBrowser::up_dir() {
 		/* delete the last part of the string, from i to len-i, ie everything
 		 * after the "/" */
 
-		std::string tmp = path_obj->value();
+		std::string tmp = __DEPR__path->value();
 		tmp.erase(i, tmp.size()-i);
 
 		/* if tmp.size == 2 we have something like 'C:'. Add a trailing
@@ -187,12 +211,12 @@ void gBrowser::up_dir() {
 		if (tmp.size() == 2)
 			tmp += "\\";
 
-		path_obj->value(tmp.c_str());
+		__DEPR__path->value(tmp.c_str());
 		refresh();
 	}
 #elif defined(__linux__) || defined (__APPLE__)
 	while (i >= 0) {
-		if (path_obj->value()[i] == '/')
+		if (__DEPR__path->value()[i] == '/')
 			break;
 		i--;
 	}
@@ -200,53 +224,53 @@ void gBrowser::up_dir() {
 	/* i == 0 means '/', the root dir. It's meaningless to go updir */
 
 	if (i==0)
-		path_obj->value("/");
+		__DEPR__path->value("/");
 	else {
 
 		/* delete the last part of the string, from i to len-i, ie everything
 		 * after the "/" */
 
-		std::string tmp = path_obj->value();
+		std::string tmp = __DEPR__path->value();
 		tmp.erase(i, tmp.size()-i);
-		path_obj->value(tmp.c_str());
+		__DEPR__path->value(tmp.c_str());
 	}
-	refresh();
+	__DEPR__refresh();
 #endif
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gBrowser::down_dir(const char *path) {
-	path_obj->value(path);
-	refresh();
+void gBrowser::__DEPR__down_dir(const char *p) {
+	__DEPR__path->value(p);
+	__DEPR__refresh();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-const char *gBrowser::get_selected_item() {
+const char *gBrowser::__DEPR__get_selected_item() {
 
 	/* click on an empty line */
 
 	if (text(value()) == NULL)
 		return NULL;
 
-	selected_item = text(value());
+	__DEPR__selected_item = text(value());
 
 	/* @ = formatting marks.
 	 * @b = bold, i.e. a directory. Erease '@b[' and ']' */
 
-	if (selected_item[0] == '@') {
-		if (selected_item[1] == 'b') {
-			selected_item.erase(0, 3);
-			selected_item.erase(selected_item.size()-1, 1);
+	if (__DEPR__selected_item[0] == '@') {
+		if (__DEPR__selected_item[1] == 'b') {
+			__DEPR__selected_item.erase(0, 3);
+			__DEPR__selected_item.erase(__DEPR__selected_item.size()-1, 1);
 		}
 		else
-		if (selected_item[1] == 'i')
-			selected_item.erase(0, 4);
+		if (__DEPR__selected_item[1] == 'i')
+			__DEPR__selected_item.erase(0, 4);
 	}
 
 #if defined(__linux__) || defined(__APPLE__)
@@ -254,33 +278,33 @@ const char *gBrowser::get_selected_item() {
 	/* add path to file name, to get an absolute path. Avoid double
 	 * slashes like '//' */
 
-	if (strcmp("/", path_obj->value()))
-		selected_item.insert(0, "/");
+	if (strcmp("/", __DEPR__path->value()))
+		__DEPR__selected_item.insert(0, "/");
 
-	selected_item.insert(0, path_obj->value());
-	return selected_item.c_str();
+	__DEPR__selected_item.insert(0, __DEPR__path->value());
+	return __DEPR__selected_item.c_str();
 #elif defined(_WIN32)
 
 	/* if path is 'All drives' we are in the devices list and the user
 	 * has clicked on a device such as 'X:\' */
 
-	if (strcmp(path_obj->value(), "All drives") == 0)
-			return selected_item.c_str();
+	if (strcmp(__DEPR__path->value(), "All drives") == 0)
+			return __DEPR__selected_item.c_str();
 	else {
 
 		/* add '\' if the path is like 'X:\' */
 
-		if (strlen(path_obj->value()) > 3) /// shouln't it be == 3?
-			selected_item.insert(0, "\\");
+		if (strlen(__DEPR__path->value()) > 3) /// shouln't it be == 3?
+			__DEPR__selected_item.insert(0, "\\");
 
-		selected_item.insert(0, path_obj->value());
-		return selected_item.c_str();
+		__DEPR__selected_item.insert(0, path->value());
+		return __DEPR__selected_item.c_str();
 	}
 #endif
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 #ifdef _WIN32

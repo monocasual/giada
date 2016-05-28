@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_browser
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,44 +24,71 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 #ifndef GE_BROWSER_H
 #define GE_BROWSER_H
 
 #include <FL/Fl.H>
-#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_File_Browser.H>
 #include <string>
 #include "ge_mixed.h"
 
-class gBrowser : public Fl_Hold_Browser {
+
+using std::string;
+
+
+class gBrowser : public Fl_File_Browser
+{
+private:
+
+	string currentDir;
+
 public:
-	gBrowser(int x, int y, int w, int h, const char *L=0);
-	~gBrowser();
-	void init(const char *init_path=NULL);
-	void refresh();
-	void sort();
-	void up_dir();
-	void down_dir(const char *path);
-	const char *get_selected_item();
+
+	gBrowser(int x, int y, int w, int h);
+
+	/* init
+	 * Initialize browser and show 'dir' as initial directory. */
+
+	void loadDir(const string &dir);
+
+	/* getSelectedItem
+	 * Return the full path of the i-th selected item. */
+
+	string getSelectedItem();
+
+	string getCurrentDir() { return currentDir; }
+
+	/* DEPRECATED STUFF ------------------------------------------------------- */
+	/* DEPRECATED STUFF ------------------------------------------------------- */
+	/* DEPRECATED STUFF ------------------------------------------------------- */
+
+	void __DEPR__init(const char *init_path=NULL);
+	void __DEPR__refresh();
+	void __DEPR__up_dir();
+	void __DEPR__down_dir(const char *path);
+	const char *__DEPR__get_selected_item();
 
 	/* path_obj
 	 * the actual path*/
 
-	class gInput *path_obj;
+	class gInput *__DEPR__path;
 
 	/* selected_item
 	 * choosen item */
 
-	std::string selected_item;
+	string __DEPR__selected_item;
 
 #ifdef _WIN32
+
 private:
 
 	/* showDrives [WIN32 only]
 	 * lists all the available drivers */
 
 	void showDrives();
+
 #endif
 };
 

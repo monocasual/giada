@@ -126,9 +126,12 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 
 	updir->callback(cb_up, (void*)this);
 	cancel->callback(cb_close, (void*)this);
-	browser->callback(cb_down, this);
-	browser->path_obj = where;
-	browser->init(initPath);
+	//browser->callback(cb_down, this);
+	//browser->__DEPR__path = where;
+	//browser->__DEPR__init(initPath);
+
+	browser->callback(cb_down, (void*) this);
+	browser->loadDir(initPath);
 
 	if (G_Conf.browserW)
 		resize(G_Conf.browserX, G_Conf.browserY, G_Conf.browserW, G_Conf.browserH);
@@ -170,8 +173,8 @@ void gdBrowser::__cb_load_patch() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	bool isProject = gIsProject(browser->get_selected_item());
-	int res = glue_loadPatch(browser->get_selected_item(), status, isProject);
+	bool isProject = gIsProject(browser->__DEPR__get_selected_item());
+	int res = glue_loadPatch(browser->__DEPR__get_selected_item(), status, isProject);
 
 	if (res == PATCH_UNREADABLE) {
 		status->hide();
@@ -227,7 +230,7 @@ void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = glue_loadChannel((SampleChannel*) ch, browser->get_selected_item());
+	int res = glue_loadChannel((SampleChannel*) ch, browser->__DEPR__get_selected_item());
 
 	if (res == SAMPLE_LOADED_OK) {
 		do_callback();
@@ -241,10 +244,19 @@ void gdBrowser::__cb_load_sample() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowser::__cb_down() {
-	const char *path = browser->get_selected_item();
-	if (!path)  // when click on an empty area
+void gdBrowser::__cb_down()
+{
+	string path = browser->getSelectedItem();
+
+	if (path.empty())  // when click on an empty area
 		return;
+
+	if (gIsDir(path))
+		browser->loadDir(path);
+	else
+		printf("path is file, TODO\n");
+
+#if 0
 	if (!gIsDir(path)) {
 
 		/* set the name of the patch/sample/project as the selected item */
@@ -261,8 +273,9 @@ void gdBrowser::__cb_down() {
 		return;
 	}
 	browser->clear();
-	browser->down_dir(path);
+	browser->__DEPR__down_dir(path);
 	browser->sort();
+#endif
 }
 
 
@@ -271,7 +284,7 @@ void gdBrowser::__cb_down() {
 
 void gdBrowser::__cb_up() {
 	browser->clear();
-	browser->up_dir();
+	browser->__DEPR__up_dir();
 	browser->sort();
 }
 
