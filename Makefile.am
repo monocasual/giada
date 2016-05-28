@@ -135,7 +135,9 @@ src/utils/gui_utils.h                  \
 src/utils/gui_utils.cpp                \
 src/utils/gvector.h                    \
 src/utils/utils.h                      \
-src/utils/utils.cpp
+src/utils/utils.cpp                    \
+src/utils/string.h                     \
+src/utils/string.cpp
 
 if WITH_VST
 giada_SOURCES +=                                              \
