@@ -111,6 +111,11 @@ bool gIsDir(const char *path)
 }
 
 
+bool gIsDir(const string &path)
+{
+	return gIsDir(path.c_str());
+}
+
 /* -------------------------------------------------------------------------- */
 
 

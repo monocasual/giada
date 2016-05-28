@@ -47,6 +47,7 @@ bool gDirExists(const char *path);
 bool gDirExists(const string &path);
 
 bool gIsDir(const char *path);
+bool gIsDir(const string &path);
 
 bool gIsProject(const char *path);
 
