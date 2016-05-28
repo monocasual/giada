@@ -32,16 +32,24 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define G_VERSION_STR   "0.12.2"
+#define G_VERSION_STR   "0.13.0"
 #define G_APP_NAME      "Giada"
 #define G_VERSION_MAJOR 0
-#define G_VERSION_MINOR 12
-#define G_VERSION_PATCH 2
+#define G_VERSION_MINOR 13
+#define G_VERSION_PATCH 0
 
 #define CONF_FILENAME		"giada.conf"
 
 #ifndef BUILD_DATE
-# define BUILD_DATE __DATE__
+	#define BUILD_DATE __DATE__
+#endif
+
+#ifdef _WIN32
+	#define G_SLASH '\\'
+	#define G_SLASH_STR "\\"
+#else
+	#define G_SLASH '/'
+	#define G_SLASH_STR "/"
 #endif
 
 
