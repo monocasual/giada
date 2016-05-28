@@ -26,6 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
+
 #ifndef GE_BROWSER_H
 #define GE_BROWSER_H
 
@@ -59,37 +60,6 @@ public:
 	string getSelectedItem();
 
 	string getCurrentDir() { return currentDir; }
-
-	/* DEPRECATED STUFF ------------------------------------------------------- */
-	/* DEPRECATED STUFF ------------------------------------------------------- */
-	/* DEPRECATED STUFF ------------------------------------------------------- */
-
-	void __DEPR__init(const char *init_path=NULL);
-	void __DEPR__refresh();
-	void __DEPR__up_dir();
-	void __DEPR__down_dir(const char *path);
-	const char *__DEPR__get_selected_item();
-
-	/* path_obj
-	 * the actual path*/
-
-	class gInput *__DEPR__path;
-
-	/* selected_item
-	 * choosen item */
-
-	string __DEPR__selected_item;
-
-#ifdef _WIN32
-
-private:
-
-	/* showDrives [WIN32 only]
-	 * lists all the available drivers */
-
-	void showDrives();
-
-#endif
 };
 
 #endif

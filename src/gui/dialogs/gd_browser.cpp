@@ -101,31 +101,31 @@ gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int t
 		ok->label("Load");
 
 	if (type == BROWSER_LOAD_PATCH)
-		ok->callback(cb_load_patch, (void*)this);
+		ok->callback(cb_load_patch, (void*) this);
 	else
 	if (type == BROWSER_LOAD_SAMPLE)
-		ok->callback(cb_load_sample, (void*)this);
+		ok->callback(cb_load_sample, (void*) this);
 	else
 	if (type == BROWSER_SAVE_PATCH) {
-		ok->callback(cb_save_patch, (void*)this);
+		ok->callback(cb_save_patch, (void*) this);
 		name->value(G_Patch.name == "" ? "my_patch.gptc" : G_Patch.name.c_str());
 		name->maximum_size(MAX_PATCHNAME_LEN+5); // +5 for ".gptc"
 	}
 	else
 	if (type == BROWSER_SAVE_SAMPLE) {
-		ok->callback(cb_save_sample, (void*)this);
+		ok->callback(cb_save_sample, (void*) this);
 		name->value(((SampleChannel*)ch)->wave->name.c_str());
 	}
 	else
 	if (type == BROWSER_SAVE_PROJECT) {
-		ok->callback(cb_save_project, (void*)this);
+		ok->callback(cb_save_project, (void*) this);
 		name->value(gStripExt(G_Patch.name).c_str());
 	}
 
 	ok->shortcut(FL_Enter);
 
-	updir->callback(cb_up, (void*)this);
-	cancel->callback(cb_close, (void*)this);
+	updir->callback(cb_up, (void*) this);
+	cancel->callback(cb_close, (void*) this);
 	//browser->callback(cb_down, this);
 	//browser->__DEPR__path = where;
 	//browser->__DEPR__init(initPath);
@@ -173,8 +173,8 @@ void gdBrowser::__cb_load_patch() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	bool isProject = gIsProject(browser->__DEPR__get_selected_item());
-	int res = glue_loadPatch(browser->__DEPR__get_selected_item(), status, isProject);
+	bool isProject = gIsProject(browser->getSelectedItem().c_str());
+	int res = glue_loadPatch(browser->getSelectedItem().c_str(), status, isProject);
 
 	if (res == PATCH_UNREADABLE) {
 		status->hide();
@@ -230,7 +230,7 @@ void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
 		return;
 
-	int res = glue_loadChannel((SampleChannel*) ch, browser->__DEPR__get_selected_item());
+	int res = glue_loadChannel((SampleChannel*) ch, browser->getSelectedItem().c_str());
 
 	if (res == SAMPLE_LOADED_OK) {
 		do_callback();
@@ -283,9 +283,7 @@ void gdBrowser::__cb_down()
 
 
 void gdBrowser::__cb_up() {
-	browser->clear();
-	browser->__DEPR__up_dir();
-	browser->sort();
+	browser->loadDir(browser->getSelectedItem() + G_SLASH_STR ".." G_SLASH_STR);
 }
 
 
