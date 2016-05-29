@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_browser
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GD_BROWSER_H
@@ -34,6 +34,72 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include "../elems/ge_window.h"
+
+
+class gdBaseBrowser : public gWindow
+{
+protected:
+
+	class Fl_Group  *groupTop;
+	class gBrowser  *browser;
+	class gClick    *ok;
+	class gClick    *cancel;
+	class gInput    *where;
+ 	class gClick    *updir;
+ 	class gProgress *status;
+
+	static void cb_up  (Fl_Widget *v, void *p);
+	static void cb_down(Fl_Widget *v, void *p);
+
+	inline void __cb_up  ();
+  inline virtual void __cb_down();
+
+public:
+
+	gdBaseBrowser(int x, int y, int w, int h, const char *title, const char *path);
+	~gdBaseBrowser();
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdSaveBrowser : public gdBaseBrowser
+{
+private:
+
+	class gInput *name;
+
+	inline void __cb_down();
+
+public:
+
+	gdSaveBrowser(int x, int y, int w, int h, const char *title, const char *path);
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdLoadPatchBrowser : public gdBaseBrowser
+{
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdLoadProjectBrowser : public gdBaseBrowser
+{
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class gdLoadSampleBrowser : public gdBaseBrowser
+{
+};
 
 
 /* TODO - this class must be subclassed into gdPluginBrowser, gdFileBrowser,
@@ -59,7 +125,7 @@ private:
 	inline void __cb_load_patch();
 	inline void __cb_save_patch();
 	inline void __cb_close();
-	
+
 	class gBrowser  *browser;
 	class gClick    *ok;
 	class gClick    *cancel;

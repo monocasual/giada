@@ -55,11 +55,11 @@ public:
 	void loadDir(const string &dir);
 
 	/* getSelectedItem
-	 * Return the full path of the i-th selected item. */
+	 * Return the full path or just the displayed name of the i-th selected item. */
 
-	string getSelectedItem();
+	string getSelectedItem(bool fullPath=true);
 
-	string getCurrentDir() { return currentDir; }
+	string getCurrentDir();
 };
 
 #endif

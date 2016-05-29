@@ -63,31 +63,44 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 
 void gBrowser::loadDir(const string &dir)
 {
-  printf("loading: %s\n", dir.c_str());
   currentDir = dir;
-  load(dir.c_str());
+  if (currentDir.back() != G_SLASH)  // make sure the trailing slash exists
+    currentDir += G_SLASH;
+    printf("loading: %s\n", currentDir.c_str());
+  load(currentDir.c_str());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string gBrowser::getSelectedItem()
+string gBrowser::getCurrentDir()
+{
+  return gGetRealPath(currentDir);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gBrowser::getSelectedItem(bool fullPath)
 {
   /* FIXME - optimize this function, it's temporarily in debugging mode */
+
+  if (!fullPath)
+    return text(value());
 
   if (value() == 0)   // no rows selected
     return currentDir;
 
-  string currentValue = text(value());
-  string out;
-  if (currentValue[0] == G_SLASH)
-    out = currentDir + text(value());
-  else
-    out = currentDir + (currentDir.back() != G_SLASH ? G_SLASH_STR : "") + text(value());
+  /* normalize final slash. If it doesn't exist, add it. */
 
-  printf("currentDir=%s, val=%s ", currentDir.c_str(), text(value()));
-  printf("out=%s\n", out.c_str());
+  string out = currentDir + text(value());
+  //if (out.back() != G_SLASH)
+  //  out += G_SLASH;
+
+  printf("currentDir=%s ### val=%s ", currentDir.c_str(), text(value()));
+  printf("### out=%s\n", gGetRealPath(out).c_str());
 
   return gGetRealPath(out);
 }

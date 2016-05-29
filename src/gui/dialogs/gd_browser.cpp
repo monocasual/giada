@@ -56,6 +56,132 @@ extern Mixer         G_Mixer;
 extern gdMainWindow	*mainWin;
 
 
+
+gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
+		const char *path)
+	:	gWindow(x, y, w, h, title)
+{
+	set_non_modal();
+
+	groupTop = new Fl_Group(8, 8, w-16, 20);
+		where = new gInput(groupTop->x(), groupTop->y(), 152, 20);
+		updir	= new gClick(groupTop->x()+groupTop->w()-20, groupTop->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
+	groupTop->end();
+	groupTop->resizable(where);
+	groupTop->box(FL_BORDER_BOX);
+
+	where->readonly(true);
+	where->cursor_color(COLOR_BG_DARK);
+	where->value(path);
+
+	updir->callback(cb_up, (void*) this);
+
+	browser = new gBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-81);
+	browser->loadDir(path);
+
+	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
+		gBox *b = new gBox(8, groupButtons->y(), 204, 20);  // spacer window border <-> buttons
+		ok  	  = new gClick(308, groupButtons->y(), 80, 20);
+		cancel  = new gClick(220, groupButtons->y(), 80, 20, "Cancel");
+		status  = new gProgress(8, groupButtons->y(), 204, 20);
+		status->minimum(0);
+		status->maximum(1);
+		status->hide();   // show the bar only if necessary
+	groupButtons->resizable(b);
+	groupButtons->end();
+
+	end();
+
+	resizable(browser);
+
+	gu_setFavicon(this);
+	show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gdBaseBrowser::~gdBaseBrowser()
+{
+	G_Conf.browserX = x();
+	G_Conf.browserY = y();
+	G_Conf.browserW = w();
+	G_Conf.browserH = h();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::cb_up  (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_up(); }
+void gdBaseBrowser::cb_down(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_down(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::__cb_up() {
+	browser->loadDir(browser->getSelectedItem() + ".." G_SLASH_STR);
+	where->value(browser->getCurrentDir().c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::__cb_down() {}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
+		const char *title, const char *path)
+	:	gdBaseBrowser(x, y, w, h, title, path)
+{
+	where->size(groupTop->w()-236, 20);
+
+	name = new gInput(where->x()+where->w()+8, 8, 200, 20);
+	groupTop->add(name);
+
+	browser->callback(cb_down, (void*) this);
+
+	ok->label("Save");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSaveBrowser::__cb_down()
+{
+	string path = browser->getSelectedItem();
+
+	if (path.empty())  // when click on an empty area
+		return;
+
+	/* if the selected item is a directory just load its content. If it's a file
+	 * use it as the file name (i.e. fill name->value()). */
+
+	if (gIsDir(path)) {
+		browser->loadDir(path);
+		where->value(browser->getCurrentDir().c_str());
+	}
+	else
+		name->value(browser->getSelectedItem(false).c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+
+
 gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int type, int stackType)
 	:	gWindow  (396, 302, title),
 		ch       (ch),
