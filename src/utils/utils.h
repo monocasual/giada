@@ -52,6 +52,7 @@ bool gIsDir(const string &path);
 bool gIsProject(const char *path);
 
 bool gIsPatch(const char *path);
+bool gIsPatch(const string &path);
 
 bool gMkdir(const char *path);
 bool gMkdir(const string &path);

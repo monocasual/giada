@@ -256,6 +256,12 @@ bool gIsProject(const char *path)
 }
 
 
+bool gIsProject(const string &path)
+{
+	return gIsProject(path);
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
