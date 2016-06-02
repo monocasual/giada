@@ -48,11 +48,13 @@ protected:
  	class gClick    *updir;
  	class gProgress *status;
 
-	static void cb_up  (Fl_Widget *v, void *p);
-	static void cb_down(Fl_Widget *v, void *p);
+	static void cb_up   (Fl_Widget *v, void *p);
+	static void cb_down (Fl_Widget *v, void *p);
+	static void cb_close(Fl_Widget *w, void *p);
 
 	inline void __cb_up  ();
-  inline virtual void __cb_down();
+  inline void __cb_down();
+	inline void __cb_close();
 
 public:
 
@@ -81,27 +83,21 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gdLoadPatchBrowser : public gdBaseBrowser
+class gdLoadBrowser : public gdBaseBrowser
 {
+private:
+
+	inline void __cb_down();
+
+public:
+
+	gdLoadBrowser(int x, int y, int w, int h, const char *title, const char *path);
 };
 
 
 /* -------------------------------------------------------------------------- */
 
-
-class gdLoadProjectBrowser : public gdBaseBrowser
-{
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdLoadSampleBrowser : public gdBaseBrowser
-{
-};
-
-
+#if 0
 /* TODO - this class must be subclassed into gdPluginBrowser, gdFileBrowser,
  * and so on. It's a real mess right now. */
 
@@ -158,5 +154,6 @@ public:
 
 	char* SelectedFile();
 };
+#endif
 
 #endif

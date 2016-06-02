@@ -366,20 +366,19 @@ void gSampleChannel::__cb_readActions()
 
 void gSampleChannel::openBrowser(int type)
 {
-	const char *title = "";
+	gWindow *childWin = NULL;
 	switch (type) {
 		case BROWSER_LOAD_SAMPLE:
-			title = "Browse Sample";
+			childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
+					G_Conf.browserW, G_Conf.browserH, "Browse sample", G_Conf.patchPath.c_str());
 			break;
 		case BROWSER_SAVE_SAMPLE:
-			title = "Save Sample";
-			break;
-		case -1:
-			title = "Edit Sample";
+			childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
+					G_Conf.browserW, G_Conf.browserH, "Save sample", G_Conf.patchPath.c_str());
 			break;
 	}
-	gWindow *childWin = new gdBrowser(title, G_Conf.samplePath.c_str(), ch, type);
-	gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
+	if (childWin)
+		gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
 }
 
 

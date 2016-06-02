@@ -92,6 +92,8 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 
 	end();
 
+	cancel->callback(cb_close, (void*) this);
+	
 	resizable(browser);
 
 	gu_setFavicon(this);
@@ -114,8 +116,9 @@ gdBaseBrowser::~gdBaseBrowser()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBaseBrowser::cb_up  (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_up(); }
-void gdBaseBrowser::cb_down(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_down(); }
+void gdBaseBrowser::cb_up   (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_up(); }
+void gdBaseBrowser::cb_down (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_down(); }
+void gdBaseBrowser::cb_close(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -124,6 +127,14 @@ void gdBaseBrowser::cb_down(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_d
 void gdBaseBrowser::__cb_up() {
 	browser->loadDir(browser->getSelectedItem() + ".." G_SLASH_STR);
 	where->value(browser->getCurrentDir().c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::__cb_close() {
+	do_callback();
 }
 
 
@@ -180,8 +191,38 @@ void gdSaveBrowser::__cb_down()
 /* -------------------------------------------------------------------------- */
 
 
+gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h,
+		const char *title, const char *path)
+	:	gdBaseBrowser(x, y, w, h, title, path)
+{
+	where->size(groupTop->w()-updir->w()-8, 20);
+	browser->callback(cb_down, (void*) this);
+	ok->label("Load");
+}
 
 
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdLoadBrowser::__cb_down()
+{
+	string path = browser->getSelectedItem();
+
+	if (path.empty() || !gIsDir(path)) // when click on an empty area or not a dir
+		return;
+
+	browser->loadDir(path);
+	where->value(browser->getCurrentDir().c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+#if 0
 gdBrowser::gdBrowser(const char *title, const char *initPath, Channel *ch, int type, int stackType)
 	:	gWindow  (396, 302, title),
 		ch       (ch),
@@ -451,3 +492,4 @@ void gdBrowser::__cb_save_project()
 void gdBrowser::__cb_close() {
 	do_callback();
 }
+#endif

@@ -53,6 +53,8 @@ src/glue/storage.h                     \
 src/glue/storage.cpp                   \
 src/glue/channel.h                     \
 src/glue/channel.cpp                   \
+src/glue/browser.h                     \
+src/glue/browser.cpp                   \
 src/gui/dialogs/gd_keyGrabber.h        \
 src/gui/dialogs/gd_keyGrabber.cpp      \
 src/gui/dialogs/gd_about.h             \
