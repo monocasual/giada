@@ -35,7 +35,7 @@
 using std::string;
 
 
-void glue_loadPatchBrowser(class gdLoadBrowser *browser);
+void glue_loadPatchBrowser(void *data);
 
 
 #endif

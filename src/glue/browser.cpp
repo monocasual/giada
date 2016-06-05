@@ -29,12 +29,37 @@
 
 
 #include <string>
+#include "../gui/dialogs/gd_browser.h"
+#include "../gui/dialogs/gd_warnings.h"
+#include "storage.h"
 #include "browser.h"
 
 
 using std::string;
 
 
-void glue_loadPatchBrowser(class gdLoadBrowser *browser)
+void glue_loadPatchBrowser(void *data)
 {
+  gdLoadBrowser *browser = (gdLoadBrowser*) data;
+
+	bool isProject = gIsProject(browser->getSelectedItem());
+	int res = glue_loadPatch(browser->getSelectedItem(), browser->getStatus(), isProject);
+
+  browser->hideStatus();
+
+	if (res == PATCH_UNREADABLE) {
+		if (isProject)
+			gdAlert("This project is unreadable.");
+		else
+			gdAlert("This patch is unreadable.");
+	}
+	else
+	if (res == PATCH_INVALID) {
+		if (isProject)
+			gdAlert("This project is not valid.");
+		else
+			gdAlert("This patch is not valid.");
+	}
+	else
+		browser->do_callback();
 }

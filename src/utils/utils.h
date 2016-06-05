@@ -49,7 +49,7 @@ bool gDirExists(const string &path);
 bool gIsDir(const char *path);
 bool gIsDir(const string &path);
 
-bool gIsProject(const char *path);
+bool gIsProject(const string &path);
 
 bool gIsPatch(const char *path);
 bool gIsPatch(const string &path);

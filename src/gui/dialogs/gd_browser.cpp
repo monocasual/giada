@@ -58,8 +58,8 @@ extern gdMainWindow	*mainWin;
 
 
 gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
-		const char *path)
-	:	gWindow(x, y, w, h, title)
+		const char *path, void (*callback)(void*))
+	:	gWindow(x, y, w, h, title), callback(callback)
 {
 	set_non_modal();
 
@@ -93,7 +93,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 	end();
 
 	cancel->callback(cb_close, (void*) this);
-	
+
 	resizable(browser);
 
 	gu_setFavicon(this);
@@ -145,13 +145,22 @@ void gdBaseBrowser::__cb_down() {}
 
 
 /* -------------------------------------------------------------------------- */
+
+
+string gdBaseBrowser::getSelectedItem()
+{
+	return browser->getSelectedItem();
+}
+
+
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
 gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
 		const char *title, const char *path)
-	:	gdBaseBrowser(x, y, w, h, title, path)
+	:	gdBaseBrowser(x, y, w, h, title, path, NULL)
 {
 	where->size(groupTop->w()-236, 20);
 
@@ -192,15 +201,34 @@ void gdSaveBrowser::__cb_down()
 
 
 gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h,
-		const char *title, const char *path)
-	:	gdBaseBrowser(x, y, w, h, title, path)
+		const char *title, const char *path, void (*cb)(void*))
+	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
 	where->size(groupTop->w()-updir->w()-8, 20);
+
 	browser->callback(cb_down, (void*) this);
+
 	ok->label("Load");
+	ok->callback(cb_load, (void*) this);
+	ok->shortcut(FL_ENTER);
 }
 
 
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdLoadBrowser::cb_load(Fl_Widget *v, void *p) { ((gdLoadBrowser*)p)->__cb_load(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdLoadBrowser::__cb_load()
+{
+	callback((void*) this);
+}
 
 
 /* -------------------------------------------------------------------------- */

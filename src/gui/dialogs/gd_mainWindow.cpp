@@ -43,6 +43,7 @@
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
 #include "../../glue/glue.h"
+#include "../../glue/browser.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"
 #include "gd_bpmInput.h"
@@ -320,7 +321,8 @@ void gMenu::__cb_file()
 		//gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath.c_str(), 0, BROWSER_LOAD_PATCH);
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Load patch or project", G_Conf.patchPath.c_str());
+				G_Conf.browserW, G_Conf.browserH, "Load patch or project",
+				G_Conf.patchPath.c_str(), glue_loadPatchBrowser);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

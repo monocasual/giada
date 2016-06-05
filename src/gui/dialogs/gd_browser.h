@@ -33,6 +33,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include "../elems/ge_mixed.h"
 #include "../elems/ge_window.h"
 
 
@@ -56,10 +57,24 @@ protected:
   inline void __cb_down();
 	inline void __cb_close();
 
+	/* Callback
+	 * Fired when the save/load button is pressed. */
+
+	void (*callback)(void*);
+
 public:
 
-	gdBaseBrowser(int x, int y, int w, int h, const char *title, const char *path);
+	gdBaseBrowser(int x, int y, int w, int h, const char *title, const char *path,
+			void (*callback)(void*));
 	~gdBaseBrowser();
+
+	string getSelectedItem();
+
+	// TODO
+	gProgress *getStatus() { return status; }
+	void setStatus() {  }
+	void showStatus() { status->show(); }
+	void hideStatus() { status->hide(); }
 };
 
 
@@ -87,11 +102,15 @@ class gdLoadBrowser : public gdBaseBrowser
 {
 private:
 
+	static void cb_load(Fl_Widget *w, void *p);
+
+	inline void __cb_load();
 	inline void __cb_down();
 
 public:
 
-	gdLoadBrowser(int x, int y, int w, int h, const char *title, const char *path);
+	gdLoadBrowser(int x, int y, int w, int h, const char *title, const char *path,
+			void (*callback)(void*));
 };
 
 

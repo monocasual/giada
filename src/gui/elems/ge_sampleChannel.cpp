@@ -370,7 +370,8 @@ void gSampleChannel::openBrowser(int type)
 	switch (type) {
 		case BROWSER_LOAD_SAMPLE:
 			childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
-					G_Conf.browserW, G_Conf.browserH, "Browse sample", G_Conf.patchPath.c_str());
+					G_Conf.browserW, G_Conf.browserH, "Browse sample",
+					G_Conf.patchPath.c_str(), NULL); // FIXME!
 			break;
 		case BROWSER_SAVE_SAMPLE:
 			childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,

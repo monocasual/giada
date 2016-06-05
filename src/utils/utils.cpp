@@ -246,19 +246,13 @@ string gStripExt(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-bool gIsProject(const char *path)
+bool gIsProject(const string &path)
 {
 	/** FIXME - checks too weak */
 
-	if (gGetExt(path) == "gprj" && gDirExists(path))
+	if (gGetExt(path.c_str()) == "gprj" && gDirExists(path))
 		return 1;
 	return 0;
-}
-
-
-bool gIsProject(const string &path)
-{
-	return gIsProject(path);
 }
 
 
