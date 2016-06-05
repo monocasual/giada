@@ -68,13 +68,15 @@ public:
 			void (*callback)(void*));
 	~gdBaseBrowser();
 
+	/* getSelectedItem
+	 * Return the full path of the selected file. */
+
 	string getSelectedItem();
 
-	// TODO
-	gProgress *getStatus() { return status; }
-	void setStatus() {  }
-	void showStatus() { status->show(); }
-	void hideStatus() { status->hide(); }
+	inline gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
+	inline void showStatusBar() { status->show(); }
+	inline void hideStatusBar() { status->hide(); }
+	void setStatusBar(float v);
 };
 
 
@@ -112,67 +114,5 @@ public:
 	gdLoadBrowser(int x, int y, int w, int h, const char *title, const char *path,
 			void (*callback)(void*));
 };
-
-
-/* -------------------------------------------------------------------------- */
-
-#if 0
-/* TODO - this class must be subclassed into gdPluginBrowser, gdFileBrowser,
- * and so on. It's a real mess right now. */
-
-class gdBrowser : public gWindow {
-
-private:
-	static void cb_down(Fl_Widget *v, void *p);
-	static void cb_up  (Fl_Widget *v, void *p);
-	static void cb_load_sample (Fl_Widget *v, void *p);
-	static void cb_save_sample (Fl_Widget *v, void *p);
-	static void cb_load_patch  (Fl_Widget *v, void *p);
-	static void cb_save_patch  (Fl_Widget *v, void *p);
-	static void cb_save_project(Fl_Widget *v, void *p);
-	static void cb_close       (Fl_Widget *w, void *p);
-
-	inline void __cb_down();
-	inline void __cb_up();
-	inline void __cb_load_sample();
-	inline void __cb_save_sample();
-	inline void __cb_save_project();
-	inline void __cb_load_patch();
-	inline void __cb_save_patch();
-	inline void __cb_close();
-
-	class gBrowser  *browser;
-	class gClick    *ok;
-	class gClick    *cancel;
-	class gInput    *where;
-	class gInput    *name;
- 	class gClick    *updir;
- 	class gProgress *status;
-
-	class Channel *ch;
-
-	/* browser type: see const.h */
-
-	/** FIXME internal enum:
-	 * enum browserType {
-		 * TYPE_A,
-		 * TYPE_B,
-		 * ....
-		 * }; */
-	int type;
-
-	/* PluginHost_DEPR_ stack type. Used only when loading plugins */
-
-	int stackType;
-
-	char selectedFile[FILENAME_MAX];
-
-public:
-	gdBrowser(const char *title, const char *initPath, class Channel *ch, int type, int stackType=0);
-	~gdBrowser();
-
-	char* SelectedFile();
-};
-#endif
 
 #endif

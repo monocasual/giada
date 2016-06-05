@@ -32,6 +32,7 @@
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/gd_browser.h"
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
@@ -60,17 +61,6 @@ extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
-
-
-static void __glue_setProgressBar__(class gProgress *status, float v)
-{
-	status->value(status->value() + v);
-	//Fl::check();
-	Fl::wait(0);
-}
-
-
-/* -------------------------------------------------------------------------- */
 
 
 #ifdef WITH_VST
@@ -180,28 +170,44 @@ int glue_savePatch(const string &fullPath, const string &name, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProject)
+void glue_loadPatch(void *data)
 {
-	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
-	* one. */
+	gdLoadBrowser *browser = (gdLoadBrowser*) data;
+	string fullPath        = browser->getSelectedItem();
+	bool isProject         = gIsProject(browser->getSelectedItem());
+
+	browser->showStatusBar();
 
 	gLog("[glue] loading %s...\n", fullPath.c_str());
 
 	string fileToLoad = fullPath;  // patch file to read from
 	string basePath   = "";        // base path, in case of reading from a project
 	if (isProject) {
-		fileToLoad = fullPath + gGetSlash() + gStripExt(gBasename(fullPath)) + ".gptc";
-		basePath   = fullPath.c_str() + gGetSlash();
+		fileToLoad = fullPath + G_SLASH + gStripExt(gBasename(fullPath)) + ".gptc";
+		basePath   = fullPath + G_SLASH;
 	}
+
+	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
+	* one. */
 
 	int res = G_Patch.read(fileToLoad);
 
 	if (res == PATCH_UNREADABLE) {
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
-		return glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(), status, isProject);
+		res = glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(),
+				browser->getStatusBar(), isProject);
 	}
-	if (res != PATCH_READ_OK)
-		return res;
+
+	if (res != PATCH_READ_OK) {
+		if (res == PATCH_UNREADABLE)
+			isProject ? gdAlert("This project is unreadable.") : gdAlert("This patch is unreadable.");
+		else
+		if (res == PATCH_INVALID)
+			isProject ? gdAlert("This project is not valid.") : gdAlert("This patch is not valid.");
+
+		browser->hideStatusBar();
+		return;
+	}
 
 	/* close all other windows. This prevents segfault if plugin
 	 * windows GUIs are on. */
@@ -213,7 +219,8 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 	glue_resetToInitState(false, false);
 
-	__glue_setProgressBar__(status, 0.1f);
+	browser->setStatusBar(0.1f);
+	//__glue_setProgressBar__(status, 0.1f);
 
 	/* Add common stuff, columns and channels. Also increment the progress bar
 	 * by 0.8 / total_channels steps.  */
@@ -229,7 +236,8 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins,
 						G_Conf.samplerate, G_Conf.rsmpQuality);
 			}
-			__glue_setProgressBar__(status, steps);
+			//__glue_setProgressBar__(status, steps);
+			browser->setStatusBar(steps);
 		}
 	}
 
@@ -252,7 +260,8 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 	gu_updateControls();
 	gu_update_win_label(G_Patch.name.c_str());
 
-	__glue_setProgressBar__(status, 1.0f);
+	browser->setStatusBar(0.1f);
+	//__glue_setProgressBar__(status, 1.0f);
 
 	gLog("[glue] patch loaded successfully\n");
 
@@ -263,7 +272,7 @@ int glue_loadPatch(const string &fullPath, class gProgress *status, bool isProje
 
 #endif
 
-	return res;
+	browser->do_callback();
 }
 
 
