@@ -12,11 +12,12 @@
 --------------------------------------------------------------------------------
 
 
-0.12.2 --- ...
+0.12.2 --- 2016 . 06 . 02
 - Update RtAudio to version 4.1.2
 - Add WASAPI support on Windows
 - Sortable plugins list
 - Simplify custom RtAudio build and inclusion on Linux
+- Fix crashes on startup on OS X El Capitan
 - Store position and size of Available Plugins window
 - Untangle Channels' code from global variables
 
