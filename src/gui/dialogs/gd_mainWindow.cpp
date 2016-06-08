@@ -333,7 +333,8 @@ void gMenu::__cb_file()
 		//gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PATCH);
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Save patch", G_Conf.patchPath.c_str());
+				G_Conf.browserW, G_Conf.browserH, "Save patch",
+				G_Conf.patchPath.c_str(), glue_savePatch);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -341,7 +342,8 @@ void gMenu::__cb_file()
 		//gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PROJECT);
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Save project", G_Conf.patchPath.c_str());
+				G_Conf.browserW, G_Conf.browserH, "Save project",
+				G_Conf.patchPath.c_str(), glue_saveProject);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

@@ -40,9 +40,11 @@ using std::string;
 using std::vector;
 
 
-void glue_loadPatch(void *data);
+void glue_loadPatch  (void *data);
 int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress *status, bool isProject);
-int glue_savePatch  (const string &fullPath, const string &name, bool isProject);
-int glue_saveProject(const string &folderPath, const string &projName);
+void glue_savePatch  (void *data);
+void glue_saveProject(void *data);
+void glue_saveSample (void *data);
+void glue_loadSample (void *data);
 
 #endif

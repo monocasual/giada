@@ -150,20 +150,46 @@ static void __glue_fillPatchGlobals__(const string &name)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_savePatch(const string &fullPath, const string &name, bool isProject)
+static bool __glue_savePatch__(const string &fullPath, const string &name,
+		bool isProject)
 {
 	G_Patch.init();
 
 	__glue_fillPatchGlobals__(name);
-	__glue_fillPatchChannels__(isProject);
+	__glue_fillPatchChannels__(gIsProject(fullPath));
 	__glue_fillPatchColumns__();
 
 	if (G_Patch.write(fullPath)) {
 		gu_update_win_label(name.c_str());
 		gLog("[glue] patch saved as %s\n", fullPath.c_str());
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_savePatch(void *data)
+{
+	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	string name            = browser->getName();
+	string fullPath        = browser->getSelectedItem() + G_SLASH + gStripExt(name) + ".gptc";
+
+	if (name == "") {
+		gdAlert("Please choose a file name.");
+		return;
+	}
+
+	if (gFileExists(fullPath.c_str()))
+		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
+			return;
+
+	if (__glue_savePatch__(fullPath, name, gIsProject(fullPath)))
+		browser->do_callback();
+	else
+		gdAlert("Unable to save the patch!");
 }
 
 
@@ -368,11 +394,24 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 /* -------------------------------------------------------------------------- */
 
 
-int glue_saveProject(const string &folderPath, const string &projName)
+void glue_saveProject(void *data)
 {
+	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	string name            = browser->getName();
+	string folderPath      = browser->getSelectedItem();
+	string fullPath        = folderPath + G_SLASH + gStripExt(name) + ".gprj";
+
+	if (name == "") {
+		gdAlert("Please choose a project name.");
+		return;
+	}
+
+	if (gIsProject(fullPath.c_str()) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
+		return;
+
 	if (!gDirExists(folderPath.c_str()) && !gMkdir(folderPath.c_str())) {
 		gLog("[glue] unable to make project directory!\n");
-		return 0;
+		return;
 	}
 
 	/* copy all samples inside the folder. Takes and logical ones are saved
@@ -391,7 +430,7 @@ int glue_saveProject(const string &folderPath, const string &projName)
 		/* update the new samplePath: everything now comes from the project
 		 * folder (folderPath). Also remove any existing file. */
 
-		string samplePath = folderPath + gGetSlash() + ch->wave->basename() + "." + ch->wave->extension();
+		string samplePath = folderPath + G_SLASH + ch->wave->basename() + "." + ch->wave->extension();
 
 		if (gFileExists(samplePath.c_str()))
 			remove(samplePath.c_str());
@@ -399,8 +438,9 @@ int glue_saveProject(const string &folderPath, const string &projName)
 			ch->wave->pathfile = samplePath;
 	}
 
-	string gptcPath = folderPath + gGetSlash() + gStripExt(projName.c_str()) + ".gptc";
-	glue_savePatch(gptcPath, projName, true); // true == it's a project
-
-	return 1;
+	string gptcPath = folderPath + G_SLASH + gStripExt(name.c_str()) + ".gptc";
+	if (__glue_savePatch__(gptcPath, name, true)) // true == it's a project
+		browser->do_callback();
+	else
+		gdAlert("Unable to save the project!");
 }

@@ -93,7 +93,10 @@ private:
 
 public:
 
-	gdSaveBrowser(int x, int y, int w, int h, const char *title, const char *path);
+	gdSaveBrowser(int x, int y, int w, int h, const char *title, const char *path,
+			void (*callback)(void*));
+
+	string getName() { return name->value(); }
 };
 
 

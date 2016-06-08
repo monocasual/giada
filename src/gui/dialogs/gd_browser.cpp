@@ -169,8 +169,8 @@ string gdBaseBrowser::getSelectedItem()
 
 
 gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
-		const char *title, const char *path)
-	:	gdBaseBrowser(x, y, w, h, title, path, NULL)
+		const char *title, const char *path, void (*cb)(void*))
+	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
 	where->size(groupTop->w()-236, 20);
 
