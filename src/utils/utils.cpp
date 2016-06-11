@@ -165,18 +165,11 @@ bool gMkdir(const string &path)
 
 /* -------------------------------------------------------------------------- */
 
-/* TODO - avoid this shit, just wrap the other call */
-string gBasename(const char *path)
-{
-	string out = path;
-	out.erase(0, out.find_last_of(G_SLASH_STR)+1);
-	return out;
-}
 
 string gBasename(const string &s)
 {
 	string out = s;
-	out.erase(0, out.find_last_of(G_SLASH_STR)+1);
+	out.erase(0, out.find_last_of(G_SLASH_STR) + 1);
 	return out;
 }
 

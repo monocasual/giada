@@ -58,7 +58,6 @@ bool gIsPatch(const string &path);
 bool gMkdir(const char *path);
 bool gMkdir(const string &path);
 
-string gBasename(const char *path);
 string gBasename(const string &s);
 
 string gReplace(string in, const string& search, const string& replace);
