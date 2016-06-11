@@ -444,3 +444,54 @@ void glue_saveProject(void *data)
 	else
 		gdAlert("Unable to save the project!");
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_loadSample (void *data)
+{
+	gdLoadBrowser *browser = (gdLoadBrowser*) data;
+	string folderPath      = browser->getSelectedItem();
+
+	if (folderPath.empty())
+		return;
+
+	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), folderPath.c_str());
+
+	if (res == SAMPLE_LOADED_OK) {
+		browser->do_callback();
+		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
+	}
+	else
+		mainWin->keyboard->printChannelMessage(res);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_saveSample (void *data)
+{
+	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	string name            = browser->getName();
+	string folderPath      = browser->getSelectedItem();
+
+	if (name == "") {
+		gdAlert("Please choose a file name.");
+		return;
+	}
+
+	/* bruteforce check extension. */
+
+	string filePath = folderPath + G_SLASH + gStripExt(name) + ".wav";
+
+	if (gFileExists(filePath))
+		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
+			return;
+
+	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str()))
+		browser->do_callback();
+	else
+		gdAlert("Unable to save this sample!");
+}

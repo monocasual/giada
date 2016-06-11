@@ -38,6 +38,7 @@
 #include "../../core/midiChannel.h"
 #include "../../glue/glue.h"
 #include "../../glue/channel.h"
+#include "../../glue/storage.h"
 #include "../../utils/gui_utils.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_keyGrabber.h"
@@ -371,12 +372,12 @@ void gSampleChannel::openBrowser(int type)
 		case BROWSER_LOAD_SAMPLE:
 			childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
 					G_Conf.browserW, G_Conf.browserH, "Browse sample",
-					G_Conf.patchPath.c_str(), NULL); // FIXME!
+					G_Conf.patchPath.c_str(), glue_loadSample, ch);
 			break;
 		case BROWSER_SAVE_SAMPLE:
 			childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 					G_Conf.browserW, G_Conf.browserH, "Save sample", \
-					G_Conf.patchPath.c_str(), NULL); // FIXME!
+					G_Conf.patchPath.c_str(), glue_saveSample, ch);
 			break;
 	}
 	if (childWin)

@@ -54,7 +54,8 @@ using std::string;
 using std::vector;
 
 
-bool gFileExists(const char *filename) {
+bool gFileExists(const char *filename)
+{
 	FILE *fh = fopen(filename, "rb");
 	if (!fh) {
 		return 0;
@@ -63,6 +64,12 @@ bool gFileExists(const char *filename) {
 		fclose(fh);
 		return 1;
 	}
+}
+
+
+bool gFileExists(const string &filename)
+{
+	return gFileExists(filename);
 }
 
 

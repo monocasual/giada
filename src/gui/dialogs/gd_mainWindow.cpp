@@ -322,7 +322,7 @@ void gMenu::__cb_file()
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Load patch or project",
-				G_Conf.patchPath.c_str(), glue_loadPatch);
+				G_Conf.patchPath.c_str(), glue_loadPatch, NULL);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -334,7 +334,7 @@ void gMenu::__cb_file()
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save patch",
-				G_Conf.patchPath.c_str(), glue_savePatch);
+				G_Conf.patchPath.c_str(), glue_savePatch, NULL);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -343,7 +343,7 @@ void gMenu::__cb_file()
 		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save project",
-				G_Conf.patchPath.c_str(), glue_saveProject);
+				G_Conf.patchPath.c_str(), glue_saveProject, NULL);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

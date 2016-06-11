@@ -42,6 +42,7 @@ using std::vector;
 
 
 bool gFileExists(const char *path);
+bool gFileExists(const string &path);
 
 bool gDirExists(const char *path);
 bool gDirExists(const string &path);

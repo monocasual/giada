@@ -169,9 +169,11 @@ string gdBaseBrowser::getSelectedItem()
 
 
 gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
-		const char *title, const char *path, void (*cb)(void*))
+		const char *title, const char *path, void (*cb)(void*), Channel *ch)
 	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
+	channel = ch;
+
 	where->size(groupTop->w()-236, 20);
 
 	name = new gInput(where->x()+where->w()+8, 8, 200, 20);
@@ -211,9 +213,11 @@ void gdSaveBrowser::__cb_down()
 
 
 gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h,
-		const char *title, const char *path, void (*cb)(void*))
+		const char *title, const char *path, void (*cb)(void*), Channel *ch)
 	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
+	channel = ch;
+
 	where->size(groupTop->w()-updir->w()-8, 20);
 
 	browser->callback(cb_down, (void*) this);
@@ -255,38 +259,7 @@ void gdLoadBrowser::__cb_down()
 	where->value(browser->getCurrentDir().c_str());
 }
 
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
 #if 0
-void gdBrowser::__cb_save_sample() {
-
-	if (strcmp(name->value(), "") == 0) {    /// FIXME glue business
-		gdAlert("Please choose a file name.");
-		return;
-	}
-
-	/* bruteforce check extension. */
-
-	string filename = gStripExt(name->value());
-	char fullpath[PATH_MAX];
-	sprintf(fullpath, "%s/%s.wav", where->value(), filename.c_str());
-
-	if (gFileExists(fullpath))
-		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
-			return;
-
-	if (((SampleChannel*)ch)->save(fullpath))
-		do_callback();
-	else
-		gdAlert("Unable to save this sample!");
-}
-
-
-/* -------------------------------------------------------------------------- */
-
 
 void gdBrowser::__cb_load_sample() {
 	if (browser->text(browser->value()) == NULL)
@@ -300,50 +273,6 @@ void gdBrowser::__cb_load_sample() {
 	}
 	else
 		mainWin->keyboard->printChannelMessage(res);
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdBrowser::__cb_save_patch()
-{
-	if (strcmp(name->value(), "") == 0) {  /// FIXME glue business
-		gdAlert("Please choose a file name.");
-		return;
-	}
-
-	string fullpath = where->value() + gGetSlash() + gStripExt(name->value()) + ".gptc";
-
-	if (gFileExists(fullpath.c_str()))
-		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
-			return;
-
-  if (glue_savePatch(fullpath, name->value(), false)) // false == not a project
-		do_callback();
-	else
-		gdAlert("Unable to save the patch!");
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdBrowser::__cb_save_project()
-{
-	if (strcmp(name->value(), "") == 0) {    /// FIXME glue business
-		gdAlert("Please choose a project name.");
-		return;
-	}
-
-	string fullpath = where->value() + gGetSlash() + gStripExt(name->value()) + ".gprj";
-
-	if (gIsProject(fullpath.c_str()) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
-		return;
-
-	if (glue_saveProject(fullpath, name->value()))
-		do_callback();
-	else
-		gdAlert("Unable to save the project!");
 }
 
 #endif
