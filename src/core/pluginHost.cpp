@@ -62,7 +62,7 @@ void PluginHost::init(int _buffersize, int _samplerate)
   buffersize = _buffersize;
   missingPlugins = false;
   //unknownPluginList.empty();
-  loadList(gGetHomePath() + gGetSlash() + "plugins.xml");
+  loadList(gGetHomePath() + G_SLASH + "plugins.xml");
 }
 
 

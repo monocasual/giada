@@ -44,8 +44,8 @@ Conf::Conf()
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	confFilePath = gGetHomePath() + gGetSlash() + CONF_FILENAME;
-	confDirPath  = gGetHomePath() + gGetSlash();
+	confFilePath = gGetHomePath() + G_SLASH + CONF_FILENAME;
+	confDirPath  = gGetHomePath() + G_SLASH;
 
 #elif defined(_WIN32)
 

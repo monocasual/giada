@@ -46,7 +46,7 @@ using std::vector;
 
 void MidiMapConf::init()
 {
-	midimapsPath = gGetHomePath() + gGetSlash() + "midimaps" + gGetSlash();
+	midimapsPath = gGetHomePath() + G_SLASH + "midimaps" + G_SLASH;
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 

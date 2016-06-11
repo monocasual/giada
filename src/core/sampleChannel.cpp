@@ -713,7 +713,7 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 		return false;
 
 	w->name     = "TAKE-" + gItoa(takeId);
-	w->pathfile = gGetCurrentPath() + gGetSlash() + w->name;
+	w->pathfile = gGetCurrentPath() + G_SLASH + w->name;
 	wave        = w;
 	status      = STATUS_OFF;
 	begin       = 0;

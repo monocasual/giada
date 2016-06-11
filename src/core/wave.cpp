@@ -33,8 +33,9 @@
 #include <math.h>
 #include "../utils/utils.h"
 #include "../utils/log.h"
-#include "wave.h"
 #include "init.h"
+#include "const.h"
+#include "wave.h"
 
 
 Wave::Wave()
@@ -257,7 +258,7 @@ void Wave::updateName(const char *n)
 {
 	std::string ext = gGetExt(pathfile.c_str());
 	name      = gStripExt(gBasename(n).c_str());
-	pathfile  = gDirname(pathfile.c_str()) + gGetSlash() + name + "." + ext;
+	pathfile  = gDirname(pathfile.c_str()) + G_SLASH + name + "." + ext;
 	isLogical = true;
 
 	/* a wave with updated name must become logical, since the underlying

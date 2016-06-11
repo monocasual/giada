@@ -81,8 +81,6 @@ string gStripExt(const string &s);
 
 string gGetProjectName(const char *path); // TODO - useless!
 
-string gGetSlash();
-
 string gItoa(int i);
 
 void gSplit(string in, string sep, vector<string> *v);

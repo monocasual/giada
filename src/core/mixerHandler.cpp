@@ -131,7 +131,7 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 	int numChans = G_Patch_DEPR_.getNumChans();
 	for (int i=0; i<numChans; i++) {
 		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
-		string samplePath = isProject ? projPath + gGetSlash() + G_Patch_DEPR_.getSamplePath(i) : "";
+		string samplePath = isProject ? projPath + G_SLASH + G_Patch_DEPR_.getSamplePath(i) : "";
 		ch->readPatch_DEPR_(samplePath.c_str(), i, &G_Patch_DEPR_, G_Conf.samplerate,
 				G_Conf.rsmpQuality);
 	}

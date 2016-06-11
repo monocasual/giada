@@ -910,7 +910,7 @@ void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
 	info->show();
 	G_PluginHost.scanDir(folderPath->value(), cb_onScan, (void*) this);
-	G_PluginHost.saveList(gGetHomePath() + gGetSlash() + "plugins.xml");
+	G_PluginHost.saveList(gGetHomePath() + G_SLASH + "plugins.xml");
 	info->hide();
 	updateCount();
 }

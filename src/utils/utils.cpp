@@ -169,14 +169,14 @@ bool gMkdir(const string &path)
 string gBasename(const char *path)
 {
 	string out = path;
-	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
+	out.erase(0, out.find_last_of(G_SLASH_STR)+1);
 	return out;
 }
 
 string gBasename(const string &s)
 {
 	string out = s;
-	out.erase(0, out.find_last_of(gGetSlash().c_str())+1);
+	out.erase(0, out.find_last_of(G_SLASH_STR)+1);
 	return out;
 }
 
@@ -298,18 +298,6 @@ string gGetProjectName(const char *path)
 	return out;
 }
 
-
-/* -------------------------------------------------------------------------- */
-
-
-string gGetSlash()
-{
-#if defined(_WIN32)
-	return "\\";
-#else
-	return "/";
-#endif
-}
 
 
 /* -------------------------------------------------------------------------- */
