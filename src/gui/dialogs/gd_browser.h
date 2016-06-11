@@ -50,11 +50,9 @@ protected:
  	class gProgress *status;
 
 	static void cb_up   (Fl_Widget *v, void *p);
-	static void cb_down (Fl_Widget *v, void *p);
 	static void cb_close(Fl_Widget *w, void *p);
 
 	inline void __cb_up  ();
-  inline void __cb_down();
 	inline void __cb_close();
 
 	/* Callback
@@ -92,6 +90,7 @@ private:
 
 	class gInput *name;
 
+	static void cb_down  (Fl_Widget *v, void *p);
 	inline void __cb_down();
 
 public:
@@ -111,6 +110,7 @@ class gdLoadBrowser : public gdBaseBrowser
 private:
 
 	static void cb_load(Fl_Widget *w, void *p);
+	static void cb_down(Fl_Widget *v, void *p);
 
 	inline void __cb_load();
 	inline void __cb_down();

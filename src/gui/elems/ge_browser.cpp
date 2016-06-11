@@ -66,7 +66,7 @@ void gBrowser::loadDir(const string &dir)
   currentDir = dir;
   if (currentDir.back() != G_SLASH)  // make sure the trailing slash exists
     currentDir += G_SLASH;
-    printf("loading: %s\n", currentDir.c_str());
+printf("[gBrowser] loading: %s\n", currentDir.c_str());
   load(currentDir.c_str());
 }
 
@@ -99,7 +99,7 @@ string gBrowser::getSelectedItem(bool fullPath)
   //if (out.back() != G_SLASH)
   //  out += G_SLASH;
 
-  printf("currentDir=%s ### val=%s ", currentDir.c_str(), text(value()));
+  printf("[gBrowser] currentDir=%s ### val=%s ", currentDir.c_str(), text(value()));
   printf("### out=%s\n", gGetRealPath(out).c_str());
 
   return gGetRealPath(out);

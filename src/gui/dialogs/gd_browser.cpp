@@ -117,7 +117,6 @@ gdBaseBrowser::~gdBaseBrowser()
 
 
 void gdBaseBrowser::cb_up   (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_up(); }
-void gdBaseBrowser::cb_down (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_down(); }
 void gdBaseBrowser::cb_close(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_close(); }
 
 
@@ -125,7 +124,10 @@ void gdBaseBrowser::cb_close(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_
 
 
 void gdBaseBrowser::__cb_up() {
-	browser->loadDir(browser->getSelectedItem() + ".." G_SLASH_STR);
+	if (gIsDir(browser->getSelectedItem()))
+		browser->loadDir(browser->getSelectedItem() + ".." G_SLASH_STR);
+	else
+		browser->loadDir(browser->getCurrentDir() + G_SLASH_STR ".." G_SLASH_STR);
 	where->value(browser->getCurrentDir().c_str());
 }
 
@@ -136,12 +138,6 @@ void gdBaseBrowser::__cb_up() {
 void gdBaseBrowser::__cb_close() {
 	do_callback();
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdBaseBrowser::__cb_down() {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -183,6 +179,12 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
 
 	ok->label("Save");
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSaveBrowser::cb_down(Fl_Widget *v, void *p) { ((gdSaveBrowser*)p)->__cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -234,6 +236,7 @@ gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h,
 
 
 void gdLoadBrowser::cb_load(Fl_Widget *v, void *p) { ((gdLoadBrowser*)p)->__cb_load(); }
+void gdLoadBrowser::cb_down(Fl_Widget *v, void *p) { ((gdLoadBrowser*)p)->__cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -252,8 +255,10 @@ void gdLoadBrowser::__cb_down()
 {
 	string path = browser->getSelectedItem();
 
-	if (path.empty() || !gIsDir(path)) // when click on an empty area or not a dir
+	if (path.empty() || !gIsDir(path)) { // when click on an empty area or not a dir
+printf("[gdLoadBrowser] empty or not dir, nothing to do\n");
 		return;
+	}
 
 	browser->loadDir(path);
 	where->value(browser->getCurrentDir().c_str());
