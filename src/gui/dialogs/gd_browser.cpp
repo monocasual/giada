@@ -258,21 +258,3 @@ void gdLoadBrowser::__cb_down()
 	browser->loadDir(path);
 	where->value(browser->getCurrentDir().c_str());
 }
-
-#if 0
-
-void gdBrowser::__cb_load_sample() {
-	if (browser->text(browser->value()) == NULL)
-		return;
-
-	int res = glue_loadChannel((SampleChannel*) ch, browser->getSelectedItem().c_str());
-
-	if (res == SAMPLE_LOADED_OK) {
-		do_callback();
-		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
-	}
-	else
-		mainWin->keyboard->printChannelMessage(res);
-}
-
-#endif
