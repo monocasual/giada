@@ -63,7 +63,7 @@ string gBasename(const string &s);
 
 string gReplace(string in, const string& search, const string& replace);
 
-string gDirname(const char *path);
+string gDirname(const string &s);
 
 string gTrim(const char *path);
 string gTrim(const string &s);

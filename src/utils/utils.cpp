@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "utils.h"
 #if defined(_WIN32)			// getcwd (unix) or __getcwd (win)
 	#include <direct.h>
 	#include <windows.h>
@@ -48,6 +47,8 @@
 	#include <libgen.h>     // basename unix
 	#include <pwd.h>        // getpwuid
 #endif
+#include "../core/const.h"
+#include "utils.h"
 
 
 using std::string;
@@ -183,10 +184,10 @@ string gBasename(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-string gDirname(const char *path)
+string gDirname(const string &path)
 {
 	string out = path;
-	out.erase(out.find_last_of(gGetSlash().c_str()));
+	out.erase(out.find_last_of(G_SLASH_STR));
 	return out;
 }
 

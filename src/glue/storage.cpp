@@ -186,8 +186,10 @@ void glue_savePatch(void *data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (__glue_savePatch__(fullPath, name, gIsProject(fullPath)))
+	if (__glue_savePatch__(fullPath, name, gIsProject(fullPath))) {
+		G_Conf.patchPath = gDirname(fullPath);
 		browser->do_callback();
+	}
 	else
 		gdAlert("Unable to save the patch!");
 }
@@ -279,7 +281,7 @@ void glue_loadPatch(void *data)
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.patchPath = gDirname(fullPath.c_str());
+	G_Conf.patchPath = gDirname(fullPath);
 
 	/* refresh GUI */
 
@@ -449,17 +451,18 @@ void glue_saveProject(void *data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_loadSample (void *data)
+void glue_loadSample(void *data)
 {
 	gdLoadBrowser *browser = (gdLoadBrowser*) data;
-	string folderPath      = browser->getSelectedItem();
+	string fullPath        = browser->getSelectedItem();
 
-	if (folderPath.empty())
+	if (fullPath.empty())
 		return;
 
-	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), folderPath.c_str());
+	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), fullPath.c_str());
 
 	if (res == SAMPLE_LOADED_OK) {
+		G_Conf.samplePath = gDirname(fullPath);
 		browser->do_callback();
 		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -471,7 +474,7 @@ void glue_loadSample (void *data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_saveSample (void *data)
+void glue_saveSample(void *data)
 {
 	gdSaveBrowser *browser = (gdSaveBrowser*) data;
 	string name            = browser->getName();
@@ -490,8 +493,10 @@ void glue_saveSample (void *data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str()))
+	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str())) {
+		G_Conf.samplePath = gDirname(folderPath);
 		browser->do_callback();
+	}
 	else
 		gdAlert("Unable to save this sample!");
 }

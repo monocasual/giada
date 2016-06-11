@@ -372,12 +372,12 @@ void gSampleChannel::openBrowser(int type)
 		case BROWSER_LOAD_SAMPLE:
 			childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
 					G_Conf.browserW, G_Conf.browserH, "Browse sample",
-					G_Conf.patchPath.c_str(), glue_loadSample, ch);
+					G_Conf.samplePath.c_str(), glue_loadSample, ch);
 			break;
 		case BROWSER_SAVE_SAMPLE:
 			childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 					G_Conf.browserW, G_Conf.browserH, "Save sample", \
-					G_Conf.patchPath.c_str(), glue_saveSample, ch);
+					G_Conf.samplePath.c_str(), glue_saveSample, ch);
 			break;
 	}
 	if (childWin)
