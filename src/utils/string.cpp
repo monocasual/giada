@@ -37,18 +37,18 @@ using std::string;
 string gGetRealPath(const string &path)
 {
 	string out = "";
+	char buf[PATH_MAX];
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	char buf[PATH_MAX];
 	char *res = realpath(path.c_str(), buf);
 	if (res)
 		out = buf;
 
-#else
+#else // Windows
 
-	gLog("[gGetRealPath] FIXME - missing implementation!\n");
-	return path;
+	if(_fullpath( full, path.c_str(), PATH_MAX) != NULL)
+		out = buf;
 
 #endif
 
