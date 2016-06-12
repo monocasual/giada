@@ -68,7 +68,6 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 		updir	= new gClick(groupTop->x()+groupTop->w()-20, groupTop->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
 	groupTop->resizable(where);
-	groupTop->box(FL_BORDER_BOX);
 
 	where->readonly(true);
 	where->cursor_color(COLOR_BG_DARK);
@@ -76,18 +75,17 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 
 	updir->callback(cb_up, (void*) this);
 
-	browser = new gBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-81);
+	browser = new gBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-73);
 	browser->loadDir(path);
 
 	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
-		gBox *b = new gBox(8, groupButtons->y(), 204, 20);  // spacer window border <-> buttons
-		ok  	  = new gClick(308, groupButtons->y(), 80, 20);
-		cancel  = new gClick(220, groupButtons->y(), 80, 20, "Cancel");
-		status  = new gProgress(8, groupButtons->y(), 204, 20);
+		ok  	  = new gClick(w-88, groupButtons->y(), 80, 20);
+		cancel  = new gClick(w-ok->w()-96, groupButtons->y(), 80, 20, "Cancel");
+		status  = new gProgress(8, groupButtons->y(), cancel->x()-16, 20);
 		status->minimum(0);
 		status->maximum(1);
 		status->hide();   // show the bar only if necessary
-	groupButtons->resizable(b);
+	groupButtons->resizable(status);
 	groupButtons->end();
 
 	end();
