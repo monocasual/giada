@@ -67,7 +67,8 @@ extern bool 		 		 G_audio_status;
 gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **argv)
 	: gWindow(W, H, title)
 {
-	Fl::visible_focus(0);
+	//Fl::visible_focus(0); // screws up event management
+
 	Fl::background(25, 25, 25);
 	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
 
