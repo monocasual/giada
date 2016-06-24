@@ -109,13 +109,18 @@ public:
 	string samplePath;
 
 	int  mainWindowX, mainWindowY, mainWindowW, mainWindowH;
-	int  browserX, browserY, browserW, browserH;
+
+	int    browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
+	string browserLastPath;
+
 	int  actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
 	int  actionEditorGridVal;
 	int  actionEditorGridOn;
+
 	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
   int  sampleEditorGridVal;
   int  sampleEditorGridOn;
+
 	int  pianoRollY, pianoRollH;
 	int  pluginListX, pluginListY;
 	int  configX, configY;

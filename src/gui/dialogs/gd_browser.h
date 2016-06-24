@@ -66,6 +66,7 @@ public:
 
 	gdBaseBrowser(int x, int y, int w, int h, const char *title, const char *path,
 			void (*callback)(void*));
+
 	~gdBaseBrowser();
 
 	/* getSelectedItem

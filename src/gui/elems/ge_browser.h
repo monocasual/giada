@@ -61,6 +61,8 @@ public:
 
 	string getCurrentDir();
 
+	void preselect(int position, int line);
+
 	int handle(int e);
 };
 

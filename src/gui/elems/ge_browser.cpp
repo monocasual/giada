@@ -55,6 +55,8 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 	this->hscrollbar.selection_color(COLOR_BG_1);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
 	this->hscrollbar.slider(G_BOX);
+
+  take_focus();  // already focused
 }
 
 
@@ -121,4 +123,14 @@ string gBrowser::getSelectedItem(bool fullPath)
     return currentDir;
 
   return gGetRealPath(currentDir + text(value()));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gBrowser::preselect(int pos, int line)
+{
+  position(pos);
+  select(line);
 }

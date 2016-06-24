@@ -216,6 +216,9 @@ int Conf::read()
 	if (!setInt(jRoot, CONF_KEY_BROWSER_Y, browserY)) return 0;
 	if (!setInt(jRoot, CONF_KEY_BROWSER_W, browserW)) return 0;
 	if (!setInt(jRoot, CONF_KEY_BROWSER_H, browserH)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_POSITION, browserPosition)) return 0;
+	if (!setString(jRoot, CONF_KEY_BROWSER_LAST_PATH, browserLastPath)) return 0;
+	if (!setInt(jRoot, CONF_KEY_BROWSER_LAST_VALUE, browserLastValue)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_X, actionEditorX)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_Y, actionEditorY)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ACTION_EDITOR_W, actionEditorW)) return 0;
@@ -314,6 +317,9 @@ int Conf::write()
 	json_object_set_new(jRoot, CONF_KEY_BROWSER_Y,                 json_integer(browserY));
 	json_object_set_new(jRoot, CONF_KEY_BROWSER_W,                 json_integer(browserW));
 	json_object_set_new(jRoot, CONF_KEY_BROWSER_H,                 json_integer(browserH));
+	json_object_set_new(jRoot, CONF_KEY_BROWSER_POSITION,          json_integer(browserPosition));
+	json_object_set_new(jRoot, CONF_KEY_BROWSER_LAST_PATH,         json_string(browserLastPath.c_str()));
+	json_object_set_new(jRoot, CONF_KEY_BROWSER_LAST_VALUE,        json_integer(browserLastValue));
 	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_X,           json_integer(actionEditorX));
 	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_Y,           json_integer(actionEditorY));
 	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_W,           json_integer(actionEditorW));

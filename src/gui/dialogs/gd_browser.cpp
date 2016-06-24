@@ -76,6 +76,8 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 
 	browser = new gBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-73);
 	browser->loadDir(path);
+	if (path == G_Conf.browserLastPath)
+		browser->preselect(G_Conf.browserPosition, G_Conf.browserLastValue);
 
 	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
 		ok  	  = new gClick(w-88, groupButtons->y(), 80, 20);
@@ -107,6 +109,9 @@ gdBaseBrowser::~gdBaseBrowser()
 	G_Conf.browserY = y();
 	G_Conf.browserW = w();
 	G_Conf.browserH = h();
+	G_Conf.browserPosition = browser->position();
+	G_Conf.browserLastPath = gDirname(browser->getSelectedItem());
+	G_Conf.browserLastValue = browser->value();
 }
 
 
