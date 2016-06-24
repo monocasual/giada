@@ -56,7 +56,6 @@ extern Mixer         G_Mixer;
 extern gdMainWindow	*mainWin;
 
 
-
 gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 		const char *path, void (*callback)(void*))
 	:	gWindow(x, y, w, h, title), callback(callback)
@@ -253,10 +252,8 @@ void gdLoadBrowser::__cb_down()
 {
 	string path = browser->getSelectedItem();
 
-	if (path.empty() || !gIsDir(path)) { // when click on an empty area or not a dir
-printf("[gdLoadBrowser] empty or not dir, nothing to do\n");
+	if (path.empty() || !gIsDir(path)) // when click on an empty area or not a dir
 		return;
-	}
 
 	browser->loadDir(path);
 	where->value(browser->getCurrentDir().c_str());

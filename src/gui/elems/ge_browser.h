@@ -60,6 +60,8 @@ public:
 	string getSelectedItem(bool fullPath=true);
 
 	string getCurrentDir();
+
+	int handle(int e);
 };
 
 #endif

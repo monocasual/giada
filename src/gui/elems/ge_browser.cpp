@@ -32,6 +32,7 @@
 #include "../../utils/utils.h"
 #include "../../utils/string.h"
 #include "../../utils/log.h"
+#include "../dialogs/gd_browser.h"
 #include "ge_browser.h"
 
 
@@ -43,7 +44,7 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
 	color(COLOR_BG_0);
-  type(FL_HOLD_BROWSER); // single selection
+  type(FL_SELECT_BROWSER);
 
 	this->scrollbar.color(COLOR_BG_0);
 	this->scrollbar.selection_color(COLOR_BG_1);
@@ -54,7 +55,6 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 	this->hscrollbar.selection_color(COLOR_BG_1);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
 	this->hscrollbar.slider(G_BOX);
-
 }
 
 
@@ -69,6 +69,36 @@ void gBrowser::loadDir(const string &dir)
   load(currentDir.c_str());
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+int gBrowser::handle(int e)
+{
+	int ret = Fl_File_Browser::handle(e);
+  switch (e) {
+    case FL_FOCUS:
+		case FL_UNFOCUS:
+			ret = 1;                	// enables receiving Keyboard events
+			break;
+    case FL_KEYDOWN:  // keyboard
+      if (Fl::event_key(FL_Down))
+        select(value() + 1);
+      else
+      if (Fl::event_key(FL_Up))
+        select(value() - 1);
+      else
+      if (Fl::event_key(FL_Enter))
+        ((gdBaseBrowser*) parent())->fireCallback();
+      ret = 1;
+      break;
+    case FL_PUSH:    // mouse
+      if (Fl::event_clicks() > 0)  // double click
+        ((gdBaseBrowser*) parent())->fireCallback();
+      ret = 1;
+      break;
+  }
+	return ret;
+}
 
 /* -------------------------------------------------------------------------- */
 

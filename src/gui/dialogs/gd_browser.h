@@ -73,11 +73,16 @@ public:
 
 	string getSelectedItem();
 
-	inline gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
-	inline void showStatusBar() { status->show(); }
-	inline void hideStatusBar() { status->hide(); }
+	/* setStatusBar
+	 * Increment status bar for progress tracking. */
+
 	void setStatusBar(float v);
-	Channel *getChannel() { return channel; }
+
+	inline gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
+	inline void showStatusBar()  { status->show(); }
+	inline void hideStatusBar()  { status->hide(); }
+	inline Channel *getChannel() { return channel; }
+	inline void fireCallback()   { callback((void*) this); }
 };
 
 
