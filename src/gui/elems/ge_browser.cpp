@@ -98,6 +98,11 @@ int gBrowser::handle(int e)
         ((gdBaseBrowser*) parent())->fireCallback();
       ret = 1;
       break;
+    case FL_RELEASE: // mouse
+      select(value() + 1);  // nasty trick to keep the selection
+      select(value() - 1);
+      ret = 0;
+      break;
   }
 	return ret;
 }
