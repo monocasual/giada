@@ -56,7 +56,7 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 	this->hscrollbar.labelcolor(COLOR_BD_1);
 	this->hscrollbar.slider(G_BOX);
 
-  take_focus();  // already focused
+  take_focus();  // let it have focus on startup
 }
 
 

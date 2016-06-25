@@ -331,8 +331,6 @@ void gMenu::__cb_file()
 		if (G_Mixer.hasLogicalSamples() || G_Mixer.hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
-		//gWindow *childWin = new gdBrowser("Save Patch", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PATCH);
-		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save patch",
 				G_Conf.patchPath.c_str(), glue_savePatch, NULL);
@@ -340,8 +338,6 @@ void gMenu::__cb_file()
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
-		//gWindow *childWin = new gdBrowser("Save Project", G_Conf.patchPath.c_str(), 0, BROWSER_SAVE_PROJECT);
-		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save project",
 				G_Conf.patchPath.c_str(), glue_saveProject, NULL);

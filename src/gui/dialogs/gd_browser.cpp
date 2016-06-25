@@ -94,6 +94,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 	cancel->callback(cb_close, (void*) this);
 
 	resizable(browser);
+	size_range(320, 200);
 
 	gu_setFavicon(this);
 	show();
@@ -180,12 +181,15 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
 	browser->callback(cb_down, (void*) this);
 
 	ok->label("Save");
+	ok->callback(cb_save, (void*) this);
+	ok->shortcut(FL_ENTER);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
+void gdSaveBrowser::cb_save(Fl_Widget *v, void *p) { ((gdSaveBrowser*)p)->__cb_save(); }
 void gdSaveBrowser::cb_down(Fl_Widget *v, void *p) { ((gdSaveBrowser*)p)->__cb_down(); }
 
 
@@ -208,6 +212,15 @@ void gdSaveBrowser::__cb_down()
 	}
 	else
 		name->value(browser->getSelectedItem(false).c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSaveBrowser::__cb_save()
+{
+	callback((void*) this);
 }
 
 

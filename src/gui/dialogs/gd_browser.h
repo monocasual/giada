@@ -96,8 +96,11 @@ private:
 
 	class gInput *name;
 
-	static void cb_down  (Fl_Widget *v, void *p);
+	static void cb_down(Fl_Widget *v, void *p);
+	static void cb_save(Fl_Widget *w, void *p);
+
 	inline void __cb_down();
+	inline void __cb_save();
 
 public:
 
