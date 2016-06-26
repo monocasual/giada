@@ -12,6 +12,12 @@
 --------------------------------------------------------------------------------
 
 
+0.13.0 ---
+- Deep refactoring of the file browser
+- Save browser's scroll position and last item selected on opening
+- Load patches/projects/samples on double click
+
+
 0.12.2 --- 2016 . 06 . 02
 - Update RtAudio to version 4.1.2
 - Add WASAPI support on Windows
