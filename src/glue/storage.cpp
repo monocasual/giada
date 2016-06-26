@@ -218,10 +218,12 @@ void glue_loadPatch(void *data)
 	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
 	* one. */
 
-	int res = G_Patch.read(fileToLoad);
+	int  res = G_Patch.read(fileToLoad);
+	bool deprecated = false;
 
 	if (res == PATCH_UNREADABLE) {
 		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
+		deprecated = true;
 		res = glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(),
 				browser->getStatusBar(), isProject);
 	}
@@ -234,6 +236,11 @@ void glue_loadPatch(void *data)
 			isProject ? gdAlert("This project is not valid.") : gdAlert("This patch is not valid.");
 
 		browser->hideStatusBar();
+		return;
+	}
+	else
+	if (deprecated) {
+		browser->do_callback();
 		return;
 	}
 
