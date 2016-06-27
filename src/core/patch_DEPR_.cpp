@@ -552,11 +552,13 @@ int Patch_DEPR_::readPlugins()
 				int nparam = atoi(getValue(tmp).c_str());
 				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
 				sprintf(tmp, "chan%d_p%dbypass", ch->index, j);
-				pPlugin->setBypass(atoi(getValue(tmp).c_str()));
-				for (int k=0; k<nparam; k++) {
-					sprintf(tmp, "chan%d_p%dparam%dvalue", ch->index, j, k);
-					float pval = atof(getValue(tmp).c_str());
-					pPlugin->setParameter(k, pval);
+				if (pPlugin) {
+					pPlugin->setBypass(atoi(getValue(tmp).c_str()));
+					for (int k=0; k<nparam; k++) {
+						sprintf(tmp, "chan%d_p%dparam%dvalue", ch->index, j, k);
+						float pval = atof(getValue(tmp).c_str());
+						pPlugin->setParameter(k, pval);
+					}
 				}
 				globalOut &= 1;
 			}
