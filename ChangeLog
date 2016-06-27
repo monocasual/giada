@@ -16,6 +16,7 @@
 - Deep refactoring of the file browser
 - Save browser's scroll position and last item selected on opening
 - Load patches/projects/samples on double click
+- Prevent deprecated patch from crashing if a plugin is not found in the stack
 
 
 0.12.2 --- 2016 . 06 . 02
