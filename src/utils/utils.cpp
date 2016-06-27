@@ -70,7 +70,7 @@ bool gFileExists(const char *filename)
 
 bool gFileExists(const string &filename)
 {
-	return gFileExists(filename);
+	return gFileExists(filename.c_str());
 }
 
 
