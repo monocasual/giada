@@ -72,8 +72,12 @@ void gLog(const char *format, ...) {
 		return;
   va_list args;
   va_start(args, format);
-  if (mode == LOG_MODE_FILE && stat == true)
+  if (mode == LOG_MODE_FILE && stat == true) {
 		vfprintf(f, format, args);
+#ifdef _WIN32
+		fflush(f);
+#endif
+	}
   else
 		vprintf(format, args);
   va_end(args);
