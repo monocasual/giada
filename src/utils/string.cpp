@@ -37,18 +37,18 @@ using std::string;
 string gGetRealPath(const string &path)
 {
 	string out = "";
-	char buf[PATH_MAX];
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	char *res = realpath(path.c_str(), buf);
-	if (res) {
+	char *buf = realpath(path.c_str(), NULL);
+	if (buf) {
 		out = buf;
 		free(buf);
 	}
 
 #else // Windows
 
+	char *buf = NULL;
 	if(_fullpath(buf, path.c_str(), PATH_MAX) != NULL) {
 		out = buf;
 		free(buf);
