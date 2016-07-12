@@ -17,6 +17,7 @@
 - Save browser's scroll position and last item selected on opening
 - Load patches/projects/samples on double click
 - Prevent deprecated patch from crashing if a plugin is not found in the stack
+- Force logger to flush to file on Windows
 
 
 0.12.2 --- 2016 . 06 . 02
