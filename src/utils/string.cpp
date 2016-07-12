@@ -42,13 +42,17 @@ string gGetRealPath(const string &path)
 #if defined(__linux__) || defined(__APPLE__)
 
 	char *res = realpath(path.c_str(), buf);
-	if (res)
+	if (res) {
 		out = buf;
+		free(buf);
+	}
 
 #else // Windows
 
-	if(_fullpath( full, path.c_str(), PATH_MAX) != NULL)
+	if(_fullpath(buf, path.c_str(), PATH_MAX) != NULL) {
 		out = buf;
+		free(buf);
+	}
 
 #endif
 
