@@ -80,10 +80,11 @@ public:
 	void setStatusBar(float v);
 
 	inline gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
-	inline void showStatusBar()  { status->show(); }
-	inline void hideStatusBar()  { status->hide(); }
-	inline Channel *getChannel() { return channel; }
-	inline void fireCallback()   { callback((void*) this); }
+	inline void showStatusBar()      { status->show(); }
+	inline void hideStatusBar()      { status->hide(); }
+	inline Channel *getChannel()     { return channel; }
+	inline void fireCallback()       { callback((void*) this); }
+	inline string getCurrentPath()   { return where->value(); }
 };
 
 
