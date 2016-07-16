@@ -36,6 +36,9 @@
 #include <string>
 
 
+using std::string;
+
+
 class Wave
 {
 private:
@@ -52,8 +55,8 @@ public:
 	~Wave();
 	Wave(const Wave &other);
 
-	std::string pathfile; // full path + sample name
-	std::string name;			// sample name (changeable)
+	string pathfile; // full path + sample name
+	string name;			// sample name (changeable)
 
 	float     *data;
 	int        size;			  // wave size (size in stereo: size / 2)
@@ -67,8 +70,8 @@ public:
 	inline void channels(int v) { inHeader.channels = v; }
 	inline void frames  (int v) { inHeader.frames = v; }
 
-	std::string basename () const;
-	std::string extension() const;
+	string basename (bool ext=false) const;
+	string extension() const;
 
 	void updateName(const char *n);
 	int  open      (const char *f);

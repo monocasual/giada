@@ -38,6 +38,9 @@
 #include "wave.h"
 
 
+using std::string;
+
+
 Wave::Wave()
 : data     (NULL),
 	size     (0),
@@ -240,12 +243,12 @@ int Wave::resample(int quality, int newRate)
 /* -------------------------------------------------------------------------- */
 
 
-std::string Wave::basename() const
+string Wave::basename(bool ext) const
 {
-	return gStripExt(gBasename(pathfile.c_str()).c_str());
+	return ext ? gBasename(pathfile) : gStripExt(gBasename(pathfile));
 }
 
-std::string Wave::extension() const
+string Wave::extension() const
 {
 	return gGetExt(pathfile.c_str());
 }
@@ -256,10 +259,10 @@ std::string Wave::extension() const
 
 void Wave::updateName(const char *n)
 {
-	std::string ext = gGetExt(pathfile.c_str());
-	name      = gStripExt(gBasename(n).c_str());
-	pathfile  = gDirname(pathfile.c_str()) + G_SLASH + name + "." + ext;
-	isLogical = true;
+	string ext = gGetExt(pathfile.c_str());
+	name       = gStripExt(gBasename(n).c_str());
+	pathfile   = gDirname(pathfile.c_str()) + G_SLASH + name + "." + ext;
+	isLogical  = true;
 
 	/* a wave with updated name must become logical, since the underlying
 	 * file does not exist yet. */
