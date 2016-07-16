@@ -69,6 +69,11 @@ void gBrowser::loadDir(const string &dir)
   if (currentDir.back() != G_SLASH)  // make sure the trailing slash exists
     currentDir += G_SLASH;
   load(currentDir.c_str());
+
+  /* hide "../", it just screws up things during navigation with "up" button */
+
+  if (strcmp(text(1), "../") == 0)
+    remove(1);
 }
 
 
