@@ -72,7 +72,7 @@ void gBrowser::loadDir(const string &dir)
 
   /* hide "../", it just screws up things during navigation with "up" button */
 
-  if (strcmp(text(1), "../") == 0)
+  if (text(1) != NULL && strcmp(text(1), "../") == 0)
     remove(1);
 }
 
