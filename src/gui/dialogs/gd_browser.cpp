@@ -158,8 +158,8 @@ string gdBaseBrowser::getSelectedItem()
 /* -------------------------------------------------------------------------- */
 
 
-gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
-		const char *title, const char *path, void (*cb)(void*), Channel *ch)
+gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const char *title,
+		const char *path, const char *_name, void (*cb)(void*), Channel *ch)
 	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
 	channel = ch;
@@ -167,6 +167,7 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h,
 	where->size(groupTop->w()-236, 20);
 
 	name = new gInput(where->x()+where->w()+8, 8, 200, 20);
+	name->value(_name);
 	groupTop->add(name);
 
 	browser->callback(cb_down, (void*) this);

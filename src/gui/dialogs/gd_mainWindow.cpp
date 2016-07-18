@@ -58,6 +58,7 @@
 
 extern Mixer	   		 G_Mixer;
 extern Patch_DEPR_   G_Patch_DEPR_;
+extern Patch         G_Patch;
 extern Conf	 	   		 G_Conf;
 extern gdMainWindow *mainWin;
 extern bool	 		 		 G_quit;
@@ -334,14 +335,14 @@ void gMenu::__cb_file()
 				return;
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save patch",
-				G_Conf.patchPath.c_str(), glue_savePatch, NULL);
+				G_Conf.patchPath.c_str(), G_Patch.name.c_str(), glue_savePatch, NULL);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save project",
-				G_Conf.patchPath.c_str(), glue_saveProject, NULL);
+				G_Conf.patchPath.c_str(), G_Patch.name.c_str(), glue_saveProject, NULL);
 		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
