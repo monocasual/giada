@@ -47,9 +47,9 @@ using std::string;
 extern Conf G_Conf;
 
 
-gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
-		const char *path, void (*callback)(void*))
-	:	gWindow(x, y, w, h, title), callback(callback)
+gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
+		const string &path, void (*callback)(void*))
+	:	gWindow(x, y, w, h, title.c_str()), callback(callback)
 {
 	set_non_modal();
 
@@ -61,7 +61,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,
 
 	where->readonly(true);
 	where->cursor_color(COLOR_BG_DARK);
-	where->value(path);
+	where->value(path.c_str());
 
 	updir->callback(cb_up, (void*) this);
 
@@ -158,8 +158,8 @@ string gdBaseBrowser::getSelectedItem()
 /* -------------------------------------------------------------------------- */
 
 
-gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const char *title,
-		const char *path, const char *_name, void (*cb)(void*), Channel *ch)
+gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const string &title,
+		const string &path, const string &_name, void (*cb)(void*), Channel *ch)
 	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
 	channel = ch;
@@ -167,7 +167,7 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const char *title,
 	where->size(groupTop->w()-236, 20);
 
 	name = new gInput(where->x()+where->w()+8, 8, 200, 20);
-	name->value(_name);
+	name->value(_name.c_str());
 	groupTop->add(name);
 
 	browser->callback(cb_down, (void*) this);
@@ -221,8 +221,8 @@ void gdSaveBrowser::__cb_save()
 /* -------------------------------------------------------------------------- */
 
 
-gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h,
-		const char *title, const char *path, void (*cb)(void*), Channel *ch)
+gdLoadBrowser::gdLoadBrowser(int x, int y, int w, int h, const string &title,
+		const string &path, void (*cb)(void*), Channel *ch)
 	:	gdBaseBrowser(x, y, w, h, title, path, cb)
 {
 	channel = ch;

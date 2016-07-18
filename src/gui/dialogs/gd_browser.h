@@ -64,8 +64,8 @@ protected:
 
 public:
 
-	gdBaseBrowser(int x, int y, int w, int h, const char *title, const char *path,
-			void (*callback)(void*));
+	gdBaseBrowser(int x, int y, int w, int h, const string &title,
+			const string &path,	void (*callback)(void*));
 
 	~gdBaseBrowser();
 
@@ -105,8 +105,9 @@ private:
 
 public:
 
-	gdSaveBrowser(int x, int y, int w, int h, const char *title, const char *path,
-			const char*name, void (*callback)(void*), class Channel *ch);
+	gdSaveBrowser(int x, int y, int w, int h, const string &title,
+			const string &path,	const string &name, void (*callback)(void*),
+			class Channel *ch);
 
 	string getName() { return name->value(); }
 };
@@ -127,8 +128,8 @@ private:
 
 public:
 
-	gdLoadBrowser(int x, int y, int w, int h, const char *title, const char *path,
-			void (*callback)(void*), class Channel *ch);
+	gdLoadBrowser(int x, int y, int w, int h, const string &title,
+			const string &path,	void (*callback)(void*), class Channel *ch);
 };
 
 #endif
