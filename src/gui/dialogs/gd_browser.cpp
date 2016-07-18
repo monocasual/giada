@@ -27,33 +27,24 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
 #include "../../core/graphics.h"
 #include "../../core/wave.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"
+#include "../../utils/gui_utils.h"
 #include "../elems/ge_browser.h"
 #include "../elems/ge_channel.h"
-#include "../elems/ge_keyboard.h"
 #include "gd_browser.h"
-#include "gd_mainWindow.h"
-#include "gd_warnings.h"
 
 
 using std::string;
 
 
-extern Patch_DEPR_   G_Patch_DEPR_;
-extern Patch         G_Patch;
-extern Conf	         G_Conf;
-extern Mixer         G_Mixer;
-extern gdMainWindow	*mainWin;
+extern Conf G_Conf;
 
 
 gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const char *title,

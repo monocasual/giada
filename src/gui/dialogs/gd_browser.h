@@ -108,7 +108,8 @@ public:
 	gdSaveBrowser(int x, int y, int w, int h, const char *title, const char *path,
 			void (*callback)(void*), class Channel *ch);
 
-	string getName() { return name->value(); }
+	string getName()          { return name->value(); }
+	void   setName(string &s) { name->value(s.c_str()); }
 };
 
 
