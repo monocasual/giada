@@ -118,10 +118,9 @@ void gdBaseBrowser::cb_close(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_
 
 
 void gdBaseBrowser::__cb_up() {
-	if (gIsDir(browser->getSelectedItem()))
-		browser->loadDir(browser->getSelectedItem() + ".." G_SLASH_STR);
-	else
-		browser->loadDir(browser->getCurrentDir() + G_SLASH_STR ".." G_SLASH_STR);
+	string dir = browser->getCurrentDir();
+	dir = dir.substr(0, dir.find_last_of(G_SLASH_STR));  // remove up to the next slash
+	browser->loadDir(dir);
 	where->value(browser->getCurrentDir().c_str());
 }
 

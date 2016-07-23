@@ -45,6 +45,11 @@ private:
 
 	string currentDir;
 
+	/* normalize
+	 * Make sure the string never ends with a trailing slash. */
+
+	string normalize(const string &s);
+
 public:
 
 	gBrowser(int x, int y, int w, int h);
@@ -55,7 +60,8 @@ public:
 	void loadDir(const string &dir);
 
 	/* getSelectedItem
-	 * Return the full path or just the displayed name of the i-th selected item. */
+	 * Return the full path or just the displayed name of the i-th selected item.
+	 * Always with the trailing slash! */
 
 	string getSelectedItem(bool fullPath=true);
 

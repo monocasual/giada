@@ -117,7 +117,7 @@ int gBrowser::handle(int e)
 
 string gBrowser::getCurrentDir()
 {
-  return gGetRealPath(currentDir);
+  return normalize(gGetRealPath(currentDir));
 }
 
 
@@ -127,12 +127,12 @@ string gBrowser::getCurrentDir()
 string gBrowser::getSelectedItem(bool fullPath)
 {
   if (!fullPath)     // no full path requested? return the selected text
-    return text(value());
-
+    return normalize(text(value()));
+  else
   if (value() == 0)  // no rows selected? return current directory
-    return currentDir;
-
-  return gGetRealPath(currentDir + text(value()));
+    return normalize(currentDir);
+  else
+    return normalize(gGetRealPath(currentDir + text(value())));
 }
 
 
@@ -143,4 +143,16 @@ void gBrowser::preselect(int pos, int line)
 {
   position(pos);
   select(line);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gBrowser::normalize(const string &s)
+{
+  string out = s;
+  if (out.back() == G_SLASH)
+    out = out.substr(0, out.size()-1);
+  return out;
 }
