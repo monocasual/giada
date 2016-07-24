@@ -34,10 +34,6 @@ before_script:
   - sudo ldconfig
   - cd ..
 
-  # Download wav file for testing purposes
-
-  - wget http://download.wavetlan.com/SVV/Media/HTTP/WAV/Media-Convert/Media-Convert_test3_PCM_Stereo_VBR_16SS_11025Hz.wav -O test.wav
-
   # Download midimaps package for testing purposes
 
   - wget https://github.com/monocasual/giada-midimaps/archive/master.zip -O giada-midimaps-master.zip
