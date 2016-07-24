@@ -179,6 +179,8 @@ string gBasename(const string &s)
 
 string gDirname(const string &path)
 {
+	if (path.empty())
+		return "";
 	string out = path;
 	out.erase(out.find_last_of(G_SLASH_STR));
 	return out;
