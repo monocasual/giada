@@ -102,12 +102,12 @@ void Conf::init()
 	limitOutput    = false;
 	rsmpQuality    = 0;
 
-	midiPortIn     = DEFAULT_MIDI_PORT_IN;
-	noNoteOff      = false;
-	midiMapPath    = "";
-	midiPortOut    = DEFAULT_MIDI_PORT_OUT;
-	midiSync       = MIDI_SYNC_NONE;
-	midiTCfps      = 25.0f;
+	midiPortIn  = DEFAULT_MIDI_PORT_IN;
+	noNoteOff   = false;
+	midiMapPath = "";
+	midiPortOut = DEFAULT_MIDI_PORT_OUT;
+	midiSync    = MIDI_SYNC_NONE;
+	midiTCfps   = 25.0f;
 
 	midiInRewind     = 0x0;
 	midiInStartStop  = 0x0;
@@ -129,24 +129,40 @@ void Conf::init()
 
 	resizeRecordings = true;
 
-	actionEditorZoom    = 100;
-	actionEditorGridOn  = false;
-	actionEditorGridVal = 1;
-
 	mainWindowX = 0;
 	mainWindowY = 0;
 	mainWindowW = GUI_WIDTH;
 	mainWindowH = GUI_HEIGHT;
+
+	browserX         = 0;
+	browserY         = 0;
+	browserW         = 640;
+	browserH         = 480;
+	browserPosition  = 0;
+	browserLastValue = 0;
+
+	actionEditorX       = 0;
+	actionEditorY       = 0;
+	actionEditorW       = 640;
+	actionEditorH       = 480;
+	actionEditorZoom    = 100;
+	actionEditorGridOn  = false;
+	actionEditorGridVal = 1;
+
+	sampleEditorX = 0;
+	sampleEditorY = 0;
+	sampleEditorW = 640;
+	sampleEditorH = 480;
 
 	pianoRollY = -1;
 	pianoRollH = 422;
 
 	#ifdef WITH_VST
 
-	pluginChooserX = 0;
-	pluginChooserY = 0;
-	pluginChooserW = 640;
-	pluginChooserH = 480;
+	pluginChooserX   = 0;
+	pluginChooserY   = 0;
+	pluginChooserW   = 640;
+	pluginChooserH   = 480;
 	pluginSortMethod = 0;
 
 	#endif
