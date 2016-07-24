@@ -1,5 +1,3 @@
-#ifdef RUN_TESTS_WITH_LOCAL_FILES
-
 #include "../src/core/wave.h"
 #include "catch.hpp"
 
@@ -17,10 +15,10 @@ TEST_CASE("Test Wave class")
 
   SECTION("test read & write")
   {
-    REQUIRE(w1.open("test.wav") == 1);
+    REQUIRE(w1.open("tests/resources/test.wav") == 1);
     REQUIRE(w1.readData() == 1);
-    REQUIRE(w1.rate() == 11025);
-    REQUIRE(w1.channels() == 2);
+    REQUIRE(w1.rate() == 44100);
+    REQUIRE(w1.channels() == 1);
     REQUIRE(w1.basename() == "test");
     REQUIRE(w1.extension() == "wav");
     REQUIRE(w1.writeData("test-write.wav") == true);
@@ -31,8 +29,8 @@ TEST_CASE("Test Wave class")
     Wave w2(w1);
     REQUIRE(w2.size == w1.size);
     REQUIRE(w2.isLogical == true);
-    //REQUIRE(w2.rate() == 11025);  // WHAT THE FUCK???
-    REQUIRE(w2.channels() == 2);
+    REQUIRE(w2.rate() == 44100);  // WHAT THE FUCK???
+    REQUIRE(w2.channels() == 1);
     REQUIRE(w2.writeData("test-write.wav") == true);
   }
 
@@ -45,5 +43,3 @@ TEST_CASE("Test Wave class")
     REQUIRE(w3.writeData("test-write.wav") == true);
   }
 }
-
-#endif // #ifdef RUN_TESTS_WITH_LOCAL_FILES
