@@ -669,12 +669,18 @@ void gTabMidi::fetchMidiMaps()
 		midiMap->deactivate();
 		return;
 	}
+
 	for (unsigned i=0; i<G_MidiMap.maps.size(); i++) {
 		const char *imap = G_MidiMap.maps.at(i).c_str();
 		midiMap->add(imap);
 		if (G_Conf.midiMapPath == imap)
 			midiMap->value(i);
 	}
+
+	/* Preselect the 0 midimap if nothing is selected but midimaps exist. */
+	
+	if (midiMap->value() == -1 && G_MidiMap.maps.size() > 0)
+		midiMap->value(0);
 }
 
 
