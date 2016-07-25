@@ -70,7 +70,7 @@ void gBrowser::loadDir(const string &dir)
     currentDir += G_SLASH;
   load(currentDir.c_str());
 
-  /* hide "../", it just screws up things during navigation with "up" button */
+  /* hide "../", it just screws up things  */
 
   if (text(1) != NULL && strcmp(text(1), "../") == 0)
     remove(1);
@@ -104,9 +104,16 @@ int gBrowser::handle(int e)
       ret = 1;
       break;
     case FL_RELEASE: // mouse
-      select(value() + 1);  // nasty trick to keep the selection
-      select(value() - 1);
-      ret = 0;
+      /* nasty trick to keep the selection on mouse release */
+      if (value() > 1) {
+        select(value() - 1);
+        select(value() + 1);
+      }
+      else {
+        select(value() + 1);
+        select(value() - 1);
+      }
+      ret = 1;
       break;
   }
 	return ret;
