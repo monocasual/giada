@@ -19,6 +19,7 @@
 - Prevent deprecated patch from crashing if a plugin is not found in the stack
 - Force logger to flush to file on Windows
 - Avoid crashes on Configuration panel if no midimaps were selected
+- Add more default values for windows' dimensions and positions
 
 
 0.12.2 --- 2016 . 06 . 02
