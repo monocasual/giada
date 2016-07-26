@@ -223,7 +223,7 @@ public:
     }
 
     /** Returns true if the array is empty, false otherwise. */
-    inline bool empty() const noexcept
+    inline bool isEmpty() const noexcept
     {
         return size() == 0;
     }
@@ -540,13 +540,17 @@ public:
         will be done.
 
         @param newElement   the new object to add to the array
+        @return             true if the element was added to the array; false otherwise.
     */
-    void addIfNotAlreadyThere (ParameterType newElement)
+    bool addIfNotAlreadyThere (ParameterType newElement)
     {
         const ScopedLockType lock (getLock());
 
-        if (! contains (newElement))
-            add (newElement);
+        if (contains (newElement))
+            return false;
+
+        add (newElement);
+        return true;
     }
 
     /** Replaces an element with a new value.

@@ -22,7 +22,7 @@
   ==============================================================================
 */
 
-#if JUCE_PLUGINHOST_VST
+#if JUCE_PLUGINHOST_VST && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX || JUCE_IOS)
 
 //==============================================================================
 #if JUCE_MAC && JUCE_SUPPORT_CARBON
@@ -165,7 +165,7 @@ namespace
     {
        #if JUCE_WINDOWS
         return timeGetTime() * 1000000.0;
-       #elif JUCE_LINUX
+       #elif JUCE_LINUX || JUCE_IOS
         timeval micro;
         gettimeofday (&micro, 0);
         return micro.tv_usec * 1000.0;
@@ -201,18 +201,6 @@ namespace
     static bool makeFSRefFromPath (FSRef* destFSRef, const String& path)
     {
         return FSPathMakeRef (reinterpret_cast<const UInt8*> (path.toRawUTF8()), destFSRef, 0) == noErr;
-    }
-   #endif
-
-   #if JUCE_MAC && JUCE_PPC
-    static void* newCFMFromMachO (void* const machofp) noexcept
-    {
-        void* result = (void*) new char[8];
-
-        ((void**) result)[0] = machofp;
-        ((void**) result)[1] = result;
-
-        return result;
     }
    #endif
 }
@@ -354,7 +342,7 @@ public:
     }
 
     //==============================================================================
-    static ModuleHandle* findOrCreateModule (const File& file)
+    static Ptr findOrCreateModule (const File& file)
     {
         for (int i = getActiveModules().size(); --i >= 0;)
         {
@@ -364,36 +352,33 @@ public:
                 return module;
         }
 
-        _fpreset(); // (doesn't do any harm)
-
         const IdleCallRecursionPreventer icrp;
         shellUIDToCreate = 0;
+        _fpreset();
 
         JUCE_VST_LOG ("Attempting to load VST: " + file.getFullPathName());
 
-        ScopedPointer<ModuleHandle> m (new ModuleHandle (file));
+        Ptr m = new ModuleHandle (file, nullptr);
 
-        if (! m->open())
-            m = nullptr;
+        if (m->open())
+        {
+            _fpreset();
+            return m;
+        }
 
-        _fpreset(); // (doesn't do any harm)
-
-        return m.release();
+        return nullptr;
     }
 
     //==============================================================================
-    ModuleHandle (const File& f)
-        : file (f), moduleMain (nullptr), customMain (nullptr)
+    ModuleHandle (const File& f, MainCall customMainCall)
+        : file (f), moduleMain (customMainCall), customMain (nullptr)
          #if JUCE_MAC
-          #if JUCE_PPC
-           , fragId (0)
-          #endif
            , resHandle (0), bundleRef (0), resFileId (0)
          #endif
     {
         getActiveModules().add (this);
 
-       #if JUCE_WINDOWS || JUCE_LINUX
+       #if JUCE_WINDOWS || JUCE_LINUX || JUCE_IOS
         fullParentDirectoryPathName = f.getParentDirectory().getFullPathName();
        #elif JUCE_MAC
         FSRef ref;
@@ -409,12 +394,18 @@ public:
     }
 
     //==============================================================================
-#if JUCE_WINDOWS || JUCE_LINUX
-    DynamicLibrary module;
+   #if ! JUCE_MAC
     String fullParentDirectoryPathName;
+   #endif
+
+  #if JUCE_WINDOWS || JUCE_LINUX
+    DynamicLibrary module;
 
     bool open()
     {
+        if (moduleMain != nullptr)
+            return true;
+
         pluginName = file.getFileNameWithoutExtension();
 
         module.open (file.getFullPathName());
@@ -472,17 +463,20 @@ public:
         return String();
     }
    #endif
-#else
-   #if JUCE_PPC
-    CFragConnectionID fragId;
-   #endif
+  #else
     Handle resHandle;
     CFBundleRef bundleRef;
+
+   #if JUCE_MAC
+    CFBundleRefNum resFileId;
     FSSpec parentDirFSSpec;
-    ResFileRefNum resFileId;
+   #endif
 
     bool open()
     {
+        if (moduleMain != nullptr)
+            return true;
+
         bool ok = false;
 
         if (file.hasFileExtension (".vst"))
@@ -522,13 +516,18 @@ public:
                             if (pluginName.isEmpty())
                                 pluginName = file.getFileNameWithoutExtension();
 
+                           #if JUCE_MAC
                             resFileId = CFBundleOpenBundleResourceMap (bundleRef);
+                           #endif
 
                             ok = true;
 
                             Array<File> vstXmlFiles;
-                            file.getChildFile ("Contents")
+                            file
+                               #if JUCE_MAC
+                                .getChildFile ("Contents")
                                 .getChildFile ("Resources")
+                               #endif
                                 .findChildFiles (vstXmlFiles, File::findFiles, false, "*.vstxml");
 
                             if (vstXmlFiles.size() > 0)
@@ -545,83 +544,17 @@ public:
                 }
             }
         }
-       #if JUCE_PPC
-        else
-        {
-            FSRef fn;
-
-            if (FSPathMakeRef ((UInt8*) file.getFullPathName().toRawUTF8(), &fn, 0) == noErr)
-            {
-                resFileId = FSOpenResFile (&fn, fsRdPerm);
-
-                if (resFileId != -1)
-                {
-                    const int numEffs = Count1Resources ('aEff');
-
-                    for (int i = 0; i < numEffs; ++i)
-                    {
-                        resHandle = Get1IndResource ('aEff', i + 1);
-
-                        if (resHandle != 0)
-                        {
-                            OSType type;
-                            Str255 name;
-                            SInt16 id;
-                            GetResInfo (resHandle, &id, &type, name);
-                            pluginName = String ((const char*) name + 1, name[0]);
-                            DetachResource (resHandle);
-                            HLock (resHandle);
-
-                            ::Ptr ptr;
-                            Str255 errorText;
-
-                            OSErr err = GetMemFragment (*resHandle, GetHandleSize (resHandle),
-                                                        name, kPrivateCFragCopy,
-                                                        &fragId, &ptr, errorText);
-
-                            if (err == noErr)
-                            {
-                                moduleMain = (MainCall) newMachOFromCFM (ptr);
-                                ok = true;
-                            }
-                            else
-                            {
-                                HUnlock (resHandle);
-                            }
-
-                            break;
-                        }
-                    }
-
-                    if (! ok)
-                        CloseResFile (resFileId);
-                }
-            }
-        }
-       #endif
 
         return ok;
     }
 
     void close()
     {
-       #if JUCE_PPC
-        if (fragId != 0)
-        {
-            if (moduleMain != nullptr)
-                disposeMachOFromCFM ((void*) moduleMain);
-
-            CloseConnection (&fragId);
-            HUnlock (resHandle);
-
-            if (resFileId != 0)
-                CloseResFile (resFileId);
-        }
-        else
-       #endif
         if (bundleRef != 0)
         {
+           #if JUCE_MAC
             CFBundleCloseBundleResourceMap (bundleRef, resFileId);
+           #endif
 
             if (CFGetRetainCount (bundleRef) == 1)
                 CFBundleUnloadExecutable (bundleRef);
@@ -633,66 +566,10 @@ public:
 
     void closeEffect (AEffect* eff)
     {
-       #if JUCE_PPC
-        if (fragId != 0)
-        {
-            Array<void*> thingsToDelete;
-            thingsToDelete.add ((void*) eff->dispatcher);
-            thingsToDelete.add ((void*) eff->process);
-            thingsToDelete.add ((void*) eff->setParameter);
-            thingsToDelete.add ((void*) eff->getParameter);
-            thingsToDelete.add ((void*) eff->processReplacing);
-
-            eff->dispatcher (eff, effClose, 0, 0, 0, 0);
-
-            for (int i = thingsToDelete.size(); --i >= 0;)
-                disposeMachOFromCFM (thingsToDelete[i]);
-        }
-        else
-       #endif
-        {
-            eff->dispatcher (eff, effClose, 0, 0, 0, 0);
-        }
+        eff->dispatcher (eff, effClose, 0, 0, 0, 0);
     }
 
-   #if JUCE_PPC
-    static void* newMachOFromCFM (void* cfmfp)
-    {
-        if (cfmfp == 0)
-            return nullptr;
-
-        UInt32* const mfp = new UInt32[6];
-
-        mfp[0] = 0x3d800000 | ((UInt32) cfmfp >> 16);
-        mfp[1] = 0x618c0000 | ((UInt32) cfmfp & 0xffff);
-        mfp[2] = 0x800c0000;
-        mfp[3] = 0x804c0004;
-        mfp[4] = 0x7c0903a6;
-        mfp[5] = 0x4e800420;
-
-        MakeDataExecutable (mfp, sizeof (UInt32) * 6);
-        return mfp;
-    }
-
-    static void disposeMachOFromCFM (void* ptr)
-    {
-        delete[] static_cast<UInt32*> (ptr);
-    }
-
-    void coerceAEffectFunctionCalls (AEffect* eff)
-    {
-        if (fragId != 0)
-        {
-            eff->dispatcher       = (AEffectDispatcherProc)   newMachOFromCFM ((void*) eff->dispatcher);
-            eff->process          = (AEffectProcessProc)      newMachOFromCFM ((void*) eff->process);
-            eff->setParameter     = (AEffectSetParameterProc) newMachOFromCFM ((void*) eff->setParameter);
-            eff->getParameter     = (AEffectGetParameterProc) newMachOFromCFM ((void*) eff->getParameter);
-            eff->processReplacing = (AEffectProcessProc)      newMachOFromCFM ((void*) eff->processReplacing);
-        }
-    }
-   #endif
-
-#endif
+  #endif
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModuleHandle)
@@ -732,29 +609,14 @@ public:
           #if JUCE_MAC
             if (module->resFileId != 0)
                 UseResFile (module->resFileId);
-
-           #if JUCE_PPC
-            if (module->fragId != 0)
-            {
-                static void* audioMasterCoerced = nullptr;
-                if (audioMasterCoerced == nullptr)
-                    audioMasterCoerced = newCFMFromMachO ((void*) &audioMaster);
-
-                effect = module->moduleMain ((audioMasterCallback) audioMasterCoerced);
-            }
-            else
-           #endif
           #endif
+
             {
                 JUCE_VST_WRAPPER_INVOKE_MAIN
             }
 
             if (effect != nullptr && effect->magic == kEffectMagic)
             {
-               #if JUCE_PPC
-                module->coerceAEffectFunctionCalls (effect);
-               #endif
-
                 jassert (effect->resvd2 == 0);
                 jassert (effect->object != 0);
 
@@ -772,6 +634,7 @@ public:
     ~VSTPluginInstance()
     {
         const ScopedLock sl (lock);
+        stopTimer();
 
         if (effect != nullptr && effect->magic == kEffectMagic)
         {
@@ -825,6 +688,18 @@ public:
         desc.isInstrument = (effect != nullptr && (effect->flags & effFlagsIsSynth) != 0);
     }
 
+    bool initialiseEffect (double initialSampleRate, int initialBlockSize)
+    {
+        if (effect != nullptr)
+        {
+            effect->resvd2 = (VstIntPtr) (pointer_sized_int) this;
+            initialise (initialSampleRate, initialBlockSize);
+            return true;
+        }
+
+        return false;
+    }
+
     void initialise (double initialSampleRate, int initialBlockSize)
     {
         if (initialised || effect == nullptr)
@@ -871,7 +746,7 @@ public:
         wantsMidiMessages = pluginCanDo ("receiveVstMidiEvent") > 0;
 
        #if JUCE_MAC && JUCE_SUPPORT_CARBON
-        usesCocoaNSView = (pluginCanDo ("hasCockosViewAsConfig") & (int) 0xffff0000) == 0xbeef0000;
+        usesCocoaNSView = ((unsigned int) pluginCanDo ("hasCockosViewAsConfig") & 0xffff0000ul) == 0xbeef0000ul;
        #endif
 
         setLatencySamples (effect->initialDelay);
@@ -1013,7 +888,12 @@ public:
     }
 
     //==============================================================================
+   #if JUCE_IOS
+    bool hasEditor() const override                  { return false; }
+   #else
     bool hasEditor() const override                  { return effect != nullptr && (effect->flags & effFlagsHasEditor) != 0; }
+   #endif
+
     AudioProcessorEditor* createEditor() override;
 
     //==============================================================================
@@ -1758,7 +1638,7 @@ private:
         jassert (index >= 0 && index < effect->numParams);
         char nm [256] = { 0 };
         dispatch (opcode, index, 0, nm, 0);
-        return String (CharPointer_UTF8 (nm)).trim();
+        return String::createStringFromData (nm, (int) sizeof (nm)).trim();
     }
 
     String getCurrentProgramName()
@@ -1770,7 +1650,7 @@ private:
             {
                 char nm[256] = { 0 };
                 dispatch (effGetProgramName, 0, 0, nm, 0);
-                progName = String (CharPointer_UTF8 (nm)).trim();
+                progName = String::createStringFromData (nm, (int) sizeof (nm)).trim();
             }
 
             const int index = getCurrentProgram();
@@ -1944,6 +1824,7 @@ private:
 };
 
 //==============================================================================
+#if ! JUCE_IOS
 class VSTPluginWindow;
 static Array<VSTPluginWindow*> activeVSTWindows;
 
@@ -2682,7 +2563,7 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VSTPluginWindow)
 };
-
+#endif
 #if JUCE_MSVC
  #pragma warning (pop)
 #endif
@@ -2690,8 +2571,12 @@ private:
 //==============================================================================
 AudioProcessorEditor* VSTPluginInstance::createEditor()
 {
+   #if JUCE_IOS
+    return nullptr;
+   #else
     return hasEditor() ? new VSTPluginWindow (*this)
                        : nullptr;
+   #endif
 }
 
 //==============================================================================
@@ -2783,8 +2668,11 @@ void VSTPluginFormat::findAllTypesForFile (OwnedArray<PluginDescription>& result
     }
 }
 
-AudioPluginInstance* VSTPluginFormat::createInstanceFromDescription (const PluginDescription& desc,
-                                                                     double sampleRate, int blockSize)
+void VSTPluginFormat::createPluginInstance (const PluginDescription& desc,
+                                            double sampleRate,
+                                            int blockSize,
+                                            void* userData,
+                                            void (*callback) (void*, AudioPluginInstance*, const String&))
 {
     ScopedPointer<VSTPluginInstance> result;
 
@@ -2801,49 +2689,32 @@ AudioPluginInstance* VSTPluginFormat::createInstanceFromDescription (const Plugi
 
             result = new VSTPluginInstance (module);
 
-            if (result->effect != nullptr)
-            {
-                result->effect->resvd2 = (VstIntPtr) (pointer_sized_int) (VSTPluginInstance*) result;
-                result->initialise (sampleRate, blockSize);
-            }
-            else
-            {
+            if (! result->initialiseEffect (sampleRate, blockSize))
                 result = nullptr;
-            }
         }
 
         previousWorkingDirectory.setAsCurrentWorkingDirectory();
     }
 
-    return result.release();
+    String errorMsg;
+
+    if (result == nullptr)
+        errorMsg = String (NEEDS_TRANS ("Unable to load XXX plug-in file")).replace ("XXX", "VST-2");
+
+    callback (userData, result.release(), errorMsg);
+}
+
+bool VSTPluginFormat::requiresUnblockedMessageThreadDuringCreation (const PluginDescription&) const noexcept
+{
+    return false;
 }
 
 bool VSTPluginFormat::fileMightContainThisPluginType (const String& fileOrIdentifier)
 {
     const File f (File::createFileWithoutCheckingPath (fileOrIdentifier));
 
-  #if JUCE_MAC
-    if (f.isDirectory() && f.hasFileExtension (".vst"))
-        return true;
-
-   #if JUCE_PPC
-    FSRef fileRef;
-    if (makeFSRefFromPath (&fileRef, f.getFullPathName()))
-    {
-        const short resFileId = FSOpenResFile (&fileRef, fsRdPerm);
-
-        if (resFileId != -1)
-        {
-            const int numEffects = Count1Resources ('aEff');
-            CloseResFile (resFileId);
-
-            if (numEffects > 0)
-                return true;
-        }
-    }
-   #endif
-
-    return false;
+  #if JUCE_MAC || JUCE_IOS
+    return f.isDirectory() && f.hasFileExtension (".vst");
   #elif JUCE_WINDOWS
     return f.existsAsFile() && f.hasFileExtension (".dll");
   #elif JUCE_LINUX
@@ -2866,7 +2737,7 @@ bool VSTPluginFormat::doesPluginStillExist (const PluginDescription& desc)
     return File (desc.fileOrIdentifier).exists();
 }
 
-StringArray VSTPluginFormat::searchPathsForPlugins (const FileSearchPath& directoriesToSearch, const bool recursive)
+StringArray VSTPluginFormat::searchPathsForPlugins (const FileSearchPath& directoriesToSearch, const bool recursive, bool)
 {
     StringArray results;
 
@@ -2910,13 +2781,26 @@ FileSearchPath VSTPluginFormat::getDefaultLocationsToSearch()
     const String programFiles (File::getSpecialLocation (File::globalApplicationsDirectory).getFullPathName());
 
     FileSearchPath paths;
-    paths.add (WindowsRegistry::getValue ("HKLM\\Software\\VST\\VSTPluginsPath",
+    paths.add (WindowsRegistry::getValue ("HKEY_LOCAL_MACHINE\\Software\\VST\\VSTPluginsPath",
                                           programFiles + "\\Steinberg\\VstPlugins"));
     paths.removeNonExistentPaths();
 
-    paths.add (WindowsRegistry::getValue ("HKLM\\Software\\VST\\VSTPluginsPath",
+    paths.add (WindowsRegistry::getValue ("HKEY_LOCAL_MACHINE\\Software\\VST\\VSTPluginsPath",
                                           programFiles + "\\VstPlugins"));
     return paths;
+   #elif JUCE_IOS
+    // on iOS you can only load plug-ins inside the hosts bundle folder
+    CFURLRef relativePluginDir = CFBundleCopyBuiltInPlugInsURL (CFBundleGetMainBundle());
+    CFURLRef pluginDir = CFURLCopyAbsoluteURL (relativePluginDir);
+    CFRelease (relativePluginDir);
+
+    CFStringRef path = CFURLCopyFileSystemPath (pluginDir, kCFURLPOSIXPathStyle);
+    CFRelease (pluginDir);
+
+    FileSearchPath retval (String (CFStringGetCStringPtr (path, kCFStringEncodingUTF8)));
+    CFRelease (path);
+
+    return retval;
    #endif
 }
 
@@ -2959,6 +2843,22 @@ bool VSTPluginFormat::setChunkData (AudioPluginInstance* plugin, const void* dat
         return vst->setChunkData (data, size, isPreset);
 
     return false;
+}
+
+AudioPluginInstance* VSTPluginFormat::createCustomVSTFromMainCall (void* entryPointFunction,
+                                                                   double initialSampleRate, int initialBufferSize)
+{
+    ModuleHandle::Ptr module = new ModuleHandle (File(), (MainCall) entryPointFunction);
+
+    if (module->open())
+    {
+        ScopedPointer<VSTPluginInstance> result (new VSTPluginInstance (module));
+
+        if (result->initialiseEffect (initialSampleRate, initialBufferSize))
+            return result.release();
+    }
+
+    return nullptr;
 }
 
 void VSTPluginFormat::setExtraFunctions (AudioPluginInstance* plugin, ExtraFunctions* functions)

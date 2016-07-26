@@ -22,11 +22,37 @@
   ==============================================================================
 */
 
+/*******************************************************************************
+ The block below describes the properties of this module, and is read by
+ the Projucer to automatically generate project code that uses it.
+ For details about the syntax and how to create or use a module, see the
+ JUCE Module Format.txt file.
+
+
+ BEGIN_JUCE_MODULE_DECLARATION
+
+  ID:               juce_audio_processors
+  vendor:           juce
+  version:          4.2.3
+  name:             JUCE audio processor classes
+  description:      Classes for loading and playing VST, AU, or internally-generated audio processors.
+  website:          http://www.juce.com/juce
+  license:          GPL/Commercial
+
+  dependencies:     juce_gui_extra, juce_audio_basics
+  OSXFrameworks:    CoreAudio CoreMIDI AudioToolbox
+  iOSFrameworks:    AudioToolbox
+
+ END_JUCE_MODULE_DECLARATION
+
+*******************************************************************************/
+
+
 #ifndef JUCE_AUDIO_PROCESSORS_H_INCLUDED
 #define JUCE_AUDIO_PROCESSORS_H_INCLUDED
 
-#include "../juce_gui_basics/juce_gui_basics.h"
-#include "../juce_audio_basics/juce_audio_basics.h"
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_audio_basics/juce_audio_basics.h>
 
 
 //==============================================================================
@@ -63,7 +89,7 @@
 // #error "You need to set either the JUCE_PLUGINHOST_AU and/or JUCE_PLUGINHOST_VST and/or JUCE_PLUGINHOST_VST3 flags if you're using this module!"
 #endif
 
-#if ! (defined (JUCE_SUPPORT_CARBON) || JUCE_64BIT)
+#if ! (defined (JUCE_SUPPORT_CARBON) || JUCE_64BIT || JUCE_IOS)
  #define JUCE_SUPPORT_CARBON 1
 #endif
 

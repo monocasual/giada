@@ -100,10 +100,11 @@ void MPESynthesiserBase::renderNextBlock (AudioBuffer<floatType>& outputAudio,
     MidiBuffer::Iterator midiIterator (inputMidi);
     midiIterator.setNextSamplePosition (startSample);
 
+    bool firstEvent = true;
     int midiEventPos;
     MidiMessage m;
 
-    const ScopedLock sl (renderAudioLock);
+    const ScopedLock sl (noteStateLock);
 
     while (numSamples > 0)
     {
@@ -122,11 +123,13 @@ void MPESynthesiserBase::renderNextBlock (AudioBuffer<floatType>& outputAudio,
             break;
         }
 
-        if (samplesToNextMidiMessage < minimumSubBlockSize)
+        if (samplesToNextMidiMessage < (firstEvent ? 1 : minimumSubBlockSize))
         {
             handleMidiEvent (m);
             continue;
         }
+
+        firstEvent = false;
 
         renderNextSubBlock (outputAudio, startSample, samplesToNextMidiMessage);
         handleMidiEvent (m);
@@ -147,7 +150,7 @@ void MPESynthesiserBase::setCurrentPlaybackSampleRate (const double newRate)
 {
     if (sampleRate != newRate)
     {
-        const ScopedLock sl (renderAudioLock);
+        const ScopedLock sl (noteStateLock);
         instrument->releaseAllNotes();
         sampleRate = newRate;
     }

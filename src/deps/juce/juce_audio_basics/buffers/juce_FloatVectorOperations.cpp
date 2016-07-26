@@ -29,17 +29,6 @@ namespace FloatVectorHelpers
     #define JUCE_INCREMENT_DEST             dest += (16 / sizeof (*dest));
 
    #if JUCE_USE_SSE_INTRINSICS
-    static bool sse2Present = false;
-
-    static bool isSSE2Available() noexcept
-    {
-        if (sse2Present)
-            return true;
-
-        sse2Present = SystemStats::hasSSE2();
-        return sse2Present;
-    }
-
     inline static bool isAligned (const void* p) noexcept
     {
         return (((pointer_sized_int) p) & 15) == 0;
@@ -113,7 +102,6 @@ namespace FloatVectorHelpers
 
     #define JUCE_BEGIN_VEC_OP \
         typedef FloatVectorHelpers::ModeType<sizeof(*dest)>::Mode Mode; \
-        if (FloatVectorHelpers::isSSE2Available()) \
         { \
             const int numLongOps = num / Mode::numParallel;
 
@@ -216,10 +204,11 @@ namespace FloatVectorHelpers
         typedef float Type;
         typedef float32x4_t ParallelType;
         typedef uint32x4_t IntegerType;
+        union signMaskUnion { ParallelType f; IntegerType i; };
         enum { numParallel = 4 };
 
-        static forcedinline IntegerType toint (ParallelType v) noexcept                 { union { ParallelType f; IntegerType i; } u; u.f = v; return u.i; }
-        static forcedinline ParallelType toflt (IntegerType v) noexcept                 { union { ParallelType f; IntegerType i; } u; u.i = v; return u.f; }
+        static forcedinline IntegerType toint (ParallelType v) noexcept                 { signMaskUnion u; u.f = v; return u.i; }
+        static forcedinline ParallelType toflt (IntegerType v) noexcept                 { signMaskUnion u; u.i = v; return u.f; }
 
         static forcedinline ParallelType load1 (Type v) noexcept                        { return vld1q_dup_f32 (&v); }
         static forcedinline ParallelType loadA (const Type* v) noexcept                 { return vld1q_f32 (v); }
@@ -247,10 +236,11 @@ namespace FloatVectorHelpers
         typedef double Type;
         typedef double ParallelType;
         typedef uint64 IntegerType;
+        union signMaskUnion { ParallelType f; IntegerType i; };
         enum { numParallel = 1 };
 
-        static forcedinline IntegerType toint (ParallelType v) noexcept                 { union { ParallelType f; IntegerType i; } u; u.f = v; return u.i; }
-        static forcedinline ParallelType toflt (IntegerType v) noexcept                 { union { ParallelType f; IntegerType i; } u; u.i = v; return u.f; }
+        static forcedinline IntegerType toint (ParallelType v) noexcept                 { signMaskUnion u; u.f = v; return u.i; }
+        static forcedinline ParallelType toflt (IntegerType v) noexcept                 { signMaskUnion u; u.i = v; return u.f; }
 
         static forcedinline ParallelType load1 (Type v) noexcept                        { return v; }
         static forcedinline ParallelType loadA (const Type* v) noexcept                 { return *v; }
@@ -358,6 +348,9 @@ namespace FloatVectorHelpers
     #define JUCE_LOAD_SRC1_SRC2_DEST(src1Load, src2Load, dstLoad)   const Mode::ParallelType d = dstLoad (dest), s1 = src1Load (src1), s2 = src2Load (src2);
     #define JUCE_LOAD_SRC_DEST(srcLoad, dstLoad)                    const Mode::ParallelType d = dstLoad (dest), s = srcLoad (src);
 
+    union signMask32 { float  f; uint32 i; };
+    union signMask64 { double d; uint64 i; };
+
    #if JUCE_USE_SSE_INTRINSICS || JUCE_USE_ARM_NEON
     template<int typeSize> struct ModeType    { typedef BasicOps32 Mode; };
     template<>             struct ModeType<8> { typedef BasicOps64 Mode; };
@@ -372,11 +365,7 @@ namespace FloatVectorHelpers
         {
             int numLongOps = num / Mode::numParallel;
 
-           #if JUCE_USE_SSE_INTRINSICS
-            if (numLongOps > 1 && isSSE2Available())
-           #else
             if (numLongOps > 1)
-           #endif
             {
                 ParallelType val;
 
@@ -446,11 +435,7 @@ namespace FloatVectorHelpers
         {
             int numLongOps = num / Mode::numParallel;
 
-           #if JUCE_USE_SSE_INTRINSICS
-            if (numLongOps > 1 && isSSE2Available())
-           #else
             if (numLongOps > 1)
-           #endif
             {
                 ParallelType mn, mx;
 
@@ -498,6 +483,17 @@ namespace FloatVectorHelpers
             return Range<Type>::findMinAndMax (src, num);
         }
     };
+   #endif
+}
+
+//==============================================================================
+namespace
+{
+   #if JUCE_USE_VDSP_FRAMEWORK
+    // This casts away constness to account for slightly different vDSP function signatures
+    // in OSX 10.8 SDK and below. Can be safely removed once those SDKs are obsolete.
+    template <typename ValueType>
+    ValueType* osx108sdkCompatibilityCast (const ValueType* arg) noexcept { return const_cast<ValueType*> (arg); }
    #endif
 }
 
@@ -588,10 +584,10 @@ void JUCE_CALLTYPE FloatVectorOperations::add (double* dest, double amount, int 
                               const Mode::ParallelType amountToAdd = Mode::load1 (amount);)
 }
 
-void JUCE_CALLTYPE FloatVectorOperations::add (float* dest, float* src, float amount, int num) noexcept
+void JUCE_CALLTYPE FloatVectorOperations::add (float* dest, const float* src, float amount, int num) noexcept
 {
    #if JUCE_USE_VDSP_FRAMEWORK
-    vDSP_vsadd (src, 1, &amount, dest, 1, (vDSP_Length) num);
+    vDSP_vsadd (osx108sdkCompatibilityCast (src), 1, &amount, dest, 1, (vDSP_Length) num);
    #else
     JUCE_PERFORM_VEC_OP_SRC_DEST (dest[i] = src[i] + amount, Mode::add (am, s),
                                   JUCE_LOAD_SRC, JUCE_INCREMENT_SRC_DEST,
@@ -599,10 +595,10 @@ void JUCE_CALLTYPE FloatVectorOperations::add (float* dest, float* src, float am
    #endif
 }
 
-void JUCE_CALLTYPE FloatVectorOperations::add (double* dest, double* src, double amount, int num) noexcept
+void JUCE_CALLTYPE FloatVectorOperations::add (double* dest, const double* src, double amount, int num) noexcept
 {
    #if JUCE_USE_VDSP_FRAMEWORK
-    vDSP_vsaddD (src, 1, &amount, dest, 1, (vDSP_Length) num);
+    vDSP_vsaddD (osx108sdkCompatibilityCast (src), 1, &amount, dest, 1, (vDSP_Length) num);
    #else
     JUCE_PERFORM_VEC_OP_SRC_DEST (dest[i] = src[i] + amount, Mode::add (am, s),
                                   JUCE_LOAD_SRC, JUCE_INCREMENT_SRC_DEST,
@@ -815,7 +811,7 @@ void FloatVectorOperations::abs (float* dest, const float* src, int num) noexcep
    #if JUCE_USE_VDSP_FRAMEWORK
     vDSP_vabs ((float*) src, 1, dest, 1, (vDSP_Length) num);
    #else
-    union { float f; uint32 i; } signMask;
+    FloatVectorHelpers::signMask32 signMask;
     signMask.i = 0x7fffffffUL;
     JUCE_PERFORM_VEC_OP_SRC_DEST (dest[i] = fabsf (src[i]), Mode::bit_and (s, mask),
                                   JUCE_LOAD_SRC, JUCE_INCREMENT_SRC_DEST,
@@ -830,7 +826,7 @@ void FloatVectorOperations::abs (double* dest, const double* src, int num) noexc
    #if JUCE_USE_VDSP_FRAMEWORK
     vDSP_vabsD ((double*) src, 1, dest, 1, (vDSP_Length) num);
    #else
-    union {double d; uint64 i;} signMask;
+    FloatVectorHelpers::signMask64 signMask;
     signMask.i = 0x7fffffffffffffffULL;
 
     JUCE_PERFORM_VEC_OP_SRC_DEST (dest[i] = fabs (src[i]), Mode::bit_and (s, mask),
@@ -1002,10 +998,17 @@ double JUCE_CALLTYPE FloatVectorOperations::findMaximum (const double* src, int 
 void JUCE_CALLTYPE FloatVectorOperations::enableFlushToZeroMode (bool shouldEnable) noexcept
 {
    #if JUCE_USE_SSE_INTRINSICS
-    if (FloatVectorHelpers::isSSE2Available())
-        _MM_SET_FLUSH_ZERO_MODE (shouldEnable ? _MM_FLUSH_ZERO_ON : _MM_FLUSH_ZERO_OFF);
+    _MM_SET_FLUSH_ZERO_MODE (shouldEnable ? _MM_FLUSH_ZERO_ON : _MM_FLUSH_ZERO_OFF);
    #endif
     ignoreUnused (shouldEnable);
+}
+
+void JUCE_CALLTYPE FloatVectorOperations::disableDenormalisedNumberSupport() noexcept
+{
+   #if JUCE_USE_SSE_INTRINSICS
+    const unsigned int mxcsr = _mm_getcsr();
+    _mm_setcsr (mxcsr | 0x8040); // add the DAZ and FZ bits
+   #endif
 }
 
 //==============================================================================

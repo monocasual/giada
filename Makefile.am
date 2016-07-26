@@ -166,8 +166,11 @@ giada_CPPFLAGS =
 #
 
 if WITH_VST
-giada_CPPFLAGS += -I./src/deps/juce -I./src/deps/vst -I/usr/include \
-  -I/usr/include/freetype2
+giada_CPPFLAGS += \
+  -I./src/deps/juce -I./src/deps/vst -I/usr/include -I/usr/include/freetype2 \
+  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
+  -DJUCE_STANDALONE_APPLICATION=1 \
+  -DJUCE_PLUGINHOST_VST=1
 endif
 
 if LINUX

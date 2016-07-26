@@ -39,6 +39,10 @@
  #define WM_APPCOMMAND                     0x0319
 #endif
 
+#if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+ #include <juce_audio_plugin_client/AAX/juce_AAX_Modifier_Injector.h>
+#endif
+
 extern void juce_repeatLastProcessPriority();
 extern void juce_checkCurrentlyFocusedTopLevelWindow();  // in juce_TopLevelWindow.cpp
 extern bool juce_isRunningInWine();
@@ -381,7 +385,7 @@ public:
             sendDataChangeMessage();
     }
 
-    ImagePixelData* clone() override
+    ImagePixelData::Ptr clone() override
     {
         WindowsBitmapImage* im = new WindowsBitmapImage (pixelFormat, width, height, false);
 
@@ -531,7 +535,7 @@ namespace IconConverters
             }
         }
 
-        return Image::null;
+        return Image();
     }
 
     HICON createHICONFromImage (const Image& image, const BOOL isIcon, int hotspotX, int hotspotY)
@@ -561,6 +565,9 @@ namespace IconConverters
 
 //==============================================================================
 class HWNDComponentPeer  : public ComponentPeer
+   #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+    , public ModifierKeyReceiver
+   #endif
 {
 public:
     enum RenderingEngineType
@@ -585,6 +592,9 @@ public:
           currentWindowIcon (0),
           dropTarget (nullptr),
           updateLayeredWindowAlpha (255)
+         #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+        , modProvider (nullptr)
+         #endif
     {
         callFunctionIfNotLocked (&createWindowCallback, this);
 
@@ -858,7 +868,7 @@ public:
 
         if (! makeActive)
         {
-            // in this case a broughttofront call won't have occured, so do it now..
+            // in this case a broughttofront call won't have occurred, so do it now..
             handleBroughtToFront();
         }
     }
@@ -1040,8 +1050,9 @@ public:
 
             Point<float> getMousePos (const POINTL& mousePos) const
             {
-                return owner.globalToLocal (Point<float> (static_cast<float> (mousePos.x),
-                                                          static_cast<float> (mousePos.y)));
+                return owner.globalToLocal (ScalingHelpers::unscaledScreenPosToScaled (owner.getComponent().getDesktopScaleFactor(),
+                                                                                       Point<float> (static_cast<float> (mousePos.x),
+                                                                                                     static_cast<float> (mousePos.y))));
             }
 
             template <typename CharType>
@@ -1165,6 +1176,9 @@ private:
     JuceDropTarget* dropTarget;
     uint8 updateLayeredWindowAlpha;
     MultiTouchMapper<DWORD> currentTouches;
+   #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+    ModifierKeyProvider* modProvider;
+   #endif
 
     //==============================================================================
     class TemporaryImage    : public Timer
@@ -1186,7 +1200,7 @@ private:
         void timerCallback() override
         {
             stopTimer();
-            image = Image::null;
+            image = Image();
         }
 
     private:
@@ -1726,7 +1740,7 @@ private:
         if (registerTouchWindow == nullptr)
             return false;
 
-        // Relevent info about touch/pen detection flags:
+        // Relevant info about touch/pen detection flags:
         // https://msdn.microsoft.com/en-us/library/windows/desktop/ms703320(v=vs.85).aspx
         // http://www.petertissen.de/?p=4
 
@@ -1750,6 +1764,11 @@ private:
                 ModifierKeys::getCurrentModifiersRealtime();
 
             updateKeyModifiers();
+
+           #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+            if (modProvider != nullptr)
+                currentModifiers = currentModifiers.withFlags (modProvider->getWin32Modifiers());
+           #endif
 
             TRACKMOUSEEVENT tme;
             tme.cbSize = sizeof (tme);
@@ -1793,6 +1812,12 @@ private:
         if (isValidPeer (this))
         {
             updateModifiersFromWParam (wParam);
+
+          #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+            if (modProvider != nullptr)
+                currentModifiers = currentModifiers.withFlags (modProvider->getWin32Modifiers());
+          #endif
+
             isDragging = true;
 
             doMouseEvent (position, MouseInputSource::invalidPressure);
@@ -1806,6 +1831,12 @@ private:
             return;
 
         updateModifiersFromWParam (wParam);
+
+       #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+        if (modProvider != nullptr)
+            currentModifiers = currentModifiers.withFlags (modProvider->getWin32Modifiers());
+       #endif
+
         const bool wasDragging = isDragging;
         isDragging = false;
 
@@ -2390,6 +2421,19 @@ private:
     void handleDPIChange() // happens when a window moves to a screen with a different DPI.
     {
     }
+
+    //==============================================================================
+  #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+    void setModifierKeyProvider (ModifierKeyProvider* provider) override
+    {
+        modProvider = provider;
+    }
+
+    void removeModifierKeyProvider() override
+    {
+        modProvider = nullptr;
+    }
+   #endif
 
     //==============================================================================
 public:

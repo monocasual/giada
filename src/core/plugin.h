@@ -32,14 +32,7 @@
 #define __PLUGIN_H__
 
 
-#include "../deps/juce/juce_audio_basics/juce_audio_basics.h"
-#include "../deps/juce/juce_audio_processors/juce_audio_processors.h"
-#include "../deps/juce/juce_core/juce_core.h"
-#include "../deps/juce/juce_data_structures/juce_data_structures.h"
-#include "../deps/juce/juce_events/juce_events.h"
-#include "../deps/juce/juce_graphics/juce_graphics.h"
-#include "../deps/juce/juce_gui_basics/juce_gui_basics.h"
-#include "../deps/juce/juce_gui_extra/juce_gui_extra.h"
+#include "../deps/juce/config.h"
 
 
 using std::string;

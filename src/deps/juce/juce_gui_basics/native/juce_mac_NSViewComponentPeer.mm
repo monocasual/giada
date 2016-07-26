@@ -59,7 +59,8 @@ static NSRect flippedScreenRect (NSRect r) noexcept
 }
 
 //==============================================================================
-class NSViewComponentPeer  : public ComponentPeer
+class NSViewComponentPeer  : public ComponentPeer,
+                             private AsyncUpdater
 {
 public:
     NSViewComponentPeer (Component& comp, const int windowStyleFlags, NSView* viewToAttachTo)
@@ -68,7 +69,6 @@ public:
           view (nil),
           isSharedWindow (viewToAttachTo != nil),
           fullScreen (false),
-          insideDrawRect (false),
          #if USE_COREGRAPHICS_RENDERING
           usingCoreGraphics (true),
          #else
@@ -393,15 +393,19 @@ public:
              && isPositiveAndBelow (localPos.getY(), (int) viewFrame.size.height)))
             return false;
 
-        if (NSWindow* const viewWindow = [view window])
+        if (! SystemStats::isRunningInAppExtensionSandbox())
         {
-            const NSRect windowFrame = [viewWindow frame];
-            const NSPoint windowPoint = [view convertPoint: NSMakePoint (localPos.x, viewFrame.size.height - localPos.y) toView: nil];
-            const NSPoint screenPoint = NSMakePoint (windowFrame.origin.x + windowPoint.x,
-                                                     windowFrame.origin.y + windowPoint.y);
+            if (NSWindow* const viewWindow = [view window])
+            {
+                const NSRect windowFrame = [viewWindow frame];
+                const NSPoint windowPoint = [view convertPoint: NSMakePoint (localPos.x, viewFrame.size.height - localPos.y) toView: nil];
+                const NSPoint screenPoint = NSMakePoint (windowFrame.origin.x + windowPoint.x,
+                                                         windowFrame.origin.y + windowPoint.y);
 
-            if (! isWindowAtPoint (viewWindow, screenPoint))
-                return false;
+                if (! isWindowAtPoint (viewWindow, screenPoint))
+                    return false;
+
+            }
         }
 
         NSView* v = [view hitTest: NSMakePoint (viewFrame.origin.x + localPos.getX(),
@@ -611,7 +615,6 @@ public:
         wheel.isSmooth = false;
         wheel.isInertial = false;
 
-       #if ! JUCE_PPC
         @try
         {
            #if defined (MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
@@ -640,7 +643,6 @@ public:
         }
         @catch (...)
         {}
-       #endif
 
         if (wheel.deltaX == 0 && wheel.deltaY == 0)
         {
@@ -773,6 +775,7 @@ public:
         handleModifierKeysChange();
     }
 
+    //==============================================================================
     void drawRect (NSRect r)
     {
         if (r.size.width < 1.0f || r.size.height < 1.0f)
@@ -791,14 +794,42 @@ public:
             displayScale = (float) screen.backingScaleFactor;
        #endif
 
+       #if USE_COREGRAPHICS_RENDERING && JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS
+        // This option invokes a separate paint call for each rectangle of the clip region.
+        // It's a long story, but this is a basically a workaround for a CGContext not having
+        // a way of finding whether a rectangle falls within its clip region
+        if (usingCoreGraphics)
+        {
+            const NSRect* rects = nullptr;
+            NSInteger numRects = 0;
+            [view getRectsBeingDrawn: &rects count: &numRects];
+
+            if (numRects > 1)
+            {
+                for (int i = 0; i < numRects; ++i)
+                {
+                    NSRect rect = rects[i];
+                    CGContextSaveGState (cg);
+                    CGContextClipToRect (cg, CGRectMake (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+                    drawRect (cg, rect, displayScale);
+                    CGContextRestoreGState (cg);
+                }
+
+                return;
+            }
+        }
+       #endif
+
+        drawRect (cg, r, displayScale);
+    }
+
+    void drawRect (CGContextRef cg, NSRect r, float displayScale)
+    {
        #if USE_COREGRAPHICS_RENDERING
         if (usingCoreGraphics)
         {
             CoreGraphicsContext context (cg, (float) [view frame].size.height, displayScale);
-
-            insideDrawRect = true;
-            handlePaint (context);
-            insideDrawRect = false;
+            invokePaint (context);
         }
         else
        #endif
@@ -829,9 +860,7 @@ public:
                     if (intScale != 1)
                         context->addTransform (AffineTransform::scale (displayScale));
 
-                    insideDrawRect = true;
-                    handlePaint (*context);
-                    insideDrawRect = false;
+                    invokePaint (*context);
                 }
 
                 CGColorSpaceRef colourSpace = CGColorSpaceCreateDeviceRGB();
@@ -843,6 +872,56 @@ public:
         }
     }
 
+    void handleAsyncUpdate() override
+    {
+        // When windows are being resized, artificially throttling high-frequency repaints helps
+        // to stop the event queue getting clogged, and keeps everything working smoothly
+        if (areAnyWindowsInLiveResize()
+              && Time::getCurrentTime() < lastRepaintTime + RelativeTime::milliseconds (1000 / 30))
+        {
+            triggerAsyncUpdate();
+            return;
+        }
+
+        for (const Rectangle<float>* i = deferredRepaints.begin(), *e = deferredRepaints.end(); i != e; ++i)
+            [view setNeedsDisplayInRect: makeNSRect (*i)];
+
+        deferredRepaints.clear();
+    }
+
+    void repaint (const Rectangle<int>& area) override
+    {
+        // In 10.11 changes were made to the way the OS handles repaint regions, and it seems that it can
+        // no longer be trusted to coalesce all the regions, or to even remember them all without losing
+        // a few when there's a lot of activity.
+        // As a work around for this, we use a RectangleList to do our own coalescing of regions before
+        // asynchronously asking the OS to repaint them.
+        deferredRepaints.add ((float) area.getX(), (float) ([view frame].size.height - area.getBottom()),
+                              (float) area.getWidth(), (float) area.getHeight());
+        triggerAsyncUpdate();
+    }
+
+    void invokePaint (LowLevelGraphicsContext& context)
+    {
+        lastRepaintTime = Time::getCurrentTime();
+        handlePaint (context);
+    }
+
+    void performAnyPendingRepaintsNow() override
+    {
+        [view displayIfNeeded];
+    }
+
+    static bool areAnyWindowsInLiveResize() noexcept
+    {
+        for (NSWindow* w in [NSApp windows])
+            if ([w inLiveResize])
+                return true;
+
+        return false;
+    }
+
+    //==============================================================================
     bool sendModalInputAttemptIfBlocked()
     {
         if (Component* modal = Component::getCurrentlyModalComponent())
@@ -920,8 +999,10 @@ public:
     {
         if (constrainer != nullptr && ! isKioskMode())
         {
-            Rectangle<int> pos      (convertToRectInt (flippedScreenRect (r)));
-            Rectangle<int> original (convertToRectInt (flippedScreenRect ([window frame])));
+            const float scale = getComponent().getDesktopScaleFactor();
+
+            Rectangle<int> pos      = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect (r)));
+            Rectangle<int> original = ScalingHelpers::unscaledScreenPosToScaled (scale, convertToRectInt (flippedScreenRect ([window frame])));
 
             const Rectangle<int> screenBounds (Desktop::getInstance().getDisplays().getTotalBounds (true));
 
@@ -943,6 +1024,8 @@ public:
                                           pos.getY() == original.getY() && pos.getBottom() != original.getBottom(),
                                           pos.getX() == original.getX() && pos.getRight()  != original.getRight());
             }
+
+            pos = ScalingHelpers::scaledScreenPosToUnscaled (scale, pos);
 
             r = flippedScreenRect (makeNSRect (pos));
         }
@@ -1232,49 +1315,15 @@ public:
     void textInputRequired (Point<int>, TextInputTarget&) override {}
 
     //==============================================================================
-    void repaint (const Rectangle<int>& area) override
-    {
-        if (insideDrawRect)
-        {
-            class AsyncRepaintMessage  : public CallbackMessage
-            {
-            public:
-                AsyncRepaintMessage (NSViewComponentPeer* const p, const Rectangle<int>& r)
-                    : peer (p), rect (r)
-                {}
-
-                void messageCallback() override
-                {
-                    if (ComponentPeer::isValidPeer (peer))
-                        peer->repaint (rect);
-                }
-
-            private:
-                NSViewComponentPeer* const peer;
-                const Rectangle<int> rect;
-            };
-
-            (new AsyncRepaintMessage (this, area))->post();
-        }
-        else
-        {
-            [view setNeedsDisplayInRect: NSMakeRect ((CGFloat) area.getX(), [view frame].size.height - (CGFloat) area.getBottom(),
-                                                     (CGFloat) area.getWidth(), (CGFloat) area.getHeight())];
-        }
-    }
-
-    void performAnyPendingRepaintsNow() override
-    {
-        [view displayIfNeeded];
-    }
-
-    //==============================================================================
     NSWindow* window;
     NSView* view;
-    bool isSharedWindow, fullScreen, insideDrawRect;
+    bool isSharedWindow, fullScreen;
     bool usingCoreGraphics, isZooming, textWasInserted;
     String stringBeingComposed;
     NSNotificationCenter* notificationCenter;
+
+    RectangleList<float> deferredRepaints;
+    Time lastRepaintTime;
 
     static ModifierKeys currentModifiers;
     static ComponentPeer* currentlyFocusedPeer;
@@ -1375,24 +1424,22 @@ private:
 
         for (int i = ComponentPeer::getNumPeers(); --i >= 0;)
         {
-            ComponentPeer* const peer = ComponentPeer::getPeer (i);
-            NSView* const compView = (NSView*) peer->getNativeHandle();
-
-            if ([compView window] == w)
+            if (NSViewComponentPeer* peer = dynamic_cast<NSViewComponentPeer*> (ComponentPeer::getPeer (i)))
             {
-                if (isKey)
+                if ([peer->view window] == w)
                 {
-                    if (compView == [w firstResponder])
-                        return false;
-                }
-                else
-                {
-                    NSViewComponentPeer* nsViewPeer = dynamic_cast<NSViewComponentPeer*> (peer);
-
-                    if ((nsViewPeer == nullptr || ! nsViewPeer->isSharedWindow)
-                            ? NSPointInRect ([e locationInWindow], NSMakeRect (0, 0, [w frame].size.width, [w frame].size.height))
-                            : NSPointInRect ([compView convertPoint: [e locationInWindow] fromView: nil], [compView bounds]))
-                        return false;
+                    if (isKey)
+                    {
+                        if (peer->view == [w firstResponder])
+                            return false;
+                    }
+                    else
+                    {
+                        if (peer->isSharedWindow
+                               ? NSPointInRect ([peer->view convertPoint: [e locationInWindow] fromView: nil], [peer->view bounds])
+                               : NSPointInRect ([e locationInWindow], NSMakeRect (0, 0, [w frame].size.width, [w frame].size.height)))
+                            return false;
+                    }
                 }
             }
         }
@@ -2051,7 +2098,7 @@ const int KeyPress::F7Key           = NSF7FunctionKey;
 const int KeyPress::F8Key           = NSF8FunctionKey;
 const int KeyPress::F9Key           = NSF9FunctionKey;
 const int KeyPress::F10Key          = NSF10FunctionKey;
-const int KeyPress::F11Key          = NSF1FunctionKey;
+const int KeyPress::F11Key          = NSF11FunctionKey;
 const int KeyPress::F12Key          = NSF12FunctionKey;
 const int KeyPress::F13Key          = NSF13FunctionKey;
 const int KeyPress::F14Key          = NSF14FunctionKey;

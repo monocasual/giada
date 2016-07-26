@@ -635,7 +635,7 @@ public:
             sendDataChangeMessage();
     }
 
-    ImagePixelData* clone() override
+    ImagePixelData::Ptr clone() override
     {
         jassertfalse;
         return nullptr;
@@ -1214,7 +1214,10 @@ private:
                                         e.dpi = ((static_cast<double> (crtc->width) * 25.4 * 0.5) / static_cast<double> (output->mm_width))
                                             + ((static_cast<double> (crtc->height) * 25.4 * 0.5) / static_cast<double> (output->mm_height));
 
-                                    e.scale = masterScale * getScaleForDisplay (output->name, e);
+                                    double scale = getScaleForDisplay (output->name, e);
+                                    scale = (scale <= 0.1 ? 1.0 : scale);
+
+                                    e.scale = masterScale * scale;
 
                                     infos.add (e);
                                 }
@@ -2308,7 +2311,7 @@ public:
 
         // if we have opengl contexts then just repaint them all
         // regardless if this is really necessary
-        repaintOpenGLContexts ();
+        repaintOpenGLContexts();
 
         if (exposeEvent.window != windowH)
         {
@@ -2568,7 +2571,7 @@ private:
             else if (Time::getApproximateMillisecondCounter() > lastTimeImageUsed + 3000)
             {
                 stopTimer();
-                image = Image::null;
+                image = Image();
             }
         }
 
@@ -3959,9 +3962,8 @@ void* CustomMouseCursorInfo::create() const
             hotspotX = (hotspotX * (int) cursorW) / (int) imageW;
             hotspotY = (hotspotY * (int) cursorH) / (int) imageH;
 
-            g.drawImageWithin (image, 0, 0, (int) imageW, (int) imageH,
-                               RectanglePlacement::xLeft | RectanglePlacement::yTop | RectanglePlacement::onlyReduceInSize,
-                               false);
+            g.drawImage (image, Rectangle<float> ((float) imageW, (float) imageH),
+                         RectanglePlacement::xLeft | RectanglePlacement::yTop | RectanglePlacement::onlyReduceInSize);
         }
         else
         {
@@ -4080,7 +4082,7 @@ void MouseCursor::showInAllWindows() const
 //==============================================================================
 Image juce_createIconForFile (const File& /* file */)
 {
-    return Image::null;
+    return Image();
 }
 
 //==============================================================================

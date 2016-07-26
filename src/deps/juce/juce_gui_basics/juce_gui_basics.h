@@ -22,11 +22,38 @@
   ==============================================================================
 */
 
+/*******************************************************************************
+ The block below describes the properties of this module, and is read by
+ the Projucer to automatically generate project code that uses it.
+ For details about the syntax and how to create or use a module, see the
+ JUCE Module Format.txt file.
+
+
+ BEGIN_JUCE_MODULE_DECLARATION
+
+  ID:               juce_gui_basics
+  vendor:           juce
+  version:          4.2.3
+  name:             JUCE GUI core classes
+  description:      Basic user-interface components and related classes.
+  website:          http://www.juce.com/juce
+  license:          GPL/Commercial
+
+  dependencies:     juce_events juce_graphics juce_data_structures
+  OSXFrameworks:    Cocoa Carbon QuartzCore
+  iOSFrameworks:    UIKit
+  linuxLibs:        X11 Xinerama Xext
+
+ END_JUCE_MODULE_DECLARATION
+
+*******************************************************************************/
+
+
 #ifndef JUCE_GUI_BASICS_H_INCLUDED
 #define JUCE_GUI_BASICS_H_INCLUDED
 
-#include "../juce_graphics/juce_graphics.h"
-#include "../juce_data_structures/juce_data_structures.h"
+#include <juce_graphics/juce_graphics.h>
+#include <juce_data_structures/juce_data_structures.h>
 
 //==============================================================================
 /** Config: JUCE_ENABLE_REPAINT_DEBUGGING
@@ -50,7 +77,7 @@
 /** JUCE_USE_XINERAMA: Enables Xinerama multi-monitor support (Linux only).
     Unless you specifically want to disable this, it's best to leave this option turned on.
     This will be used as a fallback if JUCE_USE_XRANDR not set or libxrandr cannot be found.
-    Note that your users do not need to have Xrandr installed for your JUCE app to run, as
+    Note that your users do not need to have Xinerama installed for your JUCE app to run, as
     the availability of Xinerama is queried during runtime.
 */
 #ifndef JUCE_USE_XINERAMA
