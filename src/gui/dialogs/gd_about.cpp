@@ -73,8 +73,13 @@ gdAbout::gdAbout()
 	  "Version " G_VERSION_STR " (" BUILD_DATE ")\n\n"
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
-		"RtMidi (%s), libsamplerate, Jansson (%s) \n"
-		"and libsndfile\n\n"
+		"RtMidi (%s), Libsamplerate, Jansson (%s),\n"
+		"Libsndfile"
+#ifdef WITH_VST
+		", JUCE (%d.%d.%d)\n\n"
+#else
+		"\n\n"
+#endif
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
@@ -82,7 +87,12 @@ gdAbout::gdAbout()
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
 		kernelAudio::getRtAudioVersion().c_str(),
 		kernelMidi::getRtMidiVersion().c_str(),
-		JANSSON_VERSION);
+		JANSSON_VERSION
+#ifdef WITH_VST
+		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
+#else
+		);
+#endif
 
 	int tw = 0;
 	int th = 0;
