@@ -253,8 +253,16 @@ giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \
 
 giada_tests_CXXFLAGS = -std=c++11
 
-giada_tests_CPPFLAGS = -I./src/deps/juce -I./src/deps/vst -I/usr/include \
-                       -I/usr/include/freetype2
+giada_tests_CPPFLAGS =                     \
+  -I./src/deps/juce                        \
+  -I./src/deps/vst                         \
+  -I/usr/include                           \
+  -I/usr/include/freetype2                 \
+  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
+  -DJUCE_STANDALONE_APPLICATION=1          \
+  -DJUCE_PLUGINHOST_VST=1                  \
+  -DJUCE_PLUGINHOST_VST3=0                 \
+  -DJUCE_PLUGINHOST_AU=0
 
 # make rename ------------------------------------------------------------------
 
