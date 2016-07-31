@@ -147,12 +147,6 @@ void gdPluginList::__cb_addPlugin() {
       stackType, ch);
   addSubWindow(pc);
   pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
-
-#if 0
-	gdBrowser *b = new gdBrowser("Browse Plugin_DEPR_", G_Conf.pluginPath.c_str(), ch, BROWSER_LOAD_PLUGIN, stackType);
-	addSubWindow(b);
-	b->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
-#endif
 }
 
 
@@ -363,32 +357,6 @@ void gdPlugin::__cb_openPluginWindow()
   else {
     w = new gdPluginWindow(pPlugin);
   }
-#if 0
-
-	/* TODO - at the moment you can open a window for each plugin in the stack.
-	 * This is not consistent with the rest of the gui. You can avoid this by
-	 * calling
-	 *
-	 * gu_openSubWindow(this, new gdPluginWindow(pPlugin), WID_FX);
-	 *
-	 * instead of the following code.
-	 *
-	 * EDIT 2 - having only 1 plugin window would be very uncomfortable */
-
-	if (!pParent->hasWindow(pPlugin->getId()+1)) {
-		gWindow *w;
-		if (pPlugin->hasEditor())
-#ifdef __APPLE__
-			w = new gdPluginWindowGUImac(pPlugin);
-#else
-			w = new gdPluginWindowGUI(pPlugin);
-#endif
-		else
-			w = new gdPluginWindow(pPlugin);
-		w->setId(pPlugin->getId()+1);
-		pParent->addSubWindow(w);
-	}
-#endif
 }
 
 
