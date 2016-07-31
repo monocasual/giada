@@ -237,7 +237,10 @@ src/core/pluginHost.cpp      \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
 src/utils/utils.cpp          \
-src/utils/log.cpp            \
+src/utils/log.cpp
+
+if WITH_VST
+giada_tests_SOURCES +=                                        \
 src/deps/juce/juce_audio_basics/juce_audio_basics.cpp         \
 src/deps/juce/juce_audio_processors/juce_audio_processors.cpp \
 src/deps/juce/juce_core/juce_core.cpp                         \
@@ -246,6 +249,7 @@ src/deps/juce/juce_events/juce_events.cpp                     \
 src/deps/juce/juce_graphics/juce_graphics.cpp                 \
 src/deps/juce/juce_gui_basics/juce_gui_basics.cpp             \
 src/deps/juce/juce_gui_extra/juce_gui_extra.cpp
+endif
 
 giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \
   -lXpm -lm -ljack -lasound -lpthread -ldl -lpulse-simple -lpulse -lrtmidi \
@@ -253,6 +257,7 @@ giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \
 
 giada_tests_CXXFLAGS = -std=c++11
 
+if WITH_VST
 giada_tests_CPPFLAGS =                     \
   -I./src/deps/juce                        \
   -I./src/deps/vst                         \
@@ -263,6 +268,7 @@ giada_tests_CPPFLAGS =                     \
   -DJUCE_PLUGINHOST_VST=1                  \
   -DJUCE_PLUGINHOST_VST3=0                 \
   -DJUCE_PLUGINHOST_AU=0
+endif
 
 # make rename ------------------------------------------------------------------
 
