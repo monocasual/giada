@@ -21,6 +21,7 @@
 - Avoid crashes on Configuration panel if no midimaps were selected
 - Add more default values for windows' dimensions and positions
 - Update JUCE to version 4.2.3
+- Don't include JUCE on tests without VST support
 
 
 0.12.2 --- 2016 . 06 . 02
