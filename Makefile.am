@@ -192,7 +192,7 @@ if WINDOWS
 giada_LDADD = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
   -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
   -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser -lpthreadGC2 -ljansson \
-  -limm32 -lglu32 -lshell32 -lversion -lopengl32 -loleaut32 -lshlwapi
+  -limm32 -lglu32 -lshell32 -lversion -lopengl32 -loleaut32 -lshlwapi -lcomdlg32
 giada_LDFLAGS = -mwindows -static
 giada_SOURCES += resource.rc
 endif
