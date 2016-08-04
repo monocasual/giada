@@ -52,27 +52,31 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
   show();
 
 #ifndef __APPLE__
+
   Fl::check();
+
 #endif
 
   gLog("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
     (void*) this, (void*) fl_xid(this));
 
-  pPlugin->initEditor();
-
 #if defined(__APPLE__)
+
   void *cocoaWindow = (void*) fl_xid(this);
   cocoa_setWindowSize(cocoaWindow, pPlugin->getEditorW(), pPlugin->getEditorH());
   pPlugin->showEditor(cocoa_getViewFromWindow(cocoaWindow));
+
 #else
+
   pPlugin->showEditor((void*) fl_xid(this));
+
 #endif
 
   resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
 
   Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-  copy_label(pPlugin->getName().toStdString().c_str());
+  copy_label(pPlugin->getName().toRawUTF8());
 
 }
 
