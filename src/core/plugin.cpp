@@ -41,17 +41,29 @@ int Plugin::idGenerator = 1;
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::initEditor()
+void Plugin::init()
 {
+  ui     = NULL;
+  id     = idGenerator++;;
+  bypass = false;
+  status = 1;
+
   if (getActiveEditor() != NULL) {
-    gLog("[Plugin::initEditor] plugin has an already active editor!\n");
+    gLog("[Plugin::init] plugin has an already active editor!\n");
     return;
   }
-  ui = createEditor();
+  ui = createEditorIfNeeded();
   if (ui == NULL) {
-    gLog("[Plugin::initEditor] unable to create editor!\n");
+    gLog("[Plugin::init] unable to create editor, the plugin might be GUI-less!\n");
     return;
   }
+
+  gLog("[Plugin::init] editor initialized and ready\n");
+
+  printf("[Plugin::init] ui == null ? %d\n", ui == NULL);
+  printf("[Plugin::init] ui->isVisible ? %d\n", ui->isVisible());
+  printf("[Plugin::init] ui->isShowing ? %d\n", ui->isShowing());
+  printf("[Plugin::init] ui->isOnDesktop ? %d\n", ui->isOnDesktop());
 }
 
 
@@ -65,8 +77,13 @@ void Plugin::showEditor(void *parent)
     return;
   }
   ui->setOpaque(true);
-  ui->setVisible(true);
+  //ui->setVisible(true);
   ui->addToDesktop(0, parent);
+
+  printf("[Plugin::showEditor] ui == null ? %d\n", ui == NULL);
+  printf("[Plugin::showEditor] ui->isVisible ? %d\n", ui->isVisible());
+  printf("[Plugin::showEditor] ui->isShowing ? %d\n", ui->isShowing());
+  printf("[Plugin::showEditor] ui->isOnDesktop ? %d\n", ui->isOnDesktop());
 }
 
 
@@ -75,7 +92,12 @@ void Plugin::showEditor(void *parent)
 
 bool Plugin::isEditorOpen()
 {
-  return ui->isVisible();
+  printf("[Plugin::isEditorOpen] ui == null ? %d\n", ui == NULL);
+  printf("[Plugin::isEditorOpen] ui->isVisible ? %d\n", ui->isVisible());
+  printf("[Plugin::isEditorOpen] ui->isShowing ? %d\n", ui->isShowing());
+  printf("[Plugin::isEditorOpen] ui->isOnDesktop ? %d\n", ui->isOnDesktop());
+  return ui->isVisible() && ui->isOnDesktop();
+  //return ui->isOnDesktop();
 }
 
 
@@ -95,9 +117,14 @@ void Plugin::closeEditor()
 {
   if (ui == NULL)
     return;
-  ui->setVisible(false);
+  //ui->setVisible(false);
   if (ui->isOnDesktop())
   	ui->removeFromDesktop();
+
+  printf("[Plugin::closeEditor] ui == null ? %d\n", ui == NULL);
+  printf("[Plugin::closeEditor] ui->isVisible ? %d\n", ui->isVisible());
+  printf("[Plugin::closeEditor] ui->isShowing ? %d\n", ui->isShowing());
+  printf("[Plugin::closeEditor] ui->isOnDesktop ? %d\n", ui->isOnDesktop());
 }
 
 #endif

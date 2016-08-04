@@ -51,11 +51,7 @@ private:
 
 public:
 
-  /* initEditor
-   * Prepare plugin GUI. 'parent' is a void pointer to the parent window that
-   * will contain it. */
-
-  void initEditor();
+  void init();
 
   void showEditor(void *parent);
 
@@ -73,17 +69,14 @@ public:
 
   string getUniqueId();
 
-  inline void setId() { id = idGenerator++; }
-  inline int  getId() { return id; }
-  inline bool getStatus() { return status; }
-  inline bool isBypassed() { return bypass; }
-  inline int  getEditorW() { return ui->getWidth(); }
-  inline int  getEditorH() { return ui->getHeight(); }
-
-  inline void toggleBypass() { bypass = !bypass; }
-  inline void setStatus(int s) { status = s; }
-  inline void setBypass(bool b) { bypass = b; }
-
+  int  getId()           { return id; }
+  bool getStatus()       { return status; }
+  bool isBypassed()      { return bypass; }
+  int  getEditorW()      { return ui->getWidth(); }
+  int  getEditorH()      { return ui->getHeight(); }
+  void toggleBypass()    { bypass = !bypass; }
+  void setStatus(int s)  { status = s; }
+  void setBypass(bool b) { bypass = b; }
 };
 
 #endif

@@ -151,8 +151,10 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     return NULL;
   }
 
-  p->setStatus(1);
-  p->setId();
+  //p->setStatus(1);
+  //p->setId();
+  //p->initEditor();
+  p->init();
   p->prepareToPlay(samplerate, buffersize);
 
   gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
