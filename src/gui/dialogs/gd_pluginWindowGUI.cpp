@@ -72,7 +72,12 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 #endif
 
-  resize(0, 0, pPlugin->getEditorW(), pPlugin->getEditorH());
+  int pluginW = pPlugin->getEditorW();
+  int pluginH = pPlugin->getEditorH();
+
+  printf("w=%d h=%d\n", Fl::w(), Fl::h());
+
+  resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
 
   Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
