@@ -137,7 +137,7 @@ string gBrowser::getSelectedItem(bool fullPath)
   if (value() == 0)  // no rows selected? return current directory
     return normalize(currentDir);
   else
-    return normalize(gGetRealPath(currentDir + text(value())));
+    return normalize(gGetRealPath(currentDir + G_SLASH + normalize(text(value()))));
 }
 
 
