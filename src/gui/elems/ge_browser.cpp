@@ -66,8 +66,6 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 void gBrowser::loadDir(const string &dir)
 {
   currentDir = dir;
-  if (currentDir.back() != G_SLASH)  // make sure the trailing slash exists
-    currentDir += G_SLASH;
   load(currentDir.c_str());
 
   /* hide "../", it just screws up things  */
@@ -159,7 +157,15 @@ void gBrowser::preselect(int pos, int line)
 string gBrowser::normalize(const string &s)
 {
   string out = s;
+
+  /* our crappy version of Clang doesn't seem to support std::string::back() */
+
+#ifdef __APPLE__
+  if (out[out.length() - 1] == G_SLASH)
+#else
   if (out.back() == G_SLASH)
+#endif
+
     out = out.substr(0, out.size()-1);
   return out;
 }
