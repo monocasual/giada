@@ -16,6 +16,7 @@
 - Deep refactoring of the file browser
 - Save browser's scroll position and last item selected on opening
 - Load patches/projects/samples on double click
+- 64 bit builds for Windows
 - Prevent deprecated patch from crashing if a plugin is not found in the stack
 - Force logger to flush to file on Windows
 - Avoid crashes on Configuration panel if no midimaps were selected
