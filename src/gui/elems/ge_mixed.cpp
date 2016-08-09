@@ -612,9 +612,10 @@ void gBaseButton::trimLabel()
       len--;
     }
   }
-  else
+  else {
     out = "";
-    copy_label(out.c_str());
+  }
+  copy_label(out.c_str());
 }
 
 

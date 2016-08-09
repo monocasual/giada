@@ -711,7 +711,7 @@ void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
 		ch->panRight= 0.0f + val;
 
 		char buf[8];
-		sprintf(buf, "%d L", abs((ch->panRight * 100.0f) - 100));
+		sprintf(buf, "%d L", (int) abs((ch->panRight * 100.0f) - 100));
 		win->panNum->value(buf);
 	}
 	else if (val == 1.0f) {
@@ -724,7 +724,7 @@ void glue_setPanning(class gdEditor *win, SampleChannel *ch, float val)
 		ch->panRight= 1.0f;
 
 		char buf[8];
-		sprintf(buf, "%d R", abs((ch->panLeft * 100.0f) - 100));
+		sprintf(buf, "%d R", (int) abs((ch->panLeft * 100.0f) - 100));
 		win->panNum->value(buf);
 	}
 	win->panNum->redraw();

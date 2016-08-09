@@ -651,9 +651,10 @@ void stopOverdub(int frame)
 
 	/* remove any nested action between keypress----keyrel, then record */
 
-	if (!nullLoop)
+	if (!nullLoop) {
 		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type);
 		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type);
+	}
 
 	if (!ringLoop && !nullLoop) {
 		rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
