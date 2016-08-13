@@ -19,8 +19,9 @@
 - 64 bit builds for Windows
 - Prevent deprecated patch from crashing if a plugin is not found in the stack
 - Force logger to flush to file on Windows
-- Avoid crashes on Configuration panel if no midimaps were selected
 - Add more default values for windows' dimensions and positions
+- Avoid crashes on Configuration panel if no midimaps were selected
+- Fix missing keyRelease actions in action editor 
 - Update JUCE to version 4.2.3
 - Don't include JUCE on tests without VST support (GitHub #75)
 - Fix compilation errors on GCC 6 (GitHub #82)
