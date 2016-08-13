@@ -177,69 +177,72 @@ int gActionChannel::handle(int e)
 	switch (e) {
 
 		case FL_DRAG: {
-			if (selected != NULL) {   // if you don't drag an empty area
 
-				/* if onLeftEdge o onRightEdge are true it means that you're resizing
-				 * an action. Otherwise move the widget. */
+      if (selected == NULL) {  // if you drag an empty area
+        ret = 1;
+        break;
+      }
 
-				if (selected->onLeftEdge || selected->onRightEdge) {
+			/* if onLeftEdge o onRightEdge are true it means that you're resizing
+			 * an action. Otherwise move the widget. */
 
-					/* some checks: a) cannot resize an action < N pixels, b) no beyond zero,
-					 * c) no beyond bar maxwidth. Checks for overlap are done in FL_RELEASE */
+			if (selected->onLeftEdge || selected->onRightEdge) {
 
-					if (selected->onRightEdge) {
+				/* some checks: a) cannot resize an action < N pixels, b) no beyond zero,
+				 * c) no beyond bar maxwidth. Checks for overlap are done in FL_RELEASE */
 
-						int aw = Fl::event_x()-selected->x();
-						int ah = selected->h();
+				if (selected->onRightEdge) {
 
-						if (Fl::event_x() < selected->x()+gAction::MIN_WIDTH)
-							aw = gAction::MIN_WIDTH;
-						else
-						if (Fl::event_x() > pParent->coverX)
-							aw = pParent->coverX-selected->x();
+					int aw = Fl::event_x()-selected->x();
+					int ah = selected->h();
 
-						selected->size(aw, ah);
-					}
-					else {
-
-						int ax = Fl::event_x();
-						int ay = selected->y();
-						int aw = selected->x()-Fl::event_x()+selected->w();
-						int ah = selected->h();
-
-						if (Fl::event_x() < x()) {
-							ax = x();
-							aw = selected->w()+selected->x()-x();
-						}
-						else
-						if (Fl::event_x() > selected->x()+selected->w()-gAction::MIN_WIDTH) {
-							ax = selected->x()+selected->w()-gAction::MIN_WIDTH;
-							aw = gAction::MIN_WIDTH;
-						}
-						selected->resize(ax, ay, aw, ah);
-					}
-				}
-
-				/* move the widget around */
-
-				else {
-					int real_x = Fl::event_x() - actionPickPoint;
-					if (real_x < x())                                  // don't go beyond the left border
-						selected->position(x(), selected->y());
+					if (Fl::event_x() < selected->x()+gAction::MIN_WIDTH)
+						aw = gAction::MIN_WIDTH;
 					else
-					if (real_x+selected->w() > pParent->coverX+x())         // don't go beyond the right border
-						selected->position(pParent->coverX+x()-selected->w(), selected->y());
-					else {
-						if (pParent->gridTool->isOn()) {
-							int snpx = pParent->gridTool->getSnapPoint(real_x-x()) + x() -1;
-							selected->position(snpx, selected->y());
-						}
-						else
-							selected->position(real_x, selected->y());
-					}
+					if (Fl::event_x() > pParent->coverX)
+						aw = pParent->coverX-selected->x();
+
+					selected->size(aw, ah);
 				}
-				redraw();
+				else {
+
+					int ax = Fl::event_x();
+					int ay = selected->y();
+					int aw = selected->x()-Fl::event_x()+selected->w();
+					int ah = selected->h();
+
+					if (Fl::event_x() < x()) {
+						ax = x();
+						aw = selected->w()+selected->x()-x();
+					}
+					else
+					if (Fl::event_x() > selected->x()+selected->w()-gAction::MIN_WIDTH) {
+						ax = selected->x()+selected->w()-gAction::MIN_WIDTH;
+						aw = gAction::MIN_WIDTH;
+					}
+					selected->resize(ax, ay, aw, ah);
+				}
 			}
+
+      /* move the widget around */
+
+			else {
+				int real_x = Fl::event_x() - actionPickPoint;
+				if (real_x < x())                                  // don't go beyond the left border
+					selected->position(x(), selected->y());
+				else
+				if (real_x+selected->w() > pParent->coverX+x())         // don't go beyond the right border
+					selected->position(pParent->coverX+x()-selected->w(), selected->y());
+				else {
+					if (pParent->gridTool->isOn()) {
+						int snpx = pParent->gridTool->getSnapPoint(real_x-x()) + x() -1;
+						selected->position(snpx, selected->y());
+					}
+					else
+						selected->position(real_x, selected->y());
+				}
+			}
+			redraw();
 			ret = 1;
 			break;
 		}
@@ -410,12 +413,12 @@ bool gActionChannel::actionCollides(int frame)
 	bool collision = false;
 
 	for (int i=0; i<children() && !collision; i++)
-		if ( ((gAction*)child(i))->frame_a == frame)
+		if (((gAction*) child(i))->frame_a == frame)
 			collision = true;
 
 	if (ch->mode == SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
-			gAction *c = ((gAction*)child(i));
+			gAction *c = ((gAction*) child(i));
 			if (frame <= c->frame_b && frame >= c->frame_a)
 				collision = true;
 		}
@@ -427,12 +430,6 @@ bool gActionChannel::actionCollides(int frame)
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-const int gAction::MIN_WIDTH = 8;
-
-
 /* -------------------------------------------------------------------------- */
 
 

@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_actionChannel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,10 +24,12 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
+
 
 #ifndef GE_ACTIONCHANNEL_H
 #define GE_ACTIONCHANNEL_H
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
@@ -37,8 +39,8 @@
 #include "ge_actionWidget.h"
 
 
-class gAction : public Fl_Box {
-
+class gAction : public Fl_Box
+{
 private:
 
 	bool                  selected;
@@ -48,6 +50,7 @@ private:
   char                  type;     // type of action
 
 public:
+
 	gAction(int x, int y, int h, int frame_a, unsigned index,
 				  gdActionEditor *parent, class SampleChannel *ch, bool record,
 			    char type);
@@ -80,14 +83,15 @@ public:
 	bool onRightEdge;
 	bool onLeftEdge;
 
-	static const int MIN_WIDTH;
+	static const int MIN_WIDTH = 8;
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-class gActionChannel : public gActionWidget {
+class gActionChannel : public gActionWidget
+{
 
 private:
 
@@ -125,6 +129,7 @@ private:
 	bool actionCollides(int frame);
 
 public:
+
 	gActionChannel(int x, int y, gdActionEditor *pParent, class SampleChannel *ch);
 	void draw();
 	int  handle(int e);
