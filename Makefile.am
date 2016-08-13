@@ -176,6 +176,7 @@ giada_CPPFLAGS +=                          \
   -DJUCE_PLUGINHOST_VST=1                  \
   -DJUCE_PLUGINHOST_VST3=0                 \
   -DJUCE_PLUGINHOST_AU=0
+giada_CXXFLAGS += -Wno-error=misleading-indentation
 endif
 
 if LINUX
