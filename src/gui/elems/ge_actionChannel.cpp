@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_actionChannel
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <FL/fl_draw.H>
@@ -44,11 +44,13 @@ extern Mixer         G_Mixer;
 extern Conf	         G_Conf;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChannel *ch)
- : gActionWidget(x, y, 200, 40, pParent), ch(ch), selected(NULL)
+  : gActionWidget(x, y, 200, 40, pParent),
+    ch           (ch),
+    selected     (NULL)
 {
 	size(pParent->totalWidth, h());
 
@@ -58,49 +60,47 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 	for (unsigned i=0; i<recorder::frames.size(); i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
-			recorder::action *ra = recorder::global.at(i).at(j);
+			recorder::action *action = recorder::global.at(i).at(j);
 
-			if (ra->chan == pParent->chan->index) {
+      /* Don't show actions:
+      - that don't belong to the displayed channel (!= pParent->chan->index);
+      - that are over the grey area (> G_Mixer.totalFrames);
+      - of type ACTION_KILLCHAN in a SINGLE_PRESS channel. They cannot be
+        recorded in such mode, but they can exist if you change from another
+        mode to singlepress;
+      - of type ACTION_KEYREL in a SINGLE_PRESS channel. It's up to gAction to
+        find the other piece (namely frame_b) */
 
-				/* don't show actions > than the grey area */
+      if ((action->chan != pParent->chan->index)                        ||
+          (recorder::frames.at(i) > G_Mixer.totalFrames)                ||
+          (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS) ||
+          (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)
+      )
+        continue;
 
-				if (recorder::frames.at(i) > G_Mixer.totalFrames)
-					continue;
-
-				/* skip the killchan actions in a singlepress channel. They cannot be recorded
-				 * in such mode, but they can exist if you change from another mode to singlepress */
-
-				if (ra->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)
-					continue;
-
-				/* also filter out ACTION_KEYREL: it's up to gAction to find the other piece
-				 * (namely frame_b) */
-
-				if (ra->type & (ACTION_KEYPRESS | ACTION_KILLCHAN))	{
-					int ax = x+(ra->frame/pParent->zoom);
-					gAction *a = new gAction(
-							ax,           // x
-							y+4,          // y
-							h()-8,        // h
-							ra->frame,	  // frame_a
-							i,            // n. of recordings
-							pParent,      // pointer to the pParent window
-							ch,           // pointer to SampleChannel
-							false,        // record = false: don't record it, we are just displaying it!
-							ra->type);    // type of action
-					add(a);
-				}
-			}
+			int ax = x + (action->frame / pParent->zoom);
+			gAction *a = new gAction(
+					ax,               // x
+					y + 4,            // y
+					h() - 8,          // h
+					action->frame,	  // frame_a
+					i,                // n. of recordings
+					pParent,          // pointer to the pParent window
+					ch,               // pointer to SampleChannel
+					false,            // record = false: don't record it, we are just displaying it!
+					action->type);    // type of action
+			add(a);
 		}
 	}
 	end(); // mandatory when you add widgets to a fl_group, otherwise mega malfunctions
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gAction *gActionChannel::getSelectedAction() {
+gAction *gActionChannel::getSelectedAction()
+{
 	for (int i=0; i<children(); i++) {
 		int action_x  = ((gAction*)child(i))->x();
 		int action_w  = ((gAction*)child(i))->w();
@@ -111,11 +111,11 @@ gAction *gActionChannel::getSelectedAction() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gActionChannel::updateActions() {
-
+void gActionChannel::updateActions()
+{
 	/* when zooming, don't delete and re-add actions, just MOVE them. This
 	 * function shifts the action by a zoom factor. Those singlepress are
 	 * stretched, as well */
@@ -138,11 +138,11 @@ void gActionChannel::updateActions() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gActionChannel::draw() {
-
+void gActionChannel::draw()
+{
 	/* draw basic boundaries (+ beat bars) and hide the unused area. Then
 	 * draw the children (the actions) */
 
@@ -161,11 +161,11 @@ void gActionChannel::draw() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gActionChannel::handle(int e) {
-
+int gActionChannel::handle(int e)
+{
 	int ret = Fl_Group::handle(e);
 
 	/* do nothing if the widget is deactivated. It could happen for loopmode
@@ -399,11 +399,11 @@ int gActionChannel::handle(int e) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gActionChannel::actionCollides(int frame) {
-
+bool gActionChannel::actionCollides(int frame)
+{
 	/* if SINGLE_PRESS we check that the tail (frame_b) of the action doesn't
 	 * overlap the head (frame) of the new one. First the general case, yet. */
 
@@ -425,15 +425,15 @@ bool gActionChannel::actionCollides(int frame) {
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 const int gAction::MIN_WIDTH = 8;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 /** TODO - index is useless?
@@ -485,11 +485,11 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gAction::draw() {
-
+void gAction::draw()
+{
 	int color;
 	if (selected)  /// && gActionChannel !disabled
 		color = COLOR_BD_1;
@@ -515,11 +515,11 @@ void gAction::draw() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gAction::handle(int e) {
-
+int gAction::handle(int e)
+{
 	/* ret = 0 sends the event to the parent window. */
 
 	int ret = 0;
@@ -565,11 +565,11 @@ int gAction::handle(int e) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gAction::addAction() {
-
+void gAction::addAction()
+{
 	/* always check frame parity */
 
 	if (frame_a % 2 != 0)
@@ -597,11 +597,11 @@ void gAction::addAction() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gAction::delAction() {
-
+void gAction::delAction()
+{
 	/* if SINGLE_PRESS you must delete both the keypress and the keyrelease
 	 * actions. */
 
@@ -619,11 +619,11 @@ void gAction::delAction() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gAction::moveAction(int frame_a) {
-
+void gAction::moveAction(int frame_a)
+{
 	/* easy one: delete previous action and record the new ones. As usual,
 	 * SINGLE_PRESS requires two jobs. If frame_a is valid, use that frame
 	 * value. */
@@ -652,25 +652,28 @@ void gAction::moveAction(int frame_a) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gAction::absx() {
+int gAction::absx()
+{
 	return x() - parent->ac->x();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gAction::xToFrame_a() {
+int gAction::xToFrame_a()
+{
 	return (absx()) * parent->zoom;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gAction::xToFrame_b() {
+int gAction::xToFrame_b()
+{
 	return (absx() + w()) * parent->zoom;
 }
