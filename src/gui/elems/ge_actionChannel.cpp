@@ -64,7 +64,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 
       /* Don't show actions:
       - that don't belong to the displayed channel (!= pParent->chan->index);
-      - that are over the grey area (> G_Mixer.totalFrames);
+      - that are covered by the grey area (> G_Mixer.totalFrames);
       - of type ACTION_KILLCHAN in a SINGLE_PRESS channel. They cannot be
         recorded in such mode, but they can exist if you change from another
         mode to singlepress;
