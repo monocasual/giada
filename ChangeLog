@@ -13,7 +13,7 @@
 
 
 0.13.0 ---
-- Deep refactoring of the file browser
+- Deep file browser refactoring
 - Save browser's scroll position and last item selected on opening
 - Load patches/projects/samples on double click
 - 64 bit builds for Windows
