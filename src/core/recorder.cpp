@@ -1,11 +1,11 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * recorder
  * Action recorder.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -25,7 +25,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <math.h>
@@ -41,8 +41,6 @@
 #include "sampleChannel.h"
 #include "../utils/log.h"
 #include "../utils/utils.h"
-
-
 
 
 extern Mixer       G_Mixer;
@@ -62,7 +60,7 @@ bool sortedActions = false;
 composite cmp;
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void init()
@@ -73,7 +71,7 @@ void init()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 bool canRec(Channel *ch)
@@ -90,7 +88,7 @@ bool canRec(Channel *ch)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void rec(int index, int type, int frame, uint32_t iValue, float fValue)
@@ -162,7 +160,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void clearChan(int index)
@@ -175,12 +173,6 @@ void clearChan(int index)
 			if (j == global.at(i).size()) break; 	  // for each action j of frame i
 			action *a = global.at(i).at(j);
 			if (a->chan == index)	{
-#ifdef WITH_VST
-#if 0
-				if (a->type == ACTION_MIDI)
-					free(a->event);
-#endif
-#endif
 				free(a);
 				global.at(i).erase(global.at(i).begin() + j);
 			}
@@ -196,7 +188,7 @@ void clearChan(int index)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void clearAction(int index, char act)
@@ -217,14 +209,14 @@ void clearAction(int index, char act)
 		}
 	}
 	Channel *ch = G_Mixer.getChannelByIndex(index);
-	ch->hasActions = false;   /// FIXME - why this? Isn't it useless if we call chanHasActions?
+	ch->hasActions = false;   /// FIXME - why this? Isn't it useless if we call setChanHasActionsStatus?
 	optimize();
-	chanHasActions(index);    /// FIXME
+	setChanHasActionsStatus(index);    /// FIXME
 	//print();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue)
@@ -256,12 +248,6 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 					while (lockStatus == 0) {
 						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
 						if (lockStatus == 0) {
-#ifdef WITH_VST
-#if 0
-							if (type == ACTION_MIDI)
-								free(a->event);
-#endif
-#endif
 							free(a);
 							global.at(i).erase(global.at(i).begin() + j);
 							pthread_mutex_unlock(&G_Mixer.mutex_recs);
@@ -277,7 +263,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 	}
 	if (found) {
 		optimize();
-		chanHasActions(chan);
+		setChanHasActionsStatus(chan);
 		gLog("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 	}
@@ -287,7 +273,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void deleteActions(int chan, int frame_a, int frame_b, char type)
@@ -304,7 +290,7 @@ void deleteActions(int chan, int frame_a, int frame_b, char type)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void clearAll()
@@ -336,7 +322,7 @@ void clearAll()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void optimize()
@@ -358,7 +344,7 @@ void optimize()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void sortActions()
@@ -376,7 +362,7 @@ void sortActions()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void updateBpm(float oldval, float newval, int oldquanto)
@@ -417,7 +403,7 @@ void updateBpm(float oldval, float newval, int oldquanto)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void updateSamplerate(int systemRate, int patchRate)
@@ -457,7 +443,7 @@ void updateSamplerate(int systemRate, int patchRate)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void expand(int old_fpb, int new_fpb)
@@ -488,7 +474,7 @@ void expand(int old_fpb, int new_fpb)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void shrink(int new_fpb)
@@ -515,26 +501,29 @@ void shrink(int new_fpb)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void chanHasActions(int index)
+void setChanHasActionsStatus(int index)
 {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size() == 0) {
 		ch->hasActions = false;
 		return;
 	}
-	for (unsigned i=0; i<global.size() && !ch->hasActions; i++) {
-		for (unsigned j=0; j<global.at(i).size() && !ch->hasActions; j++) {
-			if (global.at(i).at(j)->chan == index)
+	for (unsigned i=0; i<global.size(); i++) {
+		for (unsigned j=0; j<global.at(i).size(); j++) {
+			if (global.at(i).at(j)->chan == index) {
 				ch->hasActions = true;
+				return;
+			}
 		}
 	}
+	ch->hasActions = false;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
@@ -562,7 +551,7 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int getAction(int chan, char action, int frame, struct action **out)
@@ -580,7 +569,7 @@ int getAction(int chan, char action, int frame, struct action **out)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void startOverdub(int index, char actionMask, int frame)
@@ -622,7 +611,7 @@ void startOverdub(int index, char actionMask, int frame)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void stopOverdub(int frame)
@@ -674,7 +663,7 @@ void stopOverdub(int frame)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void print()

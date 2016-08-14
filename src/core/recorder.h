@@ -36,20 +36,6 @@
 #include "const.h"
 #include "mixer.h"
 
-#ifdef WITH_VST
-
-/* before including aeffetx(x).h we must define __cdecl, otherwise VST
- * headers can't be compiled correctly. In windows __cdecl is already
- * defined. */
-
-	#ifdef __GNUC__
-		#ifndef _WIN32
-			#define __cdecl
-		#endif
-	#endif
-	#include "../deps/vst/aeffectx.h"
-#endif
-
 
 using std::vector;
 
@@ -61,14 +47,15 @@ using std::vector;
  * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4]
  * */
 
-namespace recorder {
-
+namespace recorder
+{
 /* action
  * struct containing fields to describe an atomic action. Note from
  * VST sdk: parameter values, like all VST parameters, are declared as
  * floats with an inclusive range of 0.0 to 1.0 (fValue). */
 
-struct action {
+struct action
+{
 	int      chan;    // channel index, i.e. Channel->index
  	int      type;
 	int      frame;   // redundant info, used by helper functions
@@ -80,7 +67,8 @@ struct action {
  * a group of two actions (keypress+keyrel, muteon+muteoff) used during
  * the overdub process */
 
-struct composite {
+struct composite
+{
 	action a1;
 	action a2;
 };
@@ -97,11 +85,11 @@ extern bool sortedActions;                  // are actions sorted via sortAction
 
 void init();
 
-/* chanHasActions
+/* setChanHasActionsStatus
  * Check if the channel has at least one action recorded. If false, sets
  * ch->hasActions = false. Used after an action deletion. */
 
-void chanHasActions(int chan);
+void setChanHasActionsStatus(int chan);
 
 /* canRec
  * can a channel rec an action? Call this one BEFORE rec(). */
