@@ -21,10 +21,12 @@
 - Force logger to flush to file on Windows
 - Add more default values for windows' dimensions and positions
 - Avoid crashes on Configuration panel if no midimaps were selected
-- Fix missing keyRelease actions in action editor 
+- Fix missing keyRelease actions in action editor
 - Update JUCE to version 4.2.3
 - Don't include JUCE on tests without VST support (GitHub #75)
 - Fix compilation errors on GCC 6 (GitHub #82)
+- Fix wrong channel's actions count that prevented "R" button to be toggled
+  properly
 
 
 0.12.2 --- 2016 . 06 . 02
