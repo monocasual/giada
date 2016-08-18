@@ -975,11 +975,16 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 				else {
 
 					/* fillChan only if frame != 0. If you call fillChan on frame == 0
-					 * a duplicate call to fillChan occurs with loss of data. */
+					a duplicate call to fillChan occurs with loss of data. Yeah, but
+					what happens if an action really occurs on frame 0 (and it happens,
+					for example	when you start the sequencer from the firt beat)? Cheat
+					time! Shift a little bit the frame, so that it's no longer zero.  */
 
 					status = STATUS_PLAY;
 					sendMidiLplay();
-					if (frame != 0)
+					if (frame == 0)
+						frame = 2;
+					//if (frame != 0)
 						tracker = fillChan(vChan, tracker, frame);
 				}
 			}
