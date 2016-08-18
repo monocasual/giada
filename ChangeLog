@@ -27,6 +27,7 @@
 - Fix compilation errors on GCC 6 (GitHub #82)
 - Fix wrong channel's actions count that prevented "R" button to be toggled
   properly
+- Fixed a bug that prevented actions on frame 0 to being properly reproduced
 
 
 0.12.2 --- 2016 . 06 . 02
