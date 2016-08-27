@@ -14,8 +14,9 @@ notifications:
     on_failure: always
 
 before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y # for gcc 6
   - sudo apt-get update -qq
-  - sudo apt-get install -y libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev
+  - sudo apt-get install -y gcc-6 libsndfile1-dev libsamplerate0-dev libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev
 
 before_script:
 
