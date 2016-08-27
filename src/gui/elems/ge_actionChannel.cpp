@@ -69,12 +69,14 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
         recorded in such mode, but they can exist if you change from another
         mode to singlepress;
       - of type ACTION_KEYREL in a SINGLE_PRESS channel. It's up to gAction to
-        find the other piece (namely frame_b) */
+        find the other piece (namely frame_b)
+      - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
-      if ((action->chan != pParent->chan->index)                        ||
-          (recorder::frames.at(i) > G_Mixer.totalFrames)                ||
-          (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS) ||
-          (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)
+      if ((action->chan != pParent->chan->index)                            ||
+          (recorder::frames.at(i) > G_Mixer.totalFrames)                    ||
+          (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
+          (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
+          (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))
       )
         continue;
 
