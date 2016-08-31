@@ -53,7 +53,7 @@
 using std::string;
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
@@ -88,8 +88,8 @@ static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Pat
 
 static void __glue_fillPatchColumns__()
 {
-	for (unsigned i=0; i<mainWin->keyboard->getTotalColumns(); i++) {
-		gColumn *gCol = mainWin->keyboard->getColumn(i);
+	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
+		gColumn *gCol = G_MainWin->keyboard->getColumn(i);
 		Patch::column_t pCol;
 		pCol.index = gCol->getIndex();
 		pCol.width = gCol->w();
@@ -264,7 +264,7 @@ void glue_loadPatch(void *data)
 	float steps = 0.8 / G_Patch.channels.size();
 	for (unsigned i=0; i<G_Patch.columns.size(); i++) {
 		Patch::column_t *col = &G_Patch.columns.at(i);
-		mainWin->keyboard->addColumn(col->width);
+		G_MainWin->keyboard->addColumn(col->width);
 		for (unsigned k=0; k<G_Patch.channels.size(); k++) {
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column,
@@ -474,10 +474,10 @@ void glue_loadSample(void *data)
 	if (res == SAMPLE_LOADED_OK) {
 		G_Conf.samplePath = gDirname(fullPath);
 		browser->do_callback();
-		mainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
+		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
 	else
-		mainWin->keyboard->printChannelMessage(res);
+		G_MainWin->keyboard->printChannelMessage(res);
 }
 
 

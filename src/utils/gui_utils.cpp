@@ -51,7 +51,7 @@ extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
 extern Conf          G_conf;
 extern uint32_t      G_time;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -67,9 +67,9 @@ void gu_refresh()
 	/* update dynamic elements: in and out meters, beat meter and
 	 * each channel */
 
-	mainWin->inOut->refresh();
-	mainWin->beatMeter->redraw();
-	mainWin->keyboard->refreshColumns();
+	G_MainWin->inOut->refresh();
+	G_MainWin->beatMeter->redraw();
+	G_MainWin->keyboard->refreshColumns();
 
 	/* compute timer for blinker */
 
@@ -102,21 +102,21 @@ void gu_updateControls()
 		G_Mixer.channels.at(i)->guiChannel->update();
 	}
 
-	mainWin->inOut->setOutVol(G_Mixer.outVol);
-	mainWin->inOut->setInVol(G_Mixer.inVol);
+	G_MainWin->inOut->setOutVol(G_Mixer.outVol);
+	G_MainWin->inOut->setInVol(G_Mixer.inVol);
 #ifdef WITH_VST
-	mainWin->inOut->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
-	mainWin->inOut->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
+	G_MainWin->inOut->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
+	G_MainWin->inOut->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
 #endif
 
-	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
-	mainWin->timing->setBpm(G_Mixer.bpm);
+	G_MainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
+	G_MainWin->timing->setBpm(G_Mixer.bpm);
 
 	/* if you reset to init state while the seq is in play: it's better to
 	 * update the button status */
 
-	mainWin->controller->updatePlay(G_Mixer.running);
-	mainWin->controller->updateMetronome(0);
+	G_MainWin->controller->updatePlay(G_Mixer.running);
+	G_MainWin->controller->updateMetronome(0);
 }
 
 
@@ -128,7 +128,7 @@ void gu_update_win_label(const char *c)
 	std::string out = G_APP_NAME;
 	out += " - ";
 	out += c;
-	mainWin->copy_label(out.c_str());
+	G_MainWin->copy_label(out.c_str());
 }
 
 
@@ -138,18 +138,17 @@ void gu_update_win_label(const char *c)
 void gu_setFavicon(Fl_Window *w)
 {
 #if defined(__linux__)
+
 	fl_open_display();
 	Pixmap p, mask;
-	XpmCreatePixmapFromData(
-		fl_display,
-		DefaultRootWindow(fl_display),
-		(char **)giada_icon,
-		&p,
-		&mask,
-		NULL);
+	XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
+		(char **) giada_icon, &p, &mask, NULL);
 	w->icon((char *)p);
+
 #elif defined(_WIN32)
+
 	w->icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON1)));
+
 #endif
 }
 
@@ -175,11 +174,11 @@ void gu_refreshActionEditor()
 {
 	/** TODO - why don't we simply call WID_ACTION_EDITOR->redraw()? */
 
-	gdActionEditor *aeditor = (gdActionEditor*) mainWin->getChild(WID_ACTION_EDITOR);
+	gdActionEditor *aeditor = (gdActionEditor*) G_MainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
 		Channel *chan = aeditor->chan;
-		mainWin->delSubWindow(WID_ACTION_EDITOR);
-		gu_openSubWindow(mainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
+		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+		gu_openSubWindow(G_MainWin, new gdActionEditor(chan), WID_ACTION_EDITOR);
 	}
 }
 
@@ -204,10 +203,10 @@ void gu_closeAllSubwindows()
 	/* don't close WID_FILE_BROWSER, because it's the caller of this
 	 * function */
 
-	mainWin->delSubWindow(WID_ACTION_EDITOR);
-	mainWin->delSubWindow(WID_SAMPLE_EDITOR);
-	mainWin->delSubWindow(WID_FX_LIST);
-	mainWin->delSubWindow(WID_FX);
+	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+	G_MainWin->delSubWindow(WID_FX_LIST);
+	G_MainWin->delSubWindow(WID_FX);
 }
 
 

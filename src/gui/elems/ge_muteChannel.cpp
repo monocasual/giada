@@ -40,7 +40,7 @@
 #include "ge_muteChannel.h"
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 extern Mixer         G_Mixer;
 extern Recorder      G_Recorder;
 
@@ -257,7 +257,7 @@ int gMuteChannel::handle(int e) {
 					}
 					G_Recorder.sortActions();
 
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -287,7 +287,7 @@ int gMuteChannel::handle(int e) {
 					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
 					G_Recorder.sortActions();
 
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}

@@ -60,7 +60,7 @@ extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
 extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 
 gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *ch)
@@ -163,7 +163,7 @@ void gSampleChannel::__cb_changeVol()
 #ifdef WITH_VST
 void gSampleChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 
@@ -252,17 +252,17 @@ void gSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiInputChannel(ch), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiInputChannel(ch), 0);
 		return;
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiOutputSampleCh(ch), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
 		return;
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(mainWin, new gdEditor(ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
+		gu_openSubWindow(G_MainWin, new gdEditor(ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
 		return;
 	}
 
@@ -292,10 +292,10 @@ void gSampleChannel::__cb_openMenu()
 
 		/** FIXME - use gu_closeAllSubwindows() */
 
-		mainWin->delSubWindow(WID_FILE_BROWSER);
-		mainWin->delSubWindow(WID_ACTION_EDITOR);
-		mainWin->delSubWindow(WID_SAMPLE_EDITOR);
-		mainWin->delSubWindow(WID_FX_LIST);
+		G_MainWin->delSubWindow(WID_FILE_BROWSER);
+		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+		G_MainWin->delSubWindow(WID_FX_LIST);
 
 		return;
 	}
@@ -348,7 +348,7 @@ void gSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Edit actions...") == 0) {
-		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
+		gu_openSubWindow(G_MainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
 		return;
 	}
 }
@@ -382,7 +382,7 @@ void gSampleChannel::openBrowser(int type)
 			break;
 	}
 	if (childWin)
-		gu_openSubWindow(mainWin, childWin,	WID_FILE_BROWSER);
+		gu_openSubWindow(G_MainWin, childWin,	WID_FILE_BROWSER);
 }
 
 
@@ -504,7 +504,7 @@ void gSampleChannel::addActionButton()
 	/* hard redraw: there's no other way to avoid glitches when moving
 	 * the 'R' button */
 
-	mainWin->keyboard->redraw();
+	G_MainWin->keyboard->redraw();
 }
 
 
@@ -609,7 +609,7 @@ int gSampleChannelButton::handle(int e)
       SampleChannel  *ch  = gch->ch;
       int result = glue_loadChannel(ch, gTrim(gStripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK)
-				mainWin->keyboard->printChannelMessage(result);
+				G_MainWin->keyboard->printChannelMessage(result);
 			ret = 1;
 			break;
 		}

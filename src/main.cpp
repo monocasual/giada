@@ -46,7 +46,7 @@
 
 /* global variables. Yeah, we are nasty */
 
-pthread_t     t_video;
+pthread_t     G_videoThread;
 Mixer         G_Mixer;
 Recorder      G_Recorder;
 bool          G_quit;
@@ -56,14 +56,14 @@ Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
 Conf          G_Conf;
 MidiMapConf   G_MidiMap;
-gdMainWindow *mainWin;
+gdMainWindow *G_MainWin;
 
 #ifdef WITH_VST
 PluginHost G_PluginHost;
 #endif
 
 
-void *thread_video(void *arg);
+void *videoThreadCb(void *arg);
 
 
 int main(int argc, char **argv)
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);
 	Fl::lock();
-	pthread_create(&t_video, NULL, thread_video, NULL);
+	pthread_create(&G_videoThread, NULL, videoThreadCb, NULL);
 	init_startKernelAudio();
 
 #ifdef WITH_VST
@@ -89,12 +89,12 @@ int main(int argc, char **argv)
 	juce::shutdownJuce_GUI();
 #endif
 
-	pthread_join(t_video, NULL);
+	pthread_join(G_videoThread, NULL);
 	return ret;
 }
 
 
-void *thread_video(void *arg)
+void *videoThreadCb(void *arg)
 {
 	if (G_audio_status)
 		while (!G_quit)	{

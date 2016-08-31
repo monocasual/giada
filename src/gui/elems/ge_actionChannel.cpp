@@ -39,7 +39,7 @@
 #include "ge_actionChannel.h"
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 extern Mixer         G_Mixer;
 extern Conf	         G_Conf;
 extern Recorder      G_Recorder;
@@ -296,7 +296,7 @@ int gActionChannel::handle(int e)
 							true,                                 // record = true: record it!
 							pParent->getActionType());            // type of action
 					add(a);
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel); // mainWindow update
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel); // mainWindow update
 					redraw();
 					ret = 1;
 				}
@@ -314,7 +314,7 @@ int gActionChannel::handle(int e)
 					a->delAction();
 					remove(a);
 					delete a;
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel);
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel);
 					redraw();
 					ret = 1;
 				}

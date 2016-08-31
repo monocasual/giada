@@ -60,7 +60,7 @@ extern Mixer	   		 G_Mixer;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
 extern Conf	 	   		 G_Conf;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 extern bool	 		 		 G_quit;
 extern bool 		 		 G_audio_status;
 
@@ -120,7 +120,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 /* ------------------------------------------------------------------ */
 
 
-void gdMainWindow::cb_endprogram(Fl_Widget *v, void *p) { mainWin->__cb_endprogram(); }
+void gdMainWindow::cb_endprogram(Fl_Widget *v, void *p) { G_MainWin->__cb_endprogram(); }
 
 
 /* ------------------------------------------------------------------ */
@@ -215,12 +215,12 @@ void gInOut::__cb_inVol()
 #ifdef WITH_VST
 void gInOut::__cb_masterFxOut()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
 void gInOut::__cb_masterFxIn()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
 }
 
 void gInOut::__cb_inToOut()
@@ -282,7 +282,7 @@ void gMenu::cb_edit  (Fl_Widget *v, void *p) { ((gMenu*)p)->__cb_edit(); }
 
 void gMenu::__cb_about()
 {
-	gu_openSubWindow(mainWin, new gdAbout(), WID_ABOUT);
+	gu_openSubWindow(G_MainWin, new gdAbout(), WID_ABOUT);
 }
 
 
@@ -291,7 +291,7 @@ void gMenu::__cb_about()
 
 void gMenu::__cb_config()
 {
-	gu_openSubWindow(mainWin, new gdConfig(380, 370), WID_CONFIG);
+	gu_openSubWindow(G_MainWin, new gdConfig(380, 370), WID_CONFIG);
 }
 
 
@@ -322,11 +322,11 @@ void gMenu::__cb_file()
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
 		//gWindow *childWin = new gdBrowser("Load Patch", G_Conf.patchPath.c_str(), 0, BROWSER_LOAD_PATCH);
-		//gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		//gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		gWindow *childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Load patch or project",
 				G_Conf.patchPath, glue_loadPatch, NULL);
-		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save patch...") == 0) {
@@ -336,18 +336,18 @@ void gMenu::__cb_file()
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save patch",
 				G_Conf.patchPath, G_Patch.name, glue_savePatch, NULL);
-		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save project",
 				G_Conf.patchPath, G_Patch.name, glue_saveProject, NULL);
-		gu_openSubWindow(mainWin, childWin, WID_FILE_BROWSER);
+		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Quit Giada") == 0) {
-		mainWin->do_callback();
+		G_MainWin->do_callback();
 		return;
 	}
 }
@@ -396,14 +396,14 @@ void gMenu::__cb_edit()
 	if (strcmp(m->label(), "Clear all samples") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all samples: are you sure?"))
 			return;
-		mainWin->delSubWindow(WID_SAMPLE_EDITOR);
+		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
 		glue_clearAllSamples();
 		return;
 	}
 	if (strcmp(m->label(), "Clear all actions") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		mainWin->delSubWindow(WID_ACTION_EDITOR);
+		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
 		glue_clearAllRecs();
 		return;
 	}
@@ -415,11 +415,11 @@ void gMenu::__cb_edit()
 		return;
 	}
 	if (strcmp(m->label(), "Remove empty columns") == 0) {
-		mainWin->keyboard->organizeColumns();
+		G_MainWin->keyboard->organizeColumns();
 		return;
 	}
 	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiInputMaster(), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiInputMaster(), 0);
 		return;
 	}
 }
@@ -479,7 +479,7 @@ void gTiming::cb_divider   (Fl_Widget *v, void *p) { ((gTiming*)p)->__cb_divider
 
 void gTiming::__cb_bpm()
 {
-	gu_openSubWindow(mainWin, new gdBpmInput(bpm->label()), WID_BPM);
+	gu_openSubWindow(G_MainWin, new gdBpmInput(bpm->label()), WID_BPM);
 }
 
 
@@ -488,7 +488,7 @@ void gTiming::__cb_bpm()
 
 void gTiming::__cb_meter()
 {
-	gu_openSubWindow(mainWin, new gdBeatsInput(), WID_BEATS);
+	gu_openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
 }
 
 

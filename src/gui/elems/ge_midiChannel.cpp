@@ -59,7 +59,7 @@ extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
 extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 
 gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
@@ -157,7 +157,7 @@ void gMidiChannel::__cb_changeVol()
 #ifdef WITH_VST
 void gMidiChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(mainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 
@@ -216,7 +216,7 @@ void gMidiChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
-		gu_openSubWindow(mainWin, new gdKeyGrabber(ch),	0);
+		gu_openSubWindow(G_MainWin, new gdKeyGrabber(ch),	0);
 		//new gdKeyGrabber(ch);
 		return;
 	}
@@ -230,18 +230,18 @@ void gMidiChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Edit actions...") == 0) {
-		gu_openSubWindow(mainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
+		gu_openSubWindow(G_MainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
 		return;
 	}
 
 	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(mainWin, new gdMidiInputChannel(ch), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiInputChannel(ch), 0);
 		return;
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		//gu_openSubWindow(mainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
-		gu_openSubWindow(mainWin, new gdMidiOutputMidiCh(ch), 0);
+		//gu_openSubWindow(G_MainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
 		return;
 	}
 }

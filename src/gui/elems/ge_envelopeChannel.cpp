@@ -42,7 +42,7 @@
 
 extern Mixer         G_Mixer;
 extern Recorder      G_Recorder;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 
 gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l)
@@ -203,7 +203,7 @@ int gEnvelopeChannel::handle(int e) {
 					else {
 						/// TODO
 					}
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}
@@ -221,7 +221,7 @@ int gEnvelopeChannel::handle(int e) {
 						G_Recorder.sortActions();
 						points.erase(points.begin() + selectedPoint);
 					}
-					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}

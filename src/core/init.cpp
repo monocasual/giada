@@ -55,7 +55,7 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -146,8 +146,8 @@ void init_startGUI(int argc, char **argv)
 					G_APP_NAME,
 					!strcmp(G_Patch_DEPR_.name, "") ? "(default patch)" : G_Patch_DEPR_.name);
 
-	mainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
-	mainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW, G_Conf.mainWindowH);
+	G_MainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
+	G_MainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW, G_Conf.mainWindowH);
 
 	/* never update the GUI elements if G_audio_status is bad, segfaults
 	 * are around the corner */
@@ -181,10 +181,10 @@ void init_shutdown()
 
 	/* store position and size of the main window for the next startup */
 
-	G_Conf.mainWindowX = mainWin->x();
-	G_Conf.mainWindowY = mainWin->y();
-	G_Conf.mainWindowW = mainWin->w();
-	G_Conf.mainWindowH = mainWin->h();
+	G_Conf.mainWindowX = G_MainWin->x();
+	G_Conf.mainWindowY = G_MainWin->y();
+	G_Conf.mainWindowW = G_MainWin->w();
+	G_Conf.mainWindowH = G_MainWin->h();
 
 	/* close any open subwindow, especially before cleaning PluginHost_DEPR_ to
 	 * avoid mess */

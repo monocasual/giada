@@ -43,7 +43,7 @@
 #include "channel.h"
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 extern Conf          G_Conf;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
@@ -65,7 +65,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 	int result = ch->load(fname, G_Conf.samplerate, G_Conf.rsmpQuality);
 
 	if (result == SAMPLE_LOADED_OK)
-		mainWin->keyboard->updateChannel(ch->guiChannel);
+		G_MainWin->keyboard->updateChannel(ch->guiChannel);
 
 	return result;
 }
@@ -77,7 +77,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 Channel *glue_addChannel(int column, int type)
 {
 	Channel *ch    = G_Mixer.addChannel(type);
-	gChannel *gch  = mainWin->keyboard->addChannel(column, ch);
+	gChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel = gch;
 	glue_setChanVol(ch, 1.0, false); // false = not from gui click
 	return ch;
@@ -94,7 +94,7 @@ void glue_deleteChannel(Channel *ch)
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
 #endif
 	Fl::lock();
-	mainWin->keyboard->deleteChannel(ch->guiChannel);
+	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();
 	G_Mixer.deleteChannel(ch);
 	gu_closeAllSubwindows();
@@ -109,7 +109,7 @@ void glue_freeChannel(Channel *ch)
 #ifdef WITH_VST
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
 #endif
-	mainWin->keyboard->freeChannel(ch->guiChannel);
+	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	G_Recorder.clearChan(ch->index);
 	ch->empty();
 }
@@ -121,11 +121,11 @@ void glue_freeChannel(Channel *ch)
 int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = G_Mixer.addChannel(src->type);
-	gChannel *gch  = mainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
+	gChannel *gch  = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;
 	ch->copy(src, &G_Mixer.mutex_plugins);
 
-	mainWin->keyboard->updateChannel(ch->guiChannel);
+	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;
 }

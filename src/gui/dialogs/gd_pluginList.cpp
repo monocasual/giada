@@ -51,7 +51,7 @@
 extern Conf          G_Conf;
 extern Mixer         G_Mixer;
 extern PluginHost    G_PluginHost;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 
 using std::string;
@@ -195,12 +195,12 @@ void gdPluginList::refreshList() {
   gdPluginListMaster */
 
 	if (stackType == PluginHost::MASTER_OUT) {
-    mainWin->inOut->setMasterFxOutFull(
+    G_MainWin->inOut->setMasterFxOutFull(
 			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else
 	if (stackType == PluginHost::MASTER_IN) {
-    mainWin->inOut->setMasterFxInFull(
+    G_MainWin->inOut->setMasterFxInFull(
 			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else {
