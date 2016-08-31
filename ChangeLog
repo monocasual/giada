@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.13.1 ---
+- Make Recorder a proper class
+
+
 0.13.0 ---
 - Deep file browser refactoring
 - Save browser's scroll position and last item selected on opening
