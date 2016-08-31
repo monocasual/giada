@@ -35,17 +35,17 @@
 #include "baseActionEditor.h"
 
 
-class geNoteEditorContainer : public Fl_Scroll
+class geNoteEditor : public Fl_Scroll
 {
 private:
 
 	class gdActionEditor *pParent;
-	class geNoteEditor   *pianoRoll;
+	class gePianoRoll    *pianoRoll;
 
 public:
 
-	geNoteEditorContainer(int x, int y, class gdActionEditor *parent);
-	~geNoteEditorContainer();
+	geNoteEditor(int x, int y, class gdActionEditor *parent);
+	~geNoteEditor();
 	void draw();
 	void updateActions();
 };
@@ -54,7 +54,7 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class geNoteEditor : public geBaseActionEditor
+class gePianoRoll : public geBaseActionEditor
 {
 private:
 
@@ -85,7 +85,7 @@ private:
 
 public:
 
-	geNoteEditor(int x, int y, int w, class gdActionEditor *pParent);
+	gePianoRoll(int x, int y, int w, class gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);

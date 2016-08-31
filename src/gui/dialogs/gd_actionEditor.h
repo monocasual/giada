@@ -74,10 +74,10 @@ public:
 	class gClick    *zoomOut;
 	class gScroll   *scroller;       // widget container
 
-	class geActionEditor        *ac;
-	class geMuteEditor          *mc;
-	class geEnvelopeEditor      *vc;
-	class geNoteEditorContainer *pr;
+	class geActionEditor   *ac;
+	class geMuteEditor     *mc;
+	class geEnvelopeEditor *vc;
+	class geNoteEditor     *pr;
 
 	vector <class gActionWidget*> widgets;
 

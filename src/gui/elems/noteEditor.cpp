@@ -43,19 +43,19 @@ extern Recorder			 G_Recorder;
 extern Conf	         G_Conf;
 
 
-geNoteEditorContainer::geNoteEditorContainer(int x, int y,
+geNoteEditor::geNoteEditor(int x, int y,
   class gdActionEditor *pParent)
  : Fl_Scroll(x, y, 200, 422), pParent(pParent)
 {
 	size(pParent->totalWidth, G_Conf.pianoRollH);
-	pianoRoll = new geNoteEditor(x, y, pParent->totalWidth, pParent);
+	pianoRoll = new gePianoRoll(x, y, pParent->totalWidth, pParent);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geNoteEditorContainer::~geNoteEditorContainer()
+geNoteEditor::~geNoteEditor()
 {
 	clear();
 	G_Conf.pianoRollH = h();
@@ -66,7 +66,7 @@ geNoteEditorContainer::~geNoteEditorContainer()
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditorContainer::updateActions()
+void geNoteEditor::updateActions()
 {
 	pianoRoll->updateActions();
 }
@@ -75,7 +75,7 @@ void geNoteEditorContainer::updateActions()
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditorContainer::draw()
+void geNoteEditor::draw()
 {
 	pianoRoll->size(this->w(), pianoRoll->h());  /// <--- not optimal
 
@@ -100,7 +100,7 @@ void geNoteEditorContainer::draw()
 /* -------------------------------------------------------------------------- */
 
 
-geNoteEditor::geNoteEditor(int X, int Y, int W, class gdActionEditor *pParent)
+gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : geBaseActionEditor(X, Y, W, 40, pParent)
 {
 	resizable(NULL);                      // don't resize children (i.e. pianoItem)
@@ -193,7 +193,7 @@ geNoteEditor::geNoteEditor(int X, int Y, int W, class gdActionEditor *pParent)
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditor::drawSurface1()
+void gePianoRoll::drawSurface1()
 {
 	surface1 = fl_create_offscreen(40, h());
 	fl_begin_offscreen(surface1);
@@ -277,7 +277,7 @@ void geNoteEditor::drawSurface1()
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditor::drawSurface2()
+void gePianoRoll::drawSurface2()
 {
 	surface2 = fl_create_offscreen(40, h());
 	fl_begin_offscreen(surface2);
@@ -308,7 +308,7 @@ void geNoteEditor::drawSurface2()
 /* -------------------------------------------------------------------------- */
 
 
-void geNoteEditor::draw()
+void gePianoRoll::draw()
 {
 	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
 
@@ -328,7 +328,7 @@ void geNoteEditor::draw()
 /* -------------------------------------------------------------------------- */
 
 
-int geNoteEditor::handle(int e)
+int gePianoRoll::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
 
@@ -376,7 +376,7 @@ int geNoteEditor::handle(int e)
 
 			if (Fl::event_button3()) {
 
-				geNoteEditorContainer *prc = (geNoteEditorContainer*) parent();
+				geNoteEditor *prc = (geNoteEditor*) parent();
 				position(x(), Fl::event_y() - push_y);
 
 				if (y() > prc->y())
@@ -402,7 +402,7 @@ int geNoteEditor::handle(int e)
 /* ------------------------------------------------------------------ */
 
 
-void geNoteEditor::updateActions()
+void gePianoRoll::updateActions()
 {
 	/* when zooming, don't delete and re-add actions, just MOVE them. This
 	 * function shifts the action by a zoom factor. Those singlepress are
@@ -429,7 +429,7 @@ void geNoteEditor::updateActions()
 /* -------------------------------------------------------------------------- */
 
 
-bool geNoteEditor::onItem(int rel_x, int rel_y)
+bool gePianoRoll::onItem(int rel_x, int rel_y)
 {
 	if (!pParent->chan->hasActions)
 		return false;
@@ -466,7 +466,7 @@ bool geNoteEditor::onItem(int rel_x, int rel_y)
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
   Recorder::action *_b, gdActionEditor *pParent)
-	: Fl_Box  (X, Y, 20, geNoteEditor::CELL_H-5),
+	: Fl_Box  (X, Y, 20, gePianoRoll::CELL_H-5),
 	  a       (_a),
 	  b       (_b),
 		pParent (pParent),
@@ -740,7 +740,7 @@ int gePianoItem::handle(int e)
 
 int gePianoItem::getNote(int rel_y)
 {
-  return geNoteEditor::MAX_NOTES - (rel_y / geNoteEditor::CELL_H);
+  return gePianoRoll::MAX_NOTES - (rel_y / gePianoRoll::CELL_H);
 }
 
 
@@ -749,5 +749,5 @@ int gePianoItem::getNote(int rel_y)
 
 int gePianoItem::getY(int note)
 {
-  return (geNoteEditor::MAX_NOTES * geNoteEditor::CELL_H) - (note * geNoteEditor::CELL_H);
+  return (gePianoRoll::MAX_NOTES * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
 }

@@ -121,7 +121,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 			ac->deactivate();
 	}
 	else {
-		pr = new geNoteEditorContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
+		pr = new geNoteEditor(scroller->x(), upperArea->y()+upperArea->h()+8, this);
 		scroller->add(pr);
 		scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
 	}
