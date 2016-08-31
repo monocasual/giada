@@ -32,11 +32,11 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define G_VERSION_STR   "0.13.0"
+#define G_VERSION_STR   "0.13.1"
 #define G_APP_NAME      "Giada"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 13
-#define G_VERSION_PATCH 0
+#define G_VERSION_PATCH 1
 
 #define CONF_FILENAME		"giada.conf"
 
@@ -211,6 +211,7 @@
 
 
 /* -- browser types --------------------------------------------------------- */
+/* TODO - USELESS, remove them */
 #define BROWSER_LOAD_PATCH   0x00
 #define BROWSER_LOAD_SAMPLE  0x01
 #define BROWSER_SAVE_PATCH   0x02

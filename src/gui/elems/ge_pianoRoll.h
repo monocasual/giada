@@ -128,8 +128,8 @@ private:
 
 	bool overlap();
 
-	recorder::action *a;
-	recorder::action *b;
+	Recorder::action *a;
+	Recorder::action *b;
 	class gdActionEditor *pParent;
 
 	bool selected;
@@ -167,7 +167,8 @@ public:
 	/* pianoItem ctor
 	 * if action *a == NULL, record a new action */
 
-	gPianoItem(int x, int y, int rel_x, int rel_y, recorder::action *a, recorder::action *b, class gdActionEditor *pParent);
+	gPianoItem(int x, int y, int rel_x, int rel_y, Recorder::action *a,
+		Recorder::action *b, class gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);

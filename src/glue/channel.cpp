@@ -45,6 +45,7 @@
 
 extern gdMainWindow *mainWin;
 extern Conf          G_Conf;
+extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -88,7 +89,7 @@ Channel *glue_addChannel(int column, int type)
 
 void glue_deleteChannel(Channel *ch)
 {
-	recorder::clearChan(ch->index);
+	G_Recorder.clearChan(ch->index);
 #ifdef WITH_VST
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
 #endif
@@ -109,7 +110,7 @@ void glue_freeChannel(Channel *ch)
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
 #endif
 	mainWin->keyboard->freeChannel(ch->guiChannel);
-	recorder::clearChan(ch->index);
+	G_Recorder.clearChan(ch->index);
 	ch->empty();
 }
 

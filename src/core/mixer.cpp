@@ -45,6 +45,7 @@
 
 
 extern Mixer 			 G_Mixer;
+extern Recorder    G_Recorder;
 extern MidiMapConf G_MidiMap;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
@@ -455,12 +456,12 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 			/* reading all actions recorded */
 
 			pthread_mutex_lock(&mutex_recs);
-			for (unsigned y=0; y<recorder::frames.size(); y++) {
-				if (recorder::frames.at(y) == actualFrame) {
-					for (unsigned z=0; z<recorder::global.at(y).size(); z++) {
-						int index   = recorder::global.at(y).at(z)->chan;
+			for (unsigned y=0; y<G_Recorder.frames.size(); y++) {
+				if (G_Recorder.frames.at(y) == actualFrame) {
+					for (unsigned z=0; z<G_Recorder.global.at(y).size(); z++) {
+						int index   = G_Recorder.global.at(y).at(z)->chan;
 						Channel *ch = getChannelByIndex(index);
-						ch->parseAction(recorder::global.at(y).at(z), j, actualFrame, quantize, running);
+						ch->parseAction(G_Recorder.global.at(y).at(z), j, actualFrame, quantize, running);
 					}
 					break;
 				}

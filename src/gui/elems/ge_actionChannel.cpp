@@ -42,6 +42,7 @@
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
 extern Conf	         G_Conf;
+extern Recorder      G_Recorder;
 
 
 /* -------------------------------------------------------------------------- */
@@ -57,10 +58,10 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
-	for (unsigned i=0; i<recorder::frames.size(); i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
+		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 
-			recorder::action *action = recorder::global.at(i).at(j);
+		  Recorder::action *action = G_Recorder.global.at(i).at(j);
 
       /* Don't show actions:
       - that don't belong to the displayed channel (!= pParent->chan->index);
@@ -73,7 +74,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
       - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
       if ((action->chan != pParent->chan->index)                            ||
-          (recorder::frames.at(i) > G_Mixer.totalFrames)                    ||
+          (G_Recorder.frames.at(i) > G_Mixer.totalFrames)                    ||
           (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
           (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
           (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))
@@ -289,7 +290,7 @@ int gActionChannel::handle(int e)
 							y()+4,                                // y
 							h()-8,                                // h
 							fx,																		// frame_a
-							recorder::frames.size()-1,            // n. of actions recorded
+							G_Recorder.frames.size()-1,            // n. of actions recorded
 							pParent,                              // pParent window pointer
 							ch,                                   // pointer to SampleChannel
 							true,                                 // record = true: record it!
@@ -465,8 +466,8 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 	 * key_release is associated. */
 
 	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
-		recorder::action *a2 = NULL;
-		recorder::getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
+		Recorder::action *a2 = NULL;
+		G_Recorder.getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
 		if (a2) {
 			frame_b = a2->frame;
 			w((frame_b - frame_a)/parent->zoom);
@@ -581,16 +582,16 @@ void gAction::addAction()
 	 * (b) is just a graphical and meaningless point. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		recorder::rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
-		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
+		G_Recorder.rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
+		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
 		//gLog("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
-		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
+		G_Recorder.rec(parent->chan->index, parent->getActionType(), frame_a);
 		//gLog("action added, [%d]\n", frame_a);
 	}
 
-	recorder::sortActions();
+	G_Recorder.sortActions();
 
 	index++; // important!
 }
@@ -605,11 +606,11 @@ void gAction::delAction()
 	 * actions. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS, false);
-		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL, false);
+		G_Recorder.deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS, false);
+		G_Recorder.deleteAction(parent->chan->index, frame_b, ACTION_KEYREL, false);
 	}
 	else
-		recorder::deleteAction(parent->chan->index, frame_a, type, false);
+		G_Recorder.deleteAction(parent->chan->index, frame_a, type, false);
 
 	/* restore the initial cursor shape, in case you delete an action and
 	 * the double arrow (for resizing) is displayed */
@@ -640,14 +641,14 @@ void gAction::moveAction(int frame_a)
 	if (this->frame_a % 2 != 0)
 		this->frame_a++;
 
-	recorder::rec(parent->chan->index, type, this->frame_a);
+	G_Recorder.rec(parent->chan->index, type, this->frame_a);
 
 	if (ch->mode == SINGLE_PRESS) {
 		frame_b = xToFrame_b();
-		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_b);
+		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_b);
 	}
 
-	recorder::sortActions();
+	G_Recorder.sortActions();
 }
 
 

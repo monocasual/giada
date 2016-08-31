@@ -60,6 +60,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
+extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
@@ -92,7 +93,7 @@ void glue_setBpm(const char *v1, const char *v2)
 
 	/* inform recorder and actionEditor of the change */
 
-	recorder::updateBpm(old_bpm, value, G_Mixer.quanto);
+	G_Recorder.updateBpm(old_bpm, value, G_Mixer.quanto);
 	gu_refreshActionEditor();
 
 	mainWin->timing->setBpm(buf);
@@ -139,9 +140,9 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 	if (expand) {
 		if (G_Mixer.beats > oldvalue)
-			recorder::expand(oldfpb, G_Mixer.totalFrames);
+			G_Recorder.expand(oldfpb, G_Mixer.totalFrames);
 		//else if (G_Mixer.beats < oldvalue)
-		//	recorder::shrink(G_Mixer.totalFrames);
+		//	G_Recorder.shrink(G_Mixer.totalFrames);
 	}
 
 	mainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
@@ -200,8 +201,8 @@ void glue_stopSeq(bool gui) {
 	/* what to do if we stop the sequencer and some action recs are active?
 	 * Deactivate the button and delete any 'rec on' status */
 
-	if (recorder::active) {
-		recorder::active = false;
+	if (G_Recorder.active) {
+		G_Recorder.active = false;
 		if (gui) Fl::lock();
 		mainWin->controller->updateRecAction(0);
 		if (gui) Fl::unlock();
@@ -237,7 +238,7 @@ void glue_rewindSeq() {
 
 
 void glue_startStopActionRec() {
-	recorder::active ? glue_stopActionRec() : glue_startActionRec();
+	G_Recorder.active ? glue_stopActionRec() : glue_startActionRec();
 }
 
 
@@ -249,7 +250,7 @@ void glue_startActionRec() {
 		return;
 	if (!G_Mixer.running)
 		glue_startSeq();	        // start the sequencer for convenience
-	recorder::active = true;
+	G_Recorder.active = true;
 
 	Fl::lock();
 	mainWin->controller->updateRecAction(1);
@@ -264,8 +265,8 @@ void glue_stopActionRec() {
 
 	/* stop the recorder and sort new actions */
 
-	recorder::active = false;
-	recorder::sortActions();
+	G_Recorder.active = false;
+	G_Recorder.sortActions();
 
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
@@ -411,7 +412,7 @@ void glue_clearAllSamples()
 		G_Mixer.channels.at(i)->empty();
 		G_Mixer.channels.at(i)->guiChannel->reset();
 	}
-	recorder::init();
+	G_Recorder.init();
 	return;
 }
 
@@ -421,7 +422,7 @@ void glue_clearAllSamples()
 
 void glue_clearAllRecs()
 {
-	recorder::init();
+	G_Recorder.init();
 	gu_updateControls();
 }
 
@@ -434,7 +435,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	G_Patch_DEPR_.setDefault();
 	G_Mixer.close();
 	G_Mixer.init();
-	recorder::init();
+	G_Recorder.init();
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
 #endif
@@ -593,11 +594,11 @@ void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val, bool n
 
 void glue_setMute(Channel *ch, bool gui)
 {
-	if (recorder::active && recorder::canRec(ch)) {
+	if (G_Recorder.active && G_Recorder.canRec(ch)) {
 		if (!ch->mute)
-			recorder::startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
 		else
-		 recorder::stopOverdub(G_Mixer.actualFrame);
+		 G_Recorder.stopOverdub(G_Mixer.actualFrame);
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
@@ -864,11 +865,11 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 	else
 	if (shift) {
-		if (recorder::active) {
+		if (G_Recorder.active) {
 			if (G_Mixer.running) {
 				ch->kill(0); // on frame 0: user-generated event
-				if (recorder::canRec(ch) && !(ch->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
-					recorder::rec(ch->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
+				if (G_Recorder.canRec(ch) && !(ch->mode & LOOP_ANY))   // don't record killChan actions for LOOP channels
+					G_Recorder.rec(ch->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
 			}
 		}
 		else {
@@ -892,13 +893,13 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * meaningless for loop modes */
 
 		if (G_Mixer.quantize == 0 &&
-		    recorder::canRec(ch)  &&
+		    G_Recorder.canRec(ch)  &&
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS)
-				recorder::startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame);
+				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame);
 			else
-				recorder::rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
+				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
 
 		ch->start(0, true, G_Mixer.quantize, G_Mixer.running); // on frame 0: user-generated event
@@ -919,8 +920,8 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 		/* record a key release only if channel is single_press. For any
 		 * other mode the KEY REL is meaningless. */
 
-		if (ch->mode == SINGLE_PRESS && recorder::canRec(ch))
-			recorder::stopOverdub(G_Mixer.actualFrame);
+		if (ch->mode == SINGLE_PRESS && G_Recorder.canRec(ch))
+			G_Recorder.stopOverdub(G_Mixer.actualFrame);
 	}
 
 	/* the GUI update is done by gui_refresh() */

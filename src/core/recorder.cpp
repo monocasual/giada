@@ -3,7 +3,6 @@
  * Giada - Your Hardcore Loopmachine
  *
  * recorder
- * Action recorder.
  *
  * -----------------------------------------------------------------------------
  *
@@ -43,27 +42,19 @@
 #include "../utils/utils.h"
 
 
-extern Mixer       G_Mixer;
-extern Patch_DEPR_ f_patch;
-extern Conf	       G_Conf;
+extern Mixer G_Mixer;
 
 
-namespace recorder
+Recorder::Recorder()
+	: active       (false),
+	  sortedActions(false)
 {
-vector<int> frames;
-vector< vector<action*> > global;
-vector<action*>  actions;
-
-bool active = false;
-bool sortedActions = false;
-
-composite cmp;
-
+}
 
 /* -------------------------------------------------------------------------- */
 
 
-void init()
+void Recorder::init()
 {
 	sortedActions = false;
 	active = false;
@@ -74,7 +65,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-bool canRec(Channel *ch)
+bool Recorder::canRec(Channel *ch)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -82,7 +73,11 @@ bool canRec(Channel *ch)
 	 * mixer is recording a take in this channel ch
 	 * channel is empty */
 
-	if (!active || !G_Mixer.running || G_Mixer.chanInput == ch || (ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL))
+	if (!active                 ||
+		  !G_Mixer.running        ||
+			G_Mixer.chanInput == ch ||
+			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
+		)
 		return 0;
 	return 1;
 }
@@ -91,7 +86,7 @@ bool canRec(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void rec(int index, int type, int frame, uint32_t iValue, float fValue)
+void Recorder::rec(int index, int type, int frame, uint32_t iValue, float fValue)
 {
 	/* make sure frame is even */
 
@@ -163,7 +158,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 /* -------------------------------------------------------------------------- */
 
 
-void clearChan(int index)
+void Recorder::clearChan(int index)
 {
 	gLog("[REC] clearing chan %d...\n", index);
 
@@ -191,7 +186,7 @@ void clearChan(int index)
 /* -------------------------------------------------------------------------- */
 
 
-void clearAction(int index, char act)
+void Recorder::clearAction(int index, char act)
 {
 	gLog("[REC] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size(); i++) {						// for each frame i
@@ -219,7 +214,8 @@ void clearAction(int index, char act)
 /* -------------------------------------------------------------------------- */
 
 
-void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iValue, float fValue)
+void Recorder::deleteAction(int chan, int frame, char type, bool checkValues,
+	uint32_t iValue, float fValue)
 {
 	/* make sure frame is even */
 
@@ -276,7 +272,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues, uint32_t iVa
 /* -------------------------------------------------------------------------- */
 
 
-void deleteActions(int chan, int frame_a, int frame_b, char type)
+void Recorder::deleteActions(int chan, int frame_a, int frame_b, char type)
 {
 	sortActions();
 	vector<int> dels;
@@ -293,19 +289,12 @@ void deleteActions(int chan, int frame_a, int frame_b, char type)
 /* -------------------------------------------------------------------------- */
 
 
-void clearAll()
+void Recorder::clearAll()
 {
 	while (global.size() > 0) {
 		for (unsigned i=0; i<global.size(); i++) {
-			for (unsigned k=0; k<global.at(i).size(); k++) {
-#ifdef WITH_VST
-#if 0
-				if (global.at(i).at(k)->type == ACTION_MIDI)
-					free(global.at(i).at(k)->event);
-#endif
-#endif
+			for (unsigned k=0; k<global.at(i).size(); k++)
 				free(global.at(i).at(k));									// free action
-			}
 			global.at(i).clear();												// free action container
 			global.erase(global.begin() + i);
 		}
@@ -325,7 +314,7 @@ void clearAll()
 /* -------------------------------------------------------------------------- */
 
 
-void optimize()
+void Recorder::optimize()
 {
 	/* do something until the i frame is empty. */
 
@@ -347,7 +336,7 @@ void optimize()
 /* -------------------------------------------------------------------------- */
 
 
-void sortActions()
+void Recorder::sortActions()
 {
 	if (sortedActions)
 		return;
@@ -365,7 +354,7 @@ void sortActions()
 /* -------------------------------------------------------------------------- */
 
 
-void updateBpm(float oldval, float newval, int oldquanto)
+void Recorder::updateBpm(float oldval, float newval, int oldquanto)
 {
 	for (unsigned i=0; i<frames.size(); i++) {
 
@@ -406,7 +395,7 @@ void updateBpm(float oldval, float newval, int oldquanto)
 /* -------------------------------------------------------------------------- */
 
 
-void updateSamplerate(int systemRate, int patchRate)
+void Recorder::updateSamplerate(int systemRate, int patchRate)
 {
 	/* diff ratio: systemRate / patchRate
 	 * e.g.  44100 / 96000 = 0.4... */
@@ -446,7 +435,7 @@ void updateSamplerate(int systemRate, int patchRate)
 /* -------------------------------------------------------------------------- */
 
 
-void expand(int old_fpb, int new_fpb)
+void Recorder::expand(int old_fpb, int new_fpb)
 {
 	/* this algorithm requires multiple passages if we expand from e.g. 2
 	 * to 16 beats, precisely 16 / 2 - 1 = 7 times (-1 is the first group,
@@ -477,7 +466,7 @@ void expand(int old_fpb, int new_fpb)
 /* -------------------------------------------------------------------------- */
 
 
-void shrink(int new_fpb)
+void Recorder::shrink(int new_fpb)
 {
 	/* easier than expand(): here we delete eveything beyond old_framesPerBars. */
 
@@ -504,7 +493,7 @@ void shrink(int new_fpb)
 /* -------------------------------------------------------------------------- */
 
 
-void setChanHasActionsStatus(int index)
+void Recorder::setChanHasActionsStatus(int index)
 {
 	Channel *ch = G_Mixer.getChannelByIndex(index);
 	if (global.size() == 0) {
@@ -526,7 +515,8 @@ void setChanHasActionsStatus(int index)
 /* -------------------------------------------------------------------------- */
 
 
-int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
+int Recorder::getNextAction(int chan, char type, int frame, action **out,
+	uint32_t iValue)
 {
 	sortActions();  // mandatory
 
@@ -554,7 +544,7 @@ int getNextAction(int chan, char type, int frame, action **out, uint32_t iValue)
 /* -------------------------------------------------------------------------- */
 
 
-int getAction(int chan, char action, int frame, struct action **out)
+int Recorder::getAction(int chan, char action, int frame, struct action **out)
 {
 	for (unsigned i=0; i<global.size(); i++)
 		for (unsigned j=0; j<global.at(i).size(); j++)
@@ -572,7 +562,7 @@ int getAction(int chan, char action, int frame, struct action **out)
 /* -------------------------------------------------------------------------- */
 
 
-void startOverdub(int index, char actionMask, int frame)
+void Recorder::startOverdub(int index, char actionMask, int frame)
 {
 	/* prepare the composite struct */
 
@@ -614,7 +604,7 @@ void startOverdub(int index, char actionMask, int frame)
 /* -------------------------------------------------------------------------- */
 
 
-void stopOverdub(int frame)
+void Recorder::stopOverdub(int frame)
 {
 	cmp.a2.frame  = frame;
 	bool ringLoop = false;
@@ -666,7 +656,7 @@ void stopOverdub(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-void print()
+void Recorder::print()
 {
 	gLog("[REC] ** print debug **\n");
 	for (unsigned i=0; i<global.size(); i++) {
@@ -677,4 +667,4 @@ void print()
 	}
 }
 
-} // namespace
+//} // namespace

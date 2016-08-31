@@ -43,6 +43,9 @@
 using std::string;
 
 
+extern Recorder G_Recorder;
+
+
 SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
 		frameRewind      (-1),
@@ -154,14 +157,14 @@ void SampleChannel::calcVolumeEnv(int frame)
 {
 	/* method: check this frame && next frame, then calculate delta */
 
-	recorder::action *a0 = NULL;
-	recorder::action *a1 = NULL;
+	Recorder::action *a0 = NULL;
+	Recorder::action *a1 = NULL;
 	int res;
 
 	/* get this action on frame 'frame'. It's unlikely that the action
 	 * is not found. */
 
-	res = recorder::getAction(index, ACTION_VOLUME, frame, &a0);
+	res = G_Recorder.getAction(index, ACTION_VOLUME, frame, &a0);
 	if (res == 0)
 		return;
 
@@ -170,10 +173,10 @@ void SampleChannel::calcVolumeEnv(int frame)
 	 * and use action at frame number 0 (actions[0]).
 	 * res == -2 ACTION_VOLUME not found. This should never happen */
 
-	res = recorder::getNextAction(index, ACTION_VOLUME, frame, &a1);
+	res = G_Recorder.getNextAction(index, ACTION_VOLUME, frame, &a1);
 
 	if (res == -1)
-		res = recorder::getAction(index, ACTION_VOLUME, 0, &a1);
+		res = G_Recorder.getAction(index, ACTION_VOLUME, 0, &a1);
 
 	volume_i = a0->fValue;
 	volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
@@ -278,7 +281,7 @@ void SampleChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseAction(recorder::action *a, int localFrame,
+void SampleChannel::parseAction(Recorder::action *a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (readActions == false)
@@ -494,11 +497,11 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame)
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
 
-	if (recorder::canRec(this)) {
+	if (G_Recorder.canRec(this)) {
 		if (mode == SINGLE_PRESS)
-			recorder::startOverdub(index, ACTION_KEYS, globalFrame);
+			G_Recorder.startOverdub(index, ACTION_KEYS, globalFrame);
 		else
-			recorder::rec(index, ACTION_KEYPRESS, globalFrame);
+			G_Recorder.rec(index, ACTION_KEYPRESS, globalFrame);
 	}
 }
 

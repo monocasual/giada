@@ -48,6 +48,7 @@
 
 pthread_t     t_video;
 Mixer         G_Mixer;
+Recorder      G_Recorder;
 bool          G_quit;
 bool	        G_audio_status;
 bool          G_midiStatus;
@@ -65,8 +66,8 @@ PluginHost G_PluginHost;
 void *thread_video(void *arg);
 
 
-int main(int argc, char **argv) {
-
+int main(int argc, char **argv)
+{
 	G_quit = false;
 
 	init_prepareParser();
@@ -93,8 +94,8 @@ int main(int argc, char **argv) {
 }
 
 
-
-void *thread_video(void *arg) {
+void *thread_video(void *arg)
+{
 	if (G_audio_status)
 		while (!G_quit)	{
 			gu_refresh();

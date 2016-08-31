@@ -58,6 +58,7 @@
 
 extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
+extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *mainWin;
 
@@ -188,7 +189,7 @@ void gSampleChannel::__cb_openMenu()
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
 
-	if (G_Mixer.chanInput == ch || recorder::active)
+	if (G_Mixer.chanInput == ch || G_Recorder.active)
 		return;
 
 	/* the following is a trash workaround for a FLTK menu. We need a gMenu
@@ -307,7 +308,7 @@ void gSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Mute") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
+		G_Recorder.clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
 		if (!ch->hasActions)
 			delActionButton();
 
@@ -320,7 +321,7 @@ void gSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Start/Stop") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+		G_Recorder.clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
 		if (!ch->hasActions)
 			delActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
@@ -330,7 +331,7 @@ void gSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Volume") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_VOLUME);
+		G_Recorder.clearAction(ch->index, ACTION_VOLUME);
 		if (!ch->hasActions)
 			delActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
@@ -340,7 +341,7 @@ void gSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "All") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		recorder::clearChan(ch->index);
+		G_Recorder.clearChan(ch->index);
 		delActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
@@ -398,8 +399,8 @@ void gSampleChannel::refresh()
 	if (ch->wave != NULL) {
 		if (G_Mixer.chanInput == ch)
 			mainButton->setInputRecordMode();
-		if (recorder::active) {
-			if (recorder::canRec(ch))
+		if (G_Recorder.active) {
+			if (G_Recorder.canRec(ch))
 				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)

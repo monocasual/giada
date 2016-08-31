@@ -55,6 +55,7 @@ using std::string;
 
 extern gdMainWindow *mainWin;
 extern Mixer	   		 G_Mixer;
+extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
 extern Conf          G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
@@ -283,7 +284,7 @@ void glue_loadPatch(void *data)
 	/* let recorder recompute the actions' positions if the current
 	 * samplerate != patch samplerate */
 
-	recorder::updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
+	G_Recorder.updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
 
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
@@ -372,7 +373,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* this one is vital: let recorder recompute the actions' positions if
 	 * the current samplerate != patch samplerate */
 
-	recorder::updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
+	G_Recorder.updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
 
 	/* update gui */
 

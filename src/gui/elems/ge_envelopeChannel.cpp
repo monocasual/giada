@@ -41,6 +41,7 @@
 
 
 extern Mixer         G_Mixer;
+extern Recorder      G_Recorder;
 extern gdMainWindow *mainWin;
 
 
@@ -185,9 +186,9 @@ int gEnvelopeChannel::handle(int e) {
 
 						if (points.size() == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
-							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
+							G_Recorder.rec(pParent->chan->index, type, 0, 0, 1.0f);
 							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX, 1);
-							recorder::rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
+							G_Recorder.rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
 						}
 
 						/* line between 2 points y = (x-a) / (b-a); a = h() - 8; b = 1 */
@@ -195,8 +196,8 @@ int gEnvelopeChannel::handle(int e) {
 						int frame   = mx * pParent->zoom;
 						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
-						recorder::rec(pParent->chan->index, type, frame, 0, value);
-						recorder::sortActions();
+						G_Recorder.rec(pParent->chan->index, type, frame, 0, value);
+						G_Recorder.sortActions();
 						sortPoints();
 					}
 					else {
@@ -212,12 +213,12 @@ int gEnvelopeChannel::handle(int e) {
 
 				if (selectedPoint != -1) {
 					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size()-1) {
-						recorder::clearAction(pParent->chan->index, type);
+						G_Recorder.clearAction(pParent->chan->index, type);
 						points.clear();
 					}
 					else {
-						recorder::deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type, false);
-						recorder::sortActions();
+						G_Recorder.deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type, false);
+						G_Recorder.sortActions();
 						points.erase(points.begin() + selectedPoint);
 					}
 					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
@@ -253,17 +254,17 @@ int gEnvelopeChannel::handle(int e) {
 
 					/*  delete previous point and record a new one */
 
-					recorder::deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type, false);
+					G_Recorder.deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type, false);
 
 					if (range == RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
-						recorder::rec(pParent->chan->index, type, newFrame, 0, value);
+						G_Recorder.rec(pParent->chan->index, type, newFrame, 0, value);
 					}
 					else {
 						/// TODO
 					}
 
-					recorder::sortActions();
+					G_Recorder.sortActions();
 					points.at(draggedPoint).frame = newFrame;
 					draggedPoint  = -1;
 					selectedPoint = -1;
@@ -381,9 +382,9 @@ int gEnvelopeChannel::getSelectedPoint() {
 
 void gEnvelopeChannel::fill() {
 	points.clear();
-	for (unsigned i=0; i<recorder::global.size(); i++)
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
-			recorder::action *a = recorder::global.at(i).at(j);
+	for (unsigned i=0; i<G_Recorder.global.size(); i++)
+		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
+			Recorder::action *a = G_Recorder.global.at(i).at(j);
 			if (a->type == type && a->chan == pParent->chan->index) {
 				if (range == RANGE_FLOAT)
 					addPoint(

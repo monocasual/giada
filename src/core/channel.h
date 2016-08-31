@@ -167,7 +167,7 @@ public:
 	 * localFrame  - frame number of the processed buffer
 	 * globalFrame - actual frame in Mixer */
 
-	virtual void parseAction(recorder::action *a, int localFrame, int globalFrame,
+	virtual void parseAction(Recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind

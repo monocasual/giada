@@ -43,8 +43,9 @@
 #include "channel.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf    G_Conf;
+extern Mixer 		  G_Mixer;
+extern Conf       G_Conf;
+extern Recorder   G_Recorder;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
@@ -510,9 +511,9 @@ int Patch_DEPR_::readRecs()
 			if (ch)
 				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY)) {
 					if (version < 0.83f)
-						recorder::rec(ch->index, type, frame, iValue_fix, fValue);
+						G_Recorder.rec(ch->index, type, frame, iValue_fix, fValue);
 					else
-						recorder::rec(ch->index, type, frame, iValue, fValue);
+						G_Recorder.rec(ch->index, type, frame, iValue, fValue);
 				}
 		}
 	}

@@ -67,7 +67,7 @@ public:
 	void quantize   (int index, int localFrame, int globalFrame);
 	void onZero     (int frame, bool recsStopOnChanHalt);
 	void onBar      (int frame);
-	void parseAction(recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning);
 
 	/* ---------------------------------------------------------------- */
@@ -75,7 +75,7 @@ public:
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(recorder::action *a, int localFrame);
+	void sendMidi(Recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST

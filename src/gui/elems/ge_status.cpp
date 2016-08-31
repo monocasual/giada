@@ -31,7 +31,8 @@
 #include "ge_status.h"
 
 
-extern Mixer G_Mixer;
+extern Mixer    G_Mixer;
+extern Recorder G_Recorder;
 
 
 gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
@@ -62,7 +63,7 @@ void gStatus::draw()
     if (G_Mixer.chanInput == ch)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
     else
-    if (recorder::active && recorder::canRec(ch))
+    if (G_Recorder.active && G_Recorder.canRec(ch))
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
     /* equation for the progress bar:

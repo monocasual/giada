@@ -42,6 +42,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
+extern Recorder      G_Recorder;
 
 
 gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *pParent)
@@ -124,15 +125,15 @@ void gMuteChannel::extractPoints() {
 
 	points.clear();
 
-	/* actions are already sorted by recorder::sortActions() */
+	/* actions are already sorted by G_Recorder.sortActions() */
 
-	for (unsigned i=0; i<recorder::frames.size(); i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
-			if (recorder::global.at(i).at(j)->chan == pParent->chan->index) {
-				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
+	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
+		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
+			if (G_Recorder.global.at(i).at(j)->chan == pParent->chan->index) {
+				if (G_Recorder.global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
-					p.frame = recorder::frames.at(i);
-					p.type  = recorder::global.at(i).at(j)->type;
+					p.frame = G_Recorder.frames.at(i);
+					p.type  = G_Recorder.global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
 					points.push_back(p);
 					//gLog("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
@@ -247,14 +248,14 @@ int gMuteChannel::handle(int e) {
 					}
 
 					if (nextPoint % 2 != 0) {
-						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
-						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
+						G_Recorder.rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
+						G_Recorder.rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
 					}
 					else {
-						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
-						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
+						G_Recorder.rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
+						G_Recorder.rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
 					}
-					recorder::sortActions();
+					G_Recorder.sortActions();
 
 					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
@@ -282,9 +283,9 @@ int gMuteChannel::handle(int e) {
 					//gLog("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					recorder::deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
-					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
-					recorder::sortActions();
+					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
+					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
+					G_Recorder.sortActions();
 
 					mainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
@@ -306,18 +307,18 @@ int gMuteChannel::handle(int e) {
 
 					int newFrame = points.at(draggedPoint).x * pParent->zoom;
 
-					recorder::deleteAction(
+					G_Recorder.deleteAction(
 							pParent->chan->index,
 							points.at(draggedPoint).frame,
 							points.at(draggedPoint).type,
 							false);  // don't check values
 
-					recorder::rec(
+					G_Recorder.rec(
 							pParent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 
-					recorder::sortActions();
+					G_Recorder.sortActions();
 
 					points.at(draggedPoint).frame = newFrame;
 				}

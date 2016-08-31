@@ -44,6 +44,9 @@
 #include "midiMapConf.h"
 
 
+extern Recorder G_Recorder;
+
+
 Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
 #if defined(WITH_VST)
 : pluginHost(NULL),
@@ -137,11 +140,11 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 
   /* clone actions */
 
-  for (unsigned i=0; i<recorder::global.size(); i++) {
-    for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-      recorder::action *a = recorder::global.at(i).at(k);
+  for (unsigned i=0; i<G_Recorder.global.size(); i++) {
+    for (unsigned k=0; k<G_Recorder.global.at(i).size(); k++) {
+      Recorder::action *a = G_Recorder.global.at(i).at(k);
       if (a->chan == src->index)
-        recorder::rec(index, a->type, a->frame, a->iValue, a->fValue);
+        G_Recorder.rec(index, a->type, a->frame, a->iValue, a->fValue);
     }
   }
 }
@@ -228,9 +231,9 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 	pch.midiOutLmute    = midiOutLmute;
 	pch.midiOutLsolo    = midiOutLsolo;
 
-	for (unsigned i=0; i<recorder::global.size(); i++) {
-		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-			recorder::action *action = recorder::global.at(i).at(k);
+	for (unsigned i=0; i<G_Recorder.global.size(); i++) {
+		for (unsigned k=0; k<G_Recorder.global.at(i).size(); k++) {
+			Recorder::action *action = G_Recorder.global.at(i).at(k);
 			if (action->chan == index) {
 				Patch::action_t pac;
 				pac.type   = action->type;
@@ -296,7 +299,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 
 	for (unsigned k=0; k<pch->actions.size(); k++) {
 		Patch::action_t *ac = &pch->actions.at(k);
-		recorder::rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
+		G_Recorder.rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
 	}
 
 #ifdef WITH_VST

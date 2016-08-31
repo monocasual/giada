@@ -57,6 +57,7 @@
 
 extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
+extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *mainWin;
 
@@ -223,7 +224,7 @@ void gMidiChannel::__cb_openMenu()
 	if (strcmp(m->label(), "All") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		recorder::clearChan(ch->index);
+		G_Recorder.clearChan(ch->index);
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}

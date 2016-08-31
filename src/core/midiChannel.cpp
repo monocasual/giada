@@ -37,6 +37,9 @@
 #include "kernelMidi.h"
 
 
+extern Recorder G_Recorder;
+
+
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
 	  midiOut    (false),
@@ -124,7 +127,7 @@ void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::parseAction(recorder::action *a, int localFrame,
+void MidiChannel::parseAction(Recorder::action *a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (a->type == ACTION_MIDI)
@@ -285,7 +288,7 @@ int MidiChannel::readPatch(const string &basePath, int i, Patch *patch,
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::sendMidi(recorder::action *a, int localFrame)
+void MidiChannel::sendMidi(Recorder::action *a, int localFrame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)

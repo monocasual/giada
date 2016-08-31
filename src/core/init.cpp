@@ -48,6 +48,7 @@
 
 
 extern Mixer 			   G_Mixer;
+extern Recorder  	   G_Recorder;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
@@ -100,7 +101,7 @@ void init_prepareKernelAudio()
 		G_Conf.samplerate,
 		G_Conf.buffersize);
 	G_Mixer.init();
-	recorder::init();
+	G_Recorder.init();
 }
 
 
@@ -207,7 +208,7 @@ void init_shutdown()
 		gLog("[init] Mixer closed\n");
 	}
 
-	recorder::clearAll();
+	G_Recorder.clearAll();
 	gLog("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST

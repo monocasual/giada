@@ -41,6 +41,7 @@
 
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
+extern Recorder			 G_Recorder;
 extern Conf	         G_Conf;
 
 
@@ -115,21 +116,21 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 	/* add actions when the window is opened. Position is zoom-based. MIDI
 	 * actions come always in pair: start + end. */
 
-	recorder::sortActions();
+	G_Recorder.sortActions();
 
-	recorder::action *a2   = NULL;
-	recorder::action *prev = NULL;
+	Recorder::action *a2   = NULL;
+	Recorder::action *prev = NULL;
 
-	for (unsigned i=0; i<recorder::frames.size(); i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
+		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 
 			/* don't show actions > than the grey area */
 			/** FIXME - can we move this to the outer cycle? */
 
-			if (recorder::frames.at(i) > G_Mixer.totalFrames)
+			if (G_Recorder.frames.at(i) > G_Mixer.totalFrames)
 				continue;
 
-			recorder::action *a1 = recorder::global.at(i).at(j);
+			Recorder::action *a1 = G_Recorder.global.at(i).at(j);
 
 			if (a1->chan != pParent->chan->index)
 				continue;
@@ -160,7 +161,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				 * than a1->frame and with MIDI properties of note_off (0x80), same note
 				 * of a1, same velocity of a1 */
 
-				recorder::getNextAction(
+				G_Recorder.getNextAction(
 						a1->chan,
 						ACTION_MIDI,
 						a1->frame,
@@ -461,7 +462,8 @@ bool gPianoRoll::onItem(int rel_x, int rel_y) {
 /* ------------------------------------------------------------------ */
 
 
-gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a, recorder::action *_b, gdActionEditor *pParent)
+gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
+  Recorder::action *_b, gdActionEditor *pParent)
 	: Fl_Box  (X, Y, 20, gPianoRoll::CELL_H-5),
 	  a       (_a),
 	  b       (_b),
@@ -564,8 +566,8 @@ void gPianoItem::record() {
 	event_b |= (0x3F <<  8);   // velocity
 	event_b |= (0x00);
 
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
+	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
+	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
 }
 
 
@@ -573,8 +575,8 @@ void gPianoItem::record() {
 
 
 void gPianoItem::remove() {
-	recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
-	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
+	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
+	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence. */
