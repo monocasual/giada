@@ -1,12 +1,12 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_actionWidget
  *
- * parent class of any widget inside the action editor.
+ * parent class of any tool inside the action editor.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -26,7 +26,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef __GE_ACTIONWIDGET_H__
@@ -37,17 +37,19 @@
 #include "../../core/const.h"
 
 
-class gActionWidget : public Fl_Group {
-
+class geBaseActionEditor : public Fl_Group
+{
 protected:
+
 	class gdActionEditor *pParent;
 	void  baseDraw(bool clear=true);
 
 public:
+
 	virtual void updateActions() = 0;
 
-	gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent);
-	~gActionWidget();
+	geBaseActionEditor(int x, int y, int w, int h, gdActionEditor *pParent);
+	~geBaseActionEditor();
 };
 
 #endif

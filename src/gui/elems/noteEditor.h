@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_pianoRoll
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GE_PIANOROLL_H
@@ -34,32 +32,34 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Box.H>
 #include "../../core/recorder.h"
-#include "ge_actionWidget.h"
+#include "baseActionEditor.h"
 
 
-class gPianoRollContainer : public Fl_Scroll {
-
+class geNoteEditorContainer : public Fl_Scroll
+{
 private:
+
 	class gdActionEditor *pParent;
-	class gPianoRoll     *pianoRoll;
+	class geNoteEditor   *pianoRoll;
 
 public:
-	gPianoRollContainer(int x, int y, class gdActionEditor *parent);
-	~gPianoRollContainer();
+
+	geNoteEditorContainer(int x, int y, class gdActionEditor *parent);
+	~geNoteEditorContainer();
 	void draw();
 	void updateActions();
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-class gPianoRoll : public gActionWidget {
-
+class geNoteEditor : public geBaseActionEditor
+{
 private:
 
 	/* onItem
-	 * is curson on a gPianoItem? */
+	 * is curson on a gePianoItem? */
 
 	bool onItem(int rel_x, int rel_y);
 
@@ -84,44 +84,45 @@ private:
 
 
 public:
-	gPianoRoll(int x, int y, int w, class gdActionEditor *pParent);
+
+	geNoteEditor(int x, int y, int w, class gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);
 	void updateActions();
 
-	enum { MAX_NOTES = 127, CELL_H = 15 };
+	enum
+	{
+		MAX_NOTES = 127,
+		CELL_H    = 15
+	};
 };
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-class gPianoItem : public Fl_Box {
-
+class gePianoItem : public Fl_Box
+{
 private:
 
 	/* getRelX/Y
 	 * return x/y point of this item, relative to piano roll (and not to
 	 * entire screen) */
 
-	inline int getRelY() { return y() - parent()->y() - 3; };
-	inline int getRelX() { return x() - parent()->x(); };
+	int getRelY() { return y() - parent()->y() - 3; };
+	int getRelX() { return x() - parent()->x(); };
 
 	/* getNote
 	 * from a relative_y return the real MIDI note, range 0-127. 15 is
 	 * the hardcoded value for note height in pixels */
 
-	inline int getNote(int rel_y) {
-		return gPianoRoll::MAX_NOTES - (rel_y / gPianoRoll::CELL_H);
-	};
+	int getNote(int rel_y);
 
 	/* getY
 	 * from a note, return the y position on piano roll */
 
-	inline int getY(int note) {
-		return (gPianoRoll::MAX_NOTES * gPianoRoll::CELL_H) - (note * gPianoRoll::CELL_H);
-	};
+	int getY(int note);
 
 	/* overlap
 	 * check if this item don't overlap with another one. */
@@ -167,7 +168,7 @@ public:
 	/* pianoItem ctor
 	 * if action *a == NULL, record a new action */
 
-	gPianoItem(int x, int y, int rel_x, int rel_y, Recorder::action *a,
+	gePianoItem(int x, int y, int rel_x, int rel_y, Recorder::action *a,
 		Recorder::action *b, class gdActionEditor *pParent);
 
 	void draw();
@@ -175,10 +176,9 @@ public:
 	void record();
 	void remove();
 
-	inline int getFrame_a() { return frame_a; }
-	inline int getFrame_b() { return frame_b; }
-	inline int getNote()    { return note;    }
-
+	int getFrame_a() { return frame_a; }
+	int getFrame_b() { return frame_b; }
+	int getNote()    { return note;    }
 };
 
 #endif

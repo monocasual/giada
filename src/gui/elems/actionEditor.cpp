@@ -36,7 +36,7 @@
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "ge_keyboard.h"
-#include "ge_actionChannel.h"
+#include "actionEditor.h"
 
 
 extern gdMainWindow *G_MainWin;
@@ -48,10 +48,10 @@ extern Recorder      G_Recorder;
 /* -------------------------------------------------------------------------- */
 
 
-gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChannel *ch)
-  : gActionWidget(x, y, 200, 40, pParent),
-    ch           (ch),
-    selected     (NULL)
+geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch)
+  : geBaseActionEditor(x, y, 200, 40, pParent),
+    ch                (ch),
+    selected          (NULL)
 {
 	size(pParent->totalWidth, h());
 
@@ -102,7 +102,7 @@ gActionChannel::gActionChannel(int x, int y, gdActionEditor *pParent, SampleChan
 /* -------------------------------------------------------------------------- */
 
 
-gAction *gActionChannel::getSelectedAction()
+gAction *geActionEditor::getSelectedAction()
 {
 	for (int i=0; i<children(); i++) {
 		int action_x  = ((gAction*)child(i))->x();
@@ -117,7 +117,7 @@ gAction *gActionChannel::getSelectedAction()
 /* -------------------------------------------------------------------------- */
 
 
-void gActionChannel::updateActions()
+void geActionEditor::updateActions()
 {
 	/* when zooming, don't delete and re-add actions, just MOVE them. This
 	 * function shifts the action by a zoom factor. Those singlepress are
@@ -144,7 +144,7 @@ void gActionChannel::updateActions()
 /* -------------------------------------------------------------------------- */
 
 
-void gActionChannel::draw()
+void geActionEditor::draw()
 {
 	/* draw basic boundaries (+ beat bars) and hide the unused area. Then
 	 * draw the children (the actions) */
@@ -167,7 +167,7 @@ void gActionChannel::draw()
 /* -------------------------------------------------------------------------- */
 
 
-int gActionChannel::handle(int e)
+int geActionEditor::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
 
@@ -408,7 +408,7 @@ int gActionChannel::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-bool gActionChannel::actionCollides(int frame)
+bool geActionEditor::actionCollides(int frame)
 {
 	/* if SINGLE_PRESS we check that the tail (frame_b) of the action doesn't
 	 * overlap the head (frame) of the new one. First the general case, yet. */
@@ -473,7 +473,7 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 			w((frame_b - frame_a)/parent->zoom);
 		}
 		else
-			gLog("[gActionChannel] frame_b not found! [%d:???]\n", frame_a);
+			gLog("[geActionEditor] frame_b not found! [%d:???]\n", frame_a);
 
 	/* a singlepress action narrower than 8 pixel is useless. So check it.
 	 * Warning: if an action is 8 px narrow, it has no body space to drag
@@ -491,7 +491,7 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 void gAction::draw()
 {
 	int color;
-	if (selected)  /// && gActionChannel !disabled
+	if (selected)  /// && geActionEditor !disabled
 		color = COLOR_BD_1;
 	else
 		color = COLOR_BG_2;

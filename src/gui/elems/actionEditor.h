@@ -36,7 +36,7 @@
 #include "../../utils/gui_utils.h"
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
-#include "ge_actionWidget.h"
+#include "baseActionEditor.h"
 
 
 class gAction : public Fl_Box
@@ -90,7 +90,7 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gActionChannel : public gActionWidget
+class geActionEditor : public geBaseActionEditor
 {
 
 private:
@@ -130,7 +130,7 @@ private:
 
 public:
 
-	gActionChannel(int x, int y, gdActionEditor *pParent, class SampleChannel *ch);
+	geActionEditor(int x, int y, gdActionEditor *pParent, class SampleChannel *ch);
 	void draw();
 	int  handle(int e);
 	void updateActions();

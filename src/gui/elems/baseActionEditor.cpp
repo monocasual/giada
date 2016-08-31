@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -6,7 +6,7 @@
  *
  * pParent class of any widget inside the action editor.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -26,33 +26,34 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <FL/fl_draw.H>
 #include "../../core/mixer.h"
 #include "../dialogs/gd_actionEditor.h"
-#include "ge_actionWidget.h"
+#include "baseActionEditor.h"
 #include "ge_mixed.h"
 
 
 extern Mixer G_Mixer;
 
 
-gActionWidget::gActionWidget(int x, int y, int w, int h, gdActionEditor *pParent)
+geBaseActionEditor::geBaseActionEditor(int x, int y, int w, int h,
+	gdActionEditor *pParent)
 	:	Fl_Group(x, y, w, h), pParent(pParent) {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gActionWidget::~gActionWidget() {}
+geBaseActionEditor::~geBaseActionEditor() {}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gActionWidget::baseDraw(bool clear) {
+void geBaseActionEditor::baseDraw(bool clear) {
 
 	/* clear the screen */
 

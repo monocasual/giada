@@ -37,13 +37,13 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include "../../utils/utils.h"
-#include "ge_actionWidget.h"
+#include "baseActionEditor.h"
 
 
 using std::vector;
 
 
-class gEnvelopeChannel : public gActionWidget
+class geEnvelopeEditor : public geBaseActionEditor
 {
 	const char *l;      // internal label
 	int         type;   // type of action
@@ -52,7 +52,8 @@ class gEnvelopeChannel : public gActionWidget
 	/* point
 	 * a single dot in the graph. x = relative frame, y = relative value */
 
-	struct point {
+	struct point
+	{
 		int   frame;
 		int   iValue;
 		float fValue;
@@ -98,8 +99,9 @@ class gEnvelopeChannel : public gActionWidget
 	int verticalPoint(const point &p);
 
 public:
-	gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l);
-	~gEnvelopeChannel();
+
+	geEnvelopeEditor(int x, int y, gdActionEditor *pParent, int type, int range, const char *l);
+	~geEnvelopeEditor();
 
 	/* addPoint
 	 * add a point made of frame+value to internal points[]. */

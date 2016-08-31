@@ -1,11 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_muteChannel
- * a widget that represents mute actions inside the action editor.
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -25,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "../../core/recorder.h"
@@ -36,8 +33,7 @@
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "ge_keyboard.h"
-#include "ge_actionWidget.h"
-#include "ge_muteChannel.h"
+#include "muteEditor.h"
 
 
 extern gdMainWindow *G_MainWin;
@@ -45,8 +41,10 @@ extern Mixer         G_Mixer;
 extern Recorder      G_Recorder;
 
 
-gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *pParent)
- : gActionWidget(x, y, 200, 80, pParent), draggedPoint(-1), selectedPoint(-1)
+geMuteEditor::geMuteEditor(int x, int y, gdActionEditor *pParent)
+ : geBaseActionEditor(x, y, 200, 80, pParent),
+   draggedPoint      (-1),
+   selectedPoint     (-1)
 {
 	size(pParent->totalWidth, h());
 	extractPoints();
@@ -56,8 +54,8 @@ gMuteChannel::gMuteChannel(int x, int y, gdActionEditor *pParent)
 /* ------------------------------------------------------------------ */
 
 
-void gMuteChannel::draw() {
-
+void geMuteEditor::draw()
+{
 	baseDraw();
 
 	/* print label */
@@ -121,8 +119,8 @@ void gMuteChannel::draw() {
 /* ------------------------------------------------------------------ */
 
 
-void gMuteChannel::extractPoints() {
-
+void geMuteEditor::extractPoints()
+{
 	points.clear();
 
 	/* actions are already sorted by G_Recorder.sortActions() */
@@ -136,7 +134,7 @@ void gMuteChannel::extractPoints() {
 					p.type  = G_Recorder.global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
 					points.push_back(p);
-					//gLog("[gMuteChannel::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
+					//gLog("[geMuteEditor::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
 			}
 		}
@@ -147,7 +145,7 @@ void gMuteChannel::extractPoints() {
 /* ------------------------------------------------------------------ */
 
 
-void gMuteChannel::updateActions() {
+void geMuteEditor::updateActions() {
 	for (unsigned i=0; i<points.size(); i++)
 		points.at(i).x = points.at(i).frame / pParent->zoom;
 }
@@ -156,7 +154,7 @@ void gMuteChannel::updateActions() {
 /* ------------------------------------------------------------------ */
 
 
-int gMuteChannel::handle(int e) {
+int geMuteEditor::handle(int e) {
 
 	int ret = 0;
 	int mouseX = Fl::event_x()-x();
@@ -388,7 +386,7 @@ int gMuteChannel::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-bool gMuteChannel::pointCollides(int frame) {
+bool geMuteEditor::pointCollides(int frame) {
 	for (unsigned i=0; i<points.size(); i++)
 		if (frame == points.at(i).frame)
 			return true;
@@ -399,7 +397,7 @@ bool gMuteChannel::pointCollides(int frame) {
 /* ------------------------------------------------------------------ */
 
 
-int gMuteChannel::getSelectedPoint() {
+int geMuteEditor::getSelectedPoint() {
 
 	/* point is a 7x7 dot */
 

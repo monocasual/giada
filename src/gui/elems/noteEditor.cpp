@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_pianoRoll
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <FL/fl_draw.H>
@@ -36,7 +34,7 @@
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"
-#include "ge_pianoRoll.h"
+#include "noteEditor.h"
 
 
 extern gdMainWindow *mainWin;
@@ -45,37 +43,40 @@ extern Recorder			 G_Recorder;
 extern Conf	         G_Conf;
 
 
-gPianoRollContainer::gPianoRollContainer(int x, int y, class gdActionEditor *pParent)
+geNoteEditorContainer::geNoteEditorContainer(int x, int y,
+  class gdActionEditor *pParent)
  : Fl_Scroll(x, y, 200, 422), pParent(pParent)
 {
 	size(pParent->totalWidth, G_Conf.pianoRollH);
-	pianoRoll = new gPianoRoll(x, y, pParent->totalWidth, pParent);
+	pianoRoll = new geNoteEditor(x, y, pParent->totalWidth, pParent);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gPianoRollContainer::~gPianoRollContainer() {
+geNoteEditorContainer::~geNoteEditorContainer()
+{
 	clear();
 	G_Conf.pianoRollH = h();
 	G_Conf.pianoRollY = pianoRoll->y();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gPianoRollContainer::updateActions() {
+void geNoteEditorContainer::updateActions()
+{
 	pianoRoll->updateActions();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gPianoRollContainer::draw() {
-
+void geNoteEditorContainer::draw()
+{
 	pianoRoll->size(this->w(), pianoRoll->h());  /// <--- not optimal
 
 	/* clear background */
@@ -94,13 +95,13 @@ void gPianoRollContainer::draw() {
 }
 
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
-gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
- : gActionWidget(X, Y, W, 40, pParent)
+geNoteEditor::geNoteEditor(int X, int Y, int W, class gdActionEditor *pParent)
+ : geBaseActionEditor(X, Y, W, 40, pParent)
 {
 	resizable(NULL);                      // don't resize children (i.e. pianoItem)
 	size(W, (MAX_NOTES+1) * CELL_H);      // 128 MIDI channels * 15 px height
@@ -141,7 +142,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				 * checked it */
 
 				if (a1 == prev) {
-					//gLog("[gPianoRoll] ACTION_MIDI found, but skipping - was previous\n");
+					//gLog("[geNoteEditor] ACTION_MIDI found, but skipping - was previous\n");
 					continue;
 				}
 
@@ -153,7 +154,7 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				int a1_velo = kernelMidi::getB3(a1->iValue);
 
 				if (a1_type == 0x80) {
-					//gLog("[gPianoRoll] ACTION_MIDI found, but skipping - was note off\n");
+					//gLog("[geNoteEditor] ACTION_MIDI found, but skipping - was note off\n");
 					continue;
 				}
 
@@ -168,18 +169,18 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 						&a2,
 						kernelMidi::getIValue(0x80, a1_note, a1_velo));
 
-				/* next action note off found: add a new gPianoItem to piano roll */
+				/* next action note off found: add a new gePianoItem to piano roll */
 
 				if (a2) {
-					//gLog("[gPianoRoll] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
+					//gLog("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
 					//	a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
 					//	kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
-					new gPianoItem(0, 0, x(), y()+3, a1, a2, pParent);
+					new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
 					prev = a2;
 					a2 = NULL;
 				}
 				else
-					gLog("[gPianoRoll] recorder didn't find action!\n");
+					gLog("[geNoteEditor] recorder didn't find action!\n");
 
 			}
 		}
@@ -189,11 +190,11 @@ gPianoRoll::gPianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gPianoRoll::drawSurface1() {
-
+void geNoteEditor::drawSurface1()
+{
 	surface1 = fl_create_offscreen(40, h());
 	fl_begin_offscreen(surface1);
 
@@ -273,10 +274,11 @@ void gPianoRoll::drawSurface1() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gPianoRoll::drawSurface2() {
+void geNoteEditor::drawSurface2()
+{
 	surface2 = fl_create_offscreen(40, h());
 	fl_begin_offscreen(surface2);
 	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
@@ -303,11 +305,11 @@ void gPianoRoll::drawSurface2() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gPianoRoll::draw() {
-
+void geNoteEditor::draw()
+{
 	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
 
 #if defined(__APPLE__)
@@ -323,11 +325,11 @@ void gPianoRoll::draw() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gPianoRoll::handle(int e) {
-
+int geNoteEditor::handle(int e)
+{
 	int ret = Fl_Group::handle(e);
 
 	switch (e) {
@@ -363,7 +365,7 @@ int gPianoRoll::handle(int e) {
 					int greyover = ax+20 - pParent->coverX-x();
 					if (greyover > 0)
 						ax -= greyover;
-					add(new gPianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
+					add(new gePianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
 					redraw();
 				}
 			}
@@ -374,7 +376,7 @@ int gPianoRoll::handle(int e) {
 
 			if (Fl::event_button3()) {
 
-				gPianoRollContainer *prc = (gPianoRollContainer*) parent();
+				geNoteEditorContainer *prc = (geNoteEditorContainer*) parent();
 				position(x(), Fl::event_y() - push_y);
 
 				if (y() > prc->y())
@@ -400,15 +402,15 @@ int gPianoRoll::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoRoll::updateActions() {
-
+void geNoteEditor::updateActions()
+{
 	/* when zooming, don't delete and re-add actions, just MOVE them. This
 	 * function shifts the action by a zoom factor. Those singlepress are
 	 * stretched, as well */
 
-	gPianoItem *i;
+	gePianoItem *i;
 	for (int k=0; k<children(); k++) {
-		i = (gPianoItem*) child(k);
+		i = (gePianoItem*) child(k);
 
 		//gLog("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 
@@ -424,11 +426,11 @@ void gPianoRoll::updateActions() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gPianoRoll::onItem(int rel_x, int rel_y) {
-
+bool geNoteEditor::onItem(int rel_x, int rel_y)
+{
 	if (!pParent->chan->hasActions)
 		return false;
 
@@ -437,7 +439,7 @@ bool gPianoRoll::onItem(int rel_x, int rel_y) {
 	int n = children();
 	for (int i=0; i<n; i++) {   // no scrollbars to skip
 
-		gPianoItem *p = (gPianoItem*) child(i);
+		gePianoItem *p = (gePianoItem*) child(i);
 		if (p->getNote() != note)
 			continue;
 
@@ -462,9 +464,9 @@ bool gPianoRoll::onItem(int rel_x, int rel_y) {
 /* ------------------------------------------------------------------ */
 
 
-gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
+gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
   Recorder::action *_b, gdActionEditor *pParent)
-	: Fl_Box  (X, Y, 20, gPianoRoll::CELL_H-5),
+	: Fl_Box  (X, Y, 20, geNoteEditor::CELL_H-5),
 	  a       (_a),
 	  b       (_b),
 		pParent (pParent),
@@ -473,7 +475,6 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
 		event_b (0x00),
 		changed (false)
 {
-
 	/* a is a pointer: action exists, needs to be displayed */
 
 	if (a) {
@@ -503,18 +504,18 @@ gPianoItem::gPianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
 /* ------------------------------------------------------------------ */
 
 
-bool gPianoItem::overlap() {
-
+bool gePianoItem::overlap()
+{
 	/* when 2 segments overlap?
 	 * start = the highest value between the two starting points
 	 * end   = the lowest value between the two ending points
 	 * if start < end then there's an overlap of end-start pixels. */
 
-	gPianoRoll *pPiano = (gPianoRoll*) parent();
+	geNoteEditor *pPiano = (geNoteEditor*) parent();
 
 	for (int i=0; i<pPiano->children(); i++) {
 
-		gPianoItem *pItem = (gPianoItem*) pPiano->child(i);
+		gePianoItem *pItem = (gePianoItem*) pPiano->child(i);
 
 		/* don't check against itself and with different y positions */
 
@@ -534,9 +535,10 @@ bool gPianoItem::overlap() {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoItem::draw() {
+void gePianoItem::draw()
+{
 	int _w = w() > 4 ? w() : 4;
-	//gLog("[gPianoItem] draw me (%p) at x=%d\n", (void*)this, x());
+	//gLog("[gePianoItem] draw me (%p) at x=%d\n", (void*)this, x());
 	fl_rectf(x(), y(), _w, h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }
 
@@ -544,8 +546,8 @@ void gPianoItem::draw() {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoItem::record() {
-
+void gePianoItem::record()
+{
 	/* avoid frame overflow */
 
 	int overflow = frame_b - G_Mixer.totalFrames;
@@ -574,7 +576,8 @@ void gPianoItem::record() {
 /* ------------------------------------------------------------------ */
 
 
-void gPianoItem::remove() {
+void gePianoItem::remove()
+{
 	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
 	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
 
@@ -585,11 +588,11 @@ void gPianoItem::remove() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gPianoItem::handle(int e) {
-
+int gePianoItem::handle(int e)
+{
 	int ret = 0;
 
 	switch (e) {
@@ -640,7 +643,7 @@ int gPianoItem::handle(int e) {
 				remove();
 				hide();   // for Windows
 				Fl::delete_widget(this);
-				((gPianoRoll*)parent())->redraw();
+				((geNoteEditor*)parent())->redraw();
 			}
 			ret = 1;
 			break;
@@ -650,7 +653,7 @@ int gPianoItem::handle(int e) {
 
 			changed = true;
 
-			gPianoRoll *pr = (gPianoRoll*) parent();
+			geNoteEditor *pr = (geNoteEditor*) parent();
 			int coverX     = pParent->coverX + pr->x(); // relative coverX
 			int nx, ny, nw;
 
@@ -698,7 +701,7 @@ int gPianoItem::handle(int e) {
 			/* update screen */
 
 			redraw();
-			((gPianoRoll*)parent())->redraw();
+			((geNoteEditor*)parent())->redraw();
 			ret = 1;
 			break;
 		}
@@ -722,11 +725,29 @@ int gPianoItem::handle(int e) {
 				changed = false;
 			}
 
-			((gPianoRoll*)parent())->redraw();
+			((geNoteEditor*)parent())->redraw();
 
 			ret = 1;
 			break;
 		}
 	}
 	return ret;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gePianoItem::getNote(int rel_y)
+{
+  return geNoteEditor::MAX_NOTES - (rel_y / geNoteEditor::CELL_H);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gePianoItem::getY(int note)
+{
+  return (geNoteEditor::MAX_NOTES * geNoteEditor::CELL_H) - (note * geNoteEditor::CELL_H);
 }

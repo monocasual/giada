@@ -37,7 +37,7 @@
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "ge_keyboard.h"
-#include "ge_envelopeChannel.h"
+#include "envelopeEditor.h"
 
 
 extern Mixer         G_Mixer;
@@ -45,9 +45,14 @@ extern Recorder      G_Recorder;
 extern gdMainWindow *G_MainWin;
 
 
-gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int type, int range, const char *l)
-	:	gActionWidget(x, y, 200, 80, pParent), l(l), type(type), range(range),
-		selectedPoint(-1), draggedPoint(-1)
+geEnvelopeEditor::geEnvelopeEditor(int x, int y, gdActionEditor *pParent,
+	int type, int range, const char *l)
+	:	geBaseActionEditor(x, y, 200, 80, pParent),
+		l                 (l),
+		type              (type),
+		range             (range),
+		selectedPoint     (-1),
+		draggedPoint      (-1)
 {
 	size(pParent->totalWidth, h());
 }
@@ -56,7 +61,7 @@ gEnvelopeChannel::gEnvelopeChannel(int x, int y, gdActionEditor *pParent, int ty
 /* ------------------------------------------------------------------ */
 
 
-gEnvelopeChannel::~gEnvelopeChannel() {
+geEnvelopeEditor::~geEnvelopeEditor() {
 	clearPoints();
 }
 
@@ -64,7 +69,7 @@ gEnvelopeChannel::~gEnvelopeChannel() {
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int py) {
+void geEnvelopeEditor::addPoint(int frame, int iValue, float fValue, int px, int py) {
 	point p;
 	p.frame  = frame;
 	p.iValue = iValue;
@@ -78,7 +83,7 @@ void gEnvelopeChannel::addPoint(int frame, int iValue, float fValue, int px, int
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::updateActions() {
+void geEnvelopeEditor::updateActions() {
 	for (unsigned i=0; i<points.size(); i++)
 		points.at(i).x = points.at(i).frame / pParent->zoom;
 }
@@ -87,7 +92,7 @@ void gEnvelopeChannel::updateActions() {
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::draw() {
+void geEnvelopeEditor::draw() {
 
 	baseDraw();
 
@@ -129,7 +134,7 @@ void gEnvelopeChannel::draw() {
 /* ------------------------------------------------------------------ */
 
 
-int gEnvelopeChannel::handle(int e) {
+int geEnvelopeEditor::handle(int e) {
 
 	/* Adding an action: no further checks required, just record it on frame
 	 * mx*pParent->zoom. Deleting action is trickier: find the active
@@ -329,7 +334,7 @@ int gEnvelopeChannel::handle(int e) {
 /* ------------------------------------------------------------------ */
 
 
-int gEnvelopeChannel::verticalPoint(const point &p) {
+int geEnvelopeEditor::verticalPoint(const point &p) {
 	for (unsigned i=0; i<points.size(); i++) {
 		if (&p == &points.at(i)) {
 			if (i == 0 || i == points.size()-1)  // first or last point
@@ -351,7 +356,7 @@ int gEnvelopeChannel::verticalPoint(const point &p) {
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::sortPoints() {
+void geEnvelopeEditor::sortPoints() {
 	for (unsigned i=0; i<points.size(); i++)
 		for (unsigned j=0; j<points.size(); j++)
 			if (points.at(j).x > points.at(i).x)
@@ -362,7 +367,7 @@ void gEnvelopeChannel::sortPoints() {
 /* ------------------------------------------------------------------ */
 
 
-int gEnvelopeChannel::getSelectedPoint() {
+int geEnvelopeEditor::getSelectedPoint() {
 
 	/* point is a 7x7 dot */
 
@@ -380,7 +385,7 @@ int gEnvelopeChannel::getSelectedPoint() {
 /* ------------------------------------------------------------------ */
 
 
-void gEnvelopeChannel::fill() {
+void geEnvelopeEditor::fill() {
 	points.clear();
 	for (unsigned i=0; i<G_Recorder.global.size(); i++)
 		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {

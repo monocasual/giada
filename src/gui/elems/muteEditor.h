@@ -1,11 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_muteChannel
- * a widget representing mute actions inside the action editor.
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -25,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GE_MUTECHANNEL_H
@@ -37,20 +34,21 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include "../../utils/utils.h"
-#include "ge_actionWidget.h"
+#include "baseActionEditor.h"
 
 
 using std::vector;
 
 
-class gMuteChannel : public gActionWidget
+class geMuteEditor : public geBaseActionEditor
 {
 private:
 
 	/* point
 	 * a single dot in the graph. */
 
-	struct point {
+	struct point
+	{
 		int  frame;
 		char type;
 		int  x;
@@ -94,7 +92,7 @@ private:
 
 public:
 
-	gMuteChannel(int x, int y, class gdActionEditor *pParent);
+	geMuteEditor(int x, int y, class gdActionEditor *pParent);
 	void draw();
 	int  handle(int e);
 

@@ -45,8 +45,8 @@ using std::vector;
  * This class calculates chan, zoom, frames per beat, and so on. Each
  * sub-widget contains a pointer to this window to query those data. */
 
-class gdActionEditor : public gWindow {
-
+class gdActionEditor : public gWindow
+{
 private:
 
 	/* update
@@ -74,10 +74,10 @@ public:
 	class gClick    *zoomOut;
 	class gScroll   *scroller;       // widget container
 
-	class gActionChannel      *ac;
-	class gMuteChannel        *mc;
-	class gEnvelopeChannel    *vc;
-	class gPianoRollContainer *pr;
+	class geActionEditor        *ac;
+	class geMuteEditor          *mc;
+	class geEnvelopeEditor      *vc;
+	class geNoteEditorContainer *pr;
 
 	vector <class gActionWidget*> widgets;
 

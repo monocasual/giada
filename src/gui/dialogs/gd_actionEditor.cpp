@@ -35,10 +35,10 @@
 #include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../elems/ge_actionChannel.h"
-#include "../elems/ge_muteChannel.h"
-#include "../elems/ge_envelopeChannel.h"
-#include "../elems/ge_pianoRoll.h"
+#include "../elems/actionEditor.h"
+#include "../elems/envelopeEditor.h"
+#include "../elems/muteEditor.h"
+#include "../elems/noteEditor.h"
 #include "../elems/ge_mixed.h"
 #include "gd_actionEditor.h"
 
@@ -100,9 +100,9 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 		SampleChannel *ch = (SampleChannel*) chan;
 
-		ac = new gActionChannel     (scroller->x(), upperArea->y()+upperArea->h()+8, this, ch);
-		mc = new gMuteChannel       (scroller->x(), ac->y()+ac->h()+8, this);
-		vc = new gEnvelopeChannel   (scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+		ac = new geActionEditor  (scroller->x(), upperArea->y()+upperArea->h()+8, this, ch);
+		mc = new geMuteEditor    (scroller->x(), ac->y()+ac->h()+8, this);
+		vc = new geEnvelopeEditor(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
 		scroller->add(ac);
 		//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 		scroller->add(mc);
@@ -121,7 +121,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 			ac->deactivate();
 	}
 	else {
-		pr = new gPianoRollContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
+		pr = new geNoteEditorContainer(scroller->x(), upperArea->y()+upperArea->h()+8, this);
 		scroller->add(pr);
 		scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
 	}
