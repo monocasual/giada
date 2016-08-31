@@ -14,6 +14,7 @@
 
 0.13.1 ---
 - Make Recorder a proper class
+- Better naming convention for ActionEditor's children classes
 
 
 0.13.0 ---
