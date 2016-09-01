@@ -29,6 +29,7 @@
 
 #include <math.h>
 #include "../utils/log.h"
+#include "../utils/string.h"
 #include "sampleChannel.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
@@ -123,7 +124,7 @@ void SampleChannel::generateUniqueSampleName()
 	string oldName = wave->name;
 	int k = 1; // Start from k = 1, zero is too nerdy
 	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
-		wave->updateName((oldName + "-" + gItoa(k)).c_str());
+		wave->updateName((oldName + "-" + gu_itoa(k)).c_str());
 		k++;
 	}
 }
@@ -143,7 +144,7 @@ void SampleChannel::clear()
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);
 		if (fadeoutOn && fadeoutType == XFADE) {
-			gLog("[clear] filling pChan fadeoutTracker=%d\n", fadeoutTracker);
+			gu_log("[clear] filling pChan fadeoutTracker=%d\n", fadeoutTracker);
 			fadeoutTracker = fillChan(pChan, fadeoutTracker, 0);
 		}
 	}
@@ -646,7 +647,7 @@ void SampleChannel::setFadeOut(int actionPostFadeout)
 
 void SampleChannel::setXFade(int frame)
 {
-	gLog("[xFade] frame=%d tracker=%d\n", frame, tracker);
+	gu_log("[xFade] frame=%d tracker=%d\n", frame, tracker);
 
 	calcFadeoutStep();
 	fadeoutOn      = true;
@@ -715,8 +716,8 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 	if (!w->allocEmpty(frames, samplerate))
 		return false;
 
-	w->name     = "TAKE-" + gItoa(takeId);
-	w->pathfile = gGetCurrentPath() + G_SLASH + w->name;
+	w->name     = "TAKE-" + gu_itoa(takeId);
+	w->pathfile = gu_getCurrentPath() + G_SLASH + w->name;
 	wave        = w;
 	status      = STATUS_OFF;
 	begin       = 0;
@@ -811,8 +812,8 @@ void SampleChannel::stop()
 
 int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 {
-	if (strcmp(file, "") == 0 || gIsDir(file)) {
-		gLog("[SampleChannel] file not specified\n");
+	if (strcmp(file, "") == 0 || gu_isDir(file)) {
+		gu_log("[SampleChannel] file not specified\n");
 		return SAMPLE_LEFT_EMPTY;
 	}
 
@@ -822,13 +823,13 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 	Wave *w = new Wave();
 
 	if (!w->open(file)) {
-		gLog("[SampleChannel] %s: read error\n", file);
+		gu_log("[SampleChannel] %s: read error\n", file);
 		delete w;
 		return SAMPLE_READ_ERROR;
 	}
 
 	if (w->channels() > 2) {
-		gLog("[SampleChannel] %s: unsupported multichannel wave\n", file);
+		gu_log("[SampleChannel] %s: unsupported multichannel wave\n", file);
 		delete w;
 		return SAMPLE_MULTICHANNEL;
 	}
@@ -842,7 +843,7 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 		wfx_monoToStereo(w);
 
 	if (w->rate() != samplerate) {
-		gLog("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
+		gu_log("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
 				w->rate(), samplerate);
 		w->resample(rsmpQuality, samplerate);
 	}
@@ -850,7 +851,7 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 	pushWave(w);
 	generateUniqueSampleName();
 
-	gLog("[SampleChannel] %s loaded in channel %d\n", file, index);
+	gu_log("[SampleChannel] %s loaded in channel %d\n", file, index);
 	return SAMPLE_LOADED_OK;
 }
 
@@ -1041,7 +1042,7 @@ int SampleChannel::writePatch(int i, bool isProject, Patch *patch)
 	if (wave != NULL) {
 		pch->samplePath = wave->pathfile;
 		if (isProject)
-			pch->samplePath = gBasename(wave->pathfile);  // make it portable
+			pch->samplePath = gu_basename(wave->pathfile);  // make it portable
 	}
 	else
 		pch->samplePath = "";

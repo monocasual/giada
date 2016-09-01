@@ -60,7 +60,7 @@ int openDevice(
 	int buffersize)
 {
 	api = _api;
-	gLog("[KA] using system 0x%x\n", api);
+	gu_log("[KA] using system 0x%x\n", api);
 
 #if defined(__linux__)
 
@@ -98,22 +98,22 @@ int openDevice(
 
 
 
-	//gLog("[KA] %d\n", sizeof(system->rtapi_));
+	//gu_log("[KA] %d\n", sizeof(system->rtapi_));
 
-	gLog("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
+	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
 
 	numDevs = system->getDeviceCount();
 
 	if (numDevs < 1) {
-		gLog("[KA] no devices found with this API\n");
+		gu_log("[KA] no devices found with this API\n");
 		closeDevice();
 		G_audio_status = false;
 		return 0;
 	}
 	else {
-		gLog("[KA] %d device(s) found\n", numDevs);
+		gu_log("[KA] %d device(s) found\n", numDevs);
 		for (unsigned i=0; i<numDevs; i++)
-			gLog("  %d) %s\n", i, getDeviceName(i).c_str());
+			gu_log("  %d) %s\n", i, getDeviceName(i).c_str());
 	}
 
 
@@ -148,7 +148,7 @@ int openDevice(
 #if defined(__linux__) || defined(__APPLE__)
 	if (api == SYS_API_JACK) {
 		samplerate = getFreq(outDev, 0);
-		gLog("[KA] JACK in use, freq = %d\n", samplerate);
+		gu_log("[KA] JACK in use, freq = %d\n", samplerate);
 		G_Conf.samplerate = samplerate;
 	}
 #endif
@@ -173,7 +173,7 @@ int openDevice(
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] system init error: %s\n", e.getMessage().c_str());
+		gu_log("[KA] system init error: %s\n", e.getMessage().c_str());
 		closeDevice();
 		G_audio_status = false;
 		return 0;
@@ -188,11 +188,11 @@ int startStream()
 {
 	try {
 		system->startStream();
-		gLog("[KA] latency = %lu\n", system->getStreamLatency());
+		gu_log("[KA] latency = %lu\n", system->getStreamLatency());
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] Start stream error: %s\n", e.getMessage().c_str());
+		gu_log("[KA] Start stream error: %s\n", e.getMessage().c_str());
 		return 0;
 	}
 }
@@ -208,7 +208,7 @@ int stopStream()
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] Stop stream error\n");
+		gu_log("[KA] Stop stream error\n");
 		return 0;
 	}
 }
@@ -223,7 +223,7 @@ string getDeviceName(unsigned dev)
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] invalid device ID = %d\n", dev);
+		gu_log("[KA] invalid device ID = %d\n", dev);
 		return "";
 	}
 }
@@ -259,7 +259,7 @@ unsigned getMaxInChans(int dev)
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).inputChannels;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] Unable to get input channels\n");
+		gu_log("[KA] Unable to get input channels\n");
 		return 0;
 	}
 }
@@ -274,7 +274,7 @@ unsigned getMaxOutChans(unsigned dev)
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
 	}
 	catch (RtAudioError &e) {
-		gLog("[KA] Unable to get output channels\n");
+		gu_log("[KA] Unable to get output channels\n");
 		return 0;
 	}
 }
@@ -457,25 +457,25 @@ int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 {
 	switch (state) {
 		case JackTransportStopped:
-			gLog("[KA] Jack transport stopped, frame=%d\n", pos->frame);
+			gu_log("[KA] Jack transport stopped, frame=%d\n", pos->frame);
 			glue_stopSeq(false);  // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq();
 			break;
 
 		case JackTransportRolling:
-			gLog("[KA] Jack transport rolling\n");
+			gu_log("[KA] Jack transport rolling\n");
 			break;
 
 		case JackTransportStarting:
-			gLog("[KA] Jack transport starting, frame=%d\n", pos->frame);
+			gu_log("[KA] Jack transport starting, frame=%d\n", pos->frame);
 			glue_startSeq(false);  // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq();
 			break;
 
 		default:
-			gLog("[KA] Jack transport [unknown]\n");
+			gu_log("[KA] Jack transport [unknown]\n");
 	}
 	return 1;
 }

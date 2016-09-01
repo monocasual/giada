@@ -32,14 +32,22 @@
 
 
 #include <string>
-#include <cstdio>
 #include <vector>
-#include "log.h"
 
 
 using std::string;
+using std::vector;
 
 
-string gGetRealPath(const string &path);
+string gu_getRealPath(const string &path);
+
+string gu_replace(string in, const string &search, const string &replace);
+
+string gu_trim(const string &s);
+
+string gu_itoa(int i);
+
+void gu_split(string in, string sep, vector<string> *v);
+
 
 #endif

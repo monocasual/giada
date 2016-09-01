@@ -29,7 +29,7 @@
 
 #include <limits.h>
 #include "../../core/const.h"
-#include "../../utils/utils.h"
+#include "../../utils/fs.h"
 #include "../../utils/string.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_browser.h"
@@ -122,7 +122,7 @@ int gBrowser::handle(int e)
 
 string gBrowser::getCurrentDir()
 {
-  return normalize(gGetRealPath(currentDir));
+  return normalize(gu_getRealPath(currentDir));
 }
 
 
@@ -137,7 +137,7 @@ string gBrowser::getSelectedItem(bool fullPath)
   if (value() == 0)  // no rows selected? return current directory
     return normalize(currentDir);
   else
-    return normalize(gGetRealPath(currentDir + G_SLASH + normalize(text(value()))));
+    return normalize(gu_getRealPath(currentDir + G_SLASH + normalize(text(value()))));
 }
 
 

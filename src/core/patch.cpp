@@ -29,7 +29,7 @@
 
 #include <stdint.h>
 #include "../utils/log.h"
-#include "../utils/utils.h"
+#include "../utils/string.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "patch.h"
@@ -77,7 +77,7 @@ int Patch::write(const string &file)
 #endif
 
   if (json_dump_file(jRoot, file.c_str(), JSON_COMPACT) != 0) {
-    gLog("[Patch::write] unable to write patch file!\n");
+    gu_log("[Patch::write] unable to write patch file!\n");
     return 0;
   }
   return 1;
@@ -91,7 +91,7 @@ int Patch::read(const string &file)
 {
   jRoot = json_load_file(file.c_str(), 0, &jError);
   if (!jRoot) {
-    gLog("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
+    gu_log("[Patch::read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
     return PATCH_UNREADABLE;
   }
 
@@ -296,7 +296,7 @@ bool Patch::readColumns(json_t *jContainer)
   json_t *jColumn;
   json_array_foreach(jColumns, columnIndex, jColumn) {
 
-    string columnIndexStr = "column " + gItoa(columnIndex);
+    string columnIndexStr = "column " + gu_itoa(columnIndex);
     if (!checkObject(jColumn, columnIndexStr.c_str()))
       return 0;
 
@@ -323,7 +323,7 @@ bool Patch::readChannels(json_t *jContainer)
   json_t *jChannel;
   json_array_foreach(jChannels, channelIndex, jChannel) {
 
-    string channelIndexStr = "channel " + gItoa(channelIndex);
+    string channelIndexStr = "channel " + gu_itoa(channelIndex);
     if (!checkObject(jChannel, channelIndexStr.c_str()))
       return 0;
 

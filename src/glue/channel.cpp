@@ -31,7 +31,7 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/elems/ge_channel.h"
-#include "../utils/gui_utils.h"
+#include "../utils/gui.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
 #include "../core/pluginHost.h"
@@ -60,7 +60,7 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
-	G_Conf.samplePath = gDirname(fname);
+	G_Conf.samplePath = gu_dirname(fname);
 
 	int result = ch->load(fname, G_Conf.samplerate, G_Conf.rsmpQuality);
 

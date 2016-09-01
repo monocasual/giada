@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/kernelMidi.h"
 #include "../../core/conf.h"
 #include "../../core/sampleChannel.h"
@@ -69,7 +69,7 @@ void gdMidiInput::stopMidiLearn(gLearner *learner) {
 void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 	*param = msg;
 	stopMidiLearn(l);
-	gLog("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
+	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
 }
 
 

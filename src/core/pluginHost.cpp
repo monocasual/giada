@@ -31,7 +31,7 @@
 
 
 #include "../utils/log.h"
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "mixer.h"
 #include "channel.h"
 #include "midiChannel.h"
@@ -53,7 +53,7 @@ PluginHost::~PluginHost()
 
 void PluginHost::init(int _buffersize, int _samplerate)
 {
-  gLog("[PluginHost::init] initialize with buffersize=%d, samplerate=%d\n",
+  gu_log("[PluginHost::init] initialize with buffersize=%d, samplerate=%d\n",
     _buffersize, _samplerate);
 
   messageManager = juce::MessageManager::getInstance();
@@ -62,7 +62,7 @@ void PluginHost::init(int _buffersize, int _samplerate)
   buffersize = _buffersize;
   missingPlugins = false;
   //unknownPluginList.empty();
-  loadList(gGetHomePath() + G_SLASH + "plugins.xml");
+  loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
 }
 
 
@@ -72,8 +72,8 @@ void PluginHost::init(int _buffersize, int _samplerate)
 int PluginHost::scanDir(const string &dirpath, void (*callback)(float progress, void *p),
     void *p)
 {
-  gLog("[PluginHost::scanDir] requested directory: '%s'\n", dirpath.c_str());
-  gLog("[PluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
+  gu_log("[PluginHost::scanDir] requested directory: '%s'\n", dirpath.c_str());
+  gu_log("[PluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
 
   knownPluginList.clear();   // clear up previous plugins
 
@@ -85,13 +85,13 @@ int PluginHost::scanDir(const string &dirpath, void (*callback)(float progress, 
   bool cont = true;
   juce::String name;
   while (cont) {
-    gLog("[PluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
+    gu_log("[PluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
     cont = scanner.scanNextFile(false, name);
     if (callback)
       callback(scanner.getProgress(), p);
   }
 
-  gLog("[PluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());
+  gu_log("[PluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());
   return knownPluginList.getNumTypes();
 }
 
@@ -103,7 +103,7 @@ int PluginHost::saveList(const string &filepath)
 {
   int out = knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
   if (!out)
-    gLog("[PluginHost::saveList] unable to save plugin list to %s\n", filepath.c_str());
+    gu_log("[PluginHost::saveList] unable to save plugin list to %s\n", filepath.c_str());
   return out;
 }
 
@@ -138,7 +138,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
 
   juce::PluginDescription *pd = knownPluginList.getTypeForFile(fid);
   if (!pd) {
-    gLog("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
+    gu_log("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
     missingPlugins = true;
     unknownPluginList.push_back(fid);
     return NULL;
@@ -146,7 +146,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
 
   Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
   if (!p) {
-    gLog("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
+    gu_log("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
     missingPlugins = true;
     return NULL;
   }
@@ -157,7 +157,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   p->init();
   p->prepareToPlay(samplerate, buffersize);
 
-  gLog("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
+  gu_log("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
 
   /* Try to inject the plugin as soon as possible. */
 
@@ -171,7 +171,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     }
   }
 
-  gLog("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
+  gu_log("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
     fid.c_str(), p->getName().toStdString().c_str(), stackType, pStack->size());
 
   return p;
@@ -186,12 +186,12 @@ Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
 {
   juce::PluginDescription *pd = knownPluginList.getType(index);
   if (pd) {
-    gLog("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
+    gu_log("[PluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
       pd->fileOrIdentifier.toStdString().c_str(), pd->name.toStdString().c_str());
     return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, ch);
   }
   else {
-    gLog("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
+    gu_log("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
     return NULL;
   }
 }
@@ -258,7 +258,7 @@ PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
   pi.isInstrument = pd->isInstrument;
 /*
   if (!p) {
-    gLog("[PluginHost::getAvailablePlugin] unable to create plugin instance!\n");
+    gu_log("[PluginHost::getAvailablePlugin] unable to create plugin instance!\n");
     return NULL;
   }
   */
@@ -303,7 +303,7 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 			break;
 		}
 	}
-  gLog("[PluginHost::freeStack] stack type=%d freed\n", stackType);
+  gu_log("[PluginHost::freeStack] stack type=%d freed\n", stackType);
 }
 
 
@@ -389,11 +389,11 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType,
 		if (lockStatus == 0) {
 			std::swap(pStack->at(indexA), pStack->at(indexB));
 			pthread_mutex_unlock(mutex);
-			gLog("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
+			gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
 			return;
 		}
 		//else
-			//gLog("[pluginHost] waiting for mutex...\n");
+			//gu_log("[pluginHost] waiting for mutex...\n");
 	}
 }
 
@@ -414,7 +414,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 			if (pPlugin->getStatus() == 0) { // no frills if plugin is missing
 				delete pPlugin;
 				pStack->erase(pStack->begin() + i);
-        gLog("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
+        gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
 				return;
 			}
 			else {
@@ -427,16 +427,16 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 						delete pPlugin;
 						pStack->erase(pStack->begin() + i);
 						pthread_mutex_unlock(mutex);
-						gLog("[pluginHost::freePlugin] plugin id=%d removed\n", id);
+						gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
 						return;
 					}
 					//else
-						//gLog("[pluginHost] waiting for mutex...\n");
+						//gu_log("[pluginHost] waiting for mutex...\n");
 				}
 			}
 		}
   }
-	gLog("[pluginHost::freePlugin] plugin id=%d not found\n", id);
+	gu_log("[pluginHost::freePlugin] plugin id=%d not found\n", id);
 }
 
 
@@ -446,7 +446,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 void PluginHost::runDispatchLoop()
 {
   messageManager->runDispatchLoopUntil(10);
-  //gLog("[PluginHost::runDispatchLoop] %d, hasStopMessageBeenSent=%d\n", r, messageManager->hasStopMessageBeenSent());
+  //gu_log("[PluginHost::runDispatchLoop] %d, hasStopMessageBeenSent=%d\n", r, messageManager->hasStopMessageBeenSent());
 }
 
 
@@ -473,7 +473,7 @@ int PluginHost::clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
   juce::PluginDescription pd = src->getPluginDescription();
 	Plugin *p = addPlugin(pd.fileOrIdentifier.toStdString(), stackType, mutex, ch);
 	if (!p) {
-		gLog("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
+		gu_log("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
 		return 0;
 	}
 	for (int k=0; k<src->getNumParameters(); k++) {
@@ -537,7 +537,7 @@ void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, 
 	 * we should process the last chunk in a separate buffer, padded with 0 */
 
 		//else
-		//	gLog("chunk of buffer left, size=%d\n", left);
+		//	gu_log("chunk of buffer left, size=%d\n", left);
 
 		index+=step;
 	}

@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../glue/glue.h"

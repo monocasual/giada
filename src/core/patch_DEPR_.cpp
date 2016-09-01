@@ -29,7 +29,7 @@
 
 #include <stdint.h>
 #include "../utils/log.h"
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "patch_DEPR_.h"
@@ -62,7 +62,7 @@ int Patch_DEPR_::open(const char *file)
 		return PATCH_INVALID;
 
 	version = atof(getValue("versionf").c_str());
-	gLog("[patch_DEPR_] open patch version %f\n", version);
+	gu_log("[patch_DEPR_] open patch version %f\n", version);
 
 	return PATCH_READ_OK;
 }
@@ -470,7 +470,7 @@ uint32_t Patch_DEPR_::getMidiValue(int i, const char *c)
 
 int Patch_DEPR_::readRecs()
 {
-	gLog("[patch_DEPR_] Reading recs...\n");
+	gu_log("[patch_DEPR_] Reading recs...\n");
 
 	unsigned numrecs = atoi(getValue("numrecs").c_str());
 
@@ -483,7 +483,7 @@ int Patch_DEPR_::readRecs()
 		sprintf(tmpbuf, "recframe%d", i);
 		sscanf(getValue(tmpbuf).c_str(), "%d %d", &frame, &recPerFrame);
 
-//gLog("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
+//gu_log("processing frame=%d, recPerFrame=%d\n", frame, recPerFrame);
 
 		for (int k=0; k<recPerFrame; k++) {
 			int      chan = 0;
@@ -505,7 +505,7 @@ int Patch_DEPR_::readRecs()
 				else
 					sscanf(getValue(tmpbuf).c_str(), "%d|%d|%f|%u", &chan, &type, &fValue, &iValue);
 
-//gLog("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
+//gu_log("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
 
 			Channel *ch = G_Mixer.getChannelByIndex(chan);
 			if (ch)
@@ -527,7 +527,7 @@ int Patch_DEPR_::readRecs()
 #ifdef WITH_VST
 int Patch_DEPR_::readPlugins()
 {
-	gLog("[patch_DEPR_] Reading plugins...\n");
+	gu_log("[patch_DEPR_] Reading plugins...\n");
 
 	int globalOut = 1;
 

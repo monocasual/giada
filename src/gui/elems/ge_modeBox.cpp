@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/graphics.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/const.h"

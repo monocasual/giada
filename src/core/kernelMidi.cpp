@@ -64,7 +64,7 @@ void __sendMidiLightningInitMsgs__()
 	for(unsigned i=0; i<G_MidiMap.initCommands.size(); i++) {
 		MidiMapConf::message_t msg = G_MidiMap.initCommands.at(i);
 		if (msg.value != 0x0 && msg.channel != -1) {
-			gLog("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
+			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
 			send(msg.value | MIDI_CHANS[msg.channel]);
 		}
 	}
@@ -97,7 +97,7 @@ void stopMidiLearn()
 void setApi(int _api)
 {
 	api = _api;
-	gLog("[KM] using system 0x%x\n", api);
+	gu_log("[KM] using system 0x%x\n", api);
 }
 
 
@@ -111,7 +111,7 @@ int openOutDevice(int port)
 		G_midiStatus = true;
   }
   catch (RtMidiError &error) {
-    gLog("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
+    gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
     G_midiStatus = false;
     return 0;
   }
@@ -119,16 +119,16 @@ int openOutDevice(int port)
 	/* print output ports */
 
 	numOutPorts = midiOut->getPortCount();
-  gLog("[KM] %d output MIDI ports found\n", numOutPorts);
+  gu_log("[KM] %d output MIDI ports found\n", numOutPorts);
   for (unsigned i=0; i<numOutPorts; i++)
-		gLog("  %d) %s\n", i, getOutPortName(i).c_str());
+		gu_log("  %d) %s\n", i, getOutPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
 	if (port != -1 && numOutPorts > 0) {
 		try {
 			midiOut->openPort(port, getOutPortName(port));
-			gLog("[KM] MIDI out port %d open\n", port);
+			gu_log("[KM] MIDI out port %d open\n", port);
 
 			/* TODO - it shold send midiLightning message only if there is a map loaded
 			and available in G_MidiMap. */
@@ -137,7 +137,7 @@ int openOutDevice(int port)
 			return 1;
 		}
 		catch (RtMidiError &error) {
-			gLog("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
+			gu_log("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
 			G_midiStatus = false;
 			return 0;
 		}
@@ -157,7 +157,7 @@ int openInDevice(int port)
 		G_midiStatus = true;
   }
   catch (RtMidiError &error) {
-    gLog("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
+    gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
     G_midiStatus = false;
     return 0;
   }
@@ -165,9 +165,9 @@ int openInDevice(int port)
 	/* print input ports */
 
 	numInPorts = midiIn->getPortCount();
-  gLog("[KM] %d input MIDI ports found\n", numInPorts);
+  gu_log("[KM] %d input MIDI ports found\n", numInPorts);
   for (unsigned i=0; i<numInPorts; i++)
-		gLog("  %d) %s\n", i, getInPortName(i).c_str());
+		gu_log("  %d) %s\n", i, getInPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
@@ -175,12 +175,12 @@ int openInDevice(int port)
 		try {
 			midiIn->openPort(port, getInPortName(port));
 			midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
-			gLog("[KM] MIDI in port %d open\n", port);
+			gu_log("[KM] MIDI in port %d open\n", port);
 			midiIn->setCallback(&callback);
 			return 1;
 		}
 		catch (RtMidiError &error) {
-			gLog("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
+			gu_log("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
 			G_midiStatus = false;
 			return 0;
 		}
@@ -233,7 +233,7 @@ void send(uint32_t data)
   msg.push_back(getB3(data));
 
 	midiOut->sendMessage(&msg);
-	gLog("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	gu_log("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
@@ -253,7 +253,7 @@ void send(int b1, int b2, int b3)
 		msg.push_back(b3);
 
 	midiOut->sendMessage(&msg);
-	//gLog("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
+	//gu_log("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
 
@@ -266,10 +266,10 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	 * messages) as unknown, for debugging purposes */
 
 	if (msg->size() < 3) {
-		gLog("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
+		gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
 		for (unsigned i=0; i<msg->size(); i++)
-			gLog("%X", (int) msg->at(i));
-		gLog("\n");
+			gu_log("%X", (int) msg->at(i));
+		gu_log("\n");
 		return;
 	}
 
@@ -286,7 +286,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	else
 		pure  = input & 0xFFFFFF00;   // input with 'value' byte
 
-	gLog("[KM] MIDI received - 0x%X (chan %d)", input, chan >> 24);
+	gu_log("[KM] MIDI received - 0x%X (chan %d)", input, chan >> 24);
 
 	/* start dispatcher. If midi learn is on don't parse channels, just
 	 * learn incoming midi signal. Otherwise process master events first,
@@ -294,7 +294,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 	 * get processed by glue_* when midi learning is on. */
 
 	if (cb_learn)	{
-		gLog("\n");
+		gu_log("\n");
 		cb_learn(pure, cb_data);
 	}
 	else {
@@ -302,41 +302,41 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 		/* process master events */
 
 		if      (pure == G_Conf.midiInRewind) {
-			gLog(" >>> rewind (global) (pure=0x%X)", pure);
+			gu_log(" >>> rewind (global) (pure=0x%X)", pure);
 			glue_rewindSeq();
 		}
 		else if (pure == G_Conf.midiInStartStop) {
-			gLog(" >>> startStop (global) (pure=0x%X)", pure);
+			gu_log(" >>> startStop (global) (pure=0x%X)", pure);
 			glue_startStopSeq();
 		}
 		else if (pure == G_Conf.midiInActionRec) {
-			gLog(" >>> actionRec (global) (pure=0x%X)", pure);
+			gu_log(" >>> actionRec (global) (pure=0x%X)", pure);
 			glue_startStopActionRec();
 		}
 		else if (pure == G_Conf.midiInInputRec) {
-			gLog(" >>> inputRec (global) (pure=0x%X)", pure);
+			gu_log(" >>> inputRec (global) (pure=0x%X)", pure);
 			glue_startStopInputRec(false, false);   // update gui, no popup messages
 		}
 		else if (pure == G_Conf.midiInMetronome) {
-			gLog(" >>> metronome (global) (pure=0x%X)", pure);
+			gu_log(" >>> metronome (global) (pure=0x%X)", pure);
 			glue_startStopMetronome(false);
 		}
 		else if (pure == G_Conf.midiInVolumeIn) {
 			float vf = (value >> 8)/127.0f;
-			gLog(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			gu_log(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
 			glue_setInVol(vf, false);
 		}
 		else if (pure == G_Conf.midiInVolumeOut) {
 			float vf = (value >> 8)/127.0f;
-			gLog(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
+			gu_log(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
 			glue_setOutVol(vf, false);
 		}
 		else if (pure == G_Conf.midiInBeatDouble) {
-			gLog(" >>> sequencer x2 (global) (pure=0x%X)", pure);
+			gu_log(" >>> sequencer x2 (global) (pure=0x%X)", pure);
 			glue_beatsMultiply();
 		}
 		else if (pure == G_Conf.midiInBeatHalf) {
-			gLog(" >>> sequencer /2 (global) (pure=0x%X)", pure);
+			gu_log(" >>> sequencer /2 (global) (pure=0x%X)", pure);
 			glue_beatsDivide();
 		}
 
@@ -349,37 +349,37 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 			if (!ch->midiIn) continue;
 
 			if      (pure == ch->midiInKeyPress) {
-				gLog(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
+				gu_log(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
 				glue_keyPress(ch, false, false);
 			}
 			else if (pure == ch->midiInKeyRel) {
-				gLog(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
+				gu_log(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
 				glue_keyRelease(ch, false, false);
 			}
 			else if (pure == ch->midiInMute) {
-				gLog(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
+				gu_log(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
 				glue_setMute(ch, false);
 			}
 			else if (pure == ch->midiInSolo) {
-				gLog(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
+				gu_log(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
 				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
 			}
 			else if (pure == ch->midiInVolume) {
 				float vf = (value >> 8)/127.0f;
-				gLog(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				gu_log(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
 				glue_setChanVol(ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
 				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
-				gLog(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
+				gu_log(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
 				glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
-				gLog(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
+				gu_log(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
 				glue_startStopReadingRecs((SampleChannel*)ch, false);
 			}
 		}
-		gLog("\n");
+		gu_log("\n");
 	}
 }
 

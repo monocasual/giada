@@ -30,14 +30,16 @@
 #ifdef WITH_VST
 
 
-#include "../../utils/gui_utils.h"
-#include "../../utils/utils.h"
+#include "../../utils/gui.h"
+#include "../../utils/fs.h"
 #include "../../core/conf.h"
 #include "../../core/graphics.h"
 #include "../../core/pluginHost.h"
 #include "../../core/plugin.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
+#include "../../utils/log.h"
+#include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
 #include "gd_pluginList.h"
@@ -86,7 +88,7 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	if (stackType == PluginHost::MASTER_IN)
 		label("Master In Plugins");
 	else {
-    string l = "Channel " + gItoa(ch->index+1) + " Plugins";
+    string l = "Channel " + gu_itoa(ch->index+1) + " Plugins";
     copy_label(l.c_str());
 	}
 
@@ -340,13 +342,13 @@ void gdPlugin::__cb_openPluginWindow()
   gWindow *w;
   if (pPlugin->hasEditor()) {
     if (pPlugin->isEditorOpen()) {
-      gLog("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
+      gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
       return;
     }
 
     int pwid = pPlugin->getId()+1;
 
-    gLog("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
+    gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
 
     if (pParent->hasWindow(pwid))
       pParent->delSubWindow(pwid);

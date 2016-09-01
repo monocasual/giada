@@ -31,7 +31,7 @@
 
 
 #include <FL/Fl_Scroll.H>
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/plugin.h"
 #include "../elems/ge_mixed.h"
 #include "gd_pluginWindow.h"

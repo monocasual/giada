@@ -41,8 +41,8 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_editor.h"
 #include "../gui/dialogs/gd_warnings.h"
-#include "../utils/gui_utils.h"
-#include "../utils/utils.h"
+#include "../utils/gui.h"
+#include "../utils/fs.h"
 #include "../utils/log.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -97,7 +97,7 @@ void glue_setBpm(const char *v1, const char *v2)
 	gu_refreshActionEditor();
 
 	G_MainWin->timing->setBpm(buf);
-	gLog("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
+	gu_log("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }
 
 
@@ -740,7 +740,7 @@ void glue_startStopInputRec(bool gui, bool alert)
 	if (G_Mixer.chanInput == NULL) {
 		if (!glue_startInputRec(gui)) {
 			if (alert) gdAlert("No channels available for recording.");
-			else       gLog("[glue] no channels available for recording\n");
+			else       gu_log("[glue] no channels available for recording\n");
 		}
 	}
 	else

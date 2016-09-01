@@ -28,7 +28,7 @@
 
 
 #include <math.h>
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/graphics.h"
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"

@@ -44,7 +44,8 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/wave.h"
-#include "../utils/gui_utils.h"
+#include "../utils/gui.h"
+#include "../utils/log.h"
 #include "glue.h" // TODO - remove, used only for DEPR calls
 #include "channel.h"
 #include "storage.h"
@@ -161,8 +162,8 @@ static bool __glue_savePatch__(const string &fullPath, const string &name,
 	__glue_fillPatchColumns__();
 
 	if (G_Patch.write(fullPath)) {
-		gu_update_win_label(name.c_str());
-		gLog("[glue_savePatch] patch saved as %s\n", fullPath.c_str());
+		gu_updateMainWinLabel(name.c_str());
+		gu_log("[glue_savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
 	}
 	return false;
@@ -176,19 +177,19 @@ void glue_savePatch(void *data)
 {
 	gdSaveBrowser *browser = (gdSaveBrowser*) data;
 	string name            = browser->getName();
-	string fullPath        = browser->getCurrentPath() + G_SLASH + gStripExt(name) + ".gptc";
+	string fullPath        = browser->getCurrentPath() + G_SLASH + gu_stripExt(name) + ".gptc";
 
 	if (name == "") {
 		gdAlert("Please choose a file name.");
 		return;
 	}
 
-	if (gFileExists(fullPath.c_str()))
+	if (gu_fileExists(fullPath))
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
 	if (__glue_savePatch__(fullPath, name, false)) {  // false == not a project
-		G_Conf.patchPath = gDirname(fullPath);
+		G_Conf.patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
 	else
@@ -203,16 +204,16 @@ void glue_loadPatch(void *data)
 {
 	gdLoadBrowser *browser = (gdLoadBrowser*) data;
 	string fullPath        = browser->getSelectedItem();
-	bool isProject         = gIsProject(browser->getSelectedItem());
+	bool isProject         = gu_isProject(browser->getSelectedItem());
 
 	browser->showStatusBar();
 
-	gLog("[glue] loading %s...\n", fullPath.c_str());
+	gu_log("[glue] loading %s...\n", fullPath.c_str());
 
 	string fileToLoad = fullPath;  // patch file to read from
 	string basePath   = "";        // base path, in case of reading from a project
 	if (isProject) {
-		fileToLoad = fullPath + G_SLASH + gStripExt(gBasename(fullPath)) + ".gptc";
+		fileToLoad = fullPath + G_SLASH + gu_stripExt(gu_basename(fullPath)) + ".gptc";
 		basePath   = fullPath + G_SLASH;
 	}
 
@@ -223,9 +224,9 @@ void glue_loadPatch(void *data)
 	bool deprecated = false;
 
 	if (res == PATCH_UNREADABLE) {
-		gLog("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
+		gu_log("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
 		deprecated = true;
-		res = glue_loadPatch__DEPR__(gBasename(fileToLoad).c_str(), fileToLoad.c_str(),
+		res = glue_loadPatch__DEPR__(gu_basename(fileToLoad).c_str(), fileToLoad.c_str(),
 				browser->getStatusBar(), isProject);
 	}
 
@@ -289,17 +290,17 @@ void glue_loadPatch(void *data)
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.patchPath = gDirname(fullPath);
+	G_Conf.patchPath = gu_dirname(fullPath);
 
 	/* refresh GUI */
 
 	gu_updateControls();
-	gu_update_win_label(G_Patch.name.c_str());
+	gu_updateMainWinLabel(G_Patch.name.c_str());
 
 	browser->setStatusBar(0.1f);
 	//__glue_setProgressBar__(status, 1.0f);
 
-	gLog("[glue] patch loaded successfully\n");
+	gu_log("[glue] patch loaded successfully\n");
 
 #ifdef WITH_VST
 
@@ -347,12 +348,12 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch_DEPR_(isProject, gDirname(fpath).c_str());
+	mh_loadPatch_DEPR_(isProject, gu_dirname(fpath).c_str());
 
 	/* take the patch name and update the main window's title */
 
 	G_Patch_DEPR_.getName();
-	gu_update_win_label(G_Patch_DEPR_.name);
+	gu_updateMainWinLabel(G_Patch_DEPR_.name);
 
 	status->value(0.4f);  // progress status: 0.4
 	//Fl::check();
@@ -386,9 +387,9 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.patchPath = gDirname(fpath).c_str();
+	G_Conf.patchPath = gu_dirname(fpath).c_str();
 
-	gLog("[glue] patch %s loaded\n", fname);
+	gu_log("[glue] patch %s loaded\n", fname);
 
 #ifdef WITH_VST
 	if (resPlugins != 1)
@@ -409,22 +410,22 @@ void glue_saveProject(void *data)
 	gdSaveBrowser *browser = (gdSaveBrowser*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getCurrentPath(); //browser->getSelectedItem();
-	string fullPath        = folderPath + G_SLASH + gStripExt(name) + ".gprj";
+	string fullPath        = folderPath + G_SLASH + gu_stripExt(name) + ".gprj";
 
 	if (name == "") {
 		gdAlert("Please choose a project name.");
 		return;
 	}
 
-	if (gIsProject(fullPath.c_str()) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (gu_isProject(fullPath) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
-	if (!gDirExists(fullPath.c_str()) && !gMkdir(fullPath.c_str())) {
-		gLog("[glue_saveProject] unable to make project directory!\n");
+	if (!gu_dirExists(fullPath) && !gu_mkdir(fullPath)) {
+		gu_log("[glue_saveProject] unable to make project directory!\n");
 		return;
 	}
 
-	gLog("[glue_saveProject] project dir created: %s\n", fullPath.c_str());
+	gu_log("[glue_saveProject] project dir created: %s\n", fullPath.c_str());
 
 	/* copy all samples inside the folder. Takes and logical ones are saved
 	 * via glue_saveSample() */
@@ -444,13 +445,13 @@ void glue_saveProject(void *data)
 
 		string samplePath = fullPath + G_SLASH + ch->wave->basename(true);
 
-		if (gFileExists(samplePath.c_str()))
+		if (gu_fileExists(samplePath))
 			remove(samplePath.c_str());
 		if (ch->save(samplePath.c_str()))
 			ch->wave->pathfile = samplePath;
 	}
 
-	string gptcPath = fullPath + G_SLASH + gStripExt(name.c_str()) + ".gptc";
+	string gptcPath = fullPath + G_SLASH + gu_stripExt(name) + ".gptc";
 	if (__glue_savePatch__(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
@@ -472,7 +473,7 @@ void glue_loadSample(void *data)
 	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), fullPath.c_str());
 
 	if (res == SAMPLE_LOADED_OK) {
-		G_Conf.samplePath = gDirname(fullPath);
+		G_Conf.samplePath = gu_dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -497,14 +498,14 @@ void glue_saveSample(void *data)
 
 	/* bruteforce check extension. */
 
-	string filePath = folderPath + G_SLASH + gStripExt(name) + ".wav";
+	string filePath = folderPath + G_SLASH + gu_stripExt(name) + ".wav";
 
-	if (gFileExists(filePath))
+	if (gu_fileExists(filePath))
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
 	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str())) {
-		G_Conf.samplePath = gDirname(folderPath);
+		G_Conf.samplePath = gu_dirname(folderPath);
 		browser->do_callback();
 	}
 	else

@@ -27,14 +27,15 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "string.h"
 #include <limits.h>
+#include <sstream>
+#include "string.h"
 
 
 using std::string;
 
 
-string gGetRealPath(const string &path)
+string gu_getRealPath(const string &path)
 {
 	string out = "";
 
@@ -53,4 +54,60 @@ string gGetRealPath(const string &path)
 		free(buf);
 	}
 	return out;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gu_itoa(int i)
+{
+	std::stringstream out;
+	out << i;
+	return out.str();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gu_trim(const string &s)
+{
+	std::size_t first = s.find_first_not_of(" \n\t");
+	std::size_t last  = s.find_last_not_of(" \n\t");
+	return s.substr(first, last-first+1);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gu_replace(string in, const string &search, const string &replace)
+{
+	size_t pos = 0;
+	while ((pos = in.find(search, pos)) != string::npos) {
+		in.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return in;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gu_split(string in, string sep, vector<string> *v)
+{
+	string full  = in;
+	string token = "";
+	size_t curr = 0;
+	size_t next = -1;
+	do {
+	  curr  = next + 1;
+	  next  = full.find_first_of(sep, curr);
+		token = full.substr(curr, next - curr);
+		if (token != "")
+			v->push_back(token);
+	}
+	while (next != string::npos);
 }

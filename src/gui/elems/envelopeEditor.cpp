@@ -239,7 +239,7 @@ int geEnvelopeEditor::handle(int e) {
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
-					//gLog("nothing to do\n");
+					//gu_log("nothing to do\n");
 				}
 				else {
 					int newFrame = points.at(draggedPoint).x * pParent->zoom;

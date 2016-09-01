@@ -37,7 +37,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/fl_draw.H>
 #include <math.h>
-#include "../../utils/utils.h"
+#include "../../utils/fs.h"
 
 
 using std::vector;

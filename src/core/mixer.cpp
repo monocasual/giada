@@ -29,7 +29,7 @@
 
 #include <math.h>
 #include "../utils/log.h"
-#include "../utils/gui_utils.h"
+#include "../utils/gui.h"
 #include "mixer.h"
 #include "init.h"
 #include "wave.h"
@@ -176,7 +176,7 @@ Channel *Mixer::addChannel(int type)
 	}
 
 	ch->index = getNewIndex();
-	gLog("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size());
+	gu_log("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size());
 	return ch;
 }
 
@@ -215,7 +215,7 @@ int Mixer::deleteChannel(Channel *ch)
 	}
 
 	if (index == -1) {
-		gLog("[Mixer::deleteChannel] unable to find Channel %d for deletion!\n", ch->index);
+		gu_log("[Mixer::deleteChannel] unable to find Channel %d for deletion!\n", ch->index);
 		return 0;
 	}
 
@@ -229,7 +229,7 @@ int Mixer::deleteChannel(Channel *ch)
 			return 1;
 		}
 		//else
-		//	gLog("[mixer::deleteChannel] waiting for mutex...\n");
+		//	gu_log("[mixer::deleteChannel] waiting for mutex...\n");
 	}
 }
 
@@ -242,7 +242,7 @@ Channel *Mixer::getChannelByIndex(int index)
 	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
-	gLog("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
+	gu_log("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
 	return NULL;
 }
 
@@ -306,7 +306,7 @@ void Mixer::sendMIDIsync()
 						midiTCminutes = 0;
 					}
 				}
-				//gLog("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
+				//gu_log("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
 			}
 		}
 	}
@@ -614,7 +614,7 @@ void Mixer::updateFrameBars()
 		free(vChanInput);
 	vChanInput = (float*) malloc(totalFrames * sizeof(float));
 	if (!vChanInput)
-		gLog("[Mixer] vChanInput realloc error!\n");
+		gu_log("[Mixer] vChanInput realloc error!\n");
 }
 
 
@@ -715,7 +715,7 @@ bool Mixer::hasEditedSamples()
 bool Mixer::mergeVirtualInput()
 {
 	if (vChanInput == NULL) {
-		gLog("[Mixer] virtual input channel not alloc'd\n");
+		gu_log("[Mixer] virtual input channel not alloc'd\n");
 		return false;
 	}
 	else {

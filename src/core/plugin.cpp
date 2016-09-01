@@ -49,16 +49,16 @@ void Plugin::init()
   status = 1;
 
   if (getActiveEditor() != NULL) {
-    gLog("[Plugin::init] plugin has an already active editor!\n");
+    gu_log("[Plugin::init] plugin has an already active editor!\n");
     return;
   }
   ui = createEditorIfNeeded();
   if (ui == NULL) {
-    gLog("[Plugin::init] unable to create editor, the plugin might be GUI-less!\n");
+    gu_log("[Plugin::init] unable to create editor, the plugin might be GUI-less!\n");
     return;
   }
 
-  gLog("[Plugin::init] editor initialized and ready\n");
+  gu_log("[Plugin::init] editor initialized and ready\n");
 }
 
 
@@ -68,7 +68,7 @@ void Plugin::init()
 void Plugin::showEditor(void *parent)
 {
   if (ui == NULL) {
-    gLog("[Plugin::showEditor] can't show editor!\n");
+    gu_log("[Plugin::showEditor] can't show editor!\n");
     return;
   }
   ui->setOpaque(true);

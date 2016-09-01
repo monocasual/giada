@@ -36,6 +36,7 @@
 #include "../../glue/glue.h"
 #include "../../glue/channel.h"
 #include "../../utils/log.h"
+#include "../../utils/string.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_warnings.h"
 #include "../elems/ge_keyboard.h"
@@ -107,13 +108,13 @@ int gColumn::handle(int e)
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
 			vector<std::string> paths;
-			gSplit(Fl::event_text(), "\n", &paths);
+			gu_split(Fl::event_text(), "\n", &paths);
 			bool fails = false;
 			int result = 0;
 			for (unsigned i=0; i<paths.size(); i++) {
-				gLog("[gColumn::handle] loading %s...\n", paths.at(i).c_str());
+				gu_log("[gColumn::handle] loading %s...\n", paths.at(i).c_str());
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-				result = glue_loadChannel(c, gStripFileUrl(paths.at(i).c_str()).c_str());
+				result = glue_loadChannel(c, gu_stripFileUrl(paths.at(i)).c_str());
 				if (result != SAMPLE_LOADED_OK) {
 					deleteChannel(c->guiChannel);
 					fails = true;
@@ -241,7 +242,7 @@ void gColumn::deleteChannel(gChannel *gch)
 
 void gColumn::__cb_addChannel()
 {
-	gLog("[gColumn::__cb_addChannel] index = %d\n", index);
+	gu_log("[gColumn::__cb_addChannel] index = %d\n", index);
 	int type = openTypeMenu();
 	if (type)
 		glue_addChannel(index, type);

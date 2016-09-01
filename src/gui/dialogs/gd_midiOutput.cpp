@@ -31,7 +31,8 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/conf.h"
 #include "../../core/midiChannel.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
+#include "../../utils/log.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_channel.h"
 #include "../elems/ge_midiIoTools.h"
@@ -64,7 +65,7 @@ void gdMidiOutput::stopMidiLearn(gLearner *learner) {
 void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 	*param = msg;
 	stopMidiLearn(l);
-	gLog("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
+	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
 }
 
 

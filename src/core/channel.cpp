@@ -85,7 +85,7 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
 {
   vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
-		gLog("[Channel::allocVchan] unable to alloc memory for vChan\n");
+		gu_log("[Channel::allocVchan] unable to alloc memory for vChan\n");
 	memset(vChan, 0, bufferSize * sizeof(float));
 }
 
@@ -155,7 +155,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 
 void Channel::sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg)
 {
-	gLog("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
+	gu_log("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
 		learn, msg.channel, msg.value, msg.offset);
 
 	/* isolate 'channel' from learnt message and offset it as requested by 'nn'

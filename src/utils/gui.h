@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gui_utils
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 #ifndef GUI_UTILS_H
 #define GUI_UTILS_H
@@ -52,7 +50,7 @@ using std::string;
 /* refresh
  * refresh all GUI elements. */
 
-void gu_refresh();
+void gu_refreshUI();
 
 /* getBlinker
 *  return blinker value, used to make widgets blink. */
@@ -68,7 +66,7 @@ void gu_updateControls();
 /* update_win_label
  * update the name of the main window */
 
-void gu_update_win_label(const char *c);
+void gu_updateMainWinLabel(const string &s);
 
 void gu_setFavicon(Fl_Window *w);
 

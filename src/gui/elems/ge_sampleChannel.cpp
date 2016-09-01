@@ -39,7 +39,8 @@
 #include "../../glue/glue.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_keyGrabber.h"
 #include "../dialogs/gd_midiInput.h"
@@ -607,7 +608,7 @@ int gSampleChannelButton::handle(int e)
 		case FL_PASTE: {
       gSampleChannel *gch = (gSampleChannel*) parent();   // parent is gSampleChannel
       SampleChannel  *ch  = gch->ch;
-      int result = glue_loadChannel(ch, gTrim(gStripFileUrl(Fl::event_text())).c_str());
+      int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK)
 				G_MainWin->keyboard->printChannelMessage(result);
 			ret = 1;

@@ -32,56 +32,36 @@
 
 
 #include <string>
-#include <cstdio>
 #include <vector>
-#include "log.h"
 
 
 using std::string;
 using std::vector;
 
 
-bool gFileExists(const char *path);
-bool gFileExists(const string &path);
+bool gu_fileExists(const string &path);
 
-bool gDirExists(const char *path);
-bool gDirExists(const string &path);
+bool gu_dirExists(const string &path);
 
-bool gIsDir(const char *path);
-bool gIsDir(const string &path);
+bool gu_isDir(const string &path);
 
-bool gIsProject(const string &path);
+bool gu_isProject(const string &path);
 
-bool gIsPatch(const char *path);
-bool gIsPatch(const string &path);
+bool gu_mkdir(const string &path);
 
-bool gMkdir(const char *path);
-bool gMkdir(const string &path);
+string gu_getCurrentPath();
 
-string gBasename(const string &s);
+string gu_getHomePath();
 
-string gReplace(string in, const string& search, const string& replace);
+string gu_basename(const string &s);
 
-string gDirname(const string &s);
+string gu_dirname(const string &s);
 
-string gTrim(const char *path);
-string gTrim(const string &s);
+string gu_getExt(const string &s);
 
-string gGetCurrentPath();
+string gu_stripExt(const string &s);
 
-string gGetHomePath();
+string gu_stripFileUrl(const string &s);
 
-string gStripFileUrl(const char *path);
-
-string gGetExt(const char *path);
-
-string gStripExt(const char *path);
-string gStripExt(const string &s);
-
-string gGetProjectName(const char *path); // TODO - useless!
-
-string gItoa(int i);
-
-void gSplit(string in, string sep, vector<string> *v);
 
 #endif

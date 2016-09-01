@@ -31,7 +31,7 @@
 
 
 #include "../../utils/log.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/pluginHost.h"
 #include "../../core/plugin.h"
 #include "../../core/const.h"
@@ -57,7 +57,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
 #endif
 
-  gLog("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
+  gu_log("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
     (void*) this, (void*) fl_xid(this));
 
 #if defined(__APPLE__)
@@ -100,7 +100,7 @@ void gdPluginWindowGUI::__cb_close()
 {
   Fl::remove_timeout(cb_refresh);
   pPlugin->closeEditor();
-  gLog("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
+  gu_log("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 
 
@@ -109,7 +109,7 @@ void gdPluginWindowGUI::__cb_close()
 
 void gdPluginWindowGUI::__cb_refresh()
 {
-  //gLog("[gdPluginWindowGUI::__cb_refresh] refresh!\n");
+  //gu_log("[gdPluginWindowGUI::__cb_refresh] refresh!\n");
   G_PluginHost.runDispatchLoop();
   Fl::repeat_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }

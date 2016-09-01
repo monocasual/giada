@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * log
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,15 +24,18 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <cstdio>
 #include <cstdarg>
 #include <string>
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "../core/const.h"
 #include "log.h"
+
+
+using std::string;
 
 
 static FILE *f;
@@ -40,11 +43,12 @@ static int   mode;
 static bool  stat;
 
 
-int gLog_init(int m) {
+int gu_logInit(int m)
+{
 	mode = m;
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
-		std::string fpath = gGetHomePath() + "/giada.log";
+		string fpath = gu_getHomePath() + G_SLASH + "giada.log";
 		f = fopen(fpath.c_str(), "a");
 		if (!f) {
 			stat = false;
@@ -55,19 +59,21 @@ int gLog_init(int m) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gLog_close() {
+void gu_logClose()
+{
 	if (mode == LOG_MODE_FILE)
 		fclose(f);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gLog(const char *format, ...) {
+void gu_log(const char *format, ...)
+{
 	if (mode == LOG_MODE_MUTE)
 		return;
   va_list args;

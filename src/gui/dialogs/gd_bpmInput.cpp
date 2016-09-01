@@ -30,7 +30,7 @@
 #include "../../core/conf.h"
 #include "../../core/mixer.h"
 #include "../../glue/glue.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
 #include "gd_bpmInput.h"
 #include "gd_mainWindow.h"

@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <string.h>  // memcpy
 #include <math.h>
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "../utils/log.h"
 #include "init.h"
 #include "const.h"
@@ -81,11 +81,11 @@ Wave::Wave(const Wave &other)
 int Wave::open(const char *f)
 {
 	pathfile = f;
-	name     = gStripExt(gBasename(f).c_str());
+	name     = gu_stripExt(gu_basename(f));
 	fileIn   = sf_open(f, SFM_READ, &inHeader);
 
 	if (fileIn == NULL) {
-		gLog("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
+		gu_log("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
 		pathfile = "";
 		name     = "";
 		return 0;
@@ -119,12 +119,12 @@ int Wave::readData()
 	size = inHeader.frames * inHeader.channels;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {
-		gLog("[wave] unable to allocate memory\n");
+		gu_log("[wave] unable to allocate memory\n");
 		return 0;
 	}
 
 	if (sf_read_float(fileIn, data, size) != size)
-		gLog("[wave] warning: incomplete read!\n");
+		gu_log("[wave] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 	return 1;
@@ -144,13 +144,13 @@ int Wave::writeData(const char *f)
 
 	fileOut = sf_open(f, SFM_WRITE, &outHeader);
 	if (fileOut == NULL) {
-		gLog("[wave] unable to open %s for exporting\n", f);
+		gu_log("[wave] unable to open %s for exporting\n", f);
 		return 0;
 	}
 
 	int out = sf_write_float(fileOut, data, size);
 	if (out != (int) size) {
-		gLog("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
+		gu_log("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
 		return 0;
 	}
 
@@ -186,7 +186,7 @@ int Wave::allocEmpty(unsigned __size, unsigned samplerate)
 	size = __size;
 	data = (float *) malloc(size * sizeof(float));
 	if (data == NULL) {
-		gLog("[wave] unable to allocate memory\n");
+		gu_log("[wave] unable to allocate memory\n");
 		return 0;
 	}
 
@@ -213,7 +213,7 @@ int Wave::resample(int quality, int newRate)
 
 	float *tmp = (float *) malloc(newSize * sizeof(float));
 	if (!tmp) {
-		gLog("[wave] unable to allocate memory for resampling\n");
+		gu_log("[wave] unable to allocate memory for resampling\n");
 		return -1;
 	}
 
@@ -224,11 +224,11 @@ int Wave::resample(int quality, int newRate)
 	src_data.output_frames = newSize/2;  // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
 
-	gLog("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
+	gu_log("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
 
 	int ret = src_simple(&src_data, quality, 2);
 	if (ret != 0) {
-		gLog("[wave] resampling error: %s\n", src_strerror(ret));
+		gu_log("[wave] resampling error: %s\n", src_strerror(ret));
 		return 0;
 	}
 
@@ -245,12 +245,12 @@ int Wave::resample(int quality, int newRate)
 
 string Wave::basename(bool ext) const
 {
-	return ext ? gBasename(pathfile) : gStripExt(gBasename(pathfile));
+	return ext ? gu_basename(pathfile) : gu_stripExt(gu_basename(pathfile));
 }
 
 string Wave::extension() const
 {
-	return gGetExt(pathfile.c_str());
+	return gu_getExt(pathfile);
 }
 
 
@@ -259,9 +259,9 @@ string Wave::extension() const
 
 void Wave::updateName(const char *n)
 {
-	string ext = gGetExt(pathfile.c_str());
-	name       = gStripExt(gBasename(n).c_str());
-	pathfile   = gDirname(pathfile.c_str()) + G_SLASH + name + "." + ext;
+	string ext = gu_getExt(pathfile);
+	name       = gu_stripExt(gu_basename(n));
+	pathfile   = gu_dirname(pathfile) + G_SLASH + name + "." + ext;
 	isLogical  = true;
 
 	/* a wave with updated name must become logical, since the underlying

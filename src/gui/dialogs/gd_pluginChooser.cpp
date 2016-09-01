@@ -30,7 +30,7 @@
 #ifdef WITH_VST
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/channel.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"

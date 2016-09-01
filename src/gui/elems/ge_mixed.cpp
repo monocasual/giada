@@ -34,7 +34,7 @@
 #include "../../core/recorder.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "ge_mixed.h"
 
@@ -452,7 +452,7 @@ gResizerBar::gResizerBar(int X,int Y,int W,int H, bool vertical)
 /*
 gResizerBar::~gResizerBar()
 {
-  gLog("------ resizerbar %p destroyed\n", (void*)this);
+  gu_log("------ resizerbar %p destroyed\n", (void*)this);
 }
 */
 

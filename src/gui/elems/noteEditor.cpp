@@ -142,7 +142,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				 * checked it */
 
 				if (a1 == prev) {
-					//gLog("[geNoteEditor] ACTION_MIDI found, but skipping - was previous\n");
+					//gu_log("[geNoteEditor] ACTION_MIDI found, but skipping - was previous\n");
 					continue;
 				}
 
@@ -154,7 +154,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				int a1_velo = kernelMidi::getB3(a1->iValue);
 
 				if (a1_type == 0x80) {
-					//gLog("[geNoteEditor] ACTION_MIDI found, but skipping - was note off\n");
+					//gu_log("[geNoteEditor] ACTION_MIDI found, but skipping - was note off\n");
 					continue;
 				}
 
@@ -172,7 +172,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				/* next action note off found: add a new gePianoItem to piano roll */
 
 				if (a2) {
-					//gLog("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
+					//gu_log("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
 					//	a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
 					//	kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
 					new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
@@ -180,7 +180,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 					a2 = NULL;
 				}
 				else
-					gLog("[geNoteEditor] recorder didn't find action!\n");
+					gu_log("[geNoteEditor] recorder didn't find action!\n");
 
 			}
 		}
@@ -412,7 +412,7 @@ void gePianoRoll::updateActions()
 	for (int k=0; k<children(); k++) {
 		i = (gePianoItem*) child(k);
 
-		//gLog("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+		//gu_log("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 
 		int newX = x() + (i->getFrame_a() / pParent->zoom);
 		int newW = ((i->getFrame_b() - i->getFrame_a()) / pParent->zoom);
@@ -421,7 +421,7 @@ void gePianoRoll::updateActions()
 		i->resize(newX, i->y(), newW, i->h());
 		i->redraw();
 
-		//gLog("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
+		//gu_log("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 	}
 }
 
@@ -538,7 +538,7 @@ bool gePianoItem::overlap()
 void gePianoItem::draw()
 {
 	int _w = w() > 4 ? w() : 4;
-	//gLog("[gePianoItem] draw me (%p) at x=%d\n", (void*)this, x());
+	//gu_log("[gePianoItem] draw me (%p) at x=%d\n", (void*)this, x());
 	fl_rectf(x(), y(), _w, h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }
 

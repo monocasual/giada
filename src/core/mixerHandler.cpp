@@ -34,7 +34,7 @@
 #endif
 
 #include <vector>
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "../utils/log.h"
 #include "../glue/glue.h"
 #include "../glue/channel.h"
@@ -241,7 +241,7 @@ SampleChannel *mh_startInputRec()
 
 	G_Mixer.inputTracker = G_Mixer.actualFrame;
 
-	gLog(
+	gu_log(
 		"[mh] start input recs using chan %d with size %d, frame=%d\n",
 		chan->index, G_Mixer.totalFrames, G_Mixer.inputTracker
 	);
@@ -255,7 +255,7 @@ SampleChannel *mh_startInputRec()
 
 SampleChannel *mh_stopInputRec()
 {
-	gLog("[mh] stop input recs\n");
+	gu_log("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
 	SampleChannel *ch = G_Mixer.chanInput;
 	G_Mixer.chanInput = NULL;

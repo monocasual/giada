@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
@@ -132,13 +132,13 @@ int gdKeyGrabber::handle(int e)
 			    && x != FL_End
 			    && x != ' ')
 			{
-				gLog("set key '%c' (%d) for channel %d\n", x, x, ch->index);
+				gu_log("set key '%c' (%d) for channel %d\n", x, x, ch->index);
 				setButtonLabel(x);
 				updateText(x);
 				break;
 			}
 			else
-				gLog("invalid key\n");
+				gu_log("invalid key\n");
 		}
 	}
 	return(ret);

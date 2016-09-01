@@ -30,7 +30,7 @@
 #include <string>
 #include "conf.h"
 #include "const.h"
-#include "../utils/utils.h"
+#include "../utils/fs.h"
 #include "../utils/log.h"
 
 
@@ -44,8 +44,8 @@ Conf::Conf()
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	confFilePath = gGetHomePath() + G_SLASH + CONF_FILENAME;
-	confDirPath  = gGetHomePath() + G_SLASH;
+	confFilePath = gu_getHomePath() + G_SLASH + CONF_FILENAME;
+	confDirPath  = gu_getHomePath() + G_SLASH;
 
 #elif defined(_WIN32)
 
@@ -63,17 +63,17 @@ int Conf::createConfigFolder()
 {
 #if defined(__linux__) || defined(__APPLE__)
 
-	if (gDirExists(confDirPath))
+	if (gu_dirExists(confDirPath))
 		return 1;
 
-	gLog("[Conf::createConfigFolder] .giada folder not present. Updating...\n");
+	gu_log("[Conf::createConfigFolder] .giada folder not present. Updating...\n");
 
-	if (gMkdir(confDirPath)) {
-		gLog("[Conf::createConfigFolder] status: ok\n");
+	if (gu_mkdir(confDirPath)) {
+		gu_log("[Conf::createConfigFolder] status: ok\n");
 		return 1;
 	}
 	else {
-		gLog("[Conf::createConfigFolder] status: error!\n");
+		gu_log("[Conf::createConfigFolder] status: error!\n");
 		return 0;
 	}
 
@@ -178,7 +178,7 @@ int Conf::read()
 
 	jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
   if (!jRoot) {
-    gLog("[Conf::read] unable to read configuration file! Error on line %d: %s\n", jError.line, jError.text);
+    gu_log("[Conf::read] unable to read configuration file! Error on line %d: %s\n", jError.line, jError.text);
     return 0;
   }
 
@@ -373,7 +373,7 @@ int Conf::write()
 #endif
 
   if (json_dump_file(jRoot, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
-    gLog("[Conf::write] unable to write configuration file!\n");
+    gu_log("[Conf::write] unable to write configuration file!\n");
     return 0;
   }
   return 1;

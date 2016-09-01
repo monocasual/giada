@@ -473,7 +473,7 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index, gdActionEdito
 			w((frame_b - frame_a)/parent->zoom);
 		}
 		else
-			gLog("[geActionEditor] frame_b not found! [%d:???]\n", frame_a);
+			gu_log("[geActionEditor] frame_b not found! [%d:???]\n", frame_a);
 
 	/* a singlepress action narrower than 8 pixel is useless. So check it.
 	 * Warning: if an action is 8 px narrow, it has no body space to drag
@@ -584,11 +584,11 @@ void gAction::addAction()
 	if (ch->mode == SINGLE_PRESS) {
 		G_Recorder.rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
 		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
-		//gLog("action added, [%d, %d]\n", frame_a, frame_a+4096);
+		//gu_log("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
 		G_Recorder.rec(parent->chan->index, parent->getActionType(), frame_a);
-		//gLog("action added, [%d]\n", frame_a);
+		//gu_log("action added, [%d]\n", frame_a);
 	}
 
 	G_Recorder.sortActions();

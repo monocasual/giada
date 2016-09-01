@@ -35,7 +35,7 @@
 #include <dirent.h>
 #include "midiMapConf.h"
 #include "const.h"
-#include "../utils/utils.h"
+#include "../utils/string.h"
 #include "../utils/log.h"
 
 
@@ -46,18 +46,18 @@ using std::vector;
 
 void MidiMapConf::init()
 {
-	midimapsPath = gGetHomePath() + G_SLASH + "midimaps" + G_SLASH;
+	midimapsPath = gu_getHomePath() + G_SLASH + "midimaps" + G_SLASH;
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
-	gLog("[MidiMapConf::init] scanning midimaps directory...\n");
+	gu_log("[MidiMapConf::init] scanning midimaps directory...\n");
 
   DIR    *dp;
   dirent *ep;
   dp = opendir(midimapsPath.c_str());
 
 	if (!dp) {
-		gLog("[MidiMapConf::init] unable to scan midimaps directory!\n");
+		gu_log("[MidiMapConf::init] unable to scan midimaps directory!\n");
 		return;
 	}
 
@@ -67,12 +67,12 @@ void MidiMapConf::init()
 
 		// TODO - check if is a valid midimap file (verify headers)
 
-		gLog("[MidiMapConf::init] found midimap '%s'\n", ep->d_name);
+		gu_log("[MidiMapConf::init] found midimap '%s'\n", ep->d_name);
 
 		maps.push_back(ep->d_name);
 	}
 
-	gLog("[MidiMapConf::init] total midimaps found: %d\n", maps.size());
+	gu_log("[MidiMapConf::init] total midimaps found: %d\n", maps.size());
 	closedir(dp);
 }
 
@@ -125,16 +125,16 @@ void MidiMapConf::setDefault()
 int MidiMapConf::read(const string &file)
 {
 	if (file.empty()) {
-		gLog("[MidiMapConf::read] midimap not specified, nothing to do\n");
+		gu_log("[MidiMapConf::read] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	gLog("[MidiMapConf::read] reading midimap file '%s'\n", file.c_str());
+	gu_log("[MidiMapConf::read] reading midimap file '%s'\n", file.c_str());
 
 	string path = midimapsPath + file;
 	jRoot = json_load_file(path.c_str(), 0, &jError);
 	if (!jRoot) {
-    gLog("[MidiMapConf::read] unreadable midimap file. Error on line %d: %s\n", jError.line, jError.text);
+    gu_log("[MidiMapConf::read] unreadable midimap file. Error on line %d: %s\n", jError.line, jError.text);
     return MIDIMAP_UNREADABLE;
   }
 
@@ -178,7 +178,7 @@ bool MidiMapConf::readInitCommands(json_t *jContainer)
 	json_t *jInitCommand;
 	json_array_foreach(jInitCommands, commandIndex, jInitCommand) {
 
-		string indexStr = "init command " + gItoa(commandIndex);
+		string indexStr = "init command " + gu_itoa(commandIndex);
 		if (!checkObject(jInitCommand, indexStr.c_str()))
 			return 0;
 
@@ -238,7 +238,7 @@ void MidiMapConf::parse(message_t *message)
 
 	message->value = strtoul(output.c_str(), NULL, 16);
 
-	gLog("[MidiMapConf::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
+	gu_log("[MidiMapConf::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
 			message->channel, message->valueStr.c_str(), message->value, message->offset);
 }
 
@@ -296,16 +296,16 @@ void MidiMapConf::setDefault_DEPR_()
 int MidiMapConf::readMap_DEPR_(string file)
 {
 	if (file.empty()) {
-		gLog("[MidiMapConf::readMap_DEPR_] midimap not specified, nothing to do\n");
+		gu_log("[MidiMapConf::readMap_DEPR_] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	gLog("[MidiMapConf::readMap_DEPR_] reading midimap file '%s'\n", file.c_str());
+	gu_log("[MidiMapConf::readMap_DEPR_] reading midimap file '%s'\n", file.c_str());
 
 	string path = midimapsPath + file;
 	fp = fopen(path.c_str(), "r");
 	if (!fp) {
-		gLog("[MidiMapConf::readMap_DEPR_] unreadable midimap file\n");
+		gu_log("[MidiMapConf::readMap_DEPR_] unreadable midimap file\n");
 		return MIDIMAP_UNREADABLE;
 	}
 
@@ -313,20 +313,20 @@ int MidiMapConf::readMap_DEPR_(string file)
 	device = getValue("device");
 
 	if (brand.empty() || device.empty()) {
-		gLog("[MidiMapConf::readMap_DEPR_] invalid midimap file\n");
+		gu_log("[MidiMapConf::readMap_DEPR_] invalid midimap file\n");
 		return MIDIMAP_INVALID;
 	}
 
-	gLog("[MidiMapConf::readMap_DEPR_] reading midimap for %s %s\n",
+	gu_log("[MidiMapConf::readMap_DEPR_] reading midimap for %s %s\n",
 			brand.c_str(), device.c_str());
 
 	/* parse init commands */
 
 	vector<string> ic;
-	gSplit(getValue("init_commands"), ";", &ic);
+	gu_split(getValue("init_commands"), ";", &ic);
 	for (unsigned i=0; i<(unsigned)MAX_INIT_COMMANDS && i<ic.size(); i++) {
 		sscanf(ic.at(i).c_str(), "%d:%x", &init_channels[i], &init_messages[i]);
-		gLog("[MidiMapConf::readMap_DEPR_] init command %d - channel %d - message 0x%X\n",
+		gu_log("[MidiMapConf::readMap_DEPR_] init command %d - channel %d - message 0x%X\n",
 				i, init_channels[i], init_messages[i]);
 
 		/* forward compatibility */
@@ -396,7 +396,7 @@ void MidiMapConf::close_DEPR_()
 
 void MidiMapConf::parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset)
 {
-	gLog("[MidiMapConf::parse_DEPR_] command %s - ", key.c_str());
+	gu_log("[MidiMapConf::parse_DEPR_] command %s - ", key.c_str());
 	string value = getValue(key.c_str());
 
 	/* grab channel part, i.e. [channel]:*/
@@ -428,5 +428,5 @@ void MidiMapConf::parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset)
 
 	*msg = strtoul(strmsg, NULL, 16);  // from string to uint32_t
 
-	gLog("chan=%d value=%s msg=%#x, offset=%d\n", *chan, midiParts.c_str(), *msg, *offset);
+	gu_log("chan=%d value=%s msg=%#x, offset=%d\n", *chan, midiParts.c_str(), *msg, *offset);
 }

@@ -29,8 +29,8 @@
 
 #include <ctime>
 #include "../utils/log.h"
-#include "../utils/utils.h"
-#include "../utils/gui_utils.h"
+#include "../utils/fs.h"
+#include "../utils/gui.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
 #include "init.h"
@@ -66,7 +66,7 @@ void init_prepareParser()
 {
 	time_t t;
   time (&t);
-	gLog("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
+	gu_log("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
 
 	G_Conf.read();
 	G_Patch_DEPR_.setDefault();
@@ -80,10 +80,10 @@ void init_prepareParser()
 #endif
 
 
-	if (!gLog_init(G_Conf.logMode))
-		gLog("[init] log init failed! Using default stdout\n");
+	if (!gu_logInit(G_Conf.logMode))
+		gu_log("[init] log init failed! Using default stdout\n");
 
-	gLog("[init] configuration file ready\n");
+	gu_log("[init] configuration file ready\n");
 }
 
 
@@ -129,9 +129,9 @@ void init_prepareMidiMap()
 	// TODO - do the opposite: if json fails, go with deprecated one
 
 	if (G_MidiMap.read(G_Conf.midiMapPath) != MIDIMAP_READ_OK) {
-		gLog("[init_prepareMidiMap] JSON-based midimap read failed, trying with the deprecated one...\n");
+		gu_log("[init_prepareMidiMap] JSON-based midimap read failed, trying with the deprecated one...\n");
 		if (G_MidiMap.readMap_DEPR_(G_Conf.midiMapPath) == MIDIMAP_INVALID)
-			gLog("[init_prepareMidiMap] unable to read deprecated midimap. Nothing to do\n");
+			gu_log("[init_prepareMidiMap] unable to read deprecated midimap. Nothing to do\n");
 		}
 }
 
@@ -190,14 +190,14 @@ void init_shutdown()
 	 * avoid mess */
 
 	gu_closeAllSubwindows();
-	gLog("[init] all subwindows closed\n");
+	gu_log("[init] all subwindows closed\n");
 
 	/* write configuration file */
 
 	if (!G_Conf.write())
-		gLog("[init] error while saving configuration file!\n");
+		gu_log("[init] error while saving configuration file!\n");
 	else
-		gLog("[init] configuration saved\n");
+		gu_log("[init] configuration saved\n");
 
 	/* if G_audio_status we close the kernelAudio FIRST, THEN the mixer.
 	 * The opposite could cause random segfaults (even now with RtAudio?). */
@@ -205,17 +205,17 @@ void init_shutdown()
 	if (G_audio_status) {
 		kernelAudio::closeDevice();
 		G_Mixer.close();
-		gLog("[init] Mixer closed\n");
+		gu_log("[init] Mixer closed\n");
 	}
 
 	G_Recorder.clearAll();
-	gLog("[init] Recorder cleaned up\n");
+	gu_log("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
-	gLog("[init] PluginHost cleaned up\n");
+	gu_log("[init] PluginHost cleaned up\n");
 #endif
 
-	gLog("[init] Giada " G_VERSION_STR " closed\n\n");
-	gLog_close();
+	gu_log("[init] Giada " G_VERSION_STR " closed\n\n");
+	gu_logClose();
 }

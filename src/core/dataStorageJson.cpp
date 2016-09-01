@@ -39,7 +39,7 @@ bool DataStorageJson::setString(json_t *jRoot, const char *key, string &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!json_is_string(jObject)) {
-    gLog("[dataStorageJson::setString] key '%s' is not a string!\n", key);
+    gu_log("[dataStorageJson::setString] key '%s' is not a string!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -55,12 +55,12 @@ bool DataStorageJson::setFloat(json_t *jRoot, const char *key, float &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!jObject) {
-    gLog("[dataStorageJson::setFloat] key '%s' not found, using default value\n", key);
+    gu_log("[dataStorageJson::setFloat] key '%s' not found, using default value\n", key);
     output = 0.0f;
     return true;
   }
   if (!json_is_real(jObject)) {
-    gLog("[dataStorageJson::setFloat] key '%s' is not a float!\n", key);
+    gu_log("[dataStorageJson::setFloat] key '%s' is not a float!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -76,12 +76,12 @@ bool DataStorageJson::setUint32(json_t *jRoot, const char *key, uint32_t &output
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!jObject) {
-    gLog("[dataStorageJson::setUint32] key '%s' not found, using default value\n", key);
+    gu_log("[dataStorageJson::setUint32] key '%s' not found, using default value\n", key);
     output = 0;
     return true;
   }
   if (!json_is_integer(jObject)) {
-    gLog("[dataStorageJson::setUint32] key '%s' is not an integer!\n", key);
+    gu_log("[dataStorageJson::setUint32] key '%s' is not an integer!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -97,12 +97,12 @@ bool DataStorageJson::setBool(json_t *jRoot, const char *key, bool &output)
 {
   json_t *jObject = json_object_get(jRoot, key);
   if (!jObject) {
-    gLog("[dataStorageJson::setBool] key '%s' not found, using default value\n", key);
+    gu_log("[dataStorageJson::setBool] key '%s' not found, using default value\n", key);
     output = false;
     return true;
   }
   if (!json_is_boolean(jObject)) {
-    gLog("[dataStorageJson::setBool] key '%s' is not a boolean!\n", key);
+    gu_log("[dataStorageJson::setBool] key '%s' is not a boolean!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -126,7 +126,7 @@ bool DataStorageJson::setInt(json_t *jRoot, const char *key, int &output)
 bool DataStorageJson::checkObject(json_t *jRoot, const char *key)
 {
   if (!json_is_object(jRoot)) {
-    gLog("[DataStorageJson::checkObject] malformed json: %s is not an object!\n", key);
+    gu_log("[DataStorageJson::checkObject] malformed json: %s is not an object!\n", key);
     json_decref(jRoot);
     return false;
   }
@@ -140,7 +140,7 @@ bool DataStorageJson::checkObject(json_t *jRoot, const char *key)
 bool DataStorageJson::checkArray(json_t *jRoot, const char *key)
 {
   if (!json_is_array(jRoot)) {
-    gLog("[DataStorageJson::checkObject] malformed json: %s is not an array!\n", key);
+    gu_log("[DataStorageJson::checkObject] malformed json: %s is not an array!\n", key);
     json_decref(jRoot);
     return false;
   }

@@ -134,7 +134,7 @@ void geMuteEditor::extractPoints()
 					p.type  = G_Recorder.global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
 					points.push_back(p);
-					//gLog("[geMuteEditor::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
+					//gu_log("[geMuteEditor::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
 				}
 			}
 		}
@@ -278,7 +278,7 @@ int geMuteEditor::handle(int e) {
 						b = selectedPoint+1;
 					}
 
-					//gLog("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
+					//gu_log("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
 					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
@@ -299,7 +299,7 @@ int geMuteEditor::handle(int e) {
 			if (draggedPoint != -1) {
 
 				if (points.at(draggedPoint).x == previousXPoint) {
-					//gLog("nothing to do\n");
+					//gu_log("nothing to do\n");
 				}
 				else {
 

@@ -33,7 +33,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
 #include "baseActionEditor.h"

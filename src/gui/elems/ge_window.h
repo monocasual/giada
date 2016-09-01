@@ -34,7 +34,7 @@
 
 #include <vector>
 #include <FL/Fl_Double_Window.H>
-#include "../../utils/utils.h"
+#include "../../utils/fs.h"
 
 
 using std::vector;

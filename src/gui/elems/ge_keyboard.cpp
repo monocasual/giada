@@ -191,10 +191,10 @@ gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		__cb_addColumn();
 		col = columns.back();
 		col->setIndex(colIndex);
-		gLog("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
+		gu_log("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
 
-	gLog("[gKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+	gu_log("[gKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	return col->addChannel(ch);
 }
 
@@ -369,7 +369,7 @@ void gKeyboard::__cb_addColumn(int width)
 	addColumnBtn->position(colxw + gap, y());
 	redraw();
 
-	gLog("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
+	gu_log("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), width, columns.size(), addColumnBtn->x());
 
 	/* recompute col indexes */

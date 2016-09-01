@@ -131,11 +131,11 @@ src/gui/elems/ge_pluginBrowser.h       \
 src/gui/elems/ge_pluginBrowser.cpp     \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
-src/utils/gui_utils.h                  \
-src/utils/gui_utils.cpp                \
+src/utils/gui.h                  \
+src/utils/gui.cpp                \
 src/utils/gvector.h                    \
-src/utils/utils.h                      \
-src/utils/utils.cpp                    \
+src/utils/fs.h                         \
+src/utils/fs.cpp                       \
 src/utils/string.h                     \
 src/utils/string.cpp
 

@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * log
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef __LOG_H__
@@ -34,12 +34,12 @@
 /* init
  * init logger. Mode defines where to write the output: LOG_MODE_STDOUT,
  * LOG_MODE_FILE and LOG_MODE_MUTE. */
- 
-int  gLog_init (int mode);
 
-void gLog_close();
+int  gu_logInit(int mode);
 
-void gLog(const char *format, ...);
+void gu_logClose();
+
+void gu_log(const char *format, ...);
 
 
 #endif

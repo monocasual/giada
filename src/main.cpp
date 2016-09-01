@@ -39,7 +39,7 @@
 #include "core/mixerHandler.h"
 #include "core/kernelAudio.h"
 #include "core/recorder.h"
-#include "utils/gui_utils.h"
+#include "utils/gui.h"
 #include "gui/dialogs/gd_mainWindow.h"
 #include "core/pluginHost.h"
 
@@ -98,7 +98,7 @@ void *videoThreadCb(void *arg)
 {
 	if (G_audio_status)
 		while (!G_quit)	{
-			gu_refresh();
+			gu_refreshUI();
 #ifdef _WIN32
 			Sleep(GUI_SLEEP);
 #else

@@ -35,29 +35,29 @@
 #endif
 
 #include <cstdarg>
-#include <sys/stat.h>   // stat (gDirExists)
+#include <sys/stat.h>   // stat (gu_dirExists)
 #include <errno.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string>
 #include <string.h>
-#include <sstream>
 #include <limits.h>
 #if defined(__APPLE__)
 	#include <libgen.h>     // basename unix
 	#include <pwd.h>        // getpwuid
 #endif
 #include "../core/const.h"
-#include "utils.h"
+#include "string.h"
+#include "fs.h"
 
 
 using std::string;
 using std::vector;
 
 
-bool gFileExists(const char *filename)
+bool gu_fileExists(const string &filename)
 {
-	FILE *fh = fopen(filename, "rb");
+	FILE *fh = fopen(filename.c_str(), "rb");
 	if (!fh) {
 		return 0;
 	}
@@ -68,32 +68,26 @@ bool gFileExists(const char *filename)
 }
 
 
-bool gFileExists(const string &filename)
-{
-	return gFileExists(filename.c_str());
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
-bool gIsDir(const char *path)
+bool gu_isDir(const string &path)
 {
 	bool ret;
 
 #if defined(__linux__)
 
 	struct stat s1;
-	stat(path, &s1);
+	stat(path.c_str(), &s1);
 	ret = S_ISDIR(s1.st_mode);
 
 #elif defined(__APPLE__)
 
-	if (strcmp(path, "")==0)
+	if (strcmp(path.c_str(), "") == 0)
 		ret = false;
 	else {
 		struct stat s1;
-		stat(path, &s1);
+		stat(path.c_str(), &s1);
 		ret = S_ISDIR(s1.st_mode);
 
 		/* check if ret is a bundle, a special OS X folder which must be
@@ -101,72 +95,53 @@ bool gIsDir(const char *path)
 		 * FIXME - consider native functions CFBundle... */
 
 		if (ret) {
-			string tmp = path;
-			tmp += "/Contents/Info.plist";
-			if (gFileExists(tmp.c_str()))
+			if (gu_fileExists(path + "/Contents/Info.plist"))
 				ret = false;
 		}
 	}
 
 #elif defined(__WIN32)
 
-  unsigned dwAttrib = GetFileAttributes(path);
+  unsigned dwAttrib = GetFileAttributes(path.c_str());
   ret = (dwAttrib != INVALID_FILE_ATTRIBUTES &&
         (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #endif
 
-	return ret & !gIsProject(path);
+	return ret & !gu_isProject(path);
 }
 
-
-bool gIsDir(const string &path)
-{
-	return gIsDir(path.c_str());
-}
 
 /* -------------------------------------------------------------------------- */
 
 
-bool gDirExists(const char *path)
+bool gu_dirExists(const string &path)
 {
 	struct stat st;
-	if (stat(path, &st) != 0 && errno == ENOENT)
+	if (stat(path.c_str(), &st) != 0 && errno == ENOENT)
 		return false;
 	return true;
 }
 
 
-bool gDirExists(const string &path)
-{
-	return gDirExists(path.c_str());
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
-bool gMkdir(const char *path)
+bool gu_mkdir(const string &path)
 {
 #if defined(__linux__) || defined(__APPLE__)
-	if (mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
+	if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
 #else
-	if (_mkdir(path) == 0)
+	if (_mkdir(path.c_str()) == 0)
 #endif
 		return true;
 	return false;
 }
 
 
-bool gMkdir(const string &path)
-{
-	return gMkdir(path.c_str());
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
-string gBasename(const string &s)
+string gu_basename(const string &s)
 {
 	string out = s;
 	out.erase(0, out.find_last_of(G_SLASH_STR) + 1);
@@ -177,7 +152,7 @@ string gBasename(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-string gDirname(const string &path)
+string gu_dirname(const string &path)
 {
 	if (path.empty())
 		return "";
@@ -190,7 +165,7 @@ string gDirname(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-string gGetCurrentPath()
+string gu_getCurrentPath()
 {
  char buf[PATH_MAX];
 #if defined(__WIN32)
@@ -207,9 +182,10 @@ string gGetCurrentPath()
 /* -------------------------------------------------------------------------- */
 
 
-string gGetExt(const char *file)
+string gu_getExt(const string &file)
 {
-	int len = strlen(file);
+	// TODO - use std functions
+	int len = strlen(file.c_str());
 	int pos = len;
 	while (pos>0) {
 		if (file[pos] == '.')
@@ -226,21 +202,7 @@ string gGetExt(const char *file)
 /* -------------------------------------------------------------------------- */
 
 
-string gStripExt(const char *file)
-{
-	int len = strlen(file);
-	int pos = -1;
-	for (int i=0; i<len; i++)
-		if (file[i] == '.') {
-			pos = i;
-			break;
-		}
-	string out = file;
-	return pos == -1 ? out : out.substr(0, pos);
-}
-
-
-string gStripExt(const string &s)
+string gu_stripExt(const string &s)
 {
 	return s.substr(0, s.find_last_of("."));
 }
@@ -249,11 +211,11 @@ string gStripExt(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-bool gIsProject(const string &path)
+bool gu_isProject(const string &path)
 {
 	/** FIXME - checks too weak */
 
-	if (gGetExt(path.c_str()) == "gprj" && gDirExists(path))
+	if (gu_getExt(path.c_str()) == "gprj" && gu_dirExists(path))
 		return 1;
 	return 0;
 }
@@ -262,90 +224,11 @@ bool gIsProject(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-bool gIsPatch(const char *path)
-{
-	if (gGetExt(path) == "gptc")
-		return 1;
-	return 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gGetProjectName(const char *path)
-{
-	string out;
-	out = gStripExt(path);
-
-	int i = out.size();
-	while (i>=0) { /// TODO - use gGetSlash()
-#if defined(__linux__) || defined(__APPLE__)
-		if (out[i] == '/')
-#elif defined(_WIN32)
-		if (out[i] == '\\')
-#endif
-			break;
-		i--;
-	}
-
-	out.erase(0, i+1);	// includes the '/' (or '\' on windows)
-	return out;
-}
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gItoa(int i)
-{
-	std::stringstream out;
-	out << i;
-	return out.str();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gTrim(const char *f)
+string gu_stripFileUrl(const string &f)
 {
 	string out = f;
-	return gTrim(out);
-}
-
-
-string gTrim(const string &s)
-{
-	std::size_t first = s.find_first_not_of(" \n\t");
-	std::size_t last  = s.find_last_not_of(" \n\t");
-	return s.substr(first, last-first+1);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gReplace(string in, const string& search, const string& replace)
-{
-	size_t pos = 0;
-	while ((pos = in.find(search, pos)) != string::npos) {
-		in.replace(pos, search.length(), replace);
-		pos += replace.length();
-	}
-	return in;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gStripFileUrl(const char *f)
-{
-	string out = f;
-	out = gReplace(out, "file://", "");
-	out = gReplace(out, "%20", " ");
+	out = gu_replace(out, "file://", "");
+	out = gu_replace(out, "%20", " ");
 	return out;
 }
 
@@ -353,7 +236,7 @@ string gStripFileUrl(const char *f)
 /* -------------------------------------------------------------------------- */
 
 
-string gGetHomePath()
+string gu_getHomePath()
 {
 	char path[PATH_MAX];
 
@@ -369,7 +252,7 @@ string gGetHomePath()
 
 	struct passwd *p = getpwuid(getuid());
 	if (p == NULL) {
-		gLog("[gGetHomePath] unable to fetch user infos\n");
+		gu_log("[gu_getHomePath] unable to fetch user infos\n");
 		return "";
 	}
 	else {
@@ -380,24 +263,4 @@ string gGetHomePath()
 #endif
 
 	return string(path);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gSplit(string in, string sep, vector<string> *v)
-{
-	string full  = in;
-	string token = "";
-	size_t curr = 0;
-	size_t next = -1;
-	do {
-	  curr  = next + 1;
-	  next  = full.find_first_of(sep, curr);
-		token = full.substr(curr, next - curr);
-		if (token != "")
-			v->push_back(token);
-	}
-	while (next != string::npos);
 }

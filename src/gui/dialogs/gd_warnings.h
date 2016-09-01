@@ -33,7 +33,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include "../elems/ge_mixed.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 
 
 void gdAlert(const char *c);

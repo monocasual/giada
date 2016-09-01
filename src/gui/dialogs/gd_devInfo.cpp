@@ -28,8 +28,8 @@
 
 
 #include "../../core/kernelAudio.h"
-#include "../../utils/gui_utils.h"
-#include "../../utils/utils.h"
+#include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "gd_devInfo.h"
 
@@ -38,7 +38,8 @@ using std::string;
 
 
 gdDevInfo::gdDevInfo(unsigned dev)
-: Fl_Window(340, 300, "Device information") {
+	: Fl_Window(340, 300, "Device information")
+{
 	set_modal();
 
 	text  = new gBox(8, 8, 320, 200, "", (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
@@ -49,21 +50,21 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	int    lines = 7;
 
 	body  = "Device name: " + kernelAudio::getDeviceName(dev) + "\n";
-	body += "Total output(s): " + gItoa(kernelAudio::getMaxOutChans(dev)) + "\n";
-	body += "Total intput(s): " + gItoa(kernelAudio::getMaxInChans(dev)) + "\n";
-	body += "Duplex channel(s): " + gItoa(kernelAudio::getDuplexChans(dev)) + "\n";
+	body += "Total output(s): " + gu_itoa(kernelAudio::getMaxOutChans(dev)) + "\n";
+	body += "Total intput(s): " + gu_itoa(kernelAudio::getMaxInChans(dev)) + "\n";
+	body += "Duplex channel(s): " + gu_itoa(kernelAudio::getDuplexChans(dev)) + "\n";
 	body += "Default output: " + string(kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
 	body += "Default input: " + string(kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
 
 	int totalFreq = kernelAudio::getTotalFreqs(dev);
-	body += "Supported frequencies: " + gItoa(totalFreq);
+	body += "Supported frequencies: " + gu_itoa(totalFreq);
 
 	for (int i=0; i<totalFreq; i++) {
 		if (i % 6 == 0) {
 			body += "\n    ";  // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
-		body += gItoa( kernelAudio::getFreq(dev, i)) + "  ";
+		body += gu_itoa( kernelAudio::getFreq(dev, i)) + "  ";
 	}
 
 	text->copy_label(body.c_str());

@@ -33,7 +33,7 @@
 #include "../../core/kernelAudio.h"
 #include "../../core/kernelMidi.h"
 #include "../../core/graphics.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
 #include "gd_about.h"
 

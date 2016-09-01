@@ -41,8 +41,9 @@
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/elems/ge_window.h"
 #include "../gui/elems/ge_channel.h"
-#include "gui_utils.h"
 #include "log.h"
+#include "string.h"
+#include "gui.h"
 
 
 extern Mixer 	       G_Mixer;
@@ -60,7 +61,7 @@ extern PluginHost    G_PluginHost;
 static int blinker = 0;
 
 
-void gu_refresh()
+void gu_refreshUI()
 {
 	Fl::lock();
 
@@ -123,11 +124,10 @@ void gu_updateControls()
 /* -------------------------------------------------------------------------- */
 
 
-void gu_update_win_label(const char *c)
+void gu_updateMainWinLabel(const string &s)
 {
 	std::string out = G_APP_NAME;
-	out += " - ";
-	out += c;
+	out += " - " + s;
 	G_MainWin->copy_label(out.c_str());
 }
 
@@ -159,7 +159,7 @@ void gu_setFavicon(Fl_Window *w)
 void gu_openSubWindow(gWindow *parent, gWindow *child, int id)
 {
 	if (parent->hasWindow(id)) {
-		gLog("[GU] parent has subwindow with id=%d, deleting\n", id);
+		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
 	}
 	child->setId(id);
@@ -215,9 +215,9 @@ void gu_closeAllSubwindows()
 
 string gu_removeFltkChars(const string &s)
 {
-	string out = gReplace(s, "/", "-");
-	out = gReplace(out, "|", "-");
-	out = gReplace(out, "&", "-");
-	out = gReplace(out, "_", "-");
+	string out = gu_replace(s, "/", "-");
+	out = gu_replace(out, "|", "-");
+	out = gu_replace(out, "&", "-");
+	out = gu_replace(out, "_", "-");
 	return out;
 }

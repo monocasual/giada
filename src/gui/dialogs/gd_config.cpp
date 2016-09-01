@@ -33,8 +33,9 @@
 #include "../../core/kernelAudio.h"
 #include "../../core/kernelMidi.h"
 #include "../../core/pluginHost.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../utils/log.h"
+#include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
@@ -216,7 +217,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
 		for (int i=0; i<nfreq; i++) {
 			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
-			samplerate->add(gItoa(freq).c_str());
+			samplerate->add(gu_itoa(freq).c_str());
 			if (freq == G_Conf.samplerate)
 				samplerate->value(i);
 		}
@@ -241,7 +242,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(gItoa(G_Conf.buffersize).c_str());
+	buffersize->showItem(gu_itoa(G_Conf.buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -250,7 +251,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(G_Conf.rsmpQuality);
 
-	delayComp->value(gItoa(G_Conf.delayComp).c_str());
+	delayComp->value(gu_itoa(G_Conf.delayComp).c_str());
 	delayComp->type(FL_INT_INPUT);
 	delayComp->maximum_size(5);
 
@@ -678,7 +679,7 @@ void gTabMidi::fetchMidiMaps()
 	}
 
 	/* Preselect the 0 midimap if nothing is selected but midimaps exist. */
-	
+
 	if (midiMap->value() == -1 && G_MidiMap.maps.size() > 0)
 		midiMap->value(0);
 }
@@ -887,7 +888,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 
 void gTabPlugins::updateCount()
 {
-	string scanLabel = "Scan (" + gItoa(G_PluginHost.countAvailablePlugins()) + " found)";
+	string scanLabel = "Scan (" + gu_itoa(G_PluginHost.countAvailablePlugins()) + " found)";
 	scanButton->label(scanLabel.c_str());
 }
 
@@ -903,7 +904,7 @@ void gTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((gTabPlugins*)p)->__cb_scan(
 
 void gTabPlugins::cb_onScan(float progress, void *p)
 {
-	string l = "Scan in progress (" + gItoa((int)(progress*100)) + "%). Please wait...";
+	string l = "Scan in progress (" + gu_itoa((int)(progress*100)) + "%). Please wait...";
 	((gTabPlugins *)p)->info->label(l.c_str());
 	Fl::wait();
 }
@@ -916,7 +917,7 @@ void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
 	info->show();
 	G_PluginHost.scanDir(folderPath->value(), cb_onScan, (void*) this);
-	G_PluginHost.saveList(gGetHomePath() + G_SLASH + "plugins.xml");
+	G_PluginHost.saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
 	info->hide();
 	updateCount();
 }

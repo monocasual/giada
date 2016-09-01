@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------ */
 
 
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../../glue/glue.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"

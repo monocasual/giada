@@ -35,7 +35,7 @@
 #include "../../glue/glue.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"
-#include "../../utils/gui_utils.h"
+#include "../../utils/gui.h"
 #include "../elems/ge_browser.h"
 #include "../elems/ge_channel.h"
 #include "gd_browser.h"
@@ -102,7 +102,7 @@ gdBaseBrowser::~gdBaseBrowser()
 	G_Conf.browserW = w();
 	G_Conf.browserH = h();
 	G_Conf.browserPosition = browser->position();
-	G_Conf.browserLastPath = gDirname(browser->getSelectedItem());
+	G_Conf.browserLastPath = gu_dirname(browser->getSelectedItem());
 	G_Conf.browserLastValue = browser->value();
 }
 
@@ -197,7 +197,7 @@ void gdSaveBrowser::__cb_down()
 	/* if the selected item is a directory just load its content. If it's a file
 	 * use it as the file name (i.e. fill name->value()). */
 
-	if (gIsDir(path)) {
+	if (gu_isDir(path)) {
 		browser->loadDir(path);
 		where->value(browser->getCurrentDir().c_str());
 	}
@@ -261,7 +261,7 @@ void gdLoadBrowser::__cb_down()
 {
 	string path = browser->getSelectedItem();
 
-	if (path.empty() || !gIsDir(path)) // when click on an empty area or not a dir
+	if (path.empty() || !gu_isDir(path)) // when click on an empty area or not a dir
 		return;
 
 	browser->loadDir(path);
