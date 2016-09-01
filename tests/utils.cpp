@@ -1,4 +1,5 @@
 #include "../src/utils/fs.h"
+#include "../src/utils/string.h"
 #include "catch.hpp"
 
 
@@ -23,7 +24,7 @@ TEST_CASE("Test filesystem utils")
 TEST_CASE("Test string utils")
 {
   REQUIRE(gu_replace("Giada is cool", "cool", "hot") == "Giada is hot");
-  REQUIRE(g_trim("   Giada is cool       ") == "Giada is cool");
+  REQUIRE(gu_trim("   Giada is cool       ") == "Giada is cool");
   REQUIRE(gu_itoa(666) == "666");
 
   vector<std::string> v;

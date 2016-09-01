@@ -237,7 +237,8 @@ src/core/plugin.cpp          \
 src/core/pluginHost.cpp      \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
-src/utils/utils.cpp          \
+src/utils/fs.cpp             \
+src/utils/string.cpp         \
 src/utils/log.cpp
 
 if WITH_VST
