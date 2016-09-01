@@ -12,11 +12,6 @@
 --------------------------------------------------------------------------------
 
 
-0.13.1 ---
-- Make Recorder a proper class
-- Better naming convention for ActionEditor's children classes
-
-
 0.13.0 ---
 - Deep file browser refactoring
 - Save browser's scroll position and last item selected on opening
@@ -33,6 +28,9 @@
 - Fix wrong channel's actions count that prevented "R" button to be toggled
   properly
 - Fixed a bug that prevented actions on frame 0 to being properly reproduced
+- Make Recorder a proper class
+- Better naming convention for ActionEditor's children classes
+- Source code reorganization
 
 
 0.12.2 --- 2016 . 06 . 02
