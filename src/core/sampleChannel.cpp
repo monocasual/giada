@@ -812,6 +812,8 @@ void SampleChannel::stop()
 
 int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 {
+	// TODO - this code belongs an upper level, i.e. glue part
+
 	if (strcmp(file, "") == 0 || gu_isDir(file)) {
 		gu_log("[SampleChannel] file not specified\n");
 		return SAMPLE_LEFT_EMPTY;
@@ -957,7 +959,7 @@ bool SampleChannel::canInputRec()
 
 
 void SampleChannel::start(int frame, bool doQuantize, int quantize,
-		bool mixerIsRunning)
+		bool mixerIsRunning, bool isUserGenerated)
 {
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -977,18 +979,14 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 				if (quantize > 0 && mixerIsRunning && doQuantize)
 					qWait = true;
 				else {
-
-					/* fillChan only if frame != 0. If you call fillChan on frame == 0
-					a duplicate call to fillChan occurs with loss of data. Yeah, but
-					what happens if an action really occurs on frame 0 (and it happens,
-					for example	when you start the sequencer from the firt beat)? Cheat
-					time! Shift a little bit the frame, so that it's no longer zero.  */
-
 					status = STATUS_PLAY;
 					sendMidiLplay();
-					if (frame == 0)
-						frame = 2;
-					//if (frame != 0)
+
+					/* Do fillChan only if this is not a user-generated event (i.e. is an
+					action read by Mixer). Otherwise clear() will take take of calling
+					fillChan on the next cycle. */
+
+					if (!isUserGenerated)
 						tracker = fillChan(vChan, tracker, frame);
 				}
 			}
@@ -1036,6 +1034,8 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 
 int SampleChannel::writePatch(int i, bool isProject, Patch *patch)
 {
+	// TODO - this code belongs to an upper level (glue)
+
 	int pchIndex = Channel::writePatch(i, isProject, patch);
 	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 

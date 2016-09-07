@@ -111,11 +111,13 @@ public:
 	virtual void process(float *buffer) = 0;
 
 	/* start
-	 * action to do when channel starts. doQuantize = false (don't
-	 * quantize) when Mixer is reading actions from Recorder::. */
+	Action to do when channel starts. doQuantize = false (don't quantize)
+	when Mixer is reading actions from Recorder. If isUserGenerated means that
+	the channel has been started by a human key press and not a pre-recorded
+	action. */
 
 	virtual void start(int frame, bool doQuantize, int quantize,
-			bool mixerIsRunning) = 0;
+			bool mixerIsRunning, bool isUserGenerated=false) = 0;
 
 	/* stop
 	 * action to do when channel is stopped normally (via key or MIDI). */
@@ -166,6 +168,8 @@ public:
 	 * action *a   - action to parse
 	 * localFrame  - frame number of the processed buffer
 	 * globalFrame - actual frame in Mixer */
+
+	 // TODO - quantize is useless!
 
 	virtual void parseAction(Recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) = 0;

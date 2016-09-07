@@ -198,7 +198,7 @@ void MidiChannel::process(float *buffer)
 
 
 void MidiChannel::start(int frame, bool doQuantize, int quantize,
-		bool mixerIsRunning)
+		bool mixerIsRunning, bool isUserGenerated)
 {
 	switch (status) {
 		case STATUS_PLAY:

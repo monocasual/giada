@@ -902,7 +902,9 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 		}
 
-		ch->start(0, true, G_Mixer.quantize, G_Mixer.running); // on frame 0: user-generated event
+		/* This is a user-generated event, so it's on frame 0 */
+		
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, true);
 	}
 
 	/* the GUI update is done by gui_refresh() */
