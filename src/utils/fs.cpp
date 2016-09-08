@@ -48,6 +48,7 @@
 #endif
 #include "../core/const.h"
 #include "string.h"
+#include "log.h"
 #include "fs.h"
 
 
