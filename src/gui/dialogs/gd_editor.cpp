@@ -46,6 +46,7 @@
 #include "gd_mainWindow.h"
 #include "gd_warnings.h"
 
+#include <cmath>
 
 extern Mixer         G_Mixer;
 extern gdMainWindow *mainWin;
@@ -202,7 +203,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 
   if (ch->panRight < 1.0f) {
     char buf[8];
-    sprintf(buf, "%d L", (int) abs((ch->panRight * 100.0f) - 100));
+    sprintf(buf, "%d L", (int) std::abs((ch->panRight * 100.0f) - 100));
     pan->value(ch->panRight);
     panNum->value(buf);
   }
@@ -212,7 +213,7 @@ gdEditor::gdEditor(SampleChannel *ch)
   }
   else {
     char buf[8];
-    sprintf(buf, "%d R", (int) abs((ch->panLeft * 100.0f) - 100));
+    sprintf(buf, "%d R", (int) std::abs((ch->panLeft * 100.0f) - 100));
     pan->value(2.0f - ch->panLeft);
     panNum->value(buf);
   }
