@@ -176,13 +176,13 @@ giada_CPPFLAGS +=                          \
   -DJUCE_PLUGINHOST_VST=1                  \
   -DJUCE_PLUGINHOST_VST3=0                 \
   -DJUCE_PLUGINHOST_AU=0
-giada_CXXFLAGS += -Wno-error=misleading-indentation
 endif
 
 if LINUX
 giada_SOURCES += src/deps/rtaudio-mod/RtAudio.h src/deps/rtaudio-mod/RtAudio.cpp
-# mute rtAudio error on variable length array
-giada_CXXFLAGS += -Wno-error=vla
+# -Wno-error=vla: mute rtAudio error on variable length array
+# -Wno-error=misleading-indentation: mute JUCE warnings on GCC6
+giada_CXXFLAGS += -Wno-error=vla -Wno-error=misleading-indentation
 giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
   -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
@@ -190,6 +190,8 @@ giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
 endif
 
 if WINDOWS
+# -Wno-error=misleading-indentation: mute JUCE warnings on GCC6
+giada_CXXFLAGS += -Wno-error=misleading-indentation
 giada_LDADD = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
   -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
   -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser -lpthreadGC2 -ljansson \
