@@ -158,12 +158,14 @@ string gBrowser::normalize(const string &s)
 {
   string out = s;
 
-  /* our crappy version of Clang doesn't seem to support std::string::back() */
+  /* If string ends with G_SLASH, remove it. Don't do it if has length > 1, it 
+  means that the string is just '/'. Note: our crappy version of Clang doesn't 
+  seem to support std::string::back() */
 
 #ifdef __APPLE__
-  if (out[out.length() - 1] == G_SLASH)
+  if (out[out.length() - 1] == G_SLASH && out.length() > 1)
 #else
-  if (out.back() == G_SLASH)
+  if (out.back() == G_SLASH && out.length() > 1)
 #endif
 
     out = out.substr(0, out.size()-1);
