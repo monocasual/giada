@@ -46,7 +46,6 @@ class Mixer
 public:
 
 	Mixer();
-	~Mixer();
 
 	void init();
 	int  close();
