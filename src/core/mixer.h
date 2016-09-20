@@ -214,6 +214,11 @@ private:
 	Records from line in. */
 
 	void lineInRec(float *inBuf, unsigned frame);
+
+	/* ProcessLineIn
+	Computes line in peaks, plus handles "hear what you're playin'" thing. */
+	
+	void processLineIn(float *inBuf, unsigned frame);
 };
 
 #endif

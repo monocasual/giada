@@ -368,21 +368,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 
 	for (unsigned j=0; j<bufferFrames; j+=2) {
 
-		if (kernelAudio::inputEnabled) {
-
-			/* input peak calculation (left chan only so far). */
-
-			if (inBuf[j] * inVol > peakIn)
-				peakIn = inBuf[j] * inVol;
-
-			/* "hear what you're playing" - process, copy and paste the input buffer
-			 * onto the output buffer */
-
-			if (inToOut) {
-				vChanInToOut[j]   = inBuf[j]   * inVol;
-				vChanInToOut[j+1] = inBuf[j+1] * inVol;
-			}
-		}
+		processLineIn(inBuf, j);
 
 		/* operations to do if the sequencer is running:
 		 * - compute quantizer
@@ -729,4 +715,27 @@ void Mixer::lineInRec(float *inBuf, unsigned frame)
 	inputTracker += 2;
 	if (inputTracker >= totalFrames)
 		inputTracker = 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::processLineIn(float *inBuf, unsigned frame)
+{
+	if (!kernelAudio::inputEnabled)
+		return;
+
+	/* input peak calculation (left chan only so far). */
+
+	if (inBuf[frame] * inVol > peakIn)
+		peakIn = inBuf[frame] * inVol;
+
+	/* "hear what you're playing" - process, copy and paste the input buffer
+	 * onto the output buffer */
+
+	if (inToOut) {
+		vChanInToOut[frame]   = inBuf[frame]   * inVol;
+		vChanInToOut[frame+1] = inBuf[frame+1] * inVol;
+	}
 }
