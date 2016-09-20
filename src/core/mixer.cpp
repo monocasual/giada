@@ -399,23 +399,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 
 		if (running) {
 
-			/* line in recording */
-
-			if (chanInput != NULL && kernelAudio::inputEnabled) {
-
-				/* delay comp: wait until waitRec reaches delayComp. WaitRec
-				 * returns to 0 in mixerHandler, as soon as the recording ends */
-
-				if (waitRec < G_Conf.delayComp)
-					waitRec += 2;
-				else {
-					vChanInput[inputTracker]   += inBuf[j]   * inVol;
-					vChanInput[inputTracker+1] += inBuf[j+1] * inVol;
-					inputTracker += 2;
-					if (inputTracker >= totalFrames)
-						inputTracker = 0;
-				}
-			}
+			lineInRec(inBuf, j);
 
 			/* quantizer computations: quantize rewind and all channels. */
 
@@ -727,4 +711,28 @@ bool Mixer::mergeVirtualInput()
 		memset(vChanInput, 0, numFrames); // clear vchan
 		return true;
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::lineInRec(float *inBuf, unsigned frame)
+{
+	if (chanInput == NULL || !kernelAudio::inputEnabled)
+	 	return;
+
+	/* delay comp: wait until waitRec reaches delayComp. WaitRec
+	 * returns to 0 in mixerHandler, as soon as the recording ends */
+
+	if (waitRec < G_Conf.delayComp) {
+		waitRec += 2;
+		return;
+	}
+
+	vChanInput[inputTracker]   += inBuf[frame]   * inVol;
+	vChanInput[inputTracker+1] += inBuf[frame+1] * inVol;
+	inputTracker += 2;
+	if (inputTracker >= totalFrames)
+		inputTracker = 0;
 }

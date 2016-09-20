@@ -210,6 +210,11 @@ private:
 	 * the slave */
 
 	void sendMIDIrewind();
+
+	/* lineInRec
+	Records from line in. */
+
+	void lineInRec(float *inBuf, unsigned frame);
 };
 
 #endif
