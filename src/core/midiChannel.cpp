@@ -339,3 +339,11 @@ int MidiChannel::writePatch(int i, bool isProject, Patch *patch)
 
 	return 0;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MidiChannel::clear()
+{
+}

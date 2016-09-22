@@ -67,7 +67,7 @@ public:
 		void *out_buf, void *in_buf, unsigned n_frames,
 		double streamTime, RtAudioStreamStatus status, void *userData
 	);
-	int __masterPlay(void *out_buf, void *in_buf, unsigned n_frames);
+	int __masterPlay(void *out_buf, void *in_buf, unsigned bufferSize);
 
 	/* updateFrameBars
 	 * updates bpm, frames, beats and so on. */
@@ -217,8 +217,13 @@ private:
 
 	/* ProcessLineIn
 	Computes line in peaks, plus handles "hear what you're playin'" thing. */
-	
+
 	void processLineIn(float *inBuf, unsigned frame);
+
+	/* clearAllBuffers
+	Cleans up every buffer, both in Mixer and in channels. */
+
+	void clearAllBuffers(float *outBuf, unsigned bufferSize);
 };
 
 #endif

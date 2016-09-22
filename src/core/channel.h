@@ -91,12 +91,6 @@ public:
 
 	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex) = 0;
 
-	/* writePatch
-	 * Fill a patch with channel values. Returns the index of the last
-	 * Patch::channel_t added. */
-
-	virtual int writePatch(int i, bool isProject, class Patch *patch);
-
 	/* readPatch
 	 * Fill channel with data from patch. */
 
@@ -178,6 +172,17 @@ public:
 	 * rewind channel when rewind button is pressed. */
 
 	virtual void rewind() = 0;
+
+	/* clear
+	Clears all memory buffers. This is actually useful to sample channels only. */
+
+	virtual void clear() = 0;
+
+	/* writePatch
+	 * Fill a patch with channel values. Returns the index of the last
+	 * Patch::channel_t added. */
+
+	virtual int writePatch(int i, bool isProject, class Patch *patch);
 
 	/* ------------------------------------------------------------------------ */
 

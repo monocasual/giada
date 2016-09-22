@@ -50,6 +50,7 @@ public:
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex);
 
+	void clear      ();
 	void process    (float *buffer);
 	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning,
 		bool isUserGenerated=false);

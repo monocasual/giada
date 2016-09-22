@@ -344,29 +344,20 @@ int Mixer::masterPlay(
 /* -------------------------------------------------------------------------- */
 
 
-int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
+int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 {
 	if (!ready)
 		return 0;
 
 	float *outBuf = ((float *) out_buf);
 	float *inBuf  = ((float *) in_buf);
-	bufferFrames *= 2;     // stereo
+	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator
 
-	/* always clean each buffer */
+	clearAllBuffers(outBuf, bufferSize);
 
-	memset(outBuf, 0, sizeof(float) * bufferFrames);         // out
-	memset(vChanInToOut, 0, sizeof(float) * bufferFrames);   // inToOut vChan
-
-	pthread_mutex_lock(&mutex_chans);
-	for (unsigned i=0; i<channels.size(); i++)
-		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)channels.at(i))->clear();
-	pthread_mutex_unlock(&mutex_chans);
-
-	for (unsigned j=0; j<bufferFrames; j+=2) {
+	for (unsigned j=0; j<bufferSize; j+=2) {
 
 		processLineIn(inBuf, j);
 
@@ -509,7 +500,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferFrames)
 
 	/* post processing master fx + peak calculation. */
 
-	for (unsigned j=0; j<bufferFrames; j+=2) {
+	for (unsigned j=0; j<bufferSize; j+=2) {
 
 		/* merging vChanInToOut, if enabled */
 
@@ -738,4 +729,19 @@ void Mixer::processLineIn(float *inBuf, unsigned frame)
 		vChanInToOut[frame]   = inBuf[frame]   * inVol;
 		vChanInToOut[frame+1] = inBuf[frame+1] * inVol;
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::clearAllBuffers(float *outBuf, unsigned bufferSize)
+{
+	memset(outBuf, 0, sizeof(float) * bufferSize);         // out
+	memset(vChanInToOut, 0, sizeof(float) * bufferSize);   // inToOut vChan
+
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned i=0; i<channels.size(); i++)
+		channels.at(i)->clear();
+	pthread_mutex_unlock(&mutex_chans);
 }
