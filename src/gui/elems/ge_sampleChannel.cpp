@@ -37,6 +37,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"
 #include "../../glue/glue.h"
+#include "../../glue/io.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"
 #include "../../utils/gui.h"

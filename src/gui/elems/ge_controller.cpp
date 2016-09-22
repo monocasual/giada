@@ -28,6 +28,7 @@
 
 #include "../../core/graphics.h"
 #include "../../glue/glue.h"
+#include "../../glue/io.h"
 #include "ge_mixed.h"
 #include "ge_controller.h"
 

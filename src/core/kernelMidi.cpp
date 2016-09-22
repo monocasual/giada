@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "../utils/log.h"
 #include "../glue/glue.h"
+#include "../glue/io.h"
 #include "kernelMidi.h"
 #include "mixer.h"
 #include "channel.h"

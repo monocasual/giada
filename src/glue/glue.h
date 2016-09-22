@@ -36,17 +36,6 @@
 #define GLUE_H
 
 
-/* keyPress / keyRelease
- * handle the key pressure, either via mouse/keyboard or MIDI. If gui
- * is true it means that the event comes from the main window (mouse,
- * keyb or MIDI), otherwise the event comes from the action recorder. */
-
-void glue_keyPress  (class Channel       *ch, bool ctrl=0, bool shift=0);
-void glue_keyPress  (class SampleChannel *ch, bool ctrl=0, bool shift=0);
-void glue_keyPress  (class MidiChannel   *ch, bool ctrl=0, bool shift=0);
-void glue_keyRelease(class Channel       *ch, bool ctrl=0, bool shift=0);
-void glue_keyRelease(class SampleChannel *ch, bool ctrl=0, bool shift=0);
-
 void glue_setBpm(const char *v1, const char *v2);
 void glue_setBeats(int beats, int bars, bool expand);
 
@@ -58,23 +47,6 @@ void glue_startStopSeq(bool gui=true);
 void glue_startSeq    (bool gui=true);
 void glue_stopSeq     (bool gui=true);
 void glue_rewindSeq   ();
-
-/* start/stopActionRec
- * handle the action recording. */
-
-void glue_startStopActionRec();
-void glue_startActionRec();
-void glue_stopActionRec();
-
-/* start/stopInputRec
- * handle the input recording (take). If gui == true the signal comes
- * from an internal interaction on the GUI, otherwise it's a
- * MIDI/Jack/external signal. Alert displays or not the popup message
- * if there are no available channels. */
-
-void glue_startStopInputRec(bool gui=true, bool alert=true);
-int  glue_startInputRec    (bool gui=true);
-int  glue_stopInputRec     (bool gui=true);
 
 /* start/stopReadingRecs
  * handle the 'R' button. If gui == true the signal comes from an

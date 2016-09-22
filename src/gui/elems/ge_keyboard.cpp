@@ -34,6 +34,7 @@
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../glue/glue.h"
+#include "../../glue/io.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_mainWindow.h"

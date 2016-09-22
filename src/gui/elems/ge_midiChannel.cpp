@@ -38,6 +38,7 @@
 #include "../../core/midiChannel.h"
 #include "../../glue/channel.h"
 #include "../../glue/glue.h"
+#include "../../glue/io.h"
 #include "../../utils/gui.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_keyGrabber.h"
