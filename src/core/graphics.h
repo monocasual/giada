@@ -68,6 +68,9 @@ extern const char *metronomeOn_xpm[];
 extern const char *inputRecOn_xpm[];
 extern const char *inputRecOff_xpm[];
 
+extern const char *inputToOutputOn_xpm[];
+extern const char *inputToOutputOff_xpm[];
+
 extern const char *beatsDivideOn_xpm[];
 extern const char *beatsDivideOff_xpm[];
 extern const char *beatsMultiplyOn_xpm[];
