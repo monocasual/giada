@@ -38,13 +38,6 @@
 using std::vector;
 
 
-/*
- * [global0]-->[vector<_action*>0]-->[a0][a1][a2]				0[frames1]
- * [global1]-->[vector<_action*>1]-->[a0][a1][a2]				1[frames2]
- * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
- * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4]
- * */
-
 class Recorder
 {
 public:
@@ -65,6 +58,11 @@ public:
 		uint32_t iValue;  // used only for MIDI events
 	};
 
+	/* [global0]-->[vector<_action*>0]-->[a0][a1][a2]				0[frames1]
+	 * [global1]-->[vector<_action*>1]-->[a0][a1][a2]				1[frames2]
+	 * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
+	 * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4] */
+	 
 	vector<int>  frames;					  // frame counter (sentinel) frames.size == global.size
 	vector<vector<action*>> global;	// container of containers of actions
 	vector<action*> actions;				// container of actions
