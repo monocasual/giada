@@ -29,6 +29,7 @@
 #include "../../core/channel.h"
 #include "../../core/midiChannel.h"
 #include "../../core/const.h"
+#include "../../core/mixer.h"
 #include "../../core/kernelMidi.h"
 #include "../../core/conf.h"
 #include "../../utils/log.h"

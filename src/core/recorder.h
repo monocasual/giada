@@ -31,12 +31,8 @@
 #define RECORDER_H
 
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdint>
 #include <vector>
-#include "../utils/fs.h"
-#include "const.h"
-#include "mixer.h"
 
 
 using std::vector;
@@ -90,7 +86,7 @@ public:
 	/* canRec
 	 * can a channel rec an action? Call this one BEFORE rec(). */
 
-	bool canRec(Channel *ch);
+	bool canRec(class Channel *ch);
 
 	/* rec
 	 * record an action. */

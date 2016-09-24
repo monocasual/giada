@@ -144,8 +144,7 @@ void Recorder::rec(int index, int type, int frame, uint32_t iValue, float fValue
 	/* don't activate the channel (readActions == false), it's up to
 	 * the other layers */
 
-	Channel *ch = G_Mixer.getChannelByIndex(index);
-	ch->hasActions = true;
+	G_Mixer.getChannelByIndex(index)->hasActions = true;
 
 	sortedActions = false;
 

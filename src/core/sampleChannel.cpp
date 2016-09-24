@@ -39,6 +39,7 @@
 #include "waveFx.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"
+#include "kernelAudio.h"
 
 
 using std::string;
