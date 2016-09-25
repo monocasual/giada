@@ -310,9 +310,9 @@ void gKeyboard::clear()
 void gKeyboard::setChannelWithActions(gSampleChannel *gch)
 {
 	if (gch->ch->hasActions)
-		gch->addActionButton();
+		gch->showActionButton();
 	else
-		gch->delActionButton();
+		gch->hideActionButton();
 }
 
 

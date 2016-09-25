@@ -316,7 +316,7 @@ void gSampleChannel::__cb_openMenu()
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
 		if (!ch->hasActions)
-			delActionButton();
+			hideActionButton();
 
 		/* TODO - set mute=false */
 
@@ -329,7 +329,7 @@ void gSampleChannel::__cb_openMenu()
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
 		if (!ch->hasActions)
-			delActionButton();
+			hideActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -339,7 +339,7 @@ void gSampleChannel::__cb_openMenu()
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_VOLUME);
 		if (!ch->hasActions)
-			delActionButton();
+			hideActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
 		return;
 	}
@@ -348,7 +348,7 @@ void gSampleChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		G_Recorder.clearChan(ch->index);
-		delActionButton();
+		hideActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}
@@ -420,7 +420,7 @@ void gSampleChannel::refresh()
 
 void gSampleChannel::reset()
 {
-	delActionButton(true); // force==true, don't check, just remove it
+	hideActionButton();
 	mainButton->setDefaultMode("-- no sample --");
  	mainButton->redraw();
 	status->redraw();
@@ -452,9 +452,9 @@ void gSampleChannel::update()
 	 * button must be activated accordingly. */
 
 	if (ch->hasActions)
-		addActionButton();
+		showActionButton();
 	else
-		delActionButton();
+		hideActionButton();
 
 	/* updates modebox */
 
@@ -488,7 +488,7 @@ int gSampleChannel::keyPress(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::addActionButton()
+void gSampleChannel::showActionButton()
 {
 	mainButton->size(mainButton->w()-24, mainButton->h());
 	readActions->value(ch->readActions);
@@ -500,7 +500,7 @@ void gSampleChannel::addActionButton()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::delActionButton(bool force)
+void gSampleChannel::hideActionButton()
 {
 	readActions->hide();
 	mainButton->size(mainButton->w()+24, mainButton->h());
