@@ -28,7 +28,8 @@
 
 
 #include <math.h>
-#include "recorder.h"
+#include "../utils/log.h"
+#include "../utils/fs.h"
 #include "const.h"
 #include "mixer.h"
 #include "mixerHandler.h"
@@ -38,8 +39,7 @@
 #include "conf.h"
 #include "channel.h"
 #include "sampleChannel.h"
-#include "../utils/log.h"
-#include "../utils/fs.h"
+#include "recorder.h"
 
 
 extern Mixer G_Mixer;
