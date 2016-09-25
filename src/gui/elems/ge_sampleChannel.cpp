@@ -65,30 +65,30 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
-gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *ch)
+gSampleChannel::gSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	: gChannel(X, Y, W, H, CHANNEL_SAMPLE), ch(ch)
 {
 	begin();
 
 #if defined(WITH_VST)
-  int delta = 168; // (7 widgets * 20) + (7 paddings * 4)
+  int delta = 192; // (8 widgets * 20) + (8 paddings * 4)
 #else
-	int delta = 144; // (6 widgets * 20) + (6 paddings * 4)
+	int delta = 168; // (7 widgets * 20) + (7 paddings * 4)
 #endif
 
-	button       = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	status       = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
-	mainButton   = new gSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
-	modeBox      = new gModeBox(mainButton->x()+mainButton->w()+4, y(), 20, 20, ch);
-	mute         = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo         = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
-	readActions  = NULL; // no 'R' button
+	button      = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
+	status      = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
+	mainButton  = new gSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
+	readActions = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
+	modeBox     = new gModeBox(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
+	mute        = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo        = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 
 #if defined(WITH_VST)
-	fx           = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol          = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
+	fx          = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
+	vol         = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	vol          = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
+	vol         = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 
 	end();
@@ -111,6 +111,10 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, class SampleChannel *
 	solo->callback(cb_solo, (void*)this);
 
 	mainButton->callback(cb_openMenu, (void*)this);
+
+	readActions->type(FL_TOGGLE_BUTTON);
+	readActions->value(ch->readActions);
+	readActions->callback(cb_readActions, (void*)this);
 
 	vol->callback(cb_changeVol, (void*)this);
 
@@ -486,27 +490,10 @@ int gSampleChannel::keyPress(int e)
 
 void gSampleChannel::addActionButton()
 {
-	/* quit if 'R' exists yet. */
-
-	if (readActions != NULL)
-		return;
-
 	mainButton->size(mainButton->w()-24, mainButton->h());
-
-	redraw();
-
-	readActions = new gClick(mainButton->x() + mainButton->w() + 4,
-                           mainButton->y(), 20, 20, "", readActionOff_xpm,
-                           readActionOn_xpm);
-	readActions->type(FL_TOGGLE_BUTTON);
 	readActions->value(ch->readActions);
-	readActions->callback(cb_readActions, (void*)this);
-	add(readActions);
-
-	/* hard redraw: there's no other way to avoid glitches when moving
-	 * the 'R' button */
-
-	G_MainWin->keyboard->redraw();
+	readActions->show();
+	redraw();
 }
 
 
@@ -515,20 +502,9 @@ void gSampleChannel::addActionButton()
 
 void gSampleChannel::delActionButton(bool force)
 {
-	if (readActions == NULL)
-		return;
-
-	/* TODO - readActions check is useless here */
-
-	if (!force && (readActions == NULL || ch->hasActions))
-		return;
-
-	remove(readActions);		// delete from Keyboard group (FLTK)
-	delete readActions;     // delete (C++)
-	readActions = NULL;
-
+	readActions->hide();
 	mainButton->size(mainButton->w()+24, mainButton->h());
-	mainButton->redraw();
+	redraw();
 }
 
 
@@ -551,8 +527,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 		 * is added from a patch with a small width. */
 
 	  modeBox->hide();
-		if (readActions)
-      readActions->hide();
+    readActions->hide();
 	}
 	else
 	if (w() < BREAK_MODE_BOX) {
@@ -569,14 +544,13 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
     modeBox->show();
     mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), mainButton->h());
     modeBox->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-		if (readActions)
-      readActions->hide();
+    readActions->hide();
 	}
 	else {
-		if (readActions) {
-      mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), mainButton->h());
-      readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-      readActions->show();
+    if (ch->hasActions) {
+			mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), mainButton->h());
+    	readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
+    	readActions->show();
 		}
 	}
 
