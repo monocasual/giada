@@ -490,7 +490,10 @@ int gSampleChannel::keyPress(int e)
 
 void gSampleChannel::showActionButton()
 {
+	if (readActions->visible())
+		return;
 	mainButton->size(mainButton->w()-24, mainButton->h());
+	readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 	readActions->value(ch->readActions);
 	readActions->show();
 	redraw();
@@ -502,8 +505,10 @@ void gSampleChannel::showActionButton()
 
 void gSampleChannel::hideActionButton()
 {
-	readActions->hide();
+	if (!readActions->visible())
+		return;
 	mainButton->size(mainButton->w()+24, mainButton->h());
+	readActions->hide();
 	redraw();
 }
 
