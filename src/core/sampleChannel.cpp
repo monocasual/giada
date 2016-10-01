@@ -608,13 +608,9 @@ void SampleChannel::calcFadeoutStep()
 
 void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
 {
-	if (v)
-		readActions = true;
-	else {
-		readActions = false;
-		if (recsStopOnChanHalt)
-			kill(0);  /// FIXME - wrong frame value
-	}
+	readActions = v;
+	if (!readActions && recsStopOnChanHalt)
+		kill(0);  /// FIXME - wrong frame value
 }
 
 

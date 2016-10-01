@@ -365,7 +365,7 @@ void gSampleChannel::__cb_openMenu()
 
 void gSampleChannel::__cb_readActions()
 {
-	ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+	glue_startStopReadingRecs(ch);
 }
 
 
