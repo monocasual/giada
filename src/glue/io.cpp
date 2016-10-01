@@ -140,7 +140,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Mixer.quantize == 0 &&
+		if (G_Mixer.quantize == 0  &&
 		    G_Recorder.canRec(ch)  &&
 	      !(ch->mode & LOOP_ANY))
 		{
@@ -195,8 +195,6 @@ void glue_startActionRec()
 {
 	if (G_audio_status == false)
 		return;
-	if (!G_Mixer.running)
-		glue_startSeq();	        // start the sequencer for convenience
 	G_Recorder.active = true;
 
 	Fl::lock();
@@ -216,14 +214,14 @@ void glue_stopActionRec()
 	G_Recorder.sortActions();
 
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
-			SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
-			if (ch->hasActions)
-				ch->readActions = true;
-			else
-				ch->readActions = false;
-			G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel);
-		}
+	{
+		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+			continue;
+		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel);
+		if (!ch->readActions && ch->hasActions)
+			glue_startReadingRecs(ch, false);
+	}
 
 	Fl::lock();
 	G_MainWin->controller->updateRecAction(0);

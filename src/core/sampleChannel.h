@@ -169,10 +169,10 @@ public:
 	/* canInputRec
 	 * true if channel can host a new wave from input recording. */
 
-	bool  canInputRec();
+	bool canInputRec();
 
 	/* setReadActions
-	 * if enabled, recorder will read actions from this channel. If
+	 * if enabled (v == true), recorder will read actions from this channel. If
 	 * recsStopOnChanHalt == true, stop reading actions right away. */
 
 	void setReadActions(bool v, bool recsStopOnChanHalt);

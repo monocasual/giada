@@ -65,7 +65,7 @@ SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (DEFAULT_FADEOUT_STEP),
-	  readActions      (true),
+	  readActions      (false),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {

@@ -256,11 +256,9 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui) {
 		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
 	if (!gui) {
 		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
-		if (gch->readActions) { // if button exists
-			Fl::lock();
-			gch->readActions->value(1);
-			Fl::unlock();
-		}
+		Fl::lock();
+		gch->readActions->value(1);
+		Fl::unlock();
 	}
 }
 
@@ -279,11 +277,9 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
 		ch->setReadActions(false, G_Conf.recsStopOnChanHalt);
 	if (!gui) {
 		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
-		if (gch->readActions) {  // if button exists
-			Fl::lock();
-			gch->readActions->value(0);
-			Fl::unlock();
-		}
+		Fl::lock();
+		gch->readActions->value(0);
+		Fl::unlock();
 	}
 }
 
