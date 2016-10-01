@@ -187,8 +187,8 @@ void glue_startSeq(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopSeq(bool gui) {
-
+void glue_stopSeq(bool gui)
+{
 	mh_stopSequencer();
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
@@ -228,7 +228,8 @@ void glue_stopSeq(bool gui) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_rewindSeq() {
+void glue_rewindSeq()
+{
 	mh_rewindSequencer();
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
@@ -238,8 +239,17 @@ void glue_rewindSeq() {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopReadingRecs(SampleChannel *ch, bool gui) {
-	if (ch->readActions)
+void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
+{
+	/* When you call glue_startReadingRecs with G_Conf.treatRecsAsLoops, the
+	member value ch->readActions actually is not set to true immediately, because
+	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
+	the next first beat. So a 'stop rec' command should occur also when
+	ch->readActions is false but the channel is in wait mode; this check will
+	handle the case of when you press 'R', the channel goes into REC_WAITING and
+	then you press 'R' again to undo the status. */
+
+	if (ch->readActions || (!ch->readActions && ch->recStatus == REC_WAITING))
 		glue_stopReadingRecs(ch, gui);
 	else
 		glue_startReadingRecs(ch, gui);
@@ -249,15 +259,15 @@ void glue_startStopReadingRecs(SampleChannel *ch, bool gui) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startReadingRecs(SampleChannel *ch, bool gui) {
+void glue_startReadingRecs(SampleChannel *ch, bool gui)
+{
 	if (G_Conf.treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
 	else
 		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
 	if (!gui) {
-		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
 		Fl::lock();
-		gch->readActions->value(1);
+		((gSampleChannel*)ch->guiChannel)->readActions->value(1);
 		Fl::unlock();
 	}
 }
@@ -266,19 +276,25 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
+void glue_stopReadingRecs(SampleChannel *ch, bool gui)
+{
+	/* First of all, if the mixer is not running just stop and disable everything.
+	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
+	channel in REC_ENDING status. */
 
-	/* if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put
-	 * the channel in REC_ENDING status */
-
+	if (!G_Mixer.running) {
+		ch->recStatus = REC_STOPPED;
+		ch->readActions = false;
+	}
+	else
 	if (G_Conf.treatRecsAsLoops)
 		ch->recStatus = REC_ENDING;
 	else
 		ch->setReadActions(false, G_Conf.recsStopOnChanHalt);
+
 	if (!gui) {
-		gSampleChannel *gch = (gSampleChannel*)ch->guiChannel;
 		Fl::lock();
-		gch->readActions->value(0);
+		((gSampleChannel*)ch->guiChannel)->readActions->value(0);
 		Fl::unlock();
 	}
 }
@@ -287,7 +303,8 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_quantize(int val) {
+void glue_quantize(int val)
+{
 	G_Mixer.quantize = val;
 	G_Mixer.updateQuanto();
 }
@@ -296,8 +313,8 @@ void glue_quantize(int val) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setChanVol(Channel *ch, float v, bool gui) {
-
+void glue_setChanVol(Channel *ch, float v, bool gui)
+{
 	ch->volume = v;
 
 	/* also update wave editor if it's shown */
@@ -321,7 +338,8 @@ void glue_setChanVol(Channel *ch, float v, bool gui) {
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setOutVol(float v, bool gui) {
+void glue_setOutVol(float v, bool gui)
+{
 	G_Mixer.outVol = v;
 	if (!gui) {
 		Fl::lock();
