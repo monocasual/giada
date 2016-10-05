@@ -361,93 +361,16 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 
 		processLineIn(inBuf, j);
 
-		/* operations to do if the sequencer is running:
-		 * - compute quantizer
-		 * - time check for LOOP_REPEAT
-		 * - reset loops at beat 0
-		 * - read recorded actions
-		 * - reset actualFrame */
-
 		if (running) {
-
 			lineInRec(inBuf, j);
-
-			/* quantizer computations: quantize rewind and all channels. */
-
-			if (quantize > 0 && quanto > 0) {
-				if (actualFrame % (quanto) == 0) {   // is quanto!
-					if (rewindWait) {
-						rewindWait = false;
-						rewind();
-					}
-					pthread_mutex_lock(&mutex_chans);
-					for (unsigned k=0; k<channels.size(); k++)
-						channels.at(k)->quantize(k, j, actualFrame);  // j == localFrame
-					pthread_mutex_unlock(&mutex_chans);
-				}
-			}
-
-			/* reset LOOP_REPEAT, if a bar has passed */
-
-			if (actualFrame % framesPerBar == 0 && actualFrame != 0) {
-				if (metronome)
-					tickPlay = true;
-
-				pthread_mutex_lock(&mutex_chans);
-				for (unsigned k=0; k<channels.size(); k++)
-					channels.at(k)->onBar(j);
-				pthread_mutex_unlock(&mutex_chans);
-			}
-
-			/* reset loops on beat 0 */
-
-			if (actualFrame == 0) {
-				pthread_mutex_lock(&mutex_chans);
-				for (unsigned k=0; k<channels.size(); k++)
-					channels.at(k)->onZero(j, G_Conf.recsStopOnChanHalt);
-				pthread_mutex_unlock(&mutex_chans);
-			}
-
-			/* reading all actions recorded */
-
-			pthread_mutex_lock(&mutex_recs);
-			for (unsigned y=0; y<G_Recorder.frames.size(); y++) {
-				if (G_Recorder.frames.at(y) == actualFrame) {
-					for (unsigned z=0; z<G_Recorder.global.at(y).size(); z++) {
-						int index   = G_Recorder.global.at(y).at(z)->chan;
-						Channel *ch = getChannelByIndex(index);
-						ch->parseAction(G_Recorder.global.at(y).at(z), j, actualFrame, quantize, running);
-					}
-					break;
-				}
-			}
-			pthread_mutex_unlock(&mutex_recs);
-
-			/* increase actualFrame */
-
+			doQuantize(j);
+			testBar(j);
+			testFirstBeat(j);
+			readActions(j);
 			actualFrame += 2;
-
-			/* if actualFrame > totalFrames the sequencer returns to frame 0,
-			 * beat 0. This must be the last operation. */
-
-			if (actualFrame > totalFrames) {
-				actualFrame = 0;
-				actualBeat  = 0;
-			}
-			else
-			if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
-				actualBeat++;
-
-				/* avoid tick and tock to overlap when a new bar has passed (which
-				 * is also a beat) */
-
-				if (metronome && !tickPlay)
-					tockPlay = true;
-			}
-
+			testLastBeat();  // this test must be the last one
 			sendMIDIsync();
-
-		} // if (running)
+		}
 
 		/* sum channels, CHANNEL_SAMPLE only */
 
@@ -731,6 +654,103 @@ void Mixer::processLineIn(float *inBuf, unsigned frame)
 	}
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::readActions(unsigned frame)
+{
+	pthread_mutex_lock(&mutex_recs);
+	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
+		if (G_Recorder.frames.at(i) == actualFrame) {
+			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
+				int index   = G_Recorder.global.at(i).at(j)->chan;
+				Channel *ch = getChannelByIndex(index);
+				ch->parseAction(G_Recorder.global.at(i).at(j), frame, actualFrame, quantize, running);
+			}
+			break;
+		}
+	}
+	pthread_mutex_unlock(&mutex_recs);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::doQuantize(unsigned frame)
+{
+	if (quantize < 0 || quanto <= 0) // if quantizer disabled
+		return;
+	if (actualFrame % (quanto) != 0) // if a quanto has not passed yet
+		return;
+
+	if (rewindWait) {
+		rewindWait = false;
+		rewind();
+	}
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned i=0; i<channels.size(); i++)
+		channels.at(i)->quantize(i, frame, actualFrame);  // j == localFrame
+	pthread_mutex_unlock(&mutex_chans);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::testBar(unsigned frame)
+{
+	if (actualFrame % framesPerBar != 0 || actualFrame == 0)
+		return;
+
+	if (metronome)
+		tickPlay = true;
+
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size(); k++)
+		channels.at(k)->onBar(frame);
+	pthread_mutex_unlock(&mutex_chans);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::testFirstBeat(unsigned frame)
+{
+	if (actualFrame != 0)
+		return;
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size(); k++)
+		channels.at(k)->onZero(frame, G_Conf.recsStopOnChanHalt);
+	pthread_mutex_unlock(&mutex_chans);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::testLastBeat()
+{
+	/* if actualFrame > totalFrames the sequencer returns to frame 0,
+	 * beat 0. This must be the last operation. */
+
+	if (actualFrame > totalFrames) {
+		actualFrame = 0;
+		actualBeat  = 0;
+	}
+	else
+	if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
+		actualBeat++;
+
+		/* avoid tick and tock to overlap when a new bar has passed (which
+		 * is also a beat) */
+
+		if (metronome && !tickPlay)
+			tockPlay = true;
+	}
+}
 
 /* -------------------------------------------------------------------------- */
 

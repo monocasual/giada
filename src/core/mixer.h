@@ -224,6 +224,24 @@ private:
 	Cleans up every buffer, both in Mixer and in channels. */
 
 	void clearAllBuffers(float *outBuf, unsigned bufferSize);
+
+	/* readActions
+	Reads all recorded actions. */
+
+	void readActions(unsigned frame);
+
+	/* doQuantize
+	Computes quantization on 'rewind' button and all channels. */
+
+	void doQuantize(unsigned frame);
+
+	/* test*
+	Checks if the sequencer has reached a specific point (bar, first beat or
+	last frame). */
+
+	void testBar(unsigned frame);
+	void testFirstBeat(unsigned frame);
+	void testLastBeat();
 };
 
 #endif
