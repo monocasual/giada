@@ -131,10 +131,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 				ch->kill(0);    // on frame 0: user-generated event
 		}
 	}
-
-	/* case no modifier */
-
-	else {
+	else {  /* case no modifier */
 
 		/* record now if the quantizer is off, otherwise let mixer to handle it
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
@@ -152,6 +149,16 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 		/* This is a user-generated event, so it's on frame 0 */
 
+		/* TODO - there's a nasty problem here. You record an action (as done on
+		line 147) and then you call ch->start: Mixer, which is on another thread,
+		reads your newly recorded action, and then ch->start kicks in right after it
+		(as done on line []).
+		The result: Mixer plays the channel (due to the new action) but ch->start
+		kills it right away (because the sample is playing). Fix: call ch->start
+		only if you are not recording anything, i.e. let Mixer play it (i.e. put
+		an 'else' above ch->start). However, that way some issues arise for
+		overdubbing (line 145). Need to find a fix for that (nothing fancy). */
+
 		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, true);
 	}
 
@@ -164,15 +171,16 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 {
-	if (!ctrl && !shift) {
-		ch->stop();
+	if (ctrl || shift)
+		return;
 
-		/* record a key release only if channel is single_press. For any
-		 * other mode the KEY REL is meaningless. */
+	ch->stop();
 
-		if (ch->mode == SINGLE_PRESS && G_Recorder.canRec(ch))
-			G_Recorder.stopOverdub(G_Mixer.actualFrame);
-	}
+	/* record a key release only if channel is single_press. For any
+	 * other mode the KEY REL is meaningless. */
+
+	if (ch->mode == SINGLE_PRESS && G_Recorder.canRec(ch))
+		G_Recorder.stopOverdub(G_Mixer.actualFrame);
 
 	/* the GUI update is done by gui_refresh() */
 
