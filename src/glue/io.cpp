@@ -143,21 +143,22 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		{
 			if (ch->mode == SINGLE_PRESS)
 				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame);
-			else
+			else {
+
+				/* Why return here? You record an action (as done on line 156) and then
+				you call ch->start: Mixer, which is on another thread, reads your newly
+				recorded action, and then ch->start kicks in right after it	(as done on
+				line 163).
+				The result: Mixer plays the channel (due to the new action) but ch->start
+				kills it right away (because the sample is playing). Fix: call ch->start
+				only if you are not recording anything, i.e. let Mixer play it. */
+
 				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
+				return;
+			}
 		}
 
 		/* This is a user-generated event, so it's on frame 0 */
-
-		/* TODO - there's a nasty problem here. You record an action (as done on
-		line 147) and then you call ch->start: Mixer, which is on another thread,
-		reads your newly recorded action, and then ch->start kicks in right after it
-		(as done on line []).
-		The result: Mixer plays the channel (due to the new action) but ch->start
-		kills it right away (because the sample is playing). Fix: call ch->start
-		only if you are not recording anything, i.e. let Mixer play it (i.e. put
-		an 'else' above ch->start). However, that way some issues arise for
-		overdubbing (line 145). Need to find a fix for that (nothing fancy). */
 
 		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, true);
 	}
