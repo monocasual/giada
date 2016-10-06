@@ -15,6 +15,7 @@
 0.13.1 ---
 - Fix inverted 'R' button's status (GitHub #94)
 - Better handling of 'R' button's status when the sequencer is off (GitHub #95)
+- Fix non-playing samples if live-recorded and 'R' button is on (GitHub #93)
 - Refinements to show/hide 'R' button's dynamics
 - Lots of source code optimizations and cleanups
 
