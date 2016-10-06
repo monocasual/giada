@@ -28,7 +28,7 @@
 
 
 #include "../utils/log.h"
-#include "../gui/elems/ge_channel.h"
+#include "../gui/elems/channel.h"
 #include "channel.h"
 #include "pluginHost.h"
 #include "plugin.h"

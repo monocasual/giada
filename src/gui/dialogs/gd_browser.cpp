@@ -37,7 +37,7 @@
 #include "../../glue/storage.h"
 #include "../../utils/gui.h"
 #include "../elems/ge_browser.h"
-#include "../elems/ge_channel.h"
+#include "../elems/channel.h"
 #include "gd_browser.h"
 
 

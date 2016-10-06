@@ -36,8 +36,8 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/elems/ge_keyboard.h"
-#include "../gui/elems/ge_channel.h"
-#include "../gui/elems/ge_sampleChannel.h"
+#include "../gui/elems/channel.h"
+#include "../gui/elems/sampleChannel.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
 #include "../core/recorder.h"
@@ -227,7 +227,7 @@ void glue_stopActionRec()
 		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
-		G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel);
+		G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)ch->guiChannel);
 		if (!ch->readActions && ch->hasActions)
 			glue_startReadingRecs(ch, false);
 	}

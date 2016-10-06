@@ -41,9 +41,9 @@
 #include "../dialogs/gd_warnings.h"
 #include "../elems/ge_keyboard.h"
 #include "ge_column.h"
-#include "ge_channel.h"
-#include "ge_sampleChannel.h"
-#include "ge_midiChannel.h"
+#include "channel.h"
+#include "sampleChannel.h"
+#include "midiChannel.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -166,7 +166,7 @@ void gColumn::resize(int X, int Y, int W, int H)
 void gColumn::refreshChannels()
 {
 	for (int i=1; i<children(); i++)
-		((gChannel*) child(i))->refresh();
+		((geChannel*) child(i))->refresh();
 }
 
 
@@ -197,14 +197,14 @@ void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChan
 /* -------------------------------------------------------------------------- */
 
 
-gChannel *gColumn::addChannel(class Channel *ch)
+geChannel *gColumn::addChannel(Channel *ch)
 {
 	int currentY = y() + children() * 24;
-	gChannel *gch = NULL;
+	geChannel *gch = NULL;
 	if (ch->type == CHANNEL_SAMPLE)
-		gch = (gSampleChannel*) new gSampleChannel(x(), currentY, w(), 20, (SampleChannel*) ch);
+		gch = (geSampleChannel*) new geSampleChannel(x(), currentY, w(), 20, (SampleChannel*) ch);
 	else
-		gch = (gMidiChannel*) new gMidiChannel(x(),	currentY, w(), 20, (MidiChannel*) ch);
+		gch = (geMidiChannel*) new geMidiChannel(x(), currentY, w(), 20, (MidiChannel*) ch);
 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
@@ -217,7 +217,7 @@ gChannel *gColumn::addChannel(class Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::deleteChannel(gChannel *gch)
+void gColumn::deleteChannel(geChannel *gch)
 {
 	gch->hide();
 	remove(gch);
@@ -229,7 +229,7 @@ void gColumn::deleteChannel(gChannel *gch)
 	 * parameter to skip the operation */
 
 	for (int i=0; i<children(); i++) {
-		gch = (gChannel*) child(i);
+		gch = (geChannel*) child(i);
 		gch->position(gch->x(), y()+(i*24));
 	}
 	size(w(), children() * 24 + 66);  // evil space for drag n drop
@@ -287,7 +287,7 @@ void gColumn::clear(bool full)
 	else {
 		while (children() >= 2) {  // skip "add new channel" btn
 			int i = children()-1;
-			deleteChannel((gChannel*)child(i));
+			deleteChannel((geChannel*)child(i));
 		}
 	}
 }
@@ -298,9 +298,9 @@ void gColumn::clear(bool full)
 
 Channel *gColumn::getChannel(int i)
 {
-  gChannel *gch = (gChannel*) child(i);
+  geChannel *gch = (geChannel*) child(i);
   if (gch->type == CHANNEL_SAMPLE)
-    return ((gSampleChannel*) child(i))->ch;
+    return ((geSampleChannel*) child(i))->ch;
   else
-    return ((gMidiChannel*) child(i))->ch;
+    return ((geMidiChannel*) child(i))->ch;
 }

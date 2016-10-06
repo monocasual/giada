@@ -39,7 +39,7 @@
 #include "../../core/wave.h"
 #include "../elems/ge_waveform.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/ge_channel.h"
+#include "../elems/channel.h"
 #include "../elems/ge_waveTools.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_editor.h"

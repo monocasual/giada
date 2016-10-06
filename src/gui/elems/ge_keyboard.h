@@ -87,12 +87,12 @@ public:
 	void init();
 
 	/* addChannel
-	 * add a new channel to gChannels. Used by callbacks and during
-	 * patch loading. Requires Channel (and not gChannel). If build is
+	 * add a new channel to geChannels. Used by callbacks and during
+	 * patch loading. Requires Channel (and not geChannel). If build is
 	 * set to true, also generate the corresponding column if column (index) does
 	 * not exist yet. */
 
-	gChannel *addChannel(int column, class Channel *ch, bool build=false);
+	class geChannel *addChannel(int column, class Channel *ch, bool build=false);
 
 	/* addColumn
 	 * add a new column to the top of the stack. */
@@ -100,21 +100,21 @@ public:
 	void addColumn(int width=380);
 
 	/* deleteChannel
-	 * delete a channel from gChannels<> where gChannel->ch == ch and remove
+	 * delete a channel from geChannels<> where geChannel->ch == ch and remove
 	 * it from the stack. */
 
-	void deleteChannel(gChannel *gch);
+	void deleteChannel(geChannel *gch);
 
 	/* freeChannel
-	 * free a channel from gChannels<> where gChannel->ch == ch. No channels
+	 * free a channel from geChannels<> where geChannel->ch == ch. No channels
 	 * are deleted */
 
-	void freeChannel(gChannel *gch);
+	void freeChannel(geChannel *gch);
 
 	/* updateChannel
 	 * wrapper function to call gch->update(). */
 
-	void updateChannel(gChannel *gch);
+	void updateChannel(geChannel *gch);
 
 	/* organizeColumns
 	 * reorganize columns layout by removing empty gaps. */
@@ -144,7 +144,7 @@ public:
 	/* setChannelWithActions
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
-	void setChannelWithActions(class gSampleChannel *gch);
+	void setChannelWithActions(class geSampleChannel *gch);
 
 	/* printChannelMessage
 	 * given any output by glue_loadChannel, print the message on screen

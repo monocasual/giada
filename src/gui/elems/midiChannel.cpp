@@ -50,9 +50,9 @@
 #include "../dialogs/gd_keyGrabber.h"
 #include "../dialogs/gd_midiOutput.h"
 #include "ge_keyboard.h"
-#include "ge_midiChannel.h"
-#include "ge_channel.h"
-#include "ge_sampleChannel.h"
+#include "midiChannel.h"
+#include "channel.h"
+#include "sampleChannel.h"
 #include "../dialogs/gd_pluginList.h"
 
 
@@ -63,8 +63,8 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
-gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
-	: gChannel(X, Y, W, H, CHANNEL_MIDI), ch(ch)
+geMidiChannel::geMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
+	: geChannel(X, Y, W, H, CHANNEL_MIDI), ch(ch)
 {
 	begin();
 
@@ -75,7 +75,7 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 #endif
 
 	button     = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	mainButton = new gMidiChannelButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
+	mainButton = new geMidiChannelButton(button->x()+button->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute       = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo       = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
@@ -115,20 +115,20 @@ gMidiChannel::gMidiChannel(int X, int Y, int W, int H, class MidiChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::cb_button      (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_button(); }
-void gMidiChannel::cb_mute        (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_mute(); }
-void gMidiChannel::cb_solo        (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_solo(); }
-void gMidiChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_openMenu(); }
-void gMidiChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_changeVol(); }
+void geMidiChannel::cb_button      (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_button(); }
+void geMidiChannel::cb_mute        (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_mute(); }
+void geMidiChannel::cb_solo        (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_solo(); }
+void geMidiChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_openMenu(); }
+void geMidiChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_changeVol(); }
 #ifdef WITH_VST
-void gMidiChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gMidiChannel*)p)->__cb_openFxWindow(); }
+void geMidiChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_openFxWindow(); }
 #endif
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::__cb_mute()
+void geMidiChannel::__cb_mute()
 {
 	glue_setMute(ch);
 }
@@ -137,7 +137,7 @@ void gMidiChannel::__cb_mute()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::__cb_solo()
+void geMidiChannel::__cb_solo()
 {
 	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
 }
@@ -146,7 +146,7 @@ void gMidiChannel::__cb_solo()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::__cb_changeVol()
+void geMidiChannel::__cb_changeVol()
 {
 	glue_setChanVol(ch, vol->value());
 }
@@ -156,7 +156,7 @@ void gMidiChannel::__cb_changeVol()
 
 
 #ifdef WITH_VST
-void gMidiChannel::__cb_openFxWindow()
+void geMidiChannel::__cb_openFxWindow()
 {
 	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
@@ -165,7 +165,7 @@ void gMidiChannel::__cb_openFxWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::__cb_button()
+void geMidiChannel::__cb_button()
 {
 	if (button->value())
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
@@ -175,7 +175,7 @@ void gMidiChannel::__cb_button()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::__cb_openMenu()
+void geMidiChannel::__cb_openMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
 		{"Edit actions..."},                        // 0
@@ -251,7 +251,7 @@ void gMidiChannel::__cb_openMenu()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::refresh()
+void geMidiChannel::refresh()
 {
 	setColorsByStatus(ch->status, ch->recStatus);
 	mainButton->redraw();
@@ -261,7 +261,7 @@ void gMidiChannel::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::reset()
+void geMidiChannel::reset()
 {
 	mainButton->setDefaultMode("-- MIDI --");
 	mainButton->redraw();
@@ -271,7 +271,7 @@ void gMidiChannel::reset()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::update()
+void geMidiChannel::update()
 {
 	if (ch->midiOut) {
 		char tmp[32];
@@ -297,9 +297,9 @@ void gMidiChannel::update()
 /* -------------------------------------------------------------------------- */
 
 
-void gMidiChannel::resize(int X, int Y, int W, int H)
+void geMidiChannel::resize(int X, int Y, int W, int H)
 {
-  gChannel::resize(X, Y, W, H);
+  geChannel::resize(X, Y, W, H);
 
 	/* this stuff makes sense only with FX button available. Do nothing
 	 * otherwise */
@@ -317,7 +317,7 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 	mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
 	solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
 
-	gChannel::init_sizes();
+	geChannel::init_sizes();
 #endif
 }
 
@@ -325,7 +325,7 @@ void gMidiChannel::resize(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-int gMidiChannel::keyPress(int e)
+int geMidiChannel::keyPress(int e)
 {
 	return handleKey(e, ch->key);
 }
@@ -336,14 +336,14 @@ int gMidiChannel::keyPress(int e)
 /* -------------------------------------------------------------------------- */
 
 
-gMidiChannelButton::gMidiChannelButton(int x, int y, int w, int h, const char *l)
-	: gChannelButton(x, y, w, h, l) {}
+geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char *l)
+	: geChannelButton(x, y, w, h, l) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int gMidiChannelButton::handle(int e)
+int geMidiChannelButton::handle(int e)
 {
 	// MIDI drag-n-drop does nothing so far.
 	return gClick::handle(e);

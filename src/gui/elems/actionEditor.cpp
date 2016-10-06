@@ -296,7 +296,7 @@ int geActionEditor::handle(int e)
 							true,                                 // record = true: record it!
 							pParent->getActionType());            // type of action
 					add(a);
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)ch->guiChannel); // mainWindow update
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)ch->guiChannel); // mainWindow update
 					redraw();
 					ret = 1;
 				}
@@ -314,7 +314,7 @@ int geActionEditor::handle(int e)
 					a->delAction();
 					remove(a);
 					delete a;
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel);
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel);
 					redraw();
 					ret = 1;
 				}

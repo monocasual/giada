@@ -46,8 +46,8 @@
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_midiOutput.h"
 #include "ge_keyboard.h"
-#include "ge_channel.h"
-#include "ge_sampleChannel.h"
+#include "channel.h"
+#include "sampleChannel.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -56,14 +56,17 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *mainWin;
 
 
-gChannel::gChannel(int X, int Y, int W, int H, int type)
- : Fl_Group(X, Y, W, H, NULL), type(type) {}
+geChannel::geChannel(int X, int Y, int W, int H, int type)
+ : Fl_Group(X, Y, W, H, NULL),
+   type    (type)
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int gChannel::getColumnIndex()
+int geChannel::getColumnIndex()
 {
 	return ((gColumn*)parent())->getIndex();
 }
@@ -72,7 +75,7 @@ int gChannel::getColumnIndex()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannel::blink()
+void geChannel::blink()
 {
 	if (gu_getBlinker() > 6)
 		mainButton->setPlayMode();
@@ -84,7 +87,7 @@ void gChannel::blink()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannel::setColorsByStatus(int playStatus, int recStatus)
+void geChannel::setColorsByStatus(int playStatus, int recStatus)
 {
   switch (playStatus) {
     case STATUS_OFF:
@@ -121,7 +124,7 @@ void gChannel::setColorsByStatus(int playStatus, int recStatus)
 /* -------------------------------------------------------------------------- */
 
 
-int gChannel::handleKey(int e, int key)
+int geChannel::handleKey(int e, int key)
 {
 	int ret;
 	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it

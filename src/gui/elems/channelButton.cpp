@@ -29,20 +29,20 @@
 
 #include "../../core/const.h"
 #include "../../utils/fs.h"
-#include "ge_channelButton.h"
+#include "channelButton.h"
 
 
 using std::string;
 
 
-gChannelButton::gChannelButton(int x, int y, int w, int h, const char *l)
+geChannelButton::geChannelButton(int x, int y, int w, int h, const char *l)
   : gClick(x, y, w, h, l), key("") {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setKey(const string &k)
+void geChannelButton::setKey(const string &k)
 {
   key = k;
 }
@@ -51,7 +51,7 @@ void gChannelButton::setKey(const string &k)
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setKey(int k)
+void geChannelButton::setKey(int k)
 {
   if (k == 0)
     key = "";
@@ -66,7 +66,7 @@ void gChannelButton::setKey(int k)
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::draw()
+void geChannelButton::draw()
 {
   gClick::draw();
 
@@ -88,7 +88,7 @@ void gChannelButton::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setInputRecordMode()
+void geChannelButton::setInputRecordMode()
 {
   bgColor0 = COLOR_BG_3;
 }
@@ -97,7 +97,7 @@ void gChannelButton::setInputRecordMode()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setActionRecordMode()
+void geChannelButton::setActionRecordMode()
 {
   bgColor0 = COLOR_BG_4;
   txtColor = COLOR_TEXT_0;
@@ -107,7 +107,7 @@ void gChannelButton::setActionRecordMode()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setDefaultMode(const char *l)
+void geChannelButton::setDefaultMode(const char *l)
 {
   bgColor0 = COLOR_BG_0;
 	bdColor  = COLOR_BD_0;
@@ -120,7 +120,7 @@ void gChannelButton::setDefaultMode(const char *l)
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setPlayMode()
+void geChannelButton::setPlayMode()
 {
   bgColor0 = COLOR_BG_2;
   bdColor  = COLOR_BD_1;
@@ -131,7 +131,7 @@ void gChannelButton::setPlayMode()
 /* -------------------------------------------------------------------------- */
 
 
-void gChannelButton::setEndingMode()
+void geChannelButton::setEndingMode()
 {
   bgColor0 = COLOR_BD_0;
 }

@@ -37,7 +37,7 @@
 using std::string;
 
 
-class gChannelButton : public gClick
+class geChannelButton : public gClick
 {
 private:
 
@@ -45,7 +45,7 @@ private:
 
 public:
 
-	gChannelButton(int x, int y, int w, int h, const char *l=0);
+	geChannelButton(int x, int y, int w, int h, const char *l=0);
 
 	virtual int handle(int e) = 0;
 

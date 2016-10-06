@@ -40,8 +40,8 @@
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_editor.h"
 #include "../dialogs/gd_warnings.h"
-#include "ge_channel.h"
-#include "ge_sampleChannel.h"
+#include "channel.h"
+#include "sampleChannel.h"
 #include "ge_keyboard.h"
 
 
@@ -102,7 +102,7 @@ void gKeyboard::init()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::freeChannel(gChannel *gch)
+void gKeyboard::freeChannel(geChannel *gch)
 {
 	gch->reset();
 }
@@ -111,7 +111,7 @@ void gKeyboard::freeChannel(gChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::deleteChannel(gChannel *gch)
+void gKeyboard::deleteChannel(geChannel *gch)
 {
 	for (unsigned i=0; i<columns.size(); i++) {
 		int k = columns.at(i)->find(gch);
@@ -126,7 +126,7 @@ void gKeyboard::deleteChannel(gChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::updateChannel(gChannel *gch)
+void gKeyboard::updateChannel(geChannel *gch)
 {
 	gch->update();
 }
@@ -181,7 +181,7 @@ void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-gChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
+geChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
 	gColumn *col = getColumnByIndex(colIndex);
 
@@ -283,7 +283,7 @@ int gKeyboard::handle(int e)
 
 			for (unsigned i=0; i<columns.size(); i++)
 				for (int k=1; k<columns.at(i)->children(); k++)
-					ret &= ((gChannel*)columns.at(i)->child(k))->keyPress(e);
+					ret &= ((geChannel*)columns.at(i)->child(k))->keyPress(e);
 			break;
 		}
 	}
@@ -307,7 +307,7 @@ void gKeyboard::clear()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::setChannelWithActions(gSampleChannel *gch)
+void gKeyboard::setChannelWithActions(geSampleChannel *gch)
 {
 	if (gch->ch->hasActions)
 		gch->showActionButton();

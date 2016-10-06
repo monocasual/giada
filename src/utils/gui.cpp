@@ -40,7 +40,7 @@
 #include "../gui/dialogs/gd_actionEditor.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/elems/ge_window.h"
-#include "../gui/elems/ge_channel.h"
+#include "../gui/elems/channel.h"
 #include "log.h"
 #include "string.h"
 #include "gui.h"

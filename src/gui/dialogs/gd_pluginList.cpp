@@ -41,7 +41,7 @@
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/ge_channel.h"
+#include "../elems/channel.h"
 #include "gd_pluginList.h"
 #include "gd_pluginChooser.h"
 #include "gd_pluginWindow.h"

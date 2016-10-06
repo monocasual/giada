@@ -208,7 +208,7 @@ int geEnvelopeEditor::handle(int e) {
 					else {
 						/// TODO
 					}
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}
@@ -226,7 +226,7 @@ int geEnvelopeEditor::handle(int e) {
 						G_Recorder.sortActions();
 						points.erase(points.begin() + selectedPoint);
 					}
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					redraw();
 				}
 			}

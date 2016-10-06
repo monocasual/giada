@@ -30,7 +30,7 @@
 
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/elems/ge_keyboard.h"
-#include "../gui/elems/ge_channel.h"
+#include "../gui/elems/channel.h"
 #include "../utils/gui.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -76,9 +76,9 @@ int glue_loadChannel(SampleChannel *ch, const char *fname)
 
 Channel *glue_addChannel(int column, int type)
 {
-	Channel *ch    = G_Mixer.addChannel(type);
-	gChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
-	ch->guiChannel = gch;
+	Channel *ch     = G_Mixer.addChannel(type);
+	geChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
+	ch->guiChannel  = gch;
 	glue_setChanVol(ch, 1.0, false); // false = not from gui click
 	return ch;
 }
@@ -121,7 +121,7 @@ void glue_freeChannel(Channel *ch)
 int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = G_Mixer.addChannel(src->type);
-	gChannel *gch  = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
+	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;
 	ch->copy(src, &G_Mixer.mutex_plugins);

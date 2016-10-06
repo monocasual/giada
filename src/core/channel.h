@@ -186,23 +186,24 @@ public:
 
 	/* ------------------------------------------------------------------------ */
 
-	int     index;                // unique id
-	int     type;                 // midi or sample
-	int     status;	              // status: see const.h
-	int     key;                  // keyboard button
-	float   volume;               // global volume
-	float   volume_i;             // internal volume
-	float   volume_d;             // delta volume (for envelope)
+	int     index;                 // unique id
+	int     type;                  // midi or sample
+	int     status;	               // status: see const.h
+	int     key;                   // keyboard button
+	float   volume;                // global volume
+	float   volume_i;              // internal volume
+	float   volume_d;              // delta volume (for envelope)
 	float   panLeft;
 	float   panRight;
-	bool    mute_i;               // internal mute
-	bool 	  mute_s;               // previous mute status after being solo'd
-	bool    mute;                 // global mute
+	bool    mute_i;                // internal mute
+	bool 	  mute_s;                // previous mute status after being solo'd
+	bool    mute;                  // global mute
 	bool    solo;
-  bool    hasActions;           // has something recorded
-	int 	  recStatus;            // status of recordings (waiting, ending, ...)
-	float  *vChan;	              // virtual channel
-  class   gChannel *guiChannel; // pointer to a gChannel object, part of the GUI
+  bool    hasActions;            // has something recorded
+	bool    armed;							   // armed for recording
+	int 	  recStatus;             // status of recordings (waiting, ending, ...)
+	float  *vChan;	               // virtual channel
+  class   geChannel *guiChannel; // pointer to a gChannel object, part of the GUI
 
 	// TODO - midi structs, please
 

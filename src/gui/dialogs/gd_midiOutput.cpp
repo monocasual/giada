@@ -34,7 +34,7 @@
 #include "../../utils/gui.h"
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/ge_channel.h"
+#include "../elems/channel.h"
 #include "../elems/ge_midiIoTools.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_midiOutput.h"

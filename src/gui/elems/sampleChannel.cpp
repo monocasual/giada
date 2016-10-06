@@ -53,7 +53,7 @@
 #include "../dialogs/gd_pluginList.h"
 #include "../dialogs/gd_pluginChooser.h"
 #include "ge_keyboard.h"
-#include "ge_sampleChannel.h"
+#include "sampleChannel.h"
 #include "ge_status.h"
 #include "ge_modeBox.h"
 
@@ -65,8 +65,8 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
-gSampleChannel::gSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
-	: gChannel(X, Y, W, H, CHANNEL_SAMPLE), ch(ch)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
+	: geChannel(X, Y, W, H, CHANNEL_SAMPLE), ch(ch)
 {
 	begin();
 
@@ -78,7 +78,7 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 
 	button      = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	status      = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
-	mainButton  = new gSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
+	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	readActions = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
 	modeBox     = new gModeBox(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
 	mute        = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -125,21 +125,21 @@ gSampleChannel::gSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_button(); }
-void gSampleChannel::cb_mute        (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_mute(); }
-void gSampleChannel::cb_solo        (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_solo(); }
-void gSampleChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_openMenu(); }
-void gSampleChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_changeVol(); }
-void gSampleChannel::cb_readActions (Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_readActions(); }
+void geSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_button(); }
+void geSampleChannel::cb_mute        (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_mute(); }
+void geSampleChannel::cb_solo        (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_solo(); }
+void geSampleChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_openMenu(); }
+void geSampleChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_changeVol(); }
+void geSampleChannel::cb_readActions (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_readActions(); }
 #ifdef WITH_VST
-void gSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((gSampleChannel*)p)->__cb_openFxWindow(); }
+void geSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_openFxWindow(); }
 #endif
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::__cb_mute()
+void geSampleChannel::__cb_mute()
 {
 	glue_setMute(ch);
 }
@@ -148,7 +148,7 @@ void gSampleChannel::__cb_mute()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::__cb_solo()
+void geSampleChannel::__cb_solo()
 {
 	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
 }
@@ -157,7 +157,7 @@ void gSampleChannel::__cb_solo()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::__cb_changeVol()
+void geSampleChannel::__cb_changeVol()
 {
 	glue_setChanVol(ch, vol->value());
 }
@@ -167,7 +167,7 @@ void gSampleChannel::__cb_changeVol()
 
 
 #ifdef WITH_VST
-void gSampleChannel::__cb_openFxWindow()
+void geSampleChannel::__cb_openFxWindow()
 {
 	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
 }
@@ -178,7 +178,7 @@ void gSampleChannel::__cb_openFxWindow()
 
 
 
-void gSampleChannel::__cb_button()
+void geSampleChannel::__cb_button()
 {
 	if (button->value())    // pushed
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
@@ -190,7 +190,7 @@ void gSampleChannel::__cb_button()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::__cb_openMenu()
+void geSampleChannel::__cb_openMenu()
 {
 	/* if you're recording (actions or input) no menu is allowed; you can't
 	 * do anything, especially deallocate the channel */
@@ -363,7 +363,7 @@ void gSampleChannel::__cb_openMenu()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::__cb_readActions()
+void geSampleChannel::__cb_readActions()
 {
 	glue_startStopReadingRecs(ch);
 }
@@ -372,7 +372,7 @@ void gSampleChannel::__cb_readActions()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::openBrowser(int type)
+void geSampleChannel::openBrowser(int type)
 {
 	gWindow *childWin = NULL;
 	switch (type) {
@@ -395,7 +395,7 @@ void gSampleChannel::openBrowser(int type)
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::refresh()
+void geSampleChannel::refresh()
 {
   if (!mainButton->visible()) // mainButton invisible? status too (see below)
     return;
@@ -418,7 +418,7 @@ void gSampleChannel::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::reset()
+void geSampleChannel::reset()
 {
 	hideActionButton();
 	mainButton->setDefaultMode("-- no sample --");
@@ -430,7 +430,7 @@ void gSampleChannel::reset()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::update()
+void geSampleChannel::update()
 {
 	/* update sample button's label */
 
@@ -479,7 +479,7 @@ void gSampleChannel::update()
 /* -------------------------------------------------------------------------- */
 
 
-int gSampleChannel::keyPress(int e)
+int geSampleChannel::keyPress(int e)
 {
 	return handleKey(e, ch->key);
 }
@@ -488,7 +488,7 @@ int gSampleChannel::keyPress(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::showActionButton()
+void geSampleChannel::showActionButton()
 {
 	if (readActions->visible())
 		return;
@@ -503,7 +503,7 @@ void gSampleChannel::showActionButton()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::hideActionButton()
+void geSampleChannel::hideActionButton()
 {
 	if (!readActions->visible())
 		return;
@@ -516,9 +516,9 @@ void gSampleChannel::hideActionButton()
 /* -------------------------------------------------------------------------- */
 
 
-void gSampleChannel::resize(int X, int Y, int W, int H)
+void geSampleChannel::resize(int X, int Y, int W, int H)
 {
-  gChannel::resize(X, Y, W, H);
+  geChannel::resize(X, Y, W, H);
 
 	if (w() < BREAK_FX) {
 #ifdef WITH_VST
@@ -559,7 +559,7 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 		}
 	}
 
-	gChannel::init_sizes();
+	geChannel::init_sizes();
 }
 
 
@@ -568,14 +568,14 @@ void gSampleChannel::resize(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-gSampleChannelButton::gSampleChannelButton(int x, int y, int w, int h, const char *l)
-	: gChannelButton(x, y, w, h, l) {}
+geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const char *l)
+	: geChannelButton(x, y, w, h, l) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int gSampleChannelButton::handle(int e)
+int geSampleChannelButton::handle(int e)
 {
 	int ret = gClick::handle(e);
 	switch (e) {
@@ -586,7 +586,7 @@ int gSampleChannelButton::handle(int e)
 			break;
 		}
 		case FL_PASTE: {
-      gSampleChannel *gch = (gSampleChannel*) parent();   // parent is gSampleChannel
+      geSampleChannel *gch = (geSampleChannel*) parent();   // parent is geSampleChannel
       SampleChannel  *ch  = gch->ch;
       int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK)

@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_sampleChannel
+ * ge_midiChannel
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,19 +27,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_SAMPLE_CHANNEL_H
-#define GE_SAMPLE_CHANNEL_H
+#ifndef GE_MIDI_CHANNEL_H
+#define GE_MIDI_CHANNEL_H
 
 
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Button.H>
-#include "ge_channel.h"
-#include "ge_channelButton.h"
+#include "channel.h"
+#include "channelButton.h"
 #include "ge_mixed.h"
 
 
-class gSampleChannel : public gChannel
+class geMidiChannel : public geChannel
 {
 private:
 
@@ -48,7 +48,6 @@ private:
 	static void cb_solo          (Fl_Widget *v, void *p);
 	static void cb_openMenu      (Fl_Widget *v, void *p);
 	static void cb_changeVol     (Fl_Widget *v, void *p);
-	static void cb_readActions   (Fl_Widget *v, void *p);
 #ifdef WITH_VST
 	static void cb_openFxWindow  (Fl_Widget *v, void *p);
 #endif
@@ -63,11 +62,9 @@ private:
 	inline void __cb_openFxWindow();
 #endif
 
-	void openBrowser(int type);
-
 public:
 
-	gSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
+	geMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);
 
 	void reset   ();
 	void update  ();
@@ -75,26 +72,17 @@ public:
 	int  keyPress(int event);
 	void resize  (int x, int y, int w, int h);
 
-	/* show/hideActionButton
-	Adds or removes 'R' button when actions are available. */
-
-	void showActionButton();
-	void hideActionButton();
-
-	class gModeBox *modeBox;
-	class gClick 	 *readActions;
-
-	class SampleChannel *ch;
+	class MidiChannel *ch;
 };
 
 
 /* -------------------------------------------------------------------------- */
 
 
-class gSampleChannelButton : public gChannelButton
+class geMidiChannelButton : public geChannelButton
 {
 public:
-	gSampleChannelButton(int x, int y, int w, int h, const char *l=0);
+	geMidiChannelButton(int x, int y, int w, int h, const char *l=0);
 	int handle(int e);
 };
 

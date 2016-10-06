@@ -37,7 +37,7 @@
 #include "ge_mixed.h"
 
 
-class gChannel : public Fl_Group
+class geChannel : public Fl_Group
 {
 protected:
 
@@ -73,7 +73,7 @@ protected:
 
 public:
 
-	gChannel(int x, int y, int w, int h, int type);
+	geChannel(int x, int y, int w, int h, int type);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -102,14 +102,14 @@ public:
 
 	int getColumnIndex();
 
-	class gButton        *button;
-	class gStatus        *status;
-	class gChannelButton *mainButton;
-	class gDial          *vol;
-	class gClick 	       *mute;
-	class gClick 	       *solo;
+	class gButton         *button;
+	class gStatus         *status;
+	class geChannelButton *mainButton;
+	class gDial           *vol;
+	class gClick 	        *mute;
+	class gClick 	        *solo;
 #ifdef WITH_VST
-	class gFxButton      *fx;
+	class gFxButton       *fx;
 #endif
 
 	int type;

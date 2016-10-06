@@ -35,8 +35,8 @@
 #include <cmath>
 #include "../gui/elems/ge_waveform.h"
 #include "../gui/elems/ge_mixed.h"
-#include "../gui/elems/ge_channel.h"
-#include "../gui/elems/ge_sampleChannel.h"
+#include "../gui/elems/channel.h"
+#include "../gui/elems/sampleChannel.h"
 #include "../gui/elems/ge_waveTools.h"
 #include "../gui/elems/ge_keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
@@ -267,7 +267,7 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui)
 		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
 	if (!gui) {
 		Fl::lock();
-		((gSampleChannel*)ch->guiChannel)->readActions->value(1);
+		((geSampleChannel*)ch->guiChannel)->readActions->value(1);
 		Fl::unlock();
 	}
 }
@@ -294,7 +294,7 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		((gSampleChannel*)ch->guiChannel)->readActions->value(0);
+		((geSampleChannel*)ch->guiChannel)->readActions->value(0);
 		Fl::unlock();
 	}
 }

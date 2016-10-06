@@ -59,7 +59,7 @@ public:
 	 * add a new channel in this column and set the internal pointer
 	 * to channel to 'ch'. */
 
-	class gChannel *addChannel(class Channel *ch);
+	class geChannel *addChannel(class Channel *ch);
 
 	/* handle */
 
@@ -73,7 +73,7 @@ public:
 	/* deleteChannel
 	 * remove the channel 'gch' from this column. */
 
-	void deleteChannel(gChannel *gch);
+	void deleteChannel(geChannel *gch);
 
 	/* refreshChannels
 	 * update channels' graphical statues. Called on each GUI cycle. */

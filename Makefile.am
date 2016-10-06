@@ -91,10 +91,10 @@ src/gui/dialogs/gd_pluginChooser.h     \
 src/gui/dialogs/gd_pluginChooser.cpp   \
 src/gui/elems/ge_column.h              \
 src/gui/elems/ge_column.cpp            \
-src/gui/elems/ge_sampleChannel.h       \
-src/gui/elems/ge_sampleChannel.cpp     \
-src/gui/elems/ge_midiChannel.h         \
-src/gui/elems/ge_midiChannel.cpp       \
+src/gui/elems/sampleChannel.h          \
+src/gui/elems/sampleChannel.cpp        \
+src/gui/elems/midiChannel.h            \
+src/gui/elems/midiChannel.cpp          \
 src/gui/elems/ge_midiIoTools.h         \
 src/gui/elems/ge_midiIoTools.cpp       \
 src/gui/elems/ge_mixed.h               \
@@ -109,8 +109,8 @@ src/gui/elems/envelopeEditor.h         \
 src/gui/elems/envelopeEditor.cpp       \
 src/gui/elems/noteEditor.h		         \
 src/gui/elems/noteEditor.cpp           \
-src/gui/elems/ge_channel.h             \
-src/gui/elems/ge_channel.cpp           \
+src/gui/elems/channel.h                \
+src/gui/elems/channel.cpp              \
 src/gui/elems/muteEditor.h             \
 src/gui/elems/muteEditor.cpp           \
 src/gui/elems/actionEditor.h           \
@@ -127,8 +127,8 @@ src/gui/elems/ge_modeBox.h             \
 src/gui/elems/ge_modeBox.cpp           \
 src/gui/elems/ge_controller.h          \
 src/gui/elems/ge_controller.cpp        \
-src/gui/elems/ge_channelButton.h       \
-src/gui/elems/ge_channelButton.cpp     \
+src/gui/elems/channelButton.h          \
+src/gui/elems/channelButton.cpp        \
 src/gui/elems/ge_pluginBrowser.h       \
 src/gui/elems/ge_pluginBrowser.cpp     \
 src/utils/log.h                        \

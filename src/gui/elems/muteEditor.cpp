@@ -255,7 +255,7 @@ int geMuteEditor::handle(int e) {
 					}
 					G_Recorder.sortActions();
 
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}
@@ -285,7 +285,7 @@ int geMuteEditor::handle(int e) {
 					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
 					G_Recorder.sortActions();
 
-					G_MainWin->keyboard->setChannelWithActions((gSampleChannel*)pParent->chan->guiChannel); // update mainWindow
+					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
 					redraw();
 				}
