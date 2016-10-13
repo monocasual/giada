@@ -31,12 +31,8 @@
 #define GE_MIDI_CHANNEL_H
 
 
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Menu_Button.H>
 #include "channel.h"
 #include "channelButton.h"
-#include "ge_mixed.h"
 
 
 class geMidiChannel : public geChannel
@@ -61,6 +57,10 @@ private:
 #ifdef WITH_VST
 	inline void __cb_openFxWindow();
 #endif
+
+	void breakAtArm();
+	void breakAtFx(int delta=(BREAK_DELTA/* + (BREAK_UNIT*2)*/));
+	void breakAtNone();
 
 public:
 

@@ -31,12 +31,8 @@
 #define GE_SAMPLE_CHANNEL_H
 
 
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Menu_Button.H>
 #include "channel.h"
 #include "channelButton.h"
-#include "ge_mixed.h"
 
 
 class geSampleChannel : public geChannel
@@ -64,6 +60,12 @@ private:
 #endif
 
 	void openBrowser(int type);
+
+	void breakAtArm();
+	void breakAtFx(int delta=(BREAK_DELTA + BREAK_UNIT));
+	void breakAtModeBox();
+	void breakAtReadActions();
+	void breakAtNone();
 
 public:
 

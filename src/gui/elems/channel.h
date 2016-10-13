@@ -31,30 +31,30 @@
 #define GE_CHANNEL_H
 
 
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Menu_Button.H>
-#include "ge_mixed.h"
+#include <FL/Fl_Group.H>
 
 
 class geChannel : public Fl_Group
 {
 protected:
 
-	/* define some breakpoints for dynamic resize */
+	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
+	pixels to shrink sampleButton. */
 
-#ifdef WITH_VST
-	static const int BREAK_READ_ACTIONS = 212;
-	static const int BREAK_MODE_BOX     = 188;
-	static const int BREAK_FX           = 164;
-	static const int BREAK_DELTA        = 120;
-#else
-	static const int BREAK_READ_ACTIONS = 188;
-	static const int BREAK_MODE_BOX     = 164;
-	static const int BREAK_FX           = 140;
-	static const int BREAK_DELTA        = 96;
-#endif
 	static const int BREAK_UNIT         = 24;
+#ifdef WITH_VST
+	static const int BREAK_READ_ACTIONS = 240;
+	static const int BREAK_MODE_BOX     = 216;
+	static const int BREAK_FX           = 192;
+	static const int BREAK_ARM          = 168;
+	static const int BREAK_DELTA        = BREAK_UNIT * 5;
+#else
+	static const int BREAK_READ_ACTIONS = 216;
+	static const int BREAK_MODE_BOX     = 192;
+	static const int BREAK_FX           = -1;  // useless if without vst
+	static const int BREAK_ARM          = 168;
+	static const int BREAK_DELTA        = BREAK_UNIT * 4;
+#endif
 
 	/* blink
 	 * blink button when channel is in wait/ending status. */
@@ -104,10 +104,11 @@ public:
 
 	class gButton         *button;
 	class gStatus         *status;
+	class gClick 	        *arm;
 	class geChannelButton *mainButton;
-	class gDial           *vol;
 	class gClick 	        *mute;
 	class gClick 	        *solo;
+	class gDial           *vol;
 #ifdef WITH_VST
 	class gFxButton       *fx;
 #endif

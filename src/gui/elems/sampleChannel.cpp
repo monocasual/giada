@@ -31,11 +31,9 @@
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
+#include "../../core/recorder.h"
 #include "../../core/graphics.h"
-#include "../../core/channel.h"
 #include "../../core/wave.h"
-#include "../../core/sampleChannel.h"
-#include "../../core/midiChannel.h"
 #include "../../glue/glue.h"
 #include "../../glue/io.h"
 #include "../../glue/channel.h"
@@ -43,19 +41,18 @@
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
 #include "../dialogs/gd_mainWindow.h"
+#include "../dialogs/gd_pluginList.h"
 #include "../dialogs/gd_keyGrabber.h"
+#include "../dialogs/gd_midiOutput.h"
 #include "../dialogs/gd_midiInput.h"
 #include "../dialogs/gd_editor.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
-#include "../dialogs/gd_midiOutput.h"
-#include "../dialogs/gd_pluginList.h"
-#include "../dialogs/gd_pluginChooser.h"
-#include "ge_keyboard.h"
-#include "sampleChannel.h"
 #include "ge_status.h"
 #include "ge_modeBox.h"
+#include "ge_keyboard.h"
+#include "sampleChannel.h"
 
 
 extern Mixer 		     G_Mixer;
@@ -71,13 +68,14 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	begin();
 
 #if defined(WITH_VST)
-  int delta = 192; // (8 widgets * 20) + (8 paddings * 4)
+  int delta = 216; // (9 widgets * 20) + (9 paddings * 4)
 #else
-	int delta = 168; // (7 widgets * 20) + (7 paddings * 4)
+	int delta = 192; // (8 widgets * 20) + (8 paddings * 4)
 #endif
 
 	button      = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	status      = new gStatus(button->x()+button->w()+4, y(), 20, 20, ch);
+	arm         = new gClick(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
+	status      = new gStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
 	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), w() - delta, 20, "-- no sample --");
 	readActions = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
 	modeBox     = new gModeBox(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
@@ -215,7 +213,7 @@ void geSampleChannel::__cb_openMenu()
 			{"Volume"},                               // 10
 			{"Start/Stop"},                           // 11
 			{0},                                      // 12
-			{"Clone channel"},                        // 13
+		{"Clone channel"},                          // 13
 		{"Free channel"},                           // 14
 		{"Delete channel"},                         // 15
 		{0}
@@ -520,46 +518,104 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 {
   geChannel::resize(X, Y, W, H);
 
+	if (w() < BREAK_ARM) {
+		puts("BREAK_ARM");
+		breakAtArm();
+	}
+	else
 	if (w() < BREAK_FX) {
-#ifdef WITH_VST
-		fx->hide();
-#endif
-		mainButton->size(w() - BREAK_DELTA, mainButton->h());
-		mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
-
-		/* The followings are useless on manual resizing, but useful when a channel
-		 * is added from a patch with a small width. */
-
-	  modeBox->hide();
-    readActions->hide();
+		puts("BREAK_FX");
+		breakAtFx();
 	}
 	else
 	if (w() < BREAK_MODE_BOX) {
-#ifdef WITH_VST
-		fx->show();
-#endif
-		mainButton->size(w() - (BREAK_DELTA + BREAK_UNIT), mainButton->h());
-		mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-		solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
-    modeBox->hide();
+		puts("BREAK_MODE_BOX");
+		breakAtModeBox();
 	}
 	else
 	if (w() < BREAK_READ_ACTIONS) {
-    modeBox->show();
-    mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 2)), mainButton->h());
-    modeBox->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-    readActions->hide();
+		puts("BREAK_READ_ACTIONS");
+		breakAtReadActions();
 	}
 	else {
-    if (ch->hasActions) {
-			mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT * 3)), mainButton->h());
-    	readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-    	readActions->show();
-		}
+		puts("no breaks");
+		breakAtNone();
 	}
-
 	geChannel::init_sizes();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannel::breakAtArm()
+{
+	arm->hide();
+	status->resize(button->x()+button->w()+4, y(), 20, 20);
+#ifdef WITH_VST
+	mainButton->resize(status->x()+status->w()+4, y(), w() - BREAK_DELTA, 20);
+#else
+	mainButton->resize(status->x()+status->w()+4, y(), w() - (BREAK_DELTA + BREAK_UNIT), 20);
+#endif
+	/* The followings are useless on manual resizing, but useful when a channel
+	 * is added from a patch with a small width.
+	 TODO - is it true? */
+	modeBox->hide();
+	readActions->hide();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannel::breakAtFx(int delta)
+{
+#ifdef WITH_VST
+	fx->hide();
+#endif
+	arm->show();
+	arm->size(20, 20);
+	status->resize(arm->x()+arm->w()+4, y(), 20, 20);
+	mainButton->resize(status->x()+status->w()+4, y(), w() - delta, 20);
+	mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
+	solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannel::breakAtModeBox()
+{
+	breakAtFx(BREAK_DELTA + (BREAK_UNIT*2));
+#ifdef WITH_VST
+	fx->show();
+#endif
+  modeBox->hide();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannel::breakAtReadActions()
+{
+	modeBox->show();
+	mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT*3)), 20);
+	modeBox->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
+	readActions->hide();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannel::breakAtNone()
+{
+	if (!ch->hasActions)
+		return;
+	mainButton->size(w() - (BREAK_DELTA + (BREAK_UNIT*4)), 20);
+	readActions->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
+	readActions->show();
 }
 
 
