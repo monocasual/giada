@@ -32,12 +32,6 @@
 #define GLUE_CHANNEL_H
 
 
-#include "../core/patch.h"
-
-
-using std::string;
-
-
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
@@ -60,7 +54,7 @@ void glue_freeChannel(class Channel *ch);
 
 /* cloneChannel
  * Make an exact copy of Channel *ch. */
- 
+
 int glue_cloneChannel(class Channel *ch);
 
 
