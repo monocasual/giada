@@ -58,10 +58,6 @@ private:
 	inline void __cb_openFxWindow();
 #endif
 
-	void breakAtArm();
-	void breakAtFx(int delta=(BREAK_DELTA/* + (BREAK_UNIT*2)*/));
-	void breakAtNone();
-
 public:
 
 	geMidiChannel(int x, int y, int w, int h,  class MidiChannel *ch);

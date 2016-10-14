@@ -61,12 +61,6 @@ private:
 
 	void openBrowser(int type);
 
-	void breakAtArm();
-	void breakAtFx(int delta=(BREAK_DELTA + BREAK_UNIT));
-	void breakAtModeBox();
-	void breakAtReadActions();
-	void breakAtNone();
-
 public:
 
 	geSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);

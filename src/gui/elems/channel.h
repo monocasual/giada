@@ -51,7 +51,7 @@ protected:
 #else
 	static const int BREAK_READ_ACTIONS = 216;
 	static const int BREAK_MODE_BOX     = 192;
-	static const int BREAK_FX           = -1;  // useless if without vst
+	static const int BREAK_FX           = -1; 
 	static const int BREAK_ARM          = 168;
 	static const int BREAK_DELTA        = BREAK_UNIT * 4;
 #endif
@@ -70,6 +70,11 @@ protected:
 	 * method wrapped by virtual handle(int e). */
 
 	int handleKey(int e, int key);
+
+	/* packWidgets
+	Spread widgets across available space. */
+
+	void packWidgets();
 
 public:
 

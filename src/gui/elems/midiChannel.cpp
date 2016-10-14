@@ -298,17 +298,20 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
   geChannel::resize(X, Y, W, H);
 
 	if (w() < BREAK_ARM)
-		breakAtArm();
+		arm->hide();
 	else
-	if (w() < BREAK_FX)
-		breakAtFx();
-	else
-		breakAtNone();
-
-	mute->resize(mainButton->x()+mainButton->w()+4, y(), 20, 20);
-	solo->resize(mute->x()+mute->w()+4, y(), 20, 20);
-
-	geChannel::init_sizes();
+	if (w() < BREAK_FX) {
+#ifdef WITH_VST
+		fx->hide();
+#endif
+		arm->show();
+	}
+	else {
+#ifdef WITH_VST
+		fx->show();
+#endif
+	}
+	packWidgets();
 }
 
 
@@ -318,44 +321,6 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 int geMidiChannel::keyPress(int e)
 {
 	return handleKey(e, ch->key);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::breakAtArm()
-{
-	arm->hide();
-	#ifdef WITH_VST
-		mainButton->resize(button->x()+button->w()+4, y(), w() - (BREAK_DELTA - BREAK_UNIT), 20);
-	#else
-		mainButton->resize(button->x()+button->w()+4, y(), w() - BREAK_DELTA, 20);
-	#endif
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::breakAtFx(int delta)
-{
-#ifdef WITH_VST
-	fx->hide();
-#endif
-	arm->show();
-	arm->size(20, 20);
-	mainButton->resize(arm->x()+arm->w()+4, y(), w() - delta, 20);
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::breakAtNone()
-{
-	breakAtFx(BREAK_DELTA + BREAK_UNIT);
-#ifdef WITH_VST
-	fx->show();
-#endif
 }
 
 

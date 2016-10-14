@@ -112,6 +112,39 @@ void geChannel::setColorsByStatus(int playStatus, int recStatus)
 /* -------------------------------------------------------------------------- */
 
 
+void geChannel::packWidgets()
+{
+  /* Count visible widgets and resize mainButton according to how many widgets
+  are visible. */
+
+  int visibles = 0;
+  for (int i=0; i<children(); i++) {
+    child(i)->size(20, 20);  // also normalize widths
+    if (child(i)->visible())
+      visibles++;
+  }
+  mainButton->size(w() - ((visibles - 1) * (24)), 20);  // -1: exclude itself
+
+  /* Reposition everything else */
+
+  for (int i=1, p=0; i<children(); i++) {
+    if (!child(i)->visible())
+      continue;
+    for (int k=i-1; k>=0; k--) // Get the first visible item prior to i
+      if (child(k)->visible()) {
+        p = k;
+        break;
+      }
+    child(i)->position(child(p)->x() + child(p)->w() + 4, y());
+  }
+
+  init_sizes(); // Resets the internal array of widget sizes and positions
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int geChannel::handleKey(int e, int key)
 {
 	int ret;
