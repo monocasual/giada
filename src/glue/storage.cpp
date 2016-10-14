@@ -52,6 +52,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 extern gdMainWindow *G_MainWin;

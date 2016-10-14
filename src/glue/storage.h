@@ -32,19 +32,12 @@
 #define GLUE_STORAGE_H
 
 
-#include <vector>
-#include "../core/patch.h"
-
-
-using std::string;
-using std::vector;
-
-
 void glue_loadPatch  (void *data);
 int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class gProgress *status, bool isProject);
 void glue_savePatch  (void *data);
 void glue_saveProject(void *data);
 void glue_saveSample (void *data);
 void glue_loadSample (void *data);
+
 
 #endif

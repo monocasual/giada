@@ -40,6 +40,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/init.h"
 #include "../../core/patch_DEPR_.h"
+#include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
 #include "../../glue/glue.h"
