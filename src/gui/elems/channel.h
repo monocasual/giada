@@ -41,19 +41,15 @@ protected:
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
 	pixels to shrink sampleButton. */
 
-	static const int BREAK_UNIT         = 24;
 #ifdef WITH_VST
 	static const int BREAK_READ_ACTIONS = 240;
 	static const int BREAK_MODE_BOX     = 216;
 	static const int BREAK_FX           = 192;
 	static const int BREAK_ARM          = 168;
-	static const int BREAK_DELTA        = BREAK_UNIT * 5;
 #else
 	static const int BREAK_READ_ACTIONS = 216;
 	static const int BREAK_MODE_BOX     = 192;
-	static const int BREAK_FX           = -1; 
 	static const int BREAK_ARM          = 168;
-	static const int BREAK_DELTA        = BREAK_UNIT * 4;
 #endif
 
 	/* blink

@@ -297,20 +297,18 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 {
   geChannel::resize(X, Y, W, H);
 
-	if (w() < BREAK_ARM)
-		arm->hide();
-	else
-	if (w() < BREAK_FX) {
+	arm->hide();
 #ifdef WITH_VST
-		fx->hide();
+	fx->hide();
 #endif
+
+	if (w() > BREAK_ARM)
 		arm->show();
-	}
-	else {
 #ifdef WITH_VST
+	if (w() > BREAK_FX)
 		fx->show();
 #endif
-	}
+
 	packWidgets();
 }
 

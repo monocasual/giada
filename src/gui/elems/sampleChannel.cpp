@@ -509,38 +509,20 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 	arm->hide();
 	modeBox->hide();
 	readActions->hide();
+#ifdef WITH_VST
 	fx->hide();
+#endif
 
 	if (w() > BREAK_ARM)
 		arm->show();
-		
-/*
-	if (w() < BREAK_ARM)
-		arm->hide();
-	else
-	if (w() < BREAK_FX) {
 #ifdef WITH_VST
-		fx->hide();
-#endif
-		arm->show();
-	}
-	else
-	if (w() < BREAK_MODE_BOX) {
-		modeBox->hide();
-#ifdef WITH_VST
+	if (w() > BREAK_FX)
 		fx->show();
 #endif
-	}
-	else
-	if (w() < BREAK_READ_ACTIONS) {
-		readActions->hide();
+	if (w() > BREAK_MODE_BOX)
 		modeBox->show();
-	}
-	else {
-		if (ch->hasActions)
-			readActions->show();
-	}
-*/
+	if (w() > BREAK_READ_ACTIONS && ch->hasActions)
+		readActions->show();
 
 	packWidgets();
 }
