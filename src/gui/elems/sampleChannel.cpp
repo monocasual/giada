@@ -506,6 +506,15 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 {
   geChannel::resize(X, Y, W, H);
 
+	arm->hide();
+	modeBox->hide();
+	readActions->hide();
+	fx->hide();
+
+	if (w() > BREAK_ARM)
+		arm->show();
+		
+/*
 	if (w() < BREAK_ARM)
 		arm->hide();
 	else
@@ -531,6 +540,7 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 		if (ch->hasActions)
 			readActions->show();
 	}
+*/
 
 	packWidgets();
 }
