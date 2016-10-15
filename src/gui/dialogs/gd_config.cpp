@@ -47,6 +47,7 @@
 
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf	       G_Conf;
+extern KernelMidi  G_KernelMidi;
 extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
@@ -623,7 +624,7 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 
 void gTabMidi::fetchOutPorts() {
 
-	if (kernelMidi::numOutPorts == 0) {
+	if (G_KernelMidi.numOutPorts == 0) {
 		portOut->add("-- no ports found --");
 		portOut->value(0);
 		portOut->deactivate();
@@ -632,8 +633,8 @@ void gTabMidi::fetchOutPorts() {
 
 		portOut->add("(disabled)");
 
-		for (unsigned i=0; i<kernelMidi::numOutPorts; i++)
-			portOut->add(gu_removeFltkChars(kernelMidi::getOutPortName(i)).c_str());
+		for (unsigned i=0; i<G_KernelMidi.numOutPorts; i++)
+			portOut->add(gu_removeFltkChars(G_KernelMidi.getOutPortName(i)).c_str());
 
 		portOut->value(G_Conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
 	}
@@ -644,7 +645,7 @@ void gTabMidi::fetchOutPorts() {
 
 void gTabMidi::fetchInPorts()
 {
-	if (kernelMidi::numInPorts == 0) {
+	if (G_KernelMidi.numInPorts == 0) {
 		portIn->add("-- no ports found --");
 		portIn->value(0);
 		portIn->deactivate();
@@ -653,8 +654,8 @@ void gTabMidi::fetchInPorts()
 
 		portIn->add("(disabled)");
 
-		for (unsigned i=0; i<kernelMidi::numInPorts; i++)
-			portIn->add(gu_removeFltkChars(kernelMidi::getInPortName(i)).c_str());
+		for (unsigned i=0; i<G_KernelMidi.numInPorts; i++)
+			portIn->add(gu_removeFltkChars(G_KernelMidi.getInPortName(i)).c_str());
 
 		portIn->value(G_Conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
 	}
@@ -725,14 +726,14 @@ void gTabMidi::fetchSystems()
 {
 #if defined(__linux__)
 
-	if (kernelMidi::hasAPI(RtMidi::LINUX_ALSA))
+	if (G_KernelMidi.hasAPI(RtMidi::LINUX_ALSA))
 		system->add("ALSA");
-	if (kernelMidi::hasAPI(RtMidi::UNIX_JACK))
+	if (G_KernelMidi.hasAPI(RtMidi::UNIX_JACK))
 		system->add("Jack");
 
 #elif defined(_WIN32)
 
-	if (kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
+	if (G_KernelMidi.hasAPI(RtMidi::WINDOWS_MM))
 		system->add("Multimedia MIDI");
 
 #elif defined (__APPLE__)

@@ -46,6 +46,7 @@
 
 extern Mixer 			 G_Mixer;
 extern Recorder    G_Recorder;
+extern KernelMidi  G_KernelMidi;
 extern MidiMapConf G_MidiMap;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
@@ -248,7 +249,7 @@ void Mixer::sendMIDIsync()
 {
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
 		if (actualFrame % (framesPerBeat/24) == 0)
-			kernelMidi::send(MIDI_CLOCK, -1, -1);
+			G_KernelMidi.send(MIDI_CLOCK, -1, -1);
 	}
 	else
 	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
@@ -266,10 +267,10 @@ void Mixer::sendMIDIsync()
 			 * seconds high nibble */
 
 			if (midiTCframes % 2 == 0) {
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
 			}
 
 			/* minutes low nibble
@@ -278,10 +279,10 @@ void Mixer::sendMIDIsync()
 			 * hours high nibble SMPTE frame rate */
 
 			else {
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
-				kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
+				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
 			}
 
 			midiTCframes++;
@@ -323,10 +324,10 @@ void Mixer::sendMIDIrewind()
 	 * SMPTE time in one message */
 
 	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
-		kernelMidi::send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
-		kernelMidi::send(0x01, 0x01, 0x00);        // hours 0
-		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0
-		kernelMidi::send(MIDI_EOX, -1, -1);        // end of sysex
+		G_KernelMidi.send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
+		G_KernelMidi.send(0x01, 0x01, 0x00);        // hours 0
+		G_KernelMidi.send(0x00, 0x00, 0x00);        // mins, secs, frames 0
+		G_KernelMidi.send(MIDI_EOX, -1, -1);        // end of sysex
 	}
 }
 

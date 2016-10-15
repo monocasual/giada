@@ -44,7 +44,8 @@
 #include "midiMapConf.h"
 
 
-extern Recorder G_Recorder;
+extern Recorder   G_Recorder;
+extern KernelMidi G_KernelMidi;
 
 
 Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
@@ -167,7 +168,7 @@ void Channel::sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg
 	 * send it. */
 
 	out |= msg.value | (msg.channel << 24);
-	kernelMidi::send(out);
+	G_KernelMidi.send(out);
 }
 
 

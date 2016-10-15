@@ -38,6 +38,7 @@
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
 #include "core/kernelAudio.h"
+#include "core/kernelMidi.h"
 #include "core/recorder.h"
 #include "utils/gui.h"
 #include "gui/dialogs/gd_mainWindow.h"
@@ -49,6 +50,7 @@
 pthread_t     G_videoThread;
 Mixer         G_Mixer;
 Recorder      G_Recorder;
+KernelMidi    G_KernelMidi;
 bool          G_quit;
 bool	        G_audio_status;
 bool          G_midiStatus;

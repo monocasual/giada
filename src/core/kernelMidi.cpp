@@ -42,25 +42,39 @@
 extern bool        G_midiStatus;
 extern Conf        G_Conf;
 extern Mixer       G_Mixer;
+extern KernelMidi  G_KernelMidi;
 extern MidiMapConf G_MidiMap;
 
 
 using std::string;
+using std::vector;
 
 
-namespace kernelMidi
+KernelMidi::KernelMidi()
+	:	api        (0),      // one api for both in & out
+		numOutPorts(0),
+		numInPorts (0),
+		midiOut    (nullptr),
+		midiIn     (nullptr),
+		cb_learn   (nullptr),
+		cb_data    (nullptr)
 {
-int        api         = 0;      // one api for both in & out
-RtMidiOut *midiOut     = NULL;
-RtMidiIn  *midiIn      = NULL;
-unsigned   numOutPorts = 0;
-unsigned   numInPorts  = 0;
-
-cb_midiLearn *cb_learn = NULL;
-void         *cb_data  = NULL;
+}
 
 
-void __sendMidiLightningInitMsgs__()
+/* -------------------------------------------------------------------------- */
+
+
+void KernelMidi::callback(double t, vector<unsigned char> *msg, void *data)
+{
+	G_KernelMidi.__callback(t, msg, data);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelMidi::sendMidiLightningInitMsgs()
 {
 	for(unsigned i=0; i<G_MidiMap.initCommands.size(); i++) {
 		MidiMapConf::message_t msg = G_MidiMap.initCommands.at(i);
@@ -75,7 +89,7 @@ void __sendMidiLightningInitMsgs__()
 /* -------------------------------------------------------------------------- */
 
 
-void startMidiLearn(cb_midiLearn *cb, void *data)
+void KernelMidi::startMidiLearn(cb_midiLearn *cb, void *data)
 {
 	cb_learn = cb;
 	cb_data  = data;
@@ -85,17 +99,17 @@ void startMidiLearn(cb_midiLearn *cb, void *data)
 /* -------------------------------------------------------------------------- */
 
 
-void stopMidiLearn()
+void KernelMidi::stopMidiLearn()
 {
-	cb_learn = NULL;
-	cb_data  = NULL;
+	cb_learn = nullptr;
+	cb_data  = nullptr;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setApi(int _api)
+void KernelMidi::setApi(int _api)
 {
 	api = _api;
 	gu_log("[KM] using system 0x%x\n", api);
@@ -105,7 +119,7 @@ void setApi(int _api)
 /* -------------------------------------------------------------------------- */
 
 
-int openOutDevice(int port)
+int KernelMidi::openOutDevice(int port)
 {
 	try {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
@@ -134,7 +148,7 @@ int openOutDevice(int port)
 			/* TODO - it shold send midiLightning message only if there is a map loaded
 			and available in G_MidiMap. */
 
-			__sendMidiLightningInitMsgs__();
+			sendMidiLightningInitMsgs();
 			return 1;
 		}
 		catch (RtMidiError &error) {
@@ -151,7 +165,7 @@ int openOutDevice(int port)
 /* -------------------------------------------------------------------------- */
 
 
-int openInDevice(int port)
+int KernelMidi::openInDevice(int port)
 {
 	try {
 		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
@@ -194,9 +208,9 @@ int openInDevice(int port)
 /* -------------------------------------------------------------------------- */
 
 
-bool hasAPI(int API)
+bool KernelMidi::hasAPI(int API)
 {
-	std::vector<RtMidi::Api> APIs;
+	vector<RtMidi::Api> APIs;
 	RtMidi::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
 		if (APIs.at(i) == API)
@@ -208,13 +222,13 @@ bool hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-string getOutPortName(unsigned p)
+string KernelMidi::getOutPortName(unsigned p)
 {
 	try { return midiOut->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
 }
 
-string getInPortName(unsigned p)
+string KernelMidi::getInPortName(unsigned p)
 {
 	try { return midiIn->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
@@ -224,12 +238,12 @@ string getInPortName(unsigned p)
 /* -------------------------------------------------------------------------- */
 
 
-void send(uint32_t data)
+void KernelMidi::send(uint32_t data)
 {
 	if (!G_midiStatus)
 		return;
 
-  std::vector<unsigned char> msg(1, getB1(data));
+  vector<unsigned char> msg(1, getB1(data));
   msg.push_back(getB2(data));
   msg.push_back(getB3(data));
 
@@ -241,12 +255,12 @@ void send(uint32_t data)
 /* -------------------------------------------------------------------------- */
 
 
-void send(int b1, int b2, int b3)
+void KernelMidi::send(int b1, int b2, int b3)
 {
 	if (!G_midiStatus)
 		return;
 
-	std::vector<unsigned char> msg(1, b1);
+	vector<unsigned char> msg(1, b1);
 
 	if (b2 != -1)
 		msg.push_back(b2);
@@ -261,7 +275,7 @@ void send(int b1, int b2, int b3)
 /* -------------------------------------------------------------------------- */
 
 
-void callback(double t, std::vector<unsigned char> *msg, void *data)
+void KernelMidi::__callback(double t, vector<unsigned char> *msg, void *data)
 {
 	/* 0.8.0 - for now we handle other midi signals (common and real-time
 	 * messages) as unknown, for debugging purposes */
@@ -373,7 +387,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
 				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
 				gu_log(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
-				glue_setPitch(NULL, (SampleChannel*)ch, vf, false);
+				glue_setPitch(nullptr, (SampleChannel*)ch, vf, false);
 			}
 			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
 				gu_log(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
@@ -388,13 +402,7 @@ void callback(double t, std::vector<unsigned char> *msg, void *data)
 /* -------------------------------------------------------------------------- */
 
 
-std::string getRtMidiVersion()
+string KernelMidi::getRtMidiVersion()
 {
 	return midiOut->getVersion();
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-}  // namespace

@@ -37,7 +37,8 @@
 #include "gd_midiInput.h"
 
 
-extern Conf G_Conf;
+extern Conf       G_Conf;
+extern KernelMidi G_KernelMidi;
 
 
 gdMidiInput::gdMidiInput(int w, int h, const char *title)
@@ -49,16 +50,18 @@ gdMidiInput::gdMidiInput(int w, int h, const char *title)
 /* -------------------------------------------------------------------------- */
 
 
-gdMidiInput::~gdMidiInput() {
-	kernelMidi::stopMidiLearn();
+gdMidiInput::~gdMidiInput()
+{
+	G_KernelMidi.stopMidiLearn();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::stopMidiLearn(gLearner *learner) {
-	kernelMidi::stopMidiLearn();
+void gdMidiInput::stopMidiLearn(gLearner *learner)
+{
+	G_KernelMidi.stopMidiLearn();
 	learner->updateValue();
 }
 
@@ -66,7 +69,8 @@ void gdMidiInput::stopMidiLearn(gLearner *learner) {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
+void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l)
+{
 	*param = msg;
 	stopMidiLearn(l);
 	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
@@ -76,7 +80,8 @@ void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::cb_learn(uint32_t msg, void *d) {
+void gdMidiInput::cb_learn(uint32_t msg, void *d)
+{
 	cbData *data = (cbData*) d;
 	gdMidiInput   *window  = (gdMidiInput*) data->window;
 	gLearner      *learner = data->learner;
@@ -95,7 +100,8 @@ void gdMidiInput::cb_close(Fl_Widget *w, void *p)  { ((gdMidiInput*)p)->__cb_clo
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::__cb_close() {
+void gdMidiInput::__cb_close()
+{
 	do_callback();
 }
 
@@ -151,7 +157,8 @@ void gdMidiInputChannel::cb_enable(Fl_Widget *w, void *p)  { ((gdMidiInputChanne
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputChannel::__cb_enable() {
+void gdMidiInputChannel::__cb_enable()
+{
 	ch->midiIn = enable->value();
 }
 

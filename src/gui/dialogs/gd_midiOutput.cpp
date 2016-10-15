@@ -40,11 +40,11 @@
 #include "gd_midiOutput.h"
 
 
-extern Conf	G_Conf;
+extern Conf	      G_Conf;
+extern KernelMidi G_KernelMidi;
 
 
 gdMidiOutput::gdMidiOutput(int w, int h)
-	//: gWindow(300, 64, "Midi Output Setup")
 	: gWindow(w, h, "Midi Output Setup")
 {
 }
@@ -53,8 +53,9 @@ gdMidiOutput::gdMidiOutput(int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::stopMidiLearn(gLearner *learner) {
-	kernelMidi::stopMidiLearn();
+void gdMidiOutput::stopMidiLearn(gLearner *learner)
+{
+	G_KernelMidi.stopMidiLearn();
 	learner->updateValue();
 }
 
@@ -62,7 +63,8 @@ void gdMidiOutput::stopMidiLearn(gLearner *learner) {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
+void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l)
+{
 	*param = msg;
 	stopMidiLearn(l);
 	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
@@ -72,7 +74,8 @@ void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l) {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::cb_learn(uint32_t msg, void *d) {
+void gdMidiOutput::cb_learn(uint32_t msg, void *d)
+{
 	cbData *data = (cbData*) d;
 	gdMidiOutput  *window  = (gdMidiOutput*) data->window;
 	gLearner      *learner = data->learner;
@@ -91,7 +94,8 @@ void gdMidiOutput::cb_close(Fl_Widget *w, void *p)  { ((gdMidiOutput*)p)->__cb_c
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_close() {
+void gdMidiOutput::__cb_close()
+{
 	do_callback();
 }
 
@@ -99,7 +103,8 @@ void gdMidiOutput::__cb_close() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::cb_enableLightning(Fl_Widget *w, void *p)  {
+void gdMidiOutput::cb_enableLightning(Fl_Widget *w, void *p)
+{
 	((gdMidiOutput*)p)->__cb_enableLightning();
 }
 
@@ -191,7 +196,8 @@ void gdMidiOutputMidiCh::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutp
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::__cb_enableChanList() {
+void gdMidiOutputMidiCh::__cb_enableChanList()
+{
 	enableOut->value() ? chanListOut->activate() : chanListOut->deactivate();
 }
 
@@ -199,7 +205,8 @@ void gdMidiOutputMidiCh::__cb_enableChanList() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::__cb_close() {
+void gdMidiOutputMidiCh::__cb_close()
+{
 	ch->midiOut     = enableOut->value();
 	ch->midiOutChan = chanListOut->value();
 	ch->midiOutL    = enableLightning->value();
@@ -244,7 +251,8 @@ void gdMidiOutputSampleCh::cb_close(Fl_Widget *w, void *p) { ((gdMidiOutputSampl
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputSampleCh::__cb_close() {
+void gdMidiOutputSampleCh::__cb_close()
+{
 	ch->midiOutL = enableLightning->value();
 	do_callback();
 }

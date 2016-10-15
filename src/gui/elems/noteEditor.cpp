@@ -41,6 +41,7 @@
 extern gdMainWindow *mainWin;
 extern Mixer         G_Mixer;
 extern Recorder			 G_Recorder;
+extern KernelMidi    G_KernelMidi;
 extern Conf	         G_Conf;
 
 
@@ -150,9 +151,9 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 				/* extract MIDI infos from a1: if is note off skip it, we are looking
 				 * for note on only */
 
-				int a1_type = kernelMidi::getB1(a1->iValue);
-				int a1_note = kernelMidi::getB2(a1->iValue);
-				int a1_velo = kernelMidi::getB3(a1->iValue);
+				int a1_type = G_KernelMidi.getB1(a1->iValue);
+				int a1_note = G_KernelMidi.getB2(a1->iValue);
+				int a1_velo = G_KernelMidi.getB3(a1->iValue);
 
 				if (a1_type == 0x80) {
 					//gu_log("[geNoteEditor] ACTION_MIDI found, but skipping - was note off\n");
@@ -168,14 +169,14 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 						ACTION_MIDI,
 						a1->frame,
 						&a2,
-						kernelMidi::getIValue(0x80, a1_note, a1_velo));
+						G_KernelMidi.getIValue(0x80, a1_note, a1_velo));
 
 				/* next action note off found: add a new gePianoItem to piano roll */
 
 				if (a2) {
 					//gu_log("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
-					//	a1->frame, a2->frame, kernelMidi::getNoteValue(a1->iValue), kernelMidi::getNoteValue(a2->iValue),
-					//	kernelMidi::getNoteOnOff(a1->iValue), kernelMidi::getNoteOnOff(a2->iValue));
+					//	a1->frame, a2->frame, G_KernelMidi.getNoteValue(a1->iValue), G_KernelMidi.getNoteValue(a2->iValue),
+					//	G_KernelMidi.getNoteOnOff(a1->iValue), G_KernelMidi.getNoteOnOff(a2->iValue));
 					new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
 					prev = a2;
 					a2 = NULL;
@@ -479,7 +480,7 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_
 	/* a is a pointer: action exists, needs to be displayed */
 
 	if (a) {
-		note    = kernelMidi::getB2(a->iValue);
+		note    = G_KernelMidi.getB2(a->iValue);
 		frame_a = a->frame;
 		frame_b = b->frame;
 		event_a = a->iValue;

@@ -27,11 +27,15 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "ge_midiIoTools.h"
 #include "ge_mixed.h"
+#include "ge_midiIoTools.h"
 
 
-gLearner::gLearner(int X, int Y, int W, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *param)
+extern KernelMidi  G_KernelMidi;
+
+
+gLearner::gLearner(int X, int Y, int W, const char *l, KernelMidi::cb_midiLearn *cb,
+		uint32_t *param)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
 		param   (param)
@@ -98,8 +102,8 @@ void gLearner::__cb_button() {
 		cbData *data  = (cbData*) malloc(sizeof(cbData));
 		data->window  = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel
 		data->learner = this;
-		kernelMidi::startMidiLearn(callback, (void*)data);
+		G_KernelMidi.startMidiLearn(callback, (void*)data);
 	}
 	else
-		kernelMidi::stopMidiLearn();
+		G_KernelMidi.stopMidiLearn();
 }

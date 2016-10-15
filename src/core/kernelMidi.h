@@ -36,11 +36,17 @@
 #include <vector>
 
 
-namespace kernelMidi
+class KernelMidi
 {
-	extern int      api;      // one api for both in & out
-	extern unsigned numOutPorts;
-	extern unsigned numInPorts;
+public:
+
+	KernelMidi();
+
+	int      api;
+	unsigned numOutPorts;
+	unsigned numInPorts;
+	class RtMidiOut *midiOut;
+	class RtMidiIn  *midiIn;
 
 	typedef void (cb_midiLearn) (uint32_t, void *);
 
@@ -49,17 +55,17 @@ namespace kernelMidi
 	 * kernelMidi. It contains things to do once the midi message has been
 	 * stored. */
 
-	extern cb_midiLearn *cb_learn;
-	extern void         *cb_data;
+	cb_midiLearn *cb_learn;
+	void         *cb_data;
 
 	void startMidiLearn(cb_midiLearn *cb, void *data);
 	void stopMidiLearn();
 
-	inline int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
-	inline int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
-	inline int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
+	int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
+	int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
+	int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
-	inline uint32_t getIValue(int b1, int b2, int b3) {
+	uint32_t getIValue(int b1, int b2, int b3) {
 		return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 	}
 
@@ -96,9 +102,14 @@ namespace kernelMidi
 	/* callback
 	 * master callback for input events. */
 
-	void callback(double t, std::vector<unsigned char> *msg, void *data);
+	static void callback(double t, std::vector<unsigned char> *msg, void *data);
+	void __callback(double t, std::vector<unsigned char> *msg, void *data);
 
 	std::string getRtMidiVersion();
-}
+
+private:
+
+	void sendMidiLightningInitMsgs();
+};
 
 #endif

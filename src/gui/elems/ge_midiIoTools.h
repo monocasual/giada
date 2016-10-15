@@ -31,10 +31,12 @@
 #define GE_LEARNER_H
 
 
-#include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 #include "../../core/kernelMidi.h"
 #include "../dialogs/gd_midiInput.h"
+
+
+extern KernelMidi G_KernelMidi;
 
 
 class gLearner : public Fl_Group
@@ -46,7 +48,7 @@ private:
 	 * uint32_t msg - MIDI message
 	 * void   *data - extra data */
 
-	kernelMidi::cb_midiLearn *callback;
+	KernelMidi::cb_midiLearn *callback;
 
 	class gBox    *text;
 	class gClick  *value;
@@ -64,7 +66,7 @@ public:
 
 	uint32_t *param;
 
-	gLearner(int x, int y, int w, const char *l, kernelMidi::cb_midiLearn *cb, uint32_t *param);
+	gLearner(int x, int y, int w, const char *l, KernelMidi::cb_midiLearn *cb, uint32_t *param);
 
 	void updateValue();
 };

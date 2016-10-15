@@ -62,6 +62,7 @@
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
+extern KernelMidi    G_KernelMidi;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
@@ -174,8 +175,8 @@ void glue_startSeq(bool gui)
 	}
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
-		kernelMidi::send(MIDI_START, -1, -1);
-		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+		G_KernelMidi.send(MIDI_START, -1, -1);
+		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
 	}
 
 	if (gui) Fl::lock();
@@ -192,7 +193,7 @@ void glue_stopSeq(bool gui)
 	mh_stopSequencer();
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
-		kernelMidi::send(MIDI_STOP, -1, -1);
+		G_KernelMidi.send(MIDI_STOP, -1, -1);
 
 #ifdef __linux__
 	if (gui)
@@ -232,7 +233,7 @@ void glue_rewindSeq()
 {
 	mh_rewindSequencer();
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
-		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
 }
 
 
