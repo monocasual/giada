@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * KernelMidi
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,23 +24,20 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef KERNELMIDI_H
 #define KERNELMIDI_H
 
 
-#include <stdint.h>
-#include <RtMidi.h>
-#include "channel.h"
+#include <cstdint>
+#include <string>
+#include <vector>
 
 
-using std::string;
-
-
-namespace kernelMidi {
-
+namespace kernelMidi
+{
 	extern int      api;      // one api for both in & out
 	extern unsigned numOutPorts;
 	extern unsigned numInPorts;
@@ -91,8 +88,8 @@ namespace kernelMidi {
 	/* getIn/OutPortName
 	 * return the name of the port 'p'. */
 
-	string getInPortName(unsigned p);
-	string getOutPortName(unsigned p);
+	std::string getInPortName(unsigned p);
+	std::string getOutPortName(unsigned p);
 
 	bool hasAPI(int API);
 
@@ -101,7 +98,7 @@ namespace kernelMidi {
 
 	void callback(double t, std::vector<unsigned char> *msg, void *data);
 
-	string getRtMidiVersion();
+	std::string getRtMidiVersion();
 }
 
 #endif

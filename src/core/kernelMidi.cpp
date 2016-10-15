@@ -27,16 +27,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <stdio.h>
+#include <RtMidi.h>
 #include "../utils/log.h"
 #include "../glue/glue.h"
 #include "../glue/io.h"
-#include "kernelMidi.h"
 #include "mixer.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "conf.h"
 #include "midiMapConf.h"
+#include "kernelMidi.h"
 
 
 extern bool        G_midiStatus;
