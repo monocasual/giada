@@ -40,23 +40,12 @@ class KernelMidi
 {
 public:
 
-	KernelMidi();
-
-	int      api;
 	unsigned numOutPorts;
 	unsigned numInPorts;
-	class RtMidiOut *midiOut;
-	class RtMidiIn  *midiIn;
+
+	KernelMidi();
 
 	typedef void (cb_midiLearn) (uint32_t, void *);
-
-	/* cb_learn
-	 * callback prepared by the gdMidiGrabber window and called by
-	 * kernelMidi. It contains things to do once the midi message has been
-	 * stored. */
-
-	cb_midiLearn *cb_learn;
-	void         *cb_data;
 
 	void startMidiLearn(cb_midiLearn *cb, void *data);
 	void stopMidiLearn();
@@ -99,17 +88,30 @@ public:
 
 	bool hasAPI(int API);
 
+	std::string getRtMidiVersion();
+
+private:
+
 	/* callback
 	 * master callback for input events. */
 
 	static void callback(double t, std::vector<unsigned char> *msg, void *data);
 	void __callback(double t, std::vector<unsigned char> *msg, void *data);
 
-	std::string getRtMidiVersion();
-
-private:
-
 	void sendMidiLightningInitMsgs();
+
+	int      api;
+	class RtMidiOut *midiOut;
+	class RtMidiIn  *midiIn;
+
+	/* cb_learn
+	 * callback prepared by the gdMidiGrabber window and called by
+	 * kernelMidi. It contains things to do once the midi message has been
+	 * stored. */
+
+	cb_midiLearn *cb_learn;
+	void         *cb_data;
+
 };
 
 #endif

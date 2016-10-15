@@ -51,9 +51,9 @@ using std::vector;
 
 
 KernelMidi::KernelMidi()
-	:	api        (0),      // one api for both in & out
-		numOutPorts(0),
+	:	numOutPorts(0),
 		numInPorts (0),
+		api        (0),      // one api for both in & out
 		midiOut    (nullptr),
 		midiIn     (nullptr),
 		cb_learn   (nullptr),
