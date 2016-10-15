@@ -301,100 +301,114 @@ void KernelMidi::__callback(double t, vector<unsigned char> *msg, void *data)
 	else
 		pure  = input & 0xFFFFFF00;   // input with 'value' byte
 
-	gu_log("[KM] MIDI received - 0x%X (chan %d)", input, chan >> 24);
+	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
 
 	/* start dispatcher. If midi learn is on don't parse channels, just
 	 * learn incoming midi signal. Otherwise process master events first,
 	 * then each channel in the stack. This way incoming signals don't
 	 * get processed by glue_* when midi learning is on. */
 
-	if (cb_learn)	{
-		gu_log("\n");
+	if (cb_learn)
 		cb_learn(pure, cb_data);
-	}
 	else {
+		processMaster(pure, value);
+		processChannels(pure, value);
+	}
+}
 
-		/* process master events */
 
-		if      (pure == G_Conf.midiInRewind) {
-			gu_log(" >>> rewind (global) (pure=0x%X)", pure);
-			glue_rewindSeq();
+/* -------------------------------------------------------------------------- */
+
+
+void KernelMidi::processMaster(uint32_t pure, uint32_t value)
+{
+	if      (pure == G_Conf.midiInRewind) {
+		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
+		glue_rewindSeq();
+	}
+	else if (pure == G_Conf.midiInStartStop) {
+		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
+		glue_startStopSeq();
+	}
+	else if (pure == G_Conf.midiInActionRec) {
+		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
+		glue_startStopActionRec();
+	}
+	else if (pure == G_Conf.midiInInputRec) {
+		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
+		glue_startStopInputRec(false, false);   // update gui, no popup messages
+	}
+	else if (pure == G_Conf.midiInMetronome) {
+		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
+		glue_startStopMetronome(false);
+	}
+	else if (pure == G_Conf.midiInVolumeIn) {
+		float vf = (value >> 8)/127.0f;
+		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
+			pure, value >> 8, vf);
+		glue_setInVol(vf, false);
+	}
+	else if (pure == G_Conf.midiInVolumeOut) {
+		float vf = (value >> 8)/127.0f;
+		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
+			pure, value >> 8, vf);
+		glue_setOutVol(vf, false);
+	}
+	else if (pure == G_Conf.midiInBeatDouble) {
+		gu_log("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
+		glue_beatsMultiply();
+	}
+	else if (pure == G_Conf.midiInBeatHalf) {
+		gu_log("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
+		glue_beatsDivide();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelMidi::processChannels(uint32_t pure, uint32_t value)
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+
+		Channel *ch = (Channel*) G_Mixer.channels.at(i);
+
+		if (!ch->midiIn)
+			continue;
+
+		if      (pure == ch->midiInKeyPress) {
+			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_keyPress(ch, false, false);
 		}
-		else if (pure == G_Conf.midiInStartStop) {
-			gu_log(" >>> startStop (global) (pure=0x%X)", pure);
-			glue_startStopSeq();
+		else if (pure == ch->midiInKeyRel) {
+			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_keyRelease(ch, false, false);
 		}
-		else if (pure == G_Conf.midiInActionRec) {
-			gu_log(" >>> actionRec (global) (pure=0x%X)", pure);
-			glue_startStopActionRec();
+		else if (pure == ch->midiInMute) {
+			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_setMute(ch, false);
 		}
-		else if (pure == G_Conf.midiInInputRec) {
-			gu_log(" >>> inputRec (global) (pure=0x%X)", pure);
-			glue_startStopInputRec(false, false);   // update gui, no popup messages
+		else if (pure == ch->midiInSolo) {
+			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
+			ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
 		}
-		else if (pure == G_Conf.midiInMetronome) {
-			gu_log(" >>> metronome (global) (pure=0x%X)", pure);
-			glue_startStopMetronome(false);
-		}
-		else if (pure == G_Conf.midiInVolumeIn) {
+		else if (pure == ch->midiInVolume) {
 			float vf = (value >> 8)/127.0f;
-			gu_log(" >>> input volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
-			glue_setInVol(vf, false);
+			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
+				ch->index, pure, value >> 8, vf);
+			glue_setChanVol(ch, vf, false);
 		}
-		else if (pure == G_Conf.midiInVolumeOut) {
-			float vf = (value >> 8)/127.0f;
-			gu_log(" >>> output volume (global) (pure=0x%X, value=%d, float=%f)", pure, value >> 8, vf);
-			glue_setOutVol(vf, false);
+		else if (pure == ((SampleChannel*)ch)->midiInPitch) {
+			float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
+			gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
+				ch->index, pure, value >> 8, vf);
+			glue_setPitch(nullptr, (SampleChannel*)ch, vf, false);
 		}
-		else if (pure == G_Conf.midiInBeatDouble) {
-			gu_log(" >>> sequencer x2 (global) (pure=0x%X)", pure);
-			glue_beatsMultiply();
+		else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
+			gu_log("  >>> start/stop read actions ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_startStopReadingRecs((SampleChannel*)ch, false);
 		}
-		else if (pure == G_Conf.midiInBeatHalf) {
-			gu_log(" >>> sequencer /2 (global) (pure=0x%X)", pure);
-			glue_beatsDivide();
-		}
-
-		/* process channels */
-
-		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-
-			Channel *ch = (Channel*) G_Mixer.channels.at(i);
-
-			if (!ch->midiIn) continue;
-
-			if      (pure == ch->midiInKeyPress) {
-				gu_log(" >>> keyPress, ch=%d (pure=0x%X)", ch->index, pure);
-				glue_keyPress(ch, false, false);
-			}
-			else if (pure == ch->midiInKeyRel) {
-				gu_log(" >>> keyRel ch=%d (pure=0x%X)", ch->index, pure);
-				glue_keyRelease(ch, false, false);
-			}
-			else if (pure == ch->midiInMute) {
-				gu_log(" >>> mute ch=%d (pure=0x%X)", ch->index, pure);
-				glue_setMute(ch, false);
-			}
-			else if (pure == ch->midiInSolo) {
-				gu_log(" >>> solo ch=%d (pure=0x%X)", ch->index, pure);
-				ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
-			}
-			else if (pure == ch->midiInVolume) {
-				float vf = (value >> 8)/127.0f;
-				gu_log(" >>> volume ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
-				glue_setChanVol(ch, vf, false);
-			}
-			else if (pure == ((SampleChannel*)ch)->midiInPitch) {
-				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
-				gu_log(" >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)", ch->index, pure, value >> 8, vf);
-				glue_setPitch(nullptr, (SampleChannel*)ch, vf, false);
-			}
-			else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
-				gu_log(" >>> start/stop read actions ch=%d (pure=0x%X)", ch->index, pure);
-				glue_startStopReadingRecs((SampleChannel*)ch, false);
-			}
-		}
-		gu_log("\n");
 	}
 }
 

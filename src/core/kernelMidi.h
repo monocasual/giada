@@ -92,14 +92,6 @@ public:
 
 private:
 
-	/* callback
-	 * master callback for input events. */
-
-	static void callback(double t, std::vector<unsigned char> *msg, void *data);
-	void __callback(double t, std::vector<unsigned char> *msg, void *data);
-
-	void sendMidiLightningInitMsgs();
-
 	int      api;
 	class RtMidiOut *midiOut;
 	class RtMidiIn  *midiIn;
@@ -112,6 +104,17 @@ private:
 	cb_midiLearn *cb_learn;
 	void         *cb_data;
 
+	/* callback
+	 * master callback for input events. */
+
+	static void callback(double t, std::vector<unsigned char> *msg, void *data);
+	void __callback(double t, std::vector<unsigned char> *msg, void *data);
+
+	void sendMidiLightningInitMsgs();
+
+
+	void processMaster(uint32_t pure, uint32_t value);
+	void processChannels(uint32_t pure, uint32_t value);
 };
 
 #endif
