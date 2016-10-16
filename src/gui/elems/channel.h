@@ -57,7 +57,7 @@ protected:
 	static void cb_solo          (Fl_Widget *v, void *p);
 	static void cb_changeVol     (Fl_Widget *v, void *p);
 #ifdef WITH_VST
-		static void cb_openFxWindow(Fl_Widget *v, void *p); // TODO - move to base class
+		static void cb_openFxWindow(Fl_Widget *v, void *p);
 #endif
 
 	inline void __cb_mute();
