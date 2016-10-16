@@ -33,7 +33,7 @@
 #include "../../core/patch_DEPR_.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../glue/io.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_browser.h"

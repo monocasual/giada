@@ -36,7 +36,7 @@
 #include <vector>
 #include "../utils/fs.h"
 #include "../utils/log.h"
-#include "../glue/glue.h"
+#include "../glue/main.h"
 #include "../glue/channel.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"

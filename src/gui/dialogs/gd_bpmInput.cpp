@@ -29,7 +29,7 @@
 
 #include "../../core/conf.h"
 #include "../../core/mixer.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
 #include "gd_bpmInput.h"

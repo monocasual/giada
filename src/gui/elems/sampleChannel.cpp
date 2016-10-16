@@ -34,7 +34,7 @@
 #include "../../core/recorder.h"
 #include "../../core/graphics.h"
 #include "../../core/wave.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../glue/io.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"

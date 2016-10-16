@@ -31,7 +31,7 @@
 #include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"

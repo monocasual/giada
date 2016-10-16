@@ -46,7 +46,7 @@
 #include "../core/wave.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
-#include "glue.h" // TODO - remove, used only for DEPR calls
+#include "main.h" // TODO - remove, used only for DEPR calls
 #include "channel.h"
 #include "storage.h"
 

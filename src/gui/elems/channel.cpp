@@ -35,7 +35,7 @@
 #include "../../core/pluginHost.h"
 #include "../../utils/gui.h"
 #include "../../glue/channel.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_pluginList.h"
 #include "ge_column.h"

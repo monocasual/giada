@@ -30,7 +30,7 @@
 #include <vector>
 #include <cstring>
 #include "../utils/log.h"
-#include "../glue/glue.h"
+#include "../glue/main.h"
 #include "kernelAudio.h"
 #include "mixer.h"
 

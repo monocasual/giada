@@ -30,7 +30,7 @@
 #include <RtMidi.h>
 #include "../utils/log.h"
 #include "../glue/channel.h"
-#include "../glue/glue.h"
+#include "../glue/main.h"
 #include "../glue/io.h"
 #include "mixer.h"
 #include "channel.h"

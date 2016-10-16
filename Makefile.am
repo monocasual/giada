@@ -47,8 +47,8 @@ src/core/dataStorageIni.h	             \
 src/core/dataStorageIni.cpp            \
 src/core/dataStorageJson.h	           \
 src/core/dataStorageJson.cpp           \
-src/glue/glue.h                        \
-src/glue/glue.cpp                      \
+src/glue/main.h                        \
+src/glue/main.cpp                      \
 src/glue/io.h                          \
 src/glue/io.cpp                        \
 src/glue/storage.h                     \

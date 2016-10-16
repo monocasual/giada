@@ -43,7 +43,7 @@
 #include "../../core/patch.h"
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../glue/storage.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_warnings.h"

@@ -56,7 +56,7 @@
 #include "../core/kernelMidi.h"
 #include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
-#include "glue.h"
+#include "main.h"
 
 
 extern gdMainWindow *G_MainWin;

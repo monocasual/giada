@@ -28,7 +28,7 @@
 #include "../../core/recorder.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
-#include "../../glue/glue.h"
+#include "../../glue/main.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
