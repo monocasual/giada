@@ -59,13 +59,8 @@ void glue_stopReadingRecs     (class SampleChannel *ch, bool gui=true);
 
 void glue_quantize(int val);
 
-/* TODO - move to glue/channel.h */
-void glue_setChanVol(class Channel *ch, float v, bool gui=true);
-
 void glue_setOutVol (float v, bool gui=true);
 void glue_setInVol  (float v, bool gui=true);
-
-void glue_setPanning(class gdEditor *win, class SampleChannel *ch, float val);
 
 void glue_clearAllSamples();
 void glue_clearAllRecs();
@@ -77,46 +72,6 @@ void glue_clearAllRecs();
 void glue_resetToInitState(bool resetGui=true, bool createColumns=true);
 
 void glue_startStopMetronome(bool gui=true);
-
-/* setBeginEndChannel
- * sets start/end points in the sample editor.
- * Recalc=false: don't recalc internal position
- * check=true: check the points' consistency */
-
-/* TODO - move to glue/channel.h */
-/** FIXME - nobody will call this via MIDI/keyb/mouse! */
-void glue_setBeginEndChannel(class gdEditor *win, class SampleChannel *ch, int b, int e,
-	bool recalc=false, bool check=true);
-
-/* TODO - move to glue/channel.h */
-/** FIXME - nobody will call this via MIDI/keyb/mouse! */
-void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
-
-/* TODO - move to glue/channel.h */
-void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
-
-/* setVolEditor
- * handles the volume inside the SAMPLE EDITOR (not the main gui). The
- * numeric flag tells if we want to handle the dial or the numeric input
- * field. */
-
- /** FIXME - nobody will call this via MIDI/keyb/mouse! */
-void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
-
-/* mute
- * set mute on or off. If gui == true the signal comes from an internal
- * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
-
- /* TODO - move to glue/channel.h */
-void glue_setMute(class Channel *ch, bool gui=true);
-
-/* solo on/off
- * set solo on and off. If gui == true the signal comes from an internal
- * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
-
-/* TODO - move to glue/channel.h */
-void glue_setSoloOn (class Channel *ch, bool gui=true);
-void glue_setSoloOff(class Channel *ch, bool gui=true);
 
 /* beatsDivide/Multiply
  * shrinks or enlarges the number of beats by 2. */

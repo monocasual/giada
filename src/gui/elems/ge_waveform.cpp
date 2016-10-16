@@ -37,7 +37,7 @@
 #include "../../core/waveFx.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../../glue/glue.h"
+#include "../../glue/channel.h"
 #include "../dialogs/gd_editor.h"
 #include "ge_waveTools.h"
 #include "ge_mixed.h"

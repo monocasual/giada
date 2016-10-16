@@ -48,6 +48,7 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "glue.h"
+#include "channel.h"
 #include "io.h"
 
 

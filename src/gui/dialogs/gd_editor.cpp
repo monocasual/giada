@@ -28,6 +28,7 @@
 
 
 #include "../../utils/gui.h"
+#include "../../glue/channel.h"
 #include "../../glue/glue.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"

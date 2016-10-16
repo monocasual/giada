@@ -29,13 +29,17 @@
 
 
 #include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/gd_editor.h"
 #include "../gui/elems/ge_keyboard.h"
+#include "../gui/elems/ge_waveTools.h"
+#include "../gui/elems/ge_waveform.h"
 #include "../gui/elems/channel.h"
 #include "../utils/gui.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
 #include "../core/pluginHost.h"
 #include "../core/conf.h"
+#include "../core/wave.h"
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
@@ -53,6 +57,9 @@ extern PluginHost G_PluginHost;
 
 
 using std::string;
+
+
+static bool __soloSession__ = false;
 
 
 int glue_loadChannel(SampleChannel *ch, const char *fname)
@@ -139,4 +146,328 @@ int glue_cloneChannel(Channel *src)
 
 	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setChanVol(Channel *ch, float v, bool gui)
+{
+	ch->volume = v;
+
+	/* also update wave editor if it's shown */
+
+	gdEditor *editor = (gdEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
+	if (editor) {
+		glue_setVolEditor(editor, (SampleChannel*) ch, v, false);
+		Fl::lock();
+		editor->volume->value(v);
+		Fl::unlock();
+	}
+
+	if (!gui) {
+		Fl::lock();
+		ch->guiChannel->vol->value(v);
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setPitch(gdEditor *win, SampleChannel *ch, float val, bool numeric)
+{
+	if (numeric) {
+		if (val <= 0.0f)
+			val = 0.1000f;
+		if (val > 4.0f)
+			val = 4.0000f;
+		if (win)
+			win->pitch->value(val);
+	}
+
+	ch->setPitch(val);
+
+	if (win) {
+		char buf[16];
+		sprintf(buf, "%.4f", val);
+		Fl::lock();
+		win->pitchNum->value(buf);
+		win->pitchNum->redraw();
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
+{
+	if (val < 1.0f) {
+		ch->panLeft = 1.0f;
+		ch->panRight= 0.0f + val;
+
+		char buf[8];
+		sprintf(buf, "%d L", (int) std::abs((ch->panRight * 100.0f) - 100));
+		win->panNum->value(buf);
+	}
+	else if (val == 1.0f) {
+		ch->panLeft = 1.0f;
+		ch->panRight= 1.0f;
+	  win->panNum->value("C");
+	}
+	else {
+		ch->panLeft = 2.0f - val;
+		ch->panRight= 1.0f;
+
+		char buf[8];
+		sprintf(buf, "%d R", (int) std::abs((ch->panLeft * 100.0f) - 100));
+		win->panNum->value(buf);
+	}
+	win->panNum->redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setMute(Channel *ch, bool gui)
+{
+	if (G_Recorder.active && G_Recorder.canRec(ch)) {
+		if (!ch->mute)
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
+		else
+		 G_Recorder.stopOverdub(G_Mixer.actualFrame);
+	}
+
+	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
+
+	if (!gui) {
+		Fl::lock();
+		ch->guiChannel->mute->value(ch->mute);
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setSoloOn(Channel *ch, bool gui)
+{
+	/* if there's no solo session, store mute configuration of all chans
+	 * and start the session */
+
+	if (!__soloSession__) {
+		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+			Channel *och = G_Mixer.channels.at(i);
+			och->mute_s  = och->mute;
+		}
+		__soloSession__ = true;
+	}
+
+	ch->solo = !ch->solo;
+	ch->sendMidiLsolo();
+
+	/* mute all other channels and unmute this (if muted) */
+
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		Channel *och = G_Mixer.channels.at(i);
+		if (!och->solo && !och->mute) {
+			och->setMute(false);
+			Fl::lock();
+			och->guiChannel->mute->value(true);
+			Fl::unlock();
+		}
+	}
+
+	if (ch->mute) {
+		ch->unsetMute(false);
+		Fl::lock();
+		ch->guiChannel->mute->value(false);
+		Fl::unlock();
+	}
+
+	if (!gui) {
+		Fl::lock();
+		ch->guiChannel->solo->value(1);
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setSoloOff(Channel *ch, bool gui)
+{
+	/* if this is uniqueSolo, stop solo session and restore mute status,
+	 * else mute this */
+
+	if (mh_uniqueSolo(ch)) {
+		__soloSession__ = false;
+		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+			Channel *och = G_Mixer.channels.at(i);
+			if (och->mute_s) {
+				och->setMute(false);
+				Fl::lock();
+				och->guiChannel->mute->value(true);
+				Fl::unlock();
+			}
+			else {
+				och->unsetMute(false);
+				Fl::lock();
+				och->guiChannel->mute->value(false);
+				Fl::unlock();
+			}
+			och->mute_s = false;
+		}
+	}
+	else {
+		ch->setMute(false);
+		Fl::lock();
+		ch->guiChannel->mute->value(true);
+		Fl::unlock();
+	}
+
+	ch->solo = !ch->solo;
+	ch->sendMidiLsolo();
+
+	if (!gui) {
+		Fl::lock();
+		ch->guiChannel->solo->value(0);
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e,
+	bool recalc, bool check)
+{
+	if (check) {
+		if (e > ch->wave->size)
+			e = ch->wave->size;
+		if (b < 0)
+			b = 0;
+		if (b > ch->wave->size)
+			b = ch->wave->size-2;
+		if (b >= ch->end)
+			b = ch->begin;
+		if (e <= ch->begin)
+			e = ch->end;
+	}
+
+	/* continue only if new values != old values */
+
+	if (b == ch->begin && e == ch->end)
+		return;
+
+	/* print mono values */
+
+	char tmp[16];
+	sprintf(tmp, "%d", b/2);
+	win->chanStart->value(tmp);
+
+	tmp[0] = '\0';
+	sprintf(tmp, "%d", e/2);
+	win->chanEnd->value(tmp);
+
+	ch->setBegin(b);
+	ch->setEnd(e);
+
+	/* Recalc is not needed when the user drags the bars directly over the
+	waveform */
+
+	if (recalc) {
+		win->waveTools->waveform->recalcPoints();
+		win->waveTools->waveform->redraw();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
+{
+	if (numeric) {
+		if (val > 20.0f)
+			val = 20.0f;
+		else if (val < 0.0f)
+			val = 0.0f;
+
+	  float linear = pow(10, (val / 20)); // linear = 10^(dB/20)
+
+		ch->boost = linear;
+
+		char buf[10];
+		sprintf(buf, "%.2f", val);
+		win->boostNum->value(buf);
+		win->boostNum->redraw();
+
+		win->boost->value(linear);
+		win->boost->redraw();       /// inutile
+	}
+	else {
+		ch->boost = val;
+		char buf[10];
+		sprintf(buf, "%.2f", 20*log10(val));
+		win->boostNum->value(buf);
+		win->boostNum->redraw();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val,
+	bool numeric)
+{
+	if (numeric) {
+		if (val > 0.0f)
+			val = 0.0f;
+		else if (val < -60.0f)
+			val = -INFINITY;
+
+	  float linear = pow(10, (val / 20)); // linear = 10^(dB/20)
+
+		ch->volume = linear;
+
+		win->volume->value(linear);
+		win->volume->redraw();
+
+		char buf[10];
+		if (val > -INFINITY)
+			sprintf(buf, "%.2f", val);
+		else
+			sprintf(buf, "-inf");
+		win->volumeNum->value(buf);
+		win->volumeNum->redraw();
+
+		ch->guiChannel->vol->value(linear);
+		ch->guiChannel->vol->redraw();
+	}
+	else {
+		ch->volume = val;
+
+		float dbVal = 20 * log10(val);
+		char buf[10];
+		if (dbVal > -INFINITY)
+			sprintf(buf, "%.2f", dbVal);
+		else
+			sprintf(buf, "-inf");
+
+		win->volumeNum->value(buf);
+		win->volumeNum->redraw();
+
+		ch->guiChannel->vol->value(val);
+		ch->guiChannel->vol->redraw();
+	}
 }

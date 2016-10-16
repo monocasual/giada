@@ -57,10 +57,38 @@ void glue_freeChannel(class Channel *ch);
 
 int glue_cloneChannel(class Channel *ch);
 
-/* toggleArm
- * Toggle arm status. If gui == true the signal comes from a manual interaction
- * on the GUI, otherwise it's a MIDI/Jack/external signal. */
+/* toggle/set*
+ * Toggle or set several channel properties. If gui == true the signal comes
+ * from a manual interaction on the GUI, otherwise it's a MIDI/Jack/external
+ * signal. */
 
 void glue_toggleArm(class Channel *ch, bool gui=true);
+void glue_setChanVol(class Channel *ch, float v, bool gui=true);
+void glue_setMute(class Channel *ch, bool gui=true);
+void glue_setSoloOn (class Channel *ch, bool gui=true);
+void glue_setSoloOff(class Channel *ch, bool gui=true);
+
+void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val,
+  bool numeric);
+
+void glue_setPanning(class gdEditor *win, class SampleChannel *ch, float val);
+
+/* setBeginEndChannel
+ * sets start/end points in the sample editor. Recalc=false: don't recalc
+ * internal position. check=true: check the points' consistency */
+
+void glue_setBeginEndChannel(class gdEditor *win, class SampleChannel *ch,
+  int b, int e, bool recalc=false, bool check=true);
+
+void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val,
+  bool numeric);
+
+/* setVolEditor
+ * handles the volume inside the SAMPLE EDITOR (not the main gui). The
+ * numeric flag tells if we want to handle the dial or the numeric input
+ * field. */
+
+void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val,
+  bool numeric);
 
 #endif
