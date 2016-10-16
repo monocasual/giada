@@ -29,11 +29,15 @@
 
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
+#include "../../core/channel.h"
 #include "../../core/patch_DEPR_.h"
 #include "../../core/graphics.h"
+#include "../../core/pluginHost.h"
 #include "../../utils/gui.h"
 #include "../../glue/channel.h"
+#include "../../glue/glue.h"
 #include "../dialogs/gd_mainWindow.h"
+#include "../dialogs/gd_pluginList.h"
 #include "ge_column.h"
 #include "channelButton.h"
 #include "channel.h"
@@ -42,11 +46,12 @@
 extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern gdMainWindow *mainWin;
+extern gdMainWindow *G_MainWin;
 
 
-geChannel::geChannel(int X, int Y, int W, int H, int type)
+geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
  : Fl_Group(X, Y, W, H, NULL),
+   ch      (ch),
    type    (type)
 {
 }
@@ -56,6 +61,12 @@ geChannel::geChannel(int X, int Y, int W, int H, int type)
 
 
 void geChannel::cb_arm(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_arm(); }
+void geChannel::cb_mute(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_mute(); }
+void geChannel::cb_solo(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_solo(); }
+void geChannel::cb_changeVol(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_changeVol(); }
+#ifdef WITH_VST
+void geChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_openFxWindow(); }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -63,12 +74,59 @@ void geChannel::cb_arm(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_arm(); }
 
 void geChannel::__cb_arm()
 {
-  // TODO 
-  // glue_toggleArm(ch, true);
+  glue_toggleArm(ch, true);
 }
 
 
 /* -------------------------------------------------------------------------- */
+
+
+void geChannel::__cb_mute()
+{
+	glue_setMute(ch);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::__cb_solo()
+{
+	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::__cb_changeVol()
+{
+	glue_setChanVol(ch, vol->value());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+void geChannel::__cb_openFxWindow()
+{
+	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+}
+#endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geChannel::keyPress(int e)
+{
+	return handleKey(e, ch->key);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
 
 
 int geChannel::getColumnIndex()

@@ -40,23 +40,11 @@ class geMidiChannel : public geChannel
 private:
 
 	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_mute          (Fl_Widget *v, void *p); // TODO - move to base class
-	static void cb_solo          (Fl_Widget *v, void *p); // TODO - move to base class
 	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_changeVol     (Fl_Widget *v, void *p); // TODO - move to base class
-#ifdef WITH_VST
-	static void cb_openFxWindow  (Fl_Widget *v, void *p); // TODO - move to base class
-#endif
 
-	inline void __cb_mute        ();
-	inline void __cb_solo        ();
-	inline void __cb_changeVol   ();
 	inline void __cb_button      ();
 	inline void __cb_openMenu    ();
 	inline void __cb_readActions ();
-#ifdef WITH_VST
-	inline void __cb_openFxWindow();
-#endif
 
 public:
 
@@ -67,8 +55,6 @@ public:
 	void refresh ();
 	int  keyPress(int event);  // TODO - move to base class
 	void resize  (int x, int y, int w, int h);
-
-	class MidiChannel *ch;
 };
 
 

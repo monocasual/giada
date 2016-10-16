@@ -41,7 +41,6 @@
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
 #include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_pluginList.h"
 #include "../dialogs/gd_keyGrabber.h"
 #include "../dialogs/gd_midiOutput.h"
 #include "../dialogs/gd_midiInput.h"
@@ -63,7 +62,7 @@ extern gdMainWindow *G_MainWin;
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
-	: geChannel(X, Y, W, H, CHANNEL_SAMPLE), ch(ch)
+	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, ch)
 {
 	begin();
 
@@ -93,7 +92,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 
 	arm->type(FL_TOGGLE_BUTTON);
 	arm->callback(cb_arm, (void*)this);
-	
+
 #ifdef WITH_VST
 	fx->callback(cb_openFxWindow, (void*)this);
 #endif
@@ -120,56 +119,11 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 
 
 void geSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_button(); }
-void geSampleChannel::cb_mute        (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_mute(); }
-void geSampleChannel::cb_solo        (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_solo(); }
 void geSampleChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_openMenu(); }
-void geSampleChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_changeVol(); }
 void geSampleChannel::cb_readActions (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_readActions(); }
-#ifdef WITH_VST
-void geSampleChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_openFxWindow(); }
-#endif
 
 
 /* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::__cb_mute()
-{
-	glue_setMute(ch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::__cb_solo()
-{
-	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::__cb_changeVol()
-{
-	glue_setChanVol(ch, vol->value());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-void geSampleChannel::__cb_openFxWindow()
-{
-	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
-}
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
 
 
 void geSampleChannel::__cb_button()
@@ -229,7 +183,7 @@ void geSampleChannel::__cb_openMenu()
 	/* no 'clear start/stop actions' for those channels in loop mode:
 	 * they cannot have start/stop actions. */
 
-	if (ch->mode & LOOP_ANY)
+	if (((SampleChannel*)ch)->mode & LOOP_ANY)
 		rclick_menu[11].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
@@ -257,12 +211,12 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh((SampleChannel*) ch), 0);
 		return;
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdEditor(ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
+		gu_openSubWindow(G_MainWin, new gdEditor((SampleChannel*) ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
 		return;
 	}
 
@@ -359,7 +313,7 @@ void geSampleChannel::__cb_openMenu()
 
 void geSampleChannel::__cb_readActions()
 {
-	glue_startStopReadingRecs(ch);
+	glue_startStopReadingRecs((SampleChannel*) ch);
 }
 
 
@@ -396,7 +350,7 @@ void geSampleChannel::refresh()
 
 	setColorsByStatus(ch->status, ch->recStatus);
 
-	if (ch->wave != NULL) {
+	if (((SampleChannel*) ch)->wave != NULL) {
 		if (G_Mixer.chanInput == ch)
 			mainButton->setInputRecordMode();
 		if (G_Recorder.active) {
@@ -437,7 +391,7 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			mainButton->label(ch->wave->name.c_str());
+			mainButton->label(((SampleChannel*) ch)->wave->name.c_str());
 			break;
 	}
 
@@ -452,7 +406,7 @@ void geSampleChannel::update()
 
 	/* updates modebox */
 
-	modeBox->value(ch->mode);
+	modeBox->value(((SampleChannel*) ch)->mode);
 	modeBox->redraw();
 
 	/* update volumes+mute+solo */
@@ -473,18 +427,9 @@ void geSampleChannel::update()
 /* -------------------------------------------------------------------------- */
 
 
-int geSampleChannel::keyPress(int e)
-{
-	return handleKey(e, ch->key);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void geSampleChannel::showActionButton()
 {
-	readActions->value(ch->readActions);
+	readActions->value(((SampleChannel*) ch)->readActions);
 	readActions->show();
 	packWidgets();
 	redraw();
@@ -555,7 +500,7 @@ int geSampleChannelButton::handle(int e)
 		}
 		case FL_PASTE: {
       geSampleChannel *gch = (geSampleChannel*) parent();   // parent is geSampleChannel
-      SampleChannel  *ch  = gch->ch;
+      SampleChannel   *ch  = (SampleChannel*) gch->ch;
       int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())).c_str());
 			if (result != SAMPLE_LOADED_OK)
 				G_MainWin->keyboard->printChannelMessage(result);

@@ -52,8 +52,21 @@ protected:
 	static const int BREAK_ARM          = 168;
 #endif
 
-	static void cb_arm  (Fl_Widget *v, void *p);
+	static void cb_arm           (Fl_Widget *v, void *p);
+	static void cb_mute          (Fl_Widget *v, void *p);
+	static void cb_solo          (Fl_Widget *v, void *p);
+	static void cb_changeVol     (Fl_Widget *v, void *p);
+#ifdef WITH_VST
+		static void cb_openFxWindow(Fl_Widget *v, void *p); // TODO - move to base class
+#endif
+
+	inline void __cb_mute();
 	inline void __cb_arm();
+	inline void __cb_solo();
+	inline void __cb_changeVol();
+#ifdef WITH_VST
+		inline void __cb_openFxWindow();
+#endif
 
 	/* blink
 	 * blink button when channel is in wait/ending status. */
@@ -77,7 +90,7 @@ protected:
 
 public:
 
-	geChannel(int x, int y, int w, int h, int type);
+	geChannel(int x, int y, int w, int h, int type, class Channel *ch);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -98,13 +111,15 @@ public:
 	/* keypress
 	 * what to do when the corresponding key is pressed. */
 
-	virtual int keyPress(int event) = 0;
+	int keyPress(int event);
 
 	/* getColumnIndex
 	 * return the numeric index of the column in which this channel is
 	 * located. */
 
 	int getColumnIndex();
+
+	class Channel *ch;
 
 	class gButton         *button;
 	class gStatus         *status;

@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/pluginHost.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/patch_DEPR_.h"
@@ -59,7 +58,7 @@ extern gdMainWindow *G_MainWin;
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
-	: geChannel(X, Y, W, H, CHANNEL_MIDI), ch(ch)
+	: geChannel(X, Y, W, H, CHANNEL_MIDI, ch)
 {
 	begin();
 
@@ -115,51 +114,8 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 
 
 void geMidiChannel::cb_button      (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_button(); }
-void geMidiChannel::cb_mute        (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_mute(); }
-void geMidiChannel::cb_solo        (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_solo(); }
 void geMidiChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_openMenu(); }
-void geMidiChannel::cb_changeVol   (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_changeVol(); }
-#ifdef WITH_VST
-void geMidiChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_openFxWindow(); }
-#endif
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::__cb_mute()
-{
-	glue_setMute(ch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::__cb_solo()
-{
-	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::__cb_changeVol()
-{
-	glue_setChanVol(ch, vol->value());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-void geMidiChannel::__cb_openFxWindow()
-{
-	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
-}
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -241,7 +197,7 @@ void geMidiChannel::__cb_openMenu()
 
 	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
 		//gu_openSubWindow(G_MainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
-		gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
+		gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh((MidiChannel*) ch), 0);
 		return;
 	}
 }
@@ -272,9 +228,9 @@ void geMidiChannel::reset()
 
 void geMidiChannel::update()
 {
-	if (ch->midiOut) {
+	if (((MidiChannel*) ch)->midiOut) {
 		char tmp[32];
-		sprintf(tmp, "-- MIDI (channel %d) --", ch->midiOutChan+1);
+		sprintf(tmp, "-- MIDI (channel %d) --", ((MidiChannel*) ch)->midiOutChan+1);
 		mainButton->copy_label(tmp);
 	}
 	else
@@ -313,15 +269,6 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 #endif
 
 	packWidgets();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int geMidiChannel::keyPress(int e)
-{
-	return handleKey(e, ch->key);
 }
 
 
