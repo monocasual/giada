@@ -57,5 +57,10 @@ void glue_freeChannel(class Channel *ch);
 
 int glue_cloneChannel(class Channel *ch);
 
+/* toggleArm
+ * Toggle arm status. If gui == true the signal comes from a manual interaction
+ * on the GUI, otherwise it's a MIDI/Jack/external signal. */
+
+void glue_toggleArm(class Channel *ch, bool gui=true);
 
 #endif

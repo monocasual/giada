@@ -34,6 +34,7 @@
 #include "mixer.h"
 #include "channel.h"
 #include "sampleChannel.h"
+#include "midiChannel.h"
 #include "conf.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"
@@ -409,6 +410,17 @@ void KernelMidi::processChannels(uint32_t pure, uint32_t value)
 			gu_log("  >>> start/stop read actions ch=%d (pure=0x%X)\n", ch->index, pure);
 			glue_startStopReadingRecs((SampleChannel*)ch, false);
 		}
+
+		/* redirect full midi message to plugins */
+
+#ifdef WITH_VST
+
+		if (ch->type == CHANNEL_MIDI && ch->armed) {
+			gu_log("  >>> MIDI redirect - ch=%d, msg=%X\n", ch->index, pure | value);
+			((MidiChannel*) ch)->addVstMidiEvent(pure | value, 0);
+		}
+
+#endif
 	}
 }
 

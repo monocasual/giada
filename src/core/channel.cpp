@@ -69,6 +69,7 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
   mute           (false),
   solo           (false),
   hasActions     (false),
+  armed          (true),
   recStatus      (REC_STOPPED),
   vChan          (NULL),
   guiChannel     (NULL),

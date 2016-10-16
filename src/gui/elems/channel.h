@@ -52,6 +52,9 @@ protected:
 	static const int BREAK_ARM          = 168;
 #endif
 
+	static void cb_arm  (Fl_Widget *v, void *p);
+	inline void __cb_arm();
+
 	/* blink
 	 * blink button when channel is in wait/ending status. */
 

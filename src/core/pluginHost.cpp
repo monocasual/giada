@@ -417,22 +417,21 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
         gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
 				return;
 			}
-			else {
-				int lockStatus;
-				while (true) {
-					lockStatus = pthread_mutex_trylock(mutex);
-					if (lockStatus == 0) {
-            pPlugin->suspendProcessing(true);
-            pPlugin->releaseResources();
-						delete pPlugin;
-						pStack->erase(pStack->begin() + i);
-						pthread_mutex_unlock(mutex);
-						gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
-						return;
-					}
-					//else
-						//gu_log("[pluginHost] waiting for mutex...\n");
+
+			int lockStatus;
+			while (true) {
+				lockStatus = pthread_mutex_trylock(mutex);
+				if (lockStatus == 0) {
+          pPlugin->suspendProcessing(true);
+          pPlugin->releaseResources();
+					delete pPlugin;
+					pStack->erase(pStack->begin() + i);
+					pthread_mutex_unlock(mutex);
+					gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
+					return;
 				}
+				//else
+					//gu_log("[pluginHost] waiting for mutex...\n");
 			}
 		}
   }

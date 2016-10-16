@@ -118,6 +118,17 @@ void glue_freeChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
+void glue_toggleArm(Channel *ch, bool gui)
+{
+	ch->armed = !ch->armed;
+	if (!gui)
+		ch->guiChannel->arm->value(ch->armed);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = G_Mixer.addChannel(src->type);

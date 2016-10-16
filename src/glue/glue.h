@@ -59,7 +59,9 @@ void glue_stopReadingRecs     (class SampleChannel *ch, bool gui=true);
 
 void glue_quantize(int val);
 
+/* TODO - move to glue/channel.h */
 void glue_setChanVol(class Channel *ch, float v, bool gui=true);
+
 void glue_setOutVol (float v, bool gui=true);
 void glue_setInVol  (float v, bool gui=true);
 
@@ -81,13 +83,16 @@ void glue_startStopMetronome(bool gui=true);
  * Recalc=false: don't recalc internal position
  * check=true: check the points' consistency */
 
+/* TODO - move to glue/channel.h */
 /** FIXME - nobody will call this via MIDI/keyb/mouse! */
 void glue_setBeginEndChannel(class gdEditor *win, class SampleChannel *ch, int b, int e,
-														 bool recalc=false, bool check=true);
+	bool recalc=false, bool check=true);
 
+/* TODO - move to glue/channel.h */
 /** FIXME - nobody will call this via MIDI/keyb/mouse! */
 void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
 
+/* TODO - move to glue/channel.h */
 void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val, bool numeric);
 
 /* setVolEditor
@@ -102,12 +107,14 @@ void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val, 
  * set mute on or off. If gui == true the signal comes from an internal
  * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
+ /* TODO - move to glue/channel.h */
 void glue_setMute(class Channel *ch, bool gui=true);
 
 /* solo on/off
  * set solo on and off. If gui == true the signal comes from an internal
  * interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
+/* TODO - move to glue/channel.h */
 void glue_setSoloOn (class Channel *ch, bool gui=true);
 void glue_setSoloOff(class Channel *ch, bool gui=true);
 

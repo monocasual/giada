@@ -32,6 +32,7 @@
 #include "../../core/patch_DEPR_.h"
 #include "../../core/graphics.h"
 #include "../../utils/gui.h"
+#include "../../glue/channel.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "ge_column.h"
 #include "channelButton.h"
@@ -48,6 +49,22 @@ geChannel::geChannel(int X, int Y, int W, int H, int type)
  : Fl_Group(X, Y, W, H, NULL),
    type    (type)
 {
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::cb_arm(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_arm(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::__cb_arm()
+{
+  // TODO 
+  // glue_toggleArm(ch, true);
 }
 
 

@@ -91,6 +91,9 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	button->callback(cb_button, (void*)this);
 	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
 
+	arm->type(FL_TOGGLE_BUTTON);
+	arm->callback(cb_arm, (void*)this);
+	
 #ifdef WITH_VST
 	fx->callback(cb_openFxWindow, (void*)this);
 #endif
