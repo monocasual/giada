@@ -265,6 +265,8 @@ public:
 
 	juce::MidiBuffer &getPluginMidiEvents() { return midiBuffer; };
 
+	void clearMidiBuffer() { midiBuffer.clear(); }
+
 #endif
 };
 

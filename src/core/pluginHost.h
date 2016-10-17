@@ -219,6 +219,8 @@ public:
   bool hasMissingPlugins() { return missingPlugins; };
 
   void sortPlugins(int sortMethod);
+
+  pthread_mutex_t mutex_midi;
 };
 #endif
 

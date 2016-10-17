@@ -82,12 +82,6 @@ public:
 
 #ifdef WITH_VST
 
-	/* freeVstMidiEvents
-	 * empty vstEvents structure. Init: use the method for channel
-	 * initialization. */
-
-	void freeVstMidiEvents(bool init=false);
-
 	/* addVstMidiEvent
 	 * Add a new Midi event to the midiEvent stack fom a composite uint32_t raw
 	 * Midi event. LocalFrame is the offset: it tells where to put the event

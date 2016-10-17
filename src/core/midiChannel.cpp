@@ -46,9 +46,6 @@ MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
-#ifdef WITH_VST // init VstEvents stack
-	freeVstMidiEvents(true);
-#endif
 }
 
 
@@ -68,19 +65,6 @@ void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 	midiOut     = src->midiOut;
 	midiOutChan = src->midiOutChan;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-void MidiChannel::freeVstMidiEvents(bool init)
-{
-	midiBuffer.clear();
-}
-
-#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -185,7 +169,6 @@ void MidiChannel::process(float *buffer)
 {
 #ifdef WITH_VST
 	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
-	freeVstMidiEvents();
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {

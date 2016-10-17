@@ -63,6 +63,8 @@ void PluginHost::init(int _buffersize, int _samplerate)
   missingPlugins = false;
   //unknownPluginList.empty();
   loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
+
+  pthread_mutex_init(&mutex_midi, NULL);
 }
 
 
@@ -326,17 +328,29 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
     audioBuffer.setSample(1, i, buffer[(i*2)+1]);
 	}
 
-	/* hardcore processing. At the end we swap input and output, so that
-	 * the N-th plugin will process the result of the plugin N-1. */
+	/* Hardcore processing. At the end we swap input and output, so that he N-th
+  plugin will process the result of the plugin N-1. Part of this loop must be
+  guarded by mutexes, i.e. the MIDI process part. You definitely don't want
+  a situation like the following one:
+    processBlock(...)
+    [a new midi event from kernelMidi thread]
+    clearMidiBuffer()
+  The midi event in between would be surely lost, deleted by clearMidiBuffer! */
 
 	for (unsigned i=0; i<pStack->size(); i++) {
     Plugin *plugin = pStack->at(i);
 		if (plugin->getStatus() != 1 || plugin->isSuspended() || plugin->isBypassed())
 			continue;
-    juce::MidiBuffer midiBuffer;
-    if (ch) // ch might be null if stackType is MASTER_IN or MASTER_OUT
-      midiBuffer = ch->getPluginMidiEvents();
-		plugin->processBlock(audioBuffer, midiBuffer);
+    if (ch) { // ch might be null if stackType is MASTER_IN/OUT
+      pthread_mutex_lock(&mutex_midi);
+      plugin->processBlock(audioBuffer, ch->getPluginMidiEvents());
+      ch->clearMidiBuffer();
+      pthread_mutex_unlock(&mutex_midi);
+    }
+    else {
+      juce::MidiBuffer midiBuffer;  // empty buffer
+      plugin->processBlock(audioBuffer, midiBuffer);
+    }
   }
 
 	/* converting buffer from Juce to Giada. A note for the future: if we

@@ -39,6 +39,7 @@
 #include "conf.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"
+#include "pluginHost.h"
 
 
 extern bool        G_midiStatus;
@@ -46,6 +47,7 @@ extern Conf        G_Conf;
 extern Mixer       G_Mixer;
 extern KernelMidi  G_KernelMidi;
 extern MidiMapConf G_MidiMap;
+extern PluginHost  G_PluginHost;
 
 
 using std::string;
@@ -416,9 +418,20 @@ void KernelMidi::processChannels(uint32_t pure, uint32_t value)
 
 #ifdef WITH_VST
 
+		/* TODO - move this code to MidiChannel, separate method */
 		if (ch->type == CHANNEL_MIDI && ch->armed) {
-			gu_log("  >>> MIDI redirect - ch=%d, msg=%X\n", ch->index, pure | value);
-			((MidiChannel*) ch)->addVstMidiEvent(pure | value, 0);
+			MidiChannel *mch = (MidiChannel*) ch;
+			while (true) {
+				if (pthread_mutex_trylock(&G_PluginHost.mutex_midi) == 0) {
+					gu_log("  >>> MIDI redirect - ch=%d, msg=%X\n", ch->index, pure | value);
+					mch->addVstMidiEvent(pure | value, 0);
+					pthread_mutex_unlock(&G_PluginHost.mutex_midi);
+					break;
+				}
+				else {
+					printf("..... waiting for midi mutex\n");
+				}
+			}
 		}
 
 #endif
