@@ -39,6 +39,7 @@
 
 extern Recorder   G_Recorder;
 extern KernelMidi G_KernelMidi;
+extern PluginHost G_PluginHost;
 
 
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
@@ -78,7 +79,6 @@ void MidiChannel::addVstMidiEvent(uint32_t msg, int localFrame)
 		G_KernelMidi.getB1(msg),
 		G_KernelMidi.getB2(msg),
 		G_KernelMidi.getB3(msg));
-
 	midiBuffer.addEvent(message, localFrame);
 }
 
@@ -328,6 +328,24 @@ int MidiChannel::writePatch(int i, bool isProject, Patch *patch)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::clear()
+void MidiChannel::receiveMidi(uint32_t msg)
 {
+  if (!armed)
+    return;
+  while (true) {
+    if (pthread_mutex_trylock(&G_PluginHost.mutex_midi) != 0)
+      continue;
+    gu_log("[Channel::processMidi] msg=%X\n", msg);
+#ifdef WITH_VST
+    addVstMidiEvent(msg, 0);
+#endif
+    pthread_mutex_unlock(&G_PluginHost.mutex_midi);
+    break;
+  }
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MidiChannel::clear() {}

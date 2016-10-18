@@ -380,9 +380,36 @@ void Channel::sendMidiLplay()
 /* -------------------------------------------------------------------------- */
 
 
+void Channel::receiveMidi(uint32_t msg)
+{
+}
+
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef WITH_VST
+
+juce::MidiBuffer &Channel::getPluginMidiEvents()
+{
+  return midiBuffer;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::clearMidiBuffer()
+{
+  midiBuffer.clear();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void Channel::setPluginHost(PluginHost *pluginHost)
 {
   this->pluginHost = pluginHost;
 }
+
 #endif

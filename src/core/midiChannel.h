@@ -48,37 +48,38 @@ public:
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
-	void copy(const Channel *src, pthread_mutex_t *pluginMutex);
-
-	void clear      ();
-	void process    (float *buffer);
-	void start      (int frame, bool doQuantize, int quantize, bool mixerIsRunning,
-		bool isUserGenerated=false);
-	void kill       (int frame);
-	void empty      ();
-	void stopBySeq  (bool chansStopOnSeqHalt);
-	void stop       ();
-	void rewind     ();
-	void setMute    (bool internal);
-	void unsetMute  (bool internal);
-	int  readPatch_DEPR_  (const char *file, int i, class Patch_DEPR_ *patch,
-			int samplerate, int rsmpQuality);
-	int  readPatch  (const string &basePath, int i, class Patch *patch,
-			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
-	int  writePatch (int i, bool isProject, class Patch *patch);
-	void quantize   (int index, int localFrame, int globalFrame);
-	void onZero     (int frame, bool recsStopOnChanHalt);
-	void onBar      (int frame);
+	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;
+	void clear() override;
+	void process(float *buffer) override;
+	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
+		bool isUserGenerated=false) override;
+	void kill(int frame) override;
+	void empty() override;
+	void stopBySeq(bool chansStopOnSeqHalt) override;
+	void stop() override;
+	void rewind() override;
+	void setMute(bool internal) override;
+	void unsetMute(bool internal) override;
+	int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch,
+			int samplerate, int rsmpQuality) override;
+	int readPatch(const string &basePath, int i, class Patch *patch,
+			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality) override;
+	int writePatch(int i, bool isProject, class Patch *patch) override;
+	void quantize(int index, int localFrame, int globalFrame) override;
+	void onZero(int frame, bool recsStopOnChanHalt) override;
+	void onBar(int frame) override;
 	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
-			int quantize, bool mixerIsRunning);
+			int quantize, bool mixerIsRunning) override;
+	void receiveMidi(uint32_t msg) override;
 
-	/* ---------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------ */
 
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
 	void sendMidi(Recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
+
 
 #ifdef WITH_VST
 

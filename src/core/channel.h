@@ -184,6 +184,11 @@ public:
 
 	virtual int writePatch(int i, bool isProject, class Patch *patch);
 
+	/* receiveMidi
+	 * Receives and processes midi messages from external devices. */
+
+	virtual void receiveMidi(uint32_t msg);
+
 	/* ------------------------------------------------------------------------ */
 
 	int     index;                 // unique id
@@ -263,9 +268,9 @@ public:
 	 * Return a reference to midiBuffer stack. This is available for any kind of
 	 * channel, but it makes sense only for MIDI channels. */
 
-	juce::MidiBuffer &getPluginMidiEvents() { return midiBuffer; };
+	juce::MidiBuffer &getPluginMidiEvents();
 
-	void clearMidiBuffer() { midiBuffer.clear(); }
+	void clearMidiBuffer();
 
 #endif
 };
