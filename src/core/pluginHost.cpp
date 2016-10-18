@@ -420,33 +420,27 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
 
-	/* try to delete the plugin until succeed. G_Mixer has priority. */
-
 	for (unsigned i=0; i<pStack->size(); i++) {
     Plugin *pPlugin = pStack->at(i);
-		if (pPlugin->getId() == id) {
-			if (pPlugin->getStatus() == 0) { // no frills if plugin is missing
-				delete pPlugin;
-				pStack->erase(pStack->begin() + i);
-        gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
-				return;
-			}
+		if (pPlugin->getId() != id)
+      continue;
+		if (pPlugin->getStatus() == 0) { // no frills if plugin is missing
+			delete pPlugin;
+			pStack->erase(pStack->begin() + i);
+      gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
+			return;
+		}
 
-			int lockStatus;
-			while (true) {
-				lockStatus = pthread_mutex_trylock(mutex);
-				if (lockStatus == 0) {
-          pPlugin->suspendProcessing(true);
-          pPlugin->releaseResources();
-					delete pPlugin;
-					pStack->erase(pStack->begin() + i);
-					pthread_mutex_unlock(mutex);
-					gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
-					return;
-				}
-				//else
-					//gu_log("[pluginHost] waiting for mutex...\n");
-			}
+		while (true) {
+			if (pthread_mutex_trylock(mutex) != 0)
+        continue;
+      pPlugin->suspendProcessing(true);
+      pPlugin->releaseResources();
+			delete pPlugin;
+			pStack->erase(pStack->begin() + i);
+			pthread_mutex_unlock(mutex);
+			gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
+			return;
 		}
   }
 	gu_log("[pluginHost::freePlugin] plugin id=%d not found\n", id);
