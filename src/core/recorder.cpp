@@ -239,6 +239,7 @@ void Recorder::deleteAction(int chan, int frame, char type, bool checkValues,
 					doit &= (a->iValue == iValue && a->fValue == fValue);
 
 				if (doit) {
+					// TODO - wft? just do: while (true); if (pthread_mutex_trylock(&G_Mixer.mutex_recs))
 					int lockStatus = 0;
 					while (lockStatus == 0) {
 						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
