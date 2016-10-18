@@ -544,7 +544,7 @@ int Recorder::getNextAction(int chan, char type, int frame, action **out,
 /* -------------------------------------------------------------------------- */
 
 
-int Recorder::getAction(int chan, char action, int frame, action **out)
+int Recorder::getAction(int chan, char action, int frame, struct action **out)
 {
 	for (unsigned i=0; i<global.size(); i++)
 		for (unsigned j=0; j<global.at(i).size(); j++)
