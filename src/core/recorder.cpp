@@ -78,8 +78,8 @@ bool Recorder::canRec(Channel *ch)
 			G_Mixer.chanInput == ch ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
 		)
-		return 0;
-	return 1;
+		return false;
+	return true;
 }
 
 
@@ -148,7 +148,7 @@ void Recorder::rec(int index, int type, int frame, uint32_t iValue, float fValue
 
 	sortedActions = false;
 
-	gu_log("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+	gu_log("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (0x%X) fValue=%f\n",
 		a->type, a->frame, a->chan, a->iValue, a->iValue, a->fValue);
 	//print();
 }
@@ -543,7 +543,7 @@ int Recorder::getNextAction(int chan, char type, int frame, action **out,
 /* -------------------------------------------------------------------------- */
 
 
-int Recorder::getAction(int chan, char action, int frame, struct action **out)
+int Recorder::getAction(int chan, char action, int frame, action **out)
 {
 	for (unsigned i=0; i<global.size(); i++)
 		for (unsigned j=0; j<global.at(i).size(); j++)
@@ -665,5 +665,3 @@ void Recorder::print()
 		}
 	}
 }
-
-//} // namespace

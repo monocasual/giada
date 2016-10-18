@@ -34,12 +34,14 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
+#include "mixer.h"
 #include "kernelMidi.h"
 
 
 extern Recorder   G_Recorder;
 extern KernelMidi G_KernelMidi;
 extern PluginHost G_PluginHost;
+extern Mixer      G_Mixer;
 
 
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
@@ -342,6 +344,9 @@ void MidiChannel::receiveMidi(uint32_t msg)
     pthread_mutex_unlock(&G_PluginHost.mutex_midi);
     break;
   }
+
+	if (G_Recorder.canRec(this))
+		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.actualFrame, msg);
 }
 
 
