@@ -530,7 +530,8 @@ int Recorder::getNextAction(int chan, char type, int frame, action **out,
 		for (unsigned j=0; j<global.at(i).size(); j++) {
 			action *a = global.at(i).at(j);
 			if (a->chan == chan && (type & a->type) == a->type) {
-				if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
+				//if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
+				if (iValue == 0 || (iValue != 0 && (iValue & a->iValue) == a->iValue )) {
 					*out = global.at(i).at(j);
 					return 1;
 				}

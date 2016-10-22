@@ -105,7 +105,7 @@ void geNoteEditor::draw()
 gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
  : geBaseActionEditor(X, Y, W, 40, pParent)
 {
-	resizable(NULL);                      // don't resize children (i.e. pianoItem)
+	resizable(nullptr);                      // don't resize children (i.e. pianoItem)
 	size(W, (MAX_NOTES+1) * CELL_H);      // 128 MIDI channels * 15 px height
 
 	if (G_Conf.pianoRollY == -1)
@@ -121,8 +121,8 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 	G_Recorder.sortActions();
 
-	Recorder::action *a2   = NULL;
-	Recorder::action *prev = NULL;
+	Recorder::action *a2   = nullptr;
+	Recorder::action *prev = nullptr;
 
 	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
 		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
@@ -153,34 +153,27 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 			int a1_type = G_KernelMidi.getB1(a1->iValue);
 			int a1_note = G_KernelMidi.getB2(a1->iValue);
-			int a1_velo = G_KernelMidi.getB3(a1->iValue);
 
-			if (a1_type == MIDI_NOTE_OFF)
+			if (a1_type == 0x80) // NOTE_OFF
 				continue;
-printf("LOOKING FOR %X\n", G_KernelMidi.getIValue(MIDI_NOTE_OFF, a1_note, a1_velo));
-			/* search for the next action. Must have: same channel, ACTION_MIDI, greater
-			 * than a1->frame and with MIDI properties of note_off (0x80), same note
-			 * of a1, same velocity of a1 */
 
-			G_Recorder.getNextAction(
-					a1->chan,
-					ACTION_MIDI,
-					a1->frame,
-					&a2,
-					G_KernelMidi.getIValue(MIDI_NOTE_OFF, a1_note, a1_velo));
+			/* Search for the next action. Must have: same channel, ACTION_MIDI,
+      greater than a1->frame and with MIDI properties of note_off (0x80), same
+      note of a1, any velocity value (0xFF) because we just don't care about the
+      velocity of a note_off. */
+
+			G_Recorder.getNextAction(a1->chan, ACTION_MIDI, a1->frame, &a2,
+					G_KernelMidi.getIValue(0x80, a1_note, 0xFF));
 
 			/* next action note_off found: add a new gePianoItem to piano roll */
 
 			if (a2) {
-				//gu_log("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
-				//	a1->frame, a2->frame, G_KernelMidi.getNoteValue(a1->iValue), G_KernelMidi.getNoteValue(a2->iValue),
-				//	G_KernelMidi.getNoteOnOff(a1->iValue), G_KernelMidi.getNoteOnOff(a2->iValue));
 				new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
 				prev = a2;
-				a2 = NULL;
+				a2 = nullptr;
 			}
 			else
-				gu_log("[geNoteEditor] recorder didn't find action!\n");
+				gu_log("[geNoteEditor] recorder didn't find requested action!\n");
 	  }
 	}
 
@@ -201,7 +194,7 @@ void gePianoRoll::drawSurface1()
 
 	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
 
-	fl_line_style(FL_DASH, 0, NULL);
+	fl_line_style(FL_DASH, 0, nullptr);
 	fl_font(FL_HELVETICA, 11);
 
 	int octave = 9;
@@ -281,7 +274,7 @@ void gePianoRoll::drawSurface2()
 	fl_begin_offscreen(surface2);
 	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
 	fl_color(fl_rgb_color(54, 54, 54));
-	fl_line_style(FL_DASH, 0, NULL);
+	fl_line_style(FL_DASH, 0, nullptr);
 	for (int i=1; i<=MAX_NOTES+1; i++) {
 		int  step = i % 12;
 		switch (step) {
@@ -363,7 +356,7 @@ int gePianoRoll::handle(int e)
 					int greyover = ax+20 - pParent->coverX-x();
 					if (greyover > 0)
 						ax -= greyover;
-					add(new gePianoItem(ax, ay, ax-x(), ay-y()-3, NULL, NULL, pParent));
+					add(new gePianoItem(ax, ay, ax-x(), ay-y()-3, nullptr, nullptr, pParent));
 					redraw();
 				}
 			}
@@ -457,9 +450,9 @@ bool gePianoRoll::onItem(int rel_x, int rel_y)
 	return false;
 }
 
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
@@ -499,7 +492,7 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 bool gePianoItem::overlap()
@@ -530,7 +523,7 @@ bool gePianoItem::overlap()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gePianoItem::draw()
@@ -541,7 +534,7 @@ void gePianoItem::draw()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gePianoItem::record()
@@ -571,7 +564,7 @@ void gePianoItem::record()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gePianoItem::remove()
