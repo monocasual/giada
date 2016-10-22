@@ -109,6 +109,8 @@ src/gui/elems/envelopeEditor.h         \
 src/gui/elems/envelopeEditor.cpp       \
 src/gui/elems/noteEditor.h		         \
 src/gui/elems/noteEditor.cpp           \
+src/gui/elems/pianoItem.h              \
+src/gui/elems/pianoItem.cpp            \
 src/gui/elems/channel.h                \
 src/gui/elems/channel.cpp              \
 src/gui/elems/muteEditor.h             \
