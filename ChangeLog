@@ -17,6 +17,7 @@
 - Better handling of 'R' button's status when the sequencer is off (GitHub #95)
 - Fix non-playing samples if live-recorded and 'R' button is on (GitHub #93)
 - Refinements to show/hide 'R' button's dynamics
+- Increase piano roll items' height
 - Lots of source code optimizations and cleanups
 
 
