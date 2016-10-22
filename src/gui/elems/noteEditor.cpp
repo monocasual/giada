@@ -135,57 +135,53 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, class gdActionEditor *pParent)
 
 			Recorder::action *a1 = G_Recorder.global.at(i).at(j);
 
-			if (a1->chan != pParent->chan->index)
+      /* Skip action if:
+        - does not belong to this channel
+        - is not a MIDI action (we only want MIDI things here)
+        - is the previous one (we have already checked it)
+        - (later on) if it's NOTE_OFF (0x80): we want note on only */
+
+      if (a1->chan != pParent->chan->index)
+				continue;
+      if (a1->type != ACTION_MIDI)
+        continue;
+			if (a1 == prev)
 				continue;
 
-			if (a1->type == ACTION_MIDI) {
+			/* extract MIDI infos from a1: if is note off skip it, we are looking
+			 * for note on only */
 
-				/* if this action is == to previous one: skip it, we have already
-				 * checked it */
+			int a1_type = G_KernelMidi.getB1(a1->iValue);
+			int a1_note = G_KernelMidi.getB2(a1->iValue);
+			int a1_velo = G_KernelMidi.getB3(a1->iValue);
 
-				if (a1 == prev) {
-					//gu_log("[geNoteEditor] ACTION_MIDI found, but skipping - was previous\n");
-					continue;
-				}
+			if (a1_type == MIDI_NOTE_OFF)
+				continue;
+printf("LOOKING FOR %X\n", G_KernelMidi.getIValue(MIDI_NOTE_OFF, a1_note, a1_velo));
+			/* search for the next action. Must have: same channel, ACTION_MIDI, greater
+			 * than a1->frame and with MIDI properties of note_off (0x80), same note
+			 * of a1, same velocity of a1 */
 
-				/* extract MIDI infos from a1: if is note off skip it, we are looking
-				 * for note on only */
+			G_Recorder.getNextAction(
+					a1->chan,
+					ACTION_MIDI,
+					a1->frame,
+					&a2,
+					G_KernelMidi.getIValue(MIDI_NOTE_OFF, a1_note, a1_velo));
 
-				int a1_type = G_KernelMidi.getB1(a1->iValue);
-				int a1_note = G_KernelMidi.getB2(a1->iValue);
-				int a1_velo = G_KernelMidi.getB3(a1->iValue);
+			/* next action note_off found: add a new gePianoItem to piano roll */
 
-				if (a1_type == 0x80) {
-					//gu_log("[geNoteEditor] ACTION_MIDI found, but skipping - was note off\n");
-					continue;
-				}
-
-				/* search for the next action. Must have: same channel, ACTION_MIDI, greater
-				 * than a1->frame and with MIDI properties of note_off (0x80), same note
-				 * of a1, same velocity of a1 */
-
-				G_Recorder.getNextAction(
-						a1->chan,
-						ACTION_MIDI,
-						a1->frame,
-						&a2,
-						G_KernelMidi.getIValue(0x80, a1_note, a1_velo));
-
-				/* next action note off found: add a new gePianoItem to piano roll */
-
-				if (a2) {
-					//gu_log("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
-					//	a1->frame, a2->frame, G_KernelMidi.getNoteValue(a1->iValue), G_KernelMidi.getNoteValue(a2->iValue),
-					//	G_KernelMidi.getNoteOnOff(a1->iValue), G_KernelMidi.getNoteOnOff(a2->iValue));
-					new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
-					prev = a2;
-					a2 = NULL;
-				}
-				else
-					gu_log("[geNoteEditor] recorder didn't find action!\n");
-
+			if (a2) {
+				//gu_log("[geNoteEditor] ACTION_MIDI pair found, frame_a=%d frame_b=%d, note_a=%d, note_b=%d, type_a=%d, type_b=%d\n",
+				//	a1->frame, a2->frame, G_KernelMidi.getNoteValue(a1->iValue), G_KernelMidi.getNoteValue(a2->iValue),
+				//	G_KernelMidi.getNoteOnOff(a1->iValue), G_KernelMidi.getNoteOnOff(a2->iValue));
+				new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
+				prev = a2;
+				a2 = NULL;
 			}
-		}
+			else
+				gu_log("[geNoteEditor] recorder didn't find action!\n");
+	  }
 	}
 
 	end();

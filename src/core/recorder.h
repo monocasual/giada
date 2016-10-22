@@ -62,7 +62,7 @@ public:
 	 * [global1]-->[vector<_action*>1]-->[a0][a1][a2]				1[frames2]
 	 * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
 	 * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4] */
-	 
+
 	vector<int>  frames;					  // frame counter (sentinel) frames.size == global.size
 	vector<vector<action*>> global;	// container of containers of actions
 	vector<action*> actions;				// container of actions
@@ -145,7 +145,7 @@ public:
 
 	/* getNextAction
 	 * return the nearest action in chan 'chan' of type 'action' starting
-	 * from 'frame'. Action can be a bitmask. If iValue != -1 search for
+	 * from 'frame'. Action can be a bitmask. If iValue != 0 search for
 	 * next action with iValue == iValue: useful for MIDI key_release. */
 
 	int getNextAction(int chan, char action, int frame, struct action **out,

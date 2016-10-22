@@ -301,9 +301,9 @@ void KernelMidi::__callback(double t, vector<unsigned char> *msg, void *data)
 	uint32_t value = input & 0x0000FF00;
 	uint32_t pure  = 0x00;
 	if (!G_Conf.noNoteOff)
-		pure  = input & 0xFFFF0000;   // input without 'value' byte
+		pure = input & 0xFFFF0000;   // input without 'value' byte
 	else
-		pure  = input & 0xFFFFFF00;   // input with 'value' byte
+		pure = input & 0xFFFFFF00;   // input with 'value' byte
 
 	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
 
