@@ -107,6 +107,8 @@ src/gui/elems/baseActionEditor.h       \
 src/gui/elems/baseActionEditor.cpp     \
 src/gui/elems/envelopeEditor.h         \
 src/gui/elems/envelopeEditor.cpp       \
+src/gui/elems/pianoRoll.h              \
+src/gui/elems/pianoRoll.cpp            \
 src/gui/elems/noteEditor.h		         \
 src/gui/elems/noteEditor.cpp           \
 src/gui/elems/pianoItem.h              \

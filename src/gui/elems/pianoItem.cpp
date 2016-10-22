@@ -31,13 +31,13 @@
 #include "../../core/midiChannel.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "noteEditor.h"
+#include "pianoRoll.h"
 #include "pianoItem.h"
 
 
-extern KernelMidi    G_KernelMidi;
-extern Mixer         G_Mixer;
-extern Recorder			 G_Recorder;
-
+extern KernelMidi G_KernelMidi;
+extern Mixer      G_Mixer;
+extern Recorder	  G_Recorder;
 
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,

@@ -25,29 +25,56 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_NOTE_EDITOR_H
-#define GE_NOTE_EDITOR_H
+#ifndef GE_PIANO_ROLL_H
+#define GE_PIANO_ROLL_H
 
-#include <FL/Fl.H>
+
 #include <FL/fl_draw.H>
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include "../../core/recorder.h"
+#include "baseActionEditor.h"
 
 
-class geNoteEditor : public Fl_Scroll
+class gePianoRoll : public geBaseActionEditor
 {
 private:
 
-	class gdActionEditor *pParent;
-	class gePianoRoll    *pianoRoll;
+	/* onItem
+	 * is curson on a gePianoItem? */
+
+	bool onItem(int rel_x, int rel_y);
+
+	/* drawSurface*
+	 * generate a complex drawing in memory first and copy it to the
+	 * screen at a later point in time. Fl_Offscreen surface holds the
+	 * necessary data. */
+
+	/* drawSurface1
+	 * draw first tile of note values. */
+
+	void drawSurface1();
+
+	/* drawSurface2
+	 * draw the rest of the piano roll. */
+
+	void drawSurface2();
+
+	int  push_y;
+	Fl_Offscreen surface1;  // notes, no repeat
+	Fl_Offscreen surface2;  // lines, x-repeat
+
 
 public:
 
-	geNoteEditor(int x, int y, class gdActionEditor *parent);
-	~geNoteEditor();
+	gePianoRoll(int x, int y, int w, class gdActionEditor *pParent);
+
 	void draw();
+	int  handle(int e);
 	void updateActions();
+
+	enum
+  {
+		MAX_NOTES = 127,
+		CELL_H    = 15
+	};
 };
 
 
