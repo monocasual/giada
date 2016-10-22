@@ -43,11 +43,6 @@ private:
 		A = 11, GS = 0
 	};
 
-	/* onItem
-	 * is curson on a gePianoItem? */
-
-	bool onItem(int rel_x, int rel_y);
-
 	/* drawSurface*
 	Generates a complex drawing in memory first and copy it to the screen at a
 	later point in time. Fl_Offscreen surface holds the necessary data.	The first
@@ -69,7 +64,7 @@ public:
 	static const int MAX_KEYS    = 127;
 	static const int MAX_OCTAVES = 9;
 	static const int KEYS        = 12;
-	static const int CELL_H      = 15;
+	static const int CELL_H      = 18;
 	static const int CELL_W      = 40;
 
 	gePianoRoll(int x, int y, int w, class gdActionEditor *pParent);
@@ -77,6 +72,12 @@ public:
 	void draw();
 	int  handle(int e);
 	void updateActions();
+
+	/* cursorOnItem
+	Defines wheter the cursor is over a piano item. This value is updated by each
+	gePianoItem sub-widget. */
+
+	bool cursorOnItem;
 };
 
 

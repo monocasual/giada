@@ -44,7 +44,8 @@ extern KernelMidi G_KernelMidi;
 
 
 gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
-  : geBaseActionEditor(X, Y, W, 40, pParent)
+  : geBaseActionEditor(X, Y, W, 40, pParent),
+    cursorOnItem      (false)
 {
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
 	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
@@ -109,7 +110,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			/* next action note_off found: add a new gePianoItem to piano roll */
 
 			if (a2) {
-				new gePianoItem(0, 0, x(), y()+3, a1, a2, pParent);
+				new gePianoItem(0, 0, x(), y(), a1, a2, pParent);
 				prev = a2;
 				a2 = nullptr;
 			}
@@ -287,18 +288,18 @@ int gePianoRoll::handle(int e)
 
 				/* vertical snap */
 
-				int edge = (ay-y()-3) % CELL_H;
+				int edge = (ay-y()) % CELL_H;
 				if (edge != 0) ay -= edge;
 
 				/* if no overlap, add new piano item. Also check that it doesn't
 				 * overflow on the grey area, by shifting it to the left if
 				 * necessary. */
 
-				if (!onItem(ax, ay-y()-3)) {
+        if (!cursorOnItem) {
 					int greyover = ax+20 - pParent->coverX-x();
 					if (greyover > 0)
 						ax -= greyover;
-					add(new gePianoItem(ax, ay, ax-x(), ay-y()-3, nullptr, nullptr, pParent));
+					add(new gePianoItem(ax, ay, ax-x(), ay-y(), nullptr, nullptr, pParent));
 					redraw();
 				}
 			}
@@ -356,38 +357,4 @@ void gePianoRoll::updateActions()
 
 		//gu_log("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool gePianoRoll::onItem(int rel_x, int rel_y)
-{
-	if (!pParent->chan->hasActions)
-		return false;
-
-	int note = MAX_KEYS - (rel_y / CELL_H);
-
-	int n = children();
-	for (int i=0; i<n; i++) {   // no scrollbars to skip
-
-		gePianoItem *p = (gePianoItem*) child(i);
-		if (p->getNote() != note)
-			continue;
-
-		/* when 2 segments overlap?
-		 * start = the highest value between the two starting points
-		 * end   = the lowest value between the two ending points
-		 * if start < end then there's an overlap of end-start pixels. We
-		 * also add 1 px to the edges in order to gain some space:
-		 * [   ][   ]  ---> no
-		 * [   ] [   ] ---> yes! */
-
-		int start = p->x() > rel_x ? p->x() : rel_x-1;
-		int end   = p->x()+p->w() < rel_x + 20 ? p->x()+p->w() : rel_x + 21;
-		if (start < end)
-			return true;
-	}
-	return false;
 }

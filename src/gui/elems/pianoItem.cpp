@@ -42,7 +42,7 @@ extern Recorder	  G_Recorder;
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
   Recorder::action *_b, gdActionEditor *pParent)
-	: Fl_Box  (X, Y, 20, gePianoRoll::CELL_H-5),
+	: Fl_Box  (X, Y, MIN_WIDTH, gePianoRoll::CELL_H),
 	  a       (_a),
 	  b       (_b),
 		pParent (pParent),
@@ -113,9 +113,8 @@ bool gePianoItem::overlap()
 
 void gePianoItem::draw()
 {
-	int _w = w() > 4 ? w() : 4;
-	//gu_log("[gePianoItem] draw me (%p) at x=%d\n", (void*)this, x());
-	fl_rectf(x(), y(), _w, h(), (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+	int _w = w() > MIN_WIDTH ? w() : MIN_WIDTH;
+	fl_rectf(x(), y()+2, _w, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }
 
 
@@ -132,16 +131,14 @@ void gePianoItem::record()
 		frame_a -= overflow;
 	}
 
-	/* note off */
-	/** FIXME - use constants */
-	event_a |= (0x90 << 24);   // note on
+	event_a |= (MIDI_NOTE_ON);
 	event_a |= (note << 16);   // note value
-	event_a |= (0x3F <<  8);   // velocity
+	event_a |= (MIDI_VELOCITY);
 	event_a |= (0x00);
 
-	event_b |= (0x80 << 24);   // note off
+	event_b |= (MIDI_NOTE_OFF);
 	event_b |= (note << 16);   // note value
-	event_b |= (0x3F <<  8);   // velocity
+	event_b |= (MIDI_VELOCITY);
 	event_b |= (0x00);
 
 	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
@@ -161,6 +158,8 @@ void gePianoItem::remove()
 	 * key_off sequence. */
 
 	((MidiChannel*) pParent->chan)->sendMidi(event_b);
+
+  ((gePianoRoll*) parent())->cursorOnItem = false;
 }
 
 
@@ -174,6 +173,7 @@ int gePianoItem::handle(int e)
 	switch (e) {
 
 		case FL_ENTER: {
+      ((gePianoRoll*) parent())->cursorOnItem = true;
 			selected = true;
 			ret = 1;
 			redraw();
@@ -182,6 +182,7 @@ int gePianoItem::handle(int e)
 
 		case FL_LEAVE: {
 			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
+      ((gePianoRoll*) parent())->cursorOnItem = false;
 			selected = false;
 			ret = 1;
 			redraw();
@@ -192,12 +193,12 @@ int gePianoItem::handle(int e)
 			onLeftEdge  = false;
 			onRightEdge = false;
 
-			if (Fl::event_x() >= x() && Fl::event_x() < x()+4) {
+			if (Fl::event_x() >= x() && Fl::event_x() < x()+HANDLE_WIDTH) {
 				onLeftEdge = true;
 				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
 			}
 			else
-			if (Fl::event_x() >= x()+w()-4 && Fl::event_x() <= x()+w()) {
+			if (Fl::event_x() >= x()+w()-HANDLE_WIDTH && Fl::event_x() <= x()+w()) {
 				onRightEdge = true;
 				fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
 			}
@@ -242,17 +243,17 @@ int gePianoItem::handle(int e)
 					nw = w()+x()-pr->x();
 				}
 				else
-				if (nx > x()+w()-8) {
-					nx = x()+w()-8;
-					nw = 8;
+				if (nx > x()+w()-MIN_WIDTH) {
+					nx = x()+w()-MIN_WIDTH;
+					nw = MIN_WIDTH;
 				}
 				resize(nx, ny, nw, h());
 			}
 			else
 			if (onRightEdge) {
 				nw = Fl::event_x()-x();
-				if (Fl::event_x() < x()+8)
-					nw = 8;
+				if (Fl::event_x() < x()+MIN_WIDTH)
+					nw = MIN_WIDTH;
 				else
 				if (Fl::event_x() > coverX)
 					nw = coverX-x();
@@ -325,7 +326,7 @@ int gePianoItem::getNote(int rel_y)
 
 int gePianoItem::getRelY()
 {
-  return y() - parent()->y() - 3;
+  return y() - parent()->y();
 }
 
 

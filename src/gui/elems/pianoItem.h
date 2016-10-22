@@ -96,6 +96,9 @@ private:
 
 public:
 
+	static const int MIN_WIDTH    = 10;
+	static const int HANDLE_WIDTH = 5;
+
 	/* pianoItem ctor
 	 * if action *a == NULL, record a new action */
 
