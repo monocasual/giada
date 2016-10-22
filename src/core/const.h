@@ -271,6 +271,7 @@
 #define MIDI_CONTROLLER     0xB0 << 24
 #define MIDI_NOTE_ON        0x90 << 24
 #define MIDI_NOTE_OFF       0x80 << 24
+#define MIDI_VELOCITY       0x3F <<  8
 #define MIDI_ALL_NOTES_OFF (MIDI_CONTROLLER) | (0x7B << 16)
 #define MIDI_VOLUME        (MIDI_CONTROLLER) | (0x07 << 16)
 
