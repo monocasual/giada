@@ -37,44 +37,46 @@ class gePianoRoll : public geBaseActionEditor
 {
 private:
 
+	enum class Notes
+	{
+		G = 1, FS = 2, F = 3, E = 4, DS = 5, D = 6, CS = 7, C = 8, B = 9, AS = 10,
+		A = 11, GS = 0
+	};
+
 	/* onItem
 	 * is curson on a gePianoItem? */
 
 	bool onItem(int rel_x, int rel_y);
 
 	/* drawSurface*
-	 * generate a complex drawing in memory first and copy it to the
-	 * screen at a later point in time. Fl_Offscreen surface holds the
-	 * necessary data. */
-
-	/* drawSurface1
-	 * draw first tile of note values. */
+	Generates a complex drawing in memory first and copy it to the screen at a
+	later point in time. Fl_Offscreen surface holds the necessary data.	The first
+	call creates an offscreen surface of CELL_W pixel wide containing note values.
+	The second call creates another offscreen surface of CELL_W pixels wide
+	containing the rest of the piano roll. The latter will then be tiled during
+	the ::draw() call. */
 
 	void drawSurface1();
-
-	/* drawSurface2
-	 * draw the rest of the piano roll. */
-
 	void drawSurface2();
 
-	int  push_y;
+	int push_y;
+
 	Fl_Offscreen surface1;  // notes, no repeat
 	Fl_Offscreen surface2;  // lines, x-repeat
 
-
 public:
+
+	static const int MAX_KEYS    = 127;
+	static const int MAX_OCTAVES = 9;
+	static const int KEYS        = 12;
+	static const int CELL_H      = 15;
+	static const int CELL_W      = 40;
 
 	gePianoRoll(int x, int y, int w, class gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);
 	void updateActions();
-
-	enum
-  {
-		MAX_NOTES = 127,
-		CELL_H    = 15
-	};
 };
 
 

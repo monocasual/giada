@@ -75,6 +75,8 @@
 #define COLOR_TEXT_0   fl_rgb_color(200, 200, 200)
 #define COLOR_TEXT_1   fl_rgb_color(25,  25,  25)      // TODO - duplicate!
 #define COLOR_BG_MAIN  fl_rgb_color(25,  25,  25)		   // windows background
+#define COLOR_BG_RICH  fl_rgb_color(30,  30,  30)		   // lighter background
+#define COLOR_BG_LINE  fl_rgb_color(54,  54,  54)		   // lighter, for bg lines
 #define COLOR_BG_DARK  fl_rgb_color(0,   0,   0)		   // inputs background
 
 

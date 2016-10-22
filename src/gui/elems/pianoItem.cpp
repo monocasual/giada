@@ -316,7 +316,7 @@ int gePianoItem::handle(int e)
 
 int gePianoItem::getNote(int rel_y)
 {
-  return gePianoRoll::MAX_NOTES - (rel_y / gePianoRoll::CELL_H);
+  return gePianoRoll::MAX_KEYS - (rel_y / gePianoRoll::CELL_H);
 }
 
 
@@ -343,5 +343,5 @@ int gePianoItem::getRelX()
 
 int gePianoItem::getY(int note)
 {
-  return (gePianoRoll::MAX_NOTES * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
+  return (gePianoRoll::MAX_KEYS * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
 }

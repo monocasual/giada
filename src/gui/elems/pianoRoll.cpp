@@ -47,7 +47,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
   : geBaseActionEditor(X, Y, W, 40, pParent)
 {
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
-	size(W, (MAX_NOTES+1) * CELL_H);      // 128 MIDI channels * 15 px height
+	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
 
 	if (G_Conf.pianoRollY == -1)
 		position(x(), y()-(h()/2));  // center
@@ -128,78 +128,79 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 
 void gePianoRoll::drawSurface1()
 {
-	surface1 = fl_create_offscreen(40, h());
+	surface1 = fl_create_offscreen(CELL_W, h());
 	fl_begin_offscreen(surface1);
 
 	/* warning: only w() and h() come from this widget, x and y coordinates
 	 * are absolute, since we are writing in a memory chunk */
 
-	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
+	fl_rectf(0, 0, CELL_W, h(), COLOR_BG_MAIN);
 
 	fl_line_style(FL_DASH, 0, nullptr);
 	fl_font(FL_HELVETICA, 11);
 
-	int octave = 9;
+	int octave = MAX_OCTAVES;
 
-	for (int i=1; i<=MAX_NOTES+1; i++) {
+	for (int i=1; i<=MAX_KEYS+1; i++) {
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
 		char note[6];
-		int  step = i % 12;
-
-		switch (step) {
-			case 1:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+		switch (i % KEYS) {
+			case (int) Notes::G:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				sprintf(note, "%dG", octave);
 				break;
-			case 2:
+			case (int) Notes::FS:
 				sprintf(note, "%dF#", octave);
 				break;
-			case 3:
+			case (int) Notes::F:
 				sprintf(note, "%dF", octave);
 				break;
-			case 4:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+			case (int) Notes::E:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				sprintf(note, "%dE", octave);
 				break;
-			case 5:
+			case (int) Notes::DS:
 				sprintf(note, "%dD#", octave);
 				break;
-			case 6:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+			case (int) Notes::D:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				sprintf(note, "%dD", octave);
 				break;
-			case 7:
+			case (int) Notes::CS:
 				sprintf(note, "%dC#", octave);
 				break;
-			case 8:
+			case (int) Notes::C:
 				sprintf(note, "%dC", octave);
 				break;
-			case 9:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+			case (int) Notes::B:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				sprintf(note, "%dB", octave);
 				break;
-			case 10:
+			case (int) Notes::AS:
 				sprintf(note, "%dA#", octave);
 				break;
-			case 11:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+			case (int) Notes::A:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				sprintf(note, "%dA", octave);
 				break;
-			case 0:
+			case (int) Notes::GS:
 				sprintf(note, "%dG#", octave);
 				octave--;
 				break;
 		}
 
-		fl_color(fl_rgb_color(54, 54, 54));
-		fl_draw(note, 4, ((i-1)*CELL_H)+1, 30, CELL_H, (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+    /* Print note name */
 
-		/* print horizontal line */
+		fl_color(COLOR_BG_LINE);
+		fl_draw(note, 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
+      (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
-		if (i < 128)
-			fl_line(0, i*CELL_H, 40, +i*CELL_H);
+		/* Print horizontal line */
+
+		if (i < MAX_KEYS+1)
+			fl_line(0, i*CELL_H, CELL_W, +i*CELL_H);
 	}
 
 	fl_line_style(0);
@@ -212,25 +213,24 @@ void gePianoRoll::drawSurface1()
 
 void gePianoRoll::drawSurface2()
 {
-	surface2 = fl_create_offscreen(40, h());
+	surface2 = fl_create_offscreen(CELL_W, h());
 	fl_begin_offscreen(surface2);
-	fl_rectf(0, 0, 40, h(), COLOR_BG_MAIN);
-	fl_color(fl_rgb_color(54, 54, 54));
+	fl_rectf(0, 0, CELL_W, h(), COLOR_BG_MAIN);
+	fl_color(COLOR_BG_LINE);
 	fl_line_style(FL_DASH, 0, nullptr);
-	for (int i=1; i<=MAX_NOTES+1; i++) {
-		int  step = i % 12;
-		switch (step) {
-			case 1:
-			case 4:
-			case 6:
-			case 9:
-			case 11:
-				fl_rectf(0, i*CELL_H, 40, CELL_H, 30, 30, 30);
+	for (int i=1; i<=MAX_KEYS+1; i++) {
+		switch (i % KEYS) {
+			case (int) Notes::G:
+			case (int) Notes::E:
+			case (int) Notes::D:
+			case (int) Notes::B:
+			case (int) Notes::A:
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
 				break;
 		}
-		if (i < 128) {
-			fl_color(fl_rgb_color(54, 54, 54));
-			fl_line(0, i*CELL_H, 40, +i*CELL_H);
+		if (i < MAX_KEYS+1) {
+			fl_color(COLOR_BG_LINE);
+			fl_line(0, i*CELL_H, CELL_W, i*CELL_H);
 		}
 	}
 	fl_line_style(0);
@@ -243,14 +243,14 @@ void gePianoRoll::drawSurface2()
 
 void gePianoRoll::draw()
 {
-	fl_copy_offscreen(x(), y(), 40, h(), surface1, 0, 0);
+	fl_copy_offscreen(x(), y(), CELL_W, h(), surface1, 0, 0);
 
 #if defined(__APPLE__)
 	for (int i=36; i<pParent->totalWidth; i+=36) /// TODO: i < pParent->coverX is faster
-		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 1, 0);
+		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 1, 0);
 #else
-	for (int i=40; i<pParent->totalWidth; i+=40) /// TODO: i < pParent->coverX is faster
-		fl_copy_offscreen(x()+i, y(), 40, h(), surface2, 0, 0);
+	for (int i=CELL_W; i<pParent->totalWidth; i+=CELL_W) /// TODO: i < pParent->coverX is faster
+		fl_copy_offscreen(x()+i, y(), CELL_W, h(), surface2, 0, 0);
 #endif
 
 	baseDraw(false);
@@ -287,7 +287,7 @@ int gePianoRoll::handle(int e)
 
 				/* vertical snap */
 
-				int edge = (ay-y()-3) % 15;
+				int edge = (ay-y()-3) % CELL_H;
 				if (edge != 0) ay -= edge;
 
 				/* if no overlap, add new piano item. Also check that it doesn't
@@ -367,7 +367,7 @@ bool gePianoRoll::onItem(int rel_x, int rel_y)
 	if (!pParent->chan->hasActions)
 		return false;
 
-	int note = MAX_NOTES - (rel_y / CELL_H);
+	int note = MAX_KEYS - (rel_y / CELL_H);
 
 	int n = children();
 	for (int i=0; i<n; i++) {   // no scrollbars to skip
