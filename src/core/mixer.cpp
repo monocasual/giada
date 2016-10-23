@@ -410,7 +410,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->process(outBuf);
+		channels.at(k)->process(outBuf, inBuf);
 	pthread_mutex_unlock(&mutex_chans);
 
 	/* processing fxs master in & out, if any. */

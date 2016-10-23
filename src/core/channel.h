@@ -102,7 +102,7 @@ public:
 	/* process
 	 * merge vChannels into buffer, plus plugin processing (if any). */
 
-	virtual void process(float *buffer) = 0;
+	virtual void process(float *outBuffer, float *inBuffer) = 0;
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)

@@ -167,15 +167,16 @@ void MidiChannel::unsetMute(bool internal)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(float *buffer)
+void MidiChannel::process(float *outBuffer, float *inBuffer)
 {
 #ifdef WITH_VST
 	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
 #endif
 
+	/* TODO - isn't this useful only if WITH_VST ? */
 	for (int j=0; j<bufferSize; j+=2) {
-		buffer[j]   += vChan[j]   * volume; // * panLeft;   future?
-		buffer[j+1] += vChan[j+1] * volume; // * panRight;  future?
+		outBuffer[j]   += vChan[j]   * volume; // * panLeft;   future?
+		outBuffer[j+1] += vChan[j+1] * volume; // * panRight;  future?
 	}
 }
 

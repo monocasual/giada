@@ -91,7 +91,7 @@ public:
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;
 	void clear() override;
-	void process(float *buffer) override;
+	void process(float *outBuffer, float *inBuffer) override;
 	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
 		bool isUserGenerated=false) override;
 	void kill(int frame) override;

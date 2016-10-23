@@ -729,15 +729,22 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(float *buffer)
+void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
 #ifdef WITH_VST
+
+	/* If armed, copy input buffer to vChan: this enables the live processing
+	mode. The vChan will be overwritten by PluginHost::processStack, so that
+	you would record "clean" audio (i.e. not plugin-processed). */
+	if (armed)
+		memcpy(vChan, inBuffer, bufferSize * sizeof(float));
 	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
+
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {
-		buffer[j]   += vChan[j]   * volume * panLeft  * boost;
-		buffer[j+1] += vChan[j+1] * volume * panRight * boost;
+		outBuffer[j]   += vChan[j]   * volume * panLeft  * boost;
+		outBuffer[j+1] += vChan[j+1] * volume * panRight * boost;
 	}
 }
 
