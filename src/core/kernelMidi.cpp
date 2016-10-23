@@ -336,7 +336,7 @@ void KernelMidi::processMaster(uint32_t pure, uint32_t value)
 	}
 	else if (pure == G_Conf.midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		glue_startStopActionRec();
+		glue_startStopActionRec(false);
 	}
 	else if (pure == G_Conf.midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);

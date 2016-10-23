@@ -48,16 +48,17 @@ void glue_keyRelease(class Channel       *ch, bool ctrl=0, bool shift=0);
 void glue_keyRelease(class SampleChannel *ch, bool ctrl=0, bool shift=0);
 
 /* start/stopActionRec
- * handle the action recording. */
+Handles the action recording. If gui == true the signal comes from an user
+interaction, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startStopActionRec();
-void glue_startActionRec();
-void glue_stopActionRec();
+void glue_startStopActionRec(bool gui=true);
+void glue_startActionRec(bool gui=true);
+void glue_stopActionRec(bool gui=true);
 
 /* start/stopInputRec
- * handle the input recording (take). If gui == true the signal comes
+ * Handle the input recording (take). If gui == true the signal comes
  * from an internal interaction on the GUI, otherwise it's a
- * MIDI/Jack/external signal. Alert displays or not the popup message
+ * MIDI/Jack/external signal. Alert displays the popup message
  * if there are no available channels. */
 
 void glue_startStopInputRec(bool gui=true, bool alert=true);

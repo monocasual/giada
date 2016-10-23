@@ -192,31 +192,37 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopActionRec()
+void glue_startStopActionRec(bool gui)
 {
-	G_Recorder.active ? glue_stopActionRec() : glue_startActionRec();
+	G_Recorder.active ? glue_stopActionRec(gui) : glue_startActionRec(gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startActionRec()
+void glue_startActionRec(bool gui)
 {
 	if (G_audio_status == false)
 		return;
+
 	G_Recorder.active = true;
 
-	Fl::lock();
-	G_MainWin->controller->updateRecAction(1);
-	Fl::unlock();
+	if (!G_Mixer.running)
+		glue_startSeq();
+
+	if (!gui) {
+		Fl::lock();
+		G_MainWin->controller->updateRecAction(1);
+		Fl::unlock();
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopActionRec()
+void glue_stopActionRec(bool gui)
 {
 	/* stop the recorder and sort new actions */
 
@@ -233,13 +239,13 @@ void glue_stopActionRec()
 			glue_startReadingRecs(ch, false);
 	}
 
-	Fl::lock();
-	G_MainWin->controller->updateRecAction(0);
-	Fl::unlock();
+	if (!gui) {
+		Fl::lock();
+		G_MainWin->controller->updateRecAction(0);
+		Fl::unlock();
+	}
 
-	/* in case acton editor is on, refresh it */
-
-	gu_refreshActionEditor();
+	gu_refreshActionEditor();  // in case it's open
 }
 
 

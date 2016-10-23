@@ -97,7 +97,7 @@ void gController::__cb_play()
 
 void gController::__cb_recAction()
 {
-	glue_startStopActionRec();
+	glue_startStopActionRec(true);
 }
 
 
