@@ -124,7 +124,7 @@ void SampleChannel::generateUniqueSampleName()
 {
 	string oldName = wave->name;
 	int k = 1; // Start from k = 1, zero is too nerdy
-	while (!mh_uniqueSamplename(this, wave->name.c_str())) {
+	while (!mh_uniqueSampleName(this, wave->name)) {
 		wave->updateName((oldName + "-" + gu_itoa(k)).c_str());
 		k++;
 	}

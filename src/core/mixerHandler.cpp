@@ -94,6 +94,20 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 
 /* -------------------------------------------------------------------------- */
 
+/*
+static string __getNextSampleName__(SampleChannel *ch)
+{
+	string out = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
+	while (!mh_uniqueSamplename(ch, out)) {
+		G_Patch.lastTakeId++;
+		string out = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
+	}
+	return out;
+}*/
+
+
+/* -------------------------------------------------------------------------- */
+
 
 void mh_stopSequencer()
 {
@@ -203,15 +217,19 @@ void mh_rewindSequencer()
 
 SampleChannel *mh_startInputRec()
 {
-/*
+#if 0
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*) G_Mixer.channels.at(i))->canInputRec()) {
-			chan = (SampleChannel*) G_Mixer.channels.at(i);
-			break;
-		}
-	}*/
+		if (!G_Mixer.channels.at(i)->canInputRec())
+			continue;
 
+		/* allocate new sample */
+
+		Wave *w = new Wave();
+		if (!w->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate))
+			return NULL;
+
+	}
+#endif
 
 
 	/* search for the next available channel */
@@ -238,7 +256,7 @@ SampleChannel *mh_startInputRec()
 
 	char name[32];
 	sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
-	while (!mh_uniqueSamplename(chan, name)) {
+	while (!mh_uniqueSampleName(chan, name)) {
 		G_Patch_DEPR_.lastTakeId++;
 		G_Patch.lastTakeId++;
 		sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
@@ -278,17 +296,16 @@ SampleChannel *mh_stopInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_uniqueSamplename(SampleChannel *ch, const char *name)
+bool mh_uniqueSampleName(SampleChannel *ch, const string &name)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (ch != G_Mixer.channels.at(i)) {
-			if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE) {
-				SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
-				if (other->wave != NULL)
-					if (!strcmp(name, other->wave->name.c_str()))
-						return false;
-			}
-		}
+		if (ch == G_Mixer.channels.at(i))
+			continue;
+		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
+			continue;
+		SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
+		if (other->wave != NULL && name == other->wave->name)
+			return false;
 	}
 	return true;
 }
