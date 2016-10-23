@@ -103,7 +103,7 @@ public:
 	 * memcpy the virtual channel input in the channel designed for input
 	 * recording. Called by mixerHandler on stopInputRec() */
 
-	bool mergeVirtualInput();
+	void mergeVirtualInput();
 
 	/* getChannelByIndex
 	 * return channel with given index 'i'. */
@@ -133,6 +133,7 @@ public:
 	vector<class Channel*> channels;
 
 	bool   running;
+	bool   recording;         // is recording something?
 	bool   ready;
 	float *vChanInput;        // virtual channel for recording
 	float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
@@ -164,11 +165,6 @@ public:
 	static float tick[TICKSIZE];
 	int  tickTracker, tockTracker;
 	bool tickPlay, tockPlay; // 1 = play, 0 = stop
-
-	/* chanInput
-	 * the active channel during a recording. NULL = no channels active */
-
-	class SampleChannel *chanInput;
 
 	/* inputTracker
 	 * position of the sample in the input side (recording) */

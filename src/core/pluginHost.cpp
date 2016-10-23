@@ -520,36 +520,5 @@ void PluginHost::sortPlugins(int method)
   }
 }
 
-/* -------------------------------------------------------------------------- */
-
-
-void PluginHost::processStackOffline(float *buffer, int stackType, Channel *ch, int size)
-{
-#if 0
-	/* call processStack on the entire size of the buffer. How many cycles?
-	 * size / (kernelAudio::realBufsize*2) (ie. internal bufsize) */
-
-	/** FIXME 1 - calling processStack is slow, due to its internal buffer
-	 * conversions. We should also call processOffline from VST sdk */
-
-	int index = 0;
-	int step  = kernelAudio::realBufsize*2;
-
-	while (index <= size) {
-		int left = index+step-size;
-		if (left < 0)
-			processStack(&buffer[index], stackType, ch);
-
-	/** FIXME 2 - we left out the last part of buffer, because size % step != 0.
-	 * we should process the last chunk in a separate buffer, padded with 0 */
-
-		//else
-		//	gu_log("chunk of buffer left, size=%d\n", left);
-
-		index+=step;
-	}
-#endif
-}
-
 
 #endif // #ifdef WITH_VST

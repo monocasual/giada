@@ -35,6 +35,7 @@
 
 #include <vector>
 #include "../utils/fs.h"
+#include "../utils/string.h"
 #include "../utils/log.h"
 #include "../glue/main.h"
 #include "../glue/channel.h"
@@ -90,20 +91,6 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 }
 
 #endif
-
-
-/* -------------------------------------------------------------------------- */
-
-/*
-static string __getNextSampleName__(SampleChannel *ch)
-{
-	string out = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
-	while (!mh_uniqueSamplename(ch, out)) {
-		G_Patch.lastTakeId++;
-		string out = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
-	}
-	return out;
-}*/
 
 
 /* -------------------------------------------------------------------------- */
@@ -215,81 +202,60 @@ void mh_rewindSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-SampleChannel *mh_startInputRec()
+bool mh_startInputRec()
 {
-#if 0
+	int channelsReady = 0;
+
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+
 		if (!G_Mixer.channels.at(i)->canInputRec())
 			continue;
 
-		/* allocate new sample */
+		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 
-		Wave *w = new Wave();
-		if (!w->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate))
-			return NULL;
+		/* Allocate empty sample for the current channel. */
 
-	}
-#endif
-
-
-	/* search for the next available channel */
-
-	SampleChannel *chan = NULL;
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*) G_Mixer.channels.at(i))->canInputRec()) {
-			chan = (SampleChannel*) G_Mixer.channels.at(i);
-			break;
+		if (!ch->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate, G_Patch.lastTakeId))
+		{
+			gu_log("[mh_startInputRec] unable to allocate new Wave in chan %d!\n",
+				ch->index);
+			continue;
 		}
+
+		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
+
+		while (!mh_uniqueSampleName(ch, ch->wave->name)) {
+			G_Patch_DEPR_.lastTakeId++;
+			G_Patch.lastTakeId++;
+			ch->wave->name = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
+		}
+
+		gu_log("[mh_startInputRec] start input recs using chan %d with size %d "
+			"frame=%d\n", ch->index, G_Mixer.totalFrames, G_Mixer.inputTracker);
+
+		channelsReady++;
 	}
 
-	/* no chans available? */
-
-	if (chan == NULL)
-		return NULL;
-
-	Wave *w = new Wave();
-	if (!w->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate))
-		return NULL;
-
-	/* increase lastTakeId until the sample name TAKE-[n] is unique */
-
-	char name[32];
-	sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
-	while (!mh_uniqueSampleName(chan, name)) {
-		G_Patch_DEPR_.lastTakeId++;
-		G_Patch.lastTakeId++;
-		sprintf(name, "TAKE-%d", G_Patch_DEPR_.lastTakeId);
+	if (channelsReady > 0) {
+		G_Mixer.recording = true;
+		/* start to write from the actualFrame, not the beginning */
+		/** FIXME: this should be done before wave allocation */
+		G_Mixer.inputTracker = G_Mixer.actualFrame;
+		return true;
 	}
-
-	chan->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate, G_Patch_DEPR_.lastTakeId);
-	G_Mixer.chanInput = chan;
-
-	/* start to write from the actualFrame, not the beginning */
-	/** FIXME: move this before wave allocation*/
-
-	G_Mixer.inputTracker = G_Mixer.actualFrame;
-
-	gu_log(
-		"[mh] start input recs using chan %d with size %d, frame=%d\n",
-		chan->index, G_Mixer.totalFrames, G_Mixer.inputTracker
-	);
-
-	return chan;
+	return false;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-SampleChannel *mh_stopInputRec()
+void mh_stopInputRec()
 {
-	gu_log("[mh] stop input recs\n");
 	G_Mixer.mergeVirtualInput();
-	SampleChannel *ch = G_Mixer.chanInput;
-	G_Mixer.chanInput = NULL;
-	G_Mixer.waitRec   = 0;					// if delay compensation is in use
-	return ch;
+	G_Mixer.recording = false;
+	G_Mixer.waitRec = 0; // in case delay compensation is in use
+	gu_log("[mh] stop input recs\n");
 }
 
 
@@ -299,7 +265,7 @@ SampleChannel *mh_stopInputRec()
 bool mh_uniqueSampleName(SampleChannel *ch, const string &name)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (ch == G_Mixer.channels.at(i))
+		if (ch == G_Mixer.channels.at(i))  // skip itself
 			continue;
 		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
 			continue;

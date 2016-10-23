@@ -98,6 +98,7 @@ void Mixer::init()
 	docross     = false;
 	rewindWait  = false;
 	running     = false;
+	recording   = false;
 	ready       = true;
 	waitRec     = 0;
 	actualFrame = 0;
@@ -116,7 +117,6 @@ void Mixer::init()
 	inVol        = DEFAULT_IN_VOL;
 	peakOut      = 0.0f;
 	peakIn	     = 0.0f;
-	chanInput    = NULL;
 	inputTracker = 0;
 
 	actualBeat    = 0;
@@ -591,21 +591,16 @@ bool Mixer::hasEditedSamples()
 /* -------------------------------------------------------------------------- */
 
 
-bool Mixer::mergeVirtualInput()
+void Mixer::mergeVirtualInput()
 {
-	if (vChanInput == NULL) {
-		gu_log("[Mixer] virtual input channel not alloc'd\n");
-		return false;
+	for (unsigned i=0; i<channels.size(); i++) {
+		if (channels.at(i)->type == CHANNEL_MIDI)
+			continue;
+		SampleChannel *ch = (SampleChannel*) channels.at(i);
+		if (ch->armed)
+			memcpy(ch->wave->data, vChanInput, totalFrames * sizeof(float));
 	}
-	else {
-#ifdef WITH_VST
-		G_PluginHost.processStackOffline(vChanInput, PluginHost::MASTER_IN, 0, totalFrames);
-#endif
-		int numFrames = totalFrames*sizeof(float);
-		memcpy(chanInput->wave->data, vChanInput, numFrames);
-		memset(vChanInput, 0, numFrames); // clear vchan
-		return true;
-	}
+	memset(vChanInput, 0, totalFrames * sizeof(float)); // clear vchan
 }
 
 
@@ -614,7 +609,7 @@ bool Mixer::mergeVirtualInput()
 
 void Mixer::lineInRec(float *inBuf, unsigned frame)
 {
-	if (chanInput == NULL || !kernelAudio::inputEnabled)
+	if (/* TODO - !hasArmedChannels() || */ !kernelAudio::inputEnabled)
 	 	return;
 
 	/* delay comp: wait until waitRec reaches delayComp. WaitRec

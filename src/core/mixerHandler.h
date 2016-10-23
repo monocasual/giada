@@ -59,9 +59,9 @@ void mh_readPatch();
  * the chan number chosen, otherwise -1 if there are no more empty
  * channels available. */
 
-class SampleChannel *mh_startInputRec();
+bool mh_startInputRec();
 
-class SampleChannel *mh_stopInputRec();
+void mh_stopInputRec();
 
 /* uniqueSamplename
  * return true if samplename 'n' is unique. Requires SampleChannel *ch

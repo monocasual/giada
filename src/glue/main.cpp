@@ -210,7 +210,7 @@ void glue_stopSeq(bool gui)
 	/* if input recs are active (who knows why) we must deactivate them.
 	 * One might stop the sequencer while an input rec is running. */
 
-	if (G_Mixer.chanInput != NULL) {
+	if (G_Mixer.recording) {
 		mh_stopInputRec();
 		if (gui) Fl::lock();
 		G_MainWin->controller->updateRecInput(0);

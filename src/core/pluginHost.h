@@ -197,11 +197,6 @@ public:
 
   void runDispatchLoop();
 
-  /* processStackOffline
-   * apply the fx list to a longer chunk of data */
-
-  void processStackOffline(float *buffer, int stackType, class Channel *ch, int size);
-
   /* freeAllStacks
    * Free everything. */
 

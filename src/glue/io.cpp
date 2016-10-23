@@ -254,14 +254,13 @@ void glue_stopActionRec(bool gui)
 
 void glue_startStopInputRec(bool gui, bool alert)
 {
-	if (G_Mixer.chanInput == NULL) {
-		if (!glue_startInputRec(gui)) {
-			if (alert) gdAlert("No channels available for recording.");
-			else       gu_log("[glue] no channels available for recording\n");
-		}
-	}
-	else
+	if (G_Mixer.recording)
 		glue_stopInputRec(gui);
+	else
+	if (!glue_startInputRec(gui)) {
+		if (alert) gdAlert("No channels armed or available for recording.");
+		else       gu_log("[glue] no channels armed or available for recording\n");
+	}
 }
 
 
@@ -271,14 +270,13 @@ void glue_startStopInputRec(bool gui, bool alert)
 int glue_startInputRec(bool gui)
 {
 	if (G_audio_status == false)
-		return -1;
+		return false;
 
-	SampleChannel *ch = mh_startInputRec();
-	if (ch == NULL)	{                  // no chans available
+	if (!mh_startInputRec()) {
 		Fl::lock();
 		G_MainWin->controller->updateRecInput(0);
 		Fl::unlock();
-		return 0;
+		return false;
 	}
 
 	if (!G_Mixer.running) {
@@ -288,18 +286,13 @@ int glue_startInputRec(bool gui)
 		Fl::unlock();
 	}
 
-	glue_setChanVol(ch, 1.0f, false); // false = not from gui click
-
-	ch->guiChannel->mainButton->label(ch->wave->name.c_str());
-
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->controller->updateRecInput(1);
 		Fl::unlock();
 	}
 
-	return 1;
-
+	return true;
 }
 
 
@@ -308,10 +301,17 @@ int glue_startInputRec(bool gui)
 
 int glue_stopInputRec(bool gui)
 {
-	SampleChannel *ch = mh_stopInputRec();
+	mh_stopInputRec();
 
-	if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
-		ch->start(0, true, G_Mixer.quantize, G_Mixer.running);  // on frame 0: user-generated event
+	/* Start all sample channels set in loop mode. */
+
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+			continue;
+		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
+			ch->start(0, true, G_Mixer.quantize, G_Mixer.running);  // on frame 0: user-generated event
+	}
 
 	if (!gui) {
 		Fl::lock();

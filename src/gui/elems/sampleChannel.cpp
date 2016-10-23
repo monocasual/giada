@@ -140,10 +140,10 @@ void geSampleChannel::__cb_button()
 
 void geSampleChannel::__cb_openMenu()
 {
-	/* if you're recording (actions or input) no menu is allowed; you can't
-	 * do anything, especially deallocate the channel */
+	/* If you're recording (input or actions) no menu is allowed; you can't do
+	anything, especially deallocate the channel */
 
-	if (G_Mixer.chanInput == ch || G_Recorder.active)
+	if (G_Mixer.recording || G_Recorder.active)
 		return;
 
 	/* the following is a trash workaround for a FLTK menu. We need a gMenu
@@ -351,7 +351,7 @@ void geSampleChannel::refresh()
 	setColorsByStatus(ch->status, ch->recStatus);
 
 	if (((SampleChannel*) ch)->wave != NULL) {
-		if (G_Mixer.chanInput == ch)
+		if (G_Mixer.recording && ch->armed)
 			mainButton->setInputRecordMode();
 		if (G_Recorder.active) {
 			if (G_Recorder.canRec(ch))

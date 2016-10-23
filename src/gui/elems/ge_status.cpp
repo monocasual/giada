@@ -60,7 +60,7 @@ void gStatus::draw()
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
 
 
-    if (G_Mixer.chanInput == ch)
+    if (G_Mixer.recording && ch->armed)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
     else
     if (G_Recorder.active && G_Recorder.canRec(ch))

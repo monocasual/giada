@@ -698,7 +698,7 @@ void SampleChannel::pushWave(Wave *w)
 {
 	wave   = w;
 	status = STATUS_OFF;
-	sendMidiLplay();
+	sendMidiLplay();     // FIXME - why here?!?!
 	begin  = 0;
 	end    = wave->size;
 }
@@ -720,7 +720,7 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 	begin       = 0;
 	end         = wave->size;
 
-	sendMidiLplay();
+	sendMidiLplay();  // FIXME - why here?!?!
 
 	return true;
 }
@@ -731,15 +731,16 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 
 void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
-#ifdef WITH_VST
-
 	/* If armed, copy input buffer to vChan: this enables the live processing
 	mode. The vChan will be overwritten by PluginHost::processStack, so that
 	you would record "clean" audio (i.e. not plugin-processed). */
-	if (armed)
-		memcpy(vChan, inBuffer, bufferSize * sizeof(float));
-	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
 
+	if (armed) {
+		memcpy(vChan, inBuffer, bufferSize * sizeof(float));
+	}
+
+#ifdef WITH_VST
+	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {
@@ -955,7 +956,7 @@ int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
 
 bool SampleChannel::canInputRec()
 {
-	return wave == NULL;
+	return wave == NULL && armed;
 }
 
 

@@ -70,12 +70,12 @@ bool Recorder::canRec(Channel *ch)
 	/* NO recording if:
 	 * recorder is inactive
 	 * mixer is not running
-	 * mixer is recording a take in this channel ch
+	 * mixer is recording a take somewhere
 	 * channel is empty */
 
-	if (!active                 ||
-		  !G_Mixer.running        ||
-			G_Mixer.chanInput == ch ||
+	if (!active            ||
+		  !G_Mixer.running   ||
+			 G_Mixer.recording ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
 		)
 		return false;
