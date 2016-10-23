@@ -203,6 +203,17 @@ void mh_rewindSequencer()
 
 SampleChannel *mh_startInputRec()
 {
+/*
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+			if (((SampleChannel*) G_Mixer.channels.at(i))->canInputRec()) {
+			chan = (SampleChannel*) G_Mixer.channels.at(i);
+			break;
+		}
+	}*/
+
+
+
 	/* search for the next available channel */
 
 	SampleChannel *chan = NULL;

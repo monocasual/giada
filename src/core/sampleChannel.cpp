@@ -954,7 +954,7 @@ int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
 
 
 bool SampleChannel::canInputRec()
-	{
+{
 	return wave == NULL;
 }
 

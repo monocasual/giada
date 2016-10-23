@@ -178,6 +178,13 @@ public:
 
 	virtual void clear() = 0;
 
+	/* canInputRec
+	Tells whether a channel can accept and handle input audio. Always false for
+	Midi channels, true for Sample channels only if they don't contain a
+	sample yet.*/
+
+	virtual bool canInputRec() = 0;
+
 	/* writePatch
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */

@@ -111,6 +111,7 @@ public:
 	void onBar(int frame) override;
 	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
+	bool canInputRec() override;
 
 	int load(const char *file, int samplerate, int rsmpQuality);
 
@@ -166,11 +167,6 @@ public:
 	 * alloc an empty wave used in input recordings. */
 
 	bool allocEmpty(int frames, int samplerate, int takeId);
-
-	/* canInputRec
-	 * true if channel can host a new wave from input recording. */
-
-	bool canInputRec();
 
 	/* setReadActions
 	 * if enabled (v == true), recorder will read actions from this channel. If

@@ -354,4 +354,13 @@ void MidiChannel::receiveMidi(uint32_t msg)
 /* -------------------------------------------------------------------------- */
 
 
+bool MidiChannel::canInputRec()
+{
+	return false; // midi channels don't handle input audio
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void MidiChannel::clear() {}
