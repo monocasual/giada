@@ -31,7 +31,11 @@
 #define KERNELMIDI_H
 
 
-#include <cstdint>
+#ifdef __APPLE__  // our compiler still doesn't know about cstdint (c++11 stuff)
+	#include <stdint.h>
+#else
+	#include <cstdint>
+#endif
 #include <string>
 #include <vector>
 
