@@ -356,9 +356,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 	clearAllBuffers(outBuf, bufferSize);
 
 	for (unsigned j=0; j<bufferSize; j+=2) {
-
 		processLineIn(inBuf, j);
-
 		if (running) {
 			lineInRec(inBuf, j);
 			doQuantize(j);
@@ -369,86 +367,19 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 			testLastBeat();  // this test must be the last one
 			sendMIDIsync();
 		}
+		sumChannels(j);
+		renderMetronome(outBuf, j); // FIXME - move this one after the peak meter calculation
+	}
 
-		/* sum channels, CHANNEL_SAMPLE only */
+	renderOutput(outBuf, inBuf);
 
-		pthread_mutex_lock(&mutex_chans);
-		for (unsigned k=0; k<channels.size(); k++) {
-			if (channels.at(k)->type == CHANNEL_SAMPLE)
-				((SampleChannel*)channels.at(k))->sum(j, running);
-		}
-		pthread_mutex_unlock(&mutex_chans);
-
-		/* metronome play */
-		/** FIXME - move this one after the peak meter calculation */
-
-		if (tockPlay) {
-			outBuf[j]   += tock[tockTracker];
-			outBuf[j+1] += tock[tockTracker];
-			tockTracker++;
-			if (tockTracker >= TICKSIZE-1) {
-				tockPlay    = false;
-				tockTracker = 0;
-			}
-		}
-		if (tickPlay) {
-			outBuf[j]   += tick[tickTracker];
-			outBuf[j+1] += tick[tickTracker];
-			tickTracker++;
-			if (tickTracker >= TICKSIZE-1) {
-				tickPlay    = false;
-				tickTracker = 0;
-			}
-		}
-	} // end loop J
-
-
-	/* final loop: sum virtual channels and process plugins. */
-
-	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->process(outBuf, inBuf);
-	pthread_mutex_unlock(&mutex_chans);
-
-	/* processing fxs master in & out, if any. */
-
-#ifdef WITH_VST
-	pthread_mutex_lock(&mutex_plugins);
-	G_PluginHost.processStack(outBuf, PluginHost::MASTER_OUT);
-	G_PluginHost.processStack(vChanInToOut, PluginHost::MASTER_IN);
-	pthread_mutex_unlock(&mutex_plugins);
-#endif
-
-	/* post processing master fx + peak calculation. */
+	/* post processing */
 
 	for (unsigned j=0; j<bufferSize; j+=2) {
-
-		/* merging vChanInToOut, if enabled */
-
-		if (inToOut) {
-			outBuf[j]   += vChanInToOut[j];
-			outBuf[j+1] += vChanInToOut[j+1];
-		}
-
-		outBuf[j]   *= outVol;
-		outBuf[j+1] *= outVol;
-
-		/* computes the peak for the left channel (so far). */
-
-		if (outBuf[j] > peakOut)
-			peakOut = outBuf[j];
-
-		if (G_Conf.limitOutput) {
-			if (outBuf[j] > 1.0f)
-				outBuf[j] = 1.0f;
-			else if (outBuf[j] < -1.0f)
-				outBuf[j] = -1.0f;
-
-			if (outBuf[j+1] > 1.0f)
-				outBuf[j+1] = 1.0f;
-			else if (outBuf[j+1] < -1.0f)
-				outBuf[j+1] = -1.0f;
-		}
+		finalizeOutput(outBuf, j);
+		computePeak(outBuf, j);
+		if (G_Conf.limitOutput)
+			limitOutput(outBuf, j);
 	}
 
 	return 0;
@@ -744,6 +675,112 @@ void Mixer::testLastBeat()
 			tockPlay = true;
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::sumChannels(unsigned frame)
+{
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size(); k++) {
+		if (channels.at(k)->type == CHANNEL_SAMPLE)
+			((SampleChannel*)channels.at(k))->sum(frame, running);
+	}
+	pthread_mutex_unlock(&mutex_chans);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::renderMetronome(float *outBuf, unsigned frame)
+{
+	if (tockPlay) {
+		outBuf[frame]   += tock[tockTracker];
+		outBuf[frame+1] += tock[tockTracker];
+		tockTracker++;
+		if (tockTracker >= TICKSIZE-1) {
+			tockPlay    = false;
+			tockTracker = 0;
+		}
+	}
+	if (tickPlay) {
+		outBuf[frame]   += tick[tickTracker];
+		outBuf[frame+1] += tick[tickTracker];
+		tickTracker++;
+		if (tickTracker >= TICKSIZE-1) {
+			tickPlay    = false;
+			tickTracker = 0;
+		}
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::renderOutput(float *outBuf, float *inBuf)
+{
+	pthread_mutex_lock(&mutex_chans);
+	for (unsigned k=0; k<channels.size(); k++)
+		channels.at(k)->process(outBuf, inBuf);
+	pthread_mutex_unlock(&mutex_chans);
+
+#ifdef WITH_VST
+	pthread_mutex_lock(&mutex_plugins);
+	G_PluginHost.processStack(outBuf, PluginHost::MASTER_OUT);
+	G_PluginHost.processStack(vChanInToOut, PluginHost::MASTER_IN);
+	pthread_mutex_unlock(&mutex_plugins);
+#endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::computePeak(float *outBuf, unsigned frame)
+{
+	/* TODO it takes into account only left channel so far! */
+	if (outBuf[frame] > peakOut)
+		peakOut = outBuf[frame];
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::limitOutput(float *outBuf, unsigned frame)
+{
+	if (outBuf[frame] > 1.0f)
+		outBuf[frame] = 1.0f;
+	else
+	if (outBuf[frame] < -1.0f)
+		outBuf[frame] = -1.0f;
+
+	if (outBuf[frame+1] > 1.0f)
+		outBuf[frame+1] = 1.0f;
+	else
+	if (outBuf[frame+1] < -1.0f)
+		outBuf[frame+1] = -1.0f;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Mixer::finalizeOutput(float *outBuf, unsigned frame)
+{
+	/* merge vChanInToOut, if enabled */
+
+	if (inToOut) {
+		outBuf[frame]   += vChanInToOut[frame];
+		outBuf[frame+1] += vChanInToOut[frame+1];
+	}
+	outBuf[frame]   *= outVol;
+	outBuf[frame+1] *= outVol;
+}
+
 
 /* -------------------------------------------------------------------------- */
 

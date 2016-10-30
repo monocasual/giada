@@ -226,6 +226,38 @@ private:
 
 	void doQuantize(unsigned frame);
 
+	/* sumChannels
+	Sums channels, i.e. lets them add sample frames to their virtual channels.
+	This is required for CHANNEL_SAMPLE only */
+
+	void sumChannels(unsigned frame);
+
+	/* renderMetronome
+	Generates metronome when needed and pastes it to the output buffer. */
+
+	void renderMetronome(float *outBuf, unsigned frame);
+
+	/* renderOutput
+	Final processing stage. Take each channel and process it (i.e. copy its
+	content to the output buffer). Process plugins too, if any. */
+
+	void renderOutput(float *outBuf, float *inBuf);
+
+	/* limitOutput
+	Applies a very dumb hard limiter. */
+
+	void limitOutput(float *outBuf, unsigned frame);
+
+	/* computePeak */
+
+	void computePeak(float *outBuf, unsigned frame);
+
+	/* finalizeOutput
+	Last touches after the output has been rendered: apply inToOut if any, apply
+	output volume. */
+	
+	void finalizeOutput(float *outBuf, unsigned frame);
+
 	/* test*
 	Checks if the sequencer has reached a specific point (bar, first beat or
 	last frame). */
