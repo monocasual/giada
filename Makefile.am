@@ -243,7 +243,6 @@ src/core/wave.cpp            \
 src/core/midiMapConf.cpp     \
 src/core/patch.cpp           \
 src/core/plugin.cpp          \
-src/core/pluginHost.cpp      \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
 src/utils/fs.cpp             \
