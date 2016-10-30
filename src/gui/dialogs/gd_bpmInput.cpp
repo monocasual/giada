@@ -28,6 +28,7 @@
 
 
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../core/mixer.h"
 #include "../../glue/main.h"
 #include "../../utils/gui.h"

@@ -33,13 +33,14 @@
 #include "../glue/main.h"
 #include "../glue/io.h"
 #include "mixer.h"
+#include "const.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "conf.h"
 #include "midiMapConf.h"
-#include "kernelMidi.h"
 #include "pluginHost.h"
+#include "kernelMidi.h"
 
 
 extern bool        G_midiStatus;

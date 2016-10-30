@@ -29,6 +29,7 @@
 
 #include "../../core/graphics.h"
 #include "../../core/mixer.h"
+#include "../../core/const.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_waveform.h"
 #include "ge_waveTools.h"
@@ -54,7 +55,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::updateWaveform() 
+void gWaveTools::updateWaveform()
 {
 	waveform->alloc(w());
 	waveform->redraw();
@@ -64,7 +65,7 @@ void gWaveTools::updateWaveform()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::resize(int x, int y, int w, int h) 
+void gWaveTools::resize(int x, int y, int w, int h)
 {
 	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
 		Fl_Widget::resize(x, y, w, h);
@@ -87,7 +88,7 @@ void gWaveTools::resize(int x, int y, int w, int h)
 /* ------------------------------------------------------------------ */
 
 
-int gWaveTools::handle(int e) 
+int gWaveTools::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
 	switch (e) {
@@ -100,4 +101,3 @@ int gWaveTools::handle(int e)
 	}
 	return ret;
 }
-

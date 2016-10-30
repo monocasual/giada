@@ -30,15 +30,10 @@
 #ifndef MIXER_H
 #define MIXER_H
 
-#include <stdlib.h>
+
 #include <pthread.h>
 #include <vector>
-#include "const.h"
 #include "kernelAudio.h"
-#include "../utils/fs.h"
-
-
-using std::vector;
 
 
 class Mixer
@@ -130,7 +125,7 @@ public:
 		XFADE   = 0x02
 	};
 
-	vector<class Channel*> channels;
+	std::vector<class Channel*> channels;
 
 	bool   running;
 	bool   recording;         // is recording something?

@@ -30,6 +30,7 @@
 #include "../../utils/gui.h"
 #include "../../core/mixer.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../glue/main.h"
 #include "gd_beatsInput.h"
 #include "gd_mainWindow.h"

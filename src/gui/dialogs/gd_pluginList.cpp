@@ -33,6 +33,7 @@
 #include "../../utils/gui.h"
 #include "../../utils/fs.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../core/graphics.h"
 #include "../../core/pluginHost.h"
 #include "../../core/plugin.h"

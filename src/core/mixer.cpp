@@ -27,11 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <math.h>
 #include "../utils/log.h"
-#include "../utils/gui.h"
-#include "mixer.h"
-#include "init.h"
 #include "wave.h"
 #include "recorder.h"
 #include "pluginHost.h"
@@ -42,6 +38,7 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "kernelMidi.h"
+#include "mixer.h"
 
 
 extern Mixer 			 G_Mixer;

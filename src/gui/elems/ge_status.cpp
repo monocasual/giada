@@ -28,6 +28,7 @@
 
 
 #include "../../core/mixer.h"
+#include "../../core/const.h"
 #include "ge_status.h"
 
 

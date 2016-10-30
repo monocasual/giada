@@ -31,10 +31,10 @@
 #include <cstring>
 #include "../utils/log.h"
 #include "../glue/main.h"
-#include "kernelAudio.h"
-#include "mixer.h"
-
 #include "conf.h"
+#include "mixer.h"
+#include "const.h"
+#include "kernelAudio.h"
 
 
 extern Mixer G_Mixer;
@@ -88,7 +88,7 @@ int openDevice(
 
 	if (api == SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
 		system = new RtAudio(RtAudio::MACOSX_CORE);
-		
+
 #endif
 
 	else {

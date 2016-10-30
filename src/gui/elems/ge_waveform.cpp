@@ -33,6 +33,7 @@
 #include <samplerate.h>
 #include "../../core/wave.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../core/mixer.h"
 #include "../../core/waveFx.h"
 #include "../../core/channel.h"
