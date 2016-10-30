@@ -99,7 +99,8 @@ public:
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
-	 * merge vChannels into buffer, plus plugin processing (if any). */
+	Merges vChannels into buffer, plus plugin processing (if any). Warning:
+	inBuffer might be nullptr if no input devices are available for recording. */
 
 	virtual void process(float *outBuffer, float *inBuffer) = 0;
 

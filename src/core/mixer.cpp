@@ -332,24 +332,23 @@ void Mixer::sendMIDIrewind()
 /* -------------------------------------------------------------------------- */
 
 
-int Mixer::masterPlay(
-	void *out_buf, void *in_buf, unsigned n_frames,
+int Mixer::masterPlay(void *outBuf, void *inBuf, unsigned bufferSize,
 	double streamTime, RtAudioStreamStatus status, void *userData)
 {
-	return G_Mixer.__masterPlay(out_buf, in_buf, n_frames);
+	return G_Mixer.__masterPlay(outBuf, inBuf, bufferSize);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
+int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 {
 	if (!ready)
 		return 0;
 
-	float *outBuf = ((float *) out_buf);
-	float *inBuf  = ((float *) in_buf);  // TODO !G_KernelAudio.inputEnabled ? nullptr
+	float *outBuf = (float *) _outBuf;
+	float *inBuf  = G_KernelAudio.inputEnabled ? (float *) _inBuf : nullptr;
 	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator

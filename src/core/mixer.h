@@ -58,11 +58,9 @@ public:
 	/* masterPlay
 	 * core method (callback) */
 
-	static int masterPlay(
-		void *out_buf, void *in_buf, unsigned n_frames,
-		double streamTime, RtAudioStreamStatus status, void *userData
-	);
-	int __masterPlay(void *out_buf, void *in_buf, unsigned bufferSize);
+	static int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize,
+		double streamTime, RtAudioStreamStatus status, void *userData);
+	int __masterPlay(void *outBuf, void *inBuf, unsigned bufferSize);
 
 	/* updateFrameBars
 	 * updates bpm, frames, beats and so on. */

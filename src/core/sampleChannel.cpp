@@ -732,11 +732,12 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 
 void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
-	/* If armed, copy input buffer to vChan: this enables the live processing
-	mode. The vChan will be overwritten by PluginHost::processStack, so that
-	you would record "clean" audio (i.e. not plugin-processed). */
+	/* If armed and inbuffer is not null (i.e. input device available), copy input
+	buffer to vChan: this enables the live processing mode. The vChan will be
+	overwritten by PluginHost::processStack, so that you would record "clean"
+	audio (i.e. not plugin-processed). */
 
-	if (armed) {
+	if (armed && inBuffer) {
 		memcpy(vChan, inBuffer, bufferSize * sizeof(float));
 	}
 
