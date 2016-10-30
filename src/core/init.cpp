@@ -74,14 +74,6 @@ void init_prepareParser()
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
 
-#ifdef WITH_VST
-
-	G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
-	G_PluginHost.sortPlugins(G_Conf.pluginSortMethod);
-
-#endif
-
-
 	if (!gu_logInit(G_Conf.logMode))
 		gu_log("[init] log init failed! Using default stdout\n");
 
@@ -99,6 +91,20 @@ void init_prepareKernelAudio()
 		G_Conf.samplerate, G_Conf.buffersize);
 	G_Mixer.init();
 	G_Recorder.init();
+
+#ifdef WITH_VST
+
+	/* If with Jack don't use buffer size stored in Conf. Use real buffersize
+	from the soundcard (G_KernelAudio.realBufsize). */
+
+	if (G_Conf.soundSystem == SYS_API_JACK)
+		G_PluginHost.init(G_KernelAudio.realBufsize, G_Conf.samplerate);
+	else
+		G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
+		
+	G_PluginHost.sortPlugins(G_Conf.pluginSortMethod);
+
+#endif
 }
 
 
