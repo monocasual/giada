@@ -31,6 +31,7 @@
 
 
 #include "../utils/log.h"
+#include "const.h"
 #include "channel.h"
 #include "plugin.h"
 #include "pluginHost.h"

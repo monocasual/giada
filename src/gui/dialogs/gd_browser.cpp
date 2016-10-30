@@ -32,6 +32,7 @@
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../glue/main.h"
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"

@@ -30,6 +30,7 @@
 #include "../../utils/gui.h"
 #include "../../core/kernelMidi.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../core/sampleChannel.h"
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"

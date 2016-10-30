@@ -32,14 +32,13 @@
 
 
 #include <vector>
-#include "../utils/fs.h"
 #include "midiMapConf.h"
-#include "const.h"
 #include "recorder.h"
 
 #ifdef WITH_VST
 	#include "../deps/juce/config.h"
 #endif
+
 
 using std::vector;
 using std::string;
