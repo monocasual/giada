@@ -31,10 +31,7 @@
 
 
 #include "../utils/log.h"
-#include "../utils/fs.h"
-#include "mixer.h"
 #include "channel.h"
-#include "midiChannel.h"
 #include "plugin.h"
 #include "pluginHost.h"
 
