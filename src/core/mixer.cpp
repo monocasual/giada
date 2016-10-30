@@ -368,7 +368,6 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 			sendMIDIsync();
 		}
 		sumChannels(j);
-		renderMetronome(outBuf, j); // FIXME - move this one after the peak meter calculation
 	}
 
 	renderIO(outBuf, inBuf);
@@ -378,6 +377,7 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 	for (unsigned j=0; j<bufferSize; j+=2) {
 		finalizeOutput(outBuf, j);
 		computePeak(outBuf, j);
+		renderMetronome(outBuf, j);
 		if (G_Conf.limitOutput)
 			limitOutput(outBuf, j);
 	}
