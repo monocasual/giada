@@ -134,7 +134,7 @@
 #define DEFAULT_BOOST			   0.0f
 #define gDEFAULT_PITCH			 1.0f   // ugly and temporary fix to avoid conflicts with wingdi.h (Windows only).
 #define DEFAULT_OUT_VOL  	   1.0f
-#define DEFAULT_IN_VOL  	   0.0f
+#define DEFAULT_IN_VOL  	   1.0f
 #define DEFAULT_CHANMODE	   SINGLE_BASIC
 #define DEFAULT_BPM				   120.0f
 #define DEFAULT_BEATS			   4
