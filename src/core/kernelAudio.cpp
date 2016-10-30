@@ -41,6 +41,10 @@ extern Conf        G_Conf;
 extern bool	       G_audio_status;
 
 
+using std::string;
+using std::vector;
+
+
 KernelAudio::KernelAudio()
 {
 	system       = nullptr;
@@ -55,14 +59,8 @@ KernelAudio::KernelAudio()
 
 
 
-int KernelAudio::openDevice(
-	int _api,
-	int outDev,
-	int inDev,
-	int outChan,
-	int inChan,
-	int samplerate,
-	int buffersize)
+int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
+	int inChan, int samplerate, int buffersize)
 {
 	api = _api;
 	gu_log("[KA] using system 0x%x\n", api);
@@ -101,10 +99,6 @@ int KernelAudio::openDevice(
 		return 0;
 	}
 
-
-
-	//gu_log("[KA] %d\n", sizeof(system->rtapi_));
-
 	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
 
 	numDevs = system->getDeviceCount();
@@ -121,7 +115,6 @@ int KernelAudio::openDevice(
 			gu_log("  %d) %s\n", i, getDeviceName(i).c_str());
 	}
 
-
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
@@ -129,6 +122,7 @@ int KernelAudio::openDevice(
 		outParams.deviceId = getDefaultOut();
 	else
 		outParams.deviceId = outDev;
+
 	outParams.nChannels = 2;
 	outParams.firstChannel = outChan*2; // chan 0=0, 1=2, 2=4, ...
 
@@ -142,7 +136,6 @@ int KernelAudio::openDevice(
 	}
 	else
 		inputEnabled = false;
-
 
   RtAudio::StreamOptions options;
   options.streamName = "Giada";
@@ -400,7 +393,7 @@ int	KernelAudio::getDeviceByName(const char *name)
 
 bool KernelAudio::hasAPI(int API)
 {
-	std::vector<RtAudio::Api> APIs;
+	vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
 		if (APIs.at(i) == API)
@@ -412,7 +405,7 @@ bool KernelAudio::hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-std::string KernelAudio::getRtAudioVersion()
+string KernelAudio::getRtAudioVersion()
 {
 	return RtAudio::getVersion();
 }
