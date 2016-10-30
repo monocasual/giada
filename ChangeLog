@@ -18,6 +18,7 @@
 - Fix non-playing samples if live-recorded and 'R' button is on (GitHub #93)
 - Refinements to show/hide 'R' button's dynamics
 - Increase piano roll items' height
+- Generate metronome during output post-processing 
 - Lots of source code optimizations and cleanups
 
 
