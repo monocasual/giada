@@ -42,7 +42,8 @@
 #include "recorder.h"
 
 
-extern Mixer G_Mixer;
+extern KernelAudio G_KernelAudio;
+extern Mixer       G_Mixer;
 
 
 Recorder::Recorder()
@@ -589,7 +590,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame)
 	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
-			int truncFrame = cmp.a1.frame-kernelAudio::realBufsize;
+			int truncFrame = cmp.a1.frame - G_KernelAudio.realBufsize;
 			if (truncFrame < 0)
 				truncFrame = 0;
 			gu_log("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);

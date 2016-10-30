@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * KernelAudio
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +24,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef KERNELAUDIO_H
@@ -32,26 +32,22 @@
 
 
 #include "../deps/rtaudio-mod/RtAudio.h"
-#if defined(__linux__)
+#ifdef __linux__
 	#include <jack/jack.h>
 	#include <jack/intclient.h>
 	#include <jack/transport.h>
 #endif
 
 
-using std::string;
+class KernelAudio
+{
+public:
 
+	KernelAudio();
 
-namespace kernelAudio {
+	int openDevice(int api,	int outDev,	int inDev, int outChan,	int inChan,
+		int samplerate,	int buffersize);
 
-	int openDevice(
-			int api,
-			int outDev,
-			int inDev,
-			int outChan,
-			int inChan,
-			int samplerate,
-			int buffersize);
 	int closeDevice();
 
 	int startStream();
@@ -60,7 +56,7 @@ namespace kernelAudio {
 	bool			  isProbed         (unsigned dev);
 	bool		    isDefaultIn      (unsigned dev);
 	bool			  isDefaultOut     (unsigned dev);
-	string      getDeviceName    (unsigned dev);
+	std::string getDeviceName    (unsigned dev);
 	unsigned    getMaxInChans    (int dev);
 	unsigned    getMaxOutChans   (unsigned dev);
 	unsigned    getDuplexChans   (unsigned dev);
@@ -70,29 +66,27 @@ namespace kernelAudio {
 	int         getDefaultOut    ();
 	int         getDefaultIn     ();
 	bool        hasAPI           (int API);
-	string      getRtAudioVersion();
+	std::string getRtAudioVersion();
 
 #ifdef __linux__
+
 	jack_client_t *jackGetHandle();
 	void jackStart();
 	void jackStop();
 	void jackSetSyncCb();
-	int  jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
+	static int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
+	int __jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
+	
 #endif
 
-	/* *** how to avoid multiple definition of ***
-	 * When you declare a variable in a header file, every source file that
-	 * includes that header, either directly or indirectly, gets its own
-	 * separate copy of the variable. Then when you go to link all the .o
-	 * files together, the linker sees that the variable is instantiated
-	 * in a bunch of .o files. Make it extern in the header file and
-	 * instantiate it in memory.cpp. */
+	unsigned numDevs;
+	bool 		 inputEnabled;
+	unsigned realBufsize; 		// reale bufsize from the soundcard
+	int      api;
 
-	extern RtAudio  *system;
-	extern unsigned  numDevs;
-	extern bool 		 inputEnabled;
-	extern unsigned  realBufsize; 		// reale bufsize from the soundcard
-	extern int       api;
-}
+private:
+
+	RtAudio *system;
+};
 
 #endif

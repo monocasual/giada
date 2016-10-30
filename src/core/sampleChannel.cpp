@@ -45,7 +45,8 @@
 using std::string;
 
 
-extern Recorder G_Recorder;
+extern Recorder    G_Recorder;
+extern KernelAudio G_KernelAudio;
 
 
 SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
@@ -70,7 +71,7 @@ SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 	  midiInPitch      (0x0)
 {
 	rsmp_state = src_new(SRC_LINEAR, 2, NULL);
-	pChan      = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	pChan      = (float *) malloc(G_KernelAudio.realBufsize * 2 * sizeof(float));
 }
 
 

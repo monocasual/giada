@@ -47,6 +47,7 @@
 
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf	       G_Conf;
+extern KernelAudio G_KernelAudio;
 extern KernelMidi  G_KernelMidi;
 extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
@@ -135,11 +136,11 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 #if defined(__linux__)
 
-	if (kernelAudio::hasAPI(RtAudio::LINUX_ALSA))
+	if (G_KernelAudio.hasAPI(RtAudio::LINUX_ALSA))
 		soundsys->add("ALSA");
-	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
+	if (G_KernelAudio.hasAPI(RtAudio::UNIX_JACK))
 		soundsys->add("Jack");
-	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
+	if (G_KernelAudio.hasAPI(RtAudio::LINUX_PULSE))
 		soundsys->add("PulseAudio");
 
 	switch (G_Conf.soundSystem) {
@@ -161,11 +162,11 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 #elif defined(_WIN32)
 
-	if (kernelAudio::hasAPI(RtAudio::WINDOWS_DS))
+	if (G_KernelAudio.hasAPI(RtAudio::WINDOWS_DS))
 		soundsys->add("DirectSound");
-	if (kernelAudio::hasAPI(RtAudio::WINDOWS_ASIO))
+	if (G_KernelAudio.hasAPI(RtAudio::WINDOWS_ASIO))
 		soundsys->add("ASIO");
-	if (kernelAudio::hasAPI(RtAudio::WINDOWS_WASAPI))
+	if (G_KernelAudio.hasAPI(RtAudio::WINDOWS_WASAPI))
 		soundsys->add("WASAPI");
 
 	switch (G_Conf.soundSystem) {
@@ -185,7 +186,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 
 #elif defined (__APPLE__)
 
-	if (kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
+	if (G_KernelAudio.hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
 
 	switch (G_Conf.soundSystem) {
@@ -217,9 +218,9 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		/* fill frequency dropdown menu */
 		/* TODO - add fetchFrequencies() */
 
-		int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
+		int nfreq = G_KernelAudio.getTotalFreqs(sounddevOut->value());
 		for (int i=0; i<nfreq; i++) {
-			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
+			int freq = G_KernelAudio.getFreq(sounddevOut->value(), i);
 			samplerate->add(gu_itoa(freq).c_str());
 			if (freq == G_Conf.samplerate)
 				samplerate->value(i);
@@ -297,7 +298,7 @@ void gTabAudio::__cb_fetchOutChans()
 
 void gTabAudio::__cb_showInputInfo()
 {
-	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	unsigned dev = G_KernelAudio.getDeviceByName(sounddevIn->text(sounddevIn->value()));
 	new gdDevInfo(dev);
 }
 
@@ -307,7 +308,7 @@ void gTabAudio::__cb_showInputInfo()
 
 void gTabAudio::__cb_showOutputInfo()
 {
-	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	unsigned dev = G_KernelAudio.getDeviceByName(sounddevOut->text(sounddevOut->value()));
 	new gdDevInfo(dev);
 }
 
@@ -378,8 +379,8 @@ void gTabAudio::fetchInChans(int menuItem)
 
 	channelsIn->clear();
 
-	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	unsigned chs = kernelAudio::getMaxInChans(dev);
+	unsigned dev = G_KernelAudio.getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	unsigned chs = G_KernelAudio.getMaxInChans(dev);
 
 	if (chs == 0) {
 		channelsIn->add("none");
@@ -402,8 +403,8 @@ void gTabAudio::fetchOutChans(int menuItem)
 {
 	channelsOut->clear();
 
-	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	unsigned chs = kernelAudio::getMaxOutChans(dev);
+	unsigned dev = G_KernelAudio.getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	unsigned chs = G_KernelAudio.getMaxOutChans(dev);
 
 	if (chs == 0) {
 		channelsOut->add("none");
@@ -431,11 +432,11 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 		return 0;
 
 	for (int i=0; i<m->size(); i++) {
-		if (kernelAudio::getDeviceName(device) == "")
+		if (G_KernelAudio.getDeviceName(device) == "")
 			continue;
 		if (m->text(i) == NULL)
 			continue;
-		if (m->text(i) == kernelAudio::getDeviceName(device))
+		if (m->text(i) == G_KernelAudio.getDeviceName(device))
 			return i;
 	}
 
@@ -448,7 +449,7 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 
 void gTabAudio::fetchSoundDevs()
 {
-	if (kernelAudio::numDevs == 0) {
+	if (G_KernelAudio.numDevs == 0) {
 		sounddevOut->add("-- no devices found --");
 		sounddevOut->value(0);
 		sounddevIn->add("-- no devices found --");
@@ -466,11 +467,11 @@ void gTabAudio::fetchSoundDevs()
 
 		sounddevIn->add("(disabled)");
 
-		for (unsigned i=0; i<kernelAudio::numDevs; i++) {
+		for (unsigned i=0; i<G_KernelAudio.numDevs; i++) {
 
 			/* escaping '/', very dangerous in FLTK (it creates a submenu) */
 
-			string tmp = kernelAudio::getDeviceName(i);
+			string tmp = G_KernelAudio.getDeviceName(i);
 			for (unsigned k=0; k<tmp.size(); k++)
 				if (tmp[k] == '/' || tmp[k] == '|' || tmp[k] == '&' || tmp[k] == '_')
 					tmp[k] = '-';
@@ -479,10 +480,10 @@ void gTabAudio::fetchSoundDevs()
 			 * way we can filter devices only for input or output, e.g. an input
 			 * devices has 0 output channels. */
 
-			if (kernelAudio::getMaxOutChans(i) > 0)
+			if (G_KernelAudio.getMaxOutChans(i) > 0)
 				sounddevOut->add(tmp.c_str());
 
-			if (kernelAudio::getMaxInChans(i) > 0)
+			if (G_KernelAudio.getMaxInChans(i) > 0)
 				sounddevIn->add(tmp.c_str());
 		}
 
@@ -548,8 +549,8 @@ void gTabAudio::save()
 
 	/* use the device name to search into the drop down menu's */
 
-	G_Conf.soundDeviceOut = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	G_Conf.soundDeviceIn  = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	G_Conf.soundDeviceOut = G_KernelAudio.getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	G_Conf.soundDeviceIn  = G_KernelAudio.getDeviceByName(sounddevIn->text(sounddevIn->value()));
 	G_Conf.channelsOut    = channelsOut->value();
 	G_Conf.channelsIn     = channelsIn->value();
 	G_Conf.limitOutput    = limitOutput->value();

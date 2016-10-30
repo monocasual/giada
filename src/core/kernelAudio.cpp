@@ -27,8 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <vector>
-#include <cstring>
 #include "../utils/log.h"
 #include "../glue/main.h"
 #include "conf.h"
@@ -37,20 +35,27 @@
 #include "kernelAudio.h"
 
 
-extern Mixer G_Mixer;
-extern Conf  G_Conf;
-extern bool	 G_audio_status;
+extern KernelAudio G_KernelAudio;
+extern Mixer       G_Mixer;
+extern Conf        G_Conf;
+extern bool	       G_audio_status;
 
 
-namespace kernelAudio
+KernelAudio::KernelAudio()
 {
-RtAudio  *system       = NULL;
-unsigned  numDevs      = 0;
-bool 		  inputEnabled = 0;
-unsigned  realBufsize  = 0;
-int       api          = 0;
+	system       = nullptr;
+	numDevs      = 0;
+	inputEnabled = 0;
+	realBufsize  = 0;
+	api          = 0;
+}
 
-int openDevice(
+
+/* -------------------------------------------------------------------------- */
+
+
+
+int KernelAudio::openDevice(
 	int _api,
 	int outDev,
 	int inDev,
@@ -155,13 +160,13 @@ int openDevice(
 
 	try {
 		system->openStream(
-			&outParams, 					          // output params
-			inDev != -1 ? &inParams : NULL, // input params if inDevice is selected
-			RTAUDIO_FLOAT32,			          // audio format
-			samplerate, 					          // sample rate
-			&realBufsize, 				          // buffer size in byte
-			&G_Mixer.masterPlay,            // audio callback
-			NULL,									          // user data (unused)
+			&outParams, 					              // output params
+			inDev != -1 ? &inParams : nullptr,  // input params if inDevice is selected
+			RTAUDIO_FLOAT32,			              // audio format
+			samplerate, 					              // sample rate
+			&realBufsize, 				              // buffer size in byte
+			&G_Mixer.masterPlay,                // audio callback
+			nullptr,									          // user data (unused)
 			&options);
 		G_audio_status = true;
 
@@ -184,7 +189,7 @@ int openDevice(
 /* -------------------------------------------------------------------------- */
 
 
-int startStream()
+int KernelAudio::startStream()
 {
 	try {
 		system->startStream();
@@ -201,7 +206,7 @@ int startStream()
 /* -------------------------------------------------------------------------- */
 
 
-int stopStream()
+int KernelAudio::stopStream()
 {
 	try {
 		system->stopStream();
@@ -217,7 +222,7 @@ int stopStream()
 /* -------------------------------------------------------------------------- */
 
 
-string getDeviceName(unsigned dev)
+string KernelAudio::getDeviceName(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name;
@@ -232,7 +237,7 @@ string getDeviceName(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int closeDevice()
+int KernelAudio::closeDevice()
 {
 	if (system->isStreamOpen()) {
 #if defined(__linux__) || defined(__APPLE__)
@@ -242,7 +247,7 @@ int closeDevice()
 #endif
 		system->closeStream();
 		delete system;
-		system = NULL;
+		system = nullptr;
 	}
 	return 1;
 }
@@ -251,7 +256,7 @@ int closeDevice()
 /* -------------------------------------------------------------------------- */
 
 
-unsigned getMaxInChans(int dev)
+unsigned KernelAudio::getMaxInChans(int dev)
 {
 	if (dev == -1) return 0;
 
@@ -268,7 +273,7 @@ unsigned getMaxInChans(int dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned getMaxOutChans(unsigned dev)
+unsigned KernelAudio::getMaxOutChans(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
@@ -283,7 +288,7 @@ unsigned getMaxOutChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool isProbed(unsigned dev)
+bool KernelAudio::isProbed(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).probed;
@@ -297,7 +302,7 @@ bool isProbed(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned getDuplexChans(unsigned dev)
+unsigned KernelAudio::getDuplexChans(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).duplexChannels;
@@ -311,7 +316,7 @@ unsigned getDuplexChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool isDefaultIn(unsigned dev)
+bool KernelAudio::isDefaultIn(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultInput;
@@ -325,7 +330,7 @@ bool isDefaultIn(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool isDefaultOut(unsigned dev)
+bool KernelAudio::isDefaultOut(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultOutput;
@@ -339,7 +344,7 @@ bool isDefaultOut(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int getTotalFreqs(unsigned dev)
+int KernelAudio::getTotalFreqs(unsigned dev)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.size();
@@ -353,7 +358,7 @@ int getTotalFreqs(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int	getFreq(unsigned dev, int i)
+int	KernelAudio::getFreq(unsigned dev, int i)
 {
 	try {
 		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.at(i);
@@ -367,12 +372,12 @@ int	getFreq(unsigned dev, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int getDefaultIn()
+int KernelAudio::getDefaultIn()
 {
 	return system->getDefaultInputDevice();
 }
 
-int getDefaultOut()
+int KernelAudio::getDefaultOut()
 {
 	return system->getDefaultOutputDevice();
 }
@@ -381,7 +386,7 @@ int getDefaultOut()
 /* -------------------------------------------------------------------------- */
 
 
-int	getDeviceByName(const char *name)
+int	KernelAudio::getDeviceByName(const char *name)
 {
 	for (unsigned i=0; i<numDevs; i++)
 		if (name == getDeviceName(i))
@@ -393,7 +398,7 @@ int	getDeviceByName(const char *name)
 /* -------------------------------------------------------------------------- */
 
 
-bool hasAPI(int API)
+bool KernelAudio::hasAPI(int API)
 {
 	std::vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
@@ -407,7 +412,7 @@ bool hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-std::string getRtAudioVersion()
+std::string KernelAudio::getRtAudioVersion()
 {
 	return RtAudio::getVersion();
 }
@@ -417,16 +422,27 @@ std::string getRtAudioVersion()
 
 
 #ifdef __linux__
-#include <jack/jack.h>
-#include <jack/intclient.h>
-#include <jack/transport.h>
 
-jack_client_t *jackGetHandle()
+int KernelAudio::jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
+	void *arg)
+{
+	return G_KernelAudio.__jackSyncCb(state, pos, arg);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+jack_client_t *KernelAudio::jackGetHandle()
 {
 	return (jack_client_t*) system->rtapi_->__HACK__getJackClient();
 }
 
-void jackStart()
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackStart()
 {
 	if (api == SYS_API_JACK) {
 		jack_client_t *client = jackGetHandle();
@@ -435,7 +451,10 @@ void jackStart()
 }
 
 
-void jackStop()
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackStop()
 {
 	if (api == SYS_API_JACK) {
 		jack_client_t *client = jackGetHandle();
@@ -444,15 +463,21 @@ void jackStop()
 }
 
 
-void jackSetSyncCb()
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackSetSyncCb()
 {
 	jack_client_t *client = jackGetHandle();
-	jack_set_sync_callback(client, jackSyncCb, NULL);
+	jack_set_sync_callback(client, jackSyncCb, nullptr);
 	//jack_set_sync_timeout(client, 8);
 }
 
 
-int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
+/* -------------------------------------------------------------------------- */
+
+
+int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 		void *arg)
 {
 	switch (state) {
@@ -481,5 +506,3 @@ int jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 }
 
 #endif
-
-}

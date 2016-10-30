@@ -62,6 +62,7 @@
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
+extern KernelAudio   G_KernelAudio;
 extern KernelMidi    G_KernelMidi;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
@@ -167,7 +168,7 @@ void glue_startSeq(bool gui)
 
 	if (gui) {
 #ifdef __linux__
-		kernelAudio::jackStart();
+		G_KernelAudio.jackStart();
 #endif
 	}
 
@@ -194,7 +195,7 @@ void glue_stopSeq(bool gui)
 
 #ifdef __linux__
 	if (gui)
-		kernelAudio::jackStop();
+		G_KernelAudio.jackStop();
 #endif
 
 	/* what to do if we stop the sequencer and some action recs are active?

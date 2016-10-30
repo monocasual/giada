@@ -47,6 +47,7 @@
 #include "kernelMidi.h"
 
 
+extern KernelAudio   G_KernelAudio;
 extern Mixer 			   G_Mixer;
 extern Recorder  	   G_Recorder;
 extern KernelMidi    G_KernelMidi;
@@ -93,14 +94,9 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-	kernelAudio::openDevice(
-		G_Conf.soundSystem,
-		G_Conf.soundDeviceOut,
-		G_Conf.soundDeviceIn,
-		G_Conf.channelsOut,
-		G_Conf.channelsIn,
-		G_Conf.samplerate,
-		G_Conf.buffersize);
+	G_KernelAudio.openDevice(G_Conf.soundSystem, G_Conf.soundDeviceOut,
+		G_Conf.soundDeviceIn,	G_Conf.channelsOut, G_Conf.channelsIn,
+		G_Conf.samplerate, G_Conf.buffersize);
 	G_Mixer.init();
 	G_Recorder.init();
 }
@@ -169,7 +165,7 @@ void init_startGUI(int argc, char **argv)
 void init_startKernelAudio()
 {
 	if (G_audio_status)
-		kernelAudio::startStream();
+		G_KernelAudio.startStream();
 }
 
 
@@ -204,7 +200,7 @@ void init_shutdown()
 	 * The opposite could cause random segfaults (even now with RtAudio?). */
 
 	if (G_audio_status) {
-		kernelAudio::closeDevice();
+		G_KernelAudio.closeDevice();
 		G_Mixer.close();
 		gu_log("[init] Mixer closed\n");
 	}

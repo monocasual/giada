@@ -48,6 +48,7 @@
 /* global variables. Yeah, we are nasty */
 
 pthread_t     G_videoThread;
+KernelAudio   G_KernelAudio;
 Mixer         G_Mixer;
 Recorder      G_Recorder;
 KernelMidi    G_KernelMidi;

@@ -39,8 +39,9 @@
 #include "gd_about.h"
 
 
-extern Conf       G_Conf;
-extern KernelMidi G_KernelMidi;
+extern Conf        G_Conf;
+extern KernelAudio G_KernelAudio;
+extern KernelMidi  G_KernelMidi;
 
 
 gdAbout::gdAbout()
@@ -87,7 +88,7 @@ gdAbout::gdAbout()
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
-		kernelAudio::getRtAudioVersion().c_str(),
+		G_KernelAudio.getRtAudioVersion().c_str(),
 		G_KernelMidi.getRtMidiVersion().c_str(),
 		JANSSON_VERSION
 #ifdef WITH_VST

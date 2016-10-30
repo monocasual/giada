@@ -41,6 +41,7 @@
 #include "mixer.h"
 
 
+extern KernelAudio G_KernelAudio;
 extern Mixer 			 G_Mixer;
 extern Recorder    G_Recorder;
 extern KernelMidi  G_KernelMidi;
@@ -130,7 +131,7 @@ void Mixer::init()
 	/** TODO - set kernelAudio::realBufsize * 2 as private member */
 
 	vChanInput   = NULL;
-	vChanInToOut = (float *) malloc(kernelAudio::realBufsize * 2 * sizeof(float));
+	vChanInToOut = (float *) malloc(G_KernelAudio.realBufsize * 2 * sizeof(float));
 
 	pthread_mutex_init(&mutex_recs, NULL);
 	pthread_mutex_init(&mutex_chans, NULL);
@@ -147,7 +148,7 @@ void Mixer::init()
 Channel *Mixer::addChannel(int type)
 {
 	Channel *ch;
-	int bufferSize = kernelAudio::realBufsize*2;
+	int bufferSize = G_KernelAudio.realBufsize * 2;
 
 	if (type == CHANNEL_SAMPLE)
 		ch = new SampleChannel(bufferSize, &G_MidiMap);
@@ -348,7 +349,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 		return 0;
 
 	float *outBuf = ((float *) out_buf);
-	float *inBuf  = ((float *) in_buf);
+	float *inBuf  = ((float *) in_buf);  // TODO !G_KernelAudio.inputEnabled ? nullptr
 	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator
@@ -537,7 +538,7 @@ void Mixer::mergeVirtualInput()
 
 void Mixer::lineInRec(float *inBuf, unsigned frame)
 {
-	if (/* TODO - !hasArmedChannels() || */ !kernelAudio::inputEnabled)
+	if (/* TODO - !hasArmedChannels() || */ !G_KernelAudio.inputEnabled)
 	 	return;
 
 	/* delay comp: wait until waitRec reaches delayComp. WaitRec
@@ -561,7 +562,7 @@ void Mixer::lineInRec(float *inBuf, unsigned frame)
 
 void Mixer::processLineIn(float *inBuf, unsigned frame)
 {
-	if (!kernelAudio::inputEnabled)
+	if (!G_KernelAudio.inputEnabled)
 		return;
 
 	/* input peak calculation (left chan only so far). */
