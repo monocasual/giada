@@ -371,7 +371,7 @@ int Mixer::__masterPlay(void *out_buf, void *in_buf, unsigned bufferSize)
 		renderMetronome(outBuf, j); // FIXME - move this one after the peak meter calculation
 	}
 
-	renderOutput(outBuf, inBuf);
+	renderIO(outBuf, inBuf);
 
 	/* post processing */
 
@@ -720,7 +720,7 @@ void Mixer::renderMetronome(float *outBuf, unsigned frame)
 /* -------------------------------------------------------------------------- */
 
 
-void Mixer::renderOutput(float *outBuf, float *inBuf)
+void Mixer::renderIO(float *outBuf, float *inBuf)
 {
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)

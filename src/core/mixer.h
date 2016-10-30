@@ -237,11 +237,11 @@ private:
 
 	void renderMetronome(float *outBuf, unsigned frame);
 
-	/* renderOutput
+	/* renderIO
 	Final processing stage. Take each channel and process it (i.e. copy its
 	content to the output buffer). Process plugins too, if any. */
 
-	void renderOutput(float *outBuf, float *inBuf);
+	void renderIO(float *outBuf, float *inBuf);
 
 	/* limitOutput
 	Applies a very dumb hard limiter. */
@@ -255,7 +255,7 @@ private:
 	/* finalizeOutput
 	Last touches after the output has been rendered: apply inToOut if any, apply
 	output volume. */
-	
+
 	void finalizeOutput(float *outBuf, unsigned frame);
 
 	/* test*
