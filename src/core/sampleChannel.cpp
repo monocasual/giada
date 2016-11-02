@@ -738,8 +738,7 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 	audio (i.e. not plugin-processed). */
 
 	if (armed && inBuffer)
-    for (int i=0; i<bufferSize; i++)
-      vChan[i] += inBuffer[i]; // add, don't overwrite (no raw memcpy)
+    memcpy(vChan, inBuffer, bufferSize * sizeof(float));
 
 #ifdef WITH_VST
 	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);

@@ -537,10 +537,10 @@ void Mixer::mergeVirtualInput()
 
 void Mixer::lineInRec(float *inBuf, unsigned frame)
 {
-	if (/* TODO - !hasArmedChannels() || */ !G_KernelAudio.inputEnabled)
+	if (!mh_hasArmedSampleChannels() || !G_KernelAudio.inputEnabled || !recording)
 	 	return;
 
-	/* delay comp: wait until waitRec reaches delayComp. WaitRec
+	/* Delay comp: wait until waitRec reaches delayComp. WaitRec
 	 * returns to 0 in mixerHandler, as soon as the recording ends */
 
 	if (waitRec < G_Conf.delayComp) {

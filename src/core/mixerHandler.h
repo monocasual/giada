@@ -69,4 +69,10 @@ void mh_stopInputRec();
 
 bool mh_uniqueSampleName(class SampleChannel *ch, const std::string &s);
 
+/* hasArmedSampleChannels
+Tells whether Mixer has one or more sample channels armed for input
+recording. */
+
+bool mh_hasArmedSampleChannels();
+
 #endif

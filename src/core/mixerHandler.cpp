@@ -262,6 +262,20 @@ void mh_stopInputRec()
 /* -------------------------------------------------------------------------- */
 
 
+bool mh_hasArmedSampleChannels()
+{
+  for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+    Channel *ch = G_Mixer.channels.at(i);
+    if (ch->type == CHANNEL_SAMPLE && ch->armed)
+      return true;
+  }
+  return false;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool mh_uniqueSampleName(SampleChannel *ch, const string &name)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
