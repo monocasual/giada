@@ -292,6 +292,12 @@ int glue_startInputRec(bool gui)
 		Fl::unlock();
 	}
 
+  /* Update sample name inside sample channels' main button. This is useless for
+  midi channel, but let's do it anyway. */
+  
+  for (unsigned i=0; i<G_Mixer.channels.size(); i++)
+    G_Mixer.channels.at(i)->guiChannel->update();
+
 	return true;
 }
 
