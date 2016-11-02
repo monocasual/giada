@@ -62,14 +62,14 @@ using std::string;
 static bool __soloSession__ = false;
 
 
-int glue_loadChannel(SampleChannel *ch, const char *fname)
+int glue_loadChannel(SampleChannel *ch, const string &fname)
 {
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
 	G_Conf.samplePath = gu_dirname(fname);
 
-	int result = ch->load(fname, G_Conf.samplerate, G_Conf.rsmpQuality);
+	int result = ch->load(fname.c_str(), G_Conf.samplerate, G_Conf.rsmpQuality);
 
 	if (result == SAMPLE_LOADED_OK)
 		G_MainWin->keyboard->updateChannel(ch->guiChannel);

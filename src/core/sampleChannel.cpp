@@ -819,8 +819,6 @@ void SampleChannel::stop()
 
 int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 {
-	// TODO - this code belongs an upper level, i.e. glue part
-
 	if (strcmp(file, "") == 0 || gu_isDir(file)) {
 		gu_log("[SampleChannel] file not specified\n");
 		return SAMPLE_LEFT_EMPTY;

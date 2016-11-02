@@ -40,7 +40,7 @@ class Channel *glue_addChannel(int column, int type);
 /* loadChannel
  * fill an existing channel with a wave. */
 
-int glue_loadChannel(class SampleChannel *ch, const char *fname);
+int glue_loadChannel(class SampleChannel *ch, const std::string &fname);
 
 /* deleteChannel
  * Remove a channel from Mixer. */
