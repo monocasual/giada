@@ -303,13 +303,14 @@ int glue_stopInputRec(bool gui)
 {
 	mh_stopInputRec();
 
-	/* Start all sample channels set in loop mode. */
+	/* Start all sample channels in loop mode that were armed, i.e. that were
+	recording stuff and not yet in play. */
 
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
-		if (ch->mode & (LOOP_BASIC | LOOP_ONCE | LOOP_REPEAT))
+		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
 			ch->start(0, true, G_Mixer.quantize, G_Mixer.running);  // on frame 0: user-generated event
 	}
 
