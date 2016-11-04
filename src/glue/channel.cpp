@@ -91,7 +91,6 @@ Channel *glue_addChannel(int column, int type)
 	Channel *ch     = G_Mixer.addChannel(type);
 	geChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel  = gch;
-	glue_setChanVol(ch, 1.0, false); // false = not from gui click
 	return ch;
 }
 
