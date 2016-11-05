@@ -19,6 +19,7 @@
 - Refinements to show/hide 'R' button's dynamics
 - Increase piano roll items' height
 - Set input volume to max by default
+- Start live-recorded sample channels right away 
 - Avoid potential crashes when loading samples on running channels
 - Generate metronome during output post-processing
 - Lots of source code optimizations and cleanups

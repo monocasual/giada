@@ -258,8 +258,8 @@ void glue_startStopInputRec(bool gui, bool alert)
 		glue_stopInputRec(gui);
 	else
 	if (!glue_startInputRec(gui)) {
-		if (alert) gdAlert("No channels armed or available for recording.");
-		else       gu_log("[glue] no channels armed or available for recording\n");
+		if (alert) gdAlert("No channels armed/available for audio recording.");
+		else       gu_log("[glue] no channels armed/available for audio recording\n");
 	}
 }
 
