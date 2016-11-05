@@ -111,7 +111,7 @@ public:
 	action. */
 
 	virtual void start(int frame, bool doQuantize, int quantize,
-			bool mixerIsRunning, bool isUserGenerated=false) = 0;
+			bool mixerIsRunning, bool forceStart, bool isUserGenerated) = 0;
 
 	/* stop
 	 * action to do when channel is stopped normally (via key or MIDI). */

@@ -293,7 +293,7 @@ void SampleChannel::parseAction(Recorder::action *a, int localFrame,
 	switch (a->type) {
 		case ACTION_KEYPRESS:
 			if (mode & SINGLE_ANY)
-				start(localFrame, false, quantize, mixerIsRunning);
+				start(localFrame, false, quantize, mixerIsRunning, false, false);
 			break;
 		case ACTION_KEYREL:
 			if (mode & SINGLE_ANY)
@@ -964,7 +964,7 @@ bool SampleChannel::canInputRec()
 
 
 void SampleChannel::start(int frame, bool doQuantize, int quantize,
-		bool mixerIsRunning, bool isUserGenerated)
+		bool mixerIsRunning, bool forceStart, bool isUserGenerated)
 {
 	switch (status)	{
 		case STATUS_EMPTY:
@@ -973,11 +973,15 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 		{
 			return;
 		}
-
 		case STATUS_OFF:
 		{
 			if (mode & LOOP_ANY) {
-				status = STATUS_WAIT;
+        if (forceStart) {
+          status = STATUS_PLAY;
+          tracker = frame;
+        }
+        else
+				    status = STATUS_WAIT;
 				sendMidiLplay();
 			}
 			else {
@@ -997,7 +1001,6 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 			}
 			break;
 		}
-
 		case STATUS_PLAY:
 		{
 			if (mode == SINGLE_BASIC)
@@ -1016,14 +1019,12 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 			}
 			break;
 		}
-
 		case STATUS_WAIT:
 		{
 			status = STATUS_OFF;
 			sendMidiLplay();
 			break;
 		}
-
 		case STATUS_ENDING:
 		{
 			status = STATUS_PLAY;

@@ -88,7 +88,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 	if (shift)
 		ch->kill(0);        // on frame 0: user-generated event
 	else
-		ch->start(0, true, G_Mixer.quantize, G_Mixer.running); // on frame 0: user-generated event
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, false, true); // on frame 0: user-generated event
 }
 
 
@@ -161,7 +161,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 		/* This is a user-generated event, so it's on frame 0 */
 
-		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, true);
+		ch->start(0, true, G_Mixer.quantize, G_Mixer.running, false, true);
 	}
 
 	/* the GUI update is done by gui_refresh() */
@@ -294,7 +294,7 @@ int glue_startInputRec(bool gui)
 
   /* Update sample name inside sample channels' main button. This is useless for
   midi channel, but let's do it anyway. */
-  
+
   for (unsigned i=0; i<G_Mixer.channels.size(); i++)
     G_Mixer.channels.at(i)->guiChannel->update();
 
@@ -310,14 +310,16 @@ int glue_stopInputRec(bool gui)
 	mh_stopInputRec();
 
 	/* Start all sample channels in loop mode that were armed, i.e. that were
-	recording stuff and not yet in play. */
+	recording stuff and not yet in play. They are also started in force mode, i.e.
+  they must start playing right away at the current frame, not at the next first
+  beat. */
 
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
-			ch->start(0, true, G_Mixer.quantize, G_Mixer.running);  // on frame 0: user-generated event
+			ch->start(G_Mixer.actualFrame, true, G_Mixer.quantize, G_Mixer.running, true, true);
 	}
 
 	if (!gui) {

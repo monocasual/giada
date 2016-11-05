@@ -52,7 +52,7 @@ public:
 	void clear() override;
 	void process(float *outBuffer, float *inBuffer) override;
 	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
-		bool isUserGenerated=false) override;
+		  bool forceStart, bool isUserGenerated) override;
 	void kill(int frame) override;
 	void empty() override;
 	void stopBySeq(bool chansStopOnSeqHalt) override;
