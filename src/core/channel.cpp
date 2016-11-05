@@ -50,7 +50,7 @@ extern KernelMidi G_KernelMidi;
 
 Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
 #if defined(WITH_VST)
-: pluginHost(NULL),
+: pluginHost(nullptr),
 #else
 :
 #endif
@@ -71,12 +71,13 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
   hasActions     (false),
   armed          (false),
   recStatus      (REC_STOPPED),
-  vChan          (NULL),
-  guiChannel     (NULL),
+  vChan          (nullptr),
+  guiChannel     (nullptr),
   midiIn         (true),
   midiInKeyPress (0x0),
   midiInKeyRel   (0x0),
   midiInKill     (0x0),
+  midiInArm      (0x0),
   midiInVolume   (0x0),
   midiInMute     (0x0),
   midiInSolo     (0x0),
@@ -124,6 +125,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
   midiInKeyPress  = src->midiInKeyPress;
   midiInKeyRel    = src->midiInKeyRel;
   midiInKill      = src->midiInKill;
+  midiInArm       = src->midiInArm;
   midiInVolume    = src->midiInVolume;
   midiInMute      = src->midiInMute;
   midiInSolo      = src->midiInSolo;
@@ -225,6 +227,7 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 	pch.midiInKeyPress  = midiInKeyPress;
 	pch.midiInKeyRel    = midiInKeyRel;
 	pch.midiInKill      = midiInKill;
+	pch.midiInArm       = midiInArm;
 	pch.midiInVolume    = midiInVolume;
 	pch.midiInMute      = midiInMute;
 	pch.midiInSolo      = midiInSolo;
@@ -310,7 +313,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
       pluginMutex, this);
-		if (plugin != NULL) {
+		if (plugin != nullptr) {
 			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
 				plugin->setParameter(j, ppl->params.at(j));

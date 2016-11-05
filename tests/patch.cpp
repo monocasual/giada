@@ -69,6 +69,7 @@ TEST_CASE("Test Patch class")
     channel1.midiInKeyPress    = UINT32_MAX;  // check maximum value
     channel1.midiInKeyRel      = 1;
     channel1.midiInKill        = 2;
+    channel1.midiInArm         = 11;
     channel1.midiInVolume      = 3;
     channel1.midiInMute        = 4;
     channel1.midiInSolo        = 5;
@@ -157,6 +158,7 @@ TEST_CASE("Test Patch class")
     REQUIRE(channel0.midiInKeyPress == UINT32_MAX);
     REQUIRE(channel0.midiInKeyRel == 1);
     REQUIRE(channel0.midiInKill == 2);
+    REQUIRE(channel0.midiInArm == 11);
     REQUIRE(channel0.midiInVolume == 3);
     REQUIRE(channel0.midiInMute == 4);
     REQUIRE(channel0.midiInSolo == 5);

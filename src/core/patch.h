@@ -34,9 +34,7 @@
 #include <string>
 #include <vector>
 #include <stdint.h>
-#include "../utils/fs.h"
 #include "dataStorageJson.h"
-#include "const.h"
 
 
 using std::string;
@@ -79,6 +77,7 @@ public:
     uint32_t    midiInKeyPress;
     uint32_t    midiInKeyRel;
     uint32_t    midiInKill;
+    uint32_t    midiInArm;
     uint32_t    midiInVolume;
     uint32_t    midiInMute;
     uint32_t    midiInSolo;

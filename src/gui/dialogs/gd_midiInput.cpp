@@ -33,6 +33,7 @@
 #include "../../core/const.h"
 #include "../../core/sampleChannel.h"
 #include "../../utils/log.h"
+#include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_midiIoTools.h"
 #include "gd_midiInput.h"
@@ -40,6 +41,9 @@
 
 extern Conf       G_Conf;
 extern KernelMidi G_KernelMidi;
+
+
+using std::string;
 
 
 gdMidiInput::gdMidiInput(int w, int h, const char *title)
@@ -113,12 +117,11 @@ void gdMidiInput::__cb_close()
 
 
 gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
-	:	gdMidiInput(300, 206, "MIDI Input Setup"),
+	:	gdMidiInput(300, 230, "MIDI Input Setup"),
 		ch(ch)
 {
-	char title[64];
-	sprintf(title, "MIDI Input Setup (channel %d)", ch->index+1);
-	label(title);
+  string title = "MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")";
+	label(title.c_str());
 
 	set_modal();
 
@@ -126,10 +129,11 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
 	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
 	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
-	new gLearner(8, 102, w()-16, "mute",        cb_learn, &ch->midiInMute);
-	new gLearner(8, 126, w()-16, "solo",        cb_learn, &ch->midiInSolo);
-	new gLearner(8, 150, w()-16, "volume",      cb_learn, &ch->midiInVolume);
-	int yy = 178;
+	new gLearner(8, 102, w()-16, "arm",         cb_learn, &ch->midiInArm);
+	new gLearner(8, 126, w()-16, "mute",        cb_learn, &ch->midiInMute);
+	new gLearner(8, 150, w()-16, "solo",        cb_learn, &ch->midiInSolo);
+	new gLearner(8, 174, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+	int yy = 202;
 
 	if (ch->type == CHANNEL_SAMPLE) {
 		size(300, 254);

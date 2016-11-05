@@ -27,24 +27,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <stdint.h>
 #include "../utils/log.h"
 #include "../utils/string.h"
-#include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/elems/ge_keyboard.h"
-#include "patch.h"
 #include "const.h"
-#include "init.h"
-#include "recorder.h"
 #include "conf.h"
-#include "wave.h"
 #include "mixer.h"
-#include "channel.h"
+#include "patch.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf 		     G_Conf;
-extern gdMainWindow *mainWin;
+extern Mixer G_Mixer;
+extern Conf  G_Conf;
 
 
 void Patch::init()
@@ -226,6 +218,7 @@ void Patch::writeChannels(json_t *jContainer, vector<channel_t> *channels)
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     json_integer(channel.midiInKeyPress));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       json_integer(channel.midiInKeyRel));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KILL,         json_integer(channel.midiInKill));
+    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_ARM,          json_integer(channel.midiInArm));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       json_integer(channel.midiInVolume));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         json_integer(channel.midiInMute));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         json_integer(channel.midiInSolo));
@@ -342,6 +335,7 @@ bool Patch::readChannels(json_t *jContainer)
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     channel.midiInKeyPress)) return 0;
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       channel.midiInKeyRel)) return 0;
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KILL,         channel.midiInKill)) return 0;
+    if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_ARM,          channel.midiInArm)) return 0;
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       channel.midiInVolume)) return 0;
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         channel.midiInMute)) return 0;
     if (!setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         channel.midiInSolo)) return 0;
