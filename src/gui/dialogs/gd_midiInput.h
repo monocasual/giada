@@ -31,17 +31,14 @@
 #define GD_MIDI_INPUT_H
 
 
-#include "../../core/kernelMidi.h"
-#include "../../utils/fs.h"
 #include "../elems/ge_window.h"
-#include "../elems/ge_mixed.h"
 
 
 class gdMidiInput : public gWindow
 {
 protected:
 
-	gClick *ok;
+	class gClick *ok;
 
 	void stopMidiLearn(class gLearner *l);
 
@@ -70,8 +67,7 @@ private:
 
 	class Channel *ch;
 
-	gCheck *enable;
-
+	class gCheck *enable;
 
 	//gVector <gLearner *> items; for future use, with vst parameters
 
