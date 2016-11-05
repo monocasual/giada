@@ -16,10 +16,11 @@
 - Fix inverted 'R' button's status (GitHub #94)
 - Better handling of 'R' button's status when the sequencer is off (GitHub #95)
 - Fix non-playing samples if live-recorded and 'R' button is on (GitHub #93)
+- Reset button statuses once channels have been freed (GitHub #100)
 - Refinements to show/hide 'R' button's dynamics
 - Increase piano roll items' height
 - Set input volume to max by default
-- Start live-recorded sample channels right away 
+- Start live-recorded sample channels right away
 - Avoid potential crashes when loading samples on running channels
 - Generate metronome during output post-processing
 - Lots of source code optimizations and cleanups
