@@ -154,6 +154,7 @@ void geChannel::setColorsByStatus(int playStatus, int recStatus)
 {
   switch (playStatus) {
     case STATUS_OFF:
+    case STATUS_EMPTY:
   		mainButton->setDefaultMode();
       button->imgOn  = channelPlay_xpm;
       button->imgOff = channelStop_xpm;

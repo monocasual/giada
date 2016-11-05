@@ -120,6 +120,7 @@ public:
 /* gButton
  * exactly as gClick but with a unique id inside of it. Used for the buttons in
  * channels and for FXs. */
+ /* TODO - is this really useful? */
 
 class gButton : public gClick
 {
