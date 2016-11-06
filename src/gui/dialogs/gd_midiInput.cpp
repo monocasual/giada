@@ -136,10 +136,10 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	int yy = 202;
 
 	if (ch->type == CHANNEL_SAMPLE) {
-		size(300, 254);
-		new gLearner(8, 174, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-		new gLearner(8, 198, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
-		yy = 226;
+		size(300, 278);
+		new gLearner(8, 198, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+		new gLearner(8, 222, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+		yy = 250;
 	}
 
 	ok = new gButton(w()-88, yy, 80, 20, "Close");
