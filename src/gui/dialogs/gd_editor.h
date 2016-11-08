@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_editor
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,19 +24,18 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
+
 
 #ifndef GD_EDITOR_H
 #define GD_EDITOR_H
 
-#include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
-#include <math.h>
+
 #include "../elems/ge_window.h"
 
 
-class gdEditor : public gWindow {
-
+class gdEditor : public gWindow
+{
 private:
 
 	static void cb_setChanPos    (Fl_Widget *w, void *p);
@@ -112,5 +111,6 @@ public:
 
 	class SampleChannel *ch;
 };
+
 
 #endif

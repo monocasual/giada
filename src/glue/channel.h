@@ -32,6 +32,9 @@
 #define GLUE_CHANNEL_H
 
 
+#include <string>
+
+
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
