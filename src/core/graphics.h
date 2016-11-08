@@ -71,10 +71,10 @@ extern const char *inputRecOff_xpm[];
 extern const char *inputToOutputOn_xpm[];
 extern const char *inputToOutputOff_xpm[];
 
-extern const char *beatsDivideOn_xpm[];
-extern const char *beatsDivideOff_xpm[];
-extern const char *beatsMultiplyOn_xpm[];
-extern const char *beatsMultiplyOff_xpm[];
+extern const char *divideOn_xpm[];
+extern const char *divideOff_xpm[];
+extern const char *multiplyOn_xpm[];
+extern const char *multiplyOff_xpm[];
 
 extern const char *muteOff_xpm[];
 extern const char *muteOn_xpm[];

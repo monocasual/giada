@@ -1554,7 +1554,7 @@ const char *fxRemoveOn_xpm[] = {
 #endif // #ifdef WITH_VST
 
 
-const char *beatsDivideOn_xpm[] = {
+const char *divideOn_xpm[] = {
 "18 18 7 1",
 " 	c #5A5A5A",
 ".	c #696969",
@@ -1583,7 +1583,7 @@ const char *beatsDivideOn_xpm[] = {
 "                  "};
 
 
-const char *beatsDivideOff_xpm[] = {
+const char *divideOff_xpm[] = {
 "18 18 8 1",
 " 	c #252525",
 ".	c #3B3B3B",
@@ -1613,7 +1613,7 @@ const char *beatsDivideOff_xpm[] = {
 "                  "};
 
 
-const char *beatsMultiplyOn_xpm[] = {
+const char *multiplyOn_xpm[] = {
 "18 18 8 1",
 " 	c #595B58",
 ".	c #737572",
@@ -1643,7 +1643,7 @@ const char *beatsMultiplyOn_xpm[] = {
 "                  "};
 
 
-const char *beatsMultiplyOff_xpm[] = {
+const char *multiplyOff_xpm[] = {
 "18 18 8 1",
 " 	c #242523",
 ".	c #4A4C49",
