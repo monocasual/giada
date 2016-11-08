@@ -27,7 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <cmath>
 #include "../../glue/channel.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"
