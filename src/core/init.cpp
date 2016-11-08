@@ -101,7 +101,7 @@ void init_prepareKernelAudio()
 		G_PluginHost.init(G_KernelAudio.realBufsize, G_Conf.samplerate);
 	else
 		G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
-		
+
 	G_PluginHost.sortPlugins(G_Conf.pluginSortMethod);
 
 #endif
@@ -144,25 +144,20 @@ void init_prepareMidiMap()
 
 void init_startGUI(int argc, char **argv)
 {
-	char win_label[32];
-	sprintf(win_label, "%s - %s",
-					G_APP_NAME,
-					!strcmp(G_Patch_DEPR_.name, "") ? "(default patch)" : G_Patch_DEPR_.name);
+	G_MainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, "", argc, argv);
+	G_MainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW,
+    G_Conf.mainWindowH);
 
-	G_MainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, win_label, argc, argv);
-	G_MainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW, G_Conf.mainWindowH);
+  gu_updateMainWinLabel(G_Patch.name == "" ? G_DEFAULT_PATCH_NAME : G_Patch.name);
 
 	/* never update the GUI elements if G_audio_status is bad, segfaults
 	 * are around the corner */
 
 	if (G_audio_status)
 		gu_updateControls();
-
-	if (!G_audio_status)
-		gdAlert(
-			"Your soundcard isn't configured correctly.\n"
-			"Check the configuration and restart Giada."
-		);
+  else
+		gdAlert("Your soundcard isn't configured correctly.\n"
+			"Check the configuration and restart Giada.");
 }
 
 /* -------------------------------------------------------------------------- */

@@ -379,6 +379,8 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	if (createColumns)
 		G_MainWin->keyboard->init();
 
+  gu_updateMainWinLabel(G_DEFAULT_PATCH_NAME);
+
 	if (resetGui)
 		gu_updateControls();
 }

@@ -142,6 +142,7 @@
 #define DEFAULT_QUANTIZE     0		  // quantizer off
 #define DEFAULT_FADEOUT_STEP 0.01f  // micro-fadeout speed
 #define DEFAULT_COLUMN_WIDTH 380
+#define G_DEFAULT_PATCH_NAME "(default patch)"
 
 
 

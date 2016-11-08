@@ -163,7 +163,7 @@ static bool __glue_savePatch__(const string &fullPath, const string &name,
 	__glue_fillPatchColumns__();
 
 	if (G_Patch.write(fullPath)) {
-		gu_updateMainWinLabel(name.c_str());
+		gu_updateMainWinLabel(name);
 		gu_log("[glue_savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
 	}
@@ -296,7 +296,7 @@ void glue_loadPatch(void *data)
 	/* refresh GUI */
 
 	gu_updateControls();
-	gu_updateMainWinLabel(G_Patch.name.c_str());
+	gu_updateMainWinLabel(G_Patch.name);
 
 	browser->setStatusBar(0.1f);
 	//__glue_setProgressBar__(status, 1.0f);

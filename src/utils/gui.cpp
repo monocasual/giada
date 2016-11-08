@@ -126,8 +126,7 @@ void gu_updateControls()
 
 void gu_updateMainWinLabel(const string &s)
 {
-	std::string out = G_APP_NAME;
-	out += " - " + s;
+	std::string out = std::string(G_APP_NAME) + " - " + s;
 	G_MainWin->copy_label(out.c_str());
 }
 
