@@ -32,6 +32,7 @@
 
 
 #include <vector>
+#include <pthread.h>
 #include "midiMapConf.h"
 #include "recorder.h"
 
