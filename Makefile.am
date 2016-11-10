@@ -196,9 +196,28 @@ giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
 endif
 
 if WINDOWS
+giada_SOURCES +=                                      \
+src/deps/rtaudio-mod/RtAudio.h                        \
+src/deps/rtaudio-mod/RtAudio.cpp                      \
+src/deps/rtaudio-mod/include/asio.h                   \
+src/deps/rtaudio-mod/include/asio.cpp                 \
+src/deps/rtaudio-mod/include/asiolist.h               \
+src/deps/rtaudio-mod/include/asiolist.cpp             \
+src/deps/rtaudio-mod/include/asiodrivers.h            \
+src/deps/rtaudio-mod/include/asiodrivers.cpp          \
+src/deps/rtaudio-mod/include/iasiothiscallresolver.h  \
+src/deps/rtaudio-mod/include/iasiothiscallresolver.cpp
 # -Wno-error=misleading-indentation: mute JUCE warnings on GCC6
-giada_CXXFLAGS += -Wno-error=misleading-indentation
-giada_LDADD = -lrtaudio -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
+# -Wno-error=unused-but-set-variable: silence ASIO errors
+giada_CXXFLAGS +=                  \
+-Wno-error=misleading-indentation  \
+-Wno-error=unused-but-set-variable
+giada_CPPFLAGS +=                \
+-I./src/deps/rtaudio-mod/include \
+-D__WINDOWS_ASIO__               \
+-D__WINDOWS_WASAPI__             \
+-D__WINDOWS_DS__
+giada_LDADD = -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
   -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
   -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser -lpthreadGC2 -ljansson \
   -limm32 -lglu32 -lshell32 -lversion -lopengl32 -loleaut32 -lshlwapi -lcomdlg32
