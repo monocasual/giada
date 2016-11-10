@@ -539,6 +539,8 @@ void gTabAudio::save()
 		G_Conf.soundSystem = SYS_API_DS;
 	else if (text == "ASIO")
 		G_Conf.soundSystem = SYS_API_ASIO;
+	else if (text == "WASAPI")
+		G_Conf.soundSystem = SYS_API_WASAPI;
 
 #elif defined (__APPLE__)
 
