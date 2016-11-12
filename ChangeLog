@@ -20,13 +20,14 @@
 - Start live-recorded sample channels right away
 - Avoid potential crashes when loading samples on running channels
 - Generate metronome during output post-processing
-- Better widgets' layout in Sample Editor 
+- Better widgets' layout in Sample Editor
 - Lots of source code optimizations and cleanups
 - Fix inverted 'R' button's status (GitHub #94)
 - Better handling of 'R' button's status when the sequencer is off (GitHub #95)
 - Fix non-playing samples if live-recorded and 'R' button is on (GitHub #93)
 - Reset button statuses once channels have been freed (GitHub #100)
 - Fix missing ASIO and WASAPI APIs on Windows (GitHub #96)
+- Missing RtMidi libs on Linux (GitHub ##102)
 
 
 0.13.0 --- 2016 . 09 . 20
