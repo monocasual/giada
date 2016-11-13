@@ -99,9 +99,8 @@ int gu_getBlinker()
 
 void gu_updateControls()
 {
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		G_Mixer.channels.at(i)->guiChannel->update();
-	}
 
 	G_MainWin->inOut->setOutVol(G_Mixer.outVol);
 	G_MainWin->inOut->setInVol(G_Mixer.inVol);
@@ -112,9 +111,6 @@ void gu_updateControls()
 
 	G_MainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
 	G_MainWin->timing->setBpm(G_Mixer.bpm);
-
-	/* if you reset to init state while the seq is in play: it's better to
-	 * update the button status */
 
 	G_MainWin->controller->updatePlay(G_Mixer.running);
 	G_MainWin->controller->updateMetronome(G_Mixer.metronome);
