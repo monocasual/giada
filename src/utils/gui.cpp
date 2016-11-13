@@ -117,7 +117,7 @@ void gu_updateControls()
 	 * update the button status */
 
 	G_MainWin->controller->updatePlay(G_Mixer.running);
-	G_MainWin->controller->updateMetronome(0);
+	G_MainWin->controller->updateMetronome(G_Mixer.metronome);
 }
 
 
