@@ -255,13 +255,13 @@ int gKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == FL_Enter && !enterPressed) {
 					enterPressed = true;
-					glue_startStopActionRec();
+					glue_startStopActionRec(false); // update gui
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == ' ' && !spacePressed) {
 					spacePressed = true;
-					G_Mixer.running ? glue_stopSeq() : glue_startSeq(); // TODO - glue_startStopSeq, no core logic here
+          glue_startStopSeq();
 					ret = 1;
 					break;
 				}
