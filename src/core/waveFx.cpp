@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * waveFx
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,21 +24,17 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#include <math.h>
+#include <cmath>
 #include "../utils/log.h"
-#include "waveFx.h"
-#include "channel.h"
-#include "mixer.h"
 #include "wave.h"
+#include "waveFx.h"
 
 
-extern Mixer G_Mixer;
-
-
-float wfx_normalizeSoft(Wave *w) {
+float wfx_normalizeSoft(Wave *w)
+{
 	float peak = 0.0f;
 	float abs  = 0.0f;
 	for (int i=0; i<w->size; i++) { // i++: both L and R samples
@@ -57,11 +53,11 @@ float wfx_normalizeSoft(Wave *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool wfx_monoToStereo(Wave *w) {
-
+bool wfx_monoToStereo(Wave *w)
+{
 	unsigned newSize = w->size * 2;
 	float *dataNew = (float *) malloc(newSize * sizeof(float));
 	if (dataNew == NULL) {
@@ -85,11 +81,11 @@ bool wfx_monoToStereo(Wave *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void wfx_silence(Wave *w, int a, int b) {
-
+void wfx_silence(Wave *w, int a, int b)
+{
 	/* stereo values */
 	a = a * 2;
 	b = b * 2;
@@ -107,10 +103,11 @@ void wfx_silence(Wave *w, int a, int b) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int wfx_cut(Wave *w, int a, int b) {
+int wfx_cut(Wave *w, int a, int b)
+{
 	a = a * 2;
 	b = b * 2;
 
@@ -149,10 +146,11 @@ int wfx_cut(Wave *w, int a, int b) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int wfx_trim(Wave *w, int a, int b) {
+int wfx_trim(Wave *w, int a, int b)
+{
 	a = a * 2;
 	b = b * 2;
 
@@ -182,11 +180,11 @@ int wfx_trim(Wave *w, int a, int b) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void wfx_fade(Wave *w, int a, int b, int type) {
-
+void wfx_fade(Wave *w, int a, int b, int type)
+{
 	float m = type == 0 ? 0.0f : 1.0f;
 	float d = 1.0f/(float)(b-a);
 	if (type == 1)
@@ -200,14 +198,16 @@ void wfx_fade(Wave *w, int a, int b, int type) {
 		w->data[i+1] *= m;
 		m += d;
 	}
+
+  w->isEdited = true;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void wfx_smooth(Wave *w, int a, int b) {
-
+void wfx_smooth(Wave *w, int a, int b)
+{
 	int d = 32;  // 64 if stereo data
 
 	/* do nothing if fade edges (both of 32 samples) are > than selected
