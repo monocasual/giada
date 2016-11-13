@@ -224,6 +224,8 @@ gColumn *gKeyboard::getColumnByIndex(int index)
 
 /* -------------------------------------------------------------------------- */
 
+/* TODO - the following event handling for play, stop, rewind, start rec and
+so on should be moved to the proper widget: gdMainWindow or (better) geController. */
 
 int gKeyboard::handle(int e)
 {
