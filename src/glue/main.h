@@ -40,8 +40,8 @@ void glue_setBpm(const char *v1, const char *v2);
 void glue_setBeats(int beats, int bars, bool expand);
 
 /* start, stop, rewind sequencer
- * if gui == true the signal comes from an internal interaction on the
- * GUI, otherwise it's a MIDI/Jack/external signal. */
+If gui == true the signal comes from an user interaction on the GUI,
+otherwise it's a MIDI/Jack/external signal. */
 
 void glue_startStopSeq(bool gui=true);
 void glue_startSeq    (bool gui=true);
@@ -49,9 +49,8 @@ void glue_stopSeq     (bool gui=true);
 void glue_rewindSeq   ();
 
 /* start/stopReadingRecs
- * handle the 'R' button. If gui == true the signal comes from an
- * internal interaction on the GUI, otherwise it's a MIDI/Jack/external
- * signal. */
+Handles the 'R' button. If gui == true the signal comes from an user interaction
+on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
 void glue_startStopReadingRecs(class SampleChannel *ch, bool gui=true);
 void glue_startReadingRecs    (class SampleChannel *ch, bool gui=true);

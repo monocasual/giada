@@ -209,7 +209,7 @@ void glue_startActionRec(bool gui)
 	G_Recorder.active = true;
 
 	if (!G_Mixer.running)
-		glue_startSeq();
+		glue_startSeq(false);  // update gui ayway
 
 	if (!gui) {
 		Fl::lock();
@@ -252,15 +252,13 @@ void glue_stopActionRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopInputRec(bool gui, bool alert)
+void glue_startStopInputRec(bool gui)
 {
 	if (G_Mixer.recording)
 		glue_stopInputRec(gui);
 	else
-	if (!glue_startInputRec(gui)) {
-		if (alert) gdAlert("No channels armed/available for audio recording.");
-		else       gu_log("[glue] no channels armed/available for audio recording\n");
-	}
+	if (!glue_startInputRec(gui))
+		gdAlert("No channels armed/available for audio recording.");
 }
 
 
@@ -273,18 +271,14 @@ int glue_startInputRec(bool gui)
 		return false;
 
 	if (!mh_startInputRec()) {
-		Fl::lock();
-		G_MainWin->controller->updateRecInput(0);
+	  Fl::lock();
+	  G_MainWin->controller->updateRecInput(0);  // set it off, anyway
 		Fl::unlock();
 		return false;
 	}
 
-	if (!G_Mixer.running) {
-		glue_startSeq();
-		Fl::lock();
-		G_MainWin->controller->updatePlay(1);
-		Fl::unlock();
-	}
+	if (!G_Mixer.running)
+		glue_startSeq(false); // update gui anyway
 
 	if (!gui) {
 		Fl::lock();

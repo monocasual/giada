@@ -333,7 +333,7 @@ void KernelMidi::processMaster(uint32_t pure, uint32_t value)
 	}
 	else if (pure == G_Conf.midiInStartStop) {
 		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
-		glue_startStopSeq();
+		glue_startStopSeq(false);
 	}
 	else if (pure == G_Conf.midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
@@ -341,7 +341,7 @@ void KernelMidi::processMaster(uint32_t pure, uint32_t value)
 	}
 	else if (pure == G_Conf.midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
-		glue_startStopInputRec(false, false);   // update gui, no popup messages
+		glue_startStopInputRec(false);
 	}
 	else if (pure == G_Conf.midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);

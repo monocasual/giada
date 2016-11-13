@@ -56,12 +56,10 @@ void glue_startActionRec(bool gui=true);
 void glue_stopActionRec(bool gui=true);
 
 /* start/stopInputRec
- * Handle the input recording (take). If gui == true the signal comes
- * from an internal interaction on the GUI, otherwise it's a
- * MIDI/Jack/external signal. Alert displays the popup message
- * if there are no available channels. */
+Handles the input recording (take). If gui == true the signal comes from an
+internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startStopInputRec(bool gui=true, bool alert=true);
+void glue_startStopInputRec(bool gui=true);
 int  glue_startInputRec    (bool gui=true);
 int  glue_stopInputRec     (bool gui=true);
 

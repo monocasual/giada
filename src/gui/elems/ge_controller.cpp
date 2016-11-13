@@ -88,7 +88,7 @@ void gController::__cb_rewind()
 
 void gController::__cb_play()
 {
-	glue_startStopSeq();
+	glue_startStopSeq(true);
 }
 
 
@@ -106,7 +106,7 @@ void gController::__cb_recAction()
 
 void gController::__cb_recInput()
 {
-	glue_startStopInputRec();
+	glue_startStopInputRec(true);
 }
 
 
@@ -115,7 +115,7 @@ void gController::__cb_recInput()
 
 void gController::__cb_metronome()
 {
-	glue_startStopMetronome();
+	glue_startStopMetronome(true);
 }
 
 

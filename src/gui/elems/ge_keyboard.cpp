@@ -261,7 +261,7 @@ int gKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == ' ' && !spacePressed) {
 					spacePressed = true;
-          glue_startStopSeq();
+          glue_startStopSeq(false);   // update gui
 					ret = 1;
 					break;
 				}
