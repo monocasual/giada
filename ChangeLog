@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.13.1 ---
+0.13.1 --- 2016 . 11 . 16
 - Input MIDI to MIDI channels/plugins
 - Refinements to show/hide 'R' button's dynamics
 - Increase piano roll items' height
