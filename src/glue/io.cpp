@@ -53,6 +53,7 @@
 
 
 extern Recorder			 G_Recorder;
+extern KernelAudio   G_KernelAudio;
 extern bool 		 		 G_audio_status;
 extern Mixer	   		 G_Mixer;
 extern gdMainWindow *G_MainWin;
@@ -143,7 +144,8 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS)
-				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame);
+				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame,
+          G_KernelAudio.realBufsize);
 			else {
 				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
 

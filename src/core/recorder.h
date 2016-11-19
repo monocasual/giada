@@ -164,7 +164,7 @@ public:
 
 	/* start/endOverdub */
 
-	void startOverdub(int chan, char action, int frame);
+	void startOverdub(int chan, char action, int frame, unsigned bufferSize);
 	void stopOverdub(int frame);
 
 private:

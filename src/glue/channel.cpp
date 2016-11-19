@@ -49,6 +49,7 @@
 
 extern gdMainWindow *G_MainWin;
 extern Conf          G_Conf;
+extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
 #ifdef WITH_VST
@@ -245,7 +246,8 @@ void glue_setMute(Channel *ch, bool gui)
 {
 	if (G_Recorder.active && G_Recorder.canRec(ch)) {
 		if (!ch->mute)
-			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame);
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame,
+        G_KernelAudio.realBufsize);
 		else
 		 G_Recorder.stopOverdub(G_Mixer.actualFrame);
 	}

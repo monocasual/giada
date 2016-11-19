@@ -502,7 +502,8 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame)
 
 	if (G_Recorder.canRec(this)) {
 		if (mode == SINGLE_PRESS)
-			G_Recorder.startOverdub(index, ACTION_KEYS, globalFrame);
+			G_Recorder.startOverdub(index, ACTION_KEYS, globalFrame,
+        G_KernelAudio.realBufsize);
 		else
 			G_Recorder.rec(index, ACTION_KEYPRESS, globalFrame);
 	}

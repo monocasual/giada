@@ -33,7 +33,6 @@
 #include "const.h"
 #include "mixer.h"
 #include "mixerHandler.h"
-#include "kernelAudio.h"
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "conf.h"
@@ -42,7 +41,6 @@
 #include "recorder.h"
 
 
-extern KernelAudio G_KernelAudio;
 extern Mixer       G_Mixer;
 
 
@@ -564,7 +562,8 @@ int Recorder::getAction(int chan, char action, int frame, struct action **out)
 /* -------------------------------------------------------------------------- */
 
 
-void Recorder::startOverdub(int index, char actionMask, int frame)
+void Recorder::startOverdub(int index, char actionMask, int frame,
+  unsigned bufferSize)
 {
 	/* prepare the composite struct */
 
@@ -590,7 +589,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame)
 	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
-			int truncFrame = cmp.a1.frame - G_KernelAudio.realBufsize;
+			int truncFrame = cmp.a1.frame - bufferSize;
 			if (truncFrame < 0)
 				truncFrame = 0;
 			gu_log("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
