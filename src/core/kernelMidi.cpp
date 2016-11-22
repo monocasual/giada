@@ -39,7 +39,9 @@
 #include "midiChannel.h"
 #include "conf.h"
 #include "midiMapConf.h"
-#include "pluginHost.h"
+#ifdef WITH_VST
+  #include "pluginHost.h"
+#endif
 #include "kernelMidi.h"
 
 
@@ -48,8 +50,9 @@ extern Conf        G_Conf;
 extern Mixer       G_Mixer;
 extern KernelMidi  G_KernelMidi;
 extern MidiMapConf G_MidiMap;
+#ifdef WITH_VST
 extern PluginHost  G_PluginHost;
-
+#endif
 
 using std::string;
 using std::vector;

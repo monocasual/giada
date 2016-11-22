@@ -30,19 +30,22 @@
 #include "../utils/log.h"
 #include "midiChannel.h"
 #include "channel.h"
-#include "pluginHost.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
 #include "mixer.h"
+#ifdef WITH_VST
+  #include "pluginHost.h"
+#endif
 #include "kernelMidi.h"
 
 
 extern Recorder   G_Recorder;
 extern KernelMidi G_KernelMidi;
-extern PluginHost G_PluginHost;
 extern Mixer      G_Mixer;
-
+#ifdef WITH_VST
+extern PluginHost G_PluginHost;
+#endif
 
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
@@ -335,16 +338,19 @@ void MidiChannel::receiveMidi(uint32_t msg)
 {
   if (!armed)
     return;
+
+#ifdef WITH_VST
+
   while (true) {
     if (pthread_mutex_trylock(&G_PluginHost.mutex_midi) != 0)
       continue;
     gu_log("[Channel::processMidi] msg=%X\n", msg);
-#ifdef WITH_VST
     addVstMidiEvent(msg, 0);
-#endif
     pthread_mutex_unlock(&G_PluginHost.mutex_midi);
     break;
   }
+
+#endif
 
 	if (G_Recorder.canRec(this))
 		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.actualFrame, msg);
