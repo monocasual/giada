@@ -13,7 +13,8 @@
 
 
 0.13.2 ---
-Fix broken compilation when build without VST support
+- Fix broken compilation when build without VST support
+- Decouple Recorder from any global variable
 
 
 0.13.1 --- 2016 . 11 . 16
