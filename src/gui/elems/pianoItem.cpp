@@ -143,6 +143,7 @@ void gePianoItem::record()
 
 	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
 	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
+  pParent->chan->hasActions = true;
 }
 
 
@@ -151,8 +152,10 @@ void gePianoItem::record()
 
 void gePianoItem::remove()
 {
-	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true, event_a, 0.0);
-	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true, event_b, 0.0);
+	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true,
+    &G_Mixer.mutex_recs, event_a, 0.0);
+	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true,
+    &G_Mixer.mutex_recs, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence. */

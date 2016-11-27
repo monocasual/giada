@@ -514,6 +514,7 @@ int Patch_DEPR_::readRecs()
 						G_Recorder.rec(ch->index, type, frame, iValue_fix, fValue);
 					else
 						G_Recorder.rec(ch->index, type, frame, iValue, fValue);
+          ch->hasActions = true;
 				}
 		}
 	}

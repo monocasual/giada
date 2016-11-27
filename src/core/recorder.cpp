@@ -29,19 +29,10 @@
 
 #include <math.h>
 #include "../utils/log.h"
-#include "../utils/fs.h"
-#include "const.h"
 #include "mixer.h"
-#include "mixerHandler.h"
-#include "kernelMidi.h"
 #include "patch_DEPR_.h"
-#include "conf.h"
-#include "channel.h"
 #include "sampleChannel.h"
 #include "recorder.h"
-
-
-extern Mixer       G_Mixer;
 
 
 Recorder::Recorder()
@@ -64,7 +55,7 @@ void Recorder::init()
 /* -------------------------------------------------------------------------- */
 
 
-bool Recorder::canRec(Channel *ch)
+bool Recorder::canRec(Channel *ch, Mixer *mixer)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -72,9 +63,9 @@ bool Recorder::canRec(Channel *ch)
 	 * mixer is recording a take somewhere
 	 * channel is empty */
 
-	if (!active            ||
-		  !G_Mixer.running   ||
-			 G_Mixer.recording ||
+	if (!active           ||
+		  !mixer->running   ||
+			 mixer->recording ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
 		)
 		return false;
@@ -140,11 +131,6 @@ void Recorder::rec(int index, int type, int frame, uint32_t iValue, float fValue
 		global.at(frameToExpand).push_back(a);		// expand array
 	}
 
-	/* don't activate the channel (readActions == false), it's up to
-	 * the other layers */
-
-	G_Mixer.getChannelByIndex(index)->hasActions = true;
-
 	sortedActions = false;
 
 	gu_log("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (0x%X) fValue=%f\n",
@@ -173,9 +159,6 @@ void Recorder::clearChan(int index)
 				j++;
 		}
 	}
-
-	Channel *ch = G_Mixer.getChannelByIndex(index);
-	ch->hasActions = false;
 	optimize();
 	//print();
 }
@@ -201,10 +184,7 @@ void Recorder::clearAction(int index, char act)
 				j++;
 		}
 	}
-	Channel *ch = G_Mixer.getChannelByIndex(index);
-	ch->hasActions = false;   /// FIXME - why this? Isn't it useless if we call setChanHasActionsStatus?
 	optimize();
-	setChanHasActionsStatus(index);    /// FIXME
 	//print();
 }
 
@@ -213,7 +193,7 @@ void Recorder::clearAction(int index, char act)
 
 
 void Recorder::deleteAction(int chan, int frame, char type, bool checkValues,
-	uint32_t iValue, float fValue)
+	pthread_mutex_t *mixerMutex, uint32_t iValue, float fValue)
 {
 	/* make sure frame is even */
 
@@ -224,41 +204,39 @@ void Recorder::deleteAction(int chan, int frame, char type, bool checkValues,
 
 	bool found = false;
 	for (unsigned i=0; i<frames.size() && !found; i++) {
-		if (frames.at(i) == frame) {
+
+		if (frames.at(i) != frame)
+      continue;
 
 			/* find the action in frame i */
 
-			for (unsigned j=0; j<global.at(i).size(); j++) {
-				action *a = global.at(i).at(j);
+		for (unsigned j=0; j<global.at(i).size(); j++) {
+			action *a = global.at(i).at(j);
 
-				/* action comparison logic */
+			/* action comparison logic */
 
-				bool doit = (a->chan == chan && a->type == (type & a->type));
-				if (checkValues)
-					doit &= (a->iValue == iValue && a->fValue == fValue);
+			bool doit = (a->chan == chan && a->type == (type & a->type));
+			if (checkValues)
+				doit &= (a->iValue == iValue && a->fValue == fValue);
 
-				if (doit) {
-					// TODO - wft? just do: while (true); if (pthread_mutex_trylock(&G_Mixer.mutex_recs))
-					int lockStatus = 0;
-					while (lockStatus == 0) {
-						lockStatus = pthread_mutex_trylock(&G_Mixer.mutex_recs);
-						if (lockStatus == 0) {
-							free(a);
-							global.at(i).erase(global.at(i).begin() + j);
-							pthread_mutex_unlock(&G_Mixer.mutex_recs);
-							found = true;
-							break;
-						}
-						else
-							gu_log("[REC] delete action: waiting for mutex...\n");
-					}
-				}
-			}
+      if (!doit)
+        continue;
+
+      while (true) {
+        if (pthread_mutex_trylock(mixerMutex)) {
+          free(a);
+          global.at(i).erase(global.at(i).begin() + j);
+          pthread_mutex_unlock(mixerMutex);
+          found = true;
+          break;
+        }
+        else
+          gu_log("[REC] delete action: waiting for mutex...\n");
+      }
 		}
 	}
 	if (found) {
 		optimize();
-		setChanHasActionsStatus(chan);
 		gu_log("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 	}
@@ -271,7 +249,8 @@ void Recorder::deleteAction(int chan, int frame, char type, bool checkValues,
 /* -------------------------------------------------------------------------- */
 
 
-void Recorder::deleteActions(int chan, int frame_a, int frame_b, char type)
+void Recorder::deleteActions(int chan, int frame_a, int frame_b, char type,
+  pthread_mutex_t *mixerMutex)
 {
 	sortActions();
 	vector<int> dels;
@@ -281,7 +260,7 @@ void Recorder::deleteActions(int chan, int frame_a, int frame_b, char type)
 			dels.push_back(frames.at(i));
 
 	for (unsigned i=0; i<dels.size(); i++)
-		deleteAction(chan, dels.at(i), type, false); // false == don't check values
+		deleteAction(chan, dels.at(i), type, false, mixerMutex); // false == don't check values
 }
 
 
@@ -298,13 +277,6 @@ void Recorder::clearAll()
 			global.erase(global.begin() + i);
 		}
 	}
-
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->hasActions  = false;
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)G_Mixer.channels.at(i))->readActions = false;
-	}
-
 	global.clear();
 	frames.clear();
 }
@@ -492,22 +464,17 @@ void Recorder::shrink(int new_fpb)
 /* -------------------------------------------------------------------------- */
 
 
-void Recorder::setChanHasActionsStatus(int index)
+bool Recorder::hasActions(int chanIndex)
 {
-	Channel *ch = G_Mixer.getChannelByIndex(index);
-	if (global.size() == 0) {
-		ch->hasActions = false;
-		return;
-	}
+  if (global.size() == 0)
+    return false;
 	for (unsigned i=0; i<global.size(); i++) {
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			if (global.at(i).at(j)->chan == index) {
-				ch->hasActions = true;
-				return;
-			}
+			if (global.at(i).at(j)->chan == chanIndex)
+        return true;
 		}
 	}
-	ch->hasActions = false;
+	return false;
 }
 
 
@@ -596,18 +563,15 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 			rec(index, cmp.a2.type, truncFrame);
 		}
 	}
-
-	SampleChannel *ch = (SampleChannel*) G_Mixer.getChannelByIndex(index);
-	ch->readActions = false;   // don't use disableRead()
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Recorder::stopOverdub(int frame)
+void Recorder::stopOverdub(Mixer *mixer)
 {
-	cmp.a2.frame  = frame;
+	cmp.a2.frame  = mixer->actualFrame;
 	bool ringLoop = false;
 	bool nullLoop = false;
 
@@ -617,23 +581,20 @@ void Recorder::stopOverdub(int frame)
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
 		gu_log("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, G_Mixer.totalFrames); 	// record at the end of the sequencer
+		rec(cmp.a2.chan, cmp.a2.type, mixer->totalFrames); 	// record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
 		gu_log("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false); // false == don't check values
+		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, &mixer->mutex_recs); // false == don't check values
 	}
-
-	SampleChannel *ch = (SampleChannel*) G_Mixer.getChannelByIndex(cmp.a2.chan);
-	ch->readActions = false;      // don't use disableRead()
 
 	/* remove any nested action between keypress----keyrel, then record */
 
 	if (!nullLoop) {
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type);
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, &mixer->mutex_recs);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, &mixer->mutex_recs);
 	}
 
 	if (!ringLoop && !nullLoop) {
@@ -644,11 +605,9 @@ void Recorder::stopOverdub(int frame)
 
 		action *act = NULL;
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
-		if (res == 1) {
-			if (act->type == cmp.a2.type) {
-				gu_log("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
-				deleteAction(act->chan, act->frame, act->type, false); // false == don't check values
-			}
+		if (res == 1 && act->type == cmp.a2.type) {
+			gu_log("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
+			deleteAction(act->chan, act->frame, act->type, false, &mixer->mutex_recs); // false == don't check values
 		}
 	}
 }
@@ -663,7 +622,8 @@ void Recorder::print()
 	for (unsigned i=0; i<global.size(); i++) {
 		gu_log("  frame %d\n", frames.at(i));
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			gu_log("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type, global.at(i).at(j)->chan, global.at(i).at(j)->frame);
+			gu_log("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type,
+        global.at(i).at(j)->chan, global.at(i).at(j)->frame);
 		}
 	}
 }

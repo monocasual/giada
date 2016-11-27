@@ -111,7 +111,7 @@ void MidiChannel::empty() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
+void MidiChannel::quantize(int index, int localFrame, Mixer *m) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -352,8 +352,10 @@ void MidiChannel::receiveMidi(uint32_t msg)
 
 #endif
 
-	if (G_Recorder.canRec(this))
+	if (G_Recorder.canRec(this, &G_Mixer)) {
 		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.actualFrame, msg);
+    hasActions = true;
+  }
 }
 
 

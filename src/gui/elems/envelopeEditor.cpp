@@ -194,6 +194,7 @@ int geEnvelopeEditor::handle(int e) {
 							G_Recorder.rec(pParent->chan->index, type, 0, 0, 1.0f);
 							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX, 1);
 							G_Recorder.rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
+              pParent->chan->hasActions = true;
 						}
 
 						/* line between 2 points y = (x-a) / (b-a); a = h() - 8; b = 1 */
@@ -202,6 +203,7 @@ int geEnvelopeEditor::handle(int e) {
 						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
 						G_Recorder.rec(pParent->chan->index, type, frame, 0, value);
+            pParent->chan->hasActions = true;
 						G_Recorder.sortActions();
 						sortPoints();
 					}
@@ -219,11 +221,14 @@ int geEnvelopeEditor::handle(int e) {
 				if (selectedPoint != -1) {
 					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size()-1) {
 						G_Recorder.clearAction(pParent->chan->index, type);
+            pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 						points.clear();
 					}
 					else {
-						G_Recorder.deleteAction(pParent->chan->index, points.at(selectedPoint).frame, type, false);
-						G_Recorder.sortActions();
+						G_Recorder.deleteAction(pParent->chan->index,
+              points.at(selectedPoint).frame, type, false, &G_Mixer.mutex_recs);
+            pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+            G_Recorder.sortActions();
 						points.erase(points.begin() + selectedPoint);
 					}
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
@@ -259,11 +264,14 @@ int geEnvelopeEditor::handle(int e) {
 
 					/*  delete previous point and record a new one */
 
-					G_Recorder.deleteAction(pParent->chan->index,	points.at(draggedPoint).frame, type, false);
+					G_Recorder.deleteAction(pParent->chan->index,
+            points.at(draggedPoint).frame, type, false, &G_Mixer.mutex_recs);
+          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 
 					if (range == RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
 						G_Recorder.rec(pParent->chan->index, type, newFrame, 0, value);
+            pParent->chan->hasActions = true;
 					}
 					else {
 						/// TODO

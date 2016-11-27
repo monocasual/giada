@@ -102,6 +102,7 @@ Channel *glue_addChannel(int column, int type)
 void glue_deleteChannel(Channel *ch)
 {
 	G_Recorder.clearChan(ch->index);
+  ch->hasActions = false;
 #ifdef WITH_VST
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
 #endif
@@ -126,6 +127,7 @@ void glue_freeChannel(Channel *ch)
 #endif
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	G_Recorder.clearChan(ch->index);
+  ch->hasActions = false;
 	ch->empty();
 }
 
@@ -244,12 +246,14 @@ void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
 
 void glue_setMute(Channel *ch, bool gui)
 {
-	if (G_Recorder.active && G_Recorder.canRec(ch)) {
-		if (!ch->mute)
+	if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer)) {
+		if (!ch->mute) {
 			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame,
         G_KernelAudio.realBufsize);
+      ch->readActions = false;   // don't read actions while overdubbing
+    }
 		else
-		 G_Recorder.stopOverdub(G_Mixer.actualFrame);
+		 G_Recorder.stopOverdub(&G_Mixer);
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);

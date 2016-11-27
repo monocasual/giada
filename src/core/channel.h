@@ -143,10 +143,10 @@ public:
 
 	/* quantize
 	 * start channel according to quantizer. Index = array index of
-	 * mixer::channels, used by recorder. LocalFrame = frame within buffer.
-	 * GloalFrame = actual frame from mixer. */
+	 * mixer::channels, used by recorder. LocalFrame = frame within the current
+   * buffer.  */
 
-	virtual void quantize(int index, int localFrame, int globalFrame) = 0;
+	virtual void quantize(int index, int localFrame, class Mixer *m) = 0;
 
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
@@ -213,6 +213,7 @@ public:
 	bool    mute;                  // global mute
 	bool    solo;
   bool    hasActions;            // has something recorded
+  bool    readActions;           // read what's recorded
 	bool    armed;							   // armed for recording
 	int 	  recStatus;             // status of recordings (waiting, ending, ...)
 	float  *vChan;	               // virtual channel

@@ -591,6 +591,8 @@ void gAction::addAction()
 		//gu_log("action added, [%d]\n", frame_a);
 	}
 
+  parent->chan->hasActions = true;
+
 	G_Recorder.sortActions();
 
 	index++; // important!
@@ -606,11 +608,17 @@ void gAction::delAction()
 	 * actions. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		G_Recorder.deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS, false);
-		G_Recorder.deleteAction(parent->chan->index, frame_b, ACTION_KEYREL, false);
+		G_Recorder.deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS,
+      false, &G_Mixer.mutex_recs);
+		G_Recorder.deleteAction(parent->chan->index, frame_b, ACTION_KEYREL,
+      false, &G_Mixer.mutex_recs);
 	}
 	else
-		G_Recorder.deleteAction(parent->chan->index, frame_a, type, false);
+		G_Recorder.deleteAction(parent->chan->index, frame_a, type, false,
+      &G_Mixer.mutex_recs);
+
+  parent->chan->hasActions = G_Recorder.hasActions(parent->chan->index);
+
 
 	/* restore the initial cursor shape, in case you delete an action and
 	 * the double arrow (for resizing) is displayed */
@@ -647,6 +655,8 @@ void gAction::moveAction(int frame_a)
 		frame_b = xToFrame_b();
 		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_b);
 	}
+
+  parent->chan->hasActions = true;
 
 	G_Recorder.sortActions();
 }

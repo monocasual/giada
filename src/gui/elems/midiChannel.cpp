@@ -181,6 +181,7 @@ void geMidiChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		G_Recorder.clearChan(ch->index);
+    ch->hasActions = false;
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
 	}

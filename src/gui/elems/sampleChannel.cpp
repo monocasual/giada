@@ -263,6 +263,8 @@ void geSampleChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
+    ch->hasActions = G_Recorder.hasActions(ch->index);
+
 		if (!ch->hasActions)
 			hideActionButton();
 
@@ -276,6 +278,8 @@ void geSampleChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+    ch->hasActions = G_Recorder.hasActions(ch->index);
+
 		if (!ch->hasActions)
 			hideActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
@@ -286,6 +290,7 @@ void geSampleChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 			return;
 		G_Recorder.clearAction(ch->index, ACTION_VOLUME);
+    ch->hasActions = G_Recorder.hasActions(ch->index);
 		if (!ch->hasActions)
 			hideActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
@@ -296,6 +301,7 @@ void geSampleChannel::__cb_openMenu()
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		G_Recorder.clearChan(ch->index);
+    ch->hasActions = false;
 		hideActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;
@@ -354,7 +360,7 @@ void geSampleChannel::refresh()
 		if (G_Mixer.recording && ch->armed)
 			mainButton->setInputRecordMode();
 		if (G_Recorder.active) {
-			if (G_Recorder.canRec(ch))
+			if (G_Recorder.canRec(ch, &G_Mixer))
 				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)

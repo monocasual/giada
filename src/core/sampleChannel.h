@@ -106,7 +106,7 @@ public:
   int readPatch(const string &basePath, int i, class Patch *patch,
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject, class Patch *patch) override;
-	void quantize(int index, int localFrame, int globalFrame) override;
+	void quantize(int index, int localFrame, class Mixer *m) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
 	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
@@ -192,10 +192,6 @@ public:
 	float  fadeoutStep;     // fadeout decrease
   int    fadeoutType;     // xfade or fadeout
   int		 fadeoutEnd;      // what to do when fadeout ends
-
-	/* recorder:: stuff */
-
-  bool   readActions;     // read actions or not
 
 	/* midi stuff */
 

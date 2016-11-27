@@ -37,6 +37,7 @@
 #include "mixer.h"
 #include "wave.h"
 #include "const.h"
+#include "channel.h"
 #include "mixerHandler.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
@@ -207,6 +208,12 @@ void init_shutdown()
 	}
 
 	G_Recorder.clearAll();
+  for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		G_Mixer.channels.at(i)->hasActions  = false;
+		G_Mixer.channels.at(i)->readActions = false;
+		//if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
+		//	((SampleChannel*)G_Mixer.channels.at(i))->readActions = false;
+	}
 	gu_log("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST

@@ -253,6 +253,7 @@ int geMuteEditor::handle(int e) {
 						G_Recorder.rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
 						G_Recorder.rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
 					}
+          pParent->chan->hasActions = true;
 					G_Recorder.sortActions();
 
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
@@ -281,9 +282,13 @@ int geMuteEditor::handle(int e) {
 					//gu_log("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,	points.at(a).type, false); // false = don't check vals
-					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,	points.at(b).type, false); // false = don't check vals
-					G_Recorder.sortActions();
+					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,
+          points.at(a).type, false, &G_Mixer.mutex_recs); // false = don't check vals
+					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,
+          points.at(b).type, false, &G_Mixer.mutex_recs); // false = don't check vals
+          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+
+          G_Recorder.sortActions();
 
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
@@ -305,17 +310,17 @@ int geMuteEditor::handle(int e) {
 
 					int newFrame = points.at(draggedPoint).x * pParent->zoom;
 
-					G_Recorder.deleteAction(
-							pParent->chan->index,
-							points.at(draggedPoint).frame,
-							points.at(draggedPoint).type,
-							false);  // don't check values
+					G_Recorder.deleteAction(pParent->chan->index,
+            points.at(draggedPoint).frame, points.at(draggedPoint).type, false,
+            &G_Mixer.mutex_recs);  // don't check values
+          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 
 					G_Recorder.rec(
 							pParent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 
+          pParent->chan->hasActions = true;
 					G_Recorder.sortActions();
 
 					points.at(draggedPoint).frame = newFrame;

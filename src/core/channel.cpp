@@ -69,6 +69,7 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
   mute           (false),
   solo           (false),
   hasActions     (false),
+	readActions    (false),
   armed          (false),
   recStatus      (REC_STOPPED),
   vChan          (nullptr),
@@ -147,8 +148,10 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
   for (unsigned i=0; i<G_Recorder.global.size(); i++) {
     for (unsigned k=0; k<G_Recorder.global.at(i).size(); k++) {
       Recorder::action *a = G_Recorder.global.at(i).at(k);
-      if (a->chan == src->index)
+      if (a->chan == src->index) {
         G_Recorder.rec(index, a->type, a->frame, a->iValue, a->fValue);
+        hasActions = true;
+      }
     }
   }
 }
@@ -305,6 +308,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 	for (unsigned k=0; k<pch->actions.size(); k++) {
 		Patch::action_t *ac = &pch->actions.at(k);
 		G_Recorder.rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
+    hasActions = true;
 	}
 
 #ifdef WITH_VST

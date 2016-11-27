@@ -34,6 +34,7 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
+#include "mixer.h"
 #include "wave.h"
 #include "pluginHost.h"
 #include "waveFx.h"
@@ -66,7 +67,6 @@ SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (DEFAULT_FADEOUT_STEP),
-	  readActions      (false),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {
@@ -477,7 +477,7 @@ void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::quantize(int index, int localFrame, int globalFrame)
+void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 {
 	/* skip if LOOP_ANY or not in quantizer-wait mode */
 
@@ -500,12 +500,15 @@ void SampleChannel::quantize(int index, int localFrame, int globalFrame)
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
 
-	if (G_Recorder.canRec(this)) {
-		if (mode == SINGLE_PRESS)
-			G_Recorder.startOverdub(index, ACTION_KEYS, globalFrame,
+	if (G_Recorder.canRec(this, mixer)) {
+		if (mode == SINGLE_PRESS) {
+			G_Recorder.startOverdub(index, ACTION_KEYS, mixer->actualFrame,
         G_KernelAudio.realBufsize);
+      readActions = false;   // don't read actions while overdubbing
+    }
 		else
-			G_Recorder.rec(index, ACTION_KEYPRESS, globalFrame);
+			G_Recorder.rec(index, ACTION_KEYPRESS, mixer->actualFrame);
+    hasActions = true;
 	}
 }
 

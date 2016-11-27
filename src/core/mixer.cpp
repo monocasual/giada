@@ -615,7 +615,7 @@ void Mixer::doQuantize(unsigned frame)
 	}
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size(); i++)
-		channels.at(i)->quantize(i, frame, actualFrame);  // j == localFrame
+		channels.at(i)->quantize(i, frame, this);  // j == localFrame
 	pthread_mutex_unlock(&mutex_chans);
 }
 

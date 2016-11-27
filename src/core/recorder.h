@@ -37,6 +37,7 @@
 	#include <cstdint>
 #endif
 #include <vector>
+#include <pthread.h>
 
 
 using std::vector;
@@ -79,16 +80,16 @@ public:
 
 	void init();
 
-	/* setChanHasActionsStatus
-	 * Check if the channel has at least one action recorded. If false, sets
-	 * ch->hasActions = false. Used after an action deletion. */
+	/* hasActions
+	Checks if the channel has at least one action recorded. Used after an
+  action deletion. */
 
-	void setChanHasActionsStatus(int chan);
+	bool hasActions(int chanIndex);
 
 	/* canRec
 	 * can a channel rec an action? Call this one BEFORE rec(). */
 
-	bool canRec(class Channel *ch);
+	bool canRec(class Channel *ch, class Mixer *m);
 
 	/* rec
 	 * record an action. */
@@ -110,13 +111,14 @@ public:
 	 * delete ONE action. Useful in the action editor. 'type' can be a mask. */
 
 	void deleteAction(int chan, int frame, char type, bool checkValues,
-		uint32_t iValue=0, float fValue=0.0);
+    pthread_mutex_t *mixerMutex, uint32_t iValue=0, float fValue=0.0);
 
 	/* deleteActions
 	 * delete A RANGE of actions from frame_a to frame_b in channel 'chan'.
 	 * 'type' can be a bitmask. Exclusive range (frame_a, frame_b). */
 
-	void deleteActions(int chan, int frame_a, int frame_b, char type);
+	void deleteActions(int chan, int frame_a, int frame_b, char type,
+    pthread_mutex_t *mixerMutex);
 
 	/* clearAll
 	 * delete everything. */
@@ -165,7 +167,7 @@ public:
 	/* start/endOverdub */
 
 	void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-	void stopOverdub(int frame);
+	void stopOverdub(class Mixer *m);
 
 private:
 
