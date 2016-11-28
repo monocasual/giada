@@ -571,7 +571,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 
 void Recorder::stopOverdub(Mixer *mixer)
 {
-	cmp.a2.frame  = mixer->actualFrame;
+	cmp.a2.frame  = mixer->currentFrame;
 	bool ringLoop = false;
 	bool nullLoop = false;
 

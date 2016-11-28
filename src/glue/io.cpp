@@ -119,7 +119,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 			if (G_Mixer.running) {
 				ch->kill(0); // on frame 0: user-generated event
 				if (G_Recorder.canRec(ch, &G_Mixer) && !(ch->mode & LOOP_ANY)) {   // don't record killChan actions for LOOP channels
-					G_Recorder.rec(ch->index, ACTION_KILLCHAN, G_Mixer.actualFrame);
+					G_Recorder.rec(ch->index, ACTION_KILLCHAN, G_Mixer.currentFrame);
           ch->hasActions = true;
         }
 			}
@@ -146,12 +146,12 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
-				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.actualFrame,
+				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Mixer.currentFrame,
           G_KernelAudio.realBufsize);
         ch->readActions = false;   // don't read actions while overdubbing
       }
 			else {
-				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.actualFrame);
+				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Mixer.currentFrame);
         ch->hasActions = true;
 
         /* Why return here? You record an action (as done on line 148) and then
@@ -321,7 +321,7 @@ int glue_stopInputRec(bool gui)
 			continue;
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
-			ch->start(G_Mixer.actualFrame, true, G_Mixer.quantize, G_Mixer.running, true, true);
+			ch->start(G_Mixer.currentFrame, true, G_Mixer.quantize, G_Mixer.running, true, true);
 	}
 
 	if (!gui) {

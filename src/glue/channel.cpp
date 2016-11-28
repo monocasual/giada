@@ -248,7 +248,7 @@ void glue_setMute(Channel *ch, bool gui)
 {
 	if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer)) {
 		if (!ch->mute) {
-			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.actualFrame,
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.currentFrame,
         G_KernelAudio.realBufsize);
       ch->readActions = false;   // don't read actions while overdubbing
     }

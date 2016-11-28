@@ -353,7 +353,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 #endif
 
 	if (G_Recorder.canRec(this, &G_Mixer)) {
-		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.actualFrame, msg);
+		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.currentFrame, msg);
     hasActions = true;
   }
 }

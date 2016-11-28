@@ -502,12 +502,12 @@ void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 
 	if (G_Recorder.canRec(this, mixer)) {
 		if (mode == SINGLE_PRESS) {
-			G_Recorder.startOverdub(index, ACTION_KEYS, mixer->actualFrame,
+			G_Recorder.startOverdub(index, ACTION_KEYS, mixer->currentFrame,
         G_KernelAudio.realBufsize);
       readActions = false;   // don't read actions while overdubbing
     }
 		else
-			G_Recorder.rec(index, ACTION_KEYPRESS, mixer->actualFrame);
+			G_Recorder.rec(index, ACTION_KEYPRESS, mixer->currentFrame);
     hasActions = true;
 	}
 }

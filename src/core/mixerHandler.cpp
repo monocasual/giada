@@ -238,9 +238,9 @@ bool mh_startInputRec()
 
 	if (channelsReady > 0) {
 		G_Mixer.recording = true;
-		/* start to write from the actualFrame, not the beginning */
+		/* start to write from the currentFrame, not the beginning */
 		/** FIXME: this should be done before wave allocation */
-		G_Mixer.inputTracker = G_Mixer.actualFrame;
+		G_Mixer.inputTracker = G_Mixer.currentFrame;
 		return true;
 	}
 	return false;

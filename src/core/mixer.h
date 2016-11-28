@@ -150,7 +150,7 @@ public:
 	int framesPerBeat;     // frames in one beat
 	int framesInSequencer; // frames in the whole sequencer
 	int totalFrames;       // frames in the selected range (e.g. 4/4)
-	int actualFrame;
+	int currentFrame;
 	int actualBeat;
 
 #define TICKSIZE 38
