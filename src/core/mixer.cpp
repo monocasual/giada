@@ -99,7 +99,7 @@ void Mixer::init()
 	recording   = false;
 	ready       = true;
 	waitRec     = 0;
-	currentFrame = 0;
+	actualFrame = 0;
 	bpm 		    = DEFAULT_BPM;
 	bars		    = DEFAULT_BARS;
 	beats		    = DEFAULT_BEATS;
@@ -246,7 +246,7 @@ Channel *Mixer::getChannelByIndex(int index)
 void Mixer::sendMIDIsync()
 {
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
-		if (currentFrame % (framesPerBeat/24) == 0)
+		if (actualFrame % (framesPerBeat/24) == 0)
 			G_KernelMidi.send(MIDI_CLOCK, -1, -1);
 	}
 	else
@@ -257,7 +257,7 @@ void Mixer::sendMIDIsync()
 		 * 1-4 and 5-8. We check timecode frame's parity: if even, send
 		 * range 1-4, if odd send 5-8. */
 
-		if (currentFrame % midiTCrate == 0) {
+		if (actualFrame % midiTCrate == 0) {
 
 			/* frame low nibble
 			 * frame high nibble
@@ -363,7 +363,7 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 			testBar(j);
 			testFirstBeat(j);
 			readActions(j);
-			currentFrame += 2;
+			actualFrame += 2;
 			testLastBeat();  // this test must be the last one
 			sendMIDIsync();
 		}
@@ -463,7 +463,7 @@ bool Mixer::isSilent()
 
 void Mixer::rewind()
 {
-	currentFrame = 0;
+	actualFrame = 0;
 	actualBeat  = 0;
 
 	if (running)
@@ -586,11 +586,11 @@ void Mixer::readActions(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_recs);
 	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		if (G_Recorder.frames.at(i) == currentFrame) {
+		if (G_Recorder.frames.at(i) == actualFrame) {
 			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 				int index   = G_Recorder.global.at(i).at(j)->chan;
 				Channel *ch = getChannelByIndex(index);
-				ch->parseAction(G_Recorder.global.at(i).at(j), frame, currentFrame, quantize, running);
+				ch->parseAction(G_Recorder.global.at(i).at(j), frame, actualFrame, quantize, running);
 			}
 			break;
 		}
@@ -606,7 +606,7 @@ void Mixer::doQuantize(unsigned frame)
 {
 	if (quantize < 0 || quanto <= 0) // if quantizer disabled
 		return;
-	if (currentFrame % (quanto) != 0) // if a quanto has not passed yet
+	if (actualFrame % (quanto) != 0) // if a quanto has not passed yet
 		return;
 
 	if (rewindWait) {
@@ -625,7 +625,7 @@ void Mixer::doQuantize(unsigned frame)
 
 void Mixer::testBar(unsigned frame)
 {
-	if (currentFrame % framesPerBar != 0 || currentFrame == 0)
+	if (actualFrame % framesPerBar != 0 || actualFrame == 0)
 		return;
 
 	if (metronome)
@@ -643,7 +643,7 @@ void Mixer::testBar(unsigned frame)
 
 void Mixer::testFirstBeat(unsigned frame)
 {
-	if (currentFrame != 0)
+	if (actualFrame != 0)
 		return;
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)
@@ -657,15 +657,15 @@ void Mixer::testFirstBeat(unsigned frame)
 
 void Mixer::testLastBeat()
 {
-	/* if currentFrame > totalFrames the sequencer returns to frame 0,
+	/* if actualFrame > totalFrames the sequencer returns to frame 0,
 	 * beat 0. This must be the last operation. */
 
-	if (currentFrame > totalFrames) {
-		currentFrame = 0;
+	if (actualFrame > totalFrames) {
+		actualFrame = 0;
 		actualBeat  = 0;
 	}
 	else
-	if (currentFrame % framesPerBeat == 0 && currentFrame > 0) {
+	if (actualFrame % framesPerBeat == 0 && actualFrame > 0) {
 		actualBeat++;
 
 		/* avoid tick and tock to overlap when a new bar has passed (which
