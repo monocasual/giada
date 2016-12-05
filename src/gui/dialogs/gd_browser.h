@@ -31,9 +31,6 @@
 #define GD_BROWSER_H
 
 
-#include <FL/Fl.H>
-#include <FL/Fl_Double_Window.H>
-#include "../elems/ge_mixed.h"
 #include "../elems/ge_window.h"
 
 
@@ -42,6 +39,7 @@ class gdBaseBrowser : public gWindow
 protected:
 
 	class Fl_Group  *groupTop;
+  class gCheck    *hiddenFiles;
 	class geBrowser *browser;
 	class gClick    *ok;
 	class gClick    *cancel;
@@ -49,11 +47,13 @@ protected:
  	class gClick    *updir;
  	class gProgress *status;
 
-	static void cb_up   (Fl_Widget *v, void *p);
-	static void cb_close(Fl_Widget *w, void *p);
+	static void cb_up               (Fl_Widget *v, void *p);
+	static void cb_close            (Fl_Widget *w, void *p);
+	static void cb_toggleHiddenFiles(Fl_Widget *w, void *p);
 
-	inline void __cb_up  ();
-	inline void __cb_close();
+	inline void __cb_up               ();
+	inline void __cb_close            ();
+	inline void __cb_toggleHiddenFiles();
 
 	/* Callback
 	 * Fired when the save/load button is pressed. */
@@ -79,12 +79,13 @@ public:
 
 	void setStatusBar(float v);
 
-	inline gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
-	inline void showStatusBar()      { status->show(); }
-	inline void hideStatusBar()      { status->hide(); }
-	inline Channel *getChannel()     { return channel; }
-	inline void fireCallback()       { callback((void*) this); }
-	inline string getCurrentPath()   { return where->value(); }
+	gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
+	void showStatusBar();
+	void hideStatusBar();
+  string getCurrentPath();
+
+	Channel *getChannel() { return channel; }
+	void fireCallback()   { callback((void*) this); }
 };
 
 
@@ -109,7 +110,7 @@ public:
 			const string &path,	const string &name, void (*callback)(void*),
 			class Channel *ch);
 
-	string getName() { return name->value(); }
+	string getName();
 };
 
 

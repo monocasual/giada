@@ -43,6 +43,7 @@ class geBrowser : public Fl_File_Browser
 private:
 
 	string currentDir;
+  bool showHiddenFiles;
 
 	/* normalize
 	 * Make sure the string never ends with a trailing slash. */
@@ -52,6 +53,8 @@ private:
 public:
 
 	geBrowser(int x, int y, int w, int h);
+
+  void toggleHiddenFiles();
 
 	/* init
 	 * Initialize browser and show 'dir' as initial directory. */

@@ -28,17 +28,11 @@
 
 
 #include "../../core/graphics.h"
-#include "../../core/wave.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
 #include "../../core/conf.h"
 #include "../../core/const.h"
-#include "../../glue/main.h"
-#include "../../glue/channel.h"
-#include "../../glue/storage.h"
 #include "../../utils/gui.h"
+#include "../elems/ge_mixed.h"
 #include "../elems/browser.h"
-#include "../elems/channel.h"
 #include "gd_browser.h"
 
 
@@ -54,11 +48,14 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 {
 	set_non_modal();
 
-	groupTop = new Fl_Group(8, 8, w-16, 20);
-		where = new gInput(groupTop->x(), groupTop->y(), 152, 20);
-		updir	= new gClick(groupTop->x()+groupTop->w()-20, groupTop->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
+	groupTop = new Fl_Group(8, 8, w-16, 40);
+    hiddenFiles = new gCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
+		where = new gInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
+		updir	= new gClick(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
 	groupTop->resizable(where);
+
+  hiddenFiles->callback(cb_toggleHiddenFiles, (void*) this);
 
 	where->readonly(true);
 	where->cursor_color(COLOR_BG_DARK);
@@ -66,7 +63,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 
 	updir->callback(cb_up, (void*) this);
 
-	browser = new geBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-73);
+	browser = new geBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-93);
 	browser->loadDir(path);
 	if (path == G_Conf.browserLastPath)
 		browser->preselect(G_Conf.browserPosition, G_Conf.browserLastValue);
@@ -113,12 +110,14 @@ gdBaseBrowser::~gdBaseBrowser()
 
 void gdBaseBrowser::cb_up   (Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_up(); }
 void gdBaseBrowser::cb_close(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_close(); }
+void gdBaseBrowser::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBaseBrowser*)p)->__cb_toggleHiddenFiles(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBaseBrowser::__cb_up() {
+void gdBaseBrowser::__cb_up()
+{
 	string dir = browser->getCurrentDir();
 	dir = dir.substr(0, dir.find_last_of(G_SLASH_STR));  // remove up to the next slash
 	browser->loadDir(dir);
@@ -129,8 +128,18 @@ void gdBaseBrowser::__cb_up() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdBaseBrowser::__cb_close() {
+void gdBaseBrowser::__cb_close()
+{
 	do_callback();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::__cb_toggleHiddenFiles()
+{
+	browser->toggleHiddenFiles();
 }
 
 
@@ -141,6 +150,33 @@ void gdBaseBrowser::setStatusBar(float v)
 {
 	status->value(status->value() + v);
 	Fl::wait(0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::showStatusBar()
+{
+  status->show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBaseBrowser::hideStatusBar()
+{
+  status->hide();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gdBaseBrowser::getCurrentPath()
+{
+  return where->value();
 }
 
 
@@ -166,7 +202,7 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const string &title,
 
 	where->size(groupTop->w()-236, 20);
 
-	name = new gInput(where->x()+where->w()+8, 8, 200, 20);
+	name = new gInput(where->x()+where->w()+8, where->y(), 200, 20);
 	name->value(_name.c_str());
 	groupTop->add(name);
 
@@ -204,6 +240,15 @@ void gdSaveBrowser::__cb_down()
 	}
 	else
 		name->value(browser->getSelectedItem(false).c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string gdSaveBrowser::getName()
+{
+  return name->value();
 }
 
 

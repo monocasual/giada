@@ -30,11 +30,13 @@
 #include "../../core/const.h"
 #include "../../utils/string.h"
 #include "../dialogs/gd_browser.h"
+#include "../elems/ge_mixed.h"
 #include "browser.h"
 
 
 geBrowser::geBrowser(int x, int y, int w, int h)
- : Fl_File_Browser(x, y, w, h)
+ : Fl_File_Browser(x, y, w, h),
+   showHiddenFiles(false)
 {
 	box(G_BOX);
 	textsize(GUI_FONT_SIZE_BASE);
@@ -60,15 +62,30 @@ geBrowser::geBrowser(int x, int y, int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
+void geBrowser::toggleHiddenFiles()
+{
+  showHiddenFiles = !showHiddenFiles;
+  loadDir(currentDir);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geBrowser::loadDir(const string &dir)
 {
   currentDir = dir;
   load(currentDir.c_str());
 
-  /* hide "../", it just screws up things  */
+  /* Clean up unwanted elements. Hide "../" first, it just screws up things.
+  Also remove hidden files, if requested. */
 
-  if (text(1) != NULL && strcmp(text(1), "../") == 0)
-    remove(1);
+  for (int i=size(); i>=0; i--) {
+    if (text(i) == nullptr)
+      continue;
+    if (strcmp(text(i), "../") == 0 || (!showHiddenFiles && strncmp(text(i), ".", 1) == 0))
+      remove(i);
+  }
 }
 
 
