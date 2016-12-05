@@ -288,7 +288,7 @@ giada_tests_CXXFLAGS = -std=c++11
 
 if WITH_VST
 giada_tests_CPPFLAGS =                     \
-  -I./src/deps/juce                        \
+  -I./src/deps/juce/modules                \
   -I./src/deps/vst                         \
   -I/usr/include                           \
   -I/usr/include/freetype2                 \
