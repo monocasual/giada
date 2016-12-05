@@ -37,7 +37,7 @@
 #include "../../glue/channel.h"
 #include "../../glue/storage.h"
 #include "../../utils/gui.h"
-#include "../elems/ge_browser.h"
+#include "../elems/browser.h"
 #include "../elems/channel.h"
 #include "gd_browser.h"
 
@@ -66,7 +66,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 
 	updir->callback(cb_up, (void*) this);
 
-	browser = new gBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-73);
+	browser = new geBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-73);
 	browser->loadDir(path);
 	if (path == G_Conf.browserLastPath)
 		browser->preselect(G_Conf.browserPosition, G_Conf.browserLastValue);

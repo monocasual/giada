@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_browser
+ * ge_browser
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,16 +27,13 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <limits.h>
 #include "../../core/const.h"
-#include "../../utils/fs.h"
 #include "../../utils/string.h"
-#include "../../utils/log.h"
 #include "../dialogs/gd_browser.h"
-#include "ge_browser.h"
+#include "browser.h"
 
 
-gBrowser::gBrowser(int x, int y, int w, int h)
+geBrowser::geBrowser(int x, int y, int w, int h)
  : Fl_File_Browser(x, y, w, h)
 {
 	box(G_BOX);
@@ -63,7 +60,7 @@ gBrowser::gBrowser(int x, int y, int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gBrowser::loadDir(const string &dir)
+void geBrowser::loadDir(const string &dir)
 {
   currentDir = dir;
   load(currentDir.c_str());
@@ -77,7 +74,7 @@ void gBrowser::loadDir(const string &dir)
 
 /* -------------------------------------------------------------------------- */
 
-int gBrowser::handle(int e)
+int geBrowser::handle(int e)
 {
 	int ret = Fl_File_Browser::handle(e);
   switch (e) {
@@ -120,7 +117,7 @@ int gBrowser::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-string gBrowser::getCurrentDir()
+string geBrowser::getCurrentDir()
 {
   return normalize(gu_getRealPath(currentDir));
 }
@@ -129,7 +126,7 @@ string gBrowser::getCurrentDir()
 /* -------------------------------------------------------------------------- */
 
 
-string gBrowser::getSelectedItem(bool fullPath)
+string geBrowser::getSelectedItem(bool fullPath)
 {
   if (!fullPath)     // no full path requested? return the selected text
     return normalize(text(value()));
@@ -144,7 +141,7 @@ string gBrowser::getSelectedItem(bool fullPath)
 /* -------------------------------------------------------------------------- */
 
 
-void gBrowser::preselect(int pos, int line)
+void geBrowser::preselect(int pos, int line)
 {
   position(pos);
   select(line);
@@ -154,12 +151,12 @@ void gBrowser::preselect(int pos, int line)
 /* -------------------------------------------------------------------------- */
 
 
-string gBrowser::normalize(const string &s)
+string geBrowser::normalize(const string &s)
 {
   string out = s;
 
-  /* If string ends with G_SLASH, remove it. Don't do it if has length > 1, it 
-  means that the string is just '/'. Note: our crappy version of Clang doesn't 
+  /* If string ends with G_SLASH, remove it. Don't do it if has length > 1, it
+  means that the string is just '/'. Note: our crappy version of Clang doesn't
   seem to support std::string::back() */
 
 #ifdef __APPLE__

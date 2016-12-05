@@ -42,7 +42,7 @@ class gdBaseBrowser : public gWindow
 protected:
 
 	class Fl_Group  *groupTop;
-	class gBrowser  *browser;
+	class geBrowser *browser;
 	class gClick    *ok;
 	class gClick    *cancel;
 	class gInput    *where;

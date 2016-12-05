@@ -101,8 +101,8 @@ src/gui/elems/ge_mixed.h               \
 src/gui/elems/ge_mixed.cpp             \
 src/gui/elems/ge_waveform.h            \
 src/gui/elems/ge_waveform.cpp          \
-src/gui/elems/ge_browser.h		         \
-src/gui/elems/ge_browser.cpp           \
+src/gui/elems/browser.h		             \
+src/gui/elems/browser.cpp              \
 src/gui/elems/baseActionEditor.h       \
 src/gui/elems/baseActionEditor.cpp     \
 src/gui/elems/envelopeEditor.h         \

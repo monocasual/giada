@@ -30,16 +30,15 @@
 #ifndef GE_BROWSER_H
 #define GE_BROWSER_H
 
-#include <FL/Fl.H>
-#include <FL/Fl_File_Browser.H>
+
 #include <string>
-#include "ge_mixed.h"
+#include <FL/Fl_File_Browser.H>
 
 
 using std::string;
 
 
-class gBrowser : public Fl_File_Browser
+class geBrowser : public Fl_File_Browser
 {
 private:
 
@@ -52,7 +51,7 @@ private:
 
 public:
 
-	gBrowser(int x, int y, int w, int h);
+	geBrowser(int x, int y, int w, int h);
 
 	/* init
 	 * Initialize browser and show 'dir' as initial directory. */
