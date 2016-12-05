@@ -1,0 +1,4 @@
+[submodule "src/deps/juce"]
+	path = src/deps/juce
+	url = git@github.com:julianstorer/JUCE.git
+  ignore = dirty

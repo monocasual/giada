@@ -33,7 +33,7 @@
 
 
 #include <pthread.h>
-#include "../deps/juce/config.h"
+#include "../deps/juce-config.h"
 
 
 using std::string;

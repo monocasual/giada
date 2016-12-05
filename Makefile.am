@@ -147,14 +147,14 @@ src/utils/string.cpp
 
 if WITH_VST
 giada_SOURCES +=                                              \
-src/deps/juce/juce_audio_basics/juce_audio_basics.cpp         \
-src/deps/juce/juce_audio_processors/juce_audio_processors.cpp \
-src/deps/juce/juce_core/juce_core.cpp                         \
-src/deps/juce/juce_data_structures/juce_data_structures.cpp   \
-src/deps/juce/juce_events/juce_events.cpp                     \
-src/deps/juce/juce_graphics/juce_graphics.cpp                 \
-src/deps/juce/juce_gui_basics/juce_gui_basics.cpp             \
-src/deps/juce/juce_gui_extra/juce_gui_extra.cpp
+src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp         \
+src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp \
+src/deps/juce/modules/juce_core/juce_core.cpp                         \
+src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp   \
+src/deps/juce/modules/juce_events/juce_events.cpp                     \
+src/deps/juce/modules/juce_graphics/juce_graphics.cpp                 \
+src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
+src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
 endif
 
 # Check for environment: WITH_VST, LINUX, WINDOWS and OSX are varibles defined
@@ -173,7 +173,7 @@ giada_CPPFLAGS =
 
 if WITH_VST
 giada_CPPFLAGS +=                          \
-  -I./src/deps/juce                        \
+  -I./src/deps/juce/modules                \
   -I./src/deps/vst                         \
   -I/usr/include                           \
   -I/usr/include/freetype2                 \
@@ -270,14 +270,14 @@ src/utils/log.cpp
 
 if WITH_VST
 giada_tests_SOURCES +=                                        \
-src/deps/juce/juce_audio_basics/juce_audio_basics.cpp         \
-src/deps/juce/juce_audio_processors/juce_audio_processors.cpp \
-src/deps/juce/juce_core/juce_core.cpp                         \
-src/deps/juce/juce_data_structures/juce_data_structures.cpp   \
-src/deps/juce/juce_events/juce_events.cpp                     \
-src/deps/juce/juce_graphics/juce_graphics.cpp                 \
-src/deps/juce/juce_gui_basics/juce_gui_basics.cpp             \
-src/deps/juce/juce_gui_extra/juce_gui_extra.cpp
+src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp         \
+src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp \
+src/deps/juce/modules/juce_core/juce_core.cpp                         \
+src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp   \
+src/deps/juce/modules/juce_events/juce_events.cpp                     \
+src/deps/juce/modules/juce_graphics/juce_graphics.cpp                 \
+src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
+src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
 endif
 
 giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \

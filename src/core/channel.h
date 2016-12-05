@@ -37,7 +37,7 @@
 #include "recorder.h"
 
 #ifdef WITH_VST
-	#include "../deps/juce/config.h"
+	#include "../deps/juce-config.h"
 #endif
 
 

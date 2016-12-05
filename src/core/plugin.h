@@ -32,7 +32,7 @@
 #define __PLUGIN_H__
 
 
-#include "../deps/juce/config.h"
+#include "../deps/juce-config.h"
 
 
 using std::string;

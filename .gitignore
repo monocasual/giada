@@ -7,6 +7,7 @@
 *.rej
 *.swp
 *.dirstamp
+*.deps
 
 # --- rtaudio stuff
 /src/rtaudio-mod/librtaudio.pc
@@ -29,11 +30,11 @@
 /ERRORS
 /README
 /INSTALL
+/compile
 Makefile
 /NEWS
-compile
-aclocal.m4
 autom4te.cache/
+aclocal.m4
 config.log
 config.status
 depcomp
@@ -53,7 +54,6 @@ midimaps/Makefile.in
 giada_lin
 giada_win.exe
 giada_osx
-/compile
 debian/*.log
 debian/autoreconf.after
 debian/autoreconf.before
@@ -64,4 +64,3 @@ giada.files
 giada.includes
 /.idea/
 /CMakeLists.txt
-

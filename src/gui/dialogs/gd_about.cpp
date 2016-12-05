@@ -34,7 +34,7 @@
 #include "../../core/kernelMidi.h"
 #include "../../core/graphics.h"
 #ifdef WITH_VST
-  #include "../../deps/juce/config.h"
+  #include "../../deps/juce-config.h"
 #endif
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
