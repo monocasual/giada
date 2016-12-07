@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_midiIoTools
+ * midiLearner
  *
  * -----------------------------------------------------------------------------
  *
@@ -39,7 +39,7 @@
 extern KernelMidi G_KernelMidi;
 
 
-class gLearner : public Fl_Group
+class geMidiLearner : public Fl_Group
 {
 private:
 
@@ -66,7 +66,8 @@ public:
 
 	uint32_t *param;
 
-	gLearner(int x, int y, int w, const char *l, KernelMidi::cb_midiLearn *cb, uint32_t *param);
+	geMidiLearner(int x, int y, int w, const char *l, KernelMidi::cb_midiLearn *cb,
+        uint32_t *param);
 
 	void updateValue();
 };
@@ -86,7 +87,7 @@ public:
 namespace {
 	struct cbData {
 		gdMidiInput *window;
-		gLearner    *learner;
+		geMidiLearner   *learner;
 	};
 }
 

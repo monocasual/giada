@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_midiIoTools
+ * midiLearner
  *
  * -----------------------------------------------------------------------------
  *
@@ -28,13 +28,13 @@
 
 
 #include "ge_mixed.h"
-#include "ge_midiIoTools.h"
+#include "midiLearner.h"
 
 
-extern KernelMidi  G_KernelMidi;
+extern KernelMidi G_KernelMidi;
 
 
-gLearner::gLearner(int X, int Y, int W, const char *l, KernelMidi::cb_midiLearn *cb,
+geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l, KernelMidi::cb_midiLearn *cb,
 		uint32_t *param)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
@@ -62,7 +62,8 @@ gLearner::gLearner(int X, int Y, int W, const char *l, KernelMidi::cb_midiLearn 
 /* -------------------------------------------------------------------------- */
 
 
-void gLearner::updateValue() {
+void geMidiLearner::updateValue()
+{
 	char buf[16];
 	if (*param != 0x0)
 		snprintf(buf, 9, "0x%X", *param);
@@ -76,14 +77,15 @@ void gLearner::updateValue() {
 /* -------------------------------------------------------------------------- */
 
 
-void gLearner::cb_button(Fl_Widget *v, void *p) { ((gLearner*)p)->__cb_button(); }
-void gLearner::cb_value(Fl_Widget *v, void *p) { ((gLearner*)p)->__cb_value(); }
+void geMidiLearner::cb_button(Fl_Widget *v, void *p) { ((geMidiLearner*)p)->__cb_button(); }
+void geMidiLearner::cb_value(Fl_Widget *v, void *p) { ((geMidiLearner*)p)->__cb_value(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gLearner::__cb_value() {
+void geMidiLearner::__cb_value()
+{
 	if (Fl::event_button() == FL_RIGHT_MOUSE) {
 		*param = 0x0;
 		updateValue();
@@ -97,7 +99,8 @@ void gLearner::__cb_value() {
 
 /* FIXME - do not malloc on each callback! do it on the constructor! */
 
-void gLearner::__cb_button() {
+void geMidiLearner::__cb_button()
+{
 	if (button->value() == 1) {
 		cbData *data  = (cbData*) malloc(sizeof(cbData));
 		data->window  = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel

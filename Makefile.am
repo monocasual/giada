@@ -95,8 +95,8 @@ src/gui/elems/sampleChannel.h          \
 src/gui/elems/sampleChannel.cpp        \
 src/gui/elems/midiChannel.h            \
 src/gui/elems/midiChannel.cpp          \
-src/gui/elems/ge_midiIoTools.h         \
-src/gui/elems/ge_midiIoTools.cpp       \
+src/gui/elems/midiLearner.h            \
+src/gui/elems/midiLearner.cpp          \
 src/gui/elems/ge_mixed.h               \
 src/gui/elems/ge_mixed.cpp             \
 src/gui/elems/ge_waveform.h            \

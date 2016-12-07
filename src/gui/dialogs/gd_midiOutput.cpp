@@ -35,7 +35,7 @@
 #include "../../utils/log.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/channel.h"
-#include "../elems/ge_midiIoTools.h"
+#include "../elems/midiLearner.h"
 #include "../elems/ge_keyboard.h"
 #include "gd_midiOutput.h"
 
@@ -53,7 +53,7 @@ gdMidiOutput::gdMidiOutput(int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::stopMidiLearn(gLearner *learner)
+void gdMidiOutput::stopMidiLearn(geMidiLearner *learner)
 {
 	G_KernelMidi.stopMidiLearn();
 	learner->updateValue();
@@ -63,7 +63,7 @@ void gdMidiOutput::stopMidiLearn(gLearner *learner)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l)
+void gdMidiOutput::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l)
 {
 	*param = msg;
 	stopMidiLearn(l);
@@ -78,7 +78,7 @@ void gdMidiOutput::cb_learn(uint32_t msg, void *d)
 {
 	cbData *data = (cbData*) d;
 	gdMidiOutput  *window  = (gdMidiOutput*) data->window;
-	gLearner      *learner = data->learner;
+	geMidiLearner     *learner = data->learner;
 	uint32_t      *param   = learner->param;
 	window->__cb_learn(param, msg, learner);
 	free(data);
@@ -141,9 +141,9 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
 
 	enableLightning = new gCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
-	new gLearner(x()+8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);
 
 	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 
@@ -226,9 +226,9 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 	setTitle(ch->index+1);
 
 	enableLightning = new gCheck(8, 8, 120, 20, "Enable MIDI lightning output");
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutLmute);
-	new gLearner(8,  enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutLsolo);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutLmute);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutLsolo);
 
 	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 	close->callback(cb_close, (void*)this);

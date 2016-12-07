@@ -35,7 +35,7 @@
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/ge_midiIoTools.h"
+#include "../elems/midiLearner.h"
 #include "gd_midiInput.h"
 
 
@@ -64,7 +64,7 @@ gdMidiInput::~gdMidiInput()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::stopMidiLearn(gLearner *learner)
+void gdMidiInput::stopMidiLearn(geMidiLearner *learner)
 {
 	G_KernelMidi.stopMidiLearn();
 	learner->updateValue();
@@ -74,7 +74,7 @@ void gdMidiInput::stopMidiLearn(gLearner *learner)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, gLearner *l)
+void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l)
 {
 	*param = msg;
 	stopMidiLearn(l);
@@ -89,7 +89,7 @@ void gdMidiInput::cb_learn(uint32_t msg, void *d)
 {
 	cbData *data = (cbData*) d;
 	gdMidiInput   *window  = (gdMidiInput*) data->window;
-	gLearner      *learner = data->learner;
+	geMidiLearner      *learner = data->learner;
 	uint32_t      *param   = learner->param;
 	window->__cb_learn(param, msg, learner);
 	free(data);
@@ -126,19 +126,19 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	set_modal();
 
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
-	new gLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
-	new gLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
-	new gLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
-	new gLearner(8, 102, w()-16, "arm",         cb_learn, &ch->midiInArm);
-	new gLearner(8, 126, w()-16, "mute",        cb_learn, &ch->midiInMute);
-	new gLearner(8, 150, w()-16, "solo",        cb_learn, &ch->midiInSolo);
-	new gLearner(8, 174, w()-16, "volume",      cb_learn, &ch->midiInVolume);
+	new geMidiLearner(8,  30, w()-16, "key press",   cb_learn, &ch->midiInKeyPress);
+	new geMidiLearner(8,  54, w()-16, "key release", cb_learn, &ch->midiInKeyRel);
+	new geMidiLearner(8,  78, w()-16, "key kill",    cb_learn, &ch->midiInKill);
+	new geMidiLearner(8, 102, w()-16, "arm",         cb_learn, &ch->midiInArm);
+	new geMidiLearner(8, 126, w()-16, "mute",        cb_learn, &ch->midiInMute);
+	new geMidiLearner(8, 150, w()-16, "solo",        cb_learn, &ch->midiInSolo);
+	new geMidiLearner(8, 174, w()-16, "volume",      cb_learn, &ch->midiInVolume);
 	int yy = 202;
 
 	if (ch->type == CHANNEL_SAMPLE) {
 		size(300, 278);
-		new gLearner(8, 198, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-		new gLearner(8, 222, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+		new geMidiLearner(8, 198, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+		new geMidiLearner(8, 222, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
 		yy = 250;
 	}
 
@@ -178,15 +178,15 @@ gdMidiInputMaster::gdMidiInputMaster()
 {
 	set_modal();
 
-	new gLearner(8,   8, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
-	new gLearner(8,  32, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
-	new gLearner(8,  56, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
-	new gLearner(8,  80, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
-	new gLearner(8, 104, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
-	new gLearner(8, 128, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
-	new gLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
-	new gLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
-	new gLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
+	new geMidiLearner(8,   8, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
+	new geMidiLearner(8,  32, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
+	new geMidiLearner(8,  56, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
+	new geMidiLearner(8,  80, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
+	new geMidiLearner(8, 104, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
+	new geMidiLearner(8, 128, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
+	new geMidiLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
+	new geMidiLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
+	new geMidiLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
 	ok = new gButton(w()-88, 228, 80, 20, "Close");
 
 	ok->callback(cb_close, (void*)this);

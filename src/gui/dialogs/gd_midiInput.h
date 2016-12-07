@@ -40,13 +40,13 @@ protected:
 
 	class gClick *ok;
 
-	void stopMidiLearn(class gLearner *l);
+	void stopMidiLearn(class geMidiLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
 	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, gLearner *l);
+	inline void __cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l);
 
 	static void cb_close  (Fl_Widget *w, void *p);
 	inline void __cb_close();
@@ -69,7 +69,7 @@ private:
 
 	class gCheck *enable;
 
-	//gVector <gLearner *> items; for future use, with vst parameters
+	//gVector <geMidiLearner *> items; for future use, with vst parameters
 
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();

@@ -53,13 +53,13 @@ protected:
 	class gClick *close;
 	class gCheck *enableLightning;
 
-	void stopMidiLearn(class gLearner *l);
+	void stopMidiLearn(class geMidiLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
 	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, class gLearner *l);
+	inline void __cb_learn(uint32_t *param, uint32_t msg, class geMidiLearner *l);
 
 	/* cb_close
 	close current window. */
