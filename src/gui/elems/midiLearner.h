@@ -33,7 +33,6 @@
 
 #include <FL/Fl_Group.H>
 #include "../../core/kernelMidi.h"
-#include "../dialogs/gd_midiInput.h"
 
 
 extern KernelMidi G_KernelMidi;
@@ -61,35 +60,25 @@ private:
 
 public:
 
+  /* cbData_t
+   * struct we pass to kernelMidi as extra parameter. */
+
+  struct cbData_t
+  {
+		class gdMidiInput   *window;
+		class geMidiLearner *learner;
+	} cbData;
+
 	/* param
 	 * pointer to ch->midiIn[value] */
 
 	uint32_t *param;
 
 	geMidiLearner(int x, int y, int w, const char *l, KernelMidi::cb_midiLearn *cb,
-        uint32_t *param);
+    uint32_t *param);
 
 	void updateValue();
 };
-
-
-/* -------------------------------------------------------------------------- */
-
-
-/* cbData
- * struct we pass to kernelMidi as extra parameter. Local scope made
- * with unnamed namespace. Infos:
- * http://stackoverflow.com/questions/4422507/superiority-of-unnamed-namespace-over-static */
-
-/* TODO - instead of the unnamed namespace, why don't we make the struct as a
-(static) member of gLearner? */
-
-namespace {
-	struct cbData {
-		gdMidiInput *window;
-		geMidiLearner   *learner;
-	};
-}
 
 
 #endif

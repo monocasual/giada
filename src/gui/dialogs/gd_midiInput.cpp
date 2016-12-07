@@ -87,12 +87,11 @@ void gdMidiInput::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l)
 
 void gdMidiInput::cb_learn(uint32_t msg, void *d)
 {
-	cbData *data = (cbData*) d;
+	geMidiLearner::cbData_t *data = (geMidiLearner::cbData_t *) d;
 	gdMidiInput   *window  = (gdMidiInput*) data->window;
-	geMidiLearner      *learner = data->learner;
+	geMidiLearner *learner = data->learner;
 	uint32_t      *param   = learner->param;
 	window->__cb_learn(param, msg, learner);
-	free(data);
 }
 
 

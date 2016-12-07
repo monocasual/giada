@@ -34,8 +34,8 @@
 extern KernelMidi G_KernelMidi;
 
 
-geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l, KernelMidi::cb_midiLearn *cb,
-		uint32_t *param)
+geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
+  KernelMidi::cb_midiLearn *cb, uint32_t *param)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
 		param   (param)
@@ -97,15 +97,12 @@ void geMidiLearner::__cb_value()
 /* -------------------------------------------------------------------------- */
 
 
-/* FIXME - do not malloc on each callback! do it on the constructor! */
-
 void geMidiLearner::__cb_button()
 {
 	if (button->value() == 1) {
-		cbData *data  = (cbData*) malloc(sizeof(cbData));
-		data->window  = (gdMidiInput*) parent();  // parent = gdMidiGrabberChannel
-		data->learner = this;
-		G_KernelMidi.startMidiLearn(callback, (void*)data);
+		cbData.window  = (gdMidiInput*) parent();  // parent = gdMidiInput
+		cbData.learner = this;
+		G_KernelMidi.startMidiLearn(callback, (void*)&cbData);
 	}
 	else
 		G_KernelMidi.stopMidiLearn();
