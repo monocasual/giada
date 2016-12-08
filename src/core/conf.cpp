@@ -417,6 +417,8 @@ void Conf::sanitize()
 	if (configY < 0) configY = 0;
 	if (pluginListX < 0) pluginListX = 0;
 	if (pluginListY < 0) pluginListY = 0;
+	if (pluginChooserW < 640) pluginChooserW = 640;
+	if (pluginChooserH < 480) pluginChooserW = 480;
 	if (bpmX < 0) bpmX = 0;
 	if (bpmY < 0) bpmY = 0;
 	if (beatsX < 0) beatsX = 0;
