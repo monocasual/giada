@@ -27,17 +27,17 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../core/conf.h"
-#include "../../core/midiChannel.h"
-#include "../../utils/gui.h"
-#include "../../utils/log.h"
-#include "../elems/ge_mixed.h"
-#include "../elems/channel.h"
-#include "../elems/midiLearner.h"
-#include "../elems/ge_keyboard.h"
-#include "gd_midiOutput.h"
+#include "../../../core/channel.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../core/conf.h"
+#include "../../../core/midiChannel.h"
+#include "../../../utils/gui.h"
+#include "../../../utils/log.h"
+#include "../../elems/ge_mixed.h"
+#include "../../elems/channel.h"
+#include "../../elems/midiLearner.h"
+#include "../../elems/ge_keyboard.h"
+#include "midiOutput.h"
 
 
 extern Conf	      G_Conf;

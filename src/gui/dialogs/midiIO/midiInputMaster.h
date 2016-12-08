@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiInput
+ * midiInputMaster
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,63 +27,14 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MIDI_INPUT_H
-#define GD_MIDI_INPUT_H
+#ifndef GD_MIDI_INPUT_MASTER_H
+#define GD_MIDI_INPUT_MASTER_H
 
 
-#include "../elems/ge_window.h"
+#include "midiInputBase.h"
 
 
-class gdMidiInput : public gWindow
-{
-protected:
-
-	class gClick *ok;
-
-	void stopMidiLearn(class geMidiLearner *l);
-
-	/* cb_learn
-	 * callback attached to kernelMidi to learn various actions. */
-
-	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l);
-
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
-
-public:
-
-	gdMidiInput(int w, int h, const char *title);
-	~gdMidiInput();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdMidiInputChannel : public gdMidiInput
-{
-private:
-
-	class Channel *ch;
-
-	class gCheck *enable;
-
-	//gVector <geMidiLearner *> items; for future use, with vst parameters
-
-	static void cb_enable  (Fl_Widget *w, void *p);
-	inline void __cb_enable();
-
-public:
-
-	gdMidiInputChannel(class Channel *ch);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdMidiInputMaster : public gdMidiInput
+class gdMidiInputMaster : public gdMidiInputBase
 {
 public:
 

@@ -33,7 +33,7 @@
 
 #include <FL/Fl.H>
 #include <stdint.h>
-#include "../elems/ge_window.h"
+#include "../../elems/ge_window.h"
 
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI

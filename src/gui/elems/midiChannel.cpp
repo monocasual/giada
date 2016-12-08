@@ -39,14 +39,14 @@
 #include "../../utils/gui.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_keyGrabber.h"
-#include "../dialogs/gd_midiInput.h"
 #include "../dialogs/gd_editor.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
 #include "../dialogs/gd_keyGrabber.h"
-#include "../dialogs/gd_midiOutput.h"
 #include "../dialogs/gd_pluginList.h"
+#include "../dialogs/midiIO/midiInputChannel.h"
+#include "../dialogs/midiIO/midiOutput.h"
 #include "midiChannel.h"
 
 

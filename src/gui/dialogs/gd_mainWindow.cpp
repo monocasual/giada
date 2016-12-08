@@ -49,12 +49,12 @@
 #include "gd_warnings.h"
 #include "gd_bpmInput.h"
 #include "gd_beatsInput.h"
-#include "gd_midiInput.h"
 #include "gd_about.h"
 #include "gd_config.h"
 #include "gd_browser.h"
-#include "gd_mainWindow.h"
 #include "gd_pluginList.h"
+#include "midiIO/midiInputMaster.h"
+#include "gd_mainWindow.h"
 
 
 extern Mixer	   		 G_Mixer;
