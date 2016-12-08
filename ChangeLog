@@ -15,6 +15,7 @@
 0.13.2 ---
 - Toggle hidden files in File Browser
 - Fix broken compilation when build without VST support
+- Make sure PluginChooser window has a sane size
 - Decouple Recorder from any global variable
 
 
