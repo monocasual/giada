@@ -46,7 +46,7 @@
 #include "../dialogs/gd_keyGrabber.h"
 #include "../dialogs/gd_pluginList.h"
 #include "../dialogs/midiIO/midiInputChannel.h"
-#include "../dialogs/midiIO/midiOutput.h"
+#include "../dialogs/midiIO/midiOutputMidiCh.h"
 #include "midiChannel.h"
 
 

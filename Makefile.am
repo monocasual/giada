@@ -81,8 +81,12 @@ src/gui/dialogs/gd_editor.h            \
 src/gui/dialogs/gd_editor.cpp          \
 src/gui/dialogs/gd_pluginWindowGUI.h   \
 src/gui/dialogs/gd_pluginWindowGUI.cpp \
-src/gui/dialogs/midiIO/midiOutput.h    \
-src/gui/dialogs/midiIO/midiOutput.cpp  \
+src/gui/dialogs/midiIO/midiOutputBase.h    \
+src/gui/dialogs/midiIO/midiOutputBase.cpp  \
+src/gui/dialogs/midiIO/midiOutputSampleCh.h    \
+src/gui/dialogs/midiIO/midiOutputSampleCh.cpp    \
+src/gui/dialogs/midiIO/midiOutputMidiCh.h  \
+src/gui/dialogs/midiIO/midiOutputMidiCh.cpp  \
 src/gui/dialogs/midiIO/midiInputBase.h     \
 src/gui/dialogs/midiIO/midiInputBase.cpp   \
 src/gui/dialogs/midiIO/midiInputChannel.h     \

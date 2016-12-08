@@ -46,7 +46,7 @@
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_warnings.h"
 #include "../dialogs/gd_browser.h"
-#include "../dialogs/midiIO/midiOutput.h"
+#include "../dialogs/midiIO/midiOutputSampleCh.h"
 #include "../dialogs/midiIO/midiInputChannel.h"
 #include "ge_status.h"
 #include "ge_modeBox.h"

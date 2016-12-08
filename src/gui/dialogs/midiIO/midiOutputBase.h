@@ -1,10 +1,10 @@
-/* ----------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_midiOutput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2016 Giovanni A. Zuliani | Monocasual
  *
@@ -24,15 +24,14 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MIDI_OUTPUT_H
-#define GD_MIDI_OUTPUT_H
+#ifndef GD_MIDI_OUTPUT_BASE_H
+#define GD_MIDI_OUTPUT_BASE_H
 
 
 #include <FL/Fl.H>
-#include <stdint.h>
 #include "../../elems/ge_window.h"
 
 
@@ -46,7 +45,7 @@ In addition MidiOutputMidiCh has the MIDI message output box. */
 /* TODO - gdMidiOutput is almost the same thing of gdMidiInput. Create another
 parent class gdMidiIO to inherit from */
 
-class gdMidiOutput : public gWindow
+class gdMidiOutputBase : public gWindow
 {
 protected:
 
@@ -80,55 +79,8 @@ protected:
 
 public:
 
-	gdMidiOutput(int w, int h);
+	gdMidiOutputBase(int w, int h);
 };
 
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdMidiOutputMidiCh : public gdMidiOutput
-{
-private:
-
-	static void cb_enableChanList  (Fl_Widget *w, void *p);
-	inline void __cb_enableChanList();
-
-	/* __cb_close
-	override parent method, we need to do more stuff on close. */
-
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
-
-	class gCheck  *enableOut;
-	class gChoice *chanListOut;
-
-	class MidiChannel *ch;
-
-public:
-
-	gdMidiOutputMidiCh(class MidiChannel *ch);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdMidiOutputSampleCh : public gdMidiOutput
-{
-private:
-
-	class SampleChannel *ch;
-
-	/* __cb_close
-	override parent method, we need to do more stuff on close. */
-
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
-
-public:
-
-	gdMidiOutputSampleCh(class SampleChannel *ch);
-};
 
 #endif
