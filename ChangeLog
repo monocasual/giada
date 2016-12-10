@@ -17,7 +17,8 @@
 - Fix broken compilation when build without VST support
 - Make sure PluginChooser window has a sane size
 - Decouple Recorder from any global variable
-- New base widget geWidget
+- Better source code organization
+- Fix crash on clicking scrollbar arrows (GitHub #53)
 
 
 0.13.1 --- 2016 . 11 . 16
