@@ -47,6 +47,7 @@
 #include "../dialogs/gd_pluginList.h"
 #include "../dialogs/midiIO/midiInputChannel.h"
 #include "../dialogs/midiIO/midiOutputMidiCh.h"
+#include "basics/boxtypes.h"
 #include "midiChannel.h"
 
 
@@ -151,7 +152,7 @@ void geMidiChannel::__cb_openMenu()
 		rclick_menu[1].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
+	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);

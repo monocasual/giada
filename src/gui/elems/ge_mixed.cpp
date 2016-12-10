@@ -36,6 +36,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../utils/gui.h"
 #include "../dialogs/gd_mainWindow.h"
+#include "basics/boxtypes.h"
 #include "ge_mixed.h"
 
 
@@ -130,8 +131,8 @@ void gClickRepeat::draw()
 gInput::gInput(int x, int y, int w, int h, const char *L)
 : Fl_Input(x, y, w, h, L)
 {
-  //Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);
-  box(G_BOX);
+  //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
+  box(G_CUSTOM_BORDER_BOX);
   labelsize(GUI_FONT_SIZE_BASE);
   labelcolor(COLOR_TEXT_0);
   color(COLOR_BG_DARK);
@@ -242,7 +243,7 @@ void gRadio::draw()
 gProgress::gProgress(int x, int y, int w, int h, const char *L)
 : Fl_Progress(x, y, w, h, L) {
   color(COLOR_BG_0, COLOR_BD_0);
-  box(G_BOX);
+  box(G_CUSTOM_BORDER_BOX);
 
 }
 
@@ -376,18 +377,6 @@ void gChoice::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void gDrawBox(int x, int y, int w, int h, Fl_Color c)
-{
-  fl_color(c);
-  fl_rectf(x, y, w, h);
-  fl_color(COLOR_BD_0);
-  fl_rect(x, y, w, h);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
   : Fl_Scroll(x, y, w, h, l)
 {
@@ -395,7 +384,7 @@ gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
   scrollbar.color(COLOR_BG_0);
   scrollbar.selection_color(COLOR_BG_1);
   scrollbar.labelcolor(COLOR_BD_1);
-  scrollbar.slider(G_BOX);
+  scrollbar.slider(G_CUSTOM_BORDER_BOX);
 }
 
 
@@ -423,7 +412,7 @@ gSlider::gSlider(int x, int y, int w, int h, const char *l)
   align(FL_ALIGN_LEFT);
   labelcolor(COLOR_TEXT_0);
 
-  box(G_BOX);
+  box(G_CUSTOM_BORDER_BOX);
   color(COLOR_BG_0);
   selection_color(COLOR_BD_0);
 }

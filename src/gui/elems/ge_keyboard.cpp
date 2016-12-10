@@ -42,6 +42,7 @@
 #include "../dialogs/gd_warnings.h"
 #include "channel.h"
 #include "sampleChannel.h"
+#include "basics/boxtypes.h"
 #include "ge_keyboard.h"
 
 
@@ -69,11 +70,11 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 	scrollbar.color(COLOR_BG_0);
 	scrollbar.selection_color(COLOR_BG_1);
 	scrollbar.labelcolor(COLOR_BD_1);
-	scrollbar.slider(G_BOX);
+	scrollbar.slider(G_CUSTOM_BORDER_BOX);
 	hscrollbar.color(COLOR_BG_0);
 	hscrollbar.selection_color(COLOR_BG_1);
 	hscrollbar.labelcolor(COLOR_BD_1);
-	hscrollbar.slider(G_BOX);
+	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	addColumnBtn = new gClick(8, y(), 200, 20, "Add new column");
 	addColumnBtn->callback(cb_addColumn, (void*) this);

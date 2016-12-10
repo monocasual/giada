@@ -34,6 +34,7 @@
 #include "../../utils/gui.h"
 #include "../../core/plugin.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/boxtypes.h"
 #include "gd_pluginWindow.h"
 
 
@@ -55,7 +56,7 @@ Parameter::Parameter(int paramIndex, Plugin *p, int X, int Y, int W)
 
 		value = new gBox(slider->x()+slider->w()+8, y(), 100, 20);
 		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		value->box(G_BOX);
+		value->box(G_CUSTOM_BORDER_BOX);
 		updateValue();
 
 		resizable(slider);

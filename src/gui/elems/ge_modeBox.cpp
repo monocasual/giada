@@ -32,13 +32,14 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/const.h"
 #include "../dialogs/gd_mainWindow.h"
+#include "basics/boxtypes.h"
 #include "ge_modeBox.h"
 
 
 gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
   : Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {
-  box(G_BOX);
+  box(G_CUSTOM_BORDER_BOX);
   textsize(GUI_FONT_SIZE_BASE);
   textcolor(COLOR_TEXT_0);
   color(COLOR_BG_0);

@@ -31,6 +31,7 @@
 #include "../../utils/string.h"
 #include "../dialogs/gd_browser.h"
 #include "../elems/ge_mixed.h"
+#include "basics/boxtypes.h"
 #include "browser.h"
 
 
@@ -38,7 +39,7 @@ geBrowser::geBrowser(int x, int y, int w, int h)
  : Fl_File_Browser(x, y, w, h),
    showHiddenFiles(false)
 {
-	box(G_BOX);
+	box(G_CUSTOM_BORDER_BOX);
 	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
@@ -48,12 +49,12 @@ geBrowser::geBrowser(int x, int y, int w, int h)
 	this->scrollbar.color(COLOR_BG_0);
 	this->scrollbar.selection_color(COLOR_BG_1);
 	this->scrollbar.labelcolor(COLOR_BD_1);
-	this->scrollbar.slider(G_BOX);
+	this->scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	this->hscrollbar.color(COLOR_BG_0);
 	this->hscrollbar.selection_color(COLOR_BG_1);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
-	this->hscrollbar.slider(G_BOX);
+	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
   take_focus();  // let it have focus on startup
 }

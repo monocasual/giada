@@ -51,6 +51,7 @@
 #include "ge_status.h"
 #include "ge_modeBox.h"
 #include "ge_keyboard.h"
+#include "basics/boxtypes.h"
 #include "sampleChannel.h"
 
 
@@ -187,7 +188,7 @@ void geSampleChannel::__cb_openMenu()
 		rclick_menu[11].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
+	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);

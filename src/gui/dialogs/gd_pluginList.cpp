@@ -43,6 +43,7 @@
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/channel.h"
+#include "../elems/basics/boxtypes.h"
 #include "gd_pluginList.h"
 #include "gd_pluginChooser.h"
 #include "gd_pluginWindow.h"
@@ -71,7 +72,7 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	list->scrollbar.color(COLOR_BG_0);
 	list->scrollbar.selection_color(COLOR_BG_1);
 	list->scrollbar.labelcolor(COLOR_BD_1);
-	list->scrollbar.slider(G_BOX);
+	list->scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	list->begin();
 		refreshList();

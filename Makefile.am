@@ -147,6 +147,8 @@ src/gui/elems/basics/widget.h     \
 src/gui/elems/basics/widget.cpp     \
 src/gui/elems/basics/scroll.h     \
 src/gui/elems/basics/scroll.cpp     \
+src/gui/elems/basics/boxtypes.h     \
+src/gui/elems/basics/boxtypes.cpp     \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

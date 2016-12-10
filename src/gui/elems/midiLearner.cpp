@@ -28,6 +28,7 @@
 
 
 #include "ge_mixed.h"
+#include "basics/boxtypes.h"
 #include "midiLearner.h"
 
 
@@ -46,10 +47,10 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
 	button = new gButton(value->x()+value->w()+4, y(), 40, 20, "learn");
 	end();
 
-	text->box(G_BOX);
+	text->box(G_CUSTOM_BORDER_BOX);
 	text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-	value->box(G_BOX);
+	value->box(G_CUSTOM_BORDER_BOX);
 	value->callback(cb_value, (void*)this);
 	value->when(FL_WHEN_RELEASE);
 	updateValue();

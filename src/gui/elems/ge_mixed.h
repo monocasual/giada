@@ -242,16 +242,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-/* gDrawBox
- * custom boxes in FLTK. */
-
-#define G_BOX FL_FREE_BOXTYPE
-void gDrawBox(int x, int y, int w, int h, Fl_Color c);
-
-
-/* -------------------------------------------------------------------------- */
-
-
 /* gLiquidScroll
  * custom scroll that tells children to follow scroll's width when
  * resized. Thanks to Greg Ercolano from FLTK dev team.

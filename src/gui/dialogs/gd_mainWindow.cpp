@@ -46,6 +46,7 @@
 #include "../../glue/main.h"
 #include "../../glue/storage.h"
 #include "../elems/ge_keyboard.h"
+#include "../elems/basics/boxtypes.h"
 #include "gd_warnings.h"
 #include "gd_bpmInput.h"
 #include "gd_beatsInput.h"
@@ -72,7 +73,14 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 	Fl::visible_focus(0);
 
 	Fl::background(25, 25, 25);
-	Fl::set_boxtype(G_BOX, gDrawBox, 1, 1, 2, 2);    // custom box G_BOX
+  
+	Fl::set_boxtype(G_CUSTOM_BORDER_BOX, g_customBorderBox, 1, 1, 2, 2);
+	Fl::set_boxtype(G_CUSTOM_UP_BOX,     g_customUpBox,     1, 1, 2, 2);
+	Fl::set_boxtype(G_CUSTOM_DOWN_BOX,   g_customDownBox,   1, 1, 2, 2);
+
+  Fl::set_boxtype(FL_BORDER_BOX, G_CUSTOM_BORDER_BOX);
+  Fl::set_boxtype(FL_UP_BOX,     G_CUSTOM_UP_BOX);
+  Fl::set_boxtype(FL_DOWN_BOX,   G_CUSTOM_DOWN_BOX);
 
 	size_range(GUI_WIDTH, GUI_HEIGHT);
 
@@ -312,7 +320,7 @@ void gMenu::__cb_file()
 	};
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
+	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);
@@ -386,7 +394,7 @@ void gMenu::__cb_edit()
 			}
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
+	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);

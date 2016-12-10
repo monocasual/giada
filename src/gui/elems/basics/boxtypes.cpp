@@ -2,8 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geScroll
- * Custom scroll with nice scrollbars and something else.
+ * boxtypes
  *
  * -----------------------------------------------------------------------------
  *
@@ -28,23 +27,33 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/fl_draw.H>
 #include "../../../core/const.h"
 #include "boxtypes.h"
-#include "scroll.h"
 
 
-geScroll::geScroll(int x, int y, int w, int h, int t)
-  : Fl_Scroll(x, y, w, h)
+void g_customBorderBox(int x, int y, int w, int h, Fl_Color c)
 {
-  type(t);
+  fl_color(c);
+  fl_rectf(x, y, w, h);
+  fl_color(COLOR_BD_0);
+  fl_rect(x, y, w, h);
+}
 
-  scrollbar.color(COLOR_BG_0);
-  scrollbar.selection_color(COLOR_BG_1);
-  scrollbar.labelcolor(COLOR_BD_1);
-  scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-  hscrollbar.color(COLOR_BG_0);
-  hscrollbar.selection_color(COLOR_BG_1);
-  hscrollbar.labelcolor(COLOR_BD_1);
-  hscrollbar.slider(G_CUSTOM_BORDER_BOX);
+void g_customUpBox(int x, int y, int w, int h, Fl_Color c)
+{
+  fl_color(COLOR_BG_0);
+  fl_rectf(x, y, w, h);
+  fl_color(COLOR_BG_0);
+  fl_rect(x, y, w, h);
+}
+
+
+void g_customDownBox(int x, int y, int w, int h, Fl_Color c)
+{
+  fl_color(c);
+  fl_rectf(x, y, w, h);
+  fl_color(COLOR_BG_0);
+  fl_rect(x, y, w, h);
 }

@@ -40,6 +40,7 @@
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_warnings.h"
 #include "../elems/ge_keyboard.h"
+#include "../elems/basics/boxtypes.h"
 #include "ge_column.h"
 #include "channel.h"
 #include "sampleChannel.h"
@@ -261,7 +262,7 @@ int gColumn::openTypeMenu()
 	};
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_BOX);
+	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);

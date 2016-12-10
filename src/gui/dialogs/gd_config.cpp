@@ -39,6 +39,7 @@
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/boxtypes.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
@@ -954,6 +955,10 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 		resize(G_Conf.configX, G_Conf.configY, this->w(), this->h());
 
 	Fl_Tabs *tabs = new Fl_Tabs(8, 8, w-16, h-44);
+  tabs->box(G_CUSTOM_BORDER_BOX);
+  tabs->labelcolor(COLOR_TEXT_0);
+  tabs->begin();
+
 		tabAudio     = new gTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabMidi      = new gTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabBehaviors = new gTabBehaviors(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
@@ -968,10 +973,6 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 	cancel = new gClick (w-176, h-28, 80, 20, "Cancel");
 
 	end();
-
-	tabs->box(FL_FLAT_BOX); // TODO - G_BOX crashes FLTK 1.3.3
-
-	tabs->labelcolor(COLOR_TEXT_0);
 
 	save->callback(cb_save_config, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);

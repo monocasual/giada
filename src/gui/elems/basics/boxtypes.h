@@ -2,8 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geScroll
- * Custom scroll with nice scrollbars and something else.
+ * boxtypes
  *
  * -----------------------------------------------------------------------------
  *
@@ -28,23 +27,21 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
-#include "boxtypes.h"
-#include "scroll.h"
+#ifndef __BOXTYPES_H__
+#define __BOXTYPES_H__
 
 
-geScroll::geScroll(int x, int y, int w, int h, int t)
-  : Fl_Scroll(x, y, w, h)
-{
-  type(t);
+#include <FL/Fl.H>
 
-  scrollbar.color(COLOR_BG_0);
-  scrollbar.selection_color(COLOR_BG_1);
-  scrollbar.labelcolor(COLOR_BD_1);
-  scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-  hscrollbar.color(COLOR_BG_0);
-  hscrollbar.selection_color(COLOR_BG_1);
-  hscrollbar.labelcolor(COLOR_BD_1);
-  hscrollbar.slider(G_CUSTOM_BORDER_BOX);
-}
+#define G_CUSTOM_BORDER_BOX FL_FREE_BOXTYPE
+#define G_CUSTOM_UP_BOX     (Fl_Boxtype)(FL_FREE_BOXTYPE + 1)
+#define G_CUSTOM_DOWN_BOX   (Fl_Boxtype)(FL_FREE_BOXTYPE + 3)
+
+
+void g_customBorderBox(int x, int y, int w, int h, Fl_Color c);
+void g_customUpBox    (int x, int y, int w, int h, Fl_Color c);
+void g_customDownBox  (int x, int y, int w, int h, Fl_Color c);
+
+
+#endif

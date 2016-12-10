@@ -32,6 +32,7 @@
 #include "../../core/const.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_waveform.h"
+#include "basics/boxtypes.h"
 #include "ge_waveTools.h"
 
 
@@ -42,7 +43,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char
 	hscrollbar.color(COLOR_BG_0);
 	hscrollbar.selection_color(COLOR_BG_1);
 	hscrollbar.labelcolor(COLOR_BD_1);
-	hscrollbar.slider(G_BOX);
+	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	waveform = new gWaveform(x, y, w, h-24, ch);
 

@@ -34,6 +34,7 @@
 #include "../../core/const.h"
 #include "../../core/pluginHost.h"
 #include "ge_mixed.h"
+#include "basics/boxtypes.h"
 #include "ge_pluginBrowser.h"
 
 
@@ -46,7 +47,7 @@ using std::vector;
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	: Fl_Browser(x, y, w, h)
 {
-	box(G_BOX);
+	box(G_CUSTOM_BORDER_BOX);
 	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
 	selection_color(COLOR_BG_1);
@@ -55,12 +56,12 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	this->scrollbar.color(COLOR_BG_0);
 	this->scrollbar.selection_color(COLOR_BG_1);
 	this->scrollbar.labelcolor(COLOR_BD_1);
-	this->scrollbar.slider(G_BOX);
+	this->scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	this->hscrollbar.color(COLOR_BG_0);
 	this->hscrollbar.selection_color(COLOR_BG_1);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
-	this->hscrollbar.slider(G_BOX);
+	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	type(FL_HOLD_BROWSER);
 
@@ -81,7 +82,7 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 void gePluginBrowser::refresh()
 {
 	clear();
-	
+
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
 
