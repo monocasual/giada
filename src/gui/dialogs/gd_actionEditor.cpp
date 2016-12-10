@@ -40,6 +40,7 @@
 #include "../elems/muteEditor.h"
 #include "../elems/noteEditor.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/scroll.h"
 #include "gd_actionEditor.h"
 
 
@@ -94,7 +95,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	/* main scroller: contains all widgets */
 
-	scroller = new gScroll(8, 36, w()-16, h()-44);
+	scroller = new geScroll(8, 36, w()-16, h()-44);
 
 	if (chan->type == CHANNEL_SAMPLE) {
 

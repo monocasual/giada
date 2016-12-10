@@ -564,26 +564,6 @@ void gResizerBar::resize(int X,int Y,int W,int H)
 
 
 /* -------------------------------------------------------------------------- */
-
-
-gScroll::gScroll(int x, int y, int w, int h, int t)
-  : Fl_Scroll(x, y, w, h)
-{
-  type(t);
-
-  scrollbar.color(COLOR_BG_0);
-  scrollbar.selection_color(COLOR_BG_1);
-  scrollbar.labelcolor(COLOR_BD_1);
-  scrollbar.slider(G_BOX);
-
-  hscrollbar.color(COLOR_BG_0);
-  hscrollbar.selection_color(COLOR_BG_1);
-  hscrollbar.labelcolor(COLOR_BD_1);
-  hscrollbar.slider(G_BOX);
-}
-
-
-/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 

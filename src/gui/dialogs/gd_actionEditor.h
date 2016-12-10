@@ -72,7 +72,7 @@ public:
 	class gGridTool *gridTool;
 	class gClick    *zoomIn;
 	class gClick    *zoomOut;
-	class gScroll   *scroller;       // widget container
+	class geScroll  *scroller;       // widget container
 
 	class geActionEditor   *ac;
 	class geMuteEditor     *mc;
