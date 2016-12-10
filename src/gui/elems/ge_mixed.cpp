@@ -173,8 +173,9 @@ void gDial::draw()
 
 
 gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
-: Fl_Box(x, y, w, h, L)
+: Fl_Box(x, y, w, h)
 {
+  copy_label(L);
   labelsize(GUI_FONT_SIZE_BASE);
   box(FL_NO_BOX);
   labelcolor(COLOR_TEXT_0);
