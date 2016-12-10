@@ -81,6 +81,10 @@ src/gui/dialogs/gd_editor.h            \
 src/gui/dialogs/gd_editor.cpp          \
 src/gui/dialogs/gd_pluginWindowGUI.h   \
 src/gui/dialogs/gd_pluginWindowGUI.cpp \
+src/gui/dialogs/gd_actionEditor.h	     \
+src/gui/dialogs/gd_actionEditor.cpp    \
+src/gui/dialogs/gd_pluginChooser.h     \
+src/gui/dialogs/gd_pluginChooser.cpp   \
 src/gui/dialogs/midiIO/midiOutputBase.h    \
 src/gui/dialogs/midiIO/midiOutputBase.cpp  \
 src/gui/dialogs/midiIO/midiOutputSampleCh.h    \
@@ -93,10 +97,6 @@ src/gui/dialogs/midiIO/midiInputChannel.h     \
 src/gui/dialogs/midiIO/midiInputChannel.cpp     \
 src/gui/dialogs/midiIO/midiInputMaster.h   \
 src/gui/dialogs/midiIO/midiInputMaster.cpp   \
-src/gui/dialogs/gd_actionEditor.h	     \
-src/gui/dialogs/gd_actionEditor.cpp    \
-src/gui/dialogs/gd_pluginChooser.h     \
-src/gui/dialogs/gd_pluginChooser.cpp   \
 src/gui/elems/ge_column.h              \
 src/gui/elems/ge_column.cpp            \
 src/gui/elems/sampleChannel.h          \
@@ -143,6 +143,8 @@ src/gui/elems/channelButton.h          \
 src/gui/elems/channelButton.cpp        \
 src/gui/elems/ge_pluginBrowser.h       \
 src/gui/elems/ge_pluginBrowser.cpp     \
+src/gui/elems/basics/widget.h     \
+src/gui/elems/basics/widget.cpp     \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \
