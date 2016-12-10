@@ -27,10 +27,14 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Pack.H>
 #include "../../../utils/gui.h"
 #include "../../../core/const.h"
 #include "../../../core/sampleChannel.h"
-#include "../../../core/pluginHost.h"
+#ifdef WITH_VST
+  #include "../../../core/pluginHost.h"
+  #include "../../../core/plugin.h"
+#endif
 #include "../../../utils/string.h"
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
@@ -58,31 +62,46 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 
   container = new geScroll(8, enable->y()+enable->h()+4, 282, 230);
-  container->begin();
   container->box(FL_BORDER_BOX);
+  container->begin();
 
-  	new geMidiLearner(8,  30, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
-  	new geMidiLearner(8,  54, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
-  	new geMidiLearner(8,  78, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
-  	new geMidiLearner(8, 102, LEARNER_WIDTH, "arm",         cb_learn, &ch->midiInArm);
-  	new geMidiLearner(8, 126, LEARNER_WIDTH, "mute",        cb_learn, &ch->midiInMute);
-  	new geMidiLearner(8, 150, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo);
-  	new geMidiLearner(8, 174, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume);
+    Fl_Pack *pack = new Fl_Pack(0, 0, LEARNER_WIDTH, 200);
+    pack->spacing(4);
+    pack->begin();
 
-  	if (ch->type == CHANNEL_SAMPLE) {
-  		new geMidiLearner(8, 198, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-  		new geMidiLearner(8, 222, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
-  	}
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "arm",         cb_learn, &ch->midiInArm);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "mute",        cb_learn, &ch->midiInMute);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo);
+    	new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume);
+    	if (ch->type == CHANNEL_SAMPLE) {
+    		new geMidiLearner(0, 0, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+    		new geMidiLearner(0, 0, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+    	}
 
-    /* PLUGINS */
-#if 0
+    pack->end();
+
+#ifdef WITH_VST
+
     vector <Plugin *> *plugins = G_PluginHost.getStack(PluginHost::CHANNEL, ch);
     for (unsigned i=0; i<plugins->size(); i++) {
-      int lx = container->x() + ((i + 1) * LEARNER_WIDTH);
-      new geMidiLearner(lx, 30, LEARNER_WIDTH, "test", cb_learn, &ch->midiInVolume);
+
+      Fl_Pack *pack = new Fl_Pack((i + 1) * (LEARNER_WIDTH + 8), 0, LEARNER_WIDTH, 200);
+      pack->spacing(4);
+      pack->begin();
+
+        Plugin *plugin = plugins->at(i);
+        int numParams = plugin->getNumParameters();
+        for (int k=0; k<numParams; k++)
+          new geMidiLearner(0, 0, LEARNER_WIDTH,
+            plugin->getParameterName(k).toRawUTF8(), cb_learn, &ch->midiInVolume);
+
+      pack->end();
     }
+
 #endif
-    /* PLUGINS */
 
   container->end();
 
