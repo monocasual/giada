@@ -38,11 +38,14 @@ class gdMidiInputChannel : public gdMidiInputBase
 {
 private:
 
+  static const int LEARNER_WIDTH = 284;
+
 	class Channel *ch;
 
-	class gCheck *enable;
+  class geScroll *container;
+	class gCheck   *enable;
 
-	//gVector <geMidiLearner *> items; for future use, with vst parameters
+	//gVector <geMidiLearner *> items; // plugins parameters
 
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
