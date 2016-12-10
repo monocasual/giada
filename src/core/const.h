@@ -213,17 +213,6 @@
 
 
 
-/* -- browser types --------------------------------------------------------- */
-/* TODO - USELESS, remove them */
-#define BROWSER_LOAD_PATCH   0x00
-#define BROWSER_LOAD_SAMPLE  0x01
-#define BROWSER_SAVE_PATCH   0x02
-#define BROWSER_SAVE_SAMPLE  0x04
-#define BROWSER_SAVE_PROJECT 0x08
-#define BROWSER_LOAD_PLUGIN  0x10
-
-
-
 /* -- channel types --------------------------------------------------------- */
 #define CHANNEL_SAMPLE 0x01
 #define CHANNEL_MIDI   0x02

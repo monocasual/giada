@@ -197,7 +197,10 @@ void geSampleChannel::__cb_openMenu()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-		openBrowser(BROWSER_LOAD_SAMPLE);
+    gWindow *w = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
+      G_Conf.browserW, G_Conf.browserH, "Browse sample",
+      G_Conf.samplePath.c_str(), glue_loadSample, ch);
+    gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 		return;
 	}
 
@@ -222,7 +225,10 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Export sample to file...") == 0) {
-		openBrowser(BROWSER_SAVE_SAMPLE);
+    gWindow *w = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
+      G_Conf.browserW, G_Conf.browserH, "Save sample", \
+      G_Conf.samplePath.c_str(), "", glue_saveSample, ch);
+    gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 		return;
 	}
 
@@ -321,29 +327,6 @@ void geSampleChannel::__cb_openMenu()
 void geSampleChannel::__cb_readActions()
 {
 	glue_startStopReadingRecs((SampleChannel*) ch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::openBrowser(int type)
-{
-	gWindow *childWin = NULL;
-	switch (type) {
-		case BROWSER_LOAD_SAMPLE:
-			childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
-					G_Conf.browserW, G_Conf.browserH, "Browse sample",
-					G_Conf.samplePath.c_str(), glue_loadSample, ch);
-			break;
-		case BROWSER_SAVE_SAMPLE:
-			childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-					G_Conf.browserW, G_Conf.browserH, "Save sample", \
-					G_Conf.samplePath.c_str(), "", glue_saveSample, ch);
-			break;
-	}
-	if (childWin)
-		gu_openSubWindow(G_MainWin, childWin,	WID_FILE_BROWSER);
 }
 
 

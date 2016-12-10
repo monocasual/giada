@@ -47,8 +47,6 @@ private:
 	inline void __cb_openMenu    ();
 	inline void __cb_readActions ();
 
-	void openBrowser(int type);
-
 public:
 
 	geSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
