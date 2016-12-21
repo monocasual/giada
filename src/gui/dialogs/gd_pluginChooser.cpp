@@ -133,9 +133,6 @@ void gdPluginChooser::__cb_add()
     return;
   glue_addPlugin(ch, index, stackType);
   do_callback();
-  //if (index >= 0 && index < G_PluginHost.countAvailablePlugins()) {
-    //G_PluginHost.addPlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
-  //}
 }
 
 #endif // #ifdef WITH_VST

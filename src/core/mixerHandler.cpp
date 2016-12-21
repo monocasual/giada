@@ -76,6 +76,7 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
 		Patch::plugin_t *ppl = &list->at(i);
+    // TODO use glue_addPlugin()
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
 				&G_Mixer.mutex_plugins, NULL);
 		if (plugin != NULL) {

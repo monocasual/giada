@@ -315,6 +315,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
+    // TODO use glue_addPlugin()
 		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
       pluginMutex, this);
 		if (plugin != nullptr) {
