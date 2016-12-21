@@ -513,7 +513,13 @@ void glue_addPlugin(Channel *ch, int index, int stackType)
 
 void glue_freePlugin(Channel *ch, int index, int stackType)
 {
-  G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+  int pi = G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+
+  /* Erase item from Channel::midiInPlugins vector. */
+
+  if (pi == -1) // something went wrong with deletion
+    return;
+  ch->midiInPlugins.erase(ch->midiInPlugins.begin() + pi);
 }
 
 

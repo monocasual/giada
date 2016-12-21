@@ -186,19 +186,19 @@ public:
   void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
     pthread_mutex_t *mutex, class Channel *ch=NULL);
 
-  /* freePlugin */
+  /* freePlugin.
+  Returns the internal stack index of the deleted plugin. */
 
-  void freePlugin(int id, int stackType, pthread_mutex_t *mutex,
+  int freePlugin(int id, int stackType, pthread_mutex_t *mutex,
     class Channel *ch=NULL);
 
-
   /* runDispatchLoop
-   * Wake up plugins' GUI manager for N milliseconds. */
+   * Wakes up plugins' GUI manager for N milliseconds. */
 
   void runDispatchLoop();
 
   /* freeAllStacks
-   * Free everything. */
+   * Frees everything. */
 
   void freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mutex);
 

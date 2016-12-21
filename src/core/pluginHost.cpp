@@ -413,7 +413,7 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType,
 /* -------------------------------------------------------------------------- */
 
 
-void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
+int PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
   Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
@@ -426,7 +426,7 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 			delete pPlugin;
 			pStack->erase(pStack->begin() + i);
       gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
-			return;
+			return i;
 		}
 
 		while (true) {
@@ -438,10 +438,11 @@ void PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 			pStack->erase(pStack->begin() + i);
 			pthread_mutex_unlock(mutex);
 			gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
-			return;
+			return i;
 		}
   }
 	gu_log("[pluginHost::freePlugin] plugin id=%d not found\n", id);
+  return -1;
 }
 
 
