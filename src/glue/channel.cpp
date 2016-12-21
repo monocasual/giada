@@ -491,10 +491,10 @@ void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val, bool numeric
 
 #ifdef WITH_VST
 
-void glue_addPlugin(Channel *ch, int index, int stackType)
+Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 {
   if (index >= G_PluginHost.countAvailablePlugins())
-    return;
+    return nullptr;
 
   Plugin *plugin = G_PluginHost.addPlugin(index, stackType,
     &G_Mixer.mutex_plugins, ch);
@@ -505,6 +505,8 @@ void glue_addPlugin(Channel *ch, int index, int stackType)
   for (int i=0; i<plugin->getNumParameters(); i++)
     midiInParams.push_back(0x0);
   ch->midiInPlugins.push_back(midiInParams);
+
+  return plugin;
 }
 
 

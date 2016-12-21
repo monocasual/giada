@@ -96,7 +96,7 @@ void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val,
 
 #ifdef WITH_VST
 
-void glue_addPlugin(class Channel *ch, int index, int stackType);
+class Plugin *glue_addPlugin(class Channel *ch, int index, int stackType);
 void glue_freePlugin(class Channel *ch, int index, int stackType);
 
 #endif
