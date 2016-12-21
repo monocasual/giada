@@ -229,6 +229,9 @@ public:
   uint32_t midiInVolume;
   uint32_t midiInMute;
   uint32_t midiInSolo;
+#ifdef WITH_VST
+  vector <vector<uint32_t>> midiInPlugins;
+#endif
 
 	/*  midiOutL*
 	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent

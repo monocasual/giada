@@ -43,6 +43,7 @@
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/plugin.h"
 #include "main.h"
 #include "channel.h"
 
@@ -53,7 +54,7 @@ extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
 #ifdef WITH_VST
-extern PluginHost G_PluginHost;
+extern PluginHost    G_PluginHost;
 #endif
 
 
@@ -440,8 +441,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val,
-	bool numeric)
+void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val > 0.0f)
@@ -484,3 +484,37 @@ void glue_setVolEditor(class gdEditor *win, SampleChannel *ch, float val,
 		ch->guiChannel->vol->redraw();
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+void glue_addPlugin(Channel *ch, int index, int stackType)
+{
+  if (index >= G_PluginHost.countAvailablePlugins())
+    return;
+
+  Plugin *plugin = G_PluginHost.addPlugin(index, stackType,
+    &G_Mixer.mutex_plugins, ch);
+
+  /* Fill Channel::midiInPlugins vector for Midi learning. */
+
+  vector<uint32_t> midiInParams;
+  for (int i=0; i<plugin->getNumParameters(); i++)
+    midiInParams.push_back(0x0);
+  ch->midiInPlugins.push_back(midiInParams);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_freePlugin(Channel *ch, int index, int stackType)
+{
+  G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+}
+
+
+#endif

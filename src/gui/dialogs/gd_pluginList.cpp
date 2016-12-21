@@ -39,6 +39,7 @@
 #include "../../core/plugin.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
+#include "../../glue/channel.h"
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
@@ -102,7 +103,8 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-gdPluginList::~gdPluginList() {
+gdPluginList::~gdPluginList()
+{
 	G_Conf.pluginListX = x();
 	G_Conf.pluginListY = y();
 }
@@ -117,8 +119,8 @@ void gdPluginList::cb_addPlugin(Fl_Widget *v, void *p)   { ((gdPluginList*)p)->_
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::cb_refreshList(Fl_Widget *v, void *p) {
-
+void gdPluginList::cb_refreshList(Fl_Widget *v, void *p)
+{
 	/* note: this callback is fired by gdBrowser. Close its window first,
 	 * by calling the parent (pluginList) and telling it to delete its
 	 * subwindow (i.e. gdBrowser). */
@@ -139,8 +141,8 @@ void gdPluginList::cb_refreshList(Fl_Widget *v, void *p) {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::__cb_addPlugin() {
-
+void gdPluginList::__cb_addPlugin()
+{
 	/* the usual callback that gWindow adds to each subwindow in this case
 	 * is not enough, because when we close the browser the plugin list
 	 * must be redrawn. We have a special callback, cb_refreshList, which
@@ -157,8 +159,8 @@ void gdPluginList::__cb_addPlugin() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::refreshList() {
-
+void gdPluginList::refreshList()
+{
 	/* delete the previous list */
 
 	list->clear();
@@ -278,8 +280,8 @@ void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->_
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_shiftUp() {
-
+void gdPlugin::__cb_shiftUp()
+{
 	/*nothing to do if there's only one plugin */
 
 	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
@@ -299,8 +301,8 @@ void gdPlugin::__cb_shiftUp() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_shiftDown() {
-
+void gdPlugin::__cb_shiftDown()
+{
 	/*nothing to do if there's only one plugin */
 
 	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
@@ -321,14 +323,12 @@ void gdPlugin::__cb_shiftDown() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_removePlugin() {
-
-	/* any subwindow linked to the plugin must be destroyed */
+void gdPlugin::__cb_removePlugin()
+{
+	/* any subwindow linked to the plugin must be destroyed first */
 
 	pParent->delSubWindow(pPlugin->getId());
-	G_PluginHost.freePlugin(pPlugin->getId(), pParent->stackType,
-    &G_Mixer.mutex_plugins, pParent->ch);
-
+  glue_freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
   pParent->refreshList();
 }
 
@@ -367,7 +367,8 @@ void gdPlugin::__cb_openPluginWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_setBypass() {
+void gdPlugin::__cb_setBypass()
+{
 	pPlugin->toggleBypass();
 }
 
@@ -375,7 +376,8 @@ void gdPlugin::__cb_setBypass() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_setProgram() {
+void gdPlugin::__cb_setProgram()
+{
 	pPlugin->setCurrentProgram(program->value());
 }
 

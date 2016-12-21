@@ -30,9 +30,9 @@
 #ifdef WITH_VST
 
 
+#include "../../glue/channel.h"
 #include "../../utils/gui.h"
 #include "../../core/channel.h"
-#include "../../core/mixer.h"
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
 #include "../elems/ge_pluginBrowser.h"
@@ -41,7 +41,6 @@
 
 
 extern PluginHost G_PluginHost;
-extern Mixer      G_Mixer;
 extern Conf       G_Conf;
 
 
@@ -108,7 +107,8 @@ void gdPluginChooser::cb_sort(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->_
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_close() {
+void gdPluginChooser::__cb_close()
+{
 	do_callback();
 }
 
@@ -116,7 +116,8 @@ void gdPluginChooser::__cb_close() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_sort() {
+void gdPluginChooser::__cb_sort()
+{
 	G_PluginHost.sortPlugins(sortMethod->value());
   browser->refresh();
 }
@@ -125,12 +126,16 @@ void gdPluginChooser::__cb_sort() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_add() {
+void gdPluginChooser::__cb_add()
+{
   int index = browser->value() - 3; // subtract header lines
-  if (index >= 0 && index < G_PluginHost.countAvailablePlugins()) {
-    G_PluginHost.addPlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
-    do_callback();
-  }
+  if (index < 0)
+    return;
+  glue_addPlugin(ch, index, stackType);
+  do_callback();
+  //if (index >= 0 && index < G_PluginHost.countAvailablePlugins()) {
+    //G_PluginHost.addPlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+  //}
 }
 
 #endif // #ifdef WITH_VST
