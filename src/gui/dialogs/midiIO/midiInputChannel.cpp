@@ -91,8 +91,8 @@ void gdMidiInputChannel::addChannelLearners()
   pack->spacing(4);
   pack->begin();
 
-    gBox *channelBox = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
-    channelBox->box(FL_BORDER_BOX);
+    gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
+    header->box(FL_BORDER_BOX);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
@@ -130,8 +130,8 @@ void gdMidiInputChannel::addPluginLearners()
 
       Plugin *plugin = plugins->at(i);
 
-      gBox *pluginBox = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().toRawUTF8());
-      pluginBox->box(FL_BORDER_BOX);
+      gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().toRawUTF8());
+      header->box(FL_BORDER_BOX);
 
       int numParams = plugin->getNumParameters();
       for (int k=0; k<numParams; k++)
