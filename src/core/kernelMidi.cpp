@@ -41,6 +41,7 @@
 #include "midiMapConf.h"
 #ifdef WITH_VST
   #include "pluginHost.h"
+  #include "plugin.h"
 #endif
 #include "kernelMidi.h"
 
@@ -418,11 +419,46 @@ void KernelMidi::processChannels(uint32_t pure, uint32_t value)
 			glue_startStopReadingRecs((SampleChannel*)ch, false);
 		}
 
-		/* redirect full midi message to plugins */
+#ifdef WITH_VST
+
+    /* Process plugins' parameters */
+
+    processPlugins(ch, pure, value);
+
+#endif
+
+		/* Redirect full midi message (pure + value) to plugins */
 
 		ch->receiveMidi(pure | value);
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef WITH_VST
+
+void KernelMidi::processPlugins(Channel *ch, uint32_t pure, uint32_t value)
+{
+  /* Plugins' parameters layout reflect the structure of the matrix
+  Channel::midiInPlugins. It is safe to assume then that i and k indexes match
+  both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
+
+  for (unsigned i=0; i<ch->midiInPlugins.size(); i++)
+    for (unsigned k=0; k<ch->midiInPlugins.at(i).size(); k++) {
+      uint32_t midiInParam = ch->midiInPlugins.at(i).at(k);
+      if (pure != midiInParam)
+        continue;
+      Plugin *plugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, ch);
+      float vf = (value >> 8)/127.0f;
+      plugin->setParameter(k, vf);
+      gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
+        i, k, ch->index, pure, value >> 8, vf);
+    }
+}
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */

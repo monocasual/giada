@@ -96,7 +96,7 @@ public:
 
 private:
 
-	int      api;
+	int api;
 	class RtMidiOut *midiOut;
 	class RtMidiIn  *midiIn;
 
@@ -119,6 +119,9 @@ private:
 
 	void processMaster(uint32_t pure, uint32_t value);
 	void processChannels(uint32_t pure, uint32_t value);
+#ifdef WITH_VST
+  void processPlugins(class Channel *ch, uint32_t pure, uint32_t value);
+#endif
 };
 
 #endif
