@@ -94,11 +94,5 @@ void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val,
 void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val,
   bool numeric);
 
-#ifdef WITH_VST
-
-class Plugin *glue_addPlugin(class Channel *ch, int index, int stackType);
-void glue_freePlugin(class Channel *ch, int index, int stackType);
-
-#endif
 
 #endif

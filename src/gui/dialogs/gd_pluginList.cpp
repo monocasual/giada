@@ -39,7 +39,7 @@
 #include "../../core/plugin.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
-#include "../../glue/channel.h"
+#include "../../glue/plugin.h"
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"

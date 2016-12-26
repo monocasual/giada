@@ -30,7 +30,7 @@
 #ifdef WITH_VST
 
 
-#include "../../glue/channel.h"
+#include "../../glue/plugin.h"
 #include "../../utils/gui.h"
 #include "../../core/channel.h"
 #include "../../core/conf.h"
