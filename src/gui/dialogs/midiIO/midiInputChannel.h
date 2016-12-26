@@ -50,6 +50,8 @@ private:
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
 
+  void addChannelLearners();
+
 #ifdef WITH_VST
 
   void addPluginLearners();

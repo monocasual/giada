@@ -61,30 +61,9 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
   container = new geScroll(8, enable->y()+enable->h()+4, 282, 330);
   container->begin();
 
-    Fl_Pack *pack = new Fl_Pack(container->x(), container->y(), LEARNER_WIDTH, 200);
-    pack->spacing(4);
-    pack->begin();
-
-      gBox *channelBox = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
-      channelBox->box(FL_BORDER_BOX);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "arm",         cb_learn, &ch->midiInArm);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "mute",        cb_learn, &ch->midiInMute);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo);
-    	new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume);
-    	if (ch->type == CHANNEL_SAMPLE) {
-    		new geMidiLearner(0, 0, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-    		new geMidiLearner(0, 0, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
-    	}
-
-    pack->end();
-
+    addChannelLearners();
 #ifdef WITH_VST
-
     addPluginLearners();
-
 #endif
 
   container->end();
@@ -100,6 +79,33 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
   resizable(container);
 
 	show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputChannel::addChannelLearners()
+{
+  Fl_Pack *pack = new Fl_Pack(container->x(), container->y(), LEARNER_WIDTH, 200);
+  pack->spacing(4);
+  pack->begin();
+
+    gBox *channelBox = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
+    channelBox->box(FL_BORDER_BOX);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "arm",         cb_learn, &ch->midiInArm);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "mute",        cb_learn, &ch->midiInMute);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo);
+    new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume);
+    if (ch->type == CHANNEL_SAMPLE) {
+      new geMidiLearner(0, 0, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+      new geMidiLearner(0, 0, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+    }
+
+  pack->end();
 }
 
 
