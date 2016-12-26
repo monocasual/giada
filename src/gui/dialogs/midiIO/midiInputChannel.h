@@ -50,6 +50,12 @@ private:
 	static void cb_enable  (Fl_Widget *w, void *p);
 	inline void __cb_enable();
 
+#ifdef WITH_VST
+
+  void addPluginLearners();
+
+#endif
+
 public:
 
 	gdMidiInputChannel(class Channel *ch);
