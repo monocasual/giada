@@ -64,6 +64,20 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
+void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
+{
+  G_PluginHost.swapPlugin(index1, index2, stackType, &G_Mixer.mutex_plugins,
+    ch);
+
+  /* Swap items in Channel::midiInPlugins vector. */
+
+  std::swap(ch->midiInPlugins.at(index1), ch->midiInPlugins.at(index2));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void glue_freePlugin(Channel *ch, int index, int stackType)
 {
   int pi = G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);

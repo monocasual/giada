@@ -229,8 +229,16 @@ public:
   uint32_t midiInVolume;
   uint32_t midiInMute;
   uint32_t midiInSolo;
+
 #ifdef WITH_VST
+
+  /* midiInPlugins
+  A list of midiIn parameters of all plugins currently loaded. It must reflect
+  the layout of the plugin stack, especially when plugins are added/removed
+  or shifted up and down. */
+
   vector <vector<uint32_t>> midiInPlugins;
+
 #endif
 
 	/*  midiOutL*

@@ -287,13 +287,13 @@ void gdPlugin::__cb_shiftUp()
 	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	int pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	int pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(),
+    pParent->stackType, pParent->ch);
 
 	if (pluginIndex == 0)  // first of the stack, do nothing
 		return;
 
-	G_PluginHost.swapPlugin(pluginIndex, pluginIndex - 1, pParent->stackType,
-    &G_Mixer.mutex_plugins, pParent->ch);
+  glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -314,8 +314,7 @@ void gdPlugin::__cb_shiftDown()
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
-	G_PluginHost.swapPlugin(pluginIndex, pluginIndex + 1, pParent->stackType,
-    &G_Mixer.mutex_plugins, pParent->ch);
+  glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
 	pParent->refreshList();
 }
 

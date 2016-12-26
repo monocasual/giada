@@ -61,14 +61,16 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 
-  container = new geScroll(8, enable->y()+enable->h()+4, 282, 230);
-  container->box(FL_BORDER_BOX);
+  container = new geScroll(8, enable->y()+enable->h()+4, 282, 330);
+  //container->box(FL_BORDER_BOX);
   container->begin();
 
-    Fl_Pack *pack = new Fl_Pack(0, 0, LEARNER_WIDTH, 200);
+    Fl_Pack *pack = new Fl_Pack(container->x(), container->y(), LEARNER_WIDTH, 200);
     pack->spacing(4);
     pack->begin();
 
+      gBox *channelBox = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
+      channelBox->box(FL_BORDER_BOX);
     	new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
     	new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
     	new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    cb_learn, &ch->midiInKill);
@@ -85,18 +87,28 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 
 #ifdef WITH_VST
 
+    /* Plugins' parameters layout reflect the structure of the matrix
+    Channel::midiInPlugins. It is safe to assume then that i and k indexes match
+    both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
+
     vector <Plugin *> *plugins = G_PluginHost.getStack(PluginHost::CHANNEL, ch);
     for (unsigned i=0; i<plugins->size(); i++) {
 
-      Fl_Pack *pack = new Fl_Pack((i + 1) * (LEARNER_WIDTH + 8), 0, LEARNER_WIDTH, 200);
+      Fl_Pack *pack = new Fl_Pack(container->x() + ((i + 1) * (LEARNER_WIDTH + 8)),
+        container->y(), LEARNER_WIDTH, 200);
       pack->spacing(4);
       pack->begin();
 
         Plugin *plugin = plugins->at(i);
+
+        gBox *pluginBox = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().toRawUTF8());
+        pluginBox->box(FL_BORDER_BOX);
+
         int numParams = plugin->getNumParameters();
         for (int k=0; k<numParams; k++)
           new geMidiLearner(0, 0, LEARNER_WIDTH,
-            plugin->getParameterName(k).toRawUTF8(), cb_learn, &ch->midiInVolume);
+            plugin->getParameterName(k).toRawUTF8(), cb_learn,
+              &ch->midiInPlugins.at(i).at(k));
 
       pack->end();
     }

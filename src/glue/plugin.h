@@ -36,6 +36,8 @@
 
 class Plugin *glue_addPlugin(class Channel *ch, int index, int stackType);
 
+void glue_swapPlugins(class Channel *ch, int indexP1, int indexP2, int stackType);
+
 void glue_freePlugin(class Channel *ch, int index, int stackType);
 
 #endif
