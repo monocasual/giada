@@ -18,6 +18,7 @@
 - Make sure PluginChooser window has a sane size
 - Decouple Recorder from any global variable
 - Better source code organization
+- Make plugin creation more robust
 - Fix crash on clicking scrollbar arrows (GitHub #53)
 
 
