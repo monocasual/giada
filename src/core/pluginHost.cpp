@@ -156,14 +156,12 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
 
   /* Try to inject the plugin as soon as possible. */
 
-  int lockStatus;
   while (true) {
-    lockStatus = pthread_mutex_trylock(mutex);
-    if (lockStatus == 0) {
-      pStack->push_back(p);
-      pthread_mutex_unlock(mutex);
-      break;
-    }
+    if (pthread_mutex_trylock(mutex) != 0)
+      continue;
+    pStack->push_back(p);
+    pthread_mutex_unlock(mutex);
+    break;
   }
 
   gu_log("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
@@ -281,22 +279,14 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 	if (pStack->size() == 0)
 		return;
 
-	int lockStatus;
 	while (true) {
-		lockStatus = pthread_mutex_trylock(mutex);
-		if (lockStatus == 0) {
-			for (unsigned i=0; i<pStack->size(); i++) {
-        Plugin *pPlugin = pStack->at(i);
-        //if (pPlugin->getStatus() != 0) { // take care if plugin is in good status
-          //pPlugin->suspendProcessing(true);
-          //pPlugin->releaseResources();
-        //}
-				delete pPlugin;
-			}
-			pStack->clear();
-			pthread_mutex_unlock(mutex);
-			break;
-		}
+		if (pthread_mutex_trylock(mutex) != 0)
+      continue;
+		for (unsigned i=0; i<pStack->size(); i++)
+      delete pStack->at(i);
+		pStack->clear();
+		pthread_mutex_unlock(mutex);
+		break;
 	}
   gu_log("[PluginHost::freeStack] stack type=%d freed\n", stackType);
 }
@@ -390,17 +380,13 @@ void PluginHost::swapPlugin(unsigned indexA, unsigned indexB, int stackType,
   pthread_mutex_t *mutex, Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
-	int lockStatus;
 	while (true) {
-		lockStatus = pthread_mutex_trylock(mutex);
-		if (lockStatus == 0) {
-			std::swap(pStack->at(indexA), pStack->at(indexB));
-			pthread_mutex_unlock(mutex);
-			gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
-			return;
-		}
-		//else
-			//gu_log("[pluginHost] waiting for mutex...\n");
+		if (pthread_mutex_trylock(mutex) != 0)
+      continue;
+		std::swap(pStack->at(indexA), pStack->at(indexB));
+		pthread_mutex_unlock(mutex);
+		gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
+		return;
 	}
 }
 
@@ -427,8 +413,6 @@ int PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 		while (true) {
 			if (pthread_mutex_trylock(mutex) != 0)
         continue;
-      //pPlugin->suspendProcessing(true);
-      //pPlugin->releaseResources();
 			delete pPlugin;
 			pStack->erase(pStack->begin() + i);
 			pthread_mutex_unlock(mutex);
