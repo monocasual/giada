@@ -130,13 +130,13 @@ void gdMidiInputChannel::addPluginLearners()
 
       Plugin *plugin = plugins->at(i);
 
-      gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().toRawUTF8());
+      gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().c_str());
       header->box(FL_BORDER_BOX);
 
       int numParams = plugin->getNumParameters();
       for (int k=0; k<numParams; k++)
         new geMidiLearner(0, 0, LEARNER_WIDTH,
-          plugin->getParameterName(k).toRawUTF8(), cb_learn,
+          plugin->getParameterName(k).c_str(), cb_learn,
             &ch->midiInPlugins.at(i).at(k));
 
     pack->end();

@@ -234,19 +234,17 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 	end();
 
 	if (pPlugin->getStatus() != 1) {  // bad state
-    string l = "* " + pPlugin->getName().toStdString() + " *";
+    string l = "* " + pPlugin->getName() + " *";
 		button->copy_label(l.c_str());
 	}
 	else {
-		button->copy_label(pPlugin->getName().toStdString().c_str());
+		button->copy_label(pPlugin->getName().c_str());
 		button->callback(cb_openPluginWindow, (void*)this);
 
 		program->callback(cb_setProgram, (void*)this);
 
-    for (int i=0; i<pPlugin->getNumPrograms(); i++) {
-      string name = gu_removeFltkChars(pPlugin->getProgramName(i).toStdString());
-      program->add(name.c_str());
-    }
+    for (int i=0; i<pPlugin->getNumPrograms(); i++)
+      program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
 
 		if (program->size() == 0) {
 			program->add("-- no programs --\0");

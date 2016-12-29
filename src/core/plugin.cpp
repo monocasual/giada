@@ -41,24 +41,40 @@ int Plugin::idGenerator = 1;
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::init()
+Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
+  int buffersize)
+  : ui    (nullptr),
+    plugin(plugin),
+    id    (idGenerator++),
+    bypass(false),
+    status(1) // TODO useless
 {
-  ui     = NULL;
-  id     = idGenerator++;;
-  bypass = false;
-  status = 1;
+  //TODO fill midiInParams
+  //gu_log("[Plugin] midiIn params filled, count=%u\n", midiInParams.size());
 
-  if (getActiveEditor() != NULL) {
-    gu_log("[Plugin::init] plugin has an already active editor!\n");
+  if (plugin->getActiveEditor() != NULL) {
+    gu_log("[Plugin] plugin has an already active editor!\n");
     return;
   }
-  ui = createEditorIfNeeded();
+  ui = plugin->createEditorIfNeeded();
   if (ui == NULL) {
-    gu_log("[Plugin::init] unable to create editor, the plugin might be GUI-less!\n");
+    gu_log("[Plugin] unable to create editor, the plugin might be GUI-less!\n");
     return;
   }
 
-  gu_log("[Plugin::init] editor initialized and ready\n");
+  plugin->prepareToPlay(samplerate, buffersize);
+
+  gu_log("[Plugin] editor initialized and ready\n");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Plugin::~Plugin()
+{
+  plugin->suspendProcessing(true);
+  plugin->releaseResources();
 }
 
 
@@ -90,7 +106,142 @@ bool Plugin::isEditorOpen()
 
 string Plugin::getUniqueId()
 {
-  return getPluginDescription().fileOrIdentifier.toStdString();
+  return plugin->getPluginDescription().fileOrIdentifier.toStdString();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Plugin::getNumParameters()
+{
+  return plugin->getNumParameters();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+float Plugin::getParameter(int paramIndex)
+{
+  return plugin->getParameter(paramIndex);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::setParameter(int paramIndex, float value)
+{
+  return plugin->setParameter(paramIndex, value);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::prepareToPlay(double samplerate, int buffersize)
+{
+  plugin->prepareToPlay(samplerate, buffersize);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getName()
+{
+  return plugin->getName().toStdString();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Plugin::isSuspended()
+{
+  return plugin->isSuspended();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::process(juce::AudioBuffer<float> &b, juce::MidiBuffer &m)
+{
+  plugin->processBlock(b, m);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Plugin::getNumPrograms()
+{
+  return plugin->getNumPrograms();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Plugin::getCurrentProgram()
+{
+  return plugin->getCurrentProgram();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::setCurrentProgram(int index)
+{
+  plugin->setCurrentProgram(index);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Plugin::hasEditor()
+{
+  return plugin->hasEditor();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getProgramName(int index)
+{
+  return plugin->getProgramName(index).toStdString();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getParameterName(int index)
+{
+  return plugin->getParameterName(index).toStdString();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getParameterText(int index)
+{
+  return plugin->getParameterText(index).toStdString();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string Plugin::getParameterLabel(int index)
+{
+  return plugin->getParameterLabel(index).toStdString();
 }
 
 

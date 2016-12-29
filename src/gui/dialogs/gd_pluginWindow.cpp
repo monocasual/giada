@@ -47,7 +47,7 @@ Parameter::Parameter(int paramIndex, Plugin *p, int X, int Y, int W)
 	begin();
 
 		label = new gBox(x(), y(), 60, 20);
-		label->copy_label(pPlugin->getParameterName(paramIndex).toRawUTF8());
+		label->copy_label(pPlugin->getParameterName(paramIndex).c_str());
 		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 		slider = new gSlider(label->x()+label->w()+8, y(), W-200, 20);
@@ -87,8 +87,8 @@ void Parameter::__cb_setValue()
 
 void Parameter::updateValue()
 {
-	string v = pPlugin->getParameterText(paramIndex).toStdString() + " " +
-			pPlugin->getParameterLabel(paramIndex).toStdString();
+	string v = pPlugin->getParameterText(paramIndex) + " " +
+			pPlugin->getParameterLabel(paramIndex);
 	value->copy_label(v.c_str());
 }
 
@@ -114,7 +114,7 @@ gdPluginWindow::gdPluginWindow(Plugin *p)
 
 	end();
 
-	label(pPlugin->getName().toRawUTF8());
+	label(pPlugin->getName().c_str());
 
 	size_range(400, (24*1)+12);
 	resizable(list);

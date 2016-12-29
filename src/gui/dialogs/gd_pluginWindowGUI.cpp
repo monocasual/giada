@@ -79,7 +79,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
   Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-  copy_label(pPlugin->getName().toRawUTF8());
+  copy_label(pPlugin->getName().c_str());
 
 }
 

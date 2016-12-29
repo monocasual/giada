@@ -26,6 +26,7 @@
  *
  * -------------------------------------------------------------------------- */
 
+
 #ifdef WITH_VST
 
 #ifndef __PLUGIN_H__
@@ -35,23 +36,23 @@
 #include "../deps/juce-config.h"
 
 
-using std::string;
-
-
-class Plugin : public juce::AudioPluginInstance
+class Plugin
 {
 private:
 
-  juce::AudioProcessorEditor *ui;     // gui
-
   static int idGenerator;
+
+  juce::AudioProcessorEditor *ui;     // gui
+  juce::AudioPluginInstance  *plugin; // core
+
   int    id;
   bool   bypass;
   bool   status;
 
 public:
 
-  void init();
+  Plugin(juce::AudioPluginInstance *p, double samplerate, int buffersize);
+  ~Plugin();
 
   void showEditor(void *parent);
 
@@ -67,7 +68,24 @@ public:
   /* getUniqueId
    * Return a string-based UID. */
 
-  string getUniqueId();
+  std::string getUniqueId();
+
+  std::string getName();
+
+  bool  hasEditor();
+  int   getNumParameters();
+  float getParameter(int index);
+  void  setParameter(int index, float value);
+  std::string getParameterName(int index);
+  std::string getParameterText(int index);
+  std::string getParameterLabel(int index);
+  void  prepareToPlay(double samplerate, int buffersize);
+  bool  isSuspended();
+  void  process(juce::AudioBuffer<float> &b, juce::MidiBuffer &m);
+  int   getNumPrograms();
+  int   getCurrentProgram();
+  void  setCurrentProgram(int index);
+  std::string getProgramName(int index);
 
   int  getId()           { return id; }
   bool getStatus()       { return status; }
@@ -77,6 +95,11 @@ public:
   void toggleBypass()    { bypass = !bypass; }
   void setStatus(int s)  { status = s; }
   void setBypass(bool b) { bypass = b; }
+
+  /* midiInParams
+  A list of midiIn hex values for parameter automation. */
+
+  std::vector<int> midiInParams;
 };
 
 #endif

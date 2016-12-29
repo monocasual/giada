@@ -144,20 +144,15 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     return NULL;
   }
 
-  Plugin *p = (Plugin *) pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
-  if (!p) {
+  juce::AudioPluginInstance *pi = pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
+  if (!pi) {
     gu_log("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
     missingPlugins = true;
     return NULL;
   }
-
-  //p->setStatus(1);
-  //p->setId();
-  //p->initEditor();
-  p->init();
-  p->prepareToPlay(samplerate, buffersize);
-
   gu_log("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
+
+  Plugin *p = new Plugin(pi, samplerate, buffersize);
 
   /* Try to inject the plugin as soon as possible. */
 
@@ -172,7 +167,7 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
   }
 
   gu_log("[PluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
-    fid.c_str(), p->getName().toStdString().c_str(), stackType, pStack->size());
+    fid.c_str(), p->getName().c_str(), stackType, pStack->size());
 
   return p;
 }
@@ -292,10 +287,10 @@ void PluginHost::freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch)
 		if (lockStatus == 0) {
 			for (unsigned i=0; i<pStack->size(); i++) {
         Plugin *pPlugin = pStack->at(i);
-        if (pPlugin->getStatus() != 0) { // take care if plugin is in good status
-          pPlugin->suspendProcessing(true);
-          pPlugin->releaseResources();
-        }
+        //if (pPlugin->getStatus() != 0) { // take care if plugin is in good status
+          //pPlugin->suspendProcessing(true);
+          //pPlugin->releaseResources();
+        //}
 				delete pPlugin;
 			}
 			pStack->clear();
@@ -341,13 +336,13 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 			continue;
     if (ch) { // ch might be null if stackType is MASTER_IN/OUT
       pthread_mutex_lock(&mutex_midi);
-      plugin->processBlock(audioBuffer, ch->getPluginMidiEvents());
+      plugin->process(audioBuffer, ch->getPluginMidiEvents());
       ch->clearMidiBuffer();
       pthread_mutex_unlock(&mutex_midi);
     }
     else {
       juce::MidiBuffer midiBuffer;  // empty buffer
-      plugin->processBlock(audioBuffer, midiBuffer);
+      plugin->process(audioBuffer, midiBuffer);
     }
   }
 
@@ -432,8 +427,8 @@ int PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
 		while (true) {
 			if (pthread_mutex_trylock(mutex) != 0)
         continue;
-      pPlugin->suspendProcessing(true);
-      pPlugin->releaseResources();
+      //pPlugin->suspendProcessing(true);
+      //pPlugin->releaseResources();
 			delete pPlugin;
 			pStack->erase(pStack->begin() + i);
 			pthread_mutex_unlock(mutex);
@@ -476,15 +471,15 @@ void PluginHost::freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mut
 int PluginHost::clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
   Channel *ch)
 {
-  juce::PluginDescription pd = src->getPluginDescription();
-	Plugin *p = addPlugin(pd.fileOrIdentifier.toStdString(), stackType, mutex, ch);
+	Plugin *p = addPlugin(src->getUniqueId(), stackType, mutex, ch);
 	if (!p) {
 		gu_log("[PluginHost::clonePlugin] unable to add new plugin to stack!\n");
 		return 0;
 	}
-	for (int k=0; k<src->getNumParameters(); k++) {
+
+	for (int k=0; k<src->getNumParameters(); k++)
 		p->setParameter(k, src->getParameter(k));
-	}
+
 	return 1;
 }
 
