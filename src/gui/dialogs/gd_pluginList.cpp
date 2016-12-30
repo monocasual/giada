@@ -233,30 +233,24 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 	remove    = new gButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 	end();
 
-	if (pPlugin->getStatus() != 1) {  // bad state
-    string l = "* " + pPlugin->getName() + " *";
-		button->copy_label(l.c_str());
+	button->copy_label(pPlugin->getName().c_str());
+	button->callback(cb_openPluginWindow, (void*)this);
+
+	program->callback(cb_setProgram, (void*)this);
+
+  for (int i=0; i<pPlugin->getNumPrograms(); i++)
+    program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
+
+	if (program->size() == 0) {
+		program->add("-- no programs --\0");
+		program->deactivate();
 	}
-	else {
-		button->copy_label(pPlugin->getName().c_str());
-		button->callback(cb_openPluginWindow, (void*)this);
+  else
+    program->value(pPlugin->getCurrentProgram());
 
-		program->callback(cb_setProgram, (void*)this);
-
-    for (int i=0; i<pPlugin->getNumPrograms(); i++)
-      program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
-
-		if (program->size() == 0) {
-			program->add("-- no programs --\0");
-			program->deactivate();
-		}
-    else
-      program->value(pPlugin->getCurrentProgram());
-
-		bypass->callback(cb_setBypass, (void*)this);
-		bypass->type(FL_TOGGLE_BUTTON);
-		bypass->value(pPlugin->isBypassed() ? 0 : 1);
-	}
+	bypass->callback(cb_setBypass, (void*)this);
+	bypass->type(FL_TOGGLE_BUTTON);
+	bypass->value(pPlugin->isBypassed() ? 0 : 1);
 
 	shiftUp->callback(cb_shiftUp, (void*)this);
 	shiftDown->callback(cb_shiftDown, (void*)this);

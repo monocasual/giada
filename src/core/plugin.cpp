@@ -46,11 +46,14 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
   : ui    (nullptr),
     plugin(plugin),
     id    (idGenerator++),
-    bypass(false),
-    status(1) // TODO useless
+    bypass(false)
 {
-  //TODO fill midiInParams
-  //gu_log("[Plugin] midiIn params filled, count=%u\n", midiInParams.size());
+  /* Fill midiInParams. All values are empty (0x0): they will be filled during
+  midi learning process. */
+
+  for (int i=0; i<plugin->getNumParameters(); i++)
+    midiInParams.push_back(0x0);
+  gu_log("[Plugin] midiIn params filled, count=%u\n", midiInParams.size());
 
   if (plugin->getActiveEditor() != NULL) {
     gu_log("[Plugin] plugin has an already active editor!\n");

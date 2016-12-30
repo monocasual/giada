@@ -258,14 +258,12 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 	unsigned numPlugs = pluginHost->countPlugins(PluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
 		Plugin *pPlugin = pluginHost->getPluginByIndex(i, PluginHost::CHANNEL, this);
-		if (pPlugin->getStatus()) {
-			Patch::plugin_t pp;
-			pp.path   = pPlugin->getUniqueId();
-	    pp.bypass = pPlugin->isBypassed();
-			for (int k=0; k<pPlugin->getNumParameters(); k++)
-				pp.params.push_back(pPlugin->getParameter(k));
-			pch.plugins.push_back(pp);
-		}
+		Patch::plugin_t pp;
+		pp.path   = pPlugin->getUniqueId();
+    pp.bypass = pPlugin->isBypassed();
+		for (int k=0; k<pPlugin->getNumParameters(); k++)
+			pp.params.push_back(pPlugin->getParameter(k));
+		pch.plugins.push_back(pp);
 	}
 
 #endif

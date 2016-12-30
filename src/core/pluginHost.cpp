@@ -322,7 +322,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 
 	for (unsigned i=0; i<pStack->size(); i++) {
     Plugin *plugin = pStack->at(i);
-		if (plugin->getStatus() != 1 || plugin->isSuspended() || plugin->isBypassed())
+		if (plugin->isSuspended() || plugin->isBypassed())
 			continue;
     if (ch) { // ch might be null if stackType is MASTER_IN/OUT
       pthread_mutex_lock(&mutex_midi);
@@ -398,18 +398,10 @@ int PluginHost::freePlugin(int id, int stackType, pthread_mutex_t *mutex,
   Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
-
 	for (unsigned i=0; i<pStack->size(); i++) {
     Plugin *pPlugin = pStack->at(i);
 		if (pPlugin->getId() != id)
       continue;
-		if (pPlugin->getStatus() == 0) { // no frills if plugin is missing
-			delete pPlugin;
-			pStack->erase(pStack->begin() + i);
-      gu_log("[pluginHost::freePlugin] plugin id=%d removed with no frills, since it had status=0\n", id);
-			return i;
-		}
-
 		while (true) {
 			if (pthread_mutex_trylock(mutex) != 0)
         continue;

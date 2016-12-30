@@ -45,9 +45,8 @@ private:
   juce::AudioProcessorEditor *ui;     // gui
   juce::AudioPluginInstance  *plugin; // core
 
-  int    id;
-  bool   bypass;
-  bool   status;
+  int  id;
+  bool bypass;
 
 public:
 
@@ -88,12 +87,10 @@ public:
   std::string getProgramName(int index);
 
   int  getId()           { return id; }
-  bool getStatus()       { return status; }
   bool isBypassed()      { return bypass; }
   int  getEditorW()      { return ui->getWidth(); }
   int  getEditorH()      { return ui->getHeight(); }
   void toggleBypass()    { bypass = !bypass; }
-  void setStatus(int s)  { status = s; }
   void setBypass(bool b) { bypass = b; }
 
   /* midiInParams
