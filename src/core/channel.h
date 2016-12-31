@@ -230,18 +230,6 @@ public:
   uint32_t midiInMute;
   uint32_t midiInSolo;
 
-
-#ifdef WITH_VST
-
-  /* midiInPlugins
-  A list of midiIn parameters of all plugins currently loaded. It must reflect
-  the layout of the plugin stack, especially when plugins are added/removed
-  or shifted up and down. */
-
-  //vector <vector<uint32_t>> midiInPlugins;
-
-#endif
-
 	/*  midiOutL*
 	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent
 	 * to a device. Those events basically contains the MIDI channel, everything
