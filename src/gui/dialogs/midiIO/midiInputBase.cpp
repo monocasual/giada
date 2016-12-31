@@ -39,8 +39,8 @@ extern KernelMidi G_KernelMidi;
 using std::string;
 
 
-gdMidiInputBase::gdMidiInputBase(int w, int h, const char *title)
-	: gWindow(w, h, title)
+gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)
+	: gWindow(x, y, w, h, title)
 {
 }
 

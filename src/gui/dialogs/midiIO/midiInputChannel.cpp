@@ -30,6 +30,7 @@
 #include <FL/Fl_Pack.H>
 #include "../../../utils/gui.h"
 #include "../../../core/const.h"
+#include "../../../core/conf.h"
 #include "../../../core/sampleChannel.h"
 #ifdef WITH_VST
   #include "../../../core/pluginHost.h"
@@ -43,23 +44,24 @@
 
 
 extern PluginHost G_PluginHost;
+extern Conf       G_Conf;
 
 
 using std::string;
 
 
 gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
-	:	gdMidiInputBase(300, 400, "MIDI Input Setup"),
+	:	gdMidiInputBase(G_Conf.midiInputX, G_Conf.midiInputY, G_Conf.midiInputW,
+      G_Conf.midiInputH, "MIDI Input Setup"),
 		ch(ch)
 {
   string title = "MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")";
 	label(title.c_str());
-	set_modal();
-  size_range(300, 400);
+  size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
 
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 
-  container = new geScroll(8, enable->y()+enable->h()+4, 282, 330);
+  container = new geScroll(8, enable->y()+enable->h()+4, w()-16, h()-70);
   container->begin();
 
     addChannelLearners();
@@ -75,11 +77,23 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
 
-	gu_setFavicon(this);
-
   resizable(container);
 
+  gu_setFavicon(this);
+  set_modal();
 	show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gdMidiInputChannel::~gdMidiInputChannel()
+{
+  G_Conf.midiInputX = x();
+  G_Conf.midiInputY = y();
+	G_Conf.midiInputW = w();
+	G_Conf.midiInputH = h();
 }
 
 
@@ -102,8 +116,8 @@ void gdMidiInputChannel::addChannelLearners()
     new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume);
     if (ch->type == CHANNEL_SAMPLE) {
-      new geMidiLearner(0, 0, w()-16, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
-      new geMidiLearner(0, 0, w()-16, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
+      new geMidiLearner(0, 0, LEARNER_WIDTH, "pitch", cb_learn, &((SampleChannel*)ch)->midiInPitch);
+      new geMidiLearner(0, 0, LEARNER_WIDTH, "read actions", cb_learn, &((SampleChannel*)ch)->midiInReadActions);
     }
 
   pack->end();

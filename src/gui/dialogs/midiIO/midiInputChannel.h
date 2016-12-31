@@ -61,6 +61,7 @@ private:
 public:
 
 	gdMidiInputChannel(class Channel *ch);
+  ~gdMidiInputChannel();
 };
 
 

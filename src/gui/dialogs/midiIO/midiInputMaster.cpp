@@ -38,7 +38,7 @@ extern Conf G_Conf;
 
 
 gdMidiInputMaster::gdMidiInputMaster()
-	: gdMidiInputBase(300, 256, "MIDI Input Setup (global)")
+	: gdMidiInputBase(0, 0, 300, 256, "MIDI Input Setup (global)")
 {
 	set_modal();
 

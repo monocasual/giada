@@ -154,6 +154,11 @@ void Conf::init()
 	sampleEditorW = 640;
 	sampleEditorH = 480;
 
+  midiInputX = 0;
+  midiInputY = 0;
+  midiInputW = G_DEFAULT_MIDI_INPUT_UI_W;
+  midiInputH = G_DEFAULT_MIDI_INPUT_UI_H;
+
 	pianoRollY = -1;
 	pianoRollH = 422;
 
@@ -260,6 +265,10 @@ int Conf::read()
 	if (!setInt(jRoot, CONF_KEY_BEATS_Y, beatsY)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
 	if (!setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
+  if (!setInt(jRoot, CONF_KEY_MIDI_INPUT_X, midiInputX)) return 0;
+  if (!setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
+  if (!setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
+  if (!setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
 
 #ifdef WITH_VST
 
@@ -361,6 +370,10 @@ int Conf::write()
 	json_object_set_new(jRoot, CONF_KEY_BEATS_Y,                   json_integer(beatsY));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_X,              json_integer(midiInputX));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
 
 #ifdef WITH_VST
 
@@ -413,6 +426,10 @@ void Conf::sanitize()
 	if (sampleEditorH < 292) sampleEditorH = 292;
 	if (sampleEditorGridVal < 0) sampleEditorGridVal = 0;
 	if (sampleEditorGridOn < 0) sampleEditorGridOn = 0;
+  if (midiInputX < 0) midiInputX = 0;
+  if (midiInputY < 0) midiInputY = 0;
+  if (midiInputW < G_DEFAULT_MIDI_INPUT_UI_W) midiInputW = G_DEFAULT_MIDI_INPUT_UI_W;
+  if (midiInputH < G_DEFAULT_MIDI_INPUT_UI_H) midiInputH = G_DEFAULT_MIDI_INPUT_UI_H;
 	if (configX < 0) configX = 0;
 	if (configY < 0) configY = 0;
 	if (pluginListX < 0) pluginListX = 0;

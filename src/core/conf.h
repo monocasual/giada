@@ -80,14 +80,14 @@ public:
 	bool limitOutput;
 	int  rsmpQuality;
 
-	int      midiSystem;
-	int      midiPortOut;
-	int      midiPortIn;
-	bool     noNoteOff;
-	string   midiMapPath;
-	string   lastFileMap;
-	int      midiSync;  // see const.h
-	float    midiTCfps;
+	int    midiSystem;
+	int    midiPortOut;
+	int    midiPortIn;
+	bool   noNoteOff;
+	string midiMapPath;
+	string lastFileMap;
+	int    midiSync;  // see const.h
+	float  midiTCfps;
 
 	uint32_t midiInRewind;
 	uint32_t midiInStartStop;
@@ -108,25 +108,27 @@ public:
 	string patchPath;
 	string samplePath;
 
-	int  mainWindowX, mainWindowY, mainWindowW, mainWindowH;
+	int mainWindowX, mainWindowY, mainWindowW, mainWindowH;
 
-	int    browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
+	int browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
 	string browserLastPath;
 
-	int  actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
-	int  actionEditorGridVal;
-	int  actionEditorGridOn;
+	int actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
+	int actionEditorGridVal;
+	int actionEditorGridOn;
 
-	int  sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
-  int  sampleEditorGridVal;
-  int  sampleEditorGridOn;
+	int sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
+  int sampleEditorGridVal;
+  int sampleEditorGridOn;
 
-	int  pianoRollY, pianoRollH;
-	int  pluginListX, pluginListY;
-	int  configX, configY;
-	int  bpmX, bpmY;
-	int  beatsX, beatsY;
-	int  aboutX, aboutY;
+  int midiInputX, midiInputY, midiInputW, midiInputH;
+
+	int pianoRollY, pianoRollH;
+	int pluginListX, pluginListY;
+	int configX, configY;
+	int bpmX, bpmY;
+	int beatsX, beatsY;
+	int aboutX, aboutY;
 
 #ifdef WITH_VST
 

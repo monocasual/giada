@@ -53,7 +53,7 @@ protected:
 
 public:
 
-	gdMidiInputBase(int w, int h, const char *title);
+	gdMidiInputBase(int x, int y, int w, int h, const char *title);
 	~gdMidiInputBase();
 };
 

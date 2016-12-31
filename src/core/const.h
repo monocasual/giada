@@ -143,6 +143,8 @@
 #define DEFAULT_FADEOUT_STEP 0.01f  // micro-fadeout speed
 #define DEFAULT_COLUMN_WIDTH 380
 #define G_DEFAULT_PATCH_NAME "(default patch)"
+#define G_DEFAULT_MIDI_INPUT_UI_W 300
+#define G_DEFAULT_MIDI_INPUT_UI_H 350
 
 
 
@@ -455,6 +457,10 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_PLUGIN_CHOOSER_Y         "plugin_chooser_y"
 #define CONF_KEY_PLUGIN_CHOOSER_W         "plugin_chooser_w"
 #define CONF_KEY_PLUGIN_CHOOSER_H         "plugin_chooser_h"
+#define CONF_KEY_MIDI_INPUT_X             "midi_input_x"
+#define CONF_KEY_MIDI_INPUT_Y             "midi_input_y"
+#define CONF_KEY_MIDI_INPUT_W             "midi_input_w"
+#define CONF_KEY_MIDI_INPUT_H             "midi_input_h"
 #define CONF_KEY_PLUGIN_SORT_METHOD       "plugin_sort_method"
 
 /* JSON midimaps keys */
