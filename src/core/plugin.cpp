@@ -53,8 +53,9 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 
   for (int i=0; i<plugin->getNumParameters(); i++)
     midiInParams.push_back(0x0);
-  gu_log("[Plugin] midiIn params filled, count=%u\n", midiInParams.size());
 
+  /* Try to enable editor (i.e. plugin's UI) */
+  
   if (plugin->getActiveEditor() != NULL) {
     gu_log("[Plugin] plugin has an already active editor!\n");
     return;

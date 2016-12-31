@@ -52,7 +52,8 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	:	gdMidiInputBase(300, 400, "MIDI Input Setup"),
 		ch(ch)
 {
-	label(string("MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")").c_str());
+  string title = "MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")";
+	label(title.c_str());
 	set_modal();
   size_range(300, 400);
 
@@ -91,7 +92,7 @@ void gdMidiInputChannel::addChannelLearners()
   pack->spacing(4);
   pack->begin();
 
-    gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, "channel controls");
+    gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, "channel");
     header->box(FL_BORDER_BOX);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
@@ -116,10 +117,6 @@ void gdMidiInputChannel::addChannelLearners()
 
 void gdMidiInputChannel::addPluginLearners()
 {
-  /* Plugins' parameters layout reflect the structure of the matrix
-  Channel::midiInPlugins. It is safe to assume then that i and k indexes match
-  both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
-
   vector <Plugin *> *plugins = G_PluginHost.getStack(PluginHost::CHANNEL, ch);
   for (unsigned i=0; i<plugins->size(); i++) {
 
@@ -133,11 +130,9 @@ void gdMidiInputChannel::addPluginLearners()
       gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().c_str());
       header->box(FL_BORDER_BOX);
 
-      int numParams = plugin->getNumParameters();
-      for (int k=0; k<numParams; k++)
-        new geMidiLearner(0, 0, LEARNER_WIDTH,
-          plugin->getParameterName(k).c_str(), cb_learn,
-            &ch->midiInPlugins.at(i).at(k));
+      for (int k=0; k<plugin->getNumParameters(); k++)
+        new geMidiLearner(0, 0, LEARNER_WIDTH, plugin->getParameterName(k).c_str(),
+          cb_learn, &plugin->midiInParams.at(k));
 
     pack->end();
   }

@@ -47,17 +47,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
   if (index >= G_PluginHost.countAvailablePlugins())
     return nullptr;
 
-  Plugin *plugin = G_PluginHost.addPlugin(index, stackType,
-    &G_Mixer.mutex_plugins, ch);
-
-  /* Fill Channel::midiInPlugins vector for Midi learning. */
-
-  vector<uint32_t> midiInParams;
-  for (int i=0; i<plugin->getNumParameters(); i++)
-    midiInParams.push_back(0x0);
-  ch->midiInPlugins.push_back(midiInParams);
-
-  return plugin;
+  return G_PluginHost.addPlugin(index, stackType,  &G_Mixer.mutex_plugins, ch);
 }
 
 
@@ -68,10 +58,6 @@ void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 {
   G_PluginHost.swapPlugin(index1, index2, stackType, &G_Mixer.mutex_plugins,
     ch);
-
-  /* Swap items in Channel::midiInPlugins vector. */
-
-  std::swap(ch->midiInPlugins.at(index1), ch->midiInPlugins.at(index2));
 }
 
 
@@ -80,13 +66,7 @@ void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 
 void glue_freePlugin(Channel *ch, int index, int stackType)
 {
-  int pi = G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
-
-  /* Erase item from Channel::midiInPlugins vector. */
-
-  if (pi == -1) // something went wrong with deletion
-    return;
-  ch->midiInPlugins.erase(ch->midiInPlugins.begin() + pi);
+  G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
 }
 
 

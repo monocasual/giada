@@ -96,7 +96,7 @@ public:
   /* midiInParams
   A list of midiIn hex values for parameter automation. */
 
-  std::vector<int> midiInParams;
+  std::vector<uint32_t> midiInParams;
 };
 
 #endif

@@ -445,17 +445,21 @@ void KernelMidi::processPlugins(Channel *ch, uint32_t pure, uint32_t value)
   Channel::midiInPlugins. It is safe to assume then that i and k indexes match
   both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
 
-  for (unsigned i=0; i<ch->midiInPlugins.size(); i++)
-    for (unsigned k=0; k<ch->midiInPlugins.at(i).size(); k++) {
-      uint32_t midiInParam = ch->midiInPlugins.at(i).at(k);
+  vector <Plugin *> *plugins = G_PluginHost.getStack(PluginHost::CHANNEL, ch);
+
+  for (unsigned i=0; i<plugins->size(); i++)
+  {
+    Plugin *plugin = plugins->at(i);
+    for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
+      uint32_t midiInParam = plugin->midiInParams.at(k);
       if (pure != midiInParam)
         continue;
-      Plugin *plugin = G_PluginHost.getPluginByIndex(i, PluginHost::CHANNEL, ch);
       float vf = (value >> 8)/127.0f;
       plugin->setParameter(k, vf);
       gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
         i, k, ch->index, pure, value >> 8, vf);
     }
+  }
 }
 
 #endif

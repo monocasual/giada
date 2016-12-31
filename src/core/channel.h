@@ -230,6 +230,7 @@ public:
   uint32_t midiInMute;
   uint32_t midiInSolo;
 
+
 #ifdef WITH_VST
 
   /* midiInPlugins
@@ -237,7 +238,7 @@ public:
   the layout of the plugin stack, especially when plugins are added/removed
   or shifted up and down. */
 
-  vector <vector<uint32_t>> midiInPlugins;
+  //vector <vector<uint32_t>> midiInPlugins;
 
 #endif
 
