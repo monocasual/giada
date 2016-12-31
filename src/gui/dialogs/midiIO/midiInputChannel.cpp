@@ -43,7 +43,9 @@
 #include "midiInputChannel.h"
 
 
+#ifdef WITH_VST
 extern PluginHost G_PluginHost;
+#endif
 extern Conf       G_Conf;
 
 
