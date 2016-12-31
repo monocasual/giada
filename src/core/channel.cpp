@@ -263,6 +263,8 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
     pp.bypass = pPlugin->isBypassed();
 		for (int k=0; k<pPlugin->getNumParameters(); k++)
 			pp.params.push_back(pPlugin->getParameter(k));
+		for (unsigned k=0; k<pPlugin->midiInParams.size(); k++)
+			pp.midiInParams.push_back(pPlugin->midiInParams.at(k));
 		pch.plugins.push_back(pp);
 	}
 

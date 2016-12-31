@@ -119,17 +119,21 @@ void Patch::writePlugins(json_t *jContainer, vector<plugin_t> *plugins, const ch
   for (unsigned j=0; j<plugins->size(); j++) {
     json_t   *jPlugin = json_object();
     plugin_t  plugin  = plugins->at(j);
-    json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PATH,     json_string(plugin.path.c_str()));
-    json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_BYPASS,   json_boolean(plugin.bypass));
+    json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PATH,   json_string(plugin.path.c_str()));
+    json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_BYPASS, json_boolean(plugin.bypass));
     json_array_append_new(jPlugins, jPlugin);
 
-    /* plugin params */
+    /* plugin params + midiIn */
 
     json_t *jPluginParams = json_array();
-    for (unsigned z=0; z<plugin.params.size(); z++) {
+    for (unsigned z=0; z<plugin.params.size(); z++)
       json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
-    }
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PARAMS, jPluginParams);
+
+    json_t *jPluginMidiInParams = json_array();
+    for (unsigned z=0; z<plugin.midiInParams.size(); z++)
+      json_array_append_new(jPluginMidiInParams, json_integer(plugin.midiInParams.at(z)));
+    json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS, jPluginMidiInParams);
   }
   json_object_set_new(jContainer, key, jPlugins);
 }

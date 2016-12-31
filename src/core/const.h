@@ -375,6 +375,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_PLUGIN_PATH                  "path"
 #define PATCH_KEY_PLUGIN_BYPASS                "bypass"
 #define PATCH_KEY_PLUGIN_PARAMS                "params"
+#define PATCH_KEY_PLUGIN_MIDI_IN_PARAMS        "midi_in_params"
 #define PATCH_KEY_COLUMN_INDEX                 "index"
 #define PATCH_KEY_COLUMN_WIDTH                 "width"
 #define PATCH_KEY_COLUMN_CHANNELS              "channels"

@@ -56,9 +56,10 @@ public:
 #ifdef WITH_VST
   struct plugin_t
   {
-    string        path;
-    bool          bypass;
-    vector<float> params;
+    string           path;
+    bool             bypass;
+    vector<float>    params;
+    vector<uint32_t> midiInParams;
   };
 #endif
 
