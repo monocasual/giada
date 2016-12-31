@@ -459,7 +459,7 @@ void Patch::sanitize()
     ch->panLeft  = ch->panLeft < 0.0f || ch->panLeft > 1.0f ? 1.0f : ch->panLeft;
     ch->panRight = ch->panRight < 0.0f || ch->panRight > 1.0f ? 1.0f : ch->panRight;
     ch->boost    = ch->boost < 1.0f ? DEFAULT_BOOST : ch->boost;
-    ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? gDEFAULT_PITCH : ch->pitch;
+    ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? G_DEFAULT_PITCH : ch->pitch;
   }
 }
 

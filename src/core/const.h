@@ -131,8 +131,8 @@
 #define DEFAULT_BUFSIZE		   1024
 #define DEFAULT_DELAYCOMP		 0
 #define DEFAULT_VOL				   1.0f
+#define G_DEFAULT_PITCH			 1.0f
 #define DEFAULT_BOOST			   0.0f
-#define gDEFAULT_PITCH			 1.0f   // ugly and temporary fix to avoid conflicts with wingdi.h (Windows only).
 #define DEFAULT_OUT_VOL  	   1.0f
 #define DEFAULT_IN_VOL  	   1.0f
 #define DEFAULT_CHANMODE	   SINGLE_BASIC

@@ -57,7 +57,7 @@ SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 		tracker          (0),
 		begin            (0),
 		end              (0),
-		pitch            (gDEFAULT_PITCH),
+		pitch            (G_DEFAULT_PITCH),
 		boost            (1.0f),
 		mode             (DEFAULT_CHANMODE),
 		qWait	           (false),
