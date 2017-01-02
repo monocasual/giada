@@ -123,12 +123,14 @@ void Patch::writePlugins(json_t *jContainer, vector<plugin_t> *plugins, const ch
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_BYPASS, json_boolean(plugin.bypass));
     json_array_append_new(jPlugins, jPlugin);
 
-    /* plugin params + midiIn */
+    /* plugin params */
 
     json_t *jPluginParams = json_array();
     for (unsigned z=0; z<plugin.params.size(); z++)
       json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PARAMS, jPluginParams);
+
+    /* midiIn params (midi learning on plugins' parameters) */
 
     json_t *jPluginMidiInParams = json_array();
     for (unsigned z=0; z<plugin.midiInParams.size(); z++)
@@ -417,8 +419,8 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
       return 0;
 
     plugin_t plugin;
-    if (!setString (jPlugin, PATCH_KEY_PLUGIN_PATH,   plugin.path)) return 0;
-    if (!setBool   (jPlugin, PATCH_KEY_PLUGIN_BYPASS, plugin.bypass)) return 0;
+    if (!setString(jPlugin, PATCH_KEY_PLUGIN_PATH,   plugin.path)) return 0;
+    if (!setBool  (jPlugin, PATCH_KEY_PLUGIN_BYPASS, plugin.bypass)) return 0;
 
     /* read plugin params */
 
@@ -430,6 +432,16 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
     json_array_foreach(jParams, paramIndex, jParam)
       plugin.params.push_back(json_real_value(jParam));
 
+    /* read midiIn params (midi learning on plugins' parameters) */
+
+    json_t *jMidiInParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS);
+    if (!checkArray(jMidiInParams, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS)) return 0;
+
+    size_t midiInParamIndex;
+    json_t *jMidiInParam;
+    json_array_foreach(jMidiInParams, midiInParamIndex, jMidiInParam)
+      plugin.midiInParams.push_back(json_integer_value(jMidiInParam));
+      
     container->push_back(plugin);
   }
   return 1;
