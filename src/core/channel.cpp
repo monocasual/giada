@@ -317,17 +317,17 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 		Patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
       pluginMutex, this);
-		if (plugin != nullptr) {
-			plugin->setBypass(ppl->bypass);
-			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParameter(j, ppl->params.at(j));
-      plugin->midiInParams.clear();
-      for (unsigned j=0; j<ppl->midiInParams.size(); j++)
-    		plugin->midiInParams.push_back(ppl->midiInParams.at(j));
-			ret &= 1;
-		}
-		else
-			ret &= 0;
+    if (plugin == nullptr) {
+      ret &= 0;
+      continue;
+    }
+		plugin->setBypass(ppl->bypass);
+		for (unsigned j=0; j<ppl->params.size(); j++)
+			plugin->setParameter(j, ppl->params.at(j));
+    plugin->midiInParams.clear();
+    for (unsigned j=0; j<ppl->midiInParams.size(); j++)
+  		plugin->midiInParams.push_back(ppl->midiInParams.at(j));
+		ret &= 1;
 	}
 
 #endif
