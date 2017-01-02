@@ -326,7 +326,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 			plugin->setParameter(j, ppl->params.at(j));
     plugin->midiInParams.clear();
     for (unsigned j=0; j<ppl->midiInParams.size(); j++)
-  		plugin->midiInParams.push_back(ppl->midiInParams.at(j));
+      plugin->midiInParams.push_back(ppl->midiInParams.at(j));
 		ret &= 1;
 	}
 
