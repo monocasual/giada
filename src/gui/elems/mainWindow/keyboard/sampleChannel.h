@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_channelButton
+ * ge_sampleChannel
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,36 +27,54 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_CHANNEL_BUTTON_H
-#define GE_CHANNEL_BUTTON_H
+#ifndef GE_SAMPLE_CHANNEL_H
+#define GE_SAMPLE_CHANNEL_H
 
 
-#include "ge_mixed.h"
+#include "channel.h"
+#include "channelButton.h"
 
 
-using std::string;
-
-
-class geChannelButton : public gClick
+class geSampleChannel : public geChannel
 {
 private:
 
-	string key;
+	static void cb_button        (Fl_Widget *v, void *p);
+	static void cb_openMenu      (Fl_Widget *v, void *p);
+	static void cb_readActions   (Fl_Widget *v, void *p);
+
+	inline void __cb_button      ();
+	inline void __cb_openMenu    ();
+	inline void __cb_readActions ();
 
 public:
 
-	geChannelButton(int x, int y, int w, int h, const char *l=0);
+	geSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
 
-	virtual int handle(int e) = 0;
+	void reset   ();
+	void update  ();
+	void refresh ();
+	void resize  (int x, int y, int w, int h);
 
-	void draw();
-	void setKey(const string &k);
-	void setKey(int k);
-	void setPlayMode();
-	void setEndingMode();
-	void setDefaultMode(const char *l=0);
-	void setInputRecordMode();
-	void setActionRecordMode();
+	/* show/hideActionButton
+	Adds or removes 'R' button when actions are available. */
+
+	void showActionButton();
+	void hideActionButton();
+
+	class geChannelMode *modeBox;
+	class gClick 	 *readActions;
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+class geSampleChannelButton : public geChannelButton
+{
+public:
+	geSampleChannelButton(int x, int y, int w, int h, const char *l=0);
+	int handle(int e);
 };
 
 

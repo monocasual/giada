@@ -31,21 +31,12 @@
 #define GE_KEYBOARD_H
 
 
-#include <FL/Fl.H>
-#include <FL/Fl_Scroll.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Menu_Button.H>
 #include <vector>
-#include "../elems/ge_column.h"
-#include "../../core/const.h"
-#include "../../utils/fs.h"
+#include <FL/Fl_Scroll.H>
+#include "../../../../core/const.h"
 
 
-using std::vector;
-
-
-class gKeyboard : public Fl_Scroll
+class geKeyboard : public Fl_Scroll
 {
 private:
 
@@ -73,11 +64,11 @@ private:
 	/* columns
 	 * a vector of columns which in turn contain channels. */
 
-	vector<gColumn*> columns;
+	std::vector<class geColumn*> columns;
 
 public:
 
-	gKeyboard(int X, int Y, int W, int H);
+	geKeyboard(int X, int Y, int W, int H);
 
 	int handle(int e);
 
@@ -129,12 +120,12 @@ public:
 	/* getColumnByIndex
 	 * return the column with index 'index', or NULL if not found. */
 
-	gColumn *getColumnByIndex(int index);
+	geColumn *getColumnByIndex(int index);
 
 	/* getColumn
 	 * return the column with from columns->at(i). */
 
-	inline gColumn *getColumn(int i) { return columns.at(i); }
+	geColumn *getColumn(int i);
 
 	/* clear
 	 * delete all channels and groups. */
@@ -154,13 +145,13 @@ public:
 
 	/* getTotalColumns */
 
-	inline unsigned getTotalColumns() { return columns.size(); }
+	unsigned getTotalColumns() { return columns.size(); }
 
 	/* getColumnWidth
 	 * return the width in pixel of i-th column. Warning: 'i' is the i-th column
 	 * in the column array, NOT the index. */
 
-	inline int getColumnWidth(int i) { return getColumnByIndex(i)->w(); }
+	int getColumnWidth(int i);
 };
 
 

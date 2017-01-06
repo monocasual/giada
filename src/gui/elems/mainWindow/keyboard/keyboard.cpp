@@ -27,38 +27,24 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../glue/main.h"
-#include "../../glue/io.h"
-#include "../../utils/log.h"
-#include "../dialogs/gd_browser.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_editor.h"
-#include "../dialogs/gd_warnings.h"
-#include "channel.h"
+#include "../../../../core/sampleChannel.h"
+#include "../../../../glue/main.h"
+#include "../../../../glue/io.h"
+#include "../../../../utils/log.h"
+#include "../../../dialogs/gd_warnings.h"
+#include "../../basics/boxtypes.h"
+#include "column.h"
 #include "sampleChannel.h"
-#include "basics/boxtypes.h"
-#include "ge_keyboard.h"
+#include "keyboard.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf  		     G_Conf;
-extern Patch_DEPR_   G_Patch_DEPR_;
-extern gdMainWindow *mainWin;
-
-
-int gKeyboard::indexColumn = 0;
+int geKeyboard::indexColumn = 0;
 
 
 /* -------------------------------------------------------------------------- */
 
 
-gKeyboard::gKeyboard(int X, int Y, int W, int H)
+geKeyboard::geKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll    (X, Y, W, H),
 	bckspcPressed(false),
 	endPressed   (false),
@@ -87,7 +73,7 @@ gKeyboard::gKeyboard(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::init()
+void geKeyboard::init()
 {
 	/* add 6 empty columns as init layout */
 
@@ -103,7 +89,7 @@ void gKeyboard::init()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::freeChannel(geChannel *gch)
+void geKeyboard::freeChannel(geChannel *gch)
 {
 	gch->reset();
 }
@@ -112,7 +98,7 @@ void gKeyboard::freeChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::deleteChannel(geChannel *gch)
+void geKeyboard::deleteChannel(geChannel *gch)
 {
 	for (unsigned i=0; i<columns.size(); i++) {
 		int k = columns.at(i)->find(gch);
@@ -127,7 +113,7 @@ void gKeyboard::deleteChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::updateChannel(geChannel *gch)
+void geKeyboard::updateChannel(geChannel *gch)
 {
 	gch->update();
 }
@@ -136,7 +122,7 @@ void gKeyboard::updateChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::organizeColumns()
+void geKeyboard::organizeColumns()
 {
 	/* if only one column exists don't cleanup: the initial column must
 	 * stay here. */
@@ -173,18 +159,18 @@ void gKeyboard::organizeColumns()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::cb_addColumn(Fl_Widget *v, void *p)
+void geKeyboard::cb_addColumn(Fl_Widget *v, void *p)
 {
-	((gKeyboard*)p)->__cb_addColumn(DEFAULT_COLUMN_WIDTH);
+	((geKeyboard*)p)->__cb_addColumn(DEFAULT_COLUMN_WIDTH);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
+geChannel *geKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 {
-	gColumn *col = getColumnByIndex(colIndex);
+	geColumn *col = getColumnByIndex(colIndex);
 
 	/* no column with index 'colIndex' found? Just create it and set its index
 	to 'colIndex'. */
@@ -193,10 +179,10 @@ geChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 		__cb_addColumn();
 		col = columns.back();
 		col->setIndex(colIndex);
-		gu_log("[gKeyboard::addChannel] created new column with index=%d\n", colIndex);
+		gu_log("[geKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
 
-	gu_log("[gKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
+	gu_log("[geKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
 	return col->addChannel(ch);
 }
 
@@ -204,7 +190,7 @@ geChannel *gKeyboard::addChannel(int colIndex, Channel *ch, bool build)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::refreshColumns()
+void geKeyboard::refreshColumns()
 {
 	for (unsigned i=0; i<columns.size(); i++)
 		columns.at(i)->refreshChannels();
@@ -214,7 +200,7 @@ void gKeyboard::refreshColumns()
 /* -------------------------------------------------------------------------- */
 
 
-gColumn *gKeyboard::getColumnByIndex(int index)
+geColumn *geKeyboard::getColumnByIndex(int index)
 {
 	for (unsigned i=0; i<columns.size(); i++)
 		if (columns.at(i)->getIndex() == index)
@@ -228,7 +214,7 @@ gColumn *gKeyboard::getColumnByIndex(int index)
 /* TODO - the following event handling for play, stop, rewind, start rec and
 so on should be moved to the proper widget: gdMainWindow or (better) geController. */
 
-int gKeyboard::handle(int e)
+int geKeyboard::handle(int e)
 {
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
@@ -297,7 +283,7 @@ int gKeyboard::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::clear()
+void geKeyboard::clear()
 {
 	for (unsigned i=0; i<columns.size(); i++)
 		delete columns.at(i);
@@ -310,7 +296,7 @@ void gKeyboard::clear()
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::setChannelWithActions(geSampleChannel *gch)
+void geKeyboard::setChannelWithActions(geSampleChannel *gch)
 {
 	if (gch->ch->hasActions)
 		gch->showActionButton();
@@ -322,7 +308,7 @@ void gKeyboard::setChannelWithActions(geSampleChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::printChannelMessage(int res)
+void geKeyboard::printChannelMessage(int res)
 {
 	if      (res == SAMPLE_NOT_VALID)
 		gdAlert("This is not a valid WAVE file.");
@@ -346,7 +332,7 @@ void gKeyboard::printChannelMessage(int res)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::__cb_addColumn(int width)
+void geKeyboard::__cb_addColumn(int width)
 {
 	int colx;
 	int colxw;
@@ -356,14 +342,14 @@ void gKeyboard::__cb_addColumn(int width)
 		colxw = colx + width;
 	}
 	else {
-		gColumn *prev = columns.back();
+		geColumn *prev = columns.back();
 		colx  = prev->x()+prev->w() + gap;
 		colxw = colx + width;
 	}
 
-	/* add gColumn to gKeyboard and to columns vector */
+	/* add geColumn to geKeyboard and to columns vector */
 
-	gColumn *gc = new gColumn(colx, y(), width, 2000, indexColumn, this);
+	geColumn *gc = new geColumn(colx, y(), width, 2000, indexColumn, this);
   add(gc);
 	columns.push_back(gc);
 	indexColumn++;
@@ -373,7 +359,7 @@ void gKeyboard::__cb_addColumn(int width)
 	addColumnBtn->position(colxw + gap, y());
 	redraw();
 
-	gu_log("[gKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
+	gu_log("[geKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
 		gc->getIndex(), width, columns.size(), addColumnBtn->x());
 
 	/* recompute col indexes */
@@ -385,7 +371,7 @@ void gKeyboard::__cb_addColumn(int width)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::addColumn(int width)
+void geKeyboard::addColumn(int width)
 {
 	__cb_addColumn(width);
 }
@@ -394,8 +380,26 @@ void gKeyboard::addColumn(int width)
 /* -------------------------------------------------------------------------- */
 
 
-void gKeyboard::refreshColIndexes()
+void geKeyboard::refreshColIndexes()
 {
 	for (unsigned i=0; i<columns.size(); i++)
 		columns.at(i)->setIndex(i);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geKeyboard::getColumnWidth(int i)
+{
+  return getColumnByIndex(i)->w();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+geColumn *geKeyboard::getColumn(int i)
+{
+  return columns.at(i);
 }

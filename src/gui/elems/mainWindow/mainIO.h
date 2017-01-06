@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
+ *
+ * mainIO
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,31 +27,55 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MAINWINDOW_H
-#define GD_MAINWINDOW_H
+#ifndef GE_MAIN_IO_H
+#define GE_MAIN_IO_H
 
 
-#include "../elems/ge_window.h"
+#include <FL/Fl_Group.H>
 
 
-class gdMainWindow : public gWindow
+class geMainIO : public Fl_Group
 {
 private:
 
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
+	class gSoundMeter *outMeter;
+	class gSoundMeter *inMeter;
+	class gDial				*outVol;
+	class gDial				*inVol;
+#ifdef WITH_VST
+	class gFxButton 	*masterFxOut;
+	class gFxButton		*masterFxIn;
+	class gClick      *inToOut;
+#endif
+
+	static void cb_outVol     (Fl_Widget *v, void *p);
+	static void cb_inVol      (Fl_Widget *v, void *p);
+#ifdef WITH_VST
+	static void cb_masterFxOut(Fl_Widget *v, void *p);
+	static void cb_masterFxIn (Fl_Widget *v, void *p);
+	static void cb_inToOut    (Fl_Widget *v, void *p);
+#endif
+
+	inline void __cb_outVol     ();
+	inline void __cb_inVol      ();
+#ifdef WITH_VST
+	inline void __cb_masterFxOut();
+	inline void __cb_masterFxIn ();
+	inline void __cb_inToOut    ();
+#endif
 
 public:
 
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
+	geMainIO(int x, int y);
 
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
+	void refresh();
+
+	void setOutVol(float v);
+	void setInVol (float v);
+#ifdef WITH_VST
+	void setMasterFxOutFull(bool v);
+	void setMasterFxInFull(bool v);
+#endif
 };
-
 
 #endif

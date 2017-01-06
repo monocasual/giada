@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
+ *
+ * mainMenu
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,30 +27,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MAINWINDOW_H
-#define GD_MAINWINDOW_H
+#ifndef GE_MAIN_MENU_H
+#define GE_MAIN_MENU_H
 
 
-#include "../elems/ge_window.h"
+#include <FL/Fl_Group.H>
 
 
-class gdMainWindow : public gWindow
+class geMainMenu : public Fl_Group
 {
 private:
 
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
+	class gClick *file;
+	class gClick *edit;
+	class	gClick *config;
+	class gClick *about;
+
+	static void cb_about (Fl_Widget *v, void *p);
+	static void cb_config(Fl_Widget *v, void *p);
+	static void cb_file  (Fl_Widget *v, void *p);
+	static void cb_edit  (Fl_Widget *v, void *p);
+
+	inline void __cb_about ();
+	inline void __cb_config();
+	inline void __cb_file  ();
+	inline void __cb_edit  ();
 
 public:
 
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
-
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
+	geMainMenu(int x, int y);
 };
 
 

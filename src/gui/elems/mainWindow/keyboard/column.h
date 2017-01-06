@@ -31,11 +31,10 @@
 #define GE_COLUMN_H
 
 
-#include <FL/Fl.H>
 #include <FL/Fl_Group.H>
 
 
-class gColumn : public Fl_Group
+class geColumn : public Fl_Group
 {
 private:
 
@@ -46,14 +45,14 @@ private:
 
 	class gClick      *addChannelBtn;
 	class gResizerBar *resizer;
-	class gKeyboard   *parent;
+	class geKeyboard   *parent;
 
 	int index;
 
 public:
 
-	gColumn(int x, int y, int w, int h, int index, class gKeyboard *parent);
-	~gColumn();
+	geColumn(int x, int y, int w, int h, int index, class geKeyboard *parent);
+	~geColumn();
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer

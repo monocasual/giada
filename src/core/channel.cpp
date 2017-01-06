@@ -28,7 +28,7 @@
 
 
 #include "../utils/log.h"
-#include "../gui/elems/channel.h"
+#include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "channel.h"
 #include "pluginHost.h"
 #include "plugin.h"

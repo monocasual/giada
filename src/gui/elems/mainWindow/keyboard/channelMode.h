@@ -27,14 +27,14 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MODEBOX_H
-#define GE_MODEBOX_H
+#ifndef GE_CHANNEL_MODE_H
+#define GE_CHANNEL_MODE_H
 
 
 #include <FL/Fl_Menu_Button.H>
 
 
-class gModeBox : public Fl_Menu_Button
+class geChannelMode : public Fl_Menu_Button
 {
 private:
 
@@ -44,8 +44,9 @@ private:
 	class SampleChannel *ch;
 
 public:
-	
-  gModeBox(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
+
+  geChannelMode(int x, int y, int w, int h, class SampleChannel *ch,
+    const char *l=0);
 	void draw();
 };
 

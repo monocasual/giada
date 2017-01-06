@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * ge_controller
+ *
+ * mainTransport
  *
  * -----------------------------------------------------------------------------
  *
@@ -29,11 +30,11 @@
 #include "../../core/graphics.h"
 #include "../../glue/main.h"
 #include "../../glue/io.h"
-#include "ge_mixed.h"
-#include "ge_controller.h"
+#include "../ge_mixed.h"
+#include "mainTransport.h"
 
 
-gController::gController(int x, int y)
+geMainTransport::geMainTransport(int x, int y)
 	: Fl_Group(x, y, 131, 25)
 {
 	begin();
@@ -67,17 +68,17 @@ gController::gController(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void gController::cb_rewind   (Fl_Widget *v, void *p) { ((gController*)p)->__cb_rewind(); }
-void gController::cb_play     (Fl_Widget *v, void *p) { ((gController*)p)->__cb_play(); }
-void gController::cb_recAction(Fl_Widget *v, void *p) { ((gController*)p)->__cb_recAction(); }
-void gController::cb_recInput (Fl_Widget *v, void *p) { ((gController*)p)->__cb_recInput(); }
-void gController::cb_metronome(Fl_Widget *v, void *p) { ((gController*)p)->__cb_metronome(); }
+void geMainTransport::cb_rewind   (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_rewind(); }
+void geMainTransport::cb_play     (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_play(); }
+void geMainTransport::cb_recAction(Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_recAction(); }
+void geMainTransport::cb_recInput (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_recInput(); }
+void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_metronome(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gController::__cb_rewind()
+void geMainTransport::__cb_rewind()
 {
 	glue_rewindSeq();
 }
@@ -86,7 +87,7 @@ void gController::__cb_rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void gController::__cb_play()
+void geMainTransport::__cb_play()
 {
 	glue_startStopSeq(true);
 }
@@ -95,7 +96,7 @@ void gController::__cb_play()
 /* -------------------------------------------------------------------------- */
 
 
-void gController::__cb_recAction()
+void geMainTransport::__cb_recAction()
 {
 	glue_startStopActionRec(true);
 }
@@ -104,7 +105,7 @@ void gController::__cb_recAction()
 /* -------------------------------------------------------------------------- */
 
 
-void gController::__cb_recInput()
+void geMainTransport::__cb_recInput()
 {
 	glue_startStopInputRec(true);
 }
@@ -113,7 +114,7 @@ void gController::__cb_recInput()
 /* -------------------------------------------------------------------------- */
 
 
-void gController::__cb_metronome()
+void geMainTransport::__cb_metronome()
 {
 	glue_startStopMetronome(true);
 }
@@ -122,7 +123,7 @@ void gController::__cb_metronome()
 /* -------------------------------------------------------------------------- */
 
 
-void gController::updatePlay(int v)
+void geMainTransport::updatePlay(int v)
 {
 	play->value(v);
 	play->redraw();
@@ -132,7 +133,7 @@ void gController::updatePlay(int v)
 /* -------------------------------------------------------------------------- */
 
 
-void gController::updateMetronome(int v)
+void geMainTransport::updateMetronome(int v)
 {
 	metronome->value(v);
 	metronome->redraw();
@@ -142,7 +143,7 @@ void gController::updateMetronome(int v)
 /* -------------------------------------------------------------------------- */
 
 
-void gController::updateRecInput(int v)
+void geMainTransport::updateRecInput(int v)
 {
 	recInput->value(v);
 	recInput->redraw();
@@ -152,7 +153,7 @@ void gController::updateRecInput(int v)
 /* -------------------------------------------------------------------------- */
 
 
-void gController::updateRecAction(int v)
+void geMainTransport::updateRecAction(int v)
 {
 	recAction->value(v);
 	recAction->redraw();

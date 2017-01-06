@@ -296,38 +296,6 @@ void gSoundMeter::draw()
   fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !G_audio_status ? COLOR_ALERT : COLOR_BD_0);
 }
 
-/* -------------------------------------------------------------------------- */
-
-gBeatMeter::gBeatMeter(int x, int y, int w, int h, const char *L)
-  : Fl_Box(x, y, w, h, L) {}
-
-void gBeatMeter::draw()
-{
-  int cursorW = w() / MAX_BEATS;
-  int greyX   = G_Mixer.beats * cursorW;
-
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);                                // border
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);              // bg
-  fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6, COLOR_BG_2); // cursor
-
-  /* beat cells */
-
-  fl_color(COLOR_BD_0);
-  for (int i=1; i<=G_Mixer.beats; i++)
-    fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
-
-  /* bar line */
-
-  fl_color(COLOR_BG_2);
-  int delta = G_Mixer.beats / G_Mixer.bars;
-  for (int i=1; i<G_Mixer.bars; i++)
-    fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
-
-  /* unused grey area */
-
-  fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
-}
-
 
 /* -------------------------------------------------------------------------- */
 

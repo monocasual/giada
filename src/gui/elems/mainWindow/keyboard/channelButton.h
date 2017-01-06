@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * ge_controller
+ *
+ * ge_channelButton
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,43 +27,34 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_CONTROLLER_H
-#define GE_CONTROLLER_H
+#ifndef GE_CHANNEL_BUTTON_H
+#define GE_CHANNEL_BUTTON_H
 
 
-#include <FL/Fl_Group.H>
+#include "../../ge_mixed.h"
 
 
-class gController : public Fl_Group
+class geChannelButton : public gClick
 {
 private:
 
-	class gClick *rewind;
-	class gClick *play;
-	class gClick *recAction;
-	class gClick *recInput;
-	class gClick *metronome;
-
-	static void cb_rewind   (Fl_Widget *v, void *p);
-	static void cb_play     (Fl_Widget *v, void *p);
-	static void cb_recAction(Fl_Widget *v, void *p);
-	static void cb_recInput (Fl_Widget *v, void *p);
-	static void cb_metronome(Fl_Widget *v, void *p);
-
-	inline void __cb_rewind   ();
-	inline void __cb_play     ();
-	inline void __cb_recAction();
-	inline void __cb_recInput ();
-	inline void __cb_metronome();
+	std::string key;
 
 public:
 
-	gController(int x, int y);
+	geChannelButton(int x, int y, int w, int h, const char *l=0);
 
-	void updatePlay     (int v);
-	void updateMetronome(int v);
-	void updateRecInput (int v);
-	void updateRecAction(int v);
+	virtual int handle(int e) = 0;
+
+	void draw();
+	void setKey(const std::string &k);
+	void setKey(int k);
+	void setPlayMode();
+	void setEndingMode();
+	void setDefaultMode(const char *l=0);
+	void setInputRecordMode();
+	void setActionRecordMode();
 };
+
 
 #endif

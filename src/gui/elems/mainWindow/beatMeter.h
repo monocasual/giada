@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_status
+ * beatMeter
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,21 +27,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_STATUS_H
-#define GE_STATUS_H
+#ifndef GE_BEAT_METER_H
+#define GE_BEAT_METER_H
 
 
 #include <FL/Fl_Box.H>
-#include "../../core/sampleChannel.h"
-#include "ge_mixed.h"
 
 
-class gStatus : public Fl_Box
+class geBeatMeter : public Fl_Box
 {
 public:
-	gStatus(int X, int Y, int W, int H, class SampleChannel *ch, const char *L=0);
-	void draw();
-	class SampleChannel *ch;
+
+ 	geBeatMeter(int X,int Y,int W,int H,const char *L=0);
+ 	void draw();
 };
 
 

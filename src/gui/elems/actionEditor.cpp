@@ -35,7 +35,7 @@
 #include "../../utils/log.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "../dialogs/gd_actionEditor.h"
-#include "ge_keyboard.h"
+#include "mainWindow/keyboard/keyboard.h"
 #include "actionEditor.h"
 
 

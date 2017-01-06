@@ -35,10 +35,10 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/mixer.h"
 #include "../../core/wave.h"
-#include "../elems/channel.h"
 #include "../elems/ge_waveform.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_waveTools.h"
+#include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "gd_editor.h"
 

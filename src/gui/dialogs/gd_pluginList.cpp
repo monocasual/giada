@@ -43,8 +43,9 @@
 #include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/channel.h"
 #include "../elems/basics/boxtypes.h"
+#include "../elems/mainWindow/mainIO.h"
+#include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_pluginList.h"
 #include "gd_pluginChooser.h"
 #include "gd_pluginWindow.h"
@@ -201,12 +202,12 @@ void gdPluginList::refreshList()
   gdPluginListMaster */
 
 	if (stackType == PluginHost::MASTER_OUT) {
-    G_MainWin->inOut->setMasterFxOutFull(
+    G_MainWin->mainIO->setMasterFxOutFull(
 			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else
 	if (stackType == PluginHost::MASTER_IN) {
-    G_MainWin->inOut->setMasterFxInFull(
+    G_MainWin->mainIO->setMasterFxInFull(
 			G_PluginHost.countPlugins(stackType, ch) > 0);
   }
 	else {

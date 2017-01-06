@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
+ *
+ * mainTimer
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,30 +27,42 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MAINWINDOW_H
-#define GD_MAINWINDOW_H
+#ifndef GE_MAIN_TIMER_H
+#define GE_MAIN_TIMER_H
 
 
-#include "../elems/ge_window.h"
+#include <FL/Fl_Group.H>
 
 
-class gdMainWindow : public gWindow
+class geMainTimer : public Fl_Group
 {
 private:
 
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
+	class gClick   *bpm;
+	class gClick   *meter;
+	class gChoice  *quantizer;
+	class gClick   *multiplier;
+	class gClick   *divider;
+
+	static void cb_bpm       (Fl_Widget *v, void *p);
+	static void cb_meter     (Fl_Widget *v, void *p);
+	static void cb_quantizer (Fl_Widget *v, void *p);
+	static void cb_multiplier(Fl_Widget *v, void *p);
+	static void cb_divider   (Fl_Widget *v, void *p);
+
+	inline void __cb_bpm();
+	inline void __cb_meter();
+	inline void __cb_quantizer();
+	inline void __cb_multiplier();
+	inline void __cb_divider();
 
 public:
 
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
+	geMainTimer(int x, int y);
 
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
+	void setBpm(const char *v);
+	void setBpm(float v);
+	void setMeter(int beats, int bars);
 };
 
 

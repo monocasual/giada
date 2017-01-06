@@ -27,23 +27,27 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
-#include "../../core/const.h"
-#include "ge_status.h"
+#include <FL/fl_draw.H>
+#include "../../../../core/mixer.h"
+#include "../../../../core/sampleChannel.h"
+#include "../../../../core/recorder.h"
+#include "../../../../core/const.h"
+#include "channelStatus.h"
 
 
 extern Mixer    G_Mixer;
 extern Recorder G_Recorder;
 
 
-gStatus::gStatus(int x, int y, int w, int h, SampleChannel *ch, const char *L)
+geChannelStatus::geChannelStatus(int x, int y, int w, int h, SampleChannel *ch,
+  const char *L)
   : Fl_Box(x, y, w, h, L), ch(ch) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gStatus::draw()
+void geChannelStatus::draw()
 {
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
   fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background

@@ -28,11 +28,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../gui/elems/ge_column.h"
-#include "../gui/elems/ge_keyboard.h"
-#include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/dialogs/gd_warnings.h"
-#include "../gui/dialogs/gd_browser.h"
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
@@ -46,6 +41,11 @@
 #include "../core/wave.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
+#include "../gui/elems/mainWindow/keyboard/column.h"
+#include "../gui/elems/mainWindow/keyboard/keyboard.h"
+#include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/gd_browser.h"
 #include "main.h" // TODO - remove, used only for DEPR calls
 #include "channel.h"
 #include "storage.h"
@@ -91,7 +91,7 @@ static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Pat
 static void __glue_fillPatchColumns__()
 {
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
-		gColumn *gCol = G_MainWin->keyboard->getColumn(i);
+		geColumn *gCol = G_MainWin->keyboard->getColumn(i);
 		Patch::column_t pCol;
 		pCol.index = gCol->getIndex();
 		pCol.width = gCol->w();

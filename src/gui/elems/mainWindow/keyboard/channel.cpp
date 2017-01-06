@@ -27,25 +27,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
-#include "../../core/conf.h"
-#include "../../core/channel.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/graphics.h"
-#include "../../core/pluginHost.h"
-#include "../../utils/gui.h"
-#include "../../glue/channel.h"
-#include "../../glue/main.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_pluginList.h"
-#include "ge_column.h"
+#include "../../../../core/const.h"
+#include "../../../../core/channel.h"
+#include "../../../../core/graphics.h"
+#include "../../../../core/pluginHost.h"
+#include "../../../../utils/gui.h"
+#include "../../../../glue/channel.h"
+#include "../../../dialogs/gd_mainWindow.h"
+#include "../../../dialogs/gd_pluginList.h"
+#include "column.h"
 #include "channelButton.h"
 #include "channel.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf  		     G_Conf;
-extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
@@ -131,7 +125,7 @@ int geChannel::keyPress(int e)
 
 int geChannel::getColumnIndex()
 {
-	return ((gColumn*)parent())->getIndex();
+	return ((geColumn*)parent())->getIndex();
 }
 
 

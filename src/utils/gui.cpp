@@ -38,9 +38,13 @@
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_actionEditor.h"
-#include "../gui/elems/ge_keyboard.h"
 #include "../gui/elems/ge_window.h"
-#include "../gui/elems/channel.h"
+#include "../gui/elems/mainWindow/mainIO.h"
+#include "../gui/elems/mainWindow/mainTimer.h"
+#include "../gui/elems/mainWindow/mainTransport.h"
+#include "../gui/elems/mainWindow/beatMeter.h"
+#include "../gui/elems/mainWindow/keyboard/keyboard.h"
+#include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "log.h"
 #include "string.h"
 #include "gui.h"
@@ -68,7 +72,7 @@ void gu_refreshUI()
 	/* update dynamic elements: in and out meters, beat meter and
 	 * each channel */
 
-	G_MainWin->inOut->refresh();
+	G_MainWin->mainIO->refresh();
 	G_MainWin->beatMeter->redraw();
 	G_MainWin->keyboard->refreshColumns();
 
@@ -102,18 +106,18 @@ void gu_updateControls()
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		G_Mixer.channels.at(i)->guiChannel->update();
 
-	G_MainWin->inOut->setOutVol(G_Mixer.outVol);
-	G_MainWin->inOut->setInVol(G_Mixer.inVol);
+	G_MainWin->mainIO->setOutVol(G_Mixer.outVol);
+	G_MainWin->mainIO->setInVol(G_Mixer.inVol);
 #ifdef WITH_VST
-	G_MainWin->inOut->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
-	G_MainWin->inOut->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
+	G_MainWin->mainIO->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
+	G_MainWin->mainIO->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
 #endif
 
-	G_MainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
-	G_MainWin->timing->setBpm(G_Mixer.bpm);
+	G_MainWin->mainTimer->setMeter(G_Mixer.beats, G_Mixer.bars);
+	G_MainWin->mainTimer->setBpm(G_Mixer.bpm);
 
-	G_MainWin->controller->updatePlay(G_Mixer.running);
-	G_MainWin->controller->updateMetronome(G_Mixer.metronome);
+	G_MainWin->mainTransport->updatePlay(G_Mixer.running);
+	G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
 }
 
 

@@ -27,52 +27,49 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/pluginHost.h"
-#include "../../core/mixer.h"
-#include "../../core/conf.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/recorder.h"
-#include "../../core/graphics.h"
-#include "../../core/wave.h"
-#include "../../glue/main.h"
-#include "../../glue/io.h"
-#include "../../glue/channel.h"
-#include "../../glue/storage.h"
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_keyGrabber.h"
-#include "../dialogs/gd_editor.h"
-#include "../dialogs/gd_actionEditor.h"
-#include "../dialogs/gd_warnings.h"
-#include "../dialogs/gd_browser.h"
-#include "../dialogs/midiIO/midiOutputSampleCh.h"
-#include "../dialogs/midiIO/midiInputChannel.h"
-#include "ge_status.h"
-#include "ge_modeBox.h"
-#include "ge_keyboard.h"
-#include "basics/boxtypes.h"
+#include "../../../../core/mixer.h"
+#include "../../../../core/conf.h"
+#include "../../../../core/recorder.h"
+#include "../../../../core/graphics.h"
+#include "../../../../core/wave.h"
+#include "../../../../core/sampleChannel.h"
+#include "../../../../glue/main.h"
+#include "../../../../glue/io.h"
+#include "../../../../glue/channel.h"
+#include "../../../../glue/storage.h"
+#include "../../../../utils/string.h"
+#include "../../../dialogs/gd_mainWindow.h"
+#include "../../../dialogs/gd_keyGrabber.h"
+#include "../../../dialogs/gd_editor.h"
+#include "../../../dialogs/gd_actionEditor.h"
+#include "../../../dialogs/gd_warnings.h"
+#include "../../../dialogs/gd_browser.h"
+#include "../../../dialogs/midiIO/midiOutputSampleCh.h"
+#include "../../../dialogs/midiIO/midiInputChannel.h"
+#include "../../basics/boxtypes.h"
+#include "channelStatus.h"
+#include "channelMode.h"
+#include "keyboard.h"
 #include "sampleChannel.h"
 
 
 extern Mixer 		     G_Mixer;
 extern Conf  		     G_Conf;
 extern Recorder			 G_Recorder;
-extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
-	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, ch)
+	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, (Channel*) ch)
 {
 	begin();
 
 	button      = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	arm         = new gClick(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
-	status      = new gStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
+	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
 	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), 20, 20, "-- no sample --");
 	readActions = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
-	modeBox     = new gModeBox(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
+	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
 	mute        = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo        = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #ifdef WITH_VST

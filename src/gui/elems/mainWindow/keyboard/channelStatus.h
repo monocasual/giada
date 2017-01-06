@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
+ *
+ * ge_status
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,30 +27,20 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MAINWINDOW_H
-#define GD_MAINWINDOW_H
+#ifndef GE_CHANNEL_STATUS_H
+#define GE_CHANNEL_STATUS_H
 
 
-#include "../elems/ge_window.h"
+#include <FL/Fl_Box.H>
 
 
-class gdMainWindow : public gWindow
+class geChannelStatus : public Fl_Box
 {
-private:
-
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
-
 public:
-
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
-
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
+	geChannelStatus(int X, int Y, int W, int H, class SampleChannel *ch,
+    const char *L=0);
+	void draw();
+	class SampleChannel *ch;
 };
 
 

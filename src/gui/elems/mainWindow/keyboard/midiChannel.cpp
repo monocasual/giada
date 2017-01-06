@@ -27,34 +27,25 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
-#include "../../core/conf.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/graphics.h"
-#include "../../core/channel.h"
-#include "../../core/midiChannel.h"
-#include "../../glue/channel.h"
-#include "../../glue/main.h"
-#include "../../glue/io.h"
-#include "../../utils/gui.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_keyGrabber.h"
-#include "../dialogs/gd_editor.h"
-#include "../dialogs/gd_actionEditor.h"
-#include "../dialogs/gd_warnings.h"
-#include "../dialogs/gd_browser.h"
-#include "../dialogs/gd_keyGrabber.h"
-#include "../dialogs/gd_pluginList.h"
-#include "../dialogs/midiIO/midiInputChannel.h"
-#include "../dialogs/midiIO/midiOutputMidiCh.h"
-#include "basics/boxtypes.h"
+#include "../../../../core/const.h"
+#include "../../../../core/graphics.h"
+#include "../../../../core/midiChannel.h"
+#include "../../../../glue/channel.h"
+#include "../../../../glue/io.h"
+#include "../../../dialogs/gd_mainWindow.h"
+#include "../../../dialogs/gd_editor.h"
+#include "../../../dialogs/gd_actionEditor.h"
+#include "../../../dialogs/gd_warnings.h"
+#include "../../../dialogs/gd_browser.h"
+#include "../../../dialogs/gd_keyGrabber.h"
+#include "../../../dialogs/gd_pluginList.h"
+#include "../../../dialogs/midiIO/midiInputChannel.h"
+#include "../../../dialogs/midiIO/midiOutputMidiCh.h"
+#include "../../basics/boxtypes.h"
 #include "midiChannel.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf  		     G_Conf;
 extern Recorder			 G_Recorder;
-extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 

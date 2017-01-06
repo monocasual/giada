@@ -1,7 +1,8 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
+ *
+ * beatMeter
  *
  * -----------------------------------------------------------------------------
  *
@@ -26,31 +27,46 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MAINWINDOW_H
-#define GD_MAINWINDOW_H
+#include <FL/fl_draw.H>
+#include "../../../core/const.h"
+#include "../../../core/mixer.h"
+#include "beatMeter.h"
 
 
-#include "../elems/ge_window.h"
+extern Mixer G_Mixer;
 
 
-class gdMainWindow : public gWindow
+geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
+  : Fl_Box(x, y, w, h, L) {}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geBeatMeter::draw()
 {
-private:
+  int cursorW = w() / MAX_BEATS;
+  int greyX   = G_Mixer.beats * cursorW;
 
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
+  fl_rect(x(), y(), w(), h(), COLOR_BD_0);                            // border
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
+  fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6,
+    COLOR_BG_2); // cursor
 
-public:
+  /* beat cells */
 
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
+  fl_color(COLOR_BD_0);
+  for (int i=1; i<=G_Mixer.beats; i++)
+    fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
 
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
-};
+  /* bar line */
 
+  fl_color(COLOR_BG_2);
+  int delta = G_Mixer.beats / G_Mixer.bars;
+  for (int i=1; i<G_Mixer.bars; i++)
+    fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
 
-#endif
+  /* unused grey area */
+
+  fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, COLOR_BG_1);
+}

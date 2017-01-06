@@ -30,8 +30,8 @@
 #include "../../../core/midiChannel.h"
 #include "../../../utils/gui.h"
 #include "../../elems/ge_mixed.h"
-#include "../../elems/channel.h"
 #include "../../elems/midiLearner.h"
+#include "../../elems/mainWindow/keyboard/channel.h"
 #include "midiOutputMidiCh.h"
 
 

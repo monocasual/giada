@@ -32,7 +32,7 @@
 #include "../../utils/log.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
-#include "ge_keyboard.h"
+#include "mainWindow/keyboard/keyboard.h"
 #include "muteEditor.h"
 
 

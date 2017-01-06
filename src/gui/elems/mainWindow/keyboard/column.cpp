@@ -27,42 +27,28 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/mixer.h"
-#include "../../core/conf.h"
-#include "../../core/patch_DEPR_.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../core/midiChannel.h"
-#include "../../glue/main.h"
-#include "../../glue/channel.h"
-#include "../../utils/log.h"
-#include "../../utils/string.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_warnings.h"
-#include "../elems/ge_keyboard.h"
-#include "../elems/basics/boxtypes.h"
-#include "ge_column.h"
-#include "channel.h"
+#include "../../../../core/sampleChannel.h"
+#include "../../../../glue/channel.h"
+#include "../../../../utils/log.h"
+#include "../../../../utils/string.h"
+#include "../../../dialogs/gd_warnings.h"
+#include "../../../elems/basics/boxtypes.h"
+#include "keyboard.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
+#include "column.h"
 
 
-extern Mixer 		     G_Mixer;
-extern Conf  		     G_Conf;
-extern Patch_DEPR_   G_Patch_DEPR_;
-extern gdMainWindow *mainWin;
-
-
-gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
+geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 	: Fl_Group(X, Y, W, H), parent(parent), index(index)
 {
-  /* gColumn does a bit of a mess: we pass a pointer to its parent (gKeyboard) and
-  the gColumn itself deals with the creation of another widget, outside gColumn
-  and inside gKeyboard, which handles the vertical resize bar (gResizerBar).
-  The resizer cannot stay inside gColumn: it needs a broader view on the other
-  side widgets. The view can be obtained from gKeyboard only (the upper level).
+  /* geColumn does a bit of a mess: we pass a pointer to its parent (geKeyboard) and
+  the geColumn itself deals with the creation of another widget, outside geColumn
+  and inside geKeyboard, which handles the vertical resize bar (gResizerBar).
+  The resizer cannot stay inside geColumn: it needs a broader view on the other
+  side widgets. The view can be obtained from geKeyboard only (the upper level).
   Unfortunately, parent() can be NULL: at this point (i.e the constructor)
-  gColumn is still detached from any parent. We use a custom gKeyboard *parent
+  geColumn is still detached from any parent. We use a custom geKeyboard *parent
   instead. */
 
 	begin();
@@ -80,7 +66,7 @@ gColumn::gColumn(int X, int Y, int W, int H, int index, gKeyboard *parent)
 /* -------------------------------------------------------------------------- */
 
 
-gColumn::~gColumn()
+geColumn::~geColumn()
 {
   /* FIXME - this could actually cause a memory leak. resizer is
   just removed, not deleted. But we cannot delete it right now. */
@@ -93,7 +79,7 @@ gColumn::~gColumn()
 
 
 
-int gColumn::handle(int e)
+int geColumn::handle(int e)
 {
 	switch (e) {
 		case FL_RELEASE: {
@@ -113,7 +99,7 @@ int gColumn::handle(int e)
 			bool fails = false;
 			int result = 0;
 			for (unsigned i=0; i<paths.size(); i++) {
-				gu_log("[gColumn::handle] loading %s...\n", paths.at(i).c_str());
+				gu_log("[geColumn::handle] loading %s...\n", paths.at(i).c_str());
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
 				result = glue_loadChannel(c, gu_stripFileUrl(paths.at(i)).c_str());
 				if (result != SAMPLE_LOADED_OK) {
@@ -141,7 +127,7 @@ int gColumn::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::resize(int X, int Y, int W, int H)
+void geColumn::resize(int X, int Y, int W, int H)
 {
   /* resize all children */
 
@@ -164,7 +150,7 @@ void gColumn::resize(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::refreshChannels()
+void geColumn::refreshChannels()
 {
 	for (int i=1; i<children(); i++)
 		((geChannel*) child(i))->refresh();
@@ -174,7 +160,7 @@ void gColumn::refreshChannels()
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::draw()
+void geColumn::draw()
 {
 	fl_color(fl_rgb_color(27, 27, 27));
 	fl_rectf(x(), y(), w(), h());
@@ -192,13 +178,13 @@ void gColumn::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::cb_addChannel(Fl_Widget *v, void *p) { ((gColumn*)p)->__cb_addChannel(); }
+void geColumn::cb_addChannel(Fl_Widget *v, void *p) { ((geColumn*)p)->__cb_addChannel(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geChannel *gColumn::addChannel(Channel *ch)
+geChannel *geColumn::addChannel(Channel *ch)
 {
 	int currentY = y() + children() * 24;
 	geChannel *gch = NULL;
@@ -218,7 +204,7 @@ geChannel *gColumn::addChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::deleteChannel(geChannel *gch)
+void geColumn::deleteChannel(geChannel *gch)
 {
 	gch->hide();
 	remove(gch);
@@ -226,7 +212,7 @@ void gColumn::deleteChannel(geChannel *gch)
 
 	/* reposition all other channels and resize this group */
 	/** TODO
-	 * reposition is useless when called by gColumn::clear(). Add a new
+	 * reposition is useless when called by geColumn::clear(). Add a new
 	 * parameter to skip the operation */
 
 	for (int i=0; i<children(); i++) {
@@ -241,9 +227,9 @@ void gColumn::deleteChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::__cb_addChannel()
+void geColumn::__cb_addChannel()
 {
-	gu_log("[gColumn::__cb_addChannel] index = %d\n", index);
+	gu_log("[geColumn::__cb_addChannel] index = %d\n", index);
 	int type = openTypeMenu();
 	if (type)
 		glue_addChannel(index, type);
@@ -253,7 +239,7 @@ void gColumn::__cb_addChannel()
 /* -------------------------------------------------------------------------- */
 
 
-int gColumn::openTypeMenu()
+int geColumn::openTypeMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
 		{"Sample channel"},
@@ -281,7 +267,7 @@ int gColumn::openTypeMenu()
 /* -------------------------------------------------------------------------- */
 
 
-void gColumn::clear(bool full)
+void geColumn::clear(bool full)
 {
 	if (full)
 		Fl_Group::clear();
@@ -297,7 +283,7 @@ void gColumn::clear(bool full)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *gColumn::getChannel(int i)
+Channel *geColumn::getChannel(int i)
 {
   geChannel *gch = (geChannel*) child(i);
   if (gch->type == CHANNEL_SAMPLE)

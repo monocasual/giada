@@ -35,9 +35,10 @@
 #include <FL/Fl.H>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
-#include "../gui/elems/ge_keyboard.h"
-#include "../gui/elems/channel.h"
-#include "../gui/elems/sampleChannel.h"
+#include "../gui/elems/mainWindow/mainTransport.h"
+#include "../gui/elems/mainWindow/keyboard/keyboard.h"
+#include "../gui/elems/mainWindow/keyboard/channel.h"
+#include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
 #include "../core/recorder.h"
@@ -221,7 +222,7 @@ void glue_startActionRec(bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->controller->updateRecAction(1);
+		G_MainWin->mainTransport->updateRecAction(1);
 		Fl::unlock();
 	}
 }
@@ -249,7 +250,7 @@ void glue_stopActionRec(bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->controller->updateRecAction(0);
+		G_MainWin->mainTransport->updateRecAction(0);
 		Fl::unlock();
 	}
 
@@ -280,7 +281,7 @@ int glue_startInputRec(bool gui)
 
 	if (!mh_startInputRec()) {
 	  Fl::lock();
-	  G_MainWin->controller->updateRecInput(0);  // set it off, anyway
+	  G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
 		Fl::unlock();
 		return false;
 	}
@@ -290,7 +291,7 @@ int glue_startInputRec(bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->controller->updateRecInput(1);
+		G_MainWin->mainTransport->updateRecInput(1);
 		Fl::unlock();
 	}
 
@@ -326,7 +327,7 @@ int glue_stopInputRec(bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->controller->updateRecInput(0);
+		G_MainWin->mainTransport->updateRecInput(0);
 		Fl::unlock();
 	}
 

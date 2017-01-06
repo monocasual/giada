@@ -27,16 +27,17 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/gui.h"
-#include "../../core/graphics.h"
-#include "../../core/sampleChannel.h"
-#include "../../core/const.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "basics/boxtypes.h"
-#include "ge_modeBox.h"
+#include <FL/fl_draw.H>
+#include "../../../../utils/gui.h"
+#include "../../../../core/graphics.h"
+#include "../../../../core/sampleChannel.h"
+#include "../../../../core/const.h"
+#include "../../basics/boxtypes.h"
+#include "channelMode.h"
 
 
-gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
+geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
+  const char *L)
   : Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {
   box(G_CUSTOM_BORDER_BOX);
@@ -58,7 +59,7 @@ gModeBox::gModeBox(int x, int y, int w, int h, SampleChannel *ch, const char *L)
 /* -------------------------------------------------------------------------- */
 
 
-void gModeBox::draw() {
+void geChannelMode::draw() {
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);    // border
   switch (ch->mode) {
     case LOOP_BASIC:
@@ -92,13 +93,13 @@ void gModeBox::draw() {
 /* -------------------------------------------------------------------------- */
 
 
-void gModeBox::cb_changeMode(Fl_Widget *v, void *p) { ((gModeBox*)v)->__cb_changeMode((intptr_t)p); }
+void geChannelMode::cb_changeMode(Fl_Widget *v, void *p) { ((geChannelMode*)v)->__cb_changeMode((intptr_t)p); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gModeBox::__cb_changeMode(int mode)
+void geChannelMode::__cb_changeMode(int mode)
 {
   ch->mode = mode;
 

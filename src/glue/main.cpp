@@ -35,10 +35,13 @@
 #include <cmath>
 #include "../gui/elems/ge_waveform.h"
 #include "../gui/elems/ge_mixed.h"
-#include "../gui/elems/channel.h"
-#include "../gui/elems/sampleChannel.h"
 #include "../gui/elems/ge_waveTools.h"
-#include "../gui/elems/ge_keyboard.h"
+#include "../gui/elems/mainWindow/mainTransport.h"
+#include "../gui/elems/mainWindow/mainIO.h"
+#include "../gui/elems/mainWindow/mainTimer.h"
+#include "../gui/elems/mainWindow/keyboard/channel.h"
+#include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_editor.h"
 #include "../gui/dialogs/gd_warnings.h"
@@ -78,7 +81,7 @@ void glue_setBpm(const char *v1, const char *v2)
 
   if (G_Mixer.recording)
     return;
-    
+
 	char  buf[6];
 	float value = atof(v1) + (atof(v2)/10);
 	if (value < 20.0f)	{
@@ -101,7 +104,7 @@ void glue_setBpm(const char *v1, const char *v2)
 	G_Recorder.updateBpm(old_bpm, value, G_Mixer.quanto);
 	gu_refreshActionEditor();
 
-	G_MainWin->timing->setBpm(buf);
+	G_MainWin->mainTimer->setBpm(buf);
 	gu_log("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
 }
 
@@ -155,7 +158,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 		//	G_Recorder.shrink(G_Mixer.totalFrames);
 	}
 
-	G_MainWin->timing->setMeter(G_Mixer.beats, G_Mixer.bars);
+	G_MainWin->mainTimer->setMeter(G_Mixer.beats, G_Mixer.bars);
 	gu_refreshActionEditor();  // in case the action editor is open
 }
 
@@ -189,7 +192,7 @@ void glue_startSeq(bool gui)
 
 	if (!gui) {
     Fl::lock();
-    G_MainWin->controller->updatePlay(1);
+    G_MainWin->mainTransport->updatePlay(1);
     Fl::unlock();
   }
 }
@@ -216,7 +219,7 @@ void glue_stopSeq(bool gui)
 	if (G_Recorder.active) {
 		G_Recorder.active = false;
     Fl::lock();
-	  G_MainWin->controller->updateRecAction(0);
+	  G_MainWin->mainTransport->updateRecAction(0);
 	  Fl::unlock();
 	}
 
@@ -226,13 +229,13 @@ void glue_stopSeq(bool gui)
 	if (G_Mixer.recording) {
 		mh_stopInputRec();
     Fl::lock();
-	  G_MainWin->controller->updateRecInput(0);
+	  G_MainWin->mainTransport->updateRecInput(0);
 	  Fl::unlock();
 	}
 
 	if (!gui) {
     Fl::lock();
-	  G_MainWin->controller->updatePlay(0);
+	  G_MainWin->mainTransport->updatePlay(0);
 	  Fl::unlock();
   }
 }
@@ -331,7 +334,7 @@ void glue_setOutVol(float v, bool gui)
 	G_Mixer.outVol = v;
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->inOut->setOutVol(v);
+		G_MainWin->mainIO->setOutVol(v);
 		Fl::unlock();
 	}
 }
@@ -345,7 +348,7 @@ void glue_setInVol(float v, bool gui)
 	G_Mixer.inVol = v;
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->inOut->setInVol(v);
+		G_MainWin->mainIO->setInVol(v);
 		Fl::unlock();
 	}
 }
@@ -408,7 +411,7 @@ void glue_startStopMetronome(bool gui)
 	G_Mixer.metronome = !G_Mixer.metronome;
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->controller->updateMetronome(G_Mixer.metronome);
+		G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
 		Fl::unlock();
 	}
 }

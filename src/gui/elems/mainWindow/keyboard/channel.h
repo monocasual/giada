@@ -122,7 +122,7 @@ public:
 	class Channel *ch;
 
 	class gButton         *button;
-	class gStatus         *status;
+	class geChannelStatus *status;
 	class gClick 	        *arm;
 	class geChannelButton *mainButton;
 	class gClick 	        *mute;

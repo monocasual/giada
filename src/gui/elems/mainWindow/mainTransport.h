@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_sampleChannel
+ * mainTransport
  *
  * -----------------------------------------------------------------------------
  *
@@ -27,55 +27,43 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_SAMPLE_CHANNEL_H
-#define GE_SAMPLE_CHANNEL_H
+#ifndef GE_MAIN_TRANSPORT_H
+#define GE_MAIN_TRANSPORT_H
 
 
-#include "channel.h"
-#include "channelButton.h"
+#include <FL/Fl_Group.H>
 
 
-class geSampleChannel : public geChannel
+class geMainTransport : public Fl_Group
 {
 private:
 
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_readActions   (Fl_Widget *v, void *p);
+	class gClick *rewind;
+	class gClick *play;
+	class gClick *recAction;
+	class gClick *recInput;
+	class gClick *metronome;
 
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
+	static void cb_rewind   (Fl_Widget *v, void *p);
+	static void cb_play     (Fl_Widget *v, void *p);
+	static void cb_recAction(Fl_Widget *v, void *p);
+	static void cb_recInput (Fl_Widget *v, void *p);
+	static void cb_metronome(Fl_Widget *v, void *p);
+
+	inline void __cb_rewind   ();
+	inline void __cb_play     ();
+	inline void __cb_recAction();
+	inline void __cb_recInput ();
+	inline void __cb_metronome();
 
 public:
 
-	geSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
+	geMainTransport(int x, int y);
 
-	void reset   ();
-	void update  ();
-	void refresh ();
-	void resize  (int x, int y, int w, int h);
-
-	/* show/hideActionButton
-	Adds or removes 'R' button when actions are available. */
-
-	void showActionButton();
-	void hideActionButton();
-
-	class gModeBox *modeBox;
-	class gClick 	 *readActions;
+	void updatePlay     (int v);
+	void updateMetronome(int v);
+	void updateRecInput (int v);
+	void updateRecAction(int v);
 };
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class geSampleChannelButton : public geChannelButton
-{
-public:
-	geSampleChannelButton(int x, int y, int w, int h, const char *l=0);
-	int handle(int e);
-};
-
 
 #endif
