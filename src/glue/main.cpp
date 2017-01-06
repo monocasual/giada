@@ -74,6 +74,11 @@ extern PluginHost    G_PluginHost;
 
 void glue_setBpm(const char *v1, const char *v2)
 {
+  /* Never change this stuff while recording audio */
+
+  if (G_Mixer.recording)
+    return;
+    
 	char  buf[6];
 	float value = atof(v1) + (atof(v2)/10);
 	if (value < 20.0f)	{
@@ -106,7 +111,12 @@ void glue_setBpm(const char *v1, const char *v2)
 
 void glue_setBeats(int beats, int bars, bool expand)
 {
-	/* temp vars to store old data (they are necessary) */
+  /* Never change this stuff while recording audio */
+
+  if (G_Mixer.recording)
+    return;
+
+	/* Temp vars to store old data (they are necessary) */
 
 	int      oldvalue = G_Mixer.beats;
 	unsigned oldfpb		= G_Mixer.totalFrames;
