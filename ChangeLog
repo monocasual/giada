@@ -20,7 +20,9 @@
 - Decouple Recorder from any global variable
 - Better source code organization
 - Make plugin creation more robust
+- More source code reorganization
 - Fix crash on clicking scrollbar arrows (GitHub #53)
+- Fix crash when doubling/dividing length while recording (GitHub #110)
 
 
 0.13.1 --- 2016 . 11 . 16
