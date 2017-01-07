@@ -63,6 +63,11 @@ public:
 	void setBpm(const char *v);
 	void setBpm(float v);
 	void setMeter(int beats, int bars);
+
+  /* setLock
+  Locks bpm, beter and multipliers. Used during audio recordings. */
+
+  void setLock(bool v);
 };
 
 

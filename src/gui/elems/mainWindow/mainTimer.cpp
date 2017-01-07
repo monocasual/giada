@@ -152,6 +152,26 @@ void geMainTimer::setBpm(float v)
 /* -------------------------------------------------------------------------- */
 
 
+void geMainTimer::setLock(bool v)
+{
+  if (v) {
+    bpm->deactivate();
+    meter->deactivate();
+    multiplier->deactivate();
+    divider->deactivate();
+  }
+  else {
+    bpm->activate();
+    meter->activate();
+    multiplier->activate();
+    divider->activate();
+  }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geMainTimer::setMeter(int beats, int bars)
 {
 	char buf[8];

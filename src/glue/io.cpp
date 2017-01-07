@@ -36,6 +36,7 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/elems/mainWindow/mainTransport.h"
+#include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
@@ -289,11 +290,11 @@ int glue_startInputRec(bool gui)
 	if (!G_Mixer.running)
 		glue_startSeq(false); // update gui anyway
 
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updateRecInput(1);
-		Fl::unlock();
-	}
+  Fl::lock();
+    if (!gui)
+		  G_MainWin->mainTransport->updateRecInput(1);
+    G_MainWin->mainTimer->setLock(true);
+  Fl::unlock();
 
   /* Update sample name inside sample channels' main button. This is useless for
   midi channel, but let's do it anyway. */
@@ -325,11 +326,11 @@ int glue_stopInputRec(bool gui)
 			ch->start(G_Mixer.currentFrame, true, G_Mixer.quantize, G_Mixer.running, true, true);
 	}
 
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updateRecInput(0);
-		Fl::unlock();
-	}
+  Fl::lock();
+    if (!gui)
+		  G_MainWin->mainTransport->updateRecInput(0);
+    G_MainWin->mainTimer->setLock(false);
+  Fl::unlock();
 
 	return 1;
 }
