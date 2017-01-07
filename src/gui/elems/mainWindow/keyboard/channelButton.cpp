@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/const.h"
+#include "../../../../core/const.h"
 #include "channelButton.h"
 
 
