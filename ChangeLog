@@ -12,8 +12,8 @@
 --------------------------------------------------------------------------------
 
 
-0.13.2 ---
-- MIDI learn for plugins' parameters
+0.13.2 --- 2017 . 01 . 14
+- MIDI learn for plugins parameters
 - Toggle hidden files in File Browser
 - Fix broken compilation when build without VST support
 - Make sure PluginChooser window has a sane size
