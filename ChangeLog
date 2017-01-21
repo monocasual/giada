@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.13.3 ---
+- Strip VST folder from Git repository
+
+
 0.13.2 --- 2017 . 01 . 14
 - MIDI learn for plugins parameters
 - Toggle hidden files in File Browser
