@@ -53,7 +53,7 @@ before_script:
   # not to throw up nasty errors from JUCE modules.
 
   - ./autogen.sh
-  - ./configure CXXFLAGS='-g -O1' --target=linux --enable-vst
+  - ./configure CXXFLAGS='-g -O1' --target=linux #--enable-vst
 
 script: make && make check
 
