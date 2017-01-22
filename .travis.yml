@@ -45,9 +45,9 @@ before_script:
 
   # Download vst plugin for testing purposes
 
-  - wget http://www.discodsp.com/download/?id=18 -O bliss-linux.zip
-  - unzip bliss-linux.zip -d bliss-linux
-  - cp bliss-linux/64-bit/Bliss64Demo.so .
+  #- wget http://www.discodsp.com/download/?id=18 -O bliss-linux.zip
+  #- unzip bliss-linux.zip -d bliss-linux
+  #- cp bliss-linux/64-bit/Bliss64Demo.so .
 
   # Build Giada. Note the CFLAGS: optimization levels are set to O1 in order
   # not to throw up nasty errors from JUCE modules.
