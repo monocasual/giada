@@ -63,7 +63,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 
 	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
 
-  container = new geScroll(8, enable->y()+enable->h()+4, w()-16, h()-70);
+  container = new geScroll(8, enable->y()+enable->h()+4, w()-16, h()-68);
   container->begin();
 
     addChannelLearners();
@@ -73,10 +73,18 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 
   container->end();
 
-	ok = new gButton(w()-88, container->y()+container->h()+8, 80, 20, "Close");
-	ok->callback(cb_close, (void*)this);
+  Fl_Group *groupButtons = new Fl_Group(8, container->y()+container->h()+8, container->w(), 20);
+  groupButtons->begin();
 
-	enable->value(ch->midiIn);
+    gBox *spacer = new gBox(groupButtons->x(), groupButtons->y(), 100, 20); 	// spacer window border <-> buttons
+	  ok = new gButton(w()-88, groupButtons->y(), 80, 20, "Close");
+
+  groupButtons->resizable(spacer);
+  groupButtons->end();
+
+  ok->callback(cb_close, (void*)this);
+
+  enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
 
   resizable(container);
