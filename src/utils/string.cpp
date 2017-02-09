@@ -62,6 +62,7 @@ string gu_getRealPath(const string &path)
 
 string gu_itoa(int i)
 {
+    // TODO - use std::to_string -> http://stackoverflow.com/questions/191757/how-to-concatenate-a-stdstring-and-an-int?rq=1
 	std::stringstream out;
 	out << i;
 	return out.str();
