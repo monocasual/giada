@@ -254,7 +254,7 @@ if OSX
 # -ObjC++: Juce requires to build some Objective C code
 # -Wno-unknown-pragmas: shut up Juce even more
 giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h
-giada_CXXFLAGS += -ObjC++ -Wno-unknown-pragmas
+giada_CXXFLAGS += -ObjC++ -Wno-unknown-pragmas -Wno-auto-var-id
 giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
 	-lsamplerate -ljansson
 giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
