@@ -108,7 +108,7 @@ AC_LANG_POP
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
-	[RtMidi.h],
+	[rtmidi/RtMidi.h],
 	[],
 	[AC_MSG_ERROR([library 'rtMidi' not found!])]
 )

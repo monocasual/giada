@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include "../utils/log.h"
 #include "../glue/channel.h"
 #include "../glue/main.h"

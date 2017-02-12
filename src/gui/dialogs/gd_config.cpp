@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include <FL/Fl_Tabs.H>
 #include "../../core/conf.h"
 #include "../../core/midiMapConf.h"
