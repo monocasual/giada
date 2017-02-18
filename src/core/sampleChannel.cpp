@@ -53,24 +53,24 @@ extern KernelAudio G_KernelAudio;
 SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
 		frameRewind      (-1),
-		wave             (NULL),
+		wave             (nullptr),
 		tracker          (0),
 		begin            (0),
 		end              (0),
 		pitch            (G_DEFAULT_PITCH),
-		boost            (1.0f),
-		mode             (DEFAULT_CHANMODE),
+		boost            (G_DEFAULT_BOOST),
+		mode             (G_DEFAULT_CHANMODE),
 		qWait	           (false),
 		fadeinOn         (false),
 		fadeinVol        (1.0f),
 		fadeoutOn        (false),
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
-		fadeoutStep      (DEFAULT_FADEOUT_STEP),
+		fadeoutStep      (G_DEFAULT_FADEOUT_STEP),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {
-	rsmp_state = src_new(SRC_LINEAR, 2, NULL);
+	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
 	pChan      = (float *) malloc(G_KernelAudio.realBufsize * 2 * sizeof(float));
 }
 
@@ -160,8 +160,8 @@ void SampleChannel::calcVolumeEnv(int frame)
 {
 	/* method: check this frame && next frame, then calculate delta */
 
-	Recorder::action *a0 = NULL;
-	Recorder::action *a1 = NULL;
+	Recorder::action *a0 = nullptr;
+	Recorder::action *a1 = nullptr;
 	int res;
 
 	/* get this action on frame 'frame'. It's unlikely that the action
@@ -274,7 +274,7 @@ void SampleChannel::rewind()
 {
 	/* rewind LOOP_ANY or SINGLE_ANY only if it's in read-record-mode */
 
-	if (wave != NULL) {
+	if (wave != nullptr) {
 		if ((mode & LOOP_ANY) || (recStatus == REC_READING && (mode & SINGLE_ANY)))
 			reset(0);  // rewind is user-generated events, always on frame 0
 	}
@@ -321,7 +321,7 @@ void SampleChannel::parseAction(Recorder::action *a, int localFrame,
 
 void SampleChannel::sum(int frame, bool running)
 {
-	if (wave == NULL || status & ~(STATUS_PLAY | STATUS_ENDING))
+	if (wave == nullptr || status & ~(STATUS_PLAY | STATUS_ENDING))
 		return;
 
 	if (frame != frameRewind) {
@@ -434,7 +434,7 @@ void SampleChannel::sum(int frame, bool running)
 
 void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 {
-	if (wave == NULL)
+	if (wave == nullptr)
 		return;
 
 	if (mode & LOOP_ANY) {
@@ -601,10 +601,10 @@ void SampleChannel::unsetMute(bool internal)
 
 void SampleChannel::calcFadeoutStep()
 {
-	if (end - tracker < (1 / DEFAULT_FADEOUT_STEP) * 2)
+	if (end - tracker < (1 / G_DEFAULT_FADEOUT_STEP) * 2)
 		fadeoutStep = ceil((end - tracker) / volume) * 2; /// or volume_i ???
 	else
-		fadeoutStep = DEFAULT_FADEOUT_STEP;
+		fadeoutStep = G_DEFAULT_FADEOUT_STEP;
 }
 
 
@@ -689,9 +689,14 @@ void SampleChannel::empty()
 	status = STATUS_OFF;
 	if (wave) {
 		delete wave;
-		wave = NULL;
+		wave = nullptr;
 	}
-	status = STATUS_EMPTY;
+  begin   = 0;
+  end     = 0;
+  tracker = 0;
+	status  = STATUS_EMPTY;
+  volume  = G_DEFAULT_VOL;
+  boost   = G_DEFAULT_BOOST;
 	sendMidiLplay();
 }
 
@@ -736,7 +741,7 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 
 void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
-	/* If armed and inbuffer is not null (i.e. input device available), copy input
+	/* If armed and inbuffer is not nullptr (i.e. input device available), copy input
 	buffer to vChan: this enables the live recording mode. The vChan will be
 	overwritten later by PluginHost::processStack, so that you would record "clean"
 	audio (i.e. not plugin-processed). */
@@ -761,7 +766,7 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 
 void SampleChannel::kill(int frame)
 {
-	if (wave != NULL && status != STATUS_OFF) {
+	if (wave != nullptr && status != STATUS_OFF) {
 		if (mute || mute_i || (status == STATUS_WAIT && mode & LOOP_ANY))
 			hardStop(frame);
 		else
@@ -899,8 +904,8 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
 		setPitch(patch->getPitch(i));
 	}
 	else {
-		// volume = DEFAULT_VOL;
-		// mode   = DEFAULT_CHANMODE;
+		// volume = G_DEFAULT_VOL;
+		// mode   = G_DEFAULT_CHANMODE;
 		// status = STATUS_WRONG;
 		// key    = 0;
 
@@ -960,7 +965,7 @@ int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
 
 bool SampleChannel::canInputRec()
 {
-	return wave == NULL && armed;
+	return wave == nullptr && armed;
 }
 
 
@@ -1049,7 +1054,7 @@ int SampleChannel::writePatch(int i, bool isProject, Patch *patch)
 	int pchIndex = Channel::writePatch(i, isProject, patch);
 	Patch::channel_t *pch = &patch->channels.at(pchIndex);
 
-	if (wave != NULL) {
+	if (wave != nullptr) {
 		pch->samplePath = wave->pathfile;
 		if (isProject)
 			pch->samplePath = gu_basename(wave->pathfile);  // make it portable
