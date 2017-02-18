@@ -218,7 +218,7 @@ int KernelAudio::stopStream()
 string KernelAudio::getDeviceName(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).name;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).name;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] invalid device ID = %d\n", dev);
@@ -254,7 +254,7 @@ unsigned KernelAudio::getMaxInChans(int dev)
 	if (dev == -1) return 0;
 
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).inputChannels;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).inputChannels;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] Unable to get input channels\n");
@@ -269,7 +269,7 @@ unsigned KernelAudio::getMaxInChans(int dev)
 unsigned KernelAudio::getMaxOutChans(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).outputChannels;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).outputChannels;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] Unable to get output channels\n");
@@ -284,7 +284,7 @@ unsigned KernelAudio::getMaxOutChans(unsigned dev)
 bool KernelAudio::isProbed(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).probed;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).probed;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -298,7 +298,7 @@ bool KernelAudio::isProbed(unsigned dev)
 unsigned KernelAudio::getDuplexChans(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).duplexChannels;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).duplexChannels;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -312,7 +312,7 @@ unsigned KernelAudio::getDuplexChans(unsigned dev)
 bool KernelAudio::isDefaultIn(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultInput;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).isDefaultInput;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -326,7 +326,7 @@ bool KernelAudio::isDefaultIn(unsigned dev)
 bool KernelAudio::isDefaultOut(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).isDefaultOutput;
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).isDefaultOutput;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -340,7 +340,7 @@ bool KernelAudio::isDefaultOut(unsigned dev)
 int KernelAudio::getTotalFreqs(unsigned dev)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.size();
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).sampleRates.size();
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -354,7 +354,7 @@ int KernelAudio::getTotalFreqs(unsigned dev)
 int	KernelAudio::getFreq(unsigned dev, int i)
 {
 	try {
-		return ((RtAudio::DeviceInfo) system->getDeviceInfo(dev)).sampleRates.at(i);
+		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).sampleRates.at(i);
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -428,7 +428,7 @@ int KernelAudio::jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 
 jack_client_t *KernelAudio::jackGetHandle()
 {
-	return (jack_client_t*) system->rtapi_->__HACK__getJackClient();
+	return static_cast<jack_client_t*>(system->rtapi_->__HACK__getJackClient());
 }
 
 
@@ -437,10 +437,8 @@ jack_client_t *KernelAudio::jackGetHandle()
 
 void KernelAudio::jackStart()
 {
-	if (api == SYS_API_JACK) {
-		jack_client_t *client = jackGetHandle();
-		jack_transport_start(client);
-	}
+	if (api == SYS_API_JACK)
+		jack_transport_start(jackGetHandle());
 }
 
 
@@ -449,10 +447,8 @@ void KernelAudio::jackStart()
 
 void KernelAudio::jackStop()
 {
-	if (api == SYS_API_JACK) {
-		jack_client_t *client = jackGetHandle();
-		jack_transport_stop(client);
-	}
+	if (api == SYS_API_JACK)
+		jack_transport_stop(jackGetHandle());
 }
 
 
@@ -461,8 +457,7 @@ void KernelAudio::jackStop()
 
 void KernelAudio::jackSetSyncCb()
 {
-	jack_client_t *client = jackGetHandle();
-	jack_set_sync_callback(client, jackSyncCb, nullptr);
+	jack_set_sync_callback(jackGetHandle(), jackSyncCb, nullptr);
 	//jack_set_sync_timeout(client, 8);
 }
 
