@@ -29,6 +29,7 @@
 
 #include <FL/fl_draw.H>
 #include "../../core/conf.h"
+#include "../../core/clock.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../../glue/main.h"
@@ -41,6 +42,7 @@
 
 extern gdMainWindow *G_MainWin;
 extern Mixer         G_Mixer;
+extern Clock         G_Clock;
 extern Conf	         G_Conf;
 extern Recorder      G_Recorder;
 
@@ -74,7 +76,7 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
       - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
       if ((action->chan != pParent->chan->index)                            ||
-          (G_Recorder.frames.at(i) > G_Mixer.totalFrames)                    ||
+          (G_Recorder.frames.at(i) > G_Clock.getTotalFrames())              ||
           (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
           (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
           (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))

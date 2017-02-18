@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "../utils/log.h"
 #include "wave.h"
 #include "recorder.h"
@@ -34,6 +35,7 @@
 #include "patch_DEPR_.h"
 #include "conf.h"
 #include "mixerHandler.h"
+#include "clock.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
@@ -53,10 +55,13 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-Mixer::Mixer()
-	: vChanInput(NULL),
-		vChanInToOut(NULL)
-{}
+Mixer::Mixer(Clock *clock)
+	: vChanInput  (nullptr),
+		vChanInToOut(nullptr),
+    clock       (clock)
+{
+  assert(clock != nullptr);
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -92,18 +97,11 @@ float Mixer::tick[TICKSIZE] = {
 
 void Mixer::init()
 {
-	quanto      = 1;
 	docross     = false;
 	rewindWait  = false;
-	running     = false;
 	recording   = false;
 	ready       = true;
 	waitRec     = 0;
-	currentFrame = 0;
-	bpm 		    = G_DEFAULT_BPM;
-	bars		    = G_DEFAULT_BARS;
-	beats		    = G_DEFAULT_BEATS;
-	quantize    = G_DEFAULT_QUANTIZE;
 	metronome   = false;
 
 	tickTracker = 0;
@@ -117,27 +115,18 @@ void Mixer::init()
 	peakIn	     = 0.0f;
 	inputTracker = 0;
 
-	actualBeat    = 0;
-
-	midiTCstep    = 0;
-	midiTCrate    = (G_Conf.samplerate / G_Conf.midiTCfps) * 2;  // dealing with stereo vals
-	midiTCframes  = 0;
-	midiTCseconds = 0;
-	midiTCminutes = 0;
-	midiTChours   = 0;
-
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
 	/** TODO - set kernelAudio::realBufsize * 2 as private member */
 
-	vChanInput   = NULL;
-	vChanInToOut = (float *) malloc(G_KernelAudio.realBufsize * 2 * sizeof(float));
+	vChanInput   = nullptr;
+	vChanInToOut = static_cast<float*>(malloc(G_KernelAudio.realBufsize * 2 * sizeof(float)));
 
-	pthread_mutex_init(&mutex_recs, NULL);
-	pthread_mutex_init(&mutex_chans, NULL);
-	pthread_mutex_init(&mutex_plugins, NULL);
+	pthread_mutex_init(&mutex_recs, nullptr);
+	pthread_mutex_init(&mutex_chans, nullptr);
+	pthread_mutex_init(&mutex_plugins, nullptr);
 
-	updateFrameBars();
+	clock->updateFrameBars();
 	rewind();
 }
 
@@ -236,98 +225,9 @@ Channel *Mixer::getChannelByIndex(int index)
 		if (channels.at(i)->index == index)
 			return channels.at(i);
 	gu_log("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
-	return NULL;
+	return nullptr;
 }
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void Mixer::sendMIDIsync()
-{
-	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
-		if (currentFrame % (framesPerBeat/24) == 0)
-			G_KernelMidi.send(MIDI_CLOCK, -1, -1);
-	}
-	else
-	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
-
-		/* check if a new timecode frame has passed. If so, send MIDI TC
-		 * quarter frames. 8 quarter frames, divided in two branches:
-		 * 1-4 and 5-8. We check timecode frame's parity: if even, send
-		 * range 1-4, if odd send 5-8. */
-
-		if (currentFrame % midiTCrate == 0) {
-
-			/* frame low nibble
-			 * frame high nibble
-			 * seconds low nibble
-			 * seconds high nibble */
-
-			if (midiTCframes % 2 == 0) {
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
-			}
-
-			/* minutes low nibble
-			 * minutes high nibble
-			 * hours low nibble
-			 * hours high nibble SMPTE frame rate */
-
-			else {
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
-				G_KernelMidi.send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
-			}
-
-			midiTCframes++;
-
-			/* check if total timecode frames are greater than timecode fps:
-			 * if so, a second has passed */
-
-			if (midiTCframes > G_Conf.midiTCfps) {
-				midiTCframes = 0;
-				midiTCseconds++;
-				if (midiTCseconds >= 60) {
-					midiTCminutes++;
-					midiTCseconds = 0;
-					if (midiTCminutes >= 60) {
-						midiTChours++;
-						midiTCminutes = 0;
-					}
-				}
-				//gu_log("%d:%d:%d:%d\n", midiTChours, midiTCminutes, midiTCseconds, midiTCframes);
-			}
-		}
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Mixer::sendMIDIrewind()
-{
-	midiTCframes  = 0;
-	midiTCseconds = 0;
-	midiTCminutes = 0;
-	midiTChours   = 0;
-
-	/* For cueing the slave to a particular start point, Quarter Frame
-	 * messages are not used. Instead, an MTC Full Frame message should
-	 * be sent. The Full Frame is a SysEx message that encodes the entire
-	 * SMPTE time in one message */
-
-	if (G_Conf.midiSync == MIDI_SYNC_MTC_M) {
-		G_KernelMidi.send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
-		G_KernelMidi.send(0x01, 0x01, 0x00);        // hours 0
-		G_KernelMidi.send(0x00, 0x00, 0x00);        // mins, secs, frames 0
-		G_KernelMidi.send(MIDI_EOX, -1, -1);        // end of sysex
-	}
-}
 
 /* -------------------------------------------------------------------------- */
 
@@ -347,8 +247,8 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 	if (!ready)
 		return 0;
 
-	float *outBuf = (float *) _outBuf;
-	float *inBuf  = G_KernelAudio.inputEnabled ? (float *) _inBuf : nullptr;
+	float *outBuf = static_cast<float*>(_outBuf);
+	float *inBuf  = G_KernelAudio.inputEnabled ? static_cast<float*>(_inBuf) : nullptr;
 	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator
@@ -357,15 +257,15 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 
 	for (unsigned j=0; j<bufferSize; j+=2) {
 		processLineIn(inBuf, j);
-		if (running) {
+		if (clock->isRunning()) {
 			lineInRec(inBuf, j);
 			doQuantize(j);
 			testBar(j);
 			testFirstBeat(j);
 			readActions(j);
-			currentFrame += 2;
+			clock->incrCurrentFrame();
 			testLastBeat();  // this test must be the last one
-			sendMIDIsync();
+			clock->sendMIDIsync();
 		}
 		sumChannels(j);
 	}
@@ -389,58 +289,19 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 /* -------------------------------------------------------------------------- */
 
 
-void Mixer::updateFrameBars()
-{
-	/* seconds ....... total time of play (in seconds) of the whole
-	 *                 sequencer. 60 / bpm == how many seconds lasts one bpm
-	 * totalFrames ... number of frames in the whole sequencer, x2 because
-	 * 								 it's stereo
-	 * framesPerBar .. n. of frames within a bar
-	 * framesPerBeat . n. of frames within a beat */
-
-	float seconds     = (60.0f / bpm) * beats;
-	totalFrames       = G_Conf.samplerate * seconds * 2;
-	framesPerBar      = totalFrames / bars;
-	framesPerBeat     = totalFrames / beats;
-	framesInSequencer = framesPerBeat * MAX_BEATS;
-
-	/* big troubles if frames are odd. */
-
-	if (totalFrames % 2 != 0)
-		totalFrames--;
-	if (framesPerBar % 2 != 0)
-		framesPerBar--;
-	if (framesPerBeat % 2 != 0)
-		framesPerBeat--;
-
-	updateQuanto();
-
-	/* realloc input virtual channel, if not NULL. TotalFrames is changed! */
-
-	if (vChanInput != NULL)
-		free(vChanInput);
-	vChanInput = (float*) malloc(totalFrames * sizeof(float));
-	if (!vChanInput)
-		gu_log("[Mixer] vChanInput realloc error!\n");
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 int Mixer::close()
 {
-	running = false;
+	clock->stop();
 	while (channels.size() > 0)
 		deleteChannel(channels.at(0));
 
 	if (vChanInput) {
 		free(vChanInput);
-		vChanInput = NULL;
+		vChanInput = nullptr;
 	}
 	if (vChanInToOut) {
 		free(vChanInToOut);
-		vChanInToOut = NULL;
+		vChanInToOut = nullptr;
 	}
 	return 1;
 }
@@ -463,28 +324,10 @@ bool Mixer::isSilent()
 
 void Mixer::rewind()
 {
-	currentFrame = 0;
-	actualBeat  = 0;
-
-	if (running)
+  clock->rewind();
+	if (clock->isRunning())
 		for (unsigned i=0; i<channels.size(); i++)
 			channels.at(i)->rewind();
-
-	sendMIDIrewind();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Mixer::updateQuanto()
-{
-	/* big troubles if frames are odd. */
-
-	if (quantize != 0)
-		quanto = framesPerBeat / quantize;
-	if (quanto % 2 != 0)
-		quanto++;
 }
 
 
@@ -495,8 +338,8 @@ bool Mixer::hasLogicalSamples()
 {
 	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*)channels.at(i))->wave)
-				if (((SampleChannel*)channels.at(i))->wave->isLogical)
+			if (static_cast<SampleChannel*>(channels.at(i))->wave)
+				if (static_cast<SampleChannel*>(channels.at(i))->wave->isLogical)
 					return true;
 	return false;
 }
@@ -509,8 +352,8 @@ bool Mixer::hasEditedSamples()
 {
 	for (unsigned i=0; i<channels.size(); i++)
 		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*)channels.at(i))->wave)
-				if (((SampleChannel*)channels.at(i))->wave->isEdited)
+			if (static_cast<SampleChannel*>(channels.at(i))->wave)
+				if (static_cast<SampleChannel*>(channels.at(i))->wave->isEdited)
 					return true;
 	return false;
 }
@@ -524,11 +367,11 @@ void Mixer::mergeVirtualInput()
 	for (unsigned i=0; i<channels.size(); i++) {
 		if (channels.at(i)->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = (SampleChannel*) channels.at(i);
+		SampleChannel *ch = static_cast<SampleChannel*>(channels.at(i));
 		if (ch->armed)
-			memcpy(ch->wave->data, vChanInput, totalFrames * sizeof(float));
+			memcpy(ch->wave->data, vChanInput, clock->getTotalFrames() * sizeof(float));
 	}
-	memset(vChanInput, 0, totalFrames * sizeof(float)); // clear vchan
+	memset(vChanInput, 0, clock->getTotalFrames() * sizeof(float)); // clear vchan
 }
 
 
@@ -551,7 +394,7 @@ void Mixer::lineInRec(float *inBuf, unsigned frame)
 	vChanInput[inputTracker]   += inBuf[frame]   * inVol;
 	vChanInput[inputTracker+1] += inBuf[frame+1] * inVol;
 	inputTracker += 2;
-	if (inputTracker >= totalFrames)
+	if (inputTracker >= clock->getTotalFrames())
 		inputTracker = 0;
 }
 
@@ -586,11 +429,12 @@ void Mixer::readActions(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_recs);
 	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		if (G_Recorder.frames.at(i) == currentFrame) {
+		if (G_Recorder.frames.at(i) == clock->getCurrentFrame()) {
 			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 				int index   = G_Recorder.global.at(i).at(j)->chan;
 				Channel *ch = getChannelByIndex(index);
-				ch->parseAction(G_Recorder.global.at(i).at(j), frame, currentFrame, quantize, running);
+				ch->parseAction(G_Recorder.global.at(i).at(j), frame,
+          clock->getCurrentFrame(), clock->getQuantize(), clock->isRunning());
 			}
 			break;
 		}
@@ -604,18 +448,17 @@ void Mixer::readActions(unsigned frame)
 
 void Mixer::doQuantize(unsigned frame)
 {
-	if (quantize < 0 || quanto <= 0) // if quantizer disabled
-		return;
-	if (currentFrame % (quanto) != 0) // if a quanto has not passed yet
-		return;
+  /* Nothing to do if quantizer disabled or a quanto has not passed yet. */
 
+  if (clock->getQuantize() == 0 || !clock->quantoHasPassed())
+    return;
 	if (rewindWait) {
 		rewindWait = false;
 		rewind();
 	}
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size(); i++)
-		channels.at(i)->quantize(i, frame, this);  // j == localFrame
+		channels.at(i)->quantize(i, frame, this);
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -625,7 +468,7 @@ void Mixer::doQuantize(unsigned frame)
 
 void Mixer::testBar(unsigned frame)
 {
-	if (currentFrame % framesPerBar != 0 || currentFrame == 0)
+	if (!clock->isOnBar())
 		return;
 
 	if (metronome)
@@ -643,7 +486,7 @@ void Mixer::testBar(unsigned frame)
 
 void Mixer::testFirstBeat(unsigned frame)
 {
-	if (currentFrame != 0)
+	if (!clock->isOnFirstBeat())
 		return;
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)
@@ -657,23 +500,9 @@ void Mixer::testFirstBeat(unsigned frame)
 
 void Mixer::testLastBeat()
 {
-	/* if currentFrame > totalFrames the sequencer returns to frame 0,
-	 * beat 0. This must be the last operation. */
-
-	if (currentFrame > totalFrames) {
-		currentFrame = 0;
-		actualBeat  = 0;
-	}
-	else
-	if (currentFrame % framesPerBeat == 0 && currentFrame > 0) {
-		actualBeat++;
-
-		/* avoid tick and tock to overlap when a new bar has passed (which
-		 * is also a beat) */
-
-		if (metronome && !tickPlay)
-			tockPlay = true;
-	}
+  if (clock->isOnBeat())
+    if (metronome && !tickPlay)
+      tockPlay = true;
 }
 
 
@@ -685,7 +514,7 @@ void Mixer::sumChannels(unsigned frame)
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++) {
 		if (channels.at(k)->type == CHANNEL_SAMPLE)
-			((SampleChannel*)channels.at(k))->sum(frame, running);
+			static_cast<SampleChannel*>(channels.at(k))->sum(frame, clock->isRunning());
 	}
 	pthread_mutex_unlock(&mutex_chans);
 }

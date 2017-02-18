@@ -56,6 +56,7 @@
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/clock.h"
 #include "../core/kernelMidi.h"
 #include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
@@ -68,6 +69,7 @@ extern Recorder			 G_Recorder;
 extern KernelAudio   G_KernelAudio;
 extern KernelMidi    G_KernelMidi;
 extern Patch_DEPR_   G_Patch_DEPR_;
+extern Clock         G_Clock;
 extern Conf	 	   		 G_Conf;
 extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
@@ -95,17 +97,17 @@ void glue_setBpm(const char *v1, const char *v2)
 	 * because of the rounding error. So we pass the real "wrong" value to
 	 * G_Mixer and we show the nice looking (but fake) one to the GUI. */
 
-	float old_bpm = G_Mixer.bpm;
-	G_Mixer.bpm = value;
-	G_Mixer.updateFrameBars();
+	float old_bpm = G_Clock.getBpm();
+	G_Clock.setBpm(value);
+	G_Clock.updateFrameBars();
 
 	/* inform recorder and actionEditor of the change */
 
-	G_Recorder.updateBpm(old_bpm, value, G_Mixer.quanto);
+	G_Recorder.updateBpm(old_bpm, value, G_Clock.getQuanto());
 	gu_refreshActionEditor();
 
 	G_MainWin->mainTimer->setBpm(buf);
-	gu_log("[glue] Bpm changed to %s (real=%f)\n", buf, G_Mixer.bpm);
+	gu_log("[glue] Bpm changed to %s (real=%f)\n", buf, G_Clock.getBpm());
 }
 
 
@@ -121,44 +123,45 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 	/* Temp vars to store old data (they are necessary) */
 
-	int      oldvalue = G_Mixer.beats;
-	unsigned oldfpb		= G_Mixer.totalFrames;
+	int      oldvalue = G_Clock.getBeats();
+	unsigned oldfpb		= G_Clock.getTotalFrames();
 
 	if (beats > MAX_BEATS)
-		G_Mixer.beats = MAX_BEATS;
+		G_Clock.setBeats(MAX_BEATS);
 	else if (beats < 1)
-		G_Mixer.beats = 1;
+		G_Clock.setBeats(1);
 	else
-		G_Mixer.beats = beats;
+		G_Clock.setBeats(beats);
 
 	/* update bars - bars cannot be greate than beats and must be a sub
 	 * multiple of beats. If not, approximation to the nearest (and greater)
 	 * value available. */
+  /* TODO - move this to Clock*/
 
-	if (bars > G_Mixer.beats)
-		G_Mixer.bars = G_Mixer.beats;
+	if (bars > G_Clock.getBeats())
+		G_Clock.setBars(G_Clock.getBeats());
 	else if (bars <= 0)
-		G_Mixer.bars = 1;
+		G_Clock.setBars(1);
 	else if (beats % bars != 0) {
-		G_Mixer.bars = bars + (beats % bars);
-		if (beats % G_Mixer.bars != 0) // it could be an odd value, let's check it (and avoid it)
-			G_Mixer.bars = G_Mixer.bars - (beats % G_Mixer.bars);
+		G_Clock.setBars(bars + (beats % bars));
+		if (beats % G_Clock.getBars() != 0) // it could be an odd value, let's check it (and avoid it)
+			G_Clock.setBars(G_Clock.getBars() - (beats % G_Clock.getBars()));
 	}
 	else
-		G_Mixer.bars = bars;
+		G_Clock.setBars(bars);
 
-	G_Mixer.updateFrameBars();
+	G_Clock.updateFrameBars();
 
 	/* update recorded actions */
 
 	if (expand) {
-		if (G_Mixer.beats > oldvalue)
-			G_Recorder.expand(oldfpb, G_Mixer.totalFrames);
+		if (G_Clock.getBeats() > oldvalue)
+			G_Recorder.expand(oldfpb, G_Clock.getTotalFrames());
 		//else if (G_Mixer.beats < oldvalue)
 		//	G_Recorder.shrink(G_Mixer.totalFrames);
 	}
 
-	G_MainWin->mainTimer->setMeter(G_Mixer.beats, G_Mixer.bars);
+	G_MainWin->mainTimer->setMeter(G_Clock.getBeats(), G_Clock.getBars());
 	gu_refreshActionEditor();  // in case the action editor is open
 }
 
@@ -168,7 +171,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 void glue_startStopSeq(bool gui)
 {
-	G_Mixer.running ? glue_stopSeq(gui) : glue_startSeq(gui);
+	G_Clock.isRunning() ? glue_stopSeq(gui) : glue_startSeq(gui);
 }
 
 
@@ -177,7 +180,7 @@ void glue_startStopSeq(bool gui)
 
 void glue_startSeq(bool gui)
 {
-	G_Mixer.running = true;
+	G_Clock.start();
 
 	if (gui) {
 #ifdef __linux__
@@ -244,9 +247,17 @@ void glue_stopSeq(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_rewindSeq()
+void glue_rewindSeq(bool gui)
 {
 	mh_rewindSequencer();
+
+#ifdef __linux__
+
+	if (gui)
+		G_KernelAudio.jackLocate(0);
+
+#endif
+
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
 }
@@ -298,7 +309,7 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui)
 	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
 	channel in REC_ENDING status. */
 
-	if (!G_Mixer.running) {
+	if (!G_Clock.isRunning()) {
 		ch->recStatus = REC_STOPPED;
 		ch->readActions = false;
 	}
@@ -321,8 +332,7 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui)
 
 void glue_quantize(int val)
 {
-	G_Mixer.quantize = val;
-	G_Mixer.updateQuanto();
+	G_Clock.setQuantize(val);
 }
 
 
@@ -359,7 +369,7 @@ void glue_setInVol(float v, bool gui)
 
 void glue_clearAllSamples()
 {
-	G_Mixer.running = false;
+	G_Clock.stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		G_Mixer.channels.at(i)->empty();
 		G_Mixer.channels.at(i)->guiChannel->reset();
@@ -425,10 +435,10 @@ void glue_startStopMetronome(bool gui)
 
 void glue_beatsMultiply()
 {
-	glue_setBeats(G_Mixer.beats*2, G_Mixer.bars, false);
+	glue_setBeats(G_Clock.getBeats() * 2, G_Clock.getBars(), false);
 }
 
 void glue_beatsDivide()
 {
-	glue_setBeats(G_Mixer.beats/2, G_Mixer.bars, false);
+	glue_setBeats(G_Clock.getBeats() / 2, G_Clock.getBars(), false);
 }

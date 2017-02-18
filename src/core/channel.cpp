@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "../utils/log.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "channel.h"
@@ -35,6 +36,7 @@
 #include "kernelMidi.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
+#include "clock.h"
 #include "wave.h"
 #include "mixer.h"
 #include "mixerHandler.h"
@@ -48,12 +50,14 @@ extern Recorder   G_Recorder;
 extern KernelMidi G_KernelMidi;
 
 
-Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
+Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
+  Clock *clock)
 #if defined(WITH_VST)
 : pluginHost(nullptr),
 #else
 :
 #endif
+  clock          (clock),
   midiMapConf    (midiMapConf),
   bufferSize     (bufferSize),
   type           (type),
@@ -87,6 +91,8 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
   midiOutLmute   (0x0),
   midiOutLsolo   (0x0)
 {
+  assert(clock != nullptr);
+  
   vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
 		gu_log("[Channel::allocVchan] unable to alloc memory for vChan\n");

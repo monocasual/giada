@@ -27,18 +27,22 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <math.h>
 #include "../utils/log.h"
 #include "mixer.h"
 #include "patch_DEPR_.h"
 #include "sampleChannel.h"
+#include "clock.h"
 #include "recorder.h"
 
 
-Recorder::Recorder()
+Recorder::Recorder(Clock *clock)
 	: active       (false),
-	  sortedActions(false)
+	  sortedActions(false),
+    clock        (clock)
 {
+  assert(clock != nullptr);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -63,9 +67,9 @@ bool Recorder::canRec(Channel *ch, Mixer *mixer)
 	 * mixer is recording a take somewhere
 	 * channel is empty */
 
-	if (!active           ||
-		  !mixer->running   ||
-			 mixer->recording ||
+	if (!active             ||
+		  !clock->isRunning() ||
+			 mixer->recording   ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
 		)
 		return false;
@@ -571,7 +575,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 
 void Recorder::stopOverdub(Mixer *mixer)
 {
-	cmp.a2.frame  = mixer->currentFrame;
+	cmp.a2.frame  = clock->getCurrentFrame();
 	bool ringLoop = false;
 	bool nullLoop = false;
 
@@ -581,7 +585,7 @@ void Recorder::stopOverdub(Mixer *mixer)
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
 		gu_log("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, mixer->totalFrames); 	// record at the end of the sequencer
+		rec(cmp.a2.chan, cmp.a2.type, clock->getTotalFrames()); // record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {

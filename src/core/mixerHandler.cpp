@@ -27,12 +27,6 @@
  * -------------------------------------------------------------------------- */
 
 
-#if defined(__linux__)
-	#include <jack/jack.h>
-	#include <jack/intclient.h>
-	#include <jack/transport.h>
-#endif
-
 #include <vector>
 #include "../utils/fs.h"
 #include "../utils/string.h"
@@ -51,6 +45,7 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "recorder.h"
+#include "clock.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "wave.h"
@@ -60,6 +55,7 @@ extern Mixer 		   G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Conf 		   G_Conf;
+extern Clock       G_Clock;
 
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -99,7 +95,7 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 
 void mh_stopSequencer()
 {
-	G_Mixer.running = false;
+  G_Clock.stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		G_Mixer.channels.at(i)->stopBySeq(G_Conf.chansStopOnSeqHalt);
 }
@@ -141,10 +137,10 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 
 	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();
 	G_Mixer.inVol      = G_Patch_DEPR_.getInVol();
-	G_Mixer.bpm        = G_Patch_DEPR_.getBpm();
-	G_Mixer.bars       = G_Patch_DEPR_.getBars();
-	G_Mixer.beats      = G_Patch_DEPR_.getBeats();
-	G_Mixer.quantize   = G_Patch_DEPR_.getQuantize();
+	G_Clock.setBpm(G_Patch_DEPR_.getBpm());
+	G_Clock.setBars(G_Patch_DEPR_.getBars());
+	G_Clock.setBeats(G_Patch_DEPR_.getBeats());
+	G_Clock.setQuantize(G_Patch_DEPR_.getQuantize());
 	G_Mixer.metronome  = G_Patch_DEPR_.getMetronome();
 	G_Patch_DEPR_.lastTakeId = G_Patch_DEPR_.getLastTakeId();
 	G_Patch_DEPR_.samplerate = G_Patch_DEPR_.getSamplerate();
@@ -152,7 +148,7 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 	/* rewind and update frames in Mixer (it's vital) */
 
 	G_Mixer.rewind();
-	G_Mixer.updateFrameBars();
+	G_Clock.updateFrameBars();
 	G_Mixer.ready = true;
 }
 
@@ -166,10 +162,10 @@ void mh_readPatch()
 
 	G_Mixer.outVol     = G_Patch.masterVolOut;
 	G_Mixer.inVol      = G_Patch.masterVolIn;
-	G_Mixer.bpm        = G_Patch.bpm;
-	G_Mixer.bars       = G_Patch.bars;
-	G_Mixer.beats      = G_Patch.beats;
-	G_Mixer.quantize   = G_Patch.quantize;
+	G_Clock.setBpm(G_Patch.bpm);
+	G_Clock.setBars(G_Patch.bars);
+	G_Clock.setBeats(G_Patch.beats);
+	G_Clock.setQuantize(G_Patch.quantize);
 	G_Mixer.metronome  = G_Patch.metronome;
 
 #ifdef WITH_VST
@@ -182,8 +178,7 @@ void mh_readPatch()
 	/* rewind and update frames in Mixer (it's essential) */
 
 	G_Mixer.rewind();
-	G_Mixer.updateFrameBars();
-
+	G_Clock.updateFrameBars();
 	G_Mixer.ready = true;
 }
 
@@ -193,7 +188,7 @@ void mh_readPatch()
 
 void mh_rewindSequencer()
 {
-	if (G_Mixer.quantize > 0 && G_Mixer.running)   // quantize rewind
+	if (G_Clock.getQuantize() > 0 && G_Clock.isRunning())   // quantize rewind
 		G_Mixer.rewindWait = true;
 	else
 		G_Mixer.rewind();
@@ -216,7 +211,7 @@ bool mh_startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		if (!ch->allocEmpty(G_Mixer.totalFrames, G_Conf.samplerate, G_Patch.lastTakeId))
+		if (!ch->allocEmpty(G_Clock.getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
 		{
 			gu_log("[mh_startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
@@ -232,7 +227,7 @@ bool mh_startInputRec()
 		}
 
 		gu_log("[mh_startInputRec] start input recs using chan %d with size %d "
-			"frame=%d\n", ch->index, G_Mixer.totalFrames, G_Mixer.inputTracker);
+			"frame=%d\n", ch->index, G_Clock.getTotalFrames(), G_Mixer.inputTracker);
 
 		channelsReady++;
 	}
@@ -241,7 +236,7 @@ bool mh_startInputRec()
 		G_Mixer.recording = true;
 		/* start to write from the currentFrame, not the beginning */
 		/** FIXME: this should be done before wave allocation */
-		G_Mixer.inputTracker = G_Mixer.currentFrame;
+		G_Mixer.inputTracker = G_Clock.getCurrentFrame();
 		return true;
 	}
 	return false;

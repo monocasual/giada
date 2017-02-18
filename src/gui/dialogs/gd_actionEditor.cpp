@@ -33,6 +33,7 @@
 #include "../../core/mixer.h"
 #include "../../core/recorder.h"
 #include "../../core/conf.h"
+#include "../../core/clock.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../elems/actionEditor.h"
@@ -45,6 +46,7 @@
 
 
 extern Mixer G_Mixer;
+extern Clock G_Clock;
 extern Conf	 G_Conf;
 
 
@@ -59,7 +61,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	totalWidth = (int) ceilf(G_Mixer.framesInSequencer / (float) zoom);
+	totalWidth = (int) ceilf(G_Clock.getFramesInSequencer() / (float) zoom);
 
 	/* container with zoom buttons and the action type selector. Scheme of
 	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
@@ -151,7 +153,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 /* -------------------------------------------------------------------------- */
 
 
-gdActionEditor::~gdActionEditor() {
+gdActionEditor::~gdActionEditor()
+{
 	G_Conf.actionEditorX = x();
 	G_Conf.actionEditorY = y();
 	G_Conf.actionEditorW = w();
@@ -173,8 +176,8 @@ void gdActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdActionEditor*)p)->_
 /* -------------------------------------------------------------------------- */
 
 
-void gdActionEditor::__cb_zoomIn() {
-
+void gdActionEditor::__cb_zoomIn()
+{
 	/* zoom 50: empirical value, to avoid a totalWidth > 16 bit signed
 	 * (32767 max), unsupported by FLTK 1.3.x */
 
@@ -213,8 +216,8 @@ void gdActionEditor::__cb_zoomIn() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdActionEditor::__cb_zoomOut() {
-
+void gdActionEditor::__cb_zoomOut()
+{
 	zoom *= 2;
 
 	update();
@@ -249,11 +252,12 @@ void gdActionEditor::__cb_zoomOut() {
 /* -------------------------------------------------------------------------- */
 
 
-void gdActionEditor::update() {
-	totalWidth = (int) ceilf(G_Mixer.framesInSequencer / (float) zoom);
+void gdActionEditor::update()
+{
+	totalWidth = (int) ceilf(G_Clock.getFramesInSequencer() / (float) zoom);
 	if (totalWidth < scroller->w()) {
 		totalWidth = scroller->w();
-		zoom = (int) ceilf(G_Mixer.framesInSequencer / (float) totalWidth);
+		zoom = (int) ceilf(G_Clock.getFramesInSequencer() / (float) totalWidth);
 		scroller->scroll_to(0, scroller->yposition());
 	}
 }
@@ -262,7 +266,8 @@ void gdActionEditor::update() {
 /* -------------------------------------------------------------------------- */
 
 
-int gdActionEditor::handle(int e) {
+int gdActionEditor::handle(int e)
+{
 	int ret = Fl_Group::handle(e);
 	switch (e) {
 		case FL_MOUSEWHEEL: {
@@ -278,7 +283,8 @@ int gdActionEditor::handle(int e) {
 /* -------------------------------------------------------------------------- */
 
 
-int gdActionEditor::getActionType() {
+int gdActionEditor::getActionType()
+{
 	if (actionType->value() == 0)
 		return ACTION_KEYPRESS;
 	else
@@ -324,7 +330,8 @@ gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
 /* -------------------------------------------------------------------------- */
 
 
-gGridTool::~gGridTool() {
+gGridTool::~gGridTool()
+{
 	G_Conf.actionEditorGridVal = gridType->value();
 	G_Conf.actionEditorGridOn  = active->value();
 }
@@ -339,7 +346,8 @@ void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_ch
 /* -------------------------------------------------------------------------- */
 
 
-void gGridTool::__cb_changeType() {
+void gGridTool::__cb_changeType()
+{
 	calc();
 	parent->redraw();
 }
@@ -348,7 +356,8 @@ void gGridTool::__cb_changeType() {
 /* -------------------------------------------------------------------------- */
 
 
-bool gGridTool::isOn() {
+bool gGridTool::isOn()
+{
 	return active->value();
 }
 
@@ -356,7 +365,8 @@ bool gGridTool::isOn() {
 /* -------------------------------------------------------------------------- */
 
 
-int gGridTool::getValue() {
+int gGridTool::getValue()
+{
 	switch (gridType->value()) {
 		case 0:	return 1;
 		case 1: return 2;
@@ -374,8 +384,8 @@ int gGridTool::getValue() {
 /* -------------------------------------------------------------------------- */
 
 
-void gGridTool::calc() {
-
+void gGridTool::calc()
+{
 	points.clear();
 	frames.clear();
 	bars.clear();
@@ -387,29 +397,29 @@ void gGridTool::calc() {
 	 * put a concentrate of each block (which is totalFrames / zoom) */
 
 	int  j   = 0;
-	int fpgc = floor(G_Mixer.framesPerBeat / getValue());  // frames per grid cell
+	int fpgc = floor(G_Clock.getFramesPerBeat() / getValue());  // frames per grid cell
 
 	for (int i=1; i<parent->totalWidth; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
-		while (j < step && j < G_Mixer.totalFrames) {
+		while (j < step && j < G_Clock.getTotalFrames()) {
 			if (j % fpgc == 0) {
 				points.push_back(i);
 				frames.push_back(j);
 			}
-			if (j % G_Mixer.framesPerBeat == 0)
+			if (j % G_Clock.getFramesPerBeat() == 0)
 				beats.push_back(i);
-			if (j % G_Mixer.framesPerBar == 0 && i != 1)
+			if (j % G_Clock.getFramesPerBar() == 0 && i != 1)
 				bars.push_back(i);
-			if (j == G_Mixer.totalFrames-1)
+			if (j == G_Clock.getTotalFrames() - 1)
 				parent->coverX = i;
 			j++;
 		}
 		j = step;
 	}
 
-	/* fix coverX if == 0, which means G_Mixer.beats == 32 */
+	/* fix coverX if == 0, which means G_Mixer.beats == MAX_BEATS */
 
-	if (G_Mixer.beats == 32)
+	if (G_Clock.getBeats() == MAX_BEATS)
 		parent->coverX = parent->totalWidth;
 }
 
@@ -417,8 +427,8 @@ void gGridTool::calc() {
 /* -------------------------------------------------------------------------- */
 
 
-int gGridTool::getSnapPoint(int v) {
-
+int gGridTool::getSnapPoint(int v)
+{
 	if (v == 0) return 0;
 
 	for (int i=0; i<(int)points.size(); i++) {
@@ -439,8 +449,8 @@ int gGridTool::getSnapPoint(int v) {
 /* -------------------------------------------------------------------------- */
 
 
-int gGridTool::getSnapFrame(int v) {
-
+int gGridTool::getSnapFrame(int v)
+{
 	v *= parent->zoom;  // transformation pixel -> frame
 
 	for (int i=0; i<(int)frames.size(); i++) {
@@ -468,6 +478,7 @@ int gGridTool::getSnapFrame(int v) {
 /* -------------------------------------------------------------------------- */
 
 
-int gGridTool::getCellSize() {
-	return (parent->coverX - parent->ac->x()) / G_Mixer.beats / getValue();
+int gGridTool::getCellSize()
+{
+	return (parent->coverX - parent->ac->x()) / G_Clock.getBeats() / getValue();
 }

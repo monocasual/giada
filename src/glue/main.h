@@ -46,7 +46,7 @@ otherwise it's a MIDI/Jack/external signal. */
 void glue_startStopSeq(bool gui=true);
 void glue_startSeq    (bool gui=true);
 void glue_stopSeq     (bool gui=true);
-void glue_rewindSeq   ();
+void glue_rewindSeq   (bool gui=true);
 
 /* start/stopReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction

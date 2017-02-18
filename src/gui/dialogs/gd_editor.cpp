@@ -35,6 +35,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/mixer.h"
 #include "../../core/wave.h"
+#include "../../core/clock.h"
 #include "../elems/ge_waveform.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/ge_waveTools.h"
@@ -44,6 +45,7 @@
 
 
 extern Mixer G_Mixer;
+extern Clock G_Clock;
 extern Conf  G_Conf;
 
 
@@ -279,7 +281,7 @@ void gdEditor::__cb_enableSnap()
 
 void gdEditor::__cb_setPitchToBar()
 {
-  glue_setPitch(this, ch, ch->end/(float)G_Mixer.framesPerBar, true);
+  glue_setPitch(this, ch, ch->end / (float) G_Clock.getFramesPerBar(), true);
 }
 
 
@@ -288,7 +290,7 @@ void gdEditor::__cb_setPitchToBar()
 
 void gdEditor::__cb_setPitchToSong()
 {
-  glue_setPitch(this, ch, ch->end/(float)G_Mixer.totalFrames, true);
+  glue_setPitch(this, ch, ch->end / (float) G_Clock.getTotalFrames(), true);
 }
 
 

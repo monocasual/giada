@@ -307,10 +307,10 @@ const int MIDI_CHANS[16] = {
 /* midi sync constants */
 
 #define MIDI_SYNC_NONE      0x00
-#define MIDI_SYNC_CLOCK_M   0x01
-#define MIDI_SYNC_CLOCK_S   0x02
-#define MIDI_SYNC_MTC_M     0x04
-#define MIDI_SYNC_MTC_S     0x08
+#define MIDI_SYNC_CLOCK_M   0x01  // master
+#define MIDI_SYNC_CLOCK_S   0x02  // slave
+#define MIDI_SYNC_MTC_M     0x04  // master
+#define MIDI_SYNC_MTC_S     0x08  // slave
 
 /* JSON patch keys */
 

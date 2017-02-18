@@ -30,10 +30,12 @@
 #include <FL/fl_draw.H>
 #include "../../../core/const.h"
 #include "../../../core/mixer.h"
+#include "../../../core/clock.h"
 #include "beatMeter.h"
 
 
 extern Mixer G_Mixer;
+extern Clock G_Clock;
 
 
 geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
@@ -46,24 +48,24 @@ geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
 void geBeatMeter::draw()
 {
   int cursorW = w() / MAX_BEATS;
-  int greyX   = G_Mixer.beats * cursorW;
+  int greyX   = G_Clock.getBeats() * cursorW;
 
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);                            // border
   fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
-  fl_rectf(x()+(G_Mixer.actualBeat*cursorW)+3, y()+3, cursorW-5, h()-6,
+  fl_rectf(x()+(G_Clock.getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
     COLOR_BG_2); // cursor
 
   /* beat cells */
 
   fl_color(COLOR_BD_0);
-  for (int i=1; i<=G_Mixer.beats; i++)
+  for (int i=1; i<=G_Clock.getBeats(); i++)
     fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
 
   /* bar line */
 
   fl_color(COLOR_BG_2);
-  int delta = G_Mixer.beats / G_Mixer.bars;
-  for (int i=1; i<G_Mixer.bars; i++)
+  int delta = G_Clock.getBeats() / G_Clock.getBars();
+  for (int i=1; i<G_Clock.getBars(); i++)
     fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
 
   /* unused grey area */

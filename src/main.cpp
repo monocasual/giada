@@ -36,6 +36,7 @@
 #include "core/conf.h"
 #include "core/midiMapConf.h"
 #include "core/mixer.h"
+#include "core/clock.h"
 #include "core/mixerHandler.h"
 #include "core/kernelAudio.h"
 #include "core/kernelMidi.h"
@@ -47,17 +48,18 @@
 
 /* global variables. Yeah, we are nasty */
 
+Conf          G_Conf;
 pthread_t     G_videoThread;
 KernelAudio   G_KernelAudio;
-Mixer         G_Mixer;
-Recorder      G_Recorder;
 KernelMidi    G_KernelMidi;
 bool          G_quit;
 bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Conf          G_Conf;
+Clock         G_Clock(&G_KernelMidi, &G_Conf);
+Mixer         G_Mixer(&G_Clock);
+Recorder      G_Recorder(&G_Clock);
 MidiMapConf   G_MidiMap;
 gdMainWindow *G_MainWin;
 

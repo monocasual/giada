@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_beatsInput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,11 +24,12 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "../../utils/gui.h"
 #include "../../core/mixer.h"
+#include "../../core/clock.h"
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../glue/main.h"
@@ -38,6 +39,7 @@
 
 
 extern Mixer				 G_Mixer;
+extern Clock				 G_Clock;
 extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
@@ -56,8 +58,8 @@ gdBeatsInput::gdBeatsInput()
 	resizeRec = new gCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 
-	char buf_bars[3]; sprintf(buf_bars, "%d", G_Mixer.bars);
-	char buf_beats[3]; sprintf(buf_beats, "%d", G_Mixer.beats);
+	char buf_bars[3]; sprintf(buf_bars, "%d", G_Clock.getBars());
+	char buf_beats[3]; sprintf(buf_beats, "%d", G_Clock.getBeats());
 	beats->maximum_size(2);
 	beats->value(buf_beats);
 	beats->type(FL_INT_INPUT);

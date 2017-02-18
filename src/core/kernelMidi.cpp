@@ -333,7 +333,7 @@ void KernelMidi::processMaster(uint32_t pure, uint32_t value)
 {
 	if      (pure == G_Conf.midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
-		glue_rewindSeq();
+		glue_rewindSeq(false);
 	}
 	else if (pure == G_Conf.midiInStartStop) {
 		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);

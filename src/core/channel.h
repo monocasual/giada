@@ -51,6 +51,7 @@ class MidiMapConf;
 class Patch_DEPR_;
 class Patch;
 class Mixer;
+class Clock;
 class geChannel;
 
 
@@ -64,6 +65,11 @@ protected:
 	 * Pointer to PluginHost class, which manages and processes plugins. */
 
 	PluginHost *pluginHost;
+
+  /* clock
+  Pointer to Clock class. It manages timing. */
+
+  Clock *clock;
 
 	/* MidiBuffer contains MIDI events. When ready, events are sent to
 	 * each plugin in the channel. This is available for any kind of
@@ -91,7 +97,8 @@ protected:
 
 public:
 
-	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf);
+	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
+    Clock *clock);
 
 	virtual ~Channel();
 

@@ -34,6 +34,7 @@
 #include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
+#include "clock.h"
 #include "mixer.h"
 #include "wave.h"
 #include "pluginHost.h"
@@ -51,7 +52,7 @@ extern KernelAudio G_KernelAudio;
 
 
 SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf, nullptr),
 		frameRewind      (-1),
 		wave             (nullptr),
 		tracker          (0),
@@ -502,12 +503,12 @@ void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 
 	if (G_Recorder.canRec(this, mixer)) {
 		if (mode == SINGLE_PRESS) {
-			G_Recorder.startOverdub(index, ACTION_KEYS, mixer->currentFrame,
+			G_Recorder.startOverdub(index, ACTION_KEYS, clock->getCurrentFrame(),
         G_KernelAudio.realBufsize);
       readActions = false;   // don't read actions while overdubbing
     }
 		else
-			G_Recorder.rec(index, ACTION_KEYPRESS, mixer->currentFrame);
+			G_Recorder.rec(index, ACTION_KEYPRESS, clock->getCurrentFrame());
     hasActions = true;
 	}
 }

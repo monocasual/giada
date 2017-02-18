@@ -47,6 +47,8 @@ src/core/dataStorageIni.h	             \
 src/core/dataStorageIni.cpp            \
 src/core/dataStorageJson.h	           \
 src/core/dataStorageJson.cpp           \
+src/core/clock.h                       \
+src/core/clock.cpp                     \
 src/glue/main.h                        \
 src/glue/main.cpp                      \
 src/glue/io.h                          \
@@ -183,6 +185,7 @@ endif
 # via AM_CONDITIONAL inside configure.ac.
 # Note: CPPFLAGS = C preprocessor flags, CXXFLAGS = C++ compiler flags.
 
+# TODO add -DNDEBUG for production code
 giada_CXXFLAGS = -std=c++11 -Wall -Werror
 giada_CPPFLAGS =
 

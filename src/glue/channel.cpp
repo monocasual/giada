@@ -38,6 +38,7 @@
 #include "../utils/gui.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
+#include "../core/clock.h"
 #include "../core/pluginHost.h"
 #include "../core/conf.h"
 #include "../core/wave.h"
@@ -54,6 +55,7 @@ extern Conf          G_Conf;
 extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
+extern Clock	   		 G_Clock;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -244,7 +246,7 @@ void glue_setMute(Channel *ch, bool gui)
 {
 	if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer)) {
 		if (!ch->mute) {
-			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Mixer.currentFrame,
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Clock.getCurrentFrame(),
         G_KernelAudio.realBufsize);
       ch->readActions = false;   // don't read actions while overdubbing
     }
