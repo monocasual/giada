@@ -49,7 +49,7 @@ void Patch::init()
 #endif
   header     = "GIADAPTC";
   lastTakeId = 0;
-  samplerate = DEFAULT_SAMPLERATE;
+  samplerate = G_DEFAULT_SAMPLERATE;
 }
 
 
@@ -455,13 +455,13 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
 
 void Patch::sanitize()
 {
-  bpm          = bpm < 20.0f || bpm > 999.0f ? DEFAULT_BPM : bpm;
-  bars         = bars <= 0 || bars > 32 ? DEFAULT_BARS : bars;
-  beats        = beats <= 0 || beats > 32 ? DEFAULT_BEATS : beats;
-  quantize     = quantize < 0 || quantize > 8 ? DEFAULT_QUANTIZE : quantize;
-  masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? DEFAULT_VOL : masterVolIn;
-  masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? DEFAULT_VOL : masterVolOut;
-  samplerate   = samplerate <= 0 ? DEFAULT_SAMPLERATE : samplerate;
+  bpm          = bpm < 20.0f || bpm > 999.0f ? G_DEFAULT_BPM : bpm;
+  bars         = bars <= 0 || bars > 32 ? G_DEFAULT_BARS : bars;
+  beats        = beats <= 0 || beats > 32 ? G_DEFAULT_BEATS : beats;
+  quantize     = quantize < 0 || quantize > 8 ? G_DEFAULT_QUANTIZE : quantize;
+  masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? G_DEFAULT_VOL : masterVolIn;
+  masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? G_DEFAULT_VOL : masterVolOut;
+  samplerate   = samplerate <= 0 ? G_DEFAULT_SAMPLERATE : samplerate;
 
   for (unsigned i=0; i<columns.size(); i++) {
     column_t *col = &columns.at(i);
@@ -471,10 +471,10 @@ void Patch::sanitize()
 
   for (unsigned i=0; i<channels.size(); i++) {
     channel_t *ch = &channels.at(i);
-    ch->volume   = ch->volume < 0.0f || ch->volume > 1.0f ? DEFAULT_VOL : ch->volume;
+    ch->volume   = ch->volume < 0.0f || ch->volume > 1.0f ? G_DEFAULT_VOL : ch->volume;
     ch->panLeft  = ch->panLeft < 0.0f || ch->panLeft > 1.0f ? 1.0f : ch->panLeft;
     ch->panRight = ch->panRight < 0.0f || ch->panRight > 1.0f ? 1.0f : ch->panRight;
-    ch->boost    = ch->boost < 1.0f ? DEFAULT_BOOST : ch->boost;
+    ch->boost    = ch->boost < 1.0f ? G_DEFAULT_BOOST : ch->boost;
     ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? G_DEFAULT_PITCH : ch->pitch;
   }
 }

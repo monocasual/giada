@@ -115,34 +115,34 @@
 
 /* -- default system -------------------------------------------------------- */
 #if defined(__linux__)
-	#define DEFAULT_SOUNDSYS	SYS_API_NONE
+	#define G_DEFAULT_SOUNDSYS	SYS_API_NONE
 #elif defined(_WIN32)
-	#define DEFAULT_SOUNDSYS 	SYS_API_DS
+	#define G_DEFAULT_SOUNDSYS 	SYS_API_DS
 #elif defined(__APPLE__)
-	#define DEFAULT_SOUNDSYS 	SYS_API_CORE
+	#define G_DEFAULT_SOUNDSYS 	SYS_API_CORE
 #endif
 
-#define DEFAULT_SOUNDDEV_OUT  0       /// FIXME - please override with rtAudio::getDefaultDevice (or similar)
-#define DEFAULT_SOUNDDEV_IN   -1			// no recording by default: input disabled
-#define DEFAULT_MIDI_SYSTEM   0
-#define DEFAULT_MIDI_PORT_IN  -1
-#define DEFAULT_MIDI_PORT_OUT -1
-#define DEFAULT_SAMPLERATE   44100
-#define DEFAULT_BUFSIZE		   1024
-#define DEFAULT_DELAYCOMP		 0
-#define DEFAULT_VOL				   1.0f
-#define G_DEFAULT_PITCH			 1.0f
-#define DEFAULT_BOOST			   0.0f
-#define DEFAULT_OUT_VOL  	   1.0f
-#define DEFAULT_IN_VOL  	   1.0f
-#define DEFAULT_CHANMODE	   SINGLE_BASIC
-#define DEFAULT_BPM				   120.0f
-#define DEFAULT_BEATS			   4
-#define DEFAULT_BARS			   1
-#define DEFAULT_QUANTIZE     0		  // quantizer off
-#define DEFAULT_FADEOUT_STEP 0.01f  // micro-fadeout speed
-#define DEFAULT_COLUMN_WIDTH 380
-#define G_DEFAULT_PATCH_NAME "(default patch)"
+#define G_DEFAULT_SOUNDDEV_OUT    0      // FIXME - please override with rtAudio::getDefaultDevice (or similar)
+#define G_DEFAULT_SOUNDDEV_IN    -1			// no recording by default: input disabled
+#define G_DEFAULT_MIDI_SYSTEM     0
+#define G_DEFAULT_MIDI_PORT_IN   -1
+#define G_DEFAULT_MIDI_PORT_OUT  -1
+#define G_DEFAULT_SAMPLERATE      44100
+#define G_DEFAULT_BUFSIZE		      1024
+#define G_DEFAULT_DELAYCOMP		    0
+#define G_DEFAULT_VOL				      1.0f
+#define G_DEFAULT_PITCH			      1.0f
+#define G_DEFAULT_BOOST			      0.0f
+#define G_DEFAULT_OUT_VOL  	      1.0f
+#define G_DEFAULT_IN_VOL  	      1.0f
+#define G_DEFAULT_CHANMODE	      SINGLE_BASIC
+#define G_DEFAULT_BPM				      120.0f
+#define G_DEFAULT_BEATS			      4
+#define G_DEFAULT_BARS			      1
+#define G_DEFAULT_QUANTIZE        0		  // quantizer off
+#define G_DEFAULT_FADEOUT_STEP    0.01f  // micro-fadeout speed
+#define G_DEFAULT_COLUMN_WIDTH    380
+#define G_DEFAULT_PATCH_NAME       "(default patch)"
 #define G_DEFAULT_MIDI_INPUT_UI_W 300
 #define G_DEFAULT_MIDI_INPUT_UI_H 350
 

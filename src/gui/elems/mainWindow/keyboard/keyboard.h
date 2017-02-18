@@ -47,7 +47,7 @@ private:
 	void refreshColIndexes();
 
 	static void cb_addColumn  (Fl_Widget *v, void *p);
-	inline void __cb_addColumn(int width=DEFAULT_COLUMN_WIDTH);
+	inline void __cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
 
 	bool bckspcPressed;
 	bool endPressed;

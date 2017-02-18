@@ -118,7 +118,7 @@ int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	if (outDev == DEFAULT_SOUNDDEV_OUT)
+	if (outDev == G_DEFAULT_SOUNDDEV_OUT)
 		outParams.deviceId = getDefaultOut();
 	else
 		outParams.deviceId = outDev;

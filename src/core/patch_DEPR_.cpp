@@ -75,7 +75,7 @@ void Patch_DEPR_::setDefault()
 {
 	name[0]    = '\0';
   lastTakeId = 0;
-  samplerate = DEFAULT_SAMPLERATE;
+  samplerate = G_DEFAULT_SAMPLERATE;
 }
 
 
@@ -179,7 +179,7 @@ float Patch_DEPR_::getVol(int c)
 	sprintf(tmp, "chanvol%d", c);
 	float out = atof(getValue(tmp).c_str());
 	if (out > 1.0f || out < 0.0f)
-		return DEFAULT_VOL;
+		return G_DEFAULT_VOL;
 	return out;
 }
 
@@ -194,7 +194,7 @@ int Patch_DEPR_::getMode(int c)
 	int out = atoi(getValue(tmp).c_str());
 	if (out & (LOOP_ANY | SINGLE_ANY))
 		return out;
-	return DEFAULT_CHANMODE;
+	return G_DEFAULT_CHANMODE;
 }
 
 
@@ -293,7 +293,7 @@ float Patch_DEPR_::getBoost(int c)
 	sprintf(tmp, "chanBoost%d", c);
 	float out = atof(getValue(tmp).c_str());
 	if (out < 1.0f)
-		return DEFAULT_BOOST;
+		return G_DEFAULT_BOOST;
 	return out;
 }
 
@@ -383,7 +383,7 @@ float Patch_DEPR_::getBpm()
 {
 	float out = atof(getValue("bpm").c_str());
 	if (out < 20.0f || out > 999.0f)
-		return DEFAULT_BPM;
+		return G_DEFAULT_BPM;
 	return out;
 }
 
@@ -395,7 +395,7 @@ int Patch_DEPR_::getBars()
 {
 	int out = atoi(getValue("bars").c_str());
 	if (out <= 0 || out > 32)
-		return DEFAULT_BARS;
+		return G_DEFAULT_BARS;
 	return out;
 }
 
@@ -407,7 +407,7 @@ int Patch_DEPR_::getBeats()
 {
 	int out = atoi(getValue("beats").c_str());
 	if (out <= 0 || out > 32)
-		return DEFAULT_BEATS;
+		return G_DEFAULT_BEATS;
 	return out;
 }
 
@@ -419,7 +419,7 @@ int Patch_DEPR_::getQuantize()
 {
 	int out = atoi(getValue("quantize").c_str());
 	if (out < 0 || out > 8)
-		return DEFAULT_QUANTIZE;
+		return G_DEFAULT_QUANTIZE;
 	return out;
 }
 
@@ -449,7 +449,7 @@ int Patch_DEPR_::getSamplerate()
 {
 	int out = atoi(getValue("samplerate").c_str());
 	if (out <= 0)
-		return DEFAULT_SAMPLERATE;
+		return G_DEFAULT_SAMPLERATE;
 	return out;
 }
 

@@ -121,12 +121,6 @@ void glue_deleteChannel(Channel *ch)
 
 void glue_freeChannel(Channel *ch)
 {
-#ifdef WITH_VST
-
-	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
-  ch->guiChannel->fx->full = false;
-
-#endif
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	G_Recorder.clearChan(ch->index);
   ch->hasActions = false;

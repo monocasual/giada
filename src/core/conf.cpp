@@ -93,19 +93,19 @@ void Conf::init()
 	header  = "GIADACFG";
 	logMode = LOG_MODE_MUTE;
 
-	soundSystem    = DEFAULT_SOUNDSYS;
-	soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
-	soundDeviceIn  = DEFAULT_SOUNDDEV_IN;
-	samplerate     = DEFAULT_SAMPLERATE;
-	buffersize     = DEFAULT_BUFSIZE;
-	delayComp      = DEFAULT_DELAYCOMP;
+	soundSystem    = G_DEFAULT_SOUNDSYS;
+	soundDeviceOut = G_DEFAULT_SOUNDDEV_OUT;
+	soundDeviceIn  = G_DEFAULT_SOUNDDEV_IN;
+	samplerate     = G_DEFAULT_SAMPLERATE;
+	buffersize     = G_DEFAULT_BUFSIZE;
+	delayComp      = G_DEFAULT_DELAYCOMP;
 	limitOutput    = false;
 	rsmpQuality    = 0;
 
-	midiPortIn  = DEFAULT_MIDI_PORT_IN;
+	midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
 	noNoteOff   = false;
 	midiMapPath = "";
-	midiPortOut = DEFAULT_MIDI_PORT_OUT;
+	midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
 	midiSync    = MIDI_SYNC_NONE;
 	midiTCfps   = 25.0f;
 
@@ -398,16 +398,16 @@ int Conf::write()
 
 void Conf::sanitize()
 {
-	if (!(soundSystem & SYS_API_ANY)) soundSystem = DEFAULT_SOUNDSYS;
-	if (soundDeviceOut < 0) soundDeviceOut = DEFAULT_SOUNDDEV_OUT;
-	if (soundDeviceIn < -1) soundDeviceIn = DEFAULT_SOUNDDEV_IN;
+	if (!(soundSystem & SYS_API_ANY)) soundSystem = G_DEFAULT_SOUNDSYS;
+	if (soundDeviceOut < 0) soundDeviceOut = G_DEFAULT_SOUNDDEV_OUT;
+	if (soundDeviceIn < -1) soundDeviceIn = G_DEFAULT_SOUNDDEV_IN;
 	if (channelsOut < 0) channelsOut = 0;
 	if (channelsIn < 0)  channelsIn  = 0;
-	if (buffersize < 8 || buffersize > 4096) buffersize = DEFAULT_BUFSIZE;
-	if (delayComp < 0) delayComp = DEFAULT_DELAYCOMP;
-	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_SYSTEM;
-	if (midiPortOut < -1) midiPortOut = DEFAULT_MIDI_PORT_OUT;
-	if (midiPortIn < -1) midiPortIn = DEFAULT_MIDI_PORT_IN;
+	if (buffersize < 8 || buffersize > 4096) buffersize = G_DEFAULT_BUFSIZE;
+	if (delayComp < 0) delayComp = G_DEFAULT_DELAYCOMP;
+	if (midiPortOut < -1) midiPortOut = G_DEFAULT_MIDI_SYSTEM;
+	if (midiPortOut < -1) midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
+	if (midiPortIn < -1) midiPortIn = G_DEFAULT_MIDI_PORT_IN;
 	if (browserX < 0) browserX = 0;
 	if (browserY < 0) browserY = 0;
 	if (browserW < 396) browserW = 396;
@@ -444,6 +444,6 @@ void Conf::sanitize()
 	if (beatsY < 0) beatsY = 0;
 	if (aboutX < 0) aboutX = 0;
 	if (aboutY < 0) aboutY = 0;
-	if (samplerate < 8000) samplerate = DEFAULT_SAMPLERATE;
+	if (samplerate < 8000) samplerate = G_DEFAULT_SAMPLERATE;
 	if (rsmpQuality < 0 || rsmpQuality > 4) rsmpQuality = 0;
 }

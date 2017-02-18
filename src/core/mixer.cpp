@@ -100,10 +100,10 @@ void Mixer::init()
 	ready       = true;
 	waitRec     = 0;
 	currentFrame = 0;
-	bpm 		    = DEFAULT_BPM;
-	bars		    = DEFAULT_BARS;
-	beats		    = DEFAULT_BEATS;
-	quantize    = DEFAULT_QUANTIZE;
+	bpm 		    = G_DEFAULT_BPM;
+	bars		    = G_DEFAULT_BARS;
+	beats		    = G_DEFAULT_BEATS;
+	quantize    = G_DEFAULT_QUANTIZE;
 	metronome   = false;
 
 	tickTracker = 0;
@@ -111,8 +111,8 @@ void Mixer::init()
 	tickPlay    = false;
 	tockPlay    = false;
 
-	outVol       = DEFAULT_OUT_VOL;
-	inVol        = DEFAULT_IN_VOL;
+	outVol       = G_DEFAULT_OUT_VOL;
+	inVol        = G_DEFAULT_IN_VOL;
 	peakOut      = 0.0f;
 	peakIn	     = 0.0f;
 	inputTracker = 0;

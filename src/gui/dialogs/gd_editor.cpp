@@ -406,7 +406,7 @@ void gdEditor::__cb_reload()
 
   ch->load(ch->wave->pathfile.c_str(), G_Conf.samplerate, G_Conf.rsmpQuality);
 
-  glue_setBoost(this, ch, DEFAULT_BOOST, true);
+  glue_setBoost(this, ch, G_DEFAULT_BOOST, true);
   glue_setPitch(this, ch, G_DEFAULT_PITCH, true);
   glue_setPanning(this, ch, 1.0f);
   pan->value(1.0f);  // glue_setPanning doesn't do it

@@ -45,6 +45,15 @@ using std::vector;
 using std::string;
 
 
+class PluginHost;
+class Plugin;
+class MidiMapConf;
+class Patch_DEPR_;
+class Patch;
+class Mixer;
+class geChannel;
+
+
 class Channel
 {
 protected:
@@ -54,7 +63,7 @@ protected:
 	/* pluginHost
 	 * Pointer to PluginHost class, which manages and processes plugins. */
 
-	class PluginHost *pluginHost;
+	PluginHost *pluginHost;
 
 	/* MidiBuffer contains MIDI events. When ready, events are sent to
 	 * each plugin in the channel. This is available for any kind of
@@ -67,7 +76,7 @@ protected:
 	/* MidiMapConf
 	 * Pointer to MidiMapConf. It deals with Midi lightning operations. */
 
-	class MidiMapConf *midiMapConf;
+	MidiMapConf *midiMapConf;
 
 	/* bufferSize
 	 * size of every buffer in this channel (vChan, pChan) */
@@ -82,7 +91,7 @@ protected:
 
 public:
 
-	Channel(int type, int status, int bufferSize, class MidiMapConf *midiMapConf);
+	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf);
 
 	virtual ~Channel();
 
@@ -94,9 +103,9 @@ public:
 	/* readPatch
 	 * Fill channel with data from patch. */
 
-	virtual int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch,
+	virtual int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
 			int samplerate, int rsmpQuality) = 0;
-	virtual int readPatch(const string &basePath, int i, class Patch *patch,
+	virtual int readPatch(const string &basePath, int i, Patch *patch,
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
@@ -146,7 +155,7 @@ public:
 	 * mixer::channels, used by recorder. LocalFrame = frame within the current
    * buffer.  */
 
-	virtual void quantize(int index, int localFrame, class Mixer *m) = 0;
+	virtual void quantize(int index, int localFrame, Mixer *m) = 0;
 
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */
@@ -190,7 +199,7 @@ public:
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject, class Patch *patch);
+	virtual int writePatch(int i, bool isProject, Patch *patch);
 
 	/* receiveMidi
 	 * Receives and processes midi messages from external devices. */
@@ -217,7 +226,7 @@ public:
 	bool    armed;							   // armed for recording
 	int 	  recStatus;             // status of recordings (waiting, ending, ...)
 	float  *vChan;	               // virtual channel
-  class   geChannel *guiChannel; // pointer to a gChannel object, part of the GUI
+  geChannel *guiChannel;         // pointer to a gChannel object, part of the GUI
 
 	// TODO - midi structs, please
 
@@ -241,7 +250,7 @@ public:
   uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  vector <class Plugin *> plugins;
+  vector <Plugin *> plugins;
 #endif
 
 
@@ -256,8 +265,8 @@ public:
 	 * read from patch all midi-related parameters such as keypress, mute
 	 * and so on. */
 
-	void readPatchMidiIn_DEPR_(int i, class Patch_DEPR_ &patch);
-	void readPatchMidiOut_DEPR_(int i, class Patch_DEPR_ &patch);
+	void readPatchMidiIn_DEPR_(int i, Patch_DEPR_ &patch);
+	void readPatchMidiOut_DEPR_(int i, Patch_DEPR_ &patch);
 
 	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */
@@ -272,7 +281,7 @@ public:
 	 * A neat trick to avoid duplicated constructors (with and without pointer
 	 * to PluginHost). */
 
-	void setPluginHost(class PluginHost *pluginHost);
+	void setPluginHost(PluginHost *pluginHost);
 
 	/* getPluginMidiEvents
 	 * Return a reference to midiBuffer stack. This is available for any kind of

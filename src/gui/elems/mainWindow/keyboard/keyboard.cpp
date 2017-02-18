@@ -161,7 +161,7 @@ void geKeyboard::organizeColumns()
 
 void geKeyboard::cb_addColumn(Fl_Widget *v, void *p)
 {
-	((geKeyboard*)p)->__cb_addColumn(DEFAULT_COLUMN_WIDTH);
+	((geKeyboard*)p)->__cb_addColumn(G_DEFAULT_COLUMN_WIDTH);
 }
 
 
