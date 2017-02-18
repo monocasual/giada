@@ -35,6 +35,12 @@
 #include "channel.h"
 
 
+class Patch_DEPR_;
+class Patch;
+class Mixer;
+class Wave;
+
+
 class SampleChannel : public Channel
 {
 private:
@@ -86,7 +92,7 @@ private:
 
 public:
 
-	SampleChannel(int bufferSize, class MidiMapConf *midiMapConf);
+	SampleChannel(int bufferSize, MidiMapConf *midiMapConf);
 	~SampleChannel();
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;
@@ -101,12 +107,12 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-	int readPatch_DEPR_(const char *file, int i, class Patch_DEPR_ *patch,
+	int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
 			int samplerate, int rsmpQuality) override;
-  int readPatch(const string &basePath, int i, class Patch *patch,
+  int readPatch(const string &basePath, int i, Patch *patch,
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality) override;
-	int writePatch(int i, bool isProject, class Patch *patch) override;
-	void quantize(int index, int localFrame, class Mixer *m) override;
+	int writePatch(int i, bool isProject, Patch *patch) override;
+	void quantize(int index, int localFrame, Mixer *m) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
 	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
@@ -128,7 +134,7 @@ public:
 	/* pushWave
 	 * add a new wave to an existing channel. */
 
-	void pushWave(class Wave *w);
+	void pushWave(Wave *w);
 
 	/* getPosition
 	 * returns the position of an active sample. If EMPTY o MISSING
@@ -176,7 +182,7 @@ public:
 
 	/* ------------------------------------------------------------------------ */
 
-	class  Wave *wave;
+	Wave  *wave;
 	int    tracker;         // chan position
 	int    begin;
 	int    end;
