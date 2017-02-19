@@ -34,6 +34,7 @@
 #include "../../core/channel.h"
 #include "../../core/recorder.h"
 #include "../../core/mixer.h"
+#include "../../core/clock.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "../dialogs/gd_mainWindow.h"
 #include "mainWindow/keyboard/keyboard.h"
@@ -41,6 +42,7 @@
 
 
 extern Mixer         G_Mixer;
+extern Clock         G_Clock;
 extern Recorder      G_Recorder;
 extern gdMainWindow *G_MainWin;
 
@@ -192,8 +194,8 @@ int geEnvelopeEditor::handle(int e) {
 						if (points.size() == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							G_Recorder.rec(pParent->chan->index, type, 0, 0, 1.0f);
-							addPoint(G_Mixer.totalFrames, 0, 1.0f, pParent->coverX, 1);
-							G_Recorder.rec(pParent->chan->index, type, G_Mixer.totalFrames, 0, 1.0f);
+							addPoint(G_Clock.getTotalFrames(), 0, 1.0f, pParent->coverX, 1);
+							G_Recorder.rec(pParent->chan->index, type, G_Clock.getTotalFrames(), 0, 1.0f);
               pParent->chan->hasActions = true;
 						}
 
@@ -253,8 +255,8 @@ int geEnvelopeEditor::handle(int e) {
 
 					if (newFrame < 0)
 						newFrame = 0;
-					else if (newFrame > G_Mixer.totalFrames)
-						newFrame = G_Mixer.totalFrames;
+					else if (newFrame > G_Clock.getTotalFrames())
+						newFrame = G_Clock.getTotalFrames();
 
 					/* vertical line check */
 

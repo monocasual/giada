@@ -27,6 +27,7 @@
 
 #include "../../core/conf.h"
 #include "../../core/mixer.h"
+#include "../../core/clock.h"
 #include "../../core/channel.h"
 #include "../../core/recorder.h"
 #include "../../core/kernelMidi.h"
@@ -40,6 +41,7 @@
 extern Conf	      G_Conf;
 extern Recorder		G_Recorder;
 extern Mixer      G_Mixer;
+extern Clock      G_Clock;
 extern KernelMidi G_KernelMidi;
 
 
@@ -72,7 +74,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			/* don't show actions > than the grey area */
 			/** FIXME - can we move this to the outer cycle? */
 
-			if (G_Recorder.frames.at(i) > G_Mixer.totalFrames)
+			if (G_Recorder.frames.at(i) > G_Clock.getTotalFrames())
 				continue;
 
 			Recorder::action *a1 = G_Recorder.global.at(i).at(j);

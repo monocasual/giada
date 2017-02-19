@@ -36,11 +36,15 @@
 #include "kernelAudio.h"
 
 
+class Channel;
+class Clock;
+
+
 class Mixer
 {
 public:
 
-	Mixer();
+	Mixer(Clock *clock);
 
 	void init();
 	int  close();
@@ -48,12 +52,12 @@ public:
 	/* addChannel
 	 * add a new channel without any wave inside of it. */
 
-	class Channel *addChannel(int type);
+	Channel *addChannel(int type);
 
 	/* deleteChannel
 	 * completely remove a channel from the stack. */
 
-	int deleteChannel(class Channel *ch);
+	int deleteChannel(Channel *ch);
 
 	/* masterPlay
 	 * core method (callback) */
@@ -61,11 +65,6 @@ public:
 	static int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize,
 		double streamTime, RtAudioStreamStatus status, void *userData);
 	int __masterPlay(void *outBuf, void *inBuf, unsigned bufferSize);
-
-	/* updateFrameBars
-	 * updates bpm, frames, beats and so on. */
-
-	void updateFrameBars();
 
 	/* isSilent
 	 * is mixer silent? */
@@ -76,11 +75,6 @@ public:
 	 * rewind sequencer to sample 0. */
 
 	void rewind();
-
-	/* updateQuanto
-	 * recomputes the quanto between two quantizations */
-
-	void updateQuanto();
 
 	/* hasLogicalSamples
 	 * true if 1 or more samples are logical (memory only, such as takes) */
@@ -109,7 +103,7 @@ public:
 	inline Channel* getLastChannel() { return channels.back(); }
 
 
-	/* ---------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------ */
 
 
 	enum {    // const - what to do when a fadeout ends
@@ -123,9 +117,8 @@ public:
 		XFADE   = 0x02
 	};
 
-	std::vector<class Channel*> channels;
+	std::vector<Channel*> channels;
 
-	bool   running;
 	bool   recording;         // is recording something?
 	bool   ready;
 	float *vChanInput;        // virtual channel for recording
@@ -135,23 +128,10 @@ public:
 	float  inVol;
 	float  peakOut;
 	float  peakIn;
-	int    quanto;
-	char   quantize;
 	bool	 metronome;
-	float  bpm;
-	int    bars;
-	int    beats;
 	int    waitRec;      // delayComp guard
-
-	bool docross;			   // crossfade guard
-	bool rewindWait;	   // rewind guard, if quantized
-
-	int framesPerBar;      // frames in one bar
-	int framesPerBeat;     // frames in one beat
-	int framesInSequencer; // frames in the whole sequencer
-	int totalFrames;       // frames in the selected range (e.g. 4/4)
-	int currentFrame;
-	int actualBeat;
+	bool  docross;			 // crossfade guard
+	bool  rewindWait;	   // rewind guard, if quantized
 
 #define TICKSIZE 38
 	static float tock[TICKSIZE];
@@ -176,28 +156,12 @@ public:
 
 private:
 
-	int midiTCstep;      // part of MTC to send (0 to 7)
-	int midiTCrate;      // send MTC data every midiTCrate frames
-	int midiTCframes;
-	int midiTCseconds;
-	int midiTCminutes;
-	int midiTChours;
+  Clock *clock;
 
 	/* getNewIndex
 	 * compute new index value for new channels */
 
 	int getNewIndex();
-
-	/* sendMIDIsync
-	 * generate MIDI sync output data */
-
-	void sendMIDIsync();
-
-	/* sendMIDIrewind
-	 * rewind timecode to beat 0 and also send a MTC full frame to cue
-	 * the slave */
-
-	void sendMIDIrewind();
 
 	/* lineInRec
 	Records from line in. */

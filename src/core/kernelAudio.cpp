@@ -445,6 +445,33 @@ void KernelAudio::jackStart()
 /* -------------------------------------------------------------------------- */
 
 
+void KernelAudio::jackLocate(jack_nframes_t n)
+{
+	if (api == SYS_API_JACK)
+		jack_transport_locate(jackGetHandle(), n);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackReposition(jack_nframes_t n)
+{
+  jack_position_t position;
+  position.frame = n;
+  position.valid = jack_position_bits_t::JackPositionBBT;
+  position.bar  = 1;
+  position.beat = 1;
+  position.tick = 0;
+  position.ticks_per_beat = 960.0f;
+  position.beats_per_minute = 120.0f;
+  jack_transport_reposition(jackGetHandle(), &position);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void KernelAudio::jackStop()
 {
 	if (api == SYS_API_JACK)
@@ -471,9 +498,9 @@ int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos
 	switch (state) {
 		case JackTransportStopped:
 			gu_log("[KA] Jack transport stopped, frame=%d\n", pos->frame);
-			glue_stopSeq(false);  // false = not from GUI
+			glue_stopSeq(false);      // false = not from GUI
 			if (pos->frame == 0)
-				glue_rewindSeq();
+				glue_rewindSeq(false);  // false = not from GUI
 			break;
 
 		case JackTransportRolling:
@@ -482,9 +509,9 @@ int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos
 
 		case JackTransportStarting:
 			gu_log("[KA] Jack transport starting, frame=%d\n", pos->frame);
-			glue_startSeq(false);  // false = not from GUI
+			glue_startSeq(false);     // false = not from GUI
 			if (pos->frame == 0)
-				glue_rewindSeq();
+				glue_rewindSeq(false);  // false = not from GUI
 			break;
 
 		default:

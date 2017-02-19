@@ -73,10 +73,12 @@ public:
 	jack_client_t *jackGetHandle();
 	void jackStart();
 	void jackStop();
+	void jackLocate(jack_nframes_t n);
+	void jackReposition(jack_nframes_t n);
 	void jackSetSyncCb();
 	static int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
 	int __jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
-	
+
 #endif
 
 	unsigned numDevs;

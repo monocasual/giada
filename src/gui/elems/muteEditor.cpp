@@ -28,6 +28,7 @@
 #include "../../core/recorder.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
+#include "../../core/clock.h"
 #include "../../glue/main.h"
 #include "../../utils/log.h"
 #include "../dialogs/gd_actionEditor.h"
@@ -38,6 +39,7 @@
 
 extern gdMainWindow *G_MainWin;
 extern Mixer         G_Mixer;
+extern Clock         G_Clock;
 extern Recorder      G_Recorder;
 
 
@@ -240,8 +242,8 @@ int geMuteEditor::handle(int e) {
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= G_Mixer.totalFrames) {
-						frame_b = G_Mixer.totalFrames;
+					if (frame_b >= G_Clock.getTotalFrames()) {
+						frame_b = G_Clock.getTotalFrames();
 						frame_a = frame_b-2048;
 					}
 

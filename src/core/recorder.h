@@ -43,11 +43,15 @@
 using std::vector;
 
 
+class Clock;
+class Channel;
+class Mixer;
+
 class Recorder
 {
 public:
 
-	Recorder();
+	Recorder(Clock *clock);
 
 	/* action
 	 * struct containing fields to describe an atomic action. Note from
@@ -89,7 +93,7 @@ public:
 	/* canRec
 	 * can a channel rec an action? Call this one BEFORE rec(). */
 
-	bool canRec(class Channel *ch, class Mixer *m);
+	bool canRec(Channel *ch, Mixer *m);
 
 	/* rec
 	 * record an action. */
@@ -167,9 +171,11 @@ public:
 	/* start/endOverdub */
 
 	void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-	void stopOverdub(class Mixer *m);
+	void stopOverdub(Mixer *m);
 
 private:
+
+  Clock *clock;
 
 	/* composite
 	 * a group of two actions (keypress+keyrel, muteon+muteoff) used during

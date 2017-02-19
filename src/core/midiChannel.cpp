@@ -32,6 +32,7 @@
 #include "channel.h"
 #include "patch_DEPR_.h"
 #include "patch.h"
+#include "clock.h"
 #include "conf.h"
 #include "mixer.h"
 #ifdef WITH_VST
@@ -47,8 +48,8 @@ extern Mixer      G_Mixer;
 extern PluginHost G_PluginHost;
 #endif
 
-MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
+MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf, clock),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
@@ -353,7 +354,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 #endif
 
 	if (G_Recorder.canRec(this, &G_Mixer)) {
-		G_Recorder.rec(index, ACTION_MIDI, G_Mixer.currentFrame, msg);
+		G_Recorder.rec(index, ACTION_MIDI, clock->getCurrentFrame(), msg);
     hasActions = true;
   }
 }

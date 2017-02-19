@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * gd_bpmInput
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,12 +24,13 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../core/mixer.h"
+#include "../../core/clock.h"
 #include "../../glue/main.h"
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
@@ -38,6 +39,7 @@
 
 
 extern Mixer     		 G_Mixer;
+extern Clock				 G_Clock;
 extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
@@ -56,7 +58,7 @@ gdBpmInput::gdBpmInput(const char *label)
 	end();
 
 	char   a[4];
-	snprintf(a, 4, "%d", (int) G_Mixer.bpm);
+	snprintf(a, 4, "%d", (int) G_Clock.getBpm());
 	char   b[2];
 	for (unsigned i=0; i<strlen(label); i++)	// looking for the dot
 		if (label[i] == '.') {

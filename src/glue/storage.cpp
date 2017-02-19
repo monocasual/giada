@@ -38,6 +38,7 @@
 #include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/clock.h"
 #include "../core/wave.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
@@ -60,6 +61,7 @@ extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
 extern Conf          G_Conf;
+extern Clock         G_Clock;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
@@ -131,10 +133,10 @@ static void __glue_fillPatchGlobals__(const string &name)
 	G_Patch.versionMinor = G_VERSION_MINOR;
 	G_Patch.versionPatch = G_VERSION_PATCH;
 	G_Patch.name         = name;
-	G_Patch.bpm          = G_Mixer.bpm;
-	G_Patch.bars         = G_Mixer.bars;
-	G_Patch.beats        = G_Mixer.beats;
-	G_Patch.quantize     = G_Mixer.quantize;
+	G_Patch.bpm          = G_Clock.getBpm();
+	G_Patch.bars         = G_Clock.getBars();
+	G_Patch.beats        = G_Clock.getBeats();
+	G_Patch.quantize     = G_Clock.getQuantize();
 	G_Patch.masterVolIn  = G_Mixer.inVol;
   G_Patch.masterVolOut = G_Mixer.outVol;
   G_Patch.metronome    = G_Mixer.metronome;

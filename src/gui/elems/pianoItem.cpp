@@ -28,6 +28,7 @@
 #include "../../core/kernelMidi.h"
 #include "../../core/mixer.h"
 #include "../../core/channel.h"
+#include "../../core/clock.h"
 #include "../../core/midiChannel.h"
 #include "../dialogs/gd_actionEditor.h"
 #include "noteEditor.h"
@@ -37,6 +38,7 @@
 
 extern KernelMidi G_KernelMidi;
 extern Mixer      G_Mixer;
+extern Clock      G_Clock;
 extern Recorder	  G_Recorder;
 
 
@@ -125,7 +127,7 @@ void gePianoItem::record()
 {
 	/* avoid frame overflow */
 
-	int overflow = frame_b - G_Mixer.totalFrames;
+	int overflow = frame_b - G_Clock.getTotalFrames();
 	if (overflow > 0) {
 		frame_b -= overflow;
 		frame_a -= overflow;

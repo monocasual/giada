@@ -30,6 +30,7 @@
 #include "../../../core/const.h"
 #include "../../../core/mixer.h"
 #include "../../../core/graphics.h"
+#include "../../../core/clock.h"
 #include "../../../glue/main.h"
 #include "../../../utils/gui.h"
 #include "../../elems/ge_mixed.h"
@@ -40,6 +41,7 @@
 
 
 extern Mixer         G_Mixer;
+extern Clock         G_Clock;
 extern gdMainWindow *G_MainWin;
 
 
@@ -58,7 +60,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	resizable(NULL);   // don't resize any widget
 
-	char buf[6]; snprintf(buf, 6, "%f", G_Mixer.bpm);
+	char buf[6]; snprintf(buf, 6, "%f", G_Clock.getBpm());
 	bpm->copy_label(buf);
 
 	bpm->callback(cb_bpm, (void*)this);

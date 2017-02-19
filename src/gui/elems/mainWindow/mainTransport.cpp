@@ -80,7 +80,7 @@ void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p
 
 void geMainTransport::__cb_rewind()
 {
-	glue_rewindSeq();
+	glue_rewindSeq(true);
 }
 
 
