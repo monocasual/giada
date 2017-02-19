@@ -140,9 +140,9 @@ Channel *Mixer::addChannel(int type)
 	int bufferSize = G_KernelAudio.realBufsize * 2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, &G_MidiMap);
+		ch = new SampleChannel(bufferSize, &G_MidiMap, clock);
 	else
-		ch = new MidiChannel(bufferSize, &G_MidiMap);
+		ch = new MidiChannel(bufferSize, &G_MidiMap, clock);
 
 #ifdef WITH_VST
 	ch->setPluginHost(&G_PluginHost);

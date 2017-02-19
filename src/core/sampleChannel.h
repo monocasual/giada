@@ -39,6 +39,7 @@ class Patch_DEPR_;
 class Patch;
 class Mixer;
 class Wave;
+class Clock;
 
 
 class SampleChannel : public Channel
@@ -92,7 +93,7 @@ private:
 
 public:
 
-	SampleChannel(int bufferSize, MidiMapConf *midiMapConf);
+	SampleChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock);
 	~SampleChannel();
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;

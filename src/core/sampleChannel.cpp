@@ -51,8 +51,9 @@ extern Recorder    G_Recorder;
 extern KernelAudio G_KernelAudio;
 
 
-SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf, nullptr),
+SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf,
+    Clock *clock)
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf, clock),
 		frameRewind      (-1),
 		wave             (nullptr),
 		tracker          (0),

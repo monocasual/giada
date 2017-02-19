@@ -132,7 +132,7 @@
 #define G_DEFAULT_DELAYCOMP		    0
 #define G_DEFAULT_VOL				      1.0f
 #define G_DEFAULT_PITCH			      1.0f
-#define G_DEFAULT_BOOST			      0.0f
+#define G_DEFAULT_BOOST			      1.0f
 #define G_DEFAULT_OUT_VOL  	      1.0f
 #define G_DEFAULT_IN_VOL  	      1.0f
 #define G_DEFAULT_CHANMODE	      SINGLE_BASIC

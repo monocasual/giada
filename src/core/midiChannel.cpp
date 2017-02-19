@@ -48,8 +48,8 @@ extern Mixer      G_Mixer;
 extern PluginHost G_PluginHost;
 #endif
 
-MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf, nullptr),
+MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf, clock),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
