@@ -66,11 +66,6 @@ protected:
 
 	PluginHost *pluginHost;
 
-  /* clock
-  Pointer to Clock class. It manages timing. */
-
-  Clock *clock;
-
 	/* MidiBuffer contains MIDI events. When ready, events are sent to
 	 * each plugin in the channel. This is available for any kind of
 	 * channel, but it makes sense only for MIDI channels. */
@@ -78,6 +73,11 @@ protected:
 	juce::MidiBuffer midiBuffer;
 
 #endif
+
+  /* clock
+  Pointer to Clock class. It manages timing. */
+
+  Clock *clock;
 
 	/* MidiMapConf
 	 * Pointer to MidiMapConf. It deals with Midi lightning operations. */
