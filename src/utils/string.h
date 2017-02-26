@@ -35,19 +35,17 @@
 #include <vector>
 
 
-using std::string;
-using std::vector;
+std::string gu_getRealPath(const std::string &path);
 
+std::string gu_replace(std::string in, const std::string &search,
+  const std::string &replace);
 
-string gu_getRealPath(const string &path);
+std::string gu_trim(const std::string &s);
 
-string gu_replace(string in, const string &search, const string &replace);
+// TODO - use std::to_string -> http://stackoverflow.com/questions/191757/how-to-concatenate-a-stdstring-and-an-int?rq=1
+std::string gu_itoa(int i);
 
-string gu_trim(const string &s);
-
-string gu_itoa(int i);
-
-void gu_split(string in, string sep, vector<string> *v);
+void gu_split(std::string in, std::string sep, std::vector<std::string> *v);
 
 
 #endif

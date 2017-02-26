@@ -33,6 +33,7 @@
 
 
 using std::string;
+using std::vector;
 
 
 string gu_getRealPath(const string &path)
