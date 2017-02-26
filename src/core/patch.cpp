@@ -441,7 +441,7 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
     json_t *jMidiInParam;
     json_array_foreach(jMidiInParams, midiInParamIndex, jMidiInParam)
       plugin.midiInParams.push_back(json_integer_value(jMidiInParam));
-      
+
     container->push_back(plugin);
   }
   return 1;
@@ -455,10 +455,10 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
 
 void Patch::sanitize()
 {
-  bpm          = bpm < 20.0f || bpm > 999.0f ? G_DEFAULT_BPM : bpm;
-  bars         = bars <= 0 || bars > 32 ? G_DEFAULT_BARS : bars;
-  beats        = beats <= 0 || beats > 32 ? G_DEFAULT_BEATS : beats;
-  quantize     = quantize < 0 || quantize > 8 ? G_DEFAULT_QUANTIZE : quantize;
+  bpm          = bpm < G_MIN_BPM || bpm > G_MAX_BPM ? G_DEFAULT_BPM : bpm;
+  bars         = bars <= 0 || bars > MAX_BARS ? G_DEFAULT_BARS : bars;
+  beats        = beats <= 0 || beats > MAX_BEATS ? G_DEFAULT_BEATS : beats;
+  quantize     = quantize < 0 || quantize > G_MAX_QUANTIZE ? G_DEFAULT_QUANTIZE : quantize;
   masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? G_DEFAULT_VOL : masterVolIn;
   masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? G_DEFAULT_VOL : masterVolOut;
   samplerate   = samplerate <= 0 ? G_DEFAULT_SAMPLERATE : samplerate;

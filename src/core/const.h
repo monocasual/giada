@@ -82,8 +82,11 @@
 
 
 /* -- MIN/MAX values -------------------------------------------------------- */
+#define G_MIN_BPM          20.0f
+#define G_MAX_BPM          999.0f
 #define MAX_BEATS				   32
 #define MAX_BARS				   32
+#define G_MAX_QUANTIZE     8
 #define MAX_PATCHNAME_LEN	 32
 #define DB_MIN_SCALE		   60.0f
 #define MIN_COLUMN_WIDTH   140
