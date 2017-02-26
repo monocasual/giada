@@ -56,7 +56,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
-  resizer->setMinSize(MIN_COLUMN_WIDTH);
+  resizer->setMinSize(G_MIN_COLUMN_WIDTH);
   parent->add(resizer);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);

@@ -417,9 +417,9 @@ void gGridTool::calc()
 		j = step;
 	}
 
-	/* fix coverX if == 0, which means G_Mixer.beats == MAX_BEATS */
+	/* fix coverX if == 0, which means G_Mixer.beats == G_MAX_BEATS */
 
-	if (G_Clock.getBeats() == MAX_BEATS)
+	if (G_Clock.getBeats() == G_MAX_BEATS)
 		parent->coverX = parent->totalWidth;
 }
 

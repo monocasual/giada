@@ -45,7 +45,7 @@ private:
 
 public:
 
-	char  name[MAX_PATCHNAME_LEN];
+	char  name[G_MAX_PATCHNAME_LEN];
 	float version;
 	int   lastTakeId;
 	int   samplerate;

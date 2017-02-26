@@ -456,8 +456,8 @@ bool Patch::readPlugins(json_t *jContainer, vector<plugin_t> *container, const c
 void Patch::sanitize()
 {
   bpm          = bpm < G_MIN_BPM || bpm > G_MAX_BPM ? G_DEFAULT_BPM : bpm;
-  bars         = bars <= 0 || bars > MAX_BARS ? G_DEFAULT_BARS : bars;
-  beats        = beats <= 0 || beats > MAX_BEATS ? G_DEFAULT_BEATS : beats;
+  bars         = bars <= 0 || bars > G_MAX_BARS ? G_DEFAULT_BARS : bars;
+  beats        = beats <= 0 || beats > G_MAX_BEATS ? G_DEFAULT_BEATS : beats;
   quantize     = quantize < 0 || quantize > G_MAX_QUANTIZE ? G_DEFAULT_QUANTIZE : quantize;
   masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? G_DEFAULT_VOL : masterVolIn;
   masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? G_DEFAULT_VOL : masterVolOut;
@@ -466,7 +466,7 @@ void Patch::sanitize()
   for (unsigned i=0; i<columns.size(); i++) {
     column_t *col = &columns.at(i);
     col->index = col->index < 0 ? 0 : col->index;
-    col->width = col->width < MIN_COLUMN_WIDTH ? MIN_COLUMN_WIDTH : col->width;
+    col->width = col->width < G_MIN_COLUMN_WIDTH ? G_MIN_COLUMN_WIDTH : col->width;
   }
 
   for (unsigned i=0; i<channels.size(); i++) {

@@ -145,8 +145,8 @@ void glue_setBeats(int beats, int bars, bool expand)
 	int      oldvalue = G_Clock.getBeats();
 	unsigned oldfpb		= G_Clock.getTotalFrames();
 
-	if (beats > MAX_BEATS)
-		G_Clock.setBeats(MAX_BEATS);
+	if (beats > G_MAX_BEATS)
+		G_Clock.setBeats(G_MAX_BEATS);
 	else if (beats < 1)
 		G_Clock.setBeats(1);
 	else

@@ -279,7 +279,7 @@ void gSoundMeter::draw()
 
   db_level = 20 * log10(peak);
   if (db_level < db_level_old)
-    if (db_level_old > -DB_MIN_SCALE)
+    if (db_level_old > -G_DB_MIN_SCALE)
       db_level = db_level_old - 2.0f;
 
   db_level_old = db_level;
@@ -288,7 +288,7 @@ void gSoundMeter::draw()
 
   float px_level = 0.0f;
   if (db_level < 0.0f)
-    px_level = ((w()/DB_MIN_SCALE) * db_level) + w();
+    px_level = ((w()/G_DB_MIN_SCALE) * db_level) + w();
   else
     px_level = w();
 

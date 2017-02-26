@@ -177,7 +177,7 @@ void Clock::updateFrameBars()
 	totalFrames       = conf->samplerate * seconds * 2;
 	framesPerBar      = totalFrames / bars;
 	framesPerBeat     = totalFrames / beats;
-	framesInSequencer = framesPerBeat * MAX_BEATS;
+	framesInSequencer = framesPerBeat * G_MAX_BEATS;
 
 	/* big troubles if frames are odd. */
 

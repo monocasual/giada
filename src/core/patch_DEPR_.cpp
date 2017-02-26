@@ -94,7 +94,7 @@ int Patch_DEPR_::close()
 void Patch_DEPR_::getName()
 {
 	std::string out = getValue("patchname");
-	strncpy(name, out.c_str(), MAX_PATCHNAME_LEN);
+	strncpy(name, out.c_str(), G_MAX_PATCHNAME_LEN);
 }
 
 

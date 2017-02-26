@@ -47,7 +47,7 @@ geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
 
 void geBeatMeter::draw()
 {
-  int cursorW = w() / MAX_BEATS;
+  int cursorW = w() / G_MAX_BEATS;
   int greyX   = G_Clock.getBeats() * cursorW;
 
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);                            // border
