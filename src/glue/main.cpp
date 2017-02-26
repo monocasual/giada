@@ -77,37 +77,56 @@ extern PluginHost    G_PluginHost;
 #endif
 
 
-void glue_setBpm(const char *v1, const char *v2)
+void glue_setBpm(const char *v1, const char *v2, bool notifyJack)
 {
   /* Never change this stuff while recording audio */
 
   if (G_Mixer.recording)
     return;
 
-	char  buf[6];
-	float value = atof(v1) + (atof(v2)/10);
-	if (value < 20.0f)	{
-		value = 20.0f;
-		sprintf(buf, "20.0");
+	char  bpmS[6];
+	float bpmF = atof(v1) + (atof(v2)/10);
+	if (bpmF < 20.0f) {
+		bpmF = 20.0f;
+		sprintf(bpmS, "20.0");
 	}
 	else
-		sprintf(buf, "%s.%s", v1, !strcmp(v2, "") ? "0" : v2);
+		sprintf(bpmS, "%s.%s", v1, !strcmp(v2, "") ? "0" : v2);
 
 	/* a value such as atof("120.1") will never be 120.1 but 120.0999999,
 	 * because of the rounding error. So we pass the real "wrong" value to
 	 * G_Mixer and we show the nice looking (but fake) one to the GUI. */
 
-	float old_bpm = G_Clock.getBpm();
-	G_Clock.setBpm(value);
-	G_Clock.updateFrameBars();
+	float oldBpmF = G_Clock.getBpm();
+	G_Clock.setBpm(bpmF);
+  G_Recorder.updateBpm(oldBpmF, bpmF, G_Clock.getQuanto());
 
-	/* inform recorder and actionEditor of the change */
+#ifdef __linux__
 
-	G_Recorder.updateBpm(old_bpm, value, G_Clock.getQuanto());
-	gu_refreshActionEditor();
+  if (notifyJack)
+    G_KernelAudio.jackReposition(G_KernelAudio.jackQueryCurrentPosition(),
+      G_Clock.getBpm(), G_Clock.getBars(), G_Clock.getCurrentBeat());
 
-	G_MainWin->mainTimer->setBpm(buf);
-	gu_log("[glue] Bpm changed to %s (real=%f)\n", buf, G_Clock.getBpm());
+#endif
+
+  gu_refreshActionEditor();
+  G_MainWin->mainTimer->setBpm(bpmS);
+
+	gu_log("[glue] Bpm changed to %s (real=%f)\n", bpmS, G_Clock.getBpm());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setBpm(float v, bool notifyJack)
+{
+  float fIpart;
+  float fPpart = modf(v, &fIpart);
+  int iIpart = fIpart;
+  int iPpart = ceilf(fPpart);
+  glue_setBpm(std::to_string(iIpart).c_str(), std::to_string(iPpart).c_str(),
+    notifyJack);
 }
 
 
@@ -442,3 +461,17 @@ void glue_beatsDivide()
 {
 	glue_setBeats(G_Clock.getBeats() / 2, G_Clock.getBars(), false);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef __linux__
+
+void glue_onJackChange(double bpm)
+{
+  glue_setBpm(bpm, false); // false: don't notify jack, avoid infinite loop
+  printf("CHANGE! >>>>> %f\n", bpm);
+}
+
+#endif

@@ -45,8 +45,8 @@ extern gdMainWindow *mainWin;
 
 
 gdBpmInput::gdBpmInput(const char *label)
-: gWindow(144, 36, "Bpm") {
-
+: gWindow(144, 36, "Bpm")
+{
 	if (G_Conf.bpmX)
 		resize(G_Conf.bpmX, G_Conf.bpmY, w(), h());
 
@@ -82,25 +82,27 @@ gdBpmInput::gdBpmInput(const char *label)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gdBpmInput::~gdBpmInput() {
+gdBpmInput::~gdBpmInput()
+{
 	G_Conf.bpmX = x();
 	G_Conf.bpmY = y();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 void gdBpmInput::cb_update_bpm(Fl_Widget *w, void *p) { ((gdBpmInput*)p)->__cb_update_bpm(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdBpmInput::__cb_update_bpm() {
+void gdBpmInput::__cb_update_bpm()
+{
 	if (strcmp(input_a->value(), "") == 0)
 		return;
 	glue_setBpm(input_a->value(), input_b->value());

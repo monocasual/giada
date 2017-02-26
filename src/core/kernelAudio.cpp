@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "../deps/rtaudio-mod/RtAudio.h"
 #include "../utils/log.h"
 #include "../glue/main.h"
 #include "conf.h"
@@ -46,17 +47,19 @@ using std::vector;
 
 
 KernelAudio::KernelAudio()
+  :	numDevs     (0),
+  	inputEnabled(0),
+  	realBufsize (0),
+  	api         (0),
+    system      (nullptr)
+#ifdef __linux__
+   ,onJackChange(nullptr)
+#endif
 {
-	system       = nullptr;
-	numDevs      = 0;
-	inputEnabled = 0;
-	realBufsize  = 0;
-	api          = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
-
 
 
 int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
@@ -455,16 +458,31 @@ void KernelAudio::jackLocate(jack_nframes_t n)
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackReposition(jack_nframes_t n)
+uint32_t KernelAudio::jackQueryCurrentPosition()
+{
+  jack_position_t position;
+  jack_transport_query(jackGetHandle(), &position);
+  return position.frame;
+}
+
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackReposition(jack_nframes_t n, double bpm, int bar, int beat)
 {
   jack_position_t position;
   position.frame = n;
   position.valid = jack_position_bits_t::JackPositionBBT;
-  position.bar  = 1;
-  position.beat = 1;
+  position.bar = bar;
+  position.beat = beat;
   position.tick = 0;
+  position.bar_start_tick = 0;
+  position.beats_per_bar = 4; // TODO - add total beats as param
+  position.beat_type = 4;  // TODO - bar
   position.ticks_per_beat = 960.0f;
-  position.beats_per_minute = 120.0f;
+  position.beats_per_minute = bpm;
   jack_transport_reposition(jackGetHandle(), &position);
 }
 
@@ -485,7 +503,7 @@ void KernelAudio::jackStop()
 void KernelAudio::jackSetSyncCb()
 {
 	jack_set_sync_callback(jackGetHandle(), jackSyncCb, nullptr);
-	//jack_set_sync_timeout(client, 8);
+  //jack_set_sync_timeout(client, 8);
 }
 
 
@@ -501,10 +519,13 @@ int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos
 			glue_stopSeq(false);      // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq(false);  // false = not from GUI
+      if (onJackChange)
+        onJackChange(pos->beats_per_minute);
 			break;
 
 		case JackTransportRolling:
 			gu_log("[KA] Jack transport rolling\n");
+      jackQueryCurrentPosition();
 			break;
 
 		case JackTransportStarting:
@@ -512,12 +533,25 @@ int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos
 			glue_startSeq(false);     // false = not from GUI
 			if (pos->frame == 0)
 				glue_rewindSeq(false);  // false = not from GUI
+      if (onJackChange)
+        onJackChange(pos->beats_per_minute);
 			break;
 
 		default:
 			gu_log("[KA] Jack transport [unknown]\n");
 	}
+
 	return 1;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void KernelAudio::jackSetChangeCb(void (*cb)(double))
+{
+  onJackChange = cb;
+}
+
 
 #endif

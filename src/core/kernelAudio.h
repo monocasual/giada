@@ -31,12 +31,15 @@
 #define KERNELAUDIO_H
 
 
-#include "../deps/rtaudio-mod/RtAudio.h"
+#include <string>
 #ifdef __linux__
 	#include <jack/jack.h>
 	#include <jack/intclient.h>
 	#include <jack/transport.h>
 #endif
+
+
+class RtAudio;
 
 
 class KernelAudio
@@ -74,10 +77,12 @@ public:
 	void jackStart();
 	void jackStop();
 	void jackLocate(jack_nframes_t n);
-	void jackReposition(jack_nframes_t n);
+	void jackReposition(jack_nframes_t n, double bpm, int bar, int beat);
 	void jackSetSyncCb();
+  uint32_t jackQueryCurrentPosition();
 	static int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
 	int __jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
+  void jackSetChangeCb(void (*onJackChange)(double));
 
 #endif
 
@@ -89,6 +94,10 @@ public:
 private:
 
 	RtAudio *system;
+
+#ifdef __linux__
+  void (*onJackChange)(double bpm);
+#endif
 };
 
 #endif

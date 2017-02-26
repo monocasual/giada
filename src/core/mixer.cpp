@@ -28,6 +28,7 @@
 
 
 #include <cassert>
+#include "../deps/rtaudio-mod/RtAudio.h"
 #include "../utils/log.h"
 #include "wave.h"
 #include "recorder.h"
