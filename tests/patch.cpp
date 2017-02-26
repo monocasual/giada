@@ -171,7 +171,7 @@ TEST_CASE("Test Patch class")
     REQUIRE(channel0.mode == 0);
     REQUIRE(channel0.begin == 0);
     REQUIRE(channel0.end == 0);
-    REQUIRE(channel0.boost == 0);
+    REQUIRE(channel0.boost == 1.0f);
     REQUIRE(channel0.recActive == 0);
     REQUIRE(channel0.pitch == Approx(1.2f));
     REQUIRE(channel0.midiInReadActions == 0);
