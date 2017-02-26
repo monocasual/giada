@@ -111,7 +111,10 @@ void Clock::stop()
 
 void Clock::setBpm(float b)
 {
+  if (b < G_MIN_BPM)
+    b = G_MIN_BPM;
   bpm = b;
+	updateFrameBars();
 }
 
 
@@ -156,7 +159,6 @@ void Clock::rewind()
   currentBeat = 0;
   sendMIDIrewind();
 }
-
 
 
 /* -------------------------------------------------------------------------- */
