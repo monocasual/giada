@@ -248,6 +248,10 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 	if (!ready)
 		return 0;
 
+#ifdef __linux__
+  clock->recvJackSync();
+#endif
+
 	float *outBuf = static_cast<float*>(_outBuf);
 	float *inBuf  = G_KernelAudio.inputEnabled ? static_cast<float*>(_inBuf) : nullptr;
 	bufferSize   *= 2;     // stereo

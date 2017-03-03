@@ -101,12 +101,14 @@ void glue_setBpm(const char *v1, const char *v2, bool notifyJack)
 	G_Clock.setBpm(bpmF);
   G_Recorder.updateBpm(oldBpmF, bpmF, G_Clock.getQuanto());
 
+#if 0
 #ifdef __linux__
 
   if (notifyJack)
     G_KernelAudio.jackReposition(G_KernelAudio.jackQueryCurrentPosition(),
       G_Clock.getBpm(), G_Clock.getBars(), G_Clock.getCurrentBeat());
 
+#endif
 #endif
 
   gu_refreshActionEditor();
@@ -119,14 +121,13 @@ void glue_setBpm(const char *v1, const char *v2, bool notifyJack)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBpm(float v, bool notifyJack)
+void glue_setBpm(float v)
 {
   float fIpart;
   float fPpart = modf(v, &fIpart);
   int iIpart = fIpart;
   int iPpart = ceilf(fPpart);
-  glue_setBpm(std::to_string(iIpart).c_str(), std::to_string(iPpart).c_str(),
-    notifyJack);
+  glue_setBpm(std::to_string(iIpart).c_str(), std::to_string(iPpart).c_str());
 }
 
 
@@ -461,17 +462,3 @@ void glue_beatsDivide()
 {
 	glue_setBeats(G_Clock.getBeats() / 2, G_Clock.getBars(), false);
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef __linux__
-
-void glue_onJackChange(double bpm)
-{
-  glue_setBpm(bpm, false); // false: don't notify jack, avoid infinite loop
-  printf("CHANGE! >>>>> %f\n", bpm);
-}
-
-#endif

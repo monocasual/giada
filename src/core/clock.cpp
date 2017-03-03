@@ -30,12 +30,14 @@
 #include <cassert>
 #include "conf.h"
 #include "const.h"
+#include "kernelAudio.h"
 #include "kernelMidi.h"
 #include "clock.h"
 
 
-Clock::Clock(KernelMidi *kernelMidi, Conf *conf)
-  : kernelMidi       (kernelMidi),
+Clock::Clock(KernelAudio *kernelAudio, KernelMidi *kernelMidi, Conf *conf)
+  : kernelAudio      (kernelAudio),
+    kernelMidi       (kernelMidi),
     conf             (conf),
     running          (false),
     bpm              (G_DEFAULT_BPM),
@@ -56,6 +58,7 @@ Clock::Clock(KernelMidi *kernelMidi, Conf *conf)
   	midiTCminutes    (0),
   	midiTChours      (0)
 {
+  assert(kernelAudio != nullptr);
   assert(kernelMidi != nullptr);
   assert(conf != nullptr);
 }
@@ -283,6 +286,22 @@ void Clock::sendMIDIrewind()
 		kernelMidi->send(MIDI_EOX, -1, -1);        // end of sysex
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+#ifdef __linux__
+
+void Clock::recvJackSync()
+{
+  KernelAudio::JackState jackState = kernelAudio->jackTransportQuery();
+
+  printf("running = %d\n", jackState.running);
+  printf("bpm = %f\n", jackState.bpm);
+}
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */

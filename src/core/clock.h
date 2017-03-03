@@ -32,6 +32,7 @@
 
 
 class Conf;
+class KernelAudio;
 class KernelMidi;
 
 
@@ -39,7 +40,7 @@ class Clock
 {
 public:
 
-  Clock(KernelMidi *kernelMidi, Conf *conf);
+  Clock(KernelAudio *ka, KernelMidi *km, Conf *conf);
 
   /* sendMIDIsync
   Generates MIDI sync output data. */
@@ -50,6 +51,10 @@ public:
 	Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
 
 	void sendMIDIrewind();
+
+#ifdef __linux__
+  void recvJackSync();
+#endif
 
   float getBpm();
   int getBeats();
@@ -94,8 +99,9 @@ public:
 
 private:
 
-  KernelMidi *kernelMidi;
-  Conf       *conf;
+  KernelAudio *kernelAudio;
+  KernelMidi  *kernelMidi;
+  Conf        *conf;
 
   bool  running;
   float bpm;

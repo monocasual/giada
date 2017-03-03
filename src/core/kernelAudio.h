@@ -46,6 +46,16 @@ class KernelAudio
 {
 public:
 
+#ifdef __linux__
+
+  struct JackState
+  {
+    bool   running;
+    double bpm;
+  } jackState;
+
+#endif
+
 	KernelAudio();
 
 	int openDevice(int api,	int outDev,	int inDev, int outChan,	int inChan,
@@ -73,16 +83,11 @@ public:
 
 #ifdef __linux__
 
-	jack_client_t *jackGetHandle();
-	void jackStart();
-	void jackStop();
-	void jackLocate(jack_nframes_t n);
-	void jackReposition(jack_nframes_t n, double bpm, int bar, int beat);
-	void jackSetSyncCb();
-  uint32_t jackQueryCurrentPosition();
-	static int jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
-	int __jackSyncCb(jack_transport_state_t state, jack_position_t *pos, void *arg);
-  void jackSetChangeCb(void (*onJackChange)(double));
+  void   jackStart();
+  void   jackStop();
+  void   jackLocate(jack_nframes_t n);
+  void   jackReposition(jack_nframes_t n, double bpm, int bar, int beat);
+  const JackState &jackTransportQuery();
 
 #endif
 
@@ -96,7 +101,9 @@ private:
 	RtAudio *system;
 
 #ifdef __linux__
-  void (*onJackChange)(double bpm);
+
+  jack_client_t *jackGetHandle();
+
 #endif
 };
 

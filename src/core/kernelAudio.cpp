@@ -52,9 +52,6 @@ KernelAudio::KernelAudio()
   	realBufsize (0),
   	api         (0),
     system      (nullptr)
-#ifdef __linux__
-   ,onJackChange(nullptr)
-#endif
 {
 }
 
@@ -166,9 +163,11 @@ int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
 			&options);
 		G_audio_status = true;
 
+#if 0
 #if defined(__linux__)
 		if (api == SYS_API_JACK)
 			jackSetSyncCb();
+#endif
 #endif
 
 		return 1;
@@ -419,12 +418,13 @@ string KernelAudio::getRtAudioVersion()
 
 #ifdef __linux__
 
+#if 0
 int KernelAudio::jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
 	void *arg)
 {
 	return G_KernelAudio.__jackSyncCb(state, pos, arg);
 }
-
+#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -434,6 +434,26 @@ jack_client_t *KernelAudio::jackGetHandle()
 	return static_cast<jack_client_t*>(system->rtapi_->__HACK__getJackClient());
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+const KernelAudio::JackState &KernelAudio::jackTransportQuery()
+{
+  jack_position_t position;
+	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
+  jackState.running = ts != JackTransportStopped;
+  jackState.bpm     = position.beats_per_minute;
+  return jackState;
+}
+
+/*
+void KernelAudio::jackTransportQuery()
+{
+  jack_position_t position;
+	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
+  jackRunning = ts != JackTransportStopped;
+  jackBpm     = position.beats_per_minute;
+}*/
 
 /* -------------------------------------------------------------------------- */
 
@@ -457,13 +477,13 @@ void KernelAudio::jackLocate(jack_nframes_t n)
 
 /* -------------------------------------------------------------------------- */
 
-
+/*
 uint32_t KernelAudio::jackQueryCurrentPosition()
 {
   jack_position_t position;
   jack_transport_query(jackGetHandle(), &position);
   return position.frame;
-}
+}*/
 
 
 
@@ -497,9 +517,7 @@ void KernelAudio::jackStop()
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
+#if 0
 void KernelAudio::jackSetSyncCb()
 {
 	jack_set_sync_callback(jackGetHandle(), jackSyncCb, nullptr);
@@ -543,15 +561,11 @@ int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos
 
 	return 1;
 }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
 
-
-void KernelAudio::jackSetChangeCb(void (*cb)(double))
-{
-  onJackChange = cb;
-}
 
 
 #endif

@@ -88,10 +88,6 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-#ifdef __linux__
-  G_KernelAudio.jackSetChangeCb(glue_onJackChange);
-#endif
-
 	G_KernelAudio.openDevice(G_Conf.soundSystem, G_Conf.soundDeviceOut,
 		G_Conf.soundDeviceIn,	G_Conf.channelsOut, G_Conf.channelsIn,
 		G_Conf.samplerate, G_Conf.buffersize);

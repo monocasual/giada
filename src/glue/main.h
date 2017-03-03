@@ -36,7 +36,7 @@
 #define GLUE_H
 
 
-void glue_setBpm(const char *v1, const char *v2,  bool notifyJack=true);
+void glue_setBpm(const char *v1, const char *v2, bool notifyJack=true);
 void glue_setBpm(float v, bool notifyJack=true);
 void glue_setBeats(int beats, int bars, bool expand);
 
@@ -78,15 +78,5 @@ void glue_startStopMetronome(bool gui=true);
 
 void glue_beatsMultiply();
 void glue_beatsDivide();
-
-#ifdef __linux__
-
-/* onJackChange
-Callback registered to and fired from KernelAudio when some JACK's parameters
-change. */
-
-void glue_onJackChange(double bpm);
-
-#endif
 
 #endif

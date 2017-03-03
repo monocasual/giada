@@ -57,7 +57,7 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Clock         G_Clock(&G_KernelMidi, &G_Conf);
+Clock         G_Clock(&G_KernelAudio, &G_KernelMidi, &G_Conf);
 Mixer         G_Mixer(&G_Clock);
 Recorder      G_Recorder(&G_Clock);
 MidiMapConf   G_MidiMap;
