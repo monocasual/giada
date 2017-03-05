@@ -104,12 +104,18 @@ bool Clock::isOnFirstBeat()
 void Clock::start()
 {
   running = true;
+	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
+		kernelMidi->send(MIDI_START, -1, -1);
+		kernelMidi->send(MIDI_POSITION_PTR, 0, 0);
+	}
 }
 
 
 void Clock::stop()
 {
   running = false;
+  if (conf->midiSync == MIDI_SYNC_CLOCK_M)
+  	kernelMidi->send(MIDI_STOP, -1, -1);
 }
 
 

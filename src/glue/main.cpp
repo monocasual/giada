@@ -207,12 +207,6 @@ void glue_startSeq(bool gui)
 		G_KernelAudio.jackStart();
 #endif
 
-  /* TODO - move to Clock.h */
-	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
-		G_KernelMidi.send(MIDI_START, -1, -1);
-		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
-	}
-
 	if (!gui) {
     Fl::lock();
     G_MainWin->mainTransport->updatePlay(1);
@@ -227,10 +221,6 @@ void glue_startSeq(bool gui)
 void glue_stopSeq(bool gui)
 {
 	mh_stopSequencer();
-
-  /* TODO - move to Clock.h */
-	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
-		G_KernelMidi.send(MIDI_STOP, -1, -1);
 
 #ifdef __linux__
 	if (gui)
