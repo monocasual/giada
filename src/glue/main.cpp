@@ -77,7 +77,7 @@ extern PluginHost    G_PluginHost;
 #endif
 
 
-void glue_setBpm(const char *v1, const char *v2, bool notifyJack)
+void glue_setBpm(const char *v1, const char *v2)
 {
   /* Never change this stuff while recording audio */
 
@@ -202,12 +202,12 @@ void glue_startSeq(bool gui)
 {
 	G_Clock.start();
 
-	if (gui) {
 #ifdef __linux__
+	if (gui)
 		G_KernelAudio.jackStart();
 #endif
-	}
 
+  /* TODO - move to Clock.h */
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M) {
 		G_KernelMidi.send(MIDI_START, -1, -1);
 		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
@@ -228,6 +228,7 @@ void glue_stopSeq(bool gui)
 {
 	mh_stopSequencer();
 
+  /* TODO - move to Clock.h */
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		G_KernelMidi.send(MIDI_STOP, -1, -1);
 

@@ -439,21 +439,16 @@ jack_client_t *KernelAudio::jackGetHandle()
 
 const KernelAudio::JackState &KernelAudio::jackTransportQuery()
 {
+	if (api != SYS_API_JACK)
+    return jackState;
   jack_position_t position;
 	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
   jackState.running = ts != JackTransportStopped;
   jackState.bpm     = position.beats_per_minute;
+  jackState.frame   = position.frame;
   return jackState;
 }
 
-/*
-void KernelAudio::jackTransportQuery()
-{
-  jack_position_t position;
-	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
-  jackRunning = ts != JackTransportStopped;
-  jackBpm     = position.beats_per_minute;
-}*/
 
 /* -------------------------------------------------------------------------- */
 
@@ -473,18 +468,6 @@ void KernelAudio::jackLocate(jack_nframes_t n)
 	if (api == SYS_API_JACK)
 		jack_transport_locate(jackGetHandle(), n);
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-/*
-uint32_t KernelAudio::jackQueryCurrentPosition()
-{
-  jack_position_t position;
-  jack_transport_query(jackGetHandle(), &position);
-  return position.frame;
-}*/
-
 
 
 /* -------------------------------------------------------------------------- */
@@ -515,53 +498,6 @@ void KernelAudio::jackStop()
 	if (api == SYS_API_JACK)
 		jack_transport_stop(jackGetHandle());
 }
-
-
-#if 0
-void KernelAudio::jackSetSyncCb()
-{
-	jack_set_sync_callback(jackGetHandle(), jackSyncCb, nullptr);
-  //jack_set_sync_timeout(client, 8);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int KernelAudio::__jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
-		void *arg)
-{
-	switch (state) {
-		case JackTransportStopped:
-			gu_log("[KA] Jack transport stopped, frame=%d\n", pos->frame);
-			glue_stopSeq(false);      // false = not from GUI
-			if (pos->frame == 0)
-				glue_rewindSeq(false);  // false = not from GUI
-      if (onJackChange)
-        onJackChange(pos->beats_per_minute);
-			break;
-
-		case JackTransportRolling:
-			gu_log("[KA] Jack transport rolling\n");
-      jackQueryCurrentPosition();
-			break;
-
-		case JackTransportStarting:
-			gu_log("[KA] Jack transport starting, frame=%d\n", pos->frame);
-			glue_startSeq(false);     // false = not from GUI
-			if (pos->frame == 0)
-				glue_rewindSeq(false);  // false = not from GUI
-      if (onJackChange)
-        onJackChange(pos->beats_per_minute);
-			break;
-
-		default:
-			gu_log("[KA] Jack transport [unknown]\n");
-	}
-
-	return 1;
-}
-#endif
 
 
 /* -------------------------------------------------------------------------- */

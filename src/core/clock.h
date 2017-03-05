@@ -31,8 +31,9 @@
 #define __CLOCK_H__
 
 
+#include "kernelAudio.h"
+
 class Conf;
-class KernelAudio;
 class KernelMidi;
 
 
@@ -122,6 +123,12 @@ private:
 	int midiTCseconds;
 	int midiTCminutes;
 	int midiTChours;
+
+#ifdef __linux__
+  bool   jackRunningPrev;
+  double jackBpmPrev;
+  KernelAudio::JackState jackStatePrev;
+#endif
 
   void updateQuanto();
 };

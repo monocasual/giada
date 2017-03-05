@@ -28,6 +28,7 @@
 
 
 #include <cassert>
+#include "../glue/main.h"
 #include "conf.h"
 #include "const.h"
 #include "kernelAudio.h"
@@ -297,8 +298,14 @@ void Clock::recvJackSync()
 {
   KernelAudio::JackState jackState = kernelAudio->jackTransportQuery();
 
-  printf("running = %d\n", jackState.running);
-  printf("bpm = %f\n", jackState.bpm);
+  if (jackState.running != jackStatePrev.running)
+    glue_startStopSeq(false);  // false: not from UI interaction
+  if (jackState.bpm != jackStatePrev.bpm)
+    glue_setBpm(jackState.bpm);
+  if (jackState.frame == 0)
+    glue_rewindSeq(false);     // false: not from UI interaction
+
+  jackStatePrev = jackState;
 }
 
 #endif

@@ -36,8 +36,8 @@
 #define GLUE_H
 
 
-void glue_setBpm(const char *v1, const char *v2, bool notifyJack=true);
-void glue_setBpm(float v, bool notifyJack=true);
+void glue_setBpm(const char *v1, const char *v2);
+void glue_setBpm(float v);
 void glue_setBeats(int beats, int bars, bool expand);
 
 /* start, stop, rewind sequencer

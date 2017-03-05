@@ -50,8 +50,9 @@ public:
 
   struct JackState
   {
-    bool   running;
-    double bpm;
+    bool     running;
+    double   bpm;
+    uint32_t frame;
   } jackState;
 
 #endif
