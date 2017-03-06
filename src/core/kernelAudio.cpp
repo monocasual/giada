@@ -413,18 +413,8 @@ string KernelAudio::getRtAudioVersion()
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
 #ifdef __linux__
 
-#if 0
-int KernelAudio::jackSyncCb(jack_transport_state_t state, jack_position_t *pos,
-	void *arg)
-{
-	return G_KernelAudio.__jackSyncCb(state, pos, arg);
-}
-#endif
 
 /* -------------------------------------------------------------------------- */
 
@@ -463,7 +453,7 @@ void KernelAudio::jackStart()
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackLocate(jack_nframes_t n)
+void KernelAudio::jackLocate(uint32_t n)
 {
 	if (api == SYS_API_JACK)
 		jack_transport_locate(jackGetHandle(), n);
@@ -473,7 +463,7 @@ void KernelAudio::jackLocate(jack_nframes_t n)
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackReposition(jack_nframes_t n, double bpm, int bar, int beat)
+void KernelAudio::jackReposition(uint32_t n, double bpm, int bar, int beat)
 {
   jack_position_t position;
   position.frame = n;
@@ -501,7 +491,6 @@ void KernelAudio::jackStop()
 
 
 /* -------------------------------------------------------------------------- */
-
 
 
 #endif

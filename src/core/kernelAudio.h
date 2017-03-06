@@ -86,8 +86,8 @@ public:
 
   void   jackStart();
   void   jackStop();
-  void   jackLocate(jack_nframes_t n);
-  void   jackReposition(jack_nframes_t n, double bpm, int bar, int beat);
+  void   jackLocate(uint32_t n);
+  void   jackReposition(uint32_t n, double bpm, int bar, int beat);
   const JackState &jackTransportQuery();
 
 #endif
