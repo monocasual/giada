@@ -203,8 +203,7 @@ void glue_startSeq(bool gui)
 	G_Clock.start();
 
 #ifdef __linux__
-	if (gui)
-		G_KernelAudio.jackStart();
+	G_KernelAudio.jackStart();
 #endif
 
 	if (!gui) {
@@ -223,8 +222,7 @@ void glue_stopSeq(bool gui)
 	mh_stopSequencer();
 
 #ifdef __linux__
-	if (gui)
-		G_KernelAudio.jackStop();
+	G_KernelAudio.jackStop();
 #endif
 
 	/* what to do if we stop the sequencer and some action recs are active?
