@@ -304,8 +304,16 @@ void Clock::recvJackSync()
 {
   KernelAudio::JackState jackState = kernelAudio->jackTransportQuery();
 
-  if (jackState.running != jackStatePrev.running)
-    glue_startStopSeq(false);  // false: not from UI interaction
+  if (jackState.running != jackStatePrev.running) {
+    if (jackState.running) {
+      if (!isRunning())
+        glue_startSeq(false); // not from UI
+    }
+    else {
+      if (isRunning())
+        glue_stopSeq(false); // not from UI
+    }
+  }
   if (jackState.bpm != jackStatePrev.bpm)
     glue_setBpm(jackState.bpm);
   if (jackState.frame == 0)
