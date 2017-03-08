@@ -318,12 +318,9 @@ void Clock::recvJackSync()
     if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
       glue_setBpm(jackState.bpm);
 
-  // TODO
-  //if (jackState.frame == 0)
-  //{
-  //  puts("rewind");
-    //glue_rewindSeq(false);     // false: not from UI interaction
-  //}
+  if (jackState.frame == 0 && jackState.frame != jackStatePrev.frame)
+    glue_rewindSeq(false);  // not from UI
+
   jackStatePrev = jackState;
 }
 

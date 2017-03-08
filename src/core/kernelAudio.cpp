@@ -474,6 +474,9 @@ void KernelAudio::jackSetBpm(double bpm)
   jack_position_t position;
   jack_transport_query(jackGetHandle(), &position);
   position.valid = jack_position_bits_t::JackPositionBBT;
+  position.bar  = 0;  // no such info from Giada
+  position.beat = 0;  // no such info from Giada
+  position.tick = 0;  // no such info from Giada
   position.beats_per_minute = bpm;
   jack_transport_reposition(jackGetHandle(), &position);
 }
