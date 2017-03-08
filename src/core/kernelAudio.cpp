@@ -453,28 +453,27 @@ void KernelAudio::jackStart()
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackLocate(uint32_t n)
+void KernelAudio::jackSetPosition(uint32_t frame)
 {
-	if (api == SYS_API_JACK)
-		jack_transport_locate(jackGetHandle(), n);
+	if (api != SYS_API_JACK)
+    return;
+  jack_position_t position;
+  jack_transport_query(jackGetHandle(), &position);
+  position.frame = frame;
+  jack_transport_reposition(jackGetHandle(), &position);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackReposition(uint32_t n, double bpm, int bar, int beat)
+void KernelAudio::jackSetBpm(double bpm)
 {
+  if (api != SYS_API_JACK)
+    return;
   jack_position_t position;
-  position.frame = n;
+  jack_transport_query(jackGetHandle(), &position);
   position.valid = jack_position_bits_t::JackPositionBBT;
-  position.bar = bar;
-  position.beat = beat;
-  position.tick = 0;
-  position.bar_start_tick = 0;
-  position.beats_per_bar = 4; // TODO - add total beats as param
-  position.beat_type = 4;  // TODO - bar
-  position.ticks_per_beat = 960.0f;
   position.beats_per_minute = bpm;
   jack_transport_reposition(jackGetHandle(), &position);
 }

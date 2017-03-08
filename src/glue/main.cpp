@@ -101,14 +101,8 @@ void glue_setBpm(const char *v1, const char *v2)
 	G_Clock.setBpm(bpmF);
   G_Recorder.updateBpm(oldBpmF, bpmF, G_Clock.getQuanto());
 
-#if 0
 #ifdef __linux__
-
-  if (notifyJack)
-    G_KernelAudio.jackReposition(G_KernelAudio.jackQueryCurrentPosition(),
-      G_Clock.getBpm(), G_Clock.getBars(), G_Clock.getCurrentBeat());
-
-#endif
+  G_KernelAudio.jackSetBpm(G_Clock.getBpm());
 #endif
 
   gu_refreshActionEditor();
@@ -123,6 +117,8 @@ void glue_setBpm(const char *v1, const char *v2)
 
 void glue_setBpm(float v)
 {
+  if (v < G_MIN_BPM || v > G_MAX_BPM)
+    v = G_DEFAULT_BPM;
   float fIpart;
   float fPpart = modf(v, &fIpart);
   int iIpart = fIpart;
@@ -261,10 +257,7 @@ void glue_rewindSeq(bool gui)
 	mh_rewindSequencer();
 
 #ifdef __linux__
-
-	if (gui)
-		G_KernelAudio.jackLocate(0);
-
+	G_KernelAudio.jackSetPosition(0);
 #endif
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
