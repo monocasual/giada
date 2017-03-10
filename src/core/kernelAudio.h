@@ -40,6 +40,8 @@
 
 
 class RtAudio;
+class Conf;
+class Mixer;
 
 
 class KernelAudio
@@ -59,8 +61,7 @@ public:
 
 	KernelAudio();
 
-	int openDevice(int api,	int outDev,	int inDev, int outChan,	int inChan,
-		int samplerate,	int buffersize);
+	int openDevice(Conf *conf, Mixer *mixer);
 
 	int closeDevice();
 

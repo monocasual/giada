@@ -36,12 +36,6 @@
 #include "kernelAudio.h"
 
 
-extern KernelAudio G_KernelAudio;
-extern Mixer       G_Mixer;
-extern Conf        G_Conf;
-extern bool	       G_audio_status;
-
-
 using std::string;
 using std::vector;
 
@@ -59,10 +53,9 @@ KernelAudio::KernelAudio()
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
-	int inChan, int samplerate, int buffersize)
+int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
 {
-	api = _api;
+	api = conf->soundSystem;
 	gu_log("[KA] using system 0x%x\n", api);
 
 #if defined(__linux__)
@@ -94,19 +87,17 @@ int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
 
 #endif
 
-	else {
-		G_audio_status = false;
+	else
 		return 0;
-	}
 
-	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n", outDev, inDev, samplerate);
+	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n",
+    conf->soundDeviceOut, conf->soundDeviceIn, conf->samplerate);
 
 	numDevs = system->getDeviceCount();
 
 	if (numDevs < 1) {
 		gu_log("[KA] no devices found with this API\n");
 		closeDevice();
-		G_audio_status = false;
 		return 0;
 	}
 	else {
@@ -118,64 +109,55 @@ int KernelAudio::openDevice(int _api, int outDev,	int inDev, int outChan,
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	if (outDev == G_DEFAULT_SOUNDDEV_OUT)
+	if (conf->soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT)
 		outParams.deviceId = getDefaultOut();
 	else
-		outParams.deviceId = outDev;
+		outParams.deviceId = conf->soundDeviceOut;
 
 	outParams.nChannels = 2;
-	outParams.firstChannel = outChan*2; // chan 0=0, 1=2, 2=4, ...
+	outParams.firstChannel = conf->channelsOut * 2; // chan 0=0, 1=2, 2=4, ...
 
 	/* inDevice can be disabled */
 
-	if (inDev != -1) {
-		inParams.deviceId     = inDev;
+	if (conf->soundDeviceIn != -1) {
+		inParams.deviceId     = conf->soundDeviceIn;
 		inParams.nChannels    = 2;
-		inParams.firstChannel = inChan*2;   // chan 0=0, 1=2, 2=4, ...
+		inParams.firstChannel = conf->channelsIn * 2;   // chan 0=0, 1=2, 2=4, ...
 		inputEnabled = true;
 	}
 	else
 		inputEnabled = false;
 
   RtAudio::StreamOptions options;
-  options.streamName = "Giada";
+  options.streamName = G_APP_NAME;
   options.numberOfBuffers = 4;
 
-	realBufsize = buffersize;
+	realBufsize = conf->buffersize;
 
 #if defined(__linux__) || defined(__APPLE__)
+
 	if (api == SYS_API_JACK) {
-		samplerate = getFreq(outDev, 0);
-		gu_log("[KA] JACK in use, freq = %d\n", samplerate);
-		G_Conf.samplerate = samplerate;
+		conf->samplerate = getFreq(conf->soundDeviceOut, 0);
+		gu_log("[KA] JACK in use, freq = %d\n", conf->samplerate);
 	}
+
 #endif
 
 	try {
 		system->openStream(
 			&outParams, 					              // output params
-			inDev != -1 ? &inParams : nullptr,  // input params if inDevice is selected
+			conf->soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
 			RTAUDIO_FLOAT32,			              // audio format
-			samplerate, 					              // sample rate
+			conf->samplerate, 					        // sample rate
 			&realBufsize, 				              // buffer size in byte
-			&G_Mixer.masterPlay,                // audio callback
+			&mixer->masterPlay,                 // audio callback
 			nullptr,									          // user data (unused)
 			&options);
-		G_audio_status = true;
-
-#if 0
-#if defined(__linux__)
-		if (api == SYS_API_JACK)
-			jackSetSyncCb();
-#endif
-#endif
-
 		return 1;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] system init error: %s\n", e.getMessage().c_str());
 		closeDevice();
-		G_audio_status = false;
 		return 0;
 	}
 }
@@ -490,9 +472,6 @@ void KernelAudio::jackStop()
 	if (api == SYS_API_JACK)
 		jack_transport_stop(jackGetHandle());
 }
-
-
-/* -------------------------------------------------------------------------- */
 
 
 #endif

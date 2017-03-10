@@ -88,9 +88,7 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-	G_KernelAudio.openDevice(G_Conf.soundSystem, G_Conf.soundDeviceOut,
-		G_Conf.soundDeviceIn,	G_Conf.channelsOut, G_Conf.channelsIn,
-		G_Conf.samplerate, G_Conf.buffersize);
+  G_audio_status = G_KernelAudio.openDevice(&G_Conf, &G_Mixer);
 	G_Mixer.init();
 	G_Recorder.init();
 
