@@ -16,9 +16,10 @@
 - Strip VST folder from Git repository
 - Fix 'Close' button's position inside MIDI input window
 - Update RtMidi to version 2.1.1
-- Fix missing tracker reset on 'free channel' function (GitHub #99)
 - Improve 'free channel' function (GitHub #105)
 - New 'Clock' structure for timing operations
+- New Jack implementation with BPM sync and Rewind (GitHub #89)
+- Fix missing tracker reset on 'free channel' function (GitHub #99)
 
 
 0.13.2 --- 2017 . 01 . 14
