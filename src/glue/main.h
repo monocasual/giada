@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -9,7 +9,7 @@
  * new action will ever be called via MIDI or keyboard/mouse. If yes,
  * put it here.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -29,7 +29,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GLUE_H
@@ -47,7 +47,7 @@ otherwise it's a MIDI/Jack/external signal. */
 void glue_startStopSeq(bool gui=true);
 void glue_startSeq    (bool gui=true);
 void glue_stopSeq     (bool gui=true);
-void glue_rewindSeq   (bool gui=true);
+void glue_rewindSeq   (bool gui=true, bool notifyJack=true);
 
 /* start/stopReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction

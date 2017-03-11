@@ -252,16 +252,17 @@ void glue_stopSeq(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_rewindSeq(bool gui)
+void glue_rewindSeq(bool gui, bool notifyJack)
 {
 	mh_rewindSequencer();
 
   /* FIXME - potential desync when Quantizer is enabled from this point on.
   Mixer would wait, while the following calls would be made regardless of its
   state. */
-    
+
 #ifdef __linux__
-	G_KernelAudio.jackSetPosition(0);
+  if (notifyJack)
+	  G_KernelAudio.jackSetPosition(0);
 #endif
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)

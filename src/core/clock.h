@@ -33,6 +33,7 @@
 
 #include "kernelAudio.h"
 
+
 class Conf;
 class KernelMidi;
 
