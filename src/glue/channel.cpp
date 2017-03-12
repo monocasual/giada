@@ -35,6 +35,7 @@
 #include "../gui/elems/ge_mixed.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
+#include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../utils/gui.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -479,5 +480,69 @@ void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val, bool numeric
 
 		ch->guiChannel->vol->value(val);
 		ch->guiChannel->vol->redraw();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
+{
+	/* When you call glue_startReadingRecs with G_Conf.treatRecsAsLoops, the
+	member value ch->readActions actually is not set to true immediately, because
+	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
+	the next first beat. So a 'stop rec' command should occur also when
+	ch->readActions is false but the channel is in wait mode; this check will
+	handle the case of when you press 'R', the channel goes into REC_WAITING and
+	then you press 'R' again to undo the status. */
+
+	if (ch->readActions || (!ch->readActions && ch->recStatus == REC_WAITING))
+		glue_stopReadingRecs(ch, gui);
+	else
+		glue_startReadingRecs(ch, gui);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_startReadingRecs(SampleChannel *ch, bool gui)
+{
+	if (G_Conf.treatRecsAsLoops)
+		ch->recStatus = REC_WAITING;
+	else
+		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
+	if (!gui) {
+		Fl::lock();
+		((geSampleChannel*)ch->guiChannel)->readActions->value(1);
+		Fl::unlock();
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_stopReadingRecs(SampleChannel *ch, bool gui)
+{
+	/* First of all, if the mixer is not running just stop and disable everything.
+	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
+	channel in REC_ENDING status. */
+
+	if (!G_Clock.isRunning()) {
+		ch->recStatus = REC_STOPPED;
+		ch->readActions = false;
+	}
+	else
+	if (G_Conf.treatRecsAsLoops)
+		ch->recStatus = REC_ENDING;
+	else
+		ch->setReadActions(false, G_Conf.recsStopOnChanHalt);
+
+	if (!gui) {
+		Fl::lock();
+		((geSampleChannel*)ch->guiChannel)->readActions->value(0);
+		Fl::unlock();
 	}
 }

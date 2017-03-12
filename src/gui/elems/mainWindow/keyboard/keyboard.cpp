@@ -28,7 +28,7 @@
 
 
 #include "../../../../core/sampleChannel.h"
-#include "../../../../glue/main.h"
+#include "../../../../glue/transport.h"
 #include "../../../../glue/io.h"
 #include "../../../../utils/log.h"
 #include "../../../dialogs/gd_warnings.h"

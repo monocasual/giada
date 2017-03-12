@@ -33,28 +33,15 @@
 
 
 #include <cmath>
-#include "../gui/elems/ge_waveform.h"
-#include "../gui/elems/ge_mixed.h"
-#include "../gui/elems/ge_waveTools.h"
-#include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/elems/mainWindow/mainIO.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
-#include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/dialogs/gd_editor.h"
-#include "../gui/dialogs/gd_warnings.h"
 #include "../utils/gui.h"
-#include "../utils/fs.h"
 #include "../utils/log.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
-#include "../core/recorder.h"
-#include "../core/wave.h"
-#include "../core/pluginHost.h"
-#include "../core/channel.h"
-#include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/clock.h"
 #include "../core/kernelMidi.h"
@@ -71,7 +58,6 @@ extern KernelMidi    G_KernelMidi;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Clock         G_Clock;
 extern Conf	 	   		 G_Conf;
-extern bool 		 		 G_audio_status;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -119,8 +105,8 @@ void glue_setBpm(float v)
 {
   if (v < G_MIN_BPM || v > G_MAX_BPM)
     v = G_DEFAULT_BPM;
-  float fIpart;
-  float fPpart = modf(v, &fIpart);
+  double fIpart;
+  double fPpart = modf(v, &fIpart);
   int iIpart = fIpart;
   int iPpart = ceilf(fPpart);
   glue_setBpm(std::to_string(iIpart).c_str(), std::to_string(iPpart).c_str());
@@ -185,73 +171,6 @@ void glue_setBeats(int beats, int bars, bool expand)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopSeq(bool gui)
-{
-	G_Clock.isRunning() ? glue_stopSeq(gui) : glue_startSeq(gui);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_startSeq(bool gui)
-{
-	G_Clock.start();
-
-#ifdef __linux__
-	G_KernelAudio.jackStart();
-#endif
-
-	if (!gui) {
-    Fl::lock();
-    G_MainWin->mainTransport->updatePlay(1);
-    Fl::unlock();
-  }
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_stopSeq(bool gui)
-{
-	mh_stopSequencer();
-
-#ifdef __linux__
-	G_KernelAudio.jackStop();
-#endif
-
-	/* what to do if we stop the sequencer and some action recs are active?
-	 * Deactivate the button and delete any 'rec on' status */
-
-	if (G_Recorder.active) {
-		G_Recorder.active = false;
-    Fl::lock();
-	  G_MainWin->mainTransport->updateRecAction(0);
-	  Fl::unlock();
-	}
-
-	/* if input recs are active (who knows why) we must deactivate them.
-	 * One might stop the sequencer while an input rec is running. */
-
-	if (G_Mixer.recording) {
-		mh_stopInputRec();
-    Fl::lock();
-	  G_MainWin->mainTransport->updateRecInput(0);
-	  Fl::unlock();
-	}
-
-	if (!gui) {
-    Fl::lock();
-	  G_MainWin->mainTransport->updatePlay(0);
-	  Fl::unlock();
-  }
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void glue_rewindSeq(bool gui, bool notifyJack)
 {
 	mh_rewindSequencer();
@@ -267,70 +186,6 @@ void glue_rewindSeq(bool gui, bool notifyJack)
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
 		G_KernelMidi.send(MIDI_POSITION_PTR, 0, 0);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
-{
-	/* When you call glue_startReadingRecs with G_Conf.treatRecsAsLoops, the
-	member value ch->readActions actually is not set to true immediately, because
-	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
-	the next first beat. So a 'stop rec' command should occur also when
-	ch->readActions is false but the channel is in wait mode; this check will
-	handle the case of when you press 'R', the channel goes into REC_WAITING and
-	then you press 'R' again to undo the status. */
-
-	if (ch->readActions || (!ch->readActions && ch->recStatus == REC_WAITING))
-		glue_stopReadingRecs(ch, gui);
-	else
-		glue_startReadingRecs(ch, gui);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_startReadingRecs(SampleChannel *ch, bool gui)
-{
-	if (G_Conf.treatRecsAsLoops)
-		ch->recStatus = REC_WAITING;
-	else
-		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
-	if (!gui) {
-		Fl::lock();
-		((geSampleChannel*)ch->guiChannel)->readActions->value(1);
-		Fl::unlock();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_stopReadingRecs(SampleChannel *ch, bool gui)
-{
-	/* First of all, if the mixer is not running just stop and disable everything.
-	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
-	channel in REC_ENDING status. */
-
-	if (!G_Clock.isRunning()) {
-		ch->recStatus = REC_STOPPED;
-		ch->readActions = false;
-	}
-	else
-	if (G_Conf.treatRecsAsLoops)
-		ch->recStatus = REC_ENDING;
-	else
-		ch->setReadActions(false, G_Conf.recsStopOnChanHalt);
-
-	if (!gui) {
-		Fl::lock();
-		((geSampleChannel*)ch->guiChannel)->readActions->value(0);
-		Fl::unlock();
-	}
 }
 
 
@@ -417,20 +272,6 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 
 	if (resetGui)
 		gu_updateControls();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_startStopMetronome(bool gui)
-{
-	G_Mixer.metronome = !G_Mixer.metronome;
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
-		Fl::unlock();
-	}
 }
 
 

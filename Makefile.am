@@ -59,6 +59,8 @@ src/glue/channel.h                     \
 src/glue/channel.cpp                   \
 src/glue/plugin.h                      \
 src/glue/plugin.cpp                    \
+src/glue/transport.h                   \
+src/glue/transport.cpp                 \
 src/gui/dialogs/gd_keyGrabber.h        \
 src/gui/dialogs/gd_keyGrabber.cpp      \
 src/gui/dialogs/gd_about.h             \

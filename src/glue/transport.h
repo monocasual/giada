@@ -2,13 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
- * How to know if you need another glue_ function? Ask yourself if the
- * new action will ever be called via MIDI or keyboard/mouse. If yes,
- * put it here.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -32,29 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_H
-#define GLUE_H
+/* start, stop, rewind sequencer
+If gui == true the signal comes from an user interaction on the GUI,
+otherwise it's a MIDI/Jack/external signal. */
 
-
-void glue_setBpm(const char *v1, const char *v2);
-void glue_setBpm(float v);
-void glue_setBeats(int beats, int bars, bool expand);
-void glue_quantize(int val);
-void glue_setOutVol(float v, bool gui=true);
-void glue_setInVol(float v, bool gui=true);
-void glue_clearAllSamples();
-void glue_clearAllRecs();
-
-/* resetToInitState
- * reset Giada to init state. If resetGui also refresh all widgets. If
- * createColumns also build initial empty columns. */
-
-void glue_resetToInitState(bool resetGui=true, bool createColumns=true);
-
-/* beatsDivide/Multiply
- * shrinks or enlarges the number of beats by 2. */
-
-void glue_beatsMultiply();
-void glue_beatsDivide();
-
-#endif
+void glue_startStopSeq(bool gui=true);
+void glue_startSeq(bool gui=true);
+void glue_stopSeq(bool gui=true);
+void glue_rewindSeq(bool gui=true, bool notifyJack=true);
+void glue_startStopMetronome(bool gui=true);

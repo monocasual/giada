@@ -28,7 +28,7 @@
 
 
 #include "../../../core/graphics.h"
-#include "../../../glue/main.h"
+#include "../../../glue/transport.h"
 #include "../../../glue/io.h"
 #include "../ge_mixed.h"
 #include "mainTransport.h"

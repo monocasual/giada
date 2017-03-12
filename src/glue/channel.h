@@ -35,55 +35,60 @@
 #include <string>
 
 
+class Channel;
+class SampleChannel;
+class gdEditor;
+
+
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
-class Channel *glue_addChannel(int column, int type);
+Channel *glue_addChannel(int column, int type);
 
 /* loadChannel
  * fill an existing channel with a wave. */
 
-int glue_loadChannel(class SampleChannel *ch, const std::string &fname);
+int glue_loadChannel(SampleChannel *ch, const std::string &fname);
 
 /* deleteChannel
  * Remove a channel from Mixer. */
 
-void glue_deleteChannel(class Channel *ch);
+void glue_deleteChannel(Channel *ch);
 
 /* freeChannel
  * Unload the sample from a sample channel. */
 
-void glue_freeChannel(class Channel *ch);
+void glue_freeChannel(Channel *ch);
 
 /* cloneChannel
  * Make an exact copy of Channel *ch. */
 
-int glue_cloneChannel(class Channel *ch);
+int glue_cloneChannel(Channel *ch);
 
 /* toggle/set*
  * Toggle or set several channel properties. If gui == true the signal comes
  * from a manual interaction on the GUI, otherwise it's a MIDI/Jack/external
  * signal. */
 
-void glue_toggleArm(class Channel *ch, bool gui=true);
-void glue_setChanVol(class Channel *ch, float v, bool gui=true);
-void glue_setMute(class Channel *ch, bool gui=true);
-void glue_setSoloOn (class Channel *ch, bool gui=true);
-void glue_setSoloOff(class Channel *ch, bool gui=true);
+void glue_toggleArm(Channel *ch, bool gui=true);
+void glue_setChanVol(Channel *ch, float v, bool gui=true);
+void glue_setMute(Channel *ch, bool gui=true);
+void glue_setSoloOn (Channel *ch, bool gui=true);
+void glue_setSoloOff(Channel *ch, bool gui=true);
 
-void glue_setPitch(class gdEditor *win, class SampleChannel *ch, float val,
+void glue_setPitch(gdEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
-void glue_setPanning(class gdEditor *win, class SampleChannel *ch, float val);
+void glue_setPanning(gdEditor *win, SampleChannel *ch, float val);
 
 /* setBeginEndChannel
  * sets start/end points in the sample editor. Recalc=false: don't recalc
  * internal position. check=true: check the points' consistency */
 
-void glue_setBeginEndChannel(class gdEditor *win, class SampleChannel *ch,
+void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch,
   int b, int e, bool recalc=false, bool check=true);
 
-void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val,
+void glue_setBoost(gdEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
 /* setVolEditor
@@ -91,8 +96,15 @@ void glue_setBoost(class gdEditor *win, class SampleChannel *ch, float val,
  * numeric flag tells if we want to handle the dial or the numeric input
  * field. */
 
-void glue_setVolEditor(class gdEditor *win, class SampleChannel *ch, float val,
+void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
+/* start/stopReadingRecs
+Handles the 'R' button. If gui == true the signal comes from an user interaction
+on the GUI, otherwise it's a MIDI/Jack/external signal. */
+
+void glue_startStopReadingRecs(SampleChannel *ch, bool gui=true);
+void glue_startReadingRecs    (SampleChannel *ch, bool gui=true);
+void glue_stopReadingRecs     (SampleChannel *ch, bool gui=true);
 
 #endif

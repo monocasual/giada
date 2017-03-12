@@ -28,6 +28,7 @@
 
 
 #include <cassert>
+#include "../glue/transport.h"
 #include "../glue/main.h"
 #include "conf.h"
 #include "const.h"

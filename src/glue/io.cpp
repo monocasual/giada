@@ -52,6 +52,7 @@
 #include "../core/midiChannel.h"
 #include "main.h"
 #include "channel.h"
+#include "transport.h"
 #include "io.h"
 
 

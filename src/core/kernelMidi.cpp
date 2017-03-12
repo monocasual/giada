@@ -31,6 +31,7 @@
 #include "../utils/log.h"
 #include "../glue/channel.h"
 #include "../glue/main.h"
+#include "../glue/transport.h"
 #include "../glue/io.h"
 #include "mixer.h"
 #include "const.h"
