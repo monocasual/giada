@@ -47,6 +47,9 @@
 #include "../core/kernelMidi.h"
 #include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
+#ifdef WITH_VST
+#include "../core/pluginHost.h"
+#endif
 #include "main.h"
 
 
