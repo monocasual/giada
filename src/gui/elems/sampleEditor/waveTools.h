@@ -27,19 +27,24 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef GE_WAVETOOLS_H
-#define GE_WAVETOOLS_H
+#ifndef __GE_WAVETOOLS_H__
+#define __GE_WAVETOOLS_H__
 
-#include <FL/Fl.H>
-#include <FL/Fl_Group.H>
+
 #include <FL/Fl_Scroll.H>
 
 
-class gWaveTools : public Fl_Scroll {
-public:
-	class gWaveform *waveform;
+class SampleChannel;
+class geWaveform;
 
-	gWaveTools(int X,int Y,int W, int H, class SampleChannel *ch, const char *L=0);
+
+class geWaveTools : public Fl_Scroll
+{
+public:
+
+	geWaveform *waveform;
+
+	geWaveTools(int X,int Y,int W, int H, SampleChannel *ch, const char *L=0);
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 

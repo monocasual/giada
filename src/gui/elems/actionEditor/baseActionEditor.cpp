@@ -30,10 +30,10 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../core/mixer.h"
-#include "../dialogs/gd_actionEditor.h"
+#include "../../../core/mixer.h"
+#include "../../dialogs/gd_actionEditor.h"
+#include "../ge_mixed.h"
 #include "baseActionEditor.h"
-#include "ge_mixed.h"
 
 
 extern Mixer G_Mixer;

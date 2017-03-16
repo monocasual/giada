@@ -28,15 +28,15 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../core/conf.h"
-#include "../../core/clock.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../glue/main.h"
-#include "../../utils/log.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "../dialogs/gd_actionEditor.h"
-#include "mainWindow/keyboard/keyboard.h"
+#include "../../../core/conf.h"
+#include "../../../core/clock.h"
+#include "../../../core/channel.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../glue/main.h"
+#include "../../../utils/log.h"
+#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/gd_actionEditor.h"
+#include "../mainWindow/keyboard/keyboard.h"
 #include "actionEditor.h"
 
 

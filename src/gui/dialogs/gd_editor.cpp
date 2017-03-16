@@ -36,9 +36,9 @@
 #include "../../core/mixer.h"
 #include "../../core/wave.h"
 #include "../../core/clock.h"
-#include "../elems/ge_waveform.h"
 #include "../elems/ge_mixed.h"
-#include "../elems/ge_waveTools.h"
+#include "../elems/sampleEditor/waveform.h"
+#include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "gd_editor.h"
@@ -71,7 +71,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 
   /* waveform */
 
-  waveTools = new gWaveTools(8, 36, w()-16, h()-120, ch);
+  waveTools = new geWaveTools(8, 36, w()-16, h()-120, ch);
   waveTools->end();
 
   /* other tools */

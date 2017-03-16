@@ -28,19 +28,12 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef GE_WAVEFORM_H
-#define GE_WAVEFORM_H
+#ifndef __GE_WAVEFORM_H__
+#define __GE_WAVEFORM_H__
 
 
 #include <vector>
-#include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include <FL/fl_draw.H>
-#include <math.h>
-#include "../../utils/fs.h"
-
-
-using std::vector;
 
 
 #define  FLAG_WIDTH  14
@@ -48,14 +41,18 @@ using std::vector;
 #define  BORDER      8				// window border <-> widget border
 
 
-class gWaveform : public Fl_Widget {
+class SampleChannel;
 
+
+class geWaveform : public Fl_Widget
+{
 private:
 
 	/* data
 	 * real graphic stuff from the underlying waveform */
 
-	struct data {
+	struct data
+  {
 		int *sup;
 		int *inf;
 		int  size;
@@ -63,16 +60,17 @@ private:
 
 	/* grid */
 
-	struct grid {
+	struct grid
+  {
 		bool snap;
-		int  level;
-		vector<int> points;
+		int level;
+		std::vector<int> points;
 	} grid;
 
 	/* chan
 	 * chan in use. */
 
-	class SampleChannel *chan;
+	SampleChannel *chan;
 
 	/* menuOpen
 	 * is the menu open? */
@@ -126,8 +124,8 @@ private:
 
 public:
 
-	gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l=0);
-	~gWaveform();
+	geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l=0);
+	~geWaveform();
 	void draw();
 	int  handle(int e);
 
@@ -149,7 +147,7 @@ public:
 	/* displayRatio
 	 * how much of the waveform is being displayed on screen */
 
-	inline float displayRatio() { return 1.0f / (data.size / (float) w()); };
+	float displayRatio();
 
 	/* zoom
 	 * type == 1 : zoom out, type == -1: zoom in */
@@ -166,8 +164,8 @@ public:
 
 	void setGridLevel(int l);
 
-  inline void setSnap(bool v) { grid.snap = v; }
-  inline bool getSnap()       { return grid.snap; }
+  void setSnap(bool v) { grid.snap = v; }
+  bool getSnap()       { return grid.snap; }
 
 	inline int getSize() { return data.size; }
 

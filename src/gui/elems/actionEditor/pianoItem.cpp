@@ -25,12 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/kernelMidi.h"
-#include "../../core/mixer.h"
-#include "../../core/channel.h"
-#include "../../core/clock.h"
-#include "../../core/midiChannel.h"
-#include "../dialogs/gd_actionEditor.h"
+#include "../../../core/kernelMidi.h"
+#include "../../../core/mixer.h"
+#include "../../../core/channel.h"
+#include "../../../core/clock.h"
+#include "../../../core/midiChannel.h"
+#include "../../dialogs/gd_actionEditor.h"
 #include "noteEditor.h"
 #include "pianoRoll.h"
 #include "pianoItem.h"

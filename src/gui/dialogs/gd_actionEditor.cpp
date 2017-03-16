@@ -36,12 +36,12 @@
 #include "../../core/clock.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
-#include "../elems/actionEditor.h"
-#include "../elems/envelopeEditor.h"
-#include "../elems/muteEditor.h"
-#include "../elems/noteEditor.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/scroll.h"
+#include "../elems/actionEditor/actionEditor.h"
+#include "../elems/actionEditor/envelopeEditor.h"
+#include "../elems/actionEditor/muteEditor.h"
+#include "../elems/actionEditor/noteEditor.h"
 #include "gd_actionEditor.h"
 
 

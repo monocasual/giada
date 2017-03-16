@@ -31,13 +31,13 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../core/channel.h"
-#include "../../core/recorder.h"
-#include "../../core/mixer.h"
-#include "../../core/clock.h"
-#include "../dialogs/gd_actionEditor.h"
-#include "../dialogs/gd_mainWindow.h"
-#include "mainWindow/keyboard/keyboard.h"
+#include "../../../core/channel.h"
+#include "../../../core/recorder.h"
+#include "../../../core/mixer.h"
+#include "../../../core/clock.h"
+#include "../../dialogs/gd_actionEditor.h"
+#include "../../dialogs/gd_mainWindow.h"
+#include "../mainWindow/keyboard/keyboard.h"
 #include "envelopeEditor.h"
 
 

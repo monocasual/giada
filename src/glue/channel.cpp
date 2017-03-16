@@ -30,9 +30,9 @@
 
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_editor.h"
-#include "../gui/elems/ge_waveTools.h"
-#include "../gui/elems/ge_waveform.h"
 #include "../gui/elems/ge_mixed.h"
+#include "../gui/elems/sampleEditor/waveTools.h"
+#include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"

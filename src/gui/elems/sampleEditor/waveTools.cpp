@@ -27,16 +27,13 @@
  * ------------------------------------------------------------------ */
 
 
-#include "../../core/graphics.h"
-#include "../../core/mixer.h"
-#include "../../core/const.h"
-#include "../elems/ge_mixed.h"
-#include "../elems/ge_waveform.h"
-#include "basics/boxtypes.h"
-#include "ge_waveTools.h"
+#include "../../../core/const.h"
+#include "../basics/boxtypes.h"
+#include "waveform.h"
+#include "waveTools.h"
 
 
-gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
+geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
 	: Fl_Scroll(x, y, w, h, l)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
@@ -45,7 +42,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new gWaveform(x, y, w, h-24, ch);
+	waveform = new geWaveform(x, y, w, h-24, ch);
 
 
 	//resizable(waveform);
@@ -56,7 +53,7 @@ gWaveTools::gWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::updateWaveform()
+void geWaveTools::updateWaveform()
 {
 	waveform->alloc(w());
 	waveform->redraw();
@@ -66,7 +63,7 @@ void gWaveTools::updateWaveform()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveTools::resize(int x, int y, int w, int h)
+void geWaveTools::resize(int x, int y, int w, int h)
 {
 	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
 		Fl_Widget::resize(x, y, w, h);
@@ -89,7 +86,7 @@ void gWaveTools::resize(int x, int y, int w, int h)
 /* ------------------------------------------------------------------ */
 
 
-int gWaveTools::handle(int e)
+int geWaveTools::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
 	switch (e) {

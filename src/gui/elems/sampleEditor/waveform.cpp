@@ -28,29 +28,24 @@
  * ------------------------------------------------------------------ */
 
 
-#include <FL/Fl_Menu_Item.H>
-#include <FL/Fl_Menu_Button.H>
-#include <samplerate.h>
-#include "../../core/wave.h"
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../core/mixer.h"
-#include "../../core/waveFx.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../glue/channel.h"
-#include "../dialogs/gd_editor.h"
-#include "ge_waveTools.h"
-#include "ge_mixed.h"
-#include "basics/boxtypes.h"
-#include "ge_waveform.h"
+#include "../../../core/wave.h"
+#include "../../../core/conf.h"
+#include "../../../core/const.h"
+#include "../../../core/mixer.h"
+#include "../../../core/waveFx.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../glue/channel.h"
+#include "../ge_mixed.h"
+#include "../basics/boxtypes.h"
+#include "waveTools.h"
+#include "waveform.h"
 
 
 extern Mixer G_Mixer;
 extern Conf  G_Conf;
 
 
-gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const char *l)
+geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l)
 : Fl_Widget(x, y, w, h, l),
   chan(ch),
   menuOpen(false),
@@ -64,8 +59,8 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
   selectionA_abs(0),
   selectionB_abs(0)
 {
-  data.sup  = NULL;
-  data.inf  = NULL;
+  data.sup  = nullptr;
+  data.inf  = nullptr;
   data.size = 0;
 
   grid.snap  = G_Conf.sampleEditorGridOn;
@@ -78,7 +73,7 @@ gWaveform::gWaveform(int x, int y, int w, int h, class SampleChannel *ch, const 
 /* ------------------------------------------------------------------ */
 
 
-gWaveform::~gWaveform()
+geWaveform::~geWaveform()
 {
   freeData();
 }
@@ -87,13 +82,13 @@ gWaveform::~gWaveform()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::freeData()
+void geWaveform::freeData()
 {
-  if (data.sup != NULL) {
+  if (data.sup != nullptr) {
     free(data.sup);
     free(data.inf);
-    data.sup  = NULL;
-    data.inf  = NULL;
+    data.sup  = nullptr;
+    data.inf  = nullptr;
     data.size = 0;
   }
   grid.points.clear();
@@ -103,7 +98,7 @@ void gWaveform::freeData()
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::alloc(int datasize)
+int geWaveform::alloc(int datasize)
 {
   ratio = chan->wave->size / (float) datasize;
 
@@ -188,7 +183,7 @@ int gWaveform::alloc(int datasize)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::recalcPoints()
+void geWaveform::recalcPoints()
 {
   selectionA = relativePoint(selectionA_abs);
   selectionB = relativePoint(selectionB_abs);
@@ -207,7 +202,7 @@ void gWaveform::recalcPoints()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::draw()
+void geWaveform::draw()
 {
   /* blank canvas */
 
@@ -238,9 +233,9 @@ void gWaveform::draw()
   int offset = h() / 2;
   int zero   = y() + offset; // sample zero (-inf dB)
 
-  int wx1 = abs(x() - ((gWaveTools*)parent())->x());
-  int wx2 = wx1 + ((gWaveTools*)parent())->w();
-  if (x()+w() < ((gWaveTools*)parent())->w())
+  int wx1 = abs(x() - ((geWaveTools*)parent())->x());
+  int wx2 = wx1 + ((geWaveTools*)parent())->w();
+  if (x()+w() < ((geWaveTools*)parent())->w())
     wx2 = x() + w() - BORDER;
 
   fl_color(0, 0, 0);
@@ -254,10 +249,10 @@ void gWaveform::draw()
       if (grid.points.at(k) == i) {
         //gu_log("draw grid line at %d\n", i);
         fl_color(fl_rgb_color(54, 54, 54));
-        fl_line_style(FL_DASH, 0, NULL);
+        fl_line_style(FL_DASH, 0, nullptr);
         fl_line(i+x(), y(), i+x(), y()+h());
         fl_color(0, 0, 0);
-        fl_line_style(FL_SOLID, 0, NULL);
+        fl_line_style(FL_SOLID, 0, nullptr);
         break;
       }
     }
@@ -309,7 +304,7 @@ void gWaveform::draw()
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::handle(int e)
+int geWaveform::handle(int e)
 {
   int ret = 0;
 
@@ -512,10 +507,10 @@ int gWaveform::handle(int e)
 /* ------------------------------------------------------------------ */
 
 /* pixel snap disances (10px) must be equal to those defined in
- * gWaveform::mouseOnSelectionA() and gWaverfrom::mouseOnSelectionB() */
+ * geWaveform::mouseOnSelectionA() and gWaverfrom::mouseOnSelectionB() */
 /* TODO - use constant for 10px */
 
-int gWaveform::applySnap(int pos)
+int geWaveform::applySnap(int pos)
 {
   for (unsigned i=0; i<grid.points.size(); i++) {
     if (pos >= grid.points.at(i) - 10 &&
@@ -531,7 +526,7 @@ int gWaveform::applySnap(int pos)
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnStart()
+bool geWaveform::mouseOnStart()
 {
   return mouseX-10 >  chanStart + x() - BORDER              &&
          mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
@@ -542,7 +537,7 @@ bool gWaveform::mouseOnStart()
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::mouseOnEnd()
+bool geWaveform::mouseOnEnd()
 {
   return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
          mouseX-10 <= chanEnd + x() - BORDER              &&
@@ -553,9 +548,9 @@ bool gWaveform::mouseOnEnd()
 /* ------------------------------------------------------------------ */
 
 /* pixel boundaries (10px) must be equal to the snap factor distance
- * defined in gWaveform::applySnap() */
+ * defined in geWaveform::applySnap() */
 
-bool gWaveform::mouseOnSelectionA()
+bool geWaveform::mouseOnSelectionA()
 {
   if (selectionA == selectionB)
     return false;
@@ -563,7 +558,7 @@ bool gWaveform::mouseOnSelectionA()
 }
 
 
-bool gWaveform::mouseOnSelectionB()
+bool geWaveform::mouseOnSelectionB()
 {
   if (selectionA == selectionB)
     return false;
@@ -574,7 +569,7 @@ bool gWaveform::mouseOnSelectionB()
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::absolutePoint(int p)
+int geWaveform::absolutePoint(int p)
 {
   if (p <= 0)
     return 0;
@@ -589,7 +584,7 @@ int gWaveform::absolutePoint(int p)
 /* ------------------------------------------------------------------ */
 
 
-int gWaveform::relativePoint(int p)
+int geWaveform::relativePoint(int p)
 {
   return (ceilf(p / ratio)) * 2;
 }
@@ -598,7 +593,7 @@ int gWaveform::relativePoint(int p)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::openEditMenu()
+void geWaveform::openEditMenu()
 {
   if (selectionA == selectionB)
     return;
@@ -747,7 +742,7 @@ void gWaveform::openEditMenu()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::straightSel()
+void geWaveform::straightSel()
 {
   if (selectionA > selectionB) {
     unsigned tmp = selectionB;
@@ -760,7 +755,7 @@ void gWaveform::straightSel()
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::setZoom(int type)
+void geWaveform::setZoom(int type)
 {
   int newSize;
   if (type == -1) newSize = data.size*2;  // zoom in
@@ -794,7 +789,7 @@ void gWaveform::setZoom(int type)
      * |[wave----]       | offset < 0, smaller = true
      * |-------------]   | offset < 0, smaller = false  */
 
-    int  parentW = ((gWaveTools*)parent())->w();
+    int  parentW = ((geWaveTools*)parent())->w();
     int  thisW   = x() + w() - BORDER;           // visible width, not full width
 
     if (thisW < parentW)
@@ -810,9 +805,9 @@ void gWaveform::setZoom(int type)
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::stretchToWindow()
+void geWaveform::stretchToWindow()
 {
-  int s = ((gWaveTools*)parent())->w();
+  int s = ((geWaveTools*)parent())->w();
   alloc(s);
   position(BORDER, y());
   size(s, h());
@@ -822,16 +817,24 @@ void gWaveform::stretchToWindow()
 /* ------------------------------------------------------------------ */
 
 
-bool gWaveform::smaller()
+bool geWaveform::smaller()
 {
-  return w() < ((gWaveTools*)parent())->w();
+  return w() < ((geWaveTools*)parent())->w();
 }
 
 
 /* ------------------------------------------------------------------ */
 
 
-void gWaveform::setGridLevel(int l)
+float geWaveform::displayRatio()
+{
+    return 1.0f / (data.size / (float) w());
+};
+
+/* ------------------------------------------------------------------ */
+
+
+void geWaveform::setGridLevel(int l)
 {
   grid.points.clear();
   grid.level = l;
