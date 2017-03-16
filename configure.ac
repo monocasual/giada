@@ -55,6 +55,18 @@ AC_ARG_ENABLE(
 	[AM_CONDITIONAL(WITH_VST, false)]
 )
 
+
+# ------------------------------------------------------------------------------
+
+# --debug. Enable debug compilation
+
+AC_ARG_ENABLE(
+	[debug],
+	AS_HELP_STRING([--enable-debug], [enable debug mode (asserts, ...)]),
+  [],
+	[AC_DEFINE(NDEBUG)]
+)
+
 # ------------------------------------------------------------------------------
 
 # test if files needed for Travis CI are present. If so, define a new macro
