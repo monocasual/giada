@@ -33,6 +33,9 @@
 #include "../../core/recorder.h"
 
 
+class gdActionEditor;
+
+
 class gePianoItem : public Fl_Box
 {
 private:
@@ -62,7 +65,7 @@ private:
 
 	struct Recorder::action *a;
 	struct Recorder::action *b;
-	class gdActionEditor *pParent;
+	gdActionEditor *pParent;
 
 	bool selected;
 	int  push_x;
@@ -103,7 +106,7 @@ public:
 	 * if action *a == NULL, record a new action */
 
 	gePianoItem(int x, int y, int rel_x, int rel_y, struct Recorder::action *a,
-		struct Recorder::action *b, class gdActionEditor *pParent);
+		struct Recorder::action *b, gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);

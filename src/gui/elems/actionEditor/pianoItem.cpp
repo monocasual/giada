@@ -89,11 +89,11 @@ bool gePianoItem::overlap()
 	 * end   = the lowest value between the two ending points
 	 * if start < end then there's an overlap of end-start pixels. */
 
-	geNoteEditor *pPiano = (geNoteEditor*) parent();
+	geNoteEditor *pPiano = static_cast<geNoteEditor*>(parent());
 
 	for (int i=0; i<pPiano->children(); i++) {
 
-		gePianoItem *pItem = (gePianoItem*) pPiano->child(i);
+		gePianoItem *pItem = static_cast<gePianoItem*>(pPiano->child(i));
 
 		/* don't check against itself and with different y positions */
 
@@ -162,9 +162,9 @@ void gePianoItem::remove()
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence. */
 
-	((MidiChannel*) pParent->chan)->sendMidi(event_b);
+	static_cast<MidiChannel*>(pParent->chan)->sendMidi(event_b);
 
-  ((gePianoRoll*) parent())->cursorOnItem = false;
+  static_cast<gePianoRoll*>(parent())->cursorOnItem = false;
 }
 
 
@@ -178,7 +178,7 @@ int gePianoItem::handle(int e)
 	switch (e) {
 
 		case FL_ENTER: {
-      ((gePianoRoll*) parent())->cursorOnItem = true;
+      static_cast<gePianoRoll*>(parent())->cursorOnItem = true;
 			selected = true;
 			ret = 1;
 			redraw();
@@ -187,7 +187,7 @@ int gePianoItem::handle(int e)
 
 		case FL_LEAVE: {
 			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-      ((gePianoRoll*) parent())->cursorOnItem = false;
+      static_cast<gePianoRoll*>(parent())->cursorOnItem = false;
 			selected = false;
 			ret = 1;
 			redraw();
@@ -225,7 +225,7 @@ int gePianoItem::handle(int e)
 				remove();
 				hide();   // for Windows
 				Fl::delete_widget(this);
-				((geNoteEditor*)parent())->redraw();
+				static_cast<geNoteEditor*>(parent())->redraw();
 			}
 			ret = 1;
 			break;
@@ -235,7 +235,7 @@ int gePianoItem::handle(int e)
 
 			changed = true;
 
-			geNoteEditor *pr = (geNoteEditor*) parent();
+			geNoteEditor *pr = static_cast<geNoteEditor*>(parent());
 			int coverX     = pParent->coverX + pr->x(); // relative coverX
 			int nx, ny, nw;
 
@@ -283,7 +283,7 @@ int gePianoItem::handle(int e)
 			/* update screen */
 
 			redraw();
-			((geNoteEditor*)parent())->redraw();
+			static_cast<geNoteEditor*>(parent())->redraw();
 			ret = 1;
 			break;
 		}
@@ -307,7 +307,7 @@ int gePianoItem::handle(int e)
 				changed = false;
 			}
 
-			((geNoteEditor*)parent())->redraw();
+			static_cast<geNoteEditor*>(parent())->redraw();
 
 			ret = 1;
 			break;
