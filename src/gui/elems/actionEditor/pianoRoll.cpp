@@ -312,7 +312,7 @@ int gePianoRoll::handle(int e)
 
 			if (Fl::event_button3()) {
 
-				geNoteEditor *prc = (geNoteEditor*) parent();
+				geNoteEditor *prc = static_cast<geNoteEditor*>(parent());
 				position(x(), Fl::event_y() - push_y);
 
 				if (y() > prc->y())
@@ -346,7 +346,7 @@ void gePianoRoll::updateActions()
 
 	gePianoItem *i;
 	for (int k=0; k<children(); k++) {
-		i = (gePianoItem*) child(k);
+		i = static_cast<gePianoItem*>(child(k));
 
 		//gu_log("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
 
