@@ -39,21 +39,24 @@
 #include "baseActionEditor.h"
 
 
+class gdActionEditor;
+class SampleChannel;
+
+
 class gAction : public Fl_Box
 {
 private:
 
-	bool                  selected;
-	unsigned              index;
-  class gdActionEditor *parent;   // pointer to parent (gActionEditor)
-	class SampleChannel  *ch;
-  char                  type;     // type of action
+	bool            selected;
+	unsigned        index;
+  gdActionEditor *parent;   // pointer to parent (gActionEditor)
+	SampleChannel  *ch;
+  char            type;     // type of action
 
 public:
 
 	gAction(int x, int y, int h, int frame_a, unsigned index,
-				  gdActionEditor *parent, class SampleChannel *ch, bool record,
-			    char type);
+		gdActionEditor *parent, SampleChannel *ch, bool record, char type);
 	void draw();
 	int  handle(int e);
 	void addAction();
@@ -95,7 +98,7 @@ class geActionEditor : public geBaseActionEditor
 
 private:
 
-	class SampleChannel *ch;
+	SampleChannel *ch;
 
 	/* getSelectedAction
 	 * get the action under the mouse. NULL if nothing found. */
@@ -130,7 +133,7 @@ private:
 
 public:
 
-	geActionEditor(int x, int y, gdActionEditor *pParent, class SampleChannel *ch);
+	geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch);
 	void draw();
 	int  handle(int e);
 	void updateActions();
