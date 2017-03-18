@@ -64,15 +64,15 @@ protected:
 
 public:
 
-	gdBaseBrowser(int x, int y, int w, int h, const string &title,
-			const string &path,	void (*callback)(void*));
+	gdBaseBrowser(int x, int y, int w, int h, const std::string &title,
+			const std::string &path,	void (*callback)(void*));
 
 	~gdBaseBrowser();
 
 	/* getSelectedItem
 	 * Return the full path of the selected file. */
 
-	string getSelectedItem();
+	std::string getSelectedItem();
 
 	/* setStatusBar
 	 * Increment status bar for progress tracking. */
@@ -82,7 +82,7 @@ public:
 	gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
 	void showStatusBar();
 	void hideStatusBar();
-  string getCurrentPath();
+  std::string getCurrentPath();
 
 	Channel *getChannel() { return channel; }
 	void fireCallback()   { callback((void*) this); }
@@ -106,11 +106,11 @@ private:
 
 public:
 
-	gdSaveBrowser(int x, int y, int w, int h, const string &title,
-			const string &path,	const string &name, void (*callback)(void*),
+	gdSaveBrowser(int x, int y, int w, int h, const std::string &title,
+			const std::string &path,	const std::string &name, void (*callback)(void*),
 			class Channel *ch);
 
-	string getName();
+	std::string getName();
 };
 
 
@@ -129,8 +129,8 @@ private:
 
 public:
 
-	gdLoadBrowser(int x, int y, int w, int h, const string &title,
-			const string &path,	void (*callback)(void*), class Channel *ch);
+	gdLoadBrowser(int x, int y, int w, int h, const std::string &title,
+			const std::string &path,	void (*callback)(void*), class Channel *ch);
 };
 
 #endif

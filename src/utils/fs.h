@@ -27,41 +27,25 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef __UTILS_FS_H__
+#define __UTILS_FS_H__
 
 
 #include <string>
-#include <vector>
 
 
-using std::string;
-using std::vector;
-
-
-bool gu_fileExists(const string &path);
-
-bool gu_dirExists(const string &path);
-
-bool gu_isDir(const string &path);
-
-bool gu_isProject(const string &path);
-
-bool gu_mkdir(const string &path);
-
-string gu_getCurrentPath();
-
-string gu_getHomePath();
-
-string gu_basename(const string &s);
-
-string gu_dirname(const string &s);
-
-string gu_getExt(const string &s);
-
-string gu_stripExt(const string &s);
-
-string gu_stripFileUrl(const string &s);
+bool gu_fileExists(const std::string &path);
+bool gu_dirExists(const std::string &path);
+bool gu_isDir(const std::string &path);
+bool gu_isProject(const std::string &path);
+bool gu_mkdir(const std::string &path);
+std::string gu_getCurrentPath();
+std::string gu_getHomePath();
+std::string gu_basename(const std::string &s);
+std::string gu_dirname(const std::string &s);
+std::string gu_getExt(const std::string &s);
+std::string gu_stripExt(const std::string &s);
+std::string gu_stripFileUrl(const std::string &s);
 
 
 #endif

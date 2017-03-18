@@ -27,6 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 
+#ifndef __UTILS_COCOA_H__
+#define __UTILS_COCOA_H__
+
 /* fl_xid() from FLTK returns a pointer to NSWindow, but plugins on OS X want a
  * pointer to NSView. The function does the hard conversion. */
 
@@ -34,5 +37,8 @@ void *cocoa_getViewFromWindow(void *p);
 
 /* A bug on on OS X seems to misalign plugins' UI. The function takes care of
  * fixing the positioning. */
- 
+
 void cocoa_setWindowSize(void *p, int w, int h);
+
+
+#endif

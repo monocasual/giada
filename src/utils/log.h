@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __LOG_H__
-#define __LOG_H__
+#ifndef __UTILS_LOG_H__
+#define __UTILS_LOG_H__
 
 
 /* init
