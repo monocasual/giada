@@ -25,61 +25,61 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ACTION_EDITOR_H
-#define GE_ACTION_EDITOR_H
+#ifndef GE_ACTION_H
+#define GE_ACTION_H
 
 
-#include "baseActionEditor.h"
+#include <FL/Fl_Box.H>
 
 
-class gAction;
+class gdActionEditor;
 class SampleChannel;
 
 
-class geActionEditor : public geBaseActionEditor
+class gAction : public Fl_Box
 {
-
 private:
 
-	SampleChannel *ch;
-
-	/* getSelectedAction
-	 * get the action under the mouse. NULL if nothing found. */
-
-	gAction *getSelectedAction();
-
-	/* selected
-	 * pointer to the selected action. Useful when dragging around. */
-
-	gAction *selected;
-
-	/* actionOriginalX, actionOriginalW
-	 * x and w of the action, when moved. Useful for checking if the action
-	 * overlaps another one: in that case the moved action returns to
-	 * actionOriginalX (and to actionOriginalW if resized). */
-
-	int actionOriginalX;
-	int actionOriginalW;
-
-	/* actionPickPoint
-	 * the precise x point in which the action has been picked with the mouse,
-	 * before a dragging action. */
-
-	int actionPickPoint;
-
-
-	/* actionCollides
-	 * true if an action collides with another. Used while adding new points
-	 * with snap active.*/
-
-	bool actionCollides(int frame);
+	bool            selected;
+	unsigned        index;
+  gdActionEditor *parent;   // pointer to parent (gActionEditor)
+	SampleChannel  *ch;
+  char            type;     // type of action
 
 public:
 
-	geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch);
+	gAction(int x, int y, int h, int frame_a, unsigned index,
+		gdActionEditor *parent, SampleChannel *ch, bool record, char type);
 	void draw();
 	int  handle(int e);
-	void updateActions();
+	void addAction();
+	void delAction();
+
+	/* moveAction
+	 * shift the action on the x-axis and update Recorder. If frame_a != -1
+	 * use the new frame in input (used while snapping) */
+
+	void moveAction(int frame_a=-1);
+
+	/* absx
+	 * x() is relative to scrolling position. absx() returns the absolute
+	 * x value of the action, from the leftmost edge. */
+
+	int absx();
+
+	/* xToFrame_a,b
+	 * return the real frames of x() position */
+
+	int xToFrame_a();
+	int xToFrame_b();
+
+	int frame_a;  // initial frame (KEYPRESS for singlemode.press)
+	int frame_b;  // terminal frame (KEYREL for singlemode.press, null for others)
+
+	bool onRightEdge;
+	bool onLeftEdge;
+
+	static const int MIN_WIDTH = 8;
 };
 
 

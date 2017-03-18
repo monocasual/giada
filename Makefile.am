@@ -127,10 +127,14 @@ src/gui/elems/actionEditor/noteEditor.h		          \
 src/gui/elems/actionEditor/noteEditor.cpp           \
 src/gui/elems/actionEditor/pianoItem.h              \
 src/gui/elems/actionEditor/pianoItem.cpp            \
+src/gui/elems/actionEditor/pianoItemOrphaned.h      \
+src/gui/elems/actionEditor/pianoItemOrphaned.cpp    \
 src/gui/elems/actionEditor/muteEditor.h             \
 src/gui/elems/actionEditor/muteEditor.cpp           \
 src/gui/elems/actionEditor/actionEditor.h           \
 src/gui/elems/actionEditor/actionEditor.cpp         \
+src/gui/elems/actionEditor/action.h                 \
+src/gui/elems/actionEditor/action.cpp               \
 src/gui/elems/mainWindow/mainIO.h      \
 src/gui/elems/mainWindow/mainIO.cpp    \
 src/gui/elems/mainWindow/mainMenu.h    \
