@@ -32,7 +32,7 @@
 #include "baseActionEditor.h"
 
 
-class gAction;
+class geAction;
 class SampleChannel;
 
 
@@ -46,12 +46,12 @@ private:
 	/* getSelectedAction
 	 * get the action under the mouse. NULL if nothing found. */
 
-	gAction *getSelectedAction();
+	geAction *getSelectedAction();
 
 	/* selected
 	 * pointer to the selected action. Useful when dragging around. */
 
-	gAction *selected;
+	geAction *selected;
 
 	/* actionOriginalX, actionOriginalW
 	 * x and w of the action, when moved. Useful for checking if the action

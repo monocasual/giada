@@ -61,7 +61,7 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
       - of type ACTION_KILLCHAN in a SINGLE_PRESS channel. They cannot be
         recorded in such mode, but they can exist if you change from another
         mode to singlepress;
-      - of type ACTION_KEYREL in a SINGLE_PRESS channel. It's up to gAction to
+      - of type ACTION_KEYREL in a SINGLE_PRESS channel. It's up to geAction to
         find the other piece (namely frame_b)
       - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
@@ -74,7 +74,7 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
         continue;
 
 			int ax = x + (action->frame / pParent->zoom);
-			gAction *a = new gAction(
+			geAction *a = new geAction(
 					ax,               // x
 					y + 4,            // y
 					h() - 8,          // h
@@ -94,13 +94,13 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
 /* -------------------------------------------------------------------------- */
 
 
-gAction *geActionEditor::getSelectedAction()
+geAction *geActionEditor::getSelectedAction()
 {
 	for (int i=0; i<children(); i++) {
-		int action_x  = ((gAction*)child(i))->x();
-		int action_w  = ((gAction*)child(i))->w();
+		int action_x  = ((geAction*)child(i))->x();
+		int action_w  = ((geAction*)child(i))->w();
 		if (Fl::event_x() >= action_x && Fl::event_x() <= action_x + action_w)
-			return (gAction*)child(i);
+			return (geAction*)child(i);
 	}
 	return NULL;
 }
@@ -115,20 +115,20 @@ void geActionEditor::updateActions()
 	 * function shifts the action by a zoom factor. Those singlepress are
 	 * stretched, as well */
 
-	gAction *a;
+	geAction *a;
 	for (int i=0; i<children(); i++) {
 
-		a = (gAction*)child(i);
+		a = (geAction*)child(i);
 		int newX = x() + (a->frame_a / pParent->zoom);
 
 		if (ch->mode == SINGLE_PRESS) {
 			int newW = ((a->frame_b - a->frame_a) / pParent->zoom);
-			if (newW < gAction::MIN_WIDTH)
-				newW = gAction::MIN_WIDTH;
+			if (newW < geAction::MIN_WIDTH)
+				newW = geAction::MIN_WIDTH;
 			a->resize(newX, a->y(), newW, a->h());
 		}
 		else
-			a->resize(newX, a->y(), gAction::MIN_WIDTH, a->h());
+			a->resize(newX, a->y(), geAction::MIN_WIDTH, a->h());
 	}
 }
 
@@ -191,8 +191,8 @@ int geActionEditor::handle(int e)
 					int aw = Fl::event_x()-selected->x();
 					int ah = selected->h();
 
-					if (Fl::event_x() < selected->x()+gAction::MIN_WIDTH)
-						aw = gAction::MIN_WIDTH;
+					if (Fl::event_x() < selected->x()+geAction::MIN_WIDTH)
+						aw = geAction::MIN_WIDTH;
 					else
 					if (Fl::event_x() > pParent->coverX)
 						aw = pParent->coverX-selected->x();
@@ -211,9 +211,9 @@ int geActionEditor::handle(int e)
 						aw = selected->w()+selected->x()-x();
 					}
 					else
-					if (Fl::event_x() > selected->x()+selected->w()-gAction::MIN_WIDTH) {
-						ax = selected->x()+selected->w()-gAction::MIN_WIDTH;
-						aw = gAction::MIN_WIDTH;
+					if (Fl::event_x() > selected->x()+selected->w()-geAction::MIN_WIDTH) {
+						ax = selected->x()+selected->w()-geAction::MIN_WIDTH;
+						aw = geAction::MIN_WIDTH;
 					}
 					selected->resize(ax, ay, aw, ah);
 				}
@@ -277,7 +277,7 @@ int geActionEditor::handle(int e)
 						}
 					}
 
-					gAction *a = new gAction(
+					geAction *a = new geAction(
 							ax,                                   // x
 							y()+4,                                // y
 							h()-8,                                // h
@@ -301,7 +301,7 @@ int geActionEditor::handle(int e)
 			}
 			else
 			if (Fl::event_button3()) {
-				gAction *a = getSelectedAction();
+				geAction *a = getSelectedAction();
 				if (a != NULL) {
 					a->delAction();
 					remove(a);
@@ -345,11 +345,11 @@ int geActionEditor::handle(int e)
 
 				/* never check against itself. */
 
-				if ((gAction*)child(i) == selected)
+				if ((geAction*)child(i) == selected)
 					continue;
 
-				int action_x  = ((gAction*)child(i))->x();
-				int action_w  = ((gAction*)child(i))->w();
+				int action_x  = ((geAction*)child(i))->x();
+				int action_w  = ((geAction*)child(i))->w();
 				if (ch->mode == SINGLE_PRESS) {
 
 					/* when 2 segments overlap?
@@ -408,12 +408,12 @@ bool geActionEditor::actionCollides(int frame)
 	bool collision = false;
 
 	for (int i=0; i<children() && !collision; i++)
-		if (((gAction*) child(i))->frame_a == frame)
+		if (((geAction*) child(i))->frame_a == frame)
 			collision = true;
 
 	if (ch->mode == SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
-			gAction *c = ((gAction*) child(i));
+			geAction *c = ((geAction*) child(i));
 			if (frame <= c->frame_b && frame >= c->frame_a)
 				collision = true;
 		}

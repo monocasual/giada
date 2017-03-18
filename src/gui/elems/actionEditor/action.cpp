@@ -39,9 +39,9 @@ extern Recorder G_Recorder;
 
 
 /** TODO - index is useless?
- *  TODO - pass a record::action pointer and let gAction compute values */
+ *  TODO - pass a record::action pointer and let geAction compute values */
 
-gAction::gAction(int X, int Y, int H, int frame_a, unsigned index,
+geAction::geAction(int X, int Y, int H, int frame_a, unsigned index,
   gdActionEditor *parent, SampleChannel *ch, bool record, char type)
 : Fl_Box     (X, Y, MIN_WIDTH, H),
   selected   (false),
@@ -91,7 +91,7 @@ gAction::gAction(int X, int Y, int H, int frame_a, unsigned index,
 /* -------------------------------------------------------------------------- */
 
 
-void gAction::draw()
+void geAction::draw()
 {
 	int color;
 	if (selected)  /// && geActionEditor !disabled
@@ -121,7 +121,7 @@ void gAction::draw()
 /* -------------------------------------------------------------------------- */
 
 
-int gAction::handle(int e)
+int geAction::handle(int e)
 {
 	/* ret = 0 sends the event to the parent window. */
 
@@ -171,7 +171,7 @@ int gAction::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void gAction::addAction()
+void geAction::addAction()
 {
 	/* always check frame parity */
 
@@ -205,7 +205,7 @@ void gAction::addAction()
 /* -------------------------------------------------------------------------- */
 
 
-void gAction::delAction()
+void geAction::delAction()
 {
 	/* if SINGLE_PRESS you must delete both the keypress and the keyrelease
 	 * actions. */
@@ -233,7 +233,7 @@ void gAction::delAction()
 /* -------------------------------------------------------------------------- */
 
 
-void gAction::moveAction(int frame_a)
+void geAction::moveAction(int frame_a)
 {
 	/* easy one: delete previous action and record the new ones. As usual,
 	 * SINGLE_PRESS requires two jobs. If frame_a is valid, use that frame
@@ -268,7 +268,7 @@ void gAction::moveAction(int frame_a)
 /* -------------------------------------------------------------------------- */
 
 
-int gAction::absx()
+int geAction::absx()
 {
 	return x() - parent->ac->x();
 }
@@ -277,7 +277,7 @@ int gAction::absx()
 /* -------------------------------------------------------------------------- */
 
 
-int gAction::xToFrame_a()
+int geAction::xToFrame_a()
 {
 	return (absx()) * parent->zoom;
 }
@@ -286,7 +286,7 @@ int gAction::xToFrame_a()
 /* -------------------------------------------------------------------------- */
 
 
-int gAction::xToFrame_b()
+int geAction::xToFrame_b()
 {
 	return (absx() + w()) * parent->zoom;
 }

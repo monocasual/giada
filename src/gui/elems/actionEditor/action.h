@@ -36,19 +36,19 @@ class gdActionEditor;
 class SampleChannel;
 
 
-class gAction : public Fl_Box
+class geAction : public Fl_Box
 {
 private:
 
 	bool            selected;
 	unsigned        index;
-  gdActionEditor *parent;   // pointer to parent (gActionEditor)
+  gdActionEditor *parent;   // pointer to parent (geActionEditor)
 	SampleChannel  *ch;
   char            type;     // type of action
 
 public:
 
-	gAction(int x, int y, int h, int frame_a, unsigned index,
+	geAction(int x, int y, int h, int frame_a, unsigned index,
 		gdActionEditor *parent, SampleChannel *ch, bool record, char type);
 	void draw();
 	int  handle(int e);
