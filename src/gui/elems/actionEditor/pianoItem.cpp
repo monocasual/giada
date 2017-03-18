@@ -33,6 +33,7 @@
 #include "../../dialogs/gd_actionEditor.h"
 #include "noteEditor.h"
 #include "pianoRoll.h"
+#include "gridTool.h"
 #include "pianoItem.h"
 
 

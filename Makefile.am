@@ -135,6 +135,8 @@ src/gui/elems/actionEditor/actionEditor.h           \
 src/gui/elems/actionEditor/actionEditor.cpp         \
 src/gui/elems/actionEditor/action.h                 \
 src/gui/elems/actionEditor/action.cpp               \
+src/gui/elems/actionEditor/gridTool.h               \
+src/gui/elems/actionEditor/gridTool.cpp             \
 src/gui/elems/mainWindow/mainIO.h      \
 src/gui/elems/mainWindow/mainIO.cpp    \
 src/gui/elems/mainWindow/mainMenu.h    \

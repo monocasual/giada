@@ -32,6 +32,7 @@
 #include "../../dialogs/gd_actionEditor.h"
 #include "../mainWindow/keyboard/keyboard.h"
 #include "action.h"
+#include "gridTool.h"
 #include "actionEditor.h"
 
 

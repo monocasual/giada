@@ -27,14 +27,10 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <math.h>
 #include "../../utils/gui.h"
 #include "../../core/graphics.h"
-#include "../../core/mixer.h"
-#include "../../core/recorder.h"
 #include "../../core/conf.h"
 #include "../../core/clock.h"
-#include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/scroll.h"
@@ -42,10 +38,10 @@
 #include "../elems/actionEditor/envelopeEditor.h"
 #include "../elems/actionEditor/muteEditor.h"
 #include "../elems/actionEditor/noteEditor.h"
+#include "../elems/actionEditor/gridTool.h"
 #include "gd_actionEditor.h"
 
 
-extern Mixer G_Mixer;
 extern Clock G_Clock;
 extern Conf	 G_Conf;
 
@@ -72,7 +68,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	if (chan->type == CHANNEL_SAMPLE) {
 	  actionType = new gChoice(8, 8, 80, 20);
-	  gridTool   = new gGridTool(actionType->x()+actionType->w()+4, 8, this);
+	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8, this);
 		actionType->add("key press");
 		actionType->add("key release");
 		actionType->add("kill chan");
@@ -83,7 +79,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		actionType->deactivate();
 	}
 	else {
-		gridTool = new gGridTool(8, 8, this);
+		gridTool = new geGridTool(8, 8, this);
 	}
 
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
@@ -295,190 +291,4 @@ int gdActionEditor::getActionType()
 		return ACTION_KILLCHAN;
 	else
 		return -1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-gGridTool::gGridTool(int x, int y, gdActionEditor *parent)
-	:	Fl_Group(x, y, 80, 20), parent(parent)
-{
-	gridType = new gChoice(x, y, 40, 20);
-	gridType->add("1");
-	gridType->add("2");
-	gridType->add("3");
-	gridType->add("4");
-	gridType->add("6");
-	gridType->add("8");
-	gridType->add("16");
-	gridType->add("32");
-	gridType->value(0);
-	gridType->callback(cb_changeType, (void*)this);
-
-	active = new gCheck (x+44, y+4, 12, 12);
-
-	gridType->value(G_Conf.actionEditorGridVal);
-	active->value(G_Conf.actionEditorGridOn);
-
-	end();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gGridTool::~gGridTool()
-{
-	G_Conf.actionEditorGridVal = gridType->value();
-	G_Conf.actionEditorGridOn  = active->value();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gGridTool::cb_changeType(Fl_Widget *w, void *p)  { ((gGridTool*)p)->__cb_changeType(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gGridTool::__cb_changeType()
-{
-	calc();
-	parent->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool gGridTool::isOn()
-{
-	return active->value();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gGridTool::getValue()
-{
-	switch (gridType->value()) {
-		case 0:	return 1;
-		case 1: return 2;
-		case 2: return 3;
-		case 3: return 4;
-		case 4: return 6;
-		case 5: return 8;
-		case 6: return 16;
-		case 7: return 32;
-	}
-	return 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gGridTool::calc()
-{
-	points.clear();
-	frames.clear();
-	bars.clear();
-	beats.clear();
-
-	/* find beats, bars and grid. The method is the same of the waveform in sample
-	 * editor. Take totalwidth (the width in pixel of the area to draw), knowing
-	 * that totalWidth = totalFrames / zoom. Then, for each pixel of totalwidth,
-	 * put a concentrate of each block (which is totalFrames / zoom) */
-
-	int  j   = 0;
-	int fpgc = floor(G_Clock.getFramesPerBeat() / getValue());  // frames per grid cell
-
-	for (int i=1; i<parent->totalWidth; i++) {   // if i=0, step=0 -> useless cycle
-		int step = parent->zoom*i;
-		while (j < step && j < G_Clock.getTotalFrames()) {
-			if (j % fpgc == 0) {
-				points.push_back(i);
-				frames.push_back(j);
-			}
-			if (j % G_Clock.getFramesPerBeat() == 0)
-				beats.push_back(i);
-			if (j % G_Clock.getFramesPerBar() == 0 && i != 1)
-				bars.push_back(i);
-			if (j == G_Clock.getTotalFrames() - 1)
-				parent->coverX = i;
-			j++;
-		}
-		j = step;
-	}
-
-	/* fix coverX if == 0, which means G_Mixer.beats == G_MAX_BEATS */
-
-	if (G_Clock.getBeats() == G_MAX_BEATS)
-		parent->coverX = parent->totalWidth;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gGridTool::getSnapPoint(int v)
-{
-	if (v == 0) return 0;
-
-	for (int i=0; i<(int)points.size(); i++) {
-
-		if (i == (int) points.size()-1)
-			return points.at(i);
-
-		int gp  = points.at(i);
-		int gpn = points.at(i+1);
-
-		if (v >= gp && v < gpn)
-			return gp;
-	}
-	return v;  // default value
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gGridTool::getSnapFrame(int v)
-{
-	v *= parent->zoom;  // transformation pixel -> frame
-
-	for (int i=0; i<(int)frames.size(); i++) {
-
-		if (i == (int) frames.size()-1)
-			return frames.at(i);
-
-		int gf  = frames.at(i);     // grid frame
-		int gfn = frames.at(i+1);   // grid frame next
-
-		if (v >= gf && v < gfn) {
-
-			/* which one is the closest? gf < v < gfn */
-
-			if ((gfn - v) < (v - gf))
-				return gfn;
-			else
-				return gf;
-		}
-	}
-	return v;  // default value
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gGridTool::getCellSize()
-{
-	return (parent->coverX - parent->ac->x()) / G_Clock.getBeats() / getValue();
 }

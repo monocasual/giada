@@ -38,6 +38,7 @@
 #include "../../dialogs/gd_actionEditor.h"
 #include "../../dialogs/gd_mainWindow.h"
 #include "../mainWindow/keyboard/keyboard.h"
+#include "gridTool.h"
 #include "envelopeEditor.h"
 
 

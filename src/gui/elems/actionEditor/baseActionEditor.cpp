@@ -33,6 +33,7 @@
 #include "../../../core/mixer.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "../ge_mixed.h"
+#include "gridTool.h"
 #include "baseActionEditor.h"
 
 
