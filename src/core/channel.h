@@ -32,6 +32,7 @@
 
 
 #include <vector>
+#include <string>
 #include <pthread.h>
 #include "midiMapConf.h"
 #include "recorder.h"
@@ -39,10 +40,6 @@
 #ifdef WITH_VST
 	#include "../deps/juce-config.h"
 #endif
-
-
-using std::vector;
-using std::string;
 
 
 class PluginHost;
@@ -112,7 +109,7 @@ public:
 
 	virtual int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
 			int samplerate, int rsmpQuality) = 0;
-	virtual int readPatch(const string &basePath, int i, Patch *patch,
+	virtual int readPatch(const std::string &basePath, int i, Patch *patch,
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
@@ -257,7 +254,7 @@ public:
   uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  vector <Plugin *> plugins;
+  std::vector <Plugin *> plugins;
 #endif
 
 

@@ -44,7 +44,7 @@
 #endif
 
 
-using std::string;
+class gWindow;
 
 
 /* refresh
@@ -66,11 +66,11 @@ void gu_updateControls();
 /* update_win_label
  * update the name of the main window */
 
-void gu_updateMainWinLabel(const string &s);
+void gu_updateMainWinLabel(const std::string &s);
 
 void gu_setFavicon(Fl_Window *w);
 
-void gu_openSubWindow(class gWindow *parent, gWindow *child, int id);
+void gu_openSubWindow(gWindow *parent, gWindow *child, int id);
 
 /* refreshActionEditor
  * reload the action editor window by closing and reopening it. It's used
@@ -89,11 +89,11 @@ void gu_closeAllSubwindows();
 /* getSubwindow
  * return a pointer to an open subwindow, otherwise NULL. */
 
-gWindow *gu_getSubwindow(class gWindow *parent, int id);
+gWindow *gu_getSubwindow(gWindow *parent, int id);
 
 /* removeFltkChars
  * Strip special chars used by FLTK to split menus into sub-menus. */
 
-string gu_removeFltkChars(const string &s);
+std::string gu_removeFltkChars(const std::string &s);
 
 #endif

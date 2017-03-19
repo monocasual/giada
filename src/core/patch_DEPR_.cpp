@@ -28,6 +28,7 @@
 
 
 #include <stdint.h>
+#include <cstring>
 #include "../utils/log.h"
 #include "../utils/fs.h"
 #include "../gui/dialogs/gd_mainWindow.h"

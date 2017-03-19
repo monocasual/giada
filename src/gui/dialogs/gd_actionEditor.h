@@ -88,7 +88,7 @@ public:
 	geEnvelopeEditor *vc;
 	geNoteEditor     *pr;
 
-	vector <gActionWidget*> widgets;
+	std::vector <gActionWidget*> widgets;
 
 	Channel *chan;
 

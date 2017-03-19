@@ -34,6 +34,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <vector>
+#include <string>
 #include "dataStorageIni.h"
 #include "dataStorageJson.h"
 #include "../utils/fs.h"
@@ -42,25 +43,21 @@
 #endif
 
 
-using std::string;
-using std::vector;
-
-
 class MidiMapConf : public DataStorageIni, public DataStorageJson
 {
 public:
 
 	struct message_t
   {
-    int      channel;
-    string   valueStr;
-		int      offset;
-		uint32_t value;
+    int         channel;
+    std::string valueStr;
+		int         offset;
+		uint32_t    value;
   };
 
-	string brand;
-  string device;
-	vector<message_t> initCommands;
+	std::string brand;
+  std::string device;
+	std::vector<message_t> initCommands;
 	message_t muteOn;
 	message_t muteOff;
 	message_t soloOn;
@@ -73,13 +70,13 @@ public:
 	/* midimapsPath
 	 * path of midimap files, different between OSes. */
 
-	string midimapsPath;
+	std::string midimapsPath;
 
 	/* maps
-	 * Maps are the available .giadamap files. Each element of the vector
+	 * Maps are the available .giadamap files. Each element of the std::vector
 	 * represents a .giadamap filename. */
 
-	vector<string> maps;
+	std::vector<std::string> maps;
 
 	/* init
 	Parse the midi maps folders and find the available maps. */
@@ -94,7 +91,7 @@ public:
 	/* read
 	Read a midi map from file 'file'. */
 
-	int read(const string &file);
+	int read(const std::string &file);
 
 	/* --- DEPRECATED STUFF --------------------------------------------------- */
 	/* --- DEPRECATED STUFF --------------------------------------------------- */
@@ -156,13 +153,13 @@ public:
 	/* readMap
 	Read a midi map from file 'file'. */
 
-	int readMap_DEPR_(string file);
+	int readMap_DEPR_(std::string file);
 
 private:
 
 	bool readInitCommands(json_t *jContainer);
 
-	bool readCommand(json_t *jContainer, message_t *msg, const string &key);
+	bool readCommand(json_t *jContainer, message_t *msg, const std::string &key);
 
 	void parse(message_t *message);
 
@@ -171,7 +168,7 @@ private:
 	/* --- DEPRECATED STUFF --------------------------------------------------- */
 
 	void close_DEPR_();
-	void parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset);
+	void parse_DEPR_(std::string key, int *chan, uint32_t *msg, int *offset);
 };
 
 #endif

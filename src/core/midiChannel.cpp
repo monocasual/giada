@@ -48,6 +48,10 @@ extern Mixer      G_Mixer;
 extern PluginHost G_PluginHost;
 #endif
 
+
+using std::string;
+
+
 MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf, clock),
 	  midiOut    (false),

@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <string>
 #include "../core/mixer.h"
 #include "../core/patch_DEPR_.h"
 #include "../core/recorder.h"
@@ -49,6 +50,9 @@
 #include "log.h"
 #include "string.h"
 #include "gui.h"
+
+
+using std::string;
 
 
 extern Mixer 	       G_Mixer;

@@ -28,6 +28,7 @@
 
 
 #include <cmath>
+#include <cstring>
 #include "../utils/log.h"
 #include "../utils/string.h"
 #include "sampleChannel.h"
@@ -142,8 +143,8 @@ void SampleChannel::clear()
 	/** TODO - these memsets can be done only if status PLAY (if below),
 	 * but it would require extra clearPChan calls when samples stop */
 
-		memset(vChan, 0, sizeof(float) * bufferSize);
-		memset(pChan, 0, sizeof(float) * bufferSize);
+		std::memset(vChan, 0, sizeof(float) * bufferSize);
+		std::memset(pChan, 0, sizeof(float) * bufferSize);
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);

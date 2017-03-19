@@ -32,19 +32,15 @@
 
 
 #include <string>
-#include <cstdio>
 #include "dataStorageJson.h"
-
-
-using std::string;
 
 
 class Conf : public DataStorageJson
 {
 private:
 
-	string confFilePath;
-	string confDirPath;
+	std::string confFilePath;
+	std::string confDirPath;
 
 	/* init
    * Init Conf with default values. */
@@ -66,7 +62,7 @@ public:
 
 	Conf();
 
-	string header;
+	std::string header;
 
 	int  logMode;
 	int  soundSystem;
@@ -80,14 +76,14 @@ public:
 	bool limitOutput;
 	int  rsmpQuality;
 
-	int    midiSystem;
-	int    midiPortOut;
-	int    midiPortIn;
-	bool   noNoteOff;
-	string midiMapPath;
-	string lastFileMap;
-	int    midiSync;  // see const.h
-	float  midiTCfps;
+	int  midiSystem;
+	int  midiPortOut;
+	int  midiPortIn;
+	bool noNoteOff;
+	std::string midiMapPath;
+	std::string lastFileMap;
+	int   midiSync;  // see const.h
+	float midiTCfps;
 
 	uint32_t midiInRewind;
 	uint32_t midiInStartStop;
@@ -104,14 +100,14 @@ public:
 	bool treatRecsAsLoops;
 	bool resizeRecordings;
 
-	string pluginPath;
-	string patchPath;
-	string samplePath;
+	std::string pluginPath;
+	std::string patchPath;
+	std::string samplePath;
 
 	int mainWindowX, mainWindowY, mainWindowW, mainWindowH;
 
 	int browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
-	string browserLastPath;
+	std::string browserLastPath;
 
 	int actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
 	int actionEditorGridVal;
@@ -137,8 +133,8 @@ public:
 
 #endif
 
-	int  read();
-	int  write();
+	int read();
+	int write();
 };
 
 #endif

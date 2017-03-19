@@ -40,12 +40,10 @@
 #include <pthread.h>
 
 
-using std::vector;
-
-
 class Clock;
 class Channel;
 class Mixer;
+
 
 class Recorder
 {
@@ -72,12 +70,12 @@ public:
 	 * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
 	 * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4] */
 
-	vector<int>  frames;					  // frame counter (sentinel) frames.size == global.size
-	vector<vector<action*>> global;	// container of containers of actions
-	vector<action*> actions;				// container of actions
+	std::vector<int> frames;					        // frame counter (sentinel) frames.size == global.size
+	std::vector<std::vector<action*>> global;	// container of containers of actions
+	std::vector<action*> actions;			        // container of actions
 
 	bool active;
-	bool sortedActions;             // are actions sorted via sortActions()?
+	bool sortedActions;   // are actions sorted via sortActions()?
 
 	/* init
 	 * everything starts from here. */

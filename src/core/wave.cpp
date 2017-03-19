@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>  // memcpy
 #include <cmath>
+#include <samplerate.h>
 #include "../utils/fs.h"
 #include "../utils/log.h"
 #include "init.h"
@@ -267,3 +268,19 @@ void Wave::updateName(const char *n)
 	/* a wave with updated name must become logical, since the underlying
 	 * file does not exist yet. */
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int  Wave::rate    () { return inHeader.samplerate; }
+int  Wave::channels() { return inHeader.channels; }
+int  Wave::frames  () { return inHeader.frames; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Wave::rate    (int v) { inHeader.samplerate = v; }
+void Wave::channels(int v) { inHeader.channels = v; }
+void Wave::frames  (int v) { inHeader.frames = v; }

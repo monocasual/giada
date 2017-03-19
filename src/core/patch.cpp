@@ -39,6 +39,10 @@ extern Mixer G_Mixer;
 extern Conf  G_Conf;
 
 
+using std::string;
+using std::vector;
+
+
 void Patch::init()
 {
   columns.clear();

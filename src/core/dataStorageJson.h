@@ -35,9 +35,6 @@
 #include <jansson.h>
 
 
-using std::string;
-
-
 class DataStorageJson
 {
 protected:
@@ -45,7 +42,7 @@ protected:
   json_t       *jRoot;
   json_error_t  jError;
 
-  bool setString(json_t *jRoot, const char *key, string &output);
+  bool setString(json_t *jRoot, const char *key, std::string &output);
   bool setFloat(json_t *jRoot, const char *key, float &output);
   bool setUint32(json_t *jRoot, const char *key, uint32_t &output);
   bool setInt(json_t *jRoot, const char *key, int &output);

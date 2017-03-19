@@ -35,6 +35,9 @@
 #include "browser.h"
 
 
+using std::string;
+
+
 geBrowser::geBrowser(int x, int y, int w, int h)
  : Fl_File_Browser(x, y, w, h),
    showHiddenFiles(false)

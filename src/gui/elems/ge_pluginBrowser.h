@@ -33,12 +33,7 @@
 #define GE_PLUGIN_BROWSER_H
 
 
-#include <vector>
-#include <FL/Fl.H>
 #include <FL/Fl_Browser.H>
-
-
-using std::vector;
 
 
 class gePluginBrowser : public Fl_Browser

@@ -31,6 +31,7 @@
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../utils/gui.h"
+#include "../../utils/fs.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/browser.h"
 #include "gd_browser.h"

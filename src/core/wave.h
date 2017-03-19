@@ -31,23 +31,18 @@
 #define WAVE_H
 
 
-#include <samplerate.h>
 #include <sndfile.h>
 #include <string>
-
-
-using std::string;
 
 
 class Wave
 {
 private:
 
-	SNDFILE   *fileIn;
-	SNDFILE   *fileOut;
-	SF_INFO    inHeader;
-	SF_INFO    outHeader;
-
+	SNDFILE *fileIn;
+	SNDFILE *fileOut;
+	SF_INFO  inHeader;
+	SF_INFO  outHeader;
 
 public:
 
@@ -55,23 +50,23 @@ public:
 	~Wave();
 	Wave(const Wave &other);
 
-	string pathfile; // full path + sample name
-	string name;			// sample name (changeable)
+	std::string pathfile; // full path + sample name
+	std::string name;			// sample name (changeable)
 
-	float     *data;
-	int        size;			  // wave size (size in stereo: size / 2)
-	bool       isLogical;   // memory only (a take)
-	bool       isEdited;    // edited via editor
+	float *data;
+	int    size;			  // wave size (size in stereo: size / 2)
+	bool   isLogical;   // memory only (a take)
+	bool   isEdited;    // edited via editor
 
-	inline int  rate    () { return inHeader.samplerate; }
-	inline int  channels() { return inHeader.channels; }
-	inline int  frames  () { return inHeader.frames; }
-	inline void rate    (int v) { inHeader.samplerate = v; }
-	inline void channels(int v) { inHeader.channels = v; }
-	inline void frames  (int v) { inHeader.frames = v; }
+	int  rate    ();
+	int  channels();
+	int  frames  ();
+	void rate    (int v);
+	void channels(int v);
+	void frames  (int v);
 
-	string basename (bool ext=false) const;
-	string extension() const;
+	std::string basename(bool ext=false) const;
+	std::string extension() const;
 
 	void updateName(const char *n);
 	int  open      (const char *f);

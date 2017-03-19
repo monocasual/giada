@@ -34,20 +34,18 @@
 
 #include <vector>
 #include <FL/Fl_Double_Window.H>
-#include "../../utils/fs.h"
 
 
-using std::vector;
-
-
-class gWindow : public Fl_Double_Window {
-
+class gWindow : public Fl_Double_Window
+{
 protected:
-	vector <gWindow *> subWindows;
+
+	std::vector <gWindow*> subWindows;
 	int id;
 	gWindow *parent;
 
 public:
+
 	gWindow(int x, int y, int w, int h, const char *title=0, int id=0);
 	gWindow(int w, int h, const char *title=0, int id=0);
 	~gWindow();
@@ -70,7 +68,6 @@ public:
 	 * true if the window with id 'id' exists in the stack. */
 
 	bool hasWindow(int id);
-
 };
 
 

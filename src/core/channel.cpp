@@ -28,6 +28,7 @@
 
 
 #include <cassert>
+#include <cstring>
 #include "../utils/log.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "channel.h"
@@ -48,6 +49,9 @@
 
 extern Recorder   G_Recorder;
 extern KernelMidi G_KernelMidi;
+
+
+using std::string;
 
 
 Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
@@ -92,11 +96,11 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
   midiOutLsolo   (0x0)
 {
   assert(clock != nullptr);
-  
+
   vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
 		gu_log("[Channel::allocVchan] unable to alloc memory for vChan\n");
-	memset(vChan, 0, bufferSize * sizeof(float));
+	std::memset(vChan, 0, bufferSize * sizeof(float));
 }
 
 

@@ -31,6 +31,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <dirent.h>
 #include "midiMapConf.h"

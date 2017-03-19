@@ -110,7 +110,7 @@ public:
 	void unsetMute(bool internal) override;
 	int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
 			int samplerate, int rsmpQuality) override;
-  int readPatch(const string &basePath, int i, Patch *patch,
+  int readPatch(const std::string &basePath, int i, Patch *patch,
 			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject, Patch *patch) override;
 	void quantize(int index, int localFrame, Mixer *m) override;

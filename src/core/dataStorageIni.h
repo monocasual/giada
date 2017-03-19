@@ -30,14 +30,15 @@
 #ifndef __DATA_STORAGE_INI_H__
 #define __DATA_STORAGE_INI_H__
 
+
 #include <stdio.h>
 #include <string>
-#include <string.h>
+
 
 #define MAX_LINE_LEN 1024
 
 
-class DataStorageIni 
+class DataStorageIni
 {
 protected:
 

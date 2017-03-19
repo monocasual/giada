@@ -37,10 +37,6 @@
 #include "dataStorageJson.h"
 
 
-using std::string;
-using std::vector;
-
-
 class Patch : public DataStorageJson
 {
 public:
@@ -56,10 +52,10 @@ public:
 #ifdef WITH_VST
   struct plugin_t
   {
-    string           path;
-    bool             bypass;
-    vector<float>    params;
-    vector<uint32_t> midiInParams;
+    std::string           path;
+    bool                  bypass;
+    std::vector<float>    params;
+    std::vector<uint32_t> midiInParams;
   };
 #endif
 
@@ -87,7 +83,7 @@ public:
     uint32_t    midiOutLmute;
     uint32_t    midiOutLsolo;
     // sample channel
-    string      samplePath;
+    std::string samplePath;
     int         key;
     int         mode;
     int         begin;
@@ -101,10 +97,10 @@ public:
     uint32_t    midiOut;
     uint32_t    midiOutChan;
 
-    vector<action_t> actions;
+    std::vector<action_t> actions;
 
 #ifdef WITH_VST
-    vector<plugin_t> plugins;
+    std::vector<plugin_t> plugins;
 #endif
   };
 
@@ -112,15 +108,15 @@ public:
   {
     int index;
     int width;
-    vector<int> channels;
+    std::vector<int> channels;
   };
 
-  string header;
-  string version;
+  std::string header;
+  std::string version;
   int    versionMajor;
   int    versionMinor;
   int    versionPatch;
-  string name;
+  std::string name;
   float  bpm;
   int    bars;
   int    beats;
@@ -131,12 +127,12 @@ public:
   int    lastTakeId;
   int    samplerate;   // original samplerate when the patch was saved
 
-  vector<column_t>  columns;
-  vector<channel_t> channels;
+  std::vector<column_t>  columns;
+  std::vector<channel_t> channels;
 
 #ifdef WITH_VST
-  vector<plugin_t> masterInPlugins;
-  vector<plugin_t> masterOutPlugins;
+  std::vector<plugin_t> masterInPlugins;
+  std::vector<plugin_t> masterOutPlugins;
 #endif
 
   /* init
@@ -147,8 +143,8 @@ public:
   /* read/write
    * Read/write patch to/from file. */
 
-  int  write(const string &file);
-  int  read (const string &file);
+  int  write(const std::string &file);
+  int  read (const std::string &file);
 
 private:
 
@@ -167,7 +163,8 @@ private:
   bool readCommons (json_t *jContainer);
   bool readChannels(json_t *jContainer);
 #ifdef WITH_VST
-  bool readPlugins (json_t *jContainer, vector<plugin_t> *container, const char* key);
+  bool readPlugins (json_t *jContainer, std::vector<plugin_t> *container,
+    const char* key);
 #endif
   bool readActions (json_t *jContainer, channel_t *channel);
   bool readColumns (json_t *jContainer);
@@ -175,12 +172,13 @@ private:
   /* writers */
 
   void writeCommons (json_t *jContainer);
-  void writeChannels(json_t *jContainer, vector<channel_t> *channels);
+  void writeChannels(json_t *jContainer, std::vector<channel_t> *channels);
 #ifdef WITH_VST
-  void writePlugins (json_t *jContainer, vector<plugin_t> *plugins, const char* key);
+  void writePlugins (json_t *jContainer, std::vector<plugin_t> *plugins,
+    const char* key);
 #endif
-  void writeActions (json_t *jContainer, vector<action_t> *actions);
-  void writeColumns (json_t *jContainer, vector<column_t> *columns);
+  void writeActions (json_t *jContainer, std::vector<action_t> *actions);
+  void writeColumns (json_t *jContainer, std::vector<column_t> *columns);
 };
 
 #endif

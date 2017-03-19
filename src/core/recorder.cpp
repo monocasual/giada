@@ -37,6 +37,9 @@
 #include "recorder.h"
 
 
+using std::vector;
+
+
 Recorder::Recorder(Clock *clock)
 	: active       (false),
 	  sortedActions(false),

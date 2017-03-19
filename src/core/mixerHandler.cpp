@@ -63,6 +63,7 @@ extern PluginHost  G_PluginHost;
 
 
 using std::vector;
+using std::string;
 
 
 #ifdef WITH_VST

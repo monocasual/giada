@@ -39,6 +39,9 @@
 #include "column.h"
 
 
+using std::vector;
+
+
 geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 	: Fl_Group(X, Y, W, H), parent(parent), index(index)
 {

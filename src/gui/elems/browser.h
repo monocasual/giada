@@ -35,20 +35,17 @@
 #include <FL/Fl_File_Browser.H>
 
 
-using std::string;
-
-
 class geBrowser : public Fl_File_Browser
 {
 private:
 
-	string currentDir;
+	std::string currentDir;
   bool showHiddenFiles;
 
 	/* normalize
-	 * Make sure the string never ends with a trailing slash. */
+	 * Make sure the std::string never ends with a trailing slash. */
 
-	string normalize(const string &s);
+	std::string normalize(const std::string &s);
 
 public:
 
@@ -59,15 +56,15 @@ public:
 	/* init
 	 * Initialize browser and show 'dir' as initial directory. */
 
-	void loadDir(const string &dir);
+	void loadDir(const std::string &dir);
 
 	/* getSelectedItem
 	 * Return the full path or just the displayed name of the i-th selected item.
 	 * Always with the trailing slash! */
 
-	string getSelectedItem(bool fullPath=true);
+	std::string getSelectedItem(bool fullPath=true);
 
-	string getCurrentDir();
+	std::string getCurrentDir();
 
 	void preselect(int position, int line);
 

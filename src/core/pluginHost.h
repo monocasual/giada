@@ -36,8 +36,8 @@
 #include "../deps/juce-config.h"
 
 
-using std::string;
-using std::vector;
+class Plugin;
+class Channel;
 
 
 class PluginHost
@@ -59,10 +59,10 @@ private:
   /* unknownPluginList
    * List of unrecognized plugins found in a patch. */
 
-  vector<string> unknownPluginList;
+  std::vector<std::string> unknownPluginList;
 
-  vector<class Plugin*> masterOut;
-  vector<class Plugin*> masterIn;
+  std::vector<Plugin*> masterOut;
+  std::vector<Plugin*> masterIn;
 
   /* Audio|MidiBuffer
    * Dynamic buffers. */
@@ -85,19 +85,21 @@ public:
 		CHANNEL
 	};
 
-  enum sortMethod {
+  enum sortMethod
+  {
     NAME,
     CATEGORY,
     MANUFACTURER,
     FORMAT
   };
 
-  struct PluginInfo {
-    string uid;
-    string name;
-    string category;
-    string manufacturerName;
-    string format;
+  struct PluginInfo
+  {
+    std::string uid;
+    std::string name;
+    std::string category;
+    std::string manufacturerName;
+    std::string format;
     bool isInstrument;
   };
 
@@ -110,18 +112,18 @@ public:
    * called on each plugin found. Used to update the main window from the GUI
    * thread. */
 
-  int scanDir(const string &path, void (*callback)(float progress, void *p)=NULL,
+  int scanDir(const std::string &path, void (*callback)(float progress, void *p)=NULL,
       void *p=NULL);
 
   /* (save|load)List
    * (Save|Load) knownPluginList (in|from) an XML file. */
 
-  int saveList(const string &path);
-  int loadList(const string &path);
+  int saveList(const std::string &path);
+  int loadList(const std::string &path);
 
   /* addPlugin
    * Add a new plugin to 'stackType' by unique id or by index in knownPluginList
-   * vector. Requires:
+   * std::vector. Requires:
    * fid - plugin unique file id (i.e. path to dynamic library)
    * stackType - which stack to add plugin to
    * mutex - Mixer.mutex_plugin
@@ -129,15 +131,15 @@ public:
    * bufSize - buffer size
    * ch - if stackType == CHANNEL. */
 
-  Plugin *addPlugin(const string &fid, int stackType, pthread_mutex_t *mutex,
-    class Channel *ch=NULL);
+  Plugin *addPlugin(const std::string &fid, int stackType, pthread_mutex_t *mutex,
+    Channel *ch=NULL);
   Plugin *addPlugin(int index, int stackType, pthread_mutex_t *mutex,
-    class Channel *ch=NULL);
+    Channel *ch=NULL);
 
   /* countPlugins
    * Return size of 'stackType'. */
 
-  unsigned countPlugins(int stackType, class Channel *ch=NULL);
+  unsigned countPlugins(int stackType, Channel *ch=NULL);
 
   /* countAvailablePlugins
    * Return size of knownPluginList. */
@@ -155,42 +157,42 @@ public:
 
   PluginInfo getAvailablePluginInfo(int index);
 
-  string getUnknownPluginInfo(int index);
+  std::string getUnknownPluginInfo(int index);
 
   /* freeStack
    * free plugin stack of type 'stackType'. */
 
-  void freeStack(int stackType, pthread_mutex_t *mutex, class Channel *ch=NULL);
+  void freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch=NULL);
 
   /* processStack
    * apply the fx list to the buffer. */
 
-  void processStack(float *buffer, int stackType, class Channel *ch=NULL);
+  void processStack(float *buffer, int stackType, Channel *ch=NULL);
 
   /* getStack
-  * Return a vector <Plugin *> given the stackType. If stackType == CHANNEL
+  * Return a std::vector <Plugin *> given the stackType. If stackType == CHANNEL
   * a pointer to Channel is also required. */
 
-  vector <Plugin *> *getStack(int stackType, class Channel *ch=NULL);
+  std::vector <Plugin *> *getStack(int stackType, Channel *ch=NULL);
 
   /* getPluginByIndex */
 
-  Plugin *getPluginByIndex(int index, int stackType, class Channel *ch=NULL);
+  Plugin *getPluginByIndex(int index, int stackType, Channel *ch=NULL);
 
   /* getPluginIndex */
 
-  int getPluginIndex(int id, int stackType, class Channel *ch=NULL);
+  int getPluginIndex(int id, int stackType, Channel *ch=NULL);
 
   /* swapPlugin */
 
   void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
-    pthread_mutex_t *mutex, class Channel *ch=NULL);
+    pthread_mutex_t *mutex, Channel *ch=NULL);
 
   /* freePlugin.
   Returns the internal stack index of the deleted plugin. */
 
   int freePlugin(int id, int stackType, pthread_mutex_t *mutex,
-    class Channel *ch=NULL);
+    Channel *ch=NULL);
 
   /* runDispatchLoop
    * Wakes up plugins' GUI manager for N milliseconds. */
@@ -200,16 +202,16 @@ public:
   /* freeAllStacks
    * Frees everything. */
 
-  void freeAllStacks(vector <Channel*> *channels, pthread_mutex_t *mutex);
+  void freeAllStacks(std::vector <Channel*> *channels, pthread_mutex_t *mutex);
 
   /* clonePlugin */
 
   int clonePlugin(Plugin *src, int stackType, pthread_mutex_t *mutex,
-    class Channel *ch);
+    Channel *ch);
 
   /* doesPluginExist */
 
-  bool doesPluginExist(const string &fid);
+  bool doesPluginExist(const std::string &fid);
 
   bool hasMissingPlugins() { return missingPlugins; };
 
