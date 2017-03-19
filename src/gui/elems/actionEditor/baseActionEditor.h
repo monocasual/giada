@@ -32,17 +32,20 @@
 #ifndef __GE_ACTIONWIDGET_H__
 #define __GE_ACTIONWIDGET_H__
 
-#include <FL/Fl.H>
+
 #include <FL/Fl_Group.H>
-#include "../../core/const.h"
+
+
+class gdActionEditor;
 
 
 class geBaseActionEditor : public Fl_Group
 {
 protected:
 
-	class gdActionEditor *pParent;
-	void  baseDraw(bool clear=true);
+	gdActionEditor *pParent;
+
+  void baseDraw(bool clear=true);
 
 public:
 

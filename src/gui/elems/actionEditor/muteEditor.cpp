@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/fl_draw.H>
 #include "../../../core/recorder.h"
 #include "../../../core/mixer.h"
 #include "../../../core/channel.h"

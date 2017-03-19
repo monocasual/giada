@@ -26,6 +26,7 @@
 
 
 #include "../../../core/kernelMidi.h"
+#include "../../../core/const.h"
 #include "../../../core/mixer.h"
 #include "../../../core/channel.h"
 #include "../../../core/clock.h"

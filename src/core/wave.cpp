@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>  // memcpy
-#include <math.h>
+#include <cmath>
 #include "../utils/fs.h"
 #include "../utils/log.h"
 #include "init.h"

@@ -28,23 +28,24 @@
 #ifndef GE_NOTE_EDITOR_H
 #define GE_NOTE_EDITOR_H
 
-#include <FL/Fl.H>
-#include <FL/fl_draw.H>
+
 #include <FL/Fl_Scroll.H>
-#include <FL/Fl_Box.H>
-#include "../../core/recorder.h"
+
+
+class gdActionEditor;
+class gePianoRoll;
 
 
 class geNoteEditor : public Fl_Scroll
 {
 private:
 
-	class gdActionEditor *pParent;
-	class gePianoRoll    *pianoRoll;
+	gdActionEditor *pParent;
+	gePianoRoll    *pianoRoll;
 
 public:
 
-	geNoteEditor(int x, int y, class gdActionEditor *parent);
+	geNoteEditor(int x, int y, gdActionEditor *parent);
 	~geNoteEditor();
 	void draw();
 	void updateActions();

@@ -30,10 +30,6 @@
 
 
 #include <vector>
-#include <FL/Fl.H>
-#include <FL/Fl_Widget.H>
-#include <FL/fl_draw.H>
-#include "../../utils/fs.h"
 #include "baseActionEditor.h"
 
 

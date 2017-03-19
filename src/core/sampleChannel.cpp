@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <math.h>
+#include <cmath>
 #include "../utils/log.h"
 #include "../utils/string.h"
 #include "sampleChannel.h"

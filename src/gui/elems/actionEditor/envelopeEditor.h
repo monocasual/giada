@@ -34,9 +34,6 @@
 
 
 #include <vector>
-#include <FL/Fl.H>
-#include <FL/Fl_Group.H>
-#include "../../utils/fs.h"
 #include "baseActionEditor.h"
 
 

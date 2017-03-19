@@ -26,6 +26,7 @@
 
 
 #include "../../../core/conf.h"
+#include "../../../core/const.h"
 #include "../../../core/mixer.h"
 #include "../../../core/clock.h"
 #include "../../../core/channel.h"

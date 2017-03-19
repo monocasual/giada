@@ -28,6 +28,7 @@
  * ------------------------------------------------------------------ */
 
 
+#include <cmath>
 #include "../../../core/wave.h"
 #include "../../../core/conf.h"
 #include "../../../core/const.h"
@@ -586,7 +587,7 @@ int geWaveform::absolutePoint(int p)
 
 int geWaveform::relativePoint(int p)
 {
-  return (ceilf(p / ratio)) * 2;
+  return (ceil(p / ratio)) * 2;
 }
 
 

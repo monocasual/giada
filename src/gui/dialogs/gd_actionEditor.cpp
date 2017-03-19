@@ -27,9 +27,11 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cmath>
 #include "../../utils/gui.h"
 #include "../../core/graphics.h"
 #include "../../core/conf.h"
+#include "../../core/const.h"
 #include "../../core/clock.h"
 #include "../../core/sampleChannel.h"
 #include "../elems/ge_mixed.h"
@@ -57,7 +59,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	totalWidth = (int) ceilf(G_Clock.getFramesInSequencer() / (float) zoom);
+	totalWidth = (int) std::ceil(G_Clock.getFramesInSequencer() / (float) zoom);
 
 	/* container with zoom buttons and the action type selector. Scheme of
 	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */

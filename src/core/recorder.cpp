@@ -28,7 +28,7 @@
 
 
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include "../utils/log.h"
 #include "mixer.h"
 #include "patch_DEPR_.h"

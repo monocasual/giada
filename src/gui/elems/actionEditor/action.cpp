@@ -26,6 +26,7 @@
 
 
 #include <FL/fl_draw.H>
+#include "../../../core/const.h"
 #include "../../../core/mixer.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../utils/log.h"

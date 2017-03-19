@@ -30,7 +30,7 @@
 
 
 #include <FL/Fl_Box.H>
-#include "../../core/recorder.h"
+#include "../../../core/recorder.h"
 
 
 class gdActionEditor;
@@ -38,7 +38,7 @@ class gdActionEditor;
 
 class gePianoItemOrphaned : public Fl_Box
 {
-  
+
 };
 
 

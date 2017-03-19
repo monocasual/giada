@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <math.h>
+#include <cmath>
 #include "../../core/const.h"
 #include "../../core/mixer.h"
 #include "../../core/graphics.h"

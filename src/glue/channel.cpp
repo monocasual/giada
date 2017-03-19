@@ -28,6 +28,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cmath>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_editor.h"
 #include "../gui/elems/ge_mixed.h"
@@ -414,7 +415,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 		else if (val < 0.0f)
 			val = 0.0f;
 
-	  float linear = pow(10, (val / 20)); // linear = 10^(dB/20)
+	  float linear = std::pow(10, (val / 20)); // linear = 10^(dB/20)
 
 		ch->boost = linear;
 
@@ -429,7 +430,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 	else {
 		ch->boost = val;
 		char buf[10];
-		sprintf(buf, "%.2f", 20*log10(val));
+		sprintf(buf, "%.2f", 20 * std::log10(val));
 		win->boostNum->value(buf);
 		win->boostNum->redraw();
 	}

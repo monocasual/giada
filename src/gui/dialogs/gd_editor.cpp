@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cmath>
 #include "../../glue/channel.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"
@@ -144,7 +145,7 @@ gdEditor::gdEditor(SampleChannel *ch)
   volume->callback(cb_setVolume, (void*)this);
   volume->value(ch->guiChannel->vol->value());
 
-  float dB = 20*log10(ch->volume);   // dB = 20*log_10(linear value)
+  float dB = 20 * std::log10(ch->volume);   // dB = 20*log_10(linear value)
   if (dB > -INFINITY) sprintf(buf, "%.2f", dB);
   else                sprintf(buf, "-inf");
   volumeNum->value(buf);

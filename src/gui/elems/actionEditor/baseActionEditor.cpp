@@ -31,6 +31,7 @@
 
 #include <FL/fl_draw.H>
 #include "../../../core/mixer.h"
+#include "../../../core/const.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "../ge_mixed.h"
 #include "gridTool.h"
