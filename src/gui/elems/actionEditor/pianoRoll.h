@@ -33,6 +33,9 @@
 #include "baseActionEditor.h"
 
 
+class gdActionEditor;
+
+
 class gePianoRoll : public geBaseActionEditor
 {
 private:
@@ -67,7 +70,7 @@ public:
 	static const int CELL_H      = 18;
 	static const int CELL_W      = 40;
 
-	gePianoRoll(int x, int y, int w, class gdActionEditor *pParent);
+	gePianoRoll(int x, int y, int w, gdActionEditor *pParent);
 
 	void draw();
 	int  handle(int e);

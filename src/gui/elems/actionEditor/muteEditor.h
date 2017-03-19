@@ -33,7 +33,7 @@
 #include "baseActionEditor.h"
 
 
-using std::vector;
+class gdActionEditor;
 
 
 class geMuteEditor : public geBaseActionEditor
@@ -53,7 +53,7 @@ private:
 	/* points
 	 * array of on/off points, in frames */
 
-	vector<point> points;
+	std::vector<point> points;
 
 	/* draggedPoint
 	 * which point we are dragging? */
@@ -88,7 +88,7 @@ private:
 
 public:
 
-	geMuteEditor(int x, int y, class gdActionEditor *pParent);
+	geMuteEditor(int x, int y, gdActionEditor *pParent);
 	void draw();
 	int  handle(int e);
 

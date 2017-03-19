@@ -37,9 +37,6 @@
 #include "baseActionEditor.h"
 
 
-using std::vector;
-
-
 class geEnvelopeEditor : public geBaseActionEditor
 {
 	const char *l;      // internal label
@@ -61,7 +58,7 @@ class geEnvelopeEditor : public geBaseActionEditor
 	/* points
 	 * array of points, filled by fillPoints() */
 
-	vector<point> points;
+	std::vector<point> points;
 
 	/* selectedPoint
 	 * which point we are selecting? */
@@ -97,7 +94,8 @@ class geEnvelopeEditor : public geBaseActionEditor
 
 public:
 
-	geEnvelopeEditor(int x, int y, gdActionEditor *pParent, int type, int range, const char *l);
+	geEnvelopeEditor(int x, int y, gdActionEditor *pParent, int type, int range,
+    const char *l);
 	~geEnvelopeEditor();
 
 	/* addPoint
