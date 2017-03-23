@@ -39,6 +39,7 @@
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../utils/gui.h"
+#include "../utils/string.h"
 #include "../utils/log.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -112,7 +113,7 @@ void glue_setBpm(float v)
   double fPpart = modf(v, &fIpart);
   int iIpart = fIpart;
   int iPpart = ceilf(fPpart);
-  glue_setBpm(std::to_string(iIpart).c_str(), std::to_string(iPpart).c_str());
+  glue_setBpm(gu_itoa(iIpart).c_str(), gu_itoa(iPpart).c_str());
 }
 
 
