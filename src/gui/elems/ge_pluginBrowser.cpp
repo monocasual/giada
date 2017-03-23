@@ -42,6 +42,7 @@ extern PluginHost G_PluginHost;
 
 
 using std::vector;
+using std::string;
 
 
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)

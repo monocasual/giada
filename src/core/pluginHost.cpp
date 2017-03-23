@@ -37,6 +37,7 @@
 #include "pluginHost.h"
 
 
+using std::vector;
 using std::string;
 
 

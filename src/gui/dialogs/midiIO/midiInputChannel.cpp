@@ -50,6 +50,7 @@ extern Conf       G_Conf;
 
 
 using std::string;
+using std::vector;
 
 
 gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
