@@ -53,7 +53,6 @@ Clock::Clock(KernelAudio *kernelAudio, KernelMidi *kernelMidi, Conf *conf)
     totalFrames      (0),
     currentFrame     (0),
     currentBeat      (0),
-    midiTCstep       (0),
   	midiTCrate       ((conf->samplerate / conf->midiTCfps) * 2),  // stereo vals
   	midiTCframes     (0),
   	midiTCseconds    (0),

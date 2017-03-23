@@ -118,7 +118,6 @@ private:
 	int   currentFrame;
 	int   currentBeat;
 
-  int midiTCstep;      // part of MTC to send (0 to 7)
 	int midiTCrate;      // send MTC data every midiTCrate frames
 	int midiTCframes;
 	int midiTCseconds;
