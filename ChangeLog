@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.13.3 ---
+0.13.3 --- 2017 . 03 . 25
 - Strip VST folder from Git repository
 - Fix 'Close' button's position inside MIDI input window
 - Update RtMidi to version 2.1.1
