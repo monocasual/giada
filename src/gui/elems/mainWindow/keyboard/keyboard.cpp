@@ -49,7 +49,7 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	bckspcPressed(false),
 	endPressed   (false),
 	spacePressed (false),
-	addColumnBtn (NULL)
+	addColumnBtn (nullptr)
 {
 	color(COLOR_BG_MAIN);
 	type(Fl_Scroll::BOTH_ALWAYS);
@@ -205,7 +205,7 @@ geColumn *geKeyboard::getColumnByIndex(int index)
 	for (unsigned i=0; i<columns.size(); i++)
 		if (columns.at(i)->getIndex() == index)
 			return columns.at(i);
-	return NULL;
+	return nullptr;
 }
 
 

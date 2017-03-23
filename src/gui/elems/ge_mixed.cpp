@@ -78,14 +78,14 @@ void gClick::draw()
 
   fl_rect(x(), y(), w(), h(), bdColor);             // borders
   if (value()) {                                    // -- clicked
-    if (imgOn != NULL)
+    if (imgOn != nullptr)
       fl_draw_pixmap(imgOn, x()+1, y()+1);
     else
       fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
   }
   else {                                            // -- not clicked
     fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
-    if (imgOff != NULL)
+    if (imgOff != nullptr)
       fl_draw_pixmap(imgOff, x()+1, y()+1);
   }
   if (!active())
@@ -107,13 +107,13 @@ void gClickRepeat::draw()
 {
   if (value()) {                               // -- clicked
     fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
-    if (imgOn != NULL)
+    if (imgOn != nullptr)
       fl_draw_pixmap(imgOn, x()+1, y()+1);
   }
   else {                                       // -- not clicked
     fl_rectf(x(), y(), w(), h(), COLOR_BG_0);  // bg
     fl_rect(x(), y(), w(), h(), COLOR_BD_0);   // border
-    if (imgOff != NULL)
+    if (imgOff != nullptr)
       fl_draw_pixmap(imgOff, x()+1, y()+1);
   }
   if (!active())
@@ -589,7 +589,7 @@ void gBaseButton::resize(int X, int Y, int W, int H)
 
 
 gFxButton::gFxButton(int x, int y, int w, int h, const char **imgOff, const char **imgOn)
-  : gClick(x, y, w, h, NULL, imgOff, imgOn), full(false) {}
+  : gClick(x, y, w, h, nullptr, imgOff, imgOn), full(false) {}
 
 
 /* -------------------------------------------------------------------------- */

@@ -47,7 +47,7 @@ geMainTransport::geMainTransport(int x, int y)
 
 	end();
 
-	resizable(NULL);   // don't resize any widget
+	resizable(nullptr);   // don't resize any widget
 
 	rewind->callback(cb_rewind, (void*)this);
 

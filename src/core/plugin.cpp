@@ -56,12 +56,12 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 
   /* Try to enable editor (i.e. plugin's UI) */
   
-  if (plugin->getActiveEditor() != NULL) {
+  if (plugin->getActiveEditor() != nullptr) {
     gu_log("[Plugin] plugin has an already active editor!\n");
     return;
   }
   ui = plugin->createEditorIfNeeded();
-  if (ui == NULL) {
+  if (ui == nullptr) {
     gu_log("[Plugin] unable to create editor, the plugin might be GUI-less!\n");
     return;
   }
@@ -87,7 +87,7 @@ Plugin::~Plugin()
 
 void Plugin::showEditor(void *parent)
 {
-  if (ui == NULL) {
+  if (ui == nullptr) {
     gu_log("[Plugin::showEditor] can't show editor!\n");
     return;
   }
@@ -254,7 +254,7 @@ string Plugin::getParameterLabel(int index)
 
 void Plugin::closeEditor()
 {
-  if (ui == NULL)
+  if (ui == nullptr)
     return;
   if (ui->isOnDesktop())
   	ui->removeFromDesktop();

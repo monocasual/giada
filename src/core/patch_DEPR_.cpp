@@ -56,7 +56,7 @@ extern gdMainWindow *mainWin;
 int Patch_DEPR_::open(const char *file)
 {
 	fp = fopen(file, "r");
-	if (fp == NULL)
+	if (fp == nullptr)
 		return PATCH_UNREADABLE;
 
 	if (getValue("header") != "GIADAPTC")
@@ -462,7 +462,7 @@ uint32_t Patch_DEPR_::getMidiValue(int i, const char *c)
 {
 	char tmp[32];
 	sprintf(tmp, "chanMidi%s%d", c, i);
-	return strtoul(getValue(tmp).c_str(), NULL, 10);
+	return strtoul(getValue(tmp).c_str(), nullptr, 10);
 }
 
 
@@ -550,7 +550,7 @@ int Patch_DEPR_::readPlugins()
 		for (int j=0; j<np; j++) {
 			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
 			Plugin *plugin = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
-			if (plugin != NULL) {
+			if (plugin != nullptr) {
 				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
 				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
@@ -597,7 +597,7 @@ int Patch_DEPR_::readMasterPlugins(int type)
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "master%c_p%dpathfile", chr, i);
 		Plugin *p = G_PluginHost.addPlugin(getValue(tmp).c_str(), type, &G_Mixer.mutex_plugins);
-		if (p != NULL) {
+		if (p != nullptr) {
 			Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
 			sprintf(tmp, "master%c_p%dbypass", chr, i);
 			pPlugin->setBypass(atoi(getValue(tmp).c_str()));

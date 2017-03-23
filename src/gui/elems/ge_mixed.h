@@ -90,7 +90,7 @@ public:
 class gClick : public gBaseButton
 {
 public:
-	gClick(int x, int y, int w, int h, const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
+	gClick(int x, int y, int w, int h, const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
 	void draw();
 	const char **imgOff;
 	const char **imgOn;
@@ -107,7 +107,7 @@ public:
 class gClickRepeat : public Fl_Repeat_Button
 {
 public:
-	gClickRepeat(int x, int y, int w, int h, const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
+	gClickRepeat(int x, int y, int w, int h, const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
 	void draw();
 	const char **imgOff;
 	const char **imgOn;
@@ -125,7 +125,7 @@ public:
 class gButton : public gClick
 {
 public:
-	gButton(int X,int Y,int W,int H,const char *L=0, const char **imgOff=NULL, const char **imgOn=NULL);
+	gButton(int X,int Y,int W,int H,const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
 	int key;
 	int id;
 };
@@ -323,7 +323,7 @@ public:
 class gFxButton : public gClick
 {
 public:
-	gFxButton(int x, int y, int w, int h, const char **imgOff=NULL, const char **imgOn=NULL);
+	gFxButton(int x, int y, int w, int h, const char **imgOff=nullptr, const char **imgOn=nullptr);
 	void draw();
 	bool full;
 };

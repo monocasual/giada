@@ -50,7 +50,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
   and inside geKeyboard, which handles the vertical resize bar (gResizerBar).
   The resizer cannot stay inside geColumn: it needs a broader view on the other
   side widgets. The view can be obtained from geKeyboard only (the upper level).
-  Unfortunately, parent() can be NULL: at this point (i.e the constructor)
+  Unfortunately, parent() can be nullptr: at this point (i.e the constructor)
   geColumn is still detached from any parent. We use a custom geKeyboard *parent
   instead. */
 
@@ -190,7 +190,7 @@ void geColumn::cb_addChannel(Fl_Widget *v, void *p) { ((geColumn*)p)->__cb_addCh
 geChannel *geColumn::addChannel(Channel *ch)
 {
 	int currentY = y() + children() * 24;
-	geChannel *gch = NULL;
+	geChannel *gch = nullptr;
 	if (ch->type == CHANNEL_SAMPLE)
 		gch = (geSampleChannel*) new geSampleChannel(x(), currentY, w(), 20, (SampleChannel*) ch);
 	else

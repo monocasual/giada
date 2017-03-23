@@ -52,7 +52,7 @@ void geChannelStatus::draw()
   fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
   fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background
 
-  if (ch != NULL) {
+  if (ch != nullptr) {
     if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
         ch->recStatus & (REC_WAITING | REC_ENDING))
     {

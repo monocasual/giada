@@ -170,9 +170,9 @@ string gu_getCurrentPath()
 {
  char buf[PATH_MAX];
 #if defined(__WIN32)
-	if (_getcwd(buf, PATH_MAX) != NULL)
+	if (_getcwd(buf, PATH_MAX) != nullptr)
 #else
-	if (getcwd(buf, PATH_MAX) != NULL)
+	if (getcwd(buf, PATH_MAX) != nullptr)
 #endif
 		return buf;
 	else
@@ -252,7 +252,7 @@ string gu_getHomePath()
 #elif defined(__APPLE__)
 
 	struct passwd *p = getpwuid(getuid());
-	if (p == NULL) {
+	if (p == nullptr) {
 		gu_log("[gu_getHomePath] unable to fetch user infos\n");
 		return "";
 	}

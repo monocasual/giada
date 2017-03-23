@@ -43,7 +43,7 @@ using std::string;
 
 
 Wave::Wave()
-: data     (NULL),
+: data     (nullptr),
 	size     (0),
 	isLogical(0),
 	isEdited (0) {}
@@ -62,7 +62,7 @@ Wave::~Wave()
 
 
 Wave::Wave(const Wave &other)
-: data     (NULL),
+: data     (nullptr),
 	size     (0),
 	isLogical(false),
 	isEdited (false)
@@ -85,7 +85,7 @@ int Wave::open(const char *f)
 	name     = gu_stripExt(gu_basename(f));
 	fileIn   = sf_open(f, SFM_READ, &inHeader);
 
-	if (fileIn == NULL) {
+	if (fileIn == nullptr) {
 		gu_log("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
 		pathfile = "";
 		name     = "";
@@ -119,7 +119,7 @@ int Wave::readData()
 {
 	size = inHeader.frames * inHeader.channels;
 	data = (float *) malloc(size * sizeof(float));
-	if (data == NULL) {
+	if (data == nullptr) {
 		gu_log("[wave] unable to allocate memory\n");
 		return 0;
 	}
@@ -144,7 +144,7 @@ int Wave::writeData(const char *f)
 	outHeader.format     = inHeader.format;
 
 	fileOut = sf_open(f, SFM_WRITE, &outHeader);
-	if (fileOut == NULL) {
+	if (fileOut == nullptr) {
 		gu_log("[wave] unable to open %s for exporting\n", f);
 		return 0;
 	}
@@ -167,9 +167,9 @@ int Wave::writeData(const char *f)
 
 void Wave::clear()
 {
-	if (data != NULL) {
+	if (data != nullptr) {
 		free(data);
-		data     = NULL;
+		data     = nullptr;
 		pathfile = "";
 		size     = 0;
 	}
@@ -186,7 +186,7 @@ int Wave::allocEmpty(unsigned __size, unsigned samplerate)
 	/// FIXME - this way if malloc fails size becomes wrong
 	size = __size;
 	data = (float *) malloc(size * sizeof(float));
-	if (data == NULL) {
+	if (data == nullptr) {
 		gu_log("[wave] unable to allocate memory\n");
 		return 0;
 	}

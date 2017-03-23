@@ -75,8 +75,8 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 		Patch::plugin_t *ppl = &list->at(i);
     // TODO use glue_addPlugin()
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
-				&G_Mixer.mutex_plugins, NULL);
-		if (plugin != NULL) {
+				&G_Mixer.mutex_plugins, nullptr);
+		if (plugin != nullptr) {
 			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
 				plugin->setParameter(j, ppl->params.at(j));
@@ -281,7 +281,7 @@ bool mh_uniqueSampleName(SampleChannel *ch, const string &name)
 		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
 			continue;
 		SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
-		if (other->wave != NULL && name == other->wave->name)
+		if (other->wave != nullptr && name == other->wave->name)
 			return false;
 	}
 	return true;

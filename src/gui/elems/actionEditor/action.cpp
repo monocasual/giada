@@ -70,7 +70,7 @@ geAction::geAction(int X, int Y, int H, int frame_a, unsigned index,
 	 * key_release is associated. */
 
 	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
-		Recorder::action *a2 = NULL;
+		Recorder::action *a2 = nullptr;
 		G_Recorder.getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
 		if (a2) {
 			frame_b = a2->frame;

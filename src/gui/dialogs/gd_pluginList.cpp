@@ -127,7 +127,7 @@ void gdPluginList::cb_refreshList(Fl_Widget *v, void *p)
 	 * subwindow (i.e. gdBrowser). */
 
 	gWindow *child = (gWindow*) v;
-	if (child->getParent() != NULL)
+	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 
 	/* finally refresh plugin list: void *p is a pointer to gdPluginList.
@@ -168,7 +168,7 @@ void gdPluginList::refreshList()
 	list->scroll_to(0, 0);
 
 	/* add new buttons, as many as the plugin in pluginHost::stack + 1,
-	 * the 'add new' button. Warning: if ch == NULL we are working with
+	 * the 'add new' button. Warning: if ch == nullptr we are working with
 	 * master in/master out stacks. */
 
 	int numPlugins = G_PluginHost.countPlugins(stackType, ch);

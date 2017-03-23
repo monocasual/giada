@@ -65,7 +65,7 @@ geMainIO::geMainIO(int x, int y)
 
 	end();
 
-	resizable(NULL);   // don't resize any widget
+	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
 	outVol->value(G_Mixer.outVol);

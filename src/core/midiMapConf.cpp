@@ -186,7 +186,7 @@ bool MidiMapConf::readInitCommands(json_t *jContainer)
 		message_t message;
     if (!setInt(jInitCommand, MIDIMAP_KEY_CHANNEL, message.channel)) return 0;
     if (!setString(jInitCommand, MIDIMAP_KEY_MESSAGE, message.valueStr)) return 0;
-		message.value = strtoul(message.valueStr.c_str(), NULL, 16);
+		message.value = strtoul(message.valueStr.c_str(), nullptr, 16);
 
     initCommands.push_back(message);
 	}
@@ -237,7 +237,7 @@ void MidiMapConf::parse(message_t *message)
 
 	/* from string to uint32_t */
 
-	message->value = strtoul(output.c_str(), NULL, 16);
+	message->value = strtoul(output.c_str(), nullptr, 16);
 
 	gu_log("[MidiMapConf::parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
 			message->channel, message->valueStr.c_str(), message->value, message->offset);
@@ -386,9 +386,9 @@ int MidiMapConf::readMap_DEPR_(string file)
 
 void MidiMapConf::close_DEPR_()
 {
-	if (fp != NULL)
+	if (fp != nullptr)
 		fclose(fp);
-	fp = NULL;
+	fp = nullptr;
 }
 
 
@@ -427,7 +427,7 @@ void MidiMapConf::parse_DEPR_(string key, int *chan, uint32_t *msg, int *offset)
 			strmsg[i] = midiParts[i];
 	}
 
-	*msg = strtoul(strmsg, NULL, 16);  // from string to uint32_t
+	*msg = strtoul(strmsg, nullptr, 16);  // from string to uint32_t
 
 	gu_log("chan=%d value=%s msg=%#x, offset=%d\n", *chan, midiParts.c_str(), *msg, *offset);
 }

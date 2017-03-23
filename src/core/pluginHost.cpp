@@ -62,7 +62,7 @@ void PluginHost::init(int _buffersize, int _samplerate)
   //unknownPluginList.empty();
   loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
 
-  pthread_mutex_init(&mutex_midi, NULL);
+  pthread_mutex_init(&mutex_midi, nullptr);
 }
 
 
@@ -141,14 +141,14 @@ Plugin *PluginHost::addPlugin(const string &fid, int stackType,
     gu_log("[PluginHost::addPlugin] no plugin found with fid=%s!\n", fid.c_str());
     missingPlugins = true;
     unknownPluginList.push_back(fid);
-    return NULL;
+    return nullptr;
   }
 
   juce::AudioPluginInstance *pi = pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
   if (!pi) {
     gu_log("[PluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
     missingPlugins = true;
-    return NULL;
+    return nullptr;
   }
   gu_log("[PluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
 
@@ -185,7 +185,7 @@ Plugin *PluginHost::addPlugin(int index, int stackType, pthread_mutex_t *mutex,
   }
   else {
     gu_log("[PluginHost::addPlugin] no plugins found at index=%d!\n", index);
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -203,7 +203,7 @@ vector <Plugin *> *PluginHost::getStack(int stackType, Channel *ch)
 		case CHANNEL:
 			return &ch->plugins;
 		default:
-			return NULL;
+			return nullptr;
 	}
 }
 
@@ -252,7 +252,7 @@ PluginHost::PluginInfo PluginHost::getAvailablePluginInfo(int i)
 /*
   if (!p) {
     gu_log("[PluginHost::getAvailablePlugin] unable to create plugin instance!\n");
-    return NULL;
+    return nullptr;
   }
   */
   return pi;
@@ -301,7 +301,7 @@ void PluginHost::processStack(float *buffer, int stackType, Channel *ch)
 
 	/* empty stack, stack not found or mixer not ready: do nothing */
 
-	if (pStack == NULL || pStack->size() == 0)
+	if (pStack == nullptr || pStack->size() == 0)
 		return;
 
 	/* converting buffer from Giada to Juce */
@@ -353,9 +353,9 @@ Plugin *PluginHost::getPluginByIndex(int index, int stackType, Channel *ch)
 {
 	vector <Plugin *> *pStack = getStack(stackType, ch);
 	if (pStack->size() == 0)
-		return NULL;
+		return nullptr;
 	if ((unsigned) index >= pStack->size())
-		return NULL;
+		return nullptr;
 	return pStack->at(index);
 }
 

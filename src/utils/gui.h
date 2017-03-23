@@ -87,7 +87,7 @@ void gu_closeAllSubwindows();
 
 
 /* getSubwindow
- * return a pointer to an open subwindow, otherwise NULL. */
+ * return a pointer to an open subwindow, otherwise nullptr. */
 
 gWindow *gu_getSubwindow(gWindow *parent, int id);
 

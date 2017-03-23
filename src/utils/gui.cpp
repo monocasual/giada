@@ -147,7 +147,7 @@ void gu_setFavicon(Fl_Window *w)
 	fl_open_display();
 	Pixmap p, mask;
 	XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
-		(char **) giada_icon, &p, &mask, NULL);
+		(char **) giada_icon, &p, &mask, nullptr);
 	w->icon((char *)p);
 
 #elif defined(_WIN32)
@@ -196,7 +196,7 @@ gWindow *gu_getSubwindow(gWindow *parent, int id)
 	if (parent->hasWindow(id))
 		return parent->getChild(id);
 	else
-		return NULL;
+		return nullptr;
 }
 
 

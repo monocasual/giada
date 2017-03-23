@@ -112,8 +112,8 @@ public:
    * called on each plugin found. Used to update the main window from the GUI
    * thread. */
 
-  int scanDir(const std::string &path, void (*callback)(float progress, void *p)=NULL,
-      void *p=NULL);
+  int scanDir(const std::string &path, void (*callback)(float progress, void *p)=nullptr,
+      void *p=nullptr);
 
   /* (save|load)List
    * (Save|Load) knownPluginList (in|from) an XML file. */
@@ -132,14 +132,14 @@ public:
    * ch - if stackType == CHANNEL. */
 
   Plugin *addPlugin(const std::string &fid, int stackType, pthread_mutex_t *mutex,
-    Channel *ch=NULL);
+    Channel *ch=nullptr);
   Plugin *addPlugin(int index, int stackType, pthread_mutex_t *mutex,
-    Channel *ch=NULL);
+    Channel *ch=nullptr);
 
   /* countPlugins
    * Return size of 'stackType'. */
 
-  unsigned countPlugins(int stackType, Channel *ch=NULL);
+  unsigned countPlugins(int stackType, Channel *ch=nullptr);
 
   /* countAvailablePlugins
    * Return size of knownPluginList. */
@@ -162,37 +162,37 @@ public:
   /* freeStack
    * free plugin stack of type 'stackType'. */
 
-  void freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch=NULL);
+  void freeStack(int stackType, pthread_mutex_t *mutex, Channel *ch=nullptr);
 
   /* processStack
    * apply the fx list to the buffer. */
 
-  void processStack(float *buffer, int stackType, Channel *ch=NULL);
+  void processStack(float *buffer, int stackType, Channel *ch=nullptr);
 
   /* getStack
   * Return a std::vector <Plugin *> given the stackType. If stackType == CHANNEL
   * a pointer to Channel is also required. */
 
-  std::vector <Plugin *> *getStack(int stackType, Channel *ch=NULL);
+  std::vector <Plugin *> *getStack(int stackType, Channel *ch=nullptr);
 
   /* getPluginByIndex */
 
-  Plugin *getPluginByIndex(int index, int stackType, Channel *ch=NULL);
+  Plugin *getPluginByIndex(int index, int stackType, Channel *ch=nullptr);
 
   /* getPluginIndex */
 
-  int getPluginIndex(int id, int stackType, Channel *ch=NULL);
+  int getPluginIndex(int id, int stackType, Channel *ch=nullptr);
 
   /* swapPlugin */
 
   void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
-    pthread_mutex_t *mutex, Channel *ch=NULL);
+    pthread_mutex_t *mutex, Channel *ch=nullptr);
 
   /* freePlugin.
   Returns the internal stack index of the deleted plugin. */
 
   int freePlugin(int id, int stackType, pthread_mutex_t *mutex,
-    Channel *ch=NULL);
+    Channel *ch=nullptr);
 
   /* runDispatchLoop
    * Wakes up plugins' GUI manager for N milliseconds. */

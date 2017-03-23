@@ -44,7 +44,7 @@ private:
 	SampleChannel *ch;
 
 	/* getSelectedAction
-	 * get the action under the mouse. NULL if nothing found. */
+	 * get the action under the mouse. nullptr if nothing found. */
 
 	geAction *getSelectedAction();
 

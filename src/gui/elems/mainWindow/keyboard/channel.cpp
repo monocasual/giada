@@ -44,7 +44,7 @@ extern gdMainWindow *G_MainWin;
 
 
 geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
- : Fl_Group(X, Y, W, H, NULL),
+ : Fl_Group(X, Y, W, H, nullptr),
    ch      (ch),
    type    (type)
 {

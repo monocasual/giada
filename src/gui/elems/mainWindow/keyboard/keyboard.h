@@ -118,7 +118,7 @@ public:
 	void refreshColumns();
 
 	/* getColumnByIndex
-	 * return the column with index 'index', or NULL if not found. */
+	 * return the column with index 'index', or nullptr if not found. */
 
 	geColumn *getColumnByIndex(int index);
 

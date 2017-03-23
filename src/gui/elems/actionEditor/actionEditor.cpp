@@ -44,7 +44,7 @@ extern Recorder      G_Recorder;
 geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch)
   : geBaseActionEditor(x, y, 200, 40, pParent),
     ch                (ch),
-    selected          (NULL)
+    selected          (nullptr)
 {
 	size(pParent->totalWidth, h());
 
@@ -103,7 +103,7 @@ geAction *geActionEditor::getSelectedAction()
 		if (Fl::event_x() >= action_x && Fl::event_x() <= action_x + action_w)
 			return (geAction*)child(i);
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -174,7 +174,7 @@ int geActionEditor::handle(int e)
 
 		case FL_DRAG: {
 
-      if (selected == NULL) {  // if you drag an empty area
+      if (selected == nullptr) {  // if you drag an empty area
         ret = 1;
         break;
       }
@@ -253,7 +253,7 @@ int geActionEditor::handle(int e)
 
 				selected = getSelectedAction();
 
-				if (selected == NULL) {
+				if (selected == nullptr) {
 
 					/* avoid click on grey area */
 
@@ -303,7 +303,7 @@ int geActionEditor::handle(int e)
 			else
 			if (Fl::event_button3()) {
 				geAction *a = getSelectedAction();
-				if (a != NULL) {
+				if (a != nullptr) {
 					a->delAction();
 					remove(a);
 					delete a;
@@ -316,7 +316,7 @@ int geActionEditor::handle(int e)
 		}
 		case FL_RELEASE: {
 
-			if (selected == NULL) {
+			if (selected == nullptr) {
 				ret = 1;
 				break;
 			}
@@ -333,7 +333,7 @@ int geActionEditor::handle(int e)
 
 			if (noChanges) {
 				ret = 1;
-				selected = NULL;
+				selected = nullptr;
 				break;
 			}
 
@@ -377,7 +377,7 @@ int geActionEditor::handle(int e)
 
 			/* step 2: no overlap? then update the coordinates of the action, ie
 			 * delete the previous rec and create a new one.
-			 * Anyway the selected action becomes NULL, because when you release
+			 * Anyway the selected action becomes nullptr, because when you release
 			 * the mouse button the dragging process ends. */
 
 			if (!overlap) {
@@ -388,7 +388,7 @@ int geActionEditor::handle(int e)
 				else
 					selected->moveAction();
 			}
-			selected = NULL;
+			selected = nullptr;
 			ret = 1;
 			break;
 		}

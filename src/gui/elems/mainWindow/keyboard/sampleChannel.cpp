@@ -337,7 +337,7 @@ void geSampleChannel::refresh()
 
 	setColorsByStatus(ch->status, ch->recStatus);
 
-	if (((SampleChannel*) ch)->wave != NULL) {
+	if (((SampleChannel*) ch)->wave != nullptr) {
 		if (G_Mixer.recording && ch->armed)
 			mainButton->setInputRecordMode();
 		if (G_Recorder.active) {

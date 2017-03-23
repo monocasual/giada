@@ -72,7 +72,7 @@ void geBaseActionEditor::baseDraw(bool clear) {
 	if (pParent->gridTool->getValue() > 1) {
 
 		fl_color(fl_rgb_color(54, 54, 54));
-		fl_line_style(FL_DASH, 0, NULL);
+		fl_line_style(FL_DASH, 0, nullptr);
 
 		for (int i=0; i<(int) pParent->gridTool->points.size(); i++) {
 			int px = pParent->gridTool->points.at(i)+x()-1;

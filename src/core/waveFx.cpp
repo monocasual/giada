@@ -60,7 +60,7 @@ bool wfx_monoToStereo(Wave *w)
 {
 	unsigned newSize = w->size * 2;
 	float *dataNew = (float *) malloc(newSize * sizeof(float));
-	if (dataNew == NULL) {
+	if (dataNew == nullptr) {
 		gu_log("[wfx] unable to allocate memory for mono>stereo conversion\n");
 		return 0;
 	}
@@ -119,7 +119,7 @@ int wfx_cut(Wave *w, int a, int b)
 
 	unsigned newSize = w->size-(b-a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
-	if (temp == NULL) {
+	if (temp == nullptr) {
 		gu_log("[wfx] unable to allocate memory for cutting\n");
 		return 0;
 	}
@@ -159,7 +159,7 @@ int wfx_trim(Wave *w, int a, int b)
 
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));
-	if (temp == NULL) {
+	if (temp == nullptr) {
 		gu_log("[wfx] unable to allocate memory for trimming\n");
 		return 0;
 	}

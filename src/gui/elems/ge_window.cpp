@@ -32,14 +32,14 @@
 
 
 gWindow::gWindow(int x, int y, int w, int h, const char *title, int id)
-	: Fl_Double_Window(x, y, w, h, title), id(id), parent(NULL) { }
+	: Fl_Double_Window(x, y, w, h, title), id(id), parent(nullptr) { }
 
 
 /* ------------------------------------------------------------------ */
 
 
 gWindow::gWindow(int w, int h, const char *title, int id)
-	: Fl_Double_Window(w, h, title), id(id), parent(NULL) { }
+	: Fl_Double_Window(w, h, title), id(id), parent(nullptr) { }
 
 
 /* ------------------------------------------------------------------ */
@@ -62,7 +62,7 @@ gWindow::~gWindow() {
 
 void gWindow::cb_closeChild(Fl_Widget *v, void *p) {
 	gWindow *child = (gWindow*) v;
-	if (child->getParent() != NULL)
+	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 }
 
@@ -179,5 +179,5 @@ gWindow *gWindow::getChild(int id) {
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (id == subWindows.at(i)->getId())
 			return subWindows.at(i);
-	return NULL;
+	return nullptr;
 }

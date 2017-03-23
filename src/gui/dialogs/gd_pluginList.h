@@ -49,10 +49,10 @@ private:
 
 public:
 
-	class Channel *ch;      // ch == NULL ? masterOut
+	class Channel *ch;      // ch == nullptr ? masterOut
 	int   stackType;
 
-	gdPluginList(int stackType, class Channel *ch=NULL);
+	gdPluginList(int stackType, class Channel *ch=nullptr);
 	~gdPluginList();
 
 	/* special callback, passed to browser. When closed (i.e. plugin

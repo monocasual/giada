@@ -81,7 +81,7 @@ int main(int argc, char **argv)
 	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);
 	Fl::lock();
-	pthread_create(&G_videoThread, NULL, videoThreadCb, NULL);
+	pthread_create(&G_videoThread, nullptr, videoThreadCb, nullptr);
 	init_startKernelAudio();
 
 #ifdef WITH_VST
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	juce::shutdownJuce_GUI();
 #endif
 
-	pthread_join(G_videoThread, NULL);
+	pthread_join(G_videoThread, nullptr);
 	return ret;
 }
 
@@ -110,6 +110,6 @@ void *videoThreadCb(void *arg)
 			usleep(GUI_SLEEP);
 #endif
 		}
-	pthread_exit(NULL);
+	pthread_exit(nullptr);
 	return 0;
 }

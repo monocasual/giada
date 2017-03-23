@@ -73,7 +73,7 @@ bool Recorder::canRec(Channel *ch, Mixer *mixer)
 	if (!active             ||
 		  !clock->isRunning() ||
 			 mixer->recording   ||
-			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == NULL)
+			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == nullptr)
 		)
 		return false;
 	return true;
@@ -559,7 +559,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 
 	rec(index, cmp.a1.type, frame);
 
-	action *act = NULL;
+	action *act = nullptr;
 	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
@@ -610,7 +610,7 @@ void Recorder::stopOverdub(Mixer *mixer)
 		/* avoid underlying action truncation, if keyrel happens inside a
 		* composite action */
 
-		action *act = NULL;
+		action *act = nullptr;
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1 && act->type == cmp.a2.type) {
 			gu_log("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);

@@ -66,7 +66,7 @@ geMainMenu::geMainMenu(int x, int y)
 
 	end();
 
-	resizable(NULL);   // don't resize any widget
+	resizable(nullptr);   // don't resize any widget
 
 	about->callback(cb_about, (void*)this);
 	file->callback(cb_file, (void*)this);
@@ -129,7 +129,7 @@ void geMainMenu::__cb_file()
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
 		gWindow *childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Load patch or project",
-				G_Conf.patchPath, glue_loadPatch, NULL);
+				G_Conf.patchPath, glue_loadPatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -139,14 +139,14 @@ void geMainMenu::__cb_file()
 				return;
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save patch",
-				G_Conf.patchPath, G_Patch.name, glue_savePatch, NULL);
+				G_Conf.patchPath, G_Patch.name, glue_savePatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
 				G_Conf.browserW, G_Conf.browserH, "Save project",
-				G_Conf.patchPath, G_Patch.name, glue_saveProject, NULL);
+				G_Conf.patchPath, G_Patch.name, glue_saveProject, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -183,7 +183,7 @@ void geMainMenu::__cb_edit()
 		}
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != NULL) {
+			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != nullptr) {
 				menu[0].activate();
 				break;
 			}

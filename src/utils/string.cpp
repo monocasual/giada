@@ -42,11 +42,11 @@ string gu_getRealPath(const string &path)
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	char *buf = realpath(path.c_str(), NULL);
+	char *buf = realpath(path.c_str(), nullptr);
 
 #else // Windows
 
-	char *buf = _fullpath(NULL, path.c_str(), PATH_MAX);
+	char *buf = _fullpath(nullptr, path.c_str(), PATH_MAX);
 
 #endif
 

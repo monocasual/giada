@@ -436,7 +436,7 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 	for (int i=0; i<m->size(); i++) {
 		if (G_KernelAudio.getDeviceName(device) == "")
 			continue;
-		if (m->text(i) == NULL)
+		if (m->text(i) == nullptr)
 			continue;
 		if (m->text(i) == G_KernelAudio.getDeviceName(device))
 			return i;
@@ -572,7 +572,7 @@ void gTabAudio::save()
 	if (bufsize > 8192)		bufsize = 8192;
 	G_Conf.buffersize = bufsize;
 
-	const Fl_Menu_Item *i = NULL;
+	const Fl_Menu_Item *i = nullptr;
 	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
 	if (i)
 		G_Conf.samplerate = atoi(i->label());

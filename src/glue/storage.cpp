@@ -440,7 +440,7 @@ void glue_saveProject(void *data)
 
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 
-		if (ch->wave == NULL)
+		if (ch->wave == nullptr)
 			continue;
 
 		/* update the new samplePath: everything now comes from the project

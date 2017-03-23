@@ -58,7 +58,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	end();
 
-	resizable(NULL);   // don't resize any widget
+	resizable(nullptr);   // don't resize any widget
 
 	char buf[6]; snprintf(buf, 6, "%f", G_Clock.getBpm());
 	bpm->copy_label(buf);

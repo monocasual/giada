@@ -41,7 +41,7 @@ class gdPluginChooser : public gWindow {
 
 private:
 
-  class Channel *ch;      // ch == NULL ? masterOut
+  class Channel *ch;      // ch == nullptr ? masterOut
 	int   stackType;
 
   class gChoice         *sortMethod;
@@ -58,7 +58,7 @@ private:
 
 public:
 
-	gdPluginChooser(int x, int y, int w, int h, int stackType, class Channel *ch=NULL);
+	gdPluginChooser(int x, int y, int w, int h, int stackType, class Channel *ch=nullptr);
   ~gdPluginChooser();
 };
 

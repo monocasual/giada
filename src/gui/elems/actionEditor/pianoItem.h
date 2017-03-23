@@ -103,7 +103,7 @@ public:
 	static const int HANDLE_WIDTH = 5;
 
 	/* pianoItem ctor
-	 * if action *a == NULL, record a new action */
+	 * if action *a == nullptr, record a new action */
 
 	gePianoItem(int x, int y, int rel_x, int rel_y, struct Recorder::action *a,
 		struct Recorder::action *b, gdActionEditor *pParent);
