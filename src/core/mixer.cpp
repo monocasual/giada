@@ -41,16 +41,13 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
-#include "kernelMidi.h"
 #include "mixer.h"
 
 
 extern KernelAudio G_KernelAudio;
 extern Mixer 			 G_Mixer;
 extern Recorder    G_Recorder;
-extern KernelMidi  G_KernelMidi;
 extern MidiMapConf G_MidiMap;
-extern Patch_DEPR_ G_Patch_DEPR_;
 extern Conf				 G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
