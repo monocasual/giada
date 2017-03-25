@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mixerHandler
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef MIXERHANDLER_H
@@ -33,6 +31,35 @@
 
 #include <string>
 
+
+class Channel;
+class SampleChannel;
+
+
+/* addChannel
+Adds a new channel of type 'type' into mixer's stack. */
+
+Channel *mh_addChannel(int type);
+
+/* deleteChannel
+Completely removes a channel from the stack. */
+
+int mh_deleteChannel(Channel *ch);
+
+/* getChannelByIndex
+Returns channel with given index 'i'. */
+
+Channel *mh_getChannelByIndex(int i);
+
+/* hasLogicalSamples
+True if 1 or more samples are logical (memory only, such as takes) */
+
+bool mh_hasLogicalSamples();
+
+/* hasEditedSamples
+True if 1 or more samples was edited via gEditor */
+
+bool mh_hasEditedSamples();
 
 /* stopSequencer
  * stop the sequencer, with special case if samplesStopOnSeqHalt is
@@ -45,7 +72,7 @@ void mh_rewindSequencer();
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 
-bool mh_uniqueSolo(class Channel *ch);
+bool mh_uniqueSolo(Channel *ch);
 
 /* loadPatch
  * load a path or a project (if isProject) into Mixer. If isProject, path
@@ -67,7 +94,7 @@ void mh_stopInputRec();
  * return true if samplename 'n' is unique. Requires SampleChannel *ch
  * in order to skip check against itself. */
 
-bool mh_uniqueSampleName(class SampleChannel *ch, const std::string &s);
+bool mh_uniqueSampleName(SampleChannel *ch, const std::string &s);
 
 /* hasArmedSampleChannels
 Tells whether Mixer has one or more sample channels armed for input

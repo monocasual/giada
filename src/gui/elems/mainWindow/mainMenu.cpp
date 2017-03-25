@@ -29,6 +29,7 @@
 
 #include "../../../core/const.h"
 #include "../../../core/mixer.h"
+#include "../../../core/mixerHandler.h"
 #include "../../../core/conf.h"
 #include "../../../core/patch.h"
 #include "../../../core/channel.h"
@@ -134,7 +135,7 @@ void geMainMenu::__cb_file()
 		return;
 	}
 	if (strcmp(m->label(), "Save patch...") == 0) {
-		if (G_Mixer.hasLogicalSamples() || G_Mixer.hasEditedSamples())
+		if (mh_hasLogicalSamples() || mh_hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,

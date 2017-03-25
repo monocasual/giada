@@ -47,7 +47,10 @@
 #include "recorder.h"
 #include "clock.h"
 #include "channel.h"
+#include "kernelAudio.h"
+#include "midiMapConf.h"
 #include "sampleChannel.h"
+#include "midiChannel.h"
 #include "wave.h"
 
 
@@ -56,6 +59,8 @@ extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Conf 		   G_Conf;
 extern Clock       G_Clock;
+extern KernelAudio G_KernelAudio;
+extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -66,9 +71,11 @@ using std::vector;
 using std::string;
 
 
+namespace {  // private namespace
+
 #ifdef WITH_VST
 
-static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 {
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
@@ -89,6 +96,133 @@ static int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 }
 
 #endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int __mh_getNewChanIndex__()
+{
+	/* always skip last channel: it's the last one just added */
+
+	if (G_Mixer.channels.size() == 1)
+		return 0;
+
+	int index = 0;
+	for (unsigned i=0; i<G_Mixer.channels.size()-1; i++) {
+		if (G_Mixer.channels.at(i)->index > index)
+			index = G_Mixer.channels.at(i)->index;
+		}
+	index += 1;
+	return index;
+}
+
+} // private namespace
+
+/* -------------------------------------------------------------------------- */
+
+
+Channel *mh_addChannel(int type)
+{
+  Channel *ch;
+	int bufferSize = G_KernelAudio.realBufsize * 2;
+
+	if (type == CHANNEL_SAMPLE)
+		ch = new SampleChannel(bufferSize, &G_MidiMap, &G_Clock);
+	else
+		ch = new MidiChannel(bufferSize, &G_MidiMap, &G_Clock);
+
+#ifdef WITH_VST
+	ch->setPluginHost(&G_PluginHost);
+#endif
+
+	while (true) {
+		if (pthread_mutex_trylock(&G_Mixer.mutex_chans) != 0)
+      continue;
+		G_Mixer.channels.push_back(ch);
+		pthread_mutex_unlock(&G_Mixer.mutex_chans);
+		break;
+	}
+
+	ch->index = __mh_getNewChanIndex__();
+	gu_log("[mh::addChannel] channel index=%d added, type=%d, total=%d\n",
+    ch->index, ch->type, G_Mixer.channels.size());
+	return ch;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int mh_deleteChannel(Channel *ch)
+{
+	int index = -1;
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		if (G_Mixer.channels.at(i) == ch) {
+			index = i;
+			break;
+		}
+	}
+	if (index == -1) {
+		gu_log("[mh::deleteChannel] unable to find channel %d for deletion!\n", ch->index);
+		return 0;
+	}
+
+	while (true) {
+		if (pthread_mutex_trylock(&G_Mixer.mutex_chans) != 0)
+      continue;
+		G_Mixer.channels.erase(G_Mixer.channels.begin() + index);
+		delete ch;
+		pthread_mutex_unlock(&G_Mixer.mutex_chans);
+		return 1;
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Channel *mh_getChannelByIndex(int index)
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
+		if (G_Mixer.channels.at(i)->index == index)
+			return G_Mixer.channels.at(i);
+	gu_log("[mh::getChannelByIndex] channel at index %d not found!\n", index);
+	return nullptr;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool mh_hasLogicalSamples()
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+    if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
+      continue;
+    SampleChannel *ch = static_cast<SampleChannel*>(G_Mixer.channels.at(i));
+    if (ch->wave && ch->wave->isLogical)
+      return true;
+  }
+	return false;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool mh_hasEditedSamples()
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
+  {
+		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
+      continue;
+    SampleChannel *ch = static_cast<SampleChannel*>(G_Mixer.channels.at(i));
+    if (ch->wave && ch->wave->isEdited)
+      return true;
+  }
+	return false;
+}
 
 
 /* -------------------------------------------------------------------------- */

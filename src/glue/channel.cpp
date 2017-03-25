@@ -95,7 +95,7 @@ int glue_loadChannel(SampleChannel *ch, const string &fname)
 
 Channel *glue_addChannel(int column, int type)
 {
-	Channel *ch     = G_Mixer.addChannel(type);
+	Channel *ch     = mh_addChannel(type);
 	geChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel  = gch;
 	return ch;
@@ -115,7 +115,7 @@ void glue_deleteChannel(Channel *ch)
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();
-	G_Mixer.deleteChannel(ch);
+	mh_deleteChannel(ch);
 	gu_closeAllSubwindows();
 }
 
@@ -148,7 +148,7 @@ void glue_toggleArm(Channel *ch, bool gui)
 
 int glue_cloneChannel(Channel *src)
 {
-	Channel *ch    = G_Mixer.addChannel(src->type);
+	Channel *ch    = mh_addChannel(src->type);
 	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;

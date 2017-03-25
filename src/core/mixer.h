@@ -50,16 +50,6 @@ public:
 	void init();
 	int  close();
 
-	/* addChannel
-	 * add a new channel without any wave inside of it. */
-
-	Channel *addChannel(int type);
-
-	/* deleteChannel
-	 * completely remove a channel from the stack. */
-
-	int deleteChannel(Channel *ch);
-
 	/* masterPlay
 	 * core method (callback) */
 
@@ -77,35 +67,11 @@ public:
 
 	void rewind();
 
-	/* hasLogicalSamples
-	 * true if 1 or more samples are logical (memory only, such as takes) */
-
-	bool hasLogicalSamples();
-
-	/* hasEditedSamples
-	 * true if 1 or more samples was edited via gEditor */
-
-	bool hasEditedSamples();
-
 	/* mergeVirtualInput
 	 * memcpy the virtual channel input in the channel designed for input
 	 * recording. Called by mixerHandler on stopInputRec() */
 
 	void mergeVirtualInput();
-
-	/* getChannelByIndex
-	 * return channel with given index 'i'. */
-
-	Channel *getChannelByIndex(int i);
-
-	/* getLastChannel
-	 * Return last channel in the stack. */
-
-	inline Channel* getLastChannel() { return channels.back(); }
-
-
-	/* ------------------------------------------------------------------------ */
-
 
 	enum {    // const - what to do when a fadeout ends
 		DO_STOP   = 0x01,

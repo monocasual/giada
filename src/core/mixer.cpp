@@ -133,104 +133,6 @@ void Mixer::init()
 /* -------------------------------------------------------------------------- */
 
 
-Channel *Mixer::addChannel(int type)
-{
-	Channel *ch;
-	int bufferSize = G_KernelAudio.realBufsize * 2;
-
-	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, &G_MidiMap, clock);
-	else
-		ch = new MidiChannel(bufferSize, &G_MidiMap, clock);
-
-#ifdef WITH_VST
-	ch->setPluginHost(&G_PluginHost);
-#endif
-
-	while (true) {
-		int lockStatus = pthread_mutex_trylock(&mutex_chans);
-		if (lockStatus == 0) {
-			channels.push_back(ch);
-			pthread_mutex_unlock(&mutex_chans);
-			break;
-		}
-	}
-
-	ch->index = getNewIndex();
-	gu_log("[mixer] channel index=%d added, type=%d, total=%d\n", ch->index, ch->type, channels.size());
-	return ch;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Mixer::getNewIndex()
-{
-	/* always skip last channel: it's the last one just added */
-
-	if (channels.size() == 1)
-		return 0;
-
-	int index = 0;
-	for (unsigned i=0; i<channels.size()-1; i++) {
-		if (channels.at(i)->index > index)
-			index = channels.at(i)->index;
-		}
-	index += 1;
-	return index;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Mixer::deleteChannel(Channel *ch)
-{
-	int index = -1;
-	for (unsigned i=0; i<channels.size(); i++) {
-		if (channels.at(i) == ch) {
-			index = i;
-			break;
-		}
-	}
-
-	if (index == -1) {
-		gu_log("[Mixer::deleteChannel] unable to find Channel %d for deletion!\n", ch->index);
-		return 0;
-	}
-
-	int lockStatus;
-	while (true) {
-		lockStatus = pthread_mutex_trylock(&mutex_chans);
-		if (lockStatus == 0) {
-			channels.erase(channels.begin() + index);
-			delete ch;
-			pthread_mutex_unlock(&mutex_chans);
-			return 1;
-		}
-		//else
-		//	gu_log("[mixer::deleteChannel] waiting for mutex...\n");
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Channel *Mixer::getChannelByIndex(int index)
-{
-	for (unsigned i=0; i<channels.size(); i++)
-		if (channels.at(i)->index == index)
-			return channels.at(i);
-	gu_log("[mixer::getChannelByIndex] channel at index %d not found!\n", index);
-	return nullptr;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 int Mixer::masterPlay(void *outBuf, void *inBuf, unsigned bufferSize,
 	double streamTime, RtAudioStreamStatus status, void *userData)
 {
@@ -296,7 +198,7 @@ int Mixer::close()
 {
 	clock->stop();
 	while (channels.size() > 0)
-		deleteChannel(channels.at(0));
+		mh_deleteChannel(channels.at(0));
 
 	if (vChanInput) {
 		free(vChanInput);
@@ -331,34 +233,6 @@ void Mixer::rewind()
 	if (clock->isRunning())
 		for (unsigned i=0; i<channels.size(); i++)
 			channels.at(i)->rewind();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool Mixer::hasLogicalSamples()
-{
-	for (unsigned i=0; i<channels.size(); i++)
-		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			if (static_cast<SampleChannel*>(channels.at(i))->wave)
-				if (static_cast<SampleChannel*>(channels.at(i))->wave->isLogical)
-					return true;
-	return false;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool Mixer::hasEditedSamples()
-{
-	for (unsigned i=0; i<channels.size(); i++)
-		if (channels.at(i)->type == CHANNEL_SAMPLE)
-			if (static_cast<SampleChannel*>(channels.at(i))->wave)
-				if (static_cast<SampleChannel*>(channels.at(i))->wave->isEdited)
-					return true;
-	return false;
 }
 
 
@@ -435,7 +309,7 @@ void Mixer::readActions(unsigned frame)
 		if (G_Recorder.frames.at(i) == clock->getCurrentFrame()) {
 			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 				int index   = G_Recorder.global.at(i).at(j)->chan;
-				Channel *ch = getChannelByIndex(index);
+				Channel *ch = mh_getChannelByIndex(index);
 				ch->parseAction(G_Recorder.global.at(i).at(j), frame,
           clock->getCurrentFrame(), clock->getQuantize(), clock->isRunning());
 			}
