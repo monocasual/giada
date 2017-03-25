@@ -31,18 +31,15 @@
 #define __CLOCK_H__
 
 
-#include "kernelAudio.h"
-
-
 class Conf;
 class KernelMidi;
+class KernelAudio;
 
 
-class Clock
+namespace giada {
+namespace clock
 {
-public:
-
-  Clock(KernelAudio *ka, KernelMidi *km, Conf *conf);
+  void init(KernelAudio *ka, KernelMidi *km, Conf *conf);
 
   /* sendMIDIsync
   Generates MIDI sync output data. */
@@ -98,40 +95,7 @@ public:
   void rewind();
   void start();
   void stop();
-
-private:
-
-  KernelAudio *kernelAudio;
-  KernelMidi  *kernelMidi;
-  Conf        *conf;
-
-  bool  running;
-  float bpm;
-	int   bars;
-	int   beats;
-  int   quantize;
-	int   quanto;            // quantizer step
-  int   framesPerBar;      // frames in one bar
-	int   framesPerBeat;     // frames in one beat
-	int   framesInSequencer; // frames in the whole sequencer
-	int   totalFrames;       // frames in the selected range (e.g. 4/4)
-	int   currentFrame;
-	int   currentBeat;
-
-	int midiTCrate;      // send MTC data every midiTCrate frames
-	int midiTCframes;
-	int midiTCseconds;
-	int midiTCminutes;
-	int midiTChours;
-
-#ifdef __linux__
-  bool   jackRunningPrev;
-  double jackBpmPrev;
-  KernelAudio::JackState jackStatePrev;
-#endif
-
-  void updateQuanto();
-};
+}} // giada::clock::
 
 
 #endif

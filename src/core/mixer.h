@@ -38,14 +38,13 @@
 
 
 class Channel;
-class Clock;
 
 
 class Mixer
 {
 public:
 
-	Mixer(Clock *clock);
+	Mixer();
 
 	void init();
 	int  close();
@@ -122,13 +121,6 @@ public:
 	pthread_mutex_t mutex_plugins;
 
 private:
-
-  Clock *clock;
-
-	/* getNewIndex
-	 * compute new index value for new channels */
-
-	int getNewIndex();
 
 	/* lineInRec
 	Records from line in. */

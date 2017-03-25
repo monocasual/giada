@@ -57,6 +57,9 @@ extern Clock         G_Clock;
 extern gdMainWindow *G_MainWin;
 
 
+using namespace giada;
+
+
 void glue_keyPress(Channel *ch, bool ctrl, bool shift)
 {
 	if (ch->type == CHANNEL_SAMPLE)
@@ -87,7 +90,7 @@ void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 	if (shift)
 		ch->kill(0);        // on frame 0: user-generated event
 	else
-		ch->start(0, true, G_Clock.getQuantize(), G_Clock.isRunning(), false, true); // on frame 0: user-generated event
+		ch->start(0, true, clock::getQuantize(), clock::isRunning(), false, true); // on frame 0: user-generated event
 }
 
 
@@ -114,17 +117,17 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 	else
 	if (shift) {
 		if (G_Recorder.active) {
-			if (G_Clock.isRunning()) {
+			if (clock::isRunning()) {
 				ch->kill(0); // on frame 0: user-generated event
 				if (G_Recorder.canRec(ch, &G_Mixer) && !(ch->mode & LOOP_ANY)) {   // don't record killChan actions for LOOP channels
-					G_Recorder.rec(ch->index, ACTION_KILLCHAN, G_Clock.getCurrentFrame());
+					G_Recorder.rec(ch->index, ACTION_KILLCHAN, clock::getCurrentFrame());
           ch->hasActions = true;
         }
 			}
 		}
 		else {
 			if (ch->hasActions) {
-				if (G_Clock.isRunning() || ch->status == STATUS_OFF)
+				if (clock::isRunning() || ch->status == STATUS_OFF)
 					ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
 				else
 					ch->kill(0);  // on frame 0: user-generated event
@@ -139,17 +142,17 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (G_Clock.getQuantize() == 0      &&
+		if (clock::getQuantize() == 0      &&
 		    G_Recorder.canRec(ch, &G_Mixer) &&
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
-				G_Recorder.startOverdub(ch->index, ACTION_KEYS, G_Clock.getCurrentFrame(),
+				G_Recorder.startOverdub(ch->index, ACTION_KEYS, clock::getCurrentFrame(),
           G_KernelAudio.realBufsize);
         ch->readActions = false;   // don't read actions while overdubbing
       }
 			else {
-				G_Recorder.rec(ch->index, ACTION_KEYPRESS, G_Clock.getCurrentFrame());
+				G_Recorder.rec(ch->index, ACTION_KEYPRESS, clock::getCurrentFrame());
         ch->hasActions = true;
 
         /* Why return here? You record an action (as done on line 148) and then
@@ -167,7 +170,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 		/* This is a user-generated event, so it's on frame 0 */
 
-		ch->start(0, true, G_Clock.getQuantize(), G_Clock.isRunning(), false, true);
+		ch->start(0, true, clock::getQuantize(), clock::isRunning(), false, true);
 	}
 
 	/* the GUI update is done by gui_refresh() */
@@ -214,7 +217,7 @@ void glue_startActionRec(bool gui)
 
 	G_Recorder.active = true;
 
-	if (!G_Clock.isRunning())
+	if (!clock::isRunning())
 		glue_startSeq(false);  // update gui ayway
 
 	if (!gui) {
@@ -283,7 +286,7 @@ int glue_startInputRec(bool gui)
 		return false;
 	}
 
-	if (!G_Clock.isRunning())
+	if (!clock::isRunning())
 		glue_startSeq(false); // update gui anyway
 
   Fl::lock();
@@ -319,8 +322,8 @@ int glue_stopInputRec(bool gui)
 			continue;
 		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
 		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
-			ch->start(G_Clock.getCurrentFrame(), true, G_Clock.getQuantize(),
-        G_Clock.isRunning(), true, true);
+			ch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
+        clock::isRunning(), true, true);
 	}
 
   Fl::lock();

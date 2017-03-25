@@ -54,14 +54,12 @@ extern KernelMidi G_KernelMidi;
 using std::string;
 
 
-Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
-  Clock *clock)
+Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
 #if defined(WITH_VST)
 : pluginHost(nullptr),
 #else
 :
 #endif
-  clock          (clock),
   midiMapConf    (midiMapConf),
   bufferSize     (bufferSize),
   type           (type),
@@ -95,8 +93,6 @@ Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
   midiOutLmute   (0x0),
   midiOutLsolo   (0x0)
 {
-  assert(clock != nullptr);
-
   vChan = (float *) malloc(bufferSize * sizeof(float));
 	if (!vChan)
 		gu_log("[Channel::allocVchan] unable to alloc memory for vChan\n");

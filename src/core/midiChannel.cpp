@@ -50,10 +50,11 @@ extern PluginHost G_PluginHost;
 
 
 using std::string;
+using namespace giada;
 
 
-MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf, clock),
+MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {
@@ -358,7 +359,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 #endif
 
 	if (G_Recorder.canRec(this, &G_Mixer)) {
-		G_Recorder.rec(index, ACTION_MIDI, clock->getCurrentFrame(), msg);
+		G_Recorder.rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
     hasActions = true;
   }
 }

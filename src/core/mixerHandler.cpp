@@ -58,7 +58,6 @@ extern Mixer 		   G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Conf 		   G_Conf;
-extern Clock       G_Clock;
 extern KernelAudio G_KernelAudio;
 extern MidiMapConf G_MidiMap;
 
@@ -71,66 +70,69 @@ using std::vector;
 using std::string;
 
 
-namespace {
+namespace gm = giada::mh;
 
-#ifdef WITH_VST
 
-int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+namespace
 {
-	int ret = 1;
-	for (unsigned i=0; i<list->size(); i++) {
-		Patch::plugin_t *ppl = &list->at(i);
-    // TODO use glue_addPlugin()
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
-				&G_Mixer.mutex_plugins, nullptr);
-		if (plugin != nullptr) {
-			plugin->setBypass(ppl->bypass);
-			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParameter(j, ppl->params.at(j));
-			ret &= 1;
-		}
-		else
-			ret &= 0;
-	}
-	return ret;
-}
+  #ifdef WITH_VST
 
-#endif
+  int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+  {
+  	int ret = 1;
+  	for (unsigned i=0; i<list->size(); i++) {
+  		Patch::plugin_t *ppl = &list->at(i);
+      // TODO use glue_addPlugin()
+  		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
+  				&G_Mixer.mutex_plugins, nullptr);
+  		if (plugin != nullptr) {
+  			plugin->setBypass(ppl->bypass);
+  			for (unsigned j=0; j<ppl->params.size(); j++)
+  				plugin->setParameter(j, ppl->params.at(j));
+  			ret &= 1;
+  		}
+  		else
+  			ret &= 0;
+  	}
+  	return ret;
+  }
+
+  #endif
 
 
-/* -------------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------------ */
 
 
-int __getNewChanIndex__()
-{
-	/* always skip last channel: it's the last one just added */
+  int __getNewChanIndex__()
+  {
+  	/* always skip last channel: it's the last one just added */
 
-	if (G_Mixer.channels.size() == 1)
-		return 0;
+  	if (G_Mixer.channels.size() == 1)
+  		return 0;
 
-	int index = 0;
-	for (unsigned i=0; i<G_Mixer.channels.size()-1; i++) {
-		if (G_Mixer.channels.at(i)->index > index)
-			index = G_Mixer.channels.at(i)->index;
-		}
-	index += 1;
-	return index;
-}
+  	int index = 0;
+  	for (unsigned i=0; i<G_Mixer.channels.size()-1; i++) {
+  		if (G_Mixer.channels.at(i)->index > index)
+  			index = G_Mixer.channels.at(i)->index;
+  		}
+  	index += 1;
+  	return index;
+  }
 
 } // ::
 
 /* -------------------------------------------------------------------------- */
 
 
-Channel *mh::addChannel(int type)
+Channel *gm::addChannel(int type)
 {
   Channel *ch;
 	int bufferSize = G_KernelAudio.realBufsize * 2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, &G_MidiMap, &G_Clock);
+		ch = new SampleChannel(bufferSize, &G_MidiMap);
 	else
-		ch = new MidiChannel(bufferSize, &G_MidiMap, &G_Clock);
+		ch = new MidiChannel(bufferSize, &G_MidiMap);
 
 #ifdef WITH_VST
 	ch->setPluginHost(&G_PluginHost);
@@ -145,7 +147,7 @@ Channel *mh::addChannel(int type)
 	}
 
 	ch->index = __getNewChanIndex__();
-	gu_log("[mh::addChannel] channel index=%d added, type=%d, total=%d\n",
+	gu_log("[gm::addChannel] channel index=%d added, type=%d, total=%d\n",
     ch->index, ch->type, G_Mixer.channels.size());
 	return ch;
 }
@@ -154,7 +156,7 @@ Channel *mh::addChannel(int type)
 /* -------------------------------------------------------------------------- */
 
 
-int mh::deleteChannel(Channel *ch)
+int gm::deleteChannel(Channel *ch)
 {
 	int index = -1;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -164,7 +166,7 @@ int mh::deleteChannel(Channel *ch)
 		}
 	}
 	if (index == -1) {
-		gu_log("[mh::deleteChannel] unable to find channel %d for deletion!\n", ch->index);
+		gu_log("[gm::deleteChannel] unable to find channel %d for deletion!\n", ch->index);
 		return 0;
 	}
 
@@ -182,12 +184,12 @@ int mh::deleteChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *mh::getChannelByIndex(int index)
+Channel *gm::getChannelByIndex(int index)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->index == index)
 			return G_Mixer.channels.at(i);
-	gu_log("[mh::getChannelByIndex] channel at index %d not found!\n", index);
+	gu_log("[gm::getChannelByIndex] channel at index %d not found!\n", index);
 	return nullptr;
 }
 
@@ -195,7 +197,7 @@ Channel *mh::getChannelByIndex(int index)
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::hasLogicalSamples()
+bool gm::hasLogicalSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
@@ -211,7 +213,7 @@ bool mh::hasLogicalSamples()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::hasEditedSamples()
+bool gm::hasEditedSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
   {
@@ -228,9 +230,9 @@ bool mh::hasEditedSamples()
 /* -------------------------------------------------------------------------- */
 
 
-void mh::stopSequencer()
+void gm::stopSequencer()
 {
-  G_Clock.stop();
+  clock::stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		G_Mixer.channels.at(i)->stopBySeq(G_Conf.chansStopOnSeqHalt);
 }
@@ -239,7 +241,7 @@ void mh::stopSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::uniqueSolo(Channel *ch)
+bool gm::uniqueSolo(Channel *ch)
 {
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -256,7 +258,7 @@ bool mh::uniqueSolo(Channel *ch)
 
 /** TODO - revision needed: mh should not call glue_addChannel */
 
-void mh::loadPatch_DEPR_(bool isProject, const char *projPath)
+void gm::loadPatch_DEPR_(bool isProject, const char *projPath)
 {
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
@@ -272,10 +274,10 @@ void mh::loadPatch_DEPR_(bool isProject, const char *projPath)
 
 	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();
 	G_Mixer.inVol      = G_Patch_DEPR_.getInVol();
-	G_Clock.setBpm(G_Patch_DEPR_.getBpm());
-	G_Clock.setBars(G_Patch_DEPR_.getBars());
-	G_Clock.setBeats(G_Patch_DEPR_.getBeats());
-	G_Clock.setQuantize(G_Patch_DEPR_.getQuantize());
+	clock::setBpm(G_Patch_DEPR_.getBpm());
+	clock::setBars(G_Patch_DEPR_.getBars());
+	clock::setBeats(G_Patch_DEPR_.getBeats());
+	clock::setQuantize(G_Patch_DEPR_.getQuantize());
 	G_Mixer.metronome  = G_Patch_DEPR_.getMetronome();
 	G_Patch_DEPR_.lastTakeId = G_Patch_DEPR_.getLastTakeId();
 	G_Patch_DEPR_.samplerate = G_Patch_DEPR_.getSamplerate();
@@ -283,7 +285,7 @@ void mh::loadPatch_DEPR_(bool isProject, const char *projPath)
 	/* rewind and update frames in Mixer (it's vital) */
 
 	G_Mixer.rewind();
-	G_Clock.updateFrameBars();
+	clock::updateFrameBars();
 	G_Mixer.ready = true;
 }
 
@@ -291,16 +293,16 @@ void mh::loadPatch_DEPR_(bool isProject, const char *projPath)
 /* -------------------------------------------------------------------------- */
 
 
-void mh::readPatch()
+void gm::readPatch()
 {
 	G_Mixer.ready = false;
 
 	G_Mixer.outVol     = G_Patch.masterVolOut;
 	G_Mixer.inVol      = G_Patch.masterVolIn;
-	G_Clock.setBpm(G_Patch.bpm);
-	G_Clock.setBars(G_Patch.bars);
-	G_Clock.setBeats(G_Patch.beats);
-	G_Clock.setQuantize(G_Patch.quantize);
+	clock::setBpm(G_Patch.bpm);
+	clock::setBars(G_Patch.bars);
+	clock::setBeats(G_Patch.beats);
+	clock::setQuantize(G_Patch.quantize);
 	G_Mixer.metronome  = G_Patch.metronome;
 
 #ifdef WITH_VST
@@ -313,7 +315,7 @@ void mh::readPatch()
 	/* rewind and update frames in Mixer (it's essential) */
 
 	G_Mixer.rewind();
-	G_Clock.updateFrameBars();
+	clock::updateFrameBars();
 	G_Mixer.ready = true;
 }
 
@@ -321,9 +323,9 @@ void mh::readPatch()
 /* -------------------------------------------------------------------------- */
 
 
-void mh::rewindSequencer()
+void gm::rewindSequencer()
 {
-	if (G_Clock.getQuantize() > 0 && G_Clock.isRunning())   // quantize rewind
+	if (clock::getQuantize() > 0 && clock::isRunning())   // quantize rewind
 		G_Mixer.rewindWait = true;
 	else
 		G_Mixer.rewind();
@@ -333,7 +335,7 @@ void mh::rewindSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::startInputRec()
+bool gm::startInputRec()
 {
 	int channelsReady = 0;
 
@@ -346,23 +348,23 @@ bool mh::startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		if (!ch->allocEmpty(G_Clock.getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
+		if (!ch->allocEmpty(clock::getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
 		{
-			gu_log("[mh::startInputRec] unable to allocate new Wave in chan %d!\n",
+			gu_log("[gm::startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
 			continue;
 		}
 
 		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
 
-		while (!mh::uniqueSampleName(ch, ch->wave->name)) {
+		while (!gm::uniqueSampleName(ch, ch->wave->name)) {
 			G_Patch_DEPR_.lastTakeId++;
 			G_Patch.lastTakeId++;
 			ch->wave->name = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
 		}
 
-		gu_log("[mh::startInputRec] start input recs using chan %d with size %d "
-			"frame=%d\n", ch->index, G_Clock.getTotalFrames(), G_Mixer.inputTracker);
+		gu_log("[gm::startInputRec] start input recs using chan %d with size %d "
+			"frame=%d\n", ch->index, clock::getTotalFrames(), G_Mixer.inputTracker);
 
 		channelsReady++;
 	}
@@ -371,7 +373,7 @@ bool mh::startInputRec()
 		G_Mixer.recording = true;
 		/* start to write from the currentFrame, not the beginning */
 		/** FIXME: this should be done before wave allocation */
-		G_Mixer.inputTracker = G_Clock.getCurrentFrame();
+		G_Mixer.inputTracker = clock::getCurrentFrame();
 		return true;
 	}
 	return false;
@@ -381,7 +383,7 @@ bool mh::startInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-void mh::stopInputRec()
+void gm::stopInputRec()
 {
 	G_Mixer.mergeVirtualInput();
 	G_Mixer.recording = false;
@@ -393,7 +395,7 @@ void mh::stopInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::hasArmedSampleChannels()
+bool gm::hasArmedSampleChannels()
 {
   for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     Channel *ch = G_Mixer.channels.at(i);
@@ -407,7 +409,7 @@ bool mh::hasArmedSampleChannels()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh::uniqueSampleName(SampleChannel *ch, const string &name)
+bool gm::uniqueSampleName(SampleChannel *ch, const string &name)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (ch == G_Mixer.channels.at(i))  // skip itself

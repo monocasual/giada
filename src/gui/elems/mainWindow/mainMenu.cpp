@@ -55,6 +55,9 @@ extern Conf          G_Conf;
 extern gdMainWindow *G_MainWin;
 
 
+using namespace giada;
+
+
 geMainMenu::geMainMenu(int x, int y)
 	: Fl_Group(x, y, 300, 20)
 {

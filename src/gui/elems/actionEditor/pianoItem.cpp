@@ -40,8 +40,10 @@
 
 extern KernelMidi G_KernelMidi;
 extern Mixer      G_Mixer;
-extern Clock      G_Clock;
 extern Recorder	  G_Recorder;
+
+
+using namespace giada;
 
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
@@ -129,7 +131,7 @@ void gePianoItem::record()
 {
 	/* avoid frame overflow */
 
-	int overflow = frame_b - G_Clock.getTotalFrames();
+	int overflow = frame_b - clock::getTotalFrames();
 	if (overflow > 0) {
 		frame_b -= overflow;
 		frame_a -= overflow;

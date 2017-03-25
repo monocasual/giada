@@ -44,8 +44,10 @@
 #include "gd_actionEditor.h"
 
 
-extern Clock G_Clock;
 extern Conf	 G_Conf;
+
+
+using namespace giada;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)
@@ -59,7 +61,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		zoom = G_Conf.actionEditorZoom;
 	}
 
-	totalWidth = (int) std::ceil(G_Clock.getFramesInSequencer() / (float) zoom);
+	totalWidth = (int) std::ceil(clock::getFramesInSequencer() / (float) zoom);
 
 	/* container with zoom buttons and the action type selector. Scheme of
 	 * the resizable boxes: |[--b1--][actionType][--b2--][+][-]| */
@@ -252,10 +254,10 @@ void gdActionEditor::__cb_zoomOut()
 
 void gdActionEditor::update()
 {
-	totalWidth = (int) ceilf(G_Clock.getFramesInSequencer() / (float) zoom);
+	totalWidth = (int) ceilf(clock::getFramesInSequencer() / (float) zoom);
 	if (totalWidth < scroller->w()) {
 		totalWidth = scroller->w();
-		zoom = (int) ceilf(G_Clock.getFramesInSequencer() / (float) totalWidth);
+		zoom = (int) ceilf(clock::getFramesInSequencer() / (float) totalWidth);
 		scroller->scroll_to(0, scroller->yposition());
 	}
 }

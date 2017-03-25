@@ -41,8 +41,10 @@
 
 extern gdMainWindow *G_MainWin;
 extern Mixer         G_Mixer;
-extern Clock         G_Clock;
 extern Recorder      G_Recorder;
+
+
+using namespace giada;
 
 
 geMuteEditor::geMuteEditor(int x, int y, gdActionEditor *pParent)
@@ -244,8 +246,8 @@ int geMuteEditor::handle(int e) {
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= G_Clock.getTotalFrames()) {
-						frame_b = G_Clock.getTotalFrames();
+					if (frame_b >= clock::getTotalFrames()) {
+						frame_b = clock::getTotalFrames();
 						frame_a = frame_b-2048;
 					}
 

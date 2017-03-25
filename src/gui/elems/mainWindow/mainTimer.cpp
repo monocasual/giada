@@ -41,8 +41,10 @@
 
 
 extern Mixer         G_Mixer;
-extern Clock         G_Clock;
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geMainTimer::geMainTimer(int x, int y)
@@ -60,7 +62,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	resizable(nullptr);   // don't resize any widget
 
-	char buf[6]; snprintf(buf, 6, "%f", G_Clock.getBpm());
+	char buf[6]; snprintf(buf, 6, "%f", clock::getBpm());
 	bpm->copy_label(buf);
 
 	bpm->callback(cb_bpm, (void*)this);

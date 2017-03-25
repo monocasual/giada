@@ -36,75 +36,75 @@ class Channel;
 class SampleChannel;
 
 
-namespace mh {
+namespace giada {
+namespace mh
+{
+  /* addChannel
+  Adds a new channel of type 'type' into mixer's stack. */
 
-/* addChannel
-Adds a new channel of type 'type' into mixer's stack. */
+  Channel *addChannel(int type);
 
-Channel *addChannel(int type);
+  /* deleteChannel
+  Completely removes a channel from the stack. */
 
-/* deleteChannel
-Completely removes a channel from the stack. */
+  int deleteChannel(Channel *ch);
 
-int deleteChannel(Channel *ch);
+  /* getChannelByIndex
+  Returns channel with given index 'i'. */
 
-/* getChannelByIndex
-Returns channel with given index 'i'. */
+  Channel *getChannelByIndex(int i);
 
-Channel *getChannelByIndex(int i);
+  /* hasLogicalSamples
+  True if 1 or more samples are logical (memory only, such as takes) */
 
-/* hasLogicalSamples
-True if 1 or more samples are logical (memory only, such as takes) */
+  bool hasLogicalSamples();
 
-bool hasLogicalSamples();
+  /* hasEditedSamples
+  True if 1 or more samples was edited via gEditor */
 
-/* hasEditedSamples
-True if 1 or more samples was edited via gEditor */
+  bool hasEditedSamples();
 
-bool hasEditedSamples();
+  /* stopSequencer
+   * stop the sequencer, with special case if samplesStopOnSeqHalt is
+   * true. */
 
-/* stopSequencer
- * stop the sequencer, with special case if samplesStopOnSeqHalt is
- * true. */
+  void stopSequencer();
 
-void stopSequencer();
+  void rewindSequencer();
 
-void rewindSequencer();
+  /* uniqueSolo
+   * true if ch is the only solo'd channel in mixer. */
 
-/* uniqueSolo
- * true if ch is the only solo'd channel in mixer. */
+  bool uniqueSolo(Channel *ch);
 
-bool uniqueSolo(Channel *ch);
+  /* loadPatch
+   * load a path or a project (if isProject) into Mixer. If isProject, path
+   * must contain the address of the project folder. */
 
-/* loadPatch
- * load a path or a project (if isProject) into Mixer. If isProject, path
- * must contain the address of the project folder. */
+  void loadPatch_DEPR_(bool isProject, const char *projPath=0);
+  void readPatch();
 
-void loadPatch_DEPR_(bool isProject, const char *projPath=0);
-void readPatch();
+  /* startInputRec - record from line in
+   * creates a new empty wave in the first available channels and returns
+   * the chan number chosen, otherwise -1 if there are no more empty
+   * channels available. */
 
-/* startInputRec - record from line in
- * creates a new empty wave in the first available channels and returns
- * the chan number chosen, otherwise -1 if there are no more empty
- * channels available. */
+  bool startInputRec();
 
-bool startInputRec();
+  void stopInputRec();
 
-void stopInputRec();
+  /* uniqueSamplename
+   * return true if samplename 'n' is unique. Requires SampleChannel *ch
+   * in order to skip check against itself. */
 
-/* uniqueSamplename
- * return true if samplename 'n' is unique. Requires SampleChannel *ch
- * in order to skip check against itself. */
+  bool uniqueSampleName(SampleChannel *ch, const std::string &s);
 
-bool uniqueSampleName(SampleChannel *ch, const std::string &s);
+  /* hasArmedSampleChannels
+  Tells whether Mixer has one or more sample channels armed for input
+  recording. */
 
-/* hasArmedSampleChannels
-Tells whether Mixer has one or more sample channels armed for input
-recording. */
-
-bool hasArmedSampleChannels();
-
-}  // mh::
+  bool hasArmedSampleChannels();
+}}  // giada::mh::
 
 
 #endif

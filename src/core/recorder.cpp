@@ -38,15 +38,15 @@
 
 
 using std::vector;
+using namespace giada;
 
 
-Recorder::Recorder(Clock *clock)
+Recorder::Recorder()
 	: active       (false),
-	  sortedActions(false),
-    clock        (clock)
+	  sortedActions(false)
 {
-  assert(clock != nullptr);
 }
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -71,7 +71,7 @@ bool Recorder::canRec(Channel *ch, Mixer *mixer)
 	 * channel is empty */
 
 	if (!active             ||
-		  !clock->isRunning() ||
+		  !clock::isRunning() ||
 			 mixer->recording   ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == nullptr)
 		)
@@ -578,7 +578,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 
 void Recorder::stopOverdub(Mixer *mixer)
 {
-	cmp.a2.frame  = clock->getCurrentFrame();
+	cmp.a2.frame  = clock::getCurrentFrame();
 	bool ringLoop = false;
 	bool nullLoop = false;
 
@@ -588,7 +588,7 @@ void Recorder::stopOverdub(Mixer *mixer)
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
 		gu_log("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, clock->getTotalFrames()); // record at the end of the sequencer
+		rec(cmp.a2.chan, cmp.a2.type, clock::getTotalFrames()); // record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {

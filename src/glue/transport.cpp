@@ -35,16 +35,18 @@
 #include "transport.h"
 
 
-extern Clock         G_Clock;
 extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 
 
+using namespace giada;
+
+
 void glue_startStopSeq(bool gui)
 {
-	G_Clock.isRunning() ? glue_stopSeq(gui) : glue_startSeq(gui);
+	clock::isRunning() ? glue_stopSeq(gui) : glue_startSeq(gui);
 }
 
 
@@ -53,7 +55,7 @@ void glue_startStopSeq(bool gui)
 
 void glue_startSeq(bool gui)
 {
-	G_Clock.start();
+	clock::start();
 
 #ifdef __linux__
 	G_KernelAudio.jackStart();

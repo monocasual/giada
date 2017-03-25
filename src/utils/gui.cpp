@@ -56,7 +56,6 @@ using std::string;
 
 
 extern Mixer 	       G_Mixer;
-extern Clock 	       G_Clock;
 extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
@@ -66,6 +65,9 @@ extern gdMainWindow *G_MainWin;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
+
+
+using namespace giada;
 
 
 static int blinker = 0;
@@ -119,10 +121,10 @@ void gu_updateControls()
 	G_MainWin->mainIO->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
 #endif
 
-	G_MainWin->mainTimer->setMeter(G_Clock.getBeats(), G_Clock.getBars());
-	G_MainWin->mainTimer->setBpm(G_Clock.getBpm());
+	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
+	G_MainWin->mainTimer->setBpm(clock::getBpm());
 
-	G_MainWin->mainTransport->updatePlay(G_Clock.isRunning());
+	G_MainWin->mainTransport->updatePlay(clock::isRunning());
 	G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
 }
 

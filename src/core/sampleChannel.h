@@ -93,7 +93,7 @@ private:
 
 public:
 
-	SampleChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock);
+	SampleChannel(int bufferSize, MidiMapConf *midiMapConf);
 	~SampleChannel();
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;

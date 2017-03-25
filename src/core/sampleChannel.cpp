@@ -50,11 +50,11 @@ extern KernelAudio G_KernelAudio;
 
 
 using std::string;
+using namespace giada;
 
 
-SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf,
-    Clock *clock)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf, clock),
+SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
 		frameRewind      (-1),
 		wave             (nullptr),
 		tracker          (0),
@@ -505,12 +505,12 @@ void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 
 	if (G_Recorder.canRec(this, mixer)) {
 		if (mode == SINGLE_PRESS) {
-			G_Recorder.startOverdub(index, ACTION_KEYS, clock->getCurrentFrame(),
+			G_Recorder.startOverdub(index, ACTION_KEYS, clock::getCurrentFrame(),
         G_KernelAudio.realBufsize);
       readActions = false;   // don't read actions while overdubbing
     }
 		else
-			G_Recorder.rec(index, ACTION_KEYPRESS, clock->getCurrentFrame());
+			G_Recorder.rec(index, ACTION_KEYPRESS, clock::getCurrentFrame());
     hasActions = true;
 	}
 }

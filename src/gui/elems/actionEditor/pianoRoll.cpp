@@ -42,8 +42,10 @@
 extern Conf	      G_Conf;
 extern Recorder		G_Recorder;
 extern Mixer      G_Mixer;
-extern Clock      G_Clock;
 extern KernelMidi G_KernelMidi;
+
+
+using namespace giada;
 
 
 gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
@@ -75,7 +77,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			/* don't show actions > than the grey area */
 			/** FIXME - can we move this to the outer cycle? */
 
-			if (G_Recorder.frames.at(i) > G_Clock.getTotalFrames())
+			if (G_Recorder.frames.at(i) > clock::getTotalFrames())
 				continue;
 
 			Recorder::action *a1 = G_Recorder.global.at(i).at(j);

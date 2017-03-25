@@ -66,6 +66,7 @@ extern PluginHost    G_PluginHost;
 
 using std::string;
 using std::vector;
+using namespace giada;
 
 
 #ifdef WITH_VST
@@ -133,10 +134,10 @@ static void __glue_fillPatchGlobals__(const string &name)
 	G_Patch.versionMinor = G_VERSION_MINOR;
 	G_Patch.versionPatch = G_VERSION_PATCH;
 	G_Patch.name         = name;
-	G_Patch.bpm          = G_Clock.getBpm();
-	G_Patch.bars         = G_Clock.getBars();
-	G_Patch.beats        = G_Clock.getBeats();
-	G_Patch.quantize     = G_Clock.getQuantize();
+	G_Patch.bpm          = clock::getBpm();
+	G_Patch.bars         = clock::getBars();
+	G_Patch.beats        = clock::getBeats();
+	G_Patch.quantize     = clock::getQuantize();
 	G_Patch.masterVolIn  = G_Mixer.inVol;
   G_Patch.masterVolOut = G_Mixer.outVol;
   G_Patch.metronome    = G_Mixer.metronome;

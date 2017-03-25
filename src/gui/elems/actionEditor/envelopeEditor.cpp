@@ -43,9 +43,11 @@
 
 
 extern Mixer         G_Mixer;
-extern Clock         G_Clock;
 extern Recorder      G_Recorder;
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geEnvelopeEditor::geEnvelopeEditor(int x, int y, gdActionEditor *pParent,
@@ -195,8 +197,8 @@ int geEnvelopeEditor::handle(int e) {
 						if (points.size() == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							G_Recorder.rec(pParent->chan->index, type, 0, 0, 1.0f);
-							addPoint(G_Clock.getTotalFrames(), 0, 1.0f, pParent->coverX, 1);
-							G_Recorder.rec(pParent->chan->index, type, G_Clock.getTotalFrames(), 0, 1.0f);
+							addPoint(clock::getTotalFrames(), 0, 1.0f, pParent->coverX, 1);
+							G_Recorder.rec(pParent->chan->index, type, clock::getTotalFrames(), 0, 1.0f);
               pParent->chan->hasActions = true;
 						}
 
@@ -256,8 +258,8 @@ int geEnvelopeEditor::handle(int e) {
 
 					if (newFrame < 0)
 						newFrame = 0;
-					else if (newFrame > G_Clock.getTotalFrames())
-						newFrame = G_Clock.getTotalFrames();
+					else if (newFrame > clock::getTotalFrames())
+						newFrame = clock::getTotalFrames();
 
 					/* vertical line check */
 

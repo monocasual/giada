@@ -57,9 +57,8 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Clock         G_Clock(&G_KernelAudio, &G_KernelMidi, &G_Conf);
-Mixer         G_Mixer(&G_Clock);
-Recorder      G_Recorder(&G_Clock);
+Mixer         G_Mixer;
+Recorder      G_Recorder;
 MidiMapConf   G_MidiMap;
 gdMainWindow *G_MainWin;
 
@@ -78,6 +77,11 @@ int main(int argc, char **argv)
 	init_prepareParser();
 	init_prepareMidiMap();
 	init_prepareKernelAudio();
+
+  /* TODO - move somewhere else */
+  giada::clock::init(&G_KernelAudio, &G_KernelMidi, &G_Conf);
+  /* TODO */
+
 	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);
 	Fl::lock();

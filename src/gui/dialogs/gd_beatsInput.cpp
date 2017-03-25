@@ -39,9 +39,11 @@
 
 
 extern Mixer				 G_Mixer;
-extern Clock				 G_Clock;
 extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
+
+
+using namespace giada;
 
 
 gdBeatsInput::gdBeatsInput()
@@ -58,8 +60,8 @@ gdBeatsInput::gdBeatsInput()
 	resizeRec = new gCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 
-	char buf_bars[3]; sprintf(buf_bars, "%d", G_Clock.getBars());
-	char buf_beats[3]; sprintf(buf_beats, "%d", G_Clock.getBeats());
+	char buf_bars[3]; sprintf(buf_bars, "%d", clock::getBars());
+	char buf_beats[3]; sprintf(buf_beats, "%d", clock::getBeats());
 	beats->maximum_size(2);
 	beats->value(buf_beats);
 	beats->type(FL_INT_INPUT);

@@ -54,12 +54,13 @@ extern PluginHost  G_PluginHost;
 #endif
 
 
-Mixer::Mixer(Clock *clock)
+using namespace giada;
+
+
+Mixer::Mixer()
 	: vChanInput  (nullptr),
-		vChanInToOut(nullptr),
-    clock       (clock)
+		vChanInToOut(nullptr)
 {
-  assert(clock != nullptr);
 }
 
 
@@ -125,7 +126,7 @@ void Mixer::init()
 	pthread_mutex_init(&mutex_chans, nullptr);
 	pthread_mutex_init(&mutex_plugins, nullptr);
 
-	clock->updateFrameBars();
+	clock::updateFrameBars();
 	rewind();
 }
 
@@ -149,7 +150,7 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 		return 0;
 
 #ifdef __linux__
-  clock->recvJackSync();
+  clock::recvJackSync();
 #endif
 
 	float *outBuf = static_cast<float*>(_outBuf);
@@ -162,15 +163,15 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 
 	for (unsigned j=0; j<bufferSize; j+=2) {
 		processLineIn(inBuf, j);
-		if (clock->isRunning()) {
+		if (clock::isRunning()) {
 			lineInRec(inBuf, j);
 			doQuantize(j);
 			testBar(j);
 			testFirstBeat(j);
 			readActions(j);
-			clock->incrCurrentFrame();
+			clock::incrCurrentFrame();
 			testLastBeat();  // this test must be the last one
-			clock->sendMIDIsync();
+			clock::sendMIDIsync();
 		}
 		sumChannels(j);
 	}
@@ -196,7 +197,7 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 
 int Mixer::close()
 {
-	clock->stop();
+	clock::stop();
 	while (channels.size() > 0)
 		mh::deleteChannel(channels.at(0));
 
@@ -229,8 +230,8 @@ bool Mixer::isSilent()
 
 void Mixer::rewind()
 {
-  clock->rewind();
-	if (clock->isRunning())
+  clock::rewind();
+	if (clock::isRunning())
 		for (unsigned i=0; i<channels.size(); i++)
 			channels.at(i)->rewind();
 }
@@ -246,9 +247,9 @@ void Mixer::mergeVirtualInput()
 			continue;
 		SampleChannel *ch = static_cast<SampleChannel*>(channels.at(i));
 		if (ch->armed)
-			memcpy(ch->wave->data, vChanInput, clock->getTotalFrames() * sizeof(float));
+			memcpy(ch->wave->data, vChanInput, clock::getTotalFrames() * sizeof(float));
 	}
-	memset(vChanInput, 0, clock->getTotalFrames() * sizeof(float)); // clear vchan
+	memset(vChanInput, 0, clock::getTotalFrames() * sizeof(float)); // clear vchan
 }
 
 
@@ -271,7 +272,7 @@ void Mixer::lineInRec(float *inBuf, unsigned frame)
 	vChanInput[inputTracker]   += inBuf[frame]   * inVol;
 	vChanInput[inputTracker+1] += inBuf[frame+1] * inVol;
 	inputTracker += 2;
-	if (inputTracker >= clock->getTotalFrames())
+	if (inputTracker >= clock::getTotalFrames())
 		inputTracker = 0;
 }
 
@@ -306,12 +307,12 @@ void Mixer::readActions(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_recs);
 	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		if (G_Recorder.frames.at(i) == clock->getCurrentFrame()) {
+		if (G_Recorder.frames.at(i) == clock::getCurrentFrame()) {
 			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 				int index   = G_Recorder.global.at(i).at(j)->chan;
 				Channel *ch = mh::getChannelByIndex(index);
 				ch->parseAction(G_Recorder.global.at(i).at(j), frame,
-          clock->getCurrentFrame(), clock->getQuantize(), clock->isRunning());
+          clock::getCurrentFrame(), clock::getQuantize(), clock::isRunning());
 			}
 			break;
 		}
@@ -327,7 +328,7 @@ void Mixer::doQuantize(unsigned frame)
 {
   /* Nothing to do if quantizer disabled or a quanto has not passed yet. */
 
-  if (clock->getQuantize() == 0 || !clock->quantoHasPassed())
+  if (clock::getQuantize() == 0 || !clock::quantoHasPassed())
     return;
 	if (rewindWait) {
 		rewindWait = false;
@@ -345,7 +346,7 @@ void Mixer::doQuantize(unsigned frame)
 
 void Mixer::testBar(unsigned frame)
 {
-	if (!clock->isOnBar())
+	if (!clock::isOnBar())
 		return;
 
 	if (metronome)
@@ -363,7 +364,7 @@ void Mixer::testBar(unsigned frame)
 
 void Mixer::testFirstBeat(unsigned frame)
 {
-	if (!clock->isOnFirstBeat())
+	if (!clock::isOnFirstBeat())
 		return;
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)
@@ -377,7 +378,7 @@ void Mixer::testFirstBeat(unsigned frame)
 
 void Mixer::testLastBeat()
 {
-  if (clock->isOnBeat())
+  if (clock::isOnBeat())
     if (metronome && !tickPlay)
       tockPlay = true;
 }
@@ -391,7 +392,7 @@ void Mixer::sumChannels(unsigned frame)
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++) {
 		if (channels.at(k)->type == CHANNEL_SAMPLE)
-			static_cast<SampleChannel*>(channels.at(k))->sum(frame, clock->isRunning());
+			static_cast<SampleChannel*>(channels.at(k))->sum(frame, clock::isRunning());
 	}
 	pthread_mutex_unlock(&mutex_chans);
 }

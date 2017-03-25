@@ -49,7 +49,7 @@ class Recorder
 {
 public:
 
-	Recorder(Clock *clock);
+	Recorder();
 
 	/* action
 	 * struct containing fields to describe an atomic action. Note from
@@ -172,8 +172,6 @@ public:
 	void stopOverdub(Mixer *m);
 
 private:
-
-  Clock *clock;
 
 	/* composite
 	 * a group of two actions (keypress+keyrel, muteon+muteoff) used during

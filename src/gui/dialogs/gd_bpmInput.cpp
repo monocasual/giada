@@ -39,9 +39,11 @@
 
 
 extern Mixer     		 G_Mixer;
-extern Clock				 G_Clock;
 extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
+
+
+using namespace giada;
 
 
 gdBpmInput::gdBpmInput(const char *label)
@@ -58,7 +60,7 @@ gdBpmInput::gdBpmInput(const char *label)
 	end();
 
 	char   a[4];
-	snprintf(a, 4, "%d", (int) G_Clock.getBpm());
+	snprintf(a, 4, "%d", (int) clock::getBpm());
 	char   b[2];
 	for (unsigned i=0; i<strlen(label); i++)	// looking for the dot
 		if (label[i] == '.') {

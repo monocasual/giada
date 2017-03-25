@@ -71,11 +71,6 @@ protected:
 
 #endif
 
-  /* clock
-  Pointer to Clock class. It manages timing. */
-
-  Clock *clock;
-
 	/* MidiMapConf
 	 * Pointer to MidiMapConf. It deals with Midi lightning operations. */
 
@@ -94,8 +89,7 @@ protected:
 
 public:
 
-	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf,
-    Clock *clock);
+	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf);
 
 	virtual ~Channel();
 

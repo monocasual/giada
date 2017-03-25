@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * clock
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -37,57 +35,103 @@
 #include "clock.h"
 
 
-Clock::Clock(KernelAudio *kernelAudio, KernelMidi *kernelMidi, Conf *conf)
-  : kernelAudio      (kernelAudio),
-    kernelMidi       (kernelMidi),
-    conf             (conf),
-    running          (false),
-    bpm              (G_DEFAULT_BPM),
-    bars             (G_DEFAULT_BARS),
-    beats            (G_DEFAULT_BEATS),
-    quantize         (G_DEFAULT_QUANTIZE),
-    quanto           (1),
-    framesPerBar     (0),
-    framesPerBeat    (0),
-    framesInSequencer(0),
-    totalFrames      (0),
-    currentFrame     (0),
-    currentBeat      (0),
-  	midiTCrate       ((conf->samplerate / conf->midiTCfps) * 2),  // stereo vals
-  	midiTCframes     (0),
-  	midiTCseconds    (0),
-  	midiTCminutes    (0),
-  	midiTChours      (0)
+namespace gc = giada::clock;
+
+
+namespace
+{
+  KernelAudio *kernelAudio;
+  KernelMidi  *kernelMidi;
+  Conf        *conf;
+
+  bool  running;
+  float bpm;
+	int   bars;
+	int   beats;
+  int   quantize;
+	int   quanto;            // quantizer step
+  int   framesPerBar;      // frames in one bar
+	int   framesPerBeat;     // frames in one beat
+	int   framesInSequencer; // frames in the whole sequencer
+	int   totalFrames;       // frames in the selected range (e.g. 4/4)
+	int   currentFrame;
+	int   currentBeat;
+
+	int midiTCrate;      // send MTC data every midiTCrate frames
+	int midiTCframes;
+	int midiTCseconds;
+	int midiTCminutes;
+	int midiTChours;
+
+#ifdef __linux__
+  KernelAudio::JackState jackStatePrev;
+#endif
+
+  void updateQuanto()
+  {
+    if (quantize != 0)
+      quanto = framesPerBeat / quantize;
+    if (quanto % 2 != 0)
+      quanto++;
+  }
+} // ::
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gc::init(KernelAudio *kernelAudio, KernelMidi *kernelMidi, Conf *conf)
 {
   assert(kernelAudio != nullptr);
   assert(kernelMidi != nullptr);
   assert(conf != nullptr);
+
+  kernelAudio       = kernelAudio;
+  kernelMidi        = kernelMidi;
+  conf              = conf;
+  running           = false;
+  bpm               = G_DEFAULT_BPM;
+  bars              = G_DEFAULT_BARS;
+  beats             = G_DEFAULT_BEATS;
+  quantize          = G_DEFAULT_QUANTIZE;
+  quanto            = 1;
+  framesPerBar      = 0;
+  framesPerBeat     = 0;
+  framesInSequencer = 0;
+  totalFrames       = 0;
+  currentFrame      = 0;
+  currentBeat       = 0;
+  midiTCrate        = (conf->samplerate / conf->midiTCfps) * 2;  // stereo values
+  midiTCframes      = 0;
+  midiTCseconds     = 0;
+  midiTCminutes     = 0;
+  midiTChours       = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool Clock::isRunning()
+bool gc::isRunning()
 {
   return running;
 }
 
 
-bool Clock::quantoHasPassed()
+bool gc::quantoHasPassed()
 {
   return currentFrame % (quanto) == 0;
 }
 
 
-bool Clock::isOnBar()
+bool gc::isOnBar()
 {
   /* A bar cannot occur at frame 0. That's the first beat. */
   return currentFrame % framesPerBar == 0 && currentFrame != 0;
 }
 
 
-bool Clock::isOnBeat()
+bool gc::isOnBeat()
 {
   /* Skip frame 0: it is intended as 'first beat'. */
   /* TODO - this is wrong! */
@@ -95,13 +139,13 @@ bool Clock::isOnBeat()
 }
 
 
-bool Clock::isOnFirstBeat()
+bool gc::isOnFirstBeat()
 {
   return currentFrame == 0;
 }
 
 
-void Clock::start()
+void gc::start()
 {
   running = true;
 	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
@@ -111,7 +155,7 @@ void Clock::start()
 }
 
 
-void Clock::stop()
+void gc::stop()
 {
   running = false;
   if (conf->midiSync == MIDI_SYNC_CLOCK_M)
@@ -119,7 +163,7 @@ void Clock::stop()
 }
 
 
-void Clock::setBpm(float b)
+void gc::setBpm(float b)
 {
   if (b < G_MIN_BPM)
     b = G_MIN_BPM;
@@ -128,19 +172,19 @@ void Clock::setBpm(float b)
 }
 
 
-void Clock::setBars(int b)
+void gc::setBars(int b)
 {
   bars = b;
 }
 
 
-void Clock::setBeats(int b)
+void gc::setBeats(int b)
 {
   beats = b;
 }
 
 
-void Clock::setQuantize(int q)
+void gc::setQuantize(int q)
 {
   quantize = q;
   updateQuanto();
@@ -150,7 +194,7 @@ void Clock::setQuantize(int q)
 /* -------------------------------------------------------------------------- */
 
 
-void Clock::incrCurrentFrame()
+void gc::incrCurrentFrame()
 {
   currentFrame += 2;
   if (currentFrame > totalFrames) {
@@ -163,7 +207,7 @@ void Clock::incrCurrentFrame()
 }
 
 
-void Clock::rewind()
+void gc::rewind()
 {
   currentFrame = 0;
   currentBeat = 0;
@@ -174,7 +218,7 @@ void Clock::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void Clock::updateFrameBars()
+void gc::updateFrameBars()
 {
 	/* seconds ....... total time of play (in seconds) of the whole
 	 *                 sequencer. 60 / bpm == how many seconds lasts one bpm
@@ -205,7 +249,7 @@ void Clock::updateFrameBars()
 /* -------------------------------------------------------------------------- */
 
 
-void Clock::sendMIDIsync()
+void gc::sendMIDIsync()
 {
   /* TODO - only Master (_M) is implemented so far. */
 
@@ -274,7 +318,7 @@ void Clock::sendMIDIsync()
 /* -------------------------------------------------------------------------- */
 
 
-void Clock::sendMIDIrewind()
+void gc::sendMIDIrewind()
 {
 	midiTCframes  = 0;
 	midiTCseconds = 0;
@@ -300,7 +344,7 @@ void Clock::sendMIDIrewind()
 
 #ifdef __linux__
 
-void Clock::recvJackSync()
+void gc::recvJackSync()
 {
   KernelAudio::JackState jackState = kernelAudio->jackTransportQuery();
 
@@ -330,79 +374,67 @@ void Clock::recvJackSync()
 /* -------------------------------------------------------------------------- */
 
 
-int Clock::getCurrentFrame()
+int gc::getCurrentFrame()
 {
   return currentFrame;
 }
 
 
-int Clock::getTotalFrames()
+int gc::getTotalFrames()
 {
   return totalFrames;
 }
 
 
-int Clock::getCurrentBeat()
+int gc::getCurrentBeat()
 {
   return currentBeat;
 }
 
 
-int Clock::getQuantize()
+int gc::getQuantize()
 {
   return quantize;
 }
 
 
-float Clock::getBpm()
+float gc::getBpm()
 {
   return bpm;
 }
 
 
-int Clock::getBeats()
+int gc::getBeats()
 {
   return beats;
 }
 
 
-int Clock::getBars()
+int gc::getBars()
 {
   return bars;
 }
 
 
-int Clock::getQuanto()
+int gc::getQuanto()
 {
   return quanto;
 }
 
 
-int Clock::getFramesPerBar()
+int gc::getFramesPerBar()
 {
   return framesPerBar;
 }
 
 
-int Clock::getFramesPerBeat()
+int gc::getFramesPerBeat()
 {
   return framesPerBeat;
 }
 
 
-int Clock::getFramesInSequencer()
+int gc::getFramesInSequencer()
 {
   return framesInSequencer;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Clock::updateQuanto()
-{
-  if (quantize != 0)
-		quanto = framesPerBeat / quantize;
-	if (quanto % 2 != 0)
-		quanto++;
 }

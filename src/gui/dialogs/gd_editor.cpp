@@ -46,8 +46,10 @@
 
 
 extern Mixer G_Mixer;
-extern Clock G_Clock;
 extern Conf  G_Conf;
+
+
+using namespace giada;
 
 
 gdEditor::gdEditor(SampleChannel *ch)
@@ -282,7 +284,7 @@ void gdEditor::__cb_enableSnap()
 
 void gdEditor::__cb_setPitchToBar()
 {
-  glue_setPitch(this, ch, ch->end / (float) G_Clock.getFramesPerBar(), true);
+  glue_setPitch(this, ch, ch->end / (float) clock::getFramesPerBar(), true);
 }
 
 
@@ -291,7 +293,7 @@ void gdEditor::__cb_setPitchToBar()
 
 void gdEditor::__cb_setPitchToSong()
 {
-  glue_setPitch(this, ch, ch->end / (float) G_Clock.getTotalFrames(), true);
+  glue_setPitch(this, ch, ch->end / (float) clock::getTotalFrames(), true);
 }
 
 

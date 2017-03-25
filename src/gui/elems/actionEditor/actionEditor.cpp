@@ -37,8 +37,10 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Clock         G_Clock;
 extern Recorder      G_Recorder;
+
+
+using namespace giada;
 
 
 geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch)
@@ -67,7 +69,7 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
       - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
       if ((action->chan != pParent->chan->index)                            ||
-          (G_Recorder.frames.at(i) > G_Clock.getTotalFrames())              ||
+          (G_Recorder.frames.at(i) > clock::getTotalFrames())              ||
           (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
           (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
           (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))

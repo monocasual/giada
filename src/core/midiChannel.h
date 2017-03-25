@@ -49,7 +49,7 @@ class MidiChannel : public Channel
 {
 public:
 
-	MidiChannel(int bufferSize, MidiMapConf *midiMapConf, Clock *clock);
+	MidiChannel(int bufferSize, MidiMapConf *midiMapConf);
 	~MidiChannel();
 
   bool    midiOut;           // enable midi output

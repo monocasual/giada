@@ -54,6 +54,9 @@ extern PluginHost G_PluginHost;
 extern gdMainWindow *mainWin;
 
 
+using namespace giada;
+
+
 int Patch_DEPR_::open(const char *file)
 {
 	fp = fopen(file, "r");

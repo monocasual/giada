@@ -57,13 +57,13 @@ extern Conf          G_Conf;
 extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
-extern Clock	   		 G_Clock;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
 
 
 using std::string;
+using namespace giada;
 
 
 static bool __soloSession__ = false;
@@ -248,7 +248,7 @@ void glue_setMute(Channel *ch, bool gui)
 {
 	if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer)) {
 		if (!ch->mute) {
-			G_Recorder.startOverdub(ch->index, ACTION_MUTES, G_Clock.getCurrentFrame(),
+			G_Recorder.startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
         G_KernelAudio.realBufsize);
       ch->readActions = false;   // don't read actions while overdubbing
     }
@@ -531,7 +531,7 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui)
 	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
 	channel in REC_ENDING status. */
 
-	if (!G_Clock.isRunning()) {
+	if (!clock::isRunning()) {
 		ch->recStatus = REC_STOPPED;
 		ch->readActions = false;
 	}

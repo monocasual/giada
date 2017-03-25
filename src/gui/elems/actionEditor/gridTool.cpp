@@ -36,7 +36,9 @@
 
 
 extern Conf	 G_Conf;
-extern Clock G_Clock;
+
+
+using namespace giada;
 
 
 geGridTool::geGridTool(int x, int y, gdActionEditor *parent)
@@ -133,20 +135,20 @@ void geGridTool::calc()
 	 * put a concentrate of each block (which is totalFrames / zoom) */
 
 	int  j   = 0;
-	int fpgc = floor(G_Clock.getFramesPerBeat() / getValue());  // frames per grid cell
+	int fpgc = floor(clock::getFramesPerBeat() / getValue());  // frames per grid cell
 
 	for (int i=1; i<parent->totalWidth; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
-		while (j < step && j < G_Clock.getTotalFrames()) {
+		while (j < step && j < clock::getTotalFrames()) {
 			if (j % fpgc == 0) {
 				points.push_back(i);
 				frames.push_back(j);
 			}
-			if (j % G_Clock.getFramesPerBeat() == 0)
+			if (j % clock::getFramesPerBeat() == 0)
 				beats.push_back(i);
-			if (j % G_Clock.getFramesPerBar() == 0 && i != 1)
+			if (j % clock::getFramesPerBar() == 0 && i != 1)
 				bars.push_back(i);
-			if (j == G_Clock.getTotalFrames() - 1)
+			if (j == clock::getTotalFrames() - 1)
 				parent->coverX = i;
 			j++;
 		}
@@ -155,7 +157,7 @@ void geGridTool::calc()
 
 	/* fix coverX if == 0, which means G_Mixer.beats == G_MAX_BEATS */
 
-	if (G_Clock.getBeats() == G_MAX_BEATS)
+	if (clock::getBeats() == G_MAX_BEATS)
 		parent->coverX = parent->totalWidth;
 }
 
@@ -216,5 +218,5 @@ int geGridTool::getSnapFrame(int v)
 
 int geGridTool::getCellSize()
 {
-	return (parent->coverX - parent->ac->x()) / G_Clock.getBeats() / getValue();
+	return (parent->coverX - parent->ac->x()) / clock::getBeats() / getValue();
 }
