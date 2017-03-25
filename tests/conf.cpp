@@ -1,6 +1,6 @@
 #include "../src/core/const.h"
 #include "../src/core/conf.h"
-#include "catch.hpp"
+#include "catch/single_include/catch.hpp"
 
 
 using std::string;

@@ -5,7 +5,7 @@
 #if 0
 
 #include "../src/core/pluginHost.h"
-#include "catch.hpp"
+#include "catch/single_include/catch.hpp"
 
 
 TEST_CASE("Test PluginHost class")

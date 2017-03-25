@@ -1,6 +1,6 @@
 #include "../src/utils/fs.h"
 #include "../src/utils/string.h"
-#include "catch.hpp"
+#include "catch/single_include/catch.hpp"
 
 
 using std::vector;

@@ -2,3 +2,6 @@
 	path = src/deps/juce
 	url = https://github.com/julianstorer/JUCE.git
   ignore = dirty
+[submodule "tests/catch"]
+	path = tests/catch
+	url = https://github.com/philsquared/Catch.git
