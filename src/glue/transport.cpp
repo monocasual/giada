@@ -72,7 +72,7 @@ void glue_startSeq(bool gui)
 
 void glue_stopSeq(bool gui)
 {
-	mh_stopSequencer();
+	mh::stopSequencer();
 
 #ifdef __linux__
 	G_KernelAudio.jackStop();
@@ -92,7 +92,7 @@ void glue_stopSeq(bool gui)
 	 * One might stop the sequencer while an input rec is running. */
 
 	if (G_Mixer.recording) {
-		mh_stopInputRec();
+		mh::stopInputRec();
     Fl::lock();
 	  G_MainWin->mainTransport->updateRecInput(0);
 	  Fl::unlock();

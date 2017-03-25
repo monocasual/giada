@@ -36,70 +36,75 @@ class Channel;
 class SampleChannel;
 
 
+namespace mh {
+
 /* addChannel
 Adds a new channel of type 'type' into mixer's stack. */
 
-Channel *mh_addChannel(int type);
+Channel *addChannel(int type);
 
 /* deleteChannel
 Completely removes a channel from the stack. */
 
-int mh_deleteChannel(Channel *ch);
+int deleteChannel(Channel *ch);
 
 /* getChannelByIndex
 Returns channel with given index 'i'. */
 
-Channel *mh_getChannelByIndex(int i);
+Channel *getChannelByIndex(int i);
 
 /* hasLogicalSamples
 True if 1 or more samples are logical (memory only, such as takes) */
 
-bool mh_hasLogicalSamples();
+bool hasLogicalSamples();
 
 /* hasEditedSamples
 True if 1 or more samples was edited via gEditor */
 
-bool mh_hasEditedSamples();
+bool hasEditedSamples();
 
 /* stopSequencer
  * stop the sequencer, with special case if samplesStopOnSeqHalt is
  * true. */
 
-void mh_stopSequencer();
+void stopSequencer();
 
-void mh_rewindSequencer();
+void rewindSequencer();
 
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 
-bool mh_uniqueSolo(Channel *ch);
+bool uniqueSolo(Channel *ch);
 
 /* loadPatch
  * load a path or a project (if isProject) into Mixer. If isProject, path
  * must contain the address of the project folder. */
 
-void mh_loadPatch_DEPR_(bool isProject, const char *projPath=0);
-void mh_readPatch();
+void loadPatch_DEPR_(bool isProject, const char *projPath=0);
+void readPatch();
 
 /* startInputRec - record from line in
  * creates a new empty wave in the first available channels and returns
  * the chan number chosen, otherwise -1 if there are no more empty
  * channels available. */
 
-bool mh_startInputRec();
+bool startInputRec();
 
-void mh_stopInputRec();
+void stopInputRec();
 
 /* uniqueSamplename
  * return true if samplename 'n' is unique. Requires SampleChannel *ch
  * in order to skip check against itself. */
 
-bool mh_uniqueSampleName(SampleChannel *ch, const std::string &s);
+bool uniqueSampleName(SampleChannel *ch, const std::string &s);
 
 /* hasArmedSampleChannels
 Tells whether Mixer has one or more sample channels armed for input
 recording. */
 
-bool mh_hasArmedSampleChannels();
+bool hasArmedSampleChannels();
+
+}  // mh::
+
 
 #endif

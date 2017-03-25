@@ -52,10 +52,6 @@
 #include "storage.h"
 
 
-using std::string;
-using std::vector;
-
-
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
@@ -66,6 +62,10 @@ extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
+
+
+using std::string;
+using std::vector;
 
 
 #ifdef WITH_VST
@@ -283,7 +283,7 @@ void glue_loadPatch(void *data)
 
 	/* fill Mixer */
 
-	mh_readPatch();
+	mh::readPatch();
 
 	/* let recorder recompute the actions' positions if the current
 	 * samplerate != patch samplerate */
@@ -351,7 +351,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 
 	/* mixerHandler will update the samples inside Mixer */
 
-	mh_loadPatch_DEPR_(isProject, gu_dirname(fpath).c_str());
+	mh::loadPatch_DEPR_(isProject, gu_dirname(fpath).c_str());
 
 	/* take the patch name and update the main window's title */
 

@@ -198,7 +198,7 @@ int Mixer::close()
 {
 	clock->stop();
 	while (channels.size() > 0)
-		mh_deleteChannel(channels.at(0));
+		mh::deleteChannel(channels.at(0));
 
 	if (vChanInput) {
 		free(vChanInput);
@@ -257,7 +257,7 @@ void Mixer::mergeVirtualInput()
 
 void Mixer::lineInRec(float *inBuf, unsigned frame)
 {
-	if (!mh_hasArmedSampleChannels() || !G_KernelAudio.inputEnabled || !recording)
+	if (!mh::hasArmedSampleChannels() || !G_KernelAudio.inputEnabled || !recording)
 	 	return;
 
 	/* Delay comp: wait until waitRec reaches delayComp. WaitRec
@@ -309,7 +309,7 @@ void Mixer::readActions(unsigned frame)
 		if (G_Recorder.frames.at(i) == clock->getCurrentFrame()) {
 			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
 				int index   = G_Recorder.global.at(i).at(j)->chan;
-				Channel *ch = mh_getChannelByIndex(index);
+				Channel *ch = mh::getChannelByIndex(index);
 				ch->parseAction(G_Recorder.global.at(i).at(j), frame,
           clock->getCurrentFrame(), clock->getQuantize(), clock->isRunning());
 			}

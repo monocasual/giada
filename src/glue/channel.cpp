@@ -95,7 +95,7 @@ int glue_loadChannel(SampleChannel *ch, const string &fname)
 
 Channel *glue_addChannel(int column, int type)
 {
-	Channel *ch     = mh_addChannel(type);
+	Channel *ch     = mh::addChannel(type);
 	geChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel  = gch;
 	return ch;
@@ -115,7 +115,7 @@ void glue_deleteChannel(Channel *ch)
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();
-	mh_deleteChannel(ch);
+	mh::deleteChannel(ch);
 	gu_closeAllSubwindows();
 }
 
@@ -148,7 +148,7 @@ void glue_toggleArm(Channel *ch, bool gui)
 
 int glue_cloneChannel(Channel *src)
 {
-	Channel *ch    = mh_addChannel(src->type);
+	Channel *ch    = mh::addChannel(src->type);
 	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;
@@ -320,7 +320,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
 
-	if (mh_uniqueSolo(ch)) {
+	if (mh::uniqueSolo(ch)) {
 		__soloSession__ = false;
 		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 			Channel *och = G_Mixer.channels.at(i);

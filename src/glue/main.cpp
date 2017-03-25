@@ -2,13 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
- * How to know if you need another glue_ function? Ask yourself if the
- * new action will ever be called via MIDI or keyboard/mouse. If yes,
- * put it here.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -177,7 +170,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 void glue_rewindSeq(bool gui, bool notifyJack)
 {
-	mh_rewindSequencer();
+	mh::rewindSequencer();
 
   /* FIXME - potential desync when Quantizer is enabled from this point on.
   Mixer would wait, while the following calls would be made regardless of its

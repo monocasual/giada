@@ -45,11 +45,11 @@
 #include "kernelAudio.h"
 
 
-using std::string;
-
-
 extern Recorder    G_Recorder;
 extern KernelAudio G_KernelAudio;
+
+
+using std::string;
 
 
 SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf,
@@ -128,7 +128,7 @@ void SampleChannel::generateUniqueSampleName()
 {
 	string oldName = wave->name;
 	int k = 1; // Start from k = 1, zero is too nerdy
-	while (!mh_uniqueSampleName(this, wave->name)) {
+	while (!mh::uniqueSampleName(this, wave->name)) {
 		wave->updateName((oldName + "-" + gu_itoa(k)).c_str());
 		k++;
 	}

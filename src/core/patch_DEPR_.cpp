@@ -509,7 +509,7 @@ int Patch_DEPR_::readRecs()
 
 //gu_log("  loading chan=%d, type=%d, fValue=%f, iValue=%u\n", chan, type, fValue, iValue);
 
-			Channel *ch = mh_getChannelByIndex(chan);
+			Channel *ch = mh::getChannelByIndex(chan);
 			if (ch)
 				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY)) {
 					if (version < 0.83f)

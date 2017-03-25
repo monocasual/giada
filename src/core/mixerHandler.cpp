@@ -71,11 +71,11 @@ using std::vector;
 using std::string;
 
 
-namespace {  // private namespace
+namespace {
 
 #ifdef WITH_VST
 
-int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 {
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
@@ -101,7 +101,7 @@ int __mh_readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 /* -------------------------------------------------------------------------- */
 
 
-int __mh_getNewChanIndex__()
+int __getNewChanIndex__()
 {
 	/* always skip last channel: it's the last one just added */
 
@@ -117,12 +117,12 @@ int __mh_getNewChanIndex__()
 	return index;
 }
 
-} // private namespace
+} // ::
 
 /* -------------------------------------------------------------------------- */
 
 
-Channel *mh_addChannel(int type)
+Channel *mh::addChannel(int type)
 {
   Channel *ch;
 	int bufferSize = G_KernelAudio.realBufsize * 2;
@@ -144,7 +144,7 @@ Channel *mh_addChannel(int type)
 		break;
 	}
 
-	ch->index = __mh_getNewChanIndex__();
+	ch->index = __getNewChanIndex__();
 	gu_log("[mh::addChannel] channel index=%d added, type=%d, total=%d\n",
     ch->index, ch->type, G_Mixer.channels.size());
 	return ch;
@@ -154,7 +154,7 @@ Channel *mh_addChannel(int type)
 /* -------------------------------------------------------------------------- */
 
 
-int mh_deleteChannel(Channel *ch)
+int mh::deleteChannel(Channel *ch)
 {
 	int index = -1;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -182,7 +182,7 @@ int mh_deleteChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *mh_getChannelByIndex(int index)
+Channel *mh::getChannelByIndex(int index)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->index == index)
@@ -195,7 +195,7 @@ Channel *mh_getChannelByIndex(int index)
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_hasLogicalSamples()
+bool mh::hasLogicalSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
@@ -211,7 +211,7 @@ bool mh_hasLogicalSamples()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_hasEditedSamples()
+bool mh::hasEditedSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
   {
@@ -228,7 +228,7 @@ bool mh_hasEditedSamples()
 /* -------------------------------------------------------------------------- */
 
 
-void mh_stopSequencer()
+void mh::stopSequencer()
 {
   G_Clock.stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
@@ -239,7 +239,7 @@ void mh_stopSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_uniqueSolo(Channel *ch)
+bool mh::uniqueSolo(Channel *ch)
 {
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -256,7 +256,7 @@ bool mh_uniqueSolo(Channel *ch)
 
 /** TODO - revision needed: mh should not call glue_addChannel */
 
-void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
+void mh::loadPatch_DEPR_(bool isProject, const char *projPath)
 {
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
@@ -291,7 +291,7 @@ void mh_loadPatch_DEPR_(bool isProject, const char *projPath)
 /* -------------------------------------------------------------------------- */
 
 
-void mh_readPatch()
+void mh::readPatch()
 {
 	G_Mixer.ready = false;
 
@@ -305,8 +305,8 @@ void mh_readPatch()
 
 #ifdef WITH_VST
 
-	__mh_readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
-	__mh_readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
+	__readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
+	__readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
 
 #endif
 
@@ -321,7 +321,7 @@ void mh_readPatch()
 /* -------------------------------------------------------------------------- */
 
 
-void mh_rewindSequencer()
+void mh::rewindSequencer()
 {
 	if (G_Clock.getQuantize() > 0 && G_Clock.isRunning())   // quantize rewind
 		G_Mixer.rewindWait = true;
@@ -333,7 +333,7 @@ void mh_rewindSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_startInputRec()
+bool mh::startInputRec()
 {
 	int channelsReady = 0;
 
@@ -348,20 +348,20 @@ bool mh_startInputRec()
 
 		if (!ch->allocEmpty(G_Clock.getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
 		{
-			gu_log("[mh_startInputRec] unable to allocate new Wave in chan %d!\n",
+			gu_log("[mh::startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
 			continue;
 		}
 
 		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
 
-		while (!mh_uniqueSampleName(ch, ch->wave->name)) {
+		while (!mh::uniqueSampleName(ch, ch->wave->name)) {
 			G_Patch_DEPR_.lastTakeId++;
 			G_Patch.lastTakeId++;
 			ch->wave->name = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
 		}
 
-		gu_log("[mh_startInputRec] start input recs using chan %d with size %d "
+		gu_log("[mh::startInputRec] start input recs using chan %d with size %d "
 			"frame=%d\n", ch->index, G_Clock.getTotalFrames(), G_Mixer.inputTracker);
 
 		channelsReady++;
@@ -381,7 +381,7 @@ bool mh_startInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-void mh_stopInputRec()
+void mh::stopInputRec()
 {
 	G_Mixer.mergeVirtualInput();
 	G_Mixer.recording = false;
@@ -393,7 +393,7 @@ void mh_stopInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_hasArmedSampleChannels()
+bool mh::hasArmedSampleChannels()
 {
   for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     Channel *ch = G_Mixer.channels.at(i);
@@ -407,7 +407,7 @@ bool mh_hasArmedSampleChannels()
 /* -------------------------------------------------------------------------- */
 
 
-bool mh_uniqueSampleName(SampleChannel *ch, const string &name)
+bool mh::uniqueSampleName(SampleChannel *ch, const string &name)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
 		if (ch == G_Mixer.channels.at(i))  // skip itself

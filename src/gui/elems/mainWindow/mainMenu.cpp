@@ -135,7 +135,7 @@ void geMainMenu::__cb_file()
 		return;
 	}
 	if (strcmp(m->label(), "Save patch...") == 0) {
-		if (mh_hasLogicalSamples() || mh_hasEditedSamples())
+		if (mh::hasLogicalSamples() || mh::hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
 		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,

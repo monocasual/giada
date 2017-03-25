@@ -2,13 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
- * How to know if you need another glue_ function? Ask yourself if the
- * new action will ever be called via MIDI or keyboard/mouse. If yes,
- * put it here.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -283,7 +276,7 @@ int glue_startInputRec(bool gui)
 	if (G_audio_status == false)
 		return false;
 
-	if (!mh_startInputRec()) {
+	if (!mh::startInputRec()) {
 	  Fl::lock();
 	  G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
 		Fl::unlock();
@@ -314,7 +307,7 @@ int glue_startInputRec(bool gui)
 
 int glue_stopInputRec(bool gui)
 {
-	mh_stopInputRec();
+	mh::stopInputRec();
 
 	/* Start all sample channels in loop mode that were armed, i.e. that were
 	recording stuff and not yet in play. They are also started in force mode, i.e.
