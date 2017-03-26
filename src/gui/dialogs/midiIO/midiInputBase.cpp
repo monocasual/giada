@@ -33,10 +33,8 @@
 #include "midiInputBase.h"
 
 
-extern KernelMidi G_KernelMidi;
-
-
 using std::string;
+using namespace giada;
 
 
 gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)
@@ -50,7 +48,7 @@ gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)
 
 gdMidiInputBase::~gdMidiInputBase()
 {
-	G_KernelMidi.stopMidiLearn();
+	kernelMidi::stopMidiLearn();
 }
 
 
@@ -59,7 +57,7 @@ gdMidiInputBase::~gdMidiInputBase()
 
 void gdMidiInputBase::stopMidiLearn(geMidiLearner *learner)
 {
-	G_KernelMidi.stopMidiLearn();
+	kernelMidi::stopMidiLearn();
 	learner->updateValue();
 }
 

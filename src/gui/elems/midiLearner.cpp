@@ -32,11 +32,11 @@
 #include "midiLearner.h"
 
 
-extern KernelMidi G_KernelMidi;
+using namespace giada;
 
 
 geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
-  KernelMidi::cb_midiLearn *cb, uint32_t *param)
+  kernelMidi::cb_midiLearn *cb, uint32_t *param)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
 		param   (param)
@@ -103,8 +103,8 @@ void geMidiLearner::__cb_button()
 	if (button->value() == 1) {
 		cbData.window  = (gdMidiInput*) parent();  // parent = gdMidiInput
 		cbData.learner = this;
-		G_KernelMidi.startMidiLearn(callback, (void*)&cbData);
+		kernelMidi::startMidiLearn(callback, (void*)&cbData);
 	}
 	else
-		G_KernelMidi.stopMidiLearn();
+		kernelMidi::stopMidiLearn();
 }

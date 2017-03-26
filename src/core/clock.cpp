@@ -41,9 +41,7 @@ namespace gc = giada::clock;
 
 namespace
 {
-  //KernelAudio *kernelAudio;
-  KernelMidi  *kernelMidi;
-  Conf        *conf;
+  Conf *conf;
 
   bool  running;
   float bpm;
@@ -81,12 +79,10 @@ namespace
 /* -------------------------------------------------------------------------- */
 
 
-void gc::init(KernelMidi *kernelMidi, Conf *conf)
+void gc::init(Conf *conf)
 {
-  assert(kernelMidi != nullptr);
   assert(conf != nullptr);
 
-  kernelMidi        = kernelMidi;
   conf              = conf;
   running           = false;
   bpm               = G_DEFAULT_BPM;
@@ -148,8 +144,8 @@ void gc::start()
 {
   running = true;
 	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
-		kernelMidi->send(MIDI_START, -1, -1);
-		kernelMidi->send(MIDI_POSITION_PTR, 0, 0);
+		kernelMidi::send(MIDI_START, -1, -1);
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 	}
 }
 
@@ -158,7 +154,7 @@ void gc::stop()
 {
   running = false;
   if (conf->midiSync == MIDI_SYNC_CLOCK_M)
-  	kernelMidi->send(MIDI_STOP, -1, -1);
+  	kernelMidi::send(MIDI_STOP, -1, -1);
 }
 
 
@@ -254,7 +250,7 @@ void gc::sendMIDIsync()
 
 	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
 		if (currentFrame % (framesPerBeat/24) == 0)
-			kernelMidi->send(MIDI_CLOCK, -1, -1);
+			kernelMidi::send(MIDI_CLOCK, -1, -1);
     return;
   }
 
@@ -274,10 +270,10 @@ void gc::sendMIDIsync()
 		 * seconds high nibble */
 
 		if (midiTCframes % 2 == 0) {
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes & 0x0F)  | 0x00, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCframes >> 4)    | 0x10, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds & 0x0F) | 0x20, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCseconds >> 4)   | 0x30, -1);
 		}
 
 		/* minutes low nibble
@@ -286,10 +282,10 @@ void gc::sendMIDIsync()
 		 * hours high nibble SMPTE frame rate */
 
 		else {
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
-			kernelMidi->send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes & 0x0F) | 0x40, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTCminutes >> 4)   | 0x50, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours & 0x0F)   | 0x60, -1);
+			kernelMidi::send(MIDI_MTC_QUARTER, (midiTChours >> 4)     | 0x70, -1);
 		}
 
 		midiTCframes++;
@@ -330,10 +326,10 @@ void gc::sendMIDIrewind()
 	 * SMPTE time in one message */
 
 	if (conf->midiSync == MIDI_SYNC_MTC_M) {
-		kernelMidi->send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
-		kernelMidi->send(0x01, 0x01, 0x00);        // hours 0
-		kernelMidi->send(0x00, 0x00, 0x00);        // mins, secs, frames 0
-		kernelMidi->send(MIDI_EOX, -1, -1);        // end of sysex
+		kernelMidi::send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
+		kernelMidi::send(0x01, 0x01, 0x00);        // hours 0
+		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0
+		kernelMidi::send(MIDI_EOX, -1, -1);        // end of sysex
 	}
 }
 

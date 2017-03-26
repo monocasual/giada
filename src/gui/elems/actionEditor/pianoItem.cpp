@@ -38,7 +38,6 @@
 #include "pianoItem.h"
 
 
-extern KernelMidi G_KernelMidi;
 extern Mixer      G_Mixer;
 extern Recorder	  G_Recorder;
 
@@ -60,7 +59,7 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_
 	/* a is a pointer: action exists, needs to be displayed */
 
 	if (a) {
-		note    = G_KernelMidi.getB2(a->iValue);
+		note    = kernelMidi::getB2(a->iValue);
 		frame_a = a->frame;
 		frame_b = b->frame;
 		event_a = a->iValue;

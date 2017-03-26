@@ -42,7 +42,6 @@
 
 
 extern Recorder   G_Recorder;
-extern KernelMidi G_KernelMidi;
 extern Mixer      G_Mixer;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -87,9 +86,9 @@ void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 void MidiChannel::addVstMidiEvent(uint32_t msg, int localFrame)
 {
 	juce::MidiMessage message = juce::MidiMessage(
-		G_KernelMidi.getB1(msg),
-		G_KernelMidi.getB2(msg),
-		G_KernelMidi.getB3(msg));
+		kernelMidi::getB1(msg),
+		kernelMidi::getB2(msg),
+		kernelMidi::getB3(msg));
 	midiBuffer.addEvent(message, localFrame);
 }
 
@@ -155,7 +154,7 @@ void MidiChannel::setMute(bool internal)
 {
 	mute = true;  	// internal mute does not exist for midi (for now)
 	if (midiOut)
-		G_KernelMidi.send(MIDI_ALL_NOTES_OFF);
+		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
 		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif
@@ -230,7 +229,7 @@ void MidiChannel::kill(int frame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		if (midiOut)
-			G_KernelMidi.send(MIDI_ALL_NOTES_OFF);
+			kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
 		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif
@@ -288,7 +287,7 @@ void MidiChannel::sendMidi(Recorder::action *a, int localFrame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
-			G_KernelMidi.send(a->iValue | MIDI_CHANS[midiOutChan]);
+			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
 
 #ifdef WITH_VST
 		addVstMidiEvent(a->iValue, localFrame);
@@ -301,7 +300,7 @@ void MidiChannel::sendMidi(uint32_t data)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
-			G_KernelMidi.send(data | MIDI_CHANS[midiOutChan]);
+			kernelMidi::send(data | MIDI_CHANS[midiOutChan]);
 #ifdef WITH_VST
 		addVstMidiEvent(data, 0);
 #endif
@@ -315,7 +314,7 @@ void MidiChannel::sendMidi(uint32_t data)
 void MidiChannel::rewind()
 {
 	if (midiOut)
-		G_KernelMidi.send(MIDI_ALL_NOTES_OFF);
+		kernelMidi::send(MIDI_ALL_NOTES_OFF);
 #ifdef WITH_VST
 		addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 #endif

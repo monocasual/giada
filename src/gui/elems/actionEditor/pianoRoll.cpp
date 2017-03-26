@@ -42,7 +42,6 @@
 extern Conf	      G_Conf;
 extern Recorder		G_Recorder;
 extern Mixer      G_Mixer;
-extern KernelMidi G_KernelMidi;
 
 
 using namespace giada;
@@ -98,8 +97,8 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			/* extract MIDI infos from a1: if is note off skip it, we are looking
 			 * for note on only */
 
-			int a1_type = G_KernelMidi.getB1(a1->iValue);
-			int a1_note = G_KernelMidi.getB2(a1->iValue);
+			int a1_type = kernelMidi::getB1(a1->iValue);
+			int a1_note = kernelMidi::getB2(a1->iValue);
 
 			if (a1_type == 0x80) // NOTE_OFF
 				continue;
@@ -110,7 +109,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
       velocity of a note_off. */
 
 			G_Recorder.getNextAction(a1->chan, ACTION_MIDI, a1->frame, &a2,
-					G_KernelMidi.getIValue(0x80, a1_note, 0xFF));
+					kernelMidi::getIValue(0x80, a1_note, 0xFF));
 
 			/* next action note_off found: add a new gePianoItem to piano roll */
 

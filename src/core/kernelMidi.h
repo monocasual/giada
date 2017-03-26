@@ -40,27 +40,19 @@
 #include <vector>
 
 
-class KernelMidi
+namespace giada {
+namespace kernelMidi
 {
-public:
-
-	unsigned numOutPorts;
-	unsigned numInPorts;
-
-	KernelMidi();
-
 	typedef void (cb_midiLearn) (uint32_t, void *);
 
 	void startMidiLearn(cb_midiLearn *cb, void *data);
 	void stopMidiLearn();
 
-	int getB1(uint32_t iValue) { return (iValue >> 24) & 0xFF; }
-	int getB2(uint32_t iValue) { return (iValue >> 16) & 0xFF; }
-	int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
+	int getB1(uint32_t iValue);
+	int getB2(uint32_t iValue);
+	int getB3(uint32_t iValue);
 
-	uint32_t getIValue(int b1, int b2, int b3) {
-		return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
-	}
+	uint32_t getIValue(int b1, int b2, int b3);
 
 	/* send
 	 * send a MIDI message 's' (uint32_t). */
@@ -90,38 +82,13 @@ public:
 	std::string getInPortName(unsigned p);
 	std::string getOutPortName(unsigned p);
 
+  unsigned countInPorts();
+  unsigned countOutPorts();
+
 	bool hasAPI(int API);
 
 	std::string getRtMidiVersion();
+}} // giada::kernelMidi::
 
-private:
-
-	int api;
-	class RtMidiOut *midiOut;
-	class RtMidiIn  *midiIn;
-
-	/* cb_learn
-	 * callback prepared by the gdMidiGrabber window and called by
-	 * kernelMidi. It contains things to do once the midi message has been
-	 * stored. */
-
-	cb_midiLearn *cb_learn;
-	void         *cb_data;
-
-	/* callback
-	 * master callback for input events. */
-
-	static void callback(double t, std::vector<unsigned char> *msg, void *data);
-	void __callback(double t, std::vector<unsigned char> *msg, void *data);
-
-	void sendMidiLightningInitMsgs();
-
-
-	void processMaster(uint32_t pure, uint32_t value);
-	void processChannels(uint32_t pure, uint32_t value);
-#ifdef WITH_VST
-  void processPlugins(class Channel *ch, uint32_t pure, uint32_t value);
-#endif
-};
 
 #endif

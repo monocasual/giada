@@ -35,7 +35,11 @@
 #include "../../core/kernelMidi.h"
 
 
-extern KernelMidi G_KernelMidi;
+class gdMidiInput;
+class geMidiLearner;
+class gBox;
+class gClick;
+class gButton;
 
 
 class geMidiLearner : public Fl_Group
@@ -47,11 +51,11 @@ private:
 	 * uint32_t msg - MIDI message
 	 * void   *data - extra data */
 
-	KernelMidi::cb_midiLearn *callback;
+	giada::kernelMidi::cb_midiLearn *callback;
 
-	class gBox    *text;
-	class gClick  *value;
-	class gButton *button;
+	gBox    *text;
+	gClick  *value;
+	gButton *button;
 
 	static void cb_button(Fl_Widget *v, void *p);
 	static void cb_value (Fl_Widget *v, void *p);
@@ -65,8 +69,8 @@ public:
 
   struct cbData_t
   {
-		class gdMidiInput   *window;
-		class geMidiLearner *learner;
+		gdMidiInput   *window;
+		geMidiLearner *learner;
 	} cbData;
 
 	/* param
@@ -74,7 +78,7 @@ public:
 
 	uint32_t *param;
 
-	geMidiLearner(int x, int y, int w, const char *l, KernelMidi::cb_midiLearn *cb,
+	geMidiLearner(int x, int y, int w, const char *l, giada::kernelMidi::cb_midiLearn *cb,
     uint32_t *param);
 
 	void updateValue();

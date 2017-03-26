@@ -32,7 +32,7 @@
 #include "midiOutputBase.h"
 
 
-extern KernelMidi G_KernelMidi;
+using namespace giada;
 
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h)
@@ -46,7 +46,7 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 
 void gdMidiOutputBase::stopMidiLearn(geMidiLearner *learner)
 {
-	G_KernelMidi.stopMidiLearn();
+	kernelMidi::stopMidiLearn();
 	learner->updateValue();
 }
 

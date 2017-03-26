@@ -52,7 +52,6 @@
 
 extern Mixer 			   G_Mixer;
 extern Recorder  	   G_Recorder;
-extern KernelMidi    G_KernelMidi;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
@@ -116,9 +115,9 @@ void init_prepareKernelAudio()
 
 void init_prepareKernelMIDI()
 {
-	G_KernelMidi.setApi(G_Conf.midiSystem);
-	G_KernelMidi.openOutDevice(G_Conf.midiPortOut);
-	G_KernelMidi.openInDevice(G_Conf.midiPortIn);
+	kernelMidi::setApi(G_Conf.midiSystem);
+	kernelMidi::openOutDevice(G_Conf.midiPortOut);
+	kernelMidi::openInDevice(G_Conf.midiPortIn);
 }
 
 
