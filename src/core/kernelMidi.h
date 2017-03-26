@@ -43,51 +43,51 @@
 namespace giada {
 namespace kernelMidi
 {
-	typedef void (cb_midiLearn) (uint32_t, void *);
+typedef void (cb_midiLearn) (uint32_t, void *);
 
-	void startMidiLearn(cb_midiLearn *cb, void *data);
-	void stopMidiLearn();
+void startMidiLearn(cb_midiLearn *cb, void *data);
+void stopMidiLearn();
 
-	int getB1(uint32_t iValue);
-	int getB2(uint32_t iValue);
-	int getB3(uint32_t iValue);
+int getB1(uint32_t iValue);
+int getB2(uint32_t iValue);
+int getB3(uint32_t iValue);
 
-	uint32_t getIValue(int b1, int b2, int b3);
+uint32_t getIValue(int b1, int b2, int b3);
 
-	/* send
-	 * send a MIDI message 's' (uint32_t). */
+/* send
+ * send a MIDI message 's' (uint32_t). */
 
-	void send(uint32_t s);
+void send(uint32_t s);
 
-	/* send (2)
-	 * send separate bytes of MIDI message. */
+/* send (2)
+ * send separate bytes of MIDI message. */
 
-	void send(int b1, int b2=-1, int b3=-1);
+void send(int b1, int b2=-1, int b3=-1);
 
-	/* setApi
-	 * set the Api in use for both in & out messages. */
+/* setApi
+ * set the Api in use for both in & out messages. */
 
-	void setApi(int api);
+void setApi(int api);
 
-	/* open/close/in/outDevice */
+/* open/close/in/outDevice */
 
-	int openOutDevice(int port);
-	int openInDevice(int port);
-	int closeInDevice();
-	int closeOutDevice();
+int openOutDevice(int port);
+int openInDevice(int port);
+int closeInDevice();
+int closeOutDevice();
 
-	/* getIn/OutPortName
-	 * return the name of the port 'p'. */
+/* getIn/OutPortName
+ * return the name of the port 'p'. */
 
-	std::string getInPortName(unsigned p);
-	std::string getOutPortName(unsigned p);
+std::string getInPortName(unsigned p);
+std::string getOutPortName(unsigned p);
 
-  unsigned countInPorts();
-  unsigned countOutPorts();
+unsigned countInPorts();
+unsigned countOutPorts();
 
-	bool hasAPI(int API);
+bool hasAPI(int API);
 
-	std::string getRtMidiVersion();
+std::string getRtMidiVersion();
 }}; // giada::kernelMidi::
 
 

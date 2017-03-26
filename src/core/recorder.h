@@ -40,7 +40,6 @@
 #include <pthread.h>
 
 
-class Clock;
 class Channel;
 class Mixer;
 
@@ -187,7 +186,6 @@ private:
 	 * debug of the frame stack. */
 
 	void print();
-
 };
 
 #endif

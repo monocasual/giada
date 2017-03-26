@@ -39,62 +39,62 @@ class KernelAudio;
 namespace giada {
 namespace clock
 {
-  void init(Conf *conf);
+void init(Conf *conf);
 
-  /* sendMIDIsync
-  Generates MIDI sync output data. */
+/* sendMIDIsync
+Generates MIDI sync output data. */
 
-  void sendMIDIsync();
+void sendMIDIsync();
 
-  /* sendMIDIrewind
-	Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
+/* sendMIDIrewind
+Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
 
-	void sendMIDIrewind();
+void sendMIDIrewind();
 
 #ifdef __linux__
-  void recvJackSync();
+void recvJackSync();
 #endif
 
-  float getBpm();
-  int getBeats();
-  int getBars();
-  int getCurrentFrame();
-  int getCurrentBeat();
-  int getFramesPerBar();
-  int getFramesPerBeat();
-  int getTotalFrames();
-  int getFramesInSequencer();
-  int getQuantize();
-  int getQuanto();
+float getBpm();
+int getBeats();
+int getBars();
+int getCurrentFrame();
+int getCurrentBeat();
+int getFramesPerBar();
+int getFramesPerBeat();
+int getTotalFrames();
+int getFramesInSequencer();
+int getQuantize();
+int getQuanto();
 
-  /* incrCurrentFrame
-  Increases current frame of a stereo step (+2). */
+/* incrCurrentFrame
+Increases current frame of a stereo step (+2). */
 
-  void incrCurrentFrame();
+void incrCurrentFrame();
 
-  /* quantoHasPassed
-  Tells whether a quanto unit has passed yet. */
+/* quantoHasPassed
+Tells whether a quanto unit has passed yet. */
 
-  bool quantoHasPassed();
+bool quantoHasPassed();
 
-  /* updateFrameBars
-	Updates bpm, frames, beats and so on. */
+/* updateFrameBars
+Updates bpm, frames, beats and so on. */
 
-	void updateFrameBars();
+void updateFrameBars();
 
-  void setBpm(float b);
-  void setBars(int b);
-  void setBeats(int b);
-  void setQuantize(int q);
+void setBpm(float b);
+void setBars(int b);
+void setBeats(int b);
+void setQuantize(int q);
 
-  bool isRunning();
-  bool isOnBeat();
-  bool isOnBar();
-  bool isOnFirstBeat();
+bool isRunning();
+bool isOnBeat();
+bool isOnBar();
+bool isOnFirstBeat();
 
-  void rewind();
-  void start();
-  void stop();
+void rewind();
+void start();
+void stop();
 }}; // giada::clock::
 
 

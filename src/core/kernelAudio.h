@@ -49,47 +49,47 @@ namespace kernelAudio
 {
 #ifdef __linux__
 
-  struct JackState
-  {
-    bool running;
-    double bpm;
-    uint32_t frame;
-  };
+struct JackState
+{
+  bool running;
+  double bpm;
+  uint32_t frame;
+};
 
 #endif
 
-	void init();
+void init();
 
-	int openDevice(Conf *conf, Mixer *mixer);
-	int closeDevice();
-	int startStream();
-	int stopStream();
+int openDevice(Conf *conf, Mixer *mixer);
+int closeDevice();
+int startStream();
+int stopStream();
 
-	bool isProbed(unsigned dev);
-	bool isDefaultIn(unsigned dev);
-	bool isDefaultOut(unsigned dev);
-  bool isInputEnabled();
-	std::string getDeviceName(unsigned dev);
-	unsigned getMaxInChans(int dev);
-	unsigned getMaxOutChans(unsigned dev);
-	unsigned getDuplexChans(unsigned dev);
-  unsigned getRealBufSize();
-  unsigned countDevices();
-	int getTotalFreqs(unsigned dev);
-	int getFreq(unsigned dev, int i);
-	int getDeviceByName(const char *name);
-	int getDefaultOut();
-	int getDefaultIn();
-	bool hasAPI(int API);
-	std::string getRtAudioVersion();
+bool isProbed(unsigned dev);
+bool isDefaultIn(unsigned dev);
+bool isDefaultOut(unsigned dev);
+bool isInputEnabled();
+std::string getDeviceName(unsigned dev);
+unsigned getMaxInChans(int dev);
+unsigned getMaxOutChans(unsigned dev);
+unsigned getDuplexChans(unsigned dev);
+unsigned getRealBufSize();
+unsigned countDevices();
+int getTotalFreqs(unsigned dev);
+int getFreq(unsigned dev, int i);
+int getDeviceByName(const char *name);
+int getDefaultOut();
+int getDefaultIn();
+bool hasAPI(int API);
+std::string getRtAudioVersion();
 
 #ifdef __linux__
 
-  void jackStart();
-  void jackStop();
-  void jackSetPosition(uint32_t frame);
-  void jackSetBpm(double bpm);
-  const JackState &jackTransportQuery();
+void jackStart();
+void jackStop();
+void jackSetPosition(uint32_t frame);
+void jackSetBpm(double bpm);
+const JackState &jackTransportQuery();
 
 #endif
 }}; // giada::kernelAudio::
