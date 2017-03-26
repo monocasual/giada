@@ -50,7 +50,6 @@
 
 
 extern Recorder			 G_Recorder;
-extern KernelAudio   G_KernelAudio;
 extern bool 		 		 G_audio_status;
 extern Mixer	   		 G_Mixer;
 extern Clock         G_Clock;
@@ -148,7 +147,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		{
 			if (ch->mode == SINGLE_PRESS) {
 				G_Recorder.startOverdub(ch->index, ACTION_KEYS, clock::getCurrentFrame(),
-          G_KernelAudio.realBufsize);
+          kernelAudio::getRealBufSize());
         ch->readActions = false;   // don't read actions while overdubbing
       }
 			else {

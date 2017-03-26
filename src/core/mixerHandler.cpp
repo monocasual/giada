@@ -58,7 +58,6 @@ extern Mixer 		   G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
 extern Conf 		   G_Conf;
-extern KernelAudio G_KernelAudio;
 extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
@@ -127,7 +126,7 @@ namespace
 Channel *gm::addChannel(int type)
 {
   Channel *ch;
-	int bufferSize = G_KernelAudio.realBufsize * 2;
+	int bufferSize = kernelAudio::getRealBufSize() * 2;
 
 	if (type == CHANNEL_SAMPLE)
 		ch = new SampleChannel(bufferSize, &G_MidiMap);

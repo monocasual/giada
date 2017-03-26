@@ -34,10 +34,8 @@
 #include "gd_devInfo.h"
 
 
-extern KernelAudio G_KernelAudio;
-
-
 using std::string;
+using namespace giada;
 
 
 gdDevInfo::gdDevInfo(unsigned dev)
@@ -52,14 +50,14 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	string body  = "";
 	int    lines = 7;
 
-	body  = "Device name: " + G_KernelAudio.getDeviceName(dev) + "\n";
-	body += "Total output(s): " + gu_itoa(G_KernelAudio.getMaxOutChans(dev)) + "\n";
-	body += "Total intput(s): " + gu_itoa(G_KernelAudio.getMaxInChans(dev)) + "\n";
-	body += "Duplex channel(s): " + gu_itoa(G_KernelAudio.getDuplexChans(dev)) + "\n";
-	body += "Default output: " + string(G_KernelAudio.isDefaultOut(dev) ? "yes" : "no") + "\n";
-	body += "Default input: " + string(G_KernelAudio.isDefaultIn(dev) ? "yes" : "no") + "\n";
+	body  = "Device name: " + kernelAudio::getDeviceName(dev) + "\n";
+	body += "Total output(s): " + gu_itoa(kernelAudio::getMaxOutChans(dev)) + "\n";
+	body += "Total intput(s): " + gu_itoa(kernelAudio::getMaxInChans(dev)) + "\n";
+	body += "Duplex channel(s): " + gu_itoa(kernelAudio::getDuplexChans(dev)) + "\n";
+	body += "Default output: " + string(kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
+	body += "Default input: " + string(kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
 
-	int totalFreq = G_KernelAudio.getTotalFreqs(dev);
+	int totalFreq = kernelAudio::getTotalFreqs(dev);
 	body += "Supported frequencies: " + gu_itoa(totalFreq);
 
 	for (int i=0; i<totalFreq; i++) {
@@ -67,7 +65,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 			body += "\n    ";  // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
-		body += gu_itoa( G_KernelAudio.getFreq(dev, i)) + "  ";
+		body += gu_itoa( kernelAudio::getFreq(dev, i)) + "  ";
 	}
 
 	text->copy_label(body.c_str());

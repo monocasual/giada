@@ -74,7 +74,7 @@ SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
 	  midiInPitch      (0x0)
 {
 	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
-	pChan      = (float *) malloc(G_KernelAudio.realBufsize * 2 * sizeof(float));
+	pChan      = (float *) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
 }
 
 
@@ -506,7 +506,7 @@ void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 	if (G_Recorder.canRec(this, mixer)) {
 		if (mode == SINGLE_PRESS) {
 			G_Recorder.startOverdub(index, ACTION_KEYS, clock::getCurrentFrame(),
-        G_KernelAudio.realBufsize);
+        kernelAudio::getRealBufSize());
       readActions = false;   // don't read actions while overdubbing
     }
 		else

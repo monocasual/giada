@@ -50,7 +50,6 @@
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
-extern KernelAudio   G_KernelAudio;
 extern KernelMidi    G_KernelMidi;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Conf	 	   		 G_Conf;
@@ -87,7 +86,7 @@ void glue_setBpm(const char *v1, const char *v2)
   G_Recorder.updateBpm(oldBpmF, bpmF, clock::getQuanto());
 
 #ifdef __linux__
-  G_KernelAudio.jackSetBpm(clock::getBpm());
+  kernelAudio::jackSetBpm(clock::getBpm());
 #endif
 
   gu_refreshActionEditor();
@@ -180,7 +179,7 @@ void glue_rewindSeq(bool gui, bool notifyJack)
 
 #ifdef __linux__
   if (notifyJack)
-	  G_KernelAudio.jackSetPosition(0);
+	  kernelAudio::jackSetPosition(0);
 #endif
 
 	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)

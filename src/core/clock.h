@@ -39,7 +39,7 @@ class KernelAudio;
 namespace giada {
 namespace clock
 {
-  void init(KernelAudio *ka, KernelMidi *km, Conf *conf);
+  void init(KernelMidi *km, Conf *conf);
 
   /* sendMIDIsync
   Generates MIDI sync output data. */

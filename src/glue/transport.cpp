@@ -35,7 +35,6 @@
 #include "transport.h"
 
 
-extern KernelAudio   G_KernelAudio;
 extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
@@ -58,7 +57,7 @@ void glue_startSeq(bool gui)
 	clock::start();
 
 #ifdef __linux__
-	G_KernelAudio.jackStart();
+	kernelAudio::jackStart();
 #endif
 
 	if (!gui) {
@@ -77,7 +76,7 @@ void glue_stopSeq(bool gui)
 	mh::stopSequencer();
 
 #ifdef __linux__
-	G_KernelAudio.jackStop();
+	kernelAudio::jackStop();
 #endif
 
 	/* what to do if we stop the sequencer and some action recs are active?

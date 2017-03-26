@@ -50,7 +50,6 @@
 
 Conf          G_Conf;
 pthread_t     G_videoThread;
-KernelAudio   G_KernelAudio;
 KernelMidi    G_KernelMidi;
 bool          G_quit;
 bool	        G_audio_status;
@@ -79,7 +78,7 @@ int main(int argc, char **argv)
 	init_prepareKernelAudio();
 
   /* TODO - move somewhere else */
-  giada::clock::init(&G_KernelAudio, &G_KernelMidi, &G_Conf);
+  giada::clock::init(&G_KernelMidi, &G_Conf);
   /* TODO */
 
 	init_prepareKernelMIDI();

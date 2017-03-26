@@ -40,50 +40,73 @@ using std::string;
 using std::vector;
 
 
-KernelAudio::KernelAudio()
-  :	numDevs     (0),
-  	inputEnabled(0),
-  	realBufsize (0),
-  	api         (0),
-    system      (nullptr)
+namespace gka = giada::kernelAudio;
+
+
+namespace
 {
+  RtAudio *rtSystem;
+  unsigned numDevs;
+	bool inputEnabled;
+	unsigned realBufsize; 		// reale bufsize from the soundcard
+	int api;
+
+#ifdef __linux__
+
+  gka::JackState jackState;
+
+  jack_client_t *jackGetHandle()
+  {
+  	return static_cast<jack_client_t*>(rtSystem->rtapi_->__HACK__getJackClient());
+  }
+
+#endif
+}
+
+void gka::init()
+{
+  rtSystem     = nullptr;
+  numDevs      = 0;
+  inputEnabled = 0;
+  realBufsize  = 0;
+  api          = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
+int gka::openDevice(Conf *conf, Mixer *mixer)
 {
 	api = conf->soundSystem;
-	gu_log("[KA] using system 0x%x\n", api);
+	gu_log("[KA] using rtSystem 0x%x\n", api);
 
 #if defined(__linux__)
 
 	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
-		system = new RtAudio(RtAudio::UNIX_JACK);
+		rtSystem = new RtAudio(RtAudio::UNIX_JACK);
 	else
 	if (api == SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
-		system = new RtAudio(RtAudio::LINUX_ALSA);
+		rtSystem = new RtAudio(RtAudio::LINUX_ALSA);
 	else
 	if (api == SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
-		system = new RtAudio(RtAudio::LINUX_PULSE);
+		rtSystem = new RtAudio(RtAudio::LINUX_PULSE);
 
 #elif defined(_WIN32)
 
 	if (api == SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
-		system = new RtAudio(RtAudio::WINDOWS_DS);
+		rtSystem = new RtAudio(RtAudio::WINDOWS_DS);
 	else
 	if (api == SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
-		system = new RtAudio(RtAudio::WINDOWS_ASIO);
+		rtSystem = new RtAudio(RtAudio::WINDOWS_ASIO);
 	else
 	if (api == SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
-		system = new RtAudio(RtAudio::WINDOWS_WASAPI);
+		rtSystem = new RtAudio(RtAudio::WINDOWS_WASAPI);
 
 #elif defined(__APPLE__)
 
 	if (api == SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
-		system = new RtAudio(RtAudio::MACOSX_CORE);
+		rtSystem = new RtAudio(RtAudio::MACOSX_CORE);
 
 #endif
 
@@ -93,7 +116,7 @@ int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
 	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n",
     conf->soundDeviceOut, conf->soundDeviceIn, conf->samplerate);
 
-	numDevs = system->getDeviceCount();
+	numDevs = rtSystem->getDeviceCount();
 
 	if (numDevs < 1) {
 		gu_log("[KA] no devices found with this API\n");
@@ -144,7 +167,7 @@ int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
 #endif
 
 	try {
-		system->openStream(
+		rtSystem->openStream(
 			&outParams, 					              // output params
 			conf->soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
 			RTAUDIO_FLOAT32,			              // audio format
@@ -156,7 +179,7 @@ int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] system init error: %s\n", e.getMessage().c_str());
+		gu_log("[KA] rtSystem init error: %s\n", e.getMessage().c_str());
 		closeDevice();
 		return 0;
 	}
@@ -166,11 +189,11 @@ int KernelAudio::openDevice(Conf *conf, Mixer *mixer)
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::startStream()
+int gka::startStream()
 {
 	try {
-		system->startStream();
-		gu_log("[KA] latency = %lu\n", system->getStreamLatency());
+		rtSystem->startStream();
+		gu_log("[KA] latency = %lu\n", rtSystem->getStreamLatency());
 		return 1;
 	}
 	catch (RtAudioError &e) {
@@ -183,10 +206,10 @@ int KernelAudio::startStream()
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::stopStream()
+int gka::stopStream()
 {
 	try {
-		system->stopStream();
+		rtSystem->stopStream();
 		return 1;
 	}
 	catch (RtAudioError &e) {
@@ -199,10 +222,10 @@ int KernelAudio::stopStream()
 /* -------------------------------------------------------------------------- */
 
 
-string KernelAudio::getDeviceName(unsigned dev)
+string gka::getDeviceName(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).name;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).name;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] invalid device ID = %d\n", dev);
@@ -214,17 +237,17 @@ string KernelAudio::getDeviceName(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::closeDevice()
+int gka::closeDevice()
 {
-	if (system->isStreamOpen()) {
+	if (rtSystem->isStreamOpen()) {
 #if defined(__linux__) || defined(__APPLE__)
-		system->abortStream(); // stopStream seems to lock the thread
+		rtSystem->abortStream(); // stopStream seems to lock the thread
 #elif defined(_WIN32)
-		system->stopStream();	 // on Windows it's the opposite
+		rtSystem->stopStream();	 // on Windows it's the opposite
 #endif
-		system->closeStream();
-		delete system;
-		system = nullptr;
+		rtSystem->closeStream();
+		delete rtSystem;
+		rtSystem = nullptr;
 	}
 	return 1;
 }
@@ -233,12 +256,12 @@ int KernelAudio::closeDevice()
 /* -------------------------------------------------------------------------- */
 
 
-unsigned KernelAudio::getMaxInChans(int dev)
+unsigned gka::getMaxInChans(int dev)
 {
 	if (dev == -1) return 0;
 
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).inputChannels;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).inputChannels;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] Unable to get input channels\n");
@@ -250,10 +273,10 @@ unsigned KernelAudio::getMaxInChans(int dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned KernelAudio::getMaxOutChans(unsigned dev)
+unsigned gka::getMaxOutChans(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).outputChannels;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).outputChannels;
 	}
 	catch (RtAudioError &e) {
 		gu_log("[KA] Unable to get output channels\n");
@@ -265,10 +288,10 @@ unsigned KernelAudio::getMaxOutChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool KernelAudio::isProbed(unsigned dev)
+bool gka::isProbed(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).probed;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).probed;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -279,10 +302,10 @@ bool KernelAudio::isProbed(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned KernelAudio::getDuplexChans(unsigned dev)
+unsigned gka::getDuplexChans(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).duplexChannels;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).duplexChannels;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -293,10 +316,10 @@ unsigned KernelAudio::getDuplexChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool KernelAudio::isDefaultIn(unsigned dev)
+bool gka::isDefaultIn(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).isDefaultInput;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultInput;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -307,10 +330,10 @@ bool KernelAudio::isDefaultIn(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool KernelAudio::isDefaultOut(unsigned dev)
+bool gka::isDefaultOut(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).isDefaultOutput;
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultOutput;
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -321,10 +344,10 @@ bool KernelAudio::isDefaultOut(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::getTotalFreqs(unsigned dev)
+int gka::getTotalFreqs(unsigned dev)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).sampleRates.size();
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.size();
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -335,10 +358,10 @@ int KernelAudio::getTotalFreqs(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int	KernelAudio::getFreq(unsigned dev, int i)
+int	gka::getFreq(unsigned dev, int i)
 {
 	try {
-		return static_cast<RtAudio::DeviceInfo>(system->getDeviceInfo(dev)).sampleRates.at(i);
+		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.at(i);
 	}
 	catch (RtAudioError &e) {
 		return 0;
@@ -349,21 +372,48 @@ int	KernelAudio::getFreq(unsigned dev, int i)
 /* -------------------------------------------------------------------------- */
 
 
-int KernelAudio::getDefaultIn()
+unsigned gka::getRealBufSize()
 {
-	return system->getDefaultInputDevice();
-}
-
-int KernelAudio::getDefaultOut()
-{
-	return system->getDefaultOutputDevice();
+  return realBufsize;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int	KernelAudio::getDeviceByName(const char *name)
+bool gka::isInputEnabled()
+{
+  return inputEnabled;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+unsigned gka::countDevices()
+{
+  return numDevs;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gka::getDefaultIn()
+{
+	return rtSystem->getDefaultInputDevice();
+}
+
+int gka::getDefaultOut()
+{
+	return rtSystem->getDefaultOutputDevice();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int	gka::getDeviceByName(const char *name)
 {
 	for (unsigned i=0; i<numDevs; i++)
 		if (name == getDeviceName(i))
@@ -375,7 +425,7 @@ int	KernelAudio::getDeviceByName(const char *name)
 /* -------------------------------------------------------------------------- */
 
 
-bool KernelAudio::hasAPI(int API)
+bool gka::hasAPI(int API)
 {
 	vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
@@ -389,27 +439,19 @@ bool KernelAudio::hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-string KernelAudio::getRtAudioVersion()
+string gka::getRtAudioVersion()
 {
 	return RtAudio::getVersion();
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef __linux__
 
 
-/* -------------------------------------------------------------------------- */
-
-
-jack_client_t *KernelAudio::jackGetHandle()
-{
-	return static_cast<jack_client_t*>(system->rtapi_->__HACK__getJackClient());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-const KernelAudio::JackState &KernelAudio::jackTransportQuery()
+const gka::JackState &gka::jackTransportQuery()
 {
 	if (api != SYS_API_JACK)
     return jackState;
@@ -425,7 +467,7 @@ const KernelAudio::JackState &KernelAudio::jackTransportQuery()
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackStart()
+void gka::jackStart()
 {
 	if (api == SYS_API_JACK)
 		jack_transport_start(jackGetHandle());
@@ -435,7 +477,7 @@ void KernelAudio::jackStart()
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackSetPosition(uint32_t frame)
+void gka::jackSetPosition(uint32_t frame)
 {
 	if (api != SYS_API_JACK)
     return;
@@ -449,7 +491,7 @@ void KernelAudio::jackSetPosition(uint32_t frame)
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackSetBpm(double bpm)
+void gka::jackSetBpm(double bpm)
 {
   if (api != SYS_API_JACK)
     return;
@@ -467,7 +509,7 @@ void KernelAudio::jackSetBpm(double bpm)
 /* -------------------------------------------------------------------------- */
 
 
-void KernelAudio::jackStop()
+void gka::jackStop()
 {
 	if (api == SYS_API_JACK)
 		jack_transport_stop(jackGetHandle());

@@ -35,12 +35,13 @@
 #include "clock.h"
 
 
+using namespace giada;
 namespace gc = giada::clock;
 
 
 namespace
 {
-  KernelAudio *kernelAudio;
+  //KernelAudio *kernelAudio;
   KernelMidi  *kernelMidi;
   Conf        *conf;
 
@@ -64,7 +65,7 @@ namespace
 	int midiTChours;
 
 #ifdef __linux__
-  KernelAudio::JackState jackStatePrev;
+  kernelAudio::JackState jackStatePrev;
 #endif
 
   void updateQuanto()
@@ -80,13 +81,11 @@ namespace
 /* -------------------------------------------------------------------------- */
 
 
-void gc::init(KernelAudio *kernelAudio, KernelMidi *kernelMidi, Conf *conf)
+void gc::init(KernelMidi *kernelMidi, Conf *conf)
 {
-  assert(kernelAudio != nullptr);
   assert(kernelMidi != nullptr);
   assert(conf != nullptr);
 
-  kernelAudio       = kernelAudio;
   kernelMidi        = kernelMidi;
   conf              = conf;
   running           = false;
@@ -346,7 +345,7 @@ void gc::sendMIDIrewind()
 
 void gc::recvJackSync()
 {
-  KernelAudio::JackState jackState = kernelAudio->jackTransportQuery();
+  kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
 
   if (jackState.running != jackStatePrev.running) {
     if (jackState.running) {

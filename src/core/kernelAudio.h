@@ -44,69 +44,54 @@ class Conf;
 class Mixer;
 
 
-class KernelAudio
+namespace giada {
+namespace kernelAudio
 {
-public:
-
 #ifdef __linux__
 
   struct JackState
   {
-    bool     running;
-    double   bpm;
+    bool running;
+    double bpm;
     uint32_t frame;
-  } jackState;
+  };
 
 #endif
 
-	KernelAudio();
+	void init();
 
 	int openDevice(Conf *conf, Mixer *mixer);
-
 	int closeDevice();
-
 	int startStream();
 	int stopStream();
 
-	bool			  isProbed         (unsigned dev);
-	bool		    isDefaultIn      (unsigned dev);
-	bool			  isDefaultOut     (unsigned dev);
-	std::string getDeviceName    (unsigned dev);
-	unsigned    getMaxInChans    (int dev);
-	unsigned    getMaxOutChans   (unsigned dev);
-	unsigned    getDuplexChans   (unsigned dev);
-	int         getTotalFreqs    (unsigned dev);
-	int					getFreq          (unsigned dev, int i);
-	int					getDeviceByName  (const char *name);
-	int         getDefaultOut    ();
-	int         getDefaultIn     ();
-	bool        hasAPI           (int API);
+	bool isProbed(unsigned dev);
+	bool isDefaultIn(unsigned dev);
+	bool isDefaultOut(unsigned dev);
+  bool isInputEnabled();
+	std::string getDeviceName(unsigned dev);
+	unsigned getMaxInChans(int dev);
+	unsigned getMaxOutChans(unsigned dev);
+	unsigned getDuplexChans(unsigned dev);
+  unsigned getRealBufSize();
+  unsigned countDevices();
+	int getTotalFreqs(unsigned dev);
+	int getFreq(unsigned dev, int i);
+	int getDeviceByName(const char *name);
+	int getDefaultOut();
+	int getDefaultIn();
+	bool hasAPI(int API);
 	std::string getRtAudioVersion();
 
 #ifdef __linux__
 
-  void   jackStart();
-  void   jackStop();
-  void   jackSetPosition(uint32_t frame);
-  void   jackSetBpm(double bpm);
+  void jackStart();
+  void jackStop();
+  void jackSetPosition(uint32_t frame);
+  void jackSetBpm(double bpm);
   const JackState &jackTransportQuery();
 
 #endif
-
-	unsigned numDevs;
-	bool 		 inputEnabled;
-	unsigned realBufsize; 		// reale bufsize from the soundcard
-	int      api;
-
-private:
-
-	RtAudio *system;
-
-#ifdef __linux__
-
-  jack_client_t *jackGetHandle();
-
-#endif
-};
+}} // giada::kernelAudio::
 
 #endif
