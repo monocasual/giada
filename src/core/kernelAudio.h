@@ -92,6 +92,6 @@ namespace kernelAudio
   const JackState &jackTransportQuery();
 
 #endif
-}} // giada::kernelAudio::
+}}; // giada::kernelAudio::
 
 #endif

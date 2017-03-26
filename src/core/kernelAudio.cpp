@@ -40,9 +40,9 @@ using std::string;
 using std::vector;
 
 
-namespace gka = giada::kernelAudio;
-
-
+namespace giada {
+namespace kernelAudio
+{
 namespace
 {
   RtAudio *rtSystem;
@@ -53,7 +53,7 @@ namespace
 
 #ifdef __linux__
 
-  gka::JackState jackState;
+  JackState jackState;
 
   jack_client_t *jackGetHandle()
   {
@@ -61,9 +61,13 @@ namespace
   }
 
 #endif
-}
+};  // namespace
 
-void gka::init()
+
+/* -------------------------------------------------------------------------- */
+
+
+void init()
 {
   rtSystem     = nullptr;
   numDevs      = 0;
@@ -76,7 +80,7 @@ void gka::init()
 /* -------------------------------------------------------------------------- */
 
 
-int gka::openDevice(Conf *conf, Mixer *mixer)
+int openDevice(Conf *conf, Mixer *mixer)
 {
 	api = conf->soundSystem;
 	gu_log("[KA] using rtSystem 0x%x\n", api);
@@ -189,7 +193,7 @@ int gka::openDevice(Conf *conf, Mixer *mixer)
 /* -------------------------------------------------------------------------- */
 
 
-int gka::startStream()
+int startStream()
 {
 	try {
 		rtSystem->startStream();
@@ -206,7 +210,7 @@ int gka::startStream()
 /* -------------------------------------------------------------------------- */
 
 
-int gka::stopStream()
+int stopStream()
 {
 	try {
 		rtSystem->stopStream();
@@ -222,7 +226,7 @@ int gka::stopStream()
 /* -------------------------------------------------------------------------- */
 
 
-string gka::getDeviceName(unsigned dev)
+string getDeviceName(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).name;
@@ -237,7 +241,7 @@ string gka::getDeviceName(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int gka::closeDevice()
+int closeDevice()
 {
 	if (rtSystem->isStreamOpen()) {
 #if defined(__linux__) || defined(__APPLE__)
@@ -256,7 +260,7 @@ int gka::closeDevice()
 /* -------------------------------------------------------------------------- */
 
 
-unsigned gka::getMaxInChans(int dev)
+unsigned getMaxInChans(int dev)
 {
 	if (dev == -1) return 0;
 
@@ -273,7 +277,7 @@ unsigned gka::getMaxInChans(int dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned gka::getMaxOutChans(unsigned dev)
+unsigned getMaxOutChans(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).outputChannels;
@@ -288,7 +292,7 @@ unsigned gka::getMaxOutChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool gka::isProbed(unsigned dev)
+bool isProbed(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).probed;
@@ -302,7 +306,7 @@ bool gka::isProbed(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned gka::getDuplexChans(unsigned dev)
+unsigned getDuplexChans(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).duplexChannels;
@@ -316,7 +320,7 @@ unsigned gka::getDuplexChans(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool gka::isDefaultIn(unsigned dev)
+bool isDefaultIn(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultInput;
@@ -330,7 +334,7 @@ bool gka::isDefaultIn(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-bool gka::isDefaultOut(unsigned dev)
+bool isDefaultOut(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).isDefaultOutput;
@@ -344,7 +348,7 @@ bool gka::isDefaultOut(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int gka::getTotalFreqs(unsigned dev)
+int getTotalFreqs(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.size();
@@ -358,7 +362,7 @@ int gka::getTotalFreqs(unsigned dev)
 /* -------------------------------------------------------------------------- */
 
 
-int	gka::getFreq(unsigned dev, int i)
+int	getFreq(unsigned dev, int i)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).sampleRates.at(i);
@@ -372,7 +376,7 @@ int	gka::getFreq(unsigned dev, int i)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned gka::getRealBufSize()
+unsigned getRealBufSize()
 {
   return realBufsize;
 }
@@ -381,7 +385,7 @@ unsigned gka::getRealBufSize()
 /* -------------------------------------------------------------------------- */
 
 
-bool gka::isInputEnabled()
+bool isInputEnabled()
 {
   return inputEnabled;
 }
@@ -390,7 +394,7 @@ bool gka::isInputEnabled()
 /* -------------------------------------------------------------------------- */
 
 
-unsigned gka::countDevices()
+unsigned countDevices()
 {
   return numDevs;
 }
@@ -399,12 +403,12 @@ unsigned gka::countDevices()
 /* -------------------------------------------------------------------------- */
 
 
-int gka::getDefaultIn()
+int getDefaultIn()
 {
 	return rtSystem->getDefaultInputDevice();
 }
 
-int gka::getDefaultOut()
+int getDefaultOut()
 {
 	return rtSystem->getDefaultOutputDevice();
 }
@@ -413,7 +417,7 @@ int gka::getDefaultOut()
 /* -------------------------------------------------------------------------- */
 
 
-int	gka::getDeviceByName(const char *name)
+int	getDeviceByName(const char *name)
 {
 	for (unsigned i=0; i<numDevs; i++)
 		if (name == getDeviceName(i))
@@ -425,7 +429,7 @@ int	gka::getDeviceByName(const char *name)
 /* -------------------------------------------------------------------------- */
 
 
-bool gka::hasAPI(int API)
+bool hasAPI(int API)
 {
 	vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
@@ -439,7 +443,7 @@ bool gka::hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-string gka::getRtAudioVersion()
+string getRtAudioVersion()
 {
 	return RtAudio::getVersion();
 }
@@ -451,7 +455,7 @@ string gka::getRtAudioVersion()
 #ifdef __linux__
 
 
-const gka::JackState &gka::jackTransportQuery()
+const JackState &jackTransportQuery()
 {
 	if (api != SYS_API_JACK)
     return jackState;
@@ -467,7 +471,7 @@ const gka::JackState &gka::jackTransportQuery()
 /* -------------------------------------------------------------------------- */
 
 
-void gka::jackStart()
+void jackStart()
 {
 	if (api == SYS_API_JACK)
 		jack_transport_start(jackGetHandle());
@@ -477,7 +481,7 @@ void gka::jackStart()
 /* -------------------------------------------------------------------------- */
 
 
-void gka::jackSetPosition(uint32_t frame)
+void jackSetPosition(uint32_t frame)
 {
 	if (api != SYS_API_JACK)
     return;
@@ -491,7 +495,7 @@ void gka::jackSetPosition(uint32_t frame)
 /* -------------------------------------------------------------------------- */
 
 
-void gka::jackSetBpm(double bpm)
+void jackSetBpm(double bpm)
 {
   if (api != SYS_API_JACK)
     return;
@@ -509,11 +513,13 @@ void gka::jackSetBpm(double bpm)
 /* -------------------------------------------------------------------------- */
 
 
-void gka::jackStop()
+void jackStop()
 {
 	if (api == SYS_API_JACK)
 		jack_transport_stop(jackGetHandle());
 }
+
+}}; // giada::kernelAudio
 
 
 #endif

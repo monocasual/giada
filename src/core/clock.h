@@ -95,7 +95,7 @@ namespace clock
   void rewind();
   void start();
   void stop();
-}} // giada::clock::
+}}; // giada::clock::
 
 
 #endif

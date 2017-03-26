@@ -88,7 +88,7 @@ namespace kernelMidi
 	bool hasAPI(int API);
 
 	std::string getRtMidiVersion();
-}} // giada::kernelMidi::
+}}; // giada::kernelMidi::
 
 
 #endif

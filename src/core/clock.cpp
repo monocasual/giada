@@ -35,51 +35,51 @@
 #include "clock.h"
 
 
-using namespace giada;
-namespace gc = giada::clock;
-
-
+namespace giada {
+namespace clock
+{
 namespace
 {
-  Conf *conf;
+Conf *conf;
 
-  bool  running;
-  float bpm;
-	int   bars;
-	int   beats;
-  int   quantize;
-	int   quanto;            // quantizer step
-  int   framesPerBar;      // frames in one bar
-	int   framesPerBeat;     // frames in one beat
-	int   framesInSequencer; // frames in the whole sequencer
-	int   totalFrames;       // frames in the selected range (e.g. 4/4)
-	int   currentFrame;
-	int   currentBeat;
+bool  running;
+float bpm;
+int   bars;
+int   beats;
+int   quantize;
+int   quanto;            // quantizer step
+int   framesPerBar;      // frames in one bar
+int   framesPerBeat;     // frames in one beat
+int   framesInSequencer; // frames in the whole sequencer
+int   totalFrames;       // frames in the selected range (e.g. 4/4)
+int   currentFrame;
+int   currentBeat;
 
-	int midiTCrate;      // send MTC data every midiTCrate frames
-	int midiTCframes;
-	int midiTCseconds;
-	int midiTCminutes;
-	int midiTChours;
+int midiTCrate;      // send MTC data every midiTCrate frames
+int midiTCframes;
+int midiTCseconds;
+int midiTCminutes;
+int midiTChours;
 
 #ifdef __linux__
-  kernelAudio::JackState jackStatePrev;
+kernelAudio::JackState jackStatePrev;
 #endif
 
-  void updateQuanto()
-  {
-    if (quantize != 0)
-      quanto = framesPerBeat / quantize;
-    if (quanto % 2 != 0)
-      quanto++;
-  }
-} // ::
+void updateQuanto()
+{
+  if (quantize != 0)
+    quanto = framesPerBeat / quantize;
+  if (quanto % 2 != 0)
+    quanto++;
+}
+
+}; // namespace
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gc::init(Conf *conf)
+void init(Conf *conf)
 {
   assert(conf != nullptr);
 
@@ -107,26 +107,26 @@ void gc::init(Conf *conf)
 /* -------------------------------------------------------------------------- */
 
 
-bool gc::isRunning()
+bool isRunning()
 {
   return running;
 }
 
 
-bool gc::quantoHasPassed()
+bool quantoHasPassed()
 {
   return currentFrame % (quanto) == 0;
 }
 
 
-bool gc::isOnBar()
+bool isOnBar()
 {
   /* A bar cannot occur at frame 0. That's the first beat. */
   return currentFrame % framesPerBar == 0 && currentFrame != 0;
 }
 
 
-bool gc::isOnBeat()
+bool isOnBeat()
 {
   /* Skip frame 0: it is intended as 'first beat'. */
   /* TODO - this is wrong! */
@@ -134,13 +134,13 @@ bool gc::isOnBeat()
 }
 
 
-bool gc::isOnFirstBeat()
+bool isOnFirstBeat()
 {
   return currentFrame == 0;
 }
 
 
-void gc::start()
+void start()
 {
   running = true;
 	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
@@ -150,7 +150,7 @@ void gc::start()
 }
 
 
-void gc::stop()
+void stop()
 {
   running = false;
   if (conf->midiSync == MIDI_SYNC_CLOCK_M)
@@ -158,7 +158,7 @@ void gc::stop()
 }
 
 
-void gc::setBpm(float b)
+void setBpm(float b)
 {
   if (b < G_MIN_BPM)
     b = G_MIN_BPM;
@@ -167,19 +167,19 @@ void gc::setBpm(float b)
 }
 
 
-void gc::setBars(int b)
+void setBars(int b)
 {
   bars = b;
 }
 
 
-void gc::setBeats(int b)
+void setBeats(int b)
 {
   beats = b;
 }
 
 
-void gc::setQuantize(int q)
+void setQuantize(int q)
 {
   quantize = q;
   updateQuanto();
@@ -189,7 +189,7 @@ void gc::setQuantize(int q)
 /* -------------------------------------------------------------------------- */
 
 
-void gc::incrCurrentFrame()
+void incrCurrentFrame()
 {
   currentFrame += 2;
   if (currentFrame > totalFrames) {
@@ -202,7 +202,7 @@ void gc::incrCurrentFrame()
 }
 
 
-void gc::rewind()
+void rewind()
 {
   currentFrame = 0;
   currentBeat = 0;
@@ -213,7 +213,7 @@ void gc::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void gc::updateFrameBars()
+void updateFrameBars()
 {
 	/* seconds ....... total time of play (in seconds) of the whole
 	 *                 sequencer. 60 / bpm == how many seconds lasts one bpm
@@ -244,7 +244,7 @@ void gc::updateFrameBars()
 /* -------------------------------------------------------------------------- */
 
 
-void gc::sendMIDIsync()
+void sendMIDIsync()
 {
   /* TODO - only Master (_M) is implemented so far. */
 
@@ -313,7 +313,7 @@ void gc::sendMIDIsync()
 /* -------------------------------------------------------------------------- */
 
 
-void gc::sendMIDIrewind()
+void sendMIDIrewind()
 {
 	midiTCframes  = 0;
 	midiTCseconds = 0;
@@ -339,7 +339,7 @@ void gc::sendMIDIrewind()
 
 #ifdef __linux__
 
-void gc::recvJackSync()
+void recvJackSync()
 {
   kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
 
@@ -369,67 +369,70 @@ void gc::recvJackSync()
 /* -------------------------------------------------------------------------- */
 
 
-int gc::getCurrentFrame()
+int getCurrentFrame()
 {
   return currentFrame;
 }
 
 
-int gc::getTotalFrames()
+int getTotalFrames()
 {
   return totalFrames;
 }
 
 
-int gc::getCurrentBeat()
+int getCurrentBeat()
 {
   return currentBeat;
 }
 
 
-int gc::getQuantize()
+int getQuantize()
 {
   return quantize;
 }
 
 
-float gc::getBpm()
+float getBpm()
 {
   return bpm;
 }
 
 
-int gc::getBeats()
+int getBeats()
 {
   return beats;
 }
 
 
-int gc::getBars()
+int getBars()
 {
   return bars;
 }
 
 
-int gc::getQuanto()
+int getQuanto()
 {
   return quanto;
 }
 
 
-int gc::getFramesPerBar()
+int getFramesPerBar()
 {
   return framesPerBar;
 }
 
 
-int gc::getFramesPerBeat()
+int getFramesPerBeat()
 {
   return framesPerBeat;
 }
 
 
-int gc::getFramesInSequencer()
+int getFramesInSequencer()
 {
   return framesInSequencer;
 }
+
+
+}}; // giada::clock::
