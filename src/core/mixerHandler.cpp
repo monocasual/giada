@@ -69,61 +69,81 @@ using std::vector;
 using std::string;
 
 
-namespace gm = giada::mh;
-
-
+namespace giada {
+namespace mh
+{
 namespace
 {
-  #ifdef WITH_VST
+#ifdef WITH_VST
 
-  int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
-  {
-  	int ret = 1;
-  	for (unsigned i=0; i<list->size(); i++) {
-  		Patch::plugin_t *ppl = &list->at(i);
-      // TODO use glue_addPlugin()
-  		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
-  				&G_Mixer.mutex_plugins, nullptr);
-  		if (plugin != nullptr) {
-  			plugin->setBypass(ppl->bypass);
-  			for (unsigned j=0; j<ppl->params.size(); j++)
-  				plugin->setParameter(j, ppl->params.at(j));
-  			ret &= 1;
-  		}
-  		else
-  			ret &= 0;
-  	}
-  	return ret;
-  }
+int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+{
+	int ret = 1;
+	for (unsigned i=0; i<list->size(); i++) {
+		Patch::plugin_t *ppl = &list->at(i);
+    // TODO use glue_addPlugin()
+		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
+				&G_Mixer.mutex_plugins, nullptr);
+		if (plugin != nullptr) {
+			plugin->setBypass(ppl->bypass);
+			for (unsigned j=0; j<ppl->params.size(); j++)
+				plugin->setParameter(j, ppl->params.at(j));
+			ret &= 1;
+		}
+		else
+			ret &= 0;
+	}
+	return ret;
+}
 
-  #endif
-
-
-  /* ------------------------------------------------------------------------ */
+#endif
 
 
-  int __getNewChanIndex__()
-  {
-  	/* always skip last channel: it's the last one just added */
+/* ------------------------------------------------------------------------ */
 
-  	if (G_Mixer.channels.size() == 1)
-  		return 0;
 
-  	int index = 0;
-  	for (unsigned i=0; i<G_Mixer.channels.size()-1; i++) {
-  		if (G_Mixer.channels.at(i)->index > index)
-  			index = G_Mixer.channels.at(i)->index;
-  		}
-  	index += 1;
-  	return index;
-  }
+int __getNewChanIndex__()
+{
+	/* always skip last channel: it's the last one just added */
 
-} // ::
+	if (G_Mixer.channels.size() == 1)
+		return 0;
+
+	int index = 0;
+	for (unsigned i=0; i<G_Mixer.channels.size()-1; i++) {
+		if (G_Mixer.channels.at(i)->index > index)
+			index = G_Mixer.channels.at(i)->index;
+		}
+	index += 1;
+	return index;
+}
+
+
+} // namespace
+
 
 /* -------------------------------------------------------------------------- */
 
 
-Channel *gm::addChannel(int type)
+bool uniqueSampleName(SampleChannel *ch, const string &name)
+{
+	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+		if (ch == G_Mixer.channels.at(i))  // skip itself
+			continue;
+		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
+			continue;
+		SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
+		if (other->wave != nullptr && name == other->wave->name)
+			return false;
+	}
+	return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Channel *addChannel(int type)
 {
   Channel *ch;
 	int bufferSize = kernelAudio::getRealBufSize() * 2;
@@ -146,7 +166,7 @@ Channel *gm::addChannel(int type)
 	}
 
 	ch->index = __getNewChanIndex__();
-	gu_log("[gm::addChannel] channel index=%d added, type=%d, total=%d\n",
+	gu_log("[addChannel] channel index=%d added, type=%d, total=%d\n",
     ch->index, ch->type, G_Mixer.channels.size());
 	return ch;
 }
@@ -155,7 +175,7 @@ Channel *gm::addChannel(int type)
 /* -------------------------------------------------------------------------- */
 
 
-int gm::deleteChannel(Channel *ch)
+int deleteChannel(Channel *ch)
 {
 	int index = -1;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -165,7 +185,7 @@ int gm::deleteChannel(Channel *ch)
 		}
 	}
 	if (index == -1) {
-		gu_log("[gm::deleteChannel] unable to find channel %d for deletion!\n", ch->index);
+		gu_log("[deleteChannel] unable to find channel %d for deletion!\n", ch->index);
 		return 0;
 	}
 
@@ -183,12 +203,12 @@ int gm::deleteChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *gm::getChannelByIndex(int index)
+Channel *getChannelByIndex(int index)
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
 		if (G_Mixer.channels.at(i)->index == index)
 			return G_Mixer.channels.at(i);
-	gu_log("[gm::getChannelByIndex] channel at index %d not found!\n", index);
+	gu_log("[getChannelByIndex] channel at index %d not found!\n", index);
 	return nullptr;
 }
 
@@ -196,7 +216,7 @@ Channel *gm::getChannelByIndex(int index)
 /* -------------------------------------------------------------------------- */
 
 
-bool gm::hasLogicalSamples()
+bool hasLogicalSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
@@ -212,7 +232,7 @@ bool gm::hasLogicalSamples()
 /* -------------------------------------------------------------------------- */
 
 
-bool gm::hasEditedSamples()
+bool hasEditedSamples()
 {
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
   {
@@ -229,7 +249,7 @@ bool gm::hasEditedSamples()
 /* -------------------------------------------------------------------------- */
 
 
-void gm::stopSequencer()
+void stopSequencer()
 {
   clock::stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
@@ -240,7 +260,7 @@ void gm::stopSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool gm::uniqueSolo(Channel *ch)
+bool uniqueSolo(Channel *ch)
 {
 	int solos = 0;
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
@@ -257,7 +277,7 @@ bool gm::uniqueSolo(Channel *ch)
 
 /** TODO - revision needed: mh should not call glue_addChannel */
 
-void gm::loadPatch_DEPR_(bool isProject, const char *projPath)
+void loadPatch_DEPR_(bool isProject, const char *projPath)
 {
 	G_Mixer.init();
 	G_Mixer.ready = false;   // put it in wait mode
@@ -292,7 +312,7 @@ void gm::loadPatch_DEPR_(bool isProject, const char *projPath)
 /* -------------------------------------------------------------------------- */
 
 
-void gm::readPatch()
+void readPatch()
 {
 	G_Mixer.ready = false;
 
@@ -322,7 +342,7 @@ void gm::readPatch()
 /* -------------------------------------------------------------------------- */
 
 
-void gm::rewindSequencer()
+void rewindSequencer()
 {
 	if (clock::getQuantize() > 0 && clock::isRunning())   // quantize rewind
 		G_Mixer.rewindWait = true;
@@ -334,7 +354,7 @@ void gm::rewindSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool gm::startInputRec()
+bool startInputRec()
 {
 	int channelsReady = 0;
 
@@ -349,20 +369,20 @@ bool gm::startInputRec()
 
 		if (!ch->allocEmpty(clock::getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
 		{
-			gu_log("[gm::startInputRec] unable to allocate new Wave in chan %d!\n",
+			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
 			continue;
 		}
 
 		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
 
-		while (!gm::uniqueSampleName(ch, ch->wave->name)) {
+		while (!uniqueSampleName(ch, ch->wave->name)) {
 			G_Patch_DEPR_.lastTakeId++;
 			G_Patch.lastTakeId++;
 			ch->wave->name = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
 		}
 
-		gu_log("[gm::startInputRec] start input recs using chan %d with size %d "
+		gu_log("[startInputRec] start input recs using chan %d with size %d "
 			"frame=%d\n", ch->index, clock::getTotalFrames(), G_Mixer.inputTracker);
 
 		channelsReady++;
@@ -382,7 +402,7 @@ bool gm::startInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-void gm::stopInputRec()
+void stopInputRec()
 {
 	G_Mixer.mergeVirtualInput();
 	G_Mixer.recording = false;
@@ -394,7 +414,7 @@ void gm::stopInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool gm::hasArmedSampleChannels()
+bool hasArmedSampleChannels()
 {
   for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
     Channel *ch = G_Mixer.channels.at(i);
@@ -405,19 +425,4 @@ bool gm::hasArmedSampleChannels()
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
-bool gm::uniqueSampleName(SampleChannel *ch, const string &name)
-{
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (ch == G_Mixer.channels.at(i))  // skip itself
-			continue;
-		if (G_Mixer.channels.at(i)->type != CHANNEL_SAMPLE)
-			continue;
-		SampleChannel *other = (SampleChannel*) G_Mixer.channels.at(i);
-		if (other->wave != nullptr && name == other->wave->name)
-			return false;
-	}
-	return true;
-}
+}}; // giada::mh::
