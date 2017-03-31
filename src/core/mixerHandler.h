@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef MIXERHANDLER_H
-#define MIXERHANDLER_H
+#ifndef G_MIXER_HANDLER_H
+#define G_MIXER_HANDLER_H
 
 
 #include <string>

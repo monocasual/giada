@@ -28,8 +28,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_STORAGE_H
-#define GLUE_STORAGE_H
+#ifndef G_GLUE_STORAGE_H
+#define G_GLUE_STORAGE_H
 
 
 void glue_loadPatch  (void *data);

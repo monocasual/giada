@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __UTILS_FS_H__
-#define __UTILS_FS_H__
+#ifndef G_UTILS_FS_H
+#define G_UTILS_FS_H
 
 
 #include <string>

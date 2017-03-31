@@ -32,8 +32,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_IO_H
-#define GLUE_IO_H
+#ifndef G_GLUE_IO_H
+#define G_GLUE_IO_H
 
 
 /* keyPress / keyRelease

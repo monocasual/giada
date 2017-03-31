@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __PATCH_H__
-#define __PATCH_H__
+#ifndef G_PATCH_H
+#define G_PATCH_H
 
 
 #include <string>

@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __CLOCK_H__
-#define __CLOCK_H__
+#ifndef G_CLOCK_H
+#define G_CLOCK_H
 
 
 class Conf;

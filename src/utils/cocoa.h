@@ -27,8 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __UTILS_COCOA_H__
-#define __UTILS_COCOA_H__
+#ifndef G_UTILS_COCOA_H
+#define G_UTILS_COCOA_H
+
 
 /* fl_xid() from FLTK returns a pointer to NSWindow, but plugins on OS X want a
  * pointer to NSView. The function does the hard conversion. */

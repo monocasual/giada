@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef WAVE_H
-#define WAVE_H
+#ifndef G_WAVE_H
+#define G_WAVE_H
 
 
 #include <sndfile.h>

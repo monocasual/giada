@@ -28,8 +28,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_CHANNEL_H
-#define GLUE_CHANNEL_H
+#ifndef G_GLUE_CHANNEL_H
+#define G_GLUE_CHANNEL_H
 
 
 #include <string>

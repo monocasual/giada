@@ -28,8 +28,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __GLUE_PLUGIN_H__
-#define __GLUE_PLUGIN_H__
+#ifndef G_GLUE_PLUGIN_H
+#define G_GLUE_PLUGIN_H
 
 
 #ifdef WITH_VST

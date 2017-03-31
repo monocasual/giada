@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef MIXER_H
-#define MIXER_H
+#ifndef G_MIXER_H
+#define G_MIXER_H
 
 
 #include <pthread.h>

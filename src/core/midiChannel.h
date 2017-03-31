@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef MIDI_CHANNEL_H
-#define MIDI_CHANNEL_H
+#ifndef G_MIDI_CHANNEL_H
+#define G_MIDI_CHANNEL_H
 
 
 #ifdef WITH_VST

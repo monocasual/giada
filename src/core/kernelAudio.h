@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef KERNELAUDIO_H
-#define KERNELAUDIO_H
+#ifndef G_KERNELAUDIO_H
+#define G_KERNELAUDIO_H
 
 
 #include <string>

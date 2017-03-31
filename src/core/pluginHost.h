@@ -28,8 +28,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __PLUGIN_HOST_H__
-#define __PLUGIN_HOST_H__
+#ifndef G_PLUGIN_HOST_H
+#define G_PLUGIN_HOST_H
 
 
 #include <pthread.h>

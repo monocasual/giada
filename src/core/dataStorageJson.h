@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef DATA_STORAGE_JSON_H
-#define DATA_STORAGE_JSON_H
+#ifndef G_DATA_STORAGE_JSON_H
+#define G_DATA_STORAGE_JSON_H
 
 
 #include <jansson.h>

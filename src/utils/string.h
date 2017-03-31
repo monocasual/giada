@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __UTILS_STRING_H__
-#define __UTILS_STRING_H__
+#ifndef G_UTILS_STRING_H
+#define G_UTILS_STRING_H
 
 
 #include <string>

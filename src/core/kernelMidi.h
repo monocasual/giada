@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef KERNELMIDI_H
-#define KERNELMIDI_H
+#ifndef G_KERNELMIDI_H
+#define G_KERNELMIDI_H
 
 
 #ifdef __APPLE__  // our compiler still doesn't know about cstdint (c++11 stuff)

@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __DATA_STORAGE_INI_H__
-#define __DATA_STORAGE_INI_H__
+#ifndef G_DATA_STORAGE_INI_H
+#define G_DATA_STORAGE_INI_H
 
 
 #include <stdio.h>

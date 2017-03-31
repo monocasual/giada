@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef RECORDER_H
-#define RECORDER_H
+#ifndef G_RECORDER_H
+#define G_RECORDER_H
 
 
 #ifdef __APPLE__  // our compiler still doesn't know about cstdint (c++11 stuff)

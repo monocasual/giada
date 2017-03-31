@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __MIDIMAPCONF_H__
-#define __MIDIMAPCONF_H__
+#ifndef G_MIDIMAPCONF_H
+#define G_MIDIMAPCONF_H
 
 
 #include <limits.h>

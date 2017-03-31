@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef CHANNEL_H
-#define CHANNEL_H
+#ifndef G_CHANNEL_H
+#define G_CHANNEL_H
 
 
 #include <vector>

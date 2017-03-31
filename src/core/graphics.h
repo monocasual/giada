@@ -26,8 +26,8 @@
  *
  * ------------------------------------------------------------------ */
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef G_GRAPHICS_H
+#define G_GRAPHICS_H
 
 extern const char *giada_logo_xpm[];
 

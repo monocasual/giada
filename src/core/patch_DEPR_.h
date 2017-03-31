@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __PATCH_DEPR_H__
-#define __PATCH_DEPR_H__
+#ifndef G_PATCH_DEPR_H
+#define G_PATCH_DEPR_H
 
 #include <stdio.h>
 #include <string>

@@ -25,6 +25,10 @@
  * -------------------------------------------------------------------------- */
 
 
+#ifndef G_GLUE_TRANSPORT_H
+#define G_GLUE_TRANSPORT_H
+
+
 /* start, stop, rewind sequencer
 If gui == true the signal comes from an user interaction on the GUI,
 otherwise it's a MIDI/Jack/external signal. */
@@ -34,3 +38,6 @@ void glue_startSeq(bool gui=true);
 void glue_stopSeq(bool gui=true);
 void glue_rewindSeq(bool gui=true, bool notifyJack=true);
 void glue_startStopMetronome(bool gui=true);
+
+
+#endif

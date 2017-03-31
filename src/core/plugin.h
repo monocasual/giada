@@ -29,8 +29,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __PLUGIN_H__
-#define __PLUGIN_H__
+#ifndef G_PLUGIN_H
+#define G_PLUGIN_H
 
 
 #include "../deps/juce-config.h"

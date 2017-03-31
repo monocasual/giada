@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef INIT_H
-#define INIT_H
+#ifndef G_INIT_H
+#define G_INIT_H
 
 
 #include <cstdio>

@@ -32,8 +32,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GLUE_H
-#define GLUE_H
+#ifndef G_GLUE_MAIN_H
+#define G_GLUE_MAIN_H
 
 
 void glue_setBpm(const char *v1, const char *v2);

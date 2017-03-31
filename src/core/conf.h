@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef CONF_H
-#define CONF_H
+#ifndef G_CONF_H
+#define G_CONF_H
 
 
 #include <string>

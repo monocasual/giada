@@ -24,8 +24,10 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifndef __UTILS_GUI_H__
-#define __UTILS_GUI_H__
+
+#ifndef G_UTILS_GUI_H
+#define G_UTILS_GUI_H
+
 
 #include <dirent.h>
 #include <string>

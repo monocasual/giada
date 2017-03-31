@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef SAMPLE_CHANNEL_H
-#define SAMPLE_CHANNEL_H
+#ifndef G_SAMPLE_CHANNEL_H
+#define G_SAMPLE_CHANNEL_H
 
 
 #include <samplerate.h>

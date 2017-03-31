@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef WAVEFX_H
-#define WAVEFX_H
+#ifndef G_WAVE_FX_H
+#define G_WAVE_FX_H
 
 
 class Wave;
