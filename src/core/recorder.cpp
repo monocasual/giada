@@ -174,7 +174,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 
 	sortedActions = false;
 
-	gu_log("[REC] action recorded, type=%d frame=%d chan=%d iValue=%d (0x%X) fValue=%f\n",
+	gu_log("[recorder::rec] action recorded, type=%d frame=%d chan=%d iValue=%d (0x%X) fValue=%f\n",
 		a->type, a->frame, a->chan, a->iValue, a->iValue, a->fValue);
 	//print();
 }
@@ -185,7 +185,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 
 void clearChan(int index)
 {
-	gu_log("[REC] clearing chan %d...\n", index);
+	gu_log("[recorder::clearChan] clearing chan %d...\n", index);
 
 	for (unsigned i=0; i<global.size(); i++) {	// for each frame i
 		unsigned j=0;
@@ -210,7 +210,7 @@ void clearChan(int index)
 
 void clearAction(int index, char act)
 {
-	gu_log("[REC] clearing action %d from chan %d...\n", act, index);
+	gu_log("[recorder::clearAction] clearing action %d from chan %d...\n", act, index);
 	for (unsigned i=0; i<global.size(); i++) {						// for each frame i
 		unsigned j=0;
 		while (true) {                                   // for each action j of frame i
@@ -272,17 +272,17 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
           break;
         }
         else
-          gu_log("[REC] delete action: waiting for mutex...\n");
+          gu_log("[recorder::deleteAction] waiting for mutex...\n");
       }
 		}
 	}
 	if (found) {
 		optimize();
-		gu_log("[REC] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		gu_log("[recorder::deleteAction] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 	}
 	else
-		gu_log("[REC] unable to delete action, not found! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
+		gu_log("[recorder::deleteAction] unable to delete action, not found! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
 			type, frame, chan, iValue, iValue, fValue);
 }
 
@@ -415,12 +415,12 @@ void updateSamplerate(int systemRate, int patchRate)
 	if (systemRate == patchRate)
 		return;
 
-	gu_log("[REC] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
+	gu_log("[recorder::updateSamplerate] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
 
 	float ratio = systemRate / (float) patchRate;
 	for (unsigned i=0; i<frames.size(); i++) {
 
-		gu_log("[REC]    oldFrame = %d", frames.at(i));
+		gu_log("[recorder::updateSamplerate]    oldFrame = %d", frames.at(i));
 
 		float newFrame = frames.at(i);
 		newFrame = floorf(newFrame * ratio);
@@ -470,7 +470,7 @@ void expand(int old_fpb, int new_fpb)
 			}
 		}
 	}
-	gu_log("[REC] expanded recs\n");
+	gu_log("[recorder::expand] expanded recs\n");
 	//print();
 }
 
@@ -497,7 +497,7 @@ void shrink(int new_fpb)
 			i++;
 	}
 	optimize();
-	gu_log("[REC] shrinked recs\n");
+	gu_log("[recorder::shrink] shrinked recs\n");
 	//print();
 }
 
@@ -600,7 +600,7 @@ void startOverdub(int index, char actionMask, int frame,
 			int truncFrame = cmp.a1.frame - bufferSize;
 			if (truncFrame < 0)
 				truncFrame = 0;
-			gu_log("[REC] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
+			gu_log("[recorder::startOverdub] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
 			rec(index, cmp.a2.type, truncFrame);
 		}
 	}
@@ -621,13 +621,13 @@ void stopOverdub()
 
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
-		gu_log("[REC] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		gu_log("[recorder::stopOverdub] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		rec(cmp.a2.chan, cmp.a2.type, clock::getTotalFrames()); // record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
-		gu_log("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
+		gu_log("[recorder::stopOverdub] null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, &mixer::mutex_recs); // false == don't check values
 	}
 
@@ -647,7 +647,7 @@ void stopOverdub()
 		action *act = nullptr;
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1 && act->type == cmp.a2.type) {
-			gu_log("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
+			gu_log("[recorder::stopOverdub] add truncation at frame %d, type=%d\n", act->frame, act->type);
 			deleteAction(act->chan, act->frame, act->type, false, &mixer::mutex_recs); // false == don't check values
 		}
 	}
