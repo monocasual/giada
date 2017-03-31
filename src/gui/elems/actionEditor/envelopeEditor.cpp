@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -7,7 +7,7 @@
  * Parent class of any envelope controller, from volume to VST parameter
  * automations.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -27,7 +27,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include <FL/fl_draw.H>
@@ -42,7 +42,6 @@
 #include "envelopeEditor.h"
 
 
-extern Mixer         G_Mixer;
 extern Recorder      G_Recorder;
 extern gdMainWindow *G_MainWin;
 
@@ -231,7 +230,7 @@ int geEnvelopeEditor::handle(int e) {
 					}
 					else {
 						G_Recorder.deleteAction(pParent->chan->index,
-              points.at(selectedPoint).frame, type, false, &G_Mixer.mutex_recs);
+              points.at(selectedPoint).frame, type, false, &mixer::mutex_recs);
             pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
             G_Recorder.sortActions();
 						points.erase(points.begin() + selectedPoint);
@@ -270,7 +269,7 @@ int geEnvelopeEditor::handle(int e) {
 					/*  delete previous point and record a new one */
 
 					G_Recorder.deleteAction(pParent->chan->index,
-            points.at(draggedPoint).frame, type, false, &G_Mixer.mutex_recs);
+            points.at(draggedPoint).frame, type, false, &mixer::mutex_recs);
           pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 
 					if (range == RANGE_FLOAT) {

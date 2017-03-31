@@ -62,7 +62,7 @@ void Recorder::init()
 /* -------------------------------------------------------------------------- */
 
 
-bool Recorder::canRec(Channel *ch, Mixer *mixer)
+bool Recorder::canRec(Channel *ch)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -72,7 +72,7 @@ bool Recorder::canRec(Channel *ch, Mixer *mixer)
 
 	if (!active             ||
 		  !clock::isRunning() ||
-			 mixer->recording   ||
+			 mixer::recording   ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == nullptr)
 		)
 		return false;
@@ -576,7 +576,7 @@ void Recorder::startOverdub(int index, char actionMask, int frame,
 /* -------------------------------------------------------------------------- */
 
 
-void Recorder::stopOverdub(Mixer *mixer)
+void Recorder::stopOverdub()
 {
 	cmp.a2.frame  = clock::getCurrentFrame();
 	bool ringLoop = false;
@@ -594,14 +594,14 @@ void Recorder::stopOverdub(Mixer *mixer)
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
 		gu_log("[REC]  null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, &mixer->mutex_recs); // false == don't check values
+		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, &mixer::mutex_recs); // false == don't check values
 	}
 
 	/* remove any nested action between keypress----keyrel, then record */
 
 	if (!nullLoop) {
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, &mixer->mutex_recs);
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, &mixer->mutex_recs);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, &mixer::mutex_recs);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, &mixer::mutex_recs);
 	}
 
 	if (!ringLoop && !nullLoop) {
@@ -614,7 +614,7 @@ void Recorder::stopOverdub(Mixer *mixer)
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1 && act->type == cmp.a2.type) {
 			gu_log("[REC] add truncation at frame %d, type=%d\n", act->frame, act->type);
-			deleteAction(act->chan, act->frame, act->type, false, &mixer->mutex_recs); // false == don't check values
+			deleteAction(act->chan, act->frame, act->type, false, &mixer::mutex_recs); // false == don't check values
 		}
 	}
 }

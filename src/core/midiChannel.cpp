@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -42,7 +40,6 @@
 
 
 extern Recorder   G_Recorder;
-extern Mixer      G_Mixer;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
@@ -116,7 +113,7 @@ void MidiChannel::empty() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::quantize(int index, int localFrame, Mixer *m) {}
+void MidiChannel::quantize(int index, int localFrame) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -357,7 +354,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 
 #endif
 
-	if (G_Recorder.canRec(this, &G_Mixer)) {
+	if (G_Recorder.canRec(this)) {
 		G_Recorder.rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
     hasActions = true;
   }

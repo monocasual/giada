@@ -39,8 +39,10 @@
 #include "mainIO.h"
 
 
-extern Mixer         G_Mixer;
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geMainIO::geMainIO(int x, int y)
@@ -68,9 +70,9 @@ geMainIO::geMainIO(int x, int y)
 	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
-	outVol->value(G_Mixer.outVol);
+	outVol->value(mixer::outVol);
 	inVol->callback(cb_inVol, (void*)this);
-	inVol->value(G_Mixer.inVol);
+	inVol->value(mixer::inVol);
 
 #ifdef WITH_VST
 	masterFxOut->callback(cb_masterFxOut, (void*)this);
@@ -127,7 +129,7 @@ void geMainIO::__cb_masterFxIn()
 
 void geMainIO::__cb_inToOut()
 {
-	G_Mixer.inToOut = inToOut->value();
+	mixer::inToOut = inToOut->value();
 }
 #endif
 
@@ -173,8 +175,8 @@ void geMainIO::setMasterFxInFull(bool v)
 
 void geMainIO::refresh()
 {
-	outMeter->mixerPeak = G_Mixer.peakOut;
-	inMeter->mixerPeak  = G_Mixer.peakIn;
+	outMeter->mixerPeak = mixer::peakOut;
+	inMeter->mixerPeak  = mixer::peakIn;
 	outMeter->redraw();
 	inMeter->redraw();
 }

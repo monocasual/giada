@@ -40,7 +40,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Mixer         G_Mixer;
 extern Recorder      G_Recorder;
 
 
@@ -289,9 +288,9 @@ int geMuteEditor::handle(int e) {
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
 					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,
-          points.at(a).type, false, &G_Mixer.mutex_recs); // false = don't check vals
+          points.at(a).type, false, &mixer::mutex_recs); // false = don't check vals
 					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,
-          points.at(b).type, false, &G_Mixer.mutex_recs); // false = don't check vals
+          points.at(b).type, false, &mixer::mutex_recs); // false = don't check vals
           pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 
           G_Recorder.sortActions();
@@ -318,7 +317,7 @@ int geMuteEditor::handle(int e) {
 
 					G_Recorder.deleteAction(pParent->chan->index,
             points.at(draggedPoint).frame, points.at(draggedPoint).type, false,
-            &G_Mixer.mutex_recs);  // don't check values
+            &mixer::mutex_recs);  // don't check values
           pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
 
 					G_Recorder.rec(

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gui_utils
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -55,7 +53,6 @@
 using std::string;
 
 
-extern Mixer 	       G_Mixer;
 extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
@@ -111,11 +108,11 @@ int gu_getBlinker()
 
 void gu_updateControls()
 {
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		G_Mixer.channels.at(i)->guiChannel->update();
+	for (unsigned i=0; i<mixer::channels.size(); i++)
+		mixer::channels.at(i)->guiChannel->update();
 
-	G_MainWin->mainIO->setOutVol(G_Mixer.outVol);
-	G_MainWin->mainIO->setInVol(G_Mixer.inVol);
+	G_MainWin->mainIO->setOutVol(mixer::outVol);
+	G_MainWin->mainIO->setInVol(mixer::inVol);
 #ifdef WITH_VST
 	G_MainWin->mainIO->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
 	G_MainWin->mainIO->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
@@ -125,7 +122,7 @@ void gu_updateControls()
 	G_MainWin->mainTimer->setBpm(clock::getBpm());
 
 	G_MainWin->mainTransport->updatePlay(clock::isRunning());
-	G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
+	G_MainWin->mainTransport->updateMetronome(mixer::metronome);
 }
 
 

@@ -38,7 +38,6 @@
 #include "pianoItem.h"
 
 
-extern Mixer      G_Mixer;
 extern Recorder	  G_Recorder;
 
 
@@ -158,9 +157,9 @@ void gePianoItem::record()
 void gePianoItem::remove()
 {
 	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true,
-    &G_Mixer.mutex_recs, event_a, 0.0);
+    &mixer::mutex_recs, event_a, 0.0);
 	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true,
-    &G_Mixer.mutex_recs, event_b, 0.0);
+    &mixer::mutex_recs, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on
 	 * key_off sequence. */

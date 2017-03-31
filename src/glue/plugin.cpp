@@ -38,8 +38,10 @@
 #include "plugin.h"
 
 
-extern Mixer	    G_Mixer;
 extern PluginHost G_PluginHost;
+
+
+using namespace giada;
 
 
 Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
@@ -47,7 +49,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
   if (index >= G_PluginHost.countAvailablePlugins())
     return nullptr;
 
-  return G_PluginHost.addPlugin(index, stackType,  &G_Mixer.mutex_plugins, ch);
+  return G_PluginHost.addPlugin(index, stackType,  &mixer::mutex_plugins, ch);
 }
 
 
@@ -56,7 +58,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 
 void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 {
-  G_PluginHost.swapPlugin(index1, index2, stackType, &G_Mixer.mutex_plugins,
+  G_PluginHost.swapPlugin(index1, index2, stackType, &mixer::mutex_plugins,
     ch);
 }
 
@@ -66,7 +68,7 @@ void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 
 void glue_freePlugin(Channel *ch, int index, int stackType)
 {
-  G_PluginHost.freePlugin(index, stackType, &G_Mixer.mutex_plugins, ch);
+  G_PluginHost.freePlugin(index, stackType, &mixer::mutex_plugins, ch);
 }
 
 

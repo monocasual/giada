@@ -48,7 +48,6 @@
 
 
 extern bool        G_midiStatus;
-extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -115,9 +114,9 @@ void processPlugins(Channel *ch, uint32_t pure, uint32_t value)
 
 void processChannels(uint32_t pure, uint32_t value)
 {
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
 
-		Channel *ch = (Channel*) G_Mixer.channels.at(i);
+		Channel *ch = (Channel*) mixer::channels.at(i);
 
 		if (!ch->midiIn)
 			continue;

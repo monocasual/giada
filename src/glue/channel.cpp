@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -54,7 +51,6 @@
 
 extern gdMainWindow *G_MainWin;
 extern Recorder			 G_Recorder;
-extern Mixer	   		 G_Mixer;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -108,7 +104,7 @@ void glue_deleteChannel(Channel *ch)
 	G_Recorder.clearChan(ch->index);
   ch->hasActions = false;
 #ifdef WITH_VST
-	G_PluginHost.freeStack(PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
+	G_PluginHost.freeStack(PluginHost::CHANNEL, &mixer::mutex_plugins, ch);
 #endif
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
@@ -150,7 +146,7 @@ int glue_cloneChannel(Channel *src)
 	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
 
 	ch->guiChannel = gch;
-	ch->copy(src, &G_Mixer.mutex_plugins);
+	ch->copy(src, &mixer::mutex_plugins);
 
 	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;
@@ -244,14 +240,14 @@ void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
 
 void glue_setMute(Channel *ch, bool gui)
 {
-	if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer)) {
+	if (G_Recorder.active && G_Recorder.canRec(ch)) {
 		if (!ch->mute) {
 			G_Recorder.startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());
       ch->readActions = false;   // don't read actions while overdubbing
     }
 		else
-		 G_Recorder.stopOverdub(&G_Mixer);
+		 G_Recorder.stopOverdub();
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
@@ -273,8 +269,8 @@ void glue_setSoloOn(Channel *ch, bool gui)
 	 * and start the session */
 
 	if (!__soloSession__) {
-		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-			Channel *och = G_Mixer.channels.at(i);
+		for (unsigned i=0; i<mixer::channels.size(); i++) {
+			Channel *och = mixer::channels.at(i);
 			och->mute_s  = och->mute;
 		}
 		__soloSession__ = true;
@@ -285,8 +281,8 @@ void glue_setSoloOn(Channel *ch, bool gui)
 
 	/* mute all other channels and unmute this (if muted) */
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		Channel *och = G_Mixer.channels.at(i);
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		Channel *och = mixer::channels.at(i);
 		if (!och->solo && !och->mute) {
 			och->setMute(false);
 			Fl::lock();
@@ -320,8 +316,8 @@ void glue_setSoloOff(Channel *ch, bool gui)
 
 	if (mh::uniqueSolo(ch)) {
 		__soloSession__ = false;
-		for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-			Channel *och = G_Mixer.channels.at(i);
+		for (unsigned i=0; i<mixer::channels.size(); i++) {
+			Channel *och = mixer::channels.at(i);
 			if (och->mute_s) {
 				och->setMute(false);
 				Fl::lock();

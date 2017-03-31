@@ -45,7 +45,6 @@
 #include "channel.h"
 
 
-extern Mixer 		  G_Mixer;
 extern Recorder   G_Recorder;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
@@ -543,8 +542,8 @@ int Patch_DEPR_::readPlugins()
 
 	/* channel plugins */
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		Channel *ch = G_Mixer.channels.at(i);
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		Channel *ch = mixer::channels.at(i);
 
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "chan%dPlugins", ch->index);
@@ -552,7 +551,7 @@ int Patch_DEPR_::readPlugins()
 
 		for (int j=0; j<np; j++) {
 			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
-			Plugin *plugin = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, &G_Mixer.mutex_plugins, ch);
+			Plugin *plugin = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, &mixer::mutex_plugins, ch);
 			if (plugin != nullptr) {
 				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
@@ -599,7 +598,7 @@ int Patch_DEPR_::readMasterPlugins(int type)
 	for (int i=0; i<nmp; i++) {
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "master%c_p%dpathfile", chr, i);
-		Plugin *p = G_PluginHost.addPlugin(getValue(tmp).c_str(), type, &G_Mixer.mutex_plugins);
+		Plugin *p = G_PluginHost.addPlugin(getValue(tmp).c_str(), type, &mixer::mutex_plugins);
 		if (p != nullptr) {
 			Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
 			sprintf(tmp, "master%c_p%dbypass", chr, i);

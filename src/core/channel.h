@@ -153,7 +153,7 @@ public:
 	 * mixer::channels, used by recorder. LocalFrame = frame within the current
    * buffer.  */
 
-	virtual void quantize(int index, int localFrame, Mixer *m) = 0;
+	virtual void quantize(int index, int localFrame) = 0;
 
 	/* onZero
 	 * action to do when frame goes to zero, i.e. sequencer restart. */

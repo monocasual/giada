@@ -51,7 +51,6 @@
 
 extern Recorder			 G_Recorder;
 extern bool 		 		 G_audio_status;
-extern Mixer	   		 G_Mixer;
 extern Clock         G_Clock;
 extern gdMainWindow *G_MainWin;
 
@@ -118,7 +117,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		if (G_Recorder.active) {
 			if (clock::isRunning()) {
 				ch->kill(0); // on frame 0: user-generated event
-				if (G_Recorder.canRec(ch, &G_Mixer) && !(ch->mode & LOOP_ANY)) {   // don't record killChan actions for LOOP channels
+				if (G_Recorder.canRec(ch) && !(ch->mode & LOOP_ANY)) {   // don't record killChan actions for LOOP channels
 					G_Recorder.rec(ch->index, ACTION_KILLCHAN, clock::getCurrentFrame());
           ch->hasActions = true;
         }
@@ -141,8 +140,8 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (clock::getQuantize() == 0      &&
-		    G_Recorder.canRec(ch, &G_Mixer) &&
+		if (clock::getQuantize() == 0 &&
+		    G_Recorder.canRec(ch)     &&
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
@@ -189,8 +188,8 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 	/* record a key release only if channel is single_press. For any
 	 * other mode the KEY REL is meaningless. */
 
-	if (ch->mode == SINGLE_PRESS && G_Recorder.canRec(ch, &G_Mixer))
-		G_Recorder.stopOverdub(&G_Mixer);
+	if (ch->mode == SINGLE_PRESS && G_Recorder.canRec(ch))
+		G_Recorder.stopOverdub();
 
 	/* the GUI update is done by gui_refresh() */
 
@@ -237,11 +236,11 @@ void glue_stopActionRec(bool gui)
 	G_Recorder.active = false;
 	G_Recorder.sortActions();
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
+	for (unsigned i=0; i<mixer::channels.size(); i++)
 	{
-		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
 		G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)ch->guiChannel);
 		if (!ch->readActions && ch->hasActions)
 			glue_startReadingRecs(ch, false);
@@ -262,7 +261,7 @@ void glue_stopActionRec(bool gui)
 
 void glue_startStopInputRec(bool gui)
 {
-	if (G_Mixer.recording)
+	if (mixer::recording)
 		glue_stopInputRec(gui);
 	else
 	if (!glue_startInputRec(gui))
@@ -297,8 +296,8 @@ int glue_startInputRec(bool gui)
   /* Update sample name inside sample channels' main button. This is useless for
   midi channel, but let's do it anyway. */
 
-  for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-    G_Mixer.channels.at(i)->guiChannel->update();
+  for (unsigned i=0; i<mixer::channels.size(); i++)
+    mixer::channels.at(i)->guiChannel->update();
 
 	return true;
 }
@@ -316,10 +315,10 @@ int glue_stopInputRec(bool gui)
   they must start playing right away at the current frame, not at the next first
   beat. */
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
 		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
 			ch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
         clock::isRunning(), true, true);

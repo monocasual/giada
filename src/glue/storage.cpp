@@ -53,7 +53,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
@@ -98,8 +97,8 @@ static void __glue_fillPatchColumns__()
 		pCol.width = gCol->w();
 		for (int k=0; k<gCol->countChannels(); k++) {
 			Channel *colChannel = gCol->getChannel(k);
-			for (unsigned j=0; j<G_Mixer.channels.size(); j++) {
-				Channel *mixerChannel = G_Mixer.channels.at(j);
+			for (unsigned j=0; j<mixer::channels.size(); j++) {
+				Channel *mixerChannel = mixer::channels.at(j);
 				if (colChannel == mixerChannel) {
 					pCol.channels.push_back(mixerChannel->index);
 					break;
@@ -116,8 +115,8 @@ static void __glue_fillPatchColumns__()
 
 static void __glue_fillPatchChannels__(bool isProject)
 {
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->writePatch(i, isProject, &G_Patch);
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		mixer::channels.at(i)->writePatch(i, isProject, &G_Patch);
 	}
 }
 
@@ -136,9 +135,9 @@ static void __glue_fillPatchGlobals__(const string &name)
 	G_Patch.bars         = clock::getBars();
 	G_Patch.beats        = clock::getBeats();
 	G_Patch.quantize     = clock::getQuantize();
-	G_Patch.masterVolIn  = G_Mixer.inVol;
-  G_Patch.masterVolOut = G_Mixer.outVol;
-  G_Patch.metronome    = G_Mixer.metronome;
+	G_Patch.masterVolIn  = mixer::inVol;
+  G_Patch.masterVolOut = mixer::outVol;
+  G_Patch.metronome    = mixer::metronome;
 
 #ifdef WITH_VST
 
@@ -272,7 +271,7 @@ void glue_loadPatch(void *data)
 			if (G_Patch.channels.at(k).column == col->index) {
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column,
 						G_Patch.channels.at(k).type);
-				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins,
+				ch->readPatch(basePath, k, &G_Patch, &mixer::mutex_plugins,
 						conf::samplerate, conf::rsmpQuality);
 			}
 			//__glue_setProgressBar__(status, steps);
@@ -432,12 +431,12 @@ void glue_saveProject(void *data)
 	/* copy all samples inside the folder. Takes and logical ones are saved
 	 * via glue_saveSample() */
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
 
-		if (G_Mixer.channels.at(i)->type == CHANNEL_MIDI)
+		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 
-		SampleChannel *ch = (SampleChannel*) G_Mixer.channels.at(i);
+		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
 
 		if (ch->wave == nullptr)
 			continue;

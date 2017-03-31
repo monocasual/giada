@@ -480,7 +480,7 @@ void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
+void SampleChannel::quantize(int index, int localFrame)
 {
 	/* skip if LOOP_ANY or not in quantizer-wait mode */
 
@@ -503,7 +503,7 @@ void SampleChannel::quantize(int index, int localFrame, Mixer *mixer)
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
 
-	if (G_Recorder.canRec(this, mixer)) {
+	if (G_Recorder.canRec(this)) {
 		if (mode == SINGLE_PRESS) {
 			G_Recorder.startOverdub(index, ACTION_KEYS, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());

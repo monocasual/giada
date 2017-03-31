@@ -54,7 +54,6 @@ bool	        G_audio_status;
 bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Mixer         G_Mixer;
 Recorder      G_Recorder;
 MidiMapConf   G_MidiMap;
 gdMainWindow *G_MainWin;

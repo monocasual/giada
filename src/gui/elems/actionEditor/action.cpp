@@ -35,8 +35,10 @@
 #include "action.h"
 
 
-extern Mixer    G_Mixer;
 extern Recorder G_Recorder;
+
+
+using namespace giada;
 
 
 /** TODO - index is useless?
@@ -213,13 +215,13 @@ void geAction::delAction()
 
 	if (ch->mode == SINGLE_PRESS) {
 		G_Recorder.deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS,
-      false, &G_Mixer.mutex_recs);
+      false, &mixer::mutex_recs);
 		G_Recorder.deleteAction(parent->chan->index, frame_b, ACTION_KEYREL,
-      false, &G_Mixer.mutex_recs);
+      false, &mixer::mutex_recs);
 	}
 	else
 		G_Recorder.deleteAction(parent->chan->index, frame_a, type, false,
-      &G_Mixer.mutex_recs);
+      &mixer::mutex_recs);
 
   parent->chan->hasActions = G_Recorder.hasActions(parent->chan->index);
 

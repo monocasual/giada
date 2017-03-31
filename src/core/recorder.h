@@ -90,7 +90,7 @@ public:
 	/* canRec
 	 * can a channel rec an action? Call this one BEFORE rec(). */
 
-	bool canRec(Channel *ch, Mixer *m);
+	bool canRec(Channel *ch);
 
 	/* rec
 	 * record an action. */
@@ -168,7 +168,7 @@ public:
 	/* start/endOverdub */
 
 	void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-	void stopOverdub(Mixer *m);
+	void stopOverdub();
 
 private:
 

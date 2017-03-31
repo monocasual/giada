@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mixer
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -40,152 +38,80 @@
 class Channel;
 
 
-class Mixer
+namespace giada {
+namespace mixer
 {
-public:
+void init();
+int  close();
 
-	Mixer();
+/* masterPlay
+ * core method (callback) */
 
-	void init();
-	int  close();
+int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize, double streamTime,
+  RtAudioStreamStatus status, void *userData);
 
-	/* masterPlay
-	 * core method (callback) */
+/* isSilent
+ * is mixer silent? */
 
-	static int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize,
-		double streamTime, RtAudioStreamStatus status, void *userData);
-	int __masterPlay(void *outBuf, void *inBuf, unsigned bufferSize);
+bool isSilent();
 
-	/* isSilent
-	 * is mixer silent? */
+/* rewind
+ * rewind sequencer to sample 0. */
 
-	bool isSilent();
+void rewind();
 
-	/* rewind
-	 * rewind sequencer to sample 0. */
+/* mergeVirtualInput
+ * memcpy the virtual channel input in the channel designed for input
+ * recording. Called by mixerHandler on stopInputRec() */
 
-	void rewind();
+void mergeVirtualInput();
 
-	/* mergeVirtualInput
-	 * memcpy the virtual channel input in the channel designed for input
-	 * recording. Called by mixerHandler on stopInputRec() */
-
-	void mergeVirtualInput();
-
-	enum {    // const - what to do when a fadeout ends
-		DO_STOP   = 0x01,
-		DO_MUTE   = 0x02,
-		DO_MUTE_I = 0x04
-	};
-
-	enum {    // const - fade types
-		FADEOUT = 0x01,
-		XFADE   = 0x02
-	};
-
-	std::vector<Channel*> channels;
-
-	bool   recording;         // is recording something?
-	bool   ready;
-	float *vChanInput;        // virtual channel for recording
-	float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
-	int    frameSize;
-	float  outVol;
-	float  inVol;
-	float  peakOut;
-	float  peakIn;
-	bool	 metronome;
-	int    waitRec;      // delayComp guard
-	bool  docross;			 // crossfade guard
-	bool  rewindWait;	   // rewind guard, if quantized
-
-#define TICKSIZE 38
-	static float tock[TICKSIZE];
-	static float tick[TICKSIZE];
-	int  tickTracker, tockTracker;
-	bool tickPlay, tockPlay; // 1 = play, 0 = stop
-
-	/* inputTracker
-	 * position of the sample in the input side (recording) */
-
-	int inputTracker;
-
-	/* inToOut
-	 * copy, process and paste the input into the output, in order to
-	 * obtain a "hear what you're playing" feature. */
-
-	bool inToOut;
-
-	pthread_mutex_t mutex_recs;
-	pthread_mutex_t mutex_chans;
-	pthread_mutex_t mutex_plugins;
-
-private:
-
-	/* lineInRec
-	Records from line in. */
-
-	void lineInRec(float *inBuf, unsigned frame);
-
-	/* ProcessLineIn
-	Computes line in peaks, plus handles "hear what you're playin'" thing. */
-
-	void processLineIn(float *inBuf, unsigned frame);
-
-	/* clearAllBuffers
-	Cleans up every buffer, both in Mixer and in channels. */
-
-	void clearAllBuffers(float *outBuf, unsigned bufferSize);
-
-	/* readActions
-	Reads all recorded actions. */
-
-	void readActions(unsigned frame);
-
-	/* doQuantize
-	Computes quantization on 'rewind' button and all channels. */
-
-	void doQuantize(unsigned frame);
-
-	/* sumChannels
-	Sums channels, i.e. lets them add sample frames to their virtual channels.
-	This is required for CHANNEL_SAMPLE only */
-
-	void sumChannels(unsigned frame);
-
-	/* renderMetronome
-	Generates metronome when needed and pastes it to the output buffer. */
-
-	void renderMetronome(float *outBuf, unsigned frame);
-
-	/* renderIO
-	Final processing stage. Take each channel and process it (i.e. copy its
-	content to the output buffer). Process plugins too, if any. */
-
-	void renderIO(float *outBuf, float *inBuf);
-
-	/* limitOutput
-	Applies a very dumb hard limiter. */
-
-	void limitOutput(float *outBuf, unsigned frame);
-
-	/* computePeak */
-
-	void computePeak(float *outBuf, unsigned frame);
-
-	/* finalizeOutput
-	Last touches after the output has been rendered: apply inToOut if any, apply
-	output volume. */
-
-	void finalizeOutput(float *outBuf, unsigned frame);
-
-	/* test*
-	Checks if the sequencer has reached a specific point (bar, first beat or
-	last frame). */
-
-	void testBar(unsigned frame);
-	void testFirstBeat(unsigned frame);
-	void testLastBeat();
+enum {    // const - what to do when a fadeout ends
+	DO_STOP   = 0x01,
+	DO_MUTE   = 0x02,
+	DO_MUTE_I = 0x04
 };
+
+enum {    // const - fade types
+	FADEOUT = 0x01,
+	XFADE   = 0x02
+};
+
+extern std::vector<Channel*> channels;
+
+extern bool   recording;         // is recording something?
+extern bool   ready;
+extern float *vChanInput;        // virtual channel for recording
+extern float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
+extern int    frameSize;
+extern float  outVol;
+extern float  inVol;
+extern float  peakOut;
+extern float  peakIn;
+extern bool	 metronome;
+extern int    waitRec;      // delayComp guard
+extern bool  docross;			 // crossfade guard
+extern bool  rewindWait;	   // rewind guard, if quantized
+
+extern int  tickTracker, tockTracker;
+extern bool tickPlay, tockPlay; // 1 = play, 0 = stop
+
+/* inputTracker
+ * position of the sample in the input side (recording) */
+
+extern int inputTracker;
+
+/* inToOut
+ * copy, process and paste the input into the output, in order to
+ * obtain a "hear what you're playing" feature. */
+
+extern bool inToOut;
+
+extern pthread_mutex_t mutex_recs;
+extern pthread_mutex_t mutex_chans;
+extern pthread_mutex_t mutex_plugins;
+
+}} // giada::mixer::;
+
 
 #endif

@@ -37,7 +37,6 @@
 
 extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
-extern Mixer	   		 G_Mixer;
 
 
 using namespace giada;
@@ -92,7 +91,7 @@ void glue_stopSeq(bool gui)
 	/* if input recs are active (who knows why) we must deactivate them.
 	 * One might stop the sequencer while an input rec is running. */
 
-	if (G_Mixer.recording) {
+	if (mixer::recording) {
 		mh::stopInputRec();
     Fl::lock();
 	  G_MainWin->mainTransport->updateRecInput(0);
@@ -112,10 +111,10 @@ void glue_stopSeq(bool gui)
 
 void glue_startStopMetronome(bool gui)
 {
-	G_Mixer.metronome = !G_Mixer.metronome;
+	mixer::metronome = !mixer::metronome;
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->mainTransport->updateMetronome(G_Mixer.metronome);
+		G_MainWin->mainTransport->updateMetronome(mixer::metronome);
 		Fl::unlock();
 	}
 }

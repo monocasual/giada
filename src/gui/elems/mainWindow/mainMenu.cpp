@@ -47,7 +47,6 @@
 #include "mainMenu.h"
 
 
-extern Mixer         G_Mixer;
 extern Patch         G_Patch;
 extern gdMainWindow *G_MainWin;
 
@@ -177,14 +176,14 @@ void geMainMenu::__cb_edit()
 
 	menu[1].deactivate();
 
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		if (G_Mixer.channels.at(i)->hasActions) {
+	for (unsigned i=0; i<mixer::channels.size(); i++)
+		if (mixer::channels.at(i)->hasActions) {
 			menu[1].activate();
 			break;
 		}
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-			if (((SampleChannel*)G_Mixer.channels.at(i))->wave != nullptr) {
+	for (unsigned i=0; i<mixer::channels.size(); i++)
+		if (mixer::channels.at(i)->type == CHANNEL_SAMPLE)
+			if (((SampleChannel*)mixer::channels.at(i))->wave != nullptr) {
 				menu[0].activate();
 				break;
 			}

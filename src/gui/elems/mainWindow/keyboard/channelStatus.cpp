@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_status
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,8 +33,10 @@
 #include "channelStatus.h"
 
 
-extern Mixer    G_Mixer;
 extern Recorder G_Recorder;
+
+
+using namespace giada;
 
 
 geChannelStatus::geChannelStatus(int x, int y, int w, int h, SampleChannel *ch,
@@ -65,10 +65,10 @@ void geChannelStatus::draw()
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
 
 
-    if (G_Mixer.recording && ch->armed)
+    if (mixer::recording && ch->armed)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
     else
-    if (G_Recorder.active && G_Recorder.canRec(ch, &G_Mixer))
+    if (G_Recorder.active && G_Recorder.canRec(ch))
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
     /* equation for the progress bar:

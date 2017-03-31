@@ -48,7 +48,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
 #ifdef WITH_VST
@@ -63,7 +62,7 @@ void glue_setBpm(const char *v1, const char *v2)
 {
   /* Never change this stuff while recording audio */
 
-  if (G_Mixer.recording)
+  if (mixer::recording)
     return;
 
 	char  bpmS[6];
@@ -116,7 +115,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 {
   /* Never change this stuff while recording audio */
 
-  if (G_Mixer.recording)
+  if (mixer::recording)
     return;
 
 	/* Temp vars to store old data (they are necessary) */
@@ -155,8 +154,8 @@ void glue_setBeats(int beats, int bars, bool expand)
 	if (expand) {
 		if (clock::getBeats() > oldvalue)
 			G_Recorder.expand(oldfpb, clock::getTotalFrames());
-		//else if (G_Mixer.beats < oldvalue)
-		//	G_Recorder.shrink(G_Mixer.totalFrames);
+		//else if (mixer::beats < oldvalue)
+		//	G_Recorder.shrink(mixer::totalFrames);
 	}
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
@@ -199,7 +198,7 @@ void glue_quantize(int val)
 
 void glue_setOutVol(float v, bool gui)
 {
-	G_Mixer.outVol = v;
+	mixer::outVol = v;
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setOutVol(v);
@@ -213,7 +212,7 @@ void glue_setOutVol(float v, bool gui)
 
 void glue_setInVol(float v, bool gui)
 {
-	G_Mixer.inVol = v;
+	mixer::inVol = v;
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setInVol(v);
@@ -228,9 +227,9 @@ void glue_setInVol(float v, bool gui)
 void glue_clearAllSamples()
 {
 	clock::stop();
-	for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->empty();
-		G_Mixer.channels.at(i)->guiChannel->reset();
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		mixer::channels.at(i)->empty();
+		mixer::channels.at(i)->guiChannel->reset();
 	}
 	G_Recorder.init();
 	return;
@@ -253,11 +252,11 @@ void glue_clearAllRecs()
 void glue_resetToInitState(bool resetGui, bool createColumns)
 {
 	G_Patch_DEPR_.setDefault();
-	G_Mixer.close();
-	G_Mixer.init();
+	mixer::close();
+	mixer::init();
 	G_Recorder.init();
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
+	G_PluginHost.freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
 #endif
 
 	G_MainWin->keyboard->clear();

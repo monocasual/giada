@@ -50,7 +50,6 @@
 #include "kernelAudio.h"
 
 
-extern Mixer 			   G_Mixer;
 extern Recorder  	   G_Recorder;
 extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
@@ -89,8 +88,8 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-  G_audio_status = kernelAudio::openDevice(&G_Mixer);
-	G_Mixer.init();
+  G_audio_status = kernelAudio::openDevice();
+	mixer::init();
 	G_Recorder.init();
 
 #ifdef WITH_VST
@@ -203,21 +202,21 @@ void init_shutdown()
 
 	if (G_audio_status) {
 		kernelAudio::closeDevice();
-		G_Mixer.close();
+		mixer::close();
 		gu_log("[init] Mixer closed\n");
 	}
 
 	G_Recorder.clearAll();
-  for (unsigned i=0; i<G_Mixer.channels.size(); i++) {
-		G_Mixer.channels.at(i)->hasActions  = false;
-		G_Mixer.channels.at(i)->readActions = false;
-		//if (G_Mixer.channels.at(i)->type == CHANNEL_SAMPLE)
-		//	((SampleChannel*)G_Mixer.channels.at(i))->readActions = false;
+  for (unsigned i=0; i<mixer::channels.size(); i++) {
+		mixer::channels.at(i)->hasActions  = false;
+		mixer::channels.at(i)->readActions = false;
+		//if (mixer::channels.at(i)->type == CHANNEL_SAMPLE)
+		//	((SampleChannel*)mixer::channels.at(i))->readActions = false;
 	}
 	gu_log("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks(&G_Mixer.channels, &G_Mixer.mutex_plugins);
+	G_PluginHost.freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
 	gu_log("[init] PluginHost cleaned up\n");
 #endif
 

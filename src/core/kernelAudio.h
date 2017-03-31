@@ -59,7 +59,7 @@ struct JackState
 
 void init();
 
-int openDevice(Mixer *mixer);
+int openDevice();
 int closeDevice();
 int startStream();
 int stopStream();

@@ -80,7 +80,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-int openDevice(Mixer *mixer)
+int openDevice()
 {
 	api = conf::soundSystem;
 	gu_log("[KA] using rtSystem 0x%x\n", api);
@@ -177,7 +177,7 @@ int openDevice(Mixer *mixer)
 			RTAUDIO_FLOAT32,			              // audio format
 			conf::samplerate, 					        // sample rate
 			&realBufsize, 				              // buffer size in byte
-			&mixer->masterPlay,                 // audio callback
+			&mixer::masterPlay,                 // audio callback
 			nullptr,									          // user data (unused)
 			&options);
 		return 1;
