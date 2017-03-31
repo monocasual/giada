@@ -47,7 +47,7 @@ string confDirPath = "";
 /* init
 Initializes with default values. */
 
-void __init__()
+void init()
 {
 	/* Initialize confFilePath, i.e. the configuration file. In windows it is in
 	 * the same dir of the .exe, while in Linux and OS X in ~/.giada */
@@ -71,7 +71,7 @@ void __init__()
 /* sanitize
 Avoids funky values from config file. */
 
-void __sanitize__()
+void sanitize()
 {
 	if (!(soundSystem & SYS_API_ANY)) soundSystem = G_DEFAULT_SOUNDSYS;
 	if (soundDeviceOut < 0) soundDeviceOut = G_DEFAULT_SOUNDDEV_OUT;
@@ -131,7 +131,7 @@ void __sanitize__()
 Creates local folder where to put the configuration file. Path differs from OS
 to OS. */
 
-int __createConfigFolder__()
+int createConfigFolder()
 {
 #if defined(__linux__) || defined(__APPLE__)
 
@@ -156,10 +156,13 @@ int __createConfigFolder__()
 #endif
 }
 
-}; // namespace
+}; // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
 
 string header = "GIADACFG";
 
@@ -245,7 +248,7 @@ int pluginListY = 0;
 int configX = 0;
 int configY = 0;
 
-int bpmX = 0; 
+int bpmX = 0;
 int bpmY = 0;
 
 int beatsX = 0;
@@ -270,7 +273,7 @@ int pluginSortMethod = 0;
 
 int read()
 {
-	__init__();
+	init();
 
   json_error_t jError;
 	json_t *jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
@@ -375,7 +378,7 @@ int read()
 
 	json_decref(jRoot);
 
-	__sanitize__();
+	sanitize();
 
 	return 1;
 }
@@ -386,7 +389,7 @@ int read()
 
 int write()
 {
-	if (!__createConfigFolder__())
+	if (!createConfigFolder())
 		return 0;
 
 	json_t *jRoot = json_object();

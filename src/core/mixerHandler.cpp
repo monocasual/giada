@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mixerHandler
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -74,7 +72,7 @@ namespace
 {
 #ifdef WITH_VST
 
-int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
+int readPatchPlugins(vector<Patch::plugin_t> *list, int type)
 {
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
@@ -100,7 +98,7 @@ int __readPatchPlugins__(vector<Patch::plugin_t> *list, int type)
 /* ------------------------------------------------------------------------ */
 
 
-int __getNewChanIndex__()
+int getNewChanIndex()
 {
 	/* always skip last channel: it's the last one just added */
 
@@ -117,9 +115,11 @@ int __getNewChanIndex__()
 }
 
 
-} // namespace
+}; // {anonymous}
 
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
@@ -163,7 +163,7 @@ Channel *addChannel(int type)
 		break;
 	}
 
-	ch->index = __getNewChanIndex__();
+	ch->index = getNewChanIndex();
 	gu_log("[addChannel] channel index=%d added, type=%d, total=%d\n",
     ch->index, ch->type, mixer::channels.size());
 	return ch;
@@ -324,8 +324,8 @@ void readPatch()
 
 #ifdef WITH_VST
 
-	__readPatchPlugins__(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
-	__readPatchPlugins__(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
+	readPatchPlugins(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
+	readPatchPlugins(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
 
 #endif
 
