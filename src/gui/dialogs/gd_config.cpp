@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_config
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -48,7 +46,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
@@ -428,7 +425,7 @@ int gTabAudio::findMenuDevice(gChoice *m, int device)
 	if (device == -1)
 		return 0;
 
-	if (G_audio_status == false)
+	if (kernelAudio::getStatus() == false)
 		return 0;
 
 	for (int i=0; i<m->size(); i++) {

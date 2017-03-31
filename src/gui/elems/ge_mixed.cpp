@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_mixed
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -40,10 +38,10 @@
 #include "ge_mixed.h"
 
 
-extern Mixer         G_Mixer;
-extern unsigned      G_beats;
-extern bool          G_audio_status;
 extern gdMainWindow *mainWin;
+
+
+using namespace giada;
 
 
 void __cb_window_closer(Fl_Widget *v, void *p)
@@ -293,7 +291,7 @@ void gSoundMeter::draw()
     px_level = w();
 
   fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);
-  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !G_audio_status ? COLOR_ALERT : COLOR_BD_0);
+  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? COLOR_ALERT : COLOR_BD_0);
 }
 
 

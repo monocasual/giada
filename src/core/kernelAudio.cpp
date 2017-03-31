@@ -45,20 +45,21 @@ namespace kernelAudio
 {
 namespace
 {
-  RtAudio *rtSystem;
-  unsigned numDevs;
-	bool inputEnabled;
-	unsigned realBufsize; 		// reale bufsize from the soundcard
-	int api;
+RtAudio *rtSystem;
+bool status;
+unsigned numDevs;
+bool inputEnabled;
+unsigned realBufsize; 		// reale bufsize from the soundcard
+int api;
 
 #ifdef __linux__
 
-  JackState jackState;
+JackState jackState;
 
-  jack_client_t *jackGetHandle()
-  {
-  	return static_cast<jack_client_t*>(rtSystem->rtapi_->__HACK__getJackClient());
-  }
+jack_client_t *jackGetHandle()
+{
+	return static_cast<jack_client_t*>(rtSystem->rtapi_->__HACK__getJackClient());
+}
 
 #endif
 };  // namespace
@@ -74,6 +75,15 @@ void init()
   inputEnabled = 0;
   realBufsize  = 0;
   api          = 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool getStatus()
+{
+  return status;
 }
 
 
@@ -180,6 +190,7 @@ int openDevice()
 			&mixer::masterPlay,                 // audio callback
 			nullptr,									          // user data (unused)
 			&options);
+    status = true;
 		return 1;
 	}
 	catch (RtAudioError &e) {

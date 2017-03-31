@@ -32,6 +32,7 @@
 
 
 #ifdef __APPLE__  // our compiler still doesn't know about cstdint (c++11 stuff)
+                  // TODO - Apr 2017 - compiler updated, check it
 	#include <stdint.h>
 #else
 	#include <cstdint>
@@ -68,6 +69,11 @@ void send(int b1, int b2=-1, int b3=-1);
  * set the Api in use for both in & out messages. */
 
 void setApi(int api);
+
+/* getStatus
+Returns current engine status. */
+
+bool getStatus();
 
 /* open/close/in/outDevice */
 

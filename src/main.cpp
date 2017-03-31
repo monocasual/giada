@@ -50,8 +50,6 @@
 
 pthread_t     G_videoThread;
 bool          G_quit;
-bool	        G_audio_status;
-bool          G_midiStatus;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
 Recorder      G_Recorder;
@@ -101,7 +99,7 @@ int main(int argc, char **argv)
 
 void *videoThreadCb(void *arg)
 {
-	if (G_audio_status)
+	if (giada::kernelAudio::getStatus())
 		while (!G_quit)	{
 			gu_refreshUI();
 #ifdef _WIN32

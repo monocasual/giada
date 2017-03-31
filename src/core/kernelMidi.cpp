@@ -47,7 +47,6 @@
 #include "kernelMidi.h"
 
 
-extern bool        G_midiStatus;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -63,6 +62,7 @@ namespace kernelMidi
 {
 namespace
 {
+bool status = false;
 int api = 0;
 RtMidiOut *midiOut = nullptr;
 RtMidiIn  *midiIn  = nullptr;
@@ -311,11 +311,11 @@ int openOutDevice(int port)
 {
 	try {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
-		G_midiStatus = true;
+		status = true;
   }
   catch (RtMidiError &error) {
     gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
-    G_midiStatus = false;
+    status = false;
     return 0;
   }
 
@@ -341,7 +341,7 @@ int openOutDevice(int port)
 		}
 		catch (RtMidiError &error) {
 			gu_log("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
-			G_midiStatus = false;
+			status = false;
 			return 0;
 		}
 	}
@@ -357,11 +357,11 @@ int openInDevice(int port)
 {
 	try {
 		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
-		G_midiStatus = true;
+		status = true;
   }
   catch (RtMidiError &error) {
     gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
-    G_midiStatus = false;
+    status = false;
     return 0;
   }
 
@@ -384,7 +384,7 @@ int openInDevice(int port)
 		}
 		catch (RtMidiError &error) {
 			gu_log("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
-			G_midiStatus = false;
+			status = false;
 			return 0;
 		}
 	}
@@ -428,7 +428,7 @@ string getInPortName(unsigned p)
 
 void send(uint32_t data)
 {
-	if (!G_midiStatus)
+	if (!status)
 		return;
 
   vector<unsigned char> msg(1, getB1(data));
@@ -445,7 +445,7 @@ void send(uint32_t data)
 
 void send(int b1, int b2, int b3)
 {
-	if (!G_midiStatus)
+	if (!status)
 		return;
 
 	vector<unsigned char> msg(1, b1);
@@ -495,6 +495,15 @@ uint32_t getIValue(int b1, int b2, int b3)
 string getRtMidiVersion()
 {
 	return midiOut->getVersion();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool getStatus()
+{
+	return status;
 }
 
 }}; // giada::kernelMidi::

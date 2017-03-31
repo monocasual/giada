@@ -51,7 +51,6 @@
 
 
 extern Recorder  	   G_Recorder;
-extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
@@ -88,7 +87,7 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-  G_audio_status = kernelAudio::openDevice();
+  kernelAudio::openDevice();
 	mixer::init();
 	G_Recorder.init();
 
@@ -150,10 +149,10 @@ void init_startGUI(int argc, char **argv)
 
   gu_updateMainWinLabel(G_Patch.name == "" ? G_DEFAULT_PATCH_NAME : G_Patch.name);
 
-	/* never update the GUI elements if G_audio_status is bad, segfaults
+	/* never update the GUI elements if kernelAudio::getStatus() is bad, segfaults
 	 * are around the corner */
 
-	if (G_audio_status)
+	if (kernelAudio::getStatus())
 		gu_updateControls();
   else
 		gdAlert("Your soundcard isn't configured correctly.\n"
@@ -165,7 +164,7 @@ void init_startGUI(int argc, char **argv)
 
 void init_startKernelAudio()
 {
-	if (G_audio_status)
+	if (kernelAudio::getStatus())
 		kernelAudio::startStream();
 }
 
@@ -197,10 +196,10 @@ void init_shutdown()
 	else
 		gu_log("[init] configuration saved\n");
 
-	/* if G_audio_status we close the kernelAudio FIRST, THEN the mixer.
+	/* if kernelAudio::getStatus() we close the kernelAudio FIRST, THEN the mixer.
 	 * The opposite could cause random segfaults (even now with RtAudio?). */
 
-	if (G_audio_status) {
+	if (kernelAudio::getStatus()) {
 		kernelAudio::closeDevice();
 		mixer::close();
 		gu_log("[init] Mixer closed\n");

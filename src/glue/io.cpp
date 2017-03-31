@@ -50,8 +50,6 @@
 
 
 extern Recorder			 G_Recorder;
-extern bool 		 		 G_audio_status;
-extern Clock         G_Clock;
 extern gdMainWindow *G_MainWin;
 
 
@@ -210,7 +208,7 @@ void glue_startStopActionRec(bool gui)
 
 void glue_startActionRec(bool gui)
 {
-	if (G_audio_status == false)
+	if (kernelAudio::getStatus() == false)
 		return;
 
 	G_Recorder.active = true;
@@ -274,7 +272,7 @@ void glue_startStopInputRec(bool gui)
 
 int glue_startInputRec(bool gui)
 {
-	if (G_audio_status == false)
+	if (kernelAudio::getStatus() == false)
 		return false;
 
 	if (!mh::startInputRec()) {
