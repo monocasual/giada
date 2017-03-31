@@ -56,7 +56,6 @@ extern bool		 		   G_audio_status;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
-extern Conf          G_Conf;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *G_MainWin;
 
@@ -74,11 +73,11 @@ void init_prepareParser()
   time (&t);
 	gu_log("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
 
-	G_Conf.read();
+	conf::read();
 	G_Patch_DEPR_.setDefault();
 	G_Patch.init();
 
-	if (!gu_logInit(G_Conf.logMode))
+	if (!gu_logInit(conf::logMode))
 		gu_log("[init] log init failed! Using default stdout\n");
 
 	gu_log("[init] configuration file ready\n");
@@ -90,7 +89,7 @@ void init_prepareParser()
 
 void init_prepareKernelAudio()
 {
-  G_audio_status = kernelAudio::openDevice(&G_Conf, &G_Mixer);
+  G_audio_status = kernelAudio::openDevice(&G_Mixer);
 	G_Mixer.init();
 	G_Recorder.init();
 
@@ -99,12 +98,12 @@ void init_prepareKernelAudio()
 	/* If with Jack don't use buffer size stored in Conf. Use real buffersize
 	from the soundcard (kernelAudio::realBufsize). */
 
-	if (G_Conf.soundSystem == SYS_API_JACK)
-		G_PluginHost.init(kernelAudio::getRealBufSize(), G_Conf.samplerate);
+	if (conf::soundSystem == SYS_API_JACK)
+		G_PluginHost.init(kernelAudio::getRealBufSize(), conf::samplerate);
 	else
-		G_PluginHost.init(G_Conf.buffersize, G_Conf.samplerate);
+		G_PluginHost.init(conf::buffersize, conf::samplerate);
 
-	G_PluginHost.sortPlugins(G_Conf.pluginSortMethod);
+	G_PluginHost.sortPlugins(conf::pluginSortMethod);
 
 #endif
 }
@@ -115,9 +114,9 @@ void init_prepareKernelAudio()
 
 void init_prepareKernelMIDI()
 {
-	kernelMidi::setApi(G_Conf.midiSystem);
-	kernelMidi::openOutDevice(G_Conf.midiPortOut);
-	kernelMidi::openInDevice(G_Conf.midiPortIn);
+	kernelMidi::setApi(conf::midiSystem);
+	kernelMidi::openOutDevice(conf::midiPortOut);
+	kernelMidi::openInDevice(conf::midiPortIn);
 }
 
 
@@ -133,9 +132,9 @@ void init_prepareMidiMap()
 	/* read with deprecated method first. If it fails, try with the new one. */
 	// TODO - do the opposite: if json fails, go with deprecated one
 
-	if (G_MidiMap.read(G_Conf.midiMapPath) != MIDIMAP_READ_OK) {
+	if (G_MidiMap.read(conf::midiMapPath) != MIDIMAP_READ_OK) {
 		gu_log("[init_prepareMidiMap] JSON-based midimap read failed, trying with the deprecated one...\n");
-		if (G_MidiMap.readMap_DEPR_(G_Conf.midiMapPath) == MIDIMAP_INVALID)
+		if (G_MidiMap.readMap_DEPR_(conf::midiMapPath) == MIDIMAP_INVALID)
 			gu_log("[init_prepareMidiMap] unable to read deprecated midimap. Nothing to do\n");
 		}
 }
@@ -147,8 +146,8 @@ void init_prepareMidiMap()
 void init_startGUI(int argc, char **argv)
 {
 	G_MainWin = new gdMainWindow(GUI_WIDTH, GUI_HEIGHT, "", argc, argv);
-	G_MainWin->resize(G_Conf.mainWindowX, G_Conf.mainWindowY, G_Conf.mainWindowW,
-    G_Conf.mainWindowH);
+	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
+    conf::mainWindowH);
 
   gu_updateMainWinLabel(G_Patch.name == "" ? G_DEFAULT_PATCH_NAME : G_Patch.name);
 
@@ -181,10 +180,10 @@ void init_shutdown()
 
 	/* store position and size of the main window for the next startup */
 
-	G_Conf.mainWindowX = G_MainWin->x();
-	G_Conf.mainWindowY = G_MainWin->y();
-	G_Conf.mainWindowW = G_MainWin->w();
-	G_Conf.mainWindowH = G_MainWin->h();
+	conf::mainWindowX = G_MainWin->x();
+	conf::mainWindowY = G_MainWin->y();
+	conf::mainWindowW = G_MainWin->w();
+	conf::mainWindowH = G_MainWin->h();
 
 	/* close any open subwindow, especially before cleaning PluginHost_DEPR_ to
 	 * avoid mess */
@@ -194,7 +193,7 @@ void init_shutdown()
 
 	/* write configuration file */
 
-	if (!G_Conf.write())
+	if (!conf::write())
 		gu_log("[init] error while saving configuration file!\n");
 	else
 		gu_log("[init] configuration saved\n");

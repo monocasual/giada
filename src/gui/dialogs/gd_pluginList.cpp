@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginList
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -54,20 +52,20 @@
 #include "gd_mainWindow.h"
 
 
-extern Conf          G_Conf;
 extern Mixer         G_Mixer;
 extern PluginHost    G_PluginHost;
 extern gdMainWindow *G_MainWin;
 
 
 using std::string;
+using namespace giada;
 
 
 gdPluginList::gdPluginList(int stackType, Channel *ch)
   : gWindow(468, 204), ch(ch), stackType(stackType)
 {
-	if (G_Conf.pluginListX)
-		resize(G_Conf.pluginListX, G_Conf.pluginListY, w(), h());
+	if (conf::pluginListX)
+		resize(conf::pluginListX, conf::pluginListY, w(), h());
 
 	list = new Fl_Scroll(8, 8, 476, 188);
 	list->type(Fl_Scroll::VERTICAL);
@@ -106,8 +104,8 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 
 gdPluginList::~gdPluginList()
 {
-	G_Conf.pluginListX = x();
-	G_Conf.pluginListY = y();
+	conf::pluginListX = x();
+	conf::pluginListY = y();
 }
 
 
@@ -149,8 +147,8 @@ void gdPluginList::__cb_addPlugin()
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdPluginChooser. It does exactly what we need. */
 
-  gdPluginChooser *pc = new gdPluginChooser(G_Conf.pluginChooserX,
-      G_Conf.pluginChooserY, G_Conf.pluginChooserW, G_Conf.pluginChooserH,
+  gdPluginChooser *pc = new gdPluginChooser(conf::pluginChooserX,
+      conf::pluginChooserY, conf::pluginChooserW, conf::pluginChooserH,
       stackType, ch);
   addSubWindow(pc);
   pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList

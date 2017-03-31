@@ -51,7 +51,6 @@ extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern Conf	 	   		 G_Conf;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -181,7 +180,7 @@ void glue_rewindSeq(bool gui, bool notifyJack)
 	  kernelAudio::jackSetPosition(0);
 #endif
 
-	if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 

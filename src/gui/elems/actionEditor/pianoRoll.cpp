@@ -39,7 +39,6 @@
 #include "pianoRoll.h"
 
 
-extern Conf	      G_Conf;
 extern Recorder		G_Recorder;
 extern Mixer      G_Mixer;
 
@@ -54,10 +53,10 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
 	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
 
-	if (G_Conf.pianoRollY == -1)
+	if (conf::pianoRollY == -1)
 		position(x(), y()-(h()/2));  // center
 	else
-		position(x(), G_Conf.pianoRollY);
+		position(x(), conf::pianoRollY);
 
 	drawSurface1();
 	drawSurface2();

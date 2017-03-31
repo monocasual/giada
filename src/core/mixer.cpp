@@ -47,7 +47,6 @@
 extern Mixer 			 G_Mixer;
 extern Recorder    G_Recorder;
 extern MidiMapConf G_MidiMap;
-extern Conf				 G_Conf;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
 #endif
@@ -181,7 +180,7 @@ int Mixer::__masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize)
 
 	for (unsigned j=0; j<bufferSize; j+=2) {
 		finalizeOutput(outBuf, j);
-		if (G_Conf.limitOutput)
+		if (conf::limitOutput)
 			limitOutput(outBuf, j);
 		computePeak(outBuf, j);
 		renderMetronome(outBuf, j);
@@ -263,7 +262,7 @@ void Mixer::lineInRec(float *inBuf, unsigned frame)
 	/* Delay comp: wait until waitRec reaches delayComp. WaitRec
 	 * returns to 0 in mixerHandler, as soon as the recording ends */
 
-	if (waitRec < G_Conf.delayComp) {
+	if (waitRec < conf::delayComp) {
 		waitRec += 2;
 		return;
 	}
@@ -367,7 +366,7 @@ void Mixer::testFirstBeat(unsigned frame)
 		return;
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->onZero(frame, G_Conf.recsStopOnChanHalt);
+		channels.at(k)->onZero(frame, conf::recsStopOnChanHalt);
 	pthread_mutex_unlock(&mutex_chans);
 }
 

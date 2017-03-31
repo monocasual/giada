@@ -46,7 +46,6 @@
 
 
 extern Mixer 		  G_Mixer;
-extern Conf       G_Conf;
 extern Recorder   G_Recorder;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;

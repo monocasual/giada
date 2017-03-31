@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiInputChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -46,16 +44,16 @@
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
-extern Conf       G_Conf;
 
 
 using std::string;
 using std::vector;
+using namespace giada;
 
 
 gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
-	:	gdMidiInputBase(G_Conf.midiInputX, G_Conf.midiInputY, G_Conf.midiInputW,
-      G_Conf.midiInputH, "MIDI Input Setup"),
+	:	gdMidiInputBase(conf::midiInputX, conf::midiInputY, conf::midiInputW,
+      conf::midiInputH, "MIDI Input Setup"),
 		ch(ch)
 {
   string title = "MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")";
@@ -101,10 +99,10 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 
 gdMidiInputChannel::~gdMidiInputChannel()
 {
-  G_Conf.midiInputX = x();
-  G_Conf.midiInputY = y();
-	G_Conf.midiInputW = w();
-	G_Conf.midiInputH = h();
+  conf::midiInputX = x();
+  conf::midiInputY = y();
+	conf::midiInputW = w();
+	conf::midiInputH = h();
 }
 
 

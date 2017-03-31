@@ -39,7 +39,6 @@
 
 
 extern Mixer				 G_Mixer;
-extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 
@@ -49,8 +48,8 @@ using namespace giada;
 gdBeatsInput::gdBeatsInput()
 	: gWindow(164, 60, "Beats")
 {
-	if (G_Conf.beatsX)
-		resize(G_Conf.beatsX, G_Conf.beatsY, w(), h());
+	if (conf::beatsX)
+		resize(conf::beatsX, conf::beatsY, w(), h());
 
 	set_modal();
 
@@ -70,7 +69,7 @@ gdBeatsInput::gdBeatsInput()
 	bars->type(FL_INT_INPUT);
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update_batt, (void*)this);
-	resizeRec->value(G_Conf.resizeRecordings);
+	resizeRec->value(conf::resizeRecordings);
 
 	gu_setFavicon(this);
 	setId(WID_BEATS);
@@ -83,9 +82,9 @@ gdBeatsInput::gdBeatsInput()
 
 gdBeatsInput::~gdBeatsInput()
 {
-	G_Conf.beatsX = x();
-	G_Conf.beatsY = y();
-	G_Conf.resizeRecordings =	resizeRec->value();
+	conf::beatsX = x();
+	conf::beatsY = y();
+	conf::resizeRecordings =	resizeRec->value();
 }
 
 

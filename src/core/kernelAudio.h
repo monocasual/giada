@@ -40,7 +40,6 @@
 
 
 class RtAudio;
-class Conf;
 class Mixer;
 
 
@@ -60,7 +59,7 @@ struct JackState
 
 void init();
 
-int openDevice(Conf *conf, Mixer *mixer);
+int openDevice(Mixer *mixer);
 int closeDevice();
 int startStream();
 int stopStream();

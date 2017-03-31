@@ -40,8 +40,6 @@ namespace clock
 {
 namespace
 {
-Conf *conf;
-
 bool  running;
 float bpm;
 int   bars;
@@ -79,11 +77,8 @@ void updateQuanto()
 /* -------------------------------------------------------------------------- */
 
 
-void init(Conf *conf)
+void init()
 {
-  assert(conf != nullptr);
-
-  conf              = conf;
   running           = false;
   bpm               = G_DEFAULT_BPM;
   bars              = G_DEFAULT_BARS;
@@ -96,7 +91,7 @@ void init(Conf *conf)
   totalFrames       = 0;
   currentFrame      = 0;
   currentBeat       = 0;
-  midiTCrate        = (conf->samplerate / conf->midiTCfps) * 2;  // stereo values
+  midiTCrate        = (conf::samplerate / conf::midiTCfps) * 2;  // stereo values
   midiTCframes      = 0;
   midiTCseconds     = 0;
   midiTCminutes     = 0;
@@ -143,7 +138,7 @@ bool isOnFirstBeat()
 void start()
 {
   running = true;
-	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
 		kernelMidi::send(MIDI_START, -1, -1);
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 	}
@@ -153,7 +148,7 @@ void start()
 void stop()
 {
   running = false;
-  if (conf->midiSync == MIDI_SYNC_CLOCK_M)
+  if (conf::midiSync == MIDI_SYNC_CLOCK_M)
   	kernelMidi::send(MIDI_STOP, -1, -1);
 }
 
@@ -223,7 +218,7 @@ void updateFrameBars()
    * framesInSeq ... number of frames in the whole sequencer */
 
 	float seconds     = (60.0f / bpm) * beats;
-	totalFrames       = conf->samplerate * seconds * 2;
+	totalFrames       = conf::samplerate * seconds * 2;
 	framesPerBar      = totalFrames / bars;
 	framesPerBeat     = totalFrames / beats;
 	framesInSequencer = framesPerBeat * G_MAX_BEATS;
@@ -248,13 +243,13 @@ void sendMIDIsync()
 {
   /* TODO - only Master (_M) is implemented so far. */
 
-	if (conf->midiSync == MIDI_SYNC_CLOCK_M) {
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
 		if (currentFrame % (framesPerBeat/24) == 0)
 			kernelMidi::send(MIDI_CLOCK, -1, -1);
     return;
   }
 
-	if (conf->midiSync == MIDI_SYNC_MTC_M) {
+	if (conf::midiSync == MIDI_SYNC_MTC_M) {
 
 		/* check if a new timecode frame has passed. If so, send MIDI TC
 		 * quarter frames. 8 quarter frames, divided in two branches:
@@ -293,7 +288,7 @@ void sendMIDIsync()
 		/* check if total timecode frames are greater than timecode fps:
 		 * if so, a second has passed */
 
-		if (midiTCframes > conf->midiTCfps) {
+		if (midiTCframes > conf::midiTCfps) {
 			midiTCframes = 0;
 			midiTCseconds++;
 			if (midiTCseconds >= 60) {
@@ -325,7 +320,7 @@ void sendMIDIrewind()
 	 * be sent. The Full Frame is a SysEx message that encodes the entire
 	 * SMPTE time in one message */
 
-	if (conf->midiSync == MIDI_SYNC_MTC_M) {
+	if (conf::midiSync == MIDI_SYNC_MTC_M) {
 		kernelMidi::send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
 		kernelMidi::send(0x01, 0x01, 0x00);        // hours 0
 		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0

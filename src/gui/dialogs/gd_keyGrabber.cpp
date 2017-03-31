@@ -42,7 +42,6 @@
 #include "gd_mainWindow.h"
 
 
-extern Conf	         G_Conf;
 extern gdMainWindow *mainWin;
 
 

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginChooser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -41,10 +39,12 @@
 
 
 extern PluginHost G_PluginHost;
-extern Conf       G_Conf;
 
 
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, class Channel *ch)
+using namespace giada;
+
+
+gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel *ch)
   : gWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(stackType)
 {
   /* top area */
@@ -71,7 +71,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, clas
   sortMethod->add("Category");
   sortMethod->add("Manufacturer");
   sortMethod->callback(cb_sort, (void*) this);
-  sortMethod->value(G_Conf.pluginSortMethod);
+  sortMethod->value(conf::pluginSortMethod);
 
   addBtn->callback(cb_add, (void*) this);
   addBtn->shortcut(FL_Enter);
@@ -88,11 +88,11 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, clas
 
 gdPluginChooser::~gdPluginChooser()
 {
-  G_Conf.pluginChooserX = x();
-  G_Conf.pluginChooserY = y();
-  G_Conf.pluginChooserW = w();
-  G_Conf.pluginChooserH = h();
-  G_Conf.pluginSortMethod = sortMethod->value();
+  conf::pluginChooserX = x();
+  conf::pluginChooserY = y();
+  conf::pluginChooserW = w();
+  conf::pluginChooserH = h();
+  conf::pluginSortMethod = sortMethod->value();
 }
 
 

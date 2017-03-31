@@ -36,7 +36,6 @@
 
 
 extern Mixer G_Mixer;
-extern Conf  G_Conf;
 
 
 using std::string;

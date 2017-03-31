@@ -43,7 +43,9 @@
 
 
 extern Mixer G_Mixer;
-extern Conf  G_Conf;
+
+
+using namespace giada;
 
 
 geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l)
@@ -64,8 +66,8 @@ geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char
   data.inf  = nullptr;
   data.size = 0;
 
-  grid.snap  = G_Conf.sampleEditorGridOn;
-  grid.level = G_Conf.sampleEditorGridVal;
+  grid.snap  = conf::sampleEditorGridOn;
+  grid.level = conf::sampleEditorGridVal;
 
   stretchToWindow();
 }

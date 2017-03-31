@@ -38,9 +38,7 @@
 
 
 using std::string;
-
-
-extern Conf G_Conf;
+using namespace giada;
 
 
 gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
@@ -66,8 +64,8 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 
 	browser = new geBrowser(8, groupTop->y()+groupTop->h()+8, w-16, h-93);
 	browser->loadDir(path);
-	if (path == G_Conf.browserLastPath)
-		browser->preselect(G_Conf.browserPosition, G_Conf.browserLastValue);
+	if (path == conf::browserLastPath)
+		browser->preselect(conf::browserPosition, conf::browserLastValue);
 
 	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
 		ok  	  = new gClick(w-88, groupButtons->y(), 80, 20);
@@ -96,13 +94,13 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 
 gdBaseBrowser::~gdBaseBrowser()
 {
-	G_Conf.browserX = x();
-	G_Conf.browserY = y();
-	G_Conf.browserW = w();
-	G_Conf.browserH = h();
-	G_Conf.browserPosition = browser->position();
-	G_Conf.browserLastPath = gu_dirname(browser->getSelectedItem());
-	G_Conf.browserLastValue = browser->value();
+	conf::browserX = x();
+	conf::browserY = y();
+	conf::browserW = w();
+	conf::browserH = h();
+	conf::browserPosition = browser->position();
+	conf::browserLastPath = gu_dirname(browser->getSelectedItem());
+	conf::browserLastValue = browser->value();
 }
 
 

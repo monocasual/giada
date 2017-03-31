@@ -80,9 +80,9 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-int openDevice(Conf *conf, Mixer *mixer)
+int openDevice(Mixer *mixer)
 {
-	api = conf->soundSystem;
+	api = conf::soundSystem;
 	gu_log("[KA] using rtSystem 0x%x\n", api);
 
 #if defined(__linux__)
@@ -118,7 +118,7 @@ int openDevice(Conf *conf, Mixer *mixer)
 		return 0;
 
 	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n",
-    conf->soundDeviceOut, conf->soundDeviceIn, conf->samplerate);
+    conf::soundDeviceOut, conf::soundDeviceIn, conf::samplerate);
 
 	numDevs = rtSystem->getDeviceCount();
 
@@ -136,20 +136,20 @@ int openDevice(Conf *conf, Mixer *mixer)
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	if (conf->soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT)
+	if (conf::soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT)
 		outParams.deviceId = getDefaultOut();
 	else
-		outParams.deviceId = conf->soundDeviceOut;
+		outParams.deviceId = conf::soundDeviceOut;
 
 	outParams.nChannels = 2;
-	outParams.firstChannel = conf->channelsOut * 2; // chan 0=0, 1=2, 2=4, ...
+	outParams.firstChannel = conf::channelsOut * 2; // chan 0=0, 1=2, 2=4, ...
 
 	/* inDevice can be disabled */
 
-	if (conf->soundDeviceIn != -1) {
-		inParams.deviceId     = conf->soundDeviceIn;
+	if (conf::soundDeviceIn != -1) {
+		inParams.deviceId     = conf::soundDeviceIn;
 		inParams.nChannels    = 2;
-		inParams.firstChannel = conf->channelsIn * 2;   // chan 0=0, 1=2, 2=4, ...
+		inParams.firstChannel = conf::channelsIn * 2;   // chan 0=0, 1=2, 2=4, ...
 		inputEnabled = true;
 	}
 	else
@@ -159,13 +159,13 @@ int openDevice(Conf *conf, Mixer *mixer)
   options.streamName = G_APP_NAME;
   options.numberOfBuffers = 4;
 
-	realBufsize = conf->buffersize;
+	realBufsize = conf::buffersize;
 
 #if defined(__linux__) || defined(__APPLE__)
 
 	if (api == SYS_API_JACK) {
-		conf->samplerate = getFreq(conf->soundDeviceOut, 0);
-		gu_log("[KA] JACK in use, freq = %d\n", conf->samplerate);
+		conf::samplerate = getFreq(conf::soundDeviceOut, 0);
+		gu_log("[KA] JACK in use, freq = %d\n", conf::samplerate);
 	}
 
 #endif
@@ -173,9 +173,9 @@ int openDevice(Conf *conf, Mixer *mixer)
 	try {
 		rtSystem->openStream(
 			&outParams, 					              // output params
-			conf->soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
+			conf::soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
 			RTAUDIO_FLOAT32,			              // audio format
-			conf->samplerate, 					        // sample rate
+			conf::samplerate, 					        // sample rate
 			&realBufsize, 				              // buffer size in byte
 			&mixer->masterPlay,                 // audio callback
 			nullptr,									          // user data (unused)

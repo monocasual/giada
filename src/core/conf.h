@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * conf
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -27,114 +25,89 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __CONF_H__
-#define __CONF_H__
+#ifndef CONF_H
+#define CONF_H
 
 
 #include <string>
-#include "dataStorageJson.h"
 
 
-class Conf : public DataStorageJson
+namespace giada {
+namespace conf
 {
-private:
+int read();
+int write();
 
-	std::string confFilePath;
-	std::string confDirPath;
+extern std::string header;
 
-	/* init
-   * Init Conf with default values. */
+extern int  logMode;
+extern int  soundSystem;
+extern int  soundDeviceOut;
+extern int  soundDeviceIn;
+extern int  channelsOut;
+extern int  channelsIn;
+extern int  samplerate;
+extern int  buffersize;
+extern int  delayComp;
+extern bool limitOutput;
+extern int  rsmpQuality;
 
-  void init();
+extern int  midiSystem;
+extern int  midiPortOut;
+extern int  midiPortIn;
+extern bool noNoteOff;
+extern std::string midiMapPath;
+extern std::string lastFileMap;
+extern int   midiSync;  // see const.h
+extern float midiTCfps;
 
-	/* sanitize
-	 * Avoid funky values from config file. */
+extern uint32_t midiInRewind;
+extern uint32_t midiInStartStop;
+extern uint32_t midiInActionRec;
+extern uint32_t midiInInputRec;
+extern uint32_t midiInMetronome;
+extern uint32_t midiInVolumeIn;
+extern uint32_t midiInVolumeOut;
+extern uint32_t midiInBeatDouble;
+extern uint32_t midiInBeatHalf;
 
-	void sanitize();
+extern bool recsStopOnChanHalt;
+extern bool chansStopOnSeqHalt;
+extern bool treatRecsAsLoops;
+extern bool resizeRecordings;
 
-	/* createConfigFolder
-	 * Create local folder where to put the configuration file. Path differs from
-	 * OS to OS. */
+extern std::string pluginPath;
+extern std::string patchPath;
+extern std::string samplePath;
 
-	int createConfigFolder();
+extern int mainWindowX, mainWindowY, mainWindowW, mainWindowH;
 
-public:
+extern int browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
+extern std::string browserLastPath;
 
-	Conf();
+extern int actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
+extern int actionEditorGridVal;
+extern int actionEditorGridOn;
 
-	std::string header;
+extern int sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
+extern int sampleEditorGridVal;
+extern int sampleEditorGridOn;
 
-	int  logMode;
-	int  soundSystem;
-	int  soundDeviceOut;
-	int  soundDeviceIn;
-	int  channelsOut;
-	int  channelsIn;
-	int  samplerate;
-	int  buffersize;
-	int  delayComp;
-	bool limitOutput;
-	int  rsmpQuality;
+extern int midiInputX, midiInputY, midiInputW, midiInputH;
 
-	int  midiSystem;
-	int  midiPortOut;
-	int  midiPortIn;
-	bool noNoteOff;
-	std::string midiMapPath;
-	std::string lastFileMap;
-	int   midiSync;  // see const.h
-	float midiTCfps;
-
-	uint32_t midiInRewind;
-	uint32_t midiInStartStop;
-	uint32_t midiInActionRec;
-	uint32_t midiInInputRec;
-	uint32_t midiInMetronome;
-	uint32_t midiInVolumeIn;
-	uint32_t midiInVolumeOut;
-	uint32_t midiInBeatDouble;
-	uint32_t midiInBeatHalf;
-
-	bool recsStopOnChanHalt;
-	bool chansStopOnSeqHalt;
-	bool treatRecsAsLoops;
-	bool resizeRecordings;
-
-	std::string pluginPath;
-	std::string patchPath;
-	std::string samplePath;
-
-	int mainWindowX, mainWindowY, mainWindowW, mainWindowH;
-
-	int browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
-	std::string browserLastPath;
-
-	int actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
-	int actionEditorGridVal;
-	int actionEditorGridOn;
-
-	int sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
-  int sampleEditorGridVal;
-  int sampleEditorGridOn;
-
-  int midiInputX, midiInputY, midiInputW, midiInputH;
-
-	int pianoRollY, pianoRollH;
-	int pluginListX, pluginListY;
-	int configX, configY;
-	int bpmX, bpmY;
-	int beatsX, beatsY;
-	int aboutX, aboutY;
+extern int pianoRollY, pianoRollH;
+extern int pluginListX, pluginListY;
+extern int configX, configY;
+extern int bpmX, bpmY;
+extern int beatsX, beatsY;
+extern int aboutX, aboutY;
 
 #ifdef WITH_VST
 
-	int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
-	int pluginSortMethod;
+extern int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
+extern int pluginSortMethod;
 
 #endif
-
-	int read();
-	int write();
-};
+}}; // giada::conf::
 
 #endif

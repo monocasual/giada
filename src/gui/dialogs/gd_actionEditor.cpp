@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_actionEditor
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -44,9 +42,6 @@
 #include "gd_actionEditor.h"
 
 
-extern Conf	 G_Conf;
-
-
 using namespace giada;
 
 
@@ -56,9 +51,9 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		zoom   (100),
 		coverX (0)
 {
-	if (G_Conf.actionEditorW) {
-		resize(G_Conf.actionEditorX, G_Conf.actionEditorY, G_Conf.actionEditorW, G_Conf.actionEditorH);
-		zoom = G_Conf.actionEditorZoom;
+	if (conf::actionEditorW) {
+		resize(conf::actionEditorX, conf::actionEditorY, conf::actionEditorW, conf::actionEditorH);
+		zoom = conf::actionEditorZoom;
 	}
 
 	totalWidth = (int) std::ceil(clock::getFramesInSequencer() / (float) zoom);
@@ -155,11 +150,11 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 gdActionEditor::~gdActionEditor()
 {
-	G_Conf.actionEditorX = x();
-	G_Conf.actionEditorY = y();
-	G_Conf.actionEditorW = w();
-	G_Conf.actionEditorH = h();
-	G_Conf.actionEditorZoom = zoom;
+	conf::actionEditorX = x();
+	conf::actionEditorY = y();
+	conf::actionEditorW = w();
+	conf::actionEditorH = h();
+	conf::actionEditorZoom = zoom;
 
 	/** CHECKME - missing clear() ? */
 

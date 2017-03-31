@@ -35,9 +35,6 @@
 #include "gridTool.h"
 
 
-extern Conf	 G_Conf;
-
-
 using namespace giada;
 
 
@@ -58,8 +55,8 @@ geGridTool::geGridTool(int x, int y, gdActionEditor *parent)
 
 	active = new gCheck (x+44, y+4, 12, 12);
 
-	gridType->value(G_Conf.actionEditorGridVal);
-	active->value(G_Conf.actionEditorGridOn);
+	gridType->value(conf::actionEditorGridVal);
+	active->value(conf::actionEditorGridOn);
 
 	end();
 }
@@ -70,8 +67,8 @@ geGridTool::geGridTool(int x, int y, gdActionEditor *parent)
 
 geGridTool::~geGridTool()
 {
-	G_Conf.actionEditorGridVal = gridType->value();
-	G_Conf.actionEditorGridOn  = active->value();
+	conf::actionEditorGridVal = gridType->value();
+	conf::actionEditorGridOn  = active->value();
 }
 
 

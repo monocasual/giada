@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_sampleChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -54,9 +52,11 @@
 
 
 extern Mixer 		     G_Mixer;
-extern Conf  		     G_Conf;
 extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
@@ -194,9 +194,9 @@ void geSampleChannel::__cb_openMenu()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-    gWindow *w = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
-      G_Conf.browserW, G_Conf.browserH, "Browse sample",
-      G_Conf.samplePath.c_str(), glue_loadSample, ch);
+    gWindow *w = new gdLoadBrowser(conf::browserX, conf::browserY,
+      conf::browserW, conf::browserH, "Browse sample",
+      conf::samplePath.c_str(), glue_loadSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 		return;
 	}
@@ -222,9 +222,9 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Export sample to file...") == 0) {
-    gWindow *w = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-      G_Conf.browserW, G_Conf.browserH, "Save sample", \
-      G_Conf.samplePath.c_str(), "", glue_saveSample, ch);
+    gWindow *w = new gdSaveBrowser(conf::browserX, conf::browserY,
+      conf::browserW, conf::browserH, "Save sample", \
+      conf::samplePath.c_str(), "", glue_saveSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 		return;
 	}

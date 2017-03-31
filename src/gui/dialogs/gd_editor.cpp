@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_editor
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -46,7 +44,6 @@
 
 
 extern Mixer G_Mixer;
-extern Conf  G_Conf;
 
 
 using namespace giada;
@@ -58,8 +55,8 @@ gdEditor::gdEditor(SampleChannel *ch)
 {
   set_non_modal();
 
-  if (G_Conf.sampleEditorX)
-    resize(G_Conf.sampleEditorX, G_Conf.sampleEditorY, G_Conf.sampleEditorW, G_Conf.sampleEditorH);
+  if (conf::sampleEditorX)
+    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
 
   /* top bar: grid and zoom tools */
 
@@ -118,10 +115,10 @@ gdEditor::gdEditor(SampleChannel *ch)
   grid->add("16");
   grid->add("32");
   grid->add("64");
-  grid->value(G_Conf.sampleEditorGridVal);
+  grid->value(conf::sampleEditorGridVal);
   grid->callback(cb_changeGrid, (void*)this);
 
-  snap->value(G_Conf.sampleEditorGridOn);
+  snap->value(conf::sampleEditorGridOn);
   snap->callback(cb_enableSnap, (void*)this);
 
   /* TODO - redraw grid if != (off) */
@@ -236,12 +233,12 @@ gdEditor::gdEditor(SampleChannel *ch)
 
 gdEditor::~gdEditor()
 {
-  G_Conf.sampleEditorX = x();
-  G_Conf.sampleEditorY = y();
-  G_Conf.sampleEditorW = w();
-  G_Conf.sampleEditorH = h();
-  G_Conf.sampleEditorGridVal = grid->value();
-  G_Conf.sampleEditorGridOn  = snap->value();
+  conf::sampleEditorX = x();
+  conf::sampleEditorY = y();
+  conf::sampleEditorW = w();
+  conf::sampleEditorH = h();
+  conf::sampleEditorGridVal = grid->value();
+  conf::sampleEditorGridOn  = snap->value();
 }
 
 
@@ -409,7 +406,7 @@ void gdEditor::__cb_reload()
 
   /* no need for glue_loadChan, there's no gui to refresh */
 
-  ch->load(ch->wave->pathfile.c_str(), G_Conf.samplerate, G_Conf.rsmpQuality);
+  ch->load(ch->wave->pathfile.c_str(), conf::samplerate, conf::rsmpQuality);
 
   glue_setBoost(this, ch, G_DEFAULT_BOOST, true);
   glue_setPitch(this, ch, G_DEFAULT_PITCH, true);

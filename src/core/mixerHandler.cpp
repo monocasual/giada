@@ -57,7 +57,6 @@
 extern Mixer 		   G_Mixer;
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern Patch       G_Patch;
-extern Conf 		   G_Conf;
 extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
@@ -253,7 +252,7 @@ void stopSequencer()
 {
   clock::stop();
 	for (unsigned i=0; i<G_Mixer.channels.size(); i++)
-		G_Mixer.channels.at(i)->stopBySeq(G_Conf.chansStopOnSeqHalt);
+		G_Mixer.channels.at(i)->stopBySeq(conf::chansStopOnSeqHalt);
 }
 
 
@@ -287,8 +286,8 @@ void loadPatch_DEPR_(bool isProject, const char *projPath)
 		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
 		string projectPath = projPath;  // safe
 		string samplePath  = isProject ? projectPath + G_SLASH + G_Patch_DEPR_.getSamplePath(i) : "";
-		ch->readPatch_DEPR_(samplePath.c_str(), i, &G_Patch_DEPR_, G_Conf.samplerate,
-				G_Conf.rsmpQuality);
+		ch->readPatch_DEPR_(samplePath.c_str(), i, &G_Patch_DEPR_, conf::samplerate,
+				conf::rsmpQuality);
 	}
 
 	G_Mixer.outVol     = G_Patch_DEPR_.getOutVol();
@@ -367,7 +366,7 @@ bool startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		if (!ch->allocEmpty(clock::getTotalFrames(), G_Conf.samplerate, G_Patch.lastTakeId))
+		if (!ch->allocEmpty(clock::getTotalFrames(), conf::samplerate, G_Patch.lastTakeId))
 		{
 			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);

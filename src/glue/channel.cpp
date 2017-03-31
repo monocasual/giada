@@ -53,7 +53,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Conf          G_Conf;
 extern Recorder			 G_Recorder;
 extern Mixer	   		 G_Mixer;
 #ifdef WITH_VST
@@ -78,9 +77,9 @@ int glue_loadChannel(SampleChannel *ch, const string &fname)
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
 
-	G_Conf.samplePath = gu_dirname(fname);
+	conf::samplePath = gu_dirname(fname);
 
-	int result = ch->load(fname.c_str(), G_Conf.samplerate, G_Conf.rsmpQuality);
+	int result = ch->load(fname.c_str(), conf::samplerate, conf::rsmpQuality);
 
 	if (result == SAMPLE_LOADED_OK)
 		G_MainWin->keyboard->updateChannel(ch->guiChannel);
@@ -489,7 +488,7 @@ void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val, bool numeric
 
 void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
 {
-	/* When you call glue_startReadingRecs with G_Conf.treatRecsAsLoops, the
+	/* When you call glue_startReadingRecs with conf::treatRecsAsLoops, the
 	member value ch->readActions actually is not set to true immediately, because
 	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
 	the next first beat. So a 'stop rec' command should occur also when
@@ -509,10 +508,10 @@ void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
 
 void glue_startReadingRecs(SampleChannel *ch, bool gui)
 {
-	if (G_Conf.treatRecsAsLoops)
+	if (conf::treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
 	else
-		ch->setReadActions(true, G_Conf.recsStopOnChanHalt);
+		ch->setReadActions(true, conf::recsStopOnChanHalt);
 	if (!gui) {
 		Fl::lock();
 		((geSampleChannel*)ch->guiChannel)->readActions->value(1);
@@ -535,10 +534,10 @@ void glue_stopReadingRecs(SampleChannel *ch, bool gui)
 		ch->readActions = false;
 	}
 	else
-	if (G_Conf.treatRecsAsLoops)
+	if (conf::treatRecsAsLoops)
 		ch->recStatus = REC_ENDING;
 	else
-		ch->setReadActions(false, G_Conf.recsStopOnChanHalt);
+		ch->setReadActions(false, conf::recsStopOnChanHalt);
 
 	if (!gui) {
 		Fl::lock();

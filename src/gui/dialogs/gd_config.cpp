@@ -48,7 +48,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern Conf	       G_Conf;
 extern bool        G_audio_status;
 extern MidiMapConf G_MidiMap;
 
@@ -74,7 +73,7 @@ gTabMisc::gTabMisc(int X, int Y, int W, int H)
 
 	labelsize(GUI_FONT_SIZE_BASE);
 
-	switch (G_Conf.logMode) {
+	switch (conf::logMode) {
 		case LOG_MODE_MUTE:
 			debugMsg->value(0);
 			break;
@@ -95,13 +94,13 @@ void gTabMisc::save()
 {
 	switch(debugMsg->value()) {
 		case 0:
-			G_Conf.logMode = LOG_MODE_MUTE;
+			conf::logMode = LOG_MODE_MUTE;
 			break;
 		case 1:
-			G_Conf.logMode = LOG_MODE_STDOUT;
+			conf::logMode = LOG_MODE_STDOUT;
 			break;
 		case 2:
-			G_Conf.logMode = LOG_MODE_FILE;
+			conf::logMode = LOG_MODE_FILE;
 			break;
 	}
 }
@@ -144,7 +143,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
 		soundsys->add("PulseAudio");
 
-	switch (G_Conf.soundSystem) {
+	switch (conf::soundSystem) {
 		case SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -170,7 +169,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	if (kernelAudio::hasAPI(RtAudio::WINDOWS_WASAPI))
 		soundsys->add("WASAPI");
 
-	switch (G_Conf.soundSystem) {
+	switch (conf::soundSystem) {
 		case SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -190,7 +189,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	if (kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
 
-	switch (G_Conf.soundSystem) {
+	switch (conf::soundSystem) {
 		case SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -211,7 +210,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	devOutInfo->callback(cb_showOutputInfo, this);
 	devInInfo->callback(cb_showInputInfo, this);
 
-	if (G_Conf.soundSystem != SYS_API_NONE) {
+	if (conf::soundSystem != SYS_API_NONE) {
 		fetchSoundDevs();
 		fetchOutChans(sounddevOut->value());
 		fetchInChans(sounddevIn->value());
@@ -223,7 +222,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		for (int i=0; i<nfreq; i++) {
 			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
 			samplerate->add(gu_itoa(freq).c_str());
-			if (freq == G_Conf.samplerate)
+			if (freq == conf::samplerate)
 				samplerate->value(i);
 		}
 	}
@@ -247,20 +246,20 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(gu_itoa(G_Conf.buffersize).c_str());
+	buffersize->showItem(gu_itoa(conf::buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
 	rsmpQuality->add("Sinc basic quality (medium)");
 	rsmpQuality->add("Zero Order Hold (fast)");
 	rsmpQuality->add("Linear (very fast)");
-	rsmpQuality->value(G_Conf.rsmpQuality);
+	rsmpQuality->value(conf::rsmpQuality);
 
-	delayComp->value(gu_itoa(G_Conf.delayComp).c_str());
+	delayComp->value(gu_itoa(conf::delayComp).c_str());
 	delayComp->type(FL_INT_INPUT);
 	delayComp->maximum_size(5);
 
-	limitOutput->value(G_Conf.limitOutput);
+	limitOutput->value(conf::limitOutput);
 }
 
 
@@ -393,7 +392,7 @@ void gTabAudio::fetchInChans(int menuItem)
 		sprintf(str, "%d-%d", (i+1), (i+2));
 		channelsIn->add(str);
 	}
-	channelsIn->value(G_Conf.channelsIn);
+	channelsIn->value(conf::channelsIn);
 }
 
 
@@ -417,7 +416,7 @@ void gTabAudio::fetchOutChans(int menuItem)
 		sprintf(str, "%d-%d", (i+1), (i+2));
 		channelsOut->add(str);
 	}
-	channelsOut->value(G_Conf.channelsOut);
+	channelsOut->value(conf::channelsOut);
 }
 
 
@@ -496,7 +495,7 @@ void gTabAudio::fetchSoundDevs()
 			devOutInfo->deactivate();
 		}
 		else {
-			int outMenuValue = findMenuDevice(sounddevOut, G_Conf.soundDeviceOut);
+			int outMenuValue = findMenuDevice(sounddevOut, conf::soundDeviceOut);
 			sounddevOut->value(outMenuValue);
 		}
 
@@ -506,7 +505,7 @@ void gTabAudio::fetchSoundDevs()
 			devInInfo->deactivate();
 		}
 		else {
-			int inMenuValue = findMenuDevice(sounddevIn, G_Conf.soundDeviceIn);
+			int inMenuValue = findMenuDevice(sounddevIn, conf::soundDeviceIn);
 			sounddevIn->value(inMenuValue);
 		}
 	}
@@ -521,62 +520,62 @@ void gTabAudio::save()
 	string text = soundsys->text(soundsys->value());
 
 	if (text == "(none)") {
-		G_Conf.soundSystem = SYS_API_NONE;
+		conf::soundSystem = SYS_API_NONE;
 		return;
 	}
 
 #if defined(__linux__)
 
 	else if (text == "ALSA")
-		G_Conf.soundSystem = SYS_API_ALSA;
+		conf::soundSystem = SYS_API_ALSA;
 	else if (text == "Jack")
-		G_Conf.soundSystem = SYS_API_JACK;
+		conf::soundSystem = SYS_API_JACK;
 	else if (text == "PulseAudio")
-		G_Conf.soundSystem = SYS_API_PULSE;
+		conf::soundSystem = SYS_API_PULSE;
 
 #elif defined(_WIN32)
 
 	else if (text == "DirectSound")
-		G_Conf.soundSystem = SYS_API_DS;
+		conf::soundSystem = SYS_API_DS;
 	else if (text == "ASIO")
-		G_Conf.soundSystem = SYS_API_ASIO;
+		conf::soundSystem = SYS_API_ASIO;
 	else if (text == "WASAPI")
-		G_Conf.soundSystem = SYS_API_WASAPI;
+		conf::soundSystem = SYS_API_WASAPI;
 
 #elif defined (__APPLE__)
 
 	else if (text == "CoreAudio")
-		G_Conf.soundSystem = SYS_API_CORE;
+		conf::soundSystem = SYS_API_CORE;
 
 #endif
 
 	/* use the device name to search into the drop down menu's */
 
-	G_Conf.soundDeviceOut = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	G_Conf.soundDeviceIn  = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	G_Conf.channelsOut    = channelsOut->value();
-	G_Conf.channelsIn     = channelsIn->value();
-	G_Conf.limitOutput    = limitOutput->value();
-	G_Conf.rsmpQuality    = rsmpQuality->value();
+	conf::soundDeviceOut = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	conf::soundDeviceIn  = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	conf::channelsOut    = channelsOut->value();
+	conf::channelsIn     = channelsIn->value();
+	conf::limitOutput    = limitOutput->value();
+	conf::rsmpQuality    = rsmpQuality->value();
 
 	/* if sounddevOut is disabled (because of system change e.g. alsa ->
 	 * jack) its value is equal to -1. Change it! */
 
-	if (G_Conf.soundDeviceOut == -1)
-		G_Conf.soundDeviceOut = 0;
+	if (conf::soundDeviceOut == -1)
+		conf::soundDeviceOut = 0;
 
 	int bufsize = atoi(buffersize->text());
 	if (bufsize % 2 != 0) bufsize++;
 	if (bufsize < 8)		  bufsize = 8;
 	if (bufsize > 8192)		bufsize = 8192;
-	G_Conf.buffersize = bufsize;
+	conf::buffersize = bufsize;
 
 	const Fl_Menu_Item *i = nullptr;
 	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
 	if (i)
-		G_Conf.samplerate = atoi(i->label());
+		conf::samplerate = atoi(i->label());
 
-	G_Conf.delayComp = atoi(delayComp->value());
+	conf::delayComp = atoi(delayComp->value());
 }
 
 
@@ -607,16 +606,16 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	fetchInPorts();
 	fetchMidiMaps();
 
-	noNoteOff->value(G_Conf.noNoteOff);
+	noNoteOff->value(conf::noNoteOff);
 
 	sync->add("(disabled)");
 	sync->add("MIDI Clock (master)");
 	sync->add("MTC (master)");
-	if      (G_Conf.midiSync == MIDI_SYNC_NONE)
+	if      (conf::midiSync == MIDI_SYNC_NONE)
 		sync->value(0);
-	else if (G_Conf.midiSync == MIDI_SYNC_CLOCK_M)
+	else if (conf::midiSync == MIDI_SYNC_CLOCK_M)
 		sync->value(1);
-	else if (G_Conf.midiSync == MIDI_SYNC_MTC_M)
+	else if (conf::midiSync == MIDI_SYNC_MTC_M)
 		sync->value(2);
 
 	systemInitValue = system->value();
@@ -640,7 +639,7 @@ void gTabMidi::fetchOutPorts() {
 		for (unsigned i=0; i<kernelMidi::countOutPorts(); i++)
 			portOut->add(gu_removeFltkChars(kernelMidi::getOutPortName(i)).c_str());
 
-		portOut->value(G_Conf.midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
+		portOut->value(conf::midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
 	}
 }
 
@@ -661,7 +660,7 @@ void gTabMidi::fetchInPorts()
 		for (unsigned i=0; i<kernelMidi::countInPorts(); i++)
 			portIn->add(gu_removeFltkChars(kernelMidi::getInPortName(i)).c_str());
 
-		portIn->value(G_Conf.midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
+		portIn->value(conf::midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
 	}
 }
 
@@ -681,7 +680,7 @@ void gTabMidi::fetchMidiMaps()
 	for (unsigned i=0; i<G_MidiMap.maps.size(); i++) {
 		const char *imap = G_MidiMap.maps.at(i).c_str();
 		midiMap->add(imap);
-		if (G_Conf.midiMapPath == imap)
+		if (conf::midiMapPath == imap)
 			midiMap->value(i);
 	}
 
@@ -700,26 +699,26 @@ void gTabMidi::save()
 	string text = system->text(system->value());
 
 	if      (text == "ALSA")
-		G_Conf.midiSystem = RtMidi::LINUX_ALSA;
+		conf::midiSystem = RtMidi::LINUX_ALSA;
 	else if (text == "Jack")
-		G_Conf.midiSystem = RtMidi::UNIX_JACK;
+		conf::midiSystem = RtMidi::UNIX_JACK;
 	else if (text == "Multimedia MIDI")
-		G_Conf.midiSystem = RtMidi::WINDOWS_MM;
+		conf::midiSystem = RtMidi::WINDOWS_MM;
 	else if (text == "OSX Core MIDI")
-		G_Conf.midiSystem = RtMidi::MACOSX_CORE;
+		conf::midiSystem = RtMidi::MACOSX_CORE;
 
-	G_Conf.midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
-	G_Conf.midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
+	conf::midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
+	conf::midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
-	G_Conf.noNoteOff   = noNoteOff->value();
-	G_Conf.midiMapPath = G_MidiMap.maps.size() == 0 ? "" : midiMap->text(midiMap->value());
+	conf::noNoteOff   = noNoteOff->value();
+	conf::midiMapPath = G_MidiMap.maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
-		G_Conf.midiSync = MIDI_SYNC_NONE;
+		conf::midiSync = MIDI_SYNC_NONE;
 	else if (sync->value() == 1)
-		G_Conf.midiSync = MIDI_SYNC_CLOCK_M;
+		conf::midiSync = MIDI_SYNC_CLOCK_M;
 	else if (sync->value() == 2)
-		G_Conf.midiSync = MIDI_SYNC_MTC_M;
+		conf::midiSync = MIDI_SYNC_MTC_M;
 }
 
 
@@ -746,7 +745,7 @@ void gTabMidi::fetchSystems()
 
 #endif
 
-	switch (G_Conf.midiSystem) {
+	switch (conf::midiSystem) {
 		case RtMidi::LINUX_ALSA:  system->showItem("ALSA"); break;
 		case RtMidi::UNIX_JACK:   system->showItem("Jack"); break;
 		case RtMidi::WINDOWS_MM:  system->showItem("Multimedia MIDI"); break;
@@ -823,9 +822,9 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 	end();
 	labelsize(GUI_FONT_SIZE_BASE);
 
-	G_Conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
-	G_Conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
-	G_Conf.treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
+	conf::recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
+	conf::chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
+	conf::treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
 
 	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
 	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -854,9 +853,9 @@ void gTabBehaviors::__cb_radio_mutex(Fl_Widget *w)
 
 void gTabBehaviors::save()
 {
-	G_Conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
-	G_Conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
-	G_Conf.treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
+	conf::recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
+	conf::chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
+	conf::treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
 }
 
 
@@ -881,7 +880,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 	info->label("Scan in progress. Please wait...");
 	info->hide();
 
-	folderPath->value(G_Conf.pluginPath.c_str());
+	folderPath->value(conf::pluginPath.c_str());
 	folderPath->label("Plugins folder");
 
 	scanButton->callback(cb_scan, (void*) this);
@@ -935,7 +934,7 @@ void gTabPlugins::__cb_scan(Fl_Widget *w)
 
 void gTabPlugins::save()
 {
-	G_Conf.pluginPath = folderPath->value();
+	conf::pluginPath = folderPath->value();
 }
 
 
@@ -951,8 +950,8 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 {
 	set_modal();
 
-	if (G_Conf.configX)
-		resize(G_Conf.configX, G_Conf.configY, this->w(), this->h());
+	if (conf::configX)
+		resize(conf::configX, conf::configY, this->w(), this->h());
 
 	Fl_Tabs *tabs = new Fl_Tabs(8, 8, w-16, h-44);
   tabs->box(G_CUSTOM_BORDER_BOX);
@@ -988,8 +987,8 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 
 gdConfig::~gdConfig()
 {
-	G_Conf.configX = x();
-	G_Conf.configY = y();
+	conf::configX = x();
+	conf::configY = y();
 }
 
 

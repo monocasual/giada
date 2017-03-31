@@ -41,9 +41,6 @@
 #include "gd_about.h"
 
 
-extern Conf        G_Conf;
-
-
 using namespace giada;
 
 
@@ -56,8 +53,8 @@ gdAbout::gdAbout()
 {
 #endif
 
-	if (G_Conf.aboutX)
-		resize(G_Conf.aboutX, G_Conf.aboutY, w(), h());
+	if (conf::aboutX)
+		resize(conf::aboutX, conf::aboutY, w(), h());
 
 	set_modal();
 
@@ -129,8 +126,8 @@ gdAbout::gdAbout()
 
 gdAbout::~gdAbout()
 {
-	G_Conf.aboutX = x();
-	G_Conf.aboutY = y();
+	conf::aboutX = x();
+	conf::aboutY = y();
 }
 
 

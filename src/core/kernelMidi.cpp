@@ -48,7 +48,6 @@
 
 
 extern bool        G_midiStatus;
-extern Conf        G_Conf;
 extern Mixer       G_Mixer;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
@@ -171,43 +170,43 @@ void processChannels(uint32_t pure, uint32_t value)
 
 void processMaster(uint32_t pure, uint32_t value)
 {
-  if      (pure == G_Conf.midiInRewind) {
+  if      (pure == conf::midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
 		glue_rewindSeq(false);
 	}
-	else if (pure == G_Conf.midiInStartStop) {
+	else if (pure == conf::midiInStartStop) {
 		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
 		glue_startStopSeq(false);
 	}
-	else if (pure == G_Conf.midiInActionRec) {
+	else if (pure == conf::midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
 		glue_startStopActionRec(false);
 	}
-	else if (pure == G_Conf.midiInInputRec) {
+	else if (pure == conf::midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
 		glue_startStopInputRec(false);
 	}
-	else if (pure == G_Conf.midiInMetronome) {
+	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
 		glue_startStopMetronome(false);
 	}
-	else if (pure == G_Conf.midiInVolumeIn) {
+	else if (pure == conf::midiInVolumeIn) {
 		float vf = (value >> 8)/127.0f;
 		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, value >> 8, vf);
 		glue_setInVol(vf, false);
 	}
-	else if (pure == G_Conf.midiInVolumeOut) {
+	else if (pure == conf::midiInVolumeOut) {
 		float vf = (value >> 8)/127.0f;
 		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, value >> 8, vf);
 		glue_setOutVol(vf, false);
 	}
-	else if (pure == G_Conf.midiInBeatDouble) {
+	else if (pure == conf::midiInBeatDouble) {
 		gu_log("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
 		glue_beatsMultiply();
 	}
-	else if (pure == G_Conf.midiInBeatHalf) {
+	else if (pure == conf::midiInBeatHalf) {
 		gu_log("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
 		glue_beatsDivide();
 	}
@@ -238,7 +237,7 @@ static void callback(double t, std::vector<unsigned char> *msg, void *data)
 	uint32_t chan  = input & 0x0F000000;
 	uint32_t value = input & 0x0000FF00;
 	uint32_t pure  = 0x00;
-	if (!G_Conf.noNoteOff)
+	if (!conf::noNoteOff)
 		pure = input & 0xFFFF0000;   // input without 'value' byte
 	else
 		pure = input & 0xFFFFFF00;   // input with 'value' byte

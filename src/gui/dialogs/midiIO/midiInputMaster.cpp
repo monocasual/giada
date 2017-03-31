@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiInputMaster
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,7 +32,7 @@
 #include "midiInputMaster.h"
 
 
-extern Conf G_Conf;
+using namespace giada;
 
 
 gdMidiInputMaster::gdMidiInputMaster()
@@ -42,15 +40,15 @@ gdMidiInputMaster::gdMidiInputMaster()
 {
 	set_modal();
 
-	new geMidiLearner(8,   8, w()-16, "rewind",           &cb_learn, &G_Conf.midiInRewind);
-	new geMidiLearner(8,  32, w()-16, "play/stop",        &cb_learn, &G_Conf.midiInStartStop);
-	new geMidiLearner(8,  56, w()-16, "action recording", &cb_learn, &G_Conf.midiInActionRec);
-	new geMidiLearner(8,  80, w()-16, "input recording",  &cb_learn, &G_Conf.midiInInputRec);
-	new geMidiLearner(8, 104, w()-16, "metronome",        &cb_learn, &G_Conf.midiInMetronome);
-	new geMidiLearner(8, 128, w()-16, "input volume",     &cb_learn, &G_Conf.midiInVolumeIn);
-	new geMidiLearner(8, 152, w()-16, "output volume",    &cb_learn, &G_Conf.midiInVolumeOut);
-	new geMidiLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &G_Conf.midiInBeatDouble);
-	new geMidiLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &G_Conf.midiInBeatHalf);
+	new geMidiLearner(8,   8, w()-16, "rewind",           &cb_learn, &conf::midiInRewind);
+	new geMidiLearner(8,  32, w()-16, "play/stop",        &cb_learn, &conf::midiInStartStop);
+	new geMidiLearner(8,  56, w()-16, "action recording", &cb_learn, &conf::midiInActionRec);
+	new geMidiLearner(8,  80, w()-16, "input recording",  &cb_learn, &conf::midiInInputRec);
+	new geMidiLearner(8, 104, w()-16, "metronome",        &cb_learn, &conf::midiInMetronome);
+	new geMidiLearner(8, 128, w()-16, "input volume",     &cb_learn, &conf::midiInVolumeIn);
+	new geMidiLearner(8, 152, w()-16, "output volume",    &cb_learn, &conf::midiInVolumeOut);
+	new geMidiLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &conf::midiInBeatDouble);
+	new geMidiLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &conf::midiInBeatHalf);
 	ok = new gButton(w()-88, 228, 80, 20, "Close");
 
 	ok->callback(cb_close, (void*)this);

@@ -56,8 +56,6 @@ extern gdMainWindow *G_MainWin;
 extern Mixer	   		 G_Mixer;
 extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
-extern Conf          G_Conf;
-extern Clock         G_Clock;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
@@ -193,7 +191,7 @@ void glue_savePatch(void *data)
 			return;
 
 	if (__glue_savePatch__(fullPath, name, false)) {  // false == not a project
-		G_Conf.patchPath = gu_dirname(fullPath);
+		conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
 	else
@@ -275,7 +273,7 @@ void glue_loadPatch(void *data)
 				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column,
 						G_Patch.channels.at(k).type);
 				ch->readPatch(basePath, k, &G_Patch, &G_Mixer.mutex_plugins,
-						G_Conf.samplerate, G_Conf.rsmpQuality);
+						conf::samplerate, conf::rsmpQuality);
 			}
 			//__glue_setProgressBar__(status, steps);
 			browser->setStatusBar(steps);
@@ -289,12 +287,12 @@ void glue_loadPatch(void *data)
 	/* let recorder recompute the actions' positions if the current
 	 * samplerate != patch samplerate */
 
-	G_Recorder.updateSamplerate(G_Conf.samplerate, G_Patch.samplerate);
+	G_Recorder.updateSamplerate(conf::samplerate, G_Patch.samplerate);
 
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.patchPath = gu_dirname(fullPath);
+	conf::patchPath = gu_dirname(fullPath);
 
 	/* refresh GUI */
 
@@ -378,7 +376,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* this one is vital: let recorder recompute the actions' positions if
 	 * the current samplerate != patch samplerate */
 
-	G_Recorder.updateSamplerate(G_Conf.samplerate, G_Patch_DEPR_.samplerate);
+	G_Recorder.updateSamplerate(conf::samplerate, G_Patch_DEPR_.samplerate);
 
 	/* update gui */
 
@@ -391,7 +389,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
 
-	G_Conf.patchPath = gu_dirname(fpath).c_str();
+	conf::patchPath = gu_dirname(fpath).c_str();
 
 	gu_log("[glue] patch %s loaded\n", fname);
 
@@ -477,7 +475,7 @@ void glue_loadSample(void *data)
 	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), fullPath.c_str());
 
 	if (res == SAMPLE_LOADED_OK) {
-		G_Conf.samplePath = gu_dirname(fullPath);
+		conf::samplePath = gu_dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -509,7 +507,7 @@ void glue_saveSample(void *data)
 			return;
 
 	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str())) {
-		G_Conf.samplePath = gu_dirname(folderPath);
+		conf::samplePath = gu_dirname(folderPath);
 		browser->do_callback();
 	}
 	else

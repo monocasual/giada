@@ -35,14 +35,14 @@
 #include "noteEditor.h"
 
 
-extern Conf G_Conf;
+using namespace giada;
 
 
 geNoteEditor::geNoteEditor(int x, int y, gdActionEditor *pParent)
   : Fl_Scroll(x, y, 200, 422),
     pParent  (pParent)
 {
-	size(pParent->totalWidth, G_Conf.pianoRollH);
+	size(pParent->totalWidth, conf::pianoRollH);
 	pianoRoll = new gePianoRoll(x, y, pParent->totalWidth, pParent);
 }
 
@@ -53,8 +53,8 @@ geNoteEditor::geNoteEditor(int x, int y, gdActionEditor *pParent)
 geNoteEditor::~geNoteEditor()
 {
 	clear();
-	G_Conf.pianoRollH = h();
-	G_Conf.pianoRollY = pianoRoll->y();
+	conf::pianoRollH = h();
+	conf::pianoRollY = pianoRoll->y();
 }
 
 

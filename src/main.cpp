@@ -48,7 +48,6 @@
 
 /* global variables. Yeah, we are nasty */
 
-Conf          G_Conf;
 pthread_t     G_videoThread;
 bool          G_quit;
 bool	        G_audio_status;
@@ -77,7 +76,7 @@ int main(int argc, char **argv)
 	init_prepareKernelAudio();
 
   /* TODO - move somewhere else */
-  giada::clock::init(&G_Conf);
+  giada::clock::init();
   /* TODO */
 
 	init_prepareKernelMIDI();

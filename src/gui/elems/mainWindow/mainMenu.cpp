@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainMenu
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -51,7 +49,6 @@
 
 extern Mixer         G_Mixer;
 extern Patch         G_Patch;
-extern Conf          G_Conf;
 extern gdMainWindow *G_MainWin;
 
 
@@ -131,9 +128,9 @@ void geMainMenu::__cb_file()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		gWindow *childWin = new gdLoadBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Load patch or project",
-				G_Conf.patchPath, glue_loadPatch, nullptr);
+		gWindow *childWin = new gdLoadBrowser(conf::browserX, conf::browserY,
+				conf::browserW, conf::browserH, "Load patch or project",
+				conf::patchPath, glue_loadPatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -141,16 +138,16 @@ void geMainMenu::__cb_file()
 		if (mh::hasLogicalSamples() || mh::hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
-		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Save patch",
-				G_Conf.patchPath, G_Patch.name, glue_savePatch, nullptr);
+		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
+				conf::browserW, conf::browserH, "Save patch",
+				conf::patchPath, G_Patch.name, glue_savePatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
-		gWindow *childWin = new gdSaveBrowser(G_Conf.browserX, G_Conf.browserY,
-				G_Conf.browserW, G_Conf.browserH, "Save project",
-				G_Conf.patchPath, G_Patch.name, glue_saveProject, nullptr);
+		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
+				conf::browserW, conf::browserH, "Save project",
+				conf::patchPath, G_Patch.name, glue_saveProject, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

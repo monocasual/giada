@@ -39,7 +39,6 @@
 
 
 extern Mixer     		 G_Mixer;
-extern Conf          G_Conf;
 extern gdMainWindow *mainWin;
 
 
@@ -49,8 +48,8 @@ using namespace giada;
 gdBpmInput::gdBpmInput(const char *label)
 : gWindow(144, 36, "Bpm")
 {
-	if (G_Conf.bpmX)
-		resize(G_Conf.bpmX, G_Conf.bpmY, w(), h());
+	if (conf::bpmX)
+		resize(conf::bpmX, conf::bpmY, w(), h());
 
 	set_modal();
 
@@ -89,8 +88,8 @@ gdBpmInput::gdBpmInput(const char *label)
 
 gdBpmInput::~gdBpmInput()
 {
-	G_Conf.bpmX = x();
-	G_Conf.bpmY = y();
+	conf::bpmX = x();
+	conf::bpmY = y();
 }
 
 
