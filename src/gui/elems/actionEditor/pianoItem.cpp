@@ -38,14 +38,11 @@
 #include "pianoItem.h"
 
 
-extern Recorder	  G_Recorder;
-
-
 using namespace giada;
 
 
-gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, Recorder::action *_a,
-  Recorder::action *_b, gdActionEditor *pParent)
+gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a,
+  recorder::action *_b, gdActionEditor *pParent)
 	: Fl_Box  (X, Y, MIN_WIDTH, gePianoRoll::CELL_H),
 	  a       (_a),
 	  b       (_b),
@@ -145,8 +142,8 @@ void gePianoItem::record()
 	event_b |= (MIDI_VELOCITY);
 	event_b |= (0x00);
 
-	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
-	G_Recorder.rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
+	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
   pParent->chan->hasActions = true;
 }
 
@@ -156,9 +153,9 @@ void gePianoItem::record()
 
 void gePianoItem::remove()
 {
-	G_Recorder.deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true,
+	recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true,
     &mixer::mutex_recs, event_a, 0.0);
-	G_Recorder.deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true,
+	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true,
     &mixer::mutex_recs, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on

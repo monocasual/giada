@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_midiChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -45,8 +43,10 @@
 #include "midiChannel.h"
 
 
-extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
@@ -172,7 +172,7 @@ void geMidiChannel::__cb_openMenu()
 	if (strcmp(m->label(), "All") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		G_Recorder.clearChan(ch->index);
+		recorder::clearChan(ch->index);
     ch->hasActions = false;
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
 		return;

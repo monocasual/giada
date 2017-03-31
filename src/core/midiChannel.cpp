@@ -39,7 +39,6 @@
 #include "kernelMidi.h"
 
 
-extern Recorder   G_Recorder;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
@@ -119,7 +118,7 @@ void MidiChannel::quantize(int index, int localFrame) {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::parseAction(Recorder::action *a, int localFrame,
+void MidiChannel::parseAction(recorder::action *a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (a->type == ACTION_MIDI)
@@ -280,7 +279,7 @@ int MidiChannel::readPatch(const string &basePath, int i, Patch *patch,
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::sendMidi(Recorder::action *a, int localFrame)
+void MidiChannel::sendMidi(recorder::action *a, int localFrame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)
@@ -354,8 +353,8 @@ void MidiChannel::receiveMidi(uint32_t msg)
 
 #endif
 
-	if (G_Recorder.canRec(this)) {
-		G_Recorder.rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
+	if (recorder::canRec(this)) {
+		recorder::rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
     hasActions = true;
   }
 }

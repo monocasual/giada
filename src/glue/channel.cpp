@@ -50,7 +50,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Recorder			 G_Recorder;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
 #endif
@@ -101,7 +100,7 @@ Channel *glue_addChannel(int column, int type)
 
 void glue_deleteChannel(Channel *ch)
 {
-	G_Recorder.clearChan(ch->index);
+	recorder::clearChan(ch->index);
   ch->hasActions = false;
 #ifdef WITH_VST
 	G_PluginHost.freeStack(PluginHost::CHANNEL, &mixer::mutex_plugins, ch);
@@ -120,7 +119,7 @@ void glue_deleteChannel(Channel *ch)
 void glue_freeChannel(Channel *ch)
 {
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
-	G_Recorder.clearChan(ch->index);
+	recorder::clearChan(ch->index);
   ch->hasActions = false;
 	ch->empty();
 }
@@ -240,14 +239,14 @@ void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
 
 void glue_setMute(Channel *ch, bool gui)
 {
-	if (G_Recorder.active && G_Recorder.canRec(ch)) {
+	if (recorder::active && recorder::canRec(ch)) {
 		if (!ch->mute) {
-			G_Recorder.startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
+			recorder::startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());
       ch->readActions = false;   // don't read actions while overdubbing
     }
 		else
-		 G_Recorder.stopOverdub();
+		 recorder::stopOverdub();
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);

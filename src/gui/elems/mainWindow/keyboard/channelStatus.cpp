@@ -33,9 +33,6 @@
 #include "channelStatus.h"
 
 
-extern Recorder G_Recorder;
-
-
 using namespace giada;
 
 
@@ -68,7 +65,7 @@ void geChannelStatus::draw()
     if (mixer::recording && ch->armed)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
     else
-    if (G_Recorder.active && G_Recorder.canRec(ch))
+    if (recorder::active && recorder::canRec(ch))
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
     /* equation for the progress bar:

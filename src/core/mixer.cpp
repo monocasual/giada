@@ -42,7 +42,6 @@
 #include "mixer.h"
 
 
-extern Recorder    G_Recorder;
 extern MidiMapConf G_MidiMap;
 #ifdef WITH_VST
 extern PluginHost  G_PluginHost;
@@ -156,12 +155,12 @@ Reads all recorded actions. */
 void readActions(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_recs);
-	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		if (G_Recorder.frames.at(i) == clock::getCurrentFrame()) {
-			for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
-				int index   = G_Recorder.global.at(i).at(j)->chan;
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		if (recorder::frames.at(i) == clock::getCurrentFrame()) {
+			for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+				int index   = recorder::global.at(i).at(j)->chan;
 				Channel *ch = mh::getChannelByIndex(index);
-				ch->parseAction(G_Recorder.global.at(i).at(j), frame,
+				ch->parseAction(recorder::global.at(i).at(j), frame,
           clock::getCurrentFrame(), clock::getQuantize(), clock::isRunning());
 			}
 			break;

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * sampleChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -37,9 +35,7 @@
 
 class Patch_DEPR_;
 class Patch;
-class Mixer;
 class Wave;
-class Clock;
 
 
 class SampleChannel : public Channel
@@ -116,7 +112,7 @@ public:
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(giada::recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
 

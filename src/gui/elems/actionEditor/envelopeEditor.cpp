@@ -2,7 +2,7 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_envelopeWidget
+ * envelopeEditor
  *
  * Parent class of any envelope controller, from volume to VST parameter
  * automations.
@@ -42,7 +42,6 @@
 #include "envelopeEditor.h"
 
 
-extern Recorder      G_Recorder;
 extern gdMainWindow *G_MainWin;
 
 
@@ -195,9 +194,9 @@ int geEnvelopeEditor::handle(int e) {
 
 						if (points.size() == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
-							G_Recorder.rec(pParent->chan->index, type, 0, 0, 1.0f);
+							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
 							addPoint(clock::getTotalFrames(), 0, 1.0f, pParent->coverX, 1);
-							G_Recorder.rec(pParent->chan->index, type, clock::getTotalFrames(), 0, 1.0f);
+							recorder::rec(pParent->chan->index, type, clock::getTotalFrames(), 0, 1.0f);
               pParent->chan->hasActions = true;
 						}
 
@@ -206,9 +205,9 @@ int geEnvelopeEditor::handle(int e) {
 						int frame   = mx * pParent->zoom;
 						float value = (my - h() + 8) / (float) (1 - h() + 8);
 						addPoint(frame, 0, value, mx, my);
-						G_Recorder.rec(pParent->chan->index, type, frame, 0, value);
+						recorder::rec(pParent->chan->index, type, frame, 0, value);
             pParent->chan->hasActions = true;
-						G_Recorder.sortActions();
+						recorder::sortActions();
 						sortPoints();
 					}
 					else {
@@ -224,15 +223,15 @@ int geEnvelopeEditor::handle(int e) {
 
 				if (selectedPoint != -1) {
 					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size()-1) {
-						G_Recorder.clearAction(pParent->chan->index, type);
-            pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+						recorder::clearAction(pParent->chan->index, type);
+            pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 						points.clear();
 					}
 					else {
-						G_Recorder.deleteAction(pParent->chan->index,
+						recorder::deleteAction(pParent->chan->index,
               points.at(selectedPoint).frame, type, false, &mixer::mutex_recs);
-            pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
-            G_Recorder.sortActions();
+            pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
+            recorder::sortActions();
 						points.erase(points.begin() + selectedPoint);
 					}
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
@@ -268,20 +267,20 @@ int geEnvelopeEditor::handle(int e) {
 
 					/*  delete previous point and record a new one */
 
-					G_Recorder.deleteAction(pParent->chan->index,
+					recorder::deleteAction(pParent->chan->index,
             points.at(draggedPoint).frame, type, false, &mixer::mutex_recs);
-          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+          pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
 					if (range == RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
-						G_Recorder.rec(pParent->chan->index, type, newFrame, 0, value);
+						recorder::rec(pParent->chan->index, type, newFrame, 0, value);
             pParent->chan->hasActions = true;
 					}
 					else {
 						/// TODO
 					}
 
-					G_Recorder.sortActions();
+					recorder::sortActions();
 					points.at(draggedPoint).frame = newFrame;
 					draggedPoint  = -1;
 					selectedPoint = -1;
@@ -399,9 +398,9 @@ int geEnvelopeEditor::getSelectedPoint() {
 
 void geEnvelopeEditor::fill() {
 	points.clear();
-	for (unsigned i=0; i<G_Recorder.global.size(); i++)
-		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
-			Recorder::action *a = G_Recorder.global.at(i).at(j);
+	for (unsigned i=0; i<recorder::global.size(); i++)
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+			recorder::action *a = recorder::global.at(i).at(j);
 			if (a->type == type && a->chan == pParent->chan->index) {
 				if (range == RANGE_FLOAT)
 					addPoint(

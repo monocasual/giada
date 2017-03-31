@@ -173,8 +173,8 @@ public:
 
 	 // TODO - quantize is useless!
 
-	virtual void parseAction(Recorder::action *a, int localFrame, int globalFrame,
-			int quantize, bool mixerIsRunning) = 0;
+	virtual void parseAction(giada::recorder::action *a, int localFrame,
+    int globalFrame, int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind
 	 * rewind channel when rewind button is pressed. */

@@ -39,10 +39,6 @@
 #include "pianoRoll.h"
 
 
-extern Recorder		G_Recorder;
-extern Mixer      G_Mixer;
-
-
 using namespace giada;
 
 
@@ -64,21 +60,21 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 	/* add actions when the window is opened. Position is zoom-based. MIDI
 	 * actions come always in pair: start + end. */
 
-	G_Recorder.sortActions();
+	recorder::sortActions();
 
-	Recorder::action *a2   = nullptr;
-	Recorder::action *prev = nullptr;
+	recorder::action *a2   = nullptr;
+	recorder::action *prev = nullptr;
 
-	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
 			/* don't show actions > than the grey area */
 			/** FIXME - can we move this to the outer cycle? */
 
-			if (G_Recorder.frames.at(i) > clock::getTotalFrames())
+			if (recorder::frames.at(i) > clock::getTotalFrames())
 				continue;
 
-			Recorder::action *a1 = G_Recorder.global.at(i).at(j);
+			recorder::action *a1 = recorder::global.at(i).at(j);
 
       /* Skip action if:
         - does not belong to this channel
@@ -107,7 +103,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
       note of a1, any velocity value (0xFF) because we just don't care about the
       velocity of a note_off. */
 
-			G_Recorder.getNextAction(a1->chan, ACTION_MIDI, a1->frame, &a2,
+			recorder::getNextAction(a1->chan, ACTION_MIDI, a1->frame, &a2,
 					kernelMidi::getIValue(0x80, a1_note, 0xFF));
 
 			/* next action note_off found: add a new gePianoItem to piano roll */

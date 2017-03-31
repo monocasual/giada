@@ -45,7 +45,6 @@
 #include "channel.h"
 
 
-extern Recorder   G_Recorder;
 #ifdef WITH_VST
 extern PluginHost G_PluginHost;
 #endif
@@ -514,9 +513,9 @@ int Patch_DEPR_::readRecs()
 			if (ch)
 				if (ch->status & ~(STATUS_WRONG | STATUS_MISSING | STATUS_EMPTY)) {
 					if (version < 0.83f)
-						G_Recorder.rec(ch->index, type, frame, iValue_fix, fValue);
+						recorder::rec(ch->index, type, frame, iValue_fix, fValue);
 					else
-						G_Recorder.rec(ch->index, type, frame, iValue, fValue);
+						recorder::rec(ch->index, type, frame, iValue, fValue);
           ch->hasActions = true;
 				}
 		}

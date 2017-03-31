@@ -50,7 +50,6 @@
 #include "kernelAudio.h"
 
 
-extern Recorder  	   G_Recorder;
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
 extern Patch         G_Patch;
@@ -89,7 +88,7 @@ void init_prepareKernelAudio()
 {
   kernelAudio::openDevice();
 	mixer::init();
-	G_Recorder.init();
+	recorder::init();
 
 #ifdef WITH_VST
 
@@ -205,7 +204,7 @@ void init_shutdown()
 		gu_log("[init] Mixer closed\n");
 	}
 
-	G_Recorder.clearAll();
+	recorder::clearAll();
   for (unsigned i=0; i<mixer::channels.size(); i++) {
 		mixer::channels.at(i)->hasActions  = false;
 		mixer::channels.at(i)->readActions = false;

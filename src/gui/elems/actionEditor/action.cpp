@@ -35,9 +35,6 @@
 #include "action.h"
 
 
-extern Recorder G_Recorder;
-
-
 using namespace giada;
 
 
@@ -72,8 +69,8 @@ geAction::geAction(int X, int Y, int H, int frame_a, unsigned index,
 	 * key_release is associated. */
 
 	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
-		Recorder::action *a2 = nullptr;
-		G_Recorder.getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
+		recorder::action *a2 = nullptr;
+		recorder::getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
 		if (a2) {
 			frame_b = a2->frame;
 			w((frame_b - frame_a)/parent->zoom);
@@ -188,18 +185,18 @@ void geAction::addAction()
 	 * (b) is just a graphical and meaningless point. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		G_Recorder.rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
-		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
+		recorder::rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
+		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
 		//gu_log("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
-		G_Recorder.rec(parent->chan->index, parent->getActionType(), frame_a);
+		recorder::rec(parent->chan->index, parent->getActionType(), frame_a);
 		//gu_log("action added, [%d]\n", frame_a);
 	}
 
   parent->chan->hasActions = true;
 
-	G_Recorder.sortActions();
+	recorder::sortActions();
 
 	index++; // important!
 }
@@ -214,16 +211,16 @@ void geAction::delAction()
 	 * actions. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		G_Recorder.deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS,
+		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS,
       false, &mixer::mutex_recs);
-		G_Recorder.deleteAction(parent->chan->index, frame_b, ACTION_KEYREL,
+		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL,
       false, &mixer::mutex_recs);
 	}
 	else
-		G_Recorder.deleteAction(parent->chan->index, frame_a, type, false,
+		recorder::deleteAction(parent->chan->index, frame_a, type, false,
       &mixer::mutex_recs);
 
-  parent->chan->hasActions = G_Recorder.hasActions(parent->chan->index);
+  parent->chan->hasActions = recorder::hasActions(parent->chan->index);
 
 
 	/* restore the initial cursor shape, in case you delete an action and
@@ -255,16 +252,16 @@ void geAction::moveAction(int frame_a)
 	if (this->frame_a % 2 != 0)
 		this->frame_a++;
 
-	G_Recorder.rec(parent->chan->index, type, this->frame_a);
+	recorder::rec(parent->chan->index, type, this->frame_a);
 
 	if (ch->mode == SINGLE_PRESS) {
 		frame_b = xToFrame_b();
-		G_Recorder.rec(parent->chan->index, ACTION_KEYREL, frame_b);
+		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_b);
 	}
 
   parent->chan->hasActions = true;
 
-	G_Recorder.sortActions();
+	recorder::sortActions();
 }
 
 

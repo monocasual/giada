@@ -35,7 +35,6 @@
 #include "transport.h"
 
 
-extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
 
 
@@ -81,8 +80,8 @@ void glue_stopSeq(bool gui)
 	/* what to do if we stop the sequencer and some action recs are active?
 	 * Deactivate the button and delete any 'rec on' status */
 
-	if (G_Recorder.active) {
-		G_Recorder.active = false;
+	if (recorder::active) {
+		recorder::active = false;
     Fl::lock();
 	  G_MainWin->mainTransport->updateRecAction(0);
 	  Fl::unlock();

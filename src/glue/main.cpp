@@ -48,7 +48,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Recorder			 G_Recorder;
 extern Patch_DEPR_   G_Patch_DEPR_;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
@@ -80,7 +79,7 @@ void glue_setBpm(const char *v1, const char *v2)
 
 	float oldBpmF = clock::getBpm();
 	clock::setBpm(bpmF);
-  G_Recorder.updateBpm(oldBpmF, bpmF, clock::getQuanto());
+  recorder::updateBpm(oldBpmF, bpmF, clock::getQuanto());
 
 #ifdef __linux__
   kernelAudio::jackSetBpm(clock::getBpm());
@@ -153,9 +152,9 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 	if (expand) {
 		if (clock::getBeats() > oldvalue)
-			G_Recorder.expand(oldfpb, clock::getTotalFrames());
+			recorder::expand(oldfpb, clock::getTotalFrames());
 		//else if (mixer::beats < oldvalue)
-		//	G_Recorder.shrink(mixer::totalFrames);
+		//	recorder::shrink(mixer::totalFrames);
 	}
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
@@ -231,7 +230,7 @@ void glue_clearAllSamples()
 		mixer::channels.at(i)->empty();
 		mixer::channels.at(i)->guiChannel->reset();
 	}
-	G_Recorder.init();
+	recorder::init();
 	return;
 }
 
@@ -241,7 +240,7 @@ void glue_clearAllSamples()
 
 void glue_clearAllRecs()
 {
-	G_Recorder.init();
+	recorder::init();
 	gu_updateControls();
 }
 
@@ -254,7 +253,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	G_Patch_DEPR_.setDefault();
 	mixer::close();
 	mixer::init();
-	G_Recorder.init();
+	recorder::init();
 #ifdef WITH_VST
 	G_PluginHost.freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
 #endif

@@ -46,13 +46,10 @@
 #include "core/pluginHost.h"
 
 
-/* global variables. Yeah, we are nasty */
-
 pthread_t     G_videoThread;
 bool          G_quit;
 Patch_DEPR_   G_Patch_DEPR_;
 Patch         G_Patch;
-Recorder      G_Recorder;
 MidiMapConf   G_MidiMap;
 gdMainWindow *G_MainWin;
 

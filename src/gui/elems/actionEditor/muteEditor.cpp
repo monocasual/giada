@@ -40,7 +40,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Recorder      G_Recorder;
 
 
 using namespace giada;
@@ -128,15 +127,15 @@ void geMuteEditor::extractPoints()
 {
 	points.clear();
 
-	/* actions are already sorted by G_Recorder.sortActions() */
+	/* actions are already sorted by recorder::sortActions() */
 
-	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
-			if (G_Recorder.global.at(i).at(j)->chan == pParent->chan->index) {
-				if (G_Recorder.global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+			if (recorder::global.at(i).at(j)->chan == pParent->chan->index) {
+				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
 					point p;
-					p.frame = G_Recorder.frames.at(i);
-					p.type  = G_Recorder.global.at(i).at(j)->type;
+					p.frame = recorder::frames.at(i);
+					p.type  = recorder::global.at(i).at(j)->type;
 					p.x     = p.frame / pParent->zoom;
 					points.push_back(p);
 					//gu_log("[geMuteEditor::extractPoints] point found, type=%d, frame=%d\n", p.type, p.frame);
@@ -251,15 +250,15 @@ int geMuteEditor::handle(int e) {
 					}
 
 					if (nextPoint % 2 != 0) {
-						G_Recorder.rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
-						G_Recorder.rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
+						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
+						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
 					}
 					else {
-						G_Recorder.rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
-						G_Recorder.rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
+						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
+						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
 					}
           pParent->chan->hasActions = true;
-					G_Recorder.sortActions();
+					recorder::sortActions();
 
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
@@ -287,13 +286,13 @@ int geMuteEditor::handle(int e) {
 					//gu_log("selected: a=%d, b=%d >>> frame_a=%d, frame_b=%d\n",
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
-					G_Recorder.deleteAction(pParent->chan->index, points.at(a).frame,
+					recorder::deleteAction(pParent->chan->index, points.at(a).frame,
           points.at(a).type, false, &mixer::mutex_recs); // false = don't check vals
-					G_Recorder.deleteAction(pParent->chan->index,	points.at(b).frame,
+					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,
           points.at(b).type, false, &mixer::mutex_recs); // false = don't check vals
-          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+          pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
-          G_Recorder.sortActions();
+          recorder::sortActions();
 
 					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
 					extractPoints();
@@ -315,18 +314,18 @@ int geMuteEditor::handle(int e) {
 
 					int newFrame = points.at(draggedPoint).x * pParent->zoom;
 
-					G_Recorder.deleteAction(pParent->chan->index,
+					recorder::deleteAction(pParent->chan->index,
             points.at(draggedPoint).frame, points.at(draggedPoint).type, false,
             &mixer::mutex_recs);  // don't check values
-          pParent->chan->hasActions = G_Recorder.hasActions(pParent->chan->index);
+          pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
-					G_Recorder.rec(
+					recorder::rec(
 							pParent->chan->index,
 							points.at(draggedPoint).type,
 							newFrame);
 
           pParent->chan->hasActions = true;
-					G_Recorder.sortActions();
+					recorder::sortActions();
 
 					points.at(draggedPoint).frame = newFrame;
 				}

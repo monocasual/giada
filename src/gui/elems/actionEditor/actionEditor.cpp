@@ -37,7 +37,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Recorder      G_Recorder;
 
 
 using namespace giada;
@@ -53,10 +52,10 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
 	/* add actions when the window opens. Their position is zoom-based;
 	 * each frame is / 2 because we don't care about stereo infos. */
 
-	for (unsigned i=0; i<G_Recorder.frames.size(); i++) {
-		for (unsigned j=0; j<G_Recorder.global.at(i).size(); j++) {
+	for (unsigned i=0; i<recorder::frames.size(); i++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
-		  Recorder::action *action = G_Recorder.global.at(i).at(j);
+		  recorder::action *action = recorder::global.at(i).at(j);
 
       /* Don't show actions:
       - that don't belong to the displayed channel (!= pParent->chan->index);
@@ -69,7 +68,7 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
       - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
 
       if ((action->chan != pParent->chan->index)                            ||
-          (G_Recorder.frames.at(i) > clock::getTotalFrames())              ||
+          (recorder::frames.at(i) > clock::getTotalFrames())              ||
           (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
           (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
           (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))
@@ -285,7 +284,7 @@ int geActionEditor::handle(int e)
 							y()+4,                                // y
 							h()-8,                                // h
 							fx,																		// frame_a
-							G_Recorder.frames.size()-1,            // n. of actions recorded
+							recorder::frames.size()-1,            // n. of actions recorded
 							pParent,                              // pParent window pointer
 							ch,                                   // pointer to SampleChannel
 							true,                                 // record = true: record it!

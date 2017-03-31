@@ -51,7 +51,6 @@
 #include "sampleChannel.h"
 
 
-extern Recorder			 G_Recorder;
 extern gdMainWindow *G_MainWin;
 
 
@@ -140,7 +139,7 @@ void geSampleChannel::__cb_openMenu()
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel */
 
-	if (mixer::recording || G_Recorder.active)
+	if (mixer::recording || recorder::active)
 		return;
 
 	/* the following is a trash workaround for a FLTK menu. We need a gMenu
@@ -265,8 +264,8 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Mute") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
-		G_Recorder.clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
-    ch->hasActions = G_Recorder.hasActions(ch->index);
+		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
+    ch->hasActions = recorder::hasActions(ch->index);
 
 		if (!ch->hasActions)
 			hideActionButton();
@@ -280,8 +279,8 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Start/Stop") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
-		G_Recorder.clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
-    ch->hasActions = G_Recorder.hasActions(ch->index);
+		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+    ch->hasActions = recorder::hasActions(ch->index);
 
 		if (!ch->hasActions)
 			hideActionButton();
@@ -292,8 +291,8 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Volume") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 			return;
-		G_Recorder.clearAction(ch->index, ACTION_VOLUME);
-    ch->hasActions = G_Recorder.hasActions(ch->index);
+		recorder::clearAction(ch->index, ACTION_VOLUME);
+    ch->hasActions = recorder::hasActions(ch->index);
 		if (!ch->hasActions)
 			hideActionButton();
 		gu_refreshActionEditor();  // refresh a.editor window, it could be open
@@ -303,7 +302,7 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "All") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
-		G_Recorder.clearChan(ch->index);
+		recorder::clearChan(ch->index);
     ch->hasActions = false;
 		hideActionButton();
 		gu_refreshActionEditor(); // refresh a.editor window, it could be open
@@ -339,8 +338,8 @@ void geSampleChannel::refresh()
 	if (((SampleChannel*) ch)->wave != nullptr) {
 		if (mixer::recording && ch->armed)
 			mainButton->setInputRecordMode();
-		if (G_Recorder.active) {
-			if (G_Recorder.canRec(ch))
+		if (recorder::active) {
+			if (recorder::canRec(ch))
 				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)

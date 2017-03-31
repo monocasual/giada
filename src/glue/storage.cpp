@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -53,7 +50,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Recorder			 G_Recorder;
 extern Patch         G_Patch;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
@@ -286,7 +282,7 @@ void glue_loadPatch(void *data)
 	/* let recorder recompute the actions' positions if the current
 	 * samplerate != patch samplerate */
 
-	G_Recorder.updateSamplerate(conf::samplerate, G_Patch.samplerate);
+	recorder::updateSamplerate(conf::samplerate, G_Patch.samplerate);
 
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
@@ -375,7 +371,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *stat
 	/* this one is vital: let recorder recompute the actions' positions if
 	 * the current samplerate != patch samplerate */
 
-	G_Recorder.updateSamplerate(conf::samplerate, G_Patch_DEPR_.samplerate);
+	recorder::updateSamplerate(conf::samplerate, G_Patch_DEPR_.samplerate);
 
 	/* update gui */
 

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -38,11 +36,9 @@
 #include "channel.h"
 
 
-class Clock;
 class MidiMapConf;
 class Patch_DEPR_;
 class Patch;
-class Mixer;
 
 
 class MidiChannel : public Channel
@@ -75,7 +71,7 @@ public:
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(Recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(giada::recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	void receiveMidi(uint32_t msg) override;
 	bool canInputRec() override;
@@ -85,7 +81,7 @@ public:
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(Recorder::action *a, int localFrame);
+	void sendMidi(giada::recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST
