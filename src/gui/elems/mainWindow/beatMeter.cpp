@@ -34,9 +34,6 @@
 #include "beatMeter.h"
 
 
-extern Mixer G_Mixer;
-
-
 using namespace giada;
 
 

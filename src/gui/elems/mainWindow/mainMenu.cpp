@@ -47,7 +47,6 @@
 #include "mainMenu.h"
 
 
-extern Patch         G_Patch;
 extern gdMainWindow *G_MainWin;
 
 
@@ -139,14 +138,14 @@ void geMainMenu::__cb_file()
 				return;
 		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save patch",
-				conf::patchPath, G_Patch.name, glue_savePatch, nullptr);
+				conf::patchPath, patch::name, glue_savePatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save project",
-				conf::patchPath, G_Patch.name, glue_saveProject, nullptr);
+				conf::patchPath, patch::name, glue_saveProject, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

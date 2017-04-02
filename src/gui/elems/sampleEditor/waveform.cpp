@@ -42,9 +42,6 @@
 #include "waveform.h"
 
 
-extern Mixer G_Mixer;
-
-
 using namespace giada;
 
 

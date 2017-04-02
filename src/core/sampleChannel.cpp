@@ -926,15 +926,15 @@ int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string &basePath, int i, Patch *patch,
+int SampleChannel::readPatch(const string &basePath, int i,
 		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
-	Channel::readPatch("", i, patch, pluginMutex, samplerate, rsmpQuality);
+	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
 
-	Patch::channel_t *pch = &patch->channels.at(i);
+	patch::channel_t *pch = &patch::channels.at(i);
 
 	mode              = pch->mode;
 	boost             = pch->boost;
@@ -1049,12 +1049,12 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::writePatch(int i, bool isProject, Patch *patch)
+int SampleChannel::writePatch(int i, bool isProject)
 {
 	// TODO - this code belongs to an upper level (glue)
 
-	int pchIndex = Channel::writePatch(i, isProject, patch);
-	Patch::channel_t *pch = &patch->channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject);
+	patch::channel_t *pch = &patch::channels.at(pchIndex);
 
 	if (wave != nullptr) {
 		pch->samplePath = wave->pathfile;

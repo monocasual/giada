@@ -262,12 +262,12 @@ int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string &basePath, int i, Patch *patch,
+int MidiChannel::readPatch(const string &basePath, int i,
 		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
-	Channel::readPatch("", i, patch, pluginMutex, samplerate, rsmpQuality);
+	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
 
-	Patch::channel_t *pch = &patch->channels.at(i);
+	patch::channel_t *pch = &patch::channels.at(i);
 
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
@@ -320,10 +320,10 @@ void MidiChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::writePatch(int i, bool isProject, Patch *patch)
+int MidiChannel::writePatch(int i, bool isProject)
 {
-	int pchIndex = Channel::writePatch(i, isProject, patch);
-	Patch::channel_t *pch = &patch->channels.at(pchIndex);
+	int pchIndex = Channel::writePatch(i, isProject);
+	patch::channel_t *pch = &patch::channels.at(pchIndex);
 
 	pch->midiOut     = midiOut;
 	pch->midiOutChan = midiOutChan;

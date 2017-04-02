@@ -52,7 +52,6 @@
 #include "gd_mainWindow.h"
 
 
-extern Mixer         G_Mixer;
 extern PluginHost    G_PluginHost;
 extern gdMainWindow *G_MainWin;
 

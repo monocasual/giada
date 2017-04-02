@@ -38,9 +38,6 @@
 #include "baseActionEditor.h"
 
 
-extern Mixer G_Mixer;
-
-
 geBaseActionEditor::geBaseActionEditor(int x, int y, int w, int h,
 	gdActionEditor *pParent)
 	:	Fl_Group(x, y, w, h), pParent(pParent) {}

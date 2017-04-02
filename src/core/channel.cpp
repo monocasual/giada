@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -216,9 +214,9 @@ bool Channel::isPlaying()
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::writePatch(int i, bool isProject, Patch *patch)
+int Channel::writePatch(int i, bool isProject)
 {
-	Patch::channel_t pch;
+	patch::channel_t pch;
 	pch.type            = type;
 	pch.key             = key;
 	pch.index           = index;
@@ -246,7 +244,7 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
 			recorder::action *action = recorder::global.at(i).at(k);
 			if (action->chan == index) {
-				Patch::action_t pac;
+				patch::action_t pac;
 				pac.type   = action->type;
 		    pac.frame  = action->frame;
 		    pac.fValue = action->fValue;
@@ -261,7 +259,7 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 	unsigned numPlugs = pluginHost->countPlugins(PluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
 		Plugin *pPlugin = pluginHost->getPluginByIndex(i, PluginHost::CHANNEL, this);
-		Patch::plugin_t pp;
+		patch::plugin_t pp;
 		pp.path   = pPlugin->getUniqueId();
     pp.bypass = pPlugin->isBypassed();
 		for (int k=0; k<pPlugin->getNumParameters(); k++)
@@ -273,20 +271,20 @@ int Channel::writePatch(int i, bool isProject, Patch *patch)
 
 #endif
 
-	patch->channels.push_back(pch);
+	patch::channels.push_back(pch);
 
-	return patch->channels.size() - 1;
+	return patch::channels.size() - 1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string &path, int i, Patch *patch,
-    pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
+int Channel::readPatch(const string &path, int i, pthread_mutex_t *pluginMutex,
+  int samplerate, int rsmpQuality)
 {
 	int ret = 1;
-	Patch::channel_t *pch = &patch->channels.at(i);
+	patch::channel_t *pch = &patch::channels.at(i);
 	key             = pch->key;
 	type            = pch->type;
 	index           = pch->index;
@@ -309,7 +307,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 	midiOutLsolo    = pch->midiOutLsolo;
 
 	for (unsigned k=0; k<pch->actions.size(); k++) {
-		Patch::action_t *ac = &pch->actions.at(k);
+		patch::action_t *ac = &pch->actions.at(k);
 		recorder::rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
     hasActions = true;
 	}
@@ -317,7 +315,7 @@ int Channel::readPatch(const string &path, int i, Patch *patch,
 #ifdef WITH_VST
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
-		Patch::plugin_t *ppl = &pch->plugins.at(k);
+		patch::plugin_t *ppl = &pch->plugins.at(k);
 		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
       pluginMutex, this);
     if (plugin == nullptr) {

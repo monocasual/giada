@@ -38,7 +38,6 @@
 #include "gd_mainWindow.h"
 
 
-extern Mixer				 G_Mixer;
 extern gdMainWindow *mainWin;
 
 

@@ -53,11 +53,8 @@
 using std::string;
 
 
-extern unsigned      G_beats;
 extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
-extern Conf          G_conf;
-extern uint32_t      G_time;
 extern gdMainWindow *G_MainWin;
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;

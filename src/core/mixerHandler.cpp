@@ -53,7 +53,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern Patch       G_Patch;
 extern MidiMapConf G_MidiMap;
 
 #ifdef WITH_VST
@@ -72,11 +71,11 @@ namespace
 {
 #ifdef WITH_VST
 
-int readPatchPlugins(vector<Patch::plugin_t> *list, int type)
+int readPatchPlugins(vector<patch::plugin_t> *list, int type)
 {
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
-		Patch::plugin_t *ppl = &list->at(i);
+		patch::plugin_t *ppl = &list->at(i);
     // TODO use glue_addPlugin()
 		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
 				&mixer::mutex_plugins, nullptr);
@@ -314,18 +313,18 @@ void readPatch()
 {
 	mixer::ready = false;
 
-	mixer::outVol     = G_Patch.masterVolOut;
-	mixer::inVol      = G_Patch.masterVolIn;
-	clock::setBpm(G_Patch.bpm);
-	clock::setBars(G_Patch.bars);
-	clock::setBeats(G_Patch.beats);
-	clock::setQuantize(G_Patch.quantize);
-	mixer::metronome  = G_Patch.metronome;
+	mixer::outVol     = patch::masterVolOut;
+	mixer::inVol      = patch::masterVolIn;
+	clock::setBpm(patch::bpm);
+	clock::setBars(patch::bars);
+	clock::setBeats(patch::beats);
+	clock::setQuantize(patch::quantize);
+	mixer::metronome  = patch::metronome;
 
 #ifdef WITH_VST
 
-	readPatchPlugins(&G_Patch.masterInPlugins, PluginHost::MASTER_IN);
-	readPatchPlugins(&G_Patch.masterOutPlugins, PluginHost::MASTER_OUT);
+	readPatchPlugins(&patch::masterInPlugins, PluginHost::MASTER_IN);
+	readPatchPlugins(&patch::masterOutPlugins, PluginHost::MASTER_OUT);
 
 #endif
 
@@ -365,7 +364,7 @@ bool startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		if (!ch->allocEmpty(clock::getTotalFrames(), conf::samplerate, G_Patch.lastTakeId))
+		if (!ch->allocEmpty(clock::getTotalFrames(), conf::samplerate, patch::lastTakeId))
 		{
 			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
@@ -376,8 +375,8 @@ bool startInputRec()
 
 		while (!uniqueSampleName(ch, ch->wave->name)) {
 			G_Patch_DEPR_.lastTakeId++;
-			G_Patch.lastTakeId++;
-			ch->wave->name = "TAKE-" + gu_itoa(G_Patch.lastTakeId);
+			patch::lastTakeId++;
+			ch->wave->name = "TAKE-" + gu_itoa(patch::lastTakeId);
 		}
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -46,9 +44,6 @@ class PluginHost;
 class Plugin;
 class MidiMapConf;
 class Patch_DEPR_;
-class Patch;
-class Mixer;
-class Clock;
 class geChannel;
 
 
@@ -102,9 +97,9 @@ public:
 	 * Fill channel with data from patch. */
 
 	virtual int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
-			int samplerate, int rsmpQuality) = 0;
-	virtual int readPatch(const std::string &basePath, int i, Patch *patch,
-			pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
+		int samplerate, int rsmpQuality) = 0;
+	virtual int readPatch(const std::string &basePath, int i,
+    pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
 	Merges vChannels into buffer, plus plugin processing (if any). Warning:
@@ -197,7 +192,7 @@ public:
 	 * Fill a patch with channel values. Returns the index of the last
 	 * Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject, Patch *patch);
+	virtual int writePatch(int i, bool isProject);
 
 	/* receiveMidi
 	 * Receives and processes midi messages from external devices. */

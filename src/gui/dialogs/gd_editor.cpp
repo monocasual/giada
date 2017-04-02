@@ -43,9 +43,6 @@
 #include "gd_editor.h"
 
 
-extern Mixer G_Mixer;
-
-
 using namespace giada;
 
 

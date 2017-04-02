@@ -50,7 +50,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Patch         G_Patch;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 #ifdef WITH_VST
 extern PluginHost    G_PluginHost;
@@ -64,11 +63,11 @@ using namespace giada;
 
 #ifdef WITH_VST
 
-static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<Patch::plugin_t> *patch)
+static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<patch::plugin_t> *patch)
 {
 	for (unsigned i=0; i<host->size(); i++) {
 		Plugin *pl = host->at(i);
-		Patch::plugin_t ppl;
+		patch::plugin_t ppl;
 		ppl.path = pl->getUniqueId();
 		ppl.bypass = pl->isBypassed();
 		int numParams = pl->getNumParameters();
@@ -88,7 +87,7 @@ static void __glue_fillPatchColumns__()
 {
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
 		geColumn *gCol = G_MainWin->keyboard->getColumn(i);
-		Patch::column_t pCol;
+		patch::column_t pCol;
 		pCol.index = gCol->getIndex();
 		pCol.width = gCol->w();
 		for (int k=0; k<gCol->countChannels(); k++) {
@@ -101,7 +100,7 @@ static void __glue_fillPatchColumns__()
 				}
 			}
 		}
-		G_Patch.columns.push_back(pCol);
+		patch::columns.push_back(pCol);
 	}
 }
 
@@ -112,7 +111,7 @@ static void __glue_fillPatchColumns__()
 static void __glue_fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		mixer::channels.at(i)->writePatch(i, isProject, &G_Patch);
+		mixer::channels.at(i)->writePatch(i, isProject);
 	}
 }
 
@@ -122,25 +121,25 @@ static void __glue_fillPatchChannels__(bool isProject)
 
 static void __glue_fillPatchGlobals__(const string &name)
 {
-	G_Patch.version      = G_VERSION_STR;
-	G_Patch.versionMajor = G_VERSION_MAJOR;
-	G_Patch.versionMinor = G_VERSION_MINOR;
-	G_Patch.versionPatch = G_VERSION_PATCH;
-	G_Patch.name         = name;
-	G_Patch.bpm          = clock::getBpm();
-	G_Patch.bars         = clock::getBars();
-	G_Patch.beats        = clock::getBeats();
-	G_Patch.quantize     = clock::getQuantize();
-	G_Patch.masterVolIn  = mixer::inVol;
-  G_Patch.masterVolOut = mixer::outVol;
-  G_Patch.metronome    = mixer::metronome;
+	patch::version      = G_VERSION_STR;
+	patch::versionMajor = G_VERSION_MAJOR;
+	patch::versionMinor = G_VERSION_MINOR;
+	patch::versionPatch = G_VERSION_PATCH;
+	patch::name         = name;
+	patch::bpm          = clock::getBpm();
+	patch::bars         = clock::getBars();
+	patch::beats        = clock::getBeats();
+	patch::quantize     = clock::getQuantize();
+	patch::masterVolIn  = mixer::inVol;
+  patch::masterVolOut = mixer::outVol;
+  patch::metronome    = mixer::metronome;
 
 #ifdef WITH_VST
 
 	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_IN),
-			&G_Patch.masterInPlugins);
+			&patch::masterInPlugins);
 	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_OUT),
-			&G_Patch.masterOutPlugins);
+			&patch::masterOutPlugins);
 
 #endif
 }
@@ -152,13 +151,13 @@ static void __glue_fillPatchGlobals__(const string &name)
 static bool __glue_savePatch__(const string &fullPath, const string &name,
 		bool isProject)
 {
-	G_Patch.init();
+	patch::init();
 
 	__glue_fillPatchGlobals__(name);
 	__glue_fillPatchChannels__(isProject);
 	__glue_fillPatchColumns__();
 
-	if (G_Patch.write(fullPath)) {
+	if (patch::write(fullPath)) {
 		gu_updateMainWinLabel(name);
 		gu_log("[glue_savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
@@ -217,7 +216,7 @@ void glue_loadPatch(void *data)
 	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
 	* one. */
 
-	int  res = G_Patch.read(fileToLoad);
+	int  res = patch::read(fileToLoad);
 	bool deprecated = false;
 
 	if (res == PATCH_UNREADABLE) {
@@ -259,18 +258,17 @@ void glue_loadPatch(void *data)
 	/* Add common stuff, columns and channels. Also increment the progress bar
 	 * by 0.8 / total_channels steps.  */
 
-	float steps = 0.8 / G_Patch.channels.size();
-	for (unsigned i=0; i<G_Patch.columns.size(); i++) {
-		Patch::column_t *col = &G_Patch.columns.at(i);
+	float steps = 0.8 / patch::channels.size();
+	for (unsigned i=0; i<patch::columns.size(); i++) {
+		patch::column_t *col = &patch::columns.at(i);
 		G_MainWin->keyboard->addColumn(col->width);
-		for (unsigned k=0; k<G_Patch.channels.size(); k++) {
-			if (G_Patch.channels.at(k).column == col->index) {
-				Channel *ch = glue_addChannel(G_Patch.channels.at(k).column,
-						G_Patch.channels.at(k).type);
-				ch->readPatch(basePath, k, &G_Patch, &mixer::mutex_plugins,
-						conf::samplerate, conf::rsmpQuality);
+		for (unsigned k=0; k<patch::channels.size(); k++) {
+			if (patch::channels.at(k).column == col->index) {
+				Channel *ch = glue_addChannel(patch::channels.at(k).column,
+					patch::channels.at(k).type);
+				ch->readPatch(basePath, k, &mixer::mutex_plugins, conf::samplerate,
+          conf::rsmpQuality);
 			}
-			//__glue_setProgressBar__(status, steps);
 			browser->setStatusBar(steps);
 		}
 	}
@@ -282,7 +280,7 @@ void glue_loadPatch(void *data)
 	/* let recorder recompute the actions' positions if the current
 	 * samplerate != patch samplerate */
 
-	recorder::updateSamplerate(conf::samplerate, G_Patch.samplerate);
+	recorder::updateSamplerate(conf::samplerate, patch::samplerate);
 
 	/* save patchPath by taking the last dir of the broswer, in order to
 	 * reuse it the next time */
@@ -292,7 +290,7 @@ void glue_loadPatch(void *data)
 	/* refresh GUI */
 
 	gu_updateControls();
-	gu_updateMainWinLabel(G_Patch.name);
+	gu_updateMainWinLabel(patch::name);
 
 	browser->setStatusBar(0.1f);
 	//__glue_setProgressBar__(status, 1.0f);

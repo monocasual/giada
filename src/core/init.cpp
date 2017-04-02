@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * init
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -52,7 +50,6 @@
 
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern Patch         G_Patch;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *G_MainWin;
 
@@ -72,7 +69,7 @@ void init_prepareParser()
 
 	conf::read();
 	G_Patch_DEPR_.setDefault();
-	G_Patch.init();
+	patch::init();
 
 	if (!gu_logInit(conf::logMode))
 		gu_log("[init] log init failed! Using default stdout\n");
@@ -146,7 +143,7 @@ void init_startGUI(int argc, char **argv)
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
     conf::mainWindowH);
 
-  gu_updateMainWinLabel(G_Patch.name == "" ? G_DEFAULT_PATCH_NAME : G_Patch.name);
+  gu_updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
 
 	/* never update the GUI elements if kernelAudio::getStatus() is bad, segfaults
 	 * are around the corner */
