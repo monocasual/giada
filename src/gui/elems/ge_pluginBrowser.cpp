@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_pluginBrowser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -38,11 +36,9 @@
 #include "ge_pluginBrowser.h"
 
 
-extern PluginHost G_PluginHost;
-
-
 using std::vector;
 using std::string;
+using namespace giada;
 
 
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
@@ -87,16 +83,16 @@ void gePluginBrowser::refresh()
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
 
-	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
-		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
-		string m = G_PluginHost.doesPluginExist(pi.uid) ? "" : "@-";
+	for (int i=0; i<pluginHost::countAvailablePlugins(); i++) {
+		pluginHost::PluginInfo pi = pluginHost::getAvailablePluginInfo(i);
+		string m = pluginHost::doesPluginExist(pi.uid) ? "" : "@-";
 		string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
 				pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
 		add(s.c_str());
 	}
 
-	for (unsigned i=0; i<G_PluginHost.countUnknownPlugins(); i++) {
-		string s = "?\t?\t?\t?\t? " + G_PluginHost.getUnknownPluginInfo(i) + " ?";
+	for (unsigned i=0; i<pluginHost::countUnknownPlugins(); i++) {
+		string s = "?\t?\t?\t?\t? " + pluginHost::getUnknownPluginInfo(i) + " ?";
 		add(s.c_str());
 	}
 }
@@ -108,8 +104,8 @@ void gePluginBrowser::refresh()
 void gePluginBrowser::computeWidths()
 {
 	int w0, w1, w3;
-	for (int i=0; i<G_PluginHost.countAvailablePlugins(); i++) {
-		PluginHost::PluginInfo pi = G_PluginHost.getAvailablePluginInfo(i);
+	for (int i=0; i<pluginHost::countAvailablePlugins(); i++) {
+		pluginHost::PluginInfo pi = pluginHost::getAvailablePluginInfo(i);
 		w0 = (int) fl_width(pi.name.c_str());
 		w1 = (int) fl_width(pi.manufacturerName.c_str());
 		w3 = (int) fl_width(pi.format.c_str());

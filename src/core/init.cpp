@@ -53,10 +53,6 @@ extern Patch_DEPR_   G_Patch_DEPR_;
 extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *G_MainWin;
 
-#ifdef WITH_VST
-extern PluginHost G_PluginHost;
-#endif
-
 
 using namespace giada;
 
@@ -93,11 +89,11 @@ void init_prepareKernelAudio()
 	from the soundcard (kernelAudio::realBufsize). */
 
 	if (conf::soundSystem == SYS_API_JACK)
-		G_PluginHost.init(kernelAudio::getRealBufSize(), conf::samplerate);
+		pluginHost::init(kernelAudio::getRealBufSize(), conf::samplerate);
 	else
-		G_PluginHost.init(conf::buffersize, conf::samplerate);
+		pluginHost::init(conf::buffersize, conf::samplerate);
 
-	G_PluginHost.sortPlugins(conf::pluginSortMethod);
+	pluginHost::sortPlugins(conf::pluginSortMethod);
 
 #endif
 }
@@ -211,8 +207,11 @@ void init_shutdown()
 	gu_log("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
+
+	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
+  pluginHost::close();
 	gu_log("[init] PluginHost cleaned up\n");
+
 #endif
 
 	gu_log("[init] Giada " G_VERSION_STR " closed\n\n");

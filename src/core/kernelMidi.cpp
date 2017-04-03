@@ -48,9 +48,6 @@
 
 
 extern MidiMapConf G_MidiMap;
-#ifdef WITH_VST
-extern PluginHost  G_PluginHost;
-#endif
 
 
 using std::string;
@@ -89,7 +86,7 @@ void processPlugins(Channel *ch, uint32_t pure, uint32_t value)
   Channel::midiInPlugins. It is safe to assume then that i and k indexes match
   both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
 
-  vector <Plugin *> *plugins = G_PluginHost.getStack(PluginHost::CHANNEL, ch);
+  vector <Plugin *> *plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
 
   for (unsigned i=0; i<plugins->size(); i++)
   {

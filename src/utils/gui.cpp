@@ -53,12 +53,8 @@
 using std::string;
 
 
-extern bool 		     G_audio_status;
 extern Patch_DEPR_   G_patch;
 extern gdMainWindow *G_MainWin;
-#ifdef WITH_VST
-extern PluginHost    G_PluginHost;
-#endif
 
 
 using namespace giada;
@@ -111,8 +107,8 @@ void gu_updateControls()
 	G_MainWin->mainIO->setOutVol(mixer::outVol);
 	G_MainWin->mainIO->setInVol(mixer::inVol);
 #ifdef WITH_VST
-	G_MainWin->mainIO->setMasterFxOutFull(G_PluginHost.getStack(PluginHost::MASTER_OUT)->size() > 0);
-	G_MainWin->mainIO->setMasterFxInFull(G_PluginHost.getStack(PluginHost::MASTER_IN)->size() > 0);
+	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::MASTER_OUT)->size() > 0);
+	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::MASTER_IN)->size() > 0);
 #endif
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());

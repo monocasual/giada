@@ -55,10 +55,6 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern MidiMapConf G_MidiMap;
 
-#ifdef WITH_VST
-extern PluginHost  G_PluginHost;
-#endif
-
 
 using std::vector;
 using std::string;
@@ -77,7 +73,7 @@ int readPatchPlugins(vector<patch::plugin_t> *list, int type)
 	for (unsigned i=0; i<list->size(); i++) {
 		patch::plugin_t *ppl = &list->at(i);
     // TODO use glue_addPlugin()
-		Plugin *plugin = G_PluginHost.addPlugin(ppl->path.c_str(), type,
+		Plugin *plugin = pluginHost::addPlugin(ppl->path.c_str(), type,
 				&mixer::mutex_plugins, nullptr);
 		if (plugin != nullptr) {
 			plugin->setBypass(ppl->bypass);
@@ -149,10 +145,6 @@ Channel *addChannel(int type)
 		ch = new SampleChannel(bufferSize, &G_MidiMap);
 	else
 		ch = new MidiChannel(bufferSize, &G_MidiMap);
-
-#ifdef WITH_VST
-	ch->setPluginHost(&G_PluginHost);
-#endif
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
@@ -323,8 +315,8 @@ void readPatch()
 
 #ifdef WITH_VST
 
-	readPatchPlugins(&patch::masterInPlugins, PluginHost::MASTER_IN);
-	readPatchPlugins(&patch::masterOutPlugins, PluginHost::MASTER_OUT);
+	readPatchPlugins(&patch::masterInPlugins, pluginHost::MASTER_IN);
+	readPatchPlugins(&patch::masterOutPlugins, pluginHost::MASTER_OUT);
 
 #endif
 

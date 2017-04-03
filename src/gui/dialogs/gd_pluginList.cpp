@@ -52,7 +52,6 @@
 #include "gd_mainWindow.h"
 
 
-extern PluginHost    G_PluginHost;
 extern gdMainWindow *G_MainWin;
 
 
@@ -83,10 +82,10 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost::MASTER_OUT)
+	if (stackType == pluginHost::MASTER_OUT)
 		label("Master Out Plugins");
 	else
-	if (stackType == PluginHost::MASTER_IN)
+	if (stackType == pluginHost::MASTER_IN)
 		label("Master In Plugins");
 	else {
     string l = "Channel " + gu_itoa(ch->index+1) + " Plugins";
@@ -168,11 +167,11 @@ void gdPluginList::refreshList()
 	 * the 'add new' button. Warning: if ch == nullptr we are working with
 	 * master in/master out stacks. */
 
-	int numPlugins = G_PluginHost.countPlugins(stackType, ch);
+	int numPlugins = pluginHost::countPlugins(stackType, ch);
 	int i = 0;
 
 	while (i<numPlugins) {
-		Plugin   *pPlugin = G_PluginHost.getPluginByIndex(i, stackType, ch);
+		Plugin   *pPlugin = pluginHost::getPluginByIndex(i, stackType, ch);
 		gdPlugin *gdp     = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
 		list->add(gdp);
 		i++;
@@ -198,17 +197,17 @@ void gdPluginList::refreshList()
   /* TODO - awful stuff... we should subclass into gdPluginListChannel and
   gdPluginListMaster */
 
-	if (stackType == PluginHost::MASTER_OUT) {
+	if (stackType == pluginHost::MASTER_OUT) {
     G_MainWin->mainIO->setMasterFxOutFull(
-			G_PluginHost.countPlugins(stackType, ch) > 0);
+			pluginHost::countPlugins(stackType, ch) > 0);
   }
 	else
-	if (stackType == PluginHost::MASTER_IN) {
+	if (stackType == pluginHost::MASTER_IN) {
     G_MainWin->mainIO->setMasterFxInFull(
-			G_PluginHost.countPlugins(stackType, ch) > 0);
+			pluginHost::countPlugins(stackType, ch) > 0);
   }
 	else {
-    ch->guiChannel->fx->full = G_PluginHost.countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->full = pluginHost::countPlugins(stackType, ch) > 0;
     ch->guiChannel->fx->redraw();
   }
 }
@@ -274,10 +273,10 @@ void gdPlugin::__cb_shiftUp()
 {
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (pluginHost::countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	int pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(),
+	int pluginIndex = pluginHost::getPluginIndex(pPlugin->getId(),
     pParent->stackType, pParent->ch);
 
 	if (pluginIndex == 0)  // first of the stack, do nothing
@@ -295,11 +294,11 @@ void gdPlugin::__cb_shiftDown()
 {
 	/*nothing to do if there's only one plugin */
 
-	if (G_PluginHost.countPlugins(pParent->stackType, pParent->ch) == 1)
+	if (pluginHost::countPlugins(pParent->stackType, pParent->ch) == 1)
 		return;
 
-	unsigned pluginIndex = G_PluginHost.getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
-	unsigned stackSize   = (G_PluginHost.getStack(pParent->stackType, pParent->ch))->size();
+	unsigned pluginIndex = pluginHost::getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
+	unsigned stackSize   = (pluginHost::getStack(pParent->stackType, pParent->ch))->size();
 
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;

@@ -50,9 +50,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-#ifdef WITH_VST
-extern PluginHost    G_PluginHost;
-#endif
 
 
 using std::string;
@@ -103,7 +100,7 @@ void glue_deleteChannel(Channel *ch)
 	recorder::clearChan(ch->index);
   ch->hasActions = false;
 #ifdef WITH_VST
-	G_PluginHost.freeStack(PluginHost::CHANNEL, &mixer::mutex_plugins, ch);
+	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex_plugins, ch);
 #endif
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);

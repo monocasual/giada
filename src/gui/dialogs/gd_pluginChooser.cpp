@@ -38,9 +38,6 @@
 #include "gd_pluginChooser.h"
 
 
-extern PluginHost G_PluginHost;
-
-
 using namespace giada;
 
 
@@ -118,7 +115,7 @@ void gdPluginChooser::__cb_close()
 
 void gdPluginChooser::__cb_sort()
 {
-	G_PluginHost.sortPlugins(sortMethod->value());
+	pluginHost::sortPlugins(sortMethod->value());
   browser->refresh();
 }
 

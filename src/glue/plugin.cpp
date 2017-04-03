@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -38,18 +35,15 @@
 #include "plugin.h"
 
 
-extern PluginHost G_PluginHost;
-
-
 using namespace giada;
 
 
 Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 {
-  if (index >= G_PluginHost.countAvailablePlugins())
+  if (index >= pluginHost::countAvailablePlugins())
     return nullptr;
 
-  return G_PluginHost.addPlugin(index, stackType,  &mixer::mutex_plugins, ch);
+  return pluginHost::addPlugin(index, stackType,  &mixer::mutex_plugins, ch);
 }
 
 
@@ -58,7 +52,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 
 void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 {
-  G_PluginHost.swapPlugin(index1, index2, stackType, &mixer::mutex_plugins,
+  pluginHost::swapPlugin(index1, index2, stackType, &mixer::mutex_plugins,
     ch);
 }
 
@@ -68,7 +62,7 @@ void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 
 void glue_freePlugin(Channel *ch, int index, int stackType)
 {
-  G_PluginHost.freePlugin(index, stackType, &mixer::mutex_plugins, ch);
+  pluginHost::freePlugin(index, stackType, &mixer::mutex_plugins, ch);
 }
 
 

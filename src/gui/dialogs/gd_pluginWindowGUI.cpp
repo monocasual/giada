@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginWindowGUI
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -43,7 +41,7 @@
 #endif
 
 
-extern PluginHost G_PluginHost;
+using namespace giada;
 
 
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
@@ -107,8 +105,7 @@ void gdPluginWindowGUI::__cb_close()
 
 void gdPluginWindowGUI::__cb_refresh()
 {
-  //gu_log("[gdPluginWindowGUI::__cb_refresh] refresh!\n");
-  G_PluginHost.runDispatchLoop();
+  pluginHost::runDispatchLoop();
   Fl::repeat_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }
 

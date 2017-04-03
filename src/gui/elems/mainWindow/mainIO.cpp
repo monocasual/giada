@@ -2,8 +2,6 @@
 *
 * Giada - Your Hardcore Loopmachine
 *
-* mainIO
-*
 * -----------------------------------------------------------------------------
 *
 * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -119,12 +117,12 @@ void geMainIO::__cb_inVol()
 #ifdef WITH_VST
 void geMainIO::__cb_masterFxOut()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::MASTER_OUT), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(pluginHost::MASTER_OUT), WID_FX_LIST);
 }
 
 void geMainIO::__cb_masterFxIn()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::MASTER_IN), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(pluginHost::MASTER_IN), WID_FX_LIST);
 }
 
 void geMainIO::__cb_inToOut()

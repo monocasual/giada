@@ -39,11 +39,6 @@
 #include "kernelMidi.h"
 
 
-#ifdef WITH_VST
-extern PluginHost G_PluginHost;
-#endif
-
-
 using std::string;
 using namespace giada;
 
@@ -174,7 +169,7 @@ void MidiChannel::unsetMute(bool internal)
 void MidiChannel::process(float *outBuffer, float *inBuffer)
 {
 #ifdef WITH_VST
-	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
+	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
 	/* TODO - isn't this useful only if WITH_VST ? */
@@ -343,11 +338,11 @@ void MidiChannel::receiveMidi(uint32_t msg)
 #ifdef WITH_VST
 
   while (true) {
-    if (pthread_mutex_trylock(&G_PluginHost.mutex_midi) != 0)
+    if (pthread_mutex_trylock(&pluginHost::mutex_midi) != 0)
       continue;
     gu_log("[Channel::processMidi] msg=%X\n", msg);
     addVstMidiEvent(msg, 0);
-    pthread_mutex_unlock(&G_PluginHost.mutex_midi);
+    pthread_mutex_unlock(&pluginHost::mutex_midi);
     break;
   }
 

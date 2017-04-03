@@ -52,10 +52,6 @@ Patch_DEPR_   G_Patch_DEPR_;
 MidiMapConf   G_MidiMap;
 gdMainWindow *G_MainWin;
 
-#ifdef WITH_VST
-PluginHost G_PluginHost;
-#endif
-
 
 void *videoThreadCb(void *arg);
 

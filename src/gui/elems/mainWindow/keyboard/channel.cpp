@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -41,6 +39,9 @@
 
 
 extern gdMainWindow *G_MainWin;
+
+
+using namespace giada;
 
 
 geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
@@ -105,7 +106,7 @@ void geChannel::__cb_changeVol()
 #ifdef WITH_VST
 void geChannel::__cb_openFxWindow()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(PluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(pluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 

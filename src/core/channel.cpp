@@ -50,12 +50,7 @@ using namespace giada;
 
 
 Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
-#if defined(WITH_VST)
-: pluginHost(nullptr),
-#else
-:
-#endif
-  midiMapConf    (midiMapConf),
+: midiMapConf    (midiMapConf),
   bufferSize     (bufferSize),
   type           (type),
 	status         (status),
@@ -140,7 +135,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 
 #ifdef WITH_VST
   for (unsigned i=0; i<src->plugins.size(); i++)
-    pluginHost->clonePlugin(src->plugins.at(i), PluginHost::CHANNEL,
+    pluginHost::clonePlugin(src->plugins.at(i), pluginHost::CHANNEL,
       pluginMutex, this);
 #endif
 
@@ -256,9 +251,9 @@ int Channel::writePatch(int i, bool isProject)
 
 #ifdef WITH_VST
 
-	unsigned numPlugs = pluginHost->countPlugins(PluginHost::CHANNEL, this);
+	unsigned numPlugs = pluginHost::countPlugins(pluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin *pPlugin = pluginHost->getPluginByIndex(i, PluginHost::CHANNEL, this);
+		Plugin *pPlugin = pluginHost::getPluginByIndex(i, pluginHost::CHANNEL, this);
 		patch::plugin_t pp;
 		pp.path   = pPlugin->getUniqueId();
     pp.bypass = pPlugin->isBypassed();
@@ -316,7 +311,7 @@ int Channel::readPatch(const string &path, int i, pthread_mutex_t *pluginMutex,
 
 	for (unsigned k=0; k<pch->plugins.size(); k++) {
 		patch::plugin_t *ppl = &pch->plugins.at(k);
-		Plugin *plugin = pluginHost->addPlugin(ppl->path, PluginHost::CHANNEL,
+		Plugin *plugin = pluginHost::addPlugin(ppl->path, pluginHost::CHANNEL,
       pluginMutex, this);
     if (plugin == nullptr) {
       ret &= 0;
@@ -414,13 +409,5 @@ void Channel::clearMidiBuffer()
   midiBuffer.clear();
 }
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::setPluginHost(PluginHost *pluginHost)
-{
-  this->pluginHost = pluginHost;
-}
 
 #endif

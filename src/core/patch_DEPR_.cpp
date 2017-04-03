@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * patch
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -45,9 +43,6 @@
 #include "channel.h"
 
 
-#ifdef WITH_VST
-extern PluginHost G_PluginHost;
-#endif
 extern gdMainWindow *mainWin;
 
 
@@ -536,8 +531,8 @@ int Patch_DEPR_::readPlugins()
 
 	/* master plugins */
 
-	globalOut &= readMasterPlugins(PluginHost::MASTER_IN);
-	globalOut &= readMasterPlugins(PluginHost::MASTER_OUT);
+	globalOut &= readMasterPlugins(pluginHost::MASTER_IN);
+	globalOut &= readMasterPlugins(pluginHost::MASTER_OUT);
 
 	/* channel plugins */
 
@@ -550,11 +545,11 @@ int Patch_DEPR_::readPlugins()
 
 		for (int j=0; j<np; j++) {
 			sprintf(tmp, "chan%d_p%dpathfile", ch->index, j);
-			Plugin *plugin = G_PluginHost.addPlugin(getValue(tmp).c_str(), PluginHost::CHANNEL, &mixer::mutex_plugins, ch);
+			Plugin *plugin = pluginHost::addPlugin(getValue(tmp).c_str(), pluginHost::CHANNEL, &mixer::mutex_plugins, ch);
 			if (plugin != nullptr) {
 				sprintf(tmp, "chan%d_p%dnumParams", ch->index, j);
 				int nparam = atoi(getValue(tmp).c_str());
-				Plugin *pPlugin = G_PluginHost.getPluginByIndex(j, PluginHost::CHANNEL, ch);
+				Plugin *pPlugin = pluginHost::getPluginByIndex(j, pluginHost::CHANNEL, ch);
 				sprintf(tmp, "chan%d_p%dbypass", ch->index, j);
 				if (pPlugin) {
 					pPlugin->setBypass(atoi(getValue(tmp).c_str()));
@@ -585,7 +580,7 @@ int Patch_DEPR_::readMasterPlugins(int type)
 	char chr;
 	int  res = 1;
 
-	if (type == PluginHost::MASTER_IN) {
+	if (type == pluginHost::MASTER_IN) {
 		chr = 'I';
 		nmp = atoi(getValue("masterIPlugins").c_str());
 	}
@@ -597,9 +592,9 @@ int Patch_DEPR_::readMasterPlugins(int type)
 	for (int i=0; i<nmp; i++) {
 		char tmp[MAX_LINE_LEN];
 		sprintf(tmp, "master%c_p%dpathfile", chr, i);
-		Plugin *p = G_PluginHost.addPlugin(getValue(tmp).c_str(), type, &mixer::mutex_plugins);
+		Plugin *p = pluginHost::addPlugin(getValue(tmp).c_str(), type, &mixer::mutex_plugins);
 		if (p != nullptr) {
-			Plugin *pPlugin = G_PluginHost.getPluginByIndex(i, type);
+			Plugin *pPlugin = pluginHost::getPluginByIndex(i, type);
 			sprintf(tmp, "master%c_p%dbypass", chr, i);
 			pPlugin->setBypass(atoi(getValue(tmp).c_str()));
 			sprintf(tmp, "master%c_p%dnumParams", chr, i);

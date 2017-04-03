@@ -51,9 +51,6 @@
 
 extern gdMainWindow *G_MainWin;
 extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
-#ifdef WITH_VST
-extern PluginHost    G_PluginHost;
-#endif
 
 
 using std::string;
@@ -136,9 +133,9 @@ static void __glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_IN),
+	__glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_IN),
 			&patch::masterInPlugins);
-	__glue_fillPatchGlobalsPlugins__(G_PluginHost.getStack(PluginHost::MASTER_OUT),
+	__glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_OUT),
 			&patch::masterOutPlugins);
 
 #endif
@@ -299,7 +296,7 @@ void glue_loadPatch(void *data)
 
 #ifdef WITH_VST
 
-	if (G_PluginHost.hasMissingPlugins())
+	if (pluginHost::hasMissingPlugins())
 		gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
 
 #endif

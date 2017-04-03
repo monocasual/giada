@@ -40,7 +40,6 @@
 #endif
 
 
-class PluginHost;
 class Plugin;
 class MidiMapConf;
 class Patch_DEPR_;
@@ -52,11 +51,6 @@ class Channel
 protected:
 
 #ifdef WITH_VST
-
-	/* pluginHost
-	 * Pointer to PluginHost class, which manages and processes plugins. */
-
-	PluginHost *pluginHost;
 
 	/* MidiBuffer contains MIDI events. When ready, events are sent to
 	 * each plugin in the channel. This is available for any kind of
@@ -269,12 +263,6 @@ public:
 	void sendMidiLplay();
 
 #ifdef WITH_VST
-
-	/* SetPluginHost
-	 * A neat trick to avoid duplicated constructors (with and without pointer
-	 * to PluginHost). */
-
-	void setPluginHost(PluginHost *pluginHost);
 
 	/* getPluginMidiEvents
 	 * Return a reference to midiBuffer stack. This is available for any kind of

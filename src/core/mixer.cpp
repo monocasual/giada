@@ -43,9 +43,6 @@
 
 
 extern MidiMapConf G_MidiMap;
-#ifdef WITH_VST
-extern PluginHost  G_PluginHost;
-#endif
 
 
 namespace giada {
@@ -252,8 +249,8 @@ void renderIO(float *outBuf, float *inBuf)
 
 #ifdef WITH_VST
 	pthread_mutex_lock(&mutex_plugins);
-	G_PluginHost.processStack(outBuf, PluginHost::MASTER_OUT);
-	G_PluginHost.processStack(vChanInToOut, PluginHost::MASTER_IN);
+	pluginHost::processStack(outBuf, pluginHost::MASTER_OUT);
+	pluginHost::processStack(vChanInToOut, pluginHost::MASTER_IN);
 	pthread_mutex_unlock(&mutex_plugins);
 #endif
 }

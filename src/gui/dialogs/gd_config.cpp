@@ -48,10 +48,6 @@
 extern Patch_DEPR_ G_Patch_DEPR_;
 extern MidiMapConf G_MidiMap;
 
-#ifdef WITH_VST
-extern PluginHost G_PluginHost;
-#endif
-
 
 using std::string;
 using namespace giada;
@@ -891,7 +887,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 
 void gTabPlugins::updateCount()
 {
-	string scanLabel = "Scan (" + gu_itoa(G_PluginHost.countAvailablePlugins()) + " found)";
+	string scanLabel = "Scan (" + gu_itoa(pluginHost::countAvailablePlugins()) + " found)";
 	scanButton->label(scanLabel.c_str());
 }
 
@@ -919,8 +915,8 @@ void gTabPlugins::cb_onScan(float progress, void *p)
 void gTabPlugins::__cb_scan(Fl_Widget *w)
 {
 	info->show();
-	G_PluginHost.scanDir(folderPath->value(), cb_onScan, (void*) this);
-	G_PluginHost.saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	pluginHost::scanDir(folderPath->value(), cb_onScan, (void*) this);
+	pluginHost::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
 	info->hide();
 	updateCount();
 }

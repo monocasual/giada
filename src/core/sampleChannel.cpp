@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -43,9 +41,6 @@
 #include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "kernelAudio.h"
-
-
-extern KernelAudio G_KernelAudio;
 
 
 using std::string;
@@ -745,7 +740,7 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
 	/* If armed and inbuffer is not nullptr (i.e. input device available), copy input
 	buffer to vChan: this enables the live recording mode. The vChan will be
-	overwritten later by PluginHost::processStack, so that you would record "clean"
+	overwritten later by pluginHost::processStack, so that you would record "clean"
 	audio (i.e. not plugin-processed). */
 
 	if (armed && inBuffer)
@@ -753,7 +748,7 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
       vChan[i] += inBuffer[i]; // add, don't overwrite (no raw memcpy)
 
 #ifdef WITH_VST
-	pluginHost->processStack(vChan, PluginHost::CHANNEL, this);
+	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
 	for (int j=0; j<bufferSize; j+=2) {

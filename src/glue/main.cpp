@@ -49,9 +49,6 @@
 
 extern gdMainWindow *G_MainWin;
 extern Patch_DEPR_   G_Patch_DEPR_;
-#ifdef WITH_VST
-extern PluginHost    G_PluginHost;
-#endif
 
 
 using namespace giada;
@@ -255,7 +252,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	mixer::init();
 	recorder::init();
 #ifdef WITH_VST
-	G_PluginHost.freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
+	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
 #endif
 
 	G_MainWin->keyboard->clear();
