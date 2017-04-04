@@ -5,24 +5,24 @@
 
 using std::string;
 using std::vector;
+using namespace giada;
 
 
 TEST_CASE("Test Patch class")
 {
-  Patch patch;
   string filename = "./test-patch.json";
 
   SECTION("test write")
   {
-    Patch::action_t  action1;
-    Patch::action_t  action2;
-    Patch::channel_t channel1;
-    Patch::channel_t channel2;
-    Patch::column_t  column;
+    patch::action_t  action1;
+    patch::action_t  action2;
+    patch::channel_t channel1;
+    patch::channel_t channel2;
+    patch::column_t  column;
 #ifdef WITH_VST
-    Patch::plugin_t  plugin1;
-    Patch::plugin_t  plugin2;
-    Patch::plugin_t  plugin3;
+    patch::plugin_t  plugin1;
+    patch::plugin_t  plugin2;
+    patch::plugin_t  plugin3;
 #endif
 
     action1.type   = 0;
@@ -89,62 +89,62 @@ TEST_CASE("Test Patch class")
     channel1.midiInPitch       = 0;
     channel1.midiOut           = 0;
     channel1.midiOutChan       = 5;
-    patch.channels.push_back(channel1);
+    patch::channels.push_back(channel1);
 
     column.index = 0;
     column.width = 500;
-    patch.columns.push_back(column);
+    patch::columns.push_back(column);
 
-    patch.header       = "GPTCH";
-    patch.version      = "1.0";
-    patch.versionMajor = 6;
-    patch.versionMinor = 6;
-    patch.versionPatch = 6;
-    patch.name         = "test patch";
-    patch.bpm          = 100.0f;
-    patch.bars         = 4;
-    patch.beats        = 23;
-    patch.quantize     = 1;
-    patch.masterVolIn  = 1.0f;
-    patch.masterVolOut = 0.7f;
-    patch.metronome    = 0;
-    patch.lastTakeId   = 0;
-    patch.samplerate   = 44100;
+    patch::header       = "GPTCH";
+    patch::version      = "1.0";
+    patch::versionMajor = 6;
+    patch::versionMinor = 6;
+    patch::versionPatch = 6;
+    patch::name         = "test patch";
+    patch::bpm          = 100.0f;
+    patch::bars         = 4;
+    patch::beats        = 23;
+    patch::quantize     = 1;
+    patch::masterVolIn  = 1.0f;
+    patch::masterVolOut = 0.7f;
+    patch::metronome    = 0;
+    patch::lastTakeId   = 0;
+    patch::samplerate   = 44100;
 
 #ifdef WITH_VST
 
-    patch.masterInPlugins.push_back(plugin1);
-    patch.masterOutPlugins.push_back(plugin2);
+    patch::masterInPlugins.push_back(plugin1);
+    patch::masterOutPlugins.push_back(plugin2);
 
 #endif
 
-    REQUIRE(patch.write(filename) == 1);
+    REQUIRE(patch::write(filename) == 1);
   }
 
   SECTION("test read")
   {
-    REQUIRE(patch.read(filename) == PATCH_READ_OK);
-    REQUIRE(patch.header == "GPTCH");
-    REQUIRE(patch.version == "1.0");
-    REQUIRE(patch.versionMajor == 6);
-    REQUIRE(patch.versionMinor == 6);
-    REQUIRE(patch.versionPatch == 6);
-    REQUIRE(patch.name == "test patch");
-    REQUIRE(patch.bpm == Approx(100.0f));
-    REQUIRE(patch.bars == 4);
-    REQUIRE(patch.beats == 23);
-    REQUIRE(patch.quantize == 1);
-    REQUIRE(patch.masterVolIn == Approx(1.0f));
-    REQUIRE(patch.masterVolOut == Approx(0.7f));
-    REQUIRE(patch.metronome == 0);
-    REQUIRE(patch.lastTakeId == 0);
-    REQUIRE(patch.samplerate == 44100);
+    REQUIRE(patch::read(filename) == PATCH_READ_OK);
+    REQUIRE(patch::header == "GPTCH");
+    REQUIRE(patch::version == "1.0");
+    REQUIRE(patch::versionMajor == 6);
+    REQUIRE(patch::versionMinor == 6);
+    REQUIRE(patch::versionPatch == 6);
+    REQUIRE(patch::name == "test patch");
+    REQUIRE(patch::bpm == Approx(100.0f));
+    REQUIRE(patch::bars == 4);
+    REQUIRE(patch::beats == 23);
+    REQUIRE(patch::quantize == 1);
+    REQUIRE(patch::masterVolIn == Approx(1.0f));
+    REQUIRE(patch::masterVolOut == Approx(0.7f));
+    REQUIRE(patch::metronome == 0);
+    REQUIRE(patch::lastTakeId == 0);
+    REQUIRE(patch::samplerate == 44100);
 
-    Patch::column_t column0 = patch.columns.at(0);
+    patch::column_t column0 = patch::columns.at(0);
     REQUIRE(column0.index == 0);
     REQUIRE(column0.width == 500);
 
-    Patch::channel_t channel0 = patch.channels.at(0);
+    patch::channel_t channel0 = patch::channels.at(0);
     REQUIRE(channel0.type == CHANNEL_SAMPLE);
     REQUIRE(channel0.index == 666);
     REQUIRE(channel0.column == 0);
@@ -179,27 +179,27 @@ TEST_CASE("Test Patch class")
     REQUIRE(channel0.midiOut == 0);
     REQUIRE(channel0.midiOutChan == 5);
 
-    Patch::action_t action0 = channel0.actions.at(0);
+    patch::action_t action0 = channel0.actions.at(0);
     REQUIRE(action0.type == 0);
     REQUIRE(action0.frame == 50000);
     REQUIRE(action0.fValue == Approx(0.3f));
     REQUIRE(action0.iValue == 1000);
 
-    Patch::action_t action1 = channel0.actions.at(1);
+    patch::action_t action1 = channel0.actions.at(1);
     REQUIRE(action1.type == 2);
     REQUIRE(action1.frame == 589);
     REQUIRE(action1.fValue == Approx(1.0f));
     REQUIRE(action1.iValue == 130);
 
 #ifdef WITH_VST
-    Patch::plugin_t plugin0 = channel0.plugins.at(0);
+    patch::plugin_t plugin0 = channel0.plugins.at(0);
     REQUIRE(plugin0.path   == "/path/to/plugin1");
     REQUIRE(plugin0.bypass == false);
     REQUIRE(plugin0.params.at(0) == Approx(0.0f));
     REQUIRE(plugin0.params.at(1) == Approx(0.1f));
     REQUIRE(plugin0.params.at(2) == Approx(0.2f));
 
-    Patch::plugin_t plugin1 = channel0.plugins.at(1);
+    patch::plugin_t plugin1 = channel0.plugins.at(1);
     REQUIRE(plugin1.path == "/another/path/to/plugin2");
     REQUIRE(plugin1.bypass == true);
     REQUIRE(plugin1.params.at(0) == Approx(0.6f));
@@ -210,14 +210,14 @@ TEST_CASE("Test Patch class")
     REQUIRE(plugin1.params.at(5) == Approx(1.0f));
     REQUIRE(plugin1.params.at(6) == Approx(0.333f));
 
-    Patch::plugin_t masterPlugin0 = patch.masterInPlugins.at(0);
+    patch::plugin_t masterPlugin0 = patch::masterInPlugins.at(0);
     REQUIRE(masterPlugin0.path   == "/path/to/plugin1");
     REQUIRE(masterPlugin0.bypass == false);
     REQUIRE(masterPlugin0.params.at(0) == Approx(0.0f));
     REQUIRE(masterPlugin0.params.at(1) == Approx(0.1f));
     REQUIRE(masterPlugin0.params.at(2) == Approx(0.2f));
 
-    Patch::plugin_t masterPlugin1 = patch.masterOutPlugins.at(0);
+    patch::plugin_t masterPlugin1 = patch::masterOutPlugins.at(0);
     REQUIRE(masterPlugin1.path == "/another/path/to/plugin2");
     REQUIRE(masterPlugin1.bypass == true);
     REQUIRE(masterPlugin1.params.at(0) == Approx(0.6f));

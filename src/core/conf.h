@@ -35,6 +35,7 @@
 namespace giada {
 namespace conf
 {
+void init();
 int read();
 int write();
 

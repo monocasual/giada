@@ -44,27 +44,6 @@ namespace
 string confFilePath = "";
 string confDirPath = "";
 
-/* init
-Initializes with default values. */
-
-void init()
-{
-	/* Initialize confFilePath, i.e. the configuration file. In windows it is in
-	 * the same dir of the .exe, while in Linux and OS X in ~/.giada */
-
-#if defined(__linux__) || defined(__APPLE__)
-
-	confFilePath = gu_getHomePath() + G_SLASH + CONF_FILENAME;
-	confDirPath  = gu_getHomePath() + G_SLASH;
-
-#elif defined(_WIN32)
-
-	confFilePath = CONF_FILENAME;
-	confDirPath  = "";
-
-#endif
-}
-
 
 /* -------------------------------------------------------------------------- */
 
@@ -266,6 +245,28 @@ int pluginChooserH   = 480;
 int pluginSortMethod = 0;
 
 #endif
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void init()
+{
+	/* Initialize confFilePath, i.e. the configuration file. In windows it is in
+	 * the same dir of the .exe, while in Linux and OS X in ~/.giada */
+
+#if defined(__linux__) || defined(__APPLE__)
+
+	confFilePath = gu_getHomePath() + G_SLASH + CONF_FILENAME;
+	confDirPath  = gu_getHomePath() + G_SLASH;
+
+#elif defined(_WIN32)
+
+	confFilePath = CONF_FILENAME;
+	confDirPath  = "";
+
+#endif
+}
 
 
 /* -------------------------------------------------------------------------- */
