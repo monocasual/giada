@@ -60,11 +60,6 @@ protected:
 
 #endif
 
-	/* MidiMapConf
-	 * Pointer to MidiMapConf. It deals with Midi lightning operations. */
-
-	MidiMapConf *midiMapConf;
-
 	/* bufferSize
 	 * size of every buffer in this channel (vChan, pChan) */
 
@@ -74,11 +69,11 @@ protected:
 	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
 	 * it to KernelMidi. */
 
-	void sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg);
+	void sendMidiLmessage(uint32_t learn, const giada::midimap::message_t &msg);
 
 public:
 
-	Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf);
+	Channel(int type, int status, int bufferSize);
 
 	virtual ~Channel();
 

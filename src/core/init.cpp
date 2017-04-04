@@ -50,7 +50,6 @@
 
 extern bool		 		   G_quit;
 extern Patch_DEPR_   G_Patch_DEPR_;
-extern MidiMapConf   G_MidiMap;
 extern gdMainWindow *G_MainWin;
 
 
@@ -116,18 +115,11 @@ void init_prepareKernelMIDI()
 
 void init_prepareMidiMap()
 {
-	G_MidiMap.init();
-	G_MidiMap.setDefault_DEPR_();
-	G_MidiMap.setDefault();
+	midimap::init();
+	midimap::setDefault();
 
-	/* read with deprecated method first. If it fails, try with the new one. */
-	// TODO - do the opposite: if json fails, go with deprecated one
-
-	if (G_MidiMap.read(conf::midiMapPath) != MIDIMAP_READ_OK) {
-		gu_log("[init_prepareMidiMap] JSON-based midimap read failed, trying with the deprecated one...\n");
-		if (G_MidiMap.readMap_DEPR_(conf::midiMapPath) == MIDIMAP_INVALID)
-			gu_log("[init_prepareMidiMap] unable to read deprecated midimap. Nothing to do\n");
-		}
+	if (midimap::read(conf::midiMapPath) != MIDIMAP_READ_OK)
+		gu_log("[init_prepareMidiMap] MIDI map read failed!\n");
 }
 
 

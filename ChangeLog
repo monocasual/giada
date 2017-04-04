@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.13.4 ---
+- Removed support for old ini-based MIDImap files
+
+
 0.13.3 --- 2017 . 03 . 25
 - Strip VST folder from Git repository
 - Fix 'Close' button's position inside MIDI input window

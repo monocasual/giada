@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * KernelMidi
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -259,8 +257,8 @@ static void callback(double t, std::vector<unsigned char> *msg, void *data)
 
 void sendMidiLightningInitMsgs()
 {
-  for(unsigned i=0; i<G_MidiMap.initCommands.size(); i++) {
-		MidiMapConf::message_t msg = G_MidiMap.initCommands.at(i);
+  for(unsigned i=0; i<midimap::initCommands.size(); i++) {
+		midimap::message_t msg = midimap::initCommands.at(i);
 		if (msg.value != 0x0 && msg.channel != -1) {
 			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
 			send(msg.value | MIDI_CHANS[msg.channel]);
@@ -333,7 +331,7 @@ int openOutDevice(int port)
 			gu_log("[KM] MIDI out port %d open\n", port);
 
 			/* TODO - it shold send midiLightning message only if there is a map loaded
-			and available in G_MidiMap. */
+			and available in midimap:: */
 
 			sendMidiLightningInitMsgs();
 			return 1;

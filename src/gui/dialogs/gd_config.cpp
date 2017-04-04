@@ -46,7 +46,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern MidiMapConf G_MidiMap;
 
 
 using std::string;
@@ -663,15 +662,15 @@ void gTabMidi::fetchInPorts()
 
 void gTabMidi::fetchMidiMaps()
 {
-	if (G_MidiMap.maps.size() == 0) {
+	if (midimap::maps.size() == 0) {
 		midiMap->add("(no MIDI maps available)");
 		midiMap->value(0);
 		midiMap->deactivate();
 		return;
 	}
 
-	for (unsigned i=0; i<G_MidiMap.maps.size(); i++) {
-		const char *imap = G_MidiMap.maps.at(i).c_str();
+	for (unsigned i=0; i<midimap::maps.size(); i++) {
+		const char *imap = midimap::maps.at(i).c_str();
 		midiMap->add(imap);
 		if (conf::midiMapPath == imap)
 			midiMap->value(i);
@@ -679,7 +678,7 @@ void gTabMidi::fetchMidiMaps()
 
 	/* Preselect the 0 midimap if nothing is selected but midimaps exist. */
 
-	if (midiMap->value() == -1 && G_MidiMap.maps.size() > 0)
+	if (midiMap->value() == -1 && midimap::maps.size() > 0)
 		midiMap->value(0);
 }
 
@@ -704,7 +703,7 @@ void gTabMidi::save()
 	conf::midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
 
 	conf::noNoteOff   = noNoteOff->value();
-	conf::midiMapPath = G_MidiMap.maps.size() == 0 ? "" : midiMap->text(midiMap->value());
+	conf::midiMapPath = midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
 		conf::midiSync = MIDI_SYNC_NONE;

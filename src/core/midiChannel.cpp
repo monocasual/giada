@@ -43,8 +43,8 @@ using std::string;
 using namespace giada;
 
 
-MidiChannel::MidiChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize, midiMapConf),
+MidiChannel::MidiChannel(int bufferSize)
+	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
 	  midiOut    (false),
 	  midiOutChan(MIDI_CHANS[0])
 {

@@ -47,8 +47,8 @@ using std::string;
 using namespace giada;
 
 
-SampleChannel::SampleChannel(int bufferSize, MidiMapConf *midiMapConf)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize, midiMapConf),
+SampleChannel::SampleChannel(int bufferSize)
+	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
 		wave             (nullptr),
 		tracker          (0),

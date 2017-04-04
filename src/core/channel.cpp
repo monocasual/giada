@@ -49,9 +49,8 @@ using std::string;
 using namespace giada;
 
 
-Channel::Channel(int type, int status, int bufferSize, MidiMapConf *midiMapConf)
-: midiMapConf    (midiMapConf),
-  bufferSize     (bufferSize),
+Channel::Channel(int type, int status, int bufferSize)
+: bufferSize     (bufferSize),
   type           (type),
 	status         (status),
 	key            (0),
@@ -156,7 +155,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::sendMidiLmessage(uint32_t learn, const MidiMapConf::message_t &msg)
+void Channel::sendMidiLmessage(uint32_t learn, const midimap::message_t &msg)
 {
 	gu_log("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
 		learn, msg.channel, msg.value, msg.offset);
@@ -340,9 +339,9 @@ void Channel::sendMidiLmute()
 	if (!midiOutL || midiOutLmute == 0x0)
 		return;
 	if (mute)
-		sendMidiLmessage(midiOutLsolo, midiMapConf->muteOn);
+		sendMidiLmessage(midiOutLsolo, midimap::muteOn);
 	else
-		sendMidiLmessage(midiOutLsolo, midiMapConf->muteOff);
+		sendMidiLmessage(midiOutLsolo, midimap::muteOff);
 }
 
 
@@ -354,9 +353,9 @@ void Channel::sendMidiLsolo()
 	if (!midiOutL || midiOutLsolo == 0x0)
 		return;
 	if (solo)
-		sendMidiLmessage(midiOutLsolo, midiMapConf->soloOn);
+		sendMidiLmessage(midiOutLsolo, midimap::soloOn);
 	else
-		sendMidiLmessage(midiOutLsolo, midiMapConf->soloOff);
+		sendMidiLmessage(midiOutLsolo, midimap::soloOff);
 }
 
 
@@ -369,16 +368,16 @@ void Channel::sendMidiLplay()
 		return;
 	switch (status) {
 		case STATUS_OFF:
-			sendMidiLmessage(midiOutLplaying, midiMapConf->stopped);
+			sendMidiLmessage(midiOutLplaying, midimap::stopped);
 			break;
 		case STATUS_PLAY:
-			sendMidiLmessage(midiOutLplaying, midiMapConf->playing);
+			sendMidiLmessage(midiOutLplaying, midimap::playing);
 			break;
 		case STATUS_WAIT:
-			sendMidiLmessage(midiOutLplaying, midiMapConf->waiting);
+			sendMidiLmessage(midiOutLplaying, midimap::waiting);
 			break;
 		case STATUS_ENDING:
-			sendMidiLmessage(midiOutLplaying, midiMapConf->stopping);
+			sendMidiLmessage(midiOutLplaying, midimap::stopping);
 	}
 }
 

@@ -53,7 +53,6 @@
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;
-extern MidiMapConf G_MidiMap;
 
 
 using std::vector;
@@ -142,9 +141,9 @@ Channel *addChannel(int type)
 	int bufferSize = kernelAudio::getRealBufSize() * 2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, &G_MidiMap);
+		ch = new SampleChannel(bufferSize);
 	else
-		ch = new MidiChannel(bufferSize, &G_MidiMap);
+		ch = new MidiChannel(bufferSize);
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
