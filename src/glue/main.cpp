@@ -39,6 +39,7 @@
 #include "../core/midiChannel.h"
 #include "../core/clock.h"
 #include "../core/kernelMidi.h"
+#include "../core/kernelAudio.h"
 #include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
 #ifdef WITH_VST

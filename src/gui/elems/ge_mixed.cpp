@@ -31,6 +31,7 @@
 #include "../../core/graphics.h"
 #include "../../core/recorder.h"
 #include "../../core/channel.h"
+#include "../../core/kernelAudio.h"
 #include "../../core/sampleChannel.h"
 #include "../../utils/gui.h"
 #include "../dialogs/gd_mainWindow.h"

@@ -30,6 +30,7 @@
 #include "../deps/rtaudio-mod/RtAudio.h"
 #include "../utils/log.h"
 #include "wave.h"
+#include "kernelAudio.h"
 #include "recorder.h"
 #include "pluginHost.h"
 #include "patch_DEPR_.h"
@@ -40,9 +41,6 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "mixer.h"
-
-
-extern MidiMapConf G_MidiMap;
 
 
 namespace giada {

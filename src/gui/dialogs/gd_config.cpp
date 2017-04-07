@@ -36,6 +36,7 @@
 #include "../../core/pluginHost.h"
 #include "../../utils/gui.h"
 #include "../../utils/log.h"
+#include "../../utils/fs.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"

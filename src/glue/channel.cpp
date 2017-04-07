@@ -35,6 +35,8 @@
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../utils/gui.h"
+#include "../utils/fs.h"
+#include "../core/kernelAudio.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
 #include "../core/clock.h"

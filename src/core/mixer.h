@@ -32,7 +32,6 @@
 #include <pthread.h>
 #include <vector>
 #include "../deps/rtaudio-mod/RtAudio.h"
-#include "kernelAudio.h"
 
 
 class Channel;

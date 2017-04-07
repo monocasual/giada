@@ -29,16 +29,8 @@
 #define G_MIDIMAPCONF_H
 
 
-#include <limits.h>
-#include <stdint.h>
 #include <vector>
 #include <string>
-#include "dataStorageIni.h"
-#include "dataStorageJson.h"
-#include "../utils/fs.h"
-#if defined(__APPLE__)
-#include <pwd.h>
-#endif
 
 
 namespace giada {

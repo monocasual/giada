@@ -45,9 +45,6 @@
 #include "kernelMidi.h"
 
 
-extern MidiMapConf G_MidiMap;
-
-
 using std::string;
 using std::vector;
 

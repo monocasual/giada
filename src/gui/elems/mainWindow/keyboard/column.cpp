@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_column
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -30,6 +28,7 @@
 #include "../../../../core/sampleChannel.h"
 #include "../../../../glue/channel.h"
 #include "../../../../utils/log.h"
+#include "../../../../utils/fs.h"
 #include "../../../../utils/string.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../elems/basics/boxtypes.h"

@@ -32,7 +32,6 @@
 #ifdef WITH_VST
 	#include "../deps/juce-config.h"
 #endif
-
 #include "channel.h"
 
 

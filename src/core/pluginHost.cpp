@@ -29,6 +29,7 @@
 
 
 #include "../utils/log.h"
+#include "../utils/fs.h"
 #include "const.h"
 #include "channel.h"
 #include "plugin.h"

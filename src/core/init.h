@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * init
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -29,13 +27,6 @@
 
 #ifndef G_INIT_H
 #define G_INIT_H
-
-
-#include <cstdio>
-#include <stdint.h>
-#ifdef __APPLE__
-	#include <pwd.h>
-#endif
 
 
 void init_prepareParser();

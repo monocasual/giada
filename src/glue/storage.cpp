@@ -39,6 +39,7 @@
 #include "../core/wave.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
+#include "../utils/fs.h"
 #include "../gui/elems/mainWindow/keyboard/column.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"

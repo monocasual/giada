@@ -28,6 +28,7 @@
 #include <cmath>
 #include <cstring>
 #include "../utils/log.h"
+#include "../utils/fs.h"
 #include "../utils/string.h"
 #include "sampleChannel.h"
 #include "patch_DEPR_.h"

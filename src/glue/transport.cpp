@@ -29,6 +29,7 @@
 #include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../core/clock.h"
+#include "../core/kernelAudio.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
 #include "../core/recorder.h"

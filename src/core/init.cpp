@@ -26,6 +26,9 @@
 
 
 #include <ctime>
+#ifdef __APPLE__
+	#include <pwd.h>
+#endif
 #include "../utils/log.h"
 #include "../utils/fs.h"
 #include "../utils/gui.h"
@@ -36,6 +39,7 @@
 #include "mixer.h"
 #include "wave.h"
 #include "const.h"
+#include "clock.h"
 #include "channel.h"
 #include "mixerHandler.h"
 #include "patch_DEPR_.h"
@@ -96,6 +100,8 @@ void init_prepareKernelAudio()
 	pluginHost::sortPlugins(conf::pluginSortMethod);
 
 #endif
+
+  giada::clock::init();
 }
 
 

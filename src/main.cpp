@@ -62,14 +62,10 @@ int main(int argc, char **argv)
 	init_prepareParser();
 	init_prepareMidiMap();
 	init_prepareKernelAudio();
-
-  /* TODO - move somewhere else */
-  giada::clock::init();
-  /* TODO */
-
 	init_prepareKernelMIDI();
 	init_startGUI(argc, argv);
-	Fl::lock();
+
+  Fl::lock();
 	pthread_create(&G_videoThread, nullptr, videoThreadCb, nullptr);
 	init_startKernelAudio();
 

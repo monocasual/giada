@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainTimer
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -40,7 +38,6 @@
 #include "mainTimer.h"
 
 
-extern Mixer         G_Mixer;
 extern gdMainWindow *G_MainWin;
 
 
