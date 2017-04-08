@@ -108,8 +108,8 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
   pthread_mutex_t *mixerMutex, uint32_t iValue=0, float fValue=0.0);
 
 /* deleteActions
- * delete A RANGE of actions from frame_a to frame_b in channel 'chan'.
- * 'type' can be a bitmask. Exclusive range (frame_a, frame_b). */
+Deletes A RANGE of actions from frame_a to frame_b in channel 'chan' of type
+'type' (can be a bitmask). Exclusive range (frame_a, frame_b). */
 
 void deleteActions(int chan, int frame_a, int frame_b, char type,
   pthread_mutex_t *mixerMutex);
