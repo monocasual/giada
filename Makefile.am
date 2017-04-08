@@ -290,6 +290,7 @@ tests/patch.cpp              \
 tests/midiMapConf.cpp        \
 tests/pluginHost.cpp         \
 tests/utils.cpp              \
+tests/recorder.cpp           \
 src/core/conf.cpp            \
 src/core/wave.cpp            \
 src/core/midiMapConf.cpp     \
@@ -297,6 +298,7 @@ src/core/patch.cpp           \
 src/core/plugin.cpp          \
 src/core/dataStorageIni.cpp  \
 src/core/dataStorageJson.cpp \
+src/core/recorder.cpp        \
 src/utils/fs.cpp             \
 src/utils/string.cpp         \
 src/utils/log.cpp
