@@ -348,7 +348,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 
 #endif
 
-	if (recorder::canRec(this)) {
+	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
 		recorder::rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
     hasActions = true;
   }

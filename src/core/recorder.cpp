@@ -28,10 +28,8 @@
 #include <cassert>
 #include <cmath>
 #include "../utils/log.h"
-#include "mixer.h"
-#include "patch_DEPR_.h"
+#include "const.h"
 #include "sampleChannel.h"
-#include "clock.h"
 #include "recorder.h"
 
 
@@ -98,7 +96,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-bool canRec(Channel *ch)
+bool canRec(Channel *ch, bool clockRunning, bool mixerRecording)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -106,9 +104,9 @@ bool canRec(Channel *ch)
 	 * mixer is recording a take somewhere
 	 * channel is empty */
 
-	if (!active             ||
-		  !clock::isRunning() ||
-			 mixer::recording   ||
+	if (!active         ||
+		  !clockRunning   ||
+			 mixerRecording ||
 			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == nullptr)
 		)
 		return false;
@@ -612,9 +610,9 @@ void startOverdub(int index, char actionMask, int frame,
 /* -------------------------------------------------------------------------- */
 
 
-void stopOverdub()
+void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex)
 {
-	cmp.a2.frame  = clock::getCurrentFrame();
+	cmp.a2.frame  = currentFrame;
 	bool ringLoop = false;
 	bool nullLoop = false;
 
@@ -624,20 +622,20 @@ void stopOverdub()
 	if (cmp.a2.frame < cmp.a1.frame) {
 		ringLoop = true;
 		gu_log("[recorder::stopOverdub] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, clock::getTotalFrames()); // record at the end of the sequencer
+		rec(cmp.a2.chan, cmp.a2.type, totalFrames); // record at the end of the sequencer
 	}
 	else
 	if (cmp.a2.frame == cmp.a1.frame) {
 		nullLoop = true;
 		gu_log("[recorder::stopOverdub] null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, &mixer::mutex_recs); // false == don't check values
+		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, mixerMutex); // false == don't check values
 	}
 
 	/* remove any nested action between keypress----keyrel, then record */
 
 	if (!nullLoop) {
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, &mixer::mutex_recs);
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, &mixer::mutex_recs);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, mixerMutex);
+		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, mixerMutex);
 	}
 
 	if (!ringLoop && !nullLoop) {
@@ -650,7 +648,7 @@ void stopOverdub()
 		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
 		if (res == 1 && act->type == cmp.a2.type) {
 			gu_log("[recorder::stopOverdub] add truncation at frame %d, type=%d\n", act->frame, act->type);
-			deleteAction(act->chan, act->frame, act->type, false, &mixer::mutex_recs); // false == don't check values
+			deleteAction(act->chan, act->frame, act->type, false, mixerMutex); // false == don't check values
 		}
 	}
 }

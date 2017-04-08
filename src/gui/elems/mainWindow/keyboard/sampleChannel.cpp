@@ -27,6 +27,7 @@
 
 #include "../../../../core/mixer.h"
 #include "../../../../core/conf.h"
+#include "../../../../core/clock.h"
 #include "../../../../core/recorder.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/wave.h"
@@ -340,7 +341,7 @@ void geSampleChannel::refresh()
 		if (mixer::recording && ch->armed)
 			mainButton->setInputRecordMode();
 		if (recorder::active) {
-			if (recorder::canRec(ch))
+			if (recorder::canRec(ch, clock::isRunning(), mixer::recording))
 				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)

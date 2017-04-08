@@ -238,14 +238,15 @@ void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
 
 void glue_setMute(Channel *ch, bool gui)
 {
-	if (recorder::active && recorder::canRec(ch)) {
+	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
 		if (!ch->mute) {
 			recorder::startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());
       ch->readActions = false;   // don't read actions while overdubbing
     }
 		else
-		 recorder::stopOverdub();
+		 recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
+      &mixer::mutex_recs);
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);

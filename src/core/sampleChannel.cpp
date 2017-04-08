@@ -498,7 +498,7 @@ void SampleChannel::quantize(int index, int localFrame)
 	/* this is the moment in which we record the keypress, if the
 	 * quantizer is on. SINGLE_PRESS needs overdub */
 
-	if (recorder::canRec(this)) {
+	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
 		if (mode == SINGLE_PRESS) {
 			recorder::startOverdub(index, ACTION_KEYS, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());

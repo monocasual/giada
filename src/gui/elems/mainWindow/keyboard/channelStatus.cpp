@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "../../../../core/mixer.h"
+#include "../../../../core/clock.h"
 #include "../../../../core/sampleChannel.h"
 #include "../../../../core/recorder.h"
 #include "../../../../core/const.h"
@@ -65,7 +66,7 @@ void geChannelStatus::draw()
     if (mixer::recording && ch->armed)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
     else
-    if (recorder::active && recorder::canRec(ch))
+    if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))
       fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
 
     /* equation for the progress bar:

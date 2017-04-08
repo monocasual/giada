@@ -115,7 +115,9 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		if (recorder::active) {
 			if (clock::isRunning()) {
 				ch->kill(0); // on frame 0: user-generated event
-				if (recorder::canRec(ch) && !(ch->mode & LOOP_ANY)) {   // don't record killChan actions for LOOP channels
+				if (recorder::canRec(ch, clock::isRunning(), mixer::recording) &&
+            !(ch->mode & LOOP_ANY))
+        {   // don't record killChan actions for LOOP channels
 					recorder::rec(ch->index, ACTION_KILLCHAN, clock::getCurrentFrame());
           ch->hasActions = true;
         }
@@ -139,7 +141,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * meaningless for loop modes */
 
 		if (clock::getQuantize() == 0 &&
-		    recorder::canRec(ch)     &&
+		    recorder::canRec(ch, clock::isRunning(), mixer::recording) &&
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
@@ -186,8 +188,9 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 	/* record a key release only if channel is single_press. For any
 	 * other mode the KEY REL is meaningless. */
 
-	if (ch->mode == SINGLE_PRESS && recorder::canRec(ch))
-		recorder::stopOverdub();
+	if (ch->mode == SINGLE_PRESS && recorder::canRec(ch, clock::isRunning(), mixer::recording))
+		recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
+      &mixer::mutex_recs);
 
 	/* the GUI update is done by gui_refresh() */
 

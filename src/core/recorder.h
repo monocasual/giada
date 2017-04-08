@@ -84,7 +84,7 @@ bool hasActions(int chanIndex);
 /* canRec
  * can a channel rec an action? Call this one BEFORE rec(). */
 
-bool canRec(Channel *ch);
+bool canRec(Channel *ch, bool clockRunning, bool mixerRecording);
 
 /* rec
  * record an action. */
@@ -162,7 +162,7 @@ int getAction(int chan, char action, int frame, struct action **out);
 /* start/endOverdub */
 
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-void stopOverdub();
+void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
 
 }}; // giada::recorder::
 
