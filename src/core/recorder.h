@@ -65,7 +65,6 @@ struct action
 
 extern std::vector<int> frames;					        // frame counter (sentinel) frames.size == global.size
 extern std::vector<std::vector<action*>> global;	// container of containers of actions
-extern std::vector<action*> actions;			        // container of actions
 
 extern bool active;
 extern bool sortedActions;   // are actions sorted via sortActions()?

@@ -76,7 +76,7 @@ void print()
 
 vector<int> frames;
 vector<vector<action*>> global;
-vector<action*> actions;
+vector<action*> actions;     // used internally
 
 bool active = false;
 bool sortedActions = false;
