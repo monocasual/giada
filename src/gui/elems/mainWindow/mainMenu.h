@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainMenu
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,14 +32,17 @@
 #include <FL/Fl_Group.H>
 
 
+class geButton;
+
+
 class geMainMenu : public Fl_Group
 {
 private:
 
-	class gClick *file;
-	class gClick *edit;
-	class	gClick *config;
-	class gClick *about;
+  geButton *file;
+  geButton *edit;
+  geButton *config;
+  geButton *about;
 
 	static void cb_about (Fl_Widget *v, void *p);
 	static void cb_config(Fl_Widget *v, void *p);

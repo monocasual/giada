@@ -38,6 +38,7 @@
 #include "../../../../glue/storage.h"
 #include "../../../../utils/string.h"
 #include "../../../../utils/fs.h"
+#include "../../../../utils/gui.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/gd_editor.h"
@@ -65,13 +66,13 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	begin();
 
 	button      = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	arm         = new gClick(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
+	arm         = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
 	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
 	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), 20, 20, "-- no sample --");
-	readActions = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
+	readActions = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
 	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
-	mute        = new gClick(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo        = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo        = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #ifdef WITH_VST
 	fx          = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
 	vol         = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
@@ -477,7 +478,7 @@ geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const c
 
 int geSampleChannelButton::handle(int e)
 {
-	int ret = gClick::handle(e);
+	int ret = geButton::handle(e);
 	switch (e) {
 		case FL_DND_ENTER:
 		case FL_DND_DRAG:

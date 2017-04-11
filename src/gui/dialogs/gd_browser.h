@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_browser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,18 +32,27 @@
 #include "../elems/ge_window.h"
 
 
+class Channel;
+class Fl_Group;
+class gCheck;
+class geBrowser;
+class geButton;
+class gInput;
+class gProgress;
+
+
 class gdBaseBrowser : public gWindow
 {
 protected:
 
-	class Fl_Group  *groupTop;
-  class gCheck    *hiddenFiles;
-	class geBrowser *browser;
-	class gClick    *ok;
-	class gClick    *cancel;
-	class gInput    *where;
- 	class gClick    *updir;
- 	class gProgress *status;
+	Fl_Group  *groupTop;
+  gCheck    *hiddenFiles;
+	geBrowser *browser;
+	geButton  *ok;
+	geButton  *cancel;
+	gInput    *where;
+ 	geButton  *updir;
+ 	gProgress *status;
 
 	static void cb_up               (Fl_Widget *v, void *p);
 	static void cb_close            (Fl_Widget *w, void *p);
@@ -60,7 +67,7 @@ protected:
 
 	void (*callback)(void*);
 
-	class Channel *channel;
+	Channel *channel;
 
 public:
 
@@ -96,7 +103,7 @@ class gdSaveBrowser : public gdBaseBrowser
 {
 private:
 
-	class gInput *name;
+	gInput *name;
 
 	static void cb_down(Fl_Widget *v, void *p);
 	static void cb_save(Fl_Widget *w, void *p);
@@ -108,7 +115,7 @@ public:
 
 	gdSaveBrowser(int x, int y, int w, int h, const std::string &title,
 			const std::string &path,	const std::string &name, void (*callback)(void*),
-			class Channel *ch);
+			Channel *ch);
 
 	std::string getName();
 };
@@ -130,7 +137,7 @@ private:
 public:
 
 	gdLoadBrowser(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	void (*callback)(void*), class Channel *ch);
+			const std::string &path,	void (*callback)(void*), Channel *ch);
 };
 
 #endif

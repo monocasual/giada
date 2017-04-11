@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginChooser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -29,25 +27,33 @@
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGIN_CHOOSER_H__
-#define __GD_PLUGIN_CHOOSER_H__
+#ifndef GD_PLUGIN_CHOOSER_H
+#define GD_PLUGIN_CHOOSER_H
+
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include "../elems/ge_window.h"
 
 
-class gdPluginChooser : public gWindow {
+class Channel;
+class gChoice;
+class geButton;
+class geButton;
+class gePluginBrowser;
 
+
+class gdPluginChooser : public gWindow
+{
 private:
 
-  class Channel *ch;      // ch == nullptr ? masterOut
-	int   stackType;
+  Channel *ch;      // ch == nullptr ? masterOut
+	int stackType;
 
-  class gChoice         *sortMethod;
-  class gClick          *addBtn;
-  class gClick          *cancelBtn;
-	class gePluginBrowser *browser;
+  gChoice         *sortMethod;
+  geButton        *addBtn;
+  geButton        *cancelBtn;
+  gePluginBrowser *browser;
 
 	static void cb_close(Fl_Widget *w, void *p);
 	static void cb_add  (Fl_Widget *w, void *p);
@@ -58,7 +64,7 @@ private:
 
 public:
 
-	gdPluginChooser(int x, int y, int w, int h, int stackType, class Channel *ch=nullptr);
+	gdPluginChooser(int x, int y, int w, int h, int stackType, Channel *ch=nullptr);
   ~gdPluginChooser();
 };
 

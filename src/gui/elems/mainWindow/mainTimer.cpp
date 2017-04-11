@@ -50,10 +50,10 @@ geMainTimer::geMainTimer(int x, int y)
 	begin();
 
 	quantizer  = new gChoice(x, y, 40, 20, "", false);
-	bpm        = new gClick (quantizer->x()+quantizer->w()+4,  y, 40, 20);
-	meter      = new gClick (bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
-	multiplier = new gClick (meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-	divider    = new gClick (multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
+	bpm        = new geButton (quantizer->x()+quantizer->w()+4,  y, 40, 20);
+	meter      = new geButton (bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
+	multiplier = new geButton (meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
+	divider    = new geButton (multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
 
 	end();
 

@@ -54,7 +54,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
   instead. */
 
 	begin();
-	addChannelBtn = new gClick(x(), y(), w(), 20, "Add new channel");
+	addChannelBtn = new geButton(x(), y(), w(), 20, "Add new channel");
 	end();
 
   resizer = new gResizerBar(x()+w(), y(), 16, h(), false);

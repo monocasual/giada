@@ -55,45 +55,7 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 
 
 gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
-  : gClick(X, Y, W, H, L, imgOff, imgOn) {}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gClick::gClick(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
-: gBaseButton(x, y, w, h, L),
-  imgOff(imgOff),
-  imgOn(imgOn),
-  bgColor0(COLOR_BG_0),
-  bgColor1(COLOR_BG_1),
-  bdColor(COLOR_BD_0),
-  txtColor(COLOR_TEXT_0)  {}
-
-void gClick::draw()
-{
-  if (!active()) txtColor = bdColor;
-  else           txtColor = COLOR_TEXT_0;
-
-  fl_rect(x(), y(), w(), h(), bdColor);             // borders
-  if (value()) {                                    // -- clicked
-    if (imgOn != nullptr)
-      fl_draw_pixmap(imgOn, x()+1, y()+1);
-    else
-      fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
-  }
-  else {                                            // -- not clicked
-    fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
-    if (imgOff != nullptr)
-      fl_draw_pixmap(imgOff, x()+1, y()+1);
-  }
-  if (!active())
-    fl_color(FL_INACTIVE_COLOR);
-
-  fl_color(txtColor);
-  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
-  fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
-}
+  : geButton(X, Y, W, H, L, imgOff, imgOn) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -525,70 +487,8 @@ void gResizerBar::resize(int X,int Y,int W,int H)
 /* -------------------------------------------------------------------------- */
 
 
-gBaseButton::gBaseButton(int x, int y, int w, int h, const char *l)
-  : Fl_Button(x, y, w, h, l)
-{
-  initLabel = l ? l : "";
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gBaseButton::trimLabel()
-{
-  if (initLabel.empty())
-    return;
-
-  std::string out;
-  if (w() > 20) {
-    out = initLabel;
-    int len = initLabel.size();
-    while (fl_width(out.c_str(), out.size()) > w()) {
-      out = initLabel.substr(0, len) + "...";
-      len--;
-    }
-  }
-  else {
-    out = "";
-  }
-  copy_label(out.c_str());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gBaseButton::label(const char *l)
-{
-  Fl_Button::label(l);
-  initLabel = l;
-  trimLabel();
-}
-
-const char *gBaseButton::label()
-{
-  return Fl_Button::label();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gBaseButton::resize(int X, int Y, int W, int H)
-{
-  trimLabel();
-  Fl_Button::resize(X, Y, W, H);
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 gFxButton::gFxButton(int x, int y, int w, int h, const char **imgOff, const char **imgOn)
-  : gClick(x, y, w, h, nullptr, imgOff, imgOn), full(false) {}
+  : geButton(x, y, w, h, nullptr, imgOff, imgOn), full(false) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -596,7 +496,7 @@ gFxButton::gFxButton(int x, int y, int w, int h, const char **imgOff, const char
 
 void gFxButton::draw()
 {
-  gClick::draw();
+  geButton::draw();
   if (full)
     fl_draw_pixmap(imgOn, x()+1, y()+1, COLOR_BD_0);
 }

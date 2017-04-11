@@ -28,8 +28,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __GE_SCROLL_H__
-#define __GE_SCROLL_H__
+#ifndef GE_SCROLL_H
+#define GE_SCROLL_H
 
 
 #include <FL/Fl_Scroll.H>

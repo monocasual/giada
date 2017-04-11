@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_channelButton
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,7 +33,7 @@ using std::string;
 
 
 geChannelButton::geChannelButton(int x, int y, int w, int h, const char *l)
-  : gClick(x, y, w, h, l), key("") {}
+  : geButton(x, y, w, h, l), key("") {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -67,7 +65,7 @@ void geChannelButton::setKey(int k)
 
 void geChannelButton::draw()
 {
-  gClick::draw();
+  geButton::draw();
 
   if (key == "")
     return;

@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geBaseButton
+ * Base class for every button widget.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -25,48 +28,29 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_CHANNEL_H
-#define GE_MIDI_CHANNEL_H
+#ifndef GE_BASE_BUTTON_H
+#define GE_BASE_BUTTON_H
 
 
-#include "channel.h"
-#include "channelButton.h"
+#include <string>
+#include <FL/Fl_Button.H>
 
 
-class MidiChannel;
-
-
-class geMidiChannel : public geChannel
+class geBaseButton : public Fl_Button
 {
 private:
 
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
+	std::string initLabel;
 
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
+	void trimLabel();
 
 public:
 
-	geMidiChannel(int x, int y, int w, int h, MidiChannel *ch);
+  geBaseButton(int x, int y, int w, int h, const char *l=0);
 
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);  // TODO - move to base class
-	void resize  (int x, int y, int w, int h);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class geMidiChannelButton : public geChannelButton
-{
-public:
-	geMidiChannelButton(int x, int y, int w, int h, const char *l=0);
-	int handle(int e);
+  void resize(int x, int y, int w, int h) override;
+  void label(const char *l);
+	const char *label();
 };
 
 

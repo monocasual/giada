@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_channelButton
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,7 +32,7 @@
 #include "../../ge_mixed.h"
 
 
-class geChannelButton : public gClick
+class geChannelButton : public geButton
 {
 private:
 

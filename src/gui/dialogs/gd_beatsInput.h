@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_beatsInput
- *
  * ---------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,6 +32,11 @@
 #include "../elems/ge_window.h"
 
 
+class gInput;
+class geButton;
+class gCheck;
+
+
 class gdBeatsInput : public gWindow
 {
 private:
@@ -41,10 +44,10 @@ private:
 	static void cb_update_batt(Fl_Widget *w, void *p);
 	inline void __cb_update_batt();
 
-	class gInput *beats;
-	class gInput *bars;
-	class gClick *ok;
-	class gCheck *resizeRec;
+	gInput   *beats;
+	gInput   *bars;
+	geButton *ok;
+	gCheck   *resizeRec;
 
 public:
 

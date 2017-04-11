@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gg_keyboard
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -36,6 +34,13 @@
 #include "../../../../core/const.h"
 
 
+class Channel;
+class geButton;
+class geColumn;
+class geChannel;
+class geSampleChannel;
+
+
 class geKeyboard : public Fl_Scroll
 {
 private:
@@ -59,12 +64,12 @@ private:
 
 	static int indexColumn;
 
-	class gClick *addColumnBtn;
+	geButton *addColumnBtn;
 
 	/* columns
 	 * a vector of columns which in turn contain channels. */
 
-	std::vector<class geColumn*> columns;
+	std::vector<geColumn*> columns;
 
 public:
 
@@ -83,7 +88,7 @@ public:
 	 * set to true, also generate the corresponding column if column (index) does
 	 * not exist yet. */
 
-	class geChannel *addChannel(int column, class Channel *ch, bool build=false);
+	geChannel *addChannel(int column, Channel *ch, bool build=false);
 
 	/* addColumn
 	 * add a new column to the top of the stack. */
@@ -135,7 +140,7 @@ public:
 	/* setChannelWithActions
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
-	void setChannelWithActions(class geSampleChannel *gch);
+	void setChannelWithActions(geSampleChannel *gch);
 
 	/* printChannelMessage
 	 * given any output by glue_loadChannel, print the message on screen

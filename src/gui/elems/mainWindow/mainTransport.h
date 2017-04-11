@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainTransport
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,15 +32,18 @@
 #include <FL/Fl_Group.H>
 
 
+class geButton;
+
+
 class geMainTransport : public Fl_Group
 {
 private:
 
-	class gClick *rewind;
-	class gClick *play;
-	class gClick *recAction;
-	class gClick *recInput;
-	class gClick *metronome;
+	geButton *rewind;
+	geButton *play;
+	geButton *recAction;
+	geButton *recInput;
+	geButton *metronome;
 
 	static void cb_rewind   (Fl_Widget *v, void *p);
 	static void cb_play     (Fl_Widget *v, void *p);

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_about
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -60,7 +58,7 @@ gdAbout::gdAbout()
 
 	logo  = new gBox(8, 10, 324, 86);
 	text  = new gBox(8, 120, 324, 145);
-	close = new gClick(252, h()-28, 80, 20, "Close");
+	close = new geButton(252, h()-28, 80, 20, "Close");
 #ifdef WITH_VST
 	vstLogo = new gBox(8, 265, 324, 50);
 	vstText = new gBox(8, 315, 324, 46);

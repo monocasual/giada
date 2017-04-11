@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_sampleChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,6 +33,11 @@
 #include "channelButton.h"
 
 
+class SampleChannel;
+class geChannelMode;
+class geButton;
+
+
 class geSampleChannel : public geChannel
 {
 private:
@@ -49,7 +52,7 @@ private:
 
 public:
 
-	geSampleChannel(int x, int y, int w, int h, class SampleChannel *ch);
+	geSampleChannel(int x, int y, int w, int h, SampleChannel *ch);
 
 	void reset   ();
 	void update  ();
@@ -62,8 +65,8 @@ public:
 	void showActionButton();
 	void hideActionButton();
 
-	class geChannelMode *modeBox;
-	class gClick 	 *readActions;
+	geChannelMode *modeBox;
+	geButton 	    *readActions;
 };
 
 

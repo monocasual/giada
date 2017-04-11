@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geBaseButton
+ * Base class for every button widget.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -25,75 +28,63 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/kernelMidi.h"
-#include "../../../utils/log.h"
-#include "../../elems/midiLearner.h"
-#include "midiInputBase.h"
+#include <FL/fl_draw.H>
+#include "baseButton.h"
 
 
-using std::string;
-using namespace giada;
-
-
-gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)
-	: gWindow(x, y, w, h, title)
+geBaseButton::geBaseButton(int x, int y, int w, int h, const char *l)
+  : Fl_Button(x, y, w, h, l)
 {
+  initLabel = l ? l : "";
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-gdMidiInputBase::~gdMidiInputBase()
+void geBaseButton::trimLabel()
 {
-	kernelMidi::stopMidiLearn();
+  if (initLabel.empty())
+    return;
+
+  std::string out;
+  if (w() > 20) {
+    out = initLabel;
+    int len = initLabel.size();
+    while (fl_width(out.c_str(), out.size()) > w()) {
+      out = initLabel.substr(0, len) + "...";
+      len--;
+    }
+  }
+  else {
+    out = "";
+  }
+  copy_label(out.c_str());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::stopMidiLearn(geMidiLearner *learner)
+void geBaseButton::label(const char *l)
 {
-	kernelMidi::stopMidiLearn();
-	learner->updateValue();
+  Fl_Button::label(l);
+  initLabel = l;
+  trimLabel();
+}
+
+
+const char *geBaseButton::label()
+{
+  return Fl_Button::label();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l)
+void geBaseButton::resize(int X, int Y, int W, int H)
 {
-	*param = msg;
-	stopMidiLearn(l);
-	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiInputBase::cb_learn(uint32_t msg, void *d)
-{
-	geMidiLearner::cbData_t *data = (geMidiLearner::cbData_t *) d;
-	gdMidiInputBase *window  = (gdMidiInputBase*) data->window;
-	geMidiLearner   *learner = data->learner;
-	uint32_t        *param   = learner->param;
-	window->__cb_learn(param, msg, learner);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiInputBase::cb_close(Fl_Widget *w, void *p)  { ((gdMidiInputBase*)p)->__cb_close(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiInputBase::__cb_close()
-{
-	do_callback();
+  trimLabel();
+  Fl_Button::resize(X, Y, W, H);
 }

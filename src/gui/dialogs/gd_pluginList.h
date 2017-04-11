@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginList
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -37,22 +35,30 @@
 #include "../elems/ge_window.h"
 
 
+class Plugin;
+class Channel;
+class geButton;
+class gdPluginList;
+class gButton;
+class gChoice;
+
+
 class gdPluginList : public gWindow
 {
 private:
 
- 	class gClick *addPlugin;
-	Fl_Scroll    *list;
+  geButton  *addPlugin;
+	Fl_Scroll *list;
 
 	static void cb_addPlugin  (Fl_Widget *v, void *p);
 	inline void __cb_addPlugin();
 
 public:
 
-	class Channel *ch;      // ch == nullptr ? masterOut
-	int   stackType;
+	Channel *ch;      // ch == nullptr ? masterOut
+	int stackType;
 
-	gdPluginList(int stackType, class Channel *ch=nullptr);
+	gdPluginList(int stackType, Channel *ch=nullptr);
 	~gdPluginList();
 
 	/* special callback, passed to browser. When closed (i.e. plugin
@@ -71,8 +77,8 @@ class gdPlugin : public Fl_Group
 {
 private:
 
-	class  gdPluginList *pParent;
-	class Plugin        *pPlugin;
+  gdPluginList *pParent;
+  Plugin       *pPlugin;
 
 	static void cb_removePlugin       (Fl_Widget *v, void *p);
 	static void cb_openPluginWindow   (Fl_Widget *v, void *p);
@@ -89,14 +95,14 @@ private:
 
 public:
 
-	class gButton *button;
-	class gChoice *program;
-	class gButton *bypass;
-	class gButton *shiftUp;
-	class gButton *shiftDown;
-	class gButton *remove;
+	gButton *button;
+	gChoice *program;
+	gButton *bypass;
+	gButton *shiftUp;
+	gButton *shiftDown;
+	gButton *remove;
 
-	gdPlugin(gdPluginList *gdp, class Plugin *p, int x, int y, int w);
+	gdPlugin(gdPluginList *gdp, Plugin *p, int x, int y, int w);
 };
 
 #endif

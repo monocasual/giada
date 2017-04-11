@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_bpmInput
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -54,7 +52,7 @@ gdBpmInput::gdBpmInput(const char *label)
 
 	input_a = new gInput(8,  8, 30, 20);
 	input_b = new gInput(42, 8, 20, 20);
-	ok 		  = new gClick(66, 8, 70, 20, "Ok");
+	ok 		  = new geButton(66, 8, 70, 20, "Ok");
 	end();
 
 	char   a[4];

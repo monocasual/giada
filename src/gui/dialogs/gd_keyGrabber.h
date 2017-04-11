@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_keyGrabber
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,15 +33,20 @@
 #include "../elems/ge_window.h"
 
 
+class Channel;
+class gBox;
+class geButton;
+
+
 class gdKeyGrabber : public gWindow
 {
 private:
 
-	class Channel *ch;
+	Channel *ch;
 
-	class gBox   *text;
-	class gClick *clear;
-	class gClick *cancel;
+	gBox     *text;
+	geButton *clear;
+	geButton *cancel;
 
 	static void cb_clear (Fl_Widget *w, void *p);
 	static void cb_cancel(Fl_Widget *w, void *p);
@@ -51,12 +54,11 @@ private:
 	inline void __cb_cancel();
 
 	void setButtonLabel(int key);
-
 	void updateText(int key);
 
 public:
 
-	gdKeyGrabber(class Channel *ch);
+	gdKeyGrabber(Channel *ch);
 	int handle(int e);
 };
 

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiLearner
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -38,7 +36,7 @@
 class gdMidiInput;
 class geMidiLearner;
 class gBox;
-class gClick;
+class geButton;
 class gButton;
 
 
@@ -53,9 +51,9 @@ private:
 
 	giada::kernelMidi::cb_midiLearn *callback;
 
-	gBox    *text;
-	gClick  *value;
-	gButton *button;
+	gBox     *text;
+	geButton *value;
+	gButton  *button;
 
 	static void cb_button(Fl_Widget *v, void *p);
 	static void cb_value (Fl_Widget *v, void *p);

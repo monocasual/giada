@@ -57,8 +57,8 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Chan
   /* ok/cancel buttons */
   Fl_Group *group_btn = new Fl_Group(8, browser->y()+browser->h()+8, w()-16, h()-browser->h()-16);
     gBox *b2 = new gBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
-    addBtn = new gClick(w()-88, group_btn->y(), 80, 20, "Add");
-    cancelBtn = new gClick(addBtn->x()-88, group_btn->y(), 80, 20, "Cancel");
+    addBtn = new geButton(w()-88, group_btn->y(), 80, 20, "Add");
+    cancelBtn = new geButton(addBtn->x()-88, group_btn->y(), 80, 20, "Cancel");
   group_btn->resizable(b2);
   group_btn->end();
 

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_config
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,6 +32,21 @@
 #include "../elems/ge_window.h"
 
 
+class gTabAudio;
+class gTabBehaviors;
+class gTabMidi;
+class gTabMisc;
+#ifdef WITH_VST
+class gTabPlugins;
+#endif
+class geButton;
+class gChoice;
+class gCheck;
+class gInput;
+class gRadio;
+class gBox;
+
+
 class gdConfig : public gWindow
 {
 private:
@@ -48,15 +61,15 @@ public:
 	gdConfig(int w, int h);
 	~gdConfig();
 
-	class gTabAudio     *tabAudio;
-	class gTabBehaviors *tabBehaviors;
-	class gTabMidi      *tabMidi;
-	class gTabMisc      *tabMisc;
+	gTabAudio     *tabAudio;
+	gTabBehaviors *tabBehaviors;
+	gTabMidi      *tabMidi;
+	gTabMisc      *tabMisc;
 #ifdef WITH_VST
-	class gTabPlugins   *tabPlugins;
+	gTabPlugins   *tabPlugins;
 #endif
-	class gClick 	      *save;
-	class gClick 	      *cancel;
+	geButton 	    *save;
+	geButton 	    *cancel;
 };
 
 
@@ -79,12 +92,12 @@ private:
 
 public:
 
-	class gChoice *system;
-	class gChoice *portOut;
-	class gChoice *portIn;
-	class gCheck  *noNoteOff;
-	class gChoice *midiMap;
-	class gChoice *sync;
+	gChoice *system;
+	gChoice *portOut;
+	gChoice *portIn;
+	gCheck  *noNoteOff;
+	gChoice *midiMap;
+	gChoice *sync;
 
 	gTabMidi(int x, int y, int w, int h);
 
@@ -113,24 +126,24 @@ private:
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
 	void fetchOutChans(int menuItem);
-	int  findMenuDevice(class gChoice *m, int device);
+	int  findMenuDevice(gChoice *m, int device);
 
 	int soundsysInitValue;
 
 public:
 
-	class gChoice *soundsys;
-	class gChoice *samplerate;
-	class gChoice *rsmpQuality;
-	class gChoice *sounddevIn;
-	class gClick  *devInInfo;
-	class gChoice *channelsIn;
-	class gChoice *sounddevOut;
-	class gClick  *devOutInfo;
-	class gChoice *channelsOut;
-	class gCheck  *limitOutput;
-	class gChoice *buffersize;
-	class gInput  *delayComp;
+	gChoice *soundsys;
+	gChoice *samplerate;
+	gChoice *rsmpQuality;
+	gChoice *sounddevIn;
+	geButton  *devInInfo;
+	gChoice *channelsIn;
+	gChoice *sounddevOut;
+	geButton  *devOutInfo;
+	gChoice *channelsOut;
+	gCheck  *limitOutput;
+	gChoice *buffersize;
+	gInput  *delayComp;
 
 	gTabAudio(int x, int y, int w, int h);
 
@@ -150,11 +163,11 @@ private:
 
 public:
 
-	class gRadio *recsStopOnChanHalt_1;
-	class gRadio *recsStopOnChanHalt_0;
-	class gRadio *chansStopOnSeqHalt_1;
-	class gRadio *chansStopOnSeqHalt_0;
-	class gCheck *treatRecsAsLoops;
+	gRadio *recsStopOnChanHalt_1;
+	gRadio *recsStopOnChanHalt_0;
+	gRadio *chansStopOnSeqHalt_1;
+	gRadio *chansStopOnSeqHalt_0;
+	gCheck *treatRecsAsLoops;
 
 	gTabBehaviors(int x, int y, int w, int h);
 
@@ -169,7 +182,7 @@ class gTabMisc : public Fl_Group
 {
 public:
 
-	class gChoice *debugMsg;
+	gChoice *debugMsg;
 
 	gTabMisc(int x, int y, int w, int h);
 
@@ -194,9 +207,9 @@ private:
 
 public:
 
-	class gInput *folderPath;
-	class gClick *scanButton;
-	class gBox   *info;
+	gInput   *folderPath;
+	geButton *scanButton;
+	gBox     *info;
 
 	gTabPlugins(int x, int y, int w, int h);
 

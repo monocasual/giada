@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainIO
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -33,19 +31,28 @@
 
 #include <FL/Fl_Group.H>
 
+class gSoundMeter;
+class gSoundMeter;
+class gDial;
+class gDial;
+#ifdef WITH_VST
+class gFxButton;
+class gFxButton;
+class geButton;
+#endif
 
 class geMainIO : public Fl_Group
 {
 private:
 
-	class gSoundMeter *outMeter;
-	class gSoundMeter *inMeter;
-	class gDial				*outVol;
-	class gDial				*inVol;
+	gSoundMeter *outMeter;
+	gSoundMeter *inMeter;
+	gDial				*outVol;
+	gDial				*inVol;
 #ifdef WITH_VST
-	class gFxButton 	*masterFxOut;
-	class gFxButton		*masterFxIn;
-	class gClick      *inToOut;
+  gFxButton 	*masterFxOut;
+  gFxButton		*masterFxIn;
+  geButton    *inToOut;
 #endif
 
 	static void cb_outVol     (Fl_Widget *v, void *p);

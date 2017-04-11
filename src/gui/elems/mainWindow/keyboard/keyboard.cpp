@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gg_keyboard
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -62,7 +60,7 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	addColumnBtn = new gClick(8, y(), 200, 20, "Add new column");
+	addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
 	addColumnBtn->callback(cb_addColumn, (void*) this);
 	add(addColumnBtn);
 

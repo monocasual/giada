@@ -178,7 +178,7 @@ void gdPluginList::refreshList()
 	}
 
 	int addPlugY = numPlugins == 0 ? 90 : list->y()-list->yposition()+(i*24);
-	addPlugin = new gClick(8, addPlugY, 452, 20, "-- add new plugin --");
+	addPlugin = new geButton(8, addPlugY, 452, 20, "-- add new plugin --");
 	addPlugin->callback(cb_addPlugin, (void*)this);
 	list->add(addPlugin);
 

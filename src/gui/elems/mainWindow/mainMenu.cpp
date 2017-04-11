@@ -58,10 +58,10 @@ geMainMenu::geMainMenu(int x, int y)
 {
 	begin();
 
-	file   = new gClick(x, y, 70, 21, "file");
-	edit   = new gClick(file->x()+file->w()+4,  y, 70, 21, "edit");
-	config = new gClick(edit->x()+edit->w()+4, y, 70, 21, "config");
-	about	 = new gClick(config->x()+config->w()+4, y, 70, 21, "about");
+	file   = new geButton(x, y, 70, 21, "file");
+	edit   = new geButton(file->x()+file->w()+4,  y, 70, 21, "edit");
+	config = new geButton(edit->x()+edit->w()+4, y, 70, 21, "config");
+	about	 = new geButton(config->x()+config->w()+4, y, 70, 21, "about");
 
 	end();
 

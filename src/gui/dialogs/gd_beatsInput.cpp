@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_beatsInput
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -54,7 +52,7 @@ gdBeatsInput::gdBeatsInput()
 
 	beats     = new gInput(8,  8,  35, 20);
 	bars      = new gInput(47, 8,  35, 20);
-	ok 		    = new gClick(86, 8,  70, 20, "Ok");
+	ok 		    = new geButton(86, 8,  70, 20, "Ok");
 	resizeRec = new gCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 

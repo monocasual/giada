@@ -35,6 +35,7 @@
 #include "../../core/mixer.h"
 #include "../../core/wave.h"
 #include "../../core/clock.h"
+#include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
@@ -61,8 +62,8 @@ gdEditor::gdEditor(SampleChannel *ch)
   bar->begin();
     grid    = new gChoice(bar->x(), bar->y(), 50, 20);
     snap    = new gCheck(grid->x()+grid->w()+4, bar->y()+4, 12, 12);
-    zoomOut = new gClick(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
-    zoomIn  = new gClick(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+    zoomOut = new geButton(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+    zoomIn  = new geButton(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
   bar->resizable(new gBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
 
@@ -81,22 +82,22 @@ gdEditor::gdEditor(SampleChannel *ch)
     boost         = new gDial (volumeNum->x()+volumeNum->w()+108, tools->y(), 20, 20, "Boost");
     boostNum      = new gInput(boost->x()+boost->w()+4,           tools->y(), 44, 20, "dB");
 
-    normalize     = new gClick(boostNum->x()+boostNum->w()+54,   tools->y(), 70, 20, "Normalize");
+    normalize     = new geButton(boostNum->x()+boostNum->w()+54,   tools->y(), 70, 20, "Normalize");
     pan           = new gDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
     panNum        = new gInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
 
     pitch         = new gDial (tools->x()+50,                       volume->y()+volume->h()+4, 20, 20, "Pitch");
     pitchNum      = new gInput(pitch->x()+pitch->w()+4,             volume->y()+volume->h()+4, 46, 20);
-    pitchToBar    = new gClick(pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 60, 20, "To bar");
-    pitchToSong   = new gClick(pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 60, 20, "To song");
-    pitchHalf     = new gClick(pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 20, 20, "", divideOff_xpm, divideOn_xpm);
-    pitchDouble   = new gClick(pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-    pitchReset    = new gClick(pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
-    reload        = new gClick(pitchReset->x()+pitchReset->w()+4,   volume->y()+volume->h()+4, 70, 20, "Reload");
+    pitchToBar    = new geButton(pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 60, 20, "To bar");
+    pitchToSong   = new geButton(pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 60, 20, "To song");
+    pitchHalf     = new geButton(pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 20, 20, "", divideOff_xpm, divideOn_xpm);
+    pitchDouble   = new geButton(pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
+    pitchReset    = new geButton(pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
+    reload        = new geButton(pitchReset->x()+pitchReset->w()+4,   volume->y()+volume->h()+4, 70, 20, "Reload");
 
     chanStart     = new gInput(tools->x()+60,                   pitch->y()+pitch->h()+4, 60, 20, "Range");
     chanEnd       = new gInput(chanStart->x()+chanStart->w()+4, pitch->y()+pitch->h()+4, 60, 20, "");
-    resetStartEnd = new gClick(chanEnd->x()+chanEnd->w()+4,     pitch->y()+pitch->h()+4, 60, 20, "Reset");
+    resetStartEnd = new geButton(chanEnd->x()+chanEnd->w()+4,     pitch->y()+pitch->h()+4, 60, 20, "Reset");
 
   tools->end();
   tools->resizable(new gBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));

@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geButton
+ * A regular button.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -25,48 +28,28 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_CHANNEL_H
-#define GE_MIDI_CHANNEL_H
+#ifndef GE_BUTTON_H
+#define GE_BUTTON_H
 
 
-#include "channel.h"
-#include "channelButton.h"
+#include "baseButton.h"
 
 
-class MidiChannel;
-
-
-class geMidiChannel : public geChannel
-{
-private:
-
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
-
-public:
-
-	geMidiChannel(int x, int y, int w, int h, MidiChannel *ch);
-
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);  // TODO - move to base class
-	void resize  (int x, int y, int w, int h);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class geMidiChannelButton : public geChannelButton
+class geButton : public geBaseButton
 {
 public:
-	geMidiChannelButton(int x, int y, int w, int h, const char *l=0);
-	int handle(int e);
+
+  geButton(int x, int y, int w, int h, const char *L=0,
+    const char **imgOff=nullptr, const char **imgOn=nullptr);
+
+  void draw() override;
+
+  const char **imgOff;
+	const char **imgOn;
+	Fl_Color bgColor0;   // background not clicked
+	Fl_Color bgColor1;   // background clicked
+	Fl_Color bdColor;    // border
+	Fl_Color txtColor;	 // text
 };
 
 

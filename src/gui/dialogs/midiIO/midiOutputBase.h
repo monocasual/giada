@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_midiOutput
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,6 +33,11 @@
 #include "../../elems/ge_window.h"
 
 
+class geButton;
+class gCheck;
+class geMidiLearner;
+
+
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
 output master is managed by the configuration window, hence gdMidiOutput deals
 only with channels.
@@ -49,16 +52,16 @@ class gdMidiOutputBase : public gWindow
 {
 protected:
 
-	class gClick *close;
-	class gCheck *enableLightning;
+	geButton *close;
+	gCheck   *enableLightning;
 
-	void stopMidiLearn(class geMidiLearner *l);
+	void stopMidiLearn(geMidiLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
 	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, class geMidiLearner *l);
+	inline void __cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l);
 
 	/* cb_close
 	close current window. */

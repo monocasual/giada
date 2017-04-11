@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_browser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -50,7 +48,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 	groupTop = new Fl_Group(8, 8, w-16, 40);
     hiddenFiles = new gCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
 		where = new gInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
-		updir	= new gClick(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
+		updir	= new geButton(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
 	groupTop->resizable(where);
 
@@ -68,8 +66,8 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 		browser->preselect(conf::browserPosition, conf::browserLastValue);
 
 	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
-		ok  	  = new gClick(w-88, groupButtons->y(), 80, 20);
-		cancel  = new gClick(w-ok->w()-96, groupButtons->y(), 80, 20, "Cancel");
+		ok  	  = new geButton(w-88, groupButtons->y(), 80, 20);
+		cancel  = new geButton(w-ok->w()-96, groupButtons->y(), 80, 20, "Cancel");
 		status  = new gProgress(8, groupButtons->y(), cancel->x()-16, 20);
 		status->minimum(0);
 		status->maximum(1);

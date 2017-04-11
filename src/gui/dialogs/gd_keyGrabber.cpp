@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_keyGrabber
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -50,8 +48,8 @@ gdKeyGrabber::gdKeyGrabber(Channel *ch)
 {
 	set_modal();
 	text   = new gBox(8, 8, 284, 80, "");
-	clear  = new gClick(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
-	cancel = new gClick(clear->x()-88, clear->y(), 80, 20, "Close");
+	clear  = new geButton(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
+	cancel = new geButton(clear->x()-88, clear->y(), 80, 20, "Close");
 	end();
 
 	clear->callback(cb_clear, (void*)this);

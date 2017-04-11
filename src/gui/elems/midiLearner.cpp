@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiLearner
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -43,7 +41,7 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
 {
 	begin();
 	text   = new gBox(x(), y(), 156, 20, l);
-	value  = new gClick(text->x()+text->w()+4, y(), 80, 20);
+	value  = new geButton(text->x()+text->w()+4, y(), 80, 20);
 	button = new gButton(value->x()+value->w()+4, y(), 40, 20, "learn");
 	end();
 

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_column
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,6 +32,13 @@
 #include <FL/Fl_Group.H>
 
 
+class Channel;
+class geButton;
+class geChannel;
+class gResizerBar;
+class geKeyboard;
+
+
 class geColumn : public Fl_Group
 {
 private:
@@ -43,22 +48,22 @@ private:
 
 	int openTypeMenu();
 
-	class gClick      *addChannelBtn;
-	class gResizerBar *resizer;
-	class geKeyboard   *parent;
+	geButton    *addChannelBtn;
+	gResizerBar *resizer;
+	geKeyboard  *parent;
 
 	int index;
 
 public:
 
-	geColumn(int x, int y, int w, int h, int index, class geKeyboard *parent);
+	geColumn(int x, int y, int w, int h, int index, geKeyboard *parent);
 	~geColumn();
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
 	 * to channel to 'ch'. */
 
-	class geChannel *addChannel(class Channel *ch);
+	geChannel *addChannel(Channel *ch);
 
 	/* handle */
 

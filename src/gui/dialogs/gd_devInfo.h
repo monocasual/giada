@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_devInfo
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,22 +22,29 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GD_DEV_INFO_H
 #define GD_DEV_INFO_H
 
-#include <FL/Fl.H>
+
 #include <FL/Fl_Window.H>
 
 
-class gdDevInfo : public Fl_Window {
+class gBox;
+class geButton;
+
+
+class gdDevInfo : public Fl_Window
+{
 private:
-	class gBox 	 *text;
-	class gClick *close;
+
+	gBox   	 *text;
+	geButton *close;
 
 public:
+
 	gdDevInfo(unsigned dev);
 	~gdDevInfo();
 };

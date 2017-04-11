@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geButton
+ * A regular button.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -25,49 +28,48 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_CHANNEL_H
-#define GE_MIDI_CHANNEL_H
+#include <FL/fl_draw.H>
+#include "../../core/const.h"
+#include "button.h"
 
 
-#include "channel.h"
-#include "channelButton.h"
-
-
-class MidiChannel;
-
-
-class geMidiChannel : public geChannel
+geButton::geButton(int x, int y, int w, int h, const char *L,
+  const char **imgOff, const char **imgOn)
+: geBaseButton(x, y, w, h, L),
+  imgOff      (imgOff),
+  imgOn       (imgOn),
+  bgColor0    (COLOR_BG_0),
+  bgColor1    (COLOR_BG_1),
+  bdColor     (COLOR_BD_0),
+  txtColor    (COLOR_TEXT_0)
 {
-private:
-
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
-
-public:
-
-	geMidiChannel(int x, int y, int w, int h, MidiChannel *ch);
-
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);  // TODO - move to base class
-	void resize  (int x, int y, int w, int h);
-};
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-class geMidiChannelButton : public geChannelButton
+void geButton::draw()
 {
-public:
-	geMidiChannelButton(int x, int y, int w, int h, const char *l=0);
-	int handle(int e);
-};
+  if (!active()) txtColor = bdColor;
+  else           txtColor = COLOR_TEXT_0;
 
+  fl_rect(x(), y(), w(), h(), bdColor);             // borders
+  if (value()) {                                    // -- clicked
+    if (imgOn != nullptr)
+      fl_draw_pixmap(imgOn, x()+1, y()+1);
+    else
+      fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
+  }
+  else {                                            // -- not clicked
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
+    if (imgOff != nullptr)
+      fl_draw_pixmap(imgOff, x()+1, y()+1);
+  }
+  if (!active())
+    fl_color(FL_INACTIVE_COLOR);
 
-#endif
+  fl_color(txtColor);
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
+  fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
+}

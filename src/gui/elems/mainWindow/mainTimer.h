@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainTimer
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,15 +32,19 @@
 #include <FL/Fl_Group.H>
 
 
+class geButton;
+class gChoice;
+
+
 class geMainTimer : public Fl_Group
 {
 private:
 
-	class gClick   *bpm;
-	class gClick   *meter;
-	class gChoice  *quantizer;
-	class gClick   *multiplier;
-	class gClick   *divider;
+	geButton *bpm;
+	geButton *meter;
+	gChoice  *quantizer;
+	geButton *multiplier;
+	geButton *divider;
 
 	static void cb_bpm       (Fl_Widget *v, void *p);
 	static void cb_meter     (Fl_Widget *v, void *p);

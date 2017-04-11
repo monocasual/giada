@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiOutputSampleCh
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,11 +32,14 @@
 #include "midiOutputBase.h"
 
 
+class SampleChannel;
+
+
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
 private:
 
-	class SampleChannel *ch;
+	SampleChannel *ch;
 
 	/* __cb_close
 	override parent method, we need to do more stuff on close. */
@@ -48,7 +49,7 @@ private:
 
 public:
 
-	gdMidiOutputSampleCh(class SampleChannel *ch);
+	gdMidiOutputSampleCh(SampleChannel *ch);
 };
 
 #endif

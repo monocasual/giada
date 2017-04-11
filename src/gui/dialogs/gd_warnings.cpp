@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_warnings
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,14 +22,19 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include "../../utils/gui.h"
 #include "../../core/const.h"
+#include "../elems/ge_mixed.h"
 #include "gd_warnings.h"
 
 
-void gdAlert(const char *c) {
+void gdAlert(const char *c)
+{
 	Fl_Window *modal = new Fl_Window(
 			(Fl::w() / 2) - 150,
 			(Fl::h() / 2) - 47,
@@ -39,7 +42,7 @@ void gdAlert(const char *c) {
 	modal->set_modal();
 	modal->begin();
 		gBox *box = new gBox(10, 10, 280, 40, c);
-		gClick *b = new gClick(210, 60, 80, 20, "Close");
+		geButton *b = new geButton(210, 60, 80, 20, "Close");
 	modal->end();
 	box->labelsize(GUI_FONT_SIZE_BASE);
 	b->callback(__cb_window_closer, (void *)modal);
@@ -49,7 +52,8 @@ void gdAlert(const char *c) {
 }
 
 
-int gdConfirmWin(const char *title, const char *msg) {
+int gdConfirmWin(const char *title, const char *msg)
+{
 	Fl_Window *win = new Fl_Window(
 			(Fl::w() / 2) - 150,
 			(Fl::h() / 2) - 47,
@@ -57,8 +61,8 @@ int gdConfirmWin(const char *title, const char *msg) {
 	win->set_modal();
 	win->begin();
 		new gBox(10, 10, 280, 40, msg);
-		gClick *ok = new gClick(212, 62, 80, 20, "Ok");
-		gClick *ko = new gClick(124, 62, 80, 20, "Cancel");
+		geButton *ok = new geButton(212, 62, 80, 20, "Ok");
+		geButton *ko = new geButton(124, 62, 80, 20, "Cancel");
 	win->end();
 	ok->shortcut(FL_Enter);
 	gu_setFavicon(win);

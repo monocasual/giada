@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_channel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -32,6 +30,17 @@
 
 
 #include <FL/Fl_Group.H>
+
+
+class Channel;
+class gButton;
+class geChannelStatus;
+class geButton;
+class geChannelButton;
+class gDial;
+#ifdef WITH_VST
+class gFxButton;
+#endif
 
 
 class geChannel : public Fl_Group
@@ -90,7 +99,7 @@ protected:
 
 public:
 
-	geChannel(int x, int y, int w, int h, int type, class Channel *ch);
+	geChannel(int x, int y, int w, int h, int type, Channel *ch);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -119,17 +128,17 @@ public:
 
 	int getColumnIndex();
 
-	class Channel *ch;
+	Channel *ch;
 
-	class gButton         *button;
-	class geChannelStatus *status;
-	class gClick 	        *arm;
-	class geChannelButton *mainButton;
-	class gClick 	        *mute;
-	class gClick 	        *solo;
-	class gDial           *vol;
+	gButton         *button;
+	geChannelStatus *status;
+	geButton 	      *arm;
+	geChannelButton *mainButton;
+	geButton 	      *mute;
+	geButton 	      *solo;
+	gDial           *vol;
 #ifdef WITH_VST
-	class gFxButton       *fx;
+	gFxButton       *fx;
 #endif
 
 	int type;

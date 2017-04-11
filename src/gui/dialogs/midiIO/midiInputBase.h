@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiInputBase
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,13 +32,17 @@
 #include "../../elems/ge_window.h"
 
 
+class geButton;
+class geMidiLearner;
+
+
 class gdMidiInputBase : public gWindow
 {
 protected:
 
-	class gClick *ok;
+	geButton *ok;
 
-	void stopMidiLearn(class geMidiLearner *l);
+	void stopMidiLearn(geMidiLearner *l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */

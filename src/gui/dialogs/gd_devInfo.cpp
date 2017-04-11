@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_devInfo
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #include "../../core/kernelAudio.h"
@@ -44,7 +42,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	set_modal();
 
 	text  = new gBox(8, 8, 320, 200, "", (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
-	close = new gClick(252, h()-28, 80, 20, "Close");
+	close = new geButton(252, h()-28, 80, 20, "Close");
 	end();
 
 	string body  = "";

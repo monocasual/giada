@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_bpmInput
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,26 +22,33 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
+
 
 #ifndef GD_BPMINPUT_H
 #define GD_BPMINPUT_H
 
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+
 #include "../elems/ge_window.h"
 
 
-class gdBpmInput : public gWindow {
+class gInput;
+class geButton;
+
+
+class gdBpmInput : public gWindow
+{
 private:
+
 	static void cb_update_bpm(Fl_Widget *w, void *p);
 	inline void __cb_update_bpm();
 
-	class gInput *input_a;
-	class gInput *input_b;
-	class gClick *ok;
+  gInput   *input_a;
+  gInput   *input_b;
+  geButton *ok;
 
 public:
+
 	gdBpmInput(const char *label); // pointer to mainWin->timing->bpm->label()
 	~gdBpmInput();
 };

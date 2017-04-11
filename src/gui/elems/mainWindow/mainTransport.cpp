@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * mainTransport
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -39,11 +37,11 @@ geMainTransport::geMainTransport(int x, int y)
 {
 	begin();
 
-	rewind    = new gClick(x,  y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-	play      = new gClick(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
-	recAction = new gClick(play->x()+play->w()+4, y, 25, 25, "", recOff_xpm, recOn_xpm);
-	recInput  = new gClick(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
-	metronome = new gClick(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+	rewind    = new geButton(x,  y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+	play      = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
+	recAction = new geButton(play->x()+play->w()+4, y, 25, 25, "", recOff_xpm, recOn_xpm);
+	recInput  = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
+	metronome = new geButton(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
 

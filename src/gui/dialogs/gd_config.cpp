@@ -112,11 +112,11 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	buffersize  = new gChoice(x()+92,  y()+37, 55,  20, "Buffer size");
 	samplerate  = new gChoice(x()+290, y()+37, 55,  20, "Sample rate");
 	sounddevOut = new gChoice(x()+92,  y()+65, 225, 20, "Output device");
-	devOutInfo  = new gClick (x()+325, y()+65, 20,  20, "?");
+	devOutInfo  = new geButton (x()+325, y()+65, 20,  20, "?");
 	channelsOut = new gChoice(x()+92,  y()+93, 55,  20, "Output channels");
 	limitOutput = new gCheck (x()+155, y()+97, 55,  20, "Limit output");
 	sounddevIn  = new gChoice(x()+92,  y()+121, 225, 20, "Input device");
-	devInInfo   = new gClick (x()+325, y()+121, 20,  20, "?");
+	devInInfo   = new geButton (x()+325, y()+121, 20,  20, "?");
 	channelsIn  = new gChoice(x()+92,  y()+149, 55,  20, "Input channels");
 	delayComp   = new gInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
 	rsmpQuality = new gChoice(x()+92, y()+177, 253, 20, "Resampling");
@@ -863,7 +863,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Plugins")
 {
 	folderPath = new gInput(x()+w()-250, y()+8, 250, 20);
-	scanButton = new gClick(x()+w()-120, folderPath->y()+folderPath->h()+8, 120, 20);
+	scanButton = new geButton(x()+w()-120, folderPath->y()+folderPath->h()+8, 120, 20);
 	info       = new gBox(x(), scanButton->y()+scanButton->h()+8, w(), 242);
 
 	end();
@@ -961,8 +961,8 @@ gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
 
 	tabs->end();
 
-	save 	 = new gClick (w-88, h-28, 80, 20, "Save");
-	cancel = new gClick (w-176, h-28, 80, 20, "Cancel");
+	save 	 = new geButton (w-88, h-28, 80, 20, "Save");
+	cancel = new geButton (w-176, h-28, 80, 20, "Cancel");
 
 	end();
 

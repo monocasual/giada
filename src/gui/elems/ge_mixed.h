@@ -51,6 +51,8 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Scroll.H>
+#include "basics/baseButton.h"
+#include "basics/button.h"
 
 #ifdef _WIN32
 	#include <shlobj.h>  // for SHGetFolderPath
@@ -61,44 +63,6 @@
  * callback for when closing windows. Deletes the widget (delete). */
 
 void __cb_window_closer(Fl_Widget *v, void *p);
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gBaseButton : public Fl_Button
-{
-private:
-	std::string initLabel;
-
-	void trimLabel();
-
-public:
-  gBaseButton(int x, int y, int w, int h, const char *l=0);
-  void resize(int x, int y, int w, int h);
-	void label(const char *l);
-	const char *label();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-/* gClick
- * a normal button. */
-
-class gClick : public gBaseButton
-{
-public:
-	gClick(int x, int y, int w, int h, const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
-	void draw();
-	const char **imgOff;
-	const char **imgOn;
-	Fl_Color bgColor0;   // background not clicked
-	Fl_Color bgColor1;   // background clicked
-	Fl_Color bdColor;    // border
-	Fl_Color txtColor;	 // testo
-};
 
 
 /* -------------------------------------------------------------------------- */
@@ -118,11 +82,11 @@ public:
 
 
 /* gButton
- * exactly as gClick but with a unique id inside of it. Used for the buttons in
+ * exactly as geButton but with a unique id inside of it. Used for the buttons in
  * channels and for FXs. */
  /* TODO - is this really useful? */
 
-class gButton : public gClick
+class gButton : public geButton
 {
 public:
 	gButton(int X,int Y,int W,int H,const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
@@ -320,7 +284,7 @@ public:
  * a simple gClick with 'full' parameter (i.e. has plugins). If 'full' is true,
  * draw something somewhere. */
 
-class gFxButton : public gClick
+class gFxButton : public geButton
 {
 public:
 	gFxButton(int x, int y, int w, int h, const char **imgOff=nullptr, const char **imgOn=nullptr);

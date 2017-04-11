@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_about
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,17 +32,21 @@
 #include "../elems/ge_window.h"
 
 
+class gBox;
+class geButton;
+
+
 class gdAbout : public gWindow
 {
 private:
 
-	class gBox 	 *logo;
-	class gBox 	 *text;
-	class gClick *close;
+	gBox 	   *logo;
+	gBox 	   *text;
+	geButton *close;
 
 #ifdef WITH_VST
-	class gBox  *vstText;
-	class gBox  *vstLogo;
+	gBox  *vstText;
+	gBox  *vstLogo;
 #endif
 
 public:

@@ -82,8 +82,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	}
 
 		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
-		zoomIn     = new gClick(w()-8-40-4, 8, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
-		zoomOut    = new gClick(w()-8-20,   8, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+		zoomIn     = new geButton(w()-8-40-4, 8, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+		zoomOut    = new geButton(w()-8-20,   8, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	upperArea->end();
 	upperArea->resizable(b1);
 

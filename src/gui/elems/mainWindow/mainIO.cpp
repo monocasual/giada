@@ -52,7 +52,7 @@ geMainIO::geMainIO(int x, int y)
 	masterFxIn  = new gFxButton  (x, y, 20, 20, fxOff_xpm, fxOn_xpm);
 	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
 	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+4, 140, 12);
-	inToOut     = new gClick     (inMeter->x()+inMeter->w()+4, y+4, 12, 12, "", inputToOutputOff_xpm, inputToOutputOn_xpm);
+	inToOut     = new geButton   (inMeter->x()+inMeter->w()+4, y+4, 12, 12, "", inputToOutputOff_xpm, inputToOutputOn_xpm);
 	outMeter    = new gSoundMeter(inToOut->x()+inToOut->w()+4, y+4, 140, 12);
 	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 	masterFxOut = new gFxButton  (outVol->x()+outVol->w()+4, y, 20, 20, fxOff_xpm, fxOn_xpm);

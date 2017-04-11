@@ -28,6 +28,7 @@
 #include "../../../../core/const.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/midiChannel.h"
+#include "../../../../utils/gui.h"
 #include "../../../../glue/channel.h"
 #include "../../../../glue/io.h"
 #include "../../../dialogs/gd_mainWindow.h"
@@ -61,10 +62,10 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 #endif
 
 	button     = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	arm        = new gClick(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
+	arm        = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
 	mainButton = new geMidiChannelButton(arm->x()+arm->w()+4, y(), w() - delta, 20, "-- MIDI --");
-	mute       = new gClick(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo       = new gClick(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	mute       = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
+	solo       = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
 	fx         = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
 	vol        = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
@@ -280,5 +281,5 @@ geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char 
 int geMidiChannelButton::handle(int e)
 {
 	// MIDI drag-n-drop does nothing so far.
-	return gClick::handle(e);
+	return geButton::handle(e);
 }
