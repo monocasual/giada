@@ -84,7 +84,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 
       if (a1->chan != pParent->chan->index)
 				continue;
-      if (a1->type != ACTION_MIDI)
+      if (a1->type != G_ACTION_MIDI)
         continue;
 			if (a1 == prev)
 				continue;
@@ -98,12 +98,12 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			if (a1_type == 0x80) // NOTE_OFF
 				continue;
 
-			/* Search for the next action. Must have: same channel, ACTION_MIDI,
+			/* Search for the next action. Must have: same channel, G_ACTION_MIDI,
       greater than a1->frame and with MIDI properties of note_off (0x80), same
       note of a1, any velocity value (0xFF) because we just don't care about the
       velocity of a note_off. */
 
-			recorder::getNextAction(a1->chan, ACTION_MIDI, a1->frame, &a2,
+			recorder::getNextAction(a1->chan, G_ACTION_MIDI, a1->frame, &a2,
 					kernelMidi::getIValue(0x80, a1_note, 0xFF));
 
 			/* next action note_off found: add a new gePianoItem to piano roll */

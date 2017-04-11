@@ -240,7 +240,7 @@ void glue_setMute(Channel *ch, bool gui)
 {
 	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
 		if (!ch->mute) {
-			recorder::startOverdub(ch->index, ACTION_MUTES, clock::getCurrentFrame(),
+			recorder::startOverdub(ch->index, G_ACTION_MUTES, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());
       ch->readActions = false;   // don't read actions while overdubbing
     }

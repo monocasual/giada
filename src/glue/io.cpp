@@ -118,7 +118,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 				if (recorder::canRec(ch, clock::isRunning(), mixer::recording) &&
             !(ch->mode & LOOP_ANY))
         {   // don't record killChan actions for LOOP channels
-					recorder::rec(ch->index, ACTION_KILLCHAN, clock::getCurrentFrame());
+					recorder::rec(ch->index, G_ACTION_KILL, clock::getCurrentFrame());
           ch->hasActions = true;
         }
 			}
@@ -145,12 +145,12 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
-				recorder::startOverdub(ch->index, ACTION_KEYS, clock::getCurrentFrame(),
+				recorder::startOverdub(ch->index, G_ACTION_KEYS, clock::getCurrentFrame(),
           kernelAudio::getRealBufSize());
         ch->readActions = false;   // don't read actions while overdubbing
       }
 			else {
-				recorder::rec(ch->index, ACTION_KEYPRESS, clock::getCurrentFrame());
+				recorder::rec(ch->index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
         ch->hasActions = true;
 
         /* Why return here? You record an action (as done on line 148) and then

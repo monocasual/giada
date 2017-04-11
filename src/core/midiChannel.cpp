@@ -116,7 +116,7 @@ void MidiChannel::quantize(int index, int localFrame) {}
 void MidiChannel::parseAction(recorder::action *a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
-	if (a->type == ACTION_MIDI)
+	if (a->type == G_ACTION_MIDI)
 		sendMidi(a, localFrame/2);
 }
 
@@ -349,7 +349,7 @@ void MidiChannel::receiveMidi(uint32_t msg)
 #endif
 
 	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
-		recorder::rec(index, ACTION_MIDI, clock::getCurrentFrame(), msg);
+		recorder::rec(index, G_ACTION_MIDI, clock::getCurrentFrame(), msg);
     hasActions = true;
   }
 }

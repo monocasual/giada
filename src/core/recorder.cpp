@@ -575,13 +575,13 @@ void startOverdub(int index, char actionMask, int frame,
 {
 	/* prepare the composite struct */
 
-	if (actionMask == ACTION_KEYS) {
-		cmp.a1.type = ACTION_KEYPRESS;
-		cmp.a2.type = ACTION_KEYREL;
+	if (actionMask == G_ACTION_KEYS) {
+		cmp.a1.type = G_ACTION_KEYPRESS;
+		cmp.a2.type = G_ACTION_KEYREL;
 	}
 	else {
-		cmp.a1.type = ACTION_MUTEON;
-		cmp.a2.type = ACTION_MUTEOFF;
+		cmp.a1.type = G_ACTION_MUTEON;
+		cmp.a2.type = G_ACTION_MUTEOFF;
 	}
 	cmp.a1.chan  = index;
 	cmp.a2.chan  = index;

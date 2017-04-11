@@ -142,8 +142,8 @@ void gePianoItem::record()
 	event_b |= (MIDI_VELOCITY);
 	event_b |= (0x00);
 
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_a, event_a);
-	recorder::rec(pParent->chan->index, ACTION_MIDI, frame_b, event_b);
+	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_a, event_a);
+	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_b, event_b);
   pParent->chan->hasActions = true;
 }
 
@@ -153,9 +153,9 @@ void gePianoItem::record()
 
 void gePianoItem::remove()
 {
-	recorder::deleteAction(pParent->chan->index, frame_a, ACTION_MIDI, true,
+	recorder::deleteAction(pParent->chan->index, frame_a, G_ACTION_MIDI, true,
     &mixer::mutex_recs, event_a, 0.0);
-	recorder::deleteAction(pParent->chan->index, frame_b, ACTION_MIDI, true,
+	recorder::deleteAction(pParent->chan->index, frame_b, G_ACTION_MIDI, true,
     &mixer::mutex_recs, event_b, 0.0);
 
 	/* send a note-off in case we are deleting it in a middle of a key_on

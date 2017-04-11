@@ -100,7 +100,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 		ac = new geActionEditor  (scroller->x(), upperArea->y()+upperArea->h()+8, this, ch);
 		mc = new geMuteEditor    (scroller->x(), ac->y()+ac->h()+8, this);
-		vc = new geEnvelopeEditor(scroller->x(), mc->y()+mc->h()+8, this, ACTION_VOLUME, RANGE_FLOAT, "volume");
+		vc = new geEnvelopeEditor(scroller->x(), mc->y()+mc->h()+8, this, G_ACTION_VOLUME, G_RANGE_FLOAT, "volume");
 		scroller->add(ac);
 		//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 		scroller->add(mc);
@@ -281,13 +281,13 @@ int gdActionEditor::handle(int e)
 int gdActionEditor::getActionType()
 {
 	if (actionType->value() == 0)
-		return ACTION_KEYPRESS;
+		return G_ACTION_KEYPRESS;
 	else
 	if (actionType->value() == 1)
-		return ACTION_KEYREL;
+		return G_ACTION_KEYREL;
 	else
 	if (actionType->value() == 2)
-		return ACTION_KILLCHAN;
+		return G_ACTION_KILL;
 	else
 		return -1;
 }

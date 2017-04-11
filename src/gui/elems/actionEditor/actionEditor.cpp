@@ -60,18 +60,18 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
       /* Don't show actions:
       - that don't belong to the displayed channel (!= pParent->chan->index);
       - that are covered by the grey area (> G_Mixer.totalFrames);
-      - of type ACTION_KILLCHAN in a SINGLE_PRESS channel. They cannot be
+      - of type G_ACTION_KILL in a SINGLE_PRESS channel. They cannot be
         recorded in such mode, but they can exist if you change from another
         mode to singlepress;
-      - of type ACTION_KEYREL in a SINGLE_PRESS channel. It's up to geAction to
+      - of type G_ACTION_KEYREL in a SINGLE_PRESS channel. It's up to geAction to
         find the other piece (namely frame_b)
-      - not of types ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN */
+      - not of types G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL */
 
       if ((action->chan != pParent->chan->index)                            ||
           (recorder::frames.at(i) > clock::getTotalFrames())              ||
-          (action->type == ACTION_KILLCHAN && ch->mode == SINGLE_PRESS)     ||
-          (action->type == ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
-          (action->type & ~(ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN))
+          (action->type == G_ACTION_KILL && ch->mode == SINGLE_PRESS)     ||
+          (action->type == G_ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
+          (action->type & ~(G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL))
       )
         continue;
 

@@ -68,9 +68,9 @@ geAction::geAction(int X, int Y, int H, int frame_a, unsigned index,
 	 * do that after the possible recording, otherwise we don't know which
 	 * key_release is associated. */
 
-	if (ch->mode == SINGLE_PRESS && type == ACTION_KEYPRESS) {
+	if (ch->mode == SINGLE_PRESS && type == G_ACTION_KEYPRESS) {
 		recorder::action *a2 = nullptr;
-		recorder::getNextAction(ch->index, ACTION_KEYREL, frame_a, &a2);
+		recorder::getNextAction(ch->index, G_ACTION_KEYREL, frame_a, &a2);
 		if (a2) {
 			frame_b = a2->frame;
 			w((frame_b - frame_a)/parent->zoom);
@@ -103,14 +103,14 @@ void geAction::draw()
 		fl_rectf(x(), y(), w(), h(), (Fl_Color) color);
 	}
 	else {
-		if (type == ACTION_KILLCHAN)
+		if (type == G_ACTION_KILL)
 			fl_rect(x(), y(), MIN_WIDTH, h(), (Fl_Color) color);
 		else {
 			fl_rectf(x(), y(), MIN_WIDTH, h(), (Fl_Color) color);
-			if (type == ACTION_KEYPRESS)
+			if (type == G_ACTION_KEYPRESS)
 				fl_rectf(x()+3, y()+h()-11, 2, 8, COLOR_BD_0);
 			else
-			if  (type == ACTION_KEYREL)
+			if  (type == G_ACTION_KEYREL)
 				fl_rectf(x()+3, y()+3, 2, 8, COLOR_BD_0);
 		}
 	}
@@ -179,14 +179,14 @@ void geAction::addAction()
 		frame_a++;
 
 	/* anatomy of an action
-	 * ____[#######]_____ (a) is the left margin, ACTION_KEYPRESS. (b) is
-	 *     a       b      the right margin, the ACTION_KEYREL. This is the
+	 * ____[#######]_____ (a) is the left margin, G_ACTION_KEYPRESS. (b) is
+	 *     a       b      the right margin, the G_ACTION_KEYREL. This is the
 	 * theory behind the singleshot.press actions; for any other kind the
 	 * (b) is just a graphical and meaningless point. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		recorder::rec(parent->chan->index, ACTION_KEYPRESS, frame_a);
-		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_a+4096);
+		recorder::rec(parent->chan->index, G_ACTION_KEYPRESS, frame_a);
+		recorder::rec(parent->chan->index, G_ACTION_KEYREL, frame_a+4096);
 		//gu_log("action added, [%d, %d]\n", frame_a, frame_a+4096);
 	}
 	else {
@@ -211,9 +211,9 @@ void geAction::delAction()
 	 * actions. */
 
 	if (ch->mode == SINGLE_PRESS) {
-		recorder::deleteAction(parent->chan->index, frame_a, ACTION_KEYPRESS,
+		recorder::deleteAction(parent->chan->index, frame_a, G_ACTION_KEYPRESS,
       false, &mixer::mutex_recs);
-		recorder::deleteAction(parent->chan->index, frame_b, ACTION_KEYREL,
+		recorder::deleteAction(parent->chan->index, frame_b, G_ACTION_KEYREL,
       false, &mixer::mutex_recs);
 	}
 	else
@@ -256,7 +256,7 @@ void geAction::moveAction(int frame_a)
 
 	if (ch->mode == SINGLE_PRESS) {
 		frame_b = xToFrame_b();
-		recorder::rec(parent->chan->index, ACTION_KEYREL, frame_b);
+		recorder::rec(parent->chan->index, G_ACTION_KEYREL, frame_b);
 	}
 
   parent->chan->hasActions = true;

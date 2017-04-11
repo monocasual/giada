@@ -165,19 +165,19 @@ void SampleChannel::calcVolumeEnv(int frame)
 	/* get this action on frame 'frame'. It's unlikely that the action
 	 * is not found. */
 
-	res = recorder::getAction(index, ACTION_VOLUME, frame, &a0);
+	res = recorder::getAction(index, G_ACTION_VOLUME, frame, &a0);
 	if (res == 0)
 		return;
 
 	/* get the action next to this one.
 	 * res == -1: a1 not found, this is the last one. Rewind the search
 	 * and use action at frame number 0 (actions[0]).
-	 * res == -2 ACTION_VOLUME not found. This should never happen */
+	 * res == -2 G_ACTION_VOLUME not found. This should never happen */
 
-	res = recorder::getNextAction(index, ACTION_VOLUME, frame, &a1);
+	res = recorder::getNextAction(index, G_ACTION_VOLUME, frame, &a1);
 
 	if (res == -1)
-		res = recorder::getAction(index, ACTION_VOLUME, 0, &a1);
+		res = recorder::getAction(index, G_ACTION_VOLUME, 0, &a1);
 
 	volume_i = a0->fValue;
 	volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
@@ -289,25 +289,25 @@ void SampleChannel::parseAction(recorder::action *a, int localFrame,
 		return;
 
 	switch (a->type) {
-		case ACTION_KEYPRESS:
+		case G_ACTION_KEYPRESS:
 			if (mode & SINGLE_ANY)
 				start(localFrame, false, quantize, mixerIsRunning, false, false);
 			break;
-		case ACTION_KEYREL:
+		case G_ACTION_KEYREL:
 			if (mode & SINGLE_ANY)
 				stop();
 			break;
-		case ACTION_KILLCHAN:
+		case G_ACTION_KILL:
 			if (mode & SINGLE_ANY)
 				kill(localFrame);
 			break;
-		case ACTION_MUTEON:
+		case G_ACTION_MUTEON:
 			setMute(true);   // internal mute
 			break;
-		case ACTION_MUTEOFF:
+		case G_ACTION_MUTEOFF:
 			unsetMute(true); // internal mute
 			break;
-		case ACTION_VOLUME:
+		case G_ACTION_VOLUME:
 			calcVolumeEnv(globalFrame);
 			break;
 	}
@@ -500,12 +500,12 @@ void SampleChannel::quantize(int index, int localFrame)
 
 	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
 		if (mode == SINGLE_PRESS) {
-			recorder::startOverdub(index, ACTION_KEYS, clock::getCurrentFrame(),
+			recorder::startOverdub(index, G_ACTION_KEYS, clock::getCurrentFrame(),
         kernelAudio::getRealBufSize());
       readActions = false;   // don't read actions while overdubbing
     }
 		else
-			recorder::rec(index, ACTION_KEYPRESS, clock::getCurrentFrame());
+			recorder::rec(index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
     hasActions = true;
 	}
 }

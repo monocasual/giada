@@ -187,7 +187,7 @@ int geEnvelopeEditor::handle(int e) {
 					if (my > h()-8) my = h()-8;
 					if (mx > pParent->coverX-x()) mx = pParent->coverX-x();
 
-					if (range == RANGE_FLOAT) {
+					if (range == G_RANGE_FLOAT) {
 
 						/* if this is the first point ever, add other two points at the beginning
 						 * and the end of the range */
@@ -271,7 +271,7 @@ int geEnvelopeEditor::handle(int e) {
             points.at(draggedPoint).frame, type, false, &mixer::mutex_recs);
           pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
-					if (range == RANGE_FLOAT) {
+					if (range == G_RANGE_FLOAT) {
 						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
 						recorder::rec(pParent->chan->index, type, newFrame, 0, value);
             pParent->chan->hasActions = true;
@@ -402,7 +402,7 @@ void geEnvelopeEditor::fill() {
 		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 			recorder::action *a = recorder::global.at(i).at(j);
 			if (a->type == type && a->chan == pParent->chan->index) {
-				if (range == RANGE_FLOAT)
+				if (range == G_RANGE_FLOAT)
 					addPoint(
 						a->frame,                      // frame
 						0,                             // int value (unused)

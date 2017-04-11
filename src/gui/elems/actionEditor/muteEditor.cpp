@@ -132,7 +132,7 @@ void geMuteEditor::extractPoints()
 	for (unsigned i=0; i<recorder::frames.size(); i++) {
 		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 			if (recorder::global.at(i).at(j)->chan == pParent->chan->index) {
-				if (recorder::global.at(i).at(j)->type & (ACTION_MUTEON | ACTION_MUTEOFF)) {
+				if (recorder::global.at(i).at(j)->type & (G_ACTION_MUTEON | G_ACTION_MUTEOFF)) {
 					point p;
 					p.frame = recorder::frames.at(i);
 					p.type  = recorder::global.at(i).at(j)->type;
@@ -250,12 +250,12 @@ int geMuteEditor::handle(int e) {
 					}
 
 					if (nextPoint % 2 != 0) {
-						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_a);
-						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_b);
+						recorder::rec(pParent->chan->index, G_ACTION_MUTEOFF, frame_a);
+						recorder::rec(pParent->chan->index, G_ACTION_MUTEON,  frame_b);
 					}
 					else {
-						recorder::rec(pParent->chan->index, ACTION_MUTEON,  frame_a);
-						recorder::rec(pParent->chan->index, ACTION_MUTEOFF, frame_b);
+						recorder::rec(pParent->chan->index, G_ACTION_MUTEON,  frame_a);
+						recorder::rec(pParent->chan->index, G_ACTION_MUTEOFF, frame_b);
 					}
           pParent->chan->hasActions = true;
 					recorder::sortActions();
@@ -274,7 +274,7 @@ int geMuteEditor::handle(int e) {
 					unsigned a;
 					unsigned b;
 
-					if (points.at(selectedPoint).type == ACTION_MUTEOFF) {
+					if (points.at(selectedPoint).type == G_ACTION_MUTEOFF) {
 						a = selectedPoint-1;
 						b = selectedPoint;
 					}

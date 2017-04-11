@@ -266,7 +266,7 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Mute") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_MUTEON | ACTION_MUTEOFF);
+		recorder::clearAction(ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
     ch->hasActions = recorder::hasActions(ch->index);
 
 		if (!ch->hasActions)
@@ -281,7 +281,7 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Start/Stop") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_KEYPRESS | ACTION_KEYREL | ACTION_KILLCHAN);
+		recorder::clearAction(ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
     ch->hasActions = recorder::hasActions(ch->index);
 
 		if (!ch->hasActions)
@@ -293,7 +293,7 @@ void geSampleChannel::__cb_openMenu()
 	if (strcmp(m->label(), "Volume") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 			return;
-		recorder::clearAction(ch->index, ACTION_VOLUME);
+		recorder::clearAction(ch->index, G_ACTION_VOLUME);
     ch->hasActions = recorder::hasActions(ch->index);
 		if (!ch->hasActions)
 			hideActionButton();
