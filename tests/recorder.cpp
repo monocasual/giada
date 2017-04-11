@@ -209,9 +209,36 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::global.at(0).size() == 1);
   }
 
+  SECTION("Test clear all")
+  {
+    recorder::rec(0, ACTION_KEYPRESS, 0, 1, 0.5f);
+    recorder::rec(1, ACTION_KEYPRESS, 0, 1, 0.5f);
+    recorder::rec(0, ACTION_KEYREL,   80, 1, 0.5f);
+    recorder::rec(1, ACTION_KEYREL,   100, 6, 0.3f);
+    recorder::rec(2, ACTION_KILLCHAN, 120, 1, 0.5f);
 
-  // TODO clearAll
-  // TODO optimize
+    recorder::clearAll();
+    REQUIRE(recorder::frames.size() == 0);
+    REQUIRE(recorder::global.size() == 0);
+  }
+
+  SECTION("Test optimization")
+  {
+    recorder::rec(0, ACTION_KEYPRESS, 20, 1, 0.5f);
+    recorder::rec(0, ACTION_KEYREL,   80, 1, 0.5f);
+    recorder::rec(1, ACTION_KEYPRESS, 20, 1, 0.5f);
+    recorder::rec(1, ACTION_KEYREL,   80, 1, 0.5f);
+
+    /* Fake a frame without actions.*/
+    recorder::global.at(0).clear();
+    recorder::global.at(1).clear();
+
+    recorder::optimize();
+
+    REQUIRE(recorder::frames.size() == 0);
+    REQUIRE(recorder::global.size() == 0);
+  }
+
   // TODO sortActions
   // TODO updateBpm
   // TODO updateSamplerate
