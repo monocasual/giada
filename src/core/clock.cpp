@@ -179,7 +179,7 @@ void setBars(int newBars)
       bars = bars - (beats % bars);
   }
   else
-    bars newBars;
+    bars = newBars;
 }
 
 
