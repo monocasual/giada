@@ -164,15 +164,33 @@ void setBpm(float b)
 }
 
 
-void setBars(int b)
+void setBars(int newBars)
 {
-  bars = b;
+  /* Bars cannot be greater than beats and must be a sub multiple of beats. If
+  not, approximate to the nearest (and greater) value available. */
+
+  if (newBars > beats)
+    bars = beats;
+  else if (newBars <= 0)
+    bars = 1;
+  else if (beats % newBars != 0) {
+    bars = newBars + (beats % newBars);
+    if (beats % bars != 0) // it could be an odd value, let's check it (and avoid it)
+      bars = bars - (beats % bars);
+  }
+  else
+    bars newBars;
 }
 
 
 void setBeats(int b)
 {
-  beats = b;
+  if (b > G_MAX_BEATS)
+		beats = G_MAX_BEATS;
+	else if (b < 1)
+    beats = 1;
+	else
+    beats = b;
 }
 
 

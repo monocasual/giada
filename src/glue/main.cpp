@@ -117,43 +117,18 @@ void glue_setBeats(int beats, int bars, bool expand)
 
 	/* Temp vars to store old data (they are necessary) */
 
-	int      oldvalue = clock::getBeats();
-	unsigned oldfpb		= clock::getTotalFrames();
+	int oldBeats = clock::getBeats();
+	unsigned oldTotalFrames = clock::getTotalFrames();
 
-	if (beats > G_MAX_BEATS)
-		clock::setBeats(G_MAX_BEATS);
-	else if (beats < 1)
-		clock::setBeats(1);
-	else
-		clock::setBeats(beats);
-
-	/* update bars - bars cannot be greate than beats and must be a sub
-	 * multiple of beats. If not, approximation to the nearest (and greater)
-	 * value available. */
-  /* TODO - move this to Clock*/
-
-	if (bars > clock::getBeats())
-		clock::setBars(clock::getBeats());
-	else if (bars <= 0)
-		clock::setBars(1);
-	else if (beats % bars != 0) {
-		clock::setBars(bars + (beats % bars));
-		if (beats % clock::getBars() != 0) // it could be an odd value, let's check it (and avoid it)
-			clock::setBars(clock::getBars() - (beats % clock::getBars()));
-	}
-	else
-		clock::setBars(bars);
-
+	clock::setBeats(beats);
+	clock::setBars(bars);
 	clock::updateFrameBars();
 
-	/* update recorded actions */
+	/* Update recorded actions, if 'expand' required and an expansion is taking
+  place. */
 
-	if (expand) {
-		if (clock::getBeats() > oldvalue)
-			recorder::expand(oldfpb, clock::getTotalFrames());
-		//else if (mixer::beats < oldvalue)
-		//	recorder::shrink(mixer::totalFrames);
-	}
+	if (expand && clock::getBeats() > oldBeats)
+		recorder::expand(oldTotalFrames, clock::getTotalFrames());
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
 	gu_refreshActionEditor();  // in case the action editor is open
