@@ -58,13 +58,20 @@ struct action
 	uint32_t iValue;  // used only for MIDI events
 };
 
-/* [global0]-->[vector<_action*>0]-->[a0][a1][a2]				0[frames1]
- * [global1]-->[vector<_action*>1]-->[a0][a1][a2]				1[frames2]
- * [global2]-->[vector<_action*>2]-->[a0][a1][a2]				2[frames3]
- * [global3]-->[vector<_action*>3]-->[a0][a1][a2]				3[frames4] */
+/* frames
+Frame counter sentinel. It tells which frames contain actions. E.g.:
+  frames[0] = 155   // some actions on frame 155
+  frames[1] = 2048  // some actions on frame 2048
+It always matches 'global''s size: frames.size() == global.size() */
 
-extern std::vector<int> frames;					        // frame counter (sentinel) frames.size == global.size
-extern std::vector<std::vector<action*>> global;	// container of containers of actions
+extern std::vector<int> frames;
+
+/* global
+Contains the actual actions. E.g.:
+  global[0] = <actions>
+  global[1] = <actions> */
+
+extern std::vector<std::vector<action*>> global;
 
 extern bool active;
 extern bool sortedActions;   // are actions sorted via sortActions()?
