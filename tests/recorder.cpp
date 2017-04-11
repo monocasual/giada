@@ -239,12 +239,95 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::global.at(0).size() == 2);
   }
 
-  // TODO sortActions
-  // TODO updateBpm
-  // TODO updateSamplerate
-  // TODO expand
-  // TODO shrink
-  // TODO startOverdub
-  // TODO stopOverdub
+  SECTION("Test BPM update")
+  {
+    recorder::rec(0, G_ACTION_KEYPRESS,  0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYREL,   80, 1, 0.5f);
 
+    recorder::updateBpm(60.0f, 120.0f, 44100);  // scaling up
+
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 40);
+
+    recorder::updateBpm(120.0f, 60.0f, 44100);  // scaling down
+
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 80);
+  }
+
+  SECTION("Test samplerate update")
+  {
+    recorder::rec(0, G_ACTION_KEYPRESS,   0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYREL,    80, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYPRESS, 120, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYREL,   150, 1, 0.5f);
+
+    recorder::updateSamplerate(44100, 22050); // scaling down
+
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 160);
+    REQUIRE(recorder::frames.at(2) == 240);
+    REQUIRE(recorder::frames.at(3) == 300);
+
+    recorder::updateSamplerate(22050, 44100); // scaling up
+
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 80);
+    REQUIRE(recorder::frames.at(2) == 120);
+    REQUIRE(recorder::frames.at(3) == 150);
+  }
+
+  SECTION("Test expand")
+  {
+    recorder::rec(0, G_ACTION_KEYPRESS,   0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYREL,    80, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KILL,     200, 1, 0.5f);
+
+    recorder::expand(300, 600);
+
+    REQUIRE(recorder::frames.size() == 6);
+    REQUIRE(recorder::global.size() == 6);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 80);
+    REQUIRE(recorder::frames.at(2) == 200);
+    REQUIRE(recorder::frames.at(3) == 300);
+    REQUIRE(recorder::frames.at(4) == 380);
+    REQUIRE(recorder::frames.at(5) == 500);
+  }
+
+  SECTION("Test shrink")
+  {
+    recorder::rec(0, G_ACTION_KEYPRESS,   0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KEYREL,    80, 1, 0.5f);
+    recorder::rec(0, G_ACTION_KILL,     200, 1, 0.5f);
+
+    recorder::shrink(100);
+
+    REQUIRE(recorder::frames.size() == 2);
+    REQUIRE(recorder::global.size() == 2);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 80);
+  }
+
+  SECTION("Test overdub")
+  {
+    recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF,  80, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEON,  200, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+
+    /* Should delete all actions in between and keep the first one, plus a
+    new last action on frame 500. */
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 1024);
+    recorder::stopOverdub(500, 500, &mutex);
+
+    REQUIRE(recorder::frames.size() == 2);
+    REQUIRE(recorder::global.size() == 2);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 500);
+    REQUIRE(recorder::global.at(0).at(0)->frame == 0);
+    REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(1).at(0)->frame == 500);
+    REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+  }
 }
