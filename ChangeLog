@@ -15,6 +15,7 @@
 0.13.4 ---
 - Removed support for old ini-based MIDImap files
 - Lots of code refactoring
+- New test suite for Action Recorder
 
 
 0.13.3 --- 2017 . 03 . 25
