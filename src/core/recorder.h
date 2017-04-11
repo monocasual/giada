@@ -165,7 +165,9 @@ int getNextAction(int chan, char action, int frame, struct action **out,
 
 int getAction(int chan, char action, int frame, struct action **out);
 
-/* start/endOverdub */
+/* start/stopOverdub
+These functions are used when you overwrite existing actions. For example:
+pressing Mute button on a channel with some existing mute actions. */
 
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
 void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
