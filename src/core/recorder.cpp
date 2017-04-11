@@ -377,7 +377,7 @@ void updateBpm(float oldval, float newval, int oldquanto)
 		 * and the quantizer set to 44100. That would mean two recs completely
 		 * useless. So we compute a reject value ('scarto'): if it's lower
 		 * than 6 frames the new frame is collapsed with a quantized frame. */
-		/** CHECKME - maybe 6 frames are too low */
+		/** XXX - maybe 6 frames are too low */
 
 		if (frames.at(i) != 0) {
 			int scarto = oldquanto % frames.at(i);
