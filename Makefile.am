@@ -85,8 +85,8 @@ src/gui/dialogs/gd_pluginList.h	       \
 src/gui/dialogs/gd_pluginList.cpp      \
 src/gui/dialogs/gd_pluginWindow.h	     \
 src/gui/dialogs/gd_pluginWindow.cpp    \
-src/gui/dialogs/gd_editor.h            \
-src/gui/dialogs/gd_editor.cpp          \
+src/gui/dialogs/sampleEditor.h         \
+src/gui/dialogs/sampleEditor.cpp       \
 src/gui/dialogs/gd_pluginWindowGUI.h   \
 src/gui/dialogs/gd_pluginWindowGUI.cpp \
 src/gui/dialogs/gd_actionEditor.h	     \
@@ -111,7 +111,7 @@ src/gui/elems/ge_mixed.h           \
 src/gui/elems/ge_mixed.cpp         \
 src/gui/elems/browser.h		         \
 src/gui/elems/browser.cpp          \
-src/gui/elems/soundMeter.h		     \  
+src/gui/elems/soundMeter.h		     \
 src/gui/elems/soundMeter.cpp       \
 src/gui/elems/ge_pluginBrowser.h   \
 src/gui/elems/ge_pluginBrowser.cpp \

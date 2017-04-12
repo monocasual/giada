@@ -28,8 +28,8 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef __GE_WAVEFORM_H__
-#define __GE_WAVEFORM_H__
+#ifndef GE_WAVEFORM_H
+#define GE_WAVEFORM_H
 
 
 #include <vector>

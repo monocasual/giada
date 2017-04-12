@@ -34,7 +34,16 @@
 #include "window.h"
 
 
-class gdEditor : public gdWindow
+class SampleChannel;
+class geButton;
+class geWaveTools;
+class gInput;
+class gDial;
+class gChoice;
+class gCheck;
+
+
+class gdSampleEditor : public gdWindow
 {
 private:
 
@@ -81,35 +90,35 @@ private:
 
 public:
 
-	gdEditor(class SampleChannel *ch);
-	~gdEditor();
+	gdSampleEditor(SampleChannel *ch);
+	~gdSampleEditor();
 
-	class geButton    *zoomIn;
-	class geButton    *zoomOut;
-	class geWaveTools *waveTools;
-	class gInput      *chanStart;
-	class gInput      *chanEnd;
-	class geButton		*resetStartEnd;
-	class gDial       *volume;
-	class gInput      *volumeNum;
-	class gDial       *boost;
-	class gInput      *boostNum;
-	class geButton    *normalize;
-	class gDial       *pan;
-	class gInput      *panNum;
-	class geButton		*reload;
-	class gDial  		  *pitch;
-	class gInput  	  *pitchNum;
-	class geButton    *pitchToBar;
-	class geButton    *pitchToSong;
-	class geButton    *pitchHalf;
-	class geButton    *pitchDouble;
-	class geButton    *pitchReset;
-	class geButton    *close;
-	class gChoice     *grid;
-	class gCheck      *snap;
+	geButton    *zoomIn;
+	geButton    *zoomOut;
+	geWaveTools *waveTools;
+	gInput      *chanStart;
+	gInput      *chanEnd;
+	geButton		*resetStartEnd;
+	gDial       *volume;
+	gInput      *volumeNum;
+	gDial       *boost;
+	gInput      *boostNum;
+	geButton    *normalize;
+	gDial       *pan;
+	gInput      *panNum;
+	geButton		*reload;
+	gDial  		  *pitch;
+	gInput  	  *pitchNum;
+	geButton    *pitchToBar;
+	geButton    *pitchToSong;
+	geButton    *pitchHalf;
+	geButton    *pitchDouble;
+	geButton    *pitchReset;
+	geButton    *close;
+	gChoice     *grid;
+	gCheck      *snap;
 
-	class SampleChannel *ch;
+	SampleChannel *ch;
 };
 
 

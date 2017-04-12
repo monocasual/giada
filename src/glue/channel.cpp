@@ -27,7 +27,7 @@
 
 #include <cmath>
 #include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/dialogs/gd_editor.h"
+#include "../gui/dialogs/sampleEditor.h"
 #include "../gui/elems/ge_mixed.h"
 #include "../gui/elems/sampleEditor/waveTools.h"
 #include "../gui/elems/sampleEditor/waveform.h"
@@ -160,7 +160,7 @@ void glue_setChanVol(Channel *ch, float v, bool gui)
 
 	/* also update wave editor if it's shown */
 
-	gdEditor *editor = (gdEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
+	gdSampleEditor *editor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
 	if (editor) {
 		glue_setVolEditor(editor, (SampleChannel*) ch, v, false);
 		Fl::lock();
@@ -179,7 +179,7 @@ void glue_setChanVol(Channel *ch, float v, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPitch(gdEditor *win, SampleChannel *ch, float val, bool numeric)
+void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val <= 0.0f)
@@ -206,7 +206,7 @@ void glue_setPitch(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPanning(gdEditor *win, SampleChannel *ch, float val)
+void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val)
 {
 	if (val < 1.0f) {
 		ch->panLeft = 1.0f;
@@ -353,7 +353,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e,
+void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch, int b, int e,
 	bool recalc, bool check)
 {
 	if (check) {
@@ -400,7 +400,7 @@ void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch, int b, int e,
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
+void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val > 20.0f)
@@ -433,7 +433,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val, bool numeric)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val, bool numeric)
+void glue_setVolEditor(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
 {
 	if (numeric) {
 		if (val > 0.0f)

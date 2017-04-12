@@ -33,7 +33,7 @@
 #include "../../../../glue/io.h"
 #include "../../../elems/ge_mixed.h"
 #include "../../../dialogs/gd_mainWindow.h"
-#include "../../../dialogs/gd_editor.h"
+#include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/gd_browser.h"

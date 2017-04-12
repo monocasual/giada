@@ -42,7 +42,7 @@
 #include "../../../elems/ge_mixed.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_keyGrabber.h"
-#include "../../../dialogs/gd_editor.h"
+#include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/gd_browser.h"
@@ -221,7 +221,7 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdEditor((SampleChannel*) ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdEditor
+		gu_openSubWindow(G_MainWin, new gdSampleEditor((SampleChannel*) ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdSampleEditor
 		return;
 	}
 

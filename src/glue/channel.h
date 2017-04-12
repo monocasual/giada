@@ -37,7 +37,7 @@
 
 class Channel;
 class SampleChannel;
-class gdEditor;
+class gdSampleEditor;
 
 
 /* addChannel
@@ -76,19 +76,19 @@ void glue_setMute(Channel *ch, bool gui=true);
 void glue_setSoloOn (Channel *ch, bool gui=true);
 void glue_setSoloOff(Channel *ch, bool gui=true);
 
-void glue_setPitch(gdEditor *win, SampleChannel *ch, float val,
+void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
-void glue_setPanning(gdEditor *win, SampleChannel *ch, float val);
+void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val);
 
 /* setBeginEndChannel
  * sets start/end points in the sample editor. Recalc=false: don't recalc
  * internal position. check=true: check the points' consistency */
 
-void glue_setBeginEndChannel(gdEditor *win, SampleChannel *ch,
+void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch,
   int b, int e, bool recalc=false, bool check=true);
 
-void glue_setBoost(gdEditor *win, SampleChannel *ch, float val,
+void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
 /* setVolEditor
@@ -96,7 +96,7 @@ void glue_setBoost(gdEditor *win, SampleChannel *ch, float val,
  * numeric flag tells if we want to handle the dial or the numeric input
  * field. */
 
-void glue_setVolEditor(gdEditor *win, SampleChannel *ch, float val,
+void glue_setVolEditor(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
 /* start/stopReadingRecs

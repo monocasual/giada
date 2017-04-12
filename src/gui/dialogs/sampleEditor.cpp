@@ -42,13 +42,13 @@
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
-#include "gd_editor.h"
+#include "sampleEditor.h"
 
 
 using namespace giada;
 
 
-gdEditor::gdEditor(SampleChannel *ch)
+gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   : gdWindow(640, 480),
     ch(ch)
 {
@@ -230,7 +230,7 @@ gdEditor::gdEditor(SampleChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-gdEditor::~gdEditor()
+gdSampleEditor::~gdSampleEditor()
 {
   conf::sampleEditorX = x();
   conf::sampleEditorY = y();
@@ -244,32 +244,32 @@ gdEditor::~gdEditor()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setChanPos(); }
-void gdEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetStartEnd(); }
-void gdEditor::cb_setVolume       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolume(); }
-void gdEditor::cb_setVolumeNum    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setVolumeNum(); }
-void gdEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoost(); }
-void gdEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setBoostNum(); }
-void gdEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_normalize(); }
-void gdEditor::cb_panning         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_panning(); }
-void gdEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_reload(); }
-void gdEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitch(); }
-void gdEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToBar(); }
-void gdEditor::cb_setPitchToSong  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchToSong(); }
-void gdEditor::cb_setPitchHalf    (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchHalf(); }
-void gdEditor::cb_setPitchDouble  (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchDouble(); }
-void gdEditor::cb_resetPitch      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_resetPitch(); }
-void gdEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_setPitchNum(); }
-void gdEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomIn(); }
-void gdEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_zoomOut(); }
-void gdEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_changeGrid(); }
-void gdEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdEditor*)p)->__cb_enableSnap(); }
+void gdSampleEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setChanPos(); }
+void gdSampleEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetStartEnd(); }
+void gdSampleEditor::cb_setVolume       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setVolume(); }
+void gdSampleEditor::cb_setVolumeNum    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setVolumeNum(); }
+void gdSampleEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoost(); }
+void gdSampleEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoostNum(); }
+void gdSampleEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_normalize(); }
+void gdSampleEditor::cb_panning         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_panning(); }
+void gdSampleEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
+void gdSampleEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitch(); }
+void gdSampleEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToBar(); }
+void gdSampleEditor::cb_setPitchToSong  (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToSong(); }
+void gdSampleEditor::cb_setPitchHalf    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchHalf(); }
+void gdSampleEditor::cb_setPitchDouble  (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchDouble(); }
+void gdSampleEditor::cb_resetPitch      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetPitch(); }
+void gdSampleEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchNum(); }
+void gdSampleEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
+void gdSampleEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
+void gdSampleEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
+void gdSampleEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_enableSnap()
+void gdSampleEditor::__cb_enableSnap()
 {
   waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
 }
@@ -278,7 +278,7 @@ void gdEditor::__cb_enableSnap()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitchToBar()
+void gdSampleEditor::__cb_setPitchToBar()
 {
   glue_setPitch(this, ch, ch->end / (float) clock::getFramesPerBar(), true);
 }
@@ -287,7 +287,7 @@ void gdEditor::__cb_setPitchToBar()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitchToSong()
+void gdSampleEditor::__cb_setPitchToSong()
 {
   glue_setPitch(this, ch, ch->end / (float) clock::getTotalFrames(), true);
 }
@@ -296,7 +296,7 @@ void gdEditor::__cb_setPitchToSong()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_resetPitch()
+void gdSampleEditor::__cb_resetPitch()
 {
   glue_setPitch(this, ch, 1.0f, true);
 }
@@ -305,7 +305,7 @@ void gdEditor::__cb_resetPitch()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setChanPos()
+void gdSampleEditor::__cb_setChanPos()
 {
   glue_setBeginEndChannel(
     this,
@@ -320,7 +320,7 @@ void gdEditor::__cb_setChanPos()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_resetStartEnd()
+void gdSampleEditor::__cb_resetStartEnd()
 {
   glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 }
@@ -329,7 +329,7 @@ void gdEditor::__cb_resetStartEnd()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setVolume()
+void gdSampleEditor::__cb_setVolume()
 {
   glue_setVolEditor(this, ch, volume->value(), false);
 }
@@ -338,7 +338,7 @@ void gdEditor::__cb_setVolume()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setVolumeNum()
+void gdSampleEditor::__cb_setVolumeNum()
 {
   glue_setVolEditor(this, ch, atof(volumeNum->value()), true);
 }
@@ -347,7 +347,7 @@ void gdEditor::__cb_setVolumeNum()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setBoost()
+void gdSampleEditor::__cb_setBoost()
 {
   if (Fl::event() == FL_DRAG)
     glue_setBoost(this, ch, boost->value(), false);
@@ -361,7 +361,7 @@ void gdEditor::__cb_setBoost()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setBoostNum()
+void gdSampleEditor::__cb_setBoostNum()
 {
   glue_setBoost(this, ch, atof(boostNum->value()), true);
   waveTools->updateWaveform();
@@ -371,7 +371,7 @@ void gdEditor::__cb_setBoostNum()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_normalize()
+void gdSampleEditor::__cb_normalize()
 {
   float val = wfx_normalizeSoft(ch->wave);
   glue_setBoost(this, ch, val, false); // we pretend that a fake user turns the dial (numeric=false)
@@ -389,7 +389,7 @@ void gdEditor::__cb_normalize()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_panning()
+void gdSampleEditor::__cb_panning()
 {
   glue_setPanning(this, ch, pan->value());
 }
@@ -398,7 +398,7 @@ void gdEditor::__cb_panning()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_reload()
+void gdSampleEditor::__cb_reload()
 {
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
     return;
@@ -425,7 +425,7 @@ void gdEditor::__cb_reload()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitch()
+void gdSampleEditor::__cb_setPitch()
 {
   glue_setPitch(this, ch, pitch->value(), false);
 }
@@ -434,7 +434,7 @@ void gdEditor::__cb_setPitch()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitchNum()
+void gdSampleEditor::__cb_setPitchNum()
 {
   glue_setPitch(this, ch, atof(pitchNum->value()), true);
 }
@@ -443,7 +443,7 @@ void gdEditor::__cb_setPitchNum()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitchHalf()
+void gdSampleEditor::__cb_setPitchHalf()
 {
   glue_setPitch(this, ch, pitch->value()/2, true);
 }
@@ -452,7 +452,7 @@ void gdEditor::__cb_setPitchHalf()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_setPitchDouble()
+void gdSampleEditor::__cb_setPitchDouble()
 {
   glue_setPitch(this, ch, pitch->value()*2, true);
 }
@@ -461,7 +461,7 @@ void gdEditor::__cb_setPitchDouble()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_zoomIn()
+void gdSampleEditor::__cb_zoomIn()
 {
   waveTools->waveform->setZoom(-1);
   waveTools->redraw();
@@ -471,7 +471,7 @@ void gdEditor::__cb_zoomIn()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_zoomOut()
+void gdSampleEditor::__cb_zoomOut()
 {
   waveTools->waveform->setZoom(0);
   waveTools->redraw();
@@ -481,7 +481,7 @@ void gdEditor::__cb_zoomOut()
 /* -------------------------------------------------------------------------- */
 
 
-void gdEditor::__cb_changeGrid()
+void gdSampleEditor::__cb_changeGrid()
 {
   waveTools->waveform->setGridLevel(atoi(grid->text()));
 }
