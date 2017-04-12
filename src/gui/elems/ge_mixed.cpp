@@ -54,34 +54,6 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-gClickRepeat::gClickRepeat(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
-: Fl_Repeat_Button(x, y, w, h, L), imgOff(imgOff), imgOn(imgOn) {}
-
-void gClickRepeat::draw()
-{
-  if (value()) {                               // -- clicked
-    fl_rectf(x(), y(), w(), h(), COLOR_BG_1);  // bg
-    if (imgOn != nullptr)
-      fl_draw_pixmap(imgOn, x()+1, y()+1);
-  }
-  else {                                       // -- not clicked
-    fl_rectf(x(), y(), w(), h(), COLOR_BG_0);  // bg
-    fl_rect(x(), y(), w(), h(), COLOR_BD_0);   // border
-    if (imgOff != nullptr)
-      fl_draw_pixmap(imgOff, x()+1, y()+1);
-  }
-  if (!active())
-    fl_color(FL_INACTIVE_COLOR);
-
-  fl_color(COLOR_TEXT_0);
-  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
-  fl_draw(label(), x(), y(), w(), h(), FL_ALIGN_CENTER);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gInput::gInput(int x, int y, int w, int h, const char *L)
 : Fl_Input(x, y, w, h, L)
 {

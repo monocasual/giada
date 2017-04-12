@@ -37,7 +37,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_Window.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Repeat_Button.H>
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
@@ -62,19 +61,6 @@
  * callback for when closing windows. Deletes the widget (delete). */
 
 void __cb_window_closer(Fl_Widget *v, void *p);
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gClickRepeat : public Fl_Repeat_Button
-{
-public:
-	gClickRepeat(int x, int y, int w, int h, const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
-	void draw();
-	const char **imgOff;
-	const char **imgOn;
-};
 
 
 /* -------------------------------------------------------------------------- */
