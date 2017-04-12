@@ -169,6 +169,8 @@ src/gui/elems/basics/boxtypes.h        \
 src/gui/elems/basics/boxtypes.cpp      \
 src/gui/elems/basics/baseButton.h      \
 src/gui/elems/basics/baseButton.cpp    \
+src/gui/elems/basics/statusButton.h    \
+src/gui/elems/basics/statusButton.cpp  \
 src/gui/elems/basics/button.h          \
 src/gui/elems/basics/button.cpp        \
 src/gui/elems/basics/idButton.h        \

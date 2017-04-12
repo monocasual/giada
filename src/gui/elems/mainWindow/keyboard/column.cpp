@@ -25,6 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/fl_draw.H>
+#include <FL/Fl_Menu_Button.H>
 #include "../../../../core/sampleChannel.h"
 #include "../../../../glue/channel.h"
 #include "../../../../utils/log.h"

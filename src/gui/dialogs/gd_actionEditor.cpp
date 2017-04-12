@@ -34,6 +34,7 @@
 #include "../../core/sampleChannel.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/scroll.h"
+#include "../elems/basics/button.h"
 #include "../elems/basics/resizerBar.h"
 #include "../elems/actionEditor/actionEditor.h"
 #include "../elems/actionEditor/envelopeEditor.h"

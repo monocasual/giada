@@ -32,6 +32,7 @@
 #include "../../../glue/main.h"
 #include "../../../utils/gui.h"
 #include "../../elems/ge_mixed.h"
+#include "../../elems/basics/statusButton.h"
 #include "../../dialogs/gd_mainWindow.h"
 #include "../../dialogs/gd_pluginList.h"
 #include "mainIO.h"
@@ -49,13 +50,13 @@ geMainIO::geMainIO(int x, int y)
 	begin();
 
 #if defined(WITH_VST)
-	masterFxIn  = new gFxButton  (x, y, 20, 20, fxOff_xpm, fxOn_xpm);
+	masterFxIn  = new geStatusButton  (x, y, 20, 20, fxOff_xpm, fxOn_xpm);
 	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
 	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+4, 140, 12);
 	inToOut     = new geButton   (inMeter->x()+inMeter->w()+4, y+4, 12, 12, "", inputToOutputOff_xpm, inputToOutputOn_xpm);
 	outMeter    = new gSoundMeter(inToOut->x()+inToOut->w()+4, y+4, 140, 12);
 	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
-	masterFxOut = new gFxButton  (outVol->x()+outVol->w()+4, y, 20, 20, fxOff_xpm, fxOn_xpm);
+	masterFxOut = new geStatusButton  (outVol->x()+outVol->w()+4, y, 20, 20, fxOff_xpm, fxOn_xpm);
 #else
 	inVol		    = new gDial      (x+62, y, 20, 20);
 	inMeter     = new gSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 12);
@@ -154,14 +155,14 @@ void geMainIO::setInVol(float v)
 
 void geMainIO::setMasterFxOutFull(bool v)
 {
-  masterFxOut->full = v;
+  masterFxOut->status = v;
   masterFxOut->redraw();
 }
 
 
 void geMainIO::setMasterFxInFull(bool v)
 {
-  masterFxIn->full = v;
+  masterFxIn->status = v;
   masterFxIn->redraw();
 }
 

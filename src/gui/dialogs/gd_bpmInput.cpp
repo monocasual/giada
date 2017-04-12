@@ -32,6 +32,7 @@
 #include "../../glue/main.h"
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "gd_bpmInput.h"
 #include "gd_mainWindow.h"
 

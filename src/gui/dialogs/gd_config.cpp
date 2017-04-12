@@ -40,6 +40,7 @@
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
+#include "../elems/basics/button.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"

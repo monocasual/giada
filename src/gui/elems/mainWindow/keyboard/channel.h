@@ -39,7 +39,7 @@ class geButton;
 class geChannelButton;
 class gDial;
 #ifdef WITH_VST
-class gFxButton;
+class geStatusButton;
 #endif
 
 
@@ -138,7 +138,7 @@ public:
 	geButton 	      *solo;
 	gDial           *vol;
 #ifdef WITH_VST
-	gFxButton       *fx;
+	geStatusButton  *fx;
 #endif
 
 	int type;

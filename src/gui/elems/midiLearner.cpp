@@ -27,6 +27,7 @@
 
 #include "ge_mixed.h"
 #include "basics/boxtypes.h"
+#include "basics/button.h"
 #include "midiLearner.h"
 
 

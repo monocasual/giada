@@ -37,6 +37,7 @@
 #include "../../../glue/main.h"
 #include "../../elems/ge_mixed.h"
 #include "../../elems/basics/boxtypes.h"
+#include "../../elems/basics/button.h"
 #include "../../dialogs/gd_mainWindow.h"
 #include "../../dialogs/gd_about.h"
 #include "../../dialogs/gd_config.h"

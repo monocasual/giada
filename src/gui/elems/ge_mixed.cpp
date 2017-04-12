@@ -310,23 +310,3 @@ gSlider::gSlider(int x, int y, int w, int h, const char *l)
   color(COLOR_BG_0);
   selection_color(COLOR_BD_0);
 }
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-gFxButton::gFxButton(int x, int y, int w, int h, const char **imgOff, const char **imgOn)
-  : geButton(x, y, w, h, nullptr, imgOff, imgOn), full(false) {}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gFxButton::draw()
-{
-  geButton::draw();
-  if (full)
-    fl_draw_pixmap(imgOn, x()+1, y()+1, COLOR_BD_0);
-}

@@ -50,7 +50,6 @@
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Scroll.H>
-#include "basics/button.h"
 
 #ifdef _WIN32
 	#include <shlobj.h>  // for SHGetFolderPath
@@ -195,22 +194,6 @@ class gSlider : public Fl_Slider
 public:
 	gSlider(int x, int y, int w, int h, const char *l=0);
 	int id;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-/* gFxButton
- * a simple gClick with 'full' parameter (i.e. has plugins). If 'full' is true,
- * draw something somewhere. */
-
-class gFxButton : public geButton
-{
-public:
-	gFxButton(int x, int y, int w, int h, const char **imgOff=nullptr, const char **imgOn=nullptr);
-	void draw();
-	bool full;
 };
 
 

@@ -32,6 +32,7 @@
 #include "../../utils/fs.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/browser.h"
+#include "../elems/basics/button.h"
 #include "gd_browser.h"
 
 

@@ -38,6 +38,7 @@
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/scroll.h"
+#include "../../elems/basics/button.h"
 #include "midiInputChannel.h"
 
 

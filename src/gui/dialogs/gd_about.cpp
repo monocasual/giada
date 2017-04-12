@@ -36,6 +36,7 @@
 #endif
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "gd_about.h"
 
 

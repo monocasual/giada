@@ -32,12 +32,9 @@
 #include <FL/Fl_Group.H>
 
 class gSoundMeter;
-class gSoundMeter;
-class gDial;
 class gDial;
 #ifdef WITH_VST
-class gFxButton;
-class gFxButton;
+class geStatusButton;
 class geButton;
 #endif
 
@@ -50,9 +47,9 @@ private:
 	gDial				*outVol;
 	gDial				*inVol;
 #ifdef WITH_VST
-  gFxButton 	*masterFxOut;
-  gFxButton		*masterFxIn;
-  geButton    *inToOut;
+  geStatusButton *masterFxOut;
+  geStatusButton *masterFxIn;
+  geButton       *inToOut;
 #endif
 
 	static void cb_outVol     (Fl_Widget *v, void *p);

@@ -30,6 +30,7 @@
 #include "../../utils/gui.h"
 #include "../../core/const.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "gd_warnings.h"
 
 

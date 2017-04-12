@@ -37,6 +37,7 @@
 #include "../../core/clock.h"
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"

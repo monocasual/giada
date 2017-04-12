@@ -2,6 +2,9 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * geStatusButton
+ * Simple geButton with a boolean 'status' parameter.
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -25,34 +28,23 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_CHANNEL_BUTTON_H
-#define GE_CHANNEL_BUTTON_H
+#ifndef GE_STATUS_BUTTON_H
+#define GE_STATUS_BUTTON_H
 
 
-#include "../../basics/button.h"
+#include "button.h"
 
 
-class geChannelButton : public geButton
+class geStatusButton : public geButton
 {
-private:
-
-	std::string key;
-
 public:
 
-	geChannelButton(int x, int y, int w, int h, const char *l=0);
-
-	virtual int handle(int e) = 0;
+	geStatusButton(int x, int y, int w, int h, const char **imgOff=nullptr,
+    const char **imgOn=nullptr);
 
 	void draw() override;
-  
-	void setKey(const std::string &k);
-	void setKey(int k);
-	void setPlayMode();
-	void setEndingMode();
-	void setDefaultMode(const char *l=0);
-	void setInputRecordMode();
-	void setActionRecordMode();
+
+	bool status;
 };
 
 

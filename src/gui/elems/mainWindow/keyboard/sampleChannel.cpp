@@ -39,6 +39,7 @@
 #include "../../../../utils/string.h"
 #include "../../../../utils/fs.h"
 #include "../../../../utils/gui.h"
+#include "../../../elems/ge_mixed.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/gd_editor.h"
@@ -49,6 +50,7 @@
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../basics/boxtypes.h"
 #include "../../basics/idButton.h"
+#include "../../basics/statusButton.h"
 #include "channelStatus.h"
 #include "channelMode.h"
 #include "keyboard.h"
@@ -75,7 +77,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
 	solo        = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #ifdef WITH_VST
-	fx          = new gFxButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
+	fx          = new geStatusButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
 	vol         = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
 #else
 	vol         = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
@@ -407,7 +409,7 @@ void geSampleChannel::update()
 	mainButton->setKey(ch->key);
 
 #ifdef WITH_VST
-	fx->full = ch->plugins.size() > 0;
+	fx->status = ch->plugins.size() > 0;
 	fx->redraw();
 #endif
 }

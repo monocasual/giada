@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiOutputMidiCh
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -31,6 +29,7 @@
 #include "../../../utils/gui.h"
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
+#include "../../elems/basics/button.h"
 #include "../../elems/mainWindow/keyboard/channel.h"
 #include "midiOutputMidiCh.h"
 

@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/fl_draw.H>
 #include "../../../../core/const.h"
 #include "channelButton.h"
 

@@ -43,6 +43,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/idButton.h"
+#include "../elems/basics/statusButton.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_pluginList.h"
@@ -208,7 +209,7 @@ void gdPluginList::refreshList()
 			pluginHost::countPlugins(stackType, ch) > 0);
   }
 	else {
-    ch->guiChannel->fx->full = pluginHost::countPlugins(stackType, ch) > 0;
+    ch->guiChannel->fx->status = pluginHost::countPlugins(stackType, ch) > 0;
     ch->guiChannel->fx->redraw();
   }
 }

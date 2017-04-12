@@ -29,6 +29,7 @@
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "gd_devInfo.h"
 
 

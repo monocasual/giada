@@ -32,6 +32,7 @@
 #include "../../core/const.h"
 #include "../../glue/main.h"
 #include "../elems/ge_mixed.h"
+#include "../elems/basics/button.h"
 #include "gd_beatsInput.h"
 #include "gd_mainWindow.h"
 
