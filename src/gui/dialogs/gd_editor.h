@@ -31,10 +31,10 @@
 #define GD_EDITOR_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
-class gdEditor : public gWindow
+class gdEditor : public gdWindow
 {
 private:
 

@@ -34,10 +34,10 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
-class gdPluginWindow : public gWindow
+class gdPluginWindow : public gdWindow
 {
 private:
 	class Plugin *pPlugin;

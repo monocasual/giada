@@ -45,7 +45,7 @@ using namespace giada;
 
 
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
- : gWindow(450, 300), pPlugin(pPlugin)
+ : gdWindow(450, 300), pPlugin(pPlugin)
 {
   show();
 

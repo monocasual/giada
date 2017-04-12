@@ -61,7 +61,7 @@ using namespace giada;
 
 
 gdPluginList::gdPluginList(int stackType, Channel *ch)
-  : gWindow(468, 204), ch(ch), stackType(stackType)
+  : gdWindow(468, 204), ch(ch), stackType(stackType)
 {
 	if (conf::pluginListX)
 		resize(conf::pluginListX, conf::pluginListY, w(), h());
@@ -123,7 +123,7 @@ void gdPluginList::cb_refreshList(Fl_Widget *v, void *p)
 	 * by calling the parent (pluginList) and telling it to delete its
 	 * subwindow (i.e. gdBrowser). */
 
-	gWindow *child = (gWindow*) v;
+	gdWindow *child = (gdWindow*) v;
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 
@@ -141,7 +141,7 @@ void gdPluginList::cb_refreshList(Fl_Widget *v, void *p)
 
 void gdPluginList::__cb_addPlugin()
 {
-	/* the usual callback that gWindow adds to each subwindow in this case
+	/* the usual callback that gdWindow adds to each subwindow in this case
 	 * is not enough, because when we close the browser the plugin list
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdPluginChooser. It does exactly what we need. */
@@ -330,7 +330,7 @@ void gdPlugin::__cb_openPluginWindow()
   /* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
   * for the parent window 'add plugin'. */
 
-  gWindow *w;
+  gdWindow *w;
   if (pPlugin->hasEditor()) {
     if (pPlugin->isEditorOpen()) {
       gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");

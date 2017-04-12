@@ -36,7 +36,7 @@ using namespace giada;
 
 
 gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)
-	: gWindow(x, y, w, h, title)
+	: gdWindow(x, y, w, h, title)
 {
 }
 

@@ -939,7 +939,7 @@ void gTabPlugins::save()
 /* -------------------------------------------------------------------------- */
 
 
-gdConfig::gdConfig(int w, int h) : gWindow(w, h, "Configuration")
+gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 {
 	set_modal();
 

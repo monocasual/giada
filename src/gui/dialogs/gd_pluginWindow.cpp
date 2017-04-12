@@ -99,7 +99,7 @@ void Parameter::updateValue()
 
 
 gdPluginWindow::gdPluginWindow(Plugin *p)
- : gWindow(400, 156), pPlugin(p) // 350
+ : gdWindow(400, 156), pPlugin(p) // 350
 {
 	set_non_modal();
 

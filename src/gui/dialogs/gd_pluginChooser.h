@@ -33,7 +33,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class Channel;
@@ -43,7 +43,7 @@ class geButton;
 class gePluginBrowser;
 
 
-class gdPluginChooser : public gWindow
+class gdPluginChooser : public gdWindow
 {
 private:
 

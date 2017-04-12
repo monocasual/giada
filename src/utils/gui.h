@@ -46,7 +46,7 @@
 #endif
 
 
-class gWindow;
+class gdWindow;
 
 
 /* refresh
@@ -72,7 +72,7 @@ void gu_updateMainWinLabel(const std::string &s);
 
 void gu_setFavicon(Fl_Window *w);
 
-void gu_openSubWindow(gWindow *parent, gWindow *child, int id);
+void gu_openSubWindow(gdWindow *parent, gdWindow *child, int id);
 
 /* refreshActionEditor
  * reload the action editor window by closing and reopening it. It's used
@@ -91,7 +91,7 @@ void gu_closeAllSubwindows();
 /* getSubwindow
  * return a pointer to an open subwindow, otherwise nullptr. */
 
-gWindow *gu_getSubwindow(gWindow *parent, int id);
+gdWindow *gu_getSubwindow(gdWindow *parent, int id);
 
 /* removeFltkChars
  * Strip special chars used by FLTK to split menus into sub-menus. */

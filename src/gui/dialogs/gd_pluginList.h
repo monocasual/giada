@@ -32,7 +32,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class Plugin;
@@ -43,7 +43,7 @@ class geIdButton;
 class gChoice;
 
 
-class gdPluginList : public gWindow
+class gdPluginList : public gdWindow
 {
 private:
 

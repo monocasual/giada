@@ -47,7 +47,7 @@ extern gdMainWindow *G_MainWin;
 
 
 gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **argv)
-	: gWindow(W, H, title)
+	: gdWindow(W, H, title)
 {
 	Fl::visible_focus(0);
 

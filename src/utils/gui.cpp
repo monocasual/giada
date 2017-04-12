@@ -38,7 +38,7 @@
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_actionEditor.h"
-#include "../gui/elems/ge_window.h"
+#include "../gui/dialogs/window.h"
 #include "../gui/elems/mainWindow/mainIO.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/mainTransport.h"
@@ -153,7 +153,7 @@ void gu_setFavicon(Fl_Window *w)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_openSubWindow(gWindow *parent, gWindow *child, int id)
+void gu_openSubWindow(gdWindow *parent, gdWindow *child, int id)
 {
 	if (parent->hasWindow(id)) {
 		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
@@ -183,7 +183,7 @@ void gu_refreshActionEditor()
 /* -------------------------------------------------------------------------- */
 
 
-gWindow *gu_getSubwindow(gWindow *parent, int id)
+gdWindow *gu_getSubwindow(gdWindow *parent, int id)
 {
 	if (parent->hasWindow(id))
 		return parent->getChild(id);

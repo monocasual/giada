@@ -44,7 +44,7 @@ extern gdMainWindow *mainWin;
 
 
 gdKeyGrabber::gdKeyGrabber(Channel *ch)
-	: gWindow(300, 126, "Key configuration"), ch(ch)
+	: gdWindow(300, 126, "Key configuration"), ch(ch)
 {
 	set_modal();
 	text   = new gBox(8, 8, 284, 80, "");

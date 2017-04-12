@@ -34,7 +34,7 @@ using namespace giada;
 
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h)
-	: gWindow(w, h, "Midi Output Setup")
+	: gdWindow(w, h, "Midi Output Setup")
 {
 }
 

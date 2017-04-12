@@ -196,7 +196,7 @@ void geSampleChannel::__cb_openMenu()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-    gWindow *w = new gdLoadBrowser(conf::browserX, conf::browserY,
+    gdWindow *w = new gdLoadBrowser(conf::browserX, conf::browserY,
       conf::browserW, conf::browserH, "Browse sample",
       conf::samplePath.c_str(), glue_loadSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
@@ -224,7 +224,7 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Export sample to file...") == 0) {
-    gWindow *w = new gdSaveBrowser(conf::browserX, conf::browserY,
+    gdWindow *w = new gdSaveBrowser(conf::browserX, conf::browserY,
       conf::browserW, conf::browserH, "Save sample", \
       conf::samplePath.c_str(), "", glue_saveSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);

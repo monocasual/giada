@@ -126,7 +126,7 @@ void geMainMenu::__cb_file()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		gWindow *childWin = new gdLoadBrowser(conf::browserX, conf::browserY,
+		gdWindow *childWin = new gdLoadBrowser(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Load patch or project",
 				conf::patchPath, glue_loadPatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
@@ -136,14 +136,14 @@ void geMainMenu::__cb_file()
 		if (mh::hasLogicalSamples() || mh::hasEditedSamples())
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
-		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
+		gdWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save patch",
 				conf::patchPath, patch::name, glue_savePatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
-		gWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
+		gdWindow *childWin = new gdSaveBrowser(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save project",
 				conf::patchPath, patch::name, glue_saveProject, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);

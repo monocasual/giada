@@ -29,7 +29,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class gInput;
@@ -37,7 +37,7 @@ class geButton;
 class gCheck;
 
 
-class gdBeatsInput : public gWindow
+class gdBeatsInput : public gdWindow
 {
 private:
 

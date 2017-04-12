@@ -29,7 +29,7 @@
 #define GD_CONFIG_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class gTabAudio;
@@ -47,7 +47,7 @@ class gRadio;
 class gBox;
 
 
-class gdConfig : public gWindow
+class gdConfig : public gdWindow
 {
 private:
 

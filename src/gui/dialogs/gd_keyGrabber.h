@@ -30,7 +30,7 @@
 
 
 #include <FL/Fl.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class Channel;
@@ -38,7 +38,7 @@ class gBox;
 class geButton;
 
 
-class gdKeyGrabber : public gWindow
+class gdKeyGrabber : public gdWindow
 {
 private:
 

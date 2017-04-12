@@ -29,14 +29,14 @@
 #define GD_MIDI_INPUT_BASE_H
 
 
-#include "../../elems/ge_window.h"
+#include "../window.h"
 
 
 class geButton;
 class geMidiLearner;
 
 
-class gdMidiInputBase : public gWindow
+class gdMidiInputBase : public gdWindow
 {
 protected:
 

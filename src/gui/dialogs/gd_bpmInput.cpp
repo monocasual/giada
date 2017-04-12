@@ -43,7 +43,7 @@ using namespace giada;
 
 
 gdBpmInput::gdBpmInput(const char *label)
-: gWindow(144, 36, "Bpm")
+: gdWindow(144, 36, "Bpm")
 {
 	if (conf::bpmX)
 		resize(conf::bpmX, conf::bpmY, w(), h());

@@ -1,7 +1,6 @@
 /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
- * gd_mainWindow
  *
  * -----------------------------------------------------------------------------
  *
@@ -30,10 +29,10 @@
 #define GD_MAINWINDOW_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
-class gdMainWindow : public gWindow
+class gdMainWindow : public gdWindow
 {
 private:
 

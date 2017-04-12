@@ -48,7 +48,7 @@ using namespace giada;
 
 
 gdEditor::gdEditor(SampleChannel *ch)
-  : gWindow(640, 480),
+  : gdWindow(640, 480),
     ch(ch)
 {
   set_non_modal();

@@ -37,13 +37,13 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 #if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
 #endif
 
 
-class gdPluginWindowGUI : public gWindow
+class gdPluginWindowGUI : public gdWindow
 {
 private:
 
@@ -66,7 +66,7 @@ public:
 #if 0
 #if defined(__APPLE__)
 
-class gdPluginWindowGUImac : public gWindow
+class gdPluginWindowGUImac : public gdWindow
 {
 private:
 

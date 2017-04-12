@@ -44,10 +44,10 @@ using namespace giada;
 
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gWindow(340, 435, "About Giada")
+: gdWindow(340, 435, "About Giada")
 {
 #else
-: gWindow(340, 350, "About Giada")
+: gdWindow(340, 350, "About Giada")
 {
 #endif
 

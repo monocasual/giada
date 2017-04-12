@@ -29,14 +29,14 @@
 #define GD_BPMINPUT_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class gInput;
 class geButton;
 
 
-class gdBpmInput : public gWindow
+class gdBpmInput : public gdWindow
 {
 private:
 

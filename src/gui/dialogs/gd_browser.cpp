@@ -41,7 +41,7 @@ using namespace giada;
 
 gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 		const string &path, void (*callback)(void*))
-	:	gWindow(x, y, w, h, title.c_str()), callback(callback)
+	:	gdWindow(x, y, w, h, title.c_str()), callback(callback)
 {
 	set_non_modal();
 

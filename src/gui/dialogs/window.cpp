@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_window
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,29 +22,33 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#include "ge_window.h"
 #include "../../utils/log.h"
+#include "window.h"
 
 
-gWindow::gWindow(int x, int y, int w, int h, const char *title, int id)
-	: Fl_Double_Window(x, y, w, h, title), id(id), parent(nullptr) { }
+gdWindow::gdWindow(int x, int y, int w, int h, const char *title, int id)
+	: Fl_Double_Window(x, y, w, h, title), id(id), parent(nullptr)
+{
+}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gWindow::gWindow(int w, int h, const char *title, int id)
-	: Fl_Double_Window(w, h, title), id(id), parent(nullptr) { }
+gdWindow::gdWindow(int w, int h, const char *title, int id)
+	: Fl_Double_Window(w, h, title), id(id), parent(nullptr)
+{
+}
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gWindow::~gWindow() {
-
+gdWindow::~gdWindow()
+{
 	/* delete all subwindows in order to empty the stack */
 
 	for (unsigned i=0; i<subWindows.size(); i++)
@@ -55,27 +57,28 @@ gWindow::~gWindow() {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 /* this is the default callback of each window, fired when the user closes
  * the window with the 'x'. Watch out: is the parent that calls delSubWIndow */
 
-void gWindow::cb_closeChild(Fl_Widget *v, void *p) {
-	gWindow *child = (gWindow*) v;
+void gdWindow::cb_closeChild(Fl_Widget *v, void *p)
+{
+	gdWindow *child = (gdWindow*) v;
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gWindow::addSubWindow(gWindow *w) {
-
+void gdWindow::addSubWindow(gdWindow *w)
+{
 	/** TODO - useless: delete ---------------------------------------- */
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
-			//gu_log("[gWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
+			//gu_log("[gdWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
 			delete w;
 			return;
 		}
@@ -88,10 +91,11 @@ void gWindow::addSubWindow(gWindow *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gWindow::delSubWindow(gWindow *w) {
+void gdWindow::delSubWindow(gdWindow *w)
+{
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
 			delete subWindows.at(i);
@@ -103,10 +107,11 @@ void gWindow::delSubWindow(gWindow *w) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gWindow::delSubWindow(int id) {
+void gdWindow::delSubWindow(int id)
+{
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (subWindows.at(i)->getId() == id) {
 			delete subWindows.at(i);
@@ -118,53 +123,53 @@ void gWindow::delSubWindow(int id) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int gWindow::getId() {
+int gdWindow::getId()
+{
 	return id;
 }
 
 
-/* ------------------------------------------------------------------ */
-
-
-void gWindow::setId(int id) {
+void gdWindow::setId(int id)
+{
 	this->id = id;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gWindow::debug() {
+void gdWindow::debug()
+{
 	gu_log("---- window stack (id=%d): ----\n", getId());
 	for (unsigned i=0; i<subWindows.size(); i++)
-		gu_log("[gWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
+		gu_log("[gdWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
 	gu_log("----\n");
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gWindow *gWindow::getParent() {
+gdWindow *gdWindow::getParent()
+{
 	return parent;
 }
 
 
-/* ------------------------------------------------------------------ */
-
-
-void gWindow::setParent(gWindow *w) {
+void gdWindow::setParent(gdWindow *w)
+{
 	parent = w;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-bool gWindow::hasWindow(int id) {
+bool gdWindow::hasWindow(int id)
+{
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (id == subWindows.at(i)->getId())
 			return true;
@@ -172,10 +177,11 @@ bool gWindow::hasWindow(int id) {
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-gWindow *gWindow::getChild(int id) {
+gdWindow *gdWindow::getChild(int id)
+{
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (id == subWindows.at(i)->getId())
 			return subWindows.at(i);

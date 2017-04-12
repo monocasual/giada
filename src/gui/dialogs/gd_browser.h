@@ -29,7 +29,7 @@
 #define GD_BROWSER_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class Channel;
@@ -41,7 +41,7 @@ class gInput;
 class gProgress;
 
 
-class gdBaseBrowser : public gWindow
+class gdBaseBrowser : public gdWindow
 {
 protected:
 

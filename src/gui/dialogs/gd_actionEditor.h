@@ -33,7 +33,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class Channel;
@@ -54,7 +54,7 @@ Main window which contains the tools for dealing with actions. This class
 calculates chan, zoom, frames per beat, and so on. Each sub-widget contains a
 pointer to this window to query those data. */
 
-class gdActionEditor : public gWindow
+class gdActionEditor : public gdWindow
 {
 private:
 

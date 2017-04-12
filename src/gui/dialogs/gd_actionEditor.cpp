@@ -47,7 +47,7 @@ using namespace giada;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)
-	:	gWindow(640, 284),
+	:	gdWindow(640, 284),
 		chan   (chan),
 		zoom   (100),
 		coverX (0)

@@ -43,7 +43,7 @@ using namespace giada;
 
 
 gdBeatsInput::gdBeatsInput()
-	: gWindow(164, 60, "Beats")
+	: gdWindow(164, 60, "Beats")
 {
 	if (conf::beatsX)
 		resize(conf::beatsX, conf::beatsY, w(), h());

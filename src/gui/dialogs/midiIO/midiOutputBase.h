@@ -30,7 +30,7 @@
 
 
 #include <FL/Fl.H>
-#include "../../elems/ge_window.h"
+#include "../window.h"
 
 
 class geButton;
@@ -48,7 +48,7 @@ In addition MidiOutputMidiCh has the MIDI message output box. */
 /* TODO - gdMidiOutput is almost the same thing of gdMidiInput. Create another
 parent class gdMidiIO to inherit from */
 
-class gdMidiOutputBase : public gWindow
+class gdMidiOutputBase : public gdWindow
 {
 protected:
 

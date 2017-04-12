@@ -29,14 +29,14 @@
 #define GD_ABOUT_H
 
 
-#include "../elems/ge_window.h"
+#include "window.h"
 
 
 class gBox;
 class geButton;
 
 
-class gdAbout : public gWindow
+class gdAbout : public gdWindow
 {
 private:
 

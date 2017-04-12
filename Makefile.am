@@ -61,6 +61,8 @@ src/glue/plugin.h                      \
 src/glue/plugin.cpp                    \
 src/glue/transport.h                   \
 src/glue/transport.cpp                 \
+src/gui/dialogs/window.h			         \
+src/gui/dialogs/window.cpp             \
 src/gui/dialogs/gd_keyGrabber.h        \
 src/gui/dialogs/gd_keyGrabber.cpp      \
 src/gui/dialogs/gd_about.h             \
@@ -109,8 +111,6 @@ src/gui/elems/ge_mixed.h               \
 src/gui/elems/ge_mixed.cpp             \
 src/gui/elems/browser.h		             \
 src/gui/elems/browser.cpp              \
-src/gui/elems/ge_window.h			         \
-src/gui/elems/ge_window.cpp            \
 src/gui/elems/ge_pluginBrowser.h       \
 src/gui/elems/ge_pluginBrowser.cpp     \
 src/gui/elems/sampleEditor/waveform.h               \

@@ -1,11 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_window
- * A custom window.
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -25,44 +22,44 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
-#ifndef __GE_WINDOW_H__
-#define __GE_WINDOW_H__
+#ifndef GD_WINDOW_H
+#define GD_WINDOW_H
 
 
 #include <vector>
 #include <FL/Fl_Double_Window.H>
 
 
-class gWindow : public Fl_Double_Window
+class gdWindow : public Fl_Double_Window
 {
 protected:
 
-	std::vector <gWindow*> subWindows;
+	std::vector <gdWindow*> subWindows;
 	int id;
-	gWindow *parent;
+	gdWindow *parent;
 
 public:
 
-	gWindow(int x, int y, int w, int h, const char *title=0, int id=0);
-	gWindow(int w, int h, const char *title=0, int id=0);
-	~gWindow();
+	gdWindow(int x, int y, int w, int h, const char *title=0, int id=0);
+	gdWindow(int w, int h, const char *title=0, int id=0);
+	~gdWindow();
 
 	static void cb_closeChild(Fl_Widget *v, void *p);
 
-	void addSubWindow(gWindow *w);
-	void delSubWindow(gWindow *w);
+	void addSubWindow(gdWindow *w);
+	void delSubWindow(gdWindow *w);
 	void delSubWindow(int id);
 
 	int  getId();
 	void setId(int id);
 	void debug();
 
-	void     setParent(gWindow *);
-	gWindow *getParent();
-	gWindow *getChild(int id);
+	void     setParent(gdWindow *);
+	gdWindow *getParent();
+	gdWindow *getChild(int id);
 
 	/* hasWindow
 	 * true if the window with id 'id' exists in the stack. */
