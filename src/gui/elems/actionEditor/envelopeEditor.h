@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_envelopeWidget
- *
  * parent class of any envelope controller, from volume to VST parameter
  * automations.
  *
@@ -29,8 +27,8 @@
  *
  * ------------------------------------------------------------------ */
 
-#ifndef __GE_ENVELOPECHANNEL_H__
-#define __GE_ENVELOPECHANNEL_H__
+#ifndef GE_ENVELOPE_EDITOR_H
+#define GE_ENVELOPE_EDITOR_H
 
 
 #include <vector>

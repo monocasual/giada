@@ -29,8 +29,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __GE_ACTIONWIDGET_H__
-#define __GE_ACTIONWIDGET_H__
+#ifndef GE_BASE_ACTION_EDITOR_H
+#define GE_BASE_ACTION_EDITOR_H
 
 
 #include <FL/Fl_Group.H>

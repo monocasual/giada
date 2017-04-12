@@ -27,8 +27,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGINLIST_H__
-#define __GD_PLUGINLIST_H__
+#ifndef GD_PLUGINLIST_H
+#define GD_PLUGINLIST_H
 
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>

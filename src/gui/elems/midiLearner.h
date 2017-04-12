@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_LEARNER_H
-#define GE_LEARNER_H
+#ifndef GE_MIDI_LEARNER_H
+#define GE_MIDI_LEARNER_H
 
 
 #include <FL/Fl_Group.H>

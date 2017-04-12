@@ -28,8 +28,8 @@
 
 #ifdef WITH_VST
 
-#ifndef __GD_PLUGIN_WINDOW_H__
-#define __GD_PLUGIN_WINDOW_H__
+#ifndef GD_PLUGIN_WINDOW_H
+#define GD_PLUGIN_WINDOW_H
 
 
 #include <FL/Fl.H>

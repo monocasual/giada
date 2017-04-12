@@ -27,8 +27,8 @@
  * ------------------------------------------------------------------ */
 
 
-#ifndef __GE_WAVETOOLS_H__
-#define __GE_WAVETOOLS_H__
+#ifndef GE_WAVE_TOOLS_H
+#define GE_WAVE_TOOLS_H
 
 
 #include <FL/Fl_Scroll.H>

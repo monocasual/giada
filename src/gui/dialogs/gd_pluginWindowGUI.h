@@ -31,8 +31,8 @@
 #ifdef WITH_VST
 
 
-#ifndef __GD_PLUGIN_WINDOW_GUI_H__
-#define __GD_PLUGIN_WINDOW_GUI_H__
+#ifndef GD_PLUGIN_WINDOW_GUI_H
+#define GD_PLUGIN_WINDOW_GUI_H
 
 
 #include <FL/Fl.H>

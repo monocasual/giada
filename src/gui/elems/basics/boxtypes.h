@@ -27,8 +27,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef __BOXTYPES_H__
-#define __BOXTYPES_H__
+#ifndef GE_BOXTYPES_H
+#define GE_BOXTYPES_H
 
 
 #include <FL/Fl.H>

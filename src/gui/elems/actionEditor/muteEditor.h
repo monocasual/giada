@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MUTECHANNEL_H
-#define GE_MUTECHANNEL_H
+#ifndef GE_MUTE_TOOL_H
+#define GE_MUTE_TOOL_H
 
 
 #include <vector>
