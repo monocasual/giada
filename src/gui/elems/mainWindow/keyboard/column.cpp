@@ -32,6 +32,7 @@
 #include "../../../../utils/string.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../elems/basics/boxtypes.h"
+#include "../../../elems/basics/resizerBar.h"
 #include "keyboard.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
@@ -46,7 +47,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 {
   /* geColumn does a bit of a mess: we pass a pointer to its parent (geKeyboard) and
   the geColumn itself deals with the creation of another widget, outside geColumn
-  and inside geKeyboard, which handles the vertical resize bar (gResizerBar).
+  and inside geKeyboard, which handles the vertical resize bar (geResizerBar).
   The resizer cannot stay inside geColumn: it needs a broader view on the other
   side widgets. The view can be obtained from geKeyboard only (the upper level).
   Unfortunately, parent() can be nullptr: at this point (i.e the constructor)
@@ -57,7 +58,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 	addChannelBtn = new geButton(x(), y(), w(), 20, "Add new channel");
 	end();
 
-  resizer = new gResizerBar(x()+w(), y(), 16, h(), false);
+  resizer = new geResizerBar(x()+w(), y(), 16, h(), false);
   resizer->setMinSize(G_MIN_COLUMN_WIDTH);
   parent->add(resizer);
 

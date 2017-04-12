@@ -34,6 +34,7 @@
 #include "../../core/sampleChannel.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/scroll.h"
+#include "../elems/basics/resizerBar.h"
 #include "../elems/actionEditor/actionEditor.h"
 #include "../elems/actionEditor/envelopeEditor.h"
 #include "../elems/actionEditor/muteEditor.h"
@@ -102,11 +103,11 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		mc = new geMuteEditor    (scroller->x(), ac->y()+ac->h()+8, this);
 		vc = new geEnvelopeEditor(scroller->x(), mc->y()+mc->h()+8, this, G_ACTION_VOLUME, G_RANGE_FLOAT, "volume");
 		scroller->add(ac);
-		//scroller->add(new gResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
+		//scroller->add(new geResizerBar(ac->x(), ac->y()+ac->h(), scroller->w(), 8));
 		scroller->add(mc);
-		//scroller->add(new gResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
+		//scroller->add(new geResizerBar(mc->x(), mc->y()+mc->h(), scroller->w(), 8));
 		scroller->add(vc);
-		//scroller->add(new gResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
+		//scroller->add(new geResizerBar(vc->x(), vc->y()+vc->h(), scroller->w(), 8));
 
 		/* fill volume envelope with actions from recorder */
 
@@ -121,7 +122,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	else {
 		pr = new geNoteEditor(scroller->x(), upperArea->y()+upperArea->h()+8, this);
 		scroller->add(pr);
-		scroller->add(new gResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
+		scroller->add(new geResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
 	}
 
 	end();

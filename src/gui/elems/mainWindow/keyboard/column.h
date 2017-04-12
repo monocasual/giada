@@ -35,7 +35,7 @@
 class Channel;
 class geButton;
 class geChannel;
-class gResizerBar;
+class geResizerBar;
 class geKeyboard;
 
 
@@ -49,7 +49,7 @@ private:
 	int openTypeMenu();
 
 	geButton    *addChannelBtn;
-	gResizerBar *resizer;
+	geResizerBar *resizer;
 	geKeyboard  *parent;
 
 	int index;
