@@ -42,7 +42,7 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
 	begin();
 	text   = new gBox(x(), y(), 156, 20, l);
 	value  = new geButton(text->x()+text->w()+4, y(), 80, 20);
-	button = new gButton(value->x()+value->w()+4, y(), 40, 20, "learn");
+	button = new geButton(value->x()+value->w()+4, y(), 40, 20, "learn");
 	end();
 
 	text->box(G_CUSTOM_BORDER_BOX);

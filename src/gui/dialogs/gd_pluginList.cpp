@@ -42,6 +42,7 @@
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
+#include "../elems/basics/idButton.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_pluginList.h"
@@ -222,12 +223,12 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 	: Fl_Group(X, Y, W, 20), pParent(gdp), pPlugin (p)
 {
 	begin();
-	button    = new gButton(8, y(), 220, 20);
+	button    = new geIdButton(8, y(), 220, 20);
 	program   = new gChoice(button->x()+button->w()+4, y(), 132, 20);
-	bypass    = new gButton(program->x()+program->w()+4, y(), 20, 20);
-	shiftUp   = new gButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
-	shiftDown = new gButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-	remove    = new gButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
+	bypass    = new geIdButton(program->x()+program->w()+4, y(), 20, 20);
+	shiftUp   = new geIdButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
+	shiftDown = new geIdButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
+	remove    = new geIdButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 	end();
 
 	button->copy_label(pPlugin->getName().c_str());

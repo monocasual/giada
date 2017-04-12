@@ -37,7 +37,6 @@ class gdMidiInput;
 class geMidiLearner;
 class gBox;
 class geButton;
-class gButton;
 
 
 class geMidiLearner : public Fl_Group
@@ -53,7 +52,7 @@ private:
 
 	gBox     *text;
 	geButton *value;
-	gButton  *button;
+	geButton *button;
 
 	static void cb_button(Fl_Widget *v, void *p);
 	static void cb_value (Fl_Widget *v, void *p);

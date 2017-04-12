@@ -71,7 +71,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
   groupButtons->begin();
 
     gBox *spacer = new gBox(groupButtons->x(), groupButtons->y(), 100, 20); 	// spacer window border <-> buttons
-	  ok = new gButton(w()-88, groupButtons->y(), 80, 20, "Close");
+	  ok = new geButton(w()-88, groupButtons->y(), 80, 20, "Close");
 
   groupButtons->resizable(spacer);
   groupButtons->end();

@@ -39,7 +39,7 @@ class Plugin;
 class Channel;
 class geButton;
 class gdPluginList;
-class gButton;
+class geIdButton;
 class gChoice;
 
 
@@ -95,12 +95,12 @@ private:
 
 public:
 
-	gButton *button;
-	gChoice *program;
-	gButton *bypass;
-	gButton *shiftUp;
-	gButton *shiftDown;
-	gButton *remove;
+	geIdButton *button;
+	gChoice    *program;
+	geIdButton *bypass;
+	geIdButton *shiftUp;
+	geIdButton *shiftDown;
+	geIdButton *remove;
 
 	gdPlugin(gdPluginList *gdp, Plugin *p, int x, int y, int w);
 };

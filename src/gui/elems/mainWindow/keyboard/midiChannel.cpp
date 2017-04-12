@@ -41,6 +41,7 @@
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../../dialogs/midiIO/midiOutputMidiCh.h"
 #include "../../basics/boxtypes.h"
+#include "../../basics/idButton.h"
 #include "midiChannel.h"
 
 
@@ -61,7 +62,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 	int delta = 120; // (5 widgets * 20) + (5 paddings * 4)
 #endif
 
-	button     = new gButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
+	button     = new geIdButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	arm        = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
 	mainButton = new geMidiChannelButton(arm->x()+arm->w()+4, y(), w() - delta, 20, "-- MIDI --");
 	mute       = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);

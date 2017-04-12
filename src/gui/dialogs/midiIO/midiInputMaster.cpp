@@ -49,7 +49,7 @@ gdMidiInputMaster::gdMidiInputMaster()
 	new geMidiLearner(8, 152, w()-16, "output volume",    &cb_learn, &conf::midiInVolumeOut);
 	new geMidiLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &conf::midiInBeatDouble);
 	new geMidiLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &conf::midiInBeatHalf);
-	ok = new gButton(w()-88, 228, 80, 20, "Close");
+	ok = new geButton(w()-88, 228, 80, 20, "Close");
 
 	ok->callback(cb_close, (void*)this);
 

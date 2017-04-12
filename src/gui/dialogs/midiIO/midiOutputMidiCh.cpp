@@ -49,7 +49,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);
 
-	close = new gButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
+	close = new geButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 
 	end();
 

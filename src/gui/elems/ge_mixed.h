@@ -81,23 +81,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-/* gButton
- * exactly as geButton but with a unique id inside of it. Used for the buttons in
- * channels and for FXs. */
- /* TODO - is this really useful? */
-
-class gButton : public geButton
-{
-public:
-	gButton(int X,int Y,int W,int H,const char *L=0, const char **imgOff=nullptr, const char **imgOn=nullptr);
-	int key;
-	int id;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 class gInput : public Fl_Input
 {
 public:

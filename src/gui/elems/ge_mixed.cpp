@@ -54,13 +54,6 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-gButton::gButton(int X, int Y, int W, int H, const char *L, const char **imgOff, const char **imgOn)
-  : geButton(X, Y, W, H, L, imgOff, imgOn) {}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gClickRepeat::gClickRepeat(int x, int y, int w, int h, const char *L, const char **imgOff, const char **imgOn)
 : Fl_Repeat_Button(x, y, w, h, L), imgOff(imgOff), imgOn(imgOn) {}
 

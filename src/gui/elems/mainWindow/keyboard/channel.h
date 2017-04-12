@@ -33,7 +33,7 @@
 
 
 class Channel;
-class gButton;
+class geIdButton;
 class geChannelStatus;
 class geButton;
 class geChannelButton;
@@ -130,7 +130,7 @@ public:
 
 	Channel *ch;
 
-	gButton         *button;
+	geIdButton      *button;
 	geChannelStatus *status;
 	geButton 	      *arm;
 	geChannelButton *mainButton;

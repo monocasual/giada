@@ -171,6 +171,8 @@ src/gui/elems/basics/baseButton.h      \
 src/gui/elems/basics/baseButton.cpp    \
 src/gui/elems/basics/button.h          \
 src/gui/elems/basics/button.cpp        \
+src/gui/elems/basics/idButton.h        \
+src/gui/elems/basics/idButton.cpp      \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \
