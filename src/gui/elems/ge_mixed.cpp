@@ -177,55 +177,6 @@ gProgress::gProgress(int x, int y, int w, int h, const char *L)
 /* -------------------------------------------------------------------------- */
 
 
-gSoundMeter::gSoundMeter(int x, int y, int w, int h, const char *L)
-  : Fl_Box(x, y, w, h, L),
-    clip(false),
-    mixerPeak(0.0f),
-    peak(0.0f),
-    db_level(0.0f),
-    db_level_old(0.0f) {}
-
-void gSoundMeter::draw()
-{
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);
-
-  /* peak = the highest value inside the frame */
-
-  peak = 0.0f;
-  float tmp_peak = 0.0f;
-
-  tmp_peak = fabs(mixerPeak);
-  if (tmp_peak > peak)
-    peak = tmp_peak;
-
-  clip = peak >= 1.0f ? true : false; // 1.0f is considered clip
-
-
-  /*  dBFS (full scale) calculation, plus decay of -2dB per frame */
-
-  db_level = 20 * log10(peak);
-  if (db_level < db_level_old)
-    if (db_level_old > -G_DB_MIN_SCALE)
-      db_level = db_level_old - 2.0f;
-
-  db_level_old = db_level;
-
-  /* graphical part */
-
-  float px_level = 0.0f;
-  if (db_level < 0.0f)
-    px_level = ((w()/G_DB_MIN_SCALE) * db_level) + w();
-  else
-    px_level = w();
-
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);
-  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? COLOR_ALERT : COLOR_BD_0);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
   : Fl_Choice(x, y, w, h, l), angle(ang)
 {

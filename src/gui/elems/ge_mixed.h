@@ -128,34 +128,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gSoundMeter : public Fl_Box
-{
-public:
-	gSoundMeter(int X,int Y,int W,int H,const char *L=0);
-	void draw();
-	bool clip;
-	float mixerPeak;	// peak from mixer
-private:
-	float peak;
-	float db_level;
-	float db_level_old;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gBeatMeter : public Fl_Box
-{
-public:
-	gBeatMeter(int X,int Y,int W,int H,const char *L=0);
-	void draw();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 class gChoice : public Fl_Choice
 {
 public:
