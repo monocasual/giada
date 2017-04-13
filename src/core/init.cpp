@@ -84,6 +84,7 @@ void init_prepareParser()
 void init_prepareKernelAudio()
 {
   kernelAudio::openDevice();
+  clock::init();
 	mixer::init();
 	recorder::init();
 
@@ -101,7 +102,6 @@ void init_prepareKernelAudio()
 
 #endif
 
-  giada::clock::init();
 }
 
 
