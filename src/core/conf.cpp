@@ -52,7 +52,7 @@ Avoids funky values from config file. */
 
 void sanitize()
 {
-	if (!(soundSystem & SYS_API_ANY)) soundSystem = G_DEFAULT_SOUNDSYS;
+	if (!(soundSystem & G_SYS_API_ANY)) soundSystem = G_DEFAULT_SOUNDSYS;
 	if (soundDeviceOut < 0) soundDeviceOut = G_DEFAULT_SOUNDDEV_OUT;
 	if (soundDeviceIn < -1) soundDeviceIn = G_DEFAULT_SOUNDDEV_IN;
 	if (channelsOut < 0) channelsOut = 0;

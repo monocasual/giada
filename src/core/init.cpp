@@ -92,7 +92,7 @@ void init_prepareKernelAudio()
 	/* If with Jack don't use buffer size stored in Conf. Use real buffersize
 	from the soundcard (kernelAudio::realBufsize). */
 
-	if (conf::soundSystem == SYS_API_JACK)
+	if (conf::soundSystem == G_SYS_API_JACK)
 		pluginHost::init(kernelAudio::getRealBufSize(), conf::samplerate);
 	else
 		pluginHost::init(conf::buffersize, conf::samplerate);

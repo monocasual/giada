@@ -92,35 +92,31 @@
 
 
 /* -- kernel audio ---------------------------------------------------------- */
-#define SYS_API_NONE		0x00  // 0000 0000
-#define SYS_API_JACK		0x01  // 0000 0001
-#define SYS_API_ALSA		0x02  // 0000 0010
-#define SYS_API_DS			0x04  // 0000 0100
-#define SYS_API_ASIO		0x08  // 0000 1000
-#define SYS_API_CORE		0x10  // 0001 0000
-#define SYS_API_PULSE   0x20  // 0010 0000
-#define SYS_API_WASAPI  0x40  // 0100 0000
-#define SYS_API_ANY     0x7F  // 0111 1111
-
-#define KERNEL_OK					 0
-#define KERNEL_UNDERRUN	  -1
-#define KERNEL_CRITICAL	  -2
+#define G_SYS_API_NONE		0x00  // 0000 0000
+#define G_SYS_API_JACK		0x01  // 0000 0001
+#define G_SYS_API_ALSA		0x02  // 0000 0010
+#define G_SYS_API_DS			0x04  // 0000 0100
+#define G_SYS_API_ASIO		0x08  // 0000 1000
+#define G_SYS_API_CORE		0x10  // 0001 0000
+#define G_SYS_API_PULSE   0x20  // 0010 0000
+#define G_SYS_API_WASAPI  0x40  // 0100 0000
+#define G_SYS_API_ANY     0x7F  // 0111 1111
 
 
 
 /* -- kernel midi ----------------------------------------------------------- */
-#define MIDI_API_JACK		0x01  // 0000 0001
-#define MIDI_API_ALSA		0x02  // 0000 0010
+#define G_MIDI_API_JACK		0x01  // 0000 0001
+#define G_MIDI_API_ALSA		0x02  // 0000 0010
 
 
 
 /* -- default system -------------------------------------------------------- */
 #if defined(__linux__)
-	#define G_DEFAULT_SOUNDSYS	SYS_API_NONE
+	#define G_DEFAULT_SOUNDSYS	G_SYS_API_NONE
 #elif defined(_WIN32)
-	#define G_DEFAULT_SOUNDSYS 	SYS_API_DS
+	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_DS
 #elif defined(__APPLE__)
-	#define G_DEFAULT_SOUNDSYS 	SYS_API_CORE
+	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_CORE
 #endif
 
 #define G_DEFAULT_SOUNDDEV_OUT    0      // FIXME - please override with rtAudio::getDefaultDevice (or similar)

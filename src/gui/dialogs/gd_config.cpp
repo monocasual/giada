@@ -138,18 +138,18 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("PulseAudio");
 
 	switch (conf::soundSystem) {
-		case SYS_API_NONE:
+		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
-		case SYS_API_ALSA:
+		case G_SYS_API_ALSA:
 			soundsys->showItem("ALSA");
 			break;
-		case SYS_API_JACK:
+		case G_SYS_API_JACK:
 			soundsys->showItem("Jack");
 			buffersize->deactivate();
 			samplerate->deactivate();
 			break;
-		case SYS_API_PULSE:
+		case G_SYS_API_PULSE:
 			soundsys->showItem("PulseAudio");
 			break;
 	}
@@ -164,16 +164,16 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("WASAPI");
 
 	switch (conf::soundSystem) {
-		case SYS_API_NONE:
+		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
-		case SYS_API_DS:
+		case G_SYS_API_DS:
 			soundsys->showItem("DirectSound");
 			break;
-		case SYS_API_ASIO:
+		case G_SYS_API_ASIO:
 			soundsys->showItem("ASIO");
 			break;
-		case SYS_API_WASAPI:
+		case G_SYS_API_WASAPI:
 			soundsys->showItem("WASAPI");
 			break;
 	}
@@ -184,10 +184,10 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 		soundsys->add("CoreAudio");
 
 	switch (conf::soundSystem) {
-		case SYS_API_NONE:
+		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
-		case SYS_API_CORE:
+		case G_SYS_API_CORE:
 			soundsys->showItem("CoreAudio");
 			break;
 	}
@@ -204,7 +204,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	devOutInfo->callback(cb_showOutputInfo, this);
 	devInInfo->callback(cb_showInputInfo, this);
 
-	if (conf::soundSystem != SYS_API_NONE) {
+	if (conf::soundSystem != G_SYS_API_NONE) {
 		fetchSoundDevs();
 		fetchOutChans(sounddevOut->value());
 		fetchInChans(sounddevIn->value());
@@ -514,32 +514,32 @@ void gTabAudio::save()
 	string text = soundsys->text(soundsys->value());
 
 	if (text == "(none)") {
-		conf::soundSystem = SYS_API_NONE;
+		conf::soundSystem = G_SYS_API_NONE;
 		return;
 	}
 
 #if defined(__linux__)
 
 	else if (text == "ALSA")
-		conf::soundSystem = SYS_API_ALSA;
+		conf::soundSystem = G_SYS_API_ALSA;
 	else if (text == "Jack")
-		conf::soundSystem = SYS_API_JACK;
+		conf::soundSystem = G_SYS_API_JACK;
 	else if (text == "PulseAudio")
-		conf::soundSystem = SYS_API_PULSE;
+		conf::soundSystem = G_SYS_API_PULSE;
 
 #elif defined(_WIN32)
 
 	else if (text == "DirectSound")
-		conf::soundSystem = SYS_API_DS;
+		conf::soundSystem = G_SYS_API_DS;
 	else if (text == "ASIO")
-		conf::soundSystem = SYS_API_ASIO;
+		conf::soundSystem = G_SYS_API_ASIO;
 	else if (text == "WASAPI")
-		conf::soundSystem = SYS_API_WASAPI;
+		conf::soundSystem = G_SYS_API_WASAPI;
 
 #elif defined (__APPLE__)
 
 	else if (text == "CoreAudio")
-		conf::soundSystem = SYS_API_CORE;
+		conf::soundSystem = G_SYS_API_CORE;
 
 #endif
 

@@ -99,29 +99,29 @@ int openDevice()
 
 #if defined(__linux__)
 
-	if (api == SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
+	if (api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		rtSystem = new RtAudio(RtAudio::UNIX_JACK);
 	else
-	if (api == SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
+	if (api == G_SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
 		rtSystem = new RtAudio(RtAudio::LINUX_ALSA);
 	else
-	if (api == SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
+	if (api == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
 		rtSystem = new RtAudio(RtAudio::LINUX_PULSE);
 
 #elif defined(_WIN32)
 
-	if (api == SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
+	if (api == G_SYS_API_DS && hasAPI(RtAudio::WINDOWS_DS))
 		rtSystem = new RtAudio(RtAudio::WINDOWS_DS);
 	else
-	if (api == SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
+	if (api == G_SYS_API_ASIO && hasAPI(RtAudio::WINDOWS_ASIO))
 		rtSystem = new RtAudio(RtAudio::WINDOWS_ASIO);
 	else
-	if (api == SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
+	if (api == G_SYS_API_WASAPI && hasAPI(RtAudio::WINDOWS_WASAPI))
 		rtSystem = new RtAudio(RtAudio::WINDOWS_WASAPI);
 
 #elif defined(__APPLE__)
 
-	if (api == SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
+	if (api == G_SYS_API_CORE && hasAPI(RtAudio::MACOSX_CORE))
 		rtSystem = new RtAudio(RtAudio::MACOSX_CORE);
 
 #endif
@@ -175,7 +175,7 @@ int openDevice()
 
 #if defined(__linux__) || defined(__APPLE__)
 
-	if (api == SYS_API_JACK) {
+	if (api == G_SYS_API_JACK) {
 		conf::samplerate = getFreq(conf::soundDeviceOut, 0);
 		gu_log("[KA] JACK in use, freq = %d\n", conf::samplerate);
 	}
@@ -470,7 +470,7 @@ string getRtAudioVersion()
 
 const JackState &jackTransportQuery()
 {
-	if (api != SYS_API_JACK)
+	if (api != G_SYS_API_JACK)
     return jackState;
   jack_position_t position;
 	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
@@ -486,7 +486,7 @@ const JackState &jackTransportQuery()
 
 void jackStart()
 {
-	if (api == SYS_API_JACK)
+	if (api == G_SYS_API_JACK)
 		jack_transport_start(jackGetHandle());
 }
 
@@ -496,7 +496,7 @@ void jackStart()
 
 void jackSetPosition(uint32_t frame)
 {
-	if (api != SYS_API_JACK)
+	if (api != G_SYS_API_JACK)
     return;
   jack_position_t position;
   jack_transport_query(jackGetHandle(), &position);
@@ -510,7 +510,7 @@ void jackSetPosition(uint32_t frame)
 
 void jackSetBpm(double bpm)
 {
-  if (api != SYS_API_JACK)
+  if (api != G_SYS_API_JACK)
     return;
   jack_position_t position;
   jack_transport_query(jackGetHandle(), &position);
@@ -528,7 +528,7 @@ void jackSetBpm(double bpm)
 
 void jackStop()
 {
-	if (api == SYS_API_JACK)
+	if (api == G_SYS_API_JACK)
 		jack_transport_stop(jackGetHandle());
 }
 
