@@ -74,6 +74,10 @@ public:
 
 	void draw();
 	int  handle(int e);
+
+  /* updateActions
+  Repositions existing actions after a zoom gesture. */
+  
 	void updateActions();
 
 	/* cursorOnItem

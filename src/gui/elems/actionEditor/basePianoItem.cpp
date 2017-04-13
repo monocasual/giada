@@ -25,38 +25,22 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_PIANO_ITEM_ORPHANED_H
-#define GE_PIANO_ITEM_ORPHANED_H
-
-
-#include "../../../core/recorder.h"
+#include "pianoRoll.h"
 #include "basePianoItem.h"
 
 
-class gdActionEditor;
-
-
-class gePianoItemOrphaned : public geBasePianoItem
+geBasePianoItem::geBasePianoItem(int x, int y, int w, gdActionEditor *pParent)
+  : Fl_Box  (x, y, w, gePianoRoll::CELL_H),
+    pParent (pParent),
+    selected(false)
 {
-private:
-
-  struct giada::recorder::action *action;
-
-	int note;
-	int frame;
-	int event;
-
-public:
-
-  static const int WIDTH = 12;
-
-  gePianoItemOrphaned(int x, int y, int xRel, int yRel,
-    struct giada::recorder::action *action, gdActionEditor *pParent);
-
-  void draw() override;
-
-  void reposition(int pianoRollX) override;
-};
+}
 
 
-#endif
+/* -------------------------------------------------------------------------- */
+
+
+int geBasePianoItem::getY(int note)
+{
+  return (gePianoRoll::MAX_KEYS * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
+}

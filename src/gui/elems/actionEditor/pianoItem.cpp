@@ -43,14 +43,12 @@ using namespace giada;
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a,
   recorder::action *_b, gdActionEditor *pParent)
-	: Fl_Box  (X, Y, MIN_WIDTH, gePianoRoll::CELL_H),
-	  a       (_a),
-	  b       (_b),
-		pParent (pParent),
-		selected(false),
-		event_a (0x00),
-		event_b (0x00),
-		changed (false)
+	: geBasePianoItem(X, Y, MIN_WIDTH, pParent),
+	  a              (_a),
+	  b              (_b),
+		event_a        (0x00),
+		event_b        (0x00),
+		changed        (false)
 {
 	/* a is a pointer: action exists, needs to be displayed */
 
@@ -75,6 +73,20 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_
 		record();
 		size((frame_b - frame_a) / pParent->zoom, h());
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoItem::reposition(int pianoRollX)
+{
+  int newX = pianoRollX + (frame_a / pParent->zoom);
+  int newW = ((frame_b - frame_a) / pParent->zoom);
+  if (newW < MIN_WIDTH)
+    newW = MIN_WIDTH;
+  resize(newX, y(), newW, h());
+  redraw();
 }
 
 
@@ -340,13 +352,4 @@ int gePianoItem::getRelY()
 int gePianoItem::getRelX()
 {
   return x() - parent()->x();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gePianoItem::getY(int note)
-{
-  return (gePianoRoll::MAX_KEYS * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
 }

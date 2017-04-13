@@ -127,6 +127,8 @@ src/gui/elems/actionEditor/pianoRoll.h              \
 src/gui/elems/actionEditor/pianoRoll.cpp            \
 src/gui/elems/actionEditor/noteEditor.h		          \
 src/gui/elems/actionEditor/noteEditor.cpp           \
+src/gui/elems/actionEditor/basePianoItem.h          \
+src/gui/elems/actionEditor/basePianoItem.cpp        \
 src/gui/elems/actionEditor/pianoItem.h              \
 src/gui/elems/actionEditor/pianoItem.cpp            \
 src/gui/elems/actionEditor/pianoItemOrphaned.h      \

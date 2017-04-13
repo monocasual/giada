@@ -116,7 +116,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			}
 			else {
         gu_log("[geNoteEditor] recorder didn't find requested action! "
-          "Adding orphaned event\n");
+          "Adding orphaned item\n");
         new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
       }
 	  }
@@ -340,23 +340,6 @@ int gePianoRoll::handle(int e)
 
 void gePianoRoll::updateActions()
 {
-	/* when zooming, don't delete and re-add actions, just MOVE them. This
-	 * function shifts the action by a zoom factor. Those singlepress are
-	 * stretched, as well */
-
-	gePianoItem *i;
-	for (int k=0; k<children(); k++) {
-		i = static_cast<gePianoItem*>(child(k));
-
-		//gu_log("found point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
-
-		int newX = x() + (i->getFrame_a() / pParent->zoom);
-		int newW = ((i->getFrame_b() - i->getFrame_a()) / pParent->zoom);
-		if (newW < 8)
-			newW = 8;
-		i->resize(newX, i->y(), newW, i->h());
-		i->redraw();
-
-		//gu_log("update point %p, frame_a=%d frame_b=%d, x()=%d\n", (void*) i, i->getFrame_a(), i->getFrame_b(), i->x());
-	}
+	for (int k=0; k<children(); k++)
+		static_cast<geBasePianoItem*>(child(k))->reposition(x());
 }

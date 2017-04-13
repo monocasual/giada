@@ -26,6 +26,8 @@
 
 
 #include "../../../core/const.h"
+#include "../../../core/kernelMidi.h"
+#include "../../dialogs/gd_actionEditor.h"
 #include "pianoRoll.h"
 #include "pianoItemOrphaned.h"
 
@@ -35,12 +37,26 @@ using namespace giada;
 
 gePianoItemOrphaned::gePianoItemOrphaned(int x, int y, int xRel, int yRel,
   recorder::action *action, gdActionEditor *pParent)
-  : Fl_Box  (x, y, WIDTH, gePianoRoll::CELL_H),
-    action  (action),
-    pParent (pParent),
-    selected(false)
+  : geBasePianoItem(x, y, WIDTH, pParent),
+    action         (action)
 {
+  note  = kernelMidi::getB2(action->iValue);
+  frame = action->frame;
+  event = action->iValue;
+  int newX = xRel + (frame / pParent->zoom);
+  int newY = yRel + getY(note);
+  resize(newX, newY, w(), h());
+}
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoItemOrphaned::reposition(int pianoRollX)
+{
+  int newX = pianoRollX + (frame / pParent->zoom);
+  resize(newX, y(), WIDTH, h());
+  redraw();
 }
 
 
@@ -49,5 +65,5 @@ gePianoItemOrphaned::gePianoItemOrphaned(int x, int y, int xRel, int yRel,
 
 void gePianoItemOrphaned::draw()
 {
-  fl_rectf(x(), y()+2, WIDTH, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+  fl_rect(x(), y()+2, WIDTH, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
 }

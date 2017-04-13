@@ -29,14 +29,14 @@
 #define GE_PIANO_ITEM_H
 
 
-#include <FL/Fl_Box.H>
 #include "../../../core/recorder.h"
+#include "basePianoItem.h"
 
 
 class gdActionEditor;
 
 
-class gePianoItem : public Fl_Box
+class gePianoItem : public geBasePianoItem
 {
 private:
 
@@ -53,11 +53,6 @@ private:
 
 	int getNote(int rel_y);
 
-	/* getY
-	 * from a note, return the y position on piano roll */
-
-	int getY(int note);
-
 	/* overlap
 	 * check if this item don't overlap with another one. */
 
@@ -65,9 +60,7 @@ private:
 
 	struct giada::recorder::action *a;
 	struct giada::recorder::action *b;
-	gdActionEditor *pParent;
 
-	bool selected;
 	int  push_x;
 
 	/* MIDI note, start frame, end frame - Used only if it's a newly added
@@ -109,14 +102,12 @@ public:
 		struct giada::recorder::action *b, gdActionEditor *pParent);
 
 	void draw() override;
-	int  handle(int e) override;
-  
+	int handle(int e) override;
+
+  void reposition(int pianoRollX) override;
+
 	void record();
 	void remove();
-
-	int getFrame_a() { return frame_a; }
-	int getFrame_b() { return frame_b; }
-	int getNote()    { return note;    }
 };
 
 
