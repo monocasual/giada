@@ -38,6 +38,22 @@ class gdActionEditor;
 
 class gePianoItemOrphaned : public Fl_Box
 {
+private:
+
+  struct giada::recorder::action *action;
+
+  gdActionEditor *pParent;
+
+  bool selected;
+
+public:
+
+  static const int WIDTH = 10;
+
+  gePianoItemOrphaned(int x, int y, int xRel, int yRel,
+    struct giada::recorder::action *action, gdActionEditor *pParent);
+
+  void draw() override;
 
 };
 

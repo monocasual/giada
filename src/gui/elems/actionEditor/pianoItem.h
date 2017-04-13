@@ -108,8 +108,9 @@ public:
 	gePianoItem(int x, int y, int rel_x, int rel_y, struct giada::recorder::action *a,
 		struct giada::recorder::action *b, gdActionEditor *pParent);
 
-	void draw();
-	int  handle(int e);
+	void draw() override;
+	int  handle(int e) override;
+  
 	void record();
 	void remove();
 

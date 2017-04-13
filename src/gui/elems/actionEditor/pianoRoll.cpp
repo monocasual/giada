@@ -35,6 +35,7 @@
 #include "../../../utils/log.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "pianoItem.h"
+#include "pianoItemOrphaned.h"
 #include "noteEditor.h"
 #include "pianoRoll.h"
 
@@ -113,9 +114,11 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 				prev = a2;
 				a2 = nullptr;
 			}
-			else
-				gu_log("[geNoteEditor] recorder didn't find requested action!\n");
-        // TODO - create new gOrphanedPianoItem
+			else {
+        gu_log("[geNoteEditor] recorder didn't find requested action! "
+          "Adding orphaned event\n");
+        new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
+      }
 	  }
 	}
 

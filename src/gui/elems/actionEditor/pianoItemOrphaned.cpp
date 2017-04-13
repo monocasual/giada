@@ -25,4 +25,29 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "../../../core/const.h"
+#include "pianoRoll.h"
 #include "pianoItemOrphaned.h"
+
+
+using namespace giada;
+
+
+gePianoItemOrphaned::gePianoItemOrphaned(int x, int y, int xRel, int yRel,
+  recorder::action *action, gdActionEditor *pParent)
+  : Fl_Box  (x, y, WIDTH, gePianoRoll::CELL_H),
+    action  (action),
+    pParent (pParent),
+    selected(false)
+{
+
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoItemOrphaned::draw()
+{
+  fl_rectf(x(), y()+2, WIDTH, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+}
