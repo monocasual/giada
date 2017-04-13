@@ -417,4 +417,28 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::global.at(3).at(0)->frame == 300);
     REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_MUTEOFF);
   }
+
+  SECTION("Test overdub, cover all")
+  {
+    recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 100, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEON,  120, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 200, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEON,  220, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 300, 1, 0.5f);
+
+    /* Overdub all existing actions. Expected result: a single composite one. */
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 16);
+    recorder::stopOverdub(500, 500, &mutex);
+
+    REQUIRE(recorder::frames.size() == 2);
+    REQUIRE(recorder::global.size() == 2);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 500);
+
+    REQUIRE(recorder::global.at(0).at(0)->frame == 0);
+    REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(1).at(0)->frame == 500);
+    REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+  }
 }
