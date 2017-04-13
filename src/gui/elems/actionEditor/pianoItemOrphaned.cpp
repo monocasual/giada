@@ -27,8 +27,12 @@
 
 #include "../../../core/const.h"
 #include "../../../core/kernelMidi.h"
+#include "../../../core/recorder.h"
+#include "../../../core/channel.h"
+#include "../../../core/mixer.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "pianoRoll.h"
+#include "noteEditor.h"
 #include "pianoItemOrphaned.h"
 
 
@@ -57,6 +61,32 @@ void gePianoItemOrphaned::reposition(int pianoRollX)
   int newX = pianoRollX + (frame / pParent->zoom);
   resize(newX, y(), WIDTH, h());
   redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gePianoItemOrphaned::handle(int e)
+{
+  if (e == FL_PUSH) {
+    remove();
+    return 1;
+  }
+  return 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoItemOrphaned::remove()
+{
+  recorder::deleteAction(pParent->chan->index, frame, G_ACTION_MIDI, true,
+    &mixer::mutex_recs, event, 0.0);
+  hide();   // for Windows
+  Fl::delete_widget(this);
+  static_cast<geNoteEditor*>(parent())->redraw();
 }
 
 

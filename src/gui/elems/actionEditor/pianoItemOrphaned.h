@@ -54,8 +54,11 @@ public:
     struct giada::recorder::action *action, gdActionEditor *pParent);
 
   void draw() override;
+  int handle(int e) override;
 
   void reposition(int pianoRollX) override;
+
+  void remove();
 };
 
 
