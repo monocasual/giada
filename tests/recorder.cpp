@@ -309,7 +309,7 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::frames.at(1) == 80);
   }
 
-  SECTION("Test overdub")
+  SECTION("Test overdub, full overwrite")
   {
     recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
     recorder::rec(0, G_ACTION_MUTEOFF,  80, 1, 0.5f);
@@ -329,5 +329,92 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
     REQUIRE(recorder::global.at(1).at(0)->frame == 500);
     REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+  }
+
+  SECTION("Test overdub, left overlap")
+  {
+    recorder::rec(0, G_ACTION_MUTEON,  100, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+
+    /* Overdub part of the leftmost part of a composite action. Expected result:
+    a new composite action.
+    Original:    ----|########|
+    Overdub:     |#######|-----
+    Result:      |#######|----- */
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 16);
+    recorder::stopOverdub(300, 500, &mutex);
+
+    REQUIRE(recorder::frames.size() == 2);
+    REQUIRE(recorder::global.size() == 2);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 300);
+
+    REQUIRE(recorder::global.at(0).at(0)->frame == 0);
+    REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(1).at(0)->frame == 300);
+    REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+  }
+
+  SECTION("Test overdub, right overlap")
+  {
+    recorder::rec(0, G_ACTION_MUTEON,  000, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+
+    /* Overdub part of the rightmost part of a composite action. Expected result:
+    a new composite action.
+    Original:    |########|------
+    Overdub:     -----|#######|--
+    Result:      |###||#######|-- */
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 100, 16);
+    recorder::stopOverdub(500, 500, &mutex);
+
+    REQUIRE(recorder::frames.size() == 4);
+    REQUIRE(recorder::global.size() == 4);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 84); // 100 - bufferSize (16)
+    REQUIRE(recorder::frames.at(2) == 100);
+    REQUIRE(recorder::frames.at(3) == 500);
+
+    REQUIRE(recorder::global.at(0).at(0)->frame == 0);
+    REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(1).at(0)->frame == 84);
+    REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+
+    REQUIRE(recorder::global.at(2).at(0)->frame == 100);
+    REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(3).at(0)->frame == 500);
+    REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_MUTEOFF);
+  }
+
+  SECTION("Test overdub, hole diggin'")
+  {
+    recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+
+    /* Overdub in the middle of a long, composite action. Expected result:
+    original action trimmed down plus anther action next to it. Total frames
+    should be 4.
+    Original:    |#############|
+    Overdub:     ---|#######|---
+    Result:      |#||#######|--- */
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 100, 16);
+    recorder::stopOverdub(300, 500, &mutex);
+
+    REQUIRE(recorder::frames.size() == 4);
+    REQUIRE(recorder::global.size() == 4);
+    REQUIRE(recorder::frames.at(0) == 0);
+    REQUIRE(recorder::frames.at(1) == 84); // 100 - bufferSize (16)
+    REQUIRE(recorder::frames.at(2) == 100);
+    REQUIRE(recorder::frames.at(3) == 300);
+
+    REQUIRE(recorder::global.at(0).at(0)->frame == 0);
+    REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(1).at(0)->frame == 84);
+    REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+
+    REQUIRE(recorder::global.at(2).at(0)->frame == 100);
+    REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_MUTEON);
+    REQUIRE(recorder::global.at(3).at(0)->frame == 300);
+    REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_MUTEOFF);
   }
 }
