@@ -460,4 +460,25 @@ TEST_CASE("Test Recorder")
     REQUIRE(recorder::global.at(1).at(0)->frame == 284);
     REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
   }
+
+  SECTION("Test overdub, ring loop")
+  {
+    /* A ring loop occurs when you record the last action beyond the end of
+    the sequencer.
+    Original:    ---|#######|---
+    Overdub:     #####|------|##
+    Result:      ---|#######||#| */
+
+    recorder::rec(0, G_ACTION_MUTEON,  200, 1, 0.5f);
+    recorder::rec(0, G_ACTION_MUTEOFF, 300, 1, 0.5f);
+
+    recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 400, 16);
+    recorder::stopOverdub(250, 700, &mutex);
+
+    REQUIRE(recorder::frames.size() == 4);
+    REQUIRE(recorder::frames.at(0) == 200);
+    REQUIRE(recorder::frames.at(1) == 300);
+    REQUIRE(recorder::frames.at(2) == 400);
+    REQUIRE(recorder::frames.at(3) == 700);
+  }
 }
