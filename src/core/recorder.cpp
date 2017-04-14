@@ -51,20 +51,27 @@ struct composite
 	action a2;
 } cmp;
 
-/* print
-Debug of the frame stack. */
-/*
-void print()
+
+/* -------------------------------------------------------------------------- */
+
+
+/* fixOverdubTruncation
+Fixes underlying action truncation when overdubbing over a longer action. I.e.:
+  Original:    |#############|
+  Overdub:     ---|#######|---
+  fix:         |#||#######|--- */
+
+void fixOverdubTruncation(const composite &comp, pthread_mutex_t *mixerMutex)
 {
-	gu_log("[recorder::print] ** print debug **\n");
-	for (unsigned i=0; i<global.size(); i++) {
-		gu_log("  frame %d\n", frames.at(i));
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-			gu_log("    action %d | chan %d | frame %d\n", global.at(i).at(j)->type,
-        global.at(i).at(j)->chan, global.at(i).at(j)->frame);
-		}
-	}
-}*/
+  action *next = nullptr;
+  int res = getNextAction(comp.a2.chan, comp.a1.type | comp.a2.type, comp.a2.frame,
+    &next);
+  if (res != 1 || next->type != comp.a2.type)
+    return;
+  gu_log("[recorder::fixOverdubTruncation] add truncation at frame %d, type=%d\n",
+    next->frame, next->type);
+  deleteAction(next->chan, next->frame, next->type, false, mixerMutex);
+}
 
 }; // {anonymous}
 
@@ -616,41 +623,45 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex)
 	bool ringLoop = false;
 	bool nullLoop = false;
 
-	/* ring loop verification, i.e. a composite action with key_press at
-	 * frame N and key_release at frame M, with M <= N */
+	/* Check for ring loops or null loops. Ring loop: a composite action with
+  key_press at frame N and key_release at frame M, with M <= N.
+  Null loop: a composite action that begins and ends on the very same frame,
+  i.e. with 0 size. Very unlikely.
+  If ring loop: record the last action at the end of the sequencer (that
+  is 'totalFrames').
+  If null loop: remove previous action and do nothing. Also make sure to avoid
+  underlying action truncation, if the null loop occurs inside a composite
+  action. */
 
-	if (cmp.a2.frame < cmp.a1.frame) {
+	if (cmp.a2.frame < cmp.a1.frame) {  // ring loop
 		ringLoop = true;
 		gu_log("[recorder::stopOverdub] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, totalFrames); // record at the end of the sequencer
+		rec(cmp.a2.chan, cmp.a2.type, totalFrames);
 	}
 	else
-	if (cmp.a2.frame == cmp.a1.frame) {
+	if (cmp.a2.frame == cmp.a1.frame) { // null loop
 		nullLoop = true;
 		gu_log("[recorder::stopOverdub] null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, mixerMutex); // false == don't check values
-	}
+    fixOverdubTruncation(cmp, mixerMutex);
+  }
 
-	/* remove any nested action between keypress----keyrel, then record */
+  if (nullLoop)
+    return;
 
-	if (!nullLoop) {
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, mixerMutex);
-		deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, mixerMutex);
-	}
+	/* Remove any nested action between keypress----keyrel. */
 
-	if (!ringLoop && !nullLoop) {
-		rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
+	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, mixerMutex);
+	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, mixerMutex);
 
-		/* avoid underlying action truncation, if keyrel happens inside a
-		* composite action */
+  if (ringLoop)
+    return;
 
-		action *act = nullptr;
-		int res = getNextAction(cmp.a2.chan, cmp.a1.type | cmp.a2.type, cmp.a2.frame, &act);
-		if (res == 1 && act->type == cmp.a2.type) {
-			gu_log("[recorder::stopOverdub] add truncation at frame %d, type=%d\n", act->frame, act->type);
-			deleteAction(act->chan, act->frame, act->type, false, mixerMutex); // false == don't check values
-		}
-	}
+  /* Record second part of the composite action. Also make sure to avoid
+  underlying action truncation, if keyrel happens inside a composite action. */
+
+	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
+  fixOverdubTruncation(cmp, mixerMutex);
 }
 
 
