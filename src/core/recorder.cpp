@@ -577,8 +577,7 @@ int getAction(int chan, char action, int frame, struct action **out)
 /* -------------------------------------------------------------------------- */
 
 
-void startOverdub(int index, char actionMask, int frame,
-  unsigned bufferSize)
+void startOverdub(int index, char actionMask, int frame, unsigned bufferSize)
 {
 	/* prepare the composite struct */
 

@@ -95,8 +95,7 @@ bool canRec(Channel *ch, bool clockRunning, bool mixerRecording);
 /* rec
  * record an action. */
 
-void rec(int chan, int action, int frame, uint32_t iValue=0,
-	float fValue=0.0f);
+void rec(int chan, int action, int frame, uint32_t iValue=0, float fValue=0.0f);
 
 /* clearChan
  * clear all actions from a channel. */
