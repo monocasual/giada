@@ -17,6 +17,8 @@
 - Lots of code refactoring
 - New test suite for Action Recorder
 - Fix obscure bug when overdubbing actions and a null loop occurs
+- Improve action filtering in Piano Roll editor
+- Initial support for channel-based MIDI filtering
 
 
 0.13.3 --- 2017 . 03 . 25
