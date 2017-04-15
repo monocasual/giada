@@ -335,6 +335,22 @@ void MidiChannel::receiveMidi(uint32_t msg)
   if (!armed)
     return;
 
+  /* Filter time, based on MIDI channel. If midiFilter == -1, all messages
+  are taken into account. */
+  /* TODO - actual MIDI filtering not yet implemented. */
+
+  if (midiFilter != -1)
+  {
+    gu_log("[Channel::processMidi] MIDI channel filtering not yet implemented\n");
+    return;
+  }
+
+  /* Now all messages are turned into Channel-0 messages. Giada doesn't care about
+  holding MIDI channel information. Moreover, having all internal messages on
+  channel 0 is way easier. */
+
+  msg = kernelMidi::setChannel(msg, 0);
+
 #ifdef WITH_VST
 
   while (true) {
