@@ -81,7 +81,8 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
         - does not belong to this channel
         - is not a MIDI action (we only want MIDI things here)
         - is the previous one (we have already checked it)
-        - (later on) if it's NOTE_OFF (0x80): we want note on only */
+        - TODO - is not a MIDI Note On type. We don't want any other kind of
+          action here */
 
       if (a1->chan != pParent->chan->index)
 				continue;
@@ -91,12 +92,12 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 				continue;
 
 			/* extract MIDI infos from a1: if is note off skip it, we are looking
-			 * for note on only */
+			 * for Note On only */
 
 			int a1_type = kernelMidi::getB1(a1->iValue);
 			int a1_note = kernelMidi::getB2(a1->iValue);
 
-			if (a1_type == 0x80) // NOTE_OFF
+			if (a1_type != 0x90) // Note On
 				continue;
 
 			/* Search for the next action. Must have: same channel, G_ACTION_MIDI,
