@@ -53,6 +53,12 @@ int getB3(uint32_t iValue);
 
 uint32_t getIValue(int b1, int b2, int b3);
 
+/* setChannel
+Changes MIDI channel number inside iValue. Returns new message with updated
+channel. */
+
+uint32_t setChannel(uint32_t iValue, int channel);
+
 /* send
  * send a MIDI message 's' (uint32_t). */
 

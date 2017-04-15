@@ -486,6 +486,16 @@ uint32_t getIValue(int b1, int b2, int b3)
 /* -------------------------------------------------------------------------- */
 
 
+uint32_t setChannel(uint32_t iValue, int channel)
+{
+  uint32_t chanMask = 0xF << 24;
+  return (iValue & (~chanMask)) | (channel << 24);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 string getRtMidiVersion()
 {
 	return midiOut->getVersion();
