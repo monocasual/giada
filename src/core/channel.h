@@ -65,6 +65,12 @@ protected:
 
 	int bufferSize;
 
+  /* midiFilter
+  Which MIDI channel should be filtered out when receiving MIDI messages. -1
+  means 'all'. */
+  
+  int midiFilter;
+
 	/* sendMidiLMessage
 	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
 	 * it to KernelMidi. */

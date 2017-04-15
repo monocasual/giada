@@ -51,6 +51,7 @@ using namespace giada;
 
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
+  midiFilter     (-1),
   type           (type),
 	status         (status),
 	key            (0),
