@@ -67,13 +67,11 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 	recorder::action *prev = nullptr;
 
 	for (unsigned i=0; i<recorder::frames.size(); i++) {
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
-			/* don't show actions > than the grey area */
-			/** FIXME - can we move this to the outer cycle? */
+    if (recorder::frames.at(i) > clock::getTotalFrames()) // don't show actions > gray area
+      continue;
 
-			if (recorder::frames.at(i) > clock::getTotalFrames())
-				continue;
+    for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
 			recorder::action *a1 = recorder::global.at(i).at(j);
 
@@ -81,7 +79,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
         - does not belong to this channel
         - is not a MIDI action (we only want MIDI things here)
         - is the previous one (we have already checked it)
-        - TODO - is not a MIDI Note On type. We don't want any other kind of
+        - (later on) is not a MIDI Note On type. We don't want any other kind of
           action here */
 
       if (a1->chan != pParent->chan->index)
