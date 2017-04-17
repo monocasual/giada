@@ -46,7 +46,6 @@ class geActionEditor;
 class geMuteEditor;
 class geEnvelopeEditor;
 class geNoteEditor;
-class gActionWidget;
 
 
 /* gActionEditor
@@ -87,8 +86,6 @@ public:
 	geMuteEditor     *mc;
 	geEnvelopeEditor *vc;
 	geNoteEditor     *pr;
-
-	std::vector <gActionWidget*> widgets;
 
 	Channel *chan;
 
