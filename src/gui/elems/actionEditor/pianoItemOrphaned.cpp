@@ -70,11 +70,12 @@ void gePianoItemOrphaned::reposition(int pianoRollX)
 
 int gePianoItemOrphaned::handle(int e)
 {
+  int ret = geBasePianoItem::handle(e);
   if (e == FL_PUSH) {
     remove();
-    return 1;
+    ret = 1;
   }
-  return 0;
+  return ret;
 }
 
 

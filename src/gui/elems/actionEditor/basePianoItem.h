@@ -54,6 +54,8 @@ protected:
 public:
 
   virtual void reposition(int pianoRollX) = 0;
+
+  int handle(int e) override;
 };
 
 

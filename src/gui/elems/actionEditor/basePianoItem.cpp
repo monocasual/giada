@@ -40,6 +40,28 @@ geBasePianoItem::geBasePianoItem(int x, int y, int w, gdActionEditor *pParent)
 /* -------------------------------------------------------------------------- */
 
 
+int geBasePianoItem::handle(int e)
+{
+  int ret = 0;
+	switch (e) {
+		case FL_ENTER:
+      selected = true;
+      redraw();
+      ret = 1;
+      break;
+    case FL_LEAVE:
+      selected = false;
+      redraw();
+      ret = 1;
+      break;
+  }
+  return ret;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int geBasePianoItem::getY(int note)
 {
   return (gePianoRoll::MAX_KEYS * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
