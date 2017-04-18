@@ -16,9 +16,10 @@
 - Removed support for old ini-based MIDImap files
 - Lots of code refactoring
 - New test suite for Action Recorder
-- Fix obscure bug when overdubbing actions and a null loop occurs
 - Improve action filtering in Piano Roll editor
 - Initial support for channel-based MIDI filtering
+- Fix obscure bug when overdubbing actions and a null loop occurs
+- Fix "clear all actions" menu refresh when removing items on Piano Roll
 
 
 0.13.3 --- 2017 . 03 . 25
