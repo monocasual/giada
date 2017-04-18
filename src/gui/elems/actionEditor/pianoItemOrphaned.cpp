@@ -29,6 +29,7 @@
 #include "../../../core/kernelMidi.h"
 #include "../../../core/recorder.h"
 #include "../../../core/channel.h"
+#include "../../../core/midiChannel.h"
 #include "../../../core/mixer.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "pianoRoll.h"
@@ -82,10 +83,12 @@ int gePianoItemOrphaned::handle(int e)
 
 void gePianoItemOrphaned::remove()
 {
-  recorder::deleteAction(pParent->chan->index, frame, G_ACTION_MIDI, true,
+  MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
+  recorder::deleteAction(ch->index, frame, G_ACTION_MIDI, true,
     &mixer::mutex_recs, event, 0.0);
   hide();   // for Windows
   Fl::delete_widget(this);
+  ch->hasActions = recorder::hasActions(ch->index);
   static_cast<geNoteEditor*>(parent())->redraw();
 }
 
