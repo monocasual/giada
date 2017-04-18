@@ -58,8 +58,8 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 	drawSurface1();
 	drawSurface2();
 
-	/* add actions when the window is opened. Position is zoom-based. MIDI
-	 * actions come always in pair: start + end. */
+	/* Add actions when the window is opened. Position is zoom-based. MIDI actions
+  come always in pair: noteOn + noteOff. */
 
 	recorder::sortActions();
 
@@ -89,13 +89,25 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			if (a1 == prev)
 				continue;
 
-			/* extract MIDI infos from a1: if is note off skip it, we are looking
-			 * for Note On only */
+			/* Extract MIDI infos from a1: if is note off skip it, we are looking for
+      noteOn only. */
 
 			int a1_type = kernelMidi::getB1(a1->iValue);
 			int a1_note = kernelMidi::getB2(a1->iValue);
 
-			if (a1_type != 0x90) // Note On
+      /* If two same notes are found (noteOn-noteOn, noteOff-noteOff) or the
+      very first action is a noteOff, add orphaned item.*/
+
+      if ((prev && a1_type == prev->type) || a1_type == 0x80) {
+        gu_log("[geNoteEditor] invalid note pair! Add orphaned item\n");
+        new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
+        a2 = nullptr;
+        continue;
+      }
+
+      /* Now skip anything that is not a noteOn. */
+
+			if (a1_type != 0x90)
 				continue;
 
 			/* Search for the next action. Must have: same channel, G_ACTION_MIDI,
@@ -106,7 +118,8 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 			recorder::getNextAction(a1->chan, G_ACTION_MIDI, a1->frame, &a2,
 					kernelMidi::getIValue(0x80, a1_note, 0xFF));
 
-			/* next action note_off found: add a new gePianoItem to piano roll */
+			/* Next action note_off found: add a new gePianoItem to piano roll. Add
+      an orphaned piano item otherwise.  */
 
 			if (a2) {
 				new gePianoItem(0, 0, x(), y(), a1, a2, pParent);
@@ -114,8 +127,7 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 				a2 = nullptr;
 			}
 			else {
-        gu_log("[geNoteEditor] recorder didn't find requested action! "
-          "Adding orphaned item\n");
+        gu_log("[geNoteEditor] noteOff not found! Add orphaned item\n");
         new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
       }
 	  }
