@@ -33,7 +33,7 @@
 #include "../../core/channel.h"
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
-#include "../elems/ge_pluginBrowser.h"
+#include "../elems/pluginBrowser.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/choice.h"

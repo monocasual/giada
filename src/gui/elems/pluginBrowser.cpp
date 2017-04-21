@@ -33,7 +33,7 @@
 #include "../../core/pluginHost.h"
 #include "ge_mixed.h"
 #include "basics/boxtypes.h"
-#include "ge_pluginBrowser.h"
+#include "pluginBrowser.h"
 
 
 using std::vector;

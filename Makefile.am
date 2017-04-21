@@ -113,8 +113,8 @@ src/gui/elems/browser.h		         \
 src/gui/elems/browser.cpp          \
 src/gui/elems/soundMeter.h		     \
 src/gui/elems/soundMeter.cpp       \
-src/gui/elems/ge_pluginBrowser.h   \
-src/gui/elems/ge_pluginBrowser.cpp \
+src/gui/elems/pluginBrowser.h      \
+src/gui/elems/pluginBrowser.cpp    \
 src/gui/elems/sampleEditor/waveform.h               \
 src/gui/elems/sampleEditor/waveform.cpp             \
 src/gui/elems/sampleEditor/waveTools.h              \
