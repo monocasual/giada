@@ -43,6 +43,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"
+#include "../elems/basics/box.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
@@ -123,7 +124,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	channelsIn  = new geChoice(x()+92,  y()+149, 55,  20, "Input channels");
 	delayComp   = new geInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
 	rsmpQuality = new geChoice(x()+92, y()+177, 253, 20, "Resampling");
-                new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
+                new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();
 	labelsize(GUI_FONT_SIZE_BASE);
@@ -590,7 +591,7 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
 	midiMap	  = new geChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
 	sync	    = new geChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
-	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
+	new geBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(GUI_FONT_SIZE_BASE);
@@ -802,13 +803,13 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 {
 	begin();
 	Fl_Group *radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
-		new gBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
+		new geBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
 		recsStopOnChanHalt_1 = new gRadio(x()+25, y()+35, 280, 20, "stop it immediately");
 		recsStopOnChanHalt_0 = new gRadio(x()+25, y()+55, 280, 20, "play it until finished");
 	radioGrp_1->end();
 
 	Fl_Group *radioGrp_2 = new Fl_Group(x(), y()+70, w(), 70); // radio group for the mutex
-		new gBox(x(), y()+80, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
+		new geBox(x(), y()+80, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
 		chansStopOnSeqHalt_1 = new gRadio(x()+25, y()+105, 280, 20, "stop immediately all dynamic channels");
 		chansStopOnSeqHalt_0 = new gRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
@@ -867,7 +868,7 @@ gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 {
 	folderPath = new geInput(x()+w()-250, y()+8, 250, 20);
 	scanButton = new geButton(x()+w()-120, folderPath->y()+folderPath->h()+8, 120, 20);
-	info       = new gBox(x(), scanButton->y()+scanButton->h()+8, w(), 242);
+	info       = new geBox(x(), scanButton->y()+scanButton->h()+8, w(), 242);
 
 	end();
 

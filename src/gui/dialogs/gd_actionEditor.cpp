@@ -37,6 +37,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/resizerBar.h"
 #include "../elems/basics/choice.h"
+#include "../elems/basics/box.h"
 #include "../elems/actionEditor/actionEditor.h"
 #include "../elems/actionEditor/envelopeEditor.h"
 #include "../elems/actionEditor/muteEditor.h"
@@ -84,7 +85,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		gridTool = new geGridTool(8, 8, this);
 	}
 
-		gBox *b1   = new gBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
+		geBox *b1   = new geBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomIn     = new geButton(w()-8-40-4, 8, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
 		zoomOut    = new geButton(w()-8-20,   8, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	upperArea->end();

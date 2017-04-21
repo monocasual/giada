@@ -30,6 +30,7 @@
 #include "../../utils/string.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/box.h"
 #include "gd_devInfo.h"
 
 
@@ -42,7 +43,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 {
 	set_modal();
 
-	text  = new gBox(8, 8, 320, 200, "", (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
+	text  = new geBox(8, 8, 320, 200, "", (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 	close = new geButton(252, h()-28, 80, 20, "Close");
 	end();
 

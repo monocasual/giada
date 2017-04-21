@@ -32,7 +32,7 @@
 #include <FL/Fl_Window.H>
 
 
-class gBox;
+class geBox;
 class geButton;
 
 
@@ -40,7 +40,7 @@ class gdDevInfo : public Fl_Window
 {
 private:
 
-	gBox   	 *text;
+	geBox   	 *text;
 	geButton *close;
 
 public:

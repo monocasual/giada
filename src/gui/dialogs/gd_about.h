@@ -32,7 +32,7 @@
 #include "window.h"
 
 
-class gBox;
+class geBox;
 class geButton;
 
 
@@ -40,13 +40,13 @@ class gdAbout : public gdWindow
 {
 private:
 
-	gBox 	   *logo;
-	gBox 	   *text;
+	geBox 	   *logo;
+	geBox 	   *text;
 	geButton *close;
 
 #ifdef WITH_VST
-	gBox  *vstText;
-	gBox  *vstLogo;
+	geBox  *vstText;
+	geBox  *vstLogo;
 #endif
 
 public:

@@ -41,6 +41,7 @@
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"
 #include "../elems/basics/dial.h"
+#include "../elems/basics/box.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"
@@ -69,7 +70,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
     zoomOut = new geButton(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
     zoomIn  = new geButton(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
-  bar->resizable(new gBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
+  bar->resizable(new geBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
 
   /* waveform */
 
@@ -104,7 +105,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
     resetStartEnd = new geButton(chanEnd->x()+chanEnd->w()+4,     pitch->y()+pitch->h()+4, 60, 20, "Reset");
 
   tools->end();
-  tools->resizable(new gBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
+  tools->resizable(new geBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
 
   /* grid tool setup */
 

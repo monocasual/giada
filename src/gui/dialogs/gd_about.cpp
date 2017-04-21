@@ -37,6 +37,7 @@
 #include "../../utils/gui.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/box.h"
 #include "gd_about.h"
 
 
@@ -57,12 +58,12 @@ gdAbout::gdAbout()
 
 	set_modal();
 
-	logo  = new gBox(8, 10, 324, 86);
-	text  = new gBox(8, 120, 324, 145);
+	logo  = new geBox(8, 10, 324, 86);
+	text  = new geBox(8, 120, 324, 145);
 	close = new geButton(252, h()-28, 80, 20, "Close");
 #ifdef WITH_VST
-	vstLogo = new gBox(8, 265, 324, 50);
-	vstText = new gBox(8, 315, 324, 46);
+	vstLogo = new geBox(8, 265, 324, 50);
+	vstText = new geBox(8, 315, 324, 46);
 #endif
 	end();
 

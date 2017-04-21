@@ -25,41 +25,17 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_KEYGRABBER_H
-#define GD_KEYGRABBER_H
+#include "../../../core/const.h"
+#include "box.h"
 
 
-#include <FL/Fl.H>
-#include "window.h"
-
-
-class Channel;
-class geBox;
-class geButton;
-
-
-class gdKeyGrabber : public gdWindow
+geBox::geBox(int x, int y, int w, int h, const char *l, Fl_Align al)
+: Fl_Box(x, y, w, h)
 {
-private:
-
-	Channel *ch;
-
-	geBox    *text;
-	geButton *clear;
-	geButton *cancel;
-
-	static void cb_clear (Fl_Widget *w, void *p);
-	static void cb_cancel(Fl_Widget *w, void *p);
-	inline void __cb_clear ();
-	inline void __cb_cancel();
-
-	void setButtonLabel(int key);
-	void updateText(int key);
-
-public:
-
-	gdKeyGrabber(Channel *ch);
-	int handle(int e);
-};
-
-#endif
+  copy_label(l);
+  labelsize(GUI_FONT_SIZE_BASE);
+  box(FL_NO_BOX);
+  labelcolor(COLOR_TEXT_0);
+  if (al != 0)
+    align(al | FL_ALIGN_INSIDE);
+}

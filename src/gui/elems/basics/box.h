@@ -25,41 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_KEYGRABBER_H
-#define GD_KEYGRABBER_H
+#ifndef GE_BOX_H
+#define GE_BOX_H
 
 
-#include <FL/Fl.H>
-#include "window.h"
+#include <FL/Fl_Box.H>
 
 
-class Channel;
-class geBox;
-class geButton;
-
-
-class gdKeyGrabber : public gdWindow
+class geBox : public Fl_Box
 {
-private:
-
-	Channel *ch;
-
-	geBox    *text;
-	geButton *clear;
-	geButton *cancel;
-
-	static void cb_clear (Fl_Widget *w, void *p);
-	static void cb_cancel(Fl_Widget *w, void *p);
-	inline void __cb_clear ();
-	inline void __cb_cancel();
-
-	void setButtonLabel(int key);
-	void updateText(int key);
-
 public:
 
-	gdKeyGrabber(Channel *ch);
-	int handle(int e);
+  geBox(int x, int y, int w, int h, const char *l=0, Fl_Align al=FL_ALIGN_CENTER);
 };
+
 
 #endif

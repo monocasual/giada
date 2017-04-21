@@ -31,7 +31,7 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/midiChannel.h"
 #include "../../utils/log.h"
-#include "../elems/ge_mixed.h"
+#include "../elems/basics/box.h"
 #include "../elems/mainWindow/keyboard/keyboard.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "../elems/mainWindow/keyboard/channelButton.h"
@@ -47,7 +47,7 @@ gdKeyGrabber::gdKeyGrabber(Channel *ch)
 	: gdWindow(300, 126, "Key configuration"), ch(ch)
 {
 	set_modal();
-	text   = new gBox(8, 8, 284, 80, "");
+	text   = new geBox(8, 8, 284, 80, "");
 	clear  = new geButton(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
 	cancel = new geButton(clear->x()-88, clear->y(), 80, 20, "Close");
 	end();

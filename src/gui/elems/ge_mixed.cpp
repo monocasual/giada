@@ -54,22 +54,6 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-
-gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
-: Fl_Box(x, y, w, h)
-{
-  copy_label(L);
-  labelsize(GUI_FONT_SIZE_BASE);
-  box(FL_NO_BOX);
-  labelcolor(COLOR_TEXT_0);
-  if (al != 0)
-    align(al | FL_ALIGN_INSIDE);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gCheck::gCheck(int x, int y, int w, int h, const char *L)
 : Fl_Check_Button(x, y, w, h, L) {}
 

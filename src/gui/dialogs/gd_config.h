@@ -44,7 +44,7 @@ class geChoice;
 class gCheck;
 class geInput;
 class gRadio;
-class gBox;
+class geBox;
 
 
 class gdConfig : public gdWindow
@@ -209,7 +209,7 @@ public:
 
 	geInput   *folderPath;
 	geButton *scanButton;
-	gBox     *info;
+	geBox     *info;
 
 	gTabPlugins(int x, int y, int w, int h);
 

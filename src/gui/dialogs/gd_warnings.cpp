@@ -31,6 +31,7 @@
 #include "../../core/const.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/box.h"
 #include "gd_warnings.h"
 
 
@@ -42,7 +43,7 @@ void gdAlert(const char *c)
 			300, 90, "Alert");
 	modal->set_modal();
 	modal->begin();
-		gBox *box = new gBox(10, 10, 280, 40, c);
+		geBox *box = new geBox(10, 10, 280, 40, c);
 		geButton *b = new geButton(210, 60, 80, 20, "Close");
 	modal->end();
 	box->labelsize(GUI_FONT_SIZE_BASE);
@@ -61,7 +62,7 @@ int gdConfirmWin(const char *title, const char *msg)
 			300, 90, title);
 	win->set_modal();
 	win->begin();
-		new gBox(10, 10, 280, 40, msg);
+		new geBox(10, 10, 280, 40, msg);
 		geButton *ok = new geButton(212, 62, 80, 20, "Ok");
 		geButton *ko = new geButton(124, 62, 80, 20, "Cancel");
 	win->end();

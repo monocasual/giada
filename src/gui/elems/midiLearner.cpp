@@ -25,9 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "ge_mixed.h"
 #include "basics/boxtypes.h"
 #include "basics/button.h"
+#include "basics/box.h"
 #include "midiLearner.h"
 
 
@@ -41,7 +41,7 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
 		param   (param)
 {
 	begin();
-	text   = new gBox(x(), y(), 156, 20, l);
+	text   = new geBox(x(), y(), 156, 20, l);
 	value  = new geButton(text->x()+text->w()+4, y(), 80, 20);
 	button = new geButton(value->x()+value->w()+4, y(), 40, 20, "learn");
 	end();

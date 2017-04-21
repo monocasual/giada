@@ -35,7 +35,7 @@
 
 class gdMidiInput;
 class geMidiLearner;
-class gBox;
+class geBox;
 class geButton;
 
 
@@ -50,7 +50,7 @@ private:
 
 	giada::kernelMidi::cb_midiLearn *callback;
 
-	gBox     *text;
+	geBox     *text;
 	geButton *value;
 	geButton *button;
 

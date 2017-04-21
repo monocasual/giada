@@ -33,6 +33,7 @@
 #include "../../core/plugin.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
+#include "../elems/basics/box.h"
 #include "../elems/basics/liquidScroll.h"
 #include "gd_pluginWindow.h"
 
@@ -45,7 +46,7 @@ Parameter::Parameter(int paramIndex, Plugin *p, int X, int Y, int W)
 {
 	begin();
 
-		label = new gBox(x(), y(), 60, 20);
+		label = new geBox(x(), y(), 60, 20);
 		label->copy_label(pPlugin->getParameterName(paramIndex).c_str());
 		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
@@ -53,7 +54,7 @@ Parameter::Parameter(int paramIndex, Plugin *p, int X, int Y, int W)
 		slider->value(pPlugin->getParameter(paramIndex));
 		slider->callback(cb_setValue, (void *)this);
 
-		value = new gBox(slider->x()+slider->w()+8, y(), 100, 20);
+		value = new geBox(slider->x()+slider->w()+8, y(), 100, 20);
 		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 		value->box(G_CUSTOM_BORDER_BOX);
 		updateValue();

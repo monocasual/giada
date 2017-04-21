@@ -36,7 +36,7 @@
 
 
 class Plugin;
-class gBox;
+class geBox;
 class gSlider;
 
 
@@ -71,9 +71,9 @@ private:
 
 public:
 
-  gBox    *label;
+  geBox    *label;
 	gSlider *slider;
-	gBox    *value;
+	geBox    *value;
 
 	Parameter(int paramIndex, Plugin *p, int x, int y, int w);
 };

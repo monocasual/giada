@@ -39,6 +39,7 @@
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/scroll.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/box.h"
 #include "midiInputChannel.h"
 
 
@@ -71,7 +72,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
   Fl_Group *groupButtons = new Fl_Group(8, container->y()+container->h()+8, container->w(), 20);
   groupButtons->begin();
 
-    gBox *spacer = new gBox(groupButtons->x(), groupButtons->y(), 100, 20); 	// spacer window border <-> buttons
+    geBox *spacer = new geBox(groupButtons->x(), groupButtons->y(), 100, 20); 	// spacer window border <-> buttons
 	  ok = new geButton(w()-88, groupButtons->y(), 80, 20, "Close");
 
   groupButtons->resizable(spacer);
@@ -111,7 +112,7 @@ void gdMidiInputChannel::addChannelLearners()
   pack->spacing(4);
   pack->begin();
 
-    gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, "channel");
+    geBox *header = new geBox(0, 0, LEARNER_WIDTH, 20, "channel");
     header->box(FL_BORDER_BOX);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   cb_learn, &ch->midiInKeyPress);
     new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", cb_learn, &ch->midiInKeyRel);
@@ -146,7 +147,7 @@ void gdMidiInputChannel::addPluginLearners()
 
       Plugin *plugin = plugins->at(i);
 
-      gBox *header = new gBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().c_str());
+      geBox *header = new geBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().c_str());
       header->box(FL_BORDER_BOX);
 
       for (int k=0; k<plugin->getNumParameters(); k++)

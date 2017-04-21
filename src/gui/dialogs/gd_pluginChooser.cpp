@@ -37,6 +37,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/choice.h"
+#include "../elems/basics/box.h"
 #include "gd_pluginChooser.h"
 
 
@@ -49,7 +50,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Chan
   /* top area */
   Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);
   sortMethod = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
-    gBox *b1 = new gBox(sortMethod->x()+sortMethod->w(), group_top->y(), 100, 20); 	// spacer window border <-> menu
+    geBox *b1 = new geBox(sortMethod->x()+sortMethod->w(), group_top->y(), 100, 20); 	// spacer window border <-> menu
   group_top->resizable(b1);
   group_top->end();
 
@@ -58,7 +59,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Chan
 
   /* ok/cancel buttons */
   Fl_Group *group_btn = new Fl_Group(8, browser->y()+browser->h()+8, w()-16, h()-browser->h()-16);
-    gBox *b2 = new gBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
+    geBox *b2 = new geBox(8, browser->y()+browser->h(), 100, 20); 	// spacer window border <-> buttons
     addBtn = new geButton(w()-88, group_btn->y(), 80, 20, "Add");
     cancelBtn = new geButton(addBtn->x()-88, group_btn->y(), 80, 20, "Cancel");
   group_btn->resizable(b2);
