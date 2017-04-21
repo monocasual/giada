@@ -136,22 +136,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-/* gLiquidScroll
- * custom scroll that tells children to follow scroll's width when
- * resized. Thanks to Greg Ercolano from FLTK dev team.
- * http://seriss.com/people/erco/fltk/ */
-
-class gLiquidScroll : public Fl_Scroll
-{
-public:
-	gLiquidScroll(int x, int y, int w, int h, const char *l=0);
-	void resize(int x, int y, int w, int h);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 class gSlider : public Fl_Slider
 {
 public:

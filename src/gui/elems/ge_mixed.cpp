@@ -204,32 +204,6 @@ void gChoice::draw()
 /* -------------------------------------------------------------------------- */
 
 
-gLiquidScroll::gLiquidScroll(int x, int y, int w, int h, const char *l)
-  : Fl_Scroll(x, y, w, h, l)
-{
-  type(Fl_Scroll::VERTICAL);
-  scrollbar.color(COLOR_BG_0);
-  scrollbar.selection_color(COLOR_BG_1);
-  scrollbar.labelcolor(COLOR_BD_1);
-  scrollbar.slider(G_CUSTOM_BORDER_BOX);
-}
-
-
-void gLiquidScroll::resize(int X, int Y, int W, int H)
-{
-  int nc = children()-2;                // skip hscrollbar and vscrollbar
-  for ( int t=0; t<nc; t++) {           // tell children to resize to our new width
-    Fl_Widget *c = child(t);
-    c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
-  }
-  init_sizes();   // tell scroll children changed in size
-  Fl_Scroll::resize(X,Y,W,H);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gSlider::gSlider(int x, int y, int w, int h, const char *l)
   : Fl_Slider(x, y, w, h, l)
 {

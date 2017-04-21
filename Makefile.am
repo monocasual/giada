@@ -183,6 +183,8 @@ src/gui/elems/basics/resizerBar.h      \
 src/gui/elems/basics/resizerBar.cpp    \
 src/gui/elems/basics/input.h           \
 src/gui/elems/basics/input.cpp         \
+src/gui/elems/basics/liquidScroll.h    \
+src/gui/elems/basics/liquidScroll.cpp  \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

@@ -2,6 +2,11 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
+ * gLiquidScroll
+ * custom scroll that tells children to follow scroll's width when
+ * resized. Thanks to Greg Ercolano from FLTK dev team.
+ * http://seriss.com/people/erco/fltk/
+ *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -24,61 +29,33 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
 
-#ifndef GD_PLUGIN_WINDOW_H
-#define GD_PLUGIN_WINDOW_H
-
-
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include "window.h"
+#include "../../../core/const.h"
+#include "boxtypes.h"
+#include "liquidScroll.h"
 
 
-class Plugin;
-class gBox;
-class gSlider;
-
-
-class gdPluginWindow : public gdWindow
+geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, const char *l)
+  : Fl_Scroll(x, y, w, h, l)
 {
-private:
-
-  Plugin *pPlugin;
-
-public:
-
-  int id;
-
-	gdPluginWindow(Plugin *pPlugin);
-};
+  type(Fl_Scroll::VERTICAL);
+  scrollbar.color(COLOR_BG_0);
+  scrollbar.selection_color(COLOR_BG_1);
+  scrollbar.labelcolor(COLOR_BD_1);
+  scrollbar.slider(G_CUSTOM_BORDER_BOX);
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-class Parameter : public Fl_Group
+void geLiquidScroll::resize(int X, int Y, int W, int H)
 {
-private:
-
-  int paramIndex;
-	Plugin *pPlugin;
-
-	static void cb_setValue(Fl_Widget *v, void *p);
-	inline void __cb_setValue();
-
-	void updateValue();
-
-public:
-
-  gBox    *label;
-	gSlider *slider;
-	gBox    *value;
-
-	Parameter(int paramIndex, Plugin *p, int x, int y, int w);
-};
-
-
-#endif
-
-#endif // #ifdef WITH_VST
+  int nc = children()-2;                // skip hscrollbar and vscrollbar
+  for ( int t=0; t<nc; t++) {           // tell children to resize to our new width
+    Fl_Widget *c = child(t);
+    c->resize(c->x(), c->y(), W-24, c->h());    // W-24: leave room for scrollbar
+  }
+  init_sizes();   // tell scroll children changed in size
+  Fl_Scroll::resize(X,Y,W,H);
+}

@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_pluginWindow
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -35,6 +33,7 @@
 #include "../../core/plugin.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
+#include "../elems/basics/liquidScroll.h"
 #include "gd_pluginWindow.h"
 
 
@@ -103,7 +102,7 @@ gdPluginWindow::gdPluginWindow(Plugin *p)
 {
 	set_non_modal();
 
-	gLiquidScroll *list = new gLiquidScroll(8, 8, w()-16, h()-16);
+	geLiquidScroll *list = new geLiquidScroll(8, 8, w()-16, h()-16);
 	list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	list->begin();
 
