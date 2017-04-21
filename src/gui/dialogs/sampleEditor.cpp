@@ -39,6 +39,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
+#include "../elems/basics/choice.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"
@@ -62,7 +63,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
   bar->begin();
-    grid    = new gChoice(bar->x(), bar->y(), 50, 20);
+    grid    = new geChoice(bar->x(), bar->y(), 50, 20);
     snap    = new gCheck(grid->x()+grid->w()+4, bar->y()+4, 12, 12);
     zoomOut = new geButton(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
     zoomIn  = new geButton(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);

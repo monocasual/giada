@@ -40,7 +40,7 @@ class gTabMisc;
 class gTabPlugins;
 #endif
 class geButton;
-class gChoice;
+class geChoice;
 class gCheck;
 class geInput;
 class gRadio;
@@ -92,12 +92,12 @@ private:
 
 public:
 
-	gChoice *system;
-	gChoice *portOut;
-	gChoice *portIn;
+	geChoice *system;
+	geChoice *portOut;
+	geChoice *portIn;
 	gCheck  *noNoteOff;
-	gChoice *midiMap;
-	gChoice *sync;
+	geChoice *midiMap;
+	geChoice *sync;
 
 	gTabMidi(int x, int y, int w, int h);
 
@@ -126,23 +126,23 @@ private:
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
 	void fetchOutChans(int menuItem);
-	int  findMenuDevice(gChoice *m, int device);
+	int  findMenuDevice(geChoice *m, int device);
 
 	int soundsysInitValue;
 
 public:
 
-	gChoice *soundsys;
-	gChoice *samplerate;
-	gChoice *rsmpQuality;
-	gChoice *sounddevIn;
+	geChoice *soundsys;
+	geChoice *samplerate;
+	geChoice *rsmpQuality;
+	geChoice *sounddevIn;
 	geButton  *devInInfo;
-	gChoice *channelsIn;
-	gChoice *sounddevOut;
+	geChoice *channelsIn;
+	geChoice *sounddevOut;
 	geButton  *devOutInfo;
-	gChoice *channelsOut;
+	geChoice *channelsOut;
 	gCheck  *limitOutput;
-	gChoice *buffersize;
+	geChoice *buffersize;
 	geInput  *delayComp;
 
 	gTabAudio(int x, int y, int w, int h);
@@ -182,7 +182,7 @@ class gTabMisc : public Fl_Group
 {
 public:
 
-	gChoice *debugMsg;
+	geChoice *debugMsg;
 
 	gTabMisc(int x, int y, int w, int h);
 

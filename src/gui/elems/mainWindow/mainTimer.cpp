@@ -33,6 +33,7 @@
 #include "../../../utils/gui.h"
 #include "../../elems/ge_mixed.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/choice.h"
 #include "../../dialogs/gd_mainWindow.h"
 #include "../../dialogs/gd_bpmInput.h"
 #include "../../dialogs/gd_beatsInput.h"
@@ -50,7 +51,7 @@ geMainTimer::geMainTimer(int x, int y)
 {
 	begin();
 
-	quantizer  = new gChoice(x, y, 40, 20, "", false);
+	quantizer  = new geChoice(x, y, 40, 20, "", false);
 	bpm        = new geButton (quantizer->x()+quantizer->w()+4,  y, 40, 20);
 	meter      = new geButton (bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
 	multiplier = new geButton (meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);

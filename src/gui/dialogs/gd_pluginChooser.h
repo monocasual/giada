@@ -37,7 +37,7 @@
 
 
 class Channel;
-class gChoice;
+class geChoice;
 class geButton;
 class geButton;
 class gePluginBrowser;
@@ -50,7 +50,7 @@ private:
   Channel *ch;      // ch == nullptr ? masterOut
 	int stackType;
 
-  gChoice         *sortMethod;
+  geChoice         *sortMethod;
   geButton        *addBtn;
   geButton        *cancelBtn;
   gePluginBrowser *browser;

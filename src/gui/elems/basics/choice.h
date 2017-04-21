@@ -25,57 +25,24 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_GRID_TOOL_H
-#define GE_GRID_TOOL_H
+#ifndef GE_CHOICE_H
+#define GE_CHOICE_H
 
 
-#include <vector>
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Choice.H>
 
 
-class geChoice;
-class gCheck;
-class gdActionEditor;
-
-
-class geGridTool : public Fl_Group
+class geChoice : public Fl_Choice
 {
-private:
-
-  geChoice *gridType;
-	gCheck  *active;
-
-	gdActionEditor *parent;
-
-	static void cb_changeType(Fl_Widget *w, void *p);
-	inline void __cb_changeType();
-
 public:
 
-	geGridTool(int x, int y, gdActionEditor *parent);
-	~geGridTool();
+	geChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
+	void draw();
 
-	int  getValue();
-	bool isOn();
-	void calc();
+	void showItem(const char *c);
 
-	/* getSnapPoint
-	 * given a cursor position in input, return the x coordinates of the
-	 * nearest snap point (in pixel, clean, ie. not x()-shifted) */
-
-	int getSnapPoint(int v);
-	int getSnapFrame(int v);
-
-	/* getCellSize
-	 * return the size in pixel of a single cell of the grid. */
-
-	int getCellSize();
-
-	std::vector<int> points;   // points of the grid
-	std::vector<int> frames;   // frames of the grid
-
-	std::vector<int> bars;
-	std::vector<int> beats;
+	bool angle;
+	int  id;
 };
 
 

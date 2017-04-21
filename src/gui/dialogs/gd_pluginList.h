@@ -40,7 +40,7 @@ class Channel;
 class geButton;
 class gdPluginList;
 class geIdButton;
-class gChoice;
+class geChoice;
 
 
 class gdPluginList : public gdWindow
@@ -96,7 +96,7 @@ private:
 public:
 
 	geIdButton *button;
-	gChoice    *program;
+	geChoice    *program;
 	geIdButton *bypass;
 	geIdButton *shiftUp;
 	geIdButton *shiftDown;

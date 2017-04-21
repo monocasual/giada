@@ -36,6 +36,7 @@
 #include "../elems/ge_pluginBrowser.h"
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/choice.h"
 #include "gd_pluginChooser.h"
 
 
@@ -47,7 +48,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Chan
 {
   /* top area */
   Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);
-  sortMethod = new gChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
+  sortMethod = new geChoice(group_top->x() + 45, group_top->y(), 100, 20, "Sort by");
     gBox *b1 = new gBox(sortMethod->x()+sortMethod->w(), group_top->y(), 100, 20); 	// spacer window border <-> menu
   group_top->resizable(b1);
   group_top->end();

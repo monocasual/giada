@@ -33,7 +33,7 @@
 
 
 class geButton;
-class gChoice;
+class geChoice;
 
 
 class geMainTimer : public Fl_Group
@@ -42,7 +42,7 @@ private:
 
 	geButton *bpm;
 	geButton *meter;
-	gChoice  *quantizer;
+	geChoice  *quantizer;
 	geButton *multiplier;
 	geButton *divider;
 

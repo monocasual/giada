@@ -185,6 +185,8 @@ src/gui/elems/basics/input.h           \
 src/gui/elems/basics/input.cpp         \
 src/gui/elems/basics/liquidScroll.h    \
 src/gui/elems/basics/liquidScroll.cpp  \
+src/gui/elems/basics/choice.h          \
+src/gui/elems/basics/choice.cpp        \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

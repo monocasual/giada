@@ -44,6 +44,7 @@
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/idButton.h"
 #include "../elems/basics/statusButton.h"
+#include "../elems/basics/choice.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_pluginList.h"
@@ -225,7 +226,7 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 {
 	begin();
 	button    = new geIdButton(8, y(), 220, 20);
-	program   = new gChoice(button->x()+button->w()+4, y(), 132, 20);
+	program   = new geChoice(button->x()+button->w()+4, y(), 132, 20);
 	bypass    = new geIdButton(program->x()+program->w()+4, y(), 20, 20);
 	shiftUp   = new geIdButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
 	shiftDown = new geIdButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);

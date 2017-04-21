@@ -30,6 +30,7 @@
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/choice.h"
 #include "../../elems/mainWindow/keyboard/channel.h"
 #include "midiOutputMidiCh.h"
 
@@ -41,7 +42,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	begin();
 
 	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
-	chanListOut = new gChoice(w()-108, y()+8, 100, 20);
+	chanListOut = new geChoice(w()-108, y()+8, 100, 20);
 
 	enableLightning = new gCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);

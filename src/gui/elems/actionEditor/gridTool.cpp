@@ -30,6 +30,7 @@
 #include "../../../core/const.h"
 #include "../../../core/clock.h"
 #include "../../dialogs/gd_actionEditor.h"
+#include "../basics/choice.h"
 #include "../ge_mixed.h"
 #include "actionEditor.h"
 #include "gridTool.h"
@@ -41,7 +42,7 @@ using namespace giada;
 geGridTool::geGridTool(int x, int y, gdActionEditor *parent)
 	:	Fl_Group(x, y, 80, 20), parent(parent)
 {
-	gridType = new gChoice(x, y, 40, 20);
+	gridType = new geChoice(x, y, 40, 20);
 	gridType->add("1");
 	gridType->add("2");
 	gridType->add("3");

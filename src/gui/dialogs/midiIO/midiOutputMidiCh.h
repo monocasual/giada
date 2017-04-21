@@ -48,7 +48,7 @@ private:
 	inline void __cb_close();
 
 	class gCheck  *enableOut;
-	class gChoice *chanListOut;
+	class geChoice *chanListOut;
 
 	class MidiChannel *ch;
 

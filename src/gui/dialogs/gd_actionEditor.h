@@ -37,7 +37,7 @@
 
 
 class Channel;
-class gChoice;
+class geChoice;
 class geGridTool;
 class geButton;
 class geButton;
@@ -76,7 +76,7 @@ public:
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 
-	gChoice    *actionType;
+	geChoice    *actionType;
 	geGridTool *gridTool;
 	geButton   *zoomIn;
 	geButton   *zoomOut;

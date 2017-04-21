@@ -37,7 +37,7 @@ class geButton;
 class geWaveTools;
 class geInput;
 class gDial;
-class gChoice;
+class geChoice;
 class gCheck;
 
 
@@ -113,7 +113,7 @@ public:
 	geButton    *pitchDouble;
 	geButton    *pitchReset;
 	geButton    *close;
-	gChoice     *grid;
+	geChoice     *grid;
 	gCheck      *snap;
 
 	SampleChannel *ch;

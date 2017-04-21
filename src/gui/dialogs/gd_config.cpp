@@ -42,6 +42,7 @@
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
+#include "../elems/basics/choice.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
@@ -59,7 +60,7 @@ gTabMisc::gTabMisc(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Misc")
 {
 	begin();
-	debugMsg = new gChoice(x()+92,  y()+9,  253, 20, "Debug messages");
+	debugMsg = new geChoice(x()+92,  y()+9,  253, 20, "Debug messages");
 	end();
 
 	debugMsg->add("(disabled)");
@@ -110,18 +111,18 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Sound System")
 {
 	begin();
-	soundsys    = new gChoice(x()+92,  y()+9,  253, 20, "System");
-	buffersize  = new gChoice(x()+92,  y()+37, 55,  20, "Buffer size");
-	samplerate  = new gChoice(x()+290, y()+37, 55,  20, "Sample rate");
-	sounddevOut = new gChoice(x()+92,  y()+65, 225, 20, "Output device");
+	soundsys    = new geChoice(x()+92,  y()+9,  253, 20, "System");
+	buffersize  = new geChoice(x()+92,  y()+37, 55,  20, "Buffer size");
+	samplerate  = new geChoice(x()+290, y()+37, 55,  20, "Sample rate");
+	sounddevOut = new geChoice(x()+92,  y()+65, 225, 20, "Output device");
 	devOutInfo  = new geButton (x()+325, y()+65, 20,  20, "?");
-	channelsOut = new gChoice(x()+92,  y()+93, 55,  20, "Output channels");
+	channelsOut = new geChoice(x()+92,  y()+93, 55,  20, "Output channels");
 	limitOutput = new gCheck (x()+155, y()+97, 55,  20, "Limit output");
-	sounddevIn  = new gChoice(x()+92,  y()+121, 225, 20, "Input device");
+	sounddevIn  = new geChoice(x()+92,  y()+121, 225, 20, "Input device");
 	devInInfo   = new geButton (x()+325, y()+121, 20,  20, "?");
-	channelsIn  = new gChoice(x()+92,  y()+149, 55,  20, "Input channels");
+	channelsIn  = new geChoice(x()+92,  y()+149, 55,  20, "Input channels");
 	delayComp   = new geInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
-	rsmpQuality = new gChoice(x()+92, y()+177, 253, 20, "Resampling");
+	rsmpQuality = new geChoice(x()+92, y()+177, 253, 20, "Resampling");
                 new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();
@@ -418,7 +419,7 @@ void gTabAudio::fetchOutChans(int menuItem)
 /* -------------------------------------------------------------------------- */
 
 
-int gTabAudio::findMenuDevice(gChoice *m, int device)
+int gTabAudio::findMenuDevice(geChoice *m, int device)
 {
 	if (device == -1)
 		return 0;
@@ -583,12 +584,12 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "MIDI")
 {
 	begin();
-	system	  = new gChoice(x()+92, y()+9, 253, 20, "System");
-	portOut	  = new gChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
-	portIn	  = new gChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
+	system	  = new geChoice(x()+92, y()+9, 253, 20, "System");
+	portOut	  = new geChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
+	portIn	  = new geChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
 	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
-	midiMap	  = new gChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
-	sync	    = new gChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
+	midiMap	  = new geChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
+	sync	    = new geChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
 	new gBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 

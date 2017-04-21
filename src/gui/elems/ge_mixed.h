@@ -119,23 +119,6 @@ public:
 /* -------------------------------------------------------------------------- */
 
 
-class gChoice : public Fl_Choice
-{
-public:
-
-	gChoice(int X,int Y,int W,int H,const char *L=0, bool angle=true);
-	void draw();
-
-	inline void showItem(const char *c) {value(find_index(c)); }
-
-	bool angle;
-	int  id;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
 class gSlider : public Fl_Slider
 {
 public:

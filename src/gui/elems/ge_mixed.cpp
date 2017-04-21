@@ -156,50 +156,6 @@ gProgress::gProgress(int x, int y, int w, int h, const char *L)
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
-gChoice::gChoice(int x, int y, int w, int h, const char *l, bool ang)
-  : Fl_Choice(x, y, w, h, l), angle(ang)
-{
-  labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
-  box(FL_BORDER_BOX);
-  textsize(GUI_FONT_SIZE_BASE);
-  textcolor(COLOR_TEXT_0);
-  color(COLOR_BG_0);
-}
-
-
-void gChoice::draw()
-{
-  fl_rectf(x(), y(), w(), h(), COLOR_BG_0);              // bg
-  fl_rect(x(), y(), w(), h(), (Fl_Color) COLOR_BD_0);    // border
-  if (angle)
-    fl_polygon(x()+w()-8, y()+h()-1, x()+w()-1, y()+h()-8, x()+w()-1, y()+h()-1);
-
-  /* pick up the text() from the selected item (value()) and print it in
-   * the box and avoid overflows */
-
-  fl_color(!active() ? COLOR_BD_0 : COLOR_TEXT_0);
-  if (value() != -1) {
-    if (fl_width(text(value())) < w()-8) {
-      fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);
-    }
-    else {
-      std::string tmp = text(value());
-      int size        = tmp.size();
-      while (fl_width(tmp.c_str()) >= w()-16) {
-        tmp.resize(size);
-        size--;
-      }
-      tmp += "...";
-      fl_draw(tmp.c_str(), x(), y(), w(), h(), FL_ALIGN_CENTER);
-    }
-
-  }
-}
-
 
 /* -------------------------------------------------------------------------- */
 

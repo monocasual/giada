@@ -36,6 +36,7 @@
 #include "../elems/basics/scroll.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/resizerBar.h"
+#include "../elems/basics/choice.h"
 #include "../elems/actionEditor/actionEditor.h"
 #include "../elems/actionEditor/envelopeEditor.h"
 #include "../elems/actionEditor/muteEditor.h"
@@ -68,7 +69,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	upperArea->begin();
 
 	if (chan->type == CHANNEL_SAMPLE) {
-	  actionType = new gChoice(8, 8, 80, 20);
+	  actionType = new geChoice(8, 8, 80, 20);
 	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8, this);
 		actionType->add("key press");
 		actionType->add("key release");
