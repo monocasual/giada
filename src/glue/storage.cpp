@@ -40,7 +40,7 @@
 #include "../utils/gui.h"
 #include "../utils/log.h"
 #include "../utils/fs.h"
-#include "../gui/elems/ge_mixed.h"
+#include "../gui/elems/basics/progress.h"
 #include "../gui/elems/mainWindow/keyboard/column.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
@@ -310,7 +310,7 @@ void glue_loadPatch(void *data)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, gProgress *status, bool isProject)
+int glue_loadPatch__DEPR__(const char *fname, const char *fpath, geProgress *status, bool isProject)
 {
 	/* update browser's status bar with % 0.1 */
 

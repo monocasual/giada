@@ -101,14 +101,3 @@ void gRadio::draw()
   fl_color(COLOR_TEXT_0);
   fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gProgress::gProgress(int x, int y, int w, int h, const char *L)
-: Fl_Progress(x, y, w, h, L) {
-  color(COLOR_BG_0, COLOR_BD_0);
-  box(G_CUSTOM_BORDER_BOX);
-
-}

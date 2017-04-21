@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -28,16 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_GLUE_STORAGE_H
-#define G_GLUE_STORAGE_H
+#include "../../../core/const.h"
+#include "boxtypes.h"
+#include "progress.h"
 
 
-void glue_loadPatch  (void *data);
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class geProgress *status, bool isProject);
-void glue_savePatch  (void *data);
-void glue_saveProject(void *data);
-void glue_saveSample (void *data);
-void glue_loadSample (void *data);
-
-
-#endif
+geProgress::geProgress(int x, int y, int w, int h, const char *l)
+: Fl_Progress(x, y, w, h, l)
+{
+  color(COLOR_BG_0, COLOR_BD_0);
+  box(G_CUSTOM_BORDER_BOX);
+}

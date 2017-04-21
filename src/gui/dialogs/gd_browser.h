@@ -38,7 +38,7 @@ class gCheck;
 class geBrowser;
 class geButton;
 class geInput;
-class gProgress;
+class geProgress;
 
 
 class gdBaseBrowser : public gdWindow
@@ -52,7 +52,7 @@ protected:
 	geButton  *cancel;
 	geInput   *where;
  	geButton  *updir;
- 	gProgress *status;
+ 	geProgress *status;
 
 	static void cb_up               (Fl_Widget *v, void *p);
 	static void cb_close            (Fl_Widget *w, void *p);
@@ -86,7 +86,7 @@ public:
 
 	void setStatusBar(float v);
 
-	gProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
+	geProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
 	void showStatusBar();
 	void hideStatusBar();
   std::string getCurrentPath();

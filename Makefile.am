@@ -193,6 +193,8 @@ src/gui/elems/basics/box.h             \
 src/gui/elems/basics/box.cpp           \
 src/gui/elems/basics/slider.h          \
 src/gui/elems/basics/slider.cpp        \
+src/gui/elems/basics/progress.h        \
+src/gui/elems/basics/progress.cpp      \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

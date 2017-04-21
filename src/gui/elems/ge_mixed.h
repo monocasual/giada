@@ -45,7 +45,6 @@
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Radio_Button.H>
-#include <FL/Fl_Progress.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Choice.H>
@@ -81,16 +80,6 @@ class gRadio : public Fl_Radio_Button
 public:
 	gRadio(int x, int y, int w, int h, const char *L=0);
 	void draw();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gProgress : public Fl_Progress
-{
-public:
-	gProgress(int x, int y, int w, int h, const char *L=0);
 };
 
 

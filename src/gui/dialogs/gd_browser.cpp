@@ -34,6 +34,7 @@
 #include "../elems/browser.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
+#include "../elems/basics/progress.h"
 #include "gd_browser.h"
 
 
@@ -70,7 +71,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 	Fl_Group *groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w-16, 20);
 		ok  	  = new geButton(w-88, groupButtons->y(), 80, 20);
 		cancel  = new geButton(w-ok->w()-96, groupButtons->y(), 80, 20, "Cancel");
-		status  = new gProgress(8, groupButtons->y(), cancel->x()-16, 20);
+		status  = new geProgress(8, groupButtons->y(), cancel->x()-16, 20);
 		status->minimum(0);
 		status->maximum(1);
 		status->hide();   // show the bar only if necessary
