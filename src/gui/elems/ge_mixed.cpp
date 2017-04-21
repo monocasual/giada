@@ -112,22 +112,3 @@ gProgress::gProgress(int x, int y, int w, int h, const char *L)
   box(G_CUSTOM_BORDER_BOX);
 
 }
-
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gSlider::gSlider(int x, int y, int w, int h, const char *l)
-  : Fl_Slider(x, y, w, h, l)
-{
-  type(FL_HOR_FILL_SLIDER);
-
-  labelsize(GUI_FONT_SIZE_BASE);
-  align(FL_ALIGN_LEFT);
-  labelcolor(COLOR_TEXT_0);
-
-  box(G_CUSTOM_BORDER_BOX);
-  color(COLOR_BG_0);
-  selection_color(COLOR_BD_0);
-}

@@ -24,61 +24,22 @@
  *
  * -------------------------------------------------------------------------- */
 
-#ifdef WITH_VST
 
-#ifndef GD_PLUGIN_WINDOW_H
-#define GD_PLUGIN_WINDOW_H
-
-
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include "window.h"
+#include "../../../core/const.h"
+#include "boxtypes.h"
+#include "slider.h"
 
 
-class Plugin;
-class geBox;
-class geSlider;
-
-
-class gdPluginWindow : public gdWindow
+geSlider::geSlider(int x, int y, int w, int h, const char *l)
+ : Fl_Slider(x, y, w, h, l)
 {
-private:
+ type(FL_HOR_FILL_SLIDER);
 
-  Plugin *pPlugin;
+ labelsize(GUI_FONT_SIZE_BASE);
+ align(FL_ALIGN_LEFT);
+ labelcolor(COLOR_TEXT_0);
 
-public:
-
-  int id;
-
-	gdPluginWindow(Plugin *pPlugin);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class Parameter : public Fl_Group
-{
-private:
-
-  int paramIndex;
-	Plugin *pPlugin;
-
-	static void cb_setValue(Fl_Widget *v, void *p);
-	inline void __cb_setValue();
-
-	void updateValue();
-
-public:
-
-  geBox    *label;
-	geSlider *slider;
-	geBox    *value;
-
-	Parameter(int paramIndex, Plugin *p, int x, int y, int w);
-};
-
-
-#endif
-
-#endif // #ifdef WITH_VST
+ box(G_CUSTOM_BORDER_BOX);
+ color(COLOR_BG_0);
+ selection_color(COLOR_BD_0);
+}

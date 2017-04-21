@@ -94,15 +94,5 @@ public:
 };
 
 
-/* -------------------------------------------------------------------------- */
-
-
-class gSlider : public Fl_Slider
-{
-public:
-	gSlider(int x, int y, int w, int h, const char *l=0);
-	int id;
-};
-
 
 #endif

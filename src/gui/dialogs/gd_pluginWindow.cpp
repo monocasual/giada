@@ -35,6 +35,7 @@
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/box.h"
 #include "../elems/basics/liquidScroll.h"
+#include "../elems/basics/slider.h"
 #include "gd_pluginWindow.h"
 
 
@@ -50,7 +51,7 @@ Parameter::Parameter(int paramIndex, Plugin *p, int X, int Y, int W)
 		label->copy_label(pPlugin->getParameterName(paramIndex).c_str());
 		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-		slider = new gSlider(label->x()+label->w()+8, y(), W-200, 20);
+		slider = new geSlider(label->x()+label->w()+8, y(), W-200, 20);
 		slider->value(pPlugin->getParameter(paramIndex));
 		slider->callback(cb_setValue, (void *)this);
 

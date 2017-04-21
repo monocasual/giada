@@ -191,6 +191,8 @@ src/gui/elems/basics/dial.h            \
 src/gui/elems/basics/dial.cpp          \
 src/gui/elems/basics/box.h             \
 src/gui/elems/basics/box.cpp           \
+src/gui/elems/basics/slider.h          \
+src/gui/elems/basics/slider.cpp        \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \
