@@ -31,8 +31,8 @@
 #include "../../core/clock.h"
 #include "../../glue/main.h"
 #include "../../utils/gui.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/input.h"
 #include "gd_bpmInput.h"
 #include "gd_mainWindow.h"
 
@@ -51,8 +51,8 @@ gdBpmInput::gdBpmInput(const char *label)
 
 	set_modal();
 
-	input_a = new gInput(8,  8, 30, 20);
-	input_b = new gInput(42, 8, 20, 20);
+	input_a = new geInput(8,  8, 30, 20);
+	input_b = new geInput(42, 8, 20, 20);
 	ok 		  = new geButton(66, 8, 70, 20, "Ok");
 	end();
 

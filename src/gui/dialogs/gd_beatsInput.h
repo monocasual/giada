@@ -32,7 +32,7 @@
 #include "window.h"
 
 
-class gInput;
+class geInput;
 class geButton;
 class gCheck;
 
@@ -44,8 +44,8 @@ private:
 	static void cb_update_batt(Fl_Widget *w, void *p);
 	inline void __cb_update_batt();
 
-	gInput   *beats;
-	gInput   *bars;
+	geInput  *beats;
+	geInput  *bars;
 	geButton *ok;
 	gCheck   *resizeRec;
 

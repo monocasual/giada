@@ -62,15 +62,6 @@
 void __cb_window_closer(Fl_Widget *v, void *p);
 
 
-/* -------------------------------------------------------------------------- */
-
-
-class gInput : public Fl_Input
-{
-public:
-	gInput(int x, int y, int w, int h, const char *L=0);
-};
-
 
 /* -------------------------------------------------------------------------- */
 

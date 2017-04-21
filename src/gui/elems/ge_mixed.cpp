@@ -54,24 +54,6 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-gInput::gInput(int x, int y, int w, int h, const char *L)
-: Fl_Input(x, y, w, h, L)
-{
-  //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
-  box(G_CUSTOM_BORDER_BOX);
-  labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
-  color(COLOR_BG_DARK);
-  textcolor(COLOR_TEXT_0);
-  cursor_color(COLOR_TEXT_0);
-  selection_color(COLOR_BD_0);
-  textsize(GUI_FONT_SIZE_BASE);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gDial::gDial(int x, int y, int w, int h, const char *L)
 : Fl_Dial(x, y, w, h, L)
 {

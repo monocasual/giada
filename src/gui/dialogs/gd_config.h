@@ -42,7 +42,7 @@ class gTabPlugins;
 class geButton;
 class gChoice;
 class gCheck;
-class gInput;
+class geInput;
 class gRadio;
 class gBox;
 
@@ -143,7 +143,7 @@ public:
 	gChoice *channelsOut;
 	gCheck  *limitOutput;
 	gChoice *buffersize;
-	gInput  *delayComp;
+	geInput  *delayComp;
 
 	gTabAudio(int x, int y, int w, int h);
 
@@ -207,7 +207,7 @@ private:
 
 public:
 
-	gInput   *folderPath;
+	geInput   *folderPath;
 	geButton *scanButton;
 	gBox     *info;
 

@@ -33,6 +33,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/browser.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/input.h"
 #include "gd_browser.h"
 
 
@@ -48,7 +49,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 
 	groupTop = new Fl_Group(8, 8, w-16, 40);
     hiddenFiles = new gCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
-		where = new gInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
+		where = new geInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
 		updir	= new geButton(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
 	groupTop->resizable(where);
@@ -200,7 +201,7 @@ gdSaveBrowser::gdSaveBrowser(int x, int y, int w, int h, const string &title,
 
 	where->size(groupTop->w()-236, 20);
 
-	name = new gInput(where->x()+where->w()+8, where->y(), 200, 20);
+	name = new geInput(where->x()+where->w()+8, where->y(), 200, 20);
 	name->value(_name.c_str());
 	groupTop->add(name);
 

@@ -25,32 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_BPMINPUT_H
-#define GD_BPMINPUT_H
+#include "../../../core/const.h"
+#include "boxtypes.h"
+#include "input.h"
 
 
-#include "window.h"
-
-
-class geInput;
-class geButton;
-
-
-class gdBpmInput : public gdWindow
+geInput::geInput(int x, int y, int w, int h, const char *l)
+  : Fl_Input(x, y, w, h, l)
 {
-private:
-
-	static void cb_update_bpm(Fl_Widget *w, void *p);
-	inline void __cb_update_bpm();
-
-  geInput  *input_a;
-  geInput  *input_b;
-  geButton *ok;
-
-public:
-
-	gdBpmInput(const char *label); // pointer to mainWin->timing->bpm->label()
-	~gdBpmInput();
-};
-
-#endif
+  //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
+  box(G_CUSTOM_BORDER_BOX);
+  labelsize(GUI_FONT_SIZE_BASE);
+  labelcolor(COLOR_TEXT_0);
+  color(COLOR_BG_DARK);
+  textcolor(COLOR_TEXT_0);
+  cursor_color(COLOR_TEXT_0);
+  selection_color(COLOR_BD_0);
+  textsize(GUI_FONT_SIZE_BASE);
+}

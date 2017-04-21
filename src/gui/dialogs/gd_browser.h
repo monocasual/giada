@@ -37,7 +37,7 @@ class Fl_Group;
 class gCheck;
 class geBrowser;
 class geButton;
-class gInput;
+class geInput;
 class gProgress;
 
 
@@ -50,7 +50,7 @@ protected:
 	geBrowser *browser;
 	geButton  *ok;
 	geButton  *cancel;
-	gInput    *where;
+	geInput   *where;
  	geButton  *updir;
  	gProgress *status;
 
@@ -103,7 +103,7 @@ class gdSaveBrowser : public gdBaseBrowser
 {
 private:
 
-	gInput *name;
+	geInput *name;
 
 	static void cb_down(Fl_Widget *v, void *p);
 	static void cb_save(Fl_Widget *w, void *p);

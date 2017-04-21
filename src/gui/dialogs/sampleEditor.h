@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_editor
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -37,7 +35,7 @@
 class SampleChannel;
 class geButton;
 class geWaveTools;
-class gInput;
+class geInput;
 class gDial;
 class gChoice;
 class gCheck;
@@ -96,19 +94,19 @@ public:
 	geButton    *zoomIn;
 	geButton    *zoomOut;
 	geWaveTools *waveTools;
-	gInput      *chanStart;
-	gInput      *chanEnd;
+	geInput      *chanStart;
+	geInput      *chanEnd;
 	geButton		*resetStartEnd;
 	gDial       *volume;
-	gInput      *volumeNum;
+	geInput      *volumeNum;
 	gDial       *boost;
-	gInput      *boostNum;
+	geInput      *boostNum;
 	geButton    *normalize;
 	gDial       *pan;
-	gInput      *panNum;
+	geInput      *panNum;
 	geButton		*reload;
 	gDial  		  *pitch;
-	gInput  	  *pitchNum;
+	geInput  	  *pitchNum;
 	geButton    *pitchToBar;
 	geButton    *pitchToSong;
 	geButton    *pitchHalf;

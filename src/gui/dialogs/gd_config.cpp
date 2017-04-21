@@ -41,6 +41,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/input.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
@@ -119,7 +120,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	sounddevIn  = new gChoice(x()+92,  y()+121, 225, 20, "Input device");
 	devInInfo   = new geButton (x()+325, y()+121, 20,  20, "?");
 	channelsIn  = new gChoice(x()+92,  y()+149, 55,  20, "Input channels");
-	delayComp   = new gInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
+	delayComp   = new geInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
 	rsmpQuality = new gChoice(x()+92, y()+177, 253, 20, "Resampling");
                 new gBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
@@ -863,7 +864,7 @@ void gTabBehaviors::save()
 gTabPlugins::gTabPlugins(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Plugins")
 {
-	folderPath = new gInput(x()+w()-250, y()+8, 250, 20);
+	folderPath = new geInput(x()+w()-250, y()+8, 250, 20);
 	scanButton = new geButton(x()+w()-120, folderPath->y()+folderPath->h()+8, 120, 20);
 	info       = new gBox(x(), scanButton->y()+scanButton->h()+8, w(), 242);
 

@@ -25,32 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_BPMINPUT_H
-#define GD_BPMINPUT_H
+#ifndef GE_INPUT_H
+#define GE_INPUT_H
 
 
-#include "window.h"
+#include <FL/Fl_Input.H>
 
 
-class geInput;
-class geButton;
-
-
-class gdBpmInput : public gdWindow
+class geInput : public Fl_Input
 {
-private:
-
-	static void cb_update_bpm(Fl_Widget *w, void *p);
-	inline void __cb_update_bpm();
-
-  geInput  *input_a;
-  geInput  *input_b;
-  geButton *ok;
-
 public:
 
-	gdBpmInput(const char *label); // pointer to mainWin->timing->bpm->label()
-	~gdBpmInput();
+	geInput(int x, int y, int w, int h, const char *l=0);
 };
 
 #endif
