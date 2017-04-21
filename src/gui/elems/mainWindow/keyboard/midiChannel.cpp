@@ -44,6 +44,7 @@
 #include "../../basics/boxtypes.h"
 #include "../../basics/idButton.h"
 #include "../../basics/statusButton.h"
+#include "../../basics/dial.h"
 #include "midiChannel.h"
 
 
@@ -71,9 +72,9 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 	solo       = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
 	fx         = new geStatusButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol        = new gDial(fx->x()+fx->w()+4, y(), 20, 20);
+	vol        = new geDial(fx->x()+fx->w()+4, y(), 20, 20);
 #else
-	vol        = new gDial(solo->x()+solo->w()+4, y(), 20, 20);
+	vol        = new geDial(solo->x()+solo->w()+4, y(), 20, 20);
 #endif
 
 	end();

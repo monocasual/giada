@@ -25,61 +25,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MAIN_IO_H
-#define GE_MAIN_IO_H
+#include <FL/fl_draw.H>
+#include "../../../core/const.h"
+#include "dial.h"
 
 
-#include <FL/Fl_Group.H>
-
-class geSoundMeter;
-class geDial;
-#ifdef WITH_VST
-class geStatusButton;
-class geButton;
-#endif
-
-class geMainIO : public Fl_Group
+geDial::geDial(int x, int y, int w, int h, const char *l)
+: Fl_Dial(x, y, w, h, l)
 {
-private:
+  labelsize(GUI_FONT_SIZE_BASE);
+  labelcolor(COLOR_TEXT_0);
+  align(FL_ALIGN_LEFT);
+  type(FL_FILL_DIAL);
+  angles(0, 360);
+  color(COLOR_BG_0);            // background
+  selection_color(COLOR_BG_1);   // selection
+}
 
-	geSoundMeter *outMeter;
-	geSoundMeter *inMeter;
-	geDial        *outVol;
-	geDial        *inVol;
-#ifdef WITH_VST
-  geStatusButton *masterFxOut;
-  geStatusButton *masterFxIn;
-  geButton       *inToOut;
-#endif
 
-	static void cb_outVol     (Fl_Widget *v, void *p);
-	static void cb_inVol      (Fl_Widget *v, void *p);
-#ifdef WITH_VST
-	static void cb_masterFxOut(Fl_Widget *v, void *p);
-	static void cb_masterFxIn (Fl_Widget *v, void *p);
-	static void cb_inToOut    (Fl_Widget *v, void *p);
-#endif
+/* -------------------------------------------------------------------------- */
 
-	inline void __cb_outVol     ();
-	inline void __cb_inVol      ();
-#ifdef WITH_VST
-	inline void __cb_masterFxOut();
-	inline void __cb_masterFxIn ();
-	inline void __cb_inToOut    ();
-#endif
 
-public:
+void geDial::draw()
+{
+  double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
 
-	geMainIO(int x, int y);
+  fl_color(COLOR_BG_0);
+  fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
 
-	void refresh();
-
-	void setOutVol(float v);
-	void setInVol (float v);
-#ifdef WITH_VST
-	void setMasterFxOutFull(bool v);
-	void setMasterFxInFull(bool v);
-#endif
-};
-
-#endif
+  fl_color(COLOR_BD_0);
+  fl_arc(x(), y(), w(), h(), 0, 360);
+  fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
+}

@@ -66,14 +66,6 @@ void __cb_window_closer(Fl_Widget *v, void *p);
 /* -------------------------------------------------------------------------- */
 
 
-class gDial : public Fl_Dial
-{
-public:
-	gDial(int x, int y, int w, int h, const char *L=0);
-	void draw();
-};
-
-
 /* -------------------------------------------------------------------------- */
 
 

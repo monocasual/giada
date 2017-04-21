@@ -40,6 +40,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"
+#include "../elems/basics/dial.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/mainWindow/keyboard/channel.h"
@@ -79,17 +80,17 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
   tools->begin();
-    volume        = new gDial (tools->x()+50,                    tools->y(), 20, 20, "Volume");
+    volume        = new geDial (tools->x()+50,                    tools->y(), 20, 20, "Volume");
     volumeNum     = new geInput(volume->x()+volume->w()+4,        tools->y(), 46, 20, "dB");
 
-    boost         = new gDial (volumeNum->x()+volumeNum->w()+108, tools->y(), 20, 20, "Boost");
+    boost         = new geDial (volumeNum->x()+volumeNum->w()+108, tools->y(), 20, 20, "Boost");
     boostNum      = new geInput(boost->x()+boost->w()+4,           tools->y(), 44, 20, "dB");
 
     normalize     = new geButton(boostNum->x()+boostNum->w()+54,   tools->y(), 70, 20, "Normalize");
-    pan           = new gDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
+    pan           = new geDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
     panNum        = new geInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
 
-    pitch         = new gDial (tools->x()+50,                       volume->y()+volume->h()+4, 20, 20, "Pitch");
+    pitch         = new geDial (tools->x()+50,                       volume->y()+volume->h()+4, 20, 20, "Pitch");
     pitchNum      = new geInput(pitch->x()+pitch->w()+4,             volume->y()+volume->h()+4, 46, 20);
     pitchToBar    = new geButton(pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 60, 20, "To bar");
     pitchToSong   = new geButton(pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 60, 20, "To song");

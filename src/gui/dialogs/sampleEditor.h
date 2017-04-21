@@ -36,7 +36,7 @@ class SampleChannel;
 class geButton;
 class geWaveTools;
 class geInput;
-class gDial;
+class geDial;
 class geChoice;
 class gCheck;
 
@@ -97,15 +97,15 @@ public:
 	geInput      *chanStart;
 	geInput      *chanEnd;
 	geButton		*resetStartEnd;
-	gDial       *volume;
+	geDial       *volume;
 	geInput      *volumeNum;
-	gDial       *boost;
+	geDial       *boost;
 	geInput      *boostNum;
 	geButton    *normalize;
-	gDial       *pan;
+	geDial       *pan;
 	geInput      *panNum;
 	geButton		*reload;
-	gDial  		  *pitch;
+	geDial  		  *pitch;
 	geInput  	  *pitchNum;
 	geButton    *pitchToBar;
 	geButton    *pitchToSong;

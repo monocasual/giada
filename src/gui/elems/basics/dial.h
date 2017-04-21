@@ -25,61 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MAIN_IO_H
-#define GE_MAIN_IO_H
+#ifndef GE_DIAL_H
+#define GE_DIAL_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Dial.H>
 
-class geSoundMeter;
-class geDial;
-#ifdef WITH_VST
-class geStatusButton;
-class geButton;
-#endif
 
-class geMainIO : public Fl_Group
+class geDial : public Fl_Dial
 {
-private:
-
-	geSoundMeter *outMeter;
-	geSoundMeter *inMeter;
-	geDial        *outVol;
-	geDial        *inVol;
-#ifdef WITH_VST
-  geStatusButton *masterFxOut;
-  geStatusButton *masterFxIn;
-  geButton       *inToOut;
-#endif
-
-	static void cb_outVol     (Fl_Widget *v, void *p);
-	static void cb_inVol      (Fl_Widget *v, void *p);
-#ifdef WITH_VST
-	static void cb_masterFxOut(Fl_Widget *v, void *p);
-	static void cb_masterFxIn (Fl_Widget *v, void *p);
-	static void cb_inToOut    (Fl_Widget *v, void *p);
-#endif
-
-	inline void __cb_outVol     ();
-	inline void __cb_inVol      ();
-#ifdef WITH_VST
-	inline void __cb_masterFxOut();
-	inline void __cb_masterFxIn ();
-	inline void __cb_inToOut    ();
-#endif
-
 public:
 
-	geMainIO(int x, int y);
+	geDial(int x, int y, int w, int h, const char *l=0);
 
-	void refresh();
-
-	void setOutVol(float v);
-	void setInVol (float v);
-#ifdef WITH_VST
-	void setMasterFxOutFull(bool v);
-	void setMasterFxInFull(bool v);
-#endif
+	void draw();
 };
+
 
 #endif

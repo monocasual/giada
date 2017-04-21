@@ -187,6 +187,8 @@ src/gui/elems/basics/liquidScroll.h    \
 src/gui/elems/basics/liquidScroll.cpp  \
 src/gui/elems/basics/choice.h          \
 src/gui/elems/basics/choice.cpp        \
+src/gui/elems/basics/dial.h            \
+src/gui/elems/basics/dial.cpp          \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

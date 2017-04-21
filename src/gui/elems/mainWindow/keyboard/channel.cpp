@@ -35,6 +35,7 @@
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_pluginList.h"
 #include "../../basics/idButton.h"
+#include "../../basics/dial.h"
 #include "column.h"
 #include "channelButton.h"
 #include "channel.h"

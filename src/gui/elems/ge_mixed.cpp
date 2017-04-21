@@ -54,32 +54,6 @@ void __cb_window_closer(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-gDial::gDial(int x, int y, int w, int h, const char *L)
-: Fl_Dial(x, y, w, h, L)
-{
-  labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
-  align(FL_ALIGN_LEFT);
-  type(FL_FILL_DIAL);
-  angles(0, 360);
-  color(COLOR_BG_0);            // background
-  selection_color(COLOR_BG_1);   // selection
-}
-
-void gDial::draw()
-{
-  double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
-
-  fl_color(COLOR_BG_0);
-  fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
-
-  fl_color(COLOR_BD_0);
-  fl_arc(x(), y(), w(), h(), 0, 360);
-  fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
-}
-
-/* -------------------------------------------------------------------------- */
-
 
 gBox::gBox(int x, int y, int w, int h, const char *L, Fl_Align al)
 : Fl_Box(x, y, w, h)

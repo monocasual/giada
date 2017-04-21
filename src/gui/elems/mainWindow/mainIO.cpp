@@ -34,6 +34,7 @@
 #include "../../elems/ge_mixed.h"
 #include "../../elems/soundMeter.h"
 #include "../../elems/basics/statusButton.h"
+#include "../../elems/basics/dial.h"
 #include "../../dialogs/gd_mainWindow.h"
 #include "../../dialogs/gd_pluginList.h"
 #include "mainIO.h"
@@ -52,17 +53,17 @@ geMainIO::geMainIO(int x, int y)
 
 #if defined(WITH_VST)
 	masterFxIn  = new geStatusButton  (x, y, 20, 20, fxOff_xpm, fxOn_xpm);
-	inVol		    = new gDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
+	inVol		    = new geDial      (masterFxIn->x()+masterFxIn->w()+4, y, 20, 20);
 	inMeter     = new geSoundMeter(inVol->x()+inVol->w()+4, y+4, 140, 12);
 	inToOut     = new geButton   (inMeter->x()+inMeter->w()+4, y+4, 12, 12, "", inputToOutputOff_xpm, inputToOutputOn_xpm);
 	outMeter    = new geSoundMeter(inToOut->x()+inToOut->w()+4, y+4, 140, 12);
-	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
+	outVol		  = new geDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 	masterFxOut = new geStatusButton  (outVol->x()+outVol->w()+4, y, 20, 20, fxOff_xpm, fxOn_xpm);
 #else
-	inVol		    = new gDial      (x+62, y, 20, 20);
+	inVol		    = new geDial      (x+62, y, 20, 20);
 	inMeter     = new geSoundMeter(inVol->x()+inVol->w()+4, y+5, 140, 12);
 	outMeter    = new geSoundMeter(inMeter->x()+inMeter->w()+4, y+5, 140, 12);
-	outVol		  = new gDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
+	outVol		  = new geDial      (outMeter->x()+outMeter->w()+4, y, 20, 20);
 #endif
 
 	end();
