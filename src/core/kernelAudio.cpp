@@ -532,7 +532,6 @@ void jackStop()
 		jack_transport_stop(jackGetHandle());
 }
 
+#endif  // #ifdef __linux__
+
 }}; // giada::kernelAudio
-
-
-#endif
