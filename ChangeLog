@@ -12,12 +12,13 @@
 --------------------------------------------------------------------------------
 
 
-0.13.4 ---
+0.13.4 --- 
 - Removed support for old ini-based MIDImap files
+- Initial support for channel-based MIDI filtering
+- New Orphaned MIDI events in Piano Roll editor
+- Improve action filtering in Piano Roll editor
 - Lots of code refactoring
 - New test suite for Action Recorder
-- Improve action filtering in Piano Roll editor
-- Initial support for channel-based MIDI filtering
 - Fix obscure bug when overdubbing actions and a null loop occurs
 - Fix "clear all actions" menu refresh when removing items on Piano Roll
 
