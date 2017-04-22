@@ -75,8 +75,6 @@ src/gui/dialogs/gd_warnings.h          \
 src/gui/dialogs/gd_warnings.cpp        \
 src/gui/dialogs/gd_bpmInput.h          \
 src/gui/dialogs/gd_bpmInput.cpp        \
-src/gui/dialogs/gd_browser.h           \
-src/gui/dialogs/gd_browser.cpp         \
 src/gui/dialogs/gd_config.h      			 \
 src/gui/dialogs/gd_config.cpp          \
 src/gui/dialogs/gd_devInfo.h           \
@@ -93,6 +91,12 @@ src/gui/dialogs/gd_actionEditor.h	     \
 src/gui/dialogs/gd_actionEditor.cpp    \
 src/gui/dialogs/gd_pluginChooser.h     \
 src/gui/dialogs/gd_pluginChooser.cpp   \
+src/gui/dialogs/browser/browserBase.h           \
+src/gui/dialogs/browser/browserBase.cpp         \
+src/gui/dialogs/browser/browserLoad.h           \
+src/gui/dialogs/browser/browserLoad.cpp         \
+src/gui/dialogs/browser/browserSave.h           \
+src/gui/dialogs/browser/browserSave.cpp         \
 src/gui/dialogs/midiIO/midiOutputBase.h          \
 src/gui/dialogs/midiIO/midiOutputBase.cpp        \
 src/gui/dialogs/midiIO/midiOutputSampleCh.h      \

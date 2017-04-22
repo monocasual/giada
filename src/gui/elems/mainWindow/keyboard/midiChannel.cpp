@@ -36,7 +36,6 @@
 #include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
-#include "../../../dialogs/gd_browser.h"
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/gd_pluginList.h"
 #include "../../../dialogs/midiIO/midiInputChannel.h"

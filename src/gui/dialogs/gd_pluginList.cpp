@@ -50,7 +50,6 @@
 #include "gd_pluginChooser.h"
 #include "gd_pluginWindow.h"
 #include "gd_pluginWindowGUI.h"
-#include "gd_browser.h"
 #include "gd_mainWindow.h"
 
 

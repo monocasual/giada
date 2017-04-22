@@ -45,7 +45,8 @@
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_warnings.h"
-#include "../gui/dialogs/gd_browser.h"
+#include "../gui/dialogs/browser/browserSave.h"
+#include "../gui/dialogs/browser/browserLoad.h"
 #include "main.h" // TODO - remove, used only for DEPR calls
 #include "channel.h"
 #include "storage.h"
@@ -170,7 +171,7 @@ static bool __glue_savePatch__(const string &fullPath, const string &name,
 
 void glue_savePatch(void *data)
 {
-	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	gdBrowserSave *browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string fullPath        = browser->getCurrentPath() + G_SLASH + gu_stripExt(name) + ".gptc";
 
@@ -197,7 +198,7 @@ void glue_savePatch(void *data)
 
 void glue_loadPatch(void *data)
 {
-	gdLoadBrowser *browser = (gdLoadBrowser*) data;
+	gdBrowserLoad *browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
 	bool isProject         = gu_isProject(browser->getSelectedItem());
 
@@ -401,7 +402,7 @@ int glue_loadPatch__DEPR__(const char *fname, const char *fpath, geProgress *sta
 
 void glue_saveProject(void *data)
 {
-	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	gdBrowserSave *browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getCurrentPath(); //browser->getSelectedItem();
 	string fullPath        = folderPath + G_SLASH + gu_stripExt(name) + ".gprj";
@@ -458,7 +459,7 @@ void glue_saveProject(void *data)
 
 void glue_loadSample(void *data)
 {
-	gdLoadBrowser *browser = (gdLoadBrowser*) data;
+	gdBrowserLoad *browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
 
 	if (fullPath.empty())
@@ -481,7 +482,7 @@ void glue_loadSample(void *data)
 
 void glue_saveSample(void *data)
 {
-	gdSaveBrowser *browser = (gdSaveBrowser*) data;
+	gdBrowserSave *browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getSelectedItem();
 

@@ -27,7 +27,7 @@
 
 #include "../../core/const.h"
 #include "../../utils/string.h"
-#include "../dialogs/gd_browser.h"
+#include "../dialogs/browser/browserBase.h"
 #include "basics/boxtypes.h"
 #include "browser.h"
 
@@ -108,12 +108,12 @@ int geBrowser::handle(int e)
         select(value() - 1);
       else
       if (Fl::event_key(FL_Enter))
-        ((gdBaseBrowser*) parent())->fireCallback();
+        ((gdBrowserBase*) parent())->fireCallback();
       ret = 1;
       break;
     case FL_PUSH:    // mouse
       if (Fl::event_clicks() > 0)  // double click
-        ((gdBaseBrowser*) parent())->fireCallback();
+        ((gdBrowserBase*) parent())->fireCallback();
       ret = 1;
       break;
     case FL_RELEASE: // mouse

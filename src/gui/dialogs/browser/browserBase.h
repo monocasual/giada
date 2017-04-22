@@ -25,11 +25,11 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_BROWSER_H
-#define GD_BROWSER_H
+#ifndef GD_BROWSER_BASE_H
+#define GD_BROWSER_BASE_H
 
 
-#include "window.h"
+#include "../window.h"
 
 
 class Channel;
@@ -41,17 +41,19 @@ class geInput;
 class geProgress;
 
 
-class gdBaseBrowser : public gdWindow
+class gdBrowserBase : public gdWindow
 {
 protected:
 
-	Fl_Group  *groupTop;
+  Channel *channel;
+
+	Fl_Group   *groupTop;
   geCheck    *hiddenFiles;
-	geBrowser *browser;
-	geButton  *ok;
-	geButton  *cancel;
-	geInput   *where;
- 	geButton  *updir;
+	geBrowser  *browser;
+	geButton   *ok;
+	geButton   *cancel;
+	geInput    *where;
+ 	geButton   *updir;
  	geProgress *status;
 
 	static void cb_up               (Fl_Widget *v, void *p);
@@ -67,14 +69,12 @@ protected:
 
 	void (*callback)(void*);
 
-	Channel *channel;
+  gdBrowserBase(int x, int y, int w, int h, const std::string &title,
+  		const std::string &path,	void (*callback)(void*));
 
 public:
 
-	gdBaseBrowser(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	void (*callback)(void*));
-
-	~gdBaseBrowser();
+	~gdBrowserBase();
 
 	/* getSelectedItem
 	 * Return the full path of the selected file. */
@@ -95,49 +95,5 @@ public:
 	void fireCallback()   { callback((void*) this); }
 };
 
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdSaveBrowser : public gdBaseBrowser
-{
-private:
-
-	geInput *name;
-
-	static void cb_down(Fl_Widget *v, void *p);
-	static void cb_save(Fl_Widget *w, void *p);
-
-	inline void __cb_down();
-	inline void __cb_save();
-
-public:
-
-	gdSaveBrowser(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	const std::string &name, void (*callback)(void*),
-			Channel *ch);
-
-	std::string getName();
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gdLoadBrowser : public gdBaseBrowser
-{
-private:
-
-	static void cb_load(Fl_Widget *w, void *p);
-	static void cb_down(Fl_Widget *v, void *p);
-
-	inline void __cb_load();
-	inline void __cb_down();
-
-public:
-
-	gdLoadBrowser(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	void (*callback)(void*), Channel *ch);
-};
 
 #endif

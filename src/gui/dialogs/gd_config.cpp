@@ -45,10 +45,9 @@
 #include "../elems/basics/check.h"
 #include "../elems/basics/radio.h"
 #include "../elems/basics/box.h"
-#include "gd_config.h"
 #include "gd_keyGrabber.h"
 #include "gd_devInfo.h"
-#include "gd_browser.h"
+#include "gd_config.h"
 
 
 extern Patch_DEPR_ G_Patch_DEPR_;

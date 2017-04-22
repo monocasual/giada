@@ -44,7 +44,8 @@
 #include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
-#include "../../../dialogs/gd_browser.h"
+#include "../../../dialogs/browser/browserSave.h"
+#include "../../../dialogs/browser/browserLoad.h"
 #include "../../../dialogs/midiIO/midiOutputSampleCh.h"
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../basics/boxtypes.h"
@@ -198,7 +199,7 @@ void geSampleChannel::__cb_openMenu()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Load new sample...") == 0) {
-    gdWindow *w = new gdLoadBrowser(conf::browserX, conf::browserY,
+    gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
       conf::browserW, conf::browserH, "Browse sample",
       conf::samplePath.c_str(), glue_loadSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
@@ -226,7 +227,7 @@ void geSampleChannel::__cb_openMenu()
 	}
 
 	if (strcmp(m->label(), "Export sample to file...") == 0) {
-    gdWindow *w = new gdSaveBrowser(conf::browserX, conf::browserY,
+    gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
       conf::browserW, conf::browserH, "Save sample", \
       conf::samplePath.c_str(), "", glue_saveSample, ch);
     gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
