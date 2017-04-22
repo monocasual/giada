@@ -34,7 +34,7 @@
 
 class Channel;
 class Fl_Group;
-class gCheck;
+class geCheck;
 class geBrowser;
 class geButton;
 class geInput;
@@ -46,7 +46,7 @@ class gdBaseBrowser : public gdWindow
 protected:
 
 	Fl_Group  *groupTop;
-  gCheck    *hiddenFiles;
+  geCheck    *hiddenFiles;
 	geBrowser *browser;
 	geButton  *ok;
 	geButton  *cancel;

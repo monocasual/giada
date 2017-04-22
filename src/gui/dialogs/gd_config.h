@@ -41,9 +41,9 @@ class gTabPlugins;
 #endif
 class geButton;
 class geChoice;
-class gCheck;
+class geCheck;
 class geInput;
-class gRadio;
+class geRadio;
 class geBox;
 
 
@@ -95,7 +95,7 @@ public:
 	geChoice *system;
 	geChoice *portOut;
 	geChoice *portIn;
-	gCheck  *noNoteOff;
+	geCheck  *noNoteOff;
 	geChoice *midiMap;
 	geChoice *sync;
 
@@ -141,7 +141,7 @@ public:
 	geChoice *sounddevOut;
 	geButton  *devOutInfo;
 	geChoice *channelsOut;
-	gCheck  *limitOutput;
+	geCheck  *limitOutput;
 	geChoice *buffersize;
 	geInput  *delayComp;
 
@@ -163,11 +163,11 @@ private:
 
 public:
 
-	gRadio *recsStopOnChanHalt_1;
-	gRadio *recsStopOnChanHalt_0;
-	gRadio *chansStopOnSeqHalt_1;
-	gRadio *chansStopOnSeqHalt_0;
-	gCheck *treatRecsAsLoops;
+	geRadio *recsStopOnChanHalt_1;
+	geRadio *recsStopOnChanHalt_0;
+	geRadio *chansStopOnSeqHalt_1;
+	geRadio *chansStopOnSeqHalt_0;
+	geCheck *treatRecsAsLoops;
 
 	gTabBehaviors(int x, int y, int w, int h);
 

@@ -35,6 +35,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/progress.h"
+#include "../elems/basics/check.h"
 #include "gd_browser.h"
 
 
@@ -49,7 +50,7 @@ gdBaseBrowser::gdBaseBrowser(int x, int y, int w, int h, const string &title,
 	set_non_modal();
 
 	groupTop = new Fl_Group(8, 8, w-16, 40);
-    hiddenFiles = new gCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
+    hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
 		where = new geInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
 		updir	= new geButton(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();

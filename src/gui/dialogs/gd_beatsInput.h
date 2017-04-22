@@ -34,7 +34,7 @@
 
 class geInput;
 class geButton;
-class gCheck;
+class geCheck;
 
 
 class gdBeatsInput : public gdWindow
@@ -47,7 +47,7 @@ private:
 	geInput  *beats;
 	geInput  *bars;
 	geButton *ok;
-	gCheck   *resizeRec;
+	geCheck   *resizeRec;
 
 public:
 

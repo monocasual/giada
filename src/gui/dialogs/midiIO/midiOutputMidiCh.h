@@ -47,7 +47,7 @@ private:
 	static void cb_close  (Fl_Widget *w, void *p);
 	inline void __cb_close();
 
-	class gCheck  *enableOut;
+	class geCheck  *enableOut;
 	class geChoice *chanListOut;
 
 	class MidiChannel *ch;

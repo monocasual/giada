@@ -38,8 +38,9 @@
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/scroll.h"
-#include "../../elems/basics/button.h"
 #include "../../elems/basics/box.h"
+#include "../../elems/basics/button.h"
+#include "../../elems/basics/check.h"
 #include "midiInputChannel.h"
 
 
@@ -57,7 +58,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
 	label(title.c_str());
   size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
 
-	enable = new gCheck(8, 8, 120, 20, "enable MIDI input");
+	enable = new geCheck(8, 8, 120, 20, "enable MIDI input");
 
   container = new geScroll(8, enable->y()+enable->h()+4, w()-16, h()-68);
   container->begin();

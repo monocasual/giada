@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_mixed
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -27,38 +25,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIXED_H
-#define GE_MIXED_H
-
-#include <stdio.h>
-#include <dirent.h>
-#include <stdint.h>  // for intptr_t
-#include <string>
-#include <FL/Fl.H>
-#include <FL/Fl_Menu_Window.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
-#include <FL/Fl_Dial.H>
-#include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Menu_Button.H>
-#include <FL/Fl_Hold_Browser.H>
-#include <FL/Fl_Radio_Button.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Int_Input.H>
-#include <FL/Fl_Choice.H>
-#include <FL/Fl_Scroll.H>
+#include "../../../core/const.h"
+#include "check.h"
 
-#ifdef _WIN32
-	#include <shlobj.h>  // for SHGetFolderPath
-#endif
+
+geCheck::geCheck(int x, int y, int w, int h, const char *l)
+: Fl_Check_Button(x, y, w, h, l)
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
+void geCheck::draw()
+{
+  int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
 
+  if (value()) {
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+    fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
+  }
+  else {
+    fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
+    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
+  }
 
-
-
-#endif
+  fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
+  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
+  fl_color(!active() ? FL_INACTIVE_COLOR : COLOR_TEXT_0);
+  fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
+}

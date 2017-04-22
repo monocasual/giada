@@ -195,6 +195,10 @@ src/gui/elems/basics/slider.h          \
 src/gui/elems/basics/slider.cpp        \
 src/gui/elems/basics/progress.h        \
 src/gui/elems/basics/progress.cpp      \
+src/gui/elems/basics/check.h           \
+src/gui/elems/basics/check.cpp         \
+src/gui/elems/basics/radio.h           \
+src/gui/elems/basics/radio.cpp         \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
 src/utils/gui.h                        \

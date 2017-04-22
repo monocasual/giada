@@ -27,9 +27,9 @@
 
 #include "../../../core/sampleChannel.h"
 #include "../../../utils/gui.h"
-#include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/check.h"
 #include "midiOutputSampleCh.h"
 
 
@@ -38,7 +38,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
 {
 	setTitle(ch->index+1);
 
-	enableLightning = new gCheck(8, 8, 120, 20, "Enable MIDI lightning output");
+	enableLightning = new geCheck(8, 8, 120, 20, "Enable MIDI lightning output");
 	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
 	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutLmute);
 	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutLsolo);

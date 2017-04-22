@@ -31,6 +31,7 @@
 #include "../../../core/clock.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "../basics/choice.h"
+#include "../basics/check.h"
 #include "../ge_mixed.h"
 #include "actionEditor.h"
 #include "gridTool.h"
@@ -54,7 +55,7 @@ geGridTool::geGridTool(int x, int y, gdActionEditor *parent)
 	gridType->value(0);
 	gridType->callback(cb_changeType, (void*)this);
 
-	active = new gCheck (x+44, y+4, 12, 12);
+	active = new geCheck (x+44, y+4, 12, 12);
 
 	gridType->value(conf::actionEditorGridVal);
 	active->value(conf::actionEditorGridOn);

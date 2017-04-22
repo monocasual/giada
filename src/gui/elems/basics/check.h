@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_mixed
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -27,38 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIXED_H
-#define GE_MIXED_H
-
-#include <stdio.h>
-#include <dirent.h>
-#include <stdint.h>  // for intptr_t
-#include <string>
-#include <FL/Fl.H>
-#include <FL/Fl_Menu_Window.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Box.H>
-#include <FL/fl_draw.H>
-#include <FL/Fl_Dial.H>
-#include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Menu_Button.H>
-#include <FL/Fl_Hold_Browser.H>
-#include <FL/Fl_Radio_Button.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Int_Input.H>
-#include <FL/Fl_Choice.H>
-#include <FL/Fl_Scroll.H>
-
-#ifdef _WIN32
-	#include <shlobj.h>  // for SHGetFolderPath
-#endif
+#ifndef GE_CHECK_H
+#define GE_CHECK_H
 
 
-/* -------------------------------------------------------------------------- */
+#include <FL/Fl_Check_Button.H>
 
 
+class geCheck : public Fl_Check_Button
+{
+public:
 
+  geCheck(int x, int y, int w, int h, const char *l=0);
 
+  void draw();
+};
 
 
 #endif

@@ -38,7 +38,7 @@ class geWaveTools;
 class geInput;
 class geDial;
 class geChoice;
-class gCheck;
+class geCheck;
 
 
 class gdSampleEditor : public gdWindow
@@ -114,7 +114,7 @@ public:
 	geButton    *pitchReset;
 	geButton    *close;
 	geChoice     *grid;
-	gCheck      *snap;
+	geCheck      *snap;
 
 	SampleChannel *ch;
 };

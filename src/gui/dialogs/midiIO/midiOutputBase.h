@@ -34,7 +34,7 @@
 
 
 class geButton;
-class gCheck;
+class geCheck;
 class geMidiLearner;
 
 
@@ -53,7 +53,7 @@ class gdMidiOutputBase : public gdWindow
 protected:
 
 	geButton *close;
-	gCheck   *enableLightning;
+	geCheck   *enableLightning;
 
 	void stopMidiLearn(geMidiLearner *l);
 

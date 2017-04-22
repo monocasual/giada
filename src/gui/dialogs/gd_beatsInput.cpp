@@ -34,6 +34,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/button.h"
+#include "../elems/basics/check.h"
 #include "gd_beatsInput.h"
 #include "gd_mainWindow.h"
 
@@ -55,7 +56,7 @@ gdBeatsInput::gdBeatsInput()
 	beats     = new geInput(8,  8,  35, 20);
 	bars      = new geInput(47, 8,  35, 20);
 	ok 		    = new geButton(86, 8,  70, 20, "Ok");
-	resizeRec = new gCheck(8,  40, 12, 12, "resize recorded actions");
+	resizeRec = new geCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 
 	char buf_bars[3]; sprintf(buf_bars, "%d", clock::getBars());

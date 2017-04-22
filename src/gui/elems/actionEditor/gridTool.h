@@ -34,7 +34,7 @@
 
 
 class geChoice;
-class gCheck;
+class geCheck;
 class gdActionEditor;
 
 
@@ -43,7 +43,7 @@ class geGridTool : public Fl_Group
 private:
 
   geChoice *gridType;
-	gCheck  *active;
+	geCheck  *active;
 
 	gdActionEditor *parent;
 

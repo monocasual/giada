@@ -30,6 +30,7 @@
 #include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/check.h"
 #include "../../elems/basics/choice.h"
 #include "../../elems/mainWindow/keyboard/channel.h"
 #include "midiOutputMidiCh.h"
@@ -41,10 +42,10 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	setTitle(ch->index+1);
 	begin();
 
-	enableOut   = new gCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
+	enableOut   = new geCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
 	chanListOut = new geChoice(w()-108, y()+8, 100, 20);
 
-	enableLightning = new gCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
+	enableLightning = new geCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
 	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);

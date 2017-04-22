@@ -43,7 +43,7 @@ private:
 	class Channel *ch;
 
   class geScroll *container;
-	class gCheck   *enable;
+	class geCheck   *enable;
 
 	//gVector <geMidiLearner *> items; // plugins parameters
 

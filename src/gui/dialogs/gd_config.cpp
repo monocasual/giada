@@ -43,6 +43,8 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"
+#include "../elems/basics/check.h"
+#include "../elems/basics/radio.h"
 #include "../elems/basics/box.h"
 #include "gd_config.h"
 #include "gd_keyGrabber.h"
@@ -118,7 +120,7 @@ gTabAudio::gTabAudio(int X, int Y, int W, int H)
 	sounddevOut = new geChoice(x()+92,  y()+65, 225, 20, "Output device");
 	devOutInfo  = new geButton (x()+325, y()+65, 20,  20, "?");
 	channelsOut = new geChoice(x()+92,  y()+93, 55,  20, "Output channels");
-	limitOutput = new gCheck (x()+155, y()+97, 55,  20, "Limit output");
+	limitOutput = new geCheck (x()+155, y()+97, 55,  20, "Limit output");
 	sounddevIn  = new geChoice(x()+92,  y()+121, 225, 20, "Input device");
 	devInInfo   = new geButton (x()+325, y()+121, 20,  20, "?");
 	channelsIn  = new geChoice(x()+92,  y()+149, 55,  20, "Input channels");
@@ -588,7 +590,7 @@ gTabMidi::gTabMidi(int X, int Y, int W, int H)
 	system	  = new geChoice(x()+92, y()+9, 253, 20, "System");
 	portOut	  = new geChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
 	portIn	  = new geChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
-	noNoteOff = new gCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
+	noNoteOff = new geCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
 	midiMap	  = new geChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
 	sync	    = new geChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
 	new geBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
@@ -804,17 +806,17 @@ gTabBehaviors::gTabBehaviors(int X, int Y, int W, int H)
 	begin();
 	Fl_Group *radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
 		new geBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
-		recsStopOnChanHalt_1 = new gRadio(x()+25, y()+35, 280, 20, "stop it immediately");
-		recsStopOnChanHalt_0 = new gRadio(x()+25, y()+55, 280, 20, "play it until finished");
+		recsStopOnChanHalt_1 = new geRadio(x()+25, y()+35, 280, 20, "stop it immediately");
+		recsStopOnChanHalt_0 = new geRadio(x()+25, y()+55, 280, 20, "play it until finished");
 	radioGrp_1->end();
 
 	Fl_Group *radioGrp_2 = new Fl_Group(x(), y()+70, w(), 70); // radio group for the mutex
 		new geBox(x(), y()+80, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
-		chansStopOnSeqHalt_1 = new gRadio(x()+25, y()+105, 280, 20, "stop immediately all dynamic channels");
-		chansStopOnSeqHalt_0 = new gRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
+		chansStopOnSeqHalt_1 = new geRadio(x()+25, y()+105, 280, 20, "stop immediately all dynamic channels");
+		chansStopOnSeqHalt_0 = new geRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
 
-	treatRecsAsLoops  = new gCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
+	treatRecsAsLoops  = new geCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
 
 	end();
 	labelsize(GUI_FONT_SIZE_BASE);
