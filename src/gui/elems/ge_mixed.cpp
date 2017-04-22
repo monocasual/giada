@@ -45,15 +45,6 @@ extern gdMainWindow *mainWin;
 using namespace giada;
 
 
-void __cb_window_closer(Fl_Widget *v, void *p)
-{
-  delete (Fl_Window*)p;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 gCheck::gCheck(int x, int y, int w, int h, const char *L)
 : Fl_Check_Button(x, y, w, h, L) {}
 

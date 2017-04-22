@@ -32,6 +32,7 @@
 #include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
+#include "window.h"
 #include "gd_warnings.h"
 
 

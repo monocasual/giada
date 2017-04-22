@@ -55,11 +55,6 @@
 #endif
 
 
-/* cb_window_closer
- * callback for when closing windows. Deletes the widget (delete). */
-
-void __cb_window_closer(Fl_Widget *v, void *p);
-
 
 /* -------------------------------------------------------------------------- */
 
