@@ -32,21 +32,30 @@
 #include "window.h"
 
 
+class Fl_Widget;
+class geKeyboard;
+class geBeatMeter;
+class geMainMenu;
+class geMainIO;
+class geMainTimer;
+class geMainTransport;
+
+
 class gdMainWindow : public gdWindow
 {
 private:
 
-	static void cb_endprogram  (class Fl_Widget *v, void *p);
+	static void cb_endprogram  (Fl_Widget *v, void *p);
 	inline void __cb_endprogram();
 
 public:
 
-	class geKeyboard       *keyboard;
-	class geBeatMeter     *beatMeter;
-	class geMainMenu      *mainMenu;
-	class geMainIO        *mainIO;
-  class geMainTimer     *mainTimer;
-	class geMainTransport *mainTransport;
+	geKeyboard      *keyboard;
+	geBeatMeter     *beatMeter;
+	geMainMenu      *mainMenu;
+	geMainIO        *mainIO;
+  geMainTimer     *mainTimer;
+	geMainTransport *mainTransport;
 
 	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
 };

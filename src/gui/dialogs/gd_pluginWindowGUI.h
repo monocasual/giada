@@ -43,11 +43,14 @@
 #endif
 
 
+class Plugin;
+
+
 class gdPluginWindowGUI : public gdWindow
 {
 private:
 
-	class Plugin *pPlugin;
+	Plugin *pPlugin;
 
 	static void cb_close    (Fl_Widget *v, void *p);
 	static void cb_refresh  (void *data);
@@ -60,31 +63,6 @@ public:
 	~gdPluginWindowGUI();
 };
 
-
-/* -------------------------------------------------------------------------- */
-
-#if 0
-#if defined(__APPLE__)
-
-class gdPluginWindowGUImac : public gdWindow
-{
-private:
-
-	static pascal OSStatus windowHandler(EventHandlerCallRef ehc, EventRef e, void *data);
-	inline pascal OSStatus __wh(EventHandlerCallRef ehc, EventRef e);
-
-	class Plugin *pPlugin;
-	WindowRef carbonWindow;
-	bool open;
-
-public:
-
-	gdPluginWindowGUImac(Plugin *pPlugin);
-	~gdPluginWindowGUImac();
-};
-
-#endif
-#endif
 
 #endif // include guard
 
