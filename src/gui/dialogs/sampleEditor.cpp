@@ -36,7 +36,6 @@
 #include "../../core/wave.h"
 #include "../../core/clock.h"
 #include "../../utils/gui.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"

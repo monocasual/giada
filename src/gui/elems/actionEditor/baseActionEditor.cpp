@@ -2,9 +2,8 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_actionWidget
- *
- * pParent class of any widget inside the action editor.
+ * geBaseActionEditor
+ * Parent class of any widget inside the action editor.
  *
  * -----------------------------------------------------------------------------
  *
@@ -33,7 +32,6 @@
 #include "../../../core/mixer.h"
 #include "../../../core/const.h"
 #include "../../dialogs/gd_actionEditor.h"
-#include "../ge_mixed.h"
 #include "gridTool.h"
 #include "baseActionEditor.h"
 

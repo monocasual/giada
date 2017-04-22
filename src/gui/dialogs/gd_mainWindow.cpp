@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gd_mainWindow
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -31,7 +29,6 @@
 #include "../../core/const.h"
 #include "../../core/init.h"
 #include "../../utils/gui.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/mainMenu.h"

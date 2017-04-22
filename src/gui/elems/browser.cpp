@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_browser
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -30,7 +28,6 @@
 #include "../../core/const.h"
 #include "../../utils/string.h"
 #include "../dialogs/gd_browser.h"
-#include "../elems/ge_mixed.h"
 #include "basics/boxtypes.h"
 #include "browser.h"
 

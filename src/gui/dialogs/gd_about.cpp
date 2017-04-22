@@ -25,6 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Pixmap.H>
+#include <FL/fl_draw.H>
 #include <jansson.h>
 #include "../../core/conf.h"
 #include "../../core/const.h"
@@ -35,7 +37,6 @@
   #include "../../deps/juce-config.h"
 #endif
 #include "../../utils/gui.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "gd_about.h"

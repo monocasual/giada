@@ -31,7 +31,6 @@
 #include "../../../../core/pluginHost.h"
 #include "../../../../utils/gui.h"
 #include "../../../../glue/channel.h"
-#include "../../../elems/ge_mixed.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_pluginList.h"
 #include "../../basics/idButton.h"

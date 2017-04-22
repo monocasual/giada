@@ -33,7 +33,6 @@
 #include "../../core/pluginHost.h"
 #include "../../core/plugin.h"
 #include "../../core/const.h"
-#include "../elems/ge_mixed.h"
 #include "gd_pluginWindowGUI.h"
 
 #ifdef __APPLE__

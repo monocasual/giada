@@ -31,7 +31,6 @@
 #include <FL/Fl_Scroll.H>
 #include "../../utils/gui.h"
 #include "../../core/plugin.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/box.h"
 #include "../elems/basics/liquidScroll.h"

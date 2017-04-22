@@ -28,7 +28,6 @@
 #include <cmath>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/sampleEditor.h"
-#include "../gui/elems/ge_mixed.h"
 #include "../gui/elems/basics/input.h"
 #include "../gui/elems/basics/dial.h"
 #include "../gui/elems/sampleEditor/waveTools.h"

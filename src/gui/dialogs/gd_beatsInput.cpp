@@ -31,7 +31,6 @@
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../glue/main.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/check.h"

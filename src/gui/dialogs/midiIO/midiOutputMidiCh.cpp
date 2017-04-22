@@ -27,7 +27,6 @@
 
 #include "../../../core/midiChannel.h"
 #include "../../../utils/gui.h"
-#include "../../elems/ge_mixed.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/check.h"

@@ -31,7 +31,6 @@
 #include "../../../core/pluginHost.h"
 #include "../../../glue/main.h"
 #include "../../../utils/gui.h"
-#include "../../elems/ge_mixed.h"
 #include "../../elems/soundMeter.h"
 #include "../../elems/basics/statusButton.h"
 #include "../../elems/basics/dial.h"

@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Menu_Button.H>
 #include "../../../core/const.h"
 #include "../../../core/mixer.h"
 #include "../../../core/mixerHandler.h"
@@ -35,7 +36,6 @@
 #include "../../../utils/gui.h"
 #include "../../../glue/storage.h"
 #include "../../../glue/main.h"
-#include "../../elems/ge_mixed.h"
 #include "../../elems/basics/boxtypes.h"
 #include "../../elems/basics/button.h"
 #include "../../dialogs/gd_mainWindow.h"

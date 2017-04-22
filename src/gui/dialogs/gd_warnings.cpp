@@ -29,7 +29,6 @@
 #include <FL/Fl_Window.H>
 #include "../../utils/gui.h"
 #include "../../core/const.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "window.h"

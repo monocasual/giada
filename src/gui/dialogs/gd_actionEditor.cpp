@@ -32,7 +32,6 @@
 #include "../../core/const.h"
 #include "../../core/clock.h"
 #include "../../core/sampleChannel.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/scroll.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/resizerBar.h"

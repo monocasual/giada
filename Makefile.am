@@ -107,8 +107,6 @@ src/gui/dialogs/midiIO/midiInputMaster.h         \
 src/gui/dialogs/midiIO/midiInputMaster.cpp       \
 src/gui/elems/midiLearner.h        \
 src/gui/elems/midiLearner.cpp      \
-src/gui/elems/ge_mixed.h           \
-src/gui/elems/ge_mixed.cpp         \
 src/gui/elems/browser.h		         \
 src/gui/elems/browser.cpp          \
 src/gui/elems/soundMeter.h		     \

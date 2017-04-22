@@ -25,13 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Menu_Button.H>
 #include "../../../../core/const.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/midiChannel.h"
 #include "../../../../utils/gui.h"
 #include "../../../../glue/channel.h"
 #include "../../../../glue/io.h"
-#include "../../../elems/ge_mixed.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"

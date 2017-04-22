@@ -2,8 +2,8 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_waveform
- * an element which represents a waveform.
+ * geWaveform
+ * An element which represents a waveform.
  *
  * ---------------------------------------------------------------------
  *
@@ -29,6 +29,8 @@
 
 
 #include <cmath>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Menu_Button.H>
 #include "../../../core/wave.h"
 #include "../../../core/conf.h"
 #include "../../../core/const.h"
@@ -36,7 +38,6 @@
 #include "../../../core/waveFx.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../glue/channel.h"
-#include "../ge_mixed.h"
 #include "../basics/boxtypes.h"
 #include "waveTools.h"
 #include "waveform.h"

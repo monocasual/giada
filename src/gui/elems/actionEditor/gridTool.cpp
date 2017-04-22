@@ -32,7 +32,6 @@
 #include "../../dialogs/gd_actionEditor.h"
 #include "../basics/choice.h"
 #include "../basics/check.h"
-#include "../ge_mixed.h"
 #include "actionEditor.h"
 #include "gridTool.h"
 

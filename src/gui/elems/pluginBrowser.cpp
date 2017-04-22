@@ -28,10 +28,10 @@
 #ifdef WITH_VST
 
 
+#include <FL/fl_draw.H>
 #include "../../core/plugin.h"
 #include "../../core/const.h"
 #include "../../core/pluginHost.h"
-#include "ge_mixed.h"
 #include "basics/boxtypes.h"
 #include "pluginBrowser.h"
 

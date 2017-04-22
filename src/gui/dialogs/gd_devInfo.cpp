@@ -25,10 +25,10 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/fl_draw.H>
 #include "../../core/kernelAudio.h"
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
-#include "../elems/ge_mixed.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "window.h"

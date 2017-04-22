@@ -31,7 +31,6 @@
 #include "../../../core/clock.h"
 #include "../../../glue/main.h"
 #include "../../../utils/gui.h"
-#include "../../elems/ge_mixed.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/choice.h"
 #include "../../dialogs/gd_mainWindow.h"
