@@ -27,9 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>  // memcpy
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>  // memcpy
 #include <cmath>
 #include <samplerate.h>
 #include "../utils/fs.h"

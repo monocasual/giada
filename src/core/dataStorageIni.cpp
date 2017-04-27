@@ -28,7 +28,7 @@
 
 
 #include <stdlib.h>
-#include <limits.h>
+#include <climits>
 #include <cstring>
 #include "../utils/log.h"
 #include "dataStorageIni.h"

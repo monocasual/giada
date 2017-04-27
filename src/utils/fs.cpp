@@ -37,12 +37,16 @@
 #include <cstdarg>
 #include <sys/stat.h>   // stat (gu_dirExists)
 #include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstdlib>
+#ifdef __APPLE__  // our Clans still doesn't know about cstdint (c++11 stuff)
+	#include <stdint.h>
+#else
+	#include <cstdint>
+#endif
 #include <string>
-#include <string.h>
-#include <limits.h>
-#if defined(__APPLE__)
+#include <cstring>
+#include <climits>
+#ifdef __APPLE__
 	#include <libgen.h>     // basename unix
 	#include <pwd.h>        // getpwuid
 #endif

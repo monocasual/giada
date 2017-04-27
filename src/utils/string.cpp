@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <limits.h>
+#include <climits>
 #include <sstream>
 #include "string.h"
 

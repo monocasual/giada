@@ -31,7 +31,11 @@
 
 #include <string>
 #include <vector>
-#include <stdint.h>
+#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
+	#include <stdint.h>
+#else
+	#include <cstdint>
+#endif
 #include "dataStorageJson.h"
 
 

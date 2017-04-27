@@ -29,8 +29,7 @@
 #define G_KERNELMIDI_H
 
 
-#ifdef __APPLE__  // our compiler still doesn't know about cstdint (c++11 stuff)
-                  // TODO - Apr 2017 - compiler updated, check it
+#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
 	#include <stdint.h>
 #else
 	#include <cstdint>
