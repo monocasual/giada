@@ -398,10 +398,10 @@ pthread_mutex_t mutex_plugins;
 
 void init()
 {
-	/* alloc virtual input channels. vChanInput malloc is done in
-	 * updateFrameBars, because of its variable size */
+	/* Allocate virtual input channels. vChanInput malloc is done later, since
+  we need to know clock::totalFrames (it has variable size). */
 
-	vChanInput   = nullptr;
+  /* TODO - check proper allocation: make this function return 0 on failure */
 	vChanInToOut = (float*) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
 
 	pthread_mutex_init(&mutex_recs, nullptr);
@@ -409,6 +409,14 @@ void init()
 	pthread_mutex_init(&mutex_plugins, nullptr);
 
 	clock::updateFrameBars();
+
+  /* Alloc input virtual channel, if not NULL. TotalFrames is changed!. */
+
+	if (vChanInput != nullptr)
+		free(vChanInput);
+  /* TODO - check proper allocation: make this function return 0 on failure */ 
+	vChanInput = (float*) malloc(clock::getTotalFrames() * sizeof(float));
+
 	rewind();
 }
 
