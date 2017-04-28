@@ -15,6 +15,7 @@
 0.13.5 ---
 - Lots of code refactoring
 - Convert all .h headers to C++ headers
+- Fix crash when recording audio
 
 
 0.13.4 --- 2017 . 04 . 23
