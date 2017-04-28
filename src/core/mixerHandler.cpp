@@ -267,7 +267,7 @@ bool uniqueSolo(Channel *ch)
 
 void loadPatch_DEPR_(bool isProject, const char *projPath)
 {
-	mixer::init();
+	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
 	mixer::ready = false;   // put it in wait mode
 
 	int numChans = G_Patch_DEPR_.getNumChans();

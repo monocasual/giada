@@ -84,8 +84,8 @@ void init_prepareParser()
 void init_prepareKernelAudio()
 {
   kernelAudio::openDevice();
-  clock::init();
-	mixer::init();
+  clock::init(conf::samplerate, conf::midiTCfps);
+	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
 	recorder::init();
 
 #ifdef WITH_VST

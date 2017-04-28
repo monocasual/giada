@@ -225,7 +225,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 {
 	G_Patch_DEPR_.setDefault();
 	mixer::close();
-	mixer::init();
+	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
 	recorder::init();
 #ifdef WITH_VST
 	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);

@@ -40,7 +40,7 @@ class Channel;
 namespace giada {
 namespace mixer
 {
-void init();
+void init(int framesInSeq, int audioBufferSize);
 int  close();
 
 /* masterPlay

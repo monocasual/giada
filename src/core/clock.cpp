@@ -40,28 +40,29 @@ namespace clock
 {
 namespace
 {
-bool  running;
-float bpm;
-int   bars;
-int   beats;
-int   quantize;
-int   quanto;            // quantizer step
-int   framesPerBar;      // frames in one bar
-int   framesPerBeat;     // frames in one beat
-int   framesInSequencer; // frames in the whole sequencer
-int   totalFrames;       // frames in the selected range (e.g. 4/4)
-int   currentFrame;
-int   currentBeat;
+bool  running  = false;
+float bpm      = G_DEFAULT_BPM;
+int   bars     = G_DEFAULT_BARS;
+int   beats    = G_DEFAULT_BEATS;
+int   quantize = G_DEFAULT_QUANTIZE;
+int   quanto   = 1;           // quantizer step
+int   framesPerBar      = 0;  // frames in one bar
+int   framesPerBeat     = 0;  // frames in one beat
+int   framesInSequencer = 0;  // frames in the whole sequencer
+int   totalFrames  = 0;       // frames in the selected range (e.g. 4/4)
+int   currentFrame = 0;
+int   currentBeat  = 0;
 
-int midiTCrate;      // send MTC data every midiTCrate frames
-int midiTCframes;
-int midiTCseconds;
-int midiTCminutes;
-int midiTChours;
+int midiTCrate    = 0;      // send MTC data every midiTCrate frames
+int midiTCframes  = 0;
+int midiTCseconds = 0;
+int midiTCminutes = 0;
+int midiTChours   = 0;
 
 #ifdef __linux__
 kernelAudio::JackState jackStatePrev;
 #endif
+
 
 void updateQuanto()
 {
@@ -79,25 +80,10 @@ void updateQuanto()
 /* -------------------------------------------------------------------------- */
 
 
-void init()
+void init(int sampleRate, float midiTCfps)
 {
-  running           = false;
-  bpm               = G_DEFAULT_BPM;
-  bars              = G_DEFAULT_BARS;
-  beats             = G_DEFAULT_BEATS;
-  quantize          = G_DEFAULT_QUANTIZE;
-  quanto            = 1;
-  framesPerBar      = 0;
-  framesPerBeat     = 0;
-  framesInSequencer = 0;
-  totalFrames       = 0;
-  currentFrame      = 0;
-  currentBeat       = 0;
-  midiTCrate        = (conf::samplerate / conf::midiTCfps) * 2;  // stereo values
-  midiTCframes      = 0;
-  midiTCseconds     = 0;
-  midiTCminutes     = 0;
-  midiTChours       = 0;
+  midiTCrate = (sampleRate / midiTCfps) * 2;  // stereo values
+  updateFrameBars();
 }
 
 

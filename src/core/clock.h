@@ -37,7 +37,7 @@ class KernelAudio;
 namespace giada {
 namespace clock
 {
-void init();
+void init(int sampleRate, float midiTCfps);
 
 /* sendMIDIsync
 Generates MIDI sync output data. */
