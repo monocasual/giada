@@ -361,33 +361,32 @@ void testLastBeat()
 
 std::vector<Channel*> channels;
 
-bool   recording;         // is recording something?
-bool   ready;
-float *vChanInput;        // virtual channel for recording
-float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
-int    frameSize;
-float  outVol;
-float  inVol;
-float  peakOut;
-float  peakIn;
-bool	 metronome;
-int    waitRec;      // delayComp guard
-bool   docross;			 // crossfade guard
-bool   rewindWait;	   // rewind guard, if quantized
+bool   recording    = false;   // is recording something?
+bool   ready        = true;
+float *vChanInput   = nullptr; // virtual channel for recording
+float *vChanInToOut = nullptr; // virtual channel in->out bridge (hear what you're playin)
+float  outVol       = G_DEFAULT_OUT_VOL;
+float  inVol        = G_DEFAULT_IN_VOL;
+float  peakOut      = 0.0f;
+float  peakIn       = 0.0f;
+bool	 metronome    = false;
+int    waitRec      = 0;       // delayComp guard
+bool   docross      = false;	 // crossfade guard
+bool   rewindWait   = false;	 // rewind guard, if quantized
 
-int  tickTracker, tockTracker;
-bool tickPlay, tockPlay; // 1 = play, 0 = stop
+int  tickTracker, tockTracker = 0;
+bool tickPlay, tockPlay = false; // 1 = play, 0 = stop
 
 /* inputTracker
  * position of the sample in the input side (recording) */
 
-int inputTracker;
+int inputTracker = 0;
 
 /* inToOut
  * copy, process and paste the input into the output, in order to
  * obtain a "hear what you're playing" feature. */
 
-bool inToOut;
+bool inToOut = false;
 
 pthread_mutex_t mutex_recs;
 pthread_mutex_t mutex_chans;
@@ -399,33 +398,11 @@ pthread_mutex_t mutex_plugins;
 
 void init()
 {
-  vChanInput   = nullptr;
-	vChanInToOut = nullptr;
-
-	docross     = false;
-	rewindWait  = false;
-	recording   = false;
-	ready       = true;
-	waitRec     = 0;
-	metronome   = false;
-
-	tickTracker = 0;
-	tockTracker = 0;
-	tickPlay    = false;
-	tockPlay    = false;
-
-	outVol       = G_DEFAULT_OUT_VOL;
-	inVol        = G_DEFAULT_IN_VOL;
-	peakOut      = 0.0f;
-	peakIn	     = 0.0f;
-	inputTracker = 0;
-
 	/* alloc virtual input channels. vChanInput malloc is done in
 	 * updateFrameBars, because of its variable size */
-	/** TODO - set kernelAudio::realBufsize * 2 as private member */
 
 	vChanInput   = nullptr;
-	vChanInToOut = static_cast<float*>(malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float)));
+	vChanInToOut = (float*) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
 
 	pthread_mutex_init(&mutex_recs, nullptr);
 	pthread_mutex_init(&mutex_chans, nullptr);
@@ -449,8 +426,8 @@ int masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize,
   clock::recvJackSync();
 #endif
 
-	float *outBuf = static_cast<float*>(_outBuf);
-	float *inBuf  = kernelAudio::isInputEnabled() ? static_cast<float*>(_inBuf) : nullptr;
+	float *outBuf = (float*) _outBuf;
+	float *inBuf  = kernelAudio::isInputEnabled() ? (float*) _inBuf : nullptr;
 	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator
