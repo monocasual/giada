@@ -35,6 +35,7 @@
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "../gui/elems/mainWindow/keyboard/channelButton.h"
 #include "../utils/gui.h"
 #include "../utils/fs.h"
 #include "../core/kernelAudio.h"

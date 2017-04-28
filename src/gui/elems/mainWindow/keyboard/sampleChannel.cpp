@@ -34,8 +34,6 @@
 #include "../../../../glue/io.h"
 #include "../../../../glue/channel.h"
 #include "../../../../glue/storage.h"
-#include "../../../../utils/string.h"
-#include "../../../../utils/fs.h"
 #include "../../../../utils/gui.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_keyGrabber.h"
@@ -52,6 +50,7 @@
 #include "../../basics/dial.h"
 #include "channelStatus.h"
 #include "channelMode.h"
+#include "sampleChannelButton.h"
 #include "keyboard.h"
 #include "sampleChannel.h"
 
@@ -463,40 +462,4 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 		readActions->show();
 
 	packWidgets();
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h, const char *l)
-	: geChannelButton(x, y, w, h, l) {}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int geSampleChannelButton::handle(int e)
-{
-	int ret = geButton::handle(e);
-	switch (e) {
-		case FL_DND_ENTER:
-		case FL_DND_DRAG:
-		case FL_DND_RELEASE: {
-			ret = 1;
-			break;
-		}
-		case FL_PASTE: {
-      geSampleChannel *gch = (geSampleChannel*) parent();   // parent is geSampleChannel
-      SampleChannel   *ch  = (SampleChannel*) gch->ch;
-      int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())).c_str());
-			if (result != SAMPLE_LOADED_OK)
-				G_MainWin->keyboard->printChannelMessage(result);
-			ret = 1;
-			break;
-		}
-	}
-	return ret;
 }

@@ -33,6 +33,7 @@
 #include "../../basics/boxtypes.h"
 #include "column.h"
 #include "sampleChannel.h"
+#include "channelButton.h"
 #include "keyboard.h"
 
 

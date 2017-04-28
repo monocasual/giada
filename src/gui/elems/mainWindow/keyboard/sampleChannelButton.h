@@ -25,47 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_SAMPLE_CHANNEL_H
-#define GE_SAMPLE_CHANNEL_H
+#ifndef GE_SAMPLE_CHANNEL_BUTTON_H
+#define GE_SAMPLE_CHANNEL_BUTTON_H
 
 
-#include "channel.h"
+#include "channelButton.h"
 
 
-class SampleChannel;
-class geChannelMode;
-class geButton;
-
-
-class geSampleChannel : public geChannel
+class geSampleChannelButton : public geChannelButton
 {
-private:
-
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_readActions   (Fl_Widget *v, void *p);
-
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
-
 public:
 
-	geSampleChannel(int x, int y, int w, int h, SampleChannel *ch);
-
-	void reset   ();
-	void update  ();
-	void refresh ();
-	void resize  (int x, int y, int w, int h);
-
-	/* show/hideActionButton
-	Adds or removes 'R' button when actions are available. */
-
-	void showActionButton();
-	void hideActionButton();
-
-	geChannelMode *modeBox;
-	geButton 	    *readActions;
+  geSampleChannelButton(int x, int y, int w, int h, const char *l=0);
+	int handle(int e);
 };
 
 
