@@ -61,6 +61,153 @@ extern gdMainWindow *G_MainWin;
 using namespace giada;
 
 
+namespace
+{
+enum class Menu
+{
+  LOAD_SAMPLE = 0,
+  EXPORT_SAMPLE,
+  SETUP_KEYBOARD_INPUT,
+  SETUP_MIDI_INPUT,
+  SETUP_MIDI_OUTPUT,
+  EDIT_SAMPLE,
+  EDIT_ACTIONS,
+  CLEAR_ACTIONS,
+  CLEAR_ACTIONS_ALL,
+  CLEAR_ACTIONS_MUTE,
+  CLEAR_ACTIONS_VOLUME,
+  CLEAR_ACTIONS_START_STOP,
+  __END_SUBMENU__,
+  CLONE_CHANNEL,
+  FREE_CHANNEL,
+  DELETE_CHANNEL
+};
+
+
+void menuCallback(Fl_Widget *w, void *v)
+{
+  geSampleChannel *gch = static_cast<geSampleChannel*>(w);
+  Menu selectedItem = (Menu) (intptr_t) v;
+
+  switch (selectedItem)
+  {
+    case Menu::LOAD_SAMPLE: {
+      gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
+        conf::browserW, conf::browserH, "Browse sample",
+        conf::samplePath.c_str(), glue_loadSample, gch->ch);
+      gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+      break;
+    }
+    case Menu::EXPORT_SAMPLE: {
+      gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
+        conf::browserW, conf::browserH, "Save sample",
+        conf::samplePath.c_str(), "", glue_saveSample, gch->ch);
+      gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+  		break;
+    }
+    case Menu::SETUP_KEYBOARD_INPUT: {
+  		new gdKeyGrabber(gch->ch); // FIXME - use gu_openSubWindow
+  		break;
+    }
+    case Menu::SETUP_MIDI_INPUT: {
+      gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+      break;
+    }
+    case Menu::SETUP_MIDI_OUTPUT: {
+      gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(static_cast<SampleChannel*>(gch->ch)), 0);
+      break;
+    }
+    case Menu::EDIT_SAMPLE: {
+      gu_openSubWindow(G_MainWin, new gdSampleEditor(static_cast<SampleChannel*>(gch->ch)), WID_SAMPLE_EDITOR);
+      break;
+    }
+    case Menu::EDIT_ACTIONS: {
+      gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+      break;
+    }
+    case Menu::CLEAR_ACTIONS:
+      break;
+    case Menu::CLEAR_ACTIONS_ALL: {
+    /* TODO - this stuff must be performed by glue! */
+      if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+        break;
+      recorder::clearChan(gch->ch->index);
+      gch->ch->hasActions = false;
+      gch->hideActionButton();
+      gu_refreshActionEditor(); // refresh a.editor window, it could be open
+      break;
+    }
+    case Menu::CLEAR_ACTIONS_MUTE: {
+      /* TODO - this stuff must be performed by glue! */
+      if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
+  			break;
+  		recorder::clearAction(gch->ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
+      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
+  		if (!gch->ch->hasActions)
+  			gch->hideActionButton();
+  		/* TODO - set mute=false */
+  		gu_refreshActionEditor(); // refresh a.editor window, it could be open
+      break;
+    }
+    case Menu::CLEAR_ACTIONS_VOLUME: {
+      /* TODO - this stuff must be performed by glue! */
+      if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
+  			break;
+  		recorder::clearAction(gch->ch->index, G_ACTION_VOLUME);
+      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
+  		if (!gch->ch->hasActions)
+  			gch->hideActionButton();
+  		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+      break;
+    }
+    case Menu::CLEAR_ACTIONS_START_STOP: {
+      /* TODO - this stuff must be performed by glue! */
+      if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
+  			break;
+  		recorder::clearAction(gch->ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
+      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
+  		if (!gch->ch->hasActions)
+  			gch->hideActionButton();
+  		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+      break;
+    }
+    case Menu::__END_SUBMENU__:
+      break;
+    case Menu::CLONE_CHANNEL: {
+      glue_cloneChannel(gch->ch);
+      break;
+    }
+    case Menu::FREE_CHANNEL: {
+      if (gch->ch->status == STATUS_PLAY) {
+  			if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
+  				break;
+  		}
+  		else if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
+  			break;
+
+  		glue_freeChannel(gch->ch);
+  		/* delete any related subwindow */
+  		/** TODO - use gu_closeAllSubwindows() and let glue_freeChannel handle it  */
+  		G_MainWin->delSubWindow(WID_FILE_BROWSER);
+  		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+  		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+  		G_MainWin->delSubWindow(WID_FX_LIST);
+      break;
+    }
+    case Menu::DELETE_CHANNEL: {
+      if (gdConfirmWin("Warning", "Delete channel: are you sure?"))
+        glue_deleteChannel(gch->ch);
+      break;
+    }
+  }
+}
+
+}; // {namespace}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, (Channel*) ch)
 {
@@ -146,45 +293,40 @@ void geSampleChannel::__cb_openMenu()
 	if (mixer::recording || recorder::active)
 		return;
 
-	/* the following is a trash workaround for a FLTK menu. We need a gMenu
-	 * widget asap */
-
 	Fl_Menu_Item rclick_menu[] = {
-		{"Load new sample..."},                     // 0
-		{"Export sample to file..."},               // 1
-		{"Setup keyboard input..."},                // 2
-		{"Setup MIDI input..."},                    // 3
-		{"Setup MIDI output..."},                   // 4
-		{"Edit sample..."},                         // 5
-		{"Edit actions..."},                        // 6
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 7
-			{"All"},                                  // 8
-			{"Mute"},                                 // 9
-			{"Volume"},                               // 10
-			{"Start/Stop"},                           // 11
-			{0},                                      // 12
-		{"Clone channel"},                          // 13
-		{"Free channel"},                           // 14
-		{"Delete channel"},                         // 15
+		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
+		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
+		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
+		{"Setup MIDI input...",      0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
+		{"Setup MIDI output...",     0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
+		{"Edit sample...",           0, menuCallback, (void*) Menu::EDIT_SAMPLE},
+		{"Edit actions...",          0, menuCallback, (void*) Menu::EDIT_ACTIONS},
+		{"Clear actions",            0, menuCallback, (void*) Menu::CLEAR_ACTIONS, FL_SUBMENU},
+			{"All",        0, menuCallback, (void*) Menu::CLEAR_ACTIONS_ALL},
+			{"Mute",       0, menuCallback, (void*) Menu::CLEAR_ACTIONS_MUTE},
+			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
+			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
+			{0},
+		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
+		{"Free channel",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
+		{"Delete channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}
 	};
 
 	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
-		rclick_menu[1].deactivate();
-		rclick_menu[5].deactivate();
-		rclick_menu[14].deactivate();
+		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
+		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
+		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
 	}
 
-	/* no 'clear actions' if there are no actions */
-
 	if (!ch->hasActions)
-		rclick_menu[7].deactivate();
+		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
 
-	/* no 'clear start/stop actions' for those channels in loop mode:
-	 * they cannot have start/stop actions. */
+	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
+  have start/stop actions. */
 
 	if (((SampleChannel*)ch)->mode & LOOP_ANY)
-		rclick_menu[11].deactivate();
+		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
@@ -193,130 +335,9 @@ void geSampleChannel::__cb_openMenu()
 	b->color(COLOR_BG_0);
 
 	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (!m) return;
-
-	if (strcmp(m->label(), "Load new sample...") == 0) {
-    gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
-      conf::browserW, conf::browserH, "Browse sample",
-      conf::samplePath.c_str(), glue_loadSample, ch);
-    gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
-		new gdKeyGrabber(ch); /// FIXME - use gu_openSubWindow
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdMidiInputChannel(ch), 0);
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh((SampleChannel*) ch), 0);
-		return;
-	}
-
-	if (strcmp(m->label(), "Edit sample...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdSampleEditor((SampleChannel*) ch), WID_SAMPLE_EDITOR); /// FIXME title it's up to gdSampleEditor
-		return;
-	}
-
-	if (strcmp(m->label(), "Export sample to file...") == 0) {
-    gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
-      conf::browserW, conf::browserH, "Save sample", \
-      conf::samplePath.c_str(), "", glue_saveSample, ch);
-    gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-		return;
-	}
-
-	if (strcmp(m->label(), "Delete channel") == 0) {
-		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
-			return;
-		glue_deleteChannel(ch);
-		return;
-	}
-
-	if (strcmp(m->label(), "Free channel") == 0) {
-		if (ch->status == STATUS_PLAY) {
-			if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
-				return;
-		}
-		else if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
-			return;
-
-		glue_freeChannel(ch);
-
-		/* delete any related subwindow */
-
-		/** FIXME - use gu_closeAllSubwindows() */
-
-		G_MainWin->delSubWindow(WID_FILE_BROWSER);
-		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-		G_MainWin->delSubWindow(WID_FX_LIST);
-
-		return;
-	}
-
-	if (strcmp(m->label(), "Clone channel") == 0) {
-		glue_cloneChannel(ch);
-		return;
-	}
-
-	if (strcmp(m->label(), "Mute") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
-			return;
-		recorder::clearAction(ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
-    ch->hasActions = recorder::hasActions(ch->index);
-
-		if (!ch->hasActions)
-			hideActionButton();
-
-		/* TODO - set mute=false */
-
-		gu_refreshActionEditor(); // refresh a.editor window, it could be open
-		return;
-	}
-
-	if (strcmp(m->label(), "Start/Stop") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
-			return;
-		recorder::clearAction(ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
-    ch->hasActions = recorder::hasActions(ch->index);
-
-		if (!ch->hasActions)
-			hideActionButton();
-		gu_refreshActionEditor();  // refresh a.editor window, it could be open
-		return;
-	}
-
-	if (strcmp(m->label(), "Volume") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
-			return;
-		recorder::clearAction(ch->index, G_ACTION_VOLUME);
-    ch->hasActions = recorder::hasActions(ch->index);
-		if (!ch->hasActions)
-			hideActionButton();
-		gu_refreshActionEditor();  // refresh a.editor window, it could be open
-		return;
-	}
-
-	if (strcmp(m->label(), "All") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-			return;
-		recorder::clearChan(ch->index);
-    ch->hasActions = false;
-		hideActionButton();
-		gu_refreshActionEditor(); // refresh a.editor window, it could be open
-		return;
-	}
-
-	if (strcmp(m->label(), "Edit actions...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
-		return;
-	}
+  if (m)
+    m->do_callback(this, m->user_data());
+  return;
 }
 
 
