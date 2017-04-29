@@ -33,6 +33,7 @@
 #include "../../../../core/sampleChannel.h"
 #include "../../../../glue/io.h"
 #include "../../../../glue/channel.h"
+#include "../../../../glue/recorder.h"
 #include "../../../../glue/storage.h"
 #include "../../../../utils/gui.h"
 #include "../../../dialogs/gd_mainWindow.h"
@@ -84,6 +85,9 @@ enum class Menu
 };
 
 
+/* -------------------------------------------------------------------------- */
+
+
 void menuCallback(Fl_Widget *w, void *v)
 {
   geSampleChannel *gch = static_cast<geSampleChannel*>(w);
@@ -126,77 +130,34 @@ void menuCallback(Fl_Widget *w, void *v)
       break;
     }
     case Menu::CLEAR_ACTIONS:
+    case Menu::__END_SUBMENU__:
       break;
     case Menu::CLEAR_ACTIONS_ALL: {
-    /* TODO - this stuff must be performed by glue! */
-      if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-        break;
-      recorder::clearChan(gch->ch->index);
-      gch->ch->hasActions = false;
-      gch->hideActionButton();
-      gu_refreshActionEditor(); // refresh a.editor window, it could be open
+      glue_clearAllActions(gch);
       break;
     }
     case Menu::CLEAR_ACTIONS_MUTE: {
-      /* TODO - this stuff must be performed by glue! */
-      if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
-  			break;
-  		recorder::clearAction(gch->ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
-      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
-  		if (!gch->ch->hasActions)
-  			gch->hideActionButton();
-  		/* TODO - set mute=false */
-  		gu_refreshActionEditor(); // refresh a.editor window, it could be open
+      glue_clearMuteActions(gch);
       break;
     }
     case Menu::CLEAR_ACTIONS_VOLUME: {
-      /* TODO - this stuff must be performed by glue! */
-      if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
-  			break;
-  		recorder::clearAction(gch->ch->index, G_ACTION_VOLUME);
-      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
-  		if (!gch->ch->hasActions)
-  			gch->hideActionButton();
-  		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+      glue_clearVolumeActions(gch);
       break;
     }
     case Menu::CLEAR_ACTIONS_START_STOP: {
-      /* TODO - this stuff must be performed by glue! */
-      if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
-  			break;
-  		recorder::clearAction(gch->ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
-      gch->ch->hasActions = recorder::hasActions(gch->ch->index);
-  		if (!gch->ch->hasActions)
-  			gch->hideActionButton();
-  		gu_refreshActionEditor();  // refresh a.editor window, it could be open
+      glue_clearStartStopActions(gch);
       break;
     }
-    case Menu::__END_SUBMENU__:
-      break;
     case Menu::CLONE_CHANNEL: {
       glue_cloneChannel(gch->ch);
       break;
     }
     case Menu::FREE_CHANNEL: {
-      if (gch->ch->status == STATUS_PLAY) {
-  			if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
-  				break;
-  		}
-  		else if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
-  			break;
-
   		glue_freeChannel(gch->ch);
-  		/* delete any related subwindow */
-  		/** TODO - use gu_closeAllSubwindows() and let glue_freeChannel handle it  */
-  		G_MainWin->delSubWindow(WID_FILE_BROWSER);
-  		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-  		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-  		G_MainWin->delSubWindow(WID_FX_LIST);
       break;
     }
     case Menu::DELETE_CHANNEL: {
-      if (gdConfirmWin("Warning", "Delete channel: are you sure?"))
-        glue_deleteChannel(gch->ch);
+      glue_deleteChannel(gch->ch);
       break;
     }
   }
@@ -325,7 +286,7 @@ void geSampleChannel::__cb_openMenu()
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
   have start/stop actions. */
 
-	if (((SampleChannel*)ch)->mode & LOOP_ANY)
+	if (static_cast<SampleChannel*>(ch)->mode & LOOP_ANY)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);

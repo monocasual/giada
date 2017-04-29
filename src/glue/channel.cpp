@@ -28,6 +28,7 @@
 #include <cmath>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/sampleEditor.h"
+#include "../gui/dialogs/gd_warnings.h"
 #include "../gui/elems/basics/input.h"
 #include "../gui/elems/basics/dial.h"
 #include "../gui/elems/sampleEditor/waveTools.h"
@@ -101,7 +102,9 @@ Channel *glue_addChannel(int column, int type)
 
 void glue_deleteChannel(Channel *ch)
 {
-	recorder::clearChan(ch->index);
+  if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
+    return;
+  recorder::clearChan(ch->index);
   ch->hasActions = false;
 #ifdef WITH_VST
 	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex_plugins, ch);
@@ -119,10 +122,25 @@ void glue_deleteChannel(Channel *ch)
 
 void glue_freeChannel(Channel *ch)
 {
+  if (ch->status == STATUS_PLAY) {
+    if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
+      return;
+  }
+  else
+  if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
+    return;
+
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
   ch->hasActions = false;
 	ch->empty();
+
+  /* delete any related subwindow */
+  /** TODO - use gu_closeAllSubwindows()   */
+  G_MainWin->delSubWindow(WID_FILE_BROWSER);
+  G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+  G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+  G_MainWin->delSubWindow(WID_FX_LIST);
 }
 
 

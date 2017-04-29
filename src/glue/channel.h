@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -76,18 +73,22 @@ void glue_setMute(Channel *ch, bool gui=true);
 void glue_setSoloOn (Channel *ch, bool gui=true);
 void glue_setSoloOff(Channel *ch, bool gui=true);
 
+/* TODO move to glue_sampleEditor */
 void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
+/* TODO move to glue_sampleEditor */
 void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val);
 
 /* setBeginEndChannel
  * sets start/end points in the sample editor. Recalc=false: don't recalc
  * internal position. check=true: check the points' consistency */
 
+/* TODO move to glue_sampleEditor */
 void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch,
   int b, int e, bool recalc=false, bool check=true);
 
+/* TODO move to glue_sampleEditor */
 void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
@@ -96,6 +97,7 @@ void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val,
  * numeric flag tells if we want to handle the dial or the numeric input
  * field. */
 
+/* TODO move to glue_sampleEditor */
 void glue_setVolEditor(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
