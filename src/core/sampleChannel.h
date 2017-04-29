@@ -49,12 +49,12 @@ private:
 	SRC_DATA   rsmp_data;
 
 	/* pChan
-	 * extra virtual channel for processing resampled data.  */
+	Extra virtual channel for processing resampled data. */
 
 	float *pChan;
 
 	/* frameRewind
-	 * exact frame in which a rewind occurs */
+	Exact frame in which a rewind occurs. */
 
 	int frameRewind;
 
@@ -195,6 +195,7 @@ public:
 	float  fadeoutStep;     // fadeout decrease
   int    fadeoutType;     // xfade or fadeout
   int		 fadeoutEnd;      // what to do when fadeout ends
+  bool   inputMonitor;
 
 	/* midi stuff */
 

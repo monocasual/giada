@@ -68,6 +68,7 @@ int glue_cloneChannel(Channel *ch);
  * signal. */
 
 void glue_toggleArm(Channel *ch, bool gui=true);
+void glue_toggleInputMonitor(Channel *ch);
 void glue_setChanVol(Channel *ch, float v, bool gui=true);
 void glue_setMute(Channel *ch, bool gui=true);
 void glue_setSoloOn (Channel *ch, bool gui=true);

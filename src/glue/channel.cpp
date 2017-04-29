@@ -158,6 +158,16 @@ void glue_toggleArm(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
+void glue_toggleInputMonitor(Channel *ch)
+{
+  SampleChannel *sch = static_cast<SampleChannel*>(ch);
+  sch->inputMonitor = !sch->inputMonitor;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = mh::addChannel(src->type);

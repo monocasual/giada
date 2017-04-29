@@ -66,7 +66,8 @@ namespace
 {
 enum class Menu
 {
-  LOAD_SAMPLE = 0,
+  INPUT_MONITOR = 0,
+  LOAD_SAMPLE,
   EXPORT_SAMPLE,
   SETUP_KEYBOARD_INPUT,
   SETUP_MIDI_INPUT,
@@ -95,6 +96,10 @@ void menuCallback(Fl_Widget *w, void *v)
 
   switch (selectedItem)
   {
+    case Menu::INPUT_MONITOR: {
+      glue_toggleInputMonitor(gch->ch);
+      break;
+    }
     case Menu::LOAD_SAMPLE: {
       gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
         conf::browserW, conf::browserH, "Browse sample",
@@ -255,6 +260,8 @@ void geSampleChannel::__cb_openMenu()
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
+		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
+      FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},

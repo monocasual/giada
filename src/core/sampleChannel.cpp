@@ -65,11 +65,12 @@ SampleChannel::SampleChannel(int bufferSize)
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (G_DEFAULT_FADEOUT_STEP),
+    inputMonitor     (true),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {
 	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
-	pChan      = (float *) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
+	pChan = (float *) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
 }
 
 
@@ -739,12 +740,12 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 
 void SampleChannel::process(float *outBuffer, float *inBuffer)
 {
-	/* If armed and inbuffer is not nullptr (i.e. input device available), copy input
-	buffer to vChan: this enables the live recording mode. The vChan will be
-	overwritten later by pluginHost::processStack, so that you would record "clean"
-	audio (i.e. not plugin-processed). */
+	/* If armed and inbuffer is not nullptr (i.e. input device available) and
+  input monitor is on, copy input buffer to vChan: this enables the input
+  monitoring. The vChan will be overwritten later by pluginHost::processStack,
+  so that you would record "clean" audio (i.e. not plugin-processed). */
 
-	if (armed && inBuffer)
+	if (armed && inBuffer && inputMonitor)
     for (int i=0; i<bufferSize; i++)
       vChan[i] += inBuffer[i]; // add, don't overwrite (no raw memcpy)
 
@@ -752,7 +753,7 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
-	for (int j=0; j<bufferSize; j+=2) {
+  for (int j=0; j<bufferSize; j+=2) {
 		outBuffer[j]   += vChan[j]   * volume * panLeft  * boost;
 		outBuffer[j+1] += vChan[j+1] * volume * panRight * boost;
 	}
