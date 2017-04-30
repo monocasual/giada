@@ -50,6 +50,7 @@ public:
 	geRadio *chansStopOnSeqHalt_1;
 	geRadio *chansStopOnSeqHalt_0;
 	geCheck *treatRecsAsLoops;
+	geCheck *inputMonitorDefaultOn;
 
 	geTabBehaviors(int x, int y, int w, int h);
 

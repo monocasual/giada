@@ -141,7 +141,7 @@ Channel *addChannel(int type)
 	int bufferSize = kernelAudio::getRealBufSize() * 2;
 
 	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize);
+		ch = new SampleChannel(bufferSize, conf::inputMonitorDefaultOn);
 	else
 		ch = new MidiChannel(bufferSize);
 

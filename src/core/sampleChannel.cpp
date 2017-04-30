@@ -48,7 +48,7 @@ using std::string;
 using namespace giada;
 
 
-SampleChannel::SampleChannel(int bufferSize)
+SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
 		wave             (nullptr),
@@ -65,7 +65,7 @@ SampleChannel::SampleChannel(int bufferSize)
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (G_DEFAULT_FADEOUT_STEP),
-    inputMonitor     (true),
+    inputMonitor     (inputMonitor),
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {

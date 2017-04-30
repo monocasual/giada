@@ -89,7 +89,7 @@ private:
 
 public:
 
-	SampleChannel(int bufferSize);
+	SampleChannel(int bufferSize, bool inputMonitor);
 	~SampleChannel();
 
 	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;

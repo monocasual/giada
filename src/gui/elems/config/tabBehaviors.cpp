@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Pack.H>
 #include "../../core/const.h"
 #include "../../core/conf.h"
 #include "../basics/box.h"
@@ -40,8 +41,9 @@ using std::string;
 geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Behaviors")
 {
-	begin();
-	Fl_Group *radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
+  begin();
+
+  Fl_Group *radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
 		new geBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
 		recsStopOnChanHalt_1 = new geRadio(x()+25, y()+35, 280, 20, "stop it immediately");
 		recsStopOnChanHalt_0 = new geRadio(x()+25, y()+55, 280, 20, "play it until finished");
@@ -53,14 +55,17 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 		chansStopOnSeqHalt_0 = new geRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
 
-	treatRecsAsLoops  = new geCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
+	treatRecsAsLoops = new geCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
+  inputMonitorDefaultOn = new geCheck(x(), y()+180, 280, 20, "New sample channels have input monitor on by default");
 
-	end();
+  end();
+
 	labelsize(GUI_FONT_SIZE_BASE);
 
 	conf::recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	conf::chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
-	conf::treatRecsAsLoops   == 1 ? treatRecsAsLoops->value(1)  : treatRecsAsLoops->value(0);
+	treatRecsAsLoops->value(conf::treatRecsAsLoops);
+	inputMonitorDefaultOn->value(conf::inputMonitorDefaultOn);
 
 	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
 	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -91,5 +96,6 @@ void geTabBehaviors::save()
 {
 	conf::recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
 	conf::chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
-	conf::treatRecsAsLoops   = treatRecsAsLoops->value() == 1 ? 1 : 0;
+	conf::treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
+	conf::inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
 }

@@ -412,6 +412,7 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_CHANS_STOP_ON_SEQ_HALT   "chans_stop_on_seq_halt"
 #define CONF_KEY_TREAT_RECS_AS_LOOPS      "treat_recs_as_loops"
 #define CONF_KEY_RESIZE_RECORDINGS        "resize_recordings"
+#define CONF_KEY_INPUT_MONITOR_DEFAULT_ON "input_monitor_default_on"
 #define CONF_KEY_PLUGINS_PATH             "plugins_path"
 #define CONF_KEY_PATCHES_PATH             "patches_path"
 #define CONF_KEY_SAMPLES_PATH             "samples_path"
