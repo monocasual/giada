@@ -92,6 +92,7 @@ struct channel_t
   float       boost;
   int         recActive;
   float       pitch;
+  bool        inputMonitor;
   uint32_t    midiInReadActions;
   uint32_t    midiInPitch;
   // midi channel

@@ -939,6 +939,7 @@ int SampleChannel::readPatch(const string &basePath, int i,
 	recStatus         = readActions ? REC_READING : REC_STOPPED;
 	midiInReadActions = pch->midiInReadActions;
 	midiInPitch       = pch->midiInPitch;
+  inputMonitor      = pch->inputMonitor;
 
 	int res = load((basePath + pch->samplePath).c_str(), samplerate, rsmpQuality);
 	if (res == SAMPLE_LOADED_OK) {
@@ -1067,6 +1068,7 @@ int SampleChannel::writePatch(int i, bool isProject)
 	pch->boost             = boost;
 	pch->recActive         = readActions;
 	pch->pitch             = pitch;
+	pch->inputMonitor      = inputMonitor;
 	pch->midiInReadActions = midiInReadActions;
 	pch->midiInPitch       = midiInPitch;
 

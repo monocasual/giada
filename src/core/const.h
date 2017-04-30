@@ -358,6 +358,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_BOOST                "boost"
 #define PATCH_KEY_CHANNEL_REC_ACTIVE           "rec_active"
 #define PATCH_KEY_CHANNEL_PITCH                "pitch"
+#define PATCH_KEY_CHANNEL_INPUT_MONITOR        "input_monitor"
 #define PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS "midi_in_read_actions"
 #define PATCH_KEY_CHANNEL_MIDI_IN_PITCH        "midi_in_pitch"
 #define PATCH_KEY_CHANNEL_MIDI_OUT             "midi_out"
