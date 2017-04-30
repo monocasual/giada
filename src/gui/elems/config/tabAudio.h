@@ -25,51 +25,59 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_CONFIG_H
-#define GD_CONFIG_H
+#ifndef GE_TAB_AUDIO_H
+#define GE_TAB_AUDIO_H
 
 
-#include "window.h"
+#include <FL/Fl_Group.H>
 
 
-class geTabAudio;
-class geTabBehaviors;
-class geTabMidi;
-class geTabMisc;
-#ifdef WITH_VST
-class geTabPlugins;
-#endif
-class geButton;
 class geChoice;
 class geCheck;
+class geButton;
 class geInput;
-class geRadio;
-class geBox;
 
 
-class gdConfig : public gdWindow
+class geTabAudio : public Fl_Group
 {
 private:
 
-	static void cb_save_config(Fl_Widget *w, void *p);
-	static void cb_cancel     (Fl_Widget *w, void *p);
-	inline void __cb_save_config();
-	inline void __cb_cancel();
+	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
+	static void cb_fetchInChans       (Fl_Widget *w, void *p);
+	static void cb_fetchOutChans      (Fl_Widget *w, void *p);
+	static void cb_showInputInfo      (Fl_Widget *w, void *p);
+	static void cb_showOutputInfo     (Fl_Widget *w, void *p);
+	inline void __cb_deactivate_sounddev();
+	inline void __cb_fetchInChans();
+	inline void __cb_fetchOutChans();
+	inline void __cb_showInputInfo();
+	inline void __cb_showOutputInfo();
+
+	void fetchSoundDevs();
+	void fetchInChans(int menuItem);
+	void fetchOutChans(int menuItem);
+	int  findMenuDevice(geChoice *m, int device);
+
+	int soundsysInitValue;
 
 public:
 
-	gdConfig(int w, int h);
-	~gdConfig();
+	geChoice *soundsys;
+	geChoice *samplerate;
+	geChoice *rsmpQuality;
+	geChoice *sounddevIn;
+	geButton  *devInInfo;
+	geChoice *channelsIn;
+	geChoice *sounddevOut;
+	geButton  *devOutInfo;
+	geChoice *channelsOut;
+	geCheck  *limitOutput;
+	geChoice *buffersize;
+	geInput  *delayComp;
 
-	geTabAudio     *tabAudio;
-	geTabBehaviors *tabBehaviors;
-	geTabMidi      *tabMidi;
-	geTabMisc      *tabMisc;
-#ifdef WITH_VST
-	geTabPlugins   *tabPlugins;
-#endif
-	geButton 	    *save;
-	geButton 	    *cancel;
+	geTabAudio(int x, int y, int w, int h);
+
+	void save();
 };
 
 

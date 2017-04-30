@@ -25,52 +25,56 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_CONFIG_H
-#define GD_CONFIG_H
+#include "../../core/const.h"
+#include "../../core/conf.h"
+#include "../basics/choice.h"
+#include "tabMisc.h"
 
 
-#include "window.h"
+using namespace giada;
 
 
-class geTabAudio;
-class geTabBehaviors;
-class geTabMidi;
-class geTabMisc;
-#ifdef WITH_VST
-class geTabPlugins;
-#endif
-class geButton;
-class geChoice;
-class geCheck;
-class geInput;
-class geRadio;
-class geBox;
-
-
-class gdConfig : public gdWindow
+geTabMisc::geTabMisc(int X, int Y, int W, int H)
+	: Fl_Group(X, Y, W, H, "Misc")
 {
-private:
+	begin();
+	debugMsg = new geChoice(x()+92,  y()+9, 253, 20, "Debug messages");
+	end();
 
-	static void cb_save_config(Fl_Widget *w, void *p);
-	static void cb_cancel     (Fl_Widget *w, void *p);
-	inline void __cb_save_config();
-	inline void __cb_cancel();
+	debugMsg->add("(disabled)");
+	debugMsg->add("To standard output");
+	debugMsg->add("To file");
 
-public:
+	labelsize(GUI_FONT_SIZE_BASE);
 
-	gdConfig(int w, int h);
-	~gdConfig();
-
-	geTabAudio     *tabAudio;
-	geTabBehaviors *tabBehaviors;
-	geTabMidi      *tabMidi;
-	geTabMisc      *tabMisc;
-#ifdef WITH_VST
-	geTabPlugins   *tabPlugins;
-#endif
-	geButton 	    *save;
-	geButton 	    *cancel;
-};
+	switch (conf::logMode) {
+		case LOG_MODE_MUTE:
+			debugMsg->value(0);
+			break;
+		case LOG_MODE_STDOUT:
+			debugMsg->value(1);
+			break;
+		case LOG_MODE_FILE:
+			debugMsg->value(2);
+			break;
+	}
+}
 
 
-#endif
+/* -------------------------------------------------------------------------- */
+
+
+void geTabMisc::save()
+{
+	switch(debugMsg->value()) {
+		case 0:
+			conf::logMode = LOG_MODE_MUTE;
+			break;
+		case 1:
+			conf::logMode = LOG_MODE_STDOUT;
+			break;
+		case 2:
+			conf::logMode = LOG_MODE_FILE;
+			break;
+	}
+}

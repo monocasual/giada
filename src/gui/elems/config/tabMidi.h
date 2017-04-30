@@ -25,51 +25,43 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_CONFIG_H
-#define GD_CONFIG_H
+#ifndef GE_TAB_MIDI_H
+#define GE_TAB_MIDI_H
 
 
-#include "window.h"
+#include <FL/Fl_Group.H>
 
 
-class geTabAudio;
-class geTabBehaviors;
-class geTabMidi;
-class geTabMisc;
-#ifdef WITH_VST
-class geTabPlugins;
-#endif
-class geButton;
 class geChoice;
 class geCheck;
-class geInput;
-class geRadio;
-class geBox;
 
 
-class gdConfig : public gdWindow
+class geTabMidi : public Fl_Group
 {
 private:
 
-	static void cb_save_config(Fl_Widget *w, void *p);
-	static void cb_cancel     (Fl_Widget *w, void *p);
-	inline void __cb_save_config();
-	inline void __cb_cancel();
+	void fetchSystems();
+	void fetchOutPorts();
+	void fetchInPorts();
+	void fetchMidiMaps();
+
+	static void cb_changeSystem  (Fl_Widget *w, void *p);
+	inline void __cb_changeSystem();
+
+	int systemInitValue;
 
 public:
 
-	gdConfig(int w, int h);
-	~gdConfig();
+	geChoice *system;
+	geChoice *portOut;
+	geChoice *portIn;
+	geCheck  *noNoteOff;
+	geChoice *midiMap;
+	geChoice *sync;
 
-	geTabAudio     *tabAudio;
-	geTabBehaviors *tabBehaviors;
-	geTabMidi      *tabMidi;
-	geTabMisc      *tabMisc;
-#ifdef WITH_VST
-	geTabPlugins   *tabPlugins;
-#endif
-	geButton 	    *save;
-	geButton 	    *cancel;
+	geTabMidi(int x, int y, int w, int h);
+
+	void save();
 };
 
 

@@ -25,52 +25,44 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_CONFIG_H
-#define GD_CONFIG_H
+#ifndef GE_TAB_PLUGINS_H
+#define GE_TAB_PLUGINS_H
 
 
-#include "window.h"
-
-
-class geTabAudio;
-class geTabBehaviors;
-class geTabMidi;
-class geTabMisc;
 #ifdef WITH_VST
-class geTabPlugins;
-#endif
-class geButton;
-class geChoice;
-class geCheck;
+
+
+#include <FL/Fl_Group.H>
+
+
 class geInput;
-class geRadio;
+class geButton;
 class geBox;
 
 
-class gdConfig : public gdWindow
+class geTabPlugins : public Fl_Group
 {
 private:
 
-	static void cb_save_config(Fl_Widget *w, void *p);
-	static void cb_cancel     (Fl_Widget *w, void *p);
-	inline void __cb_save_config();
-	inline void __cb_cancel();
+	static void cb_scan  (Fl_Widget *w, void *p);
+	static void cb_onScan(float progress, void *p);
+	inline void __cb_scan(Fl_Widget *w);
+
+	void updateCount();
 
 public:
 
-	gdConfig(int w, int h);
-	~gdConfig();
+	geInput   *folderPath;
+	geButton *scanButton;
+	geBox     *info;
 
-	geTabAudio     *tabAudio;
-	geTabBehaviors *tabBehaviors;
-	geTabMidi      *tabMidi;
-	geTabMisc      *tabMisc;
-#ifdef WITH_VST
-	geTabPlugins   *tabPlugins;
-#endif
-	geButton 	    *save;
-	geButton 	    *cancel;
+	geTabPlugins(int x, int y, int w, int h);
+
+	void save();
 };
+
+
+#endif
 
 
 #endif

@@ -173,6 +173,16 @@ src/gui/elems/mainWindow/keyboard/channel.h                \
 src/gui/elems/mainWindow/keyboard/channel.cpp              \
 src/gui/elems/mainWindow/keyboard/sampleChannelButton.h    \
 src/gui/elems/mainWindow/keyboard/sampleChannelButton.cpp  \
+src/gui/elems/config/tabMisc.h         \
+src/gui/elems/config/tabMisc.cpp       \
+src/gui/elems/config/tabMidi.h         \
+src/gui/elems/config/tabMidi.cpp       \
+src/gui/elems/config/tabAudio.h        \
+src/gui/elems/config/tabAudio.cpp      \
+src/gui/elems/config/tabBehaviors.h    \
+src/gui/elems/config/tabBehaviors.cpp  \
+src/gui/elems/config/tabPlugins.h      \
+src/gui/elems/config/tabPlugins.cpp    \
 src/gui/elems/basics/scroll.h          \
 src/gui/elems/basics/scroll.cpp        \
 src/gui/elems/basics/boxtypes.h        \
