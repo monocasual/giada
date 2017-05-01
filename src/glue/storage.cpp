@@ -484,7 +484,7 @@ void glue_saveSample(void *data)
 {
 	gdBrowserSave *browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
-	string folderPath      = browser->getSelectedItem();
+	string folderPath      = browser->getCurrentPath();
 
 	if (name == "") {
 		gdAlert("Please choose a file name.");
@@ -499,8 +499,9 @@ void glue_saveSample(void *data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (((SampleChannel*)browser->getChannel())->save(filePath.c_str())) {
-		conf::samplePath = gu_dirname(folderPath);
+	if (static_cast<SampleChannel*>(browser->getChannel())->save(filePath.c_str())) {
+    gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
+		conf::samplePath = gu_dirname(filePath);
 		browser->do_callback();
 	}
 	else
