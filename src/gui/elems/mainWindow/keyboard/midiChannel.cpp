@@ -32,6 +32,7 @@
 #include "../../../../utils/gui.h"
 #include "../../../../glue/channel.h"
 #include "../../../../glue/io.h"
+#include "../../../../glue/recorder.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/gd_actionEditor.h"
@@ -51,6 +52,66 @@ extern gdMainWindow *G_MainWin;
 
 
 using namespace giada;
+
+
+namespace
+{
+enum class Menu
+{
+  EDIT_ACTIONS = 0,
+  CLEAR_ACTIONS,
+  CLEAR_ACTIONS_ALL,
+  __END_SUBMENU__,
+  SETUP_KEYBOARD_INPUT,
+  SETUP_MIDI_INPUT,
+  SETUP_MIDI_OUTPUT,
+  CLONE_CHANNEL,
+  DELETE_CHANNEL
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void menuCallback(Fl_Widget *w, void *v)
+{
+  geMidiChannel *gch = static_cast<geMidiChannel*>(w);
+  Menu selectedItem = (Menu) (intptr_t) v;
+
+  switch (selectedItem)
+  {
+    case Menu::CLEAR_ACTIONS:
+    case Menu::__END_SUBMENU__:
+      break;
+    case Menu::EDIT_ACTIONS:
+      gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+      break;
+    case Menu::CLEAR_ACTIONS_ALL:
+      glue_clearAllActions(gch);
+      break;
+    case Menu::SETUP_KEYBOARD_INPUT:
+      gu_openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
+      break;
+    case Menu::SETUP_MIDI_INPUT:
+      gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+      break;
+    case Menu::SETUP_MIDI_OUTPUT:
+      gu_openSubWindow(G_MainWin,
+        new gdMidiOutputMidiCh(static_cast<MidiChannel*>(gch->ch)), 0);
+      break;
+    case Menu::CLONE_CHANNEL:
+      glue_cloneChannel(gch->ch);
+      break;
+    case Menu::DELETE_CHANNEL:
+      glue_deleteChannel(gch->ch);
+      break;
+  }
+}
+
+}; // {namespace}
+
+
+/* -------------------------------------------------------------------------- */
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
@@ -129,22 +190,22 @@ void geMidiChannel::__cb_button()
 void geMidiChannel::__cb_openMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
-		{"Edit actions..."},                        // 0
-		{"Clear actions", 0, 0, 0, FL_SUBMENU},     // 1
-			{"All"},                                  // 2
-			{0},                                      // 3
-		{"Setup keyboard input..."},                // 5
-		{"Setup MIDI input..."},                    // 6
-		{"Setup MIDI output..."},                   // 7
-		{"Clone channel"},                          // 8
-		{"Delete channel"},                         // 9
+		{"Edit actions...", 0, menuCallback, (void*) Menu::EDIT_ACTIONS},
+		{"Clear actions",   0, menuCallback, (void*) Menu::CLEAR_ACTIONS, FL_SUBMENU},
+			{"All",           0, menuCallback, (void*) Menu::CLEAR_ACTIONS_ALL},
+			{0},
+		{"Setup keyboard input...", 0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
+		{"Setup MIDI input...",     0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
+		{"Setup MIDI output...",    0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
+		{"Clone channel",           0, menuCallback, (void*) Menu::CLONE_CHANNEL},
+		{"Delete channel",          0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}
 	};
 
-	/* no 'clear actions' if there are no actions */
+	/* No 'clear actions' if there are no actions. */
 
 	if (!ch->hasActions)
-		rclick_menu[1].deactivate();
+		rclick_menu[(int)Menu::CLEAR_ACTIONS].deactivate();
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
@@ -152,51 +213,10 @@ void geMidiChannel::__cb_openMenu()
 	b->textcolor(COLOR_TEXT_0);
 	b->color(COLOR_BG_0);
 
-	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (!m) return;
-
-	if (strcmp(m->label(), "Delete channel") == 0) {
-		if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
-			return;
-		glue_deleteChannel(ch);
-		return;
-	}
-
-	if (strcmp(m->label(), "Clone channel") == 0) {
-		glue_cloneChannel(ch);
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup keyboard input...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdKeyGrabber(ch),	0);
-		//new gdKeyGrabber(ch);
-		return;
-	}
-
-	if (strcmp(m->label(), "All") == 0) {
-		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
-			return;
-		recorder::clearChan(ch->index);
-    ch->hasActions = false;
-		gu_refreshActionEditor(); // refresh a.editor window, it could be open
-		return;
-	}
-
-	if (strcmp(m->label(), "Edit actions...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdActionEditor(ch),	WID_ACTION_EDITOR);
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup MIDI input...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdMidiInputChannel(ch), 0);
-		return;
-	}
-
-	if (strcmp(m->label(), "Setup MIDI output...") == 0) {
-		//gu_openSubWindow(G_MainWin, new gdMidiGrabberChannel(ch, GrabForOutput), 0);
-		gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh((MidiChannel*) ch), 0);
-		return;
-	}
+  const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+  if (m)
+    m->do_callback(this, m->user_data());
+  return;
 }
 
 
