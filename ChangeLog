@@ -13,6 +13,7 @@
 
 
 0.13.5 ---
+- Ability to toggle input monitoring while recording audio
 - Lots of code refactoring
 - Convert all .h headers to C++ headers
 - Fix crash when recording audio
