@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -33,7 +30,6 @@
 
 
 void glue_loadPatch  (void *data);
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, class geProgress *status, bool isProject);
 void glue_savePatch  (void *data);
 void glue_saveProject(void *data);
 void glue_saveSample (void *data);

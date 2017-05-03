@@ -40,7 +40,6 @@
 #include "../core/clock.h"
 #include "../core/kernelMidi.h"
 #include "../core/kernelAudio.h"
-#include "../core/patch_DEPR_.h"
 #include "../core/conf.h"
 #ifdef WITH_VST
 #include "../core/pluginHost.h"
@@ -49,7 +48,6 @@
 
 
 extern gdMainWindow *G_MainWin;
-extern Patch_DEPR_   G_Patch_DEPR_;
 
 
 using namespace giada;
@@ -223,7 +221,6 @@ void glue_clearAllRecs()
 
 void glue_resetToInitState(bool resetGui, bool createColumns)
 {
-	G_Patch_DEPR_.setDefault();
 	mixer::close();
 	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
 	recorder::init();

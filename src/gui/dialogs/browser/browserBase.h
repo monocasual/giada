@@ -86,7 +86,6 @@ public:
 
 	void setStatusBar(float v);
 
-	geProgress *getStatusBar() { return status; }  // TODO - remove with Patch_DEPR_
 	void showStatusBar();
 	void hideStatusBar();
   std::string getCurrentPath();

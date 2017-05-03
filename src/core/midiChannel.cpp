@@ -28,8 +28,8 @@
 #include "../utils/log.h"
 #include "midiChannel.h"
 #include "channel.h"
-#include "patch_DEPR_.h"
 #include "patch.h"
+#include "const.h"
 #include "clock.h"
 #include "conf.h"
 #include "mixer.h"
@@ -227,30 +227,6 @@ void MidiChannel::kill(int frame)
 	}
 	status = STATUS_OFF;
 	sendMidiLplay();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int MidiChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
-		int samplerate, int rsmpQuality)
-{
-	volume      = patch->getVol(i);
-	index       = patch->getIndex(i);
-	mute        = patch->getMute(i);
-	mute_s      = patch->getMute_s(i);
-	solo        = patch->getSolo(i);
-	panLeft     = patch->getPanLeft(i);
-	panRight    = patch->getPanRight(i);
-
-	midiOut     = patch->getMidiValue(i, "Out");
-	midiOutChan = patch->getMidiValue(i, "OutChan");
-
-	readPatchMidiIn_DEPR_(i, *patch);
-	readPatchMidiOut_DEPR_(i, *patch);
-
-	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
 }
 
 

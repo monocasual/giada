@@ -42,7 +42,6 @@
 #include "clock.h"
 #include "channel.h"
 #include "mixerHandler.h"
-#include "patch_DEPR_.h"
 #include "patch.h"
 #include "conf.h"
 #include "pluginHost.h"
@@ -53,7 +52,6 @@
 
 
 extern bool		 		   G_quit;
-extern Patch_DEPR_   G_Patch_DEPR_;
 extern gdMainWindow *G_MainWin;
 
 
@@ -68,7 +66,6 @@ void init_prepareParser()
 
   conf::init();
 	conf::read();
-	G_Patch_DEPR_.setDefault();
 	patch::init();
 
 	if (!gu_logInit(conf::logMode))
@@ -174,7 +171,7 @@ void init_shutdown()
 	conf::mainWindowW = G_MainWin->w();
 	conf::mainWindowH = G_MainWin->h();
 
-	/* close any open subwindow, especially before cleaning PluginHost_DEPR_ to
+	/* close any open subwindow, especially before cleaning PluginHost to
 	 * avoid mess */
 
 	gu_closeAllSubwindows();

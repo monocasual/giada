@@ -33,7 +33,6 @@
 #include "channel.h"
 
 
-class Patch_DEPR_;
 class Patch;
 class Wave;
 
@@ -104,8 +103,6 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-	int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
-		int samplerate, int rsmpQuality) override;
   int readPatch(const std::string &basePath, int i, pthread_mutex_t *pluginMutex,
     int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject) override;

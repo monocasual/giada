@@ -42,7 +42,6 @@
 
 class Plugin;
 class MidiMapConf;
-class Patch_DEPR_;
 class geChannel;
 
 
@@ -68,7 +67,7 @@ protected:
   /* midiFilter
   Which MIDI channel should be filtered out when receiving MIDI messages. -1
   means 'all'. */
-  
+
   int midiFilter;
 
 	/* sendMidiLMessage
@@ -91,8 +90,6 @@ public:
 	/* readPatch
 	 * Fill channel with data from patch. */
 
-	virtual int readPatch_DEPR_(const char *file, int i, Patch_DEPR_ *patch,
-		int samplerate, int rsmpQuality) = 0;
 	virtual int readPatch(const std::string &basePath, int i,
     pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
 
@@ -248,13 +245,6 @@ public:
 	 * tell wether the channel is playing or is stopped. */
 
 	bool isPlaying();
-
-	/* readPatchMidiIn
-	 * read from patch all midi-related parameters such as keypress, mute
-	 * and so on. */
-
-	void readPatchMidiIn_DEPR_(int i, Patch_DEPR_ &patch);
-	void readPatchMidiOut_DEPR_(int i, Patch_DEPR_ &patch);
 
 	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */

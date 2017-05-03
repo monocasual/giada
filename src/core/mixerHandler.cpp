@@ -40,7 +40,6 @@
 #include "plugin.h"
 #include "waveFx.h"
 #include "conf.h"
-#include "patch_DEPR_.h"
 #include "patch.h"
 #include "recorder.h"
 #include "clock.h"
@@ -50,9 +49,6 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "wave.h"
-
-
-extern Patch_DEPR_ G_Patch_DEPR_;
 
 
 using std::vector;
@@ -263,43 +259,6 @@ bool uniqueSolo(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-/** TODO - revision needed: mh should not call glue_addChannel */
-
-void loadPatch_DEPR_(bool isProject, const char *projPath)
-{
-	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
-	mixer::ready = false;   // put it in wait mode
-
-	int numChans = G_Patch_DEPR_.getNumChans();
-	for (int i=0; i<numChans; i++) {
-		Channel *ch = glue_addChannel(G_Patch_DEPR_.getColumn(i), G_Patch_DEPR_.getType(i));
-		string projectPath = projPath;  // safe
-		string samplePath  = isProject ? projectPath + G_SLASH + G_Patch_DEPR_.getSamplePath(i) : "";
-		ch->readPatch_DEPR_(samplePath.c_str(), i, &G_Patch_DEPR_, conf::samplerate,
-				conf::rsmpQuality);
-	}
-
-	mixer::outVol     = G_Patch_DEPR_.getOutVol();
-	mixer::inVol      = G_Patch_DEPR_.getInVol();
-	clock::setBpm(G_Patch_DEPR_.getBpm());
-	clock::setBars(G_Patch_DEPR_.getBars());
-	clock::setBeats(G_Patch_DEPR_.getBeats());
-	clock::setQuantize(G_Patch_DEPR_.getQuantize());
-	mixer::metronome  = G_Patch_DEPR_.getMetronome();
-	G_Patch_DEPR_.lastTakeId = G_Patch_DEPR_.getLastTakeId();
-	G_Patch_DEPR_.samplerate = G_Patch_DEPR_.getSamplerate();
-
-	/* rewind and update frames in Mixer (it's vital) */
-
-	mixer::rewind();
-	clock::updateFrameBars();
-	mixer::ready = true;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void readPatch()
 {
 	mixer::ready = false;
@@ -365,7 +324,6 @@ bool startInputRec()
 		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
 
 		while (!uniqueSampleName(ch, ch->wave->name)) {
-			G_Patch_DEPR_.lastTakeId++;
 			patch::lastTakeId++;
 			ch->wave->name = "TAKE-" + gu_itoa(patch::lastTakeId);
 		}

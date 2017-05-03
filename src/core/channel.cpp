@@ -29,11 +29,11 @@
 #include <cstring>
 #include "../utils/log.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
+#include "const.h"
 #include "channel.h"
 #include "pluginHost.h"
 #include "plugin.h"
 #include "kernelMidi.h"
-#include "patch_DEPR_.h"
 #include "patch.h"
 #include "clock.h"
 #include "wave.h"
@@ -171,29 +171,6 @@ void Channel::sendMidiLmessage(uint32_t learn, const midimap::message_t &msg)
 
 	out |= msg.value | (msg.channel << 24);
 	kernelMidi::send(out);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::readPatchMidiIn_DEPR_(int i, Patch_DEPR_ &patch)
-{
-	midiIn         = patch.getMidiValue(i, "In");
-	midiInKeyPress = patch.getMidiValue(i, "InKeyPress");
-	midiInKeyRel   = patch.getMidiValue(i, "InKeyRel");
-  midiInKill     = patch.getMidiValue(i, "InKill");
-  midiInVolume   = patch.getMidiValue(i, "InVolume");
-  midiInMute     = patch.getMidiValue(i, "InMute");
-  midiInSolo     = patch.getMidiValue(i, "InSolo");
-}
-
-void Channel::readPatchMidiOut_DEPR_(int i, Patch_DEPR_ &patch)
-{
-	midiOutL        = patch.getMidiValue(i, "OutL");
-	midiOutLplaying = patch.getMidiValue(i, "OutLplaying");
-	midiOutLmute    = patch.getMidiValue(i, "OutLmute");
-	midiOutLsolo    = patch.getMidiValue(i, "OutLsolo");
 }
 
 

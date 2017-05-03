@@ -27,7 +27,7 @@
 
 #include <FL/Fl_Tabs.H>
 #include "../../core/conf.h"
-#include "../../core/patch_DEPR_.h"
+#include "../../core/const.h"
 #include "../../utils/gui.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/button.h"
@@ -37,9 +37,6 @@
 #include "../elems/config/tabBehaviors.h"
 #include "../elems/config/tabPlugins.h"
 #include "gd_config.h"
-
-
-extern Patch_DEPR_ G_Patch_DEPR_;
 
 
 using namespace giada;

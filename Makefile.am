@@ -35,8 +35,6 @@ src/core/kernelMidi.h                  \
 src/core/kernelMidi.cpp                \
 src/core/graphics.h                    \
 src/core/graphics.cpp                  \
-src/core/patch_DEPR_.h                 \
-src/core/patch_DEPR_.cpp               \
 src/core/patch.h                       \
 src/core/patch.cpp                     \
 src/core/recorder.h                    \

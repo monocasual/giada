@@ -81,7 +81,6 @@ bool uniqueSolo(Channel *ch);
  * load a path or a project (if isProject) into Mixer. If isProject, path
  * must contain the address of the project folder. */
 
-void loadPatch_DEPR_(bool isProject, const char *projPath=0);
 void readPatch();
 
 /* startInputRec - record from line in

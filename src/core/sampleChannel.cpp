@@ -31,8 +31,8 @@
 #include "../utils/fs.h"
 #include "../utils/string.h"
 #include "sampleChannel.h"
-#include "patch_DEPR_.h"
 #include "patch.h"
+#include "const.h"
 #include "conf.h"
 #include "clock.h"
 #include "mixer.h"
@@ -868,55 +868,6 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 
 	gu_log("[SampleChannel] %s loaded in channel %d\n", file, index);
 	return SAMPLE_LOADED_OK;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::readPatch_DEPR_(const char *f, int i, Patch_DEPR_ *patch,
-		int samplerate, int rsmpQuality)
-{
-	int res = load(f, samplerate, rsmpQuality);
-
-		volume      = patch->getVol(i);
-		key         = patch->getKey(i);
-		index       = patch->getIndex(i);
-		mode        = patch->getMode(i);
-		mute        = patch->getMute(i);
-		mute_s      = patch->getMute_s(i);
-		solo        = patch->getSolo(i);
-		boost       = patch->getBoost(i);
-		panLeft     = patch->getPanLeft(i);
-		panRight    = patch->getPanRight(i);
-		readActions = patch->getRecActive(i);
-		recStatus   = readActions ? REC_READING : REC_STOPPED;
-
-		readPatchMidiIn_DEPR_(i, *patch);
-		midiInReadActions = patch->getMidiValue(i, "InReadActions");
-		midiInPitch       = patch->getMidiValue(i, "InPitch");
-		readPatchMidiOut_DEPR_(i, *patch);
-
-	if (res == SAMPLE_LOADED_OK) {
-		setBegin(patch->getBegin(i));
-		setEnd  (patch->getEnd(i, wave->size));
-		setPitch(patch->getPitch(i));
-	}
-	else {
-		// volume = G_DEFAULT_VOL;
-		// mode   = G_DEFAULT_CHANMODE;
-		// status = STATUS_WRONG;
-		// key    = 0;
-
-		if (res == SAMPLE_LEFT_EMPTY)
-			status = STATUS_EMPTY;
-		else
-		if (res == SAMPLE_READ_ERROR)
-			status = STATUS_MISSING;
-		sendMidiLplay();
-	}
-
-	return res;
 }
 
 

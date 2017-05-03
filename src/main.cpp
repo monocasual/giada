@@ -31,7 +31,6 @@
 #endif
 #include "core/init.h"
 #include "core/const.h"
-#include "core/patch_DEPR_.h"
 #include "core/patch.h"
 #include "core/conf.h"
 #include "core/midiMapConf.h"
@@ -48,7 +47,6 @@
 
 pthread_t     G_videoThread;
 bool          G_quit;
-Patch_DEPR_   G_Patch_DEPR_;
 gdMainWindow *G_MainWin;
 
 

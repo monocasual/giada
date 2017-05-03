@@ -32,7 +32,6 @@
 #include "../core/plugin.h"
 #include "../core/conf.h"
 #include "../core/patch.h"
-#include "../core/patch_DEPR_.h" // TODO - remove, used only for DEPR calls
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/clock.h"
@@ -47,13 +46,12 @@
 #include "../gui/dialogs/gd_warnings.h"
 #include "../gui/dialogs/browser/browserSave.h"
 #include "../gui/dialogs/browser/browserLoad.h"
-#include "main.h" // TODO - remove, used only for DEPR calls
+#include "main.h"
 #include "channel.h"
 #include "storage.h"
 
 
 extern gdMainWindow *G_MainWin;
-extern Patch_DEPR_   G_Patch_DEPR_; // TODO - remove, used only for DEPR calls
 
 
 using std::string;
@@ -213,32 +211,14 @@ void glue_loadPatch(void *data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	/* try to load the new JSON-based patch. If it fails, fall back to deprecated
-	* one. */
-
-	int  res = patch::read(fileToLoad);
-	bool deprecated = false;
-
-	if (res == PATCH_UNREADABLE) {
-		gu_log("[glue] failed reading JSON-based patch. Trying with the deprecated method\n");
-		deprecated = true;
-		res = glue_loadPatch__DEPR__(gu_basename(fileToLoad).c_str(), fileToLoad.c_str(),
-				browser->getStatusBar(), isProject);
-	}
-
+	int res = patch::read(fileToLoad);
 	if (res != PATCH_READ_OK) {
 		if (res == PATCH_UNREADABLE)
 			isProject ? gdAlert("This project is unreadable.") : gdAlert("This patch is unreadable.");
 		else
 		if (res == PATCH_INVALID)
 			isProject ? gdAlert("This project is not valid.") : gdAlert("This patch is not valid.");
-
 		browser->hideStatusBar();
-		return;
-	}
-	else
-	if (deprecated) {
-		browser->do_callback();
 		return;
 	}
 
@@ -305,95 +285,6 @@ void glue_loadPatch(void *data)
 #endif
 
 	browser->do_callback();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int glue_loadPatch__DEPR__(const char *fname, const char *fpath, geProgress *status, bool isProject)
-{
-	/* update browser's status bar with % 0.1 */
-
-	status->show();
-	status->value(0.1f);
-	//Fl::check();
-	Fl::wait(0);
-
-	/* is it a valid patch? */
-
-	int res = G_Patch_DEPR_.open(fpath);
-	if (res != PATCH_READ_OK)
-		return res;
-
-	/* close all other windows. This prevents segfault if plugin windows
-	 * GUI are on. */
-
-	if (res)
-		gu_closeAllSubwindows();
-
-	/* reset the system. False(1): don't update the gui right now. False(2): do
-	 * not create empty columns. */
-
-	glue_resetToInitState(false, false);
-
-	status->value(0.2f);  // progress status: % 0.2
-	//Fl::check();
-	Fl::wait(0);
-
-	/* mixerHandler will update the samples inside Mixer */
-
-	mh::loadPatch_DEPR_(isProject, gu_dirname(fpath).c_str());
-
-	/* take the patch name and update the main window's title */
-
-	G_Patch_DEPR_.getName();
-	gu_updateMainWinLabel(G_Patch_DEPR_.name);
-
-	status->value(0.4f);  // progress status: 0.4
-	//Fl::check();
-	Fl::wait(0);
-
-	G_Patch_DEPR_.readRecs();
-	status->value(0.6f);  // progress status: 0.6
-	//Fl::check();
-	Fl::wait(0);
-
-#ifdef WITH_VST
-	int resPlugins = G_Patch_DEPR_.readPlugins();
-	status->value(0.8f);  // progress status: 0.8
-	//Fl::check();
-	Fl::wait(0);
-#endif
-
-	/* this one is vital: let recorder recompute the actions' positions if
-	 * the current samplerate != patch samplerate */
-
-	recorder::updateSamplerate(conf::samplerate, G_Patch_DEPR_.samplerate);
-
-	/* update gui */
-
-	gu_updateControls();
-
-	status->value(1.0f);  // progress status: 1.0 (done)
-	//Fl::check();
-	Fl::wait(0);
-
-	/* save patchPath by taking the last dir of the broswer, in order to
-	 * reuse it the next time */
-
-	conf::patchPath = gu_dirname(fpath).c_str();
-
-	gu_log("[glue] patch %s loaded\n", fname);
-
-#ifdef WITH_VST
-	if (resPlugins != 1)
-		gdAlert("Some VST plugins were not loaded successfully.");
-#endif
-
-	gdAlert("This patch is using a deprecated format.\nPlease save it again to store it properly.");
-
-	return res;
 }
 
 

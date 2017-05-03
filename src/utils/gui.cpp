@@ -27,7 +27,6 @@
 
 #include <string>
 #include "../core/mixer.h"
-#include "../core/patch_DEPR_.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
 #include "../core/clock.h"
@@ -50,13 +49,10 @@
 #include "gui.h"
 
 
-using std::string;
-
-
-extern Patch_DEPR_   G_patch;
 extern gdMainWindow *G_MainWin;
 
 
+using std::string;
 using namespace giada;
 
 
