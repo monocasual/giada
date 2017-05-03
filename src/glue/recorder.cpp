@@ -43,7 +43,7 @@ namespace
 void updateChannel(geChannel *gch)
 {
   gch->ch->hasActions = recorder::hasActions(gch->ch->index);
-  if (!gch->ch->hasActions)
+  if (gch->ch->type == CHANNEL_SAMPLE && !gch->ch->hasActions)
     static_cast<geSampleChannel*>(gch)->hideActionButton();
   /* TODO - set mute=false */
   gu_refreshActionEditor(); // refresh a.editor window, it could be open
