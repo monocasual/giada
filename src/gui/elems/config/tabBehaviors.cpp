@@ -26,8 +26,8 @@
 
 
 #include <FL/Fl_Pack.H>
-#include "../../core/const.h"
-#include "../../core/conf.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
 #include "../basics/box.h"
 #include "../basics/radio.h"
 #include "../basics/check.h"
