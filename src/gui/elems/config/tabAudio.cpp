@@ -26,12 +26,12 @@
 
 
 #include <string>
-#include "../../deps/rtaudio-mod/RtAudio.h"
-#include "../../core/const.h"
-#include "../../core/conf.h"
-#include "../../core/kernelAudio.h"
-#include "../../utils/string.h"
-#include "../../gui/dialogs/gd_devInfo.h"
+#include "../../../deps/rtaudio-mod/RtAudio.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
+#include "../../../core/kernelAudio.h"
+#include "../../../utils/string.h"
+#include "../../../gui/dialogs/gd_devInfo.h"
 #include "../basics/box.h"
 #include "../basics/choice.h"
 #include "../basics/check.h"

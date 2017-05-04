@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../core/const.h"
-#include "../../core/conf.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
 #include "../basics/choice.h"
 #include "tabMisc.h"
 

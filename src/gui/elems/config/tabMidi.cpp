@@ -27,11 +27,11 @@
 
 #include <string>
 #include <rtmidi/RtMidi.h>
-#include "../../core/const.h"
-#include "../../core/conf.h"
-#include "../../core/midiMapConf.h"
-#include "../../core/kernelMidi.h"
-#include "../../utils/gui.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
+#include "../../../core/midiMapConf.h"
+#include "../../../core/kernelMidi.h"
+#include "../../../utils/gui.h"
 #include "../basics/box.h"
 #include "../basics/choice.h"
 #include "../basics/check.h"
