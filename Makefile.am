@@ -41,10 +41,8 @@ src/core/recorder.h                    \
 src/core/recorder.cpp                  \
 src/core/mixer.h                       \
 src/core/mixer.cpp                     \
-src/core/dataStorageIni.h	             \
-src/core/dataStorageIni.cpp            \
-src/core/dataStorageJson.h	           \
-src/core/dataStorageJson.cpp           \
+src/core/storager.h	                   \
+src/core/storager.cpp                  \
 src/core/clock.h                       \
 src/core/clock.cpp                     \
 src/glue/main.h                        \

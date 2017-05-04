@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_DATA_STORAGE_JSON_H
-#define G_DATA_STORAGE_JSON_H
+#ifndef G_STORAGER_H
+#define G_STORAGER_H
 
 
 #include <jansson.h>
@@ -52,29 +52,5 @@ check whether the jRoot object is a valid json array [] */
 bool checkArray(json_t *jRoot, const char *key);
 }}; // giada::storager::
 
-
-class DataStorageJson
-{
-protected:
-
-  json_t       *jRoot;
-  json_error_t  jError;
-
-  bool setString(json_t *jRoot, const char *key, std::string &output);
-  bool setFloat(json_t *jRoot, const char *key, float &output);
-  bool setUint32(json_t *jRoot, const char *key, uint32_t &output);
-  bool setInt(json_t *jRoot, const char *key, int &output);
-  bool setBool(json_t *jRoot, const char *key, bool &output);
-
-  /* checkObject
-  check whether the jRoot object is a valid json object {} */
-
-  bool checkObject(json_t *jRoot, const char *key);
-
-  /* checkArray
-  check whether the jRoot object is a valid json array [] */
-
-  bool checkArray(json_t *jRoot, const char *key);
-};
 
 #endif
