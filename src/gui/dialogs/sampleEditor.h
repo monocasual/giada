@@ -53,6 +53,7 @@ private:
 	static void cb_setBoostNum   (Fl_Widget *w, void *p);
 	static void cb_normalize     (Fl_Widget *w, void *p);
 	static void cb_panning       (Fl_Widget *w, void *p);
+	static void cb_panReset      (Fl_Widget *w, void *p);
 	static void cb_reload        (Fl_Widget *w, void *p);
 	static void cb_setPitch      (Fl_Widget *w, void *p);
 	static void cb_setPitchToBar (Fl_Widget *w, void *p);
@@ -73,6 +74,7 @@ private:
 	inline void __cb_setBoostNum();
 	inline void __cb_normalize();
 	inline void __cb_panning();
+	inline void __cb_panReset();
 	inline void __cb_reload();
 	inline void __cb_setPitch();
 	inline void __cb_setPitchToBar();
@@ -94,18 +96,19 @@ public:
 	geButton    *zoomIn;
 	geButton    *zoomOut;
 	geWaveTools *waveTools;
-	geInput      *chanStart;
-	geInput      *chanEnd;
+	geInput     *chanStart;
+	geInput     *chanEnd;
 	geButton		*resetStartEnd;
-	geDial       *volume;
-	geInput      *volumeNum;
-	geDial       *boost;
-	geInput      *boostNum;
+	geDial      *volume;
+	geInput     *volumeNum;
+	geDial      *boost;
+	geInput     *boostNum;
 	geButton    *normalize;
-	geDial       *pan;
-	geInput      *panNum;
+	geDial      *pan;
+	geInput     *panNum;
+	geButton    *panReset;
 	geButton		*reload;
-	geDial  		  *pitch;
+	geDial  		*pitch;
 	geInput  	  *pitchNum;
 	geButton    *pitchToBar;
 	geButton    *pitchToSong;
@@ -113,8 +116,8 @@ public:
 	geButton    *pitchDouble;
 	geButton    *pitchReset;
 	geButton    *close;
-	geChoice     *grid;
-	geCheck      *snap;
+	geChoice    *grid;
+	geCheck     *snap;
 
 	SampleChannel *ch;
 };

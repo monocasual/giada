@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cstring>
 #include "../../core/conf.h"
 #include "../../core/const.h"
 #include "../../core/mixer.h"

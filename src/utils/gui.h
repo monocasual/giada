@@ -29,23 +29,10 @@
 #define G_UTILS_GUI_H
 
 
-#include <dirent.h>
 #include <string>
-#include <FL/x.H>
-#include <FL/Fl.H>
-#ifdef __APPLE__
-	#include <libgen.h>	// in osx, for basename() (but linux?)
-#endif
-
-/* including stuff for the favicon */
-
-#if defined(_WIN32)
-	#include "../ext/resource.h"
-#elif defined(__linux__)
-	#include <X11/xpm.h>
-#endif
 
 
+class Fl_Window;
 class gdWindow;
 
 
@@ -81,12 +68,10 @@ void gu_openSubWindow(gdWindow *parent, gdWindow *child, int id);
 
 void gu_refreshActionEditor();
 
-
 /* closeAllSubwindows
  * close all subwindows attached to mainWin. */
 
 void gu_closeAllSubwindows();
-
 
 /* getSubwindow
  * return a pointer to an open subwindow, otherwise nullptr. */
@@ -97,5 +82,8 @@ gdWindow *gu_getSubwindow(gdWindow *parent, int id);
  * Strip special chars used by FLTK to split menus into sub-menus. */
 
 std::string gu_removeFltkChars(const std::string &s);
+
+int gu_getStringWidth(const std::string &s);
+
 
 #endif

@@ -29,6 +29,7 @@
 #if defined(__linux__) || defined(__APPLE__)
 	#include <unistd.h>
 #endif
+#include <FL/Fl.H>
 #include "core/init.h"
 #include "core/const.h"
 #include "core/patch.h"

@@ -26,6 +26,12 @@
 
 
 #include <string>
+#include <FL/fl_draw.H>
+#if defined(_WIN32)
+	#include "../ext/resource.h"
+#elif defined(__linux__)
+	#include <X11/xpm.h>
+#endif
 #include "../core/mixer.h"
 #include "../core/recorder.h"
 #include "../core/wave.h"
@@ -200,6 +206,18 @@ void gu_closeAllSubwindows()
 	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
 	G_MainWin->delSubWindow(WID_FX_LIST);
 	G_MainWin->delSubWindow(WID_FX);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gu_getStringWidth(const std::string &s)
+{
+  int w = 0;
+  int h = 0;
+  fl_measure(s.c_str(), w, h);
+  return w;
 }
 
 

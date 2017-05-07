@@ -26,6 +26,9 @@
 
 
 #include <cmath>
+#include <FL/Fl.H>
+#include <FL/Fl_Pack.H>
+#include <FL/fl_draw.H>
 #include "../../glue/channel.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"
@@ -74,38 +77,57 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   /* waveform */
 
-  waveTools = new geWaveTools(8, 36, w()-16, h()-120, ch);
+  waveTools = new geWaveTools(8, 36, w()-16, h()-130, ch);
   waveTools->end();
 
   /* other tools */
 
-  Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 130);
+  Fl_Pack *row1 = new Fl_Pack(8, waveTools->y()+waveTools->h()+8, 200, 20);
+  row1->spacing(4);
+  row1->type(Fl_Pack::HORIZONTAL);
+  row1->begin();
+                new geBox  (0, 0, gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
+    volume    = new geDial (0, 0, 20, 20);
+    volumeNum = new geInput(0, 0, 70, 20);
+                new geBox  (0, 0, 60, 20, "Boost", FL_ALIGN_RIGHT);
+    boost     = new geDial (0, 0, 20, 20);
+    boostNum  = new geInput(0, 0, 70, 20);
+    normalize = new geButton(0, 0, 80, 20, "Normalize");
+                new geBox  (0, 0, 60, 20, "Pan", FL_ALIGN_RIGHT);
+    pan       = new geDial (0, 0, 20, 20);
+    panNum    = new geInput(0, 0, 70, 20);
+    panReset  = new geButton(0, 0, 70, 20, "Reset");
+  row1->end();
+
+  Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 200, 20);
+  row2->spacing(4);
+  row2->type(Fl_Pack::HORIZONTAL);
+  row2->begin();
+                  new geBox  (0, 0, gu_getStringWidth("Pitch"), 20, "Pitch", FL_ALIGN_RIGHT);
+    pitch       = new geDial(0, 0, 20, 20);
+    pitchNum    = new geInput(0, 0, 70, 20);
+    pitchToBar  = new geButton(0, 0, 70, 20, "To bar");
+    pitchToSong = new geButton(0, 0, 70, 20, "To song");
+    pitchHalf   = new geButton(0, 0, 20, 20, "", divideOff_xpm, divideOn_xpm);
+    pitchDouble = new geButton(0, 0, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
+    pitchReset  = new geButton(0, 0, 70, 20, "Reset");
+  row2->end();
+
+  Fl_Pack *row3 = new Fl_Pack(8, row2->y()+row2->h()+8, 200, 20);
+  row3->spacing(4);
+  row3->type(Fl_Pack::HORIZONTAL);
+  row3->begin();
+                    new geBox  (0, 0, gu_getStringWidth("Range"), 20, "Range", FL_ALIGN_RIGHT);
+    chanStart     = new geInput(0, 0, 70, 20);
+    chanEnd       = new geInput(0, 0, 70, 20);
+    resetStartEnd = new geButton(0, 0, 70, 20, "Reset");
+  row3->end();
+
+  Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+800, w()-16, 130);
   tools->begin();
-    volume        = new geDial (tools->x()+50,                    tools->y(), 20, 20, "Volume");
-    volumeNum     = new geInput(volume->x()+volume->w()+4,        tools->y(), 46, 20, "dB");
-
-    boost         = new geDial (volumeNum->x()+volumeNum->w()+108, tools->y(), 20, 20, "Boost");
-    boostNum      = new geInput(boost->x()+boost->w()+4,           tools->y(), 44, 20, "dB");
-
-    normalize     = new geButton(boostNum->x()+boostNum->w()+54,   tools->y(), 70, 20, "Normalize");
-    pan           = new geDial (normalize->x()+normalize->w()+40, tools->y(), 20, 20, "Pan");
-    panNum        = new geInput(pan->x()+pan->w()+4,              tools->y(), 45, 20, "%");
-
-    pitch         = new geDial (tools->x()+50,                       volume->y()+volume->h()+4, 20, 20, "Pitch");
-    pitchNum      = new geInput(pitch->x()+pitch->w()+4,             volume->y()+volume->h()+4, 46, 20);
-    pitchToBar    = new geButton(pitchNum->x()+pitchNum->w()+4,       volume->y()+volume->h()+4, 60, 20, "To bar");
-    pitchToSong   = new geButton(pitchToBar->x()+pitchToBar->w()+4,   volume->y()+volume->h()+4, 60, 20, "To song");
-    pitchHalf     = new geButton(pitchToSong->x()+pitchToSong->w()+4, volume->y()+volume->h()+4, 20, 20, "", divideOff_xpm, divideOn_xpm);
-    pitchDouble   = new geButton(pitchHalf->x()+pitchHalf->w()+4,     volume->y()+volume->h()+4, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-    pitchReset    = new geButton(pitchDouble->x()+pitchDouble->w()+4, volume->y()+volume->h()+4, 46, 20, "Reset");
     reload        = new geButton(pitchReset->x()+pitchReset->w()+4,   volume->y()+volume->h()+4, 70, 20, "Reload");
-
-    chanStart     = new geInput(tools->x()+60,                   pitch->y()+pitch->h()+4, 60, 20, "Range");
-    chanEnd       = new geInput(chanStart->x()+chanStart->w()+4, pitch->y()+pitch->h()+4, 60, 20, "");
-    resetStartEnd = new geButton(chanEnd->x()+chanEnd->w()+4,     pitch->y()+pitch->h()+4, 60, 20, "Reset");
-
   tools->end();
-  tools->resizable(new geBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
+  //tools->resizable(new geBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
 
   /* grid tool setup */
 
@@ -221,6 +243,8 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   panNum->readonly(1);
   panNum->cursor_color(FL_WHITE);
 
+  panReset->callback(cb_panReset, (void*)this);
+
   gu_setFavicon(this);
   size_range(640, 480);
   resizable(waveTools);
@@ -256,6 +280,7 @@ void gdSampleEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdSampleEdit
 void gdSampleEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoostNum(); }
 void gdSampleEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_normalize(); }
 void gdSampleEditor::cb_panning         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_panning(); }
+void gdSampleEditor::cb_panReset        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_panReset(); }
 void gdSampleEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
 void gdSampleEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitch(); }
 void gdSampleEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToBar(); }
@@ -396,6 +421,15 @@ void gdSampleEditor::__cb_normalize()
 void gdSampleEditor::__cb_panning()
 {
   glue_setPanning(this, ch, pan->value());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSampleEditor::__cb_panReset()
+{
+  glue_setPanning(this, ch, 1.0f);
 }
 
 

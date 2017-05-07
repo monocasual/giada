@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <FL/x.H>
 #include "../../utils/log.h"
 #include "../../utils/gui.h"
 #include "../../core/pluginHost.h"

@@ -26,6 +26,7 @@
 
 
 #include <cmath>
+#include <FL/Fl.H>
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/sampleEditor.h"
 #include "../gui/dialogs/gd_warnings.h"
@@ -442,8 +443,8 @@ void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val, bool numer
 
 		ch->boost = linear;
 
-		char buf[10];
-		sprintf(buf, "%.2f", val);
+		char buf[16];
+		sprintf(buf, "%.2f dB", val);
 		win->boostNum->value(buf);
 		win->boostNum->redraw();
 
@@ -452,8 +453,8 @@ void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val, bool numer
 	}
 	else {
 		ch->boost = val;
-		char buf[10];
-		sprintf(buf, "%.2f", 20 * std::log10(val));
+		char buf[16];
+		sprintf(buf, "%.2f dB", 20 * std::log10(val));
 		win->boostNum->value(buf);
 		win->boostNum->redraw();
 	}

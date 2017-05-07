@@ -26,6 +26,7 @@
 
 
 #include <cmath>
+#include <FL/Fl.H>
 #include "../gui/elems/mainWindow/mainIO.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
