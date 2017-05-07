@@ -33,6 +33,7 @@
 #include "../gui/elems/basics/input.h"
 #include "../gui/elems/basics/dial.h"
 #include "../gui/elems/sampleEditor/waveTools.h"
+#include "../gui/elems/sampleEditor/volumeTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
@@ -185,19 +186,20 @@ int glue_cloneChannel(Channel *src)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setChanVol(Channel *ch, float v, bool gui)
+void glue_setVolume(Channel *ch, float v, bool gui, bool editor)
 {
 	ch->volume = v;
 
-	/* also update wave editor if it's shown */
+	/* Changing channel volume? Update wave editor (if it's shown). */
 
-	gdSampleEditor *editor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
-	if (editor) {
-		glue_setVolEditor(editor, (SampleChannel*) ch, v, false);
-		Fl::lock();
-		editor->volume->value(v);
-		Fl::unlock();
-	}
+  if (!editor) {
+  	gdSampleEditor *gdEditor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
+  	if (gdEditor) {
+  		Fl::lock();
+  		gdEditor->volumeTool->refresh();
+  		Fl::unlock();
+  	}
+  }
 
 	if (!gui) {
 		Fl::lock();
@@ -457,54 +459,6 @@ void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val, bool numer
 		sprintf(buf, "%.2f dB", 20 * std::log10(val));
 		win->boostNum->value(buf);
 		win->boostNum->redraw();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_setVolEditor(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
-{
-	if (numeric) {
-		if (val > 0.0f)
-			val = 0.0f;
-		else if (val < -60.0f)
-			val = -INFINITY;
-
-	  float linear = pow(10, (val / 20)); // linear = 10^(dB/20)
-
-		ch->volume = linear;
-
-		win->volume->value(linear);
-		win->volume->redraw();
-
-		char buf[10];
-		if (val > -INFINITY)
-			sprintf(buf, "%.2f", val);
-		else
-			sprintf(buf, "-inf");
-		win->volumeNum->value(buf);
-		win->volumeNum->redraw();
-
-		ch->guiChannel->vol->value(linear);
-		ch->guiChannel->vol->redraw();
-	}
-	else {
-		ch->volume = val;
-
-		float dbVal = 20 * log10(val);
-		char buf[10];
-		if (dbVal > -INFINITY)
-			sprintf(buf, "%.2f", dbVal);
-		else
-			sprintf(buf, "-inf");
-
-		win->volumeNum->value(buf);
-		win->volumeNum->redraw();
-
-		ch->guiChannel->vol->value(val);
-		ch->guiChannel->vol->redraw();
 	}
 }
 

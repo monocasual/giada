@@ -35,6 +35,7 @@
 class SampleChannel;
 class geButton;
 class geWaveTools;
+class geVolumeTool;
 class geInput;
 class geDial;
 class geChoice;
@@ -47,8 +48,6 @@ private:
 
 	static void cb_setChanPos    (Fl_Widget *w, void *p);
 	static void cb_resetStartEnd (Fl_Widget *w, void *p);
-	static void cb_setVolume     (Fl_Widget *w, void *p);
-	static void cb_setVolumeNum  (Fl_Widget *w, void *p);
 	static void cb_setBoost      (Fl_Widget *w, void *p);
 	static void cb_setBoostNum   (Fl_Widget *w, void *p);
 	static void cb_normalize     (Fl_Widget *w, void *p);
@@ -68,8 +67,6 @@ private:
 	static void cb_enableSnap    (Fl_Widget *w, void *p);
 	inline void __cb_setChanPos();
 	inline void __cb_resetStartEnd();
-	inline void __cb_setVolume();
-	inline void __cb_setVolumeNum();
 	inline void __cb_setBoost();
 	inline void __cb_setBoostNum();
 	inline void __cb_normalize();
@@ -96,11 +93,10 @@ public:
 	geButton    *zoomIn;
 	geButton    *zoomOut;
 	geWaveTools *waveTools;
+	geVolumeTool *volumeTool;
 	geInput     *chanStart;
 	geInput     *chanEnd;
 	geButton		*resetStartEnd;
-	geDial      *volume;
-	geInput     *volumeNum;
 	geDial      *boost;
 	geInput     *boostNum;
 	geButton    *normalize;

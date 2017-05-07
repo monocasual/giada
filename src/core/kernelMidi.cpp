@@ -133,7 +133,7 @@ void processChannels(uint32_t pure, uint32_t value)
 			float vf = (value >> 8)/127.0f;
 			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
 				ch->index, pure, value >> 8, vf);
-			glue_setChanVol(ch, vf, false);
+			glue_setVolume(ch, vf, false);
 		}
 		else if (pure == ((SampleChannel*)ch)->midiInPitch) {
 			float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]

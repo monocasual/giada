@@ -69,10 +69,10 @@ int glue_cloneChannel(Channel *ch);
 
 void glue_toggleArm(Channel *ch, bool gui=true);
 void glue_toggleInputMonitor(Channel *ch);
-void glue_setChanVol(Channel *ch, float v, bool gui=true);
 void glue_setMute(Channel *ch, bool gui=true);
 void glue_setSoloOn (Channel *ch, bool gui=true);
 void glue_setSoloOff(Channel *ch, bool gui=true);
+void glue_setVolume(Channel *ch, float v, bool gui=true, bool editor=false);
 
 /* TODO move to glue_sampleEditor */
 void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val,
@@ -91,15 +91,6 @@ void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch,
 
 /* TODO move to glue_sampleEditor */
 void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val,
-  bool numeric);
-
-/* setVolEditor
- * handles the volume inside the SAMPLE EDITOR (not the main gui). The
- * numeric flag tells if we want to handle the dial or the numeric input
- * field. */
-
-/* TODO move to glue_sampleEditor */
-void glue_setVolEditor(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
 /* start/stopReadingRecs

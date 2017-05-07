@@ -119,6 +119,8 @@ src/gui/elems/sampleEditor/waveform.h               \
 src/gui/elems/sampleEditor/waveform.cpp             \
 src/gui/elems/sampleEditor/waveTools.h              \
 src/gui/elems/sampleEditor/waveTools.cpp            \
+src/gui/elems/sampleEditor/volumeTool.h             \
+src/gui/elems/sampleEditor/volumeTool.cpp           \
 src/gui/elems/actionEditor/baseActionEditor.h       \
 src/gui/elems/actionEditor/baseActionEditor.cpp     \
 src/gui/elems/actionEditor/envelopeEditor.h         \

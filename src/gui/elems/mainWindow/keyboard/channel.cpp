@@ -98,7 +98,7 @@ void geChannel::__cb_solo()
 
 void geChannel::__cb_changeVol()
 {
-	glue_setChanVol(ch, vol->value());
+	glue_setVolume(ch, vol->value());
 }
 
 

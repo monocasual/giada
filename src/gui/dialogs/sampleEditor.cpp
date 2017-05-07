@@ -47,6 +47,7 @@
 #include "../elems/basics/check.h"
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
+#include "../elems/sampleEditor/volumeTool.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "sampleEditor.h"
@@ -86,9 +87,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   row1->spacing(4);
   row1->type(Fl_Pack::HORIZONTAL);
   row1->begin();
-                new geBox  (0, 0, gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
-    volume    = new geDial (0, 0, 20, 20);
-    volumeNum = new geInput(0, 0, 70, 20);
+    volumeTool = new geVolumeTool(0, 0, ch);
                 new geBox  (0, 0, 60, 20, "Boost", FL_ALIGN_RIGHT);
     boost     = new geDial (0, 0, 20, 20);
     boostNum  = new geInput(0, 0, 70, 20);
@@ -97,6 +96,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
     pan       = new geDial (0, 0, 20, 20);
     panNum    = new geInput(0, 0, 70, 20);
     panReset  = new geButton(0, 0, 70, 20, "Reset");
+    reload    = new geButton(0, 0, 70, 20, "Reload");
   row1->end();
 
   Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 200, 20);
@@ -122,12 +122,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
     chanEnd       = new geInput(0, 0, 70, 20);
     resetStartEnd = new geButton(0, 0, 70, 20, "Reset");
   row3->end();
-
-  Fl_Group *tools = new Fl_Group(8, waveTools->y()+waveTools->h()+800, w()-16, 130);
-  tools->begin();
-    reload        = new geButton(pitchReset->x()+pitchReset->w()+4,   volume->y()+volume->h()+4, 70, 20, "Reload");
-  tools->end();
-  //tools->resizable(new geBox(panNum->x()+panNum->w()+4, tools->y(), 80, tools->h()));
 
   /* grid tool setup */
 
@@ -165,16 +159,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   chanEnd->callback(cb_setChanPos, this);
 
   resetStartEnd->callback(cb_resetStartEnd, this);
-
-  volume->callback(cb_setVolume, (void*)this);
-  volume->value(ch->guiChannel->vol->value());
-
-  float dB = 20 * std::log10(ch->volume);   // dB = 20*log_10(linear value)
-  if (dB > -INFINITY) sprintf(buf, "%.2f", dB);
-  else                sprintf(buf, "-inf");
-  volumeNum->value(buf);
-  volumeNum->align(FL_ALIGN_RIGHT);
-  volumeNum->callback(cb_setVolumeNum, (void*)this);
 
   boost->range(1.0f, 10.0f);
   boost->callback(cb_setBoost, (void*)this);
@@ -274,8 +258,6 @@ gdSampleEditor::~gdSampleEditor()
 
 void gdSampleEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setChanPos(); }
 void gdSampleEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetStartEnd(); }
-void gdSampleEditor::cb_setVolume       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setVolume(); }
-void gdSampleEditor::cb_setVolumeNum    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setVolumeNum(); }
 void gdSampleEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoost(); }
 void gdSampleEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoostNum(); }
 void gdSampleEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_normalize(); }
@@ -352,24 +334,6 @@ void gdSampleEditor::__cb_setChanPos()
 void gdSampleEditor::__cb_resetStartEnd()
 {
   glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setVolume()
-{
-  glue_setVolEditor(this, ch, volume->value(), false);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setVolumeNum()
-{
-  glue_setVolEditor(this, ch, atof(volumeNum->value()), true);
 }
 
 
