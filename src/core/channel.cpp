@@ -52,14 +52,14 @@ using namespace giada;
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
   midiFilter     (-1),
+  panLeft        (1.0f),
+  panRight       (1.0f),
   type           (type),
-	status         (status),
-	key            (0),
+  status         (status),
+  key            (0),
   volume         (G_DEFAULT_VOL),
   volume_i       (1.0f),
   volume_d       (0.0f),
-  panLeft        (1.0f),
-  panRight       (1.0f),
   mute_i         (false),
   mute_s         (false),
   mute           (false),
@@ -366,6 +366,27 @@ void Channel::sendMidiLplay()
 void Channel::receiveMidi(uint32_t msg)
 {
 }
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::setPan(float v)
+{
+  if (v < 1.0f) {
+    panLeft = 1.0f;
+    panRight= 0.0f + v;
+  }
+  else 
+  if (v == 1.0f) {
+    panLeft = 1.0f;
+    panRight= 1.0f;
+  }
+  else {
+    panLeft = 2.0f - v;
+    panRight= 1.0f;
+  }
+}
+
 
 /* -------------------------------------------------------------------------- */
 

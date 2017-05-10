@@ -25,33 +25,41 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <FL/Fl_Pack.H>
+#include <FL/Fl.H>
 #include "../../core/sampleChannel.h"
 #include "../../core/const.h"
+#include "../../core/waveFx.h"  
 #include "../../glue/channel.h"
 #include "../../utils/gui.h"
 #include "../../utils/math.h"
+#include "../../dialogs/sampleEditor.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"
 #include "../basics/box.h"
-#include "../mainWindow/keyboard/channel.h"
-#include "volumeTool.h"
+#include "../basics/button.h"
+#include "waveTools.h"
+#include "panTool.h"
 
 
-geVolumeTool::geVolumeTool(int x, int y, SampleChannel *ch)
+gePanTool::gePanTool(int x, int y, SampleChannel *ch)
   : Fl_Group(x, y, 200, 20),
     ch      (ch)
 {
   begin();
-    label = new geBox  (0, 0, gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
-    dial  = new geDial (label->x()+label->w()+4, 0, 20, 20);
+    label = new geBox(0, 0, gu_getStringWidth("Pan"), 20, "Pan", FL_ALIGN_RIGHT);
+    dial  = new geDial(label->x()+label->w()+4, 0, 20, 20);
     input = new geInput(dial->x()+dial->w()+4, 0, 70, 20);
+    reset = new geButton(input->x()+input->w()+4, 0, 70, 20, "Reset");
   end();
 
-  dial->range(0.0f, 1.0f);
-  dial->callback(cb_setVolume, (void*)this);
+  dial->range(0.0f, 2.0f);
+  dial->callback(cb_panning, (void*)this);
 
-  input->callback(cb_setVolumeNum, (void*)this);
+  input->align(FL_ALIGN_RIGHT);
+  input->readonly(1);
+  input->cursor_color(FL_WHITE);
+
+  reset->callback(cb_panReset, (void*)this);
 
   refresh();
 }
@@ -60,40 +68,51 @@ geVolumeTool::geVolumeTool(int x, int y, SampleChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::refresh()
+void gePanTool::refresh()
 {
-  char buf[16];
-  float dB = gu_linearToDB(ch->volume);
-  if (dB > -INFINITY) sprintf(buf, "%.2f", dB);
-  else                sprintf(buf, "-inf");
-  input->value(buf);
-  dial->value(ch->guiChannel->vol->value());
+#if 0
+  if (ch->panRight < 1.0f) {
+    char buf[8];
+    sprintf(buf, "%d L", (int) std::abs((ch->panRight * 100.0f) - 100));
+    pan->value(ch->panRight);
+    panNum->value(buf);
+  }
+  else 
+  if (ch->panRight == 1.0f && ch->panLeft == 1.0f) {
+    pan->value(1.0f);
+    panNum->value("C");
+  }
+  else {
+    char buf[8];
+    sprintf(buf, "%d R", (int) std::abs((ch->panLeft * 100.0f) - 100));
+    pan->value(2.0f - ch->panLeft);
+    panNum->value(buf);
+  }
+#endif
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::cb_setVolume   (Fl_Widget *w, void *p) { ((geVolumeTool*)p)->__cb_setVolume(); }
-void geVolumeTool::cb_setVolumeNum(Fl_Widget *w, void *p) { ((geVolumeTool*)p)->__cb_setVolumeNum(); }
+void gePanTool::cb_panning (Fl_Widget *w, void *p) { ((gePanTool*)p)->__cb_panning(); }
+void gePanTool::cb_panReset(Fl_Widget *w, void *p) { ((gePanTool*)p)->__cb_panReset(); }
+
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::__cb_setVolume()
+void gePanTool::__cb_panning()
 {
-  glue_setVolume(ch, dial->value(), false, true);
-  refresh();
+  glue_setPanning(ch, dial->value());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::__cb_setVolumeNum()
+void gePanTool::__cb_panReset()
 {
-  float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
-  glue_setVolume(ch, value, false, true);
-  dial->value(ch->guiChannel->vol->value());
+  glue_setPanning(ch, 1.0f);
 }

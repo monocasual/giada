@@ -121,6 +121,10 @@ src/gui/elems/sampleEditor/waveTools.h              \
 src/gui/elems/sampleEditor/waveTools.cpp            \
 src/gui/elems/sampleEditor/volumeTool.h             \
 src/gui/elems/sampleEditor/volumeTool.cpp           \
+src/gui/elems/sampleEditor/boostTool.h              \
+src/gui/elems/sampleEditor/boostTool.cpp            \
+src/gui/elems/sampleEditor/panTool.h                \
+src/gui/elems/sampleEditor/panTool.cpp              \
 src/gui/elems/actionEditor/baseActionEditor.h       \
 src/gui/elems/actionEditor/baseActionEditor.cpp     \
 src/gui/elems/actionEditor/envelopeEditor.h         \
@@ -215,6 +219,8 @@ src/gui/elems/basics/radio.h           \
 src/gui/elems/basics/radio.cpp         \
 src/utils/log.h                        \
 src/utils/log.cpp                      \
+src/utils/math.h                       \
+src/utils/math.cpp                     \
 src/utils/gui.h                        \
 src/utils/gui.cpp                      \
 src/utils/gvector.h                    \

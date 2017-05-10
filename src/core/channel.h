@@ -70,6 +70,10 @@ protected:
 
   int midiFilter;
 
+	float panLeft;
+	float panRight;
+	float pan;
+
 	/* sendMidiLMessage
 	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
 	 * it to KernelMidi. */
@@ -200,8 +204,6 @@ public:
 	float   volume;                // global volume
 	float   volume_i;              // internal volume
 	float   volume_d;              // delta volume (for envelope)
-	float   panLeft;
-	float   panRight;
 	bool    mute_i;                // internal mute
 	bool 	  mute_s;                // previous mute status after being solo'd
 	bool    mute;                  // global mute
@@ -252,6 +254,8 @@ public:
 	void sendMidiLmute();
 	void sendMidiLsolo();
 	void sendMidiLplay();
+
+	void setPan(float v);
 
 #ifdef WITH_VST
 

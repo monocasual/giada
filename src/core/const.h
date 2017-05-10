@@ -88,6 +88,7 @@
 #define G_MAX_PATCHNAME_LEN	32
 #define G_DB_MIN_SCALE      60.0f
 #define G_MIN_COLUMN_WIDTH  140
+#define G_MAX_BOOST_DB      20.0f
 
 
 

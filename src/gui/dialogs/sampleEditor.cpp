@@ -48,6 +48,8 @@
 #include "../elems/sampleEditor/waveform.h"
 #include "../elems/sampleEditor/waveTools.h"
 #include "../elems/sampleEditor/volumeTool.h"
+#include "../elems/sampleEditor/boostTool.h"
+#include "../elems/sampleEditor/panTool.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "sampleEditor.h"
@@ -88,15 +90,9 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   row1->type(Fl_Pack::HORIZONTAL);
   row1->begin();
     volumeTool = new geVolumeTool(0, 0, ch);
-                new geBox  (0, 0, 60, 20, "Boost", FL_ALIGN_RIGHT);
-    boost     = new geDial (0, 0, 20, 20);
-    boostNum  = new geInput(0, 0, 70, 20);
-    normalize = new geButton(0, 0, 80, 20, "Normalize");
-                new geBox  (0, 0, 60, 20, "Pan", FL_ALIGN_RIGHT);
-    pan       = new geDial (0, 0, 20, 20);
-    panNum    = new geInput(0, 0, 70, 20);
-    panReset  = new geButton(0, 0, 70, 20, "Reset");
-    reload    = new geButton(0, 0, 70, 20, "Reload");
+    boostTool  = new geBoostTool(0, 0, ch);
+    panTool    = new gePanTool(0, 0, ch);
+    reload     = new geButton(0, 0, 70, 20, "Reload");
   row1->end();
 
   Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 200, 20);
@@ -160,25 +156,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   resetStartEnd->callback(cb_resetStartEnd, this);
 
-  boost->range(1.0f, 10.0f);
-  boost->callback(cb_setBoost, (void*)this);
-  if (ch->boost > 10.f)
-    boost->value(10.0f);
-  else
-    boost->value(ch->boost);
-  boost->when(FL_WHEN_CHANGED | FL_WHEN_RELEASE);
-
-  float boost = 20*log10(ch->boost); // dB = 20*log_10(linear value)
-  sprintf(buf, "%.2f", boost);
-  boostNum->value(buf);
-  boostNum->align(FL_ALIGN_RIGHT);
-  boostNum->callback(cb_setBoostNum, (void*)this);
-
-  normalize->callback(cb_normalize, (void*)this);
-
-  pan->range(0.0f, 2.0f);
-  pan->callback(cb_panning, (void*)this);
-
   pitch->range(0.01f, 4.0f);
   pitch->value(ch->pitch);
   pitch->callback(cb_setPitch, (void*)this);
@@ -205,29 +182,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   if (ch->wave->isLogical)
     reload->deactivate();
-
-  if (ch->panRight < 1.0f) {
-    char buf[8];
-    sprintf(buf, "%d L", (int) std::abs((ch->panRight * 100.0f) - 100));
-    pan->value(ch->panRight);
-    panNum->value(buf);
-  }
-  else if (ch->panRight == 1.0f && ch->panLeft == 1.0f) {
-    pan->value(1.0f);
-    panNum->value("C");
-  }
-  else {
-    char buf[8];
-    sprintf(buf, "%d R", (int) std::abs((ch->panLeft * 100.0f) - 100));
-    pan->value(2.0f - ch->panLeft);
-    panNum->value(buf);
-  }
-
-  panNum->align(FL_ALIGN_RIGHT);
-  panNum->readonly(1);
-  panNum->cursor_color(FL_WHITE);
-
-  panReset->callback(cb_panReset, (void*)this);
 
   gu_setFavicon(this);
   size_range(640, 480);
@@ -258,11 +212,6 @@ gdSampleEditor::~gdSampleEditor()
 
 void gdSampleEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setChanPos(); }
 void gdSampleEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetStartEnd(); }
-void gdSampleEditor::cb_setBoost        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoost(); }
-void gdSampleEditor::cb_setBoostNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setBoostNum(); }
-void gdSampleEditor::cb_normalize       (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_normalize(); }
-void gdSampleEditor::cb_panning         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_panning(); }
-void gdSampleEditor::cb_panReset        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_panReset(); }
 void gdSampleEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
 void gdSampleEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitch(); }
 void gdSampleEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToBar(); }
@@ -340,66 +289,6 @@ void gdSampleEditor::__cb_resetStartEnd()
 /* -------------------------------------------------------------------------- */
 
 
-void gdSampleEditor::__cb_setBoost()
-{
-  if (Fl::event() == FL_DRAG)
-    glue_setBoost(this, ch, boost->value(), false);
-  else if (Fl::event() == FL_RELEASE) {
-    glue_setBoost(this, ch, boost->value(), false);
-  waveTools->updateWaveform();
-  }
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setBoostNum()
-{
-  glue_setBoost(this, ch, atof(boostNum->value()), true);
-  waveTools->updateWaveform();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_normalize()
-{
-  float val = wfx_normalizeSoft(ch->wave);
-  glue_setBoost(this, ch, val, false); // we pretend that a fake user turns the dial (numeric=false)
-  if (val < 0.0f)
-    boost->value(0.0f);
-  else
-  if (val > 20.0f) // a dial > than it's max value goes crazy
-    boost->value(10.0f);
-  else
-    boost->value(val);
-  waveTools->updateWaveform();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_panning()
-{
-  glue_setPanning(this, ch, pan->value());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_panReset()
-{
-  glue_setPanning(this, ch, 1.0f);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void gdSampleEditor::__cb_reload()
 {
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
@@ -409,11 +298,12 @@ void gdSampleEditor::__cb_reload()
 
   ch->load(ch->wave->pathfile.c_str(), conf::samplerate, conf::rsmpQuality);
 
-  glue_setBoost(this, ch, G_DEFAULT_BOOST, true);
+  glue_setBoost(ch, G_DEFAULT_BOOST);
   glue_setPitch(this, ch, G_DEFAULT_PITCH, true);
-  glue_setPanning(this, ch, 1.0f);
-  pan->value(1.0f);  // glue_setPanning doesn't do it
-  pan->redraw();     // glue_setPanning doesn't do it
+  glue_setPanning(ch, 1.0f);
+
+  panTool->refresh();
+  boostTool->refresh();
 
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();

@@ -167,8 +167,8 @@ int geWaveform::alloc(int datasize)
       k += 2;
     }
 
-    data.sup[i] = zero - (peaksup * chan->boost * offset);
-    data.inf[i] = zero - (peakinf * chan->boost * offset);
+    data.sup[i] = zero - (peaksup * chan->getBoost() * offset);
+    data.inf[i] = zero - (peakinf * chan->getBoost() * offset);
 
     // avoid window overflow
 

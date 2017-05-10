@@ -57,6 +57,8 @@ private:
 
 	int frameRewind;
 
+	float boost;
+
 	/* fillChan
 	 * copy from wave to *dest and resample data from wave, if necessary.
 	 * Start to fill pChan from byte 'offset'. If rewind=false don't
@@ -174,6 +176,9 @@ public:
 
 	void setReadActions(bool v, bool recsStopOnChanHalt);
 
+	void setBoost(float v);
+	float getBoost();
+
 	/* ------------------------------------------------------------------------ */
 
 	Wave  *wave;
@@ -181,7 +186,6 @@ public:
 	int    begin;
 	int    end;
   float  pitch;
-	float  boost;
 	int    mode;            // mode: see const.h
 	bool   qWait;           // quantizer wait
 	bool   fadeinOn;

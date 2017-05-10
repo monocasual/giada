@@ -51,12 +51,12 @@ using namespace giada;
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
+		boost            (G_DEFAULT_BOOST),
 		wave             (nullptr),
 		tracker          (0),
 		begin            (0),
 		end              (0),
 		pitch            (G_DEFAULT_PITCH),
-		boost            (G_DEFAULT_BOOST),
 		mode             (G_DEFAULT_CHANMODE),
 		qWait	           (false),
 		fadeinOn         (false),
@@ -592,6 +592,27 @@ void SampleChannel::unsetMute(bool internal)
 	}
 
 	sendMidiLmute();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleChannel::setBoost(float v)
+{
+	if (v > G_MAX_BOOST_DB)
+		boost = G_MAX_BOOST_DB;
+	else 
+	if (v < 0.0f)
+		boost = 0.0f;
+	else
+		boost = v;
+}
+
+
+float SampleChannel::getBoost()
+{
+	return boost;
 }
 
 

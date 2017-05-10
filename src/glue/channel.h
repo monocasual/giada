@@ -79,7 +79,7 @@ void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val,
   bool numeric);
 
 /* TODO move to glue_sampleEditor */
-void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val);
+void glue_setPanning(SampleChannel *ch, float val);
 
 /* setBeginEndChannel
  * sets start/end points in the sample editor. Recalc=false: don't recalc
@@ -90,8 +90,7 @@ void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch,
   int b, int e, bool recalc=false, bool check=true);
 
 /* TODO move to glue_sampleEditor */
-void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val,
-  bool numeric);
+void glue_setBoost(SampleChannel *ch, float val);
 
 /* start/stopReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction

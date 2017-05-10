@@ -34,6 +34,8 @@
 #include "../gui/elems/basics/dial.h"
 #include "../gui/elems/sampleEditor/waveTools.h"
 #include "../gui/elems/sampleEditor/volumeTool.h"
+#include "../gui/elems/sampleEditor/boostTool.h"
+#include "../gui/elems/sampleEditor/panTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
@@ -239,8 +241,16 @@ void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val, bool numer
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val)
+void glue_setPanning(SampleChannel *ch, float val)
 {
+	ch->setPan(val);
+	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (gdEditor) {
+		Fl::lock();
+		gdEditor->panTool->refresh();
+		Fl::unlock();
+	}
+	/*
 	if (val < 1.0f) {
 		ch->panLeft = 1.0f;
 		ch->panRight= 0.0f + val;
@@ -262,7 +272,7 @@ void glue_setPanning(gdSampleEditor *win, SampleChannel *ch, float val)
 		sprintf(buf, "%d R", std::abs((int)((ch->panLeft * 100.0f) - 100)));
 		win->panNum->value(buf);
 	}
-	win->panNum->redraw();
+	win->panNum->redraw();*/
 }
 
 
@@ -433,32 +443,14 @@ void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch, int b, int 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBoost(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
+void glue_setBoost(SampleChannel *ch, float val)
 {
-	if (numeric) {
-		if (val > 20.0f)
-			val = 20.0f;
-		else if (val < 0.0f)
-			val = 0.0f;
-
-	  float linear = std::pow(10, (val / 20)); // linear = 10^(dB/20)
-
-		ch->boost = linear;
-
-		char buf[16];
-		sprintf(buf, "%.2f dB", val);
-		win->boostNum->value(buf);
-		win->boostNum->redraw();
-
-		win->boost->value(linear);
-		win->boost->redraw();       /// inutile
-	}
-	else {
-		ch->boost = val;
-		char buf[16];
-		sprintf(buf, "%.2f dB", 20 * std::log10(val));
-		win->boostNum->value(buf);
-		win->boostNum->redraw();
+	ch->setBoost(val);
+	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (gdEditor) {
+		Fl::lock();
+		gdEditor->boostTool->refresh();
+		Fl::unlock();
 	}
 }
 
