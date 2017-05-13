@@ -12,7 +12,9 @@
 --------------------------------------------------------------------------------
 
 
-0.13.5 ---
+0.14.0 ---
+- Removed support for old ini-based patch files
+- Improved and simplified pan algorithm
 - Ability to toggle input monitoring while recording audio
 - Lots of code refactoring
 - Convert all .h headers to C++ headers
