@@ -775,8 +775,8 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 #endif
 
   for (int j=0; j<bufferSize; j+=2) {
-		outBuffer[j]   += vChan[j]   * volume * panLeft  * boost;
-		outBuffer[j+1] += vChan[j+1] * volume * panRight * boost;
+		outBuffer[j]   += vChan[j]   * volume * calcPanning(0) * boost;
+		outBuffer[j+1] += vChan[j+1] * volume * calcPanning(1) * boost;
 	}
 }
 

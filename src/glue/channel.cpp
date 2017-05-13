@@ -250,29 +250,6 @@ void glue_setPanning(SampleChannel *ch, float val)
 		gdEditor->panTool->refresh();
 		Fl::unlock();
 	}
-	/*
-	if (val < 1.0f) {
-		ch->panLeft = 1.0f;
-		ch->panRight= 0.0f + val;
-
-		char buf[8];
-		sprintf(buf, "%d L", std::abs((int)((ch->panRight * 100.0f) - 100)));
-		win->panNum->value(buf);
-	}
-	else if (val == 1.0f) {
-		ch->panLeft = 1.0f;
-		ch->panRight= 1.0f;
-	  win->panNum->value("C");
-	}
-	else {
-		ch->panLeft = 2.0f - val;
-		ch->panRight= 1.0f;
-
-		char buf[8];
-		sprintf(buf, "%d R", std::abs((int)((ch->panLeft * 100.0f) - 100)));
-		win->panNum->value(buf);
-	}
-	win->panNum->redraw();*/
 }
 
 

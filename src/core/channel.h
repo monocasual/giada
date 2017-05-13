@@ -70,15 +70,18 @@ protected:
 
   int midiFilter;
 
-	float panLeft;
-	float panRight;
 	float pan;
 
 	/* sendMidiLMessage
-	 * compose a MIDI message by merging bytes from MidiMap conf class, and send
-	 * it to KernelMidi. */
+	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
+	to KernelMidi. */
 
 	void sendMidiLmessage(uint32_t learn, const giada::midimap::message_t &msg);
+
+	/* calcPanning
+	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
+
+	float calcPanning(int ch);
 
 public:
 
@@ -256,6 +259,7 @@ public:
 	void sendMidiLplay();
 
 	void setPan(float v);
+	float getPan();
 
 #ifdef WITH_VST
 

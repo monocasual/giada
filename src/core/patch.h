@@ -68,8 +68,7 @@ struct channel_t
   int         mute_s;
   int         solo;
   float       volume;
-  float       panLeft;
-  float       panRight;
+  float       pan;
   bool        midiIn;
   uint32_t    midiInKeyPress;
   uint32_t    midiInKeyRel;

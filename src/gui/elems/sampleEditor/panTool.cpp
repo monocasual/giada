@@ -52,7 +52,7 @@ gePanTool::gePanTool(int x, int y, SampleChannel *ch)
     reset = new geButton(input->x()+input->w()+4, 0, 70, 20, "Reset");
   end();
 
-  dial->range(0.0f, 2.0f);
+  dial->range(0.0f, 1.0f);
   dial->callback(cb_panning, (void*)this);
 
   input->align(FL_ALIGN_RIGHT);
@@ -70,25 +70,19 @@ gePanTool::gePanTool(int x, int y, SampleChannel *ch)
 
 void gePanTool::refresh()
 {
-#if 0
-  if (ch->panRight < 1.0f) {
-    char buf[8];
-    sprintf(buf, "%d L", (int) std::abs((ch->panRight * 100.0f) - 100));
-    pan->value(ch->panRight);
-    panNum->value(buf);
+  dial->value(ch->getPan());
+  char buf[8];
+  if (ch->getPan() < 0.5f) {
+    sprintf(buf, "%d L", (int) ((-ch->getPan() * 200.0f) + 100.0f));
+    input->value(buf);
   }
   else 
-  if (ch->panRight == 1.0f && ch->panLeft == 1.0f) {
-    pan->value(1.0f);
-    panNum->value("C");
-  }
+  if (ch->getPan() == 0.5)
+    input->value("C");
   else {
-    char buf[8];
-    sprintf(buf, "%d R", (int) std::abs((ch->panLeft * 100.0f) - 100));
-    pan->value(2.0f - ch->panLeft);
-    panNum->value(buf);
+    sprintf(buf, "%d R", (int) ((ch->getPan() * 200.0f) - 100.0f));
+    input->value(buf);
   }
-#endif
 }
 
 
@@ -114,5 +108,5 @@ void gePanTool::__cb_panning()
 
 void gePanTool::__cb_panReset()
 {
-  glue_setPanning(ch, 1.0f);
+  glue_setPanning(ch, 0.5f);
 }

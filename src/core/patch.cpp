@@ -64,11 +64,10 @@ void sanitize()
 
   for (unsigned i=0; i<channels.size(); i++) {
     channel_t *ch = &channels.at(i);
-    ch->volume   = ch->volume < 0.0f || ch->volume > 1.0f ? G_DEFAULT_VOL : ch->volume;
-    ch->panLeft  = ch->panLeft < 0.0f || ch->panLeft > 1.0f ? 1.0f : ch->panLeft;
-    ch->panRight = ch->panRight < 0.0f || ch->panRight > 1.0f ? 1.0f : ch->panRight;
-    ch->boost    = ch->boost < 1.0f ? G_DEFAULT_BOOST : ch->boost;
-    ch->pitch    = ch->pitch < 0.1f || ch->pitch > 4.0f ? G_DEFAULT_PITCH : ch->pitch;
+    ch->volume = ch->volume < 0.0f || ch->volume > 1.0f ? G_DEFAULT_VOL : ch->volume;
+    ch->pan    = ch->pan < 0.0f || ch->pan > 1.0f ? 1.0f : ch->pan;
+    ch->boost  = ch->boost < 1.0f ? G_DEFAULT_BOOST : ch->boost;
+    ch->pitch  = ch->pitch < 0.1f || ch->pitch > 4.0f ? G_DEFAULT_PITCH : ch->pitch;
   }
 }
 
@@ -211,8 +210,7 @@ bool readChannels(json_t *jContainer)
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE_S,               channel.mute_s)) return 0;
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_SOLO,                 channel.solo)) return 0;
     if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_VOLUME,               channel.volume)) return 0;
-    if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_PAN_LEFT,             channel.panRight)) return 0;
-    if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_PAN_RIGHT,            channel.panLeft)) return 0;
+    if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_PAN,                  channel.pan)) return 0;
     if (!storager::setBool  (jChannel, PATCH_KEY_CHANNEL_MIDI_IN,              channel.midiIn)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     channel.midiInKeyPress)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       channel.midiInKeyRel)) return 0;
@@ -386,8 +384,7 @@ void writeChannels(json_t *jContainer, vector<channel_t> *channels)
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE_S,               json_integer(channel.mute_s));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SOLO,                 json_integer(channel.solo));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_VOLUME,               json_real(channel.volume));
-    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PAN_LEFT,             json_real(channel.panLeft));
-    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PAN_RIGHT,            json_real(channel.panRight));
+    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PAN,                  json_real(channel.pan));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN,              json_boolean(channel.midiIn));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     json_integer(channel.midiInKeyPress));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       json_integer(channel.midiInKeyRel));

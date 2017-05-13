@@ -52,8 +52,7 @@ using namespace giada;
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
   midiFilter     (-1),
-  panLeft        (1.0f),
-  panRight       (1.0f),
+  pan            (0.5f),
   type           (type),
   status         (status),
   key            (0),
@@ -110,8 +109,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
   volume          = src->volume;
   volume_i        = src->volume_i;
   volume_d        = src->volume_d;
-  panLeft         = src->panLeft;
-  panRight        = src->panRight;
+  pan             = src->pan;
   mute_i          = src->mute_i;
   mute_s          = src->mute_s;
   mute            = src->mute;
@@ -197,8 +195,7 @@ int Channel::writePatch(int i, bool isProject)
 	pch.mute_s          = mute_s;
 	pch.solo            = solo;
 	pch.volume          = volume;
-	pch.panLeft         = panLeft;
-	pch.panRight        = panRight;
+	pch.pan             = pan;
 	pch.midiIn          = midiIn;
 	pch.midiInKeyPress  = midiInKeyPress;
 	pch.midiInKeyRel    = midiInKeyRel;
@@ -264,8 +261,7 @@ int Channel::readPatch(const string &path, int i, pthread_mutex_t *pluginMutex,
 	mute_s          = pch->mute_s;
 	solo            = pch->solo;
 	volume          = pch->volume;
-	panLeft         = pch->panLeft;
-	panRight        = pch->panRight;
+	pan             = pch->pan;
 	midiIn          = pch->midiIn;
 	midiInKeyPress  = pch->midiInKeyPress;
 	midiInKeyRel    = pch->midiInKeyRel;
@@ -372,19 +368,33 @@ void Channel::receiveMidi(uint32_t msg)
 
 void Channel::setPan(float v)
 {
-  if (v < 1.0f) {
-    panLeft = 1.0f;
-    panRight= 0.0f + v;
-  }
+  if (v > 1.0f)
+    pan = 1.0f;
   else 
-  if (v == 1.0f) {
-    panLeft = 1.0f;
-    panRight= 1.0f;
-  }
-  else {
-    panLeft = 2.0f - v;
-    panRight= 1.0f;
-  }
+  if (v < 0.0f)
+    pan = 0.0f;
+  else
+    pan = v;
+}
+
+
+float Channel::getPan()
+{
+  return pan;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+float Channel::calcPanning(int ch)
+{
+  if (pan == 0.5f) // center: nothing to do
+    return 1.0;
+  if (ch == 0)
+    return 1.0 - pan;
+  else  // channel 1
+    return pan; 
 }
 
 
