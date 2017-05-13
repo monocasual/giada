@@ -52,7 +52,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geMainMenu::geMainMenu(int x, int y)

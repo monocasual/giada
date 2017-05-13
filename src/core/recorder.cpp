@@ -37,6 +37,7 @@ using std::vector;
 
 
 namespace giada {
+namespace m {
 namespace recorder
 {
 namespace
@@ -664,4 +665,4 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex)
 }
 
 
-}}; // giada::recorder::
+}}}; // giada::m::recorder::

@@ -32,7 +32,7 @@
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char *title)

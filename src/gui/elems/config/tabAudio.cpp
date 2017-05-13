@@ -40,8 +40,8 @@
 #include "tabAudio.h"
 
 
-using namespace giada;
 using std::string;
+using namespace giada::m;
 
 
 geTabAudio::geTabAudio(int X, int Y, int W, int H)

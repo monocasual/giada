@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
 void *videoThreadCb(void *arg)
 {
-	if (giada::kernelAudio::getStatus())
+	if (giada::m::kernelAudio::getStatus())
 		while (!G_quit)	{
 			gu_refreshUI();
 #ifdef _WIN32

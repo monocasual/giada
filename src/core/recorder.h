@@ -42,6 +42,7 @@ class Channel;
 
 
 namespace giada {
+namespace m {
 namespace recorder
 {
 /* action
@@ -171,6 +172,6 @@ pressing Mute button on a channel with some existing mute actions. */
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
 void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
 
-}}; // giada::recorder::
+}}}; // giada::m::recorder::
 
 #endif

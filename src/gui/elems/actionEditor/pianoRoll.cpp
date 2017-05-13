@@ -40,7 +40,7 @@
 #include "pianoRoll.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)

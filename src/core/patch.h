@@ -39,6 +39,7 @@
 
 
 namespace giada {
+namespace m {
 namespace patch
 {
 struct action_t
@@ -145,6 +146,6 @@ void init();
 
 int write(const std::string &file);
 int read (const std::string &file);
-}};  // giada::patch::
+}}};  // giada::m::patch::
 
 #endif

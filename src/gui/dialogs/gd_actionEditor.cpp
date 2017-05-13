@@ -45,7 +45,7 @@
 #include "gd_actionEditor.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdActionEditor::gdActionEditor(Channel *chan)

@@ -37,6 +37,7 @@ using std::string;
 
 
 namespace giada {
+namespace m {
 namespace conf
 {
 namespace
@@ -491,4 +492,4 @@ int write()
   }
   return 1;
 }
-}}; // giada::conf::
+}}}; // giada::m::conf::

@@ -34,7 +34,7 @@
 #include "beatMeter.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)

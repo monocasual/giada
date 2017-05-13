@@ -36,7 +36,7 @@
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 gdDevInfo::gdDevInfo(unsigned dev)

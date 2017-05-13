@@ -41,6 +41,7 @@ using std::string;
 
 
 namespace giada {
+namespace m {
 namespace pluginHost
 {
 namespace
@@ -551,7 +552,7 @@ void sortPlugins(int method)
   }
 }
 
-}}; // giada::pluginHost::
+}}}; // giada::m::pluginHost::
 
 
 #endif // #ifdef WITH_VST

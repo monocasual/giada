@@ -58,8 +58,8 @@ private:
 
 	bool overlap();
 
-	struct giada::recorder::action *a;
-	struct giada::recorder::action *b;
+	struct giada::m::recorder::action *a;
+	struct giada::m::recorder::action *b;
 
 	int  push_x;
 
@@ -98,8 +98,9 @@ public:
 	/* pianoItem ctor
 	 * if action *a == nullptr, record a new action */
 
-	gePianoItem(int x, int y, int rel_x, int rel_y, struct giada::recorder::action *a,
-		struct giada::recorder::action *b, gdActionEditor *pParent);
+	gePianoItem(int x, int y, int rel_x, int rel_y, 
+		struct giada::m::recorder::action *a, struct giada::m::recorder::action *b, 
+		gdActionEditor *pParent);
 
 	void draw() override;
 	int handle(int e) override;

@@ -31,7 +31,7 @@
 #include "tabMisc.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geTabMisc::geTabMisc(int X, int Y, int W, int H)

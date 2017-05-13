@@ -30,7 +30,7 @@
 #include "midiOutputBase.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h)

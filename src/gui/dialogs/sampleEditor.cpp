@@ -57,7 +57,7 @@
 #include "sampleEditor.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdSampleEditor::gdSampleEditor(SampleChannel *ch)

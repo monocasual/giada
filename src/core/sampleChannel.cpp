@@ -45,7 +45,7 @@
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)

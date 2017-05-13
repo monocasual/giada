@@ -41,7 +41,7 @@
 #endif
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)

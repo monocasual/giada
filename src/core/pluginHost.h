@@ -40,6 +40,7 @@ class Channel;
 
 
 namespace giada {
+namespace m {
 namespace pluginHost
 {
 enum stackType
@@ -181,7 +182,8 @@ bool hasMissingPlugins();
 void sortPlugins(int sortMethod);
 
 extern pthread_mutex_t mutex_midi;
-}}; // giada::pluginHost::
+
+}}}; // giada::m::pluginHost::
 
 
 #endif

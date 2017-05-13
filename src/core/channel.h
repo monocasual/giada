@@ -76,7 +76,7 @@ protected:
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
 	to KernelMidi. */
 
-	void sendMidiLmessage(uint32_t learn, const giada::midimap::message_t &msg);
+	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t &msg);
 
 	/* calcPanning
 	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
@@ -167,7 +167,7 @@ public:
 
 	 // TODO - quantize is useless!
 
-	virtual void parseAction(giada::recorder::action *a, int localFrame,
+	virtual void parseAction(giada::m::recorder::action *a, int localFrame,
     int globalFrame, int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind

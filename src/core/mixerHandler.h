@@ -37,6 +37,7 @@ class SampleChannel;
 
 
 namespace giada {
+namespace m {
 namespace mh
 {
 /* addChannel
@@ -103,7 +104,7 @@ Tells whether Mixer has one or more sample channels armed for input
 recording. */
 
 bool hasArmedSampleChannels();
-}}  // giada::mh::
+}}}  // giada::m::mh::
 
 
 #endif

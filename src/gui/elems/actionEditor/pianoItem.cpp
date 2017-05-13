@@ -38,7 +38,7 @@
 #include "pianoItem.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a,

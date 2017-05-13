@@ -36,7 +36,7 @@
 #include "gridTool.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geGridTool::geGridTool(int x, int y, gdActionEditor *parent)

@@ -42,7 +42,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geMainTimer::geMainTimer(int x, int y)

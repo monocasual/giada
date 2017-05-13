@@ -35,6 +35,7 @@ class KernelAudio;
 
 
 namespace giada {
+namespace m {
 namespace clock
 {
 void init(int sampleRate, float midiTCfps);
@@ -93,7 +94,7 @@ bool isOnFirstBeat();
 void rewind();
 void start();
 void stop();
-}}; // giada::clock::
+}}}; // giada::m::clock::
 
 
 #endif

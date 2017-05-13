@@ -35,7 +35,7 @@
 #include "plugin.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 Plugin *glue_addPlugin(Channel *ch, int index, int stackType)

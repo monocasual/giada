@@ -34,6 +34,7 @@ using std::string;
 
 
 namespace giada {
+namespace m {
 namespace storager
 {
 bool setString(json_t *jRoot, const char *key, string &output)
@@ -148,4 +149,4 @@ bool checkArray(json_t *jRoot, const char *key)
   return true;
 }
 
-}}; // giada::storager::
+}}}; // giada::m::storager::

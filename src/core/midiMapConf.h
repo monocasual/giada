@@ -34,6 +34,7 @@
 
 
 namespace giada {
+namespace m {
 namespace midimap
 {
 struct message_t
@@ -82,6 +83,6 @@ Read a midi map from file 'file'. */
 
 int read(const std::string &file);
 
-}}; // giada::midimap::
+}}}; // giada::m::midimap::
 
 #endif

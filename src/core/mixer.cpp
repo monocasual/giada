@@ -44,6 +44,7 @@
 
 
 namespace giada {
+namespace m {
 namespace mixer
 {
 namespace
@@ -529,4 +530,4 @@ void mergeVirtualInput()
 }
 
 
-}}; // giada::mixer::
+}}}; // giada::m::mixer::

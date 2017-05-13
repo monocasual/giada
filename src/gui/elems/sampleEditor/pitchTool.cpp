@@ -40,7 +40,7 @@
 #include "pitchTool.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gePitchTool::gePitchTool(int x, int y, SampleChannel *ch)

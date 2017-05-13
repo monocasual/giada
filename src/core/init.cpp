@@ -55,7 +55,7 @@ extern bool		 		   G_quit;
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 void init_prepareParser()

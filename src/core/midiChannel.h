@@ -67,7 +67,7 @@ public:
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(giada::recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(giada::m::recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	void receiveMidi(uint32_t msg) override;
 	bool canInputRec() override;
@@ -77,7 +77,7 @@ public:
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(giada::recorder::action *a, int localFrame);
+	void sendMidi(giada::m::recorder::action *a, int localFrame);
 	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST

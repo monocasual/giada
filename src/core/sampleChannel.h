@@ -112,7 +112,7 @@ public:
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(giada::recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(giada::m::recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
 

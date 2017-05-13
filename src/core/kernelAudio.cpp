@@ -41,6 +41,7 @@ using std::vector;
 
 
 namespace giada {
+namespace m {
 namespace kernelAudio
 {
 namespace
@@ -534,4 +535,4 @@ void jackStop()
 
 #endif  // #ifdef __linux__
 
-}}; // giada::kernelAudio
+}}}; // giada::m::kernelAudio

@@ -34,7 +34,7 @@
 #include "channelStatus.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geChannelStatus::geChannelStatus(int x, int y, int w, int h, SampleChannel *ch,

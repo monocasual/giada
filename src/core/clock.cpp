@@ -36,6 +36,7 @@
 
 
 namespace giada {
+namespace m {
 namespace clock
 {
 namespace
@@ -436,4 +437,4 @@ int getFramesInSequencer()
 }
 
 
-}}; // giada::clock::
+}}}; // giada::m::clock::

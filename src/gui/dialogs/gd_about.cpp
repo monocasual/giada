@@ -42,7 +42,7 @@
 #include "gd_about.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdAbout::gdAbout()

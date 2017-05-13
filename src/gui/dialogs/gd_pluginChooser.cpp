@@ -40,7 +40,7 @@
 #include "gd_pluginChooser.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel *ch)

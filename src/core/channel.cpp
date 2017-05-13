@@ -46,7 +46,7 @@
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 Channel::Channel(int type, int status, int bufferSize)

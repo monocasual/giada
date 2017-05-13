@@ -33,6 +33,7 @@
 
 
 namespace giada {
+namespace m {
 namespace storager
 {
 bool setString(json_t *jRoot, const char *key, std::string &output);
@@ -50,7 +51,8 @@ bool checkObject(json_t *jRoot, const char *key);
 check whether the jRoot object is a valid json array [] */
 
 bool checkArray(json_t *jRoot, const char *key);
-}}; // giada::storager::
+
+}}}; // giada::m::storager::
 
 
 #endif

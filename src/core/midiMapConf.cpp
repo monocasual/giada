@@ -42,6 +42,7 @@ using std::vector;
 
 
 namespace giada {
+namespace m {
 namespace midimap
 {
 namespace
@@ -269,4 +270,4 @@ int read(const string &file)
 	return MIDIMAP_READ_OK;
 }
 
-}}; // giada::midimap::
+}}}; // giada::m::midimap::

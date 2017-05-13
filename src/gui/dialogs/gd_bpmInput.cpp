@@ -41,7 +41,7 @@
 extern gdMainWindow *mainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdBpmInput::gdBpmInput(const char *label)

@@ -39,6 +39,7 @@
 
 
 namespace giada {
+namespace m {
 namespace kernelMidi
 {
 typedef void (cb_midiLearn) (uint32_t, void *);
@@ -97,7 +98,7 @@ unsigned countOutPorts();
 bool hasAPI(int API);
 
 std::string getRtMidiVersion();
-}}; // giada::kernelMidi::
+}}}; // giada::m::kernelMidi::
 
 
 #endif

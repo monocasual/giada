@@ -43,7 +43,7 @@
 #include "waveform.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l)

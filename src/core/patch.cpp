@@ -39,6 +39,7 @@ using std::vector;
 
 
 namespace giada {
+namespace m {
 namespace patch
 {
 namespace
@@ -531,4 +532,4 @@ int read(const string &file)
 }
 
 
-}}; // giada::patch::
+}}}; // giada::m::patch::

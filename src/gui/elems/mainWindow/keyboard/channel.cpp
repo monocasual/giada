@@ -44,7 +44,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)

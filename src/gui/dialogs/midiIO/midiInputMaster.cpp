@@ -32,7 +32,7 @@
 #include "midiInputMaster.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdMidiInputMaster::gdMidiInputMaster()

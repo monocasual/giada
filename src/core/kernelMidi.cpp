@@ -50,6 +50,7 @@ using std::vector;
 
 
 namespace giada {
+namespace m {
 namespace kernelMidi
 {
 namespace
@@ -510,4 +511,4 @@ bool getStatus()
 	return status;
 }
 
-}}; // giada::kernelMidi::
+}}}; // giada::m::kernelMidi::

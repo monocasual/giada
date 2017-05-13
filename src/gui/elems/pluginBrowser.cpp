@@ -38,7 +38,7 @@
 
 using std::vector;
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)

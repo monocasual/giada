@@ -35,7 +35,7 @@
 #include "noteEditor.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geNoteEditor::geNoteEditor(int x, int y, gdActionEditor *pParent)

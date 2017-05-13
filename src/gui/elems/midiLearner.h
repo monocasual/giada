@@ -48,7 +48,7 @@ private:
 	 * uint32_t msg - MIDI message
 	 * void   *data - extra data */
 
-	giada::kernelMidi::cb_midiLearn *callback;
+	giada::m::kernelMidi::cb_midiLearn *callback;
 
 	geBox     *text;
 	geButton *value;
@@ -75,8 +75,8 @@ public:
 
 	uint32_t *param;
 
-	geMidiLearner(int x, int y, int w, const char *l, giada::kernelMidi::cb_midiLearn *cb,
-    uint32_t *param);
+	geMidiLearner(int x, int y, int w, const char *l, 
+		giada::m::kernelMidi::cb_midiLearn *cb, uint32_t *param);
 
 	void updateValue();
 };

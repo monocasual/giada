@@ -39,7 +39,7 @@
 #include "gd_config.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")

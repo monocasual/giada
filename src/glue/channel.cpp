@@ -64,7 +64,7 @@ extern gdMainWindow *G_MainWin;
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 static bool __soloSession__ = false;

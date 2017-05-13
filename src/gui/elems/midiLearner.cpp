@@ -31,7 +31,7 @@
 #include "midiLearner.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,

@@ -42,6 +42,7 @@ class Mixer;
 
 
 namespace giada {
+namespace m {
 namespace kernelAudio
 {
 #ifdef __linux__
@@ -90,6 +91,6 @@ void jackSetBpm(double bpm);
 const JackState &jackTransportQuery();
 
 #endif
-}}; // giada::kernelAudio::
+}}}; // giada::m::kernelAudio::
 
 #endif

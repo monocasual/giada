@@ -56,6 +56,7 @@ using std::string;
 
 
 namespace giada {
+namespace m {
 namespace mh
 {
 namespace
@@ -371,4 +372,4 @@ bool hasArmedSampleChannels()
 }
 
 
-}}; // giada::mh::
+}}}; // giada::m::mh::

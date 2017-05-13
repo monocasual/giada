@@ -38,6 +38,7 @@ class Channel;
 
 
 namespace giada {
+namespace m {
 namespace mixer
 {
 void init(int framesInSeq, int audioBufferSize);
@@ -110,7 +111,7 @@ extern pthread_mutex_t mutex_recs;
 extern pthread_mutex_t mutex_chans;
 extern pthread_mutex_t mutex_plugins;
 
-}} // giada::mixer::;
+}}} // giada::m::mixer::;
 
 
 #endif

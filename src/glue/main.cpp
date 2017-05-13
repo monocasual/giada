@@ -51,7 +51,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 void glue_setBpm(const char *v1, const char *v2)

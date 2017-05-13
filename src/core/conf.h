@@ -33,6 +33,7 @@
 
 
 namespace giada {
+namespace m {
 namespace conf
 {
 void init();
@@ -110,6 +111,6 @@ extern int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
 extern int pluginSortMethod;
 
 #endif
-}}; // giada::conf::
+}}}; // giada::m::conf::
 
 #endif

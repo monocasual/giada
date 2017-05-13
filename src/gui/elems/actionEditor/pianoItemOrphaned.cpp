@@ -37,7 +37,7 @@
 #include "pianoItemOrphaned.h"
 
 
-using namespace giada;
+using namespace giada::m;
 
 
 gePianoItemOrphaned::gePianoItemOrphaned(int x, int y, int xRel, int yRel,

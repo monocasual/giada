@@ -56,7 +56,7 @@ extern gdMainWindow *G_MainWin;
 
 using std::string;
 using std::vector;
-using namespace giada;
+using namespace giada::m;
 
 
 #ifdef WITH_VST

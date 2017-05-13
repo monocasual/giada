@@ -38,8 +38,8 @@
 #include "tabMidi.h"
 
 
-using namespace giada;
 using std::string;
+using namespace giada::m;
 
 
 geTabMidi::geTabMidi(int X, int Y, int W, int H)
