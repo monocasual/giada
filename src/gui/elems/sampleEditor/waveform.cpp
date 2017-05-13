@@ -363,7 +363,7 @@ int geWaveform::handle(int e)
       if (chanEndLit)
         realChanEnd = absolutePoint(chanEnd)*2;
 
-      glue_setBeginEndChannel((gdSampleEditor *) window(), chan, realChanStart, realChanEnd, false);
+      glue_setBeginEndChannel(chan, realChanStart, realChanEnd);
 
       pushed  = false;
       dragged = false;
@@ -647,14 +647,8 @@ void geWaveform::openEditMenu()
 
   if (strcmp(m->label(), "Set start/end here") == 0) {
 
-    glue_setBeginEndChannel(
-        (gdSampleEditor *) window(), // parent
-        chan,
-        absolutePoint(selectionA) * 2,  // stereo!
-        absolutePoint(selectionB) * 2,  // stereo!
-        false, // no recalc (we do it here)
-        false  // don't check
-        );
+    glue_setBeginEndChannel(chan, absolutePoint(selectionA) * 2, 
+      absolutePoint(selectionB) * 2); // stereo values
 
     selectionA     = 0;
     selectionB     = 0;
@@ -672,12 +666,7 @@ void geWaveform::openEditMenu()
 
     /* for convenience reset start/end points */
 
-    glue_setBeginEndChannel(
-      (gdSampleEditor *) window(),
-      chan,
-      0,
-      chan->wave->size,
-      false);
+    glue_setBeginEndChannel(chan, 0, chan->wave->size);
 
     selectionA     = 0;
     selectionB     = 0;
@@ -693,12 +682,7 @@ void geWaveform::openEditMenu()
   if (strcmp(m->label(), "Trim") == 0) {
     wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
 
-    glue_setBeginEndChannel(
-      (gdSampleEditor *) window(),
-      chan,
-      0,
-      chan->wave->size,
-      false);
+    glue_setBeginEndChannel(chan, 0, chan->wave->size);
 
     selectionA     = 0;
     selectionB     = 0;

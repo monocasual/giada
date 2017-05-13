@@ -51,6 +51,7 @@
 #include "../elems/sampleEditor/boostTool.h"
 #include "../elems/sampleEditor/panTool.h"
 #include "../elems/sampleEditor/pitchTool.h"
+#include "../elems/sampleEditor/rangeTool.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "sampleEditor.h"
@@ -106,11 +107,9 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   Fl_Pack *row3 = new Fl_Pack(8, row2->y()+row2->h()+8, 200, 20);
   row3->spacing(4);
   row3->type(Fl_Pack::HORIZONTAL);
+    rangeTool = new geRangeTool(0, 0, ch);
   row3->begin();
-                    new geBox  (0, 0, gu_getStringWidth("Range"), 20, "Range", FL_ALIGN_RIGHT);
-    chanStart     = new geInput(0, 0, 70, 20);
-    chanEnd       = new geInput(0, 0, 70, 20);
-    resetStartEnd = new geButton(0, 0, 70, 20, "Reset");
+
   row3->end();
 
   /* grid tool setup */
@@ -131,24 +130,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   snap->callback(cb_enableSnap, (void*)this);
 
   /* TODO - redraw grid if != (off) */
-
-  char buf[16];
-  sprintf(buf, "%d", ch->begin / 2); // divided by 2 because stereo
-  chanStart->value(buf);
-  chanStart->type(FL_INT_INPUT);
-  chanStart->callback(cb_setChanPos, this);
-
-  /* inputs callback: fire when they lose focus or Enter is pressed. */
-
-  chanStart->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-  chanEnd  ->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-
-  sprintf(buf, "%d", ch->end / 2);  // divided by 2 because stereo
-  chanEnd->value(buf);
-  chanEnd->type(FL_INT_INPUT);
-  chanEnd->callback(cb_setChanPos, this);
-
-  resetStartEnd->callback(cb_resetStartEnd, this);
 
   reload->callback(cb_reload, (void*)this);
 
@@ -187,13 +168,11 @@ gdSampleEditor::~gdSampleEditor()
 /* -------------------------------------------------------------------------- */
 
 
-void gdSampleEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setChanPos(); }
-void gdSampleEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetStartEnd(); }
-void gdSampleEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
-void gdSampleEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
-void gdSampleEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
-void gdSampleEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
-void gdSampleEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
+void gdSampleEditor::cb_reload    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
+void gdSampleEditor::cb_zoomIn    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
+void gdSampleEditor::cb_zoomOut   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
+void gdSampleEditor::cb_changeGrid(Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
+void gdSampleEditor::cb_enableSnap(Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -202,30 +181,6 @@ void gdSampleEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdSampleEdit
 void gdSampleEditor::__cb_enableSnap()
 {
   waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setChanPos()
-{
-  glue_setBeginEndChannel(
-    this,
-    ch,
-    atoi(chanStart->value())*2,  // glue halves printed values
-    atoi(chanEnd->value())*2,
-    true
-  );
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_resetStartEnd()
-{
-  glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 }
 
 
@@ -251,7 +206,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
+  glue_setBeginEndChannel(ch, 0, ch->wave->size);
 
   redraw();
 }

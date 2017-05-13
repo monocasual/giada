@@ -37,6 +37,7 @@
 #include "../gui/elems/sampleEditor/boostTool.h"
 #include "../gui/elems/sampleEditor/panTool.h"
 #include "../gui/elems/sampleEditor/pitchTool.h"
+#include "../gui/elems/sampleEditor/rangeTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
@@ -362,47 +363,16 @@ void glue_setSoloOff(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch, int b, int e,
-	bool recalc, bool check)
+void glue_setBeginEndChannel(SampleChannel *ch, int b, int e)
 {
-	if (check) {
-		if (e > ch->wave->size)
-			e = ch->wave->size;
-		if (b < 0)
-			b = 0;
-		if (b > ch->wave->size)
-			b = ch->wave->size-2;
-		if (b >= ch->end)
-			b = ch->begin;
-		if (e <= ch->begin)
-			e = ch->end;
-	}
-
-	/* continue only if new values != old values */
-
-	if (b == ch->begin && e == ch->end)
-		return;
-
-	/* print mono values */
-
-	char tmp[16];
-	sprintf(tmp, "%d", b/2);
-	win->chanStart->value(tmp);
-
-	tmp[0] = '\0';
-	sprintf(tmp, "%d", e/2);
-	win->chanEnd->value(tmp);
-
 	ch->setBegin(b);
 	ch->setEnd(e);
-
-	/* Recalc is not needed when the user drags the bars directly over the
-	waveform */
-
-	if (recalc) {
-		win->waveTools->waveform->recalcPoints();
-		win->waveTools->waveform->redraw();
-	}
+	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (gdEditor) {
+		Fl::lock();
+		gdEditor->rangeTool->refresh();
+		Fl::unlock();
+	}	
 }
 
 

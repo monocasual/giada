@@ -235,9 +235,18 @@ int SampleChannel::save(const char *path)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setBegin(unsigned v)
+void SampleChannel::setBegin(int v)
 {
-	begin   = v;
+	if (v < 0)
+		begin = 0;
+	else
+	if (v > wave->size)
+		begin = wave->size - 2;
+	else
+	if (v >= end)
+		begin = end - 2;
+	else
+		begin = v;
 	tracker = begin;
 }
 
@@ -245,9 +254,18 @@ void SampleChannel::setBegin(unsigned v)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setEnd(unsigned v)
+void SampleChannel::setEnd(int v)
 {
-	end = v;
+	if (v < 0)
+		end = begin + 2;
+	else
+	if (v > wave->size)
+		end = wave->size;
+	else
+	if (v <= begin)
+		end = begin + 2;
+	else
+		end = v;
 }
 
 

@@ -85,8 +85,7 @@ void glue_setPanning(SampleChannel *ch, float val);
  * internal position. check=true: check the points' consistency */
 
 /* TODO move to glue_sampleEditor */
-void glue_setBeginEndChannel(gdSampleEditor *win, SampleChannel *ch,
-  int b, int e, bool recalc=false, bool check=true);
+void glue_setBeginEndChannel(SampleChannel *ch, int b, int e);
 
 /* TODO move to glue_sampleEditor */
 void glue_setBoost(SampleChannel *ch, float val);

@@ -127,6 +127,8 @@ src/gui/elems/sampleEditor/panTool.h                \
 src/gui/elems/sampleEditor/panTool.cpp              \
 src/gui/elems/sampleEditor/pitchTool.h              \
 src/gui/elems/sampleEditor/pitchTool.cpp            \
+src/gui/elems/sampleEditor/rangeTool.h              \
+src/gui/elems/sampleEditor/rangeTool.cpp            \
 src/gui/elems/actionEditor/baseActionEditor.h       \
 src/gui/elems/actionEditor/baseActionEditor.cpp     \
 src/gui/elems/actionEditor/envelopeEditor.h         \

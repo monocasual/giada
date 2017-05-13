@@ -154,8 +154,8 @@ public:
 	/* setStart/end
 	 * change begin/end read points in sample. */
 
-	void setBegin(unsigned v);
-	void setEnd  (unsigned v);
+	void setBegin(int v);
+	void setEnd  (int v);
 
 	/* save
 	 * save sample to file. */

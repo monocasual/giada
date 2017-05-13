@@ -25,61 +25,40 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_EDITOR_H
-#define GD_EDITOR_H
+#ifndef GE_RANGE_TOOL_H
+#define GE_RANGE_TOOL_H
 
 
-#include "window.h"
+#include <FL/Fl_Group.H>
 
 
 class SampleChannel;
-class geButton;
-class geWaveTools;
-class geVolumeTool;
-class geBoostTool;
-class gePanTool;
-class gePitchTool;
-class geRangeTool;
 class geInput;
-class geDial;
-class geChoice;
-class geCheck;
+class geButton;
+class geBox;
 
 
-class gdSampleEditor : public gdWindow
+class geRangeTool : public Fl_Group
 {
 private:
 
-	static void cb_reload        (Fl_Widget *w, void *p);
-	static void cb_zoomIn        (Fl_Widget *w, void *p);
-	static void cb_zoomOut       (Fl_Widget *w, void *p);
-	static void cb_changeGrid    (Fl_Widget *w, void *p);
-	static void cb_enableSnap    (Fl_Widget *w, void *p);
-	inline void __cb_reload();
-	inline void __cb_zoomIn();
-	inline void __cb_zoomOut();
-	inline void __cb_changeGrid();
-	inline void __cb_enableSnap();
+  SampleChannel *ch;
+
+  geBox    *label;
+  geInput  *begin_;
+  geInput  *end_;
+  geButton *reset;
+
+  static void cb_setChanPos    (Fl_Widget *w, void *p);
+  static void cb_resetStartEnd (Fl_Widget *w, void *p);
+  inline void __cb_setChanPos();
+  inline void __cb_resetStartEnd();
 
 public:
 
-	gdSampleEditor(SampleChannel *ch);
-	~gdSampleEditor();
+  geRangeTool(int x, int y, SampleChannel *ch);
 
-	geButton     *zoomIn;
-	geButton     *zoomOut;
-	geWaveTools  *waveTools;
-	geVolumeTool *volumeTool;
-	geBoostTool  *boostTool;
-	gePanTool    *panTool;
-	gePitchTool  *pitchTool;
-	geRangeTool  *rangeTool;
-	geButton     *reload;
-	geButton     *close;
-	geChoice     *grid;
-	geCheck      *snap;
-
-	SampleChannel *ch;
+  void refresh();
 };
 
 
