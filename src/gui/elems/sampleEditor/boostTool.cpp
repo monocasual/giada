@@ -26,12 +26,12 @@
 
 
 #include <FL/Fl.H>
-#include "../../core/sampleChannel.h"
-#include "../../core/const.h"
-#include "../../core/waveFx.h"  
-#include "../../glue/channel.h"
-#include "../../utils/gui.h"
-#include "../../utils/math.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../core/const.h"
+#include "../../../core/waveFx.h"  
+#include "../../../glue/channel.h"
+#include "../../../utils/gui.h"
+#include "../../../utils/math.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"

@@ -26,11 +26,11 @@
 
 
 #include <FL/Fl.H>
-#include "../../core/sampleChannel.h"
-#include "../../core/wave.h"
-#include "../../glue/channel.h"
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../core/wave.h"
+#include "../../../glue/channel.h"
+#include "../../../utils/gui.h"
+#include "../../../utils/string.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/input.h"
 #include "../basics/box.h"

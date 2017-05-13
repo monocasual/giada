@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl.H>
 #include "../../../../core/const.h"
 #include "../../../../core/channel.h"
 #include "../../../../core/graphics.h"

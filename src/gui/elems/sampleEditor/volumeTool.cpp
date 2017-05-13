@@ -25,12 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cmath>
 #include <FL/Fl_Pack.H>
-#include "../../core/sampleChannel.h"
-#include "../../core/const.h"
-#include "../../glue/channel.h"
-#include "../../utils/gui.h"
-#include "../../utils/math.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../core/const.h"
+#include "../../../glue/channel.h"
+#include "../../../utils/gui.h"
+#include "../../../utils/math.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"
 #include "../basics/box.h"
