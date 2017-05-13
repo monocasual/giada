@@ -71,14 +71,17 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   /* top bar: grid and zoom tools */
 
-  Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
+  Fl_Pack *bar = new Fl_Pack(8, 8, w()-16, 20);
+  bar->spacing(4);
+  bar->type(Fl_Pack::HORIZONTAL);
   bar->begin();
-    grid    = new geChoice(bar->x(), bar->y(), 50, 20);
-    snap    = new geCheck(grid->x()+grid->w()+4, bar->y()+4, 12, 12);
-    zoomOut = new geButton(bar->x()+bar->w()-20, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
-    zoomIn  = new geButton(zoomOut->x()-24, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+    grid    = new geChoice(0, 0, 50, 20);
+    snap    = new geCheck(0, 0, 12, 12);
+    sep     = new geBox(0, 0, w()-134, 20);
+    zoomOut = new geButton(0, 0, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+    zoomIn  = new geButton(0, 0, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
-  bar->resizable(new geBox(grid->x()+grid->w()+4, bar->y(), 80, bar->h()));
+  bar->resizable(sep);
 
   /* waveform */
 

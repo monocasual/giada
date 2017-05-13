@@ -49,8 +49,8 @@ private:
   geInput  *end_;
   geButton *reset;
 
-  static void cb_setChanPos    (Fl_Widget *w, void *p);
-  static void cb_resetStartEnd (Fl_Widget *w, void *p);
+  static void cb_setChanPos   (Fl_Widget *w, void *p);
+  static void cb_resetStartEnd(Fl_Widget *w, void *p);
   inline void __cb_setChanPos();
   inline void __cb_resetStartEnd();
 

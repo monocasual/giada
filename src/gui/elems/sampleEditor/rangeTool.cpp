@@ -39,7 +39,6 @@
 #include "rangeTool.h"
 
 
-
 geRangeTool::geRangeTool(int x, int y, SampleChannel *ch)
   : Fl_Group(x, y, 600, 20),
     ch      (ch)

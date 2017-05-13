@@ -40,10 +40,10 @@ class geBoostTool;
 class gePanTool;
 class gePitchTool;
 class geRangeTool;
-class geInput;
-class geDial;
 class geChoice;
 class geCheck;
+class geBox;
+class geButton;
 
 
 class gdSampleEditor : public gdWindow
@@ -66,8 +66,6 @@ public:
 	gdSampleEditor(SampleChannel *ch);
 	~gdSampleEditor();
 
-	geButton     *zoomIn;
-	geButton     *zoomOut;
 	geWaveTools  *waveTools;
 	geVolumeTool *volumeTool;
 	geBoostTool  *boostTool;
@@ -75,9 +73,12 @@ public:
 	gePitchTool  *pitchTool;
 	geRangeTool  *rangeTool;
 	geButton     *reload;
-	geButton     *close;
+
 	geChoice     *grid;
 	geCheck      *snap;
+	geBox        *sep;
+	geButton     *zoomIn;
+	geButton     *zoomOut;
 
 	SampleChannel *ch;
 };
