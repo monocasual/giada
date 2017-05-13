@@ -52,11 +52,11 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		frameRewind      (-1),
 		boost            (G_DEFAULT_BOOST),
+		pitch            (G_DEFAULT_PITCH),
 		wave             (nullptr),
 		tracker          (0),
 		begin            (0),
 		end              (0),
-		pitch            (G_DEFAULT_PITCH),
 		mode             (G_DEFAULT_CHANMODE),
 		qWait	           (false),
 		fadeinOn         (false),
@@ -256,13 +256,26 @@ void SampleChannel::setEnd(unsigned v)
 
 void SampleChannel::setPitch(float v)
 {
-	pitch = v;
+	if (v > G_MAX_PITCH)
+		pitch = G_MAX_PITCH;
+	else
+	if (v < 0.1f)
+		pitch = 0.1000f;
+	else 
+		pitch = v;
+
 	rsmp_data.src_ratio = 1/pitch;
 
 	/* if status is off don't slide between frequencies */
 
 	if (status & (STATUS_OFF | STATUS_WAIT))
 		src_set_ratio(rsmp_state, 1/pitch);
+}
+
+
+float SampleChannel::getPitch()
+{
+	return pitch;
 }
 
 

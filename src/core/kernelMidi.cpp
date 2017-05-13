@@ -108,7 +108,7 @@ void processChannels(uint32_t pure, uint32_t value)
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
 
-		Channel *ch = (Channel*) mixer::channels.at(i);
+		Channel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
 
 		if (!ch->midiIn)
 			continue;
@@ -139,11 +139,11 @@ void processChannels(uint32_t pure, uint32_t value)
 			float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0 4.0]
 			gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
 				ch->index, pure, value >> 8, vf);
-			glue_setPitch(nullptr, (SampleChannel*)ch, vf, false);
+			glue_setPitch(static_cast<SampleChannel*>(ch), vf);
 		}
 		else if (pure == ((SampleChannel*)ch)->midiInReadActions) {
 			gu_log("  >>> start/stop read actions ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_startStopReadingRecs((SampleChannel*)ch, false);
+			glue_startStopReadingRecs(static_cast<SampleChannel*>(ch), false);
 		}
 
 #ifdef WITH_VST

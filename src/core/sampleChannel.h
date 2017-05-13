@@ -58,6 +58,7 @@ private:
 	int frameRewind;
 
 	float boost;
+	float pitch;
 
 	/* fillChan
 	 * copy from wave to *dest and resample data from wave, if necessary.
@@ -148,6 +149,7 @@ public:
 	 * updates the pitch value and chanStart+chanEnd accordingly. */
 
 	void setPitch(float v);
+	float getPitch();
 
 	/* setStart/end
 	 * change begin/end read points in sample. */
@@ -177,7 +179,7 @@ public:
 	void setReadActions(bool v, bool recsStopOnChanHalt);
 
 	void setBoost(float v);
-	float getBoost();
+	float getBoost();	
 
 	/* ------------------------------------------------------------------------ */
 
@@ -185,7 +187,6 @@ public:
 	int    tracker;         // chan position
 	int    begin;
 	int    end;
-  float  pitch;
 	int    mode;            // mode: see const.h
 	bool   qWait;           // quantizer wait
 	bool   fadeinOn;

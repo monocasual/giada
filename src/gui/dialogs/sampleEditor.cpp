@@ -50,6 +50,7 @@
 #include "../elems/sampleEditor/volumeTool.h"
 #include "../elems/sampleEditor/boostTool.h"
 #include "../elems/sampleEditor/panTool.h"
+#include "../elems/sampleEditor/pitchTool.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "gd_warnings.h"
 #include "sampleEditor.h"
@@ -95,18 +96,11 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
     reload     = new geButton(0, 0, 70, 20, "Reload");
   row1->end();
 
-  Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 200, 20);
+  Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 800, 20);
   row2->spacing(4);
   row2->type(Fl_Pack::HORIZONTAL);
   row2->begin();
-                  new geBox  (0, 0, gu_getStringWidth("Pitch"), 20, "Pitch", FL_ALIGN_RIGHT);
-    pitch       = new geDial(0, 0, 20, 20);
-    pitchNum    = new geInput(0, 0, 70, 20);
-    pitchToBar  = new geButton(0, 0, 70, 20, "To bar");
-    pitchToSong = new geButton(0, 0, 70, 20, "To song");
-    pitchHalf   = new geButton(0, 0, 20, 20, "", divideOff_xpm, divideOn_xpm);
-    pitchDouble = new geButton(0, 0, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-    pitchReset  = new geButton(0, 0, 70, 20, "Reset");
+    pitchTool = new gePitchTool(0, 0, ch);
   row2->end();
 
   Fl_Pack *row3 = new Fl_Pack(8, row2->y()+row2->h()+8, 200, 20);
@@ -156,23 +150,6 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   resetStartEnd->callback(cb_resetStartEnd, this);
 
-  pitch->range(0.01f, 4.0f);
-  pitch->value(ch->pitch);
-  pitch->callback(cb_setPitch, (void*)this);
-  pitch->when(FL_WHEN_RELEASE);
-
-  sprintf(buf, "%.4f", ch->pitch); // 4 digits
-  pitchNum->value(buf);
-  pitchNum->align(FL_ALIGN_RIGHT);
-  pitchNum->callback(cb_setPitchNum, (void*)this);
-  pitchNum->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY);
-
-  pitchToBar->callback(cb_setPitchToBar, (void*)this);
-  pitchToSong->callback(cb_setPitchToSong, (void*)this);
-  pitchHalf->callback(cb_setPitchHalf, (void*)this);
-  pitchDouble->callback(cb_setPitchDouble, (void*)this);
-  pitchReset->callback(cb_resetPitch, (void*)this);
-
   reload->callback(cb_reload, (void*)this);
 
   zoomOut->callback(cb_zoomOut, (void*)this);
@@ -213,13 +190,6 @@ gdSampleEditor::~gdSampleEditor()
 void gdSampleEditor::cb_setChanPos      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setChanPos(); }
 void gdSampleEditor::cb_resetStartEnd   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetStartEnd(); }
 void gdSampleEditor::cb_reload          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
-void gdSampleEditor::cb_setPitch        (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitch(); }
-void gdSampleEditor::cb_setPitchToBar   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToBar(); }
-void gdSampleEditor::cb_setPitchToSong  (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchToSong(); }
-void gdSampleEditor::cb_setPitchHalf    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchHalf(); }
-void gdSampleEditor::cb_setPitchDouble  (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchDouble(); }
-void gdSampleEditor::cb_resetPitch      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_resetPitch(); }
-void gdSampleEditor::cb_setPitchNum     (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_setPitchNum(); }
 void gdSampleEditor::cb_zoomIn          (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
 void gdSampleEditor::cb_zoomOut         (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
 void gdSampleEditor::cb_changeGrid      (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
@@ -232,33 +202,6 @@ void gdSampleEditor::cb_enableSnap      (Fl_Widget *w, void *p) { ((gdSampleEdit
 void gdSampleEditor::__cb_enableSnap()
 {
   waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitchToBar()
-{
-  glue_setPitch(this, ch, ch->end / (float) clock::getFramesPerBar(), true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitchToSong()
-{
-  glue_setPitch(this, ch, ch->end / (float) clock::getTotalFrames(), true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_resetPitch()
-{
-  glue_setPitch(this, ch, 1.0f, true);
 }
 
 
@@ -299,7 +242,7 @@ void gdSampleEditor::__cb_reload()
   ch->load(ch->wave->pathfile.c_str(), conf::samplerate, conf::rsmpQuality);
 
   glue_setBoost(ch, G_DEFAULT_BOOST);
-  glue_setPitch(this, ch, G_DEFAULT_PITCH, true);
+  glue_setPitch(ch, G_DEFAULT_PITCH);
   glue_setPanning(ch, 1.0f);
 
   panTool->refresh();
@@ -311,42 +254,6 @@ void gdSampleEditor::__cb_reload()
   glue_setBeginEndChannel(this, ch, 0, ch->wave->size, true);
 
   redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitch()
-{
-  glue_setPitch(this, ch, pitch->value(), false);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitchNum()
-{
-  glue_setPitch(this, ch, atof(pitchNum->value()), true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitchHalf()
-{
-  glue_setPitch(this, ch, pitch->value()/2, true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdSampleEditor::__cb_setPitchDouble()
-{
-  glue_setPitch(this, ch, pitch->value()*2, true);
 }
 
 

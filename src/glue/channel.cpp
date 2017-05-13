@@ -36,6 +36,7 @@
 #include "../gui/elems/sampleEditor/volumeTool.h"
 #include "../gui/elems/sampleEditor/boostTool.h"
 #include "../gui/elems/sampleEditor/panTool.h"
+#include "../gui/elems/sampleEditor/pitchTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
@@ -214,25 +215,13 @@ void glue_setVolume(Channel *ch, float v, bool gui, bool editor)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val, bool numeric)
+void glue_setPitch(SampleChannel *ch, float val)
 {
-	if (numeric) {
-		if (val <= 0.0f)
-			val = 0.1000f;
-		if (val > 4.0f)
-			val = 4.0000f;
-		if (win)
-			win->pitch->value(val);
-	}
-
 	ch->setPitch(val);
-
-	if (win) {
-		char buf[16];
-		sprintf(buf, "%.4f", val);
+	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (gdEditor) {
 		Fl::lock();
-		win->pitchNum->value(buf);
-		win->pitchNum->redraw();
+		gdEditor->pitchTool->refresh();
 		Fl::unlock();
 	}
 }

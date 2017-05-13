@@ -75,8 +75,7 @@ void glue_setSoloOff(Channel *ch, bool gui=true);
 void glue_setVolume(Channel *ch, float v, bool gui=true, bool editor=false);
 
 /* TODO move to glue_sampleEditor */
-void glue_setPitch(gdSampleEditor *win, SampleChannel *ch, float val,
-  bool numeric);
+void glue_setPitch(SampleChannel *ch, float val);
 
 /* TODO move to glue_sampleEditor */
 void glue_setPanning(SampleChannel *ch, float val);
