@@ -4,7 +4,7 @@
 
 
 using std::string;
-using namespace giada;
+using namespace giada::m;
 
 
 TEST_CASE("Test Conf class")

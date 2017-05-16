@@ -5,7 +5,7 @@
 
 using std::string;
 using std::vector;
-using namespace giada;
+using namespace giada::m;
 
 
 TEST_CASE("Test Patch class")
@@ -63,8 +63,7 @@ TEST_CASE("Test Patch class")
     channel1.mute_s            = 0;
     channel1.solo              = 0;
     channel1.volume            = 1.0f;
-    channel1.panLeft           = 0.5f;
-    channel1.panRight          = 0.5f;
+    channel1.pan               = 0.5f;
     channel1.midiIn            = true;
     channel1.midiInKeyPress    = UINT32_MAX;  // check maximum value
     channel1.midiInKeyRel      = 1;
@@ -152,8 +151,7 @@ TEST_CASE("Test Patch class")
     REQUIRE(channel0.mute_s == 0);
     REQUIRE(channel0.solo == 0);
     REQUIRE(channel0.volume == Approx(1.0f));
-    REQUIRE(channel0.panLeft == Approx(0.5f));
-    REQUIRE(channel0.panRight == Approx(0.5f));
+    REQUIRE(channel0.pan == Approx(0.5f));
     REQUIRE(channel0.midiIn == true);
     REQUIRE(channel0.midiInKeyPress == UINT32_MAX);
     REQUIRE(channel0.midiInKeyRel == 1);

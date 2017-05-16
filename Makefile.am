@@ -352,8 +352,7 @@ src/core/wave.cpp            \
 src/core/midiMapConf.cpp     \
 src/core/patch.cpp           \
 src/core/plugin.cpp          \
-src/core/dataStorageIni.cpp  \
-src/core/dataStorageJson.cpp \
+src/core/storager.cpp        \
 src/core/recorder.cpp        \
 src/utils/fs.cpp             \
 src/utils/string.cpp         \
