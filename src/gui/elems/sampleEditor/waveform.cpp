@@ -499,8 +499,8 @@ int geWaveform::handle(int e)
 int geWaveform::applySnap(int pos)
 {
   for (unsigned i=0; i<grid.points.size(); i++) {
-    if (pos >= grid.points.at(i) - 10 &&
-        pos <= grid.points.at(i) + 10)
+    if (pos >= grid.points.at(i) - SNAPPING &&
+        pos <= grid.points.at(i) + SNAPPING)
     {
       return grid.points.at(i);
     }

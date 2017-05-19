@@ -39,6 +39,7 @@
 #include "../../core/wave.h"
 #include "../../core/clock.h"
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "../elems/basics/choice.h"
@@ -72,7 +73,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   bar->begin();
     grid    = new geChoice(bar->x(), bar->y(), 50, 20);
     snap    = new geCheck(grid->x()+grid->w()+4, bar->y(), 12, 12);
-    sep1    = new geBox(snap->x()+snap->w()+4, bar->y(), 200, 20);
+    sep1    = new geBox(snap->x()+snap->w()+4, bar->y(), 506, 20);
     zoomOut = new geButton(sep1->x()+sep1->w()+4, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
     zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
@@ -120,7 +121,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   grid->add("16");
   grid->add("32");
   grid->add("64");
-  grid->value(conf::sampleEditorGridVal);
+  grid->value(grid->find_item(gu_itoa(conf::sampleEditorGridVal).c_str()));
   grid->callback(cb_changeGrid, (void*)this);
 
   snap->value(conf::sampleEditorGridOn);
@@ -162,7 +163,7 @@ gdSampleEditor::~gdSampleEditor()
   conf::sampleEditorY = y();
   conf::sampleEditorW = w();
   conf::sampleEditorH = h();
-  conf::sampleEditorGridVal = grid->value();
+  conf::sampleEditorGridVal = atoi(grid->text());
   conf::sampleEditorGridOn  = snap->value();
 }
 

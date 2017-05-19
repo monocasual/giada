@@ -46,6 +46,7 @@ private:
 	static const int FLAG_WIDTH  = 20;
 	static const int FLAG_HEIGHT = 20;
 	static const int BORDER      = 8;				// window border <-> widget border
+	static const int SNAPPING    = 10;
 
 	/* data
 	 * real graphic stuff from the underlying waveform */
