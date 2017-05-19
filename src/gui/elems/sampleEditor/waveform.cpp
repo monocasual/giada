@@ -339,15 +339,6 @@ int geWaveform::handle(int e)
 
     case FL_RELEASE: {
 
-      /* don't recompute points if something is selected */
-
-      if (selectionA != selectionB) {
-        pushed  = false;
-        dragged = false;
-        ret = 1;
-        break;
-      }
-
       int realChanStart = chan->begin;
       int realChanEnd   = chan->end;
 
