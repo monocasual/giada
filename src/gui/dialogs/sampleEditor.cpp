@@ -27,7 +27,7 @@
 
 #include <cmath>
 #include <FL/Fl.H>
-#include <FL/Fl_Pack.H>
+#include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 #include "../../glue/channel.h"
 #include "../../core/waveFx.h"
@@ -64,56 +64,50 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   : gdWindow(640, 480),
     ch(ch)
 {
-  set_non_modal();
-
-  if (conf::sampleEditorX)
-    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
+  begin();
 
   /* top bar: grid and zoom tools */
 
-  Fl_Pack *bar = new Fl_Pack(8, 8, w()-16, 20);
-  bar->spacing(4);
-  bar->type(Fl_Pack::HORIZONTAL);
+  Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
   bar->begin();
-    grid    = new geChoice(0, 0, 50, 20);
-    snap    = new geCheck(0, 0, 12, 12);
-    sep     = new geBox(0, 0, w()-134, 20);
-    zoomOut = new geButton(0, 0, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
-    zoomIn  = new geButton(0, 0, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+    grid    = new geChoice(bar->x(), bar->y(), 50, 20);
+    snap    = new geCheck(grid->x()+grid->w()+4, bar->y(), 12, 12);
+    sep1    = new geBox(snap->x()+snap->w()+4, bar->y(), 200, 20);
+    zoomOut = new geButton(sep1->x()+sep1->w()+4, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+    zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
   bar->end();
-  bar->resizable(sep);
+  bar->resizable(sep1);
 
   /* waveform */
 
-  waveTools = new geWaveTools(8, 36, w()-16, h()-130, ch);
+  waveTools = new geWaveTools(8, bar->y()+bar->h()+8, w()-16, h()-128, ch);
   waveTools->end();
 
   /* other tools */
 
-  Fl_Pack *row1 = new Fl_Pack(8, waveTools->y()+waveTools->h()+8, 200, 20);
-  row1->spacing(4);
-  row1->type(Fl_Pack::HORIZONTAL);
+  Fl_Group *row1 = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 20);
   row1->begin();
-    volumeTool = new geVolumeTool(0, 0, ch);
-    boostTool  = new geBoostTool(0, 0, ch);
-    panTool    = new gePanTool(0, 0, ch);
-    reload     = new geButton(0, 0, 70, 20, "Reload");
+    volumeTool = new geVolumeTool(row1->x(), row1->y(), ch);
+    boostTool  = new geBoostTool(volumeTool->x()+volumeTool->w()+4, row1->y(), ch);
+    panTool    = new gePanTool(boostTool->x()+boostTool->w()+4, row1->y(), ch);
   row1->end();
+  row1->resizable(0);
 
-  Fl_Pack *row2 = new Fl_Pack(8, row1->y()+row1->h()+8, 800, 20);
-  row2->spacing(4);
-  row2->type(Fl_Pack::HORIZONTAL);
+  Fl_Group *row2 = new Fl_Group(8, row1->y()+row1->h()+8, 800, 20);
   row2->begin();
-    pitchTool = new gePitchTool(0, 0, ch);
+    pitchTool = new gePitchTool(row2->x(), row2->y(), ch);
   row2->end();
+  row2->resizable(0);
 
-  Fl_Pack *row3 = new Fl_Pack(8, row2->y()+row2->h()+8, 200, 20);
-  row3->spacing(4);
-  row3->type(Fl_Pack::HORIZONTAL);
-    rangeTool = new geRangeTool(0, 0, ch);
+  Fl_Group *row3 = new Fl_Group(8, row2->y()+row2->h()+8, w()-16, 20);
   row3->begin();
-
+    rangeTool = new geRangeTool(row3->x(), row3->y(), ch);
+    sep2      = new geBox(rangeTool->x()+rangeTool->w()+4, row3->y(), 246, 20);
+    reload    = new geButton(sep2->x()+sep2->w()+4, row3->y(), 70, 20, "Reload");
   row3->end();
+  row3->resizable(sep2);
+
+  end();
 
   /* grid tool setup */
 
@@ -149,6 +143,11 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   resizable(waveTools);
 
   label(ch->wave->name.c_str());
+
+  set_non_modal();
+
+  if (conf::sampleEditorX)
+    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
 
   show();
 }

@@ -39,14 +39,14 @@
 #include "volumeTool.h"
 
 
-geVolumeTool::geVolumeTool(int x, int y, SampleChannel *ch)
-  : Fl_Group(x, y, 200, 20),
+geVolumeTool::geVolumeTool(int X, int Y, SampleChannel *ch)
+  : Fl_Group(X, Y, 150, 20),
     ch      (ch)
 {
   begin();
-    label = new geBox  (0, 0, gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
-    dial  = new geDial (label->x()+label->w()+4, 0, 20, 20);
-    input = new geInput(dial->x()+dial->w()+4, 0, 70, 20);
+    label = new geBox  (x(), y(), gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
+    dial  = new geDial (label->x()+label->w()+4, y(), 20, 20);
+    input = new geInput(dial->x()+dial->w()+4, y(), 70, 20);
   end();
 
   dial->range(0.0f, 1.0f);

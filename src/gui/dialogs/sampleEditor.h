@@ -66,19 +66,23 @@ public:
 	gdSampleEditor(SampleChannel *ch);
 	~gdSampleEditor();
 
+	geChoice     *grid;
+	geCheck      *snap;
+	geBox        *sep1;
+	geButton     *zoomIn;
+	geButton     *zoomOut;
+	
 	geWaveTools  *waveTools;
+
 	geVolumeTool *volumeTool;
 	geBoostTool  *boostTool;
 	gePanTool    *panTool;
-	gePitchTool  *pitchTool;
-	geRangeTool  *rangeTool;
-	geButton     *reload;
 
-	geChoice     *grid;
-	geCheck      *snap;
-	geBox        *sep;
-	geButton     *zoomIn;
-	geButton     *zoomOut;
+	gePitchTool  *pitchTool;
+
+	geRangeTool  *rangeTool;
+	geBox        *sep2;
+	geButton     *reload;
 
 	SampleChannel *ch;
 };

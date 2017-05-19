@@ -40,14 +40,14 @@
 
 
 geRangeTool::geRangeTool(int x, int y, SampleChannel *ch)
-  : Fl_Group(x, y, 600, 20),
+  : Fl_Group(x, y, 300, 20),
     ch      (ch)
 {
   begin();
-    label  = new geBox  (0, 0, gu_getStringWidth("Range"), 20, "Range", FL_ALIGN_RIGHT);
-    begin_ = new geInput(label->x()+label->w()+4, 0, 70, 20);
-    end_   = new geInput(begin_->x()+begin_->w()+4, 0, 70, 20);
-    reset  = new geButton(end_->x()+end_->w()+4, 0, 70, 20, "Reset");
+    label  = new geBox  (x, y, gu_getStringWidth("Range"), 20, "Range", FL_ALIGN_RIGHT);
+    begin_ = new geInput(label->x()+label->w()+4, y, 70, 20);
+    end_   = new geInput(begin_->x()+begin_->w()+4, y, 70, 20);
+    reset  = new geButton(end_->x()+end_->w()+4, y, 70, 20, "Reset");
   end();
 
   begin_->type(FL_INT_INPUT);

@@ -41,15 +41,15 @@
 #include "boostTool.h"
 
 
-geBoostTool::geBoostTool(int x, int y, SampleChannel *ch)
-  : Fl_Group(x, y, 200, 20),
+geBoostTool::geBoostTool(int X, int Y, SampleChannel *ch)
+  : Fl_Group(X, Y, 220, 20),
     ch      (ch)
 {
   begin();
-    label     = new geBox(0, 0, gu_getStringWidth("Boost"), 20, "Boost", FL_ALIGN_RIGHT);
-    dial      = new geDial(label->x()+label->w()+4, 0, 20, 20);
-    input     = new geInput(dial->x()+dial->w()+4, 0, 70, 20);
-    normalize = new geButton(input->x()+input->w()+4, 0, 70, 20, "Normalize");
+    label     = new geBox(x(), y(), gu_getStringWidth("Boost"), 20, "Boost", FL_ALIGN_RIGHT);
+    dial      = new geDial(label->x()+label->w()+4, y(), 20, 20);
+    input     = new geInput(dial->x()+dial->w()+4, y(), 70, 20);
+    normalize = new geButton(input->x()+input->w()+4, y(), 70, 20, "Normalize");
   end();
 
   dial->range(1.0f, 10.0f);

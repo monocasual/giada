@@ -48,14 +48,14 @@ gePitchTool::gePitchTool(int x, int y, SampleChannel *ch)
     ch      (ch)
 {
   begin();
-    label       = new geBox(0, 0, gu_getStringWidth("Pitch"), 20, "Pitch", FL_ALIGN_RIGHT);
-    dial        = new geDial(label->x()+label->w()+4, 0, 20, 20);
-    input       = new geInput(dial->x()+dial->w()+4, 0, 70, 20);
-    pitchToBar  = new geButton(input->x()+input->w()+4, 0, 70, 20, "To bar");
-    pitchToSong = new geButton(pitchToBar->x()+pitchToBar->w()+4, 0, 70, 20, "To song");
-    pitchHalf   = new geButton(pitchToSong->x()+pitchToSong->w()+4, 0, 20, 20, "", divideOff_xpm, divideOn_xpm);
-    pitchDouble = new geButton(pitchHalf->x()+pitchHalf->w()+4, 0, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-    pitchReset  = new geButton(pitchDouble->x()+pitchDouble->w()+4, 0, 70, 20, "Reset");
+    label       = new geBox(x, y, gu_getStringWidth("Pitch"), 20, "Pitch", FL_ALIGN_RIGHT);
+    dial        = new geDial(label->x()+label->w()+4, y, 20, 20);
+    input       = new geInput(dial->x()+dial->w()+4, y, 70, 20);
+    pitchToBar  = new geButton(input->x()+input->w()+4, y, 70, 20, "To bar");
+    pitchToSong = new geButton(pitchToBar->x()+pitchToBar->w()+4, y, 70, 20, "To song");
+    pitchHalf   = new geButton(pitchToSong->x()+pitchToSong->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
+    pitchDouble = new geButton(pitchHalf->x()+pitchHalf->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
+    pitchReset  = new geButton(pitchDouble->x()+pitchDouble->w()+4, y, 70, 20, "Reset");
   end();
 
   dial->range(0.01f, 4.0f);

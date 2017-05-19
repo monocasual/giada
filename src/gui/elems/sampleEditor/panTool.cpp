@@ -46,10 +46,10 @@ gePanTool::gePanTool(int x, int y, SampleChannel *ch)
     ch      (ch)
 {
   begin();
-    label = new geBox(0, 0, gu_getStringWidth("Pan"), 20, "Pan", FL_ALIGN_RIGHT);
-    dial  = new geDial(label->x()+label->w()+4, 0, 20, 20);
-    input = new geInput(dial->x()+dial->w()+4, 0, 70, 20);
-    reset = new geButton(input->x()+input->w()+4, 0, 70, 20, "Reset");
+    label = new geBox(x, y, gu_getStringWidth("Pan"), 20, "Pan", FL_ALIGN_RIGHT);
+    dial  = new geDial(label->x()+label->w()+4, y, 20, 20);
+    input = new geInput(dial->x()+dial->w()+4, y, 70, 20);
+    reset = new geButton(input->x()+input->w()+4, y, 70, 20, "Reset");
   end();
 
   dial->range(0.0f, 1.0f);

@@ -30,13 +30,13 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define G_VERSION_STR   "0.13.5"
+#define G_VERSION_STR   "0.14.0"
 #define G_APP_NAME      "Giada"
 #define G_VERSION_MAJOR 0
-#define G_VERSION_MINOR 13
-#define G_VERSION_PATCH 5
+#define G_VERSION_MINOR 14
+#define G_VERSION_PATCH 0
 
-#define CONF_FILENAME		"giada.conf"
+#define CONF_FILENAME "giada.conf"
 
 #ifndef BUILD_DATE
 	#define BUILD_DATE __DATE__
