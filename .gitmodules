@@ -1,6 +1,6 @@
 [submodule "src/deps/juce"]
 	path = src/deps/juce
-	url = https://github.com/julianstorer/JUCE.git
+	url = https://github.com/WeAreROLI/JUCE.git
   ignore = dirty
 [submodule "tests/catch"]
 	path = tests/catch
