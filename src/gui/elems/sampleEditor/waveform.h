@@ -1,11 +1,11 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * ge_waveform
  * an element which represents a waveform.
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -25,7 +25,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GE_WAVEFORM_H
@@ -36,17 +36,16 @@
 #include <FL/Fl_Widget.H>
 
 
-#define  FLAG_WIDTH  14
-#define  FLAG_HEIGHT 12
-#define  BORDER      8				// window border <-> widget border
-
-
 class SampleChannel;
 
 
 class geWaveform : public Fl_Widget
 {
 private:
+
+	static const int FLAG_WIDTH  = 14;
+	static const int FLAG_HEIGHT = 12;
+	static const int BORDER      = 8;				// window border <-> widget border
 
 	/* data
 	 * real graphic stuff from the underlying waveform */
