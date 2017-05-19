@@ -43,8 +43,8 @@ class geWaveform : public Fl_Widget
 {
 private:
 
-	static const int FLAG_WIDTH  = 14;
-	static const int FLAG_HEIGHT = 12;
+	static const int FLAG_WIDTH  = 20;
+	static const int FLAG_HEIGHT = 20;
 	static const int BORDER      = 8;				// window border <-> widget border
 
 	/* data

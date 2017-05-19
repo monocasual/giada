@@ -278,11 +278,8 @@ void geWaveform::draw()
 
   if (lineX+FLAG_WIDTH > w()+x()-2)
     fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, w()-lineX+x()-1, FLAG_HEIGHT);
-  else  {
+  else
     fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
-    fl_color(255, 255, 255);
-    fl_draw("s", lineX+4, y()+h()-3);
-  }
 
   /* print chanEnd */
 
@@ -294,11 +291,8 @@ void geWaveform::draw()
 
   if (lineX-FLAG_WIDTH < x())
     fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
-  else {
+  else
     fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
-    fl_color(255, 255, 255);
-    fl_draw("e", lineX-10, y()+10);
-  }
 }
 
 
