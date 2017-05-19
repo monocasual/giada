@@ -13,6 +13,7 @@
 
 
 0.14.0 ---
+- Sample Editor reorganized and refactored 
 - Removed support for old ini-based patch files
 - Improved and simplified pan algorithm
 - Ability to toggle input monitoring while recording audio
