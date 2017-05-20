@@ -497,15 +497,6 @@ uint32_t setChannel(uint32_t iValue, int channel)
 /* -------------------------------------------------------------------------- */
 
 
-string getRtMidiVersion()
-{
-	return midiOut->getVersion();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 bool getStatus()
 {
 	return status;

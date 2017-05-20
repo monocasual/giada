@@ -30,19 +30,19 @@
 #include <jansson.h>
 #include "../../core/conf.h"
 #include "../../core/const.h"
-#include "../../core/kernelAudio.h"
-#include "../../core/kernelMidi.h"
 #include "../../core/graphics.h"
 #ifdef WITH_VST
   #include "../../deps/juce-config.h"
 #endif
 #include "../../utils/gui.h"
+#include "../../utils/deps.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "gd_about.h"
 
 
 using namespace giada::m;
+using namespace giada::u;
 
 
 gdAbout::gdAbout()
@@ -78,7 +78,7 @@ gdAbout::gdAbout()
 		"Developed by Monocasual\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
 		"RtMidi (%s), Libsamplerate, Jansson (%s),\n"
-		"Libsndfile"
+		"Libsndfile (%s)"
 #ifdef WITH_VST
 		", JUCE (%d.%d.%d)\n\n"
 #else
@@ -89,9 +89,9 @@ gdAbout::gdAbout()
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
-		kernelAudio::getRtAudioVersion().c_str(),
-		kernelMidi::getRtMidiVersion().c_str(),
-		JANSSON_VERSION
+		deps::getRtAudioVersion().c_str(),
+		deps::getRtMidiVersion().c_str(),
+		JANSSON_VERSION, deps::getLibsndfileVersion().c_str()
 #ifdef WITH_VST
 		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
 #else

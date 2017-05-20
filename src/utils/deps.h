@@ -25,71 +25,20 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_KERNELAUDIO_H
-#define G_KERNELAUDIO_H
+#ifndef G_UTILS_DEPS_H
+#define G_UTILS_DEPS_H
 
 
 #include <string>
-#ifdef __linux__
-	#include <jack/jack.h>
-	#include <jack/intclient.h>
-	#include <jack/transport.h>
-#endif
-
-
-class RtAudio;
-class Mixer;
 
 
 namespace giada {
-namespace m {
-namespace kernelAudio
+namespace u     {
+namespace deps 
 {
-#ifdef __linux__
-
-struct JackState
-{
-  bool running;
-  double bpm;
-  uint32_t frame;
-};
-
-#endif
-
-void init();
-
-int openDevice();
-int closeDevice();
-int startStream();
-int stopStream();
-
-bool getStatus();
-bool isProbed(unsigned dev);
-bool isDefaultIn(unsigned dev);
-bool isDefaultOut(unsigned dev);
-bool isInputEnabled();
-std::string getDeviceName(unsigned dev);
-unsigned getMaxInChans(int dev);
-unsigned getMaxOutChans(unsigned dev);
-unsigned getDuplexChans(unsigned dev);
-unsigned getRealBufSize();
-unsigned countDevices();
-int getTotalFreqs(unsigned dev);
-int getFreq(unsigned dev, int i);
-int getDeviceByName(const char *name);
-int getDefaultOut();
-int getDefaultIn();
-bool hasAPI(int API);
-
-#ifdef __linux__
-
-void jackStart();
-void jackStop();
-void jackSetPosition(uint32_t frame);
-void jackSetBpm(double bpm);
-const JackState &jackTransportQuery();
-
-#endif
-}}}; // giada::m::kernelAudio::
+std::string getLibsndfileVersion();
+std::string getRtAudioVersion();
+std::string getRtMidiVersion();
+}}};  // giada::u::deps::
 
 #endif

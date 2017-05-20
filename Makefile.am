@@ -230,6 +230,8 @@ src/utils/gui.cpp                      \
 src/utils/gvector.h                    \
 src/utils/fs.h                         \
 src/utils/fs.cpp                       \
+src/utils/deps.h                       \
+src/utils/deps.cpp                     \
 src/utils/string.h                     \
 src/utils/string.cpp
 

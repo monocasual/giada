@@ -97,7 +97,6 @@ unsigned countOutPorts();
 
 bool hasAPI(int API);
 
-std::string getRtMidiVersion();
 }}}; // giada::m::kernelMidi::
 
 
