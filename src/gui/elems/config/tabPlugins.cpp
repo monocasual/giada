@@ -29,11 +29,11 @@
 
 
 #include <FL/Fl.H>
-#include "../../core/const.h"
-#include "../../core/conf.h"
-#include "../../core/pluginHost.h"
-#include "../../utils/string.h"
-#include "../../utils/fs.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
+#include "../../../core/pluginHost.h"
+#include "../../../utils/string.h"
+#include "../../../utils/fs.h"
 #include "../basics/box.h"
 #include "../basics/radio.h"
 #include "../basics/check.h"
