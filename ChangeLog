@@ -12,13 +12,14 @@
 --------------------------------------------------------------------------------
 
 
-0.14.0 ---
+0.14.0 --- 2017 . 05 . 29
 - Sample Editor reorganized and refactored 
 - Removed support for old ini-based patch files
 - Improved and simplified pan algorithm
 - Ability to toggle input monitoring while recording audio
 - Lots of code refactoring
 - Convert all .h headers to C++ headers
+- Update Libsndfile to version 1.0.28
 - Fix crash when recording audio
 - Fix wrong file path when exporting samples
 - Fix a bug that prevented begin/end handles to work in Sample Editor
