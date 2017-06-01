@@ -234,9 +234,9 @@ void geWaveform::draw()
   int offset = h() / 2;
   int zero   = y() + offset; // sample zero (-inf dB)
 
-  int wx1 = abs(x() - ((geWaveTools*)parent())->x());
-  int wx2 = wx1 + ((geWaveTools*)parent())->w();
-  if (x()+w() < ((geWaveTools*)parent())->w())
+  int wx1 = abs(x() - parent()->x());
+  int wx2 = wx1 + parent()->w();
+  if (x()+w() < parent()->w())
     wx2 = x() + w() - BORDER;
 
   fl_color(0, 0, 0);
@@ -759,7 +759,7 @@ void geWaveform::setZoom(int type)
      * |[wave----]       | offset < 0, smaller = true
      * |-------------]   | offset < 0, smaller = false  */
 
-    int  parentW = ((geWaveTools*)parent())->w();
+    int  parentW = parent()->w();
     int  thisW   = x() + w() - BORDER;           // visible width, not full width
 
     if (thisW < parentW)
@@ -777,7 +777,7 @@ void geWaveform::setZoom(int type)
 
 void geWaveform::stretchToWindow()
 {
-  int s = ((geWaveTools*)parent())->w();
+  int s = parent()->w();
   alloc(s);
   position(BORDER, y());
   size(s, h());
@@ -789,7 +789,7 @@ void geWaveform::stretchToWindow()
 
 bool geWaveform::smaller()
 {
-  return w() < ((geWaveTools*)parent())->w();
+  return w() < parent()->w();
 }
 
 
