@@ -492,12 +492,12 @@ int geWaveform::handle(int e)
 
 /* -------------------------------------------------------------------------- */
 
-/* pixel snap disances (10px) must be equal to those defined in
- * geWaveform::mouseOnSelectionA() and gWaverfrom::mouseOnSelectionB() */
-/* TODO - use constant for 10px */
 
 int geWaveform::applySnap(int pos)
 {
+  /* Pixel snap disances (SNAPPING) must be equal to those defined in 
+  mouseOnSelectionA() and mouseOnSelectionB(). */
+
   for (unsigned i=0; i<grid.points.size(); i++) {
     if (pos >= grid.points.at(i) - SNAPPING &&
         pos <= grid.points.at(i) + SNAPPING)
@@ -514,8 +514,8 @@ int geWaveform::applySnap(int pos)
 
 bool geWaveform::mouseOnStart()
 {
-  return mouseX-10 >  chanStart + x() - BORDER              &&
-         mouseX-10 <= chanStart + x() - BORDER + FLAG_WIDTH &&
+  return mouseX - (FLAG_WIDTH / 2) >  chanStart + x() - BORDER              &&
+         mouseX - (FLAG_WIDTH / 2) <= chanStart + x() - BORDER + FLAG_WIDTH &&
          mouseY    >  h() + y() - FLAG_HEIGHT;
 }
 
@@ -525,8 +525,8 @@ bool geWaveform::mouseOnStart()
 
 bool geWaveform::mouseOnEnd()
 {
-  return mouseX-10 >= chanEnd + x() - BORDER - FLAG_WIDTH &&
-         mouseX-10 <= chanEnd + x() - BORDER              &&
+  return mouseX - (FLAG_WIDTH / 2) >= chanEnd + x() - BORDER - FLAG_WIDTH &&
+         mouseX - (FLAG_WIDTH / 2) <= chanEnd + x() - BORDER              &&
          mouseY    <= y() + FLAG_HEIGHT + 1;
 }
 
@@ -540,7 +540,8 @@ bool geWaveform::mouseOnSelectionA()
 {
   if (selectionA == selectionB)
     return false;
-  return mouseX >= selectionA-10+x() && mouseX <= selectionA+10+x();
+  return mouseX >= selectionA - (FLAG_WIDTH / 2) + x() && 
+         mouseX <= selectionA + (FLAG_WIDTH / 2) + x();
 }
 
 
@@ -548,7 +549,8 @@ bool geWaveform::mouseOnSelectionB()
 {
   if (selectionA == selectionB)
     return false;
-  return mouseX >= selectionB-10+x() && mouseX <= selectionB+10+x();
+  return mouseX >= selectionB - (FLAG_WIDTH / 2) + x() && 
+         mouseX <= selectionB + (FLAG_WIDTH / 2) + x();
 }
 
 
