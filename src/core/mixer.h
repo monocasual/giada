@@ -42,7 +42,14 @@ namespace m {
 namespace mixer
 {
 void init(int framesInSeq, int audioBufferSize);
-int  close();
+
+/* allocVirtualInput
+Allocates new memory for the virtual input channel. Call this whenever you 
+shrink or resize the sequencer. */
+
+void allocVirtualInput(int frames);
+
+int close();
 
 /* masterPlay
  * core method (callback) */

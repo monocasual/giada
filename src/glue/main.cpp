@@ -122,6 +122,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 	clock::setBeats(beats);
 	clock::setBars(bars);
 	clock::updateFrameBars();
+	mixer::allocVirtualInput(clock::getTotalFrames());
 
 	/* Update recorded actions, if 'expand' required and an expansion is taking
   place. */

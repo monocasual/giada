@@ -399,12 +399,11 @@ pthread_mutex_t mutex_plugins;
 
 void init(int framesInSeq, int audioBufferSize)
 {
-	/* Allocate virtual input channels. vChanInput relies on clock::totalFrames:
-  it has variable size. */
+	/* Allocate virtual input channels. vChanInput has variable size: it depends
+	on how many frames there are in sequencer. */
 
-  if (vChanInput != nullptr)
-  	free(vChanInput);
-  vChanInput = (float*) malloc(framesInSeq * sizeof(float));
+  allocVirtualInput(framesInSeq);
+
   if (vChanInToOut != nullptr)
     free(vChanInToOut);
 	vChanInToOut = (float*) malloc(audioBufferSize * 2 * sizeof(float));
@@ -414,6 +413,19 @@ void init(int framesInSeq, int audioBufferSize)
 	pthread_mutex_init(&mutex_plugins, nullptr);
 
 	rewind();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void allocVirtualInput(int frames)
+{
+	if (vChanInput != nullptr)
+		free(vChanInput);
+	vChanInput = (float*) malloc(frames * sizeof(float));
+	if (!vChanInput)
+		gu_log("[Mixer] vChanInput realloc error!\n");	
 }
 
 
