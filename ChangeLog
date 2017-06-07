@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.14.1 --- 
+- Fix crash while recording with beats/bars greater than 4/1 (GitHub #134)
+
+
 0.14.0 --- 2017 . 05 . 29
 - Sample Editor reorganized and refactored 
 - Removed support for old ini-based patch files
