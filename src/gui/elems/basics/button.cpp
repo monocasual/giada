@@ -38,9 +38,9 @@ geButton::geButton(int x, int y, int w, int h, const char *L,
 : geBaseButton(x, y, w, h, L),
   imgOff      (imgOff),
   imgOn       (imgOn),
-  bgColor0    (COLOR_BG_0),
-  bgColor1    (COLOR_BG_1),
-  bdColor     (COLOR_BD_0),
+  bgColor0    (G_COLOR_GREY_2),
+  bgColor1    (G_COLOR_GREY_4),
+  bdColor     (G_COLOR_GREY_4),
   txtColor    (COLOR_TEXT_0)
 {
 }

@@ -38,8 +38,8 @@ geDial::geDial(int x, int y, int w, int h, const char *l)
   align(FL_ALIGN_LEFT);
   type(FL_FILL_DIAL);
   angles(0, 360);
-  color(COLOR_BG_0);            // background
-  selection_color(COLOR_BG_1);   // selection
+  color(G_COLOR_GREY_2);            // background
+  selection_color(G_COLOR_GREY_4);   // selection
 }
 
 
@@ -50,10 +50,10 @@ void geDial::draw()
 {
   double angle = (angle2()-angle1())*(value()-minimum())/(maximum()-minimum()) + angle1();
 
-  fl_color(COLOR_BG_0);
+  fl_color(G_COLOR_GREY_2);
   fl_pie(x(), y(), w(), h(), 270-angle1(), angle > angle1() ? 360+270-angle : 270-360-angle);
 
-  fl_color(COLOR_BD_0);
+  fl_color(G_COLOR_GREY_4);
   fl_arc(x(), y(), w(), h(), 0, 360);
   fl_pie(x(), y(), w(), h(), 270-angle, 270-angle1());
 }

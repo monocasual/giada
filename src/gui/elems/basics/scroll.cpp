@@ -38,13 +38,13 @@ geScroll::geScroll(int x, int y, int w, int h, int t)
 {
   type(t);
 
-  scrollbar.color(COLOR_BG_0);
-  scrollbar.selection_color(COLOR_BG_1);
+  scrollbar.color(G_COLOR_GREY_2);
+  scrollbar.selection_color(G_COLOR_GREY_4);
   scrollbar.labelcolor(COLOR_BD_1);
   scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-  hscrollbar.color(COLOR_BG_0);
-  hscrollbar.selection_color(COLOR_BG_1);
+  hscrollbar.color(G_COLOR_GREY_2);
+  hscrollbar.selection_color(G_COLOR_GREY_4);
   hscrollbar.labelcolor(COLOR_BD_1);
   hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 }

@@ -107,8 +107,8 @@ void geChannelButton::setActionRecordMode()
 
 void geChannelButton::setDefaultMode(const char *l)
 {
-  bgColor0 = COLOR_BG_0;
-	bdColor  = COLOR_BD_0;
+  bgColor0 = G_COLOR_GREY_2;
+	bdColor  = G_COLOR_GREY_4;
 	txtColor = COLOR_TEXT_0;
   if (l)
     label(l);
@@ -122,7 +122,7 @@ void geChannelButton::setPlayMode()
 {
   bgColor0 = COLOR_BG_2;
   bdColor  = COLOR_BD_1;
-  txtColor = COLOR_TEXT_1;
+  txtColor = G_COLOR_GREY_1;
 }
 
 
@@ -131,5 +131,5 @@ void geChannelButton::setPlayMode()
 
 void geChannelButton::setEndingMode()
 {
-  bgColor0 = COLOR_BD_0;
+  bgColor0 = G_COLOR_GREY_4;
 }

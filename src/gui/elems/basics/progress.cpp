@@ -33,6 +33,6 @@
 geProgress::geProgress(int x, int y, int w, int h, const char *l)
 : Fl_Progress(x, y, w, h, l)
 {
-  color(COLOR_BG_0, COLOR_BD_0);
+  color(G_COLOR_GREY_2, G_COLOR_GREY_4);
   box(G_CUSTOM_BORDER_BOX);
 }

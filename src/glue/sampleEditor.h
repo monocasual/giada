@@ -25,21 +25,32 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
-#include "boxtypes.h"
-#include "input.h"
+#ifndef G_GLUE_SAMPLE_EDITOR_H
+#define G_GLUE_SAMPLE_EDITOR_H
 
 
-geInput::geInput(int x, int y, int w, int h, const char *l)
-  : Fl_Input(x, y, w, h, l)
+class SampleChannel;
+class geWaveform;
+
+
+namespace giada {
+namespace c     {
+namespace sampleEditor 
 {
-  //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
-  box(G_CUSTOM_BORDER_BOX);
-  labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
-  color(G_COLOR_BLACK);
-  textcolor(COLOR_TEXT_0);
-  cursor_color(COLOR_TEXT_0);
-  selection_color(G_COLOR_GREY_4);
-  textsize(GUI_FONT_SIZE_BASE);
-}
+
+
+/* setBeginEndChannel
+Sets start/end points in the sample editor. */
+
+void setBeginEndChannel(SampleChannel* ch, int b, int e);
+
+void cut(SampleChannel* ch, int a, int b);
+void trim(SampleChannel* ch, int a, int b);
+void silence(SampleChannel* ch, int a, int b);
+void fade(SampleChannel* ch, int a, int b, int type);
+void smoothEdges(SampleChannel* ch, int a, int b);
+void setStartEnd(SampleChannel* ch, int a, int b);
+
+}}}; // giada::c::sampleEditor::
+
+#endif

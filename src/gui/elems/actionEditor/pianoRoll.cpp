@@ -148,7 +148,7 @@ void gePianoRoll::drawSurface1()
 	/* warning: only w() and h() come from this widget, x and y coordinates
 	 * are absolute, since we are writing in a memory chunk */
 
-	fl_rectf(0, 0, CELL_W, h(), COLOR_BG_MAIN);
+	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
 
 	fl_line_style(FL_DASH, 0, nullptr);
 	fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
@@ -162,7 +162,7 @@ void gePianoRoll::drawSurface1()
 		char note[6];
 		switch (i % KEYS) {
 			case (int) Notes::G:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				sprintf(note, "%dG", octave);
 				break;
 			case (int) Notes::FS:
@@ -172,14 +172,14 @@ void gePianoRoll::drawSurface1()
 				sprintf(note, "%dF", octave);
 				break;
 			case (int) Notes::E:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				sprintf(note, "%dE", octave);
 				break;
 			case (int) Notes::DS:
 				sprintf(note, "%dD#", octave);
 				break;
 			case (int) Notes::D:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				sprintf(note, "%dD", octave);
 				break;
 			case (int) Notes::CS:
@@ -189,14 +189,14 @@ void gePianoRoll::drawSurface1()
 				sprintf(note, "%dC", octave);
 				break;
 			case (int) Notes::B:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				sprintf(note, "%dB", octave);
 				break;
 			case (int) Notes::AS:
 				sprintf(note, "%dA#", octave);
 				break;
 			case (int) Notes::A:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				sprintf(note, "%dA", octave);
 				break;
 			case (int) Notes::GS:
@@ -207,7 +207,7 @@ void gePianoRoll::drawSurface1()
 
     /* Print note name */
 
-		fl_color(COLOR_BG_LINE);
+		fl_color(G_COLOR_GREY_3);
 		fl_draw(note, 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
       (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
@@ -229,8 +229,8 @@ void gePianoRoll::drawSurface2()
 {
 	surface2 = fl_create_offscreen(CELL_W, h());
 	fl_begin_offscreen(surface2);
-	fl_rectf(0, 0, CELL_W, h(), COLOR_BG_MAIN);
-	fl_color(COLOR_BG_LINE);
+	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
+	fl_color(G_COLOR_GREY_3);
 	fl_line_style(FL_DASH, 0, nullptr);
 	for (int i=1; i<=MAX_KEYS+1; i++) {
 		switch (i % KEYS) {
@@ -239,11 +239,11 @@ void gePianoRoll::drawSurface2()
 			case (int) Notes::D:
 			case (int) Notes::B:
 			case (int) Notes::A:
-				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, COLOR_BG_RICH);
+				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
 				break;
 		}
 		if (i < MAX_KEYS+1) {
-			fl_color(COLOR_BG_LINE);
+			fl_color(G_COLOR_GREY_3);
 			fl_line(0, i*CELL_H, CELL_W, i*CELL_H);
 		}
 	}

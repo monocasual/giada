@@ -47,16 +47,16 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	box(G_CUSTOM_BORDER_BOX);
 	textsize(GUI_FONT_SIZE_BASE);
 	textcolor(COLOR_TEXT_0);
-	selection_color(COLOR_BG_1);
-	color(COLOR_BG_0);
+	selection_color(G_COLOR_GREY_4);
+	color(G_COLOR_GREY_2);
 
-	this->scrollbar.color(COLOR_BG_0);
-	this->scrollbar.selection_color(COLOR_BG_1);
+	this->scrollbar.color(G_COLOR_GREY_2);
+	this->scrollbar.selection_color(G_COLOR_GREY_4);
 	this->scrollbar.labelcolor(COLOR_BD_1);
 	this->scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	this->hscrollbar.color(COLOR_BG_0);
-	this->hscrollbar.selection_color(COLOR_BG_1);
+	this->hscrollbar.color(G_COLOR_GREY_2);
+	this->hscrollbar.selection_color(G_COLOR_GREY_4);
 	this->hscrollbar.labelcolor(COLOR_BD_1);
 	this->hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 

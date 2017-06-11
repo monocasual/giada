@@ -41,7 +41,7 @@ geRadio::geRadio(int x, int y, int w, int h, const char *l)
 
 void geRadio::draw()
 {
- int color = !active() ? FL_INACTIVE_COLOR : COLOR_BD_0;
+ int color = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
 
  if (value()) {
    fl_rect(x(), y(), 12, 12, (Fl_Color) color);

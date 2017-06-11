@@ -76,7 +76,7 @@ void geNoteEditor::draw()
 
 	/* clear background */
 
-	fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
+	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1);
 
 	/* clip pianoRoll to pianoRollContainer size */
 
@@ -84,7 +84,7 @@ void geNoteEditor::draw()
 	draw_child(*pianoRoll);
 	fl_pop_clip();
 
-	fl_color(COLOR_BD_0);
+	fl_color(G_COLOR_GREY_4);
 	fl_line_style(0);
 	fl_rect(x(), y(), pParent->totalWidth, h());
 }

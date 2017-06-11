@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ge_waveform
- * an element which represents a waveform.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -48,86 +45,88 @@ private:
 	static const int BORDER      = 8;  // window border <-> widget border
 	static const int SNAPPING    = 10;
 
-	/* data
-	 * real graphic stuff from the underlying waveform */
+	/* selection
+	Portion of the selected wave, in pixel and in frames. */
 
-	struct data
+	struct
+	{
+		int aPixel;
+		int bPixel;
+		int aFrame;
+		int bFrame;
+	} selection;
+
+	/* data
+	Real graphic stuff from the underlying waveform. */
+
+	struct
   {
-		int *sup;
-		int *inf;
-		int  size;
+		int *sup;   // upper part of the waveform
+		int *inf;   // lower ""   "" ""  ""
+		int  size;  // width of the waveform to draw (in pixel)
 	} data;
 
-	/* grid */
-
-	struct grid
+	struct
   {
 		bool snap;
 		int level;
 		std::vector<int> points;
 	} grid;
 
-	/* chan
-	 * chan in use. */
-
-	SampleChannel *chan;
-
-	/* menuOpen
-	 * is the menu open? */
-
-	bool menuOpen;
+	SampleChannel* chan;
 
 	/* mouseOnStart/end
-	 * is mouse on start or end flag? */
+	Is mouse on start or end flag? */
 
 	bool mouseOnStart();
 	bool mouseOnEnd();
 
 	/* mouseOnSelectionA/B
-	 * as above, for the selection */
+	As above, for the selection. */
 
 	bool mouseOnSelectionA();
 	bool mouseOnSelectionB();
 
 	/* absolutePoint
-	 * from a relative 'p' point (zoom affected) returns the same point
-	 * zoom 1:1 based */
+	From a relative 'p' point (zoom affected) returns the same point zoom 1:1 
+	based. */
 
 	int absolutePoint(int p);
 
 	/* relativePoint
-	 * from an absolute 'p' point (1:1 zoom), returns the same point zoom
-	 * affected */
+	From an absolute 'p' point (1:1 zoom) returns the same point zoom affected. */
 
 	int relativePoint(int p);
 
-	/* straightSel
-	 * helper function which flattens the selection if it was made from
-	 * right to left (inverse selection) */
+	/* fixSelection
+	Helper function which flattens the selection if it was made from right to left 
+	(inverse selection). It also computes the absolute points. Call this one
+	whenever the selection gesture is done. */
 
-	void straightSel();
+	void fixSelection();
 
 	/* freeData
-	 * destroy any graphical buffer */
+	Destroys any graphical buffer. */
 
 	void freeData();
 
 	/* smaller
-	 * is the waveform smaller than the parent window? */
+	Is the waveform smaller than the parent window? */
 
 	bool smaller();
 
   /* applySnap
-   * snap a point at 'pos' pixel */
+  Snap a point at 'pos' pixel. */
 
   int applySnap(int pos);
 
 public:
 
-	geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l=0);
+	geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l=0);
 	~geWaveform();
-	void draw();
-	int  handle(int e);
+
+	void draw() override;
+	int  handle(int e) override;
 
 	/* alloc
 	 * allocate memory for the picture */
@@ -159,6 +158,11 @@ public:
 
 	void stretchToWindow();
 
+	/* refresh
+	Redraws the waveform. */
+
+	void refresh();
+
 	/* setGridLevel
 	 * set a new frequency level for the grid. 0 means disabled. */
 
@@ -167,7 +171,20 @@ public:
   void setSnap(bool v) { grid.snap = v; }
   bool getSnap()       { return grid.snap; }
 
-	inline int getSize() { return data.size; }
+	int getSize() { return data.size; }
+
+	/* isSelected
+	Tells whether a portion of the waveform has been selected. */
+
+	bool isSelected();
+
+	int getSelectionA();
+	int getSelectionB();
+
+	/* clearSel
+	Removes any active selection. */
+
+	void clearSel();
 
 	int  chanStart;
 	bool chanStartLit;
@@ -182,15 +199,6 @@ public:
   /* TODO - useless! use Fl::mouse_x() and Fl::mouse_y() instead */
 	int  mouseX;					 // mouse pos for drag.n.drop
 	int  mouseY;
-
-	/* selectionA/B  = portion of the selected wave
-	 * " " "" " _abs = selectionA/B not affected by zoom */
-	/** TODO - change selectionA to selectionA_rel
-	    TODO - change selectionB to selectionB_rel */
-	int selectionA;
-	int selectionB;
-	int selectionA_abs;
-	int selectionB_abs;
 };
 
 

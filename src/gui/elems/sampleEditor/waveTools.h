@@ -1,10 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gg_waveTools
- *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -24,7 +22,7 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
 
 
 #ifndef GE_WAVE_TOOLS_H
@@ -40,8 +38,13 @@ class geWaveform;
 
 class geWaveTools : public Fl_Scroll
 {
+private:
+
+	void openMenu();
+
 public:
 
+	SampleChannel *ch;
 	geWaveform *waveform;
 
 	geWaveTools(int X,int Y,int W, int H, SampleChannel *ch, const char *L=0);

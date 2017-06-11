@@ -64,13 +64,13 @@ void geMuteEditor::draw()
 
 	/* print label */
 
-	fl_color(COLOR_BG_1);
+	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, 12);
 	fl_draw("mute", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 	/* draw "on" and "off" labels. Must stay in background */
 
-	fl_color(COLOR_BG_1);
+	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, 9);
 	fl_draw("on",  x()+4, y(),        w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 	fl_draw("off", x()+4, y()+h()-14, w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));

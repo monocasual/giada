@@ -29,6 +29,7 @@
 #include "../../../core/sampleChannel.h"
 #include "../../../core/wave.h"
 #include "../../../glue/channel.h"
+#include "../../../glue/sampleEditor.h"
 #include "../../../utils/gui.h"
 #include "../../../utils/string.h"
 #include "../../dialogs/sampleEditor.h"
@@ -37,6 +38,9 @@
 #include "../basics/button.h"
 #include "waveTools.h"
 #include "rangeTool.h"
+
+
+using namespace giada::c;
 
 
 geRangeTool::geRangeTool(int x, int y, SampleChannel *ch)
@@ -86,7 +90,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget *w, void *p) { ((geRangeTool*)p)->_
 
 void geRangeTool::__cb_setChanPos()
 {
-  glue_setBeginEndChannel(ch, atoi(begin_->value())*2, atoi(end_->value())*2);
+  sampleEditor::setBeginEndChannel(ch, atoi(begin_->value())*2, atoi(end_->value())*2);
   static_cast<gdSampleEditor*>(parent()->parent())->waveTools->updateWaveform();
 }
 
@@ -96,6 +100,6 @@ void geRangeTool::__cb_setChanPos()
 
 void geRangeTool::__cb_resetStartEnd()
 {
-  glue_setBeginEndChannel(ch, 0, ch->wave->size);
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->size);
   static_cast<gdSampleEditor*>(parent()->parent())->waveTools->updateWaveform();
 }

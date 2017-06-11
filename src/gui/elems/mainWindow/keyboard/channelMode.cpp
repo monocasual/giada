@@ -43,7 +43,7 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
   box(G_CUSTOM_BORDER_BOX);
   textsize(GUI_FONT_SIZE_BASE);
   textcolor(COLOR_TEXT_0);
-  color(COLOR_BG_0);
+  color(G_COLOR_GREY_2);
 
   add("Loop . basic",      0, cb_changeMode, (void *)LOOP_BASIC);
   add("Loop . once",       0, cb_changeMode, (void *)LOOP_ONCE);
@@ -60,7 +60,7 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
 
 
 void geChannelMode::draw() {
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);    // border
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);    // border
   switch (ch->mode) {
     case LOOP_BASIC:
       fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);

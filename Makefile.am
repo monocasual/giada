@@ -59,6 +59,8 @@ src/glue/transport.h                   \
 src/glue/transport.cpp                 \
 src/glue/recorder.h                    \
 src/glue/recorder.cpp                  \
+src/glue/sampleEditor.h                \
+src/glue/sampleEditor.cpp              \
 src/gui/dialogs/window.h			         \
 src/gui/dialogs/window.cpp             \
 src/gui/dialogs/gd_keyGrabber.h        \

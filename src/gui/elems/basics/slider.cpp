@@ -40,6 +40,6 @@ geSlider::geSlider(int x, int y, int w, int h, const char *l)
  labelcolor(COLOR_TEXT_0);
 
  box(G_CUSTOM_BORDER_BOX);
- color(COLOR_BG_0);
- selection_color(COLOR_BD_0);
+ color(G_COLOR_GREY_2);
+ selection_color(G_COLOR_GREY_4);
 }

@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geWaveform
- * An element which represents a waveform.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -38,27 +35,25 @@
 #include "../../../core/waveFx.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../glue/channel.h"
+#include "../../../glue/sampleEditor.h"
 #include "../basics/boxtypes.h"
 #include "waveTools.h"
 #include "waveform.h"
 
 
 using namespace giada::m;
+using namespace giada::c;
 
 
-geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel *ch, const char *l)
-: Fl_Widget(x, y, w, h, l),
-  chan(ch),
-  menuOpen(false),
-  chanStart(0),
+geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l)
+: Fl_Widget   (x, y, w, h, l),
+  selection   {},
+  chan        (ch),
+  chanStart   (0),
   chanStartLit(false),
-  chanEnd(0),
-  chanEndLit(false),
-  ratio(0.0f),
-  selectionA(0),
-  selectionB(0),
-  selectionA_abs(0),
-  selectionB_abs(0)
+  chanEnd     (0),
+  chanEndLit  (false),
+  ratio       (0.0f)
 {
   data.sup  = nullptr;
   data.inf  = nullptr;
@@ -186,8 +181,8 @@ int geWaveform::alloc(int datasize)
 
 void geWaveform::recalcPoints()
 {
-  selectionA = relativePoint(selectionA_abs);
-  selectionB = relativePoint(selectionB_abs);
+  selection.aPixel = relativePoint(selection.aFrame);
+  selection.bPixel = relativePoint(selection.bFrame);
   chanStart  = relativePoint(chan->begin / 2);
 
   /* fix the rounding error when chanEnd is set on the very end of the
@@ -207,24 +202,24 @@ void geWaveform::draw()
 {
   /* blank canvas */
 
-  fl_rectf(x(), y(), w(), h(), COLOR_BG_0);
+  fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);
 
   /* draw selection (if any) */
 
-  if (selectionA != selectionB) {
+  if (isSelected()) {
 
-    int a_x = selectionA + x() - BORDER; // - start;
-    int b_x = selectionB + x() - BORDER; //  - start;
+    int a_x = selection.aPixel + x() - BORDER; // - start;
+    int b_x = selection.bPixel + x() - BORDER; //  - start;
 
     if (a_x < 0)
       a_x = 0;
     if (b_x >= w()-1)
       b_x = w()-1;
 
-    if (selectionA < selectionB)
-      fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), COLOR_BD_0);
+    if (selection.aPixel < selection.bPixel)
+      fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), G_COLOR_GREY_4);
     else
-      fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), COLOR_BD_0);
+      fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), G_COLOR_GREY_4);
   }
 
   /* draw waveform from x1 (offset driven by the scrollbar) to x2
@@ -239,7 +234,7 @@ void geWaveform::draw()
   if (x()+w() < parent()->w())
     wx2 = x() + w() - BORDER;
 
-  fl_color(0, 0, 0);
+  fl_color(G_COLOR_BLACK);
   for (int i=wx1; i<wx2; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
@@ -248,11 +243,10 @@ void geWaveform::draw()
 
     for (unsigned k=0; k<grid.points.size(); k++) {
       if (grid.points.at(k) == i) {
-        //gu_log("draw grid line at %d\n", i);
-        fl_color(fl_rgb_color(54, 54, 54));
+        fl_color(G_COLOR_GREY_3);
         fl_line_style(FL_DASH, 0, nullptr);
         fl_line(i+x(), y(), i+x(), y()+h());
-        fl_color(0, 0, 0);
+        fl_color(G_COLOR_BLACK);
         fl_line_style(FL_SOLID, 0, nullptr);
         break;
       }
@@ -261,14 +255,14 @@ void geWaveform::draw()
 
   /* border box */
 
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
 
   /* print chanStart */
 
   int lineX = x()+chanStart+1;
 
   if (chanStartLit) fl_color(COLOR_BD_1);
-  else              fl_color(COLOR_BD_0);
+  else              fl_color(G_COLOR_GREY_3);
 
   /* vertical line */
 
@@ -285,7 +279,7 @@ void geWaveform::draw()
 
   lineX = x()+chanEnd;
   if (chanEndLit) fl_color(COLOR_BD_1);
-  else            fl_color(COLOR_BD_0);
+  else            fl_color(G_COLOR_GREY_3);
 
   fl_line(lineX, y()+1, lineX, y()+h()-2);
 
@@ -311,44 +305,40 @@ int geWaveform::handle(int e)
       pushed = true;
 
       if (!mouseOnEnd() && !mouseOnStart()) {
-
-        /* right button? show the menu. Don't set selectionA,B,etc */
-
-        if (Fl::event_button3()) {
-          openEditMenu();
+        if (Fl::event_button3()) {  // let the parent (waveTools) handle this
+          ret = 0;
+          break;
         }
-        else
-        if (mouseOnSelectionA() || mouseOnSelectionB()) {
+        if (mouseOnSelectionA() || mouseOnSelectionB())
           resized = true;
-        }
         else {
           dragged = true;
-          selectionA = Fl::event_x() - x();
-
-          if (selectionA >= data.size) selectionA = data.size;
-
-          selectionB = selectionA;
-          selectionA_abs = absolutePoint(selectionA);
-          selectionB_abs = selectionA_abs;
+          selection.aPixel = Fl::event_x() - x();
+          selection.bPixel = selection.aPixel;
         }
       }
-
       ret = 1;
       break;
     }
 
     case FL_RELEASE: {
 
+      /* If selection has been done (dragged or resized), make sure that point A 
+      is always lower than B. */
+
+      if (dragged || resized)
+        fixSelection();
+
       int realChanStart = chan->begin;
       int realChanEnd   = chan->end;
 
       if (chanStartLit)
-        realChanStart = absolutePoint(chanStart)*2;
+        realChanStart = absolutePoint(chanStart) * 2;
       else
       if (chanEndLit)
-        realChanEnd = absolutePoint(chanEnd)*2;
+        realChanEnd = absolutePoint(chanEnd) * 2;
 
-      glue_setBeginEndChannel(chan, realChanStart, realChanEnd);
+      sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
 
       pushed  = false;
       dragged = false;
@@ -445,23 +435,22 @@ int geWaveform::handle(int e)
         redraw();
       }
 
-      /* here the mouse is on the waveform, i.e. a selection */
+      /* Here the mouse is on the waveform, i.e. a new selection has started. */
 
       else
       if (dragged) {
 
-        selectionB = Fl::event_x() - x();
+        selection.bPixel = Fl::event_x() - x();
 
-        if (selectionB >= data.size)
-          selectionB = data.size;
+        if (selection.bPixel >= data.size)
+          selection.bPixel = data.size;
 
-        if (selectionB <= 0)
-          selectionB = 0;
+        if (selection.bPixel <= 0)
+          selection.bPixel = 0;
 
         if (grid.snap)
-          selectionB = applySnap(selectionB);
+          selection.bPixel = applySnap(selection.bPixel);
 
-        selectionB_abs = absolutePoint(selectionB);
         redraw();
       }
 
@@ -470,15 +459,11 @@ int geWaveform::handle(int e)
       else
       if (resized) {
         int pos = Fl::event_x() - x();
-        if (mouseOnSelectionA()) {
-          selectionA     = grid.snap ? applySnap(pos) : pos;
-          selectionA_abs = absolutePoint(selectionA);
-        }
+        if (mouseOnSelectionA())
+          selection.aPixel = grid.snap ? applySnap(pos) : pos;
         else
-        if (mouseOnSelectionB()) {
-          selectionB     = grid.snap ? applySnap(pos) : pos;
-          selectionB_abs = absolutePoint(selectionB);
-        }
+        if (mouseOnSelectionB())
+          selection.bPixel = grid.snap ? applySnap(pos) : pos;
         redraw();
       }
       mouseX = Fl::event_x();
@@ -538,19 +523,19 @@ bool geWaveform::mouseOnEnd()
 
 bool geWaveform::mouseOnSelectionA()
 {
-  if (selectionA == selectionB)
+  if (!isSelected())
     return false;
-  return mouseX >= selectionA - (FLAG_WIDTH / 2) + x() && 
-         mouseX <= selectionA + (FLAG_WIDTH / 2) + x();
+  return mouseX >= selection.aPixel - (FLAG_WIDTH / 2) + x() && 
+         mouseX <= selection.aPixel + (FLAG_WIDTH / 2) + x();
 }
 
 
 bool geWaveform::mouseOnSelectionB()
 {
-  if (selectionA == selectionB)
+  if (!isSelected())
     return false;
-  return mouseX >= selectionB - (FLAG_WIDTH / 2) + x() && 
-         mouseX <= selectionB + (FLAG_WIDTH / 2) + x();
+  return mouseX >= selection.bPixel - (FLAG_WIDTH / 2) + x() && 
+         mouseX <= selection.bPixel + (FLAG_WIDTH / 2) + x();
 }
 
 
@@ -583,10 +568,8 @@ int geWaveform::relativePoint(int p)
 
 void geWaveform::openEditMenu()
 {
-  if (selectionA == selectionB)
+  if (selection.aPixel == selection.bPixel)
     return;
-
-  menuOpen = true;
 
   Fl_Menu_Item menu[] = {
     {"Cut"},
@@ -608,76 +591,67 @@ void geWaveform::openEditMenu()
   b->box(G_CUSTOM_BORDER_BOX);
   b->textsize(GUI_FONT_SIZE_BASE);
   b->textcolor(COLOR_TEXT_0);
-  b->color(COLOR_BG_0);
+  b->color(G_COLOR_GREY_2);
 
   const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
   if (!m) {
-    menuOpen = false;
     return;
   }
 
-  /* straightSel() to ensure that point A is always lower than B */
-
-  straightSel();
-
   if (strcmp(m->label(), "Silence") == 0) {
-    wfx_silence(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+    wfx_silence(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
 
-    selectionA = 0;
-    selectionB = 0;
+    selection.aPixel = 0;
+    selection.bPixel = 0;
 
     stretchToWindow();
     redraw();
-    menuOpen = false;
     return;
   }
 
   if (strcmp(m->label(), "Set start/end here") == 0) {
 
-    glue_setBeginEndChannel(chan, absolutePoint(selectionA) * 2, 
-      absolutePoint(selectionB) * 2); // stereo values
+    //glue_setBeginEndChannel(chan, absolutePoint(selection.aPixel) * 2, 
+    //  absolutePoint(selection.bPixel) * 2); // stereo values
 
-    selectionA     = 0;
-    selectionB     = 0;
-    selectionA_abs = 0;
-    selectionB_abs = 0;
+    selection.aPixel     = 0;
+    selection.bPixel     = 0;
+    selection.aFrame = 0;
+    selection.bFrame = 0;
 
     recalcPoints();
     redraw();
-    menuOpen = false;
     return;
   }
 
   if (strcmp(m->label(), "Cut") == 0) {
-    wfx_cut(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+    wfx_cut(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
 
     /* for convenience reset start/end points */
 
-    glue_setBeginEndChannel(chan, 0, chan->wave->size);
+    //glue_setBeginEndChannel(chan, 0, chan->wave->size);
 
-    selectionA     = 0;
-    selectionB     = 0;
-    selectionA_abs = 0;
-    selectionB_abs = 0;
+    selection.aPixel     = 0;
+    selection.bPixel     = 0;
+    selection.aFrame = 0;
+    selection.bFrame = 0;
 
     setZoom(0);
 
-    menuOpen = false;
     return;
   }
 
   if (strcmp(m->label(), "Trim") == 0) {
-    wfx_trim(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+    wfx_trim(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
 
-    glue_setBeginEndChannel(chan, 0, chan->wave->size);
+    //glue_setBeginEndChannel(chan, 0, chan->wave->size);
 
-    selectionA     = 0;
-    selectionB     = 0;
-    selectionA_abs = 0;
-    selectionB_abs = 0;
+    selection.aPixel     = 0;
+    selection.bPixel     = 0;
+    selection.aFrame = 0;
+    selection.bFrame = 0;
 
     stretchToWindow();
-    menuOpen = false;
     redraw();
     return;
   }
@@ -685,27 +659,25 @@ void geWaveform::openEditMenu()
   if (!strcmp(m->label(), "Fade in") || !strcmp(m->label(), "Fade out")) {
 
     int type = !strcmp(m->label(), "Fade in") ? 0 : 1;
-    wfx_fade(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB), type);
+    wfx_fade(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel), type);
 
-    selectionA = 0;
-    selectionB = 0;
+    selection.aPixel = 0;
+    selection.bPixel = 0;
 
     stretchToWindow();
     redraw();
-    menuOpen = false;
     return;
   }
 
   if (!strcmp(m->label(), "Smooth edges")) {
 
-    wfx_smooth(chan->wave, absolutePoint(selectionA), absolutePoint(selectionB));
+    wfx_smooth(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
 
-    selectionA = 0;
-    selectionB = 0;
+    selection.aPixel = 0;
+    selection.bPixel = 0;
 
     stretchToWindow();
     redraw();
-    menuOpen = false;
     return;
   }
 }
@@ -714,13 +686,27 @@ void geWaveform::openEditMenu()
 /* -------------------------------------------------------------------------- */
 
 
-void geWaveform::straightSel()
+void geWaveform::fixSelection()
 {
-  if (selectionA > selectionB) {
-    unsigned tmp = selectionB;
-    selectionB = selectionA;
-    selectionA = tmp;
+  if (selection.aPixel > selection.bPixel) {  // inverted selection, needs fix
+    unsigned tmp = selection.bPixel;
+    selection.bPixel = selection.aPixel;
+    selection.aPixel = tmp;  
   }
+  selection.aFrame = absolutePoint(selection.aPixel);
+  selection.bFrame = absolutePoint(selection.bPixel);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveform::clearSel()
+{
+  selection.aPixel = 0;
+  selection.bPixel = 0;
+  selection.aFrame = 0;
+  selection.bFrame = 0;  
 }
 
 
@@ -789,6 +775,16 @@ void geWaveform::stretchToWindow()
 /* -------------------------------------------------------------------------- */
 
 
+void geWaveform::refresh()
+{
+  alloc(data.size);
+  redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool geWaveform::smaller()
 {
   return w() < parent()->w();
@@ -812,4 +808,28 @@ void geWaveform::setGridLevel(int l)
   grid.level = l;
   alloc(data.size);
   redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool geWaveform::isSelected()
+{
+  return selection.aPixel != selection.bPixel;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geWaveform::getSelectionA()
+{
+  return selection.aFrame;
+}
+
+
+int geWaveform::getSelectionB()
+{
+  return selection.bFrame;
 }

@@ -80,13 +80,6 @@ void glue_setPitch(SampleChannel *ch, float val);
 /* TODO move to glue_sampleEditor */
 void glue_setPanning(SampleChannel *ch, float val);
 
-/* setBeginEndChannel
- * sets start/end points in the sample editor. Recalc=false: don't recalc
- * internal position. check=true: check the points' consistency */
-
-/* TODO move to glue_sampleEditor */
-void glue_setBeginEndChannel(SampleChannel *ch, int b, int e);
-
 /* TODO move to glue_sampleEditor */
 void glue_setBoost(SampleChannel *ch, float val);
 

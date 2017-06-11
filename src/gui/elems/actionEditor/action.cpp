@@ -108,10 +108,10 @@ void geAction::draw()
 		else {
 			fl_rectf(x(), y(), MIN_WIDTH, h(), (Fl_Color) color);
 			if (type == G_ACTION_KEYPRESS)
-				fl_rectf(x()+3, y()+h()-11, 2, 8, COLOR_BD_0);
+				fl_rectf(x()+3, y()+h()-11, 2, 8, G_COLOR_GREY_4);
 			else
 			if  (type == G_ACTION_KEYREL)
-				fl_rectf(x()+3, y()+3, 2, 8, COLOR_BD_0);
+				fl_rectf(x()+3, y()+3, 2, 8, G_COLOR_GREY_4);
 		}
 	}
 

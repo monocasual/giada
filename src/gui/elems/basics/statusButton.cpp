@@ -48,5 +48,5 @@ void geStatusButton::draw()
 {
   geButton::draw();
   if (status)
-    fl_draw_pixmap(imgOn, x()+1, y()+1, COLOR_BD_0);
+    fl_draw_pixmap(imgOn, x()+1, y()+1, G_COLOR_GREY_4);
 }

@@ -94,8 +94,7 @@ void menuCallback(Fl_Widget *w, void *v)
   geSampleChannel *gch = static_cast<geSampleChannel*>(w);
   Menu selectedItem = (Menu) (intptr_t) v;
 
-  switch (selectedItem)
-  {
+  switch (selectedItem) {
     case Menu::INPUT_MONITOR: {
       glue_toggleInputMonitor(gch->ch);
       break;
@@ -300,7 +299,7 @@ void geSampleChannel::__cb_openMenu()
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
+	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
   if (m)

@@ -36,16 +36,16 @@ void g_customBorderBox(int x, int y, int w, int h, Fl_Color c)
 {
   fl_color(c);
   fl_rectf(x, y, w, h);
-  fl_color(COLOR_BD_0);
+  fl_color(G_COLOR_GREY_4);
   fl_rect(x, y, w, h);
 }
 
 
 void g_customUpBox(int x, int y, int w, int h, Fl_Color c)
 {
-  fl_color(COLOR_BG_0);
+  fl_color(G_COLOR_GREY_2);
   fl_rectf(x, y, w, h);
-  fl_color(COLOR_BG_0);
+  fl_color(G_COLOR_GREY_2);
   fl_rect(x, y, w, h);
 }
 
@@ -54,6 +54,6 @@ void g_customDownBox(int x, int y, int w, int h, Fl_Color c)
 {
   fl_color(c);
   fl_rectf(x, y, w, h);
-  fl_color(COLOR_BG_0);
+  fl_color(G_COLOR_GREY_2);
   fl_rect(x, y, w, h);
 }

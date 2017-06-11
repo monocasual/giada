@@ -58,7 +58,7 @@ gdBrowserBase::gdBrowserBase(int x, int y, int w, int h, const string &title,
   hiddenFiles->callback(cb_toggleHiddenFiles, (void*) this);
 
 	where->readonly(true);
-	where->cursor_color(COLOR_BG_DARK);
+	where->cursor_color(G_COLOR_BLACK);
 	where->value(path.c_str());
 
 	updir->callback(cb_up, (void*) this);

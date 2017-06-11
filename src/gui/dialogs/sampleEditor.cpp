@@ -30,6 +30,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 #include "../../glue/channel.h"
+#include "../../glue/sampleEditor.h"
 #include "../../core/waveFx.h"
 #include "../../core/conf.h"
 #include "../../core/const.h"
@@ -59,6 +60,7 @@
 
 
 using namespace giada::m;
+using namespace giada::c;
 
 
 gdSampleEditor::gdSampleEditor(SampleChannel *ch)
@@ -209,7 +211,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  glue_setBeginEndChannel(ch, 0, ch->wave->size);
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->size);
 
   redraw();
 }

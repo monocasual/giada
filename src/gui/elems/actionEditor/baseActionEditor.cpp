@@ -55,11 +55,11 @@ void geBaseActionEditor::baseDraw(bool clear) {
 	/* clear the screen */
 
 	if (clear)
-		fl_rectf(x(), y(), w(), h(), COLOR_BG_MAIN);
+		fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1);
 
 	/* draw the container */
 
-	fl_color(COLOR_BD_0);
+	fl_color(G_COLOR_GREY_4);
 	fl_rect(x(), y(), w(), h());
 
 	/* grid drawing, if > 1 */
@@ -78,7 +78,7 @@ void geBaseActionEditor::baseDraw(bool clear) {
 
 	/* bars and beats drawing */
 
-	fl_color(COLOR_BD_0);
+	fl_color(G_COLOR_GREY_4);
 	for (int i=0; i<(int) pParent->gridTool->beats.size(); i++) {
 		int px = pParent->gridTool->beats.at(i)+x()-1;
 		fl_line(px, y()+1, px, y()+h()-2);
@@ -95,5 +95,5 @@ void geBaseActionEditor::baseDraw(bool clear) {
 
 	int coverWidth = pParent->totalWidth-pParent->coverX;
 	if (coverWidth != 0)
-		fl_rectf(pParent->coverX+x(), y()+1, coverWidth, h()-2, COLOR_BG_1);
+		fl_rectf(pParent->coverX+x(), y()+1, coverWidth, h()-2, G_COLOR_GREY_4);
 }

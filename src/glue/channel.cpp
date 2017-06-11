@@ -363,22 +363,6 @@ void glue_setSoloOff(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBeginEndChannel(SampleChannel *ch, int b, int e)
-{
-	ch->setBegin(b);
-	ch->setEnd(e);
-	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (gdEditor) {
-		Fl::lock();
-		gdEditor->rangeTool->refresh();
-		Fl::unlock();
-	}	
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void glue_setBoost(SampleChannel *ch, float val)
 {
 	ch->setBoost(val);

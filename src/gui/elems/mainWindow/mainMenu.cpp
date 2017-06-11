@@ -122,7 +122,7 @@ void geMainMenu::__cb_file()
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
+	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
 	if (!m) return;
@@ -193,7 +193,7 @@ void geMainMenu::__cb_edit()
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
 	b->textcolor(COLOR_TEXT_0);
-	b->color(COLOR_BG_0);
+	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
 	if (!m) return;

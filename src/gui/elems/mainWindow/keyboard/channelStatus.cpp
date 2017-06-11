@@ -47,8 +47,8 @@ geChannelStatus::geChannelStatus(int x, int y, int w, int h, SampleChannel *ch,
 
 void geChannelStatus::draw()
 {
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);              // reset border
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // reset background
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
 
   if (ch != nullptr) {
     if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
@@ -60,7 +60,7 @@ void geChannelStatus::draw()
     if (ch->status == STATUS_PLAY)
       fl_rect(x(), y(), w(), h(), COLOR_BD_1);
     else
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);     // status empty
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
 
 
     if (mixer::recording && ch->armed)

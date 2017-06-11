@@ -50,14 +50,14 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	spacePressed (false),
 	addColumnBtn (nullptr)
 {
-	color(COLOR_BG_MAIN);
+	color(G_COLOR_GREY_1);
 	type(Fl_Scroll::BOTH_ALWAYS);
-	scrollbar.color(COLOR_BG_0);
-	scrollbar.selection_color(COLOR_BG_1);
+	scrollbar.color(G_COLOR_GREY_2);
+	scrollbar.selection_color(G_COLOR_GREY_4);
 	scrollbar.labelcolor(COLOR_BD_1);
 	scrollbar.slider(G_CUSTOM_BORDER_BOX);
-	hscrollbar.color(COLOR_BG_0);
-	hscrollbar.selection_color(COLOR_BG_1);
+	hscrollbar.color(G_COLOR_GREY_2);
+	hscrollbar.selection_color(G_COLOR_GREY_4);
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 

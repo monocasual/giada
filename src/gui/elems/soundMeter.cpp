@@ -51,7 +51,7 @@ geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char *L)
 
 void geSoundMeter::draw()
 {
-  fl_rect(x(), y(), w(), h(), COLOR_BD_0);
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
 
   /* peak = the highest value inside the frame */
 
@@ -82,6 +82,6 @@ void geSoundMeter::draw()
   else
     px_level = w();
 
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_0);
-  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? COLOR_ALERT : COLOR_BD_0);
+  fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
+  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? COLOR_ALERT : G_COLOR_GREY_4);
 }

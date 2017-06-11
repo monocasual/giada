@@ -101,7 +101,7 @@ void geEnvelopeEditor::draw() {
 
 	/* print label */
 
-	fl_color(COLOR_BG_1);
+	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, 12);
 	fl_draw(l, x()+4, y(), 80, h(), (Fl_Align) (FL_ALIGN_LEFT));
 

@@ -147,7 +147,7 @@ void geActionEditor::draw()
 
 	/* print label */
 
-	fl_color(COLOR_BG_1);
+	fl_color(G_COLOR_GREY_4);
 	fl_font(FL_HELVETICA, 12);
 	if (active())
 		fl_draw("start/stop", x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));  /// FIXME h() is too much!

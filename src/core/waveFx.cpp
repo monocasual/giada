@@ -124,7 +124,8 @@ int wfx_cut(Wave *w, int a, int b)
 		return 0;
 	}
 
-	gu_log("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", a, b, newSize, newSize/2);
+	gu_log("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", 
+		a, b, newSize, newSize/2);
 
 	for (int i=0, k=0; i<w->size; i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep

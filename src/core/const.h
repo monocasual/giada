@@ -62,20 +62,18 @@
 #define GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUIs
 #define GUI_FONT_SIZE_BASE 12
 
-#define COLOR_BD_0     fl_rgb_color(78,  78,  78)			// border off - TODO duplicate!
-#define COLOR_BD_1     fl_rgb_color(188, 188, 188)    // border on
-#define COLOR_BG_0     fl_rgb_color(37,  37,  37)     // bg off
-#define COLOR_BG_1     fl_rgb_color(78,  78,  78)     // bg on (clicked) - TODO duplicate!
 #define COLOR_BG_2     fl_rgb_color(177, 142, 142)    // bg active (play, for some widgets)
 #define COLOR_BG_3     fl_rgb_color(28,  32,  80)     // bg input rec
 #define COLOR_BG_4     fl_rgb_color(113, 31,  31)     // bg action rec
 #define COLOR_ALERT    fl_rgb_color(239, 75,  53)     // peak meter alert
-#define COLOR_TEXT_0   fl_rgb_color(200, 200, 200)
-#define COLOR_TEXT_1   fl_rgb_color(25,  25,  25)      // TODO duplicate!
-#define COLOR_BG_MAIN  fl_rgb_color(25,  25,  25)		   // windows background - TODO duplicate!
-#define COLOR_BG_RICH  fl_rgb_color(30,  30,  30)		   // lighter background
-#define COLOR_BG_LINE  fl_rgb_color(54,  54,  54)		   // lighter, for bg lines
-#define COLOR_BG_DARK  fl_rgb_color(0,   0,   0)		   // inputs background
+
+#define COLOR_TEXT_0    fl_rgb_color(200, 200, 200)
+#define COLOR_BD_1      fl_rgb_color(188, 188, 188)  // border on
+#define G_COLOR_GREY_4 fl_rgb_color(78,  78,  78)	   // border off
+#define G_COLOR_GREY_3 fl_rgb_color(54,  54,  54)		 // lighter, for bg lines
+#define G_COLOR_GREY_2 fl_rgb_color(37,  37,  37)    // bg off
+#define G_COLOR_GREY_1 fl_rgb_color(25,  25,  25)		 // windows background
+#define G_COLOR_BLACK  fl_rgb_color(0,   0,   0)	   // inputs background
 
 
 

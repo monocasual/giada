@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * gg_waveTools
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -27,18 +25,83 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cstdint>
+#include <FL/Fl_Menu_Item.H>
+#include <FL/Fl_Menu_Button.H>
 #include "../../../core/const.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../core/waveFx.h"
+#include "../../../glue/sampleEditor.h"
 #include "../basics/boxtypes.h"
 #include "waveform.h"
 #include "waveTools.h"
 
 
+using namespace giada::c;
+
+
+namespace
+{
+enum class Menu
+{
+  CUT = 0,
+  TRIM,
+  SILENCE,
+  FADE_IN,
+  FADE_OUT,
+  SMOOTH_EDGES,
+  SET_START_END
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void menuCallback(Fl_Widget* w, void* v)
+{
+  geWaveTools* wavetools = static_cast<geWaveTools*>(w);
+  Menu selectedItem = (Menu) (intptr_t) v;
+
+  int a = wavetools->waveform->getSelectionA();
+  int b = wavetools->waveform->getSelectionB();
+
+  switch (selectedItem) {
+  	case Menu::CUT:
+      sampleEditor::cut(wavetools->ch, a, b);
+  		break;
+  	case Menu::TRIM:
+      sampleEditor::trim(wavetools->ch, a, b);
+  		break;
+  	case Menu::SILENCE:
+  		sampleEditor::silence(wavetools->ch, a, b);
+  		break;	
+  	case Menu::FADE_IN:
+  		sampleEditor::fade(wavetools->ch, a, b, 0);
+  		break;
+  	case Menu::FADE_OUT:
+  		sampleEditor::fade(wavetools->ch, a, b, 1);
+  		break;
+  	case Menu::SMOOTH_EDGES:
+  		sampleEditor::smoothEdges(wavetools->ch, a, b);
+  		break;
+  	case Menu::SET_START_END:
+  		sampleEditor::setStartEnd(wavetools->ch, a, b);
+  		break;
+  }
+}
+}; // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
-	: Fl_Scroll(x, y, w, h, l)
+	: Fl_Scroll(x, y, w, h, l),
+	  ch       (ch)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
-	hscrollbar.color(COLOR_BG_0);
-	hscrollbar.selection_color(COLOR_BG_1);
+	hscrollbar.color(G_COLOR_GREY_2);
+	hscrollbar.selection_color(G_COLOR_GREY_4);
 	hscrollbar.labelcolor(COLOR_BD_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
@@ -83,7 +146,7 @@ void geWaveTools::resize(int x, int y, int w, int h)
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int geWaveTools::handle(int e)
@@ -96,6 +159,51 @@ int geWaveTools::handle(int e)
 			ret = 1;
 			break;
 		}
+		case FL_PUSH: {
+			if (Fl::event_button3()) {  // right button
+				openMenu();
+				ret = 1;
+			}
+			break;
+		}
 	}
 	return ret;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveTools::openMenu()
+{
+	if (!waveform->isSelected())
+		return;
+
+	Fl_Menu_Item menu[] = {
+		{"Cut",                0, menuCallback, (void*) Menu::CUT},
+    {"Trim",               0, menuCallback, (void*) Menu::TRIM},
+    {"Silence",            0, menuCallback, (void*) Menu::SILENCE},
+    {"Fade in",            0, menuCallback, (void*) Menu::FADE_IN},
+    {"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
+    {"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},
+    {"Set start/end here", 0, menuCallback, (void*) Menu::SET_START_END},
+    {0}
+	};
+
+  if (ch->status == STATUS_PLAY) {
+    menu[(int)Menu::CUT].deactivate();
+    menu[(int)Menu::TRIM].deactivate();
+  }
+
+
+	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	b->box(G_CUSTOM_BORDER_BOX);
+	b->textsize(GUI_FONT_SIZE_BASE);
+	b->textcolor(COLOR_TEXT_0);
+	b->color(G_COLOR_GREY_2);
+
+	const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+  if (m)
+    m->do_callback(this, m->user_data());
+  return;
 }
