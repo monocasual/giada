@@ -70,7 +70,7 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	list->type(Fl_Scroll::VERTICAL);
 	list->scrollbar.color(G_COLOR_GREY_2);
 	list->scrollbar.selection_color(G_COLOR_GREY_4);
-	list->scrollbar.labelcolor(COLOR_BD_1);
+	list->scrollbar.labelcolor(G_COLOR_LIGHT_1);
 	list->scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	list->begin();

@@ -36,10 +36,10 @@ geInput::geInput(int x, int y, int w, int h, const char *l)
   //Fl::set_boxtype(G_CUSTOM_BORDER_BOX, gDrawBox, 1, 1, 2, 2);
   box(G_CUSTOM_BORDER_BOX);
   labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
+  labelcolor(G_COLOR_LIGHT_2);
   color(G_COLOR_BLACK);
-  textcolor(COLOR_TEXT_0);
-  cursor_color(COLOR_TEXT_0);
+  textcolor(G_COLOR_LIGHT_2);
+  cursor_color(G_COLOR_LIGHT_2);
   selection_color(G_COLOR_GREY_4);
   textsize(GUI_FONT_SIZE_BASE);
 }

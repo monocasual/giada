@@ -52,7 +52,7 @@ void geBeatMeter::draw()
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                            // border
   fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
   fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
-    COLOR_BG_2); // cursor
+    G_COLOR_LIGHT_1); // cursor
 
   /* beat cells */
 
@@ -62,7 +62,7 @@ void geBeatMeter::draw()
 
   /* bar line */
 
-  fl_color(COLOR_BG_2);
+  fl_color(G_COLOR_LIGHT_1);
   int delta = clock::getBeats() / clock::getBars();
   for (int i=1; i<clock::getBars(); i++)
     fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);

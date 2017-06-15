@@ -37,7 +37,7 @@ geSlider::geSlider(int x, int y, int w, int h, const char *l)
 
  labelsize(GUI_FONT_SIZE_BASE);
  align(FL_ALIGN_LEFT);
- labelcolor(COLOR_TEXT_0);
+ labelcolor(G_COLOR_LIGHT_2);
 
  box(G_CUSTOM_BORDER_BOX);
  color(G_COLOR_GREY_2);

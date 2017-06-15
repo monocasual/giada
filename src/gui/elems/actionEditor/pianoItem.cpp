@@ -127,7 +127,7 @@ bool gePianoItem::overlap()
 void gePianoItem::draw()
 {
 	int _w = w() > MIN_WIDTH ? w() : MIN_WIDTH;
-	fl_rectf(x(), y()+2, _w, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+	fl_rectf(x(), y()+2, _w, h()-3, (Fl_Color) selected ? G_COLOR_LIGHT_1 : G_COLOR_LIGHT_1);
 }
 
 

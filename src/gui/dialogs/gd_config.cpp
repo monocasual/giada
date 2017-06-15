@@ -51,7 +51,7 @@ gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 
 	Fl_Tabs *tabs = new Fl_Tabs(8, 8, w-16, h-44);
   tabs->box(G_CUSTOM_BORDER_BOX);
-  tabs->labelcolor(COLOR_TEXT_0);
+  tabs->labelcolor(G_COLOR_LIGHT_2);
   tabs->begin();
 
 		tabAudio     = new geTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);

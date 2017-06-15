@@ -78,7 +78,7 @@ void geMuteEditor::draw()
 	/* draw on-off points. On = higher rect, off = lower rect. It always
 	 * starts with a note_off */
 
-	fl_color(COLOR_BG_2);
+	fl_color(G_COLOR_LIGHT_1);
 
 	int pxOld = x()+1;
 	int pxNew = 0;
@@ -105,9 +105,9 @@ void geMuteEditor::draw()
 		fl_line(pxNew, y()+h()-5, pxNew, y()+4);
 
 		if (selectedPoint == (int) i) {
-			fl_color(COLOR_BD_1);
+			fl_color(G_COLOR_LIGHT_1);
 			fl_rectf(pxNew-3, pyDot, 7, 7);
-			fl_color(COLOR_BG_2);
+			fl_color(G_COLOR_LIGHT_1);
 		}
 		else
 			fl_rectf(pxNew-3, pyDot, 7, 7);

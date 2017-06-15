@@ -95,9 +95,9 @@ void geAction::draw()
 {
 	int color;
 	if (selected)  /// && geActionEditor !disabled
-		color = COLOR_BD_1;
+		color = G_COLOR_LIGHT_2;
 	else
-		color = COLOR_BG_2;
+		color = G_COLOR_LIGHT_1;
 
 	if (ch->mode == SINGLE_PRESS) {
 		fl_rectf(x(), y(), w(), h(), (Fl_Color) color);

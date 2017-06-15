@@ -83,5 +83,5 @@ void geSoundMeter::draw()
     px_level = w();
 
   fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
-  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? COLOR_ALERT : G_COLOR_GREY_4);
+  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
 }

@@ -102,7 +102,7 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const ch
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
 	hscrollbar.selection_color(G_COLOR_GREY_4);
-	hscrollbar.labelcolor(COLOR_BD_1);
+	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	waveform = new geWaveform(x, y, w, h-24, ch);
@@ -199,7 +199,7 @@ void geWaveTools::openMenu()
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(GUI_FONT_SIZE_BASE);
-	b->textcolor(COLOR_TEXT_0);
+	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);

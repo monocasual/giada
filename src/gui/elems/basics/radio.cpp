@@ -54,6 +54,6 @@ void geRadio::draw()
 
  fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
- fl_color(COLOR_TEXT_0);
+ fl_color(G_COLOR_LIGHT_2);
  fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
 }

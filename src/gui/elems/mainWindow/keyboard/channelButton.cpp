@@ -77,7 +77,7 @@ void geChannelButton::draw()
 
   /* draw key */
 
-  fl_color(COLOR_TEXT_0);
+  fl_color(G_COLOR_LIGHT_2);
   fl_font(FL_HELVETICA, 11);
   fl_draw(key.c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
 }
@@ -88,7 +88,7 @@ void geChannelButton::draw()
 
 void geChannelButton::setInputRecordMode()
 {
-  bgColor0 = COLOR_BG_3;
+  bgColor0 = G_COLOR_RED;
 }
 
 
@@ -97,8 +97,8 @@ void geChannelButton::setInputRecordMode()
 
 void geChannelButton::setActionRecordMode()
 {
-  bgColor0 = COLOR_BG_4;
-  txtColor = COLOR_TEXT_0;
+  bgColor0 = G_COLOR_BLUE;
+  txtColor = G_COLOR_LIGHT_2;
 }
 
 
@@ -109,7 +109,7 @@ void geChannelButton::setDefaultMode(const char *l)
 {
   bgColor0 = G_COLOR_GREY_2;
 	bdColor  = G_COLOR_GREY_4;
-	txtColor = COLOR_TEXT_0;
+	txtColor = G_COLOR_LIGHT_2;
   if (l)
     label(l);
 }
@@ -120,8 +120,8 @@ void geChannelButton::setDefaultMode(const char *l)
 
 void geChannelButton::setPlayMode()
 {
-  bgColor0 = COLOR_BG_2;
-  bdColor  = COLOR_BD_1;
+  bgColor0 = G_COLOR_LIGHT_1;
+  bdColor  = G_COLOR_LIGHT_1;
   txtColor = G_COLOR_GREY_1;
 }
 

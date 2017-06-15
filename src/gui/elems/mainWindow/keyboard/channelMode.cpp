@@ -42,7 +42,7 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
 {
   box(G_CUSTOM_BORDER_BOX);
   textsize(GUI_FONT_SIZE_BASE);
-  textcolor(COLOR_TEXT_0);
+  textcolor(G_COLOR_LIGHT_2);
   color(G_COLOR_GREY_2);
 
   add("Loop . basic",      0, cb_changeMode, (void *)LOOP_BASIC);

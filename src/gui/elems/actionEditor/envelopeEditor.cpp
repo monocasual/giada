@@ -110,7 +110,7 @@ void geEnvelopeEditor::draw() {
 	int pxNew = 0;
 	int pyNew = 0;
 
-	fl_color(COLOR_BG_2);
+	fl_color(G_COLOR_LIGHT_1);
 
 	for (unsigned i=0; i<points.size(); i++) {
 
@@ -118,9 +118,9 @@ void geEnvelopeEditor::draw() {
 		pyNew = points.at(i).y+y();
 
 		if (selectedPoint == (int) i) {
-			fl_color(COLOR_BD_1);
+			fl_color(G_COLOR_LIGHT_1);
 			fl_rectf(pxNew, pyNew, 7, 7);
-			fl_color(COLOR_BG_2);
+			fl_color(G_COLOR_LIGHT_1);
 		}
 		else
 			fl_rectf(pxNew, pyNew, 7, 7);

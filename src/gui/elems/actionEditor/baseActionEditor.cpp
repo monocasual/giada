@@ -84,7 +84,7 @@ void geBaseActionEditor::baseDraw(bool clear) {
 		fl_line(px, y()+1, px, y()+h()-2);
 	}
 
-	fl_color(COLOR_BG_2);
+	fl_color(G_COLOR_LIGHT_1);
 	for (int i=0; i<(int) pParent->gridTool->bars.size(); i++) {
 		int px = pParent->gridTool->bars.at(i)+x()-1;
 		fl_line(px, y()+1, px, y()+h()-2);

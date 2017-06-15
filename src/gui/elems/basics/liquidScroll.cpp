@@ -41,7 +41,7 @@ geLiquidScroll::geLiquidScroll(int x, int y, int w, int h, const char *l)
   type(Fl_Scroll::VERTICAL);
   scrollbar.color(G_COLOR_GREY_2);
   scrollbar.selection_color(G_COLOR_GREY_4);
-  scrollbar.labelcolor(COLOR_BD_1);
+  scrollbar.labelcolor(G_COLOR_LIGHT_1);
   scrollbar.slider(G_CUSTOM_BORDER_BOX);
 }
 

@@ -35,10 +35,10 @@ geChoice::geChoice(int x, int y, int w, int h, const char *l, bool ang)
   : Fl_Choice(x, y, w, h, l), angle(ang)
 {
   labelsize(GUI_FONT_SIZE_BASE);
-  labelcolor(COLOR_TEXT_0);
+  labelcolor(G_COLOR_LIGHT_2);
   box(FL_BORDER_BOX);
   textsize(GUI_FONT_SIZE_BASE);
-  textcolor(COLOR_TEXT_0);
+  textcolor(G_COLOR_LIGHT_2);
   color(G_COLOR_GREY_2);
 }
 
@@ -56,7 +56,7 @@ void geChoice::draw()
   /* pick up the text() from the selected item (value()) and print it in
    * the box and avoid overflows */
 
-  fl_color(!active() ? G_COLOR_GREY_4 : COLOR_TEXT_0);
+  fl_color(!active() ? G_COLOR_GREY_4 : G_COLOR_LIGHT_2);
   if (value() != -1) {
     if (fl_width(text(value())) < w()-8) {
       fl_draw(text(value()), x(), y(), w(), h(), FL_ALIGN_CENTER);

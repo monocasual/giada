@@ -261,8 +261,8 @@ void geWaveform::draw()
 
   int lineX = x()+chanStart+1;
 
-  if (chanStartLit) fl_color(COLOR_BD_1);
-  else              fl_color(G_COLOR_GREY_3);
+  if (chanStartLit) fl_color(G_COLOR_LIGHT_2);
+  else              fl_color(G_COLOR_LIGHT_1);
 
   /* vertical line */
 
@@ -278,8 +278,8 @@ void geWaveform::draw()
   /* print chanEnd */
 
   lineX = x()+chanEnd;
-  if (chanEndLit) fl_color(COLOR_BD_1);
-  else            fl_color(G_COLOR_GREY_3);
+  if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
+  else            fl_color(G_COLOR_LIGHT_1);
 
   fl_line(lineX, y()+1, lineX, y()+h()-2);
 
@@ -590,7 +590,7 @@ void geWaveform::openEditMenu()
   Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
   b->box(G_CUSTOM_BORDER_BOX);
   b->textsize(GUI_FONT_SIZE_BASE);
-  b->textcolor(COLOR_TEXT_0);
+  b->textcolor(G_COLOR_LIGHT_2);
   b->color(G_COLOR_GREY_2);
 
   const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);

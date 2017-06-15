@@ -54,20 +54,20 @@ void geChannelStatus::draw()
     if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
         ch->recStatus & (REC_WAITING | REC_ENDING))
     {
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+      fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
     }
     else
     if (ch->status == STATUS_PLAY)
-      fl_rect(x(), y(), w(), h(), COLOR_BD_1);
+      fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
     else
       fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
 
 
     if (mixer::recording && ch->armed)
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_3);     // take in progress
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
     else
     if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, COLOR_BG_4);     // action record
+      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);     // action record
 
     /* equation for the progress bar:
      * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
@@ -77,6 +77,6 @@ void geChannelStatus::draw()
       pos = 0;
     else
       pos = (pos * (w()-1)) / (ch->end - ch->begin);
-    fl_rectf(x()+1, y()+1, pos, h()-2, COLOR_BG_2);
+    fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
   }
 }

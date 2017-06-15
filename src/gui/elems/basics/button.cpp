@@ -41,7 +41,7 @@ geButton::geButton(int x, int y, int w, int h, const char *L,
   bgColor0    (G_COLOR_GREY_2),
   bgColor1    (G_COLOR_GREY_4),
   bdColor     (G_COLOR_GREY_4),
-  txtColor    (COLOR_TEXT_0)
+  txtColor    (G_COLOR_LIGHT_2)
 {
 }
 
@@ -52,7 +52,7 @@ geButton::geButton(int x, int y, int w, int h, const char *L,
 void geButton::draw()
 {
   if (!active()) txtColor = bdColor;
-  else           txtColor = COLOR_TEXT_0;
+  else           txtColor = G_COLOR_LIGHT_2;
 
   fl_rect(x(), y(), w(), h(), bdColor);             // borders
   if (value()) {                                    // -- clicked

@@ -99,5 +99,5 @@ void gePianoItemOrphaned::remove()
 
 void gePianoItemOrphaned::draw()
 {
-  fl_rect(x(), y()+2, WIDTH, h()-3, (Fl_Color) selected ? COLOR_BD_1 : COLOR_BG_2);
+  fl_rect(x(), y()+2, WIDTH, h()-3, (Fl_Color) selected ? G_COLOR_LIGHT_1 : G_COLOR_LIGHT_1);
 }
