@@ -63,7 +63,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
                 new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();
-	labelsize(GUI_FONT_SIZE_BASE);
+	labelsize(G_GUI_FONT_SIZE_BASE);
 
 	soundsys->add("(none)");
 

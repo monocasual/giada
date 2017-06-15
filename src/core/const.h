@@ -53,14 +53,14 @@
 
 /* -- GUI ------------------------------------------------------------------- */
 #ifdef _WIN32
-	#define GUI_SLEEP			1000/24
+	#define G_GUI_SLEEP			1000/24
 #else
-	#define GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
+	#define G_GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
 #endif
-#define GUI_WIDTH				   816
-#define GUI_HEIGHT			   510
-#define GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUIs
-#define GUI_FONT_SIZE_BASE 12
+#define G_GUI_WIDTH				   816
+#define G_GUI_HEIGHT			   510
+#define G_GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUIs
+#define G_GUI_FONT_SIZE_BASE 12
 
 #define G_COLOR_RED       fl_rgb_color(28,  32,  80)
 #define G_COLOR_BLUE      fl_rgb_color(113, 31,  31)
@@ -83,7 +83,7 @@
 #define G_MAX_BARS				  32
 #define G_MAX_QUANTIZE      8
 #define G_MAX_PATCHNAME_LEN	32
-#define G_DB_MIN_SCALE      60.0f
+#define G_MIN_DB_SCALE      60.0f
 #define G_MIN_COLUMN_WIDTH  140
 #define G_MAX_BOOST_DB      20.0f
 #define G_MAX_PITCH         4.0f

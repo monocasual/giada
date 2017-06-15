@@ -254,7 +254,7 @@ int geColumn::openTypeMenu()
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
-	b->textsize(GUI_FONT_SIZE_BASE);
+	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 

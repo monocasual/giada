@@ -33,7 +33,7 @@
 geDial::geDial(int x, int y, int w, int h, const char *l)
 : Fl_Dial(x, y, w, h, l)
 {
-  labelsize(GUI_FONT_SIZE_BASE);
+  labelsize(G_GUI_FONT_SIZE_BASE);
   labelcolor(G_COLOR_LIGHT_2);
   align(FL_ALIGN_LEFT);
   type(FL_FILL_DIAL);

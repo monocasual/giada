@@ -151,7 +151,7 @@ void gePianoRoll::drawSurface1()
 	fl_rectf(0, 0, CELL_W, h(), G_COLOR_GREY_1);
 
 	fl_line_style(FL_DASH, 0, nullptr);
-	fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
+	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
 
 	int octave = MAX_OCTAVES;
 

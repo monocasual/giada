@@ -55,7 +55,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 	end();
 
-	labelsize(GUI_FONT_SIZE_BASE);
+	labelsize(G_GUI_FONT_SIZE_BASE);
 
 	info->label("Scan in progress. Please wait...");
 	info->hide();

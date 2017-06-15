@@ -33,7 +33,7 @@ geBox::geBox(int x, int y, int w, int h, const char *l, Fl_Align al)
 : Fl_Box(x, y, w, h)
 {
   copy_label(l);
-  labelsize(GUI_FONT_SIZE_BASE);
+  labelsize(G_GUI_FONT_SIZE_BASE);
   box(FL_NO_BOX);
   labelcolor(G_COLOR_LIGHT_2);
   if (al != 0)

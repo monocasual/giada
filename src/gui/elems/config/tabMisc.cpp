@@ -45,7 +45,7 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	debugMsg->add("To standard output");
 	debugMsg->add("To file");
 
-	labelsize(GUI_FONT_SIZE_BASE);
+	labelsize(G_GUI_FONT_SIZE_BASE);
 
 	switch (conf::logMode) {
 		case LOG_MODE_MUTE:

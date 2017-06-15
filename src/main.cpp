@@ -89,9 +89,9 @@ void *videoThreadCb(void *arg)
 		while (!G_quit)	{
 			gu_refreshUI();
 #ifdef _WIN32
-			Sleep(GUI_SLEEP);
+			Sleep(G_GUI_SLEEP);
 #else
-			usleep(GUI_SLEEP);
+			usleep(G_GUI_SLEEP);
 #endif
 		}
 	pthread_exit(nullptr);

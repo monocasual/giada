@@ -34,10 +34,10 @@
 geChoice::geChoice(int x, int y, int w, int h, const char *l, bool ang)
   : Fl_Choice(x, y, w, h, l), angle(ang)
 {
-  labelsize(GUI_FONT_SIZE_BASE);
+  labelsize(G_GUI_FONT_SIZE_BASE);
   labelcolor(G_COLOR_LIGHT_2);
   box(FL_BORDER_BOX);
-  textsize(GUI_FONT_SIZE_BASE);
+  textsize(G_GUI_FONT_SIZE_BASE);
   textcolor(G_COLOR_LIGHT_2);
   color(G_COLOR_GREY_2);
 }

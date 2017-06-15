@@ -189,8 +189,8 @@ string samplePath = "";
 
 int mainWindowX = 0;
 int mainWindowY = 0;
-int mainWindowW = GUI_WIDTH;
-int mainWindowH = GUI_HEIGHT;
+int mainWindowW = G_GUI_WIDTH;
+int mainWindowH = G_GUI_HEIGHT;
 
 int browserX         = 0;
 int browserY         = 0;

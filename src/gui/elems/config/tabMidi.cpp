@@ -55,7 +55,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	new geBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
 	end();
 
-	labelsize(GUI_FONT_SIZE_BASE);
+	labelsize(G_GUI_FONT_SIZE_BASE);
 
 	system->callback(cb_changeSystem, (void*)this);
 

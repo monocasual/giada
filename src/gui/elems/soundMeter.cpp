@@ -69,7 +69,7 @@ void geSoundMeter::draw()
 
   dbLevel = 20 * log10(peak);
   if (dbLevel < dbLevelOld)
-    if (dbLevelOld > -G_DB_MIN_SCALE)
+    if (dbLevelOld > -G_MIN_DB_SCALE)
       dbLevel = dbLevelOld - 2.0f;
 
   dbLevelOld = dbLevel;
@@ -78,7 +78,7 @@ void geSoundMeter::draw()
 
   float px_level = 0.0f;
   if (dbLevel < 0.0f)
-    px_level = ((w()/G_DB_MIN_SCALE) * dbLevel) + w();
+    px_level = ((w()/G_MIN_DB_SCALE) * dbLevel) + w();
   else
     px_level = w();
 

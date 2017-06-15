@@ -70,6 +70,6 @@ void geButton::draw()
     fl_color(FL_INACTIVE_COLOR);
 
   fl_color(txtColor);
-  fl_font(FL_HELVETICA, GUI_FONT_SIZE_BASE);
+  fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
   fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
 }

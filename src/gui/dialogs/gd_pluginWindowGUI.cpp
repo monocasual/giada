@@ -75,7 +75,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin *pPlugin)
 
   resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
 
-  Fl::add_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+  Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
   copy_label(pPlugin->getName().c_str());
 
@@ -106,7 +106,7 @@ void gdPluginWindowGUI::__cb_close()
 void gdPluginWindowGUI::__cb_refresh()
 {
   pluginHost::runDispatchLoop();
-  Fl::repeat_timeout(GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+  Fl::repeat_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }
 
 

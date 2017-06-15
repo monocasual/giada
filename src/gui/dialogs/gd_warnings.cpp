@@ -46,7 +46,7 @@ void gdAlert(const char *c)
 		geBox *box = new geBox(10, 10, 280, 40, c);
 		geButton *b = new geButton(210, 60, 80, 20, "Close");
 	modal->end();
-	box->labelsize(GUI_FONT_SIZE_BASE);
+	box->labelsize(G_GUI_FONT_SIZE_BASE);
 	b->callback(__cb_window_closer, (void *)modal);
 	b->shortcut(FL_Enter);
 	gu_setFavicon(modal);
