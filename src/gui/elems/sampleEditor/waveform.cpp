@@ -241,7 +241,7 @@ void geWaveform::draw()
   }
 
   /* print grid */
-
+  
   fl_color(G_COLOR_GREY_3);
   fl_line_style(FL_DASH, 1, nullptr);
   for (int i=wx1; i<wx2; i++) {
@@ -252,7 +252,7 @@ void geWaveform::draw()
       break;
     }
   }
-  fl_line_style(FL_SOLID, 1, nullptr);
+  fl_line_style(FL_SOLID, 0, nullptr);
 
   /* border box */
 
