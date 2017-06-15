@@ -120,6 +120,14 @@ private:
 
   int applySnap(int pos);
 
+  /* draw*
+  Drawing functions. */
+
+  void drawSelection();
+  void drawWaveform(int from, int to);
+  void drawGrid(int from, int to);
+  void drawStartEndPoints();
+
 public:
 
 	geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l=0);

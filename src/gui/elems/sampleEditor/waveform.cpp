@@ -198,53 +198,53 @@ void geWaveform::recalcPoints()
 /* -------------------------------------------------------------------------- */
 
 
-void geWaveform::draw()
+void geWaveform::drawSelection()
 {
-  /* blank canvas */
+  if (!isSelected()) 
+    return;
 
-  fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);
+  int a_x = selection.aPixel + x() - BORDER; // - start;
+  int b_x = selection.bPixel + x() - BORDER; //  - start;
 
-  /* draw selection (if any) */
+  if (a_x < 0)
+    a_x = 0;
+  if (b_x >= w()-1)
+    b_x = w()-1;
 
-  if (isSelected()) {
+  if (selection.aPixel < selection.bPixel)
+    fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), G_COLOR_GREY_4);
+  else
+    fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), G_COLOR_GREY_4);
+}
 
-    int a_x = selection.aPixel + x() - BORDER; // - start;
-    int b_x = selection.bPixel + x() - BORDER; //  - start;
 
-    if (a_x < 0)
-      a_x = 0;
-    if (b_x >= w()-1)
-      b_x = w()-1;
+/* -------------------------------------------------------------------------- */
 
-    if (selection.aPixel < selection.bPixel)
-      fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), G_COLOR_GREY_4);
-    else
-      fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), G_COLOR_GREY_4);
-  }
 
+void geWaveform::drawWaveform(int from, int to)
+{
   /* draw waveform from x1 (offset driven by the scrollbar) to x2
    * (width of parent window). We don't draw the entire waveform,
    * only the visibile part. */
 
-  int offset = h() / 2;
-  int zero   = y() + offset; // sample zero (-inf dB)
-
-  int wx1 = abs(x() - parent()->x());
-  int wx2 = wx1 + parent()->w();
-  if (x()+w() < parent()->w())
-    wx2 = x() + w() - BORDER;
+  int zero = y() + (h() / 2); // zero amplitude (-inf dB)
 
   fl_color(G_COLOR_BLACK);
-  for (int i=wx1; i<wx2; i++) {
+  for (int i=from; i<to; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
   }
+}
 
-  /* print grid */
-  
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveform::drawGrid(int from, int to)
+{
   fl_color(G_COLOR_GREY_3);
   fl_line_style(FL_DASH, 1, nullptr);
-  for (int i=wx1; i<wx2; i++) {
+  for (int i=from; i<to; i++) {
     for (unsigned k=0; k<grid.points.size(); k++) {
       if (grid.points.at(k) != i) 
         continue;
@@ -253,11 +253,14 @@ void geWaveform::draw()
     }
   }
   fl_line_style(FL_SOLID, 0, nullptr);
+}
 
-  /* border box */
 
-  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
+/* -------------------------------------------------------------------------- */
 
+
+void geWaveform::drawStartEndPoints()
+{
   /* print chanStart */
 
   int lineX = x()+chanStart+1;
@@ -282,12 +285,35 @@ void geWaveform::draw()
   if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
   else            fl_color(G_COLOR_LIGHT_1);
 
+  /* vertical line */
+
   fl_line(lineX, y()+1, lineX, y()+h()-2);
 
   if (lineX-FLAG_WIDTH < x())
     fl_rectf(x()+1, y()+1, lineX-x(), FLAG_HEIGHT);
   else
     fl_rectf(lineX-FLAG_WIDTH, y()+1, FLAG_WIDTH, FLAG_HEIGHT);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveform::draw()
+{
+  fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
+
+  int from = abs(x() - parent()->x());
+  int to = from + parent()->w();
+  if (x() + w() < parent()->w())
+    to = x() + w() - BORDER;
+
+  drawSelection();
+  drawWaveform(from, to);
+  drawGrid(from, to);
+  drawStartEndPoints();
+
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
 }
 
 
@@ -706,3 +732,4 @@ int geWaveform::getSelectionB()
 {
   return selection.bFrame;
 }
+
