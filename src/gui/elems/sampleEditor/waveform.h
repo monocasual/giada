@@ -138,11 +138,6 @@ public:
 
 	void recalcPoints();
 
-	/* displayRatio
-	 * how much of the waveform is being displayed on screen */
-
-	float displayRatio();
-
 	/* zoom
 	 * type == 1 : zoom out, type == -1: zoom in */
 
@@ -188,12 +183,9 @@ public:
 	bool pushed;
 	bool dragged;
 	bool resized;
-
 	float ratio;
-
-  /* TODO - useless! use Fl::mouse_x() and Fl::mouse_y() instead */
-	int  mouseX;					 // mouse pos for drag.n.drop
-	int  mouseY;
+	int mouseX;
+	int mouseY;
 };
 
 

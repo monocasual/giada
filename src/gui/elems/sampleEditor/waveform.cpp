@@ -675,14 +675,6 @@ bool geWaveform::smaller()
 /* -------------------------------------------------------------------------- */
 
 
-float geWaveform::displayRatio()
-{
-    return 1.0f / (data.size / (float) w());
-};
-
-/* -------------------------------------------------------------------------- */
-
-
 void geWaveform::setGridLevel(int l)
 {
   grid.points.clear();
