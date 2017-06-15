@@ -238,20 +238,21 @@ void geWaveform::draw()
   for (int i=wx1; i<wx2; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
+  }
 
-    /* print grid */
+  /* print grid */
 
+  fl_color(G_COLOR_GREY_3);
+  fl_line_style(FL_DASH, 1, nullptr);
+  for (int i=wx1; i<wx2; i++) {
     for (unsigned k=0; k<grid.points.size(); k++) {
-      if (grid.points.at(k) == i) {
-        fl_color(G_COLOR_GREY_3);
-        fl_line_style(FL_DASH, 0, nullptr);
-        fl_line(i+x(), y(), i+x(), y()+h());
-        fl_color(G_COLOR_BLACK);
-        fl_line_style(FL_SOLID, 0, nullptr);
-        break;
-      }
+      if (grid.points.at(k) != i) 
+        continue;
+      fl_line(i+x(), y(), i+x(), y()+h());
+      break;
     }
   }
+  fl_line_style(FL_SOLID, 1, nullptr);
 
   /* border box */
 
@@ -560,126 +561,6 @@ int geWaveform::absolutePoint(int p)
 int geWaveform::relativePoint(int p)
 {
   return (ceil(p / ratio)) * 2;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geWaveform::openEditMenu()
-{
-  if (selection.aPixel == selection.bPixel)
-    return;
-
-  Fl_Menu_Item menu[] = {
-    {"Cut"},
-    {"Trim"},
-    {"Silence"},
-    {"Fade in"},
-    {"Fade out"},
-    {"Smooth edges"},
-    {"Set start/end here"},
-    {0}
-  };
-
-  if (chan->status == STATUS_PLAY) {
-    menu[0].deactivate();
-    menu[1].deactivate();
-  }
-
-  Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
-  b->box(G_CUSTOM_BORDER_BOX);
-  b->textsize(G_GUI_FONT_SIZE_BASE);
-  b->textcolor(G_COLOR_LIGHT_2);
-  b->color(G_COLOR_GREY_2);
-
-  const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-  if (!m) {
-    return;
-  }
-
-  if (strcmp(m->label(), "Silence") == 0) {
-    wfx_silence(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
-
-    selection.aPixel = 0;
-    selection.bPixel = 0;
-
-    stretchToWindow();
-    redraw();
-    return;
-  }
-
-  if (strcmp(m->label(), "Set start/end here") == 0) {
-
-    //glue_setBeginEndChannel(chan, absolutePoint(selection.aPixel) * 2, 
-    //  absolutePoint(selection.bPixel) * 2); // stereo values
-
-    selection.aPixel     = 0;
-    selection.bPixel     = 0;
-    selection.aFrame = 0;
-    selection.bFrame = 0;
-
-    recalcPoints();
-    redraw();
-    return;
-  }
-
-  if (strcmp(m->label(), "Cut") == 0) {
-    wfx_cut(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
-
-    /* for convenience reset start/end points */
-
-    //glue_setBeginEndChannel(chan, 0, chan->wave->size);
-
-    selection.aPixel     = 0;
-    selection.bPixel     = 0;
-    selection.aFrame = 0;
-    selection.bFrame = 0;
-
-    setZoom(0);
-
-    return;
-  }
-
-  if (strcmp(m->label(), "Trim") == 0) {
-    wfx_trim(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
-
-    //glue_setBeginEndChannel(chan, 0, chan->wave->size);
-
-    selection.aPixel     = 0;
-    selection.bPixel     = 0;
-    selection.aFrame = 0;
-    selection.bFrame = 0;
-
-    stretchToWindow();
-    redraw();
-    return;
-  }
-
-  if (!strcmp(m->label(), "Fade in") || !strcmp(m->label(), "Fade out")) {
-
-    int type = !strcmp(m->label(), "Fade in") ? 0 : 1;
-    wfx_fade(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel), type);
-
-    selection.aPixel = 0;
-    selection.bPixel = 0;
-
-    stretchToWindow();
-    redraw();
-    return;
-  }
-
-  if (!strcmp(m->label(), "Smooth edges")) {
-
-    wfx_smooth(chan->wave, absolutePoint(selection.aPixel), absolutePoint(selection.bPixel));
-
-    selection.aPixel = 0;
-    selection.bPixel = 0;
-
-    stretchToWindow();
-    redraw();
-    return;
-  }
 }
 
 

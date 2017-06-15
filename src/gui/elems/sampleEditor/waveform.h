@@ -138,11 +138,6 @@ public:
 
 	void recalcPoints();
 
-	/* openEditMenu
-	 * show edit menu on right-click */
-
-	void openEditMenu();
-
 	/* displayRatio
 	 * how much of the waveform is being displayed on screen */
 
