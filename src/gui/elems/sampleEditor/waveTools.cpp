@@ -37,7 +37,7 @@
 #include "waveTools.h"
 
 
-using namespace giada::c;
+using namespace giada;
 
 
 namespace
@@ -67,25 +67,25 @@ void menuCallback(Fl_Widget* w, void* v)
 
   switch (selectedItem) {
   	case Menu::CUT:
-      sampleEditor::cut(wavetools->ch, a, b);
+      c::sampleEditor::cut(wavetools->ch, a, b);
   		break;
   	case Menu::TRIM:
-      sampleEditor::trim(wavetools->ch, a, b);
+      c::sampleEditor::trim(wavetools->ch, a, b);
   		break;
   	case Menu::SILENCE:
-  		sampleEditor::silence(wavetools->ch, a, b);
+  		c::sampleEditor::silence(wavetools->ch, a, b);
   		break;	
   	case Menu::FADE_IN:
-  		sampleEditor::fade(wavetools->ch, a, b, 0);
+  		c::sampleEditor::fade(wavetools->ch, a, b, 0);
   		break;
   	case Menu::FADE_OUT:
-  		sampleEditor::fade(wavetools->ch, a, b, 1);
+  		c::sampleEditor::fade(wavetools->ch, a, b, 1);
   		break;
   	case Menu::SMOOTH_EDGES:
-  		sampleEditor::smoothEdges(wavetools->ch, a, b);
+  		c::sampleEditor::smoothEdges(wavetools->ch, a, b);
   		break;
   	case Menu::SET_START_END:
-  		sampleEditor::setStartEnd(wavetools->ch, a, b);
+  		c::sampleEditor::setStartEnd(wavetools->ch, a, b);
   		break;
   }
 }
@@ -106,9 +106,6 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const ch
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	waveform = new geWaveform(x, y, w, h-24, ch);
-
-
-	//resizable(waveform);
 }
 
 
@@ -118,8 +115,17 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const ch
 
 void geWaveTools::updateWaveform()
 {
-	waveform->alloc(w());
-	waveform->redraw();
+	waveform->refresh();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveTools::redrawWaveformAsync()
+{
+	if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+		waveform->redraw();
 }
 
 

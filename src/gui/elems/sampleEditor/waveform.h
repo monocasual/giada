@@ -127,6 +127,7 @@ private:
   void drawWaveform(int from, int to);
   void drawGrid(int from, int to);
   void drawStartEndPoints();
+  void drawPlayHead();
 
 public:
 

@@ -263,7 +263,7 @@ void geWaveform::drawStartEndPoints()
 {
   /* print chanStart */
 
-  int lineX = x()+chanStart+1;
+  int lineX = chanStart + x();
 
   if (chanStartLit) fl_color(G_COLOR_LIGHT_2);
   else              fl_color(G_COLOR_LIGHT_1);
@@ -281,7 +281,7 @@ void geWaveform::drawStartEndPoints()
 
   /* print chanEnd */
 
-  lineX = x()+chanEnd;
+  lineX = chanEnd + x();
   if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
   else            fl_color(G_COLOR_LIGHT_1);
 
@@ -299,9 +299,21 @@ void geWaveform::drawStartEndPoints()
 /* -------------------------------------------------------------------------- */
 
 
+void geWaveform::drawPlayHead()
+{
+  int p = (chan->tracker / ratio) + x();
+  fl_color(G_COLOR_LIGHT_2);
+  fl_line(p, y() + 1, p, y() + h() - 2);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geWaveform::draw()
 {
   fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
 
   int from = abs(x() - parent()->x());
   int to = from + parent()->w();
@@ -312,8 +324,8 @@ void geWaveform::draw()
   drawWaveform(from, to);
   drawGrid(from, to);
   drawStartEndPoints();
+  drawPlayHead();
 
-  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
 }
 
 

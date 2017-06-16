@@ -51,7 +51,18 @@ public:
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 
+	/* updateWaveform
+	Updates the waveform by realloc-ing new data (i.e. when the waveform has
+	changed). */
+
 	void updateWaveform();
+
+	/* redrawWaveformAsync
+	Redraws the waveform, called by the video thread. This is meant to be called
+	repeatedly when you need to update the play head inside the waveform. The
+	method is smart enough to skip painting if the channel is stopped. */
+
+	void redrawWaveformAsync();
 };
 
 #endif

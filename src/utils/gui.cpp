@@ -44,12 +44,14 @@
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/gd_actionEditor.h"
 #include "../gui/dialogs/window.h"
+#include "../gui/dialogs/sampleEditor.h"
 #include "../gui/elems/mainWindow/mainIO.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/elems/mainWindow/beatMeter.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
+#include "../gui/elems/sampleEditor/waveTools.h"
 #include "log.h"
 #include "string.h"
 #include "gui.h"
@@ -81,6 +83,12 @@ void gu_refreshUI()
 	blinker++;
 	if (blinker > 12)
 		blinker = 0;
+
+	/* If Sample Editor is open, repaint it (for dynamic play head). */
+
+	gdSampleEditor* se = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (se)
+		se->waveTools->redrawWaveformAsync();
 
 	/* redraw GUI */
 
