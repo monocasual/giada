@@ -223,14 +223,15 @@ void geWaveform::drawSelection()
 
 void geWaveform::drawWaveform(int from, int to)
 {
-  /* draw waveform from x1 (offset driven by the scrollbar) to x2
-   * (width of parent window). We don't draw the entire waveform,
-   * only the visibile part. */
+  /* Add 1 px offset to avoid drawing over the frame. */
+
+  from += 1;
+  to -= 1;
 
   int zero = y() + (h() / 2); // zero amplitude (-inf dB)
 
   fl_color(G_COLOR_BLACK);
-  for (int i=from; i<to; i++) {
+  for (int i=from + 1; i<to; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
   }
@@ -301,7 +302,7 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-  int p = (chan->tracker / ratio) + x();
+  int p = ceilf(chan->tracker / ratio) + x();
   fl_color(G_COLOR_LIGHT_2);
   fl_line(p, y() + 1, p, y() + h() - 2);
 }
@@ -314,6 +315,9 @@ void geWaveform::draw()
 {
   fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
+
+  /* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of 
+  parent window). We don't draw the entire waveform, only the visibile part. */
 
   int from = abs(x() - parent()->x());
   int to = from + parent()->w();
@@ -369,7 +373,7 @@ int geWaveform::handle(int e)
         fixSelection();
 
       /* Handle begin/end markers interaction. */
-      
+
       if (chanStartLit || chanEndLit) {
         int realChanStart = chan->begin;
         int realChanEnd   = chan->end;
