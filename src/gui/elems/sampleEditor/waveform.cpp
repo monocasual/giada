@@ -371,13 +371,14 @@ int geWaveform::handle(int e)
       int realChanStart = chan->begin;
       int realChanEnd   = chan->end;
 
-      if (chanStartLit)
-        realChanStart = absolutePoint(chanStart) * 2;
-      else
-      if (chanEndLit)
-        realChanEnd = absolutePoint(chanEnd) * 2;
-
-      sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
+      if (chanStartLit || chanEndLit) {
+        if (chanStartLit)
+          realChanStart = absolutePoint(chanStart) * 2;
+        else
+        if (chanEndLit)
+          realChanEnd = absolutePoint(chanEnd) * 2;
+        sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
+      }
 
       pushed  = false;
       dragged = false;
