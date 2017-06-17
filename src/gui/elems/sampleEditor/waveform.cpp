@@ -368,10 +368,11 @@ int geWaveform::handle(int e)
       if (dragged || resized)
         fixSelection();
 
-      int realChanStart = chan->begin;
-      int realChanEnd   = chan->end;
-
+      /* Handle begin/end markers interaction. */
+      
       if (chanStartLit || chanEndLit) {
+        int realChanStart = chan->begin;
+        int realChanEnd   = chan->end;
         if (chanStartLit)
           realChanStart = absolutePoint(chanStart) * 2;
         else
