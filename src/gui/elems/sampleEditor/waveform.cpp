@@ -61,8 +61,6 @@ geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char
 
   grid.snap  = conf::sampleEditorGridOn;
   grid.level = conf::sampleEditorGridVal;
-
-  stretchToWindow();
 }
 
 
@@ -80,9 +78,9 @@ geWaveform::~geWaveform()
 
 void geWaveform::freeData()
 {
-  if (data.sup != nullptr) {
-    free(data.sup);
-    free(data.inf);
+  if (data.sup) {
+    delete[] data.sup;
+    delete[] data.inf;
     data.sup  = nullptr;
     data.inf  = nullptr;
     data.size = 0;
@@ -104,8 +102,11 @@ int geWaveform::alloc(int datasize)
   freeData();
 
   data.size = datasize;
-  data.sup  = (int*) malloc(data.size * sizeof(int));
-  data.inf  = (int*) malloc(data.size * sizeof(int));
+  data.sup  = new (std::nothrow) int[data.size];
+  data.inf  = new (std::nothrow) int[data.size];
+
+  if (!data.sup || !data.inf)
+    return 0;
 
   int offset = h() / 2;
   int zero   = y() + offset; // center, zero amplitude (-inf dB)
@@ -640,48 +641,47 @@ void geWaveform::clearSel()
 
 void geWaveform::setZoom(int type)
 {
-  int newSize;
-  if (type == -1) newSize = data.size*2;  // zoom in
-  else            newSize = data.size/2;  // zoom out
+  int newSize = type == ZOOM_IN ? data.size * 2 : data.size / 2;
 
-  if (alloc(newSize)) {
-    size(data.size, h());
+  if (!alloc(newSize)) 
+    return;
 
-    /* zoom to pointer */
+  size(newSize, h());
 
-    int shift;
-    if (x() > 0)
-      shift = Fl::event_x() - x();
-    else
-    if (type == -1)
-      shift = Fl::event_x() + abs(x());
-    else
-      shift = (Fl::event_x() + abs(x())) / -2;
+  /* zoom to pointer */
 
-    if (x() - shift > BORDER)
-      shift = 0;
+  int shift;
+  if (x() > 0)
+    shift = Fl::event_x() - x();
+  else
+  if (type == ZOOM_IN)
+    shift = Fl::event_x() + abs(x());
+  else
+    shift = (Fl::event_x() + abs(x())) / -2;
 
-    position(x() - shift, y());
+  if (x() - shift > BORDER)
+    shift = 0;
+
+  position(x() - shift, y());
 
 
-    /* avoid overflow when zooming out with scrollbar like that:
-     * |----------[scrollbar]|
-     *
-     * offset vs smaller:
-     * |[wave------------| offset > 0  smaller = false
-     * |[wave----]       | offset < 0, smaller = true
-     * |-------------]   | offset < 0, smaller = false  */
+  /* avoid overflow when zooming out with scrollbar like that:
+   * |----------[scrollbar]|
+   *
+   * offset vs smaller:
+   * |[wave------------| offset > 0  smaller = false
+   * |[wave----]       | offset < 0, smaller = true
+   * |-------------]   | offset < 0, smaller = false  */
 
-    int  parentW = parent()->w();
-    int  thisW   = x() + w() - BORDER;           // visible width, not full width
+  int  parentW = parent()->w();
+  int  thisW   = x() + w() - BORDER;           // visible width, not full width
 
-    if (thisW < parentW)
-      position(x() + parentW - thisW, y());
-    if (smaller())
-      stretchToWindow();
+  if (thisW < parentW)
+    position(x() + parentW - thisW, y());
+  if (smaller())
+    stretchToWindow();
 
-    redraw();
-  }
+  redraw();
 }
 
 

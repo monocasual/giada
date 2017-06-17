@@ -61,8 +61,8 @@ private:
 
 	struct
   {
-		int *sup;   // upper part of the waveform
-		int *inf;   // lower ""   "" ""  ""
+		int* sup;   // upper part of the waveform
+		int* inf;   // lower ""   "" ""  ""
 		int  size;  // width of the waveform to draw (in pixel)
 	} data;
 
@@ -130,6 +130,9 @@ private:
   void drawPlayHead();
 
 public:
+
+	static const int ZOOM_IN  = -1;
+	static const int ZOOM_OUT = 0;
 
 	geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l=0);
 	~geWaveform();
