@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <cmath>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
@@ -61,6 +62,8 @@ geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char
 
   grid.snap  = conf::sampleEditorGridOn;
   grid.level = conf::sampleEditorGridVal;
+
+  alloc(w);
 }
 
 
@@ -314,6 +317,9 @@ void geWaveform::drawPlayHead()
 
 void geWaveform::draw()
 {
+  assert(data.sup != nullptr);
+  assert(data.inf != nullptr);
+
   fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
 
@@ -330,7 +336,6 @@ void geWaveform::draw()
   drawGrid(from, to);
   drawStartEndPoints();
   drawPlayHead();
-
 }
 
 
