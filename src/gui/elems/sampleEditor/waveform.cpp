@@ -227,15 +227,10 @@ void geWaveform::drawSelection()
 
 void geWaveform::drawWaveform(int from, int to)
 {
-  /* Add 1 px offset to avoid drawing over the frame. */
-
-  from += 1;
-  to -= 1;
-
   int zero = y() + (h() / 2); // zero amplitude (-inf dB)
 
   fl_color(G_COLOR_BLACK);
-  for (int i=from + 1; i<to; i++) {
+  for (int i=from; i<to; i++) {
     fl_line(i+x(), zero, i+x(), data.sup[i]);
     fl_line(i+x(), zero, i+x(), data.inf[i]);
   }
@@ -321,7 +316,6 @@ void geWaveform::draw()
   assert(data.inf != nullptr);
 
   fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
-  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);  // border box
 
   /* Draw things from 'from' (offset driven by the scrollbar) to 'to' (width of 
   parent window). We don't draw the entire waveform, only the visibile part. */
@@ -336,6 +330,8 @@ void geWaveform::draw()
   drawGrid(from, to);
   drawStartEndPoints();
   drawPlayHead();
+
+  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);   // border box
 }
 
 
