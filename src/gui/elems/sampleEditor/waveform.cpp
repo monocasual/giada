@@ -207,8 +207,8 @@ void geWaveform::drawSelection()
   if (!isSelected()) 
     return;
 
-  int a_x = selection.aPixel + x() - BORDER; // - start;
-  int b_x = selection.bPixel + x() - BORDER; //  - start;
+  int a_x = selection.aPixel + x(); // - start;
+  int b_x = selection.bPixel + x(); //  - start;
 
   if (a_x < 0)
     a_x = 0;
@@ -216,9 +216,9 @@ void geWaveform::drawSelection()
     b_x = w()-1;
 
   if (selection.aPixel < selection.bPixel)
-    fl_rectf(a_x+BORDER, y(), b_x-a_x, h(), G_COLOR_GREY_4);
+    fl_rectf(a_x, y(), b_x-a_x, h(), G_COLOR_GREY_4);
   else
-    fl_rectf(b_x+BORDER, y(), a_x-b_x, h(), G_COLOR_GREY_4);
+    fl_rectf(b_x, y(), a_x-b_x, h(), G_COLOR_GREY_4);
 }
 
 
@@ -486,7 +486,6 @@ int geWaveform::handle(int e)
 
       else
       if (dragged) {
-
         selection.bPixel = Fl::event_x() - x();
 
         if (selection.bPixel >= data.size)
@@ -513,7 +512,7 @@ int geWaveform::handle(int e)
           selection.bPixel = grid.snap ? applySnap(pos) : pos;
         redraw();
       }
-      mouseX = Fl::event_x();
+      mouseX = Fl::event_x() + x();
       ret = 1;
       break;
     }
@@ -615,11 +614,8 @@ int geWaveform::relativePoint(int p)
 
 void geWaveform::fixSelection()
 {
-  if (selection.aPixel > selection.bPixel) {  // inverted selection, needs fix
-    unsigned tmp = selection.bPixel;
-    selection.bPixel = selection.aPixel;
-    selection.aPixel = tmp;  
-  }
+  if (selection.aPixel > selection.bPixel) // inverted selection
+    std::swap(selection.aPixel, selection.bPixel);
   selection.aFrame = absolutePoint(selection.aPixel);
   selection.bFrame = absolutePoint(selection.bPixel);
 }
