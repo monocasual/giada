@@ -434,10 +434,10 @@ int geWaveform::handle(int e)
         redraw();
       }
 
-      if (mouseOnSelectionA())
+      if (mouseOnSelectionA() && isSelected())
         fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
       else
-      if (mouseOnSelectionB())
+      if (mouseOnSelectionB() && isSelected())
         fl_cursor(FL_CURSOR_WE, FL_WHITE, FL_BLACK);
       else
         fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
@@ -570,8 +570,8 @@ bool geWaveform::mouseOnEnd()
 
 bool geWaveform::mouseOnSelectionA()
 {
-  if (!isSelected())
-    return false;
+  //if (!isSelected())
+  //  return false;
   return mouseX >= selection.aPixel - (FLAG_WIDTH / 2) + x() && 
          mouseX <= selection.aPixel + (FLAG_WIDTH / 2) + x();
 }
@@ -579,8 +579,8 @@ bool geWaveform::mouseOnSelectionA()
 
 bool geWaveform::mouseOnSelectionB()
 {
-  if (!isSelected())
-    return false;
+  //if (!isSelected())
+  //  return false;
   return mouseX >= selection.bPixel - (FLAG_WIDTH / 2) + x() && 
          mouseX <= selection.bPixel + (FLAG_WIDTH / 2) + x();
 }
