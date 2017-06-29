@@ -209,8 +209,8 @@ void geWaveform::drawSelection()
 
   if (a_x < 0)
     a_x = 0;
-  if (b_x >= w()-1)
-    b_x = w()-1;
+  if (b_x >= w() + BORDER)
+    b_x = w() + BORDER;
 
   if (selection.aPixel < selection.bPixel)
     fl_rectf(a_x, y(), b_x-a_x, h(), G_COLOR_GREY_4);
