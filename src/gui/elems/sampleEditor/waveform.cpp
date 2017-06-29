@@ -54,6 +54,10 @@ geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char
   chanStartLit(false),
   chanEnd     (0),
   chanEndLit  (false),
+  pushed      (false),
+  dragged     (false),
+  resizedA    (false),
+  resizedB    (false),
   ratio       (0.0f)
 {
   data.sup  = nullptr;
@@ -187,15 +191,8 @@ void geWaveform::recalcPoints()
 {
   selection.aPixel = relativePoint(selection.aFrame);
   selection.bPixel = relativePoint(selection.bFrame);
-  chanStart  = relativePoint(chan->begin / 2);
-
-  /* fix the rounding error when chanEnd is set on the very end of the
-   * sample */
-
-  if (chan->end == chan->wave->size)
-    chanEnd = data.size - 2; // 2 px border
-  else
-    chanEnd = relativePoint(chan->end / 2);
+  chanStart = relativePoint(chan->begin / 2);
+  chanEnd   = relativePoint(chan->end / 2);
 }
 
 
@@ -281,7 +278,7 @@ void geWaveform::drawStartEndPoints()
 
   /* print chanEnd */
 
-  lineX = chanEnd + x();
+  lineX = chanEnd + x() - 1;
   if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
   else            fl_color(G_COLOR_LIGHT_1);
 
@@ -328,10 +325,11 @@ void geWaveform::draw()
   drawSelection();
   drawWaveform(from, to);
   drawGrid(from, to);
-  drawStartEndPoints();
   drawPlayHead();
 
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);   // border box
+  
+  drawStartEndPoints();
 }
 
 
@@ -354,8 +352,11 @@ int geWaveform::handle(int e)
           ret = 0;
           break;
         }
-        if (mouseOnSelectionA() || mouseOnSelectionB())
-          resized = true;
+        if (mouseOnSelectionA())
+          resizedA = true;
+        else
+        if(mouseOnSelectionB())
+          resizedB = true;
         else {
           dragged = true;
           selection.aPixel = Fl::event_x() - x();
@@ -371,7 +372,7 @@ int geWaveform::handle(int e)
       /* If selection has been done (dragged or resized), make sure that point A 
       is always lower than B. */
 
-      if (dragged || resized)
+      if (dragged || resizedA || resizedB)
         fixSelection();
 
       /* Handle begin/end markers interaction. */
@@ -387,8 +388,10 @@ int geWaveform::handle(int e)
         sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
       }
 
-      pushed  = false;
-      dragged = false;
+      pushed   = false;
+      dragged  = false;
+      resizedA = false;
+      resizedB = false;
 
       redraw();
       ret = 1;
@@ -461,7 +464,7 @@ int geWaveform::handle(int e)
           chanStart = 0;
         else
         if (chanStart >= chanEnd)
-          chanStart = chanEnd-2;
+          chanStart = chanEnd - 2;
 
         redraw();
       }
@@ -473,8 +476,8 @@ int geWaveform::handle(int e)
         if (grid.snap)
           chanEnd = applySnap(chanEnd);
 
-        if (chanEnd >= data.size - 2)
-          chanEnd = data.size - 2;
+        if (chanEnd > data.size)
+          chanEnd = data.size;
         else
         if (chanEnd <= chanStart)
           chanEnd = chanStart + 2;
@@ -487,32 +490,23 @@ int geWaveform::handle(int e)
       else
       if (dragged) {
         selection.bPixel = Fl::event_x() - x();
-
-        if (selection.bPixel >= data.size)
-          selection.bPixel = data.size;
-
-        if (selection.bPixel <= 0)
-          selection.bPixel = 0;
-
         if (grid.snap)
           selection.bPixel = applySnap(selection.bPixel);
-
         redraw();
       }
 
       /* here the mouse is on a selection boundary i.e. resize */
 
       else
-      if (resized) {
+      if (resizedA || resizedB) {
         int pos = Fl::event_x() - x();
-        if (mouseOnSelectionA())
-          selection.aPixel = grid.snap ? applySnap(pos) : pos;
-        else
-        if (mouseOnSelectionB())
-          selection.bPixel = grid.snap ? applySnap(pos) : pos;
+        if (grid.snap)
+          pos = applySnap(pos);
+        resizedA ? selection.aPixel = pos : selection.bPixel = pos;
         redraw();
       }
-      mouseX = Fl::event_x() + x();
+
+      mouseX = Fl::event_x();
       ret = 1;
       break;
     }
@@ -569,8 +563,6 @@ bool geWaveform::mouseOnEnd()
 
 bool geWaveform::mouseOnSelectionA()
 {
-  //if (!isSelected())
-  //  return false;
   return mouseX >= selection.aPixel - (FLAG_WIDTH / 2) + x() && 
          mouseX <= selection.aPixel + (FLAG_WIDTH / 2) + x();
 }
@@ -578,8 +570,6 @@ bool geWaveform::mouseOnSelectionA()
 
 bool geWaveform::mouseOnSelectionB()
 {
-  //if (!isSelected())
-  //  return false;
   return mouseX >= selection.bPixel - (FLAG_WIDTH / 2) + x() && 
          mouseX <= selection.bPixel + (FLAG_WIDTH / 2) + x();
 }

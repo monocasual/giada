@@ -194,7 +194,8 @@ public:
 	bool chanEndLit;
 	bool pushed;
 	bool dragged;
-	bool resized;
+	bool resizedA;
+	bool resizedB;
 	float ratio;
 	int mouseX;
 	int mouseY;
