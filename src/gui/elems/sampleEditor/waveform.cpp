@@ -298,6 +298,8 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
+  if (chan->status == STATUS_OFF)
+    return;
   int p = ceilf(chan->tracker / ratio) + x();
   fl_color(G_COLOR_LIGHT_2);
   fl_line(p, y() + 1, p, y() + h() - 2);
