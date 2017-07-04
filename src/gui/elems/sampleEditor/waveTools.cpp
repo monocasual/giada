@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "../../../core/const.h"
 #ifdef G_OS_MAC  // our Clang still doesn't know about cstdint (c++11 stuff)
 	#include <stdint.h>
 #else
@@ -32,7 +33,6 @@
 #endif
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
-#include "../../../core/const.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../core/waveFx.h"
 #include "../../../glue/sampleEditor.h"
