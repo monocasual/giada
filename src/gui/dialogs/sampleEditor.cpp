@@ -123,7 +123,10 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
   grid->add("16");
   grid->add("32");
   grid->add("64");
-  grid->value(grid->find_item(gu_itoa(conf::sampleEditorGridVal).c_str()));
+  if (conf::sampleEditorGridVal == 0)
+    grid->value(0);
+  else 
+    grid->value(grid->find_item(gu_itoa(conf::sampleEditorGridVal).c_str()));
   grid->callback(cb_changeGrid, (void*)this);
 
   snap->value(conf::sampleEditorGridOn);
