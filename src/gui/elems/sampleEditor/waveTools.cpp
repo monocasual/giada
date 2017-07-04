@@ -25,7 +25,11 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <cstdint>
+#ifdef G_OS_MAC  // our Clang still doesn't know about cstdint (c++11 stuff)
+	#include <stdint.h>
+#else
+	#include <cstdint>
+#endif
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
 #include "../../../core/const.h"
