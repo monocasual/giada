@@ -38,7 +38,7 @@
 #include <sys/stat.h>   // stat (gu_dirExists)
 #include <errno.h>
 #include <cstdlib>
-#ifdef __APPLE__  // our Clans still doesn't know about cstdint (c++11 stuff)
+#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
 	#include <stdint.h>
 #else
 	#include <cstdint>
