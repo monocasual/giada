@@ -29,6 +29,21 @@
 #define G_CONST_H
 
 
+/* -- environment ----------------------------------------------------------- */
+#if defined(_WIN32)
+	#define G_OS_WINDOWS
+#elif defined(__APPLE__)
+	#define G_OS_MAC
+#elif defined(__linux__)
+	#define G_OS_LINUX
+#endif
+
+#ifndef BUILD_DATE
+	#define BUILD_DATE __DATE__
+#endif
+
+
+
 /* -- version --------------------------------------------------------------- */
 #define G_APP_NAME      "Giada"
 #define G_VERSION_STR   "0.14.1"
@@ -38,11 +53,7 @@
 
 #define CONF_FILENAME "giada.conf"
 
-#ifndef BUILD_DATE
-	#define BUILD_DATE __DATE__
-#endif
-
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 	#define G_SLASH '\\'
 	#define G_SLASH_STR "\\"
 #else
@@ -52,7 +63,7 @@
 
 
 /* -- GUI ------------------------------------------------------------------- */
-#ifdef _WIN32
+#ifdef G_OS_WINDOWS
 	#define G_GUI_SLEEP			1000/24
 #else
 	#define G_GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
@@ -110,11 +121,11 @@
 
 
 /* -- default system -------------------------------------------------------- */
-#if defined(__linux__)
+#if defined(G_OS_LINUX)
 	#define G_DEFAULT_SOUNDSYS	G_SYS_API_NONE
-#elif defined(_WIN32)
+#elif defined(G_OS_WINDOWS)
 	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_DS
-#elif defined(__APPLE__)
+#elif defined(G_OS_MAC)
 	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_CORE
 #endif
 
