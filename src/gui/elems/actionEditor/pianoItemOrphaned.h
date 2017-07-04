@@ -40,8 +40,6 @@ class gePianoItemOrphaned : public geBasePianoItem
 {
 private:
 
-  struct giada::m::recorder::action *action;
-
 	int note;
 	int frame;
 	int event;

@@ -42,8 +42,7 @@ using namespace giada::m;
 
 gePianoItemOrphaned::gePianoItemOrphaned(int x, int y, int xRel, int yRel,
   recorder::action *action, gdActionEditor *pParent)
-  : geBasePianoItem(x, y, WIDTH, pParent),
-    action         (action)
+  : geBasePianoItem(x, y, WIDTH, pParent)
 {
   note  = kernelMidi::getB2(action->iValue);
   frame = action->frame;
