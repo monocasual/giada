@@ -302,12 +302,6 @@ pluginHost::PluginInfo getAvailablePluginInfo(int i)
   pi.manufacturerName = pd->manufacturerName.toStdString();
   pi.format = pd->pluginFormatName.toStdString();
   pi.isInstrument = pd->isInstrument;
-/*
-  if (!p) {
-    gu_log("[pluginHost::getAvailablePlugin] unable to create plugin instance!\n");
-    return nullptr;
-  }
-  */
   return pi;
 }
 
