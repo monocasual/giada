@@ -253,7 +253,6 @@ endif
 # via AM_CONDITIONAL inside configure.ac.
 # Note: CPPFLAGS = C preprocessor flags, CXXFLAGS = C++ compiler flags.
 
-# TODO add -DNDEBUG for production code
 giada_CXXFLAGS = -std=c++11 -Wall -Werror
 giada_CPPFLAGS =
 
@@ -274,14 +273,16 @@ giada_CPPFLAGS +=                          \
   -DJUCE_STANDALONE_APPLICATION=1          \
   -DJUCE_PLUGINHOST_VST=1                  \
   -DJUCE_PLUGINHOST_VST3=0                 \
-  -DJUCE_PLUGINHOST_AU=0
+  -DJUCE_PLUGINHOST_AU=0                   \
+  -DJUCE_WEB_BROWSER=0 
 endif
 
 if LINUX
 giada_SOURCES += src/deps/rtaudio-mod/RtAudio.h src/deps/rtaudio-mod/RtAudio.cpp
-# -Wno-error=vla: mute rtAudio error on variable length array
-# -Wno-error=misleading-indentation: mute JUCE warnings on GCC6
-giada_CXXFLAGS += -Wno-error=vla -Wno-error=misleading-indentation
+# -Wno-error=vla: don't stop on rtAudio error on variable length array
+# -Wno-error=misleading-indentation: don't stop on JUCE warnings on GCC6
+# -Wno-error=unused-function: don't stop on JUCE's unused functions
+giada_CXXFLAGS += -Wno-error=vla -Wno-error=misleading-indentation -Wno-error=unused-function
 giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
   -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
@@ -300,11 +301,7 @@ src/deps/rtaudio-mod/include/asiodrivers.h            \
 src/deps/rtaudio-mod/include/asiodrivers.cpp          \
 src/deps/rtaudio-mod/include/iasiothiscallresolver.h  \
 src/deps/rtaudio-mod/include/iasiothiscallresolver.cpp
-# -Wno-error=misleading-indentation: mute JUCE warnings on GCC6
-# -Wno-error=unused-but-set-variable: silence ASIO errors
-giada_CXXFLAGS +=                  \
--Wno-error=misleading-indentation  \
--Wno-error=unused-but-set-variable
+giada_CXXFLAGS += -Wno-error
 giada_CPPFLAGS +=                \
 -I./src/deps/rtaudio-mod/include \
 -D__WINDOWS_ASIO__               \
@@ -319,9 +316,6 @@ giada_SOURCES += resource.rc
 endif
 
 if OSX
-# for 32 bit compilation:
-# export CXXFLAGS="-m32"
-# export LDFLAGS="-m32"
 # -ObjC++: Juce requires to build some Objective C code
 # -Wno-unknown-pragmas: shut up Juce even more
 giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h
