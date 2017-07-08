@@ -279,10 +279,9 @@ endif
 
 if LINUX
 giada_SOURCES += src/deps/rtaudio-mod/RtAudio.h src/deps/rtaudio-mod/RtAudio.cpp
-# -Wno-error=vla: don't stop on rtAudio error on variable length array
 # -Wno-error=misleading-indentation: don't stop on JUCE warnings on GCC6
 # -Wno-error=unused-function: don't stop on JUCE's unused functions
-giada_CXXFLAGS += -Wno-error=vla -Wno-error=misleading-indentation -Wno-error=unused-function
+giada_CXXFLAGS += -Wno-error=misleading-indentation -Wno-error=unused-function
 giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
   -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
