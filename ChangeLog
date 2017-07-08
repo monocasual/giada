@@ -13,9 +13,11 @@
 
 
 0.14.1 --- 
+- Update JUCE library to 5.0.2
 - Show play head in Sample Editor
 - Refactor pop up menu in Sample Editor
 - Many small fixes and optimizations in waveform drawing routine
+- Makefile cleanup
 - Fix crash while recording with beats/bars greater than 4/1 (GitHub #134)
 
 
