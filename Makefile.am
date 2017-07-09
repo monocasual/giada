@@ -382,7 +382,8 @@ giada_tests_CPPFLAGS =                     \
   -DJUCE_STANDALONE_APPLICATION=1          \
   -DJUCE_PLUGINHOST_VST=1                  \
   -DJUCE_PLUGINHOST_VST3=0                 \
-  -DJUCE_PLUGINHOST_AU=0
+  -DJUCE_PLUGINHOST_AU=0                   \
+  -DJUCE_WEB_BROWSER=0 
 endif
 
 # make rename ------------------------------------------------------------------
