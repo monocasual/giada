@@ -37,8 +37,8 @@ float wfx_normalizeSoft(Wave *w)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
-	for (int i=0; i<w->size; i++) { // i++: both L and R samples
-		abs = fabs(w->data[i]);
+	for (int i=0; i<w->getSize(); i++) { // i++: both L and R samples
+		abs = fabs(w->getData()[i]);
 		if (abs > peak)
 			peak = abs;
 	}
@@ -58,24 +58,24 @@ float wfx_normalizeSoft(Wave *w)
 
 bool wfx_monoToStereo(Wave *w)
 {
-	unsigned newSize = w->size * 2;
+	unsigned newSize = w->getSize() * 2;
 	float *dataNew = (float *) malloc(newSize * sizeof(float));
 	if (dataNew == nullptr) {
 		gu_log("[wfx] unable to allocate memory for mono>stereo conversion\n");
 		return 0;
 	}
 
-	for (int i=0, j=0; i<w->size; i++) {
-		dataNew[j]   = w->data[i];
-		dataNew[j+1] = w->data[i];
+	for (int i=0, j=0; i<w->getSize(); i++) {
+		dataNew[j]   = w->getData()[i];
+		dataNew[j+1] = w->getData()[i];
 		j+=2;
 	}
 
-	free(w->data);
-	w->data = dataNew;
-	w->size = newSize;
-	w->frames(w->frames()*2);
-	w->channels(2);
+	free(w->getData());
+	w->setData(dataNew);
+	w->setSize(newSize);
+	w->setFrames(w->getFrames()*2);
+	w->setChannels(2);
 
 	return 1;
 }
@@ -93,11 +93,11 @@ void wfx_silence(Wave *w, int a, int b)
 	gu_log("[wfx] silencing from %d to %d\n", a, b);
 
 	for (int i=a; i<b; i+=2) {
-		w->data[i]   = 0.0f;
-		w->data[i+1] = 0.0f;
+		w->getData()[i]   = 0.0f;
+		w->getData()[i+1] = 0.0f;
 	}
 
-	w->isEdited = true;
+	w->setEdited(true);
 
 	return;
 }
@@ -112,12 +112,12 @@ int wfx_cut(Wave *w, int a, int b)
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > w->size) b = w->size;
+	if (b > w->getSize()) b = w->getSize();
 
 	/* create a new temp wave and copy there the original one, skipping
 	 * the a-b range */
 
-	unsigned newSize = w->size-(b-a);
+	unsigned newSize = w->getSize() - (b - a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == nullptr) {
 		gu_log("[wfx] unable to allocate memory for cutting\n");
@@ -127,19 +127,18 @@ int wfx_cut(Wave *w, int a, int b)
 	gu_log("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", 
 		a, b, newSize, newSize/2);
 
-	for (int i=0, k=0; i<w->size; i++) {
+	for (int i=0, k=0; i<w->getSize(); i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep
-			temp[k] = w->data[i];   // the stereo pair
+			temp[k] = w->getData()[i];   // the stereo pair
 			k++;
 		}
 	}
 
-	free(w->data);
-	w->data = temp;
-	w->size = newSize;
-	//w->inHeader.frames -= b-a;
-	w->frames(w->frames() - b - a);
-	w->isEdited = true;
+	free(w->getData());
+	w->setData(temp);
+	w->setSize(newSize);
+	w->setFrames(w->getFrames() - b - a);
+	w->setEdited(true);
 
 	gu_log("[wfx] cutting done\n");
 
@@ -156,7 +155,7 @@ int wfx_trim(Wave *w, int a, int b)
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > w->size) b = w->size;
+	if (b > w->getSize()) b = w->getSize();
 
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));
@@ -168,14 +167,13 @@ int wfx_trim(Wave *w, int a, int b)
 	gu_log("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
 	for (int i=a, k=0; i<b; i++, k++)
-		temp[k] = w->data[i];
+		temp[k] = w->getData()[i];
 
-	free(w->data);
-	w->data = temp;
-	w->size = newSize;
-	//w->inHeader.frames = b-a;
-	w->frames(b - a);
- 	w->isEdited = true;
+	free(w->getData());
+	w->setData(temp);
+	w->setSize(newSize);
+	w->setFrames(b - a);
+ 	w->setEdited(true);
 
 	return 1;
 }
@@ -195,12 +193,12 @@ void wfx_fade(Wave *w, int a, int b, int type)
 	b *= 2;
 
 	for (int i=a; i<b; i+=2) {
-		w->data[i]   *= m;
-		w->data[i+1] *= m;
+		w->getData()[i]   *= m;
+		w->getData()[i+1] *= m;
 		m += d;
 	}
 
-  w->isEdited = true;
+  w->setEdited(true);
 }
 
 

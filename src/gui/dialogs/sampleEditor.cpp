@@ -141,14 +141,14 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   /* logical samples (aka takes) cannot be reloaded. So far. */
 
-  if (ch->wave->isLogical)
+  if (ch->wave->isLogical())
     reload->deactivate();
 
   gu_setFavicon(this);
   size_range(640, 480);
   resizable(waveTools);
 
-  label(ch->wave->name.c_str());
+  label(ch->wave->getName().c_str());
 
   set_non_modal();
 
@@ -202,7 +202,7 @@ void gdSampleEditor::__cb_reload()
 
   /* no need for glue_loadChan, there's no gui to refresh */
 
-  ch->load(ch->wave->pathfile.c_str(), conf::samplerate, conf::rsmpQuality);
+  ch->load(ch->wave->getPath().c_str(), conf::samplerate, conf::rsmpQuality);
 
   glue_setBoost(ch, G_DEFAULT_BOOST);
   glue_setPitch(ch, G_DEFAULT_PITCH);
@@ -214,7 +214,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->size);
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
 
   redraw();
 }

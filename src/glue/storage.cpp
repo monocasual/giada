@@ -329,12 +329,12 @@ void glue_saveProject(void *data)
 		/* update the new samplePath: everything now comes from the project
 		 * folder (folderPath). Also remove any existing file. */
 
-		string samplePath = fullPath + G_SLASH + ch->wave->basename(true);
+		string samplePath = fullPath + G_SLASH + ch->wave->getBasename(true);
 
 		if (gu_fileExists(samplePath))
 			remove(samplePath.c_str());
 		if (ch->save(samplePath.c_str()))
-			ch->wave->pathfile = samplePath;
+			ch->wave->setPath(samplePath);
 	}
 
 	string gptcPath = fullPath + G_SLASH + gu_stripExt(name) + ".gptc";

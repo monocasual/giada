@@ -43,10 +43,10 @@ using std::string;
 
 
 Wave::Wave()
-: data     (nullptr),
-	size     (0),
-	isLogical(0),
-	isEdited (0) {}
+: data   (nullptr),
+	size   (0),
+	logical(0),
+	edited (0) {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -61,39 +61,39 @@ Wave::~Wave()
 /* -------------------------------------------------------------------------- */
 
 
-Wave::Wave(const Wave &other)
-: data     (nullptr),
-	size     (0),
-	isLogical(false),
-	isEdited (false)
+Wave::Wave(const Wave& other)
+: data   (nullptr),
+	size   (0),
+	logical(false),
+	edited (false)
 {
 	size = other.size;
 	data = new float[size];
 	memcpy(data, other.data, size * sizeof(float));
 	memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
-	pathfile = other.pathfile;
+	path = other.path;
 	name = other.name;
-	isLogical = true;
+	logical = true;
 }
 
 /* -------------------------------------------------------------------------- */
 
 
-int Wave::open(const char *f)
+int Wave::open(const char* f)
 {
-	pathfile = f;
+	path = f;
 	name     = gu_stripExt(gu_basename(f));
 	fileIn   = sf_open(f, SFM_READ, &inHeader);
 
 	if (fileIn == nullptr) {
 		gu_log("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
-		pathfile = "";
+		path = "";
 		name     = "";
 		return 0;
 	}
 
-	isLogical = false;
-	isEdited  = false;
+	logical = false;
+	edited  = false;
 
 	return 1;
 }
@@ -118,7 +118,7 @@ int Wave::open(const char *f)
 int Wave::readData()
 {
 	size = inHeader.frames * inHeader.channels;
-	data = (float *) malloc(size * sizeof(float));
+	data = (float*) malloc(size * sizeof(float));
 	if (data == nullptr) {
 		gu_log("[wave] unable to allocate memory\n");
 		return 0;
@@ -135,7 +135,7 @@ int Wave::readData()
 /* -------------------------------------------------------------------------- */
 
 
-int Wave::writeData(const char *f)
+int Wave::writeData(const char* f)
 {
 	/* prepare the header for output file */
 
@@ -155,8 +155,8 @@ int Wave::writeData(const char *f)
 		return 0;
 	}
 
-	isLogical = false;
-	isEdited  = false;
+	logical = false;
+	edited  = false;
 	sf_close(fileOut);
 	return 1;
 }
@@ -170,7 +170,7 @@ void Wave::clear()
 	if (data != nullptr) {
 		free(data);
 		data     = nullptr;
-		pathfile = "";
+		path = "";
 		size     = 0;
 	}
 }
@@ -185,7 +185,7 @@ int Wave::allocEmpty(unsigned __size, unsigned samplerate)
 
 	/// FIXME - this way if malloc fails size becomes wrong
 	size = __size;
-	data = (float *) malloc(size * sizeof(float));
+	data = (float*) malloc(size * sizeof(float));
 	if (data == nullptr) {
 		gu_log("[wave] unable to allocate memory\n");
 		return 0;
@@ -197,7 +197,7 @@ int Wave::allocEmpty(unsigned __size, unsigned samplerate)
 	inHeader.channels   = 2;
 	inHeader.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT; // wave only
 
-	isLogical = true;
+	logical = true;
 	return 1;
 }
 
@@ -244,26 +244,21 @@ int Wave::resample(int quality, int newRate)
 /* -------------------------------------------------------------------------- */
 
 
-string Wave::basename(bool ext) const
+string Wave::getBasename(bool ext) const
 {
-	return ext ? gu_basename(pathfile) : gu_stripExt(gu_basename(pathfile));
-}
-
-string Wave::extension() const
-{
-	return gu_getExt(pathfile);
+	return ext ? gu_basename(path) : gu_stripExt(gu_basename(path));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::updateName(const char *n)
+void Wave::setName(const string& n)
 {
-	string ext = gu_getExt(pathfile);
-	name       = gu_stripExt(gu_basename(n));
-	pathfile   = gu_dirname(pathfile) + G_SLASH + name + "." + ext;
-	isLogical  = true;
+	string ext = gu_getExt(path);
+	name = gu_stripExt(gu_basename(n));
+	path = gu_dirname(path) + G_SLASH + name + "." + ext;
+	logical  = true;
 
 	/* a wave with updated name must become logical, since the underlying
 	 * file does not exist yet. */
@@ -273,14 +268,24 @@ void Wave::updateName(const char *n)
 /* -------------------------------------------------------------------------- */
 
 
-int  Wave::rate    () { return inHeader.samplerate; }
-int  Wave::channels() { return inHeader.channels; }
-int  Wave::frames  () { return inHeader.frames; }
+int Wave::getRate() const { return inHeader.samplerate; }
+int Wave::getChannels() const { return inHeader.channels; }
+int Wave::getFrames() const { return inHeader.frames; }
+std::string Wave::getPath() const { return path; }
+std::string Wave::getName() const { return name; }
+float* Wave::getData() const { return data; }
+int Wave::getSize() const { return size; }
+bool Wave::isLogical() const { return logical; }
+bool Wave::isEdited() const { return edited; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::rate    (int v) { inHeader.samplerate = v; }
-void Wave::channels(int v) { inHeader.channels = v; }
-void Wave::frames  (int v) { inHeader.frames = v; }
+void Wave::setRate(int v) { inHeader.samplerate = v; }
+void Wave::setChannels(int v) { inHeader.channels = v; }
+void Wave::setFrames(int v) { inHeader.frames = v; }
+void Wave::setPath(const string& p) { path = p; }
+void Wave::setData(float* d) { data = d; }
+void Wave::setSize(int s) { size = s; }
+void Wave::setEdited(bool e) { edited = e; }
