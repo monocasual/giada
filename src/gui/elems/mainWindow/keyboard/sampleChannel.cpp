@@ -368,7 +368,7 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			mainButton->label(((SampleChannel*) ch)->wave->name.c_str());
+			mainButton->label(((SampleChannel*) ch)->wave->getName().c_str());
 			break;
 	}
 

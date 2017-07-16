@@ -536,7 +536,7 @@ void mergeVirtualInput()
 			continue;
 		SampleChannel *ch = static_cast<SampleChannel*>(channels.at(i));
 		if (ch->armed)
-			memcpy(ch->wave->data, vChanInput, clock::getTotalFrames() * sizeof(float));
+			memcpy(ch->wave->getData(), vChanInput, clock::getTotalFrames() * sizeof(float));
 	}
 	memset(vChanInput, 0, clock::getTotalFrames() * sizeof(float)); // clear vchan
 }

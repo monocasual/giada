@@ -122,7 +122,7 @@ bool uniqueSampleName(SampleChannel *ch, const string &name)
 		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
 			continue;
 		SampleChannel *other = (SampleChannel*) mixer::channels.at(i);
-		if (other->wave != nullptr && name == other->wave->name)
+		if (other->wave != nullptr && name == other->wave->getName())
 			return false;
 	}
 	return true;
@@ -207,7 +207,7 @@ bool hasLogicalSamples()
     if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
       continue;
     SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-    if (ch->wave && ch->wave->isLogical)
+    if (ch->wave && ch->wave->isLogical())
       return true;
   }
 	return false;
@@ -224,7 +224,7 @@ bool hasEditedSamples()
 		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
       continue;
     SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-    if (ch->wave && ch->wave->isEdited)
+    if (ch->wave && ch->wave->isEdited())
       return true;
   }
 	return false;
@@ -324,9 +324,9 @@ bool startInputRec()
 
 		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
 
-		while (!uniqueSampleName(ch, ch->wave->name)) {
+		while (!uniqueSampleName(ch, ch->wave->getName())) {
 			patch::lastTakeId++;
-			ch->wave->name = "TAKE-" + gu_itoa(patch::lastTakeId);
+			ch->wave->setName("TAKE-" + gu_itoa(patch::lastTakeId));
 		}
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "

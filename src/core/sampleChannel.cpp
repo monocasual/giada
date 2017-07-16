@@ -122,10 +122,10 @@ void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 
 void SampleChannel::generateUniqueSampleName()
 {
-	string oldName = wave->name;
+	string oldName = wave->getName();
 	int k = 1; // Start from k = 1, zero is too nerdy
-	while (!mh::uniqueSampleName(this, wave->name)) {
-		wave->updateName((oldName + "-" + gu_itoa(k)).c_str());
+	while (!mh::uniqueSampleName(this, wave->getName())) {
+		wave->setName((oldName + "-" + gu_itoa(k)).c_str());
 		k++;
 	}
 }
@@ -240,8 +240,8 @@ void SampleChannel::setBegin(int v)
 	if (v < 0)
 		begin = 0;
 	else
-	if (v > wave->size)
-		begin = wave->size - 2;
+	if (v > wave->getSize())
+		begin = wave->getSize() - 2;
 	else
 	if (v >= end)
 		begin = end - 2;
@@ -259,8 +259,8 @@ void SampleChannel::setEnd(int v)
 	if (v < 0)
 		end = begin + 2;
 	else
-	if (v > wave->size)
-		end = wave->size;
+	if (v > wave->getSize())
+		end = wave->getSize();
 	else
 	if (v <= begin)
 		end = begin + 2;
@@ -761,7 +761,7 @@ void SampleChannel::pushWave(Wave *w)
 	status = STATUS_OFF;
 	sendMidiLplay();     // FIXME - why here?!?!
 	begin  = 0;
-	end    = wave->size;
+	end    = wave->getSize();
 }
 
 
@@ -774,12 +774,12 @@ bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 	if (!w->allocEmpty(frames, samplerate))
 		return false;
 
-	w->name     = "TAKE-" + gu_itoa(takeId);
-	w->pathfile = gu_getCurrentPath() + G_SLASH + w->name;
-	wave        = w;
-	status      = STATUS_OFF;
-	begin       = 0;
-	end         = wave->size;
+	w->setName("TAKE-" + gu_itoa(takeId));
+	w->setPath(gu_getCurrentPath() + G_SLASH + w->getName());
+	wave   = w;
+	status = STATUS_OFF;
+	begin  = 0;
+	end    = wave->getSize();
 
 	sendMidiLplay();  // FIXME - why here?!?!
 
@@ -895,7 +895,7 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 		return SAMPLE_READ_ERROR;
 	}
 
-	if (w->channels() > 2) {
+	if (w->getChannels() > 2) {
 		gu_log("[SampleChannel] %s: unsupported multichannel wave\n", file);
 		delete w;
 		return SAMPLE_MULTICHANNEL;
@@ -906,12 +906,12 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 		return SAMPLE_READ_ERROR;
 	}
 
-	if (w->channels() == 1) /** FIXME: error checking  */
+	if (w->getChannels() == 1) /** FIXME: error checking  */
 		wfx_monoToStereo(w);
 
-	if (w->rate() != samplerate) {
+	if (w->getRate() != samplerate) {
 		gu_log("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
-				w->rate(), samplerate);
+				w->getRate(), samplerate);
 		w->resample(rsmpQuality, samplerate);
 	}
 
@@ -1058,9 +1058,9 @@ int SampleChannel::writePatch(int i, bool isProject)
 	patch::channel_t *pch = &patch::channels.at(pchIndex);
 
 	if (wave != nullptr) {
-		pch->samplePath = wave->pathfile;
+		pch->samplePath = wave->getPath();
 		if (isProject)
-			pch->samplePath = gu_basename(wave->pathfile);  // make it portable
+			pch->samplePath = gu_basename(wave->getPath());  // make it portable
 	}
 	else
 		pch->samplePath = "";
@@ -1101,7 +1101,7 @@ int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
 		 * end) */
 
 		if (start+bufferSize-offset <= end) {
-			memcpy(dest+offset, wave->data+start, (bufferSize-offset)*sizeof(float));
+			memcpy(dest+offset, wave->getData()+start, (bufferSize-offset)*sizeof(float));
 			position = start+bufferSize-offset;
 			if (rewind)
 				frameRewind = -1;
@@ -1111,7 +1111,7 @@ int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
 		 * is smaller than 'dest' */
 
 		else {
-			memcpy(dest+offset, wave->data+start, (end-start)*sizeof(float));
+			memcpy(dest+offset, wave->getData()+start, (end-start)*sizeof(float));
 			position = end;
 			if (rewind)
 				frameRewind = end-start+offset;
@@ -1119,7 +1119,7 @@ int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
 	}
 	else {
 
-		rsmp_data.data_in       = wave->data+start;         // source data
+		rsmp_data.data_in       = wave->getData()+start;    // source data
 		rsmp_data.input_frames  = (end-start)/2;            // how many readable bytes
 		rsmp_data.data_out      = dest+offset;              // destination (processed data)
 		rsmp_data.output_frames = (bufferSize-offset)/2;    // how many bytes to process

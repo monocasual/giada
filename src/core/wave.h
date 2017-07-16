@@ -39,40 +39,49 @@ class Wave
 {
 private:
 
-	SNDFILE *fileIn;
-	SNDFILE *fileOut;
+	SNDFILE* fileIn;
+	SNDFILE* fileOut;
 	SF_INFO  inHeader;
 	SF_INFO  outHeader;
+
+	float* data;
+	int size;		    // Wave size in bytes (size in stereo: size / 2)
+	bool logical;   // memory only (a take)
+	bool edited;    // edited via editor
+	
+	std::string path; // E.g. /path/to/my/sample.wav
+	std::string name; // Sample name (can be changed)
 
 public:
 
 	Wave();
 	~Wave();
-	Wave(const Wave &other);
+	Wave(const Wave& other);
 
-	std::string pathfile; // full path + sample name
-	std::string name;			// sample name (changeable)
+	void setRate(int v);
+	void setChannels(int v);
+	void setFrames(int v);
+	void setPath(const std::string& p);
+	void setName(const std::string& p);
+	void setData(float* data);
+	void setSize(int s);
+	void setEdited(bool e);
 
-	float *data;
-	int    size;			  // wave size (size in stereo: size / 2)
-	bool   isLogical;   // memory only (a take)
-	bool   isEdited;    // edited via editor
+	std::string getBasename(bool ext=false) const;
+	int getRate() const;
+	int getChannels() const;
+	int getFrames() const;	
+	std::string getPath() const;	
+	std::string getName() const;
+	float* getData() const;
+	int getSize() const;
+	bool isLogical() const;
+	bool isEdited() const;
 
-	int  rate    ();
-	int  channels();
-	int  frames  ();
-	void rate    (int v);
-	void channels(int v);
-	void frames  (int v);
-
-	std::string basename(bool ext=false) const;
-	std::string extension() const;
-
-	void updateName(const char *n);
-	int  open      (const char *f);
-	int  readData  ();
-	int	 writeData (const char *f);
-	void clear     ();
+	int  open(const char* f);
+	int  readData();
+	int	 writeData(const char* f);
+	void clear();
 
 	/* allocEmpty
 	 * alloc an empty waveform. */
