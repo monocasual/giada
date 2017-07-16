@@ -45,6 +45,8 @@ src/core/storager.h	                   \
 src/core/storager.cpp                  \
 src/core/clock.h                       \
 src/core/clock.cpp                     \
+src/core/waveManager.h                 \
+src/core/waveManager.cpp               \
 src/glue/main.h                        \
 src/glue/main.cpp                      \
 src/glue/io.h                          \
