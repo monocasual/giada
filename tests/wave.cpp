@@ -42,8 +42,16 @@ TEST_CASE("Test Wave class")
   SECTION("test rec")
   {
     REQUIRE(w1.allocEmpty(G_BUFFER_SIZE, G_SAMPLE_RATE) == 1);
+    REQUIRE(w1.getSize() == G_BUFFER_SIZE);
     REQUIRE(w1.getRate() == G_SAMPLE_RATE);
     REQUIRE(w1.getChannels() == 2);
     REQUIRE(w1.writeData("test-write.wav") == true);
+  }
+
+  SECTION("test resampling")
+  {
+    REQUIRE(w1.open("tests/resources/test.wav") == 1);
+    REQUIRE(w1.readData() == 1);
+    REQUIRE(w1.resample(1, G_SAMPLE_RATE / 2) == 1);
   }
 }
