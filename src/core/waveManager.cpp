@@ -43,14 +43,6 @@ namespace giada {
 namespace m {
 namespace waveManager
 {
-namespace
-{
-}; // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 int create(const string& path, Wave** out)
 {
 	if (path == "" || gu_isDir(path)) {
