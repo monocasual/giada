@@ -36,6 +36,9 @@
 #include "waveManager.h"
 
 
+using namespace std;
+
+
 namespace giada {
 namespace m {
 namespace waveManager
@@ -48,10 +51,10 @@ namespace
 /* -------------------------------------------------------------------------- */
 
 
-int create(const std::string& path, Wave* out)
+int create(const string& path, Wave** out)
 {
 	if (path == "" || gu_isDir(path)) {
-		gu_log("[waveManager] file not specified\n");
+		gu_log("[waveManager] malformed path (was '%s')\n", path.c_str());
 		return G_RES_ERR_NO_DATA;
 	}
 
@@ -78,7 +81,7 @@ int create(const std::string& path, Wave* out)
 	... */
 	
 	int size = header.frames * header.channels;
-	float* data = new (std::nothrow) float[size];
+	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
 		gu_log("[waveManager] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
@@ -89,14 +92,16 @@ int create(const std::string& path, Wave* out)
 
 	sf_close(fileIn);
 
-	Wave* wave = new Wave(data, size, header.channels, path);	
+	Wave* wave = new Wave(data, size, header.channels, header.samplerate, path);	
 
 	if (header.channels == 1 && !wfx_monoToStereo(wave)) {
 		delete wave;
 		return G_RES_ERR_PROCESSING;
 	}
 
-	out = wave;
+	*out = wave;
+
+	gu_log("[waveManager] new Wave created, %d frames\n", wave->getSize());
 
 	return G_RES_OK;
 }
@@ -105,16 +110,22 @@ int create(const std::string& path, Wave* out)
 /* -------------------------------------------------------------------------- */
 
 
-int createEmpty(int size, int samplerate, Wave* out)
+int createEmpty(int size, int samplerate, const string& name, Wave** out)
 {
-	float* data = new (std::nothrow) float[size];
+	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
 		gu_log("[waveManager] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
-	out = new Wave(data, size, 2, "");
-	out->setLogical(true);	
+	Wave *wave = new Wave(data, size, 2, samplerate, "");
+	wave->setLogical(true);	
+	wave->setName(name);
+	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
+
+	*out = wave;
+
+	gu_log("[waveManager] new empty Wave created, %d frames\n", size);
 
 	return G_RES_OK;
 }
@@ -130,7 +141,7 @@ int resample(Wave* w, int quality, int samplerate)
 	if (size % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
 		size++;
 
-	float* data = new (std::nothrow) float[size];
+	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
 		gu_log("[waveManager] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
@@ -157,6 +168,34 @@ int resample(Wave* w, int quality, int samplerate)
 	w->setSize(size);
 	w->setRate(samplerate);
 
+	return G_RES_OK;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int save(Wave* w, const string& path)
+{
+	SF_INFO header;
+	header.samplerate = w->getRate();
+	header.channels   = w->getChannels();
+	header.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
+
+	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
+	if (file == nullptr) {
+		gu_log("[waveManager] unable to open %s for exporting\n", path.c_str());
+		return G_RES_ERR_IO;
+	}
+
+	if (sf_write_float(file, w->getData(), w->getSize()) != w->getSize())
+		gu_log("[waveManager] warning: incomplete write!\n");
+
+	sf_close(file);
+
+	w->setLogical(false);
+	w->setEdited(false);
+	
 	return G_RES_OK;
 }
 }}}; // giada::m::waveManager

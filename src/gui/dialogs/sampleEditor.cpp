@@ -200,9 +200,8 @@ void gdSampleEditor::__cb_reload()
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
     return;
 
-  /* no need for glue_loadChan, there's no gui to refresh */
-
-  ch->load(ch->wave->getPath().c_str(), conf::samplerate, conf::rsmpQuality);
+  if (glue_loadChannel(ch, ch->wave->getPath()) != G_RES_OK)
+    return;
 
   glue_setBoost(ch, G_DEFAULT_BOOST);
   glue_setPitch(ch, G_DEFAULT_PITCH);

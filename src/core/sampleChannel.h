@@ -116,22 +116,20 @@ public:
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
 
-	int load(const char *file, int samplerate, int rsmpQuality);
-
 	void reset(int frame);
 
 	/* fade methods
 	 * prepare channel for fade, mixer will take care of the process
 	 * during master play. */
 
-	void  setFadeIn  (bool internal);
-	void  setFadeOut (int actionPostFadeout);
-	void  setXFade   (int frame);
+	void setFadeIn(bool internal);
+	void setFadeOut(int actionPostFadeout);
+	void setXFade(int frame);
 
 	/* pushWave
 	 * add a new wave to an existing channel. */
 
-	void pushWave(Wave *w);
+	void pushWave(Wave* w);
 
 	/* getPosition
 	 * returns the position of an active sample. If EMPTY o MISSING
@@ -170,7 +168,7 @@ public:
 	/* allocEmpty
 	 * alloc an empty wave used in input recordings. */
 
-	bool allocEmpty(int frames, int samplerate, int takeId);
+	int allocEmpty(int frames, int samplerate, int takeId);
 
 	/* setReadActions
 	 * if enabled (v == true), recorder will read actions from this channel. If

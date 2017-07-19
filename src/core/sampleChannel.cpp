@@ -27,10 +27,10 @@
 
 #include <cmath>
 #include <cstring>
+#include <cassert>
 #include "../utils/log.h"
 #include "../utils/fs.h"
 #include "../utils/string.h"
-#include "sampleChannel.h"
 #include "patch.h"
 #include "const.h"
 #include "conf.h"
@@ -39,9 +39,11 @@
 #include "wave.h"
 #include "pluginHost.h"
 #include "waveFx.h"
+#include "waveManager.h"
 #include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "kernelAudio.h"
+#include "sampleChannel.h"
 
 
 using std::string;
@@ -109,11 +111,8 @@ void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 	fadeoutEnd      = src->fadeoutEnd;
 	setPitch(src->pitch);
 
-	if (src->wave) {
-		Wave *w = new Wave(*src->wave); // invoke Wave's copy constructor
-		pushWave(w);
-		generateUniqueSampleName();
-	}
+	if (src->wave)
+		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor
 }
 
 
@@ -226,9 +225,9 @@ void SampleChannel::onBar(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::save(const char *path)
+int SampleChannel::save(const char* path)
 {
-	return wave->writeData(path);
+	return waveManager::save(wave, path);
 }
 
 
@@ -757,33 +756,34 @@ void SampleChannel::empty()
 
 void SampleChannel::pushWave(Wave *w)
 {
+	sendMidiLplay();     // FIXME - why here?!?!
 	wave   = w;
 	status = STATUS_OFF;
-	sendMidiLplay();     // FIXME - why here?!?!
 	begin  = 0;
 	end    = wave->getSize();
+	generateUniqueSampleName();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
+int SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
 {
-	Wave *w = new Wave();
-	if (!w->allocEmpty(frames, samplerate))
-		return false;
+	assert(wave == nullptr);
 
-	w->setName("TAKE-" + gu_itoa(takeId));
-	w->setPath(gu_getCurrentPath() + G_SLASH + w->getName());
-	wave   = w;
+	int res = waveManager::createEmpty(frames, samplerate, 
+		string("TAKE-" + gu_itoa(takeId)), &wave);
+	if (res != G_RES_OK)
+		return res;
+
 	status = STATUS_OFF;
 	begin  = 0;
 	end    = wave->getSize();
 
 	sendMidiLplay();  // FIXME - why here?!?!
 
-	return true;
+	return res;
 }
 
 
@@ -877,55 +877,6 @@ void SampleChannel::stop()
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
-{
-	if (strcmp(file, "") == 0 || gu_isDir(file)) {
-		gu_log("[SampleChannel] file not specified\n");
-		return G_RES_ERR_NO_DATA;
-	}
-
-	if (strlen(file) > FILENAME_MAX)
-		return G_RES_ERR_PATH_TOO_LONG;
-
-	Wave *w = new Wave();
-
-	if (!w->open(file)) {
-		gu_log("[SampleChannel] %s: read error\n", file);
-		delete w;
-		return G_RES_ERR_IO;
-	}
-
-	if (w->getChannels() > 2) {
-		gu_log("[SampleChannel] %s: unsupported multichannel wave\n", file);
-		delete w;
-		return G_RES_ERR_WRONG_DATA;
-	}
-
-	if (!w->readData()) {
-		delete w;
-		return G_RES_ERR_IO;
-	}
-
-	if (w->getChannels() == 1) /** FIXME: error checking  */
-		wfx_monoToStereo(w);
-
-	if (w->getRate() != samplerate) {
-		gu_log("[SampleChannel] input rate (%d) != system rate (%d), conversion needed\n",
-				w->getRate(), samplerate);
-		w->resample(rsmpQuality, samplerate);
-	}
-
-	pushWave(w);
-	generateUniqueSampleName();
-
-	gu_log("[SampleChannel] %s loaded in channel %d\n", file, index);
-	return G_RES_OK;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 int SampleChannel::readPatch(const string &basePath, int i,
 		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
 {
@@ -944,8 +895,11 @@ int SampleChannel::readPatch(const string &basePath, int i,
 	midiInPitch       = pch->midiInPitch;
   inputMonitor      = pch->inputMonitor;
 
-	int res = load((basePath + pch->samplePath).c_str(), samplerate, rsmpQuality);
+  Wave *w = nullptr;
+  int res = waveManager::create(basePath + pch->samplePath, &w); 
+
 	if (res == G_RES_OK) {
+		pushWave(w);
 		setBegin(pch->begin);
 		setEnd  (pch->end);
 		setPitch(pch->pitch);

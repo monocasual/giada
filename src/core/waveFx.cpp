@@ -74,7 +74,6 @@ bool wfx_monoToStereo(Wave *w)
 	free(w->getData());
 	w->setData(dataNew);
 	w->setSize(newSize);
-	w->setFrames(w->getFrames()*2);
 	w->setChannels(2);
 
 	return 1;
@@ -137,7 +136,6 @@ int wfx_cut(Wave *w, int a, int b)
 	free(w->getData());
 	w->setData(temp);
 	w->setSize(newSize);
-	w->setFrames(w->getFrames() - b - a);
 	w->setEdited(true);
 
 	gu_log("[wfx] cutting done\n");
@@ -172,7 +170,6 @@ int wfx_trim(Wave *w, int a, int b)
 	free(w->getData());
 	w->setData(temp);
 	w->setSize(newSize);
-	w->setFrames(b - a);
  	w->setEdited(true);
 
 	return 1;

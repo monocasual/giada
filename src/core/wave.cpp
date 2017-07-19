@@ -27,11 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>  // memcpy
-#include <cmath>
-#include <samplerate.h>
 #include "../utils/fs.h"
 #include "../utils/log.h"
 #include "init.h"
@@ -52,10 +48,11 @@ Wave::Wave()
 /* -------------------------------------------------------------------------- */
 
 
-Wave::Wave(float* data, int size, int channels, const std::string& path)
+Wave::Wave(float* data, int size, int channels, int rate, const std::string& path)
 : m_data    (data),
   m_size    (size),
   m_channels(channels),
+  m_rate    (rate),
   m_logical (false),
   m_edited  (false),
   m_path    (path),
@@ -79,96 +76,15 @@ Wave::~Wave()
 Wave::Wave(const Wave& other)
 : m_data   (nullptr),
 	m_size   (0),
-	m_logical(false),
+	m_logical(true),
 	m_edited (false)
 {
 	m_size = other.m_size;
 	m_data = new float[m_size];
 	memcpy(m_data, other.m_data, m_size * sizeof(float));
-	memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
+	//memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
 	m_path = other.m_path;
 	m_name = other.m_name;
-	m_logical = true;
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-int Wave::open(const char* f)
-{
-	m_path = f;
-	m_name = gu_stripExt(gu_basename(f));
-	fileIn = sf_open(f, SFM_READ, &inHeader);
-
-	if (fileIn == nullptr) {
-		gu_log("[wave] unable to read %s. %s\n", f, sf_strerror(fileIn));
-		m_path = "";
-		m_name = "";
-		return 0;
-	}
-
-	m_logical = false;
-	m_edited  = false;
-
-	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Wave::readData()
-{
-	/* Libsndfile's frame structure:
-
-	frame1 = [leftChannel, rightChannel]
-	frame2 = [leftChannel, rightChannel]
-	... */
-	
-	int newSize = inHeader.frames * inHeader.channels;
-	m_data = new (std::nothrow) float[newSize];
-	if (m_data == nullptr) {
-		gu_log("[wave] unable to allocate memory\n");
-		return 0;
-	}
-
-	m_size = newSize;
-
-	if (sf_read_float(fileIn, m_data, m_size) != m_size)
-		gu_log("[wave] warning: incomplete read!\n");
-
-	sf_close(fileIn);
-	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Wave::writeData(const char* f)
-{
-	/* Prepare the header for output file. */
-
-	outHeader.samplerate = inHeader.samplerate;
-	outHeader.channels   = inHeader.channels;
-	outHeader.format     = inHeader.format;
-
-	fileOut = sf_open(f, SFM_WRITE, &outHeader);
-	if (fileOut == nullptr) {
-		gu_log("[wave] unable to open %s for exporting\n", f);
-		return 0;
-	}
-
-	int out = sf_write_float(fileOut, m_data, m_size);
-	if (out != (int) m_size) {
-		gu_log("[wave] error while exporting %s! %s\n", f, sf_strerror(fileOut));
-		return 0;
-	}
-
-	m_logical = false;
-	m_edited  = false;
-	sf_close(fileOut);
-	return 1;
 }
 
 
@@ -183,72 +99,6 @@ void Wave::clear()
 	m_data = nullptr;
 	m_path = "";
 	m_size = 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Wave::allocEmpty(unsigned size, unsigned samplerate)
-{
-	/* The caller must pass a __size for stereo values. */
-
-	m_data = new (std::nothrow) float[size];
-	if (m_data == nullptr) {
-		gu_log("[wave] unable to allocate memory\n");
-		return 0;
-	}
-
-	m_size = size;
-
-	memset(m_data, 0, sizeof(float) * m_size); /// FIXME - is it useful?
-
-	inHeader.samplerate = samplerate;
-	inHeader.channels   = 2;
-	inHeader.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT; // wave only
-
-	m_logical = true;
-	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Wave::resample(int quality, int newRate)
-{
-	float ratio = newRate / (float) inHeader.samplerate;
-	int newSize = ceil(m_size * ratio);
-	if (newSize % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
-		newSize++;
-
-	float *tmp = new (std::nothrow) float[newSize];
-	if (tmp == nullptr) {
-		gu_log("[wave] unable to allocate memory for resampling\n");
-		return -1;
-	}
-
-	SRC_DATA src_data;
-	src_data.data_in       = m_data;
-	src_data.input_frames  = m_size/2;     // in frames, i.e. /2 (stereo)
-	src_data.data_out      = tmp;
-	src_data.output_frames = newSize/2;  // in frames, i.e. /2 (stereo)
-	src_data.src_ratio     = ratio;
-
-	gu_log("[wave] resampling: new size=%d (%d frames)\n", newSize, newSize/2);
-
-	int ret = src_simple(&src_data, quality, 2);
-	if (ret != 0) {
-		gu_log("[wave] resampling error: %s\n", src_strerror(ret));
-		delete[] tmp;
-		return 0;
-	}
-
-	delete[] m_data;
-	m_data = tmp;
-	m_size = newSize;
-	inHeader.samplerate = newRate;
-	return 1;
 }
 
 
@@ -279,9 +129,8 @@ void Wave::setName(const string& n)
 /* -------------------------------------------------------------------------- */
 
 
-int Wave::getRate() const { return inHeader.samplerate; }
-int Wave::getChannels() const { return inHeader.channels; }
-int Wave::getFrames() const { return inHeader.frames; }
+int Wave::getRate() const { return m_rate; }
+int Wave::getChannels() const { return m_channels; }
 std::string Wave::getPath() const { return m_path; }
 std::string Wave::getName() const { return m_name; }
 float* Wave::getData() const { return m_data; }
@@ -293,9 +142,8 @@ bool Wave::isEdited() const { return m_edited; }
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setRate(int v) { inHeader.samplerate = v; }
-void Wave::setChannels(int v) { inHeader.channels = v; }
-void Wave::setFrames(int v) { inHeader.frames = v; }
+void Wave::setRate(int v) { m_rate = v; }
+void Wave::setChannels(int v) { m_channels = v; }
 void Wave::setPath(const string& p) { m_path = p; }
 void Wave::setData(float* d) { m_data = d; }
 void Wave::setSize(int s) { m_size = s; }

@@ -45,6 +45,7 @@
 #include "../gui/elems/mainWindow/keyboard/channelButton.h"
 #include "../utils/gui.h"
 #include "../utils/fs.h"
+#include "../utils/log.h"
 #include "../core/kernelAudio.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
@@ -56,11 +57,12 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/plugin.h"
+#include "../core/waveManager.h"
 #include "main.h"
 #include "channel.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using std::string;
@@ -70,7 +72,7 @@ using namespace giada::m;
 static bool __soloSession__ = false;
 
 
-int glue_loadChannel(SampleChannel *ch, const string &fname)
+int glue_loadChannel(SampleChannel* ch, const string& fname)
 {
   /* Always stop a channel before loading a new sample in it. This will prevent
   issues if tracker is outside the boundaries of the new sample -> segfault. */
@@ -82,10 +84,24 @@ int glue_loadChannel(SampleChannel *ch, const string &fname)
 
 	conf::samplePath = gu_dirname(fname);
 
-	int result = ch->load(fname.c_str(), conf::samplerate, conf::rsmpQuality);
+	Wave* wave = nullptr;
+	int result = waveManager::create(fname, &wave); 
+	if (result != G_RES_OK)
+		return result;
 
-	if (result == G_RES_OK)
-		G_MainWin->keyboard->updateChannel(ch->guiChannel);
+	if (wave->getRate() != conf::samplerate) {
+		gu_log("[glue_loadChannel] input rate (%d) != system rate (%d), conversion needed\n",
+			wave->getRate(), conf::samplerate);
+		result = waveManager::resample(wave, conf::rsmpQuality, conf::samplerate); 
+		if (result != G_RES_OK) {
+			delete wave;
+			return result;
+		}
+	}
+
+	ch->pushWave(wave);
+
+	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 
 	return result;
 }

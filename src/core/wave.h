@@ -39,14 +39,10 @@ class Wave
 {
 private:
 
-	SNDFILE* fileIn;
-	SNDFILE* fileOut;
-	SF_INFO  inHeader;
-	SF_INFO  outHeader;
-
 	float* m_data;
 	int m_size;		    // Wave size in bytes (size in stereo: size / 2)
 	int m_channels;
+	int m_rate;
 	bool m_logical;   // memory only (a take)
 	bool m_edited;    // edited via editor
 	
@@ -56,13 +52,12 @@ private:
 public:
 
 	Wave();
-	Wave(float* data, int size, int channels, const std::string& path);
+	Wave(float* data, int size, int channels, int rate, const std::string& path);
 	~Wave();
 	Wave(const Wave& other);
 
 	void setRate(int v);
 	void setChannels(int v);
-	void setFrames(int v);
 	void setPath(const std::string& p);
 	void setName(const std::string& p);
 	void setData(float* data);
@@ -73,28 +68,14 @@ public:
 	std::string getBasename(bool ext=false) const;
 	int getRate() const;
 	int getChannels() const;
-	int getFrames() const;	
 	std::string getPath() const;	
 	std::string getName() const;
 	float* getData() const;
 	int getSize() const;
 	bool isLogical() const;
 	bool isEdited() const;
-
-	int  open(const char* f);
-	int  readData();
-	int	 writeData(const char* f);
 	void clear();
 
-	/* allocEmpty
-	 * alloc an empty waveform. */
-
-	int allocEmpty(unsigned size, unsigned samplerate);
-
-	/* resample
-	 * simple algorithm for one-shot resampling. */
-
-	int resample(int quality, int newRate);
 };
 
 #endif
