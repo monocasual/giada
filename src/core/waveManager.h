@@ -29,10 +29,27 @@
 #define G_WAVE_MANAGER_H
 
 
+#include <string>
+
+
+class Wave;
+
+
 namespace giada {
 namespace m {
 namespace waveManager
 {
+/* create
+Creates a new Wave object with data read from file 'path'. */
+
+int create(const std::string& path, Wave* out);
+
+/* createEmpty
+Creates a new silent Wave object. Note: 'size' must take 2 channels into account
+(stereo). */
+
+int createEmpty(int size, int samplerate, Wave* out);
+int resample(Wave* w, int quality, int samplerate); 
 
 }}}; // giada::m::waveManager
 

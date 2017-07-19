@@ -358,7 +358,7 @@ void glue_loadSample(void *data)
 
 	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), fullPath.c_str());
 
-	if (res == SAMPLE_LOADED_OK) {
+	if (res == G_RES_OK) {
 		conf::samplePath = gu_dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open

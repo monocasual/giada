@@ -107,7 +107,7 @@ int geColumn::handle(int e)
 				gu_log("[geColumn::handle] loading %s...\n", paths.at(i).c_str());
 				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
 				result = glue_loadChannel(c, gu_stripFileUrl(paths.at(i)).c_str());
-				if (result != SAMPLE_LOADED_OK) {
+				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
 					fails = true;
 				}

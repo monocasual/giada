@@ -64,7 +64,7 @@ int geSampleChannelButton::handle(int e)
       geSampleChannel *gch = static_cast<geSampleChannel*>(parent());
       SampleChannel   *ch  = static_cast<SampleChannel*>(gch->ch);
       int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())).c_str());
-			if (result != SAMPLE_LOADED_OK)
+			if (result != G_RES_OK)
 				G_MainWin->keyboard->printChannelMessage(result);
 			ret = 1;
 			break;

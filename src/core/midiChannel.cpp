@@ -243,7 +243,7 @@ int MidiChannel::readPatch(const string &basePath, int i,
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
 
-	return SAMPLE_LOADED_OK;  /// TODO - change name, it's meaningless here
+	return G_RES_OK;
 }
 
 

@@ -46,10 +46,10 @@
 
 /* -- version --------------------------------------------------------------- */
 #define G_APP_NAME      "Giada"
-#define G_VERSION_STR   "0.14.1"
+#define G_VERSION_STR   "0.14.2"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 14
-#define G_VERSION_PATCH 1
+#define G_VERSION_PATCH 2
 
 #define CONF_FILENAME "giada.conf"
 
@@ -200,18 +200,15 @@
 
 
 
-/* -- mixerHandler signals -------------------------------------------------- */
-#define SAMPLE_LOADED_OK      0x01
-#define SAMPLE_LEFT_EMPTY     0x02
-#define SAMPLE_NOT_VALID      0x04
-#define SAMPLE_MULTICHANNEL   0x08
-#define SAMPLE_WRONG_BIT      0x10
-#define SAMPLE_WRONG_ENDIAN   0x20
-#define SAMPLE_WRONG_FORMAT   0x40
-#define SAMPLE_READ_ERROR     0x80
-#define SAMPLE_PATH_TOO_LONG  0x100
-
-/** FIXME - add to SAMPLE_ series those for when exporting */
+/* -- responses and return codes -------------------------------------------- */
+#define G_RES_ERR_PROCESSING    -6
+#define G_RES_ERR_WRONG_DATA    -5
+#define G_RES_ERR_NO_DATA       -4
+#define G_RES_ERR_PATH_TOO_LONG -3
+#define G_RES_ERR_IO            -2
+#define G_RES_ERR_MEMORY        -1
+#define G_RES_ERR                0
+#define G_RES_OK                 1
 
 
 

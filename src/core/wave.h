@@ -44,17 +44,19 @@ private:
 	SF_INFO  inHeader;
 	SF_INFO  outHeader;
 
-	float* data;
-	int size;		    // Wave size in bytes (size in stereo: size / 2)
-	bool logical;   // memory only (a take)
-	bool edited;    // edited via editor
+	float* m_data;
+	int m_size;		    // Wave size in bytes (size in stereo: size / 2)
+	int m_channels;
+	bool m_logical;   // memory only (a take)
+	bool m_edited;    // edited via editor
 	
-	std::string path; // E.g. /path/to/my/sample.wav
-	std::string name; // Sample name (can be changed)
+	std::string m_path; // E.g. /path/to/my/sample.wav
+	std::string m_name; // Sample name (can be changed)
 
 public:
 
 	Wave();
+	Wave(float* data, int size, int channels, const std::string& path);
 	~Wave();
 	Wave(const Wave& other);
 
@@ -65,6 +67,7 @@ public:
 	void setName(const std::string& p);
 	void setData(float* data);
 	void setSize(int s);
+	void setLogical(bool l);
 	void setEdited(bool e);
 
 	std::string getBasename(bool ext=false) const;

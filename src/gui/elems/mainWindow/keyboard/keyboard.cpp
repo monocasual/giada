@@ -309,19 +309,11 @@ void geKeyboard::setChannelWithActions(geSampleChannel *gch)
 
 void geKeyboard::printChannelMessage(int res)
 {
-	if      (res == SAMPLE_NOT_VALID)
-		gdAlert("This is not a valid WAVE file.");
-	else if (res == SAMPLE_MULTICHANNEL)
+	if      (res == G_RES_ERR_WRONG_DATA)
 		gdAlert("Multichannel samples not supported.");
-	else if (res == SAMPLE_WRONG_BIT)
-		gdAlert("This sample has an\nunsupported bit-depth (> 32 bit).");
-	else if (res == SAMPLE_WRONG_ENDIAN)
-		gdAlert("This sample has a wrong\nbyte order (not little-endian).");
-	else if (res == SAMPLE_WRONG_FORMAT)
-		gdAlert("This sample is encoded in\nan unsupported audio format.");
-	else if (res == SAMPLE_READ_ERROR)
+	else if (res == G_RES_ERR_IO)
 		gdAlert("Unable to read this sample.");
-	else if (res == SAMPLE_PATH_TOO_LONG)
+	else if (res == G_RES_ERR_PATH_TOO_LONG)
 		gdAlert("File path too long.");
 	else
 		gdAlert("Unknown error.");

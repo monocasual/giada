@@ -84,7 +84,7 @@ int glue_loadChannel(SampleChannel *ch, const string &fname)
 
 	int result = ch->load(fname.c_str(), conf::samplerate, conf::rsmpQuality);
 
-	if (result == SAMPLE_LOADED_OK)
+	if (result == G_RES_OK)
 		G_MainWin->keyboard->updateChannel(ch->guiChannel);
 
 	return result;

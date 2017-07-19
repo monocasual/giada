@@ -881,29 +881,29 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 {
 	if (strcmp(file, "") == 0 || gu_isDir(file)) {
 		gu_log("[SampleChannel] file not specified\n");
-		return SAMPLE_LEFT_EMPTY;
+		return G_RES_ERR_NO_DATA;
 	}
 
 	if (strlen(file) > FILENAME_MAX)
-		return SAMPLE_PATH_TOO_LONG;
+		return G_RES_ERR_PATH_TOO_LONG;
 
 	Wave *w = new Wave();
 
 	if (!w->open(file)) {
 		gu_log("[SampleChannel] %s: read error\n", file);
 		delete w;
-		return SAMPLE_READ_ERROR;
+		return G_RES_ERR_IO;
 	}
 
 	if (w->getChannels() > 2) {
 		gu_log("[SampleChannel] %s: unsupported multichannel wave\n", file);
 		delete w;
-		return SAMPLE_MULTICHANNEL;
+		return G_RES_ERR_WRONG_DATA;
 	}
 
 	if (!w->readData()) {
 		delete w;
-		return SAMPLE_READ_ERROR;
+		return G_RES_ERR_IO;
 	}
 
 	if (w->getChannels() == 1) /** FIXME: error checking  */
@@ -919,7 +919,7 @@ int SampleChannel::load(const char *file, int samplerate, int rsmpQuality)
 	generateUniqueSampleName();
 
 	gu_log("[SampleChannel] %s loaded in channel %d\n", file, index);
-	return SAMPLE_LOADED_OK;
+	return G_RES_OK;
 }
 
 
@@ -945,16 +945,16 @@ int SampleChannel::readPatch(const string &basePath, int i,
   inputMonitor      = pch->inputMonitor;
 
 	int res = load((basePath + pch->samplePath).c_str(), samplerate, rsmpQuality);
-	if (res == SAMPLE_LOADED_OK) {
+	if (res == G_RES_OK) {
 		setBegin(pch->begin);
 		setEnd  (pch->end);
 		setPitch(pch->pitch);
 	}
 	else {
-		if (res == SAMPLE_LEFT_EMPTY)
+		if (res == G_RES_ERR_NO_DATA)
 			status = STATUS_EMPTY;
 		else
-		if (res == SAMPLE_READ_ERROR)
+		if (res == G_RES_ERR_IO)
 			status = STATUS_MISSING;
 		sendMidiLplay();  // FIXME - why sending MIDI lightning if sample status is wrong?
 	}
