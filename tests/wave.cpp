@@ -1,3 +1,4 @@
+#include <memory>
 #include "../src/core/wave.h"
 #include "catch/single_include/catch.hpp"
 
@@ -11,12 +12,44 @@ using std::string;
 
 TEST_CASE("Test Wave class")
 {
-  /* Each SECTION the TEST_CASE is executed from the start. The following
-  code is exectuted before each SECTION. */
+  /* Each SECTION the TEST_CASE is executed from the start. Any code between 
+  this comment and the first SECTION macro is exectuted before each SECTION. */
 
-  Wave w1;
+  std::unique_ptr<Wave> wave;
+  
+  SECTION("test basename")
+  {
+    wave = std::unique_ptr<Wave>(new Wave(nullptr, 1024, 2, 44100, "path/to/sample.wav"));
 
-  SECTION("test read & write")
+    REQUIRE(wave->getPath() == "path/to/sample.wav");
+    REQUIRE(wave->getBasename() == "sample");
+    REQUIRE(wave->getBasename(true) == "sample.wav");
+  }  
+
+  SECTION("test change name")
+  {
+    wave = std::unique_ptr<Wave>(new Wave(nullptr, 1024, 2, 44100, "path/to/sample.wav"));
+    wave->setName("waveform");
+
+    REQUIRE(wave->getPath() == "path/to/waveform.wav");
+    REQUIRE(wave->getBasename() == "waveform");
+    REQUIRE(wave->getBasename(true) == "waveform.wav");
+  }
+
+  SECTION("test memory cleanup")
+  {
+    float* data = new float[1024];
+
+    wave = std::unique_ptr<Wave>(new Wave(data, 1024, 2, 44100, "path/to/sample.wav"));
+    wave->clear();
+
+    REQUIRE(wave->getData() == nullptr);
+    REQUIRE(wave->getPath() == "");
+    REQUIRE(wave->getSize() == 0);
+  }
+
+#if 0
+  SECTION("test memory cleanup")
   {
     REQUIRE(w1.open("tests/resources/test.wav") == 1);
     REQUIRE(w1.readData() == 1);
@@ -54,4 +87,5 @@ TEST_CASE("Test Wave class")
     REQUIRE(w1.readData() == 1);
     REQUIRE(w1.resample(1, G_SAMPLE_RATE / 2) == 1);
   }
+#endif
 }
