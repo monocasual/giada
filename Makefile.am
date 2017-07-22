@@ -340,6 +340,7 @@ giada_tests_SOURCES =        \
 tests/main.cpp               \
 tests/conf.cpp               \
 tests/wave.cpp               \
+tests/waveManager.cpp        \
 tests/patch.cpp              \
 tests/midiMapConf.cpp        \
 tests/pluginHost.cpp         \
@@ -347,6 +348,8 @@ tests/utils.cpp              \
 tests/recorder.cpp           \
 src/core/conf.cpp            \
 src/core/wave.cpp            \
+src/core/waveManager.cpp     \
+src/core/waveFx.cpp          \
 src/core/midiMapConf.cpp     \
 src/core/patch.cpp           \
 src/core/plugin.cpp          \

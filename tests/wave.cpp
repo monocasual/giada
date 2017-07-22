@@ -8,6 +8,7 @@ using std::string;
 
 #define G_SAMPLE_RATE 44100
 #define G_BUFFER_SIZE 4096
+#define G_CHANNELS 2
 
 
 TEST_CASE("Test Wave class")
@@ -19,7 +20,8 @@ TEST_CASE("Test Wave class")
   
   SECTION("test basename")
   {
-    wave = std::unique_ptr<Wave>(new Wave(nullptr, 1024, 2, 44100, "path/to/sample.wav"));
+    wave = std::unique_ptr<Wave>(new Wave(nullptr, G_BUFFER_SIZE, G_CHANNELS, 
+      G_SAMPLE_RATE, "path/to/sample.wav"));
 
     REQUIRE(wave->getPath() == "path/to/sample.wav");
     REQUIRE(wave->getBasename() == "sample");
@@ -28,7 +30,8 @@ TEST_CASE("Test Wave class")
 
   SECTION("test change name")
   {
-    wave = std::unique_ptr<Wave>(new Wave(nullptr, 1024, 2, 44100, "path/to/sample.wav"));
+    wave = std::unique_ptr<Wave>(new Wave(nullptr, G_BUFFER_SIZE, G_CHANNELS, 
+      G_SAMPLE_RATE, "path/to/sample.wav"));
     wave->setName("waveform");
 
     REQUIRE(wave->getPath() == "path/to/waveform.wav");
@@ -38,9 +41,10 @@ TEST_CASE("Test Wave class")
 
   SECTION("test memory cleanup")
   {
-    float* data = new float[1024];
+    float* data = new float[G_BUFFER_SIZE];
 
-    wave = std::unique_ptr<Wave>(new Wave(data, 1024, 2, 44100, "path/to/sample.wav"));
+    wave = std::unique_ptr<Wave>(new Wave(data, G_BUFFER_SIZE, G_CHANNELS, 
+      G_SAMPLE_RATE, "path/to/sample.wav"));
     wave->clear();
 
     REQUIRE(wave->getData() == nullptr);
