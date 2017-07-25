@@ -38,7 +38,6 @@
 #include "../../core/sampleChannel.h"
 #include "../../core/mixer.h"
 #include "../../core/wave.h"
-#include "../../core/clock.h"
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
 #include "../elems/basics/button.h"
@@ -63,56 +62,63 @@ using namespace giada::m;
 using namespace giada::c;
 
 
-gdSampleEditor::gdSampleEditor(SampleChannel *ch)
+gdSampleEditor::gdSampleEditor(SampleChannel* ch)
   : gdWindow(640, 480),
     ch(ch)
 {
-  begin();
+  Fl_Group* upperBar = createUpperBar();
+  
+  waveTools = new geWaveTools(8, upperBar->y()+upperBar->h()+8, w()-16, h()-128, ch);
+  
+  Fl_Group* bottomBar = createBottomBar(8, waveTools->y()+waveTools->h()+8);
 
-  /* top bar: grid and zoom tools */
+  add(upperBar);
+  add(waveTools);
+  add(bottomBar);
 
-  Fl_Group *bar = new Fl_Group(8, 8, w()-16, 20);
-  bar->begin();
-    grid    = new geChoice(bar->x(), bar->y(), 50, 20);
-    snap    = new geCheck(grid->x()+grid->w()+4, bar->y(), 12, 12);
-    sep1    = new geBox(snap->x()+snap->w()+4, bar->y(), 506, 20);
-    zoomOut = new geButton(sep1->x()+sep1->w()+4, bar->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
-    zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, bar->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
-  bar->end();
-  bar->resizable(sep1);
+  resizable(waveTools);
 
-  /* waveform */
+  gu_setFavicon(this);
+  set_non_modal();
+  label(ch->wave->getName().c_str());
 
-  waveTools = new geWaveTools(8, bar->y()+bar->h()+8, w()-16, h()-128, ch);
-  waveTools->end();
+  size_range(640, 480);
+  if (conf::sampleEditorX)
+    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
+  
+  show();
+}
 
-  /* other tools */
 
-  Fl_Group *row1 = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 20);
-  row1->begin();
-    volumeTool = new geVolumeTool(row1->x(), row1->y(), ch);
-    boostTool  = new geBoostTool(volumeTool->x()+volumeTool->w()+4, row1->y(), ch);
-    panTool    = new gePanTool(boostTool->x()+boostTool->w()+4, row1->y(), ch);
-  row1->end();
-  row1->resizable(0);
 
-  Fl_Group *row2 = new Fl_Group(8, row1->y()+row1->h()+8, 800, 20);
-  row2->begin();
-    pitchTool = new gePitchTool(row2->x(), row2->y(), ch);
-  row2->end();
-  row2->resizable(0);
+/* -------------------------------------------------------------------------- */
 
-  Fl_Group *row3 = new Fl_Group(8, row2->y()+row2->h()+8, w()-16, 20);
-  row3->begin();
-    rangeTool = new geRangeTool(row3->x(), row3->y(), ch);
-    sep2      = new geBox(rangeTool->x()+rangeTool->w()+4, row3->y(), 246, 20);
-    reload    = new geButton(sep2->x()+sep2->w()+4, row3->y(), 70, 20, "Reload");
-  row3->end();
-  row3->resizable(sep2);
 
-  end();
+gdSampleEditor::~gdSampleEditor()
+{
+  conf::sampleEditorX = x();
+  conf::sampleEditorY = y();
+  conf::sampleEditorW = w();
+  conf::sampleEditorH = h();
+  conf::sampleEditorGridVal = atoi(grid->text());
+  conf::sampleEditorGridOn  = snap->value();
+}
 
-  /* grid tool setup */
+
+/* -------------------------------------------------------------------------- */
+
+
+Fl_Group* gdSampleEditor::createUpperBar()
+{
+  Fl_Group* g = new Fl_Group(8, 8, w()-16, 20);
+  g->begin();
+    grid    = new geChoice(g->x(), g->y(), 50, 20);
+    snap    = new geCheck(grid->x()+grid->w()+4, g->y(), 12, 12);
+    sep1    = new geBox(snap->x()+snap->w()+4, g->y(), 506, 20);
+    zoomOut = new geButton(sep1->x()+sep1->w()+4, g->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+    zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, g->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
+  g->end();
+  g->resizable(sep1);
 
   grid->add("(off)");
   grid->add("2");
@@ -134,53 +140,85 @@ gdSampleEditor::gdSampleEditor(SampleChannel *ch)
 
   /* TODO - redraw grid if != (off) */
 
-  reload->callback(cb_reload, (void*)this);
-
   zoomOut->callback(cb_zoomOut, (void*)this);
   zoomIn->callback(cb_zoomIn, (void*)this);
 
-  /* logical samples (aka takes) cannot be reloaded. So far. */
+  return g;
+}
 
-  if (ch->wave->isLogical())
+
+/* -------------------------------------------------------------------------- */
+
+
+Fl_Group* gdSampleEditor::createOpTools(int x, int y)
+{
+  Fl_Group* g = new Fl_Group(x, y, w()-16, 100);
+  g->begin();
+  g->resizable(0);
+    volumeTool = new geVolumeTool(g->x(), g->y(), ch);
+    boostTool  = new geBoostTool(volumeTool->x()+volumeTool->w()+4, g->y(), ch);
+    panTool    = new gePanTool(boostTool->x()+boostTool->w()+4, g->y(), ch);
+   
+    pitchTool = new gePitchTool(g->x(), panTool->y()+panTool->h()+8, ch);
+
+    rangeTool = new geRangeTool(g->x(), pitchTool->y()+pitchTool->h()+8, ch);
+    sep2      = new geBox(rangeTool->x()+rangeTool->w()+4, rangeTool->y(), 246, 20);
+    reload    = new geButton(sep2->x()+sep2->w()+4, rangeTool->y(), 70, 20, "Reload");
+  g->end();
+
+  if (ch->wave->isLogical()) // Logical samples (aka takes) cannot be reloaded.
     reload->deactivate();
 
-  gu_setFavicon(this);
-  size_range(640, 480);
-  resizable(waveTools);
+  reload->callback(cb_reload, (void*)this);
 
-  label(ch->wave->getName().c_str());
-
-  set_non_modal();
-
-  if (conf::sampleEditorX)
-    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
-
-  show();
+  return g;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-gdSampleEditor::~gdSampleEditor()
+Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
 {
-  conf::sampleEditorX = x();
-  conf::sampleEditorY = y();
-  conf::sampleEditorW = w();
-  conf::sampleEditorH = h();
-  conf::sampleEditorGridVal = atoi(grid->text());
-  conf::sampleEditorGridOn  = snap->value();
+  Fl_Group* g = new Fl_Group(x, y, 150, 100);
+  g->begin();
+    play = new geButton(g->x(), g->y(), 25, 25, "", play_xpm, pause_xpm);
+    loop = new geCheck(play->x()+play->w()+6, g->y()+4, 12, 12, "Loop");
+  g->end();
+
+  play->callback(cb_togglePreview, (void*)this);
+
+  return g;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdSampleEditor::cb_reload    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_reload(); }
-void gdSampleEditor::cb_zoomIn    (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
-void gdSampleEditor::cb_zoomOut   (Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
-void gdSampleEditor::cb_changeGrid(Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
-void gdSampleEditor::cb_enableSnap(Fl_Widget *w, void *p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
+Fl_Group* gdSampleEditor::createBottomBar(int x, int y)
+{
+  Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 100);
+  g->begin();
+    Fl_Group* infoBox = createInfoBox(g->x(), g->y());
+    geBox* divisor = new geBox(infoBox->x()+infoBox->w()+8, g->y(), 1, 100);
+    divisor->box(FL_BORDER_BOX);
+    createOpTools(divisor->x()+divisor->w()+8, g->y());
+  g->end();
+  g->resizable(0);
+
+  return g;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSampleEditor::cb_reload       (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_reload(); }
+void gdSampleEditor::cb_zoomIn       (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_zoomIn(); }
+void gdSampleEditor::cb_zoomOut      (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_zoomOut(); }
+void gdSampleEditor::cb_changeGrid   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
+void gdSampleEditor::cb_enableSnap   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
+void gdSampleEditor::cb_togglePreview(Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_togglePreview(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -189,6 +227,14 @@ void gdSampleEditor::cb_enableSnap(Fl_Widget *w, void *p) { ((gdSampleEditor*)p)
 void gdSampleEditor::__cb_enableSnap()
 {
   waveTools->waveform->setSnap(!waveTools->waveform->getSnap());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSampleEditor::__cb_togglePreview()
+{
 }
 
 

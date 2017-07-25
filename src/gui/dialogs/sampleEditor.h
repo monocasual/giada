@@ -50,41 +50,51 @@ class gdSampleEditor : public gdWindow
 {
 private:
 
-	static void cb_reload        (Fl_Widget *w, void *p);
-	static void cb_zoomIn        (Fl_Widget *w, void *p);
-	static void cb_zoomOut       (Fl_Widget *w, void *p);
-	static void cb_changeGrid    (Fl_Widget *w, void *p);
-	static void cb_enableSnap    (Fl_Widget *w, void *p);
+	Fl_Group* createUpperBar();
+	Fl_Group* createBottomBar(int x, int y);
+	Fl_Group* createOpTools(int x, int y);
+	Fl_Group* createInfoBox(int x, int y);
+
+	static void cb_reload    (Fl_Widget* w, void* p);
+	static void cb_zoomIn    (Fl_Widget* w, void* p);
+	static void cb_zoomOut   (Fl_Widget* w, void* p);
+	static void cb_changeGrid(Fl_Widget* w, void* p);
+	static void cb_enableSnap(Fl_Widget* w, void* p);
+	static void cb_togglePreview(Fl_Widget* w, void* p);
 	inline void __cb_reload();
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 	inline void __cb_changeGrid();
 	inline void __cb_enableSnap();
+	inline void __cb_togglePreview();
 
 public:
 
-	gdSampleEditor(SampleChannel *ch);
+	gdSampleEditor(SampleChannel* ch);
 	~gdSampleEditor();
 
-	geChoice     *grid;
-	geCheck      *snap;
-	geBox        *sep1;
-	geButton     *zoomIn;
-	geButton     *zoomOut;
+	geChoice* grid;
+	geCheck*  snap;
+	geBox*    sep1;
+	geButton* zoomIn;
+	geButton* zoomOut;
 	
-	geWaveTools  *waveTools;
+	geWaveTools* waveTools;
 
-	geVolumeTool *volumeTool;
-	geBoostTool  *boostTool;
-	gePanTool    *panTool;
+	geVolumeTool* volumeTool;
+	geBoostTool*  boostTool;
+	gePanTool*    panTool;
 
-	gePitchTool  *pitchTool;
+	gePitchTool* pitchTool;
 
-	geRangeTool  *rangeTool;
-	geBox        *sep2;
-	geButton     *reload;
+	geRangeTool* rangeTool;
+	geBox*       sep2;
+	geButton*    reload;
 
-	SampleChannel *ch;
+	geButton* play;
+	geCheck* loop;
+
+	SampleChannel* ch;
 };
 
 
