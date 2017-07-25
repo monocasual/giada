@@ -122,9 +122,9 @@ void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
 void SampleChannel::generateUniqueSampleName()
 {
 	string oldName = wave->getName();
-	int k = 1; // Start from k = 1, zero is too nerdy
+	int k = 0;
 	while (!mh::uniqueSampleName(this, wave->getName())) {
-		wave->setName((oldName + "-" + gu_itoa(k)).c_str());
+		wave->setName(oldName + "-" + gu_itoa(k));
 		k++;
 	}
 }
@@ -754,36 +754,16 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(Wave *w)
+void SampleChannel::pushWave(Wave *w, bool generateName)
 {
+	assert(wave == nullptr);
 	sendMidiLplay();     // FIXME - why here?!?!
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
 	end    = wave->getSize();
-	generateUniqueSampleName();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::allocEmpty(int frames, int samplerate, int takeId)
-{
-	assert(wave == nullptr);
-
-	int res = waveManager::createEmpty(frames, samplerate, 
-		string("TAKE-" + gu_itoa(takeId)), &wave);
-	if (res != G_RES_OK)
-		return res;
-
-	status = STATUS_OFF;
-	begin  = 0;
-	end    = wave->getSize();
-
-	sendMidiLplay();  // FIXME - why here?!?!
-
-	return res;
+	if (generateName)
+		generateUniqueSampleName();
 }
 
 

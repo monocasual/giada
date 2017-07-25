@@ -31,7 +31,6 @@
 #include "../utils/log.h"
 #include "../glue/main.h"
 #include "../glue/channel.h"
-#include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "mixer.h"
 #include "const.h"
@@ -49,6 +48,8 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "wave.h"
+#include "waveManager.h"
+#include "mixerHandler.h"
 
 
 using std::vector;
@@ -306,23 +307,27 @@ bool startInputRec()
 {
 	int channelsReady = 0;
 
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
+	for (Channel* channel : mixer::channels) {
 
-		if (!mixer::channels.at(i)->canInputRec())
+		if (!channel->canInputRec())
 			continue;
 
-		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
+		SampleChannel* ch = static_cast<SampleChannel*>(channel);
 
 		/* Allocate empty sample for the current channel. */
 
-		if (!ch->allocEmpty(clock::getTotalFrames(), conf::samplerate, patch::lastTakeId))
-		{
+		Wave* wave = nullptr;
+		int result = waveManager::createEmpty(clock::getTotalFrames(), 
+			conf::samplerate, string("TAKE-" + gu_itoa(patch::lastTakeId)), &wave); 
+		if (result != G_RES_OK) {
 			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
 			continue;
 		}
 
-		/* Increase lastTakeId until the sample name TAKE-[n] is unique */
+		ch->pushWave(wave, false);  // false: don't generate name, we provide it
+
+		/* Increase lastTakeId until the sample name TAKE-[n] is unique. */
 
 		while (!uniqueSampleName(ch, ch->wave->getName())) {
 			patch::lastTakeId++;

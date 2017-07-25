@@ -127,9 +127,10 @@ public:
 	void setXFade(int frame);
 
 	/* pushWave
-	 * add a new wave to an existing channel. */
+	Adds a new wave to an existing channel. It also generates a unique name
+	on request. */
 
-	void pushWave(Wave* w);
+	void pushWave(Wave* w, bool generateName=true);
 
 	/* getPosition
 	 * returns the position of an active sample. If EMPTY o MISSING
@@ -164,11 +165,6 @@ public:
 	 * stop the channel immediately, no further checks. */
 
 	void hardStop(int frame);
-
-	/* allocEmpty
-	 * alloc an empty wave used in input recordings. */
-
-	int allocEmpty(int frames, int samplerate, int takeId);
 
 	/* setReadActions
 	 * if enabled (v == true), recorder will read actions from this channel. If

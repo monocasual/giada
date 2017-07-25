@@ -110,10 +110,10 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *glue_addChannel(int column, int type)
+Channel* glue_addChannel(int column, int type)
 {
-	Channel *ch     = mh::addChannel(type);
-	geChannel *gch  = G_MainWin->keyboard->addChannel(column, ch);
+	Channel* ch     = mh::addChannel(type);
+	geChannel* gch  = G_MainWin->keyboard->addChannel(column, ch);
 	ch->guiChannel  = gch;
 	return ch;
 }
@@ -122,7 +122,7 @@ Channel *glue_addChannel(int column, int type)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_deleteChannel(Channel *ch)
+void glue_deleteChannel(Channel* ch)
 {
   if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
     return;
