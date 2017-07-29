@@ -161,23 +161,22 @@ void geWaveTools::resize(int x, int y, int w, int h)
 
 int geWaveTools::handle(int e)
 {
-	int ret = Fl_Group::handle(e);
 	switch (e) {
 		case FL_MOUSEWHEEL: {
 			waveform->setZoom(Fl::event_dy());
 			redraw();
-			ret = 1;
-			break;
+			return 1;
 		}
 		case FL_PUSH: {
 			if (Fl::event_button3()) {  // right button
 				openMenu();
-				ret = 1;
+				return 1;
 			}
-			break;
+			Fl::focus(waveform);
 		}
+		default:
+			return Fl_Group::handle(e);
 	}
-	return ret;
 }
 
 

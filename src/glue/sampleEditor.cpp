@@ -163,4 +163,13 @@ void setPlayHead(SampleChannel* ch, int f)
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
+void togglePreview(SampleChannel* ch)
+{
+	ch->togglePreview();
+}
+
+
 }}}; // giada::c::sampleEditor::

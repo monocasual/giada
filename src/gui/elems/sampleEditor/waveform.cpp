@@ -343,9 +343,13 @@ void geWaveform::draw()
 
 int geWaveform::handle(int e)
 {
-  int ret = 0;
-
   switch (e) {
+
+    case FL_KEYDOWN: {
+      if (Fl::event_key() == ' ')
+        sampleEditor::togglePreview(chan);
+      return 1;
+    }
 
     case FL_PUSH: {
 
@@ -353,10 +357,8 @@ int geWaveform::handle(int e)
       pushed = true;
 
       if (!mouseOnEnd() && !mouseOnStart()) {
-        if (Fl::event_button3()) {  // let the parent (waveTools) handle this
-          ret = 0;
-          break;
-        }
+        if (Fl::event_button3())  // let the parent (waveTools) handle this
+          return 0;
         if (mouseOnSelectionA())
           resizedA = true;
         else
@@ -368,8 +370,7 @@ int geWaveform::handle(int e)
           selection.bPixel = selection.aPixel;
         }
       }
-      ret = 1;
-      break;
+      return 1;
     }
 
     case FL_RELEASE: {
@@ -401,13 +402,11 @@ int geWaveform::handle(int e)
       resizedB = false;
 
       redraw();
-      ret = 1;
-      break;
+      return 1;
     }
 
     case FL_ENTER: {  // enables FL_DRAG
-      ret = 1;
-      break;
+      return 1;
     }
 
     case FL_LEAVE: {
@@ -416,8 +415,7 @@ int geWaveform::handle(int e)
         chanEndLit   = false;
         redraw();
       }
-      ret = 1;
-      break;
+      return 1;
     }
 
     case FL_MOVE: {
@@ -452,8 +450,7 @@ int geWaveform::handle(int e)
       else
         fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
 
-      ret = 1;
-      break;
+      return 1;
     }
 
     case FL_DRAG: {
@@ -514,11 +511,12 @@ int geWaveform::handle(int e)
       }
 
       mouseX = Fl::event_x();
-      ret = 1;
-      break;
+      return 1;
     }
+
+    default:
+      return Fl_Widget::handle(e);
   }
-  return ret;
 }
 
 
