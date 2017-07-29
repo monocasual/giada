@@ -52,11 +52,15 @@ using namespace giada::m;
 
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
+	  rsmp_state       (nullptr),
+		pChan            (nullptr),
+		vChanPreview     (nullptr),
 		frameRewind      (-1),
 		boost            (G_DEFAULT_BOOST),
 		pitch            (G_DEFAULT_PITCH),
 		wave             (nullptr),
 		tracker          (0),
+		trackerPreview   (0),
 		begin            (0),
 		end              (0),
 		mode             (G_DEFAULT_CHANMODE),
@@ -71,8 +75,6 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	  midiInReadActions(0x0),
 	  midiInPitch      (0x0)
 {
-	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
-	pChan = (float *) malloc(kernelAudio::getRealBufSize() * 2 * sizeof(float));
 }
 
 
@@ -81,20 +83,46 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 
 SampleChannel::~SampleChannel()
 {
-	if (wave)
+	if (wave != nullptr)
 		delete wave;
-	src_delete(rsmp_state);
-	free(pChan);
+	if (rsmp_state != nullptr)
+		src_delete(rsmp_state);
+	if (pChan != nullptr)
+		delete[] pChan;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
+bool SampleChannel::allocBuffers()
+{
+	if (!Channel::allocBuffers())
+		return false;
+
+	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
+	if (rsmp_state == nullptr) {
+		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for SRC_STATE!\n");
+		return false;
+	}
+
+	pChan = new (std::nothrow) float[bufferSize];
+	if (pChan == nullptr) {
+		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for pChan!\n");
+		return false;
+	}
+
+	return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleChannel::copy(const Channel* _src, pthread_mutex_t* pluginMutex)
 {
 	Channel::copy(_src, pluginMutex);
-	SampleChannel *src = (SampleChannel *) _src;
+	const SampleChannel* src = static_cast<const SampleChannel*>(_src);
 	tracker         = src->tracker;
 	begin           = src->begin;
 	end             = src->end;
@@ -138,8 +166,8 @@ void SampleChannel::clear()
 	/** TODO - these memsets can be done only if status PLAY (if below),
 	 * but it would require extra clearPChan calls when samples stop */
 
-		std::memset(vChan, 0, sizeof(float) * bufferSize);
-		std::memset(pChan, 0, sizeof(float) * bufferSize);
+	std::memset(vChan, 0, sizeof(float) * bufferSize);
+	std::memset(pChan, 0, sizeof(float) * bufferSize);
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);
@@ -789,6 +817,14 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 		outBuffer[j]   += vChan[j]   * volume * calcPanning(0) * boost;
 		outBuffer[j+1] += vChan[j+1] * volume * calcPanning(1) * boost;
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleChannel::preview(float *outBuffer)
+{
 }
 
 

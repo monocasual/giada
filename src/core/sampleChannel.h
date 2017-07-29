@@ -44,13 +44,18 @@ private:
 	/* rsmp_state, rsmp_data
 	 * structs from libsamplerate */
 
-	SRC_STATE *rsmp_state;
+	SRC_STATE* rsmp_state;
 	SRC_DATA   rsmp_data;
 
 	/* pChan
 	Extra virtual channel for processing resampled data. */
 
-	float *pChan;
+	float* pChan;
+
+	/* pChan
+	Extra virtual channel for audio preview. */
+
+	float* vChanPreview;
 
 	/* frameRewind
 	Exact frame in which a rewind occurs. */
@@ -65,12 +70,12 @@ private:
 	 * Start to fill pChan from byte 'offset'. If rewind=false don't
 	 * rewind internal tracker. Returns new sample position, in frames */
 
-	int fillChan(float *dest, int start, int offset, bool rewind=true);
+	int fillChan(float* dest, int start, int offset, bool rewind=true);
 
 	/* clearChan
 	 * set data to zero from start to bufferSize-1. */
 
-	void clearChan(float *dest, int start);
+	void clearChan(float* dest, int start);
 
 	/* calcFadeoutStep
 	 * how many frames are left before the end of the sample? Is there
@@ -94,9 +99,10 @@ public:
 	SampleChannel(int bufferSize, bool inputMonitor);
 	~SampleChannel();
 
-	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;
+	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void clear() override;
-	void process(float *outBuffer, float *inBuffer) override;
+	void process(float* outBuffer, float* inBuffer) override;
+	void preview(float* outBuffer) override;
 	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
 		bool forceStart, bool isUserGenerated) override;
 	void kill(int frame) override;
@@ -106,15 +112,16 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-  int readPatch(const std::string &basePath, int i, pthread_mutex_t *pluginMutex,
+  int readPatch(const std::string& basePath, int i, pthread_mutex_t* pluginMutex,
     int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject) override;
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(giada::m::recorder::action *a, int localFrame, int globalFrame,
+	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
+	bool allocBuffers() override;
 
 	void reset(int frame);
 
@@ -159,7 +166,7 @@ public:
 	/* save
 	 * save sample to file. */
 
-	int save(const char *path);
+	int save(const char* path);
 
 	/* hardStop
 	 * stop the channel immediately, no further checks. */
@@ -177,21 +184,22 @@ public:
 
 	/* ------------------------------------------------------------------------ */
 
-	Wave  *wave;
-	int    tracker;         // chan position
-	int    begin;
-	int    end;
-	int    mode;            // mode: see const.h
-	bool   qWait;           // quantizer wait
-	bool   fadeinOn;
-	float  fadeinVol;
-	bool   fadeoutOn;
-	float  fadeoutVol;      // fadeout volume
-	int    fadeoutTracker;  // tracker fadeout, xfade only
-	float  fadeoutStep;     // fadeout decrease
-  int    fadeoutType;     // xfade or fadeout
-  int		 fadeoutEnd;      // what to do when fadeout ends
-  bool   inputMonitor;
+	Wave* wave;
+	int   tracker;         // chan position
+	int   trackerPreview;  // chan position for audio preview
+	int   begin;
+	int   end;
+	int   mode;            // mode: see const.h
+	bool  qWait;           // quantizer wait
+	bool  fadeinOn;
+	float fadeinVol;
+	bool  fadeoutOn;
+	float fadeoutVol;      // fadeout volume
+	int   fadeoutTracker;  // tracker fadeout, xfade only
+	float fadeoutStep;     // fadeout decrease
+  int   fadeoutType;     // xfade or fadeout
+  int		fadeoutEnd;      // what to do when fadeout ends
+  bool  inputMonitor;
 
 	/* midi stuff */
 

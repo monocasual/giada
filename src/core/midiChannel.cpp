@@ -183,6 +183,15 @@ void MidiChannel::process(float *outBuffer, float *inBuffer)
 /* -------------------------------------------------------------------------- */
 
 
+void MidiChannel::preview(float *outBuffer)
+{
+	// No preview for MIDI channels (for now).
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void MidiChannel::start(int frame, bool doQuantize, int quantize,
 		bool mixerIsRunning, bool forceStart, bool isUserGenerated)
 {

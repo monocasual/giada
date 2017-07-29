@@ -80,7 +80,7 @@ float tick[TICKSIZE] = {
 /* lineInRec
 Records from line in. */
 
-void lineInRec(float *inBuf, unsigned frame)
+void lineInRec(float* inBuf, unsigned frame)
 {
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
 	 	return;
@@ -106,7 +106,7 @@ void lineInRec(float *inBuf, unsigned frame)
 /* ProcessLineIn
 Computes line in peaks, plus handles "hear what you're playin'" thing. */
 
-void processLineIn(float *inBuf, unsigned frame)
+void processLineIn(float* inBuf, unsigned frame)
 {
 	if (!kernelAudio::isInputEnabled())
 		return;
@@ -131,7 +131,7 @@ void processLineIn(float *inBuf, unsigned frame)
 /* clearAllBuffers
 Cleans up every buffer, both in Mixer and in channels. */
 
-void clearAllBuffers(float *outBuf, unsigned bufferSize)
+void clearAllBuffers(float* outBuf, unsigned bufferSize)
 {
 	memset(outBuf, 0, sizeof(float) * bufferSize);         // out
 	memset(vChanInToOut, 0, sizeof(float) * bufferSize);   // inToOut vChan
@@ -210,7 +210,7 @@ void sumChannels(unsigned frame)
 /* renderMetronome
 Generates metronome when needed and pastes it to the output buffer. */
 
-void renderMetronome(float *outBuf, unsigned frame)
+void renderMetronome(float* outBuf, unsigned frame)
 {
 	if (tockPlay) {
 		outBuf[frame]   += tock[tockTracker];
@@ -239,11 +239,13 @@ void renderMetronome(float *outBuf, unsigned frame)
 Final processing stage. Take each channel and process it (i.e. copy its
 content to the output buffer). Process plugins too, if any. */
 
-void renderIO(float *outBuf, float *inBuf)
+void renderIO(float* outBuf, float* inBuf)
 {
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->process(outBuf, inBuf);
+	for (Channel* channel : channels) {
+		channel->process(outBuf, inBuf);
+		channel->preview(outBuf);
+	}
 	pthread_mutex_unlock(&mutex_chans);
 
 #ifdef WITH_VST
@@ -260,7 +262,7 @@ void renderIO(float *outBuf, float *inBuf)
 /* limitOutput
 Applies a very dumb hard limiter. */
 
-void limitOutput(float *outBuf, unsigned frame)
+void limitOutput(float* outBuf, unsigned frame)
 {
 	if (outBuf[frame] > 1.0f)
 		outBuf[frame] = 1.0f;
@@ -280,7 +282,7 @@ void limitOutput(float *outBuf, unsigned frame)
 
 /* computePeak */
 
-void computePeak(float *outBuf, unsigned frame)
+void computePeak(float* outBuf, unsigned frame)
 {
 	/* TODO it takes into account only left channel so far! */
 	if (outBuf[frame] > peakOut)
@@ -294,7 +296,7 @@ void computePeak(float *outBuf, unsigned frame)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume. */
 
-void finalizeOutput(float *outBuf, unsigned frame)
+void finalizeOutput(float* outBuf, unsigned frame)
 {
 	/* merge vChanInToOut, if enabled */
 
@@ -432,8 +434,8 @@ void allocVirtualInput(int frames)
 /* -------------------------------------------------------------------------- */
 
 
-int masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize,
-	double streamTime, RtAudioStreamStatus status, void *userData)
+int masterPlay(void* _outBuf, void* _inBuf, unsigned bufferSize,
+	double streamTime, RtAudioStreamStatus status, void* userData)
 {
 	if (!ready)
 		return 0;
@@ -442,8 +444,8 @@ int masterPlay(void *_outBuf, void *_inBuf, unsigned bufferSize,
   clock::recvJackSync();
 #endif
 
-	float *outBuf = (float*) _outBuf;
-	float *inBuf  = kernelAudio::isInputEnabled() ? (float*) _inBuf : nullptr;
+	float* outBuf = (float*) _outBuf;
+	float* inBuf  = kernelAudio::isInputEnabled() ? (float*) _inBuf : nullptr;
 	bufferSize   *= 2;     // stereo
 	peakOut       = 0.0f;  // reset peak calculator
 	peakIn        = 0.0f;  // reset peak calculator

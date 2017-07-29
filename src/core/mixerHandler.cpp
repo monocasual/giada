@@ -115,14 +115,14 @@ int getNewChanIndex()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSampleName(SampleChannel *ch, const string &name)
+bool uniqueSampleName(SampleChannel* ch, const string& name)
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
 		if (ch == mixer::channels.at(i))  // skip itself
 			continue;
 		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
 			continue;
-		SampleChannel *other = (SampleChannel*) mixer::channels.at(i);
+		SampleChannel* other = (SampleChannel*) mixer::channels.at(i);
 		if (other->wave != nullptr && name == other->wave->getName())
 			return false;
 	}
@@ -133,15 +133,20 @@ bool uniqueSampleName(SampleChannel *ch, const string &name)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *addChannel(int type)
+Channel* addChannel(int type)
 {
-  Channel *ch;
+  Channel* ch;
 	int bufferSize = kernelAudio::getRealBufSize() * 2;
 
 	if (type == CHANNEL_SAMPLE)
 		ch = new SampleChannel(bufferSize, conf::inputMonitorDefaultOn);
 	else
 		ch = new MidiChannel(bufferSize);
+
+	if (!ch->allocBuffers()) {
+		delete ch;
+		return nullptr;
+	}
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
@@ -161,7 +166,7 @@ Channel *addChannel(int type)
 /* -------------------------------------------------------------------------- */
 
 
-int deleteChannel(Channel *ch)
+int deleteChannel(Channel* ch)
 {
 	int index = -1;
 	for (unsigned i=0; i<mixer::channels.size(); i++) {

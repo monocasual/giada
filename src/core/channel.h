@@ -76,7 +76,7 @@ protected:
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
 	to KernelMidi. */
 
-	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t &msg);
+	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t& msg);
 
 	/* calcPanning
 	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
@@ -92,19 +92,25 @@ public:
 	/* copy
 	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
 
-	virtual void copy(const Channel *src, pthread_mutex_t *pluginMutex) = 0;
+	virtual void copy(const Channel* src, pthread_mutex_t* pluginMutex) = 0;
 
 	/* readPatch
 	 * Fill channel with data from patch. */
 
-	virtual int readPatch(const std::string &basePath, int i,
-    pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality);
+	virtual int readPatch(const std::string& basePath, int i,
+    pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
 	Merges vChannels into buffer, plus plugin processing (if any). Warning:
 	inBuffer might be nullptr if no input devices are available for recording. */
 
-	virtual void process(float *outBuffer, float *inBuffer) = 0;
+	virtual void process(float* outBuffer, float* inBuffer) = 0;
+
+	/* Preview
+	Makes itself audibile for audio preview, such as Sample Editor or other
+	tools. */
+
+	virtual void preview(float* outBuffer) = 0;
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)
@@ -167,7 +173,7 @@ public:
 
 	 // TODO - quantize is useless!
 
-	virtual void parseAction(giada::m::recorder::action *a, int localFrame,
+	virtual void parseAction(giada::m::recorder::action* a, int localFrame,
     int globalFrame, int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind
@@ -198,25 +204,31 @@ public:
 
 	virtual void receiveMidi(uint32_t msg);
 
+	/* allocBuffers
+	Mandatory method to allocate memory for internal buffers. Call it after the
+	object has been constructed. */
+	
+	virtual bool allocBuffers();
+
 	/* ------------------------------------------------------------------------ */
 
-	int     index;                 // unique id
-	int     type;                  // midi or sample
-	int     status;	               // status: see const.h
-	int     key;                   // keyboard button
-	float   volume;                // global volume
-	float   volume_i;              // internal volume
-	float   volume_d;              // delta volume (for envelope)
-	bool    mute_i;                // internal mute
-	bool 	  mute_s;                // previous mute status after being solo'd
-	bool    mute;                  // global mute
-	bool    solo;
-  bool    hasActions;            // has something recorded
-  bool    readActions;           // read what's recorded
-	bool    armed;							   // armed for recording
-	int 	  recStatus;             // status of recordings (waiting, ending, ...)
-	float  *vChan;	               // virtual channel
-  geChannel *guiChannel;         // pointer to a gChannel object, part of the GUI
+	int    index;                 // unique id
+	int    type;                  // midi or sample
+	int    status;                // status: see const.h
+	int    key;                   // keyboard button
+	float  volume;                // global volume
+	float  volume_i;              // internal volume
+	float  volume_d;              // delta volume (for envelope)
+	bool   mute_i;                // internal mute
+	bool 	 mute_s;                // previous mute status after being solo'd
+	bool   mute;                  // global mute
+	bool   solo;
+  bool   hasActions;            // has something recorded
+  bool   readActions;           // read what's recorded
+	bool   armed;                 // armed for recording
+	int 	 recStatus;             // status of recordings (waiting, ending, ...)
+	float* vChan;                 // virtual channel
+  geChannel* guiChannel;        // pointer to a gChannel object, part of the GUI
 
 	// TODO - midi structs, please
 
@@ -240,7 +252,7 @@ public:
   uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  std::vector <Plugin *> plugins;
+  std::vector <Plugin*> plugins;
 #endif
 
 
@@ -267,7 +279,7 @@ public:
 	 * Return a reference to midiBuffer stack. This is available for any kind of
 	 * channel, but it makes sense only for MIDI channels. */
 
-	juce::MidiBuffer &getPluginMidiEvents();
+	juce::MidiBuffer& getPluginMidiEvents();
 
 	void clearMidiBuffer();
 

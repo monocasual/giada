@@ -82,10 +82,6 @@ Channel::Channel(int type, int status, int bufferSize)
   midiOutLmute   (0x0),
   midiOutLsolo   (0x0)
 {
-  vChan = (float *) malloc(bufferSize * sizeof(float));
-	if (!vChan)
-		gu_log("[Channel::allocVchan] unable to alloc memory for vChan\n");
-	std::memset(vChan, 0, bufferSize * sizeof(float));
 }
 
 
@@ -95,8 +91,23 @@ Channel::Channel(int type, int status, int bufferSize)
 Channel::~Channel()
 {
 	status = STATUS_OFF;
-	if (vChan)
-		free(vChan);
+	if (vChan != nullptr)
+		delete[] vChan;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Channel::allocBuffers()
+{
+	vChan = new (std::nothrow) float[bufferSize];
+	if (vChan == nullptr) {
+		gu_log("[Channel::allocBuffers] unable to alloc memory for vChan!\n");
+		return false;
+	}
+	std::memset(vChan, 0, bufferSize * sizeof(float));	
+	return true;
 }
 
 
