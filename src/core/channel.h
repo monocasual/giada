@@ -72,6 +72,11 @@ protected:
 
 	float pan;
 
+	/* previewMode
+	Whether the channel is in audio preview mode or not. */
+
+	bool previewMode;
+
 	/* sendMidiLMessage
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
 	to KernelMidi. */
@@ -207,7 +212,7 @@ public:
 	/* allocBuffers
 	Mandatory method to allocate memory for internal buffers. Call it after the
 	object has been constructed. */
-	
+
 	virtual bool allocBuffers();
 
 	/* ------------------------------------------------------------------------ */
@@ -272,6 +277,9 @@ public:
 
 	void setPan(float v);
 	float getPan();
+
+	void togglePreview();
+	bool isPreviewMode();
 
 #ifdef WITH_VST
 

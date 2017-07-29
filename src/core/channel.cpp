@@ -53,6 +53,7 @@ Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
   midiFilter     (-1),
   pan            (0.5f),
+  previewMode    (false),
   type           (type),
   status         (status),
   key            (0),
@@ -406,6 +407,21 @@ float Channel::calcPanning(int ch)
     return 1.0 - pan;
   else  // channel 1
     return pan; 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::togglePreview()
+{
+	previewMode = !previewMode;
+}
+
+
+bool Channel::isPreviewMode()
+{
+	return previewMode;
 }
 
 

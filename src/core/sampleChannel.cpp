@@ -52,7 +52,7 @@ using namespace giada::m;
 
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
-	  rsmp_state       (nullptr),
+		rsmp_state       (nullptr),
 		pChan            (nullptr),
 		vChanPreview     (nullptr),
 		frameRewind      (-1),
@@ -71,9 +71,9 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (G_DEFAULT_FADEOUT_STEP),
-    inputMonitor     (inputMonitor),
-	  midiInReadActions(0x0),
-	  midiInPitch      (0x0)
+		inputMonitor     (inputMonitor),
+		midiInReadActions(0x0),
+		midiInPitch      (0x0)
 {
 }
 
@@ -88,7 +88,9 @@ SampleChannel::~SampleChannel()
 	if (rsmp_state != nullptr)
 		src_delete(rsmp_state);
 	if (pChan != nullptr)
-		delete[] pChan;
+		delete[] pChan;	
+	if (vChanPreview != nullptr)
+		delete[] vChanPreview;
 }
 
 
@@ -109,6 +111,12 @@ bool SampleChannel::allocBuffers()
 	pChan = new (std::nothrow) float[bufferSize];
 	if (pChan == nullptr) {
 		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for pChan!\n");
+		return false;
+	}
+
+	vChanPreview = new (std::nothrow) float[bufferSize];
+	if (vChanPreview == nullptr) {
+		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for vChanPreview!\n");
 		return false;
 	}
 
@@ -274,7 +282,9 @@ void SampleChannel::setBegin(int v)
 		begin = end - 2;
 	else
 		begin = v;
+
 	tracker = begin;
+	trackerPreview = begin;
 }
 
 
@@ -765,7 +775,7 @@ void SampleChannel::reset(int frame)
 void SampleChannel::empty()
 {
 	status = STATUS_OFF;
-	if (wave) {
+	if (wave != nullptr) {
 		delete wave;
 		wave = nullptr;
 	}
@@ -798,7 +808,7 @@ void SampleChannel::pushWave(Wave *w, bool generateName)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(float *outBuffer, float *inBuffer)
+void SampleChannel::process(float* outBuffer, float* inBuffer)
 {
 	/* If armed and inbuffer is not nullptr (i.e. input device available) and
   input monitor is on, copy input buffer to vChan: this enables the input
@@ -823,8 +833,22 @@ void SampleChannel::process(float *outBuffer, float *inBuffer)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::preview(float *outBuffer)
+void SampleChannel::preview(float* outBuffer)
 {
+	if (!previewMode)
+		return;
+
+	trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+
+	for (int j=0; j<bufferSize; j+=2) {
+		outBuffer[j]   += vChanPreview[j]   * volume * calcPanning(0) * boost;
+		outBuffer[j+1] += vChanPreview[j+1] * volume * calcPanning(1) * boost;
+	}
+
+	if (trackerPreview >= end) {
+		trackerPreview = 0;
+		previewMode = false;
+	}
 }
 
 

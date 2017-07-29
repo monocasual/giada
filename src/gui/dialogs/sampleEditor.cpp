@@ -235,6 +235,7 @@ void gdSampleEditor::__cb_enableSnap()
 
 void gdSampleEditor::__cb_togglePreview()
 {
+  ch->togglePreview();
 }
 
 

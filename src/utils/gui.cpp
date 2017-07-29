@@ -87,7 +87,7 @@ void gu_refreshUI()
 	/* If Sample Editor is open, repaint it (for dynamic play head). */
 
 	gdSampleEditor* se = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (se)
+	if (se != nullptr)
 		se->waveTools->redrawWaveformAsync();
 
 	/* redraw GUI */

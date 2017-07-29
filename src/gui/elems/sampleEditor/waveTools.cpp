@@ -128,7 +128,7 @@ void geWaveTools::updateWaveform()
 
 void geWaveTools::redrawWaveformAsync()
 {
-	if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+	if (ch->isPreviewMode())
 		waveform->redraw();
 }
 
