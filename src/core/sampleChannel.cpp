@@ -794,7 +794,6 @@ void SampleChannel::empty()
 
 void SampleChannel::pushWave(Wave *w, bool generateName)
 {
-	assert(wave == nullptr);
 	sendMidiLplay();     // FIXME - why here?!?!
 	wave   = w;
 	status = STATUS_OFF;
