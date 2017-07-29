@@ -101,7 +101,8 @@ void geWaveform::freeData()
 
 int geWaveform::alloc(int datasize)
 {
-  ratio = chan->wave->getSize() / (float) datasize;
+  Wave* wave = chan->wave;
+  ratio = wave->getSize() / (float) datasize;
 
   if (ratio < 2)
     return 0;
@@ -123,7 +124,7 @@ int geWaveform::alloc(int datasize)
 
   int gridFreq = 0;
   if (grid.level != 0) {
-    gridFreq = chan->wave->getSize() / grid.level;
+    gridFreq = wave->getSize() / grid.level;
     if (gridFreq % 2 != 0)
       gridFreq--;
   }
@@ -141,8 +142,8 @@ int geWaveform::alloc(int datasize)
      *   p = j * (m-1 / n-1)
      * in order to obtain 'datasize' cells to parse (and not datasize-1) */
 
-    pp = i * ((chan->wave->getSize() - 1) / (float) datasize);
-    pn = (i+1) * ((chan->wave->getSize() - 1) / (float) datasize);
+    pp = i * ((wave->getSize() - 1) / (float) datasize);
+    pn = (i+1) * ((wave->getSize() - 1) / (float) datasize);
 
     if (pp % 2 != 0) pp -= 1;
     if (pn % 2 != 0) pn -= 1;
@@ -155,11 +156,15 @@ int geWaveform::alloc(int datasize)
     int k = pp;
     while (k < pn) {
 
-      if (chan->wave->getData()[k] > peaksup)
-        peaksup = chan->wave->getData()[k];    // FIXME - Left data only
+      /* Compute average between two channels (left and right). */
+
+      float dataAvg = (wave->getData()[k] + wave->getData()[k+1]) / 2;
+
+      if (dataAvg > peaksup)
+        peaksup = dataAvg;
       else
-      if (chan->wave->getData()[k] <= peakinf)
-        peakinf = chan->wave->getData()[k];    // FIXME - Left data only
+      if (dataAvg <= peakinf)
+        peakinf = dataAvg;
 
       /* print grid */
 
