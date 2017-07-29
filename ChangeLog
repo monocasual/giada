@@ -12,6 +12,11 @@
 --------------------------------------------------------------------------------
 
 
+0.14.2 ---
+- Better Wave objects handling
+- Improved channels' memory management
+
+
 0.14.1 --- 2017 . 07 . 16
 - Update JUCE library to 5.0.2
 - Show play head in Sample Editor
