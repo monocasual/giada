@@ -51,6 +51,11 @@ void fade(SampleChannel* ch, int a, int b, int type);
 void smoothEdges(SampleChannel* ch, int a, int b);
 void setStartEnd(SampleChannel* ch, int a, int b);
 
+/* setPlayHead
+Changes playhead's position. Used in preview. */
+
+void setPlayHead(SampleChannel* ch, int f);
+
 }}}; // giada::c::sampleEditor::
 
 #endif

@@ -388,6 +388,8 @@ int geWaveform::handle(int e)
         sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
       }
 
+      sampleEditor::setPlayHead(chan, absolutePoint(mouseX - x()));
+
       pushed   = false;
       dragged  = false;
       resizedA = false;

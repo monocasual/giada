@@ -153,4 +153,14 @@ void trim(SampleChannel* ch, int a, int b)
   gdEditor->waveTools->waveform->refresh();
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void setPlayHead(SampleChannel* ch, int f)
+{
+	ch->trackerPreview = f * 2;  // stereo value
+}
+
+
 }}}; // giada::c::sampleEditor::
