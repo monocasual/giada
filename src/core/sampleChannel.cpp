@@ -710,6 +710,15 @@ void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
 /* -------------------------------------------------------------------------- */
 
 
+void SampleChannel::setOnEndPreviewCb(std::function<void()> f)
+{
+	onPreviewEnd = f;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void SampleChannel::setFadeIn(bool internal)
 {
 	if (internal) mute_i = false;  // remove mute before fading in
@@ -847,6 +856,8 @@ void SampleChannel::preview(float* outBuffer)
 	if (trackerPreview >= end) {
 		trackerPreview = 0;
 		previewMode = false;
+		if (onPreviewEnd)
+			onPreviewEnd();
 	}
 }
 

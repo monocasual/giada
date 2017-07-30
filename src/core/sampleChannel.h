@@ -29,6 +29,7 @@
 #define G_SAMPLE_CHANNEL_H
 
 
+#include <functional>
 #include <samplerate.h>
 #include "channel.h"
 
@@ -64,6 +65,11 @@ private:
 
 	float boost;
 	float pitch;
+
+	/* onPreviewEnd
+	A callback fired when audio preview ends. */
+
+	std::function<void()> onPreviewEnd;
 
 	/* fillChan
 	 * copy from wave to *dest and resample data from wave, if necessary.
@@ -181,6 +187,8 @@ public:
 
 	void setBoost(float v);
 	float getBoost();	
+
+	void setOnEndPreviewCb(std::function<void()> f);
 
 	/* ------------------------------------------------------------------------ */
 

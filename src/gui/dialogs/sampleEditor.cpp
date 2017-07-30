@@ -190,6 +190,10 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
   play->callback(cb_togglePreview, (void*)this);
   rewind->callback(cb_rewindPreview, (void*)this);
 
+  ch->setOnEndPreviewCb([this] { 
+  	play->value(0);
+  });
+
   return g;
 }
 
