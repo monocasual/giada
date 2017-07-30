@@ -182,11 +182,13 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
 {
   Fl_Group* g = new Fl_Group(x, y, 150, 100);
   g->begin();
-    play = new geButton(g->x(), g->y(), 25, 25, "", play_xpm, pause_xpm);
-    loop = new geCheck(play->x()+play->w()+6, g->y()+4, 12, 12, "Loop");
+    rewind = new geButton(g->x(), g->y(), 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+    play   = new geButton(rewind->x()+rewind->w()+4, g->y(), 25, 25, "", play_xpm, pause_xpm);
+    loop   = new geCheck(play->x()+play->w()+6, g->y()+4, 12, 12, "Loop");
   g->end();
 
   play->callback(cb_togglePreview, (void*)this);
+  rewind->callback(cb_rewindPreview, (void*)this);
 
   return g;
 }
@@ -219,6 +221,7 @@ void gdSampleEditor::cb_zoomOut      (Fl_Widget* w, void* p) { ((gdSampleEditor*
 void gdSampleEditor::cb_changeGrid   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_changeGrid(); }
 void gdSampleEditor::cb_enableSnap   (Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_enableSnap(); }
 void gdSampleEditor::cb_togglePreview(Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_togglePreview(); }
+void gdSampleEditor::cb_rewindPreview(Fl_Widget* w, void* p) { ((gdSampleEditor*)p)->__cb_rewindPreview(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -236,6 +239,12 @@ void gdSampleEditor::__cb_enableSnap()
 void gdSampleEditor::__cb_togglePreview()
 {
   sampleEditor::togglePreview(ch);
+}
+
+
+void gdSampleEditor::__cb_rewindPreview()
+{
+  sampleEditor::setPlayHead(ch, 0);
 }
 
 

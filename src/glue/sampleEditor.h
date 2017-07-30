@@ -60,7 +60,6 @@ void setPlayHead(SampleChannel* ch, int f);
 Sets preview to on or off. */
 
 void togglePreview(SampleChannel* ch);
-
 }}}; // giada::c::sampleEditor::
 
 #endif

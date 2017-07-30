@@ -348,6 +348,9 @@ int geWaveform::handle(int e)
     case FL_KEYDOWN: {
       if (Fl::event_key() == ' ')
         sampleEditor::togglePreview(chan);
+      else
+      if (Fl::event_key() == FL_BackSpace)
+      	sampleEditor::setPlayHead(chan, 0);
       return 1;
     }
 

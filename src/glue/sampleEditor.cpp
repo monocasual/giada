@@ -160,6 +160,8 @@ void trim(SampleChannel* ch, int a, int b)
 void setPlayHead(SampleChannel* ch, int f)
 {
 	ch->trackerPreview = f * 2;  // stereo value
+	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->waveTools->waveform->redraw();
 }
 
 

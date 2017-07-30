@@ -61,12 +61,14 @@ private:
 	static void cb_changeGrid(Fl_Widget* w, void* p);
 	static void cb_enableSnap(Fl_Widget* w, void* p);
 	static void cb_togglePreview(Fl_Widget* w, void* p);
+	static void cb_rewindPreview(Fl_Widget* w, void* p);
 	inline void __cb_reload();
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 	inline void __cb_changeGrid();
 	inline void __cb_enableSnap();
 	inline void __cb_togglePreview();
+	inline void __cb_rewindPreview();
 
 public:
 
@@ -92,6 +94,7 @@ public:
 	geButton*    reload;
 
 	geButton* play;
+	geButton* rewind;
 	geCheck* loop;
 
 	SampleChannel* ch;
