@@ -159,7 +159,7 @@ void trim(SampleChannel* ch, int a, int b)
 
 void setPlayHead(SampleChannel* ch, int f)
 {
-	ch->trackerPreview = f * 2;  // stereo value
+	ch->trackerPreview = f * 2;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->redraw();
 }
@@ -174,4 +174,17 @@ void togglePreview(SampleChannel* ch)
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
+void rewindPreview(SampleChannel* ch)
+{
+	geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
+	if (waveform->isSelected() && 
+		  ch->trackerPreview != waveform->getSelectionA() * 2 &&
+		  ch->trackerPreview != 0)
+		setPlayHead(ch, waveform->getSelectionA());
+	else
+		setPlayHead(ch, 0);
+}
 }}}; // giada::c::sampleEditor::

@@ -244,7 +244,7 @@ void gdSampleEditor::__cb_togglePreview()
 
 void gdSampleEditor::__cb_rewindPreview()
 {
-  sampleEditor::setPlayHead(ch, 0);
+	sampleEditor::rewindPreview(ch);
 }
 
 

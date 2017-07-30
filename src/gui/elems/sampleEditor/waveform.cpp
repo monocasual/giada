@@ -350,7 +350,7 @@ int geWaveform::handle(int e)
         sampleEditor::togglePreview(chan);
       else
       if (Fl::event_key() == FL_BackSpace)
-      	sampleEditor::setPlayHead(chan, 0);
+				sampleEditor::rewindPreview(chan);
       return 1;
     }
 
