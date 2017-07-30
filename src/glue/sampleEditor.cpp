@@ -181,8 +181,7 @@ void rewindPreview(SampleChannel* ch)
 {
 	geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
 	if (waveform->isSelected() && 
-		  ch->trackerPreview != waveform->getSelectionA() * 2 &&
-		  ch->trackerPreview != 0)
+		  ch->trackerPreview != waveform->getSelectionA() * 2)
 		setPlayHead(ch, waveform->getSelectionA());
 	else
 		setPlayHead(ch, 0);
