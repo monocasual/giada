@@ -102,6 +102,7 @@ gdSampleEditor::~gdSampleEditor()
   conf::sampleEditorH = h();
   conf::sampleEditorGridVal = atoi(grid->text());
   conf::sampleEditorGridOn  = snap->value();
+  sampleEditor::setPreview(ch, G_PREVIEW_NONE);
 }
 
 
@@ -242,7 +243,10 @@ void gdSampleEditor::__cb_enableSnap()
 
 void gdSampleEditor::__cb_togglePreview()
 {
-  sampleEditor::togglePreview(ch);
+	if (play->value())
+  	sampleEditor::setPreview(ch, G_PREVIEW_NONE);
+	else
+  	sampleEditor::setPreview(ch, loop->value() ? G_PREVIEW_LOOP : G_PREVIEW_NORMAL);
 }
 
 

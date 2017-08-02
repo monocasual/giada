@@ -63,6 +63,7 @@ gdSampleEditor* getSampleEditorWindow()
 	return se;
 }
 
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -169,9 +170,9 @@ void setPlayHead(SampleChannel* ch, int f)
 /* -------------------------------------------------------------------------- */
 
 
-void togglePreview(SampleChannel* ch)
+void setPreview(SampleChannel* ch, int mode)
 {
-	ch->togglePreview();
+	ch->setPreviewMode(mode);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->play->value(!gdEditor->play->value());
 }

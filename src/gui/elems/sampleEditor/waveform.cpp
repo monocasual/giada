@@ -37,6 +37,7 @@
 #include "../../../core/sampleChannel.h"
 #include "../../../glue/channel.h"
 #include "../../../glue/sampleEditor.h"
+#include "../../dialogs/sampleEditor.h"
 #include "../basics/boxtypes.h"
 #include "waveTools.h"
 #include "waveform.h"
@@ -347,7 +348,7 @@ int geWaveform::handle(int e)
 
     case FL_KEYDOWN: {
       if (Fl::event_key() == ' ')
-        sampleEditor::togglePreview(chan);
+        static_cast<gdSampleEditor*>(window())->__cb_togglePreview();
       else
       if (Fl::event_key() == FL_BackSpace)
 				sampleEditor::rewindPreview(chan);

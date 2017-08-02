@@ -843,7 +843,7 @@ void SampleChannel::process(float* outBuffer, float* inBuffer)
 
 void SampleChannel::preview(float* outBuffer)
 {
-	if (!previewMode)
+	if (previewMode == G_PREVIEW_NONE)
 		return;
 
 	trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
@@ -854,10 +854,12 @@ void SampleChannel::preview(float* outBuffer)
 	}
 
 	if (trackerPreview >= end) {
-		trackerPreview = 0;
-		previewMode = false;
-		if (onPreviewEnd)
-			onPreviewEnd();
+		trackerPreview = begin;
+		if (previewMode == G_PREVIEW_NORMAL) {
+			previewMode = G_PREVIEW_NONE;
+			if (onPreviewEnd)
+				onPreviewEnd();
+		}
 	}
 }
 

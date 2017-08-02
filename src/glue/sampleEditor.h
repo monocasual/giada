@@ -56,11 +56,7 @@ Changes playhead's position. Used in preview. */
 
 void setPlayHead(SampleChannel* ch, int f);
 
-/* togglePreview
-Sets preview to on or off. */
-
-void togglePreview(SampleChannel* ch);
-
+void setPreview(SampleChannel* ch, int mode);
 void rewindPreview(SampleChannel* ch);
 }}}; // giada::c::sampleEditor::
 

@@ -75,7 +75,7 @@ protected:
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	bool previewMode;
+	int previewMode;
 
 	/* sendMidiLMessage
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
@@ -278,8 +278,8 @@ public:
 	void setPan(float v);
 	float getPan();
 
-	void togglePreview();
-	bool isPreviewMode();
+	void setPreviewMode(int m);
+	bool isPreview();
 
 #ifdef WITH_VST
 

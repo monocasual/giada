@@ -183,6 +183,13 @@
 
 
 
+/* -- preview modes --------------------------------------------------------- */
+#define G_PREVIEW_NONE   0x00
+#define G_PREVIEW_NORMAL 0x01
+#define G_PREVIEW_LOOP   0x02
+
+
+
 /* -- actions --------------------------------------------------------------- */
 #define G_ACTION_KEYPRESS		0x01 // 0000 0001
 #define G_ACTION_KEYREL			0x02 // 0000 0010
