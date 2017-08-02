@@ -378,6 +378,8 @@ int geWaveform::handle(int e)
 
     case FL_RELEASE: {
 
+    	sampleEditor::setPlayHead(chan, absolutePoint(mouseX - x()));
+
       /* If selection has been done (dragged or resized), make sure that point A 
       is always lower than B. */
 
@@ -395,9 +397,7 @@ int geWaveform::handle(int e)
         if (chanEndLit)
           realChanEnd = absolutePoint(chanEnd) * 2;
         sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
-      }
-
-      sampleEditor::setPlayHead(chan, absolutePoint(mouseX - x()));
+      }   
 
       pushed   = false;
       dragged  = false;
@@ -616,6 +616,7 @@ void geWaveform::fixSelection()
     std::swap(selection.aPixel, selection.bPixel);
   selection.aFrame = absolutePoint(selection.aPixel);
   selection.bFrame = absolutePoint(selection.bPixel);
+  sampleEditor::setPlayHead(chan, selection.aFrame);
 }
 
 
