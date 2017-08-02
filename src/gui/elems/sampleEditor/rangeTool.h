@@ -42,21 +42,21 @@ class geRangeTool : public Fl_Group
 {
 private:
 
-  SampleChannel *ch;
+  SampleChannel* ch;
 
-  geBox    *label;
-  geInput  *begin_;
-  geInput  *end_;
-  geButton *reset;
+  geBox*    label;
+  geInput*  begin_;
+  geInput*  end_;
+  geButton* reset;
 
-  static void cb_setChanPos   (Fl_Widget *w, void *p);
-  static void cb_resetStartEnd(Fl_Widget *w, void *p);
+  static void cb_setChanPos   (Fl_Widget* w, void* p);
+  static void cb_resetStartEnd(Fl_Widget* w, void* p);
   inline void __cb_setChanPos();
   inline void __cb_resetStartEnd();
 
 public:
 
-  geRangeTool(int x, int y, SampleChannel *ch);
+  geRangeTool(int x, int y, SampleChannel* ch);
 
   void refresh();
 };

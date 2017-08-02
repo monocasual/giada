@@ -107,7 +107,7 @@ void geBoostTool::__cb_setBoost()
 void geBoostTool::__cb_setBoostNum()
 {
   glue_setBoost(ch, gu_dBtoLinear(atof(input->value())));
-  static_cast<gdSampleEditor*>(parent()->parent())->waveTools->updateWaveform();
+  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }
 
 
@@ -118,6 +118,6 @@ void geBoostTool::__cb_normalize()
 {
   float val = wfx_normalizeSoft(ch->wave);
   glue_setBoost(ch, val); // it's like a fake user moving the dial 
-  static_cast<gdSampleEditor*>(parent()->parent())->waveTools->updateWaveform();
+  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }
 
