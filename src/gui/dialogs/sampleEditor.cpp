@@ -85,7 +85,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
   set_non_modal();
   label(ch->wave->getName().c_str());
 
-  size_range(640, 480);
+  size_range(720, 480);
   if (conf::sampleEditorX)
     resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, 
     	conf::sampleEditorH);
@@ -175,8 +175,6 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
 
   reload->callback(cb_reload, (void*)this);
 
-
-printf("%d\n", g->w());
   return g;
 }
 
