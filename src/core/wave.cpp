@@ -75,17 +75,18 @@ Wave::~Wave()
 
 
 Wave::Wave(const Wave& other)
-: m_data   (nullptr),
-	m_size   (0),
-	m_logical(true),
-	m_edited (false)
+: m_data    (nullptr),
+	m_size    (other.m_size),
+	m_channels(other.m_channels),
+  m_rate    (other.m_rate),
+  m_bits    (other.m_bits),	
+	m_logical (true),   // a cloned wave does not exist on disk
+	m_edited  (false),
+	m_path    (other.m_path),
+	m_name    (other.m_name)
 {
-	m_size = other.m_size;
 	m_data = new float[m_size];
 	memcpy(m_data, other.m_data, m_size * sizeof(float));
-	//memcpy(&inHeader, &other.inHeader, sizeof(other.inHeader));
-	m_path = other.m_path;
-	m_name = other.m_name;
 }
 
 
