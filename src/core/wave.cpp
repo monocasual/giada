@@ -30,7 +30,6 @@
 #include <cstring>  // memcpy
 #include "../utils/fs.h"
 #include "../utils/log.h"
-#include "init.h"
 #include "const.h"
 #include "wave.h"
 
@@ -48,11 +47,13 @@ Wave::Wave()
 /* -------------------------------------------------------------------------- */
 
 
-Wave::Wave(float* data, int size, int channels, int rate, const std::string& path)
+Wave::Wave(float* data, int size, int channels, int rate, int bits, 
+	const std::string& path)
 : m_data    (data),
   m_size    (size),
   m_channels(channels),
   m_rate    (rate),
+  m_bits    (bits),
   m_logical (false),
   m_edited  (false),
   m_path    (path),
@@ -134,9 +135,20 @@ int Wave::getChannels() const { return m_channels; }
 std::string Wave::getPath() const { return m_path; }
 std::string Wave::getName() const { return m_name; }
 float* Wave::getData() const { return m_data; }
-int Wave::getSize() const { return m_size; }
+int Wave::getSize_DEPR_() const { return m_size; }
+int Wave::getSize() const { return m_size / m_channels; }
+int Wave::getBits() const { return m_bits; }
 bool Wave::isLogical() const { return m_logical; }
 bool Wave::isEdited() const { return m_edited; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Wave::getDuration() const
+{
+	return m_size / m_channels / m_rate;
+}
 
 
 /* -------------------------------------------------------------------------- */

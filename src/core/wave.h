@@ -43,6 +43,7 @@ private:
 	int m_size;		    // Wave size in bytes (size in stereo: size / 2)
 	int m_channels;
 	int m_rate;
+	int m_bits;
 	bool m_logical;   // memory only (a take)
 	bool m_edited;    // edited via editor
 	
@@ -52,7 +53,7 @@ private:
 public:
 
 	Wave();
-	Wave(float* data, int size, int channels, int rate, const std::string& path);
+	Wave(float* data, int size, int channels, int rate, int bits, const std::string& path);
 	~Wave();
 	Wave(const Wave& other);
 
@@ -70,8 +71,11 @@ public:
 	int getChannels() const;
 	std::string getPath() const;	
 	std::string getName() const;
+	int getBits() const;
 	float* getData() const;
-	int getSize() const;
+	int getSize_DEPR_() const;  // with no channels count (deprecated)
+	int getSize() const;        // with channels count
+	int getDuration() const;
 	bool isLogical() const;
 	bool isEdited() const;
 	void clear();

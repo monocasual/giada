@@ -98,6 +98,7 @@ public:
 	geButton* play;
 	geButton* rewind;
 	geCheck* loop;
+	geBox* info;
 
 	SampleChannel* ch;
 };

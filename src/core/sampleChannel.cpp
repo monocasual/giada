@@ -275,8 +275,8 @@ void SampleChannel::setBegin(int v)
 	if (v < 0)
 		begin = 0;
 	else
-	if (v > wave->getSize())
-		begin = wave->getSize() - 2;
+	if (v > wave->getSize_DEPR_())
+		begin = wave->getSize_DEPR_() - 2;
 	else
 	if (v >= end)
 		begin = end - 2;
@@ -296,8 +296,8 @@ void SampleChannel::setEnd(int v)
 	if (v < 0)
 		end = begin + 2;
 	else
-	if (v > wave->getSize())
-		end = wave->getSize();
+	if (v > wave->getSize_DEPR_())
+		end = wave->getSize_DEPR_();
 	else
 	if (v <= begin)
 		end = begin + 2;
@@ -807,7 +807,7 @@ void SampleChannel::pushWave(Wave *w, bool generateName)
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
-	end    = wave->getSize();
+	end    = wave->getSize_DEPR_();
 	if (generateName)
 		generateUniqueSampleName();
 }

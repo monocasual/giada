@@ -103,7 +103,7 @@ void geWaveform::freeData()
 int geWaveform::alloc(int datasize)
 {
   Wave* wave = chan->wave;
-  ratio = wave->getSize() / (float) datasize;
+  ratio = wave->getSize_DEPR_() / (float) datasize;
 
   if (ratio < 2)
     return 0;
@@ -125,7 +125,7 @@ int geWaveform::alloc(int datasize)
 
   int gridFreq = 0;
   if (grid.level != 0) {
-    gridFreq = wave->getSize() / grid.level;
+    gridFreq = wave->getSize_DEPR_() / grid.level;
     if (gridFreq % 2 != 0)
       gridFreq--;
   }
@@ -143,8 +143,8 @@ int geWaveform::alloc(int datasize)
      *   p = j * (m-1 / n-1)
      * in order to obtain 'datasize' cells to parse (and not datasize-1) */
 
-    pp = i * ((wave->getSize() - 1) / (float) datasize);
-    pn = (i+1) * ((wave->getSize() - 1) / (float) datasize);
+    pp = i * ((wave->getSize_DEPR_() - 1) / (float) datasize);
+    pn = (i+1) * ((wave->getSize_DEPR_() - 1) / (float) datasize);
 
     if (pp % 2 != 0) pp -= 1;
     if (pn % 2 != 0) pn -= 1;
@@ -593,7 +593,7 @@ int geWaveform::absolutePoint(int p)
     return 0;
 
   if (p > data.size)
-    return chan->wave->getSize() / 2;
+    return chan->wave->getSize_DEPR_() / 2;
 
   return (p * ratio) / 2;
 }

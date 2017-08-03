@@ -37,7 +37,7 @@ float wfx_normalizeSoft(Wave *w)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
-	for (int i=0; i<w->getSize(); i++) { // i++: both L and R samples
+	for (int i=0; i<w->getSize_DEPR_(); i++) { // i++: both L and R samples
 		abs = fabs(w->getData()[i]);
 		if (abs > peak)
 			peak = abs;
@@ -58,14 +58,14 @@ float wfx_normalizeSoft(Wave *w)
 
 bool wfx_monoToStereo(Wave *w)
 {
-	unsigned newSize = w->getSize() * 2;
+	unsigned newSize = w->getSize_DEPR_() * 2;
 	float *dataNew = (float *) malloc(newSize * sizeof(float));
 	if (dataNew == nullptr) {
 		gu_log("[wfx] unable to allocate memory for mono>stereo conversion\n");
 		return 0;
 	}
 
-	for (int i=0, j=0; i<w->getSize(); i++) {
+	for (int i=0, j=0; i<w->getSize_DEPR_(); i++) {
 		dataNew[j]   = w->getData()[i];
 		dataNew[j+1] = w->getData()[i];
 		j+=2;
@@ -111,12 +111,12 @@ int wfx_cut(Wave *w, int a, int b)
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > w->getSize()) b = w->getSize();
+	if (b > w->getSize_DEPR_()) b = w->getSize_DEPR_();
 
 	/* create a new temp wave and copy there the original one, skipping
 	 * the a-b range */
 
-	unsigned newSize = w->getSize() - (b - a);
+	unsigned newSize = w->getSize_DEPR_() - (b - a);
 	float *temp = (float *) malloc(newSize * sizeof(float));
 	if (temp == nullptr) {
 		gu_log("[wfx] unable to allocate memory for cutting\n");
@@ -126,7 +126,7 @@ int wfx_cut(Wave *w, int a, int b)
 	gu_log("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", 
 		a, b, newSize, newSize/2);
 
-	for (int i=0, k=0; i<w->getSize(); i++) {
+	for (int i=0, k=0; i<w->getSize_DEPR_(); i++) {
 		if (i < a || i >= b) {		               // left margin always included, in order to keep
 			temp[k] = w->getData()[i];   // the stereo pair
 			k++;
@@ -153,7 +153,7 @@ int wfx_trim(Wave *w, int a, int b)
 	b = b * 2;
 
 	if (a < 0) a = 0;
-	if (b > w->getSize()) b = w->getSize();
+	if (b > w->getSize_DEPR_()) b = w->getSize_DEPR_();
 
 	int newSize = b - a;
 	float *temp = (float *) malloc(newSize * sizeof(float));

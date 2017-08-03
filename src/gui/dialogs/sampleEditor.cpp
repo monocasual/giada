@@ -58,6 +58,7 @@
 #include "sampleEditor.h"
 
 
+using std::string;
 using namespace giada::m;
 using namespace giada::c;
 
@@ -68,7 +69,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 {
   Fl_Group* upperBar = createUpperBar();
   
-  waveTools = new geWaveTools(8, upperBar->y()+upperBar->h()+8, w()-16, h()-128, ch);
+  waveTools = new geWaveTools(8, upperBar->y()+upperBar->h()+8, w()-16, h()-150, ch);
   
   Fl_Group* bottomBar = createBottomBar(8, waveTools->y()+waveTools->h()+8);
 
@@ -186,7 +187,19 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
     rewind = new geButton(g->x(), g->y(), 25, 25, "", rewindOff_xpm, rewindOn_xpm);
     play   = new geButton(rewind->x()+rewind->w()+4, g->y(), 25, 25, "", play_xpm, pause_xpm);
     loop   = new geCheck(play->x()+play->w()+6, g->y()+4, 12, 12, "Loop");
+    info   = new geBox(g->x(), play->y()+play->h()+8, g->w(), 50);
   g->end();
+
+  string bitDepth = ch->wave->getBits() != 0 ? std::to_string(ch->wave->getBits()) : "(unknown)";
+  string infoText = 
+  	"File: "  + ch->wave->getBasename(true) + "\n"
+  	"Size: " + std::to_string(ch->wave->getSize()) + " frames\n"
+  	"Duration: " + std::to_string(ch->wave->getDuration()) + " seconds\n"
+  	"Bit depth: " + bitDepth + "\n"
+  	"Frequency: " + std::to_string(ch->wave->getRate()) + " Hz\n";
+
+  info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+  info->copy_label(infoText.c_str());
 
   play->callback(cb_togglePreview, (void*)this);
   rewind->callback(cb_rewindPreview, (void*)this);
@@ -204,10 +217,10 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
 
 Fl_Group* gdSampleEditor::createBottomBar(int x, int y)
 {
-  Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 100);
+  Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 80);
   g->begin();
     Fl_Group* infoBox = createInfoBox(g->x(), g->y());
-    geBox* divisor = new geBox(infoBox->x()+infoBox->w()+8, g->y(), 1, 100);
+    geBox* divisor = new geBox(infoBox->x()+infoBox->w()+8, g->y(), 1, g->h());
     divisor->box(FL_BORDER_BOX);
     createOpTools(divisor->x()+divisor->w()+8, g->y());
   g->end();
@@ -277,7 +290,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize_DEPR_());
 
   redraw();
 }

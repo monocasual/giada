@@ -100,6 +100,6 @@ void geRangeTool::__cb_setChanPos()
 
 void geRangeTool::__cb_resetStartEnd()
 {
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize_DEPR_());
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }

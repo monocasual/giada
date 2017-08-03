@@ -43,6 +43,34 @@ namespace giada {
 namespace m {
 namespace waveManager
 {
+namespace
+{
+int getBits(SF_INFO& header)
+{
+	if      (header.format & SF_FORMAT_PCM_S8)
+		return 8;
+	else if (header.format & SF_FORMAT_PCM_16)
+		return 16;	
+	else if (header.format & SF_FORMAT_PCM_24)
+		return 24;	
+	else if (header.format & SF_FORMAT_PCM_32)
+		return 32;	
+	else if (header.format & SF_FORMAT_PCM_U8)
+		return 8;	
+	else if (header.format & SF_FORMAT_FLOAT)
+		return 32;
+	else if (header.format & SF_FORMAT_DOUBLE)
+		return 64;
+	return 0;
+}
+}; // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 int create(const string& path, Wave** out)
 {
 	if (path == "" || gu_isDir(path)) {
@@ -53,7 +81,7 @@ int create(const string& path, Wave** out)
 	if (path.size() > FILENAME_MAX)
 		return G_RES_ERR_PATH_TOO_LONG;
 
-	SF_INFO  header;
+	SF_INFO header;
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (fileIn == nullptr) {
@@ -84,7 +112,8 @@ int create(const string& path, Wave** out)
 
 	sf_close(fileIn);
 
-	Wave* wave = new Wave(data, size, header.channels, header.samplerate, path);	
+	Wave* wave = new Wave(data, size, header.channels, header.samplerate, 
+		getBits(header), path);
 
 	if (header.channels == 1 && !wfx_monoToStereo(wave)) {
 		delete wave;
@@ -93,7 +122,7 @@ int create(const string& path, Wave** out)
 
 	*out = wave;
 
-	gu_log("[waveManager] new Wave created, %d frames\n", wave->getSize());
+	gu_log("[waveManager] new Wave created, %d frames\n", wave->getSize_DEPR_());
 
 	return G_RES_OK;
 }
@@ -110,7 +139,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 		return G_RES_ERR_MEMORY;
 	}
 
-	Wave *wave = new Wave(data, size, 2, samplerate, "");
+	Wave *wave = new Wave(data, size, 2, samplerate, G_DEFAULT_BIT_DEPTH, "");
 	wave->setLogical(true);	
 	wave->setName(name);
 	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
@@ -129,7 +158,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 int resample(Wave* w, int quality, int samplerate)
 {
 	float ratio = samplerate / (float) w->getRate();
-	int size = ceil(w->getSize() * ratio);
+	int size = ceil(w->getSize_DEPR_() * ratio);
 	if (size % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
 		size++;
 
@@ -141,7 +170,7 @@ int resample(Wave* w, int quality, int samplerate)
 
 	SRC_DATA src_data;
 	src_data.data_in       = w->getData();
-	src_data.input_frames  = w->getSize() / 2;   // in frames, i.e. /2 (stereo)
+	src_data.input_frames  = w->getSize_DEPR_() / 2;   // in frames, i.e. /2 (stereo)
 	src_data.data_out      = data;
 	src_data.output_frames = size / 2;           // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
@@ -180,7 +209,7 @@ int save(Wave* w, const string& path)
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_write_float(file, w->getData(), w->getSize()) != w->getSize())
+	if (sf_write_float(file, w->getData(), w->getSize_DEPR_()) != w->getSize_DEPR_())
 		gu_log("[waveManager] warning: incomplete write!\n");
 
 	sf_close(file);
