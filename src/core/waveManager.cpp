@@ -74,7 +74,7 @@ int getBits(SF_INFO& header)
 int create(const string& path, Wave** out)
 {
 	if (path == "" || gu_isDir(path)) {
-		gu_log("[waveManager] malformed path (was '%s')\n", path.c_str());
+		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
 		return G_RES_ERR_NO_DATA;
 	}
 
@@ -85,12 +85,12 @@ int create(const string& path, Wave** out)
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (fileIn == nullptr) {
-		gu_log("[waveManager] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
+		gu_log("[waveManager::create] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
 		return G_RES_ERR_IO;
 	}
 
 	if (header.channels > 2) {
-		gu_log("[waveManager] unsupported multi-channel sample\n");
+		gu_log("[waveManager::create] unsupported multi-channel sample\n");
 		return G_RES_ERR_WRONG_DATA;
 	}
 
@@ -103,12 +103,12 @@ int create(const string& path, Wave** out)
 	int size = header.frames * header.channels;
 	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
-		gu_log("[waveManager] unable to allocate memory\n");
+		gu_log("[waveManager::create] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	if (sf_read_float(fileIn, data, size) != size)
-		gu_log("[waveManager] warning: incomplete read!\n");
+		gu_log("[waveManager::create] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 
@@ -122,7 +122,7 @@ int create(const string& path, Wave** out)
 
 	*out = wave;
 
-	gu_log("[waveManager] new Wave created, %d frames\n", wave->getSize_DEPR_());
+	gu_log("[waveManager::create] new Wave created, %d frames\n", wave->getSize_DEPR_());
 
 	return G_RES_OK;
 }
@@ -135,7 +135,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 {
 	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
-		gu_log("[waveManager] unable to allocate memory\n");
+		gu_log("[waveManager::createEmpty] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
@@ -146,7 +146,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 
 	*out = wave;
 
-	gu_log("[waveManager] new empty Wave created, %d frames\n", size);
+	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", size);
 
 	return G_RES_OK;
 }
@@ -164,7 +164,7 @@ int resample(Wave* w, int quality, int samplerate)
 
 	float* data = new (nothrow) float[size];
 	if (data == nullptr) {
-		gu_log("[waveManager] unable to allocate memory\n");
+		gu_log("[waveManager::resample] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
@@ -175,11 +175,11 @@ int resample(Wave* w, int quality, int samplerate)
 	src_data.output_frames = size / 2;           // in frames, i.e. /2 (stereo)
 	src_data.src_ratio     = ratio;
 
-	gu_log("[waveManager] resampling: new size=%d (%d frames)\n", size, size / 2);
+	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n", size, size / 2);
 
 	int ret = src_simple(&src_data, quality, 2);
 	if (ret != 0) {
-		gu_log("[waveManager] resampling error: %s\n", src_strerror(ret));
+		gu_log("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
 		delete[] data;
 		return G_RES_ERR_PROCESSING;
 	}
@@ -205,12 +205,12 @@ int save(Wave* w, const string& path)
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
-		gu_log("[waveManager] unable to open %s for exporting\n", path.c_str());
+		gu_log("[waveManager::save] unable to open %s for exporting\n", path.c_str());
 		return G_RES_ERR_IO;
 	}
 
 	if (sf_write_float(file, w->getData(), w->getSize_DEPR_()) != w->getSize_DEPR_())
-		gu_log("[waveManager] warning: incomplete write!\n");
+		gu_log("[waveManager::save] warning: incomplete write!\n");
 
 	sf_close(file);
 
