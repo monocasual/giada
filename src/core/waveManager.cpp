@@ -205,7 +205,7 @@ int save(Wave* w, const string& path)
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
-		gu_log("[waveManager::save] unable to open %s for exporting\n", path.c_str());
+		gu_log("[waveManager::save] unable to open %s for exporting: %s\n", path.c_str(), sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 
