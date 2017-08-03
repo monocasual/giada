@@ -88,7 +88,7 @@ void geKeyboard::init()
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::freeChannel(geChannel *gch)
+void geKeyboard::freeChannel(geChannel* gch)
 {
 	gch->reset();
 }
@@ -97,7 +97,7 @@ void geKeyboard::freeChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::deleteChannel(geChannel *gch)
+void geKeyboard::deleteChannel(geChannel* gch)
 {
 	for (unsigned i=0; i<columns.size(); i++) {
 		int k = columns.at(i)->find(gch);
@@ -112,7 +112,7 @@ void geKeyboard::deleteChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::updateChannel(geChannel *gch)
+void geKeyboard::updateChannel(geChannel* gch)
 {
 	gch->update();
 }
@@ -123,34 +123,32 @@ void geKeyboard::updateChannel(geChannel *gch)
 
 void geKeyboard::organizeColumns()
 {
-	/* if only one column exists don't cleanup: the initial column must
-	 * stay here. */
-
-	if (columns.size() == 1)
+	if (columns.size() == 0)
 		return;
 
-	/* otherwise delete all empty columns */
-	/** FIXME - this for loop might not work correctly! */
+	/* Otherwise delete all empty columns. */
 
-	for (unsigned i=columns.size()-1; i>=1; i--) {
+	for (size_t i=columns.size(); i-- > 0;) {
 		if (columns.at(i)->isEmpty()) {
-			//Fl::delete_widget(columns.at(i));
-			delete columns.at(i);
+			Fl::delete_widget(columns.at(i));
 			columns.erase(columns.begin() + i);
 		}
 	}
 
-	/* compact column, avoid empty spaces */
+	/* Zero columns? Just add the "add column" button. Compact column and avoid 
+	empty spaces otherwise. */
 
-	for (unsigned i=1; i<columns.size(); i++)
-		columns.at(i)->position(columns.at(i-1)->x() + columns.at(i-1)->w() + 16, y());
-
-	addColumnBtn->position(columns.back()->x() + columns.back()->w() + 16, y());
-
-	/* recompute col indexes */
+	if (columns.size() == 0)
+		addColumnBtn->position(x() - xposition(), y());
+	else {
+		for (size_t i=0; i<columns.size(); i++) {
+			int pos = i == 0 ? x() - xposition() : columns.at(i-1)->x() + columns.at(i-1)->w() + COLUMN_GAP;
+			columns.at(i)->position(pos, y());
+		}
+		addColumnBtn->position(columns.back()->x() + columns.back()->w() + COLUMN_GAP, y());
+	}
 
 	refreshColIndexes();
-
 	redraw();
 }
 
@@ -158,7 +156,7 @@ void geKeyboard::organizeColumns()
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::cb_addColumn(Fl_Widget *v, void *p)
+void geKeyboard::cb_addColumn(Fl_Widget* v, void* p)
 {
 	((geKeyboard*)p)->__cb_addColumn(G_DEFAULT_COLUMN_WIDTH);
 }
@@ -167,9 +165,9 @@ void geKeyboard::cb_addColumn(Fl_Widget *v, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-geChannel *geKeyboard::addChannel(int colIndex, Channel *ch, bool build)
+geChannel* geKeyboard::addChannel(int colIndex, Channel* ch, bool build)
 {
-	geColumn *col = getColumnByIndex(colIndex);
+	geColumn* col = getColumnByIndex(colIndex);
 
 	/* no column with index 'colIndex' found? Just create it and set its index
 	to 'colIndex'. */
@@ -199,7 +197,7 @@ void geKeyboard::refreshColumns()
 /* -------------------------------------------------------------------------- */
 
 
-geColumn *geKeyboard::getColumnByIndex(int index)
+geColumn* geKeyboard::getColumnByIndex(int index)
 {
 	for (unsigned i=0; i<columns.size(); i++)
 		if (columns.at(i)->getIndex() == index)
@@ -271,7 +269,7 @@ int geKeyboard::handle(int e)
 
 			for (unsigned i=0; i<columns.size(); i++)
 				for (int k=1; k<columns.at(i)->children(); k++)
-					ret &= ((geChannel*)columns.at(i)->child(k))->keyPress(e);
+					ret &= static_cast<geChannel*>(columns.at(i)->child(k))->keyPress(e);
 			break;
 		}
 	}
@@ -285,7 +283,7 @@ int geKeyboard::handle(int e)
 void geKeyboard::clear()
 {
 	for (unsigned i=0; i<columns.size(); i++)
-		delete columns.at(i);
+		Fl::delete_widget(columns.at(i));
 	columns.clear();
 	indexColumn = 0;     // new columns will start from index=0
 	addColumnBtn->position(8, y());
@@ -295,7 +293,7 @@ void geKeyboard::clear()
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::setChannelWithActions(geSampleChannel *gch)
+void geKeyboard::setChannelWithActions(geSampleChannel* gch)
 {
 	if (gch->ch->hasActions)
 		gch->showActionButton();
@@ -327,27 +325,26 @@ void geKeyboard::__cb_addColumn(int width)
 {
 	int colx;
 	int colxw;
-	int gap = 16;
 	if (columns.size() == 0) {
 		colx  = x() - xposition();  // mind the offset with xposition()
 		colxw = colx + width;
 	}
 	else {
-		geColumn *prev = columns.back();
-		colx  = prev->x()+prev->w() + gap;
+		geColumn* prev = columns.back();
+		colx  = prev->x()+prev->w() + COLUMN_GAP;
 		colxw = colx + width;
 	}
 
 	/* add geColumn to geKeyboard and to columns vector */
 
-	geColumn *gc = new geColumn(colx, y(), width, 2000, indexColumn, this);
+	geColumn* gc = new geColumn(colx, y(), width, 2000, indexColumn, this);
   add(gc);
 	columns.push_back(gc);
 	indexColumn++;
 
 	/* move addColumn button */
 
-	addColumnBtn->position(colxw + gap, y());
+	addColumnBtn->position(colxw + COLUMN_GAP, y());
 	redraw();
 
 	gu_log("[geKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
@@ -390,7 +387,7 @@ int geKeyboard::getColumnWidth(int i)
 /* -------------------------------------------------------------------------- */
 
 
-geColumn *geKeyboard::getColumn(int i)
+geColumn* geKeyboard::getColumn(int i)
 {
   return columns.at(i);
 }

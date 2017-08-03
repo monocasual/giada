@@ -45,13 +45,15 @@ class geKeyboard : public Fl_Scroll
 {
 private:
 
+	static const int COLUMN_GAP = 16;
+
 	/* refreshColIndexes
 	 * Recompute all column indexes in order to avoid any gaps between them.
 	 * Indexes must always be contiguous! */
 
 	void refreshColIndexes();
 
-	static void cb_addColumn  (Fl_Widget *v, void *p);
+	static void cb_addColumn  (Fl_Widget* v, void* p);
 	inline void __cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
 
 	bool bckspcPressed;
@@ -64,7 +66,7 @@ private:
 
 	static int indexColumn;
 
-	geButton *addColumnBtn;
+	geButton* addColumnBtn;
 
 	/* columns
 	 * a vector of columns which in turn contain channels. */
@@ -88,7 +90,7 @@ public:
 	 * set to true, also generate the corresponding column if column (index) does
 	 * not exist yet. */
 
-	geChannel *addChannel(int column, Channel *ch, bool build=false);
+	geChannel* addChannel(int column, Channel* ch, bool build=false);
 
 	/* addColumn
 	 * add a new column to the top of the stack. */
@@ -99,18 +101,18 @@ public:
 	 * delete a channel from geChannels<> where geChannel->ch == ch and remove
 	 * it from the stack. */
 
-	void deleteChannel(geChannel *gch);
+	void deleteChannel(geChannel* gch);
 
 	/* freeChannel
 	 * free a channel from geChannels<> where geChannel->ch == ch. No channels
 	 * are deleted */
 
-	void freeChannel(geChannel *gch);
+	void freeChannel(geChannel* gch);
 
 	/* updateChannel
 	 * wrapper function to call gch->update(). */
 
-	void updateChannel(geChannel *gch);
+	void updateChannel(geChannel* gch);
 
 	/* organizeColumns
 	 * reorganize columns layout by removing empty gaps. */
@@ -125,12 +127,12 @@ public:
 	/* getColumnByIndex
 	 * return the column with index 'index', or nullptr if not found. */
 
-	geColumn *getColumnByIndex(int index);
+	geColumn* getColumnByIndex(int index);
 
 	/* getColumn
 	 * return the column with from columns->at(i). */
 
-	geColumn *getColumn(int i);
+	geColumn* getColumn(int i);
 
 	/* clear
 	 * delete all channels and groups. */
@@ -140,7 +142,7 @@ public:
 	/* setChannelWithActions
 	 * add 'R' button if channel has actions, and set recorder to active. */
 
-	void setChannelWithActions(geSampleChannel *gch);
+	void setChannelWithActions(geSampleChannel* gch);
 
 	/* printChannelMessage
 	 * given any output by glue_loadChannel, print the message on screen
