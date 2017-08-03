@@ -69,9 +69,11 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 {
   Fl_Group* upperBar = createUpperBar();
   
-  waveTools = new geWaveTools(8, upperBar->y()+upperBar->h()+8, w()-16, h()-150, ch);
+  waveTools = new geWaveTools(8, upperBar->y()+upperBar->h()+8, w()-16, h()-128, 
+  	ch);
   
-  Fl_Group* bottomBar = createBottomBar(8, waveTools->y()+waveTools->h()+8);
+  Fl_Group* bottomBar = createBottomBar(8, waveTools->y()+waveTools->h()+8, 
+  	h()-waveTools->h()-upperBar->h()-32);
 
   add(upperBar);
   add(waveTools);
@@ -85,7 +87,8 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 
   size_range(640, 480);
   if (conf::sampleEditorX)
-    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, conf::sampleEditorH);
+    resize(conf::sampleEditorX, conf::sampleEditorY, conf::sampleEditorW, 
+    	conf::sampleEditorH);
   
   show();
 }
@@ -115,7 +118,7 @@ Fl_Group* gdSampleEditor::createUpperBar()
   Fl_Group* g = new Fl_Group(8, 8, w()-16, 20);
   g->begin();
     grid    = new geChoice(g->x(), g->y(), 50, 20);
-    snap    = new geCheck(grid->x()+grid->w()+4, g->y(), 12, 12);
+    snap    = new geCheck(grid->x()+grid->w()+4, g->y()+3, 12, 12, "Snap");
     sep1    = new geBox(snap->x()+snap->w()+4, g->y(), 506, 20);
     zoomOut = new geButton(sep1->x()+sep1->w()+4, g->y(), 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
     zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, g->y(), 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
@@ -152,9 +155,9 @@ Fl_Group* gdSampleEditor::createUpperBar()
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createOpTools(int x, int y)
+Fl_Group* gdSampleEditor::createOpTools(int x, int y, int h)
 {
-  Fl_Group* g = new Fl_Group(x, y, w()-16, 100);
+  Fl_Group* g = new Fl_Group(x, y, 572, h);
   g->begin();
   g->resizable(0);
     volumeTool = new geVolumeTool(g->x(), g->y(), ch);
@@ -164,8 +167,7 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y)
     pitchTool = new gePitchTool(g->x(), panTool->y()+panTool->h()+8, ch);
 
     rangeTool = new geRangeTool(g->x(), pitchTool->y()+pitchTool->h()+8, ch);
-    sep2      = new geBox(rangeTool->x()+rangeTool->w()+4, rangeTool->y(), 246, 20);
-    reload    = new geButton(sep2->x()+sep2->w()+4, rangeTool->y(), 70, 20, "Reload");
+    reload    = new geButton(g->x()+g->w()-70, rangeTool->y(), 70, 20, "Reload");
   g->end();
 
   if (ch->wave->isLogical()) // Logical samples (aka takes) cannot be reloaded.
@@ -173,6 +175,8 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y)
 
   reload->callback(cb_reload, (void*)this);
 
+
+printf("%d\n", g->w());
   return g;
 }
 
@@ -180,26 +184,14 @@ Fl_Group* gdSampleEditor::createOpTools(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
+Fl_Group* gdSampleEditor::createPreviewBox(int x, int y, int h)
 {
-  Fl_Group* g = new Fl_Group(x, y, 150, 100);
+  Fl_Group* g = new Fl_Group(x, y, 110, h);
   g->begin();
-    rewind = new geButton(g->x(), g->y(), 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-    play   = new geButton(rewind->x()+rewind->w()+4, g->y(), 25, 25, "", play_xpm, pause_xpm);
-    loop   = new geCheck(play->x()+play->w()+6, g->y()+4, 12, 12, "Loop");
-    info   = new geBox(g->x(), play->y()+play->h()+8, g->w(), 50);
+    rewind = new geButton(g->x(), g->y()+(g->h()/2)-12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+    play   = new geButton(rewind->x()+rewind->w()+4, g->y()+(g->h()/2)-12, 25, 25, "", play_xpm, pause_xpm);
+    loop   = new geCheck(play->x()+play->w()+6, g->y()+(g->h()/2)-6, 12, 12, "Loop");
   g->end();
-
-  string bitDepth = ch->wave->getBits() != 0 ? std::to_string(ch->wave->getBits()) : "(unknown)";
-  string infoText = 
-  	"File: "  + ch->wave->getBasename(true) + "\n"
-  	"Size: " + std::to_string(ch->wave->getSize()) + " frames\n"
-  	"Duration: " + std::to_string(ch->wave->getDuration()) + " seconds\n"
-  	"Bit depth: " + bitDepth + "\n"
-  	"Frequency: " + std::to_string(ch->wave->getRate()) + " Hz\n";
-
-  info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-  info->copy_label(infoText.c_str());
 
   play->callback(cb_togglePreview, (void*)this);
   rewind->callback(cb_rewindPreview, (void*)this);
@@ -215,14 +207,47 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-Fl_Group* gdSampleEditor::createBottomBar(int x, int y)
+Fl_Group* gdSampleEditor::createInfoBox(int x, int y, int h)
 {
-  Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, 80);
+  Fl_Group* g = new Fl_Group(x, y, 400, h);
   g->begin();
-    Fl_Group* infoBox = createInfoBox(g->x(), g->y());
-    geBox* divisor = new geBox(infoBox->x()+infoBox->w()+8, g->y(), 1, g->h());
-    divisor->box(FL_BORDER_BOX);
-    createOpTools(divisor->x()+divisor->w()+8, g->y());
+    info = new geBox(g->x(), g->y(), g->w(), g->h());
+  g->end();	
+
+  string bitDepth = ch->wave->getBits() != 0 ? std::to_string(ch->wave->getBits()) : "(unknown)";
+  string infoText = 
+  	"File: "  + ch->wave->getPath() + "\n"
+  	"Size: " + std::to_string(ch->wave->getSize()) + " frames\n"
+  	"Duration: " + std::to_string(ch->wave->getDuration()) + " seconds\n"
+  	"Bit depth: " + bitDepth + "\n"
+  	"Frequency: " + std::to_string(ch->wave->getRate()) + " Hz\n";
+
+  info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
+  info->copy_label(infoText.c_str());
+
+  return g;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Fl_Group* gdSampleEditor::createBottomBar(int x, int y, int h)
+{
+  Fl_Group* g = new Fl_Group(8, waveTools->y()+waveTools->h()+8, w()-16, h);
+  g->begin();
+    Fl_Group* previewBox = createPreviewBox(g->x(), g->y(), g->h());
+
+    geBox* divisor1 = new geBox(previewBox->x()+previewBox->w()+8, g->y(), 1, g->h());
+    divisor1->box(FL_BORDER_BOX);
+
+    Fl_Group* opTools = createOpTools(divisor1->x()+divisor1->w()+12, g->y(), g->h());
+
+    geBox* divisor2 = new geBox(opTools->x()+opTools->w()+8, g->y(), 1, g->h());
+    divisor2->box(FL_BORDER_BOX);
+
+    createInfoBox(divisor2->x()+divisor2->w()+8, g->y(), g->h());
+
   g->end();
   g->resizable(0);
 

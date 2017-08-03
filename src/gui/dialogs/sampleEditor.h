@@ -53,9 +53,11 @@ friend class geWaveform;
 private:
 
 	Fl_Group* createUpperBar();
-	Fl_Group* createBottomBar(int x, int y);
-	Fl_Group* createOpTools(int x, int y);
-	Fl_Group* createInfoBox(int x, int y);
+	Fl_Group* createBottomBar(int x, int y, int h);
+
+	Fl_Group* createPreviewBox(int x, int y, int h);
+	Fl_Group* createOpTools(int x, int y, int h);
+	Fl_Group* createInfoBox(int x, int y, int h);
 
 	static void cb_reload    (Fl_Widget* w, void* p);
 	static void cb_zoomIn    (Fl_Widget* w, void* p);
@@ -92,7 +94,6 @@ public:
 	gePitchTool* pitchTool;
 
 	geRangeTool* rangeTool;
-	geBox*       sep2;
 	geButton*    reload;
 
 	geButton* play;
