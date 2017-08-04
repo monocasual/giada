@@ -591,11 +591,12 @@ int geWaveform::absolutePoint(int p)
 {
   if (p <= 0)
     return 0;
-
   if (p > data.size)
-    return chan->wave->getSize_DEPR_() / 2;
-
-  return (p * ratio) / 2;
+    return chan->wave->getSize();
+  int out = p * ratio;
+  if (ratio > 2)
+  	out /= 2;  // adjust to stereo
+  return out;
 }
 
 

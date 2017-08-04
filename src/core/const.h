@@ -138,6 +138,7 @@
 #define G_DEFAULT_BUFSIZE		      1024
 #define G_DEFAULT_DELAYCOMP		    0
 #define G_DEFAULT_BIT_DEPTH       32     // float
+#define G_DEFAULT_AUDIO_CHANS     2      // stereo for internal processing
 #define G_DEFAULT_VOL				      1.0f
 #define G_DEFAULT_PITCH			      1.0f
 #define G_DEFAULT_BOOST			      1.0f
