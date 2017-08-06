@@ -101,7 +101,7 @@ TEST_CASE("Test waveFx")
 	SECTION("test fade")
 	{
 		int a = 47;
-		int b = 210;
+		int b = 500;
 
 		wfx::fade(waveStereo.get(), a, b, wfx::FADE_IN);
 		wfx::fade(waveStereo.get(), a, b, wfx::FADE_OUT);

@@ -195,14 +195,16 @@ int trim(Wave* w, int a, int b)
 
 void fade(Wave* w, int a, int b, int type)
 {
+	gu_log("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
+
 	float m = 0.0f;
 	float d = 1.0f / (float) (b - a);
 
 	if (type == FADE_IN)
-		for (int i=a; i<b; i++, m+=d)
+		for (int i=a; i<=b; i++, m+=d)
 			fadeFrame(w, i, m);
 	else
-		for (int i=b-1; i>=a; i--, m+=d)
+		for (int i=b; i>=a; i--, m+=d)
 			fadeFrame(w, i, m);		
 
   w->setEdited(true);

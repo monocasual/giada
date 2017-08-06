@@ -858,7 +858,7 @@ void SampleChannel::pushWave(Wave* w, bool generateName)
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
-	end    = wave->getSize() * wave->getChannels(); // TODO - Opaque channels' count
+	end    = (wave->getSize() - 1) * wave->getChannels(); // TODO - Opaque channels' count
 	if (generateName)
 		generateUniqueSampleName();
 }

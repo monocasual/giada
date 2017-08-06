@@ -574,7 +574,7 @@ int geWaveform::pixelToFrame(int p)
   if (p <= 0)
     return 0;
   if (p > m_data.size)
-    return m_ch->wave->getSize();
+    return m_ch->wave->getSize() - 1;
   return p * ratio;
 }
 

@@ -42,12 +42,12 @@ class geRangeTool : public Fl_Group
 {
 private:
 
-  SampleChannel* ch;
+  SampleChannel* m_ch;
 
-  geBox*    label;
-  geInput*  begin_;
-  geInput*  end_;
-  geButton* reset;
+  geBox*    m_label;
+  geInput*  m_begin;
+  geInput*  m_end;
+  geButton* m_reset;
 
   static void cb_setChanPos   (Fl_Widget* w, void* p);
   static void cb_resetStartEnd(Fl_Widget* w, void* p);
