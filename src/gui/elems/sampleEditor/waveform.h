@@ -72,15 +72,15 @@ private:
 	} m_grid;
 
 	SampleChannel* m_ch;
-	int chanStart;
-	bool chanStartLit;
-	int chanEnd;
-	bool chanEndLit;
-	bool pushed;
-	bool dragged;
-	bool resizedA;
-	bool resizedB;
-	float ratio;
+	int m_chanStart;
+	bool m_chanStartLit;
+	int m_chanEnd;
+	bool m_chanEndLit;
+	bool m_pushed;
+	bool m_dragged;
+	bool m_resizedA;
+	bool m_resizedB;
+	float m_ratio;
 	int m_mouseX;
 	int m_mouseY;
 
@@ -148,7 +148,7 @@ public:
 	int alloc(int datasize, bool force=false);
 
 	/* recalcPoints
-	 * re-calc chanStart, chanEnd, ... */
+	 * re-calc m_chanStart, m_chanEnd, ... */
 
 	void recalcPoints();
 
@@ -172,10 +172,9 @@ public:
 
 	void setGridLevel(int l);
 
-  void setSnap(bool v) { m_grid.snap = v; }
-  bool getSnap()       { return m_grid.snap; }
-
-	int getSize() { return m_data.size; }
+  void setSnap(bool v);
+  bool getSnap();
+	int getSize();
 
 	/* isSelected
 	Tells whether a portion of the waveform has been selected. */

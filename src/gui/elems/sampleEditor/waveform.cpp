@@ -49,18 +49,18 @@ using namespace giada::c;
 
 
 geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l)
-: Fl_Widget   (x, y, w, h, l),
-  m_selection {},
-  m_ch        (ch),
-  chanStart   (0),
-  chanStartLit(false),
-  chanEnd     (0),
-  chanEndLit  (false),
-  pushed      (false),
-  dragged     (false),
-  resizedA    (false),
-  resizedB    (false),
-  ratio       (0.0f)
+: Fl_Widget     (x, y, w, h, l),
+  m_selection   {},
+  m_ch          (ch),
+  m_chanStart   (0),
+  m_chanStartLit(false),
+  m_chanEnd     (0),
+  m_chanEndLit  (false),
+  m_pushed      (false),
+  m_dragged     (false),
+  m_resizedA    (false),
+  m_resizedB    (false),
+  m_ratio       (0.0f)
 {
   m_data.sup  = nullptr;
   m_data.inf  = nullptr;
@@ -105,13 +105,13 @@ int geWaveform::alloc(int datasize, bool force)
 {
   Wave* wave = m_ch->wave;
 
-  ratio = wave->getSize() / (float) datasize;
+  m_ratio = wave->getSize() / (float) datasize;
 
-  /* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping ratio >= 1. */
+  /* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping m_ratio >= 1. */
 
-  if (ratio < 1) {  
+  if (m_ratio < 1) {  
     datasize = wave->getSize();
-    ratio = 1;
+    m_ratio = 1;
   }
 
   if (datasize == m_data.size && !force)
@@ -128,7 +128,7 @@ int geWaveform::alloc(int datasize, bool force)
     return 0;
   }
 
-  gu_log("[geWaveform::alloc] %d pixels, %f ratio\n", m_data.size, ratio);
+  gu_log("[geWaveform::alloc] %d pixels, %f m_ratio\n", m_data.size, m_ratio);
 
   int offset = h() / 2;
   int zero   = y() + offset; // center, zero amplitude (-inf dB)
@@ -145,8 +145,8 @@ int geWaveform::alloc(int datasize, bool force)
     
     /* Scan the original waveform in chunks [pc, pn]. */
 
-    float pc = i     * ratio;  // current point
-    float pn = (i+1) * ratio;  // next point
+    float pc = i     * m_ratio;  // current point
+    float pn = (i+1) * m_ratio;  // next point
 
     float peaksup = 0.0f;
     float peakinf = 0.0f;
@@ -194,8 +194,8 @@ int geWaveform::alloc(int datasize, bool force)
 
 void geWaveform::recalcPoints()
 {
-  chanStart = m_ch->getBegin();
-  chanEnd   = m_ch->getEnd();
+  m_chanStart = m_ch->getBegin();
+  m_chanEnd   = m_ch->getEnd();
 }
 
 
@@ -260,11 +260,11 @@ void geWaveform::drawGrid(int from, int to)
 
 void geWaveform::drawStartEndPoints()
 {
-  /* print chanStart */
+  /* print m_chanStart */
 
-  int lineX = frameToPixel(chanStart) + x();
+  int lineX = frameToPixel(m_chanStart) + x();
 
-  if (chanStartLit) fl_color(G_COLOR_LIGHT_2);
+  if (m_chanStartLit) fl_color(G_COLOR_LIGHT_2);
   else              fl_color(G_COLOR_LIGHT_1);
 
   /* vertical line */
@@ -278,10 +278,10 @@ void geWaveform::drawStartEndPoints()
   else
     fl_rectf(lineX, y()+h()-FLAG_HEIGHT-1, FLAG_WIDTH, FLAG_HEIGHT);
 
-  /* print chanEnd */
+  /* print m_chanEnd */
 
-  lineX = frameToPixel(chanEnd) + x() - 1;
-  if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
+  lineX = frameToPixel(m_chanEnd) + x() - 1;
+  if (m_chanEndLit) fl_color(G_COLOR_LIGHT_2);
   else            fl_color(G_COLOR_LIGHT_1);
 
   /* vertical line */
@@ -356,18 +356,18 @@ int geWaveform::handle(int e)
 
     case FL_PUSH: {
 
-      pushed = true;
+      m_pushed = true;
 
       if (!mouseOnEnd() && !mouseOnStart()) {
         if (Fl::event_button3())  // let the parent (waveTools) handle this
           return 0;
         if (mouseOnSelectionA())
-          resizedA = true;
+          m_resizedA = true;
         else
         if(mouseOnSelectionB())
-          resizedB = true;
+          m_resizedB = true;
         else {
-          dragged = true;
+          m_dragged = true;
           m_selection.a = m_mouseX;
           m_selection.b = m_mouseX;
         }
@@ -379,21 +379,21 @@ int geWaveform::handle(int e)
 
     	sampleEditor::setPlayHead(m_ch, m_mouseX);
 
-      /* If selection has been done (dragged or resized), make sure that point A 
+      /* If selection has been done (m_dragged or resized), make sure that point A 
       is always lower than B. */
 
-      if (dragged || resizedA || resizedB)
+      if (m_dragged || m_resizedA || m_resizedB)
         fixSelection();
 
       /* Handle begin/end markers interaction. */
 
-      if (chanStartLit || chanEndLit)
-        sampleEditor::setBeginEndChannel(m_ch, chanStart, chanEnd);
+      if (m_chanStartLit || m_chanEndLit)
+        sampleEditor::setBeginEndChannel(m_ch, m_chanStart, m_chanEnd);
 
-      pushed   = false;
-      dragged  = false;
-      resizedA = false;
-      resizedB = false;
+      m_pushed   = false;
+      m_dragged  = false;
+      m_resizedA = false;
+      m_resizedB = false;
 
       redraw();
       return 1;
@@ -404,9 +404,9 @@ int geWaveform::handle(int e)
     }
 
     case FL_LEAVE: {
-      if (chanStartLit || chanEndLit) {
-        chanStartLit = false;
-        chanEndLit   = false;
+      if (m_chanStartLit || m_chanEndLit) {
+        m_chanStartLit = false;
+        m_chanEndLit   = false;
         redraw();
       }
       return 1;
@@ -415,22 +415,22 @@ int geWaveform::handle(int e)
     case FL_MOVE: {
 
       if (mouseOnStart()) {
-        chanStartLit = true;
+        m_chanStartLit = true;
         redraw();
       }
       else
-      if (chanStartLit) {
-        chanStartLit = false;
+      if (m_chanStartLit) {
+        m_chanStartLit = false;
         redraw();
       }
 
       if (mouseOnEnd()) {
-        chanEndLit = true;
+        m_chanEndLit = true;
         redraw();
       }
       else
-      if (chanEndLit) {
-        chanEndLit = false;
+      if (m_chanEndLit) {
+        m_chanEndLit = false;
         redraw();
       }
 
@@ -447,30 +447,30 @@ int geWaveform::handle(int e)
 
     case FL_DRAG: {
 
-      /* here the mouse is on the chanStart tool */
+      /* here the mouse is on the m_chanStart tool */
 
-      if (chanStartLit && pushed) {
+      if (m_chanStartLit && m_pushed) {
 
-        chanStart = snap(m_mouseX);
+        m_chanStart = snap(m_mouseX);
 
-        if (chanStart < 0)
-          chanStart = 0;
+        if (m_chanStart < 0)
+          m_chanStart = 0;
         else
-        if (chanStart >= chanEnd)
-          chanStart = chanEnd - 2;
+        if (m_chanStart >= m_chanEnd)
+          m_chanStart = m_chanEnd - 2;
 
         redraw();
       }
       else
-      if (chanEndLit && pushed) {
+      if (m_chanEndLit && m_pushed) {
 
-        chanEnd = snap(m_mouseX);
+        m_chanEnd = snap(m_mouseX);
 
-        if (chanEnd > m_ch->wave->getSize())
-          chanEnd = m_ch->wave->getSize();
+        if (m_chanEnd > m_ch->wave->getSize())
+          m_chanEnd = m_ch->wave->getSize();
         else
-        if (chanEnd <= chanStart)
-          chanEnd = chanStart + 2;
+        if (m_chanEnd <= m_chanStart)
+          m_chanEnd = m_chanStart + 2;
 
         redraw();
       }
@@ -478,7 +478,7 @@ int geWaveform::handle(int e)
       /* Here the mouse is on the waveform, i.e. a new selection has started. */
 
       else
-      if (dragged) {
+      if (m_dragged) {
         m_selection.b = snap(m_mouseX);
         redraw();
       }
@@ -486,9 +486,9 @@ int geWaveform::handle(int e)
       /* here the mouse is on a selection boundary i.e. resize */
 
       else
-      if (resizedA || resizedB) {
+      if (m_resizedA || m_resizedB) {
         int pos = snap(m_mouseX);
-        resizedA ? m_selection.a = pos : m_selection.b = pos;
+        m_resizedA ? m_selection.a = pos : m_selection.b = pos;
         redraw();
       }
 
@@ -526,7 +526,7 @@ bool geWaveform::mouseOnStart()
 {
 	int mouseXp    = frameToPixel(m_mouseX);
 	int mouseYp    = frameToPixel(m_mouseY);
-	int chanStartP = frameToPixel(chanStart);
+	int chanStartP = frameToPixel(m_chanStart);
   return mouseXp - (FLAG_WIDTH / 2) >  chanStartP - BORDER              &&
          mouseXp - (FLAG_WIDTH / 2) <= chanStartP - BORDER + FLAG_WIDTH &&
          mouseYp > h() - FLAG_HEIGHT;
@@ -540,7 +540,7 @@ bool geWaveform::mouseOnEnd()
 {
 	int mouseXp  = frameToPixel(m_mouseX);
 	int mouseYp  = frameToPixel(m_mouseY);
-	int chanEndP = frameToPixel(chanEnd);
+	int chanEndP = frameToPixel(m_chanEnd);
   return mouseXp - (FLAG_WIDTH / 2) >= chanEndP - BORDER - FLAG_WIDTH &&
          mouseXp - (FLAG_WIDTH / 2) <= chanEndP - BORDER              &&
          mouseYp <= FLAG_HEIGHT + 1;
@@ -575,7 +575,7 @@ int geWaveform::pixelToFrame(int p)
     return 0;
   if (p > m_data.size)
     return m_ch->wave->getSize() - 1;
-  return p * ratio;
+  return p * m_ratio;
 }
 
 
@@ -584,7 +584,7 @@ int geWaveform::pixelToFrame(int p)
 
 int geWaveform::frameToPixel(int p)
 {
-  return ceil(p / ratio);
+  return ceil(p / m_ratio);
 }
 
 
@@ -698,6 +698,14 @@ bool geWaveform::isSelected()
 {
   return m_selection.a != m_selection.b;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geWaveform::setSnap(bool v) { m_grid.snap = v; }
+bool geWaveform::getSnap() { return m_grid.snap; }
+int geWaveform::getSize() { return m_data.size; }
 
 
 /* -------------------------------------------------------------------------- */
