@@ -231,6 +231,8 @@ void geWaveform::drawWaveform(int from, int to)
 
   fl_color(G_COLOR_BLACK);
   for (int i=from; i<to; i++) {
+  	if (i >= m_data.size)
+  		break;
     fl_line(i+x(), zero, i+x(), m_data.sup[i]);
     fl_line(i+x(), zero, i+x(), m_data.inf[i]);
   }
