@@ -60,7 +60,7 @@ int midiTCseconds = 0;
 int midiTCminutes = 0;
 int midiTChours   = 0;
 
-#ifdef __linux__
+#ifdef G_OS_LINUX
 kernelAudio::JackState jackStatePrev;
 #endif
 
@@ -84,6 +84,11 @@ void updateQuanto()
 void init(int sampleRate, float midiTCfps)
 {
   midiTCrate = (sampleRate / midiTCfps) * 2;  // stereo values
+  running    = false;
+  bpm        = G_DEFAULT_BPM;
+  bars       = G_DEFAULT_BARS;
+  beats      = G_DEFAULT_BEATS;
+  quantize   = G_DEFAULT_QUANTIZE;
   updateFrameBars();
 }
 
@@ -339,7 +344,7 @@ void sendMIDIrewind()
 /* -------------------------------------------------------------------------- */
 
 
-#ifdef __linux__
+#ifdef G_OS_LINUX
 
 void recvJackSync()
 {

@@ -43,18 +43,16 @@ private:
 	static const int FLAG_WIDTH  = 20;
 	static const int FLAG_HEIGHT = 20;
 	static const int BORDER      = 8;  // window border <-> widget border
-	static const int SNAPPING    = 10;
+	static const int SNAPPING    = 16;
 
 	/* selection
-	Portion of the selected wave, in pixel and in frames. */
+	Portion of the selected wave, in frames. */
 
 	struct
 	{
-		int aPixel;
-		int bPixel;
-		int aFrame;
-		int bFrame;
-	} selection;
+		int a;
+		int b;
+	} m_selection;
 
 	/* data
 	Real graphic stuff from the underlying waveform. */
@@ -62,18 +60,29 @@ private:
 	struct
   {
 		int* sup;   // upper part of the waveform
-		int* inf;   // lower ""   "" ""  ""
+		int* inf;   // lower part of the waveform
 		int  size;  // width of the waveform to draw (in pixel)
-	} data;
+	} m_data;
 
 	struct
   {
 		bool snap;
 		int level;
 		std::vector<int> points;
-	} grid;
+	} m_grid;
 
-	SampleChannel* chan;
+	SampleChannel* m_ch;
+	int chanStart;
+	bool chanStartLit;
+	int chanEnd;
+	bool chanEndLit;
+	bool pushed;
+	bool dragged;
+	bool resizedA;
+	bool resizedB;
+	float ratio;
+	int m_mouseX;
+	int m_mouseY;
 
 	/* mouseOnStart/end
 	Is mouse on start or end flag? */
@@ -87,16 +96,8 @@ private:
 	bool mouseOnSelectionA();
 	bool mouseOnSelectionB();
 
-	/* absolutePoint
-	From a relative 'p' point (zoom affected) returns the same point zoom 1:1 
-	based. */
-
-	int absolutePoint(int p);
-
-	/* relativePoint
-	From an absolute 'p' point (1:1 zoom) returns the same point zoom affected. */
-
-	int relativePoint(int p);
+	int pixelToFrame(int p);
+	int frameToPixel(int f);
 
 	/* fixSelection
 	Helper function which flattens the selection if it was made from right to left 
@@ -115,10 +116,10 @@ private:
 
 	bool smaller();
 
-  /* applySnap
-  Snap a point at 'pos' pixel. */
+  /* snap
+  Snaps a point at 'pos' pixel. */
 
-  int applySnap(int pos);
+  int snap(int pos);
 
   /* draw*
   Drawing functions. */
@@ -141,9 +142,10 @@ public:
 	int  handle(int e) override;
 
 	/* alloc
-	 * allocate memory for the picture */
+	Allocates memory for the picture. It's smart enough not to reallocate if 
+	datasize hasn't changed, but it can be forced otherwise. */
 
-	int alloc(int datasize=0);
+	int alloc(int datasize, bool force=false);
 
 	/* recalcPoints
 	 * re-calc chanStart, chanEnd, ... */
@@ -170,10 +172,10 @@ public:
 
 	void setGridLevel(int l);
 
-  void setSnap(bool v) { grid.snap = v; }
-  bool getSnap()       { return grid.snap; }
+  void setSnap(bool v) { m_grid.snap = v; }
+  bool getSnap()       { return m_grid.snap; }
 
-	int getSize() { return data.size; }
+	int getSize() { return m_data.size; }
 
 	/* isSelected
 	Tells whether a portion of the waveform has been selected. */
@@ -187,18 +189,6 @@ public:
 	Removes any active selection. */
 
 	void clearSel();
-
-	int  chanStart;
-	bool chanStartLit;
-	int  chanEnd;
-	bool chanEndLit;
-	bool pushed;
-	bool dragged;
-	bool resizedA;
-	bool resizedB;
-	float ratio;
-	int mouseX;
-	int mouseY;
 };
 
 

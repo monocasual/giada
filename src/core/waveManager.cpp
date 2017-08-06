@@ -36,7 +36,7 @@
 #include "waveManager.h"
 
 
-using namespace std;
+using std::string;
 
 
 namespace giada {
@@ -101,7 +101,7 @@ int create(const string& path, Wave** out)
 	... */
 	
 	int size = header.frames * header.channels;
-	float* data = new (nothrow) float[size];
+	float* data = new (std::nothrow) float[size];
 	if (data == nullptr) {
 		gu_log("[waveManager::create] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
@@ -115,14 +115,14 @@ int create(const string& path, Wave** out)
 	Wave* wave = new Wave(data, size, header.channels, header.samplerate, 
 		getBits(header), path);
 
-	if (header.channels == 1 && !wfx_monoToStereo(wave)) {
+	if (header.channels == 1 && !wfx::monoToStereo(wave)) {
 		delete wave;
 		return G_RES_ERR_PROCESSING;
 	}
 
 	*out = wave;
 
-	gu_log("[waveManager::create] new Wave created, %d frames\n", wave->getSize_DEPR_());
+	gu_log("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
 
 	return G_RES_OK;
 }
@@ -133,7 +133,7 @@ int create(const string& path, Wave** out)
 
 int createEmpty(int size, int samplerate, const string& name, Wave** out)
 {
-	float* data = new (nothrow) float[size];
+	float* data = new (std::nothrow) float[size];
 	if (data == nullptr) {
 		gu_log("[waveManager::createEmpty] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
@@ -158,35 +158,34 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 int resample(Wave* w, int quality, int samplerate)
 {
 	float ratio = samplerate / (float) w->getRate();
-	int size = ceil(w->getSize_DEPR_() * ratio);
-	if (size % 2 != 0)   // libsndfile goes crazy with odd size in case of saving
-		size++;
+	int newSizeFrames  = ceil(w->getSize() * ratio);
+	int newSizeSamples = newSizeFrames * w->getChannels();
 
-	float* data = new (nothrow) float[size];
-	if (data == nullptr) {
+	float* newData = new (std::nothrow) float[newSizeSamples];
+	if (newData == nullptr) {
 		gu_log("[waveManager::resample] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	SRC_DATA src_data;
 	src_data.data_in       = w->getData();
-	src_data.input_frames  = w->getSize_DEPR_() / 2;   // in frames, i.e. /2 (stereo)
-	src_data.data_out      = data;
-	src_data.output_frames = size / 2;           // in frames, i.e. /2 (stereo)
+	src_data.input_frames  = w->getSize();
+	src_data.data_out      = newData;
+	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
-	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n", size, size / 2);
+	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n", 
+		newSizeSamples, newSizeFrames);
 
-	int ret = src_simple(&src_data, quality, 2);
+	int ret = src_simple(&src_data, quality, w->getChannels());
 	if (ret != 0) {
 		gu_log("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
-		delete[] data;
+		delete[] newData;
 		return G_RES_ERR_PROCESSING;
 	}
 
-	w->clear();
-	w->setData(data);
-	w->setSize(size);
+	w->free();
+	w->setData(newData, newSizeSamples);
 	w->setRate(samplerate);
 
 	return G_RES_OK;
@@ -205,11 +204,12 @@ int save(Wave* w, const string& path)
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
-		gu_log("[waveManager::save] unable to open %s for exporting: %s\n", path.c_str(), sf_strerror(file));
+		gu_log("[waveManager::save] unable to open %s for exporting: %s\n", 
+			path.c_str(), sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_write_float(file, w->getData(), w->getSize_DEPR_()) != w->getSize_DEPR_())
+	if (sf_writef_float(file, w->getData(), w->getSize()) != w->getSize())
 		gu_log("[waveManager::save] warning: incomplete write!\n");
 
 	sf_close(file);

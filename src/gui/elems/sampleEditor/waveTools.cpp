@@ -80,10 +80,10 @@ void menuCallback(Fl_Widget* w, void* v)
   		c::sampleEditor::silence(wavetools->ch, a, b);
   		break;	
   	case Menu::FADE_IN:
-  		c::sampleEditor::fade(wavetools->ch, a, b, 0);
+  		c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_IN);
   		break;
   	case Menu::FADE_OUT:
-  		c::sampleEditor::fade(wavetools->ch, a, b, 1);
+  		c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_OUT);
   		break;
   	case Menu::SMOOTH_EDGES:
   		c::sampleEditor::smoothEdges(wavetools->ch, a, b);

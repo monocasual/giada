@@ -63,8 +63,11 @@ private:
 
 	int frameRewind;
 
+	int   begin;
+	int   end;
 	float boost;
 	float pitch;
+	int   trackerPreview;  // chan position for audio preview
 
 	/* onPreviewEnd
 	A callback fired when audio preview ends. */
@@ -157,17 +160,15 @@ public:
 
 	void sum(int frame, bool running);
 
-	/* setPitch
-	 * updates the pitch value and chanStart+chanEnd accordingly. */
 
 	void setPitch(float v);
 	float getPitch();
-
-	/* setStart/end
-	 * change begin/end read points in sample. */
-
-	void setBegin(int v);
-	void setEnd  (int v);
+	void setBegin(int f);
+	int getBegin();
+	void setEnd(int f);
+	int getEnd();
+	void setTrackerPreview(int f);
+	int getTrackerPreview() const;
 
 	/* save
 	 * save sample to file. */
@@ -194,9 +195,6 @@ public:
 
 	Wave* wave;
 	int   tracker;         // chan position
-	int   trackerPreview;  // chan position for audio preview
-	int   begin;
-	int   end;
 	int   mode;            // mode: see const.h
 	bool  qWait;           // quantizer wait
 	bool  fadeinOn;

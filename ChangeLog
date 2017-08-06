@@ -13,12 +13,16 @@
 
 
 0.14.2 ---
-- Audible preview in Sample Editor
-- Show sample's information in Sample Editor
+- [Sample Editor] Audible preview (with optional loop mode)
+- [Sample Editor] Frame-precise editing
+- [Sample Editor] Show sample's information
+- [Sample Editor] Improved fade out algorithm
+- [Sample Editor] Process both left and right channel's data while drawing
 - Better Wave objects handling
 - Improved channels' memory management
-- Process both left and right channel's data in Sample Editor
 - Improved empty columns cleanup algorithm
+- Update Catch version
+- Fix missing tempo update on reset to init state
 
 
 0.14.1 --- 2017 . 07 . 16

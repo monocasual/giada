@@ -346,6 +346,7 @@ tests/midiMapConf.cpp        \
 tests/pluginHost.cpp         \
 tests/utils.cpp              \
 tests/recorder.cpp           \
+tests/waveFx.cpp             \
 src/core/conf.cpp            \
 src/core/wave.cpp            \
 src/core/waveManager.cpp     \

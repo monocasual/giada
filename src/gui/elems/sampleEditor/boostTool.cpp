@@ -41,6 +41,9 @@
 #include "boostTool.h"
 
 
+using namespace giada::m;
+
+
 geBoostTool::geBoostTool(int X, int Y, SampleChannel *ch)
   : Fl_Group(X, Y, 220, 20),
     ch      (ch)
@@ -96,7 +99,7 @@ void geBoostTool::__cb_setBoost()
   else 
   if (Fl::event() == FL_RELEASE) {
     glue_setBoost(ch, dial->value());
-    static_cast<gdSampleEditor*>(parent()->parent())->waveTools->updateWaveform();
+    static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
   }
 }
 
@@ -116,7 +119,7 @@ void geBoostTool::__cb_setBoostNum()
 
 void geBoostTool::__cb_normalize()
 {
-  float val = wfx_normalizeSoft(ch->wave);
+  float val = wfx::normalizeSoft(ch->wave);
   glue_setBoost(ch, val); // it's like a fake user moving the dial 
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }

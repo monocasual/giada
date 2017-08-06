@@ -83,11 +83,11 @@ void setBeginEndChannel(SampleChannel* ch, int b, int e)
 
 void cut(SampleChannel* ch, int a, int b)
 {
-	if (!wfx_cut(ch->wave, a, b)) {
+	if (!wfx::cut(ch->wave, a, b)) {
 		gdAlert("Unable to cut the sample!");
 		return;
 	}
-	setBeginEndChannel(ch, ch->begin, ch->end);
+	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
   gdEditor->waveTools->waveform->clearSel();
   gdEditor->waveTools->waveform->refresh();
@@ -99,7 +99,7 @@ void cut(SampleChannel* ch, int a, int b)
 
 void silence(SampleChannel* ch, int a, int b)
 {
-	wfx_silence(ch->wave, a, b);
+	wfx::silence(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -110,7 +110,7 @@ void silence(SampleChannel* ch, int a, int b)
 
 void fade(SampleChannel* ch, int a, int b, int type)
 {
-	wfx_fade(ch->wave, a, b, type);
+	wfx::fade(ch->wave, a, b, type);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -121,7 +121,7 @@ void fade(SampleChannel* ch, int a, int b, int type)
 
 void smoothEdges(SampleChannel* ch, int a, int b)
 {
-	wfx_smooth(ch->wave, a, b);
+	wfx::smooth(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -132,7 +132,7 @@ void smoothEdges(SampleChannel* ch, int a, int b)
 
 void setStartEnd(SampleChannel* ch, int a, int b)
 {
-	setBeginEndChannel(ch, a * 2, b * 2);  // stereo values
+	setBeginEndChannel(ch, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->recalcPoints();
 	gdEditor->waveTools->waveform->clearSel();
@@ -145,11 +145,11 @@ void setStartEnd(SampleChannel* ch, int a, int b)
 
 void trim(SampleChannel* ch, int a, int b)
 {
-	if (!wfx_trim(ch->wave, a, b)) {
+	if (!wfx::trim(ch->wave, a, b)) {
 		gdAlert("Unable to trim the sample!");
 		return;
 	}
-	setBeginEndChannel(ch, ch->begin, ch->end);
+	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
   gdEditor->waveTools->waveform->clearSel();
   gdEditor->waveTools->waveform->refresh();
@@ -161,7 +161,7 @@ void trim(SampleChannel* ch, int a, int b)
 
 void setPlayHead(SampleChannel* ch, int f)
 {
-	ch->trackerPreview = f * 2;
+	ch->setTrackerPreview(f);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->redraw();
 }
@@ -184,8 +184,7 @@ void setPreview(SampleChannel* ch, int mode)
 void rewindPreview(SampleChannel* ch)
 {
 	geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
-	if (waveform->isSelected() && 
-		  ch->trackerPreview != waveform->getSelectionA() * 2)
+	if (waveform->isSelected() && ch->getTrackerPreview() != waveform->getSelectionA())
 		setPlayHead(ch, waveform->getSelectionA());
 	else
 		setPlayHead(ch, 0);

@@ -76,7 +76,7 @@ void geChannelStatus::draw()
     if (pos == -1)
       pos = 0;
     else
-      pos = (pos * (w()-1)) / (ch->end - ch->begin);
+      pos = (pos * (w()-1)) / ((ch->getEnd() - ch->getBegin()));
     fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
   }
 }

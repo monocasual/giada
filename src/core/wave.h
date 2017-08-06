@@ -33,6 +33,7 @@
 
 #include <sndfile.h>
 #include <string>
+#include "const.h"
 
 
 class Wave
@@ -61,8 +62,7 @@ public:
 	void setChannels(int v);
 	void setPath(const std::string& p);
 	void setName(const std::string& p);
-	void setData(float* data);
-	void setSize(int s);
+	void setData(float* data, int size);
 	void setLogical(bool l);
 	void setEdited(bool e);
 
@@ -73,12 +73,31 @@ public:
 	std::string getName() const;
 	int getBits() const;
 	float* getData() const;
-	int getSize_DEPR_() const;  // with no channels count (deprecated)
 	int getSize() const;        // with channels count
 	int getDuration() const;
 	bool isLogical() const;
 	bool isEdited() const;
+
+	/* clear
+	Resets Wave to init state. */
+
 	void clear();
+
+	/* free
+	Frees memory, leaving everything else untouched. */
+
+	void free();
+
+	/* getFrame
+	Given a frame 'f', returns a pointer to it. This is useful for digging inside
+	a frame, i.e. parsing each channel. How to use it:
+
+		float* frame = w->getFrame(40);
+		for (int i=0; i<w->getChannels(); i++)
+			... frame[i] ...
+	*/
+
+	float* getFrame(int f) const;
 
 };
 

@@ -27,6 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <cstring>  // memcpy
 #include "../utils/fs.h"
 #include "../utils/log.h"
@@ -95,12 +96,21 @@ Wave::Wave(const Wave& other)
 
 void Wave::clear()
 {
+	free();
+	m_path = "";
+	m_size = 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Wave::free()
+{
 	if (m_data == nullptr) 
 		return;
 	delete[] m_data;
 	m_data = nullptr;
-	m_path = "";
-	m_size = 0;
 }
 
 
@@ -136,7 +146,6 @@ int Wave::getChannels() const { return m_channels; }
 std::string Wave::getPath() const { return m_path; }
 std::string Wave::getName() const { return m_name; }
 float* Wave::getData() const { return m_data; }
-int Wave::getSize_DEPR_() const { return m_size; }
 int Wave::getSize() const { return m_size / m_channels; }
 int Wave::getBits() const { return m_bits; }
 bool Wave::isLogical() const { return m_logical; }
@@ -155,10 +164,31 @@ int Wave::getDuration() const
 /* -------------------------------------------------------------------------- */
 
 
+float* Wave::getFrame(int f) const
+{
+	assert(f >= 0);
+	assert(f < getSize());	
+
+	f *= m_channels;    // convert frame to sample
+	return m_data + f;  // i.e. a pointer to m_data[f]
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void Wave::setRate(int v) { m_rate = v; }
 void Wave::setChannels(int v) { m_channels = v; }
 void Wave::setPath(const string& p) { m_path = p; }
-void Wave::setData(float* d) { m_data = d; }
-void Wave::setSize(int s) { m_size = s; }
 void Wave::setLogical(bool l) { m_logical = l; }
 void Wave::setEdited(bool e) { m_edited = e; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Wave::setData(float* d, int size) 
+{ 
+	m_data = d; 
+	m_size = size;
+}

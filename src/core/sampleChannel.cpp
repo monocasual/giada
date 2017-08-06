@@ -56,13 +56,13 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 		pChan            (nullptr),
 		vChanPreview     (nullptr),
 		frameRewind      (-1),
-		boost            (G_DEFAULT_BOOST),
-		pitch            (G_DEFAULT_PITCH),
-		wave             (nullptr),
-		tracker          (0),
-		trackerPreview   (0),
 		begin            (0),
 		end              (0),
+		boost            (G_DEFAULT_BOOST),
+		pitch            (G_DEFAULT_PITCH),
+		trackerPreview   (0),
+		wave             (nullptr),
+		tracker          (0),
 		mode             (G_DEFAULT_CHANMODE),
 		qWait	           (false),
 		fadeinOn         (false),
@@ -270,18 +270,21 @@ int SampleChannel::save(const char* path)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setBegin(int v)
+void SampleChannel::setBegin(int f)
 {
-	if (v < 0)
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
+
+	if (f < 0)
 		begin = 0;
 	else
-	if (v > wave->getSize_DEPR_())
-		begin = wave->getSize_DEPR_() - 2;
+	if (f > wave->getSize())
+		begin = wave->getSize() * wave->getChannels();
 	else
-	if (v >= end)
-		begin = end - 2;
+	if (f >= end)
+		begin = end - wave->getChannels();
 	else
-		begin = v;
+		begin = f * wave->getChannels();
 
 	tracker = begin;
 	trackerPreview = begin;
@@ -291,18 +294,63 @@ void SampleChannel::setBegin(int v)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setEnd(int v)
+void SampleChannel::setEnd(int f)
 {
-	if (v < 0)
-		end = begin + 2;
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
+	
+	if (f < 0)
+		end = begin + wave->getChannels();
 	else
-	if (v > wave->getSize_DEPR_())
-		end = wave->getSize_DEPR_();
+	if (f > wave->getSize())
+		end = wave->getSize() * wave->getChannels();
 	else
-	if (v <= begin)
-		end = begin + 2;
+	if (f <= begin)
+		end = begin + wave->getChannels();
 	else
-		end = v;
+		end = f * wave->getChannels();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::getBegin()
+{
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
+	
+	return begin / wave->getChannels();
+}
+
+
+int SampleChannel::getEnd()
+{
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
+
+	return end / wave->getChannels();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void SampleChannel::setTrackerPreview(int f)
+{
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
+	
+	trackerPreview = f * wave->getChannels();
+}
+
+
+int SampleChannel::getTrackerPreview() const
+{
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
+
+	return trackerPreview / wave->getChannels();
 }
 
 
@@ -585,8 +633,11 @@ void SampleChannel::quantize(int index, int localFrame)
 
 int SampleChannel::getPosition()
 {
+	/* TODO - Opaque channel's count - everything in SampleChannel should be
+	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
+
 	if (status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF)) // if is not (...)
-		return tracker - begin;
+		return (tracker - begin) / wave->getChannels();
 	else
 		return -1;
 }
@@ -801,13 +852,13 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(Wave *w, bool generateName)
+void SampleChannel::pushWave(Wave* w, bool generateName)
 {
 	sendMidiLplay();     // FIXME - why here?!?!
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
-	end    = wave->getSize_DEPR_();
+	end    = wave->getSize() * wave->getChannels(); // TODO - Opaque channels' count
 	if (generateName)
 		generateUniqueSampleName();
 }

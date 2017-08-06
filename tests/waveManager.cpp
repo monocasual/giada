@@ -41,7 +41,7 @@ TEST_CASE("Test waveManager")
 
     REQUIRE(res == G_RES_OK);
     REQUIRE(wave->getRate() == G_SAMPLE_RATE);
-    REQUIRE(wave->getSize() == G_BUFFER_SIZE);
+    REQUIRE(wave->getSize() == G_BUFFER_SIZE / wave->getChannels());
     REQUIRE(wave->getChannels() == G_CHANNELS);
     REQUIRE(wave->isLogical() == true);
     REQUIRE(wave->isEdited() == false);

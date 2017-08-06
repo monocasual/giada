@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * waveFx
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -33,12 +31,34 @@
 #include "waveFx.h"
 
 
-float wfx_normalizeSoft(Wave *w)
+namespace giada {
+namespace m {
+namespace wfx
+{
+namespace
+{
+void fadeFrame(Wave* w, int i, float val)
+{
+	float* frame = w->getFrame(i);
+	for (int j=0; j<w->getChannels(); j++)
+		frame[j] *= val;
+}
+}; // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+float normalizeSoft(Wave *w)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
-	for (int i=0; i<w->getSize_DEPR_(); i++) { // i++: both L and R samples
-		abs = fabs(w->getData()[i]);
+	for (int i=0; i<w->getSize(); i++) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<w->getChannels(); j++) // Find highest value in any channel
+			abs = fabs(frame[j]);
 		if (abs > peak)
 			peak = abs;
 	}
@@ -56,44 +76,44 @@ float wfx_normalizeSoft(Wave *w)
 /* -------------------------------------------------------------------------- */
 
 
-bool wfx_monoToStereo(Wave *w)
+int monoToStereo(Wave* w)
 {
-	unsigned newSize = w->getSize_DEPR_() * 2;
-	float *dataNew = (float *) malloc(newSize * sizeof(float));
-	if (dataNew == nullptr) {
-		gu_log("[wfx] unable to allocate memory for mono>stereo conversion\n");
-		return 0;
+	if (w->getChannels() >= G_DEFAULT_AUDIO_CHANS)
+		return G_RES_OK;
+
+	unsigned newSize = w->getSize() * G_DEFAULT_AUDIO_CHANS;
+	
+	float* newData = new (std::nothrow) float[newSize];
+	if (newData == nullptr) {
+		gu_log("[wfx::monoToStereo] unable to allocate memory!\n");
+		return G_RES_ERR_MEMORY;
 	}
 
-	for (int i=0, j=0; i<w->getSize_DEPR_(); i++) {
-		dataNew[j]   = w->getData()[i];
-		dataNew[j+1] = w->getData()[i];
-		j+=2;
+	for (int i=0, k=0; i<w->getSize(); i++, k+=G_DEFAULT_AUDIO_CHANS) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<G_DEFAULT_AUDIO_CHANS; j++)
+			newData[k+j] = frame[j];
 	}
 
-	free(w->getData());
-	w->setData(dataNew);
-	w->setSize(newSize);
-	w->setChannels(2);
+	w->free();
+	w->setData(newData, newSize);
+	w->setChannels(G_DEFAULT_AUDIO_CHANS);
 
-	return 1;
+	return G_RES_OK;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void wfx_silence(Wave *w, int a, int b)
+void silence(Wave* w, int a, int b)
 {
-	/* stereo values */
-	a = a * 2;
-	b = b * 2;
+	gu_log("[wfx::silence] silencing from %d to %d\n", a, b);
 
-	gu_log("[wfx] silencing from %d to %d\n", a, b);
-
-	for (int i=a; i<b; i+=2) {
-		w->getData()[i]   = 0.0f;
-		w->getData()[i+1] = 0.0f;
+	for (int i=a; i<b; i++) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<w->getChannels(); j++)	
+			frame[j] = 0.0f;
 	}
 
 	w->setEdited(true);
@@ -105,95 +125,85 @@ void wfx_silence(Wave *w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-int wfx_cut(Wave *w, int a, int b)
+int cut(Wave* w, int a, int b)
 {
-	a = a * 2;
-	b = b * 2;
-
 	if (a < 0) a = 0;
-	if (b > w->getSize_DEPR_()) b = w->getSize_DEPR_();
+	if (b > w->getSize()) b = w->getSize();
 
-	/* create a new temp wave and copy there the original one, skipping
-	 * the a-b range */
+	/* Create a new temp wave and copy there the original one, skipping the a-b 
+	range. */
 
-	unsigned newSize = w->getSize_DEPR_() - (b - a);
-	float *temp = (float *) malloc(newSize * sizeof(float));
-	if (temp == nullptr) {
-		gu_log("[wfx] unable to allocate memory for cutting\n");
-		return 0;
+	unsigned newSize = (w->getSize() - (b - a)) * w->getChannels();
+	float* newData = new (std::nothrow) float[newSize];
+	if (newData == nullptr) {
+		gu_log("[wfx::cut] unable to allocate memory!\n");
+		return G_RES_ERR_MEMORY;
 	}
 
-	gu_log("[wfx] cutting from %d to %d, new size=%d (video=%d)\n", 
-		a, b, newSize, newSize/2);
+	gu_log("[wfx::cut] cutting from %d to %d\n", a, b);
 
-	for (int i=0, k=0; i<w->getSize_DEPR_(); i++) {
-		if (i < a || i >= b) {		               // left margin always included, in order to keep
-			temp[k] = w->getData()[i];   // the stereo pair
-			k++;
+	for (int i=0, k=0; i<w->getSize(); i++) {
+		if (i < a || i >= b) {
+			float* frame = w->getFrame(i);
+			for (int j=0; j<w->getChannels(); j++)	
+				newData[k+j] = frame[j];
+			k += w->getChannels();
 		}
 	}
 
-	free(w->getData());
-	w->setData(temp);
-	w->setSize(newSize);
+	w->free();
+	w->setData(newData, newSize);
 	w->setEdited(true);
 
-	gu_log("[wfx] cutting done\n");
-
-	return 1;
+	return G_RES_OK;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int wfx_trim(Wave *w, int a, int b)
+int trim(Wave* w, int a, int b)
 {
-	a = a * 2;
-	b = b * 2;
-
 	if (a < 0) a = 0;
-	if (b > w->getSize_DEPR_()) b = w->getSize_DEPR_();
+	if (b > w->getSize()) b = w->getSize();
 
-	int newSize = b - a;
-	float *temp = (float *) malloc(newSize * sizeof(float));
-	if (temp == nullptr) {
+	int newSize = (b - a) * w->getChannels();
+	float* newData = new (std::nothrow) float[newSize];
+	if (newData == nullptr) {
 		gu_log("[wfx] unable to allocate memory for trimming\n");
-		return 0;
+		return G_RES_ERR_MEMORY;
 	}
 
-	gu_log("[wfx] trimming from %d to %d (area = %d)\n", a, b, b-a);
+	gu_log("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
-	for (int i=a, k=0; i<b; i++, k++)
-		temp[k] = w->getData()[i];
+	for (int i=a, k=0; i<b; i++, k+=w->getChannels()) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<w->getChannels(); j++)
+			newData[k+j] = frame[j];
+	}
 
-	free(w->getData());
-	w->setData(temp);
-	w->setSize(newSize);
+	w->free();
+	w->setData(newData, newSize);
  	w->setEdited(true);
 
-	return 1;
+	return G_RES_OK;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void wfx_fade(Wave *w, int a, int b, int type)
+void fade(Wave* w, int a, int b, int type)
 {
-	float m = type == 0 ? 0.0f : 1.0f;
-	float d = 1.0f/(float)(b-a);
-	if (type == 1)
-		d = -d;
+	float m = 0.0f;
+	float d = 1.0f / (float) (b - a);
 
-	a *= 2;
-	b *= 2;
-
-	for (int i=a; i<b; i+=2) {
-		w->getData()[i]   *= m;
-		w->getData()[i+1] *= m;
-		m += d;
-	}
+	if (type == FADE_IN)
+		for (int i=a; i<b; i++, m+=d)
+			fadeFrame(w, i, m);
+	else
+		for (int i=b-1; i>=a; i--, m+=d)
+			fadeFrame(w, i, m);		
 
   w->setEdited(true);
 }
@@ -202,19 +212,20 @@ void wfx_fade(Wave *w, int a, int b, int type)
 /* -------------------------------------------------------------------------- */
 
 
-void wfx_smooth(Wave *w, int a, int b)
+void smooth(Wave* w, int a, int b)
 {
-	int d = 32;  // 64 if stereo data
+	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected 
+	portion of wave. SMOOTH_SIZE*2 to count both edges. */
 
-	/* do nothing if fade edges (both of 32 samples) are > than selected
-	 * portion of wave. d*2 => count both edges, (b-a)*2 => stereo
-	 * values. */
-
-	if (d*2 > (b-a)*2) {
-		gu_log("[WFX] selection is too small, nothing to do\n");
+	if (SMOOTH_SIZE*2 > (b-a)) {
+		gu_log("[wfx::smooth] selection is too small, nothing to do\n");
 		return;
 	}
 
-	wfx_fade(w, a, a+d, 0);
-	wfx_fade(w, b-d, b, 1);
+	fade(w, a, a+SMOOTH_SIZE, FADE_IN);
+	fade(w, b-SMOOTH_SIZE, b, FADE_OUT);
+
+	w->setEdited(true);
 }
+
+}}}; // giada::m::wfx::

@@ -305,7 +305,7 @@ void gdSampleEditor::__cb_reload()
 
   glue_setBoost(ch, G_DEFAULT_BOOST);
   glue_setPitch(ch, G_DEFAULT_PITCH);
-  glue_setPanning(ch, 1.0f);
+  glue_setPanning(ch, 0.5f);
 
   panTool->refresh();
   boostTool->refresh();
@@ -313,7 +313,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize_DEPR_());
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
 
   redraw();
 }

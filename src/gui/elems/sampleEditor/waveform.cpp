@@ -37,6 +37,7 @@
 #include "../../../core/sampleChannel.h"
 #include "../../../glue/channel.h"
 #include "../../../glue/sampleEditor.h"
+#include "../../../utils/log.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/boxtypes.h"
 #include "waveTools.h"
@@ -49,8 +50,8 @@ using namespace giada::c;
 
 geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l)
 : Fl_Widget   (x, y, w, h, l),
-  selection   {},
-  chan        (ch),
+  m_selection {},
+  m_ch        (ch),
   chanStart   (0),
   chanStartLit(false),
   chanEnd     (0),
@@ -61,12 +62,12 @@ geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char
   resizedB    (false),
   ratio       (0.0f)
 {
-  data.sup  = nullptr;
-  data.inf  = nullptr;
-  data.size = 0;
+  m_data.sup  = nullptr;
+  m_data.inf  = nullptr;
+  m_data.size = 0;
 
-  grid.snap  = conf::sampleEditorGridOn;
-  grid.level = conf::sampleEditorGridVal;
+  m_grid.snap  = conf::sampleEditorGridOn;
+  m_grid.level = conf::sampleEditorGridVal;
 
   alloc(w);
 }
@@ -86,103 +87,101 @@ geWaveform::~geWaveform()
 
 void geWaveform::freeData()
 {
-  if (data.sup) {
-    delete[] data.sup;
-    delete[] data.inf;
-    data.sup  = nullptr;
-    data.inf  = nullptr;
-    data.size = 0;
+  if (m_data.sup) {
+    delete[] m_data.sup;
+    delete[] m_data.inf;
+    m_data.sup  = nullptr;
+    m_data.inf  = nullptr;
+    m_data.size = 0;
   }
-  grid.points.clear();
+  m_grid.points.clear();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int geWaveform::alloc(int datasize)
+int geWaveform::alloc(int datasize, bool force)
 {
-  Wave* wave = chan->wave;
-  ratio = wave->getSize_DEPR_() / (float) datasize;
+  Wave* wave = m_ch->wave;
 
-  if (ratio < 2)
-    return 0;
+  ratio = wave->getSize() / (float) datasize;
+
+  /* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping ratio >= 1. */
+
+  if (ratio < 1) {  
+    datasize = wave->getSize();
+    ratio = 1;
+  }
+
+  if (datasize == m_data.size && !force)
+  	return 0;
 
   freeData();
 
-  data.size = datasize;
-  data.sup  = new (std::nothrow) int[data.size];
-  data.inf  = new (std::nothrow) int[data.size];
+  m_data.size = datasize;
+  m_data.sup  = new (std::nothrow) int[m_data.size];
+  m_data.inf  = new (std::nothrow) int[m_data.size];
 
-  if (!data.sup || !data.inf)
+  if (!m_data.sup || !m_data.inf) {
+  	gu_log("[geWaveform::alloc] unable to allocate memory for the waveform!\n");
     return 0;
+  }
+
+  gu_log("[geWaveform::alloc] %d pixels, %f ratio\n", m_data.size, ratio);
 
   int offset = h() / 2;
   int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
-  /* grid frequency: store a grid point every 'gridFreq' pixel. Must be
-   * even, as always */
+  /* Frid frequency: store a grid point every 'gridFreq' frame (if grid is
+  enabled). */
 
-  int gridFreq = 0;
-  if (grid.level != 0) {
-    gridFreq = wave->getSize_DEPR_() / grid.level;
-    if (gridFreq % 2 != 0)
-      gridFreq--;
-  }
+  int gridFreq = m_grid.level != 0 ? wave->getSize() / m_grid.level : 0;
 
-  for (int i=0; i<data.size; i++) {
+	/* Resampling the waveform, hardcore way. Many thanks to 
+	http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html */
 
-    int pp;  // point prev
-    int pn;  // point next
+  for (int i=0; i<m_data.size; i++) {
+    
+    /* Scan the original waveform in chunks [pc, pn]. */
 
-    /* resampling the waveform, hardcore way. Many thanks to
-     * http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html
-     * Note: we use
-     *   p = j * (m-1 / n)
-     * instead of
-     *   p = j * (m-1 / n-1)
-     * in order to obtain 'datasize' cells to parse (and not datasize-1) */
-
-    pp = i * ((wave->getSize_DEPR_() - 1) / (float) datasize);
-    pn = (i+1) * ((wave->getSize_DEPR_() - 1) / (float) datasize);
-
-    if (pp % 2 != 0) pp -= 1;
-    if (pn % 2 != 0) pn -= 1;
+    float pc = i     * ratio;  // current point
+    float pn = (i+1) * ratio;  // next point
 
     float peaksup = 0.0f;
     float peakinf = 0.0f;
 
-    /* scan the original data in chunks */
+    for (float k=pc; k<pn; k++) {
 
-    int k = pp;
-    while (k < pn) {
+    	if (k >= wave->getSize())
+    		continue;
 
-      /* Compute average between two channels (left and right). */
+      /* Compute average of stereo signal. */
 
-      float dataAvg = (wave->getData()[k] + wave->getData()[k+1]) / 2;
+			float avg = 0.0f;
+			float* frame = wave->getFrame(k);
+			for (int j=0; j<wave->getChannels(); j++)
+				avg += frame[j];
+			avg /= wave->getChannels();
+			
+			/* Find peaks (greater and lower). */
 
-      if (dataAvg > peaksup)
-        peaksup = dataAvg;
-      else
-      if (dataAvg <= peakinf)
-        peakinf = dataAvg;
+			if      (avg > peaksup)  peaksup = avg;
+			else if (avg <= peakinf) peakinf = avg;
 
-      /* print grid */
+			/* Fill up grid vector. */
 
-      if (gridFreq != 0)
-        if (k % gridFreq == 0 && k != 0)
-          grid.points.push_back(i);
-
-      k += 2;
+			if (gridFreq != 0 && (int) k % gridFreq == 0 && k != 0)
+				m_grid.points.push_back(k);
     }
 
-    data.sup[i] = zero - (peaksup * chan->getBoost() * offset);
-    data.inf[i] = zero - (peakinf * chan->getBoost() * offset);
+    m_data.sup[i] = zero - (peaksup * m_ch->getBoost() * offset);
+    m_data.inf[i] = zero - (peakinf * m_ch->getBoost() * offset);
 
     // avoid window overflow
 
-    if (data.sup[i] < y())       data.sup[i] = y();
-    if (data.inf[i] > y()+h()-1) data.inf[i] = y()+h()-1;
+    if (m_data.sup[i] < y())       m_data.sup[i] = y();
+    if (m_data.inf[i] > y()+h()-1) m_data.inf[i] = y()+h()-1;
   }
 
   recalcPoints();
@@ -195,10 +194,8 @@ int geWaveform::alloc(int datasize)
 
 void geWaveform::recalcPoints()
 {
-  selection.aPixel = relativePoint(selection.aFrame);
-  selection.bPixel = relativePoint(selection.bFrame);
-  chanStart = relativePoint(chan->begin / 2);
-  chanEnd   = relativePoint(chan->end / 2);
+  chanStart = m_ch->getBegin();
+  chanEnd   = m_ch->getEnd();
 }
 
 
@@ -210,18 +207,18 @@ void geWaveform::drawSelection()
   if (!isSelected()) 
     return;
 
-  int a_x = selection.aPixel + x(); // - start;
-  int b_x = selection.bPixel + x(); //  - start;
+  int a = frameToPixel(m_selection.a) + x();
+  int b = frameToPixel(m_selection.b) + x();
 
-  if (a_x < 0)
-    a_x = 0;
-  if (b_x >= w() + BORDER)
-    b_x = w() + BORDER;
+  if (a < 0)
+    a = 0;
+  if (b >= w() + BORDER)
+    b = w() + BORDER;
 
-  if (selection.aPixel < selection.bPixel)
-    fl_rectf(a_x, y(), b_x-a_x, h(), G_COLOR_GREY_4);
+  if (a < b)
+    fl_rectf(a, y(), b-a, h(), G_COLOR_GREY_4);
   else
-    fl_rectf(b_x, y(), a_x-b_x, h(), G_COLOR_GREY_4);
+    fl_rectf(b, y(), a-b, h(), G_COLOR_GREY_4);
 }
 
 
@@ -234,8 +231,8 @@ void geWaveform::drawWaveform(int from, int to)
 
   fl_color(G_COLOR_BLACK);
   for (int i=from; i<to; i++) {
-    fl_line(i+x(), zero, i+x(), data.sup[i]);
-    fl_line(i+x(), zero, i+x(), data.inf[i]);
+    fl_line(i+x(), zero, i+x(), m_data.sup[i]);
+    fl_line(i+x(), zero, i+x(), m_data.inf[i]);
   }
 }
 
@@ -245,17 +242,16 @@ void geWaveform::drawWaveform(int from, int to)
 
 void geWaveform::drawGrid(int from, int to)
 {
-  fl_color(G_COLOR_GREY_3);
-  fl_line_style(FL_DASH, 1, nullptr);
-  for (int i=from; i<to; i++) {
-    for (unsigned k=0; k<grid.points.size(); k++) {
-      if (grid.points.at(k) != i) 
-        continue;
-      fl_line(i+x(), y(), i+x(), y()+h());
-      break;
-    }
-  }
-  fl_line_style(FL_SOLID, 0, nullptr);
+	fl_color(G_COLOR_GREY_3);
+	fl_line_style(FL_DASH, 1, nullptr);
+
+	for (int pf : m_grid.points) {
+		int pp = frameToPixel(pf);
+		if (pp > from && pp < to)
+			fl_line(pp+x(), y(), pp+x(), y()+h());
+	}
+
+	fl_line_style(FL_SOLID, 0, nullptr);
 }
 
 
@@ -266,7 +262,7 @@ void geWaveform::drawStartEndPoints()
 {
   /* print chanStart */
 
-  int lineX = chanStart + x();
+  int lineX = frameToPixel(chanStart) + x();
 
   if (chanStartLit) fl_color(G_COLOR_LIGHT_2);
   else              fl_color(G_COLOR_LIGHT_1);
@@ -284,7 +280,7 @@ void geWaveform::drawStartEndPoints()
 
   /* print chanEnd */
 
-  lineX = chanEnd + x() - 1;
+  lineX = frameToPixel(chanEnd) + x() - 1;
   if (chanEndLit) fl_color(G_COLOR_LIGHT_2);
   else            fl_color(G_COLOR_LIGHT_1);
 
@@ -304,7 +300,7 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-  int p = ceilf(chan->trackerPreview / ratio) + x();
+  int p = frameToPixel(m_ch->getTrackerPreview()) + x();
   fl_color(G_COLOR_LIGHT_2);
   fl_line(p, y() + 1, p, y() + h() - 2);
 }
@@ -315,8 +311,8 @@ void geWaveform::drawPlayHead()
 
 void geWaveform::draw()
 {
-  assert(data.sup != nullptr);
-  assert(data.inf != nullptr);
+  assert(m_data.sup != nullptr);
+  assert(m_data.inf != nullptr);
 
   fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_2);  // blank canvas
 
@@ -344,6 +340,9 @@ void geWaveform::draw()
 
 int geWaveform::handle(int e)
 {
+	m_mouseX = pixelToFrame(Fl::event_x() - x());
+	m_mouseY = pixelToFrame(Fl::event_y() - y());
+
   switch (e) {
 
     case FL_KEYDOWN: {
@@ -351,13 +350,12 @@ int geWaveform::handle(int e)
         static_cast<gdSampleEditor*>(window())->__cb_togglePreview();
       else
       if (Fl::event_key() == FL_BackSpace)
-				sampleEditor::rewindPreview(chan);
+				sampleEditor::rewindPreview(m_ch);
       return 1;
     }
 
     case FL_PUSH: {
 
-      mouseX = Fl::event_x();
       pushed = true;
 
       if (!mouseOnEnd() && !mouseOnStart()) {
@@ -370,8 +368,8 @@ int geWaveform::handle(int e)
           resizedB = true;
         else {
           dragged = true;
-          selection.aPixel = Fl::event_x() - x();
-          selection.bPixel = selection.aPixel;
+          m_selection.a = m_mouseX;
+          m_selection.b = m_mouseX;
         }
       }
       return 1;
@@ -379,7 +377,7 @@ int geWaveform::handle(int e)
 
     case FL_RELEASE: {
 
-    	sampleEditor::setPlayHead(chan, absolutePoint(mouseX - x()));
+    	sampleEditor::setPlayHead(m_ch, m_mouseX);
 
       /* If selection has been done (dragged or resized), make sure that point A 
       is always lower than B. */
@@ -389,16 +387,8 @@ int geWaveform::handle(int e)
 
       /* Handle begin/end markers interaction. */
 
-      if (chanStartLit || chanEndLit) {
-        int realChanStart = chan->begin;
-        int realChanEnd   = chan->end;
-        if (chanStartLit)
-          realChanStart = absolutePoint(chanStart) * 2;
-        else
-        if (chanEndLit)
-          realChanEnd = absolutePoint(chanEnd) * 2;
-        sampleEditor::setBeginEndChannel(chan, realChanStart, realChanEnd);
-      }   
+      if (chanStartLit || chanEndLit)
+        sampleEditor::setBeginEndChannel(m_ch, chanStart, chanEnd);
 
       pushed   = false;
       dragged  = false;
@@ -423,8 +413,6 @@ int geWaveform::handle(int e)
     }
 
     case FL_MOVE: {
-      mouseX = Fl::event_x();
-      mouseY = Fl::event_y();
 
       if (mouseOnStart()) {
         chanStartLit = true;
@@ -463,10 +451,7 @@ int geWaveform::handle(int e)
 
       if (chanStartLit && pushed) {
 
-        chanStart = Fl::event_x() - x();
-
-        if (grid.snap)
-          chanStart = applySnap(chanStart);
+        chanStart = snap(m_mouseX);
 
         if (chanStart < 0)
           chanStart = 0;
@@ -479,13 +464,10 @@ int geWaveform::handle(int e)
       else
       if (chanEndLit && pushed) {
 
-        chanEnd = Fl::event_x() - x();
+        chanEnd = snap(m_mouseX);
 
-        if (grid.snap)
-          chanEnd = applySnap(chanEnd);
-
-        if (chanEnd > data.size)
-          chanEnd = data.size;
+        if (chanEnd > m_ch->wave->getSize())
+          chanEnd = m_ch->wave->getSize();
         else
         if (chanEnd <= chanStart)
           chanEnd = chanStart + 2;
@@ -497,9 +479,7 @@ int geWaveform::handle(int e)
 
       else
       if (dragged) {
-        selection.bPixel = Fl::event_x() - x();
-        if (grid.snap)
-          selection.bPixel = applySnap(selection.bPixel);
+        m_selection.b = snap(m_mouseX);
         redraw();
       }
 
@@ -507,14 +487,11 @@ int geWaveform::handle(int e)
 
       else
       if (resizedA || resizedB) {
-        int pos = Fl::event_x() - x();
-        if (grid.snap)
-          pos = applySnap(pos);
-        resizedA ? selection.aPixel = pos : selection.bPixel = pos;
+        int pos = snap(m_mouseX);
+        resizedA ? m_selection.a = pos : m_selection.b = pos;
         redraw();
       }
 
-      mouseX = Fl::event_x();
       return 1;
     }
 
@@ -527,19 +504,18 @@ int geWaveform::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-int geWaveform::applySnap(int pos)
+int geWaveform::snap(int pos)
 {
-  /* Pixel snap disances (SNAPPING) must be equal to those defined in 
-  mouseOnSelectionA() and mouseOnSelectionB(). */
-
-  for (unsigned i=0; i<grid.points.size(); i++) {
-    if (pos >= grid.points.at(i) - SNAPPING &&
-        pos <= grid.points.at(i) + SNAPPING)
-    {
-      return grid.points.at(i);
-    }
-  }
-  return pos;
+	if (!m_grid.snap)
+		return pos;
+	for (int pf : m_grid.points) {
+		if (pos >= pf - pixelToFrame(SNAPPING) &&
+		    pos <= pf + pixelToFrame(SNAPPING))
+		{
+			return pf;
+		}
+	}
+	return pos;
 }
 
 
@@ -548,9 +524,12 @@ int geWaveform::applySnap(int pos)
 
 bool geWaveform::mouseOnStart()
 {
-  return mouseX - (FLAG_WIDTH / 2) >  chanStart + x() - BORDER              &&
-         mouseX - (FLAG_WIDTH / 2) <= chanStart + x() - BORDER + FLAG_WIDTH &&
-         mouseY    >  h() + y() - FLAG_HEIGHT;
+	int mouseXp    = frameToPixel(m_mouseX);
+	int mouseYp    = frameToPixel(m_mouseY);
+	int chanStartP = frameToPixel(chanStart);
+  return mouseXp - (FLAG_WIDTH / 2) >  chanStartP - BORDER              &&
+         mouseXp - (FLAG_WIDTH / 2) <= chanStartP - BORDER + FLAG_WIDTH &&
+         mouseYp > h() - FLAG_HEIGHT;
 }
 
 
@@ -559,53 +538,53 @@ bool geWaveform::mouseOnStart()
 
 bool geWaveform::mouseOnEnd()
 {
-  return mouseX - (FLAG_WIDTH / 2) >= chanEnd + x() - BORDER - FLAG_WIDTH &&
-         mouseX - (FLAG_WIDTH / 2) <= chanEnd + x() - BORDER              &&
-         mouseY    <= y() + FLAG_HEIGHT + 1;
+	int mouseXp  = frameToPixel(m_mouseX);
+	int mouseYp  = frameToPixel(m_mouseY);
+	int chanEndP = frameToPixel(chanEnd);
+  return mouseXp - (FLAG_WIDTH / 2) >= chanEndP - BORDER - FLAG_WIDTH &&
+         mouseXp - (FLAG_WIDTH / 2) <= chanEndP - BORDER              &&
+         mouseYp <= FLAG_HEIGHT + 1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* pixel boundaries (10px) must be equal to the snap factor distance
- * defined in geWaveform::applySnap() */
 
 bool geWaveform::mouseOnSelectionA()
 {
-  return mouseX >= selection.aPixel - (FLAG_WIDTH / 2) + x() && 
-         mouseX <= selection.aPixel + (FLAG_WIDTH / 2) + x();
+	int mouseXp = frameToPixel(m_mouseX);
+	int selAp   = frameToPixel(m_selection.a);
+  return mouseXp >= selAp - (FLAG_WIDTH / 2) && mouseXp <= selAp + (FLAG_WIDTH / 2);
 }
 
 
 bool geWaveform::mouseOnSelectionB()
 {
-  return mouseX >= selection.bPixel - (FLAG_WIDTH / 2) + x() && 
-         mouseX <= selection.bPixel + (FLAG_WIDTH / 2) + x();
+	int mouseXp = frameToPixel(m_mouseX);
+	int selBp   = frameToPixel(m_selection.b);
+  return mouseXp >= selBp - (FLAG_WIDTH / 2) && mouseXp <= selBp + (FLAG_WIDTH / 2);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int geWaveform::absolutePoint(int p)
+int geWaveform::pixelToFrame(int p)
 {
   if (p <= 0)
     return 0;
-  if (p > data.size)
-    return chan->wave->getSize();
-  int out = p * ratio;
-  if (ratio > 2)
-  	out /= 2;  // adjust to stereo
-  return out;
+  if (p > m_data.size)
+    return m_ch->wave->getSize();
+  return p * ratio;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int geWaveform::relativePoint(int p)
+int geWaveform::frameToPixel(int p)
 {
-  return (ceil(p / ratio)) * 2;
+  return ceil(p / ratio);
 }
 
 
@@ -614,11 +593,9 @@ int geWaveform::relativePoint(int p)
 
 void geWaveform::fixSelection()
 {
-  if (selection.aPixel > selection.bPixel) // inverted selection
-    std::swap(selection.aPixel, selection.bPixel);
-  selection.aFrame = absolutePoint(selection.aPixel);
-  selection.bFrame = absolutePoint(selection.bPixel);
-  sampleEditor::setPlayHead(chan, selection.aFrame);
+  if (m_selection.a > m_selection.b) // inverted m_selection
+    std::swap(m_selection.a, m_selection.b);
+  sampleEditor::setPlayHead(m_ch, m_selection.a);
 }
 
 
@@ -627,10 +604,8 @@ void geWaveform::fixSelection()
 
 void geWaveform::clearSel()
 {
-  selection.aPixel = 0;
-  selection.bPixel = 0;
-  selection.aFrame = 0;
-  selection.bFrame = 0;  
+  m_selection.a = 0;
+  m_selection.b = 0;  
 }
 
 
@@ -639,40 +614,30 @@ void geWaveform::clearSel()
 
 void geWaveform::setZoom(int type)
 {
-  int newSize = type == ZOOM_IN ? data.size * 2 : data.size / 2;
-
-  if (!alloc(newSize)) 
+  if (!alloc(type == ZOOM_IN ? m_data.size * 2 : m_data.size / 2)) 
     return;
 
-  size(newSize, h());
+  size(m_data.size, h());
 
-  /* zoom to pointer */
+  /* Zoom to cursor. */
+	
+	int newX = -frameToPixel(m_mouseX) + Fl::event_x();
+	if (newX > BORDER)
+		newX = BORDER;
+	position(newX, y());
 
-  int shift;
-  if (x() > 0)
-    shift = Fl::event_x() - x();
-  else
-  if (type == ZOOM_IN)
-    shift = Fl::event_x() + abs(x());
-  else
-    shift = (Fl::event_x() + abs(x())) / -2;
+  /* Avoid overflow when zooming out with scrollbar like that:
 
-  if (x() - shift > BORDER)
-    shift = 0;
+  	|----------[scrollbar]|
 
-  position(x() - shift, y());
+  Offset vs smaller:
+  
+  	|[wave------------| offset > 0  smaller = false
+  	|[wave----]       | offset < 0, smaller = true
+  	|-------------]   | offset < 0, smaller = false  */
 
-
-  /* avoid overflow when zooming out with scrollbar like that:
-   * |----------[scrollbar]|
-   *
-   * offset vs smaller:
-   * |[wave------------| offset > 0  smaller = false
-   * |[wave----]       | offset < 0, smaller = true
-   * |-------------]   | offset < 0, smaller = false  */
-
-  int  parentW = parent()->w();
-  int  thisW   = x() + w() - BORDER;           // visible width, not full width
+  int parentW = parent()->w();
+  int thisW   = x() + w() - BORDER;           // visible width, not full width
 
   if (thisW < parentW)
     position(x() + parentW - thisW, y());
@@ -700,7 +665,7 @@ void geWaveform::stretchToWindow()
 
 void geWaveform::refresh()
 {
-  alloc(data.size);
+  alloc(m_data.size, true); // force
   redraw();
 }
 
@@ -719,9 +684,9 @@ bool geWaveform::smaller()
 
 void geWaveform::setGridLevel(int l)
 {
-  grid.points.clear();
-  grid.level = l;
-  alloc(data.size);
+  m_grid.points.clear();
+  m_grid.level = l;
+  alloc(m_data.size, true); // force alloc
   redraw();
 }
 
@@ -731,7 +696,7 @@ void geWaveform::setGridLevel(int l)
 
 bool geWaveform::isSelected()
 {
-  return selection.aPixel != selection.bPixel;
+  return m_selection.a != m_selection.b;
 }
 
 
@@ -740,12 +705,12 @@ bool geWaveform::isSelected()
 
 int geWaveform::getSelectionA()
 {
-  return selection.aFrame;
+  return m_selection.a;
 }
 
 
 int geWaveform::getSelectionB()
 {
-  return selection.bFrame;
+  return m_selection.b;
 }
 

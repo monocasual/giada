@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * waveFx
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -34,29 +32,33 @@
 class Wave;
 
 
+namespace giada {
+namespace m {
+namespace wfx
+{
+static const int FADE_IN  = 0;
+static const int FADE_OUT = 1;
+static const int SMOOTH_SIZE = 32;
+
 /* normalizeSoft
- * normalize the wave by returning the dB value for the boost volume. It
- * doesn't deal with data in memory. */
+Normalizes the wave by returning the dB value for the boost volume. */
 
-float wfx_normalizeSoft(Wave *w);
+float normalizeSoft(Wave* w);
 
-bool wfx_monoToStereo(Wave *w);
-
-void wfx_silence(Wave *w, int a, int b);
-
-int wfx_cut(Wave *w, int a, int b);
-
-int wfx_trim(Wave *w, int a, int b);
+int monoToStereo(Wave* w);
+void silence(Wave* w, int a, int b);
+int cut(Wave* w, int a, int b);
+int trim(Wave* w, int a, int b);
 
 /* fade
  * fade in or fade out selection. Fade In = type 0, Fade Out = type 1 */
 
-void wfx_fade(Wave *w, int a, int b, int type);
+void fade(Wave* w, int a, int b, int type);
 
 /* smooth
  * smooth edges of selection. */
 
-void wfx_smooth(Wave *w, int a, int b);
-
+void smooth(Wave* w, int a, int b);
+}}}; // giada::m::wfx::
 
 #endif

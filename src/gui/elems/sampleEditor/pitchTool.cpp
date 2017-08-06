@@ -141,7 +141,7 @@ void gePitchTool::__cb_setPitchDouble()
 
 void gePitchTool::__cb_setPitchToBar()
 {
-  glue_setPitch(ch, ch->end / (float) clock::getFramesPerBar());
+  glue_setPitch(ch, ch->getEnd() / (float) clock::getFramesPerBar());
 }
 
 
@@ -150,7 +150,7 @@ void gePitchTool::__cb_setPitchToBar()
 
 void gePitchTool::__cb_setPitchToSong()
 {
-  glue_setPitch(ch, ch->end / (float) clock::getTotalFrames());
+  glue_setPitch(ch, ch->getEnd() / (float) clock::getTotalFrames());
 }
 
 

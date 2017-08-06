@@ -49,7 +49,7 @@
 #include "mainMenu.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using namespace giada::m;
@@ -79,10 +79,10 @@ geMainMenu::geMainMenu(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::cb_about (Fl_Widget *v, void *p) { ((geMainMenu*)p)->__cb_about(); }
-void geMainMenu::cb_config(Fl_Widget *v, void *p) { ((geMainMenu*)p)->__cb_config(); }
-void geMainMenu::cb_file  (Fl_Widget *v, void *p) { ((geMainMenu*)p)->__cb_file(); }
-void geMainMenu::cb_edit  (Fl_Widget *v, void *p) { ((geMainMenu*)p)->__cb_edit(); }
+void geMainMenu::cb_about (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_about(); }
+void geMainMenu::cb_config(Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_config(); }
+void geMainMenu::cb_file  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_file(); }
+void geMainMenu::cb_edit  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_edit(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -118,13 +118,13 @@ void geMainMenu::__cb_file()
 		{0}
 	};
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
 	if (!m) return;
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
@@ -189,13 +189,13 @@ void geMainMenu::__cb_edit()
 				break;
 			}
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, b);
 	if (!m) return;
 
 	if (strcmp(m->label(), "Clear all samples") == 0) {
@@ -215,7 +215,6 @@ void geMainMenu::__cb_edit()
 	if (strcmp(m->label(), "Reset to init state") == 0) {
 		if (!gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 			return;
-		gu_closeAllSubwindows();
 		glue_resetToInitState();
 		return;
 	}

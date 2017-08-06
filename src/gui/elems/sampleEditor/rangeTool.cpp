@@ -73,8 +73,8 @@ geRangeTool::geRangeTool(int x, int y, SampleChannel* ch)
 
 void geRangeTool::refresh()
 {
-  begin_->value(gu_itoa(ch->begin / 2).c_str());
-  end_->value(gu_itoa(ch->end / 2).c_str());
+  begin_->value(gu_itoa(ch->getBegin()).c_str());
+  end_->value(gu_itoa(ch->getEnd()).c_str());
 }
 
 
@@ -90,7 +90,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->_
 
 void geRangeTool::__cb_setChanPos()
 {
-  sampleEditor::setBeginEndChannel(ch, atoi(begin_->value())*2, atoi(end_->value())*2);
+  sampleEditor::setBeginEndChannel(ch, atoi(begin_->value()), atoi(end_->value()));
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }
 
@@ -100,6 +100,6 @@ void geRangeTool::__cb_setChanPos()
 
 void geRangeTool::__cb_resetStartEnd()
 {
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize_DEPR_());
+  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }

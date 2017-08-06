@@ -223,7 +223,9 @@ void glue_clearAllRecs()
 
 void glue_resetToInitState(bool resetGui, bool createColumns)
 {
+	gu_closeAllSubwindows();
 	mixer::close();
+	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
 	recorder::init();
 #ifdef WITH_VST
