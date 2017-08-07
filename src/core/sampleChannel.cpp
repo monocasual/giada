@@ -303,7 +303,7 @@ void SampleChannel::setEnd(int f)
 		end = begin + wave->getChannels();
 	else
 	if (f > wave->getSize())
-		end = wave->getSize() * wave->getChannels();
+		end = (wave->getSize() - 1) * wave->getChannels();
 	else
 	if (f <= begin)
 		end = begin + wave->getChannels();
