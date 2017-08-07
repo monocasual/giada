@@ -79,6 +79,8 @@ public:
 	gdSampleEditor(SampleChannel* ch);
 	~gdSampleEditor();
 
+	void updateInfo();
+
 	geChoice* grid;
 	geCheck*  snap;
 	geBox*    sep1;

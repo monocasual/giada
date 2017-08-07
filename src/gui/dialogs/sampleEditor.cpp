@@ -212,16 +212,9 @@ Fl_Group* gdSampleEditor::createInfoBox(int x, int y, int h)
     info = new geBox(g->x(), g->y(), g->w(), g->h());
   g->end();	
 
-  string bitDepth = ch->wave->getBits() != 0 ? std::to_string(ch->wave->getBits()) : "(unknown)";
-  string infoText = 
-  	"File: "  + ch->wave->getPath() + "\n"
-  	"Size: " + std::to_string(ch->wave->getSize()) + " frames\n"
-  	"Duration: " + std::to_string(ch->wave->getDuration()) + " seconds\n"
-  	"Bit depth: " + bitDepth + "\n"
-  	"Frequency: " + std::to_string(ch->wave->getRate()) + " Hz\n";
-
   info->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-  info->copy_label(infoText.c_str());
+  
+  updateInfo();
 
   return g;
 }
@@ -345,4 +338,20 @@ void gdSampleEditor::__cb_zoomOut()
 void gdSampleEditor::__cb_changeGrid()
 {
   waveTools->waveform->setGridLevel(atoi(grid->text()));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSampleEditor::updateInfo()
+{
+	string bitDepth = ch->wave->getBits() != 0 ? std::to_string(ch->wave->getBits()) : "(unknown)";
+	string infoText = 
+		"File: "  + ch->wave->getPath() + "\n"
+		"Size: " + std::to_string(ch->wave->getSize()) + " frames\n"
+		"Duration: " + std::to_string(ch->wave->getDuration()) + " seconds\n"
+		"Bit depth: " + bitDepth + "\n"
+		"Frequency: " + std::to_string(ch->wave->getRate()) + " Hz\n";
+	info->copy_label(infoText.c_str());
 }

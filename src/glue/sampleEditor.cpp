@@ -89,8 +89,9 @@ void cut(SampleChannel* ch, int a, int b)
 	}
 	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
-  gdEditor->waveTools->waveform->clearSel();
-  gdEditor->waveTools->waveform->refresh();
+	gdEditor->waveTools->waveform->clearSel();
+	gdEditor->waveTools->waveform->refresh();
+	gdEditor->updateInfo();
 }
 
 
@@ -151,8 +152,9 @@ void trim(SampleChannel* ch, int a, int b)
 	}
 	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
-  gdEditor->waveTools->waveform->clearSel();
-  gdEditor->waveTools->waveform->refresh();
+	gdEditor->waveTools->waveform->clearSel();
+	gdEditor->waveTools->waveform->refresh();
+	gdEditor->updateInfo();
 }
 
 
