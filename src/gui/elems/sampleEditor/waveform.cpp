@@ -134,7 +134,7 @@ int geWaveform::alloc(int datasize, bool force)
   int zero   = y() + offset; // center, zero amplitude (-inf dB)
 
   /* Frid frequency: store a grid point every 'gridFreq' frame (if grid is
-  enabled). */
+  enabled). TODO - this will cause round off errors, since gridFreq is integer. */
 
   int gridFreq = m_grid.level != 0 ? wave->getSize() / m_grid.level : 0;
 
