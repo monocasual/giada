@@ -902,16 +902,13 @@ void SampleChannel::preview(float* outBuffer)
 	rendering as in SampleChannel::reset(). */
 
 	if (trackerPreview + bufferSize >= end) {
-		if (previewMode == G_PREVIEW_LOOP) {
-			int fix = end - trackerPreview;
-			trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
-			trackerPreview = begin;
-			trackerPreview = fillChan(vChanPreview, begin, fix, false);
-		}
+		int offset = end - trackerPreview;
+		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+		trackerPreview = begin;
+		if (previewMode == G_PREVIEW_LOOP)
+			trackerPreview = fillChan(vChanPreview, begin, offset, false);
 		else
 		if (previewMode == G_PREVIEW_NORMAL) {
-			trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
-			trackerPreview = begin;
 			previewMode = G_PREVIEW_NONE;
 			if (onPreviewEnd)
 				onPreviewEnd();
