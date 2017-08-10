@@ -896,15 +896,22 @@ void SampleChannel::preview(float* outBuffer)
 	if (previewMode == G_PREVIEW_NONE)
 		return;
 
+	std::memset(vChanPreview, 0, sizeof(float) * bufferSize);
+
 	/* If the tracker exceedes the end point and preview is looped, split the 
 	rendering as in SampleChannel::reset(). */
 
 	if (trackerPreview + bufferSize >= end) {
-		int fix = end - trackerPreview;
-		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
-		trackerPreview = begin;
-		trackerPreview = fillChan(vChanPreview, begin, fix, false);
+		if (previewMode == G_PREVIEW_LOOP) {
+			int fix = end - trackerPreview;
+			trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+			trackerPreview = begin;
+			trackerPreview = fillChan(vChanPreview, begin, fix, false);
+		}
+		else
 		if (previewMode == G_PREVIEW_NORMAL) {
+			trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+			trackerPreview = begin;
 			previewMode = G_PREVIEW_NONE;
 			if (onPreviewEnd)
 				onPreviewEnd();
