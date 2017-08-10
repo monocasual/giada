@@ -399,7 +399,7 @@ void SampleChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseAction(recorder::action *a, int localFrame,
+void SampleChannel::parseAction(recorder::action* a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (readActions == false)
@@ -810,14 +810,13 @@ void SampleChannel::setXFade(int frame)
 
 /* -------------------------------------------------------------------------- */
 
+/* On reset, if frame > 0 and in play, fill again pChan to create something like 
+this:
 
-/* on reset, if frame > 0 and in play, fill again pChan to create
- * something like this:
- *
- * |abcdefabcdefab*abcdefabcde|
- * [old data-----]*[new data--]
- *
- * */
+	|abcdefabcdefab*abcdefabcde|
+	[old data-----]*[new data--]
+
+*/
 
 void SampleChannel::reset(int frame)
 {
@@ -897,20 +896,26 @@ void SampleChannel::preview(float* outBuffer)
 	if (previewMode == G_PREVIEW_NONE)
 		return;
 
-	trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+	/* If the tracker exceedes the end point and preview is looped, split the 
+	rendering as in SampleChannel::reset(). */
 
-	for (int j=0; j<bufferSize; j+=2) {
-		outBuffer[j]   += vChanPreview[j]   * volume * calcPanning(0) * boost;
-		outBuffer[j+1] += vChanPreview[j+1] * volume * calcPanning(1) * boost;
-	}
-
-	if (trackerPreview >= end) {
+	if (trackerPreview + bufferSize >= end) {
+		int fix = end - trackerPreview;
+		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
 		trackerPreview = begin;
+		trackerPreview = fillChan(vChanPreview, begin, fix, false);
 		if (previewMode == G_PREVIEW_NORMAL) {
 			previewMode = G_PREVIEW_NONE;
 			if (onPreviewEnd)
 				onPreviewEnd();
 		}
+	}
+	else
+		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
+
+	for (int j=0; j<bufferSize; j+=2) {
+		outBuffer[j]   += vChanPreview[j]   * volume * calcPanning(0) * boost;
+		outBuffer[j+1] += vChanPreview[j+1] * volume * calcPanning(1) * boost;
 	}
 }
 

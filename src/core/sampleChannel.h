@@ -75,9 +75,9 @@ private:
 	std::function<void()> onPreviewEnd;
 
 	/* fillChan
-	 * copy from wave to *dest and resample data from wave, if necessary.
-	 * Start to fill pChan from byte 'offset'. If rewind=false don't
-	 * rewind internal tracker. Returns new sample position, in frames */
+	Fills 'dest' buffer at point 'offset' with wave data taken from 'start'. If 
+	rewind=false don't rewind internal tracker. Returns new sample position, 
+	in frames. It resamples data if pitch != 1.0f. */
 
 	int fillChan(float* dest, int start, int offset, bool rewind=true);
 
