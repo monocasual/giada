@@ -98,6 +98,9 @@
 #define G_MIN_COLUMN_WIDTH  140
 #define G_MAX_BOOST_DB      20.0f
 #define G_MAX_PITCH         4.0f
+#define G_MAX_GRID_VAL      32
+#define G_MIN_BUF_SIZE      8
+#define G_MAX_BUF_SIZE      4096
 
 
 
@@ -139,19 +142,19 @@
 #define G_DEFAULT_DELAYCOMP		    0
 #define G_DEFAULT_BIT_DEPTH       32     // float
 #define G_DEFAULT_AUDIO_CHANS     2      // stereo for internal processing
-#define G_DEFAULT_VOL				      1.0f
-#define G_DEFAULT_PITCH			      1.0f
-#define G_DEFAULT_BOOST			      1.0f
-#define G_DEFAULT_OUT_VOL  	      1.0f
-#define G_DEFAULT_IN_VOL  	      1.0f
-#define G_DEFAULT_CHANMODE	      SINGLE_BASIC
-#define G_DEFAULT_BPM				      120.0f
-#define G_DEFAULT_BEATS			      4
-#define G_DEFAULT_BARS			      1
+#define G_DEFAULT_VOL             1.0f
+#define G_DEFAULT_PITCH           1.0f
+#define G_DEFAULT_BOOST           1.0f
+#define G_DEFAULT_OUT_VOL         1.0f
+#define G_DEFAULT_IN_VOL          1.0f
+#define G_DEFAULT_CHANMODE       SINGLE_BASIC
+#define G_DEFAULT_BPM             120.0f
+#define G_DEFAULT_BEATS           4
+#define G_DEFAULT_BARS            1
 #define G_DEFAULT_QUANTIZE        0      // quantizer off
 #define G_DEFAULT_FADEOUT_STEP    0.01f  // micro-fadeout speed
 #define G_DEFAULT_COLUMN_WIDTH    380
-#define G_DEFAULT_PATCH_NAME       "(default patch)"
+#define G_DEFAULT_PATCH_NAME      "(default patch)"
 #define G_DEFAULT_MIDI_INPUT_UI_W 300
 #define G_DEFAULT_MIDI_INPUT_UI_H 350
 

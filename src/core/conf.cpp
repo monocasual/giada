@@ -58,7 +58,7 @@ void sanitize()
 	if (soundDeviceIn < -1) soundDeviceIn = G_DEFAULT_SOUNDDEV_IN;
 	if (channelsOut < 0) channelsOut = 0;
 	if (channelsIn < 0)  channelsIn  = 0;
-	if (buffersize < 8 || buffersize > 4096) buffersize = G_DEFAULT_BUFSIZE;
+	if (buffersize < G_MIN_BUF_SIZE || buffersize > G_MAX_BUF_SIZE) buffersize = G_DEFAULT_BUFSIZE;
 	if (delayComp < 0) delayComp = G_DEFAULT_DELAYCOMP;
 	if (midiPortOut < -1) midiPortOut = G_DEFAULT_MIDI_SYSTEM;
 	if (midiPortOut < -1) midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
@@ -72,14 +72,14 @@ void sanitize()
 	if (actionEditorW < 640) actionEditorW = 640;
 	if (actionEditorH < 176) actionEditorH = 176;
 	if (actionEditorZoom < 100) actionEditorZoom = 100;
-	if (actionEditorGridVal < 0) actionEditorGridVal = 0;
+	if (actionEditorGridVal < 0 || actionEditorGridVal > G_MAX_GRID_VAL) actionEditorGridVal = 0;
 	if (actionEditorGridOn < 0) actionEditorGridOn = 0;
 	if (pianoRollH <= 0) pianoRollH = 422;
   if (sampleEditorX < 0) sampleEditorX = 0;
 	if (sampleEditorY < 0) sampleEditorY = 0;
 	if (sampleEditorW < 500) sampleEditorW = 500;
 	if (sampleEditorH < 292) sampleEditorH = 292;
-	if (sampleEditorGridVal < 0) sampleEditorGridVal = 0;
+	if (sampleEditorGridVal < 0 || sampleEditorGridVal > G_MAX_GRID_VAL) sampleEditorGridVal = 0;
 	if (sampleEditorGridOn < 0) sampleEditorGridOn = 0;
   if (midiInputX < 0) midiInputX = 0;
   if (midiInputY < 0) midiInputY = 0;
@@ -212,7 +212,7 @@ int sampleEditorX = 0;
 int sampleEditorY = 0;
 int sampleEditorW = 640;
 int sampleEditorH = 480;
-int sampleEditorGridVal = 1;
+int sampleEditorGridVal = 0;
 int sampleEditorGridOn  = false;
 
 int midiInputX = 0;
