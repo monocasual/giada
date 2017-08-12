@@ -23,6 +23,7 @@
 - Improved empty columns cleanup algorithm
 - Update Catch version
 - Update JUCE version (5.1.1)
+- Update Jansson version (2.10)
 - Fix missing tempo update on reset to init state
 
 
