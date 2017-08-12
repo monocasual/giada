@@ -25,6 +25,7 @@
 - Update JUCE version (5.1.1)
 - Update Jansson version (2.10)
 - Fix missing tempo update on reset to init state
+- Fix wrong memory allocation for UI-less plugins
 
 
 0.14.1 --- 2017 . 07 . 16
