@@ -48,12 +48,10 @@ using namespace giada::u;
 gdAbout::gdAbout()
 #ifdef WITH_VST
 : gdWindow(340, 435, "About Giada")
-{
 #else
 : gdWindow(340, 350, "About Giada")
-{
 #endif
-
+{
 	if (conf::aboutX)
 		resize(conf::aboutX, conf::aboutY, w(), h());
 
@@ -93,10 +91,9 @@ gdAbout::gdAbout()
 		deps::getRtMidiVersion().c_str(),
 		JANSSON_VERSION, deps::getLibsndfileVersion().c_str()
 #ifdef WITH_VST
-		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
-#else
-		);
+		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER
 #endif
+	);
 
 	int tw = 0;
 	int th = 0;
