@@ -56,15 +56,9 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 
   /* Try to enable editor (i.e. plugin's UI) */
   
-  if (plugin->getActiveEditor() != nullptr) {
-    gu_log("[Plugin] plugin has an already active editor!\n");
-    return;
-  }
   ui = plugin->createEditorIfNeeded();
-  if (ui == nullptr) {
+  if (ui == nullptr)
     gu_log("[Plugin] unable to create editor, the plugin might be GUI-less!\n");
-    return;
-  }
 
   plugin->prepareToPlay(samplerate, buffersize);
 
