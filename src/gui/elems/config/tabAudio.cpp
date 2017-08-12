@@ -154,7 +154,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 		int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
 		for (int i=0; i<nfreq; i++) {
 			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
-			samplerate->add(gu_itoa(freq).c_str());
+			samplerate->add(gu_toString(freq).c_str());
 			if (freq == conf::samplerate)
 				samplerate->value(i);
 		}
@@ -179,7 +179,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(gu_itoa(conf::buffersize).c_str());
+	buffersize->showItem(gu_toString(conf::buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -188,7 +188,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(conf::rsmpQuality);
 
-	delayComp->value(gu_itoa(conf::delayComp).c_str());
+	delayComp->value(gu_toString(conf::delayComp).c_str());
 	delayComp->type(FL_INT_INPUT);
 	delayComp->maximum_size(5);
 

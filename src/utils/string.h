@@ -42,8 +42,7 @@ std::string gu_replace(std::string in, const std::string &search,
 
 std::string gu_trim(const std::string &s);
 
-// TODO - use std::to_string -> http://stackoverflow.com/questions/191757/how-to-concatenate-a-stdstring-and-an-int?rq=1
-std::string gu_itoa(int i);
+std::string gu_toString(int i);
 
 void gu_split(std::string in, std::string sep, std::vector<std::string> *v);
 

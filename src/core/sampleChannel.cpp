@@ -160,7 +160,7 @@ void SampleChannel::generateUniqueSampleName()
 	string oldName = wave->getName();
 	int k = 0;
 	while (!mh::uniqueSampleName(this, wave->getName())) {
-		wave->setName(oldName + "-" + gu_itoa(k));
+		wave->setName(oldName + "-" + gu_toString(k));
 		k++;
 	}
 }

@@ -100,7 +100,7 @@ void glue_setBpm(float v)
   double fPpart = modf(v, &fIpart);
   int iIpart = fIpart;
   int iPpart = ceilf(fPpart);
-  glue_setBpm(gu_itoa(iIpart).c_str(), gu_itoa(iPpart).c_str());
+  glue_setBpm(gu_toString(iIpart).c_str(), gu_toString(iPpart).c_str());
 }
 
 

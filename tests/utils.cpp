@@ -25,7 +25,7 @@ TEST_CASE("Test string utils")
 {
   REQUIRE(gu_replace("Giada is cool", "cool", "hot") == "Giada is hot");
   REQUIRE(gu_trim("   Giada is cool       ") == "Giada is cool");
-  REQUIRE(gu_itoa(666) == "666");
+  REQUIRE(gu_toString(666) == "666");
 
   vector<std::string> v;
   gu_split("Giada is cool", " ", &v);

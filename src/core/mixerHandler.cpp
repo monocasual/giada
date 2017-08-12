@@ -323,7 +323,7 @@ bool startInputRec()
 
 		Wave* wave = nullptr;
 		int result = waveManager::createEmpty(clock::getTotalFrames(), 
-			conf::samplerate, string("TAKE-" + gu_itoa(patch::lastTakeId)), &wave); 
+			conf::samplerate, string("TAKE-" + gu_toString(patch::lastTakeId)), &wave); 
 		if (result != G_RES_OK) {
 			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
 				ch->index);
@@ -336,7 +336,7 @@ bool startInputRec()
 
 		while (!uniqueSampleName(ch, ch->wave->getName())) {
 			patch::lastTakeId++;
-			ch->wave->setName("TAKE-" + gu_itoa(patch::lastTakeId));
+			ch->wave->setName("TAKE-" + gu_toString(patch::lastTakeId));
 		}
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "

@@ -53,7 +53,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel *ch)
       conf::midiInputH, "MIDI Input Setup"),
 		ch(ch)
 {
-  string title = "MIDI Input Setup (channel " + gu_itoa(ch->index+1) + ")";
+  string title = "MIDI Input Setup (channel " + gu_toString(ch->index+1) + ")";
 	label(title.c_str());
   size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
 

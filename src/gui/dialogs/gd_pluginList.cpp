@@ -89,7 +89,7 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	if (stackType == pluginHost::MASTER_IN)
 		label("Master In Plugins");
 	else {
-    string l = "Channel " + gu_itoa(ch->index+1) + " Plugins";
+    string l = "Channel " + gu_toString(ch->index+1) + " Plugins";
     copy_label(l.c_str());
 	}
 

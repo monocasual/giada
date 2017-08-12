@@ -29,6 +29,7 @@
 
 #include <climits>
 #include <sstream>
+#include "../core/const.h"
 #include "string.h"
 
 
@@ -40,7 +41,7 @@ string gu_getRealPath(const string &path)
 {
 	string out = "";
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(G_OS_LINUX) || defined(G_OS_MAC)
 
 	char *buf = realpath(path.c_str(), nullptr);
 
@@ -61,12 +62,23 @@ string gu_getRealPath(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_itoa(int i)
+string gu_toString(int i)
 {
-    // TODO - use std::to_string -> http://stackoverflow.com/questions/191757/how-to-concatenate-a-stdstring-and-an-int?rq=1
+	/* std::to_string is the way to go. Unfortunately  it seems that it isn't 
+	available in gcc's standard library (libstdc++), it is however, available in
+	libc++ which comes with LLVM/clang. */
+
+#ifdef G_OS_MAC
+
 	std::stringstream out;
 	out << i;
 	return out.str();
+
+#else
+
+	return std::to_string(i);
+
+#endif
 }
 
 
@@ -105,8 +117,8 @@ void gu_split(string in, string sep, vector<string> *v)
 	size_t curr = 0;
 	size_t next = -1;
 	do {
-	  curr  = next + 1;
-	  next  = full.find_first_of(sep, curr);
+		curr  = next + 1;
+		next  = full.find_first_of(sep, curr);
 		token = full.substr(curr, next - curr);
 		if (token != "")
 			v->push_back(token);

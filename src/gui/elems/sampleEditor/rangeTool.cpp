@@ -73,8 +73,8 @@ geRangeTool::geRangeTool(int x, int y, SampleChannel* ch)
 
 void geRangeTool::refresh()
 {
-  m_begin->value(gu_itoa(m_ch->getBegin()).c_str());
-  m_end->value(gu_itoa(m_ch->getEnd()).c_str());
+  m_begin->value(gu_toString(m_ch->getBegin()).c_str());
+  m_end->value(gu_toString(m_ch->getEnd()).c_str());
 }
 
 
