@@ -62,7 +62,7 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 
   plugin->prepareToPlay(samplerate, buffersize);
 
-  gu_log("[Plugin] editor initialized and ready\n");
+  gu_log("[Plugin] plugin initialized and ready\n");
 }
 
 
