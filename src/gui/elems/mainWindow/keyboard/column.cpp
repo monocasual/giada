@@ -28,6 +28,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
 #include "../../../../core/sampleChannel.h"
+#include "../../../../core/midiChannel.h"
 #include "../../../../glue/channel.h"
 #include "../../../../utils/log.h"
 #include "../../../../utils/fs.h"
@@ -42,10 +43,13 @@
 
 
 using std::vector;
+using std::string;
 
 
-geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
-	: Fl_Group(X, Y, W, H), parent(parent), index(index)
+geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
+	: Fl_Group(X, Y, W, H), 
+	  parent  (parent), 
+	  index   (index)
 {
   /* geColumn does a bit of a mess: we pass a pointer to its parent (geKeyboard) and
   the geColumn itself deals with the creation of another widget, outside geColumn
@@ -60,8 +64,7 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard *parent)
 	addChannelBtn = new geButton(x(), y(), w(), 20, "Add new channel");
 	end();
 
-  resizer = new geResizerBar(x()+w(), y(), 16, h(), false);
-  resizer->setMinSize(G_MIN_COLUMN_WIDTH);
+  resizer = new geResizerBar(x()+w(), y(), 16, h(), G_MIN_COLUMN_WIDTH, false);
   parent->add(resizer);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
@@ -99,14 +102,14 @@ int geColumn::handle(int e)
 			return 1;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
-			vector<std::string> paths;
+			vector<string> paths;
 			gu_split(Fl::event_text(), "\n", &paths);
 			bool fails = false;
 			int result = 0;
-			for (unsigned i=0; i<paths.size(); i++) {
-				gu_log("[geColumn::handle] loading %s...\n", paths.at(i).c_str());
-				SampleChannel *c = (SampleChannel*) glue_addChannel(index, CHANNEL_SAMPLE);
-				result = glue_loadChannel(c, gu_stripFileUrl(paths.at(i)).c_str());
+			for (string& path : paths) {
+				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
+				SampleChannel *c = static_cast<SampleChannel*>(glue_addChannel(index, CHANNEL_SAMPLE));
+				result = glue_loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
 					fails = true;
@@ -138,7 +141,7 @@ void geColumn::resize(int X, int Y, int W, int H)
 
   int ch = children();
   for (int i=0; i<ch; i++) {
-    Fl_Widget *c = child(i);
+    Fl_Widget* c = child(i);
     c->resize(X, Y + (i * (c->h() + 4)), W, c->h());
   }
 
@@ -158,7 +161,7 @@ void geColumn::resize(int X, int Y, int W, int H)
 void geColumn::refreshChannels()
 {
 	for (int i=1; i<children(); i++)
-		((geChannel*) child(i))->refresh();
+		static_cast<geChannel*>(child(i))->refresh();
 }
 
 
@@ -183,20 +186,22 @@ void geColumn::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void geColumn::cb_addChannel(Fl_Widget *v, void *p) { ((geColumn*)p)->__cb_addChannel(); }
+void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->__cb_addChannel(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geChannel *geColumn::addChannel(Channel *ch)
+geChannel *geColumn::addChannel(Channel* ch)
 {
 	int currentY = y() + children() * 24;
-	geChannel *gch = nullptr;
+	geChannel* gch = nullptr;
 	if (ch->type == CHANNEL_SAMPLE)
-		gch = (geSampleChannel*) new geSampleChannel(x(), currentY, w(), 20, (SampleChannel*) ch);
+		gch = static_cast<geSampleChannel*>(new geSampleChannel(x(), currentY, w(), 
+			20, static_cast<SampleChannel*>(ch)));
 	else
-		gch = (geMidiChannel*) new geMidiChannel(x(), currentY, w(), 20, (MidiChannel*) ch);
+		gch = static_cast<geMidiChannel*>(new geMidiChannel(x(), currentY, w(), 
+			20, static_cast<MidiChannel*>(ch)));
 
 	add(gch);
   resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
@@ -209,7 +214,7 @@ geChannel *geColumn::addChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geColumn::deleteChannel(geChannel *gch)
+void geColumn::deleteChannel(geChannel* gch)
 {
 	gch->hide();
 	remove(gch);
@@ -221,7 +226,7 @@ void geColumn::deleteChannel(geChannel *gch)
 	 * parameter to skip the operation */
 
 	for (int i=0; i<children(); i++) {
-		gch = (geChannel*) child(i);
+		gch = static_cast<geChannel*>(child(i));
 		gch->position(gch->x(), y()+(i*24));
 	}
 	size(w(), children() * 24 + 66);  // evil space for drag n drop
@@ -252,7 +257,7 @@ int geColumn::openTypeMenu()
 		{0}
 	};
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
@@ -279,7 +284,7 @@ void geColumn::clear(bool full)
 	else {
 		while (children() >= 2) {  // skip "add new channel" btn
 			int i = children()-1;
-			deleteChannel((geChannel*)child(i));
+			deleteChannel(static_cast<geChannel*>(child(i)));
 		}
 	}
 }
@@ -290,9 +295,9 @@ void geColumn::clear(bool full)
 
 Channel *geColumn::getChannel(int i)
 {
-  geChannel *gch = (geChannel*) child(i);
+  geChannel* gch = static_cast<geChannel*>(child(i));
   if (gch->type == CHANNEL_SAMPLE)
-    return ((geSampleChannel*) child(i))->ch;
+    return static_cast<geSampleChannel*>(child(i))->ch;
   else
-    return ((geMidiChannel*) child(i))->ch;
+    return static_cast<geMidiChannel*>(child(i))->ch;
 }

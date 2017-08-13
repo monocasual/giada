@@ -9,14 +9,14 @@
  * Shows a resize cursor when hovered over.
  * Assumes:
  *     - Parent is an Fl_Scroll
- *     - All children of Fl_Scroll are vertically arranged
+ *     - All children of Fl_Scroll are m_vertically arranged
  *     - The widget above us has a bottom edge touching our top edge
  *       ie. (w->y()+w->h() == this->y())
  *
  * When this widget is dragged:
  *     - The widget above us (with a common edge) will be /resized/
- *       vertically
- *     - All children below us will be /moved/ vertically
+ *       m_vertically
+ *     - All children below us will be /moved/ m_vertically
  *
  * -----------------------------------------------------------------------------
  *
@@ -47,20 +47,21 @@
 #include "resizerBar.h"
 
 
-geResizerBar::geResizerBar(int X,int Y,int W,int H, bool vertical)
-  : Fl_Box(X,Y,W,H), vertical(vertical)
+geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool vertical)
+  : Fl_Box    (X, Y, W, H), 
+    m_vertical(vertical),
+    m_minSize (minSize)
 {
-  last_y = 0;
-  min_h  = 30;
-  if (vertical) {
-    orig_h = H;
+  m_lastPos = 0;
+  if (m_vertical) {
+    m_origSize = H;
     labelsize(H);
   }
   else {
-    orig_h = W;
+    m_origSize = W;
     labelsize(W);
   }
-  align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE);
+  align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
   labelfont(FL_COURIER);
   visible_focus(0);
 }
@@ -69,12 +70,12 @@ geResizerBar::geResizerBar(int X,int Y,int W,int H, bool vertical)
 /* -------------------------------------------------------------------------- */
 
 
-void geResizerBar::HandleDrag(int diff)
+void geResizerBar::handleDrag(int diff)
 {
-  Fl_Scroll *grp = static_cast<Fl_Scroll*>(parent());
+  Fl_Scroll* grp = static_cast<Fl_Scroll*>(parent());
   int top;
   int bot;
-  if (vertical) {
+  if (m_vertical) {
     top = y();
     bot = y()+h();
   }
@@ -87,21 +88,21 @@ void geResizerBar::HandleDrag(int diff)
   //    Possibly clamp 'diff' if widget would get too small..
 
   for (int t=0; t<grp->children(); t++) {
-    Fl_Widget *wd = grp->child(t);
-    if (vertical) {
-      if ((wd->y()+wd->h()) == top) {                           // found widget directly above?
-        if ((wd->h()+diff) < min_h)
-          diff = wd->h() - min_h;                              // clamp
-        wd->resize(wd->x(), wd->y(), wd->w(), wd->h()+diff);       // change height
-        break;                                                // done with first pass
+    Fl_Widget* wd = grp->child(t);
+    if (m_vertical) {
+      if ((wd->y()+wd->h()) == top) {                          // found widget directly above?
+        if ((wd->h()+diff) < m_minSize)
+          diff = wd->h() - m_minSize;                          // clamp
+        wd->resize(wd->x(), wd->y(), wd->w(), wd->h()+diff);   // change height
+        break;                                                 // done with first pass
       }
     }
     else {
-      if ((wd->x()+wd->w()) == top) {                           // found widget directly above?
-        if ((wd->w()+diff) < min_h)
-          diff = wd->w() - min_h;                              // clamp
-        wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());       // change height
-        break;                                                // done with first pass
+      if ((wd->x()+wd->w()) == top) {                          // found widget directly above?
+        if ((wd->w()+diff) < m_minSize)
+          diff = wd->w() - m_minSize;                          // clamp
+        wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());   // change height
+        break;                                                 // done with first pass
       }
     }
   }
@@ -109,10 +110,10 @@ void geResizerBar::HandleDrag(int diff)
   // Second pass: find widgets below us, move based on clamped diff
 
   for (int t=0; t<grp->children(); t++) {
-    Fl_Widget *wd = grp->child(t);
-    if (vertical) {
+    Fl_Widget* wd = grp->child(t);
+    if (m_vertical) {
       if (wd->y() >= bot)                                     // found widget below us?
-        wd->resize(wd->x(), wd->y()+diff, wd->w(), wd->h());      // change position
+        wd->resize(wd->x(), wd->y()+diff, wd->w(), wd->h());  // change position
     }
     else {
       if (wd->x() >= bot)
@@ -122,7 +123,7 @@ void geResizerBar::HandleDrag(int diff)
 
   // Change our position last
 
-  if (vertical)
+  if (m_vertical)
     resize(x(), y()+diff, w(), h());
   else
     resize(x()+diff, y(), w(), h());
@@ -139,7 +140,7 @@ int geResizerBar::handle(int e)
 {
   int ret = 0;
   int this_y;
-  if (vertical)
+  if (m_vertical)
     this_y = Fl::event_y_root();
   else
     this_y = Fl::event_x_root();
@@ -149,7 +150,7 @@ int geResizerBar::handle(int e)
       break;
     case FL_ENTER:
       ret = 1;
-      fl_cursor(vertical ? FL_CURSOR_NS : FL_CURSOR_WE);
+      fl_cursor(m_vertical ? FL_CURSOR_NS : FL_CURSOR_WE);
       break;
     case FL_LEAVE:
       ret = 1;
@@ -157,11 +158,11 @@ int geResizerBar::handle(int e)
       break;
     case FL_PUSH:
       ret = 1;
-      last_y = this_y;
+      m_lastPos = this_y;
       break;
     case FL_DRAG:
-      HandleDrag(this_y-last_y);
-      last_y = this_y;
+      handleDrag(this_y-m_lastPos);
+      m_lastPos = this_y;
       ret = 1;
       break;
     default: break;
@@ -173,10 +174,19 @@ int geResizerBar::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void geResizerBar::resize(int X,int Y,int W,int H)
+int geResizerBar::getMinSize() const
+{ 
+	return m_minSize; 
+} 
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geResizerBar::resize(int x, int y, int w, int h)
 {
-  if (vertical)
-    Fl_Box::resize(X,Y,W,orig_h);                                // height of resizer stays constant size
-  else
-    Fl_Box::resize(X,Y,orig_h,H);
+	if (m_vertical)
+		Fl_Box::resize(x, y, w, m_origSize); // Height of resizer stays constant size
+	else
+		Fl_Box::resize(x, y, m_origSize, h);
 }

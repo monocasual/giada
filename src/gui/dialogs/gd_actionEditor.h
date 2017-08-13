@@ -76,7 +76,7 @@ public:
 	inline void __cb_zoomIn();
 	inline void __cb_zoomOut();
 
-	geChoice    *actionType;
+	geChoice   *actionType;
 	geGridTool *gridTool;
 	geButton   *zoomIn;
 	geButton   *zoomOut;

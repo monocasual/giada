@@ -43,27 +43,27 @@ class geColumn : public Fl_Group
 {
 private:
 
-	static void cb_addChannel  (Fl_Widget *v, void *p);
+	static void cb_addChannel  (Fl_Widget* v, void* p);
 	inline void __cb_addChannel();
 
 	int openTypeMenu();
 
-	geButton    *addChannelBtn;
-	geResizerBar *resizer;
-	geKeyboard  *parent;
+	geButton*     addChannelBtn;
+	geResizerBar* resizer;
+	geKeyboard*   parent;
 
 	int index;
 
 public:
 
-	geColumn(int x, int y, int w, int h, int index, geKeyboard *parent);
+	geColumn(int x, int y, int w, int h, int index, geKeyboard* parent);
 	~geColumn();
 
 	/* addChannel
 	 * add a new channel in this column and set the internal pointer
 	 * to channel to 'ch'. */
 
-	geChannel *addChannel(Channel *ch);
+	geChannel* addChannel(Channel* ch);
 
 	/* handle */
 
@@ -77,7 +77,7 @@ public:
 	/* deleteChannel
 	 * remove the channel 'gch' from this column. */
 
-	void deleteChannel(geChannel *gch);
+	void deleteChannel(geChannel* gch);
 
 	/* refreshChannels
 	 * update channels' graphical statues. Called on each GUI cycle. */
@@ -86,7 +86,7 @@ public:
 
   /* getChannel */
 
-  Channel *getChannel(int i);
+  Channel* getChannel(int i);
 
 	/* clear
 	 * remove all channels from the column. If full==true, delete also the
@@ -97,10 +97,10 @@ public:
 
 	void draw();
 
-	inline int  getIndex()      { return index; }
-	inline void setIndex(int i) { index = i; }
-	inline bool isEmpty()       { return children() == 1; }
-  inline int  countChannels() { return children(); }
+	int  getIndex()      { return index; }
+	void setIndex(int i) { index = i; }
+	bool isEmpty()       { return children() == 1; }
+  int  countChannels() { return children(); }
 };
 
 

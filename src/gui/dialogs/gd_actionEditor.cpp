@@ -124,7 +124,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 	else {
 		pr = new geNoteEditor(scroller->x(), upperArea->y()+upperArea->h()+8, this);
 		scroller->add(pr);
-		scroller->add(new geResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 8));
+		/* TODO - avoid magic number 30 for minimum height */
+		scroller->add(new geResizerBar(pr->x(), pr->y()+pr->h(), scroller->w(), 30, 8));
 	}
 
 	end();

@@ -52,27 +52,22 @@ class geResizerBar : public Fl_Box
 {
 private:
 
-  /* TODO - use more general variable names
-   * (last_y -> last_?, min_h -> min_?, ...) */
+  bool m_vertical;
+	int  m_origSize;
+	int  m_minSize;
+	int  m_lastPos;
 
-  bool vertical;
-	int  orig_h;
-	int  last_y;
-	int  min_h;   // min height for widget above us
-
-	void HandleDrag(int diff);
+	void handleDrag(int diff);
 
 public:
 
  /* 'vertical' defines the bar movement. Vertical=true: the bar moves
   * vertically (up and down). */
 
-	geResizerBar(int x, int y, int w, int h, bool vertical=true);
+	geResizerBar(int x, int y, int w, int h, int minSize, bool vertical=true);
 
-  inline void setMinSize(int val) { min_h = val; }
-  inline int  getMinSize()        { return min_h; }
-
-  int  handle(int e);
+  int getMinSize() const;
+  int handle(int e);
   void resize(int x, int y, int w, int h);
 };
 
