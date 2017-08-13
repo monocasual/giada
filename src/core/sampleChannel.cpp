@@ -823,6 +823,7 @@ void SampleChannel::reset(int frame)
 	//fadeoutTracker = tracker;   // store old frame number for xfade
 	tracker = begin;
 	mute_i  = false;
+	qWait   = false;  // Was in qWait mode? Reset occured, no more qWait now.
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
 		tracker = fillChan(vChan, tracker, frame);
 }
