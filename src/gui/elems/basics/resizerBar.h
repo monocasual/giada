@@ -56,6 +56,7 @@ private:
 	int  m_origSize;
 	int  m_minSize;
 	int  m_lastPos;
+	bool m_hover;
 
 	void handleDrag(int diff);
 
@@ -66,8 +67,10 @@ public:
 
 	geResizerBar(int x, int y, int w, int h, int minSize, bool type=VERTICAL);
 
+	int handle(int e) override;
+	void draw() override;
+
 	int getMinSize() const;
-	int handle(int e);
 	void resize(int x, int y, int w, int h);
 };
 

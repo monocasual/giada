@@ -44,15 +44,17 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
+#include "../../../core/const.h"
 #include "resizerBar.h"
 
 
 geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type)
   : Fl_Box   (X, Y, W, H), 
     m_type   (type),
-    m_minSize(minSize)
+    m_minSize(minSize),
+    m_lastPos(0),
+    m_hover  (false)
 {
-  m_lastPos = 0;
   if (m_type == VERTICAL) {
     m_origSize = H;
     labelsize(H);
@@ -136,6 +138,16 @@ void geResizerBar::handleDrag(int diff)
 /* -------------------------------------------------------------------------- */
 
 
+void geResizerBar::draw()
+{
+	Fl_Box::draw();
+	fl_rectf(x(), y(), w(), h(), m_hover ? G_COLOR_GREY_2 : G_COLOR_GREY_1);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int geResizerBar::handle(int e)
 {
   int ret = 0;
@@ -151,10 +163,14 @@ int geResizerBar::handle(int e)
     case FL_ENTER:
       ret = 1;
       fl_cursor(m_type == VERTICAL ? FL_CURSOR_NS : FL_CURSOR_WE);
+      m_hover = true;
+      redraw();
       break;
     case FL_LEAVE:
       ret = 1;
       fl_cursor(FL_CURSOR_DEFAULT);
+      m_hover = false;
+      redraw();
       break;
     case FL_PUSH:
       ret = 1;
