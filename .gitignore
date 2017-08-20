@@ -24,6 +24,7 @@
 /test-plugin-list.xml
 
 # --- misc
+/make.sh
 /AUTHORS
 /ERRORS
 /README
