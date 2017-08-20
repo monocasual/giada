@@ -66,23 +66,23 @@ namespace
 {
 enum class Menu
 {
-  INPUT_MONITOR = 0,
-  LOAD_SAMPLE,
-  EXPORT_SAMPLE,
-  SETUP_KEYBOARD_INPUT,
-  SETUP_MIDI_INPUT,
-  SETUP_MIDI_OUTPUT,
-  EDIT_SAMPLE,
-  EDIT_ACTIONS,
-  CLEAR_ACTIONS,
-  CLEAR_ACTIONS_ALL,
-  CLEAR_ACTIONS_MUTE,
-  CLEAR_ACTIONS_VOLUME,
-  CLEAR_ACTIONS_START_STOP,
-  __END_SUBMENU__,
-  CLONE_CHANNEL,
-  FREE_CHANNEL,
-  DELETE_CHANNEL
+	INPUT_MONITOR = 0,
+	LOAD_SAMPLE,
+	EXPORT_SAMPLE,
+	SETUP_KEYBOARD_INPUT,
+	SETUP_MIDI_INPUT,
+	SETUP_MIDI_OUTPUT,
+	EDIT_SAMPLE,
+	EDIT_ACTIONS,
+	CLEAR_ACTIONS,
+	CLEAR_ACTIONS_ALL,
+	CLEAR_ACTIONS_MUTE,
+	CLEAR_ACTIONS_VOLUME,
+	CLEAR_ACTIONS_START_STOP,
+	__END_SUBMENU__,
+	CLONE_CHANNEL,
+	FREE_CHANNEL,
+	DELETE_CHANNEL
 };
 
 
@@ -91,80 +91,80 @@ enum class Menu
 
 void menuCallback(Fl_Widget *w, void *v)
 {
-  geSampleChannel *gch = static_cast<geSampleChannel*>(w);
-  Menu selectedItem = (Menu) (intptr_t) v;
+	geSampleChannel *gch = static_cast<geSampleChannel*>(w);
+	Menu selectedItem = (Menu) (intptr_t) v;
 
-  switch (selectedItem) {
-    case Menu::INPUT_MONITOR: {
-      glue_toggleInputMonitor(gch->ch);
-      break;
-    }
-    case Menu::LOAD_SAMPLE: {
-      gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
-        conf::browserW, conf::browserH, "Browse sample",
-        conf::samplePath.c_str(), glue_loadSample, gch->ch);
-      gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-      break;
-    }
-    case Menu::EXPORT_SAMPLE: {
-      gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
-        conf::browserW, conf::browserH, "Save sample",
-        conf::samplePath.c_str(), "", glue_saveSample, gch->ch);
-      gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
-  		break;
-    }
-    case Menu::SETUP_KEYBOARD_INPUT: {
-  		new gdKeyGrabber(gch->ch); // FIXME - use gu_openSubWindow
-  		break;
-    }
-    case Menu::SETUP_MIDI_INPUT: {
-      gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
-      break;
-    }
-    case Menu::SETUP_MIDI_OUTPUT: {
-      gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(static_cast<SampleChannel*>(gch->ch)), 0);
-      break;
-    }
-    case Menu::EDIT_SAMPLE: {
-      gu_openSubWindow(G_MainWin, new gdSampleEditor(static_cast<SampleChannel*>(gch->ch)), WID_SAMPLE_EDITOR);
-      break;
-    }
-    case Menu::EDIT_ACTIONS: {
-      gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
-      break;
-    }
-    case Menu::CLEAR_ACTIONS:
-    case Menu::__END_SUBMENU__:
-      break;
-    case Menu::CLEAR_ACTIONS_ALL: {
-      glue_clearAllActions(gch);
-      break;
-    }
-    case Menu::CLEAR_ACTIONS_MUTE: {
-      glue_clearMuteActions(gch);
-      break;
-    }
-    case Menu::CLEAR_ACTIONS_VOLUME: {
-      glue_clearVolumeActions(gch);
-      break;
-    }
-    case Menu::CLEAR_ACTIONS_START_STOP: {
-      glue_clearStartStopActions(gch);
-      break;
-    }
-    case Menu::CLONE_CHANNEL: {
-      glue_cloneChannel(gch->ch);
-      break;
-    }
-    case Menu::FREE_CHANNEL: {
-  		glue_freeChannel(gch->ch);
-      break;
-    }
-    case Menu::DELETE_CHANNEL: {
-      glue_deleteChannel(gch->ch);
-      break;
-    }
-  }
+	switch (selectedItem) {
+		case Menu::INPUT_MONITOR: {
+			glue_toggleInputMonitor(gch->ch);
+			break;
+		}
+		case Menu::LOAD_SAMPLE: {
+			gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
+				conf::browserW, conf::browserH, "Browse sample",
+				conf::samplePath.c_str(), glue_loadSample, gch->ch);
+			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+			break;
+		}
+		case Menu::EXPORT_SAMPLE: {
+			gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
+				conf::browserW, conf::browserH, "Save sample",
+				conf::samplePath.c_str(), "", glue_saveSample, gch->ch);
+			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+			break;
+		}
+		case Menu::SETUP_KEYBOARD_INPUT: {
+			new gdKeyGrabber(gch->ch); // FIXME - use gu_openSubWindow
+			break;
+		}
+		case Menu::SETUP_MIDI_INPUT: {
+			gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			break;
+		}
+		case Menu::SETUP_MIDI_OUTPUT: {
+			gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(static_cast<SampleChannel*>(gch->ch)), 0);
+			break;
+		}
+		case Menu::EDIT_SAMPLE: {
+			gu_openSubWindow(G_MainWin, new gdSampleEditor(static_cast<SampleChannel*>(gch->ch)), WID_SAMPLE_EDITOR);
+			break;
+		}
+		case Menu::EDIT_ACTIONS: {
+			gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+			break;
+		}
+		case Menu::CLEAR_ACTIONS:
+		case Menu::__END_SUBMENU__:
+			break;
+		case Menu::CLEAR_ACTIONS_ALL: {
+			glue_clearAllActions(gch);
+			break;
+		}
+		case Menu::CLEAR_ACTIONS_MUTE: {
+			glue_clearMuteActions(gch);
+			break;
+		}
+		case Menu::CLEAR_ACTIONS_VOLUME: {
+			glue_clearVolumeActions(gch);
+			break;
+		}
+		case Menu::CLEAR_ACTIONS_START_STOP: {
+			glue_clearStartStopActions(gch);
+			break;
+		}
+		case Menu::CLONE_CHANNEL: {
+			glue_cloneChannel(gch->ch);
+			break;
+		}
+		case Menu::FREE_CHANNEL: {
+			glue_freeChannel(gch->ch);
+			break;
+		}
+		case Menu::DELETE_CHANNEL: {
+			glue_deleteChannel(gch->ch);
+			break;
+		}
+	}
 }
 
 }; // {namespace}
@@ -174,14 +174,14 @@ void menuCallback(Fl_Widget *w, void *v)
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
-	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, (Channel*) ch)
+	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, ch)
 {
 	begin();
 
 	button      = new geIdButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
 	arm         = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
 	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
-	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), 20, 20, "-- no sample --");
+	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), 20, H, "-- no sample --");
 	readActions = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
 	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
 	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
@@ -195,7 +195,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
 
 	end();
 
-  resizable(mainButton);
+	resizable(mainButton);
 
 	update();
 
@@ -260,7 +260,7 @@ void geSampleChannel::__cb_openMenu()
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-      FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -290,7 +290,7 @@ void geSampleChannel::__cb_openMenu()
 		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
 
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
-  have start/stop actions. */
+	have start/stop actions. */
 
 	if (static_cast<SampleChannel*>(ch)->mode & LOOP_ANY)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
@@ -302,9 +302,9 @@ void geSampleChannel::__cb_openMenu()
 	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-  if (m)
-    m->do_callback(this, m->user_data());
-  return;
+	if (m)
+		m->do_callback(this, m->user_data());
+	return;
 }
 
 
@@ -313,7 +313,7 @@ void geSampleChannel::__cb_openMenu()
 
 void geSampleChannel::__cb_readActions()
 {
-	glue_startStopReadingRecs((SampleChannel*) ch);
+	glue_startStopReadingRecs(static_cast<SampleChannel*>(ch));
 }
 
 
@@ -322,8 +322,8 @@ void geSampleChannel::__cb_readActions()
 
 void geSampleChannel::refresh()
 {
-  if (!mainButton->visible()) // mainButton invisible? status too (see below)
-    return;
+	if (!mainButton->visible()) // mainButton invisible? status too (see below)
+		return;
 
 	setColorsByStatus(ch->status, ch->recStatus);
 
@@ -347,7 +347,7 @@ void geSampleChannel::reset()
 {
 	hideActionButton();
 	mainButton->setDefaultMode("-- no sample --");
- 	mainButton->redraw();
+	mainButton->redraw();
 	status->redraw();
 }
 
@@ -368,7 +368,7 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			mainButton->label(((SampleChannel*) ch)->wave->getName().c_str());
+			mainButton->label(static_cast<SampleChannel*>(ch)->wave->getName().c_str());
 			break;
 	}
 
@@ -383,7 +383,7 @@ void geSampleChannel::update()
 
 	/* updates modebox */
 
-	modeBox->value(((SampleChannel*) ch)->mode);
+	modeBox->value(static_cast<SampleChannel*>(ch)->mode);
 	modeBox->redraw();
 
 	/* update volumes+mute+solo */
@@ -406,7 +406,7 @@ void geSampleChannel::update()
 
 void geSampleChannel::showActionButton()
 {
-	readActions->value(((SampleChannel*) ch)->readActions);
+	readActions->value(static_cast<SampleChannel*>(ch)->readActions);
 	readActions->show();
 	packWidgets();
 	redraw();
@@ -429,7 +429,7 @@ void geSampleChannel::hideActionButton()
 
 void geSampleChannel::resize(int X, int Y, int W, int H)
 {
-  geChannel::resize(X, Y, W, H);
+	geChannel::resize(X, Y, W, H);
 
 	arm->hide();
 	modeBox->hide();

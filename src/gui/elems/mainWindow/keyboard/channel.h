@@ -61,12 +61,14 @@ protected:
 	static const int BREAK_ARM          = 168;
 #endif
 
-	static void cb_arm           (Fl_Widget *v, void *p);
-	static void cb_mute          (Fl_Widget *v, void *p);
-	static void cb_solo          (Fl_Widget *v, void *p);
-	static void cb_changeVol     (Fl_Widget *v, void *p);
+	static const int MIN_ELEM_W = 20;
+
+	static void cb_arm           (Fl_Widget* v, void* p);
+	static void cb_mute          (Fl_Widget* v, void* p);
+	static void cb_solo          (Fl_Widget* v, void* p);
+	static void cb_changeVol     (Fl_Widget* v, void* p);
 #ifdef WITH_VST
-		static void cb_openFxWindow(Fl_Widget *v, void *p);
+		static void cb_openFxWindow(Fl_Widget* v, void* p);
 #endif
 
 	inline void __cb_mute();
@@ -99,7 +101,7 @@ protected:
 
 public:
 
-	geChannel(int x, int y, int w, int h, int type, Channel *ch);
+	geChannel(int x, int y, int w, int h, int type, Channel* ch);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -130,15 +132,15 @@ public:
 
 	Channel *ch;
 
-	geIdButton      *button;
-	geChannelStatus *status;
-	geButton 	      *arm;
-	geChannelButton *mainButton;
-	geButton 	      *mute;
-	geButton 	      *solo;
-	geDial           *vol;
+	geIdButton*      button;
+	geChannelStatus* status;
+	geButton*        arm;
+	geChannelButton* mainButton;
+	geButton*        mute;
+	geButton*        solo;
+	geDial*          vol;
 #ifdef WITH_VST
-	geStatusButton  *fx;
+	geStatusButton*  fx;
 #endif
 
 	int type;

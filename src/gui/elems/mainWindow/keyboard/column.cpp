@@ -61,10 +61,11 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
   instead. */
 
 	begin();
-	addChannelBtn = new geButton(x(), y(), w(), 20, "Add new channel");
+	addChannelBtn = new geButton(x(), y(), w(), G_GUI_CHANNEL_H_1, "Add new channel");
 	end();
 
-  resizer = new geResizerBar(x()+w(), y(), 16, h(), G_MIN_COLUMN_WIDTH, false);
+  resizer = new geResizerBar(x()+w(), y(), G_GUI_OUTER_MARGIN * 2, h(), 
+  	G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
   parent->add(resizer);
 
 	addChannelBtn->callback(cb_addChannel, (void*)this);
@@ -142,7 +143,7 @@ void geColumn::resize(int X, int Y, int W, int H)
   int ch = children();
   for (int i=0; i<ch; i++) {
     Fl_Widget* c = child(i);
-    c->resize(X, Y + (i * (c->h() + 4)), W, c->h());
+    c->resize(X, Y + (i * (c->h() + G_GUI_INNER_MARGIN)), W, c->h());
   }
 
   /* resize group itself */
@@ -151,7 +152,7 @@ void geColumn::resize(int X, int Y, int W, int H)
 
   /* resize resizerBar */
 
-  resizer->size(16, H);
+  resizer->size(G_GUI_OUTER_MARGIN * 2, H);
 }
 
 
@@ -170,7 +171,7 @@ void geColumn::refreshChannels()
 
 void geColumn::draw()
 {
-	fl_color(fl_rgb_color(27, 27, 27));
+	fl_color(G_COLOR_GREY_1_5);
 	fl_rectf(x(), y(), w(), h());
 
   /* call draw and then redraw in order to avoid channel corruption when
@@ -194,18 +195,22 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->__cb_addCh
 
 geChannel *geColumn::addChannel(Channel* ch)
 {
-	int currentY = y() + children() * 24;
 	geChannel* gch = nullptr;
+
+	/* All geChannels are added with y=0. That's not a problem, they will be 
+	repositioned later on during geColumn::resize(). */
+
 	if (ch->type == CHANNEL_SAMPLE)
-		gch = static_cast<geSampleChannel*>(new geSampleChannel(x(), currentY, w(), 
-			20, static_cast<SampleChannel*>(ch)));
+		gch = new geSampleChannel(x(), 0, w(), G_GUI_CHANNEL_H_1, 
+			static_cast<SampleChannel*>(ch));
 	else
-		gch = static_cast<geMidiChannel*>(new geMidiChannel(x(), currentY, w(), 
-			20, static_cast<MidiChannel*>(ch)));
+		gch = new geMidiChannel(x(), 0, w(), G_GUI_CHANNEL_H_1, 
+			static_cast<MidiChannel*>(ch));
 
 	add(gch);
-  resize(x(), y(), w(), (children() * 24) + 66); // evil space for drag n drop
-  gch->redraw();    // avoid corruption
+	//add(new geResizerBar(x(), y(), w(), h(), G_GUI_OUTER_MARGIN, G_MIN_COLUMN_WIDTH, geResizerBar::VERTICAL));
+
+  resize(x(), y(), w(), (children() * (G_GUI_CHANNEL_H_1 + G_GUI_INNER_MARGIN)) + 66); // evil space for drag n drop
 	parent->redraw(); // redraw Keyboard
 	return gch;
 }

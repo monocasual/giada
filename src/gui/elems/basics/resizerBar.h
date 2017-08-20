@@ -52,7 +52,7 @@ class geResizerBar : public Fl_Box
 {
 private:
 
-  bool m_vertical;
+	bool m_type;
 	int  m_origSize;
 	int  m_minSize;
 	int  m_lastPos;
@@ -61,14 +61,14 @@ private:
 
 public:
 
- /* 'vertical' defines the bar movement. Vertical=true: the bar moves
-  * vertically (up and down). */
+	static const int HORIZONTAL = 0;
+	static const int VERTICAL   = 1;
 
-	geResizerBar(int x, int y, int w, int h, int minSize, bool vertical=true);
+	geResizerBar(int x, int y, int w, int h, int minSize, bool type=VERTICAL);
 
-  int getMinSize() const;
-  int handle(int e);
-  void resize(int x, int y, int w, int h);
+	int getMinSize() const;
+	int handle(int e);
+	void resize(int x, int y, int w, int h);
 };
 
 

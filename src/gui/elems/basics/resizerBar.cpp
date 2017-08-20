@@ -47,13 +47,13 @@
 #include "resizerBar.h"
 
 
-geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool vertical)
-  : Fl_Box    (X, Y, W, H), 
-    m_vertical(vertical),
-    m_minSize (minSize)
+geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type)
+  : Fl_Box   (X, Y, W, H), 
+    m_type   (type),
+    m_minSize(minSize)
 {
   m_lastPos = 0;
-  if (m_vertical) {
+  if (m_type == VERTICAL) {
     m_origSize = H;
     labelsize(H);
   }
@@ -75,7 +75,7 @@ void geResizerBar::handleDrag(int diff)
   Fl_Scroll* grp = static_cast<Fl_Scroll*>(parent());
   int top;
   int bot;
-  if (m_vertical) {
+  if (m_type == VERTICAL) {
     top = y();
     bot = y()+h();
   }
@@ -89,7 +89,7 @@ void geResizerBar::handleDrag(int diff)
 
   for (int t=0; t<grp->children(); t++) {
     Fl_Widget* wd = grp->child(t);
-    if (m_vertical) {
+    if (m_type == VERTICAL) {
       if ((wd->y()+wd->h()) == top) {                          // found widget directly above?
         if ((wd->h()+diff) < m_minSize)
           diff = wd->h() - m_minSize;                          // clamp
@@ -111,7 +111,7 @@ void geResizerBar::handleDrag(int diff)
 
   for (int t=0; t<grp->children(); t++) {
     Fl_Widget* wd = grp->child(t);
-    if (m_vertical) {
+    if (m_type == VERTICAL) {
       if (wd->y() >= bot)                                     // found widget below us?
         wd->resize(wd->x(), wd->y()+diff, wd->w(), wd->h());  // change position
     }
@@ -123,7 +123,7 @@ void geResizerBar::handleDrag(int diff)
 
   // Change our position last
 
-  if (m_vertical)
+  if (m_type == VERTICAL)
     resize(x(), y()+diff, w(), h());
   else
     resize(x()+diff, y(), w(), h());
@@ -140,7 +140,7 @@ int geResizerBar::handle(int e)
 {
   int ret = 0;
   int this_y;
-  if (m_vertical)
+  if (m_type == VERTICAL)
     this_y = Fl::event_y_root();
   else
     this_y = Fl::event_x_root();
@@ -150,7 +150,7 @@ int geResizerBar::handle(int e)
       break;
     case FL_ENTER:
       ret = 1;
-      fl_cursor(m_vertical ? FL_CURSOR_NS : FL_CURSOR_WE);
+      fl_cursor(m_type == VERTICAL ? FL_CURSOR_NS : FL_CURSOR_WE);
       break;
     case FL_LEAVE:
       ret = 1;
@@ -185,7 +185,7 @@ int geResizerBar::getMinSize() const
 
 void geResizerBar::resize(int x, int y, int w, int h)
 {
-	if (m_vertical)
+	if (m_type == VERTICAL)
 		Fl_Box::resize(x, y, w, m_origSize); // Height of resizer stays constant size
 	else
 		Fl_Box::resize(x, y, m_origSize, h);

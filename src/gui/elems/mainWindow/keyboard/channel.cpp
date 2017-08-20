@@ -49,9 +49,10 @@ using namespace giada::m;
 
 geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
  : Fl_Group(X, Y, W, H, nullptr),
-   ch      (ch),
-   type    (type)
+	 ch      (ch),
+	 type    (type)
 {
+	//box(FL_BORDER_BOX);
 }
 
 
@@ -72,7 +73,7 @@ void geChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_o
 
 void geChannel::__cb_arm()
 {
-  glue_toggleArm(ch, true);
+	glue_toggleArm(ch, true);
 }
 
 
@@ -141,7 +142,7 @@ void geChannel::blink()
 	if (gu_getBlinker() > 6)
 		mainButton->setPlayMode();
 	else
-    mainButton->setDefaultMode();
+		mainButton->setDefaultMode();
 }
 
 
@@ -150,36 +151,36 @@ void geChannel::blink()
 
 void geChannel::setColorsByStatus(int playStatus, int recStatus)
 {
-  switch (playStatus) {
-    case STATUS_OFF:
-    case STATUS_EMPTY:
-  		mainButton->setDefaultMode();
-      button->imgOn  = channelPlay_xpm;
-      button->imgOff = channelStop_xpm;
-      button->redraw();
-      break;
-    case STATUS_PLAY:
-      mainButton->setPlayMode();
-      button->imgOn  = channelStop_xpm;
-      button->imgOff = channelPlay_xpm;
-      button->redraw();
-      break;
-    case STATUS_WAIT:
-      blink();
-      break;
-    case STATUS_ENDING:
-      mainButton->setEndingMode();
-      break;
-  }
+	switch (playStatus) {
+		case STATUS_OFF:
+		case STATUS_EMPTY:
+			mainButton->setDefaultMode();
+			button->imgOn  = channelPlay_xpm;
+			button->imgOff = channelStop_xpm;
+			button->redraw();
+			break;
+		case STATUS_PLAY:
+			mainButton->setPlayMode();
+			button->imgOn  = channelStop_xpm;
+			button->imgOff = channelPlay_xpm;
+			button->redraw();
+			break;
+		case STATUS_WAIT:
+			blink();
+			break;
+		case STATUS_ENDING:
+			mainButton->setEndingMode();
+			break;
+	}
 
-  switch (recStatus) {
-    case REC_WAITING:
-      blink();
-      break;
-    case REC_ENDING:
-      mainButton->setEndingMode();
-      break;
-  }
+	switch (recStatus) {
+		case REC_WAITING:
+			blink();
+			break;
+		case REC_ENDING:
+			mainButton->setEndingMode();
+			break;
+	}
 }
 
 
@@ -188,31 +189,32 @@ void geChannel::setColorsByStatus(int playStatus, int recStatus)
 
 void geChannel::packWidgets()
 {
-  /* Count visible widgets and resize mainButton according to how many widgets
-  are visible. */
+	/* Count visible widgets and resize mainButton according to how many widgets
+	are visible. */
 
-  int visibles = 0;
-  for (int i=0; i<children(); i++) {
-    child(i)->size(20, 20);  // also normalize widths
-    if (child(i)->visible())
-      visibles++;
-  }
-  mainButton->size(w() - ((visibles - 1) * (24)), 20);  // -1: exclude itself
+	int visibles = 0;
+	for (int i=0; i<children(); i++) {
+		child(i)->size(MIN_ELEM_W, child(i)->h());  // also normalize widths
+		if (child(i)->visible())
+			visibles++;
+	}
+	mainButton->size(w() - ((visibles - 1) * (MIN_ELEM_W + G_GUI_INNER_MARGIN)),   // -1: exclude itself
+		mainButton->h());
 
-  /* Reposition everything else */
+	/* Reposition everything else */
 
-  for (int i=1, p=0; i<children(); i++) {
-    if (!child(i)->visible())
-      continue;
-    for (int k=i-1; k>=0; k--) // Get the first visible item prior to i
-      if (child(k)->visible()) {
-        p = k;
-        break;
-      }
-    child(i)->position(child(p)->x() + child(p)->w() + 4, y());
-  }
+	for (int i=1, p=0; i<children(); i++) {
+		if (!child(i)->visible())
+			continue;
+		for (int k=i-1; k>=0; k--) // Get the first visible item prior to i
+			if (child(k)->visible()) {
+				p = k;
+				break;
+			}
+		child(i)->position(child(p)->x() + child(p)->w() + G_GUI_INNER_MARGIN, y());
+	}
 
-  init_sizes(); // Resets the internal array of widget sizes and positions
+	init_sizes(); // Resets the internal array of widget sizes and positions
 }
 
 
