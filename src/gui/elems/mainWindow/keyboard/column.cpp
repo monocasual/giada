@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
 #include "../../../../core/sampleChannel.h"
@@ -138,19 +139,19 @@ int geColumn::handle(int e)
 
 void geColumn::resize(int X, int Y, int W, int H)
 {
-  /* resize all children */
+  /* Resize all children, including "add channel" button. */
 
-  int ch = children();
-  for (int i=0; i<ch; i++) {
+  for (int i=0; i<children(); i++) {
     Fl_Widget* c = child(i);
     c->resize(X, Y + (i * (c->h() + G_GUI_INNER_MARGIN)), W, c->h());
   }
 
-  /* resize group itself */
+  /* Resize group itself. Must use internal functions, resize() would trigger
+  infinite recursion. */
 
   x(X); y(Y); w(W); h(H);
 
-  /* resize resizerBar */
+  /* Resize resizerBar. */
 
   resizer->size(G_GUI_OUTER_MARGIN * 2, H);
 }
@@ -208,9 +209,9 @@ geChannel *geColumn::addChannel(Channel* ch)
 			static_cast<MidiChannel*>(ch));
 
 	add(gch);
-	//add(new geResizerBar(x(), y(), w(), h(), G_GUI_OUTER_MARGIN, G_MIN_COLUMN_WIDTH, geResizerBar::VERTICAL));
 
   resize(x(), y(), w(), (children() * (G_GUI_CHANNEL_H_1 + G_GUI_INNER_MARGIN)) + 66); // evil space for drag n drop
+	gch->redraw();    // fix corruption
 	parent->redraw(); // redraw Keyboard
 	return gch;
 }
@@ -298,11 +299,16 @@ void geColumn::clear(bool full)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *geColumn::getChannel(int i)
+Channel* geColumn::getChannel(int i)
 {
-  geChannel* gch = static_cast<geChannel*>(child(i));
-  if (gch->type == CHANNEL_SAMPLE)
-    return static_cast<geSampleChannel*>(child(i))->ch;
-  else
-    return static_cast<geMidiChannel*>(child(i))->ch;
+	return static_cast<geChannel*>(child(i + 1))->ch;  // Skip "add channel"
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geColumn::getIndex()       { return index; }
+void geColumn::setIndex(int i) { index = i; }
+bool geColumn::isEmpty()       { return children() == 1; }
+int geColumn::countChannels()  { return children() - 1; }

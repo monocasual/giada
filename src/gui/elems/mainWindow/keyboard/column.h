@@ -60,47 +60,36 @@ public:
 	~geColumn();
 
 	/* addChannel
-	 * add a new channel in this column and set the internal pointer
-	 * to channel to 'ch'. */
+	Adds a new channel in this column and set the internal pointer to channel 
+	to 'ch'. */
 
 	geChannel* addChannel(Channel* ch);
 
-	/* handle */
+	int handle(int e) override;
+	void draw() override;
+  void resize(int x, int y, int w, int h) override;
 
-	int handle(int e);
+	/* clear
+	Removes all channels from the column. If full==true, delete also the "add new 
+	channel" button. */
 
-  /* resize
-   * custom resize behavior. */
-
-  void resize(int x, int y, int w, int h);
+	void clear(bool full=false);
 
 	/* deleteChannel
-	 * remove the channel 'gch' from this column. */
+	Removes the channel 'gch' from this column. */
 
 	void deleteChannel(geChannel* gch);
 
 	/* refreshChannels
-	 * update channels' graphical statues. Called on each GUI cycle. */
+	Updates channels' graphical statues. Called on each GUI cycle. */
 
 	void refreshChannels();
 
-  /* getChannel */
-
-  Channel* getChannel(int i);
-
-	/* clear
-	 * remove all channels from the column. If full==true, delete also the
-	 * "add new channel" button. This method ovverrides the inherited one
-	 * from Fl_Group. */
-
-	void clear(bool full=false);
-
-	void draw();
-
-	int  getIndex()      { return index; }
-	void setIndex(int i) { index = i; }
-	bool isEmpty()       { return children() == 1; }
-  int  countChannels() { return children(); }
+	Channel* getChannel(int i);
+	int getIndex();
+	void setIndex(int i);
+	bool isEmpty();   
+  int countChannels();
 };
 
 

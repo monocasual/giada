@@ -56,7 +56,7 @@
 #include "sampleChannel.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using namespace giada::m;
@@ -89,9 +89,9 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 
 
-void menuCallback(Fl_Widget *w, void *v)
+void menuCallback(Fl_Widget* w, void* v)
 {
-	geSampleChannel *gch = static_cast<geSampleChannel*>(w);
+	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	switch (selectedItem) {
@@ -173,7 +173,7 @@ void menuCallback(Fl_Widget *w, void *v)
 /* -------------------------------------------------------------------------- */
 
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel *ch)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
 	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, ch)
 {
 	begin();
