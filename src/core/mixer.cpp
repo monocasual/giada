@@ -53,24 +53,24 @@ namespace
 
 
 float tock[TICKSIZE] = {
-  0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
-  0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
-  0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
-  0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
-  0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
+	0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
+	0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
+	0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
+	0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
+	0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
  -0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
  -0.070862, -0.048844
 };
 
 
 float tick[TICKSIZE] = {
-  0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
-  0.747229,  0.711293,	0.635697,  0.524656,  0.384362,  0.222636,
-  0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
+	0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
+	0.747229,  0.711293,	0.635697,  0.524656,  0.384362,  0.222636,
+	0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
  -0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
  -0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
-  0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
-  0.069639,  0.031320
+	0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
+	0.069639,  0.031320
 };
 
 
@@ -83,7 +83,7 @@ Records from line in. */
 void lineInRec(float* inBuf, unsigned frame)
 {
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
-	 	return;
+		return;
 
 	/* Delay comp: wait until waitRec reaches delayComp. WaitRec
 	 * returns to 0 in mixerHandler, as soon as the recording ends */
@@ -157,7 +157,7 @@ void readActions(unsigned frame)
 				int index   = recorder::global.at(i).at(j)->chan;
 				Channel *ch = mh::getChannelByIndex(index);
 				ch->parseAction(recorder::global.at(i).at(j), frame,
-          clock::getCurrentFrame(), clock::getQuantize(), clock::isRunning());
+					clock::getCurrentFrame(), clock::getQuantize(), clock::isRunning());
 			}
 			break;
 		}
@@ -173,10 +173,10 @@ Computes quantization on 'rewind' button and all channels. */
 
 void doQuantize(unsigned frame)
 {
-  /* Nothing to do if quantizer disabled or a quanto has not passed yet. */
+	/* Nothing to do if quantizer disabled or a quanto has not passed yet. */
 
-  if (clock::getQuantize() == 0 || !clock::quantoHasPassed())
-    return;
+	if (clock::getQuantize() == 0 || !clock::quantoHasPassed())
+		return;
 	if (rewindWait) {
 		rewindWait = false;
 		rewind();
@@ -349,9 +349,9 @@ void testFirstBeat(unsigned frame)
 
 void testLastBeat()
 {
-  if (clock::isOnBeat())
-    if (metronome && !tickPlay)
-      tockPlay = true;
+	if (clock::isOnBeat())
+		if (metronome && !tickPlay)
+			tockPlay = true;
 }
 
 }; // {anonymous}
@@ -404,11 +404,15 @@ void init(int framesInSeq, int audioBufferSize)
 	/* Allocate virtual input channels. vChanInput has variable size: it depends
 	on how many frames there are in sequencer. */
 
-  allocVirtualInput(framesInSeq);
+	allocVirtualInput(framesInSeq);
 
-  if (vChanInToOut != nullptr)
-    free(vChanInToOut);
-	vChanInToOut = (float*) malloc(audioBufferSize * 2 * sizeof(float));
+	if (vChanInToOut != nullptr)
+		delete[] vChanInToOut;
+	vChanInToOut = new (std::nothrow) float[audioBufferSize * 2];
+	if (!vChanInToOut) {
+		gu_log("[Mixer::init] vChanInToOut alloc error!\n");	
+		return;
+	}
 
 	pthread_mutex_init(&mutex_recs, nullptr);
 	pthread_mutex_init(&mutex_chans, nullptr);
@@ -424,10 +428,10 @@ void init(int framesInSeq, int audioBufferSize)
 void allocVirtualInput(int frames)
 {
 	if (vChanInput != nullptr)
-		free(vChanInput);
-	vChanInput = (float*) malloc(frames * sizeof(float));
+		delete[] vChanInput;
+	vChanInput = new (std::nothrow) float[frames];
 	if (!vChanInput)
-		gu_log("[Mixer] vChanInput realloc error!\n");	
+		gu_log("[Mixer::allocVirtualInput] vChanInput realloc error!\n");	
 }
 
 
@@ -441,7 +445,7 @@ int masterPlay(void* _outBuf, void* _inBuf, unsigned bufferSize,
 		return 0;
 
 #ifdef __linux__
-  clock::recvJackSync();
+	clock::recvJackSync();
 #endif
 
 	float* outBuf = (float*) _outBuf;
@@ -521,7 +525,7 @@ bool isSilent()
 
 void rewind()
 {
-  clock::rewind();
+	clock::rewind();
 	if (clock::isRunning())
 		for (unsigned i=0; i<channels.size(); i++)
 			channels.at(i)->rewind();
