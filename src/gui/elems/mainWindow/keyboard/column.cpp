@@ -199,7 +199,7 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->__cb_addCh
 void geColumn::repositionChannels()
 {
 	int totalH = 0;
-	for (int i=1; i<children(); i++)
+	for (int i=0; i<children(); i++)
 		totalH += child(i)->h() + G_GUI_INNER_MARGIN;
 	resize(x(), y(), w(), totalH + 66); // evil space for drag n drop
 }
@@ -240,17 +240,11 @@ void geColumn::deleteChannel(geChannel* gch)
 	remove(gch);
 	delete gch;
 
-	/* reposition all other channels and resize this group */
 	/** TODO
 	 * reposition is useless when called by geColumn::clear(). Add a new
 	 * parameter to skip the operation */
 
-	for (int i=0; i<children(); i++) {
-		gch = static_cast<geChannel*>(child(i));
-		gch->position(gch->x(), y()+(i*24));
-	}
-	size(w(), children() * 24 + 66);  // evil space for drag n drop
-	redraw();
+	repositionChannels();
 }
 
 

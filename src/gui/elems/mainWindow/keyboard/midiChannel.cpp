@@ -67,10 +67,10 @@ enum class Menu
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
 	RESIZE,
-	RESIZE_NORMAL,
-	RESIZE_X2,
-	RESIZE_X3,
-	RESIZE_X4,
+	RESIZE_H1,
+	RESIZE_H2,
+	RESIZE_H3,
+	RESIZE_H4,
 	__END_RESIZE_SUBMENU__,
 	CLONE_CHANNEL,
 	DELETE_CHANNEL
@@ -108,19 +108,19 @@ void menuCallback(Fl_Widget *w, void *v)
 			gu_openSubWindow(G_MainWin,
 				new gdMidiOutputMidiCh(static_cast<MidiChannel*>(gch->ch)), 0);
 			break;
-		case Menu::RESIZE_NORMAL:
+		case Menu::RESIZE_H1:
 			gch->changeSize(G_GUI_CHANNEL_H_1);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;		
-		case Menu::RESIZE_X2:
+		case Menu::RESIZE_H2:
 			gch->changeSize(G_GUI_CHANNEL_H_2);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;		
-		case Menu::RESIZE_X3:
+		case Menu::RESIZE_H3:
 			gch->changeSize(G_GUI_CHANNEL_H_3);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;		
-		case Menu::RESIZE_X4:
+		case Menu::RESIZE_H4:
 			gch->changeSize(G_GUI_CHANNEL_H_4);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
@@ -222,14 +222,14 @@ void geMidiChannel::__cb_openMenu()
 		{"Setup keyboard input...", 0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
 		{"Setup MIDI input...",     0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
 		{"Setup MIDI output...",    0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
-		{"Resize",         0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
-			{"Default",      0, menuCallback, (void*) Menu::RESIZE_NORMAL},
-			{"x 2",          0, menuCallback, (void*) Menu::RESIZE_X2},
-			{"x 3",          0, menuCallback, (void*) Menu::RESIZE_X3},
-			{"x 4",          0, menuCallback, (void*) Menu::RESIZE_X4},
+		{"Resize",    0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
+			{"Normal",  0, menuCallback, (void*) Menu::RESIZE_H1},
+			{"Medium",  0, menuCallback, (void*) Menu::RESIZE_H2},
+			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
+			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
 			{0},
-		{"Clone channel",           0, menuCallback, (void*) Menu::CLONE_CHANNEL},
-		{"Delete channel",          0, menuCallback, (void*) Menu::DELETE_CHANNEL},
+		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
+		{"Delete channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}
 	};
 

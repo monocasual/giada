@@ -82,10 +82,10 @@ enum class Menu
 	CLEAR_ACTIONS_START_STOP,
 	__END_CLEAR_ACTIONS_SUBMENU__,
 	RESIZE,
-	RESIZE_NORMAL,
-	RESIZE_X2,
-	RESIZE_X3,
-	RESIZE_X4,
+	RESIZE_H1,
+	RESIZE_H2,
+	RESIZE_H3,
+	RESIZE_H4,
 	__END_RESIZE_SUBMENU__,
 	CLONE_CHANNEL,
 	FREE_CHANNEL,
@@ -161,22 +161,22 @@ void menuCallback(Fl_Widget* w, void* v)
 			glue_clearStartStopActions(gch);
 			break;
 		}
-		case Menu::RESIZE_NORMAL: {
+		case Menu::RESIZE_H1: {
 			gch->changeSize(G_GUI_CHANNEL_H_1);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
 		}		
-		case Menu::RESIZE_X2: {
+		case Menu::RESIZE_H2: {
 			gch->changeSize(G_GUI_CHANNEL_H_2);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
 		}		
-		case Menu::RESIZE_X3: {
+		case Menu::RESIZE_H3: {
 			gch->changeSize(G_GUI_CHANNEL_H_3);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
 		}		
-		case Menu::RESIZE_X4: {
+		case Menu::RESIZE_H4: {
 			gch->changeSize(G_GUI_CHANNEL_H_4);
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
@@ -303,11 +303,11 @@ void geSampleChannel::__cb_openMenu()
 			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
 			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
 			{0},
-		{"Resize",         0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
-			{"Default",      0, menuCallback, (void*) Menu::RESIZE_NORMAL},
-			{"x 2",          0, menuCallback, (void*) Menu::RESIZE_X2},
-			{"x 3",          0, menuCallback, (void*) Menu::RESIZE_X3},
-			{"x 4",          0, menuCallback, (void*) Menu::RESIZE_X4},
+		{"Resize",    0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
+			{"Normal",  0, menuCallback, (void*) Menu::RESIZE_H1},
+			{"Medium",  0, menuCallback, (void*) Menu::RESIZE_H2},
+			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
+			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
 			{0},
 		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Free channel",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
