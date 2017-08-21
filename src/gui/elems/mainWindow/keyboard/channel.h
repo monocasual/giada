@@ -119,6 +119,11 @@ public:
 
 	virtual void refresh() = 0;
 
+	/* changeSize
+	Changes channel's size according to a template (x1, x2, ...). */
+
+	virtual void changeSize(int h);
+
 	/* keypress
 	 * what to do when the corresponding key is pressed. */
 
@@ -130,8 +135,8 @@ public:
 
 	int getColumnIndex();
 
-	Channel *ch;
-
+	Channel* ch;
+ 
 	geIdButton*      button;
 	geChannelStatus* status;
 	geButton*        arm;

@@ -41,22 +41,24 @@ class geSampleChannel : public geChannel
 {
 private:
 
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-	static void cb_readActions   (Fl_Widget *v, void *p);
-
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
+	static void cb_button     (Fl_Widget* v, void* p);
+	static void cb_openMenu   (Fl_Widget* v, void* p);
+	static void cb_readActions(Fl_Widget* v, void* p);
+	void __cb_button     ();
+	void __cb_openMenu   ();
+	void __cb_readActions();
 
 public:
 
-	geSampleChannel(int x, int y, int w, int h, SampleChannel *ch);
+	geSampleChannel(int x, int y, int w, int h, SampleChannel* ch);
 
-	void reset   ();
-	void update  ();
-	void refresh ();
-	void resize  (int x, int y, int w, int h);
+	void resize(int x, int y, int w, int h) override;
+
+	void reset() override;
+	void update() override;
+	void refresh() override;
+
+	void changeSize(int h);
 
 	/* show/hideActionButton
 	Adds or removes 'R' button when actions are available. */
@@ -64,8 +66,8 @@ public:
 	void showActionButton();
 	void hideActionButton();
 
-	geChannelMode *modeBox;
-	geButton 	    *readActions;
+	geChannelMode* modeBox;
+	geButton*      readActions;
 };
 
 

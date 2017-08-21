@@ -36,7 +36,9 @@
 #include "../../../dialogs/gd_pluginList.h"
 #include "../../basics/idButton.h"
 #include "../../basics/dial.h"
+#include "../../basics/statusButton.h"
 #include "column.h"
+#include "channelStatus.h"
 #include "channelButton.h"
 #include "channel.h"
 
@@ -52,7 +54,6 @@ geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
 	 ch      (ch),
 	 type    (type)
 {
-	//box(FL_BORDER_BOX);
 }
 
 
@@ -211,7 +212,7 @@ void geChannel::packWidgets()
 				p = k;
 				break;
 			}
-		child(i)->position(child(p)->x() + child(p)->w() + G_GUI_INNER_MARGIN, y());
+		child(i)->position(child(p)->x() + child(p)->w() + G_GUI_INNER_MARGIN, child(i)->y());
 	}
 
 	init_sizes(); // Resets the internal array of widget sizes and positions
@@ -240,4 +241,25 @@ int geChannel::handleKey(int e, int key)
 		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
 
 	return ret;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::changeSize(int H)
+{
+	size(w(), H);
+	
+	int Y = y() + (H / 2 - (G_GUI_UNIT / 2));
+
+	button->resize(x(), Y, w(), G_GUI_UNIT);
+	arm->resize(x(), Y, w(), G_GUI_UNIT);   
+	mainButton->resize(x(), y(), w(), H);
+	mute->resize(x(), Y, w(), G_GUI_UNIT);
+	solo->resize(x(), Y, w(), G_GUI_UNIT);
+	vol->resize(x(), Y, w(), G_GUI_UNIT);
+#ifdef WITH_VST
+	fx->resize(x(), Y, w(), G_GUI_UNIT);
+#endif
 }

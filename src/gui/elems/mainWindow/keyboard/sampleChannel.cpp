@@ -53,6 +53,7 @@
 #include "channelMode.h"
 #include "sampleChannelButton.h"
 #include "keyboard.h"
+#include "column.h"
 #include "sampleChannel.h"
 
 
@@ -79,7 +80,13 @@ enum class Menu
 	CLEAR_ACTIONS_MUTE,
 	CLEAR_ACTIONS_VOLUME,
 	CLEAR_ACTIONS_START_STOP,
-	__END_SUBMENU__,
+	__END_CLEAR_ACTIONS_SUBMENU__,
+	RESIZE,
+	RESIZE_NORMAL,
+	RESIZE_X2,
+	RESIZE_X3,
+	RESIZE_X4,
+	__END_RESIZE_SUBMENU__,
 	CLONE_CHANNEL,
 	FREE_CHANNEL,
 	DELETE_CHANNEL
@@ -134,7 +141,9 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::CLEAR_ACTIONS:
-		case Menu::__END_SUBMENU__:
+		case Menu::RESIZE:
+		case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
+		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
 			glue_clearAllActions(gch);
@@ -150,6 +159,26 @@ void menuCallback(Fl_Widget* w, void* v)
 		}
 		case Menu::CLEAR_ACTIONS_START_STOP: {
 			glue_clearStartStopActions(gch);
+			break;
+		}
+		case Menu::RESIZE_NORMAL: {
+			gch->changeSize(G_GUI_CHANNEL_H_1);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;
+		}		
+		case Menu::RESIZE_X2: {
+			gch->changeSize(G_GUI_CHANNEL_H_2);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;
+		}		
+		case Menu::RESIZE_X3: {
+			gch->changeSize(G_GUI_CHANNEL_H_3);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;
+		}		
+		case Menu::RESIZE_X4: {
+			gch->changeSize(G_GUI_CHANNEL_H_4);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
 		}
 		case Menu::CLONE_CHANNEL: {
@@ -178,19 +207,19 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
 {
 	begin();
 
-	button      = new geIdButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	arm         = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
-	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), 20, 20, ch);
-	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), 20, H, "-- no sample --");
-	readActions = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", readActionOff_xpm, readActionOn_xpm);
-	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), 20, 20, ch);
-	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo        = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	button      = new geIdButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
+	arm         = new geButton(button->x()+button->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), G_GUI_UNIT, H, ch);
+	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), G_GUI_UNIT, H, "-- no sample --");
+	readActions = new geButton(mainButton->x()+mainButton->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", readActionOff_xpm, readActionOn_xpm);
+	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, ch);
+	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", muteOff_xpm, muteOn_xpm);
+	solo        = new geButton(mute->x()+mute->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", soloOff_xpm, soloOn_xpm);
 #ifdef WITH_VST
-	fx          = new geStatusButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol         = new geDial(fx->x()+fx->w()+4, y(), 20, 20);
+	fx          = new geStatusButton(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	vol         = new geDial(fx->x()+fx->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
 #else
-	vol         = new geDial(solo->x()+solo->w()+4, y(), 20, 20);
+	vol         = new geDial(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
 
 	end();
@@ -230,9 +259,9 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_button      (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_button(); }
-void geSampleChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_openMenu(); }
-void geSampleChannel::cb_readActions (Fl_Widget *v, void *p) { ((geSampleChannel*)p)->__cb_readActions(); }
+void geSampleChannel::cb_button      (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_button(); }
+void geSampleChannel::cb_openMenu    (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_openMenu(); }
+void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_readActions(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -274,6 +303,12 @@ void geSampleChannel::__cb_openMenu()
 			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
 			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
 			{0},
+		{"Resize",         0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
+			{"Default",      0, menuCallback, (void*) Menu::RESIZE_NORMAL},
+			{"x 2",          0, menuCallback, (void*) Menu::RESIZE_X2},
+			{"x 3",          0, menuCallback, (void*) Menu::RESIZE_X3},
+			{"x 4",          0, menuCallback, (void*) Menu::RESIZE_X4},
+			{0},
 		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Free channel",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
 		{"Delete channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
@@ -295,13 +330,13 @@ void geSampleChannel::__cb_openMenu()
 	if (static_cast<SampleChannel*>(ch)->mode & LOOP_ANY)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
 	if (m)
 		m->do_callback(this, m->user_data());
 	return;
@@ -450,4 +485,16 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 		readActions->show();
 
 	packWidgets();
+}
+
+
+void geSampleChannel::changeSize(int H)
+{
+	geChannel::changeSize(H);
+
+	int Y = y() + (H / 2 - (G_GUI_UNIT / 2));
+
+	status->resize(x(), Y, w(), G_GUI_UNIT);
+	modeBox->resize(x(), Y, w(), G_GUI_UNIT);
+	readActions->resize(x(), Y, w(), G_GUI_UNIT);
 }

@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) G_GUI_UNIT10-G_GUI_UNIT17 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of Giada - Your Hardcore Loopmachine.
  *
@@ -45,6 +45,7 @@
 #include "../../basics/idButton.h"
 #include "../../basics/statusButton.h"
 #include "../../basics/dial.h"
+#include "column.h"
 #include "midiChannel.h"
 
 
@@ -58,15 +59,21 @@ namespace
 {
 enum class Menu
 {
-  EDIT_ACTIONS = 0,
-  CLEAR_ACTIONS,
-  CLEAR_ACTIONS_ALL,
-  __END_SUBMENU__,
-  SETUP_KEYBOARD_INPUT,
-  SETUP_MIDI_INPUT,
-  SETUP_MIDI_OUTPUT,
-  CLONE_CHANNEL,
-  DELETE_CHANNEL
+	EDIT_ACTIONS = 0,
+	CLEAR_ACTIONS,
+	CLEAR_ACTIONS_ALL,
+	__END_CLEAR_ACTION_SUBMENU__,
+	SETUP_KEYBOARD_INPUT,
+	SETUP_MIDI_INPUT,
+	SETUP_MIDI_OUTPUT,
+	RESIZE,
+	RESIZE_NORMAL,
+	RESIZE_X2,
+	RESIZE_X3,
+	RESIZE_X4,
+	__END_RESIZE_SUBMENU__,
+	CLONE_CHANNEL,
+	DELETE_CHANNEL
 };
 
 
@@ -75,37 +82,55 @@ enum class Menu
 
 void menuCallback(Fl_Widget *w, void *v)
 {
-  geMidiChannel *gch = static_cast<geMidiChannel*>(w);
-  Menu selectedItem = (Menu) (intptr_t) v;
+	geMidiChannel *gch = static_cast<geMidiChannel*>(w);
+	Menu selectedItem = (Menu) (intptr_t) v;
 
-  switch (selectedItem)
-  {
-    case Menu::CLEAR_ACTIONS:
-    case Menu::__END_SUBMENU__:
-      break;
-    case Menu::EDIT_ACTIONS:
-      gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
-      break;
-    case Menu::CLEAR_ACTIONS_ALL:
-      glue_clearAllActions(gch);
-      break;
-    case Menu::SETUP_KEYBOARD_INPUT:
-      gu_openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
-      break;
-    case Menu::SETUP_MIDI_INPUT:
-      gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
-      break;
-    case Menu::SETUP_MIDI_OUTPUT:
-      gu_openSubWindow(G_MainWin,
-        new gdMidiOutputMidiCh(static_cast<MidiChannel*>(gch->ch)), 0);
-      break;
-    case Menu::CLONE_CHANNEL:
-      glue_cloneChannel(gch->ch);
-      break;
-    case Menu::DELETE_CHANNEL:
-      glue_deleteChannel(gch->ch);
-      break;
-  }
+	switch (selectedItem)
+	{
+		case Menu::CLEAR_ACTIONS:
+		case Menu::__END_CLEAR_ACTION_SUBMENU__:
+		case Menu::RESIZE:
+		case Menu::__END_RESIZE_SUBMENU__:
+			break;
+		case Menu::EDIT_ACTIONS:
+			gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+			break;
+		case Menu::CLEAR_ACTIONS_ALL:
+			glue_clearAllActions(gch);
+			break;
+		case Menu::SETUP_KEYBOARD_INPUT:
+			gu_openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
+			break;
+		case Menu::SETUP_MIDI_INPUT:
+			gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			break;
+		case Menu::SETUP_MIDI_OUTPUT:
+			gu_openSubWindow(G_MainWin,
+				new gdMidiOutputMidiCh(static_cast<MidiChannel*>(gch->ch)), 0);
+			break;
+		case Menu::RESIZE_NORMAL:
+			gch->changeSize(G_GUI_CHANNEL_H_1);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;		
+		case Menu::RESIZE_X2:
+			gch->changeSize(G_GUI_CHANNEL_H_2);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;		
+		case Menu::RESIZE_X3:
+			gch->changeSize(G_GUI_CHANNEL_H_3);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;		
+		case Menu::RESIZE_X4:
+			gch->changeSize(G_GUI_CHANNEL_H_4);
+			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			break;
+		case Menu::CLONE_CHANNEL:
+			glue_cloneChannel(gch->ch);
+			break;
+		case Menu::DELETE_CHANNEL:
+			glue_deleteChannel(gch->ch);
+			break;
+	}
 }
 
 }; // {namespace}
@@ -120,26 +145,26 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 	begin();
 
 #if defined(WITH_VST)
-  int delta = 144; // (6 widgets * 20) + (6 paddings * 4)
+	int delta = 144; // (6 widgets * G_GUI_UNIT) + (6 paddings * 4)
 #else
-	int delta = 120; // (5 widgets * 20) + (5 paddings * 4)
+	int delta = 120; // (5 widgets * G_GUI_UNIT) + (5 paddings * 4)
 #endif
 
-	button     = new geIdButton(x(), y(), 20, 20, "", channelStop_xpm, channelPlay_xpm);
-	arm        = new geButton(button->x()+button->w()+4, y(), 20, 20, "", armOff_xpm, armOn_xpm);
-	mainButton = new geMidiChannelButton(arm->x()+arm->w()+4, y(), w() - delta, 20, "-- MIDI --");
-	mute       = new geButton(mainButton->x()+mainButton->w()+4, y(), 20, 20, "", muteOff_xpm, muteOn_xpm);
-	solo       = new geButton(mute->x()+mute->w()+4, y(), 20, 20, "", soloOff_xpm, soloOn_xpm);
+	button     = new geIdButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
+	arm        = new geButton(button->x()+button->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	mainButton = new geMidiChannelButton(arm->x()+arm->w()+4, y(), w() - delta, H, "-- MIDI --");
+	mute       = new geButton(mainButton->x()+mainButton->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", muteOff_xpm, muteOn_xpm);
+	solo       = new geButton(mute->x()+mute->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
-	fx         = new geStatusButton(solo->x()+solo->w()+4, y(), 20, 20, fxOff_xpm, fxOn_xpm);
-	vol        = new geDial(fx->x()+fx->w()+4, y(), 20, 20);
+	fx         = new geStatusButton(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	vol        = new geDial(fx->x()+fx->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
 #else
-	vol        = new geDial(solo->x()+solo->w()+4, y(), 20, 20);
+	vol        = new geDial(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
 
 	end();
 
-  resizable(mainButton);
+	resizable(mainButton);
 
 	update();
 
@@ -197,6 +222,12 @@ void geMidiChannel::__cb_openMenu()
 		{"Setup keyboard input...", 0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
 		{"Setup MIDI input...",     0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
 		{"Setup MIDI output...",    0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
+		{"Resize",         0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
+			{"Default",      0, menuCallback, (void*) Menu::RESIZE_NORMAL},
+			{"x 2",          0, menuCallback, (void*) Menu::RESIZE_X2},
+			{"x 3",          0, menuCallback, (void*) Menu::RESIZE_X3},
+			{"x 4",          0, menuCallback, (void*) Menu::RESIZE_X4},
+			{0},
 		{"Clone channel",           0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Delete channel",          0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}
@@ -213,10 +244,10 @@ void geMidiChannel::__cb_openMenu()
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-  const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-  if (m)
-    m->do_callback(this, m->user_data());
-  return;
+	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	if (m)
+		m->do_callback(this, m->user_data());
+	return;
 }
 
 
@@ -271,7 +302,7 @@ void geMidiChannel::update()
 
 void geMidiChannel::resize(int X, int Y, int W, int H)
 {
-  geChannel::resize(X, Y, W, H);
+	geChannel::resize(X, Y, W, H);
 
 	arm->hide();
 #ifdef WITH_VST

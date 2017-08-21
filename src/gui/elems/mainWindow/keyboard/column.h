@@ -48,11 +48,11 @@ private:
 
 	int openTypeMenu();
 
-	geButton*     addChannelBtn;
-	geResizerBar* resizer;
-	geKeyboard*   parent;
+	geButton*     m_addChannelBtn;
+	geResizerBar* m_resizer;
+	geKeyboard*   m_parent;
 
-	int index;
+	int m_index;
 
 public:
 
@@ -79,6 +79,8 @@ public:
 	Removes the channel 'gch' from this column. */
 
 	void deleteChannel(geChannel* gch);
+
+	void repositionChannels();
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */

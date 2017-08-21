@@ -49,27 +49,27 @@ using std::string;
 
 geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
 	: Fl_Group(X, Y, W, H), 
-	  parent  (parent), 
-	  index   (index)
+		m_parent(parent), 
+		m_index (index)
 {
-  /* geColumn does a bit of a mess: we pass a pointer to its parent (geKeyboard) and
-  the geColumn itself deals with the creation of another widget, outside geColumn
-  and inside geKeyboard, which handles the vertical resize bar (geResizerBar).
-  The resizer cannot stay inside geColumn: it needs a broader view on the other
-  side widgets. The view can be obtained from geKeyboard only (the upper level).
-  Unfortunately, parent() can be nullptr: at this point (i.e the constructor)
-  geColumn is still detached from any parent. We use a custom geKeyboard *parent
-  instead. */
+	/* geColumn does a bit of a mess: we pass a pointer to its m_parent (geKeyboard) and
+	the geColumn itself deals with the creation of another widget, outside geColumn
+	and inside geKeyboard, which handles the vertical resize bar (geResizerBar).
+	The resizer cannot stay inside geColumn: it needs a broader view on the other
+	side widgets. The view can be obtained from geKeyboard only (the upper level).
+	Unfortunately, parent() can be nullptr: at this point (i.e the constructor)
+	geColumn is still detached from any parent. We use a custom geKeyboard *parent
+	instead. */
 
 	begin();
-	addChannelBtn = new geButton(x(), y(), w(), G_GUI_CHANNEL_H_1, "Add new channel");
+	m_addChannelBtn = new geButton(x(), y(), w(), G_GUI_UNIT, "Add new channel");
 	end();
 
-  resizer = new geResizerBar(x()+w(), y(), G_GUI_OUTER_MARGIN * 2, h(), 
-  	G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
-  parent->add(resizer);
+	m_resizer = new geResizerBar(x()+w(), y(), G_GUI_OUTER_MARGIN * 2, h(), 
+		G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
+	m_parent->add(m_resizer);
 
-	addChannelBtn->callback(cb_addChannel, (void*)this);
+	m_addChannelBtn->callback(cb_addChannel, (void*)this);
 }
 
 
@@ -78,10 +78,10 @@ geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
 
 geColumn::~geColumn()
 {
-  /* FIXME - this could actually cause a memory leak. resizer is
-  just removed, not deleted. But we cannot delete it right now. */
+	/* FIXME - this could actually cause a memory leak. m_resizer is
+	just removed, not deleted. But we cannot delete it right now. */
 
-  parent->remove(resizer);
+	m_parent->remove(m_resizer);
 }
 
 
@@ -110,7 +110,7 @@ int geColumn::handle(int e)
 			int result = 0;
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
-				SampleChannel *c = static_cast<SampleChannel*>(glue_addChannel(index, CHANNEL_SAMPLE));
+				SampleChannel* c = static_cast<SampleChannel*>(glue_addChannel(m_index, CHANNEL_SAMPLE));
 				result = glue_loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
@@ -121,7 +121,7 @@ int geColumn::handle(int e)
 				if (paths.size() > 1)
 					gdAlert("Some files were not loaded successfully.");
 				else
-					parent->printChannelMessage(result);
+					m_parent->printChannelMessage(result);
 			}
 			return 1;
 		}
@@ -139,21 +139,23 @@ int geColumn::handle(int e)
 
 void geColumn::resize(int X, int Y, int W, int H)
 {
-  /* Resize all children, including "add channel" button. */
+	/* Resize all children, including "add channel" button. */
 
-  for (int i=0; i<children(); i++) {
-    Fl_Widget* c = child(i);
-    c->resize(X, Y + (i * (c->h() + G_GUI_INNER_MARGIN)), W, c->h());
-  }
+	for (int i=0; i<children(); i++) {
+		Fl_Widget* wgCurr = child(i);
+		Fl_Widget* wgPrev = i == 0 ? nullptr : child(i - 1);
+		wgCurr->resize(X, (wgPrev == nullptr ? Y : wgPrev->y() + wgPrev->h() + G_GUI_INNER_MARGIN), 
+			W, wgCurr->h());
+	}
 
-  /* Resize group itself. Must use internal functions, resize() would trigger
-  infinite recursion. */
+	/* Resize group itself. Must use internal functions, resize() would trigger
+	infinite recursion. */
 
-  x(X); y(Y); w(W); h(H);
+	x(X); y(Y); w(W); h(H);
 
-  /* Resize resizerBar. */
+	/* Resize resizerBar. */
 
-  resizer->size(G_GUI_OUTER_MARGIN * 2, H);
+	m_resizer->size(G_GUI_OUTER_MARGIN * 2, H);
 }
 
 
@@ -175,13 +177,13 @@ void geColumn::draw()
 	fl_color(G_COLOR_GREY_1_5);
 	fl_rectf(x(), y(), w(), h());
 
-  /* call draw and then redraw in order to avoid channel corruption when
-  scrolling horizontally */
+	/* call draw and then redraw in order to avoid channel corruption when
+	scrolling horizontally */
 
-  for (int i=0; i<children(); i++) {
-    child(i)->draw();
-    child(i)->redraw();
-  }
+	for (int i=0; i<children(); i++) {
+		child(i)->draw();
+		child(i)->redraw();
+	}
 }
 
 
@@ -194,7 +196,19 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->__cb_addCh
 /* -------------------------------------------------------------------------- */
 
 
-geChannel *geColumn::addChannel(Channel* ch)
+void geColumn::repositionChannels()
+{
+	int totalH = 0;
+	for (int i=1; i<children(); i++)
+		totalH += child(i)->h() + G_GUI_INNER_MARGIN;
+	resize(x(), y(), w(), totalH + 66); // evil space for drag n drop
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+geChannel* geColumn::addChannel(Channel* ch)
 {
 	geChannel* gch = nullptr;
 
@@ -210,9 +224,9 @@ geChannel *geColumn::addChannel(Channel* ch)
 
 	add(gch);
 
-  resize(x(), y(), w(), (children() * (G_GUI_CHANNEL_H_1 + G_GUI_INNER_MARGIN)) + 66); // evil space for drag n drop
+	repositionChannels();
 	gch->redraw();    // fix corruption
-	parent->redraw(); // redraw Keyboard
+	m_parent->redraw(); // redraw Keyboard
 	return gch;
 }
 
@@ -245,10 +259,10 @@ void geColumn::deleteChannel(geChannel* gch)
 
 void geColumn::__cb_addChannel()
 {
-	gu_log("[geColumn::__cb_addChannel] index = %d\n", index);
+	gu_log("[geColumn::__cb_addChannel] m_index = %d\n", m_index);
 	int type = openTypeMenu();
 	if (type)
-		glue_addChannel(index, type);
+		glue_addChannel(m_index, type);
 }
 
 
@@ -308,7 +322,7 @@ Channel* geColumn::getChannel(int i)
 /* -------------------------------------------------------------------------- */
 
 
-int geColumn::getIndex()       { return index; }
-void geColumn::setIndex(int i) { index = i; }
+int geColumn::getIndex()       { return m_index; }
+void geColumn::setIndex(int i) { m_index = i; }
 bool geColumn::isEmpty()       { return children() == 1; }
 int geColumn::countChannels()  { return children() - 1; }

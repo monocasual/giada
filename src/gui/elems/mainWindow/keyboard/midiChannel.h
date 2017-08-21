@@ -51,11 +51,13 @@ public:
 
 	geMidiChannel(int x, int y, int w, int h, MidiChannel *ch);
 
-	void reset   ();
-	void update  ();
-	void refresh ();
-	int  keyPress(int event);  // TODO - move to base class
-	void resize  (int x, int y, int w, int h);
+	void resize(int x, int y, int w, int h) override;
+
+	void reset() override;
+	void update() override;
+	void refresh() override;
+
+	int keyPress(int event);  // TODO - move to base class
 };
 
 
