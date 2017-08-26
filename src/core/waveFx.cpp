@@ -26,6 +26,7 @@
 
 
 #include <cmath>
+#include <algorithm>
 #include "../utils/log.h"
 #include "wave.h"
 #include "waveFx.h"
@@ -226,6 +227,22 @@ void smooth(Wave* w, int a, int b)
 
 	fade(w, a, a+SMOOTH_SIZE, FADE_IN);
 	fade(w, b-SMOOTH_SIZE, b, FADE_OUT);
+
+	w->setEdited(true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void reverse(Wave* w, int a, int b)
+{
+	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
+	
+	float* begin = (w->getData() + (a * w->getChannels()));
+	float* end   = (w->getData() + (b * w->getChannels()));
+
+	std::reverse(begin, end);
 
 	w->setEdited(true);
 }

@@ -51,14 +51,20 @@ int cut(Wave* w, int a, int b);
 int trim(Wave* w, int a, int b);
 
 /* fade
- * fade in or fade out selection. Fade In = type 0, Fade Out = type 1 */
+Fades in or fades out selection. Fade In = type 0, Fade Out = type 1 */
 
 void fade(Wave* w, int a, int b, int type);
 
 /* smooth
- * smooth edges of selection. */
+Smooth edges of selection. */
 
 void smooth(Wave* w, int a, int b);
+
+/* reverse
+Flips Wave's data. */
+
+void reverse(Wave* w, int a, int b);
+
 }}}; // giada::m::wfx::
 
 #endif

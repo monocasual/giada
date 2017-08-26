@@ -51,6 +51,7 @@ enum class Menu
   CUT = 0,
   TRIM,
   SILENCE,
+  REVERSE,
   FADE_IN,
   FADE_OUT,
   SMOOTH_EDGES,
@@ -78,6 +79,9 @@ void menuCallback(Fl_Widget* w, void* v)
   		break;
   	case Menu::SILENCE:
   		c::sampleEditor::silence(wavetools->ch, a, b);
+  		break;	  
+  	case Menu::REVERSE:
+  		c::sampleEditor::reverse(wavetools->ch, a, b);
   		break;	
   	case Menu::FADE_IN:
   		c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_IN);
@@ -192,6 +196,7 @@ void geWaveTools::openMenu()
 		{"Cut",                0, menuCallback, (void*) Menu::CUT},
     {"Trim",               0, menuCallback, (void*) Menu::TRIM},
     {"Silence",            0, menuCallback, (void*) Menu::SILENCE},
+    {"Reverse",            0, menuCallback, (void*) Menu::REVERSE},
     {"Fade in",            0, menuCallback, (void*) Menu::FADE_IN},
     {"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
     {"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},

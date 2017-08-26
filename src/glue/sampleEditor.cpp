@@ -131,6 +131,17 @@ void smoothEdges(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
+void reverse(SampleChannel* ch, int a, int b)
+{
+	wfx::reverse(ch->wave, a, b);
+	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->waveTools->waveform->refresh();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void setStartEnd(SampleChannel* ch, int a, int b)
 {
 	setBeginEndChannel(ch, a, b);
