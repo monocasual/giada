@@ -14,6 +14,7 @@
 
 0.14.3 --- 
 - [Sample Editor] New "reverse selection" function
+- [Sample Editor] New "normalize hard" function
 - Resizable channels
 - Remove calls to malloc/free in Mixer (use new/delete instead)
 - Fix infinite loop for one shot retrig samples with quantizer > 0
