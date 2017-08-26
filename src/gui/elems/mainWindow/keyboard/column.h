@@ -63,7 +63,7 @@ public:
 	Adds a new channel in this column and set the internal pointer to channel 
 	to 'ch'. */
 
-	geChannel* addChannel(Channel* ch);
+	geChannel* addChannel(Channel* ch, int size);
 
 	int handle(int e) override;
 	void draw() override;

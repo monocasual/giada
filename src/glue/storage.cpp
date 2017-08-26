@@ -129,8 +129,8 @@ static void __glue_fillPatchGlobals__(const string &name)
 	patch::beats        = clock::getBeats();
 	patch::quantize     = clock::getQuantize();
 	patch::masterVolIn  = mixer::inVol;
-  patch::masterVolOut = mixer::outVol;
-  patch::metronome    = mixer::metronome;
+	patch::masterVolOut = mixer::outVol;
+	patch::metronome    = mixer::metronome;
 
 #ifdef WITH_VST
 
@@ -194,9 +194,9 @@ void glue_savePatch(void *data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_loadPatch(void *data)
+void glue_loadPatch(void* data)
 {
-	gdBrowserLoad *browser = (gdBrowserLoad*) data;
+	gdBrowserLoad* browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
 	bool isProject         = gu_isProject(browser->getSelectedItem());
 
@@ -239,15 +239,15 @@ void glue_loadPatch(void *data)
 	 * by 0.8 / total_channels steps.  */
 
 	float steps = 0.8 / patch::channels.size();
-	for (unsigned i=0; i<patch::columns.size(); i++) {
-		patch::column_t *col = &patch::columns.at(i);
-		G_MainWin->keyboard->addColumn(col->width);
+	
+	for (const patch::column_t& col : patch::columns) {
+		G_MainWin->keyboard->addColumn(col.width);
 		for (unsigned k=0; k<patch::channels.size(); k++) {
-			if (patch::channels.at(k).column == col->index) {
-				Channel *ch = glue_addChannel(patch::channels.at(k).column,
-					patch::channels.at(k).type);
+			if (patch::channels.at(k).column == col.index) {
+				Channel* ch = glue_addChannel(patch::channels.at(k).column,
+					patch::channels.at(k).type, patch::channels.at(k).size);
 				ch->readPatch(basePath, k, &mixer::mutex_plugins, conf::samplerate,
-          conf::rsmpQuality);
+					conf::rsmpQuality);
 			}
 			browser->setStatusBar(steps);
 		}
@@ -391,7 +391,7 @@ void glue_saveSample(void *data)
 			return;
 
 	if (static_cast<SampleChannel*>(browser->getChannel())->save(filePath.c_str())) {
-    gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
+		gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
 		conf::samplePath = gu_dirname(filePath);
 		browser->do_callback();
 	}

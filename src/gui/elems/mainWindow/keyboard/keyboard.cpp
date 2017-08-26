@@ -165,7 +165,7 @@ void geKeyboard::cb_addColumn(Fl_Widget* v, void* p)
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geKeyboard::addChannel(int colIndex, Channel* ch, bool build)
+geChannel* geKeyboard::addChannel(int colIndex, Channel* ch, int size, bool build)
 {
 	geColumn* col = getColumnByIndex(colIndex);
 
@@ -179,8 +179,9 @@ geChannel* geKeyboard::addChannel(int colIndex, Channel* ch, bool build)
 		gu_log("[geKeyboard::addChannel] created new column with index=%d\n", colIndex);
 	}
 
-	gu_log("[geKeyboard::addChannel] add to column with index = %d\n", col->getIndex());
-	return col->addChannel(ch);
+	gu_log("[geKeyboard::addChannel] add to column with index=%d, size=%d\n", 
+		col->getIndex(), size);
+	return col->addChannel(ch, size);
 }
 
 

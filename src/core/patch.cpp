@@ -58,17 +58,18 @@ void sanitize()
   samplerate   = samplerate <= 0 ? G_DEFAULT_SAMPLERATE : samplerate;
 
   for (unsigned i=0; i<columns.size(); i++) {
-    column_t *col = &columns.at(i);
+    column_t* col = &columns.at(i);
     col->index = col->index < 0 ? 0 : col->index;
     col->width = col->width < G_MIN_COLUMN_WIDTH ? G_MIN_COLUMN_WIDTH : col->width;
   }
 
   for (unsigned i=0; i<channels.size(); i++) {
-    channel_t *ch = &channels.at(i);
+    channel_t* ch = &channels.at(i);
+    ch->size   = ch->size < G_GUI_CHANNEL_H_1 || ch->size > G_GUI_CHANNEL_H_4 ? G_GUI_CHANNEL_H_1 : ch->size;
     ch->volume = ch->volume < 0.0f || ch->volume > 1.0f ? G_DEFAULT_VOL : ch->volume;
     ch->pan    = ch->pan < 0.0f || ch->pan > 1.0f ? 1.0f : ch->pan;
     ch->boost  = ch->boost < 1.0f ? G_DEFAULT_BOOST : ch->boost;
-    ch->pitch  = ch->pitch < 0.1f || ch->pitch > 4.0f ? G_DEFAULT_PITCH : ch->pitch;
+    ch->pitch  = ch->pitch < 0.1f || ch->pitch > G_MAX_PITCH ? G_DEFAULT_PITCH : ch->pitch;
   }
 }
 
@@ -78,7 +79,7 @@ void sanitize()
 /* setInvalid
 Helper function used to return invalid status while reading. */
 
-int setInvalid(json_t *jRoot)
+int setInvalid(json_t* jRoot)
 {
   json_decref(jRoot);
   return PATCH_INVALID;
@@ -88,7 +89,7 @@ int setInvalid(json_t *jRoot)
 /* -------------------------------------------------------------------------- */
 
 
-bool readCommons(json_t *jContainer)
+bool readCommons(json_t* jContainer)
 {
   if (!storager::setString(jContainer, PATCH_KEY_HEADER, header))  return 0;
   if (!storager::setString(jContainer, PATCH_KEY_VERSION, version)) return 0;
@@ -114,14 +115,14 @@ bool readCommons(json_t *jContainer)
 
 #ifdef WITH_VST
 
-bool readPlugins(json_t *jContainer, vector<plugin_t> *container, const char *key)
+bool readPlugins(json_t* jContainer, vector<plugin_t>* container, const char* key)
 {
-  json_t *jPlugins = json_object_get(jContainer, key);
+  json_t* jPlugins = json_object_get(jContainer, key);
   if (!storager::checkArray(jPlugins, key))
     return 0;
 
   size_t pluginIndex;
-  json_t *jPlugin;
+  json_t* jPlugin;
   json_array_foreach(jPlugins, pluginIndex, jPlugin) {
 
     if (!storager::checkObject(jPlugin, "")) // TODO pass pluginIndex as string
@@ -133,21 +134,21 @@ bool readPlugins(json_t *jContainer, vector<plugin_t> *container, const char *ke
 
     /* read plugin params */
 
-    json_t *jParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_PARAMS);
+    json_t* jParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_PARAMS);
     if (!storager::checkArray(jParams, PATCH_KEY_PLUGIN_PARAMS)) return 0;
 
     size_t paramIndex;
-    json_t *jParam;
+    json_t* jParam;
     json_array_foreach(jParams, paramIndex, jParam)
       plugin.params.push_back(json_real_value(jParam));
 
     /* read midiIn params (midi learning on plugins' parameters) */
 
-    json_t *jMidiInParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS);
+    json_t* jMidiInParams = json_object_get(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS);
     if (!storager::checkArray(jMidiInParams, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS)) return 0;
 
     size_t midiInParamIndex;
-    json_t *jMidiInParam;
+    json_t* jMidiInParam;
     json_array_foreach(jMidiInParams, midiInParamIndex, jMidiInParam)
       plugin.midiInParams.push_back(json_integer_value(jMidiInParam));
 
@@ -161,14 +162,14 @@ bool readPlugins(json_t *jContainer, vector<plugin_t> *container, const char *ke
 /* -------------------------------------------------------------------------- */
 
 
-bool readActions(json_t *jContainer, channel_t *channel)
+bool readActions(json_t* jContainer, channel_t* channel)
 {
-  json_t *jActions = json_object_get(jContainer, PATCH_KEY_CHANNEL_ACTIONS);
+  json_t* jActions = json_object_get(jContainer, PATCH_KEY_CHANNEL_ACTIONS);
   if (!storager::checkArray(jActions, PATCH_KEY_CHANNEL_ACTIONS))
     return 0;
 
   size_t actionIndex;
-  json_t *jAction;
+  json_t* jAction;
   json_array_foreach(jActions, actionIndex, jAction) {
 
     if (!storager::checkObject(jAction, "")) // TODO pass actionIndex as string
@@ -188,14 +189,14 @@ bool readActions(json_t *jContainer, channel_t *channel)
 /* -------------------------------------------------------------------------- */
 
 
-bool readChannels(json_t *jContainer)
+bool readChannels(json_t* jContainer)
 {
-  json_t *jChannels = json_object_get(jContainer, PATCH_KEY_CHANNELS);
+  json_t* jChannels = json_object_get(jContainer, PATCH_KEY_CHANNELS);
   if (!storager::checkArray(jChannels, PATCH_KEY_CHANNELS))
     return 0;
 
   size_t channelIndex;
-  json_t *jChannel;
+  json_t* jChannel;
   json_array_foreach(jChannels, channelIndex, jChannel) {
 
     string channelIndexStr = "channel " + gu_toString(channelIndex);
@@ -206,6 +207,7 @@ bool readChannels(json_t *jContainer)
 
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_TYPE,                 channel.type)) return 0;
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_INDEX,                channel.index)) return 0;
+    if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_SIZE,                 channel.size)) return 0;
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_COLUMN,               channel.column)) return 0;
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE,                 channel.mute)) return 0;
     if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE_S,               channel.mute_s)) return 0;
@@ -252,14 +254,14 @@ bool readChannels(json_t *jContainer)
 /* -------------------------------------------------------------------------- */
 
 
-bool readColumns(json_t *jContainer)
+bool readColumns(json_t* jContainer)
 {
-  json_t *jColumns = json_object_get(jContainer, PATCH_KEY_COLUMNS);
+  json_t* jColumns = json_object_get(jContainer, PATCH_KEY_COLUMNS);
   if (!storager::checkArray(jColumns, PATCH_KEY_COLUMNS))
     return 0;
 
   size_t columnIndex;
-  json_t *jColumn;
+  json_t* jColumn;
   json_array_foreach(jColumns, columnIndex, jColumn) {
 
     string columnIndexStr = "column " + gu_toString(columnIndex);
@@ -280,26 +282,26 @@ bool readColumns(json_t *jContainer)
 
 #ifdef WITH_VST
 
-void writePlugins(json_t *jContainer, vector<plugin_t> *plugins, const char *key)
+void writePlugins(json_t* jContainer, vector<plugin_t>* plugins, const char* key)
 {
-  json_t *jPlugins = json_array();
+  json_t* jPlugins = json_array();
   for (unsigned j=0; j<plugins->size(); j++) {
-    json_t   *jPlugin = json_object();
-    plugin_t  plugin  = plugins->at(j);
+    json_t*  jPlugin = json_object();
+    plugin_t plugin  = plugins->at(j);
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PATH,   json_string(plugin.path.c_str()));
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_BYPASS, json_boolean(plugin.bypass));
     json_array_append_new(jPlugins, jPlugin);
 
     /* plugin params */
 
-    json_t *jPluginParams = json_array();
+    json_t* jPluginParams = json_array();
     for (unsigned z=0; z<plugin.params.size(); z++)
       json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PARAMS, jPluginParams);
 
     /* midiIn params (midi learning on plugins' parameters) */
 
-    json_t *jPluginMidiInParams = json_array();
+    json_t* jPluginMidiInParams = json_array();
     for (unsigned z=0; z<plugin.midiInParams.size(); z++)
       json_array_append_new(jPluginMidiInParams, json_integer(plugin.midiInParams.at(z)));
     json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS, jPluginMidiInParams);
@@ -313,12 +315,12 @@ void writePlugins(json_t *jContainer, vector<plugin_t> *plugins, const char *key
 /* -------------------------------------------------------------------------- */
 
 
-void writeColumns(json_t *jContainer, vector<column_t> *columns)
+void writeColumns(json_t* jContainer, vector<column_t>* columns)
 {
-  json_t *jColumns = json_array();
+  json_t* jColumns = json_array();
   for (unsigned i=0; i<columns->size(); i++) {
-    json_t   *jColumn = json_object();
-    column_t  column  = columns->at(i);
+    json_t*  jColumn = json_object();
+    column_t column  = columns->at(i);
     json_object_set_new(jColumn, PATCH_KEY_COLUMN_INDEX, json_integer(column.index));
     json_object_set_new(jColumn, PATCH_KEY_COLUMN_WIDTH, json_integer(column.width));
     json_array_append_new(jColumns, jColumn);
@@ -330,12 +332,12 @@ void writeColumns(json_t *jContainer, vector<column_t> *columns)
 /* -------------------------------------------------------------------------- */
 
 
-void writeActions(json_t *jContainer, vector<action_t> *actions)
+void writeActions(json_t*jContainer, vector<action_t>*actions)
 {
-  json_t *jActions = json_array();
+  json_t* jActions = json_array();
   for (unsigned k=0; k<actions->size(); k++) {
-    json_t   *jAction = json_object();
-    action_t  action  = actions->at(k);
+    json_t*  jAction = json_object();
+    action_t action  = actions->at(k);
     json_object_set_new(jAction, PATCH_KEY_ACTION_TYPE,    json_integer(action.type));
     json_object_set_new(jAction, PATCH_KEY_ACTION_FRAME,   json_integer(action.frame));
     json_object_set_new(jAction, PATCH_KEY_ACTION_F_VALUE, json_real(action.fValue));
@@ -349,7 +351,7 @@ void writeActions(json_t *jContainer, vector<action_t> *actions)
 /* -------------------------------------------------------------------------- */
 
 
-void writeCommons(json_t *jContainer)
+void writeCommons(json_t* jContainer)
 {
   json_object_set_new(jContainer, PATCH_KEY_HEADER,         json_string(header.c_str()));
   json_object_set_new(jContainer, PATCH_KEY_VERSION,        json_string(version.c_str()));
@@ -372,14 +374,15 @@ void writeCommons(json_t *jContainer)
 /* -------------------------------------------------------------------------- */
 
 
-void writeChannels(json_t *jContainer, vector<channel_t> *channels)
+void writeChannels(json_t* jContainer, vector<channel_t>* channels)
 {
-  json_t *jChannels = json_array();
+  json_t* jChannels = json_array();
   for (unsigned i=0; i<channels->size(); i++) {
-    json_t    *jChannel = json_object();
-    channel_t  channel  = channels->at(i);
+    json_t*   jChannel = json_object();
+    channel_t channel  = channels->at(i);
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_TYPE,                 json_integer(channel.type));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_INDEX,                json_integer(channel.index));
+    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SIZE,                 json_integer(channel.size));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_COLUMN,               json_integer(channel.column));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE,                 json_integer(channel.mute));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE_S,               json_integer(channel.mute_s));
@@ -477,9 +480,9 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-int write(const string &file)
+int write(const string& file)
 {
-  json_t *jRoot = json_object();
+  json_t* jRoot = json_object();
 
   writeCommons(jRoot);
   writeColumns(jRoot, &columns);
@@ -490,7 +493,7 @@ int write(const string &file)
 #endif
 
   if (json_dump_file(jRoot, file.c_str(), JSON_COMPACT) != 0) {
-    gu_log("[write] unable to write patch file!\n");
+    gu_log("[patch::write] unable to write patch file!\n");
     return 0;
   }
   return 1;
@@ -500,12 +503,13 @@ int write(const string &file)
 /* -------------------------------------------------------------------------- */
 
 
-int read(const string &file)
+int read(const string& file)
 {
   json_error_t jError;
-  json_t *jRoot = json_load_file(file.c_str(), 0, &jError);
+  json_t* jRoot = json_load_file(file.c_str(), 0, &jError);
   if (!jRoot) {
-    gu_log("[read] unable to read patch file! Error on line %d: %s\n", jError.line, jError.text);
+    gu_log("[patch::read] unable to read patch file! Error on line %d: %s\n", 
+    	jError.line, jError.text);
     return PATCH_UNREADABLE;
   }
 

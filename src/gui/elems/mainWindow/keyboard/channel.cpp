@@ -263,3 +263,12 @@ void geChannel::changeSize(int H)
 	fx->resize(x(), Y, w(), G_GUI_UNIT);
 #endif
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geChannel::getSize()
+{
+	return h();
+}

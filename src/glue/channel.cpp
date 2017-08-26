@@ -74,10 +74,10 @@ static bool __soloSession__ = false;
 
 int glue_loadChannel(SampleChannel* ch, const string& fname)
 {
-  /* Always stop a channel before loading a new sample in it. This will prevent
-  issues if tracker is outside the boundaries of the new sample -> segfault. */
+	/* Always stop a channel before loading a new sample in it. This will prevent
+	issues if tracker is outside the boundaries of the new sample -> segfault. */
 
-  ch->hardStop(0);
+	ch->hardStop(0);
 
 	/* save the patch and take the last browser's dir in order to re-use it
 	 * the next time */
@@ -110,10 +110,10 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* glue_addChannel(int column, int type)
+Channel* glue_addChannel(int column, int type, int size)
 {
 	Channel* ch     = mh::addChannel(type);
-	geChannel* gch  = G_MainWin->keyboard->addChannel(column, ch);
+	geChannel* gch  = G_MainWin->keyboard->addChannel(column, ch, size);
 	ch->guiChannel  = gch;
 	return ch;
 }
@@ -124,10 +124,10 @@ Channel* glue_addChannel(int column, int type)
 
 void glue_deleteChannel(Channel* ch)
 {
-  if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
-    return;
-  recorder::clearChan(ch->index);
-  ch->hasActions = false;
+	if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
+		return;
+	recorder::clearChan(ch->index);
+	ch->hasActions = false;
 #ifdef WITH_VST
 	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex_plugins, ch);
 #endif
@@ -144,25 +144,25 @@ void glue_deleteChannel(Channel* ch)
 
 void glue_freeChannel(Channel *ch)
 {
-  if (ch->status == STATUS_PLAY) {
-    if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
-      return;
-  }
-  else
-  if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
-    return;
+	if (ch->status == STATUS_PLAY) {
+		if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
+			return;
+	}
+	else
+	if (!gdConfirmWin("Warning", "Free channel: are you sure?"))
+		return;
 
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	recorder::clearChan(ch->index);
-  ch->hasActions = false;
+	ch->hasActions = false;
 	ch->empty();
 
-  /* delete any related subwindow */
-  /** TODO - use gu_closeAllSubwindows()   */
-  G_MainWin->delSubWindow(WID_FILE_BROWSER);
-  G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-  G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-  G_MainWin->delSubWindow(WID_FX_LIST);
+	/* delete any related subwindow */
+	/** TODO - use gu_closeAllSubwindows()   */
+	G_MainWin->delSubWindow(WID_FILE_BROWSER);
+	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+	G_MainWin->delSubWindow(WID_FX_LIST);
 }
 
 
@@ -182,8 +182,8 @@ void glue_toggleArm(Channel *ch, bool gui)
 
 void glue_toggleInputMonitor(Channel *ch)
 {
-  SampleChannel *sch = static_cast<SampleChannel*>(ch);
-  sch->inputMonitor = !sch->inputMonitor;
+	SampleChannel *sch = static_cast<SampleChannel*>(ch);
+	sch->inputMonitor = !sch->inputMonitor;
 }
 
 
@@ -193,7 +193,8 @@ void glue_toggleInputMonitor(Channel *ch)
 int glue_cloneChannel(Channel *src)
 {
 	Channel *ch    = mh::addChannel(src->type);
-	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), ch);
+	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), 
+		ch, src->guiChannel->getSize());
 
 	ch->guiChannel = gch;
 	ch->copy(src, &mixer::mutex_plugins);
@@ -212,14 +213,14 @@ void glue_setVolume(Channel *ch, float v, bool gui, bool editor)
 
 	/* Changing channel volume? Update wave editor (if it's shown). */
 
-  if (!editor) {
-  	gdSampleEditor *gdEditor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
-  	if (gdEditor) {
-  		Fl::lock();
-  		gdEditor->volumeTool->refresh();
-  		Fl::unlock();
-  	}
-  }
+	if (!editor) {
+		gdSampleEditor *gdEditor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
+		if (gdEditor) {
+			Fl::lock();
+			gdEditor->volumeTool->refresh();
+			Fl::unlock();
+		}
+	}
 
 	if (!gui) {
 		Fl::lock();
@@ -267,12 +268,12 @@ void glue_setMute(Channel *ch, bool gui)
 	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
 		if (!ch->mute) {
 			recorder::startOverdub(ch->index, G_ACTION_MUTES, clock::getCurrentFrame(),
-        kernelAudio::getRealBufSize());
-      ch->readActions = false;   // don't read actions while overdubbing
-    }
+				kernelAudio::getRealBufSize());
+			ch->readActions = false;   // don't read actions while overdubbing
+		}
 		else
 		 recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
-      &mixer::mutex_recs);
+			&mixer::mutex_recs);
 	}
 
 	ch->mute ? ch->unsetMute(false) : ch->setMute(false);

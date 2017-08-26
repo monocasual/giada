@@ -110,7 +110,8 @@ int geColumn::handle(int e)
 			int result = 0;
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
-				SampleChannel* c = static_cast<SampleChannel*>(glue_addChannel(m_index, CHANNEL_SAMPLE));
+				SampleChannel* c = static_cast<SampleChannel*>(glue_addChannel(
+					m_index, CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
 				result = glue_loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
@@ -208,7 +209,7 @@ void geColumn::repositionChannels()
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::addChannel(Channel* ch)
+geChannel* geColumn::addChannel(Channel* ch, int size)
 {
 	geChannel* gch = nullptr;
 
@@ -216,11 +217,9 @@ geChannel* geColumn::addChannel(Channel* ch)
 	repositioned later on during geColumn::resize(). */
 
 	if (ch->type == CHANNEL_SAMPLE)
-		gch = new geSampleChannel(x(), 0, w(), G_GUI_CHANNEL_H_1, 
-			static_cast<SampleChannel*>(ch));
+		gch = new geSampleChannel(x(), 0, w(), size, static_cast<SampleChannel*>(ch));
 	else
-		gch = new geMidiChannel(x(), 0, w(), G_GUI_CHANNEL_H_1, 
-			static_cast<MidiChannel*>(ch));
+		gch = new geMidiChannel(x(), 0, w(), size, static_cast<MidiChannel*>(ch));
 
 	add(gch);
 
@@ -256,7 +255,7 @@ void geColumn::__cb_addChannel()
 	gu_log("[geColumn::__cb_addChannel] m_index = %d\n", m_index);
 	int type = openTypeMenu();
 	if (type)
-		glue_addChannel(m_index, type);
+		glue_addChannel(m_index, type, G_GUI_CHANNEL_H_1);
 }
 
 

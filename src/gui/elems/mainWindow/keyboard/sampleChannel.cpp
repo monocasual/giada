@@ -253,6 +253,8 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
 	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
+
+	changeSize(H);  // Update size dynamically
 }
 
 

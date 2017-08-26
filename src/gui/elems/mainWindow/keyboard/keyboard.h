@@ -85,12 +85,11 @@ public:
 	void init();
 
 	/* addChannel
-	 * add a new channel to geChannels. Used by callbacks and during
-	 * patch loading. Requires Channel (and not geChannel). If build is
-	 * set to true, also generate the corresponding column if column (index) does
-	 * not exist yet. */
+	Adds a new channel to geChannels. Used by callbacks and during patch loading. 
+	Requires Channel (and not geChannel). If build is set to true, also generate 
+	the corresponding column if column (index) does not exist yet. */
 
-	geChannel* addChannel(int column, Channel* ch, bool build=false);
+	geChannel* addChannel(int column, Channel* ch, int size, bool build=false);
 
 	/* addColumn
 	 * add a new column to the top of the stack. */

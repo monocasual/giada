@@ -69,7 +69,7 @@ int readPatchPlugins(vector<patch::plugin_t> *list, int type)
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {
 		patch::plugin_t *ppl = &list->at(i);
-    // TODO use glue_addPlugin()
+		// TODO use glue_addPlugin()
 		Plugin *plugin = pluginHost::addPlugin(ppl->path.c_str(), type,
 				&mixer::mutex_plugins, nullptr);
 		if (plugin != nullptr) {
@@ -135,7 +135,7 @@ bool uniqueSampleName(SampleChannel* ch, const string& name)
 
 Channel* addChannel(int type)
 {
-  Channel* ch;
+	Channel* ch;
 	int bufferSize = kernelAudio::getRealBufSize() * 2;
 
 	if (type == CHANNEL_SAMPLE)
@@ -150,7 +150,7 @@ Channel* addChannel(int type)
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
-      continue;
+			continue;
 		mixer::channels.push_back(ch);
 		pthread_mutex_unlock(&mixer::mutex_chans);
 		break;
@@ -158,7 +158,7 @@ Channel* addChannel(int type)
 
 	ch->index = getNewChanIndex();
 	gu_log("[addChannel] channel index=%d added, type=%d, total=%d\n",
-    ch->index, ch->type, mixer::channels.size());
+		ch->index, ch->type, mixer::channels.size());
 	return ch;
 }
 
@@ -182,7 +182,7 @@ int deleteChannel(Channel* ch)
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
-      continue;
+			continue;
 		mixer::channels.erase(mixer::channels.begin() + index);
 		delete ch;
 		pthread_mutex_unlock(&mixer::mutex_chans);
@@ -194,7 +194,7 @@ int deleteChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-Channel *getChannelByIndex(int index)
+Channel* getChannelByIndex(int index)
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++)
 		if (mixer::channels.at(i)->index == index)
@@ -210,12 +210,12 @@ Channel *getChannelByIndex(int index)
 bool hasLogicalSamples()
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
-    if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
-      continue;
-    SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-    if (ch->wave && ch->wave->isLogical())
-      return true;
-  }
+		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
+			continue;
+		SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
+		if (ch->wave && ch->wave->isLogical())
+			return true;
+	}
 	return false;
 }
 
@@ -226,13 +226,13 @@ bool hasLogicalSamples()
 bool hasEditedSamples()
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++)
-  {
+	{
 		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
-      continue;
-    SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-    if (ch->wave && ch->wave->isEdited())
-      return true;
-  }
+			continue;
+		SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
+		if (ch->wave && ch->wave->isEdited())
+			return true;
+	}
 	return false;
 }
 
@@ -242,7 +242,7 @@ bool hasEditedSamples()
 
 void stopSequencer()
 {
-  clock::stop();
+	clock::stop();
 	for (unsigned i=0; i<mixer::channels.size(); i++)
 		mixer::channels.at(i)->stopBySeq(conf::chansStopOnSeqHalt);
 }
@@ -251,7 +251,7 @@ void stopSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSolo(Channel *ch)
+bool uniqueSolo(Channel* ch)
 {
 	int solos = 0;
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
@@ -270,13 +270,13 @@ void readPatch()
 {
 	mixer::ready = false;
 
-	mixer::outVol     = patch::masterVolOut;
-	mixer::inVol      = patch::masterVolIn;
+	mixer::outVol = patch::masterVolOut;
+	mixer::inVol = patch::masterVolIn;
 	clock::setBpm(patch::bpm);
 	clock::setBars(patch::bars);
 	clock::setBeats(patch::beats);
 	clock::setQuantize(patch::quantize);
-	mixer::metronome  = patch::metronome;
+	mixer::metronome = patch::metronome;
 
 #ifdef WITH_VST
 
@@ -373,12 +373,12 @@ void stopInputRec()
 
 bool hasArmedSampleChannels()
 {
-  for (unsigned i=0; i<mixer::channels.size(); i++) {
-    Channel *ch = mixer::channels.at(i);
-    if (ch->type == CHANNEL_SAMPLE && ch->armed)
-      return true;
-  }
-  return false;
+	for (unsigned i=0; i<mixer::channels.size(); i++) {
+		Channel *ch = mixer::channels.at(i);
+		if (ch->type == CHANNEL_SAMPLE && ch->armed)
+			return true;
+	}
+	return false;
 }
 
 

@@ -189,6 +189,8 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 	vol->callback(cb_changeVol, (void*)this);
 
 	ch->guiChannel = this;
+
+	changeSize(H);  // Update size dynamically
 }
 
 

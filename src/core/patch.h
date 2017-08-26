@@ -44,72 +44,73 @@ namespace patch
 {
 struct action_t
 {
-  int      type;
-  int      frame;
-  float    fValue;
-  uint32_t iValue;
+	int      type;
+	int      frame;
+	float    fValue;
+	uint32_t iValue;
 };
 
 #ifdef WITH_VST
 struct plugin_t
 {
-  std::string           path;
-  bool                  bypass;
-  std::vector<float>    params;
-  std::vector<uint32_t> midiInParams;
+	std::string           path;
+	bool                  bypass;
+	std::vector<float>    params;
+	std::vector<uint32_t> midiInParams;
 };
 #endif
 
 struct channel_t
 {
-  int         type;
-  int         index;
-  int         column;
-  int         mute;
-  int         mute_s;
-  int         solo;
-  float       volume;
-  float       pan;
-  bool        midiIn;
-  uint32_t    midiInKeyPress;
-  uint32_t    midiInKeyRel;
-  uint32_t    midiInKill;
-  uint32_t    midiInArm;
-  uint32_t    midiInVolume;
-  uint32_t    midiInMute;
-  uint32_t    midiInSolo;
-  bool        midiOutL;
-  uint32_t    midiOutLplaying;
-  uint32_t    midiOutLmute;
-  uint32_t    midiOutLsolo;
-  // sample channel
-  std::string samplePath;
-  int         key;
-  int         mode;
-  int         begin;
-  int         end;
-  float       boost;
-  int         recActive;
-  float       pitch;
-  bool        inputMonitor;
-  uint32_t    midiInReadActions;
-  uint32_t    midiInPitch;
-  // midi channel
-  uint32_t    midiOut;
-  uint32_t    midiOutChan;
+	int         type;
+	int         index;
+	int         size;
+	int         column;
+	int         mute;
+	int         mute_s;
+	int         solo;
+	float       volume;
+	float       pan;
+	bool        midiIn;
+	uint32_t    midiInKeyPress;
+	uint32_t    midiInKeyRel;
+	uint32_t    midiInKill;
+	uint32_t    midiInArm;
+	uint32_t    midiInVolume;
+	uint32_t    midiInMute;
+	uint32_t    midiInSolo;
+	bool        midiOutL;
+	uint32_t    midiOutLplaying;
+	uint32_t    midiOutLmute;
+	uint32_t    midiOutLsolo;
+	// sample channel
+	std::string samplePath;
+	int         key;
+	int         mode;
+	int         begin;
+	int         end;
+	float       boost;
+	int         recActive;
+	float       pitch;
+	bool        inputMonitor;
+	uint32_t    midiInReadActions;
+	uint32_t    midiInPitch;
+	// midi channel
+	uint32_t    midiOut;
+	uint32_t    midiOutChan;
 
-  std::vector<action_t> actions;
+	std::vector<action_t> actions;
 
 #ifdef WITH_VST
-  std::vector<plugin_t> plugins;
+	std::vector<plugin_t> plugins;
 #endif
 };
 
 struct column_t
 {
-  int index;
-  int width;
-  std::vector<int> channels;
+	int index;
+	int width;
+	std::vector<int> channels;
 };
 
 extern std::string header;
@@ -144,8 +145,8 @@ void init();
 /* read/write
  * Read/write patch to/from file. */
 
-int write(const std::string &file);
-int read (const std::string &file);
+int write(const std::string& file);
+int read (const std::string& file);
 }}};  // giada::m::patch::
 
 #endif

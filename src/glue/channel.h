@@ -40,7 +40,7 @@ class gdSampleEditor;
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
-Channel *glue_addChannel(int column, int type);
+Channel *glue_addChannel(int column, int type, int size);
 
 /* loadChannel
  * fill an existing channel with a wave. */

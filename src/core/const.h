@@ -102,7 +102,6 @@
 #define G_MAX_BEATS				  32
 #define G_MAX_BARS				  32
 #define G_MAX_QUANTIZE      8
-#define G_MAX_PATCHNAME_LEN	32
 #define G_MIN_DB_SCALE      60.0f
 #define G_MIN_COLUMN_WIDTH  140
 #define G_MAX_BOOST_DB      20.0f
@@ -359,6 +358,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNELS                     "channels"
 #define PATCH_KEY_CHANNEL_TYPE                 "type"
 #define PATCH_KEY_CHANNEL_INDEX                "index"
+#define PATCH_KEY_CHANNEL_SIZE                 "size"
 #define PATCH_KEY_CHANNEL_COLUMN               "column"
 #define PATCH_KEY_CHANNEL_MUTE                 "mute"
 #define PATCH_KEY_CHANNEL_MUTE_S               "mute_s"

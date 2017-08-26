@@ -135,6 +135,8 @@ public:
 
 	int getColumnIndex();
 
+	int getSize();
+
 	Channel* ch;
  
 	geIdButton*      button;
