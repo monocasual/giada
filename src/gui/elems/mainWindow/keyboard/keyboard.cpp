@@ -314,6 +314,8 @@ void geKeyboard::printChannelMessage(int res)
 		gdAlert("Unable to read this sample.");
 	else if (res == G_RES_ERR_PATH_TOO_LONG)
 		gdAlert("File path too long.");
+	else if (res == G_RES_ERR_NO_DATA)
+		gdAlert("No file specified.");
 	else
 		gdAlert("Unknown error.");
 }
