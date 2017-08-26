@@ -44,6 +44,24 @@ void fadeFrame(Wave* w, int i, float val)
 	for (int j=0; j<w->getChannels(); j++)
 		frame[j] *= val;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+float getPeak(Wave* w, int a, int b)
+{
+	float peak = 0.0f;
+	float abs  = 0.0f;
+	for (int i=a; i<b; i++) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<w->getChannels(); j++) // Find highest value in any channel
+			abs = fabs(frame[j]);
+		if (abs > peak)
+			peak = abs;
+	}
+	return peak;
+}
 }; // {anonymous}
 
 
@@ -52,17 +70,9 @@ void fadeFrame(Wave* w, int i, float val)
 /* -------------------------------------------------------------------------- */
 
 
-float normalizeSoft(Wave *w)
+float normalizeSoft(Wave* w)
 {
-	float peak = 0.0f;
-	float abs  = 0.0f;
-	for (int i=0; i<w->getSize(); i++) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<w->getChannels(); j++) // Find highest value in any channel
-			abs = fabs(frame[j]);
-		if (abs > peak)
-			peak = abs;
-	}
+	float peak = getPeak(w, 0, w->getSize());
 
 	/* peak == 0.0f: don't normalize the silence
 	 * peak > 1.0f: don't reduce the amplitude, just leave it alone */
@@ -71,6 +81,24 @@ float normalizeSoft(Wave *w)
 		return 1.0f;
 
 	return 1.0f / peak;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void normalizeHard(Wave* w, int a, int b)
+{
+	float peak = getPeak(w, a, b);
+	if (peak == 0.0f)
+		return;
+
+	for (int i=a; i<b; i++) {
+		float* frame = w->getFrame(i);
+		for (int j=0; j<w->getChannels(); j++)
+			frame[j] = frame[j] * (1.0f / peak);
+	}
+	w->setEdited(true);
 }
 
 
@@ -118,8 +146,6 @@ void silence(Wave* w, int a, int b)
 	}
 
 	w->setEdited(true);
-
-	return;
 }
 
 
@@ -238,7 +264,7 @@ void smooth(Wave* w, int a, int b)
 void reverse(Wave* w, int a, int b)
 {
 	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
-	
+
 	float* begin = (w->getData() + (a * w->getChannels()));
 	float* end   = (w->getData() + (b * w->getChannels()));
 

@@ -142,6 +142,17 @@ void reverse(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
+void normalizeHard(SampleChannel* ch, int a, int b)
+{
+	wfx::normalizeHard(ch->wave, a, b);
+	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->waveTools->waveform->refresh();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void setStartEnd(SampleChannel* ch, int a, int b)
 {
 	setBeginEndChannel(ch, a, b);

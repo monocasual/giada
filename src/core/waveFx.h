@@ -45,6 +45,11 @@ Normalizes the wave by returning the dB value for the boost volume. */
 
 float normalizeSoft(Wave* w);
 
+/* normalizeHard
+Normalizes the wave in range a-b by altering values in memory. */
+
+void normalizeHard(Wave* w, int a, int b);
+
 int monoToStereo(Wave* w);
 void silence(Wave* w, int a, int b);
 int cut(Wave* w, int a, int b);

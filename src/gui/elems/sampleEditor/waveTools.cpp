@@ -48,14 +48,15 @@ namespace
 {
 enum class Menu
 {
-  CUT = 0,
-  TRIM,
-  SILENCE,
-  REVERSE,
-  FADE_IN,
-  FADE_OUT,
-  SMOOTH_EDGES,
-  SET_START_END
+	CUT = 0,
+	TRIM,
+	SILENCE,
+	REVERSE,
+	NORMALIZE,
+	FADE_IN,
+	FADE_OUT,
+	SMOOTH_EDGES,
+	SET_START_END
 };
 
 
@@ -64,38 +65,41 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
-  geWaveTools* wavetools = static_cast<geWaveTools*>(w);
-  Menu selectedItem = (Menu) (intptr_t) v;
+	geWaveTools* wavetools = static_cast<geWaveTools*>(w);
+	Menu selectedItem = (Menu) (intptr_t) v;
 
-  int a = wavetools->waveform->getSelectionA();
-  int b = wavetools->waveform->getSelectionB();
+	int a = wavetools->waveform->getSelectionA();
+	int b = wavetools->waveform->getSelectionB();
 
-  switch (selectedItem) {
-  	case Menu::CUT:
-      c::sampleEditor::cut(wavetools->ch, a, b);
-  		break;
-  	case Menu::TRIM:
-      c::sampleEditor::trim(wavetools->ch, a, b);
-  		break;
-  	case Menu::SILENCE:
-  		c::sampleEditor::silence(wavetools->ch, a, b);
-  		break;	  
-  	case Menu::REVERSE:
-  		c::sampleEditor::reverse(wavetools->ch, a, b);
-  		break;	
-  	case Menu::FADE_IN:
-  		c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_IN);
-  		break;
-  	case Menu::FADE_OUT:
-  		c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_OUT);
-  		break;
-  	case Menu::SMOOTH_EDGES:
-  		c::sampleEditor::smoothEdges(wavetools->ch, a, b);
-  		break;
-  	case Menu::SET_START_END:
-  		c::sampleEditor::setStartEnd(wavetools->ch, a, b);
-  		break;
-  }
+	switch (selectedItem) {
+		case Menu::CUT:
+			c::sampleEditor::cut(wavetools->ch, a, b);
+			break;
+		case Menu::TRIM:
+			c::sampleEditor::trim(wavetools->ch, a, b);
+			break;
+		case Menu::SILENCE:
+			c::sampleEditor::silence(wavetools->ch, a, b);
+			break;	  
+		case Menu::REVERSE:
+			c::sampleEditor::reverse(wavetools->ch, a, b);
+			break;			
+		case Menu::NORMALIZE:
+			c::sampleEditor::normalizeHard(wavetools->ch, a, b);
+			break;	
+		case Menu::FADE_IN:
+			c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_IN);
+			break;
+		case Menu::FADE_OUT:
+			c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_OUT);
+			break;
+		case Menu::SMOOTH_EDGES:
+			c::sampleEditor::smoothEdges(wavetools->ch, a, b);
+			break;
+		case Menu::SET_START_END:
+			c::sampleEditor::setStartEnd(wavetools->ch, a, b);
+			break;
+	}
 }
 }; // {anonymous}
 
@@ -105,7 +109,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
 	: Fl_Scroll(x, y, w, h, l),
-	  ch       (ch)
+		ch       (ch)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
@@ -194,20 +198,21 @@ void geWaveTools::openMenu()
 
 	Fl_Menu_Item menu[] = {
 		{"Cut",                0, menuCallback, (void*) Menu::CUT},
-    {"Trim",               0, menuCallback, (void*) Menu::TRIM},
-    {"Silence",            0, menuCallback, (void*) Menu::SILENCE},
-    {"Reverse",            0, menuCallback, (void*) Menu::REVERSE},
-    {"Fade in",            0, menuCallback, (void*) Menu::FADE_IN},
-    {"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
-    {"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},
-    {"Set start/end here", 0, menuCallback, (void*) Menu::SET_START_END},
-    {0}
+		{"Trim",               0, menuCallback, (void*) Menu::TRIM},
+		{"Silence",            0, menuCallback, (void*) Menu::SILENCE},
+		{"Reverse",            0, menuCallback, (void*) Menu::REVERSE},
+		{"Normalize",          0, menuCallback, (void*) Menu::NORMALIZE},
+		{"Fade in",            0, menuCallback, (void*) Menu::FADE_IN},
+		{"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
+		{"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},
+		{"Set start/end here", 0, menuCallback, (void*) Menu::SET_START_END},
+		{0}
 	};
 
-  if (ch->status == STATUS_PLAY) {
-    menu[(int)Menu::CUT].deactivate();
-    menu[(int)Menu::TRIM].deactivate();
-  }
+	if (ch->status == STATUS_PLAY) {
+		menu[(int)Menu::CUT].deactivate();
+		menu[(int)Menu::TRIM].deactivate();
+	}
 
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
@@ -217,7 +222,7 @@ void geWaveTools::openMenu()
 	b->color(G_COLOR_GREY_2);
 
 	const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-  if (m)
-    m->do_callback(this, m->user_data());
-  return;
+	if (m)
+		m->do_callback(this, m->user_data());
+	return;
 }

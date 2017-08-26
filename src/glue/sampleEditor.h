@@ -47,6 +47,7 @@ void setBeginEndChannel(SampleChannel* ch, int b, int e);
 void cut(SampleChannel* ch, int a, int b);
 void trim(SampleChannel* ch, int a, int b);
 void reverse(SampleChannel* ch, int a, int b);
+void normalizeHard(SampleChannel* ch, int a, int b);
 void silence(SampleChannel* ch, int a, int b);
 void fade(SampleChannel* ch, int a, int b, int type);
 void smoothEdges(SampleChannel* ch, int a, int b);
