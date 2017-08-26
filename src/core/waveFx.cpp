@@ -90,7 +90,7 @@ float normalizeSoft(Wave* w)
 void normalizeHard(Wave* w, int a, int b)
 {
 	float peak = getPeak(w, a, b);
-	if (peak == 0.0f)
+	if (peak == 0.0f || peak > 1.0f)  // as in ::normalizeSoft
 		return;
 
 	for (int i=a; i<b; i++) {
