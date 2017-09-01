@@ -58,14 +58,14 @@ private:
 	Real graphic stuff from the underlying waveform. */
 
 	struct
-  {
+	{
 		int* sup;   // upper part of the waveform
 		int* inf;   // lower part of the waveform
 		int  size;  // width of the waveform to draw (in pixel)
 	} m_data;
 
 	struct
-  {
+	{
 		bool snap;
 		int level;
 		std::vector<int> points;
@@ -96,8 +96,8 @@ private:
 	bool mouseOnSelectionA();
 	bool mouseOnSelectionB();
 
-	int pixelToFrame(int p);
-	int frameToPixel(int f);
+	int pixelToFrame(int p);  // TODO - move these to utils::, will be needed in actionEditor 
+	int frameToPixel(int f);  // TODO - move these to utils::, will be needed in actionEditor 
 
 	/* fixSelection
 	Helper function which flattens the selection if it was made from right to left 
@@ -116,19 +116,21 @@ private:
 
 	bool smaller();
 
-  /* snap
-  Snaps a point at 'pos' pixel. */
+	/* snap
+	Snaps a point at 'pos' pixel. */
 
-  int snap(int pos);
+	int snap(int pos);
 
-  /* draw*
-  Drawing functions. */
+	/* draw*
+	Drawing functions. */
 
-  void drawSelection();
-  void drawWaveform(int from, int to);
-  void drawGrid(int from, int to);
-  void drawStartEndPoints();
-  void drawPlayHead();
+	void drawSelection();
+	void drawWaveform(int from, int to);
+	void drawGrid(int from, int to);
+	void drawStartEndPoints();
+	void drawPlayHead();
+
+	void selectAll();
 
 public:
 
@@ -172,8 +174,8 @@ public:
 
 	void setGridLevel(int l);
 
-  void setSnap(bool v);
-  bool getSnap();
+	void setSnap(bool v);
+	bool getSnap();
 	int getSize();
 
 	/* isSelected
