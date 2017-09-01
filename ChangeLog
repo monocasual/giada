@@ -20,6 +20,8 @@
 - Remove calls to malloc/free in Mixer (use new/delete instead)
 - Fix infinite loop for one shot retrig samples with quantizer > 0
 - Fix wrong geChannel count while saving a patch
+- Fix missing greyed-out options in Sample Channel's menu when loading a wrong
+  sample
 
 
 0.14.2 --- 2017 . 08 . 14
