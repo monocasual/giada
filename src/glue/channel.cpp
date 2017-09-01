@@ -77,10 +77,11 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 	/* Always stop a channel before loading a new sample in it. This will prevent
 	issues if tracker is outside the boundaries of the new sample -> segfault. */
 
-	ch->hardStop(0);
+	if (ch->status & (STATUS_PLAY | STATUS_ENDING))
+		ch->hardStop(0);
 
-	/* save the patch and take the last browser's dir in order to re-use it
-	 * the next time */
+	/* Save the patch and take the last browser's dir in order to re-use it the 
+	next time. */
 
 	conf::samplePath = gu_dirname(fname);
 

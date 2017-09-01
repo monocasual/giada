@@ -348,15 +348,16 @@ void glue_saveProject(void *data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_loadSample(void *data)
+void glue_loadSample(void* data)
 {
-	gdBrowserLoad *browser = (gdBrowserLoad*) data;
+	gdBrowserLoad* browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
 
 	if (fullPath.empty())
 		return;
 
-	int res = glue_loadChannel((SampleChannel*) browser->getChannel(), fullPath.c_str());
+	int res = glue_loadChannel(static_cast<SampleChannel*>(browser->getChannel()), 
+		fullPath);
 
 	if (res == G_RES_OK) {
 		conf::samplePath = gu_dirname(fullPath);
