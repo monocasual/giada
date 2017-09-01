@@ -151,7 +151,7 @@ int geWaveform::alloc(int datasize, bool force)
 		float peaksup = 0.0f;
 		float peakinf = 0.0f;
 
-		for (float k=pc; k<pn; k++) {
+		for (int k=pc; k<pn; k++) {
 
 			if (k >= wave->getSize())
 				continue;
@@ -732,8 +732,7 @@ int geWaveform::getSelectionB()
 
 void geWaveform::selectAll()
 {
-	puts("select all");
 	m_selection.a = 0;
-	m_selection.b = m_ch->wave->getSize();
+	m_selection.b = m_ch->wave->getSize() - 1;
 	redraw();
 }
