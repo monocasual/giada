@@ -145,13 +145,13 @@ int geWaveform::alloc(int datasize, bool force)
 		
 		/* Scan the original waveform in chunks [pc, pn]. */
 
-		double pc = i     * m_ratio;  // current point
-		double pn = (i+1) * m_ratio;  // next point
+		int pc = i     * m_ratio;  // current point TODO - int until we switch to uint32_t for Wave size...
+		int pn = (i+1) * m_ratio;  // next point    TODO - int until we switch to uint32_t for Wave size...
 
 		float peaksup = 0.0f;
 		float peakinf = 0.0f;
 
-		for (int k=pc; k<pn; k++) { // it's ok to use int here. TODO - until we switch to uint32_t for Wave size...
+		for (int k=pc; k<pn; k++) { // TODO - int until we switch to uint32_t for Wave size...
 
 			if (k >= wave->getSize())
 				continue;
