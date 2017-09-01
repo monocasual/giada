@@ -43,7 +43,7 @@
 using namespace giada::m;
 
 
-gePitchTool::gePitchTool(int x, int y, SampleChannel *ch)
+gePitchTool::gePitchTool(int x, int y, SampleChannel* ch)
   : Fl_Group(x, y, 600, 20),
     ch      (ch)
 {
@@ -91,13 +91,13 @@ void gePitchTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gePitchTool::cb_setPitch      (Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitch(); }
-void gePitchTool::cb_setPitchToBar (Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitchToBar(); }
-void gePitchTool::cb_setPitchToSong(Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitchToSong(); }
-void gePitchTool::cb_setPitchHalf  (Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitchHalf(); }
-void gePitchTool::cb_setPitchDouble(Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitchDouble(); }
-void gePitchTool::cb_resetPitch    (Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_resetPitch(); }
-void gePitchTool::cb_setPitchNum   (Fl_Widget *w, void *p) { ((gePitchTool*)p)->__cb_setPitchNum(); }
+void gePitchTool::cb_setPitch      (Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitch(); }
+void gePitchTool::cb_setPitchToBar (Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitchToBar(); }
+void gePitchTool::cb_setPitchToSong(Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitchToSong(); }
+void gePitchTool::cb_setPitchHalf  (Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitchHalf(); }
+void gePitchTool::cb_setPitchDouble(Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitchDouble(); }
+void gePitchTool::cb_resetPitch    (Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_resetPitch(); }
+void gePitchTool::cb_setPitchNum   (Fl_Widget* w, void* p) { ((gePitchTool*)p)->__cb_setPitchNum(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -141,7 +141,8 @@ void gePitchTool::__cb_setPitchDouble()
 
 void gePitchTool::__cb_setPitchToBar()
 {
-  glue_setPitch(ch, ch->getEnd() / (float) clock::getFramesPerBar());
+  // TODO - opaque channel's count
+  glue_setPitch(ch, (ch->getEnd()*2) / (float) clock::getFramesPerBar());
 }
 
 
@@ -150,7 +151,8 @@ void gePitchTool::__cb_setPitchToBar()
 
 void gePitchTool::__cb_setPitchToSong()
 {
-  glue_setPitch(ch, ch->getEnd() / (float) clock::getTotalFrames());
+  // TODO - opaque channel's count
+  glue_setPitch(ch, (ch->getEnd()*2) / (float) clock::getTotalFrames());
 }
 
 

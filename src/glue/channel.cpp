@@ -234,10 +234,10 @@ void glue_setVolume(Channel *ch, float v, bool gui, bool editor)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPitch(SampleChannel *ch, float val)
+void glue_setPitch(SampleChannel* ch, float val)
 {
 	ch->setPitch(val);
-	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (gdEditor) {
 		Fl::lock();
 		gdEditor->pitchTool->refresh();
@@ -249,10 +249,10 @@ void glue_setPitch(SampleChannel *ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPanning(SampleChannel *ch, float val)
+void glue_setPanning(SampleChannel* ch, float val)
 {
 	ch->setPan(val);
-	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (gdEditor) {
 		Fl::lock();
 		gdEditor->panTool->refresh();
