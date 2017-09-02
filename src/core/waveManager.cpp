@@ -139,7 +139,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 		return G_RES_ERR_MEMORY;
 	}
 
-	Wave *wave = new Wave(data, size, 2, samplerate, G_DEFAULT_BIT_DEPTH, "");
+	Wave* wave = new Wave(data, size, 2, samplerate, G_DEFAULT_BIT_DEPTH, "");
 	wave->setLogical(true);	
 	wave->setName(name);
 	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
@@ -147,6 +147,34 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 	*out = wave;
 
 	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", size);
+
+	return G_RES_OK;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int createFromWave(const Wave* src, int a, int b, Wave** out)
+{
+	int numChans = src->getChannels();
+	int size = (b - a) * numChans;
+	float* data = new (std::nothrow) float[size];
+	if (data == nullptr) {
+		gu_log("[waveManager::createFromWave] unable to allocate memory\n");
+		return G_RES_ERR_MEMORY;
+	}
+
+	std::copy(src->getData() + (a*numChans), src->getData() + (b*numChans), data);
+
+	Wave* wave = new Wave(data, size, numChans, src->getRate(), 
+		src->getBits(), "");
+	wave->setLogical(true);	
+	wave->setName(src->getName() + " part");
+
+	*out = wave;
+
+	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", size);
 
 	return G_RES_OK;
 }

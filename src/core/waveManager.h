@@ -49,6 +49,12 @@ Creates a new silent Wave object. Note: 'size' must take 2 channels into account
 (stereo). */
 
 int createEmpty(int size, int samplerate, const std::string& name, Wave** out);
+
+/* createFromWave
+Creates a new Wave from an existing one, copying the data in range a - b. */
+
+int createFromWave(const Wave* src, int a, int b, Wave** out);
+
 int resample(Wave* w, int quality, int samplerate); 
 int save(Wave* w, const std::string& path);
 

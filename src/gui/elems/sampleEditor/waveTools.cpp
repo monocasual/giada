@@ -56,7 +56,8 @@ enum class Menu
 	FADE_IN,
 	FADE_OUT,
 	SMOOTH_EDGES,
-	SET_START_END
+	SET_START_END,
+	TO_NEW_CHANNEL
 };
 
 
@@ -98,6 +99,9 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		case Menu::SET_START_END:
 			c::sampleEditor::setStartEnd(wavetools->ch, a, b);
+			break;		
+		case Menu::TO_NEW_CHANNEL:
+			c::sampleEditor::toNewChannel(wavetools->ch, a, b);
 			break;
 	}
 }
@@ -206,6 +210,7 @@ void geWaveTools::openMenu()
 		{"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
 		{"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},
 		{"Set start/end here", 0, menuCallback, (void*) Menu::SET_START_END},
+		{"To new channel",     0, menuCallback, (void*) Menu::TO_NEW_CHANNEL},
 		{0}
 	};
 

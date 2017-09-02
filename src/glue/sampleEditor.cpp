@@ -38,8 +38,10 @@
 #include "../gui/elems/sampleEditor/pitchTool.h"
 #include "../gui/elems/sampleEditor/rangeTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
+#include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/waveFx.h"
+#include "../core/waveManager.h"
 #include "../core/const.h"
 #include "../utils/gui.h"
 #include "channel.h"
@@ -212,5 +214,26 @@ void rewindPreview(SampleChannel* ch)
 		setPlayHead(ch, waveform->getSelectionA());
 	else
 		setPlayHead(ch, 0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toNewChannel(SampleChannel* ch, int a, int b)
+{
+	SampleChannel* newCh = static_cast<SampleChannel*>(glue_addChannel(
+		ch->guiChannel->getColumnIndex(), CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
+
+	Wave* wave = nullptr;
+	int result = waveManager::createFromWave(ch->wave, a, b, &wave);
+	if (result != G_RES_OK) {
+		gdAlert("Unable to copy to new channel!");
+		return;
+	}
+
+	newCh->pushWave(wave, true);
+
+	newCh->guiChannel->update();
 }
 }}}; // giada::c::sampleEditor::

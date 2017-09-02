@@ -60,6 +60,11 @@ void setPlayHead(SampleChannel* ch, int f);
 
 void setPreview(SampleChannel* ch, int mode);
 void rewindPreview(SampleChannel* ch);
+
+/* toNewChannel
+Copies the selected range into a new sample channel. */
+
+void toNewChannel(SampleChannel* ch, int a, int b);
 }}}; // giada::c::sampleEditor::
 
 #endif
