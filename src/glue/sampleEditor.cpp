@@ -41,9 +41,11 @@
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/waveFx.h"
+#include "../core/wave.h"
 #include "../core/waveManager.h"
 #include "../core/const.h"
 #include "../utils/gui.h"
+#include "../utils/log.h"
 #include "channel.h"
 #include "sampleEditor.h"
 
@@ -58,6 +60,18 @@ namespace giada {
 namespace c     {
 namespace sampleEditor
 {
+namespace
+{
+	/* m_waveBuffer
+	A Wave used during cut/copy/paste operations. */
+
+	Wave* m_waveBuffer = nullptr;
+}; // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 gdSampleEditor* getSampleEditorWindow()
 {
 	gdSampleEditor* se = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -96,6 +110,37 @@ void cut(SampleChannel* ch, int a, int b)
 	gdEditor->updateInfo();
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void copy(SampleChannel* ch, int a, int b)
+{
+	if (m_waveBuffer != nullptr)
+		delete m_waveBuffer;
+
+	int result = waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
+	if (result != G_RES_OK) {
+		gu_log("[sampleEditor::copy] unable to create wave buffer!\n");
+		return;
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void paste(SampleChannel* ch, int a)
+{
+	if (!isWaveBufferFull())
+		return;
+
+	wfx::paste(m_waveBuffer, ch->wave, a);
+	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->waveTools->waveform->clearSel();
+	gdEditor->waveTools->waveform->refresh();
+	gdEditor->updateInfo();
+}
 
 /* -------------------------------------------------------------------------- */
 
@@ -236,4 +281,14 @@ void toNewChannel(SampleChannel* ch, int a, int b)
 
 	newCh->guiChannel->update();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isWaveBufferFull()
+{
+	return m_waveBuffer != nullptr;
+}
+
 }}}; // giada::c::sampleEditor::

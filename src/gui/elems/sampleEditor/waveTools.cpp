@@ -49,6 +49,8 @@ namespace
 enum class Menu
 {
 	CUT = 0,
+	COPY,
+	PASTE,
 	TRIM,
 	SILENCE,
 	REVERSE,
@@ -75,6 +77,12 @@ void menuCallback(Fl_Widget* w, void* v)
 	switch (selectedItem) {
 		case Menu::CUT:
 			c::sampleEditor::cut(wavetools->ch, a, b);
+			break;		
+		case Menu::COPY:
+			c::sampleEditor::copy(wavetools->ch, a, b);
+			break;		
+		case Menu::PASTE:
+			c::sampleEditor::paste(wavetools->ch, a);
 			break;
 		case Menu::TRIM:
 			c::sampleEditor::trim(wavetools->ch, a, b);
@@ -201,16 +209,18 @@ void geWaveTools::openMenu()
 		return;
 
 	Fl_Menu_Item menu[] = {
-		{"Cut",                0, menuCallback, (void*) Menu::CUT},
-		{"Trim",               0, menuCallback, (void*) Menu::TRIM},
-		{"Silence",            0, menuCallback, (void*) Menu::SILENCE},
-		{"Reverse",            0, menuCallback, (void*) Menu::REVERSE},
-		{"Normalize",          0, menuCallback, (void*) Menu::NORMALIZE},
-		{"Fade in",            0, menuCallback, (void*) Menu::FADE_IN},
-		{"Fade out",           0, menuCallback, (void*) Menu::FADE_OUT},
-		{"Smooth edges",       0, menuCallback, (void*) Menu::SMOOTH_EDGES},
-		{"Set start/end here", 0, menuCallback, (void*) Menu::SET_START_END},
-		{"To new channel",     0, menuCallback, (void*) Menu::TO_NEW_CHANNEL},
+		{"Cut",                 0, menuCallback, (void*) Menu::CUT},
+		{"Copy",                0, menuCallback, (void*) Menu::COPY},
+		{"Paste",               0, menuCallback, (void*) Menu::PASTE},
+		{"Trim",                0, menuCallback, (void*) Menu::TRIM},
+		{"Silence",             0, menuCallback, (void*) Menu::SILENCE},
+		{"Reverse",             0, menuCallback, (void*) Menu::REVERSE},
+		{"Normalize",           0, menuCallback, (void*) Menu::NORMALIZE},
+		{"Fade in",             0, menuCallback, (void*) Menu::FADE_IN},
+		{"Fade out",            0, menuCallback, (void*) Menu::FADE_OUT},
+		{"Smooth edges",        0, menuCallback, (void*) Menu::SMOOTH_EDGES},
+		{"Set start/end here",  0, menuCallback, (void*) Menu::SET_START_END},
+		{"Copy to new channel", 0, menuCallback, (void*) Menu::TO_NEW_CHANNEL},
 		{0}
 	};
 

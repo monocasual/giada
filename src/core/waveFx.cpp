@@ -197,7 +197,7 @@ int trim(Wave* w, int a, int b)
 	int newSize = (b - a) * w->getChannels();
 	float* newData = new (std::nothrow) float[newSize];
 	if (newData == nullptr) {
-		gu_log("[wfx] unable to allocate memory for trimming\n");
+		gu_log("[wfx::trim] unable to allocate memory!\n");
 		return G_RES_ERR_MEMORY;
 	}
 
@@ -212,6 +212,47 @@ int trim(Wave* w, int a, int b)
 	w->free();
 	w->setData(newData, newSize);
  	w->setEdited(true);
+
+	return G_RES_OK;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int paste(Wave* src, Wave* des, int aFrame)
+{
+	int srcNumSamples = src->getSize() * src->getChannels();
+	int desNumSamples = des->getSize() * des->getChannels();
+	int aSample = aFrame * des->getChannels();
+
+	int newSize = srcNumSamples + desNumSamples;
+	float* newData = new (std::nothrow) float[newSize];
+	if (newData == nullptr) {
+		gu_log("[wfx::paste] unable to allocate memory!\n");
+		return G_RES_ERR_MEMORY;
+	}
+
+	/* |---original data---|///paste data///|---original data---|
+	          chunk 1            chunk 2          chunk 3
+	*/
+
+	float* chunk1a = des->getData();
+	float* chunk1b = des->getData() + aSample;
+
+	float* chunk2a = src->getData();
+	float* chunk2b = src->getData() + srcNumSamples;	
+
+	float* chunk3a = chunk1b;
+	float* chunk3b = des->getData() + desNumSamples;
+
+	std::copy(chunk1a, chunk1b, newData);
+	std::copy(chunk2a, chunk2b, newData + aSample);	
+	std::copy(chunk3a, chunk3b, newData + aSample + srcNumSamples);
+
+	des->free();
+	des->setData(newData, newSize);
+ 	des->setEdited(true);
 
 	return G_RES_OK;
 }

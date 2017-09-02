@@ -54,6 +54,7 @@ int monoToStereo(Wave* w);
 void silence(Wave* w, int a, int b);
 int cut(Wave* w, int a, int b);
 int trim(Wave* w, int a, int b);
+int paste(Wave* src, Wave* dest, int a);
 
 /* fade
 Fades in or fades out selection. Fade In = type 0, Fade Out = type 1 */
