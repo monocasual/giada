@@ -15,7 +15,8 @@
 0.14.3 --- 
 - [Sample Editor] New "reverse selection" function
 - [Sample Editor] New "normalize hard" function
-- [Sample Editor] Double click selects all
+- [Sample Editor] New "copy to channel" function
+- [Sample Editor] Double click on waveform selects all
 - [Sample Editor] Fix garbled characters in window's title
 - [Sample Editor] Fix wrong result on "set pitch to song/bar"
 - Resizable channels
