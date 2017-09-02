@@ -28,11 +28,15 @@
 #ifdef WITH_VST
 
 
+#include <FL/Fl.H>
 #include "../utils/log.h"
+#include "../utils/time.h"
+#include "const.h"
 #include "plugin.h"
 
 
 using std::string;
+using namespace giada::u;
 
 
 int Plugin::idGenerator = 1;
@@ -48,18 +52,12 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
     id    (idGenerator++),
     bypass(false)
 {
-  /* Fill midiInParams. All values are empty (0x0): they will be filled during
+  /* Init midiInParams. All values are empty (0x0): they will be filled during
   midi learning process. */
 
   for (int i=0; i<plugin->getNumParameters(); i++)
     midiInParams.push_back(0x0);
-
-  /* Try to enable editor (i.e. plugin's UI) */
   
-  ui = plugin->createEditorIfNeeded();
-  if (ui == nullptr)
-    gu_log("[Plugin] unable to create editor, the plugin might be GUI-less!\n");
-
   plugin->prepareToPlay(samplerate, buffersize);
 
   gu_log("[Plugin] plugin initialized and ready\n");
@@ -71,6 +69,7 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 
 Plugin::~Plugin()
 {
+	closeEditor();
   plugin->suspendProcessing(true);
   plugin->releaseResources();
 }
@@ -79,12 +78,18 @@ Plugin::~Plugin()
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::showEditor(void *parent)
+void Plugin::showEditor(void* parent)
 {
+  ui = plugin->createEditorIfNeeded();
   if (ui == nullptr) {
-    gu_log("[Plugin::showEditor] can't show editor!\n");
+    gu_log("[Plugin::showEditor] unable to create editor!\n");
     return;
   }
+
+#ifdef G_OS_LINUX
+  time::sleep(500);
+#endif
+
   ui->setOpaque(true);
   ui->addToDesktop(0, parent);
 }
@@ -95,7 +100,7 @@ void Plugin::showEditor(void *parent)
 
 bool Plugin::isEditorOpen()
 {
-  return ui->isVisible() && ui->isOnDesktop();
+  return ui != nullptr && ui->isVisible() && ui->isOnDesktop();
 }
 
 
@@ -250,8 +255,8 @@ void Plugin::closeEditor()
 {
   if (ui == nullptr)
     return;
-  if (ui->isOnDesktop())
-  	ui->removeFromDesktop();
+  delete ui;
+  ui = nullptr;
 }
 
 #endif
