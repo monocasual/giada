@@ -26,6 +26,7 @@
 - Fix wrong geChannel count while saving a patch
 - Fix missing greyed-out options in Sample Channel's menu when loading a wrong
   sample
+- Print correct octave numbers in Piano Roll
 
 
 0.14.2 --- 2017 . 08 . 14
