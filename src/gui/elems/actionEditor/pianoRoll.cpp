@@ -163,45 +163,45 @@ void gePianoRoll::drawSurface1()
 		switch (i % KEYS) {
 			case (int) Notes::G:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%dG", octave);
+				sprintf(note, "%d G", octave);
 				break;
 			case (int) Notes::FS:
-				sprintf(note, "%dF#", octave);
+				sprintf(note, "%d F#", octave);
 				break;
 			case (int) Notes::F:
-				sprintf(note, "%dF", octave);
+				sprintf(note, "%d F", octave);
 				break;
 			case (int) Notes::E:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%dE", octave);
+				sprintf(note, "%d E", octave);
 				break;
 			case (int) Notes::DS:
-				sprintf(note, "%dD#", octave);
+				sprintf(note, "%d D#", octave);
 				break;
 			case (int) Notes::D:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%dD", octave);
+				sprintf(note, "%d D", octave);
 				break;
 			case (int) Notes::CS:
-				sprintf(note, "%dC#", octave);
+				sprintf(note, "%d C#", octave);
 				break;
 			case (int) Notes::C:
-				sprintf(note, "%dC", octave);
+				sprintf(note, "%d C", octave);
+				octave--;
 				break;
 			case (int) Notes::B:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%dB", octave);
+				sprintf(note, "%d B", octave);
 				break;
 			case (int) Notes::AS:
-				sprintf(note, "%dA#", octave);
+				sprintf(note, "%d A#", octave);
 				break;
 			case (int) Notes::A:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%dA", octave);
+				sprintf(note, "%d A", octave);
 				break;
 			case (int) Notes::GS:
-				sprintf(note, "%dG#", octave);
-				octave--;
+				sprintf(note, "%d G#", octave);
 				break;
 		}
 
