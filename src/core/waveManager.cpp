@@ -50,13 +50,13 @@ int getBits(SF_INFO& header)
 	if      (header.format & SF_FORMAT_PCM_S8)
 		return 8;
 	else if (header.format & SF_FORMAT_PCM_16)
-		return 16;	
+		return 16;
 	else if (header.format & SF_FORMAT_PCM_24)
-		return 24;	
+		return 24;
 	else if (header.format & SF_FORMAT_PCM_32)
-		return 32;	
+		return 32;
 	else if (header.format & SF_FORMAT_PCM_U8)
-		return 8;	
+		return 8;
 	else if (header.format & SF_FORMAT_FLOAT)
 		return 32;
 	else if (header.format & SF_FORMAT_DOUBLE)
@@ -99,7 +99,7 @@ int create(const string& path, Wave** out)
 	frame1 = [leftChannel, rightChannel]
 	frame2 = [leftChannel, rightChannel]
 	... */
-	
+
 	int size = header.frames * header.channels;
 	float* data = new (std::nothrow) float[size];
 	if (data == nullptr) {
@@ -112,7 +112,7 @@ int create(const string& path, Wave** out)
 
 	sf_close(fileIn);
 
-	Wave* wave = new Wave(data, size, header.channels, header.samplerate, 
+	Wave* wave = new Wave(data, size, header.channels, header.samplerate,
 		getBits(header), path);
 
 	if (header.channels == 1 && !wfx::monoToStereo(wave)) {
@@ -140,7 +140,7 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 	}
 
 	Wave* wave = new Wave(data, size, 2, samplerate, G_DEFAULT_BIT_DEPTH, "");
-	wave->setLogical(true);	
+	wave->setLogical(true);
 	wave->setName(name);
 	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
 
@@ -167,9 +167,9 @@ int createFromWave(const Wave* src, int a, int b, Wave** out)
 
 	std::copy(src->getData() + (a*numChans), src->getData() + (b*numChans), data);
 
-	Wave* wave = new Wave(data, size, numChans, src->getRate(), 
-		src->getBits(), "");
-	wave->setLogical(true);	
+	Wave* wave = new Wave(data, size, numChans, src->getRate(),
+		src->getBits(), src->getPath());
+	wave->setLogical(true);
 	wave->setName(src->getName() + " part");
 
 	*out = wave;
@@ -202,7 +202,7 @@ int resample(Wave* w, int quality, int samplerate)
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
-	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n", 
+	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n",
 		newSizeSamples, newSizeFrames);
 
 	int ret = src_simple(&src_data, quality, w->getChannels());
@@ -232,7 +232,7 @@ int save(Wave* w, const string& path)
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
-		gu_log("[waveManager::save] unable to open %s for exporting: %s\n", 
+		gu_log("[waveManager::save] unable to open %s for exporting: %s\n",
 			path.c_str(), sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
@@ -244,7 +244,7 @@ int save(Wave* w, const string& path)
 
 	w->setLogical(false);
 	w->setEdited(false);
-	
+
 	return G_RES_OK;
 }
 }}}; // giada::m::waveManager
