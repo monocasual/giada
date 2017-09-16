@@ -141,8 +141,14 @@ void paste(SampleChannel* ch, int a)
 	
 	wfx::paste(m_waveBuffer, ch->wave, a);
 
-	//if (a < ch->getBegin() && a < ch->getEnd())
-	//	setBeginEnd(ch, ch->getBegin() + a, ch->getEnd() + a);
+	/* Shift begin/end points to keep the previous position. */
+
+	int delta = m_waveBuffer->getSize();
+	if (a < ch->getBegin() && a < ch->getEnd())
+		setBeginEnd(ch, ch->getBegin() + delta, ch->getEnd() + delta);
+	else
+	if (a < ch->getEnd())
+		setBeginEnd(ch, ch->getBegin(), ch->getEnd() + delta);
 
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->clearSel();
