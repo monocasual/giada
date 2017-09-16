@@ -56,10 +56,10 @@ using namespace giada::m;
 
 void glue_setBpm(const char *v1, const char *v2)
 {
-  /* Never change this stuff while recording audio */
+	/* Never change this stuff while recording audio */
 
-  if (mixer::recording)
-    return;
+	if (mixer::recording)
+		return;
 
 	char  bpmS[6];
 	float bpmF = atof(v1) + (atof(v2)/10);
@@ -76,14 +76,15 @@ void glue_setBpm(const char *v1, const char *v2)
 
 	float oldBpmF = clock::getBpm();
 	clock::setBpm(bpmF);
-  recorder::updateBpm(oldBpmF, bpmF, clock::getQuanto());
+	recorder::updateBpm(oldBpmF, bpmF, clock::getQuanto());
+	mixer::allocVirtualInput(clock::getTotalFrames());
 
 #ifdef __linux__
-  kernelAudio::jackSetBpm(clock::getBpm());
+	kernelAudio::jackSetBpm(clock::getBpm());
 #endif
 
-  gu_refreshActionEditor();
-  G_MainWin->mainTimer->setBpm(bpmS);
+	gu_refreshActionEditor();
+	G_MainWin->mainTimer->setBpm(bpmS);
 
 	gu_log("[glue] Bpm changed to %s (real=%f)\n", bpmS, clock::getBpm());
 }
@@ -94,13 +95,13 @@ void glue_setBpm(const char *v1, const char *v2)
 
 void glue_setBpm(float v)
 {
-  if (v < G_MIN_BPM || v > G_MAX_BPM)
-    v = G_DEFAULT_BPM;
-  double fIpart;
-  double fPpart = modf(v, &fIpart);
-  int iIpart = fIpart;
-  int iPpart = ceilf(fPpart);
-  glue_setBpm(gu_toString(iIpart).c_str(), gu_toString(iPpart).c_str());
+	if (v < G_MIN_BPM || v > G_MAX_BPM)
+		v = G_DEFAULT_BPM;
+	double fIpart;
+	double fPpart = modf(v, &fIpart);
+	int iIpart = fIpart;
+	int iPpart = ceilf(fPpart);
+	glue_setBpm(gu_toString(iIpart).c_str(), gu_toString(iPpart).c_str());
 }
 
 
@@ -109,10 +110,10 @@ void glue_setBpm(float v)
 
 void glue_setBeats(int beats, int bars, bool expand)
 {
-  /* Never change this stuff while recording audio */
+	/* Never change this stuff while recording audio */
 
-  if (mixer::recording)
-    return;
+	if (mixer::recording)
+		return;
 
 	/* Temp vars to store old data (they are necessary) */
 
@@ -125,7 +126,7 @@ void glue_setBeats(int beats, int bars, bool expand)
 	mixer::allocVirtualInput(clock::getTotalFrames());
 
 	/* Update recorded actions, if 'expand' required and an expansion is taking
-  place. */
+	place. */
 
 	if (expand && clock::getBeats() > oldBeats)
 		recorder::expand(oldTotalFrames, clock::getTotalFrames());
@@ -142,13 +143,13 @@ void glue_rewindSeq(bool gui, bool notifyJack)
 {
 	mh::rewindSequencer();
 
-  /* FIXME - potential desync when Quantizer is enabled from this point on.
-  Mixer would wait, while the following calls would be made regardless of its
-  state. */
+	/* FIXME - potential desync when Quantizer is enabled from this point on.
+	Mixer would wait, while the following calls would be made regardless of its
+	state. */
 
 #ifdef __linux__
-  if (notifyJack)
-	  kernelAudio::jackSetPosition(0);
+	if (notifyJack)
+		kernelAudio::jackSetPosition(0);
 #endif
 
 	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
@@ -236,7 +237,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	if (createColumns)
 		G_MainWin->keyboard->init();
 
-  gu_updateMainWinLabel(G_DEFAULT_PATCH_NAME);
+	gu_updateMainWinLabel(G_DEFAULT_PATCH_NAME);
 
 	if (resetGui)
 		gu_updateControls();

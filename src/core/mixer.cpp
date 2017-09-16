@@ -432,6 +432,7 @@ void allocVirtualInput(int frames)
 	vChanInput = new (std::nothrow) float[frames];
 	if (!vChanInput)
 		gu_log("[Mixer::allocVirtualInput] vChanInput realloc error!\n");	
+	gu_log("[Mixer::allocVirtualInput] vChanInput ready, %d frames\n", frames);	
 }
 
 
