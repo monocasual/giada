@@ -146,8 +146,8 @@
 #define G_DEFAULT_MIDI_PORT_IN   -1
 #define G_DEFAULT_MIDI_PORT_OUT  -1
 #define G_DEFAULT_SAMPLERATE      44100
-#define G_DEFAULT_BUFSIZE		      1024
-#define G_DEFAULT_DELAYCOMP		    0
+#define G_DEFAULT_BUFSIZE         1024
+#define G_DEFAULT_DELAYCOMP       0
 #define G_DEFAULT_BIT_DEPTH       32     // float
 #define G_DEFAULT_AUDIO_CHANS     2      // stereo for internal processing
 #define G_DEFAULT_VOL             1.0f

@@ -139,7 +139,8 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 		return G_RES_ERR_MEMORY;
 	}
 
-	Wave* wave = new Wave(data, size, 2, samplerate, G_DEFAULT_BIT_DEPTH, "");
+	Wave* wave = new Wave(data, size, G_DEFAULT_AUDIO_CHANS, samplerate, 
+		G_DEFAULT_BIT_DEPTH, "");
 	wave->setLogical(true);
 	wave->setName(name);
 	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
