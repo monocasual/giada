@@ -26,6 +26,7 @@
 - Fix wrong geChannel count while saving a patch
 - Fix missing greyed-out options in Sample Channel's menu when loading a wrong
   sample
+- Fix crash while audio recording with BPM set below the default 120 
 - Print correct octave numbers in Piano Roll
 
 
