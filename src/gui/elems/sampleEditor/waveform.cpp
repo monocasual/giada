@@ -395,7 +395,7 @@ int geWaveform::handle(int e)
 			/* Handle begin/end markers interaction. */
 
 			if (m_chanStartLit || m_chanEndLit)
-				sampleEditor::setBeginEndChannel(m_ch, m_chanStart, m_chanEnd);
+				sampleEditor::setBeginEnd(m_ch, m_chanStart, m_chanEnd);
 
 			m_pushed   = false;
 			m_dragged  = false;

@@ -39,10 +39,10 @@ namespace sampleEditor
 {
 
 
-/* setBeginEndChannel
+/* setBeginEnd
 Sets start/end points in the sample editor. */
 
-void setBeginEndChannel(SampleChannel* ch, int b, int e);
+void setBeginEnd(SampleChannel* ch, int b, int e);
 
 void cut(SampleChannel* ch, int a, int b);
 void copy(SampleChannel* ch, int a, int b);
@@ -59,7 +59,6 @@ void normalizeHard(SampleChannel* ch, int a, int b);
 void silence(SampleChannel* ch, int a, int b);
 void fade(SampleChannel* ch, int a, int b, int type);
 void smoothEdges(SampleChannel* ch, int a, int b);
-void setStartEnd(SampleChannel* ch, int a, int b);
 
 bool isWaveBufferFull();
 

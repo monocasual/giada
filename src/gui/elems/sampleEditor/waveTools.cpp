@@ -58,7 +58,7 @@ enum class Menu
 	FADE_IN,
 	FADE_OUT,
 	SMOOTH_EDGES,
-	SET_START_END,
+	SET_BEGIN_END,
 	TO_NEW_CHANNEL
 };
 
@@ -105,8 +105,8 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::SMOOTH_EDGES:
 			c::sampleEditor::smoothEdges(wavetools->ch, a, b);
 			break;
-		case Menu::SET_START_END:
-			c::sampleEditor::setStartEnd(wavetools->ch, a, b);
+		case Menu::SET_BEGIN_END:
+			c::sampleEditor::setBeginEnd(wavetools->ch, a, b);
 			break;		
 		case Menu::TO_NEW_CHANNEL:
 			c::sampleEditor::toNewChannel(wavetools->ch, a, b);
@@ -216,7 +216,7 @@ void geWaveTools::openMenu()
 		{"Fade in",             0, menuCallback, (void*) Menu::FADE_IN},
 		{"Fade out",            0, menuCallback, (void*) Menu::FADE_OUT},
 		{"Smooth edges",        0, menuCallback, (void*) Menu::SMOOTH_EDGES},
-		{"Set start/end here",  0, menuCallback, (void*) Menu::SET_START_END},
+		{"Set begin/end here",  0, menuCallback, (void*) Menu::SET_BEGIN_END},
 		{"Copy to new channel", 0, menuCallback, (void*) Menu::TO_NEW_CHANNEL},
 		{0}
 	};
@@ -236,7 +236,7 @@ void geWaveTools::openMenu()
 		menu[(int)Menu::FADE_IN].deactivate();		
 		menu[(int)Menu::FADE_OUT].deactivate();		
 		menu[(int)Menu::SMOOTH_EDGES].deactivate();		
-		menu[(int)Menu::SET_START_END].deactivate();		
+		menu[(int)Menu::SET_BEGIN_END].deactivate();		
 		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();		
 	}
 

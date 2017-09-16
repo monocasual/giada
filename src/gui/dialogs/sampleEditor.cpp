@@ -290,6 +290,7 @@ void gdSampleEditor::__cb_rewindPreview()
 
 void gdSampleEditor::__cb_reload()
 {
+  /* TODO - move to glue::sampleEditor */
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
     return;
 
@@ -306,7 +307,7 @@ void gdSampleEditor::__cb_reload()
   waveTools->waveform->stretchToWindow();
   waveTools->updateWaveform();
 
-  sampleEditor::setBeginEndChannel(ch, 0, ch->wave->getSize());
+  sampleEditor::setBeginEnd(ch, 0, ch->wave->getSize());
 
   redraw();
 }

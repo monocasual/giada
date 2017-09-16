@@ -83,7 +83,7 @@ gdSampleEditor* getSampleEditorWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void setBeginEndChannel(SampleChannel* ch, int b, int e)
+void setBeginEnd(SampleChannel* ch, int b, int e)
 {
 	ch->setBegin(b);
 	ch->setEnd(e);
@@ -91,6 +91,10 @@ void setBeginEndChannel(SampleChannel* ch, int b, int e)
 	Fl::lock();
 	gdEditor->rangeTool->refresh();
 	Fl::unlock();
+
+	gdEditor->waveTools->waveform->recalcPoints();
+	gdEditor->waveTools->waveform->clearSel();
+	gdEditor->waveTools->waveform->redraw();
 }
 
 
@@ -103,7 +107,7 @@ void cut(SampleChannel* ch, int a, int b)
 		gdAlert("Unable to cut the sample!");
 		return;
 	}
-	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
+	setBeginEnd(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->clearSel();
 	gdEditor->waveTools->waveform->refresh();
@@ -134,8 +138,12 @@ void paste(SampleChannel* ch, int a)
 {
 	if (!isWaveBufferFull())
 		return;
-
+	
 	wfx::paste(m_waveBuffer, ch->wave, a);
+
+	//if (a < ch->getBegin() && a < ch->getEnd())
+	//	setBeginEnd(ch, ch->getBegin() + a, ch->getEnd() + a);
+
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->clearSel();
 	gdEditor->waveTools->waveform->refresh();
@@ -200,26 +208,13 @@ void normalizeHard(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void setStartEnd(SampleChannel* ch, int a, int b)
-{
-	setBeginEndChannel(ch, a, b);
-	gdSampleEditor* gdEditor = getSampleEditorWindow();
-	gdEditor->waveTools->waveform->recalcPoints();
-	gdEditor->waveTools->waveform->clearSel();
-	gdEditor->waveTools->waveform->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void trim(SampleChannel* ch, int a, int b)
 {
 	if (!wfx::trim(ch->wave, a, b)) {
 		gdAlert("Unable to trim the sample!");
 		return;
 	}
-	setBeginEndChannel(ch, ch->getBegin(), ch->getEnd());
+	setBeginEnd(ch, ch->getBegin(), ch->getEnd());
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->clearSel();
 	gdEditor->waveTools->waveform->refresh();
