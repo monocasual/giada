@@ -205,9 +205,6 @@ int geWaveTools::handle(int e)
 
 void geWaveTools::openMenu()
 {
-	if (!waveform->isSelected())
-		return;
-
 	Fl_Menu_Item menu[] = {
 		{"Cut",                 0, menuCallback, (void*) Menu::CUT},
 		{"Copy",                0, menuCallback, (void*) Menu::COPY},
@@ -229,6 +226,19 @@ void geWaveTools::openMenu()
 		menu[(int)Menu::TRIM].deactivate();
 	}
 
+	if (!waveform->isSelected()) {
+		menu[(int)Menu::CUT].deactivate();
+		menu[(int)Menu::COPY].deactivate();		
+		menu[(int)Menu::TRIM].deactivate();		
+		menu[(int)Menu::SILENCE].deactivate();		
+		menu[(int)Menu::REVERSE].deactivate();		
+		menu[(int)Menu::NORMALIZE].deactivate();		
+		menu[(int)Menu::FADE_IN].deactivate();		
+		menu[(int)Menu::FADE_OUT].deactivate();		
+		menu[(int)Menu::SMOOTH_EDGES].deactivate();		
+		menu[(int)Menu::SET_START_END].deactivate();		
+		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();		
+	}
 
 	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
