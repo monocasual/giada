@@ -224,7 +224,7 @@ int Channel::writePatch(int i, bool isProject)
 
 	for (unsigned i=0; i<recorder::global.size(); i++) {
 		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-			recorder::action *action = recorder::global.at(i).at(k);
+			recorder::action* action = recorder::global.at(i).at(k);
 			if (action->chan == index) {
 				patch::action_t pac;
 				pac.type   = action->type;
@@ -240,7 +240,7 @@ int Channel::writePatch(int i, bool isProject)
 
 	unsigned numPlugs = pluginHost::countPlugins(pluginHost::CHANNEL, this);
 	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin *pPlugin = pluginHost::getPluginByIndex(i, pluginHost::CHANNEL, this);
+		Plugin* pPlugin = pluginHost::getPluginByIndex(i, pluginHost::CHANNEL, this);
 		patch::plugin_t pp;
 		pp.path   = pPlugin->getUniqueId();
 		pp.bypass = pPlugin->isBypassed();
@@ -262,11 +262,11 @@ int Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string &path, int i, pthread_mutex_t *pluginMutex,
+int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
 	int samplerate, int rsmpQuality)
 {
 	int ret = 1;
-	patch::channel_t *pch = &patch::channels.at(i);
+	patch::channel_t* pch = &patch::channels.at(i);
 	key             = pch->key;
 	type            = pch->type;
 	index           = pch->index;
@@ -287,28 +287,26 @@ int Channel::readPatch(const string &path, int i, pthread_mutex_t *pluginMutex,
 	midiOutLmute    = pch->midiOutLmute;
 	midiOutLsolo    = pch->midiOutLsolo;
 
-	for (unsigned k=0; k<pch->actions.size(); k++) {
-		patch::action_t *ac = &pch->actions.at(k);
-		recorder::rec(index, ac->type, ac->frame, ac->iValue, ac->fValue);
+	for (const patch::action_t& ac : pch->actions) {
+		recorder::rec(index, ac.type, ac.frame, ac.iValue, ac.fValue);
 		hasActions = true;
 	}
 
 #ifdef WITH_VST
 
-	for (unsigned k=0; k<pch->plugins.size(); k++) {
-		patch::plugin_t *ppl = &pch->plugins.at(k);
-		Plugin *plugin = pluginHost::addPlugin(ppl->path, pluginHost::CHANNEL,
+	for (const patch::plugin_t& ppl : pch->plugins) {
+		Plugin* plugin = pluginHost::addPlugin(ppl.path, pluginHost::CHANNEL,
 			pluginMutex, this);
 		if (plugin == nullptr) {
 			ret &= 0;
 			continue;
 		}
-		plugin->setBypass(ppl->bypass);
-		for (unsigned j=0; j<ppl->params.size(); j++)
-			plugin->setParameter(j, ppl->params.at(j));
+		plugin->setBypass(ppl.bypass);
+		for (unsigned j=0; j<ppl.params.size(); j++)
+			plugin->setParameter(j, ppl.params.at(j));
 		plugin->midiInParams.clear();
-		for (unsigned j=0; j<ppl->midiInParams.size(); j++)
-			plugin->midiInParams.push_back(ppl->midiInParams.at(j));
+		for (uint32_t midiInParam : ppl.midiInParams)
+			plugin->midiInParams.push_back(midiInParam);
 		ret &= 1;
 	}
 

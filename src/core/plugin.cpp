@@ -112,7 +112,8 @@ bool Plugin::isEditorOpen()
 
 string Plugin::getUniqueId()
 {
-  return plugin->getPluginDescription().fileOrIdentifier.toStdString();
+  //return plugin->getPluginDescription().fileOrIdentifier.toStdString();
+  return plugin->getPluginDescription().createIdentifierString().toStdString();
 }
 
 
