@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.14.4 ---
+- Semi-portable VST path
+
+
 0.14.3 --- 
 - [Sample Editor] New "reverse selection" function
 - [Sample Editor] New "normalize hard" function
