@@ -46,10 +46,10 @@
 
 /* -- version --------------------------------------------------------------- */
 #define G_APP_NAME      "Giada"
-#define G_VERSION_STR   "0.14.3"
+#define G_VERSION_STR   "0.14.4"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 14
-#define G_VERSION_PATCH 3
+#define G_VERSION_PATCH 4
 
 #define CONF_FILENAME "giada.conf"
 
