@@ -45,32 +45,31 @@ class gdBrowserBase : public gdWindow
 {
 protected:
 
-  Channel *channel;
+	Channel* channel;
 
-	Fl_Group   *groupTop;
-  geCheck    *hiddenFiles;
-	geBrowser  *browser;
-	geButton   *ok;
-	geButton   *cancel;
-	geInput    *where;
- 	geButton   *updir;
- 	geProgress *status;
+	Fl_Group* groupTop;
+	geCheck* hiddenFiles;
+	geBrowser* browser;
+	geButton* ok;
+	geButton* cancel;
+	geInput* where;
+	geButton* updir;
+	geProgress* status;
 
-	static void cb_up               (Fl_Widget *v, void *p);
-	static void cb_close            (Fl_Widget *w, void *p);
-	static void cb_toggleHiddenFiles(Fl_Widget *w, void *p);
-
-	inline void __cb_up               ();
-	inline void __cb_close            ();
-	inline void __cb_toggleHiddenFiles();
+	static void cb_up(Fl_Widget* v, void* p);
+	static void cb_close(Fl_Widget* w, void* p);
+	static void cb_toggleHiddenFiles(Fl_Widget* w, void* p);
+	void cb_up();
+	void cb_close();
+	void cb_toggleHiddenFiles();
 
 	/* Callback
 	 * Fired when the save/load button is pressed. */
 
 	void (*callback)(void*);
 
-  gdBrowserBase(int x, int y, int w, int h, const std::string &title,
-  		const std::string &path,	void (*callback)(void*));
+	gdBrowserBase(int x, int y, int w, int h, const std::string& title,
+			const std::string& path, void (*callback)(void*));
 
 public:
 
@@ -88,9 +87,9 @@ public:
 
 	void showStatusBar();
 	void hideStatusBar();
-  std::string getCurrentPath();
+	std::string getCurrentPath();
 
-	Channel *getChannel() { return channel; }
+	Channel* getChannel() { return channel; }
 	void fireCallback()   { callback((void*) this); }
 };
 

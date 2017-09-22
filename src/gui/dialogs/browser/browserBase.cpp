@@ -42,8 +42,8 @@ using std::string;
 using namespace giada::m;
 
 
-gdBrowserBase::gdBrowserBase(int x, int y, int w, int h, const string &title,
-		const string &path, void (*callback)(void*))
+gdBrowserBase::gdBrowserBase(int x, int y, int w, int h, const string& title,
+		const string& path, void (*callback)(void*))
 	:	gdWindow(x, y, w, h, title.c_str()), callback(callback)
 {
 	set_non_modal();
@@ -108,18 +108,31 @@ gdBrowserBase::~gdBrowserBase()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserBase::cb_up   (Fl_Widget *v, void *p) { ((gdBrowserBase*)p)->__cb_up(); }
-void gdBrowserBase::cb_close(Fl_Widget *v, void *p) { ((gdBrowserBase*)p)->__cb_close(); }
-void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBrowserBase*)p)->__cb_toggleHiddenFiles(); }
+void gdBrowserBase::cb_up   (Fl_Widget* v, void* p) { ((gdBrowserBase*)p)->cb_up(); }
+void gdBrowserBase::cb_close(Fl_Widget* v, void* p) { ((gdBrowserBase*)p)->cb_close(); }
+void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBrowserBase*)p)->cb_toggleHiddenFiles(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserBase::__cb_up()
+void gdBrowserBase::cb_up()
 {
 	string dir = browser->getCurrentDir();
-	dir = dir.substr(0, dir.find_last_of(G_SLASH_STR));  // remove up to the next slash
+
+	/* Take 'dir' path and remove all chars up to the next slash, e.g.:
+		/path/to/my/dir -> /path/to/my
+	Make sure not to remove the leading '/' (OS X/Linux only). */
+
+	dir = dir.substr(0, dir.find_last_of(G_SLASH_STR));
+
+#if defined(G_OS_MAC) || defined(G_OS_LINUX)
+
+	if (dir.empty())
+		dir = G_SLASH_STR;
+
+#endif
+
 	browser->loadDir(dir);
 	where->value(browser->getCurrentDir().c_str());
 }
@@ -128,7 +141,7 @@ void gdBrowserBase::__cb_up()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserBase::__cb_close()
+void gdBrowserBase::cb_close()
 {
 	do_callback();
 }
@@ -137,7 +150,7 @@ void gdBrowserBase::__cb_close()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserBase::__cb_toggleHiddenFiles()
+void gdBrowserBase::cb_toggleHiddenFiles()
 {
 	browser->toggleHiddenFiles();
 }
