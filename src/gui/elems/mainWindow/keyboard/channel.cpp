@@ -43,13 +43,13 @@
 #include "channel.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using namespace giada::m;
 
 
-geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
+geChannel::geChannel(int X, int Y, int W, int H, int type, Channel* ch)
  : Fl_Group(X, Y, W, H, nullptr),
 	 ch      (ch),
 	 type    (type)
@@ -60,19 +60,19 @@ geChannel::geChannel(int X, int Y, int W, int H, int type, Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::cb_arm(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_arm(); }
-void geChannel::cb_mute(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_mute(); }
-void geChannel::cb_solo(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_solo(); }
-void geChannel::cb_changeVol(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_changeVol(); }
+void geChannel::cb_arm(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_arm(); }
+void geChannel::cb_mute(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_mute(); }
+void geChannel::cb_solo(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_solo(); }
+void geChannel::cb_changeVol(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_changeVol(); }
 #ifdef WITH_VST
-void geChannel::cb_openFxWindow(Fl_Widget *v, void *p) { ((geChannel*)p)->__cb_openFxWindow(); }
+void geChannel::cb_openFxWindow(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_openFxWindow(); }
 #endif
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::__cb_arm()
+void geChannel::cb_arm()
 {
 	glue_toggleArm(ch, true);
 }
@@ -81,7 +81,7 @@ void geChannel::__cb_arm()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::__cb_mute()
+void geChannel::cb_mute()
 {
 	glue_setMute(ch);
 }
@@ -90,7 +90,7 @@ void geChannel::__cb_mute()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::__cb_solo()
+void geChannel::cb_solo()
 {
 	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
 }
@@ -99,7 +99,7 @@ void geChannel::__cb_solo()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::__cb_changeVol()
+void geChannel::cb_changeVol()
 {
 	glue_setVolume(ch, vol->value());
 }
@@ -109,7 +109,7 @@ void geChannel::__cb_changeVol()
 
 
 #ifdef WITH_VST
-void geChannel::__cb_openFxWindow()
+void geChannel::cb_openFxWindow()
 {
 	gu_openSubWindow(G_MainWin, new gdPluginList(pluginHost::CHANNEL, ch), WID_FX_LIST);
 }
@@ -131,7 +131,7 @@ int geChannel::keyPress(int e)
 
 int geChannel::getColumnIndex()
 {
-	return ((geColumn*)parent())->getIndex();
+	return static_cast<geColumn*>(parent())->getIndex();
 }
 
 

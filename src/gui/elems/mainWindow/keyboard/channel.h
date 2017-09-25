@@ -63,20 +63,19 @@ protected:
 
 	static const int MIN_ELEM_W = 20;
 
-	static void cb_arm           (Fl_Widget* v, void* p);
-	static void cb_mute          (Fl_Widget* v, void* p);
-	static void cb_solo          (Fl_Widget* v, void* p);
-	static void cb_changeVol     (Fl_Widget* v, void* p);
+	static void cb_arm(Fl_Widget* v, void* p);
+	static void cb_mute(Fl_Widget* v, void* p);
+	static void cb_solo(Fl_Widget* v, void* p);
+	static void cb_changeVol(Fl_Widget* v, void* p);
 #ifdef WITH_VST
 		static void cb_openFxWindow(Fl_Widget* v, void* p);
 #endif
-
-	inline void __cb_mute();
-	inline void __cb_arm();
-	inline void __cb_solo();
-	inline void __cb_changeVol();
+	void cb_mute();
+	void cb_arm();
+	void cb_solo();
+	void cb_changeVol();
 #ifdef WITH_VST
-		inline void __cb_openFxWindow();
+		void cb_openFxWindow();
 #endif
 
 	/* blink

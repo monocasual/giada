@@ -36,7 +36,7 @@ class geSampleChannelButton : public geChannelButton
 {
 public:
 
-  geSampleChannelButton(int x, int y, int w, int h, const char *l=0);
+	geSampleChannelButton(int x, int y, int w, int h, const char* l=0);
 	int handle(int e);
 };
 

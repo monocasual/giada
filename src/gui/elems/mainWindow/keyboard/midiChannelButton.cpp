@@ -25,38 +25,20 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_CHANNEL_H
-#define GE_MIDI_CHANNEL_H
+#include "midiChannelButton.h"
 
 
-#include "channel.h"
-#include "channelButton.h"
-
-
-class MidiChannel;
-
-
-class geMidiChannel : public geChannel
+geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char* l)
+	: geChannelButton(x, y, w, h, l)
 {
-private:
-
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_openMenu(Fl_Widget* v, void* p);
-	void cb_button();
-	void cb_openMenu();
-
-public:
-
-	geMidiChannel(int x, int y, int w, int h, MidiChannel* ch);
-
-	void resize(int x, int y, int w, int h) override;
-
-	void reset() override;
-	void update() override;
-	void refresh() override;
-
-	int keyPress(int event);  // TODO - move to base class
-};
+}
 
 
-#endif
+/* -------------------------------------------------------------------------- */
+
+
+int geMidiChannelButton::handle(int e)
+{
+	// Currently MIDI drag-n-drop does nothing.
+	return geButton::handle(e);
+}

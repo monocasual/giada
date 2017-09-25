@@ -25,37 +25,18 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_CHANNEL_H
-#define GE_MIDI_CHANNEL_H
+#ifndef GE_MIDI_CHANNEL_BUTTON_H
+#define GE_MIDI_CHANNEL_BUTTON_H
 
 
-#include "channel.h"
 #include "channelButton.h"
 
 
-class MidiChannel;
-
-
-class geMidiChannel : public geChannel
+class geMidiChannelButton : public geChannelButton
 {
-private:
-
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_openMenu(Fl_Widget* v, void* p);
-	void cb_button();
-	void cb_openMenu();
-
 public:
-
-	geMidiChannel(int x, int y, int w, int h, MidiChannel* ch);
-
-	void resize(int x, int y, int w, int h) override;
-
-	void reset() override;
-	void update() override;
-	void refresh() override;
-
-	int keyPress(int event);  // TODO - move to base class
+	geMidiChannelButton(int x, int y, int w, int h, const char* l=0);
+	int handle(int e);
 };
 
 

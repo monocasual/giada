@@ -47,6 +47,7 @@
 #include "../../basics/statusButton.h"
 #include "../../basics/dial.h"
 #include "column.h"
+#include "midiChannelButton.h"
 #include "midiChannel.h"
 
 
@@ -323,25 +324,4 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 #endif
 
 	packWidgets();
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char* l)
-	: geChannelButton(x, y, w, h, l)
-{
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int geMidiChannelButton::handle(int e)
-{
-	// MIDI drag-n-drop does nothing so far.
-	return geButton::handle(e);
 }

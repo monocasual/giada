@@ -33,16 +33,19 @@
 using std::string;
 
 
-geChannelButton::geChannelButton(int x, int y, int w, int h, const char *l)
-  : geButton(x, y, w, h, l), key("") {}
+geChannelButton::geChannelButton(int x, int y, int w, int h, const char* l)
+	: geButton(x, y, w, h, l), 
+	  m_key   ("") 
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geChannelButton::setKey(const string &k)
+void geChannelButton::setKey(const string& k)
 {
-  key = k;
+	m_key = k;
 }
 
 
@@ -51,13 +54,13 @@ void geChannelButton::setKey(const string &k)
 
 void geChannelButton::setKey(int k)
 {
-  if (k == 0)
-    key = "";
-  else {
-    // FIXME - this crap won't work with unicode/utf-8
-    char c = (char) k;
-    key = c;
-  }
+	if (k == 0)
+		m_key = "";
+	else {
+		// FIXME - this crap won't work with unicode/utf-8
+		char c = (char) k;
+		m_key = c;
+	}
 }
 
 
@@ -66,20 +69,20 @@ void geChannelButton::setKey(int k)
 
 void geChannelButton::draw()
 {
-  geButton::draw();
+	geButton::draw();
 
-  if (key == "")
-    return;
+	if (m_key == "")
+		return;
 
-  /* draw background */
+	/* draw background */
 
-  fl_rectf(x()+1, y()+1, 18, h()-2, bgColor0);
+	fl_rectf(x()+1, y()+1, 18, h()-2, bgColor0);
 
-  /* draw key */
+	/* draw m_key */
 
-  fl_color(G_COLOR_LIGHT_2);
-  fl_font(FL_HELVETICA, 11);
-  fl_draw(key.c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
+	fl_color(G_COLOR_LIGHT_2);
+	fl_font(FL_HELVETICA, 11);
+	fl_draw(m_key.c_str(), x(), y(), 18, h(), FL_ALIGN_CENTER);
 }
 
 
@@ -88,7 +91,7 @@ void geChannelButton::draw()
 
 void geChannelButton::setInputRecordMode()
 {
-  bgColor0 = G_COLOR_RED;
+	bgColor0 = G_COLOR_RED;
 }
 
 
@@ -97,21 +100,21 @@ void geChannelButton::setInputRecordMode()
 
 void geChannelButton::setActionRecordMode()
 {
-  bgColor0 = G_COLOR_BLUE;
-  txtColor = G_COLOR_LIGHT_2;
+	bgColor0 = G_COLOR_BLUE;
+	txtColor = G_COLOR_LIGHT_2;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geChannelButton::setDefaultMode(const char *l)
+void geChannelButton::setDefaultMode(const char* l)
 {
-  bgColor0 = G_COLOR_GREY_2;
+	bgColor0 = G_COLOR_GREY_2;
 	bdColor  = G_COLOR_GREY_4;
 	txtColor = G_COLOR_LIGHT_2;
-  if (l)
-    label(l);
+	if (l)
+		label(l);
 }
 
 
@@ -120,9 +123,9 @@ void geChannelButton::setDefaultMode(const char *l)
 
 void geChannelButton::setPlayMode()
 {
-  bgColor0 = G_COLOR_LIGHT_1;
-  bdColor  = G_COLOR_LIGHT_1;
-  txtColor = G_COLOR_GREY_1;
+	bgColor0 = G_COLOR_LIGHT_1;
+	bdColor  = G_COLOR_LIGHT_1;
+	txtColor = G_COLOR_GREY_1;
 }
 
 
@@ -131,5 +134,5 @@ void geChannelButton::setPlayMode()
 
 void geChannelButton::setEndingMode()
 {
-  bgColor0 = G_COLOR_GREY_4;
+	bgColor0 = G_COLOR_GREY_4;
 }

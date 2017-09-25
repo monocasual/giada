@@ -36,21 +36,21 @@ class geChannelButton : public geButton
 {
 private:
 
-	std::string key;
+	std::string m_key;
 
 public:
 
-	geChannelButton(int x, int y, int w, int h, const char *l=0);
+	geChannelButton(int x, int y, int w, int h, const char* l=0);
 
 	virtual int handle(int e) = 0;
 
 	void draw() override;
   
-	void setKey(const std::string &k);
+	void setKey(const std::string& k);
 	void setKey(int k);
 	void setPlayMode();
 	void setEndingMode();
-	void setDefaultMode(const char *l=0);
+	void setDefaultMode(const char* l=0);
 	void setInputRecordMode();
 	void setActionRecordMode();
 };
