@@ -53,15 +53,15 @@
 #include "gd_mainWindow.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using std::string;
 using namespace giada::m;
 
 
-gdPluginList::gdPluginList(int stackType, Channel *ch)
-  : gdWindow(468, 204), ch(ch), stackType(stackType)
+gdPluginList::gdPluginList(int stackType, Channel* ch)
+	: gdWindow(468, 204), ch(ch), stackType(stackType)
 {
 	if (conf::pluginListX)
 		resize(conf::pluginListX, conf::pluginListY, w(), h());
@@ -80,8 +80,8 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	end();
 	set_non_modal();
 
-  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
-  gdPluginListMaster */
+	/* TODO - awful stuff... we should subclass into gdPluginListChannel and
+	gdPluginListMaster */
 
 	if (stackType == pluginHost::MASTER_OUT)
 		label("Master Out Plugins");
@@ -89,8 +89,8 @@ gdPluginList::gdPluginList(int stackType, Channel *ch)
 	if (stackType == pluginHost::MASTER_IN)
 		label("Master In Plugins");
 	else {
-    string l = "Channel " + gu_toString(ch->index+1) + " Plugins";
-    copy_label(l.c_str());
+		string l = "Channel " + gu_toString(ch->index+1) + " Plugins";
+		copy_label(l.c_str());
 	}
 
 	gu_setFavicon(this);
@@ -111,13 +111,13 @@ gdPluginList::~gdPluginList()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::cb_addPlugin(Fl_Widget *v, void *p)   { ((gdPluginList*)p)->__cb_addPlugin(); }
+void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p)   { ((gdPluginList*)p)->__cb_addPlugin(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::cb_refreshList(Fl_Widget *v, void *p)
+void gdPluginList::cb_refreshList(Fl_Widget* v, void* p)
 {
 	/* note: this callback is fired by gdBrowser. Close its window first,
 	 * by calling the parent (pluginList) and telling it to delete its
@@ -146,11 +146,11 @@ void gdPluginList::__cb_addPlugin()
 	 * must be redrawn. We have a special callback, cb_refreshList, which
 	 * we add to gdPluginChooser. It does exactly what we need. */
 
-  gdPluginChooser *pc = new gdPluginChooser(conf::pluginChooserX,
-      conf::pluginChooserY, conf::pluginChooserW, conf::pluginChooserH,
-      stackType, ch);
-  addSubWindow(pc);
-  pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
+	gdPluginChooser* pc = new gdPluginChooser(conf::pluginChooserX,
+			conf::pluginChooserY, conf::pluginChooserW, conf::pluginChooserH,
+			stackType, ch);
+	addSubWindow(pc);
+	pc->callback(cb_refreshList, (void*)this);	// 'this' refers to gdPluginList
 }
 
 
@@ -193,24 +193,24 @@ void gdPluginList::refreshList()
 
 	redraw();
 
-  /* set 'full' flag to FX button */
+	/* set 'full' flag to FX button */
 
-  /* TODO - awful stuff... we should subclass into gdPluginListChannel and
-  gdPluginListMaster */
+	/* TODO - awful stuff... we should subclass into gdPluginListChannel and
+	gdPluginListMaster */
 
 	if (stackType == pluginHost::MASTER_OUT) {
-    G_MainWin->mainIO->setMasterFxOutFull(
+		G_MainWin->mainIO->setMasterFxOutFull(
 			pluginHost::countPlugins(stackType, ch) > 0);
-  }
+	}
 	else
 	if (stackType == pluginHost::MASTER_IN) {
-    G_MainWin->mainIO->setMasterFxInFull(
+		G_MainWin->mainIO->setMasterFxInFull(
 			pluginHost::countPlugins(stackType, ch) > 0);
-  }
+	}
 	else {
-    ch->guiChannel->fx->status = pluginHost::countPlugins(stackType, ch) > 0;
-    ch->guiChannel->fx->redraw();
-  }
+		ch->guiChannel->fx->status = pluginHost::countPlugins(stackType, ch) > 0;
+		ch->guiChannel->fx->redraw();
+	}
 }
 
 
@@ -219,7 +219,7 @@ void gdPluginList::refreshList()
 /* -------------------------------------------------------------------------- */
 
 
-gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
+gdPlugin::gdPlugin(gdPluginList* gdp, Plugin* p, int X, int Y, int W)
 	: Fl_Group(X, Y, W, 20), pParent(gdp), pPlugin (p)
 {
 	begin();
@@ -236,15 +236,15 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 
 	program->callback(cb_setProgram, (void*)this);
 
-  for (int i=0; i<pPlugin->getNumPrograms(); i++)
-    program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
+	for (int i=0; i<pPlugin->getNumPrograms(); i++)
+		program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
 
 	if (program->size() == 0) {
 		program->add("-- no programs --\0");
 		program->deactivate();
 	}
-  else
-    program->value(pPlugin->getCurrentProgram());
+	else
+		program->value(pPlugin->getCurrentProgram());
 
 	bypass->callback(cb_setBypass, (void*)this);
 	bypass->type(FL_TOGGLE_BUTTON);
@@ -259,12 +259,12 @@ gdPlugin::gdPlugin(gdPluginList *gdp, Plugin *p, int X, int Y, int W)
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::cb_removePlugin    (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_removePlugin(); }
-void gdPlugin::cb_openPluginWindow(Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_openPluginWindow(); }
-void gdPlugin::cb_setBypass       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setBypass(); }
-void gdPlugin::cb_shiftUp         (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftUp(); }
-void gdPlugin::cb_shiftDown       (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_shiftDown(); }
-void gdPlugin::cb_setProgram      (Fl_Widget *v, void *p)    { ((gdPlugin*)p)->__cb_setProgram(); }
+void gdPlugin::cb_removePlugin    (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_removePlugin(); }
+void gdPlugin::cb_openPluginWindow(Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_openPluginWindow(); }
+void gdPlugin::cb_setBypass       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_setBypass(); }
+void gdPlugin::cb_shiftUp         (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_shiftUp(); }
+void gdPlugin::cb_shiftDown       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_shiftDown(); }
+void gdPlugin::cb_setProgram      (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_setProgram(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -278,12 +278,12 @@ void gdPlugin::__cb_shiftUp()
 		return;
 
 	int pluginIndex = pluginHost::getPluginIndex(pPlugin->getId(),
-    pParent->stackType, pParent->ch);
+		pParent->stackType, pParent->ch);
 
 	if (pluginIndex == 0)  // first of the stack, do nothing
 		return;
 
-  glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
+	glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -304,7 +304,7 @@ void gdPlugin::__cb_shiftDown()
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
-  glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
+	glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -317,8 +317,8 @@ void gdPlugin::__cb_removePlugin()
 	/* any subwindow linked to the plugin must be destroyed first */
 
 	pParent->delSubWindow(pPlugin->getId());
-  glue_freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
-  pParent->refreshList();
+	glue_freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
+	pParent->refreshList();
 }
 
 
@@ -327,29 +327,30 @@ void gdPlugin::__cb_removePlugin()
 
 void gdPlugin::__cb_openPluginWindow()
 {
-  /* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
-  * for the parent window 'add plugin'. */
+	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
+	* for the parent window 'add plugin'. */
 
-  gdWindow *w;
-  if (pPlugin->hasEditor()) {
-    if (pPlugin->isEditorOpen()) {
-      gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
-      return;
-    }
+	gdWindow* w;
+	if (pPlugin->hasEditor()) {
+		int pwid = pPlugin->getId() + 1;
 
-    int pwid = pPlugin->getId()+1;
+		if (pPlugin->isEditorOpen()) {
+			gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
+			pParent->getChild(pwid)->show();  // Raise it to top
+			return;
+		}
 
-    gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
+		gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
 
-    if (pParent->hasWindow(pwid))
-      pParent->delSubWindow(pwid);
-    w = new gdPluginWindowGUI(pPlugin);
-    w->setId(pwid);
+		if (pParent->hasWindow(pwid))
+			pParent->delSubWindow(pwid);
+		w = new gdPluginWindowGUI(pPlugin);
+		w->setId(pwid);
 		pParent->addSubWindow(w);
-  }
-  else {
-    w = new gdPluginWindow(pPlugin);
-  }
+	}
+	else {
+		w = new gdPluginWindow(pPlugin);
+	}
 }
 
 

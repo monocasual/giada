@@ -36,36 +36,36 @@
 /* cb_window_closer
  * callback for when closing windows. Deletes the widget (delete). */
 
-void __cb_window_closer(Fl_Widget *v, void *p);
+void __cb_window_closer(Fl_Widget* v, void* p);
 
 
 class gdWindow : public Fl_Double_Window
 {
 protected:
 
-	std::vector <gdWindow*> subWindows;
+	std::vector<gdWindow*> subWindows;
 	int id;
-	gdWindow *parent;
+	gdWindow* parent;
 
 public:
 
-	gdWindow(int x, int y, int w, int h, const char *title=0, int id=0);
-	gdWindow(int w, int h, const char *title=0, int id=0);
+	gdWindow(int x, int y, int w, int h, const char* title=0, int id=0);
+	gdWindow(int w, int h, const char* title=0, int id=0);
 	~gdWindow();
 
-	static void cb_closeChild(Fl_Widget *v, void *p);
+	static void cb_closeChild(Fl_Widget* v, void* p);
 
-	void addSubWindow(gdWindow *w);
-	void delSubWindow(gdWindow *w);
+	void addSubWindow(gdWindow* w);
+	void delSubWindow(gdWindow* w);
 	void delSubWindow(int id);
 
 	int  getId();
 	void setId(int id);
 	void debug();
 
-	void     setParent(gdWindow *);
-	gdWindow *getParent();
-	gdWindow *getChild(int id);
+	void setParent(gdWindow* w);
+	gdWindow* getParent();
+	gdWindow* getChild(int id);
 
 	/* hasWindow
 	 * true if the window with id 'id' exists in the stack. */
