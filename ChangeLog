@@ -17,6 +17,7 @@
 - [Linux/Mac] Don't skip '/' path when navigating to upper folders
 - Beautify Configuration Window
 - Bring VST window to front when opening UI
+- Save 'arm' status to patch/project file
 
 
 0.14.3 --- 2017 . 09 . 18
