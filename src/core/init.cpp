@@ -189,6 +189,7 @@ void init_shutdown()
 
 	if (kernelAudio::getStatus()) {
 		kernelAudio::closeDevice();
+		gu_log("[init] KernelAudio closed\n");
 		mixer::close();
 		gu_log("[init] Mixer closed\n");
 	}
