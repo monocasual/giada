@@ -48,18 +48,18 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Sound System")
 {
 	begin();
-	soundsys    = new geChoice(x()+92,  y()+9,  253, 20, "System");
-	buffersize  = new geChoice(x()+92,  y()+37, 55,  20, "Buffer size");
-	samplerate  = new geChoice(x()+290, y()+37, 55,  20, "Sample rate");
-	sounddevOut = new geChoice(x()+92,  y()+65, 225, 20, "Output device");
-	devOutInfo  = new geButton (x()+325, y()+65, 20,  20, "?");
-	channelsOut = new geChoice(x()+92,  y()+93, 55,  20, "Output channels");
-	limitOutput = new geCheck (x()+155, y()+97, 55,  20, "Limit output");
-	sounddevIn  = new geChoice(x()+92,  y()+121, 225, 20, "Input device");
-	devInInfo   = new geButton (x()+325, y()+121, 20,  20, "?");
-	channelsIn  = new geChoice(x()+92,  y()+149, 55,  20, "Input channels");
-	delayComp   = new geInput (x()+290, y()+149, 55,  20, "Rec delay comp.");
-	rsmpQuality = new geChoice(x()+92, y()+177, 253, 20, "Resampling");
+	soundsys    = new geChoice(x()+114, y()+9,  250, 20, "System");
+	buffersize  = new geChoice(x()+114, y()+37, 55,  20, "Buffer size");
+	samplerate  = new geChoice(x()+309, y()+37, 55,  20, "Sample rate");
+	sounddevOut = new geChoice(x()+114, y()+65, 222, 20, "Output device");
+	devOutInfo  = new geButton(x()+344, y()+65, 20,  20, "?");
+	channelsOut = new geChoice(x()+114, y()+93, 55,  20, "Output channels");
+	limitOutput = new geCheck (x()+177, y()+97, 55,  20, "Limit output");
+	sounddevIn  = new geChoice(x()+114, y()+121, 222, 20, "Input device");
+	devInInfo   = new geButton(x()+344, y()+121, 20,  20, "?");
+	channelsIn  = new geChoice(x()+114, y()+149, 55,  20, "Input channels");
+	delayComp   = new geInput (x()+309, y()+149, 55,  20, "Rec delay comp.");
+	rsmpQuality = new geChoice(x()+114, y()+177, 250, 20, "Resampling");
                 new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();

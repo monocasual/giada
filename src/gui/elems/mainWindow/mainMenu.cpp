@@ -99,7 +99,7 @@ void geMainMenu::__cb_about()
 
 void geMainMenu::__cb_config()
 {
-	gu_openSubWindow(G_MainWin, new gdConfig(380, 370), WID_CONFIG);
+	gu_openSubWindow(G_MainWin, new gdConfig(400, 370), WID_CONFIG);
 }
 
 

@@ -46,13 +46,13 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "MIDI")
 {
 	begin();
-	system	  = new geChoice(x()+92, y()+9, 253, 20, "System");
-	portOut	  = new geChoice(x()+92, system->y()+system->h()+8, 253, 20, "Output port");
-	portIn	  = new geChoice(x()+92, portOut->y()+portOut->h()+8, 253, 20, "Input port");
-	noNoteOff = new geCheck (x()+92, portIn->y()+portIn->h()+8, 253, 20, "Device does not send NoteOff");
-	midiMap	  = new geChoice(x()+92, noNoteOff->y()+noNoteOff->h(), 253, 20, "Output Midi Map");
-	sync	    = new geChoice(x()+92, midiMap->y()+midiMap->h()+8, 253, 20, "Sync");
-	new geBox(x(), sync->y()+sync->h()+8, w(), h()-125, "Restart Giada for the changes to take effect.");
+	system	  = new geChoice(x()+w()-250, y()+9, 250, 20, "System");
+	portOut	  = new geChoice(x()+w()-250, system->y()+system->h()+8, 250, 20, "Output port");
+	portIn	  = new geChoice(x()+w()-250, portOut->y()+portOut->h()+8, 250, 20, "Input port");
+	noNoteOff = new geCheck (x()+w()-250, portIn->y()+portIn->h()+8, 230, 20, "Device does not send NoteOff");
+	midiMap	  = new geChoice(x()+w()-250, noNoteOff->y()+noNoteOff->h(), 250, 20, "Output Midi Map");
+	sync	    = new geChoice(x()+w()-250, midiMap->y()+midiMap->h()+8, 250, 20, "Sync");
+	new geBox(x(), sync->y()+sync->h()+8, w(), h()-150, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);

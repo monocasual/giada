@@ -38,7 +38,7 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Misc")
 {
 	begin();
-	debugMsg = new geChoice(x()+92,  y()+9, 253, 20, "Debug messages");
+	debugMsg = new geChoice(x()+w()-230, y()+9, 230, 20, "Debug messages");
 	end();
 
 	debugMsg->add("(disabled)");
