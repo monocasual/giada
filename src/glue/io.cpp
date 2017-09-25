@@ -320,7 +320,7 @@ int glue_stopInputRec(bool gui)
 		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
-		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->armed)
+		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->isArmed())
 			ch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
         clock::isRunning(), true, true);
 	}

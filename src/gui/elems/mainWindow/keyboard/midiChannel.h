@@ -40,16 +40,14 @@ class geMidiChannel : public geChannel
 {
 private:
 
-	static void cb_button        (Fl_Widget *v, void *p);
-	static void cb_openMenu      (Fl_Widget *v, void *p);
-
-	inline void __cb_button      ();
-	inline void __cb_openMenu    ();
-	inline void __cb_readActions ();
+	static void cb_button(Fl_Widget* v, void* p);
+	static void cb_openMenu(Fl_Widget* v, void* p);
+	void cb_button();
+	void cb_openMenu();
 
 public:
 
-	geMidiChannel(int x, int y, int w, int h, MidiChannel *ch);
+	geMidiChannel(int x, int y, int w, int h, MidiChannel* ch);
 
 	void resize(int x, int y, int w, int h) override;
 
@@ -67,7 +65,7 @@ public:
 class geMidiChannelButton : public geChannelButton
 {
 public:
-	geMidiChannelButton(int x, int y, int w, int h, const char *l=0);
+	geMidiChannelButton(int x, int y, int w, int h, const char* l=0);
 	int handle(int e);
 };
 

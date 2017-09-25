@@ -222,58 +222,57 @@ void glue_loadPatch(void* data)
 		return;
 	}
 
-	/* close all other windows. This prevents segfault if plugin
-	 * windows GUIs are on. */
+	/* Close all other windows. This prevents segfault if plugin windows GUIs are 
+	open. */
 
 	gu_closeAllSubwindows();
 
-	/* reset the system. False(1): don't update the gui right now. False(2): do
-	 * not create empty columns. */
+	/* Reset the system. False(1): don't update the gui right now. False(2): do 
+	not create empty columns. */
 
 	glue_resetToInitState(false, false);
 
 	browser->setStatusBar(0.1f);
-	//__glue_setProgressBar__(status, 0.1f);
 
-	/* Add common stuff, columns and channels. Also increment the progress bar
-	 * by 0.8 / total_channels steps.  */
+	/* Add common stuff, columns and channels. Also increment the progress bar by 
+	0.8 / total_channels steps.  */
 
 	float steps = 0.8 / patch::channels.size();
 	
 	for (const patch::column_t& col : patch::columns) {
 		G_MainWin->keyboard->addColumn(col.width);
-		for (unsigned k=0; k<patch::channels.size(); k++) {
-			if (patch::channels.at(k).column == col.index) {
-				Channel* ch = glue_addChannel(patch::channels.at(k).column,
-					patch::channels.at(k).type, patch::channels.at(k).size);
+		unsigned k = 0;
+		for (const patch::channel_t& pch : patch::channels) {
+			if (pch.column == col.index) {
+				Channel* ch = glue_addChannel(pch.column, pch.type, pch.size);
 				ch->readPatch(basePath, k, &mixer::mutex_plugins, conf::samplerate,
 					conf::rsmpQuality);
 			}
 			browser->setStatusBar(steps);
+			k++;
 		}
 	}
 
-	/* fill Mixer */
+	/* Fill Mixer. */
 
 	mh::readPatch();
 
-	/* let recorder recompute the actions' positions if the current
-	 * samplerate != patch samplerate */
+	/* Let recorder recompute the actions' positions if the current 
+	samplerate != patch samplerate. */
 
 	recorder::updateSamplerate(conf::samplerate, patch::samplerate);
 
-	/* save patchPath by taking the last dir of the broswer, in order to
-	 * reuse it the next time */
+	/* Save patchPath by taking the last dir of the broswer, in order to reuse it 
+	the next time. */
 
 	conf::patchPath = gu_dirname(fullPath);
 
-	/* refresh GUI */
+	/* Refresh GUI. */
 
 	gu_updateControls();
 	gu_updateMainWinLabel(patch::name);
 
 	browser->setStatusBar(0.1f);
-	//__glue_setProgressBar__(status, 1.0f);
 
 	gu_log("[glue] patch loaded successfully\n");
 

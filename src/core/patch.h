@@ -83,6 +83,7 @@ struct channel_t
 	uint32_t    midiOutLplaying;
 	uint32_t    midiOutLmute;
 	uint32_t    midiOutLsolo;
+	bool        armed;
 	// sample channel
 	std::string samplePath;
 	int         key;

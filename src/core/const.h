@@ -392,6 +392,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_MIDI_OUT_CHAN        "midi_out_chan"
 #define PATCH_KEY_CHANNEL_PLUGINS              "plugins"
 #define PATCH_KEY_CHANNEL_ACTIONS              "actions"
+#define PATCH_KEY_CHANNEL_ARMED                "armed"
 #define PATCH_KEY_ACTION_TYPE                  "type"
 #define PATCH_KEY_ACTION_FRAME                 "frame"
 #define PATCH_KEY_ACTION_F_VALUE               "f_value"

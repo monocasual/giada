@@ -143,7 +143,7 @@ void glue_deleteChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_freeChannel(Channel *ch)
+void glue_freeChannel(Channel* ch)
 {
 	if (ch->status == STATUS_PLAY) {
 		if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
@@ -170,20 +170,20 @@ void glue_freeChannel(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleArm(Channel *ch, bool gui)
+void glue_toggleArm(Channel* ch, bool gui)
 {
-	ch->armed = !ch->armed;
+	ch->setArmed(!ch->isArmed());
 	if (!gui)
-		ch->guiChannel->arm->value(ch->armed);
+		ch->guiChannel->arm->value(ch->isArmed());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleInputMonitor(Channel *ch)
+void glue_toggleInputMonitor(Channel* ch)
 {
-	SampleChannel *sch = static_cast<SampleChannel*>(ch);
+	SampleChannel* sch = static_cast<SampleChannel*>(ch);
 	sch->inputMonitor = !sch->inputMonitor;
 }
 
@@ -191,10 +191,10 @@ void glue_toggleInputMonitor(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_cloneChannel(Channel *src)
+int glue_cloneChannel(Channel* src)
 {
-	Channel *ch    = mh::addChannel(src->type);
-	geChannel *gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), 
+	Channel* ch    = mh::addChannel(src->type);
+	geChannel* gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), 
 		ch, src->guiChannel->getSize());
 
 	ch->guiChannel = gch;

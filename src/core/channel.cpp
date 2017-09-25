@@ -52,8 +52,9 @@ using namespace giada::m;
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
 	midiFilter     (-1),
-	pan            (0.5f),
 	previewMode    (G_PREVIEW_NONE),
+	pan            (0.5f),
+	armed          (false),
 	type           (type),
 	status         (status),
 	key            (0),
@@ -66,7 +67,6 @@ Channel::Channel(int type, int status, int bufferSize)
 	solo           (false),
 	hasActions     (false),
 	readActions    (false),
-	armed          (false),
 	recStatus      (REC_STOPPED),
 	vChan          (nullptr),
 	guiChannel     (nullptr),
@@ -187,7 +187,7 @@ void Channel::sendMidiLmessage(uint32_t learn, const midimap::message_t &msg)
 /* -------------------------------------------------------------------------- */
 
 
-bool Channel::isPlaying()
+bool Channel::isPlaying() const
 {
 	return status & (STATUS_PLAY | STATUS_ENDING);
 }
@@ -203,6 +203,7 @@ int Channel::writePatch(int i, bool isProject)
 	pch.index           = index;
 	pch.size            = guiChannel->getSize();
 	pch.key             = key;
+	pch.armed           = armed;
 	pch.column          = guiChannel->getColumnIndex();
 	pch.mute            = mute;
 	pch.mute_s          = mute_s;
@@ -268,6 +269,7 @@ int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
 	int ret = 1;
 	patch::channel_t* pch = &patch::channels.at(i);
 	key             = pch->key;
+	armed           = pch->armed;
 	type            = pch->type;
 	index           = pch->index;
 	mute            = pch->mute;
@@ -389,7 +391,7 @@ void Channel::setPan(float v)
 }
 
 
-float Channel::getPan()
+float Channel::getPan() const
 {
 	return pan;
 }
@@ -418,9 +420,24 @@ void Channel::setPreviewMode(int m)
 }
 
 
-bool Channel::isPreview()
+bool Channel::isPreview() const
 {
 	return previewMode != G_PREVIEW_NONE;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::setArmed(bool b)
+{
+	armed = b;
+}
+
+
+bool Channel::isArmed() const
+{
+	return armed;
 }
 
 

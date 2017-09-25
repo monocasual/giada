@@ -375,7 +375,7 @@ bool hasArmedSampleChannels()
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
 		Channel *ch = mixer::channels.at(i);
-		if (ch->type == CHANNEL_SAMPLE && ch->armed)
+		if (ch->type == CHANNEL_SAMPLE && ch->isArmed())
 			return true;
 	}
 	return false;

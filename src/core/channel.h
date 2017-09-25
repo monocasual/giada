@@ -70,12 +70,13 @@ protected:
 
   int midiFilter;
 
-	float pan;
-
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
 	int previewMode;
+
+	float pan;
+	bool armed;
 
 	/* sendMidiLMessage
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
@@ -230,7 +231,6 @@ public:
 	bool   solo;
   bool   hasActions;            // has something recorded
   bool   readActions;           // read what's recorded
-	bool   armed;                 // armed for recording
 	int 	 recStatus;             // status of recordings (waiting, ending, ...)
 	float* vChan;                 // virtual channel
   geChannel* guiChannel;        // pointer to a gChannel object, part of the GUI
@@ -266,7 +266,7 @@ public:
 	/* isPlaying
 	 * tell wether the channel is playing or is stopped. */
 
-	bool isPlaying();
+	bool isPlaying() const;
 
 	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */
@@ -276,10 +276,13 @@ public:
 	void sendMidiLplay();
 
 	void setPan(float v);
-	float getPan();
+	float getPan() const;
+
+	void setArmed(bool b);
+	bool isArmed() const;
 
 	void setPreviewMode(int m);
-	bool isPreview();
+	bool isPreview() const;
 
 #ifdef WITH_VST
 

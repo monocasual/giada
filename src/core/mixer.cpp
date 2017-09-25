@@ -542,7 +542,7 @@ void mergeVirtualInput()
 		if (channels.at(i)->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel *ch = static_cast<SampleChannel*>(channels.at(i));
-		if (ch->armed)
+		if (ch->isArmed())
 			memcpy(ch->wave->getData(), vChanInput, clock::getTotalFrames() * sizeof(float));
 	}
 	memset(vChanInput, 0, clock::getTotalFrames() * sizeof(float)); // clear vchan

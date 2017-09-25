@@ -365,7 +365,7 @@ void geSampleChannel::refresh()
 	setColorsByStatus(ch->status, ch->recStatus);
 
 	if (static_cast<SampleChannel*>(ch)->wave != nullptr) {
-		if (mixer::recording && ch->armed)
+		if (mixer::recording && ch->isArmed())
 			mainButton->setInputRecordMode();
 		if (recorder::active) {
 			if (recorder::canRec(ch, clock::isRunning(), mixer::recording))
@@ -430,6 +430,8 @@ void geSampleChannel::update()
 	solo->value(ch->solo);
 
 	mainButton->setKey(ch->key);
+
+	arm->value(ch->isArmed());
 
 #ifdef WITH_VST
 	fx->status = ch->plugins.size() > 0;

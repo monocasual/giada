@@ -30,6 +30,7 @@
 #include "../../../../core/graphics.h"
 #include "../../../../core/midiChannel.h"
 #include "../../../../utils/gui.h"
+#include "../../../../utils/string.h"
 #include "../../../../glue/channel.h"
 #include "../../../../glue/io.h"
 #include "../../../../glue/recorder.h"
@@ -49,9 +50,10 @@
 #include "midiChannel.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -80,9 +82,9 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 
 
-void menuCallback(Fl_Widget *w, void *v)
+void menuCallback(Fl_Widget* w, void* v)
 {
-	geMidiChannel *gch = static_cast<geMidiChannel*>(w);
+	geMidiChannel* gch = static_cast<geMidiChannel*>(w);
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	switch (selectedItem)
@@ -139,7 +141,7 @@ void menuCallback(Fl_Widget *w, void *v)
 /* -------------------------------------------------------------------------- */
 
 
-geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
+geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel* ch)
 	: geChannel(X, Y, W, H, CHANNEL_MIDI, ch)
 {
 	begin();
@@ -197,14 +199,14 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::cb_button      (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_button(); }
-void geMidiChannel::cb_openMenu    (Fl_Widget *v, void *p) { ((geMidiChannel*)p)->__cb_openMenu(); }
+void geMidiChannel::cb_button  (Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_button(); }
+void geMidiChannel::cb_openMenu(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_openMenu(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::__cb_button()
+void geMidiChannel::cb_button()
 {
 	if (button->value())
 		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
@@ -214,7 +216,7 @@ void geMidiChannel::__cb_button()
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::__cb_openMenu()
+void geMidiChannel::cb_openMenu()
 {
 	Fl_Menu_Item rclick_menu[] = {
 		{"Edit actions...", 0, menuCallback, (void*) Menu::EDIT_ACTIONS},
@@ -240,13 +242,13 @@ void geMidiChannel::__cb_openMenu()
 	if (!ch->hasActions)
 		rclick_menu[(int)Menu::CLEAR_ACTIONS].deactivate();
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item *m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
 	if (m)
 		m->do_callback(this, m->user_data());
 	return;
@@ -278,10 +280,10 @@ void geMidiChannel::reset()
 
 void geMidiChannel::update()
 {
-	if (((MidiChannel*) ch)->midiOut) {
-		char tmp[32];
-		sprintf(tmp, "-- MIDI (channel %d) --", ((MidiChannel*) ch)->midiOutChan+1);
-		mainButton->copy_label(tmp);
+	MidiChannel* mch = static_cast<MidiChannel*>(ch);
+	if (mch->midiOut) {
+		string s = "-- MIDI (channel " + gu_toString(mch->midiOutChan + 1) + ") --";
+		mainButton->copy_label(s.c_str());
 	}
 	else
 		mainButton->label("-- MIDI --");
@@ -291,6 +293,8 @@ void geMidiChannel::update()
 	solo->value(ch->solo);
 
 	mainButton->setKey(ch->key);
+
+	arm->value(ch->isArmed());
 
 #ifdef WITH_VST
 	fx->status = ch->plugins.size() > 0;
@@ -327,8 +331,10 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char *l)
-	: geChannelButton(x, y, w, h, l) {}
+geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char* l)
+	: geChannelButton(x, y, w, h, l)
+{
+}
 
 
 /* -------------------------------------------------------------------------- */

@@ -239,6 +239,7 @@ bool readChannels(json_t* jContainer)
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        channel.midiInPitch)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             channel.midiOut)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        channel.midiOutChan)) return 0;
+    if (!storager::setBool  (jChannel, PATCH_KEY_CHANNEL_ARMED,                channel.armed)) return 0;
 
     readActions(jChannel, &channel);
 
@@ -414,6 +415,7 @@ void writeChannels(json_t* jContainer, vector<channel_t>* channels)
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        json_integer(channel.midiInPitch));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             json_integer(channel.midiOut));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        json_integer(channel.midiOutChan));
+    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_ARMED,                json_boolean(channel.armed));
     json_array_append_new(jChannels, jChannel);
 
     writeActions(jChannel, &channel.actions);
