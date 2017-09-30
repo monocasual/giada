@@ -40,16 +40,16 @@ class gdBpmInput : public gdWindow
 {
 private:
 
-	static void cb_update_bpm(Fl_Widget *w, void *p);
-	inline void __cb_update_bpm();
+	static void cb_update(Fl_Widget* w, void* p);
+	void cb_update();
 
-  geInput  *input_a;
-  geInput  *input_b;
-  geButton *ok;
+	geInput* input_a;
+	geInput* input_b;
+	geButton* ok;
 
 public:
 
-	gdBpmInput(const char *label); // pointer to mainWin->timing->bpm->label()
+	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 	~gdBpmInput();
 };
 

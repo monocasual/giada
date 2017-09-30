@@ -34,7 +34,7 @@
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/choice.h"
 #include "../../dialogs/gd_mainWindow.h"
-#include "../../dialogs/gd_bpmInput.h"
+#include "../../dialogs/bpmInput.h"
 #include "../../dialogs/beatsInput.h"
 #include "mainTimer.h"
 

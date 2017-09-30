@@ -32,19 +32,22 @@
 #include "../../core/clock.h"
 #include "../../glue/main.h"
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
-#include "gd_bpmInput.h"
+#include "bpmInput.h"
 #include "gd_mainWindow.h"
 
 
 extern gdMainWindow *mainWin;
 
 
+using std::vector;
+using std::string;
 using namespace giada::m;
 
 
-gdBpmInput::gdBpmInput(const char *label)
+gdBpmInput::gdBpmInput(const char* label)
 : gdWindow(144, 36, "Bpm")
 {
 	if (conf::bpmX)
@@ -52,29 +55,25 @@ gdBpmInput::gdBpmInput(const char *label)
 
 	set_modal();
 
-	input_a = new geInput(8,  8, 30, 20);
-	input_b = new geInput(42, 8, 20, 20);
-	ok 		  = new geButton(66, 8, 70, 20, "Ok");
+	input_a = new geInput(8,  8, 30, G_GUI_UNIT);
+	input_b = new geInput(42, 8, 20, G_GUI_UNIT);
+	ok 		  = new geButton(66, 8, 70, G_GUI_UNIT, "Ok");
 	end();
-
-	char   a[4];
-	snprintf(a, 4, "%d", (int) clock::getBpm());
-	char   b[2];
-	for (unsigned i=0; i<strlen(label); i++)	// looking for the dot
-		if (label[i] == '.') {
-			snprintf(b, 2, "%c", label[i+1]);
-			break;
-		}
 
 	input_a->maximum_size(3);
 	input_a->type(FL_INT_INPUT);
-	input_a->value(a);
+	input_a->value(gu_toString(clock::getBpm()).c_str());
+
+	/* Use the decimal value from the string label. */
+
+	vector<string> tokens;
+	gu_split(label, ".", &tokens);
 	input_b->maximum_size(1);
 	input_b->type(FL_INT_INPUT);
-	input_b->value(b);
+	input_b->value(tokens[1].c_str());
 
 	ok->shortcut(FL_Enter);
-	ok->callback(cb_update_bpm, (void*)this);
+	ok->callback(cb_update, (void*)this);
 
 	gu_setFavicon(this);
 	setId(WID_BPM);
@@ -95,13 +94,13 @@ gdBpmInput::~gdBpmInput()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBpmInput::cb_update_bpm(Fl_Widget *w, void *p) { ((gdBpmInput*)p)->__cb_update_bpm(); }
+void gdBpmInput::cb_update(Fl_Widget* w, void* p) { ((gdBpmInput*)p)->cb_update(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBpmInput::__cb_update_bpm()
+void gdBpmInput::cb_update()
 {
 	if (strcmp(input_a->value(), "") == 0)
 		return;
