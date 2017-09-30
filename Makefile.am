@@ -77,6 +77,8 @@ src/gui/dialogs/gd_warnings.h          \
 src/gui/dialogs/gd_warnings.cpp        \
 src/gui/dialogs/bpmInput.h             \
 src/gui/dialogs/bpmInput.cpp           \
+src/gui/dialogs/channelNameInput.h     \
+src/gui/dialogs/channelNameInput.cpp   \
 src/gui/dialogs/gd_config.h      			 \
 src/gui/dialogs/gd_config.cpp          \
 src/gui/dialogs/gd_devInfo.h           \

@@ -71,6 +71,8 @@ public:
 	void parseAction(giada::m::recorder::action *a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	void receiveMidi(uint32_t msg) override;
+	std::string getName() const override;
+	void setName(const std::string& s) override;
 	bool canInputRec() override;
 
 	/* ------------------------------------------------------------------------ */

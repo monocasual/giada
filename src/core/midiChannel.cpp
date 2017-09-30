@@ -89,6 +89,21 @@ void MidiChannel::addVstMidiEvent(uint32_t msg, int localFrame)
 /* -------------------------------------------------------------------------- */
 
 
+string MidiChannel::getName() const
+{
+	return "TODO";
+}
+
+
+void MidiChannel::setName(const string& s)
+{
+	// TODO
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void MidiChannel::onBar(int frame) {}
 
 

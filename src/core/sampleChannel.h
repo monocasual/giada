@@ -130,6 +130,8 @@ public:
 	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
+	std::string getName() const override;
+	void setName(const std::string& s) override;
 	bool allocBuffers() override;
 
 	void reset(int frame);

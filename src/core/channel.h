@@ -49,18 +49,29 @@ class Channel
 {
 protected:
 
+	/* sendMidiLMessage
+	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
+	to KernelMidi. */
+
+	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t& msg);
+
+	/* calcPanning
+	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
+
+	float calcPanning(int ch);
+
 #ifdef WITH_VST
 
-	/* MidiBuffer contains MIDI events. When ready, events are sent to
-	 * each plugin in the channel. This is available for any kind of
-	 * channel, but it makes sense only for MIDI channels. */
+	/* MidiBuffer contains MIDI events. When ready, events are sent to each plugin 
+	in the channel. This is available for any kind of channel, but it makes sense 
+	only for MIDI channels. */
 
 	juce::MidiBuffer midiBuffer;
 
 #endif
 
 	/* bufferSize
-	 * size of every buffer in this channel (vChan, pChan) */
+	Size of every buffer in this channel (vChan, pChan) */
 
 	int bufferSize;
 
@@ -78,17 +89,6 @@ protected:
 	float pan;
 	bool armed;
 
-	/* sendMidiLMessage
-	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
-	to KernelMidi. */
-
-	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t& msg);
-
-	/* calcPanning
-	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
-
-	float calcPanning(int ch);
-
 public:
 
 	Channel(int type, int status, int bufferSize);
@@ -96,12 +96,12 @@ public:
 	virtual ~Channel();
 
 	/* copy
-	 * Make a shallow copy (no vChan/pChan allocation) of another channel. */
+	Makes a shallow copy (no vChan/pChan allocation) of another channel. */
 
 	virtual void copy(const Channel* src, pthread_mutex_t* pluginMutex) = 0;
 
 	/* readPatch
-	 * Fill channel with data from patch. */
+	Fills channel with data from patch. */
 
 	virtual int readPatch(const std::string& basePath, int i,
     pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality);
@@ -128,54 +128,53 @@ public:
 			bool mixerIsRunning, bool forceStart, bool isUserGenerated) = 0;
 
 	/* stop
-	 * action to do when channel is stopped normally (via key or MIDI). */
+	What to do when channel is stopped normally (via key or MIDI). */
 
 	virtual void stop() = 0;
 
 	/* kill
-	 * action to do when channel stops abruptly. */
+	What to do when channel stops abruptly. */
 
 	virtual void kill(int frame) = 0;
 
 	/* mute
-	 * action to do when channel is muted. If internal == true, set
-	 * internal mute without altering main mute. */
+	What to do when channel is muted. If internal == true, set internal mute 
+	without altering main mute. */
 
 	virtual void setMute  (bool internal) = 0;
 	virtual void unsetMute(bool internal) = 0;
 
 	/* empty
-	 * free any associated resources (e.g. waveform for SAMPLE). */
+	Frees any associated resources (e.g. waveform for SAMPLE). */
 
 	virtual void empty() = 0;
 
 	/* stopBySeq
-	 * action to do when channel is stopped by sequencer. */
+	What to do when channel is stopped by sequencer. */
 
 	virtual void stopBySeq(bool chansStopOnSeqHalt) = 0;
 
 	/* quantize
-	 * start channel according to quantizer. Index = array index of
-	 * mixer::channels, used by recorder. LocalFrame = frame within the current
-   * buffer.  */
+	Starts channel according to quantizer. Index = array index of mixer::channels, 
+	used by recorder. LocalFrame = frame within the current buffer.  */
 
 	virtual void quantize(int index, int localFrame) = 0;
 
 	/* onZero
-	 * action to do when frame goes to zero, i.e. sequencer restart. */
+	What to do when frame goes to zero, i.e. sequencer restart. */
 
 	virtual void onZero(int frame, bool recsStopOnChanHalt) = 0;
 
 	/* onBar
-	 * action to do when a bar has passed. */
+	What to do when a bar has passed. */
 
 	virtual void onBar(int frame) = 0;
 
 	/* parseAction
-	 * do something on a recorded action. Parameters:
-	 * action *a   - action to parse
-	 * localFrame  - frame number of the processed buffer
-	 * globalFrame - actual frame in Mixer */
+	Does something on a recorded action. Parameters:
+		- action *a   - action to parse
+	  - localFrame  - frame number of the processed buffer
+	  - globalFrame - actual frame in Mixer */
 
 	 // TODO - quantize is useless!
 
@@ -183,7 +182,7 @@ public:
     int globalFrame, int quantize, bool mixerIsRunning) = 0;
 
 	/* rewind
-	 * rewind channel when rewind button is pressed. */
+	Rewinds channel when rewind button is pressed. */
 
 	virtual void rewind() = 0;
 
@@ -199,14 +198,20 @@ public:
 
 	virtual bool canInputRec() = 0;
 
+	/* getName, setName
+	Gets/sets the channel name. */
+
+	virtual std::string getName() const = 0;
+	virtual void setName(const std::string& s) = 0;
+
 	/* writePatch
-	 * Fill a patch with channel values. Returns the index of the last
-	 * Patch::channel_t added. */
+	Fills a patch with channel values. Returns the index of the last 
+	Patch::channel_t added. */
 
 	virtual int writePatch(int i, bool isProject);
 
 	/* receiveMidi
-	 * Receives and processes midi messages from external devices. */
+	Receives and processes midi messages from external devices. */
 
 	virtual void receiveMidi(uint32_t msg);
 

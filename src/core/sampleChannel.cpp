@@ -270,6 +270,23 @@ int SampleChannel::save(const char* path)
 /* -------------------------------------------------------------------------- */
 
 
+string SampleChannel::getName() const
+{
+	if (wave == nullptr)
+		return "";
+	return wave->getName();
+}
+
+
+void SampleChannel::setName(const string& s)
+{
+	// TODO
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void SampleChannel::setBegin(int f)
 {
 	/* TODO - Opaque channel's count - everything in SampleChannel should be
