@@ -71,8 +71,8 @@ src/gui/dialogs/gd_about.h             \
 src/gui/dialogs/gd_about.cpp           \
 src/gui/dialogs/gd_mainWindow.h        \
 src/gui/dialogs/gd_mainWindow.cpp      \
-src/gui/dialogs/gd_beatsInput.h        \
-src/gui/dialogs/gd_beatsInput.cpp      \
+src/gui/dialogs/beatsInput.h           \
+src/gui/dialogs/beatsInput.cpp         \
 src/gui/dialogs/gd_warnings.h          \
 src/gui/dialogs/gd_warnings.cpp        \
 src/gui/dialogs/gd_bpmInput.h          \

@@ -1,8 +1,8 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
  *
@@ -22,13 +22,13 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
+
 
 #ifndef GD_BEATSINPUT_H
 #define GD_BEATSINPUT_H
 
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+
 #include "window.h"
 
 
@@ -41,13 +41,13 @@ class gdBeatsInput : public gdWindow
 {
 private:
 
-	static void cb_update_batt(Fl_Widget *w, void *p);
-	inline void __cb_update_batt();
+	static void cb_update(Fl_Widget* w, void* p);
+	void cb_update();
 
-	geInput  *beats;
-	geInput  *bars;
-	geButton *ok;
-	geCheck   *resizeRec;
+	geInput* beats;
+	geInput* bars;
+	geButton* ok;
+	geCheck* resizeRec;
 
 public:
 

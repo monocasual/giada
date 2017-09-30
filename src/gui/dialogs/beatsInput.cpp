@@ -25,7 +25,9 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cstring>
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../../core/mixer.h"
 #include "../../core/clock.h"
 #include "../../core/conf.h"
@@ -34,40 +36,41 @@
 #include "../elems/basics/input.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/check.h"
-#include "gd_beatsInput.h"
+#include "beatsInput.h"
 #include "gd_mainWindow.h"
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow* mainWin;
 
 
 using namespace giada::m;
 
 
 gdBeatsInput::gdBeatsInput()
-	: gdWindow(164, 60, "Beats")
+	: gdWindow(180, 60, "Beats")
 {
 	if (conf::beatsX)
 		resize(conf::beatsX, conf::beatsY, w(), h());
 
 	set_modal();
 
-	beats     = new geInput(8,  8,  35, 20);
-	bars      = new geInput(47, 8,  35, 20);
-	ok 		    = new geButton(86, 8,  70, 20, "Ok");
+	beats     = new geInput(8,  8,  43, G_GUI_UNIT);
+	bars      = new geInput(beats->x()+beats->w()+4, 8,  43, G_GUI_UNIT);
+	ok 		    = new geButton(bars->x()+bars->w()+4, 8,  70, G_GUI_UNIT, "Ok");
 	resizeRec = new geCheck(8,  40, 12, 12, "resize recorded actions");
 	end();
 
-	char buf_bars[3]; sprintf(buf_bars, "%d", clock::getBars());
-	char buf_beats[3]; sprintf(buf_beats, "%d", clock::getBeats());
 	beats->maximum_size(2);
-	beats->value(buf_beats);
+	beats->value(gu_toString(clock::getBeats()).c_str());
 	beats->type(FL_INT_INPUT);
+	
 	bars->maximum_size(2);
-	bars->value(buf_bars);
+	bars->value(gu_toString(clock::getBars()).c_str());
 	bars->type(FL_INT_INPUT);
+	
 	ok->shortcut(FL_Enter);
-	ok->callback(cb_update_batt, (void*)this);
+	ok->callback(cb_update, (void*)this);
+	
 	resizeRec->value(conf::resizeRecordings);
 
 	gu_setFavicon(this);
@@ -76,27 +79,27 @@ gdBeatsInput::gdBeatsInput()
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 gdBeatsInput::~gdBeatsInput()
 {
 	conf::beatsX = x();
 	conf::beatsY = y();
-	conf::resizeRecordings =	resizeRec->value();
+	conf::resizeRecordings = resizeRec->value();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdBeatsInput::cb_update_batt(Fl_Widget *w, void *p) { ((gdBeatsInput*)p)->__cb_update_batt(); }
+void gdBeatsInput::cb_update(Fl_Widget* w, void* p) { ((gdBeatsInput*)p)->cb_update(); }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void gdBeatsInput::__cb_update_batt()
+void gdBeatsInput::cb_update()
 {
 	if (!strcmp(beats->value(), "") || !strcmp(bars->value(), ""))
 		return;
