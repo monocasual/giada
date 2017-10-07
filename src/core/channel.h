@@ -88,6 +88,7 @@ protected:
 
 	float pan;
 	bool armed;
+	std::string name;
 
 public:
 
@@ -198,12 +199,6 @@ public:
 
 	virtual bool canInputRec() = 0;
 
-	/* getName, setName
-	Gets/sets the channel name. */
-
-	virtual std::string getName() const = 0;
-	virtual void setName(const std::string& s) = 0;
-
 	/* writePatch
 	Fills a patch with channel values. Returns the index of the last 
 	Patch::channel_t added. */
@@ -221,7 +216,41 @@ public:
 
 	virtual bool allocBuffers();
 
-	/* ------------------------------------------------------------------------ */
+	/* isPlaying
+	 * tell wether the channel is playing or is stopped. */
+
+	bool isPlaying() const;
+
+	/* sendMidiL*
+	 * send MIDI lightning events to a physical device. */
+
+	void sendMidiLmute();
+	void sendMidiLsolo();
+	void sendMidiLplay();
+
+	void setPan(float v);
+	float getPan() const;
+
+	void setArmed(bool b);
+	bool isArmed() const;
+
+	std::string getName() const;
+	void setName(const std::string& s);
+
+	void setPreviewMode(int m);
+	bool isPreview() const;
+
+#ifdef WITH_VST
+
+	/* getPluginMidiEvents
+	 * Return a reference to midiBuffer stack. This is available for any kind of
+	 * channel, but it makes sense only for MIDI channels. */
+
+	juce::MidiBuffer& getPluginMidiEvents();
+
+	void clearMidiBuffer();
+
+#endif
 
 	int    index;                 // unique id
 	int    type;                  // midi or sample
@@ -265,41 +294,6 @@ public:
   std::vector <Plugin*> plugins;
 #endif
 
-
-	/* ------------------------------------------------------------------------ */
-
-	/* isPlaying
-	 * tell wether the channel is playing or is stopped. */
-
-	bool isPlaying() const;
-
-	/* sendMidiL*
-	 * send MIDI lightning events to a physical device. */
-
-	void sendMidiLmute();
-	void sendMidiLsolo();
-	void sendMidiLplay();
-
-	void setPan(float v);
-	float getPan() const;
-
-	void setArmed(bool b);
-	bool isArmed() const;
-
-	void setPreviewMode(int m);
-	bool isPreview() const;
-
-#ifdef WITH_VST
-
-	/* getPluginMidiEvents
-	 * Return a reference to midiBuffer stack. This is available for any kind of
-	 * channel, but it makes sense only for MIDI channels. */
-
-	juce::MidiBuffer& getPluginMidiEvents();
-
-	void clearMidiBuffer();
-
-#endif
 };
 
 

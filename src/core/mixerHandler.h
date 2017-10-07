@@ -93,11 +93,11 @@ bool startInputRec();
 
 void stopInputRec();
 
-/* uniqueSamplename
- * return true if samplename 'n' is unique. Requires SampleChannel *ch
- * in order to skip check against itself. */
+/* uniqueSamplePath
+Returns true if path 'p' is unique. Requires SampleChannel 'skip' in order
+to skip check against itself. */
 
-bool uniqueSampleName(SampleChannel *ch, const std::string &s);
+bool uniqueSamplePath(const SampleChannel* skip, const std::string& p);
 
 /* hasArmedSampleChannels
 Tells whether Mixer has one or more sample channels armed for input

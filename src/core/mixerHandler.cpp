@@ -115,15 +115,13 @@ int getNewChanIndex()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSampleName(SampleChannel* ch, const string& name)
+bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		if (ch == mixer::channels.at(i))  // skip itself
+	for (const Channel* ch : mixer::channels) {
+		if (skip == ch || ch->type != CHANNEL_SAMPLE) // skip itself and MIDI channels
 			continue;
-		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
-			continue;
-		SampleChannel* other = (SampleChannel*) mixer::channels.at(i);
-		if (other->wave != nullptr && name == other->wave->getName())
+		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
+		if (sch->wave != nullptr && path == sch->wave->getPath())
 			return false;
 	}
 	return true;
@@ -330,19 +328,12 @@ bool startInputRec()
 			continue;
 		}
 
-		ch->pushWave(wave, false);  // false: don't generate name, we provide it
-
-		/* Increase lastTakeId until the sample name TAKE-[n] is unique. */
-
-		while (!uniqueSampleName(ch, ch->wave->getName())) {
-			patch::lastTakeId++;
-			ch->wave->setName("TAKE-" + gu_toString(patch::lastTakeId));
-		}
+		ch->pushWave(wave);
+		ch->setName("TAKE-" + gu_toString(patch::lastTakeId++)); // Increase lastTakeId 
+		channelsReady++;
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "
 			"frame=%d\n", ch->index, clock::getTotalFrames(), mixer::inputTracker);
-
-		channelsReady++;
 	}
 
 	if (channelsReady > 0) {

@@ -444,6 +444,21 @@ bool Channel::isArmed() const
 /* -------------------------------------------------------------------------- */
 
 
+std::string Channel::getName() const
+{
+	return name;
+}
+
+
+void Channel::setName(const std::string& s)
+{
+	name = s;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef WITH_VST
 
 juce::MidiBuffer &Channel::getPluginMidiEvents()

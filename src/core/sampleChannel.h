@@ -42,6 +42,29 @@ class SampleChannel : public Channel
 {
 private:
 
+	/* fillChan
+	Fills 'dest' buffer at point 'offset' with wave data taken from 'start'. If 
+	rewind=false don't rewind internal tracker. Returns new sample position, 
+	in frames. It resamples data if pitch != 1.0f. */
+
+	int fillChan(float* dest, int start, int offset, bool rewind=true);
+
+	/* clearChan
+	 * set data to zero from start to bufferSize-1. */
+
+	void clearChan(float* dest, int start);
+
+	/* calcFadeoutStep
+	 * how many frames are left before the end of the sample? Is there
+	 * enough room for a complete fadeout? Should we shorten it? */
+
+	void calcFadeoutStep();
+
+	/* calcVolumeEnv
+	 * compute any changes in volume done via envelope tool */
+
+	void calcVolumeEnv(int frame);
+
 	/* rsmp_state, rsmp_data
 	 * structs from libsamplerate */
 
@@ -74,35 +97,6 @@ private:
 
 	std::function<void()> onPreviewEnd;
 
-	/* fillChan
-	Fills 'dest' buffer at point 'offset' with wave data taken from 'start'. If 
-	rewind=false don't rewind internal tracker. Returns new sample position, 
-	in frames. It resamples data if pitch != 1.0f. */
-
-	int fillChan(float* dest, int start, int offset, bool rewind=true);
-
-	/* clearChan
-	 * set data to zero from start to bufferSize-1. */
-
-	void clearChan(float* dest, int start);
-
-	/* calcFadeoutStep
-	 * how many frames are left before the end of the sample? Is there
-	 * enough room for a complete fadeout? Should we shorten it? */
-
-	void calcFadeoutStep();
-
-	/* calcVolumeEnv
-	 * compute any changes in volume done via envelope tool */
-
-	void calcVolumeEnv(int frame);
-
-	/* generateUniqueSampleName
-	 * Sample name must be unique. Generate a new samplename with the "-[n]"
-	 * suffix. */
-
-	void generateUniqueSampleName();
-
 public:
 
 	SampleChannel(int bufferSize, bool inputMonitor);
@@ -130,8 +124,6 @@ public:
 	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
-	std::string getName() const override;
-	void setName(const std::string& s) override;
 	bool allocBuffers() override;
 
 	void reset(int frame);
@@ -145,10 +137,9 @@ public:
 	void setXFade(int frame);
 
 	/* pushWave
-	Adds a new wave to an existing channel. It also generates a unique name
-	on request. */
+	Adds a new wave to an existing channel. */
 
-	void pushWave(Wave* w, bool generateName=true);
+	void pushWave(Wave* w);
 
 	/* getPosition
 	 * returns the position of an active sample. If EMPTY o MISSING
@@ -172,11 +163,6 @@ public:
 	void setTrackerPreview(int f);
 	int getTrackerPreview() const;
 
-	/* save
-	 * save sample to file. */
-
-	int save(const char* path);
-
 	/* hardStop
 	 * stop the channel immediately, no further checks. */
 
@@ -192,8 +178,6 @@ public:
 	float getBoost();	
 
 	void setOnEndPreviewCb(std::function<void()> f);
-
-	/* ------------------------------------------------------------------------ */
 
 	Wave* wave;
 	int   tracker;         // chan position

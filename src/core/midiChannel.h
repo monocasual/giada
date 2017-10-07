@@ -49,12 +49,12 @@ public:
   bool    midiOut;           // enable midi output
   uint8_t midiOutChan;       // midi output channel
 
-	void copy(const Channel *src, pthread_mutex_t *pluginMutex) override;
+	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void clear() override;
-	void process(float *outBuffer, float *inBuffer) override;
-	void preview(float *outBuffer) override;
+	void process(float* outBuffer, float *inBuffer) override;
+	void preview(float* outBuffer) override;
 	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
-		  bool forceStart, bool isUserGenerated) override;
+		bool forceStart, bool isUserGenerated) override;
 	void kill(int frame) override;
 	void empty() override;
 	void stopBySeq(bool chansStopOnSeqHalt) override;
@@ -62,25 +62,21 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-	int readPatch(const std::string &basePath, int i, pthread_mutex_t *pluginMutex,
+	int readPatch(const std::string& basePath, int i, pthread_mutex_t* pluginMutex,
     int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject) override;
 	void quantize(int index, int localFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
-	void parseAction(giada::m::recorder::action *a, int localFrame, int globalFrame,
-			int quantize, bool mixerIsRunning) override;
+	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
+		int quantize, bool mixerIsRunning) override;
 	void receiveMidi(uint32_t msg) override;
-	std::string getName() const override;
-	void setName(const std::string& s) override;
 	bool canInputRec() override;
-
-	/* ------------------------------------------------------------------------ */
 
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(giada::m::recorder::action *a, int localFrame);
+	void sendMidi(giada::m::recorder::action* a, int localFrame);
 	void sendMidi(uint32_t data);
 
 #ifdef WITH_VST

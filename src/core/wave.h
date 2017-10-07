@@ -49,7 +49,6 @@ private:
 	bool m_edited;    // edited via editor
 	
 	std::string m_path; // E.g. /path/to/my/sample.wav
-	std::string m_name; // Sample name (can be changed)
 
 public:
 
@@ -61,16 +60,15 @@ public:
 	void setRate(int v);
 	void setChannels(int v);
 	void setPath(const std::string& p);
-	void setName(const std::string& p);
 	void setData(float* data, int size);
 	void setLogical(bool l);
 	void setEdited(bool e);
 
 	std::string getBasename(bool ext=false) const;
+	std::string getExtension() const;
 	int getRate() const;
 	int getChannels() const;
 	std::string getPath() const;	
-	std::string getName() const;
 	int getBits() const;
 	float* getData() const;
 	int getSize() const;        // with channels count

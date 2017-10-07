@@ -65,6 +65,7 @@ struct channel_t
 	int         type;
 	int         index;
 	int         size;
+	std::string name;
 	int         column;
 	int         mute;
 	int         mute_s;

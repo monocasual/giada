@@ -39,6 +39,7 @@
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/sampleEditor.h"
+#include "../../../dialogs/channelNameInput.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/browser/browserSave.h"
@@ -87,6 +88,7 @@ enum class Menu
 	RESIZE_H3,
 	RESIZE_H4,
 	__END_RESIZE_SUBMENU__,
+	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	FREE_CHANNEL,
 	DELETE_CHANNEL
@@ -183,6 +185,10 @@ void menuCallback(Fl_Widget* w, void* v)
 		}
 		case Menu::CLONE_CHANNEL: {
 			glue_cloneChannel(gch->ch);
+			break;
+		}
+		case Menu::RENAME_CHANNEL: {
+			gu_openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		}
 		case Menu::FREE_CHANNEL: {
@@ -311,6 +317,7 @@ void geSampleChannel::__cb_openMenu()
 			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
 			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
 			{0},
+		{"Rename channel", 0, menuCallback, (void*) Menu::RENAME_CHANNEL},
 		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Free channel",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
 		{"Delete channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
@@ -321,10 +328,12 @@ void geSampleChannel::__cb_openMenu()
 		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
+		rclick_menu[(int) Menu::RENAME_CHANNEL].deactivate();
 	}
 
 	if (!ch->hasActions)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
+
 
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
@@ -405,7 +414,7 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			mainButton->label(static_cast<SampleChannel*>(ch)->wave->getName().c_str());
+			mainButton->label(ch->getName().c_str());
 			break;
 	}
 

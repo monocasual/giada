@@ -278,8 +278,7 @@ void toNewChannel(SampleChannel* ch, int a, int b)
 		return;
 	}
 
-	newCh->pushWave(wave, true);
-
+	newCh->pushWave(wave);
 	newCh->guiChannel->update();
 }
 

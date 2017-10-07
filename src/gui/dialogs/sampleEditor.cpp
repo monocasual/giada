@@ -83,7 +83,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 
   gu_setFavicon(this);
   set_non_modal();
-  copy_label(ch->wave->getName().c_str());
+  copy_label(ch->getName().c_str());
 
   size_range(720, 480);
   if (conf::sampleEditorX)

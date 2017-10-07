@@ -34,10 +34,12 @@
 #include "../core/patch.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/waveManager.h"
 #include "../core/clock.h"
 #include "../core/wave.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
+#include "../utils/string.h"
 #include "../utils/fs.h"
 #include "../gui/elems/basics/progress.h"
 #include "../gui/elems/mainWindow/keyboard/column.h"
@@ -290,9 +292,9 @@ void glue_loadPatch(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_saveProject(void *data)
+void glue_saveProject(void* data)
 {
-	gdBrowserSave *browser = (gdBrowserSave*) data;
+	gdBrowserSave* browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getCurrentPath(); //browser->getSelectedItem();
 	string fullPath        = folderPath + G_SLASH + gu_stripExt(name) + ".gprj";
@@ -312,28 +314,40 @@ void glue_saveProject(void *data)
 
 	gu_log("[glue_saveProject] project dir created: %s\n", fullPath.c_str());
 
-	/* copy all samples inside the folder. Takes and logical ones are saved
-	 * via glue_saveSample() */
+	/* Copy all samples inside the folder. Takes and logical ones are saved
+	via glue_saveSample() */
 
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
+	for (const Channel* ch : mixer::channels) {
 
-		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
+		if (ch->type == CHANNEL_MIDI)
 			continue;
 
-		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
+		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
 
-		if (ch->wave == nullptr)
+		if (sch->wave == nullptr)
 			continue;
 
-		/* update the new samplePath: everything now comes from the project
-		 * folder (folderPath). Also remove any existing file. */
+		gu_log("[glue_saveProject] saving file %s\n", sch->wave->getPath().c_str());
 
-		string samplePath = fullPath + G_SLASH + ch->wave->getBasename(true);
+		/* Update the new samplePath: everything now comes from the project folder 
+		(folderPath). */
 
-		if (gu_fileExists(samplePath))
-			remove(samplePath.c_str());
-		if (ch->save(samplePath.c_str()))
-			ch->wave->setPath(samplePath);
+		/* Generate a unique file name.
+		HOWTO:
+		1. set the new samplePath to wave: wave->setPath(samplePath)
+		2. loop all files until the path is unique */
+
+		int k = 0;
+		string samplePath = fullPath + G_SLASH + sch->wave->getBasename(false) + "-" + gu_toString(k) + "." +  sch->wave->getExtension();
+		while (!mh::uniqueSamplePath(sch, samplePath)) {
+			samplePath = fullPath + G_SLASH + sch->wave->getBasename(false) + "-" + gu_toString(k) + "." +  sch->wave->getExtension();
+			k++;
+		}
+		sch->wave->setPath(samplePath);
+
+		gu_log("   new path: %s\n", sch->wave->getPath().c_str());
+
+		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
 	}
 
 	string gptcPath = fullPath + G_SLASH + gu_stripExt(name) + ".gptc";
@@ -373,7 +387,7 @@ void glue_loadSample(void* data)
 
 void glue_saveSample(void *data)
 {
-	gdBrowserSave *browser = (gdBrowserSave*) data;
+	gdBrowserSave* browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getCurrentPath();
 
@@ -390,7 +404,9 @@ void glue_saveSample(void *data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (static_cast<SampleChannel*>(browser->getChannel())->save(filePath.c_str())) {
+	SampleChannel* ch = static_cast<SampleChannel*>(browser->getChannel());
+
+	if (waveManager::save(ch->wave, filePath)) {
 		gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
 		conf::samplePath = gu_dirname(filePath);
 		browser->do_callback();

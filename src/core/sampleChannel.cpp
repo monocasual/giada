@@ -155,23 +155,9 @@ void SampleChannel::copy(const Channel* _src, pthread_mutex_t* pluginMutex)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::generateUniqueSampleName()
-{
-	string oldName = wave->getName();
-	int k = 0;
-	while (!mh::uniqueSampleName(this, wave->getName())) {
-		wave->setName(oldName + "-" + gu_toString(k));
-		k++;
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void SampleChannel::clear()
 {
-	/** TODO - these memsets can be done only if status PLAY (if below),
+	/** TODO - these memsets may be done only if status PLAY (if below),
 	 * but it would require extra clearPChan calls when samples stop */
 
 	std::memset(vChan, 0, sizeof(float) * bufferSize);
@@ -255,32 +241,6 @@ void SampleChannel::onBar(int frame)
 			sendMidiLplay();
 		}
 	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::save(const char* path)
-{
-	return waveManager::save(wave, path);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string SampleChannel::getName() const
-{
-	if (wave == nullptr)
-		return "";
-	return wave->getName();
-}
-
-
-void SampleChannel::setName(const string& s)
-{
-	// TODO
 }
 
 
@@ -869,15 +829,14 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(Wave* w, bool generateName)
+void SampleChannel::pushWave(Wave* w)
 {
 	sendMidiLplay();     // FIXME - why here?!?!
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
 	end    = (wave->getSize() - 1) * wave->getChannels(); // TODO - Opaque channels' count
-	if (generateName)
-		generateUniqueSampleName();
+	name   = wave->getBasename();
 }
 
 

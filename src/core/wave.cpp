@@ -31,6 +31,7 @@
 #include <cstring>  // memcpy
 #include "../utils/fs.h"
 #include "../utils/log.h"
+#include "../utils/string.h"
 #include "const.h"
 #include "wave.h"
 
@@ -57,8 +58,7 @@ Wave::Wave(float* data, int size, int channels, int rate, int bits,
   m_bits    (bits),
   m_logical (false),
   m_edited  (false),
-  m_path    (path),
-  m_name    (gu_stripExt(gu_basename(path)))
+  m_path    (path)
 {
 }	
 
@@ -83,8 +83,7 @@ Wave::Wave(const Wave& other)
   m_bits    (other.m_bits),	
 	m_logical (true),   // a cloned wave does not exist on disk
 	m_edited  (false),
-	m_path    (other.m_path),
-	m_name    (other.m_name)
+	m_path    (other.m_path)
 {
 	m_data = new float[m_size];
 	memcpy(m_data, other.m_data, m_size * sizeof(float));
@@ -126,25 +125,9 @@ string Wave::getBasename(bool ext) const
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setName(const string& n)
-{
-	string ext = gu_getExt(m_path);
-	m_name = gu_stripExt(gu_basename(n));
-	m_path = gu_dirname(m_path) + G_SLASH + m_name + "." + ext;
-	m_logical  = true;
-
-	/* A wave with updated m_name must become logical, since the underlying file
-	does not exist yet. */
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 int Wave::getRate() const { return m_rate; }
 int Wave::getChannels() const { return m_channels; }
 std::string Wave::getPath() const { return m_path; }
-std::string Wave::getName() const { return m_name; }
 float* Wave::getData() const { return m_data; }
 int Wave::getSize() const { return m_size / m_channels; }
 int Wave::getBits() const { return m_bits; }
@@ -158,6 +141,15 @@ bool Wave::isEdited() const { return m_edited; }
 int Wave::getDuration() const
 {
 	return m_size / m_channels / m_rate;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::string Wave::getExtension() const
+{
+	return gu_getExt(m_path);
 }
 
 

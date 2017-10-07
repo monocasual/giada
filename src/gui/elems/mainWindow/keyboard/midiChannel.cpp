@@ -35,7 +35,7 @@
 #include "../../../../glue/io.h"
 #include "../../../../glue/recorder.h"
 #include "../../../dialogs/gd_mainWindow.h"
-#include "../../../dialogs/sampleEditor.h"
+#include "../../../dialogs/channelNameInput.h"
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/gd_keyGrabber.h"
@@ -75,6 +75,7 @@ enum class Menu
 	RESIZE_H3,
 	RESIZE_H4,
 	__END_RESIZE_SUBMENU__,
+	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	DELETE_CHANNEL
 };
@@ -129,6 +130,9 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		case Menu::CLONE_CHANNEL:
 			glue_cloneChannel(gch->ch);
+			break;		
+		case Menu::RENAME_CHANNEL:
+			gu_openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		case Menu::DELETE_CHANNEL:
 			glue_deleteChannel(gch->ch);
@@ -233,6 +237,7 @@ void geMidiChannel::cb_openMenu()
 			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
 			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
 			{0},
+		{"Rename channel",  0, menuCallback, (void*) Menu::RENAME_CHANNEL},
 		{"Clone channel",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Delete channel", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},
 		{0}

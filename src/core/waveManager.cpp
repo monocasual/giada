@@ -142,8 +142,6 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 	Wave* wave = new Wave(data, size, G_DEFAULT_AUDIO_CHANS, samplerate, 
 		G_DEFAULT_BIT_DEPTH, "");
 	wave->setLogical(true);
-	wave->setName(name);
-	wave->setPath(gu_getCurrentPath() + G_SLASH + wave->getName());
 
 	*out = wave;
 
@@ -171,7 +169,6 @@ int createFromWave(const Wave* src, int a, int b, Wave** out)
 	Wave* wave = new Wave(data, size, numChans, src->getRate(),
 		src->getBits(), src->getPath());
 	wave->setLogical(true);
-	wave->setName(src->getName() + " part");
 
 	*out = wave;
 

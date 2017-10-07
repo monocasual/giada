@@ -360,6 +360,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_TYPE                 "type"
 #define PATCH_KEY_CHANNEL_INDEX                "index"
 #define PATCH_KEY_CHANNEL_SIZE                 "size"
+#define PATCH_KEY_CHANNEL_NAME                 "name"
 #define PATCH_KEY_CHANNEL_COLUMN               "column"
 #define PATCH_KEY_CHANNEL_MUTE                 "mute"
 #define PATCH_KEY_CHANNEL_MUTE_S               "mute_s"
