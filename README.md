@@ -20,7 +20,7 @@ Giada is a free, minimal, hardcore audio tool for DJs, live performers and elect
 * unlimited number of channels (controllable via computer keyboard);
 * several playback modes and combinations;
 * BPM and beat sync with sample-accurate loop engine;
-* VST and VSTi (instrument) plugin support;
+* VST and VSTi (instrument) plug-in support;
 * MIDI input and output support, featuring custom [MIDI lightning messages](https://github.com/monocasual/giada-midimaps);
 * super-sleek, built-in wave editor;
 * live sampler from external inputs;
@@ -48,6 +48,8 @@ Found a typo or a terrible mistake? Feel free to clone the [website repository](
 ## Build Giada from source
 
 We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](http://giadamusic.com/documentation/show/compiling-from-source).
+
+Something went wrong? Try our new [Docker image](https://github.com/monocasual/giada-docker) for building and running Giada without hurdles. 
 
 ## Bugs, requests and questions for non-developers
 
