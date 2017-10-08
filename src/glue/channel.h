@@ -40,7 +40,7 @@ class gdSampleEditor;
 /* addChannel
  * add an empty new channel to the stack. Returns the new channel. */
 
-Channel *glue_addChannel(int column, int type, int size);
+Channel* glue_addChannel(int column, int type, int size);
 
 /* loadChannel
  * fill an existing channel with a wave. */
@@ -74,14 +74,8 @@ void glue_setSoloOn (Channel* ch, bool gui=true);
 void glue_setSoloOff(Channel* ch, bool gui=true);
 void glue_setVolume(Channel* ch, float v, bool gui=true, bool editor=false);
 void glue_setName(Channel* ch, const std::string& name);
-
-/* TODO move to glue_sampleEditor */
 void glue_setPitch(SampleChannel* ch, float val);
-
-/* TODO move to glue_sampleEditor */
 void glue_setPanning(SampleChannel* ch, float val);
-
-/* TODO move to glue_sampleEditor */
 void glue_setBoost(SampleChannel* ch, float val);
 
 /* start/stopReadingRecs
