@@ -34,18 +34,35 @@
 #include <string>
 
 
-bool gu_fileExists(const std::string &path);
-bool gu_dirExists(const std::string &path);
-bool gu_isDir(const std::string &path);
-bool gu_isProject(const std::string &path);
-bool gu_mkdir(const std::string &path);
+bool gu_fileExists(const std::string& path);
+bool gu_dirExists(const std::string& path);
+bool gu_isDir(const std::string& path);
+bool gu_isProject(const std::string& path);
+bool gu_mkdir(const std::string& path);
 std::string gu_getCurrentPath();
 std::string gu_getHomePath();
-std::string gu_basename(const std::string &s);
-std::string gu_dirname(const std::string &s);
-std::string gu_getExt(const std::string &s);
-std::string gu_stripExt(const std::string &s);
-std::string gu_stripFileUrl(const std::string &s);
+
+/* gu_basename
+/path/to/file.txt -> file.txt */
+
+std::string gu_basename(const std::string& s);
+
+/* gu_dirname
+/path/to/file.txt -> /path/to */
+
+std::string gu_dirname(const std::string& s);
+
+/* gu_getExt
+/path/to/file.txt -> txt */
+
+std::string gu_getExt(const std::string& s);
+
+/* gu_stripExt
+/path/to/file.txt -> /path/to/file */
+
+std::string gu_stripExt(const std::string& s);
+
+std::string gu_stripFileUrl(const std::string& s);
 
 
 #endif
