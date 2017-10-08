@@ -59,10 +59,15 @@ public:
 
 	void setRate(int v);
 	void setChannels(int v);
-	void setPath(const std::string& p);
 	void setData(float* data, int size);
 	void setLogical(bool l);
 	void setEdited(bool e);
+
+	/* setPath
+	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
+	extension, e.g. : /path/to/sample-[id].wav */
+	 
+	void setPath(const std::string& p, int id=-1);
 
 	std::string getBasename(bool ext=false) const;
 	std::string getExtension() const;

@@ -171,9 +171,22 @@ float* Wave::getFrame(int f) const
 
 void Wave::setRate(int v) { m_rate = v; }
 void Wave::setChannels(int v) { m_channels = v; }
-void Wave::setPath(const string& p) { m_path = p; }
 void Wave::setLogical(bool l) { m_logical = l; }
 void Wave::setEdited(bool e) { m_edited = e; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Wave::setPath(const string& p, int id) 
+{ 
+	if (id == -1)
+		m_path = p; 
+	else 
+		m_path = gu_stripExt(p) + "-" + gu_toString(id) + "." + gu_getExt(p);
+
+
+}
 
 
 /* -------------------------------------------------------------------------- */
