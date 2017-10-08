@@ -363,6 +363,7 @@ src/core/storager.cpp        \
 src/core/recorder.cpp        \
 src/utils/fs.cpp             \
 src/utils/string.cpp         \
+src/utils/time.cpp           \
 src/utils/log.cpp
 
 if WITH_VST

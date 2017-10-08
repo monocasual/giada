@@ -26,6 +26,20 @@ TEST_CASE("Test Wave class")
 		REQUIRE(wave->getPath() == "path/to/sample.wav");
 		REQUIRE(wave->getBasename() == "sample");
 		REQUIRE(wave->getBasename(true) == "sample.wav");
+	}
+
+	SECTION("test path")
+	{
+		wave = std::unique_ptr<Wave>(new Wave(nullptr, BUFFER_SIZE, CHANNELS, 
+			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
+
+		wave->setPath("path/is/now/different.mp3");
+
+		REQUIRE(wave->getPath() == "path/is/now/different.mp3");
+
+		wave->setPath("path/is/now/different.mp3", 5);
+
+		REQUIRE(wave->getPath() == "path/is/now/different-5.mp3");
 	}  
 
 	SECTION("test change name")
@@ -33,9 +47,9 @@ TEST_CASE("Test Wave class")
 		wave = std::unique_ptr<Wave>(new Wave(nullptr, BUFFER_SIZE, CHANNELS, 
 			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
 
-		REQUIRE(wave->getPath() == "path/to/waveform.wav");
-		REQUIRE(wave->getBasename() == "waveform");
-		REQUIRE(wave->getBasename(true) == "waveform.wav");
+		REQUIRE(wave->getPath() == "path/to/sample.wav");
+		REQUIRE(wave->getBasename() == "sample");
+		REQUIRE(wave->getBasename(true) == "sample.wav");
 	}
 
 	SECTION("test memory cleanup")
