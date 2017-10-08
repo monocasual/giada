@@ -202,6 +202,7 @@ int Channel::writePatch(int i, bool isProject)
 	pch.type            = type;
 	pch.index           = index;
 	pch.size            = guiChannel->getSize();
+	pch.name            = name;
 	pch.key             = key;
 	pch.armed           = armed;
 	pch.column          = guiChannel->getColumnIndex();
@@ -271,6 +272,7 @@ int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
 	key             = pch->key;
 	armed           = pch->armed;
 	type            = pch->type;
+	name            = pch->name;
 	index           = pch->index;
 	mute            = pch->mute;
 	mute_s          = pch->mute_s;

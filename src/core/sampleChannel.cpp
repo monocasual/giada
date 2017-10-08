@@ -966,15 +966,15 @@ void SampleChannel::stop()
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string &basePath, int i,
-		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
+int SampleChannel::readPatch(const string& basePath, int i,
+		pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality)
 {
 	/* load channel's data first: if the sample is missing or wrong, the channel
 	 * is not completely blank. */
 
 	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
 
-	patch::channel_t *pch = &patch::channels.at(i);
+	const patch::channel_t* pch = &patch::channels.at(i);
 
 	mode              = pch->mode;
 	boost             = pch->boost;
@@ -984,13 +984,14 @@ int SampleChannel::readPatch(const string &basePath, int i,
 	midiInPitch       = pch->midiInPitch;
   inputMonitor      = pch->inputMonitor;
 
-  Wave *w = nullptr;
+  Wave* w = nullptr;
   int res = waveManager::create(basePath + pch->samplePath, &w); 
 
 	if (res == G_RES_OK) {
 		pushWave(w);
+		setName(pch->name);
 		setBegin(pch->begin);
-		setEnd  (pch->end);
+		setEnd(pch->end);
 		setPitch(pch->pitch);
 	}
 	else {

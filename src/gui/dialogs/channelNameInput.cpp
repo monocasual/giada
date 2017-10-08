@@ -24,13 +24,8 @@
  *
  * -------------------------------------------------------------------------- */
 
-/*
-#include <cstring>
-#include "../../core/conf.h"
-#include "../../core/mixer.h"
-#include "../../core/clock.h"
-#include "../../glue/main.h"
-#include "../../utils/string.h"*/
+
+#include "../../glue/channel.h"
 #include "../../utils/gui.h"
 #include "../../core/const.h"
 #include "../../core/channel.h"
@@ -93,9 +88,6 @@ void gdChannelNameInput::cb_update(Fl_Widget* w, void* p) { ((gdChannelNameInput
 
 void gdChannelNameInput::cb_update()
 {
-	/*
-	if (strcmp(input_a->value(), "") == 0)
-		return;
-	glue_setBpm(input_a->value(), input_b->value());*/
+	glue_setName(m_ch, m_name->value());
 	do_callback();
 }

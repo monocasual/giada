@@ -113,9 +113,9 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 
 Channel* glue_addChannel(int column, int type, int size)
 {
-	Channel* ch     = mh::addChannel(type);
-	geChannel* gch  = G_MainWin->keyboard->addChannel(column, ch, size);
-	ch->guiChannel  = gch;
+	Channel* ch    = mh::addChannel(type);
+	geChannel* gch = G_MainWin->keyboard->addChannel(column, ch, size);
+	ch->guiChannel = gch;
 	return ch;
 }
 
@@ -390,6 +390,16 @@ void glue_setBoost(SampleChannel *ch, float val)
 		gdEditor->boostTool->refresh();
 		Fl::unlock();
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setName(Channel* ch, const string& name)
+{
+	ch->setName(name);
+	ch->guiChannel->update();
 }
 
 

@@ -63,7 +63,7 @@ using namespace giada::m;
 
 #ifdef WITH_VST
 
-static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<patch::plugin_t> *patch)
+static void glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<patch::plugin_t> *patch)
 {
 	for (unsigned i=0; i<host->size(); i++) {
 		Plugin *pl = host->at(i);
@@ -83,7 +83,7 @@ static void __glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<pat
 /* -------------------------------------------------------------------------- */
 
 
-static void __glue_fillPatchColumns__()
+static void glue_fillPatchColumns__()
 {
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
 		geColumn *gCol = G_MainWin->keyboard->getColumn(i);
@@ -108,7 +108,7 @@ static void __glue_fillPatchColumns__()
 /* -------------------------------------------------------------------------- */
 
 
-static void __glue_fillPatchChannels__(bool isProject)
+static void glue_fillPatchChannels__(bool isProject)
 {
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
 		mixer::channels.at(i)->writePatch(i, isProject);
@@ -119,7 +119,7 @@ static void __glue_fillPatchChannels__(bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-static void __glue_fillPatchGlobals__(const string &name)
+static void glue_fillPatchGlobals__(const string &name)
 {
 	patch::version      = G_VERSION_STR;
 	patch::versionMajor = G_VERSION_MAJOR;
@@ -136,9 +136,9 @@ static void __glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-	__glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_IN),
+	glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_IN),
 			&patch::masterInPlugins);
-	__glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_OUT),
+	glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::MASTER_OUT),
 			&patch::masterOutPlugins);
 
 #endif
@@ -148,14 +148,14 @@ static void __glue_fillPatchGlobals__(const string &name)
 /* -------------------------------------------------------------------------- */
 
 
-static bool __glue_savePatch__(const string &fullPath, const string &name,
+static bool glue_savePatch__(const string &fullPath, const string &name,
 		bool isProject)
 {
 	patch::init();
 
-	__glue_fillPatchGlobals__(name);
-	__glue_fillPatchChannels__(isProject);
-	__glue_fillPatchColumns__();
+	glue_fillPatchGlobals__(name);
+	glue_fillPatchChannels__(isProject);
+	glue_fillPatchColumns__();
 
 	if (patch::write(fullPath)) {
 		gu_updateMainWinLabel(name);
@@ -184,7 +184,7 @@ void glue_savePatch(void *data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (__glue_savePatch__(fullPath, name, false)) {  // false == not a project
+	if (glue_savePatch__(fullPath, name, false)) {  // false == not a project
 		conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
@@ -330,13 +330,9 @@ void glue_saveProject(void* data)
 		gu_log("[glue_saveProject] saving file %s\n", sch->wave->getPath().c_str());
 
 		/* Update the new samplePath: everything now comes from the project folder 
-		(folderPath). */
-
-		/* Generate a unique file name.
-		HOWTO:
-		1. set the new samplePath to wave: wave->setPath(samplePath)
-		2. loop all files until the path is unique */
-
+		(folderPath). Also make sure the file path is unique inside the project
+		folder. */
+		/* TODO - make this shit less ugly with wave::setPath(newPath, id); */
 		int k = 0;
 		string samplePath = fullPath + G_SLASH + sch->wave->getBasename(false) + "-" + gu_toString(k) + "." +  sch->wave->getExtension();
 		while (!mh::uniqueSamplePath(sch, samplePath)) {
@@ -351,7 +347,7 @@ void glue_saveProject(void* data)
 	}
 
 	string gptcPath = fullPath + G_SLASH + gu_stripExt(name) + ".gptc";
-	if (__glue_savePatch__(gptcPath, name, true)) // true == it's a project
+	if (glue_savePatch__(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
 		gdAlert("Unable to save the project!");

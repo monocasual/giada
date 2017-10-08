@@ -286,13 +286,18 @@ void geMidiChannel::reset()
 
 void geMidiChannel::update()
 {
-	MidiChannel* mch = static_cast<MidiChannel*>(ch);
-	if (mch->midiOut) {
-		string s = "-- MIDI (channel " + gu_toString(mch->midiOutChan + 1) + ") --";
-		mainButton->copy_label(s.c_str());
-	}
+	const MidiChannel* mch = static_cast<const MidiChannel*>(ch);
+
+	string label; 
+	if (mch->getName() == "")
+		label = "-- MIDI --";
 	else
-		mainButton->label("-- MIDI --");
+		label = mch->getName().c_str();
+
+	if (mch->midiOut) 
+		label += " (ch " + gu_toString(mch->midiOutChan + 1) + " out)";
+
+	mainButton->label(label.c_str());
 
 	vol->value(ch->volume);
 	mute->value(ch->mute);
