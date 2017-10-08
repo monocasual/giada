@@ -44,7 +44,7 @@ extern gdMainWindow* mainWin;
 
 
 gdChannelNameInput::gdChannelNameInput(Channel* ch)
-: gdWindow(400, 36, "New channel name"),
+: gdWindow(400, 64, "New channel name"),
   m_ch    (ch)
 {
 	//if (conf::bpmX)
@@ -52,14 +52,17 @@ gdChannelNameInput::gdChannelNameInput(Channel* ch)
 
 	set_modal();
 
-	m_name = new geInput(8,  8, 100, G_GUI_UNIT);
-	m_ok 	= new geButton(m_name->x()+m_name->w()+4, 8, 70, G_GUI_UNIT, "Ok");
+	m_name = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
+	m_ok = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y()+m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, "Ok");
+	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, "Cancel");
 	end();
 
 	m_name->value(m_ch->getName().c_str());
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->callback(cb_update, (void*)this);
+
+	m_cancel->callback(cb_cancel, (void*)this);
 
 	gu_setFavicon(this);
 	setId(WID_SAMPLE_NAME);
@@ -81,6 +84,16 @@ gdChannelNameInput::~gdChannelNameInput()
 
 
 void gdChannelNameInput::cb_update(Fl_Widget* w, void* p) { ((gdChannelNameInput*)p)->cb_update(); }
+void gdChannelNameInput::cb_cancel(Fl_Widget* w, void* p) { ((gdChannelNameInput*)p)->cb_cancel(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdChannelNameInput::cb_cancel()
+{
+	do_callback();
+}
 
 
 /* -------------------------------------------------------------------------- */

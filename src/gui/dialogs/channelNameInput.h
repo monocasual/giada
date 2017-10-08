@@ -42,12 +42,15 @@ class gdChannelNameInput : public gdWindow
 private:
 
 	static void cb_update(Fl_Widget* w, void* p);
+	static void cb_cancel(Fl_Widget* w, void* p);
 	void cb_update();
+	void cb_cancel();
 
 	Channel* m_ch;
 
 	geInput* m_name;
 	geButton* m_ok;
+	geButton* m_cancel;
 
 public:
 
