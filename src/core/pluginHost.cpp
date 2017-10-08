@@ -30,6 +30,7 @@
 
 #include "../utils/log.h"
 #include "../utils/fs.h"
+#include "../utils/string.h"
 #include "const.h"
 #include "channel.h"
 #include "plugin.h"
@@ -61,10 +62,10 @@ juce::KnownPluginList knownPluginList;
 /* unknownPluginList
  * List of unrecognized plugins found in a patch. */
 
-std::vector<std::string> unknownPluginList;
+vector<string> unknownPluginList;
 
-std::vector<Plugin*> masterOut;
-std::vector<Plugin*> masterIn;
+vector<Plugin*> masterOut;
+vector<Plugin*> masterIn;
 
 /* Audio|MidiBuffer
  * Dynamic buffers. */
@@ -78,6 +79,34 @@ int buffersize;
  * If some plugins from any stack are missing. */
 
 bool missingPlugins;
+
+/* findPluginDescription
+Browses the list of known plug-ins until plug-in with id == 'id' is found.
+Unfortunately knownPluginList.getTypeForIdentifierString(id) doesn't work for
+VSTs: their ID is based on the plug-in file location. E.g.:
+
+	/home/vst/mdaAmbience.so      -> VST-mdaAmbience-18fae2d2-6d646141
+	/home/vst-test/mdaAmbience.so -> VST-mdaAmbience-b328b2f6-6d646141
+
+The following function simply drops the first hash code during comparison. */
+
+const juce::PluginDescription* findPluginDescription(const string& id)
+{
+	vector<string> idParts;
+	gu_split(id, "-", &idParts);
+
+	for (const juce::PluginDescription* pd : knownPluginList)
+	{
+		vector<string> tmpIdParts;
+		
+		gu_split(pd->createIdentifierString().toStdString(), "-", &tmpIdParts);
+		if (idParts[0] == tmpIdParts[0] && 
+		    idParts[1] == tmpIdParts[1] &&
+		    idParts[3] == tmpIdParts[3])
+			return pd;
+	}
+	return nullptr;
+}
 
 }; // {anonymous}
 
@@ -190,6 +219,8 @@ Plugin* addPlugin(const string& fid, int stackType, pthread_mutex_t* mutex,
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
 
+findPluginDescription(fid);
+
 	juce::PluginDescription* pd = knownPluginList.getTypeForIdentifierString(fid);
 	if (pd == nullptr) {
 		gu_log("[pluginHost::addPlugin] no plugin found with fid=%s! Trying with "
@@ -239,13 +270,11 @@ Plugin* addPlugin(int index, int stackType, pthread_mutex_t* mutex,
 	juce::PluginDescription* pd = knownPluginList.getType(index);
 	if (pd) {
 		gu_log("[pluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
-			pd->fileOrIdentifier.toStdString().c_str(), pd->name.toStdString().c_str());
-		return addPlugin(pd->fileOrIdentifier.toStdString(), stackType, mutex, ch);
+			pd->createIdentifierString().toRawUTF8(), pd->name.toRawUTF8());
+		return addPlugin(pd->createIdentifierString().toStdString(), stackType, mutex, ch);
 	}
-	else {
-		gu_log("[pluginHost::addPlugin] no plugins found at index=%d!\n", index);
-		return nullptr;
-	}
+	gu_log("[pluginHost::addPlugin] no plugins found at index=%d!\n", index);
+	return nullptr;
 }
 
 

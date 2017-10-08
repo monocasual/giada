@@ -43,7 +43,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
   if (index >= pluginHost::countAvailablePlugins())
     return nullptr;
 
-  return pluginHost::addPlugin(index, stackType,  &mixer::mutex_plugins, ch);
+  return pluginHost::addPlugin(index, stackType, &mixer::mutex_plugins, ch);
 }
 
 
