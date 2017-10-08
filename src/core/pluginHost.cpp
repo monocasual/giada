@@ -219,9 +219,7 @@ Plugin* addPlugin(const string& fid, int stackType, pthread_mutex_t* mutex,
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
 
-findPluginDescription(fid);
-
-	juce::PluginDescription* pd = knownPluginList.getTypeForIdentifierString(fid);
+	const juce::PluginDescription* pd = findPluginDescription(fid);
 	if (pd == nullptr) {
 		gu_log("[pluginHost::addPlugin] no plugin found with fid=%s! Trying with "
 			"deprecated mode...\n", fid.c_str());
