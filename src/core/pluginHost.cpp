@@ -211,10 +211,7 @@ int loadList(const string& filepath)
 Plugin* addPlugin(const string& fid, int stackType, pthread_mutex_t* mutex, 
 	Channel* ch)
 {
-	/* Get the proper stack to add the plugin to */
-
-	vector<Plugin*>* pStack;
-	pStack = getStack(stackType, ch);
+	vector<Plugin*>* pStack = getStack(stackType, ch);
 
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
@@ -362,8 +359,7 @@ string getUnknownPluginInfo(int i)
 
 void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch)
 {
-	vector<Plugin*>* pStack;
-	pStack = getStack(stackType, ch);
+	vector<Plugin*>* pStack = getStack(stackType, ch);
 
 	if (pStack->size() == 0)
 		return;
