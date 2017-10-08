@@ -482,6 +482,8 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_BEATS_Y                  "beats_y"
 #define CONF_KEY_ABOUT_X                  "about_x"
 #define CONF_KEY_ABOUT_Y                  "about_y"
+#define CONF_KEY_NAME_X                   "name_x"
+#define CONF_KEY_NAME_Y                   "name_y"
 #define CONF_KEY_PLUGIN_CHOOSER_X         "plugin_chooser_x"
 #define CONF_KEY_PLUGIN_CHOOSER_Y         "plugin_chooser_y"
 #define CONF_KEY_PLUGIN_CHOOSER_W         "plugin_chooser_w"

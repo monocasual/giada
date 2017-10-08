@@ -28,27 +28,22 @@
 #include "../../glue/channel.h"
 #include "../../utils/gui.h"
 #include "../../core/const.h"
+#include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "channelNameInput.h"
-#include "gd_mainWindow.h"
 
 
-extern gdMainWindow* mainWin;
-
-
-//using std::vector;
-//using std::string;
-//using namespace giada::m;
+using namespace giada::m;
 
 
 gdChannelNameInput::gdChannelNameInput(Channel* ch)
 : gdWindow(400, 64, "New channel name"),
   m_ch    (ch)
 {
-	//if (conf::bpmX)
-	//	resize(conf::bpmX, conf::bpmY, w(), h());
+	if (conf::nameX)
+		resize(conf::nameX, conf::nameY, w(), h());
 
 	set_modal();
 
@@ -75,8 +70,8 @@ gdChannelNameInput::gdChannelNameInput(Channel* ch)
 
 gdChannelNameInput::~gdChannelNameInput()
 {
-	//conf::bpmX = x();
-	//conf::bpmY = y();
+	conf::nameX = x();
+	conf::nameY = y();
 }
 
 

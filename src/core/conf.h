@@ -104,6 +104,7 @@ extern int configX, configY;
 extern int bpmX, bpmY;
 extern int beatsX, beatsY;
 extern int aboutX, aboutY;
+extern int nameX, nameY;
 
 #ifdef WITH_VST
 

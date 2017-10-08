@@ -238,6 +238,9 @@ int beatsY = 0;
 int aboutX = 0;
 int aboutY = 0;
 
+int nameX = 0;
+int nameY = 0;
+
 #ifdef WITH_VST
 
 int pluginChooserX   = 0;
@@ -365,6 +368,8 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_BEATS_Y, beatsY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
+  if (!storager::setInt(jRoot, CONF_KEY_NAME_X, nameX)) return 0;
+  if (!storager::setInt(jRoot, CONF_KEY_NAME_Y, nameY)) return 0;
   if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_X, midiInputX)) return 0;
   if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
   if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
@@ -470,7 +475,9 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_BEATS_X,                   json_integer(beatsX));
 	json_object_set_new(jRoot, CONF_KEY_BEATS_Y,                   json_integer(beatsY));
 	json_object_set_new(jRoot, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
-	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));
+	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));	
+	json_object_set_new(jRoot, CONF_KEY_NAME_X,                    json_integer(nameX));
+	json_object_set_new(jRoot, CONF_KEY_NAME_Y,                    json_integer(nameY));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_X,              json_integer(midiInputX));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
