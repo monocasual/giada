@@ -64,7 +64,7 @@ namespace
 {
 #ifdef WITH_VST
 
-int readPatchPlugins(vector<patch::plugin_t> *list, int type)
+int readPatchPlugins(vector<patch::plugin_t>* list, int type)
 {
 	int ret = 1;
 	for (unsigned i=0; i<list->size(); i++) {

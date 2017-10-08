@@ -169,6 +169,25 @@ static bool glue_savePatch__(const string &fullPath, const string &name,
 /* -------------------------------------------------------------------------- */
 
 
+static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
+{
+	return base + G_SLASH + w->getBasename(false) + "-" + gu_toString(k) + "." +  w->getExtension();
+} 
+
+
+static string glue_makeUniqueSamplePath__(const string& base, const SampleChannel* ch)
+{
+	int k = 0;
+	string p = glue_makeSamplePath__(base, ch->wave, k);
+	while (!mh::uniqueSamplePath(ch, p))
+		p = glue_makeSamplePath__(base, ch->wave, k++);
+	return p;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void glue_savePatch(void *data)
 {
 	gdBrowserSave *browser = (gdBrowserSave*) data;
@@ -308,14 +327,16 @@ void glue_saveProject(void* data)
 		return;
 
 	if (!gu_dirExists(fullPath) && !gu_mkdir(fullPath)) {
-		gu_log("[glue_saveProject] unable to make project directory!\n");
+		gu_log("[glue_saveProject] Unable to make project directory!\n");
 		return;
 	}
 
-	gu_log("[glue_saveProject] project dir created: %s\n", fullPath.c_str());
+	gu_log("[glue_saveProject] Project dir created: %s\n", fullPath.c_str());
 
-	/* Copy all samples inside the folder. Takes and logical ones are saved
-	via glue_saveSample() */
+	/* Copy all samples inside the folder. Takes and logical ones are saved via 
+	glue_saveSample(). Update the new sample path: everything now comes from the 
+	project folder (folderPath). Also make sure the file path is unique inside the 
+	project folder.*/
 
 	for (const Channel* ch : mixer::channels) {
 
@@ -327,21 +348,9 @@ void glue_saveProject(void* data)
 		if (sch->wave == nullptr)
 			continue;
 
-		gu_log("[glue_saveProject] saving file %s\n", sch->wave->getPath().c_str());
+		sch->wave->setPath(glue_makeUniqueSamplePath__(fullPath, sch));
 
-		/* Update the new samplePath: everything now comes from the project folder 
-		(folderPath). Also make sure the file path is unique inside the project
-		folder. */
-		/* TODO - make this shit less ugly with wave::setPath(newPath, id); */
-		int k = 0;
-		string samplePath = fullPath + G_SLASH + sch->wave->getBasename(false) + "-" + gu_toString(k) + "." +  sch->wave->getExtension();
-		while (!mh::uniqueSamplePath(sch, samplePath)) {
-			samplePath = fullPath + G_SLASH + sch->wave->getBasename(false) + "-" + gu_toString(k) + "." +  sch->wave->getExtension();
-			k++;
-		}
-		sch->wave->setPath(samplePath);
-
-		gu_log("   new path: %s\n", sch->wave->getPath().c_str());
+		gu_log("[glue_saveProject] Save file to %s\n", sch->wave->getPath().c_str());
 
 		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
 	}

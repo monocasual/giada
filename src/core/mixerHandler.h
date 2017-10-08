@@ -43,17 +43,17 @@ namespace mh
 /* addChannel
 Adds a new channel of type 'type' into mixer's stack. */
 
-Channel *addChannel(int type);
+Channel* addChannel(int type);
 
 /* deleteChannel
 Completely removes a channel from the stack. */
 
-int deleteChannel(Channel *ch);
+int deleteChannel(Channel* ch);
 
 /* getChannelByIndex
 Returns channel with given index 'i'. */
 
-Channel *getChannelByIndex(int i);
+Channel* getChannelByIndex(int i);
 
 /* hasLogicalSamples
 True if 1 or more samples are logical (memory only, such as takes) */
@@ -66,8 +66,7 @@ True if 1 or more samples was edited via gEditor */
 bool hasEditedSamples();
 
 /* stopSequencer
- * stop the sequencer, with special case if samplesStopOnSeqHalt is
- * true. */
+Stops the sequencer, with special case if samplesStopOnSeqHalt is true. */
 
 void stopSequencer();
 
@@ -76,18 +75,17 @@ void rewindSequencer();
 /* uniqueSolo
  * true if ch is the only solo'd channel in mixer. */
 
-bool uniqueSolo(Channel *ch);
+bool uniqueSolo(Channel* ch);
 
 /* loadPatch
- * load a path or a project (if isProject) into Mixer. If isProject, path
- * must contain the address of the project folder. */
+Loads a path or a project (if isProject) into Mixer. If isProject, path must 
+contain the address of the project folder. */
 
 void readPatch();
 
 /* startInputRec - record from line in
- * creates a new empty wave in the first available channels and returns
- * the chan number chosen, otherwise -1 if there are no more empty
- * channels available. */
+Creates a new empty wave in the first available channels. Returns false if
+something went wrong. */
 
 bool startInputRec();
 
