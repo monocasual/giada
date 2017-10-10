@@ -21,6 +21,7 @@
 - Save 'arm' status to patch/project file
 - Revamped Beats and Bpm input windows
 - Simplified audio samples' storage in project folders
+- Fix missed MIDI events with more than 1 plug-in in the stack
 
 
 0.14.3 --- 2017 . 09 . 18
