@@ -46,21 +46,21 @@ int Plugin::idGenerator = 1;
 
 
 Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
-  int buffersize)
-  : ui    (nullptr),
-    plugin(plugin),
-    id    (idGenerator++),
-    bypass(false)
+	int buffersize)
+	: ui    (nullptr),
+		plugin(plugin),
+		id    (idGenerator++),
+		bypass(false)
 {
-  /* Init midiInParams. All values are empty (0x0): they will be filled during
-  midi learning process. */
+	/* Init midiInParams. All values are empty (0x0): they will be filled during
+	midi learning process. */
 
-  for (int i=0; i<plugin->getNumParameters(); i++)
-    midiInParams.push_back(0x0);
-  
-  plugin->prepareToPlay(samplerate, buffersize);
+	for (int i=0; i<plugin->getNumParameters(); i++)
+		midiInParams.push_back(0x0);
+	
+	plugin->prepareToPlay(samplerate, buffersize);
 
-  gu_log("[Plugin] plugin initialized and ready\n");
+	gu_log("[Plugin] plugin initialized and ready\n");
 }
 
 
@@ -70,8 +70,8 @@ Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
 Plugin::~Plugin()
 {
 	closeEditor();
-  plugin->suspendProcessing(true);
-  plugin->releaseResources();
+	plugin->suspendProcessing(true);
+	plugin->releaseResources();
 }
 
 
@@ -80,175 +80,196 @@ Plugin::~Plugin()
 
 void Plugin::showEditor(void* parent)
 {
-  ui = plugin->createEditorIfNeeded();
-  if (ui == nullptr) {
-    gu_log("[Plugin::showEditor] unable to create editor!\n");
-    return;
-  }
+	ui = plugin->createEditorIfNeeded();
+	if (ui == nullptr) {
+		gu_log("[Plugin::showEditor] unable to create editor!\n");
+		return;
+	}
 
-  /* A silly workaround on X: it seems that calling addToDesktop too fast, i.e.
-  before the X Window is fully ready screws up the plugin's event dispatcher. */
+	/* A silly workaround on X: it seems that calling addToDesktop too fast, i.e.
+	before the X Window is fully ready screws up the plugin's event dispatcher. */
 
 #ifdef G_OS_LINUX
-  time::sleep(500);
+	time::sleep(500);
 #endif
 
-  ui->setOpaque(true);
-  ui->addToDesktop(0, parent);
+	ui->setOpaque(true);
+	ui->addToDesktop(0, parent);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool Plugin::isEditorOpen()
+bool Plugin::isEditorOpen() const
 {
-  return ui != nullptr && ui->isVisible() && ui->isOnDesktop();
+	return ui != nullptr && ui->isVisible() && ui->isOnDesktop();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getUniqueId()
+string Plugin::getUniqueId() const
 {
-  //return plugin->getPluginDescription().fileOrIdentifier.toStdString();
-  return plugin->getPluginDescription().createIdentifierString().toStdString();
+	//return plugin->getPluginDescription().fileOrIdentifier.toStdString();
+	return plugin->getPluginDescription().createIdentifierString().toStdString();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumParameters()
+int Plugin::getNumParameters() const
 {
-  return plugin->getNumParameters();
+	return plugin->getNumParameters();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-float Plugin::getParameter(int paramIndex)
+float Plugin::getParameter(int paramIndex) const
 {
-  return plugin->getParameter(paramIndex);
+	return plugin->getParameter(paramIndex);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::setParameter(int paramIndex, float value)
+void Plugin::setParameter(int paramIndex, float value) const
 {
-  return plugin->setParameter(paramIndex, value);
+	return plugin->setParameter(paramIndex, value);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::prepareToPlay(double samplerate, int buffersize)
+void Plugin::prepareToPlay(double samplerate, int buffersize) const
 {
-  plugin->prepareToPlay(samplerate, buffersize);
+	plugin->prepareToPlay(samplerate, buffersize);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getName()
+string Plugin::getName() const
 {
-  return plugin->getName().toStdString();
+	return plugin->getName().toStdString();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool Plugin::isSuspended()
+bool Plugin::isSuspended() const
 {
-  return plugin->isSuspended();
+	return plugin->isSuspended();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::process(juce::AudioBuffer<float> &b, juce::MidiBuffer &m)
+bool Plugin::isBypassed() const { return bypass; }
+void Plugin::toggleBypass() { bypass = !bypass; }
+void Plugin::setBypass(bool b) { bypass = b; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Plugin::getId() const { return id; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int Plugin::getEditorW() const { return ui->getWidth(); }
+int Plugin::getEditorH() const { return ui->getHeight(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Plugin::process(juce::AudioBuffer<float>& b, juce::MidiBuffer& m) const
 {
-  plugin->processBlock(b, m);
+	plugin->processBlock(b, m);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getNumPrograms()
+int Plugin::getNumPrograms() const
 {
-  return plugin->getNumPrograms();
+	return plugin->getNumPrograms();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getCurrentProgram()
+int Plugin::getCurrentProgram() const
 {
-  return plugin->getCurrentProgram();
+	return plugin->getCurrentProgram();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::setCurrentProgram(int index)
+void Plugin::setCurrentProgram(int index) const
 {
-  plugin->setCurrentProgram(index);
+	plugin->setCurrentProgram(index);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool Plugin::hasEditor()
+bool Plugin::hasEditor() const
 {
-  return plugin->hasEditor();
+	return plugin->hasEditor();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getProgramName(int index)
+string Plugin::getProgramName(int index) const
 {
-  return plugin->getProgramName(index).toStdString();
+	return plugin->getProgramName(index).toStdString();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterName(int index)
+string Plugin::getParameterName(int index) const
 {
-  return plugin->getParameterName(index).toStdString();
+	return plugin->getParameterName(index).toStdString();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterText(int index)
+string Plugin::getParameterText(int index) const
 {
-  return plugin->getParameterText(index).toStdString();
+	return plugin->getParameterText(index).toStdString();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string Plugin::getParameterLabel(int index)
+string Plugin::getParameterLabel(int index) const
 {
-  return plugin->getParameterLabel(index).toStdString();
+	return plugin->getParameterLabel(index).toStdString();
 }
 
 
@@ -257,10 +278,10 @@ string Plugin::getParameterLabel(int index)
 
 void Plugin::closeEditor()
 {
-  if (ui == nullptr)
-    return;
-  delete ui;
-  ui = nullptr;
+	if (ui == nullptr)
+		return;
+	delete ui;
+	ui = nullptr;
 }
 
 #endif

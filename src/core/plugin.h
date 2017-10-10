@@ -40,63 +40,59 @@ class Plugin
 {
 private:
 
-  static int idGenerator;
+	static int idGenerator;
 
-  juce::AudioProcessorEditor *ui;     // gui
-  juce::AudioPluginInstance  *plugin; // core
+	juce::AudioProcessorEditor* ui;    // gui
+	juce::AudioPluginInstance* plugin; // core
 
-  int  id;
-  bool bypass;
+	int id;
+	bool bypass;
 
 public:
 
-  Plugin(juce::AudioPluginInstance *p, double samplerate, int buffersize);
-  ~Plugin();
+	Plugin(juce::AudioPluginInstance* p, double samplerate, int buffersize);
+	~Plugin();
 
-  void showEditor(void *parent);
+	/* getUniqueId
+	 * Return a string-based UID. */
 
-  /* closeEditor
-   * Shut down plugin GUI. */
+	std::string getUniqueId() const;
 
-  void closeEditor();
+	std::string getName() const;
+	bool isEditorOpen() const;
+	bool hasEditor() const;
+	int getNumParameters() const;
+	float getParameter(int index) const;
+	std::string getParameterName(int index) const;
+	std::string getParameterText(int index) const;
+	std::string getParameterLabel(int index) const;
+	bool isSuspended() const;
+	bool isBypassed() const;
+	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer& m) const;
+	int getNumPrograms() const;
+	int getCurrentProgram() const;
+	std::string getProgramName(int index) const;
+	int getId() const;
+	int getEditorW() const;
+	int getEditorH() const;
+	void setParameter(int index, float value) const;
+	void prepareToPlay(double samplerate, int buffersize) const;
+	void setCurrentProgram(int index) const;
 
-  /* isEditorOpen */
+	void showEditor(void* parent);
 
-  bool isEditorOpen();
+	/* closeEditor
+	 * Shut down plugin GUI. */
 
-  /* getUniqueId
-   * Return a string-based UID. */
+	void closeEditor();
 
-  std::string getUniqueId();
+	void toggleBypass();
+	void setBypass(bool b);
 
-  std::string getName();
+	/* midiInParams
+	A list of midiIn hex values for parameter automation. */
 
-  bool  hasEditor();
-  int   getNumParameters();
-  float getParameter(int index);
-  void  setParameter(int index, float value);
-  std::string getParameterName(int index);
-  std::string getParameterText(int index);
-  std::string getParameterLabel(int index);
-  void  prepareToPlay(double samplerate, int buffersize);
-  bool  isSuspended();
-  void  process(juce::AudioBuffer<float> &b, juce::MidiBuffer &m);
-  int   getNumPrograms();
-  int   getCurrentProgram();
-  void  setCurrentProgram(int index);
-  std::string getProgramName(int index);
-
-  int  getId()           { return id; }
-  bool isBypassed()      { return bypass; }
-  int  getEditorW()      { return ui->getWidth(); }
-  int  getEditorH()      { return ui->getHeight(); }
-  void toggleBypass()    { bypass = !bypass; }
-  void setBypass(bool b) { bypass = b; }
-
-  /* midiInParams
-  A list of midiIn hex values for parameter automation. */
-
-  std::vector<uint32_t> midiInParams;
+	std::vector<uint32_t> midiInParams;
 };
 
 #endif
