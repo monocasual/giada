@@ -405,21 +405,25 @@ void processStack(float* buffer, int stackType, Channel* ch)
 		clearMidiBuffer()
 	The midi event in between would be surely lost, deleted by clearMidiBuffer! */
 
-	for (unsigned i=0; i<pStack->size(); i++) {
-		Plugin *plugin = pStack->at(i);
+	if (ch != nullptr)
+		pthread_mutex_lock(&mutex_midi);
+
+	//for (unsigned i=0; i<pStack->size(); i++) {
+		//Plugin* plugin = pStack->at(i);
+	for (const Plugin* plugin : *pStack) {
 		if (plugin->isSuspended() || plugin->isBypassed())
 			continue;
-		if (ch) { // ch might be null if stackType is MASTER_IN/OUT
-			pthread_mutex_lock(&mutex_midi);
+		if (ch != nullptr) { // ch == null when stackType is MASTER_IN/OUT
 			plugin->process(audioBuffer, ch->getPluginMidiEvents());
 			ch->clearMidiBuffer();
-			pthread_mutex_unlock(&mutex_midi);
 		}
 		else {
 			juce::MidiBuffer midiBuffer;  // empty buffer
 			plugin->process(audioBuffer, midiBuffer);
 		}
 	}
+	if (ch != nullptr)
+		pthread_mutex_unlock(&mutex_midi);
 
 	/* converting buffer from Juce to Giada. A note for the future: if we
 	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
