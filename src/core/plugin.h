@@ -54,9 +54,18 @@ public:
 	~Plugin();
 
 	/* getUniqueId
-	 * Return a string-based UID. */
+	Returns a string-based UID. */
 
 	std::string getUniqueId() const;
+
+	/* process
+	Process the plug-in with audio and MIDI data. The audio buffer is a reference:
+	it has to be altered by the plug-in itself. Conversely, the MIDI buffer must
+	be passed by copy: each plug-in must receive its own copy of the event set, so
+	that any attempt to change/clear the MIDI buffer will only modify the local 
+	copy. */
+
+	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m) const;
 
 	std::string getName() const;
 	bool isEditorOpen() const;
@@ -68,7 +77,6 @@ public:
 	std::string getParameterLabel(int index) const;
 	bool isSuspended() const;
 	bool isBypassed() const;
-	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer& m) const;
 	int getNumPrograms() const;
 	int getCurrentProgram() const;
 	std::string getProgramName(int index) const;
@@ -78,11 +86,12 @@ public:
 	void setParameter(int index, float value) const;
 	void prepareToPlay(double samplerate, int buffersize) const;
 	void setCurrentProgram(int index) const;
+	bool acceptsMidi() const;
 
 	void showEditor(void* parent);
 
 	/* closeEditor
-	 * Shut down plugin GUI. */
+	Shuts down plugin GUI. */
 
 	void closeEditor();
 

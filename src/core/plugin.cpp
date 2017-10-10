@@ -174,6 +174,15 @@ bool Plugin::isSuspended() const
 /* -------------------------------------------------------------------------- */
 
 
+bool Plugin::acceptsMidi() const
+{
+	return plugin->acceptsMidi();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool Plugin::isBypassed() const { return bypass; }
 void Plugin::toggleBypass() { bypass = !bypass; }
 void Plugin::setBypass(bool b) { bypass = b; }
@@ -195,7 +204,7 @@ int Plugin::getEditorH() const { return ui->getHeight(); }
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::process(juce::AudioBuffer<float>& b, juce::MidiBuffer& m) const
+void Plugin::process(juce::AudioBuffer<float>& b, juce::MidiBuffer m) const
 {
 	plugin->processBlock(b, m);
 }

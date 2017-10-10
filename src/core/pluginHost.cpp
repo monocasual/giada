@@ -384,49 +384,66 @@ void processStack(float* buffer, int stackType, Channel* ch)
 {
 	vector<Plugin*>* pStack = getStack(stackType, ch);
 
-	/* empty stack, stack not found or mixer not ready: do nothing */
+	/* Empty stack, stack not found or mixer not ready: do nothing. */
 
 	if (pStack == nullptr || pStack->size() == 0)
 		return;
 
-	/* converting buffer from Giada to Juce */
+	/* MIDI channels must not process the current buffer: give them an empty one. 
+	Sample channels and Master in/out want audio data instead: let's convert the 
+	internal buffer from Giada to Juce. */
 
-	for (int i=0; i<buffersize; i++) {
-		audioBuffer.setSample(0, i, buffer[i*2]);
-		audioBuffer.setSample(1, i, buffer[(i*2)+1]);
-	}
+	if (ch != nullptr && ch->type == CHANNEL_MIDI) 
+		audioBuffer.clear();
+	else
+		for (int i=0; i<buffersize; i++) {
+			audioBuffer.setSample(0, i, buffer[i*2]);
+			audioBuffer.setSample(1, i, buffer[(i*2)+1]);
+		}
 
 	/* Hardcore processing. At the end we swap input and output, so that he N-th
 	plugin will process the result of the plugin N-1. Part of this loop must be
 	guarded by mutexes, i.e. the MIDI process part. You definitely don't want
 	a situation like the following one:
-		processBlock(...)
-		[a new midi event from kernelMidi thread]
-		clearMidiBuffer()
-	The midi event in between would be surely lost, deleted by clearMidiBuffer! */
+		this::processStack()
+		[a new midi event comes in from kernelMidi thread]
+		channel::clearMidiBuffer()
+	The midi event in between would be surely lost, deleted by the last call to
+	channel::clearMidiBuffer()! */
 
 	if (ch != nullptr)
 		pthread_mutex_lock(&mutex_midi);
 
-	//for (unsigned i=0; i<pStack->size(); i++) {
-		//Plugin* plugin = pStack->at(i);
 	for (const Plugin* plugin : *pStack) {
 		if (plugin->isSuspended() || plugin->isBypassed())
 			continue;
-		if (ch != nullptr) { // ch == null when stackType is MASTER_IN/OUT
-			plugin->process(audioBuffer, ch->getPluginMidiEvents());
-			ch->clearMidiBuffer();
-		}
-		else {
-			juce::MidiBuffer midiBuffer;  // empty buffer
-			plugin->process(audioBuffer, midiBuffer);
-		}
-	}
-	if (ch != nullptr)
-		pthread_mutex_unlock(&mutex_midi);
 
-	/* converting buffer from Juce to Giada. A note for the future: if we
-	 * overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
+		/* If this is a Channel (ch != nullptr) and the current plugin is an 
+		instrument (i.e. accepts MIDI), don't let it fill the current audio buffer: 
+		create a new temporary one instead and then merge the result into the main
+		one when done. This way each plug-in generates its own audio data and we can
+		play more than one plug-in instrument in the same stack, driven by the same
+		set of MIDI events. */
+
+		if (ch != nullptr && plugin->acceptsMidi()) {
+			juce::AudioBuffer<float> tmp(2, buffersize);
+			plugin->process(tmp, ch->getPluginMidiEvents());
+			for (int i=0; i<buffersize; i++) {
+				audioBuffer.addSample(0, i, tmp.getSample(0, i));
+				audioBuffer.addSample(1, i, tmp.getSample(1, i));
+			}
+		}
+		else
+			plugin->process(audioBuffer, juce::MidiBuffer()); // Empty MIDI buffer
+	}
+
+	if (ch != nullptr) {
+		ch->clearMidiBuffer();
+		pthread_mutex_unlock(&mutex_midi);
+	}
+
+	/* Converting buffer from Juce to Giada. A note for the future: if we 
+	overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
 
 	for (int i=0; i<buffersize; i++) {
 		buffer[i*2]     = audioBuffer.getSample(0, i);
