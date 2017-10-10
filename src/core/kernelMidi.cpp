@@ -208,16 +208,16 @@ void processMaster(uint32_t pure, uint32_t value)
 /* -------------------------------------------------------------------------- */
 
 
-static void callback(double t, std::vector<unsigned char> *msg, void *data)
+static void callback(double t, std::vector<unsigned char>* msg, void* data)
 {
   /* 0.8.0 - for now we handle other midi signals (common and real-time
 	 * messages) as unknown, for debugging purposes */
 
 	if (msg->size() < 3) {
-		gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
-		for (unsigned i=0; i<msg->size(); i++)
-			gu_log("%X", (int) msg->at(i));
-		gu_log("\n");
+		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
+		//for (unsigned i=0; i<msg->size(); i++)
+		//	gu_log("%X", (int) msg->at(i));
+		//gu_log("\n");
 		return;
 	}
 
