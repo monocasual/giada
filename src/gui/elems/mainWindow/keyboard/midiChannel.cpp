@@ -289,7 +289,7 @@ void geMidiChannel::update()
 	const MidiChannel* mch = static_cast<const MidiChannel*>(ch);
 
 	string label; 
-	if (mch->getName() == "")
+	if (mch->getName().empty())
 		label = "-- MIDI --";
 	else
 		label = mch->getName().c_str();
@@ -299,16 +299,16 @@ void geMidiChannel::update()
 
 	mainButton->label(label.c_str());
 
-	vol->value(ch->volume);
-	mute->value(ch->mute);
-	solo->value(ch->solo);
+	vol->value(mch->volume);
+	mute->value(mch->mute);
+	solo->value(mch->solo);
 
-	mainButton->setKey(ch->key);
+	mainButton->setKey(mch->key);
 
-	arm->value(ch->isArmed());
+	arm->value(mch->isArmed());
 
 #ifdef WITH_VST
-	fx->status = ch->plugins.size() > 0;
+	fx->status = mch->plugins.size() > 0;
 	fx->redraw();
 #endif
 }

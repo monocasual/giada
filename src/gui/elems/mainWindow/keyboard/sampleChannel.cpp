@@ -403,9 +403,9 @@ void geSampleChannel::reset()
 
 void geSampleChannel::update()
 {
-	/* update sample button's label */
+	const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
 
-	switch (ch->status) {
+	switch (sch->status) {
 		case STATUS_EMPTY:
 			mainButton->label("-- no sample --");
 			break;
@@ -414,36 +414,35 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			mainButton->label(ch->getName().c_str());
+			if (sch->getName().empty())
+				mainButton->label(sch->wave->getBasename(false).c_str());
+			else
+				mainButton->label(sch->getName().c_str());
 			break;
 	}
 
-	/* update channels. If you load a patch with recorded actions, the 'R'
-	 * button must be shown. Moreover if the actions are active, the 'R'
-	 * button must be activated accordingly. */
+	/* Update channels. If you load a patch with recorded actions, the 'R' button 
+	must be shown. Moreover if the actions are active, the 'R' button must be 
+	activated accordingly. */
 
-	if (ch->hasActions)
+	if (sch->hasActions)
 		showActionButton();
 	else
 		hideActionButton();
 
-	/* updates modebox */
-
-	modeBox->value(static_cast<SampleChannel*>(ch)->mode);
+	modeBox->value(sch->mode);
 	modeBox->redraw();
 
-	/* update volumes+mute+solo */
+	vol->value(sch->volume);
+	mute->value(sch->mute);
+	solo->value(sch->solo);
 
-	vol->value(ch->volume);
-	mute->value(ch->mute);
-	solo->value(ch->solo);
+	mainButton->setKey(sch->key);
 
-	mainButton->setKey(ch->key);
-
-	arm->value(ch->isArmed());
+	arm->value(sch->isArmed());
 
 #ifdef WITH_VST
-	fx->status = ch->plugins.size() > 0;
+	fx->status = sch->plugins.size() > 0;
 	fx->redraw();
 #endif
 }
