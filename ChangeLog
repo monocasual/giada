@@ -24,6 +24,8 @@
 - Simplified audio samples' storage in project folders
 - Fix missed MIDI events with more than 1 plug-in in the stack
 - Update JUCE to version 5.1.2
+- UI-less plug-in window refinements
+- Update UI-less plug-in window on MIDI parameter's change
 
 
 0.14.3 --- 2017 . 09 . 18
