@@ -32,17 +32,28 @@
 #include "../core/mixer.h"
 #include "../core/plugin.h"
 #include "../core/channel.h"
+#include "../core/const.h"
+#include "../utils/gui.h"
+#include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/gd_pluginWindow.h"
+#include "../gui/dialogs/gd_pluginList.h"
 #include "plugin.h"
+
+
+extern gdMainWindow* G_MainWin;
 
 
 using namespace giada::m;
 
 
-Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
+namespace giada {
+namespace c     {
+namespace plugin 
+{
+Plugin* addPlugin(Channel* ch, int index, int stackType)
 {
   if (index >= pluginHost::countAvailablePlugins())
     return nullptr;
-
   return pluginHost::addPlugin(index, stackType, &mixer::mutex_plugins, ch);
 }
 
@@ -50,7 +61,7 @@ Plugin *glue_addPlugin(Channel *ch, int index, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
+void swapPlugins(Channel* ch, int index1, int index2, int stackType)
 {
   pluginHost::swapPlugin(index1, index2, stackType, &mixer::mutex_plugins,
     ch);
@@ -60,10 +71,25 @@ void glue_swapPlugins(Channel *ch, int index1, int index2, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_freePlugin(Channel *ch, int index, int stackType)
+void freePlugin(Channel* ch, int index, int stackType)
 {
   pluginHost::freePlugin(index, stackType, &mixer::mutex_plugins, ch);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setParameter(Plugin* p, int index, float value)
+{
+	p->setParameter(index, value);
+	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
+	gdPluginWindow* child = static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
+	if (child != nullptr)
+		child->updateParameter(index);
+}
+
+}}}; // giada::c::plugin::
 
 
 #endif

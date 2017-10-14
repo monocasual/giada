@@ -58,6 +58,7 @@ extern gdMainWindow* G_MainWin;
 
 using std::string;
 using namespace giada::m;
+using namespace giada::c;
 
 
 gdPluginList::gdPluginList(int stackType, Channel* ch)
@@ -283,7 +284,7 @@ void gdPlugin::__cb_shiftUp()
 	if (pluginIndex == 0)  // first of the stack, do nothing
 		return;
 
-	glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
+	plugin::swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -304,7 +305,7 @@ void gdPlugin::__cb_shiftDown()
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;
 
-	glue_swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
+	plugin::swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -317,7 +318,7 @@ void gdPlugin::__cb_removePlugin()
 	/* any subwindow linked to the plugin must be destroyed first */
 
 	pParent->delSubWindow(pPlugin->getId());
-	glue_freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
+	plugin::freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
 	pParent->refreshList();
 }
 
@@ -330,27 +331,27 @@ void gdPlugin::__cb_openPluginWindow()
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	* for the parent window 'add plugin'. */
 
+	int pwid = pPlugin->getId() + 1;
+	
 	gdWindow* w;
 	if (pPlugin->hasEditor()) {
-		int pwid = pPlugin->getId() + 1;
-
 		if (pPlugin->isEditorOpen()) {
-			gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor but it's already visible\n");
+			gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has editor but it's already visible\n");
 			pParent->getChild(pwid)->show();  // Raise it to top
 			return;
 		}
-
-		gu_log("[gdPlugin::__cb_openPluginWindow] plugin has editor, open window id=%d\n", pwid);
-
-		if (pParent->hasWindow(pwid))
-			pParent->delSubWindow(pwid);
+		gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has editor, window id=%d\n", pwid);
 		w = new gdPluginWindowGUI(pPlugin);
-		w->setId(pwid);
-		pParent->addSubWindow(w);
 	}
-	else {
+	else
 		w = new gdPluginWindow(pPlugin);
-	}
+
+	gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
+
+	if (pParent->hasWindow(pwid))
+		pParent->delSubWindow(pwid);
+	w->setId(pwid);
+	pParent->addSubWindow(w);
 }
 
 

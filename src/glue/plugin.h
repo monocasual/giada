@@ -34,11 +34,21 @@
 
 #ifdef WITH_VST
 
-class Plugin *glue_addPlugin(class Channel *ch, int index, int stackType);
 
-void glue_swapPlugins(class Channel *ch, int indexP1, int indexP2, int stackType);
+class Plugin;
+class Channel;
 
-void glue_freePlugin(class Channel *ch, int index, int stackType);
+
+namespace giada {
+namespace c     {
+namespace plugin 
+{
+Plugin* addPlugin(Channel* ch, int index, int stackType);
+void swapPlugins(Channel* ch, int indexP1, int indexP2, int stackType);
+void freePlugin(Channel *ch, int index, int stackType);
+void setParameter(Plugin* p, int index, float value); 
+}}}; // giada::c::plugin::
+
 
 #endif
 

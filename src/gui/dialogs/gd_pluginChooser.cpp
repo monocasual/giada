@@ -41,6 +41,7 @@
 
 
 using namespace giada::m;
+using namespace giada::c;
 
 
 gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel *ch)
@@ -130,7 +131,7 @@ void gdPluginChooser::__cb_add()
   int index = browser->value() - 3; // subtract header lines
   if (index < 0)
     return;
-  glue_addPlugin(ch, index, stackType);
+  plugin::addPlugin(ch, index, stackType);
   do_callback();
 }
 

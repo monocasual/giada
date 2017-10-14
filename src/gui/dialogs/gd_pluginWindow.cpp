@@ -33,6 +33,7 @@
 #include "../../utils/gui.h"
 #include "../../core/plugin.h"
 #include "../../core/const.h"
+#include "../../glue/plugin.h"
 #include "../elems/basics/boxtypes.h"
 #include "../elems/basics/box.h"
 #include "../elems/basics/liquidScroll.h"
@@ -41,29 +42,32 @@
 
 
 using std::string;
+using namespace giada::c;
 
 
-Parameter::Parameter(int paramIndex, Plugin* p, int X, int Y, int W, 
-	int labelWidth)
-	: Fl_Group(X, Y, W, G_GUI_UNIT), paramIndex(paramIndex), pPlugin(p)
+gePluginParameter::gePluginParameter(int paramIndex, Plugin* p, int X, int Y, 
+	int W, int labelWidth)
+	: Fl_Group    (X, Y, W, G_GUI_UNIT), 
+	  m_paramIndex(paramIndex), 
+	  m_plugin    (p)
 {
 	begin();
 
-		label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
-		label->copy_label(pPlugin->getParameterName(paramIndex).c_str());
-		label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
+		m_label->copy_label(m_plugin->getParameterName(m_paramIndex).c_str());
+		m_label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-		slider = new geSlider(label->x()+label->w()+G_GUI_OUTER_MARGIN, y(), 
-			w()-(label->x()+label->w()+G_GUI_OUTER_MARGIN)-VALUE_WIDTH, G_GUI_UNIT);
-		slider->value(pPlugin->getParameter(paramIndex));
-		slider->callback(cb_setValue, (void*)this);
+		m_slider = new geSlider(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN, y(), 
+			w()-(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN)-VALUE_WIDTH, G_GUI_UNIT);
+		m_slider->value(m_plugin->getParameter(m_paramIndex));
+		m_slider->callback(cb_setValue, (void*)this);
 
-		value = new geBox(slider->x()+slider->w()+G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
-		value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
-		value->box(G_CUSTOM_BORDER_BOX);
+		m_value = new geBox(m_slider->x()+m_slider->w()+G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
+		m_value->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+		m_value->box(G_CUSTOM_BORDER_BOX);
 
 	end();
-	resizable(slider);
+	resizable(m_slider);
 	updateValue();
 }
 
@@ -71,28 +75,26 @@ Parameter::Parameter(int paramIndex, Plugin* p, int X, int Y, int W,
 /* -------------------------------------------------------------------------- */
 
 
-void Parameter::cb_setValue(Fl_Widget* v, void* p)  { ((Parameter*)p)->cb_setValue(); }
+void gePluginParameter::cb_setValue(Fl_Widget* v, void* p)  { ((gePluginParameter*)p)->cb_setValue(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Parameter::cb_setValue()
+void gePluginParameter::cb_setValue()
 {
-	pPlugin->setParameter(paramIndex, slider->value());
-	updateValue();
-	value->redraw();
+	plugin::setParameter(m_plugin, m_paramIndex, m_slider->value());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Parameter::updateValue()
+void gePluginParameter::updateValue()
 {
-	string v = pPlugin->getParameterText(paramIndex) + " " +
-			pPlugin->getParameterLabel(paramIndex);
-	value->copy_label(v.c_str());
+	string v = m_plugin->getParameterText(m_paramIndex) + " " +
+			m_plugin->getParameterLabel(m_paramIndex);
+	m_value->copy_label(v.c_str());
 }
 
 
@@ -102,30 +104,30 @@ void Parameter::updateValue()
 
 
 gdPluginWindow::gdPluginWindow(Plugin* p)
- : gdWindow(450, 156), pPlugin(p)
+ : gdWindow(450, 156), m_plugin(p)
 {
 	set_non_modal();
 
-	geLiquidScroll* list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 
+	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 
 		w()-(G_GUI_OUTER_MARGIN*2), h()-(G_GUI_OUTER_MARGIN*2));
 
-	list->type(Fl_Scroll::VERTICAL_ALWAYS);
-	list->begin();
+	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
+	m_list->begin();
 		int labelWidth = getLabelWidth();
-		int numParams = pPlugin->getNumParameters();
+		int numParams = m_plugin->getNumParameters();
 		for (int i=0; i<numParams; i++) {
-			int py = list->y() + (i * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
-			int pw = list->w() - list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
-			new Parameter(i, pPlugin, list->x(), py, pw, labelWidth);
+			int py = m_list->y() + (i * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
+			int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
+			new gePluginParameter(i, m_plugin, m_list->x(), py, pw, labelWidth);
 		}
-	list->end();
+	m_list->end();
 
 	end();
 
-	label(pPlugin->getName().c_str());
+	label(m_plugin->getName().c_str());
 
 	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN*2)));
-	resizable(list);
+	resizable(m_list);
 
 	gu_setFavicon(this);
 	show();
@@ -135,13 +137,22 @@ gdPluginWindow::gdPluginWindow(Plugin* p)
 /* -------------------------------------------------------------------------- */
 
 
+void gdPluginWindow::updateParameter(int index)
+{
+	static_cast<gePluginParameter*>(m_list->child(index))->updateValue();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int gdPluginWindow::getLabelWidth() const
 {
 	int width = 0;
-	int numParams = pPlugin->getNumParameters();
+	int numParams = m_plugin->getNumParameters();
 	for (int i=0; i<numParams; i++) {
 		int wl = 0, hl = 0;   
-		fl_measure(pPlugin->getParameterName(i).c_str(), wl, hl);
+		fl_measure(m_plugin->getParameterName(i).c_str(), wl, hl);
 		if (wl > width)
 			width = wl;
 	}
