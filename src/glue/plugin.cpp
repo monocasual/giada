@@ -80,13 +80,20 @@ void freePlugin(Channel* ch, int index, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
-void setParameter(Plugin* p, int index, float value)
+void setParameter(Plugin* p, int index, float value, bool gui)
 {
 	p->setParameter(index, value);
+
+	/* No need to update plug-in editor if it has one: the plug-in's editor takes
+	care of it on its own. Conversely, update the specific parameter for UI-less 
+	plug-ins. */
+
+	if (p->hasEditor())
+		return;
 	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
 	gdPluginWindow* child = static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
 	if (child != nullptr)
-		child->updateParameter(index);
+		child->updateParameter(index, !gui);
 }
 
 }}}; // giada::c::plugin::

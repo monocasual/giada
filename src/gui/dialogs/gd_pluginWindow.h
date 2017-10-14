@@ -55,7 +55,7 @@ public:
 
 	gdPluginWindow(Plugin* p);
 
-	void updateParameter(int index);
+	void updateParameter(int index, bool changeSlider=false);
 };
 
 
@@ -82,7 +82,7 @@ public:
 
 	gePluginParameter(int paramIndex, Plugin* p, int x, int y, int w, int labelWidth);
 
-	void updateValue();
+	void update(bool changeSlider);
 };
 
 

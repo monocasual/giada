@@ -68,7 +68,7 @@ gePluginParameter::gePluginParameter(int paramIndex, Plugin* p, int X, int Y,
 
 	end();
 	resizable(m_slider);
-	updateValue();
+	update(false);
 }
 
 
@@ -90,11 +90,13 @@ void gePluginParameter::cb_setValue()
 /* -------------------------------------------------------------------------- */
 
 
-void gePluginParameter::updateValue()
+void gePluginParameter::update(bool changeSlider)
 {
 	string v = m_plugin->getParameterText(m_paramIndex) + " " +
 			m_plugin->getParameterLabel(m_paramIndex);
 	m_value->copy_label(v.c_str());
+	if (changeSlider)
+		m_slider->value(m_plugin->getParameter(m_paramIndex));
 }
 
 
@@ -137,9 +139,9 @@ gdPluginWindow::gdPluginWindow(Plugin* p)
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginWindow::updateParameter(int index)
+void gdPluginWindow::updateParameter(int index, bool changeSlider)
 {
-	static_cast<gePluginParameter*>(m_list->child(index))->updateValue();
+	static_cast<gePluginParameter*>(m_list->child(index))->update(changeSlider);
 }
 
 

@@ -28,6 +28,7 @@
 #include <rtmidi/RtMidi.h>
 #include "../utils/log.h"
 #include "../glue/channel.h"
+#include "../glue/plugin.h"
 #include "../glue/main.h"
 #include "../glue/transport.h"
 #include "../glue/io.h"
@@ -76,25 +77,24 @@ void         *cb_data  = nullptr;
 
 #ifdef WITH_VST
 
-void processPlugins(Channel *ch, uint32_t pure, uint32_t value)
+void processPlugins(Channel* ch, uint32_t pure, uint32_t value)
 {
-  /* Plugins' parameters layout reflect the structure of the matrix
-  Channel::midiInPlugins. It is safe to assume then that i and k indexes match
-  both the structure of Channel::midiInPlugins and vector <Plugin *> *plugins. */
+  /* Plugins' parameters layout reflects the structure of the matrix
+  Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
+  indexes match both the structure of Channel::midiInPlugins and 
+  vector<Plugin*>* plugins. */
 
-  vector <Plugin *> *plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
+  vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
 
-  for (unsigned i=0; i<plugins->size(); i++)
-  {
-    Plugin *plugin = plugins->at(i);
+  for (Plugin* plugin : *plugins) {
     for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
       uint32_t midiInParam = plugin->midiInParams.at(k);
       if (pure != midiInParam)
         continue;
-      float vf = (value >> 8)/127.0f;
-      plugin->setParameter(k, vf);
+      float vf = (value >> 8) / 127.0f;
+      c::plugin::setParameter(plugin, k, vf, false); // false: not from GUI
       gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
-        i, k, ch->index, pure, value >> 8, vf);
+        plugin->getId(), k, ch->index, pure, value >> 8, vf);
     }
   }
 }
