@@ -34,7 +34,7 @@
 #include "../../core/pluginHost.h"
 #include "../../core/plugin.h"
 #include "../../core/const.h"
-#include "gd_pluginWindowGUI.h"
+#include "pluginWindowGUI.h"
 
 #ifdef __APPLE__
 #import "../../utils/cocoa.h" // objective-c

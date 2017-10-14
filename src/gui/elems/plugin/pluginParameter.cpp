@@ -28,17 +28,13 @@
 #ifdef WITH_VST
 
 
-#include <FL/fl_draw.H>
-#include <FL/Fl_Scroll.H>
-#include "../../utils/gui.h"
-#include "../../core/plugin.h"
-#include "../../core/const.h"
-#include "../../glue/plugin.h"
-#include "../elems/basics/boxtypes.h"
-#include "../elems/basics/box.h"
-#include "../elems/basics/liquidScroll.h"
-#include "../elems/basics/slider.h"
-#include "gd_pluginWindow.h"
+#include "../../../core/plugin.h"
+#include "../../../core/const.h"
+#include "../../../glue/plugin.h"
+#include "../basics/boxtypes.h"
+#include "../basics/box.h"
+#include "../basics/slider.h"
+#include "pluginParameter.h"
 
 
 using std::string;
@@ -97,68 +93,6 @@ void gePluginParameter::update(bool changeSlider)
 	m_value->copy_label(v.c_str());
 	if (changeSlider)
 		m_slider->value(m_plugin->getParameter(m_paramIndex));
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-gdPluginWindow::gdPluginWindow(Plugin* p)
- : gdWindow(450, 156), m_plugin(p)
-{
-	set_non_modal();
-
-	m_list = new geLiquidScroll(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 
-		w()-(G_GUI_OUTER_MARGIN*2), h()-(G_GUI_OUTER_MARGIN*2));
-
-	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
-	m_list->begin();
-		int labelWidth = getLabelWidth();
-		int numParams = m_plugin->getNumParameters();
-		for (int i=0; i<numParams; i++) {
-			int py = m_list->y() + (i * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
-			int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
-			new gePluginParameter(i, m_plugin, m_list->x(), py, pw, labelWidth);
-		}
-	m_list->end();
-
-	end();
-
-	label(m_plugin->getName().c_str());
-
-	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN*2)));
-	resizable(m_list);
-
-	gu_setFavicon(this);
-	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPluginWindow::updateParameter(int index, bool changeSlider)
-{
-	static_cast<gePluginParameter*>(m_list->child(index))->update(changeSlider);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gdPluginWindow::getLabelWidth() const
-{
-	int width = 0;
-	int numParams = m_plugin->getNumParameters();
-	for (int i=0; i<numParams; i++) {
-		int wl = 0, hl = 0;   
-		fl_measure(m_plugin->getParameterName(i).c_str(), wl, hl);
-		if (wl > width)
-			width = wl;
-	}
-	return width;
 }
 
 

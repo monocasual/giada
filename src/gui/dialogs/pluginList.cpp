@@ -46,11 +46,11 @@
 #include "../elems/basics/choice.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/keyboard/channel.h"
-#include "gd_pluginList.h"
-#include "gd_pluginChooser.h"
-#include "gd_pluginWindow.h"
-#include "gd_pluginWindowGUI.h"
+#include "pluginChooser.h"
+#include "pluginWindow.h"
+#include "pluginWindowGUI.h"
 #include "gd_mainWindow.h"
+#include "pluginList.h"
 
 
 extern gdMainWindow* G_MainWin;

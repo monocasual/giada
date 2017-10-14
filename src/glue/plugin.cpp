@@ -35,8 +35,8 @@
 #include "../core/const.h"
 #include "../utils/gui.h"
 #include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/dialogs/gd_pluginWindow.h"
-#include "../gui/dialogs/gd_pluginList.h"
+#include "../gui/dialogs/pluginWindow.h"
+#include "../gui/dialogs/pluginList.h"
 #include "plugin.h"
 
 

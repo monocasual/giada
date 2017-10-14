@@ -33,11 +33,11 @@
 #include "../../core/channel.h"
 #include "../../core/conf.h"
 #include "../../core/pluginHost.h"
-#include "../elems/pluginBrowser.h"
+#include "../elems/plugin/pluginBrowser.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/choice.h"
 #include "../elems/basics/box.h"
-#include "gd_pluginChooser.h"
+#include "pluginChooser.h"
 
 
 using namespace giada::m;

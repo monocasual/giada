@@ -35,7 +35,7 @@
 #include "../../elems/basics/statusButton.h"
 #include "../../elems/basics/dial.h"
 #include "../../dialogs/gd_mainWindow.h"
-#include "../../dialogs/gd_pluginList.h"
+#include "../../dialogs/pluginList.h"
 #include "mainIO.h"
 
 

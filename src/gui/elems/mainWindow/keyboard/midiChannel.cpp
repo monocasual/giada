@@ -39,7 +39,7 @@
 #include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/gd_keyGrabber.h"
-#include "../../../dialogs/gd_pluginList.h"
+#include "../../../dialogs/pluginList.h"
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../../dialogs/midiIO/midiOutputMidiCh.h"
 #include "../../basics/boxtypes.h"

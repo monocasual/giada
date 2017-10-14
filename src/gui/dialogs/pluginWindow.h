@@ -24,14 +24,13 @@
  *
  * -------------------------------------------------------------------------- */
 
+
 #ifdef WITH_VST
 
 #ifndef GD_PLUGIN_WINDOW_H
 #define GD_PLUGIN_WINDOW_H
 
 
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
 #include "window.h"
 
 
@@ -56,33 +55,6 @@ public:
 	gdPluginWindow(Plugin* p);
 
 	void updateParameter(int index, bool changeSlider=false);
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-class gePluginParameter : public Fl_Group
-{
-private:
-
-	static const int VALUE_WIDTH = 100;
-
-	int m_paramIndex;
-	Plugin* m_plugin;
-
-	geBox*    m_label;
-	geSlider* m_slider;
-	geBox*    m_value;
-
-	static void cb_setValue(Fl_Widget* v, void* p);
-	void cb_setValue();
-
-public:
-
-	gePluginParameter(int paramIndex, Plugin* p, int x, int y, int w, int labelWidth);
-
-	void update(bool changeSlider);
 };
 
 
