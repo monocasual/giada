@@ -44,13 +44,15 @@ class gdPluginWindow : public gdWindow
 {
 private:
 
-  Plugin *pPlugin;
+	Plugin* pPlugin;
+
+	int getLabelWidth() const;
 
 public:
 
-  int id;
+	int id;
 
-	gdPluginWindow(Plugin *pPlugin);
+	gdPluginWindow(Plugin* pPlugin);
 };
 
 
@@ -61,21 +63,23 @@ class Parameter : public Fl_Group
 {
 private:
 
-  int paramIndex;
-	Plugin *pPlugin;
+	static const int VALUE_WIDTH = 100;
 
-	static void cb_setValue(Fl_Widget *v, void *p);
-	inline void __cb_setValue();
+	int paramIndex;
+	Plugin* pPlugin;
+
+	static void cb_setValue(Fl_Widget* v, void* p);
+	void cb_setValue();
 
 	void updateValue();
 
 public:
 
-  geBox    *label;
-	geSlider *slider;
-	geBox    *value;
+	geBox*    label;
+	geSlider* slider;
+	geBox*    value;
 
-	Parameter(int paramIndex, Plugin *p, int x, int y, int w);
+	Parameter(int paramIndex, Plugin* p, int x, int y, int w, int labelWidth);
 };
 
 
