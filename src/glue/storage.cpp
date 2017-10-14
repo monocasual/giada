@@ -177,11 +177,15 @@ static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
 
 static string glue_makeUniqueSamplePath__(const string& base, const SampleChannel* ch)
 {
+	string path = base + G_SLASH + ch->wave->getBasename(true);
+	if (mh::uniqueSamplePath(ch, path))
+		return path;
+
 	int k = 0;
-	string p = glue_makeSamplePath__(base, ch->wave, k);
-	while (!mh::uniqueSamplePath(ch, p))
-		p = glue_makeSamplePath__(base, ch->wave, k++);
-	return p;
+	path = glue_makeSamplePath__(base, ch->wave, k);
+	while (!mh::uniqueSamplePath(ch, path))
+		path = glue_makeSamplePath__(base, ch->wave, k++);
+	return path;
 }
 
 
