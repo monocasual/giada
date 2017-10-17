@@ -61,6 +61,7 @@ SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 		boost            (G_DEFAULT_BOOST),
 		pitch            (G_DEFAULT_PITCH),
 		trackerPreview   (0),
+		shift            (0),
 		wave             (nullptr),
 		tracker          (0),
 		mode             (G_DEFAULT_CHANMODE),
@@ -329,6 +330,13 @@ int SampleChannel::getTrackerPreview() const
 
 	return trackerPreview / wave->getChannels();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::getShift() const { return shift; }
+void SampleChannel::setShift(int s) { shift = s; }
 
 
 /* -------------------------------------------------------------------------- */

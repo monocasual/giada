@@ -44,27 +44,27 @@ using namespace giada::c;
 
 
 geRangeTool::geRangeTool(int x, int y, SampleChannel* ch)
-	: Fl_Group(x, y, 300, 20),
-	  m_ch    (ch)
+	: Fl_Group(x, y, 280, G_GUI_UNIT),
+		m_ch    (ch)
 {
-  begin();
-    m_label = new geBox  (x, y, gu_getStringWidth("Range"), 20, "Range", FL_ALIGN_RIGHT);
-    m_begin = new geInput(m_label->x()+m_label->w()+4, y, 70, 20);
-    m_end   = new geInput(m_begin->x()+m_begin->w()+4, y, 70, 20);
-    m_reset = new geButton(m_end->x()+m_end->w()+4, y, 70, 20, "Reset");
-  end();
+	begin();
+		m_label = new geBox(x, y, gu_getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
+		m_begin = new geInput(m_label->x()+m_label->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
+		m_end   = new geInput(m_begin->x()+m_begin->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
+		m_reset = new geButton(m_end->x()+m_end->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT, "Reset");
+	end();
 
-  m_begin->type(FL_INT_INPUT);
-  m_begin->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-  m_begin->callback(cb_setChanPos, this);
-  
-  m_end->type(FL_INT_INPUT);
-  m_end->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-  m_end->callback(cb_setChanPos, this);
+	m_begin->type(FL_INT_INPUT);
+	m_begin->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_begin->callback(cb_setChanPos, this);
+	
+	m_end->type(FL_INT_INPUT);
+	m_end->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
+	m_end->callback(cb_setChanPos, this);
 
-  m_reset->callback(cb_resetStartEnd, this);
+	m_reset->callback(cb_resetStartEnd, this);
 
-  refresh();
+	refresh();
 }
 
 
@@ -73,8 +73,8 @@ geRangeTool::geRangeTool(int x, int y, SampleChannel* ch)
 
 void geRangeTool::refresh()
 {
-  m_begin->value(gu_toString(m_ch->getBegin()).c_str());
-  m_end->value(gu_toString(m_ch->getEnd()).c_str());
+	m_begin->value(gu_toString(m_ch->getBegin()).c_str());
+	m_end->value(gu_toString(m_ch->getEnd()).c_str());
 }
 
 
@@ -90,8 +90,8 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->_
 
 void geRangeTool::__cb_setChanPos()
 {
-  sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
-  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
+	sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
+	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
 }
 
 
@@ -100,6 +100,6 @@ void geRangeTool::__cb_setChanPos()
 
 void geRangeTool::__cb_resetStartEnd()
 {
-  sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
-  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
+	sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
+	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
 }

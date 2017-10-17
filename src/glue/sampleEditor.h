@@ -59,6 +59,7 @@ void normalizeHard(SampleChannel* ch, int a, int b);
 void silence(SampleChannel* ch, int a, int b);
 void fade(SampleChannel* ch, int a, int b, int type);
 void smoothEdges(SampleChannel* ch, int a, int b);
+void shift(SampleChannel* ch, int offset);
 
 bool isWaveBufferFull();
 

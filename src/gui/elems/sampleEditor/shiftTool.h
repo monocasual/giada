@@ -25,54 +25,40 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_WAVE_FX_H
-#define G_WAVE_FX_H
+#ifndef GE_SHIFT_TOOL_H
+#define GE_SHIFT_TOOL_H
 
 
-class Wave;
+#include <FL/Fl_Group.H>
 
 
-namespace giada {
-namespace m {
-namespace wfx
+class SampleChannel;
+class geInput;
+class geButton;
+class geBox;
+
+
+class geShiftTool : public Fl_Group
 {
-static const int FADE_IN  = 0;
-static const int FADE_OUT = 1;
-static const int SMOOTH_SIZE = 32;
+private:
 
-/* normalizeSoft
-Normalizes the wave by returning the dB value for the boost volume. */
+	SampleChannel* m_ch;
 
-float normalizeSoft(Wave* w);
+	geBox*    m_label;
+	geInput*  m_shift;
+	geButton* m_reset;
 
-/* normalizeHard
-Normalizes the wave in range a-b by altering values in memory. */
+	static void cb_setShift(Fl_Widget* w, void* p);
+	static void cb_reset(Fl_Widget* w, void* p);
+	void cb_setShift();
+	void cb_reset();
 
-void normalizeHard(Wave* w, int a, int b);
+public:
 
-int monoToStereo(Wave* w);
-void silence(Wave* w, int a, int b);
-int cut(Wave* w, int a, int b);
-int trim(Wave* w, int a, int b);
-int paste(Wave* src, Wave* dest, int a);
+	geShiftTool(int x, int y, SampleChannel* ch);
 
-/* fade
-Fades in or fades out selection. Fade In = type 0, Fade Out = type 1 */
+	void refresh();
+};
 
-void fade(Wave* w, int a, int b, int type);
-
-/* smooth
-Smooth edges of selection. */
-
-void smooth(Wave* w, int a, int b);
-
-/* reverse
-Flips Wave's data. */
-
-void reverse(Wave* w, int a, int b);
-
-void shift(Wave* w, int offset);
-
-}}}; // giada::m::wfx::
 
 #endif

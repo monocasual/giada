@@ -291,4 +291,16 @@ bool isWaveBufferFull()
 	return m_waveBuffer != nullptr;
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void shift(SampleChannel* ch, int offset)
+{
+	wfx::shift(ch->wave, offset);
+	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->waveTools->waveform->refresh();	
+}
+
+
 }}}; // giada::c::sampleEditor::

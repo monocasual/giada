@@ -302,12 +302,25 @@ void smooth(Wave* w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
+void shift(Wave* w, int offset)
+{
+	float* begin = w->getData();
+	float* end   = w->getData() + (w->getSize() * w->getChannels());
+
+	std::rotate(begin, begin + offset, end);
+	w->setEdited(true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void reverse(Wave* w, int a, int b)
 {
 	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
 
-	float* begin = (w->getData() + (a * w->getChannels()));
-	float* end   = (w->getData() + (b * w->getChannels()));
+	float* begin = w->getData() + (a * w->getChannels());
+	float* end   = w->getData() + (b * w->getChannels());
 
 	std::reverse(begin, end);
 

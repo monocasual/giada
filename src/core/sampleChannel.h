@@ -91,6 +91,7 @@ private:
 	float boost;
 	float pitch;
 	int   trackerPreview;  // chan position for audio preview
+	int   shift;
 
 	/* onPreviewEnd
 	A callback fired when audio preview ends. */
@@ -125,6 +126,10 @@ public:
 			int quantize, bool mixerIsRunning) override;
 	bool canInputRec() override;
 	bool allocBuffers() override;
+
+	int getTrackerPreview() const;
+	int getShift() const;
+	void setShift(int s);
 
 	void reset(int frame);
 
@@ -161,7 +166,6 @@ public:
 	void setEnd(int f);
 	int getEnd();
 	void setTrackerPreview(int f);
-	int getTrackerPreview() const;
 
 	/* hardStop
 	 * stop the channel immediately, no further checks. */

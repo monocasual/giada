@@ -40,6 +40,8 @@ class geBoostTool;
 class gePanTool;
 class gePitchTool;
 class geRangeTool;
+class geSampleTool;
+class geShiftTool;
 class geChoice;
 class geCheck;
 class geBox;
@@ -66,13 +68,13 @@ private:
 	static void cb_enableSnap(Fl_Widget* w, void* p);
 	static void cb_togglePreview(Fl_Widget* w, void* p);
 	static void cb_rewindPreview(Fl_Widget* w, void* p);
-	void __cb_reload();
-	void __cb_zoomIn();
-	void __cb_zoomOut();
-	void __cb_changeGrid();
-	void __cb_enableSnap();
-	void __cb_togglePreview();
-	void __cb_rewindPreview();
+	void cb_reload();
+	void cb_zoomIn();
+	void cb_zoomOut();
+	void cb_changeGrid();
+	void cb_enableSnap();
+	void cb_togglePreview();
+	void cb_rewindPreview();
 
 public:
 
@@ -96,6 +98,7 @@ public:
 	gePitchTool* pitchTool;
 
 	geRangeTool* rangeTool;
+	geShiftTool* shiftTool;
 	geButton*    reload;
 
 	geButton* play;
