@@ -192,11 +192,11 @@ static string glue_makeUniqueSamplePath__(const string& base, const SampleChanne
 /* -------------------------------------------------------------------------- */
 
 
-void glue_savePatch(void *data)
+void glue_savePatch(void* data)
 {
-	gdBrowserSave *browser = (gdBrowserSave*) data;
-	string name            = browser->getName();
-	string fullPath        = browser->getCurrentPath() + G_SLASH + gu_stripExt(name) + ".gptc";
+	gdBrowserSave* browser = (gdBrowserSave*) data;
+	string name            = gu_stripExt(browser->getName());
+	string fullPath        = browser->getCurrentPath() + G_SLASH + name + ".gptc";
 
 	if (name == "") {
 		gdAlert("Please choose a file name.");
@@ -318,9 +318,9 @@ void glue_loadPatch(void* data)
 void glue_saveProject(void* data)
 {
 	gdBrowserSave* browser = (gdBrowserSave*) data;
-	string name            = browser->getName();
-	string folderPath      = browser->getCurrentPath(); //browser->getSelectedItem();
-	string fullPath        = folderPath + G_SLASH + gu_stripExt(name) + ".gprj";
+	string name            = gu_stripExt(browser->getName());
+	string folderPath      = browser->getCurrentPath();
+	string fullPath        = folderPath + G_SLASH + name + ".gprj";
 
 	if (name == "") {
 		gdAlert("Please choose a project name.");
@@ -359,7 +359,7 @@ void glue_saveProject(void* data)
 		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
 	}
 
-	string gptcPath = fullPath + G_SLASH + gu_stripExt(name) + ".gptc";
+	string gptcPath = fullPath + G_SLASH + name + ".gptc";
 	if (glue_savePatch__(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
