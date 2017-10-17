@@ -90,10 +90,14 @@ void setParameter(Plugin* p, int index, float value, bool gui)
 
 	if (p->hasEditor())
 		return;
+
 	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
 	gdPluginWindow* child = static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
-	if (child != nullptr)
+	if (child != nullptr) {
+		Fl::lock();
 		child->updateParameter(index, !gui);
+		Fl::unlock();
+	}
 }
 
 }}}; // giada::c::plugin::
