@@ -26,6 +26,7 @@
 - Update JUCE to version 5.1.2
 - UI-less plug-in window refinements
 - Update UI-less plug-in window on MIDI parameter's change
+- Strip .gptc/.gprj extention from patch name
 
 
 0.14.3 --- 2017 . 09 . 18
