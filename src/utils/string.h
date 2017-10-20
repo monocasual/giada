@@ -35,16 +35,16 @@
 #include <vector>
 
 
-std::string gu_getRealPath(const std::string &path);
+std::string gu_getRealPath(const std::string& path);
 
-std::string gu_replace(std::string in, const std::string &search,
-  const std::string &replace);
+std::string gu_replace(std::string in, const std::string& search,
+  const std::string& replace);
 
-std::string gu_trim(const std::string &s);
+std::string gu_trim(const std::string& s);
 
 std::string gu_toString(int i);
 
-void gu_split(std::string in, std::string sep, std::vector<std::string> *v);
+void gu_split(std::string in, std::string sep, std::vector<std::string>* v);
 
 
 #endif

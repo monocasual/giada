@@ -37,7 +37,7 @@ using std::string;
 using std::vector;
 
 
-string gu_getRealPath(const string &path)
+string gu_getRealPath(const string& path)
 {
 	string out = "";
 
@@ -85,7 +85,7 @@ string gu_toString(int i)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_trim(const string &s)
+string gu_trim(const string& s)
 {
 	std::size_t first = s.find_first_not_of(" \n\t");
 	std::size_t last  = s.find_last_not_of(" \n\t");
@@ -96,7 +96,7 @@ string gu_trim(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_replace(string in, const string &search, const string &replace)
+string gu_replace(string in, const string& search, const string& replace)
 {
 	size_t pos = 0;
 	while ((pos = in.find(search, pos)) != string::npos) {
@@ -110,7 +110,7 @@ string gu_replace(string in, const string &search, const string &replace)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_split(string in, string sep, vector<string> *v)
+void gu_split(string in, string sep, vector<string>* v)
 {
 	string full  = in;
 	string token = "";
