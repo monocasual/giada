@@ -13,7 +13,6 @@
 
 
 0.14.4 ---
-- [Sample Editor] Fix non-working 'cut' operation
 - Renameable channels
 - Portable VST path
 - [Linux/Mac] Don't skip '/' path when navigating to upper folders
@@ -23,12 +22,14 @@
 - Save 'arm' status to patch/project file
 - Revamped Beats and Bpm input windows
 - Simplified audio samples' storage in project folders
-- Fix missed MIDI events with more than 1 plug-in in the stack
 - Update JUCE to version 5.1.2
 - UI-less plug-in window refinements
 - Update UI-less plug-in window on MIDI parameter's change
 - Strip .gptc/.gprj extention from patch name
+- [Sample Editor] Fix non-working 'cut' operation
+- Fix missed MIDI events with more than 1 plug-in in the stack
 - Fix File Browser path widget drawn incorrectly in OS X
+- Fix missing MIDI learn for 'Arm channel' and 'Kill channel'
 
 
 0.14.3 --- 2017 . 09 . 18
