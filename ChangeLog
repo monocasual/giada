@@ -13,8 +13,9 @@
 
 
 0.14.4 ---
+- [Sample Editor] Fix non-working 'cut' operation
 - Renameable channels
-- Semi-portable VST path
+- Portable VST path
 - [Linux/Mac] Don't skip '/' path when navigating to upper folders
 - Ability to process more than one plug-in instrument at once
 - Beautify Configuration Window
@@ -27,6 +28,7 @@
 - UI-less plug-in window refinements
 - Update UI-less plug-in window on MIDI parameter's change
 - Strip .gptc/.gprj extention from patch name
+- Fix File Browser path widget drawn incorrectly in OS X
 
 
 0.14.3 --- 2017 . 09 . 18
