@@ -27,8 +27,13 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <chrono>
-#include <thread>
+#include "../core/const.h"
+#ifndef G_OS_MAC
+	#include <chrono>
+	#include <thread>
+#else
+	#include <unistd.h>
+#endif
 #include "time.h"
 
 
@@ -38,6 +43,10 @@ namespace time
 {
 void sleep(int millisecs)
 {
+#ifndef G_OS_MAC
 	std::this_thread::sleep_for(std::chrono::milliseconds(millisecs));
+#else
+	usleep(millisecs * 1000);
+#endif
 }
 }}};  // giada::u::time::
