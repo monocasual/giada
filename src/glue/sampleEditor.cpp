@@ -103,6 +103,7 @@ void setBeginEnd(SampleChannel* ch, int b, int e)
 
 void cut(SampleChannel* ch, int a, int b)
 {
+	copy(ch, a, b);
 	if (!wfx::cut(ch->wave, a, b)) {
 		gdAlert("Unable to cut the sample!");
 		return;
@@ -136,8 +137,10 @@ void copy(SampleChannel* ch, int a, int b)
 
 void paste(SampleChannel* ch, int a)
 {
-	if (!isWaveBufferFull())
+	if (!isWaveBufferFull()) {
+		gu_log("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
 		return;
+	}
 	
 	wfx::paste(m_waveBuffer, ch->wave, a);
 
