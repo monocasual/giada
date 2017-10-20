@@ -46,16 +46,15 @@ class gdBrowserLoad : public gdBrowserBase
 {
 private:
 
-	static void cb_load(Fl_Widget *w, void *p);
-	static void cb_down(Fl_Widget *v, void *p);
-
-	inline void __cb_load();
-	inline void __cb_down();
+	static void cb_load(Fl_Widget* w, void* p);
+	static void cb_down(Fl_Widget* v, void* p);
+	void cb_load();
+	void cb_down();
 
 public:
 
-	gdBrowserLoad(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	void (*callback)(void*), Channel *ch);
+	gdBrowserLoad(int x, int y, int w, int h, const std::string& title,
+			const std::string& path, void (*callback)(void*), Channel* ch);
 };
 
 

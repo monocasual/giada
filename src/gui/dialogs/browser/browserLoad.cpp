@@ -35,8 +35,8 @@
 using std::string;
 
 
-gdBrowserLoad::gdBrowserLoad(int x, int y, int w, int h, const string &title,
-		const string &path, void (*cb)(void*), Channel *ch)
+gdBrowserLoad::gdBrowserLoad(int x, int y, int w, int h, const string& title,
+		const string& path, void (*cb)(void*), Channel* ch)
 	:	gdBrowserBase(x, y, w, h, title, path, cb)
 {
 	channel = ch;
@@ -48,20 +48,25 @@ gdBrowserLoad::gdBrowserLoad(int x, int y, int w, int h, const string &title,
 	ok->label("Load");
 	ok->callback(cb_load, (void*) this);
 	ok->shortcut(FL_ENTER);
+
+	/* On OS X the 'where' input doesn't get resized properly on startup. Let's 
+	force it. */
+	
+	where->redraw();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserLoad::cb_load(Fl_Widget *v, void *p) { ((gdBrowserLoad*)p)->__cb_load(); }
-void gdBrowserLoad::cb_down(Fl_Widget *v, void *p) { ((gdBrowserLoad*)p)->__cb_down(); }
+void gdBrowserLoad::cb_load(Fl_Widget* v, void* p) { ((gdBrowserLoad*)p)->cb_load(); }
+void gdBrowserLoad::cb_down(Fl_Widget* v, void* p) { ((gdBrowserLoad*)p)->cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserLoad::__cb_load()
+void gdBrowserLoad::cb_load()
 {
 	callback((void*) this);
 }
@@ -70,7 +75,7 @@ void gdBrowserLoad::__cb_load()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserLoad::__cb_down()
+void gdBrowserLoad::cb_down()
 {
 	string path = browser->getSelectedItem();
 

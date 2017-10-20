@@ -35,8 +35,8 @@
 using std::string;
 
 
-gdBrowserSave::gdBrowserSave(int x, int y, int w, int h, const string &title,
-		const string &path, const string &_name, void (*cb)(void*), Channel *ch)
+gdBrowserSave::gdBrowserSave(int x, int y, int w, int h, const string& title,
+		const string& path, const string& _name, void (*cb)(void*), Channel* ch)
 	:	gdBrowserBase(x, y, w, h, title, path, cb)
 {
 	channel = ch;
@@ -52,20 +52,26 @@ gdBrowserSave::gdBrowserSave(int x, int y, int w, int h, const string &title,
 	ok->label("Save");
 	ok->callback(cb_save, (void*) this);
 	ok->shortcut(FL_ENTER);
+
+	/* On OS X the 'where' and 'name' inputs don't get resized properly on startup. 
+	Let's force them. */
+
+	where->redraw();
+	name->redraw();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::cb_save(Fl_Widget *v, void *p) { ((gdBrowserSave*)p)->__cb_save(); }
-void gdBrowserSave::cb_down(Fl_Widget *v, void *p) { ((gdBrowserSave*)p)->__cb_down(); }
+void gdBrowserSave::cb_save(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_save(); }
+void gdBrowserSave::cb_down(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::__cb_down()
+void gdBrowserSave::cb_down()
 {
 	string path = browser->getSelectedItem();
 
@@ -96,7 +102,7 @@ string gdBrowserSave::getName()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::__cb_save()
+void gdBrowserSave::cb_save()
 {
 	callback((void*) this);
 }

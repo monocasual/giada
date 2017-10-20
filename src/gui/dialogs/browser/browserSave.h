@@ -46,19 +46,18 @@ class gdBrowserSave : public gdBrowserBase
 {
 private:
 
-	geInput *name;
+	geInput* name;
 
-	static void cb_down(Fl_Widget *v, void *p);
-	static void cb_save(Fl_Widget *w, void *p);
-
-	inline void __cb_down();
-	inline void __cb_save();
+	static void cb_down(Fl_Widget* v, void* p);
+	static void cb_save(Fl_Widget* w, void* p);
+	void cb_down();
+	void cb_save();
 
 public:
 
-	gdBrowserSave(int x, int y, int w, int h, const std::string &title,
-			const std::string &path,	const std::string &name, void (*callback)(void*),
-			Channel *ch);
+	gdBrowserSave(int x, int y, int w, int h, const std::string& title,
+			const std::string& path, const std::string& name, void (*callback)(void*),
+			Channel* ch);
 
 	std::string getName();
 };

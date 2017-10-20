@@ -50,7 +50,7 @@ gdBrowserBase::gdBrowserBase(int x, int y, int w, int h, const string& title,
 
 	groupTop = new Fl_Group(8, 8, w-16, 40);
     hiddenFiles = new geCheck(groupTop->x(), groupTop->y(), 400, 20, "Show hidden files");
-		where = new geInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 152, 20);
+		where = new geInput(groupTop->x(), hiddenFiles->y()+hiddenFiles->h(), 20, 20);
 		updir	= new geButton(groupTop->x()+groupTop->w()-20, where->y(), 20, 20, "", updirOff_xpm, updirOn_xpm);
 	groupTop->end();
 	groupTop->resizable(where);
