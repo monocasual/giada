@@ -123,10 +123,18 @@ void processChannels(uint32_t pure, uint32_t value)
 		else if (pure == ch->midiInMute) {
 			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
 			glue_setMute(ch, false);
+		}		
+		else if (pure == ch->midiInKill) {
+			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_kill(ch);
+		}		
+		else if (pure == ch->midiInArm) {
+			gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->index, pure);
+			glue_toggleArm(ch, false);
 		}
 		else if (pure == ch->midiInSolo) {
 			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
-			ch->solo ? glue_setSoloOn(ch, false) : glue_setSoloOff(ch, false);
+			glue_toggleSolo(ch, false);
 		}
 		else if (pure == ch->midiInVolume) {
 			float vf = (value >> 8)/127.0f;
@@ -153,7 +161,8 @@ void processChannels(uint32_t pure, uint32_t value)
     processPlugins(ch, pure, value); // Process plugins' parameters
 #endif
 
-		/* Redirect full midi message (pure + value) to plugins */
+		/* Redirect full midi message (pure + value) to plugins. */
+
 		ch->receiveMidi(pure | value);
 	}
 }

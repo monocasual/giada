@@ -290,6 +290,24 @@ void glue_setMute(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
+void glue_toggleSolo(Channel* ch, bool gui)
+{
+	ch->solo ? glue_setSoloOn(ch, gui) : glue_setSoloOff(ch, gui);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void glue_kill(Channel* ch)
+{
+	ch->kill(0); // on frame 0: it's a user-generated event
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void glue_setSoloOn(Channel *ch, bool gui)
 {
 	/* if there's no solo session, store mute configuration of all chans

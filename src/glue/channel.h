@@ -69,9 +69,11 @@ int glue_cloneChannel(Channel* ch);
 
 void glue_toggleArm(Channel* ch, bool gui=true);
 void glue_toggleInputMonitor(Channel* ch);
+void glue_kill(Channel* ch);
 void glue_setMute(Channel* ch, bool gui=true);
 void glue_setSoloOn (Channel* ch, bool gui=true);
 void glue_setSoloOff(Channel* ch, bool gui=true);
+void glue_toggleSolo(Channel* ch, bool gui=true);
 void glue_setVolume(Channel* ch, float v, bool gui=true, bool editor=false);
 void glue_setName(Channel* ch, const std::string& name);
 void glue_setPitch(SampleChannel* ch, float val);
