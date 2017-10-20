@@ -81,7 +81,7 @@ void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
 void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
 {
 	if (ctrl)
-		glue_setMute(ch);
+		glue_toggleMute(ch);
 	else
 	if (shift)
 		ch->kill(0);        // on frame 0: user-generated event
@@ -98,7 +98,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 	/* case CTRL */
 
 	if (ctrl)
-		glue_setMute(ch);
+		glue_toggleMute(ch);
 
 	/* case SHIFT
 	 *

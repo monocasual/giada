@@ -83,7 +83,7 @@ void geChannel::cb_arm()
 
 void geChannel::cb_mute()
 {
-	glue_setMute(ch);
+	glue_toggleMute(ch);
 }
 
 

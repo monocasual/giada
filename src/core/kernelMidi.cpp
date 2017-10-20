@@ -58,8 +58,8 @@ namespace
 {
 bool status = false;
 int api = 0;
-RtMidiOut *midiOut = nullptr;
-RtMidiIn  *midiIn  = nullptr;
+RtMidiOut* midiOut = nullptr;
+RtMidiIn*  midiIn  = nullptr;
 unsigned numOutPorts = 0;
 unsigned numInPorts  = 0;
 
@@ -68,8 +68,8 @@ unsigned numInPorts  = 0;
  * kernelMidi. It contains things to do once the midi message has been
  * stored. */
 
-cb_midiLearn *cb_learn = nullptr;
-void         *cb_data  = nullptr;
+cb_midiLearn* cb_learn = nullptr;
+void* cb_data = nullptr;
 
 
 /* -------------------------------------------------------------------------- */
@@ -122,7 +122,7 @@ void processChannels(uint32_t pure, uint32_t value)
 		}
 		else if (pure == ch->midiInMute) {
 			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_setMute(ch, false);
+			glue_toggleMute(ch, false);
 		}		
 		else if (pure == ch->midiInKill) {
 			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->index, pure);
@@ -152,8 +152,8 @@ void processChannels(uint32_t pure, uint32_t value)
 			}
 			else 
 			if (pure == sch->midiInReadActions) {
-				gu_log("  >>> start/stop read actions ch=%d (pure=0x%X)\n", sch->index, pure);
-				glue_startStopReadingRecs(sch, false);
+				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->index, pure);
+				glue_toggleReadingRecs(sch, false);
 			}
 		}
 
@@ -221,8 +221,8 @@ void processMaster(uint32_t pure, uint32_t value)
 
 static void callback(double t, std::vector<unsigned char>* msg, void* data)
 {
-  /* 0.8.0 - for now we handle other midi signals (common and real-time
-	 * messages) as unknown, for debugging purposes */
+  /* 0.8.0 - for now we handle other MIDI signals (common and real-time 
+  messages) as unknown, for debugging purposes. */
 
 	if (msg->size() < 3) {
 		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
@@ -232,9 +232,8 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 		return;
 	}
 
-	/* in this place we want to catch two things: a) note on/note off
-	 * from a keyboard and b) knob/wheel/slider movements from a
-	 * controller */
+	/* Here we want to catch two things: a) note on/note off from a keyboard and 
+	b) knob/wheel/slider movements from a controller. */
 
 	uint32_t input = getIValue(msg->at(0), msg->at(1), msg->at(2));
 	uint32_t chan  = input & 0x0F000000;
@@ -247,10 +246,10 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 
 	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
 
-	/* start dispatcher. If midi learn is on don't parse channels, just
-	 * learn incoming midi signal. Otherwise process master events first,
-	 * then each channel in the stack. This way incoming signals don't
-	 * get processed by glue_* when midi learning is on. */
+	/* Start dispatcher. If midi learn is on don't parse channels, just learn 
+	incoming MIDI signal. Otherwise process master events first, then each channel 
+	in the stack. This way incoming signals don't get processed by glue_* when 
+	MIDI learning is on. */
 
 	if (cb_learn)
 		cb_learn(pure, cb_data);

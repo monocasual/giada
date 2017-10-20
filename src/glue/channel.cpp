@@ -208,7 +208,7 @@ int glue_cloneChannel(Channel* src)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setVolume(Channel *ch, float v, bool gui, bool editor)
+void glue_setVolume(Channel* ch, float v, bool gui, bool editor)
 {
 	ch->volume = v;
 
@@ -264,7 +264,7 @@ void glue_setPanning(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setMute(Channel *ch, bool gui)
+void glue_toggleMute(Channel* ch, bool gui)
 {
 	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
 		if (!ch->mute) {
@@ -308,7 +308,7 @@ void glue_kill(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setSoloOn(Channel *ch, bool gui)
+void glue_setSoloOn(Channel* ch, bool gui)
 {
 	/* if there's no solo session, store mute configuration of all chans
 	 * and start the session */
@@ -354,7 +354,7 @@ void glue_setSoloOn(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setSoloOff(Channel *ch, bool gui)
+void glue_setSoloOff(Channel* ch, bool gui)
 {
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
@@ -399,7 +399,7 @@ void glue_setSoloOff(Channel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBoost(SampleChannel *ch, float val)
+void glue_setBoost(SampleChannel* ch, float val)
 {
 	ch->setBoost(val);
 	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -424,7 +424,7 @@ void glue_setName(Channel* ch, const string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
+void glue_toggleReadingRecs(SampleChannel* ch, bool gui)
 {
 	/* When you call glue_startReadingRecs with conf::treatRecsAsLoops, the
 	member value ch->readActions actually is not set to true immediately, because
@@ -444,7 +444,7 @@ void glue_startStopReadingRecs(SampleChannel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startReadingRecs(SampleChannel *ch, bool gui)
+void glue_startReadingRecs(SampleChannel* ch, bool gui)
 {
 	if (conf::treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
@@ -461,7 +461,7 @@ void glue_startReadingRecs(SampleChannel *ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopReadingRecs(SampleChannel *ch, bool gui)
+void glue_stopReadingRecs(SampleChannel* ch, bool gui)
 {
 	/* First of all, if the mixer is not running just stop and disable everything.
 	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the

@@ -359,7 +359,7 @@ void geSampleChannel::__cb_openMenu()
 
 void geSampleChannel::__cb_readActions()
 {
-	glue_startStopReadingRecs(static_cast<SampleChannel*>(ch));
+	glue_toggleReadingRecs(static_cast<SampleChannel*>(ch));
 }
 
 

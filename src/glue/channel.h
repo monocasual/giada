@@ -63,15 +63,14 @@ void glue_freeChannel(Channel* ch);
 int glue_cloneChannel(Channel* ch);
 
 /* toggle/set*
- * Toggle or set several channel properties. If gui == true the signal comes
- * from a manual interaction on the GUI, otherwise it's a MIDI/Jack/external
- * signal. */
+Toggles or set several channel properties. If gui == true the signal comes from 
+a manual interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
 void glue_toggleArm(Channel* ch, bool gui=true);
 void glue_toggleInputMonitor(Channel* ch);
 void glue_kill(Channel* ch);
-void glue_setMute(Channel* ch, bool gui=true);
-void glue_setSoloOn (Channel* ch, bool gui=true);
+void glue_toggleMute(Channel* ch, bool gui=true);
+void glue_setSoloOn(Channel* ch, bool gui=true);
 void glue_setSoloOff(Channel* ch, bool gui=true);
 void glue_toggleSolo(Channel* ch, bool gui=true);
 void glue_setVolume(Channel* ch, float v, bool gui=true, bool editor=false);
@@ -80,12 +79,12 @@ void glue_setPitch(SampleChannel* ch, float val);
 void glue_setPanning(SampleChannel* ch, float val);
 void glue_setBoost(SampleChannel* ch, float val);
 
-/* start/stopReadingRecs
+/* toggleReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction
 on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startStopReadingRecs(SampleChannel* ch, bool gui=true);
-void glue_startReadingRecs    (SampleChannel* ch, bool gui=true);
-void glue_stopReadingRecs     (SampleChannel* ch, bool gui=true);
+void glue_toggleReadingRecs(SampleChannel* ch, bool gui=true);
+void glue_startReadingRecs(SampleChannel* ch, bool gui=true);
+void glue_stopReadingRecs(SampleChannel* ch, bool gui=true);
 
 #endif
