@@ -1,5 +1,5 @@
-#ifndef __JUCE_APPCONFIG_H__
-#define __JUCE_APPCONFIG_H__
+#ifndef JUCE_APPCONFIG_H
+#define JUCE_APPCONFIG_H
 
 
 #ifdef _WIN32
