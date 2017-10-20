@@ -80,6 +80,26 @@ int buffersize;
 
 bool missingPlugins;
 
+void splitPluginDescription(const string& descr, vector<string>& out)
+{
+	// input:  VST-mda-Ambience-18fae2d2-6d646141  string
+	// output: [2-------------] [1-----] [0-----]  vector.size() == 3
+	
+	string chunk = "";
+	int count = 2;
+	for (int i=descr.length()-1; i >= 0; i--) {
+		if (descr[i] == '-' && count != 0) {
+			out.push_back(chunk);
+			count--;
+			chunk = "";
+		}
+		else
+			chunk += descr[i];
+	}
+	out.push_back(chunk);
+}
+
+
 /* findPluginDescription
 Browses the list of known plug-ins until plug-in with id == 'id' is found.
 Unfortunately knownPluginList.getTypeForIdentifierString(id) doesn't work for
@@ -93,21 +113,16 @@ The following function simply drops the first hash code during comparison. */
 const juce::PluginDescription* findPluginDescription(const string& id)
 {
 	vector<string> idParts;
-	gu_split(id, "-", &idParts);
+	splitPluginDescription(id, idParts);
 
-	for (const juce::PluginDescription* pd : knownPluginList)
-	{
+	for (const juce::PluginDescription* pd : knownPluginList) {
 		vector<string> tmpIdParts;
-		
-		gu_split(pd->createIdentifierString().toStdString(), "-", &tmpIdParts);
-		if (idParts[0] == tmpIdParts[0] && 
-		    idParts[1] == tmpIdParts[1] &&
-		    idParts[3] == tmpIdParts[3])
+		splitPluginDescription(pd->createIdentifierString().toStdString(), tmpIdParts);
+		if (idParts[0] == tmpIdParts[0] && idParts[2] == tmpIdParts[2])
 			return pd;
 	}
 	return nullptr;
 }
-
 }; // {anonymous}
 
 
