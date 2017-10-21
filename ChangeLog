@@ -15,6 +15,7 @@
 0.14.4 ---
 - Renameable channels
 - Portable VST path
+- [Sample Editor] Sample shift tool
 - [Linux/Mac] Don't skip '/' path when navigating to upper folders
 - Ability to process more than one plug-in instrument at once
 - Beautify Configuration Window
