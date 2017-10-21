@@ -37,6 +37,7 @@
 #include "../gui/elems/sampleEditor/panTool.h"
 #include "../gui/elems/sampleEditor/pitchTool.h"
 #include "../gui/elems/sampleEditor/rangeTool.h"
+#include "../gui/elems/sampleEditor/shiftTool.h"
 #include "../gui/elems/sampleEditor/waveform.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../core/sampleChannel.h"
@@ -303,6 +304,7 @@ void shift(SampleChannel* ch, int offset)
 	wfx::shift(ch->wave, offset - ch->getShift());
 	ch->setShift(offset);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
+	gdEditor->shiftTool->refresh();
 	gdEditor->waveTools->waveform->refresh();	
 }
 
