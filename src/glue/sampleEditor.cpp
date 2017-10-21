@@ -300,7 +300,8 @@ bool isWaveBufferFull()
 
 void shift(SampleChannel* ch, int offset)
 {
-	wfx::shift(ch->wave, offset);
+	wfx::shift(ch->wave, offset - ch->getShift());
+	ch->setShift(offset);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();	
 }

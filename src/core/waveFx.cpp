@@ -304,10 +304,13 @@ void smooth(Wave* w, int a, int b)
 
 void shift(Wave* w, int offset)
 {
+	if (offset < 0)
+		offset = (w->getSize() + w->getChannels()) + offset;
+
 	float* begin = w->getData();
 	float* end   = w->getData() + (w->getSize() * w->getChannels());
 
-	std::rotate(begin, begin + offset, end);
+	std::rotate(begin, end - (offset * w->getChannels()), end);
 	w->setEdited(true);
 }
 
