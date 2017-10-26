@@ -30,6 +30,7 @@
 #include "../../../utils/gui.h"
 #include "../../../utils/string.h"
 #include "../../../glue/sampleEditor.h"
+#include "../../dialogs/gd_warnings.h"
 #include "../basics/input.h"
 #include "../basics/box.h"
 #include "../basics/button.h"
@@ -72,7 +73,7 @@ void geShiftTool::cb_reset(Fl_Widget* w, void* p) { ((geShiftTool*)p)->cb_reset(
 
 void geShiftTool::cb_setShift()
 {
-  sampleEditor::shift(m_ch, atoi(m_shift->value()));
+	shift(atoi(m_shift->value()));
 }
 
 
@@ -81,7 +82,7 @@ void geShiftTool::cb_setShift()
 
 void geShiftTool::cb_reset()
 {
-	sampleEditor::shift(m_ch, 0);
+	shift(0);
 }
 
 
@@ -91,4 +92,16 @@ void geShiftTool::cb_reset()
 void geShiftTool::refresh()
 {
 	m_shift->value(gu_toString(m_ch->getShift()).c_str());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geShiftTool::shift(int f)
+{
+	if (m_ch->isPlaying())
+		gdAlert("Can't shift sample while playing.");
+	else
+		sampleEditor::shift(m_ch, f);	
 }

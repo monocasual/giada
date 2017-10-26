@@ -53,6 +53,8 @@ private:
 	void cb_setShift();
 	void cb_reset();
 
+	void shift(int f);
+
 public:
 
 	geShiftTool(int x, int y, SampleChannel* ch);
