@@ -33,7 +33,7 @@
 
 
 #include <FL/Fl_Group.H>
-
+#include "../../../core/pluginHost.h"
 
 class geInput;
 class geButton;
@@ -44,8 +44,7 @@ class geTabPlugins : public Fl_Group
 {
 private:
 
-	static void cb_scan  (Fl_Widget* w, void* p);
-	static void cb_onScan(float progress, void* p);
+	static void cb_scan(Fl_Widget* w, void* p);
 	void cb_scan(Fl_Widget* w);
 
 	void updateCount();

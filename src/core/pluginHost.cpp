@@ -166,8 +166,7 @@ void init(int _buffersize, int _samplerate)
 /* -------------------------------------------------------------------------- */
 
 
-int scanDirs(const string& dirs, void (*callback)(float progress, void* p),
-		void* p)
+int scanDirs(const string& dirs, const std::function<void(float)>& cb)
 {
 	gu_log("[pluginHost::scanDir] requested directories: '%s'\n", dirs.c_str());
 	gu_log("[pluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
@@ -188,8 +187,8 @@ int scanDirs(const string& dirs, void (*callback)(float progress, void* p),
 	juce::String name;
 	while (scanner.scanNextFile(false, name)) {
 		gu_log("[pluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
-		if (callback)
-			callback(scanner.getProgress(), p);
+		if (cb)
+			cb(scanner.getProgress());
 	}
 
 	gu_log("[pluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());

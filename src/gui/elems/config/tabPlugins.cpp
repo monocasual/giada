@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <functional>
 #include <FL/Fl.H>
 #include "../../../core/const.h"
 #include "../../../core/conf.h"
@@ -88,21 +89,17 @@ void geTabPlugins::cb_scan(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_scan(
 /* -------------------------------------------------------------------------- */
 
 
-void geTabPlugins::cb_onScan(float progress, void* p)
-{
-	string l = "Scan in progress (" + gu_toString((int)(progress*100)) + "%). Please wait...";
-	((geTabPlugins*)p)->info->label(l.c_str());
-	Fl::wait();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void geTabPlugins::cb_scan(Fl_Widget* w)
 {
+	std::function<void(float)> callback = [this] (float progress) 
+	{
+		string l = "Scan in progress (" + gu_toString((int)(progress*100)) + "%). Please wait...";
+		info->label(l.c_str());
+		Fl::wait();
+	};
+
 	info->show();
-	pluginHost::scanDirs(folderPath->value(), cb_onScan, (void*) this);
+	pluginHost::scanDirs(folderPath->value(), callback);
 	pluginHost::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
 	info->hide();
 	updateCount();
