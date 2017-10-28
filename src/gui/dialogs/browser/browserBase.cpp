@@ -187,16 +187,28 @@ void gdBrowserBase::hideStatusBar()
 /* -------------------------------------------------------------------------- */
 
 
-string gdBrowserBase::getCurrentPath()
+string gdBrowserBase::getCurrentPath() const 
+{ 
+	return where->value(); 
+}
+
+
+Channel* gdBrowserBase::getChannel() const 
+{ 
+	return channel; 
+}
+
+
+string gdBrowserBase::getSelectedItem() const 
 {
-  return where->value();
+	return browser->getSelectedItem();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string gdBrowserBase::getSelectedItem()
-{
-	return browser->getSelectedItem();
+void gdBrowserBase::fireCallback() const
+{ 
+	callback((void*) this); 
 }

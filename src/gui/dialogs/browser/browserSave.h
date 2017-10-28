@@ -29,17 +29,11 @@
 #define GD_BROWSER_SAVE_H
 
 
-#include "../window.h"
 #include "browserBase.h"
 
 
 class Channel;
-class Fl_Group;
-class geCheck;
-class geBrowser;
-class geButton;
 class geInput;
-class geProgress;
 
 
 class gdBrowserSave : public gdBrowserBase

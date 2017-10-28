@@ -32,8 +32,8 @@
 #include "../window.h"
 
 
-class Channel;
 class Fl_Group;
+class Channel;
 class geCheck;
 class geBrowser;
 class geButton;
@@ -78,8 +78,12 @@ public:
 	/* getSelectedItem
 	 * Return the full path of the selected file. */
 
-	std::string getSelectedItem();
+	std::string getSelectedItem() const;
 
+	std::string getCurrentPath() const;
+	Channel* getChannel() const;
+	void fireCallback() const;
+	
 	/* setStatusBar
 	 * Increment status bar for progress tracking. */
 
@@ -87,10 +91,7 @@ public:
 
 	void showStatusBar();
 	void hideStatusBar();
-	std::string getCurrentPath();
 
-	Channel* getChannel() { return channel; }
-	void fireCallback()   { callback((void*) this); }
 };
 
 
