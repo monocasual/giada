@@ -187,8 +187,7 @@ int scanDirs(const string& dirs, const std::function<void(float)>& cb)
 	juce::String name;
 	while (scanner.scanNextFile(false, name)) {
 		gu_log("[pluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
-		if (cb)
-			cb(scanner.getProgress());
+		cb(scanner.getProgress());
 	}
 
 	gu_log("[pluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());

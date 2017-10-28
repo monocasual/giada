@@ -77,10 +77,6 @@ Parses plugin directories (semicolon-separated) and store list in
 knownPluginList. The callback is called on each plugin found. Used to update the 
 main window from the GUI thread. */
 
-/*int scanDirs(const std::string& paths, cb_progress_t=nullptr,
-	void* p=nullptr);
-*/
-
 int scanDirs(const std::string& paths, const std::function<void(float)>& cb);
 
 /* (save|load)List
