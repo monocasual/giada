@@ -166,24 +166,28 @@ void init(int _buffersize, int _samplerate)
 /* -------------------------------------------------------------------------- */
 
 
-int scanDir(const string& dirpath, void (*callback)(float progress, void* p),
+int scanDirs(const string& dirs, void (*callback)(float progress, void* p),
 		void* p)
 {
-	gu_log("[pluginHost::scanDir] requested directory: '%s'\n", dirpath.c_str());
+	gu_log("[pluginHost::scanDir] requested directories: '%s'\n", dirs.c_str());
 	gu_log("[pluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
 
 	knownPluginList.clear();   // clear up previous plugins
 
-	juce::VSTPluginFormat format;
-	juce::FileSearchPath path(dirpath);
-	juce::PluginDirectoryScanner scanner(knownPluginList, format, path,
-			true, juce::File::nonexistent); // true: recursive
+	vector<string> dirVec;
+	gu_split(dirs, ";", &dirVec);
 
-	bool cont = true;
+	juce::VSTPluginFormat format;
+	juce::FileSearchPath searchPath;
+	for (const string& dir : dirVec)
+		searchPath.add(juce::File(dir));
+
+	juce::PluginDirectoryScanner scanner(knownPluginList, format, searchPath, 
+		true, juce::File::nonexistent); // true: recursive
+
 	juce::String name;
-	while (cont) {
+	while (scanner.scanNextFile(false, name)) {
 		gu_log("[pluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
-		cont = scanner.scanNextFile(false, name);
 		if (callback)
 			callback(scanner.getProgress(), p);
 	}

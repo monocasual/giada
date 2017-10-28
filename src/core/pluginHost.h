@@ -43,6 +43,8 @@ namespace giada {
 namespace m {
 namespace pluginHost
 {
+typedef void (*progressCb_t)(float progress, void* p);
+
 enum stackType
 {
 	MASTER_OUT,
@@ -52,32 +54,32 @@ enum stackType
 
 enum sortMethod
 {
-  NAME,
-  CATEGORY,
-  MANUFACTURER,
-  FORMAT
+	NAME,
+	CATEGORY,
+	MANUFACTURER,
+	FORMAT
 };
 
 struct PluginInfo
 {
-  std::string uid;
-  std::string name;
-  std::string category;
-  std::string manufacturerName;
-  std::string format;
-  bool isInstrument;
+	std::string uid;
+	std::string name;
+	std::string category;
+	std::string manufacturerName;
+	std::string format;
+	bool isInstrument;
 };
 
 void init(int bufSize, int frequency);
 void close();
 
-/* scanDir
- * Parse plugin directory and store list in knownPluginList. The callback is
- * called on each plugin found. Used to update the main window from the GUI
- * thread. */
+/* scanDirs
+Parses plugin directories (semicolon-separated) and store list in 
+knownPluginList. The callback is called on each plugin found. Used to update the 
+main window from the GUI thread. */
 
-int scanDir(const std::string& path, void (*callback)(float progress, void* p)=nullptr,
-    void* p=nullptr);
+int scanDirs(const std::string& paths, void (*callback)(float progress, void* p)=nullptr,
+	void* p=nullptr);
 
 /* (save|load)List
  * (Save|Load) knownPluginList (in|from) an XML file. */
@@ -96,9 +98,9 @@ int loadList(const std::string& path);
  * ch - if stackType == CHANNEL. */
 
 Plugin* addPlugin(const std::string& fid, int stackType, pthread_mutex_t* mutex,
-  Channel* ch=nullptr);
+	Channel* ch=nullptr);
 Plugin *addPlugin(int index, int stackType, pthread_mutex_t* mutex,
-  Channel* ch=nullptr);
+	Channel* ch=nullptr);
 
 /* countPlugins
  * Return size of 'stackType'. */
@@ -150,13 +152,13 @@ int getPluginIndex(int id, int stackType, Channel* ch=nullptr);
 /* swapPlugin */
 
 void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
-  pthread_mutex_t* mutex, Channel* ch=nullptr);
+	pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* freePlugin.
 Returns the internal stack index of the deleted plugin. */
 
 int freePlugin(int id, int stackType, pthread_mutex_t *mutex,
-  Channel* ch=nullptr);
+	Channel* ch=nullptr);
 
 /* runDispatchLoop
  * Wakes up plugins' GUI manager for N milliseconds. */

@@ -69,7 +69,7 @@ protected:
 	void (*callback)(void*);
 
 	gdBrowserBase(int x, int y, int w, int h, const std::string& title,
-			const std::string& path, void (*callback)(void*));
+		const std::string& path, void (*callback)(void*));
 
 public:
 

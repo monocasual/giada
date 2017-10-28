@@ -25,35 +25,29 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_BROWSER_SAVE_H
-#define GD_BROWSER_SAVE_H
+#ifndef GD_BROWSER_DIR_H
+#define GD_BROWSER_DIR_H
 
 
 #include "browserBase.h"
 
 
 class Channel;
-class geInput;
 
 
-class gdBrowserSave : public gdBrowserBase
+class gdBrowserDir : public gdBrowserBase
 {
 private:
 
-	geInput* name;
-
+	static void cb_load(Fl_Widget* w, void* p);
 	static void cb_down(Fl_Widget* v, void* p);
-	static void cb_save(Fl_Widget* w, void* p);
+	void cb_load();
 	void cb_down();
-	void cb_save();
 
 public:
 
-	gdBrowserSave(int x, int y, int w, int h, const std::string& title,
-			const std::string& path, const std::string& name, void (*callback)(void*),
-			Channel* ch);
-
-	std::string getName() const;
+	gdBrowserDir(int x, int y, int w, int h, const std::string& title,
+		const std::string& path, void (*callback)(void*), Channel* ch);
 };
 
 

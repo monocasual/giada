@@ -44,17 +44,17 @@ class geTabPlugins : public Fl_Group
 {
 private:
 
-	static void cb_scan  (Fl_Widget *w, void *p);
-	static void cb_onScan(float progress, void *p);
-	inline void __cb_scan(Fl_Widget *w);
+	static void cb_scan  (Fl_Widget* w, void* p);
+	static void cb_onScan(float progress, void* p);
+	void cb_scan(Fl_Widget* w);
 
 	void updateCount();
 
 public:
 
-	geInput   *folderPath;
-	geButton *scanButton;
-	geBox     *info;
+	geInput* folderPath;
+	geButton* scanButton;
+	geBox* info;
 
 	geTabPlugins(int x, int y, int w, int h);
 

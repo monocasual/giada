@@ -29,80 +29,59 @@
 #include "../../elems/browser.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/input.h"
-#include "browserSave.h"
+#include "browserLoad.h"
 
 
 using std::string;
 
 
-gdBrowserSave::gdBrowserSave(int x, int y, int w, int h, const string& title,
-		const string& path, const string& _name, void (*cb)(void*), Channel* ch)
+gdBrowserDir::gdBrowserDir(int x, int y, int w, int h, const string& title,
+		const string& path, void (*cb)(void*), Channel* ch)
 	:	gdBrowserBase(x, y, w, h, title, path, cb)
 {
 	channel = ch;
 
-	where->size(groupTop->w()-236, 20);
-
-	name = new geInput(where->x()+where->w()+8, where->y(), 200, 20);
-	name->value(_name.c_str());
-	groupTop->add(name);
+	where->size(groupTop->w()-updir->w()-8, 20);
 
 	browser->callback(cb_down, (void*) this);
 
-	ok->label("Save");
-	ok->callback(cb_save, (void*) this);
+	ok->label("Select");
+	ok->callback(cb_load, (void*) this);
 	ok->shortcut(FL_ENTER);
 
-	/* On OS X the 'where' and 'name' inputs don't get resized properly on startup. 
-	Let's force them. */
-
+	/* On OS X the 'where' input doesn't get resized properly on startup. Let's 
+	force it. */
+	
 	where->redraw();
-	name->redraw();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::cb_save(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_save(); }
-void gdBrowserSave::cb_down(Fl_Widget* v, void* p) { ((gdBrowserSave*)p)->cb_down(); }
+void gdBrowserDir::cb_load(Fl_Widget* v, void* p) { ((gdBrowserDir*)p)->cb_load(); }
+void gdBrowserDir::cb_down(Fl_Widget* v, void* p) { ((gdBrowserDir*)p)->cb_down(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdBrowserSave::cb_down()
+void gdBrowserDir::cb_load()
+{
+	callback((void*) this);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdBrowserDir::cb_down()
 {
 	string path = browser->getSelectedItem();
 
-	if (path.empty())  // when click on an empty area
+	if (path.empty() || !gu_isDir(path)) // when click on an empty area or not a dir
 		return;
 
-	/* if the selected item is a directory just load its content. If it's a file
-	 * use it as the file name (i.e. fill name->value()). */
-
-	if (gu_isDir(path)) {
-		browser->loadDir(path);
-		where->value(browser->getCurrentDir().c_str());
-	}
-	else
-		name->value(browser->getSelectedItem(false).c_str());
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string gdBrowserSave::getName() const
-{
-  return name->value();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdBrowserSave::cb_save()
-{
-	callback((void*) this);
+	browser->loadDir(path);
+	where->value(browser->getCurrentDir().c_str());
 }

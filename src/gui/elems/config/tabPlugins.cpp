@@ -82,16 +82,16 @@ void geTabPlugins::updateCount()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabPlugins::cb_scan(Fl_Widget *w, void *p) { ((geTabPlugins*)p)->__cb_scan(w); }
+void geTabPlugins::cb_scan(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_scan(w); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geTabPlugins::cb_onScan(float progress, void *p)
+void geTabPlugins::cb_onScan(float progress, void* p)
 {
 	string l = "Scan in progress (" + gu_toString((int)(progress*100)) + "%). Please wait...";
-	((geTabPlugins *)p)->info->label(l.c_str());
+	((geTabPlugins*)p)->info->label(l.c_str());
 	Fl::wait();
 }
 
@@ -99,10 +99,10 @@ void geTabPlugins::cb_onScan(float progress, void *p)
 /* -------------------------------------------------------------------------- */
 
 
-void geTabPlugins::__cb_scan(Fl_Widget *w)
+void geTabPlugins::cb_scan(Fl_Widget* w)
 {
 	info->show();
-	pluginHost::scanDir(folderPath->value(), cb_onScan, (void*) this);
+	pluginHost::scanDirs(folderPath->value(), cb_onScan, (void*) this);
 	pluginHost::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
 	info->hide();
 	updateCount();
