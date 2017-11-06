@@ -25,7 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <rtmidi/RtMidi.h>
+#include "const.h"
+#ifdef G_OS_MAC
+	#include <RtMidi.h>
+#else
+	#include <rtmidi/RtMidi.h>
+#endif
 #include "../utils/log.h"
 #include "../glue/channel.h"
 #include "../glue/plugin.h"
@@ -33,7 +38,6 @@
 #include "../glue/transport.h"
 #include "../glue/io.h"
 #include "mixer.h"
-#include "const.h"
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"

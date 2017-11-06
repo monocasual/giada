@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cstdlib>
 #include "../../../core/const.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../utils/gui.h"

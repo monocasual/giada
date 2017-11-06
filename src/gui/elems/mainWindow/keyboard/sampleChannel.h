@@ -57,8 +57,7 @@ public:
 	void reset() override;
 	void update() override;
 	void refresh() override;
-
-	void changeSize(int h);
+	void changeSize(int h) override;
 
 	/* show/hideActionButton
 	Adds or removes 'R' button when actions are available. */

@@ -69,9 +69,9 @@ public:
 
 	int handle(int e) override;
 	void draw() override;
+	void resize(int x, int y, int w, int h) override;
 
 	int getMinSize() const;
-	void resize(int x, int y, int w, int h);
 };
 
 

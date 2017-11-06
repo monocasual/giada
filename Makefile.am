@@ -326,10 +326,11 @@ giada_SOURCES += resource.rc
 endif
 
 if OSX
-giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h
+giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h src/deps/rtaudio-mod/RtAudio.h \
+	src/deps/rtaudio-mod/RtAudio.cpp
 # -ObjC++: Juce requires to build some Objective C code
 giada_CXXFLAGS += -ObjC++ -Wno-auto-var-id
-giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lrtaudio \
+giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi \
 	-lsamplerate -ljansson
 giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
   -framework CoreMIDI -framework CoreFoundation -framework Accelerate \
@@ -382,9 +383,15 @@ src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
 src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
 endif
 
+if LINUX
 giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \
   -lXpm -lm -ljack -lasound -lpthread -ldl -lpulse-simple -lpulse -lrtmidi \
   -lfreetype
+endif
+
+if OSX
+giada_tests_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lsamplerate -ljansson
+endif
 
 giada_tests_CXXFLAGS = -std=c++11
 

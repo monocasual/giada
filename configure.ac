@@ -118,13 +118,24 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
-AC_LANG_PUSH([C++])
-AC_CHECK_HEADER(
-	[rtmidi/RtMidi.h],
-	[],
-	[AC_MSG_ERROR([library 'rtMidi' not found!])]
-)
-AC_LANG_POP
+if test "x$os" = "xosx"; then
+	AC_LANG_PUSH([C++])
+	AC_CHECK_HEADER(
+		[RtMidi.h],
+		[],
+		[AC_MSG_ERROR([library 'rtMidi' not found!])]
+	)
+	AC_LANG_POP
+else
+	AC_LANG_PUSH([C++])
+	AC_CHECK_HEADER(
+		[rtmidi/RtMidi.h],
+		[],
+		[AC_MSG_ERROR([library 'rtMidi' not found!])]
+	)
+	AC_LANG_POP
+fi
+
 
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
@@ -150,31 +161,14 @@ AC_LANG_POP
 #~ )
 #~ AC_LANG_POP
 
-# brutal and temporary hack for OS X: don't use pkg-config
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER(
+	[samplerate.h],
+	[],
+	[AC_MSG_ERROR([library 'samplerate' not found!])]
+)
+AC_LANG_POP
 
-if test "x$os" = "xosx"; then
-	AC_LANG_PUSH([C++])
-	AC_CHECK_HEADER(
-		[samplerate.h],
-		[],
-		[AC_MSG_ERROR([library 'samplerate' not found!])]
-	)
-	AC_LANG_POP
-else
-#	PKG_CHECK_MODULES(
-#		SAMPLERATE,
-#		samplerate >= 0.1.8,
-#		[],
-#		AC_MSG_ERROR([library 'libsamplerate' not found!])
-#	)
-	AC_LANG_PUSH([C++])
-	AC_CHECK_HEADER(
-		[samplerate.h],
-		[],
-		[AC_MSG_ERROR([library 'samplerate' not found!])]
-	)
-	AC_LANG_POP
-fi
 
 
 # ------------------------------------------------------------------------------

@@ -26,6 +26,7 @@
 
 
 #include <cmath>
+#include <cstdlib>
 #include <FL/Fl_Pack.H>
 #include "../../../core/sampleChannel.h"
 #include "../../../core/const.h"
