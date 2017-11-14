@@ -343,11 +343,11 @@ void gdPlugin::__cb_openPluginWindow()
 		gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has editor, window id=%d\n", pwid);
 		w = new gdPluginWindowGUI(pPlugin);
 	}
-	else
+	else {
 		w = new gdPluginWindow(pPlugin);
-
-	gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
-
+		gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
+	}
+	
 	if (pParent->hasWindow(pwid))
 		pParent->delSubWindow(pwid);
 	w->setId(pwid);
