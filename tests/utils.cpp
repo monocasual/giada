@@ -25,7 +25,11 @@ TEST_CASE("Test string utils")
 {
   REQUIRE(gu_replace("Giada is cool", "cool", "hot") == "Giada is hot");
   REQUIRE(gu_trim("   Giada is cool       ") == "Giada is cool");
-  REQUIRE(gu_toString(666) == "666");
+  REQUIRE(gu_iToString(666) == "666");
+  REQUIRE(gu_iToString(0x99AABB, true) == "99AABB");
+  REQUIRE(gu_fToString(3.14159, 2) == "3.14");
+  // Catch can't handle this so far?
+  //REQUIRE(gu_format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
 
   vector<std::string> v;
   gu_split("Giada is cool", " ", &v);
