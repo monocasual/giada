@@ -183,7 +183,7 @@ void Wave::setPath(const string& p, int id)
 	if (id == -1)
 		m_path = p; 
 	else 
-		m_path = gu_stripExt(p) + "-" + gu_toString(id) + "." + gu_getExt(p);
+		m_path = gu_stripExt(p) + "-" + gu_iToString(id) + "." + gu_getExt(p);
 
 
 }

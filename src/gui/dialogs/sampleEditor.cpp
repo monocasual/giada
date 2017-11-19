@@ -138,7 +138,7 @@ Fl_Group* gdSampleEditor::createUpperBar()
   if (conf::sampleEditorGridVal == 0)
     grid->value(0);
   else 
-    grid->value(grid->find_item(gu_toString(conf::sampleEditorGridVal).c_str()));
+    grid->value(grid->find_item(gu_iToString(conf::sampleEditorGridVal).c_str()));
   grid->callback(cb_changeGrid, (void*)this);
 
   snap->value(conf::sampleEditorGridOn);
@@ -349,12 +349,12 @@ void gdSampleEditor::cb_changeGrid()
 
 void gdSampleEditor::updateInfo()
 {
-	string bitDepth = ch->wave->getBits() != 0 ? gu_toString(ch->wave->getBits()) : "(unknown)";
+	string bitDepth = ch->wave->getBits() != 0 ? gu_iToString(ch->wave->getBits()) : "(unknown)";
 	string infoText = 
 		"File: "  + ch->wave->getPath() + "\n"
-		"Size: " + gu_toString(ch->wave->getSize()) + " frames\n"
-		"Duration: " + gu_toString(ch->wave->getDuration()) + " seconds\n"
+		"Size: " + gu_iToString(ch->wave->getSize()) + " frames\n"
+		"Duration: " + gu_iToString(ch->wave->getDuration()) + " seconds\n"
 		"Bit depth: " + bitDepth + "\n"
-		"Frequency: " + gu_toString(ch->wave->getRate()) + " Hz\n";
+		"Frequency: " + gu_iToString(ch->wave->getRate()) + " Hz\n";
 	info->copy_label(infoText.c_str());
 }

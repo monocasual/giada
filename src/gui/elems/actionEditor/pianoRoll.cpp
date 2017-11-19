@@ -33,6 +33,7 @@
 #include "../../../core/recorder.h"
 #include "../../../core/kernelMidi.h"
 #include "../../../utils/log.h"
+#include "../../../utils/string.h"
 #include "../../dialogs/gd_actionEditor.h"
 #include "pianoItem.h"
 #include "pianoItemOrphaned.h"
@@ -40,6 +41,7 @@
 #include "pianoRoll.h"
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -159,56 +161,56 @@ void gePianoRoll::drawSurface1()
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
-		char note[6];
+		string note = gu_iToString(octave);
 		switch (i % KEYS) {
 			case (int) Notes::G:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%d G", octave);
+				note += " G"; 
 				break;
 			case (int) Notes::FS:
-				sprintf(note, "%d F#", octave);
+				note += " F#";
 				break;
 			case (int) Notes::F:
-				sprintf(note, "%d F", octave);
+				note += " F";
 				break;
 			case (int) Notes::E:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%d E", octave);
+				note += " E";
 				break;
 			case (int) Notes::DS:
-				sprintf(note, "%d D#", octave);
+				note += " D#";
 				break;
 			case (int) Notes::D:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%d D", octave);
+				note += " D";
 				break;
 			case (int) Notes::CS:
-				sprintf(note, "%d C#", octave);
+				note += " C#";
 				break;
 			case (int) Notes::C:
-				sprintf(note, "%d C", octave);
+				note += " C";
 				octave--;
 				break;
 			case (int) Notes::B:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%d B", octave);
+				note += " B";
 				break;
 			case (int) Notes::AS:
-				sprintf(note, "%d A#", octave);
+				note += " A#";
 				break;
 			case (int) Notes::A:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
-				sprintf(note, "%d A", octave);
+				note += " A";
 				break;
 			case (int) Notes::GS:
-				sprintf(note, "%d G#", octave);
+				note += " G#";
 				break;
 		}
 
     /* Print note name */
 
 		fl_color(G_COLOR_GREY_3);
-		fl_draw(note, 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
+		fl_draw(note.c_str(), 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
       (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 		/* Print horizontal line */

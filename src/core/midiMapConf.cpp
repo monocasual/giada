@@ -57,7 +57,7 @@ bool readInitCommands(json_t *jContainer)
 	json_t *jInitCommand;
 	json_array_foreach(jInitCommands, commandIndex, jInitCommand) {
 
-		string indexStr = "init command " + gu_toString(commandIndex);
+		string indexStr = "init command " + gu_iToString(commandIndex);
 		if (!storager::checkObject(jInitCommand, indexStr.c_str()))
 			return 0;
 

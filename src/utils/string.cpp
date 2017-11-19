@@ -27,8 +27,9 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <iomanip>
+#include <cstdarg>
 #include <climits>
-#include <sstream>
 #include "../core/const.h"
 #include "string.h"
 
@@ -62,23 +63,13 @@ string gu_getRealPath(const string& path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_toString(int i)
+/* TODO - use std::to_string() */
+
+string gu_fToString(float f, int precision)
 {
-	/* std::to_string is the way to go. Unfortunately  it seems that it isn't 
-	available in gcc's standard library (libstdc++), it is however, available in
-	libc++ which comes with LLVM/clang. */
-
-#ifdef G_OS_MAC
-
 	std::stringstream out;
-	out << i;
+	out << std::fixed << std::setprecision(precision) << f;
 	return out.str();
-
-#else
-
-	return std::to_string(i);
-
-#endif
 }
 
 
@@ -104,6 +95,32 @@ string gu_replace(string in, const string& search, const string& replace)
 		pos += replace.length();
 	}
 	return in;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::string gu_format(const char* format, ...)
+{
+	va_list args;
+
+	/* Compute the size of the new expanded string (i.e. with replacement taken
+	into account). */
+
+	size_t size = vsnprintf(nullptr, 0, format, args);
+
+	/* Create a new temporary char array to hold the new expanded string. */
+
+	std::unique_ptr<char[]> tmp(new char[size]);
+
+	/* Fill the temporary string with the formatted data. */
+
+  va_start(args, format);
+	vsprintf(tmp.get(), format, args);
+  va_end(args);
+  
+ 	return string(tmp.get(), tmp.get() + size - 1);	
 }
 
 

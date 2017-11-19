@@ -171,7 +171,7 @@ static bool glue_savePatch__(const string &fullPath, const string &name,
 
 static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
 {
-	return base + G_SLASH + w->getBasename(false) + "-" + gu_toString(k) + "." +  w->getExtension();
+	return base + G_SLASH + w->getBasename(false) + "-" + gu_iToString(k) + "." +  w->getExtension();
 } 
 
 

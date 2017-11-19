@@ -75,7 +75,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 void geTabPlugins::updateCount()
 {
-	string scanLabel = "Scan (" + gu_toString(pluginHost::countAvailablePlugins()) + " found)";
+	string scanLabel = "Scan (" + gu_iToString(pluginHost::countAvailablePlugins()) + " found)";
 	scanButton->label(scanLabel.c_str());
 }
 
@@ -93,7 +93,7 @@ void geTabPlugins::cb_scan(Fl_Widget* w)
 {
 	std::function<void(float)> callback = [this] (float progress) 
 	{
-		string l = "Scan in progress (" + gu_toString((int)(progress*100)) + "%). Please wait...";
+		string l = "Scan in progress (" + gu_iToString((int)(progress*100)) + "%). Please wait...";
 		info->label(l.c_str());
 		Fl::wait();
 	};

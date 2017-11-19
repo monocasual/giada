@@ -26,10 +26,12 @@
 
 
 #include "../../../utils/log.h"
+#include "../../../utils/string.h"
 #include "../../elems/midiLearner.h"
 #include "midiOutputBase.h"
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -108,7 +110,6 @@ void gdMidiOutputBase::__cb_enableLightning() {}
 
 void gdMidiOutputBase::setTitle(int chanNum)
 {
-	char title[64];
-	sprintf(title, "MIDI Output Setup (channel %d)", chanNum);
-	copy_label(title);
+	string tmp = "MIDI Output Setup (channel " + gu_iToString(chanNum) + ")"; 
+	copy_label(tmp.c_str());
 }

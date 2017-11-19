@@ -62,7 +62,7 @@ gdBpmInput::gdBpmInput(const char* label)
 
 	input_a->maximum_size(3);
 	input_a->type(FL_INT_INPUT);
-	input_a->value(gu_toString(clock::getBpm()).c_str());
+	input_a->value(gu_fToString(clock::getBpm(), 0).c_str());
 
 	/* Use the decimal value from the string label. */
 

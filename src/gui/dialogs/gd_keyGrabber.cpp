@@ -26,6 +26,7 @@
 
 
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../../core/conf.h"
 #include "../../core/channel.h"
 #include "../../core/sampleChannel.h"
@@ -41,6 +42,9 @@
 
 
 extern gdMainWindow *mainWin;
+
+
+using std::string;
 
 
 gdKeyGrabber::gdKeyGrabber(Channel *ch)
@@ -93,8 +97,7 @@ void gdKeyGrabber::__cb_clear()
 
 void gdKeyGrabber::setButtonLabel(int key)
 {
-	char tmp[2]; sprintf(tmp, "%c", key);
-	ch->guiChannel->mainButton->setKey(tmp);
+	ch->guiChannel->mainButton->setKey(key);
 	ch->key = key;
 }
 
@@ -103,12 +106,12 @@ void gdKeyGrabber::setButtonLabel(int key)
 
 void gdKeyGrabber::updateText(int key)
 {
-	char tmp2[64];
+	string tmp = "Press a key.\n\nCurrent binding: ";
 	if (key != 0)
-		sprintf(tmp2, "Press a key.\n\nCurrent binding: %c", key);
+		tmp += static_cast<char>(key);
 	else
-		sprintf(tmp2, "Press a key.\n\nCurrent binding: [none]");
-	text->copy_label(tmp2);
+		tmp += "[none]";
+	text->copy_label(tmp.c_str());
 }
 
 

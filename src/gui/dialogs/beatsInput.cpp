@@ -61,11 +61,11 @@ gdBeatsInput::gdBeatsInput()
 	end();
 
 	beats->maximum_size(2);
-	beats->value(gu_toString(clock::getBeats()).c_str());
+	beats->value(gu_iToString(clock::getBeats()).c_str());
 	beats->type(FL_INT_INPUT);
 	
 	bars->maximum_size(2);
-	bars->value(gu_toString(clock::getBars()).c_str());
+	bars->value(gu_iToString(clock::getBars()).c_str());
 	bars->type(FL_INT_INPUT);
 	
 	ok->shortcut(FL_Enter);

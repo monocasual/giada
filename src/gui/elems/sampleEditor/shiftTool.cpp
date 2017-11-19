@@ -53,7 +53,7 @@ geShiftTool::geShiftTool(int x, int y, SampleChannel* ch)
 
 	m_shift->type(FL_INT_INPUT);
 	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift->value(gu_toString(ch->getShift()).c_str());
+	m_shift->value(gu_iToString(ch->getShift()).c_str());
 	m_shift->callback(cb_setShift, (void*)this);
 
 	m_reset->callback(cb_reset, (void*)this);
@@ -92,7 +92,7 @@ void geShiftTool::cb_reset()
 
 void geShiftTool::refresh()
 {
-	m_shift->value(gu_toString(m_ch->getShift()).c_str());
+	m_shift->value(gu_iToString(m_ch->getShift()).c_str());
 }
 
 

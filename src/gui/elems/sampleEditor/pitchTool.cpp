@@ -32,6 +32,7 @@
 #include "../../../core/clock.h"
 #include "../../../glue/channel.h"
 #include "../../../utils/gui.h"
+#include "../../../utils/string.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"
@@ -82,9 +83,7 @@ gePitchTool::gePitchTool(int x, int y, SampleChannel* ch)
 void gePitchTool::refresh()
 {
   dial->value(ch->getPitch());
-  char buf[16];
-  sprintf(buf, "%.4f", ch->getPitch()); // 4 digits
-  input->value(buf);
+  input->value(gu_fToString(ch->getPitch(), 4).c_str()); // 4 digits
 }
 
 

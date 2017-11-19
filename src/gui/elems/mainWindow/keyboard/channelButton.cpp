@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "../../../../core/const.h"
+#include "../../../../utils/string.h"
 #include "channelButton.h"
 
 
@@ -56,11 +57,8 @@ void geChannelButton::setKey(int k)
 {
 	if (k == 0)
 		m_key = "";
-	else {
-		// FIXME - this crap won't work with unicode/utf-8
-		char c = (char) k;
-		m_key = c;
-	}
+	else 
+		m_key = static_cast<char>(k); // FIXME - What about unicode/utf-8?
 }
 
 

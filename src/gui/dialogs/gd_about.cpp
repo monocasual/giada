@@ -35,12 +35,14 @@
   #include "../../deps/juce-config.h"
 #endif
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../../utils/deps.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "gd_about.h"
 
 
+using std::string;
 using namespace giada::m;
 using namespace giada::u;
 
@@ -69,9 +71,7 @@ gdAbout::gdAbout()
 	logo->image(new Fl_Pixmap(giada_logo_xpm));
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
-	char message[512];
-	sprintf(
-	  message,
+	string message = gu_format(
 	  "Version " G_VERSION_STR " (" BUILD_DATE ")\n\n"
 		"Developed by Monocasual Laboratories\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
@@ -97,8 +97,8 @@ gdAbout::gdAbout()
 
 	int tw = 0;
 	int th = 0;
-	fl_measure(message, tw, th);
-	text->copy_label(message);
+	fl_measure(message.c_str(), tw, th);
+	text->copy_label(message.c_str());
 	text->size(text->w(), th);
 
 #ifdef WITH_VST

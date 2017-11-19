@@ -31,6 +31,7 @@
 #include "../../../core/waveFx.h"  
 #include "../../../glue/channel.h"
 #include "../../../utils/gui.h"
+#include "../../../utils/string.h"
 #include "../../../utils/math.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/dial.h"
@@ -72,11 +73,8 @@ geBoostTool::geBoostTool(int X, int Y, SampleChannel *ch)
 
 void geBoostTool::refresh()
 {
-  char buf[16];
-  float dB = gu_linearToDB(ch->getBoost());
-  sprintf(buf, "%.2f", dB);
-  input->value(buf);
-  // a dial > than it's max value goes crazy
+  input->value(gu_fToString(gu_linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
+  // A dial greater than it's max value goes crazy
   dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
 }
 

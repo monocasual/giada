@@ -295,7 +295,7 @@ void geMidiChannel::update()
 		label = mch->getName().c_str();
 
 	if (mch->midiOut) 
-		label += " (ch " + gu_toString(mch->midiOutChan + 1) + " out)";
+		label += " (ch " + gu_iToString(mch->midiOutChan + 1) + " out)";
 
 	mainButton->label(label.c_str());
 

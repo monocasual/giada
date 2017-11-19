@@ -33,7 +33,20 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include "../core/const.h"
 
+
+template <typename T>
+std::string gu_iToString(T t, bool hex=false)
+{
+	std::stringstream out;
+	if (hex)
+		out << std::hex << std::uppercase << t;
+	else
+		out << t;
+	return out.str();	
+}
 
 std::string gu_getRealPath(const std::string& path);
 
@@ -42,9 +55,11 @@ std::string gu_replace(std::string in, const std::string& search,
 
 std::string gu_trim(const std::string& s);
 
-std::string gu_toString(int i);
-
 void gu_split(std::string in, std::string sep, std::vector<std::string>* v);
+
+std::string gu_fToString(float f, int precision);
+
+std::string gu_format(const char* format, ...);
 
 
 #endif

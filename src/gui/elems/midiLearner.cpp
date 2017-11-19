@@ -25,12 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "../../utils/string.h"
 #include "basics/boxtypes.h"
 #include "basics/button.h"
 #include "basics/box.h"
 #include "midiLearner.h"
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -64,12 +66,15 @@ geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
 
 void geMidiLearner::updateValue()
 {
-	char buf[16];
-	if (*param != 0x0)
-		snprintf(buf, 9, "0x%X", *param);
+	string tmp;
+	if (*param != 0x0) {
+		tmp = "0x" + gu_iToString(*param, true); // true: hex mode
+		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
+		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
+	}
 	else
-		snprintf(buf, 16, "(not set)");
-	value->copy_label(buf);
+		tmp = "(not set)";
+	value->copy_label(tmp.c_str());
 	button->value(0);
 }
 

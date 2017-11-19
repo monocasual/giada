@@ -52,21 +52,21 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	int    lines = 7;
 
 	body  = "Device name: " + kernelAudio::getDeviceName(dev) + "\n";
-	body += "Total output(s): " + gu_toString(kernelAudio::getMaxOutChans(dev)) + "\n";
-	body += "Total intput(s): " + gu_toString(kernelAudio::getMaxInChans(dev)) + "\n";
-	body += "Duplex channel(s): " + gu_toString(kernelAudio::getDuplexChans(dev)) + "\n";
+	body += "Total output(s): " + gu_iToString(kernelAudio::getMaxOutChans(dev)) + "\n";
+	body += "Total intput(s): " + gu_iToString(kernelAudio::getMaxInChans(dev)) + "\n";
+	body += "Duplex channel(s): " + gu_iToString(kernelAudio::getDuplexChans(dev)) + "\n";
 	body += "Default output: " + string(kernelAudio::isDefaultOut(dev) ? "yes" : "no") + "\n";
 	body += "Default input: " + string(kernelAudio::isDefaultIn(dev) ? "yes" : "no") + "\n";
 
 	int totalFreq = kernelAudio::getTotalFreqs(dev);
-	body += "Supported frequencies: " + gu_toString(totalFreq);
+	body += "Supported frequencies: " + gu_iToString(totalFreq);
 
 	for (int i=0; i<totalFreq; i++) {
 		if (i % 6 == 0) {
 			body += "\n    ";  // add new line each 6 printed freqs AND on the first line (i % 0 != 0)
 			lines++;
 		}
-		body += gu_toString( kernelAudio::getFreq(dev, i)) + "  ";
+		body += gu_iToString( kernelAudio::getFreq(dev, i)) + "  ";
 	}
 
 	text->copy_label(body.c_str());

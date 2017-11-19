@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include "../../utils/gui.h"
+#include "../../utils/string.h"
 #include "../../core/graphics.h"
 #include "../../core/conf.h"
 #include "../../core/const.h"
@@ -45,6 +46,7 @@
 #include "gd_actionEditor.h"
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -137,9 +139,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	gu_setFavicon(this);
 
-	char buf[256];
-	sprintf(buf, "Edit Actions in Channel %d", chan->index+1);
-	label(buf);
+	string buf = "Edit Actions in Channel " + gu_iToString(chan->index+1);
+	label(buf.c_str());
 
 	set_non_modal();
 	size_range(640, 284);

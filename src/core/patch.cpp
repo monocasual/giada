@@ -199,7 +199,7 @@ bool readChannels(json_t* jContainer)
   json_t* jChannel;
   json_array_foreach(jChannels, channelIndex, jChannel) {
 
-    string channelIndexStr = "channel " + gu_toString(channelIndex);
+    string channelIndexStr = "channel " + gu_iToString(channelIndex);
     if (!storager::checkObject(jChannel, channelIndexStr.c_str()))
       return 0;
 
@@ -266,7 +266,7 @@ bool readColumns(json_t* jContainer)
   json_t* jColumn;
   json_array_foreach(jColumns, columnIndex, jColumn) {
 
-    string columnIndexStr = "column " + gu_toString(columnIndex);
+    string columnIndexStr = "column " + gu_iToString(columnIndex);
     if (!storager::checkObject(jColumn, columnIndexStr.c_str()))
       return 0;
 

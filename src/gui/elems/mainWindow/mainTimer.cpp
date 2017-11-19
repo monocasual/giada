@@ -31,6 +31,7 @@
 #include "../../../core/clock.h"
 #include "../../../glue/main.h"
 #include "../../../utils/gui.h"
+#include "../../../utils/string.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/choice.h"
 #include "../../dialogs/gd_mainWindow.h"
@@ -42,6 +43,7 @@
 extern gdMainWindow *G_MainWin;
 
 
+using std::string;
 using namespace giada::m;
 
 
@@ -60,12 +62,13 @@ geMainTimer::geMainTimer(int x, int y)
 
 	resizable(nullptr);   // don't resize any widget
 
-	char buf[6]; snprintf(buf, 6, "%f", clock::getBpm());
-	bpm->copy_label(buf);
-
+	bpm->copy_label(gu_fToString(clock::getBpm(), 1).c_str());
 	bpm->callback(cb_bpm, (void*)this);
+
 	meter->callback(cb_meter, (void*)this);
+	
 	multiplier->callback(cb_multiplier, (void*)this);
+	
 	divider->callback(cb_divider, (void*)this);
 
 	quantizer->add("off", 0, cb_quantizer, (void*)this);
@@ -145,9 +148,7 @@ void geMainTimer::setBpm(const char *v)
 
 void geMainTimer::setBpm(float v)
 {
-	char buf[6];
-	sprintf(buf, "%.01f", v);  // only 1 decimal place (e.g. 120.0)
-	bpm->copy_label(buf);
+	bpm->copy_label(gu_fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 
@@ -176,7 +177,6 @@ void geMainTimer::setLock(bool v)
 
 void geMainTimer::setMeter(int beats, int bars)
 {
-	char buf[8];
-	sprintf(buf, "%d/%d", beats, bars);
-	meter->copy_label(buf);
+	string tmp = gu_iToString(beats) + "/" + gu_iToString(bars);
+	meter->copy_label(tmp.c_str());
 }

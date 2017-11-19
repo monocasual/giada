@@ -33,11 +33,15 @@
 #include "../../../glue/channel.h"
 #include "../../../utils/gui.h"
 #include "../../../utils/math.h"
+#include "../../../utils/string.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"
 #include "../basics/box.h"
 #include "../mainWindow/keyboard/channel.h"
 #include "volumeTool.h"
+
+
+using std::string;
 
 
 geVolumeTool::geVolumeTool(int X, int Y, SampleChannel *ch)
@@ -64,11 +68,11 @@ geVolumeTool::geVolumeTool(int X, int Y, SampleChannel *ch)
 
 void geVolumeTool::refresh()
 {
-  char buf[16];
+  string tmp;
   float dB = gu_linearToDB(ch->volume);
-  if (dB > -INFINITY) sprintf(buf, "%.2f", dB);
-  else                sprintf(buf, "-inf");
-  input->value(buf);
+  if (dB > -INFINITY) tmp = gu_fToString(dB, 2);  // 2 digits
+  else                tmp = "-inf";
+  input->value(tmp.c_str());
   dial->value(ch->guiChannel->vol->value());
 }
 

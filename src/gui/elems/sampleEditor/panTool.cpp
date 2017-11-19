@@ -32,6 +32,7 @@
 #include "../../../glue/channel.h"
 #include "../../../utils/gui.h"
 #include "../../../utils/math.h"
+#include "../../../utils/string.h"
 #include "../../dialogs/sampleEditor.h"
 #include "../basics/dial.h"
 #include "../basics/input.h"
@@ -39,6 +40,9 @@
 #include "../basics/button.h"
 #include "waveTools.h"
 #include "panTool.h"
+
+
+using std::string;
 
 
 gePanTool::gePanTool(int x, int y, SampleChannel *ch)
@@ -71,17 +75,17 @@ gePanTool::gePanTool(int x, int y, SampleChannel *ch)
 void gePanTool::refresh()
 {
   dial->value(ch->getPan());
-  char buf[8];
+
   if (ch->getPan() < 0.5f) {
-    sprintf(buf, "%d L", (int) ((-ch->getPan() * 200.0f) + 100.0f));
-    input->value(buf);
+    string tmp = gu_iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
+    input->value(tmp.c_str());
   }
   else 
   if (ch->getPan() == 0.5)
     input->value("C");
   else {
-    sprintf(buf, "%d R", (int) ((ch->getPan() * 200.0f) - 100.0f));
-    input->value(buf);
+    string tmp = gu_iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
+    input->value(tmp.c_str());
   }
 }
 
