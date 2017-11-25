@@ -26,6 +26,7 @@
 
 
 #include "../../utils/string.h"
+#include "../dialogs/midiIO/midiInputBase.h"
 #include "basics/boxtypes.h"
 #include "basics/button.h"
 #include "basics/box.h"
@@ -36,10 +37,11 @@ using std::string;
 using namespace giada::m;
 
 
-geMidiLearner::geMidiLearner(int X, int Y, int W, const char *l,
-  kernelMidi::cb_midiLearn *cb, uint32_t *param)
+geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l,
+  kernelMidi::cb_midiLearn* cb, uint32_t* param, Channel* ch)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
+		ch      (ch),
 		param   (param)
 {
 	begin();
@@ -82,14 +84,14 @@ void geMidiLearner::updateValue()
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::cb_button(Fl_Widget *v, void *p) { ((geMidiLearner*)p)->__cb_button(); }
-void geMidiLearner::cb_value(Fl_Widget *v, void *p) { ((geMidiLearner*)p)->__cb_value(); }
+void geMidiLearner::cb_button(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_button(); }
+void geMidiLearner::cb_value(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_value(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::__cb_value()
+void geMidiLearner::cb_value()
 {
 	if (Fl::event_button() == FL_RIGHT_MOUSE) {
 		*param = 0x0;
@@ -102,11 +104,12 @@ void geMidiLearner::__cb_value()
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::__cb_button()
+void geMidiLearner::cb_button()
 {
 	if (button->value() == 1) {
-		cbData.window  = (gdMidiInput*) parent();  // parent = gdMidiInput
+		cbData.window  = static_cast<gdMidiInputBase*>(parent()); // parent = gdMidiInput
 		cbData.learner = this;
+		cbData.channel = ch;
 		kernelMidi::startMidiLearn(callback, (void*)&cbData);
 	}
 	else

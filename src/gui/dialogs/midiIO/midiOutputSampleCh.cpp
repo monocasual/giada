@@ -33,15 +33,18 @@
 #include "midiOutputSampleCh.h"
 
 
-gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel *ch)
+gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel* ch)
 	: gdMidiOutputBase(300, 140), ch(ch)
 {
 	setTitle(ch->index+1);
 
 	enableLightning = new geCheck(8, 8, 120, 20, "Enable MIDI lightning output");
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+8, w()-16, "playing", cb_learn, &ch->midiOutLplaying);
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   cb_learn, &ch->midiOutLmute);
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   cb_learn, &ch->midiOutLsolo);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+8, w()-16, "playing", 
+		cb_learn, &ch->midiOutLplaying, ch);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   
+		cb_learn, &ch->midiOutLmute, ch);
+	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   
+		cb_learn, &ch->midiOutLsolo, ch);
 
 	close = new geButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 	close->callback(cb_close, (void*)this);

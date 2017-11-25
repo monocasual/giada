@@ -34,8 +34,22 @@
 #include "midiInputBase.h"
 
 
+class geCheck;
+class geChoice;
+
+
 class gdMidiInputMaster : public gdMidiInputBase
 {
+private:
+
+	geCheck*  enable;
+	geChoice* channel;
+
+	static void cb_enable(Fl_Widget* w, void* p);
+	static void cb_setChannel(Fl_Widget* w, void* p);
+	void cb_enable();
+	void cb_setChannel();
+
 public:
 
 	gdMidiInputMaster();

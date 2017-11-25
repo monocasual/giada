@@ -80,6 +80,7 @@ struct channel_t
 	uint32_t    midiInVolume;
 	uint32_t    midiInMute;
 	uint32_t    midiInSolo;
+	int         midiInFilter;
 	bool        midiOutL;
 	uint32_t    midiOutLplaying;
 	uint32_t    midiOutLmute;

@@ -51,7 +51,7 @@ using namespace giada::m;
 
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
-	midiFilter     (-1),
+	midiInFilter   (-1),
 	previewMode    (G_PREVIEW_NONE),
 	pan            (0.5f),
 	armed          (false),
@@ -166,7 +166,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::sendMidiLmessage(uint32_t learn, const midimap::message_t &msg)
+void Channel::sendMidiLmessage(uint32_t learn, const midimap::message_t& msg)
 {
 	gu_log("[channel::sendMidiLmessage] learn=%#X, chan=%d, msg=%#X, offset=%d\n",
 		learn, msg.channel, msg.value, msg.offset);
@@ -218,6 +218,7 @@ int Channel::writePatch(int i, bool isProject)
 	pch.midiInArm       = midiInArm;
 	pch.midiInVolume    = midiInVolume;
 	pch.midiInMute      = midiInMute;
+	pch.midiInFilter    = midiInFilter;
 	pch.midiInSolo      = midiInSolo;
 	pch.midiOutL        = midiOutL;
 	pch.midiOutLplaying = midiOutLplaying;
@@ -285,6 +286,7 @@ int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
 	midiInKill      = pch->midiInKill;
 	midiInVolume    = pch->midiInVolume;
 	midiInMute      = pch->midiInMute;
+	midiInFilter    = pch->midiInFilter;
 	midiInSolo      = pch->midiInSolo;
 	midiOutL        = pch->midiOutL;
 	midiOutLplaying = pch->midiOutLplaying;
@@ -299,18 +301,29 @@ int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
 #ifdef WITH_VST
 
 	for (const patch::plugin_t& ppl : pch->plugins) {
+		
 		Plugin* plugin = pluginHost::addPlugin(ppl.path, pluginHost::CHANNEL,
 			pluginMutex, this);
+		
 		if (plugin == nullptr) {
 			ret &= 0;
 			continue;
 		}
+
 		plugin->setBypass(ppl.bypass);
+		
 		for (unsigned j=0; j<ppl.params.size(); j++)
 			plugin->setParameter(j, ppl.params.at(j));
-		plugin->midiInParams.clear();
-		for (uint32_t midiInParam : ppl.midiInParams)
-			plugin->midiInParams.push_back(midiInParam);
+		
+		/* Don't fill Channel::midiInParam if Patch::midiInParams are 0: it would
+		wipe out the current default 0x0 values. */
+
+		if (!ppl.midiInParams.empty()) {
+			plugin->midiInParams.clear();
+			for (uint32_t midiInParam : ppl.midiInParams)
+				plugin->midiInParams.push_back(midiInParam);
+		}
+
 		ret &= 1;
 	}
 
@@ -374,9 +387,31 @@ void Channel::sendMidiLplay()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::receiveMidi(uint32_t msg)
+void Channel::receiveMidi(const MidiEvent& midiEvent)
 {
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::setMidiInFilter(int c)
+{
+	midiInFilter = c;
+}
+
+
+int Channel::getMidiInFilter() const
+{
+	return midiInFilter;
+}
+
+
+bool Channel::isMidiInAllowed(int c) const
+{
+	return midiInFilter == -1 || midiInFilter == c;
+}
+
 
 /* -------------------------------------------------------------------------- */
 

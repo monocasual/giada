@@ -223,6 +223,7 @@ bool readChannels(json_t* jContainer)
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       channel.midiInVolume)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         channel.midiInMute)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         channel.midiInSolo)) return 0;
+    if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,       channel.midiInFilter)) return 0;
     if (!storager::setBool  (jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L,           channel.midiOutL)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING,   channel.midiOutLplaying)) return 0;
     if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,      channel.midiOutLmute)) return 0;
@@ -399,6 +400,7 @@ void writeChannels(json_t* jContainer, vector<channel_t>* channels)
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_ARM,          json_integer(channel.midiInArm));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       json_integer(channel.midiInVolume));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         json_integer(channel.midiInMute));
+    json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,       json_integer(channel.midiInFilter));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         json_integer(channel.midiInSolo));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L,           json_boolean(channel.midiOutL));
     json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING,   json_integer(channel.midiOutLplaying));

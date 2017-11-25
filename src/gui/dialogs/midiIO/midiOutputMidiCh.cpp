@@ -1,6 +1,7 @@
+
 /* -----------------------------------------------------------------------------
  *
- * Giada - Your Hardcore Loopmachine
+, ch * Giada - Your Hardcore Loopmachine
  *
  * -----------------------------------------------------------------------------
  *
@@ -35,7 +36,7 @@
 #include "midiOutputMidiCh.h"
 
 
-gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
+gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel* ch)
 	: gdMidiOutputBase(300, 168), ch(ch)
 {
 	setTitle(ch->index+1);
@@ -45,9 +46,12 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel *ch)
 	chanListOut = new geChoice(w()-108, y()+8, 100, 20);
 
 	enableLightning = new geCheck(x()+8, chanListOut->y()+chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
-	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", cb_learn, &ch->midiOutLplaying);
-	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    cb_learn, &ch->midiOutLmute);
-	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    cb_learn, &ch->midiOutLsolo);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+8,  w()-16, "playing", 
+		cb_learn, &ch->midiOutLplaying, ch);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",    
+		cb_learn, &ch->midiOutLmute, ch);
+	new geMidiLearner(x()+8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",    
+		cb_learn, &ch->midiOutLsolo, ch);
 
 	close = new geButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
 

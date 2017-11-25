@@ -41,11 +41,12 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
+#include "midiEvent.h"
 #include "conf.h"
 #include "midiMapConf.h"
 #ifdef WITH_VST
-  #include "pluginHost.h"
-  #include "plugin.h"
+	#include "pluginHost.h"
+	#include "plugin.h"
 #endif
 #include "kernelMidi.h"
 
@@ -81,26 +82,31 @@ void* cb_data = nullptr;
 
 #ifdef WITH_VST
 
-void processPlugins(Channel* ch, uint32_t pure, uint32_t value)
+void processPlugins(Channel* ch, const MidiEvent& midiEvent)
 {
-  /* Plugins' parameters layout reflects the structure of the matrix
-  Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
-  indexes match both the structure of Channel::midiInPlugins and 
-  vector<Plugin*>* plugins. */
+	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
+	'velocy' byte. Otherwise strip it off. */
 
-  vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
+	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
 
-  for (Plugin* plugin : *plugins) {
-    for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
-      uint32_t midiInParam = plugin->midiInParams.at(k);
-      if (pure != midiInParam)
-        continue;
-      float vf = (value >> 8) / 127.0f;
-      c::plugin::setParameter(plugin, k, vf, false); // false: not from GUI
-      gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
-        plugin->getId(), k, ch->index, pure, value >> 8, vf);
-    }
-  }
+	/* Plugins' parameters layout reflects the structure of the matrix
+	Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
+	indexes match both the structure of Channel::midiInPlugins and 
+	vector<Plugin*>* plugins. */
+
+	vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
+
+	for (Plugin* plugin : *plugins) {
+		for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
+			uint32_t midiInParam = plugin->midiInParams.at(k);
+			if (pure != midiInParam)
+				continue;
+			float vf = midiEvent.getVelocity() / 127.0f;
+			c::plugin::setParameter(plugin, k, vf, false); // false: not from GUI
+			gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
+				plugin->getId(), k, ch->index, pure, midiEvent.getVelocity(), vf);
+		}
+	}
 }
 
 #endif
@@ -109,11 +115,19 @@ void processPlugins(Channel* ch, uint32_t pure, uint32_t value)
 /* -------------------------------------------------------------------------- */
 
 
-void processChannels(uint32_t pure, uint32_t value)
+void processChannels(const MidiEvent& midiEvent)
 {
+	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
+	'velocy' byte. Otherwise strip it off. */
+
+	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
+
 	for (Channel* ch : mixer::channels) {
 
-		if (!ch->midiIn)
+		/* Do nothing on this channel if MIDI in is disabled or filtered out for
+		the current MIDI channel. */
+
+		if (!ch->midiIn || !ch->isMidiInAllowed(midiEvent.getChannel()))
 			continue;
 
 		if      (pure == ch->midiInKeyPress) {
@@ -141,17 +155,17 @@ void processChannels(uint32_t pure, uint32_t value)
 			glue_toggleSolo(ch, false);
 		}
 		else if (pure == ch->midiInVolume) {
-			float vf = (value >> 8)/127.0f;
+			float vf = midiEvent.getVelocity() / 127.0f;
 			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
-				ch->index, pure, value >> 8, vf);
+				ch->index, pure, midiEvent.getVelocity(), vf);
 			glue_setVolume(ch, vf, false);
 		}
 		else {
 			SampleChannel* sch = static_cast<SampleChannel*>(ch);
 			if (pure == sch->midiInPitch) {
-				float vf = (value >> 8)/(127/4.0f); // [0-127] ~> [0.0-4.0]
+				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0]
 				gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
-					sch->index, pure, value >> 8, vf);
+					sch->index, pure, midiEvent.getVelocity(), vf);
 				glue_setPitch(sch, vf);
 			}
 			else 
@@ -162,12 +176,12 @@ void processChannels(uint32_t pure, uint32_t value)
 		}
 
 #ifdef WITH_VST
-    processPlugins(ch, pure, value); // Process plugins' parameters
+		processPlugins(ch, midiEvent); // Process plugins' parameters
 #endif
 
-		/* Redirect full midi message (pure + value) to plugins. */
+		/* Redirect full midi message (pure + velocity) to plugins. */
 
-		ch->receiveMidi(pure | value);
+		ch->receiveMidi(midiEvent.getRaw());
 	}
 }
 
@@ -175,9 +189,14 @@ void processChannels(uint32_t pure, uint32_t value)
 /* -------------------------------------------------------------------------- */
 
 
-void processMaster(uint32_t pure, uint32_t value)
+void processMaster(const MidiEvent& midiEvent)
 {
-  if      (pure == conf::midiInRewind) {
+	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
+	'velocy' byte. Otherwise strip it off. */
+
+	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
+
+	if      (pure == conf::midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
 		glue_rewindSeq(false);
 	}
@@ -198,15 +217,15 @@ void processMaster(uint32_t pure, uint32_t value)
 		glue_startStopMetronome(false);
 	}
 	else if (pure == conf::midiInVolumeIn) {
-		float vf = (value >> 8)/127.0f;
+		float vf = midiEvent.getVelocity() / 127.0f;
 		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
-			pure, value >> 8, vf);
+			pure, midiEvent.getVelocity(), vf);
 		glue_setInVol(vf, false);
 	}
 	else if (pure == conf::midiInVolumeOut) {
-		float vf = (value >> 8)/127.0f;
+		float vf = midiEvent.getVelocity() / 127.0f;
 		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
-			pure, value >> 8, vf);
+			pure, midiEvent.getVelocity(), vf);
 		glue_setOutVol(vf, false);
 	}
 	else if (pure == conf::midiInBeatDouble) {
@@ -225,8 +244,8 @@ void processMaster(uint32_t pure, uint32_t value)
 
 static void callback(double t, std::vector<unsigned char>* msg, void* data)
 {
-  /* 0.8.0 - for now we handle other MIDI signals (common and real-time 
-  messages) as unknown, for debugging purposes. */
+	/* For now we handle other MIDI signals (common and real-time messages) as 
+	unknown, for debugging purposes. */
 
 	if (msg->size() < 3) {
 		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
@@ -239,27 +258,23 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 	/* Here we want to catch two things: a) note on/note off from a keyboard and 
 	b) knob/wheel/slider movements from a controller. */
 
-	uint32_t input = getIValue(msg->at(0), msg->at(1), msg->at(2));
-	uint32_t chan  = input & 0x0F000000;
-	uint32_t value = input & 0x0000FF00;
-	uint32_t pure  = 0x00;
-	if (!conf::noNoteOff)
-		pure = input & 0xFFFF0000;   // input without 'value' (i.e. velocity) byte
-	else
-		pure = input & 0xFFFFFF00;   // input with 'value' (i.e. velocity) byte
+	MidiEvent midiEvent(msg->at(0), msg->at(1), msg->at(2));
 
-	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", input, chan >> 24);
+	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(), 
+		midiEvent.getChannel());
 
 	/* Start dispatcher. If midi learn is on don't parse channels, just learn 
-	incoming MIDI signal. Otherwise process master events first, then each channel 
+	incoming MIDI signal. Learn callback wants 'pure' MIDI event: if 'noNoteOff' 
+	in global config, get the raw value with the 'velocy' byte. Otherwise strip it 
+	off. If midi learn is off process master events first, then each channel 
 	in the stack. This way incoming signals don't get processed by glue_* when 
 	MIDI learning is on. */
 
 	if (cb_learn)
-		cb_learn(pure, cb_data);
+		cb_learn(midiEvent.getRaw(conf::noNoteOff), cb_data);
 	else {
-		processMaster(pure, value);
-		processChannels(pure, value);
+		processMaster(midiEvent);
+		processChannels(midiEvent);
 	}
 }
 
@@ -269,7 +284,7 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 
 void sendMidiLightningInitMsgs()
 {
-  for(unsigned i=0; i<midimap::initCommands.size(); i++) {
+	for(unsigned i=0; i<midimap::initCommands.size(); i++) {
 		midimap::message_t msg = midimap::initCommands.at(i);
 		if (msg.value != 0x0 && msg.channel != -1) {
 			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
@@ -286,7 +301,7 @@ void sendMidiLightningInitMsgs()
 /* -------------------------------------------------------------------------- */
 
 
-void startMidiLearn(cb_midiLearn *cb, void *data)
+void startMidiLearn(cb_midiLearn* cb, void* data)
 {
 	cb_learn = cb;
 	cb_data  = data;
@@ -321,18 +336,18 @@ int openOutDevice(int port)
 	try {
 		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
 		status = true;
-  }
-  catch (RtMidiError &error) {
-    gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
-    status = false;
-    return 0;
-  }
+	}
+	catch (RtMidiError &error) {
+		gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
+		status = false;
+		return 0;
+	}
 
 	/* print output ports */
 
 	numOutPorts = midiOut->getPortCount();
-  gu_log("[KM] %d output MIDI ports found\n", numOutPorts);
-  for (unsigned i=0; i<numOutPorts; i++)
+	gu_log("[KM] %d output MIDI ports found\n", numOutPorts);
+	for (unsigned i=0; i<numOutPorts; i++)
 		gu_log("  %d) %s\n", i, getOutPortName(i).c_str());
 
 	/* try to open a port, if enabled */
@@ -367,18 +382,18 @@ int openInDevice(int port)
 	try {
 		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
 		status = true;
-  }
-  catch (RtMidiError &error) {
-    gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
-    status = false;
-    return 0;
-  }
+	}
+	catch (RtMidiError &error) {
+		gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
+		status = false;
+		return 0;
+	}
 
 	/* print input ports */
 
 	numInPorts = midiIn->getPortCount();
-  gu_log("[KM] %d input MIDI ports found\n", numInPorts);
-  for (unsigned i=0; i<numInPorts; i++)
+	gu_log("[KM] %d input MIDI ports found\n", numInPorts);
+	for (unsigned i=0; i<numInPorts; i++)
 		gu_log("  %d) %s\n", i, getInPortName(i).c_str());
 
 	/* try to open a port, if enabled */
@@ -440,9 +455,9 @@ void send(uint32_t data)
 	if (!status)
 		return;
 
-  vector<unsigned char> msg(1, getB1(data));
-  msg.push_back(getB2(data));
-  msg.push_back(getB3(data));
+	vector<unsigned char> msg(1, getB1(data));
+	msg.push_back(getB2(data));
+	msg.push_back(getB3(data));
 
 	midiOut->sendMessage(&msg);
 	gu_log("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
@@ -474,13 +489,13 @@ void send(int b1, int b2, int b3)
 
 unsigned countInPorts()
 {
-  return numInPorts;
+	return numInPorts;
 }
 
 
 unsigned countOutPorts()
 {
-  return numOutPorts;
+	return numOutPorts;
 }
 
 
@@ -494,7 +509,7 @@ int getB3(uint32_t iValue) { return (iValue >> 8)  & 0xFF; }
 
 uint32_t getIValue(int b1, int b2, int b3)
 {
-  return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
+	return (b1 << 24) | (b2 << 16) | (b3 << 8) | (0x00);
 }
 
 
@@ -503,8 +518,8 @@ uint32_t getIValue(int b1, int b2, int b3)
 
 uint32_t setChannel(uint32_t iValue, int channel)
 {
-  uint32_t chanMask = 0xF << 24;
-  return (iValue & (~chanMask)) | (channel << 24);
+	uint32_t chanMask = 0xF << 24;
+	return (iValue & (~chanMask)) | (channel << 24);
 }
 
 

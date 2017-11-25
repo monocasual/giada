@@ -15,6 +15,8 @@ src/core/midiChannel.h                 \
 src/core/midiChannel.cpp               \
 src/core/midiMapConf.h                 \
 src/core/midiMapConf.cpp               \
+src/core/midiEvent.h                   \
+src/core/midiEvent.cpp                 \
 src/core/conf.h                        \
 src/core/conf.cpp                      \
 src/core/kernelAudio.h                 \

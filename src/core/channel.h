@@ -33,6 +33,7 @@
 #include <string>
 #include <pthread.h>
 #include "midiMapConf.h"
+#include "midiEvent.h"
 #include "recorder.h"
 
 #ifdef WITH_VST
@@ -75,11 +76,11 @@ protected:
 
 	int bufferSize;
 
-  /* midiFilter
+  /* midiInFilter
   Which MIDI channel should be filtered out when receiving MIDI messages. -1
   means 'all'. */
 
-  int midiFilter;
+  int midiInFilter;
 
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
@@ -208,7 +209,7 @@ public:
 	/* receiveMidi
 	Receives and processes midi messages from external devices. */
 
-	virtual void receiveMidi(uint32_t msg);
+	virtual void receiveMidi(const giada::m::MidiEvent& midiEvent);
 
 	/* allocBuffers
 	Mandatory method to allocate memory for internal buffers. Call it after the
@@ -216,10 +217,18 @@ public:
 
 	virtual bool allocBuffers();
 
-	/* isPlaying
-	 * tell wether the channel is playing or is stopped. */
-
 	bool isPlaying() const;
+	float getPan() const;
+	bool isArmed() const;
+	std::string getName() const;
+	bool isPreview() const;
+	int getMidiInFilter() const;
+
+	/* isMidiAllowed
+	Given a MIDI channel 'c' tells whether this channel should be allowed to receive
+	and process MIDI events on MIDI channel 'c'. */
+
+	bool isMidiInAllowed(int c) const;
 
 	/* sendMidiL*
 	 * send MIDI lightning events to a physical device. */
@@ -229,16 +238,10 @@ public:
 	void sendMidiLplay();
 
 	void setPan(float v);
-	float getPan() const;
-
 	void setArmed(bool b);
-	bool isArmed() const;
-
-	std::string getName() const;
 	void setName(const std::string& s);
-
 	void setPreviewMode(int m);
-	bool isPreview() const;
+	void setMidiInFilter(int c);
 
 #ifdef WITH_VST
 

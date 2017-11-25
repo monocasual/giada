@@ -40,22 +40,23 @@ class gdMidiInputBase : public gdWindow
 {
 protected:
 
-	geButton *ok;
+	static const int LEARNER_WIDTH = 284;
 
-	void stopMidiLearn(geMidiLearner *l);
+	geButton* ok;
+
+	void stopMidiLearn(geMidiLearner* l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
-	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l);
-
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
+	static void cb_learn(uint32_t msg, void* data);
+	static void cb_close(Fl_Widget* w, void* p);
+	void cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l);
+	void cb_close();
 
 public:
 
-	gdMidiInputBase(int x, int y, int w, int h, const char *title);
+	gdMidiInputBase(int x, int y, int w, int h, const char* title);
 	~gdMidiInputBase();
 };
 

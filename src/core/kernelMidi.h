@@ -44,7 +44,7 @@ namespace kernelMidi
 {
 typedef void (cb_midiLearn) (uint32_t, void *);
 
-void startMidiLearn(cb_midiLearn *cb, void *data);
+void startMidiLearn(cb_midiLearn* cb, void* data);
 void stopMidiLearn();
 
 int getB1(uint32_t iValue);

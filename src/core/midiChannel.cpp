@@ -34,7 +34,7 @@
 #include "conf.h"
 #include "mixer.h"
 #ifdef WITH_VST
-  #include "pluginHost.h"
+	#include "pluginHost.h"
 #endif
 #include "kernelMidi.h"
 
@@ -45,8 +45,8 @@ using namespace giada::m;
 
 MidiChannel::MidiChannel(int bufferSize)
 	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
-	  midiOut    (false),
-	  midiOutChan(MIDI_CHANS[0])
+		midiOut    (false),
+		midiOutChan(MIDI_CHANS[0])
 {
 }
 
@@ -315,44 +315,35 @@ int MidiChannel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::receiveMidi(uint32_t msg)
+void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 {
-  if (!armed)
-    return;
+	if (!armed)
+		return;
 
-  /* Filter time, based on MIDI channel. If midiFilter == -1, all messages
-  are taken into account. */
-  /* TODO - actual MIDI filtering not yet implemented. */
+	/* Now all messages are turned into Channel-0 messages. Giada doesn't care about
+	holding MIDI channel information. Moreover, having all internal messages on
+	channel 0 is way easier. */
 
-  if (midiFilter != -1)
-  {
-    gu_log("[Channel::processMidi] MIDI channel filtering not yet implemented\n");
-    return;
-  }
-
-  /* Now all messages are turned into Channel-0 messages. Giada doesn't care about
-  holding MIDI channel information. Moreover, having all internal messages on
-  channel 0 is way easier. */
-
-  msg = kernelMidi::setChannel(msg, 0);
+	MidiEvent midiEventFlat(midiEvent);
+	midiEventFlat.setChannel(0);
 
 #ifdef WITH_VST
 
-  while (true) {
-    if (pthread_mutex_trylock(&pluginHost::mutex_midi) != 0)
-      continue;
-    gu_log("[Channel::processMidi] msg=%X\n", msg);
-    addVstMidiEvent(msg, 0);
-    pthread_mutex_unlock(&pluginHost::mutex_midi);
-    break;
-  }
+	while (true) {
+		if (pthread_mutex_trylock(&pluginHost::mutex_midi) != 0)
+			continue;
+		gu_log("[Channel::processMidi] msg=%X\n", midiEventFlat.getRaw());
+		addVstMidiEvent(midiEventFlat.getRaw(), 0);
+		pthread_mutex_unlock(&pluginHost::mutex_midi);
+		break;
+	}
 
 #endif
 
 	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
-		recorder::rec(index, G_ACTION_MIDI, clock::getCurrentFrame(), msg);
-    hasActions = true;
-  }
+		recorder::rec(index, G_ACTION_MIDI, clock::getCurrentFrame(), midiEventFlat.getRaw());
+		hasActions = true;
+	}
 }
 
 

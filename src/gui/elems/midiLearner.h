@@ -33,7 +33,8 @@
 #include "../../core/kernelMidi.h"
 
 
-class gdMidiInput;
+class Channel;
+class gdMidiInputBase;
 class geMidiLearner;
 class geBox;
 class geButton;
@@ -48,16 +49,21 @@ private:
 	 * uint32_t msg - MIDI message
 	 * void   *data - extra data */
 
-	giada::m::kernelMidi::cb_midiLearn *callback;
+	giada::m::kernelMidi::cb_midiLearn* callback;
 
-	geBox     *text;
-	geButton *value;
-	geButton *button;
+	/* Channel it belongs to. Might be nullptr if the learner comes from the MIDI
+	input master window. */
 
-	static void cb_button(Fl_Widget *v, void *p);
-	static void cb_value (Fl_Widget *v, void *p);
-	inline void __cb_button();
-	inline void __cb_value();
+	Channel* ch;
+
+	geBox* text;
+	geButton* value;
+	geButton* button;
+
+	static void cb_button(Fl_Widget* v, void* p);
+	static void cb_value (Fl_Widget* v, void* p);
+	void cb_button();
+	void cb_value();
 
 public:
 
@@ -66,17 +72,18 @@ public:
 
   struct cbData_t
   {
-		gdMidiInput   *window;
-		geMidiLearner *learner;
+		gdMidiInputBase* window;
+		geMidiLearner*   learner;
+		Channel*         channel;
 	} cbData;
 
 	/* param
 	 * pointer to ch->midiIn[value] */
 
-	uint32_t *param;
+	uint32_t* param;
 
-	geMidiLearner(int x, int y, int w, const char *l, 
-		giada::m::kernelMidi::cb_midiLearn *cb, uint32_t *param);
+	geMidiLearner(int x, int y, int w, const char* l, 
+		giada::m::kernelMidi::cb_midiLearn* cb, uint32_t* param, Channel* ch);
 
 	void updateValue();
 };

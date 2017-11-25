@@ -92,6 +92,8 @@ void setParameter(Plugin* p, int index, float value, bool gui)
 		return;
 
 	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
+	if (parent == nullptr)
+		return;
 	gdPluginWindow* child = static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
 	if (child != nullptr) {
 		Fl::lock();

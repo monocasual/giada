@@ -40,6 +40,12 @@ void init();
 int read();
 int write();
 
+/* isMidiAllowed
+Given a MIDI channel 'c' tells whether this channel should be allowed to receive
+and process MIDI events on MIDI channel 'c'. */
+
+bool isMidiInAllowed(int c);
+
 extern std::string header;
 
 extern int  logMode;
@@ -63,6 +69,8 @@ extern std::string lastFileMap;
 extern int   midiSync;  // see const.h
 extern float midiTCfps;
 
+extern bool midiIn;
+extern int midiInFilter;
 extern uint32_t midiInRewind;
 extern uint32_t midiInStartStop;
 extern uint32_t midiInActionRec;

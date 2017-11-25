@@ -25,10 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl_Pack.H>
 #include "../../../utils/gui.h"
 #include "../../../core/conf.h"
+#include "../../../core/const.h"
 #include "../../elems/midiLearner.h"
 #include "../../elems/basics/button.h"
+#include "../../elems/basics/check.h"
+#include "../../elems/basics/choice.h"
 #include "midiInputMaster.h"
 
 
@@ -36,23 +40,93 @@ using namespace giada::m;
 
 
 gdMidiInputMaster::gdMidiInputMaster()
-	: gdMidiInputBase(0, 0, 300, 256, "MIDI Input Setup (global)")
+	: gdMidiInputBase(0, 0, 300, 284, "MIDI Input Setup (global)")
 {
 	set_modal();
 
-	new geMidiLearner(8,   8, w()-16, "rewind",           &cb_learn, &conf::midiInRewind);
-	new geMidiLearner(8,  32, w()-16, "play/stop",        &cb_learn, &conf::midiInStartStop);
-	new geMidiLearner(8,  56, w()-16, "action recording", &cb_learn, &conf::midiInActionRec);
-	new geMidiLearner(8,  80, w()-16, "input recording",  &cb_learn, &conf::midiInInputRec);
-	new geMidiLearner(8, 104, w()-16, "metronome",        &cb_learn, &conf::midiInMetronome);
-	new geMidiLearner(8, 128, w()-16, "input volume",     &cb_learn, &conf::midiInVolumeIn);
-	new geMidiLearner(8, 152, w()-16, "output volume",    &cb_learn, &conf::midiInVolumeOut);
-	new geMidiLearner(8, 176, w()-16, "sequencer ×2",     &cb_learn, &conf::midiInBeatDouble);
-	new geMidiLearner(8, 200, w()-16, "sequencer ÷2",     &cb_learn, &conf::midiInBeatHalf);
-	ok = new geButton(w()-88, 228, 80, 20, "Close");
+	Fl_Group* groupHeader = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20);
+	groupHeader->begin();
+
+		enable = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT, 
+			"enable MIDI input");
+		channel = new geChoice(enable->x()+enable->w()+44, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT);
+
+	groupHeader->resizable(nullptr);
+	groupHeader->end();
+
+	Fl_Pack* pack = new Fl_Pack(G_GUI_OUTER_MARGIN, groupHeader->y()+groupHeader->h()+G_GUI_OUTER_MARGIN, 
+		LEARNER_WIDTH, 212);
+	pack->spacing(G_GUI_INNER_MARGIN);
+	pack->begin();
+
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "rewind",           &cb_learn, &conf::midiInRewind, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "play/stop",        &cb_learn, &conf::midiInStartStop, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "action recording", &cb_learn, &conf::midiInActionRec, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "input recording",  &cb_learn, &conf::midiInInputRec, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "metronome",        &cb_learn, &conf::midiInMetronome, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "input volume",     &cb_learn, &conf::midiInVolumeIn, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "output volume",    &cb_learn, &conf::midiInVolumeOut, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ×2",     &cb_learn, &conf::midiInBeatDouble, nullptr);
+		new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ÷2",     &cb_learn, &conf::midiInBeatHalf, nullptr);
+
+	pack->end();
+
+	ok = new geButton(w()-88, pack->y()+pack->h()+G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, "Close");
+
+	end();
 
 	ok->callback(cb_close, (void*)this);
+
+	enable->value(conf::midiIn);
+	enable->callback(cb_enable, (void*)this);
+
+	channel->add("Channel (any)");
+	channel->add("Channel 1");
+	channel->add("Channel 2");
+	channel->add("Channel 3");
+	channel->add("Channel 4");
+	channel->add("Channel 5");
+	channel->add("Channel 6");
+	channel->add("Channel 7");
+	channel->add("Channel 8");
+	channel->add("Channel 9");
+	channel->add("Channel 10");
+	channel->add("Channel 11");
+	channel->add("Channel 12");
+	channel->add("Channel 13");
+	channel->add("Channel 14");
+	channel->add("Channel 15");
+	channel->add("Channel 16");
+	channel->value(conf::midiInFilter -1 ? 0 : conf::midiInFilter + 1);
+	channel->callback(cb_setChannel, (void*)this);
 
 	gu_setFavicon(this);
 	show();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputMaster::cb_enable(Fl_Widget* w, void* p) { ((gdMidiInputMaster*)p)->cb_enable(); }
+void gdMidiInputMaster::cb_setChannel(Fl_Widget* w, void* p) { ((gdMidiInputMaster*)p)->cb_setChannel(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputMaster::cb_enable()
+{
+	conf::midiIn = enable->value();
+	enable->value() ? channel->activate() : channel->deactivate();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputMaster::cb_setChannel()
+{
+	conf::midiInFilter = channel->value() == 0 ? -1 : channel->value() - 1;
+}
+

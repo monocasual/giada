@@ -167,6 +167,8 @@ string lastFileMap = "";
 int    midiSync    = MIDI_SYNC_NONE;
 float  midiTCfps   = 25.0f;
 
+bool midiIn               = false;
+int midiInFilter          = -1;
 uint32_t midiInRewind     = 0x0;
 uint32_t midiInStartStop  = 0x0;
 uint32_t midiInActionRec  = 0x0;
@@ -277,6 +279,15 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
+bool isMidiInAllowed(int c)
+{
+	return midiInFilter == -1 || midiInFilter == c;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int read()
 {
 	init();
@@ -314,7 +325,9 @@ int read()
 	if (!storager::setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
 	if (!storager::setFloat(jRoot, CONF_KEY_MIDI_TC_FPS, midiTCfps)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_REWIND, midiInRewind)) return 0;
+	if (!storager::setBool(jRoot, CONF_KEY_MIDI_IN, midiIn)) return 0; 
+	if (!storager::setInt(jRoot, CONF_KEY_MIDI_IN_FILTER, midiInFilter)) return 0; 
+	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_REWIND, midiInRewind)) return 0; 
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_START_STOP, midiInStartStop)) return 0;
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_ACTION_REC, midiInActionRec)) return 0;
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_INPUT_REC, midiInInputRec)) return 0;
@@ -331,7 +344,6 @@ int read()
 	if (!storager::setString(jRoot, CONF_KEY_PLUGINS_PATH, pluginPath)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_PATCHES_PATH, patchPath)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_SAMPLES_PATH, samplePath)) return 0;
-
 	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_X, mainWindowX)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_Y, mainWindowY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_W, mainWindowW)) return 0;
@@ -423,6 +435,8 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_LAST_MIDIMAP,              json_string(lastFileMap.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_SYNC,                 json_integer(midiSync));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_TC_FPS,               json_real(midiTCfps));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_IN,                   json_boolean(midiIn));
+	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_FILTER,            json_integer(midiInFilter));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_REWIND,            json_integer(midiInRewind));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_START_STOP,        json_integer(midiInStartStop));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_ACTION_REC,   	   json_integer(midiInActionRec));

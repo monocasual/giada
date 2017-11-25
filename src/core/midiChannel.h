@@ -70,7 +70,7 @@ public:
 	void onBar(int frame) override;
 	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
 		int quantize, bool mixerIsRunning) override;
-	void receiveMidi(uint32_t msg) override;
+	void receiveMidi(const giada::m::MidiEvent& midiEvent) override;
 	bool canInputRec() override;
 
 	/* sendMidi

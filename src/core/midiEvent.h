@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiInputChannel
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2017 Giovanni A. Zuliani | Monocasual
@@ -27,47 +25,54 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GD_MIDI_INPUT_CHANNEL_H
-#define GD_MIDI_INPUT_CHANNEL_H
+#ifndef G_MIDI_EVENT_H
+#define G_MIDI_EVENT_H
 
 
-#include "midiInputBase.h"
+#include <cstdint>
 
 
-class Channel;
-class geScroll;
-class geCheck;
-class geChoice;
-
-
-class gdMidiInputChannel : public gdMidiInputBase
+namespace giada {
+namespace m
 {
-private:
-
-	Channel* ch;
-
-	geScroll* container;
-	geCheck*  enable;
-	geChoice* channel;
-
-	static void cb_enable(Fl_Widget* w, void* p);
-	static void cb_setChannel(Fl_Widget* w, void* p);
-	void cb_enable();
-	void cb_setChannel();
-
-	void addChannelLearners();
-
-#ifdef WITH_VST
-
-	void addPluginLearners();
-
-#endif
-
+class MidiEvent
+{
 public:
 
-	gdMidiInputChannel(Channel* ch);
-	~gdMidiInputChannel();
+	static const int NOTE_ON = 0x90;
+	static const int NOTE_OFF = 0x80;
+
+	MidiEvent();
+	MidiEvent(uint32_t raw);
+	MidiEvent(int byte1, int byte2, int byte3);
+
+	int getStatus() const;	
+	int getChannel() const;	
+	int getNote() const;	
+	int getVelocity() const;	
+	bool isNoteOnOff() const;	
+	int getDelta() const;
+
+	/* getRaw
+	Returns the raw message. If 'velocity' is false, velocity byte is stripped
+	out. */
+
+	uint32_t getRaw(bool velocity=true) const;
+
+	void resetDelta();
+	void setChannel(int c);
+
+private:
+
+	uint32_t m_raw;
+	int m_status;
+	int m_channel;
+	int m_note;
+	int m_velocity;
+	int m_delta;
 };
+
+}} // giada::m::
 
 
 #endif
