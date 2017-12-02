@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_KERNELMIDI_H
-#define G_KERNELMIDI_H
+#ifndef G_MIDI_DISPATCHER_H
+#define G_MIDI_DISPATCHER_H
 
 
 #ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
@@ -34,64 +34,20 @@
 #else
 	#include <cstdint>
 #endif
-#include <string>
 
 
 namespace giada {
 namespace m {
-namespace kernelMidi
+namespace midiDispatcher
 {
-int getB1(uint32_t iValue);
-int getB2(uint32_t iValue);
-int getB3(uint32_t iValue);
+typedef void (cb_midiLearn) (uint32_t, void*);
 
-uint32_t getIValue(int b1, int b2, int b3);
+void startMidiLearn(cb_midiLearn* cb, void* data);
+void stopMidiLearn();
 
-/* setChannel
-Changes MIDI channel number inside iValue. Returns new message with updated
-channel. */
+void dispatch(int byte1, int byte2, int byte3);
 
-uint32_t setChannel(uint32_t iValue, int channel);
-
-/* send
- * send a MIDI message 's' (uint32_t). */
-
-void send(uint32_t s);
-
-/* send (2)
- * send separate bytes of MIDI message. */
-
-void send(int b1, int b2=-1, int b3=-1);
-
-/* setApi
- * set the Api in use for both in & out messages. */
-
-void setApi(int api);
-
-/* getStatus
-Returns current engine status. */
-
-bool getStatus();
-
-/* open/close/in/outDevice */
-
-int openOutDevice(int port);
-int openInDevice(int port);
-int closeInDevice();
-int closeOutDevice();
-
-/* getIn/OutPortName
- * return the name of the port 'p'. */
-
-std::string getInPortName(unsigned p);
-std::string getOutPortName(unsigned p);
-
-unsigned countInPorts();
-unsigned countOutPorts();
-
-bool hasAPI(int API);
-
-}}}; // giada::m::kernelMidi::
+}}}; // giada::m::midiDispatcher::
 
 
 #endif

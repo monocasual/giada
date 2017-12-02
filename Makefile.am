@@ -11,6 +11,8 @@ src/core/channel.h                     \
 src/core/channel.cpp                   \
 src/core/sampleChannel.h               \
 src/core/sampleChannel.cpp             \
+src/core/midiDispatcher.h              \
+src/core/midiDispatcher.cpp            \
 src/core/midiChannel.h                 \
 src/core/midiChannel.cpp               \
 src/core/midiMapConf.h                 \

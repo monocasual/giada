@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/kernelMidi.h"
+#include "../../../core/midiDispatcher.h"
 #include "../../../core/channel.h"
 #include "../../../core/conf.h"
 #include "../../../utils/log.h"
@@ -48,7 +48,7 @@ gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char* title)
 
 gdMidiInputBase::~gdMidiInputBase()
 {
-	kernelMidi::stopMidiLearn();
+	midiDispatcher::stopMidiLearn();
 }
 
 
@@ -57,7 +57,7 @@ gdMidiInputBase::~gdMidiInputBase()
 
 void gdMidiInputBase::stopMidiLearn(geMidiLearner* learner)
 {
-	kernelMidi::stopMidiLearn();
+	midiDispatcher::stopMidiLearn();
 	learner->updateValue();
 }
 

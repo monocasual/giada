@@ -38,7 +38,7 @@ using namespace giada::m;
 
 
 geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l,
-  kernelMidi::cb_midiLearn* cb, uint32_t* param, Channel* ch)
+  midiDispatcher::cb_midiLearn* cb, uint32_t* param, Channel* ch)
 	: Fl_Group(X, Y, W, 20),
 		callback(cb),
 		ch      (ch),
@@ -110,8 +110,8 @@ void geMidiLearner::cb_button()
 		cbData.window  = static_cast<gdMidiInputBase*>(parent()); // parent = gdMidiInput
 		cbData.learner = this;
 		cbData.channel = ch;
-		kernelMidi::startMidiLearn(callback, (void*)&cbData);
+		midiDispatcher::startMidiLearn(callback, (void*)&cbData);
 	}
 	else
-		kernelMidi::stopMidiLearn();
+		midiDispatcher::stopMidiLearn();
 }

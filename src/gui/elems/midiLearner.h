@@ -30,7 +30,7 @@
 
 
 #include <FL/Fl_Group.H>
-#include "../../core/kernelMidi.h"
+#include "../../core/midiDispatcher.h"
 
 
 class Channel;
@@ -45,11 +45,11 @@ class geMidiLearner : public Fl_Group
 private:
 
 	/* callback
-	 * cb to pass to kernelMidi. Requires two parameters:
+	Callback to pass to midiDispatcher. Requires two parameters:
 	 * uint32_t msg - MIDI message
 	 * void   *data - extra data */
 
-	giada::m::kernelMidi::cb_midiLearn* callback;
+	giada::m::midiDispatcher::cb_midiLearn* callback;
 
 	/* Channel it belongs to. Might be nullptr if the learner comes from the MIDI
 	input master window. */
@@ -68,7 +68,7 @@ private:
 public:
 
   /* cbData_t
-   * struct we pass to kernelMidi as extra parameter. */
+  Struct we pass to midiDispatcher as extra parameter. */
 
   struct cbData_t
   {
@@ -83,7 +83,7 @@ public:
 	uint32_t* param;
 
 	geMidiLearner(int x, int y, int w, const char* l, 
-		giada::m::kernelMidi::cb_midiLearn* cb, uint32_t* param, Channel* ch);
+		giada::m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, Channel* ch);
 
 	void updateValue();
 };

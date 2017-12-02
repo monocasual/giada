@@ -46,7 +46,7 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 
 void gdMidiOutputBase::stopMidiLearn(geMidiLearner *learner)
 {
-	kernelMidi::stopMidiLearn();
+	midiDispatcher::stopMidiLearn();
 	learner->updateValue();
 }
 

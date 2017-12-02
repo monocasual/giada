@@ -32,22 +32,8 @@
 	#include <rtmidi/RtMidi.h>
 #endif
 #include "../utils/log.h"
-#include "../glue/channel.h"
-#include "../glue/plugin.h"
-#include "../glue/main.h"
-#include "../glue/transport.h"
-#include "../glue/io.h"
-#include "mixer.h"
-#include "channel.h"
-#include "sampleChannel.h"
-#include "midiChannel.h"
-#include "midiEvent.h"
-#include "conf.h"
+#include "midiDispatcher.h"
 #include "midiMapConf.h"
-#ifdef WITH_VST
-	#include "pluginHost.h"
-	#include "plugin.h"
-#endif
 #include "kernelMidi.h"
 
 
@@ -68,185 +54,9 @@ RtMidiIn*  midiIn  = nullptr;
 unsigned numOutPorts = 0;
 unsigned numInPorts  = 0;
 
-/* cb_learn
- * callback prepared by the gdMidiGrabber window and called by
- * kernelMidi. It contains things to do once the midi message has been
- * stored. */
-
-cb_midiLearn* cb_learn = nullptr;
-void* cb_data = nullptr;
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-void processPlugins(Channel* ch, const MidiEvent& midiEvent)
-{
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
-
-	/* Plugins' parameters layout reflects the structure of the matrix
-	Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
-	indexes match both the structure of Channel::midiInPlugins and 
-	vector<Plugin*>* plugins. */
-
-	vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
-
-	for (Plugin* plugin : *plugins) {
-		for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
-			uint32_t midiInParam = plugin->midiInParams.at(k);
-			if (pure != midiInParam)
-				continue;
-			float vf = midiEvent.getVelocity() / 127.0f;
-			c::plugin::setParameter(plugin, k, vf, false); // false: not from GUI
-			gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
-				plugin->getId(), k, ch->index, pure, midiEvent.getVelocity(), vf);
-		}
-	}
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void processChannels(const MidiEvent& midiEvent)
-{
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
-
-	for (Channel* ch : mixer::channels) {
-
-		/* Do nothing on this channel if MIDI in is disabled or filtered out for
-		the current MIDI channel. */
-
-		if (!ch->midiIn || !ch->isMidiInAllowed(midiEvent.getChannel()))
-			continue;
-
-		if      (pure == ch->midiInKeyPress) {
-			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_keyPress(ch, false, false);
-		}
-		else if (pure == ch->midiInKeyRel) {
-			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_keyRelease(ch, false, false);
-		}
-		else if (pure == ch->midiInMute) {
-			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleMute(ch, false);
-		}		
-		else if (pure == ch->midiInKill) {
-			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_kill(ch);
-		}		
-		else if (pure == ch->midiInArm) {
-			gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleArm(ch, false);
-		}
-		else if (pure == ch->midiInSolo) {
-			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleSolo(ch, false);
-		}
-		else if (pure == ch->midiInVolume) {
-			float vf = midiEvent.getVelocity() / 127.0f;
-			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
-				ch->index, pure, midiEvent.getVelocity(), vf);
-			glue_setVolume(ch, vf, false);
-		}
-		else {
-			SampleChannel* sch = static_cast<SampleChannel*>(ch);
-			if (pure == sch->midiInPitch) {
-				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0]
-				gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
-					sch->index, pure, midiEvent.getVelocity(), vf);
-				glue_setPitch(sch, vf);
-			}
-			else 
-			if (pure == sch->midiInReadActions) {
-				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->index, pure);
-				glue_toggleReadingRecs(sch, false);
-			}
-		}
-
-#ifdef WITH_VST
-		processPlugins(ch, midiEvent); // Process plugins' parameters
-#endif
-
-		/* Redirect full midi message (pure + velocity) to plugins. */
-
-		ch->receiveMidi(midiEvent.getRaw());
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void processMaster(const MidiEvent& midiEvent)
-{
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
-
-	if      (pure == conf::midiInRewind) {
-		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
-		glue_rewindSeq(false);
-	}
-	else if (pure == conf::midiInStartStop) {
-		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
-		glue_startStopSeq(false);
-	}
-	else if (pure == conf::midiInActionRec) {
-		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		glue_startStopActionRec(false);
-	}
-	else if (pure == conf::midiInInputRec) {
-		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
-		glue_startStopInputRec(false);
-	}
-	else if (pure == conf::midiInMetronome) {
-		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
-		glue_startStopMetronome(false);
-	}
-	else if (pure == conf::midiInVolumeIn) {
-		float vf = midiEvent.getVelocity() / 127.0f;
-		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
-			pure, midiEvent.getVelocity(), vf);
-		glue_setInVol(vf, false);
-	}
-	else if (pure == conf::midiInVolumeOut) {
-		float vf = midiEvent.getVelocity() / 127.0f;
-		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
-			pure, midiEvent.getVelocity(), vf);
-		glue_setOutVol(vf, false);
-	}
-	else if (pure == conf::midiInBeatDouble) {
-		gu_log("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
-		glue_beatsMultiply();
-	}
-	else if (pure == conf::midiInBeatHalf) {
-		gu_log("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
-		glue_beatsDivide();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
 
 static void callback(double t, std::vector<unsigned char>* msg, void* data)
 {
-	/* For now we handle other MIDI signals (common and real-time messages) as 
-	unknown, for debugging purposes. */
-
 	if (msg->size() < 3) {
 		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
 		//for (unsigned i=0; i<msg->size(); i++)
@@ -254,28 +64,7 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 		//gu_log("\n");
 		return;
 	}
-
-	/* Here we want to catch two things: a) note on/note off from a keyboard and 
-	b) knob/wheel/slider movements from a controller. */
-
-	MidiEvent midiEvent(msg->at(0), msg->at(1), msg->at(2));
-
-	gu_log("[KM] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(), 
-		midiEvent.getChannel());
-
-	/* Start dispatcher. If midi learn is on don't parse channels, just learn 
-	incoming MIDI signal. Learn callback wants 'pure' MIDI event: if 'noNoteOff' 
-	in global config, get the raw value with the 'velocy' byte. Otherwise strip it 
-	off. If midi learn is off process master events first, then each channel 
-	in the stack. This way incoming signals don't get processed by glue_* when 
-	MIDI learning is on. */
-
-	if (cb_learn)
-		cb_learn(midiEvent.getRaw(conf::noNoteOff), cb_data);
-	else {
-		processMaster(midiEvent);
-		processChannels(midiEvent);
-	}
+	midiDispatcher::dispatch(msg->at(0), msg->at(1), msg->at(2));
 }
 
 
@@ -298,26 +87,6 @@ void sendMidiLightningInitMsgs()
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-void startMidiLearn(cb_midiLearn* cb, void* data)
-{
-	cb_learn = cb;
-	cb_data  = data;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void stopMidiLearn()
-{
-	cb_learn = nullptr;
-	cb_data  = nullptr;
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
