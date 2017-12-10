@@ -45,9 +45,8 @@ using std::string;
 using namespace giada::m;
 
 
-gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
-  : geBaseActionEditor(X, Y, W, 40, pParent),
-    cursorOnItem      (false)
+gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor* pParent)
+	: geBaseActionEditor(X, Y, W, 40, pParent)
 {
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
 	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
@@ -61,67 +60,67 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 	drawSurface2();
 
 	/* Add actions when the window is opened. Position is zoom-based. MIDI actions
-  come always in pair: noteOn + noteOff. */
+	come always in pair: noteOn + noteOff. */
 
 	recorder::sortActions();
 
-	recorder::action *a2   = nullptr;
-	recorder::action *prev = nullptr;
+	recorder::action* a2   = nullptr;
+	recorder::action* prev = nullptr;
 
 	for (unsigned i=0; i<recorder::frames.size(); i++) {
 
-    if (recorder::frames.at(i) > clock::getTotalFrames()) // don't show actions > gray area
-      continue;
+		if (recorder::frames.at(i) > clock::getTotalFrames()) // don't show actions > gray area
+			continue;
 
-    for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
 
-			recorder::action *a1 = recorder::global.at(i).at(j);
+			recorder::action* a1 = recorder::global.at(i).at(j);
 
-      /* Skip action if:
-        - does not belong to this channel
-        - is not a MIDI action (we only want MIDI things here)
-        - is the previous one (we have already checked it)
-        - (later on) is not a MIDI Note On type. We don't want any other kind of
-          action here */
+			/* Skip action if:
+				- does not belong to this channel
+				- is not a MIDI action (we only want MIDI things here)
+				- is the previous one (we have already checked it)
+				- (later on) is not a MIDI Note On type. We don't want any other kind of
+					action here */
 
-      if (a1->chan != pParent->chan->index)
+			if (a1->chan != pParent->chan->index)
 				continue;
-      if (a1->type != G_ACTION_MIDI)
-        continue;
+			if (a1->type != G_ACTION_MIDI)
+				continue;
 			if (a1 == prev)
 				continue;
 
 			/* Extract MIDI infos from a1: if is note off skip it, we are looking for
-      noteOn only. */
+			noteOn only. */
 
 			int a1_type = kernelMidi::getB1(a1->iValue);
 			int a1_note = kernelMidi::getB2(a1->iValue);
 
-      /* If two same notes are found (noteOn-noteOn, noteOff-noteOff) or the
-      very first action is a noteOff, add orphaned item.*/
+			/* If two same notes are found (noteOn-noteOn, noteOff-noteOff) or the
+			very first action is a noteOff, add orphaned item.*/
 
-      if ((prev && a1_type == prev->type) || a1_type == 0x80) {
-        gu_log("[geNoteEditor] invalid note pair! Add orphaned item\n");
-        new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
-        a2 = nullptr;
-        continue;
-      }
+			if ((prev && a1_type == prev->type) || a1_type == 0x80) {
+				gu_log("[geNoteEditor] invalid note pair! Add orphaned item\n");
+				new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
+				a2 = nullptr;
+				continue;
+			}
 
-      /* Now skip anything that is not a noteOn. */
+			/* Now skip anything that is not a noteOn. */
 
 			if (a1_type != 0x90)
 				continue;
 
 			/* Search for the next action. Must have: same channel, G_ACTION_MIDI,
-      greater than a1->frame and with MIDI properties of note_off (0x80), same
-      note of a1, any velocity value (0xFF) because we just don't care about the
-      velocity of a note_off. */
+			greater than a1->frame and with MIDI properties of note_off (0x80), same
+			note of a1, any velocity value (0xFF) because we just don't care about the
+			velocity of a note_off. */
 
 			recorder::getNextAction(a1->chan, G_ACTION_MIDI, a1->frame, &a2,
 					kernelMidi::getIValue(0x80, a1_note, 0xFF));
 
 			/* Next action note_off found: add a new gePianoItem to piano roll. Add
-      an orphaned piano item otherwise.  */
+			an orphaned piano item otherwise.  */
 
 			if (a2) {
 				new gePianoItem(0, 0, x(), y(), a1, a2, pParent);
@@ -129,10 +128,10 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor *pParent)
 				a2 = nullptr;
 			}
 			else {
-        gu_log("[geNoteEditor] noteOff not found! Add orphaned item\n");
-        new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
-      }
-	  }
+				gu_log("[geNoteEditor] noteOff not found! Add orphaned item\n");
+				new gePianoItemOrphaned(0, 0, x(), y(), a1, pParent);
+			}
+		}
 	}
 
 	end();
@@ -207,11 +206,11 @@ void gePianoRoll::drawSurface1()
 				break;
 		}
 
-    /* Print note name */
+		/* Print note name */
 
 		fl_color(G_COLOR_GREY_3);
 		fl_draw(note.c_str(), 4, ((i-1)*CELL_H)+1, CELL_W, CELL_H,
-      (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
+			(Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 
 		/* Print horizontal line */
 
@@ -291,7 +290,6 @@ int gePianoRoll::handle(int e)
 				break;
 			}
 
-
 			push_y = Fl::event_y() - y();
 
 			if (Fl::event_button1()) {
@@ -306,11 +304,12 @@ int gePianoRoll::handle(int e)
 				int edge = (ay-y()) % CELL_H;
 				if (edge != 0) ay -= edge;
 
-				/* if no overlap, add new piano item. Also check that it doesn't
-				 * overflow on the grey area, by shifting it to the left if
-				 * necessary. */
+				/* If there are no pianoItems below the mouse, add a new one. Also check 
+				that it doesn't overflow on the grey area, by shifting it to the left if
+				necessary. */
 
-        if (!cursorOnItem) {
+				gePianoItem* pianoItem = dynamic_cast<gePianoItem*>(Fl::belowmouse());
+				if (pianoItem == nullptr) {
 					int greyover = ax+20 - pParent->coverX-x();
 					if (greyover > 0)
 						ax -= greyover;
@@ -325,7 +324,7 @@ int gePianoRoll::handle(int e)
 
 			if (Fl::event_button3()) {
 
-				geNoteEditor *prc = static_cast<geNoteEditor*>(parent());
+				geNoteEditor* prc = static_cast<geNoteEditor*>(parent());
 				position(x(), Fl::event_y() - push_y);
 
 				if (y() > prc->y())

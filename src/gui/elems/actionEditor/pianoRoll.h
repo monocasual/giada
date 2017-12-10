@@ -79,12 +79,6 @@ public:
   Repositions existing actions after a zoom gesture. */
   
 	void updateActions();
-
-	/* cursorOnItem
-	Defines wheter the cursor is over a piano item. This value is updated by each
-	gePianoItem sub-widget. */
-
-	bool cursorOnItem;
 };
 
 

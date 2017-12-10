@@ -42,10 +42,10 @@ using namespace giada::m;
 
 
 gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a,
-  recorder::action *_b, gdActionEditor *pParent)
+	recorder::action *_b, gdActionEditor *pParent)
 	: geBasePianoItem(X, Y, MIN_WIDTH, pParent),
-	  a              (_a),
-	  b              (_b),
+		a              (_a),
+		b              (_b),
 		event_a        (0x00),
 		event_b        (0x00),
 		changed        (false)
@@ -81,12 +81,12 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_
 
 void gePianoItem::reposition(int pianoRollX)
 {
-  int newX = pianoRollX + (frame_a / pParent->zoom);
-  int newW = ((frame_b - frame_a) / pParent->zoom);
-  if (newW < MIN_WIDTH)
-    newW = MIN_WIDTH;
-  resize(newX, y(), newW, h());
-  redraw();
+	int newX = pianoRollX + (frame_a / pParent->zoom);
+	int newW = ((frame_b - frame_a) / pParent->zoom);
+	if (newW < MIN_WIDTH)
+		newW = MIN_WIDTH;
+	resize(newX, y(), newW, h());
+	redraw();
 }
 
 
@@ -155,8 +155,14 @@ void gePianoItem::record()
 	event_b |= (0x00);
 
 	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_a, event_a);
+
+/*
+	recorder::action* next;
+	recorder::getNextAction(pParent->chan->index, G_ACTION_MIDI, frame_a, &next);
+	printf("%d\n", next->frame);
+*/
 	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_b, event_b);
-  pParent->chan->hasActions = true;
+	pParent->chan->hasActions = true;
 }
 
 
@@ -165,18 +171,17 @@ void gePianoItem::record()
 
 void gePianoItem::remove()
 {
-  MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
+	MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
 	recorder::deleteAction(ch->index, frame_a, G_ACTION_MIDI, true,
-    &mixer::mutex_recs, event_a, 0.0);
+		&mixer::mutex_recs, event_a, 0.0);
 	recorder::deleteAction(ch->index, frame_b, G_ACTION_MIDI, true,
-    &mixer::mutex_recs, event_b, 0.0);
+		&mixer::mutex_recs, event_b, 0.0);
 
 	/* Send a note-off in case we are deleting it in a middle of a key_on/key_off
-  sequence. */
+	sequence. */
 
 	ch->sendMidi(event_b);
-  ch->hasActions = recorder::hasActions(ch->index);
-  static_cast<gePianoRoll*>(parent())->cursorOnItem = false;
+	ch->hasActions = recorder::hasActions(ch->index);
 }
 
 
@@ -190,7 +195,6 @@ int gePianoItem::handle(int e)
 	switch (e) {
 
 		case FL_ENTER: {
-      static_cast<gePianoRoll*>(parent())->cursorOnItem = true;
 			selected = true;
 			ret = 1;
 			redraw();
@@ -199,7 +203,6 @@ int gePianoItem::handle(int e)
 
 		case FL_LEAVE: {
 			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-      static_cast<gePianoRoll*>(parent())->cursorOnItem = false;
 			selected = false;
 			ret = 1;
 			redraw();
@@ -334,7 +337,7 @@ int gePianoItem::handle(int e)
 
 int gePianoItem::getNote(int rel_y)
 {
-  return gePianoRoll::MAX_KEYS - (rel_y / gePianoRoll::CELL_H);
+	return gePianoRoll::MAX_KEYS - (rel_y / gePianoRoll::CELL_H);
 }
 
 
@@ -343,7 +346,7 @@ int gePianoItem::getNote(int rel_y)
 
 int gePianoItem::getRelY()
 {
-  return y() - parent()->y();
+	return y() - parent()->y();
 }
 
 
@@ -352,5 +355,5 @@ int gePianoItem::getRelY()
 
 int gePianoItem::getRelX()
 {
-  return x() - parent()->x();
+	return x() - parent()->x();
 }
