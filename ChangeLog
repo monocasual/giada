@@ -15,6 +15,7 @@
 0.14.5 ---
 - Support for multiple plug-in directories
 - OS X builds on Travis CI
+- Update plug-in's parameters on program change in plug-in's window
 - Fix crash on MIDI learn for plug-in parameters
 - Fix crash in MIDI input window if MIDI in params are 0
 
