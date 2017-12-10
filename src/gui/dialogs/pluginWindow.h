@@ -55,6 +55,7 @@ public:
 	gdPluginWindow(Plugin* p);
 
 	void updateParameter(int index, bool changeSlider=false);
+	void updateParameters(bool changeSlider=false);
 };
 
 

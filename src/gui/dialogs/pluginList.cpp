@@ -112,7 +112,7 @@ gdPluginList::~gdPluginList()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p)   { ((gdPluginList*)p)->__cb_addPlugin(); }
+void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p) { ((gdPluginList*)p)->cb_addPlugin(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -140,7 +140,7 @@ void gdPluginList::cb_refreshList(Fl_Widget* v, void* p)
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginList::__cb_addPlugin()
+void gdPluginList::cb_addPlugin()
 {
 	/* the usual callback that gdWindow adds to each subwindow in this case
 	 * is not enough, because when we close the browser the plugin list
@@ -260,18 +260,18 @@ gdPlugin::gdPlugin(gdPluginList* gdp, Plugin* p, int X, int Y, int W)
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::cb_removePlugin    (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_removePlugin(); }
-void gdPlugin::cb_openPluginWindow(Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_openPluginWindow(); }
-void gdPlugin::cb_setBypass       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_setBypass(); }
-void gdPlugin::cb_shiftUp         (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_shiftUp(); }
-void gdPlugin::cb_shiftDown       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_shiftDown(); }
-void gdPlugin::cb_setProgram      (Fl_Widget* v, void* p) { ((gdPlugin*)p)->__cb_setProgram(); }
+void gdPlugin::cb_removePlugin    (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_removePlugin(); }
+void gdPlugin::cb_openPluginWindow(Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_openPluginWindow(); }
+void gdPlugin::cb_setBypass       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_setBypass(); }
+void gdPlugin::cb_shiftUp         (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_shiftUp(); }
+void gdPlugin::cb_shiftDown       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_shiftDown(); }
+void gdPlugin::cb_setProgram      (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_setProgram(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_shiftUp()
+void gdPlugin::cb_shiftUp()
 {
 	/*nothing to do if there's only one plugin */
 
@@ -292,7 +292,7 @@ void gdPlugin::__cb_shiftUp()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_shiftDown()
+void gdPlugin::cb_shiftDown()
 {
 	/*nothing to do if there's only one plugin */
 
@@ -313,7 +313,7 @@ void gdPlugin::__cb_shiftDown()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_removePlugin()
+void gdPlugin::cb_removePlugin()
 {
 	/* any subwindow linked to the plugin must be destroyed first */
 
@@ -326,7 +326,7 @@ void gdPlugin::__cb_removePlugin()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_openPluginWindow()
+void gdPlugin::cb_openPluginWindow()
 {
 	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
 	* for the parent window 'add plugin'. */
@@ -358,7 +358,7 @@ void gdPlugin::__cb_openPluginWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_setBypass()
+void gdPlugin::cb_setBypass()
 {
 	pPlugin->toggleBypass();
 }
@@ -367,9 +367,10 @@ void gdPlugin::__cb_setBypass()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPlugin::__cb_setProgram()
+void gdPlugin::cb_setProgram()
 {
-	pPlugin->setCurrentProgram(program->value());
+	//pPlugin->setCurrentProgram(program->value());
+	plugin::setProgram(pPlugin, program->value());
 }
 
 

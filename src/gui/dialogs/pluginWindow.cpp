@@ -77,6 +77,14 @@ void gdPluginWindow::updateParameter(int index, bool changeSlider)
 }
 
 
+void gdPluginWindow::updateParameters(bool changeSlider)
+{
+	for (int i=0; i<m_plugin->getNumParameters(); i++) {
+		static_cast<gePluginParameter*>(m_list->child(i))->update(changeSlider);
+	}
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

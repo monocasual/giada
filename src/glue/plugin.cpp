@@ -50,6 +50,30 @@ namespace giada {
 namespace c     {
 namespace plugin 
 {
+namespace
+{
+/* getPluginWindow
+Returns the plugInWindow (GUI-less one) with the parameter list. It might be 
+nullptr if there is no plug-in window shown on screen. */
+
+gdPluginWindow* getPluginWindow(const Plugin* p)
+{
+	/* Get the parent window first: the plug-in list. Then, if it exists, get
+	the child window - the actual pluginWindow. */
+
+	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
+	if (parent == nullptr)
+		return nullptr;
+	return static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
+}
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 Plugin* addPlugin(Channel* ch, int index, int stackType)
 {
   if (index >= pluginHost::countAvailablePlugins())
@@ -80,6 +104,28 @@ void freePlugin(Channel* ch, int index, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
+void setProgram(Plugin* p, int index)
+{
+	p->setCurrentProgram(index);
+
+	/* No need to update plug-in editor if it has one: the plug-in's editor takes
+	care of it on its own. Conversely, update the specific parameter for UI-less 
+	plug-ins. */
+
+	if (p->hasEditor())
+		return;
+
+	gdPluginWindow* child = getPluginWindow(p);
+	if (child == nullptr) 
+		return;
+	
+	child->updateParameters(true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void setParameter(Plugin* p, int index, float value, bool gui)
 {
 	p->setParameter(index, value);
@@ -91,15 +137,13 @@ void setParameter(Plugin* p, int index, float value, bool gui)
 	if (p->hasEditor())
 		return;
 
-	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
-	if (parent == nullptr)
+	gdPluginWindow* child = getPluginWindow(p);
+	if (child == nullptr) 
 		return;
-	gdPluginWindow* child = static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
-	if (child != nullptr) {
-		Fl::lock();
-		child->updateParameter(index, !gui);
-		Fl::unlock();
-	}
+
+	Fl::lock();
+	child->updateParameter(index, !gui);
+	Fl::unlock();
 }
 
 }}}; // giada::c::plugin::

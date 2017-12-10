@@ -50,8 +50,8 @@ private:
   geButton  *addPlugin;
 	Fl_Scroll *list;
 
-	static void cb_addPlugin  (Fl_Widget *v, void *p);
-	inline void __cb_addPlugin();
+	static void cb_addPlugin(Fl_Widget *v, void *p);
+	void cb_addPlugin();
 
 public:
 
@@ -80,18 +80,18 @@ private:
   gdPluginList *pParent;
   Plugin       *pPlugin;
 
-	static void cb_removePlugin       (Fl_Widget *v, void *p);
-	static void cb_openPluginWindow   (Fl_Widget *v, void *p);
-	static void cb_setBypass          (Fl_Widget *v, void *p);
-	static void cb_shiftUp            (Fl_Widget *v, void *p);
-	static void cb_shiftDown          (Fl_Widget *v, void *p);
-	static void cb_setProgram         (Fl_Widget *v, void *p);
-	inline void __cb_removePlugin     ();
-	inline void __cb_openPluginWindow ();
-	inline void __cb_setBypass        ();
-	inline void __cb_shiftUp          ();
-	inline void __cb_shiftDown        ();
-	inline void __cb_setProgram       ();
+	static void cb_removePlugin(Fl_Widget *v, void *p);
+	static void cb_openPluginWindow(Fl_Widget *v, void *p);
+	static void cb_setBypass(Fl_Widget *v, void *p);
+	static void cb_shiftUp(Fl_Widget *v, void *p);
+	static void cb_shiftDown(Fl_Widget *v, void *p);
+	static void cb_setProgram(Fl_Widget *v, void *p);
+	void cb_removePlugin();
+	void cb_openPluginWindow();
+	void cb_setBypass();
+	void cb_shiftUp();
+	void cb_shiftDown();
+	void cb_setProgram();
 
 public:
 
