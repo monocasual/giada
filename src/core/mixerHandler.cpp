@@ -274,6 +274,7 @@ void readPatch()
 	clock::setBars(patch::bars);
 	clock::setBeats(patch::beats);
 	clock::setQuantize(patch::quantize);
+	clock::updateFrameBars();
 	mixer::metronome = patch::metronome;
 
 #ifdef WITH_VST
