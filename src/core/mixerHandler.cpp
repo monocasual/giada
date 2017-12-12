@@ -290,7 +290,6 @@ void readPatch()
 
 	mixer::rewind();
 	mixer::allocVirtualInput(clock::getTotalFrames());
-	clock::updateFrameBars();
 	mixer::ready = true;
 }
 
