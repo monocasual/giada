@@ -283,9 +283,12 @@ void readPatch()
 
 #endif
 
-	/* rewind and update frames in Mixer (it's essential) */
+	/* Rewind and update frames in Mixer. Also alloc new space in the virtual
+	input buffer, in case the patch has a sequencer size != default one (which is
+	very likely). */
 
 	mixer::rewind();
+	mixer::allocVirtualInput(clock::getTotalFrames());
 	clock::updateFrameBars();
 	mixer::ready = true;
 }

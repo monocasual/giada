@@ -316,12 +316,12 @@ int glue_stopInputRec(bool gui)
   they must start playing right away at the current frame, not at the next first
   beat. */
 
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
+	for (Channel* ch : mixer::channels) {
+		if (ch->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
-		if (ch->mode & (LOOP_ANY) && ch->status == STATUS_OFF && ch->isArmed())
-			ch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
+		SampleChannel* sch = static_cast<SampleChannel*>(ch);
+		if (sch->mode & (LOOP_ANY) && sch->status == STATUS_OFF && sch->isArmed())
+			sch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
         clock::isRunning(), true, true);
 	}
 

@@ -52,24 +52,24 @@ void allocVirtualInput(int frames);
 int close();
 
 /* masterPlay
- * core method (callback) */
+Core method (callback) */
 
 int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize, double streamTime,
   RtAudioStreamStatus status, void *userData);
 
 /* isSilent
- * is mixer silent? */
+Is mixer silent? */
 
 bool isSilent();
 
 /* rewind
- * rewind sequencer to sample 0. */
+Rewinds sequencer to frame 0. */
 
 void rewind();
 
 /* mergeVirtualInput
- * memcpy the virtual channel input in the channel designed for input
- * recording. Called by mixerHandler on stopInputRec() */
+Copies the virtual channel input in the channels designed for input recording. 
+Called by mixerHandler on stopInputRec(). */
 
 void mergeVirtualInput();
 

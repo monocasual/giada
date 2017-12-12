@@ -137,8 +137,8 @@ void clearAllBuffers(float* outBuf, unsigned bufferSize)
 	memset(vChanInToOut, 0, sizeof(float) * bufferSize);   // inToOut vChan
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned i=0; i<channels.size(); i++)
-		channels.at(i)->clear();
+	for (Channel* channel : channels)
+		channel->clear();
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -497,12 +497,12 @@ int close()
 	while (channels.size() > 0)
 		mh::deleteChannel(channels.at(0));
 
-	if (vChanInput) {
-		free(vChanInput);
+	if (vChanInput != nullptr) {
+		delete[] vChanInput;
 		vChanInput = nullptr;
 	}
-	if (vChanInToOut) {
-		free(vChanInToOut);
+	if (vChanInToOut != nullptr) {
+		delete[] vChanInToOut;
 		vChanInToOut = nullptr;
 	}
 	return 1;
@@ -528,8 +528,8 @@ void rewind()
 {
 	clock::rewind();
 	if (clock::isRunning())
-		for (unsigned i=0; i<channels.size(); i++)
-			channels.at(i)->rewind();
+		for (Channel* ch : channels)
+			ch->rewind();
 }
 
 
@@ -538,12 +538,14 @@ void rewind()
 
 void mergeVirtualInput()
 {
-	for (unsigned i=0; i<channels.size(); i++) {
-		if (channels.at(i)->type == CHANNEL_MIDI)
+	assert(vChanInput != nullptr);
+
+	for (Channel* ch : channels) {
+		if (ch->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = static_cast<SampleChannel*>(channels.at(i));
-		if (ch->isArmed())
-			memcpy(ch->wave->getData(), vChanInput, clock::getTotalFrames() * sizeof(float));
+		SampleChannel* sch = static_cast<SampleChannel*>(ch);
+		if (sch->isArmed())
+			memcpy(sch->wave->getData(), vChanInput, clock::getTotalFrames() * sizeof(float));
 	}
 	memset(vChanInput, 0, clock::getTotalFrames() * sizeof(float)); // clear vchan
 }
