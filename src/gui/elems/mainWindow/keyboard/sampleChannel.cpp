@@ -61,7 +61,7 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 namespace
@@ -109,16 +109,16 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
-			gdWindow *w = new gdBrowserLoad(conf::browserX, conf::browserY,
-				conf::browserW, conf::browserH, "Browse sample",
-				conf::samplePath.c_str(), glue_loadSample, gch->ch);
+			gdWindow *w = new gdBrowserLoad(m::conf::browserX, m::conf::browserY,
+				m::conf::browserW, m::conf::browserH, "Browse sample",
+				m::conf::samplePath.c_str(), glue_loadSample, gch->ch);
 			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::EXPORT_SAMPLE: {
-			gdWindow *w = new gdBrowserSave(conf::browserX, conf::browserY,
-				conf::browserW, conf::browserH, "Save sample",
-				conf::samplePath.c_str(), "", glue_saveSample, gch->ch);
+			gdWindow *w = new gdBrowserSave(m::conf::browserX, m::conf::browserY,
+				m::conf::browserW, m::conf::browserH, "Save sample",
+				m::conf::samplePath.c_str(), "", glue_saveSample, gch->ch);
 			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
@@ -148,19 +148,19 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
-			glue_clearAllActions(gch);
+			c::recorder::clearAllActions(gch);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_MUTE: {
-			glue_clearMuteActions(gch);
+			c::recorder::clearMuteActions(gch);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_VOLUME: {
-			glue_clearVolumeActions(gch);
+			c::recorder::clearVolumeActions(gch);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_START_STOP: {
-			glue_clearStartStopActions(gch);
+			c::recorder::clearStartStopActions(gch);
 			break;
 		}
 		case Menu::RESIZE_H1: {
@@ -292,7 +292,7 @@ void geSampleChannel::__cb_openMenu()
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel */
 
-	if (mixer::recording || recorder::active)
+	if (m::mixer::recording || m::recorder::active)
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
@@ -374,10 +374,10 @@ void geSampleChannel::refresh()
 	setColorsByStatus(ch->status, ch->recStatus);
 
 	if (static_cast<SampleChannel*>(ch)->wave != nullptr) {
-		if (mixer::recording && ch->isArmed())
+		if (m::mixer::recording && ch->isArmed())
 			mainButton->setInputRecordMode();
-		if (recorder::active) {
-			if (recorder::canRec(ch, clock::isRunning(), mixer::recording))
+		if (m::recorder::active) {
+			if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording))
 				mainButton->setActionRecordMode();
 		}
 		status->redraw(); // status invisible? sampleButton too (see below)

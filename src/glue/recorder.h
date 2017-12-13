@@ -36,11 +36,18 @@
 class geChannel;
 
 
-void glue_clearAllActions(geChannel *gch);
-void glue_clearMuteActions(geChannel *gch);
-void glue_clearVolumeActions(geChannel *gch);
-void glue_clearStartStopActions(geChannel *gch);
+namespace giada {
+namespace c     {
+namespace recorder 
+{
+void clearAllActions(geChannel *gch);
+void clearMuteActions(geChannel *gch);
+void clearVolumeActions(geChannel *gch);
+void clearStartStopActions(geChannel *gch);
 
-std::vector<giada::m::recorder::Composite> glue_getMidiActions(int channel, 
+std::vector<giada::m::recorder::Composite> getMidiActions(int channel, 
 	int frameLimit);
+
+}}} // giada::c::recorder::
+
 #endif

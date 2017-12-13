@@ -55,7 +55,7 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada::m;
+using namespace giada;
 
 
 namespace
@@ -100,7 +100,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
 			break;
 		case Menu::CLEAR_ACTIONS_ALL:
-			glue_clearAllActions(gch);
+			c::recorder::clearAllActions(gch);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
 			gu_openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);

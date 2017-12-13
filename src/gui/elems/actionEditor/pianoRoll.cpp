@@ -44,33 +44,33 @@
 
 using std::string;
 using std::vector;
-using namespace giada::m;
+using namespace giada;
 
 
 gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor* pParent)
 	: geBaseActionEditor(X, Y, W, 40, pParent)
 {
-	using namespace recorder;
+	using namespace m::recorder;
 
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
 	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
 
-	if (conf::pianoRollY == -1)
+	if (m::conf::pianoRollY == -1)
 		position(x(), y()-(h()/2));  // center
 	else
-		position(x(), conf::pianoRollY);
+		position(x(), m::conf::pianoRollY);
 
 	drawSurface1();
 	drawSurface2();
 
 	int channel  = pParent->chan->index;
-	int maxFrame = clock::getTotalFrames();
+	int maxFrame = m::clock::getTotalFrames();
 
-	vector<Composite> actions = glue_getMidiActions(channel, maxFrame); 
+	vector<Composite> actions = c::recorder::getMidiActions(channel, maxFrame); 
 	for (Composite composite : actions)
 	{
-		MidiEvent e1 = composite.a1.iValue;
-		MidiEvent e2 = composite.a2.iValue;
+		m::MidiEvent e1 = composite.a1.iValue;
+		m::MidiEvent e2 = composite.a2.iValue;
 
 		gu_log("[gePianoRoll] ((0x%X, f=%d) - (0x%X, f=%d))\n", 
 			e1.getStatus(), composite.a1.frame,

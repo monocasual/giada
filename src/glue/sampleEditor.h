@@ -37,8 +37,6 @@ namespace giada {
 namespace c     {
 namespace sampleEditor 
 {
-
-
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 

@@ -37,14 +37,18 @@
 
 
 using std::vector;
-using namespace giada::m;
+using namespace giada;
 
 
+namespace giada {
+namespace c     {
+namespace recorder 
+{
 namespace
 {
-void updateChannel(geChannel *gch)
+void updateChannel(geChannel* gch)
 {
-	gch->ch->hasActions = recorder::hasActions(gch->ch->index);
+	gch->ch->hasActions = m::recorder::hasActions(gch->ch->index);
 	if (gch->ch->type == CHANNEL_SAMPLE && !gch->ch->hasActions)
 		static_cast<geSampleChannel*>(gch)->hideActionButton();
 	/* TODO - set mute=false */
@@ -56,11 +60,11 @@ void updateChannel(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearAllActions(geChannel *gch)
+void clearAllActions(geChannel* gch)
 {
 	if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
-	recorder::clearChan(gch->ch->index);
+	m::recorder::clearChan(gch->ch->index);
 	updateChannel(gch);
 }
 
@@ -68,11 +72,11 @@ void glue_clearAllActions(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearVolumeActions(geChannel *gch)
+void clearVolumeActions(geChannel* gch)
 {
 	if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 		return;
-	recorder::clearAction(gch->ch->index, G_ACTION_VOLUME);
+	m::recorder::clearAction(gch->ch->index, G_ACTION_VOLUME);
 	updateChannel(gch);
 }
 
@@ -80,11 +84,11 @@ void glue_clearVolumeActions(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearStartStopActions(geChannel *gch)
+void clearStartStopActions(geChannel* gch)
 {
 	if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 		return;
-	recorder::clearAction(gch->ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
+	m::recorder::clearAction(gch->ch->index, G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL);
 	updateChannel(gch);
 }
 
@@ -92,11 +96,11 @@ void glue_clearStartStopActions(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearMuteActions(geChannel *gch)
+void clearMuteActions(geChannel* gch)
 {
 	if (!gdConfirmWin("Warning", "Clear all mute actions: are you sure?"))
 		return;
-	recorder::clearAction(gch->ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
+	m::recorder::clearAction(gch->ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
 	updateChannel(gch);
 }
 
@@ -104,36 +108,37 @@ void glue_clearMuteActions(geChannel *gch)
 /* -------------------------------------------------------------------------- */
 
 
-vector<recorder::Composite> glue_getMidiActions(int chan, int frameLimit)
+vector<m::recorder::Composite> getMidiActions(int chan, int frameLimit)
 {
-	vector<recorder::Composite> out;
+	vector<m::recorder::Composite> out;
 
-	recorder::sortActions();
+	m::recorder::sortActions();
 
-	for (unsigned i=0; i<recorder::frames.size(); i++) {
+	for (unsigned i=0; i<m::recorder::frames.size(); i++) {
 
-		if (recorder::frames.at(i) > frameLimit)
+		if (m::recorder::frames.at(i) > frameLimit)
 			continue;
 
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
+		for (unsigned j=0; j<m::recorder::global.at(i).size(); j++) {
 
-			recorder::action* a1 = recorder::global.at(i).at(j);
-			recorder::action* a2 = nullptr;
+			m::recorder::action* a1 = m::recorder::global.at(i).at(j);
+			m::recorder::action* a2 = nullptr;
 
-			MidiEvent a1midi(a1->iValue);
+			m::MidiEvent a1midi(a1->iValue);
 
 			/* Skip action if:
 				- does not belong to this channel
 				- is not a MIDI action (we only want MIDI things here)
 				- is not a MIDI Note On type. We don't want any other kind of action here */
 
-			if (a1->chan != chan || a1->type != G_ACTION_MIDI || a1midi.getStatus() != MidiEvent::NOTE_ON)
+			if (a1->chan != chan || a1->type != G_ACTION_MIDI || 
+				  a1midi.getStatus() != m::MidiEvent::NOTE_ON)
 				continue;
 
 			/* Prepare the composite action. Action 1 exists for sure, so fill it up
 			right away. */
 
-			recorder::Composite cmp; 
+			m::recorder::Composite cmp; 
 			cmp.a1 = *a1;
 
 			/* Search for the next action. Must have: same channel, G_ACTION_MIDI,
@@ -141,9 +146,9 @@ vector<recorder::Composite> glue_getMidiActions(int chan, int frameLimit)
 			note of a1 and random velocity: we don't care about it (and so we mask it
 			with 0x0000FF00). */
 
-			MidiEvent a2midi(MidiEvent::NOTE_OFF, a1midi.getNote(), 0x0);
+			m::MidiEvent a2midi(m::MidiEvent::NOTE_OFF, a1midi.getNote(), 0x0);
 
-			recorder::getNextAction(chan, G_ACTION_MIDI, a1->frame, &a2, 
+			m::recorder::getNextAction(chan, G_ACTION_MIDI, a1->frame, &a2, 
 				a2midi.getRaw(), 0x0000FF00);
 
 			/* If action 2 has been found, add it to the composite duo. Otherwise
@@ -160,3 +165,5 @@ vector<recorder::Composite> glue_getMidiActions(int chan, int frameLimit)
 
 	return out;
 }
+
+}}} // giada::c::recorder::
