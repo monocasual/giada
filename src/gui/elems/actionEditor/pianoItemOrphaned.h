@@ -49,7 +49,7 @@ public:
   static const int WIDTH = 12;
 
   gePianoItemOrphaned(int x, int y, int xRel, int yRel,
-    struct giada::m::recorder::action *action, gdActionEditor *pParent);
+    struct giada::m::recorder::action action, gdActionEditor* pParent);
 
   void draw() override;
   int handle(int e) override;

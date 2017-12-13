@@ -59,6 +59,15 @@ struct action
 	uint32_t iValue;  // used only for MIDI events
 };
 
+/* Composite
+A group of two actions (keypress+keyrel, muteon+muteoff). */
+
+struct Composite
+{
+	action a1;
+	action a2;
+};
+
 /* frames
 Frame counter sentinel. It tells which frames contain actions. E.g.:
   frames[0] = 155   // some actions on frame 155
@@ -151,19 +160,22 @@ void expand(int old_fpb, int new_fpb);
 void shrink(int new_fpb);
 
 /* getNextAction
- * Return the nearest action in chan 'chan' of type 'action' starting
- * from 'frame'. Action can be a bitmask. If iValue != 0 search for
- * next action with iValue == iValue: useful for MIDI key_release. iValue
- * can be a bitmask. */
+Returns the nearest action in chan 'chan' of type 'action' starting from 
+'frame'. Action can be a bitmask. If iValue != 0 search for next action with 
+iValue == iValue with 'mask' to ignore bytes. Useful for MIDI key_release. 
+Mask example:
 
-int getNextAction(int chan, char action, int frame, struct action **out,
-	uint32_t iValue=0);
+	iValue = 0x803D3F00
+	mask   = 0x0000FF00  // ignore byte 3
+	action = 0x803D3200  // <--- this action will be found */
+
+int getNextAction(int chan, char action, int frame, struct action** out,
+	uint32_t iValue=0, uint32_t mask=0);
 
 /* getAction
- * return a pointer to action in chan 'chan' of type 'action' at frame
- * 'frame'. */
+Returns a pointer to action in chan 'chan' of type 'action' at frame 'frame'. */
 
-int getAction(int chan, char action, int frame, struct action **out);
+int getAction(int chan, char action, int frame, struct action** out);
 
 /* start/stopOverdub
 These functions are used when you overwrite existing actions. For example:
@@ -171,7 +183,6 @@ pressing Mute button on a channel with some existing mute actions. */
 
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
 void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
-
 }}}; // giada::m::recorder::
 
 #endif

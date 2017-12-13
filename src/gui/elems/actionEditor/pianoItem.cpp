@@ -41,38 +41,35 @@
 using namespace giada::m;
 
 
-gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action *_a,
-	recorder::action *_b, gdActionEditor *pParent)
+gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action a,
+	recorder::action b, gdActionEditor* pParent)
 	: geBasePianoItem(X, Y, MIN_WIDTH, pParent),
-		a              (_a),
-		b              (_b),
-		event_a        (0x00),
-		event_b        (0x00),
+		a              (a),
+		b              (b),
 		changed        (false)
 {
 	/* a is a pointer: action exists, needs to be displayed */
 
-	if (a) {
-		note    = kernelMidi::getB2(a->iValue);
-		frame_a = a->frame;
-		frame_b = b->frame;
-		event_a = a->iValue;
-		event_b = b->iValue;
+//	if (a) {
+		note    = kernelMidi::getB2(a.iValue);
+		frame_a = a.frame;
+		frame_b = b.frame;
+		event_a = MidiEvent(a.iValue);
+		event_b = MidiEvent(b.iValue);
 		int newX = rel_x + (frame_a / pParent->zoom);
 		int newY = rel_y + getY(note);
 		int newW = (frame_b - frame_a) / pParent->zoom;
 		resize(newX, newY, newW, h());
-	}
+//	}
 
 	/* a is null: action needs to be recorded from scratch */
-
+/*
 	else {
 		note    = getNote(rel_y);
 		frame_a = rel_x * pParent->zoom;
 		frame_b = (rel_x + 20) * pParent->zoom;
-		record();
 		size((frame_b - frame_a) / pParent->zoom, h());
-	}
+	}*/
 }
 
 
@@ -100,11 +97,11 @@ bool gePianoItem::overlap()
 	 * end   = the lowest value between the two ending points
 	 * if start < end then there's an overlap of end-start pixels. */
 
-	geNoteEditor *pPiano = static_cast<geNoteEditor*>(parent());
+	geNoteEditor* noteEditor = static_cast<geNoteEditor*>(parent());
 
-	for (int i=0; i<pPiano->children(); i++) {
+	for (int i=0; i<noteEditor->children(); i++) {
 
-		gePianoItem *pItem = static_cast<gePianoItem*>(pPiano->child(i));
+		gePianoItem* pItem = static_cast<gePianoItem*>(noteEditor->child(i));
 
 		/* don't check against itself and with different y positions */
 
@@ -144,24 +141,11 @@ void gePianoItem::record()
 		frame_a -= overflow;
 	}
 
-	event_a |= (MIDI_NOTE_ON);
-	event_a |= (note << 16);   // note value
-	event_a |= (MIDI_VELOCITY);
-	event_a |= (0x00);
+	event_a = MidiEvent(MidiEvent::NOTE_ON,  note, 0x3F); // max velocity for now
+	event_b = MidiEvent(MidiEvent::NOTE_OFF, note, 0x3F);
 
-	event_b |= (MIDI_NOTE_OFF);
-	event_b |= (note << 16);   // note value
-	event_b |= (MIDI_VELOCITY);
-	event_b |= (0x00);
-
-	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_a, event_a);
-
-/*
-	recorder::action* next;
-	recorder::getNextAction(pParent->chan->index, G_ACTION_MIDI, frame_a, &next);
-	printf("%d\n", next->frame);
-*/
-	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_b, event_b);
+	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_a, event_a.getRaw());
+	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_b, event_b.getRaw());
 	pParent->chan->hasActions = true;
 }
 
@@ -173,14 +157,14 @@ void gePianoItem::remove()
 {
 	MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
 	recorder::deleteAction(ch->index, frame_a, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, event_a, 0.0);
+		&mixer::mutex_recs, event_a.getRaw(), 0.0);
 	recorder::deleteAction(ch->index, frame_b, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, event_b, 0.0);
+		&mixer::mutex_recs, event_b.getRaw(), 0.0);
 
 	/* Send a note-off in case we are deleting it in a middle of a key_on/key_off
 	sequence. */
 
-	ch->sendMidi(event_b);
+	ch->sendMidi(event_b.getRaw());
 	ch->hasActions = recorder::hasActions(ch->index);
 }
 

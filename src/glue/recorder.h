@@ -29,6 +29,10 @@
 #define G_GLUE_RECORDER_H
 
 
+#include <vector>
+#include "../core/recorder.h"
+
+
 class geChannel;
 
 
@@ -37,5 +41,6 @@ void glue_clearMuteActions(geChannel *gch);
 void glue_clearVolumeActions(geChannel *gch);
 void glue_clearStartStopActions(geChannel *gch);
 
-
+std::vector<giada::m::recorder::Composite> glue_getMidiActions(int channel, 
+	int frameLimit);
 #endif

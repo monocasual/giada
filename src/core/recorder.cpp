@@ -42,15 +42,11 @@ namespace recorder
 {
 namespace
 {
-/* composite
-A group of two actions (keypress+keyrel, muteon+muteoff) used during the overdub
+/* Composite
+A group of two actions (keypress+keyrel, muteon+muteoff) used during the overdub 
 process. */
 
-struct composite
-{
-	action a1;
-	action a2;
-} cmp;
+Composite cmp;
 
 
 /* -------------------------------------------------------------------------- */
@@ -62,9 +58,9 @@ Fixes underlying action truncation when overdubbing over a longer action. I.e.:
   Overdub:     ---|#######|---
   fix:         |#||#######|--- */
 
-void fixOverdubTruncation(const composite &comp, pthread_mutex_t *mixerMutex)
+void fixOverdubTruncation(const Composite& comp, pthread_mutex_t* mixerMutex)
 {
-  action *next = nullptr;
+  action* next = nullptr;
   int res = getNextAction(comp.a2.chan, comp.a1.type | comp.a2.type, comp.a2.frame,
     &next);
   if (res != 1 || next->type != comp.a2.type)
@@ -104,7 +100,7 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-bool canRec(Channel *ch, bool clockRunning, bool mixerRecording)
+bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 {
 	/* NO recording if:
 	 * recorder is inactive
@@ -242,7 +238,7 @@ void clearAction(int index, char act)
 
 
 void deleteAction(int chan, int frame, char type, bool checkValues,
-	pthread_mutex_t *mixerMutex, uint32_t iValue, float fValue)
+	pthread_mutex_t* mixerMutex, uint32_t iValue, float fValue)
 {
 	/* make sure frame is even */
 
@@ -299,7 +295,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
 
 
 void deleteActions(int chan, int frame_a, int frame_b, char type,
-  pthread_mutex_t *mixerMutex)
+  pthread_mutex_t* mixerMutex)
 {
 	sortActions();
 	vector<int> dels;
@@ -530,29 +526,44 @@ bool hasActions(int chanIndex)
 /* -------------------------------------------------------------------------- */
 
 
-int getNextAction(int chan, char type, int frame, action **out,
-	uint32_t iValue)
+int getNextAction(int chan, char type, int fromFrame, action** out, 
+	uint32_t iValue, uint32_t mask)
 {
 	sortActions();  // mandatory
 
-	unsigned i=0;
-	while (i < frames.size() && frames.at(i) <= frame) i++;
+	/* Increase 'i' until it reaches 'fromFrame'. That's the point where to start
+	to look for the next action. */
 
-	if (i == frames.size())   // no further actions past 'frame'
+	unsigned i = 0;
+	while (i < frames.size() && frames.at(i) <= fromFrame) i++;
+
+	/* No other actions past 'fromFrame': there are no more actions to look for.
+	Return -1. */
+
+	if (i == frames.size())
 		return -1;
 
-	for (; i<global.size(); i++)
+	for (; i<global.size(); i++) {
+
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action *a = global.at(i).at(j);
-			if (a->chan == chan && (type & a->type) == a->type) {
-				//if (iValue == 0 || (iValue != 0 && a->iValue == iValue)) {
-				if (iValue == 0 || (iValue != 0 && (iValue & a->iValue) == a->iValue )) {
-					*out = global.at(i).at(j);
-					return 1;
-				}
+
+			action* a = global.at(i).at(j);
+
+			/* If the requested channel and type don't match, continue. */
+
+			if (a->chan != chan || (type & a->type) != a->type) 
+				continue;
+
+			/* If no iValue has been specified (iValue == 0), then the next action has 
+			been found, return it. Otherwise, make sure the iValue matches the 
+			action's iValue, according to the mask provided. */
+
+			if (iValue == 0 || (iValue != 0 && ((iValue & (a->iValue | mask)) == iValue))) {
+				*out = global.at(i).at(j);
+				return 1;
 			}
 		}
-
+	}
 	return -2;   // no 'type' actions found
 }
 
@@ -560,7 +571,7 @@ int getNextAction(int chan, char type, int frame, action **out,
 /* -------------------------------------------------------------------------- */
 
 
-int getAction(int chan, char action, int frame, struct action **out)
+int getAction(int chan, char action, int frame, struct action** out)
 {
 	for (unsigned i=0; i<global.size(); i++)
 		for (unsigned j=0; j<global.at(i).size(); j++)
@@ -617,7 +628,7 @@ void startOverdub(int index, char actionMask, int frame, unsigned bufferSize)
 /* -------------------------------------------------------------------------- */
 
 
-void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex)
+void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 {
 	cmp.a2.frame  = currentFrame;
 	bool ringLoop = false;
@@ -663,6 +674,4 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex)
 	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
   fixOverdubTruncation(cmp, mixerMutex);
 }
-
-
 }}}; // giada::m::recorder::
