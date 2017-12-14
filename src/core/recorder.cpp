@@ -558,7 +558,7 @@ int getNextAction(int chan, char type, int fromFrame, action** out,
 			been found, return it. Otherwise, make sure the iValue matches the 
 			action's iValue, according to the mask provided. */
 
-			if (iValue == 0 || (iValue != 0 && ((iValue & (a->iValue | mask)) == iValue))) {
+			if (iValue == 0 || (iValue != 0 && (a->iValue | mask) == (iValue | mask))) {
 				*out = global.at(i).at(j);
 				return 1;
 			}
