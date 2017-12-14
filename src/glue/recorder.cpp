@@ -29,6 +29,7 @@
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../core/const.h"
+#include "../core/clock.h"
 #include "../core/kernelMidi.h"
 #include "../core/channel.h"
 #include "../core/recorder.h"
@@ -102,6 +103,32 @@ void clearMuteActions(geChannel* gch)
 		return;
 	m::recorder::clearAction(gch->ch->index, G_ACTION_MUTEON | G_ACTION_MUTEOFF);
 	updateChannel(gch);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void recordMidiAction(int chan, int note, int frame_a, int frame_b)
+{
+	if (frame_b == 0)
+		frame_b = frame_a + 10000;
+
+	/* avoid frame overflow */
+
+	int overflow = frame_b - m::clock::getTotalFrames();
+	if (overflow > 0) {
+		frame_b -= overflow;
+		frame_a -= overflow;
+	}
+
+	m::MidiEvent event_a = m::MidiEvent(m::MidiEvent::NOTE_ON,  note, 0x3F); // max velocity for now
+	m::MidiEvent event_b = m::MidiEvent(m::MidiEvent::NOTE_OFF, note, 0x3F);
+
+	m::recorder::rec(chan, G_ACTION_MIDI, frame_a, event_a.getRaw());
+	m::recorder::rec(chan, G_ACTION_MIDI, frame_b, event_b.getRaw());		
+
+	printf("%d %d\n", frame_a, frame_b);
 }
 
 

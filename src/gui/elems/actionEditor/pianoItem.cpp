@@ -48,28 +48,15 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action a,
 		b              (b),
 		changed        (false)
 {
-	/* a is a pointer: action exists, needs to be displayed */
-
-//	if (a) {
-		note    = kernelMidi::getB2(a.iValue);
-		frame_a = a.frame;
-		frame_b = b.frame;
-		event_a = MidiEvent(a.iValue);
-		event_b = MidiEvent(b.iValue);
-		int newX = rel_x + (frame_a / pParent->zoom);
-		int newY = rel_y + getY(note);
-		int newW = (frame_b - frame_a) / pParent->zoom;
-		resize(newX, newY, newW, h());
-//	}
-
-	/* a is null: action needs to be recorded from scratch */
-/*
-	else {
-		note    = getNote(rel_y);
-		frame_a = rel_x * pParent->zoom;
-		frame_b = (rel_x + 20) * pParent->zoom;
-		size((frame_b - frame_a) / pParent->zoom, h());
-	}*/
+	note    = kernelMidi::getB2(a.iValue);
+	frame_a = a.frame;
+	frame_b = b.frame;
+	event_a = MidiEvent(a.iValue);
+	event_b = MidiEvent(b.iValue);
+	int newX = rel_x + (frame_a / pParent->zoom);
+	int newY = rel_y + getY(note);
+	int newW = (frame_b - frame_a) / pParent->zoom;
+	resize(newX, newY, newW, h());
 }
 
 
@@ -131,29 +118,7 @@ void gePianoItem::draw()
 /* -------------------------------------------------------------------------- */
 
 
-void gePianoItem::record()
-{
-	/* avoid frame overflow */
-
-	int overflow = frame_b - clock::getTotalFrames();
-	if (overflow > 0) {
-		frame_b -= overflow;
-		frame_a -= overflow;
-	}
-
-	event_a = MidiEvent(MidiEvent::NOTE_ON,  note, 0x3F); // max velocity for now
-	event_b = MidiEvent(MidiEvent::NOTE_OFF, note, 0x3F);
-
-	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_a, event_a.getRaw());
-	recorder::rec(pParent->chan->index, G_ACTION_MIDI, frame_b, event_b.getRaw());
-	pParent->chan->hasActions = true;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gePianoItem::remove()
+void gePianoItem::removeAction()
 {
 	MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
 	recorder::deleteAction(ch->index, frame_a, G_ACTION_MIDI, true,
@@ -214,14 +179,13 @@ int gePianoItem::handle(int e)
 		}
 
 		case FL_PUSH: {
-
 			push_x = Fl::event_x() - x();
 			old_x  = x();
 			old_w  = w();
 
 			if (Fl::event_button3()) {
 				fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK);
-				remove();
+				removeAction();
 				hide();   // for Windows
 				Fl::delete_widget(this);
 				static_cast<geNoteEditor*>(parent())->redraw();
@@ -289,8 +253,11 @@ int gePianoItem::handle(int e)
 
 		case FL_RELEASE: {
 
-			/* delete & record the action, only if it doesn't overlap with
-			 * another one */
+
+			gePianoRoll* pianoRoll = static_cast<gePianoRoll*>(parent());
+
+			/* Delete and record the action, only if it doesn't overlap with another 
+			existing one. */
 
 			if (overlap()) {
 				resize(old_x, y(), old_w, h());
@@ -298,30 +265,21 @@ int gePianoItem::handle(int e)
 			}
 			else
 			if (changed) {
-				remove();
-				note    = getNote(getRelY());
+				removeAction();
+				note    = pianoRoll->yToNote(getRelY());
 				frame_a = getRelX() * pParent->zoom;
 				frame_b = (getRelX()+w()) * pParent->zoom;
-				record();
+				pianoRoll->recordAction(note, frame_a, frame_b);
 				changed = false;
 			}
 
-			static_cast<geNoteEditor*>(parent())->redraw();
+			pianoRoll->redraw();
 
 			ret = 1;
 			break;
 		}
 	}
 	return ret;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int gePianoItem::getNote(int rel_y)
-{
-	return gePianoRoll::MAX_KEYS - (rel_y / gePianoRoll::CELL_H);
 }
 
 

@@ -48,12 +48,6 @@ private:
 	int getRelY();
 	int getRelX();
 
-	/* getNote
-	 * from a relative_y return the real MIDI note, range 0-127. 15 is
-	 * the hardcoded value for note height in pixels */
-
-	int getNote(int rel_y);
-
 	/* overlap
 	 * check if this item don't overlap with another one. */
 
@@ -97,9 +91,6 @@ public:
 	static const int MIN_WIDTH    = 10;
 	static const int HANDLE_WIDTH = 5;
 
-	/* pianoItem ctor
-	 * if action *a == nullptr, record a new action */
-
 	gePianoItem(int x, int y, int rel_x, int rel_y, 
 		struct giada::m::recorder::action a, struct giada::m::recorder::action b, 
 		gdActionEditor* pParent);
@@ -109,8 +100,7 @@ public:
 
   void reposition(int pianoRollX) override;
 
-	void record();
-	void remove();
+	void removeAction();
 };
 
 

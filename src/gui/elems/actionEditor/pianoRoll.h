@@ -46,6 +46,11 @@ private:
 		A = 11, GS = 0
 	};
 
+	int push_y;
+
+	Fl_Offscreen surface1;  // notes, no repeat
+	Fl_Offscreen surface2;  // lines, x-repeat
+
 	/* drawSurface*
 	Generates a complex drawing in memory first and copy it to the screen at a
 	later point in time. Fl_Offscreen surface holds the necessary data.	The first
@@ -57,10 +62,8 @@ private:
 	void drawSurface1();
 	void drawSurface2();
 
-	int push_y;
 
-	Fl_Offscreen surface1;  // notes, no repeat
-	Fl_Offscreen surface2;  // lines, x-repeat
+	void build();
 
 public:
 
@@ -70,15 +73,19 @@ public:
 	static const int CELL_H      = 18;
 	static const int CELL_W      = 40;
 
-	gePianoRoll(int x, int y, int w, gdActionEditor *pParent);
+	gePianoRoll(int x, int y, int w, gdActionEditor* pParent);
 
-	void draw();
-	int  handle(int e);
+	void draw() override;
+	int  handle(int e) override;
 
   /* updateActions
   Repositions existing actions after a zoom gesture. */
   
-	void updateActions();
+	void updateActions() override;
+
+	void recordAction(int note, int frame_a, int frame_b=0);
+
+	int yToNote(int y);
 };
 
 

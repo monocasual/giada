@@ -50,7 +50,6 @@ using namespace giada;
 gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor* pParent)
 	: geBaseActionEditor(X, Y, W, 40, pParent)
 {
-	using namespace m::recorder;
 
 	resizable(nullptr);                   // don't resize children (i.e. pianoItem)
 	size(W, (MAX_KEYS+1) * CELL_H);      // 128 MIDI channels * CELL_H height
@@ -63,6 +62,19 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor* pParent)
 	drawSurface1();
 	drawSurface2();
 
+	build();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoRoll::build()
+{
+	using namespace m::recorder;
+	
+	clear();
+
 	int channel  = pParent->chan->index;
 	int maxFrame = m::clock::getTotalFrames();
 
@@ -72,18 +84,18 @@ gePianoRoll::gePianoRoll(int X, int Y, int W, gdActionEditor* pParent)
 		m::MidiEvent e1 = composite.a1.iValue;
 		m::MidiEvent e2 = composite.a2.iValue;
 
-		gu_log("[gePianoRoll] ((0x%X, f=%d) - (0x%X, f=%d))\n", 
-			e1.getStatus(), composite.a1.frame,
-			e2.getStatus(), composite.a2.frame
+		gu_log("[gePianoRoll] ((0x%X, 0x%X, f=%d) - (0x%X, 0x%X, f=%d))\n", 
+			e1.getStatus(), e1.getNote(), composite.a1.frame,
+			e2.getStatus(), e2.getNote(), composite.a2.frame
 		);
 
 		if (composite.a2.frame != -1)
-			new gePianoItem(0, 0, x(), y(), composite.a1, composite.a2, pParent);
+			add(new gePianoItem(0, 0, x(), y(), composite.a1, composite.a2, pParent));
 		else
-			new gePianoItemOrphaned(0, 0, x(), y(), composite.a1, pParent);
+			add(new gePianoItemOrphaned(0, 0, x(), y(), composite.a1, pParent));
 	}
 
-	end();
+	redraw();
 }
 
 
@@ -228,7 +240,6 @@ void gePianoRoll::draw()
 int gePianoRoll::handle(int e)
 {
 	int ret = Fl_Group::handle(e);
-
 	switch (e) {
 		case FL_PUSH:	{
 
@@ -243,37 +254,26 @@ int gePianoRoll::handle(int e)
 
 			if (Fl::event_button1()) {
 
-				/* ax is driven by grid, ay by the height in px of each note */
+				/* ax is driven by grid, ay by the height in px of each note. */
 
 				int ax = Fl::event_x();
 				int ay = Fl::event_y();
 
-				/* vertical snap */
+				/* Vertical snap. */
 
 				int edge = (ay-y()) % CELL_H;
 				if (edge != 0) ay -= edge;
 
-				/* If there are no pianoItems below the mouse, add a new one. Also check 
-				that it doesn't overflow on the grey area, by shifting it to the left if
-				necessary. */
+				/* If there are no pianoItems below the mouse, add a new one. */
 
 				gePianoItem* pianoItem = dynamic_cast<gePianoItem*>(Fl::belowmouse());
-				if (pianoItem == nullptr) {
-					int greyover = ax+20 - pParent->coverX-x();
-					if (greyover > 0)
-						ax -= greyover;
-					/* TODO _ RECORDING */
-					/* TODO _ RECORDING */
-					/* TODO _ RECORDING */
-					/* TODO _ RECORDING */
-					/* TODO _ RECORDING */
-					//add(new gePianoItem(ax, ay, ax-x(), ay-y(), nullptr, nullptr, pParent));
-					redraw();
-				}
+				if (pianoItem == nullptr)
+					recordAction(yToNote(ay-y()), (ax-x()) * pParent->zoom);
 			}
 			ret = 1;
 			break;
 		}
+
 		case FL_DRAG:	{
 
 			if (Fl::event_button3()) {
@@ -292,6 +292,7 @@ int gePianoRoll::handle(int e)
 			ret = 1;
 			break;
 		}
+
 		case FL_MOUSEWHEEL: {   // nothing to do, just avoid small internal scroll
 			ret = 1;
 			break;
@@ -300,6 +301,25 @@ int gePianoRoll::handle(int e)
 	return ret;
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void gePianoRoll::recordAction(int note, int frame_a, int frame_b)
+{
+	c::recorder::recordMidiAction(pParent->chan->index, note, frame_a, frame_b);
+	pParent->chan->hasActions = true;
+	build();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int gePianoRoll::yToNote(int y)
+{
+	return gePianoRoll::MAX_KEYS - (y / gePianoRoll::CELL_H);
+}
 
 /* -------------------------------------------------------------------------- */
 

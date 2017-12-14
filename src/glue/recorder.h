@@ -45,6 +45,16 @@ void clearMuteActions(geChannel *gch);
 void clearVolumeActions(geChannel *gch);
 void clearStartStopActions(geChannel *gch);
 
+/* recordMidiAction
+Records a new MIDI action at frame_a. If frame_b == 0, uses the default action
+size. */
+
+void recordMidiAction(int chan, int note, int frame_a, int frame_b=0);
+
+/* getMidiActions
+Returns a list of Composite actions, ready to be displayed in a MIDI note
+editor as pairs of NoteOn+NoteOff. */
+
 std::vector<giada::m::recorder::Composite> getMidiActions(int channel, 
 	int frameLimit);
 
