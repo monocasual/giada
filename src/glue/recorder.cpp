@@ -34,6 +34,7 @@
 #include "../core/channel.h"
 #include "../core/recorder.h"
 #include "../utils/gui.h"
+#include "../utils/log.h"
 #include "recorder.h"
 
 
@@ -112,9 +113,9 @@ void clearMuteActions(geChannel* gch)
 void recordMidiAction(int chan, int note, int frame_a, int frame_b)
 {
 	if (frame_b == 0)
-		frame_b = frame_a + 10000;
+		frame_b = frame_a + G_DEFAULT_MIDI_ACTION_SIZE;
 
-	/* avoid frame overflow */
+	/* Avoid frame overflow. */
 
 	int overflow = frame_b - m::clock::getTotalFrames();
 	if (overflow > 0) {
@@ -122,13 +123,26 @@ void recordMidiAction(int chan, int note, int frame_a, int frame_b)
 		frame_a -= overflow;
 	}
 
-	m::MidiEvent event_a = m::MidiEvent(m::MidiEvent::NOTE_ON,  note, 0x3F); // max velocity for now
+	/* Prepare MIDI events, with maximum velocity (0x3F) for now. */
+
+	m::MidiEvent event_a = m::MidiEvent(m::MidiEvent::NOTE_ON,  note, 0x3F);
 	m::MidiEvent event_b = m::MidiEvent(m::MidiEvent::NOTE_OFF, note, 0x3F);
+
+	/* Avoid overlapping actions. Find the next action past frame_a and compare 
+	its frame: if smaller than frame_b, an overlap occurs. Shrink the new action
+	accordingly. */
+
+	m::recorder::action* next = nullptr;
+	m::recorder::getNextAction(chan, G_ACTION_MIDI, frame_a, &next, event_a.getRaw(), 
+		0x0000FF00);
+
+	if (next != nullptr && next->frame <= frame_b) {
+		frame_b = next->frame - 2;
+		gu_log("[recorder::recordMidiAction] Shrink new action, due to overlap\n");
+	}
 
 	m::recorder::rec(chan, G_ACTION_MIDI, frame_a, event_a.getRaw());
 	m::recorder::rec(chan, G_ACTION_MIDI, frame_b, event_b.getRaw());		
-
-	printf("%d %d\n", frame_a, frame_b);
 }
 
 

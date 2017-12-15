@@ -48,14 +48,9 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action a,
 		b              (b),
 		changed        (false)
 {
-	note    = kernelMidi::getB2(a.iValue);
-	frame_a = a.frame;
-	frame_b = b.frame;
-	event_a = MidiEvent(a.iValue);
-	event_b = MidiEvent(b.iValue);
-	int newX = rel_x + (frame_a / pParent->zoom);
-	int newY = rel_y + getY(note);
-	int newW = (frame_b - frame_a) / pParent->zoom;
+	int newX = rel_x + (a.frame / pParent->zoom);
+	int newY = rel_y + getY(kernelMidi::getB2(a.iValue));
+	int newW = (b.frame - a.frame) / pParent->zoom;
 	resize(newX, newY, newW, h());
 }
 
@@ -65,8 +60,8 @@ gePianoItem::gePianoItem(int X, int Y, int rel_x, int rel_y, recorder::action a,
 
 void gePianoItem::reposition(int pianoRollX)
 {
-	int newX = pianoRollX + (frame_a / pParent->zoom);
-	int newW = ((frame_b - frame_a) / pParent->zoom);
+	int newX = pianoRollX + (a.frame / pParent->zoom);
+	int newW = ((b.frame - a.frame) / pParent->zoom);
 	if (newW < MIN_WIDTH)
 		newW = MIN_WIDTH;
 	resize(newX, y(), newW, h());
@@ -120,16 +115,16 @@ void gePianoItem::draw()
 
 void gePianoItem::removeAction()
 {
-	MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
-	recorder::deleteAction(ch->index, frame_a, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, event_a.getRaw(), 0.0);
-	recorder::deleteAction(ch->index, frame_b, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, event_b.getRaw(), 0.0);
+	MidiChannel* ch = static_cast<MidiChannel*>(pParent->chan);
+	recorder::deleteAction(ch->index, a.frame, G_ACTION_MIDI, true,
+		&mixer::mutex_recs, a.iValue, 0.0);
+	recorder::deleteAction(ch->index, b.frame, G_ACTION_MIDI, true,
+		&mixer::mutex_recs, b.iValue, 0.0);
 
 	/* Send a note-off in case we are deleting it in a middle of a key_on/key_off
 	sequence. */
 
-	ch->sendMidi(event_b.getRaw());
+	ch->sendMidi(b.iValue);
 	ch->hasActions = recorder::hasActions(ch->index);
 }
 
@@ -266,9 +261,9 @@ int gePianoItem::handle(int e)
 			else
 			if (changed) {
 				removeAction();
-				note    = pianoRoll->yToNote(getRelY());
-				frame_a = getRelX() * pParent->zoom;
-				frame_b = (getRelX()+w()) * pParent->zoom;
+				int note    = pianoRoll->yToNote(getRelY());
+				int frame_a = getRelX() * pParent->zoom;
+				int frame_b = (getRelX()+w()) * pParent->zoom;
 				pianoRoll->recordAction(note, frame_a, frame_b);
 				changed = false;
 			}
