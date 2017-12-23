@@ -101,6 +101,8 @@ src/gui/dialogs/pluginChooser.h        \
 src/gui/dialogs/pluginChooser.cpp      \
 src/gui/dialogs/browser/browserBase.h           \
 src/gui/dialogs/browser/browserBase.cpp         \
+src/gui/dialogs/browser/browserDir.h            \
+src/gui/dialogs/browser/browserDir.cpp          \
 src/gui/dialogs/browser/browserLoad.h           \
 src/gui/dialogs/browser/browserLoad.cpp         \
 src/gui/dialogs/browser/browserSave.h           \

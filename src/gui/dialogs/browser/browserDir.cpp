@@ -29,18 +29,16 @@
 #include "../../elems/browser.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/input.h"
-#include "browserLoad.h"
+#include "browserDir.h"
 
 
 using std::string;
 
 
 gdBrowserDir::gdBrowserDir(int x, int y, int w, int h, const string& title,
-		const string& path, void (*cb)(void*), Channel* ch)
-	:	gdBrowserBase(x, y, w, h, title, path, cb)
+		const string& path)
+	:	gdBrowserBase(x, y, w, h, title, path, nullptr)
 {
-	channel = ch;
-
 	where->size(groupTop->w()-updir->w()-8, 20);
 
 	browser->callback(cb_down, (void*) this);

@@ -47,7 +47,7 @@ private:
 public:
 
 	gdBrowserDir(int x, int y, int w, int h, const std::string& title,
-		const std::string& path, void (*callback)(void*), Channel* ch);
+		const std::string& path);
 };
 
 

@@ -35,12 +35,19 @@
 #include "../../../core/pluginHost.h"
 #include "../../../utils/string.h"
 #include "../../../utils/fs.h"
+#include "../../../utils/gui.h"
+#include "../../dialogs/window.h"
+#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/browser/browserDir.h"
 #include "../basics/box.h"
 #include "../basics/radio.h"
 #include "../basics/check.h"
 #include "../basics/input.h"
 #include "../basics/button.h"
 #include "tabPlugins.h"
+
+
+extern gdMainWindow* G_MainWin;
 
 
 using std::string;
@@ -50,21 +57,24 @@ using namespace giada::m;
 geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Plugins")
 {
-	folderPath = new geInput(x()+w()-250, y()+8, 250, 20);
-	scanButton = new geButton(x()+w()-120, folderPath->y()+folderPath->h()+8, 120, 20);
-	info       = new geBox(x(), scanButton->y()+scanButton->h()+8, w(), 242);
+	m_folderPath = new geInput(x()+w()-350, y()+8, 250, 20);
+	m_browse     = new geButton(w()-40, y()+8, 40, 20);
+	m_scanButton = new geButton(x()+w()-120, m_folderPath->y()+m_folderPath->h()+8, 120, 20);
+	m_info       = new geBox(x(), m_scanButton->y()+m_scanButton->h()+8, w(), 242);
 
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
 
-	info->label("Scan in progress. Please wait...");
-	info->hide();
+	m_info->label("Scan in progress. Please wait...");
+	m_info->hide();
 
-	folderPath->value(conf::pluginPath.c_str());
-	folderPath->label("Plugins folder");
+	m_folderPath->value(conf::pluginPath.c_str());
+	m_folderPath->label("Plugins folder");
 
-	scanButton->callback(cb_scan, (void*) this);
+	m_browse->callback(cb_browse, (void*) this);
+
+	m_scanButton->callback(cb_scan, (void*) this);
 
 	updateCount();
 }
@@ -76,7 +86,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 void geTabPlugins::updateCount()
 {
 	string scanLabel = "Scan (" + gu_iToString(pluginHost::countAvailablePlugins()) + " found)";
-	scanButton->label(scanLabel.c_str());
+	m_scanButton->label(scanLabel.c_str());
 }
 
 
@@ -84,6 +94,20 @@ void geTabPlugins::updateCount()
 
 
 void geTabPlugins::cb_scan(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_scan(w); }
+void geTabPlugins::cb_browse(Fl_Widget* w, void* p) { ((geTabPlugins*)p)->cb_browse(w); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geTabPlugins::cb_browse(Fl_Widget* w)
+{
+		gdBrowserDir* browser = new gdBrowserDir(0, 0,
+				800, 600, "Add plug-ins directory",
+				conf::patchPath);
+
+		gu_openSubWindow(G_MainWin, browser, WID_FILE_BROWSER);
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -94,14 +118,14 @@ void geTabPlugins::cb_scan(Fl_Widget* w)
 	std::function<void(float)> callback = [this] (float progress) 
 	{
 		string l = "Scan in progress (" + gu_iToString((int)(progress*100)) + "%). Please wait...";
-		info->label(l.c_str());
+		m_info->label(l.c_str());
 		Fl::wait();
 	};
 
-	info->show();
-	pluginHost::scanDirs(folderPath->value(), callback);
+	m_info->show();
+	pluginHost::scanDirs(m_folderPath->value(), callback);
 	pluginHost::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
-	info->hide();
+	m_info->hide();
 	updateCount();
 }
 
@@ -111,7 +135,7 @@ void geTabPlugins::cb_scan(Fl_Widget* w)
 
 void geTabPlugins::save()
 {
-	conf::pluginPath = folderPath->value();
+	conf::pluginPath = m_folderPath->value();
 }
 
 
