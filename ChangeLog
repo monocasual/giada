@@ -16,7 +16,7 @@
 - Support for multiple plug-in directories
 - OS X builds on Travis CI
 - Update plug-in's parameters on program change in plug-in's window
-- Improve MIDI action retrieval in Piano Roll
+- Improve MIDI action management in Piano Roll
 - Fix crash on MIDI learn for plug-in parameters
 - Fix crash in MIDI input window if MIDI in params are 0
 - Fix unwanted new action when dragging piano items in Piano Roll
