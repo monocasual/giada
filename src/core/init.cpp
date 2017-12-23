@@ -129,7 +129,7 @@ void init_prepareMidiMap()
 /* -------------------------------------------------------------------------- */
 
 
-void init_startGUI(int argc, char **argv)
+void init_startGUI(int argc, char** argv)
 {
 	G_MainWin = new gdMainWindow(G_GUI_WIDTH, G_GUI_HEIGHT, "", argc, argv);
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,

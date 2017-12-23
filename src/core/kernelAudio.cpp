@@ -46,12 +46,12 @@ namespace kernelAudio
 {
 namespace
 {
-RtAudio *rtSystem;
-bool status;
-unsigned numDevs;
-bool inputEnabled;
-unsigned realBufsize; 		// reale bufsize from the soundcard
-int api;
+RtAudio *rtSystem = nullptr;
+bool status = false;
+unsigned numDevs = 0;
+bool inputEnabled = false;
+unsigned realBufsize = 0; 		// reale bufsize from the soundcard
+int api = 0;
 
 #ifdef __linux__
 
@@ -71,19 +71,6 @@ jack_client_t *jackGetHandle()
 /* -------------------------------------------------------------------------- */
 
 
-void init()
-{
-  rtSystem     = nullptr;
-  numDevs      = 0;
-  inputEnabled = 0;
-  realBufsize  = 0;
-  api          = 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 bool getStatus()
 {
   return status;
@@ -96,7 +83,7 @@ bool getStatus()
 int openDevice()
 {
 	api = conf::soundSystem;
-	gu_log("[KA] using rtSystem 0x%x\n", api);
+	gu_log("[KA] using system 0x%x\n", api);
 
 #if defined(__linux__)
 
@@ -127,8 +114,10 @@ int openDevice()
 
 #endif
 
-	else
+	else {
+		gu_log("[KA] No API available, nothing to do!\n");
 		return 0;
+	}
 
 	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n",
     conf::soundDeviceOut, conf::soundDeviceIn, conf::samplerate);

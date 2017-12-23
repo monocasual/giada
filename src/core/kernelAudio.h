@@ -56,8 +56,6 @@ struct JackState
 
 #endif
 
-void init();
-
 int openDevice();
 int closeDevice();
 int startStream();
