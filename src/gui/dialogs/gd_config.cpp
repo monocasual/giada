@@ -44,12 +44,10 @@ using namespace giada::m;
 
 gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 {
-	set_modal();
-
 	if (conf::configX)
 		resize(conf::configX, conf::configY, this->w(), this->h());
 
-	Fl_Tabs *tabs = new Fl_Tabs(8, 8, w-16, h-44);
+	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w-16, h-44);
   tabs->box(G_CUSTOM_BORDER_BOX);
   tabs->labelcolor(G_COLOR_LIGHT_2);
   tabs->begin();
@@ -91,14 +89,14 @@ gdConfig::~gdConfig()
 /* -------------------------------------------------------------------------- */
 
 
-void gdConfig::cb_save_config(Fl_Widget *w, void *p) { ((gdConfig*)p)->__cb_save_config(); }
-void gdConfig::cb_cancel     (Fl_Widget *w, void *p) { ((gdConfig*)p)->__cb_cancel(); }
+void gdConfig::cb_save_config(Fl_Widget* w, void* p) { ((gdConfig*)p)->cb_save_config(); }
+void gdConfig::cb_cancel     (Fl_Widget* w, void* p) { ((gdConfig*)p)->cb_cancel(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdConfig::__cb_save_config()
+void gdConfig::cb_save_config()
 {
 	tabAudio->save();
 	tabBehaviors->save();
@@ -114,7 +112,19 @@ void gdConfig::__cb_save_config()
 /* -------------------------------------------------------------------------- */
 
 
-void gdConfig::__cb_cancel()
+void gdConfig::cb_cancel()
 {
 	do_callback();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+#ifdef WITH_VST
+
+void gdConfig::refreshVstPath()
+{
+	tabPlugins->refreshVstPath();
+}
+
+#endif

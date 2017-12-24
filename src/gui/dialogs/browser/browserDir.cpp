@@ -36,8 +36,8 @@ using std::string;
 
 
 gdBrowserDir::gdBrowserDir(int x, int y, int w, int h, const string& title,
-		const string& path)
-	:	gdBrowserBase(x, y, w, h, title, path, nullptr)
+		const string& path, void (*callback)(void*))
+	:	gdBrowserBase(x, y, w, h, title, path, callback)
 {
 	where->size(groupTop->w()-updir->w()-8, 20);
 

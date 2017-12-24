@@ -51,25 +51,29 @@ class gdConfig : public gdWindow
 {
 private:
 
-	static void cb_save_config(Fl_Widget *w, void *p);
-	static void cb_cancel     (Fl_Widget *w, void *p);
-	inline void __cb_save_config();
-	inline void __cb_cancel();
+	static void cb_save_config(Fl_Widget* w, void* p);
+	static void cb_cancel(Fl_Widget* w, void* p);
+	void cb_save_config();
+	void cb_cancel();
 
 public:
+
+	geTabAudio* tabAudio;
+	geTabBehaviors* tabBehaviors;
+	geTabMidi* tabMidi;
+	geTabMisc* tabMisc;
+#ifdef WITH_VST
+	geTabPlugins* tabPlugins;
+#endif
+	geButton* save;
+	geButton* cancel;
 
 	gdConfig(int w, int h);
 	~gdConfig();
 
-	geTabAudio     *tabAudio;
-	geTabBehaviors *tabBehaviors;
-	geTabMidi      *tabMidi;
-	geTabMisc      *tabMisc;
 #ifdef WITH_VST
-	geTabPlugins   *tabPlugins;
+	void refreshVstPath();
 #endif
-	geButton 	    *save;
-	geButton 	    *cancel;
 };
 
 

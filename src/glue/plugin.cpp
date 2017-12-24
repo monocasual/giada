@@ -33,10 +33,14 @@
 #include "../core/plugin.h"
 #include "../core/channel.h"
 #include "../core/const.h"
+#include "../core/conf.h"
 #include "../utils/gui.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../gui/dialogs/pluginWindow.h"
 #include "../gui/dialogs/pluginList.h"
+#include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/gd_config.h"
+#include "../gui/dialogs/browser/browserDir.h"
 #include "plugin.h"
 
 
@@ -144,6 +148,29 @@ void setParameter(Plugin* p, int index, float value, bool gui)
 	Fl::lock();
 	child->updateParameter(index, !gui);
 	Fl::unlock();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setPluginPathCb(void* data)
+{
+	gdBrowserDir* browser = (gdBrowserDir*) data;
+
+	if (browser->getCurrentPath() == "") {
+		gdAlert("Invalid path.");
+		return;
+	}
+
+	if (!conf::pluginPath.empty() && conf::pluginPath.back() != ';')
+		conf::pluginPath += ";";
+	conf::pluginPath += browser->getCurrentPath();
+
+	browser->do_callback();
+
+	gdConfig* configWin = static_cast<gdConfig*>(gu_getSubwindow(G_MainWin, WID_CONFIG));
+	configWin->refreshVstPath();
 }
 
 }}}; // giada::c::plugin::

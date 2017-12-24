@@ -33,7 +33,7 @@
 
 
 #include <FL/Fl_Group.H>
-#include "../../../core/pluginHost.h"
+
 
 class geInput;
 class geButton;
@@ -51,16 +51,17 @@ private:
 
 	static void cb_scan(Fl_Widget* w, void* p);
 	static void cb_browse(Fl_Widget* w, void* p);
-	void cb_scan(Fl_Widget* w);
-	void cb_browse(Fl_Widget* w);
+	void cb_scan();
+	void cb_browse();
 
-	void updateCount();
+	void refreshCount();
 
 public:
 
 	geTabPlugins(int x, int y, int w, int h);
 
 	void save();
+	void refreshVstPath();
 };
 
 
