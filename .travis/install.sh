@@ -13,7 +13,7 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   sudo apt-get install -y gcc-6 g++-6 libsndfile1-dev libsamplerate0-dev \
   	libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev \
-  	libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev
+  	libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev librtmidi-dev
 
   # Symlink gcc in order to use the latest version
 
@@ -21,10 +21,10 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   # Download and build latest version of RtMidi
 
-  wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.1.tar.gz
-  tar -xvf rtmidi-2.1.1.tar.gz
-  cd rtmidi-2.1.1 && ./configure --with-jack --with-alsa && make && sudo make install || true
-  cd ..
+  #wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.1.tar.gz
+  #tar -xvf rtmidi-2.1.1.tar.gz
+  #cd rtmidi-2.1.1 && ./configure --with-jack --with-alsa && make && sudo make install || true
+  #cd ..
 
   # Download and install latest version of Jansson
 
