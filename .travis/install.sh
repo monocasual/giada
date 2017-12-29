@@ -22,8 +22,8 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   # Download and build latest version of RtMidi
 
   wget https://github.com/thestk/rtmidi/archive/master.zip
-  unzip rtmidi-master.zip
-  cd rtmidi-master && ./autogen.sh && ./configure --with-jack --with-alsa && make && sudo make install || true
+  unzip master.zip
+  cd master && ./autogen.sh && ./configure --with-jack --with-alsa && make && sudo make install || true
   cd ..
 
   #wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.1.tar.gz
