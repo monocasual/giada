@@ -2,33 +2,47 @@ sudo: required
 
 dist: trusty
 
-os: 
-  - linux
-  - osx
-
+os:
+- linux
+- osx
 language: cpp
-
 compiler: gcc
-
 notifications:
   email:
     recipients:
-      - giadaloopmachine@gmail.com
+    - giadaloopmachine@gmail.com
     on_success: never
     on_failure: always
 
 before_install:
-
-  - ./.travis/before_install.sh
+- "./.travis/before_install.sh"
 
 install:
-
-  - ./.travis/install.sh
+- "./.travis/install.sh"
 
 before_script:
+- "./.travis/before_script.sh"
 
-  - ./.travis/before_script.sh
+script: 
+- "./.travis/script.sh" 
 
-script: make && make check
+after_success:
+- "./.travis/after_success.sh" 
 
 after_failure: cat $TRAVIS_BUILD_DIR/test-suite.log
+
+# If build+test are successful, deploy the build/ dir (created in 
+# after_success.sh) to S3. 
+
+deploy:
+  provider: s3
+  access_key_id: AKIAJP2CDHVGCPZAJGSA
+  secret_access_key:
+    secure: VNheuPP1d72MzX3FqJek8diglJllnpU4dS38eVMsHoLIbynlKwGFo35lBJ11xBK5RyoxCYy4Ka9kNifWulGVmfVOKYWhj39w91xl2D4HgPf/RcaCTvBmfg/mrhtop3Ns+WjYYVoxW2K5xmShdknS7HID9ldDBiKhafHNFWhyBWE=
+  bucket: static.giadamusic.com
+  skip_cleanup: true
+  acl: public_read
+  on:
+    tags: true # only tags (on master branch?) are built
+    # branch: osx-build # would build only for branch 'osx-build'
+  local_dir: build

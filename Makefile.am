@@ -1,5 +1,102 @@
 AUTOMAKE_OPTIONS = foreign
 
+# Define conditional variables -------------------------------------------------
+# WITH_VST, LINUX, WINDOWS and OSX are varibles defined via AM_CONDITIONAL 
+# inside configure.ac.
+
+extraSources = 
+cppFlags =
+cxxFlags = -std=c++11 -Wall -Werror
+ldAdd =
+ldFlags =
+
+if WITH_VST
+
+extraSources += \
+	src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp         \
+	src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp \
+	src/deps/juce/modules/juce_core/juce_core.cpp                         \
+	src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp   \
+	src/deps/juce/modules/juce_events/juce_events.cpp                     \
+	src/deps/juce/modules/juce_graphics/juce_graphics.cpp                 \
+	src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
+	src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
+
+cppFlags += \
+  -I./src/deps/juce/modules                \
+  -I./src/deps/vst                         \
+  -I/usr/include                           \
+  -I/usr/include/freetype2                 \
+  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
+  -DJUCE_STANDALONE_APPLICATION=1          \
+  -DJUCE_PLUGINHOST_VST=1                  \
+  -DJUCE_PLUGINHOST_VST3=0                 \
+  -DJUCE_PLUGINHOST_AU=0                   \
+  -DJUCE_WEB_BROWSER=0 
+
+endif
+
+if WINDOWS
+
+extraSources += \
+	src/deps/rtaudio-mod/include/asio.h                    \
+	src/deps/rtaudio-mod/include/asio.cpp                  \
+	src/deps/rtaudio-mod/include/asiolist.h                \
+	src/deps/rtaudio-mod/include/asiolist.cpp              \
+	src/deps/rtaudio-mod/include/asiodrivers.h             \
+	src/deps/rtaudio-mod/include/asiodrivers.cpp           \
+	src/deps/rtaudio-mod/include/iasiothiscallresolver.h   \
+	src/deps/rtaudio-mod/include/iasiothiscallresolver.cpp \
+	resource.rc
+
+cppFlags += \
+	-I./src/deps/rtaudio-mod/include \
+	-D__WINDOWS_ASIO__               \
+	-D__WINDOWS_WASAPI__             \
+	-D__WINDOWS_DS__
+
+cxxFlags += -Wno-error
+
+ldAdd += -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
+  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile -lsamplerate -lrtmidi \
+  -lwinmm -lsetupapi -lksuser -ljansson -limm32 -lglu32 -lshell32 -lversion \
+  -lopengl32 -loleaut32 -lshlwapi -lcomdlg32
+
+# Generate a GUI application (-mwindows), make the build static (-static).
+ldFlags += -mwindows -static
+
+endif
+
+if LINUX
+
+# Add preprocessor flags to enable ALSA, Pulse and JACK in RtAudio.
+cppFlags += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
+
+# Don't stop on JUCE's unused functions.
+cxxFlags += -Wno-error=unused-function
+
+ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
+  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
+  -lfreetype
+
+endif
+
+if OSX
+
+extraSources += src/utils/cocoa.mm src/utils/cocoa.h
+
+# -ObjC++: Juce requires to build some Objective C code
+cxxFlags += -ObjC++ -Wno-auto-var-id
+
+ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -ljansson -lm -lpthread \
+  -lFLAC -logg -lvorbis -lvorbisenc
+
+ldFlags += -framework CoreAudio -framework Cocoa -framework Carbon \
+  -framework CoreMIDI -framework CoreFoundation -framework Accelerate \
+  -framework WebKit -framework QuartzCore -framework IOKit
+
+endif
+
 # make giada -------------------------------------------------------------------
 
 bin_PROGRAMS = giada
@@ -253,104 +350,24 @@ src/utils/fs.cpp                       \
 src/utils/deps.h                       \
 src/utils/deps.cpp                     \
 src/utils/string.h                     \
-src/utils/string.cpp
+src/utils/string.cpp                   \
+src/deps/rtaudio-mod/RtAudio.h         \
+src/deps/rtaudio-mod/RtAudio.cpp
 
-if WITH_VST
-giada_SOURCES +=                                              \
-src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp         \
-src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp \
-src/deps/juce/modules/juce_core/juce_core.cpp                         \
-src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp   \
-src/deps/juce/modules/juce_events/juce_events.cpp                     \
-src/deps/juce/modules/juce_graphics/juce_graphics.cpp                 \
-src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
-src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
-endif
+giada_SOURCES += $(extraSources)
+giada_CPPFLAGS = $(cppFlags)
+giada_CXXFLAGS = $(cxxFlags)
+giada_LDADD = $(ldAdd)
+giada_LDFLAGS = $(ldFlags)
 
-# Check for environment: WITH_VST, LINUX, WINDOWS and OSX are varibles defined
-# via AM_CONDITIONAL inside configure.ac.
-# Note: CPPFLAGS = C preprocessor flags, CXXFLAGS = C++ compiler flags.
-
-giada_CXXFLAGS = -std=c++11 -Wall -Werror
-giada_CPPFLAGS =
-
-# TODO - these are flags for Linux only!
-# Also, JUCE makes GCC complain if compiled with optimization set to -O2.
-# Call configure script as follows:
-#
-# ./configure CXXFLAGS='-g -O1 -pedantic' --target=linux --enable-vst
-#
-
-if WITH_VST
-giada_CPPFLAGS +=                          \
-  -I./src/deps/juce/modules                \
-  -I./src/deps/vst                         \
-  -I/usr/include                           \
-  -I/usr/include/freetype2                 \
-  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
-  -DJUCE_STANDALONE_APPLICATION=1          \
-  -DJUCE_PLUGINHOST_VST=1                  \
-  -DJUCE_PLUGINHOST_VST3=0                 \
-  -DJUCE_PLUGINHOST_AU=0                   \
-  -DJUCE_WEB_BROWSER=0 
-endif
-
-if LINUX
-giada_SOURCES += src/deps/rtaudio-mod/RtAudio.h src/deps/rtaudio-mod/RtAudio.cpp
-# -Wno-error=unused-function: don't stop on JUCE's unused functions
-giada_CXXFLAGS += -Wno-error=unused-function
-giada_CPPFLAGS += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
-giada_LDADD = -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
-  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
-  -lfreetype
-endif
-
-if WINDOWS
-giada_SOURCES +=                                      \
-src/deps/rtaudio-mod/RtAudio.h                        \
-src/deps/rtaudio-mod/RtAudio.cpp                      \
-src/deps/rtaudio-mod/include/asio.h                   \
-src/deps/rtaudio-mod/include/asio.cpp                 \
-src/deps/rtaudio-mod/include/asiolist.h               \
-src/deps/rtaudio-mod/include/asiolist.cpp             \
-src/deps/rtaudio-mod/include/asiodrivers.h            \
-src/deps/rtaudio-mod/include/asiodrivers.cpp          \
-src/deps/rtaudio-mod/include/iasiothiscallresolver.h  \
-src/deps/rtaudio-mod/include/iasiothiscallresolver.cpp
-giada_CXXFLAGS += -Wno-error
-giada_CPPFLAGS +=                \
--I./src/deps/rtaudio-mod/include \
--D__WINDOWS_ASIO__               \
--D__WINDOWS_WASAPI__             \
--D__WINDOWS_DS__
-giada_LDADD = -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 \
-  -lshell32 -lvfw32 -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile \
-  -lsamplerate -lrtmidi -lwinmm -lsetupapi -lksuser -ljansson \
-  -limm32 -lglu32 -lshell32 -lversion -lopengl32 -loleaut32 -lshlwapi -lcomdlg32
-giada_LDFLAGS = -mwindows -static
-giada_SOURCES += resource.rc
-endif
-
-if OSX
-giada_SOURCES += src/utils/cocoa.mm src/utils/cocoa.h src/deps/rtaudio-mod/RtAudio.h \
-	src/deps/rtaudio-mod/RtAudio.cpp
-# -ObjC++: Juce requires to build some Objective C code
-giada_CXXFLAGS += -ObjC++ -Wno-auto-var-id
-giada_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi \
-	-lsamplerate -ljansson
-giada_LDFLAGS = -framework CoreAudio -framework Cocoa -framework Carbon \
-  -framework CoreMIDI -framework CoreFoundation -framework Accelerate \
-  -framework WebKit -framework QuartzCore -framework IOKit
-endif
-
-# used only under MinGW to compile the resource.rc file (program icon)
-
+# Used only under MinGW to compile the resource.rc file (program icon)
 resource.o:
 	windres src/ext/resource.rc -o resource.o
 
-# make test --------------------------------------------------------------------
+# make check -------------------------------------------------------------------
 
 TESTS = giada_tests
+
 check_PROGRAMS = giada_tests
 giada_tests_SOURCES =        \
 tests/main.cpp               \
@@ -377,43 +394,11 @@ src/utils/string.cpp         \
 src/utils/time.cpp           \
 src/utils/log.cpp
 
-if WITH_VST
-giada_tests_SOURCES +=                                        \
-src/deps/juce/modules/juce_audio_basics/juce_audio_basics.cpp         \
-src/deps/juce/modules/juce_audio_processors/juce_audio_processors.cpp \
-src/deps/juce/modules/juce_core/juce_core.cpp                         \
-src/deps/juce/modules/juce_data_structures/juce_data_structures.cpp   \
-src/deps/juce/modules/juce_events/juce_events.cpp                     \
-src/deps/juce/modules/juce_graphics/juce_graphics.cpp                 \
-src/deps/juce/modules/juce_gui_basics/juce_gui_basics.cpp             \
-src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
-endif
-
-if LINUX
-giada_tests_LDADD = -ljansson -lsndfile -lsamplerate -lfltk -lXext -lX11 -lXft \
-  -lXpm -lm -ljack -lasound -lpthread -ldl -lpulse-simple -lpulse -lrtmidi \
-  -lfreetype
-endif
-
-if OSX
-giada_tests_LDADD = -lsndfile -lm -lpthread -lfltk -lrtmidi -lsamplerate -ljansson
-endif
-
-giada_tests_CXXFLAGS = -std=c++11
-
-if WITH_VST
-giada_tests_CPPFLAGS =                     \
-  -I./src/deps/juce/modules                \
-  -I./src/deps/vst                         \
-  -I/usr/include                           \
-  -I/usr/include/freetype2                 \
-  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
-  -DJUCE_STANDALONE_APPLICATION=1          \
-  -DJUCE_PLUGINHOST_VST=1                  \
-  -DJUCE_PLUGINHOST_VST3=0                 \
-  -DJUCE_PLUGINHOST_AU=0                   \
-  -DJUCE_WEB_BROWSER=0 
-endif
+giada_tests_SOURCES += $(extraSources)
+giada_tests_CPPFLAGS = $(cppFlags)
+giada_tests_CXXFLAGS = $(cxxFlags)
+giada_tests_LDADD = $(ldAdd)
+giada_tests_LDFLAGS = $(ldFlags)
 
 # make rename ------------------------------------------------------------------
 

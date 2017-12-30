@@ -8,6 +8,39 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   brew install libsamplerate
   brew install fltk
   brew install libsndfile
+  brew install upx
+
+  #ls Remove dynamic libraries to force static linking.
+
+  rm -rf /usr/local/lib/librtmidi.dylib
+  rm -rf /usr/local/lib/librtmidi.4.dylib
+  rm -rf /usr/local/lib/libjansson.dylib
+  rm -rf /usr/local/lib/libjansson.4.dylib
+  rm -rf /usr/local/lib/libsamplerate.dylib
+  rm -rf /usr/local/lib/libsamplerate.0.dylib
+  rm -rf /usr/local/lib/libfltk.1.3.dylib
+  rm -rf /usr/local/lib/libfltk.dylib
+  rm -rf /usr/local/lib/libfltk_forms.1.3.dylib
+  rm -rf /usr/local/lib/libfltk_forms.dylib
+  rm -rf /usr/local/lib/libfltk_forms.dylib
+  rm -rf /usr/local/lib/libfltk_gl.1.3.dylib
+  rm -rf /usr/local/lib/libfltk_gl.dylib 
+  rm -rf /usr/local/lib/libfltk_images.1.3.dylib
+  rm -rf /usr/local/lib/libfltk_images.dylib 
+  rm -rf /usr/local/lib/libsndfile.1.dylib 
+  rm -rf /usr/local/lib/libsndfile.dylib 
+  rm -rf /usr/local/lib/libFLAC++.6.dylib
+  rm -rf /usr/local/lib/libFLAC++.dylib
+  rm -rf /usr/local/lib/libFLAC.8.dylib
+  rm -rf /usr/local/lib/libFLAC.dylib
+  rm -rf /usr/local/lib/libogg.0.dylib
+  rm -rf /usr/local/lib/libogg.dylib
+  rm -rf /usr/local/lib/libvorbis.0.dylib
+  rm -rf /usr/local/lib/libvorbis.dylib
+  rm -rf /usr/local/lib/libvorbisenc.2.dylib
+  rm -rf /usr/local/lib/libvorbisenc.dylib
+
+  # TODO - what about midimaps?
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
@@ -32,6 +65,7 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   #cd ..
 
   # Download and install latest version of Jansson
+  # TODO - no longer needed! Use apt instead
 
   wget http://www.digip.org/jansson/releases/jansson-2.7.tar.gz
   tar -xvf jansson-2.7.tar.gz

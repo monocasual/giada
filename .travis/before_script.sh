@@ -3,7 +3,7 @@
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
   ./autogen.sh
-  ./configure --target=osx #--enable-vst
+  ./configure --target=osx --enable-vst
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
