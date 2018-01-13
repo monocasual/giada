@@ -9,6 +9,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
+	: # null command - nothing to do 
+	
 	# TODO  
   # cp giada_lin ./build
 
