@@ -44,5 +44,5 @@ deploy:
   acl: public_read
   on:
     tags: true # only tags (on master branch?) are built
-    # branch: osx-build # would build only for branch 'osx-build'
+    branch: "master" # would build only for branch 'osx-build'
   local_dir: build
