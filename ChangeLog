@@ -12,12 +12,14 @@
 --------------------------------------------------------------------------------
 
 
-0.14.5 ---
+0.14.5 --- 2018 . 01 . 15
+- OS X builds on Travis CI
+- AppImage executable for Linux
 - Support for multiple plug-in directories
 - New directory browser for adding plug-in directories
-- OS X builds on Travis CI
 - Update plug-in's parameters on program change in plug-in's window
-- Improve MIDI action management in Piano Roll
+- Improved MIDI action management in Piano Roll
+- Simplified conditional rules in Makefile.am 
 - Fix crash on MIDI learn for plug-in parameters
 - Fix crash in MIDI input window if MIDI in params are 0
 - Fix unwanted new action when dragging piano items in Piano Roll
