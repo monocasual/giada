@@ -41,7 +41,7 @@ class Wave
 private:
 
 	float* m_data;
-	int m_size;		    // Wave size in bytes (size in stereo: size / 2)
+	int m_size;		    // Wave size in bytes (size in frames: m_size / m_channels)
 	int m_channels;
 	int m_rate;
 	int m_bits;
@@ -57,12 +57,6 @@ public:
 	~Wave();
 	Wave(const Wave& other);
 
-	void setRate(int v);
-	void setChannels(int v);
-	void setData(float* data, int size);
-	void setLogical(bool l);
-	void setEdited(bool e);
-
 	/* setPath
 	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
 	extension, e.g. : /path/to/sample-[id].wav */
@@ -76,11 +70,17 @@ public:
 	std::string getPath() const;	
 	int getBits() const;
 	float* getData() const;
-	int getSize() const;        // with channels count
+	int getSize() const;        // in frames
 	int getDuration() const;
 	bool isLogical() const;
 	bool isEdited() const;
 
+	void setRate(int v);
+	void setChannels(int v);
+	void setData(float* data, int size);
+	void setLogical(bool l);
+	void setEdited(bool e);
+	
 	/* clear
 	Resets Wave to init state. */
 
