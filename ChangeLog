@@ -12,6 +12,10 @@
 --------------------------------------------------------------------------------
 
 
+0.14.6 ---
+- Fix unreadable tabs title in Configuration Window 
+
+
 0.14.5 --- 2018 . 01 . 15
 - OS X builds on Travis CI
 - AppImage executable for Linux
