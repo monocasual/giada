@@ -108,8 +108,10 @@ std::string gu_format(const char* format, ...)
 	/* Compute the size of the new expanded string (i.e. with replacement taken
 	into account). */
 
-	size_t size = vsnprintf(nullptr, 0, format, args);
-
+	va_start(args, format);
+	size_t size = vsnprintf(nullptr, 0, format, args) + 1;
+	va_end(args);
+	
 	/* Create a new temporary char array to hold the new expanded string. */
 
 	std::unique_ptr<char[]> tmp(new char[size]);
