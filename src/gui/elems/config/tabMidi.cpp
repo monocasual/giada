@@ -60,6 +60,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
+	selection_color(G_COLOR_GREY_4);
 
 	system->callback(cb_changeSystem, (void*)this);
 

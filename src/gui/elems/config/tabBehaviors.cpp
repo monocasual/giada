@@ -61,6 +61,7 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
   end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
+	selection_color(G_COLOR_GREY_4);
 
 	conf::recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
 	conf::chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);

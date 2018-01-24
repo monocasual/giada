@@ -67,6 +67,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
+	selection_color(G_COLOR_GREY_4);
 
 	m_info->label("Scan in progress. Please wait...");
 	m_info->hide();
