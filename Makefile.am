@@ -23,16 +23,22 @@ extraSources += \
 	src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
 
 cppFlags += \
-  -I./src/deps/juce/modules                \
-  -I./src/deps/vst                         \
-  -I/usr/include                           \
-  -I/usr/include/freetype2                 \
-  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 \
-  -DJUCE_STANDALONE_APPLICATION=1          \
-  -DJUCE_PLUGINHOST_VST=1                  \
-  -DJUCE_PLUGINHOST_VST3=0                 \
-  -DJUCE_PLUGINHOST_AU=0                   \
+  -I$(top_srcdir)/src/deps/juce/modules      \
+  -I$(top_srcdir)/src/deps/vst               \
+  -I/usr/include                             \
+  -I/usr/include/freetype2                   \
+  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1   \
+  -DJUCE_STANDALONE_APPLICATION=1            \
+  -DJUCE_PLUGINHOST_VST=1                    \
+  -DJUCE_PLUGINHOST_VST3=0                   \
+  -DJUCE_PLUGINHOST_AU=0                     \
   -DJUCE_WEB_BROWSER=0 
+
+endif
+
+if !WITH_SYSTEM_CATCH
+
+cppFlags += -I$(top_srcdir)/tests/catch/single_include
 
 endif
 
@@ -50,9 +56,9 @@ extraSources += \
 	resource.rc
 
 cppFlags += \
-	-I./src/deps/rtaudio-mod/include \
-	-D__WINDOWS_ASIO__               \
-	-D__WINDOWS_WASAPI__             \
+	-I$(top_srcdir)/src/deps/rtaudio-mod/include \
+	-D__WINDOWS_ASIO__                           \
+	-D__WINDOWS_WASAPI__                         \
 	-D__WINDOWS_DS__
 
 cxxFlags += -Wno-error

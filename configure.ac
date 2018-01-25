@@ -55,6 +55,17 @@ AC_ARG_ENABLE(
 	[AM_CONDITIONAL(WITH_VST, false)]
 )
 
+# ------------------------------------------------------------------------------
+
+# --enable-system-catch. If enabled, use the system-provided Catch. Use bundled
+# version otherwise (default mode).
+
+AC_ARG_ENABLE(
+	[system-catch],
+	AS_HELP_STRING([--enable-system-catch], [use system-provided Catch library]),
+  [AC_DEFINE(WITH_SYSTEM_CATCH) AM_CONDITIONAL(WITH_SYSTEM_CATCH, true)],
+	[AM_CONDITIONAL(WITH_SYSTEM_CATCH, false)]
+)
 
 # ------------------------------------------------------------------------------
 

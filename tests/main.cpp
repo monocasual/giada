@@ -1,3 +1,3 @@
 #define CATCH_CONFIG_MAIN
 #define CATCH_CONFIG_FAST_COMPILE
-#include "catch/single_include/catch.hpp"
+#include <catch.hpp>

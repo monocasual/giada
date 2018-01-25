@@ -1,6 +1,6 @@
 #include <memory>
 #include "../src/core/wave.h"
-#include "catch/single_include/catch.hpp"
+#include <catch.hpp>
 
 
 using std::string;

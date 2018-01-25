@@ -2,7 +2,7 @@
 #include "../src/core/const.h"
 #include "../src/core/wave.h"
 #include "../src/core/waveFx.h"
-#include "catch/single_include/catch.hpp"
+#include <catch.hpp>
 
 
 using std::string;
