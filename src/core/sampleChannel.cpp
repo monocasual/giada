@@ -714,7 +714,7 @@ void SampleChannel::setBoost(float v)
 }
 
 
-float SampleChannel::getBoost()
+float SampleChannel::getBoost() const
 {
 	return boost;
 }
@@ -735,10 +735,10 @@ void SampleChannel::calcFadeoutStep()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
+void SampleChannel::setReadActions(bool v, bool killOnFalse)
 {
 	readActions = v;
-	if (!readActions && recsStopOnChanHalt)
+	if (!readActions && killOnFalse)
 		kill(0);  /// FIXME - wrong frame value
 }
 

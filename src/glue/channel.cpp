@@ -215,7 +215,7 @@ void glue_setVolume(Channel* ch, float v, bool gui, bool editor)
 	/* Changing channel volume? Update wave editor (if it's shown). */
 
 	if (!editor) {
-		gdSampleEditor *gdEditor = (gdSampleEditor*) gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR);
+		gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 		if (gdEditor) {
 			Fl::lock();
 			gdEditor->volumeTool->refresh();
@@ -426,6 +426,7 @@ void glue_setName(Channel* ch, const string& name)
 
 void glue_toggleReadingRecs(SampleChannel* ch, bool gui)
 {
+
 	/* When you call glue_startReadingRecs with conf::treatRecsAsLoops, the
 	member value ch->readActions actually is not set to true immediately, because
 	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
@@ -452,7 +453,7 @@ void glue_startReadingRecs(SampleChannel* ch, bool gui)
 		ch->setReadActions(true, conf::recsStopOnChanHalt);
 	if (!gui) {
 		Fl::lock();
-		((geSampleChannel*)ch->guiChannel)->readActions->value(1);
+		static_cast<geSampleChannel*>(ch->guiChannel)->readActions->value(1);
 		Fl::unlock();
 	}
 }
@@ -463,14 +464,20 @@ void glue_startReadingRecs(SampleChannel* ch, bool gui)
 
 void glue_stopReadingRecs(SampleChannel* ch, bool gui)
 {
-	/* First of all, if the mixer is not running just stop and disable everything.
+	/* First of all, if the clock is not running just stop and disable everything.
 	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
 	channel in REC_ENDING status. */
 
 	if (!clock::isRunning()) {
 		ch->recStatus = REC_STOPPED;
-		ch->readActions = false;
+		ch->setReadActions(false, false);
 	}
+	else
+	if (ch->recStatus == REC_WAITING)
+		ch->recStatus = REC_STOPPED;
+	else
+	if (ch->recStatus == REC_ENDING)
+		ch->recStatus = REC_READING;
 	else
 	if (conf::treatRecsAsLoops)
 		ch->recStatus = REC_ENDING;
@@ -479,7 +486,7 @@ void glue_stopReadingRecs(SampleChannel* ch, bool gui)
 
 	if (!gui) {
 		Fl::lock();
-		((geSampleChannel*)ch->guiChannel)->readActions->value(0);
+		static_cast<geSampleChannel*>(ch->guiChannel)->readActions->value(0);
 		Fl::unlock();
 	}
 }

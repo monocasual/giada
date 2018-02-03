@@ -129,6 +129,8 @@ public:
 
 	int getTrackerPreview() const;
 	int getShift() const;
+	float getBoost() const;	
+
 	void setShift(int s);
 
 	void reset(int frame);
@@ -173,13 +175,12 @@ public:
 	void hardStop(int frame);
 
 	/* setReadActions
-	 * if enabled (v == true), recorder will read actions from this channel. If
-	 * recsStopOnChanHalt == true, stop reading actions right away. */
+	If enabled (v == true), recorder will read actions from this channel. If 
+	killOnFalse == true and disabled, will also kill the channel. */
 
-	void setReadActions(bool v, bool recsStopOnChanHalt);
+	void setReadActions(bool v, bool killOnFalse);
 
 	void setBoost(float v);
-	float getBoost();	
 
 	void setOnEndPreviewCb(std::function<void()> f);
 
