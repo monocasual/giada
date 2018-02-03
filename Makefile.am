@@ -38,7 +38,7 @@ endif
 
 if !WITH_SYSTEM_CATCH
 
-cppFlags += -I$(top_srcdir)/tests/catch/single_include
+cppFlags += -I$(top_srcdir)/tests/catch2/single_include
 
 endif
 
