@@ -13,8 +13,9 @@
 
 
 0.14.6 ---
-- Ability to use system-provided Catch library
-- Fix unreadable tabs title in Configuration Window 
+- Ability to use system-provided Catch library (GitHub #151)
+- Update Catch to version 2
+- Fix unreadable tabs title in Configuration Window (GitHub #168)
 - Fix crash on opening About window
 
 
