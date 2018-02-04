@@ -36,55 +36,60 @@ class Channel;
 class SampleChannel;
 class gdSampleEditor;
 
-
+namespace giada {
+namespace c     {
+namespace channel 
+{
 /* addChannel
- * add an empty new channel to the stack. Returns the new channel. */
+Adds an empty new channel to the stack. Returns the new channel. */
 
-Channel* glue_addChannel(int column, int type, int size);
+Channel* addChannel(int column, int type, int size);
 
 /* loadChannel
- * fill an existing channel with a wave. */
+Fills an existing channel with a wave. */
 
-int glue_loadChannel(SampleChannel* ch, const std::string& fname);
+int loadChannel(SampleChannel* ch, const std::string& fname);
 
 /* deleteChannel
- * Remove a channel from Mixer. */
+Removes a channel from Mixer. */
 
-void glue_deleteChannel(Channel* ch);
+void deleteChannel(Channel* ch);
 
 /* freeChannel
- * Unload the sample from a sample channel. */
+Unloads the sample from a sample channel. */
 
-void glue_freeChannel(Channel* ch);
+void freeChannel(Channel* ch);
 
 /* cloneChannel
- * Make an exact copy of Channel *ch. */
+Makes an exact copy of Channel *ch. */
 
-int glue_cloneChannel(Channel* ch);
+int cloneChannel(Channel* ch);
 
 /* toggle/set*
 Toggles or set several channel properties. If gui == true the signal comes from 
 a manual interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_toggleArm(Channel* ch, bool gui=true);
-void glue_toggleInputMonitor(Channel* ch);
-void glue_kill(Channel* ch);
-void glue_toggleMute(Channel* ch, bool gui=true);
-void glue_setSoloOn(Channel* ch, bool gui=true);
-void glue_setSoloOff(Channel* ch, bool gui=true);
-void glue_toggleSolo(Channel* ch, bool gui=true);
-void glue_setVolume(Channel* ch, float v, bool gui=true, bool editor=false);
-void glue_setName(Channel* ch, const std::string& name);
-void glue_setPitch(SampleChannel* ch, float val);
-void glue_setPanning(SampleChannel* ch, float val);
-void glue_setBoost(SampleChannel* ch, float val);
+void toggleArm(Channel* ch, bool gui=true);
+void toggleInputMonitor(Channel* ch);
+void kill(Channel* ch);
+void toggleMute(Channel* ch, bool gui=true);
+void setSoloOn(Channel* ch, bool gui=true);
+void setSoloOff(Channel* ch, bool gui=true);
+void toggleSolo(Channel* ch, bool gui=true);
+void setVolume(Channel* ch, float v, bool gui=true, bool editor=false);
+void setName(Channel* ch, const std::string& name);
+void setPitch(SampleChannel* ch, float val);
+void setPanning(SampleChannel* ch, float val);
+void setBoost(SampleChannel* ch, float val);
 
 /* toggleReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction
 on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_toggleReadingRecs(SampleChannel* ch, bool gui=true);
-void glue_startReadingRecs(SampleChannel* ch, bool gui=true);
-void glue_stopReadingRecs(SampleChannel* ch, bool gui=true);
+void toggleReadingRecs(SampleChannel* ch, bool gui=true);
+void startReadingRecs(SampleChannel* ch, bool gui=true);
+void stopReadingRecs(SampleChannel* ch, bool gui=true);
+
+}}}; // giada::c::channel::
 
 #endif

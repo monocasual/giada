@@ -58,13 +58,15 @@ extern gdMainWindow *G_MainWin;
 
 using std::string;
 using std::vector;
-using namespace giada::m;
+using namespace giada;
 
 
 #ifdef WITH_VST
 
-static void glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<patch::plugin_t> *patch)
+static void glue_fillPatchGlobalsPlugins__(vector <Plugin*>* host, vector<m::patch::plugin_t>* patch)
 {
+	using namespace giada::m;
+
 	for (unsigned i=0; i<host->size(); i++) {
 		Plugin *pl = host->at(i);
 		patch::plugin_t ppl;
@@ -85,6 +87,8 @@ static void glue_fillPatchGlobalsPlugins__(vector <Plugin *> *host, vector<patch
 
 static void glue_fillPatchColumns__()
 {
+	using namespace giada::m;
+
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
 		geColumn *gCol = G_MainWin->keyboard->getColumn(i);
 		patch::column_t pCol;
@@ -110,6 +114,8 @@ static void glue_fillPatchColumns__()
 
 static void glue_fillPatchChannels__(bool isProject)
 {
+	using namespace giada::m;
+
 	for (unsigned i=0; i<mixer::channels.size(); i++) {
 		mixer::channels.at(i)->writePatch(i, isProject);
 	}
@@ -121,6 +127,8 @@ static void glue_fillPatchChannels__(bool isProject)
 
 static void glue_fillPatchGlobals__(const string &name)
 {
+	using namespace giada::m;
+
 	patch::version      = G_VERSION_STR;
 	patch::versionMajor = G_VERSION_MAJOR;
 	patch::versionMinor = G_VERSION_MINOR;
@@ -151,6 +159,8 @@ static void glue_fillPatchGlobals__(const string &name)
 static bool glue_savePatch__(const string &fullPath, const string &name,
 		bool isProject)
 {
+	using namespace giada::m;
+
 	patch::init();
 
 	glue_fillPatchGlobals__(name);
@@ -177,6 +187,8 @@ static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
 
 static string glue_makeUniqueSamplePath__(const string& base, const SampleChannel* ch)
 {
+	using namespace giada::m;
+
 	string path = base + G_SLASH + ch->wave->getBasename(true);
 	if (mh::uniqueSamplePath(ch, path))
 		return path;
@@ -208,7 +220,7 @@ void glue_savePatch(void* data)
 			return;
 
 	if (glue_savePatch__(fullPath, name, false)) {  // false == not a project
-		conf::patchPath = gu_dirname(fullPath);
+		m::conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
 	else
@@ -221,6 +233,8 @@ void glue_savePatch(void* data)
 
 void glue_loadPatch(void* data)
 {
+	using namespace giada::m;
+
 	gdBrowserLoad* browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
 	bool isProject         = gu_isProject(browser->getSelectedItem());
@@ -269,7 +283,7 @@ void glue_loadPatch(void* data)
 		unsigned k = 0;
 		for (const patch::channel_t& pch : patch::channels) {
 			if (pch.column == col.index) {
-				Channel* ch = glue_addChannel(pch.column, pch.type, pch.size);
+				Channel* ch = c::channel::addChannel(pch.column, pch.type, pch.size);
 				ch->readPatch(basePath, k, &mixer::mutex_plugins, conf::samplerate,
 					conf::rsmpQuality);
 			}
@@ -317,6 +331,8 @@ void glue_loadPatch(void* data)
 
 void glue_saveProject(void* data)
 {
+	using namespace giada::m;
+
 	gdBrowserSave* browser = (gdBrowserSave*) data;
 	string name            = gu_stripExt(browser->getName());
 	string folderPath      = browser->getCurrentPath();
@@ -378,11 +394,11 @@ void glue_loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	int res = glue_loadChannel(static_cast<SampleChannel*>(browser->getChannel()), 
+	int res = c::channel::loadChannel(static_cast<SampleChannel*>(browser->getChannel()), 
 		fullPath);
 
 	if (res == G_RES_OK) {
-		conf::samplePath = gu_dirname(fullPath);
+		m::conf::samplePath = gu_dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -396,6 +412,8 @@ void glue_loadSample(void* data)
 
 void glue_saveSample(void *data)
 {
+	using namespace giada::m;
+
 	gdBrowserSave* browser = (gdBrowserSave*) data;
 	string name            = browser->getName();
 	string folderPath      = browser->getCurrentPath();

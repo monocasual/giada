@@ -105,7 +105,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 	switch (selectedItem) {
 		case Menu::INPUT_MONITOR: {
-			glue_toggleInputMonitor(gch->ch);
+			c::channel::toggleInputMonitor(gch->ch);
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
@@ -184,7 +184,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::CLONE_CHANNEL: {
-			glue_cloneChannel(gch->ch);
+			c::channel::cloneChannel(gch->ch);
 			break;
 		}
 		case Menu::RENAME_CHANNEL: {
@@ -192,11 +192,11 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::FREE_CHANNEL: {
-			glue_freeChannel(gch->ch);
+			c::channel::freeChannel(gch->ch);
 			break;
 		}
 		case Menu::DELETE_CHANNEL: {
-			glue_deleteChannel(gch->ch);
+			c::channel::deleteChannel(gch->ch);
 			break;
 		}
 	}
@@ -359,7 +359,7 @@ void geSampleChannel::__cb_openMenu()
 
 void geSampleChannel::__cb_readActions()
 {
-	glue_toggleReadingRecs(static_cast<SampleChannel*>(ch));
+	c::channel::toggleReadingRecs(static_cast<SampleChannel*>(ch));
 }
 
 

@@ -43,6 +43,7 @@
 
 
 using std::string;
+using namespace giada;
 
 
 gePanTool::gePanTool(int x, int y, SampleChannel *ch)
@@ -103,7 +104,7 @@ void gePanTool::cb_panReset(Fl_Widget *w, void *p) { ((gePanTool*)p)->__cb_panRe
 
 void gePanTool::__cb_panning()
 {
-  glue_setPanning(ch, dial->value());
+  c::channel::setPanning(ch, dial->value());
 }
 
 
@@ -112,5 +113,5 @@ void gePanTool::__cb_panning()
 
 void gePanTool::__cb_panReset()
 {
-  glue_setPanning(ch, 0.5f);
+  c::channel::setPanning(ch, 0.5f);
 }

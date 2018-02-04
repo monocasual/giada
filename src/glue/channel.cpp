@@ -66,14 +66,27 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada::m;
 
 
-static bool __soloSession__ = false;
-
-
-int glue_loadChannel(SampleChannel* ch, const string& fname)
+namespace giada {
+namespace c     {
+namespace channel 
 {
+namespace
+{
+bool soloSession__ = false;
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+int loadChannel(SampleChannel* ch, const string& fname)
+{
+	using namespace giada::m;
+
 	/* Always stop a channel before loading a new sample in it. This will prevent
 	issues if tracker is outside the boundaries of the new sample -> segfault. */
 
@@ -91,7 +104,7 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 		return result;
 
 	if (wave->getRate() != conf::samplerate) {
-		gu_log("[glue_loadChannel] input rate (%d) != system rate (%d), conversion needed\n",
+		gu_log("[loadChannel] input rate (%d) != system rate (%d), conversion needed\n",
 			wave->getRate(), conf::samplerate);
 		result = waveManager::resample(wave, conf::rsmpQuality, conf::samplerate); 
 		if (result != G_RES_OK) {
@@ -111,9 +124,9 @@ int glue_loadChannel(SampleChannel* ch, const string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* glue_addChannel(int column, int type, int size)
+Channel* addChannel(int column, int type, int size)
 {
-	Channel* ch    = mh::addChannel(type);
+	Channel* ch    = m::mh::addChannel(type);
 	geChannel* gch = G_MainWin->keyboard->addChannel(column, ch, size);
 	ch->guiChannel = gch;
 	return ch;
@@ -123,8 +136,10 @@ Channel* glue_addChannel(int column, int type, int size)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_deleteChannel(Channel* ch)
+void deleteChannel(Channel* ch)
 {
+	using namespace giada::m;
+
 	if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
 		return;
 	recorder::clearChan(ch->index);
@@ -143,7 +158,7 @@ void glue_deleteChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_freeChannel(Channel* ch)
+void freeChannel(Channel* ch)
 {
 	if (ch->status == STATUS_PLAY) {
 		if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
@@ -154,7 +169,7 @@ void glue_freeChannel(Channel* ch)
 		return;
 
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
-	recorder::clearChan(ch->index);
+	m::recorder::clearChan(ch->index);
 	ch->hasActions = false;
 	ch->empty();
 
@@ -170,7 +185,7 @@ void glue_freeChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleArm(Channel* ch, bool gui)
+void toggleArm(Channel* ch, bool gui)
 {
 	ch->setArmed(!ch->isArmed());
 	if (!gui)
@@ -181,7 +196,7 @@ void glue_toggleArm(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleInputMonitor(Channel* ch)
+void toggleInputMonitor(Channel* ch)
 {
 	SampleChannel* sch = static_cast<SampleChannel*>(ch);
 	sch->inputMonitor = !sch->inputMonitor;
@@ -191,8 +206,10 @@ void glue_toggleInputMonitor(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_cloneChannel(Channel* src)
+int cloneChannel(Channel* src)
 {
+	using namespace giada::m;
+
 	Channel* ch    = mh::addChannel(src->type);
 	geChannel* gch = G_MainWin->keyboard->addChannel(src->guiChannel->getColumnIndex(), 
 		ch, src->guiChannel->getSize());
@@ -208,7 +225,7 @@ int glue_cloneChannel(Channel* src)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setVolume(Channel* ch, float v, bool gui, bool editor)
+void setVolume(Channel* ch, float v, bool gui, bool editor)
 {
 	ch->volume = v;
 
@@ -234,7 +251,7 @@ void glue_setVolume(Channel* ch, float v, bool gui, bool editor)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPitch(SampleChannel* ch, float val)
+void setPitch(SampleChannel* ch, float val)
 {
 	ch->setPitch(val);
 	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -249,7 +266,7 @@ void glue_setPitch(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setPanning(SampleChannel* ch, float val)
+void setPanning(SampleChannel* ch, float val)
 {
 	ch->setPan(val);
 	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -264,8 +281,10 @@ void glue_setPanning(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleMute(Channel* ch, bool gui)
+void toggleMute(Channel* ch, bool gui)
 {
+	using namespace giada::m;
+
 	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
 		if (!ch->mute) {
 			recorder::startOverdub(ch->index, G_ACTION_MUTES, clock::getCurrentFrame(),
@@ -290,16 +309,16 @@ void glue_toggleMute(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleSolo(Channel* ch, bool gui)
+void toggleSolo(Channel* ch, bool gui)
 {
-	ch->solo ? glue_setSoloOn(ch, gui) : glue_setSoloOff(ch, gui);
+	ch->solo ? setSoloOn(ch, gui) : setSoloOff(ch, gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_kill(Channel* ch)
+void kill(Channel* ch)
 {
 	ch->kill(0); // on frame 0: it's a user-generated event
 }
@@ -308,17 +327,19 @@ void glue_kill(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setSoloOn(Channel* ch, bool gui)
+void setSoloOn(Channel* ch, bool gui)
 {
+	using namespace giada::m;
+
 	/* if there's no solo session, store mute configuration of all chans
 	 * and start the session */
 
-	if (!__soloSession__) {
+	if (!soloSession__) {
 		for (unsigned i=0; i<mixer::channels.size(); i++) {
 			Channel *och = mixer::channels.at(i);
 			och->mute_s  = och->mute;
 		}
-		__soloSession__ = true;
+		soloSession__ = true;
 	}
 
 	ch->solo = !ch->solo;
@@ -354,13 +375,15 @@ void glue_setSoloOn(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setSoloOff(Channel* ch, bool gui)
+void setSoloOff(Channel* ch, bool gui)
 {
+	using namespace giada::m;
+
 	/* if this is uniqueSolo, stop solo session and restore mute status,
 	 * else mute this */
 
 	if (mh::uniqueSolo(ch)) {
-		__soloSession__ = false;
+		soloSession__ = false;
 		for (unsigned i=0; i<mixer::channels.size(); i++) {
 			Channel *och = mixer::channels.at(i);
 			if (och->mute_s) {
@@ -399,7 +422,7 @@ void glue_setSoloOff(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBoost(SampleChannel* ch, float val)
+void setBoost(SampleChannel* ch, float val)
 {
 	ch->setBoost(val);
 	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -414,7 +437,7 @@ void glue_setBoost(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setName(Channel* ch, const string& name)
+void setName(Channel* ch, const string& name)
 {
 	ch->setName(name);
 	ch->guiChannel->update();
@@ -424,10 +447,10 @@ void glue_setName(Channel* ch, const string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_toggleReadingRecs(SampleChannel* ch, bool gui)
+void toggleReadingRecs(SampleChannel* ch, bool gui)
 {
 
-	/* When you call glue_startReadingRecs with conf::treatRecsAsLoops, the
+	/* When you call startReadingRecs with conf::treatRecsAsLoops, the
 	member value ch->readActions actually is not set to true immediately, because
 	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
 	the next first beat. So a 'stop rec' command should occur also when
@@ -436,17 +459,19 @@ void glue_toggleReadingRecs(SampleChannel* ch, bool gui)
 	then you press 'R' again to undo the status. */
 
 	if (ch->readActions || (!ch->readActions && ch->recStatus == REC_WAITING))
-		glue_stopReadingRecs(ch, gui);
+		stopReadingRecs(ch, gui);
 	else
-		glue_startReadingRecs(ch, gui);
+		startReadingRecs(ch, gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startReadingRecs(SampleChannel* ch, bool gui)
+void startReadingRecs(SampleChannel* ch, bool gui)
 {
+	using namespace giada::m;
+
 	if (conf::treatRecsAsLoops)
 		ch->recStatus = REC_WAITING;
 	else
@@ -462,8 +487,10 @@ void glue_startReadingRecs(SampleChannel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopReadingRecs(SampleChannel* ch, bool gui)
+void stopReadingRecs(SampleChannel* ch, bool gui)
 {
+	using namespace giada::m;
+
 	/* First of all, if the clock is not running just stop and disable everything.
 	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
 	channel in REC_ENDING status. */
@@ -490,3 +517,5 @@ void glue_stopReadingRecs(SampleChannel* ch, bool gui)
 		Fl::unlock();
 	}
 }
+
+}}}; // giada::c::channel::

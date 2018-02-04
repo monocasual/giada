@@ -129,13 +129,13 @@ void menuCallback(Fl_Widget* w, void* v)
 			static_cast<geColumn*>(gch->parent())->repositionChannels();
 			break;
 		case Menu::CLONE_CHANNEL:
-			glue_cloneChannel(gch->ch);
+			c::channel::cloneChannel(gch->ch);
 			break;		
 		case Menu::RENAME_CHANNEL:
 			gu_openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		case Menu::DELETE_CHANNEL:
-			glue_deleteChannel(gch->ch);
+			c::channel::deleteChannel(gch->ch);
 			break;
 	}
 }

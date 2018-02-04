@@ -53,7 +53,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 void glue_keyPress(Channel *ch, bool ctrl, bool shift)
@@ -78,27 +78,27 @@ void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyPress(MidiChannel *ch, bool ctrl, bool shift)
+void glue_keyPress(MidiChannel* ch, bool ctrl, bool shift)
 {
 	if (ctrl)
-		glue_toggleMute(ch);
+		c::channel::toggleMute(ch);
 	else
 	if (shift)
 		ch->kill(0);        // on frame 0: user-generated event
 	else
-		ch->start(0, true, clock::getQuantize(), clock::isRunning(), false, true); // on frame 0: user-generated event
+		ch->start(0, true, m::clock::getQuantize(), m::clock::isRunning(), false, true); // on frame 0: user-generated event
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
+void glue_keyPress(SampleChannel* ch, bool ctrl, bool shift)
 {
 	/* case CTRL */
 
 	if (ctrl)
-		glue_toggleMute(ch);
+		c::channel::toggleMute(ch);
 
 	/* case SHIFT
 	 *
@@ -112,21 +112,21 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 	else
 	if (shift) {
-		if (recorder::active) {
-			if (clock::isRunning()) {
+		if (m::recorder::active) {
+			if (m::clock::isRunning()) {
 				ch->kill(0); // on frame 0: user-generated event
-				if (recorder::canRec(ch, clock::isRunning(), mixer::recording) &&
+				if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
             !(ch->mode & LOOP_ANY))
         {   // don't record killChan actions for LOOP channels
-					recorder::rec(ch->index, G_ACTION_KILL, clock::getCurrentFrame());
+					m::recorder::rec(ch->index, G_ACTION_KILL, m::clock::getCurrentFrame());
           ch->hasActions = true;
         }
 			}
 		}
 		else {
 			if (ch->hasActions) {
-				if (clock::isRunning() || ch->status == STATUS_OFF)
-					ch->readActions ? glue_stopReadingRecs(ch) : glue_startReadingRecs(ch);
+				if (m::clock::isRunning() || ch->status == STATUS_OFF)
+					ch->readActions ? c::channel::stopReadingRecs(ch) : c::channel::startReadingRecs(ch);
 				else
 					ch->kill(0);  // on frame 0: user-generated event
 			}
@@ -140,17 +140,17 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
 		 * meaningless for loop modes */
 
-		if (clock::getQuantize() == 0 &&
-		    recorder::canRec(ch, clock::isRunning(), mixer::recording) &&
+		if (m::clock::getQuantize() == 0 &&
+		    m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
 	      !(ch->mode & LOOP_ANY))
 		{
 			if (ch->mode == SINGLE_PRESS) {
-				recorder::startOverdub(ch->index, G_ACTION_KEYS, clock::getCurrentFrame(),
-          kernelAudio::getRealBufSize());
+				m::recorder::startOverdub(ch->index, G_ACTION_KEYS, m::clock::getCurrentFrame(),
+          m::kernelAudio::getRealBufSize());
         ch->readActions = false;   // don't read actions while overdubbing
       }
 			else {
-				recorder::rec(ch->index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
+				m::recorder::rec(ch->index, G_ACTION_KEYPRESS, m::clock::getCurrentFrame());
         ch->hasActions = true;
 
         /* Why return here? You record an action (as done on line 148) and then
@@ -168,7 +168,7 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 
 		/* This is a user-generated event, so it's on frame 0 */
 
-		ch->start(0, true, clock::getQuantize(), clock::isRunning(), false, true);
+		ch->start(0, true, m::clock::getQuantize(), m::clock::isRunning(), false, true);
 	}
 
 	/* the GUI update is done by gui_refresh() */
@@ -178,8 +178,10 @@ void glue_keyPress(SampleChannel *ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
+void glue_keyRelease(SampleChannel* ch, bool ctrl, bool shift)
 {
+	using namespace giada::m;
+
 	if (ctrl || shift)
 		return;
 
@@ -202,7 +204,7 @@ void glue_keyRelease(SampleChannel *ch, bool ctrl, bool shift)
 
 void glue_startStopActionRec(bool gui)
 {
-	recorder::active ? glue_stopActionRec(gui) : glue_startActionRec(gui);
+	m::recorder::active ? glue_stopActionRec(gui) : glue_startActionRec(gui);
 }
 
 
@@ -211,6 +213,8 @@ void glue_startStopActionRec(bool gui)
 
 void glue_startActionRec(bool gui)
 {
+	using namespace giada::m;
+
 	if (kernelAudio::getStatus() == false)
 		return;
 
@@ -234,17 +238,17 @@ void glue_stopActionRec(bool gui)
 {
 	/* stop the recorder and sort new actions */
 
-	recorder::active = false;
-	recorder::sortActions();
+	m::recorder::active = false;
+	m::recorder::sortActions();
 
-	for (unsigned i=0; i<mixer::channels.size(); i++)
+	for (Channel* ch : m::mixer::channels)
 	{
-		if (mixer::channels.at(i)->type == CHANNEL_MIDI)
+		if (ch->type == CHANNEL_MIDI)
 			continue;
-		SampleChannel *ch = (SampleChannel*) mixer::channels.at(i);
-		G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)ch->guiChannel);
-		if (!ch->readActions && ch->hasActions)
-			glue_startReadingRecs(ch, false);
+		SampleChannel* sch = static_cast<SampleChannel*>(ch);
+		G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(sch->guiChannel));
+		if (!sch->readActions && sch->hasActions)
+			c::channel::startReadingRecs(sch, false);
 	}
 
 	if (!gui) {
@@ -262,7 +266,7 @@ void glue_stopActionRec(bool gui)
 
 void glue_startStopInputRec(bool gui)
 {
-	if (mixer::recording)
+	if (m::mixer::recording)
 		glue_stopInputRec(gui);
 	else
 	if (!glue_startInputRec(gui))
@@ -275,6 +279,8 @@ void glue_startStopInputRec(bool gui)
 
 int glue_startInputRec(bool gui)
 {
+	using namespace giada::m;
+
 	if (kernelAudio::getStatus() == false)
 		return false;
 
@@ -297,8 +303,8 @@ int glue_startInputRec(bool gui)
   /* Update sample name inside sample channels' main button. This is useless for
   midi channel, but let's do it anyway. */
 
-  for (unsigned i=0; i<mixer::channels.size(); i++)
-    mixer::channels.at(i)->guiChannel->update();
+  for (Channel* ch : m::mixer::channels)
+    ch->guiChannel->update();
 
 	return true;
 }
@@ -309,6 +315,8 @@ int glue_startInputRec(bool gui)
 
 int glue_stopInputRec(bool gui)
 {
+	using namespace giada::m;
+	
 	mh::stopInputRec();
 
 	/* Start all sample channels in loop mode that were armed, i.e. that were

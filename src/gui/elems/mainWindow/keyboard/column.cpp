@@ -45,6 +45,7 @@
 
 using std::vector;
 using std::string;
+using namespace giada;
 
 
 geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
@@ -110,9 +111,9 @@ int geColumn::handle(int e)
 			int result = 0;
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
-				SampleChannel* c = static_cast<SampleChannel*>(glue_addChannel(
+				SampleChannel* c = static_cast<SampleChannel*>(c::channel::addChannel(
 					m_index, CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
-				result = glue_loadChannel(c, gu_stripFileUrl(path));
+				result = c::channel::loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
 					fails = true;
@@ -255,7 +256,7 @@ void geColumn::__cb_addChannel()
 	gu_log("[geColumn::__cb_addChannel] m_index = %d\n", m_index);
 	int type = openTypeMenu();
 	if (type)
-		glue_addChannel(m_index, type, G_GUI_CHANNEL_H_1);
+		c::channel::addChannel(m_index, type, G_GUI_CHANNEL_H_1);
 }
 
 

@@ -54,9 +54,6 @@
 extern gdMainWindow *G_MainWin;
 
 
-using namespace giada::m;
-
-
 namespace giada {
 namespace c     {
 namespace sampleEditor
@@ -105,7 +102,7 @@ void setBeginEnd(SampleChannel* ch, int b, int e)
 void cut(SampleChannel* ch, int a, int b)
 {
 	copy(ch, a, b);
-	if (!wfx::cut(ch->wave, a, b)) {
+	if (!m::wfx::cut(ch->wave, a, b)) {
 		gdAlert("Unable to cut the sample!");
 		return;
 	}
@@ -125,7 +122,7 @@ void copy(SampleChannel* ch, int a, int b)
 	if (m_waveBuffer != nullptr)
 		delete m_waveBuffer;
 
-	int result = waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
+	int result = m::waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
 	if (result != G_RES_OK) {
 		gu_log("[sampleEditor::copy] unable to create wave buffer!\n");
 		return;
@@ -143,7 +140,7 @@ void paste(SampleChannel* ch, int a)
 		return;
 	}
 	
-	wfx::paste(m_waveBuffer, ch->wave, a);
+	m::wfx::paste(m_waveBuffer, ch->wave, a);
 
 	/* Shift begin/end points to keep the previous position. */
 
@@ -165,7 +162,7 @@ void paste(SampleChannel* ch, int a)
 
 void silence(SampleChannel* ch, int a, int b)
 {
-	wfx::silence(ch->wave, a, b);
+	m::wfx::silence(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -176,7 +173,7 @@ void silence(SampleChannel* ch, int a, int b)
 
 void fade(SampleChannel* ch, int a, int b, int type)
 {
-	wfx::fade(ch->wave, a, b, type);
+	m::wfx::fade(ch->wave, a, b, type);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -187,7 +184,7 @@ void fade(SampleChannel* ch, int a, int b, int type)
 
 void smoothEdges(SampleChannel* ch, int a, int b)
 {
-	wfx::smooth(ch->wave, a, b);
+	m::wfx::smooth(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -198,7 +195,7 @@ void smoothEdges(SampleChannel* ch, int a, int b)
 
 void reverse(SampleChannel* ch, int a, int b)
 {
-	wfx::reverse(ch->wave, a, b);
+	m::wfx::reverse(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -209,7 +206,7 @@ void reverse(SampleChannel* ch, int a, int b)
 
 void normalizeHard(SampleChannel* ch, int a, int b)
 {
-	wfx::normalizeHard(ch->wave, a, b);
+	m::wfx::normalizeHard(ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->refresh();
 }
@@ -220,7 +217,7 @@ void normalizeHard(SampleChannel* ch, int a, int b)
 
 void trim(SampleChannel* ch, int a, int b)
 {
-	if (!wfx::trim(ch->wave, a, b)) {
+	if (!m::wfx::trim(ch->wave, a, b)) {
 		gdAlert("Unable to trim the sample!");
 		return;
 	}
@@ -272,11 +269,11 @@ void rewindPreview(SampleChannel* ch)
 
 void toNewChannel(SampleChannel* ch, int a, int b)
 {
-	SampleChannel* newCh = static_cast<SampleChannel*>(glue_addChannel(
+	SampleChannel* newCh = static_cast<SampleChannel*>(c::channel::addChannel(
 		ch->guiChannel->getColumnIndex(), CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
 
 	Wave* wave = nullptr;
-	int result = waveManager::createFromWave(ch->wave, a, b, &wave);
+	int result = m::waveManager::createFromWave(ch->wave, a, b, &wave);
 	if (result != G_RES_OK) {
 		gdAlert("Unable to copy to new channel!");
 		return;
@@ -301,7 +298,7 @@ bool isWaveBufferFull()
 
 void shift(SampleChannel* ch, int offset)
 {
-	wfx::shift(ch->wave, offset - ch->getShift());
+	m::wfx::shift(ch->wave, offset - ch->getShift());
 	ch->setShift(offset);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->shiftTool->refresh();

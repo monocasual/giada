@@ -17,6 +17,7 @@
 - Update Catch to version 2
 - Fix unreadable tabs title in Configuration Window (GitHub #168)
 - Fix crash on opening About window
+- Fix 'read actions' button behavior during ending and waiting statuses
 
 
 0.14.5 --- 2018 . 01 . 15

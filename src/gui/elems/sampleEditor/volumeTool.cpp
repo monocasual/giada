@@ -42,9 +42,10 @@
 
 
 using std::string;
+using namespace giada;
 
 
-geVolumeTool::geVolumeTool(int X, int Y, SampleChannel *ch)
+geVolumeTool::geVolumeTool(int X, int Y, SampleChannel* ch)
   : Fl_Group(X, Y, 150, 20),
     ch      (ch)
 {
@@ -80,8 +81,8 @@ void geVolumeTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::cb_setVolume   (Fl_Widget *w, void *p) { ((geVolumeTool*)p)->__cb_setVolume(); }
-void geVolumeTool::cb_setVolumeNum(Fl_Widget *w, void *p) { ((geVolumeTool*)p)->__cb_setVolumeNum(); }
+void geVolumeTool::cb_setVolume   (Fl_Widget* w, void* p) { ((geVolumeTool*)p)->__cb_setVolume(); }
+void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->__cb_setVolumeNum(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -89,7 +90,7 @@ void geVolumeTool::cb_setVolumeNum(Fl_Widget *w, void *p) { ((geVolumeTool*)p)->
 
 void geVolumeTool::__cb_setVolume()
 {
-  glue_setVolume(ch, dial->value(), false, true);
+  c::channel::setVolume(ch, dial->value(), false, true);
   refresh();
 }
 
@@ -100,6 +101,6 @@ void geVolumeTool::__cb_setVolume()
 void geVolumeTool::__cb_setVolumeNum()
 {
   float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
-  glue_setVolume(ch, value, false, true);
+  c::channel::setVolume(ch, value, false, true);
   dial->value(ch->guiChannel->vol->value());
 }

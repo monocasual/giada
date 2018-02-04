@@ -35,13 +35,15 @@
 #include "channelNameInput.h"
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 gdChannelNameInput::gdChannelNameInput(Channel* ch)
 : gdWindow(400, 64, "New channel name"),
   m_ch    (ch)
 {
+	using namespace giada::m;
+
 	if (conf::nameX)
 		resize(conf::nameX, conf::nameY, w(), h());
 
@@ -70,8 +72,8 @@ gdChannelNameInput::gdChannelNameInput(Channel* ch)
 
 gdChannelNameInput::~gdChannelNameInput()
 {
-	conf::nameX = x();
-	conf::nameY = y();
+	m::conf::nameX = x();
+	m::conf::nameY = y();
 }
 
 
@@ -96,6 +98,6 @@ void gdChannelNameInput::cb_cancel()
 
 void gdChannelNameInput::cb_update()
 {
-	glue_setName(m_ch, m_name->value());
+	c::channel::setName(m_ch, m_name->value());
 	do_callback();
 }

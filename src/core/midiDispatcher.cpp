@@ -122,25 +122,25 @@ void processChannels(const MidiEvent& midiEvent)
 		}
 		else if (pure == ch->midiInMute) {
 			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleMute(ch, false);
+			c::channel::toggleMute(ch, false);
 		}		
 		else if (pure == ch->midiInKill) {
 			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_kill(ch);
+			c::channel::kill(ch);
 		}		
 		else if (pure == ch->midiInArm) {
 			gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleArm(ch, false);
+			c::channel::toggleArm(ch, false);
 		}
 		else if (pure == ch->midiInSolo) {
 			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_toggleSolo(ch, false);
+			c::channel::toggleSolo(ch, false);
 		}
 		else if (pure == ch->midiInVolume) {
 			float vf = midiEvent.getVelocity() / 127.0f;
 			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
 				ch->index, pure, midiEvent.getVelocity(), vf);
-			glue_setVolume(ch, vf, false);
+			c::channel::setVolume(ch, vf, false);
 		}
 		else {
 			SampleChannel* sch = static_cast<SampleChannel*>(ch);
@@ -148,12 +148,12 @@ void processChannels(const MidiEvent& midiEvent)
 				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0]
 				gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
 					sch->index, pure, midiEvent.getVelocity(), vf);
-				glue_setPitch(sch, vf);
+				c::channel::setPitch(sch, vf);
 			}
 			else 
 			if (pure == sch->midiInReadActions) {
 				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->index, pure);
-				glue_toggleReadingRecs(sch, false);
+				c::channel::toggleReadingRecs(sch, false);
 			}
 		}
 

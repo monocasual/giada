@@ -60,14 +60,15 @@
 
 
 using std::string;
-using namespace giada::m;
-using namespace giada::c;
+using namespace giada;
 
 
 gdSampleEditor::gdSampleEditor(SampleChannel* ch)
   : gdWindow(640, 480),
     ch(ch)
 {
+  using namespace giada::m;
+
   Fl_Group* upperBar = createUpperBar();
   
   waveTools = new geWaveTools(G_GUI_OUTER_MARGIN, upperBar->y()+upperBar->h()+G_GUI_OUTER_MARGIN, 
@@ -101,13 +102,13 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 
 gdSampleEditor::~gdSampleEditor()
 {
-  conf::sampleEditorX = x();
-  conf::sampleEditorY = y();
-  conf::sampleEditorW = w();
-  conf::sampleEditorH = h();
-  conf::sampleEditorGridVal = atoi(grid->text());
-  conf::sampleEditorGridOn  = snap->value();
-  sampleEditor::setPreview(ch, G_PREVIEW_NONE);
+  m::conf::sampleEditorX = x();
+  m::conf::sampleEditorY = y();
+  m::conf::sampleEditorW = w();
+  m::conf::sampleEditorH = h();
+  m::conf::sampleEditorGridVal = atoi(grid->text());
+  m::conf::sampleEditorGridOn  = snap->value();
+  c::sampleEditor::setPreview(ch, G_PREVIEW_NONE);
 }
 
 
@@ -116,6 +117,8 @@ gdSampleEditor::~gdSampleEditor()
 
 Fl_Group* gdSampleEditor::createUpperBar()
 {
+  using namespace giada::m;
+
   Fl_Group* g = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w()-16, G_GUI_UNIT);
   g->begin();
     grid    = new geChoice(g->x(), g->y(), 50, G_GUI_UNIT);
@@ -274,6 +277,8 @@ void gdSampleEditor::cb_enableSnap()
 
 void gdSampleEditor::cb_togglePreview()
 {
+  using namespace giada::c;
+
 	if (play->value())
   	sampleEditor::setPreview(ch, G_PREVIEW_NONE);
 	else
@@ -283,7 +288,7 @@ void gdSampleEditor::cb_togglePreview()
 
 void gdSampleEditor::cb_rewindPreview()
 {
-	sampleEditor::rewindPreview(ch);
+	c::sampleEditor::rewindPreview(ch);
 }
 
 
@@ -292,16 +297,18 @@ void gdSampleEditor::cb_rewindPreview()
 
 void gdSampleEditor::cb_reload()
 {
+  using namespace giada::c;
+
   /* TODO - move to glue::sampleEditor */
   if (!gdConfirmWin("Warning", "Reload sample: are you sure?"))
     return;
 
-  if (glue_loadChannel(ch, ch->wave->getPath()) != G_RES_OK)
+  if (channel::loadChannel(ch, ch->wave->getPath()) != G_RES_OK)
     return;
 
-  glue_setBoost(ch, G_DEFAULT_BOOST);
-  glue_setPitch(ch, G_DEFAULT_PITCH);
-  glue_setPanning(ch, 0.5f);
+  channel::setBoost(ch, G_DEFAULT_BOOST);
+  channel::setPitch(ch, G_DEFAULT_PITCH);
+  channel::setPanning(ch, 0.5f);
 
   panTool->refresh();
   boostTool->refresh();

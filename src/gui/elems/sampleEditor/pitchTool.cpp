@@ -41,7 +41,7 @@
 #include "pitchTool.h"
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 gePitchTool::gePitchTool(int x, int y, SampleChannel* ch)
@@ -104,7 +104,7 @@ void gePitchTool::cb_setPitchNum   (Fl_Widget* w, void* p) { ((gePitchTool*)p)->
 
 void gePitchTool::__cb_setPitch()
 {
-  glue_setPitch(ch, dial->value());
+  c::channel::setPitch(ch, dial->value());
 }
 
 
@@ -113,7 +113,7 @@ void gePitchTool::__cb_setPitch()
 
 void gePitchTool::__cb_setPitchNum()
 {
-  glue_setPitch(ch, atof(input->value()));
+  c::channel::setPitch(ch, atof(input->value()));
 }
 
 
@@ -122,7 +122,7 @@ void gePitchTool::__cb_setPitchNum()
 
 void gePitchTool::__cb_setPitchHalf()
 {
-  glue_setPitch(ch, dial->value()/2);
+  c::channel::setPitch(ch, dial->value()/2);
 }
 
 
@@ -131,7 +131,7 @@ void gePitchTool::__cb_setPitchHalf()
 
 void gePitchTool::__cb_setPitchDouble()
 {
-  glue_setPitch(ch, dial->value()*2);
+  c::channel::setPitch(ch, dial->value()*2);
 }
 
 
@@ -141,7 +141,7 @@ void gePitchTool::__cb_setPitchDouble()
 void gePitchTool::__cb_setPitchToBar()
 {
   // TODO - opaque channel's count
-  glue_setPitch(ch, (ch->getEnd()*2) / (float) clock::getFramesPerBar());
+  c::channel::setPitch(ch, (ch->getEnd()*2) / (float) m::clock::getFramesPerBar());
 }
 
 
@@ -151,7 +151,7 @@ void gePitchTool::__cb_setPitchToBar()
 void gePitchTool::__cb_setPitchToSong()
 {
   // TODO - opaque channel's count
-  glue_setPitch(ch, (ch->getEnd()*2) / (float) clock::getTotalFrames());
+  c::channel::setPitch(ch, (ch->getEnd()*2) / (float) m::clock::getTotalFrames());
 }
 
 
@@ -160,5 +160,5 @@ void gePitchTool::__cb_setPitchToSong()
 
 void gePitchTool::__cb_resetPitch()
 {
-  glue_setPitch(ch, G_DEFAULT_PITCH);
+  c::channel::setPitch(ch, G_DEFAULT_PITCH);
 }

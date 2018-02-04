@@ -40,6 +40,9 @@
 extern gdMainWindow* G_MainWin;
 
 
+using namespace giada;
+
+
 geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h,
 	const char* l)
 	: geChannelButton(x, y, w, h, l)
@@ -63,7 +66,7 @@ int geSampleChannelButton::handle(int e)
 		case FL_PASTE: {
 			geSampleChannel* gch = static_cast<geSampleChannel*>(parent());
 			SampleChannel*   ch  = static_cast<SampleChannel*>(gch->ch);
-			int result = glue_loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())));
+			int result = c::channel::loadChannel(ch, gu_trim(gu_stripFileUrl(Fl::event_text())));
 			if (result != G_RES_OK)
 				G_MainWin->keyboard->printChannelMessage(result);
 			ret = 1;

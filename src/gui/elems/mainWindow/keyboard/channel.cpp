@@ -46,7 +46,7 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 geChannel::geChannel(int X, int Y, int W, int H, int type, Channel* ch)
@@ -74,7 +74,7 @@ void geChannel::cb_openFxWindow(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_ope
 
 void geChannel::cb_arm()
 {
-	glue_toggleArm(ch, true);
+	c::channel::toggleArm(ch, true);
 }
 
 
@@ -83,7 +83,7 @@ void geChannel::cb_arm()
 
 void geChannel::cb_mute()
 {
-	glue_toggleMute(ch);
+	c::channel::toggleMute(ch);
 }
 
 
@@ -92,7 +92,7 @@ void geChannel::cb_mute()
 
 void geChannel::cb_solo()
 {
-	solo->value() ? glue_setSoloOn(ch) : glue_setSoloOff(ch);
+	solo->value() ? c::channel::setSoloOn(ch) : c::channel::setSoloOff(ch);
 }
 
 
@@ -101,7 +101,7 @@ void geChannel::cb_solo()
 
 void geChannel::cb_changeVol()
 {
-	glue_setVolume(ch, vol->value());
+	c::channel::setVolume(ch, vol->value());
 }
 
 
@@ -111,7 +111,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(pluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 
