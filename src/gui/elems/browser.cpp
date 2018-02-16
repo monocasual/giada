@@ -73,7 +73,7 @@ void geBrowser::toggleHiddenFiles()
 /* -------------------------------------------------------------------------- */
 
 
-void geBrowser::loadDir(const string &dir)
+void geBrowser::loadDir(const string& dir)
 {
   currentDir = dir;
   load(currentDir.c_str());
@@ -151,8 +151,14 @@ string geBrowser::getSelectedItem(bool fullPath)
   else
   if (value() == 0)  // no rows selected? return current directory
     return normalize(currentDir);
-  else
-    return normalize(gu_getRealPath(currentDir + G_SLASH + normalize(text(value()))));
+  else {
+#ifdef G_OS_WINDOWS
+    string sep = currentDir != "" ? G_SLASH_STR : "";
+#else
+    string sep = G_SLASH_STR;
+#endif
+    return normalize(gu_getRealPath(currentDir + sep + normalize(text(value()))));
+  }
 }
 
 
@@ -169,20 +175,14 @@ void geBrowser::preselect(int pos, int line)
 /* -------------------------------------------------------------------------- */
 
 
-string geBrowser::normalize(const string &s)
+string geBrowser::normalize(const string& s)
 {
   string out = s;
 
   /* If string ends with G_SLASH, remove it. Don't do it if has length > 1, it
-  means that the string is just '/'. Note: our crappy version of Clang doesn't
-  seem to support std::string::back() */
+  means that the string is just '/'. */
 
-#ifdef __APPLE__
-  if (out[out.length() - 1] == G_SLASH && out.length() > 1)
-#else
   if (out.back() == G_SLASH && out.length() > 1)
-#endif
-
     out = out.substr(0, out.size()-1);
   return out;
 }
