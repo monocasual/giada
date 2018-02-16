@@ -187,7 +187,7 @@ string gu_getCurrentPath()
 /* -------------------------------------------------------------------------- */
 
 
-string gu_getExt(const string &file)
+string gu_getExt(const string& file)
 {
 	// TODO - use std functions
 	int len = strlen(file.c_str());
@@ -207,7 +207,7 @@ string gu_getExt(const string &file)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_stripExt(const string &s)
+string gu_stripExt(const string& s)
 {
 	return s.substr(0, s.find_last_of("."));
 }
@@ -216,7 +216,7 @@ string gu_stripExt(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_isProject(const string &path)
+bool gu_isProject(const string& path)
 {
 	/** FIXME - checks too weak */
 
@@ -229,7 +229,7 @@ bool gu_isProject(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_stripFileUrl(const string &f)
+string gu_stripFileUrl(const string& f)
 {
 	string out = f;
 	out = gu_replace(out, "file://", "");
@@ -255,17 +255,37 @@ string gu_getHomePath()
 
 #elif defined(__APPLE__)
 
-	struct passwd *p = getpwuid(getuid());
+	struct passwd* p = getpwuid(getuid());
 	if (p == nullptr) {
 		gu_log("[gu_getHomePath] unable to fetch user infos\n");
 		return "";
 	}
 	else {
-		const char *home = p->pw_dir;
+		const char* home = p->pw_dir;
 		snprintf(path, PATH_MAX, "%s/Library/Application Support/Giada", home);
 	}
 
 #endif
 
 	return string(path);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool gu_isRootDir(const std::string& s)
+{
+	if (s == "")
+		return false;
+
+#ifdef G_WINDOWS
+
+	return s.length() <= 3 && s[1] == ':';
+
+#else
+
+	return s == G_SLASH_STR;
+
+#endif
 }

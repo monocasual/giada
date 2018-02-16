@@ -27,6 +27,7 @@
 
 #include "../../core/const.h"
 #include "../../utils/string.h"
+#include "../../utils/fs.h"
 #include "../dialogs/browser/browserBase.h"
 #include "basics/boxtypes.h"
 #include "browser.h"
@@ -37,7 +38,7 @@ using std::string;
 
 geBrowser::geBrowser(int x, int y, int w, int h)
  : Fl_File_Browser(x, y, w, h),
-   showHiddenFiles(false)
+   m_showHiddenFiles(false)
 {
 	box(G_CUSTOM_BORDER_BOX);
 	textsize(G_GUI_FONT_SIZE_BASE);
@@ -65,8 +66,8 @@ geBrowser::geBrowser(int x, int y, int w, int h)
 
 void geBrowser::toggleHiddenFiles()
 {
-  showHiddenFiles = !showHiddenFiles;
-  loadDir(currentDir);
+  m_showHiddenFiles = !m_showHiddenFiles;
+  loadDir(m_currentDir);
 }
 
 
@@ -75,8 +76,8 @@ void geBrowser::toggleHiddenFiles()
 
 void geBrowser::loadDir(const string& dir)
 {
-  currentDir = dir;
-  load(currentDir.c_str());
+  m_currentDir = dir;
+  load(m_currentDir.c_str());
 
   /* Clean up unwanted elements. Hide "../" first, it just screws up things.
   Also remove hidden files, if requested. */
@@ -84,7 +85,7 @@ void geBrowser::loadDir(const string& dir)
   for (int i=size(); i>=0; i--) {
     if (text(i) == nullptr)
       continue;
-    if (strcmp(text(i), "../") == 0 || (!showHiddenFiles && strncmp(text(i), ".", 1) == 0))
+    if (strcmp(text(i), "../") == 0 || (!m_showHiddenFiles && strncmp(text(i), ".", 1) == 0))
       remove(i);
   }
 }
@@ -108,12 +109,12 @@ int geBrowser::handle(int e)
         select(value() - 1);
       else
       if (Fl::event_key(FL_Enter))
-        ((gdBrowserBase*) parent())->fireCallback();
+        static_cast<gdBrowserBase*>(parent())->fireCallback();
       ret = 1;
       break;
     case FL_PUSH:    // mouse
       if (Fl::event_clicks() > 0)  // double click
-        ((gdBrowserBase*) parent())->fireCallback();
+        static_cast<gdBrowserBase*>(parent())->fireCallback();
       ret = 1;
       break;
     case FL_RELEASE: // mouse
@@ -137,7 +138,7 @@ int geBrowser::handle(int e)
 
 string geBrowser::getCurrentDir()
 {
-  return normalize(gu_getRealPath(currentDir));
+  return normalize(gu_getRealPath(m_currentDir));
 }
 
 
@@ -150,14 +151,14 @@ string geBrowser::getSelectedItem(bool fullPath)
     return normalize(text(value()));
   else
   if (value() == 0)  // no rows selected? return current directory
-    return normalize(currentDir);
+    return normalize(m_currentDir);
   else {
 #ifdef G_OS_WINDOWS
-    string sep = currentDir != "" ? G_SLASH_STR : "";
+    string sep = m_currentDir != "" ? G_SLASH_STR : "";
 #else
     string sep = G_SLASH_STR;
 #endif
-    return normalize(gu_getRealPath(currentDir + sep + normalize(text(value()))));
+    return normalize(gu_getRealPath(m_currentDir + sep + normalize(text(value()))));
   }
 }
 
@@ -179,10 +180,11 @@ string geBrowser::normalize(const string& s)
 {
   string out = s;
 
-  /* If string ends with G_SLASH, remove it. Don't do it if has length > 1, it
-  means that the string is just '/'. */
+  /* If string ends with G_SLASH, remove it. Don't do it if is the root dir, 
+  that is '/' on Unix or '[x]:\' on Windows. */
 
-  if (out.back() == G_SLASH && out.length() > 1)
+  //if (out.back() == G_SLASH && out.length() > 1)
+  if (out.back() == G_SLASH && !gu_isRootDir(s))
     out = out.substr(0, out.size()-1);
   return out;
 }

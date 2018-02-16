@@ -37,6 +37,12 @@
 bool gu_fileExists(const std::string& path);
 bool gu_dirExists(const std::string& path);
 bool gu_isDir(const std::string& path);
+
+/* isRootDir
+Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
+
+bool gu_isRootDir(const std::string& s);
+
 bool gu_isProject(const std::string& path);
 bool gu_mkdir(const std::string& path);
 std::string gu_getCurrentPath();
