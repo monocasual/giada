@@ -8,7 +8,7 @@ using std::vector;
 
 TEST_CASE("Test filesystem utils")
 {
-  REQUIRE(gu_fileExists("giada_tests") == true);
+  REQUIRE(gu_fileExists("README.md") == true);
   REQUIRE(gu_fileExists("ghost_file") == false);
   REQUIRE(gu_dirExists("src/") == true);
   REQUIRE(gu_dirExists("ghost_dir/") == false);
@@ -18,6 +18,9 @@ TEST_CASE("Test filesystem utils")
   REQUIRE(gu_dirname("tests/utils.cpp") == "tests");
   REQUIRE(gu_getExt("tests/utils.cpp") == "cpp");
   REQUIRE(gu_stripExt("tests/utils.cpp") == "tests/utils");
+  REQUIRE(gu_isRootDir("C:\\") == true);
+  REQUIRE(gu_isRootDir("/") == true);
+  REQUIRE(gu_isRootDir("/path/to/something") == false);
 }
 
 
