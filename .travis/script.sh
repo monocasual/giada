@@ -2,4 +2,4 @@
 
 make -j 2
 make rename
-make check -j 2
+xvfb-run make check -j 2
