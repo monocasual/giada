@@ -58,7 +58,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
   Fl::set_boxtype(FL_UP_BOX,     G_CUSTOM_UP_BOX);
   Fl::set_boxtype(FL_DOWN_BOX,   G_CUSTOM_DOWN_BOX);
 
-	size_range(G_GUI_WIDTH, G_GUI_HEIGHT);
+	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
 	mainMenu      = new geMainMenu(8, -1);
 	mainIO        = new geMainIO(412, 8);

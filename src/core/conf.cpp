@@ -26,6 +26,7 @@
 
 
 #include <string>
+#include <FL/Fl.H>
 #include "../utils/fs.h"
 #include "../utils/log.h"
 #include "storager.h"
@@ -189,10 +190,10 @@ string pluginPath = "";
 string patchPath  = "";
 string samplePath = "";
 
-int mainWindowX = 0;
-int mainWindowY = 0;
-int mainWindowW = G_GUI_WIDTH;
-int mainWindowH = G_GUI_HEIGHT;
+int mainWindowX = (Fl::w() / 2) - (G_MIN_GUI_WIDTH / 2);
+int mainWindowY = (Fl::h() / 2) - (G_MIN_GUI_HEIGHT / 2);
+int mainWindowW = G_MIN_GUI_WIDTH;
+int mainWindowH = G_MIN_GUI_HEIGHT;
 
 int browserX         = 0;
 int browserY         = 0;

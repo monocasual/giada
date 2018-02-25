@@ -51,10 +51,10 @@ bool          G_quit;
 gdMainWindow *G_MainWin;
 
 
-void *videoThreadCb(void *arg);
+void* videoThreadCb(void* arg);
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	G_quit = false;
 
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 }
 
 
-void *videoThreadCb(void *arg)
+void* videoThreadCb(void* arg)
 {
 	if (giada::m::kernelAudio::getStatus())
 		while (!G_quit)	{

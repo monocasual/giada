@@ -68,8 +68,6 @@
 #else
 	#define G_GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
 #endif
-#define G_GUI_WIDTH				   816
-#define G_GUI_HEIGHT			   510
 #define G_GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUIs
 #define G_GUI_FONT_SIZE_BASE 12
 #define G_GUI_INNER_MARGIN   4
@@ -109,6 +107,8 @@
 #define G_MAX_GRID_VAL      64
 #define G_MIN_BUF_SIZE      8
 #define G_MAX_BUF_SIZE      4096
+#define G_MIN_GUI_WIDTH     816
+#define G_MIN_GUI_HEIGHT    510
 
 
 
