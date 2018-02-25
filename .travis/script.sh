@@ -2,4 +2,13 @@
 
 make -j 2
 make rename
-xvfb-run make check -j 2
+
+if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
+	
+	xvfb-run make check -j 2
+
+else
+
+	make check -j 2
+
+fi
