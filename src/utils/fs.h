@@ -70,5 +70,11 @@ std::string gu_stripExt(const std::string& s);
 
 std::string gu_stripFileUrl(const std::string& s);
 
+/* gu_getUpDir
+Returns the upper directory:
+/path/to/my/directory -> /path/to/my/ */
+
+std::string gu_getUpDir(const std::string& s);
+
 
 #endif

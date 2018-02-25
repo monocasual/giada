@@ -100,7 +100,7 @@ gdBrowserBase::~gdBrowserBase()
 	conf::browserW = w();
 	conf::browserH = h();
 	conf::browserPosition = browser->position();
-	conf::browserLastPath = gu_dirname(browser->getSelectedItem());
+	conf::browserLastPath = browser->getCurrentDir();
 	conf::browserLastValue = browser->value();
 }
 
@@ -118,22 +118,7 @@ void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBrowserBas
 
 void gdBrowserBase::cb_up()
 {
-	string dir = browser->getCurrentDir();
-
-	/* Take 'dir' path and remove all chars up to the next slash, e.g.:
-		/path/to/my/dir -> /path/to/my
-	Make sure not to remove the leading '/' (OS X/Linux only). */
-
-	dir = dir.substr(0, dir.find_last_of(G_SLASH_STR));
-
-#if defined(G_OS_MAC) || defined(G_OS_LINUX)
-
-	if (dir.empty())
-		dir = G_SLASH_STR;
-
-#endif
-
-	browser->loadDir(dir);
+	browser->loadDir(gu_getUpDir(browser->getCurrentDir()));
 	where->value(browser->getCurrentDir().c_str());
 }
 

@@ -146,7 +146,7 @@ bool gu_mkdir(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_basename(const string &s)
+string gu_basename(const string& s)
 {
 	string out = s;
 	out.erase(0, out.find_last_of(G_SLASH_STR) + 1);
@@ -157,7 +157,7 @@ string gu_basename(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_dirname(const string &path)
+string gu_dirname(const string& path)
 {
 	if (path.empty())
 		return "";
@@ -279,13 +279,30 @@ bool gu_isRootDir(const std::string& s)
 	if (s == "")
 		return false;
 
-#ifdef G_WINDOWS
+#ifdef G_OS_WINDOWS
 
-	return s.length() <= 3 && s[1] == ':';
+	return s.length() <= 3 && s[1] == ':';  /* X: or X:\ */
 
 #else
 
 	return s == G_SLASH_STR;
 
 #endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::string gu_getUpDir(const std::string& s)
+{
+#ifdef G_OS_WINDOWS
+
+	/* If root, let the user browse the drives list by returning "". */
+	if (gu_isRootDir(s))
+		return "";
+
+#endif
+
+	return s.substr(0, s.find_last_of(G_SLASH_STR)) + G_SLASH_STR;
 }
