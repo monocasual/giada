@@ -64,7 +64,6 @@ void init_prepareParser()
   time (&t);
 	gu_log("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
 
-  conf::init();
 	conf::read();
 	patch::init();
 
