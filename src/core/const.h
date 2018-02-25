@@ -63,12 +63,8 @@
 
 
 /* -- GUI ------------------------------------------------------------------- */
-#ifdef G_OS_WINDOWS
-	#define G_GUI_SLEEP			1000/24
-#else
-	#define G_GUI_SLEEP			1000000/24 // == 1.000.000 / 24 == 1/24 sec == 24 Hz
-#endif
-#define G_GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUIs
+#define G_GUI_REFRESH_RATE   1000/24
+#define G_GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUI
 #define G_GUI_FONT_SIZE_BASE 12
 #define G_GUI_INNER_MARGIN   4
 #define G_GUI_OUTER_MARGIN   8

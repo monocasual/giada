@@ -43,7 +43,7 @@
 extern gdMainWindow *G_MainWin;
 
 
-gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **argv)
+gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv)
 	: gdWindow(W, H, title)
 {
 	Fl::visible_focus(0);
@@ -69,21 +69,21 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 
 	/* zone 1 - menus, and I/O tools */
 
-	Fl_Group *zone1 = new Fl_Group(8, 8, W-16, 20);
+	Fl_Group* zone1 = new Fl_Group(8, 8, W-16, 20);
 	zone1->add(mainMenu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(mainIO);
 
 	/* zone 2 - mainTransport and timing tools */
 
-	Fl_Group *zone2 = new Fl_Group(8, mainTransport->y(), W-16, mainTransport->h());
+	Fl_Group* zone2 = new Fl_Group(8, mainTransport->y(), W-16, mainTransport->h());
 	zone2->add(mainTransport);
 	zone2->resizable(new Fl_Box(mainTransport->x()+mainTransport->w()+4, zone2->y(), 80, 20));
 	zone2->add(mainTimer);
 
 	/* zone 3 - beat meter */
 
-	Fl_Group *zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());
+	Fl_Group* zone3 = new Fl_Group(8, beatMeter->y(), W-16, beatMeter->h());
 	zone3->add(beatMeter);
 
 	/* zone 4 - the keyboard (Fl_Group is unnecessary here, keyboard is
@@ -105,13 +105,13 @@ gdMainWindow::gdMainWindow(int W, int H, const char *title, int argc, char **arg
 /* -------------------------------------------------------------------------- */
 
 
-void gdMainWindow::cb_endprogram(Fl_Widget *v, void *p) { G_MainWin->__cb_endprogram(); }
+void gdMainWindow::cb_endprogram(Fl_Widget* v, void* p) { G_MainWin->cb_endprogram(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMainWindow::__cb_endprogram()
+void gdMainWindow::cb_endprogram()
 {
 	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;

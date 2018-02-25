@@ -45,19 +45,19 @@ class gdMainWindow : public gdWindow
 {
 private:
 
-	static void cb_endprogram  (Fl_Widget *v, void *p);
-	inline void __cb_endprogram();
+	static void cb_endprogram(Fl_Widget* v, void* p);
+	inline void cb_endprogram();
 
 public:
 
-	geKeyboard      *keyboard;
-	geBeatMeter     *beatMeter;
-	geMainMenu      *mainMenu;
-	geMainIO        *mainIO;
-  geMainTimer     *mainTimer;
-	geMainTransport *mainTransport;
+	geKeyboard* keyboard;
+	geBeatMeter* beatMeter;
+	geMainMenu* mainMenu;
+	geMainIO* mainIO;
+  geMainTimer* mainTimer;
+	geMainTransport* mainTransport;
 
-	gdMainWindow(int w, int h, const char *title, int argc, char **argv);
+	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 };
 
 

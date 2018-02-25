@@ -42,13 +42,14 @@
 #include "core/kernelMidi.h"
 #include "core/recorder.h"
 #include "utils/gui.h"
+#include "utils/time.h"
 #include "gui/dialogs/gd_mainWindow.h"
 #include "core/pluginHost.h"
 
 
 pthread_t     G_videoThread;
 bool          G_quit;
-gdMainWindow *G_MainWin;
+gdMainWindow* G_MainWin;
 
 
 void* videoThreadCb(void* arg);
@@ -85,14 +86,12 @@ int main(int argc, char** argv)
 
 void* videoThreadCb(void* arg)
 {
-	if (giada::m::kernelAudio::getStatus())
+	using namespace giada;
+
+	if (m::kernelAudio::getStatus())
 		while (!G_quit)	{
 			gu_refreshUI();
-#ifdef _WIN32
-			Sleep(G_GUI_SLEEP);
-#else
-			usleep(G_GUI_SLEEP);
-#endif
+			u::time::sleep(G_GUI_REFRESH_RATE);
 		}
 	pthread_exit(nullptr);
 	return 0;
