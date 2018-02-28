@@ -91,6 +91,9 @@ if OSX
 
 extraSources += src/utils/cocoa.mm src/utils/cocoa.h
 
+# Add preprocessor flags to enable CoreAudio in RtAudio.
+cppFlags += -D__MACOSX_CORE__
+
 # -ObjC++: Juce requires to build some Objective C code
 cxxFlags += -ObjC++ -Wno-auto-var-id
 
