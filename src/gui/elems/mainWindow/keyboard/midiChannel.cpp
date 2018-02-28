@@ -55,7 +55,6 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada;
 
 
 namespace
@@ -86,6 +85,8 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
+	using namespace giada;
+
 	geMidiChannel* gch = static_cast<geMidiChannel*>(w);
 	Menu selectedItem = (Menu) (intptr_t) v;
 
@@ -213,8 +214,10 @@ void geMidiChannel::cb_openMenu(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb
 
 void geMidiChannel::cb_button()
 {
+	using namespace giada;
+	
 	if (button->value())
-		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 }
 
 

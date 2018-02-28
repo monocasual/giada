@@ -114,11 +114,11 @@ void processChannels(const MidiEvent& midiEvent)
 
 		if      (pure == ch->midiInKeyPress) {
 			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_keyPress(ch, false, false);
+			c::io::keyPress(ch, false, false);
 		}
 		else if (pure == ch->midiInKeyRel) {
 			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);
-			glue_keyRelease(ch, false, false);
+			c::io::keyRelease(ch, false, false);
 		}
 		else if (pure == ch->midiInMute) {
 			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
@@ -188,11 +188,11 @@ void processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == conf::midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		glue_startStopActionRec(false);
+		c::io::startStopActionRec(false);
 	}
 	else if (pure == conf::midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
-		glue_startStopInputRec(false);
+		c::io::startStopInputRec(false);
 	}
 	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);

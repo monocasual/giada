@@ -61,9 +61,6 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
 namespace
 {
 enum class Menu
@@ -100,6 +97,8 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
+	using namespace giada;
+
 	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
 	Menu selectedItem = (Menu) (intptr_t) v;
 
@@ -277,10 +276,12 @@ void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel
 
 void geSampleChannel::__cb_button()
 {
+	using namespace giada;
+
 	if (button->value())    // pushed
-		glue_keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
 	else                    // released
-		glue_keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -289,6 +290,8 @@ void geSampleChannel::__cb_button()
 
 void geSampleChannel::__cb_openMenu()
 {
+	using namespace giada;
+
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel */
 
@@ -359,7 +362,8 @@ void geSampleChannel::__cb_openMenu()
 
 void geSampleChannel::__cb_readActions()
 {
-	c::channel::toggleReadingRecs(static_cast<SampleChannel*>(ch));
+	using namespace giada::c::channel;
+	toggleReadingRecs(static_cast<SampleChannel*>(ch));
 }
 
 
@@ -368,6 +372,8 @@ void geSampleChannel::__cb_readActions()
 
 void geSampleChannel::refresh()
 {
+	using namespace giada;
+	
 	if (!mainButton->visible()) // mainButton invisible? status too (see below)
 		return;
 

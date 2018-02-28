@@ -214,6 +214,8 @@ so on should be moved to the proper widget: gdMainWindow or (better) geControlle
 
 int geKeyboard::handle(int e)
 {
+	using namespace giada::c;
+
 	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_FOCUS:
@@ -236,13 +238,13 @@ int geKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					glue_startStopInputRec(false);  // not from GUI
+					io::startStopInputRec(false);  // not from GUI
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == FL_Enter && !enterPressed) {
 					enterPressed = true;
-					glue_startStopActionRec(false); // not from GUI
+					io::startStopActionRec(false); // not from GUI
 					ret = 1;
 					break;
 				}

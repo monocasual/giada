@@ -50,35 +50,36 @@
 #include "io.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
-void glue_keyPress(Channel *ch, bool ctrl, bool shift)
+namespace giada {
+namespace c     {
+namespace io 
+{
+void keyPress(Channel* ch, bool ctrl, bool shift)
 {
 	if (ch->type == CHANNEL_SAMPLE)
-		glue_keyPress((SampleChannel*)ch, ctrl, shift);
+		keyPress(static_cast<SampleChannel*>(ch), ctrl, shift);
 	else
-		glue_keyPress((MidiChannel*)ch, ctrl, shift);
+		keyPress(static_cast<MidiChannel*>(ch), ctrl, shift);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyRelease(Channel *ch, bool ctrl, bool shift)
+void keyRelease(Channel* ch, bool ctrl, bool shift)
 {
 	if (ch->type == CHANNEL_SAMPLE)
-		glue_keyRelease((SampleChannel*)ch, ctrl, shift);
+		keyRelease((SampleChannel*)ch, ctrl, shift);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyPress(MidiChannel* ch, bool ctrl, bool shift)
+void keyPress(MidiChannel* ch, bool ctrl, bool shift)
 {
 	if (ctrl)
 		c::channel::toggleMute(ch);
@@ -93,7 +94,7 @@ void glue_keyPress(MidiChannel* ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyPress(SampleChannel* ch, bool ctrl, bool shift)
+void keyPress(SampleChannel* ch, bool ctrl, bool shift)
 {
 	/* case CTRL */
 
@@ -178,7 +179,7 @@ void glue_keyPress(SampleChannel* ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_keyRelease(SampleChannel* ch, bool ctrl, bool shift)
+void keyRelease(SampleChannel* ch, bool ctrl, bool shift)
 {
 	using namespace giada::m;
 
@@ -202,16 +203,16 @@ void glue_keyRelease(SampleChannel* ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopActionRec(bool gui)
+void startStopActionRec(bool gui)
 {
-	m::recorder::active ? glue_stopActionRec(gui) : glue_startActionRec(gui);
+	m::recorder::active ? stopActionRec(gui) : startActionRec(gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startActionRec(bool gui)
+void startActionRec(bool gui)
 {
 	using namespace giada::m;
 
@@ -234,7 +235,7 @@ void glue_startActionRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopActionRec(bool gui)
+void stopActionRec(bool gui)
 {
 	/* stop the recorder and sort new actions */
 
@@ -264,12 +265,12 @@ void glue_stopActionRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopInputRec(bool gui)
+void startStopInputRec(bool gui)
 {
 	if (m::mixer::recording)
-		glue_stopInputRec(gui);
+		stopInputRec(gui);
 	else
-	if (!glue_startInputRec(gui))
+	if (!startInputRec(gui))
 		gdAlert("No channels armed/available for audio recording.");
 }
 
@@ -277,7 +278,7 @@ void glue_startStopInputRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_startInputRec(bool gui)
+int startInputRec(bool gui)
 {
 	using namespace giada::m;
 
@@ -313,7 +314,7 @@ int glue_startInputRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-int glue_stopInputRec(bool gui)
+int stopInputRec(bool gui)
 {
 	using namespace giada::m;
 	
@@ -341,3 +342,5 @@ int glue_stopInputRec(bool gui)
 
 	return 1;
 }
+
+}}} // giada::c::io::

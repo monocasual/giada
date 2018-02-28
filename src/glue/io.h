@@ -36,32 +36,41 @@
 #define G_GLUE_IO_H
 
 
+class Channel;
+class SampleChannel;
+class MidiChannel;
+
+namespace giada {
+namespace c     {
+namespace io 
+{
 /* keyPress / keyRelease
  * handle the key pressure, either via mouse/keyboard or MIDI. If gui
  * is true it means that the event comes from the main window (mouse,
  * keyb or MIDI), otherwise the event comes from the action recorder. */
 
-void glue_keyPress  (class Channel       *ch, bool ctrl=0, bool shift=0);
-void glue_keyPress  (class SampleChannel *ch, bool ctrl=0, bool shift=0);
-void glue_keyPress  (class MidiChannel   *ch, bool ctrl=0, bool shift=0);
-void glue_keyRelease(class Channel       *ch, bool ctrl=0, bool shift=0);
-void glue_keyRelease(class SampleChannel *ch, bool ctrl=0, bool shift=0);
+void keyPress  (Channel*       ch, bool ctrl=0, bool shift=0);
+void keyPress  (SampleChannel* ch, bool ctrl=0, bool shift=0);
+void keyPress  (MidiChannel*   ch, bool ctrl=0, bool shift=0);
+void keyRelease(Channel*       ch, bool ctrl=0, bool shift=0);
+void keyRelease(SampleChannel* ch, bool ctrl=0, bool shift=0);
 
 /* start/stopActionRec
 Handles the action recording. If gui == true the signal comes from an user
 interaction, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startStopActionRec(bool gui=true);
-void glue_startActionRec(bool gui=true);
-void glue_stopActionRec(bool gui=true);
+void startStopActionRec(bool gui=true);
+void startActionRec(bool gui=true);
+void stopActionRec(bool gui=true);
 
 /* start/stopInputRec
 Handles the input recording (take). If gui == true the signal comes from an
 internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void glue_startStopInputRec(bool gui=true);
-int  glue_startInputRec    (bool gui=true);
-int  glue_stopInputRec     (bool gui=true);
+void startStopInputRec(bool gui=true);
+int  startInputRec    (bool gui=true);
+int  stopInputRec     (bool gui=true);
 
+}}} // giada::c::io::
 
 #endif
