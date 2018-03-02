@@ -39,17 +39,17 @@ class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
 private:
 
-	SampleChannel *ch;
+	SampleChannel* ch;
 
-	/* __cb_close
-	override parent method, we need to do more stuff on close. */
+	/* cb_close
+	Override parent method, we need to do more stuff on close. */
 
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
+	static void cb_close(Fl_Widget* w, void* p);
+	inline void cb_close();
 
 public:
 
-	gdMidiOutputSampleCh(SampleChannel *ch);
+	gdMidiOutputSampleCh(SampleChannel* ch);
 };
 
 #endif

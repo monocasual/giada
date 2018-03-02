@@ -227,7 +227,7 @@ int cloneChannel(Channel* src)
 
 void setVolume(Channel* ch, float v, bool gui, bool editor)
 {
-	ch->volume = v;
+	ch->setVolume(v);
 
 	/* Changing channel volume? Update wave editor (if it's shown). */
 

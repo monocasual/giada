@@ -42,7 +42,6 @@
 
 
 using std::string;
-using namespace giada;
 
 
 geVolumeTool::geVolumeTool(int X, int Y, SampleChannel* ch)
@@ -69,8 +68,10 @@ geVolumeTool::geVolumeTool(int X, int Y, SampleChannel* ch)
 
 void geVolumeTool::refresh()
 {
+  using namespace giada::u;
+
   string tmp;
-  float dB = gu_linearToDB(ch->volume);
+  float dB = math::linearToDB(ch->getVolume());
   if (dB > -INFINITY) tmp = gu_fToString(dB, 2);  // 2 digits
   else                tmp = "-inf";
   input->value(tmp.c_str());
@@ -90,6 +91,8 @@ void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->
 
 void geVolumeTool::__cb_setVolume()
 {
+  using namespace giada;
+
   c::channel::setVolume(ch, dial->value(), false, true);
   refresh();
 }
@@ -100,6 +103,8 @@ void geVolumeTool::__cb_setVolume()
 
 void geVolumeTool::__cb_setVolumeNum()
 {
+  using namespace giada;
+
   float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
   c::channel::setVolume(ch, value, false, true);
   dial->value(ch->guiChannel->vol->value());

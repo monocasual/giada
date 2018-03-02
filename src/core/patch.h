@@ -31,11 +31,7 @@
 
 #include <string>
 #include <vector>
-#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
-	#include <stdint.h>
-#else
-	#include <cstdint>
-#endif
+#include <cstdint>
 
 
 namespace giada {
@@ -73,6 +69,7 @@ struct channel_t
 	float       volume;
 	float       pan;
 	bool        midiIn;
+	bool        midiInVeloAsVol;
 	uint32_t    midiInKeyPress;
 	uint32_t    midiInKeyRel;
 	uint32_t    midiInKill;
@@ -118,19 +115,19 @@ struct column_t
 
 extern std::string header;
 extern std::string version;
-extern int    versionMajor;
-extern int    versionMinor;
-extern int    versionPatch;
+extern int         versionMajor;
+extern int         versionMinor;
+extern int         versionPatch;
 extern std::string name;
-extern float  bpm;
-extern int    bars;
-extern int    beats;
-extern int    quantize;
-extern float  masterVolIn;
-extern float  masterVolOut;
-extern int    metronome;
-extern int    lastTakeId;
-extern int    samplerate;   // original samplerate when the patch was saved
+extern float       bpm;
+extern int         bars;
+extern int         beats;
+extern int         quantize;
+extern float       masterVolIn;
+extern float       masterVolOut;
+extern int         metronome;
+extern int         lastTakeId;
+extern int         samplerate;   // original samplerate when the patch was saved
 
 extern std::vector<column_t>  columns;
 extern std::vector<channel_t> channels;

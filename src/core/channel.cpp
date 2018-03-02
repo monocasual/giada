@@ -54,13 +54,13 @@ Channel::Channel(int type, int status, int bufferSize)
 	midiInFilter   (-1),
 	previewMode    (G_PREVIEW_NONE),
 	pan            (0.5f),
+	volume         (G_DEFAULT_VOL),
+	volume_i       (1.0f),
+	volume_d       (0.0f),
 	armed          (false),
 	type           (type),
 	status         (status),
 	key            (0),
-	volume         (G_DEFAULT_VOL),
-	volume_i       (1.0f),
-	volume_d       (0.0f),
 	mute_i         (false),
 	mute_s         (false),
 	mute           (false),
@@ -431,6 +431,27 @@ void Channel::setPan(float v)
 float Channel::getPan() const
 {
 	return pan;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Channel::setVolume(float v)
+{
+	volume = v;
+}
+
+
+void Channel::setVolumeI(float v)
+{
+	volume_i = v;
+}
+
+
+float Channel::getVolume() const
+{
+	return volume;
 }
 
 

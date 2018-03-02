@@ -365,6 +365,7 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_VOLUME               "volume"
 #define PATCH_KEY_CHANNEL_PAN                  "pan"
 #define PATCH_KEY_CHANNEL_MIDI_IN              "midi_in"
+#define PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL  "midi_in_velo_as_vol"
 #define PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS     "midi_in_keypress"
 #define PATCH_KEY_CHANNEL_MIDI_IN_KEYREL       "midi_in_keyrel"
 #define PATCH_KEY_CHANNEL_MIDI_IN_KILL         "midi_in_kill"

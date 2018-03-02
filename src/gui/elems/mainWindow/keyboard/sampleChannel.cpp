@@ -266,20 +266,20 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_button      (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_button(); }
-void geSampleChannel::cb_openMenu    (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_openMenu(); }
-void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->__cb_readActions(); }
+void geSampleChannel::cb_button      (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_button(); }
+void geSampleChannel::cb_openMenu    (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
+void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::__cb_button()
+void geSampleChannel::cb_button()
 {
 	using namespace giada;
 
-	if (button->value())    // pushed
-		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+	if (button->value())    // pushed, max velocity (127 i.e. 0x7f)
+		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), 0x7F);
 	else                    // released
 		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
 }
@@ -288,7 +288,7 @@ void geSampleChannel::__cb_button()
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::__cb_openMenu()
+void geSampleChannel::cb_openMenu()
 {
 	using namespace giada;
 
@@ -360,7 +360,7 @@ void geSampleChannel::__cb_openMenu()
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::__cb_readActions()
+void geSampleChannel::cb_readActions()
 {
 	using namespace giada::c::channel;
 	toggleReadingRecs(static_cast<SampleChannel*>(ch));
@@ -439,7 +439,7 @@ void geSampleChannel::update()
 	modeBox->value(sch->mode);
 	modeBox->redraw();
 
-	vol->value(sch->volume);
+	vol->value(sch->getVolume());
 	mute->value(sch->mute);
 	solo->value(sch->solo);
 

@@ -988,6 +988,7 @@ int SampleChannel::readPatch(const string& basePath, int i,
 	boost             = pch->boost;
 	readActions       = pch->recActive;
 	recStatus         = readActions ? REC_READING : REC_STOPPED;
+	midiInVeloAsVol   = pch->midiInVeloAsVol;
 	midiInReadActions = pch->midiInReadActions;
 	midiInPitch       = pch->midiInPitch;
   inputMonitor      = pch->inputMonitor;

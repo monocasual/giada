@@ -114,7 +114,7 @@ void processChannels(const MidiEvent& midiEvent)
 
 		if      (pure == ch->midiInKeyPress) {
 			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::io::keyPress(ch, false, false);
+			c::io::keyPress(ch, false, false, midiEvent.getVelocity());
 		}
 		else if (pure == ch->midiInKeyRel) {
 			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);

@@ -42,10 +42,7 @@
 #include "boostTool.h"
 
 
-using namespace giada;
-
-
-geBoostTool::geBoostTool(int X, int Y, SampleChannel *ch)
+geBoostTool::geBoostTool(int X, int Y, SampleChannel* ch)
   : Fl_Group(X, Y, 220, 20),
     ch      (ch)
 {
@@ -73,7 +70,9 @@ geBoostTool::geBoostTool(int X, int Y, SampleChannel *ch)
 
 void geBoostTool::refresh()
 {
-  input->value(gu_fToString(gu_linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
+  using namespace giada::u;
+
+  input->value(gu_fToString(math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
   // A dial greater than it's max value goes crazy
   dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
 }
@@ -82,21 +81,23 @@ void geBoostTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::cb_setBoost   (Fl_Widget *w, void *p) { ((geBoostTool*)p)->__cb_setBoost(); }
-void geBoostTool::cb_setBoostNum(Fl_Widget *w, void *p) { ((geBoostTool*)p)->__cb_setBoostNum(); }
-void geBoostTool::cb_normalize  (Fl_Widget *w, void *p) { ((geBoostTool*)p)->__cb_normalize(); }
+void geBoostTool::cb_setBoost   (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_setBoost(); }
+void geBoostTool::cb_setBoostNum(Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_setBoostNum(); }
+void geBoostTool::cb_normalize  (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_normalize(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::__cb_setBoost()
+void geBoostTool::cb_setBoost()
 {
+  using namespace giada::c;
+
   if (Fl::event() == FL_DRAG)
-    c::channel::setBoost(ch, dial->value());
+    channel::setBoost(ch, dial->value());
   else 
   if (Fl::event() == FL_RELEASE) {
-    c::channel::setBoost(ch, dial->value());
+    channel::setBoost(ch, dial->value());
     static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
   }
 }
@@ -105,9 +106,11 @@ void geBoostTool::__cb_setBoost()
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::__cb_setBoostNum()
+void geBoostTool::cb_setBoostNum()
 {
-  c::channel::setBoost(ch, gu_dBtoLinear(atof(input->value())));
+  using namespace giada;
+
+  c::channel::setBoost(ch, u::math::dBtoLinear(atof(input->value())));
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }
 
@@ -115,8 +118,10 @@ void geBoostTool::__cb_setBoostNum()
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::__cb_normalize()
+void geBoostTool::cb_normalize()
 {
+  using namespace giada;
+
   float val = m::wfx::normalizeSoft(ch->wave);
   c::channel::setBoost(ch, val); // it's like a fake user moving the dial 
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();

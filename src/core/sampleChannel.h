@@ -200,6 +200,7 @@ public:
 
 	/* midi stuff */
 
+  bool     midiInVeloAsVol;
   uint32_t midiInReadActions;
   uint32_t midiInPitch;
 

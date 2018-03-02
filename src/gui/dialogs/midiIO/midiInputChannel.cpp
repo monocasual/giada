@@ -59,18 +59,22 @@ gdMidiInputChannel::gdMidiInputChannel(Channel* ch)
 	label(title.c_str());
 	size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
 
-	Fl_Group* groupHeader = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20);
+	int extra = ch->type == CHANNEL_SAMPLE ? 28 : 0;
+
+	Fl_Group* groupHeader = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20 + extra);
 	groupHeader->begin();
 
 		enable = new geCheck(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT, 
-			"enable MIDI input");
+			"Enable MIDI input");
 		channel = new geChoice(enable->x()+enable->w()+44, G_GUI_OUTER_MARGIN, 120, G_GUI_UNIT);
+		veloAsVol = new geCheck(G_GUI_OUTER_MARGIN, enable->y()+enable->h()+G_GUI_OUTER_MARGIN 	, 120, G_GUI_UNIT, 
+			"Velocity drives volume (one-shot only)");
 
 	groupHeader->resizable(nullptr);
 	groupHeader->end();
 
-	container = new geScroll(G_GUI_OUTER_MARGIN, enable->y()+enable->h()+G_GUI_OUTER_MARGIN, 
-		w()-16, h()-76);
+	container = new geScroll(G_GUI_OUTER_MARGIN, groupHeader->y()+groupHeader->h()+G_GUI_OUTER_MARGIN, 
+		w()-16, h()-72-extra);
 	container->begin();
 
 		addChannelLearners();
@@ -93,6 +97,13 @@ gdMidiInputChannel::gdMidiInputChannel(Channel* ch)
 
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
+
+	if (ch->type == CHANNEL_SAMPLE) {
+		veloAsVol->value(static_cast<SampleChannel*>(ch)->midiInVeloAsVol);
+		veloAsVol->callback(cb_veloAsVol, (void*)this);	
+	}
+	else
+		veloAsVol->hide();
 
 	channel->add("Channel (any)");
 	channel->add("Channel 1");
@@ -201,6 +212,7 @@ void gdMidiInputChannel::addPluginLearners()
 
 void gdMidiInputChannel::cb_enable(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_enable(); }
 void gdMidiInputChannel::cb_setChannel(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_setChannel(); }
+void gdMidiInputChannel::cb_veloAsVol(Fl_Widget* w, void* p) { ((gdMidiInputChannel*)p)->cb_veloAsVol(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -210,6 +222,15 @@ void gdMidiInputChannel::cb_enable()
 {
 	ch->midiIn = enable->value();
 	enable->value() ? channel->activate() : channel->deactivate();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMidiInputChannel::cb_veloAsVol()
+{
+	static_cast<SampleChannel*>(ch)->midiInVeloAsVol = veloAsVol->value();
 }
 
 

@@ -217,7 +217,7 @@ void geMidiChannel::cb_button()
 	using namespace giada;
 	
 	if (button->value())
-		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyPress(static_cast<MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -302,7 +302,7 @@ void geMidiChannel::update()
 
 	mainButton->label(label.c_str());
 
-	vol->value(mch->volume);
+	vol->value(mch->getVolume());
 	mute->value(mch->mute);
 	solo->value(mch->solo);
 

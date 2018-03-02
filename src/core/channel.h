@@ -88,6 +88,9 @@ protected:
 	int previewMode;
 
 	float pan;
+	float volume;   // global volume
+	float volume_i; // internal volume
+	float volume_d; // delta volume (for envelope)
 	bool armed;
 	std::string name;
 
@@ -189,7 +192,8 @@ public:
 	virtual void rewind() = 0;
 
 	/* clear
-	Clears all memory buffers. This is actually useful to sample channels only. */
+	Clears all memory buffers. This is actually useful to sample channels only. 
+	TODO - please rename it to clearBuffers. */
 
 	virtual void clear() = 0;
 
@@ -219,6 +223,7 @@ public:
 
 	bool isPlaying() const;
 	float getPan() const;
+	float getVolume() const;
 	bool isArmed() const;
 	std::string getName() const;
 	bool isPreview() const;
@@ -238,6 +243,8 @@ public:
 	void sendMidiLplay();
 
 	void setPan(float v);
+	void setVolume(float v);
+	void setVolumeI(float v);
 	void setArmed(bool b);
 	void setName(const std::string& s);
 	void setPreviewMode(int m);
@@ -259,9 +266,6 @@ public:
 	int    type;                  // midi or sample
 	int    status;                // status: see const.h
 	int    key;                   // keyboard button
-	float  volume;                // global volume
-	float  volume_i;              // internal volume
-	float  volume_d;              // delta volume (for envelope)
 	bool   mute_i;                // internal mute
 	bool 	 mute_s;                // previous mute status after being solo'd
 	bool   mute;                  // global mute

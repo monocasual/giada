@@ -49,11 +49,11 @@ namespace io
  * is true it means that the event comes from the main window (mouse,
  * keyb or MIDI), otherwise the event comes from the action recorder. */
 
-void keyPress  (Channel*       ch, bool ctrl=0, bool shift=0);
-void keyPress  (SampleChannel* ch, bool ctrl=0, bool shift=0);
-void keyPress  (MidiChannel*   ch, bool ctrl=0, bool shift=0);
-void keyRelease(Channel*       ch, bool ctrl=0, bool shift=0);
-void keyRelease(SampleChannel* ch, bool ctrl=0, bool shift=0);
+void keyPress  (Channel*       ch, bool ctrl, bool shift, int velocity);
+void keyPress  (SampleChannel* ch, bool ctrl, bool shift, int velocity);
+void keyPress  (MidiChannel*   ch, bool ctrl, bool shift);
+void keyRelease(Channel*       ch, bool ctrl, bool shift);
+void keyRelease(SampleChannel* ch, bool ctrl, bool shift);
 
 /* start/stopActionRec
 Handles the action recording. If gui == true the signal comes from an user

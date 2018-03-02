@@ -1,9 +1,7 @@
 #include "../src/utils/fs.h"
 #include "../src/utils/string.h"
+#include "../src/utils/math.h"
 #include <catch.hpp>
-
-
-using std::vector;
 
 
 TEST_CASE("Test filesystem utils")
@@ -36,6 +34,8 @@ TEST_CASE("Test filesystem utils")
 
 TEST_CASE("Test string utils")
 {
+	using std::vector;
+
 	REQUIRE(gu_replace("Giada is cool", "cool", "hot") == "Giada is hot");
 	REQUIRE(gu_trim("   Giada is cool       ") == "Giada is cool");
 	REQUIRE(gu_iToString(666) == "666");
@@ -49,4 +49,14 @@ TEST_CASE("Test string utils")
 	REQUIRE(v.at(0) == "Giada");
 	REQUIRE(v.at(1) == "is");
 	REQUIRE(v.at(2) == "cool");
+}
+
+
+TEST_CASE("Test math utils")
+{
+	using namespace giada::u::math;
+
+	REQUIRE(map( 0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
+	REQUIRE(map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
+	REQUIRE(map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
 }

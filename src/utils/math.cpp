@@ -29,16 +29,22 @@
 #include "math.h"
 
 
-float gu_linearToDB(float f)
+namespace giada {
+namespace u     {
+namespace math 
 {
-  return 20 * std::log10(f);
+float linearToDB(float f)
+{
+	return 20 * std::log10(f);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-float gu_dBtoLinear(float f)
+float dBtoLinear(float f)
 {
-  return std::pow(10, f/20.0f); 
+	return std::pow(10, f/20.0f); 
 }
+
+}}}  // giada::u::math::

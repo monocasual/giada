@@ -35,6 +35,7 @@
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../utils/gui.h"
 #include "../utils/log.h"
+#include "../utils/math.h"
 #include "../core/recorder.h"
 #include "../core/kernelAudio.h"
 #include "../core/mixer.h"
@@ -57,10 +58,106 @@ namespace giada {
 namespace c     {
 namespace io 
 {
-void keyPress(Channel* ch, bool ctrl, bool shift)
+namespace
+{
+void ctrlPress(SampleChannel* ch)
+{
+	c::channel::toggleMute(ch);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void shiftPress(SampleChannel* ch)
+{
+	/* action recording on:
+			if sequencer is running, rec a killchan
+		 action recording off:
+			if chan has recorded events:
+			|	 if seq is playing OR channel 'c' is stopped, de/activate recs
+			|	 else kill chan
+			else kill chan. */
+
+	if (m::recorder::active) {
+		if (!m::clock::isRunning()) 
+			return;
+		ch->kill(0); // on frame 0: user-generated event
+		if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
+				!(ch->mode & LOOP_ANY))
+		{   // don't record killChan actions for LOOP channels
+			m::recorder::rec(ch->index, G_ACTION_KILL, m::clock::getCurrentFrame());
+			ch->hasActions = true;
+		}
+	}
+	else {
+		if (ch->hasActions) {
+			if (m::clock::isRunning() || ch->status == STATUS_OFF)
+				ch->readActions ? c::channel::stopReadingRecs(ch) : c::channel::startReadingRecs(ch);
+			else
+				ch->kill(0);  // on frame 0: user-generated event
+		}
+		else
+			ch->kill(0);    // on frame 0: user-generated event
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void cleanPress(SampleChannel* ch, int velocity)
+{
+	/* Record now if the quantizer is off, otherwise let mixer to handle it when a
+	quantoWait has passed. Moreover, KEYPRESS and KEYREL are meaningless for loop 
+	modes. */
+
+	if (m::clock::getQuantize() == 0 &&
+			m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
+			!(ch->mode & LOOP_ANY))
+	{
+		if (ch->mode == SINGLE_PRESS) {
+			m::recorder::startOverdub(ch->index, G_ACTION_KEYS, m::clock::getCurrentFrame(),
+				m::kernelAudio::getRealBufSize());
+			ch->readActions = false;   // don't read actions while overdubbing
+		}
+		else {
+			m::recorder::rec(ch->index, G_ACTION_KEYPRESS, m::clock::getCurrentFrame());
+			ch->hasActions = true;
+
+			/* Why return here? You record an action and then you call ch->start: 
+			Mixer, which is on another thread, reads your newly recorded action if you 
+			have readActions == true, and then ch->start kicks in right after it.
+			The result: Mixer plays the channel (due to the new action) but ch->start
+			kills it right away (because the sample is playing). Fix: call ch->start
+			only if you are not recording anything, i.e. let Mixer play it. */
+
+			if (ch->readActions)
+				return;
+		}
+	}
+
+	/* This is a user-generated event, so it's on frame 0. For one-shot modes,
+	velocity drives the internal volume. */
+
+	if (ch->mode & SINGLE_ANY && ch->midiInVeloAsVol)
+		ch->setVolumeI(u::math::map((float)velocity, 0.0f, 127.0f, 0.0f, 1.0f));
+
+	ch->start(0, true, m::clock::getQuantize(), m::clock::isRunning(), false, true);
+}
+
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
 {
 	if (ch->type == CHANNEL_SAMPLE)
-		keyPress(static_cast<SampleChannel*>(ch), ctrl, shift);
+		keyPress(static_cast<SampleChannel*>(ch), ctrl, shift, velocity);
 	else
 		keyPress(static_cast<MidiChannel*>(ch), ctrl, shift);
 }
@@ -72,7 +169,7 @@ void keyPress(Channel* ch, bool ctrl, bool shift)
 void keyRelease(Channel* ch, bool ctrl, bool shift)
 {
 	if (ch->type == CHANNEL_SAMPLE)
-		keyRelease((SampleChannel*)ch, ctrl, shift);
+		keyRelease(static_cast<SampleChannel*>(ch), ctrl, shift);
 }
 
 
@@ -94,85 +191,14 @@ void keyPress(MidiChannel* ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void keyPress(SampleChannel* ch, bool ctrl, bool shift)
+void keyPress(SampleChannel* ch, bool ctrl, bool shift, int velocity)
 {
-	/* case CTRL */
-
 	if (ctrl)
-		c::channel::toggleMute(ch);
-
-	/* case SHIFT
-	 *
-	 * action recording on:
-	 * 		if seq is playing, rec a killchan
-	 * action recording off:
-	 * 		if chan has recorded events:
-	 * 		|	 if seq is playing OR channel 'c' is stopped, de/activate recs
-	 * 		|	 else kill chan
-	 *		else kill chan */
-
+		ctrlPress(ch);
+	else if (shift)
+		shiftPress(ch);
 	else
-	if (shift) {
-		if (m::recorder::active) {
-			if (m::clock::isRunning()) {
-				ch->kill(0); // on frame 0: user-generated event
-				if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
-            !(ch->mode & LOOP_ANY))
-        {   // don't record killChan actions for LOOP channels
-					m::recorder::rec(ch->index, G_ACTION_KILL, m::clock::getCurrentFrame());
-          ch->hasActions = true;
-        }
-			}
-		}
-		else {
-			if (ch->hasActions) {
-				if (m::clock::isRunning() || ch->status == STATUS_OFF)
-					ch->readActions ? c::channel::stopReadingRecs(ch) : c::channel::startReadingRecs(ch);
-				else
-					ch->kill(0);  // on frame 0: user-generated event
-			}
-			else
-				ch->kill(0);    // on frame 0: user-generated event
-		}
-	}
-	else {  /* case no modifier */
-
-		/* record now if the quantizer is off, otherwise let mixer to handle it
-		 * when a quantoWait has passed. Moreover, KEYPRESS and KEYREL are
-		 * meaningless for loop modes */
-
-		if (m::clock::getQuantize() == 0 &&
-		    m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording) &&
-	      !(ch->mode & LOOP_ANY))
-		{
-			if (ch->mode == SINGLE_PRESS) {
-				m::recorder::startOverdub(ch->index, G_ACTION_KEYS, m::clock::getCurrentFrame(),
-          m::kernelAudio::getRealBufSize());
-        ch->readActions = false;   // don't read actions while overdubbing
-      }
-			else {
-				m::recorder::rec(ch->index, G_ACTION_KEYPRESS, m::clock::getCurrentFrame());
-        ch->hasActions = true;
-
-        /* Why return here? You record an action (as done on line 148) and then
-				you call ch->start (line 165): Mixer, which is on another thread, reads
-        your newly recorded action if you have readActions == true, and then
-        ch->start kicks in right after it	(as done on	line 165).
-				The result: Mixer plays the channel (due to the new action) but ch->start
-				kills it right away (because the sample is playing). Fix: call ch->start
-				only if you are not recording anything, i.e. let Mixer play it. */
-
-        if (ch->readActions)
-          return;
-			}
-		}
-
-		/* This is a user-generated event, so it's on frame 0 */
-
-		ch->start(0, true, m::clock::getQuantize(), m::clock::isRunning(), false, true);
-	}
-
-	/* the GUI update is done by gui_refresh() */
+		cleanPress(ch, velocity);
 }
 
 
@@ -193,7 +219,7 @@ void keyRelease(SampleChannel* ch, bool ctrl, bool shift)
 
 	if (ch->mode == SINGLE_PRESS && recorder::canRec(ch, clock::isRunning(), mixer::recording))
 		recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
-      &mixer::mutex_recs);
+			&mixer::mutex_recs);
 
 	/* the GUI update is done by gui_refresh() */
 
@@ -286,8 +312,8 @@ int startInputRec(bool gui)
 		return false;
 
 	if (!mh::startInputRec()) {
-	  Fl::lock();
-	  G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
+		Fl::lock();
+		G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
 		Fl::unlock();
 		return false;
 	}
@@ -295,17 +321,17 @@ int startInputRec(bool gui)
 	if (!clock::isRunning())
 		glue_startSeq(false); // update gui anyway
 
-  Fl::lock();
-    if (!gui)
-		  G_MainWin->mainTransport->updateRecInput(1);
-    G_MainWin->mainTimer->setLock(true);
-  Fl::unlock();
+	Fl::lock();
+		if (!gui)
+			G_MainWin->mainTransport->updateRecInput(1);
+		G_MainWin->mainTimer->setLock(true);
+	Fl::unlock();
 
-  /* Update sample name inside sample channels' main button. This is useless for
-  midi channel, but let's do it anyway. */
+	/* Update sample name inside sample channels' main button. This is useless for
+	midi channel, but let's do it anyway. */
 
-  for (Channel* ch : m::mixer::channels)
-    ch->guiChannel->update();
+	for (Channel* ch : m::mixer::channels)
+		ch->guiChannel->update();
 
 	return true;
 }
@@ -322,8 +348,8 @@ int stopInputRec(bool gui)
 
 	/* Start all sample channels in loop mode that were armed, i.e. that were
 	recording stuff and not yet in play. They are also started in force mode, i.e.
-  they must start playing right away at the current frame, not at the next first
-  beat. */
+	they must start playing right away at the current frame, not at the next first
+	beat. */
 
 	for (Channel* ch : mixer::channels) {
 		if (ch->type == CHANNEL_MIDI)
@@ -331,14 +357,14 @@ int stopInputRec(bool gui)
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
 		if (sch->mode & (LOOP_ANY) && sch->status == STATUS_OFF && sch->isArmed())
 			sch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
-        clock::isRunning(), true, true);
+				clock::isRunning(), true, true);
 	}
 
-  Fl::lock();
-    if (!gui)
-		  G_MainWin->mainTransport->updateRecInput(0);
-    G_MainWin->mainTimer->setLock(false);
-  Fl::unlock();
+	Fl::lock();
+		if (!gui)
+			G_MainWin->mainTransport->updateRecInput(0);
+		G_MainWin->mainTimer->setLock(false);
+	Fl::unlock();
 
 	return 1;
 }
