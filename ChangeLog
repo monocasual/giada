@@ -13,11 +13,15 @@
 
 
 0.14.6 ---
+- MIDI velocity drives volume for one-shot sample channels
+- FLAC and Ogg support
 - Ability to use system-provided Catch library (GitHub #151)
 - Update Catch to version 2
 - Fix unreadable tabs title in Configuration Window (GitHub #168)
 - Fix crash on opening About window
 - Fix 'read actions' button behavior during ending and waiting statuses
+- Fix sound card initialization on MacOS
+- Fix UI stuck on top-right corner on Windows
 
 
 0.14.5 --- 2018 . 01 . 15
