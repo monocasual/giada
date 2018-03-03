@@ -21,7 +21,8 @@
 - Fix crash on opening About window
 - Fix 'read actions' button behavior during ending and waiting statuses
 - Fix sound card initialization on MacOS
-- Fix UI stuck on top-right corner on Windows
+- [Windows] Fix UI stuck on top-right corner
+- [Windows] Fix browsing for directories
 
 
 0.14.5 --- 2018 . 01 . 15
