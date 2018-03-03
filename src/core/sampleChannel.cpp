@@ -421,6 +421,10 @@ void SampleChannel::parseAction(recorder::action* a, int localFrame,
 
 void SampleChannel::sum(int frame, bool running)
 {
+	// TODO - Opaque channels' processing
+	// TODO - Opaque channels' processing
+	// TODO - Opaque channels' processing
+	
 	if (wave == nullptr || status & ~(STATUS_PLAY | STATUS_ENDING))
 		return;
 
@@ -866,6 +870,7 @@ void SampleChannel::process(float* outBuffer, float* inBuffer)
 	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
+	// TODO - Opaque channels' processing
   for (int j=0; j<bufferSize; j+=2) {
 		outBuffer[j]   += vChan[j]   * volume * calcPanning(0) * boost;
 		outBuffer[j+1] += vChan[j+1] * volume * calcPanning(1) * boost;
@@ -902,6 +907,7 @@ void SampleChannel::preview(float* outBuffer)
 	else
 		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
 
+	// TODO - Opaque channels' processing
 	for (int j=0; j<bufferSize; j+=2) {
 		outBuffer[j]   += vChanPreview[j]   * volume * calcPanning(0) * boost;
 		outBuffer[j+1] += vChanPreview[j+1] * volume * calcPanning(1) * boost;
@@ -1171,7 +1177,7 @@ int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
 		}
 	}
 	else {
-
+		// TODO - Opaque channels count
 		rsmp_data.data_in       = wave->getData()+start;    // source data
 		rsmp_data.input_frames  = (end-start)/2;            // how many readable bytes
 		rsmp_data.data_out      = dest+offset;              // destination (processed data)

@@ -46,18 +46,18 @@ namespace kernelAudio
 {
 namespace
 {
-RtAudio *rtSystem = nullptr;
-bool status = false;
-unsigned numDevs = 0;
-bool inputEnabled = false;
-unsigned realBufsize = 0; 		// reale bufsize from the soundcard
-int api = 0;
+RtAudio* rtSystem     = nullptr;
+bool     status       = false;
+unsigned numDevs      = 0;
+bool     inputEnabled = false;
+unsigned realBufsize  = 0; 		// reale bufsize from the soundcard
+int      api          = 0;
 
 #ifdef __linux__
 
 JackState jackState;
 
-jack_client_t *jackGetHandle()
+jack_client_t* jackGetHandle()
 {
 	return static_cast<jack_client_t*>(rtSystem->rtapi_->__HACK__getJackClient());
 }
