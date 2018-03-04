@@ -34,74 +34,66 @@
 #include <sndfile.h>
 #include <string>
 #include "const.h"
+#include "audioBuffer.h"
 
 
 class Wave
 {
-private:
-
-	float* m_data;
-	int m_size;		    // Wave size in bytes (size in frames: m_size / m_channels)
-	int m_channels;
-	int m_rate;
-	int m_bits;
-	bool m_logical;   // memory only (a take)
-	bool m_edited;    // edited via editor
-	
-	std::string m_path; // E.g. /path/to/my/sample.wav
-
 public:
 
 	Wave();
-	Wave(float* data, int size, int channels, int rate, int bits, const std::string& path);
-	~Wave();
 	Wave(const Wave& other);
 
-	/* setPath
-	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
-	extension, e.g. : /path/to/sample-[id].wav */
-	 
-	void setPath(const std::string& p, int id=-1);
+	float* operator [](int offset) const;
 
+	/* getFrame
+	Works like operator []. See AudioBuffer for reference. */
+	
+	float* getFrame(int f) const;
+	
 	std::string getBasename(bool ext=false) const;
 	std::string getExtension() const;
 	int getRate() const;
 	int getChannels() const;
 	std::string getPath() const;	
 	int getBits() const;
-	float* getData() const;
 	int getSize() const;        // in frames
 	int getDuration() const;
 	bool isLogical() const;
 	bool isEdited() const;
 
+	/* setPath
+	Sets new path 'p'. If 'id' != -1 inserts a numeric id next to the file 
+	extension, e.g. : /path/to/sample-[id].wav */
+
+	void setPath(const std::string& p, int id=-1);
+
 	void setRate(int v);
-	void setChannels(int v);
-	void setData(float* data, int size);
 	void setLogical(bool l);
 	void setEdited(bool e);
+
+	/* moveData
+	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer. */
+
+	void moveData(giada::m::AudioBuffer& b); 
 	
-	/* clear
-	Resets Wave to init state. */
+	/* copyData
+	Copies 'frames' frames from the new 'data' into m_data, starting from frame 
+	'offset'. It takes for granted that the new data contains the same number of 
+	channels than m_channels. */
 
-	void clear();
+	void copyData(float* data, int frames, int offset=0);
 
-	/* free
-	Frees memory, leaving everything else untouched. */
+	bool alloc(int size, int channels, int rate, int bits, const std::string& path);
 
-	void free();
+private:
 
-	/* getFrame
-	Given a frame 'f', returns a pointer to it. This is useful for digging inside
-	a frame, i.e. parsing each channel. How to use it:
-
-		float* frame = w->getFrame(40);
-		for (int i=0; i<w->getChannels(); i++)
-			... frame[i] ...
-	*/
-
-	float* getFrame(int f) const;
-
+	giada::m::AudioBuffer buffer;
+	int m_rate;
+	int m_bits;
+	bool m_logical;     // memory only (a take)
+	bool m_edited;      // edited via editor
+	std::string m_path; // E.g. /path/to/my/sample.wav
 };
 
 #endif

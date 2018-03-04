@@ -195,8 +195,8 @@ int geEnvelopeEditor::handle(int e) {
 						if (points.size() == 0) {
 							addPoint(0, 0, 1.0f, 0, 1);
 							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
-							addPoint(clock::getTotalFrames(), 0, 1.0f, pParent->coverX, 1);
-							recorder::rec(pParent->chan->index, type, clock::getTotalFrames(), 0, 1.0f);
+							addPoint(clock::getFramesInLoop(), 0, 1.0f, pParent->coverX, 1);
+							recorder::rec(pParent->chan->index, type, clock::getFramesInLoop(), 0, 1.0f);
               pParent->chan->hasActions = true;
 						}
 
@@ -256,8 +256,8 @@ int geEnvelopeEditor::handle(int e) {
 
 					if (newFrame < 0)
 						newFrame = 0;
-					else if (newFrame > clock::getTotalFrames())
-						newFrame = clock::getTotalFrames();
+					else if (newFrame > clock::getFramesInLoop())
+						newFrame = clock::getFramesInLoop();
 
 					/* vertical line check */
 

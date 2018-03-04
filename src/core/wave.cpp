@@ -40,35 +40,20 @@ using std::string;
 
 
 Wave::Wave()
-: m_data   (nullptr),
-	m_size   (0),
-	m_logical(0),
-	m_edited (0) {}
+: m_rate   (0),
+  m_bits   (0),
+  m_logical(false),
+  m_edited (false) 
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Wave::Wave(float* data, int size, int channels, int rate, int bits, 
-	const std::string& path)
-: m_data    (data),
-  m_size    (size),
-  m_channels(channels),
-  m_rate    (rate),
-  m_bits    (bits),
-  m_logical (false),
-  m_edited  (false),
-  m_path    (path)
+float* Wave::operator [](int offset) const
 {
-}	
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Wave::~Wave()
-{
-	clear();
+	return buffer[offset];
 }
 
 
@@ -76,40 +61,28 @@ Wave::~Wave()
 
 
 Wave::Wave(const Wave& other)
-: m_data    (nullptr),
-	m_size    (other.m_size),
-	m_channels(other.m_channels),
-  m_rate    (other.m_rate),
-  m_bits    (other.m_bits),	
+:	m_rate    (other.m_rate),
+	m_bits    (other.m_bits),	
 	m_logical (true),   // a cloned wave does not exist on disk
 	m_edited  (false),
 	m_path    (other.m_path)
 {
-	m_data = new float[m_size];
-	memcpy(m_data, other.m_data, m_size * sizeof(float));
+	buffer.alloc(other.getSize(), other.getChannels());
+	buffer.copyData(other.getFrame(0), other.getSize(), other.getChannels());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::clear()
+bool Wave::alloc(int size, int channels, int rate, int bits, const std::string& path)
 {
-	free();
-	m_path = "";
-	m_size = 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Wave::free()
-{
-	if (m_data == nullptr) 
-		return;
-	delete[] m_data;
-	m_data = nullptr;
+	if (!buffer.alloc(size, channels))
+		return false;
+	m_rate = rate;
+	m_bits = bits;
+	m_path = path;
+	return true;
 }
 
 
@@ -126,10 +99,9 @@ string Wave::getBasename(bool ext) const
 
 
 int Wave::getRate() const { return m_rate; }
-int Wave::getChannels() const { return m_channels; }
+int Wave::getChannels() const { return buffer.countChannels(); }
 std::string Wave::getPath() const { return m_path; }
-float* Wave::getData() const { return m_data; }
-int Wave::getSize() const { return m_size / m_channels; }
+int Wave::getSize() const { return buffer.countFrames(); }
 int Wave::getBits() const { return m_bits; }
 bool Wave::isLogical() const { return m_logical; }
 bool Wave::isEdited() const { return m_edited; }
@@ -140,7 +112,7 @@ bool Wave::isEdited() const { return m_edited; }
 
 int Wave::getDuration() const
 {
-	return m_size / m_channels / m_rate;
+	return buffer.countFrames() / m_rate;
 }
 
 
@@ -158,21 +130,16 @@ std::string Wave::getExtension() const
 
 float* Wave::getFrame(int f) const
 {
-	assert(f >= 0);
-	assert(f < getSize());	
-
-	f *= m_channels;    // convert frame to sample
-	return m_data + f;  // i.e. a pointer to m_data[f]
+	return buffer[f];
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setRate(int v) { m_rate = v; }
-void Wave::setChannels(int v) { m_channels = v; }
+void Wave::setRate(int v)     { m_rate = v; }
 void Wave::setLogical(bool l) { m_logical = l; }
-void Wave::setEdited(bool e) { m_edited = e; }
+void Wave::setEdited(bool e)  { m_edited = e; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -184,16 +151,22 @@ void Wave::setPath(const string& p, int id)
 		m_path = p; 
 	else 
 		m_path = gu_stripExt(p) + "-" + gu_iToString(id) + "." + gu_getExt(p);
-
-
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setData(float* d, int size) 
-{ 
-	m_data = d; 
-	m_size = size;
+void Wave::copyData(float* data, int frames, int offset)
+{
+	buffer.copyData(data, frames, offset);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void Wave::moveData(giada::m::AudioBuffer& b)
+{
+	buffer.moveData(b);
 }

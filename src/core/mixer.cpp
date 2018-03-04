@@ -40,6 +40,7 @@
 #include "channel.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
+#include "audioBuffer.h"
 #include "mixer.h"
 
 
@@ -74,29 +75,54 @@ float tick[TICKSIZE] = {
 };
 
 
+AudioBuffer vChanInput;   // virtual channel for recording
+AudioBuffer vChanInToOut; // virtual channel in->out bridge (hear what you're playin)
+
+int  tickTracker, tockTracker = 0;
+bool tickPlay, tockPlay = false; // 1 = play, 0 = stop
+
+/* inputTracker
+Sample position while recording. */
+
+int inputTracker = 0;
+
+
+/* -------------------------------------------------------------------------- */
+
+/* computePeak */
+
+void computePeak(const AudioBuffer& buf, float& peak, unsigned frame)
+{
+	for (int i=0; i<buf.countChannels(); i++)
+		if (buf[frame][i] > peak)
+			peak = buf[frame][i];
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
 /* lineInRec
 Records from line in. */
 
-void lineInRec(float* inBuf, unsigned frame)
+void lineInRec(const AudioBuffer& inBuf, unsigned frame)
 {
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
 		return;
 
-	/* Delay comp: wait until waitRec reaches delayComp. WaitRec
-	 * returns to 0 in mixerHandler, as soon as the recording ends */
+	/* Delay comp: wait until waitRec reaches delayComp. WaitRec returns to 0 in 
+	mixerHandler, as soon as the recording ends. */
 
 	if (waitRec < conf::delayComp) {
-		waitRec += 2;
+		waitRec++;
 		return;
 	}
 
-	vChanInput[inputTracker]   += inBuf[frame]   * inVol;
-	vChanInput[inputTracker+1] += inBuf[frame+1] * inVol;
-	inputTracker += 2;
-	if (inputTracker >= clock::getTotalFrames())
+	for (int i=0; i<vChanInput.countChannels(); i++)
+		vChanInput[inputTracker][i] += inBuf[frame][i] * inVol;  // adding: overdub!
+
+	inputTracker++;
+	if (inputTracker >= clock::getFramesInLoop())
 		inputTracker = 0;
 }
 
@@ -106,23 +132,19 @@ void lineInRec(float* inBuf, unsigned frame)
 /* ProcessLineIn
 Computes line in peaks, plus handles "hear what you're playin'" thing. */
 
-void processLineIn(float* inBuf, unsigned frame)
+void processLineIn(const AudioBuffer& inBuf, unsigned frame)
 {
 	if (!kernelAudio::isInputEnabled())
 		return;
 
-	/* input peak calculation (left chan only so far). */
+	computePeak(inBuf, peakIn, frame);
 
-	if (inBuf[frame] * inVol > peakIn)
-		peakIn = inBuf[frame] * inVol;
+	/* "hear what you're playing" - process, copy and paste the input buffer onto 
+	the output buffer. */
 
-	/* "hear what you're playing" - process, copy and paste the input buffer
-	 * onto the output buffer */
-
-	if (inToOut) {
-		vChanInToOut[frame]   = inBuf[frame]   * inVol;
-		vChanInToOut[frame+1] = inBuf[frame+1] * inVol;
-	}
+	if (inToOut)
+		for (int i=0; i<vChanInToOut.countChannels(); i++)
+			vChanInToOut[frame][i] = inBuf[frame][i] * inVol;
 }
 
 
@@ -131,10 +153,10 @@ void processLineIn(float* inBuf, unsigned frame)
 /* clearAllBuffers
 Cleans up every buffer, both in Mixer and in channels. */
 
-void clearAllBuffers(float* outBuf, unsigned bufferSize)
+void clearAllBuffers(AudioBuffer& outBuf)
 {
-	memset(outBuf, 0, sizeof(float) * bufferSize);         // out
-	memset(vChanInToOut, 0, sizeof(float) * bufferSize);   // inToOut vChan
+	outBuf.clear();
+	vChanInToOut.clear();
 
 	pthread_mutex_lock(&mutex_chans);
 	for (Channel* channel : channels)
@@ -152,15 +174,14 @@ void readActions(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_recs);
 	for (unsigned i=0; i<recorder::frames.size(); i++) {
-		if (recorder::frames.at(i) == clock::getCurrentFrame()) {
-			for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
-				int index   = recorder::global.at(i).at(j)->chan;
-				Channel *ch = mh::getChannelByIndex(index);
-				ch->parseAction(recorder::global.at(i).at(j), frame,
-					clock::getCurrentFrame(), clock::getQuantize(), clock::isRunning());
-			}
-			break;
+		if (recorder::frames.at(i) != clock::getCurrentFrame())
+			continue;
+		for (recorder::action* action : recorder::global.at(i)) {
+			Channel* ch = mh::getChannelByIndex(action->chan);
+			ch->parseAction(action, frame, clock::getCurrentFrame(), 
+				clock::getQuantize(), clock::isRunning());
 		}
+		break;
 	}
 	pthread_mutex_unlock(&mutex_recs);
 }
@@ -177,13 +198,15 @@ void doQuantize(unsigned frame)
 
 	if (clock::getQuantize() == 0 || !clock::quantoHasPassed())
 		return;
+
 	if (rewindWait) {
 		rewindWait = false;
 		rewind();
 	}
+
 	pthread_mutex_lock(&mutex_chans);
 	for (unsigned i=0; i<channels.size(); i++)
-		channels.at(i)->quantize(i, frame);
+		channels.at(i)->quantize(i, frame, clock::getCurrentFrame());
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -197,10 +220,9 @@ This is required for CHANNEL_SAMPLE only */
 void sumChannels(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size(); k++) {
-		if (channels.at(k)->type == CHANNEL_SAMPLE)
-			static_cast<SampleChannel*>(channels.at(k))->sum(frame, clock::isRunning());
-	}
+	for (Channel* ch : channels)
+		if (ch->type == CHANNEL_SAMPLE)
+			static_cast<SampleChannel*>(ch)->sum(frame, clock::isRunning());
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -210,11 +232,11 @@ void sumChannels(unsigned frame)
 /* renderMetronome
 Generates metronome when needed and pastes it to the output buffer. */
 
-void renderMetronome(float* outBuf, unsigned frame)
+void renderMetronome(AudioBuffer& outBuf, unsigned frame)
 {
 	if (tockPlay) {
-		outBuf[frame]   += tock[tockTracker];
-		outBuf[frame+1] += tock[tockTracker];
+		for (int i=0; i<outBuf.countChannels(); i++)
+			outBuf[frame][i] += tock[tockTracker];
 		tockTracker++;
 		if (tockTracker >= TICKSIZE-1) {
 			tockPlay    = false;
@@ -222,8 +244,8 @@ void renderMetronome(float* outBuf, unsigned frame)
 		}
 	}
 	if (tickPlay) {
-		outBuf[frame]   += tick[tickTracker];
-		outBuf[frame+1] += tick[tickTracker];
+		for (int i=0; i<outBuf.countChannels(); i++)
+			outBuf[frame][i] += tick[tickTracker];
 		tickTracker++;
 		if (tickTracker >= TICKSIZE-1) {
 			tickPlay    = false;
@@ -239,7 +261,7 @@ void renderMetronome(float* outBuf, unsigned frame)
 Final processing stage. Take each channel and process it (i.e. copy its
 content to the output buffer). Process plugins too, if any. */
 
-void renderIO(float* outBuf, float* inBuf)
+void renderIO(AudioBuffer& outBuf, const AudioBuffer& inBuf)
 {
 	pthread_mutex_lock(&mutex_chans);
 	for (Channel* channel : channels) {
@@ -262,31 +284,13 @@ void renderIO(float* outBuf, float* inBuf)
 /* limitOutput
 Applies a very dumb hard limiter. */
 
-void limitOutput(float* outBuf, unsigned frame)
+void limitOutput(AudioBuffer& outBuf, unsigned frame)
 {
-	if (outBuf[frame] > 1.0f)
-		outBuf[frame] = 1.0f;
-	else
-	if (outBuf[frame] < -1.0f)
-		outBuf[frame] = -1.0f;
-
-	if (outBuf[frame+1] > 1.0f)
-		outBuf[frame+1] = 1.0f;
-	else
-	if (outBuf[frame+1] < -1.0f)
-		outBuf[frame+1] = -1.0f;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-/* computePeak */
-
-void computePeak(float* outBuf, unsigned frame)
-{
-	/* TODO it takes into account only left channel so far! */
-	if (outBuf[frame] > peakOut)
-		peakOut = outBuf[frame];
+	for (int i=0; i<outBuf.countChannels(); i++)
+		if      (outBuf[frame][i] > 1.0f)
+			outBuf[frame][i] = 1.0f;
+		else if (outBuf[frame][i] < -1.0f)	
+			outBuf[frame][i] = -1.0f;	
 }
 
 
@@ -296,16 +300,15 @@ void computePeak(float* outBuf, unsigned frame)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume. */
 
-void finalizeOutput(float* outBuf, unsigned frame)
+void finalizeOutput(AudioBuffer& outBuf, unsigned frame)
 {
-	/* merge vChanInToOut, if enabled */
+	/* Merge vChanInToOut, if enabled. */
 
-	if (inToOut) {
-		outBuf[frame]   += vChanInToOut[frame];
-		outBuf[frame+1] += vChanInToOut[frame+1];
-	}
-	outBuf[frame]   *= outVol;
-	outBuf[frame+1] *= outVol;
+	if (inToOut)
+		outBuf.copyFrame(frame, vChanInToOut[frame]); 
+
+	for (int i=0; i<outBuf.countChannels(); i++)
+		outBuf[frame][i] *= outVol; 
 }
 
 
@@ -324,8 +327,8 @@ void testBar(unsigned frame)
 		tickPlay = true;
 
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->onBar(frame);
+	for (Channel* ch : channels)
+		ch->onBar(frame);
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -338,8 +341,8 @@ void testFirstBeat(unsigned frame)
 	if (!clock::isOnFirstBeat())
 		return;
 	pthread_mutex_lock(&mutex_chans);
-	for (unsigned k=0; k<channels.size(); k++)
-		channels.at(k)->onZero(frame, conf::recsStopOnChanHalt);
+	for (Channel* ch : channels)
+		ch->onZero(frame, conf::recsStopOnChanHalt);
 	pthread_mutex_unlock(&mutex_chans);
 }
 
@@ -364,32 +367,17 @@ void testLastBeat()
 
 std::vector<Channel*> channels;
 
-bool   recording    = false;   // is recording something?
+bool   recording    = false;
 bool   ready        = true;
-float *vChanInput   = nullptr; // virtual channel for recording
-float *vChanInToOut = nullptr; // virtual channel in->out bridge (hear what you're playin)
 float  outVol       = G_DEFAULT_OUT_VOL;
 float  inVol        = G_DEFAULT_IN_VOL;
 float  peakOut      = 0.0f;
 float  peakIn       = 0.0f;
 bool	 metronome    = false;
-int    waitRec      = 0;       // delayComp guard
-bool   docross      = false;	 // crossfade guard
-bool   rewindWait   = false;	 // rewind guard, if quantized
-
-int  tickTracker, tockTracker = 0;
-bool tickPlay, tockPlay = false; // 1 = play, 0 = stop
-
-/* inputTracker
- * position of the sample in the input side (recording) */
-
-int inputTracker = 0;
-
-/* inToOut
- * copy, process and paste the input into the output, in order to
- * obtain a "hear what you're playing" feature. */
-
-bool inToOut = false;
+int    waitRec      = 0;
+bool   docross      = false;
+bool   rewindWait   = false;
+bool   inToOut      = false;
 
 pthread_mutex_t mutex_recs;
 pthread_mutex_t mutex_chans;
@@ -399,17 +387,13 @@ pthread_mutex_t mutex_plugins;
 /* -------------------------------------------------------------------------- */
 
 
-void init(int framesInSeq, int audioBufferSize)
+void init(int framesInSeq, int framesInBuffer)
 {
 	/* Allocate virtual input channels. vChanInput has variable size: it depends
 	on how many frames there are in sequencer. */
-
 	allocVirtualInput(framesInSeq);
 
-	if (vChanInToOut != nullptr)
-		delete[] vChanInToOut;
-	vChanInToOut = new (std::nothrow) float[audioBufferSize * 2];
-	if (!vChanInToOut) {
+	if (!vChanInToOut.alloc(framesInBuffer, G_MAX_IO_CHANS)) {
 		gu_log("[Mixer::init] vChanInToOut alloc error!\n");	
 		return;
 	}
@@ -427,10 +411,7 @@ void init(int framesInSeq, int audioBufferSize)
 
 void allocVirtualInput(int frames)
 {
-	if (vChanInput != nullptr)
-		delete[] vChanInput;
-	vChanInput = new (std::nothrow) float[frames];
-	if (!vChanInput)
+	if (!vChanInput.alloc(frames, G_MAX_IO_CHANS))
 		gu_log("[Mixer::allocVirtualInput] vChanInput realloc error!\n");	
 	gu_log("[Mixer::allocVirtualInput] vChanInput ready, %d frames\n", frames);	
 }
@@ -439,7 +420,7 @@ void allocVirtualInput(int frames)
 /* -------------------------------------------------------------------------- */
 
 
-int masterPlay(void* _outBuf, void* _inBuf, unsigned bufferSize,
+int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, 
 	double streamTime, RtAudioStreamStatus status, void* userData)
 {
 	if (!ready)
@@ -449,18 +430,20 @@ int masterPlay(void* _outBuf, void* _inBuf, unsigned bufferSize,
 	clock::recvJackSync();
 #endif
 
-	float* outBuf = (float*) _outBuf;
-	float* inBuf  = kernelAudio::isInputEnabled() ? (float*) _inBuf : nullptr;
-	bufferSize   *= 2;     // stereo
-	peakOut       = 0.0f;  // reset peak calculator
-	peakIn        = 0.0f;  // reset peak calculator
+	AudioBuffer out, in;
+	out.setData((float*) outBuf, bufferSize, G_MAX_IO_CHANS);
+	if (kernelAudio::isInputEnabled())
+		in.setData((float*) inBuf, bufferSize, G_MAX_IO_CHANS);
 
-	clearAllBuffers(outBuf, bufferSize);
+	peakOut = 0.0f;  // reset peak calculator
+	peakIn  = 0.0f;  // reset peak calculator
 
-	for (unsigned j=0; j<bufferSize; j+=2) {
-		processLineIn(inBuf, j);
+	clearAllBuffers(out);
+
+	for (unsigned j=0; j<bufferSize; j++) {
+		processLineIn(in, j);
 		if (clock::isRunning()) {
-			lineInRec(inBuf, j);
+			lineInRec(in, j);
 			doQuantize(j);
 			testBar(j);
 			testFirstBeat(j);
@@ -472,17 +455,21 @@ int masterPlay(void* _outBuf, void* _inBuf, unsigned bufferSize,
 		sumChannels(j);
 	}
 
-	renderIO(outBuf, inBuf);
+	renderIO(out, in);
 
-	/* post processing */
-
-	for (unsigned j=0; j<bufferSize; j+=2) {
-		finalizeOutput(outBuf, j);
+	/* Post processing. */
+	for (unsigned j=0; j<bufferSize; j++) {
+		finalizeOutput(out, j); 
 		if (conf::limitOutput)
-			limitOutput(outBuf, j);
-		computePeak(outBuf, j);
-		renderMetronome(outBuf, j);
+			limitOutput(out, j);
+		computePeak(out, peakOut, j); 
+		renderMetronome(out, j);
 	}
+
+	/* Unset data in buffers. If you don't do this, buffers go out of scope and
+	destroy memory allocated by RtAudio ---> havoc. */
+	out.setData(nullptr, 0, 0);
+	in.setData(nullptr, 0, 0);
 
 	return 0;
 }
@@ -496,15 +483,6 @@ int close()
 	clock::stop();
 	while (channels.size() > 0)
 		mh::deleteChannel(channels.at(0));
-
-	if (vChanInput != nullptr) {
-		delete[] vChanInput;
-		vChanInput = nullptr;
-	}
-	if (vChanInToOut != nullptr) {
-		delete[] vChanInToOut;
-		vChanInToOut = nullptr;
-	}
 	return 1;
 }
 
@@ -514,8 +492,8 @@ int close()
 
 bool isSilent()
 {
-	for (unsigned i=0; i<channels.size(); i++)
-		if (channels.at(i)->status == STATUS_PLAY)
+	for (const Channel* ch : channels)
+		if (ch->status == STATUS_PLAY)
 			return false;
 	return true;
 }
@@ -536,18 +514,26 @@ void rewind()
 /* -------------------------------------------------------------------------- */
 
 
+void startInputRec()
+{
+	/* Start inputTracker from the current frame, not the beginning. */
+	recording    = true;
+	inputTracker = clock::getCurrentFrame();
+}
+
+/* -------------------------------------------------------------------------- */
+
+
 void mergeVirtualInput()
 {
-	assert(vChanInput != nullptr);
-
 	for (Channel* ch : channels) {
 		if (ch->type == CHANNEL_MIDI)
 			continue;
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
 		if (sch->isArmed())
-			memcpy(sch->wave->getData(), vChanInput, clock::getTotalFrames() * sizeof(float));
+			sch->wave->copyData(vChanInput[0], vChanInput.countFrames());
 	}
-	memset(vChanInput, 0, clock::getTotalFrames() * sizeof(float)); // clear vchan
+	vChanInput.clear();
 }
 
 

@@ -125,6 +125,8 @@ src/core/midiMapConf.h                 \
 src/core/midiMapConf.cpp               \
 src/core/midiEvent.h                   \
 src/core/midiEvent.cpp                 \
+src/core/audioBuffer.h                 \
+src/core/audioBuffer.cpp               \
 src/core/conf.h                        \
 src/core/conf.cpp                      \
 src/core/kernelAudio.h                 \
@@ -389,6 +391,7 @@ tests/pluginHost.cpp         \
 tests/utils.cpp              \
 tests/recorder.cpp           \
 tests/waveFx.cpp             \
+tests/audioBuffer.cpp        \
 src/core/conf.cpp            \
 src/core/wave.cpp            \
 src/core/waveManager.cpp     \
@@ -398,6 +401,7 @@ src/core/patch.cpp           \
 src/core/plugin.cpp          \
 src/core/storager.cpp        \
 src/core/recorder.cpp        \
+src/core/audioBuffer.cpp     \
 src/utils/fs.cpp             \
 src/utils/string.cpp         \
 src/utils/time.cpp           \

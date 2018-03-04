@@ -133,20 +133,20 @@ void geGridTool::calc()
 	 * put a concentrate of each block (which is totalFrames / zoom) */
 
 	int  j   = 0;
-	int fpgc = floor(clock::getFramesPerBeat() / getValue());  // frames per grid cell
+	int fpgc = floor(clock::getFramesInBeat() / getValue());  // frames per grid cell
 
 	for (int i=1; i<parent->totalWidth; i++) {   // if i=0, step=0 -> useless cycle
 		int step = parent->zoom*i;
-		while (j < step && j < clock::getTotalFrames()) {
+		while (j < step && j < clock::getFramesInLoop()) {
 			if (j % fpgc == 0) {
 				points.push_back(i);
 				frames.push_back(j);
 			}
-			if (j % clock::getFramesPerBeat() == 0)
+			if (j % clock::getFramesInBeat() == 0)
 				beats.push_back(i);
-			if (j % clock::getFramesPerBar() == 0 && i != 1)
+			if (j % clock::getFramesInBar() == 0 && i != 1)
 				bars.push_back(i);
-			if (j == clock::getTotalFrames() - 1)
+			if (j == clock::getFramesInLoop() - 1)
 				parent->coverX = i;
 			j++;
 		}

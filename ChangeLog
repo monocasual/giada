@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.14.6 ---
+0.14.6 --- 2018 . 03 . 15
 - MIDI velocity drives volume for one-shot sample channels
 - FLAC and Ogg support
 - Ability to use system-provided Catch library (GitHub #151)

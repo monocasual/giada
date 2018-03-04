@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <cassert>
 #include "../utils/log.h"
 #include "../utils/fs.h"
 #include "../utils/string.h"
@@ -146,20 +147,20 @@ void close()
 /* -------------------------------------------------------------------------- */
 
 
-void init(int _buffersize, int _samplerate)
+void init(int buffersize_, int samplerate_)
 {
-	gu_log("[pluginHost::init] initialize with buffersize=%d, samplerate=%d\n",
-		_buffersize, _samplerate);
-
 	messageManager = juce::MessageManager::getInstance();
-	audioBuffer.setSize(2, _buffersize);
-	samplerate = _samplerate;
-	buffersize = _buffersize;
+	audioBuffer.setSize(G_MAX_IO_CHANS, buffersize_);
+	samplerate = samplerate_;
+	buffersize = buffersize_;
 	missingPlugins = false;
 	//unknownPluginList.empty();
 	loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
 
 	pthread_mutex_init(&mutex_midi, nullptr);
+
+	gu_log("[pluginHost::init] initialized with buffersize=%d, samplerate=%d\n",
+	buffersize, samplerate);
 }
 
 
@@ -343,12 +344,12 @@ pluginHost::PluginInfo getAvailablePluginInfo(int i)
 {
 	juce::PluginDescription* pd = knownPluginList.getType(i);
 	PluginInfo pi;
-	pi.uid = pd->fileOrIdentifier.toStdString();
-	pi.name = pd->name.toStdString();
-	pi.category = pd->category.toStdString();
+	pi.uid              = pd->fileOrIdentifier.toStdString();
+	pi.name             = pd->name.toStdString();
+	pi.category         = pd->category.toStdString();
 	pi.manufacturerName = pd->manufacturerName.toStdString();
-	pi.format = pd->pluginFormatName.toStdString();
-	pi.isInstrument = pd->isInstrument;
+	pi.format           = pd->pluginFormatName.toStdString();
+	pi.isInstrument     = pd->isInstrument;
 	return pi;
 }
 
@@ -397,7 +398,7 @@ void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void processStack(float* buffer, int stackType, Channel* ch)
+void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 {
 	vector<Plugin*>* pStack = getStack(stackType, ch);
 
@@ -406,6 +407,8 @@ void processStack(float* buffer, int stackType, Channel* ch)
 	if (pStack == nullptr || pStack->size() == 0)
 		return;
 
+	assert(outBuf.countFrames() == audioBuffer.getNumSamples());
+
 	/* MIDI channels must not process the current buffer: give them an empty one. 
 	Sample channels and Master in/out want audio data instead: let's convert the 
 	internal buffer from Giada to Juce. */
@@ -413,10 +416,9 @@ void processStack(float* buffer, int stackType, Channel* ch)
 	if (ch != nullptr && ch->type == CHANNEL_MIDI) 
 		audioBuffer.clear();
 	else
-		for (int i=0; i<buffersize; i++) {
-			audioBuffer.setSample(0, i, buffer[i*2]);
-			audioBuffer.setSample(1, i, buffer[(i*2)+1]);
-		}
+		for (int i=0; i<outBuf.countFrames(); i++)
+			for (int j=0; j<outBuf.countChannels(); j++)
+				audioBuffer.setSample(j, i, outBuf[i][j]);
 
 	/* Hardcore processing. At the end we swap input and output, so that he N-th
 	plugin will process the result of the plugin N-1. Part of this loop must be
@@ -443,12 +445,11 @@ void processStack(float* buffer, int stackType, Channel* ch)
 		set of MIDI events. */
 
 		if (ch != nullptr && plugin->acceptsMidi()) {
-			juce::AudioBuffer<float> tmp(2, buffersize);
+			juce::AudioBuffer<float> tmp(audioBuffer.getNumChannels(), buffersize);
 			plugin->process(tmp, ch->getPluginMidiEvents());
-			for (int i=0; i<buffersize; i++) {
-				audioBuffer.addSample(0, i, tmp.getSample(0, i));
-				audioBuffer.addSample(1, i, tmp.getSample(1, i));
-			}
+			for (int i=0; i<audioBuffer.getNumSamples(); i++)
+				for (int j=0; j<audioBuffer.getNumChannels(); j++)
+					audioBuffer.addSample(j, i, tmp.getSample(j, i));	
 		}
 		else
 			plugin->process(audioBuffer, juce::MidiBuffer()); // Empty MIDI buffer
@@ -462,10 +463,9 @@ void processStack(float* buffer, int stackType, Channel* ch)
 	/* Converting buffer from Juce to Giada. A note for the future: if we 
 	overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
 
-	for (int i=0; i<buffersize; i++) {
-		buffer[i*2]     = audioBuffer.getSample(0, i);
-		buffer[(i*2)+1] = audioBuffer.getSample(1, i);
-	}
+	for (int i=0; i<outBuf.countFrames(); i++)
+		for (int j=0; j<outBuf.countChannels(); j++)	
+			outBuf[i][j] = audioBuffer.getSample(j, i);
 }
 
 

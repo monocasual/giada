@@ -244,8 +244,8 @@ int geMuteEditor::handle(int e) {
 					/* avoid overflow: frame_b must be within the sequencer range. In that
 					 * case shift the ON-OFF block */
 
-					if (frame_b >= clock::getTotalFrames()) {
-						frame_b = clock::getTotalFrames();
+					if (frame_b >= clock::getFramesInLoop()) {
+						frame_b = clock::getFramesInLoop();
 						frame_a = frame_b-2048;
 					}
 

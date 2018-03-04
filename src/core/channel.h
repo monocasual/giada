@@ -35,6 +35,7 @@
 #include "midiMapConf.h"
 #include "midiEvent.h"
 #include "recorder.h"
+#include "audioBuffer.h"
 
 #ifdef WITH_VST
 	#include "../deps/juce-config.h"
@@ -60,6 +61,11 @@ protected:
 	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
 
 	float calcPanning(int ch);
+
+	/* vChan
+	Virtual channel for internal processing. */
+	
+	giada::m::AudioBuffer vChan;
 
 #ifdef WITH_VST
 
@@ -115,13 +121,13 @@ public:
 	Merges vChannels into buffer, plus plugin processing (if any). Warning:
 	inBuffer might be nullptr if no input devices are available for recording. */
 
-	virtual void process(float* outBuffer, float* inBuffer) = 0;
+	virtual void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) = 0;
 
 	/* Preview
 	Makes itself audibile for audio preview, such as Sample Editor or other
 	tools. */
 
-	virtual void preview(float* outBuffer) = 0;
+	virtual void preview(giada::m::AudioBuffer& in) = 0;
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)
@@ -160,10 +166,11 @@ public:
 	virtual void stopBySeq(bool chansStopOnSeqHalt) = 0;
 
 	/* quantize
-	Starts channel according to quantizer. Index = array index of mixer::channels, 
-	used by recorder. LocalFrame = frame within the current buffer.  */
+	Starts channel according to quantizer. Index = array index of mixer::channels 
+	used by recorder, localFrame = frame within the current buffer, 
+	globalFrame = frame within the whole sequencer loop.  */
 
-	virtual void quantize(int index, int localFrame) = 0;
+	virtual void quantize(int index, int localFrame, int globalFrame) = 0;
 
 	/* onZero
 	What to do when frame goes to zero, i.e. sequencer restart. */
@@ -273,7 +280,6 @@ public:
   bool   hasActions;            // has something recorded
   bool   readActions;           // read what's recorded
 	int 	 recStatus;             // status of recordings (waiting, ending, ...)
-	float* vChan;                 // virtual channel
   geChannel* guiChannel;        // pointer to a gChannel object, part of the GUI
 
 	// TODO - midi structs, please

@@ -53,8 +53,6 @@ using namespace giada::m;
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
 	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		rsmp_state       (nullptr),
-		pChan            (nullptr),
-		vChanPreview     (nullptr),
 		frameRewind      (-1),
 		begin            (0),
 		end              (0),
@@ -88,10 +86,6 @@ SampleChannel::~SampleChannel()
 		delete wave;
 	if (rsmp_state != nullptr)
 		src_delete(rsmp_state);
-	if (pChan != nullptr)
-		delete[] pChan;	
-	if (vChanPreview != nullptr)
-		delete[] vChanPreview;
 }
 
 
@@ -103,20 +97,18 @@ bool SampleChannel::allocBuffers()
 	if (!Channel::allocBuffers())
 		return false;
 
-	rsmp_state = src_new(SRC_LINEAR, 2, nullptr);
+	rsmp_state = src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr);
 	if (rsmp_state == nullptr) {
 		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for SRC_STATE!\n");
 		return false;
 	}
 
-	pChan = new (std::nothrow) float[bufferSize];
-	if (pChan == nullptr) {
+	if (!pChan.alloc(bufferSize, G_MAX_IO_CHANS)) {
 		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for pChan!\n");
 		return false;
 	}
 
-	vChanPreview = new (std::nothrow) float[bufferSize];
-	if (vChanPreview == nullptr) {
+	if (!vChanPreview.alloc(bufferSize, G_MAX_IO_CHANS)) {
 		gu_log("[SampleChannel::allocBuffers] unable to alloc memory for vChanPreview!\n");
 		return false;
 	}
@@ -128,10 +120,10 @@ bool SampleChannel::allocBuffers()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel* _src, pthread_mutex_t* pluginMutex)
+void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 {
-	Channel::copy(_src, pluginMutex);
-	const SampleChannel* src = static_cast<const SampleChannel*>(_src);
+	Channel::copy(src_, pluginMutex);
+	const SampleChannel* src = static_cast<const SampleChannel*>(src_);
 	tracker         = src->tracker;
 	begin           = src->begin;
 	end             = src->end;
@@ -158,11 +150,11 @@ void SampleChannel::copy(const Channel* _src, pthread_mutex_t* pluginMutex)
 
 void SampleChannel::clear()
 {
-	/** TODO - these memsets may be done only if status PLAY (if below),
+	/** TODO - these clear() may be done only if status PLAY | ENDING (if below),
 	 * but it would require extra clearPChan calls when samples stop */
 
-	std::memset(vChan, 0, sizeof(float) * bufferSize);
-	std::memset(pChan, 0, sizeof(float) * bufferSize);
+	vChan.clear();
+	pChan.clear();
 
 	if (status & (STATUS_PLAY | STATUS_ENDING)) {
 		tracker = fillChan(vChan, tracker, 0);
@@ -181,8 +173,8 @@ void SampleChannel::calcVolumeEnv(int frame)
 {
 	/* method: check this frame && next frame, then calculate delta */
 
-	recorder::action *a0 = nullptr;
-	recorder::action *a1 = nullptr;
+	recorder::action* a0 = nullptr;
+	recorder::action* a1 = nullptr;
 	int res;
 
 	/* get this action on frame 'frame'. It's unlikely that the action
@@ -203,7 +195,7 @@ void SampleChannel::calcVolumeEnv(int frame)
 		res = recorder::getAction(index, G_ACTION_VOLUME, 0, &a1);
 
 	volume_i = a0->fValue;
-	volume_d = ((a1->fValue - a0->fValue) / ((a1->frame - a0->frame) / 2)) * 1.003f;
+	volume_d = ((a1->fValue - a0->fValue) / (a1->frame - a0->frame)) * 1.003f;
 }
 
 
@@ -212,8 +204,8 @@ void SampleChannel::calcVolumeEnv(int frame)
 
 void SampleChannel::hardStop(int frame)
 {
-	if (frame != 0)        // clear data in range [frame, bufferSize-1]
-		clearChan(vChan, frame);
+	if (frame != 0)        
+		vChan.clear(frame); // clear data in range [frame, [end]]
 	status = STATUS_OFF;
 	sendMidiLplay();
 	reset(frame);
@@ -226,12 +218,12 @@ void SampleChannel::hardStop(int frame)
 void SampleChannel::onBar(int frame)
 {
 	///if (mode == LOOP_REPEAT && status == STATUS_PLAY)
-	///	//setXFade(frame);
-	///	reset(frame);
+	///	//setXFade(frame * 2);
+	///	reset(frame * 2);
 
 	if (mode == LOOP_REPEAT) {
 		if (status == STATUS_PLAY)
-			//setXFade(frame);
+			//setXFade(frame * 2);
 			reset(frame);
 	}
 	else
@@ -250,19 +242,16 @@ void SampleChannel::onBar(int frame)
 
 void SampleChannel::setBegin(int f)
 {
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
-
 	if (f < 0)
 		begin = 0;
 	else
 	if (f > wave->getSize())
-		begin = wave->getSize() * wave->getChannels();
+		begin = wave->getSize();
 	else
 	if (f >= end)
-		begin = end - wave->getChannels();
+		begin = end - 1;
 	else
-		begin = f * wave->getChannels();
+		begin = f;
 
 	tracker = begin;
 	trackerPreview = begin;
@@ -274,41 +263,24 @@ void SampleChannel::setBegin(int f)
 
 void SampleChannel::setEnd(int f)
 {
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
-	
 	if (f < 0)
 		end = begin + wave->getChannels();
 	else
 	if (f >= wave->getSize())
-		end = (wave->getSize() - 1) * wave->getChannels();
+		end = wave->getSize() - 1;
 	else
-	if (f * wave->getChannels() <= begin)
-		end = begin + wave->getChannels();
+	if (f <= begin)
+		end = begin + 1;
 	else
-		end = f * wave->getChannels();
+		end = f;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::getBegin()
-{
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
-	
-	return begin / wave->getChannels();
-}
-
-
-int SampleChannel::getEnd()
-{
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
-
-	return end / wave->getChannels();
-}
+int SampleChannel::getBegin() const { return begin; }
+int SampleChannel::getEnd() const   { return end; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -316,19 +288,13 @@ int SampleChannel::getEnd()
 
 void SampleChannel::setTrackerPreview(int f)
 {
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove * wave->getChannels() stuff. */
-	
-	trackerPreview = f * wave->getChannels();
+	trackerPreview = f;
 }
 
 
 int SampleChannel::getTrackerPreview() const
 {
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
-
-	return trackerPreview / wave->getChannels();
+	return trackerPreview;
 }
 
 
@@ -361,10 +327,7 @@ void SampleChannel::setPitch(float v)
 }
 
 
-float SampleChannel::getPitch()
-{
-	return pitch;
-}
+float SampleChannel::getPitch() const { return pitch; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -421,10 +384,6 @@ void SampleChannel::parseAction(recorder::action* a, int localFrame,
 
 void SampleChannel::sum(int frame, bool running)
 {
-	// TODO - Opaque channels' processing
-	// TODO - Opaque channels' processing
-	// TODO - Opaque channels' processing
-	
 	if (wave == nullptr || status & ~(STATUS_PLAY | STATUS_ENDING))
 		return;
 
@@ -448,14 +407,14 @@ void SampleChannel::sum(int frame, bool running)
 		 * volume envelope. */
 
 		if (mute || mute_i) {
-			vChan[frame]   = 0.0f;
-			vChan[frame+1] = 0.0f;
+			for (int i=0; i<vChan.countChannels(); i++)
+				vChan[frame][i] = 0.0f;
 		}
 		else
 		if (fadeinOn) {
 			if (fadeinVol < 1.0f) {
-				vChan[frame]   *= fadeinVol * volume_i;
-				vChan[frame+1] *= fadeinVol * volume_i;
+				for (int i=0; i<vChan.countChannels(); i++)
+					vChan[frame][i] *= fadeinVol * volume_i;
 				fadeinVol += 0.01f;
 			}
 			else {
@@ -467,14 +426,12 @@ void SampleChannel::sum(int frame, bool running)
 		if (fadeoutOn) {
 			if (fadeoutVol > 0.0f) { // fadeout ongoing
 				if (fadeoutType == XFADE) {
-					vChan[frame]   *= volume_i;
-					vChan[frame+1] *= volume_i;
-					vChan[frame]    = pChan[frame]   * fadeoutVol * volume_i;
-					vChan[frame+1]  = pChan[frame+1] * fadeoutVol * volume_i;
+					for (int i=0; i<vChan.countChannels(); i++)
+						vChan[frame][i] = pChan[frame][i] * fadeoutVol * volume_i;
 				}
 				else {
-					vChan[frame]   *= fadeoutVol * volume_i;
-					vChan[frame+1] *= fadeoutVol * volume_i;
+					for (int i=0; i<vChan.countChannels(); i++)
+						vChan[frame][i] *= fadeoutVol * volume_i;
 				}
 				fadeoutVol -= fadeoutStep;
 			}
@@ -499,8 +456,8 @@ void SampleChannel::sum(int frame, bool running)
 			}
 		}
 		else {
-			vChan[frame]   *= volume_i;
-			vChan[frame+1] *= volume_i;
+			for (int i=0; i<vChan.countChannels(); i++)
+				vChan[frame][i] *= volume_i;
 		}
 	}
 	else { // at this point the sample has reached the end */
@@ -525,8 +482,8 @@ void SampleChannel::sum(int frame, bool running)
 				status = STATUS_WAIT;
 		}
 
-		/* check for end of samples. SINGLE_ENDLESS runs forever unless
-		 * it's in ENDING mode. */
+		/* Check for end of samples. SINGLE_ENDLESS runs forever unless it's in 
+		ENDING mode. */
 
 		reset(frame);
 	}
@@ -549,9 +506,9 @@ void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 		if (status == STATUS_PLAY) {
 			/*
 			if (mute || mute_i)
-				reset(frame);
+				reset(frame * 2);
 			else
-				setXFade(frame);
+				setXFade(frame * 2);
 			*/
 			reset(frame);
 		}
@@ -581,7 +538,7 @@ void SampleChannel::onZero(int frame, bool recsStopOnChanHalt)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::quantize(int index, int localFrame)
+void SampleChannel::quantize(int index, int localFrame, int globalFrame)
 {
 	/* skip if LOOP_ANY or not in quantizer-wait mode */
 
@@ -598,7 +555,7 @@ void SampleChannel::quantize(int index, int localFrame)
 		tracker = fillChan(vChan, tracker, localFrame); /// FIXME: ???
 	}
 	else
-		//setXFade(localFrame);
+		//setXFade(localFrame * 2);
 		reset(localFrame);
 
 	/* this is the moment in which we record the keypress, if the
@@ -606,12 +563,12 @@ void SampleChannel::quantize(int index, int localFrame)
 
 	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
 		if (mode == SINGLE_PRESS) {
-			recorder::startOverdub(index, G_ACTION_KEYS, clock::getCurrentFrame(),
-        kernelAudio::getRealBufSize());
+			recorder::startOverdub(index, G_ACTION_KEYS, globalFrame, 
+				kernelAudio::getRealBufSize());
       readActions = false;   // don't read actions while overdubbing
     }
 		else
-			recorder::rec(index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
+			recorder::rec(index, G_ACTION_KEYPRESS, globalFrame);
     hasActions = true;
 	}
 }
@@ -622,11 +579,8 @@ void SampleChannel::quantize(int index, int localFrame)
 
 int SampleChannel::getPosition()
 {
-	/* TODO - Opaque channel's count - everything in SampleChannel should be
-	frame-based, not sample-based. I.e. Remove / wave->getChannels() stuff. */
-
 	if (status & ~(STATUS_EMPTY | STATUS_MISSING | STATUS_OFF)) // if is not (...)
-		return (tracker - begin) / wave->getChannels();
+		return tracker - begin;
 	else
 		return -1;
 }
@@ -729,8 +683,8 @@ float SampleChannel::getBoost() const
 
 void SampleChannel::calcFadeoutStep()
 {
-	if (end - tracker < (1 / G_DEFAULT_FADEOUT_STEP) * 2)
-		fadeoutStep = ceil((end - tracker) / volume) * 2; /// or volume_i ???
+	if (end - tracker < (1 / G_DEFAULT_FADEOUT_STEP))
+		fadeoutStep = ceil((end - tracker) / volume); /// or volume_i ???
 	else
 		fadeoutStep = G_DEFAULT_FADEOUT_STEP;
 }
@@ -799,13 +753,6 @@ void SampleChannel::setXFade(int frame)
 
 /* -------------------------------------------------------------------------- */
 
-/* On reset, if frame > 0 and in play, fill again pChan to create something like 
-this:
-
-	|abcdefabcdefab*abcdefabcde|
-	[old data-----]*[new data--]
-
-*/
 
 void SampleChannel::reset(int frame)
 {
@@ -813,6 +760,13 @@ void SampleChannel::reset(int frame)
 	tracker = begin;
 	mute_i  = false;
 	qWait   = false;  // Was in qWait mode? Reset occured, no more qWait now.
+
+	/* On reset, if frame > 0 and in play, fill again pChan to create something 
+	like this:
+
+		|abcdefabcdefab*abcdefabcde|
+		[old data-----]*[new data--] */
+
 	if (frame > 0 && status & (STATUS_PLAY | STATUS_ENDING))
 		tracker = fillChan(vChan, tracker, frame);
 }
@@ -847,7 +801,7 @@ void SampleChannel::pushWave(Wave* w)
 	wave   = w;
 	status = STATUS_OFF;
 	begin  = 0;
-	end    = (wave->getSize() - 1) * wave->getChannels(); // TODO - Opaque channels' count
+	end    = wave->getSize() - 1;
 	name   = wave->getBasename();
 }
 
@@ -855,38 +809,40 @@ void SampleChannel::pushWave(Wave* w)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(float* outBuffer, float* inBuffer)
+void SampleChannel::process(AudioBuffer& out, const AudioBuffer& in)
 {
+	assert(out.countSamples() == vChan.countSamples());
+	assert(in.countSamples()  == vChan.countSamples());
+
 	/* If armed and inbuffer is not nullptr (i.e. input device available) and
   input monitor is on, copy input buffer to vChan: this enables the input
   monitoring. The vChan will be overwritten later by pluginHost::processStack,
   so that you would record "clean" audio (i.e. not plugin-processed). */
 
-	if (armed && inBuffer && inputMonitor)
-    for (int i=0; i<bufferSize; i++)
-      vChan[i] += inBuffer[i]; // add, don't overwrite (no raw memcpy)
+	if (armed && in.isAllocd() && inputMonitor)
+		for (int i=0; i<vChan.countFrames(); i++)
+			for (int j=0; j<vChan.countChannels(); j++)
+				vChan[i][j] += in[i][j];   // add, don't overwrite
 
 #ifdef WITH_VST
 	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
-	// TODO - Opaque channels' processing
-  for (int j=0; j<bufferSize; j+=2) {
-		outBuffer[j]   += vChan[j]   * volume * calcPanning(0) * boost;
-		outBuffer[j+1] += vChan[j+1] * volume * calcPanning(1) * boost;
-	}
+		for (int i=0; i<out.countFrames(); i++)
+			for (int j=0; j<out.countChannels(); j++)
+				out[i][j] += vChan[i][j] * volume * calcPanning(j) * boost;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::preview(float* outBuffer)
+void SampleChannel::preview(AudioBuffer& out)
 {
 	if (previewMode == G_PREVIEW_NONE)
 		return;
 
-	std::memset(vChanPreview, 0, sizeof(float) * bufferSize);
+	vChanPreview.clear();
 
 	/* If the tracker exceedes the end point and preview is looped, split the 
 	rendering as in SampleChannel::reset(). */
@@ -907,11 +863,9 @@ void SampleChannel::preview(float* outBuffer)
 	else
 		trackerPreview = fillChan(vChanPreview, trackerPreview, 0, false);
 
-	// TODO - Opaque channels' processing
-	for (int j=0; j<bufferSize; j+=2) {
-		outBuffer[j]   += vChanPreview[j]   * volume * calcPanning(0) * boost;
-		outBuffer[j+1] += vChanPreview[j+1] * volume * calcPanning(1) * boost;
-	}
+	for (int i=0; i<out.countFrames(); i++)
+		for (int j=0; j<out.countChannels(); j++)
+			out[i][j] += vChanPreview[i][j] * volume * calcPanning(j) * boost;
 }
 
 
@@ -1114,7 +1068,7 @@ int SampleChannel::writePatch(int i, bool isProject)
 	// TODO - this code belongs to an upper level (glue)
 
 	int pchIndex = Channel::writePatch(i, isProject);
-	patch::channel_t *pch = &patch::channels.at(pchIndex);
+	patch::channel_t* pch = &patch::channels.at(pchIndex);
 
 	if (wave != nullptr) {
 		pch->samplePath = wave->getPath();
@@ -1141,59 +1095,48 @@ int SampleChannel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::clearChan(float *dest, int start)
-{
-	memset(dest+start, 0, sizeof(float)*(bufferSize-start));
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::fillChan(float *dest, int start, int offset, bool rewind)
+int SampleChannel::fillChan(AudioBuffer& dest, int start, int offset, bool rewind)
 {
 	int position;  // return value: the new position
 
 	if (pitch == 1.0f) {
 
-		/* case 1: 'dest' lies within the original sample boundaries (start-
-		 * end) */
+		/* Fill 'dest' buffer with a chunk of data of size 'buffersize - offset'. 
+		Case 1: there is enough data in Wave. Case2: not enough data or Wave is 
+		smaller than the buffer. */
 
-		if (start+bufferSize-offset <= end) {
-			memcpy(dest+offset, wave->getData()+start, (bufferSize-offset)*sizeof(float));
-			position = start+bufferSize-offset;
+		int chunkSize = bufferSize - offset;
+
+		if (start + chunkSize <= end) {
+			position = start + chunkSize;
 			if (rewind)
 				frameRewind = -1;
 		}
-
-		/* case2: 'dest' lies outside the end of the sample, OR the sample
-		 * is smaller than 'dest' */
-
 		else {
-			memcpy(dest+offset, wave->getData()+start, (end-start)*sizeof(float));
-			position = end;
+			chunkSize = end - start;
+			position  = end;
 			if (rewind)
-				frameRewind = end-start+offset;
+				frameRewind = chunkSize + offset;
 		}
+		dest.copyData(wave->getFrame(start), chunkSize, offset);
 	}
 	else {
-		// TODO - Opaque channels count
-		rsmp_data.data_in       = wave->getData()+start;    // source data
-		rsmp_data.input_frames  = (end-start)/2;            // how many readable bytes
-		rsmp_data.data_out      = dest+offset;              // destination (processed data)
-		rsmp_data.output_frames = (bufferSize-offset)/2;    // how many bytes to process
+		rsmp_data.data_in       = wave->getFrame(start);    // source data
+		rsmp_data.input_frames  = end - start;              // how many readable bytes
+		rsmp_data.data_out      = dest[offset];             // destination (processed data)
+		rsmp_data.output_frames = bufferSize - offset;      // how many bytes to process
 		rsmp_data.end_of_input  = false;
 
 		src_process(rsmp_state, &rsmp_data);
-		int gen = rsmp_data.output_frames_gen*2;            // frames generated by this call
 
-		position = start + rsmp_data.input_frames_used*2;   // position goes forward of frames_used (i.e. read from wave)
+		position = start + rsmp_data.input_frames_used;     // position goes forward of frames_used (i.e. read from wave)
 
 		if (rewind) {
-			if (gen == bufferSize-offset)
+			int gen = rsmp_data.output_frames_gen;            // frames generated by this call
+			if (gen == bufferSize - offset)
 				frameRewind = -1;
 			else
-				frameRewind = gen+offset;
+				frameRewind = gen + offset;
 		}
 	}
 	return position;

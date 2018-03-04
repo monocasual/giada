@@ -141,7 +141,7 @@ void gePitchTool::__cb_setPitchDouble()
 void gePitchTool::__cb_setPitchToBar()
 {
   // TODO - opaque channel's count
-  c::channel::setPitch(ch, (ch->getEnd()*2) / (float) m::clock::getFramesPerBar());
+  c::channel::setPitch(ch, (ch->getEnd()) / (float) m::clock::getFramesInBar());
 }
 
 
@@ -151,7 +151,7 @@ void gePitchTool::__cb_setPitchToBar()
 void gePitchTool::__cb_setPitchToSong()
 {
   // TODO - opaque channel's count
-  c::channel::setPitch(ch, (ch->getEnd()*2) / (float) m::clock::getTotalFrames());
+  c::channel::setPitch(ch, ch->getEnd() / (float) m::clock::getFramesInLoop());
 }
 
 

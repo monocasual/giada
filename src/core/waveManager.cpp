@@ -89,33 +89,24 @@ int create(const string& path, Wave** out)
 		return G_RES_ERR_IO;
 	}
 
-	if (header.channels > 2) {
+	if (header.channels > G_MAX_IO_CHANS) {
 		gu_log("[waveManager::create] unsupported multi-channel sample\n");
 		return G_RES_ERR_WRONG_DATA;
 	}
 
-	/* Libsndfile's frame structure:
-
-	frame1 = [leftChannel, rightChannel]
-	frame2 = [leftChannel, rightChannel]
-	... */
-
-	int size = header.frames * header.channels;
-	float* data = new (std::nothrow) float[size];
-	if (data == nullptr) {
+	Wave* wave = new Wave();
+	if (!wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path)) {
 		gu_log("[waveManager::create] unable to allocate memory\n");
+		delete wave;
 		return G_RES_ERR_MEMORY;
 	}
 
-	if (sf_read_float(fileIn, data, size) != size)
+	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
 		gu_log("[waveManager::create] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 
-	Wave* wave = new Wave(data, size, header.channels, header.samplerate,
-		getBits(header), path);
-
-	if (header.channels == 1 && !wfx::monoToStereo(wave)) {
+	if (header.channels == 1 && !wfx::monoToStereo(*wave)) {
 		delete wave;
 		return G_RES_ERR_PROCESSING;
 	}
@@ -131,21 +122,22 @@ int create(const string& path, Wave** out)
 /* -------------------------------------------------------------------------- */
 
 
-int createEmpty(int size, int samplerate, const string& name, Wave** out)
+int createEmpty(int frames, int channels, int samplerate, const string& name, 
+	Wave** out)
 {
-	float* data = new (std::nothrow) float[size];
-	if (data == nullptr) {
+	Wave* wave = new Wave();
+	if (!wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, "")) {
 		gu_log("[waveManager::createEmpty] unable to allocate memory\n");
+		delete wave;
 		return G_RES_ERR_MEMORY;
 	}
 
-	Wave* wave = new Wave(data, size, G_DEFAULT_AUDIO_CHANS, samplerate, 
-		G_DEFAULT_BIT_DEPTH, "");
 	wave->setLogical(true);
 
 	*out = wave;
 
-	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", size);
+	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
+		wave->getSize());
 
 	return G_RES_OK;
 }
@@ -156,23 +148,22 @@ int createEmpty(int size, int samplerate, const string& name, Wave** out)
 
 int createFromWave(const Wave* src, int a, int b, Wave** out)
 {
-	int numChans = src->getChannels();
-	int size = (b - a) * numChans;
-	float* data = new (std::nothrow) float[size];
-	if (data == nullptr) {
+	int channels = src->getChannels();
+	int frames   = b - a;
+
+	Wave* wave = new Wave();
+	if (!wave->alloc(frames, channels, src->getRate(), src->getBits(), src->getPath())) {
 		gu_log("[waveManager::createFromWave] unable to allocate memory\n");
+		delete wave;
 		return G_RES_ERR_MEMORY;
 	}
 
-	std::copy(src->getData() + (a*numChans), src->getData() + (b*numChans), data);
-
-	Wave* wave = new Wave(data, size, numChans, src->getRate(),
-		src->getBits(), src->getPath());
+	wave->copyData(src->getFrame(a), frames);
 	wave->setLogical(true);
 
 	*out = wave;
 
-	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", size);
+	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
 
 	return G_RES_OK;
 }
@@ -184,34 +175,30 @@ int createFromWave(const Wave* src, int a, int b, Wave** out)
 int resample(Wave* w, int quality, int samplerate)
 {
 	float ratio = samplerate / (float) w->getRate();
-	int newSizeFrames  = ceil(w->getSize() * ratio);
-	int newSizeSamples = newSizeFrames * w->getChannels();
+	int newSizeFrames = ceil(w->getSize() * ratio);
 
-	float* newData = new (std::nothrow) float[newSizeSamples];
-	if (newData == nullptr) {
+	AudioBuffer newData;
+	if (!newData.alloc(newSizeFrames, w->getChannels())) {
 		gu_log("[waveManager::resample] unable to allocate memory\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	SRC_DATA src_data;
-	src_data.data_in       = w->getData();
+	src_data.data_in       = w->getFrame(0);
 	src_data.input_frames  = w->getSize();
-	src_data.data_out      = newData;
+	src_data.data_out      = newData[0];
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
-	gu_log("[waveManager::resample] resampling: new size=%d (%d frames)\n",
-		newSizeSamples, newSizeFrames);
+	gu_log("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
 
 	int ret = src_simple(&src_data, quality, w->getChannels());
 	if (ret != 0) {
 		gu_log("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
-		delete[] newData;
 		return G_RES_ERR_PROCESSING;
 	}
 
-	w->free();
-	w->setData(newData, newSizeSamples);
+	w->moveData(newData);
 	w->setRate(samplerate);
 
 	return G_RES_OK;
@@ -235,7 +222,7 @@ int save(Wave* w, const string& path)
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_writef_float(file, w->getData(), w->getSize()) != w->getSize())
+	if (sf_writef_float(file, w->getFrame(0), w->getSize()) != w->getSize())
 		gu_log("[waveManager::save] warning: incomplete write!\n");
 
 	sf_close(file);

@@ -75,10 +75,10 @@ void gePianoRoll::build()
 	
 	clear();
 
-	int channel  = pParent->chan->index;
-	int maxFrame = m::clock::getTotalFrames();
+	int channel   = pParent->chan->index;
+	int maxSample = m::clock::getFramesInLoop();
 
-	vector<Composite> actions = c::recorder::getMidiActions(channel, maxFrame); 
+	vector<Composite> actions = c::recorder::getMidiActions(channel, maxSample); 
 	for (Composite composite : actions)
 	{
 		m::MidiEvent e1 = composite.a1.iValue;

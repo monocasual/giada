@@ -4,7 +4,7 @@
 # prereq & init
 
 AC_PREREQ(2.60)
-AC_INIT([giada], [0.14], [giadaloopmachine@gmail.com])
+AC_INIT([giada], [0.15], [giadaloopmachine@gmail.com])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AM_INIT_AUTOMAKE([subdir-objects])
 

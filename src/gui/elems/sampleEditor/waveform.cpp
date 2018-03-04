@@ -621,7 +621,7 @@ void geWaveform::clearSel()
 
 void geWaveform::setZoom(int type)
 {
-	if (!alloc(type == ZOOM_IN ? m_data.size * 2 : m_data.size / 2)) 
+	if (!alloc(type == ZOOM_IN ? m_data.size * G_GUI_ZOOM_FACTOR : m_data.size / G_GUI_ZOOM_FACTOR)) 
 		return;
 
 	size(m_data.size, h());
