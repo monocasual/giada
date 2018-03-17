@@ -26,6 +26,7 @@
 
 
 #include <cmath>
+#include <cassert>
 #include <algorithm>
 #include "../utils/log.h"
 #include "wave.h"
@@ -38,25 +39,23 @@ namespace wfx
 {
 namespace
 {
-void fadeFrame(Wave* w, int i, float val)
+void fadeFrame(Wave& w, int i, float val)
 {
-	float* frame = w->getFrame(i);
-	for (int j=0; j<w->getChannels(); j++)
-		frame[j] *= val;
+	for (int j=0; j<w.getChannels(); j++)
+		w[i][j] *= val;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-float getPeak(Wave* w, int a, int b)
+float getPeak(const Wave& w, int a, int b)
 {
 	float peak = 0.0f;
 	float abs  = 0.0f;
 	for (int i=a; i<b; i++) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<w->getChannels(); j++) // Find highest value in any channel
-			abs = fabs(frame[j]);
+		for (int j=0; j<w.getChannels(); j++) // Find highest value in any channel
+			abs = fabs(w[i][j]);
 		if (abs > peak)
 			peak = abs;
 	}
@@ -70,9 +69,9 @@ float getPeak(Wave* w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-float normalizeSoft(Wave* w)
+float normalizeSoft(const Wave& w)
 {
-	float peak = getPeak(w, 0, w->getSize());
+	float peak = getPeak(w, 0, w.getSize());
 
 	/* peak == 0.0f: don't normalize the silence
 	 * peak > 1.0f: don't reduce the amplitude, just leave it alone */
@@ -87,46 +86,39 @@ float normalizeSoft(Wave* w)
 /* -------------------------------------------------------------------------- */
 
 
-void normalizeHard(Wave* w, int a, int b)
+void normalizeHard(Wave& w, int a, int b)
 {
 	float peak = getPeak(w, a, b);
 	if (peak == 0.0f || peak > 1.0f)  // as in ::normalizeSoft
 		return;
 
 	for (int i=a; i<b; i++) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<w->getChannels(); j++)
-			frame[j] = frame[j] * (1.0f / peak);
+		for (int j=0; j<w.getChannels(); j++)
+			w[i][j] = w[i][j] * (1.0f / peak);
 	}
-	w->setEdited(true);
+	w.setEdited(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int monoToStereo(Wave* w)
+int monoToStereo(Wave& w)
 {
-	if (w->getChannels() >= G_DEFAULT_AUDIO_CHANS)
+	if (w.getChannels() >= G_MAX_IO_CHANS)
 		return G_RES_OK;
 
-	unsigned newSize = w->getSize() * G_DEFAULT_AUDIO_CHANS;
-	
-	float* newData = new (std::nothrow) float[newSize];
-	if (newData == nullptr) {
+	AudioBuffer newData;
+	if (!newData.alloc(w.getSize(), G_MAX_IO_CHANS)) {
 		gu_log("[wfx::monoToStereo] unable to allocate memory!\n");
 		return G_RES_ERR_MEMORY;
 	}
 
-	for (int i=0, k=0; i<w->getSize(); i++, k+=G_DEFAULT_AUDIO_CHANS) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<G_DEFAULT_AUDIO_CHANS; j++)
-			newData[k+j] = frame[j];
-	}
+	for (int i=0; i<newData.countFrames(); i++)
+		for (int j=0; j<newData.countChannels(); j++)
+			newData[i][j] = w[i][0];
 
-	w->free();
-	w->setData(newData, newSize);
-	w->setChannels(G_DEFAULT_AUDIO_CHANS);
+	w.moveData(newData);
 
 	return G_RES_OK;
 }
@@ -135,52 +127,50 @@ int monoToStereo(Wave* w)
 /* -------------------------------------------------------------------------- */
 
 
-void silence(Wave* w, int a, int b)
+void silence(Wave& w, int a, int b)
 {
 	gu_log("[wfx::silence] silencing from %d to %d\n", a, b);
 
 	for (int i=a; i<b; i++) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<w->getChannels(); j++)	
-			frame[j] = 0.0f;
+		for (int j=0; j<w.getChannels(); j++)	
+			w[i][j] = 0.0f;
 	}
 
-	w->setEdited(true);
+	w.setEdited(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int cut(Wave* w, int a, int b)
+int cut(Wave& w, int a, int b)
 {
 	if (a < 0) a = 0;
-	if (b > w->getSize()) b = w->getSize();
+	if (b > w.getSize()) b = w.getSize();
 
 	/* Create a new temp wave and copy there the original one, skipping the a-b 
 	range. */
 
-	unsigned newSize = (w->getSize() - (b - a)) * w->getChannels();
-	float* newData = new (std::nothrow) float[newSize];
-	if (newData == nullptr) {
+	int newSize = w.getSize() - (b - a);
+
+	AudioBuffer newData;
+	if (!newData.alloc(newSize, w.getChannels())) {
 		gu_log("[wfx::cut] unable to allocate memory!\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	gu_log("[wfx::cut] cutting from %d to %d\n", a, b);
 
-	for (int i=0, k=0; i<w->getSize(); i++) {
+	for (int i=0, k=0; i<w.getSize(); i++) {
 		if (i < a || i >= b) {
-			float* frame = w->getFrame(i);
-			for (int j=0; j<w->getChannels(); j++)	
-				newData[k+j] = frame[j];
-			k += w->getChannels();
+			for (int j=0; j<w.getChannels(); j++)	
+				newData[k][j] = w[i][j];
+			k++;
 		}
 	}
 
-	w->free();
-	w->setData(newData, newSize);
-	w->setEdited(true);
+	w.moveData(newData);
+	w.setEdited(true);
 
 	return G_RES_OK;
 }
@@ -189,29 +179,27 @@ int cut(Wave* w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-int trim(Wave* w, int a, int b)
+int trim(Wave& w, int a, int b)
 {
 	if (a < 0) a = 0;
-	if (b > w->getSize()) b = w->getSize();
+	if (b > w.getSize()) b = w.getSize();
 
-	int newSize = (b - a) * w->getChannels();
-	float* newData = new (std::nothrow) float[newSize];
-	if (newData == nullptr) {
+	int newSize = b - a;
+
+	AudioBuffer newData;
+	if (!newData.alloc(newSize, w.getChannels())) {
 		gu_log("[wfx::trim] unable to allocate memory!\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	gu_log("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
-	for (int i=a, k=0; i<b; i++, k+=w->getChannels()) {
-		float* frame = w->getFrame(i);
-		for (int j=0; j<w->getChannels(); j++)
-			newData[k+j] = frame[j];
-	}
+	for (int i=0; i<newData.countFrames(); i++)
+		for (int j=0; j<newData.countChannels(); j++)
+			newData[i][j] = w[i+a][j];
 
-	w->free();
-	w->setData(newData, newSize);
- 	w->setEdited(true);
+	w.moveData(newData);
+ 	w.setEdited(true);
 
 	return G_RES_OK;
 }
@@ -220,39 +208,25 @@ int trim(Wave* w, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-int paste(Wave* src, Wave* des, int aFrame)
+int paste(const Wave& src, Wave& des, int a)
 {
-	int srcNumSamples = src->getSize() * src->getChannels();
-	int desNumSamples = des->getSize() * des->getChannels();
-	int aSample = aFrame * des->getChannels();
+	assert(src.getChannels() == des.getChannels());
 
-	int newSize = srcNumSamples + desNumSamples;
-	float* newData = new (std::nothrow) float[newSize];
-	if (newData == nullptr) {
+	AudioBuffer newData;
+	if (!newData.alloc(src.getSize() + des.getSize(), des.getChannels())) {
 		gu_log("[wfx::paste] unable to allocate memory!\n");
 		return G_RES_ERR_MEMORY;
 	}
 
 	/* |---original data---|///paste data///|---original data---|
-	          chunk 1            chunk 2          chunk 3
-	*/
+	         des[0, a)      src[0, src.size)   des[a, des.size)	*/
 
-	float* chunk1a = des->getData();
-	float* chunk1b = des->getData() + aSample;
+	newData.copyData(des[0], a, 0);
+	newData.copyData(src[0], src.getSize(), a);
+	newData.copyData(des[a], des.getSize() - a, src.getSize() + a);
 
-	float* chunk2a = src->getData();
-	float* chunk2b = src->getData() + srcNumSamples;	
-
-	float* chunk3a = chunk1b;
-	float* chunk3b = des->getData() + desNumSamples;
-
-	std::copy(chunk1a, chunk1b, newData);
-	std::copy(chunk2a, chunk2b, newData + aSample);	
-	std::copy(chunk3a, chunk3b, newData + aSample + srcNumSamples);
-
-	des->free();
-	des->setData(newData, newSize);
- 	des->setEdited(true);
+	des.moveData(newData);
+ 	des.setEdited(true);
 
 	return G_RES_OK;
 }
@@ -261,7 +235,7 @@ int paste(Wave* src, Wave* des, int aFrame)
 /* -------------------------------------------------------------------------- */
 
 
-void fade(Wave* w, int a, int b, int type)
+void fade(Wave& w, int a, int b, int type)
 {
 	gu_log("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
 
@@ -275,14 +249,14 @@ void fade(Wave* w, int a, int b, int type)
 		for (int i=b; i>=a; i--, m+=d)
 			fadeFrame(w, i, m);		
 
-  w->setEdited(true);
+  w.setEdited(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void smooth(Wave* w, int a, int b)
+void smooth(Wave& w, int a, int b)
 {
 	/* Do nothing if fade edges (both of SMOOTH_SIZE samples) are > than selected 
 	portion of wave. SMOOTH_SIZE*2 to count both edges. */
@@ -295,39 +269,39 @@ void smooth(Wave* w, int a, int b)
 	fade(w, a, a+SMOOTH_SIZE, FADE_IN);
 	fade(w, b-SMOOTH_SIZE, b, FADE_OUT);
 
-	w->setEdited(true);
+	w.setEdited(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void shift(Wave* w, int offset)
+void shift(Wave& w, int offset)
 {
 	if (offset < 0)
-		offset = (w->getSize() + w->getChannels()) + offset;
+		offset = (w.getSize() + w.getChannels()) + offset;
 
-	float* begin = w->getData();
-	float* end   = w->getData() + (w->getSize() * w->getChannels());
+	float* begin = w.getFrame(0);
+	float* end   = w.getFrame(0) + (w.getSize() * w.getChannels());
 
-	std::rotate(begin, end - (offset * w->getChannels()), end);
-	w->setEdited(true);
+	std::rotate(begin, end - (offset * w.getChannels()), end);
+	w.setEdited(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void reverse(Wave* w, int a, int b)
+void reverse(Wave& w, int a, int b)
 {
 	/* https://stackoverflow.com/questions/33201528/reversing-an-array-of-structures-in-c */
 
-	float* begin = w->getData() + (a * w->getChannels());
-	float* end   = w->getData() + (b * w->getChannels());
+	float* begin = w.getFrame(0) + (a * w.getChannels());
+	float* end   = w.getFrame(0) + (b * w.getChannels());
 
 	std::reverse(begin, end);
 
-	w->setEdited(true);
+	w.setEdited(true);
 }
 
 }}}; // giada::m::wfx::

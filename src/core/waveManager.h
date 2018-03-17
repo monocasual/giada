@@ -45,10 +45,10 @@ Creates a new Wave object with data read from file 'path'. */
 int create(const std::string& path, Wave** out);
 
 /* createEmpty
-Creates a new silent Wave object. Note: 'size' must take 2 channels into account
-(stereo). */
+Creates a new silent Wave object. */
 
-int createEmpty(int size, int samplerate, const std::string& name, Wave** out);
+int createEmpty(int frames, int channels, int samplerate, const std::string& name, 
+	Wave** out);
 
 /* createFromWave
 Creates a new Wave from an existing one, copying the data in range a - b. */

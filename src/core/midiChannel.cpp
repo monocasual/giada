@@ -60,10 +60,10 @@ MidiChannel::~MidiChannel() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::copy(const Channel *_src, pthread_mutex_t *pluginMutex)
+void MidiChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 {
-	Channel::copy(_src, pluginMutex);
-	MidiChannel *src = (MidiChannel *) _src;
+	Channel::copy(src_, pluginMutex);
+	const MidiChannel* src = static_cast<const MidiChannel*>(src_);
 	midiOut     = src->midiOut;
 	midiOutChan = src->midiOutChan;
 }
@@ -107,17 +107,17 @@ void MidiChannel::empty() {}
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::quantize(int index, int localFrame) {}
+void MidiChannel::quantize(int index, int localFrame, int globalFrame) {}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::parseAction(recorder::action *a, int localFrame,
+void MidiChannel::parseAction(recorder::action* a, int localFrame,
 		int globalFrame, int quantize, bool mixerIsRunning)
 {
 	if (a->type == G_ACTION_MIDI)
-		sendMidi(a, localFrame/2);
+		sendMidi(a, localFrame);
 }
 
 
@@ -166,24 +166,23 @@ void MidiChannel::unsetMute(bool internal)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(float *outBuffer, float *inBuffer)
+void MidiChannel::process(AudioBuffer& out, const AudioBuffer& in)
 {
 #ifdef WITH_VST
 	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
 #endif
 
 	/* TODO - isn't this useful only if WITH_VST ? */
-	for (int j=0; j<bufferSize; j+=2) {
-		outBuffer[j]   += vChan[j]   * volume; // * panLeft;   future?
-		outBuffer[j+1] += vChan[j+1] * volume; // * panRight;  future?
-	}
+	for (int i=0; i<out.countFrames(); i++)
+		for (int j=0; j<out.countChannels(); j++)
+			out[i][j] += vChan[i][j] * volume;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::preview(float *outBuffer)
+void MidiChannel::preview(AudioBuffer& out)
 {
 	// No preview for MIDI channels (for now).
 }
@@ -242,12 +241,12 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string &basePath, int i,
-		pthread_mutex_t *pluginMutex, int samplerate, int rsmpQuality)
+int MidiChannel::readPatch(const string& basePath, int i,
+		pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality)
 {
 	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
 
-	patch::channel_t *pch = &patch::channels.at(i);
+	patch::channel_t* pch = &patch::channels.at(i);
 
 	midiOut     = pch->midiOut;
 	midiOutChan = pch->midiOutChan;
@@ -259,7 +258,7 @@ int MidiChannel::readPatch(const string &basePath, int i,
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::sendMidi(recorder::action *a, int localFrame)
+void MidiChannel::sendMidi(recorder::action* a, int localFrame)
 {
 	if (status & (STATUS_PLAY | STATUS_ENDING) && !mute) {
 		if (midiOut)

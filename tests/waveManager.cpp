@@ -35,13 +35,13 @@ TEST_CASE("Test waveManager")
 
   SECTION("test recording")
   {
-    int res = waveManager::createEmpty(G_BUFFER_SIZE, G_SAMPLE_RATE, 
+    int res = waveManager::createEmpty(G_BUFFER_SIZE, G_MAX_IO_CHANS, G_SAMPLE_RATE, 
       "test.wav", &w);
     std::unique_ptr<Wave> wave(w);
 
     REQUIRE(res == G_RES_OK);
     REQUIRE(wave->getRate() == G_SAMPLE_RATE);
-    REQUIRE(wave->getSize() == G_BUFFER_SIZE / wave->getChannels());
+    REQUIRE(wave->getSize() == G_BUFFER_SIZE);
     REQUIRE(wave->getChannels() == G_CHANNELS);
     REQUIRE(wave->isLogical() == true);
     REQUIRE(wave->isEdited() == false);

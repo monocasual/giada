@@ -138,20 +138,16 @@ int openDevice()
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	if (conf::soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT)
-		outParams.deviceId = getDefaultOut();
-	else
-		outParams.deviceId = conf::soundDeviceOut;
+	outParams.deviceId     = conf::soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? getDefaultOut() : conf::soundDeviceOut;
+	outParams.nChannels    = G_MAX_IO_CHANS;
+	outParams.firstChannel = conf::channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
 
-	outParams.nChannels = 2;
-	outParams.firstChannel = conf::channelsOut * 2; // chan 0=0, 1=2, 2=4, ...
-
-	/* inDevice can be disabled */
+	/* inDevice can be disabled. */
 
 	if (conf::soundDeviceIn != -1) {
 		inParams.deviceId     = conf::soundDeviceIn;
-		inParams.nChannels    = 2;
-		inParams.firstChannel = conf::channelsIn * 2;   // chan 0=0, 1=2, 2=4, ...
+		inParams.nChannels    = G_MAX_IO_CHANS;
+		inParams.firstChannel = conf::channelsIn * G_MAX_IO_CHANS;   // chan 0=0, 1=2, 2=4, ...
 		inputEnabled = true;
 	}
 	else
@@ -420,7 +416,7 @@ int getDefaultOut()
 /* -------------------------------------------------------------------------- */
 
 
-int	getDeviceByName(const char *name)
+int	getDeviceByName(const char* name)
 {
 	for (unsigned i=0; i<numDevs; i++)
 		if (name == getDeviceName(i))

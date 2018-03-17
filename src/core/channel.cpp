@@ -68,7 +68,6 @@ Channel::Channel(int type, int status, int bufferSize)
 	hasActions     (false),
 	readActions    (false),
 	recStatus      (REC_STOPPED),
-	vChan          (nullptr),
 	guiChannel     (nullptr),
 	midiIn         (true),
 	midiInKeyPress (0x0),
@@ -92,8 +91,6 @@ Channel::Channel(int type, int status, int bufferSize)
 Channel::~Channel()
 {
 	status = STATUS_OFF;
-	if (vChan != nullptr)
-		delete[] vChan;
 }
 
 
@@ -102,12 +99,10 @@ Channel::~Channel()
 
 bool Channel::allocBuffers()
 {
-	vChan = new (std::nothrow) float[bufferSize];
-	if (vChan == nullptr) {
+	if (!vChan.alloc(bufferSize, G_MAX_IO_CHANS)) {
 		gu_log("[Channel::allocBuffers] unable to alloc memory for vChan!\n");
 		return false;
 	}
-	std::memset(vChan, 0, bufferSize * sizeof(float));	
 	return true;
 }
 
@@ -115,7 +110,7 @@ bool Channel::allocBuffers()
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
+void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 {
 	key             = src->key;
 	volume          = src->volume;
@@ -153,7 +148,7 @@ void Channel::copy(const Channel *src, pthread_mutex_t *pluginMutex)
 
 	for (unsigned i=0; i<recorder::global.size(); i++) {
 		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-			recorder::action *a = recorder::global.at(i).at(k);
+			recorder::action* a = recorder::global.at(i).at(k);
 			if (a->chan == src->index) {
 				recorder::rec(index, a->type, a->frame, a->iValue, a->fValue);
 				hasActions = true;

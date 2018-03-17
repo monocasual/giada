@@ -74,7 +74,7 @@ unsigned getRealBufSize();
 unsigned countDevices();
 int getTotalFreqs(unsigned dev);
 int getFreq(unsigned dev, int i);
-int getDeviceByName(const char *name);
+int getDeviceByName(const char* name);
 int getDefaultOut();
 int getDefaultIn();
 bool hasAPI(int API);

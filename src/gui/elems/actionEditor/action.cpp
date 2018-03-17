@@ -173,11 +173,6 @@ int geAction::handle(int e)
 
 void geAction::addAction()
 {
-	/* always check frame parity */
-
-	if (frame_a % 2 != 0)
-		frame_a++;
-
 	/* anatomy of an action
 	 * ____[#######]_____ (a) is the left margin, G_ACTION_KEYPRESS. (b) is
 	 *     a       b      the right margin, the G_ACTION_KEYREL. This is the

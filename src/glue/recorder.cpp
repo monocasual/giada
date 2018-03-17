@@ -117,7 +117,7 @@ void recordMidiAction(int chan, int note, int frame_a, int frame_b)
 
 	/* Avoid frame overflow. */
 
-	int overflow = frame_b - m::clock::getTotalFrames();
+	int overflow = frame_b - (m::clock::getFramesInLoop());
 	if (overflow > 0) {
 		frame_b -= overflow;
 		frame_a -= overflow;

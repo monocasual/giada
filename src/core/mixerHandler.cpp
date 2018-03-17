@@ -134,7 +134,7 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 Channel* addChannel(int type)
 {
 	Channel* ch;
-	int bufferSize = kernelAudio::getRealBufSize() * 2;
+	int bufferSize = kernelAudio::getRealBufSize();
 
 	if (type == CHANNEL_SAMPLE)
 		ch = new SampleChannel(bufferSize, conf::inputMonitorDefaultOn);
@@ -289,7 +289,7 @@ void readPatch()
 	very likely). */
 
 	mixer::rewind();
-	mixer::allocVirtualInput(clock::getTotalFrames());
+	mixer::allocVirtualInput(clock::getFramesInLoop());
 	mixer::ready = true;
 }
 
@@ -323,7 +323,7 @@ bool startInputRec()
 		/* Allocate empty sample for the current channel. */
 
 		Wave* wave = nullptr;
-		int result = waveManager::createEmpty(clock::getTotalFrames(), 
+		int result = waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS,
 			conf::samplerate, string("TAKE-" + gu_iToString(patch::lastTakeId)), &wave); 
 		if (result != G_RES_OK) {
 			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
@@ -336,14 +336,14 @@ bool startInputRec()
 		channelsReady++;
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "
-			"frame=%d\n", ch->index, clock::getTotalFrames(), mixer::inputTracker);
+			"on frame=%d\n", ch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
 	}
 
+	/** FIXME: mixer::startInputRec() should be called before wave allocation */
+	/** FIXME: mixer::startInputRec() should be called before wave allocation */
+	/** FIXME: mixer::startInputRec() should be called before wave allocation */
 	if (channelsReady > 0) {
-		mixer::recording = true;
-		/* start to write from the currentFrame, not the beginning */
-		/** FIXME: this should be done before wave allocation */
-		mixer::inputTracker = clock::getCurrentFrame();
+		mixer::startInputRec();
 		return true;
 	}
 	return false;

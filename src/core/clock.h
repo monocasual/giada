@@ -29,11 +29,6 @@
 #define G_CLOCK_H
 
 
-class Conf;
-class KernelMidi;
-class KernelAudio;
-
-
 namespace giada {
 namespace m {
 namespace clock
@@ -57,17 +52,17 @@ void recvJackSync();
 float getBpm();
 int getBeats();
 int getBars();
-int getCurrentFrame();
 int getCurrentBeat();
-int getFramesPerBar();
-int getFramesPerBeat();
-int getTotalFrames();
-int getFramesInSequencer();
+int getCurrentFrame();
+int getFramesInBar();
+int getFramesInBeat();
+int getFramesInLoop();
+int getFramesInSeq();
 int getQuantize();
 int getQuanto();
 
 /* incrCurrentFrame
-Increases current frame of a stereo step (+2). */
+Increases current frame of a single step (+1). */
 
 void incrCurrentFrame();
 

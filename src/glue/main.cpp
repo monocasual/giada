@@ -77,7 +77,7 @@ void glue_setBpm(const char *v1, const char *v2)
 	float oldBpmF = clock::getBpm();
 	clock::setBpm(bpmF);
 	recorder::updateBpm(oldBpmF, bpmF, clock::getQuanto());
-	mixer::allocVirtualInput(clock::getTotalFrames());
+	mixer::allocVirtualInput(clock::getFramesInLoop());
 
 #ifdef __linux__
 	kernelAudio::jackSetBpm(clock::getBpm());
@@ -118,18 +118,18 @@ void glue_setBeats(int beats, int bars, bool expand)
 	/* Temp vars to store old data (they are necessary) */
 
 	int oldBeats = clock::getBeats();
-	unsigned oldTotalFrames = clock::getTotalFrames();
+	unsigned oldTotalFrames = clock::getFramesInLoop();
 
 	clock::setBeats(beats);
 	clock::setBars(bars);
 	clock::updateFrameBars();
-	mixer::allocVirtualInput(clock::getTotalFrames());
+	mixer::allocVirtualInput(clock::getFramesInLoop());
 
 	/* Update recorded actions, if 'expand' required and an expansion is taking
 	place. */
 
 	if (expand && clock::getBeats() > oldBeats)
-		recorder::expand(oldTotalFrames, clock::getTotalFrames());
+		recorder::expand(oldTotalFrames, clock::getFramesInLoop());
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
 	gu_refreshActionEditor();  // in case the action editor is open
@@ -227,7 +227,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	gu_closeAllSubwindows();
 	mixer::close();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mixer::init(clock::getTotalFrames(), kernelAudio::getRealBufSize());
+	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	recorder::init();
 #ifdef WITH_VST
 	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);

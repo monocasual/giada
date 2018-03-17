@@ -47,23 +47,23 @@ private:
 	rewind=false don't rewind internal tracker. Returns new sample position, 
 	in frames. It resamples data if pitch != 1.0f. */
 
-	int fillChan(float* dest, int start, int offset, bool rewind=true);
-
-	/* clearChan
-	 * set data to zero from start to bufferSize-1. */
-
-	void clearChan(float* dest, int start);
+	int fillChan(giada::m::AudioBuffer& dest, int start, int offset, bool rewind=true);
 
 	/* calcFadeoutStep
-	 * how many frames are left before the end of the sample? Is there
-	 * enough room for a complete fadeout? Should we shorten it? */
+	How many frames are left before the end of the sample? Is there enough room 
+	for a complete fadeout? Should we shorten it? */
 
 	void calcFadeoutStep();
 
 	/* calcVolumeEnv
-	 * compute any changes in volume done via envelope tool */
+	Computes any changes in volume done via envelope tool. */
 
 	void calcVolumeEnv(int frame);
+
+	/* reset
+	Rewinds tracker to the beginning of the sample. */
+
+	void reset(int frame);
 
 	/* rsmp_state, rsmp_data
 	 * structs from libsamplerate */
@@ -74,12 +74,12 @@ private:
 	/* pChan
 	Extra virtual channel for processing resampled data. */
 
-	float* pChan;
+	giada::m::AudioBuffer pChan;
 
 	/* pChan
 	Extra virtual channel for audio preview. */
 
-	float* vChanPreview;
+	giada::m::AudioBuffer vChanPreview;
 
 	/* frameRewind
 	Exact frame in which a rewind occurs. */
@@ -105,8 +105,8 @@ public:
 
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void clear() override;
-	void process(float* outBuffer, float* inBuffer) override;
-	void preview(float* outBuffer) override;
+	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) override;
+	void preview(giada::m::AudioBuffer& out) override;
 	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
 		bool forceStart, bool isUserGenerated) override;
 	void kill(int frame) override;
@@ -119,7 +119,7 @@ public:
   int readPatch(const std::string& basePath, int i, pthread_mutex_t* pluginMutex,
     int samplerate, int rsmpQuality) override;
 	int writePatch(int i, bool isProject) override;
-	void quantize(int index, int localFrame) override;
+	void quantize(int index, int localFrame, int globalFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
 	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
@@ -130,10 +130,11 @@ public:
 	int getTrackerPreview() const;
 	int getShift() const;
 	float getBoost() const;	
-
+	int getBegin() const;
+	int getEnd() const;
+	float getPitch() const;
+	
 	void setShift(int s);
-
-	void reset(int frame);
 
 	/* fade methods
 	 * prepare channel for fade, mixer will take care of the process
@@ -160,13 +161,9 @@ public:
 
 	void sum(int frame, bool running);
 
-
 	void setPitch(float v);
-	float getPitch();
 	void setBegin(int f);
-	int getBegin();
 	void setEnd(int f);
-	int getEnd();
 	void setTrackerPreview(int f);
 
 	/* hardStop

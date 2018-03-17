@@ -41,7 +41,7 @@ namespace giada {
 namespace m {
 namespace mixer
 {
-void init(int framesInSeq, int audioBufferSize);
+void init(int framesInSeq, int framesInBuffer);
 
 /* allocVirtualInput
 Allocates new memory for the virtual input channel. Call this whenever you 
@@ -54,8 +54,8 @@ int close();
 /* masterPlay
 Core method (callback) */
 
-int masterPlay(void *outBuf, void *inBuf, unsigned bufferSize, double streamTime,
-  RtAudioStreamStatus status, void *userData);
+int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
+  RtAudioStreamStatus status, void* userData);
 
 /* isSilent
 Is mixer silent? */
@@ -66,6 +66,11 @@ bool isSilent();
 Rewinds sequencer to frame 0. */
 
 void rewind();
+
+/* startInputRec
+Starts input recording on frame clock::getCurrentFrame(). */
+
+void startInputRec();
 
 /* mergeVirtualInput
 Copies the virtual channel input in the channels designed for input recording. 
@@ -88,29 +93,18 @@ extern std::vector<Channel*> channels;
 
 extern bool   recording;         // is recording something?
 extern bool   ready;
-extern float *vChanInput;        // virtual channel for recording
-extern float *vChanInToOut;      // virtual channel in->out bridge (hear what you're playin)
-extern int    frameSize;
 extern float  outVol;
 extern float  inVol;
 extern float  peakOut;
 extern float  peakIn;
-extern bool	 metronome;
+extern bool	  metronome;
 extern int    waitRec;      // delayComp guard
-extern bool  docross;			 // crossfade guard
-extern bool  rewindWait;	   // rewind guard, if quantized
-
-extern int  tickTracker, tockTracker;
-extern bool tickPlay, tockPlay; // 1 = play, 0 = stop
-
-/* inputTracker
- * position of the sample in the input side (recording) */
-
-extern int inputTracker;
+extern bool   docross;			 // crossfade guard
+extern bool   rewindWait;	   // rewind guard, if quantized
 
 /* inToOut
- * copy, process and paste the input into the output, in order to
- * obtain a "hear what you're playing" feature. */
+Copy, process and paste the input into the output, in order to obtain a "hear 
+what you're playing" feature. */
 
 extern bool inToOut;
 

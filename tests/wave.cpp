@@ -58,10 +58,10 @@ TEST_CASE("Test Wave class")
 
 		wave = std::unique_ptr<Wave>(new Wave(data, BUFFER_SIZE, CHANNELS, 
 			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
-		wave->clear();
+		wave->free();
 
-		REQUIRE(wave->getData() == nullptr);
-		REQUIRE(wave->getPath() == "");
+		REQUIRE(wave->getFrame(0) == nullptr);
+		REQUIRE(wave->getPath() == "path/to/sample.wav");  // other data is left untouched
 		REQUIRE(wave->getSize() == 0);
 	}
 }

@@ -46,13 +46,14 @@ float bpm      = G_DEFAULT_BPM;
 int   bars     = G_DEFAULT_BARS;
 int   beats    = G_DEFAULT_BEATS;
 int   quantize = G_DEFAULT_QUANTIZE;
-int   quanto   = 1;           // quantizer step
-int   framesPerBar      = 0;  // frames in one bar
-int   framesPerBeat     = 0;  // frames in one beat
-int   framesInSequencer = 0;  // frames in the whole sequencer
-int   totalFrames  = 0;       // frames in the selected range (e.g. 4/4)
-int   currentFrame = 0;
-int   currentBeat  = 0;
+int   quanto   = 1;            // quantizer step
+
+int framesInLoop = 0;
+int framesInBar  = 0;
+int framesInBeat = 0;
+int framesInSeq  = 0;
+int currentFrame = 0;
+int currentBeat  = 0;
 
 int midiTCrate    = 0;      // send MTC data every midiTCrate frames
 int midiTCframes  = 0;
@@ -67,10 +68,8 @@ kernelAudio::JackState jackStatePrev;
 
 void updateQuanto()
 {
-  if (quantize != 0)
-    quanto = framesPerBeat / quantize;
-  if (quanto % 2 != 0)
-    quanto++;
+	if (quantize != 0)
+		quanto = framesInBeat / quantize;
 }
 
 }; // {anonymous}
@@ -83,13 +82,13 @@ void updateQuanto()
 
 void init(int sampleRate, float midiTCfps)
 {
-  midiTCrate = (sampleRate / midiTCfps) * 2;  // stereo values
-  running    = false;
-  bpm        = G_DEFAULT_BPM;
-  bars       = G_DEFAULT_BARS;
-  beats      = G_DEFAULT_BEATS;
-  quantize   = G_DEFAULT_QUANTIZE;
-  updateFrameBars();
+	midiTCrate = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
+	running    = false;
+	bpm        = G_DEFAULT_BPM;
+	bars       = G_DEFAULT_BARS;
+	beats      = G_DEFAULT_BEATS;
+	quantize   = G_DEFAULT_QUANTIZE;
+	updateFrameBars();
 }
 
 
@@ -98,40 +97,40 @@ void init(int sampleRate, float midiTCfps)
 
 bool isRunning()
 {
-  return running;
+	return running;
 }
 
 
 bool quantoHasPassed()
 {
-  return currentFrame % (quanto) == 0;
+	return currentFrame % (quanto) == 0;
 }
 
 
 bool isOnBar()
 {
-  /* A bar cannot occur at frame 0. That's the first beat. */
-  return currentFrame % framesPerBar == 0 && currentFrame != 0;
+	/* A bar cannot occur at frame 0. That's the first beat. */
+	return currentFrame % framesInBar == 0 && currentFrame != 0;
 }
 
 
 bool isOnBeat()
 {
-  /* Skip frame 0: it is intended as 'first beat'. */
-  /* TODO - this is wrong! */
-  return currentFrame % framesPerBeat == 0 && currentFrame > 0;
+	/* Skip frame 0: it is intended as 'first beat'. */
+	/* TODO - this is wrong! */
+	return currentFrame % framesInBeat == 0 && currentFrame > 0;
 }
 
 
 bool isOnFirstBeat()
 {
-  return currentFrame == 0;
+	return currentFrame == 0;
 }
 
 
 void start()
 {
-  running = true;
+	running = true;
 	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
 		kernelMidi::send(MIDI_START, -1, -1);
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
@@ -141,79 +140,78 @@ void start()
 
 void stop()
 {
-  running = false;
-  if (conf::midiSync == MIDI_SYNC_CLOCK_M)
-  	kernelMidi::send(MIDI_STOP, -1, -1);
+	running = false;
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+		kernelMidi::send(MIDI_STOP, -1, -1);
 }
 
 
 void setBpm(float b)
 {
-  if (b < G_MIN_BPM)
-    b = G_MIN_BPM;
-  bpm = b;
+	if (b < G_MIN_BPM)
+		b = G_MIN_BPM;
+	bpm = b;
 	updateFrameBars();
 }
 
 
 void setBars(int newBars)
 {
-  /* Bars cannot be greater than beats and must be a sub multiple of beats. If
-  not, approximate to the nearest (and greater) value available. */
+	/* Bars cannot be greater than beats and must be a sub multiple of beats. If
+	not, approximate to the nearest (and greater) value available. */
 
-  if (newBars > beats)
-    bars = beats;
-  else if (newBars <= 0)
-    bars = 1;
-  else if (beats % newBars != 0) {
-    bars = newBars + (beats % newBars);
-    if (beats % bars != 0) // it could be an odd value, let's check it (and avoid it)
-      bars = bars - (beats % bars);
-  }
-  else
-    bars = newBars;
+	if (newBars > beats)
+		bars = beats;
+	else if (newBars <= 0)
+		bars = 1;
+	else if (beats % newBars != 0) {
+		bars = newBars + (beats % newBars);
+		if (beats % bars != 0) // it could be an odd value, let's check it (and avoid it)
+			bars = bars - (beats % bars);
+	}
+	else
+		bars = newBars;
 }
 
 
 void setBeats(int b)
 {
-  if (b > G_MAX_BEATS)
+	if (b > G_MAX_BEATS)
 		beats = G_MAX_BEATS;
 	else if (b < 1)
-    beats = 1;
+		beats = 1;
 	else
-    beats = b;
+		beats = b;
 }
 
 
 void setQuantize(int q)
 {
-  quantize = q;
-  updateQuanto();
+	quantize = q;
+	updateQuanto();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void incrCurrentFrame()
-{
-  currentFrame += 2;
-  if (currentFrame > totalFrames) {
+void incrCurrentFrame() {
+	currentFrame++;
+	if (currentFrame > framesInLoop) {
 		currentFrame = 0;
 		currentBeat  = 0;
 	}
-  else
-  if (isOnBeat())
-    currentBeat++;
+	else
+	if (isOnBeat())
+		currentBeat++;
 }
 
 
 void rewind()
 {
-  currentFrame = 0;
-  currentBeat = 0;
-  sendMIDIrewind();
+	currentFrame = 0;
+	currentBeat  = 0;
+	sendMIDIrewind();
 }
 
 
@@ -222,29 +220,18 @@ void rewind()
 
 void updateFrameBars()
 {
-	/* seconds ....... total time of play (in seconds) of the whole
-	 *                 sequencer. 60 / bpm == how many seconds lasts one bpm
-	 * totalFrames ... loop length in frames, x2 because it's stereo
-	 * framesPerBar .. n. of frames within a bar
-	 * framesPerBeat . n. of frames within a beat
-   * framesInSeq ... number of frames in the whole sequencer */
+	/* framesInLoop ... loop length in frames, or samplerate * # frames per 
+	 *                  current bpm * beats;
+	 * framesInBar .... n. of frames within a bar;
+	 * framesInBeat ... n. of frames within a beat;
+	 * framesInSeq .... number of frames in the whole sequencer. */
 
-	float seconds     = (60.0f / bpm) * beats;
-	totalFrames       = conf::samplerate * seconds * 2;
-	framesPerBar      = totalFrames / bars;
-	framesPerBeat     = totalFrames / beats;
-	framesInSequencer = framesPerBeat * G_MAX_BEATS;
+	framesInLoop = (conf::samplerate * (60.0f / bpm)) * beats;
+	framesInBar  = framesInLoop / bars;
+	framesInBeat = framesInLoop / beats;
+	framesInSeq  = framesInBeat * G_MAX_BEATS;
 
-	/* big troubles if frames are odd. */
-
-	if (totalFrames % 2 != 0)
-		totalFrames--;
-	if (framesPerBar % 2 != 0)
-		framesPerBar--;
-	if (framesPerBeat % 2 != 0)
-		framesPerBeat--;
-
-  updateQuanto();
+	updateQuanto();
 }
 
 
@@ -253,13 +240,13 @@ void updateFrameBars()
 
 void sendMIDIsync()
 {
-  /* TODO - only Master (_M) is implemented so far. */
+	/* TODO - only Master (_M) is implemented so far. */
 
 	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
-		if (currentFrame % (framesPerBeat/24) == 0)
+		if (currentFrame % (framesInBeat/24) == 0)
 			kernelMidi::send(MIDI_CLOCK, -1, -1);
-    return;
-  }
+		return;
+	}
 
 	if (conf::midiSync == MIDI_SYNC_MTC_M) {
 
@@ -269,7 +256,7 @@ void sendMIDIsync()
 		 * range 1-4, if odd send 5-8. */
 
 		if (currentFrame % midiTCrate != 0)  // no timecode frame passed
-      return;
+			return;
 
 		/* frame low nibble
 		 * frame high nibble
@@ -348,26 +335,26 @@ void sendMIDIrewind()
 
 void recvJackSync()
 {
-  kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
+	kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
 
-  if (jackState.running != jackStatePrev.running) {
-    if (jackState.running) {
-      if (!isRunning())
-        glue_startSeq(false); // not from UI
-    }
-    else {
-      if (isRunning())
-        glue_stopSeq(false); // not from UI
-    }
-  }
-  if (jackState.bpm != jackStatePrev.bpm)
-    if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
-      glue_setBpm(jackState.bpm);
+	if (jackState.running != jackStatePrev.running) {
+		if (jackState.running) {
+			if (!isRunning())
+				glue_startSeq(false); // not from UI
+		}
+		else {
+			if (isRunning())
+				glue_stopSeq(false); // not from UI
+		}
+	}
+	if (jackState.bpm != jackStatePrev.bpm)
+		if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
+			glue_setBpm(jackState.bpm);
 
-  if (jackState.frame == 0 && jackState.frame != jackStatePrev.frame)
-    glue_rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
+	if (jackState.frame == 0 && jackState.frame != jackStatePrev.frame)
+		glue_rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
 
-  jackStatePrev = jackState;
+	jackStatePrev = jackState;
 }
 
 #endif
@@ -378,67 +365,67 @@ void recvJackSync()
 
 int getCurrentFrame()
 {
-  return currentFrame;
+	return currentFrame;
 }
 
 
-int getTotalFrames()
+int getFramesInLoop()
 {
-  return totalFrames;
+	return framesInLoop;
 }
 
 
 int getCurrentBeat()
 {
-  return currentBeat;
+	return currentBeat;
 }
 
 
 int getQuantize()
 {
-  return quantize;
+	return quantize;
 }
 
 
 float getBpm()
 {
-  return bpm;
+	return bpm;
 }
 
 
 int getBeats()
 {
-  return beats;
+	return beats;
 }
 
 
 int getBars()
 {
-  return bars;
+	return bars;
 }
 
 
 int getQuanto()
 {
-  return quanto;
+	return quanto;
 }
 
 
-int getFramesPerBar()
+int getFramesInBar()
 {
-  return framesPerBar;
+	return framesInBar;
 }
 
 
-int getFramesPerBeat()
+int getFramesInBeat()
 {
-  return framesPerBeat;
+	return framesInBeat;
 }
 
 
-int getFramesInSequencer()
+int getFramesInSeq()
 {
-  return framesInSequencer;
+	return framesInSeq;
 }
 
 

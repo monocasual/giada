@@ -30,7 +30,7 @@
 
 
 void init_prepareParser();
-void init_startGUI(int argc, char **argv);
+void init_startGUI(int argc, char** argv);
 void init_prepareKernelAudio();
 void init_prepareKernelMIDI();
 void init_prepareMidiMap();

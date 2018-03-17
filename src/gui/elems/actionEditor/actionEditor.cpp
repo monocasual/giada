@@ -67,10 +67,10 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
         find the other piece (namely frame_b)
       - not of types G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL */
 
-      if ((action->chan != pParent->chan->index)                            ||
-          (recorder::frames.at(i) > clock::getTotalFrames())              ||
+      if ((action->chan != pParent->chan->index)                          ||
+          (recorder::frames.at(i) > clock::getFramesInLoop())             ||
           (action->type == G_ACTION_KILL && ch->mode == SINGLE_PRESS)     ||
-          (action->type == G_ACTION_KEYREL && ch->mode == SINGLE_PRESS)       ||
+          (action->type == G_ACTION_KEYREL && ch->mode == SINGLE_PRESS)   ||
           (action->type & ~(G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL))
       )
         continue;

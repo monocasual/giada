@@ -122,7 +122,7 @@ void geBoostTool::cb_normalize()
 {
   using namespace giada;
 
-  float val = m::wfx::normalizeSoft(ch->wave);
+  float val = m::wfx::normalizeSoft(*ch->wave);
   c::channel::setBoost(ch, val); // it's like a fake user moving the dial 
   static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
 }

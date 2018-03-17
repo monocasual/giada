@@ -34,6 +34,7 @@
 #include <functional>
 #include <pthread.h>
 #include "../deps/juce-config.h"
+#include "audioBuffer.h"
 
 
 class Plugin;
@@ -69,7 +70,7 @@ struct PluginInfo
 	bool isInstrument;
 };
 
-void init(int bufSize, int frequency);
+void init(int bufSize, int samplerate);
 void close();
 
 /* scanDirs
@@ -129,9 +130,9 @@ std::string getUnknownPluginInfo(int index);
 void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* processStack
- * apply the fx list to the buffer. */
+Applies the fx list to the buffer. */
 
-void processStack(float* buffer, int stackType, Channel* ch=nullptr);
+void processStack(AudioBuffer& outBuf, int stackType, Channel* ch=nullptr);
 
 /* getStack
 * Return a std::vector <Plugin *> given the stackType. If stackType == CHANNEL

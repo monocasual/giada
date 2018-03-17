@@ -218,7 +218,7 @@ void keyRelease(SampleChannel* ch, bool ctrl, bool shift)
 	 * other mode the KEY REL is meaningless. */
 
 	if (ch->mode == SINGLE_PRESS && recorder::canRec(ch, clock::isRunning(), mixer::recording))
-		recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
+		recorder::stopOverdub(clock::getCurrentFrame(), clock::getFramesInLoop(),
 			&mixer::mutex_recs);
 
 	/* the GUI update is done by gui_refresh() */

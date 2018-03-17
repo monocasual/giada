@@ -292,7 +292,7 @@ void toggleMute(Channel* ch, bool gui)
 			ch->readActions = false;   // don't read actions while overdubbing
 		}
 		else
-		 recorder::stopOverdub(clock::getCurrentFrame(), clock::getTotalFrames(),
+		 recorder::stopOverdub(clock::getCurrentFrame(), clock::getFramesInLoop(),
 			&mixer::mutex_recs);
 	}
 

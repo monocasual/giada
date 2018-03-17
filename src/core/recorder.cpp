@@ -111,7 +111,7 @@ bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 	if (!active         ||
 		  !clockRunning   ||
 			 mixerRecording ||
-			(ch->type == CHANNEL_SAMPLE && ((SampleChannel*)ch)->wave == nullptr)
+			(ch->type == CHANNEL_SAMPLE && static_cast<SampleChannel*>(ch)->wave == nullptr)
 		)
 		return false;
 	return true;
@@ -123,14 +123,9 @@ bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 
 void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 {
-	/* make sure frame is even */
-
-	if (frame % 2 != 0)
-		frame++;
-
 	/* allocating the action */
 
-	action *a = (action*) malloc(sizeof(action));
+	action* a = (action*) malloc(sizeof(action));
 	a->chan   = index;
 	a->type   = type;
 	a->frame  = frame;
@@ -164,7 +159,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 		/* no duplicates, please */
 
 		for (unsigned t=0; t<global.at(frameToExpand).size(); t++) {
-			action *ac = global.at(frameToExpand).at(t);
+			action* ac = global.at(frameToExpand).at(t);
 			if (ac->chan   == index  &&
 			    ac->type   == type   &&
 			    ac->frame  == frame  &&
@@ -195,7 +190,7 @@ void clearChan(int index)
 		unsigned j=0;
 		while (true) {
 			if (j == global.at(i).size()) break; 	  // for each action j of frame i
-			action *a = global.at(i).at(j);
+			action* a = global.at(i).at(j);
 			if (a->chan == index)	{
 				free(a);
 				global.at(i).erase(global.at(i).begin() + j);
@@ -220,7 +215,7 @@ void clearAction(int index, char act)
 		while (true) {                                   // for each action j of frame i
 			if (j == global.at(i).size())
 				break;
-			action *a = global.at(i).at(j);
+			action* a = global.at(i).at(j);
 			if (a->chan == index && (act & a->type) == a->type)	{ // bitmask
 				free(a);
 				global.at(i).erase(global.at(i).begin() + j);
@@ -240,11 +235,6 @@ void clearAction(int index, char act)
 void deleteAction(int chan, int frame, char type, bool checkValues,
 	pthread_mutex_t* mixerMutex, uint32_t iValue, float fValue)
 {
-	/* make sure frame is even */
-
-	if (frame % 2 != 0)
-		frame++;
-
 	/* find the frame 'frame' */
 
 	bool found = false;
@@ -256,7 +246,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
 			/* find the action in frame i */
 
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action *a = global.at(i).at(j);
+			action* a = global.at(i).at(j);
 
 			/* action comparison logic */
 
@@ -388,18 +378,13 @@ void updateBpm(float oldval, float newval, int oldquanto)
 			if (scarto > 0 && scarto <= 6)
 				frames.at(i) = frames.at(i) + scarto;
 		}
-
-		/* never ever have odd frames. */
-
-		if (frames.at(i) % 2 != 0)
-			frames.at(i)++;
 	}
 
 	/* update structs */
 
 	for (unsigned i=0; i<frames.size(); i++) {
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action *a = global.at(i).at(j);
+			action* a = global.at(i).at(j);
 			a->frame = frames.at(i);
 		}
 	}
@@ -431,9 +416,6 @@ void updateSamplerate(int systemRate, int patchRate)
 
 		frames.at(i) = (int) newFrame;
 
-		if (frames.at(i) % 2 != 0)
-			frames.at(i)++;
-
 		gu_log(", newFrame = %d\n", frames.at(i));
 	}
 
@@ -441,7 +423,7 @@ void updateSamplerate(int systemRate, int patchRate)
 
 	for (unsigned i=0; i<frames.size(); i++) {
 		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action *a = global.at(i).at(j);
+			action* a = global.at(i).at(j);
 			a->frame = frames.at(i);
 		}
 	}
@@ -469,7 +451,7 @@ void expand(int old_fpb, int new_fpb)
 			frames.push_back(newframe);
 			global.push_back(actions);
 			for (unsigned k=0; k<global.at(i).size(); k++) {
-				action *a = global.at(i).at(k);
+				action* a = global.at(i).at(k);
 				rec(a->chan, a->type, newframe, a->iValue, a->fValue);
 			}
 		}
@@ -611,7 +593,7 @@ void startOverdub(int index, char actionMask, int frame, unsigned bufferSize)
 
 	rec(index, cmp.a1.type, frame);
 
-	action *act = nullptr;
+	action* act = nullptr;
 	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
 	if (res == 1) {
 		if (act->type == cmp.a2.type) {
