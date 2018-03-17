@@ -126,7 +126,7 @@ int createEmpty(int frames, int channels, int samplerate, const string& name,
 	Wave** out)
 {
 	Wave* wave = new Wave();
-	if (!wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, "")) {
+	if (!wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name)) {
 		gu_log("[waveManager::createEmpty] unable to allocate memory\n");
 		delete wave;
 		return G_RES_ERR_MEMORY;

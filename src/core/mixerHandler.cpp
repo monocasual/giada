@@ -313,40 +313,38 @@ bool startInputRec()
 {
 	int channelsReady = 0;
 
-	for (Channel* channel : mixer::channels) {
+	for (Channel* ch : mixer::channels) {
 
-		if (!channel->canInputRec())
+		if (!ch->canInputRec())
 			continue;
 
-		SampleChannel* ch = static_cast<SampleChannel*>(channel);
+		SampleChannel* sch = static_cast<SampleChannel*>(ch);
 
 		/* Allocate empty sample for the current channel. */
 
-		Wave* wave = nullptr;
-		int result = waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS,
-			conf::samplerate, string("TAKE-" + gu_iToString(patch::lastTakeId)), &wave); 
-		if (result != G_RES_OK) {
-			gu_log("[startInputRec] unable to allocate new Wave in chan %d!\n",
-				ch->index);
-			continue;
-		}
+		Wave*  wave = nullptr;
+		string name = string("TAKE-" + gu_iToString(patch::lastTakeId++)); // Increase lastTakeId 
 
-		ch->pushWave(wave);
-		ch->setName("TAKE-" + gu_iToString(patch::lastTakeId++)); // Increase lastTakeId 
+		int result = waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS,
+			conf::samplerate, name + ".wav", &wave); 
+		if (result != G_RES_OK)
+			continue;
+
+		sch->pushWave(wave);
+		sch->setName(name); 
 		channelsReady++;
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "
-			"on frame=%d\n", ch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
+			"on frame=%d\n", sch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
 	}
 
 	/** FIXME: mixer::startInputRec() should be called before wave allocation */
 	/** FIXME: mixer::startInputRec() should be called before wave allocation */
 	/** FIXME: mixer::startInputRec() should be called before wave allocation */
-	if (channelsReady > 0) {
-		mixer::startInputRec();
-		return true;
-	}
-	return false;
+	if (channelsReady == 0)
+		return false;
+	mixer::startInputRec();
+	return true;
 }
 
 
