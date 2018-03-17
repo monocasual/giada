@@ -16,52 +16,36 @@ TEST_CASE("Test Wave class")
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
 	this comment and the first SECTION macro is exectuted before each SECTION. */
 
-	std::unique_ptr<Wave> wave;
-	
-	SECTION("test basename")
+
+	SECTION("test allocation")
 	{
-		wave = std::unique_ptr<Wave>(new Wave(nullptr, BUFFER_SIZE, CHANNELS, 
-			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
+		Wave wave;
 
-		REQUIRE(wave->getPath() == "path/to/sample.wav");
-		REQUIRE(wave->getBasename() == "sample");
-		REQUIRE(wave->getBasename(true) == "sample.wav");
-	}
+		REQUIRE(wave.alloc(BUFFER_SIZE, CHANNELS, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav") == true);
 
-	SECTION("test path")
-	{
-		wave = std::unique_ptr<Wave>(new Wave(nullptr, BUFFER_SIZE, CHANNELS, 
-			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
+		SECTION("test basename")
+		{
+			REQUIRE(wave.getPath() == "path/to/sample.wav");
+			REQUIRE(wave.getBasename() == "sample");
+			REQUIRE(wave.getBasename(true) == "sample.wav");
+		}
 
-		wave->setPath("path/is/now/different.mp3");
+		SECTION("test path")
+		{
+			wave.setPath("path/is/now/different.mp3");
 
-		REQUIRE(wave->getPath() == "path/is/now/different.mp3");
+			REQUIRE(wave.getPath() == "path/is/now/different.mp3");
 
-		wave->setPath("path/is/now/different.mp3", 5);
+			wave.setPath("path/is/now/different.mp3", 5);
 
-		REQUIRE(wave->getPath() == "path/is/now/different-5.mp3");
-	}  
+			REQUIRE(wave.getPath() == "path/is/now/different-5.mp3");
+		}  
 
-	SECTION("test change name")
-	{
-		wave = std::unique_ptr<Wave>(new Wave(nullptr, BUFFER_SIZE, CHANNELS, 
-			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
-
-		REQUIRE(wave->getPath() == "path/to/sample.wav");
-		REQUIRE(wave->getBasename() == "sample");
-		REQUIRE(wave->getBasename(true) == "sample.wav");
-	}
-
-	SECTION("test memory cleanup")
-	{
-		float* data = new float[BUFFER_SIZE];
-
-		wave = std::unique_ptr<Wave>(new Wave(data, BUFFER_SIZE, CHANNELS, 
-			SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav"));
-		wave->free();
-
-		REQUIRE(wave->getFrame(0) == nullptr);
-		REQUIRE(wave->getPath() == "path/to/sample.wav");  // other data is left untouched
-		REQUIRE(wave->getSize() == 0);
+		SECTION("test change name")
+		{
+			REQUIRE(wave.getPath() == "path/to/sample.wav");
+			REQUIRE(wave.getBasename() == "sample");
+			REQUIRE(wave.getBasename(true) == "sample.wav");
+		}
 	}
 }
