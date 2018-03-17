@@ -12,6 +12,11 @@
 --------------------------------------------------------------------------------
 
 
+0.15.0 --- 
+- Refactor audio engine into frame-based processing
+- Fix missing .wav extension on recorded audio takes
+
+
 0.14.6 --- 2018 . 03 . 15
 - MIDI velocity drives volume for one-shot sample channels
 - FLAC and Ogg support
