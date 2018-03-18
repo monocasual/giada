@@ -809,7 +809,7 @@ void SampleChannel::pushWave(Wave* w)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(AudioBuffer& out, const AudioBuffer& in)
+void SampleChannel::process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in)
 {
 	assert(out.countSamples() == vChan.countSamples());
 	assert(in.countSamples()  == vChan.countSamples());

@@ -166,7 +166,7 @@ void MidiChannel::unsetMute(bool internal)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(AudioBuffer& out, const AudioBuffer& in)
+void MidiChannel::process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in)
 {
 #ifdef WITH_VST
 	pluginHost::processStack(vChan, pluginHost::CHANNEL, this);
