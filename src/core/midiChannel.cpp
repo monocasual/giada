@@ -182,7 +182,7 @@ void MidiChannel::process(giada::m::AudioBuffer& out, const giada::m::AudioBuffe
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::preview(AudioBuffer& out)
+void MidiChannel::preview(giada::m::AudioBuffer& out)
 {
 	// No preview for MIDI channels (for now).
 }

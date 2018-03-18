@@ -837,7 +837,7 @@ void SampleChannel::process(giada::m::AudioBuffer& out, const giada::m::AudioBuf
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::preview(AudioBuffer& out)
+void SampleChannel::preview(giada::m::AudioBuffer& out)
 {
 	if (previewMode == G_PREVIEW_NONE)
 		return;
@@ -1095,7 +1095,7 @@ int SampleChannel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillChan(AudioBuffer& dest, int start, int offset, bool rewind)
+int SampleChannel::fillChan(giada::m::AudioBuffer& dest, int start, int offset, bool rewind)
 {
 	int position;  // return value: the new position
 
