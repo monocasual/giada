@@ -55,7 +55,7 @@ TEST_CASE("Test Patch class")
 		channel1.plugins.push_back(plugin2);
 #endif
 
-		channel1.type              = CHANNEL_SAMPLE;
+		channel1.type              = G_CHANNEL_SAMPLE;
 		channel1.index             = 666;
 		channel1.size              = G_GUI_CHANNEL_H_1;
 		channel1.column            = 0;
@@ -144,7 +144,7 @@ TEST_CASE("Test Patch class")
 		REQUIRE(column0.width == 500);
 
 		patch::channel_t channel0 = patch::channels.at(0);
-		REQUIRE(channel0.type == CHANNEL_SAMPLE);
+		REQUIRE(channel0.type == G_CHANNEL_SAMPLE);
 		REQUIRE(channel0.index == 666);
 		REQUIRE(channel0.size == G_GUI_CHANNEL_H_1);
 		REQUIRE(channel0.column == 0);

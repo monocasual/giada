@@ -302,7 +302,7 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-	int p = frameToPixel(m_ch->getTrackerPreview()) + x();
+	int p = frameToPixel(m_ch->trackerPreview) + x();
 	fl_color(G_COLOR_LIGHT_2);
 	fl_line(p, y() + 1, p, y() + h() - 2);
 }

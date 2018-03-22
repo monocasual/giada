@@ -148,7 +148,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel* ch)
-	: geChannel(X, Y, W, H, CHANNEL_MIDI, ch)
+	: geChannel(X, Y, W, H, G_CHANNEL_MIDI, ch)
 {
 	begin();
 
@@ -292,23 +292,23 @@ void geMidiChannel::update()
 	const MidiChannel* mch = static_cast<const MidiChannel*>(ch);
 
 	string label; 
-	if (mch->getName().empty())
+	if (mch->name.empty())
 		label = "-- MIDI --";
 	else
-		label = mch->getName().c_str();
+		label = mch->name.c_str();
 
 	if (mch->midiOut) 
 		label += " (ch " + gu_iToString(mch->midiOutChan + 1) + " out)";
 
 	mainButton->label(label.c_str());
 
-	vol->value(mch->getVolume());
+	vol->value(mch->volume);
 	mute->value(mch->mute);
 	solo->value(mch->solo);
 
 	mainButton->setKey(mch->key);
 
-	arm->value(mch->isArmed());
+	arm->value(mch->armed);
 
 #ifdef WITH_VST
 	fx->status = mch->plugins.size() > 0;

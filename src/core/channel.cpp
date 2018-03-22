@@ -30,7 +30,7 @@
 #include "../utils/log.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "const.h"
-#include "channel.h"
+#include "channelManager.h"
 #include "pluginHost.h"
 #include "plugin.h"
 #include "kernelMidi.h"
@@ -43,6 +43,7 @@
 #include "patch.h"
 #include "waveFx.h"
 #include "midiMapConf.h"
+#include "channel.h"
 
 
 using std::string;
@@ -51,24 +52,23 @@ using namespace giada::m;
 
 Channel::Channel(int type, int status, int bufferSize)
 : bufferSize     (bufferSize),
-	midiInFilter   (-1),
+	volume_i       (1.0f),
+	volume_d       (0.0f),
+	mute_i         (false),
+	guiChannel     (nullptr),
 	previewMode    (G_PREVIEW_NONE),
 	pan            (0.5f),
 	volume         (G_DEFAULT_VOL),
-	volume_i       (1.0f),
-	volume_d       (0.0f),
 	armed          (false),
 	type           (type),
 	status         (status),
 	key            (0),
-	mute_i         (false),
-	mute_s         (false),
 	mute           (false),
+	mute_s         (false),
 	solo           (false),
 	hasActions     (false),
 	readActions    (false),
 	recStatus      (REC_STOPPED),
-	guiChannel     (nullptr),
 	midiIn         (true),
 	midiInKeyPress (0x0),
 	midiInKeyRel   (0x0),
@@ -77,6 +77,7 @@ Channel::Channel(int type, int status, int bufferSize)
 	midiInVolume   (0x0),
 	midiInMute     (0x0),
 	midiInSolo     (0x0),
+	midiInFilter   (-1),
 	midiOutL       (false),
 	midiOutLplaying(0x0),
 	midiOutLmute   (0x0),
@@ -191,140 +192,18 @@ bool Channel::isPlaying() const
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::writePatch(int i, bool isProject)
+void Channel::writePatch(int i, bool isProject)
 {
-	patch::channel_t pch;
-	pch.type            = type;
-	pch.index           = index;
-	pch.size            = guiChannel->getSize();
-	pch.name            = name;
-	pch.key             = key;
-	pch.armed           = armed;
-	pch.column          = guiChannel->getColumnIndex();
-	pch.mute            = mute;
-	pch.mute_s          = mute_s;
-	pch.solo            = solo;
-	pch.volume          = volume;
-	pch.pan             = pan;
-	pch.midiIn          = midiIn;
-	pch.midiInKeyPress  = midiInKeyPress;
-	pch.midiInKeyRel    = midiInKeyRel;
-	pch.midiInKill      = midiInKill;
-	pch.midiInArm       = midiInArm;
-	pch.midiInVolume    = midiInVolume;
-	pch.midiInMute      = midiInMute;
-	pch.midiInFilter    = midiInFilter;
-	pch.midiInSolo      = midiInSolo;
-	pch.midiOutL        = midiOutL;
-	pch.midiOutLplaying = midiOutLplaying;
-	pch.midiOutLmute    = midiOutLmute;
-	pch.midiOutLsolo    = midiOutLsolo;
-
-	for (unsigned i=0; i<recorder::global.size(); i++) {
-		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-			recorder::action* action = recorder::global.at(i).at(k);
-			if (action->chan == index) {
-				patch::action_t pac;
-				pac.type   = action->type;
-				pac.frame  = action->frame;
-				pac.fValue = action->fValue;
-				pac.iValue = action->iValue;
-				pch.actions.push_back(pac);
-			}
-		}
-	}
-
-#ifdef WITH_VST
-
-	unsigned numPlugs = pluginHost::countPlugins(pluginHost::CHANNEL, this);
-	for (unsigned i=0; i<numPlugs; i++) {
-		Plugin* pPlugin = pluginHost::getPluginByIndex(i, pluginHost::CHANNEL, this);
-		patch::plugin_t pp;
-		pp.path   = pPlugin->getUniqueId();
-		pp.bypass = pPlugin->isBypassed();
-		for (int k=0; k<pPlugin->getNumParameters(); k++)
-			pp.params.push_back(pPlugin->getParameter(k));
-		for (unsigned k=0; k<pPlugin->midiInParams.size(); k++)
-			pp.midiInParams.push_back(pPlugin->midiInParams.at(k));
-		pch.plugins.push_back(pp);
-	}
-
-#endif
-
-	patch::channels.push_back(pch);
-
-	return patch::channels.size() - 1;
+	channelManager::writePatch(this, isProject);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int Channel::readPatch(const string& path, int i, pthread_mutex_t* pluginMutex,
-	int samplerate, int rsmpQuality)
+void Channel::readPatch(const string& path, int i)
 {
-	int ret = 1;
-	patch::channel_t* pch = &patch::channels.at(i);
-	key             = pch->key;
-	armed           = pch->armed;
-	type            = pch->type;
-	name            = pch->name;
-	index           = pch->index;
-	mute            = pch->mute;
-	mute_s          = pch->mute_s;
-	solo            = pch->solo;
-	volume          = pch->volume;
-	pan             = pch->pan;
-	midiIn          = pch->midiIn;
-	midiInKeyPress  = pch->midiInKeyPress;
-	midiInKeyRel    = pch->midiInKeyRel;
-	midiInKill      = pch->midiInKill;
-	midiInVolume    = pch->midiInVolume;
-	midiInMute      = pch->midiInMute;
-	midiInFilter    = pch->midiInFilter;
-	midiInSolo      = pch->midiInSolo;
-	midiOutL        = pch->midiOutL;
-	midiOutLplaying = pch->midiOutLplaying;
-	midiOutLmute    = pch->midiOutLmute;
-	midiOutLsolo    = pch->midiOutLsolo;
-
-	for (const patch::action_t& ac : pch->actions) {
-		recorder::rec(index, ac.type, ac.frame, ac.iValue, ac.fValue);
-		hasActions = true;
-	}
-
-#ifdef WITH_VST
-
-	for (const patch::plugin_t& ppl : pch->plugins) {
-		
-		Plugin* plugin = pluginHost::addPlugin(ppl.path, pluginHost::CHANNEL,
-			pluginMutex, this);
-		
-		if (plugin == nullptr) {
-			ret &= 0;
-			continue;
-		}
-
-		plugin->setBypass(ppl.bypass);
-		
-		for (unsigned j=0; j<ppl.params.size(); j++)
-			plugin->setParameter(j, ppl.params.at(j));
-		
-		/* Don't fill Channel::midiInParam if Patch::midiInParams are 0: it would
-		wipe out the current default 0x0 values. */
-
-		if (!ppl.midiInParams.empty()) {
-			plugin->midiInParams.clear();
-			for (uint32_t midiInParam : ppl.midiInParams)
-				plugin->midiInParams.push_back(midiInParam);
-		}
-
-		ret &= 1;
-	}
-
-#endif
-
-	return ret;
+	channelManager::readPatch(this, i);
 }
 
 
@@ -390,18 +269,6 @@ void Channel::receiveMidi(const MidiEvent& midiEvent)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::setMidiInFilter(int c)
-{
-	midiInFilter = c;
-}
-
-
-int Channel::getMidiInFilter() const
-{
-	return midiInFilter;
-}
-
-
 bool Channel::isMidiInAllowed(int c) const
 {
 	return midiInFilter == -1 || midiInFilter == c;
@@ -432,21 +299,9 @@ float Channel::getPan() const
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::setVolume(float v)
-{
-	volume = v;
-}
-
-
 void Channel::setVolumeI(float v)
 {
 	volume_i = v;
-}
-
-
-float Channel::getVolume() const
-{
-	return volume;
 }
 
 
@@ -476,36 +331,6 @@ void Channel::setPreviewMode(int m)
 bool Channel::isPreview() const
 {
 	return previewMode != G_PREVIEW_NONE;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::setArmed(bool b)
-{
-	armed = b;
-}
-
-
-bool Channel::isArmed() const
-{
-	return armed;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::string Channel::getName() const
-{
-	return name;
-}
-
-
-void Channel::setName(const std::string& s)
-{
-	name = s;
 }
 
 

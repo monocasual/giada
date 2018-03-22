@@ -238,8 +238,8 @@
 
 
 /* -- channel types --------------------------------------------------------- */
-#define CHANNEL_SAMPLE 0x01
-#define CHANNEL_MIDI   0x02
+#define G_CHANNEL_SAMPLE 0x01
+#define G_CHANNEL_MIDI   0x02
 
 
 

@@ -215,13 +215,13 @@ void doQuantize(unsigned frame)
 
 /* sumChannels
 Sums channels, i.e. lets them add sample frames to their virtual channels.
-This is required for CHANNEL_SAMPLE only */
+This is required for G_CHANNEL_SAMPLE only */
 
 void sumChannels(unsigned frame)
 {
 	pthread_mutex_lock(&mutex_chans);
 	for (Channel* ch : channels)
-		if (ch->type == CHANNEL_SAMPLE)
+		if (ch->type == G_CHANNEL_SAMPLE)
 			static_cast<SampleChannel*>(ch)->sum(frame, clock::isRunning());
 	pthread_mutex_unlock(&mutex_chans);
 }
@@ -527,10 +527,10 @@ void startInputRec()
 void mergeVirtualInput()
 {
 	for (Channel* ch : channels) {
-		if (ch->type == CHANNEL_MIDI)
+		if (ch->type == G_CHANNEL_MIDI)
 			continue;
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
-		if (sch->isArmed())
+		if (sch->armed)
 			sch->wave->copyData(vChanInput[0], vChanInput.countFrames());
 	}
 	vChanInput.clear();

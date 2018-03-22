@@ -32,6 +32,7 @@
 #include "../utils/fs.h"
 #include "../utils/string.h"
 #include "patch.h"
+#include "channelManager.h"
 #include "const.h"
 #include "conf.h"
 #include "clock.h"
@@ -51,25 +52,25 @@ using namespace giada::m;
 
 
 SampleChannel::SampleChannel(int bufferSize, bool inputMonitor)
-	: Channel          (CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
+	: Channel          (G_CHANNEL_SAMPLE, STATUS_EMPTY, bufferSize),
 		rsmp_state       (nullptr),
 		frameRewind      (-1),
 		begin            (0),
 		end              (0),
-		boost            (G_DEFAULT_BOOST),
 		pitch            (G_DEFAULT_PITCH),
-		trackerPreview   (0),
-		shift            (0),
-		wave             (nullptr),
-		tracker          (0),
-		mode             (G_DEFAULT_CHANMODE),
-		qWait	           (false),
+		boost            (G_DEFAULT_BOOST),
 		fadeinOn         (false),
 		fadeinVol        (1.0f),
 		fadeoutOn        (false),
 		fadeoutVol       (1.0f),
 		fadeoutTracker   (0),
 		fadeoutStep      (G_DEFAULT_FADEOUT_STEP),
+		wave             (nullptr),
+		tracker          (0),
+		trackerPreview   (0),
+		shift            (0),
+		mode             (G_DEFAULT_CHANMODE),
+		qWait	           (false),
 		inputMonitor     (inputMonitor),
 		midiInReadActions(0x0),
 		midiInPitch      (0x0)
@@ -281,28 +282,6 @@ void SampleChannel::setEnd(int f)
 
 int SampleChannel::getBegin() const { return begin; }
 int SampleChannel::getEnd() const   { return end; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void SampleChannel::setTrackerPreview(int f)
-{
-	trackerPreview = f;
-}
-
-
-int SampleChannel::getTrackerPreview() const
-{
-	return trackerPreview;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int SampleChannel::getShift() const { return shift; }
-void SampleChannel::setShift(int s) { shift = s; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -704,15 +683,6 @@ void SampleChannel::setReadActions(bool v, bool killOnFalse)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setOnEndPreviewCb(std::function<void()> f)
-{
-	onPreviewEnd = f;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void SampleChannel::setFadeIn(bool internal)
 {
 	if (internal) mute_i = false;  // remove mute before fading in
@@ -934,45 +904,10 @@ void SampleChannel::stop()
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::readPatch(const string& basePath, int i,
-		pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality)
+void SampleChannel::readPatch(const string& basePath, int i)
 {
-	/* load channel's data first: if the sample is missing or wrong, the channel
-	 * is not completely blank. */
-
-	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
-
-	const patch::channel_t* pch = &patch::channels.at(i);
-
-	mode              = pch->mode;
-	boost             = pch->boost;
-	readActions       = pch->recActive;
-	recStatus         = readActions ? REC_READING : REC_STOPPED;
-	midiInVeloAsVol   = pch->midiInVeloAsVol;
-	midiInReadActions = pch->midiInReadActions;
-	midiInPitch       = pch->midiInPitch;
-  inputMonitor      = pch->inputMonitor;
-
-  Wave* w = nullptr;
-  int res = waveManager::create(basePath + pch->samplePath, &w); 
-
-	if (res == G_RES_OK) {
-		pushWave(w);
-		setName(pch->name);
-		setBegin(pch->begin);
-		setEnd(pch->end);
-		setPitch(pch->pitch);
-	}
-	else {
-		if (res == G_RES_ERR_NO_DATA)
-			status = STATUS_EMPTY;
-		else
-		if (res == G_RES_ERR_IO)
-			status = STATUS_MISSING;
-		sendMidiLplay();  // FIXME - why sending MIDI lightning if sample status is wrong?
-	}
-
-	return res;
+	Channel::readPatch("", i);
+	channelManager::readPatch(this, basePath, i);
 }
 
 
@@ -1063,32 +998,10 @@ void SampleChannel::start(int frame, bool doQuantize, int quantize,
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::writePatch(int i, bool isProject)
+void SampleChannel::writePatch(int i, bool isProject)
 {
-	// TODO - this code belongs to an upper level (glue)
-
-	int pchIndex = Channel::writePatch(i, isProject);
-	patch::channel_t* pch = &patch::channels.at(pchIndex);
-
-	if (wave != nullptr) {
-		pch->samplePath = wave->getPath();
-		if (isProject)
-			pch->samplePath = gu_basename(wave->getPath());  // make it portable
-	}
-	else
-		pch->samplePath = "";
-
-	pch->mode              = mode;
-	pch->begin             = begin;
-	pch->end               = end;
-	pch->boost             = boost;
-	pch->recActive         = readActions;
-	pch->pitch             = pitch;
-	pch->inputMonitor      = inputMonitor;
-	pch->midiInReadActions = midiInReadActions;
-	pch->midiInPitch       = midiInPitch;
-
-	return 0;
+	Channel::writePatch(i, isProject);
+	channelManager::writePatch(this, isProject, i);
 }
 
 

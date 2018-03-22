@@ -413,7 +413,7 @@ void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 	Sample channels and Master in/out want audio data instead: let's convert the 
 	internal buffer from Giada to Juce. */
 
-	if (ch != nullptr && ch->type == CHANNEL_MIDI) 
+	if (ch != nullptr && ch->type == G_CHANNEL_MIDI) 
 		audioBuffer.clear();
 	else
 		for (int i=0; i<outBuf.countFrames(); i++)
@@ -611,6 +611,20 @@ void sortPlugins(int method)
 			break;
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void forEachPlugin(int stackType, const Channel* ch, std::function<void(const Plugin* p)> f)
+{
+	/* TODO - Remove const is ugly. This is a temporary workaround until all
+	PluginHost functions params will be const-correct. */
+	vector<Plugin*>* stack = getStack(stackType, const_cast<Channel*>(ch));
+	for (const Plugin* p : *stack)
+		f(p);
+}
+
 
 }}}; // giada::m::pluginHost::
 

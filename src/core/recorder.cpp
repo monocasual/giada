@@ -111,7 +111,7 @@ bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 	if (!active         ||
 		  !clockRunning   ||
 			 mixerRecording ||
-			(ch->type == CHANNEL_SAMPLE && static_cast<SampleChannel*>(ch)->wave == nullptr)
+			(ch->type == G_CHANNEL_SAMPLE && static_cast<SampleChannel*>(ch)->wave == nullptr)
 		)
 		return false;
 	return true;
@@ -655,5 +655,16 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 
 	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
   fixOverdubTruncation(cmp, mixerMutex);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void forEachAction(std::function<void(const action*)> f)
+{
+	for (const vector<action*> actions : recorder::global)
+		for (const action* action : actions)
+			f(action);
 }
 }}}; // giada::m::recorder::

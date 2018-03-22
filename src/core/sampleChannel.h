@@ -65,20 +65,24 @@ private:
 
 	void reset(int frame);
 
+	/* fade methods
+	Prepare channel for fade, mixer will take care of the process during master 
+	play. */
+
+	void setFadeIn(bool internal);
+	void setFadeOut(int actionPostFadeout);
+	void setXFade(int frame);
+
 	/* rsmp_state, rsmp_data
-	 * structs from libsamplerate */
+	Structs from libsamplerate. */
 
 	SRC_STATE* rsmp_state;
 	SRC_DATA   rsmp_data;
 
-	/* pChan
-	Extra virtual channel for processing resampled data. */
+	/* pChan, vChanPreview
+	Extra virtual channel for processing resampled data and for audio preview. */
 
 	giada::m::AudioBuffer pChan;
-
-	/* pChan
-	Extra virtual channel for audio preview. */
-
 	giada::m::AudioBuffer vChanPreview;
 
 	/* frameRewind
@@ -86,17 +90,23 @@ private:
 
 	int frameRewind;
 
-	int   begin;
-	int   end;
-	float boost;
+	/* begin, end
+	Begin/end point to read wave data from/to. */
+
+	int begin;
+	int end;
+	
 	float pitch;
-	int   trackerPreview;  // chan position for audio preview
-	int   shift;
+	float boost;
 
-	/* onPreviewEnd
-	A callback fired when audio preview ends. */
-
-	std::function<void()> onPreviewEnd;
+	bool  fadeinOn;
+	float fadeinVol;
+	bool  fadeoutOn;
+	float fadeoutVol;      // fadeout volume
+	int   fadeoutTracker;  // tracker fadeout, xfade only
+	float fadeoutStep;     // fadeout decrease
+  int   fadeoutType;     // xfade or fadeout
+  int		fadeoutEnd;      // what to do when fadeout ends
 
 public:
 
@@ -116,9 +126,8 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-  int readPatch(const std::string& basePath, int i, pthread_mutex_t* pluginMutex,
-    int samplerate, int rsmpQuality) override;
-	int writePatch(int i, bool isProject) override;
+  void readPatch(const std::string& basePath, int i) override;
+	void writePatch(int i, bool isProject) override;
 	void quantize(int index, int localFrame, int globalFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
@@ -127,22 +136,10 @@ public:
 	bool canInputRec() override;
 	bool allocBuffers() override;
 
-	int getTrackerPreview() const;
-	int getShift() const;
 	float getBoost() const;	
-	int getBegin() const;
-	int getEnd() const;
+	int   getBegin() const;
+	int   getEnd() const;
 	float getPitch() const;
-	
-	void setShift(int s);
-
-	/* fade methods
-	 * prepare channel for fade, mixer will take care of the process
-	 * during master play. */
-
-	void setFadeIn(bool internal);
-	void setFadeOut(int actionPostFadeout);
-	void setXFade(int frame);
 
 	/* pushWave
 	Adds a new wave to an existing channel. */
@@ -150,24 +147,23 @@ public:
 	void pushWave(Wave* w);
 
 	/* getPosition
-	 * returns the position of an active sample. If EMPTY o MISSING
-	 * returns -1. */
+	Returns the position of an active sample. If EMPTY o MISSING returns -1. */
 
 	int getPosition();
 
 	/* sum
-	 * add sample frames to virtual channel. Frame = processed frame in
-	 * Mixer. Running = is Mixer in play? */
+	Adds sample frames to virtual channel. Frame = processed frame in Mixer. 
+	Running == is Mixer in play? */
 
 	void sum(int frame, bool running);
 
 	void setPitch(float v);
 	void setBegin(int f);
 	void setEnd(int f);
-	void setTrackerPreview(int f);
+	void setBoost(float v);
 
 	/* hardStop
-	 * stop the channel immediately, no further checks. */
+	Stops the channel immediately, no further checks. */
 
 	void hardStop(int frame);
 
@@ -177,22 +173,17 @@ public:
 
 	void setReadActions(bool v, bool killOnFalse);
 
-	void setBoost(float v);
+	/* onPreviewEnd
+	A callback fired when audio preview ends. */
 
-	void setOnEndPreviewCb(std::function<void()> f);
+	std::function<void()> onPreviewEnd;
 
 	Wave* wave;
 	int   tracker;         // chan position
+	int   trackerPreview;  // chan position for audio preview
+	int   shift;
 	int   mode;            // mode: see const.h
 	bool  qWait;           // quantizer wait
-	bool  fadeinOn;
-	float fadeinVol;
-	bool  fadeoutOn;
-	float fadeoutVol;      // fadeout volume
-	int   fadeoutTracker;  // tracker fadeout, xfade only
-	float fadeoutStep;     // fadeout decrease
-  int   fadeoutType;     // xfade or fadeout
-  int		fadeoutEnd;      // what to do when fadeout ends
   bool  inputMonitor;
 
 	/* midi stuff */

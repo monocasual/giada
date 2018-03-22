@@ -31,6 +31,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <functional>
 #include <pthread.h>
 
 
@@ -179,6 +180,11 @@ pressing Mute button on a channel with some existing mute actions. */
 
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
 void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
+
+/* forEachAction
+Applies a read-only callback on each action recorded. */
+
+void forEachAction(std::function<void(const action*)> f);
 }}}; // giada::m::recorder::
 
 #endif

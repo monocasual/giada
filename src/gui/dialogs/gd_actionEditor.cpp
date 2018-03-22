@@ -70,7 +70,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	upperArea->begin();
 
-	if (chan->type == CHANNEL_SAMPLE) {
+	if (chan->type == G_CHANNEL_SAMPLE) {
 	  actionType = new geChoice(8, 8, 80, 20);
 	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8, this);
 		actionType->add("key press");
@@ -99,7 +99,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	scroller = new geScroll(8, 36, w()-16, h()-44);
 
-	if (chan->type == CHANNEL_SAMPLE) {
+	if (chan->type == G_CHANNEL_SAMPLE) {
 
 		SampleChannel *ch = (SampleChannel*) chan;
 
@@ -188,7 +188,7 @@ void gdActionEditor::__cb_zoomIn()
 
 	update();
 
-	if (chan->type == CHANNEL_SAMPLE) {
+	if (chan->type == G_CHANNEL_SAMPLE) {
 		ac->size(totalWidth, ac->h());
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());
@@ -222,7 +222,7 @@ void gdActionEditor::__cb_zoomOut()
 
 	update();
 
-	if (chan->type == CHANNEL_SAMPLE) {
+	if (chan->type == G_CHANNEL_SAMPLE) {
 		ac->size(totalWidth, ac->h());
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());

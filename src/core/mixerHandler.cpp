@@ -26,6 +26,7 @@
 
 
 #include <vector>
+#include <algorithm>
 #include "../utils/fs.h"
 #include "../utils/string.h"
 #include "../utils/log.h"
@@ -49,6 +50,7 @@
 #include "midiChannel.h"
 #include "wave.h"
 #include "waveManager.h"
+#include "channelManager.h"
 #include "mixerHandler.h"
 
 
@@ -87,7 +89,7 @@ int readPatchPlugins(vector<patch::plugin_t>* list, int type)
 #endif
 
 
-/* ------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
 int getNewChanIndex()
@@ -118,7 +120,7 @@ int getNewChanIndex()
 bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 {
 	for (const Channel* ch : mixer::channels) {
-		if (skip == ch || ch->type != CHANNEL_SAMPLE) // skip itself and MIDI channels
+		if (skip == ch || ch->type != G_CHANNEL_SAMPLE) // skip itself and MIDI channels
 			continue;
 		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
 		if (sch->wave != nullptr && path == sch->wave->getPath())
@@ -133,18 +135,11 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 
 Channel* addChannel(int type)
 {
-	Channel* ch;
-	int bufferSize = kernelAudio::getRealBufSize();
-
-	if (type == CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, conf::inputMonitorDefaultOn);
-	else
-		ch = new MidiChannel(bufferSize);
-
-	if (!ch->allocBuffers()) {
-		delete ch;
+	Channel* ch = nullptr;
+	channelManager::create(type, kernelAudio::getRealBufSize(), 
+		conf::inputMonitorDefaultOn, &ch);
+	if (ch == nullptr)
 		return nullptr;
-	}
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
@@ -164,27 +159,16 @@ Channel* addChannel(int type)
 /* -------------------------------------------------------------------------- */
 
 
-int deleteChannel(Channel* ch)
+void deleteChannel(Channel* target)
 {
-	int index = -1;
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		if (mixer::channels.at(i) == ch) {
-			index = i;
-			break;
-		}
-	}
-	if (index == -1) {
-		gu_log("[deleteChannel] unable to find channel %d for deletion!\n", ch->index);
-		return 0;
-	}
-
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
 			continue;
-		mixer::channels.erase(mixer::channels.begin() + index);
-		delete ch;
+		auto it = std::find(mixer::channels.begin(), mixer::channels.end(), target);
+		if (it != mixer::channels.end()) 
+			mixer::channels.erase(it);
 		pthread_mutex_unlock(&mixer::mutex_chans);
-		return 1;
+		return;
 	}
 }
 
@@ -194,9 +178,9 @@ int deleteChannel(Channel* ch)
 
 Channel* getChannelByIndex(int index)
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		if (mixer::channels.at(i)->index == index)
-			return mixer::channels.at(i);
+	for (Channel* ch : mixer::channels)
+		if (ch->index == index)
+			return ch;
 	gu_log("[getChannelByIndex] channel at index %d not found!\n", index);
 	return nullptr;
 }
@@ -207,11 +191,11 @@ Channel* getChannelByIndex(int index)
 
 bool hasLogicalSamples()
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
+	for (const Channel* ch : mixer::channels) {
+		if (ch->type != G_CHANNEL_SAMPLE)
 			continue;
-		SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-		if (ch->wave && ch->wave->isLogical())
+		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
+		if (sch->wave != nullptr && sch->wave->isLogical())
 			return true;
 	}
 	return false;
@@ -223,12 +207,11 @@ bool hasLogicalSamples()
 
 bool hasEditedSamples()
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-	{
-		if (mixer::channels.at(i)->type != CHANNEL_SAMPLE)
+	for (const Channel* ch : mixer::channels) {
+		if (ch->type != G_CHANNEL_SAMPLE)
 			continue;
-		SampleChannel *ch = static_cast<SampleChannel*>(mixer::channels.at(i));
-		if (ch->wave && ch->wave->isEdited())
+		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
+		if (sch->wave != nullptr && sch->wave->isEdited())
 			return true;
 	}
 	return false;
@@ -241,8 +224,8 @@ bool hasEditedSamples()
 void stopSequencer()
 {
 	clock::stop();
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		mixer::channels.at(i)->stopBySeq(conf::chansStopOnSeqHalt);
+	for (Channel* ch : mixer::channels)
+		ch->stopBySeq(conf::chansStopOnSeqHalt);
 }
 
 
@@ -252,8 +235,7 @@ void stopSequencer()
 bool uniqueSolo(Channel* ch)
 {
 	int solos = 0;
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		Channel *ch = mixer::channels.at(i);
+	for (Channel* ch : mixer::channels) {
 		if (ch->solo) solos++;
 		if (solos > 1) return false;
 	}
@@ -331,7 +313,7 @@ bool startInputRec()
 			continue;
 
 		sch->pushWave(wave);
-		sch->setName(name); 
+		sch->name = name; 
 		channelsReady++;
 
 		gu_log("[startInputRec] start input recs using chan %d with size %d "
@@ -365,11 +347,9 @@ void stopInputRec()
 
 bool hasArmedSampleChannels()
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		Channel *ch = mixer::channels.at(i);
-		if (ch->type == CHANNEL_SAMPLE && ch->isArmed())
+	for (const Channel* ch : mixer::channels)
+		if (ch->type == G_CHANNEL_SAMPLE && ch->armed)
 			return true;
-	}
 	return false;
 }
 

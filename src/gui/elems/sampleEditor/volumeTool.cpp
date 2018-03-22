@@ -71,7 +71,7 @@ void geVolumeTool::refresh()
   using namespace giada::u;
 
   string tmp;
-  float dB = math::linearToDB(ch->getVolume());
+  float dB = math::linearToDB(ch->volume);
   if (dB > -INFINITY) tmp = gu_fToString(dB, 2);  // 2 digits
   else                tmp = "-inf";
   input->value(tmp.c_str());

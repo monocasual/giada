@@ -51,6 +51,8 @@ class Channel
 {
 protected:
 
+	Channel(int type, int status, int bufferSize);
+
 	/* sendMidiLMessage
 	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
 	to KernelMidi. */
@@ -82,27 +84,16 @@ protected:
 
 	int bufferSize;
 
-  /* midiInFilter
-  Which MIDI channel should be filtered out when receiving MIDI messages. -1
-  means 'all'. */
+	/* volume_*
+	Internal volume variables: volume_i for envelopes, volume_d keeps track of
+	the delta during volume changes. */
+	
+	float volume_i;
+	float volume_d;
 
-  int midiInFilter;
-
-	/* previewMode
-	Whether the channel is in audio preview mode or not. */
-
-	int previewMode;
-
-	float pan;
-	float volume;   // global volume
-	float volume_i; // internal volume
-	float volume_d; // delta volume (for envelope)
-	bool armed;
-	std::string name;
-
+	bool mute_i;                // internal mute
+	
 public:
-
-	Channel(int type, int status, int bufferSize);
 
 	virtual ~Channel();
 
@@ -110,12 +101,6 @@ public:
 	Makes a shallow copy (no vChan/pChan allocation) of another channel. */
 
 	virtual void copy(const Channel* src, pthread_mutex_t* pluginMutex) = 0;
-
-	/* readPatch
-	Fills channel with data from patch. */
-
-	virtual int readPatch(const std::string& basePath, int i,
-    pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality);
 
 	/* process
 	Merges vChannels into buffer, plus plugin processing (if any). Warning:
@@ -211,11 +196,16 @@ public:
 
 	virtual bool canInputRec() = 0;
 
+	/* readPatch
+	Fills channel with data from patch. */
+
+	virtual void readPatch(const std::string& basePath, int i);
+
 	/* writePatch
 	Fills a patch with channel values. Returns the index of the last 
 	Patch::channel_t added. */
 
-	virtual int writePatch(int i, bool isProject);
+	virtual void writePatch(int i, bool isProject);
 
 	/* receiveMidi
 	Receives and processes midi messages from external devices. */
@@ -230,11 +220,7 @@ public:
 
 	bool isPlaying() const;
 	float getPan() const;
-	float getVolume() const;
-	bool isArmed() const;
-	std::string getName() const;
 	bool isPreview() const;
-	int getMidiInFilter() const;
 
 	/* isMidiAllowed
 	Given a MIDI channel 'c' tells whether this channel should be allowed to receive
@@ -250,12 +236,8 @@ public:
 	void sendMidiLplay();
 
 	void setPan(float v);
-	void setVolume(float v);
 	void setVolumeI(float v);
-	void setArmed(bool b);
-	void setName(const std::string& s);
 	void setPreviewMode(int m);
-	void setMidiInFilter(int c);
 
 #ifdef WITH_VST
 
@@ -269,29 +251,43 @@ public:
 
 #endif
 
-	int    index;                 // unique id
-	int    type;                  // midi or sample
-	int    status;                // status: see const.h
-	int    key;                   // keyboard button
-	bool   mute_i;                // internal mute
-	bool 	 mute_s;                // previous mute status after being solo'd
-	bool   mute;                  // global mute
-	bool   solo;
-  bool   hasActions;            // has something recorded
-  bool   readActions;           // read what's recorded
-	int 	 recStatus;             // status of recordings (waiting, ending, ...)
   geChannel* guiChannel;        // pointer to a gChannel object, part of the GUI
+	
+	/* previewMode
+	Whether the channel is in audio preview mode or not. */
 
-	// TODO - midi structs, please
+	int previewMode;
 
-  bool     midiIn;              // enable midi input
-  uint32_t midiInKeyPress;
-  uint32_t midiInKeyRel;
-  uint32_t midiInKill;
-  uint32_t midiInArm;
-  uint32_t midiInVolume;
-  uint32_t midiInMute;
-  uint32_t midiInSolo;
+	float       pan;
+	float       volume;   // global volume
+	bool        armed;
+	std::string name;
+	int         index;    // unique id
+	int         type;     // midi or sample
+	int         status;   // status: see const.h
+	int         key;      // keyboard button
+	bool        mute;     // global mute
+	bool        mute_s;   // previous mute status after being solo'd TODO - remove it with mute refactoring
+	bool        solo;
+
+  bool hasActions;      // has something recorded
+  bool readActions;     // read what's recorded
+	int  recStatus;       // status of recordings (waiting, ending, ...)
+  
+  bool      midiIn;               // enable midi input
+  uint32_t  midiInKeyPress;
+  uint32_t  midiInKeyRel;
+  uint32_t  midiInKill;
+  uint32_t  midiInArm;
+  uint32_t  midiInVolume;
+  uint32_t  midiInMute;
+  uint32_t  midiInSolo;
+
+  /* midiInFilter
+  Which MIDI channel should be filtered out when receiving MIDI messages. -1
+  means 'all'. */
+
+  int midiInFilter;
 
 	/*  midiOutL*
 	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent

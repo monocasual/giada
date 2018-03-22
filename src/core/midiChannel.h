@@ -46,9 +46,6 @@ public:
 	MidiChannel(int bufferSize);
 	~MidiChannel();
 
-  bool    midiOut;           // enable midi output
-  uint8_t midiOutChan;       // midi output channel
-
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void clear() override;
 	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) override;
@@ -62,9 +59,8 @@ public:
 	void rewind() override;
 	void setMute(bool internal) override;
 	void unsetMute(bool internal) override;
-	int readPatch(const std::string& basePath, int i, pthread_mutex_t* pluginMutex,
-    int samplerate, int rsmpQuality) override;
-	int writePatch(int i, bool isProject) override;
+	void readPatch(const std::string& basePath, int i) override;
+	void writePatch(int i, bool isProject) override;
 	void quantize(int index, int localFrame, int globalFrame) override;
 	void onZero(int frame, bool recsStopOnChanHalt) override;
 	void onBar(int frame) override;
@@ -89,6 +85,9 @@ public:
 	void addVstMidiEvent(uint32_t msg, int localFrame);
 
 #endif
+
+	bool    midiOut;           // enable midi output
+	uint8_t midiOutChan;       // midi output channel
 };
 
 

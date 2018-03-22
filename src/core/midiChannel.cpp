@@ -27,15 +27,14 @@
 
 #include "../utils/log.h"
 #include "midiChannel.h"
+#include "channelManager.h"
 #include "channel.h"
 #include "patch.h"
 #include "const.h"
 #include "clock.h"
 #include "conf.h"
 #include "mixer.h"
-#ifdef WITH_VST
-	#include "pluginHost.h"
-#endif
+#include "pluginHost.h"
 #include "kernelMidi.h"
 
 
@@ -44,7 +43,7 @@ using namespace giada::m;
 
 
 MidiChannel::MidiChannel(int bufferSize)
-	: Channel    (CHANNEL_MIDI, STATUS_OFF, bufferSize),
+	: Channel    (G_CHANNEL_MIDI, STATUS_OFF, bufferSize),
 		midiOut    (false),
 		midiOutChan(MIDI_CHANS[0])
 {
@@ -241,17 +240,10 @@ void MidiChannel::kill(int frame)
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::readPatch(const string& basePath, int i,
-		pthread_mutex_t* pluginMutex, int samplerate, int rsmpQuality)
+void MidiChannel::readPatch(const string& basePath, int i)
 {
-	Channel::readPatch("", i, pluginMutex, samplerate, rsmpQuality);
-
-	patch::channel_t* pch = &patch::channels.at(i);
-
-	midiOut     = pch->midiOut;
-	midiOutChan = pch->midiOutChan;
-
-	return G_RES_OK;
+	Channel::readPatch("", i);
+	channelManager::readPatch(this, i);
 }
 
 
@@ -299,15 +291,10 @@ void MidiChannel::rewind()
 /* -------------------------------------------------------------------------- */
 
 
-int MidiChannel::writePatch(int i, bool isProject)
+void MidiChannel::writePatch(int i, bool isProject)
 {
-	int pchIndex = Channel::writePatch(i, isProject);
-	patch::channel_t *pch = &patch::channels.at(pchIndex);
-
-	pch->midiOut     = midiOut;
-	pch->midiOutChan = midiOutChan;
-
-	return 0;
+	Channel::writePatch(i, isProject);
+	channelManager::writePatch(this, isProject, i);
 }
 
 

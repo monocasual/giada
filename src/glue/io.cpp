@@ -156,7 +156,7 @@ void cleanPress(SampleChannel* ch, int velocity)
 
 void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
 {
-	if (ch->type == CHANNEL_SAMPLE)
+	if (ch->type == G_CHANNEL_SAMPLE)
 		keyPress(static_cast<SampleChannel*>(ch), ctrl, shift, velocity);
 	else
 		keyPress(static_cast<MidiChannel*>(ch), ctrl, shift);
@@ -168,7 +168,7 @@ void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
 
 void keyRelease(Channel* ch, bool ctrl, bool shift)
 {
-	if (ch->type == CHANNEL_SAMPLE)
+	if (ch->type == G_CHANNEL_SAMPLE)
 		keyRelease(static_cast<SampleChannel*>(ch), ctrl, shift);
 }
 
@@ -270,7 +270,7 @@ void stopActionRec(bool gui)
 
 	for (Channel* ch : m::mixer::channels)
 	{
-		if (ch->type == CHANNEL_MIDI)
+		if (ch->type == G_CHANNEL_MIDI)
 			continue;
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
 		G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(sch->guiChannel));
@@ -352,10 +352,10 @@ int stopInputRec(bool gui)
 	beat. */
 
 	for (Channel* ch : mixer::channels) {
-		if (ch->type == CHANNEL_MIDI)
+		if (ch->type == G_CHANNEL_MIDI)
 			continue;
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
-		if (sch->mode & (LOOP_ANY) && sch->status == STATUS_OFF && sch->isArmed())
+		if (sch->mode & (LOOP_ANY) && sch->status == STATUS_OFF && sch->armed)
 			sch->start(clock::getCurrentFrame(), true, clock::getQuantize(),
 				clock::isRunning(), true, true);
 	}

@@ -284,8 +284,7 @@ void glue_loadPatch(void* data)
 		for (const patch::channel_t& pch : patch::channels) {
 			if (pch.column == col.index) {
 				Channel* ch = c::channel::addChannel(pch.column, pch.type, pch.size);
-				ch->readPatch(basePath, k, &mixer::mutex_plugins, conf::samplerate,
-					conf::rsmpQuality);
+				ch->readPatch(basePath, k);
 			}
 			browser->setStatusBar(steps);
 			k++;
@@ -360,7 +359,7 @@ void glue_saveProject(void* data)
 
 	for (const Channel* ch : mixer::channels) {
 
-		if (ch->type == CHANNEL_MIDI)
+		if (ch->type == G_CHANNEL_MIDI)
 			continue;
 
 		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);

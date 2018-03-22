@@ -159,6 +159,8 @@ src/core/clock.h                       \
 src/core/clock.cpp                     \
 src/core/waveManager.h                 \
 src/core/waveManager.cpp               \
+src/core/channelManager.h              \
+src/core/channelManager.cpp            \
 src/glue/main.h                        \
 src/glue/main.cpp                      \
 src/glue/io.h                          \

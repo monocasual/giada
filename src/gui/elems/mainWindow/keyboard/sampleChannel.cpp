@@ -208,7 +208,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
-	: geChannel(X, Y, W, H, CHANNEL_SAMPLE, ch)
+	: geChannel(X, Y, W, H, G_CHANNEL_SAMPLE, ch)
 {
 	begin();
 
@@ -380,7 +380,7 @@ void geSampleChannel::refresh()
 	setColorsByStatus(ch->status, ch->recStatus);
 
 	if (static_cast<SampleChannel*>(ch)->wave != nullptr) {
-		if (m::mixer::recording && ch->isArmed())
+		if (m::mixer::recording && ch->armed)
 			mainButton->setInputRecordMode();
 		if (m::recorder::active) {
 			if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording))
@@ -420,10 +420,10 @@ void geSampleChannel::update()
 			mainButton->label("* file not found! *");
 			break;
 		default:
-			if (sch->getName().empty())
+			if (sch->name.empty())
 				mainButton->label(sch->wave->getBasename(false).c_str());
 			else
-				mainButton->label(sch->getName().c_str());
+				mainButton->label(sch->name.c_str());
 			break;
 	}
 
@@ -439,13 +439,13 @@ void geSampleChannel::update()
 	modeBox->value(sch->mode);
 	modeBox->redraw();
 
-	vol->value(sch->getVolume());
+	vol->value(sch->volume);
 	mute->value(sch->mute);
 	solo->value(sch->solo);
 
 	mainButton->setKey(sch->key);
 
-	arm->value(sch->isArmed());
+	arm->value(sch->armed);
 
 #ifdef WITH_VST
 	fx->status = sch->plugins.size() > 0;

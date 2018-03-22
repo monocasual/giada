@@ -48,7 +48,7 @@ Channel* addChannel(int type);
 /* deleteChannel
 Completely removes a channel from the stack. */
 
-int deleteChannel(Channel* ch);
+void deleteChannel(Channel* ch);
 
 /* getChannelByIndex
 Returns channel with given index 'i'. */

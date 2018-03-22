@@ -54,7 +54,7 @@ gdChannelNameInput::gdChannelNameInput(Channel* ch)
 	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, "Cancel");
 	end();
 
-	m_name->value(m_ch->getName().c_str());
+	m_name->value(m_ch->name.c_str());
 
 	m_ok->shortcut(FL_Enter);
 	m_ok->callback(cb_update, (void*)this);

@@ -63,7 +63,7 @@ void geChannelStatus::draw()
       fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
 
 
-    if (mixer::recording && ch->isArmed())
+    if (mixer::recording && ch->armed)
       fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
     else
     if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))

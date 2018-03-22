@@ -112,7 +112,7 @@ int geColumn::handle(int e)
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
 				SampleChannel* c = static_cast<SampleChannel*>(c::channel::addChannel(
-					m_index, CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
+					m_index, G_CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
 				result = c::channel::loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
 					deleteChannel(c->guiChannel);
@@ -217,7 +217,7 @@ geChannel* geColumn::addChannel(Channel* ch, int size)
 	/* All geChannels are added with y=0. That's not a problem, they will be 
 	repositioned later on during geColumn::resize(). */
 
-	if (ch->type == CHANNEL_SAMPLE)
+	if (ch->type == G_CHANNEL_SAMPLE)
 		gch = new geSampleChannel(x(), 0, w(), size, static_cast<SampleChannel*>(ch));
 	else
 		gch = new geMidiChannel(x(), 0, w(), size, static_cast<MidiChannel*>(ch));
@@ -281,9 +281,9 @@ int geColumn::openTypeMenu()
 	if (!m) return 0;
 
 	if (strcmp(m->label(), "Sample channel") == 0)
-		return CHANNEL_SAMPLE;
+		return G_CHANNEL_SAMPLE;
 	if (strcmp(m->label(), "MIDI channel") == 0)
-		return CHANNEL_MIDI;
+		return G_CHANNEL_MIDI;
 	return 0;
 }
 

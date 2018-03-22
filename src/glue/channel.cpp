@@ -187,9 +187,9 @@ void freeChannel(Channel* ch)
 
 void toggleArm(Channel* ch, bool gui)
 {
-	ch->setArmed(!ch->isArmed());
+	ch->armed = !ch->armed;
 	if (!gui)
-		ch->guiChannel->arm->value(ch->isArmed());
+		ch->guiChannel->arm->value(ch->armed);
 }
 
 
@@ -227,7 +227,7 @@ int cloneChannel(Channel* src)
 
 void setVolume(Channel* ch, float v, bool gui, bool editor)
 {
-	ch->setVolume(v);
+	ch->volume = v;
 
 	/* Changing channel volume? Update wave editor (if it's shown). */
 
@@ -439,7 +439,7 @@ void setBoost(SampleChannel* ch, float val)
 
 void setName(Channel* ch, const string& name)
 {
-	ch->setName(name);
+	ch->name = name;
 	ch->guiChannel->update();
 }
 

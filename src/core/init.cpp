@@ -194,12 +194,6 @@ void init_shutdown()
 	}
 
 	recorder::clearAll();
-  for (unsigned i=0; i<mixer::channels.size(); i++) {
-		mixer::channels.at(i)->hasActions  = false;
-		mixer::channels.at(i)->readActions = false;
-		//if (mixer::channels.at(i)->type == CHANNEL_SAMPLE)
-		//	((SampleChannel*)mixer::channels.at(i))->readActions = false;
-	}
 	gu_log("[init] Recorder cleaned up\n");
 
 #ifdef WITH_VST

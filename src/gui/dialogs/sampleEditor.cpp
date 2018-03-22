@@ -85,7 +85,7 @@ gdSampleEditor::gdSampleEditor(SampleChannel* ch)
 
   gu_setFavicon(this);
   set_non_modal();
-  copy_label(ch->getName().c_str());
+  copy_label(ch->name.c_str());
 
   size_range(720, 480);
   if (conf::sampleEditorX)
@@ -199,9 +199,9 @@ Fl_Group* gdSampleEditor::createPreviewBox(int x, int y, int h)
   play->callback(cb_togglePreview, (void*)this);
   rewind->callback(cb_rewindPreview, (void*)this);
 
-  ch->setOnEndPreviewCb([this] { 
+  ch->onPreviewEnd = [this] { 
   	play->value(0);
-  });
+  };
 
   return g;
 }

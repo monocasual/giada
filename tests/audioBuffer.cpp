@@ -95,6 +95,6 @@ TEST_CASE("Test AudioBuffer class")
 			REQUIRE(buffer[16][1] == 33.0f);
 		}
 
-		delete data;
+		delete[] data;
 	}
 }

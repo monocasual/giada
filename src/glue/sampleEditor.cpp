@@ -234,7 +234,7 @@ void trim(SampleChannel* ch, int a, int b)
 
 void setPlayHead(SampleChannel* ch, int f)
 {
-	ch->setTrackerPreview(f);
+	ch->trackerPreview = f;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->waveTools->waveform->redraw();
 }
@@ -257,7 +257,7 @@ void setPreview(SampleChannel* ch, int mode)
 void rewindPreview(SampleChannel* ch)
 {
 	geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
-	if (waveform->isSelected() && ch->getTrackerPreview() != waveform->getSelectionA())
+	if (waveform->isSelected() && ch->trackerPreview != waveform->getSelectionA())
 		setPlayHead(ch, waveform->getSelectionA());
 	else
 		setPlayHead(ch, 0);
@@ -270,7 +270,7 @@ void rewindPreview(SampleChannel* ch)
 void toNewChannel(SampleChannel* ch, int a, int b)
 {
 	SampleChannel* newCh = static_cast<SampleChannel*>(c::channel::addChannel(
-		ch->guiChannel->getColumnIndex(), CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
+		ch->guiChannel->getColumnIndex(), G_CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
 
 	Wave* wave = nullptr;
 	int result = m::waveManager::createFromWave(ch->wave, a, b, &wave);
@@ -298,8 +298,8 @@ bool isWaveBufferFull()
 
 void shift(SampleChannel* ch, int offset)
 {
-	m::wfx::shift(*ch->wave, offset - ch->getShift());
-	ch->setShift(offset);
+	m::wfx::shift(*ch->wave, offset - ch->shift);
+	ch->shift = offset;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->shiftTool->refresh();
 	gdEditor->waveTools->waveform->refresh();	

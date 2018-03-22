@@ -70,6 +70,8 @@ struct PluginInfo
 	bool isInstrument;
 };
 
+extern pthread_mutex_t mutex_midi;
+
 void init(int bufSize, int samplerate);
 void close();
 
@@ -181,7 +183,7 @@ bool hasMissingPlugins();
 
 void sortPlugins(int sortMethod);
 
-extern pthread_mutex_t mutex_midi;
+void forEachPlugin(int stackType, const Channel* ch, std::function<void(const Plugin* p)> f);
 
 }}}; // giada::m::pluginHost::
 

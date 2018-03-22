@@ -183,7 +183,7 @@ void geMainMenu::__cb_edit()
 			break;
 		}
 	for (unsigned i=0; i<mixer::channels.size(); i++)
-		if (mixer::channels.at(i)->type == CHANNEL_SAMPLE)
+		if (mixer::channels.at(i)->type == G_CHANNEL_SAMPLE)
 			if (((SampleChannel*)mixer::channels.at(i))->wave != nullptr) {
 				menu[0].activate();
 				break;
