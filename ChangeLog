@@ -15,6 +15,7 @@
 0.15.0 --- 
 - Refactor audio engine into frame-based processing
 - Refactor channels readers/writers into channelManager namespace
+- Smarter Solo algorithm
 - Fix missing .wav extension on recorded audio takes
 
 
