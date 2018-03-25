@@ -232,14 +232,14 @@ void stopSequencer()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSolo(Channel* ch)
+void updateSoloCount()
 {
-	int solos = 0;
-	for (Channel* ch : mixer::channels) {
-		if (ch->solo) solos++;
-		if (solos > 1) return false;
-	}
-	return true;
+	for (Channel* ch : mixer::channels)
+		if (ch->solo) {
+			mixer::hasSolos = true;
+			return;
+		}
+	mixer::hasSolos = false;
 }
 
 

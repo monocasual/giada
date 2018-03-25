@@ -92,7 +92,7 @@ void geChannel::cb_mute()
 
 void geChannel::cb_solo()
 {
-	solo->value() ? c::channel::setSoloOn(ch) : c::channel::setSoloOff(ch);
+	c::channel::toggleSolo(ch);
 }
 
 

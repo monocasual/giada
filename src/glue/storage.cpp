@@ -291,8 +291,9 @@ void glue_loadPatch(void* data)
 		}
 	}
 
-	/* Fill Mixer. */
+	/* Prepare Mixer. */
 
+	mh::updateSoloCount();
 	mh::readPatch();
 
 	/* Let recorder recompute the actions' positions if the current 
@@ -409,7 +410,7 @@ void glue_loadSample(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_saveSample(void *data)
+void glue_saveSample(void* data)
 {
 	using namespace giada::m;
 

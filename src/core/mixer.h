@@ -47,9 +47,9 @@ void init(int framesInSeq, int framesInBuffer);
 Allocates new memory for the virtual input channel. Call this whenever you 
 shrink or resize the sequencer. */
 
-void allocVirtualInput(int frames);
+bool allocVirtualInput(int frames);
 
-int close();
+void close();
 
 /* masterPlay
 Core method (callback) */
@@ -98,9 +98,9 @@ extern float  inVol;
 extern float  peakOut;
 extern float  peakIn;
 extern bool	  metronome;
-extern int    waitRec;      // delayComp guard
-extern bool   docross;			 // crossfade guard
+extern int    waitRec;       // delayComp guard
 extern bool   rewindWait;	   // rewind guard, if quantized
+extern bool   hasSolos;      // more than 0 channels soloed
 
 /* inToOut
 Copy, process and paste the input into the output, in order to obtain a "hear 

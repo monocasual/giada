@@ -89,6 +89,15 @@ int inputTracker = 0;
 
 /* -------------------------------------------------------------------------- */
 
+
+bool isChannelAudible(Channel* ch)
+{
+	return !hasSolos || (hasSolos && ch->solo);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
 /* computePeak */
 
 void computePeak(const AudioBuffer& buf, float& peak, unsigned frame)
@@ -264,9 +273,10 @@ content to the output buffer). Process plugins too, if any. */
 void renderIO(AudioBuffer& outBuf, const AudioBuffer& inBuf)
 {
 	pthread_mutex_lock(&mutex_chans);
-	for (Channel* channel : channels) {
-		channel->process(outBuf, inBuf);
-		channel->preview(outBuf);
+	for (Channel* ch : channels) {
+		if (isChannelAudible(ch))
+			ch->process(outBuf, inBuf);
+		ch->preview(outBuf);
 	}
 	pthread_mutex_unlock(&mutex_chans);
 
@@ -375,8 +385,8 @@ float  peakOut      = 0.0f;
 float  peakIn       = 0.0f;
 bool	 metronome    = false;
 int    waitRec      = 0;
-bool   docross      = false;
 bool   rewindWait   = false;
+bool   hasSolos     = false;
 bool   inToOut      = false;
 
 pthread_mutex_t mutex_recs;
@@ -391,12 +401,19 @@ void init(int framesInSeq, int framesInBuffer)
 {
 	/* Allocate virtual input channels. vChanInput has variable size: it depends
 	on how many frames there are in sequencer. */
-	allocVirtualInput(framesInSeq);
-
+	if (!allocVirtualInput(framesInSeq)) {
+		gu_log("[Mixer::init] vChanInput alloc error!\n");	
+		return;
+	}
 	if (!vChanInToOut.alloc(framesInBuffer, G_MAX_IO_CHANS)) {
 		gu_log("[Mixer::init] vChanInToOut alloc error!\n");	
 		return;
 	}
+
+	gu_log("[Mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
+		framesInSeq, framesInBuffer);	
+
+	hasSolos = false;
 
 	pthread_mutex_init(&mutex_recs, nullptr);
 	pthread_mutex_init(&mutex_chans, nullptr);
@@ -409,11 +426,9 @@ void init(int framesInSeq, int framesInBuffer)
 /* -------------------------------------------------------------------------- */
 
 
-void allocVirtualInput(int frames)
+bool allocVirtualInput(int frames)
 {
-	if (!vChanInput.alloc(frames, G_MAX_IO_CHANS))
-		gu_log("[Mixer::allocVirtualInput] vChanInput realloc error!\n");	
-	gu_log("[Mixer::allocVirtualInput] vChanInput ready, %d frames\n", frames);	
+	return vChanInput.alloc(frames, G_MAX_IO_CHANS);
 }
 
 
@@ -478,12 +493,11 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 /* -------------------------------------------------------------------------- */
 
 
-int close()
+void close()
 {
 	clock::stop();
 	while (channels.size() > 0)
 		mh::deleteChannel(channels.at(0));
-	return 1;
 }
 
 

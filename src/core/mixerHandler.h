@@ -72,10 +72,10 @@ void stopSequencer();
 
 void rewindSequencer();
 
-/* uniqueSolo
- * true if ch is the only solo'd channel in mixer. */
+/* updateSoloCount
+Updates the number of solo-ed channels in mixer. */
 
-bool uniqueSolo(Channel* ch);
+void updateSoloCount();
 
 /* loadPatch
 Loads a path or a project (if isProject) into Mixer. If isProject, path must 

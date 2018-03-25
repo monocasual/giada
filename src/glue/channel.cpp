@@ -72,17 +72,6 @@ namespace giada {
 namespace c     {
 namespace channel 
 {
-namespace
-{
-bool soloSession__ = false;
-} // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 int loadChannel(SampleChannel* ch, const string& fname)
 {
 	using namespace giada::m;
@@ -311,7 +300,16 @@ void toggleMute(Channel* ch, bool gui)
 
 void toggleSolo(Channel* ch, bool gui)
 {
-	ch->solo ? setSoloOn(ch, gui) : setSoloOff(ch, gui);
+	using namespace giada::m;
+	
+	ch->solo = !ch->solo;
+	mh::updateSoloCount();	
+	
+	if (!gui) {
+		Fl::lock();
+		ch->guiChannel->solo->value(ch->solo);
+		Fl::unlock();
+	}
 }
 
 
@@ -321,101 +319,6 @@ void toggleSolo(Channel* ch, bool gui)
 void kill(Channel* ch)
 {
 	ch->kill(0); // on frame 0: it's a user-generated event
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setSoloOn(Channel* ch, bool gui)
-{
-	using namespace giada::m;
-
-	/* if there's no solo session, store mute configuration of all chans
-	 * and start the session */
-
-	if (!soloSession__) {
-		for (unsigned i=0; i<mixer::channels.size(); i++) {
-			Channel *och = mixer::channels.at(i);
-			och->mute_s  = och->mute;
-		}
-		soloSession__ = true;
-	}
-
-	ch->solo = !ch->solo;
-	ch->sendMidiLsolo();
-
-	/* mute all other channels and unmute this (if muted) */
-
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		Channel *och = mixer::channels.at(i);
-		if (!och->solo && !och->mute) {
-			och->setMute(false);
-			Fl::lock();
-			och->guiChannel->mute->value(true);
-			Fl::unlock();
-		}
-	}
-
-	if (ch->mute) {
-		ch->unsetMute(false);
-		Fl::lock();
-		ch->guiChannel->mute->value(false);
-		Fl::unlock();
-	}
-
-	if (!gui) {
-		Fl::lock();
-		ch->guiChannel->solo->value(1);
-		Fl::unlock();
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void setSoloOff(Channel* ch, bool gui)
-{
-	using namespace giada::m;
-
-	/* if this is uniqueSolo, stop solo session and restore mute status,
-	 * else mute this */
-
-	if (mh::uniqueSolo(ch)) {
-		soloSession__ = false;
-		for (unsigned i=0; i<mixer::channels.size(); i++) {
-			Channel *och = mixer::channels.at(i);
-			if (och->mute_s) {
-				och->setMute(false);
-				Fl::lock();
-				och->guiChannel->mute->value(true);
-				Fl::unlock();
-			}
-			else {
-				och->unsetMute(false);
-				Fl::lock();
-				och->guiChannel->mute->value(false);
-				Fl::unlock();
-			}
-			och->mute_s = false;
-		}
-	}
-	else {
-		ch->setMute(false);
-		Fl::lock();
-		ch->guiChannel->mute->value(true);
-		Fl::unlock();
-	}
-
-	ch->solo = !ch->solo;
-	ch->sendMidiLsolo();
-
-	if (!gui) {
-		Fl::lock();
-		ch->guiChannel->solo->value(0);
-		Fl::unlock();
-	}
 }
 
 
