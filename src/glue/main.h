@@ -36,14 +36,14 @@
 #define G_GLUE_MAIN_H
 
 
-void glue_setBpm(const char *v1, const char *v2);
+void glue_setBpm(const char* v1, const char* v2);
 void glue_setBpm(float v);
 void glue_setBeats(int beats, int bars, bool expand);
 void glue_quantize(int val);
 void glue_setOutVol(float v, bool gui=true);
 void glue_setInVol(float v, bool gui=true);
 void glue_clearAllSamples();
-void glue_clearAllRecs();
+void glue_clearAllActions();
 
 /* resetToInitState
  * reset Giada to init state. If resetGui also refresh all widgets. If

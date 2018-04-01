@@ -40,10 +40,10 @@ namespace giada {
 namespace c     {
 namespace recorder 
 {
-void clearAllActions(geChannel *gch);
-void clearMuteActions(geChannel *gch);
-void clearVolumeActions(geChannel *gch);
-void clearStartStopActions(geChannel *gch);
+void clearAllActions(geChannel* gch);
+void clearMuteActions(geChannel* gch);
+void clearVolumeActions(geChannel* gch);
+void clearStartStopActions(geChannel* gch);
 
 /* recordMidiAction
 Records a new MIDI action at frame_a. If frame_b == 0, uses the default action

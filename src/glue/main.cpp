@@ -200,9 +200,9 @@ void glue_setInVol(float v, bool gui)
 void glue_clearAllSamples()
 {
 	clock::stop();
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
-		mixer::channels.at(i)->empty();
-		mixer::channels.at(i)->guiChannel->reset();
+	for (Channel* ch : mixer::channels) {
+		ch->empty();
+		ch->guiChannel->reset();
 	}
 	recorder::init();
 	return;
@@ -212,9 +212,11 @@ void glue_clearAllSamples()
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearAllRecs()
+void glue_clearAllActions()
 {
 	recorder::init();
+	for (Channel* ch : mixer::channels)
+		ch->hasActions = false;
 	gu_updateControls();
 }
 

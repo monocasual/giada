@@ -111,8 +111,8 @@ int gu_getBlinker()
 
 void gu_updateControls()
 {
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		mixer::channels.at(i)->guiChannel->update();
+	for (const Channel* ch : mixer::channels)
+		ch->guiChannel->update();
 
 	G_MainWin->mainIO->setOutVol(mixer::outVol);
 	G_MainWin->mainIO->setInVol(mixer::inVol);
@@ -132,7 +132,7 @@ void gu_updateControls()
 /* -------------------------------------------------------------------------- */
 
 
-void gu_updateMainWinLabel(const string &s)
+void gu_updateMainWinLabel(const string& s)
 {
 	std::string out = std::string(G_APP_NAME) + " - " + s;
 	G_MainWin->copy_label(out.c_str());
@@ -142,7 +142,7 @@ void gu_updateMainWinLabel(const string &s)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_setFavicon(Fl_Window *w)
+void gu_setFavicon(Fl_Window* w)
 {
 #if defined(__linux__)
 
@@ -163,7 +163,7 @@ void gu_setFavicon(Fl_Window *w)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_openSubWindow(gdWindow *parent, gdWindow *child, int id)
+void gu_openSubWindow(gdWindow* parent, gdWindow* child, int id)
 {
 	if (parent->hasWindow(id)) {
 		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
@@ -181,7 +181,7 @@ void gu_refreshActionEditor()
 {
 	/** TODO - why don't we simply call WID_ACTION_EDITOR->redraw()? */
 
-	gdActionEditor *aeditor = (gdActionEditor*) G_MainWin->getChild(WID_ACTION_EDITOR);
+	gdActionEditor* aeditor = (gdActionEditor*) G_MainWin->getChild(WID_ACTION_EDITOR);
 	if (aeditor) {
 		Channel *chan = aeditor->chan;
 		G_MainWin->delSubWindow(WID_ACTION_EDITOR);

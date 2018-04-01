@@ -209,7 +209,7 @@ void geMainMenu::__cb_edit()
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-		glue_clearAllRecs();
+		glue_clearAllActions();
 		return;
 	}
 	if (strcmp(m->label(), "Reset to init state") == 0) {
