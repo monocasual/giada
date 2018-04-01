@@ -17,6 +17,7 @@
 - Refactor channels readers/writers into channelManager namespace
 - Smarter Solo algorithm
 - Fix missing .wav extension on recorded audio takes
+- Fix wrong Channel status update after 'Clear all actions'
 
 
 0.14.6 --- 2018 . 03 . 15
