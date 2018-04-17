@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.15.0 --- 
+0.15.0 --- 2018 . 04 . 18
 - Refactor audio engine into frame-based processing
 - Refactor channels readers/writers into channelManager namespace
 - Smarter Solo algorithm
