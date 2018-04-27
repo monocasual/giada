@@ -117,9 +117,9 @@ void gePianoItem::removeAction()
 {
 	MidiChannel* ch = static_cast<MidiChannel*>(pParent->chan);
 	recorder::deleteAction(ch->index, a.frame, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, a.iValue, 0.0);
+		&mixer::mutex, a.iValue, 0.0);
 	recorder::deleteAction(ch->index, b.frame, G_ACTION_MIDI, true,
-		&mixer::mutex_recs, b.iValue, 0.0);
+		&mixer::mutex, b.iValue, 0.0);
 
 	/* Send a note-off in case we are deleting it in a middle of a key_on/key_off
 	sequence. */

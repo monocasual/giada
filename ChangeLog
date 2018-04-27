@@ -12,6 +12,11 @@
 --------------------------------------------------------------------------------
 
 
+0.15.1 --- 
+- Simplify mutex mechanism
+- Fix wrong quantizer value on patch/project load
+
+
 0.15.0 --- 2018 . 04 . 18
 - Refactor audio engine into frame-based processing
 - Refactor channels readers/writers into channelManager namespace

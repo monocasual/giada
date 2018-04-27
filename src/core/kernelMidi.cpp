@@ -256,6 +256,25 @@ void send(int b1, int b2, int b3)
 /* -------------------------------------------------------------------------- */
 
 
+void sendMidiLightning(uint32_t learn, const midimap::message_t& msg)
+{
+	gu_log("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, msg.channel, 
+		msg.value, msg.offset);
+
+	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 
+	the midimap configuration file. */
+	uint32_t out = ((learn & 0x00FF0000) >> 16) << msg.offset;
+
+	/* Merge the previously prepared channel into final message, and finally send 
+	it. */
+	out |= msg.value | (msg.channel << 24);
+	send(out);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 unsigned countInPorts()
 {
 	return numInPorts;

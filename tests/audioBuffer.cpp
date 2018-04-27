@@ -3,7 +3,7 @@
 #include <catch.hpp>
 
 
-TEST_CASE("Test AudioBuffer class")
+TEST_CASE("AudioBuffer")
 {
 	using namespace giada::m;
 
@@ -19,7 +19,7 @@ TEST_CASE("Test AudioBuffer class")
 	{
 		SECTION("test mono")
 		{
-			REQUIRE(buffer.alloc(BUFFER_SIZE, 1) == 1);
+			buffer.alloc(BUFFER_SIZE, 1);
 			REQUIRE(buffer.countFrames() == BUFFER_SIZE);
 			REQUIRE(buffer.countSamples() == BUFFER_SIZE);
 			REQUIRE(buffer.countChannels() == 1);
@@ -34,7 +34,7 @@ TEST_CASE("Test AudioBuffer class")
 
 		SECTION("test odd channels count")
 		{
-			REQUIRE(buffer.alloc(BUFFER_SIZE, 7) == 1);
+			buffer.alloc(BUFFER_SIZE, 7);
 			REQUIRE(buffer.countFrames() == BUFFER_SIZE);
 			REQUIRE(buffer.countSamples() == BUFFER_SIZE * 7);
 			REQUIRE(buffer.countChannels() == 7);

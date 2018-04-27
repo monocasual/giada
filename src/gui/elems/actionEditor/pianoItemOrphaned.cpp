@@ -84,8 +84,8 @@ int gePianoItemOrphaned::handle(int e)
 void gePianoItemOrphaned::remove()
 {
   MidiChannel *ch = static_cast<MidiChannel*>(pParent->chan);
-  recorder::deleteAction(ch->index, frame, G_ACTION_MIDI, true,
-    &mixer::mutex_recs, event, 0.0);
+  recorder::deleteAction(ch->index, frame, G_ACTION_MIDI, true, &mixer::mutex, 
+    event, 0.0);
   hide();   // for Windows
   Fl::delete_widget(this);
   ch->hasActions = recorder::hasActions(ch->index);

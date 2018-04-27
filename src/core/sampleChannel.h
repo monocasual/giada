@@ -31,6 +31,7 @@
 
 #include <functional>
 #include <samplerate.h>
+#include "types.h"
 #include "channel.h"
 
 
@@ -40,172 +41,111 @@ class Wave;
 
 class SampleChannel : public Channel
 {
-private:
-
-	/* fillChan
-	Fills 'dest' buffer at point 'offset' with wave data taken from 'start'. If 
-	rewind=false don't rewind internal tracker. Returns new sample position, 
-	in frames. It resamples data if pitch != 1.0f. */
-
-	int fillChan(giada::m::AudioBuffer& dest, int start, int offset, bool rewind=true);
-
-	/* calcFadeoutStep
-	How many frames are left before the end of the sample? Is there enough room 
-	for a complete fadeout? Should we shorten it? */
-
-	void calcFadeoutStep();
-
-	/* calcVolumeEnv
-	Computes any changes in volume done via envelope tool. */
-
-	void calcVolumeEnv(int frame);
-
-	/* reset
-	Rewinds tracker to the beginning of the sample. */
-
-	void reset(int frame);
-
-	/* fade methods
-	Prepare channel for fade, mixer will take care of the process during master 
-	play. */
-
-	void setFadeIn(bool internal);
-	void setFadeOut(int actionPostFadeout);
-	void setXFade(int frame);
-
-	/* rsmp_state, rsmp_data
-	Structs from libsamplerate. */
-
-	SRC_STATE* rsmp_state;
-	SRC_DATA   rsmp_data;
-
-	/* pChan, vChanPreview
-	Extra virtual channel for processing resampled data and for audio preview. */
-
-	giada::m::AudioBuffer pChan;
-	giada::m::AudioBuffer vChanPreview;
-
-	/* frameRewind
-	Exact frame in which a rewind occurs. */
-
-	int frameRewind;
-
-	/* begin, end
-	Begin/end point to read wave data from/to. */
-
-	int begin;
-	int end;
-	
-	float pitch;
-	float boost;
-
-	bool  fadeinOn;
-	float fadeinVol;
-	bool  fadeoutOn;
-	float fadeoutVol;      // fadeout volume
-	int   fadeoutTracker;  // tracker fadeout, xfade only
-	float fadeoutStep;     // fadeout decrease
-  int   fadeoutType;     // xfade or fadeout
-  int		fadeoutEnd;      // what to do when fadeout ends
-
 public:
 
-	SampleChannel(int bufferSize, bool inputMonitor);
+	SampleChannel(bool inputMonitor, int bufferSize);
 	~SampleChannel();
 
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
-	void clear() override;
-	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) override;
-	void preview(giada::m::AudioBuffer& out) override;
-	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
-		bool forceStart, bool isUserGenerated) override;
+	void prepareBuffer(bool running) override;
+	void parseEvents(giada::m::mixer::FrameEvents fe) override;
+	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in,
+		bool audible, bool running) override;
+	void readPatch(const std::string& basePath, int i) override;
+	void writePatch(int i, bool isProject) override;
+
+	void start(int frame, bool doQuantize, int velocity) override;
+	void stop() override;
 	void kill(int frame) override;
+	bool recordStart(bool canQuantize) override;
+	bool recordKill() override;
+	void recordStop() override;
+	void recordMute() override;
+	void setMute(bool value, EventType eventType) override;
+	void startReadingActions(bool treatRecsAsLoops, bool recsStopOnChanHalt) override;
+	void stopReadingActions(bool running, bool treatRecsAsLoops, 
+		bool recsStopOnChanHalt) override;
 	void empty() override;
 	void stopBySeq(bool chansStopOnSeqHalt) override;
-	void stop() override;
-	void rewind() override;
-	void setMute(bool internal) override;
-	void unsetMute(bool internal) override;
-  void readPatch(const std::string& basePath, int i) override;
-	void writePatch(int i, bool isProject) override;
-	void quantize(int index, int localFrame, int globalFrame) override;
-	void onZero(int frame, bool recsStopOnChanHalt) override;
-	void onBar(int frame) override;
-	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
-			int quantize, bool mixerIsRunning) override;
+	void rewindBySeq() override;
 	bool canInputRec() override;
-	bool allocBuffers() override;
+	void stopInputRec(int globalFrame) override;
+	bool hasLogicalData() const override;
+	bool hasEditedData() const override;
+	bool hasData() const override;
 
 	float getBoost() const;	
 	int   getBegin() const;
 	int   getEnd() const;
 	float getPitch() const;
+	bool isAnyLoopMode() const;
+	bool isAnySingleMode() const;
+	bool isOnLastFrame() const;
+
+	/* getPosition
+	Returns the position of an active sample. If EMPTY o MISSING returns -1. */
+
+	int getPosition() const;
+
+	/* fillBuffer
+	Fills 'dest' buffer at point 'offset' with Wave data taken from 'start'. 
+	Returns how many frames have been used from the original Wave data. It also
+	resamples data if pitch != 1.0f. */
+
+	int fillBuffer(giada::m::AudioBuffer& dest, int start, int offset);
 
 	/* pushWave
 	Adds a new wave to an existing channel. */
 
 	void pushWave(Wave* w);
 
-	/* getPosition
-	Returns the position of an active sample. If EMPTY o MISSING returns -1. */
-
-	int getPosition();
-
-	/* sum
-	Adds sample frames to virtual channel. Frame = processed frame in Mixer. 
-	Running == is Mixer in play? */
-
-	void sum(int frame, bool running);
-
 	void setPitch(float v);
 	void setBegin(int f);
 	void setEnd(int f);
 	void setBoost(float v);
 
-	/* hardStop
-	Stops the channel immediately, no further checks. */
-
-	void hardStop(int frame);
-
-	/* setReadActions
-	If enabled (v == true), recorder will read actions from this channel. If 
-	killOnFalse == true and disabled, will also kill the channel. */
-
-	void setReadActions(bool v, bool killOnFalse);
+	void setReadActions(bool v, bool recsStopOnChanHalt);
 
 	/* onPreviewEnd
 	A callback fired when audio preview ends. */
 
 	std::function<void()> onPreviewEnd;
 
+	/* bufferPreview
+	Extra buffer for audio preview. */
+
+	giada::m::AudioBuffer bufferPreview;
+	
+	ChannelMode mode;
+	
 	Wave* wave;
 	int   tracker;         // chan position
 	int   trackerPreview;  // chan position for audio preview
 	int   shift;
-	int   mode;            // mode: see const.h
 	bool  qWait;           // quantizer wait
-  bool  inputMonitor;
+	bool  inputMonitor;  
+	float boost;
+	float pitch;
+
+	/* begin, end
+	Begin/end point to read wave data from/to. */
+
+	int begin;
+	int end;
 
 	/* midi stuff */
 
-  bool     midiInVeloAsVol;
-  uint32_t midiInReadActions;
-  uint32_t midiInPitch;
+	bool     midiInVeloAsVol;
+	uint32_t midiInReadActions;
+	uint32_t midiInPitch;
+	
+private:
 
-	/* const - what to do when a fadeout ends */
+	/* rsmp_state, rsmp_data
+	Structs from libsamplerate. */
 
-	enum {
-		DO_STOP   = 0x01,
-		DO_MUTE   = 0x02,
-		DO_MUTE_I = 0x04
-	};
-
-	/*  const - fade types */
-
-	enum {
-		FADEOUT = 0x01,
-		XFADE   = 0x02
-	};
+	SRC_STATE* rsmp_state;
+	SRC_DATA   rsmp_data;
 };
 
 #endif

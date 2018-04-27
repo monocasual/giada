@@ -68,7 +68,7 @@ geAction::geAction(int X, int Y, int H, int frame_a, unsigned index,
 	 * do that after the possible recording, otherwise we don't know which
 	 * key_release is associated. */
 
-	if (ch->mode == SINGLE_PRESS && type == G_ACTION_KEYPRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS && type == G_ACTION_KEYPRESS) {
 		recorder::action *a2 = nullptr;
 		recorder::getNextAction(ch->index, G_ACTION_KEYREL, frame_a, &a2);
 		if (a2) {
@@ -99,7 +99,7 @@ void geAction::draw()
 	else
 		color = G_COLOR_LIGHT_1;
 
-	if (ch->mode == SINGLE_PRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
 		fl_rectf(x(), y(), w(), h(), (Fl_Color) color);
 	}
 	else {
@@ -146,7 +146,7 @@ int geAction::handle(int e)
 
 			/* handling of the two margins, left & right. 4 pixels are good enough */
 
-			if (ch->mode == SINGLE_PRESS) {
+			if (ch->mode == ChannelMode::SINGLE_PRESS) {
 				onLeftEdge  = false;
 				onRightEdge = false;
 				if (Fl::event_x() >= x() && Fl::event_x() < x()+4) {
@@ -179,7 +179,7 @@ void geAction::addAction()
 	 * theory behind the singleshot.press actions; for any other kind the
 	 * (b) is just a graphical and meaningless point. */
 
-	if (ch->mode == SINGLE_PRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
 		recorder::rec(parent->chan->index, G_ACTION_KEYPRESS, frame_a);
 		recorder::rec(parent->chan->index, G_ACTION_KEYREL, frame_a+4096);
 		//gu_log("action added, [%d, %d]\n", frame_a, frame_a+4096);
@@ -205,15 +205,15 @@ void geAction::delAction()
 	/* if SINGLE_PRESS you must delete both the keypress and the keyrelease
 	 * actions. */
 
-	if (ch->mode == SINGLE_PRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
 		recorder::deleteAction(parent->chan->index, frame_a, G_ACTION_KEYPRESS,
-      false, &mixer::mutex_recs);
+      false, &mixer::mutex);
 		recorder::deleteAction(parent->chan->index, frame_b, G_ACTION_KEYREL,
-      false, &mixer::mutex_recs);
+      false, &mixer::mutex);
 	}
 	else
 		recorder::deleteAction(parent->chan->index, frame_a, type, false,
-      &mixer::mutex_recs);
+      &mixer::mutex);
 
   parent->chan->hasActions = recorder::hasActions(parent->chan->index);
 
@@ -249,7 +249,7 @@ void geAction::moveAction(int frame_a)
 
 	recorder::rec(parent->chan->index, type, this->frame_a);
 
-	if (ch->mode == SINGLE_PRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
 		frame_b = xToFrame_b();
 		recorder::rec(parent->chan->index, G_ACTION_KEYREL, frame_b);
 	}

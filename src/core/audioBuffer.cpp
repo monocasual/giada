@@ -60,14 +60,13 @@ bool AudioBuffer::isAllocd()     const { return m_data != nullptr; }
 /* -------------------------------------------------------------------------- */
 
 
-bool AudioBuffer::alloc(int size, int channels) noexcept
+void AudioBuffer::alloc(int size, int channels)
 {
 	free();
 	m_size     = size;
 	m_channels = channels;
-	m_data     = new (std::nothrow) float[m_size * m_channels];	
+	m_data     = new float[m_size * m_channels];	
 	clear(); // does nothing if m_data == nullptr
-	return m_data != nullptr;
 }
 
 

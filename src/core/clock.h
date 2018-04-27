@@ -71,6 +71,11 @@ Tells whether a quanto unit has passed yet. */
 
 bool quantoHasPassed();
 
+/* quantoHasPassed
+Whether the quantizer value is > 0 and the clock is running. */
+
+bool canQuantize();
+
 /* updateFrameBars
 Updates bpm, frames, beats and so on. */
 

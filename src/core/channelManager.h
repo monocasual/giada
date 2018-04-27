@@ -30,6 +30,7 @@
 
 
 #include <string>
+#include "types.h"
 
 
 class Channel;
@@ -41,7 +42,7 @@ namespace giada {
 namespace m {
 namespace channelManager
 {
-int create(int type, int bufferSize, bool inputMonitorOn, Channel** out);
+int create(ChannelType type, int bufferSize, bool inputMonitorOn, Channel** out);
 
 int  writePatch(const Channel* ch, bool isProject);
 void writePatch(const SampleChannel* ch, bool isProject, int index);

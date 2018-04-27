@@ -30,11 +30,13 @@
 
 
 #include <string>
+#include "../core/types.h"
 
 
 class Channel;
 class SampleChannel;
 class gdSampleEditor;
+
 
 namespace giada {
 namespace c     {
@@ -43,7 +45,7 @@ namespace channel
 /* addChannel
 Adds an empty new channel to the stack. Returns the new channel. */
 
-Channel* addChannel(int column, int type, int size);
+Channel* addChannel(int column, ChannelType type, int size);
 
 /* loadChannel
 Fills an existing channel with a wave. */
@@ -84,9 +86,9 @@ void setBoost(SampleChannel* ch, float val);
 Handles the 'R' button. If gui == true the signal comes from an user interaction
 on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void toggleReadingRecs(SampleChannel* ch, bool gui=true);
-void startReadingRecs(SampleChannel* ch, bool gui=true);
-void stopReadingRecs(SampleChannel* ch, bool gui=true);
+void toggleReadingActions(Channel* ch, bool gui=true);
+void startReadingActions(Channel* ch, bool gui=true);
+void stopReadingActions(Channel* ch, bool gui=true);
 
 }}}; // giada::c::channel::
 

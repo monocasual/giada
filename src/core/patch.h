@@ -64,7 +64,6 @@ struct channel_t
 	std::string name;
 	int         column;
 	int         mute;
-	int         mute_s;
 	int         solo;
 	float       volume;
 	float       pan;

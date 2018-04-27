@@ -229,7 +229,7 @@ int geEnvelopeEditor::handle(int e) {
 					}
 					else {
 						recorder::deleteAction(pParent->chan->index,
-              points.at(selectedPoint).frame, type, false, &mixer::mutex_recs);
+              points.at(selectedPoint).frame, type, false, &mixer::mutex);
             pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
             recorder::sortActions();
 						points.erase(points.begin() + selectedPoint);
@@ -268,7 +268,7 @@ int geEnvelopeEditor::handle(int e) {
 					/*  delete previous point and record a new one */
 
 					recorder::deleteAction(pParent->chan->index,
-            points.at(draggedPoint).frame, type, false, &mixer::mutex_recs);
+            points.at(draggedPoint).frame, type, false, &mixer::mutex);
           pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
 					if (range == G_RANGE_FLOAT) {

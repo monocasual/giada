@@ -50,33 +50,37 @@ void geChannelStatus::draw()
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
   fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
 
-  if (ch != nullptr) {
-    if (ch->status    & (STATUS_WAIT | STATUS_ENDING | REC_ENDING | REC_WAITING) ||
-        ch->recStatus & (REC_WAITING | REC_ENDING))
-    {
-      fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
-    }
-    else
-    if (ch->status == STATUS_PLAY)
-      fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
-    else
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
+  if (ch == nullptr) 
+    return;
 
-
-    if (mixer::recording && ch->armed)
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
-    else
-    if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))
-      fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);     // action record
-
-    /* equation for the progress bar:
-     * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
-
-    int pos = ch->getPosition();
-    if (pos == -1)
-      pos = 0;
-    else
-      pos = (pos * (w()-1)) / ((ch->getEnd() - ch->getBegin()));
-    fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
+  if (ch->status == ChannelStatus::WAIT    || 
+      ch->status == ChannelStatus::ENDING  ||
+      ch->recStatus == ChannelStatus::WAIT || 
+      ch->recStatus == ChannelStatus::ENDING)
+  {
+    fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
   }
+  else
+  if (ch->status == ChannelStatus::PLAY)
+    fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
+  else
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
+
+
+  if (mixer::recording && ch->armed)
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
+  else
+  if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);     // action record
+
+  /* equation for the progress bar:
+   * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
+
+  int pos = ch->getPosition();
+  if (pos == -1)
+    pos = 0;
+  else
+    pos = (pos * (w()-1)) / ((ch->getEnd() - ch->getBegin()));
+  fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
+
 }

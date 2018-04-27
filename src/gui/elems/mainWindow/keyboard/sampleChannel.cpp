@@ -208,7 +208,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
-	: geChannel(X, Y, W, H, G_CHANNEL_SAMPLE, ch)
+	: geChannel(X, Y, W, H, ch)
 {
 	begin();
 
@@ -327,7 +327,9 @@ void geSampleChannel::cb_openMenu()
 		{0}
 	};
 
-	if (ch->status & (STATUS_EMPTY | STATUS_MISSING)) {
+	if (ch->status == ChannelStatus::EMPTY || 
+		  ch->status == ChannelStatus::MISSING) 
+	{
 		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
@@ -341,7 +343,7 @@ void geSampleChannel::cb_openMenu()
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
 
-	if (static_cast<SampleChannel*>(ch)->mode & LOOP_ANY)
+	if (static_cast<SampleChannel*>(ch)->isAnyLoopMode())
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
@@ -363,7 +365,7 @@ void geSampleChannel::cb_openMenu()
 void geSampleChannel::cb_readActions()
 {
 	using namespace giada::c::channel;
-	toggleReadingRecs(static_cast<SampleChannel*>(ch));
+	toggleReadingActions(static_cast<SampleChannel*>(ch));
 }
 
 
@@ -412,11 +414,11 @@ void geSampleChannel::update()
 	const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
 
 	switch (sch->status) {
-		case STATUS_EMPTY:
+		case ChannelStatus::EMPTY:
 			mainButton->label("-- no sample --");
 			break;
-		case STATUS_MISSING:
-		case STATUS_WRONG:
+		case ChannelStatus::MISSING:
+		case ChannelStatus::WRONG:
 			mainButton->label("* file not found! *");
 			break;
 		default:
@@ -436,7 +438,7 @@ void geSampleChannel::update()
 	else
 		hideActionButton();
 
-	modeBox->value(sch->mode);
+	modeBox->value(static_cast<int>(sch->mode));
 	modeBox->redraw();
 
 	vol->value(sch->volume);

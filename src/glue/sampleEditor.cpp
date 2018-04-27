@@ -121,12 +121,7 @@ void copy(SampleChannel* ch, int a, int b)
 {
 	if (m_waveBuffer != nullptr)
 		delete m_waveBuffer;
-
-	int result = m::waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
-	if (result != G_RES_OK) {
-		gu_log("[sampleEditor::copy] unable to create wave buffer!\n");
-		return;
-	}
+	m::waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
 }
 
 
@@ -243,9 +238,9 @@ void setPlayHead(SampleChannel* ch, int f)
 /* -------------------------------------------------------------------------- */
 
 
-void setPreview(SampleChannel* ch, int mode)
+void setPreview(SampleChannel* ch, PreviewMode mode)
 {
-	ch->setPreviewMode(mode);
+	ch->previewMode = mode;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
 	gdEditor->play->value(!gdEditor->play->value());
 }
@@ -270,14 +265,10 @@ void rewindPreview(SampleChannel* ch)
 void toNewChannel(SampleChannel* ch, int a, int b)
 {
 	SampleChannel* newCh = static_cast<SampleChannel*>(c::channel::addChannel(
-		ch->guiChannel->getColumnIndex(), G_CHANNEL_SAMPLE, G_GUI_CHANNEL_H_1));
+		ch->guiChannel->getColumnIndex(), ChannelType::SAMPLE, G_GUI_CHANNEL_H_1));
 
 	Wave* wave = nullptr;
-	int result = m::waveManager::createFromWave(ch->wave, a, b, &wave);
-	if (result != G_RES_OK) {
-		gdAlert("Unable to copy to new channel!");
-		return;
-	}
+	m::waveManager::createFromWave(ch->wave, a, b, &wave);
 
 	newCh->pushWave(wave);
 	newCh->guiChannel->update();

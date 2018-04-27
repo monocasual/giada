@@ -30,6 +30,7 @@
 
 
 #include <string>
+#include "types.h"
 
 
 class Channel;
@@ -43,7 +44,7 @@ namespace mh
 /* addChannel
 Adds a new channel of type 'type' into mixer's stack. */
 
-Channel* addChannel(int type);
+Channel* addChannel(ChannelType type);
 
 /* deleteChannel
 Completely removes a channel from the stack. */

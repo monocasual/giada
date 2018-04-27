@@ -6,7 +6,7 @@
 using std::string;
 
 
-TEST_CASE("Test Wave class")
+TEST_CASE("Wave")
 {
 	static const int SAMPLE_RATE = 44100;
 	static const int BUFFER_SIZE = 4096;
@@ -20,8 +20,7 @@ TEST_CASE("Test Wave class")
 	SECTION("test allocation")
 	{
 		Wave wave;
-
-		REQUIRE(wave.alloc(BUFFER_SIZE, CHANNELS, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav") == true);
+		wave.alloc(BUFFER_SIZE, CHANNELS, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav");
 
 		SECTION("test basename")
 		{

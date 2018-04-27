@@ -183,8 +183,16 @@ void init_shutdown()
 	else
 		gu_log("[init] configuration saved\n");
 
-	/* if kernelAudio::getStatus() we close the kernelAudio FIRST, THEN the mixer.
-	 * The opposite could cause random segfaults (even now with RtAudio?). */
+	recorder::clearAll();
+	gu_log("[init] Recorder cleaned up\n");
+
+#ifdef WITH_VST
+
+	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
+  pluginHost::close();
+	gu_log("[init] PluginHost cleaned up\n");
+
+#endif
 
 	if (kernelAudio::getStatus()) {
 		kernelAudio::closeDevice();
@@ -192,17 +200,6 @@ void init_shutdown()
 		mixer::close();
 		gu_log("[init] Mixer closed\n");
 	}
-
-	recorder::clearAll();
-	gu_log("[init] Recorder cleaned up\n");
-
-#ifdef WITH_VST
-
-	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
-  pluginHost::close();
-	gu_log("[init] PluginHost cleaned up\n");
-
-#endif
 
 	gu_log("[init] Giada " G_VERSION_STR " closed\n\n");
 	gu_logClose();

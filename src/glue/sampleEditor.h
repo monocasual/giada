@@ -29,6 +29,9 @@
 #define G_GLUE_SAMPLE_EDITOR_H
 
 
+#include "../core/types.h"
+
+
 class SampleChannel;
 class geWaveform;
 
@@ -66,7 +69,7 @@ Changes playhead's position. Used in preview. */
 
 void setPlayHead(SampleChannel* ch, int f);
 
-void setPreview(SampleChannel* ch, int mode);
+void setPreview(SampleChannel* ch, PreviewMode mode);
 void rewindPreview(SampleChannel* ch);
 
 /* toNewChannel

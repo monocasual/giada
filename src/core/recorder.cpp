@@ -102,19 +102,12 @@ void init()
 
 bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 {
-	/* NO recording if:
-	 * recorder is inactive
-	 * mixer is not running
-	 * mixer is recording a take somewhere
-	 * channel is empty */
-
-	if (!active         ||
-		  !clockRunning   ||
-			 mixerRecording ||
-			(ch->type == G_CHANNEL_SAMPLE && static_cast<SampleChannel*>(ch)->wave == nullptr)
-		)
-		return false;
-	return true;
+	/* Can record on a channel if:
+	  - recorder is on
+	  - mixer is running
+	  - mixer is not recording a take somewhere
+	  - channel is SAMPLE type and has data in it  */
+	return active && clockRunning && !mixerRecording && ch->type == ChannelType::SAMPLE && ch->hasData();
 }
 
 
@@ -125,7 +118,7 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 {
 	/* allocating the action */
 
-	action* a = (action*) malloc(sizeof(action));
+	action* a = (action*) malloc(sizeof(action)); /* TODO - AAARRRGGHHHHHH!!!! */
 	a->chan   = index;
 	a->type   = type;
 	a->frame  = frame;
@@ -655,6 +648,20 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 
 	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
   fixOverdubTruncation(cmp, mixerMutex);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+vector<action*> getActionsOnFrame(int frame)
+{
+	for (size_t i=0; i<frames.size(); i++) {
+		if (recorder::frames.at(i) != frame)
+			continue;
+		return global.at(i);
+	}
+	return vector<action*>();
 }
 
 

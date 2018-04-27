@@ -153,7 +153,7 @@ void processChannels(const MidiEvent& midiEvent)
 			else 
 			if (pure == sch->midiInReadActions) {
 				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->index, pure);
-				c::channel::toggleReadingRecs(sch, false);
+				c::channel::toggleReadingActions(sch, false);
 			}
 		}
 

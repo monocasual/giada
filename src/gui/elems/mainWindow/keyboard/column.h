@@ -46,8 +46,6 @@ private:
 	static void cb_addChannel  (Fl_Widget* v, void* p);
 	inline void __cb_addChannel();
 
-	int openTypeMenu();
-
 	geButton*     m_addChannelBtn;
 	geResizerBar* m_resizer;
 	geKeyboard*   m_parent;

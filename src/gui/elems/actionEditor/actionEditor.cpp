@@ -69,8 +69,8 @@ geActionEditor::geActionEditor(int x, int y, gdActionEditor *pParent, SampleChan
 
       if ((action->chan != pParent->chan->index)                          ||
           (recorder::frames.at(i) > clock::getFramesInLoop())             ||
-          (action->type == G_ACTION_KILL && ch->mode == SINGLE_PRESS)     ||
-          (action->type == G_ACTION_KEYREL && ch->mode == SINGLE_PRESS)   ||
+          (action->type == G_ACTION_KILL && ch->mode == ChannelMode::SINGLE_PRESS)     ||
+          (action->type == G_ACTION_KEYREL && ch->mode == ChannelMode::SINGLE_PRESS)   ||
           (action->type & ~(G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL))
       )
         continue;
@@ -123,7 +123,7 @@ void geActionEditor::updateActions()
 		a = (geAction*)child(i);
 		int newX = x() + (a->frame_a / pParent->zoom);
 
-		if (ch->mode == SINGLE_PRESS) {
+		if (ch->mode == ChannelMode::SINGLE_PRESS) {
 			int newW = ((a->frame_b - a->frame_a) / pParent->zoom);
 			if (newW < geAction::MIN_WIDTH)
 				newW = geAction::MIN_WIDTH;
@@ -328,7 +328,7 @@ int geActionEditor::handle(int e)
 			bool noChanges = false;
 			if (actionOriginalX == selected->x())
 				noChanges = true;
-			if (ch->mode == SINGLE_PRESS &&
+			if (ch->mode == ChannelMode::SINGLE_PRESS &&
 					actionOriginalX+actionOriginalW != selected->x()+selected->w())
 				noChanges = false;
 
@@ -352,7 +352,7 @@ int geActionEditor::handle(int e)
 
 				int action_x  = ((geAction*)child(i))->x();
 				int action_w  = ((geAction*)child(i))->w();
-				if (ch->mode == SINGLE_PRESS) {
+				if (ch->mode == ChannelMode::SINGLE_PRESS) {
 
 					/* when 2 segments overlap?
 					 * start = the highest value between the two starting points
@@ -413,7 +413,7 @@ bool geActionEditor::actionCollides(int frame)
 		if (((geAction*) child(i))->frame_a == frame)
 			collision = true;
 
-	if (ch->mode == SINGLE_PRESS) {
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
 		for (int i=0; i<children() && !collision; i++) {
 			geAction *c = ((geAction*) child(i));
 			if (frame <= c->frame_b && frame >= c->frame_a)

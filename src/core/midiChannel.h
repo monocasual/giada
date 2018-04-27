@@ -44,28 +44,20 @@ class MidiChannel : public Channel
 public:
 
 	MidiChannel(int bufferSize);
-	~MidiChannel();
 
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
-	void clear() override;
-	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) override;
-	void preview(giada::m::AudioBuffer& out) override;
-	void start(int frame, bool doQuantize, int quantize, bool mixerIsRunning,
-		bool forceStart, bool isUserGenerated) override;
-	void kill(int frame) override;
+	void parseEvents(giada::m::mixer::FrameEvents fe) override;
+	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in, 
+		bool audible, bool running) override;
+	void start(int frame, bool doQuantize, int velocity) override;
+	void kill(int localFrame) override;
 	void empty() override;
 	void stopBySeq(bool chansStopOnSeqHalt) override;
-	void stop() override;
-	void rewind() override;
-	void setMute(bool internal) override;
-	void unsetMute(bool internal) override;
+	void stop() override {};
+	void rewindBySeq() override;
+	void setMute(bool value, EventType eventType) override;
 	void readPatch(const std::string& basePath, int i) override;
 	void writePatch(int i, bool isProject) override;
-	void quantize(int index, int localFrame, int globalFrame) override;
-	void onZero(int frame, bool recsStopOnChanHalt) override;
-	void onBar(int frame) override;
-	void parseAction(giada::m::recorder::action* a, int localFrame, int globalFrame,
-		int quantize, bool mixerIsRunning) override;
 	void receiveMidi(const giada::m::MidiEvent& midiEvent) override;
 	bool canInputRec() override;
 

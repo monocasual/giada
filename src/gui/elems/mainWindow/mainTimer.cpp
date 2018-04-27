@@ -72,12 +72,12 @@ geMainTimer::geMainTimer(int x, int y)
 	divider->callback(cb_divider, (void*)this);
 
 	quantizer->add("off", 0, cb_quantizer, (void*)this);
-	quantizer->add("1b",  0, cb_quantizer, (void*)this);
-	quantizer->add("2b",  0, cb_quantizer, (void*)this);
-	quantizer->add("3b",  0, cb_quantizer, (void*)this);
-	quantizer->add("4b",  0, cb_quantizer, (void*)this);
-	quantizer->add("6b",  0, cb_quantizer, (void*)this);
-	quantizer->add("8b",  0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/1", 0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/2", 0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/3", 0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/4", 0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/6", 0, cb_quantizer, (void*)this);
+	quantizer->add("1\\/8", 0, cb_quantizer, (void*)this);
 	quantizer->value(0); //  "off" by default
 }
 
@@ -85,17 +85,17 @@ geMainTimer::geMainTimer(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::cb_bpm       (Fl_Widget *v, void *p) { ((geMainTimer*)p)->__cb_bpm(); }
-void geMainTimer::cb_meter     (Fl_Widget *v, void *p) { ((geMainTimer*)p)->__cb_meter(); }
-void geMainTimer::cb_quantizer (Fl_Widget *v, void *p) { ((geMainTimer*)p)->__cb_quantizer(); }
-void geMainTimer::cb_multiplier(Fl_Widget *v, void *p) { ((geMainTimer*)p)->__cb_multiplier(); }
-void geMainTimer::cb_divider   (Fl_Widget *v, void *p) { ((geMainTimer*)p)->__cb_divider(); }
+void geMainTimer::cb_bpm       (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_bpm(); }
+void geMainTimer::cb_meter     (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_meter(); }
+void geMainTimer::cb_quantizer (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_quantizer(); }
+void geMainTimer::cb_multiplier(Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_multiplier(); }
+void geMainTimer::cb_divider   (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_divider(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::__cb_bpm()
+void geMainTimer::cb_bpm()
 {
 	gu_openSubWindow(G_MainWin, new gdBpmInput(bpm->label()), WID_BPM);
 }
@@ -104,7 +104,7 @@ void geMainTimer::__cb_bpm()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::__cb_meter()
+void geMainTimer::cb_meter()
 {
 	gu_openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
 }
@@ -113,7 +113,7 @@ void geMainTimer::__cb_meter()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::__cb_quantizer()
+void geMainTimer::cb_quantizer()
 {
 	glue_quantize(quantizer->value());
 }
@@ -122,7 +122,7 @@ void geMainTimer::__cb_quantizer()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::__cb_multiplier()
+void geMainTimer::cb_multiplier()
 {
 	glue_beatsMultiply();
 }
@@ -131,7 +131,7 @@ void geMainTimer::__cb_multiplier()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::__cb_divider()
+void geMainTimer::cb_divider()
 {
 	glue_beatsDivide();
 }
@@ -140,7 +140,7 @@ void geMainTimer::__cb_divider()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTimer::setBpm(const char *v)
+void geMainTimer::setBpm(const char* v)
 {
 	bpm->copy_label(v);
 }
@@ -169,6 +169,15 @@ void geMainTimer::setLock(bool v)
     multiplier->activate();
     divider->activate();
   }
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMainTimer::setQuantizer(int q)
+{
+	quantizer->value(q);
 }
 
 

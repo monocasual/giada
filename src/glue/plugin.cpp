@@ -82,7 +82,7 @@ Plugin* addPlugin(Channel* ch, int index, int stackType)
 {
   if (index >= pluginHost::countAvailablePlugins())
     return nullptr;
-  return pluginHost::addPlugin(index, stackType, &mixer::mutex_plugins, ch);
+  return pluginHost::addPlugin(index, stackType, &mixer::mutex, ch);
 }
 
 
@@ -91,7 +91,7 @@ Plugin* addPlugin(Channel* ch, int index, int stackType)
 
 void swapPlugins(Channel* ch, int index1, int index2, int stackType)
 {
-  pluginHost::swapPlugin(index1, index2, stackType, &mixer::mutex_plugins,
+  pluginHost::swapPlugin(index1, index2, stackType, &mixer::mutex,
     ch);
 }
 
@@ -101,7 +101,7 @@ void swapPlugins(Channel* ch, int index1, int index2, int stackType)
 
 void freePlugin(Channel* ch, int index, int stackType)
 {
-  pluginHost::freePlugin(index, stackType, &mixer::mutex_plugins, ch);
+  pluginHost::freePlugin(index, stackType, &mixer::mutex, ch);
 }
 
 

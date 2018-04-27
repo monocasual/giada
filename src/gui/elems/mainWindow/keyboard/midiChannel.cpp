@@ -148,7 +148,7 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel* ch)
-	: geChannel(X, Y, W, H, G_CHANNEL_MIDI, ch)
+	: geChannel(X, Y, W, H, ch)
 {
 	begin();
 
@@ -217,7 +217,7 @@ void geMidiChannel::cb_button()
 	using namespace giada;
 	
 	if (button->value())
-		c::io::keyPress(static_cast<MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyPress(static_cast<MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift(), 0);
 }
 
 

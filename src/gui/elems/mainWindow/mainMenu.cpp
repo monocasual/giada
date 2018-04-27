@@ -39,7 +39,7 @@
 #include "../../elems/basics/boxtypes.h"
 #include "../../elems/basics/button.h"
 #include "../../dialogs/gd_mainWindow.h"
-#include "../../dialogs/gd_about.h"
+#include "../../dialogs/about.h"
 #include "../../dialogs/gd_config.h"
 #include "../../dialogs/gd_warnings.h"
 #include "../../dialogs/browser/browserLoad.h"
@@ -177,17 +177,17 @@ void geMainMenu::__cb_edit()
 
 	menu[1].deactivate();
 
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		if (mixer::channels.at(i)->hasActions) {
+	for (const Channel* ch : mixer::channels)
+		if (ch->hasActions) {
 			menu[1].activate();
 			break;
 		}
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		if (mixer::channels.at(i)->type == G_CHANNEL_SAMPLE)
-			if (((SampleChannel*)mixer::channels.at(i))->wave != nullptr) {
-				menu[0].activate();
-				break;
-			}
+
+	for (const Channel* ch : mixer::channels)
+		if (ch->hasData()) {
+			menu[0].activate();
+			break;
+		}
 
 	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);

@@ -1,5 +1,6 @@
 #include "../src/core/patch.h"
 #include "../src/core/const.h"
+#include "../src/core/types.h"
 #include <catch.hpp>
 
 
@@ -8,14 +9,14 @@ using std::vector;
 using namespace giada::m;
 
 
-TEST_CASE("Test Patch class")
+TEST_CASE("patch")
 {
 	string filename = "./test-patch.json";
 
 	SECTION("test write")
 	{
+		patch::action_t  action0;
 		patch::action_t  action1;
-		patch::action_t  action2;
 		patch::channel_t channel1;
 		patch::column_t  column;
 #ifdef WITH_VST
@@ -24,16 +25,16 @@ TEST_CASE("Test Patch class")
 		patch::plugin_t  plugin3;
 #endif
 
-		action1.type   = 0;
-		action1.frame  = 50000;
-		action1.fValue = 0.3f;
-		action1.iValue = 1000;
-		action2.type   = 2;
-		action2.frame  = 589;
-		action2.fValue = 1.0f;
-		action2.iValue = 130;
+		action0.type   = 0;
+		action0.frame  = 50000;
+		action0.fValue = 0.3f;
+		action0.iValue = 1000;
+		action1.type   = 2;
+		action1.frame  = 589;
+		action1.fValue = 1.0f;
+		action1.iValue = 130;
+		channel1.actions.push_back(action0);
 		channel1.actions.push_back(action1);
-		channel1.actions.push_back(action2);
 
 #ifdef WITH_VST
 		plugin1.path   = "/path/to/plugin1";
@@ -55,12 +56,11 @@ TEST_CASE("Test Patch class")
 		channel1.plugins.push_back(plugin2);
 #endif
 
-		channel1.type              = G_CHANNEL_SAMPLE;
+		channel1.type              = static_cast<int>(ChannelType::SAMPLE);
 		channel1.index             = 666;
 		channel1.size              = G_GUI_CHANNEL_H_1;
 		channel1.column            = 0;
 		channel1.mute              = 0;
-		channel1.mute_s            = 0;
 		channel1.solo              = 0;
 		channel1.volume            = 1.0f;
 		channel1.pan               = 0.5f;
@@ -144,12 +144,11 @@ TEST_CASE("Test Patch class")
 		REQUIRE(column0.width == 500);
 
 		patch::channel_t channel0 = patch::channels.at(0);
-		REQUIRE(channel0.type == G_CHANNEL_SAMPLE);
+		REQUIRE(channel0.type == static_cast<int>(ChannelType::SAMPLE));
 		REQUIRE(channel0.index == 666);
 		REQUIRE(channel0.size == G_GUI_CHANNEL_H_1);
 		REQUIRE(channel0.column == 0);
 		REQUIRE(channel0.mute == 0);
-		REQUIRE(channel0.mute_s == 0);
 		REQUIRE(channel0.solo == 0);
 		REQUIRE(channel0.volume == Approx(1.0f));
 		REQUIRE(channel0.pan == Approx(0.5f));

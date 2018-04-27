@@ -7,7 +7,7 @@ using std::string;
 using namespace giada::m;
 
 
-TEST_CASE("Test Recorder")
+TEST_CASE("recorder")
 {
 	/* Each SECTION the TEST_CASE is executed from the start. The following
 	code is exectuted before each SECTION. */

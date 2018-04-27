@@ -1,4 +1,4 @@
-/* -----------------------------------------------------------------------------
+ /* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
@@ -45,14 +45,14 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
   textcolor(G_COLOR_LIGHT_2);
   color(G_COLOR_GREY_2);
 
-  add("Loop . basic",      0, cb_changeMode, (void *)LOOP_BASIC);
-  add("Loop . once",       0, cb_changeMode, (void *)LOOP_ONCE);
-  add("Loop . once . bar", 0, cb_changeMode, (void *)LOOP_ONCE_BAR);
-  add("Loop . repeat",     0, cb_changeMode, (void *)LOOP_REPEAT);
-  add("Oneshot . basic",   0, cb_changeMode, (void *)SINGLE_BASIC);
-  add("Oneshot . press",   0, cb_changeMode, (void *)SINGLE_PRESS);
-  add("Oneshot . retrig",  0, cb_changeMode, (void *)SINGLE_RETRIG);
-  add("Oneshot . endless", 0, cb_changeMode, (void *)SINGLE_ENDLESS);
+  add("Loop . basic",      0, cb_changeMode, (void*) ChannelMode::LOOP_BASIC);
+  add("Loop . once",       0, cb_changeMode, (void*) ChannelMode::LOOP_ONCE);
+  add("Loop . once . bar", 0, cb_changeMode, (void*) ChannelMode::LOOP_ONCE_BAR);
+  add("Loop . repeat",     0, cb_changeMode, (void*) ChannelMode::LOOP_REPEAT);
+  add("Oneshot . basic",   0, cb_changeMode, (void*) ChannelMode::SINGLE_BASIC);
+  add("Oneshot . press",   0, cb_changeMode, (void*) ChannelMode::SINGLE_PRESS);
+  add("Oneshot . retrig",  0, cb_changeMode, (void*) ChannelMode::SINGLE_RETRIG);
+  add("Oneshot . endless", 0, cb_changeMode, (void*) ChannelMode::SINGLE_ENDLESS);
 }
 
 
@@ -62,28 +62,28 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
 void geChannelMode::draw() {
   fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);    // border
   switch (ch->mode) {
-    case LOOP_BASIC:
+    case ChannelMode::LOOP_BASIC:
       fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
       break;
-    case LOOP_ONCE:
+    case ChannelMode::LOOP_ONCE:
       fl_draw_pixmap(loopOnce_xpm, x()+1, y()+1);
       break;
-    case LOOP_ONCE_BAR:
+    case ChannelMode::LOOP_ONCE_BAR:
       fl_draw_pixmap(loopOnceBar_xpm, x()+1, y()+1);
       break;
-    case LOOP_REPEAT:
+    case ChannelMode::LOOP_REPEAT:
       fl_draw_pixmap(loopRepeat_xpm, x()+1, y()+1);
       break;
-    case SINGLE_BASIC:
+    case ChannelMode::SINGLE_BASIC:
       fl_draw_pixmap(oneshotBasic_xpm, x()+1, y()+1);
       break;
-    case SINGLE_PRESS:
+    case ChannelMode::SINGLE_PRESS:
       fl_draw_pixmap(oneshotPress_xpm, x()+1, y()+1);
       break;
-    case SINGLE_RETRIG:
+    case ChannelMode::SINGLE_RETRIG:
       fl_draw_pixmap(oneshotRetrig_xpm, x()+1, y()+1);
       break;
-    case SINGLE_ENDLESS:
+    case ChannelMode::SINGLE_ENDLESS:
       fl_draw_pixmap(oneshotEndless_xpm, x()+1, y()+1);
       break;
   }
@@ -101,7 +101,7 @@ void geChannelMode::cb_changeMode(Fl_Widget *v, void *p) { ((geChannelMode*)v)->
 
 void geChannelMode::__cb_changeMode(int mode)
 {
-  ch->mode = mode;
+  ch->mode = static_cast<ChannelMode>(mode);
 
   /* what to do when the channel is playing and you change the mode?
    * Nothing, since v0.5.3. Just refresh the action editor window, in

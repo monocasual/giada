@@ -9,7 +9,7 @@ using std::string;
 using namespace giada::m;
 
 
-TEST_CASE("Test waveFx")
+TEST_CASE("waveFx")
 {
 	static const int SAMPLE_RATE = 44100;
 	static const int BUFFER_SIZE = 4000;

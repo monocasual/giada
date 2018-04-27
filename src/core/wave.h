@@ -84,7 +84,7 @@ public:
 
 	void copyData(float* data, int frames, int offset=0);
 
-	bool alloc(int size, int channels, int rate, int bits, const std::string& path);
+	void alloc(int size, int channels, int rate, int bits, const std::string& path);
 
 private:
 

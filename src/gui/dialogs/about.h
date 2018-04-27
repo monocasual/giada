@@ -25,47 +25,37 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../core/const.h"
-#ifdef G_OS_MAC
-	#include <RtMidi.h>
-#else
-	#include <rtmidi/RtMidi.h>
+#ifndef GD_ABOUT_H
+#define GD_ABOUT_H
+
+
+#include "window.h"
+
+
+class geBox;
+class geButton;
+
+
+class gdAbout : public gdWindow
+{
+private:
+
+	geBox*    logo;
+	geBox*    text;
+	geButton* close;
+
+#ifdef WITH_VST
+	geBox* vstText;
+	geBox* vstLogo;
 #endif
-#include <sndfile.h>
-#include "../deps/rtaudio-mod/RtAudio.h"
-#include "deps.h"
 
+public:
 
-using std::string;
+	gdAbout();
+	~gdAbout();
 
+	static void cb_close(Fl_Widget* w, void* p);
+	inline void cb_close();
+};
 
-namespace giada {
-namespace u     {
-namespace deps  
-{
-string getLibsndfileVersion()
-{
-  char buffer[128];
-  sf_command(NULL, SFC_GET_LIB_VERSION, buffer, sizeof(buffer));
-  return string(buffer);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string getRtAudioVersion()
-{
-  return RtAudio::getVersion();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string getRtMidiVersion()
-{
-  return RtMidi::getVersion();
-}
-
-}}};  // giada::u::deps::
+#endif

@@ -363,6 +363,15 @@ void recvJackSync()
 /* -------------------------------------------------------------------------- */
 
 
+bool canQuantize()
+{
+	return getQuantize() > 0 && isRunning();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int getCurrentFrame()
 {
 	return currentFrame;

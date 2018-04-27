@@ -72,8 +72,8 @@ int readPatchPlugins(vector<patch::plugin_t>* list, int type)
 	for (unsigned i=0; i<list->size(); i++) {
 		patch::plugin_t *ppl = &list->at(i);
 		// TODO use glue_addPlugin()
-		Plugin *plugin = pluginHost::addPlugin(ppl->path.c_str(), type,
-				&mixer::mutex_plugins, nullptr);
+		Plugin *plugin = pluginHost::addPlugin(ppl->path.c_str(), type, 
+			&mixer::mutex, nullptr);
 		if (plugin != nullptr) {
 			plugin->setBypass(ppl->bypass);
 			for (unsigned j=0; j<ppl->params.size(); j++)
@@ -120,7 +120,7 @@ int getNewChanIndex()
 bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 {
 	for (const Channel* ch : mixer::channels) {
-		if (skip == ch || ch->type != G_CHANNEL_SAMPLE) // skip itself and MIDI channels
+		if (skip == ch || ch->type != ChannelType::SAMPLE) // skip itself and MIDI channels
 			continue;
 		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
 		if (sch->wave != nullptr && path == sch->wave->getPath())
@@ -133,7 +133,7 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* addChannel(int type)
+Channel* addChannel(ChannelType type)
 {
 	Channel* ch = nullptr;
 	channelManager::create(type, kernelAudio::getRealBufSize(), 
@@ -142,10 +142,10 @@ Channel* addChannel(int type)
 		return nullptr;
 
 	while (true) {
-		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
+		if (pthread_mutex_trylock(&mixer::mutex) != 0)
 			continue;
 		mixer::channels.push_back(ch);
-		pthread_mutex_unlock(&mixer::mutex_chans);
+		pthread_mutex_unlock(&mixer::mutex);
 		break;
 	}
 
@@ -162,12 +162,12 @@ Channel* addChannel(int type)
 void deleteChannel(Channel* target)
 {
 	while (true) {
-		if (pthread_mutex_trylock(&mixer::mutex_chans) != 0)
+		if (pthread_mutex_trylock(&mixer::mutex) != 0)
 			continue;
 		auto it = std::find(mixer::channels.begin(), mixer::channels.end(), target);
 		if (it != mixer::channels.end()) 
 			mixer::channels.erase(it);
-		pthread_mutex_unlock(&mixer::mutex_chans);
+		pthread_mutex_unlock(&mixer::mutex);
 		return;
 	}
 }
@@ -191,13 +191,9 @@ Channel* getChannelByIndex(int index)
 
 bool hasLogicalSamples()
 {
-	for (const Channel* ch : mixer::channels) {
-		if (ch->type != G_CHANNEL_SAMPLE)
-			continue;
-		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-		if (sch->wave != nullptr && sch->wave->isLogical())
+	for (const Channel* ch : mixer::channels)
+		if (ch->hasLogicalData())
 			return true;
-	}
 	return false;
 }
 
@@ -207,13 +203,9 @@ bool hasLogicalSamples()
 
 bool hasEditedSamples()
 {
-	for (const Channel* ch : mixer::channels) {
-		if (ch->type != G_CHANNEL_SAMPLE)
-			continue;
-		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-		if (sch->wave != nullptr && sch->wave->isEdited())
+	for (const Channel* ch : mixer::channels)
+		if (ch->hasEditedData())
 			return true;
-	}
 	return false;
 }
 
@@ -234,7 +226,7 @@ void stopSequencer()
 
 void updateSoloCount()
 {
-	for (Channel* ch : mixer::channels)
+	for (const Channel* ch : mixer::channels)
 		if (ch->solo) {
 			mixer::hasSolos = true;
 			return;
@@ -307,10 +299,8 @@ bool startInputRec()
 		Wave*  wave = nullptr;
 		string name = string("TAKE-" + gu_iToString(patch::lastTakeId++)); // Increase lastTakeId 
 
-		int result = waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS,
+		waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS, 
 			conf::samplerate, name + ".wav", &wave); 
-		if (result != G_RES_OK)
-			continue;
 
 		sch->pushWave(wave);
 		sch->name = name; 
@@ -338,6 +328,10 @@ void stopInputRec()
 	mixer::mergeVirtualInput();
 	mixer::recording = false;
 	mixer::waitRec = 0; // in case delay compensation is in use
+
+	for (Channel* ch : mixer::channels)
+		ch->stopInputRec(clock::getCurrentFrame());
+
 	gu_log("[mh] stop input recs\n");
 }
 
@@ -348,7 +342,7 @@ void stopInputRec()
 bool hasArmedSampleChannels()
 {
 	for (const Channel* ch : mixer::channels)
-		if (ch->type == G_CHANNEL_SAMPLE && ch->armed)
+		if (ch->type == ChannelType::SAMPLE && ch->armed)
 			return true;
 	return false;
 }

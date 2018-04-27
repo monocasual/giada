@@ -7,7 +7,7 @@ using std::string;
 using namespace giada::m;
 
 
-TEST_CASE("Test Conf class")
+TEST_CASE("conf")
 {
   conf::init();
   

@@ -28,7 +28,7 @@
 #include <cmath>
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
-#include <FL/fl_draw.H>
+//#include <FL/fl_draw.H>
 #include "../../glue/channel.h"
 #include "../../glue/sampleEditor.h"
 #include "../../core/waveFx.h"
@@ -108,7 +108,7 @@ gdSampleEditor::~gdSampleEditor()
   m::conf::sampleEditorH = h();
   m::conf::sampleEditorGridVal = atoi(grid->text());
   m::conf::sampleEditorGridOn  = snap->value();
-  c::sampleEditor::setPreview(ch, G_PREVIEW_NONE);
+  c::sampleEditor::setPreview(ch, PreviewMode::NONE);
 }
 
 
@@ -280,9 +280,9 @@ void gdSampleEditor::cb_togglePreview()
   using namespace giada::c;
 
 	if (play->value())
-  	sampleEditor::setPreview(ch, G_PREVIEW_NONE);
+  	sampleEditor::setPreview(ch, PreviewMode::NONE);
 	else
-  	sampleEditor::setPreview(ch, loop->value() ? G_PREVIEW_LOOP : G_PREVIEW_NORMAL);
+  	sampleEditor::setPreview(ch, loop->value() ? PreviewMode::LOOP : PreviewMode::NORMAL);
 }
 
 

@@ -105,7 +105,7 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 
 	for (const patch::plugin_t& ppl : pch.plugins) {
 		Plugin* plugin = pluginHost::addPlugin(ppl.path, pluginHost::CHANNEL,
-			&mixer::mutex_plugins, ch);
+			&mixer::mutex, ch);
 		if (plugin == nullptr)
 			continue;
 
@@ -132,21 +132,12 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 /* -------------------------------------------------------------------------- */
 
 
-int create(int type, int bufferSize, bool inputMonitorOn, Channel** out)
+int create(ChannelType type, int bufferSize, bool inputMonitorOn, Channel** out)
 {
-	Channel* ch;
-	if (type == G_CHANNEL_SAMPLE)
-		ch = new SampleChannel(bufferSize, inputMonitorOn);
+	if (type == ChannelType::SAMPLE)
+		*out = new SampleChannel(inputMonitorOn, bufferSize);
 	else
-		ch = new MidiChannel(bufferSize);
-
-	if (!ch->allocBuffers()) {
-		delete ch;
-		return G_RES_ERR_MEMORY;
-	}
-
-	*out = ch;
-
+		*out = new MidiChannel(bufferSize);
 	return G_RES_OK;
 }
 
@@ -157,7 +148,7 @@ int create(int type, int bufferSize, bool inputMonitorOn, Channel** out)
 int writePatch(const Channel* ch, bool isProject)
 {
 	patch::channel_t pch;
-	pch.type            = ch->type;
+	pch.type            = static_cast<int>(ch->type);
 	pch.index           = ch->index;
 	pch.size            = ch->guiChannel->getSize();
 	pch.name            = ch->name;
@@ -165,7 +156,6 @@ int writePatch(const Channel* ch, bool isProject)
 	pch.armed           = ch->armed;
 	pch.column          = ch->guiChannel->getColumnIndex();
 	pch.mute            = ch->mute;
-	// pch.mute_s          = ch->mute_s;  TODO remove it with mute refactoring
 	pch.solo            = ch->solo;
 	pch.volume          = ch->volume;
 	pch.pan             = ch->pan;
@@ -218,7 +208,7 @@ void writePatch(const SampleChannel* ch, bool isProject, int index)
 	else
 		pch.samplePath = "";
 
-	pch.mode              = ch->mode;
+	pch.mode              = static_cast<int>(ch->mode);
 	pch.begin             = ch->getBegin();
 	pch.end               = ch->getEnd();
 	pch.boost             = ch->getBoost();
@@ -239,11 +229,10 @@ void readPatch(Channel* ch, int i)
 
 	ch->key             = pch.key;
 	ch->armed           = pch.armed;
-	ch->type            = pch.type;
+	ch->type            = static_cast<ChannelType>(pch.type);
 	ch->name            = pch.name;
 	ch->index           = pch.index;
 	ch->mute            = pch.mute;
-	//ch->mute_s          = pch.mute_s;
 	ch->solo            = pch.solo;
 	ch->volume          = pch.volume;
 	ch->pan             = pch.pan;
@@ -272,9 +261,9 @@ void readPatch(SampleChannel* ch, const string& basePath, int i)
 {
 	const patch::channel_t& pch = patch::channels.at(i);
 
-	ch->mode              = pch.mode;
+	ch->mode              = static_cast<ChannelMode>(pch.mode);
 	ch->readActions       = pch.recActive;
-	ch->recStatus         = pch.recActive ? REC_READING : REC_STOPPED;
+	ch->recStatus         = pch.recActive ? ChannelStatus::PLAY : ChannelStatus::OFF;
 	ch->midiInVeloAsVol   = pch.midiInVeloAsVol;
 	ch->midiInReadActions = pch.midiInReadActions;
 	ch->midiInPitch       = pch.midiInPitch;
@@ -292,11 +281,11 @@ void readPatch(SampleChannel* ch, const string& basePath, int i)
 	}
 	else {
 		if (res == G_RES_ERR_NO_DATA)
-			ch->status = STATUS_EMPTY;
+			ch->status = ChannelStatus::EMPTY;
 		else
 		if (res == G_RES_ERR_IO)
-			ch->status = STATUS_MISSING;
-		ch->sendMidiLplay();  // FIXME - why sending MIDI lightning if sample status is wrong?
+			ch->status = ChannelStatus::MISSING;
+		ch->sendMidiLstatus();  // FIXME - why sending MIDI lightning if sample status is wrong?
 	}
 }
 

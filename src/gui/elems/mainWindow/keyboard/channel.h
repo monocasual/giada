@@ -30,6 +30,7 @@
 
 
 #include <FL/Fl_Group.H>
+#include "../../../../core/types.h"
 
 
 class Channel;
@@ -86,7 +87,7 @@ protected:
 	/* setColorByStatus
 	 * update colors depending on channel status. */
 
-	void setColorsByStatus(int playStatus, int recStatus);
+	void setColorsByStatus(ChannelStatus chan, ChannelStatus rec);
 
 	/* handleKey
 	 * method wrapped by virtual handle(int e). */
@@ -100,7 +101,7 @@ protected:
 
 public:
 
-	geChannel(int x, int y, int w, int h, int type, Channel* ch);
+	geChannel(int x, int y, int w, int h, Channel* ch);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -148,8 +149,6 @@ public:
 #ifdef WITH_VST
 	geStatusButton*  fx;
 #endif
-
-	int type;
 };
 
 

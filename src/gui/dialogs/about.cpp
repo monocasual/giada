@@ -36,10 +36,10 @@
 #endif
 #include "../../utils/gui.h"
 #include "../../utils/string.h"
-#include "../../utils/deps.h"
+#include "../../utils/ver.h"
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
-#include "gd_about.h"
+#include "about.h"
 
 
 using std::string;
@@ -87,9 +87,9 @@ gdAbout::gdAbout()
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
-		deps::getRtAudioVersion().c_str(),
-		deps::getRtMidiVersion().c_str(),
-		JANSSON_VERSION, deps::getLibsndfileVersion().c_str()
+		ver::getRtAudioVersion().c_str(),
+		ver::getRtMidiVersion().c_str(),
+		JANSSON_VERSION, ver::getLibsndfileVersion().c_str()
 #ifdef WITH_VST
 		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER
 #endif
@@ -132,13 +132,13 @@ gdAbout::~gdAbout()
 /* -------------------------------------------------------------------------- */
 
 
-void gdAbout::cb_close(Fl_Widget *w, void *p) { ((gdAbout*)p)->__cb_close(); }
+void gdAbout::cb_close(Fl_Widget* w, void* p) { ((gdAbout*)p)->cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdAbout::__cb_close()
+void gdAbout::cb_close()
 {
 	do_callback();
 }

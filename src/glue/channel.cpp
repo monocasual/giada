@@ -79,8 +79,8 @@ int loadChannel(SampleChannel* ch, const string& fname)
 	/* Always stop a channel before loading a new sample in it. This will prevent
 	issues if tracker is outside the boundaries of the new sample -> segfault. */
 
-	if (ch->status & (STATUS_PLAY | STATUS_ENDING))
-		ch->hardStop(0);
+	if (ch->isPlaying())
+		ch->kill(0);
 
 	/* Save the patch and take the last browser's dir in order to re-use it the 
 	next time. */
@@ -113,7 +113,7 @@ int loadChannel(SampleChannel* ch, const string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* addChannel(int column, int type, int size)
+Channel* addChannel(int column, ChannelType type, int size)
 {
 	Channel* ch    = m::mh::addChannel(type);
 	geChannel* gch = G_MainWin->keyboard->addChannel(column, ch, size);
@@ -134,7 +134,7 @@ void deleteChannel(Channel* ch)
 	recorder::clearChan(ch->index);
 	ch->hasActions = false;
 #ifdef WITH_VST
-	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex_plugins, ch);
+	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex, ch);
 #endif
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
@@ -149,7 +149,7 @@ void deleteChannel(Channel* ch)
 
 void freeChannel(Channel* ch)
 {
-	if (ch->status == STATUS_PLAY) {
+	if (ch->isPlaying()) {
 		if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
 			return;
 	}
@@ -159,7 +159,6 @@ void freeChannel(Channel* ch)
 
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
 	m::recorder::clearChan(ch->index);
-	ch->hasActions = false;
 	ch->empty();
 
 	/* delete any related subwindow */
@@ -204,7 +203,7 @@ int cloneChannel(Channel* src)
 		ch, src->guiChannel->getSize());
 
 	ch->guiChannel = gch;
-	ch->copy(src, &mixer::mutex_plugins);
+	ch->copy(src, &mixer::mutex);
 
 	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 	return true;
@@ -272,21 +271,7 @@ void setPanning(SampleChannel* ch, float val)
 
 void toggleMute(Channel* ch, bool gui)
 {
-	using namespace giada::m;
-
-	if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording)) {
-		if (!ch->mute) {
-			recorder::startOverdub(ch->index, G_ACTION_MUTES, clock::getCurrentFrame(),
-				kernelAudio::getRealBufSize());
-			ch->readActions = false;   // don't read actions while overdubbing
-		}
-		else
-		 recorder::stopOverdub(clock::getCurrentFrame(), clock::getFramesInLoop(),
-			&mixer::mutex_recs);
-	}
-
-	ch->mute ? ch->unsetMute(false) : ch->setMute(false);
-
+	ch->setMute(!ch->mute, EventType::MANUAL);
 	if (!gui) {
 		Fl::lock();
 		ch->guiChannel->mute->value(ch->mute);
@@ -300,11 +285,8 @@ void toggleMute(Channel* ch, bool gui)
 
 void toggleSolo(Channel* ch, bool gui)
 {
-	using namespace giada::m;
-	
 	ch->solo = !ch->solo;
-	mh::updateSoloCount();	
-	
+	m::mh::updateSoloCount();	
 	if (!gui) {
 		Fl::lock();
 		ch->guiChannel->solo->value(ch->solo);
@@ -350,7 +332,7 @@ void setName(Channel* ch, const string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleReadingRecs(SampleChannel* ch, bool gui)
+void toggleReadingActions(Channel* ch, bool gui)
 {
 
 	/* When you call startReadingRecs with conf::treatRecsAsLoops, the
@@ -361,24 +343,22 @@ void toggleReadingRecs(SampleChannel* ch, bool gui)
 	handle the case of when you press 'R', the channel goes into REC_WAITING and
 	then you press 'R' again to undo the status. */
 
-	if (ch->readActions || (!ch->readActions && ch->recStatus == REC_WAITING))
-		stopReadingRecs(ch, gui);
+	if (ch->readActions || (!ch->readActions && ch->recStatus == ChannelStatus::WAIT))
+		stopReadingActions(ch, gui);
 	else
-		startReadingRecs(ch, gui);
+		startReadingActions(ch, gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void startReadingRecs(SampleChannel* ch, bool gui)
+void startReadingActions(Channel* ch, bool gui)
 {
 	using namespace giada::m;
 
-	if (conf::treatRecsAsLoops)
-		ch->recStatus = REC_WAITING;
-	else
-		ch->setReadActions(true, conf::recsStopOnChanHalt);
+	ch->startReadingActions(conf::treatRecsAsLoops, conf::recsStopOnChanHalt); 
+
 	if (!gui) {
 		Fl::lock();
 		static_cast<geSampleChannel*>(ch->guiChannel)->readActions->value(1);
@@ -390,29 +370,12 @@ void startReadingRecs(SampleChannel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void stopReadingRecs(SampleChannel* ch, bool gui)
+void stopReadingActions(Channel* ch, bool gui)
 {
 	using namespace giada::m;
 
-	/* First of all, if the clock is not running just stop and disable everything.
-	Then if "treatRecsAsLoop" wait until the sequencer reaches beat 0, so put the
-	channel in REC_ENDING status. */
-
-	if (!clock::isRunning()) {
-		ch->recStatus = REC_STOPPED;
-		ch->setReadActions(false, false);
-	}
-	else
-	if (ch->recStatus == REC_WAITING)
-		ch->recStatus = REC_STOPPED;
-	else
-	if (ch->recStatus == REC_ENDING)
-		ch->recStatus = REC_READING;
-	else
-	if (conf::treatRecsAsLoops)
-		ch->recStatus = REC_ENDING;
-	else
-		ch->setReadActions(false, conf::recsStopOnChanHalt);
+	ch->stopReadingActions(clock::isRunning(), conf::treatRecsAsLoops, 
+		conf::recsStopOnChanHalt);
 
 	if (!gui) {
 		Fl::lock();

@@ -14,7 +14,7 @@ using namespace giada::m;
 #define G_CHANNELS 2
 
 
-TEST_CASE("Test waveManager")
+TEST_CASE("waveManager")
 {
   /* Each SECTION the TEST_CASE is executed from the start. Any code between 
   this comment and the first SECTION macro is exectuted before each SECTION. */
@@ -35,11 +35,10 @@ TEST_CASE("Test waveManager")
 
   SECTION("test recording")
   {
-    int res = waveManager::createEmpty(G_BUFFER_SIZE, G_MAX_IO_CHANS, G_SAMPLE_RATE, 
+    waveManager::createEmpty(G_BUFFER_SIZE, G_MAX_IO_CHANS, G_SAMPLE_RATE, 
       "test.wav", &w);
     std::unique_ptr<Wave> wave(w);
 
-    REQUIRE(res == G_RES_OK);
     REQUIRE(wave->getRate() == G_SAMPLE_RATE);
     REQUIRE(wave->getSize() == G_BUFFER_SIZE);
     REQUIRE(wave->getChannels() == G_CHANNELS);
@@ -49,15 +48,12 @@ TEST_CASE("Test waveManager")
 
   SECTION("test resampling")
   {
-    int res = waveManager::create("tests/resources/test.wav", &w);
+    waveManager::create("tests/resources/test.wav", &w);
     std::unique_ptr<Wave> wave(w);
-    
-    REQUIRE(res == G_RES_OK);
 
     int oldSize = wave->getSize();
-    res = waveManager::resample(wave.get(), 1, G_SAMPLE_RATE * 2);
+    waveManager::resample(wave.get(), 1, G_SAMPLE_RATE * 2);
     
-    REQUIRE(res == G_RES_OK);
     REQUIRE(wave->getRate() == G_SAMPLE_RATE * 2);
     REQUIRE(wave->getSize() == oldSize * 2);
     REQUIRE(wave->getChannels() == G_CHANNELS);

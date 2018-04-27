@@ -95,11 +95,7 @@ int create(const string& path, Wave** out)
 	}
 
 	Wave* wave = new Wave();
-	if (!wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path)) {
-		gu_log("[waveManager::create] unable to allocate memory\n");
-		delete wave;
-		return G_RES_ERR_MEMORY;
-	}
+	wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
 		gu_log("[waveManager::create] warning: incomplete read!\n");
@@ -122,15 +118,11 @@ int create(const string& path, Wave** out)
 /* -------------------------------------------------------------------------- */
 
 
-int createEmpty(int frames, int channels, int samplerate, const string& name, 
+void createEmpty(int frames, int channels, int samplerate, const string& name, 
 	Wave** out)
 {
 	Wave* wave = new Wave();
-	if (!wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name)) {
-		gu_log("[waveManager::createEmpty] unable to allocate memory\n");
-		delete wave;
-		return G_RES_ERR_MEMORY;
-	}
+	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 
 	wave->setLogical(true);
 
@@ -138,25 +130,19 @@ int createEmpty(int frames, int channels, int samplerate, const string& name,
 
 	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
 		wave->getSize());
-
-	return G_RES_OK;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int createFromWave(const Wave* src, int a, int b, Wave** out)
+void createFromWave(const Wave* src, int a, int b, Wave** out)
 {
 	int channels = src->getChannels();
 	int frames   = b - a;
 
 	Wave* wave = new Wave();
-	if (!wave->alloc(frames, channels, src->getRate(), src->getBits(), src->getPath())) {
-		gu_log("[waveManager::createFromWave] unable to allocate memory\n");
-		delete wave;
-		return G_RES_ERR_MEMORY;
-	}
+	wave->alloc(frames, channels, src->getRate(), src->getBits(), src->getPath());
 
 	wave->copyData(src->getFrame(a), frames);
 	wave->setLogical(true);
@@ -164,8 +150,6 @@ int createFromWave(const Wave* src, int a, int b, Wave** out)
 	*out = wave;
 
 	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
-
-	return G_RES_OK;
 }
 
 
@@ -178,10 +162,7 @@ int resample(Wave* w, int quality, int samplerate)
 	int newSizeFrames = ceil(w->getSize() * ratio);
 
 	AudioBuffer newData;
-	if (!newData.alloc(newSizeFrames, w->getChannels())) {
-		gu_log("[waveManager::resample] unable to allocate memory\n");
-		return G_RES_ERR_MEMORY;
-	}
+	newData.alloc(newSizeFrames, w->getChannels());
 
 	SRC_DATA src_data;
 	src_data.data_in       = w->getFrame(0);

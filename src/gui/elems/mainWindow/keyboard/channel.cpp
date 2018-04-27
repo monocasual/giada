@@ -49,10 +49,9 @@ extern gdMainWindow* G_MainWin;
 using namespace giada;
 
 
-geChannel::geChannel(int X, int Y, int W, int H, int type, Channel* ch)
+geChannel::geChannel(int X, int Y, int W, int H, Channel* ch)
  : Fl_Group(X, Y, W, H, nullptr),
-	 ch      (ch),
-	 type    (type)
+	 ch      (ch)
 {
 }
 
@@ -149,38 +148,39 @@ void geChannel::blink()
 
 /* -------------------------------------------------------------------------- */
 
-
-void geChannel::setColorsByStatus(int playStatus, int recStatus)
+void geChannel::setColorsByStatus(ChannelStatus playStatus, ChannelStatus recStatus)
 {
 	switch (playStatus) {
-		case STATUS_OFF:
-		case STATUS_EMPTY:
+		case ChannelStatus::OFF:
+		case ChannelStatus::EMPTY:
 			mainButton->setDefaultMode();
 			button->imgOn  = channelPlay_xpm;
 			button->imgOff = channelStop_xpm;
 			button->redraw();
 			break;
-		case STATUS_PLAY:
+		case ChannelStatus::PLAY:
 			mainButton->setPlayMode();
 			button->imgOn  = channelStop_xpm;
 			button->imgOff = channelPlay_xpm;
 			button->redraw();
 			break;
-		case STATUS_WAIT:
+		case ChannelStatus::WAIT:
 			blink();
 			break;
-		case STATUS_ENDING:
+		case ChannelStatus::ENDING:
 			mainButton->setEndingMode();
 			break;
+		default: break;
 	}
 
 	switch (recStatus) {
-		case REC_WAITING:
+		case ChannelStatus::WAIT:
 			blink();
 			break;
-		case REC_ENDING:
+		case ChannelStatus::ENDING:
 			mainButton->setEndingMode();
 			break;
+		default: break;
 	}
 }
 

@@ -75,14 +75,12 @@ Wave::Wave(const Wave& other)
 /* -------------------------------------------------------------------------- */
 
 
-bool Wave::alloc(int size, int channels, int rate, int bits, const std::string& path)
+void Wave::alloc(int size, int channels, int rate, int bits, const std::string& path)
 {
-	if (!buffer.alloc(size, channels))
-		return false;
+	buffer.alloc(size, channels);
 	m_rate = rate;
 	m_bits = bits;
 	m_path = path;
-	return true;
 }
 
 

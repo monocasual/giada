@@ -7,7 +7,7 @@ using std::string;
 using namespace giada::m;
 
 
-TEST_CASE("Test MidiMapConf")
+TEST_CASE("midiMapConf")
 {
   SECTION("test default values")
   {

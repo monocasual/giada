@@ -32,6 +32,8 @@
 #include <vector>
 #include <string>
 #include <pthread.h>
+#include "types.h"
+#include "mixer.h"
 #include "midiMapConf.h"
 #include "midiEvent.h"
 #include "recorder.h"
@@ -42,6 +44,9 @@
 #endif
 
 
+#undef Status
+
+
 class Plugin;
 class MidiMapConf;
 class geChannel;
@@ -49,79 +54,32 @@ class geChannel;
 
 class Channel
 {
-protected:
-
-	Channel(int type, int status, int bufferSize);
-
-	/* sendMidiLMessage
-	Composes a MIDI message by merging bytes from MidiMap conf class, and sends it 
-	to KernelMidi. */
-
-	void sendMidiLmessage(uint32_t learn, const giada::m::midimap::message_t& msg);
-
-	/* calcPanning
-	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
-
-	float calcPanning(int ch);
-
-	/* vChan
-	Virtual channel for internal processing. */
-	
-	giada::m::AudioBuffer vChan;
-
-#ifdef WITH_VST
-
-	/* MidiBuffer contains MIDI events. When ready, events are sent to each plugin 
-	in the channel. This is available for any kind of channel, but it makes sense 
-	only for MIDI channels. */
-
-	juce::MidiBuffer midiBuffer;
-
-#endif
-
-	/* bufferSize
-	Size of every buffer in this channel (vChan, pChan) */
-
-	int bufferSize;
-
-	/* volume_*
-	Internal volume variables: volume_i for envelopes, volume_d keeps track of
-	the delta during volume changes. */
-	
-	float volume_i;
-	float volume_d;
-
-	bool mute_i;                // internal mute
-	
 public:
 
-	virtual ~Channel();
+	virtual ~Channel() {};
 
 	/* copy
-	Makes a shallow copy (no vChan/pChan allocation) of another channel. */
+	Makes a shallow copy (no internal buffers allocation) of another channel. */
 
 	virtual void copy(const Channel* src, pthread_mutex_t* pluginMutex) = 0;
 
+	/* parseEvents
+	Prepares channel for rendering. This is called on each frame. */
+
+	virtual void parseEvents(giada::m::mixer::FrameEvents fe) = 0;
+
 	/* process
-	Merges vChannels into buffer, plus plugin processing (if any). Warning:
+	Merges working buffers into 'out', plus plugin processing (if any). Warning:
 	inBuffer might be nullptr if no input devices are available for recording. */
 
-	virtual void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in) = 0;
-
-	/* Preview
-	Makes itself audibile for audio preview, such as Sample Editor or other
-	tools. */
-
-	virtual void preview(giada::m::AudioBuffer& in) = 0;
+	virtual void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in,
+		bool audible, bool running) = 0;
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)
-	when Mixer is reading actions from Recorder. If isUserGenerated means that
-	the channel has been started by a human key press and not a pre-recorded
-	action. */
+	when Mixer is reading actions from Recorder. */
 
-	virtual void start(int frame, bool doQuantize, int quantize,
-			bool mixerIsRunning, bool forceStart, bool isUserGenerated) = 0;
+	virtual void start(int localFrame, bool doQuantize, int velocity) = 0;
 
 	/* stop
 	What to do when channel is stopped normally (via key or MIDI). */
@@ -131,14 +89,12 @@ public:
 	/* kill
 	What to do when channel stops abruptly. */
 
-	virtual void kill(int frame) = 0;
+	virtual void kill(int localFrame) = 0;
 
-	/* mute
-	What to do when channel is muted. If internal == true, set internal mute 
-	without altering main mute. */
+	/* set
+	What to do when channel is un/muted. */
 
-	virtual void setMute  (bool internal) = 0;
-	virtual void unsetMute(bool internal) = 0;
+	virtual void setMute(bool value, EventType eventType) = 0;
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */
@@ -150,44 +106,10 @@ public:
 
 	virtual void stopBySeq(bool chansStopOnSeqHalt) = 0;
 
-	/* quantize
-	Starts channel according to quantizer. Index = array index of mixer::channels 
-	used by recorder, localFrame = frame within the current buffer, 
-	globalFrame = frame within the whole sequencer loop.  */
-
-	virtual void quantize(int index, int localFrame, int globalFrame) = 0;
-
-	/* onZero
-	What to do when frame goes to zero, i.e. sequencer restart. */
-
-	virtual void onZero(int frame, bool recsStopOnChanHalt) = 0;
-
-	/* onBar
-	What to do when a bar has passed. */
-
-	virtual void onBar(int frame) = 0;
-
-	/* parseAction
-	Does something on a recorded action. Parameters:
-		- action *a   - action to parse
-	  - localFrame  - frame number of the processed buffer
-	  - globalFrame - actual frame in Mixer */
-
-	 // TODO - quantize is useless!
-
-	virtual void parseAction(giada::m::recorder::action* a, int localFrame,
-    int globalFrame, int quantize, bool mixerIsRunning) = 0;
-
 	/* rewind
 	Rewinds channel when rewind button is pressed. */
 
-	virtual void rewind() = 0;
-
-	/* clear
-	Clears all memory buffers. This is actually useful to sample channels only. 
-	TODO - please rename it to clearBuffers. */
-
-	virtual void clear() = 0;
+	virtual void rewindBySeq() = 0;
 
 	/* canInputRec
 	Tells whether a channel can accept and handle input audio. Always false for
@@ -196,48 +118,66 @@ public:
 
 	virtual bool canInputRec() = 0;
 
-	/* readPatch
-	Fills channel with data from patch. */
+	virtual bool hasLogicalData() const { return false; };
+	virtual bool hasEditedData()  const { return false; };
+	virtual bool hasData()        const { return false; };
 
+	virtual bool recordStart(bool canQuantize) { return true; };
+	virtual bool recordKill() { return false; };
+	virtual void recordStop() {};
+	virtual void recordMute() {};
+
+	/* prepareBuffer
+	Fill audio buffer with audio data from the internal source. This is actually 
+	useful to sample channels only. */
+
+	virtual void prepareBuffer(bool running) {};
+
+	virtual void startReadingActions(bool treatRecsAsLoops, 
+		bool recsStopOnChanHalt) {};
+	virtual void stopReadingActions(bool running, bool treatRecsAsLoops, 
+		bool recsStopOnChanHalt) {};
+
+	virtual void stopInputRec(int globalFrame) {};
+	
 	virtual void readPatch(const std::string& basePath, int i);
-
-	/* writePatch
-	Fills a patch with channel values. Returns the index of the last 
-	Patch::channel_t added. */
-
 	virtual void writePatch(int i, bool isProject);
 
 	/* receiveMidi
 	Receives and processes midi messages from external devices. */
 
-	virtual void receiveMidi(const giada::m::MidiEvent& midiEvent);
+	virtual void receiveMidi(const giada::m::MidiEvent& midiEvent) {};
 
-	/* allocBuffers
-	Mandatory method to allocate memory for internal buffers. Call it after the
-	object has been constructed. */
+	/* calcPanning
+	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
 
-	virtual bool allocBuffers();
+	float calcPanning(int ch) const;
 
 	bool isPlaying() const;
 	float getPan() const;
 	bool isPreview() const;
 
-	/* isMidiAllowed
-	Given a MIDI channel 'c' tells whether this channel should be allowed to receive
-	and process MIDI events on MIDI channel 'c'. */
+	/* isMidiInAllowed
+	Given a MIDI channel 'c' tells whether this channel should be allowed to 
+	receive and process MIDI events on MIDI channel 'c'. */
 
 	bool isMidiInAllowed(int c) const;
 
+	/* isReadingActions
+	Tells whether the channel as actions and it is currently reading them. */
+
+	bool isReadingActions() const;
+
 	/* sendMidiL*
-	 * send MIDI lightning events to a physical device. */
+	Sends MIDI lightning events to a physical device. */
 
 	void sendMidiLmute();
 	void sendMidiLsolo();
-	void sendMidiLplay();
+	void sendMidiLstatus();
 
 	void setPan(float v);
-	void setVolumeI(float v);
-	void setPreviewMode(int m);
+
+	void calcVolumeEnvelope();
 
 #ifdef WITH_VST
 
@@ -251,28 +191,47 @@ public:
 
 #endif
 
-  geChannel* guiChannel;        // pointer to a gChannel object, part of the GUI
+	/* guiChannel
+	Pointer to a gChannel object, part of the GUI. TODO - remove this and send
+	signals instead. */
+
+  geChannel* guiChannel;
+
+	/* buffer
+	Working buffer for internal processing. */
 	
+	giada::m::AudioBuffer buffer;
+
+	ChannelType   type;
+	ChannelStatus status;
+	ChannelStatus recStatus;
+
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	int previewMode;
+	PreviewMode previewMode;
 
 	float       pan;
 	float       volume;   // global volume
 	bool        armed;
 	std::string name;
 	int         index;    // unique id
-	int         type;     // midi or sample
-	int         status;   // status: see const.h
 	int         key;      // keyboard button
 	bool        mute;     // global mute
-	bool        mute_s;   // previous mute status after being solo'd TODO - remove it with mute refactoring
 	bool        solo;
 
+	/* volume_*
+	Internal volume variables: volume_i for envelopes, volume_d keeps track of
+	the delta during volume changes (or the line slope between two volume 
+	points). */
+	
+	float volume_i;
+	float volume_d;
+
+	bool mute_i;          // internal mute
+	
   bool hasActions;      // has something recorded
   bool readActions;     // read what's recorded
-	int  recStatus;       // status of recordings (waiting, ending, ...)
   
   bool      midiIn;               // enable midi input
   uint32_t  midiInKeyPress;
@@ -303,6 +262,19 @@ public:
   std::vector <Plugin*> plugins;
 #endif
 
+protected:
+
+	Channel(ChannelType type, ChannelStatus status, int bufferSize);
+
+#ifdef WITH_VST
+
+	/* MidiBuffer contains MIDI events. When ready, events are sent to each plugin 
+	in the channel. This is available for any kind of channel, but it makes sense 
+	only for MIDI channels. */
+
+	juce::MidiBuffer midiBuffer;
+
+#endif
 };
 
 

@@ -25,39 +25,22 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_WAVE_MANAGER_H
-#define G_WAVE_MANAGER_H
+#ifndef G_UTILS_VER_H
+#define G_UTILS_VER_H
 
 
 #include <string>
 
 
-class Wave;
-
-
 namespace giada {
-namespace m {
-namespace waveManager
+namespace u     {
+namespace ver 
 {
-/* create
-Creates a new Wave object with data read from file 'path'. */
+std::string getLibsndfileVersion();
+std::string getRtAudioVersion();
+std::string getRtMidiVersion();
 
-int create(const std::string& path, Wave** out);
-
-/* createEmpty
-Creates a new silent Wave object. */
-
-void createEmpty(int frames, int channels, int samplerate, const std::string& name, 
-	Wave** out);
-
-/* createFromWave
-Creates a new Wave from an existing one, copying the data in range a - b. */
-
-void createFromWave(const Wave* src, int a, int b, Wave** out);
-
-int resample(Wave* w, int quality, int samplerate); 
-int save(Wave* w, const std::string& path);
-
-}}}; // giada::m::waveManager
+bool isLess(int a1, int b1, int c1, int a2, int b2, int c2);
+}}};  // giada::u::ver::
 
 #endif

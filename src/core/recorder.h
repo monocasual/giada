@@ -79,6 +79,8 @@ Contains the actual actions. E.g.:
   global[1] = <actions> */
 
 extern std::vector<std::vector<action*>> global;
+/* TODO - this frames vs global madness must be replaced with a map:
+std::map<int, vector<actions>> */
 
 extern bool active;
 extern bool sortedActions;   // are actions sorted via sortActions()?
@@ -174,12 +176,17 @@ Returns a pointer to action in chan 'chan' of type 'action' at frame 'frame'. */
 
 int getAction(int chan, char action, int frame, struct action** out);
 
+/* getActionsOnFrame
+Returns a vector of actions that occur on frame 'frame'. */
+
+std::vector<action*> getActionsOnFrame(int frame);
+
 /* start/stopOverdub
 These functions are used when you overwrite existing actions. For example:
 pressing Mute button on a channel with some existing mute actions. */
 
 void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t *mixerMutex);
+void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex);
 
 /* forEachAction
 Applies a read-only callback on each action recorded. */

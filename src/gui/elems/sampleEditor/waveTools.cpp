@@ -25,18 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
-#ifdef G_OS_MAC  // our Clang still doesn't know about cstdint (c++11 stuff)
-	#include <stdint.h>
-#else
-	#include <cstdint>
-#endif
+#include <cstdint>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
 #include "../../../core/sampleChannel.h"
 #include "../../../core/waveFx.h"
 #include "../../../glue/sampleEditor.h"
 #include "../basics/boxtypes.h"
+#include "../../../core/const.h"
 #include "waveform.h"
 #include "waveTools.h"
 
@@ -221,7 +217,7 @@ void geWaveTools::openMenu()
 		{0}
 	};
 
-	if (ch->status == STATUS_PLAY) {
+	if (ch->status == ChannelStatus::PLAY) {
 		menu[(int)Menu::CUT].deactivate();
 		menu[(int)Menu::TRIM].deactivate();
 	}

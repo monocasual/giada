@@ -30,7 +30,7 @@ public:
 	int countChannels() const;
 	bool isAllocd() const;
 
-	bool alloc(int size, int channels) noexcept;
+	void alloc(int size, int channels);
 	void free();
 
 	/* copyData

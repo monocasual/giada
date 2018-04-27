@@ -25,39 +25,73 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_WAVE_MANAGER_H
-#define G_WAVE_MANAGER_H
+#include "../core/const.h"
+#ifdef G_OS_MAC
+	#include <RtMidi.h>
+#else
+	#include <rtmidi/RtMidi.h>
+#endif
+#include <sndfile.h>
+#include "../deps/rtaudio-mod/RtAudio.h"
+#include "ver.h"
 
 
-#include <string>
-
-
-class Wave;
+using std::string;
 
 
 namespace giada {
-namespace m {
-namespace waveManager
+namespace u     {
+namespace ver  
 {
-/* create
-Creates a new Wave object with data read from file 'path'. */
+string getLibsndfileVersion()
+{
+  char buffer[128];
+  sf_command(NULL, SFC_GET_LIB_VERSION, buffer, sizeof(buffer));
+  return string(buffer);
+}
 
-int create(const std::string& path, Wave** out);
 
-/* createEmpty
-Creates a new silent Wave object. */
+/* -------------------------------------------------------------------------- */
 
-void createEmpty(int frames, int channels, int samplerate, const std::string& name, 
-	Wave** out);
 
-/* createFromWave
-Creates a new Wave from an existing one, copying the data in range a - b. */
-
-void createFromWave(const Wave* src, int a, int b, Wave** out);
-
-int resample(Wave* w, int quality, int samplerate); 
-int save(Wave* w, const std::string& path);
-
-}}}; // giada::m::waveManager
-
+string getRtAudioVersion()
+{
+#ifdef TESTS
+		return "";
+#else
+  return RtAudio::getVersion();
 #endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+string getRtMidiVersion()
+{
+#ifdef TESTS
+		return "";
+#else
+  return RtMidi::getVersion();
+#endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isLess(int a1, int b1, int c1, int a2, int b2, int c2)
+{
+	const int s = 3;
+	int v1[s] = {a1, b1, c1};
+	int v2[s] = {a2, b2, c2};
+
+	for (int i=0; i<s; i++) {
+		if (v1[i] == v2[i])
+			continue;
+		return v1[i] < v2[i];
+	}
+	return false;
+}
+
+}}};  // giada::u::ver::

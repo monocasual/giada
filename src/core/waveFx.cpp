@@ -109,10 +109,7 @@ int monoToStereo(Wave& w)
 		return G_RES_OK;
 
 	AudioBuffer newData;
-	if (!newData.alloc(w.getSize(), G_MAX_IO_CHANS)) {
-		gu_log("[wfx::monoToStereo] unable to allocate memory!\n");
-		return G_RES_ERR_MEMORY;
-	}
+	newData.alloc(w.getSize(), G_MAX_IO_CHANS);
 
 	for (int i=0; i<newData.countFrames(); i++)
 		for (int j=0; j<newData.countChannels(); j++)
@@ -154,10 +151,7 @@ int cut(Wave& w, int a, int b)
 	int newSize = w.getSize() - (b - a);
 
 	AudioBuffer newData;
-	if (!newData.alloc(newSize, w.getChannels())) {
-		gu_log("[wfx::cut] unable to allocate memory!\n");
-		return G_RES_ERR_MEMORY;
-	}
+	newData.alloc(newSize, w.getChannels());
 
 	gu_log("[wfx::cut] cutting from %d to %d\n", a, b);
 
@@ -187,10 +181,7 @@ int trim(Wave& w, int a, int b)
 	int newSize = b - a;
 
 	AudioBuffer newData;
-	if (!newData.alloc(newSize, w.getChannels())) {
-		gu_log("[wfx::trim] unable to allocate memory!\n");
-		return G_RES_ERR_MEMORY;
-	}
+	newData.alloc(newSize, w.getChannels());
 
 	gu_log("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
@@ -213,10 +204,7 @@ int paste(const Wave& src, Wave& des, int a)
 	assert(src.getChannels() == des.getChannels());
 
 	AudioBuffer newData;
-	if (!newData.alloc(src.getSize() + des.getSize(), des.getChannels())) {
-		gu_log("[wfx::paste] unable to allocate memory!\n");
-		return G_RES_ERR_MEMORY;
-	}
+	newData.alloc(src.getSize() + des.getSize(), des.getChannels());
 
 	/* |---original data---|///paste data///|---original data---|
 	         des[0, a)      src[0, src.size)   des[a, des.size)	*/

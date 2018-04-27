@@ -232,7 +232,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	recorder::init();
 #ifdef WITH_VST
-	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex_plugins);
+	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
 #endif
 
 	G_MainWin->keyboard->clear();

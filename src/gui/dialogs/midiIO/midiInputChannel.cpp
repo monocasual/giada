@@ -59,7 +59,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel* ch)
 	label(title.c_str());
 	size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
 
-	int extra = ch->type == G_CHANNEL_SAMPLE ? 28 : 0;
+	int extra = ch->type == ChannelType::SAMPLE ? 28 : 0;
 
 	Fl_Group* groupHeader = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w(), 20 + extra);
 	groupHeader->begin();
@@ -98,7 +98,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel* ch)
 	enable->value(ch->midiIn);
 	enable->callback(cb_enable, (void*)this);
 
-	if (ch->type == G_CHANNEL_SAMPLE) {
+	if (ch->type == ChannelType::SAMPLE) {
 		veloAsVol->value(static_cast<SampleChannel*>(ch)->midiInVeloAsVol);
 		veloAsVol->callback(cb_veloAsVol, (void*)this);	
 	}
@@ -165,7 +165,7 @@ void gdMidiInputChannel::addChannelLearners()
 		new geMidiLearner(0, 0, LEARNER_WIDTH, "mute",        cb_learn, &ch->midiInMute, ch);
 		new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        cb_learn, &ch->midiInSolo, ch);
 		new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      cb_learn, &ch->midiInVolume, ch);
-		if (ch->type == G_CHANNEL_SAMPLE) {
+		if (ch->type == ChannelType::SAMPLE) {
 			new geMidiLearner(0, 0, LEARNER_WIDTH, "pitch", cb_learn, 
 				&(static_cast<SampleChannel*>(ch))->midiInPitch, ch);
 			new geMidiLearner(0, 0, LEARNER_WIDTH, "read actions", cb_learn, 

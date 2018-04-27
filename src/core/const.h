@@ -46,10 +46,10 @@
 
 /* -- version --------------------------------------------------------------- */
 #define G_APP_NAME      "Giada"
-#define G_VERSION_STR   "0.15.0"
+#define G_VERSION_STR   "0.15.1"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 15
-#define G_VERSION_PATCH 0
+#define G_VERSION_PATCH 1
 
 #define CONF_FILENAME "giada.conf"
 
@@ -152,7 +152,6 @@
 #define G_DEFAULT_BOOST            1.0f
 #define G_DEFAULT_OUT_VOL          1.0f
 #define G_DEFAULT_IN_VOL           1.0f
-#define G_DEFAULT_CHANMODE         SINGLE_BASIC
 #define G_DEFAULT_BPM              120.0f
 #define G_DEFAULT_BEATS            4
 #define G_DEFAULT_BARS             1
@@ -163,41 +162,6 @@
 #define G_DEFAULT_MIDI_INPUT_UI_W  300
 #define G_DEFAULT_MIDI_INPUT_UI_H  350
 #define G_DEFAULT_MIDI_ACTION_SIZE 8192   // frames
-
-
-
-/* -- mixer statuses and modes ---------------------------------------------- */
-#define LOOP_BASIC			 0x01 // 0000 0001  chanMode
-#define LOOP_ONCE				 0x02 // 0000 0010  chanMode
-#define	SINGLE_BASIC		 0x04 // 0000 0100  chanMode
-#define SINGLE_PRESS		 0x08 // 0000 1000	chanMode
-#define SINGLE_RETRIG		 0x10 // 0001 0000	chanMode
-#define LOOP_REPEAT			 0x20 // 0010 0000  chanMode
-#define SINGLE_ENDLESS   0x40 // 0100 0000  chanMode
-#define LOOP_ONCE_BAR    0x80 // 1000 0000  chanMode
-
-#define LOOP_ANY				 0xA3 // 1010 0011  chanMode - any loop mode
-#define SINGLE_ANY		   0x5C // 0101 1100  chanMode - any single mode
-
-#define	STATUS_ENDING		 0x01 // 0000 0001  chanStatus - ending            (loop mode only)
-#define	STATUS_WAIT			 0x02 // 0000 0010  chanStatus - waiting for start (loop mode only)
-#define	STATUS_PLAY			 0x04 // 0000 0100  chanStatus - playing
-#define STATUS_OFF			 0x08 // 0000 1000  chanStatus - off
-#define STATUS_EMPTY	   0x10 // 0001 0000  chanStatus - not loaded (empty chan)
-#define STATUS_MISSING   0x20 // 0010 0000  chanStatus - not found
-#define STATUS_WRONG     0x40 // 0100 0000  chanStatus - something wrong (freq, bitrate, ...)
-
-#define REC_WAITING			 0x01 // 0000 0001
-#define REC_ENDING       0x02 // 0000 0010
-#define REC_READING      0x04 // 0000 0100
-#define REC_STOPPED      0x08 // 0000 1000
-
-
-
-/* -- preview modes --------------------------------------------------------- */
-#define G_PREVIEW_NONE   0x00
-#define G_PREVIEW_NORMAL 0x01
-#define G_PREVIEW_LOOP   0x02
 
 
 
@@ -234,12 +198,6 @@
 #define LOG_MODE_STDOUT 0x01
 #define LOG_MODE_FILE   0x02
 #define LOG_MODE_MUTE   0x04
-
-
-
-/* -- channel types --------------------------------------------------------- */
-#define G_CHANNEL_SAMPLE 0x01
-#define G_CHANNEL_MIDI   0x02
 
 
 
@@ -361,7 +319,6 @@ const int MIDI_CHANS[16] = {
 #define PATCH_KEY_CHANNEL_NAME                 "name"
 #define PATCH_KEY_CHANNEL_COLUMN               "column"
 #define PATCH_KEY_CHANNEL_MUTE                 "mute"
-#define PATCH_KEY_CHANNEL_MUTE_S               "mute_s"
 #define PATCH_KEY_CHANNEL_SOLO                 "solo"
 #define PATCH_KEY_CHANNEL_VOLUME               "volume"
 #define PATCH_KEY_CHANNEL_PAN                  "pan"

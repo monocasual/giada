@@ -40,31 +40,31 @@ class geMainTimer : public Fl_Group
 {
 private:
 
-	geButton *bpm;
-	geButton *meter;
-	geChoice  *quantizer;
-	geButton *multiplier;
-	geButton *divider;
+	geButton* bpm;
+	geButton* meter;
+	geChoice* quantizer;
+	geButton* multiplier;
+	geButton* divider;
 
-	static void cb_bpm       (Fl_Widget *v, void *p);
-	static void cb_meter     (Fl_Widget *v, void *p);
-	static void cb_quantizer (Fl_Widget *v, void *p);
-	static void cb_multiplier(Fl_Widget *v, void *p);
-	static void cb_divider   (Fl_Widget *v, void *p);
-
-	inline void __cb_bpm();
-	inline void __cb_meter();
-	inline void __cb_quantizer();
-	inline void __cb_multiplier();
-	inline void __cb_divider();
+	static void cb_bpm       (Fl_Widget* v, void* p);
+	static void cb_meter     (Fl_Widget* v, void* p);
+	static void cb_quantizer (Fl_Widget* v, void* p);
+	static void cb_multiplier(Fl_Widget* v, void* p);
+	static void cb_divider   (Fl_Widget* v, void* p);
+	inline void cb_bpm();
+	inline void cb_meter();
+	inline void cb_quantizer();
+	inline void cb_multiplier();
+	inline void cb_divider();
 
 public:
 
 	geMainTimer(int x, int y);
 
-	void setBpm(const char *v);
+	void setBpm(const char* v);
 	void setBpm(float v);
 	void setMeter(int beats, int bars);
+	void setQuantizer(int q);
 
   /* setLock
   Locks bpm, beter and multipliers. Used during audio recordings. */

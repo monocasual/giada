@@ -141,6 +141,7 @@ pthread_mutex_t mutex_midi;
 void close()
 {
 	messageManager->deleteInstance();
+	pthread_mutex_destroy(&mutex_midi);
 }
 
 
@@ -413,7 +414,7 @@ void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 	Sample channels and Master in/out want audio data instead: let's convert the 
 	internal buffer from Giada to Juce. */
 
-	if (ch != nullptr && ch->type == G_CHANNEL_MIDI) 
+	if (ch != nullptr && ch->type == ChannelType::MIDI) 
 		audioBuffer.clear();
 	else
 		for (int i=0; i<outBuf.countFrames(); i++)

@@ -31,6 +31,7 @@
 
 #include <pthread.h>
 #include <vector>
+#include "recorder.h"
 #include "../deps/rtaudio-mod/RtAudio.h"
 
 
@@ -41,42 +42,16 @@ namespace giada {
 namespace m {
 namespace mixer
 {
-void init(int framesInSeq, int framesInBuffer);
-
-/* allocVirtualInput
-Allocates new memory for the virtual input channel. Call this whenever you 
-shrink or resize the sequencer. */
-
-bool allocVirtualInput(int frames);
-
-void close();
-
-/* masterPlay
-Core method (callback) */
-
-int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
-  RtAudioStreamStatus status, void* userData);
-
-/* isSilent
-Is mixer silent? */
-
-bool isSilent();
-
-/* rewind
-Rewinds sequencer to frame 0. */
-
-void rewind();
-
-/* startInputRec
-Starts input recording on frame clock::getCurrentFrame(). */
-
-void startInputRec();
-
-/* mergeVirtualInput
-Copies the virtual channel input in the channels designed for input recording. 
-Called by mixerHandler on stopInputRec(). */
-
-void mergeVirtualInput();
+struct FrameEvents
+{
+	int   frameLocal;
+	int   frameGlobal;
+	bool  doQuantize;
+	bool  onBar;
+	bool  onFirstBeat;
+	bool  quantoPassed;
+	std::vector<recorder::action*> actions;
+};
 
 enum {    // const - what to do when a fadeout ends
 	DO_STOP   = 0x01,
@@ -108,10 +83,46 @@ what you're playing" feature. */
 
 extern bool inToOut;
 
-extern pthread_mutex_t mutex_recs;
-extern pthread_mutex_t mutex_chans;
-extern pthread_mutex_t mutex_plugins;
+extern pthread_mutex_t mutex;
 
+void init(int framesInSeq, int framesInBuffer);
+
+/* allocVirtualInput
+Allocates new memory for the virtual input channel. Call this whenever you 
+shrink or resize the sequencer. */
+
+void allocVirtualInput(int frames);
+
+void close();
+
+/* masterPlay
+Core method (callback) */
+
+int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
+	RtAudioStreamStatus status, void* userData);
+
+/* isSilent
+Is mixer silent? */
+
+bool isSilent();
+
+bool isChannelAudible(Channel* ch);
+
+/* rewind
+Rewinds sequencer to frame 0. */
+
+void rewind();
+
+/* startInputRec
+Starts input recording on frame clock::getCurrentFrame(). */
+
+void startInputRec();
+
+/* mergeVirtualInput
+Copies the virtual channel input in the channels designed for input recording. 
+Called by mixerHandler on stopInputRec(). */
+
+void mergeVirtualInput();
 }}} // giada::m::mixer::;
 
 

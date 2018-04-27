@@ -287,9 +287,9 @@ int geMuteEditor::handle(int e) {
 					//		a, b, points.at(a).frame, points.at(b).frame);
 
 					recorder::deleteAction(pParent->chan->index, points.at(a).frame,
-          points.at(a).type, false, &mixer::mutex_recs); // false = don't check vals
+          points.at(a).type, false, &mixer::mutex); // false = don't check vals
 					recorder::deleteAction(pParent->chan->index,	points.at(b).frame,
-          points.at(b).type, false, &mixer::mutex_recs); // false = don't check vals
+          points.at(b).type, false, &mixer::mutex); // false = don't check vals
           pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
           recorder::sortActions();
@@ -316,7 +316,7 @@ int geMuteEditor::handle(int e) {
 
 					recorder::deleteAction(pParent->chan->index,
             points.at(draggedPoint).frame, points.at(draggedPoint).type, false,
-            &mixer::mutex_recs);  // don't check values
+            &mixer::mutex);  // don't check values
           pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
 
 					recorder::rec(

@@ -50,7 +50,7 @@ using std::string;
 using namespace giada::m;
 
 
-gdActionEditor::gdActionEditor(Channel *chan)
+gdActionEditor::gdActionEditor(Channel* chan)
 	:	gdWindow(640, 284),
 		chan   (chan),
 		zoom   (100),
@@ -70,7 +70,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	upperArea->begin();
 
-	if (chan->type == G_CHANNEL_SAMPLE) {
+	if (chan->type == ChannelType::SAMPLE) {
 	  actionType = new geChoice(8, 8, 80, 20);
 	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8, this);
 		actionType->add("key press");
@@ -78,8 +78,8 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		actionType->add("kill chan");
 		actionType->value(0);
 
-		SampleChannel *ch = (SampleChannel*) chan;
-		if (ch->mode == SINGLE_PRESS || ch->mode & LOOP_ANY)
+		SampleChannel *ch = static_cast<SampleChannel*>(chan);
+		if (ch->mode == ChannelMode::SINGLE_PRESS || ch->isAnyLoopMode())
 		actionType->deactivate();
 	}
 	else {
@@ -99,9 +99,9 @@ gdActionEditor::gdActionEditor(Channel *chan)
 
 	scroller = new geScroll(8, 36, w()-16, h()-44);
 
-	if (chan->type == G_CHANNEL_SAMPLE) {
+	if (chan->type == ChannelType::SAMPLE) {
 
-		SampleChannel *ch = (SampleChannel*) chan;
+		SampleChannel *ch = static_cast<SampleChannel*>(chan);
 
 		ac = new geActionEditor  (scroller->x(), upperArea->y()+upperArea->h()+8, this, ch);
 		mc = new geMuteEditor    (scroller->x(), ac->y()+ac->h()+8, this);
@@ -120,7 +120,7 @@ gdActionEditor::gdActionEditor(Channel *chan)
 		/* if channel is LOOP_ANY, deactivate it: a loop mode channel cannot
 		 * hold keypress/keyrelease actions */
 
-		if (ch->mode & LOOP_ANY)
+		if (ch->isAnyLoopMode())
 			ac->deactivate();
 	}
 	else {
@@ -188,7 +188,7 @@ void gdActionEditor::__cb_zoomIn()
 
 	update();
 
-	if (chan->type == G_CHANNEL_SAMPLE) {
+	if (chan->type == ChannelType::SAMPLE) {
 		ac->size(totalWidth, ac->h());
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());
@@ -222,7 +222,7 @@ void gdActionEditor::__cb_zoomOut()
 
 	update();
 
-	if (chan->type == G_CHANNEL_SAMPLE) {
+	if (chan->type == ChannelType::SAMPLE) {
 		ac->size(totalWidth, ac->h());
 		mc->size(totalWidth, mc->h());
 		vc->size(totalWidth, vc->h());

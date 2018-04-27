@@ -27,7 +27,9 @@
 
 #include "../utils/log.h"
 #include "../utils/string.h"
+#include "../utils/ver.h"
 #include "const.h"
+#include "types.h"
 #include "storager.h"
 #include "conf.h"
 #include "mixer.h"
@@ -82,10 +84,22 @@ Makes sure an older patch is compatible with the current version. */
 void modernize()
 {
 	/* Starting from 0.15.0 actions are recorded on frames, not samples. */
-	if (versionMajor <= 0 && versionMinor < 15) {
+	if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 0)) {
 		for (channel_t& ch : channels)
 			for (action_t& a : ch.actions)
 				a.frame /= 2;
+	}
+
+	/* Starting from 0.15.1 Channel Modes have different values. */
+	if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 1)) {
+		for (channel_t& ch : channels) {
+			if      (ch.mode == 0x04) ch.mode = static_cast<int>(ChannelMode::SINGLE_BASIC);
+			else if (ch.mode == 0x08) ch.mode = static_cast<int>(ChannelMode::SINGLE_PRESS);
+			else if (ch.mode == 0x10) ch.mode = static_cast<int>(ChannelMode::SINGLE_RETRIG);
+			else if (ch.mode == 0x20) ch.mode = static_cast<int>(ChannelMode::LOOP_REPEAT);
+			else if (ch.mode == 0x40) ch.mode = static_cast<int>(ChannelMode::SINGLE_ENDLESS);
+			else if (ch.mode == 0x80) ch.mode = static_cast<int>(ChannelMode::LOOP_ONCE_BAR);
+		}
 	}
 }
 
@@ -227,7 +241,6 @@ bool readChannels(json_t* jContainer)
 		if (!storager::setString(jChannel, PATCH_KEY_CHANNEL_NAME,                 channel.name)) return 0;
 		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_COLUMN,               channel.column)) return 0;
 		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE,                 channel.mute)) return 0;
-		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MUTE_S,               channel.mute_s)) return 0;
 		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_SOLO,                 channel.solo)) return 0;
 		if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_VOLUME,               channel.volume)) return 0;
 		if (!storager::setFloat (jChannel, PATCH_KEY_CHANNEL_PAN,                  channel.pan)) return 0;
@@ -406,7 +419,6 @@ void writeChannels(json_t* jContainer, vector<channel_t>* channels)
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_NAME,                 json_string(channel.name.c_str()));
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_COLUMN,               json_integer(channel.column));
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE,                 json_integer(channel.mute));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE_S,               json_integer(channel.mute_s));
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SOLO,                 json_integer(channel.solo));
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_VOLUME,               json_real(channel.volume));
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PAN,                  json_real(channel.pan));

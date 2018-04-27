@@ -29,12 +29,9 @@
 #define G_KERNELMIDI_H
 
 
-#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
-	#include <stdint.h>
-#else
-	#include <cstdint>
-#endif
+#include <cstdint>
 #include <string>
+#include "midiMapConf.h"
 
 
 namespace giada {
@@ -54,14 +51,15 @@ channel. */
 uint32_t setChannel(uint32_t iValue, int channel);
 
 /* send
- * send a MIDI message 's' (uint32_t). */
+Sends a MIDI message 's' as uint32_t or as separate bytes. */
 
 void send(uint32_t s);
-
-/* send (2)
- * send separate bytes of MIDI message. */
-
 void send(int b1, int b2=-1, int b3=-1);
+
+/* sendMidiLightning
+Sends a MIDI lightning message defined by 'msg'. */
+
+void sendMidiLightning(uint32_t learn, const midimap::message_t& msg);
 
 /* setApi
  * set the Api in use for both in & out messages. */
