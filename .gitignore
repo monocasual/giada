@@ -62,4 +62,4 @@ giada.creator.user
 giada.files
 giada.includes
 /.idea/
-/CMakeLists.txt
+/build
