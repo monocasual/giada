@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <pthread.h>
+#include <thread>
 #if defined(__linux__) || defined(__APPLE__)
 	#include <unistd.h>
 #endif
@@ -47,13 +47,15 @@
 #include "core/pluginHost.h"
 
 
-pthread_t     G_videoThread;
 bool          G_quit;
 gdMainWindow* G_MainWin;
 
+namespace
+{
 
-void* videoThreadCb(void* arg);
+void videoThreadCb();
 
+}
 
 int main(int argc, char** argv)
 {
@@ -66,7 +68,7 @@ int main(int argc, char** argv)
 	init_startGUI(argc, argv);
 
 	Fl::lock();
-	pthread_create(&G_videoThread, nullptr, videoThreadCb, nullptr);
+	std::thread G_videoThread(videoThreadCb);
 	init_startKernelAudio();
 
 #ifdef WITH_VST
@@ -79,12 +81,15 @@ int main(int argc, char** argv)
 	juce::shutdownJuce_GUI();
 #endif
 
-	pthread_join(G_videoThread, nullptr);
+	G_videoThread.join();
+
 	return ret;
 }
 
+namespace
+{
 
-void* videoThreadCb(void* arg)
+void videoThreadCb()
 {
 	using namespace giada;
 
@@ -93,6 +98,6 @@ void* videoThreadCb(void* arg)
 			gu_refreshUI();
 			u::time::sleep(G_GUI_REFRESH_RATE);
 		}
-	pthread_exit(nullptr);
-	return 0;
+}
+
 }
