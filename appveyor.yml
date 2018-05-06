@@ -1,0 +1,14 @@
+platform: x64
+configuration: Debug
+
+before_build:
+  - mkdir build
+  - cd build
+  - cmake ..
+
+build:
+  project: build\ALL_BUILD.vcxproj
+
+test_script:
+  - cmd: ctest -C Debug --verbose --output-on-failure
+
