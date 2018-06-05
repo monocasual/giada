@@ -13,8 +13,10 @@
 
 
 0.15.1 --- 
+- Deep code refactoring, featuring Channels processors
 - Simplify mutex mechanism
 - Fix wrong quantizer value on patch/project load
+- Remove the old, buggy and glitchy internal crossfade algorithm
 
 
 0.15.0 --- 2018 . 04 . 18
