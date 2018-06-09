@@ -47,6 +47,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -90,6 +91,8 @@ Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize)
 
 void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 {
+	using namespace giada::m;
+
 	key             = src->key;
 	volume          = src->volume;
 	volume_i        = src->volume_i;

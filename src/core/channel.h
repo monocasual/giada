@@ -94,7 +94,7 @@ public:
 	/* set
 	What to do when channel is un/muted. */
 
-	virtual void setMute(bool value, EventType eventType) = 0;
+	virtual void setMute(bool value, giada::EventType eventType) = 0;
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */
@@ -202,14 +202,14 @@ public:
 	
 	giada::m::AudioBuffer buffer;
 
-	ChannelType   type;
-	ChannelStatus status;
-	ChannelStatus recStatus;
+	giada::ChannelType   type;
+	giada::ChannelStatus status;
+	giada::ChannelStatus recStatus;
 
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	PreviewMode previewMode;
+	giada::PreviewMode previewMode;
 
 	float       pan;
 	float       volume;   // global volume
@@ -264,7 +264,7 @@ public:
 
 protected:
 
-	Channel(ChannelType type, ChannelStatus status, int bufferSize);
+	Channel(giada::ChannelType type, giada::ChannelStatus status, int bufferSize);
 
 #ifdef WITH_VST
 

@@ -35,6 +35,7 @@
 #include "action.h"
 
 
+using namespace giada;
 using namespace giada::m;
 
 

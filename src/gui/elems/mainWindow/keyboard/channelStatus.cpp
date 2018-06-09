@@ -34,6 +34,7 @@
 #include "channelStatus.h"
 
 
+using namespace giada;
 using namespace giada::m;
 
 

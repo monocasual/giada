@@ -40,6 +40,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 

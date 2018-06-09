@@ -35,6 +35,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -98,7 +99,7 @@ void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseEvents(mixer::FrameEvents fe)
+void SampleChannel::parseEvents(m::mixer::FrameEvents fe)
 {
 	sampleChannelProc::parseEvents(this, fe);
 	sampleChannelRec::parseEvents(this, fe);

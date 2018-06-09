@@ -61,6 +61,9 @@
 extern gdMainWindow* G_MainWin;
 
 
+using namespace giada;
+
+
 namespace
 {
 enum class Menu

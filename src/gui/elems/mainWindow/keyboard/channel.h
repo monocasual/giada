@@ -87,7 +87,7 @@ protected:
 	/* setColorByStatus
 	 * update colors depending on channel status. */
 
-	void setColorsByStatus(ChannelStatus chan, ChannelStatus rec);
+	void setColorsByStatus(giada::ChannelStatus chan, giada::ChannelStatus rec);
 
 	/* handleKey
 	 * method wrapped by virtual handle(int e). */

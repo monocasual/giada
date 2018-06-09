@@ -29,6 +29,8 @@
 #define G_TYPES_H
 
 
+namespace giada
+{
 enum class ChannelType : int 
 {
 	SAMPLE = 1, MIDI
@@ -50,6 +52,7 @@ enum class ChannelMode : int
 
 enum class PreviewMode : int { NONE = 0, NORMAL, LOOP };
 enum class EventType : int { AUTO = 0, MANUAL };
+};
 
 
 #endif

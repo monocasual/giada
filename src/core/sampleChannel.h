@@ -61,7 +61,7 @@ public:
 	bool recordKill() override;
 	void recordStop() override;
 	void recordMute() override;
-	void setMute(bool value, EventType eventType) override;
+	void setMute(bool value, giada::EventType eventType) override;
 	void startReadingActions(bool treatRecsAsLoops, bool recsStopOnChanHalt) override;
 	void stopReadingActions(bool running, bool treatRecsAsLoops, 
 		bool recsStopOnChanHalt) override;
@@ -116,7 +116,7 @@ public:
 
 	giada::m::AudioBuffer bufferPreview;
 	
-	ChannelMode mode;
+	giada::ChannelMode mode;
 	
 	Wave* wave;
 	int   tracker;         // chan position
