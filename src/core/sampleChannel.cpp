@@ -311,9 +311,6 @@ void SampleChannel::setBegin(int f)
 
 void SampleChannel::setEnd(int f)
 {
-	if (f < 0)
-		end = begin + wave->getChannels();
-	else
 	if (f >= wave->getSize())
 		end = wave->getSize() - 1;
 	else
@@ -339,8 +336,8 @@ void SampleChannel::setPitch(float v)
 	if (v > G_MAX_PITCH)
 		pitch = G_MAX_PITCH;
 	else
-	if (v < 0.1f)
-		pitch = 0.1000f;
+	if (v < G_MIN_PITCH)
+		pitch = G_MIN_PITCH;
 	else 
 		pitch = v;
 
@@ -395,7 +392,6 @@ float SampleChannel::getBoost() const
 void SampleChannel::empty()
 {
 	status     = ChannelStatus::EMPTY;
-	wave       = nullptr;
   begin      = 0;
   end        = 0;
   tracker    = 0;
@@ -403,6 +399,7 @@ void SampleChannel::empty()
   boost      = G_DEFAULT_BOOST;
   hasActions = false;
 	delete wave;
+	wave = nullptr;
 	sendMidiLstatus();
 }
 
