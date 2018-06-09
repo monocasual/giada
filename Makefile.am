@@ -285,6 +285,7 @@ sourcesTests =                 \
 	tests/recorder.cpp           \
 	tests/waveFx.cpp             \
 	tests/audioBuffer.cpp        \
+	tests/sampleChannel.cpp      \
 	tests/sampleChannelProc.cpp  \
 	tests/sampleChannelRec.cpp  
 

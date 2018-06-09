@@ -100,6 +100,7 @@
 #define G_MIN_DB_SCALE      60.0f
 #define G_MIN_COLUMN_WIDTH  140
 #define G_MAX_BOOST_DB      20.0f
+#define G_MIN_PITCH         0.1f
 #define G_MAX_PITCH         4.0f
 #define G_MAX_GRID_VAL      64
 #define G_MIN_BUF_SIZE      8
