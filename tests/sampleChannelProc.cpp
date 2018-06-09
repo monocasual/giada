@@ -189,11 +189,12 @@ TEST_CASE("sampleChannelProc")
 	{
 		/* Start all sample channels in any loop mode that were armed. */
 		for (ChannelMode mode : modes) {
-			ch.mode   = mode;
-			ch.status = ChannelStatus::OFF;	
-			ch.armed  = true;
+			ch.mode    = mode;
+			ch.status  = ChannelStatus::OFF;	
+			ch.armed   = true;
+			ch.tracker = 16;
 			
-			sampleChannelProc::stopInputRec(&ch, 0, /*globalFrame=*/666);
+			sampleChannelProc::stopInputRec(&ch, /*globalFrame=*/666);
 
 			if (ch.isAnyLoopMode()) {
 				REQUIRE(ch.status == ChannelStatus::PLAY);
@@ -201,9 +202,48 @@ TEST_CASE("sampleChannelProc")
 			}
 			else {
 				REQUIRE(ch.status == ChannelStatus::OFF);
-				REQUIRE(ch.tracker == 0);				
+				REQUIRE(ch.tracker == 16);				
+			}
+		}
+	}
+
+	SECTION("rewind by sequencer")
+	{
+		ch.pushWave(w);
+
+		/* Test loop modes. */
+
+		for (ChannelMode mode : modes) {
+			ch.mode    = mode;
+			ch.status  = ChannelStatus::PLAY;	
+			ch.tracker = 16; // simulate processing
+
+			sampleChannelProc::rewindBySeq(&ch);
+
+			if (ch.isAnyLoopMode()) {
+				REQUIRE(ch.status == ChannelStatus::PLAY);
+				REQUIRE(ch.tracker == 0);
+			}
+			else {
+				REQUIRE(ch.status == ChannelStatus::PLAY);
+				REQUIRE(ch.tracker == 16);				
 			}
 		}
 
+		/* Test single modes that are reading actions. */
+
+		for (ChannelMode mode : modes) {
+			ch.mode      = mode;
+			ch.status    = ChannelStatus::PLAY;	
+			ch.tracker   = 16; // simulate processing
+			ch.recStatus = ChannelStatus::PLAY;
+
+			sampleChannelProc::rewindBySeq(&ch);
+
+			if (ch.isAnySingleMode()) {
+				REQUIRE(ch.status == ChannelStatus::PLAY);
+				REQUIRE(ch.tracker == 0);
+			}
+		}		
 	}
 }

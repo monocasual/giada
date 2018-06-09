@@ -339,11 +339,12 @@ void stopBySeq(SampleChannel* ch, bool chansStopOnSeqHalt)
 
 void rewindBySeq(SampleChannel* ch)
 {
-	/* rewind LOOP_ANY or SINGLE_ANY only if it's in read-record-mode */
+	/* Rewind LOOP_ANY or SINGLE_ANY only if it's in read-record-mode. Rewind by 
+	sequencer is a user-generated event, it always occurs on local frame 0. */
 
 	if (ch->hasData()) {
 		if ((ch->isAnyLoopMode()) || (ch->recStatus == ChannelStatus::PLAY && (ch->isAnySingleMode())))
-			rewind_(ch, 0);  // rewind is user-generated events, always on frame 0
+			rewind_(ch, 0);
 	}	
 }
 
