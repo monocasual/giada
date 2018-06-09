@@ -152,6 +152,27 @@ void parseAction_(SampleChannel* ch, const recorder::action* a, int localFrame,
 /* -------------------------------------------------------------------------- */
 
 
+void recordKeyPressAction_(SampleChannel* ch)
+{
+	if (!recorderCanRec_(ch))
+		return;
+
+	/* SINGLE_PRESS mode needs overdub. Also, disable reading actions while 
+	overdubbing. */
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
+		recorder::startOverdub(ch->index, G_ACTION_KEYS, clock::getCurrentFrame(), 
+			kernelAudio::getRealBufSize());
+		ch->readActions = false;
+	}
+	else
+		recorder::rec(ch->index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
+	ch->hasActions = true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void quantize_(SampleChannel* ch, bool quantoPassed)
 {
 	/* Skip if LOOP_ANY or not in quantizer-wait mode. Otherwise the quantize wait 
@@ -159,7 +180,7 @@ void quantize_(SampleChannel* ch, bool quantoPassed)
 
 	if (ch->isAnyLoopMode() || !ch->qWait || !quantoPassed)
 		return;
-	recordKeyPressAction(ch);
+	recordKeyPressAction_(ch);
 }
 }; // {anonymous}
 
@@ -177,27 +198,6 @@ void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 	for (const recorder::action* action : fe.actions)
 		if (action->chan == ch->index)
 			parseAction_(ch, action, fe.frameLocal, fe.frameGlobal);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void recordKeyPressAction(SampleChannel* ch)
-{
-	if (!recorderCanRec_(ch))
-		return;
-
-	/* SINGLE_PRESS mode needs overdub. Also, disable reading actions while 
-	overdubbing. */
-	if (ch->mode == ChannelMode::SINGLE_PRESS) {
-		recorder::startOverdub(ch->index, G_ACTION_KEYS, clock::getCurrentFrame(), 
-			kernelAudio::getRealBufSize());
-		ch->readActions = false;
-	}
-	else
-		recorder::rec(ch->index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
-	ch->hasActions = true;
 }
 
 
@@ -230,7 +230,7 @@ bool recordStart(SampleChannel* ch, bool canQuantize)
 
 	if (!canQuantize && !ch->isAnyLoopMode() && recorderCanRec_(ch))
 	{
-		recordKeyPressAction(ch);
+		recordKeyPressAction_(ch);
 
 		/* Why return here? You record an action and then you call ch->start: 
 		Mixer, which is on another thread, reads your newly recorded action if you 
