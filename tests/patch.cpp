@@ -6,6 +6,7 @@
 
 using std::string;
 using std::vector;
+using namespace giada;
 using namespace giada::m;
 
 

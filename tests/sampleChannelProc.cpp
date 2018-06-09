@@ -5,6 +5,7 @@
 #include <catch.hpp>
 
 
+using namespace giada;
 using namespace giada::m;
 
 

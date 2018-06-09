@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS = foreign
 
 
 cppFlags =
-cxxFlags = -std=c++11 -Wall -Werror
+cxxFlags = -std=c++11 -Wall
 ldAdd =
 ldFlags =
 sourcesExtra = 
@@ -340,8 +340,6 @@ cppFlags += \
 	-D__WINDOWS_WASAPI__                         \
 	-D__WINDOWS_DS__
 
-cxxFlags += -Wno-error
-
 ldAdd += -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
   -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile -lsamplerate -lrtmidi \
   -lwinmm -lsetupapi -lksuser -ljansson -limm32 -lglu32 -lshell32 -lversion \
@@ -357,9 +355,6 @@ if LINUX
 # Add preprocessor flags to enable ALSA, Pulse and JACK in RtAudio.
 cppFlags += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 
-# Don't stop on JUCE's unused functions.
-cxxFlags += -Wno-error=unused-function
-
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
   -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
   -lfreetype
@@ -374,7 +369,7 @@ sourcesExtra += src/utils/cocoa.mm src/utils/cocoa.h
 cppFlags += -D__MACOSX_CORE__
 
 # -ObjC++: Juce requires to build some Objective C code
-cxxFlags += -ObjC++ -Wno-auto-var-id
+cxxFlags += -ObjC++
 
 ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -ljansson -lm -lpthread \
   -lFLAC -logg -lvorbis -lvorbisenc
@@ -389,9 +384,7 @@ endif
 
 bin_PROGRAMS = giada
 
-giada_SOURCES = $(sourcesCore)
-giada_SOURCES += $(sourcesMain)
-giada_SOURCES += $(sourcesExtra)
+giada_SOURCES = $(sourcesCore) $(sourcesMain) $(sourcesExtra)
 giada_CPPFLAGS = $(cppFlags)
 giada_CXXFLAGS = $(cxxFlags)
 giada_LDADD = $(ldAdd)
@@ -406,9 +399,7 @@ resource.o:
 TESTS = giada_tests
 
 check_PROGRAMS = giada_tests
-giada_tests_SOURCES = $(sourcesCore)
-giada_tests_SOURCES += $(sourcesExtra)
-giada_tests_SOURCES += $(sourcesTests)
+giada_tests_SOURCES = $(sourcesCore) $(sourcesExtra) $(sourcesTests)
 giada_tests_CPPFLAGS = $(cppFlags) 
 giada_tests_CPPFLAGS += -DTESTS
 giada_tests_CXXFLAGS = $(cxxFlags)
