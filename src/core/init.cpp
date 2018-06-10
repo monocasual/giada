@@ -29,6 +29,9 @@
 #ifdef __APPLE__
 	#include <pwd.h>
 #endif
+#if defined(__linux__) && defined(WITH_VST)
+	#include <X11/Xlib.h> // For XInitThreads
+#endif
 #include "../utils/log.h"
 #include "../utils/fs.h"
 #include "../utils/gui.h"
@@ -130,6 +133,14 @@ void init_prepareMidiMap()
 
 void init_startGUI(int argc, char** argv)
 {
+	/* This is of paramount importance on Linux with VST enabled, otherwise many
+	plug-ins go nuts and crash hard. It seems that some plug-ins or our Juce-based
+	PluginHost use Xlib concurrently. */
+	
+#if defined(__linux__) && defined(WITH_VST)
+	XInitThreads();
+#endif
+
 	G_MainWin = new gdMainWindow(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv);
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
     conf::mainWindowH);
