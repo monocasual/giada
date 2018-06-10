@@ -17,6 +17,7 @@
 - Simplify mutex mechanism
 - Fix wrong quantizer value on patch/project load
 - Remove the old, buggy and glitchy internal crossfade algorithm
+- Fix many potential plug-in crashes on Linux
 
 
 0.15.0 --- 2018 . 04 . 18
