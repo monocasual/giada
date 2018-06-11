@@ -50,16 +50,16 @@ class gdPluginWindowGUI : public gdWindow
 {
 private:
 
-	Plugin *pPlugin;
+	Plugin* m_plugin;
 
-	static void cb_close    (Fl_Widget *v, void *p);
-	static void cb_refresh  (void *data);
-	inline void __cb_close  ();
-	inline void __cb_refresh();
+	static void cb_close  (Fl_Widget* v, void* p);
+	static void cb_refresh(void* data);
+	inline void cb_close  ();
+	inline void cb_refresh();
 
 public:
 
-	gdPluginWindowGUI(Plugin *pPlugin);
+	gdPluginWindowGUI(Plugin* p);
 	~gdPluginWindowGUI();
 };
 
