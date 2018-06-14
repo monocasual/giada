@@ -146,6 +146,8 @@ sourcesCore =                            \
 	src/gui/elems/plugin/pluginBrowser.cpp              \
 	src/gui/elems/plugin/pluginParameter.h              \
 	src/gui/elems/plugin/pluginParameter.cpp            \
+	src/gui/elems/plugin/pluginElement.h                \
+	src/gui/elems/plugin/pluginElement.cpp              \
 	src/gui/elems/sampleEditor/waveform.h               \
 	src/gui/elems/sampleEditor/waveform.cpp             \
 	src/gui/elems/sampleEditor/waveTools.h              \

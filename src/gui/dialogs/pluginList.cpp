@@ -28,27 +28,21 @@
 #ifdef WITH_VST
 
 
+#include <string>
+#include <FL/Fl_Scroll.H>
 #include "../../utils/gui.h"
-#include "../../utils/fs.h"
 #include "../../core/conf.h"
 #include "../../core/const.h"
-#include "../../core/graphics.h"
 #include "../../core/pluginHost.h"
-#include "../../core/plugin.h"
-#include "../../core/mixer.h"
 #include "../../core/channel.h"
-#include "../../glue/plugin.h"
-#include "../../utils/log.h"
 #include "../../utils/string.h"
 #include "../elems/basics/boxtypes.h"
-#include "../elems/basics/idButton.h"
+#include "../elems/basics/button.h"
 #include "../elems/basics/statusButton.h"
-#include "../elems/basics/choice.h"
 #include "../elems/mainWindow/mainIO.h"
 #include "../elems/mainWindow/keyboard/channel.h"
+#include "../elems/plugin/pluginElement.h"
 #include "pluginChooser.h"
-#include "pluginWindow.h"
-#include "pluginWindowGUI.h"
 #include "gd_mainWindow.h"
 #include "pluginList.h"
 
@@ -57,13 +51,14 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada::m;
-using namespace giada::c;
+using namespace giada;
 
 
 gdPluginList::gdPluginList(int stackType, Channel* ch)
 	: gdWindow(468, 204), ch(ch), stackType(stackType)
 {
+	using namespace giada::m;
+
 	if (conf::pluginListX)
 		resize(conf::pluginListX, conf::pluginListY, w(), h());
 
@@ -104,8 +99,8 @@ gdPluginList::gdPluginList(int stackType, Channel* ch)
 
 gdPluginList::~gdPluginList()
 {
-	conf::pluginListX = x();
-	conf::pluginListY = y();
+	m::conf::pluginListX = x();
+	m::conf::pluginListY = y();
 }
 
 
@@ -120,17 +115,17 @@ void gdPluginList::cb_addPlugin(Fl_Widget* v, void* p) { ((gdPluginList*)p)->cb_
 
 void gdPluginList::cb_refreshList(Fl_Widget* v, void* p)
 {
-	/* note: this callback is fired by gdBrowser. Close its window first,
-	 * by calling the parent (pluginList) and telling it to delete its
-	 * subwindow (i.e. gdBrowser). */
+	/* Note: this callback is fired by gdBrowser. Close its window first, by 
+	calling the parent (pluginList) and telling it to delete its subwindow 
+	(i.e. gdBrowser). */
 
-	gdWindow *child = (gdWindow*) v;
+	gdWindow* child = static_cast<gdWindow*>(v);
 	if (child->getParent() != nullptr)
 		(child->getParent())->delSubWindow(child);
 
-	/* finally refresh plugin list: void *p is a pointer to gdPluginList.
-	 * This callback works even when you click 'x' to close the window...
-	 * well, who cares */
+	/* Finally refresh plugin list: void *p is a pointer to gdPluginList. This 
+	callback works even when you click 'x' to close the window... well, it does
+	not matter. */
 
 	((gdPluginList*)p)->refreshList();
 	((gdPluginList*)p)->redraw();
@@ -142,10 +137,12 @@ void gdPluginList::cb_refreshList(Fl_Widget* v, void* p)
 
 void gdPluginList::cb_addPlugin()
 {
-	/* the usual callback that gdWindow adds to each subwindow in this case
-	 * is not enough, because when we close the browser the plugin list
-	 * must be redrawn. We have a special callback, cb_refreshList, which
-	 * we add to gdPluginChooser. It does exactly what we need. */
+	using namespace giada::m;
+
+	/* The usual callback that gdWindow adds to each subwindow in this case is not 
+	enough, because when we close the browser the plugin list must be redrawn. We 
+	have a special callback, cb_refreshList, which we add to gdPluginChooser. 
+	It does exactly what we need. */
 
 	gdPluginChooser* pc = new gdPluginChooser(conf::pluginChooserX,
 			conf::pluginChooserY, conf::pluginChooserW, conf::pluginChooserH,
@@ -160,6 +157,8 @@ void gdPluginList::cb_addPlugin()
 
 void gdPluginList::refreshList()
 {
+	using namespace giada::m;
+
 	/* delete the previous list */
 
 	list->clear();
@@ -173,9 +172,10 @@ void gdPluginList::refreshList()
 	int i = 0;
 
 	while (i<numPlugins) {
-		Plugin   *pPlugin = pluginHost::getPluginByIndex(i, stackType, ch);
-		gdPlugin *gdp     = new gdPlugin(this, pPlugin, list->x(), list->y()-list->yposition()+(i*24), 800);
-		list->add(gdp);
+		Plugin*          plugin = pluginHost::getPluginByIndex(i, stackType, ch);
+		gePluginElement* gdpe   = new gePluginElement(this, plugin, list->x(), 
+			list->y()-list->yposition()+(i*24), 800);
+		list->add(gdpe);
 		i++;
 	}
 
@@ -200,177 +200,16 @@ void gdPluginList::refreshList()
 	gdPluginListMaster */
 
 	if (stackType == pluginHost::MASTER_OUT) {
-		G_MainWin->mainIO->setMasterFxOutFull(
-			pluginHost::countPlugins(stackType, ch) > 0);
+		G_MainWin->mainIO->setMasterFxOutFull(pluginHost::countPlugins(stackType, ch) > 0);
 	}
 	else
 	if (stackType == pluginHost::MASTER_IN) {
-		G_MainWin->mainIO->setMasterFxInFull(
-			pluginHost::countPlugins(stackType, ch) > 0);
+		G_MainWin->mainIO->setMasterFxInFull(pluginHost::countPlugins(stackType, ch) > 0);
 	}
 	else {
 		ch->guiChannel->fx->status = pluginHost::countPlugins(stackType, ch) > 0;
 		ch->guiChannel->fx->redraw();
 	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-gdPlugin::gdPlugin(gdPluginList* gdp, Plugin* p, int X, int Y, int W)
-	: Fl_Group(X, Y, W, 20), pParent(gdp), pPlugin (p)
-{
-	begin();
-	button    = new geIdButton(8, y(), 220, 20);
-	program   = new geChoice(button->x()+button->w()+4, y(), 132, 20);
-	bypass    = new geIdButton(program->x()+program->w()+4, y(), 20, 20);
-	shiftUp   = new geIdButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
-	shiftDown = new geIdButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-	remove    = new geIdButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
-	end();
-
-	button->copy_label(pPlugin->getName().c_str());
-	button->callback(cb_openPluginWindow, (void*)this);
-
-	program->callback(cb_setProgram, (void*)this);
-
-	for (int i=0; i<pPlugin->getNumPrograms(); i++)
-		program->add(gu_removeFltkChars(pPlugin->getProgramName(i)).c_str());
-
-	if (program->size() == 0) {
-		program->add("-- no programs --\0");
-		program->deactivate();
-	}
-	else
-		program->value(pPlugin->getCurrentProgram());
-
-	bypass->callback(cb_setBypass, (void*)this);
-	bypass->type(FL_TOGGLE_BUTTON);
-	bypass->value(pPlugin->isBypassed() ? 0 : 1);
-
-	shiftUp->callback(cb_shiftUp, (void*)this);
-	shiftDown->callback(cb_shiftDown, (void*)this);
-	remove->callback(cb_removePlugin, (void*)this);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_removePlugin    (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_removePlugin(); }
-void gdPlugin::cb_openPluginWindow(Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_openPluginWindow(); }
-void gdPlugin::cb_setBypass       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_setBypass(); }
-void gdPlugin::cb_shiftUp         (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_shiftUp(); }
-void gdPlugin::cb_shiftDown       (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_shiftDown(); }
-void gdPlugin::cb_setProgram      (Fl_Widget* v, void* p) { ((gdPlugin*)p)->cb_setProgram(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_shiftUp()
-{
-	/*nothing to do if there's only one plugin */
-
-	if (pluginHost::countPlugins(pParent->stackType, pParent->ch) == 1)
-		return;
-
-	int pluginIndex = pluginHost::getPluginIndex(pPlugin->getId(),
-		pParent->stackType, pParent->ch);
-
-	if (pluginIndex == 0)  // first of the stack, do nothing
-		return;
-
-	plugin::swapPlugins(pParent->ch, pluginIndex, pluginIndex-1, pParent->stackType);
-	pParent->refreshList();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_shiftDown()
-{
-	/*nothing to do if there's only one plugin */
-
-	if (pluginHost::countPlugins(pParent->stackType, pParent->ch) == 1)
-		return;
-
-	unsigned pluginIndex = pluginHost::getPluginIndex(pPlugin->getId(), pParent->stackType, pParent->ch);
-	unsigned stackSize   = (pluginHost::getStack(pParent->stackType, pParent->ch))->size();
-
-	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
-		return;
-
-	plugin::swapPlugins(pParent->ch, pluginIndex, pluginIndex+1, pParent->stackType);
-	pParent->refreshList();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_removePlugin()
-{
-	/* any subwindow linked to the plugin must be destroyed first */
-
-	pParent->delSubWindow(pPlugin->getId());
-	plugin::freePlugin(pParent->ch, pPlugin->getId(), pParent->stackType);
-	pParent->refreshList();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_openPluginWindow()
-{
-	/* the new pluginWindow has id = id_plugin + 1, because id=0 is reserved
-	* for the parent window 'add plugin'. */
-
-	int pwid = pPlugin->getId() + 1;
-	
-	gdWindow* w;
-	if (pPlugin->hasEditor()) {
-		if (pPlugin->isEditorOpen()) {
-			gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has editor but it's already visible\n");
-			pParent->getChild(pwid)->show();  // Raise it to top
-			return;
-		}
-		gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has editor, window id=%d\n", pwid);
-		w = new gdPluginWindowGUI(pPlugin);
-	}
-	else {
-		w = new gdPluginWindow(pPlugin);
-		gu_log("[gdPlugin::__cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
-	}
-	
-	if (pParent->hasWindow(pwid))
-		pParent->delSubWindow(pwid);
-	w->setId(pwid);
-	pParent->addSubWindow(w);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_setBypass()
-{
-	pPlugin->toggleBypass();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdPlugin::cb_setProgram()
-{
-	//pPlugin->setCurrentProgram(program->value());
-	plugin::setProgram(pPlugin, program->value());
 }
 
 

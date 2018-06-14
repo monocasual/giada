@@ -27,44 +27,51 @@
 
 #ifdef WITH_VST
 
-#ifndef GD_PLUGINLIST_H
-#define GD_PLUGINLIST_H
+
+#ifndef GE_PLUGIN_ELEMENT_H
+#define GE_PLUGIN_ELEMENT_H
 
 
-#include "window.h"
+#include <FL/Fl_Group.H>
 
 
-class Fl_Scroll;
-class Channel;
-class geButton;
+class gdPluginList;
+class Plugin;
+class geIdButton;
+class geChoice;
 
 
-class gdPluginList : public gdWindow
+class gePluginElement : public Fl_Group
 {
 private:
 
-	geButton*  addPlugin;
-	Fl_Scroll* list;
+	gdPluginList* m_parentWin;
+	Plugin*       m_plugin;
 
-	static void cb_addPlugin(Fl_Widget* v, void* p);
-	void cb_addPlugin();
+	static void cb_removePlugin(Fl_Widget* v, void* p);
+	static void cb_openPluginWindow(Fl_Widget* v, void* p);
+	static void cb_setBypass(Fl_Widget* v, void* p);
+	static void cb_shiftUp(Fl_Widget* v, void* p);
+	static void cb_shiftDown(Fl_Widget* v, void* p);
+	static void cb_setProgram(Fl_Widget* v, void* p);
+	void cb_removePlugin();
+	void cb_openPluginWindow();
+	void cb_setBypass();
+	void cb_shiftUp();
+	void cb_shiftDown();
+	void cb_setProgram();
 
 public:
 
-	Channel* ch;      // ch == nullptr ? masterOut
-	int stackType;
+	geIdButton* button;
+	geChoice*   program;
+	geIdButton* bypass;
+	geIdButton* shiftUp;
+	geIdButton* shiftDown;
+	geIdButton* remove;
 
-	gdPluginList(int stackType, Channel* ch=nullptr);
-	~gdPluginList();
-
-	/* special callback, passed to browser. When closed (i.e. plugin
-	 * has been selected) the same browser will refresh this window. */
-
-	static void cb_refreshList(Fl_Widget*, void*);
-
-	void refreshList();
+	gePluginElement(gdPluginList* gdp, Plugin* p, int x, int y, int w);
 };
-
 
 #endif
 

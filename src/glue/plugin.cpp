@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <FL/Fl.H>
 #include "../core/pluginHost.h"
 #include "../core/mixer.h"
 #include "../core/plugin.h"
