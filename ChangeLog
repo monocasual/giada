@@ -14,10 +14,12 @@
 
 0.15.1 --- 
 - Deep code refactoring, featuring Channels processors
+- Many new unit tests added
 - Simplify mutex mechanism
 - Fix wrong quantizer value on patch/project load
 - Remove the old, buggy and glitchy internal crossfade algorithm
 - Fix many potential plug-in crashes on Linux
+- Properly close plug-in window on plug-in removal 
 
 
 0.15.0 --- 2018 . 04 . 18
