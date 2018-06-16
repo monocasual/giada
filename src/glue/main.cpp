@@ -42,6 +42,7 @@
 #include "../core/kernelMidi.h"
 #include "../core/kernelAudio.h"
 #include "../core/conf.h"
+#include "../core/const.h"
 #ifdef WITH_VST
 #include "../core/pluginHost.h"
 #endif
@@ -51,57 +52,81 @@
 extern gdMainWindow *G_MainWin;
 
 
+using std::string;
 using namespace giada::m;
 
 
-void glue_setBpm(const char *v1, const char *v2)
+namespace
+{
+void setBpm_(float f, string s)
+{
+	if (f < G_MIN_BPM) {
+		f = G_MIN_BPM;
+		s = G_MIN_BPM_STR;
+	}
+	else
+	if (f > G_MAX_BPM) {
+		f = G_MAX_BPM;
+		s = G_MAX_BPM_STR;		
+	}
+
+	float vPre = clock::getBpm();
+	clock::setBpm(f);
+	recorder::updateBpm(vPre, f, clock::getQuanto());
+	mixer::allocVirtualInput(clock::getFramesInLoop());
+
+	gu_refreshActionEditor();
+	G_MainWin->mainTimer->setBpm(s.c_str());
+
+	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), clock::getBpm());
+}
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+void glue_setBpm(const char* v1, const char* v2)
 {
 	/* Never change this stuff while recording audio */
 
 	if (mixer::recording)
 		return;
 
-	char  bpmS[6];
-	float bpmF = atof(v1) + (atof(v2)/10);
-	if (bpmF < 20.0f) {
-		bpmF = 20.0f;
-		sprintf(bpmS, "20.0");
-	}
+	/* A value such as atof("120.1") will never be 120.1 but 120.0999999, because 
+	of the rounding error. So we pass the real "wrong" value to mixer and we show 
+	the nice looking (but fake) one to the GUI. 
+	On Linux, let Jack handle the bpm change if its on. */
+
+	float  f = atof(v1) + (atof(v2)/10);
+	string s = string(v1) + "." + string(v2);
+
+#ifdef G_OS_LINUX
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		kernelAudio::jackSetBpm(f);
 	else
-		sprintf(bpmS, "%s.%s", v1, !strcmp(v2, "") ? "0" : v2);
-
-	/* a value such as atof("120.1") will never be 120.1 but 120.0999999,
-	 * because of the rounding error. So we pass the real "wrong" value to
-	 * G_Mixer and we show the nice looking (but fake) one to the GUI. */
-
-	float oldBpmF = clock::getBpm();
-	clock::setBpm(bpmF);
-	recorder::updateBpm(oldBpmF, bpmF, clock::getQuanto());
-	mixer::allocVirtualInput(clock::getFramesInLoop());
-
-#ifdef __linux__
-	kernelAudio::jackSetBpm(clock::getBpm());
 #endif
-
-	gu_refreshActionEditor();
-	G_MainWin->mainTimer->setBpm(bpmS);
-
-	gu_log("[glue] Bpm changed to %s (real=%f)\n", bpmS, clock::getBpm());
+	setBpm_(f, s);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBpm(float v)
+void glue_setBpm(float f)
 {
-	if (v < G_MIN_BPM || v > G_MAX_BPM)
-		v = G_DEFAULT_BPM;
-	double fIpart;
-	double fPpart = modf(v, &fIpart);
-	int iIpart = fIpart;
-	int iPpart = ceilf(fPpart);
-	glue_setBpm(gu_iToString(iIpart).c_str(), gu_iToString(iPpart).c_str());
+	/* Never change this stuff while recording audio */
+
+	if (mixer::recording)
+		return;
+
+	float intpart;
+	float fracpart = std::round(std::modf(f, &intpart) * 10);
+	string s = std::to_string((int) intpart) + "." + std::to_string((int)fracpart);
+
+	setBpm_(f, s);
 }
 
 

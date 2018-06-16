@@ -36,8 +36,16 @@
 #define G_GLUE_MAIN_H
 
 
+/* glue_setBpm (1)
+Sets bpm value from string to float. */
+
 void glue_setBpm(const char* v1, const char* v2);
+
+/* glue_setBpm (2)
+Sets bpm value. Usually called from the Jack callback or non-UI components. */
+
 void glue_setBpm(float v);
+
 void glue_setBeats(int beats, int bars, bool expand);
 void glue_quantize(int val);
 void glue_setOutVol(float v, bool gui=true);
@@ -46,13 +54,13 @@ void glue_clearAllSamples();
 void glue_clearAllActions();
 
 /* resetToInitState
- * reset Giada to init state. If resetGui also refresh all widgets. If
- * createColumns also build initial empty columns. */
+Resets Giada to init state. If resetGui also refresh all widgets. If 
+createColumns also build initial empty columns. */
 
 void glue_resetToInitState(bool resetGui=true, bool createColumns=true);
 
 /* beatsDivide/Multiply
- * shrinks or enlarges the number of beats by 2. */
+Shrinks or enlarges the number of beats by 2. */
 
 void glue_beatsMultiply();
 void glue_beatsDivide();

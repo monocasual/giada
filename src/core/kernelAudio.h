@@ -78,6 +78,7 @@ int getDeviceByName(const char* name);
 int getDefaultOut();
 int getDefaultIn();
 bool hasAPI(int API);
+int getAPI();
 
 #ifdef __linux__
 

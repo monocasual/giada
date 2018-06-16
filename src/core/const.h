@@ -93,7 +93,9 @@
 
 /* -- MIN/MAX values -------------------------------------------------------- */
 #define G_MIN_BPM           20.0f
+#define G_MIN_BPM_STR       "20.0"
 #define G_MAX_BPM           999.0f
+#define G_MAX_BPM_STR       "999.0"
 #define G_MAX_BEATS				  32
 #define G_MAX_BARS				  32
 #define G_MAX_QUANTIZE      8
