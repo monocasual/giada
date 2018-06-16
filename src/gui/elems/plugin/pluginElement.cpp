@@ -148,9 +148,11 @@ void gePluginElement::cb_shiftDown()
 
 void gePluginElement::cb_removePlugin()
 {
-	/* Any subwindow linked to the plugin must be destroyed first. */
-
-	m_parentWin->delSubWindow(m_plugin->getId());
+	/* Any subwindow linked to the plugin must be destroyed first. The 
+	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
+	window 'add plugin' (i.e. this).*/
+	
+	m_parentWin->delSubWindow(m_plugin->getId() + 1);
 	c::plugin::freePlugin(m_parentWin->ch, m_plugin->getId(), m_parentWin->stackType);
 	m_parentWin->refreshList();
 }
@@ -169,16 +171,16 @@ void gePluginElement::cb_openPluginWindow()
 	gdWindow* w;
 	if (m_plugin->hasEditor()) {
 		if (m_plugin->isEditorOpen()) {
-			gu_log("[gePluginElement::__cb_openPluginWindow] Plug-in has editor but it's already visible\n");
+			gu_log("[gePluginElement::cb_openPluginWindow] Plug-in has editor but it's already visible\n");
 			m_parentWin->getChild(pwid)->show();  // Raise it to top
 			return;
 		}
-		gu_log("[gePluginElement::__cb_openPluginWindow] Plug-in has editor, window id=%d\n", pwid);
+		gu_log("[gePluginElement::cb_openPluginWindow] Plug-in has editor, window id=%d\n", pwid);
 		w = new gdPluginWindowGUI(m_plugin);
 	}
 	else {
 		w = new gdPluginWindow(m_plugin);
-		gu_log("[gePluginElement::__cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
+		gu_log("[gePluginElement::cb_openPluginWindow] Plug-in has no editor, window id=%d\n", pwid);
 	}
 	
 	if (m_parentWin->hasWindow(pwid))
