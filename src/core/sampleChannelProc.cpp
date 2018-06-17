@@ -44,12 +44,12 @@ void rewind_(SampleChannel* ch, int localFrame)
 	ch->mute_i  = false;
 	ch->qWait   = false;  // Was in qWait mode? Reset occured, no more qWait now.
 
-	/* On reset, if localFrame > 0 and channel is playing, fill again buffer to 
-	create something like this:
+	/* On rewind, if channel is playing fill again buffer to create something like 
+	this:
                    v-------------- localFrame
 		[old data-----]*[new data--] */
 
-	if (localFrame > 0 && ch->isPlaying())
+	if (ch->isPlaying())
 		ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame); 
 }
 
@@ -146,7 +146,8 @@ void onFirstBeat_(SampleChannel* ch, int localFrame)
 
 
 /* onLastFrame
-Things to do when the sample has reached the end (i.e. last frame). */
+Things to do when the sample has reached the end (i.e. last frame). Called by
+prepareBuffer(). */
 
 void onLastFrame_(SampleChannel* ch, int localFrame, bool running)
 {
@@ -433,7 +434,7 @@ void prepareBuffer(SampleChannel* ch, bool running)
 		int framesUsed = ch->fillBuffer(ch->buffer, ch->tracker, 0);
 		ch->tracker += framesUsed;
 		if (ch->isOnLastFrame())
-			onLastFrame_(ch, framesUsed, running);
+			onLastFrame_(ch, framesUsed * (1 / ch->pitch), running);
 	}
 }
 
