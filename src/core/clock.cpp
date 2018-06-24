@@ -197,7 +197,7 @@ void setQuantize(int q)
 
 void incrCurrentFrame() {
 	currentFrame++;
-	if (currentFrame > framesInLoop) {
+	if (currentFrame >= framesInLoop) {
 		currentFrame = 0;
 		currentBeat  = 0;
 	}

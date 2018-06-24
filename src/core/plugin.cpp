@@ -45,7 +45,7 @@ int Plugin::idGenerator = 1;
 /* -------------------------------------------------------------------------- */
 
 
-Plugin::Plugin(juce::AudioPluginInstance *plugin, double samplerate,
+Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
 	: ui    (nullptr),
 		plugin(plugin),

@@ -49,7 +49,9 @@ void rewind_(SampleChannel* ch, int localFrame)
                    v-------------- localFrame
 		[old data-----]*[new data--] */
 
-	if (ch->isPlaying())
+	printf("rewind localFrame=%d\n", localFrame);
+
+	if (localFrame > 0 && ch->isPlaying())
 		ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame); 
 }
 

@@ -434,7 +434,7 @@ bool SampleChannel::canInputRec()
 int SampleChannel::fillBuffer(giada::m::AudioBuffer& dest, int start, int offset)
 {
 	rsmp_data.data_in       = wave->getFrame(start);        // Source data
-	rsmp_data.input_frames  = end - start;                  // How many readable frames
+	rsmp_data.input_frames  = end - start - 1;              // How many readable frames
 	rsmp_data.data_out      = dest[offset];                 // Destination (processed data)
 	rsmp_data.output_frames = dest.countFrames() - offset;  // How many frames to process
 	rsmp_data.end_of_input  = false;
@@ -467,5 +467,5 @@ bool SampleChannel::isAnySingleMode() const
 
 bool SampleChannel::isOnLastFrame() const
 {
-	return tracker == end;
+	return tracker == end - 1;
 }

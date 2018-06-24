@@ -398,6 +398,8 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 		renderMetronome(out, j);
 	}
 
+out[0][1] = 3.0f;
+
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
 	out.setData(nullptr, 0, 0);
