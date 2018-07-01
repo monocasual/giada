@@ -433,8 +433,18 @@ bool SampleChannel::canInputRec()
 
 int SampleChannel::fillBuffer(giada::m::AudioBuffer& dest, int start, int offset)
 {
+	if (pitch == 1.0) return fillBufferCopy(dest, start, offset);
+	else              return fillBufferResampled(dest, start, offset);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::fillBufferResampled(giada::m::AudioBuffer& dest, int start, int offset)
+{
 	rsmp_data.data_in       = wave->getFrame(start);        // Source data
-	rsmp_data.input_frames  = end - start - 1;              // How many readable frames
+	rsmp_data.input_frames  = end - start;                  // How many readable frames
 	rsmp_data.data_out      = dest[offset];                 // Destination (processed data)
 	rsmp_data.output_frames = dest.countFrames() - offset;  // How many frames to process
 	rsmp_data.end_of_input  = false;
@@ -443,6 +453,20 @@ int SampleChannel::fillBuffer(giada::m::AudioBuffer& dest, int start, int offset
 	src_process(rsmp_state, &rsmp_data);
 
 	return rsmp_data.input_frames_used; // Returns used frames
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+int SampleChannel::fillBufferCopy(giada::m::AudioBuffer& dest, int start, int offset)
+{
+	int used = dest.countFrames() - offset;
+	if (used + start > wave->getSize())
+		used = wave->getSize() - start;
+
+	dest.copyData(wave->getFrame(start), used, offset);
+
+	return used;
 }
 
 
@@ -467,5 +491,5 @@ bool SampleChannel::isAnySingleMode() const
 
 bool SampleChannel::isOnLastFrame() const
 {
-	return tracker == end - 1;
+	return tracker >= end;
 }

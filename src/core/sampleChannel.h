@@ -146,6 +146,9 @@ private:
 
 	SRC_STATE* rsmp_state;
 	SRC_DATA   rsmp_data;
+
+	int fillBufferResampled(giada::m::AudioBuffer& dest, int start, int offset);
+	int fillBufferCopy     (giada::m::AudioBuffer& dest, int start, int offset);
 };
 
 #endif

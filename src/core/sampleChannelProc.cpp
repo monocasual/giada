@@ -30,6 +30,7 @@
 #include "pluginHost.h"
 #include "sampleChannel.h"
 #include "sampleChannelProc.h"
+#include "clock.h"
 
 
 namespace giada {
@@ -48,8 +49,6 @@ void rewind_(SampleChannel* ch, int localFrame)
 	this:
                    v-------------- localFrame
 		[old data-----]*[new data--] */
-
-	printf("rewind localFrame=%d\n", localFrame);
 
 	if (localFrame > 0 && ch->isPlaying())
 		ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame); 

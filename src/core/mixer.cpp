@@ -381,8 +381,8 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 			lineInRec(in, j);   // TODO - can go outside this loop
 			doQuantize(j);
 			testBar(j);
+			testLastBeat();
 			clock::incrCurrentFrame();
-			testLastBeat();  // this test must be the last one
 			clock::sendMIDIsync();
 		}
 	}
@@ -397,8 +397,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 		computePeak(out, peakOut, j); 
 		renderMetronome(out, j);
 	}
-
-out[0][1] = 3.0f;
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
