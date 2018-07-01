@@ -60,13 +60,19 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 /* -------------------------------------------------------------------------- */
 
 
-void process(MidiChannel* ch, giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in)
+void process(MidiChannel* ch, giada::m::AudioBuffer& out, 
+	const giada::m::AudioBuffer& in, bool audible)
 {
 	#ifdef WITH_VST
 		pluginHost::processStack(ch->buffer, pluginHost::CHANNEL, ch);
 	#endif
 
-		/* TODO - isn't this useful only if WITH_VST ? */
+	/* Process the plugin stack first, then quit if the channel is muted/soloed. 
+	This way there's no risk of cutting midi event pairs such as note-on and 
+	note-off while triggering a mute/solo. */
+
+	/* TODO - this is meaningful only if WITH_VST is defined */
+	if (audible)
 		for (int i=0; i<out.countFrames(); i++)
 			for (int j=0; j<out.countChannels(); j++)
 				out[i][j] += ch->buffer[i][j] * ch->volume;	

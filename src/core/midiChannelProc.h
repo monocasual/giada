@@ -20,7 +20,7 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents ev);
 
 /**/
 void process(MidiChannel* ch, giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in);
+	const giada::m::AudioBuffer& in, bool audible);
 
 /* kill
 Stops a channel abruptly. */

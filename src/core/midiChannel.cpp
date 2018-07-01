@@ -78,7 +78,7 @@ void MidiChannel::parseEvents(mixer::FrameEvents fe)
 void MidiChannel::process(giada::m::AudioBuffer& out, 
 	const giada::m::AudioBuffer& in, bool audible, bool running)
 {
-	midiChannelProc::process(this, out, in);
+	midiChannelProc::process(this, out, in, audible);
 }
 
 
