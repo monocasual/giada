@@ -59,7 +59,7 @@ TEST_CASE("sampleChannelProc")
 			REQUIRE(ch.fillBuffer(ch.buffer, 0, 666) == BUFFER_SIZE - 666);
 
 			/* At the end of the waveform. */
-			REQUIRE(ch.fillBuffer(ch.buffer, ch.end - 666, 0) == ch.end - (ch.end - 666));
+			REQUIRE(ch.fillBuffer(ch.buffer, ch.end - 666, 0) == (ch.end - (ch.end - 666)) + 1);
 		}
 	}
 
