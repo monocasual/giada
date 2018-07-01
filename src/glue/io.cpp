@@ -133,6 +133,8 @@ void stopActionRec(bool gui)
 
 	for (Channel* ch : m::mixer::channels)
 	{
+		if (ch->type == ChannelType::MIDI)
+			continue;
 		G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
 		if (!ch->readActions && ch->hasActions)
 			c::channel::startReadingActions(ch, false);
