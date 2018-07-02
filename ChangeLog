@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.15.1 --- 
+0.15.1 --- 2018 . 07 . 03
 - Deep code refactoring, featuring Channels processors
 - Many new unit tests added
 - Simplify mutex mechanism
@@ -21,7 +21,6 @@
 - Fix many potential plug-in crashes on Linux
 - Properly close plug-in window on plug-in removal 
 - Improve BPM changes while running as JACK client
-- Upgrade to Catch version 2.2.3
 
 
 0.15.0 --- 2018 . 04 . 18
