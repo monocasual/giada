@@ -319,7 +319,7 @@ endif
 
 if !WITH_SYSTEM_CATCH
 
-cppFlags += -I$(top_srcdir)/tests/catch2/single_include/catch2
+cppFlags += -I$(top_srcdir)/tests/catch2/single_include
 
 endif
 
