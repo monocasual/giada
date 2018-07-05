@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * plugin
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2018 Giovanni A. Zuliani | Monocasual
@@ -40,6 +38,7 @@ class Plugin
 {
 private:
 
+	static const int MAX_LABEL_SIZE = 64;
 	static int idGenerator;
 
 	juce::AudioProcessorEditor* ui;    // gui
