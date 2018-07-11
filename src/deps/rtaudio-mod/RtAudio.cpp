@@ -1941,7 +1941,7 @@ struct JackHandle {
 };
 
 /* --- Monocasual hack ------------------------------------------------------ */
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 void *RtApi :: __HACK__getJackClient() {
 	JackHandle *handle = (JackHandle *) stream_.apiHandle;
 	return (void*) handle->client;

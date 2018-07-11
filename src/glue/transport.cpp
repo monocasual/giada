@@ -55,7 +55,7 @@ void glue_startSeq(bool gui)
 {
 	clock::start();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	kernelAudio::jackStart();
 #endif
 
@@ -74,7 +74,7 @@ void glue_stopSeq(bool gui)
 {
 	mh::stopSequencer();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	kernelAudio::jackStop();
 #endif
 

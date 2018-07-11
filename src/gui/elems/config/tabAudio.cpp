@@ -95,6 +95,27 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 			break;
 	}
 
+#elif defined(__FreeBSD__)
+
+	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
+		soundsys->add("Jack");
+	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
+		soundsys->add("PulseAudio");
+
+	switch (conf::soundSystem) {
+		case G_SYS_API_NONE:
+			soundsys->showItem("(none)");
+			break;
+		case G_SYS_API_JACK:
+			soundsys->showItem("Jack");
+			buffersize->deactivate();
+			samplerate->deactivate();
+			break;
+		case G_SYS_API_PULSE:
+			soundsys->showItem("PulseAudio");
+			break;
+	}
+
 #elif defined(_WIN32)
 
 	if (kernelAudio::hasAPI(RtAudio::WINDOWS_DS))
@@ -461,6 +482,13 @@ void geTabAudio::save()
 
 	else if (text == "ALSA")
 		conf::soundSystem = G_SYS_API_ALSA;
+	else if (text == "Jack")
+		conf::soundSystem = G_SYS_API_JACK;
+	else if (text == "PulseAudio")
+		conf::soundSystem = G_SYS_API_PULSE;
+
+#elif defined(__FreeBSD__)
+
 	else if (text == "Jack")
 		conf::soundSystem = G_SYS_API_JACK;
 	else if (text == "PulseAudio")

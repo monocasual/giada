@@ -93,7 +93,7 @@ void Plugin::showEditor(void* parent)
 	/* A silly workaround on X: it seems that calling addToDesktop too fast, i.e.
 	before the X Window is fully ready screws up the plugin's event dispatcher. */
 
-#ifdef G_OS_LINUX
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	time::sleep(500);
 #endif
 

@@ -29,7 +29,7 @@
 #include <FL/fl_draw.H>
 #if defined(_WIN32)
 	#include "../ext/resource.h"
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__FreeBSD__)
 	#include <X11/xpm.h>
 #endif
 #include "../core/mixer.h"
@@ -145,7 +145,7 @@ void gu_updateMainWinLabel(const string& s)
 
 void gu_setFavicon(Fl_Window* w)
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 
 	fl_open_display();
 	Pixmap p, mask;

@@ -49,7 +49,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin* plugin)
 {
   show();
 
-#ifdef G_OS_LINUX
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 
   /*  Fl_Window::show() is not guaranteed to show and draw the window on all 
   platforms immediately. Instead this is done in the background; particularly on 

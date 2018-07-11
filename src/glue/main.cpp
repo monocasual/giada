@@ -103,7 +103,7 @@ void glue_setBpm(const char* v1, const char* v2)
 	float  f = atof(v1) + (atof(v2)/10);
 	string s = string(v1) + "." + string(v2);
 
-#ifdef G_OS_LINUX
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		kernelAudio::jackSetBpm(f);
 	else
@@ -172,7 +172,7 @@ void glue_rewindSeq(bool gui, bool notifyJack)
 	Mixer would wait, while the following calls would be made regardless of its
 	state. */
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	if (notifyJack)
 		kernelAudio::jackSetPosition(0);
 #endif

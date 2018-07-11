@@ -363,6 +363,17 @@ ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
 
 endif
 
+if FREEBSD
+
+# Add preprocessor flags to enable ALSA, Pulse and JACK in RtAudio.
+cppFlags += -D__LINUX_PULSE__ -D__UNIX_JACK__
+
+ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
+  -lpthread -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
+  -lfreetype
+
+endif
+
 if OSX
 
 sourcesExtra += src/utils/cocoa.mm src/utils/cocoa.h
