@@ -107,6 +107,9 @@ extern int sampleEditorGridOn;
 extern int midiInputX, midiInputY, midiInputW, midiInputH;
 
 extern int pianoRollY, pianoRollH;
+extern int sampleActionEditorH; 
+extern int velocityEditorH; 
+extern int envelopeEditorH; 
 extern int pluginListX, pluginListY;
 extern int configX, configY;
 extern int bpmX, bpmY;

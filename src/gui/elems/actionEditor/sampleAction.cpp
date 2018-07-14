@@ -25,66 +25,44 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../../../core/midiChannel.h"
-#include "../../dialogs/actionEditor/midiActionEditor.h"
-#include "pianoRoll.h"
-#include "noteEditor.h"
+#include "../../../core/sampleChannel.h"
+#include "sampleAction.h"
 
 
 namespace giada {
 namespace v
 {
-geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
-: geScroll(x, y, 200, 422),
-	m_base  (base)
+geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, 
+	const SampleChannel* ch, m::recorder::action a1, m::recorder::action a2)
+: geBaseAction(X, Y, W, H, ch->mode == ChannelMode::SINGLE_PRESS, a1, a2),
+  m_ch        (ch)
 {
-	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, static_cast<MidiChannel*>(m_base->ch));
-
-	rebuild();
-	
-	size(m_base->fullWidth, m::conf::pianoRollH);
-	
-	type(Fl_Scroll::VERTICAL_ALWAYS);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geNoteEditor::~geNoteEditor()
+void geSampleAction::draw()
 {
-	m::conf::pianoRollH = h();
-	m::conf::pianoRollY = pianoRoll->y();
-}
+	Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1; 
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void geNoteEditor::scroll()
-{
-	Pixel ey = Fl::event_y() - pianoRoll->pick;
-
-	Pixel y1 = y();
-	Pixel y2 = (y() + h()) - pianoRoll->h();
-
-	if (ey > y1) ey = y1; else if (ey < y2) ey = y2;
-
-	pianoRoll->position(x(), ey);
-
-	redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geNoteEditor::rebuild()
-{
-	size(m_base->fullWidth, h());
-	pianoRoll->rebuild();
+	if (m_ch->mode == ChannelMode::SINGLE_PRESS) {
+		fl_rectf(x(), y(), w(), h(), color);
+	}
+	else {
+		if (a1.type == G_ACTION_KILL)
+			fl_rect(x(), y(), MIN_WIDTH, h(), color);
+		else {
+			fl_rectf(x(), y(), MIN_WIDTH, h(), color);
+			if (a1.type == G_ACTION_KEYPRESS)
+				fl_rectf(x()+3, y()+h()-11, w()-6, 8, G_COLOR_GREY_4);
+			else
+			if (a1.type == G_ACTION_KEYREL)
+				fl_rectf(x()+3, y()+3, w()-6, 8, G_COLOR_GREY_4);
+		}
+	}
 }
 }} // giada::v::

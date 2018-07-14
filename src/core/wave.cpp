@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * wave
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2018 Giovanni A. Zuliani | Monocasual

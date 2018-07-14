@@ -54,20 +54,20 @@ Composite cmp;
 
 /* fixOverdubTruncation
 Fixes underlying action truncation when overdubbing over a longer action. I.e.:
-  Original:    |#############|
-  Overdub:     ---|#######|---
-  fix:         |#||#######|--- */
+	Original:    |#############|
+	Overdub:     ---|#######|---
+	fix:         |#||#######|--- */
 
 void fixOverdubTruncation(const Composite& comp, pthread_mutex_t* mixerMutex)
 {
-  action* next = nullptr;
-  int res = getNextAction(comp.a2.chan, comp.a1.type | comp.a2.type, comp.a2.frame,
-    &next);
-  if (res != 1 || next->type != comp.a2.type)
-    return;
-  gu_log("[recorder::fixOverdubTruncation] add truncation at frame %d, type=%d\n",
-    next->frame, next->type);
-  deleteAction(next->chan, next->frame, next->type, false, mixerMutex);
+	action* next = nullptr;
+	int res = getNextAction(comp.a2.chan, comp.a1.type | comp.a2.type, comp.a2.frame,
+		&next);
+	if (res != 1 || next->type != comp.a2.type)
+		return;
+	gu_log("[recorder::fixOverdubTruncation] add truncation at frame %d, type=%d\n",
+		next->frame, next->type);
+	deleteAction(next->chan, next->frame, next->type, false, mixerMutex);
 }
 
 }; // {anonymous}
@@ -92,7 +92,7 @@ bool sortedActions = false;
 void init()
 {
 	active = false;
-  sortedActions = false;
+	sortedActions = false;
 	clearAll();
 }
 
@@ -103,10 +103,10 @@ void init()
 bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 {
 	/* Can record on a channel if:
-	  - recorder is on
-	  - mixer is running
-	  - mixer is not recording a take somewhere
-	  - channel is SAMPLE type and has data in it  */
+		- recorder is on
+		- mixer is running
+		- mixer is not recording a take somewhere
+		- channel is SAMPLE type and has data in it  */
 	return active && clockRunning && !mixerRecording && ch->type == ChannelType::SAMPLE && ch->hasData();
 }
 
@@ -154,10 +154,10 @@ void rec(int index, int type, int frame, uint32_t iValue, float fValue)
 		for (unsigned t=0; t<global.at(frameToExpand).size(); t++) {
 			action* ac = global.at(frameToExpand).at(t);
 			if (ac->chan   == index  &&
-			    ac->type   == type   &&
-			    ac->frame  == frame  &&
-			    ac->iValue == iValue &&
-			    ac->fValue == fValue)
+					ac->type   == type   &&
+					ac->frame  == frame  &&
+					ac->iValue == iValue &&
+					ac->fValue == fValue)
 				return;
 		}
 
@@ -234,7 +234,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
 	for (unsigned i=0; i<frames.size() && !found; i++) {
 
 		if (frames.at(i) != frame)
-      continue;
+			continue;
 
 			/* find the action in frame i */
 
@@ -247,20 +247,20 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
 			if (checkValues)
 				doit &= (a->iValue == iValue && a->fValue == fValue);
 
-      if (!doit)
-        continue;
+			if (!doit)
+				continue;
 
-      while (true) {
-        if (pthread_mutex_trylock(mixerMutex)) {
-          free(a);
-          global.at(i).erase(global.at(i).begin() + j);
-          pthread_mutex_unlock(mixerMutex);
-          found = true;
-          break;
-        }
-        else
-          gu_log("[recorder::deleteAction] waiting for mutex...\n");
-      }
+			while (true) {
+				if (pthread_mutex_trylock(mixerMutex)) {
+					free(a);
+					global.at(i).erase(global.at(i).begin() + j);
+					pthread_mutex_unlock(mixerMutex);
+					found = true;
+					break;
+				}
+				else
+					gu_log("[recorder::deleteAction] waiting for mutex...\n");
+			}
 		}
 	}
 	if (found) {
@@ -278,7 +278,7 @@ void deleteAction(int chan, int frame, char type, bool checkValues,
 
 
 void deleteActions(int chan, int frame_a, int frame_b, char type,
-  pthread_mutex_t* mixerMutex)
+	pthread_mutex_t* mixerMutex)
 {
 	sortActions();
 	vector<int> dels;
@@ -484,14 +484,15 @@ void shrink(int new_fpb)
 /* -------------------------------------------------------------------------- */
 
 
-bool hasActions(int chanIndex)
+bool hasActions(int chanIndex, int type)
 {
-  if (global.size() == 0)
-    return false;
+	if (global.size() == 0)
+		return false;
 	for (unsigned i=0; i<global.size(); i++) {
 		for (unsigned j=0; j<global.at(i).size(); j++) {
 			if (global.at(i).at(j)->chan == chanIndex)
-        return true;
+				if (type == -1 || global.at(i).at(j)->type == type)
+					return true;
 		}
 	}
 	return false;
@@ -568,14 +569,8 @@ void startOverdub(int index, char actionMask, int frame, unsigned bufferSize)
 {
 	/* prepare the composite struct */
 
-	if (actionMask == G_ACTION_KEYS) {
-		cmp.a1.type = G_ACTION_KEYPRESS;
-		cmp.a2.type = G_ACTION_KEYREL;
-	}
-	else {
-		cmp.a1.type = G_ACTION_MUTEON;
-		cmp.a2.type = G_ACTION_MUTEOFF;
-	}
+	cmp.a1.type  = G_ACTION_KEYPRESS;
+	cmp.a2.type  = G_ACTION_KEYREL;
 	cmp.a1.chan  = index;
 	cmp.a2.chan  = index;
 	cmp.a1.frame = frame;
@@ -610,14 +605,14 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 	bool nullLoop = false;
 
 	/* Check for ring loops or null loops. Ring loop: a composite action with
-  key_press at frame N and key_release at frame M, with M <= N.
-  Null loop: a composite action that begins and ends on the very same frame,
-  i.e. with 0 size. Very unlikely.
-  If ring loop: record the last action at the end of the sequencer (that
-  is 'totalFrames').
-  If null loop: remove previous action and do nothing. Also make sure to avoid
-  underlying action truncation, if the null loop occurs inside a composite
-  action. */
+	key_press at frame N and key_release at frame M, with M <= N.
+	Null loop: a composite action that begins and ends on the very same frame,
+	i.e. with 0 size. Very unlikely.
+	If ring loop: record the last action at the end of the sequencer (that
+	is 'totalFrames').
+	If null loop: remove previous action and do nothing. Also make sure to avoid
+	underlying action truncation, if the null loop occurs inside a composite
+	action. */
 
 	if (cmp.a2.frame < cmp.a1.frame) {  // ring loop
 		ringLoop = true;
@@ -629,25 +624,25 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 		nullLoop = true;
 		gu_log("[recorder::stopOverdub] null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
 		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, mixerMutex); // false == don't check values
-    fixOverdubTruncation(cmp, mixerMutex);
-  }
+		fixOverdubTruncation(cmp, mixerMutex);
+	}
 
-  if (nullLoop)
-    return;
+	if (nullLoop)
+		return;
 
 	/* Remove any nested action between keypress----keyrel. */
 
 	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, mixerMutex);
 	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, mixerMutex);
 
-  if (ringLoop)
-    return;
+	if (ringLoop)
+		return;
 
-  /* Record second part of the composite action. Also make sure to avoid
-  underlying action truncation, if keyrel happens inside a composite action. */
+	/* Record second part of the composite action. Also make sure to avoid
+	underlying action truncation, if keyrel happens inside a composite action. */
 
 	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
-  fixOverdubTruncation(cmp, mixerMutex);
+	fixOverdubTruncation(cmp, mixerMutex);
 }
 
 
@@ -670,6 +665,7 @@ vector<action*> getActionsOnFrame(int frame)
 
 void forEachAction(std::function<void(const action*)> f)
 {
+
 	for (const vector<action*> actions : recorder::global)
 		for (const action* action : actions)
 			f(action);

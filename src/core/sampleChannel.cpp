@@ -182,12 +182,6 @@ void SampleChannel::recordStop()
 }
 
 
-void SampleChannel::recordMute()
-{
-	sampleChannelRec::recordMute(this);
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 

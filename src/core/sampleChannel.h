@@ -60,7 +60,6 @@ public:
 	bool recordStart(bool canQuantize) override;
 	bool recordKill() override;
 	void recordStop() override;
-	void recordMute() override;
 	void setMute(bool value, giada::EventType eventType) override;
 	void startReadingActions(bool treatRecsAsLoops, bool recsStopOnChanHalt) override;
 	void stopReadingActions(bool running, bool treatRecsAsLoops, 

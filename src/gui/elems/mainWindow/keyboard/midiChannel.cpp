@@ -36,10 +36,10 @@
 #include "../../../../glue/recorder.h"
 #include "../../../dialogs/gd_mainWindow.h"
 #include "../../../dialogs/channelNameInput.h"
-#include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/pluginList.h"
+#include "../../../dialogs/actionEditor/midiActionEditor.h"
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../../dialogs/midiIO/midiOutputMidiCh.h"
 #include "../../basics/boxtypes.h"
@@ -88,6 +88,8 @@ void menuCallback(Fl_Widget* w, void* v)
 	using namespace giada;
 
 	geMidiChannel* gch = static_cast<geMidiChannel*>(w);
+	MidiChannel*   ch  = static_cast<MidiChannel*>(gch->ch);
+
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	switch (selectedItem)
@@ -98,7 +100,7 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::EDIT_ACTIONS:
-			gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+			gu_openSubWindow(G_MainWin, new v::gdMidiActionEditor(ch), WID_ACTION_EDITOR);
 			break;
 		case Menu::CLEAR_ACTIONS_ALL:
 			c::recorder::clearAllActions(gch);
@@ -110,8 +112,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
 			break;
 		case Menu::SETUP_MIDI_OUTPUT:
-			gu_openSubWindow(G_MainWin,
-				new gdMidiOutputMidiCh(static_cast<MidiChannel*>(gch->ch)), 0);
+			gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
 			break;
 		case Menu::RESIZE_H1:
 			gch->changeSize(G_GUI_CHANNEL_H_1);

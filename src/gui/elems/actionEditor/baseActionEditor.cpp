@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * geBaseActionEditor
- * Parent class of any widget inside the action editor.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2018 Giovanni A. Zuliani | Monocasual
@@ -28,72 +25,165 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../core/mixer.h"
 #include "../../../core/const.h"
-#include "../../dialogs/gd_actionEditor.h"
+#include "../../../core/clock.h"
+#include "../../dialogs/actionEditor/baseActionEditor.h"
 #include "gridTool.h"
+#include "baseAction.h"
 #include "baseActionEditor.h"
 
 
-geBaseActionEditor::geBaseActionEditor(int x, int y, int w, int h,
-	gdActionEditor *pParent)
-	:	Fl_Group(x, y, w, h), pParent(pParent) {}
+namespace giada {
+namespace v
+{
+geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, Channel* ch)
+:	Fl_Group(x, y, w, h),
+  m_ch    (ch),
+  m_base  (static_cast<gdBaseActionEditor*>(window())),
+  m_action(nullptr)
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geBaseActionEditor::~geBaseActionEditor() {}
+geBaseAction* geBaseActionEditor::getActionAtCursor() const
+{
+	for (int i=0; i<children(); i++) {
+		geBaseAction* a = static_cast<geBaseAction*>(child(i));
+		if (a->hovered)
+			return a;
+	}
+	return nullptr;
+}
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geBaseActionEditor::baseDraw(bool clear) {
-
-	/* clear the screen */
+void geBaseActionEditor::baseDraw(bool clear) const
+{
+	/* Clear the screen. */
 
 	if (clear)
 		fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1);
 
-	/* draw the container */
+	/* Draw the outer container. */
 
 	fl_color(G_COLOR_GREY_4);
 	fl_rect(x(), y(), w(), h());
 
-	/* grid drawing, if > 1 */
+	/* Draw grid, beats and bars. A grid set to 1 has a cell size == beat, so
+	painting it is useless. */
 
-	if (pParent->gridTool->getValue() > 1) {
-
-		fl_color(fl_rgb_color(54, 54, 54));
-		fl_line_style(FL_DASH, 0, nullptr);
-
-		for (int i=0; i<(int) pParent->gridTool->points.size(); i++) {
-			int px = pParent->gridTool->points.at(i)+x()-1;
-			fl_line(px, y()+1, px, y()+h()-2);
-		}
-		fl_line_style(0);
+	if (m_base->gridTool->getValue() > 1) {
+		fl_color(G_COLOR_GREY_3);
+		drawVerticals(m_base->gridTool->getCellSize());
 	}
-
-	/* bars and beats drawing */
 
 	fl_color(G_COLOR_GREY_4);
-	for (int i=0; i<(int) pParent->gridTool->beats.size(); i++) {
-		int px = pParent->gridTool->beats.at(i)+x()-1;
-		fl_line(px, y()+1, px, y()+h()-2);
-	}
+	drawVerticals(m::clock::getFramesInBeat());
 
 	fl_color(G_COLOR_LIGHT_1);
-	for (int i=0; i<(int) pParent->gridTool->bars.size(); i++) {
-		int px = pParent->gridTool->bars.at(i)+x()-1;
-		fl_line(px, y()+1, px, y()+h()-2);
-	}
+	drawVerticals(m::clock::getFramesInBar());
 
-	/* cover unused area. Avoid drawing cover if width == 0 (i.e. beats
-	 * are 32) */
+	/* Cover unused area. Avoid drawing cover if width == 0 (i.e. beats are 32). */
 
-	int coverWidth = pParent->totalWidth-pParent->coverX;
+	Pixel coverWidth = m_base->fullWidth - m_base->loopWidth;
 	if (coverWidth != 0)
-		fl_rectf(pParent->coverX+x(), y()+1, coverWidth, h()-2, G_COLOR_GREY_4);
+		fl_rectf(m_base->loopWidth+x(), y()+1, coverWidth, h()-2, G_COLOR_GREY_4);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geBaseActionEditor::drawVerticals(int steps) const
+{
+	/* Start drawing from steps, not from 0. The zero-th element is always 
+	graphically useless. */
+	for (Frame i=steps; i<m::clock::getFramesInLoop(); i+=steps) {
+		Pixel p = m_base->frameToPixel(i) + x();
+		fl_line(p, y()+1, p, y()+h()-2);
+	}	
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+int geBaseActionEditor::handle(int e)
+{
+	switch (e) {
+		case FL_PUSH:
+			return push();
+		case FL_DRAG:
+			return drag();
+		case FL_RELEASE:
+			fl_cursor(FL_CURSOR_DEFAULT, FL_WHITE, FL_BLACK); // Make sure cursor returns normal
+			return release();
+		default:
+			return Fl_Group::handle(e);
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geBaseActionEditor::push()
+{
+	m_action = getActionAtCursor();
+
+	if (Fl::event_button1()) {    // Left button
+		if (m_action == nullptr) {  // No action under cursor: add a new one
+			if (Fl::event_x() < m_base->loopWidth) // Avoid click on grey area
+				onAddAction();
+		}
+		else                        // Prepare for dragging
+			m_action->pick = Fl::event_x() - m_action->x();
+	}
+	else
+	if (Fl::event_button3()) {    // Right button
+		if (m_action != nullptr) {
+			onDeleteAction();
+			m_action = nullptr;
+		}
+	}
+	return 1;	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geBaseActionEditor::drag()
+{
+	if (m_action == nullptr)
+		return 0;
+	if (m_action->isOnEdges())
+		onResizeAction();
+	else
+		onMoveAction();
+	m_action->altered = true;
+	redraw();
+	return 1;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geBaseActionEditor::release()
+{
+	int ret = 0;
+	if (m_action != nullptr && m_action->altered) {
+		onRefreshAction();
+		ret = 1;
+	}
+	m_action = nullptr;
+	return ret;
+}
+}} // giada::v::

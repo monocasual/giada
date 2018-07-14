@@ -29,21 +29,25 @@
 #define G_UTILS_MATH_H
 
 
+#include "../core/types.h"
+
+
 namespace giada {
 namespace u     {
 namespace math 
 {
 float linearToDB(float f);
 float dBtoLinear(float f);
+int quantize(int x, int step);
 
 /* map (template)
 Maps 'x' in range [a, b] to a new range [w, z]. Source:
 	https://en.wikipedia.org/wiki/Linear_equation#Two-point_form*/
 
-template <typename T>
-T map(T x, T a, T b, T w, T z)
+template <typename Tin, typename Tout>
+Tout map(Tin x, Tin a, Tin b, Tout w, Tout z)
 {
-	return (((x - a) / (b - a)) * (z - w)) + w;
+	return (((x - a) / (float) (b - a)) * (z - w)) + w;
 }
 
 }}}  // giada::u::math::

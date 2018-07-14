@@ -14,6 +14,7 @@ sourcesMain = src/main.cpp
 sourcesCore =                            \
 	src/core/const.h                       \
 	src/core/types.h                       \
+	src/core/range.h                       \
 	src/core/channel.h                     \
 	src/core/channel.cpp                   \
 	src/core/sampleChannel.h               \
@@ -112,18 +113,22 @@ sourcesCore =                            \
 	src/gui/dialogs/sampleEditor.cpp       \
 	src/gui/dialogs/pluginWindowGUI.h      \
 	src/gui/dialogs/pluginWindowGUI.cpp    \
-	src/gui/dialogs/gd_actionEditor.h	     \
-	src/gui/dialogs/gd_actionEditor.cpp    \
 	src/gui/dialogs/pluginChooser.h        \
 	src/gui/dialogs/pluginChooser.cpp      \
-	src/gui/dialogs/browser/browserBase.h           \
-	src/gui/dialogs/browser/browserBase.cpp         \
-	src/gui/dialogs/browser/browserDir.h            \
-	src/gui/dialogs/browser/browserDir.cpp          \
-	src/gui/dialogs/browser/browserLoad.h           \
-	src/gui/dialogs/browser/browserLoad.cpp         \
-	src/gui/dialogs/browser/browserSave.h           \
-	src/gui/dialogs/browser/browserSave.cpp         \
+	src/gui/dialogs/actionEditor/baseActionEditor.h     \
+	src/gui/dialogs/actionEditor/baseActionEditor.cpp   \
+	src/gui/dialogs/actionEditor/sampleActionEditor.h   \
+	src/gui/dialogs/actionEditor/sampleActionEditor.cpp \
+	src/gui/dialogs/actionEditor/midiActionEditor.h     \
+	src/gui/dialogs/actionEditor/midiActionEditor.cpp   \
+	src/gui/dialogs/browser/browserBase.h            \
+	src/gui/dialogs/browser/browserBase.cpp          \
+	src/gui/dialogs/browser/browserDir.h             \
+	src/gui/dialogs/browser/browserDir.cpp           \
+	src/gui/dialogs/browser/browserLoad.h            \
+	src/gui/dialogs/browser/browserLoad.cpp          \
+	src/gui/dialogs/browser/browserSave.h            \
+	src/gui/dialogs/browser/browserSave.cpp          \
 	src/gui/dialogs/midiIO/midiOutputBase.h          \
 	src/gui/dialogs/midiIO/midiOutputBase.cpp        \
 	src/gui/dialogs/midiIO/midiOutputSampleCh.h      \
@@ -166,24 +171,24 @@ sourcesCore =                            \
 	src/gui/elems/sampleEditor/shiftTool.cpp            \
 	src/gui/elems/actionEditor/baseActionEditor.h       \
 	src/gui/elems/actionEditor/baseActionEditor.cpp     \
+	src/gui/elems/actionEditor/baseAction.h             \
+	src/gui/elems/actionEditor/baseAction.cpp           \
 	src/gui/elems/actionEditor/envelopeEditor.h         \
 	src/gui/elems/actionEditor/envelopeEditor.cpp       \
+	src/gui/elems/actionEditor/velocityEditor.h         \
+	src/gui/elems/actionEditor/velocityEditor.cpp       \
+	src/gui/elems/actionEditor/envelopePoint.h          \
+	src/gui/elems/actionEditor/envelopePoint.cpp        \
 	src/gui/elems/actionEditor/pianoRoll.h              \
 	src/gui/elems/actionEditor/pianoRoll.cpp            \
 	src/gui/elems/actionEditor/noteEditor.h		          \
 	src/gui/elems/actionEditor/noteEditor.cpp           \
-	src/gui/elems/actionEditor/basePianoItem.h          \
-	src/gui/elems/actionEditor/basePianoItem.cpp        \
 	src/gui/elems/actionEditor/pianoItem.h              \
 	src/gui/elems/actionEditor/pianoItem.cpp            \
-	src/gui/elems/actionEditor/pianoItemOrphaned.h      \
-	src/gui/elems/actionEditor/pianoItemOrphaned.cpp    \
-	src/gui/elems/actionEditor/muteEditor.h             \
-	src/gui/elems/actionEditor/muteEditor.cpp           \
-	src/gui/elems/actionEditor/actionEditor.h           \
-	src/gui/elems/actionEditor/actionEditor.cpp         \
-	src/gui/elems/actionEditor/action.h                 \
-	src/gui/elems/actionEditor/action.cpp               \
+	src/gui/elems/actionEditor/sampleActionEditor.h           \
+	src/gui/elems/actionEditor/sampleActionEditor.cpp         \
+	src/gui/elems/actionEditor/sampleAction.h                 \
+	src/gui/elems/actionEditor/sampleAction.cpp               \
 	src/gui/elems/actionEditor/gridTool.h               \
 	src/gui/elems/actionEditor/gridTool.cpp             \
 	src/gui/elems/mainWindow/mainIO.h          \

@@ -125,7 +125,6 @@ public:
 	virtual bool recordStart(bool canQuantize) { return true; };
 	virtual bool recordKill() { return false; };
 	virtual void recordStop() {};
-	virtual void recordMute() {};
 
 	/* prepareBuffer
 	Fill audio buffer with audio data from the internal source. This is actually 

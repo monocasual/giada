@@ -12,6 +12,13 @@
 --------------------------------------------------------------------------------
 
 
+0.15.2 --- 
+- New sample-accurate Action Editor
+- Ability to edit MIDI velocity
+- Remove mute action recording
+- Avoid calls to deprecated JUCE plug-ins methods
+
+
 0.15.1 --- 2018 . 07 . 03
 - Deep code refactoring, featuring Channels processors
 - Many new unit tests added

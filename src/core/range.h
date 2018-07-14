@@ -25,62 +25,33 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ACTION_EDITOR_H
-#define GE_ACTION_EDITOR_H
+#ifndef G_RANGE_H
+#define G_RANGE_H
 
 
-#include "baseActionEditor.h"
+#include <cassert>
 
 
-class geAction;
-class SampleChannel;
-
-
-class geActionEditor : public geBaseActionEditor
+namespace giada
 {
-
+template<typename T>
+class Range
+{
 private:
 
-	SampleChannel *ch;
-
-	/* getSelectedAction
-	 * get the action under the mouse. nullptr if nothing found. */
-
-	geAction *getSelectedAction();
-
-	/* selected
-	 * pointer to the selected action. Useful when dragging around. */
-
-	geAction *selected;
-
-	/* actionOriginalX, actionOriginalW
-	 * x and w of the action, when moved. Useful for checking if the action
-	 * overlaps another one: in that case the moved action returns to
-	 * actionOriginalX (and to actionOriginalW if resized). */
-
-	int actionOriginalX;
-	int actionOriginalW;
-
-	/* actionPickPoint
-	 * the precise x point in which the action has been picked with the mouse,
-	 * before a dragging action. */
-
-	int actionPickPoint;
-
-
-	/* actionCollides
-	 * true if an action collides with another. Used while adding new points
-	 * with snap active.*/
-
-	bool actionCollides(int frame);
+	T m_a;
+	T m_b;
 
 public:
 
-	geActionEditor(int x, int y, gdActionEditor *pParent, SampleChannel *ch);
-	void draw();
-	int  handle(int e);
-	void updateActions();
+	Range() : m_a(0), m_b(0) {}
+	Range(T a, T b) : m_a(a), m_b(b) { assert(a < b); }
+
+	T getBegin() const  { return m_a; }
+	T getEnd() const    { return m_b; }
+	T getLength() const { return m_b - m_a; }
 };
+} // giada::
 
 
 #endif

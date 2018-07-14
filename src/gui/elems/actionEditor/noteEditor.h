@@ -29,27 +29,32 @@
 #define GE_NOTE_EDITOR_H
 
 
-#include <FL/Fl_Scroll.H>
+#include "../basics/scroll.h"
 
 
-class gdActionEditor;
+namespace giada {
+namespace v
+{
+class gdMidiActionEditor;
 class gePianoRoll;
 
 
-class geNoteEditor : public Fl_Scroll
+class geNoteEditor : public geScroll
 {
 private:
 
-	gdActionEditor *pParent;
-	gePianoRoll    *pianoRoll;
+	gdMidiActionEditor* m_base;
 
 public:
 
-	geNoteEditor(int x, int y, gdActionEditor *parent);
+	geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base);
 	~geNoteEditor();
-	void draw();
-	void updateActions();
-};
 
+	void rebuild();
+	void scroll();
+
+	gePianoRoll* pianoRoll;
+};
+}} // giada::v::
 
 #endif

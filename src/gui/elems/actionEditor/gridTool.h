@@ -29,54 +29,44 @@
 #define GE_GRID_TOOL_H
 
 
-#include <vector>
 #include <FL/Fl_Group.H>
+#include "../../../core/types.h"
 
 
 class geChoice;
 class geCheck;
-class gdActionEditor;
 
 
+namespace giada {
+namespace v
+{
 class geGridTool : public Fl_Group
 {
 private:
 
-  geChoice *gridType;
-	geCheck  *active;
+  geChoice* gridType;
+	geCheck*  active;
 
-	gdActionEditor *parent;
-
-	static void cb_changeType(Fl_Widget *w, void *p);
-	inline void __cb_changeType();
+	static void cb_changeType(Fl_Widget* w, void* p);
+	inline void cb_changeType();
 
 public:
 
-	geGridTool(int x, int y, gdActionEditor *parent);
+	geGridTool(Pixel x, Pixel y);
 	~geGridTool();
 
-	int  getValue();
-	bool isOn();
-	void calc();
+	int getValue() const;
+	bool isOn() const;
 
-	/* getSnapPoint
-	 * given a cursor position in input, return the x coordinates of the
-	 * nearest snap point (in pixel, clean, ie. not x()-shifted) */
-
-	int getSnapPoint(int v);
-	int getSnapFrame(int v);
+	Frame getSnapFrame(Frame f) const;
 
 	/* getCellSize
-	 * return the size in pixel of a single cell of the grid. */
+	Returns the size in frames of a single cell of the grid. */
 
-	int getCellSize();
+	Frame getCellSize() const;
 
-	std::vector<int> points;   // points of the grid
-	std::vector<int> frames;   // frames of the grid
-
-	std::vector<int> bars;
-	std::vector<int> beats;
 };
+}} // giada::v::
 
 
 #endif

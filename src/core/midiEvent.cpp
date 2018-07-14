@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "midiEvent.h"
 
 
@@ -78,7 +79,15 @@ void MidiEvent::resetDelta()
 
 void MidiEvent::setChannel(int c)
 {
+	assert(c >= 0 && c < G_MAX_MIDI_CHANS);
 	m_channel = c;
+}
+
+
+void MidiEvent::setVelocity(int v)
+{
+	assert(v >= 0 && v < G_MAX_VELOCITY);
+	m_velocity = v;
 }
 
 
@@ -123,9 +132,8 @@ int MidiEvent::getDelta() const
 
 uint32_t MidiEvent::getRaw(bool velocity) const
 {
-	if (!velocity)
-		return m_raw & 0xFFFF0000;
-	return m_raw;
+	return (m_status << 24) | (m_channel << 24) | (m_note << 16) | 
+	       ((velocity ? m_velocity : 0x00) << 8) | (0x00);
 }
 
 

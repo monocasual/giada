@@ -92,9 +92,9 @@ void init();
 
 /* hasActions
 Checks if the channel has at least one action recorded. Used after an
-action deletion. */
+action deletion. Type != -1: check if channel has actions of type 'type'.*/
 
-bool hasActions(int chanIndex);
+bool hasActions(int chanIndex, int type=-1);
 
 /* canRec
  * can a channel rec an action? Call this one BEFORE rec(). */

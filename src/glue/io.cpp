@@ -61,10 +61,8 @@ namespace io
 void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
 {
 	/* Everything occurs on frame 0 here: they are all user-generated events. */
-	if (ctrl) {
-		ch->recordMute();
+	if (ctrl)
 		c::channel::toggleMute(ch);
-	}
 	else
 	if (shift) {
 		if (ch->recordKill())

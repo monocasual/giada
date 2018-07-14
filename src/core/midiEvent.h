@@ -61,6 +61,7 @@ public:
 
 	void resetDelta();
 	void setChannel(int c);
+	void setVelocity(int v);
 
 private:
 

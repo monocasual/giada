@@ -25,53 +25,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ENVELOPE_EDITOR_H
-#define GE_ENVELOPE_EDITOR_H
+#ifndef GD_SAMPLE_ACTION_EDITOR_H
+#define GD_SAMPLE_ACTION_EDITOR_H
 
 
 #include "baseActionEditor.h"
 
 
 class SampleChannel;
+class geSampleActionEditor;
+class geEnvelopeEditor;
 
 
 namespace giada {
 namespace v
 {
-class geEnvelopePoint;
-
-
-class geEnvelopeEditor : public geBaseActionEditor
+class gdSampleActionEditor : public gdBaseActionEditor
 {
 private:
 
-	/* m_actionType
-	What type of action this envelope editor is dealing with. */
+	geSampleActionEditor* ac;
+	geEnvelopeEditor*     vc;
 	
-	int m_actionType;
-
-	void onAddAction()     override;
-	void onDeleteAction()  override;
-	void onMoveAction()    override;
-	void onResizeAction()  override{}; // Nothing to do here
-	void onRefreshAction() override;
-
-	Pixel frameToX(Frame frame) const;
-	Pixel valueToY(float value) const;
-	float yToValue(Pixel pixel) const;
-
-	bool isFirstPoint() const;
-	bool isLastPoint()  const;
-
 public:
 
-	geEnvelopeEditor(Pixel x, Pixel y, int actionType, const char* l, SampleChannel* ch);
-	~geEnvelopeEditor();
-
-	void draw() override;
+	gdSampleActionEditor(SampleChannel* ch);
 
 	void rebuild() override;
 };
 }} // giada::v::
+
 
 #endif

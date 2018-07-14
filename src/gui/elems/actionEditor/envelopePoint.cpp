@@ -25,66 +25,25 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../../../core/midiChannel.h"
-#include "../../dialogs/actionEditor/midiActionEditor.h"
-#include "pianoRoll.h"
-#include "noteEditor.h"
+#include "envelopePoint.h"
 
 
 namespace giada {
 namespace v
 {
-geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
-: geScroll(x, y, 200, 422),
-	m_base  (base)
+geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, m::recorder::action a)
+	: geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, {})
 {
-	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, static_cast<MidiChannel*>(m_base->ch));
-
-	rebuild();
-	
-	size(m_base->fullWidth, m::conf::pianoRollH);
-	
-	type(Fl_Scroll::VERTICAL_ALWAYS);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geNoteEditor::~geNoteEditor()
+void geEnvelopePoint::draw()
 {
-	m::conf::pianoRollH = h();
-	m::conf::pianoRollY = pianoRoll->y();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geNoteEditor::scroll()
-{
-	Pixel ey = Fl::event_y() - pianoRoll->pick;
-
-	Pixel y1 = y();
-	Pixel y2 = (y() + h()) - pianoRoll->h();
-
-	if (ey > y1) ey = y1; else if (ey < y2) ey = y2;
-
-	pianoRoll->position(x(), ey);
-
-	redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geNoteEditor::rebuild()
-{
-	size(m_base->fullWidth, h());
-	pianoRoll->rebuild();
+	fl_rectf(x(), y(), w(), h(), hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1);
 }
 }} // giada::v::

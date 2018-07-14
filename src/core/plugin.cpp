@@ -272,7 +272,7 @@ string Plugin::getParameterName(int index) const
 
 string Plugin::getParameterText(int index) const
 {
-	return plugin->getParameters()[index]->getText(index, MAX_LABEL_SIZE).toStdString();
+	return plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
 }
 
 
