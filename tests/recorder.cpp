@@ -326,20 +326,17 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(0) == 0);
 		REQUIRE(recorder::frames.at(1) == 80);
 	}
-
-	/* TODO - rewrite overdub tests without mutes */
-#if 0
 	
 	SECTION("Test overdub, full overwrite")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF,  80, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEON,  200, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,    0, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL,  80, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  200, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 400, 1, 0.5f);
 
 		/* Should delete all actions in between and keep the first one, plus a
 		new last action on frame 500. */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 1024);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 0, 1024);
 		recorder::stopOverdub(500, 500, &mutex);
 
 		REQUIRE(recorder::frames.size() == 2);
@@ -347,22 +344,22 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(0) == 0);
 		REQUIRE(recorder::frames.at(1) == 500);
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 500);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, left overlap")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,  100, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  100, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 400, 1, 0.5f);
 
 		/* Overdub part of the leftmost part of a composite action. Expected result:
 		a new composite action.
 		Original:    ----|########|
 		Overdub:     |#######|-----
 		Result:      |#######|----- */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 0, 16);
 		recorder::stopOverdub(300, 500, &mutex);
 
 		REQUIRE(recorder::frames.size() == 2);
@@ -371,22 +368,22 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(1) == 300);
 
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 300);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, right overlap")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,  000, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  000, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 400, 1, 0.5f);
 
 		/* Overdub part of the rightmost part of a composite action. Expected result:
 		a new composite action.
 		Original:    |########|------
 		Overdub:     -----|#######|--
 		Result:      |###||#######|-- */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 100, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 100, 16);
 		recorder::stopOverdub(500, 500, &mutex);
 
 		REQUIRE(recorder::frames.size() == 4);
@@ -397,20 +394,20 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(3) == 500);
 
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 84);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 
 		REQUIRE(recorder::global.at(2).at(0)->frame == 100);
-		REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(3).at(0)->frame == 500);
-		REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, hole diggin'")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 400, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,    0, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 400, 1, 0.5f);
 
 		/* Overdub in the middle of a long, composite action. Expected result:
 		original action trimmed down plus anther action next to it. Total frames
@@ -418,7 +415,7 @@ TEST_CASE("recorder")
 		Original:    |#############|
 		Overdub:     ---|#######|---
 		Result:      |#||#######|--- */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 100, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 100, 16);
 		recorder::stopOverdub(300, 500, &mutex);
 
 		REQUIRE(recorder::frames.size() == 4);
@@ -429,27 +426,27 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(3) == 300);
 
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 84);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 
 		REQUIRE(recorder::global.at(2).at(0)->frame == 100);
-		REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(2).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(3).at(0)->frame == 300);
-		REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(3).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, cover all")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 100, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEON,  120, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 200, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEON,  220, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 300, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,    0, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 100, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  120, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 200, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  220, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 300, 1, 0.5f);
 
 		/* Overdub all existing actions. Expected result: a single composite one. */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 0, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 0, 16);
 		recorder::stopOverdub(500, 500, &mutex);
 
 		REQUIRE(recorder::frames.size() == 2);
@@ -458,18 +455,18 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(1) == 500);
 
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 500);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, null loop")
 	{
-		recorder::rec(0, G_ACTION_MUTEON,    0, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 500, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,    0, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 500, 1, 0.5f);
 
 		/* A null loop is a loop that begins and ends on the very same frame. */
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 300, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 300, 16);
 		recorder::stopOverdub(300, 700, &mutex);
 
 		REQUIRE(recorder::frames.size() == 2);
@@ -477,9 +474,9 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(1) == 284);  // 300 - bufferSize (16)
 
 		REQUIRE(recorder::global.at(0).at(0)->frame == 0);
-		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_MUTEON);
+		REQUIRE(recorder::global.at(0).at(0)->type == G_ACTION_KEYPRESS);
 		REQUIRE(recorder::global.at(1).at(0)->frame == 284);
-		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_MUTEOFF);
+		REQUIRE(recorder::global.at(1).at(0)->type == G_ACTION_KEYREL);
 	}
 
 	SECTION("Test overdub, ring loop")
@@ -490,10 +487,10 @@ TEST_CASE("recorder")
 		Overdub:     #####|------|##
 		Result:      ---|#######||#| */
 
-		recorder::rec(0, G_ACTION_MUTEON,  200, 1, 0.5f);
-		recorder::rec(0, G_ACTION_MUTEOFF, 300, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYPRESS,  200, 1, 0.5f);
+		recorder::rec(0, G_ACTION_KEYREL, 300, 1, 0.5f);
 
-		recorder::startOverdub(0, G_ACTION_MUTEON | G_ACTION_MUTEOFF, 400, 16);
+		recorder::startOverdub(0, G_ACTION_KEYPRESS | G_ACTION_KEYREL, 400, 16);
 		recorder::stopOverdub(250, 700, &mutex);
 
 		REQUIRE(recorder::frames.size() == 4);
@@ -502,5 +499,4 @@ TEST_CASE("recorder")
 		REQUIRE(recorder::frames.at(2) == 400);
 		REQUIRE(recorder::frames.at(3) == 700);
 	}
-#endif
 }
