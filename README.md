@@ -47,7 +47,7 @@ Found a typo or a terrible mistake? Feel free to clone the [website repository](
 
 ## Build Giada from source
 
-We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](http://giadamusic.com/documentation/show/compiling-from-source).
+We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](https://www.giadamusic.com/documentation-compiling-from-source).
 
 Something went wrong? Try our new [Docker image](https://github.com/monocasual/giada-docker) for building and running Giada without hurdles. 
 
