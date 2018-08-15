@@ -186,6 +186,8 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction() 
 {
+	namespace cr = c::recorder;
+
 	SampleChannel* ch = static_cast<SampleChannel*>(m_ch);
 
 	Pixel p1   = m_action->x() - x();
@@ -207,8 +209,14 @@ void geSampleActionEditor::onRefreshAction()
 		f2 = m_base->pixelToFrame(p2);
 	}
 
-	c::recorder::deleteSampleAction(ch, m_action->a1, m_action->a2);
-	c::recorder::recordSampleAction(ch, type, f1, f2);
+	/* TODO - less then optimal. Let's wait for recorder refactoring... */
+
+	cr::deleteSampleAction(ch, m_action->a1, m_action->a2);
+	if (cr::sampleActionCanFit(ch, f1, f2))
+		cr::recordSampleAction(ch, type, f1, f2);
+	else
+		cr::recordSampleAction(ch, type, m_action->a1.frame, m_action->a2.frame);
+				
 	rebuild();
 }
 }} // giada::v::

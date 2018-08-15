@@ -120,6 +120,20 @@ bool midiActionCanFit(int chan, int note, int frame_a, int frame_b)
 }
 
 
+bool sampleActionCanFit(const SampleChannel* ch, int frame_a, int frame_b)
+{
+	namespace mr = m::recorder;
+
+	/* TODO - Even more insanity... Let's wait for recorder refactoring... */
+
+	vector<mr::Composite> comps = getSampleActions(ch);
+	for (mr::Composite c : comps)
+    if (frame_b >= c.a1.frame && c.a2.frame >= frame_a)
+			return false;
+	return true;
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
@@ -262,7 +276,7 @@ vector<m::recorder::Composite> getSampleActions(const SampleChannel* ch)
 		if (a1->frame > m::clock::getFramesInLoop() || 
 			  a1->chan != ch->index                   || 
 			  a1->type & ~(G_ACTION_KEYPRESS | G_ACTION_KEYREL | G_ACTION_KILL) || 
-			  ch->mode == ChannelMode::SINGLE_PRESS && a1->type == G_ACTION_KEYREL)
+			  (ch->mode == ChannelMode::SINGLE_PRESS && a1->type == G_ACTION_KEYREL))
 			return;
 
 		mr::Composite cmp; 
