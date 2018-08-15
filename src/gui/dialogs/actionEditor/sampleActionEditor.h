@@ -46,6 +46,8 @@ private:
 
 	geSampleActionEditor* ac;
 	geEnvelopeEditor*     vc;
+
+	bool canChangeActionType();
 	
 public:
 

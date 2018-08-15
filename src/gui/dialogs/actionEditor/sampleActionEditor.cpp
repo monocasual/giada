@@ -65,8 +65,8 @@ gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
 		actionType->add("Kill chan");
 		actionType->value(0);
 
-		if (ch->mode == ChannelMode::SINGLE_PRESS || ch->isAnyLoopMode())
-		actionType->deactivate();
+		if (!canChangeActionType())
+			actionType->deactivate();
 
 		geBox* b1  = new geBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
 		zoomInBtn  = new geButton(w()-8-40-4, 8, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
@@ -98,8 +98,19 @@ gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
+bool gdSampleActionEditor::canChangeActionType()
+{
+	SampleChannel* sch = static_cast<SampleChannel*>(ch); 
+	return sch->mode != ChannelMode::SINGLE_PRESS && !sch->isAnyLoopMode();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void gdSampleActionEditor::rebuild()
 {
+	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 
 	computeWidth();
 	ac->rebuild();
 	vc->rebuild();	
