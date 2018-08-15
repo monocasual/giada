@@ -121,7 +121,7 @@ void MidiChannel::rewindBySeq()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::setMute(bool value, EventType eventType)
+void MidiChannel::setMute(bool value)
 {
 	midiChannelProc::setMute(this, value);
 }

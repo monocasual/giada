@@ -271,7 +271,7 @@ void setPanning(SampleChannel* ch, float val)
 
 void toggleMute(Channel* ch, bool gui)
 {
-	ch->setMute(!ch->mute, EventType::MANUAL);
+	ch->setMute(!ch->mute);
 	if (!gui) {
 		Fl::lock();
 		ch->guiChannel->mute->value(ch->mute);

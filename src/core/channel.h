@@ -94,7 +94,7 @@ public:
 	/* set
 	What to do when channel is un/muted. */
 
-	virtual void setMute(bool value, giada::EventType eventType) = 0;
+	virtual void setMute(bool value) = 0;
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */
@@ -226,8 +226,6 @@ public:
 	
 	float volume_i;
 	float volume_d;
-
-	bool mute_i;          // internal mute
 	
   bool hasActions;      // has something recorded
   bool readActions;     // read what's recorded

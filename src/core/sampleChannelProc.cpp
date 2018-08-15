@@ -43,7 +43,6 @@ namespace
 void rewind_(SampleChannel* ch, int localFrame)
 {
 	ch->tracker = ch->begin;
-	ch->mute_i  = false;
 	ch->qWait   = false;  // Was in qWait mode? Reset occured, no more qWait now.
 
 	/* On rewind, if channel is playing fill again buffer to create something like 
@@ -211,7 +210,7 @@ void processData_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& 
 	for (int i=0; i<out.countFrames(); i++) {
 		if (running)
 			ch->calcVolumeEnvelope();
-		if (!ch->mute && !ch->mute_i)
+		if (!ch->mute)
 			for (int j=0; j<out.countChannels(); j++)
 				out[i][j] += ch->buffer[i][j] * ch->volume * ch->volume_i * ch->calcPanning(j) * ch->boost;	
 	}
@@ -355,9 +354,9 @@ void rewindBySeq(SampleChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void setMute(SampleChannel* ch, bool value, EventType eventType)
+void setMute(SampleChannel* ch, bool value)
 {
-	eventType == EventType::MANUAL ? ch->mute = value : ch->mute_i = value;
+	ch->mute = value;
 	ch->sendMidiLmute();
 }
 

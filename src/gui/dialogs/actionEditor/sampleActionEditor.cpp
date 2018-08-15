@@ -60,9 +60,9 @@ gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
 
 	  actionType = new geChoice(8, 8, 80, 20);
 	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8);
-		actionType->add("key press");
-		actionType->add("key release");
-		actionType->add("kill chan");
+		actionType->add("Key press");
+		actionType->add("Key release");
+		actionType->add("Kill chan");
 		actionType->value(0);
 
 		if (ch->mode == ChannelMode::SINGLE_PRESS || ch->isAnyLoopMode())

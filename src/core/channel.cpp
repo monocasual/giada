@@ -65,7 +65,6 @@ Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize)
 	solo           (false),
 	volume_i       (1.0f),
 	volume_d       (0.0f),
-	mute_i         (false),
 	hasActions     (false),
 	readActions    (false),
 	midiIn         (true),
@@ -98,7 +97,6 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 	volume_i        = src->volume_i;
 	volume_d        = src->volume_d;
 	pan             = src->pan;
-	mute_i          = src->mute_i;
 	mute            = src->mute;
 	solo            = src->solo;
 	hasActions      = src->hasActions;
