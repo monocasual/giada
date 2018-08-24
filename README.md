@@ -39,9 +39,7 @@ Take a look at the COPYING file for further informations.
 
 ## Documentation
 
-Docs are available online on the official website:
-
-http://www.giadamusic.com/documentation
+Docs are available online on [the official website](https://www.giadamusic.com/documentation-index).
 
 Found a typo or a terrible mistake? Feel free to clone the [website repository](https://github.com/monocasual/giada-www) and send us your pull requests.
 
@@ -53,9 +51,7 @@ Something went wrong? Try our new [Docker image](https://github.com/monocasual/g
 
 ## Bugs, requests and questions for non-developers
 
-Feel free to ask anything on our end-user forum:
-
-http://www.giadamusic.com/forum
+Feel free to ask anything on [our end-user forum](https://www.giadamusic.com/forum).
 
 ## Copyright
 
