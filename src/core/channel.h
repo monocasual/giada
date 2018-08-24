@@ -44,9 +44,6 @@
 #endif
 
 
-#undef Status
-
-
 class Plugin;
 class MidiMapConf;
 class geChannel;
