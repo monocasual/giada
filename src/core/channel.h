@@ -120,7 +120,7 @@ public:
 	virtual bool hasData()        const { return false; };
 
 	virtual bool recordStart(bool canQuantize) { return true; };
-	virtual bool recordKill() { return false; };
+	virtual bool recordKill() { return true; };
 	virtual void recordStop() {};
 
 	/* prepareBuffer
