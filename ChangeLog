@@ -14,9 +14,11 @@
 
 0.15.2 --- 
 - New sample-accurate Action Editor
-- Ability to edit MIDI velocity
+- New MIDI Velocity Editor widget
+- Ability to move MIDI events vertically (i.e. change note) 
 - Remove mute action recording
 - Avoid calls to deprecated JUCE plug-ins methods
+- Can't kill midi channels (fix #197)
 
 
 0.15.1 --- 2018 . 07 . 03
