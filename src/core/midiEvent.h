@@ -39,7 +39,7 @@ class MidiEvent
 {
 public:
 
-	static const int NOTE_ON = 0x90;
+	static const int NOTE_ON  = 0x90;
 	static const int NOTE_OFF = 0x80;
 
 	MidiEvent();
@@ -53,19 +53,28 @@ public:
 	bool isNoteOnOff() const;	
 	int getDelta() const;
 
-	/* getRaw
-	Returns the raw message. If 'velocity' is false, velocity byte is stripped
-	out. */
+	/* getRaw(), getRawNoVelocity()
+	Returns the raw MIDI message. If getRawNoVelocity(), the velocity value is
+	stripped off (i.e. velocity == 0). */
 
-	uint32_t getRaw(bool velocity=true) const;
+	uint32_t getRaw() const;
+	uint32_t getRawNoVelocity() const;
 
 	void resetDelta();
 	void setChannel(int c);
 	void setVelocity(int v);
 
+	/* fixVelocityZero()
+	According to the MIDI standard, there is a special case if the velocity is 
+	set to zero. The NOTE ON message then has the same meaning as a NOTE OFF 
+	message, switching the note off. Let's fix it. Sometime however you do want
+	a NOTE ON with velocity zero: setting velocity to 0 in MIDI action editor to
+	mute a specific event.  */
+
+	void fixVelocityZero();
+
 private:
 
-	uint32_t m_raw;
 	int m_status;
 	int m_channel;
 	int m_note;
