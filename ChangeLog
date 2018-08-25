@@ -17,6 +17,7 @@
 - New MIDI Velocity Editor widget
 - Ability to move MIDI events vertically in piano roll (i.e. change note) 
 - Remove mute action recording
+- Better handling of MIDI devices that send NOTEON + velocity 0 as NOTEOFF
 - Avoid calls to deprecated JUCE plug-ins methods
 - Can't kill midi channels (fix #197)
 - Removed useless pthreadGC2.dll from Windows package
