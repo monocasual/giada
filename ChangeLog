@@ -15,10 +15,11 @@
 0.15.2 --- 
 - New sample-accurate Action Editor
 - New MIDI Velocity Editor widget
-- Ability to move MIDI events vertically (i.e. change note) 
+- Ability to move MIDI events vertically in piano roll (i.e. change note) 
 - Remove mute action recording
 - Avoid calls to deprecated JUCE plug-ins methods
 - Can't kill midi channels (fix #197)
+- Removed useless pthreadGC2.dll from Windows package
 
 
 0.15.1 --- 2018 . 07 . 03
