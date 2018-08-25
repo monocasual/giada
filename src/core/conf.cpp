@@ -165,7 +165,6 @@ int  rsmpQuality    = 0;
 int    midiSystem  = 0;
 int    midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
 int    midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-bool   noNoteOff   = false;
 string midiMapPath = "";
 string lastFileMap = "";
 int    midiSync    = MIDI_SYNC_NONE;
@@ -328,7 +327,6 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYSTEM, midiSystem)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_OUT, midiPortOut)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_IN, midiPortIn)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_NO_NOTE_OFF, noNoteOff)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_MIDIMAP_PATH, midiMapPath)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
@@ -441,7 +439,6 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_MIDI_SYSTEM,               json_integer(midiSystem));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_OUT,             json_integer(midiPortOut));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_IN,              json_integer(midiPortIn));
-	json_object_set_new(jRoot, CONF_KEY_NO_NOTE_OFF,               json_boolean(noNoteOff));
 	json_object_set_new(jRoot, CONF_KEY_MIDIMAP_PATH,              json_string(midiMapPath.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_LAST_MIDIMAP,              json_string(lastFileMap.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_SYNC,                 json_integer(midiSync));

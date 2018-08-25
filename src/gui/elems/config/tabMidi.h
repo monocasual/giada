@@ -45,19 +45,18 @@ private:
 	void fetchInPorts();
 	void fetchMidiMaps();
 
-	static void cb_changeSystem  (Fl_Widget *w, void *p);
-	inline void __cb_changeSystem();
+	static void cb_changeSystem(Fl_Widget* w, void* p);
+	inline void cb_changeSystem();
 
 	int systemInitValue;
 
 public:
 
-	geChoice *system;
-	geChoice *portOut;
-	geChoice *portIn;
-	geCheck  *noNoteOff;
-	geChoice *midiMap;
-	geChoice *sync;
+	geChoice* system;
+	geChoice* portOut;
+	geChoice* portIn;
+	geChoice* midiMap;
+	geChoice* sync;
 
 	geTabMidi(int x, int y, int w, int h);
 

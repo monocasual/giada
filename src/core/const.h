@@ -384,7 +384,6 @@ const int MIDI_CHANS[G_MAX_MIDI_CHANS] = {
 #define CONF_KEY_MIDI_SYSTEM              "midi_system"
 #define CONF_KEY_MIDI_PORT_OUT            "midi_port_out"
 #define CONF_KEY_MIDI_PORT_IN             "midi_port_in"
-#define CONF_KEY_NO_NOTE_OFF              "no_note_off"
 #define CONF_KEY_MIDIMAP_PATH             "midimap_path"
 #define CONF_KEY_LAST_MIDIMAP             "last_midimap"
 #define CONF_KEY_MIDI_SYNC                "midi_sync"

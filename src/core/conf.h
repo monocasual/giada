@@ -63,7 +63,6 @@ extern int  rsmpQuality;
 extern int  midiSystem;
 extern int  midiPortOut;
 extern int  midiPortIn;
-extern bool noNoteOff;
 extern std::string midiMapPath;
 extern std::string lastFileMap;
 extern int   midiSync;  // see const.h
