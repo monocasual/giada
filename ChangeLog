@@ -19,7 +19,8 @@
 - Remove mute action recording
 - Better handling of MIDI devices that send NOTEON + velocity 0 as NOTEOFF
 - Avoid calls to deprecated JUCE plug-ins methods
-- Can't kill midi channels (fix #197)
+- Can't kill MIDI channels (fix #197)
+- Can't record MIDI actions (fix #202)
 - Removed useless pthreadGC2.dll from Windows package
 
 
