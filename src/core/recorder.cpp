@@ -106,8 +106,9 @@ bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
 		- recorder is on
 		- mixer is running
 		- mixer is not recording a take somewhere
-		- channel is SAMPLE type and has data in it  */
-	return active && clockRunning && !mixerRecording && ch->type == ChannelType::SAMPLE && ch->hasData();
+		- channel is MIDI or SAMPLE type with data in it  */
+	return active && clockRunning && !mixerRecording && 
+	       (ch->type == ChannelType::MIDI || (ch->type == ChannelType::SAMPLE && ch->hasData()));
 }
 
 

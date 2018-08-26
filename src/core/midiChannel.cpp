@@ -221,7 +221,7 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 	while (true) {
 		if (pthread_mutex_trylock(&pluginHost::mutex_midi) != 0)
 			continue;
-		gu_log("[Channel::processMidi] msg=%X\n", midiEventFlat.getRaw());
+		gu_log("[MidiChannel::processMidi] msg=%X\n", midiEventFlat.getRaw());
 		addVstMidiEvent(midiEventFlat.getRaw(), 0);
 		pthread_mutex_unlock(&pluginHost::mutex_midi);
 		break;
