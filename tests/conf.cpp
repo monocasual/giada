@@ -28,7 +28,6 @@ TEST_CASE("conf")
     conf::midiSystem = 11;
     conf::midiPortOut = 12;
     conf::midiPortIn = 13;
-    conf::noNoteOff = false;
     conf::midiMapPath = "path/to/midi/map";
     conf::lastFileMap = "path/to/last/midi/map";
     conf::midiSync = 14;
@@ -104,7 +103,6 @@ TEST_CASE("conf")
     REQUIRE(conf::midiSystem == 11);
     REQUIRE(conf::midiPortOut == 12);
     REQUIRE(conf::midiPortIn == 13);
-    REQUIRE(conf::noNoteOff == false);
     REQUIRE(conf::midiMapPath == "path/to/midi/map");
     REQUIRE(conf::lastFileMap == "path/to/last/midi/map");
     REQUIRE(conf::midiSync == 14);
