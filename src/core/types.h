@@ -31,8 +31,8 @@
 
 namespace giada
 {
-typedef int Pixel;
-typedef int Frame;
+using Pixel = int;
+using Frame = int;
 
 
 enum class ChannelType : int 
