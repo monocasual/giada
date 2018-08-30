@@ -32,6 +32,7 @@
 #include <pthread.h>
 #include <vector>
 #include "recorder.h"
+#include "types.h"
 #include "../deps/rtaudio-mod/RtAudio.h"
 
 
@@ -44,8 +45,8 @@ namespace mixer
 {
 struct FrameEvents
 {
-	int   frameLocal;
-	int   frameGlobal;
+	Frame frameLocal;
+	Frame frameGlobal;
 	bool  doQuantize;
 	bool  onBar;
 	bool  onFirstBeat;
@@ -85,13 +86,13 @@ extern bool inToOut;
 
 extern pthread_mutex_t mutex;
 
-void init(int framesInSeq, int framesInBuffer);
+void init(Frame framesInSeq, Frame framesInBuffer);
 
 /* allocVirtualInput
 Allocates new memory for the virtual input channel. Call this whenever you 
 shrink or resize the sequencer. */
 
-void allocVirtualInput(int frames);
+void allocVirtualInput(Frame frames);
 
 void close();
 

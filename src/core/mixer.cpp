@@ -50,7 +50,7 @@ namespace mixer
 {
 namespace
 {
-constexpr int TICKSIZE = 38;
+constexpr Frame TICKSIZE = 38;
 
 float tock[TICKSIZE] = {
 	0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
@@ -75,15 +75,15 @@ float tick[TICKSIZE] = {
 AudioBuffer vChanInput;   // virtual channel for recording
 AudioBuffer vChanInToOut; // virtual channel in->out bridge (hear what you're playin)
 
-int tickTracker = 0;
-int tockTracker = 0;
+Frame tickTracker = 0;
+Frame tockTracker = 0;
 bool tickPlay = false;
 bool tockPlay = false;
 
 /* inputTracker
 Sample position while recording. */
 
-int inputTracker = 0;
+Frame inputTracker = 0;
 
 
 /* -------------------------------------------------------------------------- */
@@ -299,7 +299,7 @@ pthread_mutex_t mutex;
 /* -------------------------------------------------------------------------- */
 
 
-void init(int framesInSeq, int framesInBuffer)
+void init(Frame framesInSeq, Frame framesInBuffer)
 {
 	/* Allocate virtual input channels. vChanInput has variable size: it depends
 	on how many frames there are in sequencer. */
@@ -321,7 +321,7 @@ void init(int framesInSeq, int framesInBuffer)
 /* -------------------------------------------------------------------------- */
 
 
-void allocVirtualInput(int frames)
+void allocVirtualInput(Frame frames)
 {
 	vChanInput.alloc(frames, G_MAX_IO_CHANS);
 }
