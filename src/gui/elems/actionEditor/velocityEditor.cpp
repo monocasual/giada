@@ -98,7 +98,8 @@ void geVelocityEditor::draw()
 
 Pixel geVelocityEditor::valueToY(int v) const
 {
-	return u::math::map<int, Pixel>(v, 0, G_MAX_VELOCITY, y() + (h() - geEnvelopePoint::SIDE), y());
+	/* Cast the input type of 'v' to float, to make the mapping more precise. */
+	return u::math::map<float, Pixel>(v, 0, G_MAX_VELOCITY, y() + (h() - geEnvelopePoint::SIDE), y());
 }
 
 

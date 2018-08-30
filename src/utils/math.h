@@ -29,9 +29,6 @@
 #define G_UTILS_MATH_H
 
 
-#include "../core/types.h"
-
-
 namespace giada {
 namespace u     {
 namespace math 
