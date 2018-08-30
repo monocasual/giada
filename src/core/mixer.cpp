@@ -50,8 +50,7 @@ namespace mixer
 {
 namespace
 {
-#define TICKSIZE 38
-
+constexpr int TICKSIZE = 38;
 
 float tock[TICKSIZE] = {
 	0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
@@ -63,7 +62,6 @@ float tock[TICKSIZE] = {
  -0.070862, -0.048844
 };
 
-
 float tick[TICKSIZE] = {
 	0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
 	0.747229,  0.711293,	0.635697,  0.524656,  0.384362,  0.222636,
@@ -74,12 +72,13 @@ float tick[TICKSIZE] = {
 	0.069639,  0.031320
 };
 
-
 AudioBuffer vChanInput;   // virtual channel for recording
 AudioBuffer vChanInToOut; // virtual channel in->out bridge (hear what you're playin)
 
-int  tickTracker, tockTracker = 0;
-bool tickPlay, tockPlay = false; // 1 = play, 0 = stop
+int tickTracker = 0;
+int tockTracker = 0;
+bool tickPlay = false;
+bool tockPlay = false;
 
 /* inputTracker
 Sample position while recording. */
@@ -100,7 +99,6 @@ void computePeak(const AudioBuffer& buf, float& peak, unsigned frame)
 
 
 /* -------------------------------------------------------------------------- */
-
 
 /* lineInRec
 Records from line in. */
@@ -262,14 +260,16 @@ void finalizeOutput(AudioBuffer& outBuf, unsigned frame)
 
 /* -------------------------------------------------------------------------- */
 
-/* test*
-Checks if the sequencer has reached a specific point (bar, first beat or
-last frame). */
 
-void testBar(unsigned frame)
+void renderMetronome()
 {
-	if (clock::isOnBar() && metronome)
+	if (!metronome)
+		return;
+	if (clock::isOnBar() || clock::isOnFirstBeat())
 		tickPlay = true;
+	else
+	if (clock::isOnBeat())
+		tockPlay = true;
 }
 
 
@@ -281,6 +281,7 @@ void testLastBeat()
 	if (clock::isOnBeat() && metronome && !tickPlay)
 		tockPlay = true;
 }
+#endif
 }; // {anonymous}
 
 
@@ -380,8 +381,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 			lineInRec(in, j);   // TODO - can go outside this loop
 			doQuantize(j);
-			testBar(j);
-			testLastBeat();
+			renderMetronome();
 			clock::incrCurrentFrame();
 			clock::sendMIDIsync();
 		}
