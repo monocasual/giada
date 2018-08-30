@@ -54,17 +54,6 @@ struct FrameEvents
 	std::vector<recorder::action*> actions;
 };
 
-enum {    // const - what to do when a fadeout ends
-	DO_STOP   = 0x01,
-	DO_MUTE   = 0x02,
-	DO_MUTE_I = 0x04
-};
-
-enum {    // const - fade types
-	FADEOUT = 0x01,
-	XFADE   = 0x02
-};
-
 extern std::vector<Channel*> channels;
 
 extern bool   recording;         // is recording something?
