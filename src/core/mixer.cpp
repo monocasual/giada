@@ -90,7 +90,7 @@ int inputTracker = 0;
 
 /* computePeak */
 
-void computePeak(const AudioBuffer& buf, float& peak, unsigned frame)
+void computePeak(const AudioBuffer& buf, float& peak, Frame frame)
 {
 	for (int i=0; i<buf.countChannels(); i++)
 		if (buf[frame][i] > peak)
@@ -271,17 +271,6 @@ void renderMetronome()
 	if (clock::isOnBeat())
 		tockPlay = true;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void testLastBeat()
-{
-	if (clock::isOnBeat() && metronome && !tickPlay)
-		tockPlay = true;
-}
-#endif
 }; // {anonymous}
 
 
