@@ -31,7 +31,6 @@
 #include "pluginHost.h"
 #include "sampleChannel.h"
 #include "sampleChannelProc.h"
-#include "clock.h"
 
 
 namespace giada {
