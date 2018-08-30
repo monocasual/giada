@@ -19,9 +19,10 @@
 - Remove mute action recording
 - Better handling of MIDI devices that send NOTEON + velocity 0 as NOTEOFF
 - Avoid calls to deprecated JUCE plug-ins methods
+- Removed useless pthreadGC2.dll from Windows package
 - Can't kill MIDI channels (fix #197)
 - Can't record MIDI actions (fix #202)
-- Removed useless pthreadGC2.dll from Windows package
+- Fix missing first beat on metronome rendering
 
 
 0.15.1 --- 2018 . 07 . 03
