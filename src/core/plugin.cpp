@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <cassert>
 #include <FL/Fl.H>
 #include "../utils/log.h"
 #include "../utils/time.h"
@@ -200,8 +201,8 @@ int Plugin::getId() const { return id; }
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getEditorW() const { return ui->getWidth(); }
-int Plugin::getEditorH() const { return ui->getHeight(); }
+int Plugin::getEditorW() const { assert(ui != nullptr); return ui->getWidth(); }
+int Plugin::getEditorH() const { assert(ui != nullptr); return ui->getHeight(); }
 
 
 /* -------------------------------------------------------------------------- */
