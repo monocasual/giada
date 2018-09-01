@@ -90,14 +90,6 @@ void Plugin::showEditor(void* parent)
 		gu_log("[Plugin::showEditor] unable to create editor!\n");
 		return;
 	}
-
-	/* A silly workaround on X: it seems that calling addToDesktop too fast, i.e.
-	before the X Window is fully ready screws up the plugin's event dispatcher. */
-
-#ifdef G_OS_LINUX
-	time::sleep(500);
-#endif
-
 	ui->setOpaque(true);
 	ui->addToDesktop(0, parent);
 }
@@ -291,8 +283,6 @@ string Plugin::getParameterLabel(int index) const
 
 void Plugin::closeEditor()
 {
-	if (ui == nullptr)
-		return;
 	delete ui;
 	ui = nullptr;
 }
