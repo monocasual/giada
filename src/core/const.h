@@ -166,7 +166,7 @@
 #define G_DEFAULT_PATCH_NAME       "(default patch)"
 #define G_DEFAULT_MIDI_INPUT_UI_W  300
 #define G_DEFAULT_MIDI_INPUT_UI_H  350
-#define G_DEFAULT_ACTION_SIZE      32768  // frames
+#define G_DEFAULT_ACTION_SIZE      8192  // frames
 #define G_DEFAULT_ZOOM_RATIO       128
 
 
