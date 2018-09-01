@@ -23,6 +23,7 @@
 - Can't kill MIDI channels (fix #197)
 - Can't record MIDI actions (fix #202)
 - Fix missing first beat on metronome rendering
+- Fix crash on opening plug-in window on macOS
 
 
 0.15.1 --- 2018 . 07 . 03
