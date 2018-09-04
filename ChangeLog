@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.15.2 --- 
+0.15.2 --- 2018 . 09 . 05
 - New sample-accurate Action Editor
 - New MIDI Velocity Editor widget
 - Ability to move MIDI events vertically in piano roll (i.e. change note) 
