@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://raw.githubusercontent.com/monocasual/giada/master/giada-logo.png" alt="Giada - Your Hardcore Loop Machine">
+	<img src="https://raw.githubusercontent.com/monocasual/giada/master/extras/giada-logotype.png" alt="Giada - Your Hardcore Loop Machine">
 </p>
 
 <p align="center">

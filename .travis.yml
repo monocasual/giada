@@ -45,6 +45,6 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    tags: true # only tags (on master branch?) are built
-    branch: "master" # would build only for branch 'osx-build'
+    tags: false # only tags (on master branch?) are built
+    branch: "travis-linux-build" # would build only for branch 'osx-build'
   local_dir: build

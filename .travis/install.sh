@@ -52,6 +52,11 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   sudo ln -f -s /usr/bin/g++-6 /usr/bin/g++
 
+  # Download linuxdeployqt for building AppImages.
+
+  wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
+  chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+
   # Download and build latest version of RtMidi
 
   wget https://github.com/thestk/rtmidi/archive/master.zip
@@ -73,7 +78,7 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   sudo ldconfig
   cd ..
 
-  # Download midimaps package for testing purposes
+  # Download midimaps package for testing purposes.
 
   wget https://github.com/monocasual/giada-midimaps/archive/master.zip -O giada-midimaps-master.zip
   unzip giada-midimaps-master.zip
