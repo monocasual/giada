@@ -36,6 +36,8 @@
 	#define G_OS_MAC
 #elif defined(__linux__)
 	#define G_OS_LINUX
+#elif defined(__FreeBSD__)
+	#define G_OS_FREEBSD
 #endif
 
 #ifndef BUILD_DATE
@@ -137,6 +139,8 @@
 /* -- default system -------------------------------------------------------- */
 #if defined(G_OS_LINUX)
 	#define G_DEFAULT_SOUNDSYS	G_SYS_API_NONE
+#elif defined(G_OS_FREEBSD)
+	#define G_DEFAULT_SOUNDSYS	G_SYS_API_PULSE
 #elif defined(G_OS_WINDOWS)
 	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_DS
 #elif defined(G_OS_MAC)

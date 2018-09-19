@@ -338,7 +338,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	pthread_mutex_lock(&mutex);
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	clock::recvJackSync();
 #endif
 

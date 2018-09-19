@@ -117,7 +117,7 @@ to OS. */
 
 int createConfigFolder()
 {
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
 	if (gu_dirExists(confDirPath))
 		return 1;
@@ -269,7 +269,7 @@ void init()
 	/* Initialize confFilePath, i.e. the configuration file. In windows it is in
 	 * the same dir of the .exe, while in Linux and OS X in ~/.giada */
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
 	confFilePath = gu_getHomePath() + G_SLASH + CONF_FILENAME;
 	confDirPath  = gu_getHomePath() + G_SLASH;
