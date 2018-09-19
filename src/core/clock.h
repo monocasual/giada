@@ -45,7 +45,7 @@ Rewinds timecode to beat 0 and also send a MTC full frame to cue the slave. */
 
 void sendMIDIrewind();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 void recvJackSync();
 #endif
 

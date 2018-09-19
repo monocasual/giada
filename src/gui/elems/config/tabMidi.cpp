@@ -192,6 +192,11 @@ void geTabMidi::fetchSystems()
 	if (kernelMidi::hasAPI(RtMidi::UNIX_JACK))
 		system->add("Jack");
 
+#elif defined(__FreeBSD__)
+
+	if (kernelMidi::hasAPI(RtMidi::UNIX_JACK))
+		system->add("Jack");
+
 #elif defined(_WIN32)
 
 	if (kernelMidi::hasAPI(RtMidi::WINDOWS_MM))
