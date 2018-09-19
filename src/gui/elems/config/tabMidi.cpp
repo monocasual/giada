@@ -53,8 +53,7 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	system	  = new geChoice(x()+w()-250, y()+9, 250, 20, "System");
 	portOut	  = new geChoice(x()+w()-250, system->y()+system->h()+8, 250, 20, "Output port");
 	portIn	  = new geChoice(x()+w()-250, portOut->y()+portOut->h()+8, 250, 20, "Input port");
-	noNoteOff = new geCheck (x()+w()-250, portIn->y()+portIn->h()+8, 230, 20, "Device does not send NoteOff");
-	midiMap	  = new geChoice(x()+w()-250, noNoteOff->y()+noNoteOff->h(), 250, 20, "Output Midi Map");
+	midiMap	  = new geChoice(x()+w()-250, portIn->y()+portIn->h()+8, 250, 20, "Output Midi Map");
 	sync	    = new geChoice(x()+w()-250, midiMap->y()+midiMap->h()+8, 250, 20, "Sync");
 	new geBox(x(), sync->y()+sync->h()+8, w(), h()-150, "Restart Giada for the changes to take effect.");
 	end();
@@ -68,8 +67,6 @@ geTabMidi::geTabMidi(int X, int Y, int W, int H)
 	fetchOutPorts();
 	fetchInPorts();
 	fetchMidiMaps();
-
-	noNoteOff->value(conf::noNoteOff);
 
 	sync->add("(disabled)");
 	sync->add("MIDI Clock (master)");
@@ -172,8 +169,6 @@ void geTabMidi::save()
 
 	conf::midiPortOut = portOut->value()-1;   // -1 because midiPortOut=-1 is '(disabled)'
 	conf::midiPortIn  = portIn->value()-1;    // -1 because midiPortIn=-1 is '(disabled)'
-
-	conf::noNoteOff   = noNoteOff->value();
 	conf::midiMapPath = midimap::maps.size() == 0 ? "" : midiMap->text(midiMap->value());
 
 	if      (sync->value() == 0)
@@ -226,13 +221,13 @@ void geTabMidi::fetchSystems()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabMidi::cb_changeSystem(Fl_Widget *w, void *p) { ((geTabMidi*)p)->__cb_changeSystem(); }
+void geTabMidi::cb_changeSystem(Fl_Widget* w, void* p) { ((geTabMidi*)p)->cb_changeSystem(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geTabMidi::__cb_changeSystem()
+void geTabMidi::cb_changeSystem()
 {
 	/* if the user changes MIDI device (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original system, we re-fill the list by
@@ -245,7 +240,6 @@ void geTabMidi::__cb_changeSystem()
 		portIn->clear();
 		fetchInPorts();
 		portIn->activate();
-		noNoteOff->activate();
 		sync->activate();
 	}
 	else {
@@ -257,7 +251,6 @@ void geTabMidi::__cb_changeSystem()
 		portIn->clear();
 		portIn->add("-- restart to fetch device(s) --");
 		portIn->value(0);
-		noNoteOff->deactivate();
 		sync->deactivate();
 	}
 

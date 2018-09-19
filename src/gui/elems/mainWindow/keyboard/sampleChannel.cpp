@@ -40,8 +40,8 @@
 #include "../../../dialogs/gd_keyGrabber.h"
 #include "../../../dialogs/sampleEditor.h"
 #include "../../../dialogs/channelNameInput.h"
-#include "../../../dialogs/gd_actionEditor.h"
 #include "../../../dialogs/gd_warnings.h"
+#include "../../../dialogs/actionEditor/sampleActionEditor.h"
 #include "../../../dialogs/browser/browserSave.h"
 #include "../../../dialogs/browser/browserLoad.h"
 #include "../../../dialogs/midiIO/midiOutputSampleCh.h"
@@ -78,7 +78,6 @@ enum class Menu
 	EDIT_ACTIONS,
 	CLEAR_ACTIONS,
 	CLEAR_ACTIONS_ALL,
-	CLEAR_ACTIONS_MUTE,
 	CLEAR_ACTIONS_VOLUME,
 	CLEAR_ACTIONS_START_STOP,
 	__END_CLEAR_ACTIONS_SUBMENU__,
@@ -103,6 +102,8 @@ void menuCallback(Fl_Widget* w, void* v)
 	using namespace giada;
 
 	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
+	SampleChannel*   ch  = static_cast<SampleChannel*>(gch->ch);
+
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	switch (selectedItem) {
@@ -133,15 +134,15 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::SETUP_MIDI_OUTPUT: {
-			gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(static_cast<SampleChannel*>(gch->ch)), 0);
+			gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
 			break;
 		}
 		case Menu::EDIT_SAMPLE: {
-			gu_openSubWindow(G_MainWin, new gdSampleEditor(static_cast<SampleChannel*>(gch->ch)), WID_SAMPLE_EDITOR);
+			gu_openSubWindow(G_MainWin, new gdSampleEditor(ch), WID_SAMPLE_EDITOR);
 			break;
 		}
 		case Menu::EDIT_ACTIONS: {
-			gu_openSubWindow(G_MainWin, new gdActionEditor(gch->ch), WID_ACTION_EDITOR);
+			gu_openSubWindow(G_MainWin, new v::gdSampleActionEditor(ch), WID_ACTION_EDITOR);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS:
@@ -151,10 +152,6 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
 			c::recorder::clearAllActions(gch);
-			break;
-		}
-		case Menu::CLEAR_ACTIONS_MUTE: {
-			c::recorder::clearMuteActions(gch);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_VOLUME: {
@@ -207,6 +204,8 @@ void menuCallback(Fl_Widget* w, void* v)
 }; // {namespace}
 
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
@@ -313,7 +312,6 @@ void geSampleChannel::cb_openMenu()
 		{"Edit actions...",          0, menuCallback, (void*) Menu::EDIT_ACTIONS},
 		{"Clear actions",            0, menuCallback, (void*) Menu::CLEAR_ACTIONS, FL_SUBMENU},
 			{"All",        0, menuCallback, (void*) Menu::CLEAR_ACTIONS_ALL},
-			{"Mute",       0, menuCallback, (void*) Menu::CLEAR_ACTIONS_MUTE},
 			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
 			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
 			{0},

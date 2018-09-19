@@ -66,10 +66,7 @@ void* cb_data = nullptr;
 
 void processPlugins(Channel* ch, const MidiEvent& midiEvent)
 {
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
+	uint32_t pure = midiEvent.getRawNoVelocity();
 
 	/* Plugins' parameters layout reflects the structure of the matrix
 	Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
@@ -99,10 +96,7 @@ void processPlugins(Channel* ch, const MidiEvent& midiEvent)
 
 void processChannels(const MidiEvent& midiEvent)
 {
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
+	uint32_t pure = midiEvent.getRawNoVelocity();
 
 	for (Channel* ch : mixer::channels) {
 
@@ -158,11 +152,13 @@ void processChannels(const MidiEvent& midiEvent)
 		}
 
 #ifdef WITH_VST
-		processPlugins(ch, midiEvent); // Process plugins' parameters
+
+		/* Process learned plugins parameters. */
+		processPlugins(ch, midiEvent); 
+
 #endif
 
 		/* Redirect full midi message (pure + velocity) to plugins. */
-
 		ch->receiveMidi(midiEvent.getRaw());
 	}
 }
@@ -173,10 +169,7 @@ void processChannels(const MidiEvent& midiEvent)
 
 void processMaster(const MidiEvent& midiEvent)
 {
-	/* Pure value: if 'noNoteOff' in global config, get the raw value with the
-	'velocy' byte. Otherwise strip it off. */
-
-	uint32_t pure = midiEvent.getRaw(conf::noNoteOff);
+	uint32_t pure = midiEvent.getRawNoVelocity();
 
 	if      (pure == conf::midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
@@ -251,22 +244,24 @@ void stopMidiLearn()
 void dispatch(int byte1, int byte2, int byte3)
 {
 	/* Here we want to catch two things: a) note on/note off from a keyboard and 
-	b) knob/wheel/slider movements from a controller. */
+	b) knob/wheel/slider movements from a controller. 
+	We must also fix the velocity zero issue for those devices that sends NOTE
+	OFF events as NOTE ON + velocity zero. Let's make it a real NOTE OFF event. */
 
 	MidiEvent midiEvent(byte1, byte2, byte3);
+	midiEvent.fixVelocityZero();
 
 	gu_log("[midiDispatcher] MIDI received - 0x%X (chan %d)\n", midiEvent.getRaw(), 
 		midiEvent.getChannel());
 
 	/* Start dispatcher. If midi learn is on don't parse channels, just learn 
-	incoming MIDI signal. Learn callback wants 'pure' MIDI event: if 'noNoteOff' 
-	in global config, get the raw value with the 'velocy' byte. Otherwise strip it 
-	off. If midi learn is off process master events first, then each channel 
-	in the stack. This way incoming signals don't get processed by glue_* when 
-	MIDI learning is on. */
+	incoming MIDI signal. Learn callback wants 'pure' MIDI event, i.e. with
+	velocity value stripped off. If midi learn is off process master events first, 
+	then each channel in the stack. This way incoming signals don't get processed 
+	by glue_* when MIDI learning is on. */
 
 	if (cb_learn)
-		cb_learn(midiEvent.getRaw(conf::noNoteOff), cb_data);
+		cb_learn(midiEvent.getRawNoVelocity(), cb_data);
 	else {
 		processMaster(midiEvent);
 		processChannels(midiEvent);

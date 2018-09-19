@@ -1,12 +1,18 @@
-# Giada - Your Hardcore Loopmachine
+<p align="center">
+	<img src="https://raw.githubusercontent.com/monocasual/giada/master/giada-logo.png" alt="Giada - Your Hardcore Loop Machine">
+</p>
 
-Official website: http://www.giadamusic.com | Travis CI status: [![Build Status](https://travis-ci.org/monocasual/giada.svg?branch=master)](https://travis-ci.org/monocasual/giada)
+<p align="center">
+<strong>Giada - Your Hardcore Loop Machine</strong> | Official website: <a href="https://www.giadamusic.com">giadamusic.com</a> | Travis CI status: <a href="https://travis-ci.org/monocasual/giada"><img src="https://travis-ci.org/monocasual/giada.svg?branch=master" alt="Build status"></a>
+</p>
 
 ## What is Giada?
 
 Giada is a free, minimal, hardcore audio tool for DJs, live performers and electronic musicians. How does it work? Just pick up your channel, fill it with samples or MIDI events and start the show by using this tiny piece of software as a loop machine, drum machine, sequencer, live sampler or yet as a plugin/effect host. Giada aims to be a compact and portable virtual device for Linux, Mac OS X and Windows for production use and live sets.
 
-➔➔➔ [See Giada in action!](http://www.youtube.com/user/GiadaLoopMachine)
+<p align="center">
+✦✦✦ <a href="http://www.youtube.com/user/GiadaLoopMachine">See Giada in action!</a> ✦✦✦
+</p>
 
 ![Giada Loop Machine screenshot](http://giadamusic.com/public/img/screenshots/giada-loop-machine-screenshot-14-carousel.jpg)
 
@@ -39,23 +45,19 @@ Take a look at the COPYING file for further informations.
 
 ## Documentation
 
-Docs are available online on the official website:
-
-http://www.giadamusic.com/documentation
+Docs are available online on [the official website](https://www.giadamusic.com/documentation-index).
 
 Found a typo or a terrible mistake? Feel free to clone the [website repository](https://github.com/monocasual/giada-www) and send us your pull requests.
 
 ## Build Giada from source
 
-We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](http://giadamusic.com/documentation/show/compiling-from-source).
+We do our best to make the compilation process as simple as possible. You can find all the information in the [official docs page](https://www.giadamusic.com/documentation-compiling-from-source).
 
 Something went wrong? Try our new [Docker image](https://github.com/monocasual/giada-docker) for building and running Giada without hurdles. 
 
 ## Bugs, requests and questions for non-developers
 
-Feel free to ask anything on our end-user forum:
-
-http://www.giadamusic.com/forum
+Feel free to ask anything on [our end-user forum](https://www.giadamusic.com/forum).
 
 ## Copyright
 

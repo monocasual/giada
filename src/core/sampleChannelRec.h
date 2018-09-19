@@ -55,8 +55,6 @@ Ends overdub mode SINGLE_PRESS channels. */
 
 void recordStop(SampleChannel* ch);
 
-void recordMute(SampleChannel* ch);
-
 /* setReadActions
 If enabled (v == true), Recorder will read actions from channel 'ch'. If 
 recsStopOnChanHalt == true and v == false, will also kill the channel. */

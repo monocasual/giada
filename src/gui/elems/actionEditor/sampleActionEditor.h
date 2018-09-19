@@ -25,44 +25,41 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "pianoRoll.h"
-#include "basePianoItem.h"
+#ifndef GE_SAMPLE_ACTION_EDITOR_H
+#define GE_SAMPLE_ACTION_EDITOR_H
 
 
-geBasePianoItem::geBasePianoItem(int x, int y, int w, gdActionEditor *pParent)
-  : Fl_Box  (x, y, w, gePianoRoll::CELL_H),
-    pParent (pParent),
-    selected(false)
+#include "baseActionEditor.h"
+
+
+class SampleChannel;
+
+
+namespace giada {
+namespace v
 {
-}
+class geSampleAction;
 
 
-/* -------------------------------------------------------------------------- */
-
-
-int geBasePianoItem::handle(int e)
+class geSampleActionEditor : public geBaseActionEditor
 {
-  int ret = 0;
-	switch (e) {
-		case FL_ENTER:
-      selected = true;
-      redraw();
-      ret = 1;
-      break;
-    case FL_LEAVE:
-      selected = false;
-      redraw();
-      ret = 1;
-      break;
-  }
-  return ret;
-}
+private:
 
+	void onAddAction()     override;
+	void onDeleteAction()  override;
+	void onMoveAction()    override;
+	void onResizeAction()  override;
+	void onRefreshAction() override;
 
-/* -------------------------------------------------------------------------- */
+public:
 
+	geSampleActionEditor(Pixel x, Pixel y, SampleChannel* ch);
+	~geSampleActionEditor();
 
-int geBasePianoItem::getY(int note)
-{
-  return (gePianoRoll::MAX_KEYS * gePianoRoll::CELL_H) - (note * gePianoRoll::CELL_H);
-}
+	void draw() override;
+
+	void rebuild() override;
+};
+}} // giada::v::
+
+#endif

@@ -48,10 +48,10 @@
 
 /* -- version --------------------------------------------------------------- */
 #define G_APP_NAME      "Giada"
-#define G_VERSION_STR   "0.15.2"
+#define G_VERSION_STR   "0.15.3"
 #define G_VERSION_MAJOR 0
 #define G_VERSION_MINOR 15
-#define G_VERSION_PATCH 2
+#define G_VERSION_PATCH 3
 
 #define CONF_FILENAME "giada.conf"
 
@@ -112,6 +112,8 @@
 #define G_MIN_GUI_WIDTH     816
 #define G_MIN_GUI_HEIGHT    510
 #define G_MAX_IO_CHANS      2
+#define G_MAX_VELOCITY      0x7F
+#define G_MAX_MIDI_CHANS    16
 
 
 
@@ -168,7 +170,8 @@
 #define G_DEFAULT_PATCH_NAME       "(default patch)"
 #define G_DEFAULT_MIDI_INPUT_UI_W  300
 #define G_DEFAULT_MIDI_INPUT_UI_H  350
-#define G_DEFAULT_MIDI_ACTION_SIZE 8192   // frames
+#define G_DEFAULT_ACTION_SIZE      8192  // frames
+#define G_DEFAULT_ZOOM_RATIO       128
 
 
 
@@ -176,13 +179,10 @@
 #define G_ACTION_KEYPRESS		0x01 // 0000 0001
 #define G_ACTION_KEYREL			0x02 // 0000 0010
 #define G_ACTION_KILL		    0x04 // 0000 0100
-#define G_ACTION_MUTEON			0x08 // 0000 1000
-#define G_ACTION_MUTEOFF		0x10 // 0001 0000
 #define G_ACTION_VOLUME     0x20 // 0010 0000
 #define G_ACTION_MIDI       0x40 // 0100 0000
 
 #define G_ACTION_KEYS       0x03 // 0000 0011 any key
-#define G_ACTION_MUTES      0x24 // 0001 1000 any mute
 
 #define G_RANGE_CHAR        0x01 // range for MIDI (0-127)
 #define G_RANGE_FLOAT       0x02 // range for volumes and VST params (0.0-1.0)
@@ -284,7 +284,7 @@ it drives knobs, volume, faders and such. */
 #define MIDI_CHAN_14        0x0E << 24
 #define MIDI_CHAN_15        0x0F << 24
 
-const int MIDI_CHANS[16] = {
+const int MIDI_CHANS[G_MAX_MIDI_CHANS] = {
 	MIDI_CHAN_0,  MIDI_CHAN_1,	MIDI_CHAN_2,  MIDI_CHAN_3,
 	MIDI_CHAN_4,  MIDI_CHAN_5,	MIDI_CHAN_6,  MIDI_CHAN_7,
 	MIDI_CHAN_8,  MIDI_CHAN_9,	MIDI_CHAN_10, MIDI_CHAN_11,
@@ -388,7 +388,6 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_MIDI_SYSTEM              "midi_system"
 #define CONF_KEY_MIDI_PORT_OUT            "midi_port_out"
 #define CONF_KEY_MIDI_PORT_IN             "midi_port_in"
-#define CONF_KEY_NO_NOTE_OFF              "no_note_off"
 #define CONF_KEY_MIDIMAP_PATH             "midimap_path"
 #define CONF_KEY_LAST_MIDIMAP             "last_midimap"
 #define CONF_KEY_MIDI_SYNC                "midi_sync"
@@ -438,6 +437,9 @@ const int MIDI_CHANS[16] = {
 #define CONF_KEY_SAMPLE_EDITOR_GRID_ON    "sample_editor_grid_on"
 #define CONF_KEY_PIANO_ROLL_Y             "piano_roll_y"
 #define CONF_KEY_PIANO_ROLL_H             "piano_roll_h"
+#define CONF_KEY_SAMPLE_ACTION_EDITOR_H   "sample_action_editor_h"
+#define CONF_KEY_VELOCITY_EDITOR_H        "velocity_editor_h"
+#define CONF_KEY_ENVELOPE_EDITOR_H        "envelope_editor_h"
 #define CONF_KEY_PLUGIN_LIST_X            "plugin_list_x"
 #define CONF_KEY_PLUGIN_LIST_Y            "plugin_list_y"
 #define CONF_KEY_CONFIG_X                 "config_x"

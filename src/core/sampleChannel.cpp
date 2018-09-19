@@ -182,12 +182,6 @@ void SampleChannel::recordStop()
 }
 
 
-void SampleChannel::recordMute()
-{
-	sampleChannelRec::recordMute(this);
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
@@ -220,9 +214,9 @@ void SampleChannel::stopInputRec(int globalFrame)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setMute(bool value, EventType eventType)
+void SampleChannel::setMute(bool value)
 {
-	sampleChannelProc::setMute(this, value, eventType);
+	sampleChannelProc::setMute(this, value);
 }
 
 

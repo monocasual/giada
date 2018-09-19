@@ -106,9 +106,8 @@ void geChannelMode::__cb_changeMode(int mode)
 {
   ch->mode = static_cast<ChannelMode>(mode);
 
-  /* what to do when the channel is playing and you change the mode?
-   * Nothing, since v0.5.3. Just refresh the action editor window, in
-   * case it's open */
+  /* What to do when the channel is playing and you change the mode? Nothing, 
+  since v0.5.3. Just refresh the action editor window, in case it's open. */
 
   gu_refreshActionEditor();
 }

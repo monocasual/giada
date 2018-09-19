@@ -2,11 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * envelopeEditor
- *
- * Parent class of any envelope controller, from volume to VST parameter
- * automations.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2018 Giovanni A. Zuliani | Monocasual
@@ -30,387 +25,209 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../core/channel.h"
-#include "../../../core/recorder.h"
-#include "../../../core/mixer.h"
-#include "../../../core/clock.h"
-#include "../../dialogs/gd_actionEditor.h"
-#include "../../dialogs/gd_mainWindow.h"
-#include "../mainWindow/keyboard/keyboard.h"
-#include "gridTool.h"
+#include "../../../utils/log.h"
+#include "../../../utils/math.h"
+#include "../../../core/const.h"
+#include "../../../core/conf.h"
+#include "../../../core/sampleChannel.h"
+#include "../../../glue/recorder.h"
+#include "../../dialogs/actionEditor/baseActionEditor.h"
+#include "envelopePoint.h"
 #include "envelopeEditor.h"
 
 
-extern gdMainWindow *G_MainWin;
+using std::vector;
 
 
-using namespace giada::m;
-
-
-geEnvelopeEditor::geEnvelopeEditor(int x, int y, gdActionEditor *pParent,
-	int type, int range, const char *l)
-	:	geBaseActionEditor(x, y, 200, 80, pParent),
-		l                 (l),
-		type              (type),
-		range             (range),
-		selectedPoint     (-1),
-		draggedPoint      (-1)
+namespace giada {
+namespace v
 {
-	size(pParent->totalWidth, h());
+geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, int actionType, const char* l, 
+	SampleChannel* ch)
+:	geBaseActionEditor(x, y, 200, m::conf::envelopeEditorH, ch),	
+  m_actionType      (actionType)
+{
+	copy_label(l);
+	rebuild();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-geEnvelopeEditor::~geEnvelopeEditor() {
-	clearPoints();
+geEnvelopeEditor::~geEnvelopeEditor()
+{
+	m::conf::envelopeEditorH = h();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void geEnvelopeEditor::addPoint(int frame, int iValue, float fValue, int px, int py) {
-	point p;
-	p.frame  = frame;
-	p.iValue = iValue;
-	p.fValue = fValue;
-	p.x = px;
-	p.y = py;
-	points.push_back(p);
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void geEnvelopeEditor::updateActions() {
-	for (unsigned i=0; i<points.size(); i++)
-		points.at(i).x = points.at(i).frame / pParent->zoom;
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-void geEnvelopeEditor::draw() {
-
+void geEnvelopeEditor::draw() 
+{
 	baseDraw();
 
-	/* print label */
+	/* Print label. */
 
 	fl_color(G_COLOR_GREY_4);
-	fl_font(FL_HELVETICA, 12);
-	fl_draw(l, x()+4, y(), 80, h(), (Fl_Align) (FL_ALIGN_LEFT));
+	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
+	fl_draw(label(), x()+4, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT));
 
-	int pxOld = x()-3;
-	int pyOld = y()+1;
-	int pxNew = 0;
-	int pyNew = 0;
+	if (children() == 0)
+		return;
 
-	fl_color(G_COLOR_LIGHT_1);
+	Pixel side = geEnvelopePoint::SIDE / 2;
 
-	for (unsigned i=0; i<points.size(); i++) {
+	Pixel x1 = child(0)->x() + side;
+	Pixel y1 = child(0)->y() + side;
+	Pixel x2 = 0;
+	Pixel y2 = 0;
 
-		pxNew = points.at(i).x+x()-3;
-		pyNew = points.at(i).y+y();
+	/* For each point: 
+		- paint the connecting line with the next one;
+		- reposition it on the y axis, only if there's no point selected (dragged
+	    around). */
 
-		if (selectedPoint == (int) i) {
-			fl_color(G_COLOR_LIGHT_1);
-			fl_rectf(pxNew, pyNew, 7, 7);
-			fl_color(G_COLOR_LIGHT_1);
-		}
-		else
-			fl_rectf(pxNew, pyNew, 7, 7);
-
-		if (i > 0)
-			fl_line(pxOld+3, pyOld+3, pxNew+3, pyNew+3);
-
-		pxOld = pxNew;
-		pyOld = pyNew;
-	}
-}
-
-
-/* ------------------------------------------------------------------ */
-
-
-int geEnvelopeEditor::handle(int e) {
-
-	/* Adding an action: no further checks required, just record it on frame
-	 * mx*pParent->zoom. Deleting action is trickier: find the active
-	 * point and derive from it the corresponding frame. */
-
-	int ret = 0;
-	int mx  = Fl::event_x()-x();  // mouse x
-	int my  = Fl::event_y()-y();  // mouse y
-
-	switch (e) {
-
-		case FL_ENTER: {
-			ret = 1;
-			break;
-		}
-
-		case FL_MOVE: {
-			selectedPoint = getSelectedPoint();
-			redraw();
-			ret = 1;
-			break;
-		}
-
-		case FL_LEAVE: {
-			draggedPoint  = -1;
-			selectedPoint = -1;
-			redraw();
-			ret = 1;
-			break;
-		}
-
-		case FL_PUSH: {
-
-			/* left click on point: drag
-			 * right click on point: delete
-			 * left click on void: add */
-
-			if (Fl::event_button1()) {
-
-				if (selectedPoint != -1) {
-					draggedPoint = selectedPoint;
-				}
-				else {
-
-					/* top & border fix */
-
-					if (my > h()-8) my = h()-8;
-					if (mx > pParent->coverX-x()) mx = pParent->coverX-x();
-
-					if (range == G_RANGE_FLOAT) {
-
-						/* if this is the first point ever, add other two points at the beginning
-						 * and the end of the range */
-
-						if (points.size() == 0) {
-							addPoint(0, 0, 1.0f, 0, 1);
-							recorder::rec(pParent->chan->index, type, 0, 0, 1.0f);
-							addPoint(clock::getFramesInLoop(), 0, 1.0f, pParent->coverX, 1);
-							recorder::rec(pParent->chan->index, type, clock::getFramesInLoop(), 0, 1.0f);
-              pParent->chan->hasActions = true;
-						}
-
-						/* line between 2 points y = (x-a) / (b-a); a = h() - 8; b = 1 */
-
-						int frame   = mx * pParent->zoom;
-						float value = (my - h() + 8) / (float) (1 - h() + 8);
-						addPoint(frame, 0, value, mx, my);
-						recorder::rec(pParent->chan->index, type, frame, 0, value);
-            pParent->chan->hasActions = true;
-						recorder::sortActions();
-						sortPoints();
-					}
-					else {
-						/// TODO
-					}
-					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
-					redraw();
-				}
-			}
-			else {
-
-				/* right click on point 0 or point size-1 deletes the entire envelope */
-
-				if (selectedPoint != -1) {
-					if (selectedPoint == 0 || (unsigned) selectedPoint == points.size()-1) {
-						recorder::clearAction(pParent->chan->index, type);
-            pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
-						points.clear();
-					}
-					else {
-						recorder::deleteAction(pParent->chan->index,
-              points.at(selectedPoint).frame, type, false, &mixer::mutex);
-            pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
-            recorder::sortActions();
-						points.erase(points.begin() + selectedPoint);
-					}
-					G_MainWin->keyboard->setChannelWithActions((geSampleChannel*)pParent->chan->guiChannel); // update mainWindow
-					redraw();
-				}
-			}
-
-			ret = 1;
-			break;
-		}
-
-		case FL_RELEASE: {
-			if (draggedPoint != -1) {
-
-				if (points.at(draggedPoint).x == previousXPoint) {
-					//gu_log("nothing to do\n");
-				}
-				else {
-					int newFrame = points.at(draggedPoint).x * pParent->zoom;
-
-					/* x edge correction */
-
-					if (newFrame < 0)
-						newFrame = 0;
-					else if (newFrame > clock::getFramesInLoop())
-						newFrame = clock::getFramesInLoop();
-
-					/* vertical line check */
-
-					int vp = verticalPoint(points.at(draggedPoint));
-					if (vp == 1) 			 newFrame -= 256;
-					else if (vp == -1) newFrame += 256;
-
-					/*  delete previous point and record a new one */
-
-					recorder::deleteAction(pParent->chan->index,
-            points.at(draggedPoint).frame, type, false, &mixer::mutex);
-          pParent->chan->hasActions = recorder::hasActions(pParent->chan->index);
-
-					if (range == G_RANGE_FLOAT) {
-						float value = (points.at(draggedPoint).y - h() + 8) / (float) (1 - h() + 8);
-						recorder::rec(pParent->chan->index, type, newFrame, 0, value);
-            pParent->chan->hasActions = true;
-					}
-					else {
-						/// TODO
-					}
-
-					recorder::sortActions();
-					points.at(draggedPoint).frame = newFrame;
-					draggedPoint  = -1;
-					selectedPoint = -1;
-				}
-			}
-			ret = 1;
-			break;
-		}
-
-		case FL_DRAG: {
-
-			if (draggedPoint != -1) {
-
-				/* y constraint */
-
-				if (my > h()-8)
-					points.at(draggedPoint).y = h()-8;
-				else
-				if (my < 1)
-					points.at(draggedPoint).y = 1;
-				else
-					points.at(draggedPoint).y = my;
-
-				/* x constraint
-				 * constrain the point between two ends (leftBorder-point, point-point,
-				 * point-rightBorder). First & last points cannot be shifted on x */
-
-				if (draggedPoint == 0)
-					points.at(draggedPoint).x = x()-8;
-				else
-				if ((unsigned) draggedPoint == points.size()-1)
-					points.at(draggedPoint).x = pParent->coverX;
-				else {
-					int prevPoint = points.at(draggedPoint-1).x;
-					int nextPoint = points.at(draggedPoint+1).x;
-					if (mx <= prevPoint)
-						points.at(draggedPoint).x = prevPoint;
-					else
-					if (mx >= nextPoint)
-						points.at(draggedPoint).x = nextPoint;
-					//else
-					//	points.at(draggedPoint).x = mx;
-					else {
-						if (pParent->gridTool->isOn())
-							points.at(draggedPoint).x = pParent->gridTool->getSnapPoint(mx)-1;
-						else
-							points.at(draggedPoint).x = mx;
-					}
-				}
-				redraw();
-			}
-
-			ret = 1;
-			break;
+	for (int i=0; i<children(); i++) {
+		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
+		if (m_action == nullptr)
+			p->position(p->x(), valueToY(p->a1.fValue));
+		if (i > 0) {
+			x2 = p->x() + side;
+			y2 = p->y() + side;
+			fl_line(x1, y1, x2, y2);
+			x1 = x2;
+			y1 = y2;
 		}
 	}
 
-	return ret;
+	draw_children();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-int geEnvelopeEditor::verticalPoint(const point &p) {
-	for (unsigned i=0; i<points.size(); i++) {
-		if (&p == &points.at(i)) {
-			if (i == 0 || i == points.size()-1)  // first or last point
-				return 0;
-			else {
-				if (points.at(i-1).x == p.x)    // vertical with point[i-1]
-					return -1;
-				else
-				if (points.at(i+1).x == p.x)    // vertical with point[i+1]
-					return 1;
-			}
-			break;
-		}
+void geEnvelopeEditor::rebuild()
+{
+	namespace mr = m::recorder;
+	namespace cr = c::recorder;
+
+	/* Remove all existing actions and set a new width, according to the current
+	zoom level. */
+
+	clear();
+	size(m_base->fullWidth, h());
+
+	vector<mr::action> actions = cr::getEnvelopeActions(m_ch, m_actionType);
+
+	for (mr::action a : actions) {
+		gu_log("[geEnvelopeEditor::rebuild] Action %d\n", a.frame);
+		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.fValue), a)); 		
 	}
-	return 0;
+
+	resizable(nullptr);
+
+	redraw();
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void geEnvelopeEditor::sortPoints() {
-	for (unsigned i=0; i<points.size(); i++)
-		for (unsigned j=0; j<points.size(); j++)
-			if (points.at(j).x > points.at(i).x)
-				std::swap(points.at(j), points.at(i));
+bool geEnvelopeEditor::isFirstPoint() const
+{
+	return find(m_action) == 0;
 }
 
 
-/* ------------------------------------------------------------------ */
-
-
-int geEnvelopeEditor::getSelectedPoint() {
-
-	/* point is a 7x7 dot */
-
-	for (unsigned i=0; i<points.size(); i++) {
-		if (Fl::event_x() >= points.at(i).x+x()-4  &&
-				Fl::event_x() <= points.at(i).x+x()+4  &&
-				Fl::event_y() >= points.at(i).y+y()    &&
-				Fl::event_y() <= points.at(i).y+y()+7)
-		return i;
-	}
-	return -1;
+bool geEnvelopeEditor::isLastPoint() const
+{
+	return find(m_action) == children() - 1;
 }
 
 
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 
-void geEnvelopeEditor::fill() {
-	points.clear();
-	for (unsigned i=0; i<recorder::global.size(); i++)
-		for (unsigned j=0; j<recorder::global.at(i).size(); j++) {
-			recorder::action *a = recorder::global.at(i).at(j);
-			if (a->type == type && a->chan == pParent->chan->index) {
-				if (range == G_RANGE_FLOAT)
-					addPoint(
-						a->frame,                      // frame
-						0,                             // int value (unused)
-						a->fValue,                     // float value
-						a->frame / pParent->zoom,       // x
-						((1-h()+8)*a->fValue)+h()-8);  // y = (b-a)x + a (line between two points)
-				// else: TODO
-			}
-		}
-
+Pixel geEnvelopeEditor::frameToX(Frame frame) const
+{
+	return x() + m_base->frameToPixel(frame) - (geEnvelopePoint::SIDE / 2);
 }
+
+
+Pixel geEnvelopeEditor::valueToY(float value) const
+{
+	return u::math::map<float, Pixel>(value, 0.0, 1.0, y() + (h() - geEnvelopePoint::SIDE), y());
+}
+
+
+float geEnvelopeEditor::yToValue(Pixel pixel) const
+{
+	return u::math::map<Pixel, float>(pixel, h() - geEnvelopePoint::SIDE, 0, 0.0, 1.0);	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geEnvelopeEditor::onAddAction()     
+{
+	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
+	float v = yToValue(Fl::event_y() - y());
+	c::recorder::recordEnvelopeAction(m_ch, m_actionType, f, v);
+	rebuild();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geEnvelopeEditor::onDeleteAction()  
+{
+	c::recorder::deleteEnvelopeAction(m_ch, m_action->a1, /*moved=*/false);
+	rebuild();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geEnvelopeEditor::onMoveAction()    
+{
+	Pixel side = geEnvelopePoint::SIDE / 2;
+	Pixel ex   = Fl::event_x() - side;
+	Pixel ey   = Fl::event_y() - side;
+
+	Pixel x1 = x() - side;
+	Pixel x2 = m_base->loopWidth + x() - side;
+	Pixel y1 = y();
+	Pixel y2 = y() + h() - geEnvelopePoint::SIDE;
+
+	/* x-axis constraints. */
+	if      (isFirstPoint() || ex < x1) ex = x1; 
+	else if (isLastPoint()  || ex > x2) ex = x2;
+
+	/* y-axis constraints. */
+	if (ey < y1) ey = y1; else if (ey > y2) ey = y2;
+
+	m_action->position(ex, ey);
+	redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geEnvelopeEditor::onRefreshAction() 
+{
+	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
+	float v = yToValue(m_action->y() - y());
+	c::recorder::deleteEnvelopeAction(m_ch, m_action->a1, /*moved=*/true);
+	c::recorder::recordEnvelopeAction(m_ch, m_actionType, f, v);
+	rebuild();
+}
+}} // giada::v::

@@ -25,62 +25,34 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ACTION_H
-#define GE_ACTION_H
+#ifndef GE_SAMPLE_ACTION_H
+#define GE_SAMPLE_ACTION_H
 
 
-#include <FL/Fl_Box.H>
+#include "../../../core/recorder.h"
+#include "baseAction.h"
 
 
-class gdActionEditor;
 class SampleChannel;
 
 
-class geAction : public Fl_Box
+namespace giada {
+namespace v
+{
+class geSampleAction : public geBaseAction
 {
 private:
 
-	bool            selected;
-	unsigned        index;
-  gdActionEditor *parent;   // pointer to parent (geActionEditor)
-	SampleChannel  *ch;
-  char            type;     // type of action
+	const SampleChannel* m_ch;
 
 public:
 
-	geAction(int x, int y, int h, int frame_a, unsigned index,
-		gdActionEditor *parent, SampleChannel *ch, bool record, char type);
-	void draw();
-	int  handle(int e);
-	void addAction();
-	void delAction();
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const SampleChannel* ch,
+		m::recorder::action a1, m::recorder::action a2);
 
-	/* moveAction
-	 * shift the action on the x-axis and update Recorder. If frame_a != -1
-	 * use the new frame in input (used while snapping) */
-
-	void moveAction(int frame_a=-1);
-
-	/* absx
-	 * x() is relative to scrolling position. absx() returns the absolute
-	 * x value of the action, from the leftmost edge. */
-
-	int absx();
-
-	/* xToFrame_a,b
-	 * return the real frames of x() position */
-
-	int xToFrame_a();
-	int xToFrame_b();
-
-	int frame_a;  // initial frame (KEYPRESS for singlemode.press)
-	int frame_b;  // terminal frame (KEYREL for singlemode.press, null for others)
-
-	bool onRightEdge;
-	bool onLeftEdge;
-
-	static const int MIN_WIDTH = 8;
+	void draw() override;
 };
+}} // giada::v::
 
 
 #endif

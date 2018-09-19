@@ -31,6 +31,10 @@
 
 namespace giada
 {
+using Pixel = int;
+using Frame = int;
+
+
 enum class ChannelType : int 
 {
 	SAMPLE = 1, MIDI

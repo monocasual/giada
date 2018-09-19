@@ -76,6 +76,9 @@ void sanitize()
 	if (actionEditorGridVal < 0 || actionEditorGridVal > G_MAX_GRID_VAL) actionEditorGridVal = 0;
 	if (actionEditorGridOn < 0) actionEditorGridOn = 0;
 	if (pianoRollH <= 0) pianoRollH = 422;
+	if (sampleActionEditorH <= 0) sampleActionEditorH = 40;
+	if (velocityEditorH <= 0) velocityEditorH = 40;
+	if (envelopeEditorH <= 0) envelopeEditorH = 40;
   if (sampleEditorX < 0) sampleEditorX = 0;
 	if (sampleEditorY < 0) sampleEditorY = 0;
 	if (sampleEditorW < 500) sampleEditorW = 500;
@@ -162,7 +165,6 @@ int  rsmpQuality    = 0;
 int    midiSystem  = 0;
 int    midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
 int    midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-bool   noNoteOff   = false;
 string midiMapPath = "";
 string lastFileMap = "";
 int    midiSync    = MIDI_SYNC_NONE;
@@ -225,6 +227,10 @@ int midiInputH = G_DEFAULT_MIDI_INPUT_UI_H;
 
 int pianoRollY = -1;
 int pianoRollH = 422;
+
+int sampleActionEditorH = 40; 
+int velocityEditorH     = 40; 
+int envelopeEditorH     = 40; 
 
 int pluginListX = 0;
 int pluginListY = 0;
@@ -321,7 +327,6 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYSTEM, midiSystem)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_OUT, midiPortOut)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_IN, midiPortIn)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_NO_NOTE_OFF, noNoteOff)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_MIDIMAP_PATH, midiMapPath)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
@@ -371,6 +376,9 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_ON, sampleEditorGridOn)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_PIANO_ROLL_Y, pianoRollY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_PIANO_ROLL_H, pianoRollH)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_ACTION_EDITOR_H, sampleActionEditorH)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_VELOCITY_EDITOR_H, velocityEditorH)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_ENVELOPE_EDITOR_H, envelopeEditorH)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_LIST_X, pluginListX)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_LIST_Y, pluginListY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_CONFIG_X, configX)) return 0;
@@ -431,7 +439,6 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_MIDI_SYSTEM,               json_integer(midiSystem));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_OUT,             json_integer(midiPortOut));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_IN,              json_integer(midiPortIn));
-	json_object_set_new(jRoot, CONF_KEY_NO_NOTE_OFF,               json_boolean(noNoteOff));
 	json_object_set_new(jRoot, CONF_KEY_MIDIMAP_PATH,              json_string(midiMapPath.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_LAST_MIDIMAP,              json_string(lastFileMap.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_SYNC,                 json_integer(midiSync));
@@ -481,6 +488,9 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_ON,     json_integer(sampleEditorGridOn));
 	json_object_set_new(jRoot, CONF_KEY_PIANO_ROLL_Y,              json_integer(pianoRollY));
 	json_object_set_new(jRoot, CONF_KEY_PIANO_ROLL_H,              json_integer(pianoRollH));
+	json_object_set_new(jRoot, CONF_KEY_SAMPLE_ACTION_EDITOR_H,    json_integer(sampleActionEditorH));
+	json_object_set_new(jRoot, CONF_KEY_VELOCITY_EDITOR_H,         json_integer(velocityEditorH));
+	json_object_set_new(jRoot, CONF_KEY_ENVELOPE_EDITOR_H,         json_integer(envelopeEditorH));
 	json_object_set_new(jRoot, CONF_KEY_PLUGIN_LIST_X,             json_integer(pluginListX));
 	json_object_set_new(jRoot, CONF_KEY_PLUGIN_LIST_Y,             json_integer(pluginListY));
 	json_object_set_new(jRoot, CONF_KEY_CONFIG_X,                  json_integer(configX));

@@ -28,6 +28,7 @@
 #ifdef WITH_VST
 
 
+#include <cassert>
 #include <FL/Fl.H>
 #include "../utils/log.h"
 #include "../utils/time.h"
@@ -89,14 +90,6 @@ void Plugin::showEditor(void* parent)
 		gu_log("[Plugin::showEditor] unable to create editor!\n");
 		return;
 	}
-
-	/* A silly workaround on X: it seems that calling addToDesktop too fast, i.e.
-	before the X Window is fully ready screws up the plugin's event dispatcher. */
-
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
-	time::sleep(500);
-#endif
-
 	ui->setOpaque(true);
 	ui->addToDesktop(0, parent);
 }
@@ -200,8 +193,8 @@ int Plugin::getId() const { return id; }
 /* -------------------------------------------------------------------------- */
 
 
-int Plugin::getEditorW() const { return ui->getWidth(); }
-int Plugin::getEditorH() const { return ui->getHeight(); }
+int Plugin::getEditorW() const { assert(ui != nullptr); return ui->getWidth(); }
+int Plugin::getEditorH() const { assert(ui != nullptr); return ui->getHeight(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -272,7 +265,7 @@ string Plugin::getParameterName(int index) const
 
 string Plugin::getParameterText(int index) const
 {
-	return plugin->getParameters()[index]->getText(index, MAX_LABEL_SIZE).toStdString();
+	return plugin->getParameters()[index]->getCurrentValueAsText().toStdString();
 }
 
 
@@ -290,8 +283,6 @@ string Plugin::getParameterLabel(int index) const
 
 void Plugin::closeEditor()
 {
-	if (ui == nullptr)
-		return;
 	delete ui;
 	ui = nullptr;
 }

@@ -59,7 +59,7 @@ gdAbout::gdAbout()
 
 	set_modal();
 
-	logo  = new geBox(8, 10, 324, 86);
+	logo  = new geBox(8, 20, 324, 86);
 	text  = new geBox(8, 120, 324, 145);
 	close = new geButton(252, h()-28, 80, 20, "Close");
 #ifdef WITH_VST

@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "midiEvent.h"
 
 
@@ -32,8 +33,7 @@ namespace giada {
 namespace m
 {
 MidiEvent::MidiEvent()
-	: m_raw     (0x0),
-	  m_status  (0),
+	: m_status  (0),
 	  m_channel (0),
 	  m_note    (0),
 	  m_velocity(0),
@@ -46,8 +46,7 @@ MidiEvent::MidiEvent()
 
 
 MidiEvent::MidiEvent(uint32_t raw)
-	: m_raw     (raw),
-	  m_status  ((raw & 0xF0000000) >> 24),
+	: m_status  ((raw & 0xF0000000) >> 24),
 	  m_channel ((raw & 0x0F000000) >> 24),
 	  m_note    ((raw & 0x00FF0000) >> 16),
 	  m_velocity((raw & 0x0000FF00) >> 8),
@@ -57,6 +56,7 @@ MidiEvent::MidiEvent(uint32_t raw)
 
 
 /* -------------------------------------------------------------------------- */
+
 
 MidiEvent::MidiEvent(int byte1, int byte2, int byte3)
 	: MidiEvent((byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (0x00))
@@ -78,7 +78,25 @@ void MidiEvent::resetDelta()
 
 void MidiEvent::setChannel(int c)
 {
+	assert(c >= 0 && c < G_MAX_MIDI_CHANS);
 	m_channel = c;
+}
+
+
+void MidiEvent::setVelocity(int v)
+{
+	assert(v >= 0 && v < G_MAX_VELOCITY);
+	m_velocity = v;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void MidiEvent::fixVelocityZero()
+{
+	if (m_status == NOTE_ON && m_velocity == 0)
+		m_status = NOTE_OFF;
 }
 
 
@@ -121,11 +139,18 @@ int MidiEvent::getDelta() const
 }
 
 
-uint32_t MidiEvent::getRaw(bool velocity) const
+/* -------------------------------------------------------------------------- */
+
+
+uint32_t MidiEvent::getRaw() const
 {
-	if (!velocity)
-		return m_raw & 0xFFFF0000;
-	return m_raw;
+	return (m_status << 24) | (m_channel << 24) | (m_note << 16) | (m_velocity << 8) | (0x00);
+}
+
+
+uint32_t MidiEvent::getRawNoVelocity() const
+{
+	return (m_status << 24) | (m_channel << 24) | (m_note << 16) | (0x00 << 8) | (0x00);
 }
 
 

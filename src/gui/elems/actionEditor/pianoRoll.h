@@ -33,9 +33,12 @@
 #include "baseActionEditor.h"
 
 
-class gdActionEditor;
+class MidiChannel;
 
 
+namespace giada {
+namespace v
+{
 class gePianoRoll : public geBaseActionEditor
 {
 private:
@@ -46,10 +49,14 @@ private:
 		A = 11, GS = 0
 	};
 
-	int push_y;
-
 	Fl_Offscreen surface1;  // notes, no repeat
 	Fl_Offscreen surface2;  // lines, x-repeat
+
+	void onAddAction()     override;
+	void onDeleteAction()  override;
+	void onMoveAction()    override;
+	void onResizeAction()  override;
+	void onRefreshAction() override;
 
 	/* drawSurface*
 	Generates a complex drawing in memory first and copy it to the screen at a
@@ -62,31 +69,28 @@ private:
 	void drawSurface1();
 	void drawSurface2();
 
-
-	void build();
+	Pixel snapToY(Pixel p) const;
+	int   yToNote(Pixel y) const;
+	Pixel noteToY(int n) const;
 
 public:
 
 	static const int MAX_KEYS    = 127;
 	static const int MAX_OCTAVES = 9;
 	static const int KEYS        = 12;
-	static const int CELL_H      = 18;
-	static const int CELL_W      = 40;
+	static const Pixel CELL_H    = 20;
+	static const Pixel CELL_W    = 40;
 
-	gePianoRoll(int x, int y, int w, gdActionEditor* pParent);
+	gePianoRoll(Pixel x, Pixel y, Pixel w, MidiChannel* ch);
 
 	void draw() override;
 	int  handle(int e) override;
 
-  /* updateActions
-  Repositions existing actions after a zoom gesture. */
-  
-	void updateActions() override;
+	void rebuild() override;
 
-	void recordAction(int note, int frame_a, int frame_b=0);
-
-	int yToNote(int y);
+	Pixel pick;
 };
+}} // giada::v::
 
 
 #endif

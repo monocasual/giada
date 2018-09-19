@@ -44,9 +44,6 @@
 #endif
 
 
-#undef Status
-
-
 class Plugin;
 class MidiMapConf;
 class geChannel;
@@ -94,7 +91,7 @@ public:
 	/* set
 	What to do when channel is un/muted. */
 
-	virtual void setMute(bool value, giada::EventType eventType) = 0;
+	virtual void setMute(bool value) = 0;
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */
@@ -123,9 +120,8 @@ public:
 	virtual bool hasData()        const { return false; };
 
 	virtual bool recordStart(bool canQuantize) { return true; };
-	virtual bool recordKill() { return false; };
+	virtual bool recordKill() { return true; };
 	virtual void recordStop() {};
-	virtual void recordMute() {};
 
 	/* prepareBuffer
 	Fill audio buffer with audio data from the internal source. This is actually 
@@ -227,8 +223,6 @@ public:
 	
 	float volume_i;
 	float volume_d;
-
-	bool mute_i;          // internal mute
 	
   bool hasActions;      // has something recorded
   bool readActions;     // read what's recorded

@@ -32,6 +32,7 @@
 #include <pthread.h>
 #include <vector>
 #include "recorder.h"
+#include "types.h"
 #include "../deps/rtaudio-mod/RtAudio.h"
 
 
@@ -44,24 +45,13 @@ namespace mixer
 {
 struct FrameEvents
 {
-	int   frameLocal;
-	int   frameGlobal;
+	Frame frameLocal;
+	Frame frameGlobal;
 	bool  doQuantize;
 	bool  onBar;
 	bool  onFirstBeat;
 	bool  quantoPassed;
 	std::vector<recorder::action*> actions;
-};
-
-enum {    // const - what to do when a fadeout ends
-	DO_STOP   = 0x01,
-	DO_MUTE   = 0x02,
-	DO_MUTE_I = 0x04
-};
-
-enum {    // const - fade types
-	FADEOUT = 0x01,
-	XFADE   = 0x02
 };
 
 extern std::vector<Channel*> channels;
@@ -85,13 +75,13 @@ extern bool inToOut;
 
 extern pthread_mutex_t mutex;
 
-void init(int framesInSeq, int framesInBuffer);
+void init(Frame framesInSeq, Frame framesInBuffer);
 
 /* allocVirtualInput
 Allocates new memory for the virtual input channel. Call this whenever you 
 shrink or resize the sequencer. */
 
-void allocVirtualInput(int frames);
+void allocVirtualInput(Frame frames);
 
 void close();
 

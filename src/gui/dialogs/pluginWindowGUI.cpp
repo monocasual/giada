@@ -45,11 +45,15 @@ using namespace giada::m;
 
 
 gdPluginWindowGUI::gdPluginWindowGUI(Plugin* plugin)
- : gdWindow(450, 300), m_plugin(plugin)
+#ifdef G_OS_MAC
+ : gdWindow(Fl::w(), Fl::h()), m_plugin(plugin)
+#else
+ : gdWindow(320, 200), m_plugin(plugin)
+#endif
 {
   show();
 
-#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+#if defined(G_OS_LINUX) || defined(G_OS_MAC) || defined(G_OS_FREEBSD)
 
   /*  Fl_Window::show() is not guaranteed to show and draw the window on all 
   platforms immediately. Instead this is done in the background; particularly on 
@@ -58,18 +62,10 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin* plugin)
   want to have the window instantiated and displayed synchronously. Currently 
   (as of FLTK 1.3.4) this method has an effect on X11 and Mac OS. 
 
-  http://www.fltk.org/doc-1.3/classFl__Window.html#aafbec14ca8ff8abdaff77a35ebb23dd8
-  
-  NOTE - we should try to macOS as well. */
+  http://www.fltk.org/doc-1.3/classFl__Window.html#aafbec14ca8ff8abdaff77a35ebb23dd8 */
 
   wait_for_expose();
   Fl::flush();
-
-#endif
-
-#ifndef G_OS_MAC
-
-  Fl::check();
 
 #endif
 
@@ -79,19 +75,19 @@ gdPluginWindowGUI::gdPluginWindowGUI(Plugin* plugin)
 #ifdef G_OS_MAC
 
   void* cocoaWindow = (void*) fl_xid(this);
-  cocoa_setWindowSize(cocoaWindow, m_plugin->getEditorW(), m_plugin->getEditorH());
   m_plugin->showEditor(cocoa_getViewFromWindow(cocoaWindow));
 
 #else
 
   m_plugin->showEditor((void*) fl_xid(this));
 
-#endif
-
   int pluginW = m_plugin->getEditorW();
   int pluginH = m_plugin->getEditorH();
 
   resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
+
+
+#endif
 
   Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 

@@ -12,6 +12,23 @@
 --------------------------------------------------------------------------------
 
 
+0.15.3 ---
+
+
+0.15.2 --- 2018 . 09 . 05
+- New sample-accurate Action Editor
+- New MIDI Velocity Editor widget
+- Ability to move MIDI events vertically in piano roll (i.e. change note) 
+- Remove mute action recording
+- Better handling of MIDI devices that send NOTEON + velocity 0 as NOTEOFF
+- Avoid calls to deprecated JUCE plug-ins methods
+- Removed useless pthreadGC2.dll from Windows package
+- Can't kill MIDI channels (fix #197)
+- Can't record MIDI actions (fix #202)
+- Fix missing first beat on metronome rendering
+- Fix crash on opening plug-in window on macOS
+
+
 0.15.1 --- 2018 . 07 . 03
 - Deep code refactoring, featuring Channels processors
 - Many new unit tests added

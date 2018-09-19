@@ -25,14 +25,14 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ENVELOPE_EDITOR_H
-#define GE_ENVELOPE_EDITOR_H
+#ifndef GE_VELOCITY_EDITOR_H
+#define GE_VELOCITY_EDITOR_H
 
 
 #include "baseActionEditor.h"
 
 
-class SampleChannel;
+class MidiChannel;
 
 
 namespace giada {
@@ -41,37 +41,29 @@ namespace v
 class geEnvelopePoint;
 
 
-class geEnvelopeEditor : public geBaseActionEditor
+class geVelocityEditor : public geBaseActionEditor
 {
 private:
 
-	/* m_actionType
-	What type of action this envelope editor is dealing with. */
-	
-	int m_actionType;
-
-	void onAddAction()     override;
-	void onDeleteAction()  override;
 	void onMoveAction()    override;
-	void onResizeAction()  override{}; // Nothing to do here
 	void onRefreshAction() override;
+	void onAddAction()     override{};
+	void onDeleteAction()  override{};
+	void onResizeAction()  override{};
 
-	Pixel frameToX(Frame frame) const;
-	Pixel valueToY(float value) const;
-	float yToValue(Pixel pixel) const;
-
-	bool isFirstPoint() const;
-	bool isLastPoint()  const;
+	Pixel valueToY(int v)   const;
+	int   yToValue(Pixel y) const;
 
 public:
 
-	geEnvelopeEditor(Pixel x, Pixel y, int actionType, const char* l, SampleChannel* ch);
-	~geEnvelopeEditor();
+	geVelocityEditor(Pixel x, Pixel y, MidiChannel* ch);
+	~geVelocityEditor();
 
 	void draw() override;
 
 	void rebuild() override;
 };
 }} // giada::v::
+
 
 #endif

@@ -63,7 +63,6 @@ extern int  rsmpQuality;
 extern int  midiSystem;
 extern int  midiPortOut;
 extern int  midiPortIn;
-extern bool noNoteOff;
 extern std::string midiMapPath;
 extern std::string lastFileMap;
 extern int   midiSync;  // see const.h
@@ -107,6 +106,9 @@ extern int sampleEditorGridOn;
 extern int midiInputX, midiInputY, midiInputW, midiInputH;
 
 extern int pianoRollY, pianoRollH;
+extern int sampleActionEditorH; 
+extern int velocityEditorH; 
+extern int envelopeEditorH; 
 extern int pluginListX, pluginListY;
 extern int configX, configY;
 extern int bpmX, bpmY;

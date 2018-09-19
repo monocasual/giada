@@ -25,38 +25,37 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_BASE_PIANO_ITEM_H
-#define GE_BASE_PIANO_ITEM_H
+#ifndef GD_MIDI_ACTION_EDITOR_H
+#define GD_MIDI_ACTION_EDITOR_H
 
 
-#include <FL/Fl_Box.H>
-#include "../../../core/recorder.h"
+#include "baseActionEditor.h"
 
 
-class gdActionEditor;
+class MidiChannel;
 
 
-class geBasePianoItem : public Fl_Box
+namespace giada {
+namespace v
 {
-protected:
+class geNoteEditor;
+class geVelocityEditor;
 
-  geBasePianoItem(int x, int y, int w, gdActionEditor *pParent);
 
-  /* getY
-	 * from a note, return the y position on piano roll */
+class gdMidiActionEditor : public gdBaseActionEditor
+{
+private:
 
-	int getY(int note);
-
-  gdActionEditor *pParent;
-
-  bool selected;
+	geNoteEditor*     ne;
+	geVelocityEditor* ve;
 
 public:
 
-  virtual void reposition(int pianoRollX) = 0;
+	gdMidiActionEditor(MidiChannel* ch);
 
-  int handle(int e) override;
+	void rebuild() override;
 };
+}} // giada::v::
 
 
 #endif

@@ -32,15 +32,16 @@
  #import "cocoa.h"
 
 
-void *cocoa_getViewFromWindow(void *p)
+void* cocoa_getViewFromWindow(void* p)
 {
-  NSWindow *win = (NSWindow *) p;
-  return (void*) [win contentView];
+  NSWindow* win = (NSWindow* ) p;
+  return (void*) win.contentView;
 }
 
-
+/*
 void cocoa_setWindowSize(void *p, int w, int h)
 {
   NSWindow *win = (NSWindow *) p;
   [win setContentSize:NSMakeSize(w, h)];
 }
+*/

@@ -25,52 +25,52 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_ENVELOPE_EDITOR_H
-#define GE_ENVELOPE_EDITOR_H
+#ifndef GE_BASE_ACTION_H
+#define GE_BASE_ACTION_H
 
 
-#include "baseActionEditor.h"
-
-
-class SampleChannel;
+#include <FL/Fl_Box.H>
+#include "../../../core/recorder.h"
+#include "../../../core/types.h"
 
 
 namespace giada {
 namespace v
 {
-class geEnvelopePoint;
-
-
-class geEnvelopeEditor : public geBaseActionEditor
+class geBaseAction : public Fl_Box
 {
 private:
-
-	/* m_actionType
-	What type of action this envelope editor is dealing with. */
 	
-	int m_actionType;
-
-	void onAddAction()     override;
-	void onDeleteAction()  override;
-	void onMoveAction()    override;
-	void onResizeAction()  override{}; // Nothing to do here
-	void onRefreshAction() override;
-
-	Pixel frameToX(Frame frame) const;
-	Pixel valueToY(float value) const;
-	float yToValue(Pixel pixel) const;
-
-	bool isFirstPoint() const;
-	bool isLastPoint()  const;
+	bool m_resizable;
 
 public:
 
-	geEnvelopeEditor(Pixel x, Pixel y, int actionType, const char* l, SampleChannel* ch);
-	~geEnvelopeEditor();
+	static const Pixel MIN_WIDTH    = 12;
+	static const Pixel HANDLE_WIDTH = 6;
 
-	void draw() override;
+	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable, 
+		m::recorder::action a1, m::recorder::action a2);
 
-	void rebuild() override;
+	int handle(int e) override;
+
+	bool isOnEdges() const;
+
+	/* setLeftEdge/setRightEdge
+	Set new left/right edges position, relative range. */
+
+	void setLeftEdge(Pixel p);
+	void setRightEdge(Pixel p);
+
+	void setPosition(Pixel p);
+
+	bool onRightEdge;
+	bool onLeftEdge;
+	bool hovered;
+	bool altered;
+	Pixel pick;
+
+	m::recorder::action a1;
+	m::recorder::action a2;
 };
 }} // giada::v::
 

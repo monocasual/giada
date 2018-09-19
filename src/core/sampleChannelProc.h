@@ -84,7 +84,7 @@ actions from Recorder. */
 
 void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity);
 
-void setMute(SampleChannel* ch, bool value, EventType eventType);
+void setMute(SampleChannel* ch, bool value);
 }}};
 
 

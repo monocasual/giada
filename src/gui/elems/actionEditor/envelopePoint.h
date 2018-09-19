@@ -25,39 +25,28 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_PIANO_ITEM_ORPHANED_H
-#define GE_PIANO_ITEM_ORPHANED_H
+#ifndef GE_ENVELOPE_POINT_H
+#define GE_ENVELOPE_POINT_H
 
 
 #include "../../../core/recorder.h"
-#include "basePianoItem.h"
+#include "baseAction.h"
 
 
-class gdActionEditor;
-
-
-class gePianoItemOrphaned : public geBasePianoItem
+namespace giada {
+namespace v
 {
-private:
-
-	int note;
-	int frame;
-	int event;
-
+class geEnvelopePoint : public geBaseAction
+{
 public:
 
-  static const int WIDTH = 12;
+	static const Pixel SIDE = 12;
 
-  gePianoItemOrphaned(int x, int y, int xRel, int yRel,
-    struct giada::m::recorder::action action, gdActionEditor* pParent);
+	geEnvelopePoint(Pixel x, Pixel y, m::recorder::action a);
 
-  void draw() override;
-  int handle(int e) override;
-
-  void reposition(int pianoRollX) override;
-
-  void remove();
+	void draw() override;
 };
+}} // giada::v::
 
 
 #endif
