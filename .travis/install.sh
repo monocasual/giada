@@ -45,12 +45,20 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   sudo apt-get install -y gcc-6 g++-6 libsndfile1-dev libsamplerate0-dev \
-  	libfltk1.3-dev libasound2-dev libxpm-dev libpulse-dev libjack-dev \
-  	libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev
+  	libasound2-dev libxpm-dev libpulse-dev libjack-dev \
+  	libxft-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev \
+    libfontconfig1-dev 
 
   # Symlink gcc in order to use the latest version
 
   sudo ln -f -s /usr/bin/g++-6 /usr/bin/g++
+
+  # Download and build latest version of FLTK.
+
+  wget http://fltk.org/pub/fltk/1.3.4/fltk-1.3.4-2-source.tar.gz
+  tar -xvf fltk-1.3.4-2-source.tar.gz
+  cd fltk-1.3.4-2 && ./configure && make -j2 && sudo make install || true
+  cd ..
 
   # Download linuxdeployqt for building AppImages.
 
@@ -61,14 +69,14 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   wget https://github.com/thestk/rtmidi/archive/master.zip
   unzip master.zip
-  cd rtmidi-master && ./autogen.sh && ./configure --with-jack --with-alsa && make && sudo make install || true
+  cd rtmidi-master && ./autogen.sh && ./configure --with-jack --with-alsa && make -j2 && sudo make install || true
   cd ..
 
   # Download and install latest version of Jansson
 
   wget http://www.digip.org/jansson/releases/jansson-2.7.tar.gz
   tar -xvf jansson-2.7.tar.gz
-  cd jansson-2.7 && ./configure && make && sudo make install || true
+  cd jansson-2.7 && ./configure && make -j2 && sudo make install || true
   sudo ldconfig
   cd ..
 

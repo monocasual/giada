@@ -364,7 +364,7 @@ cppFlags += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
   -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
-  -lfreetype
+  -lfreetype -lfontconfig -lXrender -lXfixes -lXcursor -lXinerama
 
 endif
 
