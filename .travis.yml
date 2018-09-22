@@ -34,7 +34,7 @@ after_success:
 after_failure: cat $TRAVIS_BUILD_DIR/test-suite.log
 
 # If build+test are successful, deploy the build/ dir (created in 
-# after_success.sh) to S3. 
+# after_success.sh) to S3. Only tagged releases on master are built.
 
 deploy:
   provider: s3
@@ -45,6 +45,6 @@ deploy:
   skip_cleanup: true
   acl: public_read
   on:
-    tags: false # only tags (on master branch?) are built
-    branch: "travis-linux-build" # would build only for branch 'osx-build'
+    tags: true 
+    branch: "master"
   local_dir: build
