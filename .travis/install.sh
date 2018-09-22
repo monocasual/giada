@@ -64,13 +64,7 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   cd rtmidi-master && ./autogen.sh && ./configure --with-jack --with-alsa && make && sudo make install || true
   cd ..
 
-  #wget http://www.music.mcgill.ca/~gary/rtmidi/release/rtmidi-2.1.1.tar.gz
-  #tar -xvf rtmidi-2.1.1.tar.gz
-  #cd rtmidi-2.1.1 && ./configure --with-jack --with-alsa && make && sudo make install || true
-  #cd ..
-
   # Download and install latest version of Jansson
-  # TODO - no longer needed! Use apt instead
 
   wget http://www.digip.org/jansson/releases/jansson-2.7.tar.gz
   tar -xvf jansson-2.7.tar.gz
