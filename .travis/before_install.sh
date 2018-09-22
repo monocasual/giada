@@ -2,7 +2,7 @@
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-	echo ""
+	: # null command - nothing to do 
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
