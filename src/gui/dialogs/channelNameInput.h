@@ -32,7 +32,6 @@
 #include "window.h"
 
 
-class Channel;
 class geInput;
 class geButton;
 
@@ -46,7 +45,7 @@ private:
 	void cb_update();
 	void cb_cancel();
 
-	Channel* m_ch;
+	giada::m::Channel* m_ch;
 
 	geInput* m_name;
 	geButton* m_ok;
@@ -54,7 +53,7 @@ private:
 
 public:
 
-	gdChannelNameInput(Channel* ch);
+	gdChannelNameInput(giada::m::Channel* ch);
 	~gdChannelNameInput();
 };
 

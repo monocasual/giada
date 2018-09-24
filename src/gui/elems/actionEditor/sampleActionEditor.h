@@ -32,14 +32,15 @@
 #include "baseActionEditor.h"
 
 
-class SampleChannel;
-
-
 namespace giada {
+namespace m
+{
+class SampleChannel;
+class Action;
+}
 namespace v
 {
 class geSampleAction;
-
 
 class geSampleActionEditor : public geBaseActionEditor
 {
@@ -51,9 +52,11 @@ private:
 	void onResizeAction()  override;
 	void onRefreshAction() override;
 
+    bool isNoteOffSinglePress(const m::Action* a);
+
 public:
 
-	geSampleActionEditor(Pixel x, Pixel y, SampleChannel* ch);
+	geSampleActionEditor(Pixel x, Pixel y, m::SampleChannel* ch);
 	~geSampleActionEditor();
 
 	void draw() override;

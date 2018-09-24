@@ -44,7 +44,7 @@ using namespace giada::m;
 using namespace giada::c;
 
 
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel *ch)
+gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel* ch)
   : gdWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(stackType)
 {
   /* top area */
@@ -99,15 +99,15 @@ gdPluginChooser::~gdPluginChooser()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::cb_close(Fl_Widget *v, void *p) { ((gdPluginChooser*)p)->__cb_close(); }
-void gdPluginChooser::cb_add(Fl_Widget *v, void *p)   { ((gdPluginChooser*)p)->__cb_add(); }
-void gdPluginChooser::cb_sort(Fl_Widget *v, void *p)  { ((gdPluginChooser*)p)->__cb_sort(); }
+void gdPluginChooser::cb_close(Fl_Widget* v, void* p) { ((gdPluginChooser*)p)->cb_close(); }
+void gdPluginChooser::cb_add(Fl_Widget* v, void* p)   { ((gdPluginChooser*)p)->cb_add(); }
+void gdPluginChooser::cb_sort(Fl_Widget* v, void* p)  { ((gdPluginChooser*)p)->cb_sort(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_close()
+void gdPluginChooser::cb_close()
 {
 	do_callback();
 }
@@ -116,7 +116,7 @@ void gdPluginChooser::__cb_close()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_sort()
+void gdPluginChooser::cb_sort()
 {
 	pluginHost::sortPlugins(sortMethod->value());
   browser->refresh();
@@ -126,7 +126,7 @@ void gdPluginChooser::__cb_sort()
 /* -------------------------------------------------------------------------- */
 
 
-void gdPluginChooser::__cb_add()
+void gdPluginChooser::cb_add()
 {
   int index = browser->value() - 3; // subtract header lines
   if (index < 0)

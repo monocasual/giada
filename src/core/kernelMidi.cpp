@@ -77,7 +77,7 @@ void sendMidiLightningInitMsgs()
 		midimap::message_t msg = midimap::initCommands.at(i);
 		if (msg.value != 0x0 && msg.channel != -1) {
 			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
-			send(msg.value | MIDI_CHANS[msg.channel]);
+			send(msg.value | G_MIDI_CHANS[msg.channel]);
 		}
 	}
 }

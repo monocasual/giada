@@ -34,7 +34,6 @@
 #include "midiInputBase.h"
 
 
-class Channel;
 class geScroll;
 class geCheck;
 class geChoice;
@@ -44,7 +43,7 @@ class gdMidiInputChannel : public gdMidiInputBase
 {
 private:
 
-	Channel* ch;
+	giada::m::Channel* ch;
 
 	geScroll* container;
 	geCheck*  enable;
@@ -68,7 +67,7 @@ private:
 
 public:
 
-	gdMidiInputChannel(Channel* ch);
+	gdMidiInputChannel(giada::m::Channel* ch);
 	~gdMidiInputChannel();
 };
 

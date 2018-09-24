@@ -33,10 +33,13 @@
 #include "baseActionEditor.h"
 
 
-class MidiChannel;
 
 
 namespace giada {
+namespace m
+{
+class MidiChannel;
+}	
 namespace v
 {
 class gePianoRoll : public geBaseActionEditor
@@ -72,6 +75,7 @@ private:
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
 	Pixel noteToY(int n) const;
+	Pixel getPianoItemW(Pixel x, const m::Action* a1, const m::Action* a2) const;
 
 public:
 
@@ -81,7 +85,7 @@ public:
 	static const Pixel CELL_H    = 20;
 	static const Pixel CELL_W    = 40;
 
-	gePianoRoll(Pixel x, Pixel y, Pixel w, MidiChannel* ch);
+	gePianoRoll(Pixel x, Pixel y, Pixel w, m::MidiChannel* ch);
 
 	void draw() override;
 	int  handle(int e) override;

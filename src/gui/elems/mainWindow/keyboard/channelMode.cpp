@@ -39,7 +39,7 @@
 using namespace giada;
 
 
-geChannelMode::geChannelMode(int x, int y, int w, int h, SampleChannel *ch,
+geChannelMode::geChannelMode(int x, int y, int w, int h, m::SampleChannel *ch,
   const char *L)
   : Fl_Menu_Button(x, y, w, h, L), ch(ch)
 {

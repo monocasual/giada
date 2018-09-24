@@ -32,10 +32,13 @@
 #include "baseActionEditor.h"
 
 
-class MidiChannel;
 
 
 namespace giada {
+namespace m
+{
+class MidiChannel;
+}
 namespace v
 {
 class geEnvelopePoint;
@@ -56,7 +59,7 @@ private:
 
 public:
 
-	geVelocityEditor(Pixel x, Pixel y, MidiChannel* ch);
+	geVelocityEditor(Pixel x, Pixel y, m::MidiChannel* ch);
 	~geVelocityEditor();
 
 	void draw() override;

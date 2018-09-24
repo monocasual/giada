@@ -28,6 +28,7 @@
 #include <string>
 #include "../../../core/graphics.h"
 #include "../../../core/midiChannel.h"
+#include "../../../glue/actionEditor.h"
 #include "../../elems/basics/scroll.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/resizerBar.h"
@@ -45,7 +46,7 @@ using std::string;
 namespace giada {
 namespace v
 {
-gdMidiActionEditor::gdMidiActionEditor(MidiChannel* ch)
+gdMidiActionEditor::gdMidiActionEditor(m::MidiChannel* ch)
 : gdBaseActionEditor(ch)
 {
 	computeWidth();
@@ -80,6 +81,7 @@ gdMidiActionEditor::gdMidiActionEditor(MidiChannel* ch)
 
 	end();
 	prepareWindow();
+	rebuild();
 }
 
 
@@ -88,6 +90,7 @@ gdMidiActionEditor::gdMidiActionEditor(MidiChannel* ch)
 
 void gdMidiActionEditor::rebuild()
 {
+	m_actions = c::actionEditor::getActions(ch);
 	computeWidth();
 	ne->rebuild();
 	ve->rebuild();

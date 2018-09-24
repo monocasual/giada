@@ -33,22 +33,26 @@
 #include "baseAction.h"
 
 
-class SampleChannel;
 
 
 namespace giada {
+namespace m
+{
+class SampleChannel;
+class Action;
+}
 namespace v
 {
 class geSampleAction : public geBaseAction
 {
 private:
 
-	const SampleChannel* m_ch;
+	const m::SampleChannel* m_ch;
 
 public:
 
-	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const SampleChannel* ch,
-		m::recorder::action a1, m::recorder::action a2);
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::SampleChannel* ch,
+		const m::Action* a1, const m::Action* a2);
 
 	void draw() override;
 };

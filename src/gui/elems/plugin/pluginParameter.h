@@ -35,7 +35,6 @@
 #include <FL/Fl_Group.H>
 
 
-class Plugin;
 class geBox;
 class geSlider;
 
@@ -47,7 +46,7 @@ private:
 	static const int VALUE_WIDTH = 100;
 
 	int m_paramIndex;
-	Plugin* m_plugin;
+	giada::m::Plugin* m_plugin;
 
 	geBox*    m_label;
 	geSlider* m_slider;
@@ -58,7 +57,7 @@ private:
 
 public:
 
-	gePluginParameter(int paramIndex, Plugin* p, int x, int y, int w, int labelWidth);
+	gePluginParameter(int paramIndex, giada::m::Plugin* p, int x, int y, int w, int labelWidth);
 
 	void update(bool changeSlider);
 };

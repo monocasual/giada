@@ -31,10 +31,10 @@
 #define GD_PLUGIN_WINDOW_H
 
 
+#include "../../core/plugin.h"
 #include "window.h"
 
 
-class Plugin;
 class geBox;
 class geSlider;
 class geLiquidScroll;
@@ -44,7 +44,7 @@ class gdPluginWindow : public gdWindow
 {
 private:
 
-	Plugin* m_plugin;
+	giada::m::Plugin* m_plugin;
 
 	geLiquidScroll* m_list;
 
@@ -52,7 +52,7 @@ private:
 
 public:
 
-	gdPluginWindow(Plugin* p);
+	gdPluginWindow(giada::m::Plugin* p);
 
 	void updateParameter(int index, bool changeSlider=false);
 	void updateParameters(bool changeSlider=false);

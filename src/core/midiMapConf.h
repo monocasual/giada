@@ -39,8 +39,8 @@ namespace midimap
 {
 struct message_t
 {
-  int         channel;
-  std::string valueStr;
+    int         channel;
+    std::string valueStr;
 	int         offset;
 	uint32_t    value;
 };

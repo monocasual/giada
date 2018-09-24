@@ -38,10 +38,11 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::c;
 
 
-gePluginParameter::gePluginParameter(int paramIndex, Plugin* p, int X, int Y, 
+gePluginParameter::gePluginParameter(int paramIndex, m::Plugin* p, int X, int Y, 
 	int W, int labelWidth)
 	: Fl_Group    (X, Y, W, G_GUI_UNIT), 
 	  m_paramIndex(paramIndex), 

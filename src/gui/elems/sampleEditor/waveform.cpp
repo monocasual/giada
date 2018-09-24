@@ -48,7 +48,7 @@ using namespace giada::m;
 using namespace giada::c;
 
 
-geWaveform::geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l)
+geWaveform::geWaveform(int x, int y, int w, int h, giada::m::SampleChannel* ch, const char* l)
 : Fl_Widget     (x, y, w, h, l),
 	m_selection   {},
 	m_ch          (ch),

@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class SampleChannel;
 class geDial;
 class geInput;
 class geButton;
@@ -43,35 +42,35 @@ class gePitchTool : public Fl_Group
 {
 private:
 
-  SampleChannel *ch;
+  giada::m::SampleChannel* ch;
 
-  geBox    *label;
-  geDial   *dial;
-  geInput  *input;
-  geButton *pitchToBar;
-  geButton *pitchToSong;
-  geButton *pitchHalf;
-  geButton *pitchDouble;
-  geButton *pitchReset;
+  geBox*    label;
+  geDial*   dial;
+  geInput*  input;
+  geButton* pitchToBar;
+  geButton* pitchToSong;
+  geButton* pitchHalf;
+  geButton* pitchDouble;
+  geButton* pitchReset;
 
-  static void cb_setPitch      (Fl_Widget *w, void *p);
-  static void cb_setPitchToBar (Fl_Widget *w, void *p);
-  static void cb_setPitchToSong(Fl_Widget *w, void *p);
-  static void cb_setPitchHalf  (Fl_Widget *w, void *p);
-  static void cb_setPitchDouble(Fl_Widget *w, void *p);
-  static void cb_resetPitch    (Fl_Widget *w, void *p);
-  static void cb_setPitchNum   (Fl_Widget *w, void *p);
-  inline void __cb_setPitch();
-  inline void __cb_setPitchToBar();
-  inline void __cb_setPitchToSong();
-  inline void __cb_setPitchHalf();
-  inline void __cb_setPitchDouble();
-  inline void __cb_resetPitch();
-  inline void __cb_setPitchNum();
+  static void cb_setPitch      (Fl_Widget* w, void* p);
+  static void cb_setPitchToBar (Fl_Widget* w, void* p);
+  static void cb_setPitchToSong(Fl_Widget* w, void* p);
+  static void cb_setPitchHalf  (Fl_Widget* w, void* p);
+  static void cb_setPitchDouble(Fl_Widget* w, void* p);
+  static void cb_resetPitch    (Fl_Widget* w, void* p);
+  static void cb_setPitchNum   (Fl_Widget* w, void* p);
+  void cb_setPitch();
+  void cb_setPitchToBar();
+  void cb_setPitchToSong();
+  void cb_setPitchHalf();
+  void cb_setPitchDouble();
+  void cb_resetPitch();
+  void cb_setPitchNum();
 
 public:
 
-  gePitchTool(int x, int y, SampleChannel *ch);
+  gePitchTool(int x, int y, giada::m::SampleChannel* ch);
 
   void refresh();
 };

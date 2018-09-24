@@ -29,10 +29,10 @@
 #define GE_SAMPLE_CHANNEL_H
 
 
+#include "../../../../core/sampleChannel.h"
 #include "channel.h"
 
 
-class SampleChannel;
 class geChannelMode;
 class geButton;
 
@@ -50,7 +50,7 @@ private:
 
 public:
 
-	geSampleChannel(int x, int y, int w, int h, SampleChannel* ch);
+	geSampleChannel(int x, int y, int w, int h, giada::m::SampleChannel* ch);
 
 	void resize(int x, int y, int w, int h) override;
 

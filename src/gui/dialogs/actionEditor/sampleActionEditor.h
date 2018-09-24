@@ -32,14 +32,12 @@
 #include "baseActionEditor.h"
 
 
-class SampleChannel;
-class geSampleActionEditor;
-class geEnvelopeEditor;
-
-
 namespace giada {
 namespace v
 {
+class geSampleActionEditor;
+class geEnvelopeEditor;
+
 class gdSampleActionEditor : public gdBaseActionEditor
 {
 private:
@@ -51,7 +49,7 @@ private:
 	
 public:
 
-	gdSampleActionEditor(SampleChannel* ch);
+	gdSampleActionEditor(m::SampleChannel* ch);
 
 	void rebuild() override;
 };

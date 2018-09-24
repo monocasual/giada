@@ -15,6 +15,7 @@ sourcesCore =                            \
 	src/core/const.h                       \
 	src/core/types.h                       \
 	src/core/range.h                       \
+	src/core/action.h                      \
 	src/core/channel.h                     \
 	src/core/channel.cpp                   \
 	src/core/sampleChannel.h               \
@@ -33,7 +34,7 @@ sourcesCore =                            \
 	src/core/conf.cpp                      \
 	src/core/kernelAudio.h                 \
 	src/core/kernelAudio.cpp               \
-	src/core/pluginHost.h		               \
+	src/core/pluginHost.h		           \
 	src/core/pluginHost.cpp                \
 	src/core/mixerHandler.h                \
 	src/core/mixerHandler.cpp              \
@@ -51,8 +52,12 @@ sourcesCore =                            \
 	src/core/graphics.cpp                  \
 	src/core/patch.h                       \
 	src/core/patch.cpp                     \
-	src/core/recorder.h                    \
-	src/core/recorder.cpp                  \
+	src/core/recorderHandler.h             \
+	src/core/recorderHandler.cpp           \
+	src/core/recorder/recorder.h           \
+	src/core/recorder/recorder.cpp         \
+	src/core/recorder/recorderStack.h      \
+	src/core/recorder/recorderStack.cpp    \
 	src/core/mixer.h                       \
 	src/core/mixer.cpp                     \
 	src/core/storager.h	                   \
@@ -85,7 +90,9 @@ sourcesCore =                            \
 	src/glue/recorder.cpp                  \
 	src/glue/sampleEditor.h                \
 	src/glue/sampleEditor.cpp              \
-	src/gui/dialogs/window.h			         \
+	src/glue/actionEditor.h                \
+	src/glue/actionEditor.cpp              \
+	src/gui/dialogs/window.h               \
 	src/gui/dialogs/window.cpp             \
 	src/gui/dialogs/gd_keyGrabber.h        \
 	src/gui/dialogs/gd_keyGrabber.cpp      \

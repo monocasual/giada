@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class SampleChannel;
 class geInput;
 class geButton;
 class geBox;
@@ -42,7 +41,7 @@ class geShiftTool : public Fl_Group
 {
 private:
 
-	SampleChannel* m_ch;
+	giada::m::SampleChannel* m_ch;
 
 	geBox*    m_label;
 	geInput*  m_shift;
@@ -57,7 +56,7 @@ private:
 
 public:
 
-	geShiftTool(int x, int y, SampleChannel* ch);
+	geShiftTool(int x, int y, giada::m::SampleChannel* ch);
 
 	void refresh();
 };

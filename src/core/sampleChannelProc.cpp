@@ -189,7 +189,8 @@ void processData_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& 
 	bool running)
 {
 	assert(out.countSamples() == ch->buffer.countSamples());
-	assert(in.countSamples()  == ch->buffer.countSamples());
+	if (in.isAllocd())
+		assert(in.countSamples() == ch->buffer.countSamples());
 
 	/* If armed and input buffer is not empty (i.e. input device available) and
 	input monitor is on, copy input buffer to channel buffer: this enables the 
@@ -374,7 +375,7 @@ void setSolo(SampleChannel* ch, bool value)
 	m::mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (Channel* channel : giada::m::mixer::channels)		
+	for (Channel* channel : mixer::channels)		
 		channel->sendMidiLstatus();
 
 	ch->sendMidiLsolo();
@@ -449,15 +450,26 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 
 void prepareBuffer(SampleChannel* ch, bool running)
 {
-	if (!ch->hasData())
-		return;
+	namespace um = u::math;
+
 	ch->buffer.clear();
-	if (ch->isPlaying()) {
-		int framesUsed = ch->fillBuffer(ch->buffer, ch->tracker, 0);
-		ch->tracker += framesUsed;
-		if (ch->isOnLastFrame())
-			onLastFrame_(ch, framesUsed * (1 / ch->pitch), running);
+
+	if (!ch->hasData() || !ch->isPlaying())
+		return;
+
+	Frame framesUsed = ch->fillBuffer(ch->buffer, ch->tracker, 0);
+	ch->tracker += framesUsed;
+
+	/* The "framesUsed * (1 / ch->pitch)" operation might yield results greater
+	than the current buffer size. So clamping is mandatory. */
+
+	if (ch->isOnLastFrame()) {
+		Frame min  = 0; 
+		Frame max  = ch->buffer.countFrames() - 1;
+		framesUsed = static_cast<Frame>(framesUsed * (1 / ch->pitch));
+		onLastFrame_(ch, um::bound(framesUsed, min, max, max), running);
 	}
+
 }
 
 

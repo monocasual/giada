@@ -41,12 +41,18 @@ int quantize(int x, int step);
 Maps 'x' in range [a, b] to a new range [w, z]. Source:
 	https://en.wikipedia.org/wiki/Linear_equation#Two-point_form*/
 
-template <typename Tin, typename Tout>
-Tout map(Tin x, Tin a, Tin b, Tout w, Tout z)
+template <typename TI, typename TO>
+TO map(TI x, TI a, TI b, TO w, TO z)
 {
 	return (((x - a) / (float) (b - a)) * (z - w)) + w;
 }
 
+
+template <typename T>
+T bound(T x, T min, T max, T def)
+{
+    return x < min || x > max ? def : x;
+}
 }}}  // giada::u::math::
 
 

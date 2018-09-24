@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class Channel;
 class geButton;
 class geChannel;
 class geResizerBar;
@@ -61,11 +60,11 @@ public:
 	Adds a new channel in this column and set the internal pointer to channel 
 	to 'ch'. */
 
-	geChannel* addChannel(Channel* ch, int size);
+	geChannel* addChannel(giada::m::Channel* ch, int size);
 
 	int handle(int e) override;
 	void draw() override;
-  void resize(int x, int y, int w, int h) override;
+	void resize(int x, int y, int w, int h) override;
 
 	/* clear
 	Removes all channels from the column. If full==true, delete also the "add new 
@@ -85,7 +84,7 @@ public:
 
 	void refreshChannels();
 
-	Channel* getChannel(int i);
+	giada::m::Channel* getChannel(int i);
 	int getIndex();
 	void setIndex(int i);
 	bool isEmpty();   

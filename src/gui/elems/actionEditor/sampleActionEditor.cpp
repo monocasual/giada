@@ -27,11 +27,13 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include "../../../core/recorder/recorder.h"
 #include "../../../core/const.h"
 #include "../../../core/conf.h"
+#include "../../../core/action.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../utils/log.h"
-#include "../../../glue/recorder.h"
+#include "../../../glue/actionEditor.h"
 #include "../../dialogs/actionEditor/baseActionEditor.h"
 #include "sampleAction.h"
 #include "sampleActionEditor.h"
@@ -43,10 +45,9 @@ using std::vector;
 namespace giada {
 namespace v
 {
-geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, SampleChannel* ch)
+geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y, m::SampleChannel* ch)
 : geBaseActionEditor(x, y, 200, m::conf::sampleActionEditorH, ch)
 {
-	rebuild();
 }
 
 
@@ -65,9 +66,9 @@ geSampleActionEditor::~geSampleActionEditor()
 void geSampleActionEditor::rebuild()
 {
 	namespace mr = m::recorder;
-	namespace cr = c::recorder;
+	namespace ca = c::actionEditor;
 
-	const SampleChannel* ch = static_cast<const SampleChannel*>(m_ch);
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(m_ch);
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -75,21 +76,23 @@ void geSampleActionEditor::rebuild()
 	clear();
 	size(m_base->fullWidth, h());
 
-	vector<mr::Composite> comps = cr::getSampleActions(ch);
+	for (const m::Action* a1 : m_base->getActions()) {
 
-	for (mr::Composite comp : comps) {
-		gu_log("[geSampleActionEditor::rebuild] Action [%d, %d)\n", 
-			comp.a1.frame, comp.a2.frame);
-		Pixel px = x() + m_base->frameToPixel(comp.a1.frame);
+		if (a1->event.getStatus() == m::MidiEvent::ENVELOPE || isNoteOffSinglePress(a1))
+			continue;
+
+		const m::Action* a2 = a1->next;
+
+		Pixel px = x() + m_base->frameToPixel(a1->frame);
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
-		if (comp.a2.frame != -1)
-				pw = m_base->frameToPixel(comp.a2.frame - comp.a1.frame);
+		if (a2 != nullptr && ch->mode == ChannelMode::SINGLE_PRESS)
+			pw = m_base->frameToPixel(a2->frame - a1->frame);
 
-		geSampleAction* a = new geSampleAction(px, py, pw, ph, ch, comp.a1, comp.a2);
-		add(a);
-		resizable(a);
+		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, ch, a1, a2);
+		add(gsa);
+		resizable(gsa);
 	}
 
 	/* If channel is LOOP_ANY, deactivate it: a loop mode channel cannot hold 
@@ -130,9 +133,10 @@ void geSampleActionEditor::draw()
 void geSampleActionEditor::onAddAction()     
 {
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
-	c::recorder::recordSampleAction(static_cast<SampleChannel*>(m_ch), 
+	c::actionEditor::recordSampleAction(static_cast<m::SampleChannel*>(m_ch), 
 		m_base->getActionType(), f);
-	rebuild();
+	
+	m_base->rebuild();
 }
 
 
@@ -141,8 +145,9 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()  
 {
-	c::recorder::deleteSampleAction(static_cast<SampleChannel*>(m_ch), m_action->a1, m_action->a2);
-	rebuild();
+	c::actionEditor::deleteSampleAction(static_cast<m::SampleChannel*>(m_ch), m_action->a1);
+	
+	m_base->rebuild();
 }
 
 
@@ -186,15 +191,15 @@ void geSampleActionEditor::onResizeAction()
 
 void geSampleActionEditor::onRefreshAction() 
 {
-	namespace cr = c::recorder;
+	namespace ca = c::actionEditor;
 
-	SampleChannel* ch = static_cast<SampleChannel*>(m_ch);
+	m::SampleChannel* ch = static_cast<m::SampleChannel*>(m_ch);
 
 	Pixel p1   = m_action->x() - x();
 	Pixel p2   = m_action->x() + m_action->w() - x();
 	Frame f1   = 0;
 	Frame f2   = 0;
-	int   type = m_action->a1.type;
+	int   type = m_action->a1->event.getStatus();
 
 	if (!m_action->isOnEdges()) {
 		f1 = m_base->pixelToFrame(p1);
@@ -202,21 +207,26 @@ void geSampleActionEditor::onRefreshAction()
 	}	
 	else if (m_action->onLeftEdge) {
 		f1 = m_base->pixelToFrame(p1);
-		f2 = m_action->a2.frame;
+		f2 = m_action->a2->frame;
 	}
 	else if (m_action->onRightEdge) {
-		f1 = m_action->a1.frame;
+		f1 = m_action->a1->frame;
 		f2 = m_base->pixelToFrame(p2);
 	}
 
-	/* TODO - less then optimal. Let's wait for recorder refactoring... */
-
-	cr::deleteSampleAction(ch, m_action->a1, m_action->a2);
-	if (cr::sampleActionCanFit(ch, f1, f2))
-		cr::recordSampleAction(ch, type, f1, f2);
-	else
-		cr::recordSampleAction(ch, type, m_action->a1.frame, m_action->a2.frame);
-				
-	rebuild();
+	ca::updateSampleAction(ch, m_action->a1, type, f1, f2);
+			
+	m_base->rebuild();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool geSampleActionEditor::isNoteOffSinglePress(const m::Action* a)
+{
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(m_ch);
+	return ch->mode == ChannelMode::SINGLE_PRESS && a->event.getStatus() == m::MidiEvent::NOTE_OFF;
+}
+
 }} // giada::v::

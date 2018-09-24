@@ -32,6 +32,9 @@
 #include "mainTransport.h"
 
 
+using namespace giada;
+
+
 geMainTransport::geMainTransport(int x, int y)
 	: Fl_Group(x, y, 131, 25)
 {
@@ -66,35 +69,35 @@ geMainTransport::geMainTransport(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::cb_rewind   (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_rewind(); }
-void geMainTransport::cb_play     (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_play(); }
-void geMainTransport::cb_recAction(Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_recAction(); }
-void geMainTransport::cb_recInput (Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_recInput(); }
-void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p)->__cb_metronome(); }
+void geMainTransport::cb_rewind   (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_rewind(); }
+void geMainTransport::cb_play     (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_play(); }
+void geMainTransport::cb_recAction(Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_recAction(); }
+void geMainTransport::cb_recInput (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_recInput(); }
+void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_metronome(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::__cb_rewind()
+void geMainTransport::cb_rewind()
 {
-	glue_rewindSeq(true);
+	c::transport::rewindSeq(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::__cb_play()
+void geMainTransport::cb_play()
 {
-	glue_startStopSeq(true);
+	c::transport::startStopSeq(true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::__cb_recAction()
+void geMainTransport::cb_recAction()
 {
 	using namespace giada::c::io;
 	startStopActionRec(true);
@@ -104,7 +107,7 @@ void geMainTransport::__cb_recAction()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::__cb_recInput()
+void geMainTransport::cb_recInput()
 {
 	using namespace giada::c::io;
 	startStopInputRec(true);
@@ -114,9 +117,9 @@ void geMainTransport::__cb_recInput()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainTransport::__cb_metronome()
+void geMainTransport::cb_metronome()
 {
-	glue_startStopMetronome(true);
+	c::transport::startStopMetronome(true);
 }
 
 

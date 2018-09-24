@@ -29,11 +29,14 @@
 #define GE_PIANO_ITEM_H
 
 
-#include "../../../core/recorder.h"
 #include "baseAction.h"
 
 
 namespace giada {
+namespace m 
+{
+class Action;
+}
 namespace v
 {
 class gdActionEditor;
@@ -43,16 +46,18 @@ class gePianoItem : public geBaseAction
 {
 private:
 
+	bool m_ringLoop;
+	bool m_orphaned;
+
 	Pixel calcVelocityH() const;
 
 public:
 
-	gePianoItem(int x, int y, int w, int h, m::recorder::action a1, 
-		m::recorder::action a2);
+	gePianoItem(int x, int y, int w, int h, const m::Action* a1, const m::Action* a2);
  
 	void draw() override;
 
-	bool orphaned;
+	bool isResizable() const;
 };
 }} // giada::v::
 

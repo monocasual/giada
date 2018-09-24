@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-
+#if 0
 #include <cassert>
 #include <cmath>
 #include "../utils/log.h"
@@ -38,7 +38,7 @@ using std::vector;
 
 namespace giada {
 namespace m {
-namespace recorder
+namespace recorder_DEPR_
 {
 namespace
 {
@@ -653,7 +653,7 @@ void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
 vector<action*> getActionsOnFrame(int frame)
 {
 	for (size_t i=0; i<frames.size(); i++) {
-		if (recorder::frames.at(i) != frame)
+		if (recorder_DEPR_::frames.at(i) != frame)
 			continue;
 		return global.at(i);
 	}
@@ -667,8 +667,10 @@ vector<action*> getActionsOnFrame(int frame)
 void forEachAction(std::function<void(const action*)> f)
 {
 
-	for (const vector<action*> actions : recorder::global)
+	for (const vector<action*> actions : recorder_DEPR_::global)
 		for (const action* action : actions)
 			f(action);
 }
 }}}; // giada::m::recorder::
+
+#endif

@@ -36,7 +36,10 @@
 #include "midiOutputMidiCh.h"
 
 
-gdMidiOutputMidiCh::gdMidiOutputMidiCh(MidiChannel* ch)
+using namespace giada;
+
+
+gdMidiOutputMidiCh::gdMidiOutputMidiCh(m::MidiChannel* ch)
 	: gdMidiOutputBase(300, 168), ch(ch)
 {
 	setTitle(ch->index+1);

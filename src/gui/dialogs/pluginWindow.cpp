@@ -37,7 +37,10 @@
 #include "pluginWindow.h"
 
 
-gdPluginWindow::gdPluginWindow(Plugin* p)
+using namespace giada;
+
+
+gdPluginWindow::gdPluginWindow(m::Plugin* p)
  : gdWindow(450, 156), m_plugin(p)
 {
 	set_non_modal();

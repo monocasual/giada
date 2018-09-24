@@ -34,11 +34,11 @@
 #include "types.h"
 
 
+namespace giada {
+namespace m 
+{
 class SampleChannel;
 
-
-namespace giada {
-namespace m {
 namespace sampleChannelProc
 {
 /**/
@@ -50,8 +50,8 @@ Parses events gathered by Mixer::masterPlay(). */
 void parseEvents(SampleChannel* ch, mixer::FrameEvents ev);
 
 /**/
-void process(SampleChannel* ch, giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in, bool audible, bool running);
+void process(SampleChannel* ch, AudioBuffer& out, const AudioBuffer& in, 
+    bool audible, bool running);
 
 /* kill
 Stops a channel abruptly. */

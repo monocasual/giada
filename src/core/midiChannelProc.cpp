@@ -2,6 +2,7 @@
 #include "pluginHost.h"
 #include "kernelMidi.h"
 #include "const.h"
+#include "action.h"
 #include "midiChannelProc.h"
 #include "mixerHandler.h"
 
@@ -23,22 +24,6 @@ void onFirstBeat_(MidiChannel* ch)
 		ch->sendMidiLstatus();
 	}
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void parseAction_(MidiChannel* ch, const recorder::action* a, int localFrame)
-{
-	if (ch->isPlaying() && !ch->mute) {
-		if (ch->midiOut)
-			kernelMidi::send(a->iValue | MIDI_CHANS[ch->midiOutChan]);
-#ifdef WITH_VST
-		ch->addVstMidiEvent(a->iValue, localFrame);
-#endif
-	}
-}
-
 }; // {anonymous}
 
 
@@ -51,21 +36,20 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 {
 	if (fe.onFirstBeat)
 		onFirstBeat_(ch);
-	for (const recorder::action* action : fe.actions)
-		if (action->chan == ch->index && action->type == G_ACTION_MIDI)
-			parseAction_(ch, action, fe.frameLocal);
+	for (const Action* action : fe.actions)
+		if (action->channel == ch->index)
+			ch->sendMidi(action, fe.frameLocal);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void process(MidiChannel* ch, giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in, bool audible)
+void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audible)
 {
-	#ifdef WITH_VST
-		pluginHost::processStack(ch->buffer, pluginHost::CHANNEL, ch);
-	#endif
+#ifdef WITH_VST
+	pluginHost::processStack(ch->buffer, pluginHost::CHANNEL, ch);
+#endif
 
 	/* Process the plugin stack first, then quit if the channel is muted/soloed. 
 	This way there's no risk of cutting midi event pairs such as note-on and 
@@ -166,7 +150,7 @@ void setSolo(MidiChannel* ch, bool v)
 	m::mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (Channel* channel : giada::m::mixer::channels)		
+	for (Channel* channel : mixer::channels)		
 		channel->sendMidiLstatus();
 
 	ch->sendMidiLsolo();

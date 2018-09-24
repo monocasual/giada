@@ -39,8 +39,10 @@ class MidiEvent
 {
 public:
 
-	static const int NOTE_ON  = 0x90;
-	static const int NOTE_OFF = 0x80;
+	static const int NOTE_ON   = 0x90;
+	static const int NOTE_OFF  = 0x80;
+	static const int NOTE_KILL = 0x70;
+	static const int ENVELOPE  = 0xB0;
 
 	MidiEvent();
 	MidiEvent(uint32_t raw);

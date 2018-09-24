@@ -56,6 +56,7 @@
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/recorder/recorder.h"
 #include "../core/plugin.h"
 #include "../core/waveManager.h"
 #include "main.h"
@@ -72,7 +73,7 @@ namespace giada {
 namespace c     {
 namespace channel 
 {
-int loadChannel(SampleChannel* ch, const string& fname)
+int loadChannel(m::SampleChannel* ch, const string& fname)
 {
 	using namespace giada::m;
 
@@ -113,9 +114,9 @@ int loadChannel(SampleChannel* ch, const string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* addChannel(int column, ChannelType type, int size)
+m::Channel* addChannel(int column, ChannelType type, int size)
 {
-	Channel* ch    = m::mh::addChannel(type);
+	m::Channel* ch = m::mh::addChannel(type);
 	geChannel* gch = G_MainWin->keyboard->addChannel(column, ch, size);
 	ch->guiChannel = gch;
 	return ch;
@@ -125,13 +126,13 @@ Channel* addChannel(int column, ChannelType type, int size)
 /* -------------------------------------------------------------------------- */
 
 
-void deleteChannel(Channel* ch)
+void deleteChannel(m::Channel* ch)
 {
 	using namespace giada::m;
 
 	if (!gdConfirmWin("Warning", "Delete channel: are you sure?"))
 		return;
-	recorder::clearChan(ch->index);
+	recorder::clearChannel(ch->index);
 	ch->hasActions = false;
 #ifdef WITH_VST
 	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex, ch);
@@ -147,7 +148,7 @@ void deleteChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void freeChannel(Channel* ch)
+void freeChannel(m::Channel* ch)
 {
 	if (ch->isPlaying()) {
 		if (!gdConfirmWin("Warning", "This action will stop the channel: are you sure?"))
@@ -158,7 +159,7 @@ void freeChannel(Channel* ch)
 		return;
 
 	G_MainWin->keyboard->freeChannel(ch->guiChannel);
-	m::recorder::clearChan(ch->index);
+	m::recorder::clearChannel(ch->index);
 	ch->empty();
 
 	/* delete any related subwindow */
@@ -173,7 +174,7 @@ void freeChannel(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleArm(Channel* ch, bool gui)
+void toggleArm(m::Channel* ch, bool gui)
 {
 	ch->armed = !ch->armed;
 	if (!gui)
@@ -184,9 +185,9 @@ void toggleArm(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleInputMonitor(Channel* ch)
+void toggleInputMonitor(m::Channel* ch)
 {
-	SampleChannel* sch = static_cast<SampleChannel*>(ch);
+	m::SampleChannel* sch = static_cast<m::SampleChannel*>(ch);
 	sch->inputMonitor = !sch->inputMonitor;
 }
 
@@ -194,7 +195,7 @@ void toggleInputMonitor(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-int cloneChannel(Channel* src)
+int cloneChannel(m::Channel* src)
 {
 	using namespace giada::m;
 
@@ -213,7 +214,7 @@ int cloneChannel(Channel* src)
 /* -------------------------------------------------------------------------- */
 
 
-void setVolume(Channel* ch, float v, bool gui, bool editor)
+void setVolume(m::Channel* ch, float v, bool gui, bool editor)
 {
 	ch->volume = v;
 
@@ -239,7 +240,7 @@ void setVolume(Channel* ch, float v, bool gui, bool editor)
 /* -------------------------------------------------------------------------- */
 
 
-void setPitch(SampleChannel* ch, float val)
+void setPitch(m::SampleChannel* ch, float val)
 {
 	ch->setPitch(val);
 	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -254,7 +255,7 @@ void setPitch(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void setPanning(SampleChannel* ch, float val)
+void setPanning(m::SampleChannel* ch, float val)
 {
 	ch->setPan(val);
 	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -269,7 +270,7 @@ void setPanning(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleMute(Channel* ch, bool gui)
+void toggleMute(m::Channel* ch, bool gui)
 {
 	ch->setMute(!ch->mute);
 	if (!gui) {
@@ -283,7 +284,7 @@ void toggleMute(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleSolo(Channel* ch, bool gui)
+void toggleSolo(m::Channel* ch, bool gui)
 {
 	ch->setSolo(!ch->solo);
 	if (!gui) {
@@ -297,7 +298,7 @@ void toggleSolo(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void kill(Channel* ch)
+void kill(m::Channel* ch)
 {
 	ch->kill(0); // on frame 0: it's a user-generated event
 }
@@ -306,7 +307,7 @@ void kill(Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void setBoost(SampleChannel* ch, float val)
+void setBoost(m::SampleChannel* ch, float val)
 {
 	ch->setBoost(val);
 	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
@@ -321,7 +322,7 @@ void setBoost(SampleChannel* ch, float val)
 /* -------------------------------------------------------------------------- */
 
 
-void setName(Channel* ch, const string& name)
+void setName(m::Channel* ch, const string& name)
 {
 	ch->name = name;
 	ch->guiChannel->update();
@@ -331,7 +332,7 @@ void setName(Channel* ch, const string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void toggleReadingActions(Channel* ch, bool gui)
+void toggleReadingActions(m::Channel* ch, bool gui)
 {
 
 	/* When you call startReadingRecs with conf::treatRecsAsLoops, the
@@ -352,7 +353,7 @@ void toggleReadingActions(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void startReadingActions(Channel* ch, bool gui)
+void startReadingActions(m::Channel* ch, bool gui)
 {
 	using namespace giada::m;
 
@@ -369,7 +370,7 @@ void startReadingActions(Channel* ch, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void stopReadingActions(Channel* ch, bool gui)
+void stopReadingActions(m::Channel* ch, bool gui)
 {
 	using namespace giada::m;
 

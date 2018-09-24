@@ -32,7 +32,6 @@
 #include "browserBase.h"
 
 
-class Channel;
 class geInput;
 
 
@@ -51,7 +50,7 @@ public:
 
 	gdBrowserSave(int x, int y, int w, int h, const std::string& title,
 			const std::string& path, const std::string& name, void (*callback)(void*),
-			Channel* ch);
+			giada::m::Channel* ch);
 
 	std::string getName() const;
 };

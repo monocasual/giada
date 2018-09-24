@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class SampleChannel;
 class geDial;
 class geInput;
 class geButton;
@@ -43,25 +42,25 @@ class geBoostTool : public Fl_Group
 {
 private:
 
-  SampleChannel* ch;
+	giada::m::SampleChannel* ch;
 
-  geBox*    label;
-  geDial*   dial;
-  geInput*  input;
-  geButton* normalize;
+	geBox*    label;
+	geDial*   dial;
+	geInput*  input;
+	geButton* normalize;
 
-  static void cb_setBoost(Fl_Widget* w, void* p);
-  static void cb_setBoostNum(Fl_Widget* w, void* p);
-  static void cb_normalize(Fl_Widget* w, void* p);
-  inline void cb_setBoost();
-  inline void cb_setBoostNum();
-  inline void cb_normalize();
+	static void cb_setBoost(Fl_Widget* w, void* p);
+	static void cb_setBoostNum(Fl_Widget* w, void* p);
+	static void cb_normalize(Fl_Widget* w, void* p);
+	void cb_setBoost();
+	void cb_setBoostNum();
+	void cb_normalize();
 
 public:
 
-  geBoostTool(int x, int y, SampleChannel* ch);
+	geBoostTool(int x, int y, giada::m::SampleChannel* ch);
 
-  void refresh();
+	void refresh();
 };
 
 

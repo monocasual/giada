@@ -43,14 +43,11 @@
 #endif
 
 
-class Plugin;
-
-
 class gdPluginWindowGUI : public gdWindow
 {
 private:
 
-	Plugin* m_plugin;
+	giada::m::Plugin* m_plugin;
 
 	static void cb_close  (Fl_Widget* v, void* p);
 	static void cb_refresh(void* data);
@@ -59,7 +56,7 @@ private:
 
 public:
 
-	gdPluginWindowGUI(Plugin* p);
+	gdPluginWindowGUI(giada::m::Plugin* p);
 	~gdPluginWindowGUI();
 };
 

@@ -32,7 +32,6 @@
 #include <FL/Fl_Scroll.H>
 
 
-class SampleChannel;
 class geWaveform;
 
 
@@ -44,10 +43,10 @@ private:
 
 public:
 
-	SampleChannel *ch;
-	geWaveform *waveform;
+	giada::m::SampleChannel* ch;
+	geWaveform* waveform;
 
-	geWaveTools(int X,int Y,int W, int H, SampleChannel *ch, const char *L=0);
+	geWaveTools(int x, int y, int w, int h, giada::m::SampleChannel* ch, const char* l=0);
 	void resize(int x, int y, int w, int h);
 	int  handle(int e);
 

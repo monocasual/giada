@@ -34,6 +34,9 @@
 #include "../deps/juce-config.h"
 
 
+namespace giada {
+namespace m 
+{
 class Plugin
 {
 private:
@@ -103,6 +106,8 @@ public:
 
 	std::vector<uint32_t> midiInParams;
 };
+
+}} // giada::m::
 
 #endif
 

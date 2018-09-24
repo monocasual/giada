@@ -45,9 +45,10 @@ extern gdMainWindow *mainWin;
 
 
 using std::string;
+using namespace giada;
 
 
-gdKeyGrabber::gdKeyGrabber(Channel *ch)
+gdKeyGrabber::gdKeyGrabber(m::Channel* ch)
 	: gdWindow(300, 126, "Key configuration"), ch(ch)
 {
 	set_modal();
@@ -69,14 +70,14 @@ gdKeyGrabber::gdKeyGrabber(Channel *ch)
 /* -------------------------------------------------------------------------- */
 
 
-void gdKeyGrabber::cb_clear (Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_clear(); }
-void gdKeyGrabber::cb_cancel(Fl_Widget *w, void *p) { ((gdKeyGrabber*)p)->__cb_cancel(); }
+void gdKeyGrabber::cb_clear (Fl_Widget* w, void* p) { ((gdKeyGrabber*)p)->cb_clear(); }
+void gdKeyGrabber::cb_cancel(Fl_Widget* w, void* p) { ((gdKeyGrabber*)p)->cb_cancel(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdKeyGrabber::__cb_cancel()
+void gdKeyGrabber::cb_cancel()
 {
 	do_callback();
 }
@@ -85,7 +86,7 @@ void gdKeyGrabber::__cb_cancel()
 /* -------------------------------------------------------------------------- */
 
 
-void gdKeyGrabber::__cb_clear()
+void gdKeyGrabber::cb_clear()
 {
 	updateText(0);
 	setButtonLabel(0);

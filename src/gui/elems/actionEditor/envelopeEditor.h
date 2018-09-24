@@ -32,10 +32,13 @@
 #include "baseActionEditor.h"
 
 
-class SampleChannel;
 
 
 namespace giada {
+namespace m
+{
+class SampleChannel;
+}
 namespace v
 {
 class geEnvelopePoint;
@@ -45,11 +48,6 @@ class geEnvelopeEditor : public geBaseActionEditor
 {
 private:
 
-	/* m_actionType
-	What type of action this envelope editor is dealing with. */
-	
-	int m_actionType;
-
 	void onAddAction()     override;
 	void onDeleteAction()  override;
 	void onMoveAction()    override;
@@ -57,15 +55,15 @@ private:
 	void onRefreshAction() override;
 
 	Pixel frameToX(Frame frame) const;
-	Pixel valueToY(float value) const;
-	float yToValue(Pixel pixel) const;
+	Pixel valueToY(int value) const;
+	int   yToValue(Pixel pixel, Pixel offset=0) const;
 
 	bool isFirstPoint() const;
 	bool isLastPoint()  const;
 
 public:
 
-	geEnvelopeEditor(Pixel x, Pixel y, int actionType, const char* l, SampleChannel* ch);
+	geEnvelopeEditor(Pixel x, Pixel y, const char* l, m::SampleChannel* ch);
 	~geEnvelopeEditor();
 
 	void draw() override;

@@ -46,7 +46,7 @@ Sets bpm value. Usually called from the Jack callback or non-UI components. */
 
 void glue_setBpm(float v);
 
-void glue_setBeats(int beats, int bars, bool expand);
+void glue_setBeats(int beats, int bars);
 void glue_quantize(int val);
 void glue_setOutVol(float v, bool gui=true);
 void glue_setInVol(float v, bool gui=true);

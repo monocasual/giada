@@ -54,7 +54,7 @@ using std::string;
 using namespace giada;
 
 
-gdPluginList::gdPluginList(int stackType, Channel* ch)
+gdPluginList::gdPluginList(int stackType, m::Channel* ch)
 	: gdWindow(468, 204), ch(ch), stackType(stackType)
 {
 	using namespace giada::m;

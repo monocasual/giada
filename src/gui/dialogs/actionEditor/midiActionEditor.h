@@ -32,9 +32,6 @@
 #include "baseActionEditor.h"
 
 
-class MidiChannel;
-
-
 namespace giada {
 namespace v
 {
@@ -51,7 +48,7 @@ private:
 
 public:
 
-	gdMidiActionEditor(MidiChannel* ch);
+	gdMidiActionEditor(m::MidiChannel* ch);
 
 	void rebuild() override;
 };

@@ -42,7 +42,7 @@ public:
 
 	static const Pixel SIDE = 12;
 
-	geEnvelopePoint(Pixel x, Pixel y, m::recorder::action a);
+	geEnvelopePoint(Pixel x, Pixel y, const m::Action* a);
 
 	void draw() override;
 };

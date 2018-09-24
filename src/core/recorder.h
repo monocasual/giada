@@ -24,9 +24,9 @@
  *
  * -------------------------------------------------------------------------- */
 
-
-#ifndef G_RECORDER_H
-#define G_RECORDER_H
+#if 0
+#ifndef G_RECORDER_DEPRECATED_H
+#define G_RECORDER_DEPRECATED_H
 
 
 #include <cstdint>
@@ -35,12 +35,9 @@
 #include <pthread.h>
 
 
-class Channel;
-
-
 namespace giada {
 namespace m {
-namespace recorder
+namespace recorder_DEPR_
 {
 /* action
  * struct containing fields to describe an atomic action. Note from
@@ -193,5 +190,7 @@ Applies a read-only callback on each action recorded. */
 
 void forEachAction(std::function<void(const action*)> f);
 }}}; // giada::m::recorder::
+
+#endif
 
 #endif

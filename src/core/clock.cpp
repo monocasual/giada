@@ -340,11 +340,11 @@ void recvJackSync()
 	if (jackState.running != jackStatePrev.running) {
 		if (jackState.running) {
 			if (!isRunning())
-				glue_startSeq(false); // not from UI
+				c::transport::startSeq(false); // not from UI
 		}
 		else {
 			if (isRunning())
-				glue_stopSeq(false); // not from UI
+				c::transport::stopSeq(false); // not from UI
 		}
 	}
 	if (jackState.bpm != jackStatePrev.bpm)
@@ -352,7 +352,7 @@ void recvJackSync()
 			glue_setBpm(jackState.bpm);
 
 	if (jackState.frame == 0 && jackState.frame != jackStatePrev.frame)
-		glue_rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
+		c::transport::rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
 
 	jackStatePrev = jackState;
 }

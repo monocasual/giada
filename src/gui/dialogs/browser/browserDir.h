@@ -32,9 +32,6 @@
 #include "browserBase.h"
 
 
-class Channel;
-
-
 class gdBrowserDir : public gdBrowserBase
 {
 private:

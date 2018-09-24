@@ -33,9 +33,6 @@
 #include <FL/Fl_Widget.H>
 
 
-class SampleChannel;
-
-
 class geWaveform : public Fl_Widget
 {
 private:
@@ -71,7 +68,7 @@ private:
 		std::vector<int> points;
 	} m_grid;
 
-	SampleChannel* m_ch;
+	giada::m::SampleChannel* m_ch;
 	int m_chanStart;
 	bool m_chanStartLit;
 	int m_chanEnd;
@@ -137,7 +134,7 @@ public:
 	static const int ZOOM_IN  = -1;
 	static const int ZOOM_OUT = 0;
 
-	geWaveform(int x, int y, int w, int h, SampleChannel* ch, const char* l=0);
+	geWaveform(int x, int y, int w, int h, giada::m::SampleChannel* ch, const char* l=0);
 	~geWaveform();
 
 	void draw() override;

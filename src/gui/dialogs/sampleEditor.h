@@ -29,6 +29,7 @@
 #define GD_EDITOR_H
 
 
+#include "../../core/sampleChannel.h"
 #include "window.h"
 
 
@@ -78,7 +79,7 @@ private:
 
 public:
 
-	gdSampleEditor(SampleChannel* ch);
+	gdSampleEditor(giada::m::SampleChannel* ch);
 	~gdSampleEditor();
 
 	void updateInfo();
@@ -106,7 +107,7 @@ public:
 	geCheck* loop;
 	geBox* info;
 
-	SampleChannel* ch;
+	giada::m::SampleChannel* ch;
 };
 
 

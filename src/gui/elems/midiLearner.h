@@ -31,9 +31,9 @@
 
 #include <FL/Fl_Group.H>
 #include "../../core/midiDispatcher.h"
+#include "../../core/channel.h"
 
 
-class Channel;
 class gdMidiInputBase;
 class geMidiLearner;
 class geBox;
@@ -54,7 +54,7 @@ private:
 	/* Channel it belongs to. Might be nullptr if the learner comes from the MIDI
 	input master window. */
 
-	Channel* ch;
+	giada::m::Channel* ch;
 
 	geBox* text;
 	geButton* value;
@@ -72,9 +72,9 @@ public:
 
   struct cbData_t
   {
-		gdMidiInputBase* window;
-		geMidiLearner*   learner;
-		Channel*         channel;
+		gdMidiInputBase*   window;
+		geMidiLearner*     learner;
+		giada::m::Channel* channel;
 	} cbData;
 
 	/* param
@@ -83,7 +83,7 @@ public:
 	uint32_t* param;
 
 	geMidiLearner(int x, int y, int w, const char* l, 
-		giada::m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, Channel* ch);
+		giada::m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, giada::m::Channel* ch);
 
 	void updateValue();
 };

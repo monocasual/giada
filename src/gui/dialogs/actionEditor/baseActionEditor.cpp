@@ -47,7 +47,7 @@ using std::string;
 namespace giada {
 namespace v
 {
-gdBaseActionEditor::gdBaseActionEditor(Channel* ch)
+gdBaseActionEditor::gdBaseActionEditor(m::Channel* ch)
 :	gdWindow (640, 284),
 	ch       (ch),
 	ratio    (G_DEFAULT_ZOOM_RATIO)
@@ -86,6 +86,15 @@ void gdBaseActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdBaseActionEdito
 /* -------------------------------------------------------------------------- */
 
 
+const std::vector<const m::Action*>& gdBaseActionEditor::getActions()
+{
+	return m_actions;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void gdBaseActionEditor::computeWidth()
 {
 	fullWidth = frameToPixel(m::clock::getFramesInSeq());
@@ -113,14 +122,17 @@ Frame gdBaseActionEditor::pixelToFrame(Pixel p, bool snap) const
 
 void gdBaseActionEditor::zoomIn()
 {
-	if (ratio / 2 > MIN_RATIO) {
-		ratio /= 2;
+	float ratioPrev = ratio;
+
+	ratio /= 2;
+	if (ratio < MIN_RATIO)
+		ratio = MIN_RATIO;
+
+	if (ratioPrev != ratio) {
 		rebuild();
 		centerViewportIn();
 		redraw();
 	}
-	else
-		ratio = MIN_RATIO;
 }
 
 
@@ -129,14 +141,17 @@ void gdBaseActionEditor::zoomIn()
 
 void gdBaseActionEditor::zoomOut()
 {
-	if (ratio * 2 < MAX_RATIO) {
-		ratio *= 2;
+	float ratioPrev = ratio;
+	
+	ratio *= 2;
+	if (ratio > MAX_RATIO)
+		ratio = MAX_RATIO;
+
+	if (ratioPrev != ratio) {
 		rebuild();
 		centerViewportOut();
 		redraw();
 	}
-	else
-		ratio = MAX_RATIO;
 }
 
 
@@ -164,13 +179,13 @@ void gdBaseActionEditor::centerViewportOut()
 int gdBaseActionEditor::getActionType() const
 {
 	if (actionType->value() == 0)
-		return G_ACTION_KEYPRESS;
+		return m::MidiEvent::NOTE_ON;
 	else
 	if (actionType->value() == 1)
-		return G_ACTION_KEYREL;
+		return m::MidiEvent::NOTE_OFF;
 	else
 	if (actionType->value() == 2)
-		return G_ACTION_KILL;
+		return m::MidiEvent::NOTE_KILL;
 
 	assert(false);
 	return -1;

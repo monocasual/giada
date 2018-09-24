@@ -47,7 +47,6 @@ private:
 	geInput* beats;
 	geInput* bars;
 	geButton* ok;
-	geCheck* resizeRec;
 
 public:
 

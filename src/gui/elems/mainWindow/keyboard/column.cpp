@@ -111,7 +111,7 @@ int geColumn::handle(int e)
 			int result = 0;
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
-				SampleChannel* c = static_cast<SampleChannel*>(c::channel::addChannel(
+				m::SampleChannel* c = static_cast<m::SampleChannel*>(c::channel::addChannel(
 					m_index, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1));
 				result = c::channel::loadChannel(c, gu_stripFileUrl(path));
 				if (result != G_RES_OK) {
@@ -210,7 +210,7 @@ void geColumn::repositionChannels()
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::addChannel(Channel* ch, int size)
+geChannel* geColumn::addChannel(m::Channel* ch, int size)
 {
 	geChannel* gch = nullptr;
 
@@ -218,9 +218,9 @@ geChannel* geColumn::addChannel(Channel* ch, int size)
 	repositioned later on during geColumn::resize(). */
 
 	if (ch->type == ChannelType::SAMPLE)
-		gch = new geSampleChannel(x(), 0, w(), size, static_cast<SampleChannel*>(ch));
+		gch = new geSampleChannel(x(), 0, w(), size, static_cast<m::SampleChannel*>(ch));
 	else
-		gch = new geMidiChannel(x(), 0, w(), size, static_cast<MidiChannel*>(ch));
+		gch = new geMidiChannel(x(), 0, w(), size, static_cast<m::MidiChannel*>(ch));
 
 	add(gch);
 
@@ -297,7 +297,7 @@ void geColumn::clear(bool full)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* geColumn::getChannel(int i)
+m::Channel* geColumn::getChannel(int i)
 {
 	return static_cast<geChannel*>(child(i + 1))->ch;  // Skip "add channel"
 }

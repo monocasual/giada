@@ -25,74 +25,27 @@
  * -------------------------------------------------------------------------- */
 
 
-#include <pthread.h>
-#if defined(__linux__) || defined(__APPLE__)
-	#include <unistd.h>
-#endif
+#include <atomic>
 #include <FL/Fl.H>
 #include "core/init.h"
-#include "core/const.h"
-#include "core/patch.h"
-#include "core/conf.h"
-#include "core/midiMapConf.h"
-#include "core/mixer.h"
-#include "core/clock.h"
-#include "core/mixerHandler.h"
-#include "core/kernelAudio.h"
-#include "core/kernelMidi.h"
-#include "core/recorder.h"
-#include "utils/gui.h"
-#include "utils/time.h"
-#include "gui/dialogs/gd_mainWindow.h"
-#include "core/pluginHost.h"
 
 
-pthread_t     G_videoThread;
-bool          G_quit;
-gdMainWindow* G_MainWin;
-
-
-void* videoThreadCb(void* arg);
+std::atomic<bool> G_quit(false);
+class gdMainWindow* G_MainWin = nullptr;
 
 
 int main(int argc, char** argv)
 {
-	G_quit = false;
+	using namespace giada;
 
-	init_prepareParser();
-	init_prepareMidiMap();
-	init_prepareKernelAudio();
-	init_prepareKernelMIDI();
-	init_startGUI(argc, argv);
-
-  Fl::lock();
-	pthread_create(&G_videoThread, nullptr, videoThreadCb, nullptr);
-	init_startKernelAudio();
-
-#ifdef WITH_VST
-	juce::initialiseJuce_GUI();
-#endif
+	m::init::startup(argc, argv);
 
 	int ret = Fl::run();
 
-#ifdef WITH_VST
-	juce::shutdownJuce_GUI();
-#endif
+	m::init::shutdown();
 
-	pthread_join(G_videoThread, nullptr);
 	return ret;
 }
 
 
-void* videoThreadCb(void* arg)
-{
-	using namespace giada;
 
-	if (m::kernelAudio::getStatus())
-		while (!G_quit)	{
-			gu_refreshUI();
-			u::time::sleep(G_GUI_REFRESH_RATE);
-		}
-	pthread_exit(nullptr);
-	return 0;
-}

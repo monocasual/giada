@@ -37,10 +37,10 @@
 class geChannelStatus : public Fl_Box
 {
 public:
-	geChannelStatus(int X, int Y, int W, int H, class SampleChannel *ch,
+	geChannelStatus(int X, int Y, int W, int H, giada::m::SampleChannel *ch,
     const char *L=0);
 	void draw();
-	class SampleChannel *ch;
+	giada::m::SampleChannel *ch;
 };
 
 

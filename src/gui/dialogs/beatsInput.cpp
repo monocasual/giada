@@ -47,17 +47,16 @@ using namespace giada::m;
 
 
 gdBeatsInput::gdBeatsInput()
-	: gdWindow(180, 60, "Beats")
+	: gdWindow(180, 36, "Beats")
 {
 	if (conf::beatsX)
 		resize(conf::beatsX, conf::beatsY, w(), h());
 
 	set_modal();
 
-	beats     = new geInput(8,  8,  43, G_GUI_UNIT);
-	bars      = new geInput(beats->x()+beats->w()+4, 8,  43, G_GUI_UNIT);
-	ok 		    = new geButton(bars->x()+bars->w()+4, 8,  70, G_GUI_UNIT, "Ok");
-	resizeRec = new geCheck(8,  40, 12, 12, "resize recorded actions");
+	beats = new geInput(8,  8,  43, G_GUI_UNIT);
+	bars  = new geInput(beats->x()+beats->w()+4, 8,  43, G_GUI_UNIT);
+	ok 	  = new geButton(bars->x()+bars->w()+4, 8,  70, G_GUI_UNIT, "Ok");
 	end();
 
 	beats->maximum_size(2);
@@ -70,8 +69,6 @@ gdBeatsInput::gdBeatsInput()
 	
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update, (void*)this);
-	
-	resizeRec->value(conf::resizeRecordings);
 
 	gu_setFavicon(this);
 	setId(WID_BEATS);
@@ -86,7 +83,6 @@ gdBeatsInput::~gdBeatsInput()
 {
 	conf::beatsX = x();
 	conf::beatsY = y();
-	conf::resizeRecordings = resizeRec->value();
 }
 
 
@@ -103,6 +99,6 @@ void gdBeatsInput::cb_update()
 {
 	if (!strcmp(beats->value(), "") || !strcmp(bars->value(), ""))
 		return;
-	glue_setBeats(atoi(beats->value()), atoi(bars->value()), resizeRec->value());
+	glue_setBeats(atoi(beats->value()), atoi(bars->value()));
 	do_callback();
 }

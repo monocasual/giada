@@ -92,36 +92,37 @@
 
 
 /* -- MIN/MAX values -------------------------------------------------------- */
-#define G_MIN_BPM           20.0f
-#define G_MIN_BPM_STR       "20.0"
-#define G_MAX_BPM           999.0f
-#define G_MAX_BPM_STR       "999.0"
-#define G_MAX_BEATS				  32
-#define G_MAX_BARS				  32
-#define G_MAX_QUANTIZE      8
-#define G_MIN_DB_SCALE      60.0f
-#define G_MIN_COLUMN_WIDTH  140
-#define G_MAX_BOOST_DB      20.0f
-#define G_MIN_PITCH         0.1f
-#define G_MAX_PITCH         4.0f
-#define G_MAX_GRID_VAL      64
-#define G_MIN_BUF_SIZE      8
-#define G_MAX_BUF_SIZE      4096
-#define G_MIN_GUI_WIDTH     816
-#define G_MIN_GUI_HEIGHT    510
-#define G_MAX_IO_CHANS      2
-#define G_MAX_VELOCITY      0x7F
-#define G_MAX_MIDI_CHANS    16
+constexpr float G_MIN_BPM          = 20.0f;
+constexpr auto  G_MIN_BPM_STR      = "20.0";
+constexpr float G_MAX_BPM          = 999.0f;
+constexpr auto  G_MAX_BPM_STR      = "999.0";
+constexpr int   G_MAX_BEATS        = 32;
+constexpr int   G_MAX_BARS         = 32;
+constexpr int   G_MAX_QUANTIZE     = 8;
+constexpr float G_MIN_DB_SCALE     = 60.0f;
+constexpr int   G_MIN_COLUMN_WIDTH = 140;
+constexpr float G_MAX_BOOST_DB     = 20.0f;
+constexpr float G_MIN_PITCH        = 0.1f;
+constexpr float G_MAX_PITCH        = 4.0f;
+constexpr int   G_MAX_GRID_VAL     = 64;
+constexpr int   G_MIN_BUF_SIZE     = 8;
+constexpr int   G_MAX_BUF_SIZE     = 4096;
+constexpr int   G_MIN_GUI_WIDTH    = 816;
+constexpr int   G_MIN_GUI_HEIGHT   = 510;
+constexpr int   G_MAX_IO_CHANS     = 2;
+constexpr int   G_MAX_VELOCITY     = 0x7F;
+constexpr int   G_MAX_MIDI_CHANS   = 16;
+constexpr int   G_MAX_POLYPHONY    = 32;
 
 
 
 /* -- kernel audio ---------------------------------------------------------- */
-#define G_SYS_API_NONE		0x00  // 0000 0000
-#define G_SYS_API_JACK		0x01  // 0000 0001
-#define G_SYS_API_ALSA		0x02  // 0000 0010
-#define G_SYS_API_DS			0x04  // 0000 0100
-#define G_SYS_API_ASIO		0x08  // 0000 1000
-#define G_SYS_API_CORE		0x10  // 0001 0000
+#define G_SYS_API_NONE    0x00  // 0000 0000
+#define G_SYS_API_JACK    0x01  // 0000 0001
+#define G_SYS_API_ALSA    0x02  // 0000 0010
+#define G_SYS_API_DS      0x04  // 0000 0100
+#define G_SYS_API_ASIO    0x08  // 0000 1000
+#define G_SYS_API_CORE    0x10  // 0001 0000
 #define G_SYS_API_PULSE   0x20  // 0010 0000
 #define G_SYS_API_WASAPI  0x40  // 0100 0000
 #define G_SYS_API_ANY     0x7F  // 0111 1111
@@ -129,8 +130,8 @@
 
 
 /* -- kernel midi ----------------------------------------------------------- */
-#define G_MIDI_API_JACK		0x01  // 0000 0001
-#define G_MIDI_API_ALSA		0x02  // 0000 0010
+#define G_MIDI_API_JACK   0x01  // 0000 0001
+#define G_MIDI_API_ALSA   0x02  // 0000 0010
 
 
 
@@ -261,30 +262,13 @@ it drives knobs, volume, faders and such. */
 #define MIDI_STOP           0xFC
 #define MIDI_EOX            0xF7  // end of sysex
 
-/* channels */
+/* Channels */
 
-#define MIDI_CHAN_0         0x00 << 24
-#define MIDI_CHAN_1         0x01 << 24
-#define MIDI_CHAN_2         0x02 << 24
-#define MIDI_CHAN_3         0x03 << 24
-#define MIDI_CHAN_4         0x04 << 24
-#define MIDI_CHAN_5         0x05 << 24
-#define MIDI_CHAN_6         0x06 << 24
-#define MIDI_CHAN_7         0x07 << 24
-#define MIDI_CHAN_8         0x08 << 24
-#define MIDI_CHAN_9         0x09 << 24
-#define MIDI_CHAN_10        0x0A << 24
-#define MIDI_CHAN_11        0x0B << 24
-#define MIDI_CHAN_12        0x0C << 24
-#define MIDI_CHAN_13        0x0D << 24
-#define MIDI_CHAN_14        0x0E << 24
-#define MIDI_CHAN_15        0x0F << 24
-
-const int MIDI_CHANS[G_MAX_MIDI_CHANS] = {
-	MIDI_CHAN_0,  MIDI_CHAN_1,	MIDI_CHAN_2,  MIDI_CHAN_3,
-	MIDI_CHAN_4,  MIDI_CHAN_5,	MIDI_CHAN_6,  MIDI_CHAN_7,
-	MIDI_CHAN_8,  MIDI_CHAN_9,	MIDI_CHAN_10, MIDI_CHAN_11,
-	MIDI_CHAN_12, MIDI_CHAN_13,	MIDI_CHAN_14, MIDI_CHAN_15
+constexpr int G_MIDI_CHANS[G_MAX_MIDI_CHANS] = {
+	0x00 << 24,  0x01 << 24,  0x02 << 24,  0x03 << 24,
+	0x04 << 24,  0x05 << 24,  0x06 << 24,  0x07 << 24,
+	0x08 << 24,  0x09 << 24,  0x0A << 24,  0x0B << 24,
+	0x0C << 24,  0x0D << 24,  0x0E << 24,  0x0F << 24
 };
 
 /* midi sync constants */
@@ -367,6 +351,13 @@ const int MIDI_CHANS[G_MAX_MIDI_CHANS] = {
 #define PATCH_KEY_COLUMN_WIDTH                 "width"
 #define PATCH_KEY_COLUMN_CHANNELS              "channels"
 
+#define G_PATCH_KEY_ACTION_ID                  "id"
+#define G_PATCH_KEY_ACTION_CHANNEL             "channel"     
+#define G_PATCH_KEY_ACTION_FRAME               "frame"   
+#define G_PATCH_KEY_ACTION_EVENT               "event"   
+#define G_PATCH_KEY_ACTION_PREV                "prev"  
+#define G_PATCH_KEY_ACTION_NEXT                "next"
+
 /* JSON config keys */
 
 #define CONF_KEY_HEADER                   "header"
@@ -402,7 +393,6 @@ const int MIDI_CHANS[G_MAX_MIDI_CHANS] = {
 #define CONF_KEY_RECS_STOP_ON_CHAN_HALT   "recs_stop_on_chan_halt"
 #define CONF_KEY_CHANS_STOP_ON_SEQ_HALT   "chans_stop_on_seq_halt"
 #define CONF_KEY_TREAT_RECS_AS_LOOPS      "treat_recs_as_loops"
-#define CONF_KEY_RESIZE_RECORDINGS        "resize_recordings"
 #define CONF_KEY_INPUT_MONITOR_DEFAULT_ON "input_monitor_default_on"
 #define CONF_KEY_PLUGINS_PATH             "plugins_path"
 #define CONF_KEY_PATCHES_PATH             "patches_path"

@@ -30,10 +30,11 @@
 
 
 #include "../window.h"
+#include "../../../core/plugin.h"
+#include "../../../core/channel.h"
 
 
 class Fl_Group;
-class Channel;
 class geCheck;
 class geBrowser;
 class geButton;
@@ -45,7 +46,7 @@ class gdBrowserBase : public gdWindow
 {
 protected:
 
-	Channel* channel;
+	giada::m::Channel* channel;
 
 	Fl_Group* groupTop;
 	geCheck* hiddenFiles;
@@ -81,7 +82,7 @@ public:
 	std::string getSelectedItem() const;
 
 	std::string getCurrentPath() const;
-	Channel* getChannel() const;
+	giada::m::Channel* getChannel() const;
 	void fireCallback() const;
 	
 	/* setStatusBar

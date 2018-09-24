@@ -28,6 +28,7 @@
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
+#include "../core/recorderHandler.h"
 #include "../core/pluginHost.h"
 #include "../core/plugin.h"
 #include "../core/conf.h"
@@ -63,7 +64,7 @@ using namespace giada;
 
 #ifdef WITH_VST
 
-static void glue_fillPatchGlobalsPlugins__(vector <Plugin*>* host, vector<m::patch::plugin_t>* patch)
+static void glue_fillPatchGlobalsPlugins__(vector <m::Plugin*>* host, vector<m::patch::plugin_t>* patch)
 {
 	using namespace giada::m;
 
@@ -90,14 +91,13 @@ static void glue_fillPatchColumns__()
 	using namespace giada::m;
 
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
-		geColumn *gCol = G_MainWin->keyboard->getColumn(i);
+		geColumn* gCol = G_MainWin->keyboard->getColumn(i);
 		patch::column_t pCol;
 		pCol.index = gCol->getIndex();
 		pCol.width = gCol->w();
 		for (int k=0; k<gCol->countChannels(); k++) {
-			Channel *colChannel = gCol->getChannel(k);
-			for (unsigned j=0; j<mixer::channels.size(); j++) {
-				Channel *mixerChannel = mixer::channels.at(j);
+			Channel* colChannel = gCol->getChannel(k);
+			for (const Channel* mixerChannel : mixer::channels) {
 				if (colChannel == mixerChannel) {
 					pCol.channels.push_back(mixerChannel->index);
 					break;
@@ -185,7 +185,7 @@ static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
 } 
 
 
-static string glue_makeUniqueSamplePath__(const string& base, const SampleChannel* ch)
+static string glue_makeUniqueSamplePath__(const string& base, const m::SampleChannel* ch)
 {
 	using namespace giada::m;
 
@@ -261,7 +261,7 @@ void glue_loadPatch(void* data)
 		return;
 	}
 
-	/* Close all other windows. This prevents segfault if plugin windows GUIs are 
+	/* Close all other windows. This prevents problems if plugin windows are 
 	open. */
 
 	gu_closeAllSubwindows();
@@ -274,32 +274,27 @@ void glue_loadPatch(void* data)
 	browser->setStatusBar(0.1f);
 
 	/* Add common stuff, columns and channels. Also increment the progress bar by 
-	0.8 / total_channels steps.  */
+	0.8 / total_channels steps. */
 
 	float steps = 0.8 / patch::channels.size();
 	
 	for (const patch::column_t& col : patch::columns) {
 		G_MainWin->keyboard->addColumn(col.width);
-		unsigned k = 0;
 		for (const patch::channel_t& pch : patch::channels) {
 			if (pch.column == col.index) {
 				Channel* ch = c::channel::addChannel(pch.column, static_cast<ChannelType>(pch.type), pch.size);
-				ch->readPatch(basePath, k);
+				ch->readPatch(basePath, pch);
 			}
 			browser->setStatusBar(steps);
-			k++;
 		}
 	}
 
-	/* Prepare Mixer. */
+	/* Prepare Mixer and Recorder. The latter has to recompute the actions' 
+	positions if the current samplerate != patch samplerate.*/
 
 	mh::updateSoloCount();
 	mh::readPatch();
-
-	/* Let recorder recompute the actions' positions if the current 
-	samplerate != patch samplerate. */
-
-	recorder::updateSamplerate(conf::samplerate, patch::samplerate);
+	recorderHandler::updateSamplerate(conf::samplerate, patch::samplerate);
 
 	/* Save patchPath by taking the last dir of the broswer, in order to reuse it 
 	the next time. */
@@ -394,7 +389,7 @@ void glue_loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	int res = c::channel::loadChannel(static_cast<SampleChannel*>(browser->getChannel()), 
+	int res = c::channel::loadChannel(static_cast<m::SampleChannel*>(browser->getChannel()), 
 		fullPath);
 
 	if (res == G_RES_OK) {

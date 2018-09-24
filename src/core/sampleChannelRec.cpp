@@ -26,9 +26,13 @@
 
 
 #include <cassert>
+#include "../utils/math.h"
+#include "recorder/recorder.h"
+#include "recorderHandler.h"
 #include "const.h"
 #include "conf.h"
 #include "clock.h"
+#include "action.h"
 #include "kernelAudio.h"
 #include "sampleChannel.h"
 #include "sampleChannelRec.h"
@@ -69,7 +73,14 @@ void onFirstBeat_(SampleChannel* ch, bool recsStopOnChanHalt)
 
 bool recorderCanRec_(SampleChannel* ch)
 {
-	return recorder::canRec(ch, clock::isRunning(), mixer::recording);
+	/* Can record on a channel if:
+		- recorder is on
+		- mixer is running
+		- mixer is not recording a take somewhere
+		- channel is MIDI or SAMPLE type with data in it  */
+
+	return recorder::isActive() && clock::isRunning() && !mixer::recording && 
+		(ch->type == ChannelType::MIDI || (ch->type == ChannelType::SAMPLE && ch->hasData()));
 }
 
 
@@ -79,48 +90,31 @@ bool recorderCanRec_(SampleChannel* ch)
 /* calcVolumeEnv
 Computes any changes in volume done via envelope tool. */
 
-void calcVolumeEnv_(SampleChannel* ch, int globalFrame)
+void calcVolumeEnv_(SampleChannel* ch, const Action* a1)
 {
-	/* method: check this frame && next frame, then calculate delta */
+	assert(a1 != nullptr);
+	assert(a1->next != nullptr);
 
-	recorder::action* a0 = nullptr;
-	recorder::action* a1 = nullptr;
-	int res;
+	const Action* a2 = a1->next;
 
-	/* get this action on frame 'frame'. It's unlikely that the action
-	 * is not found. */
+	double vf1 = u::math::map<int, double>(a1->event.getVelocity(), 0, G_MAX_VELOCITY, 0, 1.0);
+	double vf2 = u::math::map<int, double>(a2->event.getVelocity(), 0, G_MAX_VELOCITY, 0, 1.0);
 
-	res = recorder::getAction(ch->index, G_ACTION_VOLUME, globalFrame, &a0);
-
-	assert(res != 0);
-
-	/* get the action next to this one.
-	 * res == -1: a1 not found, this is the last one. Rewind the search
-	 * and use action at frame number 0 (actions[0]).
-	 * res == -2 G_ACTION_VOLUME not found. This should never happen */
-
-	res = recorder::getNextAction(ch->index, G_ACTION_VOLUME, globalFrame, &a1);
-	if (res == -1)
-		res = recorder::getAction(ch->index, G_ACTION_VOLUME, 0, &a1);
-
-	assert(res != -2);
-
-	ch->volume_i = a0->fValue;
-	ch->volume_d = ((a1->fValue - a0->fValue) / (a1->frame - a0->frame)) * 1.003f;
+	ch->volume_i = vf1;
+	ch->volume_d = a2->frame == a1->frame ? 0 : (vf2 - vf1) / (a2->frame - a1->frame);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void parseAction_(SampleChannel* ch, const recorder::action* a, int localFrame, 
-	int globalFrame)
+void parseAction_(SampleChannel* ch, const Action* a, int localFrame, int globalFrame)
 {
 	if (!ch->readActions)
 		return;
 
-	switch (a->type) {
-		case G_ACTION_KEYPRESS:
+	switch (a->event.getStatus()) {
+		case MidiEvent::NOTE_ON:
 			if (ch->isAnySingleMode()) {
 				ch->start(localFrame, false, 0);
 				/* This is not a user-generated event, so fill the first chunk of buffer. 
@@ -130,16 +124,16 @@ void parseAction_(SampleChannel* ch, const recorder::action* a, int localFrame,
 					ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame);
 			}
 			break;
-		case G_ACTION_KEYREL:
+		case MidiEvent::NOTE_OFF:
 			if (ch->isAnySingleMode())
 				ch->stop();
 			break;
-		case G_ACTION_KILL:
+		case MidiEvent::NOTE_KILL:
 			if (ch->isAnySingleMode())
 				ch->kill(localFrame);
 			break;
-		case G_ACTION_VOLUME:
-			calcVolumeEnv_(ch, globalFrame);
+		case MidiEvent::ENVELOPE:
+			calcVolumeEnv_(ch, a);
 			break;
 	}
 }
@@ -153,15 +147,11 @@ void recordKeyPressAction_(SampleChannel* ch)
 	if (!recorderCanRec_(ch))
 		return;
 
-	/* SINGLE_PRESS mode needs overdub. Also, disable reading actions while 
-	overdubbing. */
-	if (ch->mode == ChannelMode::SINGLE_PRESS) {
-		recorder::startOverdub(ch->index, G_ACTION_KEYS, clock::getCurrentFrame(), 
-			kernelAudio::getRealBufSize());
+	/* Disable reading actions while recording SINGLE_PRESS mode. */
+	if (ch->mode == ChannelMode::SINGLE_PRESS)
 		ch->readActions = false;
-	}
-	else
-		recorder::rec(ch->index, G_ACTION_KEYPRESS, clock::getCurrentFrame());
+	
+	recorderHandler::liveRec(ch->index, MidiEvent(MidiEvent::NOTE_ON, 0, 0));
 	ch->hasActions = true;
 }
 
@@ -191,8 +181,8 @@ void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 	quantize_(ch, fe.quantoPassed);
 	if (fe.onFirstBeat)
 		onFirstBeat_(ch, conf::recsStopOnChanHalt);
-	for (const recorder::action* action : fe.actions)
-		if (action->chan == ch->index)
+	for (const Action* action : fe.actions)
+		if (action->channel == ch->index)
 			parseAction_(ch, action, fe.frameLocal, fe.frameGlobal);
 }
 
@@ -230,9 +220,9 @@ bool recordStart(SampleChannel* ch, bool canQuantize)
 
 bool recordKill(SampleChannel* ch)
 {
-	/* Don't record G_ACTION_KILL actions for LOOP channels. */
+	/* Don't record NOTE_KILL actions for LOOP channels. */
 	if (recorderCanRec_(ch) && !ch->isAnyLoopMode()) {
-		recorder::rec(ch->index, G_ACTION_KILL, clock::getCurrentFrame());
+		recorder::rec(ch->index, clock::getCurrentFrame(), MidiEvent(MidiEvent::NOTE_KILL, 0, 0));
 		ch->hasActions = true;
 	}
 	return true;
@@ -246,10 +236,8 @@ void recordStop(SampleChannel* ch)
 {
 	/* Record a stop event only if channel is SINGLE_PRESS. For any other mode 
 	the stop event is meaningless. */
-	if (recorderCanRec_(ch) && ch->mode == ChannelMode::SINGLE_PRESS) {
-		recorder::stopOverdub(clock::getCurrentFrame(), clock::getFramesInLoop(),
-			&mixer::mutex);
-	}
+	if (recorderCanRec_(ch) && ch->mode == ChannelMode::SINGLE_PRESS)
+		recorderHandler::liveRec(ch->index, MidiEvent(MidiEvent::NOTE_OFF, 0, 0));
 }
 
 

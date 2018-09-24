@@ -36,7 +36,7 @@
 #include "../utils/gui.h"
 #include "../utils/log.h"
 #include "../utils/math.h"
-#include "../core/recorder.h"
+#include "../core/recorder/recorder.h"
 #include "../core/kernelAudio.h"
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
@@ -45,6 +45,7 @@
 #include "../core/clock.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
+#include "../core/recorderHandler.h"
 #include "main.h"
 #include "channel.h"
 #include "transport.h"
@@ -55,10 +56,10 @@ extern gdMainWindow* G_MainWin;
 
 
 namespace giada {
-namespace c     {
+namespace c {
 namespace io 
 {
-void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
+void keyPress(m::Channel* ch, bool ctrl, bool shift, int velocity)
 {
 	/* Everything occurs on frame 0 here: they are all user-generated events. */
 	if (ctrl)
@@ -78,7 +79,7 @@ void keyPress(Channel* ch, bool ctrl, bool shift, int velocity)
 /* -------------------------------------------------------------------------- */
 
 
-void keyRelease(Channel* ch, bool ctrl, bool shift)
+void keyRelease(m::Channel* ch, bool ctrl, bool shift)
 {
 	if (!ctrl && !shift) {
 		ch->recordStop();
@@ -92,7 +93,7 @@ void keyRelease(Channel* ch, bool ctrl, bool shift)
 
 void startStopActionRec(bool gui)
 {
-	m::recorder::active ? stopActionRec(gui) : startActionRec(gui);
+	m::recorder::isActive() ? stopActionRec(gui) : startActionRec(gui);
 }
 
 
@@ -101,15 +102,13 @@ void startStopActionRec(bool gui)
 
 void startActionRec(bool gui)
 {
-	using namespace giada::m;
-
-	if (kernelAudio::getStatus() == false)
+	if (m::kernelAudio::getStatus() == false)
 		return;
 
-	recorder::active = true;
+	m::recorder::enable();
 
-	if (!clock::isRunning())
-		glue_startSeq(false);  // update gui
+	if (!m::clock::isRunning())
+		c::transport::startSeq(false);  // update gui
 
 	if (!gui) {
 		Fl::lock();
@@ -124,13 +123,10 @@ void startActionRec(bool gui)
 
 void stopActionRec(bool gui)
 {
-	/* Stop the recorder and sort newly recorder actions. */
+	m::recorder::disable();
+	m::recorderHandler::consolidate();
 
-	m::recorder::active = false;
-	m::recorder::sortActions();
-
-	for (Channel* ch : m::mixer::channels)
-	{
+	for (m::Channel* ch : m::mixer::channels) {
 		if (ch->type == ChannelType::MIDI)
 			continue;
 		G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
@@ -179,7 +175,7 @@ int startInputRec(bool gui)
 	}
 
 	if (!clock::isRunning())
-		glue_startSeq(false); // update gui anyway
+		transport::startSeq(false); // update gui anyway
 
 	Fl::lock();
 		if (!gui)

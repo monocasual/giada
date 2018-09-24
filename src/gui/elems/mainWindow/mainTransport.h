@@ -50,12 +50,11 @@ private:
 	static void cb_recAction(Fl_Widget *v, void *p);
 	static void cb_recInput (Fl_Widget *v, void *p);
 	static void cb_metronome(Fl_Widget *v, void *p);
-
-	inline void __cb_rewind   ();
-	inline void __cb_play     ();
-	inline void __cb_recAction();
-	inline void __cb_recInput ();
-	inline void __cb_metronome();
+	void cb_rewind   ();
+	void cb_play     ();
+	void cb_recAction();
+	void cb_recInput ();
+	void cb_metronome();
 
 public:
 

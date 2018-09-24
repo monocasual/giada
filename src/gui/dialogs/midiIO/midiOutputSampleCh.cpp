@@ -33,7 +33,10 @@
 #include "midiOutputSampleCh.h"
 
 
-gdMidiOutputSampleCh::gdMidiOutputSampleCh(SampleChannel* ch)
+using namespace giada;
+
+
+gdMidiOutputSampleCh::gdMidiOutputSampleCh(m::SampleChannel* ch)
 	: gdMidiOutputBase(300, 140), ch(ch)
 {
 	setTitle(ch->index+1);

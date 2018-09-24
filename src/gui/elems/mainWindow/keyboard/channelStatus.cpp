@@ -29,7 +29,7 @@
 #include "../../../../core/mixer.h"
 #include "../../../../core/clock.h"
 #include "../../../../core/sampleChannel.h"
-#include "../../../../core/recorder.h"
+#include "../../../../core/recorder/recorder.h"
 #include "../../../../core/const.h"
 #include "channelStatus.h"
 
@@ -65,17 +65,17 @@ void geChannelStatus::draw()
   if (ch->status == ChannelStatus::PLAY)
     fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
   else
-    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // status empty
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);  // status empty
 
 
   if (mixer::recording && ch->armed)
     fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
   else
-  if (recorder::active && recorder::canRec(ch, clock::isRunning(), mixer::recording))
-    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);     // action record
+  if (recorder::isActive())
+    fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);    // action recording
 
-  /* equation for the progress bar:
-   * ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
+  /* Equation for the progress bar: 
+  ((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 
   int pos = ch->getPosition();
   if (pos == -1)

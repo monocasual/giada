@@ -32,50 +32,53 @@
 #include "../core/types.h"
 
 
-class SampleChannel;
 class geWaveform;
 
 
 namespace giada {
-namespace c     {
+namespace m
+{
+class SampleChannel;
+}
+namespace c {
 namespace sampleEditor 
 {
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 
-void setBeginEnd(SampleChannel* ch, int b, int e);
+void setBeginEnd(m::SampleChannel* ch, int b, int e);
 
-void cut(SampleChannel* ch, int a, int b);
-void copy(SampleChannel* ch, int a, int b);
+void cut(m::SampleChannel* ch, int a, int b);
+void copy(m::SampleChannel* ch, int a, int b);
 
 /* paste
 Pastes what's defined in m_copyBuffer into channel 'ch' at point 'a'. If 
 m_copyBuffer is empty, does nothing. */
 
-void paste(SampleChannel* ch, int a);
+void paste(m::SampleChannel* ch, int a);
 
-void trim(SampleChannel* ch, int a, int b);
-void reverse(SampleChannel* ch, int a, int b);
-void normalizeHard(SampleChannel* ch, int a, int b);
-void silence(SampleChannel* ch, int a, int b);
-void fade(SampleChannel* ch, int a, int b, int type);
-void smoothEdges(SampleChannel* ch, int a, int b);
-void shift(SampleChannel* ch, int offset);
+void trim(m::SampleChannel* ch, int a, int b);
+void reverse(m::SampleChannel* ch, int a, int b);
+void normalizeHard(m::SampleChannel* ch, int a, int b);
+void silence(m::SampleChannel* ch, int a, int b);
+void fade(m::SampleChannel* ch, int a, int b, int type);
+void smoothEdges(m::SampleChannel* ch, int a, int b);
+void shift(m::SampleChannel* ch, int offset);
 
 bool isWaveBufferFull();
 
 /* setPlayHead
 Changes playhead's position. Used in preview. */
 
-void setPlayHead(SampleChannel* ch, int f);
+void setPlayHead(m::SampleChannel* ch, int f);
 
-void setPreview(SampleChannel* ch, PreviewMode mode);
-void rewindPreview(SampleChannel* ch);
+void setPreview(m::SampleChannel* ch, PreviewMode mode);
+void rewindPreview(m::SampleChannel* ch);
 
 /* toNewChannel
 Copies the selected range into a new sample channel. */
 
-void toNewChannel(SampleChannel* ch, int a, int b);
+void toNewChannel(m::SampleChannel* ch, int a, int b);
 }}}; // giada::c::sampleEditor::
 
 #endif
