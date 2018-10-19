@@ -202,14 +202,17 @@ void Channel::sendMidiLstatus()
 		case ChannelStatus::OFF:
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopped);
 			break;
-		case ChannelStatus::PLAY:
-			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
-			break;
 		case ChannelStatus::WAIT:
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::waiting);
 			break;
 		case ChannelStatus::ENDING:
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopping);
+			break;
+		case ChannelStatus::PLAY:
+			if (giada::m::mixer::isChannelAudible(this) && !(this->mute))
+				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
+			else
+				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing_inaudible);
 			break;
 		default:
 			break;

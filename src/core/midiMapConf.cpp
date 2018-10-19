@@ -57,7 +57,7 @@ bool readInitCommands(json_t *jContainer)
 	json_t *jInitCommand;
 	json_array_foreach(jInitCommands, commandIndex, jInitCommand) {
 
-		string indexStr = "init command " + gu_iToString(commandIndex);
+		string indexStr = "init command " + gu_iToString(commandIndex);				// "init command " ?? WTF
 		if (!storager::checkObject(jInitCommand, indexStr.c_str()))
 			return 0;
 
@@ -141,6 +141,7 @@ message_t waiting;
 message_t playing;
 message_t stopping;
 message_t stopped;
+message_t playing_inaudible;
 
 string midimapsPath;
 vector<string> maps;
@@ -221,6 +222,10 @@ void setDefault()
 	stopped.valueStr  = "";
 	stopped.offset    = -1;
 	stopped.value     = 0;
+	playing_inaudible.channel   = 0;
+	playing_inaudible.valueStr  = "";
+	playing_inaudible.offset    = -1;
+	playing_inaudible.value     = 0;
 }
 
 
@@ -255,6 +260,8 @@ int read(const string &file)
 	if (!readCommand(jRoot, &playing,  MIDIMAP_KEY_PLAYING))  return MIDIMAP_UNREADABLE;
 	if (!readCommand(jRoot, &stopping, MIDIMAP_KEY_STOPPING)) return MIDIMAP_UNREADABLE;
 	if (!readCommand(jRoot, &stopped,  MIDIMAP_KEY_STOPPED))  return MIDIMAP_UNREADABLE;
+	if (!readCommand(jRoot, &playing_inaudible,  MIDIMAP_KEY_PLAYING_INAUDIBLE))  return MIDIMAP_UNREADABLE;
+
 
 	/* parse messages */
 
@@ -266,6 +273,7 @@ int read(const string &file)
 	parse(&playing);
 	parse(&stopping);
 	parse(&stopped);
+	parse(&playing_inaudible);
 
 	return MIDIMAP_READ_OK;
 }

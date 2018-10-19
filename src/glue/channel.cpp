@@ -285,8 +285,7 @@ void toggleMute(Channel* ch, bool gui)
 
 void toggleSolo(Channel* ch, bool gui)
 {
-	ch->solo = !ch->solo;
-	m::mh::updateSoloCount();	
+	ch->setSolo(!ch->solo);
 	if (!gui) {
 		Fl::lock();
 		ch->guiChannel->solo->value(ch->solo);

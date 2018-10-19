@@ -223,6 +223,14 @@ void SampleChannel::setMute(bool value)
 /* -------------------------------------------------------------------------- */
 
 
+void SampleChannel::setSolo(bool value)
+{
+	sampleChannelProc::setSolo(this, value);
+}
+
+/* -------------------------------------------------------------------------- */
+
+
 void SampleChannel::process(giada::m::AudioBuffer& out, 
 	const giada::m::AudioBuffer& in, bool audible, bool running)
 {

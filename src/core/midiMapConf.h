@@ -56,6 +56,7 @@ extern message_t waiting;
 extern message_t playing;
 extern message_t stopping;
 extern message_t stopped;
+extern message_t playing_inaudible;
 
 /* midimapsPath
  * path of midimap files, different between OSes. */
@@ -83,6 +84,6 @@ Read a midi map from file 'file'. */
 
 int read(const std::string &file);
 
-}}}; // giada::m::midimap::
+}}};
 
 #endif
