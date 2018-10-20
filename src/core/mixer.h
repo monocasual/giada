@@ -96,7 +96,7 @@ Is mixer silent? */
 
 bool isSilent();
 
-extern bool isChannelAudible(Channel* ch);
+bool isChannelAudible(Channel* ch);
 
 /* rewind
 Rewinds sequencer to frame 0. */

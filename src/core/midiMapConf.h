@@ -75,15 +75,20 @@ Parse the midi maps folders and find the available maps. */
 void init();
 
 /* setDefault
-Set default values in case no maps are available/choosen. */
+Set default values in case no maps are available/chosen. */
 
 void setDefault();
+
+/* isDefined
+Check whether a specific message has been defined within midi map file.*/
+
+bool isDefined(message_t msg);
 
 /* read
 Read a midi map from file 'file'. */
 
 int read(const std::string &file);
 
-}}};
+}}}; // giada::m::midimap::
 
 #endif

@@ -362,7 +362,6 @@ void setMute(SampleChannel* ch, bool value)
 		channel->sendMidiLstatus();
 
 	ch->sendMidiLmute();
-	ch->sendMidiLsolo();
 }
 
 

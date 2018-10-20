@@ -209,7 +209,8 @@ void Channel::sendMidiLstatus()
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopping);
 			break;
 		case ChannelStatus::PLAY:
-			if (giada::m::mixer::isChannelAudible(this) && !(this->mute))
+			if ((giada::m::mixer::isChannelAudible(this) && !(this->mute)) ||
+					!isDefined(midimap::playing_inaudible))
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
 			else
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing_inaudible);
