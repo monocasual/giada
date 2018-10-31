@@ -150,8 +150,8 @@ void setMute(MidiChannel* ch, bool v)
 	#endif		
 		}
 
-	for (Channel* channel : giada::m::mixer::channels)		// This is for processing playing_inaudible
-		channel->sendMidiLstatus();
+	// This is for processing playing_inaudible
+	ch->sendMidiLstatus();	
 
 	ch->sendMidiLmute();
 }
@@ -165,7 +165,8 @@ void setSolo(MidiChannel* ch, bool v)
 	ch->solo = v;
 	m::mh::updateSoloCount();
 
-	for (Channel* channel : giada::m::mixer::channels)		// This is for processing playing_inaudible
+	// This is for processing playing_inaudible
+	for (Channel* channel : giada::m::mixer::channels)		
 		channel->sendMidiLstatus();
 
 	ch->sendMidiLsolo();
