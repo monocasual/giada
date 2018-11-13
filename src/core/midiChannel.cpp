@@ -130,6 +130,15 @@ void MidiChannel::setMute(bool value)
 /* -------------------------------------------------------------------------- */
 
 
+void MidiChannel::setSolo(bool value)
+{
+	midiChannelProc::setSolo(this, value);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void MidiChannel::readPatch(const string& basePath, int i)
 {
 	Channel::readPatch("", i);

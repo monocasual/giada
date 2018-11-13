@@ -3,7 +3,7 @@
 #include "kernelMidi.h"
 #include "const.h"
 #include "midiChannelProc.h"
-
+#include "mixerHandler.h"
 
 namespace giada {
 namespace m {
@@ -149,7 +149,27 @@ void setMute(MidiChannel* ch, bool v)
 			ch->addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
 	#endif		
 		}
+
+	// This is for processing playing_inaudible
+	ch->sendMidiLstatus();	
+
 	ch->sendMidiLmute();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setSolo(MidiChannel* ch, bool v)
+{
+	ch->solo = v;
+	m::mh::updateSoloCount();
+
+	// This is for processing playing_inaudible
+	for (Channel* channel : giada::m::mixer::channels)		
+		channel->sendMidiLstatus();
+
+	ch->sendMidiLsolo();
 }
 
 

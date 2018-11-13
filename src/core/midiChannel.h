@@ -56,6 +56,7 @@ public:
 	void stop() override {};
 	void rewindBySeq() override;
 	void setMute(bool value) override;
+	void setSolo(bool value) override;
 	void readPatch(const std::string& basePath, int i) override;
 	void writePatch(int i, bool isProject) override;
 	void receiveMidi(const giada::m::MidiEvent& midiEvent) override;

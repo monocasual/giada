@@ -96,7 +96,11 @@ void parse(message_t *message)
 {
 	/* Remove '0x' part from the original string. */
 
-	string input = message->valueStr.replace(0, 2, "");
+	string input = message->valueStr;
+
+	size_t f = input.find("0x");					// check if "0x" is there
+	if (f!=std::string::npos)
+		input = message->valueStr.replace(f, 2, "");
 
 	/* Then transform string value into the actual uint32_t value, by parsing
 	 * each char (i.e. nibble) in the original string. Substitute 'n' with
@@ -141,6 +145,7 @@ message_t waiting;
 message_t playing;
 message_t stopping;
 message_t stopped;
+message_t playing_inaudible;
 
 string midimapsPath;
 vector<string> maps;
@@ -221,6 +226,19 @@ void setDefault()
 	stopped.valueStr  = "";
 	stopped.offset    = -1;
 	stopped.value     = 0;
+	playing_inaudible.channel   = 0;
+	playing_inaudible.valueStr  = "";
+	playing_inaudible.offset    = -1;
+	playing_inaudible.value     = 0;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isDefined(message_t msg)
+{
+	return (msg.offset!=-1);
 }
 
 
@@ -245,27 +263,17 @@ int read(const string &file)
   }
 
 	if (!storager::setString(jRoot, MIDIMAP_KEY_BRAND, brand))   return MIDIMAP_UNREADABLE;
-  if (!storager::setString(jRoot, MIDIMAP_KEY_DEVICE, device)) return MIDIMAP_UNREADABLE;
+    if (!storager::setString(jRoot, MIDIMAP_KEY_DEVICE, device)) return MIDIMAP_UNREADABLE;
 	if (!readInitCommands(jRoot)) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &muteOn,   MIDIMAP_KEY_MUTE_ON))  return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &muteOff,  MIDIMAP_KEY_MUTE_OFF)) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &soloOn,   MIDIMAP_KEY_SOLO_ON))  return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &soloOff,  MIDIMAP_KEY_SOLO_OFF)) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &waiting,  MIDIMAP_KEY_WAITING))  return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &playing,  MIDIMAP_KEY_PLAYING))  return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &stopping, MIDIMAP_KEY_STOPPING)) return MIDIMAP_UNREADABLE;
-	if (!readCommand(jRoot, &stopped,  MIDIMAP_KEY_STOPPED))  return MIDIMAP_UNREADABLE;
-
-	/* parse messages */
-
-	parse(&muteOn);
-	parse(&muteOff);
-	parse(&soloOn);
-	parse(&soloOff);
-	parse(&waiting);
-	parse(&playing);
-	parse(&stopping);
-	parse(&stopped);
+	if (readCommand(jRoot, &muteOn,   MIDIMAP_KEY_MUTE_ON))  parse(&muteOn);
+	if (readCommand(jRoot, &muteOff,  MIDIMAP_KEY_MUTE_OFF)) parse(&muteOff);
+	if (readCommand(jRoot, &soloOn,   MIDIMAP_KEY_SOLO_ON))  parse(&soloOn);
+	if (readCommand(jRoot, &soloOff,  MIDIMAP_KEY_SOLO_OFF)) parse(&soloOff);
+	if (readCommand(jRoot, &waiting,  MIDIMAP_KEY_WAITING))  parse(&waiting);
+	if (readCommand(jRoot, &playing,  MIDIMAP_KEY_PLAYING))  parse(&playing);
+	if (readCommand(jRoot, &stopping, MIDIMAP_KEY_STOPPING)) parse(&stopping);
+	if (readCommand(jRoot, &stopped,  MIDIMAP_KEY_STOPPED))  parse(&stopped);
+	if (readCommand(jRoot, &playing_inaudible,  MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse(&playing_inaudible);
 
 	return MIDIMAP_READ_OK;
 }

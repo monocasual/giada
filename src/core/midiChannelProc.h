@@ -46,6 +46,7 @@ void rewindBySeq(MidiChannel* ch);
 Mutes/unmutes a channel. */
 
 void setMute(MidiChannel* ch, bool v);
+void setSolo(MidiChannel* ch, bool v);
 }}};
 
 

@@ -258,6 +258,14 @@ void send(int b1, int b2, int b3)
 
 void sendMidiLightning(uint32_t learn, const midimap::message_t& msg)
 {
+	// Skip lightning message if not defined in midi map
+
+	if (!midimap::isDefined(msg))
+	{
+		gu_log("[KM] message skipped (not defined in midimap)");
+		return;
+	}
+
 	gu_log("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, msg.channel, 
 		msg.value, msg.offset);
 

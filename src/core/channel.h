@@ -88,10 +88,15 @@ public:
 
 	virtual void kill(int localFrame) = 0;
 
-	/* set
+	/* set mute
 	What to do when channel is un/muted. */
 
 	virtual void setMute(bool value) = 0;
+
+	/* set solo
+	What to do when channel is un/soloed. */
+
+	virtual void setSolo(bool value) = 0;
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */

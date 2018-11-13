@@ -31,6 +31,7 @@
 #include "pluginHost.h"
 #include "sampleChannel.h"
 #include "sampleChannelProc.h"
+#include "mixerHandler.h"
 
 
 namespace giada {
@@ -356,7 +357,28 @@ void rewindBySeq(SampleChannel* ch)
 void setMute(SampleChannel* ch, bool value)
 {
 	ch->mute = value;
+
+	// This is for processing playing_inaudible
+	ch->sendMidiLstatus();	
+
 	ch->sendMidiLmute();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setSolo(SampleChannel* ch, bool value)
+{
+	ch->solo = value;
+	m::mh::updateSoloCount();
+
+	// This is for processing playing_inaudible
+	for (Channel* channel : giada::m::mixer::channels)		
+		channel->sendMidiLstatus();
+
+	ch->sendMidiLsolo();
+
 }
 
 

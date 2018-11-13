@@ -61,6 +61,7 @@ public:
 	bool recordKill() override;
 	void recordStop() override;
 	void setMute(bool value) override;
+	void setSolo(bool value) override;
 	void startReadingActions(bool treatRecsAsLoops, bool recsStopOnChanHalt) override;
 	void stopReadingActions(bool running, bool treatRecsAsLoops, 
 		bool recsStopOnChanHalt) override;

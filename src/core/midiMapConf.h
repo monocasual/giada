@@ -56,6 +56,7 @@ extern message_t waiting;
 extern message_t playing;
 extern message_t stopping;
 extern message_t stopped;
+extern message_t playing_inaudible;
 
 /* midimapsPath
  * path of midimap files, different between OSes. */
@@ -74,9 +75,14 @@ Parse the midi maps folders and find the available maps. */
 void init();
 
 /* setDefault
-Set default values in case no maps are available/choosen. */
+Set default values in case no maps are available/chosen. */
 
 void setDefault();
+
+/* isDefined
+Check whether a specific message has been defined within midi map file.*/
+
+bool isDefined(message_t msg);
 
 /* read
 Read a midi map from file 'file'. */
