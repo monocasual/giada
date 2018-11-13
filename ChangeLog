@@ -13,8 +13,9 @@
 
 
 0.15.3 ---
+- Support for "inaudible" MIDI lightning events (thank you @tomek-szczesny)
 - Build AppImage for Linux on Travis CI instance
-- Huge optimization of the AppImage binary file  
+- Huge optimization of the AppImage binary file
 
 
 0.15.2 --- 2018 . 09 . 05
