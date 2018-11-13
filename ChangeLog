@@ -13,6 +13,7 @@
 
 
 0.15.3 ---
+- Optional midimap parameters (thank you @tomek-szczesny)
 - Support for "inaudible" MIDI lightning events (thank you @tomek-szczesny)
 - Build AppImage for Linux on Travis CI instance
 - Huge optimization of the AppImage binary file
