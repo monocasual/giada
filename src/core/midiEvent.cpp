@@ -86,7 +86,7 @@ void MidiEvent::setChannel(int c)
 
 void MidiEvent::setVelocity(int v)
 {
-	assert(v >= 0 && v < G_MAX_VELOCITY);
+	assert(v >= 0 && v <= G_MAX_VELOCITY);
 	m_velocity = v;
 }
 
