@@ -35,10 +35,11 @@
 
 
 using std::string;
-using namespace giada;
-using namespace giada::m;
 
 
+namespace giada {
+namespace m 
+{
 SampleChannel::SampleChannel(bool inputMonitor, int bufferSize)
 	: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize),
 		mode             (ChannelMode::SINGLE_BASIC),
@@ -91,15 +92,15 @@ void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 	qWait           = src->qWait;
 	setPitch(src->pitch);
 
-	if (src->wave)
-		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor
+	/*if (src->wave)
+		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor*/
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::parseEvents(m::mixer::FrameEvents fe)
+void SampleChannel::parseEvents(mixer::FrameEvents fe)
 {
 	sampleChannelProc::parseEvents(this, fe);
 	sampleChannelRec::parseEvents(this, fe);
@@ -231,8 +232,8 @@ void SampleChannel::setSolo(bool value)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::process(giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in, bool audible, bool running)
+void SampleChannel::process(AudioBuffer& out, const AudioBuffer& in, 
+	bool audible, bool running)
 {
 	sampleChannelProc::process(this, out, in, audible, running);
 }
@@ -241,10 +242,10 @@ void SampleChannel::process(giada::m::AudioBuffer& out,
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::readPatch(const string& basePath, int i)
+void SampleChannel::readPatch(const string& basePath, const patch::channel_t& pch)
 {
-	Channel::readPatch("", i);
-	channelManager::readPatch(this, basePath, i);
+	Channel::readPatch("", pch);
+	channelManager::readPatch(this, basePath, pch);
 }
 
 
@@ -433,7 +434,7 @@ bool SampleChannel::canInputRec()
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillBuffer(giada::m::AudioBuffer& dest, int start, int offset)
+int SampleChannel::fillBuffer(AudioBuffer& dest, int start, int offset)
 {
 	if (pitch == 1.0) return fillBufferCopy(dest, start, offset);
 	else              return fillBufferResampled(dest, start, offset);
@@ -443,7 +444,7 @@ int SampleChannel::fillBuffer(giada::m::AudioBuffer& dest, int start, int offset
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillBufferResampled(giada::m::AudioBuffer& dest, int start, int offset)
+int SampleChannel::fillBufferResampled(AudioBuffer& dest, int start, int offset)
 {
 	rsmp_data.data_in       = wave->getFrame(start);        // Source data
 	rsmp_data.input_frames  = end - start;                  // How many readable frames
@@ -460,7 +461,7 @@ int SampleChannel::fillBufferResampled(giada::m::AudioBuffer& dest, int start, i
 /* -------------------------------------------------------------------------- */
 
 
-int SampleChannel::fillBufferCopy(giada::m::AudioBuffer& dest, int start, int offset)
+int SampleChannel::fillBufferCopy(AudioBuffer& dest, int start, int offset)
 {
 	int used = dest.countFrames() - offset;
 	if (used + start > wave->getSize())
@@ -495,3 +496,5 @@ bool SampleChannel::isOnLastFrame() const
 {
 	return tracker >= end;
 }
+
+}} // giada::m::

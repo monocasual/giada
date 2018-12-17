@@ -35,7 +35,6 @@
 
 
 class Fl_Scroll;
-class Channel;
 class geButton;
 
 
@@ -51,10 +50,10 @@ private:
 
 public:
 
-	Channel* ch;      // ch == nullptr ? masterOut
+	giada::m::Channel* ch;      // ch == nullptr ? masterOut
 	int stackType;
 
-	gdPluginList(int stackType, Channel* ch=nullptr);
+	gdPluginList(int stackType, giada::m::Channel* ch=nullptr);
 	~gdPluginList();
 
 	/* special callback, passed to browser. When closed (i.e. plugin

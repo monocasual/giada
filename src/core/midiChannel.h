@@ -35,10 +35,9 @@
 #include "channel.h"
 
 
-class MidiMapConf;
-class Patch;
-
-
+namespace giada {
+namespace m 
+{
 class MidiChannel : public Channel
 {
 public:
@@ -46,9 +45,8 @@ public:
 	MidiChannel(int bufferSize);
 
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
-	void parseEvents(giada::m::mixer::FrameEvents fe) override;
-	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in, 
-		bool audible, bool running) override;
+	void parseEvents(mixer::FrameEvents fe) override;
+	void process(AudioBuffer& out, const AudioBuffer& in, bool audible, bool running) override;
 	void start(int frame, bool doQuantize, int velocity) override;
 	void kill(int localFrame) override;
 	void empty() override;
@@ -57,16 +55,15 @@ public:
 	void rewindBySeq() override;
 	void setMute(bool value) override;
 	void setSolo(bool value) override;
-	void readPatch(const std::string& basePath, int i) override;
+	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
 	void writePatch(int i, bool isProject) override;
-	void receiveMidi(const giada::m::MidiEvent& midiEvent) override;
+	void receiveMidi(const MidiEvent& midiEvent) override;
 	bool canInputRec() override;
 
 	/* sendMidi
 	 * send Midi event to the outside world. */
 
-	void sendMidi(giada::m::recorder::action* a, int localFrame);
-	void sendMidi(uint32_t data);
+	void sendMidi(const Action* a, int localFrame);
 
 #ifdef WITH_VST
 
@@ -79,9 +76,11 @@ public:
 
 #endif
 
-	bool    midiOut;           // enable midi output
-	uint8_t midiOutChan;       // midi output channel
+	bool midiOut;      // enable midi output
+	int  midiOutChan;  // midi output channel
 };
+
+}} // giada::m::
 
 
 #endif

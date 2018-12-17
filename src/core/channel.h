@@ -33,6 +33,7 @@
 #include <string>
 #include <pthread.h>
 #include "types.h"
+#include "patch.h"
 #include "mixer.h"
 #include "midiMapConf.h"
 #include "midiEvent.h"
@@ -44,10 +45,13 @@
 #endif
 
 
-class Plugin;
-class MidiMapConf;
 class geChannel;
 
+
+namespace giada {
+namespace m 
+{
+class Plugin;
 
 class Channel
 {
@@ -63,14 +67,14 @@ public:
 	/* parseEvents
 	Prepares channel for rendering. This is called on each frame. */
 
-	virtual void parseEvents(giada::m::mixer::FrameEvents fe) = 0;
+	virtual void parseEvents(mixer::FrameEvents fe) = 0;
 
 	/* process
 	Merges working buffers into 'out', plus plugin processing (if any). Warning:
 	inBuffer might be nullptr if no input devices are available for recording. */
 
-	virtual void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in,
-		bool audible, bool running) = 0;
+	virtual void process(AudioBuffer& out, const AudioBuffer& in, bool audible, 
+		bool running) = 0;
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)
@@ -141,13 +145,13 @@ public:
 
 	virtual void stopInputRec(int globalFrame) {};
 	
-	virtual void readPatch(const std::string& basePath, int i);
+	virtual void readPatch(const std::string& basePath, const patch::channel_t& pch);
 	virtual void writePatch(int i, bool isProject);
 
 	/* receiveMidi
 	Receives and processes midi messages from external devices. */
 
-	virtual void receiveMidi(const giada::m::MidiEvent& midiEvent) {};
+	virtual void receiveMidi(const MidiEvent& midiEvent) {};
 
 	/* calcPanning
 	Given an audio channel (stereo: 0 or 1) computes the current panning value. */
@@ -196,21 +200,21 @@ public:
 	Pointer to a gChannel object, part of the GUI. TODO - remove this and send
 	signals instead. */
 
-  geChannel* guiChannel;
+	geChannel* guiChannel;
 
 	/* buffer
 	Working buffer for internal processing. */
 	
-	giada::m::AudioBuffer buffer;
+	AudioBuffer buffer;
 
-	giada::ChannelType   type;
-	giada::ChannelStatus status;
-	giada::ChannelStatus recStatus;
+	ChannelType   type;
+	ChannelStatus status;
+	ChannelStatus recStatus;
 
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	giada::PreviewMode previewMode;
+	PreviewMode previewMode;
 
 	float       pan;
 	float       volume;   // global volume
@@ -226,26 +230,26 @@ public:
 	the delta during volume changes (or the line slope between two volume 
 	points). */
 	
-	float volume_i;
-	float volume_d;
+	double volume_i;
+	double volume_d;
 	
-  bool hasActions;      // has something recorded
-  bool readActions;     // read what's recorded
-  
-  bool      midiIn;               // enable midi input
-  uint32_t  midiInKeyPress;
-  uint32_t  midiInKeyRel;
-  uint32_t  midiInKill;
-  uint32_t  midiInArm;
-  uint32_t  midiInVolume;
-  uint32_t  midiInMute;
-  uint32_t  midiInSolo;
+	bool hasActions;      // has something recorded
+	bool readActions;     // read what's recorded
 
-  /* midiInFilter
-  Which MIDI channel should be filtered out when receiving MIDI messages. -1
-  means 'all'. */
+	bool      midiIn;               // enable midi input
+	uint32_t  midiInKeyPress;
+	uint32_t  midiInKeyRel;
+	uint32_t  midiInKill;
+	uint32_t  midiInArm;
+	uint32_t  midiInVolume;
+	uint32_t  midiInMute;
+	uint32_t  midiInSolo;
 
-  int midiInFilter;
+	/* midiInFilter
+	Which MIDI channel should be filtered out when receiving MIDI messages. -1
+	means 'all'. */
+
+	int midiInFilter;
 
 	/*  midiOutL*
 	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent
@@ -253,17 +257,17 @@ public:
 	 * else gets stripped out. */
 
 	bool     midiOutL;
-  uint32_t midiOutLplaying;
-  uint32_t midiOutLmute;
-  uint32_t midiOutLsolo;
+	uint32_t midiOutLplaying;
+	uint32_t midiOutLmute;
+	uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-  std::vector <Plugin*> plugins;
+	std::vector <Plugin*> plugins;
 #endif
 
 protected:
 
-	Channel(giada::ChannelType type, giada::ChannelStatus status, int bufferSize);
+	Channel(ChannelType type, ChannelStatus status, int bufferSize);
 
 #ifdef WITH_VST
 
@@ -275,6 +279,8 @@ protected:
 
 #endif
 };
+
+}} // giada::m::
 
 
 #endif

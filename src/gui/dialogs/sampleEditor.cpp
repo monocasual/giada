@@ -63,7 +63,7 @@ using std::string;
 using namespace giada;
 
 
-gdSampleEditor::gdSampleEditor(SampleChannel* ch)
+gdSampleEditor::gdSampleEditor(m::SampleChannel* ch)
   : gdWindow(640, 480),
     ch(ch)
 {

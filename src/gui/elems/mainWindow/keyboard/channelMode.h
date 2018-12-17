@@ -41,11 +41,11 @@ private:
 	static void cb_changeMode  (Fl_Widget *v, void *p);
 	inline void __cb_changeMode(int mode);
 
-	class SampleChannel *ch;
+	giada::m::SampleChannel *ch;
 
 public:
 
-  geChannelMode(int x, int y, int w, int h, class SampleChannel *ch,
+  geChannelMode(int x, int y, int w, int h, giada::m::SampleChannel *ch,
     const char *l=0);
 	void draw();
 };

@@ -33,9 +33,6 @@
 #include <FL/Fl_Group.H>
 
 
-class Channel;
-
-
 namespace giada {
 namespace v
 {
@@ -57,7 +54,7 @@ private:
 
 protected:
 
-	Channel* m_ch;
+	m::Channel* m_ch;
 
 	gdBaseActionEditor* m_base;
 
@@ -79,7 +76,7 @@ protected:
 
 public:
 
-	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, Channel* ch);
+	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, m::Channel* ch);
 
   /* updateActions
   Rebuild the actions widgets from scratch. */

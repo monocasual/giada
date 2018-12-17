@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "../../../core/const.h"
+#include "../../../core/action.h"
 #include "../../../core/midiEvent.h"
 #include "../../../utils/math.h"
 #include "pianoItem.h"
@@ -35,11 +36,22 @@
 namespace giada {
 namespace v
 {
-gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, m::recorder::action a1,
-	m::recorder::action a2)
+gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, const m::Action* a1,
+	const m::Action* a2)
 : geBaseAction(X, Y, W, H, /*resizable=*/true, a1, a2),
-  orphaned    (a2.frame == -1)
+  m_ringLoop  (a2 != nullptr && a1->frame > a2->frame),
+  m_orphaned  (a2 == nullptr)
 {
+	m_resizable = isResizable();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool gePianoItem::isResizable() const
+{
+	return !(m_ringLoop || m_orphaned);
 }
 
 
@@ -53,14 +65,21 @@ void gePianoItem::draw()
 	Pixel by = y() + 2;
 	Pixel bh = h() - 3;
 
-	if (orphaned) {
-		fl_rect(x(), by, MIN_WIDTH, bh, color);
-		fl_line(x(), by, x() + MIN_WIDTH, by + bh);
+	if (m_orphaned) {
+		fl_rect(x(), by, w(), bh, color);
+		fl_line(x(), by, x() + w(), by + bh);
 	}
 	else {
 		Pixel vh = calcVelocityH();
-		fl_rectf(x(), by + (bh - vh), w(), vh, color);
-		fl_rect(x(), by, w(), bh, color);
+		if (m_ringLoop) {
+			fl_rect(x(), by, MIN_WIDTH, bh, color);
+			fl_line(x() + MIN_WIDTH, by + bh/2, x() + w(), by + bh/2);
+			fl_rectf(x(), by + (bh - vh), MIN_WIDTH, vh, color);
+		}
+		else {
+			fl_rect(x(), by, w(), bh, color);
+			fl_rectf(x(), by + (bh - vh), w(), vh, color);
+		}
 	}
 }
 
@@ -70,7 +89,7 @@ void gePianoItem::draw()
 
 Pixel gePianoItem::calcVelocityH() const
 {
-	int v = m::MidiEvent(a1.iValue).getVelocity();
+	int v = a1->event.getVelocity();
 	return u::math::map<int, Pixel>(v, 0, G_MAX_VELOCITY, 0, h() - 3);
 }
 }} // giada::v::

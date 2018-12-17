@@ -33,24 +33,28 @@
 #include "types.h"
 
 
+namespace giada {
+namespace m 
+{
 class Channel;
 class SampleChannel;
 class MidiChannel;
 
-
-namespace giada {
-namespace m {
+namespace patch
+{
+struct channel_t;
+}
 namespace channelManager
 {
-int create(ChannelType type, int bufferSize, bool inputMonitorOn, Channel** out);
+Channel* create(ChannelType type, int bufferSize, bool inputMonitorOn);
 
 int  writePatch(const Channel* ch, bool isProject);
 void writePatch(const SampleChannel* ch, bool isProject, int index);
 void writePatch(const MidiChannel* ch, bool isProject, int index);
 
-void readPatch(Channel* ch, int index);
-void readPatch(SampleChannel* ch, const std::string& basePath, int index);
-void readPatch(MidiChannel* ch, int index);
+void readPatch(Channel* ch, const patch::channel_t& pch);
+void readPatch(SampleChannel* ch, const std::string& basePath, const patch::channel_t& pch);
+void readPatch(MidiChannel* ch, const patch::channel_t& pch);
 }}}; // giada::m::channelManager
 
 

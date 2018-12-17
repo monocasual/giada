@@ -33,12 +33,14 @@
 #include "types.h"
 
 
-class Channel;
-class SampleChannel;
 
 
 namespace giada {
-namespace m {
+namespace m 
+{
+class Channel;
+class SampleChannel;
+
 namespace mh
 {
 /* addChannel

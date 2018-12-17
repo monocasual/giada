@@ -115,7 +115,7 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geWaveTools::geWaveTools(int x, int y, int w, int h, SampleChannel *ch, const char *l)
+geWaveTools::geWaveTools(int x, int y, int w, int h, m::SampleChannel* ch, const char* l)
 	: Fl_Scroll(x, y, w, h, l),
 		ch       (ch)
 {
@@ -236,13 +236,13 @@ void geWaveTools::openMenu()
 		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();		
 	}
 
-	Fl_Menu_Button *b = new Fl_Menu_Button(0, 0, 100, 50);
+	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
 	b->box(G_CUSTOM_BORDER_BOX);
 	b->textsize(G_GUI_FONT_SIZE_BASE);
 	b->textcolor(G_COLOR_LIGHT_2);
 	b->color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item *m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
 	if (m)
 		m->do_callback(this, m->user_data());
 	return;

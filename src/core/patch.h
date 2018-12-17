@@ -40,10 +40,12 @@ namespace patch
 {
 struct action_t
 {
-	int      type;
+	int      id;
+	int      channel;
 	int      frame;
-	float    fValue;
-	uint32_t iValue;
+	uint32_t event;
+	int      prev;
+	int      next;
 };
 
 #ifdef WITH_VST
@@ -95,8 +97,8 @@ struct channel_t
 	uint32_t    midiInReadActions;
 	uint32_t    midiInPitch;
 	// midi channel
-	uint32_t    midiOut;
-	uint32_t    midiOutChan;
+	int         midiOut;   // TODO - should be bool
+	int         midiOutChan;
 
 	std::vector<action_t> actions;
 

@@ -33,8 +33,8 @@
 namespace giada {
 namespace v
 {
-geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, m::recorder::action a)
-	: geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, {})
+geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, const m::Action* a)
+	: geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, nullptr)
 {
 }
 

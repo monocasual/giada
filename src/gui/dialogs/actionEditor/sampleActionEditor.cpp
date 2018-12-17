@@ -27,8 +27,10 @@
 
 #include <string>
 #include "../../../core/const.h"
+#include "../../../core/midiEvent.h"
 #include "../../../core/graphics.h"
 #include "../../../core/sampleChannel.h"
+#include "../../../glue/actionEditor.h"
 #include "../../elems/basics/scroll.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/resizerBar.h"
@@ -46,7 +48,7 @@ using std::string;
 namespace giada {
 namespace v
 {
-gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
+gdSampleActionEditor::gdSampleActionEditor(m::SampleChannel* ch)
 : gdBaseActionEditor(ch)
 {
 	computeWidth();
@@ -86,12 +88,13 @@ gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
 	viewport->add(ac);
 	viewport->add(new geResizerBar(ac->x(), ac->y()+ac->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
 	
-	vc = new geEnvelopeEditor(viewport->x(), ac->y()+ac->h()+RESIZER_BAR_H, G_ACTION_VOLUME, "volume", ch);
+	vc = new geEnvelopeEditor(viewport->x(), ac->y()+ac->h()+RESIZER_BAR_H, "volume", ch);
 	viewport->add(vc);
 	viewport->add(new geResizerBar(vc->x(), vc->y()+vc->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
 
 	end();
 	prepareWindow();
+	rebuild();
 }
 
 
@@ -100,7 +103,7 @@ gdSampleActionEditor::gdSampleActionEditor(SampleChannel* ch)
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	SampleChannel* sch = static_cast<SampleChannel*>(ch); 
+	m::SampleChannel* sch = static_cast<m::SampleChannel*>(ch); 
 	return sch->mode != ChannelMode::SINGLE_PRESS && !sch->isAnyLoopMode();
 }
 
@@ -110,6 +113,7 @@ bool gdSampleActionEditor::canChangeActionType()
 
 void gdSampleActionEditor::rebuild()
 {
+	m_actions = c::actionEditor::getActions(ch);
 	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 
 	computeWidth();
 	ac->rebuild();

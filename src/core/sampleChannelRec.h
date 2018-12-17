@@ -29,11 +29,13 @@
 #define G_SAMPLE_CHANNEL_REC_H
 
 
-class SampleChannel;
 
 
 namespace giada {
-namespace m {
+namespace m 
+{
+class SampleChannel;
+
 namespace sampleChannelRec
 {
 void parseEvents(SampleChannel* ch, mixer::FrameEvents fe);

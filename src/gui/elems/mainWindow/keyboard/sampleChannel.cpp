@@ -30,6 +30,7 @@
 #include "../../../../core/clock.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/wave.h"
+#include "../../../../core/recorder/recorder.h"
 #include "../../../../core/sampleChannel.h"
 #include "../../../../glue/io.h"
 #include "../../../../glue/channel.h"
@@ -101,8 +102,8 @@ void menuCallback(Fl_Widget* w, void* v)
 {
 	using namespace giada;
 
-	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
-	SampleChannel*   ch  = static_cast<SampleChannel*>(gch->ch);
+	geSampleChannel*  gch = static_cast<geSampleChannel*>(w);
+	m::SampleChannel* ch  = static_cast<m::SampleChannel*>(gch->ch);
 
 	Menu selectedItem = (Menu) (intptr_t) v;
 
@@ -209,7 +210,7 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, SampleChannel* ch)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* ch)
 	: geChannel(X, Y, W, H, ch)
 {
 	begin();
@@ -297,12 +298,12 @@ void geSampleChannel::cb_openMenu()
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel */
 
-	if (m::mixer::recording || m::recorder::active)
+	if (m::mixer::recording || m::recorder::isActive())
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<m::SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -344,7 +345,7 @@ void geSampleChannel::cb_openMenu()
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
 
-	if (static_cast<SampleChannel*>(ch)->isAnyLoopMode())
+	if (static_cast<m::SampleChannel*>(ch)->isAnyLoopMode())
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
 	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
@@ -366,7 +367,7 @@ void geSampleChannel::cb_openMenu()
 void geSampleChannel::cb_readActions()
 {
 	using namespace giada::c::channel;
-	toggleReadingActions(static_cast<SampleChannel*>(ch));
+	toggleReadingActions(static_cast<m::SampleChannel*>(ch));
 }
 
 
@@ -382,13 +383,11 @@ void geSampleChannel::refresh()
 
 	setColorsByStatus(ch->status, ch->recStatus);
 
-	if (static_cast<SampleChannel*>(ch)->wave != nullptr) {
+	if (static_cast<m::SampleChannel*>(ch)->wave != nullptr) {
 		if (m::mixer::recording && ch->armed)
 			mainButton->setInputRecordMode();
-		if (m::recorder::active) {
-			if (m::recorder::canRec(ch, m::clock::isRunning(), m::mixer::recording))
-				mainButton->setActionRecordMode();
-		}
+		if (m::recorder::isActive())
+			mainButton->setActionRecordMode();
 		status->redraw(); // status invisible? sampleButton too (see below)
 	}
 	mainButton->redraw();
@@ -412,7 +411,7 @@ void geSampleChannel::reset()
 
 void geSampleChannel::update()
 {
-	const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
+	const m::SampleChannel* sch = static_cast<const m::SampleChannel*>(ch);
 
 	switch (sch->status) {
 		case ChannelStatus::EMPTY:
@@ -462,7 +461,7 @@ void geSampleChannel::update()
 
 void geSampleChannel::showActionButton()
 {
-	readActions->value(static_cast<SampleChannel*>(ch)->readActions);
+	readActions->value(static_cast<m::SampleChannel*>(ch)->readActions);
 	readActions->show();
 	packWidgets();
 	redraw();

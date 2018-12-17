@@ -35,10 +35,12 @@
 #include "channel.h"
 
 
-class Patch;
 class Wave;
 
 
+namespace giada {
+namespace m 
+{
 class SampleChannel : public Channel
 {
 public:
@@ -48,10 +50,9 @@ public:
 
 	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void prepareBuffer(bool running) override;
-	void parseEvents(giada::m::mixer::FrameEvents fe) override;
-	void process(giada::m::AudioBuffer& out, const giada::m::AudioBuffer& in,
-		bool audible, bool running) override;
-	void readPatch(const std::string& basePath, int i) override;
+	void parseEvents(mixer::FrameEvents fe) override;
+	void process(AudioBuffer& out, const AudioBuffer& in, bool audible, bool running) override;
+	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
 	void writePatch(int i, bool isProject) override;
 
 	void start(int frame, bool doQuantize, int velocity) override;
@@ -92,7 +93,7 @@ public:
 	Returns how many frames have been used from the original Wave data. It also
 	resamples data if pitch != 1.0f. */
 
-	int fillBuffer(giada::m::AudioBuffer& dest, int start, int offset);
+	int fillBuffer(AudioBuffer& dest, int start, int offset);
 
 	/* pushWave
 	Adds a new wave to an existing channel. */
@@ -114,9 +115,9 @@ public:
 	/* bufferPreview
 	Extra buffer for audio preview. */
 
-	giada::m::AudioBuffer bufferPreview;
+	AudioBuffer bufferPreview;
 	
-	giada::ChannelMode mode;
+	ChannelMode mode;
 	
 	Wave* wave;
 	int   tracker;         // chan position
@@ -147,8 +148,11 @@ private:
 	SRC_STATE* rsmp_state;
 	SRC_DATA   rsmp_data;
 
-	int fillBufferResampled(giada::m::AudioBuffer& dest, int start, int offset);
-	int fillBufferCopy     (giada::m::AudioBuffer& dest, int start, int offset);
+	int fillBufferResampled(AudioBuffer& dest, int start, int offset);
+	int fillBufferCopy     (AudioBuffer& dest, int start, int offset);
 };
+
+}} // giada::m::
+
 
 #endif

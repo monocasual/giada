@@ -29,11 +29,9 @@
 #define GE_MIDI_CHANNEL_H
 
 
+#include "../../../../core/midiChannel.h"
 #include "channel.h"
 #include "channelButton.h"
-
-
-class MidiChannel;
 
 
 class geMidiChannel : public geChannel
@@ -47,7 +45,7 @@ private:
 
 public:
 
-	geMidiChannel(int x, int y, int w, int h, MidiChannel* ch);
+	geMidiChannel(int x, int y, int w, int h, giada::m::MidiChannel* ch);
 
 	void resize(int x, int y, int w, int h) override;
 

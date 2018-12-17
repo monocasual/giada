@@ -41,6 +41,8 @@
 #include "../core/clock.h"
 #include "../core/kernelMidi.h"
 #include "../core/kernelAudio.h"
+#include "../core/recorder/recorder.h"
+#include "../core/recorderHandler.h"
 #include "../core/conf.h"
 #include "../core/const.h"
 #ifdef WITH_VST
@@ -72,7 +74,7 @@ void setBpm_(float f, string s)
 
 	float vPre = clock::getBpm();
 	clock::setBpm(f);
-	recorder::updateBpm(vPre, f, clock::getQuanto());
+	recorderHandler::updateBpm(vPre, f, clock::getQuanto());
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 
 	gu_refreshActionEditor();
@@ -133,52 +135,20 @@ void glue_setBpm(float f)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBeats(int beats, int bars, bool expand)
+void glue_setBeats(int beats, int bars)
 {
 	/* Never change this stuff while recording audio */
 
 	if (mixer::recording)
 		return;
 
-	/* Temp vars to store old data (they are necessary) */
-
-	int oldBeats = clock::getBeats();
-	unsigned oldTotalFrames = clock::getFramesInLoop();
-
 	clock::setBeats(beats);
 	clock::setBars(bars);
 	clock::updateFrameBars();
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 
-	/* Update recorded actions, if 'expand' required and an expansion is taking
-	place. */
-
-	if (expand && clock::getBeats() > oldBeats)
-		recorder::expand(oldTotalFrames, clock::getFramesInLoop());
-
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
 	gu_refreshActionEditor();  // in case the action editor is open
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void glue_rewindSeq(bool gui, bool notifyJack)
-{
-	mh::rewindSequencer();
-
-	/* FIXME - potential desync when Quantizer is enabled from this point on.
-	Mixer would wait, while the following calls would be made regardless of its
-	state. */
-
-#ifdef __linux__
-	if (notifyJack)
-		kernelAudio::jackSetPosition(0);
-#endif
-
-	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
-		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
 
@@ -229,7 +199,7 @@ void glue_clearAllSamples()
 		ch->empty();
 		ch->guiChannel->reset();
 	}
-	recorder::init();
+	recorder::clearAll();
 	return;
 }
 
@@ -239,7 +209,7 @@ void glue_clearAllSamples()
 
 void glue_clearAllActions()
 {
-	recorder::init();
+	recorder::clearAll();
 	for (Channel* ch : mixer::channels)
 		ch->hasActions = false;
 	gu_updateControls();
@@ -255,7 +225,7 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	mixer::close();
 	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
-	recorder::init();
+	recorder::init(&mixer::mutex);
 #ifdef WITH_VST
 	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
 #endif
@@ -274,15 +244,12 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 /* -------------------------------------------------------------------------- */
 
 
-/* never expand or shrink recordings (last param of setBeats = false):
- * this is live manipulation */
-
 void glue_beatsMultiply()
 {
-	glue_setBeats(clock::getBeats() * 2, clock::getBars(), false);
+	glue_setBeats(clock::getBeats() * 2, clock::getBars());
 }
 
 void glue_beatsDivide()
 {
-	glue_setBeats(clock::getBeats() / 2, clock::getBars(), false);
+	glue_setBeats(clock::getBeats() / 2, clock::getBars());
 }

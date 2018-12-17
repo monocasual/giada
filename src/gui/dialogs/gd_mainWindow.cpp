@@ -115,7 +115,6 @@ void gdMainWindow::cb_endprogram()
 {
 	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
-	init_shutdown();
 	hide();
 	delete this;
 }

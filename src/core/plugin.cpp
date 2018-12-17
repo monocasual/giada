@@ -37,9 +37,11 @@
 
 
 using std::string;
-using namespace giada::u;
 
 
+namespace giada {
+namespace m 
+{
 int Plugin::idGenerator = 1;
 
 
@@ -49,9 +51,9 @@ int Plugin::idGenerator = 1;
 Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
 	: ui    (nullptr),
-		plugin(plugin),
-		id    (idGenerator++),
-		bypass(false)
+	  plugin(plugin),
+	  id    (idGenerator++),
+	  bypass(false)
 {
 	using namespace juce;
 
@@ -286,5 +288,8 @@ void Plugin::closeEditor()
 	delete ui;
 	ui = nullptr;
 }
+
+}} // giada::m::
+
 
 #endif

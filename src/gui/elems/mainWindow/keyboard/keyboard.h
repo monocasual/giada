@@ -32,9 +32,9 @@
 #include <vector>
 #include <FL/Fl_Scroll.H>
 #include "../../../../core/const.h"
+#include "../../../../core/channel.h"
 
 
-class Channel;
 class geButton;
 class geColumn;
 class geChannel;
@@ -89,7 +89,7 @@ public:
 	Requires Channel (and not geChannel). If build is set to true, also generate 
 	the corresponding column if column (index) does not exist yet. */
 
-	geChannel* addChannel(int column, Channel* ch, int size, bool build=false);
+	geChannel* addChannel(int column, giada::m::Channel* ch, int size, bool build=false);
 
 	/* addColumn
 	 * add a new column to the top of the stack. */

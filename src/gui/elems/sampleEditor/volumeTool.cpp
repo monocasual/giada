@@ -42,9 +42,10 @@
 
 
 using std::string;
+using namespace giada;
 
 
-geVolumeTool::geVolumeTool(int X, int Y, SampleChannel* ch)
+geVolumeTool::geVolumeTool(int X, int Y, m::SampleChannel* ch)
   : Fl_Group(X, Y, 150, 20),
     ch      (ch)
 {
@@ -82,14 +83,14 @@ void geVolumeTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::cb_setVolume   (Fl_Widget* w, void* p) { ((geVolumeTool*)p)->__cb_setVolume(); }
-void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->__cb_setVolumeNum(); }
+void geVolumeTool::cb_setVolume   (Fl_Widget* w, void* p) { ((geVolumeTool*)p)->cb_setVolume(); }
+void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->cb_setVolumeNum(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::__cb_setVolume()
+void geVolumeTool::cb_setVolume()
 {
   using namespace giada;
 
@@ -101,7 +102,7 @@ void geVolumeTool::__cb_setVolume()
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::__cb_setVolumeNum()
+void geVolumeTool::cb_setVolumeNum()
 {
   using namespace giada;
 

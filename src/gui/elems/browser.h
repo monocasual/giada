@@ -40,12 +40,12 @@ class geBrowser : public Fl_File_Browser
 private:
 
 	std::string m_currentDir;
-  bool m_showHiddenFiles;
+	bool m_showHiddenFiles;
 
 	/* normalize
 	Makes sure the std::string never ends with a trailing slash. */
 
-	std::string normalize(const std::string &s);
+	std::string normalize(const std::string& s);
 
 public:
 
@@ -56,7 +56,7 @@ public:
 	/* init
 	Initializes browser and show 'dir' as initial directory. */
 
-	void loadDir(const std::string &dir);
+	void loadDir(const std::string& dir);
 
 	/* getSelectedItem
 	Returns the full path or just the displayed name of the i-th selected item.

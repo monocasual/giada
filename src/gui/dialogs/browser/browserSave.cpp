@@ -33,6 +33,7 @@
 
 
 using std::string;
+using namespace giada::m;
 
 
 gdBrowserSave::gdBrowserSave(int x, int y, int w, int h, const string& title,

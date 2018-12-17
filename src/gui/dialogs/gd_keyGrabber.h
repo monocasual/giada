@@ -33,7 +33,6 @@
 #include "window.h"
 
 
-class Channel;
 class geBox;
 class geButton;
 
@@ -42,23 +41,23 @@ class gdKeyGrabber : public gdWindow
 {
 private:
 
-	Channel *ch;
+	giada::m::Channel* ch;
 
-	geBox    *text;
-	geButton *clear;
-	geButton *cancel;
+	geBox*    text;
+	geButton* clear;
+	geButton* cancel;
 
-	static void cb_clear (Fl_Widget *w, void *p);
-	static void cb_cancel(Fl_Widget *w, void *p);
-	inline void __cb_clear ();
-	inline void __cb_cancel();
+	static void cb_clear (Fl_Widget* w, void* p);
+	static void cb_cancel(Fl_Widget* w, void* p);
+	void cb_clear ();
+	void cb_cancel();
 
 	void setButtonLabel(int key);
 	void updateText(int key);
 
 public:
 
-	gdKeyGrabber(Channel *ch);
+	gdKeyGrabber(giada::m::Channel* ch);
 	int handle(int e);
 };
 

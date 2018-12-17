@@ -33,10 +33,11 @@
 
 
 using std::string;
+using namespace giada;
 
 
 gdBrowserLoad::gdBrowserLoad(int x, int y, int w, int h, const string& title,
-		const string& path, void (*cb)(void*), Channel* ch)
+		const string& path, void (*cb)(void*), m::Channel* ch)
 	:	gdBrowserBase(x, y, w, h, title, path, cb)
 {
 	channel = ch;

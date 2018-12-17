@@ -35,11 +35,15 @@
 
 
 namespace giada {
+namespace m 
+{
+class Action;
+}
 namespace v
 {
 class geBaseAction : public Fl_Box
 {
-private:
+protected:
 	
 	bool m_resizable;
 
@@ -49,7 +53,7 @@ public:
 	static const Pixel HANDLE_WIDTH = 6;
 
 	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable, 
-		m::recorder::action a1, m::recorder::action a2);
+		const m::Action* a1, const m::Action* a2);
 
 	int handle(int e) override;
 
@@ -69,8 +73,8 @@ public:
 	bool altered;
 	Pixel pick;
 
-	m::recorder::action a1;
-	m::recorder::action a2;
+	const m::Action* a1;
+	const m::Action* a2;
 };
 }} // giada::v::
 

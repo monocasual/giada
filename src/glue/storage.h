@@ -29,11 +29,11 @@
 #define G_GLUE_STORAGE_H
 
 
-void glue_loadPatch  (void *data);
-void glue_savePatch  (void *data);
-void glue_saveProject(void *data);
-void glue_saveSample (void *data);
-void glue_loadSample (void *data);
+void glue_loadPatch  (void* data);
+void glue_savePatch  (void* data);
+void glue_saveProject(void* data);
+void glue_saveSample (void* data);
+void glue_loadSample (void* data);
 
 
 #endif

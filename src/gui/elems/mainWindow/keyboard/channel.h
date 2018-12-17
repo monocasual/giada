@@ -31,9 +31,9 @@
 
 #include <FL/Fl_Group.H>
 #include "../../../../core/types.h"
+#include "../../../../core/channel.h"
 
 
-class Channel;
 class geIdButton;
 class geChannelStatus;
 class geButton;
@@ -101,7 +101,7 @@ protected:
 
 public:
 
-	geChannel(int x, int y, int w, int h, Channel* ch);
+	geChannel(int x, int y, int w, int h, giada::m::Channel* ch);
 
 	/* reset
 	 * reset channel to initial status. */
@@ -137,7 +137,7 @@ public:
 
 	int getSize();
 
-	Channel* ch;
+	giada::m::Channel* ch;
  
 	geIdButton*      button;
 	geChannelStatus* status;

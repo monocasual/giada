@@ -41,7 +41,7 @@
 using namespace giada::c;
 
 
-geShiftTool::geShiftTool(int x, int y, SampleChannel* ch)
+geShiftTool::geShiftTool(int x, int y, giada::m::SampleChannel* ch)
 	: Fl_Group(x, y, 300, G_GUI_UNIT),
 		m_ch    (ch)
 {

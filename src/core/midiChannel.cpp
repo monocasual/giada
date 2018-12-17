@@ -25,13 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "../utils/log.h"
+#include "recorder/recorder.h"
 #include "midiChannelProc.h"
 #include "channelManager.h"
 #include "channel.h"
+#include "recorderHandler.h"
+#include "action.h"
 #include "patch.h"
 #include "const.h"
-#include "clock.h"
 #include "conf.h"
 #include "mixer.h"
 #include "pluginHost.h"
@@ -40,14 +43,15 @@
 
 
 using std::string;
-using namespace giada;
-using namespace giada::m;
 
 
+namespace giada {
+namespace m 
+{
 MidiChannel::MidiChannel(int bufferSize)
-	: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize),
+	: Channel      (ChannelType::MIDI, ChannelStatus::OFF, bufferSize),
 		midiOut    (false),
-		midiOutChan(MIDI_CHANS[0])
+		midiOutChan(G_MIDI_CHANS[0])
 {
 }
 
@@ -75,8 +79,8 @@ void MidiChannel::parseEvents(mixer::FrameEvents fe)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in, bool audible, bool running)
+void MidiChannel::process(AudioBuffer& out, const AudioBuffer& in, bool audible, 
+	bool running)
 {
 	midiChannelProc::process(this, out, in, audible);
 }
@@ -139,10 +143,10 @@ void MidiChannel::setSolo(bool value)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::readPatch(const string& basePath, int i)
+void MidiChannel::readPatch(const string& basePath, const patch::channel_t& pch)
 {
-	Channel::readPatch("", i);
-	channelManager::readPatch(this, i);
+	Channel::readPatch("", pch);
+	channelManager::readPatch(this, pch);
 }
 
 
@@ -185,26 +189,16 @@ void MidiChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::sendMidi(recorder::action* a, int localFrame)
+void MidiChannel::sendMidi(const Action* a, int localFrame)
 {
 	if (isPlaying() && !mute) {
-		if (midiOut)
-			kernelMidi::send(a->iValue | MIDI_CHANS[midiOutChan]);
-
+		if (midiOut) {
+			MidiEvent event = a->event;
+			event.setChannel(midiOutChan);
+			kernelMidi::send(event.getRaw());
+		}
 #ifdef WITH_VST
-		addVstMidiEvent(a->iValue, localFrame);
-#endif
-	}
-}
-
-
-void MidiChannel::sendMidi(uint32_t data)
-{
-	if (isPlaying() && !mute) {
-		if (midiOut)
-			kernelMidi::send(data | MIDI_CHANS[midiOutChan]);
-#ifdef WITH_VST
-		addVstMidiEvent(data, 0);
+		addVstMidiEvent(a->event.getRaw(), localFrame);
 #endif
 	}
 }
@@ -215,31 +209,29 @@ void MidiChannel::sendMidi(uint32_t data)
 
 void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 {
+	namespace mrh = m::recorderHandler;
+	namespace mr  = m::recorder;
+
 	if (!armed)
 		return;
 
-	/* Now all messages are turned into Channel-0 messages. Giada doesn't care about
-	holding MIDI channel information. Moreover, having all internal messages on
-	channel 0 is way easier. */
+	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
+	about holding MIDI channel information. Moreover, having all internal 
+	messages on channel 0 is way easier. */
 
 	MidiEvent midiEventFlat(midiEvent);
 	midiEventFlat.setChannel(0);
 
 #ifdef WITH_VST
 
-	while (true) {
-		if (pthread_mutex_trylock(&pluginHost::mutex_midi) != 0)
-			continue;
-		gu_log("[MidiChannel::processMidi] msg=%X\n", midiEventFlat.getRaw());
-		addVstMidiEvent(midiEventFlat.getRaw(), 0);
-		pthread_mutex_unlock(&pluginHost::mutex_midi);
-		break;
-	}
+	pthread_mutex_lock(&pluginHost::mutex_midi);
+	addVstMidiEvent(midiEventFlat.getRaw(), 0);
+	pthread_mutex_unlock(&pluginHost::mutex_midi);
 
 #endif
 
-	if (recorder::canRec(this, clock::isRunning(), mixer::recording)) {
-		recorder::rec(index, G_ACTION_MIDI, clock::getCurrentFrame(), midiEventFlat.getRaw());
+	if (mr::isActive()) {
+		mrh::liveRec(index, midiEventFlat);
 		hasActions = true;
 	}
 }
@@ -252,3 +244,5 @@ bool MidiChannel::canInputRec()
 {
 	return false; // midi channels don't handle input audio
 }
+
+}} // giada::m::

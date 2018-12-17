@@ -43,7 +43,7 @@
 using namespace giada::c;
 
 
-geRangeTool::geRangeTool(int x, int y, SampleChannel* ch)
+geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
 	: Fl_Group(x, y, 280, G_GUI_UNIT),
 		m_ch    (ch)
 {
@@ -81,14 +81,14 @@ void geRangeTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::cb_setChanPos   (Fl_Widget* w, void* p) { ((geRangeTool*)p)->__cb_setChanPos(); }
-void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->__cb_resetStartEnd(); }
+void geRangeTool::cb_setChanPos   (Fl_Widget* w, void* p) { ((geRangeTool*)p)->cb_setChanPos(); }
+void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->cb_resetStartEnd(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::__cb_setChanPos()
+void geRangeTool::cb_setChanPos()
 {
 	sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
 	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
@@ -98,7 +98,7 @@ void geRangeTool::__cb_setChanPos()
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::__cb_resetStartEnd()
+void geRangeTool::cb_resetStartEnd()
 {
 	sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
 	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!

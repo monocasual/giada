@@ -51,7 +51,7 @@ using std::string;
 using namespace giada;
 
 
-gePluginElement::gePluginElement(gdPluginList* gdp, Plugin* p, int X, int Y, int W)
+gePluginElement::gePluginElement(gdPluginList* gdp, m::Plugin* p, int X, int Y, int W)
 	: Fl_Group   (X, Y, W, 20), 
 	  m_parentWin(gdp), 
 	  m_plugin    (p)

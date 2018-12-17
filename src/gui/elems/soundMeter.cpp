@@ -35,13 +35,13 @@
 using namespace giada::m;
 
 
-geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char *L)
-  : Fl_Box    (x, y, w, h, L),
-    clip      (false),
-    mixerPeak (0.0f),
-    peak      (0.0f),
-    dbLevel   (0.0f),
-    dbLevelOld(0.0f)
+geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
+: Fl_Box    (x, y, w, h, l),
+	clip      (false),
+	mixerPeak (0.0f),
+	peak      (0.0f),
+	dbLevel   (0.0f),
+	dbLevelOld(0.0f)
 {
 }
 
@@ -51,37 +51,37 @@ geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char *L)
 
 void geSoundMeter::draw()
 {
-  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
+	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
 
-  /* peak = the highest value inside the frame */
+	/* peak = the highest value inside the frame */
 
-  peak = 0.0f;
-  float tmp_peak = 0.0f;
+	peak = 0.0f;
+	float tmp_peak = 0.0f;
 
-  tmp_peak = fabs(mixerPeak);
-  if (tmp_peak > peak)
-    peak = tmp_peak;
+	tmp_peak = fabs(mixerPeak);
+	if (tmp_peak > peak)
+		peak = tmp_peak;
 
-  clip = peak >= 1.0f ? true : false; // 1.0f is considered clip
+	clip = peak >= 1.0f ? true : false; // 1.0f is considered clip
 
 
-  /*  dBFS (full scale) calculation, plus decay of -2dB per frame */
+	/*  dBFS (full scale) calculation, plus decay of -2dB per frame */
 
-  dbLevel = 20 * log10(peak);
-  if (dbLevel < dbLevelOld)
-    if (dbLevelOld > -G_MIN_DB_SCALE)
-      dbLevel = dbLevelOld - 2.0f;
+	dbLevel = 20 * log10(peak);
+	if (dbLevel < dbLevelOld)
+		if (dbLevelOld > -G_MIN_DB_SCALE)
+			dbLevel = dbLevelOld - 2.0f;
 
-  dbLevelOld = dbLevel;
+	dbLevelOld = dbLevel;
 
-  /* graphical part */
+	/* graphical part */
 
-  float px_level = 0.0f;
-  if (dbLevel < 0.0f)
-    px_level = ((w()/G_MIN_DB_SCALE) * dbLevel) + w();
-  else
-    px_level = w();
+	float px_level = 0.0f;
+	if (dbLevel < 0.0f)
+		px_level = ((w()/G_MIN_DB_SCALE) * dbLevel) + w();
+	else
+		px_level = w();
 
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
-  fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
+	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
+	fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
 }

@@ -185,7 +185,6 @@ uint32_t midiInMetronome  = 0x0;
 bool recsStopOnChanHalt    = false;
 bool chansStopOnSeqHalt    = false;
 bool treatRecsAsLoops      = false;
-bool resizeRecordings      = true;
 bool inputMonitorDefaultOn = false;
 
 string pluginPath = "";
@@ -345,7 +344,6 @@ int read()
 	if (!storager::setBool(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT, recsStopOnChanHalt)) return 0;
 	if (!storager::setBool(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT, chansStopOnSeqHalt)) return 0;
 	if (!storager::setBool(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS, treatRecsAsLoops)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_RESIZE_RECORDINGS, resizeRecordings)) return 0;
 	if (!storager::setBool(jRoot, CONF_KEY_INPUT_MONITOR_DEFAULT_ON, inputMonitorDefaultOn)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_PLUGINS_PATH, pluginPath)) return 0;
 	if (!storager::setString(jRoot, CONF_KEY_PATCHES_PATH, patchPath)) return 0;
@@ -457,7 +455,6 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT,    json_boolean(recsStopOnChanHalt));
 	json_object_set_new(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT,    json_boolean(chansStopOnSeqHalt));
 	json_object_set_new(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS,       json_boolean(treatRecsAsLoops));
-	json_object_set_new(jRoot, CONF_KEY_RESIZE_RECORDINGS,         json_boolean(resizeRecordings));
 	json_object_set_new(jRoot, CONF_KEY_INPUT_MONITOR_DEFAULT_ON,  json_boolean(inputMonitorDefaultOn));
 	json_object_set_new(jRoot, CONF_KEY_PLUGINS_PATH,              json_string(pluginPath.c_str()));
 	json_object_set_new(jRoot, CONF_KEY_PATCHES_PATH,              json_string(patchPath.c_str()));

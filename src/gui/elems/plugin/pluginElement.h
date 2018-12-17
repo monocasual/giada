@@ -36,7 +36,6 @@
 
 
 class gdPluginList;
-class Plugin;
 class geIdButton;
 class geChoice;
 
@@ -45,8 +44,8 @@ class gePluginElement : public Fl_Group
 {
 private:
 
-	gdPluginList* m_parentWin;
-	Plugin*       m_plugin;
+	gdPluginList*     m_parentWin;
+	giada::m::Plugin* m_plugin;
 
 	static void cb_removePlugin(Fl_Widget* v, void* p);
 	static void cb_openPluginWindow(Fl_Widget* v, void* p);
@@ -70,7 +69,7 @@ public:
 	geIdButton* shiftDown;
 	geIdButton* remove;
 
-	gePluginElement(gdPluginList* gdp, Plugin* p, int x, int y, int w);
+	gePluginElement(gdPluginList* gdp, giada::m::Plugin* p, int x, int y, int w);
 };
 
 #endif

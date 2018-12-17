@@ -33,13 +33,17 @@
 #include "../window.h"
 
 
-class Channel;
 class geChoice;
 class geButton;
 class geScroll;
 
 
 namespace giada {
+namespace m
+{
+class Channel;
+class Action;
+}
 namespace v
 {
 class geGridTool;
@@ -54,7 +58,9 @@ protected:
 	static constexpr float MIN_RATIO     = 25.0f;
 	static constexpr float MAX_RATIO     = 40000.0f;
 
-	gdBaseActionEditor(Channel* ch);
+	std::vector<const m::Action*> m_actions;
+
+	gdBaseActionEditor(m::Channel* ch);
 
 	void zoomIn();
 	void zoomOut();
@@ -87,16 +93,18 @@ public:
 	Frame pixelToFrame(Pixel p, bool snap=true) const;
 	int getActionType() const;
 
+	const std::vector<const m::Action*>& getActions();
+
 	geChoice*   actionType;
 	geGridTool* gridTool;
 	geButton*   zoomInBtn;
 	geButton*   zoomOutBtn;
 	geScroll*   viewport;       // widget container
 
-	Channel* ch;
+	m::Channel* ch;
 
 	float ratio;
-	Pixel fullWidth;   // Full widgets width, i.e. scaled-down full sequencer
+	Pixel fullWidth;     // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; 	 // Loop width, i.e. scaled-down sequencer range
 };
 }} // giada::v::

@@ -51,7 +51,7 @@
 #include "sampleEditor.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -81,7 +81,7 @@ gdSampleEditor* getSampleEditorWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void setBeginEnd(SampleChannel* ch, int b, int e)
+void setBeginEnd(m::SampleChannel* ch, int b, int e)
 {
 	ch->setBegin(b);
 	ch->setEnd(e);
@@ -99,7 +99,7 @@ void setBeginEnd(SampleChannel* ch, int b, int e)
 /* -------------------------------------------------------------------------- */
 
 
-void cut(SampleChannel* ch, int a, int b)
+void cut(m::SampleChannel* ch, int a, int b)
 {
 	copy(ch, a, b);
 	if (!m::wfx::cut(*ch->wave, a, b)) {
@@ -117,7 +117,7 @@ void cut(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void copy(SampleChannel* ch, int a, int b)
+void copy(m::SampleChannel* ch, int a, int b)
 {
 	if (m_waveBuffer != nullptr)
 		delete m_waveBuffer;
@@ -128,7 +128,7 @@ void copy(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void paste(SampleChannel* ch, int a)
+void paste(m::SampleChannel* ch, int a)
 {
 	if (!isWaveBufferFull()) {
 		gu_log("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
@@ -155,7 +155,7 @@ void paste(SampleChannel* ch, int a)
 /* -------------------------------------------------------------------------- */
 
 
-void silence(SampleChannel* ch, int a, int b)
+void silence(m::SampleChannel* ch, int a, int b)
 {
 	m::wfx::silence(*ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -166,7 +166,7 @@ void silence(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void fade(SampleChannel* ch, int a, int b, int type)
+void fade(m::SampleChannel* ch, int a, int b, int type)
 {
 	m::wfx::fade(*ch->wave, a, b, type);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -177,7 +177,7 @@ void fade(SampleChannel* ch, int a, int b, int type)
 /* -------------------------------------------------------------------------- */
 
 
-void smoothEdges(SampleChannel* ch, int a, int b)
+void smoothEdges(m::SampleChannel* ch, int a, int b)
 {
 	m::wfx::smooth(*ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -188,7 +188,7 @@ void smoothEdges(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void reverse(SampleChannel* ch, int a, int b)
+void reverse(m::SampleChannel* ch, int a, int b)
 {
 	m::wfx::reverse(*ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -199,7 +199,7 @@ void reverse(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void normalizeHard(SampleChannel* ch, int a, int b)
+void normalizeHard(m::SampleChannel* ch, int a, int b)
 {
 	m::wfx::normalizeHard(*ch->wave, a, b);
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -210,7 +210,7 @@ void normalizeHard(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void trim(SampleChannel* ch, int a, int b)
+void trim(m::SampleChannel* ch, int a, int b)
 {
 	if (!m::wfx::trim(*ch->wave, a, b)) {
 		gdAlert("Unable to trim the sample!");
@@ -227,7 +227,7 @@ void trim(SampleChannel* ch, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-void setPlayHead(SampleChannel* ch, int f)
+void setPlayHead(m::SampleChannel* ch, int f)
 {
 	ch->trackerPreview = f;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -238,7 +238,7 @@ void setPlayHead(SampleChannel* ch, int f)
 /* -------------------------------------------------------------------------- */
 
 
-void setPreview(SampleChannel* ch, PreviewMode mode)
+void setPreview(m::SampleChannel* ch, PreviewMode mode)
 {
 	ch->previewMode = mode;
 	gdSampleEditor* gdEditor = getSampleEditorWindow();
@@ -249,7 +249,7 @@ void setPreview(SampleChannel* ch, PreviewMode mode)
 /* -------------------------------------------------------------------------- */
 
 
-void rewindPreview(SampleChannel* ch)
+void rewindPreview(m::SampleChannel* ch)
 {
 	geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
 	if (waveform->isSelected() && ch->trackerPreview != waveform->getSelectionA())
@@ -262,9 +262,9 @@ void rewindPreview(SampleChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void toNewChannel(SampleChannel* ch, int a, int b)
+void toNewChannel(m::SampleChannel* ch, int a, int b)
 {
-	SampleChannel* newCh = static_cast<SampleChannel*>(c::channel::addChannel(
+	m::SampleChannel* newCh = static_cast<m::SampleChannel*>(c::channel::addChannel(
 		ch->guiChannel->getColumnIndex(), ChannelType::SAMPLE, G_GUI_CHANNEL_H_1));
 
 	Wave* wave = nullptr;
@@ -287,7 +287,7 @@ bool isWaveBufferFull()
 /* -------------------------------------------------------------------------- */
 
 
-void shift(SampleChannel* ch, int offset)
+void shift(m::SampleChannel* ch, int offset)
 {
 	m::wfx::shift(*ch->wave, offset - ch->shift);
 	ch->shift = offset;

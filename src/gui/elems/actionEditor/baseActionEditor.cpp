@@ -38,11 +38,11 @@
 namespace giada {
 namespace v
 {
-geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, Channel* ch)
+geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, m::Channel* ch)
 :	Fl_Group(x, y, w, h),
-  m_ch    (ch),
-  m_base  (static_cast<gdBaseActionEditor*>(window())),
-  m_action(nullptr)
+	m_ch    (ch),
+	m_base  (static_cast<gdBaseActionEditor*>(window())),
+	m_action(nullptr)
 {
 }
 

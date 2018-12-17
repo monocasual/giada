@@ -41,9 +41,7 @@ geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 : geScroll(x, y, 200, 422),
 	m_base  (base)
 {
-	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, static_cast<MidiChannel*>(m_base->ch));
-
-	rebuild();
+	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, static_cast<m::MidiChannel*>(m_base->ch));
 	
 	size(m_base->fullWidth, m::conf::pianoRollH);
 	

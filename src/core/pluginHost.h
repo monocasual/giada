@@ -37,12 +37,14 @@
 #include "audioBuffer.h"
 
 
-class Plugin;
-class Channel;
 
 
 namespace giada {
-namespace m {
+namespace m 
+{
+class Plugin;
+class Channel;
+
 namespace pluginHost
 {
 enum stackType

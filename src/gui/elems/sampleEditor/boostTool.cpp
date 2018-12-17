@@ -42,7 +42,10 @@
 #include "boostTool.h"
 
 
-geBoostTool::geBoostTool(int X, int Y, SampleChannel* ch)
+using namespace giada;
+
+
+geBoostTool::geBoostTool(int X, int Y, m::SampleChannel* ch)
   : Fl_Group(X, Y, 220, 20),
     ch      (ch)
 {

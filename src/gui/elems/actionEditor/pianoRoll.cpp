@@ -30,11 +30,13 @@
 #include "../../../core/conf.h"
 #include "../../../core/const.h"
 #include "../../../core/clock.h"
+#include "../../../core/action.h"
+#include "../../../core/midiEvent.h"
 #include "../../../core/midiChannel.h"
 #include "../../../utils/log.h"
 #include "../../../utils/string.h"
 #include "../../../utils/math.h"
-#include "../../../glue/recorder.h"
+#include "../../../glue/actionEditor.h"
 #include "../../dialogs/actionEditor/baseActionEditor.h"
 #include "pianoItem.h"
 #include "noteEditor.h"
@@ -48,12 +50,11 @@ using std::vector;
 namespace giada {
 namespace v
 {
-gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, MidiChannel* ch)
+gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, m::MidiChannel* ch)
 	: geBaseActionEditor(X, Y, W, 40, ch),
 	  pick              (0)
 {
 	position(x(), m::conf::pianoRollY == -1 ? y()-(h()/2) : m::conf::pianoRollY);
-	rebuild();
 }
 
 
@@ -219,7 +220,7 @@ void gePianoRoll::onAddAction()
 {
 	Frame frame = m_base->pixelToFrame(Fl::event_x() - x());
 	int   note  = yToNote(Fl::event_y() - y());
-	c::recorder::recordMidiAction(m_ch->index, note, G_MAX_VELOCITY, frame);
+	c::actionEditor::recordMidiAction(static_cast<m::MidiChannel*>(m_ch), note, G_MAX_VELOCITY, frame);
 	
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -230,7 +231,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::recorder::deleteMidiAction(static_cast<MidiChannel*>(m_ch), m_action->a1, m_action->a2);	
+	c::actionEditor::deleteMidiAction(static_cast<m::MidiChannel*>(m_ch), m_action->a1);	
 	
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -264,7 +265,7 @@ void gePianoRoll::onMoveAction()
 
 void gePianoRoll::onResizeAction()
 {
-	if (static_cast<gePianoItem*>(m_action)->orphaned)
+	if (!static_cast<gePianoItem*>(m_action)->isResizable())
 		return;
 
 	Pixel ex = Fl::event_x();
@@ -286,10 +287,7 @@ void gePianoRoll::onResizeAction()
 
 void gePianoRoll::onRefreshAction()
 {
-	namespace cr = c::recorder;
-
-	if (static_cast<gePianoItem*>(m_action)->orphaned)
-		return;
+	namespace ca = c::actionEditor;
 
 	Pixel p1 = m_action->x() - x();
 	Pixel p2 = m_action->x() + m_action->w() - x();
@@ -303,26 +301,24 @@ void gePianoRoll::onRefreshAction()
 	}	
 	else if (m_action->onLeftEdge) {
 		f1 = m_base->pixelToFrame(p1);
-		f2 = m_action->a2.frame;
+		f2 = m_action->a2->frame;
+		if (f1 == f2) // If snapping makes an action fall onto the other
+			f1 -= G_DEFAULT_ACTION_SIZE;
 	}
 	else if (m_action->onRightEdge) {
-		f1 = m_action->a1.frame;
+		f1 = m_action->a1->frame;
 		f2 = m_base->pixelToFrame(p2);
+		if (f1 == f2) // If snapping makes an action fall onto the other
+			f2 += G_DEFAULT_ACTION_SIZE;
 	}
 
-	assert(f1 != 0 && f2 != 0);
+	assert(f2 != 0);
 
 	int note     = yToNote(m_action->y() - y());
-	int velocity = m::MidiEvent(m_action->a1.iValue).getVelocity();
+	int velocity = m_action->a1->event.getVelocity();
 
-	/* TODO - less then optimal. Let's wait for recorder refactoring... */
-	
-	int oldNote  = m::MidiEvent(m_action->a1.iValue).getNote();
-	cr::deleteMidiAction(static_cast<MidiChannel*>(m_ch), m_action->a1, m_action->a2);	
-	if (cr::midiActionCanFit(m_ch->index, note, f1, f2))
-		cr::recordMidiAction(m_ch->index, note, velocity, f1, f2);
-	else
-		cr::recordMidiAction(m_ch->index, oldNote, velocity, m_action->a1.frame, m_action->a2.frame);
+	ca::updateMidiAction(static_cast<m::MidiChannel*>(m_ch), m_action->a1, note, 
+		velocity, f1, f2);
 
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -349,13 +345,23 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 }
 
 
+Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action* a1, const m::Action* a2) const
+{
+	if (a2 != nullptr) {            // Regular
+		if (a1->frame > a2->frame)  // Ring-loop
+			return m_base->loopWidth - (px - x());
+		return m_base->frameToPixel(a2->frame - a1->frame);
+	}
+	return geBaseAction::MIN_WIDTH;	// Orphaned
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
 void gePianoRoll::rebuild()
 {
-	namespace mr = m::recorder;
-	namespace cr = c::recorder;
+	namespace ca = c::actionEditor;
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -363,23 +369,22 @@ void gePianoRoll::rebuild()
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	vector<mr::Composite> actions = cr::getMidiActions(m_ch->index); 
-	for (mr::Composite comp : actions)
+	for (const m::Action* action : m_base->getActions())
 	{
-		m::MidiEvent e1 = comp.a1.iValue;
-		m::MidiEvent e2 = comp.a2.iValue;
+		if (action->event.getStatus() == m::MidiEvent::NOTE_OFF)
+			continue;
 
-		gu_log("[gePianoRoll::rebuild] ((0x%X, 0x%X, f=%d) - (0x%X, 0x%X, f=%d))\n", 
-			e1.getStatus(), e1.getNote(), comp.a1.frame,
-			e2.getStatus(), e2.getNote(), comp.a2.frame
-		);
+		const m::Action* a1 = action;
+		const m::Action* a2 = action->next;
 
-		Pixel px = x() + m_base->frameToPixel(comp.a1.frame);
-		Pixel py = y() + noteToY(e1.getNote());
-		Pixel pw = m_base->frameToPixel(comp.a2.frame - comp.a1.frame);
+		assert(a1 != nullptr);  // a2 might be null if orphaned
+
+		Pixel px = x() + m_base->frameToPixel(a1->frame);
+		Pixel py = y() + noteToY(a1->event.getNote());
 		Pixel ph = CELL_H;
+		Pixel pw = getPianoItemW(px, a1, a2);
 
-		add(new gePianoItem(px, py, pw, ph, comp.a1, comp.a2));
+		add(new gePianoItem(px, py, pw, ph, a1, a2));
 	}
 
 	drawSurface1();

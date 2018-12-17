@@ -36,12 +36,13 @@
 #define G_GLUE_IO_H
 
 
-class Channel;
-class SampleChannel;
-class MidiChannel;
-
 namespace giada {
-namespace c     {
+namespace m
+{
+class Plugin;
+class Channel;
+}
+namespace c {
 namespace io 
 {
 /* keyPress / keyRelease
@@ -49,8 +50,8 @@ Handle the key pressure, either via mouse/keyboard or MIDI. If gui is true the
 event comes from the main window (mouse, keyboard or MIDI), otherwise the event 
 comes from the action recorder. */
 
-void keyPress  (Channel* ch, bool ctrl, bool shift, int velocity);
-void keyRelease(Channel* ch, bool ctrl, bool shift);
+void keyPress  (m::Channel* ch, bool ctrl, bool shift, int velocity);
+void keyRelease(m::Channel* ch, bool ctrl, bool shift);
 
 /* start/stopActionRec
 Handles the action recording. If gui == true the signal comes from an user

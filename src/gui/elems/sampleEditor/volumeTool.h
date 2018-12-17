@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class SampleChannel;
 class geDial;
 class geInput;
 class geBox;
@@ -42,20 +41,20 @@ class geVolumeTool : public Fl_Group
 {
 private:
 
-  SampleChannel *ch;
+  giada::m::SampleChannel* ch;
 
-  geBox   *label;
-  geDial  *dial;
-  geInput *input;
+  geBox*   label;
+  geDial*  dial;
+  geInput* input;
 
-  static void cb_setVolume   (Fl_Widget *w, void *p);
-	static void cb_setVolumeNum(Fl_Widget *w, void *p);
-  inline void __cb_setVolume   ();
-  inline void __cb_setVolumeNum();
+  static void cb_setVolume   (Fl_Widget* w, void* p);
+	static void cb_setVolumeNum(Fl_Widget* w, void* p);
+  void cb_setVolume   ();
+  void cb_setVolumeNum();
 
 public:
 
-  geVolumeTool(int x, int y, SampleChannel *ch);
+  geVolumeTool(int x, int y, giada::m::SampleChannel* ch);
 
   void refresh();
 };

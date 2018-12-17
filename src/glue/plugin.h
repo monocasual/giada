@@ -35,19 +35,20 @@
 #ifdef WITH_VST
 
 
+namespace giada {
+namespace m
+{
 class Plugin;
 class Channel;
-
-
-namespace giada {
-namespace c     {
+}
+namespace c {
 namespace plugin 
 {
-Plugin* addPlugin(Channel* ch, int index, int stackType);
-void swapPlugins(Channel* ch, int indexP1, int indexP2, int stackType);
-void freePlugin(Channel* ch, int index, int stackType);
-void setParameter(Plugin* p, int index, float value, bool gui=true); 
-void setProgram(Plugin* p, int index);
+m::Plugin* addPlugin(m::Channel* ch, int index, int stackType);
+void swapPlugins(m::Channel* ch, int indexP1, int indexP2, int stackType);
+void freePlugin(m::Channel* ch, int index, int stackType);
+void setParameter(m::Plugin* p, int index, float value, bool gui=true); 
+void setProgram(m::Plugin* p, int index);
 
 /* setPluginPathCb
 Callback attached to the DirBrowser for adding new Plug-in search paths in the

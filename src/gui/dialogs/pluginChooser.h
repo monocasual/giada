@@ -36,7 +36,6 @@
 #include "window.h"
 
 
-class Channel;
 class geChoice;
 class geButton;
 class geButton;
@@ -47,25 +46,25 @@ class gdPluginChooser : public gdWindow
 {
 private:
 
-  Channel *ch;      // ch == nullptr ? masterOut
+	giada::m::Channel* ch;      // ch == nullptr ? masterOut
 	int stackType;
 
-  geChoice         *sortMethod;
-  geButton        *addBtn;
-  geButton        *cancelBtn;
-  gePluginBrowser *browser;
+	geChoice*        sortMethod;
+	geButton*        addBtn;
+	geButton*        cancelBtn;
+	gePluginBrowser* browser;
 
-	static void cb_close(Fl_Widget *w, void *p);
-	static void cb_add  (Fl_Widget *w, void *p);
-	static void cb_sort (Fl_Widget *w, void *p);
-  inline void __cb_close();
-  inline void __cb_add  ();
-  inline void __cb_sort ();
+	static void cb_close(Fl_Widget* w, void* p);
+	static void cb_add  (Fl_Widget* w, void* p);
+	static void cb_sort (Fl_Widget* w, void* p);
+	void cb_close();
+	void cb_add  ();
+	void cb_sort ();
 
 public:
 
-	gdPluginChooser(int x, int y, int w, int h, int stackType, Channel *ch=nullptr);
-  ~gdPluginChooser();
+	gdPluginChooser(int x, int y, int w, int h, int stackType, giada::m::Channel* ch=nullptr);
+	~gdPluginChooser();
 };
 
 

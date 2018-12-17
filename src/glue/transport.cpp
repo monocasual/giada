@@ -29,29 +29,36 @@
 #include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/dialogs/gd_mainWindow.h"
 #include "../core/clock.h"
+#include "../core/conf.h"
+#include "../core/const.h"
 #include "../core/kernelAudio.h"
+#include "../core/kernelMidi.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
-#include "../core/recorder.h"
+#include "../core/recorder/recorder.h"
 #include "transport.h"
 
 
-extern gdMainWindow *G_MainWin;
-
+extern gdMainWindow* G_MainWin;
+ 
 
 using namespace giada::m;
 
 
-void glue_startStopSeq(bool gui)
+namespace giada {
+namespace c {
+namespace transport 
 {
-	clock::isRunning() ? glue_stopSeq(gui) : glue_startSeq(gui);
+void startStopSeq(bool gui)
+{
+	clock::isRunning() ? stopSeq(gui) : startSeq(gui);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startSeq(bool gui)
+void startSeq(bool gui)
 {
 	clock::start();
 
@@ -60,9 +67,9 @@ void glue_startSeq(bool gui)
 #endif
 
 	if (!gui) {
-    Fl::lock();
-    G_MainWin->mainTransport->updatePlay(1);
-    Fl::unlock();
+		Fl::lock();
+		G_MainWin->mainTransport->updatePlay(1);
+		Fl::unlock();
   }
 }
 
@@ -70,7 +77,7 @@ void glue_startSeq(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_stopSeq(bool gui)
+void stopSeq(bool gui)
 {
 	mh::stopSequencer();
 
@@ -78,38 +85,58 @@ void glue_stopSeq(bool gui)
 	kernelAudio::jackStop();
 #endif
 
-	/* what to do if we stop the sequencer and some action recs are active?
-	 * Deactivate the button and delete any 'rec on' status */
+	/* What to do if we stop the sequencer and some action recs are active?
+	Deactivate the button and delete any 'rec on' status. */
 
-	if (recorder::active) {
-		recorder::active = false;
-    Fl::lock();
-	  G_MainWin->mainTransport->updateRecAction(0);
-	  Fl::unlock();
+	if (recorder::isActive()) {
+		recorder::disable();
+		Fl::lock();
+		G_MainWin->mainTransport->updateRecAction(0);
+		Fl::unlock();
 	}
 
-	/* if input recs are active (who knows why) we must deactivate them.
-	 * One might stop the sequencer while an input rec is running. */
+	/* If input recs are active (who knows why) we must deactivate them. One 
+	might stop the sequencer while an input rec is running. */
 
 	if (mixer::recording) {
 		mh::stopInputRec();
-    Fl::lock();
-	  G_MainWin->mainTransport->updateRecInput(0);
-	  Fl::unlock();
+		Fl::lock();
+		G_MainWin->mainTransport->updateRecInput(0);
+		Fl::unlock();
 	}
 
 	if (!gui) {
-    Fl::lock();
-	  G_MainWin->mainTransport->updatePlay(0);
-	  Fl::unlock();
-  }
+		Fl::lock();
+		G_MainWin->mainTransport->updatePlay(0);
+		Fl::unlock();
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void glue_startStopMetronome(bool gui)
+void rewindSeq(bool gui, bool notifyJack)
+{
+	mh::rewindSequencer();
+
+	/* FIXME - potential desync when Quantizer is enabled from this point on.
+	Mixer would wait, while the following calls would be made regardless of its
+	state. */
+
+#ifdef __linux__
+	if (notifyJack)
+		kernelAudio::jackSetPosition(0);
+#endif
+
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+}
+
+/* -------------------------------------------------------------------------- */
+
+
+void startStopMetronome(bool gui)
 {
 	mixer::metronome = !mixer::metronome;
 	if (!gui) {
@@ -118,3 +145,5 @@ void glue_startStopMetronome(bool gui)
 		Fl::unlock();
 	}
 }
+
+}}} // giada::c::transport::

@@ -39,6 +39,7 @@
 #include "wave.h"
 #include "mixer.h"
 #include "mixerHandler.h"
+#include "recorderHandler.h"
 #include "conf.h"
 #include "patch.h"
 #include "waveFx.h"
@@ -47,10 +48,11 @@
 
 
 using std::string;
-using namespace giada;
-using namespace giada::m;
 
 
+namespace giada {
+namespace m 
+{
 Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize)
 :	guiChannel     (nullptr),
 	type           (type),
@@ -90,8 +92,6 @@ Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize)
 
 void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 {
-	using namespace giada::m;
-
 	key             = src->key;
 	volume          = src->volume;
 	volume_i        = src->volume_i;
@@ -114,25 +114,12 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 	midiOutLmute    = src->midiOutLmute;
 	midiOutLsolo    = src->midiOutLsolo;
 
-	/* clone plugins */
-
 #ifdef WITH_VST
-	for (unsigned i=0; i<src->plugins.size(); i++)
-		pluginHost::clonePlugin(src->plugins.at(i), pluginHost::CHANNEL,
-			pluginMutex, this);
+	for (Plugin* plugin : src->plugins)
+		pluginHost::clonePlugin(plugin, pluginHost::CHANNEL, pluginMutex, this);
 #endif
 
-	/* clone actions */
-
-	for (unsigned i=0; i<recorder::global.size(); i++) {
-		for (unsigned k=0; k<recorder::global.at(i).size(); k++) {
-			recorder::action* a = recorder::global.at(i).at(k);
-			if (a->chan == src->index) {
-				recorder::rec(index, a->type, a->frame, a->iValue, a->fValue);
-				hasActions = true;
-			}
-		}
-	}
+	hasActions = recorderHandler::cloneActions(src->index, index);
 }
 
 
@@ -157,9 +144,9 @@ void Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::readPatch(const string& path, int i)
+void Channel::readPatch(const string& path, const patch::channel_t& pch)
 {
-	channelManager::readPatch(this, i);
+	channelManager::readPatch(this, pch);
 }
 
 
@@ -209,8 +196,8 @@ void Channel::sendMidiLstatus()
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopping);
 			break;
 		case ChannelStatus::PLAY:
-			if ((giada::m::mixer::isChannelAudible(this) && !(this->mute)) ||
-					!isDefined(midimap::playing_inaudible))
+			if ((mixer::isChannelAudible(this) && !(this->mute)) || 
+				!midimap::isDefined(midimap::playing_inaudible))
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
 			else
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing_inaudible);
@@ -313,5 +300,6 @@ void Channel::clearMidiBuffer()
 	midiBuffer.clear();
 }
 
-
 #endif
+
+}} // giada::m::

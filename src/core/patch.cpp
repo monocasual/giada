@@ -28,9 +28,11 @@
 #include "../utils/log.h"
 #include "../utils/string.h"
 #include "../utils/ver.h"
+#include "../utils/math.h"
 #include "const.h"
 #include "types.h"
 #include "storager.h"
+#include "midiEvent.h"
 #include "conf.h"
 #include "mixer.h"
 #include "patch.h"
@@ -51,27 +53,28 @@ Internal sanity check. */
 
 void sanitize()
 {
-	bpm          = bpm < G_MIN_BPM || bpm > G_MAX_BPM ? G_DEFAULT_BPM : bpm;
-	bars         = bars <= 0 || bars > G_MAX_BARS ? G_DEFAULT_BARS : bars;
-	beats        = beats <= 0 || beats > G_MAX_BEATS ? G_DEFAULT_BEATS : beats;
-	quantize     = quantize < 0 || quantize > G_MAX_QUANTIZE ? G_DEFAULT_QUANTIZE : quantize;
-	masterVolIn  = masterVolIn < 0.0f || masterVolIn > 1.0f ? G_DEFAULT_VOL : masterVolIn;
-	masterVolOut = masterVolOut < 0.0f || masterVolOut > 1.0f ? G_DEFAULT_VOL : masterVolOut;
+	namespace um = u::math;
+
+	bpm          = um::bound(bpm, G_MIN_BPM, G_MAX_BPM, G_DEFAULT_BPM);
+	bars         = um::bound(bars, 1, G_MAX_BARS, G_DEFAULT_BARS);
+	beats        = um::bound(beats, 1, G_MAX_BEATS, G_DEFAULT_BEATS);
+	quantize     = um::bound(quantize, 0, G_MAX_QUANTIZE, G_DEFAULT_QUANTIZE);
+	masterVolIn  = um::bound(masterVolIn, 0.0f, 1.0f, G_DEFAULT_VOL);
+	masterVolOut = um::bound(masterVolOut, 0.0f, 1.0f, G_DEFAULT_VOL);
 	samplerate   = samplerate <= 0 ? G_DEFAULT_SAMPLERATE : samplerate;
 
-	for (unsigned i=0; i<columns.size(); i++) {
-		column_t* col = &columns.at(i);
-		col->index = col->index < 0 ? 0 : col->index;
-		col->width = col->width < G_MIN_COLUMN_WIDTH ? G_MIN_COLUMN_WIDTH : col->width;
+	for (column_t& col : columns) {
+		col.index = col.index < 0 ? 0 : col.index;
+		col.width = col.width < G_MIN_COLUMN_WIDTH ? G_MIN_COLUMN_WIDTH : col.width;
 	}
 
-	for (unsigned i=0; i<channels.size(); i++) {
-		channel_t* ch = &channels.at(i);
-		ch->size   = ch->size < G_GUI_CHANNEL_H_1 || ch->size > G_GUI_CHANNEL_H_4 ? G_GUI_CHANNEL_H_1 : ch->size;
-		ch->volume = ch->volume < 0.0f || ch->volume > 1.0f ? G_DEFAULT_VOL : ch->volume;
-		ch->pan    = ch->pan < 0.0f || ch->pan > 1.0f ? 1.0f : ch->pan;
-		ch->boost  = ch->boost < 1.0f ? G_DEFAULT_BOOST : ch->boost;
-		ch->pitch  = ch->pitch < 0.1f || ch->pitch > G_MAX_PITCH ? G_DEFAULT_PITCH : ch->pitch;
+	for (channel_t& ch : channels) {
+		ch.size        = um::bound(ch.size, G_GUI_CHANNEL_H_1, G_GUI_CHANNEL_H_4, G_GUI_CHANNEL_H_1);
+		ch.volume      = um::bound(ch.volume, 0.0f, 1.0f, G_DEFAULT_VOL);
+		ch.pan         = um::bound(ch.pan, 0.0f, 1.0f, 1.0f);
+		ch.boost       = um::bound(ch.boost, 1.0f, G_MAX_BOOST_DB, G_DEFAULT_BOOST);
+		ch.pitch       = um::bound(ch.pitch, 0.1f, G_MAX_PITCH, G_DEFAULT_PITCH);
+		ch.midiOutChan = um::bound(ch.midiOutChan, 0, G_MAX_MIDI_CHANS - 1, 0);
 	}
 }
 
@@ -196,23 +199,50 @@ bool readActions(json_t* jContainer, channel_t* channel)
 {
 	json_t* jActions = json_object_get(jContainer, PATCH_KEY_CHANNEL_ACTIONS);
 	if (!storager::checkArray(jActions, PATCH_KEY_CHANNEL_ACTIONS))
-		return 0;
+		return false;
 
 	size_t actionIndex;
 	json_t* jAction;
 	json_array_foreach(jActions, actionIndex, jAction) {
 
 		if (!storager::checkObject(jAction, "")) // TODO pass actionIndex as string
-			return 0;
+			return false;
 
 		action_t action;
-		if (!storager::setInt   (jAction, PATCH_KEY_ACTION_TYPE,    action.type)) return 0;
-		if (!storager::setInt   (jAction, PATCH_KEY_ACTION_FRAME,   action.frame)) return 0;
-		if (!storager::setFloat (jAction, PATCH_KEY_ACTION_F_VALUE, action.fValue)) return 0;
-		if (!storager::setUint32(jAction, PATCH_KEY_ACTION_I_VALUE, action.iValue)) return 0;
+
+		/* TODO - temporary code for backward compatibility with old actions. 
+		To be removed in 0.16.0. */
+		if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 3)) {
+
+			action.id = -1;
+			action.channel = channel->index;
+			if (!storager::setInt   (jAction, "frame", action.frame)) return 0;			
+			if (!storager::setUint32(jAction, "type",  action.event)) return 0;
+			action.prev = -1;
+			action.next = -1;
+
+			if      (action.event == 0x01)   // KEY_PRESS
+				action.event = MidiEvent(MidiEvent::NOTE_ON, 0, 0).getRaw();
+			else if (action.event == 0x02)   // KEY_REL
+				action.event = MidiEvent(MidiEvent::NOTE_OFF, 0, 0).getRaw();
+			else if (action.event == 0x04)   // KEY_KILL
+				action.event = MidiEvent(MidiEvent::NOTE_KILL, 0, 0).getRaw();
+			else if (action.event == 0x20)   // VOLUME not supported, sorry :)
+				continue;
+			else if (action.event == 0x40)   // MIDI EVENT
+				if (!storager::setUint32(jAction, "i_value", action.event)) return 0;
+		}
+		else {
+			if (!storager::setInt   (jAction, G_PATCH_KEY_ACTION_ID,      action.id)) return 0;
+			if (!storager::setInt   (jAction, G_PATCH_KEY_ACTION_CHANNEL, action.channel)) return 0;
+			if (!storager::setInt   (jAction, G_PATCH_KEY_ACTION_FRAME,   action.frame)) return 0;
+			if (!storager::setUint32(jAction, G_PATCH_KEY_ACTION_EVENT,   action.event)) return 0;
+			if (!storager::setInt   (jAction, G_PATCH_KEY_ACTION_PREV,    action.prev)) return 0;
+			if (!storager::setInt   (jAction, G_PATCH_KEY_ACTION_NEXT,    action.next)) return 0;
+		}
 		channel->actions.push_back(action);
 	}
-	return 1;
+	return true;
 }
 
 
@@ -269,8 +299,8 @@ bool readChannels(json_t* jContainer)
 		if (!storager::setBool  (jChannel, PATCH_KEY_CHANNEL_INPUT_MONITOR,        channel.inputMonitor)) return 0;
 		if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, channel.midiInReadActions)) return 0;
 		if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        channel.midiInPitch)) return 0;
-		if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             channel.midiOut)) return 0;
-		if (!storager::setUint32(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        channel.midiOutChan)) return 0;
+		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             channel.midiOut)) return 0;
+		if (!storager::setInt   (jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        channel.midiOutChan)) return 0;
 		if (!storager::setBool  (jChannel, PATCH_KEY_CHANNEL_ARMED,                channel.armed)) return 0;
 
 		readActions(jChannel, &channel);
@@ -365,16 +395,17 @@ void writeColumns(json_t* jContainer, vector<column_t>* columns)
 /* -------------------------------------------------------------------------- */
 
 
-void writeActions(json_t*jContainer, vector<action_t>*actions)
+void writeActions(json_t* jContainer, vector<action_t>& actions)
 {
 	json_t* jActions = json_array();
-	for (unsigned k=0; k<actions->size(); k++) {
-		json_t*  jAction = json_object();
-		action_t action  = actions->at(k);
-		json_object_set_new(jAction, PATCH_KEY_ACTION_TYPE,    json_integer(action.type));
-		json_object_set_new(jAction, PATCH_KEY_ACTION_FRAME,   json_integer(action.frame));
-		json_object_set_new(jAction, PATCH_KEY_ACTION_F_VALUE, json_real(action.fValue));
-		json_object_set_new(jAction, PATCH_KEY_ACTION_I_VALUE, json_integer(action.iValue));
+	for (action_t action : actions) {
+		json_t* jAction = json_object();
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_ID,      json_integer(action.id));
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_CHANNEL, json_integer(action.channel));
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_FRAME,   json_integer(action.frame));
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_EVENT,   json_integer(action.event));
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_PREV,    json_integer(action.prev));
+		json_object_set_new(jAction, G_PATCH_KEY_ACTION_NEXT,    json_integer(action.next));
 		json_array_append_new(jActions, jAction);
 	}
 	json_object_set_new(jContainer, PATCH_KEY_CHANNEL_ACTIONS, jActions);
@@ -452,7 +483,7 @@ void writeChannels(json_t* jContainer, vector<channel_t>* channels)
 		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_ARMED,                json_boolean(channel.armed));
 		json_array_append_new(jChannels, jChannel);
 
-		writeActions(jChannel, &channel.actions);
+		writeActions(jChannel, channel.actions);
 
 #ifdef WITH_VST
 

@@ -131,7 +131,7 @@ void processChannels(const MidiEvent& midiEvent)
 			c::channel::toggleSolo(ch, false);
 		}
 		else if (pure == ch->midiInVolume) {
-			float vf = midiEvent.getVelocity() / 127.0f;
+			float vf = midiEvent.getVelocity() / 127.0f; // TODO: u::math::map
 			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
 				ch->index, pure, midiEvent.getVelocity(), vf);
 			c::channel::setVolume(ch, vf, false);
@@ -139,7 +139,7 @@ void processChannels(const MidiEvent& midiEvent)
 		else {
 			SampleChannel* sch = static_cast<SampleChannel*>(ch);
 			if (pure == sch->midiInPitch) {
-				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0]
+				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0] TODO: u::math::map
 				gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
 					sch->index, pure, midiEvent.getVelocity(), vf);
 				c::channel::setPitch(sch, vf);
@@ -173,11 +173,11 @@ void processMaster(const MidiEvent& midiEvent)
 
 	if      (pure == conf::midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
-		glue_rewindSeq(false);
+		c::transport::rewindSeq(false);
 	}
 	else if (pure == conf::midiInStartStop) {
 		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
-		glue_startStopSeq(false);
+		c::transport::startStopSeq(false);
 	}
 	else if (pure == conf::midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
@@ -189,7 +189,7 @@ void processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
-		glue_startStopMetronome(false);
+		c::transport::startStopMetronome(false);
 	}
 	else if (pure == conf::midiInVolumeIn) {
 		float vf = midiEvent.getVelocity() / 127.0f;

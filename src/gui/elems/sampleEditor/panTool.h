@@ -32,7 +32,6 @@
 #include <FL/Fl_Group.H>
 
 
-class SampleChannel;
 class geDial;
 class geInput;
 class geButton;
@@ -43,21 +42,21 @@ class gePanTool : public Fl_Group
 {
 private:
 
-  SampleChannel *ch;
+  giada::m::SampleChannel* ch;
 
-  geBox    *label;
-  geDial   *dial;
-  geInput  *input;
-  geButton *reset;
+  geBox*    label;
+  geDial*   dial;
+  geInput*  input;
+  geButton* reset;
 
-  static void cb_panning (Fl_Widget *w, void *p);
-  static void cb_panReset(Fl_Widget *w, void *p);
-  inline void __cb_panning();
-  inline void __cb_panReset();
+  static void cb_panning (Fl_Widget* w, void* p);
+  static void cb_panReset(Fl_Widget* w, void* p);
+  void cb_panning();
+  void cb_panReset();
 
 public:
 
-  gePanTool(int x, int y, SampleChannel *ch);
+  gePanTool(int x, int y, giada::m::SampleChannel* ch);
 
   void refresh();
 };

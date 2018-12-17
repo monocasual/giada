@@ -50,11 +50,11 @@ private:
 	class geCheck  *enableOut;
 	class geChoice *chanListOut;
 
-	class MidiChannel *ch;
+	class giada::m::MidiChannel *ch;
 
 public:
 
-	gdMidiOutputMidiCh(class MidiChannel *ch);
+	gdMidiOutputMidiCh(class giada::m::MidiChannel *ch);
 };
 
 

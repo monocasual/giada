@@ -29,6 +29,7 @@
 #include "../../../../core/const.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/midiChannel.h"
+#include "../../../../core/recorder/recorder.h"
 #include "../../../../utils/gui.h"
 #include "../../../../utils/string.h"
 #include "../../../../glue/channel.h"
@@ -54,6 +55,7 @@
 extern gdMainWindow* G_MainWin;
 
 
+using namespace giada;
 using std::string;
 
 
@@ -87,8 +89,8 @@ void menuCallback(Fl_Widget* w, void* v)
 {
 	using namespace giada;
 
-	geMidiChannel* gch = static_cast<geMidiChannel*>(w);
-	MidiChannel*   ch  = static_cast<MidiChannel*>(gch->ch);
+	geMidiChannel*  gch = static_cast<geMidiChannel*>(w);
+	m::MidiChannel* ch  = static_cast<m::MidiChannel*>(gch->ch);
 
 	Menu selectedItem = (Menu) (intptr_t) v;
 
@@ -148,7 +150,7 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geMidiChannel::geMidiChannel(int X, int Y, int W, int H, MidiChannel* ch)
+geMidiChannel::geMidiChannel(int X, int Y, int W, int H, m::MidiChannel* ch)
 	: geChannel(X, Y, W, H, ch)
 {
 	begin();
@@ -218,7 +220,7 @@ void geMidiChannel::cb_button()
 	using namespace giada;
 	
 	if (button->value())
-		c::io::keyPress(static_cast<MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift(), 0);
+		c::io::keyPress(static_cast<m::MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift(), 0);
 }
 
 
@@ -271,6 +273,8 @@ void geMidiChannel::cb_openMenu()
 void geMidiChannel::refresh()
 {
 	setColorsByStatus(ch->status, ch->recStatus);
+	if (m::recorder::isActive() && ch->armed)
+		mainButton->setActionRecordMode();
 	mainButton->redraw();
 }
 
@@ -290,7 +294,7 @@ void geMidiChannel::reset()
 
 void geMidiChannel::update()
 {
-	const MidiChannel* mch = static_cast<const MidiChannel*>(ch);
+	const m::MidiChannel* mch = static_cast<const m::MidiChannel*>(ch);
 
 	string label; 
 	if (mch->name.empty())

@@ -32,14 +32,11 @@
 #include "midiOutputBase.h"
 
 
-class SampleChannel;
-
-
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
 private:
 
-	SampleChannel* ch;
+	giada::m::SampleChannel* ch;
 
 	/* cb_close
 	Override parent method, we need to do more stuff on close. */
@@ -49,7 +46,7 @@ private:
 
 public:
 
-	gdMidiOutputSampleCh(SampleChannel* ch);
+	gdMidiOutputSampleCh(giada::m::SampleChannel* ch);
 };
 
 #endif

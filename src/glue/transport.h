@@ -29,15 +29,16 @@
 #define G_GLUE_TRANSPORT_H
 
 
-/* start, stop, rewind sequencer
-If gui == true the signal comes from an user interaction on the GUI,
-otherwise it's a MIDI/Jack/external signal. */
-
-void glue_startStopSeq(bool gui=true);
-void glue_startSeq(bool gui=true);
-void glue_stopSeq(bool gui=true);
-void glue_rewindSeq(bool gui=true, bool notifyJack=true);
-void glue_startStopMetronome(bool gui=true);
+namespace giada {
+namespace c {
+namespace transport 
+{
+void startStopSeq(bool gui=true);
+void startSeq(bool gui=true);
+void stopSeq(bool gui=true);
+void rewindSeq(bool gui=true, bool notifyJack=true);
+void startStopMetronome(bool gui=true);
+}}} // giada::c::transport::
 
 
 #endif

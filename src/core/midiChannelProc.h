@@ -6,11 +6,11 @@
 #include "audioBuffer.h"
 
 
+namespace giada {
+namespace m 
+{
 class MidiChannel;
 
-
-namespace giada {
-namespace m {
 namespace midiChannelProc
 {
 /* parseEvents
@@ -19,8 +19,7 @@ Parses events gathered by Mixer::masterPlay(). */
 void parseEvents(MidiChannel* ch, mixer::FrameEvents ev);
 
 /**/
-void process(MidiChannel* ch, giada::m::AudioBuffer& out, 
-	const giada::m::AudioBuffer& in, bool audible);
+void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audible);
 
 /* kill
 Stops a channel abruptly. */

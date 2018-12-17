@@ -17,6 +17,9 @@
 - Support for "inaudible" MIDI lightning events (thank you @tomek-szczesny)
 - Build AppImage for Linux on Travis CI instance
 - Huge optimization of the AppImage binary file
+- Fix Action Editor repaint on min/max zoom levels
+- "Resize recording" flag has been removed
+- Smarter column assignment while loading a patch/project
 
 
 0.15.2 --- 2018 . 09 . 05

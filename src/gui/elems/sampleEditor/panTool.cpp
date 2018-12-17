@@ -46,7 +46,7 @@ using std::string;
 using namespace giada;
 
 
-gePanTool::gePanTool(int x, int y, SampleChannel *ch)
+gePanTool::gePanTool(int x, int y, m::SampleChannel* ch)
   : Fl_Group(x, y, 200, 20),
     ch      (ch)
 {
@@ -94,15 +94,15 @@ void gePanTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::cb_panning (Fl_Widget *w, void *p) { ((gePanTool*)p)->__cb_panning(); }
-void gePanTool::cb_panReset(Fl_Widget *w, void *p) { ((gePanTool*)p)->__cb_panReset(); }
+void gePanTool::cb_panning (Fl_Widget *w, void *p) { ((gePanTool*)p)->cb_panning(); }
+void gePanTool::cb_panReset(Fl_Widget *w, void *p) { ((gePanTool*)p)->cb_panReset(); }
 
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::__cb_panning()
+void gePanTool::cb_panning()
 {
   c::channel::setPanning(ch, dial->value());
 }
@@ -111,7 +111,7 @@ void gePanTool::__cb_panning()
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::__cb_panReset()
+void gePanTool::cb_panReset()
 {
   c::channel::setPanning(ch, 0.5f);
 }

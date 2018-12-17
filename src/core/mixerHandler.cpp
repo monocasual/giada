@@ -135,11 +135,8 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 
 Channel* addChannel(ChannelType type)
 {
-	Channel* ch = nullptr;
-	channelManager::create(type, kernelAudio::getRealBufSize(), 
-		conf::inputMonitorDefaultOn, &ch);
-	if (ch == nullptr)
-		return nullptr;
+	Channel* ch = channelManager::create(type, kernelAudio::getRealBufSize(), 
+		conf::inputMonitorDefaultOn);
 
 	while (true) {
 		if (pthread_mutex_trylock(&mixer::mutex) != 0)

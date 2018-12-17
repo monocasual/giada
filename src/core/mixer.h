@@ -36,11 +36,14 @@
 #include "../deps/rtaudio-mod/RtAudio.h"
 
 
-class Channel;
 
 
 namespace giada {
-namespace m {
+namespace m
+{
+class Action;
+class Channel;
+
 namespace mixer
 {
 struct FrameEvents
@@ -51,7 +54,7 @@ struct FrameEvents
 	bool  onBar;
 	bool  onFirstBeat;
 	bool  quantoPassed;
-	std::vector<recorder::action*> actions;
+	std::vector<const Action*> actions;
 };
 
 extern std::vector<Channel*> channels;

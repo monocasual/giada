@@ -37,6 +37,8 @@
 #include "midiChannel.h"
 #include "pluginHost.h"
 #include "plugin.h"
+#include "action.h"
+#include "recorderHandler.h"
 #include "channelManager.h"
 
 
@@ -49,21 +51,6 @@ namespace channelManager
 {
 namespace
 {
-void writeActions_(int chanIndex, patch::channel_t& pch)
-{
-	recorder::forEachAction([&] (const recorder::action* a) {
-		if (a->chan != chanIndex) 
-			return;
-		pch.actions.push_back(patch::action_t { 
-			a->type, a->frame, a->fValue, a->iValue 
-		});
-	});
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void writePlugins_(const Channel* ch, patch::channel_t& pch)
 {
 #ifdef WITH_VST
@@ -89,10 +76,8 @@ void writePlugins_(const Channel* ch, patch::channel_t& pch)
 
 void readActions_(Channel* ch, const patch::channel_t& pch)
 {
-	for (const patch::action_t& ac : pch.actions) {
-		recorder::rec(ch->index, ac.type, ac.frame, ac.iValue, ac.fValue);
-		ch->hasActions = true;
-	}
+	recorderHandler::readPatch(pch.actions);
+	ch->hasActions = pch.actions.size() > 0;
 }
 
 
@@ -132,13 +117,12 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 /* -------------------------------------------------------------------------- */
 
 
-int create(ChannelType type, int bufferSize, bool inputMonitorOn, Channel** out)
+Channel* create(ChannelType type, int bufferSize, bool inputMonitorOn)
 {
 	if (type == ChannelType::SAMPLE)
-		*out = new SampleChannel(inputMonitorOn, bufferSize);
+		return new SampleChannel(inputMonitorOn, bufferSize);
 	else
-		*out = new MidiChannel(bufferSize);
-	return G_RES_OK;
+		return new MidiChannel(bufferSize);
 }
 
 
@@ -173,7 +157,7 @@ int writePatch(const Channel* ch, bool isProject)
 	pch.midiOutLmute    = ch->midiOutLmute;
 	pch.midiOutLsolo    = ch->midiOutLsolo;
 
-	writeActions_(ch->index, pch);
+	recorderHandler::writePatch(ch->index, pch.actions);
 	writePlugins_(ch, pch);
 
 	patch::channels.push_back(pch);
@@ -223,10 +207,8 @@ void writePatch(const SampleChannel* ch, bool isProject, int index)
 /* -------------------------------------------------------------------------- */
 
 
-void readPatch(Channel* ch, int i)
+void readPatch(Channel* ch, const patch::channel_t& pch)
 {
-	const patch::channel_t& pch = patch::channels.at(i);
-
 	ch->key             = pch.key;
 	ch->armed           = pch.armed;
 	ch->type            = static_cast<ChannelType>(pch.type);
@@ -257,21 +239,19 @@ void readPatch(Channel* ch, int i)
 /* -------------------------------------------------------------------------- */
 
 
-void readPatch(SampleChannel* ch, const string& basePath, int i)
+void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t& pch)
 {
-	const patch::channel_t& pch = patch::channels.at(i);
-
 	ch->mode              = static_cast<ChannelMode>(pch.mode);
 	ch->readActions       = pch.recActive;
 	ch->recStatus         = pch.recActive ? ChannelStatus::PLAY : ChannelStatus::OFF;
 	ch->midiInVeloAsVol   = pch.midiInVeloAsVol;
 	ch->midiInReadActions = pch.midiInReadActions;
 	ch->midiInPitch       = pch.midiInPitch;
-  ch->inputMonitor      = pch.inputMonitor;
+	ch->inputMonitor      = pch.inputMonitor;
 	ch->setBoost(pch.boost);
 
-  Wave* w = nullptr;
-  int res = waveManager::create(basePath + pch.samplePath, &w); 
+	Wave* w = nullptr;
+	int res = waveManager::create(basePath + pch.samplePath, &w); 
 
 	if (res == G_RES_OK) {
 		ch->pushWave(w);
@@ -293,10 +273,8 @@ void readPatch(SampleChannel* ch, const string& basePath, int i)
 /* -------------------------------------------------------------------------- */
 
 
-void readPatch(MidiChannel* ch, int i)
+void readPatch(MidiChannel* ch, const patch::channel_t& pch)
 {
-	const patch::channel_t& pch = patch::channels.at(i);
-
 	ch->midiOut     = pch.midiOut;
 	ch->midiOutChan = pch.midiOutChan;	
 }

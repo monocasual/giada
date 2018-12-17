@@ -38,7 +38,7 @@
 using namespace giada;
 
 
-gdChannelNameInput::gdChannelNameInput(Channel* ch)
+gdChannelNameInput::gdChannelNameInput(m::Channel* ch)
 : gdWindow(400, 64, "New channel name"),
   m_ch    (ch)
 {

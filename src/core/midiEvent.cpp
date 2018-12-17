@@ -26,6 +26,7 @@
 
 
 #include <cassert>
+#include "const.h"
 #include "midiEvent.h"
 
 

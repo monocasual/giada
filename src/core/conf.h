@@ -83,7 +83,6 @@ extern uint32_t midiInBeatHalf;
 extern bool recsStopOnChanHalt;
 extern bool chansStopOnSeqHalt;
 extern bool treatRecsAsLoops;
-extern bool resizeRecordings;
 extern bool inputMonitorDefaultOn;
 
 extern std::string pluginPath;
