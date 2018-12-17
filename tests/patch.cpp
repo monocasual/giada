@@ -26,14 +26,18 @@ TEST_CASE("patch")
 		patch::plugin_t  plugin3;
 #endif
 
-		action0.type   = 0;
-		action0.frame  = 50000;
-		action0.fValue = 0.3f;
-		action0.iValue = 1000;
-		action1.type   = 2;
-		action1.frame  = 589;
-		action1.fValue = 1.0f;
-		action1.iValue = 130;
+		action0.id      = 0;
+		action0.channel = 6;
+		action0.frame   = 4000;
+		action0.event   = 0xFF00FF00;
+		action0.prev    = -1;
+		action0.next    = -1;
+		action1.id      = 1;
+		action1.channel = 2;
+		action1.frame   = 8000;
+		action1.event   = 0x00000000;
+		action1.prev    = -1;
+		action1.next    = -1;
 		channel1.actions.push_back(action0);
 		channel1.actions.push_back(action1);
 
@@ -179,16 +183,20 @@ TEST_CASE("patch")
 		REQUIRE(channel0.midiOutChan == 5);
 
 		patch::action_t action0 = channel0.actions.at(0);
-		REQUIRE(action0.type == 0);
-		REQUIRE(action0.frame == 50000);
-		REQUIRE(action0.fValue == Approx(0.3f));
-		REQUIRE(action0.iValue == 1000);
+		REQUIRE(action0.id == 0);
+		REQUIRE(action0.channel == 6);
+		REQUIRE(action0.frame == 4000);
+		REQUIRE(action0.event == 0xFF00FF00);
+		REQUIRE(action0.prev == -1);
+		REQUIRE(action0.next == -1);
 
 		patch::action_t action1 = channel0.actions.at(1);
-		REQUIRE(action1.type == 2);
-		REQUIRE(action1.frame == 589);
-		REQUIRE(action1.fValue == Approx(1.0f));
-		REQUIRE(action1.iValue == 130);
+		REQUIRE(action1.id == 1);
+		REQUIRE(action1.channel == 2);
+		REQUIRE(action1.frame == 8000);
+		REQUIRE(action1.event == 0x00000000);
+		REQUIRE(action1.prev == -1);
+		REQUIRE(action1.next == -1);
 
 #ifdef WITH_VST
 		patch::plugin_t plugin0 = channel0.plugins.at(0);

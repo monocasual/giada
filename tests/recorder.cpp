@@ -1,4 +1,4 @@
-#include "../src/core/recorder/recorder.h"
+#include "../src/core/recorder.h"
 #include "../src/core/const.h"
 #include "../src/core/types.h"
 #include "../src/core/action.h"
@@ -23,18 +23,18 @@ TEST_CASE("recorder")
 		const int       ch = 0;
 		const Frame     f1 = 10;
 		const Frame     f2 = 70;
-		const MidiEvent e1 = MidiEvent(static_cast<int>(ActionType::NOTE_ON), 0x00, 0x00);
-		const MidiEvent e2 = MidiEvent(static_cast<int>(ActionType::NOTE_OFF), 0x00, 0x00);
+		const MidiEvent e1 = MidiEvent(MidiEvent::NOTE_ON, 0x00, 0x00);
+		const MidiEvent e2 = MidiEvent(MidiEvent::NOTE_OFF, 0x00, 0x00);
 
-		const Action* a1 = recorder::rec(ch, f1, e1, nullptr);
-		const Action* a2 = recorder::rec(ch, f2, e2, a1);
+		const Action* a1 = recorder::rec(ch, f1, e1);
+		const Action* a2 = recorder::rec(ch, f2, e2);
 
 		REQUIRE(recorder::hasActions(ch) == true);
 		REQUIRE(a1->frame == f1);
 		REQUIRE(a2->frame == f2);
 		REQUIRE(a1->prev == nullptr);
-		REQUIRE(a1->next == a2);
-		REQUIRE(a2->prev == a1);
+		REQUIRE(a1->next == nullptr);
+		REQUIRE(a2->prev == nullptr);
 		REQUIRE(a2->next == nullptr);
 
 		SECTION("Test clear actions by channel")
@@ -42,11 +42,11 @@ TEST_CASE("recorder")
 			const int       ch = 1;
 			const Frame     f1 = 100;
 			const Frame     f2 = 200;
-			const MidiEvent e1 = MidiEvent(static_cast<int>(ActionType::NOTE_ON), 0x00, 0x00);
-			const MidiEvent e2 = MidiEvent(static_cast<int>(ActionType::NOTE_OFF), 0x00, 0x00);
+			const MidiEvent e1 = MidiEvent(MidiEvent::NOTE_ON, 0x00, 0x00);
+			const MidiEvent e2 = MidiEvent(MidiEvent::NOTE_OFF, 0x00, 0x00);
 
-			recorder::rec(ch, f1, e1, nullptr);
-			recorder::rec(ch, f2, e2, nullptr);
+			recorder::rec(ch, f1, e1);
+			recorder::rec(ch, f2, e2);
 
 			recorder::clearChannel(/*channel=*/0);
 			
@@ -56,13 +56,13 @@ TEST_CASE("recorder")
 
 		SECTION("Test clear actions by type")
 		{
-			recorder::clearAction(/*channel=*/0, ActionType::NOTE_ON);
-			recorder::clearAction(/*channel=*/0, ActionType::NOTE_OFF);
+			recorder::clearActions(/*channel=*/0, MidiEvent::NOTE_ON);
+			recorder::clearActions(/*channel=*/0, MidiEvent::NOTE_OFF);
 			
 			REQUIRE(recorder::hasActions(/*channel=*/0) == false);
 		}
 
-
+/* TODO -> recorderHandler
 		SECTION("Test BPM update")
 		{
 			REQUIRE(a1->frame == f1);
@@ -91,6 +91,7 @@ TEST_CASE("recorder")
 			REQUIRE(a1->frame == f1);
 			REQUIRE(a2->frame == f2);
 		}
+*/
 	}
 
 	SECTION("Test retrieval")
@@ -126,42 +127,6 @@ TEST_CASE("recorder")
 	}
 
 	SECTION("Test samplerate update")
-	{
-	}
-
-	SECTION("Test expand")
-	{
-	}
-
-	SECTION("Test shrink")
-	{
-	}
-	
-	SECTION("Test overdub, full overwrite")
-	{
-	}
-
-	SECTION("Test overdub, left overlap")
-	{
-	}
-
-	SECTION("Test overdub, right overlap")
-	{
-	}
-
-	SECTION("Test overdub, hole diggin'")
-	{
-	}
-
-	SECTION("Test overdub, cover all")
-	{
-	}
-
-	SECTION("Test overdub, null loop")
-	{
-	}
-
-	SECTION("Test overdub, ring loop")
 	{
 	}
 }

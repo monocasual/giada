@@ -42,7 +42,6 @@ TEST_CASE("AudioBuffer")
 
 		buffer.free();
 
-		REQUIRE(buffer[0] == nullptr);
 		REQUIRE(buffer.countFrames() == 0);
 		REQUIRE(buffer.countSamples() == 0);
 		REQUIRE(buffer.countChannels() == 0);

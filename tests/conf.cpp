@@ -44,7 +44,6 @@ TEST_CASE("conf")
     conf::recsStopOnChanHalt = true;
     conf::chansStopOnSeqHalt = false;
     conf::treatRecsAsLoops = true;
-    conf::resizeRecordings = false;
     conf::pluginPath = "path/to/plugins";
     conf::patchPath = "path/to/patches";
     conf::samplePath = "path/to/samples";
@@ -119,7 +118,6 @@ TEST_CASE("conf")
     REQUIRE(conf::recsStopOnChanHalt == true);
     REQUIRE(conf::chansStopOnSeqHalt == false);
     REQUIRE(conf::treatRecsAsLoops == true);
-    REQUIRE(conf::resizeRecordings == false);
     REQUIRE(conf::pluginPath == "path/to/plugins");
     REQUIRE(conf::patchPath == "path/to/patches");
     REQUIRE(conf::samplePath == "path/to/samples");
