@@ -31,7 +31,7 @@
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
 #include "../core/recorderHandler.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "../core/action.h"
 #include "recorder.h"
 #include "actionEditor.h"

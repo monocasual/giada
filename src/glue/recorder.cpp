@@ -34,7 +34,7 @@
 #include "../core/kernelMidi.h"
 #include "../core/channel.h"
 #include "../core/recorderHandler.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "../core/action.h"
 #include "../core/mixer.h"
 #include "../core/sampleChannel.h"

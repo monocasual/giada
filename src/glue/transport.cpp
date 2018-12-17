@@ -35,7 +35,7 @@
 #include "../core/kernelMidi.h"
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "transport.h"
 
 

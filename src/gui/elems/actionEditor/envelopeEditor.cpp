@@ -32,7 +32,7 @@
 #include "../../../core/const.h"
 #include "../../../core/conf.h"
 #include "../../../core/action.h"
-#include "../../../core/recorder/recorder.h"
+#include "../../../core/recorder.h"
 #include "../../../core/sampleChannel.h"
 #include "../../../glue/actionEditor.h"
 #include "../../dialogs/actionEditor/baseActionEditor.h"

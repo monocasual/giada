@@ -54,10 +54,8 @@ sourcesCore =                            \
 	src/core/patch.cpp                     \
 	src/core/recorderHandler.h             \
 	src/core/recorderHandler.cpp           \
-	src/core/recorder/recorder.h           \
-	src/core/recorder/recorder.cpp         \
-	src/core/recorder/recorderStack.h      \
-	src/core/recorder/recorderStack.cpp    \
+	src/core/recorder.h                    \
+	src/core/recorder.cpp                  \
 	src/core/mixer.h                       \
 	src/core/mixer.cpp                     \
 	src/core/storager.h	                   \
@@ -108,11 +106,11 @@ sourcesCore =                            \
 	src/gui/dialogs/bpmInput.cpp           \
 	src/gui/dialogs/channelNameInput.h     \
 	src/gui/dialogs/channelNameInput.cpp   \
-	src/gui/dialogs/gd_config.h      			 \
+	src/gui/dialogs/gd_config.h            \
 	src/gui/dialogs/gd_config.cpp          \
 	src/gui/dialogs/gd_devInfo.h           \
-	src/gui/dialogs/gd_devInfo.cpp		     \
-	src/gui/dialogs/pluginList.h	         \
+	src/gui/dialogs/gd_devInfo.cpp         \
+	src/gui/dialogs/pluginList.h           \
 	src/gui/dialogs/pluginList.cpp         \
 	src/gui/dialogs/pluginWindow.h	       \
 	src/gui/dialogs/pluginWindow.cpp       \
@@ -287,7 +285,7 @@ sourcesCore =                            \
 	src/utils/string.cpp                   \
 	src/deps/rtaudio-mod/RtAudio.h         \
 	src/deps/rtaudio-mod/RtAudio.cpp
-sourcesTests =                 \
+sourcesTests =                   \
 	tests/main.cpp               \
 	tests/conf.cpp               \
 	tests/wave.cpp               \

@@ -27,7 +27,7 @@
 
 #include <cassert>
 #include "../utils/math.h"
-#include "recorder/recorder.h"
+#include "recorder.h"
 #include "recorderHandler.h"
 #include "const.h"
 #include "conf.h"

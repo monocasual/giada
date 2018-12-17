@@ -24,173 +24,134 @@
  *
  * -------------------------------------------------------------------------- */
 
-#if 0
-#ifndef G_RECORDER_DEPRECATED_H
-#define G_RECORDER_DEPRECATED_H
+
+#ifndef G_RECORDER_H
+#define G_RECORDER_H
 
 
-#include <cstdint>
+#include <map>
 #include <vector>
 #include <functional>
-#include <pthread.h>
+#include "types.h"
+#include "midiEvent.h"
 
 
 namespace giada {
-namespace m {
-namespace recorder_DEPR_
+namespace m 
 {
-/* action
- * struct containing fields to describe an atomic action. Note from
- * VST sdk: parameter values, like all VST parameters, are declared as
- * floats with an inclusive range of 0.0 to 1.0 (fValue). */
+class Action;
 
-struct action
+namespace recorder
 {
-	int      chan;    // channel index, i.e. Channel->index
- 	int      type;
-	int      frame;   // redundant info, used by helper functions
-	float    fValue;  // used only for envelopes (volumes, vst params).
-	uint32_t iValue;  // used only for MIDI events
-};
+using ActionMap = std::map<Frame, std::vector<const Action*>>;
 
-/* Composite
-A group of two actions (keypress+keyrel, muteon+muteoff). */
-
-struct Composite
-{
-	action a1;
-	action a2;
-};
-
-/* frames
-Frame counter sentinel. It tells which frames contain actions. E.g.:
-  frames[0] = 155   // some actions on frame 155
-  frames[1] = 2048  // some actions on frame 2048
-It always matches 'global''s size: frames.size() == global.size() */
-
-extern std::vector<int> frames;
-
-/* global
-Contains the actual actions. E.g.:
-  global[0] = <actions>
-  global[1] = <actions> */
-
-extern std::vector<std::vector<action*>> global;
-/* TODO - this frames vs global madness must be replaced with a map:
-std::map<int, vector<actions>> */
-
-extern bool active;
-extern bool sortedActions;   // are actions sorted via sortActions()?
-
+void debug();
 /* init
- * everything starts from here. */
+Initializes the recorder: everything starts from here. */
 
-void init();
-
-/* hasActions
-Checks if the channel has at least one action recorded. Used after an
-action deletion. Type != -1: check if channel has actions of type 'type'.*/
-
-bool hasActions(int chanIndex, int type=-1);
-
-/* canRec
- * can a channel rec an action? Call this one BEFORE rec(). */
-
-bool canRec(Channel* ch, bool clockRunning, bool mixerRecording);
-
-/* rec
- * record an action. */
-
-void rec(int chan, int action, int frame, uint32_t iValue=0, float fValue=0.0f);
-
-/* clearChan
- * clear all actions from a channel. */
-
-void clearChan(int chan);
-
-/* clearAction
- * clear the 'action' action type from a channel. */
-
-void clearAction(int chan, char action);
-
-/* deleteAction
- * delete ONE action. Useful in the action editor. 'type' can be a mask. */
-
-void deleteAction(int chan, int frame, char type, bool checkValues,
-  pthread_mutex_t* mixerMutex, uint32_t iValue=0, float fValue=0.0);
-
-/* deleteActions
-Deletes A RANGE of actions from frame_a to frame_b in channel 'chan' of type
-'type' (can be a bitmask). Exclusive range (frame_a, frame_b). */
-
-void deleteActions(int chan, int frame_a, int frame_b, char type,
-  pthread_mutex_t* mixerMutex);
+void init(pthread_mutex_t* mixerMutex);
 
 /* clearAll
- * delete everything. */
+Deletes all recorded actions. */
 
 void clearAll();
 
-/* optimize
- * clear frames without actions. */
+/* clearChannel
+Clears all actions from a channel. */
 
-void optimize();
+void clearChannel(int channel);
 
-/* sortActions
- * sorts actions by frame, asc mode. */
+/* clearActions
+Clears the actions by type from a channel. */
 
-void sortActions();
+void clearActions(int channel, int type);
 
-/* updateBpm
- * reassign frames by calculating the new bpm value. */
+/* deleteAction
+Deletes a specific action. */
 
-void updateBpm(float oldval, float newval, int oldquanto);
+void deleteAction(const Action* a);
 
-/* updateSamplerate
- * reassign frames taking in account the samplerate. If f_system ==
- * f_patch nothing changes, otherwise the conversion is mandatory. */
+/* updateKeyFrames
+Update all the key frames in the internal map of actions, according to a lambda 
+function 'f'. */
 
-void updateSamplerate(int systemRate, int patchRate);
+void updateKeyFrames(std::function<Frame(Frame old)> f);
 
-void expand(int old_fpb, int new_fpb);
-void shrink(int new_fpb);
+/* updateActionMap
+Replaces the current map of actions with a new one. Warning: 'am' will be moved
+as a replacement (no copy). */
 
-/* getNextAction
-Returns the nearest action in chan 'chan' of type 'action' starting from 
-'frame'. Action can be a bitmask. If iValue != 0 search for next action with 
-iValue == iValue with 'mask' to ignore bytes. Useful for MIDI key_release. 
-Mask example:
+void updateActionMap(ActionMap&& am);
 
-	iValue = 0x803D3F00
-	mask   = 0x0000FF00  // ignore byte 3
-	action = 0x803D3200  // <--- this action will be found */
+/* updateEvent
+Changes the event in action 'a'. */
 
-int getNextAction(int chan, char action, int frame, struct action** out,
-	uint32_t iValue=0, uint32_t mask=0);
+void updateEvent(const Action* a, MidiEvent e);
 
-/* getAction
-Returns a pointer to action in chan 'chan' of type 'action' at frame 'frame'. */
+/* updateSiblings
+Changes previous and next actions in action 'a'. Mostly used for chained actions
+such as envelopes. */
 
-int getAction(int chan, char action, int frame, struct action** out);
+void updateSiblings(const Action* a, const Action* prev, const Action* next);
 
-/* getActionsOnFrame
-Returns a vector of actions that occur on frame 'frame'. */
+void updateActionId(int id);
 
-std::vector<action*> getActionsOnFrame(int frame);
+/* hasActions
+Checks if the channel has at least one action recorded. */
 
-/* start/stopOverdub
-These functions are used when you overwrite existing actions. For example:
-pressing Mute button on a channel with some existing mute actions. */
+bool hasActions(int channel, int type=0);
 
-void startOverdub(int chan, char action, int frame, unsigned bufferSize);
-void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex);
+/* isActive
+Is recorder recording something? */
+
+bool isActive();
+
+void enable();
+void disable();
+
+const Action* makeAction(int id, int channel, Frame frame, MidiEvent e);
+
+/* rec (1)
+Records an action and returns it. */
+
+const Action* rec(int channel, Frame frame, MidiEvent e);
+
+/* rec (2)
+Transfer a vector of actions into the current ActionMap. This is called by 
+recordHandler when a live session is over and consolidation is required. */
+
+void rec(const std::vector<const Action*>& actions);
 
 /* forEachAction
-Applies a read-only callback on each action recorded. */
+Applies a read-only callback on each action recorded. NEVER do anything inside 
+the callback that might alter the ActionMap. */
 
-void forEachAction(std::function<void(const action*)> f);
+void forEachAction(std::function<void(const Action*)> f);
+
+/* getActionsOnFrame
+Returns a vector of actions recorded on frame 'f'. */
+
+std::vector<const Action*> getActionsOnFrame(Frame f);
+
+/* getActionsOnChannel
+Returns a vector of actions belonging to channel 'ch'. */
+
+std::vector<const Action*> getActionsOnChannel(int ch);
+
+/* getClosestAction
+Given a frame 'f' returns the closest action. */
+
+const Action* getClosestAction(int channel, Frame f, int type);
+
+
+int getLatestActionId();
+
+/* getActionMap
+Returns a copy of the internal action map. Used only by recorderHandler. */
+
+ActionMap getActionMap();
+
 }}}; // giada::m::recorder::
 
-#endif
 
 #endif

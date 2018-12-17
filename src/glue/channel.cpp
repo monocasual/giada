@@ -56,7 +56,7 @@
 #include "../core/channel.h"
 #include "../core/sampleChannel.h"
 #include "../core/midiChannel.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "../core/plugin.h"
 #include "../core/waveManager.h"
 #include "main.h"

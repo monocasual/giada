@@ -27,7 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../core/recorder/recorder.h"
+#include "../../../core/recorder.h"
 #include "../../../core/const.h"
 #include "../../../core/conf.h"
 #include "../../../core/action.h"

@@ -32,7 +32,6 @@
 #include "wave.h"
 #include "kernelAudio.h"
 #include "recorder.h"
-#include "recorder/recorder.h"
 #include "pluginHost.h"
 #include "conf.h"
 #include "mixerHandler.h"

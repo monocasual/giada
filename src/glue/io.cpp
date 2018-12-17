@@ -36,7 +36,7 @@
 #include "../utils/gui.h"
 #include "../utils/log.h"
 #include "../utils/math.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "../core/kernelAudio.h"
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"

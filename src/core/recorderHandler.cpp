@@ -30,8 +30,7 @@
 #include <cassert>
 #include "../utils/log.h"
 #include "../utils/ver.h"
-#include "recorder/recorder.h"
-#include "recorder/recorderStack.h"
+#include "recorder.h"
 #include "action.h"
 #include "clock.h"
 #include "const.h"

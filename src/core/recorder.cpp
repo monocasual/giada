@@ -24,75 +24,103 @@
  *
  * -------------------------------------------------------------------------- */
 
-#if 0
+
+#include <memory>
+#include <algorithm>
 #include <cassert>
-#include <cmath>
 #include "../utils/log.h"
-#include "const.h"
-#include "sampleChannel.h"
+#include "action.h"
+#include "channel.h"
 #include "recorder.h"
 
 
+using std::map;
 using std::vector;
 
 
 namespace giada {
 namespace m {
-namespace recorder_DEPR_
+namespace recorder
 {
 namespace
 {
-/* Composite
-A group of two actions (keypress+keyrel, muteon+muteoff) used during the overdub 
-process. */
+/* actions
+The big map of actions {frame : actions[]}. This belongs to Recorder, but it
+is often parsed by Mixer. So every "write" action performed on it (add, 
+remove, ...) must be guarded by a lock on the mixerMutex. Until a proper
+lock-free solution will be implemented. */
 
-Composite cmp;
+ActionMap actions;
+
+pthread_mutex_t* mixerMutex = nullptr;
+bool             active     = false;
+int              actionId   = 0;
 
 
 /* -------------------------------------------------------------------------- */
 
 
-/* fixOverdubTruncation
-Fixes underlying action truncation when overdubbing over a longer action. I.e.:
-	Original:    |#############|
-	Overdub:     ---|#######|---
-	fix:         |#||#######|--- */
-
-void fixOverdubTruncation(const Composite& comp, pthread_mutex_t* mixerMutex)
+void lock_(std::function<void()> f)
 {
-	action* next = nullptr;
-	int res = getNextAction(comp.a2.chan, comp.a1.type | comp.a2.type, comp.a2.frame,
-		&next);
-	if (res != 1 || next->type != comp.a2.type)
-		return;
-	gu_log("[recorder::fixOverdubTruncation] add truncation at frame %d, type=%d\n",
-		next->frame, next->type);
-	deleteAction(next->chan, next->frame, next->type, false, mixerMutex);
+	assert(mixerMutex != nullptr);
+	pthread_mutex_lock(mixerMutex);
+	f();
+	pthread_mutex_unlock(mixerMutex);
 }
 
-}; // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-vector<int> frames;
-vector<vector<action*>> global;
-vector<action*> actions;     // used internally
-
-bool active = false;
-bool sortedActions = false;
-
 
 /* -------------------------------------------------------------------------- */
 
+/* optimize
+Removes frames without actions. */
 
-void init()
+void optimize_(ActionMap& map)
 {
-	active = false;
-	sortedActions = false;
+	for (auto it = map.cbegin(); it != map.cend();)
+		it->second.size() == 0 ? it = map.erase(it) : ++it;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void removeIf_(std::function<bool(const Action*)> f)
+{
+	ActionMap temp = actions;
+
+	/*
+	for (auto& kv : temp) {
+		vector<Action*>& as = kv.second;
+		as.erase(std::remove_if(as.begin(), as.end(), f), as.end());
+	}*/
+	for (auto& kv : temp) {
+		auto i = std::begin(kv.second);
+		while (i != std::end(kv.second)) {
+			if (f(*i)) {
+				delete *i;
+				i = kv.second.erase(i);
+			}
+			else
+				++i;
+		}
+	}
+	optimize_(temp);
+
+	lock_([&](){ actions = std::move(temp); });
+}
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+void init(pthread_mutex_t* m)
+{
+	mixerMutex = m;
+	active     = false;
+	actionId   = 0;
 	clearAll();
 }
 
@@ -100,196 +128,20 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-bool canRec(Channel* ch, bool clockRunning, bool mixerRecording)
+void debug()
 {
-	/* Can record on a channel if:
-		- recorder is on
-		- mixer is running
-		- mixer is not recording a take somewhere
-		- channel is MIDI or SAMPLE type with data in it  */
-	return active && clockRunning && !mixerRecording && 
-	       (ch->type == ChannelType::MIDI || (ch->type == ChannelType::SAMPLE && ch->hasData()));
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void rec(int index, int type, int frame, uint32_t iValue, float fValue)
-{
-	/* allocating the action */
-
-	action* a = (action*) malloc(sizeof(action)); /* TODO - AAARRRGGHHHHHH!!!! */
-	a->chan   = index;
-	a->type   = type;
-	a->frame  = frame;
-	a->iValue = iValue;
-	a->fValue = fValue;
-
-	/* check if the frame exists in the stack. If it exists, we don't extend
-	 * the stack, but we add (or push) a new action to it. */
-
-	int frameToExpand = frames.size();
-	for (int i=0; i<frameToExpand; i++)
-		if (frames.at(i) == frame) {
-			frameToExpand = i;
-			break;
-		}
-
-	/* espansione dello stack frames nel caso l'azione ricada in frame
-	 * non precedentemente memorizzati (frameToExpand == frames.size()).
-	 * Espandere frames è facile, basta aggiungere un frame in coda.
-	 * Espandere global è più complesso: bisogna prima allocare una
-	 * cella in global (per renderlo parallelo a frames) e poi
-	 * inizializzare il suo sub-stack (di action). */
-
-	if (frameToExpand == (int) frames.size()) {
-		frames.push_back(frame);
-		global.push_back(actions);               // array of actions added
-		global.at(global.size()-1).push_back(a); // action added
-	}
-	else {
-
-		/* no duplicates, please */
-
-		for (unsigned t=0; t<global.at(frameToExpand).size(); t++) {
-			action* ac = global.at(frameToExpand).at(t);
-			if (ac->chan   == index  &&
-					ac->type   == type   &&
-					ac->frame  == frame  &&
-					ac->iValue == iValue &&
-					ac->fValue == fValue)
-				return;
-		}
-
-		global.at(frameToExpand).push_back(a);		// expand array
-	}
-
-	sortedActions = false;
-
-	gu_log("[recorder::rec] action recorded, type=%d frame=%d chan=%d iValue=%d (0x%X) fValue=%f\n",
-		a->type, a->frame, a->chan, a->iValue, a->iValue, a->fValue);
-	//print();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void clearChan(int index)
-{
-	gu_log("[recorder::clearChan] clearing chan %d...\n", index);
-
-	for (unsigned i=0; i<global.size(); i++) {	// for each frame i
-		unsigned j=0;
-		while (true) {
-			if (j == global.at(i).size()) break; 	  // for each action j of frame i
-			action* a = global.at(i).at(j);
-			if (a->chan == index)	{
-				free(a);
-				global.at(i).erase(global.at(i).begin() + j);
-			}
-			else
-				j++;
+	int total = 0;
+	puts("-------------");
+	for (auto& kv : actions) {
+		printf("frame: %d\n", kv.first);
+		for (const Action* a : kv.second) {
+			total++;
+			printf(" this=%p - id=%d, frame=%d, channel=%d, value=0x%X, prev=%p, next=%p\n", 
+				(void*) a, a->id, a->frame, a->channel, a->event.getRaw(), (void*) a->prev, (void*) a->next);	
 		}
 	}
-	optimize();
-	//print();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void clearAction(int index, char act)
-{
-	gu_log("[recorder::clearAction] clearing action %d from chan %d...\n", act, index);
-	for (unsigned i=0; i<global.size(); i++) {						// for each frame i
-		unsigned j=0;
-		while (true) {                                   // for each action j of frame i
-			if (j == global.at(i).size())
-				break;
-			action* a = global.at(i).at(j);
-			if (a->chan == index && (act & a->type) == a->type)	{ // bitmask
-				free(a);
-				global.at(i).erase(global.at(i).begin() + j);
-			}
-			else
-				j++;
-		}
-	}
-	optimize();
-	//print();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void deleteAction(int chan, int frame, char type, bool checkValues,
-	pthread_mutex_t* mixerMutex, uint32_t iValue, float fValue)
-{
-	/* find the frame 'frame' */
-
-	bool found = false;
-	for (unsigned i=0; i<frames.size() && !found; i++) {
-
-		if (frames.at(i) != frame)
-			continue;
-
-			/* find the action in frame i */
-
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action* a = global.at(i).at(j);
-
-			/* action comparison logic */
-
-			bool doit = (a->chan == chan && a->type == (type & a->type));
-			if (checkValues)
-				doit &= (a->iValue == iValue && a->fValue == fValue);
-
-			if (!doit)
-				continue;
-
-			while (true) {
-				if (pthread_mutex_trylock(mixerMutex)) {
-					free(a);
-					global.at(i).erase(global.at(i).begin() + j);
-					pthread_mutex_unlock(mixerMutex);
-					found = true;
-					break;
-				}
-				else
-					gu_log("[recorder::deleteAction] waiting for mutex...\n");
-			}
-		}
-	}
-	if (found) {
-		optimize();
-		gu_log("[recorder::deleteAction] action deleted, type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
-			type, frame, chan, iValue, iValue, fValue);
-	}
-	else
-		gu_log("[recorder::deleteAction] unable to delete action, not found! type=%d frame=%d chan=%d iValue=%d (%X) fValue=%f\n",
-			type, frame, chan, iValue, iValue, fValue);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void deleteActions(int chan, int frame_a, int frame_b, char type,
-	pthread_mutex_t* mixerMutex)
-{
-	sortActions();
-	vector<int> dels;
-
-	for (unsigned i=0; i<frames.size(); i++)
-		if (frames.at(i) > frame_a && frames.at(i) < frame_b)
-			dels.push_back(frames.at(i));
-
-	for (unsigned i=0; i<dels.size(); i++)
-		deleteAction(chan, dels.at(i), type, false, mixerMutex); // false == don't check values
+	printf("TOTAL: %d\n", total);
+	puts("-------------");
 }
 
 
@@ -298,204 +150,118 @@ void deleteActions(int chan, int frame_a, int frame_b, char type,
 
 void clearAll()
 {
-	while (global.size() > 0) {
-		for (unsigned i=0; i<global.size(); i++) {
-			for (unsigned k=0; k<global.at(i).size(); k++)
-				free(global.at(i).at(k));									// free action
-			global.at(i).clear();												// free action container
-			global.erase(global.begin() + i);
-		}
-	}
-	global.clear();
-	frames.clear();
+	removeIf_([=](const Action* a) { return true; }); // TODO optimize this
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void optimize()
+void clearChannel(int channel)
 {
-	/* do something until the i frame is empty. */
-
-	unsigned i = 0;
-	while (true) {
-		if (i == global.size()) return;
-		if (global.at(i).size() == 0) {
-			global.erase(global.begin() + i);
-			frames.erase(frames.begin() + i);
-		}
-		else
-			i++;
-	}
-
-	sortActions();
+	removeIf_([=](const Action* a) { return a->channel == channel; });
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void sortActions()
+void clearActions(int channel, int type)
 {
-	if (sortedActions)
-		return;
-	for (unsigned i=0; i<frames.size(); i++)
-		for (unsigned j=0; j<frames.size(); j++)
-			if (frames.at(j) > frames.at(i)) {
-				std::swap(frames.at(j), frames.at(i));
-				std::swap(global.at(j), global.at(i));
-			}
-	sortedActions = true;
-	//print();
+	removeIf_([=](const Action* a)
+	{ 
+		return a->channel == channel && a->event.getStatus() == type;
+	});
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateBpm(float oldval, float newval, int oldquanto)
+void deleteAction(const Action* target)
 {
-	for (unsigned i=0; i<frames.size(); i++) {
-
-		float frame  = ((float) frames.at(i)/newval) * oldval;
-		frames.at(i) = (int) frame;
-
-		/* the division up here cannot be precise. A new frame can be 44099
-		 * and the quantizer set to 44100. That would mean two recs completely
-		 * useless. So we compute a reject value ('scarto'): if it's lower
-		 * than 6 frames the new frame is collapsed with a quantized frame. */
-		/** XXX - maybe 6 frames are too low */
-
-		if (frames.at(i) != 0) {
-			int scarto = oldquanto % frames.at(i);
-			if (scarto > 0 && scarto <= 6)
-				frames.at(i) = frames.at(i) + scarto;
-		}
-	}
-
-	/* update structs */
-
-	for (unsigned i=0; i<frames.size(); i++) {
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action* a = global.at(i).at(j);
-			a->frame = frames.at(i);
-		}
-	}
-
-	//print();
+	removeIf_([=](const Action* a) { return a == target; });
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateSamplerate(int systemRate, int patchRate)
+void updateKeyFrames(std::function<Frame(Frame old)> f)
 {
-	/* diff ratio: systemRate / patchRate
-	 * e.g.  44100 / 96000 = 0.4... */
+	/* This stuff must be performed in a lock, because we are moving the vector
+	of actions from the real ActionMap to the temporary one. */
+	
+	ActionMap temp;
 
-	if (systemRate == patchRate)
-		return;
-
-	gu_log("[recorder::updateSamplerate] systemRate (%d) != patchRate (%d), converting...\n", systemRate, patchRate);
-
-	float ratio = systemRate / (float) patchRate;
-	for (unsigned i=0; i<frames.size(); i++) {
-
-		gu_log("[recorder::updateSamplerate]    oldFrame = %d", frames.at(i));
-
-		float newFrame = frames.at(i);
-		newFrame = floorf(newFrame * ratio);
-
-		frames.at(i) = (int) newFrame;
-
-		gu_log(", newFrame = %d\n", frames.at(i));
-	}
-
-	/* update structs */
-
-	for (unsigned i=0; i<frames.size(); i++) {
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-			action* a = global.at(i).at(j);
-			a->frame = frames.at(i);
+	lock_([&]()
+	{ 
+		for (auto& kv : actions) {
+			Frame frame = f(kv.first);
+			temp[frame] = std::move(kv.second);  // Move std::vector<Action*>
+			for (const Action* action : temp[frame])
+				const_cast<Action*>(action)->frame = frame;
+			gu_log("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);
 		}
-	}
+		actions = std::move(temp); 
+	});
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void expand(int old_fpb, int new_fpb)
+void updateEvent(const Action* a, MidiEvent e)
 {
-	/* this algorithm requires multiple passages if we expand from e.g. 2
-	 * to 16 beats, precisely 16 / 2 - 1 = 7 times (-1 is the first group,
-	 * which exists yet). If we expand by a non-multiple, the result is zero,
-	 * due to float->int implicit cast */
-
-	unsigned pass = (int) (new_fpb / old_fpb) - 1;
-	if (pass == 0) pass = 1;
-
-	unsigned init_fs = frames.size();
-
-	for (unsigned z=1; z<=pass; z++) {
-		for (unsigned i=0; i<init_fs; i++) {
-			unsigned newframe = frames.at(i) + (old_fpb*z);
-			frames.push_back(newframe);
-			global.push_back(actions);
-			for (unsigned k=0; k<global.at(i).size(); k++) {
-				action* a = global.at(i).at(k);
-				rec(a->chan, a->type, newframe, a->iValue, a->fValue);
-			}
-		}
-	}
-	gu_log("[recorder::expand] expanded recs\n");
-	//print();
+	assert(a != nullptr);
+	lock_([&] { const_cast<Action*>(a)->event = e; });
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void shrink(int new_fpb)
+void updateSiblings(const Action* a, const Action* prev, const Action* next)
 {
-	/* easier than expand(): here we delete eveything beyond old_framesPerBars. */
-
-	unsigned i=0;
-	while (true) {
-		if (i == frames.size()) break;
-
-		if (frames.at(i) >= new_fpb) {
-			for (unsigned k=0; k<global.at(i).size(); k++)
-				free(global.at(i).at(k));		      // free action
-			global.at(i).clear();								// free action container
-			global.erase(global.begin() + i);   // shrink global
-			frames.erase(frames.begin() + i);   // shrink frames
-		}
-		else
-			i++;
-	}
-	optimize();
-	gu_log("[recorder::shrink] shrinked recs\n");
-	//print();
+	assert(a != nullptr);
+	lock_([&] 
+	{ 
+		const_cast<Action*>(a)->prev = prev;
+		const_cast<Action*>(a)->next = next;
+		if (prev != nullptr) const_cast<Action*>(prev)->next = a;		
+		if (next != nullptr) const_cast<Action*>(next)->prev = a;	
+	});
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool hasActions(int chanIndex, int type)
+void updateActionMap(ActionMap&& am)
 {
-	if (global.size() == 0)
-		return false;
-	for (unsigned i=0; i<global.size(); i++) {
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-			if (global.at(i).at(j)->chan == chanIndex)
-				if (type == -1 || global.at(i).at(j)->type == type)
-					return true;
-		}
-	}
+	lock_([&](){ actions = am; });
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void updateActionId(int id)
+{
+	if (actionId <= id)  // Never decrease it
+		actionId = id;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool hasActions(int channel, int type)
+{
+	for (auto& kv : actions)
+		for (const Action* action : kv.second)
+			if (action->channel == channel && (type == 0 || type == action->event.getStatus()))
+				return true;
 	return false;
 }
 
@@ -503,174 +269,109 @@ bool hasActions(int chanIndex, int type)
 /* -------------------------------------------------------------------------- */
 
 
-int getNextAction(int chan, char type, int fromFrame, action** out, 
-	uint32_t iValue, uint32_t mask)
+bool isActive() { return active; }
+void enable()   { active = true; }
+void disable()  { active = false; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+const Action* makeAction(int id, int channel, Frame frame, MidiEvent e)
 {
-	sortActions();  // mandatory
-
-	/* Increase 'i' until it reaches 'fromFrame'. That's the point where to start
-	to look for the next action. */
-
-	unsigned i = 0;
-	while (i < frames.size() && frames.at(i) <= fromFrame) i++;
-
-	/* No other actions past 'fromFrame': there are no more actions to look for.
-	Return -1. */
-
-	if (i == frames.size())
-		return -1;
-
-	for (; i<global.size(); i++) {
-
-		for (unsigned j=0; j<global.at(i).size(); j++) {
-
-			action* a = global.at(i).at(j);
-
-			/* If the requested channel and type don't match, continue. */
-
-			if (a->chan != chan || (type & a->type) != a->type) 
-				continue;
-
-			/* If no iValue has been specified (iValue == 0), then the next action has 
-			been found, return it. Otherwise, make sure the iValue matches the 
-			action's iValue, according to the mask provided. */
-
-			if (iValue == 0 || (iValue != 0 && (a->iValue | mask) == (iValue | mask))) {
-				*out = global.at(i).at(j);
-				return 1;
-			}
-		}
-	}
-	return -2;   // no 'type' actions found
+	return new Action{ id, channel, frame, e, -1, -1, nullptr, nullptr };
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int getAction(int chan, char action, int frame, struct action** out)
+const Action* rec(int channel, Frame frame, MidiEvent event)
 {
-	for (unsigned i=0; i<global.size(); i++)
-		for (unsigned j=0; j<global.at(i).size(); j++)
-			if (frame  == global.at(i).at(j)->frame &&
-					action == global.at(i).at(j)->type &&
-					chan   == global.at(i).at(j)->chan)
-			{
-				*out = global.at(i).at(j);
-				return 1;
-			}
-	return 0;
+	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
+	enough to insert a new item first. No plug-in data for now. */
+
+	lock_([&]
+	{ 
+		actions[frame].push_back(makeAction(actionId++, channel, frame, event));
+	});
+	return actions[frame].back();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void startOverdub(int index, char actionMask, int frame, unsigned bufferSize)
+void rec(const std::vector<const Action*>& as)
 {
-	/* prepare the composite struct */
+	ActionMap temp = actions;
 
-	cmp.a1.type  = G_ACTION_KEYPRESS;
-	cmp.a2.type  = G_ACTION_KEYREL;
-	cmp.a1.chan  = index;
-	cmp.a2.chan  = index;
-	cmp.a1.frame = frame;
-	// cmp.a2.frame doesn't exist yet
-
-	/* avoid underlying action truncation: if action2.type == nextAction:
-	 * you are in the middle of a composite action, truncation needed */
-
-	rec(index, cmp.a1.type, frame);
-
-	action* act = nullptr;
-	int res = getNextAction(index, cmp.a1.type | cmp.a2.type, cmp.a1.frame, &act);
-	if (res == 1) {
-		if (act->type == cmp.a2.type) {
-			int truncFrame = cmp.a1.frame - bufferSize;
-			if (truncFrame < 0)
-				truncFrame = 0;
-			gu_log("[recorder::startOverdub] add truncation at frame %d, type=%d\n", truncFrame, cmp.a2.type);
-			rec(index, cmp.a2.type, truncFrame);
-		}
+	for (const Action* a : as) {
+		const_cast<Action*>(a)->id = actionId++;
+		temp[a->frame].push_back(a); // Memory is already allocated by recorderHandler
 	}
+
+	lock_([&](){ actions = std::move(temp); });
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void stopOverdub(int currentFrame, int totalFrames, pthread_mutex_t* mixerMutex)
+vector<const Action*> getActionsOnFrame(Frame frame)
 {
-	cmp.a2.frame  = currentFrame;
-	bool ringLoop = false;
-	bool nullLoop = false;
-
-	/* Check for ring loops or null loops. Ring loop: a composite action with
-	key_press at frame N and key_release at frame M, with M <= N.
-	Null loop: a composite action that begins and ends on the very same frame,
-	i.e. with 0 size. Very unlikely.
-	If ring loop: record the last action at the end of the sequencer (that
-	is 'totalFrames').
-	If null loop: remove previous action and do nothing. Also make sure to avoid
-	underlying action truncation, if the null loop occurs inside a composite
-	action. */
-
-	if (cmp.a2.frame < cmp.a1.frame) {  // ring loop
-		ringLoop = true;
-		gu_log("[recorder::stopOverdub] ring loop! frame1=%d < frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		rec(cmp.a2.chan, cmp.a2.type, totalFrames);
-	}
-	else
-	if (cmp.a2.frame == cmp.a1.frame) { // null loop
-		nullLoop = true;
-		gu_log("[recorder::stopOverdub] null loop! frame1=%d == frame2=%d\n", cmp.a1.frame, cmp.a2.frame);
-		deleteAction(cmp.a1.chan, cmp.a1.frame, cmp.a1.type, false, mixerMutex); // false == don't check values
-		fixOverdubTruncation(cmp, mixerMutex);
-	}
-
-	if (nullLoop)
-		return;
-
-	/* Remove any nested action between keypress----keyrel. */
-
-	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a1.type, mixerMutex);
-	deleteActions(cmp.a2.chan, cmp.a1.frame, cmp.a2.frame, cmp.a2.type, mixerMutex);
-
-	if (ringLoop)
-		return;
-
-	/* Record second part of the composite action. Also make sure to avoid
-	underlying action truncation, if keyrel happens inside a composite action. */
-
-	rec(cmp.a2.chan, cmp.a2.type, cmp.a2.frame);
-	fixOverdubTruncation(cmp, mixerMutex);
+	return actions.count(frame) ? actions[frame] : vector<const Action*>();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-vector<action*> getActionsOnFrame(int frame)
+const Action* getClosestAction(int channel, Frame f, int type)
 {
-	for (size_t i=0; i<frames.size(); i++) {
-		if (recorder_DEPR_::frames.at(i) != frame)
-			continue;
-		return global.at(i);
-	}
-	return vector<action*>();
+	const Action* out = nullptr;
+	forEachAction([&](const Action* a)
+	{
+		if (a->event.getStatus() != type || a->channel != channel)
+			return;
+		if (out == nullptr || (a->frame <= f && a->frame > out->frame))
+			out = a;
+	});
+	return out;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void forEachAction(std::function<void(const action*)> f)
-{
+ActionMap getActionMap() { return actions; }
 
-	for (const vector<action*> actions : recorder_DEPR_::global)
-		for (const action* action : actions)
+int getLatestActionId() { return actionId; }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+vector<const Action*> getActionsOnChannel(int channel)
+{
+	vector<const Action*> out;
+	forEachAction([&](const Action* a)
+	{
+		if (a->channel == channel)
+			out.push_back(a);
+	});
+	return out;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void forEachAction(std::function<void(const Action*)> f)
+{
+	for (auto& kv : actions)
+		for (const Action* action : kv.second)
 			f(action);
 }
-}}}; // giada::m::recorder::
 
-#endif
+}}}; // giada::m::recorder::

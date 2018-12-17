@@ -51,7 +51,6 @@
 #include "conf.h"
 #include "pluginHost.h"
 #include "recorder.h"
-#include "recorder/recorder.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"
 #include "kernelAudio.h"

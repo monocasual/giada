@@ -29,7 +29,7 @@
 #include "../../../../core/mixer.h"
 #include "../../../../core/clock.h"
 #include "../../../../core/sampleChannel.h"
-#include "../../../../core/recorder/recorder.h"
+#include "../../../../core/recorder.h"
 #include "../../../../core/const.h"
 #include "channelStatus.h"
 

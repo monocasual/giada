@@ -27,7 +27,7 @@
 
 #include <cassert>
 #include "../utils/log.h"
-#include "recorder/recorder.h"
+#include "recorder.h"
 #include "midiChannelProc.h"
 #include "channelManager.h"
 #include "channel.h"

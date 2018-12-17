@@ -30,7 +30,7 @@
 #include "../../../../core/clock.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/wave.h"
-#include "../../../../core/recorder/recorder.h"
+#include "../../../../core/recorder.h"
 #include "../../../../core/sampleChannel.h"
 #include "../../../../glue/io.h"
 #include "../../../../glue/channel.h"

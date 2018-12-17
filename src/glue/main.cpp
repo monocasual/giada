@@ -41,7 +41,7 @@
 #include "../core/clock.h"
 #include "../core/kernelMidi.h"
 #include "../core/kernelAudio.h"
-#include "../core/recorder/recorder.h"
+#include "../core/recorder.h"
 #include "../core/recorderHandler.h"
 #include "../core/conf.h"
 #include "../core/const.h"

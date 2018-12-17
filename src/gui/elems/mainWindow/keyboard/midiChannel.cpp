@@ -29,7 +29,7 @@
 #include "../../../../core/const.h"
 #include "../../../../core/graphics.h"
 #include "../../../../core/midiChannel.h"
-#include "../../../../core/recorder/recorder.h"
+#include "../../../../core/recorder.h"
 #include "../../../../utils/gui.h"
 #include "../../../../utils/string.h"
 #include "../../../../glue/channel.h"
