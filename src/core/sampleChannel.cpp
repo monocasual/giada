@@ -42,20 +42,20 @@ namespace m
 {
 SampleChannel::SampleChannel(bool inputMonitor, int bufferSize)
 	: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize),
-		mode             (ChannelMode::SINGLE_BASIC),
-		wave             (nullptr),
-		tracker          (0),
-		trackerPreview   (0),
-		shift            (0),
-		qWait	           (false),
-		inputMonitor     (inputMonitor),
-		boost            (G_DEFAULT_BOOST),
-		pitch            (G_DEFAULT_PITCH),
-		begin            (0),
-		end              (0),
-		midiInReadActions(0x0),
-		midiInPitch      (0x0),
-		rsmp_state       (nullptr)
+	  mode             (ChannelMode::SINGLE_BASIC),
+	  wave             (nullptr),
+	  tracker          (0),
+	  trackerPreview   (0),
+	  shift            (0),
+	  qWait	           (false),
+	  inputMonitor     (inputMonitor),
+	  boost            (G_DEFAULT_BOOST),
+	  pitch            (G_DEFAULT_PITCH),
+	  begin            (0),
+	  end              (0),
+	  midiInReadActions(0x0),
+	  midiInPitch      (0x0),
+	  rsmp_state       (nullptr)
 {
 	rsmp_state = src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr);
 	if (rsmp_state == nullptr) {
@@ -396,12 +396,12 @@ float SampleChannel::getBoost() const
 void SampleChannel::empty()
 {
 	status     = ChannelStatus::EMPTY;
-  begin      = 0;
-  end        = 0;
-  tracker    = 0;
-  volume     = G_DEFAULT_VOL;
-  boost      = G_DEFAULT_BOOST;
-  hasActions = false;
+	begin      = 0;
+	end        = 0;
+	tracker    = 0;
+	volume     = G_DEFAULT_VOL;
+	boost      = G_DEFAULT_BOOST;
+	hasActions = false;
 	delete wave;
 	wave = nullptr;
 	sendMidiLstatus();
@@ -417,7 +417,6 @@ void SampleChannel::pushWave(Wave* w)
 	wave   = w;
 	begin  = 0;
 	end    = wave->getSize() - 1;
-	name   = wave->getBasename();
 	sendMidiLstatus();
 }
 
