@@ -75,11 +75,11 @@ std::thread videoThread;
 
 void videoThreadCallback_()
 {
-	if (m::kernelAudio::getStatus())
-		while (G_quit.load() == false) {
+	while (G_quit.load() == false) {
+		if (m::kernelAudio::getStatus())
 			gu_refreshUI();
-			u::time::sleep(G_GUI_REFRESH_RATE);
-		}
+		u::time::sleep(G_GUI_REFRESH_RATE);
+	}
 }
 
 
