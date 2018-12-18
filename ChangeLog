@@ -21,6 +21,7 @@
 - Fix Action Editor repaint on min/max zoom levels
 - "Resize recording" flag has been removed
 - Smarter column assignment while loading a patch/project
+- Fix wrong resizer bar width between Action Editor widgets when zooming
 
 
 0.15.2 --- 2018 . 09 . 05
