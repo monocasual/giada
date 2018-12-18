@@ -32,6 +32,9 @@
 #include "baseActionEditor.h"
 
 
+class geResizerBar;
+
+
 namespace giada {
 namespace v
 {
@@ -43,8 +46,11 @@ class gdMidiActionEditor : public gdBaseActionEditor
 {
 private:
 
-	geNoteEditor*     ne;
-	geVelocityEditor* ve;
+    geNoteEditor*     m_ne;
+	geResizerBar*     m_ner;
+
+	geVelocityEditor* m_ve;
+    geResizerBar*     m_ver;
 
 public:
 

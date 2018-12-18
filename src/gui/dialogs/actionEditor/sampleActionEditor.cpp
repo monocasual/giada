@@ -84,13 +84,15 @@ gdSampleActionEditor::gdSampleActionEditor(m::SampleChannel* ch)
 
 	viewport = new geScroll(8, 36, w()-16, h()-44);
 
-	ac = new geSampleActionEditor(viewport->x(), viewport->y(), ch);
-	viewport->add(ac);
-	viewport->add(new geResizerBar(ac->x(), ac->y()+ac->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
+	m_ae  = new geSampleActionEditor(viewport->x(), viewport->y(), ch);
+	m_aer = new geResizerBar(m_ae->x(), m_ae->y()+m_ae->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	viewport->add(m_ae);
+	viewport->add(m_aer);
 	
-	vc = new geEnvelopeEditor(viewport->x(), ac->y()+ac->h()+RESIZER_BAR_H, "volume", ch);
-	viewport->add(vc);
-	viewport->add(new geResizerBar(vc->x(), vc->y()+vc->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
+	m_ee  = new geEnvelopeEditor(viewport->x(), m_ae->y()+m_ae->h()+RESIZER_BAR_H, "volume", ch);
+	m_eer = new geResizerBar(m_ee->x(), m_ee->y()+m_ee->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	viewport->add(m_ee);
+	viewport->add(m_eer);
 
 	end();
 	prepareWindow();
@@ -116,7 +118,9 @@ void gdSampleActionEditor::rebuild()
 	m_actions = c::actionEditor::getActions(ch);
 	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 
 	computeWidth();
-	ac->rebuild();
-	vc->rebuild();	
+	m_ae->rebuild();
+	m_aer->size(m_ae->w(), m_aer->h());
+	m_ee->rebuild();	
+	m_eer->size(m_ee->w(), m_eer->h());
 }
 }} // giada::v::

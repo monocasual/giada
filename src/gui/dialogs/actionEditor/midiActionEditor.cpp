@@ -71,13 +71,15 @@ gdMidiActionEditor::gdMidiActionEditor(m::MidiChannel* ch)
 
 	viewport = new geScroll(8, 36, w()-16, h()-44);
 
-	ne = new geNoteEditor(viewport->x(), viewport->y(), this);
-	viewport->add(ne);
-	viewport->add(new geResizerBar(ne->x(), ne->y()+ne->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
+	m_ne  = new geNoteEditor(viewport->x(), viewport->y(), this);
+	m_ner = new geResizerBar(m_ne->x(), m_ne->y()+m_ne->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	viewport->add(m_ne);
+	viewport->add(m_ner);
 	
-	ve = new geVelocityEditor(viewport->x(), ne->y()+ne->h()+RESIZER_BAR_H, ch);
-	viewport->add(ve);
-	viewport->add(new geResizerBar(ve->x(), ve->y()+ve->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H));
+	m_ve  = new geVelocityEditor(viewport->x(), m_ne->y()+m_ne->h()+RESIZER_BAR_H, ch);
+	m_ver = new geResizerBar(m_ve->x(), m_ve->y()+m_ve->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	viewport->add(m_ve);
+	viewport->add(m_ver);
 
 	end();
 	prepareWindow();
@@ -92,7 +94,9 @@ void gdMidiActionEditor::rebuild()
 {
 	m_actions = c::actionEditor::getActions(ch);
 	computeWidth();
-	ne->rebuild();
-	ve->rebuild();
+	m_ne->rebuild();
+	m_ner->size(m_ne->w(), m_ner->h());
+	m_ve->rebuild();
+	m_ver->size(m_ve->w(), m_ver->h());
 }
 }} // giada::v::

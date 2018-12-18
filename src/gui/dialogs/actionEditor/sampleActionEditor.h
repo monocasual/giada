@@ -32,6 +32,9 @@
 #include "baseActionEditor.h"
 
 
+class geResizerBar;
+
+
 namespace giada {
 namespace v
 {
@@ -42,8 +45,11 @@ class gdSampleActionEditor : public gdBaseActionEditor
 {
 private:
 
-	geSampleActionEditor* ac;
-	geEnvelopeEditor*     vc;
+	geSampleActionEditor* m_ae;
+    geResizerBar*         m_aer;
+
+	geEnvelopeEditor*     m_ee;
+    geResizerBar*         m_eer;
 
 	bool canChangeActionType();
 	
