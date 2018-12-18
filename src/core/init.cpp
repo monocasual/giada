@@ -207,6 +207,7 @@ void shutdownGUI_()
 {
 	gu_closeAllSubwindows();
 	videoThread.join();	
+
 	gu_log("[init] All subwindows and UI thread closed\n");
 }
 } // {anonymous}

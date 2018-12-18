@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include "../../core/const.h"
+#include "../../core/conf.h"
 #include "../../core/init.h"
 #include "../../utils/gui.h"
 #include "../elems/basics/boxtypes.h"
@@ -40,7 +41,10 @@
 #include "gd_mainWindow.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
+
+
+using namespace giada;
 
 
 gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv)
@@ -54,9 +58,9 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	Fl::set_boxtype(G_CUSTOM_UP_BOX,     g_customUpBox,     1, 1, 2, 2);
 	Fl::set_boxtype(G_CUSTOM_DOWN_BOX,   g_customDownBox,   1, 1, 2, 2);
 
-  Fl::set_boxtype(FL_BORDER_BOX, G_CUSTOM_BORDER_BOX);
-  Fl::set_boxtype(FL_UP_BOX,     G_CUSTOM_UP_BOX);
-  Fl::set_boxtype(FL_DOWN_BOX,   G_CUSTOM_DOWN_BOX);
+	Fl::set_boxtype(FL_BORDER_BOX, G_CUSTOM_BORDER_BOX);
+	Fl::set_boxtype(FL_UP_BOX,     G_CUSTOM_UP_BOX);
+	Fl::set_boxtype(FL_DOWN_BOX,   G_CUSTOM_DOWN_BOX);
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
@@ -115,6 +119,12 @@ void gdMainWindow::cb_endprogram()
 {
 	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
+
+	m::conf::mainWindowX = x();
+	m::conf::mainWindowY = y();
+	m::conf::mainWindowW = w();
+	m::conf::mainWindowH = h();
+
 	hide();
 	delete this;
 }
