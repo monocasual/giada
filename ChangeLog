@@ -24,6 +24,7 @@
 - Smarter column assignment while loading a patch/project
 - Fix wrong resizer bar width between Action Editor widgets when zooming
 - Can't display custom channel name in Sample Channel (fixed)
+- Fix crash when cloning Sample Channel with audio data in it
 
 
 0.15.2 --- 2018 . 09 . 05

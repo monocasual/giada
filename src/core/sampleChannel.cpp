@@ -92,8 +92,8 @@ void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 	qWait           = src->qWait;
 	setPitch(src->pitch);
 
-	/*if (src->wave)
-		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor*/
+	if (src->wave)
+		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor
 }
 
 

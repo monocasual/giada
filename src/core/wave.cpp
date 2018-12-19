@@ -61,12 +61,12 @@ float* Wave::operator [](int offset) const
 Wave::Wave(const Wave& other)
 :	m_rate    (other.m_rate),
 	m_bits    (other.m_bits),	
-	m_logical (true),   // a cloned wave does not exist on disk
+	m_logical (true),   // A cloned wave does not exist on disk
 	m_edited  (false),
 	m_path    (other.m_path)
 {
 	buffer.alloc(other.getSize(), other.getChannels());
-	buffer.copyData(other.getFrame(0), other.getSize(), other.getChannels());
+	buffer.copyData(other.getFrame(0), other.getSize());
 }
 
 
