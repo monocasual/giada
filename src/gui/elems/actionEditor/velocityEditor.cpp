@@ -106,7 +106,7 @@ Pixel geVelocityEditor::valueToY(int v) const
 
 int geVelocityEditor::yToValue(Pixel px) const
 {
-	return u::math::map<Pixel, int>(px, h() - geEnvelopePoint::SIDE, 1, 0, G_MAX_VELOCITY);	
+	return u::math::map<Pixel, int>(px, h() - geEnvelopePoint::SIDE, 0, 0, G_MAX_VELOCITY);	
 }
 
 
