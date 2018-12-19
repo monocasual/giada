@@ -20,8 +20,10 @@
 - Huge optimization of the AppImage binary file
 - Fix Action Editor repaint on min/max zoom levels
 - "Resize recording" flag has been removed
+- Change text labels for channel operations
 - Smarter column assignment while loading a patch/project
 - Fix wrong resizer bar width between Action Editor widgets when zooming
+- Can't display custom channel name in Sample Channel (fixed)
 
 
 0.15.2 --- 2018 . 09 . 05
