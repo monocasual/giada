@@ -29,7 +29,7 @@ TEST_CASE("sampleChannel")
 		REQUIRE(ch.wave == w);
 		REQUIRE(ch.begin == 0);
 		REQUIRE(ch.end == w->getSize() - 1);
-		REQUIRE(ch.name == w->getBasename());		
+		REQUIRE(ch.name == "");		
 	}
 
 	SECTION("begin/end")
