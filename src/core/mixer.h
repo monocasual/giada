@@ -36,8 +36,6 @@
 #include "../deps/rtaudio-mod/RtAudio.h"
 
 
-
-
 namespace giada {
 namespace m
 {

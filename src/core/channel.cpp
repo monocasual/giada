@@ -96,6 +96,7 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 	volume          = src->volume;
 	volume_i        = src->volume_i;
 	volume_d        = src->volume_d;
+	name            = src->name;
 	pan             = src->pan;
 	mute            = src->mute;
 	solo            = src->solo;
