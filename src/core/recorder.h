@@ -29,6 +29,7 @@
 #define G_RECORDER_H
 
 
+#include <pthread.h>
 #include <map>
 #include <vector>
 #include <functional>
