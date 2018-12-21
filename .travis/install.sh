@@ -62,8 +62,8 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
   # Download linuxdeployqt for building AppImages.
 
-  wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
-  chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+  wget https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage
+  chmod a+x linuxdeployqt-5-x86_64.AppImage
 
   # Download and build latest version of RtMidi
 

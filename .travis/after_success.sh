@@ -4,8 +4,8 @@ mkdir build
 
 if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
-  cp giada_osx ./build
-  upx --best ./build/giada_osx
+	cp giada_osx ./build
+	upx --best ./build/giada_osx
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
@@ -41,7 +41,7 @@ EOF
 
 	# Run linuxdeployqt to make the AppImage, then move it to ./build dir.
 
-	./linuxdeployqt-continuous-x86_64.AppImage ./temp/giada_lin -appimage
-  cp Giada-x86_64.AppImage ./build
+	./linuxdeployqt-5-x86_64.AppImage ./temp/giada_lin -appimage
+	cp Giada-x86_64.AppImage ./build
 
 fi
