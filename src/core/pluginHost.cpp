@@ -184,7 +184,7 @@ int scanDirs(const string& dirs, const std::function<void(float)>& cb)
 		searchPath.add(juce::File(dir));
 
 	juce::PluginDirectoryScanner scanner(knownPluginList, format, searchPath, 
-		true, juce::File::nonexistent); // true: recursive
+		true, juce::File()); // true: recursive
 
 	juce::String name;
 	while (scanner.scanNextFile(false, name)) {
