@@ -34,8 +34,10 @@ sourcesCore =                            \
 	src/core/conf.cpp                      \
 	src/core/kernelAudio.h                 \
 	src/core/kernelAudio.cpp               \
-	src/core/pluginHost.h		           \
+	src/core/pluginHost.h                  \
 	src/core/pluginHost.cpp                \
+	src/core/pluginManager.h               \
+	src/core/pluginManager.cpp             \
 	src/core/mixerHandler.h                \
 	src/core/mixerHandler.cpp              \
 	src/core/init.h                        \
@@ -279,6 +281,7 @@ sourcesCore =                            \
 	src/utils/gvector.h                    \
 	src/utils/fs.h                         \
 	src/utils/fs.cpp                       \
+	src/utils/vector.h                     \
 	src/utils/ver.h                        \
 	src/utils/ver.cpp                      \
 	src/utils/string.h                     \

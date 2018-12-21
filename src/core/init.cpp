@@ -49,6 +49,7 @@
 #include "mixerHandler.h"
 #include "patch.h"
 #include "conf.h"
+#include "pluginManager.h"
 #include "pluginHost.h"
 #include "recorder.h"
 #include "midiMapConf.h"
@@ -108,22 +109,16 @@ void initConf_()
 
 void initAudio_()
 {
-  kernelAudio::openDevice();
-  clock::init(conf::samplerate, conf::midiTCfps);
+	kernelAudio::openDevice();
+	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	recorder::init(&mixer::mutex);
 
 #ifdef WITH_VST
 
-	/* If with Jack don't use buffer size stored in Conf. Use real buffersize
-	from the soundcard (kernelAudio::realBufsize). */
-
-	if (conf::soundSystem == G_SYS_API_JACK)
-		pluginHost::init(kernelAudio::getRealBufSize(), conf::samplerate);
-	else
-		pluginHost::init(conf::buffersize, conf::samplerate);
-
-	pluginHost::sortPlugins(conf::pluginSortMethod);
+	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
+	pluginManager::sortPlugins(static_cast<pluginManager::SortMethod>(conf::pluginSortMethod));
+	pluginHost::init(kernelAudio::getRealBufSize());
 
 #endif
 
@@ -186,7 +181,7 @@ void shutdownAudio_()
 #ifdef WITH_VST
 
 	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
-  pluginHost::close();
+	pluginHost::close();
 	gu_log("[init] PluginHost cleaned up\n");
 
 #endif

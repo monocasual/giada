@@ -39,18 +39,6 @@ namespace m
 {
 class Plugin
 {
-private:
-
-	static const int MAX_LABEL_SIZE = 64;
-	
-	static int idGenerator;
-
-	juce::AudioProcessorEditor* ui;    // gui
-	juce::AudioPluginInstance* plugin; // core
-
-	int id;
-	bool bypass;
-
 public:
 
 	Plugin(juce::AudioPluginInstance* p, double samplerate, int buffersize);
@@ -60,15 +48,6 @@ public:
 	Returns a string-based UID. */
 
 	std::string getUniqueId() const;
-
-	/* process
-	Process the plug-in with audio and MIDI data. The audio buffer is a reference:
-	it has to be altered by the plug-in itself. Conversely, the MIDI buffer must
-	be passed by copy: each plug-in must receive its own copy of the event set, so
-	that any attempt to change/clear the MIDI buffer will only modify the local 
-	copy. */
-
-	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m) const;
 
 	std::string getName() const;
 	bool isEditorOpen() const;
@@ -87,9 +66,17 @@ public:
 	int getEditorW() const;
 	int getEditorH() const;
 	void setParameter(int index, float value) const;
-	void prepareToPlay(double samplerate, int buffersize) const;
 	void setCurrentProgram(int index) const;
 	bool acceptsMidi() const;
+
+	/* process
+	Process the plug-in with audio and MIDI data. The audio buffer is a reference:
+	it has to be altered by the plug-in itself. Conversely, the MIDI buffer must
+	be passed by copy: each plug-in must receive its own copy of the event set, so
+	that any attempt to change/clear the MIDI buffer will only modify the local 
+	copy. */
+
+	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m);
 
 	void showEditor(void* parent);
 
@@ -105,6 +92,28 @@ public:
 	A list of midiIn hex values for parameter automation. */
 
 	std::vector<uint32_t> midiInParams;
+
+private:
+
+	enum class BusType { IN = true, OUT = false };
+
+	static const int MAX_LABEL_SIZE = 64;
+	
+	static int m_idGenerator;
+
+	juce::AudioProcessorEditor* m_ui;     // gui
+	juce::AudioPluginInstance*  m_plugin; // core
+	juce::AudioBuffer<float>    m_buffer;
+
+	int m_id;
+	bool m_bypass;
+
+	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
+
+	/* countMainOutChannels
+	Returns the current channel layout for the main output bus. */
+
+	int countMainOutChannels() const;
 };
 
 }} // giada::m::

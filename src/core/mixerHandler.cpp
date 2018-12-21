@@ -37,6 +37,7 @@
 #include "const.h"
 #include "init.h"
 #include "pluginHost.h"
+#include "pluginManager.h"
 #include "plugin.h"
 #include "waveFx.h"
 #include "conf.h"
@@ -66,18 +67,16 @@ namespace
 {
 #ifdef WITH_VST
 
-int readPatchPlugins(vector<patch::plugin_t>* list, int type)
+int readPatchPlugins_(const vector<patch::plugin_t>& list, int type)
 {
 	int ret = 1;
-	for (unsigned i=0; i<list->size(); i++) {
-		patch::plugin_t *ppl = &list->at(i);
-		// TODO use glue_addPlugin()
-		Plugin *plugin = pluginHost::addPlugin(ppl->path.c_str(), type, 
-			&mixer::mutex, nullptr);
-		if (plugin != nullptr) {
-			plugin->setBypass(ppl->bypass);
-			for (unsigned j=0; j<ppl->params.size(); j++)
-				plugin->setParameter(j, ppl->params.at(j));
+	for (const patch::plugin_t& ppl : list) {
+		Plugin* p = pluginManager::makePlugin(ppl.path);
+		if (p != nullptr) {
+			pluginHost::addPlugin(p, type, &mixer::mutex, nullptr);
+			p->setBypass(ppl.bypass);
+			for (unsigned j=0; j<ppl.params.size(); j++)
+				p->setParameter(j, ppl.params.at(j));
 			ret &= 1;
 		}
 		else
@@ -250,8 +249,8 @@ void readPatch()
 
 #ifdef WITH_VST
 
-	readPatchPlugins(&patch::masterInPlugins, pluginHost::MASTER_IN);
-	readPatchPlugins(&patch::masterOutPlugins, pluginHost::MASTER_OUT);
+	readPatchPlugins_(patch::masterInPlugins, pluginHost::MASTER_IN);
+	readPatchPlugins_(patch::masterOutPlugins, pluginHost::MASTER_OUT);
 
 #endif
 

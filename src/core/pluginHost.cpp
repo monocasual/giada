@@ -30,8 +30,7 @@
 
 #include <cassert>
 #include "../utils/log.h"
-#include "../utils/fs.h"
-#include "../utils/string.h"
+#include "../utils/vector.h"
 #include "const.h"
 #include "channel.h"
 #include "plugin.h"
@@ -48,81 +47,26 @@ namespace pluginHost
 {
 namespace
 {
-juce::MessageManager* messageManager;
+juce::MessageManager* messageManager_;
+juce::AudioBuffer<float> audioBuffer_;
 
-/* pluginFormat
- * Plugin format manager. */
+vector<Plugin*> masterOut_;
+vector<Plugin*> masterIn_;
 
-juce::VSTPluginFormat pluginFormat;
 
-/* knownPuginList
- * List of known (i.e. scanned) plugins. */
+/* -------------------------------------------------------------------------- */
 
-juce::KnownPluginList knownPluginList;
 
-/* unknownPluginList
- * List of unrecognized plugins found in a patch. */
-
-vector<string> unknownPluginList;
-
-vector<Plugin*> masterOut;
-vector<Plugin*> masterIn;
-
-/* Audio|MidiBuffer
- * Dynamic buffers. */
-
-juce::AudioBuffer<float> audioBuffer;
-
-int samplerate;
-int buffersize;
-
-/* missingPlugins
- * If some plugins from any stack are missing. */
-
-bool missingPlugins;
-
-void splitPluginDescription(const string& descr, vector<string>& out)
+void processPlugin_(Plugin& p, Channel* ch)
 {
-	// input:  VST-mda-Ambience-18fae2d2-6d646141  string
-	// output: [2-------------] [1-----] [0-----]  vector.size() == 3
-	
-	string chunk = "";
-	int count = 2;
-	for (int i=descr.length()-1; i >= 0; i--) {
-		if (descr[i] == '-' && count != 0) {
-			out.push_back(chunk);
-			count--;
-			chunk = "";
-		}
-		else
-			chunk += descr[i];
-	}
-	out.push_back(chunk);
-}
+	if (p.isSuspended() || p.isBypassed())
+		return;
 
+	juce::MidiBuffer events;
+	if (ch != nullptr)
+		events = ch->getPluginMidiEvents();
 
-/* findPluginDescription
-Browses the list of known plug-ins until plug-in with id == 'id' is found.
-Unfortunately knownPluginList.getTypeForIdentifierString(id) doesn't work for
-VSTs: their ID is based on the plug-in file location. E.g.:
-
-	/home/vst/mdaAmbience.so      -> VST-mdaAmbience-18fae2d2-6d646141
-	/home/vst-test/mdaAmbience.so -> VST-mdaAmbience-b328b2f6-6d646141
-
-The following function simply drops the first hash code during comparison. */
-
-const juce::PluginDescription* findPluginDescription(const string& id)
-{
-	vector<string> idParts;
-	splitPluginDescription(id, idParts);
-
-	for (const juce::PluginDescription* pd : knownPluginList) {
-		vector<string> tmpIdParts;
-		splitPluginDescription(pd->createIdentifierString().toStdString(), tmpIdParts);
-		if (idParts[0] == tmpIdParts[0] && idParts[2] == tmpIdParts[2])
-			return pd;
-	}
-	return nullptr;
+	p.process(audioBuffer_, events);
 }
 }; // {anonymous}
 
@@ -132,7 +76,7 @@ const juce::PluginDescription* findPluginDescription(const string& id)
 /* -------------------------------------------------------------------------- */
 
 
-pthread_mutex_t mutex_midi;
+pthread_mutex_t mutex;
 
 
 /* -------------------------------------------------------------------------- */
@@ -140,155 +84,36 @@ pthread_mutex_t mutex_midi;
 
 void close()
 {
-	messageManager->deleteInstance();
-	pthread_mutex_destroy(&mutex_midi);
+	messageManager_->deleteInstance();
+	pthread_mutex_destroy(&mutex);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void init(int buffersize_, int samplerate_)
+void init(int buffersize)
 {
-	messageManager = juce::MessageManager::getInstance();
-	audioBuffer.setSize(G_MAX_IO_CHANS, buffersize_);
-	samplerate = samplerate_;
-	buffersize = buffersize_;
-	missingPlugins = false;
-	//unknownPluginList.empty();
-	loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	messageManager_ = juce::MessageManager::getInstance();
+	audioBuffer_.setSize(G_MAX_IO_CHANS, buffersize);
 
-	pthread_mutex_init(&mutex_midi, nullptr);
-
-	gu_log("[pluginHost::init] initialized with buffersize=%d, samplerate=%d\n",
-	buffersize, samplerate);
+	pthread_mutex_init(&mutex, nullptr);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int scanDirs(const string& dirs, const std::function<void(float)>& cb)
+void addPlugin(Plugin* p, int stackType, pthread_mutex_t* mixerMutex, Channel* ch)
 {
-	gu_log("[pluginHost::scanDir] requested directories: '%s'\n", dirs.c_str());
-	gu_log("[pluginHost::scanDir] current plugins: %d\n", knownPluginList.getNumTypes());
+	vector<Plugin*>* stack = getStack(stackType, ch);
 
-	knownPluginList.clear();   // clear up previous plugins
+	pthread_mutex_lock(mixerMutex);
+	stack->push_back(p);
+	pthread_mutex_unlock(mixerMutex);
 
-	vector<string> dirVec;
-	gu_split(dirs, ";", &dirVec);
-
-	juce::VSTPluginFormat format;
-	juce::FileSearchPath searchPath;
-	for (const string& dir : dirVec)
-		searchPath.add(juce::File(dir));
-
-	juce::PluginDirectoryScanner scanner(knownPluginList, format, searchPath, 
-		true, juce::File()); // true: recursive
-
-	juce::String name;
-	while (scanner.scanNextFile(false, name)) {
-		gu_log("[pluginHost::scanDir]   scanning '%s'\n", name.toRawUTF8());
-		cb(scanner.getProgress());
-	}
-
-	gu_log("[pluginHost::scanDir] %d plugin(s) found\n", knownPluginList.getNumTypes());
-	return knownPluginList.getNumTypes();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int saveList(const string& filepath)
-{
-	int out = knownPluginList.createXml()->writeToFile(juce::File(filepath), "");
-	if (!out)
-		gu_log("[pluginHost::saveList] unable to save plugin list to %s\n", filepath.c_str());
-	return out;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int loadList(const string& filepath)
-{
-	juce::XmlElement* elem = juce::XmlDocument::parse(juce::File(filepath));
-	if (elem) {
-		knownPluginList.recreateFromXml(*elem);
-		delete elem;
-		return 1;
-	}
-	return 0;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Plugin* addPlugin(const string& fid, int stackType, pthread_mutex_t* mutex, 
-	Channel* ch)
-{
-	vector<Plugin*>* pStack = getStack(stackType, ch);
-
-	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
-	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
-
-	const juce::PluginDescription* pd = findPluginDescription(fid);
-	if (pd == nullptr) {
-		gu_log("[pluginHost::addPlugin] no plugin found with fid=%s! Trying with "
-			"deprecated mode...\n", fid.c_str());
-		pd = knownPluginList.getTypeForFile(fid);
-		if (pd == nullptr) {
-			gu_log("[pluginHost::addPlugin] still nothing to do, returning unknown plugin\n");
-			missingPlugins = true;
-			unknownPluginList.push_back(fid);
-			return nullptr;
-		}
-	}
-
-	juce::AudioPluginInstance* pi = pluginFormat.createInstanceFromDescription(*pd, samplerate, buffersize);
-	if (!pi) {
-		gu_log("[pluginHost::addPlugin] unable to create instance with fid=%s!\n", fid.c_str());
-		missingPlugins = true;
-		return nullptr;
-	}
-	gu_log("[pluginHost::addPlugin] plugin instance with fid=%s created\n", fid.c_str());
-
-	Plugin* p = new Plugin(pi, samplerate, buffersize);
-
-	/* Try to inject the plugin as soon as possible. */
-
-	while (true) {
-		if (pthread_mutex_trylock(mutex) != 0)
-			continue;
-		pStack->push_back(p);
-		pthread_mutex_unlock(mutex);
-		break;
-	}
-
-	gu_log("[pluginHost::addPlugin] plugin id=%s loaded (%s), stack type=%d, stack size=%d\n",
-		fid.c_str(), p->getName().c_str(), stackType, pStack->size());
-
-	return p;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-Plugin* addPlugin(int index, int stackType, pthread_mutex_t* mutex,
-	Channel* ch)
-{
-	juce::PluginDescription* pd = knownPluginList.getType(index);
-	if (pd) {
-		gu_log("[pluginHost::addPlugin] plugin found, uid=%s, name=%s...\n",
-			pd->createIdentifierString().toRawUTF8(), pd->name.toRawUTF8());
-		return addPlugin(pd->createIdentifierString().toStdString(), stackType, mutex, ch);
-	}
-	gu_log("[pluginHost::addPlugin] no plugins found at index=%d!\n", index);
-	return nullptr;
+	gu_log("[pluginHost::addPlugin] plugin loaded (%s), stack type=%d, stack size=%d\n",
+		p->getName().c_str(), stackType, stack->size());
 }
 
 
@@ -299,9 +124,9 @@ vector<Plugin*>* getStack(int stackType, Channel* ch)
 {
 	switch(stackType) {
 		case MASTER_OUT:
-			return &masterOut;
+			return &masterOut_;
 		case MASTER_IN:
-			return &masterIn;
+			return &masterIn_;
 		case CHANNEL:
 			return &ch->plugins;
 		default:
@@ -313,85 +138,28 @@ vector<Plugin*>* getStack(int stackType, Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned countPlugins(int stackType, Channel* ch)
+int countPlugins(int stackType, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(stackType, ch);
-	return pStack->size();
+	return getStack(stackType, ch)->size();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int countAvailablePlugins()
-{
-	return knownPluginList.getNumTypes();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-unsigned countUnknownPlugins()
-{
-	return unknownPluginList.size();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-pluginHost::PluginInfo getAvailablePluginInfo(int i)
-{
-	juce::PluginDescription* pd = knownPluginList.getType(i);
-	PluginInfo pi;
-	pi.uid              = pd->fileOrIdentifier.toStdString();
-	pi.name             = pd->name.toStdString();
-	pi.category         = pd->category.toStdString();
-	pi.manufacturerName = pd->manufacturerName.toStdString();
-	pi.format           = pd->pluginFormatName.toStdString();
-	pi.isInstrument     = pd->isInstrument;
-	return pi;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool hasMissingPlugins()
-{
-	return missingPlugins;
-};
-
-
-/* -------------------------------------------------------------------------- */
-
-
-string getUnknownPluginInfo(int i)
-{
-	return unknownPluginList.at(i);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch)
+void freeStack(int stackType, pthread_mutex_t* mixerMutex, Channel* ch)
 {
 	vector<Plugin*>* pStack = getStack(stackType, ch);
 
 	if (pStack->size() == 0)
 		return;
 
-	while (true) {
-		if (pthread_mutex_trylock(mutex) != 0)
-			continue;
-		for (unsigned i=0; i<pStack->size(); i++)
-			delete pStack->at(i);
+	pthread_mutex_lock(mixerMutex);
+		for (Plugin* p : *pStack)
+			delete p;
 		pStack->clear();
-		pthread_mutex_unlock(mutex);
-		break;
-	}
+	pthread_mutex_unlock(mixerMutex);
+
 	gu_log("[pluginHost::freeStack] stack type=%d freed\n", stackType);
 }
 
@@ -401,64 +169,45 @@ void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch)
 
 void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(stackType, ch);
+	vector<Plugin*>* stack = getStack(stackType, ch);
 
 	/* Empty stack, stack not found or mixer not ready: do nothing. */
 
-	if (pStack == nullptr || pStack->size() == 0)
+	if (stack == nullptr || stack->size() == 0)
 		return;
 
-	assert(outBuf.countFrames() == audioBuffer.getNumSamples());
+	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());
 
 	/* MIDI channels must not process the current buffer: give them an empty one. 
 	Sample channels and Master in/out want audio data instead: let's convert the 
 	internal buffer from Giada to Juce. */
 
 	if (ch != nullptr && ch->type == ChannelType::MIDI) 
-		audioBuffer.clear();
+		audioBuffer_.clear();
 	else
 		for (int i=0; i<outBuf.countFrames(); i++)
 			for (int j=0; j<outBuf.countChannels(); j++)
-				audioBuffer.setSample(j, i, outBuf[i][j]);
+				audioBuffer_.setSample(j, i, outBuf[i][j]);
 
-	/* Hardcore processing. At the end we swap input and output, so that he N-th
-	plugin will process the result of the plugin N-1. Part of this loop must be
-	guarded by mutexes, i.e. the MIDI process part. You definitely don't want
-	a situation like the following one:
-		this::processStack()
-		[a new midi event comes in from kernelMidi thread]
-		channel::clearMidiBuffer()
+	/* Hardcore processing. Part of this loop must be guarded by mutexes, i.e. 
+	the MIDI process part. You definitely don't want a situation like the 
+	following one:
+		1. this::processStack()
+		2. [a new midi event comes in from kernelMidi thread]
+		3. channel::clearMidiBuffer()
 	The midi event in between would be surely lost, deleted by the last call to
-	channel::clearMidiBuffer()! */
+	channel::clearMidiBuffer()! 
+	TODO - that's why we need a proper queue for MIDI events in input... */
 
 	if (ch != nullptr)
-		pthread_mutex_lock(&mutex_midi);
+		pthread_mutex_lock(&mutex);
 
-	for (const Plugin* plugin : *pStack) {
-		if (plugin->isSuspended() || plugin->isBypassed())
-			continue;
-
-		/* If this is a Channel (ch != nullptr) and the current plugin is an 
-		instrument (i.e. accepts MIDI), don't let it fill the current audio buffer: 
-		create a new temporary one instead and then merge the result into the main
-		one when done. This way each plug-in generates its own audio data and we can
-		play more than one plug-in instrument in the same stack, driven by the same
-		set of MIDI events. */
-
-		if (ch != nullptr && plugin->acceptsMidi()) {
-			juce::AudioBuffer<float> tmp(audioBuffer.getNumChannels(), buffersize);
-			plugin->process(tmp, ch->getPluginMidiEvents());
-			for (int i=0; i<audioBuffer.getNumSamples(); i++)
-				for (int j=0; j<audioBuffer.getNumChannels(); j++)
-					audioBuffer.addSample(j, i, tmp.getSample(j, i));	
-		}
-		else
-			plugin->process(audioBuffer, juce::MidiBuffer()); // Empty MIDI buffer
-	}
+	for (Plugin* plugin : *stack)
+		processPlugin_(*plugin, ch);
 
 	if (ch != nullptr) {
 		ch->clearMidiBuffer();
-		pthread_mutex_unlock(&mutex_midi);
+		pthread_mutex_unlock(&mutex);
 	}
 
 	/* Converting buffer from Juce to Giada. A note for the future: if we 
@@ -466,7 +215,7 @@ void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 
 	for (int i=0; i<outBuf.countFrames(); i++)
 		for (int j=0; j<outBuf.countChannels(); j++)	
-			outBuf[i][j] = audioBuffer.getSample(j, i);
+			outBuf[i][j] = audioBuffer_.getSample(j, i);
 }
 
 
@@ -476,10 +225,7 @@ void processStack(AudioBuffer& outBuf, int stackType, Channel* ch)
 Plugin* getPluginByIndex(int index, int stackType, Channel* ch)
 {
 	vector<Plugin*>* pStack = getStack(stackType, ch);
-	if (pStack->size() == 0)
-		return nullptr;
-	if ((unsigned) index >= pStack->size())
-		return nullptr;
+	assert((size_t) index < pStack->size());
 	return pStack->at(index);
 }
 
@@ -489,11 +235,8 @@ Plugin* getPluginByIndex(int index, int stackType, Channel* ch)
 
 int getPluginIndex(int id, int stackType, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(stackType, ch);
-	for (unsigned i=0; i<pStack->size(); i++)
-		if (pStack->at(i)->getId() == id)
-			return i;
-	return -1;
+	vector<Plugin*>* stack = getStack(stackType, ch);
+	return u::vector::indexOf(*stack, [&](const Plugin* p) { return p->getId() == id; });
 }
 
 
@@ -501,42 +244,35 @@ int getPluginIndex(int id, int stackType, Channel* ch)
 
 
 void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
-	pthread_mutex_t* mutex, Channel* ch)
+	pthread_mutex_t* mixerMutex, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(stackType, ch);
-	while (true) {
-		if (pthread_mutex_trylock(mutex) != 0)
-			continue;
-		std::swap(pStack->at(indexA), pStack->at(indexB));
-		pthread_mutex_unlock(mutex);
-		gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
-		return;
-	}
+	vector<Plugin*>* stack = getStack(stackType, ch);
+
+	pthread_mutex_lock(mixerMutex);
+	std::swap(stack->at(indexA), stack->at(indexB));
+	pthread_mutex_unlock(mixerMutex);
+
+	gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int freePlugin(int id, int stackType, pthread_mutex_t* mutex, Channel* ch)
+int freePlugin(int id, int stackType, pthread_mutex_t* mixerMutex, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(stackType, ch);
-	for (unsigned i=0; i<pStack->size(); i++) {
-		Plugin *pPlugin = pStack->at(i);
-		if (pPlugin->getId() != id)
-			continue;
-		while (true) {
-			if (pthread_mutex_trylock(mutex) != 0)
-				continue;
-			delete pPlugin;
-			pStack->erase(pStack->begin() + i);
-			pthread_mutex_unlock(mutex);
-			gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
-			return i;
-		}
-	}
-	gu_log("[pluginHost::freePlugin] plugin id=%d not found\n", id);
-	return -1;
+	vector<Plugin*>* stack = getStack(stackType, ch);
+
+	int index = u::vector::indexOf(*stack, [&](const Plugin* p) { return p->getId() == id; });
+	assert(index != -1);
+
+	pthread_mutex_lock(mixerMutex);
+	delete stack->at(index);
+	stack->erase(stack->begin() + index);
+	pthread_mutex_unlock(mixerMutex);	
+
+	gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
+	return index;
 }
 
 
@@ -545,31 +281,33 @@ int freePlugin(int id, int stackType, pthread_mutex_t* mutex, Channel* ch)
 
 void runDispatchLoop()
 {
-	messageManager->runDispatchLoopUntil(10);
-	//gu_log("[pluginHost::runDispatchLoop] %d, hasStopMessageBeenSent=%d\n", r, messageManager->hasStopMessageBeenSent());
+	messageManager_->runDispatchLoopUntil(10);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void freeAllStacks(vector<Channel*>* channels, pthread_mutex_t* mutex)
+void freeAllStacks(vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
 {
-	freeStack(pluginHost::MASTER_OUT, mutex);
-	freeStack(pluginHost::MASTER_IN, mutex);
-	for (unsigned i=0; i<channels->size(); i++)
-		freeStack(pluginHost::CHANNEL, mutex, channels->at(i));
-	missingPlugins = false;
-	unknownPluginList.clear();
+	freeStack(pluginHost::MASTER_OUT, mixerMutex);
+	freeStack(pluginHost::MASTER_IN, mixerMutex);
+	for (Channel* c : *channels)
+		freeStack(pluginHost::CHANNEL, mixerMutex, c);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int clonePlugin(Plugin* src, int stackType, pthread_mutex_t* mutex,
+int clonePlugin(Plugin* src, int stackType, pthread_mutex_t* mixerMutex,
 	Channel* ch)
 {
+	assert(false);
+#if 0
+
+TOD0
+
 	Plugin* p = addPlugin(src->getUniqueId(), stackType, mutex, ch);
 	if (!p) {
 		gu_log("[pluginHost::clonePlugin] unable to add new plugin to stack!\n");
@@ -578,39 +316,8 @@ int clonePlugin(Plugin* src, int stackType, pthread_mutex_t* mutex,
 
 	for (int k=0; k<src->getNumParameters(); k++)
 		p->setParameter(k, src->getParameter(k));
-
+#endif
 	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool doesPluginExist(const string& fid)
-{
-	return pluginFormat.doesPluginStillExist(*knownPluginList.getTypeForFile(fid));
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void sortPlugins(int method)
-{
-	switch (method) {
-		case sortMethod::NAME:
-			knownPluginList.sort(juce::KnownPluginList::SortMethod::sortAlphabetically, true);
-			break;
-		case sortMethod::CATEGORY:
-			knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByCategory, true);
-			break;
-		case sortMethod::MANUFACTURER:
-			knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByManufacturer, true);
-			break;
-		case sortMethod::FORMAT:
-			knownPluginList.sort(juce::KnownPluginList::SortMethod::sortByFormat, true);
-			break;
-	}
 }
 
 

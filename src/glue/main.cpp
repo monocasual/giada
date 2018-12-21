@@ -45,9 +45,8 @@
 #include "../core/recorderHandler.h"
 #include "../core/conf.h"
 #include "../core/const.h"
-#ifdef WITH_VST
+#include "../core/pluginManager.h"
 #include "../core/pluginHost.h"
-#endif
 #include "main.h"
 
 
@@ -226,8 +225,10 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	recorder::init(&mixer::mutex);
+
 #ifdef WITH_VST
 	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
+	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
 #endif
 
 	G_MainWin->keyboard->clear();

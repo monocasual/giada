@@ -187,10 +187,10 @@ public:
 #ifdef WITH_VST
 
 	/* getPluginMidiEvents
-	 * Return a reference to midiBuffer stack. This is available for any kind of
-	 * channel, but it makes sense only for MIDI channels. */
+	Returns a reference to midiBuffer stack. This is available for any kind of
+	channel, but it makes sense only for MIDI channels. */
 
-	juce::MidiBuffer& getPluginMidiEvents();
+	const juce::MidiBuffer& getPluginMidiEvents() const;
 
 	void clearMidiBuffer();
 

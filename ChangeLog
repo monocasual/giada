@@ -12,6 +12,11 @@
 --------------------------------------------------------------------------------
 
 
+0.15.4 ---
+- Initial support for plug-ins with mono I/O buses
+- PluginHost refactoring
+
+
 0.15.3 --- 2018 . 12 . 24
 - Action recorder refactoring
 - Optional midimap parameters (thank you @tomek-szczesny)

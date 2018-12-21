@@ -33,7 +33,7 @@
 #include "../../../core/const.h"
 #include "../../../core/conf.h"
 #include "../../../core/graphics.h"
-#include "../../../core/pluginHost.h"
+#include "../../../core/pluginManager.h"
 #include "../../../glue/plugin.h"
 #include "../../../utils/string.h"
 #include "../../../utils/fs.h"
@@ -88,7 +88,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 void geTabPlugins::refreshCount()
 {
-	string scanLabel = "Scan (" + gu_iToString(pluginHost::countAvailablePlugins()) + " found)";
+	string scanLabel = "Scan (" + gu_iToString(pluginManager::countAvailablePlugins()) + " found)";
 	m_scanButton->label(scanLabel.c_str());
 }
 
@@ -125,8 +125,8 @@ void geTabPlugins::cb_scan()
 	};
 
 	m_info->show();
-	pluginHost::scanDirs(m_folderPath->value(), callback);
-	pluginHost::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	pluginManager::scanDirs(m_folderPath->value(), callback);
+	pluginManager::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
 	m_info->hide();
 	refreshCount();
 }

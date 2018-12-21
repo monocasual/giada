@@ -31,6 +31,7 @@
 #include <FL/fl_draw.H>
 #include "../../../core/plugin.h"
 #include "../../../core/const.h"
+#include "../../../core/pluginManager.h"
 #include "../../../core/pluginHost.h"
 #include "../basics/boxtypes.h"
 #include "pluginBrowser.h"
@@ -83,16 +84,16 @@ void gePluginBrowser::refresh()
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
 
-	for (int i=0; i<pluginHost::countAvailablePlugins(); i++) {
-		pluginHost::PluginInfo pi = pluginHost::getAvailablePluginInfo(i);
-		string m = pluginHost::doesPluginExist(pi.uid) ? "" : "@-";
+	for (int i=0; i<pluginManager::countAvailablePlugins(); i++) {
+		pluginManager::PluginInfo pi = pluginManager::getAvailablePluginInfo(i);
+		string m = pluginManager::doesPluginExist(pi.uid) ? "" : "@-";
 		string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
 				pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
 		add(s.c_str());
 	}
 
-	for (unsigned i=0; i<pluginHost::countUnknownPlugins(); i++) {
-		string s = "?\t?\t?\t?\t? " + pluginHost::getUnknownPluginInfo(i) + " ?";
+	for (unsigned i=0; i<pluginManager::countUnknownPlugins(); i++) {
+		string s = "?\t?\t?\t?\t? " + pluginManager::getUnknownPluginInfo(i) + " ?";
 		add(s.c_str());
 	}
 }
@@ -104,8 +105,8 @@ void gePluginBrowser::refresh()
 void gePluginBrowser::computeWidths()
 {
 	int w0, w1, w3;
-	for (int i=0; i<pluginHost::countAvailablePlugins(); i++) {
-		pluginHost::PluginInfo pi = pluginHost::getAvailablePluginInfo(i);
+	for (int i=0; i<pluginManager::countAvailablePlugins(); i++) {
+		pluginManager::PluginInfo pi = pluginManager::getAvailablePluginInfo(i);
 		w0 = (int) fl_width(pi.name.c_str());
 		w1 = (int) fl_width(pi.manufacturerName.c_str());
 		w3 = (int) fl_width(pi.format.c_str());

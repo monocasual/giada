@@ -224,9 +224,9 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 
 #ifdef WITH_VST
 
-	pthread_mutex_lock(&pluginHost::mutex_midi);
+	pthread_mutex_lock(&pluginHost::mutex);
 	addVstMidiEvent(midiEventFlat.getRaw(), 0);
-	pthread_mutex_unlock(&pluginHost::mutex_midi);
+	pthread_mutex_unlock(&pluginHost::mutex);
 
 #endif
 

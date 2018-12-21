@@ -36,6 +36,7 @@
 #include "sampleChannel.h"
 #include "midiChannel.h"
 #include "pluginHost.h"
+#include "pluginManager.h"
 #include "plugin.h"
 #include "action.h"
 #include "recorderHandler.h"
@@ -89,10 +90,12 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 #ifdef WITH_VST
 
 	for (const patch::plugin_t& ppl : pch.plugins) {
-		Plugin* plugin = pluginHost::addPlugin(ppl.path, pluginHost::CHANNEL,
-			&mixer::mutex, ch);
+
+		Plugin* plugin = pluginManager::makePlugin(ppl.path);
 		if (plugin == nullptr)
 			continue;
+
+		pluginHost::addPlugin(plugin, pluginHost::CHANNEL, &mixer::mutex, ch);
 
 		plugin->setBypass(ppl.bypass);
 		for (unsigned j=0; j<ppl.params.size(); j++)

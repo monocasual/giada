@@ -29,6 +29,7 @@
 #include "../core/mixerHandler.h"
 #include "../core/channel.h"
 #include "../core/recorderHandler.h"
+#include "../core/pluginManager.h"
 #include "../core/pluginHost.h"
 #include "../core/plugin.h"
 #include "../core/conf.h"
@@ -312,7 +313,7 @@ void glue_loadPatch(void* data)
 
 #ifdef WITH_VST
 
-	if (pluginHost::hasMissingPlugins())
+	if (pluginManager::hasMissingPlugins())
 		gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
 
 #endif

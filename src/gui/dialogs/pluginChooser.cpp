@@ -32,6 +32,7 @@
 #include "../../utils/gui.h"
 #include "../../core/channel.h"
 #include "../../core/conf.h"
+#include "../../core/pluginManager.h"
 #include "../../core/pluginHost.h"
 #include "../elems/plugin/pluginBrowser.h"
 #include "../elems/basics/button.h"
@@ -118,7 +119,7 @@ void gdPluginChooser::cb_close()
 
 void gdPluginChooser::cb_sort()
 {
-	pluginHost::sortPlugins(sortMethod->value());
+	pluginManager::sortPlugins(static_cast<pluginManager::SortMethod>(sortMethod->value()));
   browser->refresh();
 }
 

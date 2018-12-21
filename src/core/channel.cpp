@@ -287,7 +287,7 @@ bool Channel::isReadingActions() const
 
 #ifdef WITH_VST
 
-juce::MidiBuffer &Channel::getPluginMidiEvents()
+const juce::MidiBuffer& Channel::getPluginMidiEvents() const
 {
 	return midiBuffer;
 }

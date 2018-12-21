@@ -29,6 +29,7 @@
 
 
 #include <FL/Fl.H>
+#include "../core/pluginManager.h"
 #include "../core/pluginHost.h"
 #include "../core/mixer.h"
 #include "../core/plugin.h"
@@ -81,9 +82,16 @@ gdPluginWindow* getPluginWindow(const Plugin* p)
 
 Plugin* addPlugin(Channel* ch, int index, int stackType)
 {
-  if (index >= pluginHost::countAvailablePlugins())
-    return nullptr;
-  return pluginHost::addPlugin(index, stackType, &mixer::mutex, ch);
+	if (index >= pluginManager::countAvailablePlugins())
+		return nullptr;
+
+	Plugin* p = pluginManager::makePlugin(index);
+	if (p == nullptr)
+		return nullptr;
+
+	pluginHost::addPlugin(p, stackType, &mixer::mutex, ch);
+
+	return p;
 }
 
 
