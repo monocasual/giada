@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 
-0.15.3 ---
+0.15.3 --- 2018 . 12 . 24
 - Action recorder refactoring
 - Optional midimap parameters (thank you @tomek-szczesny)
 - Support for "inaudible" MIDI lightning events (thank you @tomek-szczesny)
