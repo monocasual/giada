@@ -71,7 +71,6 @@ SampleChannel::SampleChannel(bool inputMonitor, int bufferSize)
 
 SampleChannel::~SampleChannel()
 {
-	delete wave;
 	if (rsmp_state != nullptr)
 		src_delete(rsmp_state);
 }
@@ -93,7 +92,7 @@ void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 	setPitch(src->pitch);
 
 	if (src->wave)
-		pushWave(new Wave(*src->wave)); // invoke Wave's copy constructor
+		pushWave(std::make_unique<Wave>(*src->wave)); // invoke Wave's copy constructor
 }
 
 
@@ -402,8 +401,7 @@ void SampleChannel::empty()
 	volume     = G_DEFAULT_VOL;
 	boost      = G_DEFAULT_BOOST;
 	hasActions = false;
-	delete wave;
-	wave = nullptr;
+	wave.reset(nullptr);
 	sendMidiLstatus();
 }
 
@@ -411,10 +409,10 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(Wave* w)
+void SampleChannel::pushWave(std::unique_ptr<Wave>&& w)
 {
 	status = ChannelStatus::OFF;
-	wave   = w;
+	wave   = std::move(w);
 	begin  = 0;
 	end    = wave->getSize() - 1;
 	sendMidiLstatus();

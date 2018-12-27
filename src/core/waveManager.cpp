@@ -71,30 +71,30 @@ int getBits(SF_INFO& header)
 /* -------------------------------------------------------------------------- */
 
 
-int create(const string& path, Wave** out)
+Result createFromFile(const string& path)
 {
 	if (path == "" || gu_isDir(path)) {
 		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
-		return G_RES_ERR_NO_DATA;
+		return { G_RES_ERR_NO_DATA };
 	}
 
 	if (path.size() > FILENAME_MAX)
-		return G_RES_ERR_PATH_TOO_LONG;
+		return { G_RES_ERR_PATH_TOO_LONG };
 
 	SF_INFO header;
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (fileIn == nullptr) {
 		gu_log("[waveManager::create] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
-		return G_RES_ERR_IO;
+		return { G_RES_ERR_IO };
 	}
 
 	if (header.channels > G_MAX_IO_CHANS) {
 		gu_log("[waveManager::create] unsupported multi-channel sample\n");
-		return G_RES_ERR_WRONG_DATA;
+		return { G_RES_ERR_WRONG_DATA };
 	}
 
-	Wave* wave = new Wave();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
@@ -102,54 +102,47 @@ int create(const string& path, Wave** out)
 
 	sf_close(fileIn);
 
-	if (header.channels == 1 && !wfx::monoToStereo(*wave)) {
-		delete wave;
-		return G_RES_ERR_PROCESSING;
-	}
-
-	*out = wave;
+	if (header.channels == 1 && !wfx::monoToStereo(*wave))
+		return { G_RES_ERR_PROCESSING };
 
 	gu_log("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
 
-	return G_RES_OK;
+	return { G_RES_OK, std::move(wave) };
 }
-
 
 /* -------------------------------------------------------------------------- */
 
 
-void createEmpty(int frames, int channels, int samplerate, const string& name, 
-	Wave** out)
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
+	const string& name)
 {
-	Wave* wave = new Wave();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
-
 	wave->setLogical(true);
-
-	*out = wave;
 
 	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
 		wave->getSize());
+
+	return std::move(wave);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void createFromWave(const Wave* src, int a, int b, Wave** out)
+std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b)
 {
 	int channels = src->getChannels();
 	int frames   = b - a;
 
-	Wave* wave = new Wave();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
 	wave->alloc(frames, channels, src->getRate(), src->getBits(), src->getPath());
-
 	wave->copyData(src->getFrame(a), frames);
 	wave->setLogical(true);
 
-	*out = wave;
-
 	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
+
+	return std::move(wave);
 }
 
 

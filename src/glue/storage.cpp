@@ -195,9 +195,9 @@ static string glue_makeUniqueSamplePath__(const string& base, const m::SampleCha
 		return path;
 
 	int k = 0;
-	path = glue_makeSamplePath__(base, ch->wave, k);
+	path = glue_makeSamplePath__(base, ch->wave.get(), k);
 	while (!mh::uniqueSamplePath(ch, path))
-		path = glue_makeSamplePath__(base, ch->wave, k++);
+		path = glue_makeSamplePath__(base, ch->wave.get(), k++);
 	return path;
 }
 
@@ -368,7 +368,7 @@ void glue_saveProject(void* data)
 
 		gu_log("[glue_saveProject] Save file to %s\n", sch->wave->getPath().c_str());
 
-		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
+		waveManager::save(sch->wave.get(), sch->wave->getPath()); // TODO - error checking	
 	}
 
 	string gptcPath = fullPath + G_SLASH + name + ".gptc";
@@ -429,7 +429,7 @@ void glue_saveSample(void* data)
 
 	SampleChannel* ch = static_cast<SampleChannel*>(browser->getChannel());
 
-	if (waveManager::save(ch->wave, filePath)) {
+	if (waveManager::save(ch->wave.get(), filePath)) {
 		gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
 		conf::samplePath = gu_dirname(filePath);
 		browser->do_callback();

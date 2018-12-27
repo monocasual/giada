@@ -25,11 +25,13 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <vector>
 #include <algorithm>
 #include "../utils/fs.h"
 #include "../utils/string.h"
 #include "../utils/log.h"
+#include "../utils/vector.h"
 #include "../glue/main.h"
 #include "../glue/channel.h"
 #include "kernelMidi.h"
@@ -137,13 +139,9 @@ Channel* addChannel(ChannelType type)
 	Channel* ch = channelManager::create(type, kernelAudio::getRealBufSize(), 
 		conf::inputMonitorDefaultOn);
 
-	while (true) {
-		if (pthread_mutex_trylock(&mixer::mutex) != 0)
-			continue;
-		mixer::channels.push_back(ch);
-		pthread_mutex_unlock(&mixer::mutex);
-		break;
-	}
+	pthread_mutex_lock(&mixer::mutex);
+	mixer::channels.push_back(ch);
+	pthread_mutex_unlock(&mixer::mutex);
 
 	ch->index = getNewChanIndex();
 	gu_log("[addChannel] channel index=%d added, type=%d, total=%d\n",
@@ -157,15 +155,13 @@ Channel* addChannel(ChannelType type)
 
 void deleteChannel(Channel* target)
 {
-	while (true) {
-		if (pthread_mutex_trylock(&mixer::mutex) != 0)
-			continue;
-		auto it = std::find(mixer::channels.begin(), mixer::channels.end(), target);
-		if (it != mixer::channels.end()) 
-			mixer::channels.erase(it);
-		pthread_mutex_unlock(&mixer::mutex);
-		return;
-	}
+	int index = u::vector::indexOf(mixer::channels, target);
+	assert(index != -1);
+	
+	pthread_mutex_lock(&mixer::mutex);
+	delete mixer::channels.at(index);
+	mixer::channels.erase(mixer::channels.begin() + index);
+	pthread_mutex_unlock(&mixer::mutex);
 }
 
 
@@ -292,13 +288,11 @@ bool startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		Wave*  wave = nullptr;
-		string name = string("TAKE-" + gu_iToString(patch::lastTakeId++)); // Increase lastTakeId 
+		string name    = string("TAKE-" + gu_iToString(patch::lastTakeId++));
+		string nameExt = name + ".wav";
 
-		waveManager::createEmpty(clock::getFramesInLoop(), G_MAX_IO_CHANS, 
-			conf::samplerate, name + ".wav", &wave); 
-
-		sch->pushWave(wave);
+		sch->pushWave(waveManager::createEmpty(clock::getFramesInLoop(), 
+			G_MAX_IO_CHANS, conf::samplerate, nameExt));
 		sch->name = name; 
 		channelsReady++;
 

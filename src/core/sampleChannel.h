@@ -96,9 +96,9 @@ public:
 	int fillBuffer(AudioBuffer& dest, int start, int offset);
 
 	/* pushWave
-	Adds a new wave to an existing channel. */
+	Adds a new wave to this channel. */
 
-	void pushWave(Wave* w);
+	void pushWave(std::unique_ptr<Wave>&& w);
 
 	void setPitch(float v);
 	void setBegin(int f);
@@ -119,7 +119,7 @@ public:
 	
 	ChannelMode mode;
 	
-	Wave* wave;
+	std::unique_ptr<Wave> wave;
 	int   tracker;         // chan position
 	int   trackerPreview;  // chan position for audio preview
 	int   shift;

@@ -253,20 +253,19 @@ void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t
 	ch->inputMonitor      = pch.inputMonitor;
 	ch->setBoost(pch.boost);
 
-	Wave* w = nullptr;
-	int res = waveManager::create(basePath + pch.samplePath, &w); 
+	waveManager::Result res = waveManager::createFromFile(basePath + pch.samplePath);
 
-	if (res == G_RES_OK) {
-		ch->pushWave(w);
+	if (res.status == G_RES_OK) {
+		ch->pushWave(std::move(res.wave));
 		ch->setBegin(pch.begin);
 		ch->setEnd(pch.end);
 		ch->setPitch(pch.pitch);
 	}
 	else {
-		if (res == G_RES_ERR_NO_DATA)
+		if (res.status == G_RES_ERR_NO_DATA)
 			ch->status = ChannelStatus::EMPTY;
 		else
-		if (res == G_RES_ERR_IO)
+		if (res.status == G_RES_ERR_IO)
 			ch->status = ChannelStatus::MISSING;
 		ch->sendMidiLstatus();  // FIXME - why sending MIDI lightning if sample status is wrong?
 	}

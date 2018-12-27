@@ -103,7 +103,7 @@ void geWaveform::freeData()
 
 int geWaveform::alloc(int datasize, bool force)
 {
-	Wave* wave = m_ch->wave;
+	const Wave* wave = m_ch->wave.get();
 
 	m_ratio = wave->getSize() / (float) datasize;
 

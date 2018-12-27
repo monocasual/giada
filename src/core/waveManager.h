@@ -30,6 +30,7 @@
 
 
 #include <string>
+#include <memory>
 
 
 class Wave;
@@ -39,21 +40,27 @@ namespace giada {
 namespace m {
 namespace waveManager
 {
+struct Result
+{
+    int status;
+    std::unique_ptr<Wave> wave;
+};
+
 /* create
 Creates a new Wave object with data read from file 'path'. */
 
-int create(const std::string& path, Wave** out);
+Result createFromFile(const std::string& path);
 
 /* createEmpty
 Creates a new silent Wave object. */
 
-void createEmpty(int frames, int channels, int samplerate, const std::string& name, 
-	Wave** out);
+std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
+    const std::string& name);
 
 /* createFromWave
 Creates a new Wave from an existing one, copying the data in range a - b. */
 
-void createFromWave(const Wave* src, int a, int b, Wave** out);
+std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b);
 
 int resample(Wave* w, int quality, int samplerate); 
 int save(Wave* w, const std::string& path);

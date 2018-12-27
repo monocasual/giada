@@ -38,6 +38,13 @@ namespace giada {
 namespace u     {
 namespace vector 
 {
+template <typename T>
+int indexOf(std::vector<T>& v, T obj)
+{
+    auto it = std::find(v.begin(), v.end(), obj);
+    return it != v.end() ? std::distance(v.begin(), it) : -1;
+}
+
 template <typename T, typename F>
 int indexOf(std::vector<T>& v, F&& func)
 {

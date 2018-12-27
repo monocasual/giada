@@ -88,26 +88,24 @@ int loadChannel(m::SampleChannel* ch, const string& fname)
 
 	conf::samplePath = gu_dirname(fname);
 
-	Wave* wave = nullptr;
-	int result = waveManager::create(fname, &wave); 
-	if (result != G_RES_OK)
-		return result;
+	waveManager::Result res = waveManager::createFromFile(fname); 
 
-	if (wave->getRate() != conf::samplerate) {
+	if (res.status != G_RES_OK)
+		return res.status;
+
+	if (res.wave->getRate() != conf::samplerate) {
 		gu_log("[loadChannel] input rate (%d) != system rate (%d), conversion needed\n",
-			wave->getRate(), conf::samplerate);
-		result = waveManager::resample(wave, conf::rsmpQuality, conf::samplerate); 
-		if (result != G_RES_OK) {
-			delete wave;
-			return result;
-		}
+			res.wave->getRate(), conf::samplerate);
+		res.status = waveManager::resample(res.wave.get(), conf::rsmpQuality, conf::samplerate); 
+		if (res.status != G_RES_OK)
+			return res.status;
 	}
 
-	ch->pushWave(wave);
+	ch->pushWave(std::move(res.wave));
 
 	G_MainWin->keyboard->updateChannel(ch->guiChannel);
 
-	return result;
+	return res.status;
 }
 
 

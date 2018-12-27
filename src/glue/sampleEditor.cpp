@@ -60,10 +60,10 @@ namespace sampleEditor
 {
 namespace
 {
-	/* m_waveBuffer
+	/* waveBuffer
 	A Wave used during cut/copy/paste operations. */
 
-	Wave* m_waveBuffer = nullptr;
+	std::unique_ptr<Wave> waveBuffer_;
 }; // {anonymous}
 
 
@@ -119,9 +119,7 @@ void cut(m::SampleChannel* ch, int a, int b)
 
 void copy(m::SampleChannel* ch, int a, int b)
 {
-	if (m_waveBuffer != nullptr)
-		delete m_waveBuffer;
-	m::waveManager::createFromWave(ch->wave, a, b, &m_waveBuffer);
+	waveBuffer_ = m::waveManager::createFromWave(ch->wave.get(), a, b);
 }
 
 
@@ -135,11 +133,11 @@ void paste(m::SampleChannel* ch, int a)
 		return;
 	}
 	
-	m::wfx::paste(*m_waveBuffer, *ch->wave, a);
+	m::wfx::paste(*waveBuffer_.get(), *ch->wave.get(), a);
 
 	/* Shift begin/end points to keep the previous position. */
 
-	int delta = m_waveBuffer->getSize();
+	int delta = waveBuffer_->getSize();
 	if (a < ch->getBegin() && a < ch->getEnd())
 		setBeginEnd(ch, ch->getBegin() + delta, ch->getEnd() + delta);
 	else
@@ -267,10 +265,7 @@ void toNewChannel(m::SampleChannel* ch, int a, int b)
 	m::SampleChannel* newCh = static_cast<m::SampleChannel*>(c::channel::addChannel(
 		ch->guiChannel->getColumnIndex(), ChannelType::SAMPLE, G_GUI_CHANNEL_H_1));
 
-	Wave* wave = nullptr;
-	m::waveManager::createFromWave(ch->wave, a, b, &wave);
-
-	newCh->pushWave(wave);
+	newCh->pushWave(m::waveManager::createFromWave(ch->wave.get(), a, b));
 	newCh->guiChannel->update();
 }
 
@@ -280,7 +275,7 @@ void toNewChannel(m::SampleChannel* ch, int a, int b)
 
 bool isWaveBufferFull()
 {
-	return m_waveBuffer != nullptr;
+	return waveBuffer_ != nullptr;
 }
 
 
