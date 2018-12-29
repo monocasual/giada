@@ -185,8 +185,6 @@ void processStack(AudioBuffer& outBuf, StackType t, Channel* ch)
 {
 	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
-	/* Empty stack, stack not found or mixer not ready: do nothing. */
-
 	if (stack.size() == 0)
 		return;
 
@@ -250,7 +248,10 @@ Plugin* getPluginByIndex(int index, StackType t, Channel* ch)
 int getPluginIndex(int id, StackType t, Channel* ch)
 {
 	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-	return u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) { return p->getId() == id; });
+	return u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) 
+	{ 
+		return p->getId() == id;
+	});
 }
 
 
@@ -277,7 +278,10 @@ int freePlugin(int id, StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
 {
 	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
-	int index = u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) { return p->getId() == id; });
+	int index = u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) 
+	{ 
+		return p->getId() == id; 
+	});
 	assert(index != -1);
 
 	pthread_mutex_lock(mixerMutex);
@@ -339,13 +343,10 @@ TOD0
 
 void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f)
 {
-	/* TODO - Remove const is ugly. This is a temporary workaround until all
-	PluginHost functions params will be const-correct. */
 	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, const_cast<Channel*>(ch));
 	for (const std::unique_ptr<Plugin>& p : stack)
 		f(p.get());
 }
-
 
 }}}; // giada::m::pluginHost::
 

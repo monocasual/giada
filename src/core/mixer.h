@@ -57,7 +57,7 @@ struct FrameEvents
 
 extern std::vector<Channel*> channels;
 
-extern bool   recording;         // is recording something?
+extern bool   recording;     // is recording something?
 extern bool   ready;
 extern float  outVol;
 extern float  inVol;
@@ -65,7 +65,7 @@ extern float  peakOut;
 extern float  peakIn;
 extern bool	  metronome;
 extern int    waitRec;       // delayComp guard
-extern bool   rewindWait;	   // rewind guard, if quantized
+extern bool   rewindWait;    // rewind guard, if quantized
 extern bool   hasSolos;      // more than 0 channels soloed
 
 /* inToOut
