@@ -80,18 +80,13 @@ gdPluginWindow* getPluginWindow(const Plugin* p)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin* addPlugin(Channel* ch, int index, m::pluginHost::StackType t)
+void addPlugin(Channel* ch, int index, m::pluginHost::StackType t)
 {
 	if (index >= pluginManager::countAvailablePlugins())
-		return nullptr;
-
-	Plugin* p = pluginManager::makePlugin(index);
-	if (p == nullptr)
-		return nullptr;
-
-	pluginHost::addPlugin(p, t, &mixer::mutex, ch);
-
-	return p;
+		return;
+	std::unique_ptr<Plugin> p = pluginManager::makePlugin(index);
+	if (p != nullptr)
+		pluginHost::addPlugin(std::move(p), t, &mixer::mutex, ch);
 }
 
 

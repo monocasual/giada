@@ -37,10 +37,6 @@
 #include "pluginHost.h"
 
 
-using std::vector;
-using std::string;
-
-
 namespace giada {
 namespace m {
 namespace pluginHost
@@ -50,8 +46,8 @@ namespace
 juce::MessageManager* messageManager_;
 juce::AudioBuffer<float> audioBuffer_;
 
-vector<Plugin*> masterOut_;
-vector<Plugin*> masterIn_;
+std::vector<std::unique_ptr<Plugin>> masterOut_;
+std::vector<std::unique_ptr<Plugin>> masterIn_;
 
 
 /* -------------------------------------------------------------------------- */
@@ -68,6 +64,28 @@ void processPlugin_(Plugin& p, Channel* ch)
 
 	p.process(audioBuffer_, events);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+/* getStack_
+Returns a vector of unique_ptr's given the stackType. If stackType == CHANNEL
+a pointer to Channel is also required. */
+
+std::vector<std::unique_ptr<Plugin>>& getStack_(StackType t, Channel* ch=nullptr)
+{
+	switch(t) {
+		case StackType::MASTER_OUT:
+			return masterOut_;
+		case StackType::MASTER_IN:
+			return masterIn_;
+		case StackType::CHANNEL:
+			return ch->plugins;
+		default:
+			assert(false);
+	}
+}
+
 }; // {anonymous}
 
 
@@ -104,34 +122,32 @@ void init(int buffersize)
 /* -------------------------------------------------------------------------- */
 
 
-void addPlugin(Plugin* p, StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
+void addPlugin(std::unique_ptr<Plugin> p, StackType t, pthread_mutex_t* mixerMutex, 
+	Channel* ch)
 {
-	vector<Plugin*>* stack = getStack(t, ch);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
+
+	gu_log("[pluginHost::addPlugin] load plugin (%s), stack type=%d, stack size=%d\n",
+		p->getName().c_str(), t, stack.size());
 
 	pthread_mutex_lock(mixerMutex);
-	stack->push_back(p);
+	stack.push_back(std::move(p));
 	pthread_mutex_unlock(mixerMutex);
-
-	gu_log("[pluginHost::addPlugin] plugin loaded (%s), stack type=%d, stack size=%d\n",
-		p->getName().c_str(), t, stack->size());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-vector<Plugin*>* getStack(StackType t, Channel* ch)
+std::vector<Plugin*> getStack(StackType t, Channel* ch)
 {
-	switch(t) {
-		case StackType::MASTER_OUT:
-			return &masterOut_;
-		case StackType::MASTER_IN:
-			return &masterIn_;
-		case StackType::CHANNEL:
-			return &ch->plugins;
-		default:
-			return nullptr;
-	}
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
+
+	std::vector<Plugin*> out;
+	for (const std::unique_ptr<Plugin>& p : stack)
+		out.push_back(p.get());
+
+	return out;
 }
 
 
@@ -140,7 +156,7 @@ vector<Plugin*>* getStack(StackType t, Channel* ch)
 
 int countPlugins(StackType t, Channel* ch)
 {
-	return getStack(t, ch)->size();
+	return getStack_(t, ch).size();
 }
 
 
@@ -149,15 +165,13 @@ int countPlugins(StackType t, Channel* ch)
 
 void freeStack(StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(t, ch);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
-	if (pStack->size() == 0)
+	if (stack.size() == 0)
 		return;
 
 	pthread_mutex_lock(mixerMutex);
-		for (Plugin* p : *pStack)
-			delete p;
-		pStack->clear();
+	stack.clear();
 	pthread_mutex_unlock(mixerMutex);
 
 	gu_log("[pluginHost::freeStack] stack type=%d freed\n", t);
@@ -169,11 +183,11 @@ void freeStack(StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
 
 void processStack(AudioBuffer& outBuf, StackType t, Channel* ch)
 {
-	vector<Plugin*>* stack = getStack(t, ch);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
 	/* Empty stack, stack not found or mixer not ready: do nothing. */
 
-	if (stack == nullptr || stack->size() == 0)
+	if (stack.size() == 0)
 		return;
 
 	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());
@@ -202,8 +216,8 @@ void processStack(AudioBuffer& outBuf, StackType t, Channel* ch)
 	if (ch != nullptr)
 		pthread_mutex_lock(&mutex);
 
-	for (Plugin* plugin : *stack)
-		processPlugin_(*plugin, ch);
+	for (std::unique_ptr<Plugin>& plugin : stack)
+		processPlugin_(*plugin.get(), ch);
 
 	if (ch != nullptr) {
 		ch->clearMidiBuffer();
@@ -224,9 +238,9 @@ void processStack(AudioBuffer& outBuf, StackType t, Channel* ch)
 
 Plugin* getPluginByIndex(int index, StackType t, Channel* ch)
 {
-	vector<Plugin*>* pStack = getStack(t, ch);
-	assert((size_t) index < pStack->size());
-	return pStack->at(index);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
+	assert((size_t) index < stack.size());
+	return stack.at(index).get();
 }
 
 
@@ -235,21 +249,21 @@ Plugin* getPluginByIndex(int index, StackType t, Channel* ch)
 
 int getPluginIndex(int id, StackType t, Channel* ch)
 {
-	vector<Plugin*>* stack = getStack(t, ch);
-	return u::vector::indexOf(*stack, [&](const Plugin* p) { return p->getId() == id; });
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
+	return u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) { return p->getId() == id; });
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugin(unsigned indexA, unsigned indexB, StackType t,
-	pthread_mutex_t* mixerMutex, Channel* ch)
+void swapPlugin(int indexA, int indexB, StackType t, pthread_mutex_t* mixerMutex, 
+	Channel* ch)
 {
-	vector<Plugin*>* stack = getStack(t, ch);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
 	pthread_mutex_lock(mixerMutex);
-	std::swap(stack->at(indexA), stack->at(indexB));
+	std::swap(stack.at(indexA), stack.at(indexB));
 	pthread_mutex_unlock(mixerMutex);
 
 	gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
@@ -261,14 +275,13 @@ void swapPlugin(unsigned indexA, unsigned indexB, StackType t,
 
 int freePlugin(int id, StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
 {
-	vector<Plugin*>* stack = getStack(t, ch);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
 
-	int index = u::vector::indexOf(*stack, [&](const Plugin* p) { return p->getId() == id; });
+	int index = u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) { return p->getId() == id; });
 	assert(index != -1);
 
 	pthread_mutex_lock(mixerMutex);
-	delete stack->at(index);
-	stack->erase(stack->begin() + index);
+	stack.erase(stack.begin() + index);
 	pthread_mutex_unlock(mixerMutex);	
 
 	gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
@@ -288,7 +301,7 @@ void runDispatchLoop()
 /* -------------------------------------------------------------------------- */
 
 
-void freeAllStacks(vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
+void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
 {
 	freeStack(StackType::MASTER_OUT, mixerMutex);
 	freeStack(StackType::MASTER_IN, mixerMutex);
@@ -300,7 +313,7 @@ void freeAllStacks(vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
 /* -------------------------------------------------------------------------- */
 
 
-int clonePlugin(Plugin* src, StackType t, pthread_mutex_t* mixerMutex,
+int clonePlugin(const Plugin& src, StackType t, pthread_mutex_t* mixerMutex,
 	Channel* ch)
 {
 	assert(false);
@@ -328,9 +341,9 @@ void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plug
 {
 	/* TODO - Remove const is ugly. This is a temporary workaround until all
 	PluginHost functions params will be const-correct. */
-	vector<Plugin*>* stack = getStack(t, const_cast<Channel*>(ch));
-	for (const Plugin* p : *stack)
-		f(p);
+	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, const_cast<Channel*>(ch));
+	for (const std::unique_ptr<Plugin>& p : stack)
+		f(p.get());
 }
 
 

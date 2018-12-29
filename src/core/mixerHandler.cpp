@@ -73,12 +73,12 @@ int readPatchPlugins_(const vector<patch::plugin_t>& list, pluginHost::StackType
 {
 	int ret = 1;
 	for (const patch::plugin_t& ppl : list) {
-		Plugin* p = pluginManager::makePlugin(ppl.path);
+		std::unique_ptr<Plugin> p = pluginManager::makePlugin(ppl.path);
 		if (p != nullptr) {
-			pluginHost::addPlugin(p, t, &mixer::mutex, nullptr);
 			p->setBypass(ppl.bypass);
 			for (unsigned j=0; j<ppl.params.size(); j++)
 				p->setParameter(j, ppl.params.at(j));
+			pluginHost::addPlugin(std::move(p), t, &mixer::mutex, nullptr);
 			ret &= 1;
 		}
 		else

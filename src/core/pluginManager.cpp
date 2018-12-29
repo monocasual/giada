@@ -195,7 +195,7 @@ int loadList(const string& filepath)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin* makePlugin(const string& fid)
+std::unique_ptr<Plugin> makePlugin(const string& fid)
 {
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
@@ -209,7 +209,7 @@ Plugin* makePlugin(const string& fid)
 			gu_log("[pluginManager::makePlugin] still nothing to do, returning unknown plugin\n");
 			missingPlugins_ = true;
 			unknownPluginList_.push_back(fid);
-			return nullptr;
+			return {};
 		}
 	}
 
@@ -217,23 +217,23 @@ Plugin* makePlugin(const string& fid)
 	if (!pi) {
 		gu_log("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
 		missingPlugins_ = true;
-		return nullptr;
+		return {};
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return new Plugin(pi, samplerate_, buffersize_);
+	return std::move(std::make_unique<Plugin>(pi, samplerate_, buffersize_));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Plugin* makePlugin(int index)
+std::unique_ptr<Plugin> makePlugin(int index)
 {
 	juce::PluginDescription* pd = knownPluginList_.getType(index);
 	
 	if (pd == nullptr) 
-		return nullptr;
+		return {};
 	
 	gu_log("[pluginManager::makePlugin] plugin found, uid=%s, name=%s...\n",
 		pd->createIdentifierString().toRawUTF8(), pd->name.toRawUTF8());

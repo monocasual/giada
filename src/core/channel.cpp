@@ -116,8 +116,8 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 	midiOutLsolo    = src->midiOutLsolo;
 
 #ifdef WITH_VST
-	for (Plugin* plugin : src->plugins)
-		pluginHost::clonePlugin(plugin, pluginHost::StackType::CHANNEL, pluginMutex, this);
+	for (const std::unique_ptr<Plugin>& plugin : src->plugins)
+		pluginHost::clonePlugin(*plugin.get(), pluginHost::StackType::CHANNEL, pluginMutex, this);
 #endif
 
 	hasActions = recorderHandler::cloneActions(src->index, index);

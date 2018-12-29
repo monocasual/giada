@@ -91,11 +91,9 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 
 	for (const patch::plugin_t& ppl : pch.plugins) {
 
-		Plugin* plugin = pluginManager::makePlugin(ppl.path);
+		std::unique_ptr<Plugin> plugin = pluginManager::makePlugin(ppl.path);
 		if (plugin == nullptr)
 			continue;
-
-		pluginHost::addPlugin(plugin, pluginHost::StackType::CHANNEL, &mixer::mutex, ch);
 
 		plugin->setBypass(ppl.bypass);
 		for (unsigned j=0; j<ppl.params.size(); j++)
@@ -109,6 +107,8 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 			for (uint32_t midiInParam : ppl.midiInParams)
 				plugin->midiInParams.push_back(midiInParam);
 		}
+
+		pluginHost::addPlugin(std::move(plugin), pluginHost::StackType::CHANNEL, &mixer::mutex, ch);
 	}
 
 #endif

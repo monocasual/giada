@@ -132,8 +132,8 @@ void gePluginElement::cb_shiftDown()
 	if (m::pluginHost::countPlugins(m_parentWin->stackType, m_parentWin->ch) == 1)
 		return;
 
-	unsigned pluginIndex = m::pluginHost::getPluginIndex(m_plugin->getId(), m_parentWin->stackType, m_parentWin->ch);
-	unsigned stackSize   = (m::pluginHost::getStack(m_parentWin->stackType, m_parentWin->ch))->size();
+	int pluginIndex = m::pluginHost::getPluginIndex(m_plugin->getId(), m_parentWin->stackType, m_parentWin->ch);
+	int stackSize   = m::pluginHost::getStack(m_parentWin->stackType, m_parentWin->ch).size();
 
 	if (pluginIndex == stackSize-1)  // last one in the stack, do nothing
 		return;

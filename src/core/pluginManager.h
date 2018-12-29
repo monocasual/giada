@@ -32,13 +32,12 @@
 
 
 #include "../deps/juce-config.h"
+#include "plugin.h"
 
 
 namespace giada {
 namespace m
 {
-class Plugin;
-
 namespace pluginManager
 {
 enum class SortMethod
@@ -84,8 +83,8 @@ Returns how many plug-ins are in a unknown/not-found state. */
 
 unsigned countUnknownPlugins();
 
-Plugin* makePlugin(const std::string& fid);
-Plugin* makePlugin(int index);
+std::unique_ptr<Plugin> makePlugin(const std::string& fid);
+std::unique_ptr<Plugin> makePlugin(int index);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

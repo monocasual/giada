@@ -65,18 +65,17 @@ using namespace giada;
 
 #ifdef WITH_VST
 
-static void glue_fillPatchGlobalsPlugins__(vector <m::Plugin*>* host, vector<m::patch::plugin_t>* patch)
+static void glue_fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack, 
+	vector<m::patch::plugin_t>* patch)
 {
 	using namespace giada::m;
 
-	for (unsigned i=0; i<host->size(); i++) {
-		Plugin *pl = host->at(i);
+	for (const Plugin* plugin : stack) {
 		patch::plugin_t ppl;
-		ppl.path = pl->getUniqueId();
-		ppl.bypass = pl->isBypassed();
-		int numParams = pl->getNumParameters();
-		for (int k=0; k<numParams; k++)
-			ppl.params.push_back(pl->getParameter(k));
+		ppl.path   = plugin->getUniqueId();
+		ppl.bypass = plugin->isBypassed();
+		for (int k=0; k<plugin->getNumParameters(); k++)
+			ppl.params.push_back(plugin->getParameter(k));
 		patch->push_back(ppl);
 	}
 }
@@ -87,7 +86,7 @@ static void glue_fillPatchGlobalsPlugins__(vector <m::Plugin*>* host, vector<m::
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchColumns__()
+static void glue_fillPatchColumns_()
 {
 	using namespace giada::m;
 
@@ -113,7 +112,7 @@ static void glue_fillPatchColumns__()
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchChannels__(bool isProject)
+static void glue_fillPatchChannels_(bool isProject)
 {
 	using namespace giada::m;
 
@@ -126,7 +125,7 @@ static void glue_fillPatchChannels__(bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchGlobals__(const string &name)
+static void glue_fillPatchGlobals_(const string &name)
 {
 	using namespace giada::m;
 
@@ -145,9 +144,9 @@ static void glue_fillPatchGlobals__(const string &name)
 
 #ifdef WITH_VST
 
-	glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::StackType::MASTER_IN),
+	glue_fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN),
 			&patch::masterInPlugins);
-	glue_fillPatchGlobalsPlugins__(pluginHost::getStack(pluginHost::StackType::MASTER_OUT),
+	glue_fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT),
 			&patch::masterOutPlugins);
 
 #endif
@@ -157,16 +156,16 @@ static void glue_fillPatchGlobals__(const string &name)
 /* -------------------------------------------------------------------------- */
 
 
-static bool glue_savePatch__(const string &fullPath, const string &name,
+static bool glue_savePatch_(const string &fullPath, const string &name,
 		bool isProject)
 {
 	using namespace giada::m;
 
 	patch::init();
 
-	glue_fillPatchGlobals__(name);
-	glue_fillPatchChannels__(isProject);
-	glue_fillPatchColumns__();
+	glue_fillPatchGlobals_(name);
+	glue_fillPatchChannels_(isProject);
+	glue_fillPatchColumns_();
 
 	if (patch::write(fullPath)) {
 		gu_updateMainWinLabel(name);
@@ -180,13 +179,13 @@ static bool glue_savePatch__(const string &fullPath, const string &name,
 /* -------------------------------------------------------------------------- */
 
 
-static string glue_makeSamplePath__(const string& base, const Wave* w, int k)
+static string glue_makeSamplePath_(const string& base, const Wave* w, int k)
 {
 	return base + G_SLASH + w->getBasename(false) + "-" + gu_iToString(k) + "." +  w->getExtension();
 } 
 
 
-static string glue_makeUniqueSamplePath__(const string& base, const m::SampleChannel* ch)
+static string glue_makeUniqueSamplePath_(const string& base, const m::SampleChannel* ch)
 {
 	using namespace giada::m;
 
@@ -195,9 +194,9 @@ static string glue_makeUniqueSamplePath__(const string& base, const m::SampleCha
 		return path;
 
 	int k = 0;
-	path = glue_makeSamplePath__(base, ch->wave.get(), k);
+	path = glue_makeSamplePath_(base, ch->wave.get(), k);
 	while (!mh::uniqueSamplePath(ch, path))
-		path = glue_makeSamplePath__(base, ch->wave.get(), k++);
+		path = glue_makeSamplePath_(base, ch->wave.get(), k++);
 	return path;
 }
 
@@ -220,7 +219,7 @@ void glue_savePatch(void* data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_savePatch__(fullPath, name, false)) {  // false == not a project
+	if (glue_savePatch_(fullPath, name, false)) {  // false == not a project
 		m::conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
@@ -364,7 +363,7 @@ void glue_saveProject(void* data)
 		if (sch->wave == nullptr)
 			continue;
 
-		sch->wave->setPath(glue_makeUniqueSamplePath__(fullPath, sch));
+		sch->wave->setPath(glue_makeUniqueSamplePath_(fullPath, sch));
 
 		gu_log("[glue_saveProject] Save file to %s\n", sch->wave->getPath().c_str());
 
@@ -372,7 +371,7 @@ void glue_saveProject(void* data)
 	}
 
 	string gptcPath = fullPath + G_SLASH + name + ".gptc";
-	if (glue_savePatch__(gptcPath, name, true)) // true == it's a project
+	if (glue_savePatch_(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
 		gdAlert("Unable to save the project!");

@@ -56,7 +56,8 @@ void close();
 /* addPlugin
 Adds a new plugin to 'stackType'. */
 
-void addPlugin(Plugin* p, StackType t, pthread_mutex_t* mutex, Channel* ch=nullptr);
+void addPlugin(std::unique_ptr<Plugin> p, StackType t, pthread_mutex_t* mutex, 
+    Channel* ch=nullptr);
 
 /* countPlugins
 Returns the size of 'stackType'. */
@@ -74,10 +75,10 @@ Applies the fx list to the buffer. */
 void processStack(AudioBuffer& outBuf, StackType t, Channel* ch=nullptr);
 
 /* getStack
-Returns a std::vector <Plugin *> given the stackType. If stackType == CHANNEL
+Returns a vector of Plugin pointers given the stackType. If stackType == CHANNEL
 a pointer to Channel is also required. */
 
-std::vector<Plugin*>* getStack(StackType t, Channel* ch=nullptr);
+std::vector<Plugin*> getStack(StackType t, Channel* ch=nullptr);
 
 /* getPluginByIndex */
 
@@ -89,8 +90,8 @@ int getPluginIndex(int id, StackType t, Channel* ch=nullptr);
 
 /* swapPlugin */
 
-void swapPlugin(unsigned indexA, unsigned indexB, StackType t,
-	pthread_mutex_t* mutex, Channel* ch=nullptr);
+void swapPlugin(int indexA, int indexB, StackType t, pthread_mutex_t* mutex, 
+    Channel* ch=nullptr);
 
 /* freePlugin.
 Returns the internal stack index of the deleted plugin. */
@@ -109,7 +110,7 @@ void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mutex);
 
 /* clonePlugin */
 
-int clonePlugin(Plugin* src, StackType t, pthread_mutex_t* mutex, Channel* ch);
+int clonePlugin(const Plugin& src, StackType t, pthread_mutex_t* mutex, Channel* ch);
 
 void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f);
 

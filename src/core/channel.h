@@ -42,6 +42,7 @@
 
 #ifdef WITH_VST
 	#include "../deps/juce-config.h"
+	#include "plugin.h"
 #endif
 
 
@@ -49,10 +50,8 @@ class geChannel;
 
 
 namespace giada {
-namespace m 
+namespace m
 {
-class Plugin;
-
 class Channel
 {
 public:
@@ -262,7 +261,7 @@ public:
 	uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
-	std::vector <Plugin*> plugins;
+	std::vector<std::unique_ptr<Plugin>> plugins;
 #endif
 
 protected:

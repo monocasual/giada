@@ -184,15 +184,15 @@ void gdMidiInputChannel::addChannelLearners()
 
 void gdMidiInputChannel::addPluginLearners()
 {
-	vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::StackType::CHANNEL, ch);
-	for (unsigned i=0; i<plugins->size(); i++) {
+	vector<Plugin*> plugins = pluginHost::getStack(pluginHost::StackType::CHANNEL, ch);
+
+	int i = 0;
+	for (Plugin* plugin : plugins) {
 
 		Fl_Pack* pack = new Fl_Pack(container->x() + ((i + 1) * (LEARNER_WIDTH + 8)),
 			container->y(), LEARNER_WIDTH, 200);
 		pack->spacing(4);
 		pack->begin();
-
-			Plugin* plugin = plugins->at(i);
 
 			geBox* header = new geBox(0, 0, LEARNER_WIDTH, 20, plugin->getName().c_str());
 			header->box(FL_BORDER_BOX);
@@ -202,6 +202,8 @@ void gdMidiInputChannel::addPluginLearners()
 					cb_learn, &plugin->midiInParams.at(k), ch);
 
 		pack->end();
+
+		i++;
 	}
 }
 
