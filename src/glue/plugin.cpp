@@ -80,7 +80,7 @@ gdPluginWindow* getPluginWindow(const Plugin* p)
 /* -------------------------------------------------------------------------- */
 
 
-Plugin* addPlugin(Channel* ch, int index, int stackType)
+Plugin* addPlugin(Channel* ch, int index, m::pluginHost::StackType t)
 {
 	if (index >= pluginManager::countAvailablePlugins())
 		return nullptr;
@@ -89,7 +89,7 @@ Plugin* addPlugin(Channel* ch, int index, int stackType)
 	if (p == nullptr)
 		return nullptr;
 
-	pluginHost::addPlugin(p, stackType, &mixer::mutex, ch);
+	pluginHost::addPlugin(p, t, &mixer::mutex, ch);
 
 	return p;
 }
@@ -98,9 +98,9 @@ Plugin* addPlugin(Channel* ch, int index, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugins(Channel* ch, int index1, int index2, int stackType)
+void swapPlugins(Channel* ch, int index1, int index2, m::pluginHost::StackType t)
 {
-  pluginHost::swapPlugin(index1, index2, stackType, &mixer::mutex,
+  pluginHost::swapPlugin(index1, index2, t, &mixer::mutex,
     ch);
 }
 
@@ -108,9 +108,9 @@ void swapPlugins(Channel* ch, int index1, int index2, int stackType)
 /* -------------------------------------------------------------------------- */
 
 
-void freePlugin(Channel* ch, int index, int stackType)
+void freePlugin(Channel* ch, int index, m::pluginHost::StackType t)
 {
-  pluginHost::freePlugin(index, stackType, &mixer::mutex, ch);
+  pluginHost::freePlugin(index, t, &mixer::mutex, ch);
 }
 
 

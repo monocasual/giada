@@ -46,12 +46,7 @@ class AudioBuffer;
 
 namespace pluginHost
 {
-enum stackType
-{
-	MASTER_OUT,
-	MASTER_IN,
-	CHANNEL
-};
+enum class StackType { MASTER_OUT, MASTER_IN, CHANNEL };
 
 extern pthread_mutex_t mutex;
 
@@ -61,46 +56,46 @@ void close();
 /* addPlugin
 Adds a new plugin to 'stackType'. */
 
-void addPlugin(Plugin* p, int stackType, pthread_mutex_t* mutex, Channel* ch=nullptr);
+void addPlugin(Plugin* p, StackType t, pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* countPlugins
 Returns the size of 'stackType'. */
 
-int countPlugins(int stackType, Channel* ch=nullptr);
+int countPlugins(StackType t, Channel* ch=nullptr);
 
 /* freeStack
 Frees plugin stack of type 'stackType'. */
 
-void freeStack(int stackType, pthread_mutex_t* mutex, Channel* ch=nullptr);
+void freeStack(StackType t, pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* processStack
 Applies the fx list to the buffer. */
 
-void processStack(AudioBuffer& outBuf, int stackType, Channel* ch=nullptr);
+void processStack(AudioBuffer& outBuf, StackType t, Channel* ch=nullptr);
 
 /* getStack
 Returns a std::vector <Plugin *> given the stackType. If stackType == CHANNEL
 a pointer to Channel is also required. */
 
-std::vector<Plugin*>* getStack(int stackType, Channel* ch=nullptr);
+std::vector<Plugin*>* getStack(StackType t, Channel* ch=nullptr);
 
 /* getPluginByIndex */
 
-Plugin* getPluginByIndex(int index, int stackType, Channel* ch=nullptr);
+Plugin* getPluginByIndex(int index, StackType t, Channel* ch=nullptr);
 
 /* getPluginIndex */
 
-int getPluginIndex(int id, int stackType, Channel* ch=nullptr);
+int getPluginIndex(int id, StackType t, Channel* ch=nullptr);
 
 /* swapPlugin */
 
-void swapPlugin(unsigned indexA, unsigned indexB, int stackType,
+void swapPlugin(unsigned indexA, unsigned indexB, StackType t,
 	pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* freePlugin.
 Returns the internal stack index of the deleted plugin. */
 
-int freePlugin(int id, int stackType, pthread_mutex_t* mutex, Channel* ch=nullptr);
+int freePlugin(int id, StackType t, pthread_mutex_t* mutex, Channel* ch=nullptr);
 
 /* runDispatchLoop
 Wakes up plugins' GUI manager for N milliseconds. */
@@ -114,9 +109,9 @@ void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mutex);
 
 /* clonePlugin */
 
-int clonePlugin(Plugin* src, int stackType, pthread_mutex_t* mutex, Channel* ch);
+int clonePlugin(Plugin* src, StackType t, pthread_mutex_t* mutex, Channel* ch);
 
-void forEachPlugin(int stackType, const Channel* ch, std::function<void(const Plugin* p)> f);
+void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f);
 
 }}}; // giada::m::pluginHost::
 

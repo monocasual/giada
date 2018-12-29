@@ -73,7 +73,7 @@ void processPlugins(Channel* ch, const MidiEvent& midiEvent)
 	indexes match both the structure of Channel::midiInPlugins and 
 	vector<Plugin*>* plugins. */
 
-	vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::CHANNEL, ch);
+	vector<Plugin*>* plugins = pluginHost::getStack(pluginHost::StackType::CHANNEL, ch);
 
 	for (Plugin* plugin : *plugins) {
 		for (unsigned k=0; k<plugin->midiInParams.size(); k++) {

@@ -56,7 +56,7 @@ void writePlugins_(const Channel* ch, patch::channel_t& pch)
 {
 #ifdef WITH_VST
 
-	pluginHost::forEachPlugin(pluginHost::CHANNEL, ch, [&] (const Plugin* p) {
+	pluginHost::forEachPlugin(pluginHost::StackType::CHANNEL, ch, [&] (const Plugin* p) {
 		patch::plugin_t pp;
 		pp.path   = p->getUniqueId();
 		pp.bypass = p->isBypassed();
@@ -95,7 +95,7 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 		if (plugin == nullptr)
 			continue;
 
-		pluginHost::addPlugin(plugin, pluginHost::CHANNEL, &mixer::mutex, ch);
+		pluginHost::addPlugin(plugin, pluginHost::StackType::CHANNEL, &mixer::mutex, ch);
 
 		plugin->setBypass(ppl.bypass);
 		for (unsigned j=0; j<ppl.params.size(); j++)

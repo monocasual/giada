@@ -69,13 +69,13 @@ namespace
 {
 #ifdef WITH_VST
 
-int readPatchPlugins_(const vector<patch::plugin_t>& list, int type)
+int readPatchPlugins_(const vector<patch::plugin_t>& list, pluginHost::StackType t)
 {
 	int ret = 1;
 	for (const patch::plugin_t& ppl : list) {
 		Plugin* p = pluginManager::makePlugin(ppl.path);
 		if (p != nullptr) {
-			pluginHost::addPlugin(p, type, &mixer::mutex, nullptr);
+			pluginHost::addPlugin(p, t, &mixer::mutex, nullptr);
 			p->setBypass(ppl.bypass);
 			for (unsigned j=0; j<ppl.params.size(); j++)
 				p->setParameter(j, ppl.params.at(j));
@@ -245,8 +245,8 @@ void readPatch()
 
 #ifdef WITH_VST
 
-	readPatchPlugins_(patch::masterInPlugins, pluginHost::MASTER_IN);
-	readPatchPlugins_(patch::masterOutPlugins, pluginHost::MASTER_OUT);
+	readPatchPlugins_(patch::masterInPlugins, pluginHost::StackType::MASTER_IN);
+	readPatchPlugins_(patch::masterOutPlugins, pluginHost::StackType::MASTER_OUT);
 
 #endif
 

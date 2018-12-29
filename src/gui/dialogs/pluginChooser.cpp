@@ -45,8 +45,8 @@ using namespace giada::m;
 using namespace giada::c;
 
 
-gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, int stackType, Channel* ch)
-  : gdWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(stackType)
+gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, pluginHost::StackType t, Channel* ch)
+  : gdWindow(X, Y, W, H, "Available plugins"), ch(ch), stackType(t)
 {
   /* top area */
   Fl_Group *group_top = new Fl_Group(8, 8, w()-16, 20);

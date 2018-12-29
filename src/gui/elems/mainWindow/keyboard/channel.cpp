@@ -110,7 +110,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::CHANNEL, ch), WID_FX_LIST);
+	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 

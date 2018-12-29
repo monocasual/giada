@@ -47,7 +47,7 @@ class gdPluginChooser : public gdWindow
 private:
 
 	giada::m::Channel* ch;      // ch == nullptr ? masterOut
-	int stackType;
+	giada::m::pluginHost::StackType stackType;
 
 	geChoice*        sortMethod;
 	geButton*        addBtn;
@@ -63,7 +63,8 @@ private:
 
 public:
 
-	gdPluginChooser(int x, int y, int w, int h, int stackType, giada::m::Channel* ch=nullptr);
+	gdPluginChooser(int x, int y, int w, int h, giada::m::pluginHost::StackType t, 
+		giada::m::Channel* ch=nullptr);
 	~gdPluginChooser();
 };
 

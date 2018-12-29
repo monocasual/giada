@@ -133,7 +133,7 @@ void deleteChannel(m::Channel* ch)
 	recorder::clearChannel(ch->index);
 	ch->hasActions = false;
 #ifdef WITH_VST
-	pluginHost::freeStack(pluginHost::CHANNEL, &mixer::mutex, ch);
+	pluginHost::freeStack(pluginHost::StackType::CHANNEL, &mixer::mutex, ch);
 #endif
 	Fl::lock();
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);

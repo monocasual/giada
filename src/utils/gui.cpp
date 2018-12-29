@@ -118,8 +118,8 @@ void gu_updateControls()
 	G_MainWin->mainIO->setOutVol(mixer::outVol);
 	G_MainWin->mainIO->setInVol(mixer::inVol);
 #ifdef WITH_VST
-	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::MASTER_OUT)->size() > 0);
-	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::MASTER_IN)->size() > 0);
+	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT)->size() > 0);
+	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN)->size() > 0);
 #endif
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());

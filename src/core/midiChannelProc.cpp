@@ -48,7 +48,7 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audible)
 {
 #ifdef WITH_VST
-	pluginHost::processStack(ch->buffer, pluginHost::CHANNEL, ch);
+	pluginHost::processStack(ch->buffer, pluginHost::StackType::CHANNEL, ch);
 #endif
 
 	/* Process the plugin stack first, then quit if the channel is muted/soloed. 

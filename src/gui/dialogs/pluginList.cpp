@@ -54,8 +54,8 @@ using std::string;
 using namespace giada;
 
 
-gdPluginList::gdPluginList(int stackType, m::Channel* ch)
-	: gdWindow(468, 204), ch(ch), stackType(stackType)
+gdPluginList::gdPluginList(m::pluginHost::StackType t, m::Channel* ch)
+	: gdWindow(468, 204), ch(ch), stackType(t)
 {
 	using namespace giada::m;
 
@@ -79,10 +79,10 @@ gdPluginList::gdPluginList(int stackType, m::Channel* ch)
 	/* TODO - awful stuff... we should subclass into gdPluginListChannel and
 	gdPluginListMaster */
 
-	if (stackType == pluginHost::MASTER_OUT)
+	if (stackType == pluginHost::StackType::MASTER_OUT)
 		label("Master Out Plugins");
 	else
-	if (stackType == pluginHost::MASTER_IN)
+	if (stackType == pluginHost::StackType::MASTER_IN)
 		label("Master In Plugins");
 	else {
 		string l = "Channel " + gu_iToString(ch->index+1) + " Plugins";
@@ -199,11 +199,11 @@ void gdPluginList::refreshList()
 	/* TODO - awful stuff... we should subclass into gdPluginListChannel and
 	gdPluginListMaster */
 
-	if (stackType == pluginHost::MASTER_OUT) {
+	if (stackType == pluginHost::StackType::MASTER_OUT) {
 		G_MainWin->mainIO->setMasterFxOutFull(pluginHost::countPlugins(stackType, ch) > 0);
 	}
 	else
-	if (stackType == pluginHost::MASTER_IN) {
+	if (stackType == pluginHost::StackType::MASTER_IN) {
 		G_MainWin->mainIO->setMasterFxInFull(pluginHost::countPlugins(stackType, ch) > 0);
 	}
 	else {

@@ -31,6 +31,7 @@
 #define GD_PLUGINLIST_H
 
 
+#include "../../core/pluginHost.h"
 #include "window.h"
 
 
@@ -51,9 +52,9 @@ private:
 public:
 
 	giada::m::Channel* ch;      // ch == nullptr ? masterOut
-	int stackType;
+	giada::m::pluginHost::StackType stackType;
 
-	gdPluginList(int stackType, giada::m::Channel* ch=nullptr);
+	gdPluginList(giada::m::pluginHost::StackType t, giada::m::Channel* ch=nullptr);
 	~gdPluginList();
 
 	/* special callback, passed to browser. When closed (i.e. plugin

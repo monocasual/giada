@@ -117,7 +117,7 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 
 #ifdef WITH_VST
 	for (Plugin* plugin : src->plugins)
-		pluginHost::clonePlugin(plugin, pluginHost::CHANNEL, pluginMutex, this);
+		pluginHost::clonePlugin(plugin, pluginHost::StackType::CHANNEL, pluginMutex, this);
 #endif
 
 	hasActions = recorderHandler::cloneActions(src->index, index);
