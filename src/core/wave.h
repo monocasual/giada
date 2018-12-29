@@ -41,10 +41,6 @@ public:
 
 	Wave();
 	Wave(const Wave& other);
-	~Wave()
-	{
-		puts("DELETED!!!");
-	}
 
 	float* operator [](int offset) const;
 

@@ -19,16 +19,15 @@ TEST_CASE("sampleChannel")
 		ChannelMode::SINGLE_ENDLESS };
 
 	SampleChannel ch(false, BUFFER_SIZE);
-	Wave* w;
-	waveManager::create("tests/resources/test.wav", &w); 
-	ch.pushWave(w);
+	waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
+	int waveSize = res.wave->getSize();
+	ch.pushWave(std::move(res.wave));
 
 	SECTION("push wave")
 	{
 		REQUIRE(ch.status == ChannelStatus::OFF);
-		REQUIRE(ch.wave == w);
 		REQUIRE(ch.begin == 0);
-		REQUIRE(ch.end == w->getSize() - 1);
+		REQUIRE(ch.end == waveSize - 1);
 		REQUIRE(ch.name == "");		
 	}
 
@@ -42,9 +41,9 @@ TEST_CASE("sampleChannel")
 
 		ch.setBegin(100000);
 
-		REQUIRE(ch.getBegin() == w->getSize());
-		REQUIRE(ch.tracker == w->getSize());
-		REQUIRE(ch.trackerPreview == w->getSize());
+		REQUIRE(ch.getBegin() == waveSize);
+		REQUIRE(ch.tracker == waveSize);
+		REQUIRE(ch.trackerPreview == waveSize);
 
 		ch.setBegin(16);
 
@@ -58,7 +57,7 @@ TEST_CASE("sampleChannel")
 
 		ch.setEnd(100000);
 
-		REQUIRE(ch.getEnd() == w->getSize() - 1);
+		REQUIRE(ch.getEnd() == waveSize - 1);
 
 		ch.setEnd(32);
 

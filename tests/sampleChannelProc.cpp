@@ -19,9 +19,8 @@ TEST_CASE("sampleChannelProc")
 		ChannelMode::SINGLE_PRESS, ChannelMode::SINGLE_RETRIG, 
 		ChannelMode::SINGLE_ENDLESS };
 
-	Wave* w;
 	SampleChannel ch(false, BUFFER_SIZE);
-	waveManager::create("tests/resources/test.wav", &w); 
+	waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
 
 	REQUIRE(ch.status == ChannelStatus::EMPTY);
 	REQUIRE(ch.mode == ChannelMode::SINGLE_BASIC);
@@ -36,7 +35,7 @@ TEST_CASE("sampleChannelProc")
 			REQUIRE(ch.tracker == 0);
 
 			/* With data, stopped. */
-			ch.pushWave(w);
+			ch.pushWave(std::move(res.wave));
 			sampleChannelProc::prepareBuffer(&ch, /*running=*/false);
 
 			REQUIRE(ch.tracker == 0);
@@ -50,7 +49,7 @@ TEST_CASE("sampleChannelProc")
 
 		SECTION("fill")
 		{
-			ch.pushWave(w);
+			ch.pushWave(std::move(res.wave));
 
 			/* Zero offset. */
 			REQUIRE(ch.fillBuffer(ch.buffer, 0, 0) == BUFFER_SIZE);
@@ -65,7 +64,7 @@ TEST_CASE("sampleChannelProc")
 
 	SECTION("statuses")
 	{
-		ch.pushWave(w);
+		ch.pushWave(std::move(res.wave));
 
 		SECTION("start from OFF")
 		{
@@ -210,7 +209,7 @@ TEST_CASE("sampleChannelProc")
 
 	SECTION("rewind by sequencer")
 	{
-		ch.pushWave(w);
+		ch.pushWave(std::move(res.wave));
 
 		/* Test loop modes. */
 
