@@ -15,7 +15,9 @@
 0.15.4 ---
 - Initial support for plug-ins with mono I/O buses
 - PluginHost refactoring
+- Smart pointers for Wave and Plugin objects
 - Fix memory leak when replacing samples in a Sample Channel
+- Fix plug-ins ordering method when re-opening Giada
 
 
 0.15.3 --- 2018 . 12 . 24
