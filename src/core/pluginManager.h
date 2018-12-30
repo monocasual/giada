@@ -40,12 +40,9 @@ namespace m
 {
 namespace pluginManager
 {
-enum class SortMethod
+enum class SortMethod : int
 {
-	NAME,
-	CATEGORY,
-	MANUFACTURER,
-	FORMAT
+	NAME = 0, CATEGORY,	MANUFACTURER, FORMAT
 };
 
 struct PluginInfo

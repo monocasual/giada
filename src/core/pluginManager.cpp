@@ -183,7 +183,7 @@ int saveList(const string& filepath)
 int loadList(const string& filepath)
 {
 	juce::XmlElement* elem = juce::XmlDocument::parse(juce::File(filepath));
-	if (elem) {
+	if (elem != nullptr) {
 		knownPluginList_.recreateFromXml(*elem);
 		delete elem;
 		return 1;
