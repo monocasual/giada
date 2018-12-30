@@ -246,6 +246,20 @@ std::unique_ptr<Plugin> makePlugin(int index)
 /* -------------------------------------------------------------------------- */
 
 
+std::unique_ptr<Plugin> makePlugin(const Plugin& src)
+{
+	std::unique_ptr<Plugin> p = makePlugin(src.getUniqueId());
+	
+	for (int i=0; i<src.getNumParameters(); i++)
+		p->setParameter(i, src.getParameter(i));	
+
+	return std::move(p);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 int countAvailablePlugins()
 {
 	return knownPluginList_.getNumTypes();

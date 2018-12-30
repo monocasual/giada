@@ -85,6 +85,7 @@ unsigned countUnknownPlugins();
 
 std::unique_ptr<Plugin> makePlugin(const std::string& fid);
 std::unique_ptr<Plugin> makePlugin(int index);
+std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

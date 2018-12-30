@@ -108,10 +108,6 @@ Frees everything. */
 
 void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mutex);
 
-/* clonePlugin */
-
-int clonePlugin(const Plugin& src, StackType t, pthread_mutex_t* mutex, Channel* ch);
-
 void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f);
 
 }}}; // giada::m::pluginHost::

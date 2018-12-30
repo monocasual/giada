@@ -317,30 +317,6 @@ void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
 /* -------------------------------------------------------------------------- */
 
 
-int clonePlugin(const Plugin& src, StackType t, pthread_mutex_t* mixerMutex,
-	Channel* ch)
-{
-	assert(false);
-#if 0
-
-TOD0
-
-	Plugin* p = addPlugin(src->getUniqueId(), t, mutex, ch);
-	if (!p) {
-		gu_log("[pluginHost::clonePlugin] unable to add new plugin to stack!\n");
-		return 0;
-	}
-
-	for (int k=0; k<src->getNumParameters(); k++)
-		p->setParameter(k, src->getParameter(k));
-#endif
-	return 1;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f)
 {
 	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, const_cast<Channel*>(ch));

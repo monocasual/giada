@@ -32,6 +32,7 @@
 #include "const.h"
 #include "channelManager.h"
 #include "pluginHost.h"
+#include "pluginManager.h"
 #include "plugin.h"
 #include "kernelMidi.h"
 #include "patch.h"
@@ -116,8 +117,11 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 	midiOutLsolo    = src->midiOutLsolo;
 
 #ifdef WITH_VST
+
 	for (const std::unique_ptr<Plugin>& plugin : src->plugins)
-		pluginHost::clonePlugin(*plugin.get(), pluginHost::StackType::CHANNEL, pluginMutex, this);
+		pluginHost::addPlugin(std::move(pluginManager::makePlugin(*plugin.get())), 
+			pluginHost::StackType::CHANNEL, pluginMutex, this);
+
 #endif
 
 	hasActions = recorderHandler::cloneActions(src->index, index);
