@@ -55,11 +55,12 @@
 #include "storage.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using std::string;
 using std::vector;
+
 
 namespace giada {
 namespace c {
@@ -69,8 +70,7 @@ namespace
 {
 #ifdef WITH_VST
 
-void fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack, 
-	vector<m::patch::plugin_t>& patch)
+void fillPatchGlobalsPlugins_(vector<m::Plugin*> stack, vector<m::patch::plugin_t>& patch)
 {
 	using namespace giada::m;
 

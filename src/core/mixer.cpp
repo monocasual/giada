@@ -54,44 +54,43 @@ namespace
 constexpr Frame TICKSIZE = 38;
 
 float tock[TICKSIZE] = {
-	0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
-	0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
-	0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
-	0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
-	0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
- -0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
- -0.070862, -0.048844
+	 0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
+	 0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
+	 0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
+	 0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
+	 0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
+	-0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
+	-0.070862, -0.048844
 };
 
 float tick[TICKSIZE] = {
-	0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
-	0.747229,  0.711293,	0.635697,  0.524656,  0.384362,  0.222636,
-	0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
- -0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
- -0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
-	0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
-	0.069639,  0.031320
+	 0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
+	 0.747229,  0.711293,  0.635697,  0.524656,  0.384362,  0.222636,
+	 0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
+	-0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
+ 	-0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
+	 0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
+	 0.069639,  0.031320
 };
 
-AudioBuffer vChanInput;   // virtual channel for recording
-AudioBuffer vChanInToOut; // virtual channel in->out bridge (hear what you're playin)
+AudioBuffer vChanInput_;   // virtual channel for recording
+AudioBuffer vChanInToOut_; // virtual channel in->out bridge (hear what you're playin)
 
-Frame tickTracker = 0;
-Frame tockTracker = 0;
-bool tickPlay = false;
-bool tockPlay = false;
+Frame tickTracker_ = 0;
+Frame tockTracker_ = 0;
+bool tickPlay_ = false;
+bool tockPlay_ = false;
 
 /* inputTracker
 Sample position while recording. */
 
-Frame inputTracker = 0;
+Frame inputTracker_ = 0;
 
 
 /* -------------------------------------------------------------------------- */
 
-/* computePeak */
 
-void computePeak(const AudioBuffer& buf, float& peak, Frame frame)
+void computePeak_(const AudioBuffer& buf, float& peak, Frame frame)
 {
 	for (int i=0; i<buf.countChannels(); i++)
 		if (buf[frame][i] > peak)
@@ -104,7 +103,7 @@ void computePeak(const AudioBuffer& buf, float& peak, Frame frame)
 /* lineInRec
 Records from line in. */
 
-void lineInRec(const AudioBuffer& inBuf, unsigned frame)
+void lineInRec_(const AudioBuffer& inBuf, unsigned frame)
 {
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
 		return;
@@ -117,33 +116,33 @@ void lineInRec(const AudioBuffer& inBuf, unsigned frame)
 		return;
 	}
 
-	for (int i=0; i<vChanInput.countChannels(); i++)
-		vChanInput[inputTracker][i] += inBuf[frame][i] * inVol;  // adding: overdub!
+	for (int i=0; i<vChanInput_.countChannels(); i++)
+		vChanInput_[inputTracker_][i] += inBuf[frame][i] * inVol;  // adding: overdub!
 
-	inputTracker++;
-	if (inputTracker >= clock::getFramesInLoop())
-		inputTracker = 0;
+	inputTracker_++;
+	if (inputTracker_ >= clock::getFramesInLoop())
+		inputTracker_ = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* ProcessLineIn
+/* processLineIn
 Computes line in peaks, plus handles "hear what you're playin'" thing. */
 
-void processLineIn(const AudioBuffer& inBuf, unsigned frame)
+void processLineIn_(const AudioBuffer& inBuf, unsigned frame)
 {
 	if (!kernelAudio::isInputEnabled())
 		return;
 
-	computePeak(inBuf, peakIn, frame);
+	computePeak_(inBuf, peakIn, frame);
 
 	/* "hear what you're playing" - process, copy and paste the input buffer onto 
 	the output buffer. */
 
 	if (inToOut)
-		for (int i=0; i<vChanInToOut.countChannels(); i++)
-			vChanInToOut[frame][i] = inBuf[frame][i] * inVol;
+		for (int i=0; i<vChanInToOut_.countChannels(); i++)
+			vChanInToOut_[frame][i] = inBuf[frame][i] * inVol;
 }
 
 
@@ -152,10 +151,10 @@ void processLineIn(const AudioBuffer& inBuf, unsigned frame)
 /* prepareBuffers
 Cleans up every buffer, both in Mixer and in channels. */
 
-void prepareBuffers(AudioBuffer& outBuf)
+void prepareBuffers_(AudioBuffer& outBuf)
 {
 	outBuf.clear();
-	vChanInToOut.clear();
+	vChanInToOut_.clear();
 	for (Channel* channel : channels)
 		channel->prepareBuffer(clock::isRunning());
 }
@@ -166,7 +165,7 @@ void prepareBuffers(AudioBuffer& outBuf)
 /* doQuantize
 Computes quantization on 'rewind' button and all channels. */
 
-void doQuantize(unsigned frame)
+void doQuantize_(unsigned frame)
 {
 	/* Nothing to do if quantizer disabled or a quanto has not passed yet. */
 
@@ -185,24 +184,24 @@ void doQuantize(unsigned frame)
 /* renderMetronome
 Generates metronome when needed and pastes it to the output buffer. */
 
-void renderMetronome(AudioBuffer& outBuf, unsigned frame)
+void renderMetronome_(AudioBuffer& outBuf, unsigned frame)
 {
-	if (tockPlay) {
+	if (tockPlay_) {
 		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[frame][i] += tock[tockTracker];
-		tockTracker++;
-		if (tockTracker >= TICKSIZE-1) {
-			tockPlay    = false;
-			tockTracker = 0;
+			outBuf[frame][i] += tock[tockTracker_];
+		tockTracker_++;
+		if (tockTracker_ >= TICKSIZE-1) {
+			tockPlay_    = false;
+			tockTracker_ = 0;
 		}
 	}
-	if (tickPlay) {
+	if (tickPlay_) {
 		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[frame][i] += tick[tickTracker];
-		tickTracker++;
-		if (tickTracker >= TICKSIZE-1) {
-			tickPlay    = false;
-			tickTracker = 0;
+			outBuf[frame][i] += tick[tickTracker_];
+		tickTracker_++;
+		if (tickTracker_ >= TICKSIZE-1) {
+			tickPlay_    = false;
+			tickTracker_ = 0;
 		}
 	}
 }
@@ -214,14 +213,14 @@ void renderMetronome(AudioBuffer& outBuf, unsigned frame)
 Final processing stage. Take each channel and process it (i.e. copy its
 content to the output buffer). Process plugins too, if any. */
 
-void renderIO(AudioBuffer& outBuf, const AudioBuffer& inBuf)
+void renderIO_(AudioBuffer& outBuf, const AudioBuffer& inBuf)
 {
 	for (Channel* channel : channels)
 		channel->process(outBuf, inBuf, isChannelAudible(channel), clock::isRunning());
 
 #ifdef WITH_VST
 	pluginHost::processStack(outBuf, pluginHost::StackType::MASTER_OUT);
-	pluginHost::processStack(vChanInToOut, pluginHost::StackType::MASTER_IN);
+	pluginHost::processStack(vChanInToOut_, pluginHost::StackType::MASTER_IN);
 #endif
 }
 
@@ -231,7 +230,7 @@ void renderIO(AudioBuffer& outBuf, const AudioBuffer& inBuf)
 /* limitOutput
 Applies a very dumb hard limiter. */
 
-void limitOutput(AudioBuffer& outBuf, unsigned frame)
+void limitOutput_(AudioBuffer& outBuf, unsigned frame)
 {
 	for (int i=0; i<outBuf.countChannels(); i++)
 		if      (outBuf[frame][i] > 1.0f)
@@ -247,12 +246,12 @@ void limitOutput(AudioBuffer& outBuf, unsigned frame)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume. */
 
-void finalizeOutput(AudioBuffer& outBuf, unsigned frame)
+void finalizeOutput_(AudioBuffer& outBuf, unsigned frame)
 {
-	/* Merge vChanInToOut, if enabled. */
+	/* Merge vChanInToOut_, if enabled. */
 
 	if (inToOut)
-		outBuf.copyFrame(frame, vChanInToOut[frame]); 
+		outBuf.copyFrame(frame, vChanInToOut_[frame]); 
 
 	for (int i=0; i<outBuf.countChannels(); i++)
 		outBuf[frame][i] *= outVol; 
@@ -262,15 +261,15 @@ void finalizeOutput(AudioBuffer& outBuf, unsigned frame)
 /* -------------------------------------------------------------------------- */
 
 
-void renderMetronome()
+void renderMetronome_()
 {
 	if (!metronome)
 		return;
 	if (clock::isOnBar() || clock::isOnFirstBeat())
-		tickPlay = true;
+		tickPlay_ = true;
 	else
 	if (clock::isOnBeat())
-		tockPlay = true;
+		tockPlay_ = true;
 }
 }; // {anonymous}
 
@@ -302,11 +301,11 @@ pthread_mutex_t mutex;
 
 void init(Frame framesInSeq, Frame framesInBuffer)
 {
-	/* Allocate virtual input channels. vChanInput has variable size: it depends
+	/* Allocate virtual input channels. vChanInput_ has variable size: it depends
 	on how many frames there are in sequencer. */
 	
-	vChanInput.alloc(framesInSeq, G_MAX_IO_CHANS);
-	vChanInToOut.alloc(framesInBuffer, G_MAX_IO_CHANS);
+	vChanInput_.alloc(framesInSeq, G_MAX_IO_CHANS);
+	vChanInToOut_.alloc(framesInBuffer, G_MAX_IO_CHANS);
 
 	gu_log("[Mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
 		framesInSeq, framesInBuffer);	
@@ -324,7 +323,7 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 
 void allocVirtualInput(Frame frames)
 {
-	vChanInput.alloc(frames, G_MAX_IO_CHANS);
+	vChanInput_.alloc(frames, G_MAX_IO_CHANS);
 }
 
 
@@ -351,12 +350,12 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	peakOut = 0.0f;  // reset peak calculator
 	peakIn  = 0.0f;  // reset peak calculator
 
-	prepareBuffers(out);
+	prepareBuffers_(out);
 
 	// TODO - move lock here
 
 	for (unsigned j=0; j<bufferSize; j++) {
-		processLineIn(in, j);   // TODO - can go outside this loop
+		processLineIn_(in, j);   // TODO - can go outside this loop
 
 		if (clock::isRunning()) {
 			FrameEvents fe;
@@ -371,31 +370,31 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 			for (Channel* channel : channels)
 				channel->parseEvents(fe);
 
-			lineInRec(in, j);   // TODO - can go outside this loop
-			doQuantize(j);
-			renderMetronome();
+			lineInRec_(in, j);   // TODO - can go outside this loop
+			doQuantize_(j);
+			renderMetronome_();
 			clock::incrCurrentFrame();
 			clock::sendMIDIsync();
 		}
 	}
 	
-	renderIO(out, in);
+	renderIO_(out, in);
 
 	// TODO - move unlock here
 
 	/* Post processing. */
 	for (unsigned j=0; j<bufferSize; j++) {
-		finalizeOutput(out, j); 
+		finalizeOutput_(out, j); 
 		if (conf::limitOutput)
-			limitOutput(out, j);
-		computePeak(out, peakOut, j); 
-		renderMetronome(out, j);
+			limitOutput_(out, j);
+		computePeak_(out, peakOut, j); 
+		renderMetronome_(out, j);
 	}
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
 	out.setData(nullptr, 0, 0);
-	in.setData(nullptr, 0, 0);
+	in.setData (nullptr, 0, 0);
 
 	pthread_mutex_unlock(&mutex);
 
@@ -454,9 +453,9 @@ void rewind()
 
 void startInputRec()
 {
-	/* Start inputTracker from the current frame, not the beginning. */
+	/* Start inputTracker_ from the current frame, not the beginning. */
 	recording    = true;
-	inputTracker = clock::getCurrentFrame();
+	inputTracker_ = clock::getCurrentFrame();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -470,8 +469,8 @@ void mergeVirtualInput()
 			continue;
 		SampleChannel* sch = static_cast<SampleChannel*>(ch);
 		if (sch->armed)
-			sch->wave->copyData(vChanInput[0], vChanInput.countFrames());
+			sch->wave->copyData(vChanInput_[0], vChanInput_.countFrames());
 	}
-	vChanInput.clear();
+	vChanInput_.clear();
 }
 }}}; // giada::m::mixer::

@@ -47,15 +47,15 @@ namespace kernelMidi
 {
 namespace
 {
-bool status = false;
-int api = 0;
-RtMidiOut* midiOut = nullptr;
-RtMidiIn*  midiIn  = nullptr;
-unsigned numOutPorts = 0;
-unsigned numInPorts  = 0;
+bool status_ = false;
+int api_ = 0;
+RtMidiOut* midiOut_ = nullptr;
+RtMidiIn*  midiIn_  = nullptr;
+unsigned numOutPorts_ = 0;
+unsigned numInPorts_  = 0;
 
 
-static void callback(double t, std::vector<unsigned char>* msg, void* data)
+static void callback_(double t, vector<unsigned char>* msg, void* data)
 {
 	if (msg->size() < 3) {
 		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
@@ -71,7 +71,7 @@ static void callback(double t, std::vector<unsigned char>* msg, void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void sendMidiLightningInitMsgs()
+void sendMidiLightningInitMsgs_()
 {
 	for(unsigned i=0; i<midimap::initCommands.size(); i++) {
 		midimap::message_t msg = midimap::initCommands.at(i);
@@ -82,7 +82,7 @@ void sendMidiLightningInitMsgs()
 	}
 }
 
-}; // {anonymous}
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
@@ -90,10 +90,10 @@ void sendMidiLightningInitMsgs()
 /* -------------------------------------------------------------------------- */
 
 
-void setApi(int _api)
+void setApi(int api)
 {
-	api = _api;
-	gu_log("[KM] using system 0x%x\n", api);
+	api_ = api;
+	gu_log("[KM] using system 0x%x\n", api_);
 }
 
 
@@ -103,38 +103,38 @@ void setApi(int _api)
 int openOutDevice(int port)
 {
 	try {
-		midiOut = new RtMidiOut((RtMidi::Api) api, "Giada MIDI Output");
-		status = true;
+		midiOut_ = new RtMidiOut((RtMidi::Api) api_, "Giada MIDI Output");
+		status_  = true;
 	}
 	catch (RtMidiError &error) {
 		gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
-		status = false;
+		status_ = false;
 		return 0;
 	}
 
 	/* print output ports */
 
-	numOutPorts = midiOut->getPortCount();
-	gu_log("[KM] %d output MIDI ports found\n", numOutPorts);
-	for (unsigned i=0; i<numOutPorts; i++)
+	numOutPorts_ = midiOut_->getPortCount();
+	gu_log("[KM] %d output MIDI ports found\n", numOutPorts_);
+	for (unsigned i=0; i<numOutPorts_; i++)
 		gu_log("  %d) %s\n", i, getOutPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
-	if (port != -1 && numOutPorts > 0) {
+	if (port != -1 && numOutPorts_ > 0) {
 		try {
-			midiOut->openPort(port, getOutPortName(port));
+			midiOut_->openPort(port, getOutPortName(port));
 			gu_log("[KM] MIDI out port %d open\n", port);
 
 			/* TODO - it shold send midiLightning message only if there is a map loaded
 			and available in midimap:: */
 
-			sendMidiLightningInitMsgs();
+			sendMidiLightningInitMsgs_();
 			return 1;
 		}
-		catch (RtMidiError &error) {
+		catch (RtMidiError& error) {
 			gu_log("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
-			status = false;
+			status_ = false;
 			return 0;
 		}
 	}
@@ -149,35 +149,35 @@ int openOutDevice(int port)
 int openInDevice(int port)
 {
 	try {
-		midiIn = new RtMidiIn((RtMidi::Api) api, "Giada MIDI input");
-		status = true;
+		midiIn_ = new RtMidiIn((RtMidi::Api) api_, "Giada MIDI input");
+		status_ = true;
 	}
 	catch (RtMidiError &error) {
 		gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
-		status = false;
+		status_ = false;
 		return 0;
 	}
 
 	/* print input ports */
 
-	numInPorts = midiIn->getPortCount();
-	gu_log("[KM] %d input MIDI ports found\n", numInPorts);
-	for (unsigned i=0; i<numInPorts; i++)
+	numInPorts_ = midiIn_->getPortCount();
+	gu_log("[KM] %d input MIDI ports found\n", numInPorts_);
+	for (unsigned i=0; i<numInPorts_; i++)
 		gu_log("  %d) %s\n", i, getInPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
-	if (port != -1 && numInPorts > 0) {
+	if (port != -1 && numInPorts_ > 0) {
 		try {
-			midiIn->openPort(port, getInPortName(port));
-			midiIn->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
+			midiIn_->openPort(port, getInPortName(port));
+			midiIn_->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
 			gu_log("[KM] MIDI in port %d open\n", port);
-			midiIn->setCallback(&callback);
+			midiIn_->setCallback(&callback_);
 			return 1;
 		}
-		catch (RtMidiError &error) {
+		catch (RtMidiError& error) {
 			gu_log("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
-			status = false;
+			status_ = false;
 			return 0;
 		}
 	}
@@ -205,13 +205,13 @@ bool hasAPI(int API)
 
 string getOutPortName(unsigned p)
 {
-	try { return midiOut->getPortName(p); }
+	try { return midiOut_->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
 }
 
 string getInPortName(unsigned p)
 {
-	try { return midiIn->getPortName(p); }
+	try { return midiIn_->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
 }
 
@@ -221,14 +221,14 @@ string getInPortName(unsigned p)
 
 void send(uint32_t data)
 {
-	if (!status)
+	if (!status_)
 		return;
 
 	vector<unsigned char> msg(1, getB1(data));
 	msg.push_back(getB2(data));
 	msg.push_back(getB3(data));
 
-	midiOut->sendMessage(&msg);
+	midiOut_->sendMessage(&msg);
 	gu_log("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
@@ -238,7 +238,7 @@ void send(uint32_t data)
 
 void send(int b1, int b2, int b3)
 {
-	if (!status)
+	if (!status_)
 		return;
 
 	vector<unsigned char> msg(1, b1);
@@ -248,7 +248,7 @@ void send(int b1, int b2, int b3)
 	if (b3 != -1)
 		msg.push_back(b3);
 
-	midiOut->sendMessage(&msg);
+	midiOut_->sendMessage(&msg);
 	//gu_log("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
@@ -283,17 +283,9 @@ void sendMidiLightning(uint32_t learn, const midimap::message_t& msg)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned countInPorts()
-{
-	return numInPorts;
-}
-
-
-unsigned countOutPorts()
-{
-	return numOutPorts;
-}
-
+unsigned countInPorts()  { return numInPorts_; }
+unsigned countOutPorts() { return numOutPorts_; }
+bool getStatus()         { return status_; }
 
 /* -------------------------------------------------------------------------- */
 
@@ -316,15 +308,6 @@ uint32_t setChannel(uint32_t iValue, int channel)
 {
 	uint32_t chanMask = 0xF << 24;
 	return (iValue & (~chanMask)) | (channel << 24);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool getStatus()
-{
-	return status;
 }
 
 }}}; // giada::m::kernelMidi::
