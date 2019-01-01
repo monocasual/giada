@@ -97,6 +97,14 @@ void computePeak_(const AudioBuffer& buf, float& peak, Frame frame)
 			peak = buf[frame][i];
 }
 
+void computePeak_(const AudioBuffer& buf, float& peak)
+{
+	for (int i=0; i<buf.countFrames(); i++)
+		for (int j=0; j<buf.countChannels(); j++)
+			if (buf[i][j] > peak)
+				peak = buf[i][j];
+}
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -130,19 +138,20 @@ void lineInRec_(const AudioBuffer& inBuf, unsigned frame)
 /* processLineIn
 Computes line in peaks, plus handles "hear what you're playin'" thing. */
 
-void processLineIn_(const AudioBuffer& inBuf, unsigned frame)
+void processLineIn_(const AudioBuffer& inBuf)
 {
 	if (!kernelAudio::isInputEnabled())
 		return;
 
-	computePeak_(inBuf, peakIn, frame);
+	computePeak_(inBuf, peakIn);
 
 	/* "hear what you're playing" - process, copy and paste the input buffer onto 
 	the output buffer. */
 
 	if (inToOut)
-		for (int i=0; i<vChanInToOut_.countChannels(); i++)
-			vChanInToOut_[frame][i] = inBuf[frame][i] * inVol;
+		for (int i=0; i<vChanInToOut_.countFrames(); i++)
+			for (int j=0; j<vChanInToOut_.countChannels(); j++)
+				vChanInToOut_[i][j] = inBuf[i][j] * inVol;
 }
 
 
@@ -251,7 +260,8 @@ void finalizeOutput_(AudioBuffer& outBuf, unsigned frame)
 	/* Merge vChanInToOut_, if enabled. */
 
 	if (inToOut)
-		outBuf.copyFrame(frame, vChanInToOut_[frame]); 
+		for (int i=0; i<outBuf.countChannels(); i++)
+			outBuf[frame][i] += vChanInToOut_[frame][i];
 
 	for (int i=0; i<outBuf.countChannels(); i++)
 		outBuf[frame][i] *= outVol; 
@@ -349,13 +359,14 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	peakIn  = 0.0f;  // reset peak calculator
 
 	prepareBuffers_(out);
+	processLineIn_(in);
 
 	pthread_mutex_lock(&mutex);
 
-	for (unsigned j=0; j<bufferSize; j++) {
-		processLineIn_(in, j);   // TODO - can go outside this loop
+	if (clock::isRunning()) {
 
-		if (clock::isRunning()) {
+		for (unsigned j=0; j<bufferSize; j++) {
+		
 			FrameEvents fe;
 			fe.frameLocal   = j;
 			fe.frameGlobal  = clock::getCurrentFrame();
@@ -380,7 +391,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	pthread_mutex_unlock(&mutex);
 
-	/* Post processing. */
+	/* Post processing. TODO no need to loop on each frame */
 	for (unsigned j=0; j<bufferSize; j++) {
 		finalizeOutput_(out, j); 
 		if (conf::limitOutput)
