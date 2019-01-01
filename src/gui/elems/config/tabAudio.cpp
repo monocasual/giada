@@ -190,7 +190,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(conf::rsmpQuality);
 
-	delayComp->value(gu_iToString(conf::delayComp).c_str());
+	delayComp->value();
 	delayComp->type(FL_INT_INPUT);
 	delayComp->maximum_size(5);
 
@@ -499,14 +499,12 @@ void geTabAudio::save()
 
 	int bufsize = atoi(buffersize->text());
 	if (bufsize % 2 != 0) bufsize++;
-	if (bufsize < 8)		  bufsize = 8;
-	if (bufsize > 8192)		bufsize = 8192;
+	if (bufsize < 8)      bufsize = 8;
+	if (bufsize > 8192)   bufsize = 8192;
 	conf::buffersize = bufsize;
 
 	const Fl_Menu_Item *i = nullptr;
 	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
 	if (i)
 		conf::samplerate = atoi(i->label());
-
-	conf::delayComp = atoi(delayComp->value());
 }

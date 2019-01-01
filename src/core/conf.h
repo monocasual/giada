@@ -56,7 +56,6 @@ extern int  channelsOut;
 extern int  channelsIn;
 extern int  samplerate;
 extern int  buffersize;
-extern int  delayComp;
 extern bool limitOutput;
 extern int  rsmpQuality;
 

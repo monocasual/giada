@@ -116,16 +116,8 @@ void lineInRec_(const AudioBuffer& inBuf, unsigned frame)
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
 		return;
 
-	/* Delay comp: wait until waitRec reaches delayComp. WaitRec returns to 0 in 
-	mixerHandler, as soon as the recording ends. */
-
-	if (waitRec < conf::delayComp) {
-		waitRec++;
-		return;
-	}
-
-	for (int i=0; i<vChanInput_.countChannels(); i++)
-		vChanInput_[inputTracker_][i] += inBuf[frame][i] * inVol;  // adding: overdub!
+	for (int j=0; j<vChanInput_.countChannels(); j++)
+		vChanInput_[inputTracker_][j] += inBuf[frame][j] * inVol;  // adding: overdub!
 
 	inputTracker_++;
 	if (inputTracker_ >= clock::getFramesInLoop())
