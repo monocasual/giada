@@ -40,11 +40,11 @@
 #include "mainTimer.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada::m;
+using namespace giada;
 
 
 geMainTimer::geMainTimer(int x, int y)
@@ -53,16 +53,16 @@ geMainTimer::geMainTimer(int x, int y)
 	begin();
 
 	quantizer  = new geChoice(x, y, 40, 20, "", false);
-	bpm        = new geButton (quantizer->x()+quantizer->w()+4,  y, 40, 20);
-	meter      = new geButton (bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
-	multiplier = new geButton (meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
-	divider    = new geButton (multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
+	bpm        = new geButton(quantizer->x()+quantizer->w()+4,  y, 40, 20);
+	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
+	multiplier = new geButton(meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
+	divider    = new geButton(multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
 
 	end();
 
 	resizable(nullptr);   // don't resize any widget
 
-	bpm->copy_label(gu_fToString(clock::getBpm(), 1).c_str());
+	bpm->copy_label(gu_fToString(m::clock::getBpm(), 1).c_str());
 	bpm->callback(cb_bpm, (void*)this);
 
 	meter->callback(cb_meter, (void*)this);
@@ -115,7 +115,7 @@ void geMainTimer::cb_meter()
 
 void geMainTimer::cb_quantizer()
 {
-	glue_quantize(quantizer->value());
+	c::main::quantize(quantizer->value());
 }
 
 
@@ -124,7 +124,7 @@ void geMainTimer::cb_quantizer()
 
 void geMainTimer::cb_multiplier()
 {
-	glue_beatsMultiply();
+	c::main::beatsMultiply();
 }
 
 
@@ -133,7 +133,7 @@ void geMainTimer::cb_multiplier()
 
 void geMainTimer::cb_divider()
 {
-	glue_beatsDivide();
+	c::main::beatsDivide();
 }
 
 

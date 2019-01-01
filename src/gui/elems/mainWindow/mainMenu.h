@@ -39,20 +39,19 @@ class geMainMenu : public Fl_Group
 {
 private:
 
-  geButton *file;
-  geButton *edit;
-  geButton *config;
-  geButton *about;
+  geButton* file;
+  geButton* edit;
+  geButton* config;
+  geButton* about;
 
-	static void cb_about (Fl_Widget *v, void *p);
-	static void cb_config(Fl_Widget *v, void *p);
-	static void cb_file  (Fl_Widget *v, void *p);
-	static void cb_edit  (Fl_Widget *v, void *p);
-
-	inline void __cb_about ();
-	inline void __cb_config();
-	inline void __cb_file  ();
-	inline void __cb_edit  ();
+	static void cb_about (Fl_Widget* v, void* p);
+	static void cb_config(Fl_Widget* v, void* p);
+	static void cb_file  (Fl_Widget* v, void* p);
+	static void cb_edit  (Fl_Widget* v, void* p);
+	void cb_about ();
+	void cb_config();
+	void cb_file  ();
+	void cb_edit  ();
 
 public:
 

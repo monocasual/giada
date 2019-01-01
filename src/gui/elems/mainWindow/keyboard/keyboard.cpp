@@ -241,13 +241,13 @@ int geKeyboard::handle(int e)
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					io::startStopInputRec(false);  // not from GUI
+					io::toggleInputRec(false);  // not from GUI
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == FL_Enter && !enterPressed) {
 					enterPressed = true;
-					io::startStopActionRec(false); // not from GUI
+					io::toggleActionRec(false); // not from GUI
 					ret = 1;
 					break;
 				}

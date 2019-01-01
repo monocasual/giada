@@ -91,7 +91,7 @@ void keyRelease(m::Channel* ch, bool ctrl, bool shift)
 /* -------------------------------------------------------------------------- */
 
 
-void startStopActionRec(bool gui)
+void toggleActionRec(bool gui)
 {
 	m::recorder::isActive() ? stopActionRec(gui) : startActionRec(gui);
 }
@@ -147,7 +147,7 @@ void stopActionRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void startStopInputRec(bool gui)
+void toggleInputRec(bool gui)
 {
 	if (m::mixer::recording)
 		stopInputRec(gui);
@@ -183,8 +183,8 @@ int startInputRec(bool gui)
 		G_MainWin->mainTimer->setLock(true);
 	Fl::unlock();
 
-	/* Update sample name inside sample channels' main button. This is useless for
-	midi channel, but let's do it anyway. */
+	/* Update sample name inside sample channels' main button. This is useless 
+	for MIDI channels, but let's do it anyway. */
 
 	for (Channel* ch : m::mixer::channels)
 		ch->guiChannel->update();

@@ -39,7 +39,6 @@
 namespace giada {
 namespace m
 {
-class Plugin;
 class Channel;
 }
 namespace c {
@@ -57,17 +56,17 @@ void keyRelease(m::Channel* ch, bool ctrl, bool shift);
 Handles the action recording. If gui == true the signal comes from an user
 interaction, otherwise it's a MIDI/Jack/external signal. */
 
-void startStopActionRec(bool gui=true);
-void startActionRec(bool gui=true);
-void stopActionRec(bool gui=true);
+void toggleActionRec(bool gui=true);
+void startActionRec (bool gui=true);
+void stopActionRec  (bool gui=true);
 
 /* start/stopInputRec
 Handles the input recording (take). If gui == true the signal comes from an
 internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void startStopInputRec(bool gui=true);
-int  startInputRec    (bool gui=true);
-int  stopInputRec     (bool gui=true);
+void toggleInputRec(bool gui=true);
+int  startInputRec (bool gui=true);
+int  stopInputRec  (bool gui=true);
 
 }}} // giada::c::io::
 

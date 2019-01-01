@@ -39,30 +39,30 @@
 #include "gd_mainWindow.h"
 
 
-extern gdMainWindow *mainWin;
+extern gdMainWindow* mainWin;
 
 
 using std::vector;
 using std::string;
-using namespace giada::m;
+using namespace giada;
 
 
 gdBpmInput::gdBpmInput(const char* label)
 : gdWindow(144, 36, "Bpm")
 {
-	if (conf::bpmX)
-		resize(conf::bpmX, conf::bpmY, w(), h());
+	if (m::conf::bpmX)
+		resize(m::conf::bpmX, m::conf::bpmY, w(), h());
 
 	set_modal();
 
 	input_a = new geInput(8,  8, 30, G_GUI_UNIT);
 	input_b = new geInput(42, 8, 20, G_GUI_UNIT);
-	ok 		  = new geButton(66, 8, 70, G_GUI_UNIT, "Ok");
+	ok 		= new geButton(66, 8, 70, G_GUI_UNIT, "Ok");
 	end();
 
 	input_a->maximum_size(3);
 	input_a->type(FL_INT_INPUT);
-	input_a->value(gu_fToString(clock::getBpm(), 0).c_str());
+	input_a->value(gu_fToString(m::clock::getBpm(), 0).c_str());
 
 	/* Use the decimal value from the string label. */
 
@@ -86,8 +86,8 @@ gdBpmInput::gdBpmInput(const char* label)
 
 gdBpmInput::~gdBpmInput()
 {
-	conf::bpmX = x();
-	conf::bpmY = y();
+	m::conf::bpmX = x();
+	m::conf::bpmY = y();
 }
 
 
@@ -104,6 +104,6 @@ void gdBpmInput::cb_update()
 {
 	if (strcmp(input_a->value(), "") == 0)
 		return;
-	glue_setBpm(input_a->value(), input_b->value());
+	c::main::setBpm(input_a->value(), input_b->value());
 	do_callback();
 }

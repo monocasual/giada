@@ -181,11 +181,11 @@ void processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == conf::midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		c::io::startStopActionRec(false);
+		c::io::toggleActionRec(false);
 	}
 	else if (pure == conf::midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
-		c::io::startStopInputRec(false);
+		c::io::toggleInputRec(false);
 	}
 	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
@@ -195,21 +195,21 @@ void processMaster(const MidiEvent& midiEvent)
 		float vf = midiEvent.getVelocity() / 127.0f;
 		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		glue_setInVol(vf, false);
+		c::main::setInVol(vf, false);
 	}
 	else if (pure == conf::midiInVolumeOut) {
 		float vf = midiEvent.getVelocity() / 127.0f;
 		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		glue_setOutVol(vf, false);
+		c::main::setOutVol(vf, false);
 	}
 	else if (pure == conf::midiInBeatDouble) {
 		gu_log("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
-		glue_beatsMultiply();
+		c::main::beatsMultiply();
 	}
 	else if (pure == conf::midiInBeatHalf) {
 		gu_log("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
-		glue_beatsDivide();
+		c::main::beatsDivide();
 	}
 }
 

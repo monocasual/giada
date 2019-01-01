@@ -43,14 +43,14 @@
 extern gdMainWindow* mainWin;
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 gdBeatsInput::gdBeatsInput()
 	: gdWindow(180, 36, "Beats")
 {
-	if (conf::beatsX)
-		resize(conf::beatsX, conf::beatsY, w(), h());
+	if (m::conf::beatsX)
+		resize(m::conf::beatsX, m::conf::beatsY, w(), h());
 
 	set_modal();
 
@@ -60,11 +60,11 @@ gdBeatsInput::gdBeatsInput()
 	end();
 
 	beats->maximum_size(2);
-	beats->value(gu_iToString(clock::getBeats()).c_str());
+	beats->value(gu_iToString(m::clock::getBeats()).c_str());
 	beats->type(FL_INT_INPUT);
 	
 	bars->maximum_size(2);
-	bars->value(gu_iToString(clock::getBars()).c_str());
+	bars->value(gu_iToString(m::clock::getBars()).c_str());
 	bars->type(FL_INT_INPUT);
 	
 	ok->shortcut(FL_Enter);
@@ -81,8 +81,8 @@ gdBeatsInput::gdBeatsInput()
 
 gdBeatsInput::~gdBeatsInput()
 {
-	conf::beatsX = x();
-	conf::beatsY = y();
+	m::conf::beatsX = x();
+	m::conf::beatsY = y();
 }
 
 
@@ -99,6 +99,6 @@ void gdBeatsInput::cb_update()
 {
 	if (!strcmp(beats->value(), "") || !strcmp(bars->value(), ""))
 		return;
-	glue_setBeats(atoi(beats->value()), atoi(bars->value()));
+	c::main::setBeats(atoi(beats->value()), atoi(bars->value()));
 	do_callback();
 }

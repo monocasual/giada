@@ -42,30 +42,30 @@ class geMainIO : public Fl_Group
 {
 private:
 
-	geSoundMeter *outMeter;
-	geSoundMeter *inMeter;
-	geDial        *outVol;
-	geDial        *inVol;
+	geSoundMeter* outMeter;
+	geSoundMeter* inMeter;
+	geDial*       outVol;
+	geDial*       inVol;
 #ifdef WITH_VST
-  geStatusButton *masterFxOut;
-  geStatusButton *masterFxIn;
-  geButton       *inToOut;
+  geStatusButton* masterFxOut;
+  geStatusButton* masterFxIn;
+  geButton*       inToOut;
 #endif
 
-	static void cb_outVol     (Fl_Widget *v, void *p);
-	static void cb_inVol      (Fl_Widget *v, void *p);
+	static void cb_outVol     (Fl_Widget* v, void* p);
+	static void cb_inVol      (Fl_Widget* v, void* p);
 #ifdef WITH_VST
-	static void cb_masterFxOut(Fl_Widget *v, void *p);
-	static void cb_masterFxIn (Fl_Widget *v, void *p);
-	static void cb_inToOut    (Fl_Widget *v, void *p);
+	static void cb_masterFxOut(Fl_Widget* v, void* p);
+	static void cb_masterFxIn (Fl_Widget* v, void* p);
+	static void cb_inToOut    (Fl_Widget* v, void* p);
 #endif
 
-	inline void __cb_outVol     ();
-	inline void __cb_inVol      ();
+	void cb_outVol     ();
+	void cb_inVol      ();
 #ifdef WITH_VST
-	inline void __cb_masterFxOut();
-	inline void __cb_masterFxIn ();
-	inline void __cb_inToOut    ();
+	void cb_masterFxOut();
+	void cb_masterFxIn ();
+	void cb_inToOut    ();
 #endif
 
 public:

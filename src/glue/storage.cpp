@@ -269,7 +269,7 @@ void glue_loadPatch(void* data)
 	/* Reset the system. False(1): don't update the gui right now. False(2): do 
 	not create empty columns. */
 
-	glue_resetToInitState(false, false);
+	c::main::resetToInitState(false, false);
 
 	browser->setStatusBar(0.1f);
 

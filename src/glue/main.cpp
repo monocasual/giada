@@ -56,7 +56,10 @@ extern gdMainWindow *G_MainWin;
 using std::string;
 using namespace giada::m;
 
-
+namespace giada {
+namespace c {
+namespace main
+{
 namespace
 {
 void setBpm_(float f, string s)
@@ -89,7 +92,7 @@ void setBpm_(float f, string s)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBpm(const char* v1, const char* v2)
+void setBpm(const char* v1, const char* v2)
 {
 	/* Never change this stuff while recording audio */
 
@@ -116,7 +119,7 @@ void glue_setBpm(const char* v1, const char* v2)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBpm(float f)
+void setBpm(float f)
 {
 	/* Never change this stuff while recording audio */
 
@@ -134,7 +137,7 @@ void glue_setBpm(float f)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setBeats(int beats, int bars)
+void setBeats(int beats, int bars)
 {
 	/* Never change this stuff while recording audio */
 
@@ -154,7 +157,7 @@ void glue_setBeats(int beats, int bars)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_quantize(int val)
+void quantize(int val)
 {
 	clock::setQuantize(val);
 }
@@ -163,7 +166,7 @@ void glue_quantize(int val)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setOutVol(float v, bool gui)
+void setOutVol(float v, bool gui)
 {
 	mixer::outVol = v;
 	if (!gui) {
@@ -177,7 +180,7 @@ void glue_setOutVol(float v, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_setInVol(float v, bool gui)
+void setInVol(float v, bool gui)
 {
 	mixer::inVol = v;
 	if (!gui) {
@@ -191,7 +194,7 @@ void glue_setInVol(float v, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearAllSamples()
+void clearAllSamples()
 {
 	clock::stop();
 	for (Channel* ch : mixer::channels) {
@@ -206,7 +209,7 @@ void glue_clearAllSamples()
 /* -------------------------------------------------------------------------- */
 
 
-void glue_clearAllActions()
+void clearAllActions()
 {
 	recorder::clearAll();
 	for (Channel* ch : mixer::channels)
@@ -218,7 +221,7 @@ void glue_clearAllActions()
 /* -------------------------------------------------------------------------- */
 
 
-void glue_resetToInitState(bool resetGui, bool createColumns)
+void resetToInitState(bool resetGui, bool createColumns)
 {
 	gu_closeAllSubwindows();
 	mixer::close();
@@ -245,12 +248,14 @@ void glue_resetToInitState(bool resetGui, bool createColumns)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_beatsMultiply()
+void beatsMultiply()
 {
-	glue_setBeats(clock::getBeats() * 2, clock::getBars());
+	setBeats(clock::getBeats() * 2, clock::getBars());
 }
 
-void glue_beatsDivide()
+void beatsDivide()
 {
-	glue_setBeats(clock::getBeats() / 2, clock::getBars());
+	setBeats(clock::getBeats() / 2, clock::getBars());
 }
+
+}}} // giada::c::main::

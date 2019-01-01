@@ -52,7 +52,7 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 geMainMenu::geMainMenu(int x, int y)
@@ -79,16 +79,16 @@ geMainMenu::geMainMenu(int x, int y)
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::cb_about (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_about(); }
-void geMainMenu::cb_config(Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_config(); }
-void geMainMenu::cb_file  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_file(); }
-void geMainMenu::cb_edit  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->__cb_edit(); }
+void geMainMenu::cb_about (Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_about(); }
+void geMainMenu::cb_config(Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_config(); }
+void geMainMenu::cb_file  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_file(); }
+void geMainMenu::cb_edit  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_edit(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::__cb_about()
+void geMainMenu::cb_about()
 {
 	gu_openSubWindow(G_MainWin, new gdAbout(), WID_ABOUT);
 }
@@ -97,7 +97,7 @@ void geMainMenu::__cb_about()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::__cb_config()
+void geMainMenu::cb_config()
 {
 	gu_openSubWindow(G_MainWin, new gdConfig(400, 370), WID_CONFIG);
 }
@@ -106,8 +106,10 @@ void geMainMenu::__cb_config()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::__cb_file()
+void geMainMenu::cb_file()
 {
+	using namespace giada::m;
+
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
 	Fl_Menu_Item menu[] = {
@@ -128,7 +130,7 @@ void geMainMenu::__cb_file()
 	if (!m) return;
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		gdWindow *childWin = new gdBrowserLoad(conf::browserX, conf::browserY,
+		gdWindow* childWin = new gdBrowserLoad(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Load patch or project",
 				conf::patchPath, glue_loadPatch, nullptr);
 		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
@@ -161,7 +163,7 @@ void geMainMenu::__cb_file()
 /* -------------------------------------------------------------------------- */
 
 
-void geMainMenu::__cb_edit()
+void geMainMenu::cb_edit()
 {
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
@@ -177,13 +179,13 @@ void geMainMenu::__cb_edit()
 
 	menu[1].deactivate();
 
-	for (const Channel* ch : mixer::channels)
+	for (const m::Channel* ch : m::mixer::channels)
 		if (ch->hasActions) {
 			menu[1].activate();
 			break;
 		}
 
-	for (const Channel* ch : mixer::channels)
+	for (const m::Channel* ch : m::mixer::channels)
 		if (ch->hasData()) {
 			menu[0].activate();
 			break;
@@ -202,20 +204,20 @@ void geMainMenu::__cb_edit()
 		if (!gdConfirmWin("Warning", "Clear all samples: are you sure?"))
 			return;
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
-		glue_clearAllSamples();
+		c::main::clearAllSamples();
 		return;
 	}
 	if (strcmp(m->label(), "Clear all actions") == 0) {
 		if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 			return;
 		G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-		glue_clearAllActions();
+		c::main::clearAllActions();
 		return;
 	}
 	if (strcmp(m->label(), "Reset to init state") == 0) {
 		if (!gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 			return;
-		glue_resetToInitState();
+		c::main::resetToInitState();
 		return;
 	}
 	if (strcmp(m->label(), "Remove empty columns") == 0) {

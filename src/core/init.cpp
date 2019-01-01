@@ -159,9 +159,9 @@ void initGUI_(int argc, char** argv)
 
 	G_MainWin = new gdMainWindow(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv);
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
-    conf::mainWindowH);
+		conf::mainWindowH);
 
-  gu_updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
+	gu_updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
 
 	if (!kernelAudio::getStatus())
 		gdAlert("Your soundcard isn't configured correctly.\n"
@@ -216,7 +216,7 @@ void shutdownGUI_()
 void startup(int argc, char** argv)
 {
 	time_t t;
-  time (&t);
+	time (&t);
 	gu_log("[init] Giada " G_VERSION_STR " - %s", ctime(&t));
 
 	initConf_();

@@ -99,8 +99,7 @@ void geMainTransport::cb_play()
 
 void geMainTransport::cb_recAction()
 {
-	using namespace giada::c::io;
-	startStopActionRec(true);
+	c::io::toggleActionRec(true);
 }
 
 
@@ -109,8 +108,7 @@ void geMainTransport::cb_recAction()
 
 void geMainTransport::cb_recInput()
 {
-	using namespace giada::c::io;
-	startStopInputRec(true);
+	c::io::toggleInputRec(true);
 }
 
 

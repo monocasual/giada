@@ -349,7 +349,7 @@ void recvJackSync()
 	}
 	if (jackState.bpm != jackStatePrev.bpm)
 		if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
-			glue_setBpm(jackState.bpm);
+			c::main::setBpm(jackState.bpm);
 
 	if (jackState.frame == 0 && jackState.frame != jackStatePrev.frame)
 		c::transport::rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
