@@ -60,13 +60,17 @@ extern gdMainWindow *G_MainWin;
 
 using std::string;
 using std::vector;
-using namespace giada;
 
-
+namespace giada {
+namespace c {
+namespace storage
+{
+namespace
+{
 #ifdef WITH_VST
 
-static void glue_fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack, 
-	vector<m::patch::plugin_t>* patch)
+void fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack, 
+	vector<m::patch::plugin_t>& patch)
 {
 	using namespace giada::m;
 
@@ -76,7 +80,7 @@ static void glue_fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack,
 		ppl.bypass = plugin->isBypassed();
 		for (int k=0; k<plugin->getNumParameters(); k++)
 			ppl.params.push_back(plugin->getParameter(k));
-		patch->push_back(ppl);
+		patch.push_back(ppl);
 	}
 }
 
@@ -86,7 +90,7 @@ static void glue_fillPatchGlobalsPlugins_(std::vector<m::Plugin*> stack,
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchColumns_()
+void fillPatchColumns_()
 {
 	using namespace giada::m;
 
@@ -112,20 +116,19 @@ static void glue_fillPatchColumns_()
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchChannels_(bool isProject)
+void fillPatchChannels_(bool isProject)
 {
 	using namespace giada::m;
 
-	for (unsigned i=0; i<mixer::channels.size(); i++) {
+	for (unsigned i=0; i<mixer::channels.size(); i++)
 		mixer::channels.at(i)->writePatch(i, isProject);
-	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-static void glue_fillPatchGlobals_(const string &name)
+void fillPatchGlobals_(const string& name)
 {
 	using namespace giada::m;
 
@@ -144,10 +147,10 @@ static void glue_fillPatchGlobals_(const string &name)
 
 #ifdef WITH_VST
 
-	glue_fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN),
-			&patch::masterInPlugins);
-	glue_fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT),
-			&patch::masterOutPlugins);
+	fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN),
+			patch::masterInPlugins);
+	fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT),
+			patch::masterOutPlugins);
 
 #endif
 }
@@ -156,20 +159,19 @@ static void glue_fillPatchGlobals_(const string &name)
 /* -------------------------------------------------------------------------- */
 
 
-static bool glue_savePatch_(const string &fullPath, const string &name,
-		bool isProject)
+bool savePatch_(const string& fullPath, const string& name, bool isProject)
 {
 	using namespace giada::m;
 
 	patch::init();
 
-	glue_fillPatchGlobals_(name);
-	glue_fillPatchChannels_(isProject);
-	glue_fillPatchColumns_();
+	fillPatchGlobals_(name);
+	fillPatchChannels_(isProject);
+	fillPatchColumns_();
 
 	if (patch::write(fullPath)) {
 		gu_updateMainWinLabel(name);
-		gu_log("[glue_savePatch] patch saved as %s\n", fullPath.c_str());
+		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
 	}
 	return false;
@@ -179,13 +181,13 @@ static bool glue_savePatch_(const string &fullPath, const string &name,
 /* -------------------------------------------------------------------------- */
 
 
-static string glue_makeSamplePath_(const string& base, const Wave* w, int k)
+string makeSamplePath_(const string& base, const Wave& w, int k)
 {
-	return base + G_SLASH + w->getBasename(false) + "-" + gu_iToString(k) + "." +  w->getExtension();
+	return base + G_SLASH + w.getBasename(false) + "-" + gu_iToString(k) + "." +  w.getExtension();
 } 
 
 
-static string glue_makeUniqueSamplePath_(const string& base, const m::SampleChannel* ch)
+string makeUniqueSamplePath_(const string& base, const m::SampleChannel* ch)
 {
 	using namespace giada::m;
 
@@ -194,17 +196,20 @@ static string glue_makeUniqueSamplePath_(const string& base, const m::SampleChan
 		return path;
 
 	int k = 0;
-	path = glue_makeSamplePath_(base, ch->wave.get(), k);
+	path = makeSamplePath_(base, *ch->wave.get(), k);
 	while (!mh::uniqueSamplePath(ch, path))
-		path = glue_makeSamplePath_(base, ch->wave.get(), k++);
+		path = makeSamplePath_(base, *ch->wave.get(), k++);
 	return path;
 }
+} // {anonymous}
 
 
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
-void glue_savePatch(void* data)
+void savePatch(void* data)
 {
 	gdBrowserSave* browser = (gdBrowserSave*) data;
 	string name            = gu_stripExt(browser->getName());
@@ -219,7 +224,7 @@ void glue_savePatch(void* data)
 		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (glue_savePatch_(fullPath, name, false)) {  // false == not a project
+	if (savePatch_(fullPath, name, false)) {  // false == not a project
 		m::conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
@@ -231,7 +236,7 @@ void glue_savePatch(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_loadPatch(void* data)
+void loadPatch(void* data)
 {
 	using namespace giada::m;
 
@@ -324,7 +329,7 @@ void glue_loadPatch(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_saveProject(void* data)
+void saveProject(void* data)
 {
 	using namespace giada::m;
 
@@ -342,14 +347,14 @@ void glue_saveProject(void* data)
 		return;
 
 	if (!gu_dirExists(fullPath) && !gu_mkdir(fullPath)) {
-		gu_log("[glue_saveProject] Unable to make project directory!\n");
+		gu_log("[saveProject] Unable to make project directory!\n");
 		return;
 	}
 
-	gu_log("[glue_saveProject] Project dir created: %s\n", fullPath.c_str());
+	gu_log("[saveProject] Project dir created: %s\n", fullPath.c_str());
 
 	/* Copy all samples inside the folder. Takes and logical ones are saved via 
-	glue_saveSample(). Update the new sample path: everything now comes from the 
+	saveSample(). Update the new sample path: everything now comes from the 
 	project folder (folderPath). Also make sure the file path is unique inside the 
 	project folder.*/
 
@@ -363,15 +368,15 @@ void glue_saveProject(void* data)
 		if (sch->wave == nullptr)
 			continue;
 
-		sch->wave->setPath(glue_makeUniqueSamplePath_(fullPath, sch));
+		sch->wave->setPath(makeUniqueSamplePath_(fullPath, sch));
 
-		gu_log("[glue_saveProject] Save file to %s\n", sch->wave->getPath().c_str());
+		gu_log("[saveProject] Save file to %s\n", sch->wave->getPath().c_str());
 
 		waveManager::save(sch->wave.get(), sch->wave->getPath()); // TODO - error checking	
 	}
 
 	string gptcPath = fullPath + G_SLASH + name + ".gptc";
-	if (glue_savePatch_(gptcPath, name, true)) // true == it's a project
+	if (savePatch_(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
 		gdAlert("Unable to save the project!");
@@ -381,7 +386,7 @@ void glue_saveProject(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_loadSample(void* data)
+void loadSample(void* data)
 {
 	gdBrowserLoad* browser = (gdBrowserLoad*) data;
 	string fullPath        = browser->getSelectedItem();
@@ -405,7 +410,7 @@ void glue_loadSample(void* data)
 /* -------------------------------------------------------------------------- */
 
 
-void glue_saveSample(void* data)
+void saveSample(void* data)
 {
 	using namespace giada::m;
 
@@ -429,10 +434,12 @@ void glue_saveSample(void* data)
 	SampleChannel* ch = static_cast<SampleChannel*>(browser->getChannel());
 
 	if (waveManager::save(ch->wave.get(), filePath)) {
-		gu_log("[glue_saveSample] sample saved to %s\n", filePath.c_str());
+		gu_log("[saveSample] sample saved to %s\n", filePath.c_str());
 		conf::samplePath = gu_dirname(filePath);
 		browser->do_callback();
 	}
 	else
 		gdAlert("Unable to save this sample!");
 }
+
+}}} // giada::c::storage::

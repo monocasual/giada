@@ -29,11 +29,15 @@
 #define G_GLUE_STORAGE_H
 
 
-void glue_loadPatch  (void* data);
-void glue_savePatch  (void* data);
-void glue_saveProject(void* data);
-void glue_saveSample (void* data);
-void glue_loadSample (void* data);
-
+namespace giada {
+namespace c {
+namespace storage
+{
+void loadPatch  (void* data);
+void savePatch  (void* data);
+void saveProject(void* data);
+void saveSample (void* data);
+void loadSample (void* data);
+}}} // giada::c::storage::
 
 #endif
