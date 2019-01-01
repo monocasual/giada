@@ -16,6 +16,7 @@
 - Initial support for plug-ins with mono I/O buses
 - PluginHost refactoring
 - Smart pointers for Wave and Plugin objects
+- Remove old and deprecated input delay compensation
 - Fix memory leak when replacing samples in a Sample Channel
 - Fix plug-ins ordering method when re-opening Giada
 

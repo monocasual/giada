@@ -90,13 +90,6 @@ Frame inputTracker_ = 0;
 /* -------------------------------------------------------------------------- */
 
 
-void computePeak_(const AudioBuffer& buf, float& peak, Frame frame)
-{
-	for (int i=0; i<buf.countChannels(); i++)
-		if (buf[frame][i] > peak)
-			peak = buf[frame][i];
-}
-
 void computePeak_(const AudioBuffer& buf, float& peak)
 {
 	for (int i=0; i<buf.countFrames(); i++)
@@ -111,17 +104,17 @@ void computePeak_(const AudioBuffer& buf, float& peak)
 /* lineInRec
 Records from line in. */
 
-void lineInRec_(const AudioBuffer& inBuf, unsigned frame)
+void lineInRec_(const AudioBuffer& inBuf)
 {
 	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
 		return;
 
-	for (int j=0; j<vChanInput_.countChannels(); j++)
-		vChanInput_[inputTracker_][j] += inBuf[frame][j] * inVol;  // adding: overdub!
-
-	inputTracker_++;
-	if (inputTracker_ >= clock::getFramesInLoop())
-		inputTracker_ = 0;
+	for (int i=0; i<inBuf.countFrames(); i++, inputTracker_++)
+		for (int j=0; j<inBuf.countChannels(); j++) {
+			if (inputTracker_ >= clock::getFramesInLoop())
+				inputTracker_ = 0;
+			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol;  // adding: overdub!
+		}
 }
 
 
@@ -231,13 +224,14 @@ void renderIO_(AudioBuffer& outBuf, const AudioBuffer& inBuf)
 /* limitOutput
 Applies a very dumb hard limiter. */
 
-void limitOutput_(AudioBuffer& outBuf, unsigned frame)
+void limitOutput_(AudioBuffer& outBuf)
 {
-	for (int i=0; i<outBuf.countChannels(); i++)
-		if      (outBuf[frame][i] > 1.0f)
-			outBuf[frame][i] = 1.0f;
-		else if (outBuf[frame][i] < -1.0f)	
-			outBuf[frame][i] = -1.0f;	
+	if (!conf::limitOutput)
+		return;
+	for (int i=0; i<outBuf.countFrames(); i++)
+		for (int j=0; j<outBuf.countChannels(); j++)
+			if      (outBuf[i][j] > 1.0f)  outBuf[i][j] = 1.0f;
+			else if (outBuf[i][j] < -1.0f) outBuf[i][j] = -1.0f;	
 }
 
 
@@ -247,16 +241,14 @@ void limitOutput_(AudioBuffer& outBuf, unsigned frame)
 Last touches after the output has been rendered: apply inToOut if any, apply
 output volume. */
 
-void finalizeOutput_(AudioBuffer& outBuf, unsigned frame)
+void finalizeOutput_(AudioBuffer& outBuf)
 {
-	/* Merge vChanInToOut_, if enabled. */
-
-	if (inToOut)
-		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[frame][i] += vChanInToOut_[frame][i];
-
-	for (int i=0; i<outBuf.countChannels(); i++)
-		outBuf[frame][i] *= outVol; 
+	for (int i=0; i<outBuf.countFrames(); i++)
+		for (int j=0; j<outBuf.countChannels(); j++) {
+			if (inToOut) // Merge vChanInToOut_, if enabled
+				outBuf[i][j] += vChanInToOut_[i][j];
+			outBuf[i][j] *= outVol; 
+		}
 }
 
 
@@ -371,26 +363,26 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 			for (Channel* channel : channels)
 				channel->parseEvents(fe);
 
-			lineInRec_(in, j);   // TODO - can go outside this loop
 			doQuantize_(j);
 			renderMetronome_();
 			clock::incrCurrentFrame();
 			clock::sendMIDIsync();
 		}
+		lineInRec_(in);
 	}
 	
 	renderIO_(out, in);
 
 	pthread_mutex_unlock(&mutex);
 
-	/* Post processing. TODO no need to loop on each frame */
-	for (unsigned j=0; j<bufferSize; j++) {
-		finalizeOutput_(out, j); 
-		if (conf::limitOutput)
-			limitOutput_(out, j);
-		computePeak_(out, peakOut, j); 
+	/* Post processing */
+
+	finalizeOutput_(out);
+	limitOutput_(out);
+	computePeak_(out, peakOut);
+
+	for (unsigned j=0; j<bufferSize; j++)
 		renderMetronome_(out, j);
-	}
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
@@ -453,7 +445,7 @@ void rewind()
 void startInputRec()
 {
 	/* Start inputTracker_ from the current frame, not the beginning. */
-	recording    = true;
+	recording     = true;
 	inputTracker_ = clock::getCurrentFrame();
 }
 
