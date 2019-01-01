@@ -336,8 +336,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (!ready)
 		return 0;
 
-	pthread_mutex_lock(&mutex);
-
 #ifdef __linux__
 	clock::recvJackSync();
 #endif
@@ -352,7 +350,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	prepareBuffers_(out);
 
-	// TODO - move lock here
+	pthread_mutex_lock(&mutex);
 
 	for (unsigned j=0; j<bufferSize; j++) {
 		processLineIn_(in, j);   // TODO - can go outside this loop
@@ -380,7 +378,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	
 	renderIO_(out, in);
 
-	// TODO - move unlock here
+	pthread_mutex_unlock(&mutex);
 
 	/* Post processing. */
 	for (unsigned j=0; j<bufferSize; j++) {
@@ -395,8 +393,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	destroy memory allocated by RtAudio ---> havoc. */
 	out.setData(nullptr, 0, 0);
 	in.setData (nullptr, 0, 0);
-
-	pthread_mutex_unlock(&mutex);
 
 	return 0;
 }
