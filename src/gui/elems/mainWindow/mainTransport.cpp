@@ -81,7 +81,7 @@ void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p
 
 void geMainTransport::cb_rewind()
 {
-	c::transport::rewindSeq(true);
+	c::transport::rewindSeq(/*gui=*/true);
 }
 
 
@@ -90,7 +90,7 @@ void geMainTransport::cb_rewind()
 
 void geMainTransport::cb_play()
 {
-	c::transport::startStopSeq(true);
+	c::transport::startStopSeq(/*gui=*/true);
 }
 
 
@@ -99,7 +99,7 @@ void geMainTransport::cb_play()
 
 void geMainTransport::cb_recAction()
 {
-	c::io::toggleActionRec(true);
+	c::io::toggleActionRec(/*gui=*/true);
 }
 
 
@@ -108,7 +108,7 @@ void geMainTransport::cb_recAction()
 
 void geMainTransport::cb_recInput()
 {
-	c::io::toggleInputRec(true);
+	c::io::toggleInputRec(/*gui=*/true);
 }
 
 
@@ -117,7 +117,7 @@ void geMainTransport::cb_recInput()
 
 void geMainTransport::cb_metronome()
 {
-	c::transport::startStopMetronome(true);
+	c::transport::toggleMetronome(/*gui=*/true);
 }
 
 

@@ -189,7 +189,7 @@ void processMaster(const MidiEvent& midiEvent)
 	}
 	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
-		c::transport::startStopMetronome(false);
+		c::transport::toggleMetronome(false);
 	}
 	else if (pure == conf::midiInVolumeIn) {
 		float vf = midiEvent.getVelocity() / 127.0f;

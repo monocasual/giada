@@ -37,7 +37,7 @@ void startStopSeq(bool gui=true);
 void startSeq(bool gui=true);
 void stopSeq(bool gui=true);
 void rewindSeq(bool gui=true, bool notifyJack=true);
-void startStopMetronome(bool gui=true);
+void toggleMetronome(bool gui=true);
 }}} // giada::c::transport::
 
 

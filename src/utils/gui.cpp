@@ -127,7 +127,7 @@ void gu_updateControls()
 	G_MainWin->mainTimer->setQuantizer(clock::getQuantize());
 
 	G_MainWin->mainTransport->updatePlay(clock::isRunning());
-	G_MainWin->mainTransport->updateMetronome(mixer::metronome);
+	G_MainWin->mainTransport->updateMetronome(mixer::isMetronomeOn());
 }
 
 

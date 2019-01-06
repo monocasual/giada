@@ -51,38 +51,59 @@ namespace mixer
 {
 namespace
 {
-constexpr Frame TICKSIZE = 38;
+struct Metronome
+{
+	static constexpr Frame CLICK_SIZE = 38;
 
-float tock[TICKSIZE] = {
-	 0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
-	 0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
-	 0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
-	 0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
-	 0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
-	-0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
-	-0.070862, -0.048844
-};
+	float beat[CLICK_SIZE] = {
+		 0.059033,  0.117240,  0.173807,  0.227943,  0.278890,  0.325936,
+		 0.368423,  0.405755,  0.437413,  0.462951,  0.482013,  0.494333,
+		 0.499738,  0.498153,  0.489598,  0.474195,  0.452159,  0.423798,
+		 0.389509,  0.349771,  0.289883,  0.230617,  0.173194,  0.118739,
+		 0.068260,  0.022631, -0.017423, -0.051339,	-0.078721, -0.099345,
+		-0.113163, -0.120295, -0.121028, -0.115804, -0.105209, -0.089954,
+		-0.070862, -0.048844
+	};
 
-float tick[TICKSIZE] = {
-	 0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
-	 0.747229,  0.711293,  0.635697,  0.524656,  0.384362,  0.222636,
-	 0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
-	-0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
- 	-0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
-	 0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
-	 0.069639,  0.031320
-};
+	float bar[CLICK_SIZE] = {
+		 0.175860,  0.341914,  0.488904,  0.608633,  0.694426,  0.741500,
+		 0.747229,  0.711293,  0.635697,  0.524656,  0.384362,  0.222636,
+		 0.048496, -0.128348, -0.298035, -0.451105, -0.579021, -0.674653,
+		-0.732667, -0.749830, -0.688924, -0.594091, -0.474481, -0.340160,
+	 	-0.201360, -0.067752,  0.052194,  0.151746,  0.226280,  0.273493,
+		 0.293425,  0.288307,  0.262252,  0.220811,  0.170435,  0.117887,
+		 0.069639,  0.031320
+	};
 
-AudioBuffer vChanInput_;   // virtual channel for recording
-AudioBuffer vChanInToOut_; // virtual channel in->out bridge (hear what you're playin)
+	Frame tracker  = 0;
+	bool  running  = false;
+	bool  playBar  = false;
+	bool  playBeat = false;
 
-Frame tickTracker_ = 0;
-Frame tockTracker_ = 0;
-bool tickPlay_ = false;
-bool tockPlay_ = false;
+	void render(AudioBuffer& outBuf, bool& process, float* data, Frame f)
+	{
+		process = true;
+		for (int i=0; i<outBuf.countChannels(); i++)
+			outBuf[f][i] += data[tracker];
+		if (++tracker > Metronome::CLICK_SIZE) {
+			process = false;
+			tracker = 0;
+		}	
+	}
+} metronome_;
+
+/* vChanInput
+Virtual channel for input recording. */
+
+AudioBuffer vChanInput_;
+
+/* vChanInToOut
+Virtual channel in->out bridge (hear what you're playin). */
+
+AudioBuffer vChanInToOut_;
 
 /* inputTracker
-Sample position while recording. */
+Frame position while recording. */
 
 Frame inputTracker_ = 0;
 
@@ -175,34 +196,6 @@ void doQuantize_(unsigned frame)
 
 /* -------------------------------------------------------------------------- */
 
-/* renderMetronome
-Generates metronome when needed and pastes it to the output buffer. */
-
-void renderMetronome_(AudioBuffer& outBuf, unsigned frame)
-{
-	if (tockPlay_) {
-		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[frame][i] += tock[tockTracker_];
-		tockTracker_++;
-		if (tockTracker_ >= TICKSIZE-1) {
-			tockPlay_    = false;
-			tockTracker_ = 0;
-		}
-	}
-	if (tickPlay_) {
-		for (int i=0; i<outBuf.countChannels(); i++)
-			outBuf[frame][i] += tick[tickTracker_];
-		tickTracker_++;
-		if (tickTracker_ >= TICKSIZE-1) {
-			tickPlay_    = false;
-			tickTracker_ = 0;
-		}
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
 /* renderIO
 Final processing stage. Take each channel and process it (i.e. copy its
 content to the output buffer). Process plugins too, if any. */
@@ -255,15 +248,16 @@ void finalizeOutput_(AudioBuffer& outBuf)
 /* -------------------------------------------------------------------------- */
 
 
-void renderMetronome_()
+void renderMetronome_(AudioBuffer& outBuf, Frame f)
 {
-	if (!metronome)
+	if (!metronome_.running)
 		return;
-	if (clock::isOnBar() || clock::isOnFirstBeat())
-		tickPlay_ = true;
+
+	if (clock::getCurrentFrame() % clock::getFramesInBar() == 0 || metronome_.playBar)
+		metronome_.render(outBuf, metronome_.playBar, metronome_.bar, f);
 	else
-	if (clock::isOnBeat())
-		tockPlay_ = true;
+	if (clock::getCurrentFrame() % clock::getFramesInBeat() == 0 || metronome_.playBeat)
+		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
 }
 }; // {anonymous}
 
@@ -275,17 +269,17 @@ void renderMetronome_()
 
 std::vector<Channel*> channels;
 
-bool   recording    = false;
-bool   ready        = true;
-float  outVol       = G_DEFAULT_OUT_VOL;
-float  inVol        = G_DEFAULT_IN_VOL;
-float  peakOut      = 0.0f;
-float  peakIn       = 0.0f;
-bool	 metronome    = false;
-int    waitRec      = 0;
-bool   rewindWait   = false;
-bool   hasSolos     = false;
-bool   inToOut      = false;
+bool  recording  = false;
+bool  ready      = true;
+float outVol     = G_DEFAULT_OUT_VOL;
+float inVol      = G_DEFAULT_IN_VOL;
+float peakOut    = 0.0f;
+float peakIn     = 0.0f;
+bool  metronome  = false;
+int   waitRec    = 0;
+bool  rewindWait = false;
+bool  hasSolos   = false;
+bool  inToOut    = false;
 
 pthread_mutex_t mutex;
 
@@ -364,7 +358,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 				channel->parseEvents(fe);
 
 			doQuantize_(j);
-			renderMetronome_();
+			renderMetronome_(out, j);
 			clock::incrCurrentFrame();
 			clock::sendMIDIsync();
 		}
@@ -380,9 +374,6 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	finalizeOutput_(out);
 	limitOutput_(out);
 	computePeak_(out, peakOut);
-
-	for (unsigned j=0; j<bufferSize; j++)
-		renderMetronome_(out, j);
 
 	/* Unset data in buffers. If you don't do this, buffers go out of scope and
 	destroy memory allocated by RtAudio ---> havoc. */
@@ -417,7 +408,6 @@ bool isSilent()
 }
 
 
-
 /* -------------------------------------------------------------------------- */
 
 
@@ -425,6 +415,8 @@ bool isChannelAudible(Channel* ch)
 {
 	return !hasSolos || (hasSolos && ch->solo);
 }
+
+bool isMetronomeOn() { return metronome_.running; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -448,6 +440,21 @@ void startInputRec()
 	recording     = true;
 	inputTracker_ = clock::getCurrentFrame();
 }
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleMetronome()
+{
+	metronome_.running = !metronome_.running;
+}
+
+
+void setMetronome(bool v) 
+{ 
+	metronome_.running = v; 
+}
+
 
 /* -------------------------------------------------------------------------- */
 

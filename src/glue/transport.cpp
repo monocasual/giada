@@ -136,12 +136,12 @@ void rewindSeq(bool gui, bool notifyJack)
 /* -------------------------------------------------------------------------- */
 
 
-void startStopMetronome(bool gui)
+void toggleMetronome(bool gui)
 {
-	mixer::metronome = !mixer::metronome;
+	mixer::toggleMetronome();
 	if (!gui) {
 		Fl::lock();
-		G_MainWin->mainTransport->updateMetronome(mixer::metronome);
+		G_MainWin->mainTransport->updateMetronome(mixer::isMetronomeOn());
 		Fl::unlock();
 	}
 }

@@ -39,17 +39,17 @@ class geMainTransport : public Fl_Group
 {
 private:
 
-	geButton *rewind;
-	geButton *play;
-	geButton *recAction;
-	geButton *recInput;
-	geButton *metronome;
+	geButton* rewind;
+	geButton* play;
+	geButton* recAction;
+	geButton* recInput;
+	geButton* metronome;
 
-	static void cb_rewind   (Fl_Widget *v, void *p);
-	static void cb_play     (Fl_Widget *v, void *p);
-	static void cb_recAction(Fl_Widget *v, void *p);
-	static void cb_recInput (Fl_Widget *v, void *p);
-	static void cb_metronome(Fl_Widget *v, void *p);
+	static void cb_rewind   (Fl_Widget* v, void* p);
+	static void cb_play     (Fl_Widget* v, void* p);
+	static void cb_recAction(Fl_Widget* v, void* p);
+	static void cb_recInput (Fl_Widget* v, void* p);
+	static void cb_metronome(Fl_Widget* v, void* p);
 	void cb_rewind   ();
 	void cb_play     ();
 	void cb_recAction();

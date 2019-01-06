@@ -63,7 +63,6 @@ extern float  outVol;
 extern float  inVol;
 extern float  peakOut;
 extern float  peakIn;
-extern bool	  metronome;
 extern bool   rewindWait;    // rewind guard, if quantized
 extern bool   hasSolos;      // more than 0 channels soloed
 
@@ -113,6 +112,10 @@ Copies the virtual channel input in the channels designed for input recording.
 Called by mixerHandler on stopInputRec(). */
 
 void mergeVirtualInput();
+
+void toggleMetronome();
+bool isMetronomeOn();
+void setMetronome(bool v);
 }}} // giada::m::mixer::;
 
 
