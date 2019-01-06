@@ -109,16 +109,13 @@ bool quantoHasPassed()
 
 bool isOnBar()
 {
-	/* A bar cannot occur at frame 0. That's the first beat. */
-	return currentFrame % framesInBar == 0 && currentFrame != 0;
+	return currentFrame % framesInBar == 0;
 }
 
 
 bool isOnBeat()
 {
-	/* Skip frame 0: it is intended as 'first beat'. */
-	/* TODO - this is wrong! */
-	return currentFrame % framesInBeat == 0 && currentFrame > 0;
+	return currentFrame % framesInBeat == 0;
 }
 
 

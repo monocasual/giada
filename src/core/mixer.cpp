@@ -253,10 +253,10 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 	if (!metronome_.running)
 		return;
 
-	if (clock::getCurrentFrame() % clock::getFramesInBar() == 0 || metronome_.playBar)
+	if (clock::isOnBar() || metronome_.playBar)
 		metronome_.render(outBuf, metronome_.playBar, metronome_.bar, f);
 	else
-	if (clock::getCurrentFrame() % clock::getFramesInBeat() == 0 || metronome_.playBeat)
+	if (clock::isOnBeat() || metronome_.playBeat)
 		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
 }
 }; // {anonymous}
