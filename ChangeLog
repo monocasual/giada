@@ -19,6 +19,7 @@
 - Remove old and deprecated input delay compensation
 - Fix memory leak when replacing samples in a Sample Channel
 - Fix plug-ins ordering method when re-opening Giada
+- Optimized audio IO processing in Mixer callback
 
 
 0.15.3 --- 2018 . 12 . 24
