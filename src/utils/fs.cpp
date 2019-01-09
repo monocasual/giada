@@ -58,6 +58,7 @@
 
 using std::string;
 using std::vector;
+using namespace giada;
 
 
 bool gu_fileExists(const string &filename)
@@ -232,8 +233,8 @@ bool gu_isProject(const string& path)
 string gu_stripFileUrl(const string& f)
 {
 	string out = f;
-	out = gu_replace(out, "file://", "");
-	out = gu_replace(out, "%20", " ");
+	out = u::string::replace(out, "file://", "");
+	out = u::string::replace(out, "%20", " ");
 	return out;
 }
 

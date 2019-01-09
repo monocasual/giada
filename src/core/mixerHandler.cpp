@@ -288,7 +288,7 @@ bool startInputRec()
 
 		/* Allocate empty sample for the current channel. */
 
-		string name    = string("TAKE-" + gu_iToString(patch::lastTakeId++));
+		string name    = string("TAKE-" + u::string::iToString(patch::lastTakeId++));
 		string nameExt = name + ".wav";
 
 		sch->pushWave(waveManager::createEmpty(clock::getFramesInLoop(), 

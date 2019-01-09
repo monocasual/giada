@@ -106,7 +106,7 @@ int geColumn::handle(int e)
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
 			vector<string> paths;
-			gu_split(Fl::event_text(), "\n", &paths);
+			u::string::split(Fl::event_text(), "\n", &paths);
 			bool fails = false;
 			int result = 0;
 			for (string& path : paths) {

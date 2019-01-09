@@ -83,7 +83,7 @@ gePitchTool::gePitchTool(int x, int y, m::SampleChannel* ch)
 void gePitchTool::refresh()
 {
   dial->value(ch->getPitch());
-  input->value(gu_fToString(ch->getPitch(), 4).c_str()); // 4 digits
+  input->value(u::string::fToString(ch->getPitch(), 4).c_str()); // 4 digits
 }
 
 

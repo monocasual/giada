@@ -78,14 +78,14 @@ void gePanTool::refresh()
   dial->value(ch->getPan());
 
   if (ch->getPan() < 0.5f) {
-    string tmp = gu_iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
+    string tmp = u::string::iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
     input->value(tmp.c_str());
   }
   else 
   if (ch->getPan() == 0.5)
     input->value("C");
   else {
-    string tmp = gu_iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
+    string tmp = u::string::iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
     input->value(tmp.c_str());
   }
 }
@@ -94,8 +94,8 @@ void gePanTool::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::cb_panning (Fl_Widget *w, void *p) { ((gePanTool*)p)->cb_panning(); }
-void gePanTool::cb_panReset(Fl_Widget *w, void *p) { ((gePanTool*)p)->cb_panReset(); }
+void gePanTool::cb_panning (Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panning(); }
+void gePanTool::cb_panReset(Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panReset(); }
 
 
 

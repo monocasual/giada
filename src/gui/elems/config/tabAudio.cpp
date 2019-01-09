@@ -41,6 +41,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -156,7 +157,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 		int nfreq = kernelAudio::getTotalFreqs(sounddevOut->value());
 		for (int i=0; i<nfreq; i++) {
 			int freq = kernelAudio::getFreq(sounddevOut->value(), i);
-			samplerate->add(gu_iToString(freq).c_str());
+			samplerate->add(u::string::iToString(freq).c_str());
 			if (freq == conf::samplerate)
 				samplerate->value(i);
 		}
@@ -181,7 +182,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(gu_iToString(conf::buffersize).c_str());
+	buffersize->showItem(u::string::iToString(conf::buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
@@ -323,7 +324,7 @@ void geTabAudio::fetchInChans(int menuItem)
 		return;
 	}
 	for (unsigned i=0; i<chs; i+=2) {
-		string tmp = gu_iToString(i+1) + "-" + gu_iToString(i+2);
+		string tmp = u::string::iToString(i+1) + "-" + u::string::iToString(i+2);
 		channelsIn->add(tmp.c_str());
 	}
 	channelsIn->value(conf::channelsIn);
@@ -346,7 +347,7 @@ void geTabAudio::fetchOutChans(int menuItem)
 		return;
 	}
 	for (unsigned i=0; i<chs; i+=2) {
-		string tmp = gu_iToString(i+1) + "-" + gu_iToString(i+2);
+		string tmp = u::string::iToString(i+1) + "-" + u::string::iToString(i+2);
 		channelsOut->add(tmp.c_str());
 	}
 	channelsOut->value(conf::channelsOut);

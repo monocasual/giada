@@ -80,7 +80,7 @@ void gePianoRoll::drawSurface1()
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
-		string note = gu_iToString(octave);
+		string note = u::string::iToString(octave);
 		switch (i % KEYS) {
 			case (int) Notes::G:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);

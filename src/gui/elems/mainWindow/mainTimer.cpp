@@ -62,7 +62,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	resizable(nullptr);   // don't resize any widget
 
-	bpm->copy_label(gu_fToString(m::clock::getBpm(), 1).c_str());
+	bpm->copy_label(u::string::fToString(m::clock::getBpm(), 1).c_str());
 	bpm->callback(cb_bpm, (void*)this);
 
 	meter->callback(cb_meter, (void*)this);
@@ -148,7 +148,7 @@ void geMainTimer::setBpm(const char* v)
 
 void geMainTimer::setBpm(float v)
 {
-	bpm->copy_label(gu_fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
+	bpm->copy_label(u::string::fToString((float) v, 1).c_str()); // Only 1 decimal place (e.g. 120.0)
 }
 
 
@@ -186,6 +186,6 @@ void geMainTimer::setQuantizer(int q)
 
 void geMainTimer::setMeter(int beats, int bars)
 {
-	string tmp = gu_iToString(beats) + "/" + gu_iToString(bars);
+	string tmp = u::string::iToString(beats) + "/" + u::string::iToString(bars);
 	meter->copy_label(tmp.c_str());
 }

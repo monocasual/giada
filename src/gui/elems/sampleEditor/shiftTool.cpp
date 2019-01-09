@@ -38,7 +38,7 @@
 #include "shiftTool.h"
 
 
-using namespace giada::c;
+using namespace giada;
 
 
 geShiftTool::geShiftTool(int x, int y, giada::m::SampleChannel* ch)
@@ -53,7 +53,7 @@ geShiftTool::geShiftTool(int x, int y, giada::m::SampleChannel* ch)
 
 	m_shift->type(FL_INT_INPUT);
 	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift->value(gu_iToString(ch->shift).c_str());
+	m_shift->value(u::string::iToString(ch->shift).c_str());
 	m_shift->callback(cb_setShift, (void*)this);
 
 	m_reset->callback(cb_reset, (void*)this);
@@ -92,7 +92,7 @@ void geShiftTool::cb_reset()
 
 void geShiftTool::refresh()
 {
-	m_shift->value(gu_iToString(m_ch->shift).c_str());
+	m_shift->value(u::string::iToString(m_ch->shift).c_str());
 }
 
 
@@ -104,5 +104,5 @@ void geShiftTool::shift(int f)
 	if (m_ch->isPlaying())
 		gdAlert("Can't shift sample while playing.");
 	else
-		sampleEditor::shift(m_ch, f);	
+		c::sampleEditor::shift(m_ch, f);	
 }

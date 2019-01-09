@@ -183,7 +183,7 @@ bool savePatch_(const string& fullPath, const string& name, bool isProject)
 
 string makeSamplePath_(const string& base, const Wave& w, int k)
 {
-	return base + G_SLASH + w.getBasename(false) + "-" + gu_iToString(k) + "." +  w.getExtension();
+	return base + G_SLASH + w.getBasename(false) + "-" + u::string::iToString(k) + "." +  w.getExtension();
 } 
 
 

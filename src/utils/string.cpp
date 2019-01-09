@@ -34,13 +34,13 @@
 #include "string.h"
 
 
-using std::string;
-using std::vector;
-
-
-string gu_getRealPath(const string& path)
+namespace giada {
+namespace u     {
+namespace string 
 {
-	string out = "";
+std::string getRealPath(const std::string& path)
+{
+	std::string out = "";
 
 #if defined(G_OS_LINUX) || defined(G_OS_MAC)
 
@@ -65,7 +65,7 @@ string gu_getRealPath(const string& path)
 
 /* TODO - use std::to_string() */
 
-string gu_fToString(float f, int precision)
+std::string fToString(float f, int precision)
 {
 	std::stringstream out;
 	out << std::fixed << std::setprecision(precision) << f;
@@ -76,7 +76,7 @@ string gu_fToString(float f, int precision)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_trim(const string& s)
+std::string trim(const std::string& s)
 {
 	std::size_t first = s.find_first_not_of(" \n\t");
 	std::size_t last  = s.find_last_not_of(" \n\t");
@@ -87,10 +87,10 @@ string gu_trim(const string& s)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_replace(string in, const string& search, const string& replace)
+std::string replace(std::string in, const std::string& search, const std::string& replace)
 {
 	size_t pos = 0;
-	while ((pos = in.find(search, pos)) != string::npos) {
+	while ((pos = in.find(search, pos)) != std::string::npos) {
 		in.replace(pos, search.length(), replace);
 		pos += replace.length();
 	}
@@ -101,38 +101,38 @@ string gu_replace(string in, const string& search, const string& replace)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gu_format(const char* format, ...)
+std::string format(const char* format, ...)
 {
 	va_list args;
 
-	/* Compute the size of the new expanded string (i.e. with replacement taken
+	/* Compute the size of the new expanded std::string (i.e. with replacement taken
 	into account). */
 
 	va_start(args, format);
 	size_t size = vsnprintf(nullptr, 0, format, args) + 1;
 	va_end(args);
 	
-	/* Create a new temporary char array to hold the new expanded string. */
+	/* Create a new temporary char array to hold the new expanded std::string. */
 
 	std::unique_ptr<char[]> tmp(new char[size]);
 
-	/* Fill the temporary string with the formatted data. */
+	/* Fill the temporary std::string with the formatted data. */
 
-  va_start(args, format);
+	va_start(args, format);
 	vsprintf(tmp.get(), format, args);
-  va_end(args);
-  
- 	return string(tmp.get(), tmp.get() + size - 1);	
+	va_end(args);
+
+	return std::string(tmp.get(), tmp.get() + size - 1);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gu_split(string in, string sep, vector<string>* v)
+void split(std::string in, std::string sep, std::vector<std::string>* v)
 {
-	string full  = in;
-	string token = "";
+	std::string full  = in;
+	std::string token = "";
 	size_t curr = 0;
 	size_t next = -1;
 	do {
@@ -142,5 +142,7 @@ void gu_split(string in, string sep, vector<string>* v)
 		if (token != "")
 			v->push_back(token);
 	}
-	while (next != string::npos);
+	while (next != std::string::npos);
 }
+
+}}} // giada::u::string

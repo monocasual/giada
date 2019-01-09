@@ -32,7 +32,7 @@
 
 
 using std::string;
-using namespace giada::m;
+using namespace giada;
 
 
 gdMidiOutputBase::gdMidiOutputBase(int w, int h)
@@ -46,7 +46,7 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 
 void gdMidiOutputBase::stopMidiLearn(geMidiLearner *learner)
 {
-	midiDispatcher::stopMidiLearn();
+	m::midiDispatcher::stopMidiLearn();
 	learner->updateValue();
 }
 
@@ -54,7 +54,7 @@ void gdMidiOutputBase::stopMidiLearn(geMidiLearner *learner)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l)
+void gdMidiOutputBase::cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l)
 {
 	*param = msg;
 	stopMidiLearn(l);
@@ -67,24 +67,24 @@ void gdMidiOutputBase::__cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *
 
 void gdMidiOutputBase::cb_learn(uint32_t msg, void *d)
 {
-	geMidiLearner::cbData_t *data = (geMidiLearner::cbData_t*) d;
-	gdMidiOutputBase  *window  = (gdMidiOutputBase*) data->window;
-	geMidiLearner *learner = data->learner;
-	uint32_t      *param   = learner->param;
-	window->__cb_learn(param, msg, learner);
+	geMidiLearner::cbData_t* data   = (geMidiLearner::cbData_t*) d;
+	gdMidiOutputBase*        window = (gdMidiOutputBase*) data->window;
+	geMidiLearner* learner = data->learner;
+	uint32_t*      param   = learner->param;
+	window->cb_learn(param, msg, learner);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_close(Fl_Widget *w, void *p)  { ((gdMidiOutputBase*)p)->__cb_close(); }
+void gdMidiOutputBase::cb_close(Fl_Widget* w, void* p)  { ((gdMidiOutputBase*)p)->cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::__cb_close()
+void gdMidiOutputBase::cb_close()
 {
 	do_callback();
 }
@@ -93,16 +93,16 @@ void gdMidiOutputBase::__cb_close()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_enableLightning(Fl_Widget *w, void *p)
+void gdMidiOutputBase::cb_enableLightning(Fl_Widget* w, void* p)
 {
-	((gdMidiOutputBase*)p)->__cb_enableLightning();
+	((gdMidiOutputBase*)p)->cb_enableLightning();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::__cb_enableLightning() {}
+void gdMidiOutputBase::cb_enableLightning() {}
 
 
 /* -------------------------------------------------------------------------- */
@@ -110,6 +110,6 @@ void gdMidiOutputBase::__cb_enableLightning() {}
 
 void gdMidiOutputBase::setTitle(int chanNum)
 {
-	string tmp = "MIDI Output Setup (channel " + gu_iToString(chanNum) + ")"; 
+	string tmp = "MIDI Output Setup (channel " + u::string::iToString(chanNum) + ")"; 
 	copy_label(tmp.c_str());
 }

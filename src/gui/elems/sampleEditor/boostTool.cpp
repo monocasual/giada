@@ -75,7 +75,7 @@ void geBoostTool::refresh()
 {
   using namespace giada::u;
 
-  input->value(gu_fToString(math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
+  input->value(string::fToString(math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
   // A dial greater than it's max value goes crazy
   dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
 }

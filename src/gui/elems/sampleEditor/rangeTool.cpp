@@ -40,7 +40,7 @@
 #include "rangeTool.h"
 
 
-using namespace giada::c;
+using namespace giada;
 
 
 geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
@@ -73,8 +73,8 @@ geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
 
 void geRangeTool::refresh()
 {
-	m_begin->value(gu_iToString(m_ch->getBegin()).c_str());
-	m_end->value(gu_iToString(m_ch->getEnd()).c_str());
+	m_begin->value(u::string::iToString(m_ch->getBegin()).c_str());
+	m_end->value(u::string::iToString(m_ch->getEnd()).c_str());
 }
 
 
@@ -90,7 +90,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->c
 
 void geRangeTool::cb_setChanPos()
 {
-	sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
+	c::sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
 	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
 }
 
@@ -100,6 +100,6 @@ void geRangeTool::cb_setChanPos()
 
 void geRangeTool::cb_resetStartEnd()
 {
-	sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
+	c::sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
 	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
 }

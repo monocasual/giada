@@ -42,9 +42,7 @@
 #include "about.h"
 
 
-using std::string;
-using namespace giada::m;
-using namespace giada::u;
+using namespace giada;
 
 
 gdAbout::gdAbout()
@@ -54,8 +52,8 @@ gdAbout::gdAbout()
 : gdWindow(340, 350, "About Giada")
 #endif
 {
-	if (conf::aboutX)
-		resize(conf::aboutX, conf::aboutY, w(), h());
+	if (m::conf::aboutX)
+		resize(m::conf::aboutX, m::conf::aboutY, w(), h());
 
 	set_modal();
 
@@ -71,7 +69,7 @@ gdAbout::gdAbout()
 	logo->image(new Fl_Pixmap(giada_logo_xpm));
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
-	string message = gu_format(
+	std::string message = u::string::format(
 	  "Version " G_VERSION_STR " (" BUILD_DATE ")\n\n"
 		"Developed by Monocasual Laboratories\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
@@ -87,9 +85,9 @@ gdAbout::gdAbout()
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
 		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
-		ver::getRtAudioVersion().c_str(),
-		ver::getRtMidiVersion().c_str(),
-		JANSSON_VERSION, ver::getLibsndfileVersion().c_str()
+		u::ver::getRtAudioVersion().c_str(),
+		u::ver::getRtMidiVersion().c_str(),
+		JANSSON_VERSION, u::ver::getLibsndfileVersion().c_str()
 #ifdef WITH_VST
 		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER
 #endif
@@ -124,8 +122,8 @@ gdAbout::gdAbout()
 
 gdAbout::~gdAbout()
 {
-	conf::aboutX = x();
-	conf::aboutY = y();
+	m::conf::aboutX = x();
+	m::conf::aboutY = y();
 }
 
 

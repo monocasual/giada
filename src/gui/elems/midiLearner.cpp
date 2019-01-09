@@ -34,15 +34,15 @@
 
 
 using std::string;
-using namespace giada::m;
+using namespace giada;
 
 
 geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l,
-  midiDispatcher::cb_midiLearn* cb, uint32_t* param, Channel* ch)
-	: Fl_Group(X, Y, W, 20),
-		callback(cb),
-		ch      (ch),
-		param   (param)
+  m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, m::Channel* ch)
+: Fl_Group(X, Y, W, 20),
+  callback(cb),
+  ch      (ch),
+  param   (param)
 {
 	begin();
 	text   = new geBox(x(), y(), 156, 20, l);
@@ -70,7 +70,7 @@ void geMidiLearner::updateValue()
 {
 	string tmp;
 	if (*param != 0x0) {
-		tmp = "0x" + gu_iToString(*param, true); // true: hex mode
+		tmp = "0x" + u::string::iToString(*param, true); // true: hex mode
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 	}
@@ -110,8 +110,8 @@ void geMidiLearner::cb_button()
 		cbData.window  = static_cast<gdMidiInputBase*>(parent()); // parent = gdMidiInput
 		cbData.learner = this;
 		cbData.channel = ch;
-		midiDispatcher::startMidiLearn(callback, (void*)&cbData);
+		m::midiDispatcher::startMidiLearn(callback, (void*)&cbData);
 	}
 	else
-		midiDispatcher::stopMidiLearn();
+		m::midiDispatcher::stopMidiLearn();
 }

@@ -52,28 +52,28 @@ class gdMidiOutputBase : public gdWindow
 {
 protected:
 
-	geButton *close;
-	geCheck   *enableLightning;
+	geButton* close;
+	geCheck*  enableLightning;
 
-	void stopMidiLearn(geMidiLearner *l);
+	void stopMidiLearn(geMidiLearner* l);
 
 	/* cb_learn
 	 * callback attached to kernelMidi to learn various actions. */
 
-	static void cb_learn  (uint32_t msg, void *data);
-	inline void __cb_learn(uint32_t *param, uint32_t msg, geMidiLearner *l);
+	static void cb_learn(uint32_t msg, void* data);
+	void cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l);
 
 	/* cb_close
 	close current window. */
 
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
+	static void cb_close(Fl_Widget* w, void* p);
+	void cb_close();
 
 	/* cb_enableLightning
 	enable MIDI lightning output. */
 
-	static void cb_enableLightning  (Fl_Widget *w, void *p);
-	inline void __cb_enableLightning();
+	static void cb_enableLightning  (Fl_Widget* w, void* p);
+	void cb_enableLightning();
 
 	/* setTitle
 	 * set window title. */

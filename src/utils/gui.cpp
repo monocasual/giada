@@ -231,9 +231,9 @@ int gu_getStringWidth(const std::string& s)
 
 string gu_removeFltkChars(const string& s)
 {
-	string out = gu_replace(s, "/", "-");
-	out = gu_replace(out, "|", "-");
-	out = gu_replace(out, "&", "-");
-	out = gu_replace(out, "_", "-");
+	string out = u::string::replace(s, "/", "-");
+	out = u::string::replace(out, "|", "-");
+	out = u::string::replace(out, "&", "-");
+	out = u::string::replace(out, "_", "-");
 	return out;
 }

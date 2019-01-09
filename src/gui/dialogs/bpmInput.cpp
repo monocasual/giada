@@ -62,12 +62,12 @@ gdBpmInput::gdBpmInput(const char* label)
 
 	input_a->maximum_size(3);
 	input_a->type(FL_INT_INPUT);
-	input_a->value(gu_fToString(m::clock::getBpm(), 0).c_str());
+	input_a->value(u::string::fToString(m::clock::getBpm(), 0).c_str());
 
 	/* Use the decimal value from the string label. */
 
 	vector<string> tokens;
-	gu_split(label, ".", &tokens);
+	u::string::split(label, ".", &tokens);
 	input_b->maximum_size(1);
 	input_b->type(FL_INT_INPUT);
 	input_b->value(tokens[1].c_str());

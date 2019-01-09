@@ -34,6 +34,7 @@
 
 
 using std::string;
+using namespace giada;
 
 
 geBrowser::geBrowser(int x, int y, int w, int h)
@@ -138,7 +139,7 @@ int geBrowser::handle(int e)
 
 string geBrowser::getCurrentDir()
 {
-  return normalize(gu_getRealPath(m_currentDir));
+  return normalize(u::string::getRealPath(m_currentDir));
 }
 
 
@@ -158,7 +159,7 @@ string geBrowser::getSelectedItem(bool fullPath)
 #else
     string sep = G_SLASH_STR;
 #endif
-    return normalize(gu_getRealPath(m_currentDir + sep + normalize(text(value()))));
+    return normalize(u::string::getRealPath(m_currentDir + sep + normalize(text(value()))));
   }
 }
 

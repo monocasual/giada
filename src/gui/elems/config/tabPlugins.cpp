@@ -53,6 +53,7 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -88,7 +89,7 @@ geTabPlugins::geTabPlugins(int X, int Y, int W, int H)
 
 void geTabPlugins::refreshCount()
 {
-	string scanLabel = "Scan (" + gu_iToString(pluginManager::countAvailablePlugins()) + " found)";
+	string scanLabel = "Scan (" + u::string::iToString(pluginManager::countAvailablePlugins()) + " found)";
 	m_scanButton->label(scanLabel.c_str());
 }
 
@@ -119,7 +120,7 @@ void geTabPlugins::cb_scan()
 {
 	std::function<void(float)> callback = [this] (float progress) 
 	{
-		string l = "Scan in progress (" + gu_iToString((int)(progress*100)) + "%). Please wait...";
+		string l = "Scan in progress (" + u::string::iToString((int)(progress*100)) + "%). Please wait...";
 		m_info->label(l.c_str());
 		Fl::wait();
 	};
