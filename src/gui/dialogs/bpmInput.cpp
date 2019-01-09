@@ -66,8 +66,8 @@ gdBpmInput::gdBpmInput(const char* label)
 
 	/* Use the decimal value from the string label. */
 
-	vector<string> tokens;
-	u::string::split(label, ".", &tokens);
+	vector<string> tokens = u::string::split(label, ".");
+	
 	input_b->maximum_size(1);
 	input_b->type(FL_INT_INPUT);
 	input_b->value(tokens[1].c_str());

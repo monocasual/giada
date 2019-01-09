@@ -129,8 +129,9 @@ std::string format(const char* format, ...)
 /* -------------------------------------------------------------------------- */
 
 
-void split(std::string in, std::string sep, std::vector<std::string>* v)
+std::vector<std::string> split(std::string in, std::string sep)
 {
+	std::vector<std::string> out;
 	std::string full  = in;
 	std::string token = "";
 	size_t curr = 0;
@@ -140,9 +141,10 @@ void split(std::string in, std::string sep, std::vector<std::string>* v)
 		next  = full.find_first_of(sep, curr);
 		token = full.substr(curr, next - curr);
 		if (token != "")
-			v->push_back(token);
+			out.push_back(token);
 	}
 	while (next != std::string::npos);
+	return out;
 }
 
 }}} // giada::u::string

@@ -58,7 +58,7 @@ std::string replace(std::string in, const std::string& search,
 
 std::string trim(const std::string& s);
 
-void split(std::string in, std::string sep, std::vector<std::string>* v);
+std::vector<std::string> split(std::string in, std::string sep);
 
 std::string fToString(float f, int precision);
 

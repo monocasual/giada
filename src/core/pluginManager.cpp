@@ -143,8 +143,7 @@ int scanDirs(const string& dirs, const std::function<void(float)>& cb)
 
 	knownPluginList_.clear();   // clear up previous plugins
 
-	vector<string> dirVec;
-	u::string::split(dirs, ";", &dirVec);
+	vector<string> dirVec = u::string::split(dirs, ";");
 
 	juce::VSTPluginFormat format;
 	juce::FileSearchPath searchPath;

@@ -105,12 +105,12 @@ int geColumn::handle(int e)
 			return 1;
 		}
 		case FL_PASTE: {              // handle actual drop (paste) operation
-			vector<string> paths;
-			u::string::split(Fl::event_text(), "\n", &paths);
+			vector<string> paths = u::string::split(Fl::event_text(), "\n");
 			bool fails = false;
 			int result = 0;
 			for (string& path : paths) {
 				gu_log("[geColumn::handle] loading %s...\n", path.c_str());
+				// TODO - c::channel::addAndLoad(...)
 				m::SampleChannel* c = static_cast<m::SampleChannel*>(c::channel::addChannel(
 					m_index, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1));
 				result = c::channel::loadChannel(c, gu_stripFileUrl(path));
