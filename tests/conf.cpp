@@ -22,7 +22,6 @@ TEST_CASE("conf")
     conf::channelsIn = 6;
     conf::samplerate = 7;
     conf::buffersize = 8;
-    conf::delayComp = 9;
     conf::limitOutput = true;
     conf::rsmpQuality = 10;
     conf::midiSystem = 11;
@@ -96,7 +95,6 @@ TEST_CASE("conf")
     REQUIRE(conf::channelsIn == 6);
     REQUIRE(conf::samplerate == 44100);  // sanitized
     REQUIRE(conf::buffersize == 8);
-    REQUIRE(conf::delayComp == 9);
     REQUIRE(conf::limitOutput == true);
     REQUIRE(conf::rsmpQuality == 0); // sanitized
     REQUIRE(conf::midiSystem == 11);
