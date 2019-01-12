@@ -41,6 +41,9 @@ class geChannel;
 class geSampleChannel;
 
 
+namespace giada {
+namespace v
+{
 class geKeyboard : public Fl_Scroll
 {
 private:
@@ -159,6 +162,7 @@ public:
 
 	int getColumnWidth(int i);
 };
+}} // giada::v::
 
 
 #endif

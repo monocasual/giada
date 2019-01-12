@@ -37,7 +37,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/check.h"
 #include "beatsInput.h"
-#include "gd_mainWindow.h"
+#include "mainWindow.h"
 
 
 extern gdMainWindow* mainWin;

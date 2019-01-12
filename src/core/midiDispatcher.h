@@ -29,11 +29,8 @@
 #define G_MIDI_DISPATCHER_H
 
 
-#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
-	#include <stdint.h>
-#else
-	#include <cstdint>
-#endif
+#include <functional>
+#include <cstdint>
 
 
 namespace giada {
@@ -47,6 +44,7 @@ void stopMidiLearn();
 
 void dispatch(int byte1, int byte2, int byte3);
 
+void setSignalCallback(std::function<void()> f);
 }}}; // giada::m::midiDispatcher::
 
 

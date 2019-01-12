@@ -68,6 +68,7 @@ void toggleInputRec(bool gui=true);
 int  startInputRec (bool gui=true);
 int  stopInputRec  (bool gui=true);
 
+void toggleRecOnSignal(bool gui=true);
 }}} // giada::c::io::
 
 #endif

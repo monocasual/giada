@@ -36,6 +36,9 @@ class geButton;
 class geChoice;
 
 
+namespace giada {
+namespace v
+{
 class geMainTimer : public Fl_Group
 {
 private:
@@ -71,6 +74,7 @@ public:
 
   void setLock(bool v);
 };
+}} // giada::v::
 
 
 #endif

@@ -94,24 +94,24 @@ sourcesCore =                            \
 	src/glue/actionEditor.cpp              \
 	src/gui/dialogs/window.h               \
 	src/gui/dialogs/window.cpp             \
-	src/gui/dialogs/gd_keyGrabber.h        \
-	src/gui/dialogs/gd_keyGrabber.cpp      \
+	src/gui/dialogs/keyGrabber.h           \
+	src/gui/dialogs/keyGrabber.cpp         \
 	src/gui/dialogs/about.h                \
 	src/gui/dialogs/about.cpp              \
-	src/gui/dialogs/gd_mainWindow.h        \
-	src/gui/dialogs/gd_mainWindow.cpp      \
+	src/gui/dialogs/mainWindow.h           \
+	src/gui/dialogs/mainWindow.cpp         \
 	src/gui/dialogs/beatsInput.h           \
 	src/gui/dialogs/beatsInput.cpp         \
-	src/gui/dialogs/gd_warnings.h          \
-	src/gui/dialogs/gd_warnings.cpp        \
+	src/gui/dialogs/warnings.h             \
+	src/gui/dialogs/warnings.cpp           \
 	src/gui/dialogs/bpmInput.h             \
 	src/gui/dialogs/bpmInput.cpp           \
 	src/gui/dialogs/channelNameInput.h     \
 	src/gui/dialogs/channelNameInput.cpp   \
-	src/gui/dialogs/gd_config.h            \
-	src/gui/dialogs/gd_config.cpp          \
-	src/gui/dialogs/gd_devInfo.h           \
-	src/gui/dialogs/gd_devInfo.cpp         \
+	src/gui/dialogs/config.h               \
+	src/gui/dialogs/config.cpp             \
+	src/gui/dialogs/devInfo.h              \
+	src/gui/dialogs/devInfo.cpp            \
 	src/gui/dialogs/pluginList.h           \
 	src/gui/dialogs/pluginList.cpp         \
 	src/gui/dialogs/pluginWindow.h	       \

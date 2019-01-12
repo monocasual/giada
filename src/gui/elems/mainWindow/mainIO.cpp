@@ -34,7 +34,7 @@
 #include "../../elems/soundMeter.h"
 #include "../../elems/basics/statusButton.h"
 #include "../../elems/basics/dial.h"
-#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/mainWindow.h"
 #include "../../dialogs/pluginList.h"
 #include "mainIO.h"
 
@@ -42,9 +42,9 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v
+{
 geMainIO::geMainIO(int x, int y)
 	: Fl_Group(x, y, 396, 20)
 {
@@ -180,3 +180,5 @@ void geMainIO::refresh()
 	outMeter->redraw();
 	inMeter->redraw();
 }
+
+}} // giada::v::

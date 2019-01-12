@@ -32,92 +32,53 @@
 #include "mainTransport.h"
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v
+{
 geMainTransport::geMainTransport(int x, int y)
-	: Fl_Group(x, y, 131, 25)
+	: Fl_Group(x, y, 158, 25)
 {
 	begin();
 
-	rewind    = new geButton(x,  y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-	play      = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
-	recAction = new geButton(play->x()+play->w()+4, y, 25, 25, "", recOff_xpm, recOn_xpm);
-	recInput  = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
-	metronome = new geButton(recInput->x()+recInput->w()+4, y+10, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+	rewind      = new geButton(x, y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+	play        = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
+	recAction   = new geButton(play->x()+play->w()+8, y, 25, 25, "", recOff_xpm, recOn_xpm);
+	recInput    = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
+	recOnSignal = new geButton(recInput->x()+recInput->w()+4, y+5, 15, 15, "");
+	metronome   = new geButton(recOnSignal->x()+recOnSignal->w()+8, y+5, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
 
 	resizable(nullptr);   // don't resize any widget
 
-	rewind->callback(cb_rewind, (void*)this);
+	rewind->callback([](Fl_Widget* w, void* v) { 
+		c::transport::rewindSeq(/*gui=*/true);
+	});
 
-	play->callback(cb_play);
+	play->callback([](Fl_Widget* w, void* v) { 
+		c::transport::startStopSeq(/*gui=*/true);
+	});
 	play->type(FL_TOGGLE_BUTTON);
 
-	recAction->callback(cb_recAction, (void*)this);
+	recAction->callback([](Fl_Widget* w, void* v) { 
+		c::io::toggleActionRec(/*gui=*/true);
+	});
 	recAction->type(FL_TOGGLE_BUTTON);
 
-	recInput->callback(cb_recInput, (void*)this);
+	recInput->callback([](Fl_Widget* w, void* v) { 
+		c::io::toggleInputRec(/*gui=*/true);
+	});
 	recInput->type(FL_TOGGLE_BUTTON);
 
-	metronome->callback(cb_metronome);
+	recOnSignal->callback([](Fl_Widget* w, void* v) { 
+		c::io::toggleRecOnSignal(/*gui=*/true); 
+	});
+	recOnSignal->type(FL_TOGGLE_BUTTON);
+
+	metronome->callback([](Fl_Widget* w, void* v) {
+		c::transport::toggleMetronome(/*gui=*/true);
+	});
 	metronome->type(FL_TOGGLE_BUTTON);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_rewind   (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_rewind(); }
-void geMainTransport::cb_play     (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_play(); }
-void geMainTransport::cb_recAction(Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_recAction(); }
-void geMainTransport::cb_recInput (Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_recInput(); }
-void geMainTransport::cb_metronome(Fl_Widget *v, void *p) { ((geMainTransport*)p)->cb_metronome(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_rewind()
-{
-	c::transport::rewindSeq(/*gui=*/true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_play()
-{
-	c::transport::startStopSeq(/*gui=*/true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_recAction()
-{
-	c::io::toggleActionRec(/*gui=*/true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_recInput()
-{
-	c::io::toggleInputRec(/*gui=*/true);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMainTransport::cb_metronome()
-{
-	c::transport::toggleMetronome(/*gui=*/true);
 }
 
 
@@ -159,3 +120,5 @@ void geMainTransport::updateRecAction(int v)
 	recAction->value(v);
 	recAction->redraw();
 }
+
+}} // giada::v::

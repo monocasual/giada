@@ -37,8 +37,8 @@
 #include "../elems/mainWindow/mainTransport.h"
 #include "../elems/mainWindow/beatMeter.h"
 #include "../elems/mainWindow/keyboard/keyboard.h"
-#include "gd_warnings.h"
-#include "gd_mainWindow.h"
+#include "warnings.h"
+#include "mainWindow.h"
 
 
 extern gdMainWindow* G_MainWin;
@@ -64,12 +64,12 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
-	mainMenu      = new geMainMenu(8, -1);
-	mainIO        = new geMainIO(412, 8);
-	mainTransport = new geMainTransport(8, 39);
-	mainTimer     = new geMainTimer(628, 44);
-	beatMeter     = new geBeatMeter(100, 83, 609, 20);
-	keyboard      = new geKeyboard(8, 122, w()-16, 380);
+	mainMenu      = new v::geMainMenu(8, -1);
+	mainIO        = new v::geMainIO(412, 8);
+	mainTransport = new v::geMainTransport(8, 39);
+	mainTimer     = new v::geMainTimer(598, 44);
+	beatMeter     = new v::geBeatMeter(100, 83, 609, 20);
+	keyboard      = new v::geKeyboard(8, 122, w()-16, 380);
 
 	/* zone 1 - menus, and I/O tools */
 

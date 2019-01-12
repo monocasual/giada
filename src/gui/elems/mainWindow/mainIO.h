@@ -38,6 +38,9 @@ class geStatusButton;
 class geButton;
 #endif
 
+namespace giada {
+namespace v
+{
 class geMainIO : public Fl_Group
 {
 private:
@@ -81,5 +84,7 @@ public:
 	void setMasterFxInFull(bool v);
 #endif
 };
+}} // giada::v::
+
 
 #endif

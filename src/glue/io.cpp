@@ -26,8 +26,8 @@
 
 
 #include <FL/Fl.H>
-#include "../gui/dialogs/gd_mainWindow.h"
-#include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/mainWindow.h"
+#include "../gui/dialogs/warnings.h"
 #include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
@@ -41,6 +41,7 @@
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/wave.h"
+#include "../core/midiDispatcher.h"
 #include "../core/channel.h"
 #include "../core/clock.h"
 #include "../core/sampleChannel.h"
@@ -59,6 +60,17 @@ namespace giada {
 namespace c {
 namespace io 
 {
+namespace
+{
+std::function<void()> recOnSignalCb_ = nullptr;
+} // {anonymous}
+
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 void keyPress(m::Channel* ch, bool ctrl, bool shift, int velocity)
 {
 	/* Everything occurs on frame 0 here: they are all user-generated events. */
@@ -211,4 +223,18 @@ int stopInputRec(bool gui)
 	return 1;
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleRecOnSignal(bool gui)
+{
+	if (recOnSignalCb_ == nullptr)
+		recOnSignalCb_ = [](){ startInputRec(false); };
+	else
+		recOnSignalCb_ = nullptr;
+
+	m::mixer::setSignalCallback(recOnSignalCb_);
+	m::midiDispatcher::setSignalCallback(recOnSignalCb_);
+}
 }}} // giada::c::io::

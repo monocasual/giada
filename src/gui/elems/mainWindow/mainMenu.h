@@ -35,6 +35,9 @@
 class geButton;
 
 
+namespace giada {
+namespace v
+{
 class geMainMenu : public Fl_Group
 {
 private:
@@ -57,6 +60,7 @@ public:
 
 	geMainMenu(int x, int y);
 };
+}} // giada::v::
 
 
 #endif

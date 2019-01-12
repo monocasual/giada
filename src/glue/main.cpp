@@ -31,7 +31,7 @@
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
-#include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/mainWindow.h"
 #include "../utils/gui.h"
 #include "../utils/string.h"
 #include "../utils/log.h"

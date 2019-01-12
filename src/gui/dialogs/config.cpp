@@ -36,7 +36,7 @@
 #include "../elems/config/tabAudio.h"
 #include "../elems/config/tabBehaviors.h"
 #include "../elems/config/tabPlugins.h"
-#include "gd_config.h"
+#include "config.h"
 
 
 using namespace giada::m;

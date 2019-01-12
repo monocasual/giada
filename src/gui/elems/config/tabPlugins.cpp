@@ -39,7 +39,7 @@
 #include "../../../utils/fs.h"
 #include "../../../utils/gui.h"
 #include "../../dialogs/window.h"
-#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/mainWindow.h"
 #include "../../dialogs/browser/browserDir.h"
 #include "../basics/box.h"
 #include "../basics/radio.h"

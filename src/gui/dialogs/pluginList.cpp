@@ -43,7 +43,7 @@
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "../elems/plugin/pluginElement.h"
 #include "pluginChooser.h"
-#include "gd_mainWindow.h"
+#include "mainWindow.h"
 #include "pluginList.h"
 
 

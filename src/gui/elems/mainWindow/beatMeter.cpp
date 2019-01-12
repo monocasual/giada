@@ -34,11 +34,13 @@
 #include "beatMeter.h"
 
 
-using namespace giada::m;
-
-
-geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
-  : Fl_Box(x, y, w, h, L) {}
+namespace giada {
+namespace v
+{
+geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char* l)
+: Fl_Box(x, y, w, h, l)
+{
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -46,28 +48,32 @@ geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char *L)
 
 void geBeatMeter::draw()
 {
-  int cursorW = w() / G_MAX_BEATS;
-  int greyX   = clock::getBeats() * cursorW;
+	using namespace giada::m;
 
-  fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                            // border
-  fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
-  fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
-    G_COLOR_LIGHT_1); // cursor
+	int cursorW = w() / G_MAX_BEATS;
+	int greyX   = clock::getBeats() * cursorW;
 
-  /* beat cells */
+	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                        // border
+	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
+	fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
+		G_COLOR_LIGHT_1); // cursor
 
-  fl_color(G_COLOR_GREY_4);
-  for (int i=1; i<=clock::getBeats(); i++)
-    fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
+	/* beat cells */
 
-  /* bar line */
+	fl_color(G_COLOR_GREY_4);
+	for (int i=1; i<=clock::getBeats(); i++)
+		fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
 
-  fl_color(G_COLOR_LIGHT_1);
-  int delta = clock::getBeats() / clock::getBars();
-  for (int i=1; i<clock::getBars(); i++)
-    fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
+	/* bar line */
 
-  /* unused grey area */
+	fl_color(G_COLOR_LIGHT_1);
+	int delta = clock::getBeats() / clock::getBars();
+	for (int i=1; i<clock::getBars(); i++)
+		fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
 
-  fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, G_COLOR_GREY_4);
+	/* unused grey area */
+
+	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, G_COLOR_GREY_4);
 }
+
+}} // giada::v::

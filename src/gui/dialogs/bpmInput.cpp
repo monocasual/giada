@@ -36,7 +36,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/input.h"
 #include "bpmInput.h"
-#include "gd_mainWindow.h"
+#include "mainWindow.h"
 
 
 extern gdMainWindow* mainWin;

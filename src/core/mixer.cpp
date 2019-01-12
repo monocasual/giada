@@ -29,6 +29,7 @@
 #include <cstring>
 #include "../deps/rtaudio-mod/RtAudio.h"
 #include "../utils/log.h"
+#include "../utils/math.h"
 #include "wave.h"
 #include "kernelAudio.h"
 #include "recorder.h"
@@ -107,6 +108,8 @@ Frame position while recording. */
 
 Frame inputTracker_ = 0;
 
+std::function<void()> signalCb_ = nullptr;
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -150,6 +153,8 @@ void processLineIn_(const AudioBuffer& inBuf)
 		return;
 
 	computePeak_(inBuf, peakIn);
+	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > -10.0) // TODO
+		signalCb_();
 
 	/* "hear what you're playing" - process, copy and paste the input buffer onto 
 	the output buffer. */
@@ -453,6 +458,15 @@ void toggleMetronome()
 void setMetronome(bool v) 
 { 
 	metronome_.running = v; 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setSignalCallback(std::function<void()> f)
+{
+	signalCb_ = f;
 }
 
 

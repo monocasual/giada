@@ -37,7 +37,7 @@
 #include "../../../glue/plugin.h"
 #include "../../elems/basics/idButton.h"
 #include "../../elems/basics/choice.h"
-#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/mainWindow.h"
 #include "../../dialogs/pluginList.h"
 #include "../../dialogs/pluginWindowGUI.h"
 #include "../../dialogs/pluginWindow.h"

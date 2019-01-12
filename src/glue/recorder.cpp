@@ -26,7 +26,7 @@
 
 
 #include <cassert>
-#include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/warnings.h"
 #include "../gui/elems/mainWindow/keyboard/channel.h"
 #include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
 #include "../core/const.h"

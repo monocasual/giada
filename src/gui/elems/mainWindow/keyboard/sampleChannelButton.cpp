@@ -31,7 +31,7 @@
 #include "../../../../utils/string.h"
 #include "../../../../utils/fs.h"
 #include "../../../../glue/channel.h"
-#include "../../../dialogs/gd_mainWindow.h"
+#include "../../../dialogs/mainWindow.h"
 #include "sampleChannel.h"
 #include "keyboard.h"
 #include "sampleChannelButton.h"

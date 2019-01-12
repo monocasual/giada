@@ -36,9 +36,9 @@
 #include "../elems/mainWindow/keyboard/keyboard.h"
 #include "../elems/mainWindow/keyboard/channel.h"
 #include "../elems/mainWindow/keyboard/channelButton.h"
-#include "gd_keyGrabber.h"
-#include "gd_config.h"
-#include "gd_mainWindow.h"
+#include "keyGrabber.h"
+#include "config.h"
+#include "mainWindow.h"
 
 
 extern gdMainWindow *mainWin;

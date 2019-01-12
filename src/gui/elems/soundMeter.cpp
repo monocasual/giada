@@ -29,10 +29,11 @@
 #include <FL/fl_draw.H>
 #include "../../core/const.h"
 #include "../../core/kernelAudio.h"
+#include "../../utils/math.h"
 #include "soundMeter.h"
 
 
-using namespace giada::m;
+using namespace giada;
 
 
 geSoundMeter::geSoundMeter(int x, int y, int w, int h, const char* l)
@@ -58,7 +59,7 @@ void geSoundMeter::draw()
 	peak = 0.0f;
 	float tmp_peak = 0.0f;
 
-	tmp_peak = fabs(mixerPeak);
+	tmp_peak = std::fabs(mixerPeak);
 	if (tmp_peak > peak)
 		peak = tmp_peak;
 
@@ -67,10 +68,10 @@ void geSoundMeter::draw()
 
 	/*  dBFS (full scale) calculation, plus decay of -2dB per frame */
 
-	dbLevel = 20 * log10(peak);
-	if (dbLevel < dbLevelOld)
-		if (dbLevelOld > -G_MIN_DB_SCALE)
-			dbLevel = dbLevelOld - 2.0f;
+	dbLevel = u::math::linearToDB(peak);
+
+	if (dbLevel < dbLevelOld && dbLevelOld > -G_MIN_DB_SCALE)
+		dbLevel = dbLevelOld - 2.0f;
 
 	dbLevelOld = dbLevel;
 
@@ -83,5 +84,5 @@ void geSoundMeter::draw()
 		px_level = w();
 
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);
-	fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !kernelAudio::getStatus() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
+	fl_rectf(x()+1, y()+1, (int) px_level, h()-2, clip || !m::kernelAudio::getStatus() ? G_COLOR_RED_ALERT : G_COLOR_GREY_4);
 }

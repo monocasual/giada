@@ -34,7 +34,7 @@
 #include "../../../utils/string.h"
 #include "../../elems/basics/button.h"
 #include "../../elems/basics/choice.h"
-#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/mainWindow.h"
 #include "../../dialogs/bpmInput.h"
 #include "../../dialogs/beatsInput.h"
 #include "mainTimer.h"
@@ -44,17 +44,19 @@ extern gdMainWindow* G_MainWin;
 
 
 using std::string;
-using namespace giada;
 
 
+namespace giada {
+namespace v
+{
 geMainTimer::geMainTimer(int x, int y)
 	: Fl_Group(x, y, 180, 20)
 {
 	begin();
 
-	quantizer  = new geChoice(x, y, 40, 20, "", false);
-	bpm        = new geButton(quantizer->x()+quantizer->w()+4,  y, 40, 20);
-	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 40, 20, "4/1");
+	quantizer  = new geChoice(x, y, 50, 20, "", false);
+	bpm        = new geButton(quantizer->x()+quantizer->w()+4,  y, 50, 20);
+	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 50, 20, "4/1");
 	multiplier = new geButton(meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
 	divider    = new geButton(multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
 
@@ -189,3 +191,5 @@ void geMainTimer::setMeter(int beats, int bars)
 	string tmp = u::string::iToString(beats) + "/" + u::string::iToString(bars);
 	meter->copy_label(tmp.c_str());
 }
+
+}} // giada::v::

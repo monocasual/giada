@@ -34,13 +34,17 @@
 #include <FL/Fl_Box.H>
 
 
+namespace giada {
+namespace v
+{
 class geBeatMeter : public Fl_Box
 {
 public:
 
- 	geBeatMeter(int X,int Y,int W,int H,const char *L=0);
- 	void draw();
+	geBeatMeter(int x, int y, int w, int h, const char* l=0);
+	void draw();
 };
+}} // giada::v::
 
 
 #endif

@@ -55,7 +55,7 @@
 #include "../elems/sampleEditor/rangeTool.h"
 #include "../elems/sampleEditor/shiftTool.h"
 #include "../elems/mainWindow/keyboard/channel.h"
-#include "gd_warnings.h"
+#include "warnings.h"
 #include "sampleEditor.h"
 
 

@@ -46,7 +46,7 @@ int quantize(int x, int step)
 {
 	/* Source:
 	https://en.wikipedia.org/wiki/Quantization_(signal_processing)#Rounding_example */
-	return step * floor((x / (float) step) + 0.5f);
+	return step * std::floor((x / (float) step) + 0.5f);
 }
 
 

@@ -32,7 +32,7 @@
 #include "../../../../core/pluginHost.h"
 #include "../../../../utils/gui.h"
 #include "../../../../glue/channel.h"
-#include "../../../dialogs/gd_mainWindow.h"
+#include "../../../dialogs/mainWindow.h"
 #include "../../../dialogs/pluginList.h"
 #include "../../basics/idButton.h"
 #include "../../basics/dial.h"

@@ -33,12 +33,18 @@
 
 
 class Fl_Widget;
+
+
+namespace giada {
+namespace v 
+{
 class geKeyboard;
-class geBeatMeter;
-class geMainMenu;
 class geMainIO;
-class geMainTimer;
+class geMainMenu;
+class geBeatMeter;
 class geMainTransport;
+class geMainTimer;
+}}
 
 
 class gdMainWindow : public gdWindow
@@ -46,16 +52,16 @@ class gdMainWindow : public gdWindow
 private:
 
 	static void cb_endprogram(Fl_Widget* v, void* p);
-	inline void cb_endprogram();
+	void cb_endprogram();
 
 public:
 
-	geKeyboard* keyboard;
-	geBeatMeter* beatMeter;
-	geMainMenu* mainMenu;
-	geMainIO* mainIO;
-  geMainTimer* mainTimer;
-	geMainTransport* mainTransport;
+	giada::v::geKeyboard* keyboard;
+	giada::v::geBeatMeter* beatMeter;
+	giada::v::geMainMenu* mainMenu;
+	giada::v::geMainIO* mainIO;
+	giada::v::geMainTimer* mainTimer;
+	giada::v::geMainTransport* mainTransport;
 
 	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 };

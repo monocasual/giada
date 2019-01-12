@@ -31,7 +31,7 @@
 #include "../../../utils/gui.h"
 #include "../../../utils/string.h"
 #include "../../../glue/sampleEditor.h"
-#include "../../dialogs/gd_warnings.h"
+#include "../../dialogs/warnings.h"
 #include "../basics/input.h"
 #include "../basics/box.h"
 #include "../basics/button.h"

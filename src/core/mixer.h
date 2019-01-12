@@ -30,6 +30,7 @@
 
 
 #include <pthread.h>
+#include <functional>
 #include <vector>
 #include "recorder.h"
 #include "types.h"
@@ -116,6 +117,8 @@ void mergeVirtualInput();
 void toggleMetronome();
 bool isMetronomeOn();
 void setMetronome(bool v);
+
+void setSignalCallback(std::function<void()> f);
 }}} // giada::m::mixer::;
 
 

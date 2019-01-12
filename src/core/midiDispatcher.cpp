@@ -51,12 +51,14 @@ namespace midiDispatcher
 {
 namespace
 {
-/* cb_midiLearn, cb_data
+/* cb_midiLearn, cb_data_
 Callback prepared by the gdMidiGrabber window and called by midiDispatcher. It 
 contains things to do once the midi message has been stored. */
 
-cb_midiLearn* cb_learn = nullptr;
-void* cb_data = nullptr;	
+cb_midiLearn* cb_learn_ = nullptr;
+void* cb_data_ = nullptr;	
+
+std::function<void()> signalCb_ = nullptr;
 
 
 /* -------------------------------------------------------------------------- */
@@ -64,7 +66,7 @@ void* cb_data = nullptr;
 
 #ifdef WITH_VST
 
-void processPlugins(Channel* ch, const MidiEvent& midiEvent)
+void processPlugins_(Channel* ch, const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
@@ -94,7 +96,7 @@ void processPlugins(Channel* ch, const MidiEvent& midiEvent)
 /* -------------------------------------------------------------------------- */
 
 
-void processChannels(const MidiEvent& midiEvent)
+void processChannels_(const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
@@ -154,7 +156,7 @@ void processChannels(const MidiEvent& midiEvent)
 #ifdef WITH_VST
 
 		/* Process learned plugins parameters. */
-		processPlugins(ch, midiEvent); 
+		processPlugins_(ch, midiEvent); 
 
 #endif
 
@@ -167,7 +169,7 @@ void processChannels(const MidiEvent& midiEvent)
 /* -------------------------------------------------------------------------- */
 
 
-void processMaster(const MidiEvent& midiEvent)
+void processMaster_(const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
@@ -223,8 +225,8 @@ void processMaster(const MidiEvent& midiEvent)
 
 void startMidiLearn(cb_midiLearn* cb, void* data)
 {
-	cb_learn = cb;
-	cb_data  = data;
+	cb_learn_ = cb;
+	cb_data_  = data;
 }
 
 
@@ -233,8 +235,8 @@ void startMidiLearn(cb_midiLearn* cb, void* data)
 
 void stopMidiLearn()
 {
-	cb_learn = nullptr;
-	cb_data  = nullptr;
+	cb_learn_ = nullptr;
+	cb_data_  = nullptr;
 }
 
 
@@ -260,12 +262,22 @@ void dispatch(int byte1, int byte2, int byte3)
 	then each channel in the stack. This way incoming signals don't get processed 
 	by glue_* when MIDI learning is on. */
 
-	if (cb_learn)
-		cb_learn(midiEvent.getRawNoVelocity(), cb_data);
+	if (cb_learn_)
+		cb_learn_(midiEvent.getRawNoVelocity(), cb_data_);
 	else {
-		processMaster(midiEvent);
-		processChannels(midiEvent);
+		processMaster_(midiEvent);
+		processChannels_(midiEvent);
 	}	
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setSignalCallback(std::function<void()> f)
+{
+	signalCb_ = f;
+}
+
 }}}; // giada::m::midiDispatcher::
 

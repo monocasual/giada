@@ -29,7 +29,7 @@
 #include "../../../../glue/transport.h"
 #include "../../../../glue/io.h"
 #include "../../../../utils/log.h"
-#include "../../../dialogs/gd_warnings.h"
+#include "../../../dialogs/warnings.h"
 #include "../../basics/boxtypes.h"
 #include "column.h"
 #include "sampleChannel.h"
@@ -37,9 +37,9 @@
 #include "keyboard.h"
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v
+{
 int geKeyboard::indexColumn = 0;
 
 
@@ -399,3 +399,5 @@ geColumn* geKeyboard::getColumn(int i)
 {
   return columns.at(i);
 }
+
+}} // giada::v::

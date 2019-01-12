@@ -32,7 +32,7 @@
 #include "../elems/basics/button.h"
 #include "../elems/basics/box.h"
 #include "window.h"
-#include "gd_warnings.h"
+#include "warnings.h"
 
 
 void gdAlert(const char *c)

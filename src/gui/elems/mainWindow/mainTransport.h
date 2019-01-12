@@ -35,26 +35,21 @@
 class geButton;
 
 
+namespace giada {
+namespace v
+{
 class geMainTransport : public Fl_Group
 {
 private:
 
 	geButton* rewind;
 	geButton* play;
+	
 	geButton* recAction;
 	geButton* recInput;
-	geButton* metronome;
+	geButton* recOnSignal;
 
-	static void cb_rewind   (Fl_Widget* v, void* p);
-	static void cb_play     (Fl_Widget* v, void* p);
-	static void cb_recAction(Fl_Widget* v, void* p);
-	static void cb_recInput (Fl_Widget* v, void* p);
-	static void cb_metronome(Fl_Widget* v, void* p);
-	void cb_rewind   ();
-	void cb_play     ();
-	void cb_recAction();
-	void cb_recInput ();
-	void cb_metronome();
+	geButton* metronome;
 
 public:
 
@@ -65,5 +60,7 @@ public:
 	void updateRecInput (int v);
 	void updateRecAction(int v);
 };
+}} // giada::v::
+
 
 #endif

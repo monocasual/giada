@@ -27,9 +27,9 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/mainWindow.h"
 #include "../gui/dialogs/sampleEditor.h"
-#include "../gui/dialogs/gd_warnings.h"
+#include "../gui/dialogs/warnings.h"
 #include "../gui/elems/basics/button.h"
 #include "../gui/elems/sampleEditor/waveTools.h"
 #include "../gui/elems/sampleEditor/volumeTool.h"

@@ -35,7 +35,11 @@
 class geButton;
 class geChannel;
 class geResizerBar;
+namespace giada {
+namespace v 
+{
 class geKeyboard;
+}}
 
 
 class geColumn : public Fl_Group
@@ -47,13 +51,13 @@ private:
 
 	geButton*     m_addChannelBtn;
 	geResizerBar* m_resizer;
-	geKeyboard*   m_parent;
+	giada::v::geKeyboard* m_parent;
 
 	int m_index;
 
 public:
 
-	geColumn(int x, int y, int w, int h, int index, geKeyboard* parent);
+	geColumn(int x, int y, int w, int h, int index, giada::v::geKeyboard* parent);
 	~geColumn();
 
 	/* addChannel

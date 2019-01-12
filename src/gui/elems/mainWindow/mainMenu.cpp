@@ -38,10 +38,10 @@
 #include "../../../glue/main.h"
 #include "../../elems/basics/boxtypes.h"
 #include "../../elems/basics/button.h"
-#include "../../dialogs/gd_mainWindow.h"
+#include "../../dialogs/mainWindow.h"
 #include "../../dialogs/about.h"
-#include "../../dialogs/gd_config.h"
-#include "../../dialogs/gd_warnings.h"
+#include "../../dialogs/config.h"
+#include "../../dialogs/warnings.h"
 #include "../../dialogs/browser/browserLoad.h"
 #include "../../dialogs/browser/browserSave.h"
 #include "../../dialogs/midiIO/midiInputMaster.h"
@@ -52,9 +52,9 @@
 extern gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v
+{
 geMainMenu::geMainMenu(int x, int y)
 	: Fl_Group(x, y, 300, 20)
 {
@@ -229,3 +229,5 @@ void geMainMenu::cb_edit()
 		return;
 	}
 }
+
+}} // giada::v::

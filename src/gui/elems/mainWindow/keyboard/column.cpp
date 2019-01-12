@@ -34,7 +34,7 @@
 #include "../../../../utils/log.h"
 #include "../../../../utils/fs.h"
 #include "../../../../utils/string.h"
-#include "../../../dialogs/gd_warnings.h"
+#include "../../../dialogs/warnings.h"
 #include "../../../elems/basics/boxtypes.h"
 #include "../../../elems/basics/resizerBar.h"
 #include "keyboard.h"
@@ -48,7 +48,7 @@ using std::string;
 using namespace giada;
 
 
-geColumn::geColumn(int X, int Y, int W, int H, int index, geKeyboard* parent)
+geColumn::geColumn(int X, int Y, int W, int H, int index, v::geKeyboard* parent)
 	: Fl_Group(X, Y, W, H), 
 		m_parent(parent), 
 		m_index (index)

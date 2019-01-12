@@ -31,7 +31,7 @@
 #include "../../../core/conf.h"
 #include "../../../core/kernelAudio.h"
 #include "../../../utils/string.h"
-#include "../../../gui/dialogs/gd_devInfo.h"
+#include "../../../gui/dialogs/devInfo.h"
 #include "../basics/box.h"
 #include "../basics/choice.h"
 #include "../basics/check.h"

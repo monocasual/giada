@@ -27,7 +27,7 @@
 
 #include <FL/Fl.H>
 #include "../gui/elems/mainWindow/mainTransport.h"
-#include "../gui/dialogs/gd_mainWindow.h"
+#include "../gui/dialogs/mainWindow.h"
 #include "../core/clock.h"
 #include "../core/conf.h"
 #include "../core/const.h"
