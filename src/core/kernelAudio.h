@@ -30,7 +30,7 @@
 
 
 #include <string>
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	#include <jack/jack.h>
 	#include <jack/intclient.h>
 	#include <jack/transport.h>
@@ -45,7 +45,7 @@ namespace giada {
 namespace m {
 namespace kernelAudio
 {
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 
 struct JackState
 {
@@ -80,7 +80,7 @@ int getDefaultIn();
 bool hasAPI(int API);
 int getAPI();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 
 void jackStart();
 void jackStop();

@@ -42,7 +42,7 @@ std::string getRealPath(const std::string& path)
 {
 	std::string out = "";
 
-#if defined(G_OS_LINUX) || defined(G_OS_MAC)
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD) || defined(G_OS_MAC)
 
 	char *buf = realpath(path.c_str(), nullptr);
 

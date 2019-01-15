@@ -107,7 +107,7 @@ void setBpm(const char* v1, const char* v2)
 	float  f = atof(v1) + (atof(v2)/10);
 	string s = string(v1) + "." + string(v2);
 
-#ifdef G_OS_LINUX
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		kernelAudio::jackSetBpm(f);
 	else

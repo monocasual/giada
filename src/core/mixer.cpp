@@ -324,7 +324,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (!ready)
 		return 0;
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	clock::recvJackSync();
 #endif
 

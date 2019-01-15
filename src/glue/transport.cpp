@@ -62,7 +62,7 @@ void startSeq(bool gui)
 {
 	clock::start();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	kernelAudio::jackStart();
 #endif
 
@@ -81,7 +81,7 @@ void stopSeq(bool gui)
 {
 	mh::stopSequencer();
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 	kernelAudio::jackStop();
 #endif
 

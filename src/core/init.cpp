@@ -30,7 +30,7 @@
 #ifdef __APPLE__
 	#include <pwd.h>
 #endif
-#if defined(__linux__) && defined(WITH_VST)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(WITH_VST)
 	#include <X11/Xlib.h> // For XInitThreads
 #endif
 #include <FL/Fl.H>
@@ -153,7 +153,7 @@ void initGUI_(int argc, char** argv)
 	plug-ins go nuts and crash hard. It seems that some plug-ins or our Juce-based
 	PluginHost use Xlib concurrently. */
 	
-#if defined(__linux__) && defined(WITH_VST)
+#if (defined(__linux__) || defined(__FreeBSD__)) && defined(WITH_VST)
 	XInitThreads();
 #endif
 
