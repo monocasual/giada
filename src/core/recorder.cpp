@@ -52,9 +52,9 @@ lock-free solution will be implemented. */
 
 ActionMap actions;
 
-pthread_mutex_t* mixerMutex = nullptr;
-bool             active     = false;
-int              actionId   = 0;
+pthread_mutex_t* mixerMutex_ = nullptr;
+bool             active_     = false;
+int              actionId_   = 0;
 
 
 /* -------------------------------------------------------------------------- */
@@ -62,10 +62,10 @@ int              actionId   = 0;
 
 void lock_(std::function<void()> f)
 {
-	assert(mixerMutex != nullptr);
-	pthread_mutex_lock(mixerMutex);
+	assert(mixerMutex_ != nullptr);
+	pthread_mutex_lock(mixerMutex_);
 	f();
-	pthread_mutex_unlock(mixerMutex);
+	pthread_mutex_unlock(mixerMutex_);
 }
 
 
@@ -118,9 +118,9 @@ void removeIf_(std::function<bool(const Action*)> f)
 
 void init(pthread_mutex_t* m)
 {
-	mixerMutex = m;
-	active     = false;
-	actionId   = 0;
+	mixerMutex_ = m;
+	active_     = false;
+	actionId_   = 0;
 	clearAll();
 }
 
@@ -248,8 +248,8 @@ void updateActionMap(ActionMap&& am)
 
 void updateActionId(int id)
 {
-	if (actionId <= id)  // Never decrease it
-		actionId = id;
+	if (actionId_ <= id)  // Never decrease it
+		actionId_ = id;
 }
 
 
@@ -269,9 +269,9 @@ bool hasActions(int channel, int type)
 /* -------------------------------------------------------------------------- */
 
 
-bool isActive() { return active; }
-void enable()   { active = true; }
-void disable()  { active = false; }
+bool isActive() { return active_; }
+void enable()   { active_ = true; }
+void disable()  { active_ = false; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -293,7 +293,7 @@ const Action* rec(int channel, Frame frame, MidiEvent event)
 
 	lock_([&]
 	{ 
-		actions[frame].push_back(makeAction(actionId++, channel, frame, event));
+		actions[frame].push_back(makeAction(actionId_++, channel, frame, event));
 	});
 	return actions[frame].back();
 }
@@ -307,7 +307,7 @@ void rec(const std::vector<const Action*>& as)
 	ActionMap temp = actions;
 
 	for (const Action* a : as) {
-		const_cast<Action*>(a)->id = actionId++;
+		const_cast<Action*>(a)->id = actionId_++;
 		temp[a->frame].push_back(a); // Memory is already allocated by recorderHandler
 	}
 
@@ -346,7 +346,7 @@ const Action* getClosestAction(int channel, Frame f, int type)
 
 ActionMap getActionMap() { return actions; }
 
-int getLatestActionId() { return actionId; }
+int getLatestActionId() { return actionId_; }
 
 
 /* -------------------------------------------------------------------------- */

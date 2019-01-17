@@ -65,8 +65,8 @@ Handles the input recording (take). If gui == true the signal comes from an
 internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
 void toggleInputRec(bool gui=true);
-int  startInputRec (bool gui=true);
-int  stopInputRec  (bool gui=true);
+bool startInputRec (bool gui=true);
+void stopInputRec  (bool gui=true);
 
 void toggleRecOnSignal(bool gui=true);
 }}} // giada::c::io::

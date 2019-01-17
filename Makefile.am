@@ -74,6 +74,8 @@ sourcesCore =                            \
 	src/core/sampleChannelRec.cpp          \
 	src/core/midiChannelProc.h             \
 	src/core/midiChannelProc.cpp           \
+	src/core/recManager.h                  \
+	src/core/recManager.cpp                \
 	src/glue/main.h                        \
 	src/glue/main.cpp                      \
 	src/glue/io.h                          \

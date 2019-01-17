@@ -28,6 +28,7 @@
 #include <FL/Fl.H>
 #include "../gui/dialogs/mainWindow.h"
 #include "../gui/dialogs/warnings.h"
+#include "../gui/elems/basics/button.h"
 #include "../gui/elems/mainWindow/mainTransport.h"
 #include "../gui/elems/mainWindow/mainTimer.h"
 #include "../gui/elems/mainWindow/keyboard/keyboard.h"
@@ -37,7 +38,9 @@
 #include "../utils/log.h"
 #include "../utils/math.h"
 #include "../core/recorder.h"
+#include "../core/recManager.h"
 #include "../core/kernelAudio.h"
+#include "../core/channel.h"
 #include "../core/mixer.h"
 #include "../core/mixerHandler.h"
 #include "../core/wave.h"
@@ -114,19 +117,12 @@ void toggleActionRec(bool gui)
 
 void startActionRec(bool gui)
 {
-	if (m::kernelAudio::getStatus() == false)
+	if (!m::recManager::startActionRec())
 		return;
-
-	m::recorder::enable();
-
-	if (!m::clock::isRunning())
-		c::transport::startSeq(false);  // update gui
-
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updateRecAction(1);
-		Fl::unlock();
-	}
+	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->updatePlay(1);
+	G_MainWin->mainTransport->updateRecAction(1);
+	if (!gui) Fl::unlock();
 }
 
 
@@ -135,22 +131,14 @@ void startActionRec(bool gui)
 
 void stopActionRec(bool gui)
 {
-	m::recorder::disable();
-	m::recorderHandler::consolidate();
+	m::recManager::stopActionRec();
 
-	for (m::Channel* ch : m::mixer::channels) {
-		if (ch->type == ChannelType::MIDI)
-			continue;
-		G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
-		if (!ch->readActions && ch->hasActions)
-			c::channel::startReadingActions(ch, false);
-	}
-
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updateRecAction(0);
-		Fl::unlock();
-	}
+	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->updateRecAction(0);
+	for (m::Channel* ch : m::mixer::channels)
+		if (ch->type == ChannelType::SAMPLE)
+			G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
+	if (!gui) Fl::unlock();
 
 	gu_refreshActionEditor();  // in case it's open
 }
@@ -172,33 +160,25 @@ void toggleInputRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-int startInputRec(bool gui)
+bool startInputRec(bool gui)
 {
-	using namespace giada::m;
-
-	if (kernelAudio::getStatus() == false)
-		return false;
-
-	if (!mh::startInputRec()) {
-		Fl::lock();
+	if (!m::recManager::startInputRec()) {
+		if (!gui) Fl::lock();
 		G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
-		Fl::unlock();
+		if (!gui) Fl::unlock();
 		return false;
-	}
+	}	
 
-	if (!clock::isRunning())
-		transport::startSeq(false); // update gui anyway
-
-	Fl::lock();
-		if (!gui)
-			G_MainWin->mainTransport->updateRecInput(1);
-		G_MainWin->mainTimer->setLock(true);
-	Fl::unlock();
+	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->updatePlay(m::clock::isRunning());
+	G_MainWin->mainTransport->updateRecInput(1);
+	G_MainWin->mainTimer->setLock(true);
+	if (!gui) Fl::unlock();
 
 	/* Update sample name inside sample channels' main button. This is useless 
 	for MIDI channels, but let's do it anyway. */
 
-	for (Channel* ch : m::mixer::channels)
+	for (m::Channel* ch : m::mixer::channels)
 		ch->guiChannel->update();
 
 	return true;
@@ -208,19 +188,14 @@ int startInputRec(bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-int stopInputRec(bool gui)
+void stopInputRec(bool gui)
 {
-	using namespace giada::m;
-	
-	mh::stopInputRec();
+	m::recManager::stopInputRec();
 
-	Fl::lock();
-		if (!gui)
-			G_MainWin->mainTransport->updateRecInput(0);
-		G_MainWin->mainTimer->setLock(false);
-	Fl::unlock();
-
-	return 1;
+	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->updateRecInput(0);
+	G_MainWin->mainTimer->setLock(false);
+	if (!gui) Fl::unlock();
 }
 
 
