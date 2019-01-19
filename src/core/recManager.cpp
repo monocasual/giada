@@ -25,13 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../core/clock.h"
-#include "../core/kernelAudio.h"
-#include "../core/conf.h"
-#include "../core/channel.h"
-#include "../core/mixerHandler.h"
-#include "../core/recorder.h"
-#include "../core/recorderHandler.h"
+#include "types.h"
+#include "clock.h"
+#include "kernelAudio.h"
+#include "conf.h"
+#include "channel.h"
+#include "mixer.h"
+#include "mixerHandler.h"
+#include "midiDispatcher.h"
+#include "recorder.h"
+#include "recorderHandler.h"
 #include "recManager.h"
 
 
@@ -42,7 +45,40 @@ namespace recManager
 namespace
 {
 pthread_mutex_t* mixerMutex_ = nullptr;
-Mode mode_ = Mode::NORMAL;
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool startActionRec_()
+{
+	if (!kernelAudio::getStatus())
+		return false;
+	recorder::enable();
+	clock::start();
+#ifdef __linux__
+	kernelAudio::jackStart();
+#endif
+	return true;	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool startInputRec_()
+{
+	puts("START INPUT REC");
+	if (!kernelAudio::getStatus() || !mh::startInputRec())
+		return false;
+	if (!clock::isRunning()) {
+		clock::start();
+#ifdef __linux__
+		kernelAudio::jackStart();
+#endif
+	}
+	return true;
+}
 } // {anonymous}
 
 
@@ -60,22 +96,15 @@ void init(pthread_mutex_t* mixerMutex)
 /* -------------------------------------------------------------------------- */
 
 
-void setMode(Mode m) { mode_ = m; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool startActionRec()
+bool startActionRec(RecTriggerMode mode)
 {
-	if (!m::kernelAudio::getStatus())
-		return false;
-	m::recorder::enable();
-	clock::start();
-#ifdef __linux__
-	kernelAudio::jackStart();
-#endif
-	return true;
+	if (mode == RecTriggerMode::NORMAL)
+		return startActionRec_();
+	if (mode == RecTriggerMode::SIGNAL) {
+		mixer::setSignalCallback(startActionRec_);
+		midiDispatcher::setSignalCallback(startActionRec_);
+		// TODO recorderHandler
+	}
 }
 
 
@@ -84,8 +113,8 @@ bool startActionRec()
 
 void stopActionRec()
 {
-	m::recorder::disable();
-	m::recorderHandler::consolidate();
+	recorder::disable();
+	recorderHandler::consolidate();
 
 	/* Enable reading actions for Sample Channels that has just been filled
 	with action. */
@@ -107,15 +136,14 @@ void stopActionRec()
 /* -------------------------------------------------------------------------- */
 
 
-bool startInputRec()
+bool startInputRec(RecTriggerMode mode)
 {
-	if (!kernelAudio::getStatus() || !mh::startInputRec())
-		return false;
-	if (!clock::isRunning()) {
-		clock::start();
-#ifdef __linux__
-		kernelAudio::jackStart();
-#endif
+	if (mode == RecTriggerMode::NORMAL)
+		return startInputRec_();
+	if (mode == RecTriggerMode::SIGNAL) {
+		mixer::setSignalCallback(startInputRec_);
+		midiDispatcher::setSignalCallback(startInputRec_);
+		// TODO recorderHandler
 	}
 	return true;
 }

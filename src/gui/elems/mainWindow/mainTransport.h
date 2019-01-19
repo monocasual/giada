@@ -30,6 +30,7 @@
 
 
 #include <FL/Fl_Group.H>
+#include "../../../core/types.h"
 
 
 class geButton;
@@ -55,10 +56,13 @@ public:
 
 	geMainTransport(int x, int y);
 
+	RecTriggerMode getRecTriggerMode() const;
+	
 	void updatePlay     (int v);
 	void updateMetronome(int v);
 	void updateRecInput (int v);
 	void updateRecAction(int v);
+
 };
 }} // giada::v::
 

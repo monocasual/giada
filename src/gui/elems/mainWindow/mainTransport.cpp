@@ -70,9 +70,6 @@ geMainTransport::geMainTransport(int x, int y)
 	});
 	recInput->type(FL_TOGGLE_BUTTON);
 
-	recOnSignal->callback([](Fl_Widget* w, void* v) { 
-		c::io::toggleRecOnSignal(/*gui=*/true); 
-	});
 	recOnSignal->type(FL_TOGGLE_BUTTON);
 
 	metronome->callback([](Fl_Widget* w, void* v) {
@@ -119,6 +116,15 @@ void geMainTransport::updateRecAction(int v)
 {
 	recAction->value(v);
 	recAction->redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+RecTriggerMode geMainTransport::getRecTriggerMode() const
+{
+	return recOnSignal->value() ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 }
 
 }} // giada::v::

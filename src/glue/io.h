@@ -67,8 +67,6 @@ internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
 void toggleInputRec(bool gui=true);
 bool startInputRec (bool gui=true);
 void stopInputRec  (bool gui=true);
-
-void toggleRecOnSignal(bool gui=true);
 }}} // giada::c::io::
 
 #endif

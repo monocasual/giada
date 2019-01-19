@@ -63,17 +63,6 @@ namespace giada {
 namespace c {
 namespace io 
 {
-namespace
-{
-std::function<void()> recOnSignalCb_ = nullptr;
-} // {anonymous}
-
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
 void keyPress(m::Channel* ch, bool ctrl, bool shift, int velocity)
 {
 	/* Everything occurs on frame 0 here: they are all user-generated events. */
@@ -117,10 +106,12 @@ void toggleActionRec(bool gui)
 
 void startActionRec(bool gui)
 {
-	if (!m::recManager::startActionRec())
+	RecTriggerMode triggerMode = G_MainWin->mainTransport->getRecTriggerMode();
+
+	if (!m::recManager::startActionRec(triggerMode))
 		return;
 	if (!gui) Fl::lock();
-	G_MainWin->mainTransport->updatePlay(1);
+	G_MainWin->mainTransport->updatePlay(1); // TODO wrong
 	G_MainWin->mainTransport->updateRecAction(1);
 	if (!gui) Fl::unlock();
 }
@@ -162,7 +153,9 @@ void toggleInputRec(bool gui)
 
 bool startInputRec(bool gui)
 {
-	if (!m::recManager::startInputRec()) {
+	RecTriggerMode triggerMode = G_MainWin->mainTransport->getRecTriggerMode();
+
+	if (!m::recManager::startInputRec(triggerMode)) {
 		if (!gui) Fl::lock();
 		G_MainWin->mainTransport->updateRecInput(0);  // set it off, anyway
 		if (!gui) Fl::unlock();
@@ -198,18 +191,4 @@ void stopInputRec(bool gui)
 	if (!gui) Fl::unlock();
 }
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void toggleRecOnSignal(bool gui)
-{
-	if (recOnSignalCb_ == nullptr)
-		recOnSignalCb_ = [](){ startInputRec(false); };
-	else
-		recOnSignalCb_ = nullptr;
-
-	m::mixer::setSignalCallback(recOnSignalCb_);
-	m::midiDispatcher::setSignalCallback(recOnSignalCb_);
-}
 }}} // giada::c::io::

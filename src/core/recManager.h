@@ -33,15 +33,12 @@ namespace giada {
 namespace m {
 namespace recManager
 {
-enum class Mode { NORMAL, SIGNAL, FREE };
-
 void init(pthread_mutex_t* mixerMutex);
 
-bool startActionRec();
+bool startActionRec(RecTriggerMode m);
 void stopActionRec();
-bool startInputRec();
+bool startInputRec(RecTriggerMode m);
 void stopInputRec();
-void setMode(Mode m);
 }}} // giada::m::recManager
 
 #endif

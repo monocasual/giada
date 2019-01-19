@@ -69,7 +69,7 @@ protected:
 	static void cb_solo(Fl_Widget* v, void* p);
 	static void cb_changeVol(Fl_Widget* v, void* p);
 #ifdef WITH_VST
-		static void cb_openFxWindow(Fl_Widget* v, void* p);
+	static void cb_openFxWindow(Fl_Widget* v, void* p);
 #endif
 	void cb_mute();
 	void cb_arm();
@@ -139,7 +139,7 @@ public:
 
 	giada::m::Channel* ch;
  
-	geIdButton*      button;
+	geButton*        button;
 	geChannelStatus* status;
 	geButton*        arm;
 	geChannelButton* mainButton;

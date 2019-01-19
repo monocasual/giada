@@ -235,25 +235,25 @@ int geKeyboard::handle(int e)
 			if (e == FL_KEYDOWN) {
 				if (Fl::event_key() == FL_BackSpace && !bckspcPressed) {
 					bckspcPressed = true;
-					transport::rewindSeq(false);          // not from GUI
+					transport::rewindSeq(/*gui=*/false);
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == FL_End && !endPressed) {
 					endPressed = true;
-					io::toggleInputRec(false);  // not from GUI
+					io::toggleInputRec(/*gui=*/false);
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == FL_Enter && !enterPressed) {
 					enterPressed = true;
-					io::toggleActionRec(false); // not from GUI
+					io::toggleActionRec(/*gui=*/false);
 					ret = 1;
 					break;
 				}
 				else if (Fl::event_key() == ' ' && !spacePressed) {
 					spacePressed = true;
-					transport::startStopSeq(false);      // unot from GUI
+					transport::startStopSeq(/*gui=*/false);
 					ret = 1;
 					break;
 				}

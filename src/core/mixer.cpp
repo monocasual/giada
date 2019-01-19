@@ -153,8 +153,11 @@ void processLineIn_(const AudioBuffer& inBuf)
 		return;
 
 	computePeak_(inBuf, peakIn);
-	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > -10.0) // TODO
+
+	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > -10.0) { // TODO - constant
 		signalCb_();
+		signalCb_ = nullptr;
+	}
 
 	/* "hear what you're playing" - process, copy and paste the input buffer onto 
 	the output buffer. */

@@ -215,6 +215,17 @@ void processMaster_(const MidiEvent& midiEvent)
 	}
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void triggerSignalCb_()
+{
+	if (signalCb_ == nullptr) 
+		return;
+	signalCb_();
+	signalCb_ = nullptr;
+}
 } // {anonymous}
 
 
@@ -267,6 +278,7 @@ void dispatch(int byte1, int byte2, int byte3)
 	else {
 		processMaster_(midiEvent);
 		processChannels_(midiEvent);
+		triggerSignalCb_();
 	}	
 }
 
