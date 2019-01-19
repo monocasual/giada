@@ -33,7 +33,7 @@ namespace giada {
 namespace m {
 namespace recManager
 {
-enum class Mode { NORMAL, ON_SIGNAL };
+enum class Mode { NORMAL, SIGNAL, FREE };
 
 void init(pthread_mutex_t* mixerMutex);
 
