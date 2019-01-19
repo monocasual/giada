@@ -48,7 +48,7 @@
 #include "../../../dialogs/midiIO/midiOutputSampleCh.h"
 #include "../../../dialogs/midiIO/midiInputChannel.h"
 #include "../../basics/boxtypes.h"
-#include "../../basics/idButton.h"
+#include "../../basics/button.h"
 #include "../../basics/statusButton.h"
 #include "../../basics/dial.h"
 #include "channelStatus.h"
@@ -215,7 +215,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* c
 {
 	begin();
 
-	button      = new geIdButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
+	button      = new geButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
 	arm         = new geButton(button->x()+button->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
 	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), G_GUI_UNIT, H, ch);
 	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), G_GUI_UNIT, H, "-- no sample --");

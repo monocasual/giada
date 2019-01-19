@@ -35,7 +35,7 @@
 #include "../../../utils/gui.h"
 #include "../../../utils/log.h"
 #include "../../../glue/plugin.h"
-#include "../../elems/basics/idButton.h"
+#include "../../elems/basics/button.h"
 #include "../../elems/basics/choice.h"
 #include "../../dialogs/mainWindow.h"
 #include "../../dialogs/pluginList.h"
@@ -57,12 +57,12 @@ gePluginElement::gePluginElement(gdPluginList* gdp, m::Plugin* p, int X, int Y, 
 	  m_plugin    (p)
 {
 	begin();
-	button    = new geIdButton(8, y(), 220, 20);
+	button    = new geButton(8, y(), 220, 20);
 	program   = new geChoice(button->x()+button->w()+4, y(), 132, 20);
-	bypass    = new geIdButton(program->x()+program->w()+4, y(), 20, 20);
-	shiftUp   = new geIdButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
-	shiftDown = new geIdButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
-	remove    = new geIdButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
+	bypass    = new geButton(program->x()+program->w()+4, y(), 20, 20);
+	shiftUp   = new geButton(bypass->x()+bypass->w()+4, y(), 20, 20, "", fxShiftUpOff_xpm, fxShiftUpOn_xpm);
+	shiftDown = new geButton(shiftUp->x()+shiftUp->w()+4, y(), 20, 20, "", fxShiftDownOff_xpm, fxShiftDownOn_xpm);
+	remove    = new geButton(shiftDown->x()+shiftDown->w()+4, y(), 20, 20, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 	end();
 
 	button->copy_label(m_plugin->getName().c_str());

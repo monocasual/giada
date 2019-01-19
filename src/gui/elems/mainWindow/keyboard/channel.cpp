@@ -34,7 +34,7 @@
 #include "../../../../glue/channel.h"
 #include "../../../dialogs/mainWindow.h"
 #include "../../../dialogs/pluginList.h"
-#include "../../basics/idButton.h"
+#include "../../basics/button.h"
 #include "../../basics/dial.h"
 #include "../../basics/statusButton.h"
 #include "column.h"

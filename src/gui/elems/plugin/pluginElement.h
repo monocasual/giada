@@ -36,8 +36,8 @@
 
 
 class gdPluginList;
-class geIdButton;
 class geChoice;
+class geButton;
 
 
 class gePluginElement : public Fl_Group
@@ -62,12 +62,12 @@ private:
 
 public:
 
-	geIdButton* button;
-	geChoice*   program;
-	geIdButton* bypass;
-	geIdButton* shiftUp;
-	geIdButton* shiftDown;
-	geIdButton* remove;
+	geButton* button;
+	geChoice* program;
+	geButton* bypass;
+	geButton* shiftUp;
+	geButton* shiftDown;
+	geButton* remove;
 
 	gePluginElement(gdPluginList* gdp, giada::m::Plugin* p, int x, int y, int w);
 };

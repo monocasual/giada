@@ -34,7 +34,6 @@
 #include "../../../../core/channel.h"
 
 
-class geIdButton;
 class geChannelStatus;
 class geButton;
 class geChannelButton;
