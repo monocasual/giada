@@ -29,12 +29,15 @@
 #define G_V_KEY_DISPATCHER_H
 
 
+#include <functional>
+
+
 namespace giada {
 namespace v {
 namespace keyDispatcher
 {
 void dispatch(int event);
-
+void setSignalCallback(std::function<void()> f);
 }}} // giada::v::keyDispatcher
 
 
