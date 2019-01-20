@@ -30,6 +30,7 @@
 #include "../../../../glue/io.h"
 #include "../../../../utils/log.h"
 #include "../../../dialogs/warnings.h"
+#include "../../../keyDispatcher.h"
 #include "../../basics/boxtypes.h"
 #include "column.h"
 #include "sampleChannel.h"
@@ -212,74 +213,22 @@ geColumn* geKeyboard::getColumnByIndex(int index)
 
 /* -------------------------------------------------------------------------- */
 
-/* TODO - the following event handling for play, stop, rewind, start rec and
-so on should be moved to the proper widget: gdMainWindow or (better) geController. */
 
 int geKeyboard::handle(int e)
 {
-	using namespace giada::c;
-
-	int ret = Fl_Group::handle(e);  // assume the buttons won't handle the Keyboard events
 	switch (e) {
 		case FL_FOCUS:
 		case FL_UNFOCUS: {
-			ret = 1;                	// enables receiving Keyboard events
-			break;
+			return 1;               // Enables receiving Keyboard events
 		}
-		case FL_SHORTCUT:           // in case widget that isn't ours has focus
+		case FL_SHORTCUT:           // In case widget that isn't ours has focus
 		case FL_KEYDOWN:            // Keyboard key pushed
 		case FL_KEYUP: {            // Keyboard key released
-
-			/* rewind session. Avoid retrigs */
-
-			if (e == FL_KEYDOWN) {
-				if (Fl::event_key() == FL_BackSpace && !bckspcPressed) {
-					bckspcPressed = true;
-					transport::rewindSeq(/*gui=*/false);
-					ret = 1;
-					break;
-				}
-				else if (Fl::event_key() == FL_End && !endPressed) {
-					endPressed = true;
-					io::toggleInputRec(/*gui=*/false);
-					ret = 1;
-					break;
-				}
-				else if (Fl::event_key() == FL_Enter && !enterPressed) {
-					enterPressed = true;
-					io::toggleActionRec(/*gui=*/false);
-					ret = 1;
-					break;
-				}
-				else if (Fl::event_key() == ' ' && !spacePressed) {
-					spacePressed = true;
-					transport::startStopSeq(/*gui=*/false);
-					ret = 1;
-					break;
-				}
-			}
-			else if (e == FL_KEYUP) {
-				if (Fl::event_key() == FL_BackSpace)
-					bckspcPressed = false;
-				else if (Fl::event_key() == FL_End)
-					endPressed = false;
-				else if (Fl::event_key() == ' ')
-					spacePressed = false;
-				else if (Fl::event_key() == FL_Enter)
-					enterPressed = false;
-			}
-
-			/* Walk button arrays, trying to match button's label with the Keyboard event.
-			 * If found, set that button's value() based on up/down event,
-			 * and invoke that button's callback() */
-
-			for (unsigned i=0; i<columns.size(); i++)
-				for (int k=1; k<columns.at(i)->children(); k++)
-					ret &= static_cast<geChannel*>(columns.at(i)->child(k))->keyPress(e);
-			break;
+			keyDispatcher::dispatch(e);
+			return 1;
 		}
 	}
-	return ret;
+	return Fl_Group::handle(e);     // Assume the buttons won't handle the Keyboard events
 }
 
 

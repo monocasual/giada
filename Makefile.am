@@ -96,6 +96,8 @@ sourcesCore =                            \
 	src/glue/actionEditor.cpp              \
 	src/gui/dialogs/window.h               \
 	src/gui/dialogs/window.cpp             \
+	src/gui/keyDispatcher.h                \
+	src/gui/keyDispatcher.cpp              \
 	src/gui/dialogs/keyGrabber.h           \
 	src/gui/dialogs/keyGrabber.cpp         \
 	src/gui/dialogs/about.h                \

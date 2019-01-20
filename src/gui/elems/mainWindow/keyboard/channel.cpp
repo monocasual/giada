@@ -118,15 +118,6 @@ void geChannel::cb_openFxWindow()
 /* -------------------------------------------------------------------------- */
 
 
-int geChannel::keyPress(int e)
-{
-	return handleKey(e, ch->key);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 
 int geChannel::getColumnIndex()
 {
@@ -147,6 +138,7 @@ void geChannel::blink()
 
 
 /* -------------------------------------------------------------------------- */
+
 
 void geChannel::setColorsByStatus(ChannelStatus playStatus, ChannelStatus recStatus)
 {
@@ -225,7 +217,7 @@ void geChannel::packWidgets()
 int geChannel::handleKey(int e, int key)
 {
 	int ret;
-	if (e == FL_KEYDOWN && button->value())                              // key already pressed! skip it
+	if (e == FL_KEYDOWN && button->value())                                // key already pressed! skip it
 		ret = 1;
 	else
 	if (Fl::event_key() == key && !button->value()) {

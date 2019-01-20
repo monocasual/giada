@@ -88,11 +88,6 @@ protected:
 
 	void setColorsByStatus(giada::ChannelStatus chan, giada::ChannelStatus rec);
 
-	/* handleKey
-	 * method wrapped by virtual handle(int e). */
-
-	int handleKey(int e, int key);
-
 	/* packWidgets
 	Spread widgets across available space. */
 
@@ -123,11 +118,6 @@ public:
 
 	virtual void changeSize(int h);
 
-	/* keypress
-	 * what to do when the corresponding key is pressed. */
-
-	int keyPress(int event);
-
 	/* getColumnIndex
 	 * return the numeric index of the column in which this channel is
 	 * located. */
@@ -135,6 +125,11 @@ public:
 	int getColumnIndex();
 
 	int getSize();
+
+	/* handleKey
+	 * method wrapped by virtual handle(int e). */
+
+	int handleKey(int e, int key);
 
 	giada::m::Channel* ch;
  
