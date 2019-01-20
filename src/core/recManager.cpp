@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "../gui/keyDispatcher.h"
 #include "types.h"
 #include "clock.h"
 #include "kernelAudio.h"
@@ -68,7 +69,6 @@ bool startActionRec_()
 
 bool startInputRec_()
 {
-	puts("START INPUT REC");
 	if (!kernelAudio::getStatus() || !mh::startInputRec())
 		return false;
 	if (!clock::isRunning()) {
@@ -101,10 +101,10 @@ bool startActionRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::NORMAL)
 		return startActionRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
-		mixer::setSignalCallback(startActionRec_);
-		midiDispatcher::setSignalCallback(startActionRec_);
-		// TODO recorderHandler
+		m::midiDispatcher::setSignalCallback(startActionRec_);
+		v::keyDispatcher::setSignalCallback(startActionRec_);
 	}
+	return true;
 }
 
 
@@ -140,11 +140,8 @@ bool startInputRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL)
 		return startInputRec_();
-	if (mode == RecTriggerMode::SIGNAL) {
+	if (mode == RecTriggerMode::SIGNAL)
 		mixer::setSignalCallback(startInputRec_);
-		midiDispatcher::setSignalCallback(startInputRec_);
-		// TODO recorderHandler
-	}
 	return true;
 }
 
