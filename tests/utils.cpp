@@ -36,16 +36,16 @@ TEST_CASE("u::fs")
 TEST_CASE("u::string")
 {
 	using std::vector;
+	using namespace giada::u::string;
 
-	REQUIRE(gu_replace("Giada is cool", "cool", "hot") == "Giada is hot");
-	REQUIRE(gu_trim("   Giada is cool       ") == "Giada is cool");
-	REQUIRE(gu_iToString(666) == "666");
-	REQUIRE(gu_iToString(0x99AABB, true) == "99AABB");
-	REQUIRE(gu_fToString(3.14159, 2) == "3.14");
-	REQUIRE(gu_format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
+	REQUIRE(replace("Giada is cool", "cool", "hot") == "Giada is hot");
+	REQUIRE(trim("   Giada is cool       ") == "Giada is cool");
+	REQUIRE(iToString(666) == "666");
+	REQUIRE(iToString(0x99AABB, true) == "99AABB");
+	REQUIRE(fToString(3.14159, 2) == "3.14");
+	REQUIRE(format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
 
-	vector<std::string> v;
-	gu_split("Giada is cool", " ", &v);
+	vector<std::string> v = split("Giada is cool", " ");
 	REQUIRE(v.size() == 3);
 	REQUIRE(v.at(0) == "Giada");
 	REQUIRE(v.at(1) == "is");
