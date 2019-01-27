@@ -68,22 +68,27 @@ void triggerSignalCb_()
 
 void dispatch(int event)
 {
+	/* These events come from the keyboard, not from a direct interaction on the 
+	UI with the mouse/touch. So the 'gui' parameter is set to false. */
+
+	const bool gui = false;
+
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {
 			backspace_ = true;
-			c::transport::rewindSeq(/*gui=*/false);
+			c::transport::rewindSeq(gui);
 		}
 		else if (Fl::event_key() == FL_End && !end_) {
 			end_ = true;
-			c::io::toggleInputRec(/*gui=*/false);
+			c::io::toggleInputRec(gui);
 		}
 		else if (Fl::event_key() == FL_Enter && !enter_) {
 			enter_ = true;
-			c::io::toggleActionRec(/*gui=*/false);
+			c::io::toggleActionRec(gui);
 		}
 		else if (Fl::event_key() == ' ' && !space_) {
 			space_ = true;
-			c::transport::startStopSeq(/*gui=*/false);
+			c::transport::startStopSeq(gui);
 		}
 		else
 			triggerSignalCb_();

@@ -60,6 +60,7 @@ bool startActionRec_()
 #ifdef __linux__
 	kernelAudio::jackStart();
 #endif
+	puts("startActionRec_ callback");
 	return true;	
 }
 

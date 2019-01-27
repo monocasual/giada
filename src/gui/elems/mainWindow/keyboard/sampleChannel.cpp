@@ -281,8 +281,8 @@ void geSampleChannel::cb_button()
 {
 	using namespace giada;
 
-	if (button->value())    // pushed, max velocity (127 i.e. 0x7f)
-		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), 0x7F);
+	if (button->value())    // pushed, max velocity
+		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
 	else                    // released
 		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
 }

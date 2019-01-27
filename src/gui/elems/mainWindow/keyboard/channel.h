@@ -79,12 +79,12 @@ protected:
 #endif
 
 	/* blink
-	 * blink button when channel is in wait/ending status. */
+	Blinks button when channel is in wait/ending status. */
 
 	void blink();
 
 	/* setColorByStatus
-	 * update colors depending on channel status. */
+	Updates colors depending on channel status. */
 
 	void setColorsByStatus(giada::ChannelStatus chan, giada::ChannelStatus rec);
 
@@ -98,18 +98,18 @@ public:
 	geChannel(int x, int y, int w, int h, giada::m::Channel* ch);
 
 	/* reset
-	 * reset channel to initial status. */
+	Resets channel to initial status. */
 
 	virtual void reset() = 0;
 
 	/* update
-	 * update the label of sample button and everything else such as 'R'
-	 * button, key box and so on, according to global values. */
+	Updates the label of sample button and everything else such as 'R' button, 
+	key box and so on, according to global values. */
 
 	virtual void update() = 0;
 
 	/* refresh
-	 * update graphics. */
+	Updates graphics. */
 
 	virtual void refresh() = 0;
 
@@ -119,15 +119,14 @@ public:
 	virtual void changeSize(int h);
 
 	/* getColumnIndex
-	 * return the numeric index of the column in which this channel is
-	 * located. */
+	Returns the numeric index of the column in which this channel is located. */
 
 	int getColumnIndex();
 
 	int getSize();
 
 	/* handleKey
-	 * method wrapped by virtual handle(int e). */
+	Actions to perform when the bound key is pressed. */
 
 	int handleKey(int e, int key);
 
