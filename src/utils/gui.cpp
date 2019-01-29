@@ -81,8 +81,7 @@ void gu_refreshUI()
 
 	/* compute timer for blinker */
 
-	blinker++;
-	if (blinker > 12)
+	if (blinker++ > 12)
 		blinker = 0;
 
 	/* If Sample Editor is open, repaint it (for dynamic play head). */

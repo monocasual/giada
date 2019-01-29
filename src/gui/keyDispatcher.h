@@ -33,10 +33,15 @@
 
 
 namespace giada {
+namespace m 
+{
+    class Channel;
+}
 namespace v {
 namespace keyDispatcher
 {
-void dispatch(int event);
+void dispatchKey(int event);
+void dispatchTouch(m::Channel* ch, bool status);
 void setSignalCallback(std::function<void()> f);
 }}} // giada::v::keyDispatcher
 

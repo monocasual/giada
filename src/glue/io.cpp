@@ -75,7 +75,7 @@ void keyPress(m::Channel* ch, bool ctrl, bool shift, int velocity)
 	}
 	else {
 		if (ch->recordStart(m::clock::canQuantize()))
-			ch->start(0, m::clock::canQuantize(), 0);
+			ch->start(0, m::clock::canQuantize(), 0); // TODO -- last param should be velocity!!?
 	}
 }
 

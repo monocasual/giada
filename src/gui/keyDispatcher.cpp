@@ -26,6 +26,7 @@
 
 
 #include <FL/Fl.H>
+#include "../core/const.h"
 #include "../core/mixer.h"
 #include "../core/channel.h"
 #include "../glue/transport.h"
@@ -51,6 +52,33 @@ std::function<void()> signalCb_ = nullptr;
 /* -------------------------------------------------------------------------- */
 
 
+void perform_(m::Channel* ch, int event)
+{
+	if (event == FL_KEYDOWN)
+		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
+	else
+	if (event == FL_KEYUP)	
+		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+/* Walk channels array, trying to match button's bound key with the event. If 
+found, trigger the key-press function. */
+
+void dispatchChannels_(int event)
+{
+	for (m::Channel* ch : m::mixer::channels)
+		if (ch->guiChannel->handleKey(event))
+			perform_(ch, event);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void triggerSignalCb_()
 {
 	if (signalCb_ == nullptr) 
@@ -66,7 +94,7 @@ void triggerSignalCb_()
 /* -------------------------------------------------------------------------- */
 
 
-void dispatch(int event)
+void dispatchKey(int event)
 {
 	/* These events come from the keyboard, not from a direct interaction on the 
 	UI with the mouse/touch. So the 'gui' parameter is set to false. */
@@ -104,12 +132,16 @@ void dispatch(int event)
 			enter_ = false;
 	}
 
-	/* Walk button arrays, trying to match button's label with the Keyboard 
-	event. If found, set that button's value() based on up/down event, and
-	invoke that button's callback(). */
+	dispatchChannels_(event);
+}
 
-	for (m::Channel* ch : m::mixer::channels)
-		ch->guiChannel->handleKey(event, ch->key);
+
+/* -------------------------------------------------------------------------- */
+
+
+void dispatchTouch(m::Channel* ch, bool status)
+{
+	perform_(ch, status ? FL_KEYDOWN : FL_KEYUP);
 }
 
 

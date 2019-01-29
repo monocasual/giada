@@ -45,6 +45,57 @@ class geStatusButton;
 
 class geChannel : public Fl_Group
 {
+public:
+
+	geChannel(int x, int y, int w, int h, giada::m::Channel* ch);
+
+	/* reset
+	Resets channel to initial status. */
+
+	virtual void reset() = 0;
+
+	/* update
+	Updates the label of sample button and everything else such as 'R' button, 
+	key box and so on, according to global values. */
+
+	virtual void update() = 0;
+
+	/* refresh
+	Updates graphics. */
+
+	virtual void refresh() = 0;
+
+	/* changeSize
+	Changes channel's size according to a template (x1, x2, ...). */
+
+	virtual void changeSize(int h);
+
+	/* getColumnIndex
+	Returns the numeric index of the column in which this channel is located. */
+
+	int getColumnIndex();
+
+	int getSize();
+
+	/* handleKey
+	Performs some UI-related operations when the bound key is pressed. Returns
+	whether the bound key has been pressed or not. */
+
+	bool handleKey(int e);
+
+	giada::m::Channel* ch;
+ 
+	geButton*        button;
+	geChannelStatus* status;
+	geButton*        arm;
+	geChannelButton* mainButton;
+	geButton*        mute;
+	geButton*        solo;
+	geDial*          vol;
+#ifdef WITH_VST
+	geStatusButton*  fx;
+#endif
+
 protected:
 
 	/* Define some breakpoints for dynamic resize. BREAK_DELTA: base amount of
@@ -86,62 +137,12 @@ protected:
 	/* setColorByStatus
 	Updates colors depending on channel status. */
 
-	void setColorsByStatus(giada::ChannelStatus chan, giada::ChannelStatus rec);
+	void setColorsByStatus();
 
 	/* packWidgets
 	Spread widgets across available space. */
 
 	void packWidgets();
-
-public:
-
-	geChannel(int x, int y, int w, int h, giada::m::Channel* ch);
-
-	/* reset
-	Resets channel to initial status. */
-
-	virtual void reset() = 0;
-
-	/* update
-	Updates the label of sample button and everything else such as 'R' button, 
-	key box and so on, according to global values. */
-
-	virtual void update() = 0;
-
-	/* refresh
-	Updates graphics. */
-
-	virtual void refresh() = 0;
-
-	/* changeSize
-	Changes channel's size according to a template (x1, x2, ...). */
-
-	virtual void changeSize(int h);
-
-	/* getColumnIndex
-	Returns the numeric index of the column in which this channel is located. */
-
-	int getColumnIndex();
-
-	int getSize();
-
-	/* handleKey
-	Actions to perform when the bound key is pressed. */
-
-	int handleKey(int e, int key);
-
-	giada::m::Channel* ch;
- 
-	geButton*        button;
-	geChannelStatus* status;
-	geButton*        arm;
-	geChannelButton* mainButton;
-	geButton*        mute;
-	geButton*        solo;
-	geDial*          vol;
-#ifdef WITH_VST
-	geStatusButton*  fx;
-#endif
 };
 
 

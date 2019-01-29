@@ -37,6 +37,7 @@
 #include "../../../../glue/recorder.h"
 #include "../../../../glue/storage.h"
 #include "../../../../utils/gui.h"
+#include "../../../keyDispatcher.h"
 #include "../../../dialogs/mainWindow.h"
 #include "../../../dialogs/keyGrabber.h"
 #include "../../../dialogs/sampleEditor.h"
@@ -279,12 +280,12 @@ void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel
 
 void geSampleChannel::cb_button()
 {
-	using namespace giada;
-
+	v::keyDispatcher::dispatchTouch(ch, button->value());
+/*
 	if (button->value())    // pushed, max velocity
 		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
 	else                    // released
-		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());*/
 }
 
 
@@ -381,7 +382,7 @@ void geSampleChannel::refresh()
 	if (!mainButton->visible()) // mainButton invisible? status too (see below)
 		return;
 
-	setColorsByStatus(ch->status, ch->recStatus);
+	setColorsByStatus();
 
 	if (static_cast<m::SampleChannel*>(ch)->wave != nullptr) {
 		if (m::mixer::recording && ch->armed)

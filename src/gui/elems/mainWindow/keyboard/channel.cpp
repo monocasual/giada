@@ -50,8 +50,8 @@ using namespace giada;
 
 
 geChannel::geChannel(int X, int Y, int W, int H, giada::m::Channel* ch)
- : Fl_Group(X, Y, W, H, nullptr),
-	 ch      (ch)
+: Fl_Group    (X, Y, W, H, nullptr),
+  ch          (ch)
 {
 }
 
@@ -140,9 +140,9 @@ void geChannel::blink()
 /* -------------------------------------------------------------------------- */
 
 
-void geChannel::setColorsByStatus(ChannelStatus playStatus, ChannelStatus recStatus)
+void geChannel::setColorsByStatus()
 {
-	switch (playStatus) {
+	switch (ch->status) {
 		case ChannelStatus::OFF:
 		case ChannelStatus::EMPTY:
 			mainButton->setDefaultMode();
@@ -152,9 +152,11 @@ void geChannel::setColorsByStatus(ChannelStatus playStatus, ChannelStatus recSta
 			break;
 		case ChannelStatus::PLAY:
 			mainButton->setPlayMode();
-			button->imgOn  = channelStop_xpm;
-			button->imgOff = channelPlay_xpm;
-			button->redraw();
+			if (!button->value()) { // If not manually pressed (it would interfere)
+				button->imgOn  = channelStop_xpm;
+				button->imgOff = channelPlay_xpm;
+				button->redraw();			
+			}
 			break;
 		case ChannelStatus::WAIT:
 			blink();
@@ -165,7 +167,7 @@ void geChannel::setColorsByStatus(ChannelStatus playStatus, ChannelStatus recSta
 		default: break;
 	}
 
-	switch (recStatus) {
+	switch (ch->recStatus) {
 		case ChannelStatus::WAIT:
 			blink();
 			break;
@@ -214,25 +216,23 @@ void geChannel::packWidgets()
 /* -------------------------------------------------------------------------- */
 
 
-int geChannel::handleKey(int e, int key)
+bool geChannel::handleKey(int e)
 {
-	int ret;
-	if (e == FL_KEYDOWN && button->value())                                // key already pressed! skip it
-		ret = 1;
-	else
-	if (Fl::event_key() == key && !button->value()) {
-		button->take_focus();                                              // move focus to this button
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-		button->do_callback();                                             // invoke the button's callback
-		ret = 1;
+	if (Fl::event_key() != ch->key) 
+		return false;
+
+	if (e == FL_KEYDOWN && !button->value()) {  // Key not already pressed
+		button->take_focus();                   // Move focus to this button
+		button->value(1);
+		return true;
 	}
-	else
-		ret = 0;
 
-	if (Fl::event_key() == key)
-		button->value((e == FL_KEYDOWN || e == FL_SHORTCUT) ? 1 : 0);      // change the button's state
-
-	return ret;
+	if (e == FL_KEYUP) {
+		button->value(0);
+		return true;
+	}
+	
+	return false;
 }
 
 

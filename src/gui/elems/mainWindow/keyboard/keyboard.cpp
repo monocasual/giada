@@ -224,7 +224,7 @@ int geKeyboard::handle(int e)
 		case FL_SHORTCUT:           // In case widget that isn't ours has focus
 		case FL_KEYDOWN:            // Keyboard key pushed
 		case FL_KEYUP: {            // Keyboard key released
-			keyDispatcher::dispatch(e);
+			keyDispatcher::dispatchKey(e);
 			return 1;
 		}
 	}
