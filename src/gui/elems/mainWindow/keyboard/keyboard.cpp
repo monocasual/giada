@@ -30,7 +30,7 @@
 #include "../../../../glue/io.h"
 #include "../../../../utils/log.h"
 #include "../../../dialogs/warnings.h"
-#include "../../../keyDispatcher.h"
+#include "../../../dispatcher.h"
 #include "../../basics/boxtypes.h"
 #include "column.h"
 #include "sampleChannel.h"
@@ -224,7 +224,7 @@ int geKeyboard::handle(int e)
 		case FL_SHORTCUT:           // In case widget that isn't ours has focus
 		case FL_KEYDOWN:            // Keyboard key pushed
 		case FL_KEYUP: {            // Keyboard key released
-			keyDispatcher::dispatchKey(e);
+			dispatcher::dispatchKey(e);
 			return 1;
 		}
 	}

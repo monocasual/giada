@@ -25,8 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_V_KEY_DISPATCHER_H
-#define G_V_KEY_DISPATCHER_H
+#ifndef G_V_DISPATCHER_H
+#define G_V_DISPATCHER_H
 
 
 #include <functional>
@@ -38,12 +38,12 @@ namespace m
     class Channel;
 }
 namespace v {
-namespace keyDispatcher
+namespace dispatcher
 {
 void dispatchKey(int event);
 void dispatchTouch(m::Channel* ch, bool status);
 void setSignalCallback(std::function<void()> f);
-}}} // giada::v::keyDispatcher
+}}} // giada::v::dispatcher
 
 
 #endif

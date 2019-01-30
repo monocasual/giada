@@ -35,7 +35,7 @@
 #include "../../../../glue/channel.h"
 #include "../../../../glue/io.h"
 #include "../../../../glue/recorder.h"
-#include "../../../keyDispatcher.h"
+#include "../../../dispatcher.h"
 #include "../../../dialogs/mainWindow.h"
 #include "../../../dialogs/channelNameInput.h"
 #include "../../../dialogs/warnings.h"
@@ -218,12 +218,7 @@ void geMidiChannel::cb_openMenu(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb
 
 void geMidiChannel::cb_button()
 {
-	v::keyDispatcher::dispatchTouch(ch, button->value());
-	/*
-	using namespace giada;
-	
-	if (button->value())
-		c::io::keyPress(static_cast<m::MidiChannel*>(ch), Fl::event_ctrl(), Fl::event_shift(), 0);*/
+	v::dispatcher::dispatchTouch(ch, button->value());
 }
 
 

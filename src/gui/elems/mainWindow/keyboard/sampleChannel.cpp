@@ -37,7 +37,7 @@
 #include "../../../../glue/recorder.h"
 #include "../../../../glue/storage.h"
 #include "../../../../utils/gui.h"
-#include "../../../keyDispatcher.h"
+#include "../../../dispatcher.h"
 #include "../../../dialogs/mainWindow.h"
 #include "../../../dialogs/keyGrabber.h"
 #include "../../../dialogs/sampleEditor.h"
@@ -270,9 +270,9 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* c
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_button      (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_button(); }
-void geSampleChannel::cb_openMenu    (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
-void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
+void geSampleChannel::cb_button     (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_button(); }
+void geSampleChannel::cb_openMenu   (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
+void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -280,12 +280,7 @@ void geSampleChannel::cb_readActions (Fl_Widget* v, void* p) { ((geSampleChannel
 
 void geSampleChannel::cb_button()
 {
-	v::keyDispatcher::dispatchTouch(ch, button->value());
-/*
-	if (button->value())    // pushed, max velocity
-		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
-	else                    // released
-		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());*/
+	v::dispatcher::dispatchTouch(ch, button->value());
 }
 
 

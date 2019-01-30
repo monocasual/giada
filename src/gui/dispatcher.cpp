@@ -32,12 +32,12 @@
 #include "../glue/transport.h"
 #include "../glue/io.h"
 #include "elems/mainWindow/keyboard/channel.h"
-#include "keyDispatcher.h"
+#include "dispatcher.h"
 
 
 namespace giada {
 namespace v {
-namespace keyDispatcher
+namespace dispatcher
 {
 namespace
 {
@@ -141,6 +141,7 @@ void dispatchKey(int event)
 
 void dispatchTouch(m::Channel* ch, bool status)
 {
+	triggerSignalCb_();
 	perform_(ch, status ? FL_KEYDOWN : FL_KEYUP);
 }
 
@@ -153,4 +154,4 @@ void setSignalCallback(std::function<void()> f)
 	signalCb_ = f;
 }
 
-}}} // giada::v::keyDispatcher
+}}} // giada::v::dispatcher

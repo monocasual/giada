@@ -25,7 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../gui/keyDispatcher.h"
+#include "../gui/dispatcher.h"
 #include "types.h"
 #include "clock.h"
 #include "kernelAudio.h"
@@ -60,7 +60,6 @@ bool startActionRec_()
 #ifdef __linux__
 	kernelAudio::jackStart();
 #endif
-	puts("startActionRec_ callback");
 	return true;	
 }
 
@@ -103,7 +102,7 @@ bool startActionRec(RecTriggerMode mode)
 		return startActionRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
 		m::midiDispatcher::setSignalCallback(startActionRec_);
-		v::keyDispatcher::setSignalCallback(startActionRec_);
+		v::dispatcher::setSignalCallback(startActionRec_);
 	}
 	return true;
 }
