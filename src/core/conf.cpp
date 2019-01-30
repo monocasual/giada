@@ -247,6 +247,8 @@ int aboutY = 0;
 int nameX = 0;
 int nameY = 0;
 
+bool recOnSignal = false;
+
 #ifdef WITH_VST
 
 int pluginChooserX   = 0;
@@ -384,12 +386,13 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_BEATS_Y, beatsY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_NAME_X, nameX)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_NAME_Y, nameY)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_X, midiInputX)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
-  if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_NAME_X, nameX)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_NAME_Y, nameY)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_X, midiInputX)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
+	if (!storager::setBool(jRoot, CONF_KEY_REC_ON_SIGNAL, recOnSignal)) return 0;
 
 #ifdef WITH_VST
 
@@ -500,6 +503,7 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
+	json_object_set_new(jRoot, CONF_KEY_REC_ON_SIGNAL,             json_boolean(recOnSignal));
 
 #ifdef WITH_VST
 

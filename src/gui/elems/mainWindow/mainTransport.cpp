@@ -26,6 +26,7 @@
 
 
 #include "../../../core/graphics.h"
+#include "../../../core/conf.h"
 #include "../../../glue/transport.h"
 #include "../../../glue/io.h"
 #include "../../elems/basics/button.h"
@@ -70,12 +71,22 @@ geMainTransport::geMainTransport(int x, int y)
 	});
 	recInput->type(FL_TOGGLE_BUTTON);
 
+	recOnSignal->value(m::conf::recOnSignal);
 	recOnSignal->type(FL_TOGGLE_BUTTON);
 
 	metronome->callback([](Fl_Widget* w, void* v) {
 		c::transport::toggleMetronome(/*gui=*/true);
 	});
 	metronome->type(FL_TOGGLE_BUTTON);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+geMainTransport::~geMainTransport()
+{
+	m::conf::recOnSignal = recOnSignal->value();
 }
 
 

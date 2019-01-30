@@ -114,6 +114,8 @@ extern int beatsX, beatsY;
 extern int aboutX, aboutY;
 extern int nameX, nameY;
 
+extern bool recOnSignal;
+
 #ifdef WITH_VST
 
 extern int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
