@@ -29,6 +29,7 @@
 #define G_RECORDER_HANDLER_H
 
 
+#include <unordered_set>
 #include "midiEvent.h"
 #include "patch.h"
 
@@ -37,6 +38,7 @@ namespace giada {
 namespace m 
 {
 struct Action;
+
 
 namespace recorderHandler
 {
@@ -65,7 +67,11 @@ Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
 void liveRec(int channel, MidiEvent e);
 
-void consolidate();
+/* consolidate
+Records all live actions. Returns a set of channels indexes that have been 
+recorded. */
+
+std::unordered_set<int> consolidate();
 
 void writePatch(int chanIndex, std::vector<patch::action_t>& pactions);
 void readPatch(const std::vector<patch::action_t>& pactions);

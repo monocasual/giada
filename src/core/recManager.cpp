@@ -114,21 +114,16 @@ bool startActionRec(RecTriggerMode mode)
 void stopActionRec()
 {
 	recorder::disable();
-	recorderHandler::consolidate();
+	std::unordered_set<int> channels = recorderHandler::consolidate();
 
-	/* Enable reading actions for Sample Channels that has just been filled
-	with action. */
+	/* Enable reading actions for Channels that have just been filled with 
+	actions. Start reading right away, without checking whether 
+	conf::treatRecsAsLoops is enabled or not. */
 
 	pthread_mutex_lock(mixerMutex_);
-
-	/* TODO - this is wrong. This enables ALL channels with actions and R disabled. I don't want
-	that my channel with disabled action gets started! 
-	Instead, get a vector of channels in recorderHandler::consolidate that have been 
-	recorded and startReadingAction on them. */
-
-	//for (m::Channel* ch : m::mixer::channels)
-		//if (ch->type == ChannelType::SAMPLE && !ch->readActions && ch->hasActions)
-		//	ch->startReadingActions(conf::treatRecsAsLoops, conf::recsStopOnChanHalt); 
+	for (int index : channels)
+		mh::getChannelByIndex(index)->startReadingActions(
+			/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false); 
 	pthread_mutex_unlock(mixerMutex_);
 }
 

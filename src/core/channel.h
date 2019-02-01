@@ -232,8 +232,8 @@ public:
 	double volume_i;
 	double volume_d;
 	
-	bool hasActions;      // has something recorded
-	bool readActions;     // read what's recorded
+	bool hasActions;      // If has some actions recorded
+	bool readActions;     // If should read recorded actions
 
 	bool      midiIn;               // enable midi input
 	uint32_t  midiInKeyPress;

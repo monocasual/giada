@@ -213,11 +213,17 @@ void liveRec(int channel, MidiEvent e)
 /* -------------------------------------------------------------------------- */
 
 
-void consolidate()
+std::unordered_set<int> consolidate()
 {
 	consolidate_();
 	recorder::rec(recs_);
+
+	std::unordered_set<int> out;
+	for (const Action* action : recs_)
+		out.insert(action->channel);
+
 	recs_.clear();
+	return out;
 }
 
 
