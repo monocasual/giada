@@ -73,20 +73,14 @@ geMainTransport::geMainTransport(int x, int y)
 
 	recOnSignal->value(m::conf::recOnSignal);
 	recOnSignal->type(FL_TOGGLE_BUTTON);
+	recOnSignal->callback([](Fl_Widget* w, void* v) { 
+		m::conf::recOnSignal = static_cast<geButton*>(w)->value();
+	});
 
 	metronome->callback([](Fl_Widget* w, void* v) {
 		c::transport::toggleMetronome(/*gui=*/true);
 	});
 	metronome->type(FL_TOGGLE_BUTTON);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-geMainTransport::~geMainTransport()
-{
-	m::conf::recOnSignal = recOnSignal->value();
 }
 
 

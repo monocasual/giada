@@ -55,7 +55,6 @@ private:
 public:
 
 	geMainTransport(int x, int y);
-	~geMainTransport();
 
 	RecTriggerMode getRecTriggerMode() const;
 	
