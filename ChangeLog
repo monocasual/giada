@@ -17,9 +17,11 @@
 - PluginHost refactoring
 - Smart pointers for Wave and Plugin objects
 - Remove old and deprecated input delay compensation
+- Optimized audio IO processing in Mixer callback
+- Atomic I/O meters with improved accuracy
 - Fix memory leak when replacing samples in a Sample Channel
 - Fix plug-ins ordering method when re-opening Giada
-- Optimized audio IO processing in Mixer callback
+- Fix silent Sample Channel when recording actions a second time
 
 
 0.15.3 --- 2018 . 12 . 24

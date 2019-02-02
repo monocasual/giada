@@ -114,12 +114,12 @@ std::function<void()> signalCb_ = nullptr;
 /* -------------------------------------------------------------------------- */
 
 
-void computePeak_(const AudioBuffer& buf, float& peak)
+void computePeak_(const AudioBuffer& buf, std::atomic<float>& peak)
 {
 	for (int i=0; i<buf.countFrames(); i++)
 		for (int j=0; j<buf.countChannels(); j++)
-			if (buf[i][j] > peak)
-				peak = buf[i][j];
+			if (buf[i][j] > peak.load())
+				peak.store(buf[i][j]);
 }
 
 
@@ -281,13 +281,13 @@ bool  recording  = false;
 bool  ready      = true;
 float outVol     = G_DEFAULT_OUT_VOL;
 float inVol      = G_DEFAULT_IN_VOL;
-float peakOut    = 0.0f;
-float peakIn     = 0.0f;
 bool  metronome  = false;
 int   waitRec    = 0;
 bool  rewindWait = false;
 bool  hasSolos   = false;
 bool  inToOut    = false;
+std::atomic<float> peakOut(0.0);
+std::atomic<float> peakIn(0.0);
 
 pthread_mutex_t mutex;
 
@@ -341,8 +341,8 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (kernelAudio::isInputEnabled())
 		in.setData((float*) inBuf, bufferSize, G_MAX_IO_CHANS);
 
-	peakOut = 0.0f;  // reset peak calculator
-	peakIn  = 0.0f;  // reset peak calculator
+	peakOut.store(0.0);  // reset peak calculator
+	peakIn.store(0.0);  // reset peak calculator
 
 	prepareBuffers_(out);
 	processLineIn_(in);

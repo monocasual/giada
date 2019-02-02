@@ -40,14 +40,12 @@ public:
 
 	void draw() override;
 
-	bool clip;
-	float mixerPeak;	// peak from mixer
+    float mixerPeak;    // peak from mixer
 
 private:
 
-	float peak;
-	float dbLevel;
-	float dbLevelOld;
+	float m_dbLevelCur;
+	float m_dbLevelOld;
 };
 
 

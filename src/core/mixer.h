@@ -29,6 +29,7 @@
 #define G_MIXER_H
 
 
+#include <atomic>
 #include <pthread.h>
 #include <functional>
 #include <vector>
@@ -62,10 +63,10 @@ extern bool   recording;     // is recording something?
 extern bool   ready;
 extern float  outVol;
 extern float  inVol;
-extern float  peakOut;
-extern float  peakIn;
 extern bool   rewindWait;    // rewind guard, if quantized
 extern bool   hasSolos;      // more than 0 channels soloed
+extern std::atomic<float> peakOut;
+extern std::atomic<float> peakIn;
 
 /* inToOut
 Copy, process and paste the input into the output, in order to obtain a "hear 
