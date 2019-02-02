@@ -55,7 +55,7 @@ extern gdMainWindow* G_MainWin;
 
 
 namespace giada {
-namespace c     {
+namespace c {
 namespace sampleEditor
 {
 namespace
@@ -72,7 +72,7 @@ namespace
 
 gdSampleEditor* getSampleEditorWindow()
 {
-	gdSampleEditor* se = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* se = static_cast<gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	assert(se != nullptr);
 	return se;
 }

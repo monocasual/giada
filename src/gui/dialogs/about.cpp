@@ -111,7 +111,7 @@ gdAbout::gdAbout()
 #endif
 
 	close->callback(cb_close, (void*)this);
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	setId(WID_ABOUT);
 	show();
 }

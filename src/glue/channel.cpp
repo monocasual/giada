@@ -139,7 +139,7 @@ void deleteChannel(m::Channel* ch)
 	G_MainWin->keyboard->deleteChannel(ch->guiChannel);
 	Fl::unlock();
 	mh::deleteChannel(ch);
-	gu_closeAllSubwindows();
+	u::gui::closeAllSubwindows();
 }
 
 
@@ -219,7 +219,7 @@ void setVolume(m::Channel* ch, float v, bool gui, bool editor)
 	/* Changing channel volume? Update wave editor (if it's shown). */
 
 	if (!editor) {
-		gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+		gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 		if (gdEditor) {
 			Fl::lock();
 			gdEditor->volumeTool->refresh();
@@ -241,7 +241,7 @@ void setVolume(m::Channel* ch, float v, bool gui, bool editor)
 void setPitch(m::SampleChannel* ch, float val)
 {
 	ch->setPitch(val);
-	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (gdEditor) {
 		Fl::lock();
 		gdEditor->pitchTool->refresh();
@@ -256,7 +256,7 @@ void setPitch(m::SampleChannel* ch, float val)
 void setPanning(m::SampleChannel* ch, float val)
 {
 	ch->setPan(val);
-	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* gdEditor = static_cast<gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (gdEditor) {
 		Fl::lock();
 		gdEditor->panTool->refresh();
@@ -308,7 +308,7 @@ void kill(m::Channel* ch)
 void setBoost(m::SampleChannel* ch, float val)
 {
 	ch->setBoost(val);
-	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor *gdEditor = static_cast<gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (gdEditor) {
 		Fl::lock();
 		gdEditor->boostTool->refresh();

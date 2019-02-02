@@ -41,6 +41,7 @@
 #include "pluginChooser.h"
 
 
+using namespace giada;
 using namespace giada::m;
 using namespace giada::c;
 
@@ -79,7 +80,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, pluginHost::StackTy
   cancelBtn->callback(cb_close, (void*) this);
 
   resizable(browser);
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
   show();
 }
 

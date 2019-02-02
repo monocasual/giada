@@ -62,7 +62,7 @@ gdKeyGrabber::gdKeyGrabber(m::Channel* ch)
 
 	updateText(ch->key);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

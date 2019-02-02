@@ -44,10 +44,6 @@
 #include "recorder.h"
 
 
-using std::vector;
-using namespace giada;
-
-
 namespace giada {
 namespace c {
 namespace recorder 
@@ -103,7 +99,7 @@ void updateChannel(geChannel* gch, bool refreshActionEditor)
 		gsch->ch->hasActions ? gsch->showActionButton() : gsch->hideActionButton();
 	}
 	if (refreshActionEditor)
-		gu_refreshActionEditor(); // refresh a.editor window, it could be open
+		u::gui::refreshActionEditor(); // refresh a.editor window, it could be open
 }
 
 }}} // giada::c::recorder::

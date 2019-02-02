@@ -119,12 +119,12 @@ void geMainIO::cb_inVol()
 #ifdef WITH_VST
 void geMainIO::cb_masterFxOut()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::MASTER_OUT), WID_FX_LIST);
+	u::gui::openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::MASTER_OUT), WID_FX_LIST);
 }
 
 void geMainIO::cb_masterFxIn()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::MASTER_IN), WID_FX_LIST);
+	u::gui::openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::MASTER_IN), WID_FX_LIST);
 }
 
 void geMainIO::cb_inToOut()

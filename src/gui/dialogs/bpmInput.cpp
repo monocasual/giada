@@ -75,7 +75,7 @@ gdBpmInput::gdBpmInput(const char* label)
 	ok->shortcut(FL_Enter);
 	ok->callback(cb_update, (void*)this);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	setId(WID_BPM);
 	show();
 }

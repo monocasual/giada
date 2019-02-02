@@ -43,6 +43,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -97,7 +98,7 @@ void geTabMidi::fetchOutPorts()
 		portOut->add("(disabled)");
 
 		for (unsigned i=0; i<kernelMidi::countOutPorts(); i++)
-			portOut->add(gu_removeFltkChars(kernelMidi::getOutPortName(i)).c_str());
+			portOut->add(u::gui::removeFltkChars(kernelMidi::getOutPortName(i)).c_str());
 
 		portOut->value(conf::midiPortOut+1);    // +1 because midiPortOut=-1 is '(disabled)'
 	}
@@ -118,7 +119,7 @@ void geTabMidi::fetchInPorts()
 		portIn->add("(disabled)");
 
 		for (unsigned i=0; i<kernelMidi::countInPorts(); i++)
-			portIn->add(gu_removeFltkChars(kernelMidi::getInPortName(i)).c_str());
+			portIn->add(u::gui::removeFltkChars(kernelMidi::getInPortName(i)).c_str());
 
 		portIn->value(conf::midiPortIn+1);    // +1 because midiPortIn=-1 is '(disabled)'
 	}

@@ -61,7 +61,7 @@ gdChannelNameInput::gdChannelNameInput(m::Channel* ch)
 
 	m_cancel->callback(cb_cancel, (void*)this);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	setId(WID_SAMPLE_NAME);
 	show();
 }

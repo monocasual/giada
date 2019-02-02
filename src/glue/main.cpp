@@ -79,7 +79,7 @@ void setBpm_(float f, string s)
 	recorderHandler::updateBpm(vPre, f, clock::getQuanto());
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 
-	gu_refreshActionEditor();
+	u::gui::refreshActionEditor();
 	G_MainWin->mainTimer->setBpm(s.c_str());
 
 	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), clock::getBpm());
@@ -150,7 +150,7 @@ void setBeats(int beats, int bars)
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
-	gu_refreshActionEditor();  // in case the action editor is open
+	u::gui::refreshActionEditor();  // in case the action editor is open
 }
 
 
@@ -214,7 +214,7 @@ void clearAllActions()
 	recorder::clearAll();
 	for (Channel* ch : mixer::channels)
 		ch->hasActions = false;
-	gu_updateControls();
+	u::gui::updateControls();
 }
 
 
@@ -223,7 +223,7 @@ void clearAllActions()
 
 void resetToInitState(bool resetGui, bool createColumns)
 {
-	gu_closeAllSubwindows();
+	u::gui::closeAllSubwindows();
 	mixer::close();
 	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
@@ -238,10 +238,10 @@ void resetToInitState(bool resetGui, bool createColumns)
 	if (createColumns)
 		G_MainWin->keyboard->init();
 
-	gu_updateMainWinLabel(G_DEFAULT_PATCH_NAME);
+	u::gui::updateMainWinLabel(G_DEFAULT_PATCH_NAME);
 
 	if (resetGui)
-		gu_updateControls();
+		u::gui::updateControls();
 }
 
 

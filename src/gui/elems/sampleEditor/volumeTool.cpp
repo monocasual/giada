@@ -50,7 +50,7 @@ geVolumeTool::geVolumeTool(int X, int Y, m::SampleChannel* ch)
     ch      (ch)
 {
   begin();
-    label = new geBox  (x(), y(), gu_getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
+    label = new geBox  (x(), y(), u::gui::getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
     dial  = new geDial (label->x()+label->w()+4, y(), 20, 20);
     input = new geInput(dial->x()+dial->w()+4, y(), 70, 20);
   end();

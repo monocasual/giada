@@ -46,7 +46,7 @@ geShiftTool::geShiftTool(int x, int y, giada::m::SampleChannel* ch)
 		m_ch    (ch)
 {
 	begin();
-		m_label = new geBox(x, y, gu_getStringWidth("Shift"), G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT);
+		m_label = new geBox(x, y, u::gui::getStringWidth("Shift"), G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT);
 		m_shift = new geInput(m_label->x()+m_label->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
 		m_reset = new geButton(m_shift->x()+m_shift->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT, "Reset");
 	end();

@@ -66,7 +66,7 @@ gdPluginWindow::gdPluginWindow(m::Plugin* p)
 	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN*2)));
 	resizable(m_list);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

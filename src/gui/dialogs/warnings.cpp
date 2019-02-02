@@ -35,6 +35,9 @@
 #include "warnings.h"
 
 
+using namespace giada;
+
+
 void gdAlert(const char *c)
 {
 	Fl_Window *modal = new Fl_Window(
@@ -49,7 +52,7 @@ void gdAlert(const char *c)
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
 	b->callback(__cb_window_closer, (void *)modal);
 	b->shortcut(FL_Enter);
-	gu_setFavicon(modal);
+	u::gui::setFavicon(modal);
 	modal->show();
 }
 
@@ -67,7 +70,7 @@ int gdConfirmWin(const char *title, const char *msg)
 		geButton *ko = new geButton(124, 62, 80, 20, "Cancel");
 	win->end();
 	ok->shortcut(FL_Enter);
-	gu_setFavicon(win);
+	u::gui::setFavicon(win);
 	win->show();
 
 	/* no callbacks here. readqueue() check the event stack. */

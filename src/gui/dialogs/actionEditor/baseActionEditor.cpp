@@ -41,9 +41,6 @@
 #include "baseActionEditor.h"
 
 
-using std::string;
-
-
 namespace giada {
 namespace v
 {
@@ -79,8 +76,8 @@ gdBaseActionEditor::~gdBaseActionEditor()
 /* -------------------------------------------------------------------------- */
 
 
-void gdBaseActionEditor::cb_zoomIn(Fl_Widget *w, void *p)  { ((gdBaseActionEditor*)p)->zoomIn(); }
-void gdBaseActionEditor::cb_zoomOut(Fl_Widget *w, void *p) { ((gdBaseActionEditor*)p)->zoomOut(); }
+void gdBaseActionEditor::cb_zoomIn(Fl_Widget* w, void* p)  { ((gdBaseActionEditor*)p)->zoomIn(); }
+void gdBaseActionEditor::cb_zoomOut(Fl_Widget* w, void* p) { ((gdBaseActionEditor*)p)->zoomOut(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -197,9 +194,9 @@ int gdBaseActionEditor::getActionType() const
 
 void gdBaseActionEditor::prepareWindow()
 {
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 
-	string l = "Action Editor";
+	std::string l = "Action Editor";
 	if (ch->name != "") l += " - " + ch->name;
 	copy_label(l.c_str());
 

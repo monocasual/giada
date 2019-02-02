@@ -90,7 +90,7 @@ void geMainMenu::cb_edit  (Fl_Widget* v, void* p) { ((geMainMenu*)p)->cb_edit();
 
 void geMainMenu::cb_about()
 {
-	gu_openSubWindow(G_MainWin, new gdAbout(), WID_ABOUT);
+	u::gui::openSubWindow(G_MainWin, new gdAbout(), WID_ABOUT);
 }
 
 
@@ -99,7 +99,7 @@ void geMainMenu::cb_about()
 
 void geMainMenu::cb_config()
 {
-	gu_openSubWindow(G_MainWin, new gdConfig(400, 370), WID_CONFIG);
+	u::gui::openSubWindow(G_MainWin, new gdConfig(400, 370), WID_CONFIG);
 }
 
 
@@ -133,7 +133,7 @@ void geMainMenu::cb_file()
 		gdWindow* childWin = new gdBrowserLoad(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Load patch or project",
 				conf::patchPath, c::storage::loadPatch, nullptr);
-		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
+		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save patch...") == 0) {
@@ -143,14 +143,14 @@ void geMainMenu::cb_file()
 		gdWindow *childWin = new gdBrowserSave(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save patch",
 				conf::patchPath, patch::name, c::storage::savePatch, nullptr);
-		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
+		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gdWindow *childWin = new gdBrowserSave(conf::browserX, conf::browserY,
 				conf::browserW, conf::browserH, "Save project",
 				conf::patchPath, patch::name, c::storage::saveProject, nullptr);
-		gu_openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
+		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Quit Giada") == 0) {
@@ -225,7 +225,7 @@ void geMainMenu::cb_edit()
 		return;
 	}
 	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
-		gu_openSubWindow(G_MainWin, new gdMidiInputMaster(), 0);
+		u::gui::openSubWindow(G_MainWin, new gdMidiInputMaster(), 0);
 		return;
 	}
 }

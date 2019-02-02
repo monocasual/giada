@@ -100,7 +100,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	add(zone3);
 	add(keyboard);
 	callback(cb_endprogram);
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 
 	show(argc, argv);
 }

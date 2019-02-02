@@ -48,7 +48,7 @@ geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
 		m_ch    (ch)
 {
 	begin();
-		m_label = new geBox(x, y, gu_getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
+		m_label = new geBox(x, y, u::gui::getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
 		m_begin = new geInput(m_label->x()+m_label->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
 		m_end   = new geInput(m_begin->x()+m_begin->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
 		m_reset = new geButton(m_end->x()+m_end->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT, "Reset");

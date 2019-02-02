@@ -99,7 +99,7 @@ void geMainTimer::cb_divider   (Fl_Widget* v, void* p) { ((geMainTimer*)p)->cb_d
 
 void geMainTimer::cb_bpm()
 {
-	gu_openSubWindow(G_MainWin, new gdBpmInput(bpm->label()), WID_BPM);
+	u::gui::openSubWindow(G_MainWin, new gdBpmInput(bpm->label()), WID_BPM);
 }
 
 
@@ -108,7 +108,7 @@ void geMainTimer::cb_bpm()
 
 void geMainTimer::cb_meter()
 {
-	gu_openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
+	u::gui::openSubWindow(G_MainWin, new gdBeatsInput(), WID_BEATS);
 }
 
 

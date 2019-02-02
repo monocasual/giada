@@ -132,7 +132,7 @@ void stopActionRec(bool gui)
 			G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
 	if (!gui) Fl::unlock();
 
-	gu_refreshActionEditor();  // in case it's open
+	u::gui::refreshActionEditor();  // in case it's open
 }
 
 

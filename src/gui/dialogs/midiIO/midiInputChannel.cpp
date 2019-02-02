@@ -130,7 +130,7 @@ gdMidiInputChannel::gdMidiInputChannel(Channel* ch)
 
 	end();
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	set_modal();
 	show();
 }

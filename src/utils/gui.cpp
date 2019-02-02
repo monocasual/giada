@@ -59,16 +59,22 @@
 extern gdMainWindow* G_MainWin;
 
 
-using std::string;
-using namespace giada;
-using namespace giada::m;
-using namespace giada::v;
+namespace giada {
+namespace u {
+namespace gui 
+{
+namespace
+{
+int blinker_ = 0;
+} // {anonymous}
 
 
-static int blinker = 0;
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
-void gu_refreshUI()
+void refreshUI()
 {
 	Fl::lock();
 
@@ -81,12 +87,12 @@ void gu_refreshUI()
 
 	/* compute timer for blinker */
 
-	if (blinker++ > 12)
-		blinker = 0;
+	if (blinker_++ > 12)
+		blinker_ = 0;
 
 	/* If Sample Editor is open, repaint it (for dynamic play head). */
 
-	gdSampleEditor* se = static_cast<gdSampleEditor*>(gu_getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	gdSampleEditor* se = static_cast<gdSampleEditor*>(getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
 	if (se != nullptr)
 		se->waveTools->redrawWaveformAsync();
 
@@ -100,25 +106,30 @@ void gu_refreshUI()
 /* -------------------------------------------------------------------------- */
 
 
-int gu_getBlinker()
+bool shouldBlink()
 {
-	return blinker;
+	return blinker_ > 6;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gu_updateControls()
+void updateControls()
 {
+	using namespace giada::m;
+
 	for (const Channel* ch : mixer::channels)
 		ch->guiChannel->update();
 
 	G_MainWin->mainIO->setOutVol(mixer::outVol);
 	G_MainWin->mainIO->setInVol(mixer::inVol);
+
 #ifdef WITH_VST
+
 	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).size() > 0);
 	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).size() > 0);
+	
 #endif
 
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
@@ -133,7 +144,7 @@ void gu_updateControls()
 /* -------------------------------------------------------------------------- */
 
 
-void gu_updateMainWinLabel(const string& s)
+void updateMainWinLabel(const std::string& s)
 {
 	std::string out = std::string(G_APP_NAME) + " - " + s;
 	G_MainWin->copy_label(out.c_str());
@@ -143,7 +154,7 @@ void gu_updateMainWinLabel(const string& s)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_setFavicon(Fl_Window* w)
+void setFavicon(Fl_Window* w)
 {
 #if defined(__linux__)
 
@@ -164,7 +175,7 @@ void gu_setFavicon(Fl_Window* w)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_openSubWindow(gdWindow* parent, gdWindow* child, int id)
+void openSubWindow(gdWindow* parent, gdWindow* child, int id)
 {
 	if (parent->hasWindow(id)) {
 		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
@@ -178,9 +189,9 @@ void gu_openSubWindow(gdWindow* parent, gdWindow* child, int id)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_refreshActionEditor()
+void refreshActionEditor()
 {
-	gdBaseActionEditor* ae = static_cast<gdBaseActionEditor*>(G_MainWin->getChild(WID_ACTION_EDITOR));
+	v::gdBaseActionEditor* ae = static_cast<v::gdBaseActionEditor*>(G_MainWin->getChild(WID_ACTION_EDITOR));
 	if (ae != nullptr)
 		ae->rebuild();
 }
@@ -189,7 +200,7 @@ void gu_refreshActionEditor()
 /* -------------------------------------------------------------------------- */
 
 
-gdWindow* gu_getSubwindow(gdWindow* parent, int id)
+gdWindow* getSubwindow(gdWindow* parent, int id)
 {
 	if (parent->hasWindow(id))
 		return parent->getChild(id);
@@ -201,7 +212,7 @@ gdWindow* gu_getSubwindow(gdWindow* parent, int id)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_closeAllSubwindows()
+void closeAllSubwindows()
 {
 	/* don't close WID_FILE_BROWSER, because it's the caller of this
 	 * function */
@@ -216,7 +227,7 @@ void gu_closeAllSubwindows()
 /* -------------------------------------------------------------------------- */
 
 
-int gu_getStringWidth(const std::string& s)
+int getStringWidth(const std::string& s)
 {
 	int w = 0;
 	int h = 0;
@@ -228,11 +239,13 @@ int gu_getStringWidth(const std::string& s)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_removeFltkChars(const string& s)
+std::string removeFltkChars(const std::string& s)
 {
-	string out = u::string::replace(s, "/", "-");
+	std::string out = u::string::replace(s, "/", "-");
 	out = u::string::replace(out, "|", "-");
 	out = u::string::replace(out, "&", "-");
 	out = u::string::replace(out, "_", "-");
 	return out;
 }
+
+}}} // giada::u::gui::

@@ -117,14 +117,14 @@ void menuCallback(Fl_Widget* w, void* v)
 			gdWindow *w = new gdBrowserLoad(m::conf::browserX, m::conf::browserY,
 				m::conf::browserW, m::conf::browserH, "Browse sample",
 				m::conf::samplePath.c_str(), c::storage::loadSample, gch->ch);
-			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::EXPORT_SAMPLE: {
 			gdWindow *w = new gdBrowserSave(m::conf::browserX, m::conf::browserY,
 				m::conf::browserW, m::conf::browserH, "Save sample",
 				m::conf::samplePath.c_str(), "", c::storage::saveSample, gch->ch);
-			gu_openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
+			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::SETUP_KEYBOARD_INPUT: {
@@ -132,19 +132,19 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::SETUP_MIDI_INPUT: {
-			gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
 			break;
 		}
 		case Menu::SETUP_MIDI_OUTPUT: {
-			gu_openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
 			break;
 		}
 		case Menu::EDIT_SAMPLE: {
-			gu_openSubWindow(G_MainWin, new gdSampleEditor(ch), WID_SAMPLE_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(ch), WID_SAMPLE_EDITOR);
 			break;
 		}
 		case Menu::EDIT_ACTIONS: {
-			gu_openSubWindow(G_MainWin, new v::gdSampleActionEditor(ch), WID_ACTION_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new v::gdSampleActionEditor(ch), WID_ACTION_EDITOR);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS:
@@ -189,7 +189,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::RENAME_CHANNEL: {
-			gu_openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
+			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		}
 		case Menu::FREE_CHANNEL: {

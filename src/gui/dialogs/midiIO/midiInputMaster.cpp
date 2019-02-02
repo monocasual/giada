@@ -36,6 +36,7 @@
 #include "midiInputMaster.h"
 
 
+using namespace giada;
 using namespace giada::m;
 
 
@@ -100,7 +101,7 @@ gdMidiInputMaster::gdMidiInputMaster()
 	channel->value(conf::midiInFilter -1 ? 0 : conf::midiInFilter + 1);
 	channel->callback(cb_setChannel, (void*)this);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

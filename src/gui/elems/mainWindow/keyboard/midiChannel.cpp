@@ -103,19 +103,19 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::EDIT_ACTIONS:
-			gu_openSubWindow(G_MainWin, new v::gdMidiActionEditor(ch), WID_ACTION_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(ch), WID_ACTION_EDITOR);
 			break;
 		case Menu::CLEAR_ACTIONS_ALL:
 			c::recorder::clearAllActions(gch);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
-			gu_openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
 			break;
 		case Menu::SETUP_MIDI_INPUT:
-			gu_openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
 			break;
 		case Menu::SETUP_MIDI_OUTPUT:
-			gu_openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
 			break;
 		case Menu::RESIZE_H1:
 			gch->changeSize(G_GUI_CHANNEL_H_1);
@@ -137,7 +137,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			c::channel::cloneChannel(gch->ch);
 			break;		
 		case Menu::RENAME_CHANNEL:
-			gu_openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
+			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		case Menu::DELETE_CHANNEL:
 			c::channel::deleteChannel(gch->ch);

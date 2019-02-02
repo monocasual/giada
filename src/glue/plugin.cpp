@@ -67,10 +67,10 @@ gdPluginWindow* getPluginWindow(const Plugin* p)
 	/* Get the parent window first: the plug-in list. Then, if it exists, get
 	the child window - the actual pluginWindow. */
 
-	gdPluginList* parent = static_cast<gdPluginList*>(gu_getSubwindow(G_MainWin, WID_FX_LIST));
+	gdPluginList* parent = static_cast<gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
 	if (parent == nullptr)
 		return nullptr;
-	return static_cast<gdPluginWindow*>(gu_getSubwindow(parent, p->getId() + 1));
+	return static_cast<gdPluginWindow*>(u::gui::getSubwindow(parent, p->getId() + 1));
 }
 } // {anonymous}
 
@@ -173,7 +173,7 @@ void setPluginPathCb(void* data)
 
 	browser->do_callback();
 
-	gdConfig* configWin = static_cast<gdConfig*>(gu_getSubwindow(G_MainWin, WID_CONFIG));
+	gdConfig* configWin = static_cast<gdConfig*>(u::gui::getSubwindow(G_MainWin, WID_CONFIG));
 	configWin->refreshVstPath();
 }
 

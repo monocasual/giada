@@ -92,7 +92,7 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(m::MidiChannel* ch)
 	close->callback(cb_close, (void*)this);
 
 	set_modal();
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

@@ -89,7 +89,7 @@ gdPluginList::gdPluginList(m::pluginHost::StackType t, m::Channel* ch)
 		copy_label(l.c_str());
 	}
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

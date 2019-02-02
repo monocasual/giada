@@ -78,7 +78,7 @@ gdDevInfo::gdDevInfo(unsigned dev)
 	close->position(close->x(), (lines * fl_height()) + 8 + 8);
 
 	close->callback(__cb_window_closer, (void*)this);
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

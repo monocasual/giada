@@ -110,7 +110,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	gu_openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::CHANNEL, ch), WID_FX_LIST);
+	u::gui::openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::CHANNEL, ch), WID_FX_LIST);
 }
 #endif
 
@@ -130,7 +130,7 @@ int geChannel::getColumnIndex()
 
 void geChannel::blink()
 {
-	if (gu_getBlinker() > 6)
+	if (u::gui::shouldBlink())
 		mainButton->setPlayMode();
 	else
 		mainButton->setDefaultMode();

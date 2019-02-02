@@ -83,7 +83,7 @@ gdSampleEditor::gdSampleEditor(m::SampleChannel* ch)
 
   resizable(waveTools);
 
-  gu_setFavicon(this);
+  u::gui::setFavicon(this);
   set_non_modal();
   copy_label(ch->name.c_str());
 

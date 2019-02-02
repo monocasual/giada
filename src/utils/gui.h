@@ -36,54 +36,60 @@ class Fl_Window;
 class gdWindow;
 
 
+namespace giada {
+namespace u {
+namespace gui 
+{
 /* refresh
- * refresh all GUI elements. */
+Repaints some dynamic GUI elements. */
 
-void gu_refreshUI();
+void refreshUI();
 
-/* getBlinker
-*  return blinker value, used to make widgets blink. */
+/* shouldBlink
+Return whether is time to blink something or not. This is used to make widgets 
+blink. */
 
-int gu_getBlinker();
+bool shouldBlink();
 
 /* updateControls
- * update attributes of control elements (sample names, volumes, ...).
- * Useful when loading a new patch. */
+Updates attributes of control elements (sample names, volumes, ...). Useful when 
+loading a new patch. */
 
-void gu_updateControls();
+void updateControls();
 
-/* update_win_label
- * update the name of the main window */
+/* updateMainWinLabel
+Updates the name of the main window */
 
-void gu_updateMainWinLabel(const std::string &s);
+void updateMainWinLabel(const std::string& s);
 
-void gu_setFavicon(Fl_Window *w);
+void setFavicon(Fl_Window* w);
 
-void gu_openSubWindow(gdWindow *parent, gdWindow *child, int id);
+void openSubWindow(gdWindow* parent, gdWindow* child, int id);
 
 /* refreshActionEditor
- * reload the action editor window by closing and reopening it. It's used
- * when you delete some actions from the mainWindow and the action editor
- * window is open. */
+Reloads the action editor window by closing and reopening it. It's used when you
+delete some actions from the mainWindow and the action editor window is open. */
 
-void gu_refreshActionEditor();
+void refreshActionEditor();
 
 /* closeAllSubwindows
- * close all subwindows attached to mainWin. */
+Closes all subwindows attached to mainWin. */
 
-void gu_closeAllSubwindows();
+void closeAllSubwindows();
 
 /* getSubwindow
- * return a pointer to an open subwindow, otherwise nullptr. */
+Returns a pointer to an open subwindow, otherwise nullptr. */
 
-gdWindow *gu_getSubwindow(gdWindow *parent, int id);
+gdWindow* getSubwindow(gdWindow* parent, int id);
 
 /* removeFltkChars
- * Strip special chars used by FLTK to split menus into sub-menus. */
+Strips special chars used by FLTK to split menus into sub-menus. */
 
-std::string gu_removeFltkChars(const std::string &s);
+std::string removeFltkChars(const std::string& s);
 
-int gu_getStringWidth(const std::string &s);
+int getStringWidth(const std::string& s);
+
+}}} // giada::u::gui::
 
 
 #endif

@@ -170,7 +170,7 @@ bool savePatch_(const string& fullPath, const string& name, bool isProject)
 	fillPatchColumns_();
 
 	if (patch::write(fullPath)) {
-		gu_updateMainWinLabel(name);
+		u::gui::updateMainWinLabel(name);
 		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
 	}
@@ -269,7 +269,7 @@ void loadPatch(void* data)
 	/* Close all other windows. This prevents problems if plugin windows are 
 	open. */
 
-	gu_closeAllSubwindows();
+	u::gui::closeAllSubwindows();
 
 	/* Reset the system. False(1): don't update the gui right now. False(2): do 
 	not create empty columns. */
@@ -308,8 +308,8 @@ void loadPatch(void* data)
 
 	/* Refresh GUI. */
 
-	gu_updateControls();
-	gu_updateMainWinLabel(patch::name);
+	u::gui::updateControls();
+	u::gui::updateMainWinLabel(patch::name);
 
 	browser->setStatusBar(0.1f);
 

@@ -71,7 +71,7 @@ gePluginElement::gePluginElement(gdPluginList* gdp, m::Plugin* p, int X, int Y, 
 	program->callback(cb_setProgram, (void*)this);
 
 	for (int i=0; i<m_plugin->getNumPrograms(); i++)
-		program->add(gu_removeFltkChars(m_plugin->getProgramName(i)).c_str());
+		program->add(u::gui::removeFltkChars(m_plugin->getProgramName(i)).c_str());
 
 	if (program->size() == 0) {
 		program->add("-- no programs --\0");

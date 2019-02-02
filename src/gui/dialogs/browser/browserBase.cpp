@@ -39,6 +39,7 @@
 
 
 using std::string;
+using namespace giada;
 using namespace giada::m;
 
 
@@ -85,7 +86,7 @@ gdBrowserBase::gdBrowserBase(int x, int y, int w, int h, const string& title,
 	resizable(browser);
 	size_range(320, 200);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 

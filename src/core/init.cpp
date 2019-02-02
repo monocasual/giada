@@ -80,7 +80,7 @@ void videoThreadCallback_()
 {
 	while (G_quit.load() == false) {
 		if (m::kernelAudio::getStatus())
-			gu_refreshUI();
+			u::gui::refreshUI();
 		u::time::sleep(G_GUI_REFRESH_RATE);
 	}
 }
@@ -164,13 +164,13 @@ void initGUI_(int argc, char** argv)
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
 		conf::mainWindowH);
 
-	gu_updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
+	u::gui::updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
 
 	if (!kernelAudio::getStatus())
 		gdAlert("Your soundcard isn't configured correctly.\n"
 			"Check the configuration and restart Giada.");
 
-	gu_updateControls();
+	u::gui::updateControls();
 	
 	videoThread = std::thread(videoThreadCallback_);
 }
@@ -203,7 +203,7 @@ void shutdownAudio_()
 
 void shutdownGUI_()
 {
-	gu_closeAllSubwindows();
+	u::gui::closeAllSubwindows();
 	videoThread.join();	
 
 	gu_log("[init] All subwindows and UI thread closed\n");

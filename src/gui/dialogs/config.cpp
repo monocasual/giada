@@ -39,6 +39,7 @@
 #include "config.h"
 
 
+using namespace giada;
 using namespace giada::m;
 
 
@@ -70,7 +71,7 @@ gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 	save->callback(cb_save_config, (void*)this);
 	cancel->callback(cb_cancel, (void*)this);
 
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	setId(WID_CONFIG);
 	show();
 }

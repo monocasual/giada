@@ -56,7 +56,7 @@ gdMidiOutputSampleCh::gdMidiOutputSampleCh(m::SampleChannel* ch)
 	enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
-	gu_setFavicon(this);
+	u::gui::setFavicon(this);
 	show();
 }
 
