@@ -41,7 +41,7 @@ class geBeatMeter : public Fl_Box
 {
 public:
 
-	geBeatMeter(int x, int y, int w, int h, const char* l=0);
+	geBeatMeter(int x, int y, int w, int h, const char* l=nullptr);
 	void draw();
 };
 }} // giada::v::

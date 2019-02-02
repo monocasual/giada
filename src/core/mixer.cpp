@@ -342,7 +342,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 		in.setData((float*) inBuf, bufferSize, G_MAX_IO_CHANS);
 
 	peakOut.store(0.0);  // reset peak calculator
-	peakIn.store(0.0);  // reset peak calculator
+	peakIn.store(0.0);   // reset peak calculator
 
 	prepareBuffers_(out);
 	processLineIn_(in);
@@ -372,7 +372,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 		}
 		lineInRec_(in);
 	}
-	
+
 	renderIO_(out, in);
 
 	pthread_mutex_unlock(&mutex);

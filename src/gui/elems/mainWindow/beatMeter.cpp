@@ -53,25 +53,30 @@ void geBeatMeter::draw()
 	int cursorW = w() / G_MAX_BEATS;
 	int greyX   = clock::getBeats() * cursorW;
 
-	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);                        // border
-	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);          // bg
-	fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
-		G_COLOR_LIGHT_1); // cursor
+	/* Border and background. */
+	
+	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);
+	fl_rectf(x()+1, y()+1, w()-2, h()-2, FL_BACKGROUND_COLOR);
 
-	/* beat cells */
+	/* Cursor. */
+
+	fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
+		G_COLOR_LIGHT_1);
+
+	/* Beat cells. */
 
 	fl_color(G_COLOR_GREY_4);
 	for (int i=1; i<=clock::getBeats(); i++)
 		fl_line(x()+cursorW*i, y()+1, x()+cursorW*i, y()+h()-2);
 
-	/* bar line */
+	/* Bar line. */
 
 	fl_color(G_COLOR_LIGHT_1);
 	int delta = clock::getBeats() / clock::getBars();
 	for (int i=1; i<clock::getBars(); i++)
 		fl_line(x()+cursorW*(i*delta), y()+1, x()+cursorW*(i*delta), y()+h()-2);
 
-	/* unused grey area */
+	/* Unused grey area. */
 
 	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, G_COLOR_GREY_4);
 }

@@ -46,9 +46,9 @@ private:
 	geButton* rewind;
 	geButton* play;
 	
+	geButton* recTriggerMode;
 	geButton* recAction;
 	geButton* recInput;
-	geButton* recTriggerMode;
 
 	geButton* metronome;
 

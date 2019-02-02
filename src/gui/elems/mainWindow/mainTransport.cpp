@@ -43,10 +43,10 @@ geMainTransport::geMainTransport(int x, int y)
 
 	rewind         = new geButton(x, y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
 	play           = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
-	recAction      = new geButton(play->x()+play->w()+8, y, 25, 25, "", recOff_xpm, recOn_xpm);
+	recTriggerMode = new geButton(play->x()+play->w()+16, y+5, 15, 15, "");
+	recAction      = new geButton(recTriggerMode->x()+recTriggerMode->w()+4, y, 25, 25, "", recOff_xpm, recOn_xpm);
 	recInput       = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
-	recTriggerMode = new geButton(recInput->x()+recInput->w()+4, y+5, 15, 15, "");
-	metronome      = new geButton(recTriggerMode->x()+recTriggerMode->w()+8, y+5, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+	metronome      = new geButton(recInput->x()+recInput->w()+16, y+5, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
 
