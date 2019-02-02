@@ -114,7 +114,7 @@ extern int beatsX, beatsY;
 extern int aboutX, aboutY;
 extern int nameX, nameY;
 
-extern bool recOnSignal;
+extern int recTriggerMode;
 
 #ifdef WITH_VST
 

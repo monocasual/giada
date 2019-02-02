@@ -41,12 +41,12 @@ geMainTransport::geMainTransport(int x, int y)
 {
 	begin();
 
-	rewind      = new geButton(x, y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-	play        = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
-	recAction   = new geButton(play->x()+play->w()+8, y, 25, 25, "", recOff_xpm, recOn_xpm);
-	recInput    = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
-	recOnSignal = new geButton(recInput->x()+recInput->w()+4, y+5, 15, 15, "");
-	metronome   = new geButton(recOnSignal->x()+recOnSignal->w()+8, y+5, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
+	rewind         = new geButton(x, y, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
+	play           = new geButton(rewind->x()+rewind->w()+4, y, 25, 25, "", play_xpm, pause_xpm);
+	recAction      = new geButton(play->x()+play->w()+8, y, 25, 25, "", recOff_xpm, recOn_xpm);
+	recInput       = new geButton(recAction->x()+recAction->w()+4, y, 25, 25, "", inputRecOff_xpm, inputRecOn_xpm);
+	recTriggerMode = new geButton(recInput->x()+recInput->w()+4, y+5, 15, 15, "");
+	metronome      = new geButton(recTriggerMode->x()+recTriggerMode->w()+8, y+5, 15, 15, "", metronomeOff_xpm, metronomeOn_xpm);
 
 	end();
 
@@ -71,10 +71,10 @@ geMainTransport::geMainTransport(int x, int y)
 	});
 	recInput->type(FL_TOGGLE_BUTTON);
 
-	recOnSignal->value(m::conf::recOnSignal);
-	recOnSignal->type(FL_TOGGLE_BUTTON);
-	recOnSignal->callback([](Fl_Widget* w, void* v) { 
-		m::conf::recOnSignal = static_cast<geButton*>(w)->value();
+	recTriggerMode->value(m::conf::recTriggerMode);
+	recTriggerMode->type(FL_TOGGLE_BUTTON);
+	recTriggerMode->callback([](Fl_Widget* w, void* v) { 
+		m::conf::recTriggerMode = static_cast<geButton*>(w)->value();
 	});
 
 	metronome->callback([](Fl_Widget* w, void* v) {
@@ -121,15 +121,6 @@ void geMainTransport::updateRecAction(int v)
 {
 	recAction->value(v);
 	recAction->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-RecTriggerMode geMainTransport::getRecTriggerMode() const
-{
-	return recOnSignal->value() ? RecTriggerMode::SIGNAL : RecTriggerMode::NORMAL;
 }
 
 }} // giada::v::

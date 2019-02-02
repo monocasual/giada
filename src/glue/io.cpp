@@ -38,6 +38,7 @@
 #include "../utils/log.h"
 #include "../utils/math.h"
 #include "../core/recorder.h"
+#include "../core/conf.h"
 #include "../core/recManager.h"
 #include "../core/kernelAudio.h"
 #include "../core/channel.h"
@@ -106,12 +107,12 @@ void toggleActionRec(bool gui)
 
 void startActionRec(bool gui)
 {
-	RecTriggerMode triggerMode = G_MainWin->mainTransport->getRecTriggerMode();
+	RecTriggerMode triggerMode = static_cast<RecTriggerMode>(m::conf::recTriggerMode);
 
 	if (!m::recManager::startActionRec(triggerMode))
 		return;
 	if (!gui) Fl::lock();
-	G_MainWin->mainTransport->updatePlay(1); // TODO wrong
+	G_MainWin->mainTransport->updatePlay(m::clock::isRunning());
 	G_MainWin->mainTransport->updateRecAction(1);
 	if (!gui) Fl::unlock();
 }
@@ -153,7 +154,7 @@ void toggleInputRec(bool gui)
 
 bool startInputRec(bool gui)
 {
-	RecTriggerMode triggerMode = G_MainWin->mainTransport->getRecTriggerMode();
+	RecTriggerMode triggerMode = static_cast<RecTriggerMode>(m::conf::recTriggerMode);
 
 	if (!m::recManager::startInputRec(triggerMode)) {
 		if (!gui) Fl::lock();

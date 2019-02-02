@@ -31,6 +31,7 @@
 #include "../utils/log.h"
 #include "storager.h"
 #include "const.h"
+#include "types.h"
 #include "conf.h"
 
 
@@ -247,7 +248,7 @@ int aboutY = 0;
 int nameX = 0;
 int nameY = 0;
 
-bool recOnSignal = false;
+int recTriggerMode = static_cast<int>(RecTriggerMode::NORMAL);
 
 #ifdef WITH_VST
 
@@ -392,7 +393,7 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_REC_ON_SIGNAL, recOnSignal)) return 0;
+	if (!storager::setInt(jRoot, CONF_KEY_REC_TRIGGER_MODE, recTriggerMode)) return 0;
 
 #ifdef WITH_VST
 
@@ -503,7 +504,7 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
-	json_object_set_new(jRoot, CONF_KEY_REC_ON_SIGNAL,             json_boolean(recOnSignal));
+	json_object_set_new(jRoot, CONF_KEY_REC_TRIGGER_MODE,          json_integer(recTriggerMode));
 
 #ifdef WITH_VST
 

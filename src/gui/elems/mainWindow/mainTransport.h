@@ -48,15 +48,13 @@ private:
 	
 	geButton* recAction;
 	geButton* recInput;
-	geButton* recOnSignal;
+	geButton* recTriggerMode;
 
 	geButton* metronome;
 
 public:
 
 	geMainTransport(int x, int y);
-
-	RecTriggerMode getRecTriggerMode() const;
 	
 	void updatePlay     (int v);
 	void updateMetronome(int v);

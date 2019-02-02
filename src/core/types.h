@@ -54,7 +54,7 @@ enum class ChannelMode : int
 };
 
 
-enum class RecTriggerMode { NORMAL, SIGNAL };
+enum class RecTriggerMode : int { NORMAL = 0, SIGNAL };
 
 
 enum class PreviewMode : int { NONE = 0, NORMAL, LOOP };
