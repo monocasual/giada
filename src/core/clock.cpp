@@ -45,8 +45,8 @@ namespace
 float bpm_      = G_DEFAULT_BPM;
 int   bars_     = G_DEFAULT_BARS;
 int   beats_    = G_DEFAULT_BEATS;
-int   quantize_ = G_DEFAULT_QUANTIZE;
 int   quanto_   = 1;            // quantizer step
+std::atomic<int>  quantize_(G_DEFAULT_QUANTIZE);
 std::atomic<bool> running_(false);
 
 int framesInLoop_ = 0;
@@ -54,7 +54,7 @@ int framesInBar_  = 0;
 int framesInBeat_ = 0;
 int framesInSeq_  = 0;
 std::atomic<int> currentFrame_(0);
-std::atomic<int> currentBeat_ (0);
+std::atomic<int> currentBeat_(0);
 
 int midiTCrate_    = 0;      // send MTC data every midiTCrate_ frames
 int midiTCframes_  = 0;
@@ -69,8 +69,8 @@ kernelAudio::JackState jackStatePrev_;
 
 void updateQuanto_()
 {
-	if (quantize_ != 0)
-		quanto_ = framesInBeat_ / quantize_;
+	if (quantize_.load() != 0)
+		quanto_ = framesInBeat_ / quantize_.load();
 }
 
 }; // {anonymous}
@@ -83,12 +83,12 @@ void updateQuanto_()
 
 void init(int sampleRate, float midiTCfps)
 {
-	running_.load(false);
+	running_.store(false);  // Must be the first thing to do
 	midiTCrate_ = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
 	bpm_        = G_DEFAULT_BPM;
 	bars_       = G_DEFAULT_BARS;
 	beats_      = G_DEFAULT_BEATS;
-	quantize_   = G_DEFAULT_QUANTIZE;
+	quantize_.store(G_DEFAULT_QUANTIZE);
 	updateFrameBars();
 }
 
@@ -185,7 +185,7 @@ void setBeats(int b)
 
 void setQuantize(int q)
 {
-	quantize_ = q;
+	quantize_.store(q);
 	updateQuanto_();
 }
 
@@ -335,8 +335,8 @@ void recvJackSync()
 {
 	kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
 
-	if (jackState.running_ != jackStatePrev_.running_) {
-		if (jackState.running_) {
+	if (jackState.running != jackStatePrev_.running) {
+		if (jackState.running) {
 			if (!isRunning())
 				c::transport::startSeq(false); // not from UI
 		}
@@ -345,9 +345,9 @@ void recvJackSync()
 				c::transport::stopSeq(false); // not from UI
 		}
 	}
-	if (jackState.bpm_ != jackStatePrev_.bpm_)
-		if (jackState.bpm_ > 1.0f)  // 0 bpm_ if Jack does not send that info
-			c::main::setBpm(jackState.bpm_);
+	if (jackState.bpm != jackStatePrev_.bpm)
+		if (jackState.bpm > 1.0f)  // 0 bpm if Jack does not send that info
+			c::main::setBpm(jackState.bpm);
 
 	if (jackState.frame == 0 && jackState.frame != jackStatePrev_.frame)
 		c::transport::rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
@@ -390,7 +390,7 @@ int getCurrentBeat()
 
 int getQuantize()
 {
-	return quantize_;
+	return quantize_.load();
 }
 
 
