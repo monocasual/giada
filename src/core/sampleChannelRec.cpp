@@ -197,20 +197,7 @@ bool recordStart(SampleChannel* ch, bool canQuantize)
 	channel is in any loop mode, where KEYPRESS and KEYREL are meaningless. */
 
 	if (!canQuantize && !ch->isAnyLoopMode() && recorderCanRec_(ch))
-	{
 		recordKeyPressAction_(ch);
-
-		/* Why return here? You record an action and then you call ch->start: 
-		Mixer, which is on another thread, reads your newly recorded action if you 
-		have readActions == true, and then ch->start kicks in right after it.
-		The result: Mixer plays the channel (due to the new action) but the code
-		in the switch in start() kills it right away (because the sample is playing). 
-		Fix: start channel only if you are not recording anything, i.e. let 
-		Mixer play it. */
-
-		if (ch->readActions)
-			return false;
-	}
 	return true;
 }
 
