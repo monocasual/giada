@@ -95,6 +95,9 @@ void clearStartStopActions(geChannel* gch)
 void updateChannel(geChannel* gch, bool refreshActionEditor)
 {
 	gch->ch->hasActions = m::recorder::hasActions(gch->ch->index);
+	if (!gch->ch->hasActions)
+		gch->ch->readActions = false;
+
 	if (gch->ch->type == ChannelType::SAMPLE) {
 		geSampleChannel* gsch = static_cast<geSampleChannel*>(gch);
 		gsch->ch->hasActions ? gsch->showActionButton() : gsch->hideActionButton();

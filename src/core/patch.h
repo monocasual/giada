@@ -91,7 +91,7 @@ struct channel_t
 	int         begin;
 	int         end;
 	float       boost;
-	int         recActive;
+	int         readActions; // TODO - should be bool
 	float       pitch;
 	bool        inputMonitor;
 	uint32_t    midiInReadActions;

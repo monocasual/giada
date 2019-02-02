@@ -199,7 +199,7 @@ void writePatch(const SampleChannel* ch, bool isProject, int index)
 	pch.begin             = ch->getBegin();
 	pch.end               = ch->getEnd();
 	pch.boost             = ch->getBoost();
-	pch.recActive         = ch->readActions;
+	pch.readActions       = ch->readActions;
 	pch.pitch             = ch->getPitch();
 	pch.inputMonitor      = ch->inputMonitor;
 	pch.midiInReadActions = ch->midiInReadActions;
@@ -245,8 +245,8 @@ void readPatch(Channel* ch, const patch::channel_t& pch)
 void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t& pch)
 {
 	ch->mode              = static_cast<ChannelMode>(pch.mode);
-	ch->readActions       = pch.recActive;
-	ch->recStatus         = pch.recActive ? ChannelStatus::PLAY : ChannelStatus::OFF;
+	ch->readActions       = pch.readActions;
+	ch->recStatus         = pch.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF;
 	ch->midiInVeloAsVol   = pch.midiInVeloAsVol;
 	ch->midiInReadActions = pch.midiInReadActions;
 	ch->midiInPitch       = pch.midiInPitch;
