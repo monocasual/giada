@@ -29,8 +29,10 @@
 
 #include <FL/fl_draw.H>
 #include "../../../core/const.h"
+#include "../../../core/recManager.h"
 #include "../../../core/mixer.h"
 #include "../../../core/clock.h"
+#include "../../../utils/gui.h"
 #include "beatMeter.h"
 
 
@@ -40,6 +42,17 @@ namespace v
 geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char* l)
 : Fl_Box(x, y, w, h, l)
 {
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+Fl_Color geBeatMeter::getCursorColor()
+{
+	if (m::recManager::isWaiting() && u::gui::shouldBlink())
+		return FL_BACKGROUND_COLOR;
+	return G_COLOR_LIGHT_1;
 }
 
 
@@ -60,8 +73,7 @@ void geBeatMeter::draw()
 
 	/* Cursor. */
 
-	fl_rectf(x()+(clock::getCurrentBeat()*cursorW)+3, y()+3, cursorW-5, h()-6,
-		G_COLOR_LIGHT_1);
+	fl_rectf(x() + (clock::getCurrentBeat() * cursorW) + 3, y() + 3, cursorW - 5, h() - 6, getCursorColor());	
 
 	/* Beat cells. */
 

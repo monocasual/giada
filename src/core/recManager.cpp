@@ -46,6 +46,7 @@ namespace recManager
 namespace
 {
 pthread_mutex_t* mixerMutex_ = nullptr;
+bool isWaiting_ = false;
 
 
 /* -------------------------------------------------------------------------- */
@@ -60,6 +61,7 @@ bool startActionRec_()
 #ifdef __linux__
 	kernelAudio::jackStart();
 #endif
+	isWaiting_ = false;
 	return true;	
 }
 
@@ -77,6 +79,7 @@ bool startInputRec_()
 		kernelAudio::jackStart();
 #endif
 	}
+	isWaiting_ = false;
 	return true;
 }
 } // {anonymous}
@@ -90,7 +93,14 @@ bool startInputRec_()
 void init(pthread_mutex_t* mixerMutex)
 {
 	mixerMutex_ = mixerMutex;
+	isWaiting_  = false;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isWaiting() { return isWaiting_; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -103,6 +113,7 @@ bool startActionRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::SIGNAL) {
 		m::midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
+		isWaiting_ = true;
 	}
 	return true;
 }
@@ -135,8 +146,10 @@ bool startInputRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL)
 		return startInputRec_();
-	if (mode == RecTriggerMode::SIGNAL)
+	if (mode == RecTriggerMode::SIGNAL) {
 		mixer::setSignalCallback(startInputRec_);
+		isWaiting_ = true;
+	}
 	return true;
 }
 

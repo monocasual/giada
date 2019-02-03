@@ -43,6 +43,10 @@ public:
 
 	geBeatMeter(int x, int y, int w, int h, const char* l=nullptr);
 	void draw();
+
+private:
+
+    Fl_Color getCursorColor();
 };
 }} // giada::v::
 

@@ -29,11 +29,20 @@
 #define G_REC_MANAGER_H
 
 
+#include "types.h"
+
+
 namespace giada {
 namespace m {
 namespace recManager
 {
 void init(pthread_mutex_t* mixerMutex);
+
+/* isWaiting
+Returns true if any Recorder (Action Recorder or Input Recorder) are waiting
+for input signals. */
+
+bool isWaiting();
 
 bool startActionRec(RecTriggerMode m);
 void stopActionRec();
