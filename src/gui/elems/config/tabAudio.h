@@ -42,38 +42,37 @@ class geTabAudio : public Fl_Group
 {
 private:
 
-	static void cb_deactivate_sounddev(Fl_Widget *w, void *p);
-	static void cb_fetchInChans       (Fl_Widget *w, void *p);
-	static void cb_fetchOutChans      (Fl_Widget *w, void *p);
-	static void cb_showInputInfo      (Fl_Widget *w, void *p);
-	static void cb_showOutputInfo     (Fl_Widget *w, void *p);
-	inline void __cb_deactivate_sounddev();
-	inline void __cb_fetchInChans();
-	inline void __cb_fetchOutChans();
-	inline void __cb_showInputInfo();
-	inline void __cb_showOutputInfo();
+	static void cb_deactivate_sounddev(Fl_Widget* w, void* p);
+	static void cb_fetchInChans       (Fl_Widget* w, void* p);
+	static void cb_fetchOutChans      (Fl_Widget* w, void* p);
+	static void cb_showInputInfo      (Fl_Widget* w, void* p);
+	static void cb_showOutputInfo     (Fl_Widget* w, void* p);
+	void cb_deactivate_sounddev();
+	void cb_fetchInChans();
+	void cb_fetchOutChans();
+	void cb_showInputInfo();
+	void cb_showOutputInfo();
 
 	void fetchSoundDevs();
 	void fetchInChans(int menuItem);
 	void fetchOutChans(int menuItem);
-	int  findMenuDevice(geChoice *m, int device);
+	int  findMenuDevice(geChoice* m, int device);
 
 	int soundsysInitValue;
 
 public:
 
-	geChoice *soundsys;
-	geChoice *samplerate;
-	geChoice *rsmpQuality;
-	geChoice *sounddevIn;
-	geButton  *devInInfo;
-	geChoice *channelsIn;
-	geChoice *sounddevOut;
-	geButton  *devOutInfo;
-	geChoice *channelsOut;
-	geCheck  *limitOutput;
-	geChoice *buffersize;
-	geInput  *delayComp;
+	geChoice* soundsys;
+	geChoice* samplerate;
+	geChoice* rsmpQuality;
+	geChoice* sounddevIn;
+	geButton* devInInfo;
+	geChoice* channelsIn;
+	geChoice* sounddevOut;
+	geButton* devOutInfo;
+	geChoice* channelsOut;
+	geCheck*  limitOutput;
+	geChoice* buffersize;
 
 	geTabAudio(int x, int y, int w, int h);
 

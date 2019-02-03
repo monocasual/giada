@@ -59,9 +59,8 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	sounddevIn  = new geChoice(x()+114, y()+121, 222, 20, "Input device");
 	devInInfo   = new geButton(x()+344, y()+121, 20,  20, "?");
 	channelsIn  = new geChoice(x()+114, y()+149, 55,  20, "Input channels");
-	delayComp   = new geInput (x()+309, y()+149, 55,  20, "Rec delay comp.");
 	rsmpQuality = new geChoice(x()+114, y()+177, 250, 20, "Resampling");
-                new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
+                  new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
 										"Restart Giada for the changes to take effect.");
 	end();
 
@@ -191,10 +190,6 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(conf::rsmpQuality);
 
-	delayComp->value();
-	delayComp->type(FL_INT_INPUT);
-	delayComp->maximum_size(5);
-
 	limitOutput->value(conf::limitOutput);
 }
 
@@ -202,17 +197,17 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::cb_deactivate_sounddev(Fl_Widget *w, void *p) { ((geTabAudio*)p)->__cb_deactivate_sounddev(); }
-void geTabAudio::cb_fetchInChans(Fl_Widget *w, void *p)        { ((geTabAudio*)p)->__cb_fetchInChans(); }
-void geTabAudio::cb_fetchOutChans(Fl_Widget *w, void *p)       { ((geTabAudio*)p)->__cb_fetchOutChans(); }
-void geTabAudio::cb_showInputInfo(Fl_Widget *w, void *p)       { ((geTabAudio*)p)->__cb_showInputInfo(); }
-void geTabAudio::cb_showOutputInfo(Fl_Widget *w, void *p)      { ((geTabAudio*)p)->__cb_showOutputInfo(); }
+void geTabAudio::cb_deactivate_sounddev(Fl_Widget* w, void* p) { ((geTabAudio*)p)->cb_deactivate_sounddev(); }
+void geTabAudio::cb_fetchInChans(Fl_Widget* w, void* p)        { ((geTabAudio*)p)->cb_fetchInChans(); }
+void geTabAudio::cb_fetchOutChans(Fl_Widget* w, void* p)       { ((geTabAudio*)p)->cb_fetchOutChans(); }
+void geTabAudio::cb_showInputInfo(Fl_Widget* w, void* p)       { ((geTabAudio*)p)->cb_showInputInfo(); }
+void geTabAudio::cb_showOutputInfo(Fl_Widget* w, void* p)      { ((geTabAudio*)p)->cb_showOutputInfo(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::__cb_fetchInChans()
+void geTabAudio::cb_fetchInChans()
 {
 	fetchInChans(sounddevIn->value());
 	channelsIn->value(0);
@@ -222,7 +217,7 @@ void geTabAudio::__cb_fetchInChans()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::__cb_fetchOutChans()
+void geTabAudio::cb_fetchOutChans()
 {
 	fetchOutChans(sounddevOut->value());
 	channelsOut->value(0);
@@ -232,7 +227,7 @@ void geTabAudio::__cb_fetchOutChans()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::__cb_showInputInfo()
+void geTabAudio::cb_showInputInfo()
 {
 	unsigned dev = kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
 	new gdDevInfo(dev);
@@ -242,7 +237,7 @@ void geTabAudio::__cb_showInputInfo()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::__cb_showOutputInfo()
+void geTabAudio::cb_showOutputInfo()
 {
 	unsigned dev = kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
 	new gdDevInfo(dev);
@@ -252,7 +247,7 @@ void geTabAudio::__cb_showOutputInfo()
 /* -------------------------------------------------------------------------- */
 
 
-void geTabAudio::__cb_deactivate_sounddev()
+void geTabAudio::cb_deactivate_sounddev()
 {
 	/* if the user changes sound system (eg ALSA->JACK) device menu deactivates.
 	 * If it returns to the original sound system, we re-fill the list by
@@ -305,13 +300,11 @@ void geTabAudio::fetchInChans(int menuItem)
 	if (menuItem == 0) {
 		devInInfo ->deactivate();
 		channelsIn->deactivate();
-		delayComp ->deactivate();
 		return;
 	}
 
 	devInInfo ->activate();
 	channelsIn->activate();
-	delayComp ->activate();
 
 	channelsIn->clear();
 
