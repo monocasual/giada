@@ -44,6 +44,12 @@ for input signals. */
 
 bool isWaiting();
 
+/* isActive
+Returns true if its ready for recording, whether it is actually recording 
+something or is in wait mode for a signal. */
+
+bool isActive();
+
 bool startActionRec(RecTriggerMode m);
 void stopActionRec();
 bool startInputRec(RecTriggerMode m);

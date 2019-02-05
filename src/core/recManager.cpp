@@ -47,6 +47,7 @@ namespace
 {
 pthread_mutex_t* mixerMutex_ = nullptr;
 bool isWaiting_ = false;
+bool isActive_  = false;
 
 
 /* -------------------------------------------------------------------------- */
@@ -94,6 +95,7 @@ void init(pthread_mutex_t* mixerMutex)
 {
 	mixerMutex_ = mixerMutex;
 	isWaiting_  = false;
+	isActive_   = false;
 }
 
 
@@ -101,6 +103,7 @@ void init(pthread_mutex_t* mixerMutex)
 
 
 bool isWaiting() { return isWaiting_; }
+bool isActive()  { return isActive_; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -108,6 +111,7 @@ bool isWaiting() { return isWaiting_; }
 
 bool startActionRec(RecTriggerMode mode)
 {
+	isActive_ = true;
 	if (mode == RecTriggerMode::NORMAL)
 		return startActionRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
@@ -124,6 +128,14 @@ bool startActionRec(RecTriggerMode mode)
 
 void stopActionRec()
 {
+	bool wasWaiting = isWaiting_;
+
+	isActive_  = false;
+	isWaiting_ = false;
+
+	if (wasWaiting)
+		return;
+
 	recorder::disable();
 	std::unordered_set<int> channels = recorderHandler::consolidate();
 
@@ -145,12 +157,13 @@ void stopActionRec()
 bool startInputRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL)
-		return startInputRec_();
+		isActive_ = startInputRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
 		mixer::setSignalCallback(startInputRec_);
 		isWaiting_ = true;
+		isActive_  = true;
 	}
-	return true;
+	return isActive_;
 }
 
 
@@ -159,6 +172,12 @@ bool startInputRec(RecTriggerMode mode)
 
 void stopInputRec()
 {
-	mh::stopInputRec();
+	bool wasWaiting = isWaiting_;
+
+	isActive_  = false;
+	isWaiting_ = false;
+
+	if (!wasWaiting)
+		mh::stopInputRec();
 }
 }}} // giada::m::recManager

@@ -98,7 +98,7 @@ void keyRelease(m::Channel* ch, bool ctrl, bool shift)
 
 void toggleActionRec(bool gui)
 {
-	m::recorder::isActive() ? stopActionRec(gui) : startActionRec(gui);
+	m::recManager::isActive() ? stopActionRec(gui) : startActionRec(gui);
 }
 
 
@@ -141,7 +141,7 @@ void stopActionRec(bool gui)
 
 void toggleInputRec(bool gui)
 {
-	if (m::mixer::recording)
+	if (m::recManager::isActive())
 		stopInputRec(gui);
 	else
 	if (!startInputRec(gui))
