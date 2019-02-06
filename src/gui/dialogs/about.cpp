@@ -70,7 +70,7 @@ gdAbout::gdAbout()
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
 
 	std::string message = u::string::format(
-	  "Version " G_VERSION_STR " (" BUILD_DATE ")\n\n"
+	  "Version %s (" BUILD_DATE ")\n\n"
 		"Developed by Monocasual Laboratories\n"
 		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
 		"RtMidi (%s), Libsamplerate, Jansson (%s),\n"
@@ -84,7 +84,7 @@ gdAbout::gdAbout()
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
 		"www.giadamusic.com",
-		FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
+		G_VERSION_STR, FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
 		u::ver::getRtAudioVersion().c_str(),
 		u::ver::getRtMidiVersion().c_str(),
 		JANSSON_VERSION, u::ver::getLibsndfileVersion().c_str()

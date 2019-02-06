@@ -41,13 +41,13 @@ namespace sampleChannelRec
 void parseEvents(SampleChannel* ch, mixer::FrameEvents fe);
 
 /* recordStart
-Records a G_ACTION_KEYPRESS if capable of. Returns true if a start() call can
+Records a 'start' action if capable of. Returns true if a start() call can
 be performed. */
 
 bool recordStart(SampleChannel* ch, bool doQuantize);
 
 /* recordKill
-Records a G_ACTION_KILL if capable of. Returns true if a kill() call can
+Records a 'kill' action if capable of. Returns true if a kill() call can
 be performed. */
 
 bool recordKill(SampleChannel* ch);

@@ -45,13 +45,13 @@
 
 
 /* -- version --------------------------------------------------------------- */
-#define G_APP_NAME      "Giada"
-#define G_VERSION_STR   "0.15.4"
-#define G_VERSION_MAJOR 0
-#define G_VERSION_MINOR 15
-#define G_VERSION_PATCH 4
+constexpr auto G_APP_NAME      = "Giada";
+constexpr auto G_VERSION_STR   = "0.15.4";
+constexpr int  G_VERSION_MAJOR = 0;
+constexpr int  G_VERSION_MINOR = 15;
+constexpr int  G_VERSION_PATCH = 4;
 
-#define CONF_FILENAME "giada.conf"
+constexpr auto CONF_FILENAME = "giada.conf";
 
 #ifdef G_OS_WINDOWS
 	#define G_SLASH '\\'
@@ -117,21 +117,21 @@ constexpr int   G_MAX_POLYPHONY    = 32;
 
 
 /* -- kernel audio ---------------------------------------------------------- */
-#define G_SYS_API_NONE    0x00  // 0000 0000
-#define G_SYS_API_JACK    0x01  // 0000 0001
-#define G_SYS_API_ALSA    0x02  // 0000 0010
-#define G_SYS_API_DS      0x04  // 0000 0100
-#define G_SYS_API_ASIO    0x08  // 0000 1000
-#define G_SYS_API_CORE    0x10  // 0001 0000
-#define G_SYS_API_PULSE   0x20  // 0010 0000
-#define G_SYS_API_WASAPI  0x40  // 0100 0000
-#define G_SYS_API_ANY     0x7F  // 0111 1111
+constexpr int G_SYS_API_NONE   = 0x00;  // 0000 0000
+constexpr int G_SYS_API_JACK   = 0x01;  // 0000 0001
+constexpr int G_SYS_API_ALSA   = 0x02;  // 0000 0010
+constexpr int G_SYS_API_DS     = 0x04;  // 0000 0100
+constexpr int G_SYS_API_ASIO   = 0x08;  // 0000 1000
+constexpr int G_SYS_API_CORE   = 0x10;  // 0001 0000
+constexpr int G_SYS_API_PULSE  = 0x20;  // 0010 0000
+constexpr int G_SYS_API_WASAPI = 0x40;  // 0100 0000
+constexpr int G_SYS_API_ANY    = 0x7F;  // 0111 1111
 
 
 
 /* -- kernel midi ----------------------------------------------------------- */
-#define G_MIDI_API_JACK   0x01  // 0000 0001
-#define G_MIDI_API_ALSA   0x02  // 0000 0010
+constexpr int G_MIDI_API_JACK = 0x01;  // 0000 0001
+constexpr int G_MIDI_API_ALSA = 0x02;  // 0000 0010
 
 
 
@@ -169,20 +169,6 @@ constexpr int   G_DEFAULT_MIDI_INPUT_UI_H   = 350;
 constexpr int   G_DEFAULT_ACTION_SIZE       = 8192;  // frames
 constexpr int   G_DEFAULT_ZOOM_RATIO        = 128;
 constexpr float G_DEFAULT_REC_TRIGGER_LEVEL = -10.0f;
-
-
-
-/* -- actions --------------------------------------------------------------- */
-#define G_ACTION_KEYPRESS		0x01 // 0000 0001
-#define G_ACTION_KEYREL			0x02 // 0000 0010
-#define G_ACTION_KILL		    0x04 // 0000 0100
-#define G_ACTION_VOLUME     0x20 // 0010 0000
-#define G_ACTION_MIDI       0x40 // 0100 0000
-
-#define G_ACTION_KEYS       0x03 // 0000 0011 any key
-
-#define G_RANGE_CHAR        0x01 // range for MIDI (0-127)
-#define G_RANGE_FLOAT       0x02 // range for volumes and VST params (0.0-1.0)
 
 
 
