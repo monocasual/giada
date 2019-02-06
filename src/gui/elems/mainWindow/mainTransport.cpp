@@ -37,7 +37,7 @@ namespace giada {
 namespace v
 {
 geMainTransport::geMainTransport(int x, int y)
-	: Fl_Group(x, y, 158, 25)
+	: Fl_Group(x, y, 174, 25)
 {
 	begin();
 
