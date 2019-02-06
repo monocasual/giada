@@ -115,6 +115,8 @@ bool startActionRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::NORMAL)
 		return startActionRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
+		clock::stop();
+		clock::rewind();
 		m::midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
 		isWaiting_ = true;
@@ -159,6 +161,8 @@ bool startInputRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::NORMAL)
 		isActive_ = startInputRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
+		clock::stop();
+		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);
 		isWaiting_ = true;
 		isActive_  = true;
