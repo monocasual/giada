@@ -26,6 +26,7 @@
 
 
 #include "../gui/dispatcher.h"
+#include "../glue/transport.h"
 #include "types.h"
 #include "clock.h"
 #include "kernelAudio.h"
@@ -58,10 +59,7 @@ bool startActionRec_()
 	if (!kernelAudio::getStatus())
 		return false;
 	recorder::enable();
-	clock::start();
-#ifdef __linux__
-	kernelAudio::jackStart();
-#endif
+	c::transport::startSeq(/*gui=*/false);
 	isWaiting_ = false;
 	return true;	
 }
@@ -74,12 +72,7 @@ bool startInputRec_()
 {
 	if (!kernelAudio::getStatus() || !mh::startInputRec())
 		return false;
-	if (!clock::isRunning()) {
-		clock::start();
-#ifdef __linux__
-		kernelAudio::jackStart();
-#endif
-	}
+	c::transport::startSeq(/*gui=*/false);
 	isWaiting_ = false;
 	return true;
 }
