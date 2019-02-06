@@ -61,10 +61,10 @@ extern std::vector<Channel*> channels;
 
 extern bool   recording;     // is recording something?
 extern bool   ready;
-extern float  outVol;
-extern float  inVol;
 extern bool   rewindWait;    // rewind guard, if quantized
 extern bool   hasSolos;      // more than 0 channels soloed
+extern std::atomic<float> outVol;
+extern std::atomic<float> inVol;
 extern std::atomic<float> peakOut;
 extern std::atomic<float> peakIn;
 

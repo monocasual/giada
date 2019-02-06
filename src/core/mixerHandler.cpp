@@ -234,8 +234,8 @@ void readPatch()
 {
 	mixer::ready = false;
 
-	mixer::outVol = patch::masterVolOut;
-	mixer::inVol = patch::masterVolIn;
+	mixer::outVol.store(patch::masterVolOut);
+	mixer::inVol.store(patch::masterVolIn);
 	clock::setBpm(patch::bpm);
 	clock::setBars(patch::bars);
 	clock::setBeats(patch::beats);

@@ -122,8 +122,8 @@ void updateControls()
 	for (const Channel* ch : mixer::channels)
 		ch->guiChannel->update();
 
-	G_MainWin->mainIO->setOutVol(mixer::outVol);
-	G_MainWin->mainIO->setInVol(mixer::inVol);
+	G_MainWin->mainIO->setOutVol(mixer::outVol.load());
+	G_MainWin->mainIO->setInVol(mixer::inVol.load());
 
 #ifdef WITH_VST
 

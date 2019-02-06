@@ -70,9 +70,9 @@ geMainIO::geMainIO(int x, int y)
 	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
-	outVol->value(m::mixer::outVol);
+	outVol->value(m::mixer::outVol.load());
 	inVol->callback(cb_inVol, (void*)this);
-	inVol->value(m::mixer::inVol);
+	inVol->value(m::mixer::inVol.load());
 
 #ifdef WITH_VST
 	masterFxOut->callback(cb_masterFxOut, (void*)this);

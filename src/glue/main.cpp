@@ -168,7 +168,7 @@ void quantize(int val)
 
 void setOutVol(float v, bool gui)
 {
-	mixer::outVol = v;
+	mixer::outVol.store(v);
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setOutVol(v);
@@ -182,7 +182,7 @@ void setOutVol(float v, bool gui)
 
 void setInVol(float v, bool gui)
 {
-	mixer::inVol = v;
+	mixer::inVol.store(v);
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setInVol(v);

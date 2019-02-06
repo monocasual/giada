@@ -141,8 +141,8 @@ void fillPatchGlobals_(const string& name)
 	patch::bars         = clock::getBars();
 	patch::beats        = clock::getBeats();
 	patch::quantize     = clock::getQuantize();
-	patch::masterVolIn  = mixer::inVol;
-	patch::masterVolOut = mixer::outVol;
+	patch::masterVolIn  = mixer::inVol.load();
+	patch::masterVolOut = mixer::outVol.load();
 	patch::metronome    = mixer::isMetronomeOn();
 
 #ifdef WITH_VST

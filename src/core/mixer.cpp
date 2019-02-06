@@ -137,7 +137,7 @@ void lineInRec_(const AudioBuffer& inBuf)
 		for (int j=0; j<inBuf.countChannels(); j++) {
 			if (inputTracker_ >= clock::getFramesInLoop())
 				inputTracker_ = 0;
-			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol;  // adding: overdub!
+			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol.load();  // adding: overdub!
 		}
 }
 
@@ -165,7 +165,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 	if (inToOut)
 		for (int i=0; i<vChanInToOut_.countFrames(); i++)
 			for (int j=0; j<vChanInToOut_.countChannels(); j++)
-				vChanInToOut_[i][j] = inBuf[i][j] * inVol;
+				vChanInToOut_[i][j] = inBuf[i][j] * inVol.load();
 }
 
 
@@ -248,7 +248,7 @@ void finalizeOutput_(AudioBuffer& outBuf)
 		for (int j=0; j<outBuf.countChannels(); j++) {
 			if (inToOut) // Merge vChanInToOut_, if enabled
 				outBuf[i][j] += vChanInToOut_[i][j];
-			outBuf[i][j] *= outVol; 
+			outBuf[i][j] *= outVol.load(); 
 		}
 }
 
@@ -279,13 +279,13 @@ std::vector<Channel*> channels;
 
 bool  recording  = false;
 bool  ready      = true;
-float outVol     = G_DEFAULT_OUT_VOL;
-float inVol      = G_DEFAULT_IN_VOL;
 bool  metronome  = false;
 int   waitRec    = 0;
 bool  rewindWait = false;
 bool  hasSolos   = false;
 bool  inToOut    = false;
+std::atomic<float> outVol(G_DEFAULT_OUT_VOL);
+std::atomic<float> inVol(G_DEFAULT_IN_VOL);
 std::atomic<float> peakOut(0.0);
 std::atomic<float> peakIn(0.0);
 
