@@ -144,31 +144,31 @@ constexpr int   G_MAX_POLYPHONY    = 32;
 	#define G_DEFAULT_SOUNDSYS 	G_SYS_API_CORE
 #endif
 
-#define G_DEFAULT_SOUNDDEV_OUT     0      // FIXME - please override with rtAudio::getDefaultDevice (or similar)
-#define G_DEFAULT_SOUNDDEV_IN     -1      // no recording by default: input disabled
-#define G_DEFAULT_MIDI_SYSTEM      0
-#define G_DEFAULT_MIDI_PORT_IN    -1
-#define G_DEFAULT_MIDI_PORT_OUT   -1
-#define G_DEFAULT_SAMPLERATE       44100
-#define G_DEFAULT_BUFSIZE          1024
-#define G_DEFAULT_DELAYCOMP        0
-#define G_DEFAULT_BIT_DEPTH        32     // float
-#define G_DEFAULT_VOL              1.0f
-#define G_DEFAULT_PITCH            1.0f
-#define G_DEFAULT_BOOST            1.0f
-#define G_DEFAULT_OUT_VOL          1.0f
-#define G_DEFAULT_IN_VOL           1.0f
-#define G_DEFAULT_BPM              120.0f
-#define G_DEFAULT_BEATS            4
-#define G_DEFAULT_BARS             1
-#define G_DEFAULT_QUANTIZE         0      // quantizer off
-#define G_DEFAULT_FADEOUT_STEP     0.01f  // micro-fadeout speed
-#define G_DEFAULT_COLUMN_WIDTH     380
-#define G_DEFAULT_PATCH_NAME       "(default patch)"
-#define G_DEFAULT_MIDI_INPUT_UI_W  300
-#define G_DEFAULT_MIDI_INPUT_UI_H  350
-#define G_DEFAULT_ACTION_SIZE      8192  // frames
-#define G_DEFAULT_ZOOM_RATIO       128
+constexpr int   G_DEFAULT_SOUNDDEV_OUT      = 0;      // FIXME - please override with rtAudio::getDefaultDevice (or similar)
+constexpr int   G_DEFAULT_SOUNDDEV_IN       = -1;     // no recording by default: input disabled
+constexpr int   G_DEFAULT_MIDI_SYSTEM       = 0;
+constexpr int   G_DEFAULT_MIDI_PORT_IN      = -1;
+constexpr int   G_DEFAULT_MIDI_PORT_OUT     = -1;
+constexpr int   G_DEFAULT_SAMPLERATE        = 44100;
+constexpr int   G_DEFAULT_BUFSIZE           = 1024;
+constexpr int   G_DEFAULT_BIT_DEPTH         = 32;     // float
+constexpr float G_DEFAULT_VOL               = 1.0f;
+constexpr float G_DEFAULT_PITCH             = 1.0f;
+constexpr float G_DEFAULT_BOOST             = 1.0f;
+constexpr float G_DEFAULT_OUT_VOL           = 1.0f;
+constexpr float G_DEFAULT_IN_VOL            = 1.0f;
+constexpr float G_DEFAULT_BPM               = 120.0f;
+constexpr int   G_DEFAULT_BEATS             = 4;
+constexpr int   G_DEFAULT_BARS              = 1;
+constexpr int   G_DEFAULT_QUANTIZE          = 0;      // quantizer off
+constexpr float G_DEFAULT_FADEOUT_STEP      = 0.01f;  // micro-fadeout speed
+constexpr int   G_DEFAULT_COLUMN_WIDTH      = 380;
+constexpr auto  G_DEFAULT_PATCH_NAME        = "(default patch)";
+constexpr int   G_DEFAULT_MIDI_INPUT_UI_W   = 300;
+constexpr int   G_DEFAULT_MIDI_INPUT_UI_H   = 350;
+constexpr int   G_DEFAULT_ACTION_SIZE       = 8192;  // frames
+constexpr int   G_DEFAULT_ZOOM_RATIO        = 128;
+constexpr float G_DEFAULT_REC_TRIGGER_LEVEL = -10.0f;
 
 
 

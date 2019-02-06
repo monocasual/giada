@@ -248,7 +248,8 @@ int aboutY = 0;
 int nameX = 0;
 int nameY = 0;
 
-int recTriggerMode = static_cast<int>(RecTriggerMode::NORMAL);
+int   recTriggerMode  = static_cast<int>(RecTriggerMode::NORMAL);
+float recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
 
 #ifdef WITH_VST
 

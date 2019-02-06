@@ -154,7 +154,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 
 	computePeak_(inBuf, peakIn);
 
-	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > -10.0) { // TODO - constant
+	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > conf::recTriggerLevel) {
 		signalCb_();
 		signalCb_ = nullptr;
 	}
