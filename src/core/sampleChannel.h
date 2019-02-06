@@ -29,6 +29,7 @@
 #define G_SAMPLE_CHANNEL_H
 
 
+#include <memory>
 #include <functional>
 #include <samplerate.h>
 #include "types.h"

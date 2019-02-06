@@ -26,6 +26,7 @@
 
 
 #include <thread>
+#include <atomic>
 #include <ctime>
 #include <atomic>
 #ifdef __APPLE__
