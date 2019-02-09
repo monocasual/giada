@@ -99,7 +99,9 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	add(zone2);
 	add(zone3);
 	add(keyboard);
-	callback(cb_endprogram);
+	callback([](Fl_Widget* w, void* v) {
+		m::init::closeMainWindow();
+	});
 	u::gui::setFavicon(this);
 
 	show(argc, argv);
@@ -109,22 +111,10 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 /* -------------------------------------------------------------------------- */
 
 
-void gdMainWindow::cb_endprogram(Fl_Widget* v, void* p) { G_MainWin->cb_endprogram(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMainWindow::cb_endprogram()
+gdMainWindow::~gdMainWindow()
 {
-	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
-		return;
-
 	m::conf::mainWindowX = x();
 	m::conf::mainWindowY = y();
 	m::conf::mainWindowW = w();
 	m::conf::mainWindowH = h();
-
-	hide();
-	delete this;
 }

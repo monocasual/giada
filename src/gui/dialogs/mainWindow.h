@@ -49,11 +49,6 @@ class geMainTimer;
 
 class gdMainWindow : public gdWindow
 {
-private:
-
-	static void cb_endprogram(Fl_Widget* v, void* p);
-	void cb_endprogram();
-
 public:
 
 	giada::v::geKeyboard* keyboard;
@@ -63,7 +58,8 @@ public:
 	giada::v::geMainTimer* mainTimer;
 	giada::v::geMainTransport* mainTransport;
 
-	gdMainWindow(int w, int h, const char* title, int argc, char** argv);
+    gdMainWindow(int w, int h, const char* title, int argc, char** argv);
+	~gdMainWindow();
 };
 
 

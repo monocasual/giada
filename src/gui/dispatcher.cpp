@@ -26,6 +26,7 @@
 
 
 #include <FL/Fl.H>
+#include "../core/init.h"
 #include "../core/const.h"
 #include "../core/mixer.h"
 #include "../core/channel.h"
@@ -45,6 +46,7 @@ bool backspace_ = false;
 bool end_       = false;
 bool enter_     = false;
 bool space_     = false;
+bool esc_       = false;
 
 std::function<void()> signalCb_ = nullptr;
 
@@ -118,6 +120,10 @@ void dispatchKey(int event)
 			space_ = true;
 			c::transport::startStopSeq(gui);
 		}
+		else if (Fl::event_key() == FL_Escape && !esc_) {
+			esc_ = true;
+			m::init::closeMainWindow();
+		}
 		else
 			triggerSignalCb_();
 	}
@@ -130,6 +136,8 @@ void dispatchKey(int event)
 			space_ = false;
 		else if (Fl::event_key() == FL_Enter)
 			enter_ = false;
+		else if (Fl::event_key() == FL_Escape)
+			esc_ = false;
 	}
 
 	dispatchChannels_(event);

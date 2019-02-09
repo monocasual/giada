@@ -34,6 +34,7 @@ namespace m {
 namespace init
 {
 void startup(int argc, char** argv);
+void closeMainWindow();
 void shutdown();
 }}} // giada::m::init
 

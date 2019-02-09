@@ -71,13 +71,13 @@ namespace init
 {
 namespace
 {
-std::thread videoThread;
+std::thread UIThread_;
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void videoThreadCallback_()
+void UIThreadCallback_()
 {
 	while (G_quit.load() == false) {
 		if (m::kernelAudio::getStatus())
@@ -173,7 +173,7 @@ void initGUI_(int argc, char** argv)
 
 	u::gui::updateControls();
 	
-	videoThread = std::thread(videoThreadCallback_);
+	UIThread_ = std::thread(UIThreadCallback_);
 }
 
 
@@ -205,7 +205,7 @@ void shutdownAudio_()
 void shutdownGUI_()
 {
 	u::gui::closeAllSubwindows();
-	videoThread.join();	
+	UIThread_.join();	
 
 	gu_log("[init] All subwindows and UI thread closed\n");
 }
@@ -227,6 +227,19 @@ void startup(int argc, char** argv)
 	initAudio_();
 	initMIDI_();
 	initGUI_(argc, argv);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void closeMainWindow()
+{
+	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
+		return;
+
+	G_MainWin->hide();
+	delete G_MainWin;
 }
 
 
