@@ -49,19 +49,19 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	: Fl_Group(X, Y, W, H, "Sound System")
 {
 	begin();
-	soundsys    = new geChoice(x()+114, y()+9,  250, 20, "System");
-	buffersize  = new geChoice(x()+114, y()+37, 55,  20, "Buffer size");
-	samplerate  = new geChoice(x()+309, y()+37, 55,  20, "Sample rate");
-	sounddevOut = new geChoice(x()+114, y()+65, 222, 20, "Output device");
-	devOutInfo  = new geButton(x()+344, y()+65, 20,  20, "?");
-	channelsOut = new geChoice(x()+114, y()+93, 55,  20, "Output channels");
-	limitOutput = new geCheck (x()+177, y()+97, 55,  20, "Limit output");
-	sounddevIn  = new geChoice(x()+114, y()+121, 222, 20, "Input device");
-	devInInfo   = new geButton(x()+344, y()+121, 20,  20, "?");
-	channelsIn  = new geChoice(x()+114, y()+149, 55,  20, "Input channels");
-	rsmpQuality = new geChoice(x()+114, y()+177, 250, 20, "Resampling");
-                  new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92,
-										"Restart Giada for the changes to take effect.");
+	soundsys        = new geChoice(x()+114, y()+9,  250, 20, "System");
+	buffersize      = new geChoice(x()+114, y()+37, 55,  20, "Buffer size");
+	samplerate      = new geChoice(x()+309, y()+37, 55,  20, "Sample rate");
+	sounddevOut     = new geChoice(x()+114, y()+65, 222, 20, "Output device");
+	devOutInfo      = new geButton(x()+344, y()+65, 20,  20, "?");
+	channelsOut     = new geChoice(x()+114, y()+93, 55,  20, "Output channels");
+	limitOutput     = new geCheck (x()+177, y()+97, 55,  20, "Limit output");
+	sounddevIn      = new geChoice(x()+114, y()+121, 222, 20, "Input device");
+	devInInfo       = new geButton(x()+344, y()+121, 20,  20, "?");
+	channelsIn      = new geChoice(x()+114, y()+149, 55,  20, "Input channels");
+	recTriggerLevel = new geInput (x()+309, y()+149, 55,  20, "Rec threshold (dB)");
+	rsmpQuality     = new geChoice(x()+114, y()+177, 250, 20, "Resampling");
+                      new geBox(x(), rsmpQuality->y()+rsmpQuality->h()+8, w(), 92, "Restart Giada for the changes to take effect.");
 	end();
 
 	labelsize(G_GUI_FONT_SIZE_BASE);
@@ -190,6 +190,8 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	rsmpQuality->add("Linear (very fast)");
 	rsmpQuality->value(conf::rsmpQuality);
 
+	recTriggerLevel->value(u::string::fToString(conf::recTriggerLevel, 1).c_str());
+
 	limitOutput->value(conf::limitOutput);
 }
 
@@ -298,13 +300,15 @@ void geTabAudio::fetchInChans(int menuItem)
 	/* if menuItem==0 device in input is disabled. */
 
 	if (menuItem == 0) {
-		devInInfo ->deactivate();
+		devInInfo->deactivate();
 		channelsIn->deactivate();
+		recTriggerLevel->deactivate();
 		return;
 	}
 
-	devInInfo ->activate();
+	devInInfo->activate();
 	channelsIn->activate();
+	recTriggerLevel->activate();
 
 	channelsIn->clear();
 
@@ -491,14 +495,11 @@ void geTabAudio::save()
 	if (conf::soundDeviceOut == -1)
 		conf::soundDeviceOut = 0;
 
-	int bufsize = atoi(buffersize->text());
-	if (bufsize % 2 != 0) bufsize++;
-	if (bufsize < 8)      bufsize = 8;
-	if (bufsize > 8192)   bufsize = 8192;
-	conf::buffersize = bufsize;
+	conf::buffersize = std::atoi(buffersize->text());
+	conf::recTriggerLevel = std::atof(recTriggerLevel->value());
 
-	const Fl_Menu_Item *i = nullptr;
+	const Fl_Menu_Item* i = nullptr;
 	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
-	if (i)
-		conf::samplerate = atoi(i->label());
+	if (i != nullptr)
+		conf::samplerate = std::atoi(i->label());
 }

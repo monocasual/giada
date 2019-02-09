@@ -63,16 +63,17 @@ private:
 public:
 
 	geChoice* soundsys;
+	geChoice* buffersize;
 	geChoice* samplerate;
-	geChoice* rsmpQuality;
-	geChoice* sounddevIn;
-	geButton* devInInfo;
-	geChoice* channelsIn;
 	geChoice* sounddevOut;
 	geButton* devOutInfo;
 	geChoice* channelsOut;
 	geCheck*  limitOutput;
-	geChoice* buffersize;
+	geChoice* sounddevIn;
+	geButton* devInInfo;
+	geChoice* channelsIn;
+	geInput*  recTriggerLevel;
+	geChoice* rsmpQuality;
 
 	geTabAudio(int x, int y, int w, int h);
 
