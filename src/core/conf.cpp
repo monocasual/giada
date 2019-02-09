@@ -395,6 +395,7 @@ int read()
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_REC_TRIGGER_MODE, recTriggerMode)) return 0;
+	if (!storager::setFloat(jRoot, CONF_KEY_REC_TRIGGER_LEVEL, recTriggerLevel)) return 0;
 
 #ifdef WITH_VST
 
@@ -506,6 +507,7 @@ int write()
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
 	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
 	json_object_set_new(jRoot, CONF_KEY_REC_TRIGGER_MODE,          json_integer(recTriggerMode));
+	json_object_set_new(jRoot, CONF_KEY_REC_TRIGGER_LEVEL,         json_real(recTriggerLevel));
 
 #ifdef WITH_VST
 
