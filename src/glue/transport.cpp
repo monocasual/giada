@@ -36,6 +36,7 @@
 #include "../core/mixerHandler.h"
 #include "../core/mixer.h"
 #include "../core/recorder.h"
+#include "../core/recManager.h"
 #include "transport.h"
 
 
@@ -60,17 +61,16 @@ void startStopSeq(bool gui)
 
 void startSeq(bool gui)
 {
-	clock::start();
-
+	if (!m::recManager::isWaiting()) {
+		clock::start();
 #ifdef __linux__
-	kernelAudio::jackStart();
+		kernelAudio::jackStart();
 #endif
+	}
 
-	if (!gui) {
-		Fl::lock();
-		G_MainWin->mainTransport->updatePlay(1);
-		Fl::unlock();
-  }
+	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->updatePlay(clock::isRunning());
+	if (!gui) Fl::unlock();
 }
 
 
