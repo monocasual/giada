@@ -61,16 +61,17 @@ void startStopSeq(bool gui)
 
 void startSeq(bool gui)
 {
-	if (!m::recManager::isWaiting()) {
-		clock::start();
-#ifdef __linux__
-		kernelAudio::jackStart();
-#endif
-	}
+	clock::start();
 
-	if (!gui) Fl::lock();
-	G_MainWin->mainTransport->updatePlay(clock::isRunning());
-	if (!gui) Fl::unlock();
+#ifdef __linux__
+	kernelAudio::jackStart();
+#endif
+
+	if (!gui) {
+		Fl::lock();
+		G_MainWin->mainTransport->updatePlay(1);
+		Fl::unlock();
+	}
 }
 
 
