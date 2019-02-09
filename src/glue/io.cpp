@@ -169,12 +169,6 @@ bool startInputRec(bool gui)
 	G_MainWin->mainTimer->setLock(true);
 	if (!gui) Fl::unlock();
 
-	/* Update sample name inside sample channels' main button. This is useless 
-	for MIDI channels, but let's do it anyway. */
-
-	for (m::Channel* ch : m::mixer::channels)
-		ch->guiChannel->update();
-
 	return true;
 }
 
@@ -189,6 +183,10 @@ void stopInputRec(bool gui)
 	if (!gui) Fl::lock();
 	G_MainWin->mainTransport->updateRecInput(0);
 	G_MainWin->mainTimer->setLock(false);
+	/* Update sample name inside sample channels' main button. This is useless 
+	for MIDI channels, but let's do it anyway. */
+	for (const m::Channel* ch : m::mixer::channels)
+		ch->guiChannel->update();
 	if (!gui) Fl::unlock();
 }
 

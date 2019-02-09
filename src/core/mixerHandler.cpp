@@ -299,12 +299,10 @@ bool startInputRec()
 		gu_log("[startInputRec] start input recs using chan %d with size %d "
 			"on frame=%d\n", sch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
 	}
-
-	/** FIXME: mixer::startInputRec() should be called before wave allocation */
-	/** FIXME: mixer::startInputRec() should be called before wave allocation */
-	/** FIXME: mixer::startInputRec() should be called before wave allocation */
+	
 	if (channelsReady == 0)
 		return false;
+
 	mixer::startInputRec();
 	return true;
 }
