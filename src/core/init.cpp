@@ -27,6 +27,7 @@
 
 #include <thread>
 #include <ctime>
+#include <atomic>
 #ifdef __APPLE__
 	#include <pwd.h>
 #endif
