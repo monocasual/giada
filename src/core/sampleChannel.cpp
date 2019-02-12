@@ -422,7 +422,7 @@ void SampleChannel::pushWave(std::unique_ptr<Wave>&& w)
 /* -------------------------------------------------------------------------- */
 
 
-bool SampleChannel::canInputRec()
+bool SampleChannel::canInputRec() const
 {
 	return wave == nullptr && armed;
 }

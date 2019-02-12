@@ -70,7 +70,8 @@ public:
 
 	/* process
 	Merges working buffers into 'out', plus plugin processing (if any). Warning:
-	inBuffer might be nullptr if no input devices are available for recording. */
+	inBuffer might be unallocated if no input devices are available for 
+	recording. */
 
 	virtual void process(AudioBuffer& out, const AudioBuffer& in, bool audible, 
 		bool running) = 0;
@@ -121,8 +122,7 @@ public:
 	Midi channels, true for Sample channels only if they don't contain a
 	sample yet.*/
 
-	virtual bool canInputRec() = 0;
-
+	virtual bool canInputRec()    const { return false; };
 	virtual bool hasLogicalData() const { return false; };
 	virtual bool hasEditedData()  const { return false; };
 	virtual bool hasData()        const { return false; };

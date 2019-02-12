@@ -101,10 +101,15 @@ to skip check against itself. */
 bool uniqueSamplePath(const SampleChannel* skip, const std::string& p);
 
 /* hasArmedSampleChannels
-Tells whether Mixer has one or more sample channels armed for input
-recording. */
+Tells whether Mixer has one or more Sample Channels armed for input recording. */
 
 bool hasArmedSampleChannels();
+
+/* hasRecordableSampleChannels
+Tells whether Mixer has one or more recordable Sample Channels, that is: 
+a) armed; b) empty (no Wave). */
+
+bool hasRecordableSampleChannels();
 }}}  // giada::m::mh::
 
 

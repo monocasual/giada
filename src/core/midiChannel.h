@@ -58,19 +58,18 @@ public:
 	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
 	void writePatch(int i, bool isProject) override;
 	void receiveMidi(const MidiEvent& midiEvent) override;
-	bool canInputRec() override;
 
 	/* sendMidi
-	 * send Midi event to the outside world. */
+	Sends Midi event to the outside world. */
 
 	void sendMidi(const Action* a, int localFrame);
 
 #ifdef WITH_VST
 
 	/* addVstMidiEvent
-	 * Add a new Midi event to the midiEvent stack fom a composite uint32_t raw
-	 * Midi event. LocalFrame is the offset: it tells where to put the event
-	 * inside the buffer. */
+	Adds a new Midi event to the midiEvent stack fom a composite uint32_t raw
+	Midi event. LocalFrame is the offset: it tells where to put the event
+	inside the buffer. */
 
 	void addVstMidiEvent(uint32_t msg, int localFrame);
 

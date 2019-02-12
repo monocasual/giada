@@ -277,7 +277,8 @@ void rewindSequencer()
 
 bool startInputRec()
 {
-	int channelsReady = 0;
+	if (!hasRecordableSampleChannels())
+		return false;
 
 	for (Channel* ch : mixer::channels) {
 
@@ -294,14 +295,10 @@ bool startInputRec()
 		sch->pushWave(waveManager::createEmpty(clock::getFramesInLoop(), 
 			G_MAX_IO_CHANS, conf::samplerate, nameExt));
 		sch->name = name; 
-		channelsReady++;
 
-		gu_log("[startInputRec] start input recs using chan %d with size %d "
+		gu_log("[startInputRec] start input recs using Channel %d with size %d "
 			"on frame=%d\n", sch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
 	}
-	
-	if (channelsReady == 0)
-		return false;
 
 	mixer::startInputRec();
 	return true;
@@ -328,10 +325,22 @@ void stopInputRec()
 
 bool hasArmedSampleChannels()
 {
-	for (const Channel* ch : mixer::channels)
-		if (ch->type == ChannelType::SAMPLE && ch->armed)
-			return true;
-	return false;
+	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	{
+		return ch->type == ChannelType::SAMPLE && ch->armed;
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool hasRecordableSampleChannels()
+{
+	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	{
+		return ch->canInputRec();
+	});
 }
 
 

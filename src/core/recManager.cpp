@@ -154,6 +154,8 @@ bool startInputRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::NORMAL)
 		isActive_ = startInputRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
+		if (!mh::hasRecordableSampleChannels())
+			return false;
 		clock::stop();
 		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);

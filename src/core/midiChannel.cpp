@@ -236,13 +236,4 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 	}
 }
 
-
-/* -------------------------------------------------------------------------- */
-
-
-bool MidiChannel::canInputRec()
-{
-	return false; // midi channels don't handle input audio
-}
-
 }} // giada::m::

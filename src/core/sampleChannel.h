@@ -70,8 +70,8 @@ public:
 	void empty() override;
 	void stopBySeq(bool chansStopOnSeqHalt) override;
 	void rewindBySeq() override;
-	bool canInputRec() override;
 	void stopInputRec(int globalFrame) override;
+	bool canInputRec() const override;
 	bool hasLogicalData() const override;
 	bool hasEditedData() const override;
 	bool hasData() const override;
