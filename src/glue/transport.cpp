@@ -61,7 +61,7 @@ void startStopSeq(bool gui)
 
 void startSeq(bool gui)
 {
-	clock::start();
+	clock::setStatus(ClockStatus::RUNNING);
 
 #ifdef __linux__
 	kernelAudio::jackStart();

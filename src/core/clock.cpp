@@ -46,8 +46,8 @@ float bpm_      = G_DEFAULT_BPM;
 int   bars_     = G_DEFAULT_BARS;
 int   beats_    = G_DEFAULT_BEATS;
 int   quanto_   = 1;            // quantizer step
-std::atomic<int>  quantize_(G_DEFAULT_QUANTIZE);
-std::atomic<bool> running_(false);
+std::atomic<int>         quantize_(G_DEFAULT_QUANTIZE);
+std::atomic<ClockStatus> status_(ClockStatus::STOPPED);
 
 int framesInLoop_ = 0;
 int framesInBar_  = 0;
@@ -83,7 +83,7 @@ void updateQuanto_()
 
 void init(int sampleRate, float midiTCfps)
 {
-	running_.store(false);  // Must be the first thing to do
+	status_.store(ClockStatus::STOPPED);  // Must be the first thing to do
 	midiTCrate_ = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
 	bpm_        = G_DEFAULT_BPM;
 	bars_       = G_DEFAULT_BARS;
@@ -98,7 +98,13 @@ void init(int sampleRate, float midiTCfps)
 
 bool isRunning()
 {
-	return running_.load();
+	return status_.load() == ClockStatus::RUNNING;
+}
+
+
+bool isActive()
+{
+	return status_.load() == ClockStatus::RUNNING || status_.load() == ClockStatus::WAITING;
 }
 
 
@@ -123,24 +129,6 @@ bool isOnBeat()
 bool isOnFirstBeat()
 {
 	return currentFrame_.load() == 0;
-}
-
-
-void start()
-{
-	running_.store(true);
-	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
-		kernelMidi::send(MIDI_START, -1, -1);
-		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
-	}
-}
-
-
-void stop()
-{
-	running_.store(false);
-	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
-		kernelMidi::send(MIDI_STOP, -1, -1);
 }
 
 
@@ -187,6 +175,24 @@ void setQuantize(int q)
 {
 	quantize_.store(q);
 	updateQuanto_();
+}
+
+
+void setStatus(ClockStatus s)
+{
+	status_.store(s);
+	
+	if (s == ClockStatus::RUNNING) {
+		if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
+			kernelMidi::send(MIDI_START, -1, -1);
+			kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+		}
+	}
+	else
+	if (s == ClockStatus::STOPPED) {
+		if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+			kernelMidi::send(MIDI_STOP, -1, -1);
+	}
 }
 
 
@@ -435,5 +441,10 @@ int getFramesInSeq()
 	return framesInSeq_;
 }
 
+
+ClockStatus getStatus()
+{
+	return status_;
+}
 
 }}}; // giada::m::clock::

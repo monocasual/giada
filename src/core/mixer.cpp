@@ -366,9 +366,9 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 				channel->parseEvents(fe);
 
 			doQuantize_(j);
-			renderMetronome_(out, j);
 			clock::incrCurrentFrame();
 			clock::sendMIDIsync();
+			renderMetronome_(out, j);
 		}
 		lineInRec_(in);
 	}
@@ -397,7 +397,7 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 void close()
 {
-	clock::stop();
+	clock::setStatus(ClockStatus::STOPPED);
 	while (channels.size() > 0)
 		mh::deleteChannel(channels.at(0));
 	pthread_mutex_destroy(&mutex);

@@ -34,18 +34,14 @@ namespace giada
 using Pixel = int;
 using Frame = int;
 
+enum class ClockStatus { STOPPED, WAITING, RUNNING };
 
-enum class ChannelType : int 
-{
-	SAMPLE = 1, MIDI
-};
-
+enum class ChannelType : int { SAMPLE = 1, MIDI };
 
 enum class ChannelStatus : int
 {
 	ENDING = 1, WAIT, PLAY, OFF, EMPTY, MISSING, WRONG  
 };
-
 
 enum class ChannelMode : int
 {
@@ -53,9 +49,7 @@ enum class ChannelMode : int
 	SINGLE_BASIC, SINGLE_PRESS, SINGLE_RETRIG, SINGLE_ENDLESS
 };
 
-
 enum class RecTriggerMode : int { NORMAL = 0, SIGNAL };
-
 
 enum class PreviewMode : int { NONE = 0, NORMAL, LOOP };
 enum class EventType : int { AUTO = 0, MANUAL };

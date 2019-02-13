@@ -88,7 +88,7 @@ void readPatch();
 
 /* startInputRec - record from line in
 Creates a new empty wave in the first available channels. Returns false if
-something went wrong. */
+there are no available channels. */
 
 bool startInputRec();
 

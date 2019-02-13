@@ -207,7 +207,7 @@ bool hasEditedSamples()
 
 void stopSequencer()
 {
-	clock::stop();
+	clock::setStatus(ClockStatus::STOPPED);
 	for (Channel* ch : mixer::channels)
 		ch->stopBySeq(conf::chansStopOnSeqHalt);
 }

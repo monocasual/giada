@@ -50,7 +50,7 @@ geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char* l)
 
 Fl_Color geBeatMeter::getCursorColor()
 {
-	if (m::recManager::isWaiting() && u::gui::shouldBlink())
+	if (m::clock::getStatus() == ClockStatus::WAITING && u::gui::shouldBlink())
 		return FL_BACKGROUND_COLOR;
 	return G_COLOR_LIGHT_1;
 }

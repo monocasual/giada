@@ -196,7 +196,7 @@ void setInVol(float v, bool gui)
 
 void clearAllSamples()
 {
-	clock::stop();
+	clock::setStatus(ClockStatus::STOPPED);
 	for (Channel* ch : mixer::channels) {
 		ch->empty();
 		ch->guiChannel->reset();

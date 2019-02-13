@@ -38,12 +38,6 @@ namespace recManager
 {
 void init(pthread_mutex_t* mixerMutex);
 
-/* isWaiting
-Returns true if any Recorder (Action Recorder or Input Recorder) are waiting
-for input signals. */
-
-bool isWaiting();
-
 /* isActive
 Returns true if its ready for recording, whether it is actually recording 
 something or is in wait mode for a signal. */

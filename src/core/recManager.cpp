@@ -47,8 +47,7 @@ namespace recManager
 namespace
 {
 pthread_mutex_t* mixerMutex_ = nullptr;
-bool isWaiting_ = false;
-bool isActive_  = false;
+bool isActive_ = false;
 
 
 /* -------------------------------------------------------------------------- */
@@ -60,7 +59,6 @@ bool startActionRec_()
 		return false;
 	recorder::enable();
 	c::transport::startSeq(/*gui=*/false);
-	isWaiting_ = false;
 	return true;	
 }
 
@@ -73,7 +71,6 @@ bool startInputRec_()
 	if (!kernelAudio::getStatus() || !mh::startInputRec())
 		return false;
 	c::transport::startSeq(/*gui=*/false);
-	isWaiting_ = false;
 	return true;
 }
 } // {anonymous}
@@ -87,7 +84,6 @@ bool startInputRec_()
 void init(pthread_mutex_t* mixerMutex)
 {
 	mixerMutex_ = mixerMutex;
-	isWaiting_  = false;
 	isActive_   = false;
 }
 
@@ -95,7 +91,6 @@ void init(pthread_mutex_t* mixerMutex)
 /* -------------------------------------------------------------------------- */
 
 
-bool isWaiting() { return isWaiting_; }
 bool isActive()  { return isActive_; }
 
 
@@ -108,11 +103,10 @@ bool startActionRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::NORMAL)
 		return startActionRec_();
 	if (mode == RecTriggerMode::SIGNAL) {
-		clock::stop();
+		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		m::midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
-		isWaiting_ = true;
 	}
 	return true;
 }
@@ -123,13 +117,14 @@ bool startActionRec(RecTriggerMode mode)
 
 void stopActionRec()
 {
-	bool wasWaiting = isWaiting_;
+	isActive_ = false;
 
-	isActive_  = false;
-	isWaiting_ = false;
-
-	if (wasWaiting)
+	if (clock::getStatus() == ClockStatus::WAITING)	{
+		clock::setStatus(ClockStatus::STOPPED);
 		return;
+	}
+
+	clock::setStatus(ClockStatus::RUNNING);
 
 	recorder::disable();
 	std::unordered_set<int> channels = recorderHandler::consolidate();
@@ -156,11 +151,10 @@ bool startInputRec(RecTriggerMode mode)
 	if (mode == RecTriggerMode::SIGNAL) {
 		if (!mh::hasRecordableSampleChannels())
 			return false;
-		clock::stop();
+		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);
-		isWaiting_ = true;
-		isActive_  = true;
+		isActive_ = true;
 	}
 	return isActive_;
 }
@@ -171,12 +165,14 @@ bool startInputRec(RecTriggerMode mode)
 
 void stopInputRec()
 {
-	bool wasWaiting = isWaiting_;
+	isActive_ = false;
 
-	isActive_  = false;
-	isWaiting_ = false;
-
-	if (!wasWaiting)
+	if (clock::getStatus() == ClockStatus::WAITING)	{
+		clock::setStatus(ClockStatus::STOPPED);
+	}
+	else {
+		clock::setStatus(ClockStatus::RUNNING);
 		mh::stopInputRec();
+	}
 }
 }}} // giada::m::recManager

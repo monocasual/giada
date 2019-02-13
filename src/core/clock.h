@@ -29,6 +29,9 @@
 #define G_CLOCK_H
 
 
+#include "types.h"
+
+
 namespace giada {
 namespace m {
 namespace clock
@@ -60,6 +63,7 @@ int getFramesInLoop();
 int getFramesInSeq();
 int getQuantize();
 int getQuanto();
+ClockStatus getStatus();
 
 /* incrCurrentFrame
 Increases current frame of a single step (+1). */
@@ -86,14 +90,23 @@ void setBars(int b);
 void setBeats(int b);
 void setQuantize(int q);
 
+/* isRunning
+When clock is actually moving forward, i.e. ClockStatus == RUNNING. */
+
 bool isRunning();
+
+/* isActive
+Clock is enabled, but might be in wait mode, i.e. ClockStatus == RUNNING or
+ClockStatus == WAITING. */
+
+bool isActive();
+
 bool isOnBeat();
 bool isOnBar();
 bool isOnFirstBeat();
 
 void rewind();
-void start();
-void stop();
+void setStatus(ClockStatus s);
 }}}; // giada::m::clock::
 
 
