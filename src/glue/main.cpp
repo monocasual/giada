@@ -79,8 +79,13 @@ void setBpm_(float f, string s)
 	recorderHandler::updateBpm(vPre, f, clock::getQuanto());
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 
-	u::gui::refreshActionEditor();
-	G_MainWin->mainTimer->setBpm(s.c_str());
+	/* This function might get called by Jack callback BEFORE the UI is up
+	and running, that is when G_MainWin == nullptr. */
+	
+	if (G_MainWin != nullptr) {
+		u::gui::refreshActionEditor();
+		G_MainWin->mainTimer->setBpm(s.c_str());
+	}
 
 	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), clock::getBpm());
 }
