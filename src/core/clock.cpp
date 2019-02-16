@@ -53,10 +53,11 @@ int framesInLoop_ = 0;
 int framesInBar_  = 0;
 int framesInBeat_ = 0;
 int framesInSeq_  = 0;
+std::atomic<int> currentFrameWait_(0);  // Used only in wait mode
 std::atomic<int> currentFrame_(0);
 std::atomic<int> currentBeat_(0);
 
-int midiTCrate_    = 0;      // send MTC data every midiTCrate_ frames
+int midiTCrate_    = 0;      // Send MTC data every midiTCrate_ frames
 int midiTCframes_  = 0;
 int midiTCseconds_ = 0;
 int midiTCminutes_ = 0;
@@ -116,12 +117,16 @@ bool quantoHasPassed()
 
 bool isOnBar()
 {
+	if (status_.load() == ClockStatus::WAITING)
+		return false;
 	return currentFrame_.load() % framesInBar_ == 0;
 }
 
 
 bool isOnBeat()
 {
+	if (status_.load() == ClockStatus::WAITING)
+		return currentFrameWait_.load() % framesInBeat_ == 0;
 	return currentFrame_.load() % framesInBeat_ == 0;
 }
 
@@ -199,20 +204,29 @@ void setStatus(ClockStatus s)
 /* -------------------------------------------------------------------------- */
 
 
-void incrCurrentFrame() {
-	currentFrame_++;
-	if (currentFrame_.load() >= framesInLoop_) {
-		currentFrame_.store(0);
-		currentBeat_.store(0);
+void incrCurrentFrame() 
+{
+	if (status_.load() == ClockStatus::WAITING) {
+		currentFrameWait_++;
+		if (currentFrameWait_.load() >= framesInLoop_)
+			currentFrameWait_ = 0;
 	}
-	else
-	if (isOnBeat())
-		currentBeat_++;
+	else {
+		currentFrame_++;
+		if (currentFrame_.load() >= framesInLoop_) {
+			currentFrame_.store(0);
+			currentBeat_.store(0);
+		}
+		else
+		if (isOnBeat())
+			currentBeat_++;
+	}
 }
 
 
 void rewind()
 {
+	currentFrameWait_.store(0);
 	currentFrame_.store(0);
 	currentBeat_.store(0);
 	sendMIDIrewind();
@@ -244,6 +258,11 @@ void updateFrameBars()
 
 void sendMIDIsync()
 {
+	/* Sending MIDI sync while waiting is meaningless. */
+
+	if (status_.load() == ClockStatus::WAITING)
+		return;
+
 	/* TODO - only Master (_M) is implemented so far. */
 
 	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {

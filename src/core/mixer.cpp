@@ -267,6 +267,25 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 	if (clock::isOnBeat() || metronome_.playBeat)
 		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void parseEvents_(Frame f)
+{
+	FrameEvents fe;
+	fe.frameLocal   = f;
+	fe.frameGlobal  = clock::getCurrentFrame();
+	fe.doQuantize   = clock::getQuantize() == 0 || !clock::quantoHasPassed();
+	fe.onBar        = clock::isOnBar();
+	fe.onFirstBeat  = clock::isOnFirstBeat();
+	fe.quantoPassed = clock::quantoHasPassed();
+	fe.actions      = recorder::getActionsOnFrame(clock::getCurrentFrame());
+
+	for (Channel* channel : channels)
+		channel->parseEvents(fe);	
+}
 }; // {anonymous}
 
 
@@ -349,25 +368,14 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	pthread_mutex_lock(&mutex);
 
-	if (clock::isRunning()) {
-
+	if (clock::isActive()) {
 		for (unsigned j=0; j<bufferSize; j++) {
-		
-			FrameEvents fe;
-			fe.frameLocal   = j;
-			fe.frameGlobal  = clock::getCurrentFrame();
-			fe.doQuantize   = clock::getQuantize() == 0 || !clock::quantoHasPassed();
-			fe.onBar        = clock::isOnBar();
-			fe.onFirstBeat  = clock::isOnFirstBeat();
-			fe.quantoPassed = clock::quantoHasPassed();
-			fe.actions      = recorder::getActionsOnFrame(clock::getCurrentFrame());
-
-			for (Channel* channel : channels)
-				channel->parseEvents(fe);
-
-			doQuantize_(j);
-			clock::incrCurrentFrame();
+			if (clock::isRunning()) {
+				parseEvents_(j);
+				doQuantize_(j);
+			}
 			clock::sendMIDIsync();
+			clock::incrCurrentFrame();
 			renderMetronome_(out, j);
 		}
 		lineInRec_(in);
