@@ -179,7 +179,7 @@ TEST_CASE("sampleChannelProc")
 					REQUIRE(ch.status == ChannelStatus::WAIT);	
 				else {
 					REQUIRE(ch.status == ChannelStatus::OFF);	
-					REQUIRE(ch.qWait == true);	
+					REQUIRE(ch.quantizing == true);	
 				}
 			}
 		}

@@ -87,7 +87,7 @@ TEST_CASE("patch")
 		channel1.begin             = 0;
 		channel1.end               = 0;
 		channel1.boost             = 0;
-		channel1.recActive         = 0;
+		channel1.readActions       = 0;
 		channel1.pitch             = 1.2f;
 		channel1.midiInReadActions = 0;
 		channel1.midiInPitch       = 0;
@@ -175,7 +175,7 @@ TEST_CASE("patch")
 		REQUIRE(channel0.begin == 0);
 		REQUIRE(channel0.end == 0);
 		REQUIRE(channel0.boost == 1.0f);
-		REQUIRE(channel0.recActive == 0);
+		REQUIRE(channel0.readActions == 0);
 		REQUIRE(channel0.pitch == Approx(1.2f));
 		REQUIRE(channel0.midiInReadActions == 0);
 		REQUIRE(channel0.midiInPitch == 0);
