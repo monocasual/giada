@@ -42,8 +42,8 @@ namespace
 {
 void rewind_(SampleChannel* ch, int localFrame)
 {
-	ch->tracker = ch->begin;
-	ch->qWait   = false;  // Was in qWait mode? Reset occured, no more qWait now.
+	ch->tracker    = ch->begin;
+	ch->quantizing = false;  // No more quantization now
 
 	/* On rewind, if channel is playing fill again buffer to create something like 
 	this:
@@ -66,15 +66,15 @@ void quantize_(SampleChannel* ch, int localFrame, bool quantoPassed)
 	/* Skip if LOOP_ANY, not in quantizer-wait mode or still waiting for the 
 	quantization time to end. */
 
-	if (ch->isAnyLoopMode() || !ch->qWait || !quantoPassed)
+	if (ch->isAnyLoopMode() || !ch->quantizing || !quantoPassed)
 		return;
 
 	switch (ch->status) {
 		case ChannelStatus::OFF:
 			ch->status   = ChannelStatus::PLAY;
-			ch->qWait    = false;
 			ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame);
 			ch->sendMidiLstatus();
+			// ch->quantizing = false is set by sampleChannelRec::quantize()
 			break;
 
 		default:
@@ -289,8 +289,8 @@ void stop(SampleChannel* ch)
 
 		default:
 			/* If quantizing, stop a SINGLE_PRESS immediately. */
-			if (ch->mode == ChannelMode::SINGLE_PRESS && ch->qWait)
-				ch->qWait = false;	
+			if (ch->mode == ChannelMode::SINGLE_PRESS && ch->quantizing)
+				ch->quantizing = false;	
 			break;		
 	}
 }
@@ -402,7 +402,7 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 			}
 			else {
 				if (doQuantize)
-					ch->qWait = true;
+					ch->quantizing = true;
 				else {
 					ch->status = ChannelStatus::PLAY;
 					ch->sendMidiLstatus();
@@ -413,7 +413,7 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 		case ChannelStatus::PLAY:
 			if (ch->mode == ChannelMode::SINGLE_RETRIG) {
 				if (doQuantize)
-					ch->qWait = true;
+					ch->quantizing = true;
 				else
 					rewind_(ch, localFrame);
 			}

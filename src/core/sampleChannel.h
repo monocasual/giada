@@ -124,7 +124,7 @@ public:
 	int   tracker;         // chan position
 	int   trackerPreview;  // chan position for audio preview
 	int   shift;
-	bool  qWait;           // quantizer wait
+	bool  quantizing;      // quantization in progress
 	bool  inputMonitor;  
 	float boost;
 	float pitch;

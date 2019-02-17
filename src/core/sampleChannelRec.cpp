@@ -147,7 +147,9 @@ void recordKeyPressAction_(SampleChannel* ch)
 	if (!recorderCanRec_(ch))
 		return;
 
-	/* Disable reading actions while recording SINGLE_PRESS mode. */
+	/* Disable reading actions while recording SINGLE_PRESS mode. Don't let 
+	existing actions interfere with the current one being recorded. */
+
 	if (ch->mode == ChannelMode::SINGLE_PRESS)
 		ch->readActions = false;
 	
@@ -161,12 +163,13 @@ void recordKeyPressAction_(SampleChannel* ch)
 
 void quantize_(SampleChannel* ch, bool quantoPassed)
 {
-	/* Skip if LOOP_ANY or not in quantizer-wait mode. Otherwise the quantize wait 
-	has expired: record the keypress.  */
+	/* Skip if in loop mode or not in a quantization stage. Otherwise the 
+	quantization wait has expired: record the keypress.  */
 
-	if (ch->isAnyLoopMode() || !ch->qWait || !quantoPassed)
-		return;
-	recordKeyPressAction_(ch);
+	if (!ch->isAnyLoopMode() && ch->quantizing && quantoPassed && ch->status == ChannelStatus::PLAY) {
+		ch->quantizing = false;
+		recordKeyPressAction_(ch);
+	}
 }
 }; // {anonymous}
 

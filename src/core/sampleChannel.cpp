@@ -47,7 +47,7 @@ SampleChannel::SampleChannel(bool inputMonitor, int bufferSize)
 	  tracker          (0),
 	  trackerPreview   (0),
 	  shift            (0),
-	  qWait	           (false),
+	  quantizing       (false),
 	  inputMonitor     (inputMonitor),
 	  boost            (G_DEFAULT_BOOST),
 	  pitch            (G_DEFAULT_PITCH),
@@ -88,7 +88,7 @@ void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
 	end             = src->end;
 	boost           = src->boost;
 	mode            = src->mode;
-	qWait           = src->qWait;
+	quantizing      = src->quantizing;
 	setPitch(src->pitch);
 
 	if (src->wave)
