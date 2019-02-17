@@ -56,10 +56,11 @@ public:
 
 	geMainTransport(int x, int y);
 	
-	void updatePlay     (int v);
+	void updatePlay(int v);
 	void updateMetronome(int v);
-	void updateRecInput (int v);
+	void updateRecInput(int v);
 	void updateRecAction(int v);
+	void setRecTriggerModeActive(bool v);
 
 };
 }} // giada::v::

@@ -123,4 +123,13 @@ void geMainTransport::updateRecAction(int v)
 	recAction->redraw();
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMainTransport::setRecTriggerModeActive(bool v)
+{
+	v ? recTriggerMode->activate() : recTriggerMode->deactivate();
+}
+
 }} // giada::v::

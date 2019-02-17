@@ -112,6 +112,7 @@ void startActionRec(bool gui)
 	if (!m::recManager::startActionRec(triggerMode))
 		return;
 	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->setRecTriggerModeActive(false);
 	G_MainWin->mainTransport->updatePlay(m::clock::isRunning());
 	G_MainWin->mainTransport->updateRecAction(1);
 	if (!gui) Fl::unlock();
@@ -127,6 +128,7 @@ void stopActionRec(bool gui)
 
 	if (!gui) Fl::lock();
 	G_MainWin->mainTransport->updateRecAction(0);
+	G_MainWin->mainTransport->setRecTriggerModeActive(true);
 	for (m::Channel* ch : m::mixer::channels)
 		if (ch->type == ChannelType::SAMPLE)
 			G_MainWin->keyboard->setChannelWithActions(static_cast<geSampleChannel*>(ch->guiChannel));
@@ -164,6 +166,7 @@ bool startInputRec(bool gui)
 	}	
 
 	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->setRecTriggerModeActive(false);
 	G_MainWin->mainTransport->updatePlay(m::clock::isRunning());
 	G_MainWin->mainTransport->updateRecInput(1);
 	G_MainWin->mainTimer->setLock(true);
@@ -181,6 +184,7 @@ void stopInputRec(bool gui)
 	m::recManager::stopInputRec();
 
 	if (!gui) Fl::lock();
+	G_MainWin->mainTransport->setRecTriggerModeActive(true);
 	G_MainWin->mainTransport->updateRecInput(0);
 	G_MainWin->mainTimer->setLock(false);
 	/* Update sample name inside sample channels' main button. This is useless 
