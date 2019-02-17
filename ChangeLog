@@ -23,6 +23,7 @@
 - Fix plug-ins ordering method when re-opening Giada
 - Fix silent Sample Channel when recording actions a second time
 - Fix velocity always discarded when sending key-press to Sample Channel
+- Fix inability to record actions with quantizer enabled
 
 
 0.15.3 --- 2018 . 12 . 24
