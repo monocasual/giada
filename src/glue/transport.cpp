@@ -61,7 +61,20 @@ void startStopSeq(bool gui)
 
 void startSeq(bool gui)
 {
-	clock::setStatus(ClockStatus::RUNNING);
+	switch (clock::getStatus()) {
+		case ClockStatus::STOPPED:
+			clock::setStatus(ClockStatus::RUNNING); 
+			break;
+		case ClockStatus::WAITING:
+			clock::setStatus(ClockStatus::RUNNING); 
+			m::recManager::stopActionRec();
+			G_MainWin->mainTransport->setRecTriggerModeActive(true);
+			G_MainWin->mainTransport->updateRecAction(0);
+			G_MainWin->mainTransport->updateRecInput(0);
+			break;
+		default: 
+			break;
+	}
 
 #ifdef __linux__
 	kernelAudio::jackStart();
