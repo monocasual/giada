@@ -36,7 +36,7 @@
 namespace giada {
 namespace m
 {
-class Action;
+struct Action;
 class SampleChannel;
 class MidiChannel;
 }
