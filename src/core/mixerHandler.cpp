@@ -181,30 +181,6 @@ Channel* getChannelByIndex(int index)
 /* -------------------------------------------------------------------------- */
 
 
-bool hasLogicalSamples()
-{
-	for (const Channel* ch : mixer::channels)
-		if (ch->hasLogicalData())
-			return true;
-	return false;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool hasEditedSamples()
-{
-	for (const Channel* ch : mixer::channels)
-		if (ch->hasEditedData())
-			return true;
-	return false;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void stopSequencer()
 {
 	clock::setStatus(ClockStatus::STOPPED);
@@ -332,14 +308,29 @@ bool hasArmedSampleChannels()
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
 bool hasRecordableSampleChannels()
 {
 	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
 	{
 		return ch->canInputRec();
+	});
+}
+
+
+bool hasLogicalSamples()
+{
+	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	{
+		return ch->hasLogicalData();
+	});
+}
+
+
+bool hasEditedSamples()
+{
+	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	{
+		return ch->hasEditedData();
 	});
 }
 

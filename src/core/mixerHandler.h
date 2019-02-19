@@ -58,16 +58,6 @@ Returns channel with given index 'i'. */
 
 Channel* getChannelByIndex(int i);
 
-/* hasLogicalSamples
-True if 1 or more samples are logical (memory only, such as takes) */
-
-bool hasLogicalSamples();
-
-/* hasEditedSamples
-True if 1 or more samples was edited via gEditor */
-
-bool hasEditedSamples();
-
 /* stopSequencer
 Stops the sequencer, with special case if samplesStopOnSeqHalt is true. */
 
@@ -99,6 +89,16 @@ Returns true if path 'p' is unique. Requires SampleChannel 'skip' in order
 to skip check against itself. */
 
 bool uniqueSamplePath(const SampleChannel* skip, const std::string& p);
+
+/* hasLogicalSamples
+True if 1 or more samples are logical (memory only, such as takes) */
+
+bool hasLogicalSamples();
+
+/* hasEditedSamples
+True if 1 or more samples was edited via gEditor */
+
+bool hasEditedSamples();
 
 /* hasArmedSampleChannels
 Tells whether Mixer has one or more Sample Channels armed for input recording. */
