@@ -37,7 +37,7 @@
 namespace giada {
 namespace m 
 {
-class Action;
+struct Action;
 }
 namespace v
 {

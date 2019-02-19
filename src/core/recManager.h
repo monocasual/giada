@@ -29,6 +29,7 @@
 #define G_REC_MANAGER_H
 
 
+#include <pthread.h>
 #include "types.h"
 
 
