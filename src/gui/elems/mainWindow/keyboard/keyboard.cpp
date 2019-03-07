@@ -48,11 +48,8 @@ int geKeyboard::indexColumn = 0;
 
 
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
-: Fl_Scroll    (X, Y, W, H),
-	bckspcPressed(false),
-	endPressed   (false),
-	spacePressed (false),
-	addColumnBtn (nullptr)
+: Fl_Scroll     (X, Y, W, H),
+	addColumnBtn(nullptr)
 {
 	color(G_COLOR_GREY_1);
 	type(Fl_Scroll::BOTH_ALWAYS);
