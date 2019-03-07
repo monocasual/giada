@@ -50,7 +50,7 @@ namespace giada {
 namespace v
 {
 geMainTimer::geMainTimer(int x, int y)
-	: Fl_Group(x, y, 180, 20)
+	: Fl_Group(x, y, 210, 20)
 {
 	begin();
 

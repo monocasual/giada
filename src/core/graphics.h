@@ -65,6 +65,9 @@ extern const char* recOn_xpm[];
 extern const char* metronomeOff_xpm[];
 extern const char* metronomeOn_xpm[];
 
+extern const char* recTriggerModeOff_xpm[];
+extern const char* recTriggerModeOn_xpm[];
+
 extern const char* inputRecOn_xpm[];
 extern const char* inputRecOff_xpm[];
 
