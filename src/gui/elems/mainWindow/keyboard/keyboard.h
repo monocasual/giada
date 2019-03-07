@@ -59,11 +59,6 @@ private:
 	static void cb_addColumn  (Fl_Widget* v, void* p);
 	inline void __cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
 
-	bool bckspcPressed;
-	bool endPressed;
-	bool spacePressed;
-	bool enterPressed;
-
 	/* indexColumn
 	 * the last index used for column. */
 
