@@ -57,6 +57,7 @@ bool startActionRec_()
 {
 	if (!kernelAudio::getStatus())
 		return false;
+	clock::setStatus(ClockStatus::RUNNING);
 	recorder::enable();
 	c::transport::startSeq(/*gui=*/false);
 	return true;	
