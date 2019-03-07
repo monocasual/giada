@@ -39,7 +39,7 @@ namespace giada {
 namespace m
 {
 class SampleChannel;
-class Action;
+struct Action;
 }
 namespace v
 {
