@@ -220,7 +220,7 @@ std::unique_ptr<Plugin> makePlugin(const string& fid)
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return std::move(std::make_unique<Plugin>(pi, samplerate_, buffersize_));
+	return std::make_unique<Plugin>(pi, samplerate_, buffersize_);
 }
 
 
@@ -252,7 +252,7 @@ std::unique_ptr<Plugin> makePlugin(const Plugin& src)
 	for (int i=0; i<src.getNumParameters(); i++)
 		p->setParameter(i, src.getParameter(i));	
 
-	return std::move(p);
+	return p;
 }
 
 

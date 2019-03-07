@@ -123,7 +123,7 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
 		wave->getSize());
 
-	return std::move(wave);
+	return wave;
 }
 
 
@@ -142,7 +142,7 @@ std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b)
 
 	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
 
-	return std::move(wave);
+	return wave;
 }
 
 
