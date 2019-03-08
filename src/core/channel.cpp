@@ -119,7 +119,7 @@ void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
 #ifdef WITH_VST
 
 	for (const std::unique_ptr<Plugin>& plugin : src->plugins)
-		pluginHost::addPlugin(std::move(pluginManager::makePlugin(*plugin.get())), 
+		pluginHost::addPlugin(pluginManager::makePlugin(*plugin.get()), 
 			pluginHost::StackType::CHANNEL, pluginMutex, this);
 
 #endif
