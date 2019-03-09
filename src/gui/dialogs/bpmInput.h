@@ -36,21 +36,26 @@ class geInput;
 class geButton;
 
 
+namespace giada {
+namespace v 
+{
 class gdBpmInput : public gdWindow
 {
-private:
-
-	static void cb_update(Fl_Widget* w, void* p);
-	void cb_update();
-
-	geInput* input_a;
-	geInput* input_b;
-	geButton* ok;
-
 public:
 
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
 	~gdBpmInput();
+
+private:
+
+    static void cb_update(Fl_Widget* w, void* p);
+    void cb_update();
+
+    geInput* input_a;
+    geInput* input_b;
+    geButton* ok;
 };
+}} // giada::v::
+
 
 #endif

@@ -25,13 +25,15 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../../core/sampleChannel.h"
-#include "../../../../glue/transport.h"
-#include "../../../../glue/io.h"
-#include "../../../../utils/log.h"
-#include "../../../dialogs/warnings.h"
-#include "../../../dispatcher.h"
-#include "../../basics/boxtypes.h"
+#include <cassert>
+#include "core/model/model.h"
+#include "core/channels/sampleChannel.h"
+#include "glue/io.h"
+#include "utils/log.h"
+#include "gui/dispatcher.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/resizerBar.h"
 #include "column.h"
 #include "sampleChannel.h"
 #include "channelButton.h"
@@ -41,7 +43,7 @@
 namespace giada {
 namespace v
 {
-int geKeyboard::indexColumn = 0;
+int geKeyboard::indexGen = 0;
 
 
 /* -------------------------------------------------------------------------- */
@@ -49,7 +51,7 @@ int geKeyboard::indexColumn = 0;
 
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll     (X, Y, W, H),
-	addColumnBtn(nullptr)
+  m_addColumnBtn(nullptr)
 {
 	color(G_COLOR_GREY_1);
 	type(Fl_Scroll::BOTH_ALWAYS);
@@ -62,11 +64,16 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
-	addColumnBtn->callback(cb_addColumn, (void*) this);
-	add(addColumnBtn);
-
 	init();
+
+	/* Add 6 empty columns as initial layout. */
+
+	//cb_addColumn();
+	//cb_addColumn();
+	//cb_addColumn();
+	//cb_addColumn();
+	//cb_addColumn();
+	//cb_addColumn();
 }
 
 
@@ -75,47 +82,34 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 
 void geKeyboard::init()
 {
-	/* add 6 empty columns as init layout */
-
-	__cb_addColumn();
-	__cb_addColumn();
-	__cb_addColumn();
-	__cb_addColumn();
-	__cb_addColumn();
-	__cb_addColumn();
+	clear();
+	m_columns.clear();
+	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
+	m_addColumnBtn->callback(cb_addColumn, (void*) this);
+	add(m_addColumnBtn);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::freeChannel(geChannel* gch)
+void geKeyboard::rebuild()
 {
-	gch->reset();
-}
+	init();
 
+	const std::vector<std::unique_ptr<m::Channel>>& channels = m::model::getLayout()->channels;
 
-/* -------------------------------------------------------------------------- */
-
-
-void geKeyboard::deleteChannel(geChannel* gch)
-{
-	for (unsigned i=0; i<columns.size(); i++) {
-		int k = columns.at(i)->find(gch);
-		if (k != columns.at(i)->children()) {
-			columns.at(i)->deleteChannel(gch);
-			return;
-		}
+	for (const std::unique_ptr<m::Channel>& ch : channels) {
+		if (ch->id == m::mixer::MASTER_OUT_CHANNEL_ID ||
+			ch->id == m::mixer::MASTER_IN_CHANNEL_ID)
+			continue;
+		geColumn* column;
+		if (ch->columnIndex < m_columns.size())
+			column = m_columns[ch->columnIndex];
+		else
+			column = cb_addColumn(G_DEFAULT_COLUMN_WIDTH, ch->columnIndex);
+		column->addChannel(ch.get(), G_GUI_CHANNEL_H_1);
 	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geKeyboard::updateChannel(geChannel* gch)
-{
-	gch->update();
 }
 
 
@@ -124,6 +118,7 @@ void geKeyboard::updateChannel(geChannel* gch)
 
 void geKeyboard::organizeColumns()
 {
+#if 0
 	if (columns.size() == 0)
 		return;
 
@@ -151,6 +146,7 @@ void geKeyboard::organizeColumns()
 
 	refreshColIndexes();
 	redraw();
+#endif
 }
 
 
@@ -159,52 +155,17 @@ void geKeyboard::organizeColumns()
 
 void geKeyboard::cb_addColumn(Fl_Widget* v, void* p)
 {
-	((geKeyboard*)p)->__cb_addColumn(G_DEFAULT_COLUMN_WIDTH);
+	((geKeyboard*)p)->cb_addColumn(G_DEFAULT_COLUMN_WIDTH);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geKeyboard::addChannel(int colIndex, m::Channel* ch, int size, bool build)
+void geKeyboard::refresh()
 {
-	geColumn* col = getColumnByIndex(colIndex);
-
-	/* no column with index 'colIndex' found? Just create it and set its index
-	to 'colIndex'. */
-
-	if (!col) {
-		__cb_addColumn();
-		col = columns.back();
-		col->setIndex(colIndex);
-		gu_log("[geKeyboard::addChannel] created new column with index=%d\n", colIndex);
-	}
-
-	gu_log("[geKeyboard::addChannel] add to column with index=%d, size=%d\n", 
-		col->getIndex(), size);
-	return col->addChannel(ch, size);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geKeyboard::refreshColumns()
-{
-	for (unsigned i=0; i<columns.size(); i++)
-		columns.at(i)->refreshChannels();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-geColumn* geKeyboard::getColumnByIndex(int index)
-{
-	for (unsigned i=0; i<columns.size(); i++)
-		if (columns.at(i)->getIndex() == index)
-			return columns.at(i);
-	return nullptr;
+	for (geColumn* c : m_columns)
+		c->refresh();
 }
 
 
@@ -232,81 +193,34 @@ int geKeyboard::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::clear()
+geColumn* geKeyboard::cb_addColumn(int width, int index)
 {
-	for (unsigned i=0; i<columns.size(); i++)
-		Fl::delete_widget(columns.at(i));
-	columns.clear();
-	indexColumn = 0;     // new columns will start from index=0
-	addColumnBtn->position(8, y());
-}
+	int colx = x() - xposition();  // Mind the x-scroll offset with xposition()
 
+	/* If this is not the first column... */
 
-/* -------------------------------------------------------------------------- */
+	if (m_columns.size() > 0)
+		colx = m_columns.back()->x() + m_columns.back()->w() + COLUMN_GAP;
 
+	/* Generate new index. If not passed in. */
 
-void geKeyboard::setChannelWithActions(geSampleChannel* gch)
-{
-	if (gch->ch->hasActions)
-		gch->showActionButton();
-	else
-		gch->hideActionButton();
-}
+	int newIndex = index != -1 ? index : m_columns.size(); 
 
+	/* Add a new column + a new resizer bar. */
 
-/* -------------------------------------------------------------------------- */
+	geColumn*     column = new geColumn(colx, y(), width, h(), newIndex);
+	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
+	add(column);
+	add(bar);
+	m_columns.push_back(column);
 
+	/* And then shift the "add column" button on the rightmost edge. */
 
-void geKeyboard::printChannelMessage(int res)
-{
-	if      (res == G_RES_ERR_WRONG_DATA)
-		gdAlert("Multichannel samples not supported.");
-	else if (res == G_RES_ERR_IO)
-		gdAlert("Unable to read this sample.");
-	else if (res == G_RES_ERR_PATH_TOO_LONG)
-		gdAlert("File path too long.");
-	else if (res == G_RES_ERR_NO_DATA)
-		gdAlert("No file specified.");
-	else
-		gdAlert("Unknown error.");
-}
+	m_addColumnBtn->position(colx + width + COLUMN_GAP, y());
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void geKeyboard::__cb_addColumn(int width)
-{
-	int colx;
-	int colxw;
-	if (columns.size() == 0) {
-		colx  = x() - xposition();  // mind the offset with xposition()
-		colxw = colx + width;
-	}
-	else {
-		geColumn* prev = columns.back();
-		colx  = prev->x()+prev->w() + COLUMN_GAP;
-		colxw = colx + width;
-	}
-
-	/* add geColumn to geKeyboard and to columns vector */
-
-	geColumn* gc = new geColumn(colx, y(), width, 2000, indexColumn, this);
-  add(gc);
-	columns.push_back(gc);
-	indexColumn++;
-
-	/* move addColumn button */
-
-	addColumnBtn->position(colxw + COLUMN_GAP, y());
 	redraw();
 
-	gu_log("[geKeyboard::__cb_addColumn] new column added (index=%d, w=%d), total count=%d, addColumn(x)=%d\n",
-		gc->getIndex(), width, columns.size(), addColumnBtn->x());
-
-	/* recompute col indexes */
-
-	refreshColIndexes();
+	return column;
 }
 
 
@@ -315,35 +229,32 @@ void geKeyboard::__cb_addColumn(int width)
 
 void geKeyboard::addColumn(int width)
 {
-	__cb_addColumn(width);
+	cb_addColumn(width);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::refreshColIndexes()
+void geKeyboard::forEachChannel(std::function<void(geChannel* c)> f) const
 {
-	for (unsigned i=0; i<columns.size(); i++)
-		columns.at(i)->setIndex(i);
+	for (geColumn* column : m_columns) 
+		column->forEachChannel(f);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int geKeyboard::getColumnWidth(int i)
+geChannel* geKeyboard::getChannel(ID chanID)
 {
-  return getColumnByIndex(i)->w();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-geColumn* geKeyboard::getColumn(int i)
-{
-  return columns.at(i);
+	for (geColumn* column : m_columns) {
+		geChannel* c = column->getChannel(chanID);
+		if (c != nullptr) 
+			return c;
+	}
+	assert(false);
+	return nullptr;
 }
 
 }} // giada::v::

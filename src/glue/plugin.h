@@ -2,9 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
@@ -35,7 +32,8 @@
 #ifdef WITH_VST
 
 
-#include "../core/pluginHost.h"
+#include "core/pluginHost.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -47,11 +45,18 @@ class Channel;
 namespace c {
 namespace plugin 
 {
-void addPlugin(m::Channel* ch, int index, m::pluginHost::StackType t);
-void swapPlugins(m::Channel* ch, int indexP1, int indexP2, m::pluginHost::StackType t);
-void freePlugin(m::Channel* ch, int index, m::pluginHost::StackType t);
-void setParameter(m::Plugin* p, int index, float value, bool gui=true); 
-void setProgram(m::Plugin* p, int index);
+void addPlugin(int pluginListIndex, ID chanID);
+
+void swapPlugins(ID pluginID1, ID pluginID2, ID chanID);
+
+void freePlugin(ID pluginID, ID chanID);
+
+void setParameter(ID pluginID, int paramIndex, float value, ID chanID, 
+    bool gui=true); 
+
+void setProgram(ID pluginID, int programIndex, ID chanID);
+
+void toggleBypass(ID pluginID, ID chanID);
 
 /* setPluginPathCb
 Callback attached to the DirBrowser for adding new Plug-in search paths in the

@@ -80,14 +80,8 @@ Whether the quantizer value is > 0 and the clock is running. */
 
 bool canQuantize();
 
-/* updateFrameBars
-Updates bpm, frames, beats and so on. */
-
-void updateFrameBars();
-
 void setBpm(float b);
-void setBars(int b);
-void setBeats(int b);
+void setBeats(int beats, int bars);
 void setQuantize(int q);
 
 /* isRunning

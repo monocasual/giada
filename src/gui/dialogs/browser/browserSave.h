@@ -35,25 +35,33 @@
 class geInput;
 
 
+namespace giada {
+namespace m 
+{ 
+class Channel; 
+}
+namespace v
+{
 class gdBrowserSave : public gdBrowserBase
 {
-private:
-
-	geInput* name;
-
-	static void cb_down(Fl_Widget* v, void* p);
-	static void cb_save(Fl_Widget* w, void* p);
-	void cb_down();
-	void cb_save();
-
 public:
 
-	gdBrowserSave(int x, int y, int w, int h, const std::string& title,
-			const std::string& path, const std::string& name, void (*callback)(void*),
-			giada::m::Channel* ch);
+	gdBrowserSave(const std::string& title, const std::string& path, 
+        const std::string& name, std::function<void(void*)> cb, 
+        const m::Channel* ch);
 
 	std::string getName() const;
+
+private:
+
+    geInput* name;
+
+    static void cb_down(Fl_Widget* v, void* p);
+    static void cb_save(Fl_Widget* w, void* p);
+    void cb_down();
+    void cb_save();
 };
+}} // giada::v::
 
 
 #endif

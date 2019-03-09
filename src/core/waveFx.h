@@ -29,11 +29,11 @@
 #define G_WAVE_FX_H
 
 
+namespace giada {
+namespace m 
+{
 class Wave;
 
-
-namespace giada {
-namespace m {
 namespace wfx
 {
 static const int FADE_IN  = 0;

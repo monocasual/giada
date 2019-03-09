@@ -27,11 +27,11 @@
 
 #ifdef WITH_VST
 
+
 #ifndef GD_PLUGIN_WINDOW_H
 #define GD_PLUGIN_WINDOW_H
 
 
-#include "../../core/plugin.h"
 #include "window.h"
 
 
@@ -40,23 +40,31 @@ class geSlider;
 class geLiquidScroll;
 
 
+namespace giada {
+namespace m
+{
+class Plugin;
+}
+namespace v
+{
 class gdPluginWindow : public gdWindow
 {
-private:
-
-	giada::m::Plugin* m_plugin;
-
-	geLiquidScroll* m_list;
-
-	int getLabelWidth() const;
-
 public:
 
-	gdPluginWindow(giada::m::Plugin* p);
+	gdPluginWindow(const m::Plugin& p, ID chanID);
 
 	void updateParameter(int index, bool changeSlider=false);
 	void updateParameters(bool changeSlider=false);
+
+private:
+
+	int getLabelWidth() const;
+
+	const m::Plugin& m_plugin;
+	
+	geLiquidScroll* m_list;
 };
+}} // giada::v::
 
 
 #endif

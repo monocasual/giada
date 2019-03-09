@@ -29,36 +29,41 @@
 #define GD_MIDI_INPUT_BASE_H
 
 
-#include "../window.h"
+#include "gui/dialogs/window.h"
+#include "gui/elems/midiLearner.h"
 
 
 class geButton;
-class geMidiLearner;
+class geCheck;
+class geChoice;
 
 
+namespace giada {
+namespace v 
+{
 class gdMidiInputBase : public gdWindow
 {
-protected:
-
-	static const int LEARNER_WIDTH = 284;
-
-	geButton* ok;
-
-	void stopMidiLearn(geMidiLearner* l);
-
-	/* cb_learn
-	 * callback attached to kernelMidi to learn various actions. */
-
-	static void cb_learn(uint32_t msg, void* data);
-	static void cb_close(Fl_Widget* w, void* p);
-	void cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l);
-	void cb_close();
-
 public:
 
 	gdMidiInputBase(int x, int y, int w, int h, const char* title);
 	~gdMidiInputBase();
+
+	void refresh() override;
+
+protected:
+
+	static const int LEARNER_WIDTH = 284;
+
+	static void cb_close(Fl_Widget* w, void* p);
+	void cb_close();
+
+	std::vector<geMidiLearner*> m_learners;
+
+	geButton* m_ok;
+	geCheck*  m_enable;
+	geChoice* m_channel;
 };
+}} // giada::v::
 
 
 #endif

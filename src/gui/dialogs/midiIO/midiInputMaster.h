@@ -2,8 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * midiInputMaster
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
@@ -38,22 +36,23 @@ class geCheck;
 class geChoice;
 
 
+namespace giada {
+namespace v 
+{
 class gdMidiInputMaster : public gdMidiInputBase
 {
-private:
+public:
 
-	geCheck*  enable;
-	geChoice* channel;
+    gdMidiInputMaster();
+
+private:
 
 	static void cb_enable(Fl_Widget* w, void* p);
 	static void cb_setChannel(Fl_Widget* w, void* p);
 	void cb_enable();
 	void cb_setChannel();
-
-public:
-
-	gdMidiInputMaster();
 };
+}} // giada::v::
 
 
 #endif

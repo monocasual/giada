@@ -26,27 +26,24 @@
 
 
 #include <FL/Fl.H>
-#include "../../core/const.h"
-#include "../../core/conf.h"
-#include "../../core/init.h"
-#include "../../utils/gui.h"
-#include "../elems/basics/boxtypes.h"
-#include "../elems/mainWindow/mainIO.h"
-#include "../elems/mainWindow/mainMenu.h"
-#include "../elems/mainWindow/mainTimer.h"
-#include "../elems/mainWindow/mainTransport.h"
-#include "../elems/mainWindow/beatMeter.h"
-#include "../elems/mainWindow/keyboard/keyboard.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "core/init.h"
+#include "utils/gui.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainMenu.h"
+#include "gui/elems/mainWindow/mainTimer.h"
+#include "gui/elems/mainWindow/mainTransport.h"
+#include "gui/elems/mainWindow/beatMeter.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "warnings.h"
 #include "mainWindow.h"
 
 
-extern gdMainWindow* G_MainWin;
-
-
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** argv)
 	: gdWindow(W, H, title)
 {
@@ -64,8 +61,8 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
-	mainMenu      = new v::geMainMenu(8, -1);
-	mainIO        = new v::geMainIO(412, 8);
+	mainMenu      = new v::geMainMenu(8, 0);
+	mainIO        = new v::geMainIO(408, 8);
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(598, 44);
 	beatMeter     = new v::geBeatMeter(100, 83, 609, 20);
@@ -73,7 +70,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 	/* zone 1 - menus, and I/O tools */
 
-	Fl_Group* zone1 = new Fl_Group(8, 8, W-16, 20);
+	Fl_Group* zone1 = new Fl_Group(8, 0, W-16, 28);
 	zone1->add(mainMenu);
 	zone1->resizable(new Fl_Box(300, 8, 80, 20));
 	zone1->add(mainIO);
@@ -118,3 +115,13 @@ gdMainWindow::~gdMainWindow()
 	m::conf::mainWindowW = w();
 	m::conf::mainWindowH = h();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMainWindow::rebuild()
+{
+	keyboard->rebuild();
+}
+}} // giada::v::

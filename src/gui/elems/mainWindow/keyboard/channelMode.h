@@ -34,21 +34,29 @@
 #include <FL/Fl_Menu_Button.H>
 
 
+namespace giada {
+namespace m 
+{ 
+class SampleChannel; 
+}
+namespace v
+{
 class geChannelMode : public Fl_Menu_Button
 {
-private:
-
-	static void cb_changeMode  (Fl_Widget *v, void *p);
-	inline void __cb_changeMode(int mode);
-
-	giada::m::SampleChannel *ch;
-
 public:
 
-  geChannelMode(int x, int y, int w, int h, giada::m::SampleChannel *ch,
-    const char *l=0);
-	void draw();
+  geChannelMode(int x, int y, int w, int h, const m::SampleChannel* ch);
+
+	void draw() override;
+
+private:
+
+    static void cb_changeMode(Fl_Widget* v, void* p);
+    void cb_changeMode(int mode);
+
+    const m::SampleChannel* ch;
 };
+}} // giada::v::
 
 
 #endif

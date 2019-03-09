@@ -25,15 +25,24 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <FL/Fl.H>
-#include "../core/init.h"
-#include "../core/const.h"
-#include "../core/mixer.h"
-#include "../core/channel.h"
-#include "../glue/transport.h"
-#include "../glue/io.h"
-#include "elems/mainWindow/keyboard/channel.h"
+#include "core/channels/channel.h"
+#include "core/init.h"
+#include "core/const.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/recManager.h"
+#include "core/conf.h"
+#include "glue/io.h"
+#include "glue/main.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "dispatcher.h"
+
+
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -54,13 +63,13 @@ std::function<void()> signalCb_ = nullptr;
 /* -------------------------------------------------------------------------- */
 
 
-void perform_(m::Channel* ch, int event)
+void perform_(const geChannel* gch, int event)
 {
 	if (event == FL_KEYDOWN)
-		c::io::keyPress(ch, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
+		c::io::keyPress(gch->ch->id, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
 	else
 	if (event == FL_KEYUP)	
-		c::io::keyRelease(ch, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyRelease(gch->ch->id, Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -68,13 +77,15 @@ void perform_(m::Channel* ch, int event)
 
 
 /* Walk channels array, trying to match button's bound key with the event. If 
-found, trigger the key-press function. */
+found, trigger the key-press/key-release function. */
 
 void dispatchChannels_(int event)
 {
-	for (m::Channel* ch : m::mixer::channels)
-		if (ch->guiChannel->handleKey(event))
-			perform_(ch, event);
+	G_MainWin->keyboard->forEachChannel([=](geChannel* c)
+	{
+		if (c->handleKey(event))
+			perform_(c, event);
+	});
 }
 
 
@@ -106,19 +117,19 @@ void dispatchKey(int event)
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {
 			backspace_ = true;
-			c::transport::rewindSeq(gui);
+			m::mh::rewindSequencer();
 		}
 		else if (Fl::event_key() == FL_End && !end_) {
 			end_ = true;
-			c::io::toggleInputRec(gui);
+			c::main::toggleInputRec();
 		}
 		else if (Fl::event_key() == FL_Enter && !enter_) {
 			enter_ = true;
-			c::io::toggleActionRec(gui);
+			m::recManager::toggleActionRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode));
 		}
 		else if (Fl::event_key() == ' ' && !space_) {
 			space_ = true;
-			c::transport::startStopSeq(gui);
+			m::mh::toggleSequencer();
 		}
 		else if (Fl::event_key() == FL_Escape && !esc_) {
 			esc_ = true;
@@ -147,10 +158,10 @@ void dispatchKey(int event)
 /* -------------------------------------------------------------------------- */
 
 
-void dispatchTouch(m::Channel* ch, bool status)
+void dispatchTouch(const geChannel* gch, bool status)
 {
 	triggerSignalCb_();
-	perform_(ch, status ? FL_KEYDOWN : FL_KEYUP);
+	perform_(gch, status ? FL_KEYDOWN : FL_KEYUP);
 }
 
 

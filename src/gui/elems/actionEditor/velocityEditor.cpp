@@ -28,27 +28,24 @@
 #include <cassert>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../utils/log.h"
-#include "../../../utils/math.h"
-#include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../../../core/action.h"
-#include "../../../core/clock.h"
-#include "../../../core/midiChannel.h"
-#include "../../../glue/actionEditor.h"
-#include "../../dialogs/actionEditor/baseActionEditor.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "core/channels/midiChannel.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "core/action.h"
+#include "core/clock.h"
+#include "glue/actionEditor.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "envelopePoint.h"
 #include "velocityEditor.h"
-
-
-using std::vector;
 
 
 namespace giada {
 namespace v
 {
-geVelocityEditor::geVelocityEditor(Pixel x, Pixel y, m::MidiChannel* ch)
-:	geBaseActionEditor(x, y, 200, m::conf::velocityEditorH, ch)
+geVelocityEditor::geVelocityEditor(Pixel x, Pixel y)
+:	geBaseActionEditor(x, y, 200, m::conf::velocityEditorH)
 {
 }
 
@@ -83,7 +80,7 @@ void geVelocityEditor::draw()
 	for (int i=0; i<children(); i++) {
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
-			p->position(p->x(), valueToY(p->a1->event.getVelocity()));
+			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
 		Pixel x1 = p->x() + side;
 		Pixel y1 = p->y();
 		Pixel y2 = y() + h();
@@ -123,15 +120,13 @@ void geVelocityEditor::rebuild()
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* action : m_base->getActions())
+	for (const m::Action& action : m_base->getActions())
 	{
-		if (action->event.getStatus() == m::MidiEvent::NOTE_OFF)
+		if (action.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;
-		
-		//gu_log("[geVelocityEditor::rebuild] f=%d\n", action->frame);
 
-		Pixel px = x() + m_base->frameToPixel(action->frame);
-		Pixel py = y() + valueToY(action->event.getVelocity());
+		Pixel px = x() + m_base->frameToPixel(action.frame);
+		Pixel py = y() + valueToY(action.event.getVelocity());
 
 		add(new geEnvelopePoint(px, py, action));
 	}
@@ -163,8 +158,7 @@ void geVelocityEditor::onMoveAction()
 
 void geVelocityEditor::onRefreshAction() 
 {
-	c::actionEditor::updateVelocity(static_cast<m::MidiChannel*>(m_ch), m_action->a1, 
-		yToValue(m_action->y() - y()));
+	c::actionEditor::updateVelocity(m_action->a1, yToValue(m_action->y() - y()));
 
 	m_base->rebuild();  // Rebuild pianoRoll as well
 }

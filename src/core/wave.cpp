@@ -27,17 +27,16 @@
 
 #include <cassert>
 #include <cstring>  // memcpy
-#include "../utils/fs.h"
-#include "../utils/log.h"
-#include "../utils/string.h"
+#include "utils/fs.h"
+#include "utils/log.h"
+#include "utils/string.h"
 #include "const.h"
 #include "wave.h"
 
 
-using std::string;
-using namespace giada;
-
-
+namespace giada {
+namespace m 
+{
 Wave::Wave()
 : m_rate   (0),
   m_bits   (0),
@@ -62,7 +61,7 @@ float* Wave::operator [](int offset) const
 Wave::Wave(const Wave& other)
 :	m_rate    (other.m_rate),
 	m_bits    (other.m_bits),	
-	m_logical (true),   // A cloned wave does not exist on disk
+	m_logical (false),
 	m_edited  (false),
 	m_path    (other.m_path)
 {
@@ -86,7 +85,7 @@ void Wave::alloc(int size, int channels, int rate, int bits, const std::string& 
 /* -------------------------------------------------------------------------- */
 
 
-string Wave::getBasename(bool ext) const
+std::string Wave::getBasename(bool ext) const
 {
 	return ext ? gu_basename(m_path) : gu_stripExt(gu_basename(m_path));
 }
@@ -142,19 +141,19 @@ void Wave::setEdited(bool e)  { m_edited = e; }
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::setPath(const string& p, int id) 
+void Wave::setPath(const std::string& p, int id) 
 { 
 	if (id == -1)
 		m_path = p; 
 	else 
-		m_path = gu_stripExt(p) + "-" + u::string::iToString(id) + "." + gu_getExt(p);
+		m_path = gu_stripExt(p) + "-" + std::to_string(id) + "." + gu_getExt(p);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::copyData(float* data, int frames, int offset)
+void Wave::copyData(const float* data, int frames, int offset)
 {
 	buffer.copyData(data, frames, offset);
 }
@@ -163,7 +162,9 @@ void Wave::copyData(float* data, int frames, int offset)
 /* -------------------------------------------------------------------------- */
 
 
-void Wave::moveData(giada::m::AudioBuffer& b)
+void Wave::moveData(AudioBuffer& b)
 {
 	buffer.moveData(b);
 }
+
+}}; // giada::m::

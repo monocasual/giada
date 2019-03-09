@@ -32,20 +32,27 @@
 #include "browserBase.h"
 
 
+namespace giada {
+namespace m 
+{ 
+class Channel; 
+}
+namespace v
+{
 class gdBrowserLoad : public gdBrowserBase
 {
+public:
+
+    gdBrowserLoad(const std::string& title, const std::string& path, 
+        std::function<void(void*)> cb, const m::Channel* ch);
+
 private:
 
 	static void cb_load(Fl_Widget* w, void* p);
 	static void cb_down(Fl_Widget* v, void* p);
 	void cb_load();
 	void cb_down();
-
-public:
-
-	gdBrowserLoad(int x, int y, int w, int h, const std::string& title,
-			const std::string& path, void (*callback)(void*), giada::m::Channel* ch);
 };
-
+}} // giada::v::
 
 #endif

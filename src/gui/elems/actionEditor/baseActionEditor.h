@@ -41,20 +41,27 @@ class geBaseAction;
 
 class geBaseActionEditor : public Fl_Group
 {
-private:
+public:
+
+	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h);
+
+  /* updateActions
+  Rebuild the actions widgets from scratch. */
+  
+	virtual void rebuild() = 0;
+
+	/* handle
+	Override base FL_Group events. */
 	
-	/* drawVerticals
-	Draws generic vertical lines (beats, bars, grid lines...). */
-	
-	void drawVerticals(int steps) const;
-	
-	int push();
-	int drag();
-	int release();
+	int handle(int e) override;
+
+	/* getActionAtCursor
+	Returns the action under the mouse. nullptr if nothing found. Why not using
+	Fl::belowmouse? It would require a boring dynamic_cast. */
+
+	geBaseAction* getActionAtCursor() const;
 
 protected:
-
-	m::Channel* m_ch;
 
 	gdBaseActionEditor* m_base;
 
@@ -74,25 +81,16 @@ protected:
 	virtual void onResizeAction()  = 0;
 	virtual void onRefreshAction() = 0;
 
-public:
-
-	geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, m::Channel* ch);
-
-  /* updateActions
-  Rebuild the actions widgets from scratch. */
-  
-	virtual void rebuild() = 0;
-
-	/* handle
-	Override base FL_Group events. */
+private:
 	
-	int handle(int e) override;
-
-	/* getActionAtCursor
-	Returns the action under the mouse. nullptr if nothing found. Why not using
-	Fl::belowmouse? It would require a boring dynamic_cast. */
-
-	geBaseAction* getActionAtCursor() const;	
+	/* drawVerticals
+	Draws generic vertical lines (beats, bars, grid lines...). */
+	
+	void drawVerticals(int steps) const;
+	
+	int push();
+	int drag();
+	int release();
 };
 }} // giada::v::
 

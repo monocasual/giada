@@ -38,19 +38,27 @@ namespace m
 {
 struct Action
 {
-    int       id; // For persistence only
-	int       channel;
+	ID        id = 0;  // Invalid
+	ID        channelId;
 	Frame     frame;
 	MidiEvent event;
-    int       pluginIndex;
-    int       pluginParam;
-	const Action* prev;
-	const Action* next;
+	ID        pluginId    = -1;
+	int       pluginParam = -1;
+	ID        prevId = 0;
+	ID        nextId = 0;
+	
+	const Action* prev = nullptr;
+	const Action* next = nullptr;
 
-    bool isVolumeEnvelope() const
-    { 
-        return event.getStatus() == MidiEvent::ENVELOPE && pluginIndex == -1; 
-    }
+	bool isValid() const 
+	{
+		return id != 0;
+	}    
+
+	bool isVolumeEnvelope() const
+	{ 
+		return event.getStatus() == MidiEvent::ENVELOPE && pluginId == -1; 
+	}
 };
 
 }} // giada::m::

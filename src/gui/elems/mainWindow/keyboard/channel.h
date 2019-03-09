@@ -29,41 +29,35 @@
 #define GE_CHANNEL_H
 
 
-#include <FL/Fl_Group.H>
-#include "../../../../core/types.h"
-#include "../../../../core/channel.h"
+#include <FL/Fl_Pack.H>
+#include "core/types.h"
 
 
 class geChannelStatus;
 class geButton;
-class geChannelButton;
 class geDial;
-#ifdef WITH_VST
 class geStatusButton;
-#endif
 
 
-class geChannel : public Fl_Group
+namespace giada {
+namespace m
+{
+class Channel;
+}
+namespace v
+{
+class geChannelButton;
+
+class geChannel : public Fl_Pack
 {
 public:
 
-	geChannel(int x, int y, int w, int h, giada::m::Channel* ch);
-
-	/* reset
-	Resets channel to initial status. */
-
-	virtual void reset() = 0;
-
-	/* update
-	Updates the label of sample button and everything else such as 'R' button, 
-	key box and so on, according to global values. */
-
-	virtual void update() = 0;
+	geChannel(int x, int y, int w, int h, const m::Channel* ch);
 
 	/* refresh
 	Updates graphics. */
 
-	virtual void refresh() = 0;
+	virtual void refresh();
 
 	/* changeSize
 	Changes channel's size according to a template (x1, x2, ...). */
@@ -83,14 +77,14 @@ public:
 
 	bool handleKey(int e);
 
-	giada::m::Channel* ch;
+	const m::Channel* ch;
  
-	geButton*        button;
+	geStatusButton*  playButton;
 	geChannelStatus* status;
 	geButton*        arm;
 	geChannelButton* mainButton;
-	geButton*        mute;
-	geButton*        solo;
+	geStatusButton*  mute;
+	geStatusButton*  solo;
 	geDial*          vol;
 #ifdef WITH_VST
 	geStatusButton*  fx;
@@ -134,16 +128,12 @@ protected:
 
 	void blink();
 
-	/* setColorByStatus
-	Updates colors depending on channel status. */
-
-	void setColorsByStatus();
-
 	/* packWidgets
 	Spread widgets across available space. */
 
 	void packWidgets();
 };
+}} // giada::v::
 
 
 #endif

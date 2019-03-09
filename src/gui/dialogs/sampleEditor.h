@@ -29,29 +29,73 @@
 #define GD_EDITOR_H
 
 
-#include "../../core/sampleChannel.h"
+#include "core/types.h"
 #include "window.h"
 
 
-class SampleChannel;
 class geButton;
-class geWaveTools;
-class geVolumeTool;
-class geBoostTool;
-class gePanTool;
-class gePitchTool;
-class geRangeTool;
-class geSampleTool;
-class geShiftTool;
 class geChoice;
 class geCheck;
 class geBox;
 class geButton;
+class geStatusButton;
 
+
+namespace giada {
+namespace m
+{
+class SampleChannel;
+}
+namespace v 
+{
+class geVolumeTool;
+class geWaveTools;
+class geBoostTool;
+class gePanTool;
+class gePitchTool;
+class geRangeTool;
+class geShiftTool;
 
 class gdSampleEditor : public gdWindow
 {
 friend class geWaveform;
+
+public:
+
+	gdSampleEditor(ID chanID);
+	~gdSampleEditor();
+
+	void rebuild() override;
+	void refresh() override;
+
+	void updateInfo();
+
+	geChoice* grid;
+	geCheck*  snap;
+	geBox*    sep1;
+	geButton* zoomIn;
+	geButton* zoomOut;
+	
+	geWaveTools* waveTools;
+
+	geVolumeTool* volumeTool;
+	geBoostTool*  boostTool;
+	gePanTool*    panTool;
+
+	gePitchTool* pitchTool;
+
+	geRangeTool* rangeTool;
+	geShiftTool* shiftTool;
+	geButton*    reload;
+
+	geStatusButton* play;
+	geButton*       rewind;
+	geCheck*        loop;
+	geBox*          info;
+
+	const m::SampleChannel* ch;
+
+	ID chanID;
 
 private:
 
@@ -76,39 +120,8 @@ private:
 	void cb_enableSnap();
 	void cb_togglePreview();
 	void cb_rewindPreview();
-
-public:
-
-	gdSampleEditor(giada::m::SampleChannel* ch);
-	~gdSampleEditor();
-
-	void updateInfo();
-
-	geChoice* grid;
-	geCheck*  snap;
-	geBox*    sep1;
-	geButton* zoomIn;
-	geButton* zoomOut;
-	
-	geWaveTools* waveTools;
-
-	geVolumeTool* volumeTool;
-	geBoostTool*  boostTool;
-	gePanTool*    panTool;
-
-	gePitchTool* pitchTool;
-
-	geRangeTool* rangeTool;
-	geShiftTool* shiftTool;
-	geButton*    reload;
-
-	geButton* play;
-	geButton* rewind;
-	geCheck* loop;
-	geBox* info;
-
-	giada::m::SampleChannel* ch;
 };
+}} // giada::v::
 
 
 #endif

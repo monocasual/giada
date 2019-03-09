@@ -36,8 +36,23 @@ class geChoice;
 class geCheck;
 
 
+namespace giada {
+namespace v
+{
 class geTabMidi : public Fl_Group
 {
+public:
+
+	geTabMidi(int x, int y, int w, int h);
+
+	void save();
+
+	geChoice* system;
+	geChoice* portOut;
+	geChoice* portIn;
+	geChoice* midiMap;
+	geChoice* sync;
+
 private:
 
 	void fetchSystems();
@@ -46,22 +61,11 @@ private:
 	void fetchMidiMaps();
 
 	static void cb_changeSystem(Fl_Widget* w, void* p);
-	inline void cb_changeSystem();
+	void cb_changeSystem();
 
 	int systemInitValue;
-
-public:
-
-	geChoice* system;
-	geChoice* portOut;
-	geChoice* portIn;
-	geChoice* midiMap;
-	geChoice* sync;
-
-	geTabMidi(int x, int y, int w, int h);
-
-	void save();
 };
+}} // giada::v::
 
 
 #endif

@@ -28,18 +28,19 @@
 #include <cstdint>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
-#include "../../../core/sampleChannel.h"
-#include "../../../core/waveFx.h"
-#include "../../../glue/sampleEditor.h"
-#include "../basics/boxtypes.h"
-#include "../../../core/const.h"
+#include "core/channels/sampleChannel.h"
+#include "core/waveFx.h"
+#include "glue/sampleEditor.h"
+#include "core/const.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/dialogs/sampleEditor.h"
 #include "waveform.h"
 #include "waveTools.h"
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 namespace
 {
 enum class Menu
@@ -62,9 +63,11 @@ enum class Menu
 /* -------------------------------------------------------------------------- */
 
 
-void menuCallback(Fl_Widget* w, void* v)
+void menuCallback_(Fl_Widget* w, void* v)
 {
-	geWaveTools* wavetools = static_cast<geWaveTools*>(w);
+	const geWaveTools*      wavetools = static_cast<geWaveTools*>(w);
+	const m::SampleChannel* ch        = static_cast<gdSampleEditor*>(wavetools->window())->ch;
+
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	int a = wavetools->waveform->getSelectionA();
@@ -72,40 +75,40 @@ void menuCallback(Fl_Widget* w, void* v)
 
 	switch (selectedItem) {
 		case Menu::CUT:
-			c::sampleEditor::cut(wavetools->ch, a, b);
+			c::sampleEditor::cut(ch->id, a, b);
 			break;		
 		case Menu::COPY:
-			c::sampleEditor::copy(wavetools->ch, a, b);
+			c::sampleEditor::copy(ch->id, a, b);
 			break;		
 		case Menu::PASTE:
-			c::sampleEditor::paste(wavetools->ch, a);
+			c::sampleEditor::paste(ch->id, a);
 			break;
 		case Menu::TRIM:
-			c::sampleEditor::trim(wavetools->ch, a, b);
+			c::sampleEditor::trim(ch->id, a, b);
 			break;
 		case Menu::SILENCE:
-			c::sampleEditor::silence(wavetools->ch, a, b);
+			c::sampleEditor::silence(ch->id, a, b);
 			break;	  
 		case Menu::REVERSE:
-			c::sampleEditor::reverse(wavetools->ch, a, b);
+			c::sampleEditor::reverse(ch->id, a, b);
 			break;			
 		case Menu::NORMALIZE:
-			c::sampleEditor::normalizeHard(wavetools->ch, a, b);
+			c::sampleEditor::normalizeHard(ch->id, a, b);
 			break;	
 		case Menu::FADE_IN:
-			c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_IN);
+			c::sampleEditor::fade(ch->id, a, b, m::wfx::FADE_IN);
 			break;
 		case Menu::FADE_OUT:
-			c::sampleEditor::fade(wavetools->ch, a, b, m::wfx::FADE_OUT);
+			c::sampleEditor::fade(ch->id, a, b, m::wfx::FADE_OUT);
 			break;
 		case Menu::SMOOTH_EDGES:
-			c::sampleEditor::smoothEdges(wavetools->ch, a, b);
+			c::sampleEditor::smoothEdges(ch->id, a, b);
 			break;
 		case Menu::SET_BEGIN_END:
-			c::sampleEditor::setBeginEnd(wavetools->ch, a, b);
+			c::sampleEditor::setBeginEnd(ch->id, a, b);
 			break;		
 		case Menu::TO_NEW_CHANNEL:
-			c::sampleEditor::toNewChannel(wavetools->ch, a, b);
+			c::sampleEditor::toNewChannel(ch->id, a, b);
 			break;
 	}
 }
@@ -113,11 +116,12 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 /* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 
 
-geWaveTools::geWaveTools(int x, int y, int w, int h, m::SampleChannel* ch, const char* l)
-	: Fl_Scroll(x, y, w, h, l),
-		ch       (ch)
+geWaveTools::geWaveTools(int x, int y, int w, int h)
+: Fl_Scroll(x, y, w, h, nullptr)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
@@ -125,7 +129,7 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, m::SampleChannel* ch, const
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new geWaveform(x, y, w, h-24, ch);
+	waveform = new v::geWaveform(x, y, w, h-24);
 }
 
 
@@ -133,17 +137,19 @@ geWaveTools::geWaveTools(int x, int y, int w, int h, m::SampleChannel* ch, const
 /* -------------------------------------------------------------------------- */
 
 
-void geWaveTools::updateWaveform()
+void geWaveTools::rebuild()
 {
-	waveform->refresh();
+	waveform->rebuild();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geWaveTools::redrawWaveformAsync()
+void geWaveTools::refresh()
 {
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
 	if (ch->isPreview())
 		waveform->redraw();
 }
@@ -154,13 +160,11 @@ void geWaveTools::redrawWaveformAsync()
 
 void geWaveTools::resize(int x, int y, int w, int h)
 {
+	Fl_Widget::resize(x, y, w, h);
+
 	if (this->w() == w || (this->w() != w && this->h() != h)) {   // vertical or both resize
-		Fl_Widget::resize(x, y, w, h);
 		waveform->resize(x, y, waveform->w(), h-24);
-		updateWaveform();
-	}
-	else {                                                        // horizontal resize
-		Fl_Widget::resize(x, y, w, h);
+		waveform->rebuild();
 	}
 
 	if (this->w() > waveform->w())
@@ -179,7 +183,7 @@ int geWaveTools::handle(int e)
 {
 	switch (e) {
 		case FL_MOUSEWHEEL: {
-			waveform->setZoom(Fl::event_dy());
+			waveform->setZoom(Fl::event_dy() == 1 ? geWaveform::Zoom::OUT : geWaveform::Zoom::IN);
 			redraw();
 			return 1;
 		}
@@ -202,25 +206,20 @@ int geWaveTools::handle(int e)
 void geWaveTools::openMenu()
 {
 	Fl_Menu_Item menu[] = {
-		{"Cut",                 0, menuCallback, (void*) Menu::CUT},
-		{"Copy",                0, menuCallback, (void*) Menu::COPY},
-		{"Paste",               0, menuCallback, (void*) Menu::PASTE},
-		{"Trim",                0, menuCallback, (void*) Menu::TRIM},
-		{"Silence",             0, menuCallback, (void*) Menu::SILENCE},
-		{"Reverse",             0, menuCallback, (void*) Menu::REVERSE},
-		{"Normalize",           0, menuCallback, (void*) Menu::NORMALIZE},
-		{"Fade in",             0, menuCallback, (void*) Menu::FADE_IN},
-		{"Fade out",            0, menuCallback, (void*) Menu::FADE_OUT},
-		{"Smooth edges",        0, menuCallback, (void*) Menu::SMOOTH_EDGES},
-		{"Set begin/end here",  0, menuCallback, (void*) Menu::SET_BEGIN_END},
-		{"Copy to new channel", 0, menuCallback, (void*) Menu::TO_NEW_CHANNEL},
+		{"Cut",                 0, menuCallback_, (void*) Menu::CUT},
+		{"Copy",                0, menuCallback_, (void*) Menu::COPY},
+		{"Paste",               0, menuCallback_, (void*) Menu::PASTE},
+		{"Trim",                0, menuCallback_, (void*) Menu::TRIM},
+		{"Silence",             0, menuCallback_, (void*) Menu::SILENCE},
+		{"Reverse",             0, menuCallback_, (void*) Menu::REVERSE},
+		{"Normalize",           0, menuCallback_, (void*) Menu::NORMALIZE},
+		{"Fade in",             0, menuCallback_, (void*) Menu::FADE_IN},
+		{"Fade out",            0, menuCallback_, (void*) Menu::FADE_OUT},
+		{"Smooth edges",        0, menuCallback_, (void*) Menu::SMOOTH_EDGES},
+		{"Set begin/end here",  0, menuCallback_, (void*) Menu::SET_BEGIN_END},
+		{"Copy to new channel", 0, menuCallback_, (void*) Menu::TO_NEW_CHANNEL},
 		{0}
 	};
-
-	if (ch->status == ChannelStatus::PLAY) {
-		menu[(int)Menu::CUT].deactivate();
-		menu[(int)Menu::TRIM].deactivate();
-	}
 
 	if (!waveform->isSelected()) {
 		menu[(int)Menu::CUT].deactivate();
@@ -236,14 +235,17 @@ void geWaveTools::openMenu()
 		menu[(int)Menu::TO_NEW_CHANNEL].deactivate();		
 	}
 
-	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_CUSTOM_BORDER_BOX);
-	b->textsize(G_GUI_FONT_SIZE_BASE);
-	b->textcolor(G_COLOR_LIGHT_2);
-	b->color(G_COLOR_GREY_2);
+	Fl_Menu_Button b(0, 0, 100, 50);
+	b.box(G_CUSTOM_BORDER_BOX);
+	b.textsize(G_GUI_FONT_SIZE_BASE);
+	b.textcolor(G_COLOR_LIGHT_2);
+	b.color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (m)
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
+	if (m != nullptr)
 		m->do_callback(this, m->user_data());
+
 	return;
 }
+
+}} // giada::v::

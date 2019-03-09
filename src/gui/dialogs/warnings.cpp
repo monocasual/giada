@@ -27,47 +27,47 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include "../../utils/gui.h"
-#include "../../core/const.h"
-#include "../elems/basics/button.h"
-#include "../elems/basics/box.h"
+#include "utils/gui.h"
+#include "core/const.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/box.h"
 #include "window.h"
 #include "warnings.h"
 
 
-using namespace giada;
-
-
-void gdAlert(const char *c)
+namespace giada {
+namespace v 
 {
-	Fl_Window *modal = new Fl_Window(
-			(Fl::w() / 2) - 150,
-			(Fl::h() / 2) - 47,
-			300, 90, "Alert");
+void gdAlert(const char* c)
+{
+	gdWindow* modal = new gdWindow(
+		(Fl::w() / 2) - 150,
+		(Fl::h() / 2) - 47,
+		300, 90, "Alert");
 	modal->set_modal();
 	modal->begin();
-		geBox *box = new geBox(10, 10, 280, 40, c);
-		geButton *b = new geButton(210, 60, 80, 20, "Close");
+		geBox*    box = new geBox(10, 10, 280, 40, c);
+		geButton* b   = new geButton(210, 60, 80, 20, "Close");
 	modal->end();
 	box->labelsize(G_GUI_FONT_SIZE_BASE);
-	b->callback(__cb_window_closer, (void *)modal);
+	b->callback(cb_window_closer, (void *)modal);
 	b->shortcut(FL_Enter);
 	u::gui::setFavicon(modal);
 	modal->show();
 }
 
 
-int gdConfirmWin(const char *title, const char *msg)
+int gdConfirmWin(const char* title, const char* msg)
 {
-	Fl_Window *win = new Fl_Window(
+	gdWindow* win = new gdWindow(
 			(Fl::w() / 2) - 150,
 			(Fl::h() / 2) - 47,
 			300, 90, title);
 	win->set_modal();
 	win->begin();
 		new geBox(10, 10, 280, 40, msg);
-		geButton *ok = new geButton(212, 62, 80, 20, "Ok");
-		geButton *ko = new geButton(124, 62, 80, 20, "Cancel");
+		geButton* ok = new geButton(212, 62, 80, 20, "Ok");
+		geButton* ko = new geButton(124, 62, 80, 20, "Cancel");
 	win->end();
 	ok->shortcut(FL_Enter);
 	u::gui::setFavicon(win);
@@ -77,7 +77,7 @@ int gdConfirmWin(const char *title, const char *msg)
 
 	int r = 0;
 	while (true) {
-		Fl_Widget *o = Fl::readqueue();
+		Fl_Widget* o = Fl::readqueue();
 		if (!o) Fl::wait();
 		else if (o == ok) {r = 1; break;}
 		else if (o == ko) {r = 0; break;}
@@ -86,3 +86,4 @@ int gdConfirmWin(const char *title, const char *msg)
 	win->hide();
 	return r;
 }
+}} // giada::v::

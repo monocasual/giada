@@ -25,40 +25,41 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <cstdlib>
-#include "../../../core/const.h"
-#include "../../../core/sampleChannel.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/string.h"
-#include "../../../glue/sampleEditor.h"
-#include "../../dialogs/warnings.h"
-#include "../basics/input.h"
-#include "../basics/box.h"
-#include "../basics/button.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "glue/sampleEditor.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "shiftTool.h"
 
 
-using namespace giada;
-
-
-geShiftTool::geShiftTool(int x, int y, giada::m::SampleChannel* ch)
-	: Fl_Group(x, y, 300, G_GUI_UNIT),
-		m_ch    (ch)
+namespace giada {
+namespace v 
 {
+geShiftTool::geShiftTool(int x, int y)
+: Fl_Pack(x, y, 300, G_GUI_UNIT)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
+
 	begin();
-		m_label = new geBox(x, y, u::gui::getStringWidth("Shift"), G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT);
-		m_shift = new geInput(m_label->x()+m_label->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
-		m_reset = new geButton(m_shift->x()+m_shift->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT, "Reset");
+		m_label = new geBox   (0, 0, u::gui::getStringWidth("Shift"), G_GUI_UNIT, "Shift", FL_ALIGN_RIGHT);
+		m_shift = new geInput (0, 0, 70, G_GUI_UNIT);
+		m_reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
 	end();
 
 	m_shift->type(FL_INT_INPUT);
 	m_shift->when(FL_WHEN_RELEASE | FL_WHEN_ENTER_KEY); // on focus lost or enter key
-	m_shift->value(u::string::iToString(ch->shift).c_str());
 	m_shift->callback(cb_setShift, (void*)this);
 
 	m_reset->callback(cb_reset, (void*)this);
-
-	refresh();
 }
 
 
@@ -90,9 +91,11 @@ void geShiftTool::cb_reset()
 /* -------------------------------------------------------------------------- */
 
 
-void geShiftTool::refresh()
+void geShiftTool::rebuild()
 {
-	m_shift->value(u::string::iToString(m_ch->shift).c_str());
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	m_shift->value(u::string::iToString(ch->shift).c_str());
 }
 
 
@@ -101,8 +104,9 @@ void geShiftTool::refresh()
 
 void geShiftTool::shift(int f)
 {
-	if (m_ch->isPlaying())
-		gdAlert("Can't shift sample while playing.");
-	else
-		c::sampleEditor::shift(m_ch, f);	
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	c::sampleEditor::shift(ch->id, f);	
 }
+
+}} // giada::v::

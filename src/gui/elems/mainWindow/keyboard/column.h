@@ -29,71 +29,58 @@
 #define GE_COLUMN_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geButton;
-class geChannel;
 class geResizerBar;
+
+
 namespace giada {
-namespace v 
+namespace v
 {
 class geKeyboard;
-}}
+class geChannel;
 
-
-class geColumn : public Fl_Group
+class geColumn : public Fl_Pack
 {
-private:
-
-	static void cb_addChannel  (Fl_Widget* v, void* p);
-	inline void __cb_addChannel();
-
-	geButton*     m_addChannelBtn;
-	geResizerBar* m_resizer;
-	giada::v::geKeyboard* m_parent;
-
-	int m_index;
-
 public:
 
-	geColumn(int x, int y, int w, int h, int index, giada::v::geKeyboard* parent);
-	~geColumn();
+	geColumn(int x, int y, int w, int h, int index);
 
+	int handle(int e) override;
+	
+	int getIndex() const;
+	geChannel* getChannel(ID chanID) const;
+	
 	/* addChannel
 	Adds a new channel in this column and set the internal pointer to channel 
 	to 'ch'. */
 
-	geChannel* addChannel(giada::m::Channel* ch, int size);
+	geChannel* addChannel(const m::Channel* ch, int size);
 
-	int handle(int e) override;
-	void draw() override;
-	void resize(int x, int y, int w, int h) override;
+	/* computeHeight
+	Resize column height and leave some space for drag n drop. */
 
-	/* clear
-	Removes all channels from the column. If full==true, delete also the "add new 
-	channel" button. */
-
-	void clear(bool full=false);
-
-	/* deleteChannel
-	Removes the channel 'gch' from this column. */
-
-	void deleteChannel(geChannel* gch);
-
-	void repositionChannels();
+	void computeHeight();
 
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */
 
-	void refreshChannels();
+	void refresh();
 
-	giada::m::Channel* getChannel(int i);
-	int getIndex();
-	void setIndex(int i);
-	bool isEmpty();   
-  int countChannels();
+	void forEachChannel(std::function<void(geChannel* c)> f) const;
+
+private:
+
+	static void cb_addChannel(Fl_Widget* v, void* p);
+	void cb_addChannel();
+
+	geButton* m_addChannelBtn;
+
+	int m_index;
 };
+}} // giada::v::
 
 
 #endif

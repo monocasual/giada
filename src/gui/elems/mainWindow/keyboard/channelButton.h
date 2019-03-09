@@ -29,29 +29,40 @@
 #define GE_CHANNEL_BUTTON_H
 
 
-#include "../../basics/button.h"
+#include "gui/elems/basics/button.h"
 
 
+namespace giada {
+namespace m 
+{ 
+class Channel; 
+}
+namespace v
+{
 class geChannelButton : public geButton
 {
-private:
-
-	std::string m_key;
-
 public:
 
-	geChannelButton(int x, int y, int w, int h, const char* l=0);
+	geChannelButton(int x, int y, int w, int h, const m::Channel* ch);
+
+	virtual void refresh();
 
 	void draw() override;
   
-	void setKey(const std::string& k);
 	void setKey(int k);
 	void setPlayMode();
 	void setEndingMode();
 	void setDefaultMode(const char* l=0);
 	void setInputRecordMode();
 	void setActionRecordMode();
+
+protected:
+
+	std::string m_key;
+
+	const m::Channel* m_ch;
 };
+}} // giada::v::
 
 
 #endif

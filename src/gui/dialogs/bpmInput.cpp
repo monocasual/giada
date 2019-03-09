@@ -26,27 +26,25 @@
 
 
 #include <cstring>
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../core/mixer.h"
-#include "../../core/clock.h"
-#include "../../glue/main.h"
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
-#include "../elems/basics/button.h"
-#include "../elems/basics/input.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/mixer.h"
+#include "core/clock.h"
+#include "glue/main.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/input.h"
 #include "bpmInput.h"
 #include "mainWindow.h"
 
 
-extern gdMainWindow* mainWin;
+extern giada::v::gdMainWindow* mainWin;
 
 
-using std::vector;
-using std::string;
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 gdBpmInput::gdBpmInput(const char* label)
 : gdWindow(144, 36, "Bpm")
 {
@@ -66,7 +64,7 @@ gdBpmInput::gdBpmInput(const char* label)
 
 	/* Use the decimal value from the string label. */
 
-	vector<string> tokens = u::string::split(label, ".");
+	std::vector<std::string> tokens = u::string::split(label, ".");
 	
 	input_b->maximum_size(1);
 	input_b->type(FL_INT_INPUT);
@@ -107,3 +105,6 @@ void gdBpmInput::cb_update()
 	c::main::setBpm(input_a->value(), input_b->value());
 	do_callback();
 }
+
+
+}} // giada::v::

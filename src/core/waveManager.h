@@ -33,11 +33,11 @@
 #include <memory>
 
 
+namespace giada {
+namespace m 
+{
 class Wave;
 
-
-namespace giada {
-namespace m {
 namespace waveManager
 {
 struct Result
@@ -60,11 +60,16 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 /* createFromWave
 Creates a new Wave from an existing one, copying the data in range a - b. */
 
-std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b);
+std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b);
 
-int resample(Wave* w, int quality, int samplerate); 
-int save(Wave* w, const std::string& path);
+int resample(Wave& w, int quality, int samplerate); 
+
+/* save
+Writes Wave data to file 'path'. Only 'wav' format is supported for now. */
+
+int save(const Wave& w, const std::string& path);
 
 }}}; // giada::m::waveManager
+
 
 #endif

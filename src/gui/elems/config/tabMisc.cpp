@@ -25,17 +25,17 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../basics/choice.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "gui/elems/basics/choice.h"
 #include "tabMisc.h"
 
 
-using namespace giada::m;
-
-
+namespace giada {
+namespace v
+{
 geTabMisc::geTabMisc(int X, int Y, int W, int H)
-	: Fl_Group(X, Y, W, H, "Misc")
+: Fl_Group(X, Y, W, H, "Misc")
 {
 	begin();
 	debugMsg = new geChoice(x()+w()-230, y()+9, 230, 20, "Debug messages");
@@ -48,7 +48,7 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	switch (conf::logMode) {
+	switch (m::conf::logMode) {
 		case LOG_MODE_MUTE:
 			debugMsg->value(0);
 			break;
@@ -69,13 +69,14 @@ void geTabMisc::save()
 {
 	switch(debugMsg->value()) {
 		case 0:
-			conf::logMode = LOG_MODE_MUTE;
+			m::conf::logMode = LOG_MODE_MUTE;
 			break;
 		case 1:
-			conf::logMode = LOG_MODE_STDOUT;
+			m::conf::logMode = LOG_MODE_STDOUT;
 			break;
 		case 2:
-			conf::logMode = LOG_MODE_FILE;
+			m::conf::logMode = LOG_MODE_FILE;
 			break;
 	}
 }
+}} // giada::v::

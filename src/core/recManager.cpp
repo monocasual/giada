@@ -25,19 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../gui/dispatcher.h"
-#include "../glue/transport.h"
-#include "types.h"
-#include "clock.h"
-#include "kernelAudio.h"
-#include "conf.h"
-#include "channel.h"
-#include "mixer.h"
-#include "mixerHandler.h"
-#include "midiDispatcher.h"
-#include "recorder.h"
-#include "recorderHandler.h"
-#include "recManager.h"
+#include "gui/dispatcher.h"
+#include "core/channels/channel.h"
+#include "core/model/model.h"
+#include "core/types.h"
+#include "core/clock.h"
+#include "core/kernelAudio.h"
+#include "core/conf.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/midiDispatcher.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "core/recManager.h"
 
 
 namespace giada {
@@ -46,8 +46,8 @@ namespace recManager
 {
 namespace
 {
-pthread_mutex_t* mixerMutex_ = nullptr;
-bool isActive_ = false;
+bool isRecordingAction_ = false;
+bool isRecordingInput_  = false;
 
 
 /* -------------------------------------------------------------------------- */
@@ -55,11 +55,12 @@ bool isActive_ = false;
 
 bool startActionRec_()
 {
-	if (!kernelAudio::getStatus())
+	if (!kernelAudio::isReady())
 		return false;
 	clock::setStatus(ClockStatus::RUNNING);
 	recorder::enable();
-	c::transport::startSeq(/*gui=*/false);
+	m::mh::startSequencer();
+	isRecordingAction_ = true;
 	return true;	
 }
 
@@ -69,9 +70,10 @@ bool startActionRec_()
 
 bool startInputRec_()
 {
-	if (!kernelAudio::getStatus() || !mh::startInputRec())
+	if (!kernelAudio::isReady() || !mh::startInputRec())
 		return false;
-	c::transport::startSeq(/*gui=*/false);
+	m::mh::startSequencer();
+	isRecordingInput_ = true;
 	return true;
 }
 } // {anonymous}
@@ -82,34 +84,35 @@ bool startInputRec_()
 /* -------------------------------------------------------------------------- */
 
 
-void init(pthread_mutex_t* mixerMutex)
+void init()
 {
-	mixerMutex_ = mixerMutex;
-	isActive_   = false;
+	isRecordingAction_ = false;
+	isRecordingInput_  = false;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isActive()  { return isActive_; }
+bool isRecording()       { return isRecordingAction_ || isRecordingInput_; }
+bool isRecordingAction() { return isRecordingAction_; }
+bool isRecordingInput()  { return isRecordingInput_; }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool startActionRec(RecTriggerMode mode)
+void startActionRec(RecTriggerMode mode)
 {
-	isActive_ = true;
 	if (mode == RecTriggerMode::NORMAL)
-		return startActionRec_();
+		startActionRec_();
+	else
 	if (mode == RecTriggerMode::SIGNAL) {
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		m::midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
 	}
-	return true;
 }
 
 
@@ -118,27 +121,32 @@ bool startActionRec(RecTriggerMode mode)
 
 void stopActionRec()
 {
-	isActive_ = false;
+	isRecordingAction_ = false;
 
 	if (clock::getStatus() == ClockStatus::WAITING)	{
 		clock::setStatus(ClockStatus::STOPPED);
 		return;
 	}
 
-	clock::setStatus(ClockStatus::RUNNING);
-
 	recorder::disable();
-	std::unordered_set<int> channels = recorderHandler::consolidate();
+	std::unordered_set<ID> channels = recorderHandler::consolidate();
 
 	/* Enable reading actions for Channels that have just been filled with 
 	actions. Start reading right away, without checking whether 
 	conf::treatRecsAsLoops is enabled or not. */
 
-	pthread_mutex_lock(mixerMutex_);
-	for (int index : channels)
-		mh::getChannelByIndex(index)->startReadingActions(
-			/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false); 
-	pthread_mutex_unlock(mixerMutex_);
+	for (ID id : channels)
+		m::model::getLayout()->getChannel(id)->startReadingActions(
+			/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleActionRec(RecTriggerMode m)
+{
+	isRecordingAction_ ? stopActionRec() : startActionRec(m);
 }
 
 
@@ -148,16 +156,17 @@ void stopActionRec()
 bool startInputRec(RecTriggerMode mode)
 {
 	if (mode == RecTriggerMode::NORMAL)
-		isActive_ = startInputRec_();
+		startInputRec_();
+	else
 	if (mode == RecTriggerMode::SIGNAL) {
 		if (!mh::hasRecordableSampleChannels())
 			return false;
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);
-		isActive_ = true;
+		isRecordingInput_ = true;
 	}
-	return isActive_;
+	return isRecordingInput_;
 }
 
 
@@ -166,14 +175,24 @@ bool startInputRec(RecTriggerMode mode)
 
 void stopInputRec()
 {
-	isActive_ = false;
+	isRecordingInput_ = false;
 
-	if (clock::getStatus() == ClockStatus::WAITING)	{
+	if (clock::getStatus() == ClockStatus::WAITING)
 		clock::setStatus(ClockStatus::STOPPED);
-	}
-	else {
-		clock::setStatus(ClockStatus::RUNNING);
+	else
 		mh::stopInputRec();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool toggleInputRec(RecTriggerMode m)
+{
+	if (isRecordingInput_) {
+		stopInputRec();
+		return true;
 	}
+	return startInputRec(m);
 }
 }}} // giada::m::recManager

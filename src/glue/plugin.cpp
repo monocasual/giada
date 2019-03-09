@@ -28,28 +28,26 @@
 #ifdef WITH_VST
 
 
+#include <cassert>
 #include <FL/Fl.H>
-#include "../core/pluginManager.h"
-#include "../core/pluginHost.h"
-#include "../core/mixer.h"
-#include "../core/plugin.h"
-#include "../core/channel.h"
-#include "../core/const.h"
-#include "../core/conf.h"
-#include "../utils/gui.h"
-#include "../gui/dialogs/mainWindow.h"
-#include "../gui/dialogs/pluginWindow.h"
-#include "../gui/dialogs/pluginList.h"
-#include "../gui/dialogs/warnings.h"
-#include "../gui/dialogs/config.h"
-#include "../gui/dialogs/browser/browserDir.h"
+#include "core/channels/channel.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
+#include "core/mixer.h"
+#include "core/plugin.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "utils/gui.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/pluginWindow.h"
+#include "gui/dialogs/pluginList.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/config.h"
+#include "gui/dialogs/browser/browserDir.h"
 #include "plugin.h"
 
 
-extern gdMainWindow* G_MainWin;
-
-
-using namespace giada::m;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -58,19 +56,26 @@ namespace plugin
 {
 namespace
 {
-/* getPluginWindow
-Returns the plugInWindow (GUI-less one) with the parameter list. It might be 
-nullptr if there is no plug-in window shown on screen. */
-
-gdPluginWindow* getPluginWindow(const Plugin* p)
+void updatePluginEditor_(ID pluginID, ID chanID, bool gui)
 {
+	const m::Plugin* p = m::pluginHost::getPluginByID(pluginID, chanID);
+
+	if (p->hasEditor())
+		return;
+
 	/* Get the parent window first: the plug-in list. Then, if it exists, get
 	the child window - the actual pluginWindow. */
 
-	gdPluginList* parent = static_cast<gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
+	v::gdPluginList* parent = static_cast<v::gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
 	if (parent == nullptr)
-		return nullptr;
-	return static_cast<gdPluginWindow*>(u::gui::getSubwindow(parent, p->getId() + 1));
+		return;
+	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, p->id + 1));
+	if (child == nullptr) 
+		return;
+	
+	if (!gui) Fl::lock();
+	child->updateParameters(!gui);
+	if (!gui) Fl::unlock();
 }
 } // {anonymous}
 
@@ -80,78 +85,61 @@ gdPluginWindow* getPluginWindow(const Plugin* p)
 /* -------------------------------------------------------------------------- */
 
 
-void addPlugin(Channel* ch, int index, m::pluginHost::StackType t)
+void addPlugin(int pluginListIndex, ID chanID)
 {
-	if (index >= pluginManager::countAvailablePlugins())
+	if (pluginListIndex >= m::pluginManager::countAvailablePlugins())
 		return;
-	std::unique_ptr<Plugin> p = pluginManager::makePlugin(index);
+	std::shared_ptr<m::Plugin> p = m::pluginManager::makePlugin(pluginListIndex);
 	if (p != nullptr)
-		pluginHost::addPlugin(std::move(p), t, &mixer::mutex, ch);
+		m::pluginHost::addPlugin(p, chanID);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugins(Channel* ch, int index1, int index2, m::pluginHost::StackType t)
+void swapPlugins(ID pluginID1, ID pluginID2, ID chanID)
 {
-  pluginHost::swapPlugin(index1, index2, t, &mixer::mutex,
-    ch);
+	m::pluginHost::swapPlugin(pluginID1, pluginID2, chanID);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void freePlugin(Channel* ch, int index, m::pluginHost::StackType t)
+void freePlugin(ID pluginID, ID chanID)
 {
-  pluginHost::freePlugin(index, t, &mixer::mutex, ch);
+	m::pluginHost::freePlugin(pluginID, chanID);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setProgram(Plugin* p, int index)
+void setProgram(ID pluginID, int programIndex, ID chanID)
 {
-	p->setCurrentProgram(index);
-
-	/* No need to update plug-in editor if it has one: the plug-in's editor takes
-	care of it on its own. Conversely, update the specific parameter for UI-less 
-	plug-ins. */
-
-	if (p->hasEditor())
-		return;
-
-	gdPluginWindow* child = getPluginWindow(p);
-	if (child == nullptr) 
-		return;
-	
-	child->updateParameters(true);
+	m::pluginHost::setPluginProgram(pluginID, programIndex, chanID); 
+	updatePluginEditor_(pluginID, chanID, /*gui=*/true); 
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setParameter(Plugin* p, int index, float value, bool gui)
+void setParameter(ID pluginID, int paramIndex, float value, 
+    ID chanID, bool gui)
 {
-	p->setParameter(index, value);
+	m::pluginHost::setPluginParameter(pluginID, paramIndex, value, chanID); 
+	updatePluginEditor_(pluginID, chanID, gui); 
+}
 
-	/* No need to update plug-in editor if it has one: the plug-in's editor takes
-	care of it on its own. Conversely, update the specific parameter for UI-less 
-	plug-ins. */
 
-	if (p->hasEditor())
-		return;
+/* -------------------------------------------------------------------------- */
 
-	gdPluginWindow* child = getPluginWindow(p);
-	if (child == nullptr) 
-		return;
 
-	Fl::lock();
-	child->updateParameter(index, !gui);
-	Fl::unlock();
+void toggleBypass(ID pluginID, ID chanID)
+{
+	m::pluginHost::toggleBypass(pluginID, chanID);
 }
 
 
@@ -160,20 +148,20 @@ void setParameter(Plugin* p, int index, float value, bool gui)
 
 void setPluginPathCb(void* data)
 {
-	gdBrowserDir* browser = (gdBrowserDir*) data;
+	v::gdBrowserDir* browser = (v::gdBrowserDir*) data;
 
 	if (browser->getCurrentPath() == "") {
-		gdAlert("Invalid path.");
+		v::gdAlert("Invalid path.");
 		return;
 	}
 
-	if (!conf::pluginPath.empty() && conf::pluginPath.back() != ';')
-		conf::pluginPath += ";";
-	conf::pluginPath += browser->getCurrentPath();
+	if (!m::conf::pluginPath.empty() && m::conf::pluginPath.back() != ';')
+		m::conf::pluginPath += ";";
+	m::conf::pluginPath += browser->getCurrentPath();
 
 	browser->do_callback();
 
-	gdConfig* configWin = static_cast<gdConfig*>(u::gui::getSubwindow(G_MainWin, WID_CONFIG));
+	v::gdConfig* configWin = static_cast<v::gdConfig*>(u::gui::getSubwindow(G_MainWin, WID_CONFIG));
 	configWin->refreshVstPath();
 }
 

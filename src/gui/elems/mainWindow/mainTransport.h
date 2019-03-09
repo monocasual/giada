@@ -29,39 +29,34 @@
 #define GE_MAIN_TRANSPORT_H
 
 
-#include <FL/Fl_Group.H>
-#include "../../../core/types.h"
+#include <FL/Fl_Pack.H>
 
 
 class geButton;
+class geStatusButton;
 
 
 namespace giada {
 namespace v
 {
-class geMainTransport : public Fl_Group
+class geMainTransport : public Fl_Pack
 {
-private:
-
-	geButton* rewind;
-	geButton* play;
-	
-	geButton* recTriggerMode;
-	geButton* recAction;
-	geButton* recInput;
-
-	geButton* metronome;
-
 public:
 
 	geMainTransport(int x, int y);
-	
-	void updatePlay(int v);
-	void updateMetronome(int v);
-	void updateRecInput(int v);
-	void updateRecAction(int v);
-	void setRecTriggerModeActive(bool v);
 
+	void refresh();
+
+private:
+
+	geButton* rewind;
+	geStatusButton* play;
+	
+	geButton* recTriggerMode;
+	geStatusButton* recAction;
+	geStatusButton* recInput;
+
+	geStatusButton* metronome;
 };
 }} // giada::v::
 

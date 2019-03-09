@@ -29,56 +29,50 @@
 #define G_GLUE_SAMPLE_EDITOR_H
 
 
-#include "../core/types.h"
-
-
-class geWaveform;
+#include "core/types.h"
 
 
 namespace giada {
-namespace m
-{
-class SampleChannel;
-}
 namespace c {
 namespace sampleEditor 
 {
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 
-void setBeginEnd(m::SampleChannel* ch, int b, int e);
+void setBeginEnd(ID chanID, int b, int e);
 
-void cut(m::SampleChannel* ch, int a, int b);
-void copy(m::SampleChannel* ch, int a, int b);
+void cut(ID chanID, int a, int b);
+void copy(ID chanID, int a, int b);
 
 /* paste
 Pastes what's defined in m_copyBuffer into channel 'ch' at point 'a'. If 
 m_copyBuffer is empty, does nothing. */
 
-void paste(m::SampleChannel* ch, int a);
+void paste(ID chanID, int a);
 
-void trim(m::SampleChannel* ch, int a, int b);
-void reverse(m::SampleChannel* ch, int a, int b);
-void normalizeHard(m::SampleChannel* ch, int a, int b);
-void silence(m::SampleChannel* ch, int a, int b);
-void fade(m::SampleChannel* ch, int a, int b, int type);
-void smoothEdges(m::SampleChannel* ch, int a, int b);
-void shift(m::SampleChannel* ch, int offset);
+void trim(ID chanID, int a, int b);
+void reverse(ID chanID, int a, int b);
+void normalizeHard(ID chanID, int a, int b);
+void silence(ID chanID, int a, int b);
+void fade(ID chanID, int a, int b, int type);
+void smoothEdges(ID chanID, int a, int b);
+void shift(ID chanID, int offset);
+void reload(ID chanID);
 
 bool isWaveBufferFull();
 
 /* setPlayHead
 Changes playhead's position. Used in preview. */
 
-void setPlayHead(m::SampleChannel* ch, int f);
+void setPlayHead(ID chanID, Frame f);
 
-void setPreview(m::SampleChannel* ch, PreviewMode mode);
-void rewindPreview(m::SampleChannel* ch);
+void setPreview(ID chanID, PreviewMode mode);
+void rewindPreview(ID chanID);
 
 /* toNewChannel
 Copies the selected range into a new sample channel. */
 
-void toNewChannel(m::SampleChannel* ch, int a, int b);
+void toNewChannel(ID chanID, int a, int b);
 }}}; // giada::c::sampleEditor::
 
 #endif

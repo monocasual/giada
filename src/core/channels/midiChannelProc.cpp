@@ -1,10 +1,40 @@
-#include "midiChannel.h"
-#include "pluginHost.h"
-#include "kernelMidi.h"
-#include "const.h"
-#include "action.h"
+/* -----------------------------------------------------------------------------
+ *
+ * Giada - Your Hardcore Loopmachine
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
+ *
+ * This file is part of Giada - Your Hardcore Loopmachine.
+ *
+ * Giada - Your Hardcore Loopmachine is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation, either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * Giada - Your Hardcore Loopmachine is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Giada - Your Hardcore Loopmachine. If not, see
+ * <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------- */
+
+
+#include <cassert>
+#include "core/channels/midiChannel.h"
+#include "core/model/model.h"
+#include "core/pluginHost.h"
+#include "core/kernelMidi.h"
+#include "core/const.h"
+#include "core/action.h"
+#include "core/mixerHandler.h"
 #include "midiChannelProc.h"
-#include "mixerHandler.h"
+
 
 namespace giada {
 namespace m {
@@ -24,6 +54,17 @@ void onFirstBeat_(MidiChannel* ch)
 		ch->sendMidiLstatus();
 	}
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void sendAllNotesOff_(MidiChannel* ch)
+{
+	MidiEvent e(MIDI_ALL_NOTES_OFF);
+	ch->sendMidi(e, /*localFrame=*/0);
+
+}
 }; // {anonymous}
 
 
@@ -36,9 +77,10 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 {
 	if (fe.onFirstBeat)
 		onFirstBeat_(ch);
-	for (const Action* action : fe.actions)
-		if (action->channel == ch->index)
-			ch->sendMidi(action, fe.frameLocal);
+	if (fe.actions != nullptr)
+		for (const Action& action : *fe.actions)
+			if (action.channelId == ch->id && ch->isPlaying() && ch->mute.load() == false)
+				ch->sendMidi(action.event, fe.frameLocal);
 }
 
 
@@ -48,18 +90,31 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audible)
 {
 #ifdef WITH_VST
-	pluginHost::processStack(ch->buffer, pluginHost::StackType::CHANNEL, ch);
-#endif
 
+	ch->midiBuffer.clear();
+	
+	MidiEvent e;
+	while (ch->midiQueue.pop(e)) {
+		juce::MidiMessage message = juce::MidiMessage(
+			e.getStatus(), 
+			e.getNote(), 
+			e.getVelocity());
+		ch->midiBuffer.addEvent(message, e.getDelta());
+	}
+	pluginHost::processStack(ch->buffer, ch->plugins, &ch->midiBuffer);
+	
 	/* Process the plugin stack first, then quit if the channel is muted/soloed. 
 	This way there's no risk of cutting midi event pairs such as note-on and 
 	note-off while triggering a mute/solo. */
 
-	/* TODO - this is meaningful only if WITH_VST is defined */
-	if (audible)
-		for (int i=0; i<out.countFrames(); i++)
-			for (int j=0; j<out.countChannels(); j++)
-				out[i][j] += ch->buffer[i][j] * ch->volume;	
+	if (!audible)
+		return;
+
+	for (int i=0; i<out.countFrames(); i++)
+		for (int j=0; j<out.countChannels(); j++)
+			out[i][j] += ch->buffer[i][j] * ch->volume;	
+
+#endif
 }
 
 
@@ -95,13 +150,9 @@ void start(MidiChannel* ch)
 
 void kill(MidiChannel* ch, int localFrame)
 {
-	if (ch->isPlaying()) {
-		if (ch->midiOut)
-			kernelMidi::send(MIDI_ALL_NOTES_OFF);
-#ifdef WITH_VST
-		ch->addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
-#endif
-	}
+	if (ch->isPlaying())
+		sendAllNotesOff_(ch);
+
 	ch->status = ChannelStatus::OFF;
 	ch->sendMidiLstatus();
 }
@@ -112,11 +163,7 @@ void kill(MidiChannel* ch, int localFrame)
 
 void rewindBySeq(MidiChannel* ch)
 {
-	if (ch->midiOut)
-		kernelMidi::send(MIDI_ALL_NOTES_OFF);
-#ifdef WITH_VST
-		ch->addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
-#endif	
+	sendAllNotesOff_(ch);
 }
 
 
@@ -126,13 +173,8 @@ void rewindBySeq(MidiChannel* ch)
 void setMute(MidiChannel* ch, bool v)
 {
 	ch->mute = v;
-	if (ch->mute) {
-		if (ch->midiOut)
-			kernelMidi::send(MIDI_ALL_NOTES_OFF);
-	#ifdef WITH_VST
-			ch->addVstMidiEvent(MIDI_ALL_NOTES_OFF, 0);
-	#endif		
-		}
+	if (v)
+		sendAllNotesOff_(ch);
 
 	// This is for processing playing_inaudible
 	ch->sendMidiLstatus();	
@@ -147,11 +189,11 @@ void setMute(MidiChannel* ch, bool v)
 void setSolo(MidiChannel* ch, bool v)
 {
 	ch->solo = v;
-	m::mh::updateSoloCount();
+	mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (Channel* channel : mixer::channels)		
-		channel->sendMidiLstatus();
+	for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
+		c->sendMidiLstatus();
 
 	ch->sendMidiLsolo();
 }
@@ -161,7 +203,8 @@ void setSolo(MidiChannel* ch, bool v)
 
 
 void stopBySeq(MidiChannel* ch)
-{
+{	
+	sendAllNotesOff_(ch);
 	kill(ch, 0);
 }
 }}};

@@ -35,33 +35,35 @@
 	#include <X11/Xlib.h> // For XInitThreads
 #endif
 #include <FL/Fl.H>
-#include "../utils/log.h"
-#include "../utils/fs.h"
-#include "../utils/time.h"
-#include "../utils/gui.h"
-#include "../gui/dialogs/mainWindow.h"
-#include "../gui/dialogs/warnings.h"
-#include "../glue/main.h"
-#include "mixer.h"
-#include "wave.h"
-#include "const.h"
-#include "clock.h"
-#include "channel.h"
-#include "mixerHandler.h"
-#include "patch.h"
-#include "conf.h"
-#include "pluginManager.h"
-#include "pluginHost.h"
-#include "recorder.h"
-#include "recManager.h"
-#include "midiMapConf.h"
-#include "kernelMidi.h"
-#include "kernelAudio.h"
-#include "init.h"
+#include "gui/updater.h"
+#include "utils/log.h"
+#include "utils/fs.h"
+#include "utils/time.h"
+#include "utils/gui.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/warnings.h"
+#include "glue/main.h"
+#include "core/channels/channel.h"
+#include "core/mixer.h"
+#include "core/wave.h"
+#include "core/const.h"
+#include "core/clock.h"
+#include "core/mixerHandler.h"
+#include "core/patch.h"
+#include "core/conf.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "core/recManager.h"
+#include "core/midiMapConf.h"
+#include "core/kernelMidi.h"
+#include "core/kernelAudio.h"
+#include "core/init.h"
 
 
-extern std::atomic<bool> G_quit;
-extern gdMainWindow*     G_MainWin;
+extern std::atomic<bool>       G_quit;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -70,25 +72,6 @@ namespace init
 {
 namespace
 {
-std::thread UIThread_;
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void UIThreadCallback_()
-{
-	while (G_quit.load() == false) {
-		if (m::kernelAudio::getStatus())
-			u::gui::refreshUI();
-		u::time::sleep(G_GUI_REFRESH_RATE);
-	}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void initConf_()
 {
 	if (!conf::read())
@@ -114,8 +97,10 @@ void initAudio_()
 	kernelAudio::openDevice();
 	clock::init(conf::samplerate, conf::midiTCfps);
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
-	recorder::init(&mixer::mutex);
-	recManager::init(&mixer::mutex);
+	mh::init();
+	recorder::init();
+	recorderHandler::init();
+	recManager::init();
 
 #ifdef WITH_VST
 
@@ -125,7 +110,7 @@ void initAudio_()
 
 #endif
 
-	if (!kernelAudio::getStatus())
+	if (!kernelAudio::isReady())
 		return;
 
 	kernelAudio::startStream();
@@ -160,19 +145,19 @@ void initGUI_(int argc, char** argv)
 	XInitThreads();
 #endif
 
-	G_MainWin = new gdMainWindow(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv);
+	G_MainWin = new v::gdMainWindow(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT, "", argc, argv);
 	G_MainWin->resize(conf::mainWindowX, conf::mainWindowY, conf::mainWindowW,
 		conf::mainWindowH);
 
 	u::gui::updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
 
-	if (!kernelAudio::getStatus())
-		gdAlert("Your soundcard isn't configured correctly.\n"
+	if (!kernelAudio::isReady())
+		v::gdAlert("Your soundcard isn't configured correctly.\n"
 			"Check the configuration and restart Giada.");
 
 	u::gui::updateControls();
-	
-	UIThread_ = std::thread(UIThreadCallback_);
+
+	Fl::add_timeout(G_GUI_REFRESH_RATE, v::updater::update, nullptr);
 }
 
 
@@ -183,13 +168,12 @@ void shutdownAudio_()
 {
 #ifdef WITH_VST
 
-	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
 	pluginHost::close();
 	gu_log("[init] PluginHost cleaned up\n");
 
 #endif
 
-	if (kernelAudio::getStatus()) {
+	if (kernelAudio::isReady()) {
 		kernelAudio::closeDevice();
 		gu_log("[init] KernelAudio closed\n");
 		mixer::close();
@@ -204,7 +188,6 @@ void shutdownAudio_()
 void shutdownGUI_()
 {
 	u::gui::closeAllSubwindows();
-	UIThread_.join();	
 
 	gu_log("[init] All subwindows and UI thread closed\n");
 }
@@ -234,7 +217,7 @@ void startup(int argc, char** argv)
 
 void closeMainWindow()
 {
-	if (!gdConfirmWin("Warning", "Quit Giada: are you sure?"))
+	if (!v::gdConfirmWin("Warning", "Quit Giada: are you sure?"))
 		return;
 
 	G_MainWin->hide();

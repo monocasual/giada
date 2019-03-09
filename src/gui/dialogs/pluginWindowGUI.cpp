@@ -29,70 +29,79 @@
 
 
 #include <FL/x.H>
-#include "../../utils/log.h"
-#include "../../utils/gui.h"
-#include "../../core/pluginHost.h"
-#include "../../core/plugin.h"
-#include "../../core/const.h"
+#include "utils/log.h"
+#include "utils/gui.h"
+#include "core/pluginHost.h"
+#include "core/plugin.h"
+#include "core/const.h"
 #include "pluginWindowGUI.h"
-
 #ifdef G_OS_MAC
-#import "../../utils/cocoa.h" // objective-c
+#import "utils/cocoa.h" // objective-c
 #endif
 
 
-using namespace giada::m;
-
-
-gdPluginWindowGUI::gdPluginWindowGUI(Plugin* plugin)
-#ifdef G_OS_MAC
- : gdWindow(Fl::w(), Fl::h()), m_plugin(plugin)
-#else
- : gdWindow(320, 200), m_plugin(plugin)
-#endif
+namespace giada {
+namespace v
 {
-  show();
+gdPluginWindowGUI::gdPluginWindowGUI(const m::Plugin& plugin)
+#ifdef G_OS_MAC
+: gdWindow(Fl::w(), Fl::h()), m_plugin(plugin),
+#else
+: gdWindow(320, 200), m_plugin(plugin),
+#endif
+  m_ui    (nullptr)
+{
+	show();
 
 #if defined(G_OS_LINUX) || defined(G_OS_MAC)
 
-  /*  Fl_Window::show() is not guaranteed to show and draw the window on all 
-  platforms immediately. Instead this is done in the background; particularly on 
-  X11 it will take a few messages (client server roundtrips) to display the 
-  window. Usually this small delay doesn't matter, but in some cases you may 
-  want to have the window instantiated and displayed synchronously. Currently 
-  (as of FLTK 1.3.4) this method has an effect on X11 and Mac OS. 
+	/*  Fl_Window::show() is not guaranteed to show and draw the window on all 
+	platforms immediately. Instead this is done in the background; particularly on 
+	X11 it will take a few messages (client server roundtrips) to display the 
+	window. Usually this small delay doesn't matter, but in some cases you may 
+	want to have the window instantiated and displayed synchronously. Currently 
+	(as of FLTK 1.3.4) this method has an effect on X11 and Mac OS. 
 
-  http://www.fltk.org/doc-1.3/classFl__Window.html#aafbec14ca8ff8abdaff77a35ebb23dd8 */
+	http://www.fltk.org/doc-1.3/classFl__Window.html#aafbec14ca8ff8abdaff77a35ebb23dd8 */
 
-  wait_for_expose();
-  Fl::flush();
+	wait_for_expose();
+	Fl::flush();
 
 #endif
 
-  gu_log("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
-    (void*) this, (void*) fl_xid(this));
+	gu_log("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
+		(void*) this, (void*) fl_xid(this));
 
 #ifdef G_OS_MAC
 
-  void* cocoaWindow = (void*) fl_xid(this);
-  m_plugin->showEditor(cocoa_getViewFromWindow(cocoaWindow));
+	void* cocoaWindow = (void*) fl_xid(this);
+	openEditor(cocoa_getViewFromWindow(cocoaWindow));
 
 #else
 
-  m_plugin->showEditor((void*) fl_xid(this));
+	openEditor((void*) fl_xid(this));
 
-  int pluginW = m_plugin->getEditorW();
-  int pluginH = m_plugin->getEditorH();
+	int pluginW = m_ui->getWidth();
+	int pluginH = m_ui->getHeight();
 
-  resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
+	resize((Fl::w() - pluginW) / 2, (Fl::h() - pluginH) / 2, pluginW, pluginH);
 
 
 #endif
 
-  Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+	Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-  copy_label(m_plugin->getName().c_str());
+	copy_label(m_plugin.getName().c_str());
 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+gdPluginWindowGUI::~gdPluginWindowGUI()
+{
+	cb_close();
 }
 
 
@@ -108,9 +117,9 @@ void gdPluginWindowGUI::cb_refresh(void* data) { ((gdPluginWindowGUI*)data)->cb_
 
 void gdPluginWindowGUI::cb_close()
 {
-  Fl::remove_timeout(cb_refresh);
-  m_plugin->closeEditor();
-  gu_log("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
+	Fl::remove_timeout(cb_refresh);
+	closeEditor();
+	gu_log("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 
 
@@ -119,17 +128,36 @@ void gdPluginWindowGUI::cb_close()
 
 void gdPluginWindowGUI::cb_refresh()
 {
-  pluginHost::runDispatchLoop();
-  Fl::repeat_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
+	m::pluginHost::runDispatchLoop();
+	Fl::repeat_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-gdPluginWindowGUI::~gdPluginWindowGUI()
+void gdPluginWindowGUI::openEditor(void* parent)
 {
-  cb_close();
+	m_ui = m_plugin.createEditor();
+	if (m_ui == nullptr) {
+		gu_log("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
+		return;
+	}
+	m_ui->setOpaque(true);
+	m_ui->addToDesktop(0, parent);	
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdPluginWindowGUI::closeEditor()
+{
+	delete m_ui;
+	m_ui = nullptr;
+}
+
+}} // giada::v::
+
 
 #endif // #ifdef WITH_VST

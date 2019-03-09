@@ -26,17 +26,20 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../../core/const.h"
-#include "../../../../utils/string.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
+#include "core/recorder.h"
+#include "utils/string.h"
 #include "channelButton.h"
 
 
-using std::string;
-
-
-geChannelButton::geChannelButton(int x, int y, int w, int h, const char* l)
-	: geButton(x, y, w, h, l), 
-	  m_key   ("") 
+namespace giada {
+namespace v
+{
+geChannelButton::geChannelButton(int x, int y, int w, int h, const m::Channel* ch)
+: geButton(x, y, w, h), 
+  m_key   (""),
+  m_ch    (ch)
 {
 }
 
@@ -44,9 +47,24 @@ geChannelButton::geChannelButton(int x, int y, int w, int h, const char* l)
 /* -------------------------------------------------------------------------- */
 
 
-void geChannelButton::setKey(const string& k)
+void geChannelButton::refresh()
 {
-	m_key = k;
+	switch (m_ch->status) {
+		case ChannelStatus::OFF:
+		case ChannelStatus::EMPTY:
+			setDefaultMode(); break;
+		case ChannelStatus::PLAY:
+			setPlayMode(); break;
+		case ChannelStatus::ENDING:
+			setEndingMode(); break;
+		default: break;
+	}
+
+	switch (m_ch->recStatus) {
+		case ChannelStatus::ENDING:
+			setEndingMode(); break;
+		default: break;
+	}
 }
 
 
@@ -55,10 +73,8 @@ void geChannelButton::setKey(const string& k)
 
 void geChannelButton::setKey(int k)
 {
-	if (k == 0)
-		m_key = "";
-	else 
-		m_key = static_cast<char>(k); // FIXME - What about unicode/utf-8?
+	m_key = k == 0 ? "" : std::string(1, k);
+	redraw();
 }
 
 
@@ -134,3 +150,5 @@ void geChannelButton::setEndingMode()
 {
 	bgColor0 = G_COLOR_GREY_4;
 }
+
+}} // giada::v::

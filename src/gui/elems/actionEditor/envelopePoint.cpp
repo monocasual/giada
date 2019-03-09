@@ -26,15 +26,15 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
+#include "core/const.h"
 #include "envelopePoint.h"
 
 
 namespace giada {
 namespace v
 {
-geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, const m::Action* a)
-	: geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, nullptr)
+geEnvelopePoint::geEnvelopePoint(Pixel X, Pixel Y, m::Action a)
+	: geBaseAction(X, Y, SIDE, SIDE, /*resizable=*/false, a, {})
 {
 }
 

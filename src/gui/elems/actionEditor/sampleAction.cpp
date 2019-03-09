@@ -26,9 +26,9 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
-#include "../../../core/action.h"
-#include "../../../core/sampleChannel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/action.h"
 #include "sampleAction.h"
 
 
@@ -36,7 +36,7 @@ namespace giada {
 namespace v
 {
 geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, 
-	const m::SampleChannel* ch, const m::Action* a1, const m::Action* a2)
+	const m::SampleChannel* ch, m::Action a1, m::Action a2)
 : geBaseAction(X, Y, W, H, ch->mode == ChannelMode::SINGLE_PRESS, a1, a2),
   m_ch        (ch)
 {
@@ -54,14 +54,14 @@ void geSampleAction::draw()
 		fl_rectf(x(), y(), w(), h(), color);
 	}
 	else {
-		if (a1->event.getStatus() == m::MidiEvent::NOTE_KILL)
+		if (a1.event.getStatus() == m::MidiEvent::NOTE_KILL)
 			fl_rect(x(), y(), MIN_WIDTH, h(), color);
 		else {
 			fl_rectf(x(), y(), MIN_WIDTH, h(), color);
-			if (a1->event.getStatus() == m::MidiEvent::NOTE_ON)
+			if (a1.event.getStatus() == m::MidiEvent::NOTE_ON)
 				fl_rectf(x()+3, y()+h()-11, w()-6, 8, G_COLOR_GREY_4);
 			else
-			if (a1->event.getStatus() == m::MidiEvent::NOTE_OFF)
+			if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
 				fl_rectf(x()+3, y()+3, w()-6, 8, G_COLOR_GREY_4);
 		}
 	}

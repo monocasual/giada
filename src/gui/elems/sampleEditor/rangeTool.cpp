@@ -25,33 +25,36 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <FL/Fl.H>
-#include "../../../core/sampleChannel.h"
-#include "../../../core/wave.h"
-#include "../../../glue/channel.h"
-#include "../../../glue/sampleEditor.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/string.h"
-#include "../../dialogs/sampleEditor.h"
-#include "../basics/input.h"
-#include "../basics/box.h"
-#include "../basics/button.h"
+#include "core/channels/sampleChannel.h"
+#include "core/wave.h"
+#include "glue/channel.h"
+#include "glue/sampleEditor.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "waveTools.h"
 #include "rangeTool.h"
 
 
-using namespace giada;
-
-
-geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
-	: Fl_Group(x, y, 280, G_GUI_UNIT),
-		m_ch    (ch)
+namespace giada {
+namespace v 
 {
+geRangeTool::geRangeTool(int x, int y)
+: Fl_Pack(x, y, 280, G_GUI_UNIT)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
+
 	begin();
-		m_label = new geBox(x, y, u::gui::getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
-		m_begin = new geInput(m_label->x()+m_label->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
-		m_end   = new geInput(m_begin->x()+m_begin->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT);
-		m_reset = new geButton(m_end->x()+m_end->w()+G_GUI_INNER_MARGIN, y, 70, G_GUI_UNIT, "Reset");
+		m_label = new geBox   (0, 0, u::gui::getStringWidth("Range"), G_GUI_UNIT, "Range", FL_ALIGN_RIGHT);
+		m_begin = new geInput (0, 0, 70, G_GUI_UNIT);
+		m_end   = new geInput (0, 0, 70, G_GUI_UNIT);
+		m_reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
 	end();
 
 	m_begin->type(FL_INT_INPUT);
@@ -63,18 +66,18 @@ geRangeTool::geRangeTool(int x, int y, giada::m::SampleChannel* ch)
 	m_end->callback(cb_setChanPos, this);
 
 	m_reset->callback(cb_resetStartEnd, this);
-
-	refresh();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geRangeTool::refresh()
+void geRangeTool::rebuild()
 {
-	m_begin->value(u::string::iToString(m_ch->getBegin()).c_str());
-	m_end->value(u::string::iToString(m_ch->getEnd()).c_str());
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	m_begin->value(u::string::iToString(ch->getBegin()).c_str());
+	m_end->value(u::string::iToString(ch->getEnd()).c_str());
 }
 
 
@@ -90,8 +93,9 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->c
 
 void geRangeTool::cb_setChanPos()
 {
-	c::sampleEditor::setBeginEnd(m_ch, atoi(m_begin->value()), atoi(m_end->value()));
-	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	c::sampleEditor::setBeginEnd(ch->id, atoi(m_begin->value()), atoi(m_end->value()));
 }
 
 
@@ -100,6 +104,9 @@ void geRangeTool::cb_setChanPos()
 
 void geRangeTool::cb_resetStartEnd()
 {
-	c::sampleEditor::setBeginEnd(m_ch, 0, m_ch->wave->getSize() - 1);
-	static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform(); // TODO - glue's business!
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	c::sampleEditor::setBeginEnd(ch->id, 0, ch->wave->getSize() - 1);
 }
+
+}} // giada::v::

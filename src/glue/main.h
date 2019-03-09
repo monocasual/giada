@@ -2,13 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
- * How to know if you need another  function? Ask yourself if the
- * new action will ever be called via MIDI or keyboard/mouse. If yes,
- * put it here.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
@@ -68,6 +61,29 @@ Shrinks or enlarges the number of beats by 2. */
 
 void beatsMultiply();
 void beatsDivide();
+
+
+
+
+
+
+
+
+
+void rewind();
+void play();
+
+/* toggleInputRec
+Handles the input recording.*/
+
+void toggleInputRec();
+
+void toggleActionRec();
+void startActionRec();
+void stopActionRec();
+
+
+void toggleMetronome();
 
 }}} // giada::c::main::
 

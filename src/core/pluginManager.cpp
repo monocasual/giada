@@ -29,16 +29,12 @@
 
 
 #include <cassert>
-#include "../utils/log.h"
-#include "../utils/fs.h"
-#include "../utils/string.h"
+#include "utils/log.h"
+#include "utils/fs.h"
+#include "utils/string.h"
 #include "const.h"
 #include "plugin.h"
 #include "pluginManager.h"
-
-
-using std::vector;
-using std::string;
 
 
 namespace giada {
@@ -63,21 +59,21 @@ juce::KnownPluginList knownPluginList_;
 /* unknownPluginList
 List of unrecognized plugins found in a patch. */
 
-vector<string> unknownPluginList_;
+std::vector<std::string> unknownPluginList_;
 
 /* missingPlugins
 If some plugins from any stack are missing. */
 
 bool missingPlugins_;
 
-vector<string> splitPluginDescription_(const string& descr)
+std::vector<std::string> splitPluginDescription_(const std::string& descr)
 {
 	// input:  VST-mda-Ambience-18fae2d2-6d646141  string
 	// output: [2-------------] [1-----] [0-----]  vector.size() == 3
 	
-	vector<string> out;
+	std::vector<std::string> out;
 
-	string chunk = "";
+	std::string chunk = "";
 	int count = 2;
 	for (int i=descr.length()-1; i >= 0; i--) {
 		if (descr[i] == '-' && count != 0) {
@@ -104,12 +100,12 @@ VSTs: their ID is based on the plug-in file location. E.g.:
 
 The following function simply drops the first hash code during comparison. */
 
-const juce::PluginDescription* findPluginDescription_(const string& id)
+const juce::PluginDescription* findPluginDescription_(const std::string& id)
 {
-	vector<string> idParts = splitPluginDescription_(id);
+	std::vector<std::string> idParts = splitPluginDescription_(id);
 
 	for (const juce::PluginDescription* pd : knownPluginList_) {
-		vector<string> tmpIdParts = splitPluginDescription_(pd->createIdentifierString().toStdString());
+		std::vector<std::string> tmpIdParts = splitPluginDescription_(pd->createIdentifierString().toStdString());
 		if (idParts[0] == tmpIdParts[0] && idParts[2] == tmpIdParts[2])
 			return pd;
 	}
@@ -136,18 +132,18 @@ void init(int samplerate, int buffersize)
 /* -------------------------------------------------------------------------- */
 
 
-int scanDirs(const string& dirs, const std::function<void(float)>& cb)
+int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 {
 	gu_log("[pluginManager::scanDir] requested directories: '%s'\n", dirs.c_str());
 	gu_log("[pluginManager::scanDir] current plugins: %d\n", knownPluginList_.getNumTypes());
 
 	knownPluginList_.clear();   // clear up previous plugins
 
-	vector<string> dirVec = u::string::split(dirs, ";");
+	std::vector<std::string> dirVec = u::string::split(dirs, ";");
 
 	juce::VSTPluginFormat format;
 	juce::FileSearchPath searchPath;
-	for (const string& dir : dirVec)
+	for (const std::string& dir : dirVec)
 		searchPath.add(juce::File(dir));
 
 	juce::PluginDirectoryScanner scanner(knownPluginList_, format, searchPath, 
@@ -167,7 +163,7 @@ int scanDirs(const string& dirs, const std::function<void(float)>& cb)
 /* -------------------------------------------------------------------------- */
 
 
-int saveList(const string& filepath)
+int saveList(const std::string& filepath)
 {
 	int out = knownPluginList_.createXml()->writeToFile(juce::File(filepath), "");
 	if (!out)
@@ -179,7 +175,7 @@ int saveList(const string& filepath)
 /* -------------------------------------------------------------------------- */
 
 
-int loadList(const string& filepath)
+int loadList(const std::string& filepath)
 {
 	juce::XmlElement* elem = juce::XmlDocument::parse(juce::File(filepath));
 	if (elem != nullptr) {
@@ -194,7 +190,7 @@ int loadList(const string& filepath)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> makePlugin(const string& fid)
+std::shared_ptr<Plugin> makePlugin(const std::string& fid)
 {
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
@@ -220,14 +216,14 @@ std::unique_ptr<Plugin> makePlugin(const string& fid)
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return std::make_unique<Plugin>(pi, samplerate_, buffersize_);
+	return std::make_shared<Plugin>(pi, samplerate_, buffersize_);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> makePlugin(int index)
+std::shared_ptr<Plugin> makePlugin(int index)
 {
 	juce::PluginDescription* pd = knownPluginList_.getType(index);
 	
@@ -245,9 +241,9 @@ std::unique_ptr<Plugin> makePlugin(int index)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> makePlugin(const Plugin& src)
+std::shared_ptr<Plugin> makePlugin(const Plugin& src)
 {
-	std::unique_ptr<Plugin> p = makePlugin(src.getUniqueId());
+	std::shared_ptr<Plugin> p = makePlugin(src.getUniqueId());
 	
 	for (int i=0; i<src.getNumParameters(); i++)
 		p->setParameter(i, src.getParameter(i));	
@@ -303,7 +299,7 @@ bool hasMissingPlugins()
 /* -------------------------------------------------------------------------- */
 
 
-string getUnknownPluginInfo(int i)
+std::string getUnknownPluginInfo(int i)
 {
 	return unknownPluginList_.at(i);
 }
@@ -312,7 +308,7 @@ string getUnknownPluginInfo(int i)
 /* -------------------------------------------------------------------------- */
 
 
-bool doesPluginExist(const string& fid)
+bool doesPluginExist(const std::string& fid)
 {
 	return pluginFormat_.doesPluginStillExist(*knownPluginList_.getTypeForFile(fid));
 }

@@ -33,8 +33,63 @@
 #include <FL/Fl_Widget.H>
 
 
+namespace giada {
+namespace v 
+{
 class geWaveform : public Fl_Widget
 {
+public:
+
+	enum class Zoom	{ IN, OUT };
+
+	geWaveform(int x, int y, int w, int h);
+
+	void draw() override;
+	int  handle(int e) override;
+
+	/* isSelected
+	Tells whether a portion of the waveform has been selected. */
+
+	bool isSelected() const;
+
+	int getSelectionA() const;
+	int getSelectionB() const;
+
+	bool getSnap() const;
+	int getSize() const;
+
+	/* recalcPoints
+	Recomputes m_chanStart, m_chanEnd, ... */
+
+	void recalcPoints();
+
+	/* zoom
+	Type == 1 : zoom out, type == -1: zoom in */
+
+	void setZoom(Zoom z);
+
+	/* strecthToWindow
+	Shrinks or enlarge the waveform to match parent's width (gWaveTools) */
+
+	void stretchToWindow();
+
+	/* rebuild
+	Redraws the waveform. */
+
+	void rebuild();
+
+	/* setGridLevel
+	Sets a new frequency level for the grid. 0 means disabled. */
+
+	void setGridLevel(int l);
+
+	void setSnap(bool v);
+
+	/* clearSelection
+	Removes any active selection. */
+
+	void clearSelection();
+
 private:
 
 	static const int FLAG_WIDTH  = 20;
@@ -56,8 +111,8 @@ private:
 
 	struct
 	{
-		int* sup;   // upper part of the waveform
-		int* inf;   // lower part of the waveform
+		std::vector<int> sup;   // upper part of the waveform
+		std::vector<int> inf;   // lower part of the waveform
 		int  size;  // width of the waveform to draw (in pixel)
 	} m_data;
 
@@ -67,34 +122,26 @@ private:
 		int level;
 		std::vector<int> points;
 	} m_grid;
-
-	giada::m::SampleChannel* m_ch;
-	int m_chanStart;
-	bool m_chanStartLit;
-	int m_chanEnd;
-	bool m_chanEndLit;
-	bool m_pushed;
-	bool m_dragged;
-	bool m_resizedA;
-	bool m_resizedB;
-	float m_ratio;
-	int m_mouseX;
-	int m_mouseY;
-
+	
 	/* mouseOnStart/end
 	Is mouse on start or end flag? */
 
-	bool mouseOnStart();
-	bool mouseOnEnd();
+	bool mouseOnStart() const;
+	bool mouseOnEnd() const;
 
 	/* mouseOnSelectionA/B
 	As above, for the selection. */
 
-	bool mouseOnSelectionA();
-	bool mouseOnSelectionB();
+	bool mouseOnSelectionA() const;
+	bool mouseOnSelectionB() const;
 
-	int pixelToFrame(int p);  // TODO - move these to utils::, will be needed in actionEditor 
-	int frameToPixel(int f);  // TODO - move these to utils::, will be needed in actionEditor 
+	/* smaller
+	Is the waveform smaller than the parent window? */
+
+	bool smaller() const;
+
+	int pixelToFrame(int p) const;  // TODO - move these to utils::, will be needed in actionEditor 
+	int frameToPixel(int f) const;  // TODO - move these to utils::, will be needed in actionEditor 
 
 	/* fixSelection
 	Helper function which flattens the selection if it was made from right to left 
@@ -103,15 +150,10 @@ private:
 
 	void fixSelection();
 
-	/* freeData
+	/* clearData
 	Destroys any graphical buffer. */
 
-	void freeData();
-
-	/* smaller
-	Is the waveform smaller than the parent window? */
-
-	bool smaller();
+	void clearData();
 
 	/* snap
 	Snaps a point at 'pos' pixel. */
@@ -129,65 +171,25 @@ private:
 
 	void selectAll();
 
-public:
-
-	static const int ZOOM_IN  = -1;
-	static const int ZOOM_OUT = 0;
-
-	geWaveform(int x, int y, int w, int h, giada::m::SampleChannel* ch, const char* l=0);
-	~geWaveform();
-
-	void draw() override;
-	int  handle(int e) override;
-
 	/* alloc
 	Allocates memory for the picture. It's smart enough not to reallocate if 
 	datasize hasn't changed, but it can be forced otherwise. */
 
 	int alloc(int datasize, bool force=false);
 
-	/* recalcPoints
-	 * re-calc m_chanStart, m_chanEnd, ... */
-
-	void recalcPoints();
-
-	/* zoom
-	 * type == 1 : zoom out, type == -1: zoom in */
-
-	void setZoom(int type);
-
-	/* strecthToWindow
-	 * shrink or enlarge the waveform to match parent's width (gWaveTools) */
-
-	void stretchToWindow();
-
-	/* refresh
-	Redraws the waveform. */
-
-	void refresh();
-
-	/* setGridLevel
-	 * set a new frequency level for the grid. 0 means disabled. */
-
-	void setGridLevel(int l);
-
-	void setSnap(bool v);
-	bool getSnap();
-	int getSize();
-
-	/* isSelected
-	Tells whether a portion of the waveform has been selected. */
-
-	bool isSelected();
-
-	int getSelectionA();
-	int getSelectionB();
-
-	/* clearSel
-	Removes any active selection. */
-
-	void clearSel();
+	int   m_chanStart;
+	bool  m_chanStartLit;
+	int   m_chanEnd;
+	bool  m_chanEndLit;
+	bool  m_pushed;
+	bool  m_dragged;
+	bool  m_resizedA;
+	bool  m_resizedB;
+	float m_ratio;
+	int   m_mouseX;
+	int   m_mouseY;
 };
+}} // giada::v::
 
 
 #endif

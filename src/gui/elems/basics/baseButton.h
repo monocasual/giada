@@ -38,19 +38,19 @@
 
 class geBaseButton : public Fl_Button
 {
+public:
+
+	geBaseButton(int x, int y, int w, int h, const char* l=nullptr);
+
+	void draw() override;
+	void label(const char* l);
+	const char* label();
+
 private:
 
 	std::string initLabel;
 
 	void trimLabel();
-
-public:
-
-  geBaseButton(int x, int y, int w, int h, const char *l=0);
-
-  void resize(int x, int y, int w, int h) override;
-  void label(const char *l);
-	const char *label();
 };
 
 

@@ -29,14 +29,14 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
+#include "core/const.h"
 #include "statusButton.h"
 
 
-geStatusButton::geStatusButton(int x, int y, int w, int h, const char **imgOff,
-  const char **imgOn)
-  : geButton(x, y, w, h, nullptr, imgOff, imgOn),
-    status  (false)
+geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
+	const char** imgOn)
+: geButton(x, y, w, h, nullptr, imgOff, imgOn),
+  m_status(false)
 {
 }
 
@@ -46,7 +46,25 @@ geStatusButton::geStatusButton(int x, int y, int w, int h, const char **imgOff,
 
 void geStatusButton::draw()
 {
-  geButton::draw();
-  if (status)
-    fl_draw_pixmap(imgOn, x()+1, y()+1, G_COLOR_GREY_4);
+	geButton::draw();
+	if (m_status)
+		fl_draw_pixmap(imgOn, x()+1, y()+1, G_COLOR_GREY_4);
+	else
+		fl_draw_pixmap(imgOff, x()+1, y()+1, G_COLOR_GREY_4);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geStatusButton::setStatus(bool s)
+{
+    m_status = s;
+    redraw();
+}
+
+
+bool geStatusButton::getStatus() const
+{
+    return m_status;
 }

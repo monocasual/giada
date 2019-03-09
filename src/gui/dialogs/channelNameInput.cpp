@@ -25,32 +25,31 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../glue/channel.h"
-#include "../../utils/gui.h"
-#include "../../core/const.h"
-#include "../../core/conf.h"
-#include "../../core/channel.h"
-#include "../elems/basics/button.h"
-#include "../elems/basics/input.h"
+#include "glue/channel.h"
+#include "utils/gui.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/input.h"
 #include "channelNameInput.h"
 
 
-using namespace giada;
 
-
-gdChannelNameInput::gdChannelNameInput(m::Channel* ch)
+namespace giada {
+namespace v 
+{
+gdChannelNameInput::gdChannelNameInput(const m::Channel* ch)
 : gdWindow(400, 64, "New channel name"),
   m_ch    (ch)
 {
-	using namespace giada::m;
-
-	if (conf::nameX)
-		resize(conf::nameX, conf::nameY, w(), h());
+	if (m::conf::nameX)
+		resize(m::conf::nameX, m::conf::nameY, w(), h());
 
 	set_modal();
 
-	m_name = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
-	m_ok = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y()+m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, "Ok");
+	m_name   = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
+	m_ok     = new geButton(w() - 70 - G_GUI_OUTER_MARGIN, m_name->y()+m_name->h() + G_GUI_OUTER_MARGIN, 70, G_GUI_UNIT, "Ok");
 	m_cancel = new geButton(m_ok->x() - 70 - G_GUI_OUTER_MARGIN, m_ok->y(), 70, G_GUI_UNIT, "Cancel");
 	end();
 
@@ -98,6 +97,8 @@ void gdChannelNameInput::cb_cancel()
 
 void gdChannelNameInput::cb_update()
 {
-	c::channel::setName(m_ch, m_name->value());
+	c::channel::setName(m_ch->id, m_name->value());
 	do_callback();
 }
+
+}} // giada::v::

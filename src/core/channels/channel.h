@@ -31,22 +31,19 @@
 
 #include <vector>
 #include <string>
-#include <pthread.h>
-#include "types.h"
-#include "patch.h"
-#include "mixer.h"
-#include "midiMapConf.h"
-#include "midiEvent.h"
-#include "recorder.h"
-#include "audioBuffer.h"
-
+#include "core/types.h"
+#include "core/patch.h"
+#include "core/mixer.h"
+#include "core/midiMapConf.h"
+#include "core/midiEvent.h"
+#include "core/recorder.h"
+#include "core/audioBuffer.h"
 #ifdef WITH_VST
-	#include "../deps/juce-config.h"
-	#include "plugin.h"
+#include "deps/juce-config.h"
+#include "core/plugin.h"
+#include "core/pluginHost.h"
+#include "core/queue.h"
 #endif
-
-
-class geChannel;
 
 
 namespace giada {
@@ -58,23 +55,17 @@ public:
 
 	virtual ~Channel() {};
 
-	/* copy
-	Makes a shallow copy (no internal buffers allocation) of another channel. */
-
-	virtual void copy(const Channel* src, pthread_mutex_t* pluginMutex) = 0;
-
 	/* parseEvents
 	Prepares channel for rendering. This is called on each frame. */
 
 	virtual void parseEvents(mixer::FrameEvents fe) = 0;
 
-	/* process
-	Merges working buffers into 'out', plus plugin processing (if any). Warning:
-	inBuffer might be unallocated if no input devices are available for 
-	recording. */
+	/* render
+	Audio rendering. Warning: inBuffer might be unallocated if no input devices 
+	are available for recording. */
 
-	virtual void process(AudioBuffer& out, const AudioBuffer& in, bool audible, 
-		bool running) = 0;
+	virtual void render(AudioBuffer& out, const AudioBuffer& in, 
+		AudioBuffer& inToOut, bool audible, bool running) {};
 
 	/* start
 	Action to do when channel starts. doQuantize = false (don't quantize)
@@ -131,12 +122,6 @@ public:
 	virtual bool recordKill() { return true; };
 	virtual void recordStop() {};
 
-	/* prepareBuffer
-	Fill audio buffer with audio data from the internal source. This is actually 
-	useful to sample channels only. */
-
-	virtual void prepareBuffer(bool running) {};
-
 	virtual void startReadingActions(bool treatRecsAsLoops, 
 		bool recsStopOnChanHalt) {};
 	virtual void stopReadingActions(bool running, bool treatRecsAsLoops, 
@@ -183,100 +168,91 @@ public:
 
 	void calcVolumeEnvelope();
 
-#ifdef WITH_VST
-
-	/* getPluginMidiEvents
-	Returns a reference to midiBuffer stack. This is available for any kind of
-	channel, but it makes sense only for MIDI channels. */
-
-	const juce::MidiBuffer& getPluginMidiEvents() const;
-
-	void clearMidiBuffer();
-
-#endif
-
-	/* guiChannel
-	Pointer to a gChannel object, part of the GUI. TODO - remove this and send
-	signals instead. */
-
-	geChannel* guiChannel;
-
 	/* buffer
 	Working buffer for internal processing. */
 	
 	AudioBuffer buffer;
 
-	ChannelType   type;
-	ChannelStatus status;
-	ChannelStatus recStatus;
+	ChannelType type;
+	std::atomic<ChannelStatus> status;
+	std::atomic<ChannelStatus> recStatus;
+
+	int columnIndex;
+	ID id;
 
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	PreviewMode previewMode;
+	std::atomic<PreviewMode> previewMode;
 
-	float       pan;
-	float       volume;   // global volume
-	bool        armed;
+	std::atomic<float> pan;
+	std::atomic<float> volume;   // global volume
+	std::atomic<bool> armed;
 	std::string name;
-	int         index;    // unique id
-	int         key;      // keyboard button
-	bool        mute;     // global mute
-	bool        solo;
+	std::atomic<int>  key;
+	std::atomic<bool> mute;
+	std::atomic<bool> solo;
 
 	/* volume_*
 	Internal volume variables: volume_i for envelopes, volume_d keeps track of
 	the delta during volume changes (or the line slope between two volume 
 	points). */
 	
-	double volume_i;
-	double volume_d;
+	std::atomic<double> volume_i;
+	std::atomic<double> volume_d;
 	
-	bool hasActions;      // If has some actions recorded
-	bool readActions;     // If should read recorded actions
+	std::atomic<bool> hasActions;  // If has some actions recorded
+	std::atomic<bool> readActions; // If should read recorded actions
 
-	bool      midiIn;               // enable midi input
-	uint32_t  midiInKeyPress;
-	uint32_t  midiInKeyRel;
-	uint32_t  midiInKill;
-	uint32_t  midiInArm;
-	uint32_t  midiInVolume;
-	uint32_t  midiInMute;
-	uint32_t  midiInSolo;
+	std::atomic<bool>     midiIn;               // enable midi input
+	std::atomic<uint32_t> midiInKeyPress;
+	std::atomic<uint32_t> midiInKeyRel;
+	std::atomic<uint32_t> midiInKill;
+	std::atomic<uint32_t> midiInArm;
+	std::atomic<uint32_t> midiInVolume;
+	std::atomic<uint32_t> midiInMute;
+	std::atomic<uint32_t> midiInSolo;
 
 	/* midiInFilter
 	Which MIDI channel should be filtered out when receiving MIDI messages. -1
 	means 'all'. */
 
-	int midiInFilter;
+	std::atomic<int> midiInFilter;
 
 	/*  midiOutL*
-	 * Enable MIDI lightning output, plus a set of midi lighting event to be sent
-	 * to a device. Those events basically contains the MIDI channel, everything
-	 * else gets stripped out. */
+	Enables MIDI lightning output, plus a set of midi lighting event to be sent
+	to a device. Those events basically contains the MIDI channel, everything
+	else gets stripped out. */
 
-	bool     midiOutL;
-	uint32_t midiOutLplaying;
-	uint32_t midiOutLmute;
-	uint32_t midiOutLsolo;
+	std::atomic<bool>     midiOutL;
+	std::atomic<uint32_t> midiOutLplaying;
+	std::atomic<uint32_t> midiOutLmute;
+	std::atomic<uint32_t> midiOutLsolo;
 
 #ifdef WITH_VST
-	std::vector<std::unique_ptr<Plugin>> plugins;
+
+	std::vector<std::shared_ptr<Plugin>> plugins;
+
+	/* MidiBuffer 
+	Contains MIDI events. When ready, events are sent to each plugin in the 
+	channel. This is available for any kind of channel, but it makes sense only 
+	for MIDI channels. */
+	
+	juce::MidiBuffer midiBuffer;
+
+	/* midiQueue
+	FIFO queue for collecting MIDI events from the MIDI thread and passing them
+	to the audio thread. */
+	/* TODO - magic number */
+
+	Queue<MidiEvent, 32> midiQueue;
+
 #endif
 
 protected:
 
-	Channel(ChannelType type, ChannelStatus status, int bufferSize);
-
-#ifdef WITH_VST
-
-	/* MidiBuffer contains MIDI events. When ready, events are sent to each plugin 
-	in the channel. This is available for any kind of channel, but it makes sense 
-	only for MIDI channels. */
-
-	juce::MidiBuffer midiBuffer;
-
-#endif
+	Channel(ChannelType type, ChannelStatus status, int bufferSize, size_t column);
+	Channel(const Channel& o);
 };
 
 }} // giada::m::

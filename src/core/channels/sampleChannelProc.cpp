@@ -26,12 +26,13 @@
 
 
 #include <cassert>
-#include "../utils/math.h"
-#include "const.h"
-#include "pluginHost.h"
-#include "sampleChannel.h"
+#include "utils/math.h"
+#include "core/model/model.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/pluginHost.h"
+#include "core/mixerHandler.h"
 #include "sampleChannelProc.h"
-#include "mixerHandler.h"
 
 
 namespace giada {
@@ -40,18 +41,18 @@ namespace sampleChannelProc
 {
 namespace
 {
-void rewind_(SampleChannel* ch, int localFrame)
+void rewind_(SampleChannel* ch, Frame localFrame)
 {
-	ch->tracker    = ch->begin;
-	ch->quantizing = false;  // No more quantization now
+	/* Quantization stops on rewind. */
 
-	/* On rewind, if channel is playing fill again buffer to create something like 
-	this:
-                   v-------------- localFrame
-		[old data-----]*[new data--] */
+	ch->quantizing = false; 
 
-	if (localFrame > 0 && ch->isPlaying())
-		ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame); 
+	if (ch->isPlaying()) { 
+		ch->rewinding    = true;
+		ch->bufferOffset = localFrame;
+	}
+	else
+		ch->tracker = ch->begin.load();
 }
 
 
@@ -71,8 +72,8 @@ void quantize_(SampleChannel* ch, int localFrame, bool quantoPassed)
 
 	switch (ch->status) {
 		case ChannelStatus::OFF:
-			ch->status   = ChannelStatus::PLAY;
-			ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame);
+			ch->status       = ChannelStatus::PLAY;
+			ch->bufferOffset = localFrame;
 			ch->sendMidiLstatus();
 			// ch->quantizing = false is set by sampleChannelRec::quantize()
 			break;
@@ -100,8 +101,8 @@ void onBar_(SampleChannel* ch, int localFrame)
 
 		case ChannelStatus::WAIT:
 			if (ch->mode == ChannelMode::LOOP_ONCE_BAR) {
-				ch->status   = ChannelStatus::PLAY;
-				ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame);
+				ch->status       = ChannelStatus::PLAY;
+				ch->bufferOffset = localFrame;
 				ch->sendMidiLstatus();
 			}
 			break;
@@ -117,11 +118,8 @@ void onBar_(SampleChannel* ch, int localFrame)
 /* onFirstBeat
 Things to do when the sequencer is on the first beat. */
 
-void onFirstBeat_(SampleChannel* ch, int localFrame)
+void onFirstBeat_(SampleChannel* ch, Frame localFrame)
 {
-	if (!ch->hasData())
-		return;
-
 	switch (ch->status) {
 		case ChannelStatus::PLAY: 
 			if (ch->isAnyLoopMode())
@@ -129,8 +127,8 @@ void onFirstBeat_(SampleChannel* ch, int localFrame)
 			break;
 
 		case ChannelStatus::WAIT:
-			ch->status   = ChannelStatus::PLAY;
-			ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, localFrame);			
+			ch->status       = ChannelStatus::PLAY;
+			ch->bufferOffset = localFrame;
 			ch->sendMidiLstatus();
 			break;
 
@@ -150,23 +148,28 @@ void onFirstBeat_(SampleChannel* ch, int localFrame)
 Things to do when the sample has reached the end (i.e. last frame). Called by
 prepareBuffer(). */
 
-void onLastFrame_(SampleChannel* ch, int localFrame, bool running)
+void onLastFrame_(SampleChannel* ch, bool running)
 {
 	switch (ch->status) {
 		case ChannelStatus::PLAY:
 			/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
-			 SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. */
-			if ((ch->mode == ChannelMode::SINGLE_BASIC || 
-				   ch->mode == ChannelMode::SINGLE_PRESS ||
-				   ch->mode == ChannelMode::SINGLE_RETRIG) || 
-				  (ch->isAnyLoopMode() && !running))
+			SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
+			Other loop once modes are put in wait mode. */
+			if ((ch->mode == ChannelMode::SINGLE_BASIC   || 
+				 ch->mode == ChannelMode::SINGLE_PRESS   ||
+				 ch->mode == ChannelMode::SINGLE_RETRIG) || 
+				(ch->isAnyLoopMode() && !running))
 				ch->status = ChannelStatus::OFF;
+			else
+			if (ch->mode == ChannelMode::LOOP_ONCE     ||
+			    ch->mode == ChannelMode::LOOP_ONCE_BAR)
+				ch->status = ChannelStatus::WAIT;
 			ch->sendMidiLstatus();
 			break;			
 
 		case ChannelStatus::ENDING:
-			/* LOOP_ONCE or LOOP_ONCE_BAR: if ending (i.e. the user requested their
-			termination), stop 'em. Let them wait otherwise. */
+			/* LOOP_ONCE or LOOP_ONCE_BAR: if ending (i.e. the user requested 
+			their termination), stop 'em. Let them wait otherwise. */
 			if (ch->mode == ChannelMode::LOOP_ONCE ||
 			    ch->mode == ChannelMode::LOOP_ONCE_BAR)
 				ch->status = ChannelStatus::WAIT;
@@ -178,14 +181,13 @@ void onLastFrame_(SampleChannel* ch, int localFrame, bool running)
 
 		default: break;
 	}
-	rewind_(ch, localFrame);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void processData_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in, 
+void processIO_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in, 
 	bool running)
 {
 	assert(out.countSamples() == ch->buffer.countSamples());
@@ -205,13 +207,13 @@ void processData_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& 
 	}
 
 #ifdef WITH_VST
-	pluginHost::processStack(ch->buffer, pluginHost::StackType::CHANNEL, ch);
+	pluginHost::processStack(ch->buffer, ch->plugins);
 #endif
 
 	for (int i=0; i<out.countFrames(); i++) {
 		if (running)
 			ch->calcVolumeEnvelope();
-		if (!ch->mute)
+		if (ch->mute == false)
 			for (int j=0; j<out.countChannels(); j++)
 				out[i][j] += ch->buffer[i][j] * ch->volume * ch->volume_i * ch->calcPanning(j) * ch->boost;	
 	}
@@ -231,15 +233,12 @@ void processPreview_(SampleChannel* ch, m::AudioBuffer& out)
 	if (ch->trackerPreview + ch->bufferPreview.countFrames() >= ch->end) {
 		int offset = ch->end - ch->trackerPreview;
 		ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->trackerPreview, 0);
-		ch->trackerPreview  = ch->begin;
+		ch->trackerPreview = ch->begin.load();
 		if (ch->previewMode == PreviewMode::LOOP)
 			ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->begin, offset);
 		else
-		if (ch->previewMode == PreviewMode::NORMAL) {
+		if (ch->previewMode == PreviewMode::NORMAL)
 			ch->previewMode = PreviewMode::NONE;
-			if (ch->onPreviewEnd)
-				ch->onPreviewEnd();
-		}
 	}
 	else
 		ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->trackerPreview, 0);
@@ -247,6 +246,54 @@ void processPreview_(SampleChannel* ch, m::AudioBuffer& out)
 	for (int i=0; i<out.countFrames(); i++)
 		for (int j=0; j<out.countChannels(); j++)
 			out[i][j] += ch->bufferPreview[i][j] * ch->volume * ch->calcPanning(j) * ch->boost;	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void fillBuffer_(SampleChannel* ch, bool running)
+{
+	ch->buffer.clear();
+
+	if (!ch->hasData() || !ch->isPlaying())
+		return;
+
+	if (ch->rewinding) {
+
+		/* Fill the tail. */
+		
+		if (!ch->isOnLastFrame())
+			ch->fillBuffer(ch->buffer, ch->tracker, 0);
+		
+		/* Reset tracker to begin point. */
+
+		ch->tracker = ch->begin.load();
+		
+		/* Then fill the new head. */
+
+		ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, ch->bufferOffset);
+		ch->bufferOffset = 0;
+		ch->rewinding    = false;
+	}
+	else {
+		Frame framesUsed = ch->fillBuffer(ch->buffer, ch->tracker, ch->bufferOffset);
+		ch->tracker      += framesUsed;
+		ch->bufferOffset  = 0;
+		if (ch->isOnLastFrame()) {
+			onLastFrame_(ch, running);
+			ch->tracker = ch->begin.load();
+			if (ch->mode == ChannelMode::LOOP_BASIC  || 
+			    ch->mode == ChannelMode::LOOP_REPEAT || 
+			    ch->mode == ChannelMode::SINGLE_ENDLESS) {
+				/* framesUsed might be imprecise when working with resampled 
+				audio, which could cause a buffer overflow if used as offset.
+				Let's clamp it to be at most buffer->countFrames(). */
+				ch->tracker += ch->fillBuffer(ch->buffer, ch->tracker, 
+					u::math::bound(framesUsed, 0, ch->buffer.countFrames() - 1));
+			}
+		}
+	}
 }
 }; // {anonymous}
 
@@ -372,11 +419,11 @@ void setMute(SampleChannel* ch, bool value)
 void setSolo(SampleChannel* ch, bool value)
 {
 	ch->solo = value;
-	m::mh::updateSoloCount();
+	mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (Channel* channel : mixer::channels)		
-		channel->sendMidiLstatus();
+	for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
+		c->sendMidiLstatus();
 
 	ch->sendMidiLsolo();
 
@@ -394,8 +441,9 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 			ch->volume_i = u::math::map<int, float>(velocity, 0, G_MAX_VELOCITY, 0.0, 1.0);		
 	}
 
-	switch (ch->status)	{
+	switch (ch->status) {
 		case ChannelStatus::OFF:
+			ch->bufferOffset = localFrame;
 			if (ch->isAnyLoopMode()) {
 				ch->status = ChannelStatus::WAIT;
 				ch->sendMidiLstatus();
@@ -448,28 +496,16 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 /* -------------------------------------------------------------------------- */
 
 
-void prepareBuffer(SampleChannel* ch, bool running)
+void render(SampleChannel* ch, AudioBuffer& out, const AudioBuffer& in, 
+		AudioBuffer& inToOut, bool audible, bool running)
 {
-	namespace um = u::math;
+	fillBuffer_(ch, running);
 
-	ch->buffer.clear();
+	if (audible)
+		processIO_(ch, out, in, running);
 
-	if (!ch->hasData() || !ch->isPlaying())
-		return;
-
-	Frame framesUsed = ch->fillBuffer(ch->buffer, ch->tracker, 0);
-	ch->tracker += framesUsed;
-
-	/* The "framesUsed * (1 / ch->pitch)" operation might yield results greater
-	than the current buffer size. So clamping is mandatory. */
-
-	if (ch->isOnLastFrame()) {
-		Frame min  = 0; 
-		Frame max  = ch->buffer.countFrames() - 1;
-		framesUsed = static_cast<Frame>(framesUsed * (1 / ch->pitch));
-		onLastFrame_(ch, um::bound(framesUsed, min, max, max), running);
-	}
-
+	if (ch->isPreview())
+		processPreview_(ch, out);
 }
 
 
@@ -481,21 +517,7 @@ void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 	quantize_(ch, fe.frameLocal, fe.quantoPassed);
 	if (fe.onBar)
 		onBar_(ch, fe.frameLocal);
-	if (fe.onFirstBeat)
+	if (fe.onFirstBeat && ch->hasData())
 		onFirstBeat_(ch, fe.frameLocal);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void process(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in,
-	bool audible, bool running)
-{
-	if (audible)
-		processData_(ch, out, in, running);
-
-	if (ch->isPreview())
-		processPreview_(ch, out);
 }
 }}};

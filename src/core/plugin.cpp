@@ -30,8 +30,8 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "../utils/log.h"
-#include "../utils/time.h"
+#include "utils/log.h"
+#include "utils/time.h"
 #include "const.h"
 #include "plugin.h"
 
@@ -42,16 +42,9 @@ using std::string;
 namespace giada {
 namespace m 
 {
-int Plugin::m_idGenerator = 1;
-
-
-/* -------------------------------------------------------------------------- */
-
-
 Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate, int buffersize)
-: m_ui    (nullptr),
+: id      (0),
   m_plugin(plugin),
-  m_id    (m_idGenerator++),
   m_bypass(false)
 {
 	using namespace juce;
@@ -59,9 +52,7 @@ Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate, int buffers
 	/* Init midiInParams. All values are empty (0x0): they will be filled during
 	midi learning process. */
 
-	const OwnedArray<AudioProcessorParameter>& params = m_plugin->getParameters();
-	for (int i=0; i<params.size(); i++)
-		midiInParams.push_back(0x0);
+	midiInParams = std::deque<std::atomic<uint32_t>>(m_plugin->getParameters().size());
 	
 	m_buffer.setSize(G_MAX_IO_CHANS, buffersize);
 
@@ -83,9 +74,21 @@ Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate, int buffers
 /* -------------------------------------------------------------------------- */
 
 
+Plugin::Plugin(const Plugin& o)
+: id          (o.id),
+  m_plugin    (o.m_plugin),
+  m_bypass    (o.m_bypass.load())
+{
+	for (const std::atomic<uint32_t>& p : o.midiInParams)
+		midiInParams.emplace_back(p.load());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Plugin::~Plugin()
 {
-	closeEditor();
 	m_plugin->suspendProcessing(true);
 	m_plugin->releaseResources();
 }
@@ -115,24 +118,9 @@ int Plugin::countMainOutChannels() const
 /* -------------------------------------------------------------------------- */
 
 
-void Plugin::showEditor(void* parent)
+juce::AudioProcessorEditor* Plugin::createEditor() const
 {
-	m_ui = m_plugin->createEditorIfNeeded();
-	if (m_ui == nullptr) {
-		gu_log("[Plugin::showEditor] unable to create editor!\n");
-		return;
-	}
-	m_ui->setOpaque(true);
-	m_ui->addToDesktop(0, parent);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool Plugin::isEditorOpen() const
-{
-	return m_ui != nullptr && m_ui->isVisible() && m_ui->isOnDesktop();
+	return m_plugin->createEditorIfNeeded();
 }
 
 
@@ -202,22 +190,8 @@ bool Plugin::acceptsMidi() const
 /* -------------------------------------------------------------------------- */
 
 
-bool Plugin::isBypassed() const { return m_bypass; }
-void Plugin::toggleBypass() { m_bypass = !m_bypass; }
-void Plugin::setBypass(bool b) { m_bypass = b; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Plugin::getId() const { return m_id; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int Plugin::getEditorW() const { assert(m_ui != nullptr); return m_ui->getWidth(); }
-int Plugin::getEditorH() const { assert(m_ui != nullptr); return m_ui->getHeight(); }
+bool Plugin::isBypassed() const { return m_bypass.load(); }
+void Plugin::setBypass(bool b) { m_bypass.store(b); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -306,7 +280,8 @@ string Plugin::getProgramName(int index) const
 
 string Plugin::getParameterName(int index) const
 {
-	return m_plugin->getParameters()[index]->getName(MAX_LABEL_SIZE).toStdString();
+	const int labelSize = 64;
+	return m_plugin->getParameters()[index]->getName(labelSize).toStdString();
 }
 
 
@@ -325,16 +300,6 @@ string Plugin::getParameterText(int index) const
 string Plugin::getParameterLabel(int index) const
 {
 	return m_plugin->getParameters()[index]->getLabel().toStdString();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Plugin::closeEditor()
-{
-	delete m_ui;
-	m_ui = nullptr;
 }
 
 }} // giada::m::

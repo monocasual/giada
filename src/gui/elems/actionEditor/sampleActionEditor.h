@@ -44,6 +44,15 @@ class geSampleAction;
 
 class geSampleActionEditor : public geBaseActionEditor
 {
+public:
+
+	geSampleActionEditor(Pixel x, Pixel y);
+	~geSampleActionEditor();
+
+	void draw() override;
+
+	void rebuild() override;
+
 private:
 
 	void onAddAction()     override;
@@ -52,16 +61,7 @@ private:
 	void onResizeAction()  override;
 	void onRefreshAction() override;
 
-    bool isNoteOffSinglePress(const m::Action* a);
-
-public:
-
-	geSampleActionEditor(Pixel x, Pixel y, m::SampleChannel* ch);
-	~geSampleActionEditor();
-
-	void draw() override;
-
-	void rebuild() override;
+    bool isNoteOffSinglePress(const m::Action& a);
 };
 }} // giada::v::
 

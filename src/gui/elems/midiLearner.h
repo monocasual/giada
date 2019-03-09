@@ -29,64 +29,53 @@
 #define GE_MIDI_LEARNER_H
 
 
+#include <atomic>
 #include <FL/Fl_Group.H>
-#include "../../core/midiDispatcher.h"
-#include "../../core/channel.h"
 
 
-class gdMidiInputBase;
-class geMidiLearner;
 class geBox;
 class geButton;
 
 
+namespace giada {
+namespace m
+{
+class Channel;	
+}
+namespace v 
+{
 class geMidiLearner : public Fl_Group
 {
+public:
+
+	geMidiLearner(int x, int y, int w, const char* l, std::atomic<uint32_t>& param, 
+		const m::Channel* ch);
+
+	void refresh();
+
 private:
-
-	/* callback
-	Callback to pass to midiDispatcher. Requires two parameters:
-	 * uint32_t msg - MIDI message
-	 * void   *data - extra data */
-
-	giada::m::midiDispatcher::cb_midiLearn* callback;
-
-	/* Channel it belongs to. Might be nullptr if the learner comes from the MIDI
-	input master window. */
-
-	giada::m::Channel* ch;
-
-	geBox* text;
-	geButton* value;
-	geButton* button;
 
 	static void cb_button(Fl_Widget* v, void* p);
 	static void cb_value (Fl_Widget* v, void* p);
 	void cb_button();
 	void cb_value();
 
-public:
+	/* m_ch
+	Channel it belongs to. Might be nullptr if the learner comes from the MIDI
+	input master window. */
 
-  /* cbData_t
-  Struct we pass to midiDispatcher as extra parameter. */
+	const m::Channel* m_ch;
 
-  struct cbData_t
-  {
-		gdMidiInputBase*   window;
-		geMidiLearner*     learner;
-		giada::m::Channel* channel;
-	} cbData;
+	/* m_param
+	Reference to ch->midiIn[value]. */
 
-	/* param
-	 * pointer to ch->midiIn[value] */
+	std::atomic<uint32_t>& m_param;
 
-	uint32_t* param;
-
-	geMidiLearner(int x, int y, int w, const char* l, 
-		giada::m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, giada::m::Channel* ch);
-
-	void updateValue();
+	geBox*    m_text;
+	geButton* m_value;
+	geButton* m_button;
 };
+}} // giada::v::
 
 
 #endif

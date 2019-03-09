@@ -25,49 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_SAMPLE_CHANNEL_REC_H
-#define G_SAMPLE_CHANNEL_REC_H
-
-
+#ifndef G_V_UPDATER_H
+#define G_V_UPDATER_H
 
 
 namespace giada {
-namespace m 
+namespace v {
+namespace updater
 {
-class SampleChannel;
-
-namespace sampleChannelRec
-{
-void parseEvents(SampleChannel* ch, mixer::FrameEvents fe);
-
-/* recordStart
-Records a 'start' action if capable of. Returns true if a start() call can
-be performed. */
-
-bool recordStart(SampleChannel* ch, bool doQuantize);
-
-/* recordKill
-Records a 'kill' action if capable of. Returns true if a kill() call can
-be performed. */
-
-bool recordKill(SampleChannel* ch);
-
-/* recordStop
-Ends overdub mode SINGLE_PRESS channels. */
-
-void recordStop(SampleChannel* ch);
-
-/* setReadActions
-If enabled (v == true), Recorder will read actions from channel 'ch'. If 
-recsStopOnChanHalt == true and v == false, will also kill the channel. */
-
-void setReadActions(SampleChannel* ch, bool v, bool recsStopOnChanHalt);
-
-void startReadingActions(SampleChannel* ch, bool treatRecsAsLoops, 
-	bool recsStopOnChanHalt);
-void stopReadingActions(SampleChannel* ch, bool isClockRunning, 
-	bool treatRecsAsLoops, bool recsStopOnChanHalt);
-}}};
+void update(void* p);
+}}} // giada::v::updater
 
 
 #endif

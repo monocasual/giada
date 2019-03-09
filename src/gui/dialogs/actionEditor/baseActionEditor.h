@@ -29,8 +29,8 @@
 #define GD_BASE_ACTION_EDITOR_H
 
 
-#include "../../../core/types.h"
-#include "../window.h"
+#include "core/types.h"
+#include "gui/dialogs/window.h"
 
 
 class geChoice;
@@ -51,49 +51,16 @@ class geGridTool;
 
 class gdBaseActionEditor : public gdWindow
 {
-protected:
-
-	static constexpr Pixel RESIZER_BAR_H = 20;
-	static constexpr Pixel MIN_WIDGET_H  = 10;
-	static constexpr float MIN_RATIO     = 25.0f;
-	static constexpr float MAX_RATIO     = 40000.0f;
-
-	std::vector<const m::Action*> m_actions;
-
-	gdBaseActionEditor(m::Channel* ch);
-
-	void zoomIn();
-	void zoomOut();
-	static void cb_zoomIn(Fl_Widget* w, void* p);
-	static void cb_zoomOut(Fl_Widget* w, void* p);
-	
-	/* computeWidth
-  Computes total width, in pixel. */
-
-	void computeWidth();
-
-	void centerViewportIn();
-	void centerViewportOut();
-
-	void prepareWindow();
-
 public:
 
 	virtual ~gdBaseActionEditor();
-
-	/* rebuild
-	Forces all internal widgets to rebuild themselves. Used when refreshing the
-	whole Action Editor window. */
-	
-	virtual void rebuild() = 0;
 
 	int handle(int e) override;
 
 	Pixel frameToPixel(Frame f) const;
 	Frame pixelToFrame(Pixel p, bool snap=true) const;
 	int getActionType() const;
-
-	const std::vector<const m::Action*>& getActions();
+	std::vector<m::Action> getActions() const;
 
 	geChoice*   actionType;
 	geGridTool* gridTool;
@@ -101,11 +68,38 @@ public:
 	geButton*   zoomOutBtn;
 	geScroll*   viewport;       // widget container
 
-	m::Channel* ch;
+	const m::Channel* ch;
+	ID channelId;
 
 	float ratio;
 	Pixel fullWidth;     // Full widgets width, i.e. scaled-down full sequencer
 	Pixel loopWidth; 	 // Loop width, i.e. scaled-down sequencer range
+
+protected:
+
+	static constexpr Pixel RESIZER_BAR_H = 20;
+	static constexpr Pixel MIN_WIDGET_H  = 10;
+	static constexpr float MIN_RATIO     = 25.0f;
+	static constexpr float MAX_RATIO     = 40000.0f;
+
+	std::vector<m::Action> m_actions;
+
+	gdBaseActionEditor(ID channelId);
+
+	void zoomIn();
+	void zoomOut();
+	static void cb_zoomIn(Fl_Widget* w, void* p);
+	static void cb_zoomOut(Fl_Widget* w, void* p);
+	
+	/* computeWidth
+	Computes total width, in pixel. */
+
+	void computeWidth();
+
+	void centerViewportIn();
+	void centerViewportOut();
+
+	void prepareWindow();
 };
 }} // giada::v::
 

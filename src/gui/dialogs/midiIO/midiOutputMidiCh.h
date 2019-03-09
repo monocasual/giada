@@ -34,28 +34,32 @@
 #include "midiOutputBase.h"
 
 
+namespace giada {
+namespace v 
+{
 class gdMidiOutputMidiCh : public gdMidiOutputBase
 {
-private:
-
-	static void cb_enableChanList  (Fl_Widget *w, void *p);
-	inline void __cb_enableChanList();
-
-	/* __cb_close
-	override parent method, we need to do more stuff on close. */
-
-	static void cb_close  (Fl_Widget *w, void *p);
-	inline void __cb_close();
-
-	class geCheck  *enableOut;
-	class geChoice *chanListOut;
-
-	class giada::m::MidiChannel *ch;
-
 public:
 
-	gdMidiOutputMidiCh(class giada::m::MidiChannel *ch);
+	gdMidiOutputMidiCh(ID channelId);
+
+private:
+
+	static void cb_enableChanList(Fl_Widget* w, void* p);
+	void cb_enableChanList();
+
+	/* cb_close
+	override parent method, we need to do more stuff on close. */
+
+	static void cb_close(Fl_Widget* w, void* p);
+	void cb_close();
+
+	geCheck*  m_enableOut;
+	geChoice* m_chanListOut;
+
+	m::MidiChannel* m_ch;
 };
+}} // giada::v::
 
 
 #endif

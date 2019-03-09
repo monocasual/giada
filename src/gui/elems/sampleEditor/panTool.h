@@ -29,7 +29,7 @@
 #define GE_PAN_TOOL_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geDial;
@@ -38,28 +38,31 @@ class geButton;
 class geBox;
 
 
-class gePanTool : public Fl_Group
+namespace giada {
+namespace v 
 {
+class gePanTool : public Fl_Pack
+{
+public:
+
+  gePanTool(int x, int y);
+
+  void rebuild();
+
 private:
-
-  giada::m::SampleChannel* ch;
-
-  geBox*    label;
-  geDial*   dial;
-  geInput*  input;
-  geButton* reset;
 
   static void cb_panning (Fl_Widget* w, void* p);
   static void cb_panReset(Fl_Widget* w, void* p);
   void cb_panning();
   void cb_panReset();
 
-public:
+  geBox*    label;
+  geDial*   dial;
+  geInput*  input;
+  geButton* reset;
 
-  gePanTool(int x, int y, giada::m::SampleChannel* ch);
-
-  void refresh();
 };
+}} // giada::v::
 
 
 #endif

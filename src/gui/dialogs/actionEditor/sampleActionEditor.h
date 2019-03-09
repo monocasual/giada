@@ -42,7 +42,13 @@ class geSampleActionEditor;
 class geEnvelopeEditor;
 
 class gdSampleActionEditor : public gdBaseActionEditor
-{
+{  
+public:
+
+    gdSampleActionEditor(ID channelId);
+
+    void rebuild() override;
+
 private:
 
 	geSampleActionEditor* m_ae;
@@ -52,12 +58,6 @@ private:
     geResizerBar*         m_eer;
 
 	bool canChangeActionType();
-	
-public:
-
-	gdSampleActionEditor(m::SampleChannel* ch);
-
-	void rebuild() override;
 };
 }} // giada::v::
 

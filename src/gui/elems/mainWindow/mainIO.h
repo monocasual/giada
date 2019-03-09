@@ -29,7 +29,8 @@
 #define GE_MAIN_IO_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
+
 
 class geSoundMeter;
 class geDial;
@@ -38,39 +39,12 @@ class geStatusButton;
 class geButton;
 #endif
 
+
 namespace giada {
 namespace v
 {
-class geMainIO : public Fl_Group
+class geMainIO : public Fl_Pack
 {
-private:
-
-	geSoundMeter* outMeter;
-	geSoundMeter* inMeter;
-	geDial*       outVol;
-	geDial*       inVol;
-#ifdef WITH_VST
-  geStatusButton* masterFxOut;
-  geStatusButton* masterFxIn;
-  geButton*       inToOut;
-#endif
-
-	static void cb_outVol     (Fl_Widget* v, void* p);
-	static void cb_inVol      (Fl_Widget* v, void* p);
-#ifdef WITH_VST
-	static void cb_masterFxOut(Fl_Widget* v, void* p);
-	static void cb_masterFxIn (Fl_Widget* v, void* p);
-	static void cb_inToOut    (Fl_Widget* v, void* p);
-#endif
-
-	void cb_outVol     ();
-	void cb_inVol      ();
-#ifdef WITH_VST
-	void cb_masterFxOut();
-	void cb_masterFxIn ();
-	void cb_inToOut    ();
-#endif
-
 public:
 
 	geMainIO(int x, int y);
@@ -82,6 +56,33 @@ public:
 #ifdef WITH_VST
 	void setMasterFxOutFull(bool v);
 	void setMasterFxInFull(bool v);
+#endif
+
+private:
+
+	static void cb_outVol     (Fl_Widget* v, void* p);
+	static void cb_inVol      (Fl_Widget* v, void* p);
+#ifdef WITH_VST
+	static void cb_masterFxOut(Fl_Widget* v, void* p);
+	static void cb_masterFxIn (Fl_Widget* v, void* p);
+	static void cb_inToOut    (Fl_Widget* v, void* p);
+#endif
+	void cb_outVol();
+	void cb_inVol();
+#ifdef WITH_VST
+	void cb_masterFxOut();
+	void cb_masterFxIn();
+	void cb_inToOut();
+#endif
+
+	geSoundMeter* outMeter;
+	geSoundMeter* inMeter;
+	geDial*       outVol;
+	geDial*       inVol;
+#ifdef WITH_VST
+  geStatusButton* masterFxOut;
+  geStatusButton* masterFxIn;
+  geButton*       inToOut;
 #endif
 };
 }} // giada::v::

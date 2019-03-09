@@ -35,23 +35,16 @@
 #include <FL/Fl_File_Browser.H>
 
 
+namespace giada {
+namespace v
+{
 class geBrowser : public Fl_File_Browser
 {
-private:
-
-	std::string m_currentDir;
-	bool m_showHiddenFiles;
-
-	/* normalize
-	Makes sure the std::string never ends with a trailing slash. */
-
-	std::string normalize(const std::string& s);
-
 public:
 
 	geBrowser(int x, int y, int w, int h);
 
-  void toggleHiddenFiles();
+	void toggleHiddenFiles();
 
 	/* init
 	Initializes browser and show 'dir' as initial directory. */
@@ -69,6 +62,18 @@ public:
 	void preselect(int position, int line);
 
 	int handle(int e);
+
+private:
+
+	/* normalize
+	Makes sure the std::string never ends with a trailing slash. */
+
+	std::string normalize(const std::string& s);
+
+	std::string m_currentDir;
+	bool m_showHiddenFiles;
 };
+}} // giada::v::
+
 
 #endif

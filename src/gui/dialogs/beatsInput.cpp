@@ -26,28 +26,28 @@
 
 
 #include <cstring>
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
-#include "../../core/mixer.h"
-#include "../../core/clock.h"
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../glue/main.h"
-#include "../elems/basics/input.h"
-#include "../elems/basics/button.h"
-#include "../elems/basics/check.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "core/mixer.h"
+#include "core/clock.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "glue/main.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/check.h"
 #include "beatsInput.h"
 #include "mainWindow.h"
 
 
-extern gdMainWindow* mainWin;
+extern giada::v::gdMainWindow* mainWin;
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 gdBeatsInput::gdBeatsInput()
-	: gdWindow(180, 36, "Beats")
+: gdWindow(180, 36, "Beats")
 {
 	if (m::conf::beatsX)
 		resize(m::conf::beatsX, m::conf::beatsY, w(), h());
@@ -60,11 +60,11 @@ gdBeatsInput::gdBeatsInput()
 	end();
 
 	beats->maximum_size(2);
-	beats->value(u::string::iToString(m::clock::getBeats()).c_str());
+	beats->value(std::to_string(m::clock::getBeats()).c_str());
 	beats->type(FL_INT_INPUT);
 	
 	bars->maximum_size(2);
-	bars->value(u::string::iToString(m::clock::getBars()).c_str());
+	bars->value(std::to_string(m::clock::getBars()).c_str());
 	bars->type(FL_INT_INPUT);
 	
 	ok->shortcut(FL_Enter);
@@ -102,3 +102,5 @@ void gdBeatsInput::cb_update()
 	c::main::setBeats(atoi(beats->value()), atoi(bars->value()));
 	do_callback();
 }
+
+}} // giada::v::

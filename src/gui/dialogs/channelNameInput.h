@@ -36,8 +36,16 @@ class geInput;
 class geButton;
 
 
+namespace giada {
+namespace v 
+{
 class gdChannelNameInput : public gdWindow
 {
+public:
+
+	gdChannelNameInput(const m::Channel* ch);
+	~gdChannelNameInput();
+
 private:
 
 	static void cb_update(Fl_Widget* w, void* p);
@@ -45,16 +53,13 @@ private:
 	void cb_update();
 	void cb_cancel();
 
-	giada::m::Channel* m_ch;
+	const m::Channel* m_ch;
 
-	geInput* m_name;
+	geInput*  m_name;
 	geButton* m_ok;
 	geButton* m_cancel;
-
-public:
-
-	gdChannelNameInput(giada::m::Channel* ch);
-	~gdChannelNameInput();
 };
+}} // giada::v::
+
 
 #endif

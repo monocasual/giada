@@ -25,25 +25,22 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
-#include "../../../core/mixer.h"
-#include "../../../core/graphics.h"
-#include "../../../core/clock.h"
-#include "../../../glue/main.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/string.h"
-#include "../../elems/basics/button.h"
-#include "../../elems/basics/choice.h"
-#include "../../dialogs/mainWindow.h"
-#include "../../dialogs/bpmInput.h"
-#include "../../dialogs/beatsInput.h"
+#include "core/const.h"
+#include "core/mixer.h"
+#include "core/graphics.h"
+#include "core/clock.h"
+#include "glue/main.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/choice.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/bpmInput.h"
+#include "gui/dialogs/beatsInput.h"
 #include "mainTimer.h"
 
 
-extern gdMainWindow* G_MainWin;
-
-
-using std::string;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -56,7 +53,7 @@ geMainTimer::geMainTimer(int x, int y)
 
 	quantizer  = new geChoice(x, y, 50, 20, "", false);
 	bpm        = new geButton(quantizer->x()+quantizer->w()+4,  y, 50, 20);
-	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 50, 20, "4/1");
+	meter      = new geButton(bpm->x()+bpm->w()+8,  y, 50, 20);
 	multiplier = new geButton(meter->x()+meter->w()+4, y, 20, 20, "", multiplyOff_xpm, multiplyOn_xpm);
 	divider    = new geButton(multiplier->x()+multiplier->w()+4, y, 20, 20, "", divideOff_xpm, divideOn_xpm);
 
@@ -188,7 +185,7 @@ void geMainTimer::setQuantizer(int q)
 
 void geMainTimer::setMeter(int beats, int bars)
 {
-	string tmp = u::string::iToString(beats) + "/" + u::string::iToString(bars);
+	std::string tmp = u::string::iToString(beats) + "/" + u::string::iToString(bars);
 	meter->copy_label(tmp.c_str());
 }
 

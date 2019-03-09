@@ -38,11 +38,11 @@ namespace giada {
 namespace m 
 {
 struct Action;
-
-
 namespace recorderHandler
 {
-bool isBoundaryEnvelopeAction(const Action* a);
+void init();
+
+bool isBoundaryEnvelopeAction(const Action& a);
 
 /* updateBpm
 Changes actions position by calculating the new bpm value. */
@@ -57,23 +57,23 @@ mandatory. */
 void updateSamplerate(int systemRate, int patchRate);
 
 /* cloneActions
-Clones actions in channel 'chanIndex', giving them a new channel index. Returns
+Clones actions in channel 'channelId', giving them a new channel ID. Returns
 whether any action has been cloned. */
 
-bool cloneActions(int chanIndex, int newChanIndex);
+bool cloneActions(ID channelId, ID newChannelId);
 
 /* liveRec
 Records a user-generated action. NOTE_ON or NOTE_OFF only for now. */
 
-void liveRec(int channel, MidiEvent e);
+void liveRec(ID channelId, MidiEvent e);
 
 /* consolidate
-Records all live actions. Returns a set of channels indexes that have been 
+Records all live actions. Returns a set of channels IDs that have been 
 recorded. */
 
-std::unordered_set<int> consolidate();
+std::unordered_set<ID> consolidate();
 
-void writePatch(int chanIndex, std::vector<patch::action_t>& pactions);
+void writePatch(ID channelId, std::vector<patch::action_t>& pactions);
 void readPatch(const std::vector<patch::action_t>& pactions);
 
 }}}; // giada::m::recorderHandler::

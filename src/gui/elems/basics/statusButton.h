@@ -39,12 +39,18 @@ class geStatusButton : public geButton
 {
 public:
 
-	geStatusButton(int x, int y, int w, int h, const char **imgOff=nullptr,
-    const char **imgOn=nullptr);
+	geStatusButton(int x, int y, int w, int h, const char** imgOff=nullptr,
+    const char** imgOn=nullptr);
 
 	void draw() override;
 
-	bool status;
+    bool getStatus() const;
+
+    void setStatus(bool s);
+
+private:
+
+	bool m_status;
 };
 
 

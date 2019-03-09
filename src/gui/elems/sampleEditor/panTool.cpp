@@ -26,68 +26,69 @@
 
 
 #include <FL/Fl.H>
-#include "../../../core/sampleChannel.h"
-#include "../../../core/const.h"
-#include "../../../core/waveFx.h"  
-#include "../../../glue/channel.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/math.h"
-#include "../../../utils/string.h"
-#include "../../dialogs/sampleEditor.h"
-#include "../basics/dial.h"
-#include "../basics/input.h"
-#include "../basics/box.h"
-#include "../basics/button.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/waveFx.h"  
+#include "glue/channel.h"
+#include "utils/gui.h"
+#include "utils/math.h"
+#include "utils/string.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "waveTools.h"
 #include "panTool.h"
 
 
-using std::string;
-using namespace giada;
-
-
-gePanTool::gePanTool(int x, int y, m::SampleChannel* ch)
-  : Fl_Group(x, y, 200, 20),
-    ch      (ch)
+namespace giada {
+namespace v 
 {
-  begin();
-    label = new geBox(x, y, u::gui::getStringWidth("Pan"), 20, "Pan", FL_ALIGN_RIGHT);
-    dial  = new geDial(label->x()+label->w()+4, y, 20, 20);
-    input = new geInput(dial->x()+dial->w()+4, y, 70, 20);
-    reset = new geButton(input->x()+input->w()+4, y, 70, 20, "Reset");
-  end();
+gePanTool::gePanTool(int x, int y)
+: Fl_Pack(x, y, 200, G_GUI_UNIT)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
 
-  dial->range(0.0f, 1.0f);
-  dial->callback(cb_panning, (void*)this);
+	begin();
+		label = new geBox   (0, 0, u::gui::getStringWidth("Pan"), G_GUI_UNIT, "Pan", FL_ALIGN_RIGHT);
+		dial  = new geDial  (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+		input = new geInput (0, 0, 70, G_GUI_UNIT);
+		reset = new geButton(0, 0, 70, G_GUI_UNIT, "Reset");
+	end();
 
-  input->align(FL_ALIGN_RIGHT);
-  input->readonly(1);
-  input->cursor_color(FL_WHITE);
+	dial->range(0.0f, 1.0f);
+	dial->callback(cb_panning, (void*)this);
 
-  reset->callback(cb_panReset, (void*)this);
+	input->align(FL_ALIGN_RIGHT);
+	input->readonly(1);
+	input->cursor_color(FL_WHITE);
 
-  refresh();
+	reset->callback(cb_panReset, (void*)this);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gePanTool::refresh()
+void gePanTool::rebuild()
 {
-  dial->value(ch->getPan());
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	
+	dial->value(ch->getPan());
 
-  if (ch->getPan() < 0.5f) {
-    string tmp = u::string::iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
-    input->value(tmp.c_str());
-  }
-  else 
-  if (ch->getPan() == 0.5)
-    input->value("C");
-  else {
-    string tmp = u::string::iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
-    input->value(tmp.c_str());
-  }
+	if (ch->getPan() < 0.5f) {
+		std::string tmp = u::string::iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
+		input->value(tmp.c_str());
+	}
+	else 
+	if (ch->getPan() == 0.5)
+		input->value("C");
+	else {
+		std::string tmp = u::string::iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
+		input->value(tmp.c_str());
+	}
 }
 
 
@@ -104,7 +105,9 @@ void gePanTool::cb_panReset(Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panRese
 
 void gePanTool::cb_panning()
 {
-  c::channel::setPanning(ch, dial->value());
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	c::channel::setPan(ch->id, dial->value());
 }
 
 
@@ -113,5 +116,9 @@ void gePanTool::cb_panning()
 
 void gePanTool::cb_panReset()
 {
-  c::channel::setPanning(ch, 0.5f);
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	c::channel::setPan(ch->id, 0.5f);
 }
+
+}} // giada::v::

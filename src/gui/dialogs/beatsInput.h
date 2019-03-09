@@ -37,8 +37,16 @@ class geButton;
 class geCheck;
 
 
+namespace giada {
+namespace v 
+{
 class gdBeatsInput : public gdWindow
 {
+public:
+
+    gdBeatsInput();
+    ~gdBeatsInput();
+
 private:
 
 	static void cb_update(Fl_Widget* w, void* p);
@@ -47,12 +55,8 @@ private:
 	geInput* beats;
 	geInput* bars;
 	geButton* ok;
-
-public:
-
-	gdBeatsInput();
-	~gdBeatsInput();
 };
+}} // giada::v::
 
 
 #endif

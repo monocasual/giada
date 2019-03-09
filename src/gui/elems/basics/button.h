@@ -39,13 +39,13 @@ class geButton : public geBaseButton
 {
 public:
 
-  geButton(int x, int y, int w, int h, const char *L=0,
-    const char **imgOff=nullptr, const char **imgOn=nullptr);
+	geButton(int x, int y, int w, int h, const char *l=nullptr,
+		const char** imgOff=nullptr, const char** imgOn=nullptr);
 
-  void draw() override;
+	void draw() override;
 
-  const char **imgOff;
-	const char **imgOn;
+	const char** imgOff;
+	const char** imgOn;
 	Fl_Color bgColor0;   // background not clicked
 	Fl_Color bgColor1;   // background clicked
 	Fl_Color bdColor;    // border

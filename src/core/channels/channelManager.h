@@ -25,20 +25,46 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_GLUE_TRANSPORT_H
-#define G_GLUE_TRANSPORT_H
+#ifndef G_CHANNEL_MANAGER_H
+#define G_CHANNEL_MANAGER_H
+
+
+#include <memory>
+#include <string>
+#include "core/types.h"
 
 
 namespace giada {
-namespace c {
-namespace transport 
+namespace m 
 {
-void startStopSeq(bool gui=true);
-void startSeq(bool gui=true);
-void stopSeq(bool gui=true);
-void rewindSeq(bool gui=true, bool notifyJack=true);
-void toggleMetronome(bool gui=true);
-}}} // giada::c::transport::
+class Channel;
+class SampleChannel;
+class MidiChannel;
+
+namespace patch
+{
+struct channel_t;
+}
+namespace channelManager
+{
+/* create (1)
+Creates a new Channel from scratch. */
+
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize, bool inputMonitorOn, size_t column);
+
+/* create (2)
+Creates a new Channel given an existing one (i.e. clone). */
+
+std::unique_ptr<Channel> create(const Channel& ch);
+
+int  writePatch(const Channel* ch, bool isProject);
+void writePatch(const SampleChannel* ch, bool isProject, int index);
+void writePatch(const MidiChannel* ch, bool isProject, int index);
+
+void readPatch(Channel* ch, const patch::channel_t& pch);
+void readPatch(SampleChannel* ch, const std::string& basePath, const patch::channel_t& pch);
+void readPatch(MidiChannel* ch, const patch::channel_t& pch);
+}}}; // giada::m::channelManager
 
 
 #endif

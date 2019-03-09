@@ -33,20 +33,16 @@
 #include <FL/Fl_Double_Window.H>
 
 
+namespace giada {
+namespace v 
+{
 /* cb_window_closer
- * callback for when closing windows. Deletes the widget (delete). */
+Callback for closing windows. Deletes the widget (delete). */
 
-void __cb_window_closer(Fl_Widget* v, void* p);
-
+void cb_window_closer(Fl_Widget* v, void* p);
 
 class gdWindow : public Fl_Double_Window
 {
-protected:
-
-	std::vector<gdWindow*> subWindows;
-	int id;
-	gdWindow* parent;
-
 public:
 
 	gdWindow(int x, int y, int w, int h, const char* title=0, int id=0);
@@ -55,23 +51,37 @@ public:
 
 	static void cb_closeChild(Fl_Widget* v, void* p);
 
+	/* rebuild, refresh
+	Rebuild() is called by the View Updater when something structural changes
+	(e.g. a new channel added). Refresh() is called periodically by the View 
+	Updater during the refresh loop. */
+	
+	virtual void rebuild() {};
+	virtual void refresh() {};
+
+	/* hasWindow
+	True if the window with id 'id' exists in the stack. */
+
+	bool hasWindow(int id) const;
+	
+	int  getId() const;
+	void debug() const;
+
 	void addSubWindow(gdWindow* w);
 	void delSubWindow(gdWindow* w);
 	void delSubWindow(int id);
-
-	int  getId();
 	void setId(int id);
-	void debug();
-
 	void setParent(gdWindow* w);
 	gdWindow* getParent();
 	gdWindow* getChild(int id);
 
-	/* hasWindow
-	 * true if the window with id 'id' exists in the stack. */
+protected:
 
-	bool hasWindow(int id);
+	std::vector<gdWindow*> subWindows;
+	int id;
+	gdWindow* parent;
 };
+}} // giada::v::
 
 
 #endif

@@ -39,16 +39,17 @@ class geCheck;
 class geChoice;
 
 
+namespace giada {
+namespace v 
+{
+class geMidiLearner;
 class gdMidiInputChannel : public gdMidiInputBase
 {
+public:
+
+	gdMidiInputChannel(ID channelId);
+
 private:
-
-	giada::m::Channel* ch;
-
-	geScroll* container;
-	geCheck*  enable;
-	geCheck*  veloAsVol;
-	geChoice* channel;
 
 	static void cb_enable(Fl_Widget* w, void* p);
 	static void cb_setChannel(Fl_Widget* w, void* p);
@@ -65,11 +66,12 @@ private:
 
 #endif
 
-public:
+	m::Channel* m_ch;
 
-	gdMidiInputChannel(giada::m::Channel* ch);
-	~gdMidiInputChannel();
+	geScroll* m_container;
+	geCheck*  m_veloAsVol;
 };
+}} // giada::v::
 
 
 #endif

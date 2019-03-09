@@ -34,14 +34,24 @@
 #include <FL/Fl_Box.H>
 
 
+namespace giada {
+namespace m 
+{ 
+class SampleChannel; 
+}
+namespace v
+{
 class geChannelStatus : public Fl_Box
 {
 public:
-	geChannelStatus(int X, int Y, int W, int H, giada::m::SampleChannel *ch,
-    const char *L=0);
-	void draw();
-	giada::m::SampleChannel *ch;
+
+	geChannelStatus(int x, int y, int w, int h, const m::SampleChannel* ch);
+
+	void draw() override;
+
+	const m::SampleChannel* ch;
 };
+}} // giada::v::
 
 
 #endif

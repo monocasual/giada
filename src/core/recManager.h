@@ -30,25 +30,26 @@
 
 
 #include <pthread.h>
-#include "types.h"
+#include "core/types.h"
 
 
 namespace giada {
 namespace m {
 namespace recManager
 {
-void init(pthread_mutex_t* mixerMutex);
+void init();
 
-/* isActive
-Returns true if its ready for recording, whether it is actually recording 
-something or is in wait mode for a signal. */
+bool isRecording();
+bool isRecordingAction();
+bool isRecordingInput();
 
-bool isActive();
-
-bool startActionRec(RecTriggerMode m);
+void startActionRec(RecTriggerMode m);
 void stopActionRec();
+void toggleActionRec(RecTriggerMode m);
+
 bool startInputRec(RecTriggerMode m);
 void stopInputRec();
+bool toggleInputRec(RecTriggerMode m);
 }}} // giada::m::recManager
 
 #endif

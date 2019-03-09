@@ -33,8 +33,6 @@
 #include "baseActionEditor.h"
 
 
-
-
 namespace giada {
 namespace m
 {
@@ -44,6 +42,23 @@ namespace v
 {
 class gePianoRoll : public geBaseActionEditor
 {
+public:
+
+	static const int MAX_KEYS    = 127;
+	static const int MAX_OCTAVES = 9;
+	static const int KEYS        = 12;
+	static const Pixel CELL_H    = 20;
+	static const Pixel CELL_W    = 40;
+
+	gePianoRoll(Pixel x, Pixel y, Pixel w);
+
+	void draw() override;
+	int  handle(int e) override;
+
+	void rebuild() override;
+
+	Pixel pick;
+
 private:
 
 	enum class Notes
@@ -75,24 +90,7 @@ private:
 	Pixel snapToY(Pixel p) const;
 	int   yToNote(Pixel y) const;
 	Pixel noteToY(int n) const;
-	Pixel getPianoItemW(Pixel x, const m::Action* a1, const m::Action* a2) const;
-
-public:
-
-	static const int MAX_KEYS    = 127;
-	static const int MAX_OCTAVES = 9;
-	static const int KEYS        = 12;
-	static const Pixel CELL_H    = 20;
-	static const Pixel CELL_W    = 40;
-
-	gePianoRoll(Pixel x, Pixel y, Pixel w, m::MidiChannel* ch);
-
-	void draw() override;
-	int  handle(int e) override;
-
-	void rebuild() override;
-
-	Pixel pick;
+	Pixel getPianoItemW(Pixel x, const m::Action& a1, const m::Action& a2) const;
 };
 }} // giada::v::
 

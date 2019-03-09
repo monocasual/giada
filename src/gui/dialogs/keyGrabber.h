@@ -37,15 +37,26 @@ class geBox;
 class geButton;
 
 
+namespace giada {
+namespace v 
+{
 class gdKeyGrabber : public gdWindow
 {
+public:
+
+	gdKeyGrabber(ID channelId);
+
+	int handle(int e) override;
+	void rebuild() override;
+
 private:
 
-	giada::m::Channel* ch;
+	const m::Channel* m_ch;
+	ID m_channelId;
 
-	geBox*    text;
-	geButton* clear;
-	geButton* cancel;
+	geBox*    m_text;
+	geButton* m_clear;
+	geButton* m_cancel;
 
 	static void cb_clear (Fl_Widget* w, void* p);
 	static void cb_cancel(Fl_Widget* w, void* p);
@@ -54,11 +65,8 @@ private:
 
 	void setButtonLabel(int key);
 	void updateText(int key);
-
-public:
-
-	gdKeyGrabber(giada::m::Channel* ch);
-	int handle(int e);
 };
+}} // giada::v::
+
 
 #endif

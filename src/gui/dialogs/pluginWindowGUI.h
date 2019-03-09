@@ -38,29 +38,36 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include "window.h"
-#if defined(__APPLE__)
-	#include <Carbon/Carbon.h>
-#endif
 
 
+namespace giada {
+namespace v
+{
 class gdPluginWindowGUI : public gdWindow
 {
-private:
-
-	giada::m::Plugin* m_plugin;
-
-	static void cb_close  (Fl_Widget* v, void* p);
-	static void cb_refresh(void* data);
-	inline void cb_close  ();
-	inline void cb_refresh();
-
 public:
 
-	gdPluginWindowGUI(giada::m::Plugin* p);
+	gdPluginWindowGUI(const m::Plugin& p);
 	~gdPluginWindowGUI();
+
+private:
+
+	static void cb_close(Fl_Widget* v, void* p);
+	static void cb_refresh(void* data);
+	void cb_close();
+	void cb_refresh();
+
+	void openEditor(void* parent); 
+	void closeEditor(); 
+
+	const m::Plugin& m_plugin;
+
+	juce::AudioProcessorEditor* m_ui;
 };
+}} // giada::v::
 
 
 #endif // include guard
+
 
 #endif // #ifdef WITH_VST

@@ -27,23 +27,25 @@
 
 #include <cassert>
 #include <cstring>
-#include "../deps/rtaudio-mod/RtAudio.h"
-#include "../utils/log.h"
-#include "../utils/math.h"
-#include "wave.h"
-#include "kernelAudio.h"
-#include "recorder.h"
-#include "pluginHost.h"
-#include "conf.h"
-#include "mixerHandler.h"
-#include "clock.h"
-#include "const.h"
-#include "channel.h"
-#include "sampleChannel.h"
-#include "midiChannel.h"
-#include "audioBuffer.h"
-#include "action.h"
-#include "mixer.h"
+#include "deps/rtaudio-mod/RtAudio.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/wave.h"
+#include "core/kernelAudio.h"
+#include "core/recorder.h"
+#include "core/pluginHost.h"
+#include "core/conf.h"
+#include "core/mixerHandler.h"
+#include "core/clock.h"
+#include "core/const.h"
+#include "core/audioBuffer.h"
+#include "core/action.h"
+#include "core/mixer.h"
 
 
 namespace giada {
@@ -93,20 +95,23 @@ struct Metronome
 	}
 } metronome_;
 
-/* vChanInput
+/* vChanInput_
 Virtual channel for input recording. */
 
 AudioBuffer vChanInput_;
 
-/* vChanInToOut
+/* vChanInToOut_
 Virtual channel in->out bridge (hear what you're playin). */
 
 AudioBuffer vChanInToOut_;
 
-/* inputTracker
+/* inputTracker_
 Frame position while recording. */
 
 Frame inputTracker_ = 0;
+
+/* signalCb_
+Callback triggered when the input signal level reaches a threshold. */
 
 std::function<void()> signalCb_ = nullptr;
 
@@ -118,8 +123,8 @@ void computePeak_(const AudioBuffer& buf, std::atomic<float>& peak)
 {
 	for (int i=0; i<buf.countFrames(); i++)
 		for (int j=0; j<buf.countChannels(); j++)
-			if (buf[i][j] > peak.load())
-				peak.store(buf[i][j]);
+			if (buf[i][j] > peak)
+				peak = buf[i][j];
 }
 
 
@@ -130,14 +135,14 @@ Records from line in. */
 
 void lineInRec_(const AudioBuffer& inBuf)
 {
-	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled() || !recording)
+	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled())
 		return;
 
 	for (int i=0; i<inBuf.countFrames(); i++, inputTracker_++)
 		for (int j=0; j<inBuf.countChannels(); j++) {
 			if (inputTracker_ >= clock::getFramesInLoop())
 				inputTracker_ = 0;
-			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol.load();  // adding: overdub!
+			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol;  // adding: overdub!
 		}
 }
 
@@ -165,28 +170,14 @@ void processLineIn_(const AudioBuffer& inBuf)
 	if (inToOut)
 		for (int i=0; i<vChanInToOut_.countFrames(); i++)
 			for (int j=0; j<vChanInToOut_.countChannels(); j++)
-				vChanInToOut_[i][j] = inBuf[i][j] * inVol.load();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-/* prepareBuffers
-Cleans up every buffer, both in Mixer and in channels. */
-
-void prepareBuffers_(AudioBuffer& outBuf)
-{
-	outBuf.clear();
-	vChanInToOut_.clear();
-	for (Channel* channel : channels)
-		channel->prepareBuffer(clock::isRunning());
+				vChanInToOut_[i][j] = inBuf[i][j] * inVol;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 /* doQuantize
-Computes quantization on 'rewind' button and all channels. */
+Computes quantization on 'rewind' button. */
 
 void doQuantize_(unsigned frame)
 {
@@ -197,26 +188,54 @@ void doQuantize_(unsigned frame)
 
 	if (rewindWait) {
 		rewindWait = false;
-		rewind();
+		clock::rewind();
 	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* renderIO
-Final processing stage. Take each channel and process it (i.e. copy its
-content to the output buffer). Process plugins too, if any. */
 
-void renderIO_(AudioBuffer& outBuf, const AudioBuffer& inBuf)
+void renderMetronome_(AudioBuffer& outBuf, Frame f)
 {
-	for (Channel* channel : channels)
-		channel->process(outBuf, inBuf, isChannelAudible(channel), clock::isRunning());
+	if (!metronome_.running)
+		return;
 
-#ifdef WITH_VST
-	pluginHost::processStack(outBuf, pluginHost::StackType::MASTER_OUT);
-	pluginHost::processStack(vChanInToOut_, pluginHost::StackType::MASTER_IN);
-#endif
+	if (clock::isOnBar() || metronome_.playBar)
+		metronome_.render(outBuf, metronome_.playBar, metronome_.bar, f);
+	else
+	if (clock::isOnBeat() || metronome_.playBeat)
+		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void processSequencer_(AudioBuffer& out, const AudioBuffer& in, model::Layout& layout)
+{
+	for (int j=0; j<out.countFrames(); j++) {
+		if (clock::isRunning()) {
+			layout.parse(j);
+			doQuantize_(j);
+		}
+		clock::sendMIDIsync();
+		clock::incrCurrentFrame();
+		renderMetronome_(out, j);
+	}
+	lineInRec_(in);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+/* prepareBuffers
+Cleans up every buffer. */
+
+void prepareBuffers_(AudioBuffer& outBuf)
+{
+	outBuf.clear();
+	vChanInToOut_.clear();
 }
 
 
@@ -248,43 +267,8 @@ void finalizeOutput_(AudioBuffer& outBuf)
 		for (int j=0; j<outBuf.countChannels(); j++) {
 			if (inToOut) // Merge vChanInToOut_, if enabled
 				outBuf[i][j] += vChanInToOut_[i][j];
-			outBuf[i][j] *= outVol.load(); 
+			outBuf[i][j] *= outVol; 
 		}
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void renderMetronome_(AudioBuffer& outBuf, Frame f)
-{
-	if (!metronome_.running)
-		return;
-
-	if (clock::isOnBar() || metronome_.playBar)
-		metronome_.render(outBuf, metronome_.playBar, metronome_.bar, f);
-	else
-	if (clock::isOnBeat() || metronome_.playBeat)
-		metronome_.render(outBuf, metronome_.playBeat, metronome_.beat, f);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void parseEvents_(Frame f)
-{
-	FrameEvents fe;
-	fe.frameLocal   = f;
-	fe.frameGlobal  = clock::getCurrentFrame();
-	fe.doQuantize   = clock::getQuantize() == 0 || !clock::quantoHasPassed();
-	fe.onBar        = clock::isOnBar();
-	fe.onFirstBeat  = clock::isOnFirstBeat();
-	fe.quantoPassed = clock::quantoHasPassed();
-	fe.actions      = recorder::getActionsOnFrame(clock::getCurrentFrame());
-
-	for (Channel* channel : channels)
-		channel->parseEvents(fe);	
 }
 }; // {anonymous}
 
@@ -294,21 +278,13 @@ void parseEvents_(Frame f)
 /* -------------------------------------------------------------------------- */
 
 
-std::vector<Channel*> channels;
-
-bool  recording  = false;
-bool  ready      = true;
-bool  metronome  = false;
-int   waitRec    = 0;
-bool  rewindWait = false;
-bool  hasSolos   = false;
-bool  inToOut    = false;
+std::atomic<bool>  rewindWait(false);
+std::atomic<bool>  hasSolos(false);
+std::atomic<bool>  inToOut(false);
 std::atomic<float> outVol(G_DEFAULT_OUT_VOL);
 std::atomic<float> inVol(G_DEFAULT_IN_VOL);
 std::atomic<float> peakOut(0.0);
 std::atomic<float> peakIn(0.0);
-
-pthread_mutex_t mutex;
 
 
 /* -------------------------------------------------------------------------- */
@@ -316,7 +292,7 @@ pthread_mutex_t mutex;
 
 void init(Frame framesInSeq, Frame framesInBuffer)
 {
-	/* Allocate virtual input channels. vChanInput_ has variable size: it depends
+	/* Allocate virtual inputs. vChanInput_ has variable size: it depends
 	on how many frames there are in sequencer. */
 	
 	vChanInput_.alloc(framesInSeq, G_MAX_IO_CHANS);
@@ -327,9 +303,7 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 
 	hasSolos = false;
 
-	pthread_mutex_init(&mutex, nullptr);
-
-	rewind();
+	clock::rewind();
 }
 
 
@@ -342,17 +316,30 @@ void allocVirtualInput(Frame frames)
 }
 
 
+void clearVirtualInput()
+{
+	vChanInput_.clear();
+}
+
+
+const AudioBuffer& getVirtualInput()
+{
+	return vChanInput_;
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, 
 	double streamTime, RtAudioStreamStatus status, void* userData)
 {
-	if (!ready)
+	if (!kernelAudio::isReady())
 		return 0;
 
 #ifdef __linux__
-	clock::recvJackSync();
+	if (kernelAudio::getAPI() == G_SYS_API_JACK)
+		clock::recvJackSync();
 #endif
 
 	AudioBuffer out, in;
@@ -360,32 +347,25 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	if (kernelAudio::isInputEnabled())
 		in.setData((float*) inBuf, bufferSize, G_MAX_IO_CHANS);
 
-	peakOut.store(0.0);  // reset peak calculator
-	peakIn.store(0.0);   // reset peak calculator
+	/* Reset peak computation. */
+
+	peakOut = 0.0;
+	peakIn  = 0.0;
 
 	prepareBuffers_(out);
 	processLineIn_(in);
 
-	pthread_mutex_lock(&mutex);
+	/* Process model. */
 
-	if (clock::isActive()) {
-		for (unsigned j=0; j<bufferSize; j++) {
-			if (clock::isRunning()) {
-				parseEvents_(j);
-				doQuantize_(j);
-			}
-			clock::sendMIDIsync();
-			clock::incrCurrentFrame();
-			renderMetronome_(out, j);
-		}
-		lineInRec_(in);
-	}
+//out[0][0] = 3.0f;
+	std::shared_ptr<model::Layout> layout = model::getLayout();
 
-	renderIO_(out, in);
+	if (clock::isActive()) 
+		processSequencer_(out, in, *layout.get());
 
-	pthread_mutex_unlock(&mutex);
+	layout->render(out, in, vChanInToOut_);
 
-	/* Post processing */
+	/* Post processing. */
 
 	finalizeOutput_(out);
 	limitOutput_(out);
@@ -406,28 +386,13 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 void close()
 {
 	clock::setStatus(ClockStatus::STOPPED);
-	while (channels.size() > 0)
-		mh::deleteChannel(channels.at(0));
-	pthread_mutex_destroy(&mutex);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isSilent()
-{
-	for (const Channel* ch : channels)
-		if (ch->isPlaying())
-			return false;
-	return true;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool isChannelAudible(Channel* ch)
+bool isChannelAudible(const Channel* ch)
 {
 	return !hasSolos || (hasSolos && ch->solo);
 }
@@ -438,23 +403,16 @@ bool isMetronomeOn() { return metronome_.running; }
 /* -------------------------------------------------------------------------- */
 
 
-void rewind()
-{
-	clock::rewind();
-	if (clock::isRunning())
-		for (Channel* ch : channels)
-			ch->rewindBySeq();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void startInputRec()
 {
 	/* Start inputTracker_ from the current frame, not the beginning. */
-	recording     = true;
 	inputTracker_ = clock::getCurrentFrame();
+}
+
+
+void stopInputRec()
+{
+	inputTracker_ = 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -478,22 +436,5 @@ void setMetronome(bool v)
 void setSignalCallback(std::function<void()> f)
 {
 	signalCb_ = f;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void mergeVirtualInput()
-{
-	for (Channel* ch : channels) {
-		/* TODO - move this to audioProc::*/
-		if (ch->type == ChannelType::MIDI)
-			continue;
-		SampleChannel* sch = static_cast<SampleChannel*>(ch);
-		if (sch->armed)
-			sch->wave->copyData(vChanInput_[0], vChanInput_.countFrames());
-	}
-	vChanInput_.clear();
 }
 }}}; // giada::m::mixer::

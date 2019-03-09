@@ -25,24 +25,26 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <vector>
-#include "../glue/plugin.h"
-#include "../glue/io.h"
-#include "../glue/channel.h"
-#include "../glue/transport.h"
-#include "../glue/main.h"
-#include "../utils/log.h"
-#include "channel.h"
-#include "sampleChannel.h"
-#include "midiChannel.h"
-#include "conf.h"
-#include "mixer.h"
-#include "pluginHost.h"
-#include "plugin.h"
-#include "midiDispatcher.h"
-
-
-using std::vector;
+#include "glue/plugin.h"
+#include "glue/io.h"
+#include "glue/channel.h"
+#include "glue/main.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "core/model/model.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/conf.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/pluginHost.h"
+#include "core/plugin.h"
+#include "core/recManager.h"
+#include "core/types.h"
+#include "core/midiDispatcher.h"
 
 
 namespace giada {
@@ -55,10 +57,8 @@ namespace
 Callback prepared by the gdMidiGrabber window and called by midiDispatcher. It 
 contains things to do once the midi message has been stored. */
 
-cb_midiLearn* cb_learn_ = nullptr;
-void* cb_data_ = nullptr;	
-
-std::function<void()> signalCb_ = nullptr;
+std::function<void()>          signalCb_ = nullptr;
+std::function<void(MidiEvent)> learnCb_  = nullptr;
 
 
 /* -------------------------------------------------------------------------- */
@@ -66,26 +66,23 @@ std::function<void()> signalCb_ = nullptr;
 
 #ifdef WITH_VST
 
-void processPlugins_(Channel* ch, const MidiEvent& midiEvent)
+void processPlugins_(const std::unique_ptr<Channel>& ch, const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
+	float    vf   = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, 1.0f);
 
 	/* Plugins' parameters layout reflects the structure of the matrix
-	Channel::midiInPlugins. It is safe to assume then that i (i.e. Plugin*) and k 
-	indexes match both the structure of Channel::midiInPlugins and 
-	vector<Plugin*>* plugins. */
-
-	std::vector<Plugin*> plugins = pluginHost::getStack(pluginHost::StackType::CHANNEL, ch);
-
-	for (Plugin* plugin : plugins) {
-		for (unsigned k=0; k<plugin->midiInParams.size(); k++) {
-			uint32_t midiInParam = plugin->midiInParams.at(k);
-			if (pure != midiInParam)
+	Channel::midiInPlugins. It is safe to assume then that Plugin 'p' and 
+	k indexes match both the structure of Channel::midiInPlugins and the vector
+	of plugins. */
+	
+	for (const std::shared_ptr<Plugin>& p : ch->plugins) {
+		for (unsigned k = 0; k < p->midiInParams.size(); k++) {
+			if (pure != p->midiInParams.at(k))
 				continue;
-			float vf = midiEvent.getVelocity() / 127.0f;
-			c::plugin::setParameter(plugin, k, vf, false); // false: not from GUI
+			c::plugin::setParameter(p->id, k, vf, ch->id, /*gui=*/false);
 			gu_log("  >>> [plugin %d parameter %d] ch=%d (pure=0x%X, value=%d, float=%f)\n",
-				plugin->getId(), k, ch->index, pure, midiEvent.getVelocity(), vf);
+				p->id, k, ch->id, pure, midiEvent.getVelocity(), vf);
 		}
 	}
 }
@@ -100,7 +97,7 @@ void processChannels_(const MidiEvent& midiEvent)
 {
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
-	for (Channel* ch : mixer::channels) {
+	for (const std::unique_ptr<Channel>& ch : model::getLayout()->channels) {
 
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
@@ -109,47 +106,47 @@ void processChannels_(const MidiEvent& midiEvent)
 			continue;
 
 		if      (pure == ch->midiInKeyPress) {
-			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::io::keyPress(ch, false, false, midiEvent.getVelocity());
+			gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::io::keyPress(ch->id, false, false, midiEvent.getVelocity());
 		}
 		else if (pure == ch->midiInKeyRel) {
-			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::io::keyRelease(ch, false, false);
+			gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::io::keyRelease(ch->id, false, false);
 		}
 		else if (pure == ch->midiInMute) {
-			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::channel::toggleMute(ch, false);
+			gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::channel::setMute(ch->id, !ch->mute.load());
 		}		
 		else if (pure == ch->midiInKill) {
-			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::channel::kill(ch);
+			gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::channel::kill(ch->id, /*record=*/false);
 		}		
 		else if (pure == ch->midiInArm) {
-			gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::channel::toggleArm(ch, false);
+			gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::channel::setArm(ch->id, ch->armed.load());
 		}
 		else if (pure == ch->midiInSolo) {
-			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->index, pure);
-			c::channel::toggleSolo(ch, false);
+			gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->id, pure);
+			c::channel::setSolo(ch->id, !ch->solo.load());
 		}
 		else if (pure == ch->midiInVolume) {
-			float vf = midiEvent.getVelocity() / 127.0f; // TODO: u::math::map
+			float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
 			gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
-				ch->index, pure, midiEvent.getVelocity(), vf);
-			c::channel::setVolume(ch, vf, false);
+				ch->id, pure, midiEvent.getVelocity(), vf);
+			c::channel::setVolume(ch->id, vf, /*gui=*/false);
 		}
 		else {
-			SampleChannel* sch = static_cast<SampleChannel*>(ch);
+			const SampleChannel* sch = static_cast<const SampleChannel*>(ch.get());
 			if (pure == sch->midiInPitch) {
-				float vf = midiEvent.getVelocity() / (127/4.0f); // [0-127] ~> [0.0-4.0] TODO: u::math::map
+				float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH); 
 				gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
-					sch->index, pure, midiEvent.getVelocity(), vf);
-				c::channel::setPitch(sch, vf);
+					sch->id, pure, midiEvent.getVelocity(), vf);
+				c::channel::setPitch(sch->id, vf);
 			}
 			else 
 			if (pure == sch->midiInReadActions) {
-				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->index, pure);
-				c::channel::toggleReadingActions(sch, false);
+				gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->id, pure);
+				c::channel::toggleReadingActions(sch->id);
 			}
 		}
 
@@ -171,39 +168,41 @@ void processChannels_(const MidiEvent& midiEvent)
 
 void processMaster_(const MidiEvent& midiEvent)
 {
+	const bool gui = false;
+
 	uint32_t pure = midiEvent.getRawNoVelocity();
 
 	if      (pure == conf::midiInRewind) {
 		gu_log("  >>> rewind (master) (pure=0x%X)\n", pure);
-		c::transport::rewindSeq(false);
+		mh::rewindSequencer();
 	}
 	else if (pure == conf::midiInStartStop) {
 		gu_log("  >>> startStop (master) (pure=0x%X)\n", pure);
-		c::transport::startStopSeq(false);
+		mh::toggleSequencer();
 	}
 	else if (pure == conf::midiInActionRec) {
 		gu_log("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		c::io::toggleActionRec(false);
+		recManager::toggleActionRec(static_cast<RecTriggerMode>(conf::recTriggerMode));
 	}
 	else if (pure == conf::midiInInputRec) {
 		gu_log("  >>> inputRec (master) (pure=0x%X)\n", pure);
-		c::io::toggleInputRec(false);
+		c::main::toggleInputRec();
 	}
 	else if (pure == conf::midiInMetronome) {
 		gu_log("  >>> metronome (master) (pure=0x%X)\n", pure);
-		c::transport::toggleMetronome(false);
+		m::mixer::toggleMetronome();
 	}
 	else if (pure == conf::midiInVolumeIn) {
-		float vf = midiEvent.getVelocity() / 127.0f;
+		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
 		gu_log("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		c::main::setInVol(vf, false);
+		c::main::setInVol(vf, gui);
 	}
 	else if (pure == conf::midiInVolumeOut) {
-		float vf = midiEvent.getVelocity() / 127.0f;
+		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
 		gu_log("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		c::main::setOutVol(vf, false);
+		c::main::setOutVol(vf, gui);
 	}
 	else if (pure == conf::midiInBeatDouble) {
 		gu_log("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
@@ -234,10 +233,9 @@ void triggerSignalCb_()
 /* -------------------------------------------------------------------------- */
 
 
-void startMidiLearn(cb_midiLearn* cb, void* data)
+void startMidiLearn(std::function<void(MidiEvent)> f)
 {
-	cb_learn_ = cb;
-	cb_data_  = data;
+	learnCb_ = f;
 }
 
 
@@ -246,8 +244,7 @@ void startMidiLearn(cb_midiLearn* cb, void* data)
 
 void stopMidiLearn()
 {
-	cb_learn_ = nullptr;
-	cb_data_  = nullptr;
+	learnCb_ = nullptr;
 }
 
 
@@ -273,8 +270,9 @@ void dispatch(int byte1, int byte2, int byte3)
 	then each channel in the stack. This way incoming signals don't get processed 
 	by glue_* when MIDI learning is on. */
 
-	if (cb_learn_)
-		cb_learn_(midiEvent.getRawNoVelocity(), cb_data_);
+	if (learnCb_ != nullptr) {
+		learnCb_(midiEvent);
+	}
 	else {
 		processMaster_(midiEvent);
 		processChannels_(midiEvent);

@@ -116,7 +116,7 @@ void AudioBuffer::copyFrame(int frame, float* values)
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::copyData(float* data, int frames, int offset)
+void AudioBuffer::copyData(const float* data, int frames, int offset)
 {
 	assert(m_data != nullptr);
 	assert(frames <= m_size - offset);

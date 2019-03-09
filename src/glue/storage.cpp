@@ -25,41 +25,39 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../core/mixer.h"
-#include "../core/mixerHandler.h"
-#include "../core/channel.h"
-#include "../core/recorderHandler.h"
-#include "../core/pluginManager.h"
-#include "../core/pluginHost.h"
-#include "../core/plugin.h"
-#include "../core/conf.h"
-#include "../core/patch.h"
-#include "../core/sampleChannel.h"
-#include "../core/midiChannel.h"
-#include "../core/waveManager.h"
-#include "../core/clock.h"
-#include "../core/wave.h"
-#include "../utils/gui.h"
-#include "../utils/log.h"
-#include "../utils/string.h"
-#include "../utils/fs.h"
-#include "../gui/elems/basics/progress.h"
-#include "../gui/elems/mainWindow/keyboard/column.h"
-#include "../gui/elems/mainWindow/keyboard/keyboard.h"
-#include "../gui/dialogs/mainWindow.h"
-#include "../gui/dialogs/warnings.h"
-#include "../gui/dialogs/browser/browserSave.h"
-#include "../gui/dialogs/browser/browserLoad.h"
+#include <cassert>
+#include "core/model/model.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/recorderHandler.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
+#include "core/plugin.h"
+#include "core/conf.h"
+#include "core/patch.h"
+#include "core/waveManager.h"
+#include "core/clock.h"
+#include "core/wave.h"
+#include "utils/gui.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include "utils/fs.h"
+#include "gui/elems/basics/progress.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/browser/browserSave.h"
+#include "gui/dialogs/browser/browserLoad.h"
 #include "main.h"
 #include "channel.h"
 #include "storage.h"
 
 
-extern gdMainWindow* G_MainWin;
-
-
-using std::string;
-using std::vector;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -70,7 +68,7 @@ namespace
 {
 #ifdef WITH_VST
 
-void fillPatchGlobalsPlugins_(vector<m::Plugin*> stack, vector<m::patch::plugin_t>& patch)
+void fillPatchGlobalsPlugins_(std::vector<const m::Plugin*> stack, std::vector<m::patch::plugin_t>& patch)
 {
 	using namespace giada::m;
 
@@ -92,6 +90,7 @@ void fillPatchGlobalsPlugins_(vector<m::Plugin*> stack, vector<m::patch::plugin_
 
 void fillPatchColumns_()
 {
+/*
 	using namespace giada::m;
 
 	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
@@ -110,6 +109,7 @@ void fillPatchColumns_()
 		}
 		patch::columns.push_back(pCol);
 	}
+*/
 }
 
 
@@ -118,17 +118,19 @@ void fillPatchColumns_()
 
 void fillPatchChannels_(bool isProject)
 {
+#if 0
 	using namespace giada::m;
 
 	for (unsigned i=0; i<mixer::channels.size(); i++)
 		mixer::channels.at(i)->writePatch(i, isProject);
+#endif
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void fillPatchGlobals_(const string& name)
+void fillPatchGlobals_(const std::string& name)
 {
 	using namespace giada::m;
 
@@ -147,10 +149,10 @@ void fillPatchGlobals_(const string& name)
 
 #ifdef WITH_VST
 
-	fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN),
-			patch::masterInPlugins);
-	fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT),
-			patch::masterOutPlugins);
+	//fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins,
+	//		patch::masterInPlugins);
+	//fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins,
+	//		patch::masterOutPlugins);
 
 #endif
 }
@@ -159,7 +161,7 @@ void fillPatchGlobals_(const string& name)
 /* -------------------------------------------------------------------------- */
 
 
-bool savePatch_(const string& fullPath, const string& name, bool isProject)
+bool savePatch_(const std::string& fullPath, const std::string& name, bool isProject)
 {
 	using namespace giada::m;
 
@@ -181,24 +183,24 @@ bool savePatch_(const string& fullPath, const string& name, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-string makeSamplePath_(const string& base, const Wave& w, int k)
+std::string makeSamplePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return base + G_SLASH + w.getBasename(false) + "-" + u::string::iToString(k) + "." +  w.getExtension();
+	return base + G_SLASH + w.getBasename(false) + "-" + std::to_string(k) + "." +  w.getExtension();
 } 
 
 
-string makeUniqueSamplePath_(const string& base, const m::SampleChannel* ch)
+std::string makeUniqueSamplePath_(const std::string& base, const m::SampleChannel* ch)
 {
 	using namespace giada::m;
 
-	string path = base + G_SLASH + ch->wave->getBasename(true);
+	std::string path = base + G_SLASH + ch->wave->getBasename(true);
 	if (mh::uniqueSamplePath(ch, path))
 		return path;
 
 	int k = 0;
-	path = makeSamplePath_(base, *ch->wave.get(), k);
+	path = makeSamplePath_(base, *ch->wave, k);
 	while (!mh::uniqueSamplePath(ch, path))
-		path = makeSamplePath_(base, *ch->wave.get(), k++);
+		path = makeSamplePath_(base, *ch->wave, k++);
 	return path;
 }
 } // {anonymous}
@@ -211,17 +213,19 @@ string makeUniqueSamplePath_(const string& base, const m::SampleChannel* ch)
 
 void savePatch(void* data)
 {
-	gdBrowserSave* browser = (gdBrowserSave*) data;
-	string name            = gu_stripExt(browser->getName());
-	string fullPath        = browser->getCurrentPath() + G_SLASH + name + ".gptc";
+	assert(false);
+#if 0	
+	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
+	std::string name          = gu_stripExt(browser->getName());
+	std::string fullPath      = browser->getCurrentPath() + G_SLASH + name + ".gptc";
 
 	if (name == "") {
-		gdAlert("Please choose a file name.");
+		v::gdAlert("Please choose a file name.");
 		return;
 	}
 
 	if (gu_fileExists(fullPath))
-		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
+		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
 	if (savePatch_(fullPath, name, false)) {  // false == not a project
@@ -229,7 +233,8 @@ void savePatch(void* data)
 		browser->do_callback();
 	}
 	else
-		gdAlert("Unable to save the patch!");
+		v::gdAlert("Unable to save the patch!");
+#endif
 }
 
 
@@ -238,18 +243,20 @@ void savePatch(void* data)
 
 void loadPatch(void* data)
 {
+	assert(false);
+#if 0
 	using namespace giada::m;
 
-	gdBrowserLoad* browser = (gdBrowserLoad*) data;
-	string fullPath        = browser->getSelectedItem();
-	bool isProject         = gu_isProject(browser->getSelectedItem());
+	v::gdBrowserLoad* browser = (v::gdBrowserLoad*) data;
+	std::string fullPath      = browser->getSelectedItem();
+	bool isProject            = gu_isProject(browser->getSelectedItem());
 
 	browser->showStatusBar();
 
 	gu_log("[glue] loading %s...\n", fullPath.c_str());
 
-	string fileToLoad = fullPath;  // patch file to read from
-	string basePath   = "";        // base path, in case of reading from a project
+	std::string fileToLoad = fullPath;  // patch file to read from
+	std::string basePath   = "";        // base path, in case of reading from a project
 	if (isProject) {
 		fileToLoad = fullPath + G_SLASH + gu_stripExt(gu_basename(fullPath)) + ".gptc";
 		basePath   = fullPath + G_SLASH;
@@ -258,10 +265,10 @@ void loadPatch(void* data)
 	int res = patch::read(fileToLoad);
 	if (res != PATCH_READ_OK) {
 		if (res == PATCH_UNREADABLE)
-			isProject ? gdAlert("This project is unreadable.") : gdAlert("This patch is unreadable.");
+			isProject ? v::gdAlert("This project is unreadable.") : v::gdAlert("This patch is unreadable.");
 		else
 		if (res == PATCH_INVALID)
-			isProject ? gdAlert("This project is not valid.") : gdAlert("This patch is not valid.");
+			isProject ? v::gdAlert("This project is not valid.") : v::gdAlert("This patch is not valid.");
 		browser->hideStatusBar();
 		return;
 	}
@@ -318,11 +325,12 @@ void loadPatch(void* data)
 #ifdef WITH_VST
 
 	if (pluginManager::hasMissingPlugins())
-		gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
+		v::gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
 
 #endif
 
 	browser->do_callback();
+#endif
 }
 
 
@@ -331,15 +339,16 @@ void loadPatch(void* data)
 
 void saveProject(void* data)
 {
+#if 0
 	using namespace giada::m;
 
-	gdBrowserSave* browser = (gdBrowserSave*) data;
+	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
 	string name            = gu_stripExt(browser->getName());
 	string folderPath      = browser->getCurrentPath();
 	string fullPath        = folderPath + G_SLASH + name + ".gprj";
 
 	if (name == "") {
-		gdAlert("Please choose a project name.");
+		v::gdAlert("Please choose a project name.");
 		return;
 	}
 
@@ -372,14 +381,15 @@ void saveProject(void* data)
 
 		gu_log("[saveProject] Save file to %s\n", sch->wave->getPath().c_str());
 
-		waveManager::save(sch->wave.get(), sch->wave->getPath()); // TODO - error checking	
+		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
 	}
 
 	string gptcPath = fullPath + G_SLASH + name + ".gptc";
 	if (savePatch_(gptcPath, name, true)) // true == it's a project
 		browser->do_callback();
 	else
-		gdAlert("Unable to save the project!");
+		v::gdAlert("Unable to save the project!");
+#endif
 }
 
 
@@ -388,22 +398,19 @@ void saveProject(void* data)
 
 void loadSample(void* data)
 {
-	gdBrowserLoad* browser = (gdBrowserLoad*) data;
-	string fullPath        = browser->getSelectedItem();
+	v::gdBrowserLoad* browser  = (v::gdBrowserLoad*) data;
+	std::string       fullPath = browser->getSelectedItem();
 
 	if (fullPath.empty())
 		return;
 
-	int res = c::channel::loadChannel(static_cast<m::SampleChannel*>(browser->getChannel()), 
-		fullPath);
+	int res = c::channel::loadChannel(browser->getChannel()->id, fullPath);
 
 	if (res == G_RES_OK) {
 		m::conf::samplePath = gu_dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
-	else
-		G_MainWin->keyboard->printChannelMessage(res);
 }
 
 
@@ -412,34 +419,43 @@ void loadSample(void* data)
 
 void saveSample(void* data)
 {
-	using namespace giada::m;
-
-	gdBrowserSave* browser = (gdBrowserSave*) data;
-	string name            = browser->getName();
-	string folderPath      = browser->getCurrentPath();
+	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
+	std::string name          = browser->getName();
+	std::string folderPath    = browser->getCurrentPath();
 
 	if (name == "") {
-		gdAlert("Please choose a file name.");
+		v::gdAlert("Please choose a file name.");
 		return;
 	}
 
-	/* bruteforce check extension. */
+	std::string filePath = folderPath + G_SLASH + gu_stripExt(name) + ".wav";
 
-	string filePath = folderPath + G_SLASH + gu_stripExt(name) + ".wav";
+	if (gu_fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
+		return;
 
-	if (gu_fileExists(filePath))
-		if (!gdConfirmWin("Warning", "File exists: overwrite?"))
-			return;
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(browser->getChannel());
 
-	SampleChannel* ch = static_cast<SampleChannel*>(browser->getChannel());
-
-	if (waveManager::save(ch->wave.get(), filePath)) {
-		gu_log("[saveSample] sample saved to %s\n", filePath.c_str());
-		conf::samplePath = gu_dirname(filePath);
-		browser->do_callback();
+	if (!m::waveManager::save(*ch->wave.get(), filePath)) {
+		v::gdAlert("Unable to save this sample!");
+		return;
 	}
-	else
-		gdAlert("Unable to save this sample!");
+	
+	gu_log("[saveSample] sample saved to %s\n", filePath.c_str());
+	
+	/* Update last used path in conf, so that it can be reused next time. */
+
+	m::conf::samplePath = gu_dirname(filePath);
+
+	/* Update logical and edited states in Wave. No need for atomic operations
+	here: no other thread will read this data beyond the UI one. */
+
+	m::Wave* w = m::model::getData().waves.at(ch->id).get();
+	w->setLogical(false);
+	w->setEdited(false);
+
+	/* Finally close the browser. */
+
+	browser->do_callback();
 }
 
 }}} // giada::c::storage::

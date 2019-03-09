@@ -25,59 +25,61 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/string.h"
-#include "../dialogs/midiIO/midiInputBase.h"
+#include "utils/string.h"
+#include "core/midiDispatcher.h"
+#include "core/midiEvent.h"
+#include "glue/io.h"
+#include "gui/dialogs/midiIO/midiInputBase.h"
 #include "basics/boxtypes.h"
 #include "basics/button.h"
 #include "basics/box.h"
 #include "midiLearner.h"
 
 
-using std::string;
-using namespace giada;
-
-
-geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l,
-  m::midiDispatcher::cb_midiLearn* cb, uint32_t* param, m::Channel* ch)
+namespace giada {
+namespace v 
+{
+geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l, 
+	std::atomic<uint32_t>& param, const m::Channel* ch)
 : Fl_Group(X, Y, W, 20),
-  callback(cb),
-  ch      (ch),
-  param   (param)
+  m_ch    (ch),
+  m_param (param)
 {
 	begin();
-	text   = new geBox(x(), y(), 156, 20, l);
-	value  = new geButton(text->x()+text->w()+4, y(), 80, 20);
-	button = new geButton(value->x()+value->w()+4, y(), 40, 20, "learn");
+	m_text   = new geBox(x(), y(), 156, 20, l);
+	m_value  = new geButton(m_text->x()+m_text->w()+4, y(), 80, 20);
+	m_button = new geButton(m_value->x()+m_value->w()+4, y(), 40, 20, "learn");
 	end();
 
-	text->box(G_CUSTOM_BORDER_BOX);
-	text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
+	m_text->box(G_CUSTOM_BORDER_BOX);
+	m_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-	value->box(G_CUSTOM_BORDER_BOX);
-	value->callback(cb_value, (void*)this);
-	value->when(FL_WHEN_RELEASE);
-	updateValue();
+	m_value->box(G_CUSTOM_BORDER_BOX);
+	m_value->callback(cb_value, (void*)this);
+	m_value->when(FL_WHEN_RELEASE);
 
-	button->type(FL_TOGGLE_BUTTON);
-	button->callback(cb_button, (void*)this);
+	m_button->type(FL_TOGGLE_BUTTON);
+	m_button->callback(cb_button, (void*)this);
+	
+	refresh();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::updateValue()
+void geMidiLearner::refresh()
 {
-	string tmp;
-	if (*param != 0x0) {
-		tmp = "0x" + u::string::iToString(*param, true); // true: hex mode
+	std::string tmp = "(not set)";
+	
+	if (m_param != 0x0) {
+		tmp = "0x" + u::string::iToString(m_param.load(), true); // true: hex mode
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 	}
-	else
-		tmp = "(not set)";
-	value->copy_label(tmp.c_str());
-	button->value(0);
+
+	m_value->copy_label(tmp.c_str());
+	m_button->value(0);
 }
 
 
@@ -93,11 +95,8 @@ void geMidiLearner::cb_value(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_va
 
 void geMidiLearner::cb_value()
 {
-	if (Fl::event_button() == FL_RIGHT_MOUSE) {
-		*param = 0x0;
-		updateValue();
-	}
-	/// TODO - elif (LEFT_MOUSE) : insert values by hand
+	if (Fl::event_button() == FL_RIGHT_MOUSE)
+		c::io::midiLearn(m::MidiEvent(), m_param, m_ch);  // Empty event (0x0)
 }
 
 
@@ -106,12 +105,13 @@ void geMidiLearner::cb_value()
 
 void geMidiLearner::cb_button()
 {
-	if (button->value() == 1) {
-		cbData.window  = static_cast<gdMidiInputBase*>(parent()); // parent = gdMidiInput
-		cbData.learner = this;
-		cbData.channel = ch;
-		m::midiDispatcher::startMidiLearn(callback, (void*)&cbData);
-	}
+	if (m_button->value() == 1)
+		m::midiDispatcher::startMidiLearn([this](m::MidiEvent e) 
+		{
+			c::io::midiLearn(e, m_param, m_ch);
+		});
 	else
-		m::midiDispatcher::stopMidiLearn();
+		m::midiDispatcher::stopMidiLearn();	
 }
+
+}} // giada::v::

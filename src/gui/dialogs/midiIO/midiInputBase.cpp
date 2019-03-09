@@ -25,20 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/midiDispatcher.h"
-#include "../../../core/channel.h"
-#include "../../../core/conf.h"
-#include "../../../utils/log.h"
-#include "../../elems/midiLearner.h"
+#include "core/channels/channel.h"
+#include "core/midiDispatcher.h"
+#include "core/conf.h"
+#include "utils/log.h"
+#include "gui/elems/midiLearner.h"
 #include "midiInputBase.h"
 
 
-using std::string;
-using namespace giada::m;
-
-
+namespace giada {
+namespace v 
+{
 gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char* title)
-	: gdWindow(x, y, w, h, title)
+: gdWindow(x, y, w, h, title)
 {
 }
 
@@ -48,60 +47,29 @@ gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char* title)
 
 gdMidiInputBase::~gdMidiInputBase()
 {
-	midiDispatcher::stopMidiLearn();
+	m::midiDispatcher::stopMidiLearn();
+	
+	m::conf::midiInputX = x();
+	m::conf::midiInputY = y();
+	m::conf::midiInputW = w();
+	m::conf::midiInputH = h();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::stopMidiLearn(geMidiLearner* learner)
+void gdMidiInputBase::refresh()
 {
-	midiDispatcher::stopMidiLearn();
-	learner->updateValue();
+	for (geMidiLearner* l : m_learners)
+		l->refresh();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiInputBase::cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l)
-{
-	*param = msg;
-	stopMidiLearn(l);
-	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiInputBase::cb_learn(uint32_t msg, void* d)
-{
-
-	geMidiLearner::cbData_t* data = (geMidiLearner::cbData_t*) d;
-	geMidiLearner* learner = data->learner;
-	Channel* channel = data->channel;
-	uint32_t* param = learner->param;
-	int midiChannel = (*param & 0x0F000000) >> 24; // Brutally extract channel
-
-	/* No MIDI learning if we are learning a Channel (channel != nullptr) and 
-	the selected MIDI channel is filtered OR if we are learning a global parameter
-	(channel == nullptr) and the selected MIDI channel is filtered. */
-
-	if ((channel != nullptr && !channel->isMidiInAllowed(midiChannel)) ||
-	    (channel == nullptr && !conf::isMidiInAllowed(midiChannel)))
-			return;
-
-	gdMidiInputBase* window  = static_cast<gdMidiInputBase*>(data->window);
-	window->cb_learn(param, msg, learner);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiInputBase::cb_close(Fl_Widget* w, void* p)  { ((gdMidiInputBase*)p)->cb_close(); }
+void gdMidiInputBase::cb_close(Fl_Widget* w, void* p) { ((gdMidiInputBase*)p)->cb_close(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -111,3 +79,5 @@ void gdMidiInputBase::cb_close()
 {
 	do_callback();
 }
+
+}} // giada::v::

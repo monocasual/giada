@@ -28,37 +28,37 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include "../utils/fs.h"
-#include "../utils/string.h"
-#include "../utils/log.h"
-#include "../utils/vector.h"
-#include "../glue/main.h"
-#include "../glue/channel.h"
-#include "kernelMidi.h"
-#include "mixer.h"
-#include "const.h"
-#include "init.h"
-#include "pluginHost.h"
-#include "pluginManager.h"
-#include "plugin.h"
-#include "waveFx.h"
-#include "conf.h"
-#include "patch.h"
-#include "recorder.h"
-#include "clock.h"
-#include "channel.h"
-#include "kernelAudio.h"
-#include "midiMapConf.h"
-#include "sampleChannel.h"
-#include "midiChannel.h"
-#include "wave.h"
-#include "waveManager.h"
-#include "channelManager.h"
-#include "mixerHandler.h"
-
-
-using std::vector;
-using std::string;
+#include "utils/fs.h"
+#include "utils/string.h"
+#include "utils/log.h"
+#include "utils/vector.h"
+#include "glue/main.h"
+#include "glue/channel.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/channels/channelManager.h"
+#include "core/kernelMidi.h"
+#include "core/mixer.h"
+#include "core/const.h"
+#include "core/init.h"
+#include "core/pluginHost.h"
+#include "core/pluginManager.h"
+#include "core/plugin.h"
+#include "core/waveFx.h"
+#include "core/conf.h"
+#include "core/patch.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "core/recManager.h"
+#include "core/clock.h"
+#include "core/kernelAudio.h"
+#include "core/midiMapConf.h"
+#include "core/wave.h"
+#include "core/waveManager.h"
+#include "core/mixerHandler.h"
 
 
 namespace giada {
@@ -67,10 +67,13 @@ namespace mh
 {
 namespace
 {
+ID channelId_ = 0;
+
 #ifdef WITH_VST
 
-int readPatchPlugins_(const vector<patch::plugin_t>& list, pluginHost::StackType t)
+int readPatchPlugins_(const std::vector<patch::plugin_t>& list/*, pluginHost::StackType t*/)
 {
+#if 0
 	int ret = 1;
 	for (const patch::plugin_t& ppl : list) {
 		std::unique_ptr<Plugin> p = pluginManager::makePlugin(ppl.path);
@@ -78,13 +81,14 @@ int readPatchPlugins_(const vector<patch::plugin_t>& list, pluginHost::StackType
 			p->setBypass(ppl.bypass);
 			for (unsigned j=0; j<ppl.params.size(); j++)
 				p->setParameter(j, ppl.params.at(j));
-			pluginHost::addPlugin(std::move(p), t, &mixer::mutex, nullptr);
+			pluginHost::addPlugin(std::move(p), {t, 0});
 			ret &= 1;
 		}
 		else
 			ret &= 0;
 	}
 	return ret;
+#endif
 }
 
 #endif
@@ -93,23 +97,56 @@ int readPatchPlugins_(const vector<patch::plugin_t>& list, pluginHost::StackType
 /* -------------------------------------------------------------------------- */
 
 
-int getNewChanIndex()
+std::unique_ptr<Channel> createChannel_(ChannelType type, size_t column, ID id)
 {
-	/* always skip last channel: it's the last one just added */
-
-	if (mixer::channels.size() == 1)
-		return 0;
-
-	int index = 0;
-	for (unsigned i=0; i<mixer::channels.size()-1; i++) {
-		if (mixer::channels.at(i)->index > index)
-			index = mixer::channels.at(i)->index;
-		}
-	index += 1;
-	return index;
+	std::unique_ptr<Channel> ch = channelManager::create(type, 
+		kernelAudio::getRealBufSize(), conf::inputMonitorDefaultOn, column);
+	ch->id = id;
+	return ch;	
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
+waveManager::Result createWave_(const std::string& fname)
+{
+	waveManager::Result res = waveManager::createFromFile(fname); 
+	if (res.status != G_RES_OK)
+		return res;
+	if (res.wave->getRate() != conf::samplerate) {
+		gu_log("[mh::loadChannel] input rate (%d) != system rate (%d), conversion needed\n",
+			res.wave->getRate(), conf::samplerate);
+		res.status = waveManager::resample(*res.wave.get(), conf::rsmpQuality, conf::samplerate); 
+		if (res.status != G_RES_OK)
+			return res;
+	}
+	return res;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool channelHas_(std::function<bool(std::unique_ptr<Channel>&)> f)
+{
+	std::vector<std::unique_ptr<Channel>>& c = m::model::getLayout()->channels;
+	return std::any_of(c.begin(), c.end(), f);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+/* pushWave_
+Pushes a new wave into Sample Channel 'ch' and into the corresponding Data map.
+Use this when modifying a local layout, before swapping it. */
+
+void pushWave_(SampleChannel* ch, std::unique_ptr<Wave>&& w)
+{
+	model::Data& data = model::getData();
+	data.waves[ch->id] = std::move(w);
+	ch->pushWave(data.waves.at(ch->id));
+}
 }; // {anonymous}
 
 
@@ -118,8 +155,33 @@ int getNewChanIndex()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSamplePath(const SampleChannel* skip, const string& path)
+void init()
 {
+	/* Create two MASTER channels: input and output. */
+	
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+
+	layout->channels.push_back(createChannel_(ChannelType::MASTER, /*column=*/0, 
+		mixer::MASTER_OUT_CHANNEL_ID));
+	layout->channels.push_back(createChannel_(ChannelType::MASTER, /*column=*/0, 
+		mixer::MASTER_IN_CHANNEL_ID));
+
+	/* IDs here start from 2: ID=0 and ID=1 are already taken by master
+	channels. */
+
+	channelId_ = layout->channels.size() + 1;
+
+	model::swapLayout(layout);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool uniqueSamplePath(const SampleChannel* skip, const std::string& path)
+{
+	assert(false);
+	/*
 	for (const Channel* ch : mixer::channels) {
 		if (skip == ch || ch->type != ChannelType::SAMPLE) // skip itself and MIDI channels
 			continue;
@@ -127,6 +189,7 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 		if (sch->wave != nullptr && path == sch->wave->getPath())
 			return false;
 	}
+	*/
 	return true;
 }
 
@@ -134,47 +197,200 @@ bool uniqueSamplePath(const SampleChannel* skip, const string& path)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* addChannel(ChannelType type)
+Channel* addChannel(ChannelType type, size_t column)
 {
-	Channel* ch = channelManager::create(type, kernelAudio::getRealBufSize(), 
-		conf::inputMonitorDefaultOn);
+	/* Create new channel and push it back into the local layout. */
 
-	pthread_mutex_lock(&mixer::mutex);
-	mixer::channels.push_back(ch);
-	pthread_mutex_unlock(&mixer::mutex);
+	ID channelId = channelId_++;
 
-	ch->index = getNewChanIndex();
-	gu_log("[addChannel] channel index=%d added, type=%d, total=%d\n",
-		ch->index, ch->type, mixer::channels.size());
-	return ch;
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	layout->channels.push_back(createChannel_(type, column, channelId));
+	model::swapLayout(layout);
+
+	return layout->channels.back().get();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void deleteChannel(Channel* target)
+int loadChannel(ID channelId, const std::string& fname)
 {
-	int index = u::vector::indexOf(mixer::channels, target);
-	assert(index != -1);
+	waveManager::Result res = createWave_(fname); 
+	if (res.status != G_RES_OK) 
+		return res.status;
+
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
 	
-	pthread_mutex_lock(&mixer::mutex);
-	delete mixer::channels.at(index);
-	mixer::channels.erase(mixer::channels.begin() + index);
-	pthread_mutex_unlock(&mixer::mutex);
+	pushWave_(static_cast<SampleChannel*>(layout->getChannel(channelId)), 
+		std::move(res.wave));
+	
+	model::swapLayout(layout);
+
+	return res.status;
+}
+
+
+void loadChannel(ID channelId, std::unique_ptr<Wave>&& w)
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
+	pushWave_(static_cast<SampleChannel*>(layout->getChannel(channelId)), 
+			std::move(w));
+	
+	model::swapLayout(layout);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Channel* getChannelByIndex(int index)
+int addAndLoadChannel(size_t columnIndex, const std::string& fname)
 {
-	for (Channel* ch : mixer::channels)
-		if (ch->index == index)
-			return ch;
-	gu_log("[getChannelByIndex] channel at index %d not found!\n", index);
-	return nullptr;
+	waveManager::Result res = createWave_(fname);
+	if (res.status == G_RES_OK)
+		addAndLoadChannel(columnIndex, std::move(res.wave));
+	return res.status;
+}
+
+
+void addAndLoadChannel(size_t columnIndex, std::unique_ptr<Wave>&& w)
+{
+	ID channelId = channelId_++;
+
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
+	std::unique_ptr<Channel> ch = createChannel_(ChannelType::SAMPLE, 
+		columnIndex, channelId);
+	layout->channels.push_back(std::move(ch));
+	pushWave_(static_cast<SampleChannel*>(ch.get()), std::move(w));
+
+	model::swapLayout(layout);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void cloneChannel(ID channelId)
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
+	ID newChannelId = channelId_++;
+
+	const Channel*           oldChannel	= layout->getChannel(channelId);
+	std::unique_ptr<Channel> newChannel = channelManager::create(*oldChannel);
+
+	newChannel->id = newChannelId;
+
+	/* Clone plugins first: it will add new values to the Data map. */
+
+	pluginHost::clonePlugins(channelId, newChannelId);
+	
+	/* Also clone Wave if the original channel has one, i.e. create a new Wave
+	in the Data map. */
+
+	if (oldChannel->hasData()) {
+		SampleChannel* ch = static_cast<SampleChannel*>(newChannel.get());
+
+		pushWave_(ch, waveManager::createFromWave(*ch->wave, 0, 
+			ch->wave->getSize()));
+	}
+
+	/* Push back the new channel into the local layout. */
+
+	layout->channels.push_back(std::move(newChannel));
+	
+	/* Remove plugins from the channel in local layout: they still point to
+	the old ones. We want new plugins created by pluginHost above, if any. */
+	
+	layout->getPlugins(newChannelId)->clear();
+	for (std::shared_ptr<Plugin>& plugin : model::getData().plugins.at(newChannelId))
+		layout->getPlugins(newChannelId)->push_back(plugin);
+
+
+	model::swapLayout(layout);
+
+	recorderHandler::cloneActions(channelId, newChannelId);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void freeChannel(ID channelId)
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	static_cast<SampleChannel*>(layout->getChannel(channelId))->empty();
+	model::swapLayout(layout);
+
+	model::getData().waves.at(channelId) = nullptr;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void freeAllChannels()
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();	
+	for (std::unique_ptr<m::Channel>& ch : layout->channels)
+		ch->empty();
+	model::swapLayout(layout);
+
+	model::getData().waves.clear();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void deleteChannel(ID channelId)
+{
+	std::shared_ptr<model::Layout>         layout   = model::cloneLayout();
+	std::vector<std::unique_ptr<Channel>>& channels = layout->channels;
+
+	u::vector::removeIf(channels, [=](const std::unique_ptr<Channel>& c)
+	{
+		return c->id == channelId;
+	});
+
+	model::swapLayout(layout);
+	model::getData().waves.erase(channelId);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void renameChannel(ID channelId, const std::string& name)
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	static_cast<SampleChannel*>(layout->getChannel(channelId))->name = name;
+	model::swapLayout(layout);	
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void startSequencer()
+{
+	switch (m::clock::getStatus()) {
+		case ClockStatus::STOPPED:
+			m::clock::setStatus(ClockStatus::RUNNING); 
+			break;
+		case ClockStatus::WAITING:
+			m::clock::setStatus(ClockStatus::RUNNING); 
+			m::recManager::stopActionRec();
+			break;
+		default: 
+			break;
+	}
+
+#ifdef __linux__
+	m::kernelAudio::jackStart();
+#endif
 }
 
 
@@ -184,8 +400,31 @@ Channel* getChannelByIndex(int index)
 void stopSequencer()
 {
 	clock::setStatus(ClockStatus::STOPPED);
-	for (Channel* ch : mixer::channels)
+
+	for (std::unique_ptr<Channel>& ch : m::model::getLayout()->channels)
 		ch->stopBySeq(conf::chansStopOnSeqHalt);
+
+#ifdef __linux__
+	m::kernelAudio::jackStop();
+#endif
+
+	/* If recordings (both input and action) are active deactivate them, but 
+	store the takes. RecManager takes care of it. */
+
+	if (m::recManager::isRecordingAction())
+		m::recManager::stopActionRec();
+	else
+	if (m::recManager::isRecordingInput())
+		m::recManager::stopInputRec();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleSequencer()
+{
+	m::clock::isRunning() ? stopSequencer() : startSequencer();
 }
 
 
@@ -194,12 +433,10 @@ void stopSequencer()
 
 void updateSoloCount()
 {
-	for (const Channel* ch : mixer::channels)
-		if (ch->solo) {
-			mixer::hasSolos = true;
-			return;
-		}
-	mixer::hasSolos = false;
+	mixer::hasSolos = channelHas_([](std::unique_ptr<Channel>& ch)
+	{
+		return ch->solo == true;
+	});
 }
 
 
@@ -208,6 +445,7 @@ void updateSoloCount()
 
 void readPatch()
 {
+#if 0
 	mixer::ready = false;
 
 	mixer::outVol.store(patch::masterVolOut);
@@ -233,6 +471,7 @@ void readPatch()
 	mixer::rewind();
 	mixer::allocVirtualInput(clock::getFramesInLoop());
 	mixer::ready = true;
+#endif
 }
 
 
@@ -244,7 +483,18 @@ void rewindSequencer()
 	if (clock::getQuantize() > 0 && clock::isRunning())   // quantize rewind
 		mixer::rewindWait = true;
 	else
-		mixer::rewind();
+		clock::rewind();
+
+	/* FIXME - potential desync when Quantizer is enabled from this point on.
+	Mixer would wait, while the following calls would be made regardless of its
+	state. */
+
+#ifdef __linux__
+	m::kernelAudio::jackSetPosition(0);
+#endif
+
+	if (m::conf::midiSync == MIDI_SYNC_CLOCK_M)
+		m::kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
 
@@ -255,27 +505,6 @@ bool startInputRec()
 {
 	if (!hasRecordableSampleChannels())
 		return false;
-
-	for (Channel* ch : mixer::channels) {
-
-		if (!ch->canInputRec())
-			continue;
-
-		SampleChannel* sch = static_cast<SampleChannel*>(ch);
-
-		/* Allocate empty sample for the current channel. */
-
-		string name    = string("TAKE-" + u::string::iToString(patch::lastTakeId++));
-		string nameExt = name + ".wav";
-
-		sch->pushWave(waveManager::createEmpty(clock::getFramesInLoop(), 
-			G_MAX_IO_CHANS, conf::samplerate, nameExt));
-		sch->name = name; 
-
-		gu_log("[startInputRec] start input recs using Channel %d with size %d "
-			"on frame=%d\n", sch->index, clock::getFramesInLoop(), clock::getCurrentFrame());
-	}
-
 	mixer::startInputRec();
 	return true;
 }
@@ -286,13 +515,42 @@ bool startInputRec()
 
 void stopInputRec()
 {
-	mixer::mergeVirtualInput();
-	mixer::recording = false;
+	mixer::stopInputRec();
 
-	for (Channel* ch : mixer::channels)
-		ch->stopInputRec(clock::getCurrentFrame());
+	const AudioBuffer& virtualInput = mixer::getVirtualInput();
 
-	gu_log("[mh] stop input recs\n");
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	model::Data&                   data   = model::getData();
+
+	/* Push a new Wave into each recordable channel. Warning: this algorithm
+	will require some changes when we will allow overdubbing (the previous 
+	existing Wave has to be discarded somehow). */
+
+	for (std::unique_ptr<Channel>& ch : layout->channels) {
+
+		if (!ch->canInputRec())
+			continue;
+
+		SampleChannel* sch = static_cast<SampleChannel*>(ch.get());
+
+		/* Create a new Wave with audio coming from Mixer's virtual input. */
+
+		std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(), 
+			G_MAX_IO_CHANS, conf::samplerate, sch->name + ".wav");
+
+		wave->copyData(virtualInput[0], virtualInput.countFrames());
+
+		/* Move the new Wave into Data, then push it into the local Layout. 
+		Create the key in data.waves if missing ([] operator). */
+
+		data.waves[sch->id] = std::move(wave);
+		sch->pushWave(data.waves.at(sch->id));
+		sch->name = std::string("TAKE-" + std::to_string(patch::lastTakeId++));
+	}
+
+	model::swapLayout(layout);
+
+	mixer::clearVirtualInput();
 }
 
 
@@ -301,7 +559,7 @@ void stopInputRec()
 
 bool hasArmedSampleChannels()
 {
-	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	return channelHas_([](std::unique_ptr<Channel>& ch)
 	{
 		return ch->type == ChannelType::SAMPLE && ch->armed;
 	});
@@ -310,7 +568,7 @@ bool hasArmedSampleChannels()
 
 bool hasRecordableSampleChannels()
 {
-	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	return channelHas_([](std::unique_ptr<Channel>& ch)
 	{
 		return ch->canInputRec();
 	});
@@ -319,7 +577,7 @@ bool hasRecordableSampleChannels()
 
 bool hasLogicalSamples()
 {
-	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	return channelHas_([](std::unique_ptr<Channel>& ch)
 	{
 		return ch->hasLogicalData();
 	});
@@ -328,9 +586,27 @@ bool hasLogicalSamples()
 
 bool hasEditedSamples()
 {
-	return std::any_of(mixer::channels.begin(), mixer::channels.end(), [](const Channel* ch)
+	return channelHas_([](std::unique_ptr<Channel>& ch)
 	{
 		return ch->hasEditedData();
+	});
+}
+
+
+bool hasActions()
+{
+	return channelHas_([](std::unique_ptr<Channel>& ch)
+	{
+		return ch->hasActions.load();
+	});
+}
+
+
+bool hasAudioData()
+{
+	return channelHas_([](std::unique_ptr<Channel>& ch)
+	{
+		return ch->hasData();
 	});
 }
 

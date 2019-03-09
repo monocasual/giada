@@ -32,12 +32,22 @@
 #include "channelButton.h"
 
 
+namespace giada {
+namespace m 
+{ 
+class MidiChannel; 
+}
+namespace v
+{
 class geMidiChannelButton : public geChannelButton
 {
 public:
-	geMidiChannelButton(int x, int y, int w, int h, const char* l=0);
-	int handle(int e);
+
+	geMidiChannelButton(int x, int y, int w, int h, const m::MidiChannel* ch);
+	
+	void refresh() override;
 };
+}} // giada::v::
 
 
 #endif

@@ -37,21 +37,51 @@ float linearToDB(float f);
 float dBtoLinear(float f);
 int quantize(int x, int step);
 
-/* map (template)
+
+/* -------------------------------------------------------------------------- */
+
+/* map (1)
 Maps 'x' in range [a, b] to a new range [w, z]. Source:
 	https://en.wikipedia.org/wiki/Linear_equation#Two-point_form*/
 
 template <typename TI, typename TO>
 TO map(TI x, TI a, TI b, TO w, TO z)
 {
-	return (((x - a) / (float) (b - a)) * (z - w)) + w;
+	return (((x - a) / (double) (b - a)) * (z - w)) + w;
 }
 
+
+/* map (2)
+Maps 'x' in range [0, b) to a new range [0, z]. */
+
+template <typename TI, typename TO>
+TO map(TI x, TI b, TO z)
+{
+	return (x / (double) b) * z;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+/* bound (1)
+Returns 'def' if 'x' is outside the range ('min', 'max'). */
 
 template <typename T>
 T bound(T x, T min, T max, T def)
 {
     return x < min || x > max ? def : x;
+}
+
+
+/* bound (2)
+Clamps 'x' in the range ('min', 'max'). */
+
+template <typename T>
+T bound(T x, T min, T max)
+{
+    if (x < min) return min; 
+	if (x > max) return max;
+	return x;
 }
 }}}  // giada::u::math::
 

@@ -29,7 +29,7 @@
 #define GE_VOLUME_TOOL_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geDial;
@@ -37,27 +37,29 @@ class geInput;
 class geBox;
 
 
-class geVolumeTool : public Fl_Group
+namespace giada {
+namespace v 
 {
-private:
-
-  giada::m::SampleChannel* ch;
-
-  geBox*   label;
-  geDial*  dial;
-  geInput* input;
-
-  static void cb_setVolume   (Fl_Widget* w, void* p);
-	static void cb_setVolumeNum(Fl_Widget* w, void* p);
-  void cb_setVolume   ();
-  void cb_setVolumeNum();
-
+class geVolumeTool : public Fl_Pack
+{
 public:
 
-  geVolumeTool(int x, int y, giada::m::SampleChannel* ch);
+	geVolumeTool(int x, int y);
 
-  void refresh();
+	void rebuild();
+	
+private:
+
+	geBox*   label;
+	geDial*  dial;
+	geInput* input;
+
+	static void cb_setVolume   (Fl_Widget* w, void* p);
+	static void cb_setVolumeNum(Fl_Widget* w, void* p);
+	void cb_setVolume   ();
+	void cb_setVolumeNum();
 };
+}} // giada::v::
 
 
 #endif

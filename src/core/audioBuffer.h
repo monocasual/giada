@@ -5,6 +5,7 @@
 namespace giada {
 namespace m
 {
+/* TODO - this class needs a serious modern C++ lifting */
 class AudioBuffer
 {
 public:
@@ -38,7 +39,7 @@ public:
 	starting from frame 'offset'. It takes for granted that the new data contains 
 	the same number of channels than m_channels. */
 
-	void copyData(float* data, int frames, int offset=0);
+	void copyData(const float* data, int frames, int offset=0);
 
 	/* copyFrame
 	Copies data pointed by 'values' into m_data[frame]. It takes for granted that

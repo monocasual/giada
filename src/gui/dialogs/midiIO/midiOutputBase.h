@@ -30,12 +30,12 @@
 
 
 #include <FL/Fl.H>
-#include "../window.h"
+#include "gui/dialogs/window.h"
+#include "gui/elems/midiLearner.h"
 
 
 class geButton;
 class geCheck;
-class geMidiLearner;
 
 
 /* There's no such thing as a gdMidiOutputMaster vs gdMidiOutputChannel. MIDI
@@ -48,20 +48,20 @@ In addition MidiOutputMidiCh has the MIDI message output box. */
 /* TODO - gdMidiOutput is almost the same thing of gdMidiInput. Create another
 parent class gdMidiIO to inherit from */
 
+namespace giada {
+namespace v 
+{
+class geMidiLearner;
 class gdMidiOutputBase : public gdWindow
 {
+public:
+
+	gdMidiOutputBase(int w, int h);
+	~gdMidiOutputBase();
+
+	void refresh() override;
+
 protected:
-
-	geButton* close;
-	geCheck*  enableLightning;
-
-	void stopMidiLearn(geMidiLearner* l);
-
-	/* cb_learn
-	 * callback attached to kernelMidi to learn various actions. */
-
-	static void cb_learn(uint32_t msg, void* data);
-	void cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l);
 
 	/* cb_close
 	close current window. */
@@ -72,7 +72,7 @@ protected:
 	/* cb_enableLightning
 	enable MIDI lightning output. */
 
-	static void cb_enableLightning  (Fl_Widget* w, void* p);
+	static void cb_enableLightning(Fl_Widget* w, void* p);
 	void cb_enableLightning();
 
 	/* setTitle
@@ -80,10 +80,12 @@ protected:
 
 	void setTitle(int chanNum);
 
-public:
-
-	gdMidiOutputBase(int w, int h);
+	std::vector<geMidiLearner*> m_learners;
+	
+	geButton* m_close;
+	geCheck*  m_enableLightning;
 };
+}} // giada::v::
 
 
 #endif

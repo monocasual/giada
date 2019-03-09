@@ -28,53 +28,55 @@
 #include <cmath>
 #include <cstdlib>
 #include <FL/Fl_Pack.H>
-#include "../../../core/sampleChannel.h"
-#include "../../../core/const.h"
-#include "../../../glue/channel.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/math.h"
-#include "../../../utils/string.h"
-#include "../basics/dial.h"
-#include "../basics/input.h"
-#include "../basics/box.h"
-#include "../mainWindow/keyboard/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "glue/channel.h"
+#include "utils/gui.h"
+#include "utils/math.h"
+#include "utils/string.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "volumeTool.h"
 
 
-using std::string;
-using namespace giada;
-
-
-geVolumeTool::geVolumeTool(int X, int Y, m::SampleChannel* ch)
-  : Fl_Group(X, Y, 150, 20),
-    ch      (ch)
+namespace giada {
+namespace v 
 {
-  begin();
-    label = new geBox  (x(), y(), u::gui::getStringWidth("Volume"), 20, "Volume", FL_ALIGN_RIGHT);
-    dial  = new geDial (label->x()+label->w()+4, y(), 20, 20);
-    input = new geInput(dial->x()+dial->w()+4, y(), 70, 20);
-  end();
+geVolumeTool::geVolumeTool(int X, int Y)
+: Fl_Pack(X, Y, 150, G_GUI_UNIT)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
 
-  dial->range(0.0f, 1.0f);
-  dial->callback(cb_setVolume, (void*)this);
+	begin();
+		label = new geBox  (0, 0, u::gui::getStringWidth("Volume"), G_GUI_UNIT, "Volume", FL_ALIGN_RIGHT);
+		dial  = new geDial (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+		input = new geInput(0, 0, 70, G_GUI_UNIT);
+	end();
 
-  input->callback(cb_setVolumeNum, (void*)this);
+	dial->range(0.0f, 1.0f);
+	dial->callback(cb_setVolume, (void*)this);
 
-  refresh();
+	input->callback(cb_setVolumeNum, (void*)this);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geVolumeTool::refresh()
+void geVolumeTool::rebuild()
 {
-  string tmp;
-  float dB = u::math::linearToDB(ch->volume);
-  if (dB > -INFINITY) tmp = u::string::fToString(dB, 2);  // 2 digits
-  else                tmp = "-inf";
-  input->value(tmp.c_str());
-  dial->value(ch->guiChannel->vol->value());
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+
+	std::string tmp = "-inf";
+	float dB = u::math::linearToDB(ch->volume);
+	if (dB > -INFINITY) 
+		tmp = u::string::fToString(dB, 2);  // 2 digits
+	input->value(tmp.c_str());
+	dial->value(ch->volume);
 }
 
 
@@ -90,10 +92,9 @@ void geVolumeTool::cb_setVolumeNum(Fl_Widget* w, void* p) { ((geVolumeTool*)p)->
 
 void geVolumeTool::cb_setVolume()
 {
-  using namespace giada;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  c::channel::setVolume(ch, dial->value(), false, true);
-  refresh();
+	c::channel::setVolume(ch->id, dial->value(), false, true);
 }
 
 
@@ -102,9 +103,10 @@ void geVolumeTool::cb_setVolume()
 
 void geVolumeTool::cb_setVolumeNum()
 {
-  using namespace giada;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
-  c::channel::setVolume(ch, value, false, true);
-  dial->value(ch->guiChannel->vol->value());
+	float value = pow(10, (atof(input->value()) / 20)); // linear = 10^(dB/20)
+	c::channel::setVolume(ch->id, value, false, true);
 }
+
+}} // giada::v::

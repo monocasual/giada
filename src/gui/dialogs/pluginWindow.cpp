@@ -29,19 +29,20 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../utils/gui.h"
-#include "../../core/plugin.h"
-#include "../../core/const.h"
-#include "../elems/basics/liquidScroll.h"
-#include "../elems/plugin/pluginParameter.h"
+#include "utils/gui.h"
+#include "core/plugin.h"
+#include "core/const.h"
+#include "gui/elems/basics/liquidScroll.h"
+#include "gui/elems/plugin/pluginParameter.h"
 #include "pluginWindow.h"
 
 
-using namespace giada;
-
-
-gdPluginWindow::gdPluginWindow(m::Plugin* p)
- : gdWindow(450, 156), m_plugin(p)
+namespace giada {
+namespace v
+{
+gdPluginWindow::gdPluginWindow(const m::Plugin& p, ID chanID)
+: gdWindow(450, 156), 
+  m_plugin(p)
 {
 	set_non_modal();
 
@@ -51,17 +52,17 @@ gdPluginWindow::gdPluginWindow(m::Plugin* p)
 	m_list->type(Fl_Scroll::VERTICAL_ALWAYS);
 	m_list->begin();
 		int labelWidth = getLabelWidth();
-		int numParams = m_plugin->getNumParameters();
+		int numParams = m_plugin.getNumParameters();
 		for (int i=0; i<numParams; i++) {
 			int py = m_list->y() + (i * (G_GUI_UNIT + G_GUI_INNER_MARGIN));
 			int pw = m_list->w() - m_list->scrollbar_size() - (G_GUI_OUTER_MARGIN*3);
-			new gePluginParameter(i, m_plugin, m_list->x(), py, pw, labelWidth);
+			new v::gePluginParameter(i, m_plugin, chanID, m_list->x(), py, pw, labelWidth);
 		}
 	m_list->end();
 
 	end();
 
-	label(m_plugin->getName().c_str());
+	label(m_plugin.getName().c_str());
 
 	size_range(450, (G_GUI_UNIT + (G_GUI_OUTER_MARGIN*2)));
 	resizable(m_list);
@@ -76,14 +77,14 @@ gdPluginWindow::gdPluginWindow(m::Plugin* p)
 
 void gdPluginWindow::updateParameter(int index, bool changeSlider)
 {
-	static_cast<gePluginParameter*>(m_list->child(index))->update(changeSlider);
+	static_cast<v::gePluginParameter*>(m_list->child(index))->update(changeSlider);
 }
 
 
 void gdPluginWindow::updateParameters(bool changeSlider)
 {
-	for (int i=0; i<m_plugin->getNumParameters(); i++) {
-		static_cast<gePluginParameter*>(m_list->child(i))->update(changeSlider);
+	for (int i=0; i<m_plugin.getNumParameters(); i++) {
+		static_cast<v::gePluginParameter*>(m_list->child(i))->update(changeSlider);
 	}
 }
 
@@ -94,15 +95,16 @@ void gdPluginWindow::updateParameters(bool changeSlider)
 int gdPluginWindow::getLabelWidth() const
 {
 	int width = 0;
-	int numParams = m_plugin->getNumParameters();
+	int numParams = m_plugin.getNumParameters();
 	for (int i=0; i<numParams; i++) {
 		int wl = 0, hl = 0;   
-		fl_measure(m_plugin->getParameterName(i).c_str(), wl, hl);
+		fl_measure(m_plugin.getParameterName(i).c_str(), wl, hl);
 		if (wl > width)
 			width = wl;
 	}
 	return width;
 }
+}} // giada::v::
 
 
 #endif // #ifdef WITH_VST

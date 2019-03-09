@@ -30,7 +30,7 @@
 
 
 #include <FL/Fl_Group.H>
-#include "../../../core/types.h"
+#include "core/types.h"
 
 
 class geChoice;

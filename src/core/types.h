@@ -31,12 +31,13 @@
 
 namespace giada
 {
+using ID    = int;
 using Pixel = int;
 using Frame = int;
 
 enum class ClockStatus { STOPPED, WAITING, RUNNING };
 
-enum class ChannelType : int { SAMPLE = 1, MIDI };
+enum class ChannelType : int { SAMPLE = 1, MIDI, MASTER };
 
 enum class ChannelStatus : int
 {

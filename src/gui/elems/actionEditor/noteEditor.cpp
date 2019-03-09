@@ -26,10 +26,10 @@
 
 
 #include <FL/Fl.H>
-#include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../../../core/midiChannel.h"
-#include "../../dialogs/actionEditor/midiActionEditor.h"
+#include "core/channels/midiChannel.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "gui/dialogs/actionEditor/midiActionEditor.h"
 #include "pianoRoll.h"
 #include "noteEditor.h"
 
@@ -39,9 +39,9 @@ namespace v
 {
 geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 : geScroll(x, y, 200, 422),
-	m_base  (base)
+  m_base  (base)
 {
-	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth, static_cast<m::MidiChannel*>(m_base->ch));
+	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth);
 	
 	size(m_base->fullWidth, m::conf::pianoRollH);
 	

@@ -30,17 +30,13 @@
 
 
 #include <string>
-#include "../core/types.h"
-
-
-class gdSampleEditor;
+#include "core/types.h"
 
 
 namespace giada {
 namespace m
 {
 class Channel;
-class SampleChannel;
 }
 namespace c {
 namespace channel 
@@ -48,50 +44,59 @@ namespace channel
 /* addChannel
 Adds an empty new channel to the stack. Returns the new channel. */
 
-m::Channel* addChannel(int column, ChannelType type, int size);
+m::Channel* addChannel(size_t columnIndex, ChannelType type, int size);
 
 /* loadChannel
 Fills an existing channel with a wave. */
 
-int loadChannel(m::SampleChannel* ch, const std::string& fname);
+int loadChannel(ID channelId, const std::string& fname);
+
+/* addAndLoadChannel
+Adds a new Sample Channel and fills it with a wave right away. */
+
+void addAndLoadChannel(size_t columnIndex, int size, const std::string& fname); 
 
 /* deleteChannel
 Removes a channel from Mixer. */
 
-void deleteChannel(m::Channel* ch);
+void deleteChannel(ID channelId);
 
 /* freeChannel
 Unloads the sample from a sample channel. */
 
-void freeChannel(m::Channel* ch);
+void freeChannel(ID channelId);
 
 /* cloneChannel
 Makes an exact copy of Channel *ch. */
 
-int cloneChannel(m::Channel* ch);
+void cloneChannel(ID channelId);
 
-/* toggle/set*
-Toggles or set several channel properties. If gui == true the signal comes from 
-a manual interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
+/* set*
+Sets several channel properties. */
 
-void toggleArm(m::Channel* ch, bool gui=true);
-void toggleInputMonitor(m::Channel* ch);
-void kill(m::Channel* ch);
-void toggleMute(m::Channel* ch, bool gui=true);
-void toggleSolo(m::Channel* ch, bool gui=true);
-void setVolume(m::Channel* ch, float v, bool gui=true, bool editor=false);
-void setName(m::Channel* ch, const std::string& name);
-void setPitch(m::SampleChannel* ch, float val);
-void setPanning(m::SampleChannel* ch, float val);
-void setBoost(m::SampleChannel* ch, float val);
+void setArm(ID channelId, bool value);
+void setInputMonitor(ID channelId, bool value);
+void setMute(ID channelId, bool value);
+void toggleMute(ID channelId);
+void setSolo(ID channelId, bool value);
+void setVolume(ID channelId, float v, bool gui=true, bool editor=false);
+void setName(ID channelId, const std::string& name);
+void setPitch(ID channelId, float val, bool gui=true);
+void setPan(ID channelId, float val, bool gui=true);
+void setBoost(ID channelId, float val, bool gui=true);
+void setSampleMode(ID channelId, ChannelMode m);
+
+void start(ID channelId, int velocity, bool record);
+void kill(ID channelId, bool record);
+void stop(ID channelId);
 
 /* toggleReadingRecs
 Handles the 'R' button. If gui == true the signal comes from an user interaction
 on the GUI, otherwise it's a MIDI/Jack/external signal. */
 
-void toggleReadingActions(m::Channel* ch, bool gui=true);
-void startReadingActions(m::Channel* ch, bool gui=true);
-void stopReadingActions(m::Channel* ch, bool gui=true);
+void toggleReadingActions(ID channelId);
+void startReadingActions(ID channelId);
+void stopReadingActions(ID channelId);
 
 }}}; // giada::c::channel::
 

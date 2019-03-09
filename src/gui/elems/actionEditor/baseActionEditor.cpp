@@ -27,9 +27,9 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
-#include "../../../core/clock.h"
-#include "../../dialogs/actionEditor/baseActionEditor.h"
+#include "core/const.h"
+#include "core/clock.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "gridTool.h"
 #include "baseAction.h"
 #include "baseActionEditor.h"
@@ -38,9 +38,8 @@
 namespace giada {
 namespace v
 {
-geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h, m::Channel* ch)
+geBaseActionEditor::geBaseActionEditor(Pixel x, Pixel y, Pixel w, Pixel h)
 :	Fl_Group(x, y, w, h),
-	m_ch    (ch),
 	m_base  (static_cast<gdBaseActionEditor*>(window())),
 	m_action(nullptr)
 {

@@ -33,15 +33,22 @@
 
 
 namespace giada {
-namespace m 
+namespace v 
 {
-    class Channel;
-}
-namespace v {
+class geChannel;
+
 namespace dispatcher
 {
+/* dispatchKey
+Processes a key pressed on the physical keyboard. */
+
 void dispatchKey(int event);
-void dispatchTouch(m::Channel* ch, bool status);
+
+/* dispatchTouch
+Processes a mouse click/touch event. */
+
+void dispatchTouch(const geChannel* gch, bool status);
+
 void setSignalCallback(std::function<void()> f);
 }}} // giada::v::dispatcher
 

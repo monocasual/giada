@@ -34,7 +34,7 @@ namespace giada {
 namespace v
 {
 geBaseAction::geBaseAction(Pixel X, Pixel Y, Pixel W, Pixel H, bool resizable,
-	const m::Action* a1, const m::Action* a2)
+	m::Action a1, m::Action a2)
 : Fl_Box     (X, Y, W, H),
   m_resizable(resizable),
   onRightEdge(false),

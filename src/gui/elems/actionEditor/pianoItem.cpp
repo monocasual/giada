@@ -26,21 +26,21 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
-#include "../../../core/action.h"
-#include "../../../core/midiEvent.h"
-#include "../../../utils/math.h"
+#include "core/const.h"
+#include "core/action.h"
+#include "core/midiEvent.h"
+#include "utils/math.h"
 #include "pianoItem.h"
 
 
 namespace giada {
 namespace v
 {
-gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, const m::Action* a1,
-	const m::Action* a2)
+gePianoItem::gePianoItem(Pixel X, Pixel Y, Pixel W, Pixel H, m::Action a1,
+	m::Action a2)
 : geBaseAction(X, Y, W, H, /*resizable=*/true, a1, a2),
-  m_ringLoop  (a2 != nullptr && a1->frame > a2->frame),
-  m_orphaned  (a2 == nullptr)
+  m_ringLoop  (a2.isValid() && a1.frame > a2.frame),
+  m_orphaned  (!a2.isValid())
 {
 	m_resizable = isResizable();
 }
@@ -89,7 +89,7 @@ void gePianoItem::draw()
 
 Pixel gePianoItem::calcVelocityH() const
 {
-	int v = a1->event.getVelocity();
+	int v = a1.event.getVelocity();
 	return u::math::map<int, Pixel>(v, 0, G_MAX_VELOCITY, 0, h() - 3);
 }
 }} // giada::v::

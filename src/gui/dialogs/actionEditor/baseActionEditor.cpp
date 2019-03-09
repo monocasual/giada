@@ -29,24 +29,27 @@
 #include <string>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../utils/gui.h"
-#include "../../../utils/string.h"
-#include "../../../core/conf.h"
-#include "../../../core/const.h"
-#include "../../../core/clock.h"
-#include "../../../core/channel.h"
-#include "../../elems/actionEditor/gridTool.h"
-#include "../../elems/basics/scroll.h"
-#include "../../elems/basics/choice.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "core/channels/channel.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/clock.h"
+#include "gui/elems/actionEditor/gridTool.h"
+#include "gui/elems/basics/scroll.h"
+#include "gui/elems/basics/choice.h"
 #include "baseActionEditor.h"
 
 
 namespace giada {
 namespace v
 {
-gdBaseActionEditor::gdBaseActionEditor(m::Channel* ch)
+gdBaseActionEditor::gdBaseActionEditor(ID channelId)
 :	gdWindow (640, 284),
-	ch       (ch),
+	ch       (m::model::getLayout()->getChannel(channelId)),
+	channelId(channelId),
 	ratio    (G_DEFAULT_ZOOM_RATIO)
 {
 	using namespace giada::m;
@@ -83,7 +86,7 @@ void gdBaseActionEditor::cb_zoomOut(Fl_Widget* w, void* p) { ((gdBaseActionEdito
 /* -------------------------------------------------------------------------- */
 
 
-const std::vector<const m::Action*>& gdBaseActionEditor::getActions()
+std::vector<m::Action> gdBaseActionEditor::getActions() const
 {
 	return m_actions;
 }

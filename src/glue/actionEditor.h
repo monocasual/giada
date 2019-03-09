@@ -30,7 +30,7 @@
 
 
 #include <vector>
-#include "../core/types.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -43,27 +43,30 @@ class MidiChannel;
 namespace c {
 namespace actionEditor 
 {
-std::vector<const m::Action*> getActions(const m::Channel* ch);
+std::vector<m::Action> getActions(ID channelId);
 
 /* MIDI actions.  */
 
-void recordMidiAction(m::MidiChannel* ch, int note, int velocity, Frame f1, Frame f2=0);
-void deleteMidiAction(m::MidiChannel* ch, const m::Action* a);
-void updateMidiAction(m::MidiChannel* ch, const m::Action* a, int note, int velocity, 
-    Frame f1, Frame f2);
-void updateVelocity(const m::MidiChannel* ch, const m::Action* a, int value);
+void recordMidiAction(ID channelId, int note, int velocity, Frame f1, 
+	Frame f2=0);
+void deleteMidiAction(ID channelId, const m::Action& a);
+void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity, 
+	Frame f1, Frame f2);
+void updateVelocity(const m::Action& a, int value);
 
 /* Sample Actions. */
 
-void recordSampleAction(const m::SampleChannel* ch, int type, Frame f1, Frame f2=0);
-void deleteSampleAction(m::SampleChannel* ch, const m::Action* a);
-void updateSampleAction(m::SampleChannel* ch, const m::Action* a, int type, Frame f1, Frame f2=0);
+void recordSampleAction(ID channelId, int type, Frame f1, Frame f2=0);
+void deleteSampleAction(ID channelId, const m::Action& a);
+void updateSampleAction(ID channelId, const m::Action& a, int type, 
+    Frame f1, Frame f2=0);
 
 /* Envelope actions (only volume for now). */
 
-void recordEnvelopeAction(m::Channel* ch, int frame, int value);
-void deleteEnvelopeAction(m::Channel* ch, const m::Action* a);
-void updateEnvelopeAction(m::Channel* ch, const m::Action* a, int frame, int value);
+void recordEnvelopeAction(ID channelId, Frame f, int value);
+void deleteEnvelopeAction(ID channelId, const m::Action& a);
+void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value);
 }}}; // giada::c::actionEditor::
+
 
 #endif

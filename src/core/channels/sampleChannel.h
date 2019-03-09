@@ -32,27 +32,26 @@
 #include <memory>
 #include <functional>
 #include <samplerate.h>
-#include "types.h"
-#include "channel.h"
-
-
-class Wave;
+#include "core/types.h"
+#include "core/channels/channel.h"
 
 
 namespace giada {
 namespace m 
 {
+class Wave;
+
 class SampleChannel : public Channel
 {
 public:
 
-	SampleChannel(bool inputMonitor, int bufferSize);
+	SampleChannel(bool inputMonitor, int bufferSize, size_t column);
+	SampleChannel(const SampleChannel& o);
 	~SampleChannel();
 
-	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
-	void prepareBuffer(bool running) override;
 	void parseEvents(mixer::FrameEvents fe) override;
-	void process(AudioBuffer& out, const AudioBuffer& in, bool audible, bool running) override;
+	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
+		bool audible, bool running) override;
 	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
 	void writePatch(int i, bool isProject) override;
 
@@ -99,7 +98,7 @@ public:
 	/* pushWave
 	Adds a new wave to this channel. */
 
-	void pushWave(std::unique_ptr<Wave>&& w);
+	void pushWave(std::shared_ptr<const Wave> wave);
 
 	void setPitch(float v);
 	void setBegin(int f);
@@ -108,39 +107,50 @@ public:
 
 	void setReadActions(bool v, bool recsStopOnChanHalt);
 
-	/* onPreviewEnd
-	A callback fired when audio preview ends. */
-
-	std::function<void()> onPreviewEnd;
-
 	/* bufferPreview
 	Extra buffer for audio preview. */
 
 	AudioBuffer bufferPreview;
 	
-	ChannelMode mode;
-	
-	std::unique_ptr<Wave> wave;
-	int   tracker;         // chan position
-	int   trackerPreview;  // chan position for audio preview
-	int   shift;
-	bool  quantizing;      // quantization in progress
-	bool  inputMonitor;  
-	float boost;
-	float pitch;
+	/* wave
+	Pointer to a read-only Wave object. Might be null. */
+
+	std::shared_ptr<const Wave> wave;
+
+	int shift;
+	/* TODO atomic */ ChannelMode mode;
+	std::atomic<Frame> tracker;         // chan position
+	std::atomic<Frame> trackerPreview;  // chan position for audio preview
+	/* TODO atomic */ bool  quantizing; // quantization in progress
+	std::atomic<bool> inputMonitor;  
+	std::atomic<float> boost;
+	std::atomic<float> pitch;
 
 	/* begin, end
 	Begin/end point to read wave data from/to. */
 
-	int begin;
-	int end;
+	std::atomic<int> begin;  // TODO - Frame, not int
+	std::atomic<int> end;    // TODO - Frame, not int
 
-	/* midi stuff */
+	/* midiIn*
+	MIDI input parameters. */
 
-	bool     midiInVeloAsVol;
-	uint32_t midiInReadActions;
-	uint32_t midiInPitch;
+	std::atomic<bool>     midiInVeloAsVol;
+	std::atomic<uint32_t> midiInReadActions;
+	std::atomic<uint32_t> midiInPitch;
+
+	/* bufferOffset
+	Offset used while filling the internal buffer with audio data. Value is 
+	greater than zero on start sample. */
 	
+	Frame bufferOffset;
+
+	/* rewinding
+	Tells whether a rewind event is taking place. Used to fill the audio
+	buffer twice. */
+
+	bool rewinding;	
+
 private:
 
 	/* rsmp_state, rsmp_data

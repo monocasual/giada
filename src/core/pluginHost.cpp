@@ -29,12 +29,15 @@
 
 
 #include <cassert>
-#include "../utils/log.h"
-#include "../utils/vector.h"
-#include "const.h"
-#include "channel.h"
-#include "plugin.h"
-#include "pluginHost.h"
+#include "utils/log.h"
+#include "utils/vector.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
+#include "core/plugin.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
 
 
 namespace giada {
@@ -45,47 +48,44 @@ namespace
 {
 juce::MessageManager* messageManager_;
 juce::AudioBuffer<float> audioBuffer_;
-
-std::vector<std::unique_ptr<Plugin>> masterOut_;
-std::vector<std::unique_ptr<Plugin>> masterIn_;
+ID pluginId_;
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void processPlugin_(Plugin& p, Channel* ch)
+void giadaToJuceTempBuf_(const AudioBuffer& outBuf)
 {
-	if (p.isSuspended() || p.isBypassed())
-		return;
+	for (int i=0; i<outBuf.countFrames(); i++)
+		for (int j=0; j<outBuf.countChannels(); j++)
+			audioBuffer_.setSample(j, i, outBuf[i][j]);
+}
 
-	juce::MidiBuffer events;
-	if (ch != nullptr)
-		events = ch->getPluginMidiEvents();
 
-	p.process(audioBuffer_, events);
+/* juceToGiadaOutBuf_
+Converts buffer from Juce to Giada. A note for the future: if we overwrite (=) 
+(as we do now) it's SEND, if we add (+) it's INSERT. */
+
+void juceToGiadaOutBuf_(AudioBuffer& outBuf)
+{
+	for (int i=0; i<outBuf.countFrames(); i++)
+		for (int j=0; j<outBuf.countChannels(); j++)	
+			outBuf[i][j] = audioBuffer_.getSample(j, i);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
-/* getStack_
-Returns a vector of unique_ptr's given the stackType. If stackType == CHANNEL
-a pointer to Channel is also required. */
 
-std::vector<std::unique_ptr<Plugin>>& getStack_(StackType t, Channel* ch=nullptr)
+void processPlugins_(const Stack& stack, juce::MidiBuffer& events)
 {
-	switch(t) {
-		case StackType::MASTER_OUT:
-			return masterOut_;
-		case StackType::MASTER_IN:
-			return masterIn_;
-		case StackType::CHANNEL:
-			return ch->plugins;
-		default:
-			assert(false);
+	for (const std::shared_ptr<Plugin>& p : stack) {
+		if (p->isSuspended() || p->isBypassed())
+			continue;
+		const_cast<std::shared_ptr<Plugin>&>(p)->process(audioBuffer_, events);
+		events.clear();
 	}
 }
-
 }; // {anonymous}
 
 
@@ -94,16 +94,9 @@ std::vector<std::unique_ptr<Plugin>>& getStack_(StackType t, Channel* ch=nullptr
 /* -------------------------------------------------------------------------- */
 
 
-pthread_mutex_t mutex;
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void close()
 {
 	messageManager_->deleteInstance();
-	pthread_mutex_destroy(&mutex);
 }
 
 
@@ -114,143 +107,100 @@ void init(int buffersize)
 {
 	messageManager_ = juce::MessageManager::getInstance();
 	audioBuffer_.setSize(G_MAX_IO_CHANS, buffersize);
-
-	pthread_mutex_init(&mutex, nullptr);
+	pluginId_ = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void addPlugin(std::unique_ptr<Plugin> p, StackType t, pthread_mutex_t* mixerMutex, 
-	Channel* ch)
+void processStack(AudioBuffer& outBuf, const Stack& stack, juce::MidiBuffer* events)
 {
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-
-	gu_log("[pluginHost::addPlugin] load plugin (%s), stack type=%d, stack size=%d\n",
-		p->getName().c_str(), t, stack.size());
-
-	pthread_mutex_lock(mixerMutex);
-	stack.push_back(std::move(p));
-	pthread_mutex_unlock(mixerMutex);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::vector<Plugin*> getStack(StackType t, Channel* ch)
-{
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-
-	std::vector<Plugin*> out;
-	for (const std::unique_ptr<Plugin>& p : stack)
-		out.push_back(p.get());
-
-	return out;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int countPlugins(StackType t, Channel* ch)
-{
-	return getStack_(t, ch).size();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void freeStack(StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
-{
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-
-	if (stack.size() == 0)
-		return;
-
-	pthread_mutex_lock(mixerMutex);
-	stack.clear();
-	pthread_mutex_unlock(mixerMutex);
-
-	gu_log("[pluginHost::freeStack] stack type=%d freed\n", t);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void processStack(AudioBuffer& outBuf, StackType t, Channel* ch)
-{
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-
-	if (stack.size() == 0)
-		return;
-
 	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());
 
-	/* MIDI channels must not process the current buffer: give them an empty one. 
-	Sample channels and Master in/out want audio data instead: let's convert the 
-	internal buffer from Giada to Juce. */
-
-	if (ch != nullptr && ch->type == ChannelType::MIDI) 
-		audioBuffer_.clear();
-	else
-		for (int i=0; i<outBuf.countFrames(); i++)
-			for (int j=0; j<outBuf.countChannels(); j++)
-				audioBuffer_.setSample(j, i, outBuf[i][j]);
-
-	/* Hardcore processing. Part of this loop must be guarded by mutexes, i.e. 
-	the MIDI process part. You definitely don't want a situation like the 
-	following one:
-		1. this::processStack()
-		2. [a new midi event comes in from kernelMidi thread]
-		3. channel::clearMidiBuffer()
-	The midi event in between would be surely lost, deleted by the last call to
-	channel::clearMidiBuffer()! 
-	TODO - that's why we need a proper queue for MIDI events in input... */
-
-	if (ch != nullptr)
-		pthread_mutex_lock(&mutex);
-
-	for (std::unique_ptr<Plugin>& plugin : stack)
-		processPlugin_(*plugin.get(), ch);
-
-	if (ch != nullptr) {
-		ch->clearMidiBuffer();
-		pthread_mutex_unlock(&mutex);
+	/* If events are null: Audio stack processing (master in, master out or
+	sample channels. No need for MIDI events. 
+	If events are not null: MIDI stack (MIDI channels). MIDI channels must not 
+	process the current buffer: give them an empty and clean one. */
+	
+	if (events == nullptr) {
+		giadaToJuceTempBuf_(outBuf);
+		juce::MidiBuffer events; // empty
+		processPlugins_(stack, events);
 	}
+	else {
+		audioBuffer_.clear();
+		processPlugins_(stack, *events);
 
-	/* Converting buffer from Juce to Giada. A note for the future: if we 
-	overwrite (=) (as we do now) it's SEND, if we add (+) it's INSERT. */
-
-	for (int i=0; i<outBuf.countFrames(); i++)
-		for (int j=0; j<outBuf.countChannels(); j++)	
-			outBuf[i][j] = audioBuffer_.getSample(j, i);
+	}
+	juceToGiadaOutBuf_(outBuf);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-Plugin* getPluginByIndex(int index, StackType t, Channel* ch)
+const Plugin* getPluginByID(ID pluginID, ID chanID)
 {
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-	assert((size_t) index < stack.size());
-	return stack.at(index).get();
+	return model::getLayout()->getPlugin(pluginID, chanID);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int getPluginIndex(int id, StackType t, Channel* ch)
+void addPlugin(std::shared_ptr<Plugin> p, ID chanID)
 {
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-	return u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) 
-	{ 
-		return p->getId() == id;
+	Stack& stack = model::getData().plugins[chanID]; // Let's create the key if non-existent with the [] operator
+	p->id = pluginId_++;
+	stack.push_back(p);
+	
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	layout->getPlugins(chanID)->push_back(p);
+	model::swapLayout(layout);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void swapPlugin(ID pluginID1, ID pluginID2, ID chanID)
+{
+	if (model::getLayout()->getPlugins(chanID)->size() == 1 || pluginID1 == pluginID2)
+		return;
+
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	Stack& stack = *layout->getPlugins(chanID);
+
+	int index1 = u::vector::indexOf(stack, [=](const std::shared_ptr<Plugin>& p)
+	{
+		return p->id == pluginID1;
+	});
+	int index2 = u::vector::indexOf(stack, [=](const std::shared_ptr<Plugin>& p)
+	{
+		return p->id == pluginID2;
+	});
+
+	std::swap(stack[index1], stack[index2]);
+	model::swapLayout(layout);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void freePlugin(ID pluginID, ID chanID)
+{
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	u::vector::removeIf(*layout->getPlugins(chanID), [=](const std::shared_ptr<Plugin>& p)
+	{
+		return p->id == pluginID;
+	});
+	model::swapLayout(layout);
+
+	u::vector::removeIf(model::getData().plugins.at(chanID), [=](const std::shared_ptr<Plugin>& p)
+	{
+		return p->id == pluginID;
 	});
 }
 
@@ -258,38 +208,43 @@ int getPluginIndex(int id, StackType t, Channel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugin(int indexA, int indexB, StackType t, pthread_mutex_t* mixerMutex, 
-	Channel* ch)
+void clonePlugins(ID channelId, ID newChannelId)
 {
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
-
-	pthread_mutex_lock(mixerMutex);
-	std::swap(stack.at(indexA), stack.at(indexB));
-	pthread_mutex_unlock(mixerMutex);
-
-	gu_log("[pluginHost::swapPlugin] plugin at index %d and %d swapped\n", indexA, indexB);
+	Stack& stack = model::getData().plugins[newChannelId]; // Create the key
+	
+	for (std::shared_ptr<Plugin>& p : *model::getLayout()->getPlugins(channelId)) {
+		std::shared_ptr<Plugin> clone = pluginManager::makePlugin(*p.get()); 
+		clone->id = pluginId_++;
+		stack.push_back(clone);
+	}
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int freePlugin(int id, StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
+void setPluginParameter(ID pluginID, int paramIndex, float value, ID chanID)
 {
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, ch);
+	model::getLayout()->getPlugin(pluginID, chanID)->setParameter(paramIndex, value);
+}
 
-	int index = u::vector::indexOf(stack, [&](const std::unique_ptr<Plugin>& p) 
-	{ 
-		return p->getId() == id; 
-	});
-	assert(index != -1);
 
-	pthread_mutex_lock(mixerMutex);
-	stack.erase(stack.begin() + index);
-	pthread_mutex_unlock(mixerMutex);	
+/* -------------------------------------------------------------------------- */
 
-	gu_log("[pluginHost::freePlugin] plugin id=%d removed\n", id);
-	return index;
+
+void setPluginProgram(ID pluginID, int programIndex, ID chanID)
+{
+	model::getLayout()->getPlugin(pluginID, chanID)->setCurrentProgram(programIndex);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleBypass(ID pluginID, ID chanID)
+{
+	Plugin* p = model::getLayout()->getPlugin(pluginID, chanID);
+	p->setBypass(!p->isBypassed());
 }
 
 
@@ -299,29 +254,6 @@ int freePlugin(int id, StackType t, pthread_mutex_t* mixerMutex, Channel* ch)
 void runDispatchLoop()
 {
 	messageManager_->runDispatchLoopUntil(10);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void freeAllStacks(std::vector<Channel*>* channels, pthread_mutex_t* mixerMutex)
-{
-	freeStack(StackType::MASTER_OUT, mixerMutex);
-	freeStack(StackType::MASTER_IN, mixerMutex);
-	for (Channel* c : *channels)
-		freeStack(StackType::CHANNEL, mixerMutex, c);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void forEachPlugin(StackType t, const Channel* ch, std::function<void(const Plugin* p)> f)
-{
-	std::vector<std::unique_ptr<Plugin>>& stack = getStack_(t, const_cast<Channel*>(ch));
-	for (const std::unique_ptr<Plugin>& p : stack)
-		f(p.get());
 }
 
 }}}; // giada::m::pluginHost::

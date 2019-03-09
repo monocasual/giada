@@ -26,32 +26,29 @@
 
 
 #include <cassert>
-#include "../utils/log.h"
-#include "recorder.h"
-#include "midiChannelProc.h"
-#include "channelManager.h"
-#include "channel.h"
-#include "recorderHandler.h"
-#include "action.h"
-#include "patch.h"
-#include "const.h"
-#include "conf.h"
-#include "mixer.h"
-#include "pluginHost.h"
-#include "kernelMidi.h"
+#include "utils/log.h"
+#include "core/channels/midiChannelProc.h"
+#include "core/channels/channelManager.h"
+#include "core/channels/channel.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "core/action.h"
+#include "core/patch.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "core/mixer.h"
+#include "core/pluginHost.h"
+#include "core/kernelMidi.h"
 #include "midiChannel.h"
-
-
-using std::string;
 
 
 namespace giada {
 namespace m 
 {
-MidiChannel::MidiChannel(int bufferSize)
-	: Channel      (ChannelType::MIDI, ChannelStatus::OFF, bufferSize),
-		midiOut    (false),
-		midiOutChan(G_MIDI_CHANS[0])
+MidiChannel::MidiChannel(int bufferSize, size_t column)
+: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize, column),
+  midiOut    (false),
+  midiOutChan(G_MIDI_CHANS[0])
 {
 }
 
@@ -59,12 +56,11 @@ MidiChannel::MidiChannel(int bufferSize)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
+MidiChannel::MidiChannel(const MidiChannel& o)
+: Channel    (o),
+  midiOut    (o.midiOut),
+  midiOutChan(o.midiOutChan)
 {
-	Channel::copy(src_, pluginMutex);
-	const MidiChannel* src = static_cast<const MidiChannel*>(src_);
-	midiOut     = src->midiOut;
-	midiOutChan = src->midiOutChan;
 }
 
 
@@ -79,8 +75,8 @@ void MidiChannel::parseEvents(mixer::FrameEvents fe)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::process(AudioBuffer& out, const AudioBuffer& in, bool audible, 
-	bool running)
+void MidiChannel::render(AudioBuffer& out, const AudioBuffer& in, 
+	AudioBuffer& inToOut, bool audible, bool running)
 {
 	midiChannelProc::process(this, out, in, audible);
 }
@@ -143,7 +139,7 @@ void MidiChannel::setSolo(bool value)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::readPatch(const string& basePath, const patch::channel_t& pch)
+void MidiChannel::readPatch(const std::string& basePath, const patch::channel_t& pch)
 {
 	Channel::readPatch("", pch);
 	channelManager::readPatch(this, pch);
@@ -163,23 +159,6 @@ void MidiChannel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-#ifdef WITH_VST
-
-void MidiChannel::addVstMidiEvent(uint32_t msg, int localFrame)
-{
-	juce::MidiMessage message = juce::MidiMessage(
-		kernelMidi::getB1(msg),
-		kernelMidi::getB2(msg),
-		kernelMidi::getB3(msg));
-	midiBuffer.addEvent(message, localFrame);
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void MidiChannel::empty()
 {
 	hasActions = false;
@@ -189,18 +168,24 @@ void MidiChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void MidiChannel::sendMidi(const Action* a, int localFrame)
+void MidiChannel::sendMidi(const MidiEvent& e, int localFrame)
 {
-	if (isPlaying() && !mute) {
-		if (midiOut) {
-			MidiEvent event = a->event;
-			event.setChannel(midiOutChan);
-			kernelMidi::send(event.getRaw());
-		}
-#ifdef WITH_VST
-		addVstMidiEvent(a->event.getRaw(), localFrame);
-#endif
+	if (midiOut) {
+		MidiEvent e_ = e;
+		e_.setChannel(midiOutChan);
+		kernelMidi::send(e_.getRaw());
 	}
+
+#ifdef WITH_VST
+
+	/* Enqueue this MIDI event for plug-ins processing. Will be read and
+	rendered later on by the audio thread. */
+
+	MidiEvent e_ = e;
+	e_.setDelta(localFrame);
+	midiQueue.push(e_);
+
+#endif
 }
 
 
@@ -212,7 +197,7 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 	namespace mrh = m::recorderHandler;
 	namespace mr  = m::recorder;
 
-	if (!armed)
+	if (armed.load() == false)
 		return;
 
 	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
@@ -224,14 +209,15 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 
 #ifdef WITH_VST
 
-	pthread_mutex_lock(&pluginHost::mutex);
-	addVstMidiEvent(midiEventFlat.getRaw(), 0);
-	pthread_mutex_unlock(&pluginHost::mutex);
+	/* Enqueue this MIDI event for plug-ins processing. Will be read and
+	rendered later on by the audio thread. */
+
+	midiQueue.push(midiEventFlat);
 
 #endif
 
 	if (mr::isActive()) {
-		mrh::liveRec(index, midiEventFlat);
+		mrh::liveRec(id, midiEventFlat);
 		hasActions = true;
 	}
 }

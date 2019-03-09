@@ -29,32 +29,33 @@
 #define GE_MIDI_CHANNEL_H
 
 
-#include "../../../../core/midiChannel.h"
 #include "channel.h"
 #include "channelButton.h"
 
 
+namespace giada {
+namespace m
+{
+class MidiChannel;
+}
+namespace v
+{
 class geMidiChannel : public geChannel
 {
-private:
-
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_openMenu(Fl_Widget* v, void* p);
-	void cb_button();
-	void cb_openMenu();
-
 public:
 
-	geMidiChannel(int x, int y, int w, int h, giada::m::MidiChannel* ch);
+    geMidiChannel(int x, int y, int w, int h, const m::MidiChannel* ch);
 
-	void resize(int x, int y, int w, int h) override;
+    void resize(int x, int y, int w, int h) override;
 
-	void reset() override;
-	void update() override;
-	void refresh() override;
+private:
 
-	int keyPress(int event);  // TODO - move to base class
+	static void cb_playButton(Fl_Widget* v, void* p);
+	static void cb_openMenu(Fl_Widget* v, void* p);
+	void cb_playButton();
+	void cb_openMenu();
 };
+}} // giada::v::
 
 
 #endif

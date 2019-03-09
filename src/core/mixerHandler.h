@@ -29,40 +29,64 @@
 #define G_MIXER_HANDLER_H
 
 
+#include <memory>
 #include <string>
 #include "types.h"
-
-
 
 
 namespace giada {
 namespace m 
 {
+class Wave;
 class Channel;
 class SampleChannel;
 
 namespace mh
 {
-/* addChannel
-Adds a new channel of type 'type' into mixer's stack. */
+void init();
 
-Channel* addChannel(ChannelType type);
+/* addChannel
+Adds a new channel of type 'type' into the channels stack. */
+
+Channel* addChannel(ChannelType type, size_t column);
+
+/* loadChannel (1)
+Loads a new Wave inside a Sample Channel. */
+
+int loadChannel(ID channelId, const std::string& fname);
+
+/* loadChannel (2)
+Loads a new channel with an existing Wave. */
+
+void loadChannel(ID channelId, std::unique_ptr<Wave>&& w);
+
+/* addAndLoadChannel (1)
+Creates a new channels, fills it with a Wave and then add it to the stack. */
+
+int addAndLoadChannel(size_t column, const std::string& fname); 
+
+/* addAndLoadChannel (2)
+Same as (1), but Wave is already provided. */
+
+void addAndLoadChannel(size_t column, std::unique_ptr<Wave>&& w); 
+
+/* freeChannel
+Unloads existing Wave from a Sample Channel. */
+
+void freeChannel(ID channelId);
 
 /* deleteChannel
 Completely removes a channel from the stack. */
 
-void deleteChannel(Channel* ch);
+void deleteChannel(ID channelId);
 
-/* getChannelByIndex
-Returns channel with given index 'i'. */
+void cloneChannel(ID channelId);
+void renameChannel(ID channelId, const std::string& name);
+void freeAllChannels();
 
-Channel* getChannelByIndex(int i);
-
-/* stopSequencer
-Stops the sequencer, with special case if samplesStopOnSeqHalt is true. */
-
+void startSequencer();
 void stopSequencer();
-
+void toggleSequencer();
 void rewindSequencer();
 
 /* updateSoloCount
@@ -110,6 +134,16 @@ Tells whether Mixer has one or more recordable Sample Channels, that is:
 a) armed; b) empty (no Wave). */
 
 bool hasRecordableSampleChannels();
+
+/* hasActions
+True if at least one Channel has actions recorded in it. */
+
+bool hasActions();
+
+/* hasAudioData
+True if at least one Sample Channel has some audio recorded in it. */
+
+bool hasAudioData();
 }}}  // giada::m::mh::
 
 

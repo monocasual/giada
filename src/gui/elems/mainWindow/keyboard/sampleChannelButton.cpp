@@ -26,27 +26,63 @@
 
 
 #include <FL/Fl.H>
-#include "../../../../core/const.h"
-#include "../../../../core/sampleChannel.h"
-#include "../../../../utils/string.h"
-#include "../../../../utils/fs.h"
-#include "../../../../glue/channel.h"
-#include "../../../dialogs/mainWindow.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/wave.h"
+#include "core/mixer.h"
+#include "core/recorder.h"
+#include "core/recManager.h"
+#include "utils/string.h"
+#include "utils/fs.h"
+#include "glue/channel.h"
+#include "gui/dialogs/mainWindow.h"
 #include "sampleChannel.h"
 #include "keyboard.h"
 #include "sampleChannelButton.h"
 
 
-extern gdMainWindow* G_MainWin;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
-geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h,
-	const char* l)
-	: geChannelButton(x, y, w, h, l)
+namespace giada {
+namespace v
 {
+geSampleChannelButton::geSampleChannelButton(int x, int y, int w, int h,
+	const m::SampleChannel* ch)
+: geChannelButton(x, y, w, h, ch)
+{
+	switch (ch->status) {
+		case ChannelStatus::EMPTY:
+			label("-- no sample --");
+			break;
+		case ChannelStatus::MISSING:
+		case ChannelStatus::WRONG:
+			label("* file not found! *");
+			break;
+		default:
+			if (ch->name.empty())
+				label(ch->wave->getBasename(false).c_str());
+			else
+				label(ch->name.c_str());
+			break;
+	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geSampleChannelButton::refresh()
+{
+	geChannelButton::refresh();
+	
+	if (m::recManager::isRecordingInput() && m_ch->armed)
+		setInputRecordMode();
+	else
+	if (m::recorder::isActive() && static_cast<const m::SampleChannel*>(m_ch)->wave != nullptr)
+		setActionRecordMode();
+
+	redraw();
 }
 
 
@@ -64,14 +100,12 @@ int geSampleChannelButton::handle(int e)
 			break;
 		}
 		case FL_PASTE: {
-			geSampleChannel*  gch = static_cast<geSampleChannel*>(parent());
-			m::SampleChannel* ch  = static_cast<m::SampleChannel*>(gch->ch);
-			int result = c::channel::loadChannel(ch, u::string::trim(gu_stripFileUrl(Fl::event_text())));
-			if (result != G_RES_OK)
-				G_MainWin->keyboard->printChannelMessage(result);
+			c::channel::loadChannel(m_ch->id, u::string::trim(gu_stripFileUrl(Fl::event_text())));
 			ret = 1;
 			break;
 		}
 	}
 	return ret;
 }
+
+}} // giada::v::

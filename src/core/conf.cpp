@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <string>
 #include <FL/Fl.H>
 #include "../utils/fs.h"
@@ -169,17 +170,17 @@ string lastFileMap = "";
 int    midiSync    = MIDI_SYNC_NONE;
 float  midiTCfps   = 25.0f;
 
-bool midiIn               = false;
-int midiInFilter          = -1;
-uint32_t midiInRewind     = 0x0;
-uint32_t midiInStartStop  = 0x0;
-uint32_t midiInActionRec  = 0x0;
-uint32_t midiInInputRec   = 0x0;
-uint32_t midiInVolumeIn   = 0x0;
-uint32_t midiInVolumeOut  = 0x0;
-uint32_t midiInBeatDouble = 0x0;
-uint32_t midiInBeatHalf   = 0x0;
-uint32_t midiInMetronome  = 0x0;
+std::atomic<bool>     midiIn          (false);
+std::atomic<int>      midiInFilter    (-1);
+std::atomic<uint32_t> midiInRewind    (0x0);
+std::atomic<uint32_t> midiInStartStop (0x0);
+std::atomic<uint32_t> midiInActionRec (0x0);
+std::atomic<uint32_t> midiInInputRec  (0x0);
+std::atomic<uint32_t> midiInVolumeIn  (0x0);
+std::atomic<uint32_t> midiInVolumeOut (0x0);
+std::atomic<uint32_t> midiInBeatDouble(0x0);
+std::atomic<uint32_t> midiInBeatHalf  (0x0);
+std::atomic<uint32_t> midiInMetronome (0x0);
 
 bool recsStopOnChanHalt    = false;
 bool chansStopOnSeqHalt    = false;
@@ -300,17 +301,17 @@ int read()
 {
 	init();
 
-  json_error_t jError;
+	json_error_t jError;
 	json_t *jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
-  if (!jRoot) {
-    gu_log("[conf::read] unable to read configuration file! Error on line %d: %s\n",
-      jError.line, jError.text);
-    return 0;
-  }
+	if (!jRoot) {
+		gu_log("[conf::read] unable to read configuration file! Error on line %d: %s\n",
+		jError.line, jError.text);
+	return 0;
+	}
 
-  if (!storager::checkObject(jRoot, "root element")) {
+	if (!storager::checkObject(jRoot, "root element")) {
 		json_decref(jRoot);
-    return 0;
+		return 0;
 	}
 
 	if (!storager::setString(jRoot, CONF_KEY_HEADER, header)) return 0;
@@ -331,6 +332,8 @@ int read()
 	if (!storager::setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
 	if (!storager::setFloat(jRoot, CONF_KEY_MIDI_TC_FPS, midiTCfps)) return 0;
+#warning "ATOMIC VALUES NOT STORED IN CONF YET"
+	/*
 	if (!storager::setBool(jRoot, CONF_KEY_MIDI_IN, midiIn)) return 0; 
 	if (!storager::setInt(jRoot, CONF_KEY_MIDI_IN_FILTER, midiInFilter)) return 0; 
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_REWIND, midiInRewind)) return 0; 
@@ -341,7 +344,7 @@ int read()
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_IN, midiInVolumeIn)) return 0;
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_OUT, midiInVolumeOut)) return 0;
 	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_DOUBLE, midiInBeatDouble)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_HALF, midiInBeatHalf)) return 0;
+	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_HALF, midiInBeatHalf)) return 0;*/
 	if (!storager::setBool(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT, recsStopOnChanHalt)) return 0;
 	if (!storager::setBool(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT, chansStopOnSeqHalt)) return 0;
 	if (!storager::setBool(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS, treatRecsAsLoops)) return 0;
@@ -520,8 +523,8 @@ int write()
 #endif
 
   if (json_dump_file(jRoot, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
-    gu_log("[conf::write] unable to write configuration file!\n");
-    return 0;
+	gu_log("[conf::write] unable to write configuration file!\n");
+	return 0;
   }
   return 1;
 }

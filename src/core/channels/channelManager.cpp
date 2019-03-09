@@ -25,25 +25,22 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../gui/elems/mainWindow/keyboard/channel.h"
-#include "../utils/fs.h"
-#include "const.h"
-#include "channel.h"
-#include "patch.h"
-#include "mixer.h"
-#include "wave.h"
-#include "waveManager.h"
-#include "sampleChannel.h"
-#include "midiChannel.h"
-#include "pluginHost.h"
-#include "pluginManager.h"
-#include "plugin.h"
-#include "action.h"
-#include "recorderHandler.h"
+#include "utils/fs.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/channels/masterChannel.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
+#include "core/patch.h"
+#include "core/mixer.h"
+#include "core/wave.h"
+#include "core/waveManager.h"
+#include "core/pluginHost.h"
+#include "core/pluginManager.h"
+#include "core/plugin.h"
+#include "core/action.h"
+#include "core/recorderHandler.h"
 #include "channelManager.h"
-
-
-using std::string;
 
 
 namespace giada {
@@ -55,8 +52,8 @@ namespace
 void writePlugins_(const Channel* ch, patch::channel_t& pch)
 {
 #ifdef WITH_VST
-
-	pluginHost::forEachPlugin(pluginHost::StackType::CHANNEL, ch, [&] (const Plugin* p) {
+#if 0
+	pluginHost::forEachPlugin({pluginHost::StackType::CHANNEL, ch->index}, [&] (const Plugin* p) {
 		patch::plugin_t pp;
 		pp.path   = p->getUniqueId();
 		pp.bypass = p->isBypassed();
@@ -66,7 +63,7 @@ void writePlugins_(const Channel* ch, patch::channel_t& pch)
 			pp.midiInParams.push_back(param);
 		pch.plugins.push_back(pp);
 	});
-
+#endif
 #endif
 }
 } // {anonymous}
@@ -87,6 +84,7 @@ void readActions_(Channel* ch, const patch::channel_t& pch)
 
 void readPlugins_(Channel* ch, const patch::channel_t& pch)
 {
+#if 0
 #ifdef WITH_VST
 
 	for (const patch::plugin_t& ppl : pch.plugins) {
@@ -108,9 +106,9 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 				plugin->midiInParams.push_back(midiInParam);
 		}
 
-		pluginHost::addPlugin(std::move(plugin), pluginHost::StackType::CHANNEL, &mixer::mutex, ch);
+		pluginHost::addPlugin(std::move(plugin), {pluginHost::StackType::CHANNEL, ch->index});
 	}
-
+#endif
 #endif
 }
 
@@ -120,12 +118,30 @@ void readPlugins_(Channel* ch, const patch::channel_t& pch)
 /* -------------------------------------------------------------------------- */
 
 
-Channel* create(ChannelType type, int bufferSize, bool inputMonitorOn)
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize, bool inputMonitorOn, size_t column)
 {
 	if (type == ChannelType::SAMPLE)
-		return new SampleChannel(inputMonitorOn, bufferSize);
+		return std::make_unique<SampleChannel>(inputMonitorOn, bufferSize, column);
 	else
-		return new MidiChannel(bufferSize);
+	if (type == ChannelType::MIDI)
+		return std::make_unique<MidiChannel>(bufferSize, column);
+	else
+		return std::make_unique<MasterChannel>(bufferSize, column);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::unique_ptr<Channel> create(const Channel& ch)
+{
+	if (ch.type == ChannelType::SAMPLE)
+		return std::make_unique<SampleChannel>(static_cast<const SampleChannel&>(ch));
+	else
+	if (ch.type == ChannelType::MIDI)
+		return std::make_unique<MidiChannel>(static_cast<const MidiChannel&>(ch));
+	else
+		return std::make_unique<MasterChannel>(static_cast<const MasterChannel&>(ch));
 }
 
 
@@ -134,14 +150,15 @@ Channel* create(ChannelType type, int bufferSize, bool inputMonitorOn)
 
 int writePatch(const Channel* ch, bool isProject)
 {
+#if 0
 	patch::channel_t pch;
 	pch.type            = static_cast<int>(ch->type);
 	pch.index           = ch->index;
-	pch.size            = ch->guiChannel->getSize();
+	//pch.size            = ch->guiChannel->getSize();
 	pch.name            = ch->name;
 	pch.key             = ch->key;
 	pch.armed           = ch->armed;
-	pch.column          = ch->guiChannel->getColumnIndex();
+	pch.column          = ch->columnIndex;
 	pch.mute            = ch->mute;
 	pch.solo            = ch->solo;
 	pch.volume          = ch->volume;
@@ -166,6 +183,7 @@ int writePatch(const Channel* ch, bool isProject)
 	patch::channels.push_back(pch);
 
 	return patch::channels.size() - 1;
+#endif
 }
 
 
@@ -174,9 +192,11 @@ int writePatch(const Channel* ch, bool isProject)
 
 void writePatch(const MidiChannel* ch, bool isProject, int index)
 {
+#if 0
 	patch::channel_t& pch = patch::channels.at(index);
 	pch.midiOut     = ch->midiOut;
 	pch.midiOutChan = ch->midiOutChan;
+#endif
 }
 
 
@@ -185,6 +205,7 @@ void writePatch(const MidiChannel* ch, bool isProject, int index)
 
 void writePatch(const SampleChannel* ch, bool isProject, int index)
 {
+#if 0
 	patch::channel_t& pch = patch::channels.at(index);
 
 	if (ch->wave != nullptr) {
@@ -204,6 +225,7 @@ void writePatch(const SampleChannel* ch, bool isProject, int index)
 	pch.inputMonitor      = ch->inputMonitor;
 	pch.midiInReadActions = ch->midiInReadActions;
 	pch.midiInPitch       = ch->midiInPitch;	
+#endif
 }
 
 
@@ -212,6 +234,7 @@ void writePatch(const SampleChannel* ch, bool isProject, int index)
 
 void readPatch(Channel* ch, const patch::channel_t& pch)
 {
+#if 0
 	ch->key             = pch.key;
 	ch->armed           = pch.armed;
 	ch->type            = static_cast<ChannelType>(pch.type);
@@ -236,14 +259,16 @@ void readPatch(Channel* ch, const patch::channel_t& pch)
 
 	readActions_(ch, pch);
 	readPlugins_(ch, pch);
+#endif
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t& pch)
+void readPatch(SampleChannel* ch, const std::string& basePath, const patch::channel_t& pch)
 {
+#if 0
 	ch->mode              = static_cast<ChannelMode>(pch.mode);
 	ch->readActions       = pch.readActions;
 	ch->recStatus         = pch.readActions ? ChannelStatus::PLAY : ChannelStatus::OFF;
@@ -269,6 +294,7 @@ void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t
 			ch->status = ChannelStatus::MISSING;
 		ch->sendMidiLstatus();  // FIXME - why sending MIDI lightning if sample status is wrong?
 	}
+#endif
 }
 
 
@@ -277,7 +303,9 @@ void readPatch(SampleChannel* ch, const string& basePath, const patch::channel_t
 
 void readPatch(MidiChannel* ch, const patch::channel_t& pch)
 {
+#if 0
 	ch->midiOut     = pch.midiOut;
 	ch->midiOutChan = pch.midiOutChan;	
+#endif
 }
 }}}; // giada::m::channelManager

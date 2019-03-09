@@ -25,23 +25,20 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../utils/fs.h"
-#include "../../elems/browser.h"
-#include "../../elems/basics/button.h"
-#include "../../elems/basics/input.h"
+#include "utils/fs.h"
+#include "gui/elems/browser.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/input.h"
 #include "browserLoad.h"
 
 
-using std::string;
-using namespace giada;
-
-
-gdBrowserLoad::gdBrowserLoad(int x, int y, int w, int h, const string& title,
-		const string& path, void (*cb)(void*), m::Channel* ch)
-	:	gdBrowserBase(x, y, w, h, title, path, cb)
+namespace giada {
+namespace v
 {
-	channel = ch;
-
+gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path, 
+	std::function<void(void*)> cb, const m::Channel* ch)
+: gdBrowserBase(title, path, cb, ch)
+{
 	where->size(groupTop->w()-updir->w()-8, 20);
 
 	browser->callback(cb_down, (void*) this);
@@ -69,7 +66,7 @@ void gdBrowserLoad::cb_down(Fl_Widget* v, void* p) { ((gdBrowserLoad*)p)->cb_dow
 
 void gdBrowserLoad::cb_load()
 {
-	callback((void*) this);
+	fireCallback();
 }
 
 
@@ -78,7 +75,7 @@ void gdBrowserLoad::cb_load()
 
 void gdBrowserLoad::cb_down()
 {
-	string path = browser->getSelectedItem();
+	std::string path = browser->getSelectedItem();
 
 	if (path.empty() || !gu_isDir(path)) // when click on an empty area or not a dir
 		return;
@@ -86,3 +83,5 @@ void gdBrowserLoad::cb_down()
 	browser->loadDir(path);
 	where->value(browser->getCurrentDir().c_str());
 }
+
+}} // giada::v::

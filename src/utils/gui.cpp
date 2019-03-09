@@ -29,34 +29,34 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #if defined(_WIN32)
-	#include "../ext/resource.h"
+	#include "ext/resource.h"
 #elif defined(__linux__)
 	#include <X11/xpm.h>
 #endif
-#include "../core/mixer.h"
-#include "../core/clock.h"
-#include "../core/pluginHost.h"
-#include "../core/channel.h"
-#include "../core/conf.h"
-#include "../core/graphics.h"
-#include "../gui/dialogs/warnings.h"
-#include "../gui/dialogs/mainWindow.h"
-#include "../gui/dialogs/actionEditor/baseActionEditor.h"
-#include "../gui/dialogs/window.h"
-#include "../gui/dialogs/sampleEditor.h"
-#include "../gui/elems/mainWindow/mainIO.h"
-#include "../gui/elems/mainWindow/mainTimer.h"
-#include "../gui/elems/mainWindow/mainTransport.h"
-#include "../gui/elems/mainWindow/beatMeter.h"
-#include "../gui/elems/mainWindow/keyboard/keyboard.h"
-#include "../gui/elems/mainWindow/keyboard/channel.h"
-#include "../gui/elems/sampleEditor/waveTools.h"
+#include "core/channels/channel.h"
+#include "core/mixer.h"
+#include "core/clock.h"
+#include "core/pluginHost.h"
+#include "core/conf.h"
+#include "core/graphics.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
+#include "gui/dialogs/window.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainTimer.h"
+#include "gui/elems/mainWindow/mainTransport.h"
+#include "gui/elems/mainWindow/beatMeter.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/sampleEditor/waveTools.h"
 #include "log.h"
 #include "string.h"
 #include "gui.h"
 
 
-extern gdMainWindow* G_MainWin;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -74,32 +74,58 @@ int blinker_ = 0;
 /* -------------------------------------------------------------------------- */
 
 
-void refreshUI()
+void rebuildSubWindow(int wid)
 {
-	Fl::lock();
+	v::gdWindow* w = getSubwindow(G_MainWin, wid);
+	if(w != nullptr)  // If its open
+		w->rebuild();	
+}
 
-	/* update dynamic elements: in and out meters, beat meter and
-	 * each channel */
 
+/* -------------------------------------------------------------------------- */
+
+
+void refreshSubWindow(int wid)
+{
+	v::gdWindow* w = getSubwindow(G_MainWin, wid);
+	if(w != nullptr)  // If its open
+		w->refresh();		
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void refresh()
+{
+	/* Update dynamic elements: in and out meters, beat meter and each 
+	channel. */
+
+	/* TODO G_MainWin::refresh() override */
 	G_MainWin->mainIO->refresh();
-	G_MainWin->beatMeter->redraw();
-	G_MainWin->keyboard->refreshColumns();
+	G_MainWin->mainTransport->refresh();
+	G_MainWin->beatMeter->redraw(); // TODO change name for consistency
+	G_MainWin->keyboard->refresh();
 
-	/* compute timer for blinker */
+	/* Compute timer for blinker. */
 
-	if (blinker_++ > 12)
-		blinker_ = 0;
+	blinker_ = (blinker_ + 1) % 12;
 
-	/* If Sample Editor is open, repaint it (for dynamic play head). */
+	/* Refresh Sample Editor (if open) for dynamic play head. */
 
-	gdSampleEditor* se = static_cast<gdSampleEditor*>(getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (se != nullptr)
-		se->waveTools->redrawWaveformAsync();
+	refreshSubWindow(WID_SAMPLE_EDITOR);
+}
 
-	/* redraw GUI */
 
-	Fl::unlock();
-	Fl::awake();
+/* -------------------------------------------------------------------------- */
+
+
+void rebuild()
+{
+	G_MainWin->rebuild();
+	rebuildSubWindow(WID_FX_LIST);
+	rebuildSubWindow(WID_SAMPLE_EDITOR);
+	rebuildSubWindow(WID_ACTION_EDITOR);
 }
 
 
@@ -119,16 +145,16 @@ void updateControls()
 {
 	using namespace giada::m;
 
-	for (const Channel* ch : mixer::channels)
-		ch->guiChannel->update();
+	//for (const Channel* ch : mixer::channels)
+	//	ch->guiChannel->update();
 
 	G_MainWin->mainIO->setOutVol(mixer::outVol.load());
 	G_MainWin->mainIO->setInVol(mixer::inVol.load());
 
 #ifdef WITH_VST
 
-	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).size() > 0);
-	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).size() > 0);
+//	G_MainWin->mainIO->setMasterFxOutFull(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins.size() > 0);
+//	G_MainWin->mainIO->setMasterFxInFull(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins.size() > 0);
 	
 #endif
 
@@ -136,8 +162,8 @@ void updateControls()
 	G_MainWin->mainTimer->setBpm(clock::getBpm());
 	G_MainWin->mainTimer->setQuantizer(clock::getQuantize());
 
-	G_MainWin->mainTransport->updatePlay(clock::isRunning());
-	G_MainWin->mainTransport->updateMetronome(mixer::isMetronomeOn());
+	//G_MainWin->mainTransport->updatePlay(clock::isRunning());
+	//G_MainWin->mainTransport->updateMetronome(mixer::isMetronomeOn());
 }
 
 
@@ -154,7 +180,7 @@ void updateMainWinLabel(const std::string& s)
 /* -------------------------------------------------------------------------- */
 
 
-void setFavicon(Fl_Window* w)
+void setFavicon(v::gdWindow* w)
 {
 #if defined(__linux__)
 
@@ -175,7 +201,7 @@ void setFavicon(Fl_Window* w)
 /* -------------------------------------------------------------------------- */
 
 
-void openSubWindow(gdWindow* parent, gdWindow* child, int id)
+void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id)
 {
 	if (parent->hasWindow(id)) {
 		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
@@ -200,7 +226,7 @@ void refreshActionEditor()
 /* -------------------------------------------------------------------------- */
 
 
-gdWindow* getSubwindow(gdWindow* parent, int id)
+v::gdWindow* getSubwindow(v::gdWindow* parent, int id)
 {
 	if (parent->hasWindow(id))
 		return parent->getChild(id);

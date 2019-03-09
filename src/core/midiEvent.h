@@ -62,7 +62,7 @@ public:
 	uint32_t getRaw() const;
 	uint32_t getRawNoVelocity() const;
 
-	void resetDelta();
+	void setDelta(int d);
 	void setChannel(int c);
 	void setVelocity(int v);
 

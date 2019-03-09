@@ -25,30 +25,27 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include "../../../utils/log.h"
-#include "../../../utils/math.h"
-#include "../../../core/const.h"
-#include "../../../core/conf.h"
-#include "../../../core/action.h"
-#include "../../../core/recorder.h"
-#include "../../../core/sampleChannel.h"
-#include "../../../glue/actionEditor.h"
-#include "../../dialogs/actionEditor/baseActionEditor.h"
+#include "utils/log.h"
+#include "utils/math.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/conf.h"
+#include "core/action.h"
+#include "core/recorder.h"
+#include "glue/actionEditor.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "envelopePoint.h"
 #include "envelopeEditor.h"
-
-
-using std::vector;
 
 
 namespace giada {
 namespace v
 {
-geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l, 
-	m::SampleChannel* ch)
-:	geBaseActionEditor(x, y, 200, m::conf::envelopeEditorH, ch)
+geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l)
+:	geBaseActionEditor(x, y, 200, m::conf::envelopeEditorH)
 {
 	copy_label(l);
 }
@@ -94,7 +91,7 @@ void geEnvelopeEditor::draw()
 	for (int i=0; i<children(); i++) {
 		geEnvelopePoint* p = static_cast<geEnvelopePoint*>(child(i));
 		if (m_action == nullptr)
-			p->position(p->x(), valueToY(p->a1->event.getVelocity()));
+			p->position(p->x(), valueToY(p->a1.event.getVelocity()));
 		if (i > 0) {
 			x2 = p->x() + side;
 			y2 = p->y() + side;
@@ -122,10 +119,10 @@ void geEnvelopeEditor::rebuild()
 	clear();
 	size(m_base->fullWidth, h());
 
-	for (const m::Action* a : m_base->getActions()) {
-		if (a->event.getStatus() != m::MidiEvent::ENVELOPE)
+	for (const m::Action& a : m_base->getActions()) {
+		if (a.event.getStatus() != m::MidiEvent::ENVELOPE)
 			continue;
-		add(new geEnvelopePoint(frameToX(a->frame), valueToY(a->event.getVelocity()), a)); 		
+		add(new geEnvelopePoint(frameToX(a.frame), valueToY(a.event.getVelocity()), a)); 		
 	}
 
 	resizable(nullptr);
@@ -178,7 +175,7 @@ void geEnvelopeEditor::onAddAction()
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
 	int   v = yToValue(Fl::event_y() - y());
 	
-	c::actionEditor::recordEnvelopeAction(m_ch, f, v);
+	c::actionEditor::recordEnvelopeAction(m_base->ch->id, f, v);
 	
 	m_base->rebuild();
 }
@@ -189,7 +186,7 @@ void geEnvelopeEditor::onAddAction()
 
 void geEnvelopeEditor::onDeleteAction()  
 {
-	c::actionEditor::deleteEnvelopeAction(m_ch, m_action->a1);
+	c::actionEditor::deleteEnvelopeAction(m_base->ch->id, m_action->a1);
 		
 	m_base->rebuild();
 }
@@ -228,7 +225,7 @@ void geEnvelopeEditor::onRefreshAction()
 {
 	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
 	float v = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
-	c::actionEditor::updateEnvelopeAction(m_ch, m_action->a1, f, v);
+	c::actionEditor::updateEnvelopeAction(m_base->ch->id, m_action->a1, f, v);
 
 	m_base->rebuild();
 }

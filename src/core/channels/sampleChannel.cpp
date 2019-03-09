@@ -25,44 +25,75 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../utils/log.h"
+#include <cassert>
+#include "utils/log.h"
+#include "core/const.h"
+#include "core/wave.h"
 #include "sampleChannelProc.h"
 #include "sampleChannelRec.h"
 #include "channelManager.h"
-#include "const.h"
-#include "wave.h"
 #include "sampleChannel.h"
-
-
-using std::string;
 
 
 namespace giada {
 namespace m 
 {
-SampleChannel::SampleChannel(bool inputMonitor, int bufferSize)
-	: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize),
-	  mode             (ChannelMode::SINGLE_BASIC),
-	  wave             (nullptr),
-	  tracker          (0),
-	  trackerPreview   (0),
-	  shift            (0),
-	  quantizing       (false),
-	  inputMonitor     (inputMonitor),
-	  boost            (G_DEFAULT_BOOST),
-	  pitch            (G_DEFAULT_PITCH),
-	  begin            (0),
-	  end              (0),
-	  midiInReadActions(0x0),
-	  midiInPitch      (0x0),
-	  rsmp_state       (nullptr)
+SampleChannel::SampleChannel(bool inputMonitor, int bufferSize, size_t column)
+: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize, column),
+  wave             (nullptr),
+  shift            (0),
+  mode             (ChannelMode::SINGLE_BASIC),
+  tracker          (0),
+  trackerPreview   (0),
+  quantizing       (false),
+  inputMonitor     (inputMonitor),
+  boost            (G_DEFAULT_BOOST),
+  pitch            (G_DEFAULT_PITCH),
+  begin            (0),
+  end              (0),
+  midiInReadActions(0x0),
+  midiInPitch      (0x0),
+  bufferOffset     (0),
+  rewinding        (false),
+  rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
 {
-	rsmp_state = src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr);
 	if (rsmp_state == nullptr) {
 		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
 		throw std::bad_alloc();
 	}
 	bufferPreview.alloc(bufferSize, G_MAX_IO_CHANS);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+SampleChannel::SampleChannel(const SampleChannel& o)
+: Channel          (o),
+  wave             (o.wave),
+  shift            (o.shift),
+  mode             (o.mode),
+  tracker          (o.tracker.load()),
+  trackerPreview   (0),
+  quantizing       (o.quantizing),
+  inputMonitor     (o.inputMonitor.load()),
+  boost            (o.boost.load()),
+  pitch            (o.pitch.load()),
+  begin            (o.begin.load()),
+  end              (o.end.load()),
+  midiInVeloAsVol  (o.midiInVeloAsVol.load()),
+  midiInReadActions(o.midiInReadActions.load()),
+  midiInPitch      (o.midiInPitch.load()),
+  bufferOffset     (o.bufferOffset),
+  rewinding        (o.rewinding),
+  rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
+{
+	if (rsmp_state == nullptr) {
+		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
+		throw std::bad_alloc();
+	}
+	
+	bufferPreview.alloc(o.bufferPreview.countFrames(), G_MAX_IO_CHANS);
 }
 
 
@@ -79,26 +110,6 @@ SampleChannel::~SampleChannel()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::copy(const Channel* src_, pthread_mutex_t* pluginMutex)
-{
-	Channel::copy(src_, pluginMutex);
-	const SampleChannel* src = static_cast<const SampleChannel*>(src_);
-	tracker         = src->tracker;
-	begin           = src->begin;
-	end             = src->end;
-	boost           = src->boost;
-	mode            = src->mode;
-	quantizing      = src->quantizing;
-	setPitch(src->pitch);
-
-	if (src->wave)
-		pushWave(std::make_unique<Wave>(*src->wave)); // invoke Wave's copy constructor
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void SampleChannel::parseEvents(mixer::FrameEvents fe)
 {
 	sampleChannelProc::parseEvents(this, fe);
@@ -109,9 +120,10 @@ void SampleChannel::parseEvents(mixer::FrameEvents fe)
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::prepareBuffer(bool running)
+void SampleChannel::render(AudioBuffer& out, const AudioBuffer& in, 
+        AudioBuffer& inToOut, bool audible, bool running)
 {
-	sampleChannelProc::prepareBuffer(this, running);
+	sampleChannelProc::render(this, out, in, inToOut, audible, running);
 }
 
 
@@ -228,20 +240,11 @@ void SampleChannel::setSolo(bool value)
 	sampleChannelProc::setSolo(this, value);
 }
 
-/* -------------------------------------------------------------------------- */
-
-
-void SampleChannel::process(AudioBuffer& out, const AudioBuffer& in, 
-	bool audible, bool running)
-{
-	sampleChannelProc::process(this, out, in, audible, running);
-}
-
 
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::readPatch(const string& basePath, const patch::channel_t& pch)
+void SampleChannel::readPatch(const std::string& basePath, const patch::channel_t& pch)
 {
 	Channel::readPatch("", pch);
 	channelManager::readPatch(this, basePath, pch);
@@ -294,18 +297,17 @@ bool SampleChannel::hasData() const
 void SampleChannel::setBegin(int f)
 {
 	if (f < 0)
-		begin = 0;
+		f = 0;
 	else
 	if (f > wave->getSize())
-		begin = wave->getSize();
+		f = wave->getSize();
 	else
 	if (f >= end)
-		begin = end - 1;
-	else
-		begin = f;
+		f = end - 1;
 
-	tracker = begin;
-	trackerPreview = begin;
+	begin          = f;
+	tracker        = f;
+	trackerPreview = f;
 }
 
 
@@ -315,12 +317,12 @@ void SampleChannel::setBegin(int f)
 void SampleChannel::setEnd(int f)
 {
 	if (f >= wave->getSize())
-		end = wave->getSize() - 1;
+		f = wave->getSize() - 1;
 	else
 	if (f <= begin)
-		end = begin + 1;
-	else
-		end = f;
+		f = begin + 1;
+
+	end = f;
 }
 
 
@@ -383,10 +385,7 @@ void SampleChannel::setBoost(float v)
 }
 
 
-float SampleChannel::getBoost() const
-{
-	return boost;
-}
+float SampleChannel::getBoost() const { return boost; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -401,7 +400,7 @@ void SampleChannel::empty()
 	volume     = G_DEFAULT_VOL;
 	boost      = G_DEFAULT_BOOST;
 	hasActions = false;
-	wave.reset(nullptr);
+	wave       = nullptr;
 	sendMidiLstatus();
 }
 
@@ -409,22 +408,21 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(std::unique_ptr<Wave>&& w)
+void SampleChannel::pushWave(std::shared_ptr<const Wave> w)
 {
 	status = ChannelStatus::OFF;
-	wave   = std::move(w);
+	wave   = w;
 	begin  = 0;
-	end    = wave->getSize() - 1;
+	end    = w != nullptr ? wave->getSize() - 1 : 0;
 	sendMidiLstatus();
 }
-
 
 /* -------------------------------------------------------------------------- */
 
 
 bool SampleChannel::canInputRec() const
 {
-	return wave == nullptr && armed;
+	return wave == nullptr && armed == true;
 }
 
 
@@ -433,6 +431,8 @@ bool SampleChannel::canInputRec() const
 
 int SampleChannel::fillBuffer(AudioBuffer& dest, int start, int offset)
 {
+	assert(offset < dest.countFrames());
+	
 	if (pitch == 1.0) return fillBufferCopy(dest, start, offset);
 	else              return fillBufferResampled(dest, start, offset);
 }
@@ -461,7 +461,7 @@ int SampleChannel::fillBufferResampled(AudioBuffer& dest, int start, int offset)
 int SampleChannel::fillBufferCopy(AudioBuffer& dest, int start, int offset)
 {
 	int used = dest.countFrames() - offset;
-	if (used + start > wave->getSize())
+	if (used > wave->getSize() - start)
 		used = wave->getSize() - start;
 
 	dest.copyData(wave->getFrame(start), used, offset);
@@ -475,8 +475,10 @@ int SampleChannel::fillBufferCopy(AudioBuffer& dest, int start, int offset)
 
 bool SampleChannel::isAnyLoopMode() const
 {
-	return mode == ChannelMode::LOOP_BASIC || mode == ChannelMode::LOOP_ONCE || 
-	       mode == ChannelMode::LOOP_REPEAT || mode == ChannelMode::LOOP_ONCE_BAR;
+	return mode == ChannelMode::LOOP_BASIC  || 
+	       mode == ChannelMode::LOOP_ONCE   || 
+	       mode == ChannelMode::LOOP_REPEAT || 
+	       mode == ChannelMode::LOOP_ONCE_BAR;
 }
 
 

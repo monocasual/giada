@@ -29,19 +29,17 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/plugin.h"
-#include "../../../core/const.h"
-#include "../../../core/pluginManager.h"
-#include "../../../core/pluginHost.h"
-#include "../basics/boxtypes.h"
+#include "core/plugin.h"
+#include "core/const.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
+#include "gui/elems/basics/boxtypes.h"
 #include "pluginBrowser.h"
 
 
-using std::vector;
-using std::string;
-using namespace giada::m;
-
-
+namespace giada {
+namespace v
+{
 gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 	: Fl_Browser(x, y, w, h)
 {
@@ -65,8 +63,8 @@ gePluginBrowser::gePluginBrowser(int x, int y, int w, int h)
 
 	computeWidths();
 
-  column_widths(widths);
-  column_char('\t');       // tabs as column delimiters
+	column_widths(widths);
+	column_char('\t');       // tabs as column delimiters
 
 	refresh();
 
@@ -84,16 +82,16 @@ void gePluginBrowser::refresh()
 	add("NAME\tMANUFACTURER\tCATEGORY\tFORMAT\tUID");
 	add("---\t---\t---\t---\t---");
 
-	for (int i=0; i<pluginManager::countAvailablePlugins(); i++) {
-		pluginManager::PluginInfo pi = pluginManager::getAvailablePluginInfo(i);
-		string m = pluginManager::doesPluginExist(pi.uid) ? "" : "@-";
-		string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
+	for (int i=0; i<m::pluginManager::countAvailablePlugins(); i++) {
+		m::pluginManager::PluginInfo pi = m::pluginManager::getAvailablePluginInfo(i);
+		std::string m = m::pluginManager::doesPluginExist(pi.uid) ? "" : "@-";
+		std::string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
 				pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
 		add(s.c_str());
 	}
 
-	for (unsigned i=0; i<pluginManager::countUnknownPlugins(); i++) {
-		string s = "?\t?\t?\t?\t? " + pluginManager::getUnknownPluginInfo(i) + " ?";
+	for (unsigned i=0; i<m::pluginManager::countUnknownPlugins(); i++) {
+		std::string s = "?\t?\t?\t?\t? " + m::pluginManager::getUnknownPluginInfo(i) + " ?";
 		add(s.c_str());
 	}
 }
@@ -105,8 +103,8 @@ void gePluginBrowser::refresh()
 void gePluginBrowser::computeWidths()
 {
 	int w0, w1, w3;
-	for (int i=0; i<pluginManager::countAvailablePlugins(); i++) {
-		pluginManager::PluginInfo pi = pluginManager::getAvailablePluginInfo(i);
+	for (int i=0; i<m::pluginManager::countAvailablePlugins(); i++) {
+		m::pluginManager::PluginInfo pi = m::pluginManager::getAvailablePluginInfo(i);
 		w0 = (int) fl_width(pi.name.c_str());
 		w1 = (int) fl_width(pi.manufacturerName.c_str());
 		w3 = (int) fl_width(pi.format.c_str());
@@ -120,6 +118,7 @@ void gePluginBrowser::computeWidths()
 	widths[3] += 60;
 	widths[4] = 0;
 }
+}} // giada::v::
 
 
 #endif

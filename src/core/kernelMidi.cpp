@@ -27,11 +27,11 @@
 
 #include "const.h"
 #ifdef G_OS_MAC
-	#include <RtMidi.h>
+#include <RtMidi.h>
 #else
-	#include <rtmidi/RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #endif
-#include "../utils/log.h"
+#include "utils/log.h"
 #include "midiDispatcher.h"
 #include "midiMapConf.h"
 #include "kernelMidi.h"

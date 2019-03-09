@@ -30,9 +30,9 @@
 
 
 #ifdef WITH_VST
-	#include "../deps/juce-config.h"
+#include "deps/juce-config.h"
 #endif
-#include "channel.h"
+#include "core/channels/channel.h"
 
 
 namespace giada {
@@ -42,11 +42,12 @@ class MidiChannel : public Channel
 {
 public:
 
-	MidiChannel(int bufferSize);
+	MidiChannel(int bufferSize, size_t column);
+	MidiChannel(const MidiChannel& o);
 
-	void copy(const Channel* src, pthread_mutex_t* pluginMutex) override;
 	void parseEvents(mixer::FrameEvents fe) override;
-	void process(AudioBuffer& out, const AudioBuffer& in, bool audible, bool running) override;
+	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
+		bool audible, bool running) override;
 	void start(int frame, bool doQuantize, int velocity) override;
 	void kill(int localFrame) override;
 	void empty() override;
@@ -62,19 +63,8 @@ public:
 	/* sendMidi
 	Sends Midi event to the outside world. */
 
-	void sendMidi(const Action* a, int localFrame);
-
-#ifdef WITH_VST
-
-	/* addVstMidiEvent
-	Adds a new Midi event to the midiEvent stack fom a composite uint32_t raw
-	Midi event. LocalFrame is the offset: it tells where to put the event
-	inside the buffer. */
-
-	void addVstMidiEvent(uint32_t msg, int localFrame);
-
-#endif
-
+	void sendMidi(const MidiEvent& e, int localFrame);
+	
 	bool midiOut;      // enable midi output
 	int  midiOutChan;  // midi output channel
 };

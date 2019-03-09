@@ -25,45 +25,61 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
-#include "../../core/conf.h"
-#include "../../core/channel.h"
-#include "../../core/sampleChannel.h"
-#include "../../core/midiChannel.h"
-#include "../../utils/log.h"
-#include "../elems/basics/box.h"
-#include "../elems/mainWindow/keyboard/keyboard.h"
-#include "../elems/mainWindow/keyboard/channel.h"
-#include "../elems/mainWindow/keyboard/channelButton.h"
+#include <cassert>
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "glue/io.h"
+#include "core/model/model.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/conf.h"
+#include "utils/log.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/channelButton.h"
 #include "keyGrabber.h"
 #include "config.h"
 #include "mainWindow.h"
 
 
-extern gdMainWindow *mainWin;
+extern giada::v::gdMainWindow* mainWin;
 
 
-using std::string;
-using namespace giada;
-
-
-gdKeyGrabber::gdKeyGrabber(m::Channel* ch)
-	: gdWindow(300, 126, "Key configuration"), ch(ch)
+namespace giada {
+namespace v 
 {
-	set_modal();
-	text   = new geBox(8, 8, 284, 80, "");
-	clear  = new geButton(w()-88, text->y()+text->h()+8, 80, 20, "Clear");
-	cancel = new geButton(clear->x()-88, clear->y(), 80, 20, "Close");
+gdKeyGrabber::gdKeyGrabber(ID channelId)
+: gdWindow   (300, 126, "Key configuration"), 
+  m_ch       (nullptr),
+  m_channelId(channelId)
+{
+	begin();
+	m_text   = new geBox(8, 8, 284, 80, "");
+	m_clear  = new geButton(w()-88, m_text->y()+m_text->h()+8, 80, 20, "Clear");
+	m_cancel = new geButton(m_clear->x()-88, m_clear->y(), 80, 20, "Close");
 	end();
 
-	clear->callback(cb_clear, (void*)this);
-	cancel->callback(cb_cancel, (void*)this);
+	m_clear->callback(cb_clear, (void*)this);
+	m_cancel->callback(cb_cancel, (void*)this);
 
-	updateText(ch->key);
+	rebuild();
 
 	u::gui::setFavicon(this);
+	set_modal();
 	show();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdKeyGrabber::rebuild()
+{
+	m_ch = m::model::getLayout()->getChannel(m_channelId);
+
+	updateText(m_ch->key);
 }
 
 
@@ -98,8 +114,7 @@ void gdKeyGrabber::cb_clear()
 
 void gdKeyGrabber::setButtonLabel(int key)
 {
-	ch->guiChannel->mainButton->setKey(key);
-	ch->key = key;
+	c::io::setSampleChannelKey(m_ch->id, key);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -107,12 +122,12 @@ void gdKeyGrabber::setButtonLabel(int key)
 
 void gdKeyGrabber::updateText(int key)
 {
-	string tmp = "Press a key.\n\nCurrent binding: ";
+	std::string tmp = "Press a key.\n\nCurrent binding: ";
 	if (key != 0)
 		tmp += static_cast<char>(key);
 	else
 		tmp += "[none]";
-	text->copy_label(tmp.c_str());
+	m_text->copy_label(tmp.c_str());
 }
 
 
@@ -133,7 +148,7 @@ int gdKeyGrabber::handle(int e)
 			    && x != FL_End
 			    && x != ' ')
 			{
-				gu_log("set key '%c' (%d) for channel %d\n", x, x, ch->index);
+				gu_log("set key '%c' (%d) for channel ID=%d\n", x, x, m_ch->id);
 				setButtonLabel(x);
 				updateText(x);
 				break;
@@ -144,3 +159,5 @@ int gdKeyGrabber::handle(int e)
 	}
 	return(ret);
 }
+
+}} // giada::v::

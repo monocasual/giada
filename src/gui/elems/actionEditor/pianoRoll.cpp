@@ -27,31 +27,27 @@
 
 #include <cassert>
 #include <FL/Fl.H>
-#include "../../../core/conf.h"
-#include "../../../core/const.h"
-#include "../../../core/clock.h"
-#include "../../../core/action.h"
-#include "../../../core/midiEvent.h"
-#include "../../../core/midiChannel.h"
-#include "../../../utils/log.h"
-#include "../../../utils/string.h"
-#include "../../../utils/math.h"
-#include "../../../glue/actionEditor.h"
-#include "../../dialogs/actionEditor/baseActionEditor.h"
+#include "core/channels/midiChannel.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/clock.h"
+#include "core/action.h"
+#include "core/midiEvent.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include "utils/math.h"
+#include "glue/actionEditor.h"
+#include "gui/dialogs/actionEditor/baseActionEditor.h"
 #include "pianoItem.h"
 #include "noteEditor.h"
 #include "pianoRoll.h"
 
 
-using std::string;
-using std::vector;
-
-
 namespace giada {
 namespace v
 {
-gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W, m::MidiChannel* ch)
-	: geBaseActionEditor(X, Y, W, 40, ch),
+gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W)
+	: geBaseActionEditor(X, Y, W, 40),
 	  pick              (0)
 {
 	position(x(), m::conf::pianoRollY == -1 ? y()-(h()/2) : m::conf::pianoRollY);
@@ -80,7 +76,7 @@ void gePianoRoll::drawSurface1()
 
 		/* print key note label. C C# D D# E F F# G G# A A# B */
 
-		string note = u::string::iToString(octave);
+		std::string note = u::string::iToString(octave);
 		switch (i % KEYS) {
 			case (int) Notes::G:
 				fl_rectf(0, i*CELL_H, CELL_W, CELL_H, G_COLOR_GREY_2);
@@ -220,8 +216,9 @@ void gePianoRoll::onAddAction()
 {
 	Frame frame = m_base->pixelToFrame(Fl::event_x() - x());
 	int   note  = yToNote(Fl::event_y() - y());
-	c::actionEditor::recordMidiAction(static_cast<m::MidiChannel*>(m_ch), note, G_MAX_VELOCITY, frame);
-	
+	c::actionEditor::recordMidiAction(m_base->ch->id, note, G_MAX_VELOCITY, 
+		frame);
+
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
 
@@ -231,7 +228,7 @@ void gePianoRoll::onAddAction()
 
 void gePianoRoll::onDeleteAction()
 {
-	c::actionEditor::deleteMidiAction(static_cast<m::MidiChannel*>(m_ch), m_action->a1);	
+	c::actionEditor::deleteMidiAction(m_base->ch->id, m_action->a1);	
 	
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -301,12 +298,12 @@ void gePianoRoll::onRefreshAction()
 	}	
 	else if (m_action->onLeftEdge) {
 		f1 = m_base->pixelToFrame(p1);
-		f2 = m_action->a2->frame;
+		f2 = m_action->a2.frame;
 		if (f1 == f2) // If snapping makes an action fall onto the other
 			f1 -= G_DEFAULT_ACTION_SIZE;
 	}
 	else if (m_action->onRightEdge) {
-		f1 = m_action->a1->frame;
+		f1 = m_action->a1.frame;
 		f2 = m_base->pixelToFrame(p2);
 		if (f1 == f2) // If snapping makes an action fall onto the other
 			f2 += G_DEFAULT_ACTION_SIZE;
@@ -315,10 +312,9 @@ void gePianoRoll::onRefreshAction()
 	assert(f2 != 0);
 
 	int note     = yToNote(m_action->y() - y());
-	int velocity = m_action->a1->event.getVelocity();
+	int velocity = m_action->a1.event.getVelocity();
 
-	ca::updateMidiAction(static_cast<m::MidiChannel*>(m_ch), m_action->a1, note, 
-		velocity, f1, f2);
+	ca::updateMidiAction(m_base->ch->id, m_action->a1, note, velocity, f1, f2);
 
 	m_base->rebuild();  // Rebuild velocityEditor as well
 }
@@ -345,12 +341,12 @@ Pixel gePianoRoll::snapToY(Pixel p) const
 }
 
 
-Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action* a1, const m::Action* a2) const
+Pixel gePianoRoll::getPianoItemW(Pixel px, const m::Action& a1, const m::Action& a2) const
 {
-	if (a2 != nullptr) {            // Regular
-		if (a1->frame > a2->frame)  // Ring-loop
+	if (a2.isValid()) {             // Regular
+		if (a1.frame > a2.frame)    // Ring-loop
 			return m_base->loopWidth - (px - x());
-		return m_base->frameToPixel(a2->frame - a1->frame);
+		return m_base->frameToPixel(a2.frame - a1.frame);
 	}
 	return geBaseAction::MIN_WIDTH;	// Orphaned
 }
@@ -369,18 +365,17 @@ void gePianoRoll::rebuild()
 	clear();
 	size(m_base->fullWidth, (MAX_KEYS + 1) * CELL_H);
 
-	for (const m::Action* action : m_base->getActions())
+	for (const m::Action& a1 : m_base->getActions())
 	{
-		if (action->event.getStatus() == m::MidiEvent::NOTE_OFF)
+		if (a1.event.getStatus() == m::MidiEvent::NOTE_OFF)
 			continue;
 
-		const m::Action* a1 = action;
-		const m::Action* a2 = action->next;
+		assert(a1.isValid());  // a2 might be null if orphaned
 
-		assert(a1 != nullptr);  // a2 might be null if orphaned
+		const m::Action& a2 = a1.next != nullptr ? *a1.next : m::Action{};
 
-		Pixel px = x() + m_base->frameToPixel(a1->frame);
-		Pixel py = y() + noteToY(a1->event.getNote());
+		Pixel px = x() + m_base->frameToPixel(a1.frame);
+		Pixel py = y() + noteToY(a1.event.getNote());
 		Pixel ph = CELL_H;
 		Pixel pw = getPianoItemW(px, a1, a2);
 

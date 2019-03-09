@@ -29,6 +29,7 @@
 #define G_CONF_H
 
 
+#include <atomic>
 #include <string>
 
 
@@ -67,17 +68,17 @@ extern std::string lastFileMap;
 extern int   midiSync;  // see const.h
 extern float midiTCfps;
 
-extern bool midiIn;
-extern int midiInFilter;
-extern uint32_t midiInRewind;
-extern uint32_t midiInStartStop;
-extern uint32_t midiInActionRec;
-extern uint32_t midiInInputRec;
-extern uint32_t midiInMetronome;
-extern uint32_t midiInVolumeIn;
-extern uint32_t midiInVolumeOut;
-extern uint32_t midiInBeatDouble;
-extern uint32_t midiInBeatHalf;
+extern std::atomic<bool>     midiIn;
+extern std::atomic<int>      midiInFilter;
+extern std::atomic<uint32_t> midiInRewind;
+extern std::atomic<uint32_t> midiInStartStop;
+extern std::atomic<uint32_t> midiInActionRec;
+extern std::atomic<uint32_t> midiInInputRec;
+extern std::atomic<uint32_t> midiInMetronome;
+extern std::atomic<uint32_t> midiInVolumeIn;
+extern std::atomic<uint32_t> midiInVolumeOut;
+extern std::atomic<uint32_t> midiInBeatDouble;
+extern std::atomic<uint32_t> midiInBeatHalf;
 
 extern bool recsStopOnChanHalt;
 extern bool chansStopOnSeqHalt;

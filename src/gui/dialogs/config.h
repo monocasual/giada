@@ -47,26 +47,12 @@ class geRadio;
 class geBox;
 
 
+namespace giada {
+namespace v 
+{
 class gdConfig : public gdWindow
 {
-private:
-
-	static void cb_save_config(Fl_Widget* w, void* p);
-	static void cb_cancel(Fl_Widget* w, void* p);
-	void cb_save_config();
-	void cb_cancel();
-
 public:
-
-	geTabAudio* tabAudio;
-	geTabBehaviors* tabBehaviors;
-	geTabMidi* tabMidi;
-	geTabMisc* tabMisc;
-#ifdef WITH_VST
-	geTabPlugins* tabPlugins;
-#endif
-	geButton* save;
-	geButton* cancel;
 
 	gdConfig(int w, int h);
 	~gdConfig();
@@ -74,7 +60,24 @@ public:
 #ifdef WITH_VST
 	void refreshVstPath();
 #endif
-};
 
+	geTabAudio*     tabAudio;
+	geTabBehaviors* tabBehaviors;
+	geTabMidi*      tabMidi;
+	geTabMisc*      tabMisc;
+#ifdef WITH_VST
+	geTabPlugins*   tabPlugins;
+#endif
+	geButton*       save;
+	geButton*       cancel;
+
+private:
+
+	static void cb_save_config(Fl_Widget* w, void* p);
+	static void cb_cancel(Fl_Widget* w, void* p);
+	void cb_save_config();
+	void cb_cancel();
+};
+}} // giada::v::
 
 #endif

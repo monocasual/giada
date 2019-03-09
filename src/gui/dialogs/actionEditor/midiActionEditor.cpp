@@ -26,28 +26,27 @@
 
 
 #include <string>
-#include "../../../core/graphics.h"
-#include "../../../core/midiChannel.h"
-#include "../../../glue/actionEditor.h"
-#include "../../elems/basics/scroll.h"
-#include "../../elems/basics/button.h"
-#include "../../elems/basics/resizerBar.h"
-#include "../../elems/basics/box.h"
-#include "../../elems/actionEditor/noteEditor.h"
-#include "../../elems/actionEditor/velocityEditor.h"
-#include "../../elems/actionEditor/pianoRoll.h"
-#include "../../elems/actionEditor/gridTool.h"
+#include "core/channels/midiChannel.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/graphics.h"
+#include "glue/actionEditor.h"
+#include "gui/elems/basics/scroll.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/actionEditor/noteEditor.h"
+#include "gui/elems/actionEditor/velocityEditor.h"
+#include "gui/elems/actionEditor/pianoRoll.h"
+#include "gui/elems/actionEditor/gridTool.h"
 #include "midiActionEditor.h"
-
-
-using std::string;
 
 
 namespace giada {
 namespace v
 {
-gdMidiActionEditor::gdMidiActionEditor(m::MidiChannel* ch)
-: gdBaseActionEditor(ch)
+gdMidiActionEditor::gdMidiActionEditor(ID channelId)
+: gdBaseActionEditor(channelId)
 {
 	computeWidth();
 
@@ -76,7 +75,7 @@ gdMidiActionEditor::gdMidiActionEditor(m::MidiChannel* ch)
 	viewport->add(m_ne);
 	viewport->add(m_ner);
 	
-	m_ve  = new geVelocityEditor(viewport->x(), m_ne->y()+m_ne->h()+RESIZER_BAR_H, ch);
+	m_ve  = new geVelocityEditor(viewport->x(), m_ne->y()+m_ne->h()+RESIZER_BAR_H);
 	m_ver = new geResizerBar(m_ve->x(), m_ve->y()+m_ve->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
 	viewport->add(m_ve);
 	viewport->add(m_ver);
@@ -92,7 +91,9 @@ gdMidiActionEditor::gdMidiActionEditor(m::MidiChannel* ch)
 
 void gdMidiActionEditor::rebuild()
 {
-	m_actions = c::actionEditor::getActions(ch);
+	ch        = m::model::getLayout()->getChannel(channelId);
+	m_actions = c::actionEditor::getActions(channelId);
+
 	computeWidth();
 	m_ne->rebuild();
 	m_ner->size(m_ne->w(), m_ner->h());

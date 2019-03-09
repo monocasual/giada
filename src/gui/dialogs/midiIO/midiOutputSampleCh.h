@@ -32,21 +32,26 @@
 #include "midiOutputBase.h"
 
 
+namespace giada {
+namespace v 
+{
 class gdMidiOutputSampleCh : public gdMidiOutputBase
 {
-private:
+public:
 
-	giada::m::SampleChannel* ch;
+    gdMidiOutputSampleCh(ID channelId);
+
+private:
 
 	/* cb_close
 	Override parent method, we need to do more stuff on close. */
 
 	static void cb_close(Fl_Widget* w, void* p);
-	inline void cb_close();
+	void cb_close();
 
-public:
-
-	gdMidiOutputSampleCh(giada::m::SampleChannel* ch);
+	m::SampleChannel* m_ch;
 };
+}} // giada::v::
+
 
 #endif

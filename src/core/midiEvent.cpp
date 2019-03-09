@@ -68,9 +68,9 @@ MidiEvent::MidiEvent(int byte1, int byte2, int byte3)
 /* -------------------------------------------------------------------------- */
 
 
-void MidiEvent::resetDelta()
+void MidiEvent::setDelta(int d)
 {
-	m_delta = 0;
+	m_delta = d;
 }
 
 

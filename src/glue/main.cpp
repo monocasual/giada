@@ -26,35 +26,37 @@
 
 
 #include <cmath>
+#include <cassert>
 #include <FL/Fl.H>
-#include "../gui/elems/mainWindow/mainIO.h"
-#include "../gui/elems/mainWindow/mainTimer.h"
-#include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "../gui/elems/mainWindow/keyboard/keyboard.h"
-#include "../gui/dialogs/mainWindow.h"
-#include "../utils/gui.h"
-#include "../utils/string.h"
-#include "../utils/log.h"
-#include "../core/mixerHandler.h"
-#include "../core/mixer.h"
-#include "../core/midiChannel.h"
-#include "../core/clock.h"
-#include "../core/kernelMidi.h"
-#include "../core/kernelAudio.h"
-#include "../core/recorder.h"
-#include "../core/recorderHandler.h"
-#include "../core/conf.h"
-#include "../core/const.h"
-#include "../core/pluginManager.h"
-#include "../core/pluginHost.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/mainWindow/mainIO.h"
+#include "gui/elems/mainWindow/mainTimer.h"
+#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/dialogs/mainWindow.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "utils/log.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/midiChannel.h"
+#include "core/mixerHandler.h"
+#include "core/mixer.h"
+#include "core/clock.h"
+#include "core/kernelMidi.h"
+#include "core/kernelAudio.h"
+#include "core/recorder.h"
+#include "core/recorderHandler.h"
+#include "core/recManager.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/pluginManager.h"
+#include "core/pluginHost.h"
 #include "main.h"
 
 
-extern gdMainWindow *G_MainWin;
+extern giada::v::gdMainWindow *G_MainWin;
 
-
-using std::string;
-using namespace giada::m;
 
 namespace giada {
 namespace c {
@@ -62,7 +64,7 @@ namespace main
 {
 namespace
 {
-void setBpm_(float f, string s)
+void setBpm_(float f, std::string s)
 {
 	if (f < G_MIN_BPM) {
 		f = G_MIN_BPM;
@@ -74,10 +76,10 @@ void setBpm_(float f, string s)
 		s = G_MAX_BPM_STR;		
 	}
 
-	float vPre = clock::getBpm();
-	clock::setBpm(f);
-	recorderHandler::updateBpm(vPre, f, clock::getQuanto());
-	mixer::allocVirtualInput(clock::getFramesInLoop());
+	float vPre = m::clock::getBpm();
+	m::clock::setBpm(f);
+	m::recorderHandler::updateBpm(vPre, f, m::clock::getQuanto());
+	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 
 	/* This function might get called by Jack callback BEFORE the UI is up
 	and running, that is when G_MainWin == nullptr. */
@@ -87,7 +89,7 @@ void setBpm_(float f, string s)
 		G_MainWin->mainTimer->setBpm(s.c_str());
 	}
 
-	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), clock::getBpm());
+	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), m::clock::getBpm());
 }
 } // {anonymous}
 
@@ -99,9 +101,9 @@ void setBpm_(float f, string s)
 
 void setBpm(const char* v1, const char* v2)
 {
-	/* Never change this stuff while recording audio */
+	/* Never change this stuff while recording audio. */
 
-	if (mixer::recording)
+	if (m::recManager::isRecordingInput())
 		return;
 
 	/* A value such as atof("120.1") will never be 120.1 but 120.0999999, because 
@@ -109,12 +111,12 @@ void setBpm(const char* v1, const char* v2)
 	the nice looking (but fake) one to the GUI. 
 	On Linux, let Jack handle the bpm change if its on. */
 
-	float  f = atof(v1) + (atof(v2)/10);
-	string s = string(v1) + "." + string(v2);
+	float       f = std::atof(v1) + (std::atof(v2)/10);
+	std::string s = std::string(v1) + "." + std::string(v2);
 
 #ifdef G_OS_LINUX
-	if (kernelAudio::getAPI() == G_SYS_API_JACK)
-		kernelAudio::jackSetBpm(f);
+	if (m::kernelAudio::getAPI() == G_SYS_API_JACK)
+		m::kernelAudio::jackSetBpm(f);
 	else
 #endif
 	setBpm_(f, s);
@@ -126,14 +128,14 @@ void setBpm(const char* v1, const char* v2)
 
 void setBpm(float f)
 {
-	/* Never change this stuff while recording audio */
+	/* Never change this stuff while recording audio. */
 
-	if (mixer::recording)
+	if (m::recManager::isRecordingInput())
 		return;
 
 	float intpart;
 	float fracpart = std::round(std::modf(f, &intpart) * 10);
-	string s = std::to_string((int) intpart) + "." + std::to_string((int)fracpart);
+	std::string s = std::to_string((int) intpart) + "." + std::to_string((int)fracpart);
 
 	setBpm_(f, s);
 }
@@ -146,15 +148,13 @@ void setBeats(int beats, int bars)
 {
 	/* Never change this stuff while recording audio */
 
-	if (mixer::recording)
+	if (m::recManager::isRecordingInput())
 		return;
 
-	clock::setBeats(beats);
-	clock::setBars(bars);
-	clock::updateFrameBars();
-	mixer::allocVirtualInput(clock::getFramesInLoop());
+	m::clock::setBeats(beats, bars);
+	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 
-	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
+	G_MainWin->mainTimer->setMeter(m::clock::getBeats(), m::clock::getBars());
 	u::gui::refreshActionEditor();  // in case the action editor is open
 }
 
@@ -164,7 +164,7 @@ void setBeats(int beats, int bars)
 
 void quantize(int val)
 {
-	clock::setQuantize(val);
+	m::clock::setQuantize(val);
 }
 
 
@@ -173,7 +173,7 @@ void quantize(int val)
 
 void setOutVol(float v, bool gui)
 {
-	mixer::outVol.store(v);
+	m::mixer::outVol = v;
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setOutVol(v);
@@ -187,7 +187,7 @@ void setOutVol(float v, bool gui)
 
 void setInVol(float v, bool gui)
 {
-	mixer::inVol.store(v);
+	m::mixer::inVol = v;
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setInVol(v);
@@ -201,12 +201,12 @@ void setInVol(float v, bool gui)
 
 void clearAllSamples()
 {
-	clock::setStatus(ClockStatus::STOPPED);
-	for (Channel* ch : mixer::channels) {
-		ch->empty();
-		ch->guiChannel->reset();
-	}
-	recorder::clearAll();
+	if (!v::gdConfirmWin("Warning", "Clear all samples: are you sure?"))
+		return;
+	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
+	m::clock::setStatus(ClockStatus::STOPPED);
+	m::mh::freeAllChannels();
+	m::recorder::clearAll();
 	return;
 }
 
@@ -216,9 +216,12 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	recorder::clearAll();
-	for (Channel* ch : mixer::channels)
+	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+		return;
+	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
+	for (std::unique_ptr<m::Channel>& ch : m::model::getLayout()->channels)
 		ch->hasActions = false;
+	m::recorder::clearAll();
 	u::gui::updateControls();
 }
 
@@ -228,6 +231,10 @@ void clearAllActions()
 
 void resetToInitState(bool resetGui, bool createColumns)
 {
+	if (!v::gdConfirmWin("Warning", "Reset to init state: are you sure?"))
+		return;
+	assert(false);
+#if 0
 	u::gui::closeAllSubwindows();
 	mixer::close();
 	clock::init(conf::samplerate, conf::midiTCfps);
@@ -235,7 +242,7 @@ void resetToInitState(bool resetGui, bool createColumns)
 	recorder::init(&mixer::mutex);
 
 #ifdef WITH_VST
-	pluginHost::freeAllStacks(&mixer::channels, &mixer::mutex);
+	pluginHost::freeAllStacks();
 	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
 #endif
 
@@ -247,6 +254,7 @@ void resetToInitState(bool resetGui, bool createColumns)
 
 	if (resetGui)
 		u::gui::updateControls();
+#endif
 }
 
 
@@ -255,12 +263,50 @@ void resetToInitState(bool resetGui, bool createColumns)
 
 void beatsMultiply()
 {
-	setBeats(clock::getBeats() * 2, clock::getBars());
+	setBeats(m::clock::getBeats() * 2, m::clock::getBars());
 }
 
 void beatsDivide()
 {
-	setBeats(clock::getBeats() / 2, clock::getBars());
+	setBeats(m::clock::getBeats() / 2, m::clock::getBars());
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleInputRec()
+{
+	if (!m::recManager::toggleInputRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode)))
+		v::gdAlert("No channels armed/available for audio recording.");
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleActionRec()
+{
+	m::recManager::isRecordingAction() ? stopActionRec() : startActionRec();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void startActionRec()
+{
+	m::recManager::startActionRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void stopActionRec()
+{
+	m::recManager::stopActionRec();
+	u::gui::refreshActionEditor();  // If Action Editor window is open
 }
 
 }}} // giada::c::main::

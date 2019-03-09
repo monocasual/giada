@@ -25,37 +25,26 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_CHANNEL_MANAGER_H
-#define G_CHANNEL_MANAGER_H
-
-
-#include <string>
-#include "types.h"
+#include <FL/Fl.H>
+#include "core/const.h"
+#include "core/model/model.h"
+#include "utils/gui.h"
+#include "updater.h"
 
 
 namespace giada {
-namespace m 
+namespace v {
+namespace updater
 {
-class Channel;
-class SampleChannel;
-class MidiChannel;
+void update(void* p)
+{
+	if (m::model::changed.load() == true) {
+		u::gui::rebuild();
+		m::model::changed.store(false);
+	}
+	else
+		u::gui::refresh();
 
-namespace patch
-{
-struct channel_t;
+	Fl::add_timeout(G_GUI_REFRESH_RATE, update, nullptr);
 }
-namespace channelManager
-{
-Channel* create(ChannelType type, int bufferSize, bool inputMonitorOn);
-
-int  writePatch(const Channel* ch, bool isProject);
-void writePatch(const SampleChannel* ch, bool isProject, int index);
-void writePatch(const MidiChannel* ch, bool isProject, int index);
-
-void readPatch(Channel* ch, const patch::channel_t& pch);
-void readPatch(SampleChannel* ch, const std::string& basePath, const patch::channel_t& pch);
-void readPatch(MidiChannel* ch, const patch::channel_t& pch);
-}}}; // giada::m::channelManager
-
-
-#endif
+}}} // giada::v::updater

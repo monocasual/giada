@@ -31,7 +31,9 @@
 #define G_PLUGIN_H
 
 
-#include "../deps/juce-config.h"
+#include <deque>
+#include "deps/juce-config.h"
+#include "pluginHost.h"
 #include "const.h"
 
 
@@ -43,6 +45,7 @@ class Plugin
 public:
 
 	Plugin(juce::AudioPluginInstance* p, double samplerate, int buffersize);
+	Plugin(const Plugin& o);
 	~Plugin();
 
 	/* getUniqueId
@@ -51,7 +54,6 @@ public:
 	std::string getUniqueId() const;
 
 	std::string getName() const;
-	bool isEditorOpen() const;
 	bool hasEditor() const;
 	int getNumParameters() const;
 	float getParameter(int index) const;
@@ -63,12 +65,11 @@ public:
 	int getNumPrograms() const;
 	int getCurrentProgram() const;
 	std::string getProgramName(int index) const;
-	int getId() const;
-	int getEditorW() const;
-	int getEditorH() const;
 	void setParameter(int index, float value) const;
 	void setCurrentProgram(int index) const;
 	bool acceptsMidi() const;
+
+	juce::AudioProcessorEditor* createEditor() const;
 
 	/* process
 	Process the plug-in with audio and MIDI data. The audio buffer is a reference:
@@ -79,40 +80,34 @@ public:
 
 	void process(juce::AudioBuffer<float>& b, juce::MidiBuffer m);
 
-	void showEditor(void* parent);
-
-	/* closeEditor
-	Shuts down plugin GUI. */
-
-	void closeEditor();
-
-	void toggleBypass();
 	void setBypass(bool b);
 
-	/* midiInParams
-	A list of midiIn hex values for parameter automation. */
+	/* id
+	Unique identifier. */
 
-	std::vector<uint32_t> midiInParams;
+	ID id;
+
+	/* midiInParams
+	A list of midiIn hex values for parameter automation. Why not a vector? 
+	Unfortunately std::atomic types are not copy-constructible, nor 
+	copy-assignable: such type won't suit a std::vector. */
+
+	std::deque<std::atomic<uint32_t>> midiInParams;
 
 private:
 
 #ifdef G_OS_WINDOWS
+	/* Fuck... */
 	#undef IN
 	#undef OUT
 #endif
 
 	enum class BusType { IN = true, OUT = false };
 
-	static const int MAX_LABEL_SIZE = 64;
-	
-	static int m_idGenerator;
-
-	juce::AudioProcessorEditor* m_ui;     // gui
 	juce::AudioPluginInstance*  m_plugin; // core
 	juce::AudioBuffer<float>    m_buffer;
 
-	int m_id;
-	bool m_bypass;
+	std::atomic<bool> m_bypass;
 
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
 

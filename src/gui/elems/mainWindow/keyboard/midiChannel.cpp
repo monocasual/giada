@@ -26,40 +26,39 @@
 
 
 #include <FL/Fl_Menu_Button.H>
-#include "../../../../core/const.h"
-#include "../../../../core/graphics.h"
-#include "../../../../core/midiChannel.h"
-#include "../../../../core/recorder.h"
-#include "../../../../utils/gui.h"
-#include "../../../../utils/string.h"
-#include "../../../../glue/channel.h"
-#include "../../../../glue/io.h"
-#include "../../../../glue/recorder.h"
-#include "../../../dispatcher.h"
-#include "../../../dialogs/mainWindow.h"
-#include "../../../dialogs/channelNameInput.h"
-#include "../../../dialogs/warnings.h"
-#include "../../../dialogs/keyGrabber.h"
-#include "../../../dialogs/pluginList.h"
-#include "../../../dialogs/actionEditor/midiActionEditor.h"
-#include "../../../dialogs/midiIO/midiInputChannel.h"
-#include "../../../dialogs/midiIO/midiOutputMidiCh.h"
-#include "../../basics/boxtypes.h"
-#include "../../basics/button.h"
-#include "../../basics/statusButton.h"
-#include "../../basics/dial.h"
+#include "core/const.h"
+#include "core/graphics.h"
+#include "core/channels/midiChannel.h"
+#include "core/recorder.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "glue/channel.h"
+#include "glue/io.h"
+#include "glue/recorder.h"
+#include "gui/dispatcher.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/channelNameInput.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/keyGrabber.h"
+#include "gui/dialogs/pluginList.h"
+#include "gui/dialogs/actionEditor/midiActionEditor.h"
+#include "gui/dialogs/midiIO/midiInputChannel.h"
+#include "gui/dialogs/midiIO/midiOutputMidiCh.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/dial.h"
 #include "column.h"
 #include "midiChannelButton.h"
 #include "midiChannel.h"
 
 
-extern gdMainWindow* G_MainWin;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-using std::string;
-
-
+namespace giada {
+namespace v
+{
 namespace
 {
 enum class Menu
@@ -88,10 +87,8 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
-	using namespace giada;
-
-	geMidiChannel*  gch = static_cast<geMidiChannel*>(w);
-	m::MidiChannel* ch  = static_cast<m::MidiChannel*>(gch->ch);
+	geMidiChannel* gch = static_cast<geMidiChannel*>(w);
+	const m::MidiChannel* ch = static_cast<const m::MidiChannel*>(gch->ch);
 
 	Menu selectedItem = (Menu) (intptr_t) v;
 
@@ -103,44 +100,44 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::EDIT_ACTIONS:
-			u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(ch), WID_ACTION_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(ch->id), WID_ACTION_EDITOR);
 			break;
 		case Menu::CLEAR_ACTIONS_ALL:
-			c::recorder::clearAllActions(gch);
+			c::recorder::clearAllActions(ch->id);
 			break;
 		case Menu::SETUP_KEYBOARD_INPUT:
-			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(ch->id), WID_KEY_GRABBER);
 			break;
 		case Menu::SETUP_MIDI_INPUT:
-			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(ch->id), WID_MIDI_INPUT);
 			break;
 		case Menu::SETUP_MIDI_OUTPUT:
-			u::gui::openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiOutputMidiCh(ch->id), WID_MIDI_OUTPUT);
 			break;
 		case Menu::RESIZE_H1:
 			gch->changeSize(G_GUI_CHANNEL_H_1);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;		
 		case Menu::RESIZE_H2:
 			gch->changeSize(G_GUI_CHANNEL_H_2);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;		
 		case Menu::RESIZE_H3:
 			gch->changeSize(G_GUI_CHANNEL_H_3);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;		
 		case Menu::RESIZE_H4:
 			gch->changeSize(G_GUI_CHANNEL_H_4);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		case Menu::CLONE_CHANNEL:
-			c::channel::cloneChannel(gch->ch);
+			c::channel::cloneChannel(ch->id);
 			break;		
 		case Menu::RENAME_CHANNEL:
 			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
 			break;
 		case Menu::DELETE_CHANNEL:
-			c::channel::deleteChannel(gch->ch);
+			c::channel::deleteChannel(ch->id);
 			break;
 	}
 }
@@ -151,39 +148,38 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geMidiChannel::geMidiChannel(int X, int Y, int W, int H, m::MidiChannel* ch)
+geMidiChannel::geMidiChannel(int X, int Y, int W, int H, const m::MidiChannel* ch)
 	: geChannel(X, Y, W, H, ch)
 {
-	begin();
-
 #if defined(WITH_VST)
-	int delta = 144; // (6 widgets * G_GUI_UNIT) + (6 paddings * 4)
+	const int delta = 144; // (6 widgets * G_GUI_UNIT) + (6 paddings * 4)
 #else
-	int delta = 120; // (5 widgets * G_GUI_UNIT) + (5 paddings * 4)
+	const int delta = 120; // (5 widgets * G_GUI_UNIT) + (5 paddings * 4)
 #endif
 
-	button     = new geButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
-	arm        = new geButton(button->x()+button->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
-	mainButton = new geMidiChannelButton(arm->x()+arm->w()+4, y(), w() - delta, H, "-- MIDI --");
-	mute       = new geButton(mainButton->x()+mainButton->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", muteOff_xpm, muteOn_xpm);
-	solo       = new geButton(mute->x()+mute->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", soloOff_xpm, soloOn_xpm);
+	playButton = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm        = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	mainButton = new geMidiChannelButton(0, 0, w() - delta, H, ch);
+	mute       = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo       = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
-	fx         = new geStatusButton(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	vol        = new geDial(fx->x()+fx->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
-#else
-	vol        = new geDial(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
+	fx         = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 #endif
+	vol        = new geDial(0, 0, G_GUI_UNIT, G_GUI_UNIT);
 
 	end();
 
 	resizable(mainButton);
 
-	update();
+#ifdef WITH_VST
+	fx->setStatus(ch->plugins.size() > 0);
+#endif
 
-	button->callback(cb_button, (void*)this);
-	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
+	playButton->callback(cb_playButton, (void*)this);
+	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
+	arm->value(ch->armed.load());
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -196,11 +192,11 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, m::MidiChannel* ch)
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
+	mainButton->setKey(ch->key);
 	mainButton->callback(cb_openMenu, (void*)this);
 
+	vol->value(ch->volume.load());
 	vol->callback(cb_changeVol, (void*)this);
-
-	ch->guiChannel = this;
 
 	changeSize(H);  // Update size dynamically
 }
@@ -209,16 +205,16 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, m::MidiChannel* ch)
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::cb_button  (Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_button(); }
+void geMidiChannel::cb_playButton(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_playButton(); }
 void geMidiChannel::cb_openMenu(Fl_Widget* v, void* p) { ((geMidiChannel*)p)->cb_openMenu(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiChannel::cb_button()
+void geMidiChannel::cb_playButton()
 {
-	v::dispatcher::dispatchTouch(ch, button->value());
+	v::dispatcher::dispatchTouch(this, playButton->value());
 }
 
 
@@ -249,74 +245,19 @@ void geMidiChannel::cb_openMenu()
 
 	/* No 'clear actions' if there are no actions. */
 
-	if (!ch->hasActions)
+	if (ch->hasActions.load() == false)
 		rclick_menu[(int)Menu::CLEAR_ACTIONS].deactivate();
 
-	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_CUSTOM_BORDER_BOX);
-	b->textsize(G_GUI_FONT_SIZE_BASE);
-	b->textcolor(G_COLOR_LIGHT_2);
-	b->color(G_COLOR_GREY_2);
+	Fl_Menu_Button b(0, 0, 100, 50);
+	b.box(G_CUSTOM_BORDER_BOX);
+	b.textsize(G_GUI_FONT_SIZE_BASE);
+	b.textcolor(G_COLOR_LIGHT_2);
+	b.color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (m)
+	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
+	if (m != nullptr)
 		m->do_callback(this, m->user_data());
 	return;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::refresh()
-{
-	setColorsByStatus();
-	if (m::recorder::isActive() && ch->armed)
-		mainButton->setActionRecordMode();
-	mainButton->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::reset()
-{
-	mainButton->setDefaultMode("-- MIDI --");
-	mainButton->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiChannel::update()
-{
-	const m::MidiChannel* mch = static_cast<const m::MidiChannel*>(ch);
-
-	string label; 
-	if (mch->name.empty())
-		label = "-- MIDI --";
-	else
-		label = mch->name.c_str();
-
-	if (mch->midiOut) 
-		label += " (ch " + u::string::iToString(mch->midiOutChan + 1) + " out)";
-
-	mainButton->label(label.c_str());
-
-	vol->value(mch->volume);
-	mute->value(mch->mute);
-	solo->value(mch->solo);
-
-	mainButton->setKey(mch->key);
-
-	arm->value(mch->armed);
-
-#ifdef WITH_VST
-	fx->status = mch->plugins.size() > 0;
-	fx->redraw();
-#endif
 }
 
 
@@ -341,3 +282,5 @@ void geMidiChannel::resize(int X, int Y, int W, int H)
 
 	packWidgets();
 }
+
+}} // giada::v::

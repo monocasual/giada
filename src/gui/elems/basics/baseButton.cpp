@@ -32,10 +32,10 @@
 #include "baseButton.h"
 
 
-geBaseButton::geBaseButton(int x, int y, int w, int h, const char *l)
-  : Fl_Button(x, y, w, h, l)
+geBaseButton::geBaseButton(int x, int y, int w, int h, const char* l)
+: Fl_Button(x, y, w, h, l)
 {
-  initLabel = l ? l : "";
+	initLabel = l != nullptr ? l : "";
 }
 
 
@@ -44,47 +44,47 @@ geBaseButton::geBaseButton(int x, int y, int w, int h, const char *l)
 
 void geBaseButton::trimLabel()
 {
-  if (initLabel.empty())
-    return;
+	if (initLabel.empty())
+		return;
 
-  std::string out;
-  if (w() > 20) {
-    out = initLabel;
-    int len = initLabel.size();
-    while (fl_width(out.c_str(), out.size()) > w()) {
-      out = initLabel.substr(0, len) + "...";
-      len--;
-    }
-  }
-  else {
-    out = "";
-  }
-  copy_label(out.c_str());
+	std::string out;
+	if (w() > 20) {
+		out = initLabel;
+		int len = initLabel.size();
+		while (fl_width(out.c_str(), out.size()) > w()) {
+			out = initLabel.substr(0, len) + "...";
+			len--;
+		}
+	}
+	else {
+		out = "";
+	}
+	copy_label(out.c_str());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geBaseButton::label(const char *l)
+void geBaseButton::label(const char* l)
 {
-  Fl_Button::label(l);
-  initLabel = l;
-  trimLabel();
+	Fl_Button::label(l);
+	initLabel = l;
+	trimLabel();
 }
 
 
-const char *geBaseButton::label()
+const char* geBaseButton::label()
 {
-  return Fl_Button::label();
+	return Fl_Button::label();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geBaseButton::resize(int X, int Y, int W, int H)
+void geBaseButton::draw()
 {
-  trimLabel();
-  Fl_Button::resize(X, Y, W, H);
+	trimLabel();
+	Fl_Button::draw();
 }

@@ -28,35 +28,36 @@
 #ifdef WITH_VST
 
 
-#include "../../../core/plugin.h"
-#include "../../../core/const.h"
-#include "../../../glue/plugin.h"
-#include "../basics/boxtypes.h"
-#include "../basics/box.h"
-#include "../basics/slider.h"
+#include "core/plugin.h"
+#include "core/const.h"
+#include "glue/plugin.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/slider.h"
 #include "pluginParameter.h"
 
 
-using std::string;
-using namespace giada;
-using namespace giada::c;
-
-
-gePluginParameter::gePluginParameter(int paramIndex, m::Plugin* p, int X, int Y, 
-	int W, int labelWidth)
-	: Fl_Group    (X, Y, W, G_GUI_UNIT), 
-	  m_paramIndex(paramIndex), 
-	  m_plugin    (p)
+namespace giada {
+namespace v
+{
+gePluginParameter::gePluginParameter(int paramIndex, const m::Plugin& p, 
+	ID chanID, int X, int Y, int W, int labelWidth)
+: Fl_Group    (X, Y, W, G_GUI_UNIT), 
+  m_plugin    (p),
+  m_paramIndex(paramIndex),
+  m_chanID    (chanID)
 {
 	begin();
 
+		const int VALUE_WIDTH = 100;
+
 		m_label = new geBox(x(), y(), labelWidth, G_GUI_UNIT);
-		m_label->copy_label(m_plugin->getParameterName(m_paramIndex).c_str());
+		m_label->copy_label(m_plugin.getParameterName(m_paramIndex).c_str());
 		m_label->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
 		m_slider = new geSlider(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN, y(), 
 			w()-(m_label->x()+m_label->w()+G_GUI_OUTER_MARGIN)-VALUE_WIDTH, G_GUI_UNIT);
-		m_slider->value(m_plugin->getParameter(m_paramIndex));
+		m_slider->value(m_plugin.getParameter(m_paramIndex));
 		m_slider->callback(cb_setValue, (void*)this);
 
 		m_value = new geBox(m_slider->x()+m_slider->w()+G_GUI_OUTER_MARGIN, y(), VALUE_WIDTH, G_GUI_UNIT);
@@ -80,7 +81,8 @@ void gePluginParameter::cb_setValue(Fl_Widget* v, void* p)  { ((gePluginParamete
 
 void gePluginParameter::cb_setValue()
 {
-	plugin::setParameter(m_plugin, m_paramIndex, m_slider->value());
+	c::plugin::setParameter(m_plugin.id, m_paramIndex, m_slider->value(), 
+		m_chanID, /*gui=*/true);
 }
 
 
@@ -89,12 +91,16 @@ void gePluginParameter::cb_setValue()
 
 void gePluginParameter::update(bool changeSlider)
 {
-	string v = m_plugin->getParameterText(m_paramIndex) + " " +
-			m_plugin->getParameterLabel(m_paramIndex);
+	std::string v = m_plugin.getParameterText(m_paramIndex) + " " +
+	                m_plugin.getParameterLabel(m_paramIndex);
+
 	m_value->copy_label(v.c_str());
+
 	if (changeSlider)
-		m_slider->value(m_plugin->getParameter(m_paramIndex));
+		m_slider->value(m_plugin.getParameter(m_paramIndex));
 }
+
+}} // giada::v::
 
 
 #endif // #ifdef WITH_VST

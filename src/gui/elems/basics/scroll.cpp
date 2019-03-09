@@ -28,23 +28,33 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/const.h"
+#include <cassert>
+#include "core/const.h"
 #include "boxtypes.h"
 #include "scroll.h"
 
 
 geScroll::geScroll(int x, int y, int w, int h, int t)
-  : Fl_Scroll(x, y, w, h)
+	: Fl_Scroll(x, y, w, h)
 {
-  type(t);
+	type(t);
 
-  scrollbar.color(G_COLOR_GREY_2);
-  scrollbar.selection_color(G_COLOR_GREY_4);
-  scrollbar.labelcolor(G_COLOR_LIGHT_1);
-  scrollbar.slider(G_CUSTOM_BORDER_BOX);
+	scrollbar.color(G_COLOR_GREY_2);
+	scrollbar.selection_color(G_COLOR_GREY_4);
+	scrollbar.labelcolor(G_COLOR_LIGHT_1);
+	scrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-  hscrollbar.color(G_COLOR_GREY_2);
-  hscrollbar.selection_color(G_COLOR_GREY_4);
-  hscrollbar.labelcolor(G_COLOR_LIGHT_1);
-  hscrollbar.slider(G_CUSTOM_BORDER_BOX);
+	hscrollbar.color(G_COLOR_GREY_2);
+	hscrollbar.selection_color(G_COLOR_GREY_4);
+	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
+	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geScroll::countChildren() const
+{
+	return children() - 2; // Exclude scrollbars
 }

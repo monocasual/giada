@@ -26,30 +26,29 @@
 
 
 #include <string>
-#include "../../../core/const.h"
-#include "../../../core/midiEvent.h"
-#include "../../../core/graphics.h"
-#include "../../../core/sampleChannel.h"
-#include "../../../glue/actionEditor.h"
-#include "../../elems/basics/scroll.h"
-#include "../../elems/basics/button.h"
-#include "../../elems/basics/resizerBar.h"
-#include "../../elems/basics/choice.h"
-#include "../../elems/basics/box.h"
-#include "../../elems/actionEditor/sampleActionEditor.h"
-#include "../../elems/actionEditor/envelopeEditor.h"
-#include "../../elems/actionEditor/gridTool.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/midiEvent.h"
+#include "core/graphics.h"
+#include "glue/actionEditor.h"
+#include "gui/elems/basics/scroll.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/resizerBar.h"
+#include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/actionEditor/sampleActionEditor.h"
+#include "gui/elems/actionEditor/envelopeEditor.h"
+#include "gui/elems/actionEditor/gridTool.h"
 #include "sampleActionEditor.h"
-
-
-using std::string;
 
 
 namespace giada {
 namespace v
 {
-gdSampleActionEditor::gdSampleActionEditor(m::SampleChannel* ch)
-: gdBaseActionEditor(ch)
+gdSampleActionEditor::gdSampleActionEditor(ID channelId)
+: gdBaseActionEditor(channelId)
 {
 	computeWidth();
 
@@ -84,12 +83,12 @@ gdSampleActionEditor::gdSampleActionEditor(m::SampleChannel* ch)
 
 	viewport = new geScroll(8, 36, w()-16, h()-44);
 
-	m_ae  = new geSampleActionEditor(viewport->x(), viewport->y(), ch);
+	m_ae  = new geSampleActionEditor(viewport->x(), viewport->y());
 	m_aer = new geResizerBar(m_ae->x(), m_ae->y()+m_ae->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
 	viewport->add(m_ae);
 	viewport->add(m_aer);
 	
-	m_ee  = new geEnvelopeEditor(viewport->x(), m_ae->y()+m_ae->h()+RESIZER_BAR_H, "volume", ch);
+	m_ee  = new geEnvelopeEditor(viewport->x(), m_ae->y()+m_ae->h()+RESIZER_BAR_H, "volume");
 	m_eer = new geResizerBar(m_ee->x(), m_ee->y()+m_ee->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
 	viewport->add(m_ee);
 	viewport->add(m_eer);
@@ -105,7 +104,7 @@ gdSampleActionEditor::gdSampleActionEditor(m::SampleChannel* ch)
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	m::SampleChannel* sch = static_cast<m::SampleChannel*>(ch); 
+	const m::SampleChannel* sch = static_cast<const m::SampleChannel*>(ch); 
 	return sch->mode != ChannelMode::SINGLE_PRESS && !sch->isAnyLoopMode();
 }
 
@@ -115,9 +114,12 @@ bool gdSampleActionEditor::canChangeActionType()
 
 void gdSampleActionEditor::rebuild()
 {
-	m_actions = c::actionEditor::getActions(ch);
+	ch        = m::model::getLayout()->getChannel(channelId);
+	m_actions = c::actionEditor::getActions(channelId);
+
 	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 
 	computeWidth();
+	
 	m_ae->rebuild();
 	m_aer->size(m_ae->w(), m_aer->h());
 	m_ee->rebuild();	

@@ -31,15 +31,17 @@
 
 #include <functional>
 #include <cstdint>
+#include "core/midiEvent.h"
 
 
 namespace giada {
 namespace m {
 namespace midiDispatcher
 {
-typedef void (cb_midiLearn) (uint32_t, void*);
+/*typedef void (cb_midiLearn) (uint32_t, void*);
 
-void startMidiLearn(cb_midiLearn* cb, void* data);
+void startMidiLearn(cb_midiLearn* cb, void* data);*/
+void startMidiLearn(std::function<void(MidiEvent)> f);
 void stopMidiLearn();
 
 void dispatch(int byte1, int byte2, int byte3);

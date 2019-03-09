@@ -27,11 +27,12 @@
 
 #include <atomic>
 #include <cassert>
-#include "../glue/transport.h"
-#include "../glue/main.h"
+#include "glue/main.h"
+#include "core/model/model.h"
 #include "conf.h"
 #include "const.h"
 #include "kernelAudio.h"
+#include "mixerHandler.h"
 #include "kernelMidi.h"
 #include "clock.h"
 
@@ -42,17 +43,14 @@ namespace clock
 {
 namespace
 {
-float bpm_      = G_DEFAULT_BPM;
-int   bars_     = G_DEFAULT_BARS;
-int   beats_    = G_DEFAULT_BEATS;
-int   quanto_   = 1;            // quantizer step
-std::atomic<int>         quantize_(G_DEFAULT_QUANTIZE);
+int quanto_ = 1; // quantizer step
+
 std::atomic<ClockStatus> status_(ClockStatus::STOPPED);
 
-int framesInLoop_ = 0;
-int framesInBar_  = 0;
-int framesInBeat_ = 0;
-int framesInSeq_  = 0;
+std::atomic<int> framesInLoop_(0);
+std::atomic<int> framesInBar_ (0);
+std::atomic<int> framesInBeat_(0);
+std::atomic<int> framesInSeq_ (0);
 std::atomic<int> currentFrameWait_(0);  // Used only in wait mode
 std::atomic<int> currentFrame_(0);
 std::atomic<int> currentBeat_(0);
@@ -68,12 +66,28 @@ kernelAudio::JackState jackStatePrev_;
 #endif
 
 
-void updateQuanto_()
-{
-	if (quantize_.load() != 0)
-		quanto_ = framesInBeat_ / quantize_.load();
-}
+/* -------------------------------------------------------------------------- */
 
+/* updateFrameBars
+Updates bpm, frames, beats and so on. */
+
+void updateFrameBars_()
+{
+	int   bars     = model::getLayout()->bars;
+	int   beats    = model::getLayout()->beats;
+	float bpm      = model::getLayout()->bpm;
+    int   quantize = model::getLayout()->quantize;
+	int   fil      = (conf::samplerate * (60.0f / bpm)) * beats;
+	int   fib      = fil / (float) beats;
+
+	framesInLoop_.store(fil);
+	framesInBar_.store(fil / (float) bars);
+	framesInBeat_.store(fib);
+	framesInSeq_.store(fib * G_MAX_BEATS);
+
+	if (quantize != 0)
+		quanto_ = fib / quantize;
+}
 }; // {anonymous}
 
 
@@ -84,13 +98,8 @@ void updateQuanto_()
 
 void init(int sampleRate, float midiTCfps)
 {
-	status_.store(ClockStatus::STOPPED);  // Must be the first thing to do
 	midiTCrate_ = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
-	bpm_        = G_DEFAULT_BPM;
-	bars_       = G_DEFAULT_BARS;
-	beats_      = G_DEFAULT_BEATS;
-	quantize_.store(G_DEFAULT_QUANTIZE);
-	updateFrameBars();
+	updateFrameBars_();
 }
 
 
@@ -105,7 +114,8 @@ bool isRunning()
 
 bool isActive()
 {
-	return status_.load() == ClockStatus::RUNNING || status_.load() == ClockStatus::WAITING;
+	ClockStatus status = status_.load();
+	return status == ClockStatus::RUNNING || status == ClockStatus::WAITING;
 }
 
 
@@ -117,17 +127,23 @@ bool quantoHasPassed()
 
 bool isOnBar()
 {
-	if (status_.load() == ClockStatus::WAITING)
+	ClockStatus status      = status_.load();
+    int         framesInBar = framesInBar_.load();
+
+	if (status == ClockStatus::WAITING || isOnFirstBeat())
 		return false;
-	return currentFrame_.load() % framesInBar_ == 0;
+	return currentFrame_.load() % framesInBar == 0;
 }
 
 
 bool isOnBeat()
 {
-	if (status_.load() == ClockStatus::WAITING)
-		return currentFrameWait_.load() % framesInBeat_ == 0;
-	return currentFrame_.load() % framesInBeat_ == 0;
+	ClockStatus status       = status_.load();
+    int         framesInBeat = framesInBeat_.load();
+	
+	if (status == ClockStatus::WAITING)
+		return currentFrameWait_.load() % framesInBeat == 0;
+	return currentFrame_.load() % framesInBeat == 0;
 }
 
 
@@ -137,49 +153,58 @@ bool isOnFirstBeat()
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
 void setBpm(float b)
 {
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
 	if (b < G_MIN_BPM)
 		b = G_MIN_BPM;
-	bpm_ = b;
-	updateFrameBars();
+	
+	layout->bpm = b;
+	
+	model::swapLayout(layout);
+	
+	updateFrameBars_();
 }
 
 
-void setBars(int newBars)
+void setBeats(int newBeats, int newBars)
 {
-	/* Bars cannot be greater than beats_ and must be a sub multiple of beats_. If
-	not, approximate to the nearest (and greater) value available. */
-
-	if (newBars > beats_)
-		bars_ = beats_;
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
+	if (newBeats > G_MAX_BEATS)
+		newBeats = G_MAX_BEATS;
+	else if (newBeats < 1)
+		newBeats = 1;
+	
+	/* Bars cannot be greater than beats. */
+	
+	if (newBars > newBeats)
+		newBars = newBeats;
 	else if (newBars <= 0)
-		bars_ = 1;
-	else if (beats_ % newBars != 0) {
-		bars_ = newBars + (beats_ % newBars);
-		if (beats_ % bars_ != 0) // it could be an odd value, let's check it (and avoid it)
-			bars_ = bars_ - (beats_ % bars_);
-	}
-	else
-		bars_ = newBars;
-}
+		newBars = 1;
 
-
-void setBeats(int b)
-{
-	if (b > G_MAX_BEATS)
-		beats_ = G_MAX_BEATS;
-	else if (b < 1)
-		beats_ = 1;
-	else
-		beats_ = b;
+	layout->beats = newBeats;
+	layout->bars  = newBars;
+	
+	model::swapLayout(layout);
+	
+	updateFrameBars_();
 }
 
 
 void setQuantize(int q)
 {
-	quantize_.store(q);
-	updateQuanto_();
+	std::shared_ptr<model::Layout> layout = model::cloneLayout();
+	
+	layout->quantize = q;	
+	
+	model::swapLayout(layout);
+	
+	updateFrameBars_();
 }
 
 
@@ -206,21 +231,31 @@ void setStatus(ClockStatus s)
 
 void incrCurrentFrame() 
 {
-	if (status_.load() == ClockStatus::WAITING) {
-		currentFrameWait_++;
-		if (currentFrameWait_.load() >= framesInLoop_)
-			currentFrameWait_ = 0;
+	ClockStatus status       = status_.load();
+	int         framesInLoop = framesInLoop_.load();
+	int         framesInBeat = framesInBeat_.load();
+
+	if (status == ClockStatus::WAITING) {
+		int f = currentFrameWait_.load() + 1;
+		if (f >= framesInLoop)
+			f = 0;
+		currentFrameWait_.store(f);
+		return;
 	}
-	else {
-		currentFrame_++;
-		if (currentFrame_.load() >= framesInLoop_) {
-			currentFrame_.store(0);
-			currentBeat_.store(0);
-		}
-		else
-		if (isOnBeat())
-			currentBeat_++;
+
+	int f = currentFrame_.load() + 1;
+	int b = currentBeat_.load();
+
+	if (f >= framesInLoop) {
+		f = 0;
+		b = 0;
 	}
+	else
+	if (f % framesInBeat == 0) // If is on beat
+		b++;
+
+	currentFrame_.store(f);
+	currentBeat_.store(b);
 }
 
 
@@ -236,37 +271,21 @@ void rewind()
 /* -------------------------------------------------------------------------- */
 
 
-void updateFrameBars()
-{
-	/* framesInLoop_ ... loop length in frames, or samplerate * # frames per 
-	 *                  current bpm_ * beats_;
-	 * framesInBar_ .... n. of frames within a bar;
-	 * framesInBeat_ ... n. of frames within a beat;
-	 * framesInSeq_ .... number of frames in the whole sequencer. */
-
-	framesInLoop_ = (conf::samplerate * (60.0f / bpm_)) * beats_;
-	framesInBar_  = framesInLoop_ / bars_;
-	framesInBeat_ = framesInLoop_ / beats_;
-	framesInSeq_  = framesInBeat_ * G_MAX_BEATS;
-
-	updateQuanto_();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void sendMIDIsync()
 {
+	ClockStatus status       = status_.load();
+	int         framesInBeat = framesInBeat_.load();
+	int         currentFrame = currentFrame_.load();	
+	
 	/* Sending MIDI sync while waiting is meaningless. */
 
-	if (status_.load() == ClockStatus::WAITING)
+	if (status == ClockStatus::WAITING)
 		return;
 
 	/* TODO - only Master (_M) is implemented so far. */
 
 	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
-		if (currentFrame_.load() % (framesInBeat_/24) == 0)
+		if (currentFrame % (framesInBeat / 24) == 0)
 			kernelMidi::send(MIDI_CLOCK, -1, -1);
 		return;
 	}
@@ -278,7 +297,7 @@ void sendMIDIsync()
 		 * 1-4 and 5-8. We check timecode frame's parity: if even, send
 		 * range 1-4, if odd send 5-8. */
 
-		if (currentFrame_.load() % midiTCrate_ != 0)  // no timecode frame passed
+		if (currentFrame % midiTCrate_ != 0)  // no timecode frame passed
 			return;
 
 		/* frame low nibble
@@ -358,16 +377,19 @@ void sendMIDIrewind()
 
 void recvJackSync()
 {
+	/* TODO - these things should be processed by a higher level, 
+	above clock:: ----> clockManager */
+
 	kernelAudio::JackState jackState = kernelAudio::jackTransportQuery();
 
 	if (jackState.running != jackStatePrev_.running) {
 		if (jackState.running) {
 			if (!isRunning())
-				c::transport::startSeq(false); // not from UI
+				mh::startSequencer();
 		}
 		else {
 			if (isRunning())
-				c::transport::stopSeq(false); // not from UI
+				mh::stopSequencer();
 		}
 	}
 	if (jackState.bpm != jackStatePrev_.bpm)
@@ -375,7 +397,7 @@ void recvJackSync()
 			c::main::setBpm(jackState.bpm);
 
 	if (jackState.frame == 0 && jackState.frame != jackStatePrev_.frame)
-		c::transport::rewindSeq(false, false);  // not from UI, don't notify jack (avoid loop)
+		mh::rewindSequencer();
 
 	jackStatePrev_ = jackState;
 }
@@ -395,75 +417,17 @@ bool canQuantize()
 /* -------------------------------------------------------------------------- */
 
 
-int getCurrentFrame()
-{
-	return currentFrame_.load();
-}
-
-
-int getFramesInLoop()
-{
-	return framesInLoop_;
-}
-
-
-int getCurrentBeat()
-{
-	return currentBeat_.load();
-}
-
-
-int getQuantize()
-{
-	return quantize_.load();
-}
-
-
-float getBpm()
-{
-	return bpm_;
-}
-
-
-int getBeats()
-{
-	return beats_;
-}
-
-
-int getBars()
-{
-	return bars_;
-}
-
-
-int getQuanto()
-{
-	return quanto_;
-}
-
-
-int getFramesInBar()
-{
-	return framesInBar_;
-}
-
-
-int getFramesInBeat()
-{
-	return framesInBeat_;
-}
-
-
-int getFramesInSeq()
-{
-	return framesInSeq_;
-}
-
-
-ClockStatus getStatus()
-{
-	return status_;
-}
+ClockStatus getStatus()       { return status_.load(); }
+int         getCurrentFrame() { return currentFrame_.load(); }
+int         getCurrentBeat()  { return currentBeat_.load(); }
+int         getFramesInLoop() { return framesInLoop_.load(); }
+int         getFramesInBar()  { return framesInBar_.load(); }
+int         getFramesInBeat() { return framesInBeat_.load(); }
+int         getFramesInSeq()  { return framesInSeq_.load(); }
+int         getQuanto()       { return quanto_; }
+int         getQuantize()     { return model::getLayout()->quantize; }
+float       getBpm()          { return model::getLayout()->bpm; }
+int         getBeats()        { return model::getLayout()->beats; }
+int         getBars()         { return model::getLayout()->bars; }
 
 }}}; // giada::m::clock::

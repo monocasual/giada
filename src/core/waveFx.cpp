@@ -28,7 +28,8 @@
 #include <cmath>
 #include <cassert>
 #include <algorithm>
-#include "../utils/log.h"
+#include "utils/log.h"
+#include "const.h"
 #include "wave.h"
 #include "waveFx.h"
 

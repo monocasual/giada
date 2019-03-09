@@ -29,8 +29,11 @@
 #define GD_WARNINGS_H
 
 
+namespace giada {
+namespace v 
+{
 void gdAlert(const char *c);
 int  gdConfirmWin(const char *title, const char *msg);
-
+}} // giada::v::
 
 #endif

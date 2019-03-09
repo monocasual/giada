@@ -25,33 +25,35 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../../core/mixer.h"
-#include "../../../../core/conf.h"
-#include "../../../../core/clock.h"
-#include "../../../../core/graphics.h"
-#include "../../../../core/wave.h"
-#include "../../../../core/recorder.h"
-#include "../../../../core/sampleChannel.h"
-#include "../../../../glue/io.h"
-#include "../../../../glue/channel.h"
-#include "../../../../glue/recorder.h"
-#include "../../../../glue/storage.h"
-#include "../../../../utils/gui.h"
-#include "../../../dispatcher.h"
-#include "../../../dialogs/mainWindow.h"
-#include "../../../dialogs/keyGrabber.h"
-#include "../../../dialogs/sampleEditor.h"
-#include "../../../dialogs/channelNameInput.h"
-#include "../../../dialogs/warnings.h"
-#include "../../../dialogs/actionEditor/sampleActionEditor.h"
-#include "../../../dialogs/browser/browserSave.h"
-#include "../../../dialogs/browser/browserLoad.h"
-#include "../../../dialogs/midiIO/midiOutputSampleCh.h"
-#include "../../../dialogs/midiIO/midiInputChannel.h"
-#include "../../basics/boxtypes.h"
-#include "../../basics/button.h"
-#include "../../basics/statusButton.h"
-#include "../../basics/dial.h"
+#include <cassert>
+#include "core/channels/sampleChannel.h"
+#include "core/mixer.h"
+#include "core/conf.h"
+#include "core/clock.h"
+#include "core/graphics.h"
+#include "core/wave.h"
+#include "core/recorder.h"
+#include "core/recManager.h"
+#include "glue/io.h"
+#include "glue/channel.h"
+#include "glue/recorder.h"
+#include "glue/storage.h"
+#include "utils/gui.h"
+#include "gui/dispatcher.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/keyGrabber.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/dialogs/channelNameInput.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/dialogs/actionEditor/sampleActionEditor.h"
+#include "gui/dialogs/browser/browserSave.h"
+#include "gui/dialogs/browser/browserLoad.h"
+#include "gui/dialogs/midiIO/midiOutputSampleCh.h"
+#include "gui/dialogs/midiIO/midiInputChannel.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/statusButton.h"
+#include "gui/elems/basics/dial.h"
 #include "channelStatus.h"
 #include "channelMode.h"
 #include "sampleChannelButton.h"
@@ -60,12 +62,12 @@
 #include "sampleChannel.h"
 
 
-extern gdMainWindow* G_MainWin;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v
+{
 namespace
 {
 enum class Menu
@@ -101,50 +103,51 @@ enum class Menu
 
 void menuCallback(Fl_Widget* w, void* v)
 {
-	using namespace giada;
-
-	geSampleChannel*  gch = static_cast<geSampleChannel*>(w);
-	m::SampleChannel* ch  = static_cast<m::SampleChannel*>(gch->ch);
+	geSampleChannel* gch = static_cast<geSampleChannel*>(w);
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(gch->ch);
 
 	Menu selectedItem = (Menu) (intptr_t) v;
 
 	switch (selectedItem) {
 		case Menu::INPUT_MONITOR: {
-			c::channel::toggleInputMonitor(gch->ch);
+			c::channel::setInputMonitor(ch->id, !ch->inputMonitor);
 			break;
 		}
 		case Menu::LOAD_SAMPLE: {
-			gdWindow *w = new gdBrowserLoad(m::conf::browserX, m::conf::browserY,
-				m::conf::browserW, m::conf::browserH, "Browse sample",
-				m::conf::samplePath.c_str(), c::storage::loadSample, gch->ch);
+			gdWindow* w = new gdBrowserLoad("Browse sample", 
+				m::conf::samplePath.c_str(), c::storage::loadSample, ch);
 			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::EXPORT_SAMPLE: {
-			gdWindow *w = new gdBrowserSave(m::conf::browserX, m::conf::browserY,
-				m::conf::browserW, m::conf::browserH, "Save sample",
-				m::conf::samplePath.c_str(), "", c::storage::saveSample, gch->ch);
+			gdWindow* w = new gdBrowserSave("Save sample", 
+				m::conf::samplePath.c_str(), "", c::storage::saveSample, ch);
 			u::gui::openSubWindow(G_MainWin, w, WID_FILE_BROWSER);
 			break;
 		}
 		case Menu::SETUP_KEYBOARD_INPUT: {
-			new gdKeyGrabber(gch->ch); // FIXME - use gu_openSubWindow
+			u::gui::openSubWindow(G_MainWin, new gdKeyGrabber(ch->id), 
+				WID_KEY_GRABBER);
 			break;
 		}
 		case Menu::SETUP_MIDI_INPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(gch->ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiInputChannel(ch->id), 
+				WID_MIDI_INPUT);
 			break;
 		}
 		case Menu::SETUP_MIDI_OUTPUT: {
-			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch), 0);
+			u::gui::openSubWindow(G_MainWin, new gdMidiOutputSampleCh(ch->id), 
+				WID_MIDI_OUTPUT);
 			break;
 		}
 		case Menu::EDIT_SAMPLE: {
-			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(ch), WID_SAMPLE_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new gdSampleEditor(ch->id), 
+				WID_SAMPLE_EDITOR);
 			break;
 		}
 		case Menu::EDIT_ACTIONS: {
-			u::gui::openSubWindow(G_MainWin, new v::gdSampleActionEditor(ch), WID_ACTION_EDITOR);
+			u::gui::openSubWindow(G_MainWin, new gdSampleActionEditor(ch->id), 
+				WID_ACTION_EDITOR);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS:
@@ -153,51 +156,52 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
-			c::recorder::clearAllActions(gch);
+			c::recorder::clearAllActions(ch->id);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_VOLUME: {
-			c::recorder::clearVolumeActions(gch);
+			c::recorder::clearVolumeActions(ch->id);
 			break;
 		}
 		case Menu::CLEAR_ACTIONS_START_STOP: {
-			c::recorder::clearStartStopActions(gch);
+			c::recorder::clearStartStopActions(ch->id);
 			break;
 		}
 		case Menu::RESIZE_H1: {
 			gch->changeSize(G_GUI_CHANNEL_H_1);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H2: {
 			gch->changeSize(G_GUI_CHANNEL_H_2);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H3: {
 			gch->changeSize(G_GUI_CHANNEL_H_3);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H4: {
 			gch->changeSize(G_GUI_CHANNEL_H_4);
-			static_cast<geColumn*>(gch->parent())->repositionChannels();
+			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}
 		case Menu::CLONE_CHANNEL: {
-			c::channel::cloneChannel(gch->ch);
+			c::channel::cloneChannel(ch->id);
 			break;
 		}
 		case Menu::RENAME_CHANNEL: {
-			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), WID_SAMPLE_NAME);
+			u::gui::openSubWindow(G_MainWin, new gdChannelNameInput(gch->ch), 
+				WID_SAMPLE_NAME);
 			break;
 		}
 		case Menu::FREE_CHANNEL: {
-			c::channel::freeChannel(gch->ch);
+			c::channel::freeChannel(ch->id);
 			break;
 		}
 		case Menu::DELETE_CHANNEL: {
-			c::channel::deleteChannel(gch->ch);
+			c::channel::deleteChannel(ch->id);
 			break;
 		}
 	}
@@ -211,36 +215,38 @@ void menuCallback(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* ch)
+geSampleChannel::geSampleChannel(int X, int Y, int W, int H, const m::SampleChannel* ch)
 	: geChannel(X, Y, W, H, ch)
 {
-	begin();
-
-	button      = new geButton(x(), y(), G_GUI_UNIT, G_GUI_UNIT, "", channelStop_xpm, channelPlay_xpm);
-	arm         = new geButton(button->x()+button->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
-	status      = new geChannelStatus(arm->x()+arm->w()+4, y(), G_GUI_UNIT, H, ch);
-	mainButton  = new geSampleChannelButton(status->x()+status->w()+4, y(), G_GUI_UNIT, H, "-- no sample --");
-	readActions = new geButton(mainButton->x()+mainButton->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", readActionOff_xpm, readActionOn_xpm);
-	modeBox     = new geChannelMode(readActions->x()+readActions->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, ch);
-	mute        = new geButton(modeBox->x()+modeBox->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", muteOff_xpm, muteOn_xpm);
-	solo        = new geButton(mute->x()+mute->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, "", soloOff_xpm, soloOn_xpm);
+	playButton  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm         = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	status      = new geChannelStatus(0, 0, G_GUI_UNIT, H, ch);
+	mainButton  = new geSampleChannelButton(0, 0, G_GUI_UNIT, H, ch);
+	readActions = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", readActionOff_xpm, readActionOn_xpm);
+	modeBox     = new geChannelMode(0, 0, G_GUI_UNIT, G_GUI_UNIT, ch);
+	mute        = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo        = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #ifdef WITH_VST
-	fx          = new geStatusButton(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
-	vol         = new geDial(fx->x()+fx->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
-#else
-	vol         = new geDial(solo->x()+solo->w()+4, y(), G_GUI_UNIT, G_GUI_UNIT);
+	fx          = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 #endif
+	vol         = new geDial(0, 0, G_GUI_UNIT, G_GUI_UNIT);
 
 	end();
 
 	resizable(mainButton);
 
-	update();
+	modeBox->value(static_cast<int>(ch->mode));
+	modeBox->redraw();
 
-	button->callback(cb_button, (void*)this);
-	button->when(FL_WHEN_CHANGED);   // do callback on keypress && on keyrelease
+#ifdef WITH_VST
+	fx->setStatus(ch->plugins.size() > 0);
+#endif
+
+	playButton->callback(cb_playButton, (void*)this);
+	playButton->when(FL_WHEN_CHANGED);   // On keypress && on keyrelease
 
 	arm->type(FL_TOGGLE_BUTTON);
+	arm->value(ch->armed.load());
 	arm->callback(cb_arm, (void*)this);
 
 #ifdef WITH_VST
@@ -253,15 +259,15 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* c
 	solo->type(FL_TOGGLE_BUTTON);
 	solo->callback(cb_solo, (void*)this);
 
+	mainButton->setKey(ch->key);
 	mainButton->callback(cb_openMenu, (void*)this);
 
 	readActions->type(FL_TOGGLE_BUTTON);
-	readActions->value(ch->readActions);
+	readActions->value(ch->readActions.load());
 	readActions->callback(cb_readActions, (void*)this);
 
+	vol->value(ch->volume.load());
 	vol->callback(cb_changeVol, (void*)this);
-
-	ch->guiChannel = this;
 
 	changeSize(H);  // Update size dynamically
 }
@@ -270,7 +276,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, m::SampleChannel* c
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_button     (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_button(); }
+void geSampleChannel::cb_playButton (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_playButton(); }
 void geSampleChannel::cb_openMenu   (Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_openMenu(); }
 void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*)p)->cb_readActions(); }
 
@@ -278,9 +284,9 @@ void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*
 /* -------------------------------------------------------------------------- */
 
 
-void geSampleChannel::cb_button()
+void geSampleChannel::cb_playButton()
 {
-	v::dispatcher::dispatchTouch(ch, button->value());
+	v::dispatcher::dispatchTouch(this, playButton->value());
 }
 
 
@@ -289,17 +295,15 @@ void geSampleChannel::cb_button()
 
 void geSampleChannel::cb_openMenu()
 {
-	using namespace giada;
-
 	/* If you're recording (input or actions) no menu is allowed; you can't do
 	anything, especially deallocate the channel */
 
-	if (m::mixer::recording || m::recorder::isActive())
+	if (m::recManager::isRecording())
 		return;
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Input monitor",            0, menuCallback, (void*) Menu::INPUT_MONITOR,
-			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<m::SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
+			FL_MENU_TOGGLE | FL_MENU_DIVIDER | (static_cast<const m::SampleChannel*>(ch)->inputMonitor ? FL_MENU_VALUE : 0)},
 		{"Load new sample...",       0, menuCallback, (void*) Menu::LOAD_SAMPLE},
 		{"Export sample to file...", 0, menuCallback, (void*) Menu::EXPORT_SAMPLE},
 		{"Setup keyboard input...",  0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
@@ -326,32 +330,31 @@ void geSampleChannel::cb_openMenu()
 	};
 
 	if (ch->status == ChannelStatus::EMPTY || 
-		  ch->status == ChannelStatus::MISSING) 
-	{
+		ch->status == ChannelStatus::MISSING) {
 		rclick_menu[(int) Menu::EXPORT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::EDIT_SAMPLE].deactivate();
 		rclick_menu[(int) Menu::FREE_CHANNEL].deactivate();
 		rclick_menu[(int) Menu::RENAME_CHANNEL].deactivate();
 	}
 
-	if (!ch->hasActions)
+	if (ch->hasActions == false)
 		rclick_menu[(int) Menu::CLEAR_ACTIONS].deactivate();
 
 
 	/* No 'clear start/stop actions' for those channels in loop mode: they cannot
 	have start/stop actions. */
 
-	if (static_cast<m::SampleChannel*>(ch)->isAnyLoopMode())
+	if (static_cast<const m::SampleChannel*>(ch)->isAnyLoopMode())
 		rclick_menu[(int) Menu::CLEAR_ACTIONS_START_STOP].deactivate();
 
-	Fl_Menu_Button* b = new Fl_Menu_Button(0, 0, 100, 50);
-	b->box(G_CUSTOM_BORDER_BOX);
-	b->textsize(G_GUI_FONT_SIZE_BASE);
-	b->textcolor(G_COLOR_LIGHT_2);
-	b->color(G_COLOR_GREY_2);
+	Fl_Menu_Button b(0, 0, 100, 50);
+	b.box(G_CUSTOM_BORDER_BOX);
+	b.textsize(G_GUI_FONT_SIZE_BASE);
+	b.textcolor(G_COLOR_LIGHT_2);
+	b.color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, b);
-	if (m)
+	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
+	if (m != nullptr)
 		m->do_callback(this, m->user_data());
 	return;
 }
@@ -362,8 +365,7 @@ void geSampleChannel::cb_openMenu()
 
 void geSampleChannel::cb_readActions()
 {
-	using namespace giada::c::channel;
-	toggleReadingActions(static_cast<m::SampleChannel*>(ch));
+	c::channel::toggleReadingActions(ch->id);
 }
 
 
@@ -372,106 +374,17 @@ void geSampleChannel::cb_readActions()
 
 void geSampleChannel::refresh()
 {
-	using namespace giada;
-	
-	if (!mainButton->visible()) // mainButton invisible? status too (see below)
-		return;
+	geChannel::refresh();
 
-	setColorsByStatus();
-
-	if (static_cast<m::SampleChannel*>(ch)->wave != nullptr) {
-		if (m::mixer::recording && ch->armed)
-			mainButton->setInputRecordMode();
-		if (m::recorder::isActive())
-			mainButton->setActionRecordMode();
-		status->redraw(); // status invisible? sampleButton too (see below)
-	}
-	mainButton->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::reset()
-{
-	hideActionButton();
-	mainButton->setDefaultMode("-- no sample --");
-	mainButton->redraw();
-	status->redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::update()
-{
 	const m::SampleChannel* sch = static_cast<const m::SampleChannel*>(ch);
 
-	switch (sch->status) {
-		case ChannelStatus::EMPTY:
-			mainButton->label("-- no sample --");
-			break;
-		case ChannelStatus::MISSING:
-		case ChannelStatus::WRONG:
-			mainButton->label("* file not found! *");
-			break;
-		default:
-			if (sch->name.empty())
-				mainButton->label(sch->wave->getBasename(false).c_str());
-			else
-				mainButton->label(sch->name.c_str());
-			break;
-	}
+	if (sch->wave != nullptr) 
+		status->redraw();
 
-	/* Update channels. If you load a patch with recorded actions, the 'R' button 
-	must be shown. Moreover if the actions are active, the 'R' button must be 
-	activated accordingly. */
-
-	if (sch->hasActions)
-		showActionButton();
-	else
-		hideActionButton();
-
-	modeBox->value(static_cast<int>(sch->mode));
-	modeBox->redraw();
-
-	vol->value(sch->volume);
-	mute->value(sch->mute);
-	solo->value(sch->solo);
-
-	mainButton->setKey(sch->key);
-
-	arm->value(sch->armed);
-
-#ifdef WITH_VST
-	fx->status = sch->plugins.size() > 0;
-	fx->redraw();
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::showActionButton()
-{
-	readActions->value(static_cast<m::SampleChannel*>(ch)->readActions);
-	readActions->show();
-	packWidgets();
-	redraw();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geSampleChannel::hideActionButton()
-{
-	readActions->hide();
-	packWidgets();
-	redraw();
+	if (sch->hasActions.load() == true)
+	 	readActions->show();
+	else 
+		readActions->hide();
 }
 
 
@@ -504,6 +417,9 @@ void geSampleChannel::resize(int X, int Y, int W, int H)
 }
 
 
+/* -------------------------------------------------------------------------- */
+
+
 void geSampleChannel::changeSize(int H)
 {
 	geChannel::changeSize(H);
@@ -514,3 +430,5 @@ void geSampleChannel::changeSize(int H)
 	modeBox->resize(x(), Y, w(), G_GUI_UNIT);
 	readActions->resize(x(), Y, w(), G_GUI_UNIT);
 }
+
+}} // giada::v::

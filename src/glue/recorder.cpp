@@ -26,21 +26,23 @@
 
 
 #include <cassert>
-#include "../gui/dialogs/warnings.h"
-#include "../gui/elems/mainWindow/keyboard/channel.h"
-#include "../gui/elems/mainWindow/keyboard/sampleChannel.h"
-#include "../core/const.h"
-#include "../core/clock.h"
-#include "../core/kernelMidi.h"
-#include "../core/channel.h"
-#include "../core/recorderHandler.h"
-#include "../core/recorder.h"
-#include "../core/action.h"
-#include "../core/mixer.h"
-#include "../core/sampleChannel.h"
-#include "../core/midiChannel.h"
-#include "../utils/gui.h"
-#include "../utils/log.h"
+#include "gui/dialogs/warnings.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/sampleChannel.h"
+#include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/const.h"
+#include "core/clock.h"
+#include "core/model/data.h"
+#include "core/model/model.h"
+#include "core/kernelMidi.h"
+#include "core/recorderHandler.h"
+#include "core/recorder.h"
+#include "core/action.h"
+#include "core/mixer.h"
+#include "utils/gui.h"
+#include "utils/log.h"
 #include "recorder.h"
 
 
@@ -48,58 +50,49 @@ namespace giada {
 namespace c {
 namespace recorder 
 {
-void clearAllActions(geChannel* gch)
+void clearAllActions(ID channelId)
 {
-	if (!gdConfirmWin("Warning", "Clear all actions: are you sure?"))
+	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
-	gch->ch->kill(0);
-	m::recorder::clearChannel(gch->ch->index);
-	updateChannel(gch);
+	m::recorder::clearChannel(channelId);
+	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void clearVolumeActions(geChannel* gch)
+void clearVolumeActions(ID channelId)
 {
-	if (!gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
+	if (!v::gdConfirmWin("Warning", "Clear all volume actions: are you sure?"))
 		return;
-	m::recorder::clearActions(gch->ch->index, m::MidiEvent::ENVELOPE);
-	updateChannel(gch);
+	m::recorder::clearActions(channelId, m::MidiEvent::ENVELOPE);
+	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void clearStartStopActions(geChannel* gch)
+void clearStartStopActions(ID channelId)
 {
-	if (!gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
+	if (!v::gdConfirmWin("Warning", "Clear all start/stop actions: are you sure?"))
 		return;
-	gch->ch->kill(0);
-	m::recorder::clearActions(gch->ch->index, m::MidiEvent::NOTE_ON);
-	m::recorder::clearActions(gch->ch->index, m::MidiEvent::NOTE_OFF);
-	m::recorder::clearActions(gch->ch->index, m::MidiEvent::NOTE_KILL);
-	updateChannel(gch);
+	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_ON);
+	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_OFF);
+	m::recorder::clearActions(channelId, m::MidiEvent::NOTE_KILL);
+	updateChannel(channelId, /*updateActionEditor=*/true);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateChannel(geChannel* gch, bool refreshActionEditor)
+void updateChannel(ID channelId, bool updateActionEditor)
 {
-	gch->ch->hasActions = m::recorder::hasActions(gch->ch->index);
-	if (!gch->ch->hasActions)
-		gch->ch->readActions = false;
-
-	if (gch->ch->type == ChannelType::SAMPLE) {
-		geSampleChannel* gsch = static_cast<geSampleChannel*>(gch);
-		gsch->ch->hasActions ? gsch->showActionButton() : gsch->hideActionButton();
-	}
-	if (refreshActionEditor)
-		u::gui::refreshActionEditor(); // refresh a.editor window, it could be open
+	m::model::getLayout()->getChannel(channelId)->hasActions = m::recorder::hasActions(channelId);
+	if (updateActionEditor)
+		u::gui::refreshActionEditor();
 }
 
 }}} // giada::c::recorder::

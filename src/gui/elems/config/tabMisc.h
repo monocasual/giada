@@ -35,15 +35,20 @@
 class geChoice;
 
 
+namespace giada {
+namespace v
+{
 class geTabMisc : public Fl_Group
 {
 public:
 
-	geChoice *debugMsg;
-
 	geTabMisc(int x, int y, int w, int h);
 
 	void save();
+
+	geChoice* debugMsg;
 };
+}} // giada::v::
+
 
 #endif

@@ -29,32 +29,29 @@
 #define GE_SAMPLE_ACTION_H
 
 
-#include "../../../core/recorder.h"
+#include "core/recorder.h"
 #include "baseAction.h"
-
-
 
 
 namespace giada {
 namespace m
 {
 class SampleChannel;
-struct Action;
 }
 namespace v
 {
 class geSampleAction : public geBaseAction
 {
-private:
-
-	const m::SampleChannel* m_ch;
-
 public:
 
 	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::SampleChannel* ch,
-		const m::Action* a1, const m::Action* a2);
+		m::Action a1, m::Action a2);
 
 	void draw() override;
+
+private:
+
+    const m::SampleChannel* m_ch;
 };
 }} // giada::v::
 

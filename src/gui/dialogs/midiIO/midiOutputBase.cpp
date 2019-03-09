@@ -25,16 +25,16 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../utils/log.h"
-#include "../../../utils/string.h"
-#include "../../elems/midiLearner.h"
+#include "core/midiDispatcher.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include "gui/elems/midiLearner.h"
 #include "midiOutputBase.h"
 
 
-using std::string;
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 	: gdWindow(w, h, "Midi Output Setup")
 {
@@ -44,34 +44,19 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::stopMidiLearn(geMidiLearner *learner)
+gdMidiOutputBase::~gdMidiOutputBase()
 {
 	m::midiDispatcher::stopMidiLearn();
-	learner->updateValue();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_learn(uint32_t* param, uint32_t msg, geMidiLearner* l)
+void gdMidiOutputBase::refresh()
 {
-	*param = msg;
-	stopMidiLearn(l);
-	gu_log("[gdMidiGrabber] MIDI learn done - message=0x%X\n", msg);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputBase::cb_learn(uint32_t msg, void *d)
-{
-	geMidiLearner::cbData_t* data   = (geMidiLearner::cbData_t*) d;
-	gdMidiOutputBase*        window = (gdMidiOutputBase*) data->window;
-	geMidiLearner* learner = data->learner;
-	uint32_t*      param   = learner->param;
-	window->cb_learn(param, msg, learner);
+	for (geMidiLearner* l : m_learners)
+		l->refresh();	
 }
 
 
@@ -110,6 +95,8 @@ void gdMidiOutputBase::cb_enableLightning() {}
 
 void gdMidiOutputBase::setTitle(int chanNum)
 {
-	string tmp = "MIDI Output Setup (channel " + u::string::iToString(chanNum) + ")"; 
+	std::string tmp = "MIDI Output Setup (channel " + std::to_string(chanNum) + ")"; 
 	copy_label(tmp.c_str());
 }
+
+}} // giada::v::

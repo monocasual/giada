@@ -29,7 +29,7 @@
 #define GE_ENVELOPE_POINT_H
 
 
-#include "../../../core/recorder.h"
+#include "core/recorder.h"
 #include "baseAction.h"
 
 
@@ -42,7 +42,7 @@ public:
 
 	static const Pixel SIDE = 12;
 
-	geEnvelopePoint(Pixel x, Pixel y, const m::Action* a);
+	geEnvelopePoint(Pixel x, Pixel y, m::Action a);
 
 	void draw() override;
 };

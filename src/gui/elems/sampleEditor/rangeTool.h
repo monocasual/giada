@@ -29,7 +29,7 @@
 #define GE_RANGE_TOOL_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geInput;
@@ -37,28 +37,30 @@ class geButton;
 class geBox;
 
 
-class geRangeTool : public Fl_Group
+namespace giada {
+namespace v 
 {
-private:
-
-  giada::m::SampleChannel* m_ch;
-
-  geBox*    m_label;
-  geInput*  m_begin;
-  geInput*  m_end;
-  geButton* m_reset;
-
-  static void cb_setChanPos   (Fl_Widget* w, void* p);
-  static void cb_resetStartEnd(Fl_Widget* w, void* p);
-  void cb_setChanPos();
-  void cb_resetStartEnd();
-
+class geRangeTool : public Fl_Pack
+{
 public:
 
-  geRangeTool(int x, int y, giada::m::SampleChannel* ch);
+	geRangeTool(int x, int y);
 
-  void refresh();
+	void rebuild();
+
+private:
+
+	static void cb_setChanPos   (Fl_Widget* w, void* p);
+	static void cb_resetStartEnd(Fl_Widget* w, void* p);
+	void cb_setChanPos();
+	void cb_resetStartEnd();
+
+	geBox*    m_label;
+	geInput*  m_begin;
+	geInput*  m_end;
+	geButton* m_reset;
 };
+}} // giada::v::
 
 
 #endif

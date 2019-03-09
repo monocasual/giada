@@ -26,18 +26,17 @@
 
 
 #include <cassert>
-#include "../core/clock.h"
-#include "../core/const.h"
-#include "../core/sampleChannel.h"
-#include "../core/midiChannel.h"
-#include "../core/recorderHandler.h"
-#include "../core/recorder.h"
-#include "../core/action.h"
+#include "core/model/model.h"
+#include "core/model/data.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/midiChannel.h"
+#include "core/clock.h"
+#include "core/const.h"
+#include "core/recorderHandler.h"
+#include "core/recorder.h"
+#include "core/action.h"
 #include "recorder.h"
 #include "actionEditor.h"
-
-
-using std::vector;
 
 
 namespace giada {
@@ -46,11 +45,11 @@ namespace actionEditor
 {
 namespace
 {
-Frame fixVerticalEnvActions_(Frame f, const m::Action* a1, const m::Action* a2)
+Frame fixVerticalEnvActions_(Frame f, const m::Action& a1, const m::Action& a2)
 {
-	if      (a1->frame == f) f += 1;
-	else if (a2->frame == f) f -= 1;
-	if (a1->frame == f || a2->frame == f)
+	if      (a1.frame == f) f += 1;
+	else if (a2.frame == f) f -= 1;
+	if (a1.frame == f || a2.frame == f)
 		return -1;
 	return f;
 }
@@ -61,18 +60,19 @@ Frame fixVerticalEnvActions_(Frame f, const m::Action* a1, const m::Action* a2)
 /* recordFirstEnvelopeAction_
 First action ever? Add actions at boundaries. */
 
-void recordFirstEnvelopeAction_(int channel, Frame frame, int value)
+void recordFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
 	namespace mr = m::recorder;
 
 	m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, G_MAX_VELOCITY);
 	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
-	const m::Action* a1 = mr::rec(channel, 0, e1);	
-	const m::Action* a2 = mr::rec(channel, frame, e2);
-	const m::Action* a3 = mr::rec(channel, m::clock::getFramesInLoop() - 1, e1);
-	mr::updateSiblings(a1, a3, a2); // Circular loop (begin)
-	mr::updateSiblings(a2, a1, a3);
-	mr::updateSiblings(a3, a2, a1); // Circular loop (end)
+	const m::Action a1 = mr::rec(channelId, 0, e1);	
+	const m::Action a2 = mr::rec(channelId, frame, e2); 
+	const m::Action a3 = mr::rec(channelId, m::clock::getFramesInLoop() - 1, e1);
+
+	mr::updateSiblings(a1.id, /*prev=*/a3.id, /*next=*/a2.id); // Circular loop (begin)
+	mr::updateSiblings(a2.id, /*prev=*/a1.id, /*next=*/a3.id);
+	mr::updateSiblings(a3.id, /*prev=*/a2.id, /*next=*/a1.id); // Circular loop (end)
 }
 
 
@@ -83,20 +83,24 @@ void recordFirstEnvelopeAction_(int channel, Frame frame, int value)
 Find action right before frame 'frame' and inject a new action in there. 
 Vertical envelope points are forbidden. */
 
-void recordNonFirstEnvelopeAction_(int channel, Frame frame, int value)
+void recordNonFirstEnvelopeAction_(ID channelId, Frame frame, int value)
 {
 	namespace mr = m::recorder;
 
-	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
-	const m::Action* a1 = mr::getClosestAction(channel, frame, m::MidiEvent::ENVELOPE);
-	const m::Action* a3 = a1->next;
-	assert(a1 != nullptr);
-	assert(a3 != nullptr);
+	const m::Action a1 = mr::getClosestAction(channelId, frame, m::MidiEvent::ENVELOPE);
+	const m::Action a3 = a1.next != nullptr ? *a1.next : m::Action{};
+
+	assert(a1.isValid());
+	assert(a3.isValid());
+
 	frame = fixVerticalEnvActions_(frame, a1, a3);
 	if (frame == -1) // Vertical points, nothing to do here
 		return;
-	const m::Action* a2 = mr::rec(channel, frame, e2);
-	mr::updateSiblings(a2, a1, a3);
+
+	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value);
+	const m::Action a2 = mr::rec(channelId, frame, e2);
+
+	mr::updateSiblings(a2.id, a1.id, a3.id);
 }
 }; // {anonymous}
 
@@ -106,7 +110,7 @@ void recordNonFirstEnvelopeAction_(int channel, Frame frame, int value)
 /* -------------------------------------------------------------------------- */
 
 
-void recordMidiAction(m::MidiChannel* ch, int note, int velocity, Frame f1, Frame f2)
+void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 {
 	namespace mr = m::recorder;
 	namespace cr = c::recorder;
@@ -125,97 +129,118 @@ void recordMidiAction(m::MidiChannel* ch, int note, int velocity, Frame f1, Fram
 	m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::NOTE_ON,  note, velocity);
 	m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::NOTE_OFF, note, velocity);
 
-	const m::Action* a1 = mr::rec(ch->index, f1, e1);
-	const m::Action* a2 = mr::rec(ch->index, f2, e2);
+	mr::rec(channelId, f1, f2, e1, e2);
 
-	mr::updateSiblings(a1, nullptr, a2);
-
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void deleteMidiAction(m::MidiChannel* ch, const m::Action* a)
+void deleteMidiAction(ID channelId, const m::Action& a)
 {
 	namespace mr = m::recorder;
 	namespace cr = c::recorder;
 
-	assert(a != nullptr);
-	assert(a->event.getStatus() == m::MidiEvent::NOTE_ON);
+	assert(a.isValid());
+	assert(a.event.getStatus() == m::MidiEvent::NOTE_ON);
 
 	/* Send a note-off first in case we are deleting it in a middle of a 
-	key_on/key_off sequence. */
+	key_on/key_off sequence. Check if 'next' exist first: could be orphaned. */
 	
-	if (a->next != nullptr) {
-		ch->sendMidi(a->next, 0);
-		mr::deleteAction(a->next);
+	if (a.next != nullptr) {		
+		m::MidiChannel* ch = static_cast<m::MidiChannel*>(
+			m::model::getLayout()->getChannel(channelId));
+		if (ch->isPlaying() && ch->mute.load() == false)
+			ch->sendMidi(a.next->event, 0);
+		mr::deleteAction(a.id, a.next->id);
 	}
-	mr::deleteAction(a);
+	else
+		mr::deleteAction(a.id);
 
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateMidiAction(m::MidiChannel* ch, const m::Action* a, int note, int velocity, 
+void updateMidiAction(ID channelId, const m::Action& a, int note, int velocity, 
 	Frame f1, Frame f2)
 {
 	namespace mr = m::recorder;
 
-	mr::deleteAction(a->next);
-	mr::deleteAction(a);
-	
-	recordMidiAction(ch, note, velocity, f1, f2);
+	mr::deleteAction(a.id, a.next->id);
+	recordMidiAction(channelId, note, velocity, f1, f2);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void recordSampleAction(const m::SampleChannel* ch, int type, Frame f1, Frame f2)
+void recordSampleAction(ID channelId, int type, Frame f1, Frame f2)
+{
+	namespace mr = m::recorder;
+
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(
+			m::model::getLayout()->getChannel(channelId));
+
+	if (ch->mode == ChannelMode::SINGLE_PRESS) {
+		if (f2 == 0)
+			f2 = f1 + G_DEFAULT_ACTION_SIZE;
+		m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::NOTE_ON, 0, 0);
+		m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::NOTE_OFF, 0, 0);
+		mr::rec(channelId, f1, f2, e1, e2);
+	}
+	else {
+		m::MidiEvent e1 = m::MidiEvent(type, 0, 0);
+		mr::rec(channelId, f1, e1);
+	}
+
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void updateSampleAction(ID channelId, const m::Action& a, int type, 
+	Frame f1, Frame f2)
+{
+	namespace mr = m::recorder;	
+
+	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(
+			m::model::getLayout()->getChannel(channelId));
+	
+	if (ch->mode == ChannelMode::SINGLE_PRESS)
+		mr::deleteAction(a.id, a.next->id);
+	else
+		mr::deleteAction(a.id);
+
+	recordSampleAction(channelId, type, f1, f2);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void deleteSampleAction(ID channelId, const m::Action& a)
 {
 	namespace mr = m::recorder;
 	namespace cr = c::recorder;
 
-	if (ch->mode == ChannelMode::SINGLE_PRESS) {
-		m::MidiEvent e1 = m::MidiEvent(m::MidiEvent::NOTE_ON, 0, 0);
-		m::MidiEvent e2 = m::MidiEvent(m::MidiEvent::NOTE_OFF, 0, 0);
-		const m::Action* a1 = mr::rec(ch->index, f1, e1);
-		const m::Action* a2 = mr::rec(ch->index, f2 == 0 ? f1 + G_DEFAULT_ACTION_SIZE : f2, e2);
-		mr::updateSiblings(a1, nullptr, a2);
-	}
-	else {
-		m::MidiEvent e1 = m::MidiEvent(type, 0, 0);
-		mr::rec(ch->index, f1, e1);
-	}
-	
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	if (a.next != nullptr) // For ChannelMode::SINGLE_PRESS combo
+		mr::deleteAction(a.next->id);
+	mr::deleteAction(a.id);
+
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateSampleAction(m::SampleChannel* ch, const m::Action* a, int type, Frame f1, 
-	Frame f2)
-{
-	namespace mr = m::recorder;	
-
-	if (ch->mode == ChannelMode::SINGLE_PRESS)
-		mr::deleteAction(a->next);
-	mr::deleteAction(a);
-
-	recordSampleAction(ch, type, f1, f2);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void recordEnvelopeAction(m::Channel* ch, int frame, int value)
+void recordEnvelopeAction(ID channelId, Frame f, int value)
 {
 	namespace mr = m::recorder;	
 	namespace cr = c::recorder;	
@@ -225,115 +250,101 @@ void recordEnvelopeAction(m::Channel* ch, int frame, int value)
 	/* First action ever? Add actions at boundaries. Else, find action right
 	before frame 'f' and inject a new action in there. Vertical envelope points 
 	are forbidden for now. */
+	
 
-	if (!mr::hasActions(ch->index, m::MidiEvent::ENVELOPE))
-		recordFirstEnvelopeAction_(ch->index, frame, value);
+	if (!mr::hasActions(channelId, m::MidiEvent::ENVELOPE))
+		recordFirstEnvelopeAction_(channelId, f, value);
 	else 
-		recordNonFirstEnvelopeAction_(ch->index, frame, value);
+		recordNonFirstEnvelopeAction_(channelId, f, value);
 
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void deleteEnvelopeAction(m::Channel* ch, const m::Action* a)
+void deleteEnvelopeAction(ID channelId, const m::Action& a)
 {
 	namespace mr  = m::recorder;
 	namespace cr  = c::recorder;
 	namespace mrh = m::recorderHandler;
 
-	assert(a != nullptr);
+	/* Deleting a boundary action wipes out everything. If is volume, remember 
+	to restore _i and _d members in channel. */
 
-	/* Delete a boundary action wipes out everything. If is volume, remember to
-	restore _i and _d members in channel. */
 
 	if (mrh::isBoundaryEnvelopeAction(a)) {
-		if (a->isVolumeEnvelope()) {
-			ch->volume_i = 1.0;
-			ch->volume_d = 0.0;
+		if (a.isVolumeEnvelope()) {
+			m::model::getLayout()->getChannel(channelId)->volume_i = 1.0;
+			m::model::getLayout()->getChannel(channelId)->volume_d = 0.0;
 		}
-		mr::clearActions(ch->index, a->event.getStatus());
-		return;
+		mr::clearActions(channelId, a.event.getStatus());
+	}
+	else {
+		assert(a.prev != nullptr);
+		assert(a.next != nullptr);
+		
+		const m::Action a1     = *a.prev;
+		const m::Action a1prev = *a1.prev;
+		const m::Action a3     = *a.next; 
+		const m::Action a3next = *a3.next; 
+
+		/* Original status:   a1--->a--->a3
+		   Modified status:   a1-------->a3 
+		Order is important, here: first update siblings, then delete the action.
+		Otherwise mr::deleteAction would complain of missing prevId/nextId no
+		longer found. */
+
+		mr::updateSiblings(a1.id, a1prev.id, a3.id);
+		mr::updateSiblings(a3.id, a1.id, a3next.id);
+		mr::deleteAction(a.id);
 	}
 
-	const m::Action* a1 = a->prev;
-	const m::Action* a3 = a->next; 
-
-	/* Original status:   a1--->a--->a3
-	   Modified status:   a1-------->a3 */
-
-	mr::deleteAction(a);
-	mr::updateSiblings(a1, a1->prev, a3);
-	mr::updateSiblings(a3, a1, a3->next);
-
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void updateEnvelopeAction(m::Channel* ch, const m::Action* a, int frame, int value)
+void updateEnvelopeAction(ID channelId, const m::Action& a, Frame f, int value)
 {
 	namespace mr  = m::recorder;
 	namespace cr  = c::recorder;
 	namespace mrh = m::recorderHandler;
-
-	assert(a != nullptr);
 
 	/* Update the action directly if it is a boundary one. Else, delete the
 	previous one and record a new action. */
 
 	if (mrh::isBoundaryEnvelopeAction(a))
-		mr::updateEvent(a, m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value));
+		mr::updateEvent(a.id, m::MidiEvent(m::MidiEvent::ENVELOPE, 0, value));
 	else {
-		deleteEnvelopeAction(ch, a);
-		recordEnvelopeAction(ch, frame, value); 
+		deleteEnvelopeAction(channelId, a);
+		recordEnvelopeAction(channelId, f, value);
 	}
-
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);	
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void deleteSampleAction(m::SampleChannel* ch, const m::Action* a)
+std::vector<m::Action> getActions(ID channelId)
 {
-	namespace mr = m::recorder;
-	namespace cr = c::recorder;
-
-	assert(a != nullptr);
-
-	if (a->next != nullptr) // For ChannelMode::SINGLE_PRESS combo
-		mr::deleteAction(a->next);
-	mr::deleteAction(a);
-
-	cr::updateChannel(ch->guiChannel, /*refreshActionEditor=*/false);
+	return m::recorder::getActionsOnChannel(channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-vector<const m::Action*> getActions(const m::Channel* ch)
-{
-	return m::recorder::getActionsOnChannel(ch->index);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void updateVelocity(const m::MidiChannel* ch, const m::Action* a, int value)
+void updateVelocity(const m::Action& a, int value)
 {
 	namespace mr = m::recorder;
 	
-	m::MidiEvent event(a->event);
+	m::MidiEvent event(a.event);
 	event.setVelocity(value);
 
-	mr::updateEvent(a, event);
+	mr::updateEvent(a.id, event);
 }
 }}}; // giada::c::actionEditor::

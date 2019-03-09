@@ -103,7 +103,7 @@ void geResizerBar::handleDrag(int diff)
 			if ((wd->x()+wd->w()) == top) {                          // found widget directly above?
 				if ((wd->w()+diff) < m_minSize)
 					diff = wd->w() - m_minSize;                          // clamp
-				wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());   // change height
+				wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());   // change width
 				break;                                                 // done with first pass
 			}
 		}

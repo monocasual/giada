@@ -38,8 +38,30 @@ class geButton;
 class geInput;
 
 
+namespace giada {
+namespace v
+{
 class geTabAudio : public Fl_Group
 {
+public:
+
+	geTabAudio(int x, int y, int w, int h);
+
+	void save();
+
+	geChoice* soundsys;
+	geChoice* buffersize;
+	geChoice* samplerate;
+	geChoice* sounddevOut;
+	geButton* devOutInfo;
+	geChoice* channelsOut;
+	geCheck*  limitOutput;
+	geChoice* sounddevIn;
+	geButton* devInInfo;
+	geChoice* channelsIn;
+	geInput*  recTriggerLevel;
+	geChoice* rsmpQuality;
+
 private:
 
 	static void cb_deactivate_sounddev(Fl_Widget* w, void* p);
@@ -59,26 +81,8 @@ private:
 	int  findMenuDevice(geChoice* m, int device);
 
 	int soundsysInitValue;
-
-public:
-
-	geChoice* soundsys;
-	geChoice* buffersize;
-	geChoice* samplerate;
-	geChoice* sounddevOut;
-	geButton* devOutInfo;
-	geChoice* channelsOut;
-	geCheck*  limitOutput;
-	geChoice* sounddevIn;
-	geButton* devInInfo;
-	geChoice* channelsIn;
-	geInput*  recTriggerLevel;
-	geChoice* rsmpQuality;
-
-	geTabAudio(int x, int y, int w, int h);
-
-	void save();
 };
+}} // giada::v::
 
 
 #endif

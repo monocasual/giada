@@ -28,8 +28,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
-#include "../utils/log.h"
-#include "../utils/ver.h"
+#include "utils/log.h"
+#include "utils/ver.h"
 #include "recorder.h"
 #include "action.h"
 #include "clock.h"
@@ -43,12 +43,14 @@ namespace recorderHandler
 {
 namespace
 {
-std::vector<const Action*> recs_;
+constexpr int MAX_LIVE_RECS_CHUNK = 128;
+
+std::vector<Action> recs_; 
 
 
 /* -------------------------------------------------------------------------- */
 
-
+/*
 const Action* getActionById_(int id, const recorder::ActionMap& source)
 {
 	for (auto& kv : source)
@@ -57,7 +59,7 @@ const Action* getActionById_(int id, const recorder::ActionMap& source)
 				return action;
 	return nullptr;
 }
-
+*/
 
 /* -------------------------------------------------------------------------- */
 
@@ -65,12 +67,12 @@ const Action* getActionById_(int id, const recorder::ActionMap& source)
 /* areComposite_
 Composite: NOTE_ON + NOTE_OFF on the same note. */
 
-bool areComposite_(const Action* a1, const Action* a2)
+bool areComposite_(const Action& a1, const Action& a2)
 {
-	return a1->event.getStatus() == MidiEvent::NOTE_ON  &&
-	       a2->event.getStatus() == MidiEvent::NOTE_OFF &&
-	       a1->event.getNote() == a2->event.getNote()   &&
-	       a1->channel == a2->channel;
+	return a1.event.getStatus() == MidiEvent::NOTE_ON  &&
+	       a2.event.getStatus() == MidiEvent::NOTE_OFF &&
+	       a1.event.getNote() == a2.event.getNote()    &&
+	       a1.channelId == a2.channelId;
 }
 
 
@@ -84,20 +86,20 @@ in linear sequence, the potential partner of 'a1' always lies beyond a1 itself.
 Without this trick (i.e. if it loops from vector.begin() each time) the
 algorithm would end up matching wrong partners. */
 
-void consolidate_(const Action* a1, size_t i)
+void consolidate_(const Action& a1, size_t i)
 {
 	for (auto it = recs_.begin() + i; it != recs_.end(); ++it) {
 
-		const Action* a2 = *it;
+		const Action& a2 = *it;
 
 		if (!areComposite_(a1, a2))
 			continue;
 
-		const_cast<Action*>(a1)->next = a2;
-		const_cast<Action*>(a2)->prev = a1;
+		const_cast<Action&>(a1).nextId = a2.id;
+		const_cast<Action&>(a2).prevId = a1.id;
 
 		break;
-	}		
+	}
 }
 
 
@@ -115,10 +117,13 @@ void consolidate_()
 
 void readPatch_DEPR_(const std::vector<patch::action_t>& pactions)
 {
+	assert(false);
+/*
 	for (const patch::action_t paction : pactions)
-		recs_.push_back(recorder::makeAction(-1, paction.channel, paction.frame, MidiEvent(paction.event)));
+		recs_.push_back(recorder::makeAction(-1, paction.channelId, paction.frame, MidiEvent(paction.event)));
 	
 	consolidate();
+*/
 }
 } // {anonymous}
 
@@ -128,11 +133,20 @@ void readPatch_DEPR_(const std::vector<patch::action_t>& pactions)
 /* -------------------------------------------------------------------------- */
 
 
-bool isBoundaryEnvelopeAction(const Action* a)
+void init()
 {
-	assert(a->prev != nullptr);
-	assert(a->next != nullptr);
-	return a->prev->frame > a->frame || a->next->frame < a->frame;
+	recs_.reserve(MAX_LIVE_RECS_CHUNK);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isBoundaryEnvelopeAction(const Action& a)
+{
+	assert(a.prev != nullptr);
+	assert(a.next != nullptr);
+	return a.prev->frame > a.frame || a.next->frame < a.frame;
 }
 
 
@@ -175,26 +189,22 @@ void updateSamplerate(int systemRate, int patchRate)
 /* -------------------------------------------------------------------------- */
 
 
-bool cloneActions(int chanIndex, int newChanIndex)
+bool cloneActions(ID channelId, ID newChannelId)
 {
-	recorder::ActionMap temp = recorder::getActionMap();
+	bool cloned = false;
+	std::vector<Action> actions;
 
-	bool cloned   = false;
-	int  actionId = recorder::getLatestActionId(); 
-
-	recorder::forEachAction([&](const Action* a) 
+	recorder::forEachAction([&](const Action& a) 
 	{
-		if (a->channel == chanIndex) {
-			Action* clone = new Action(*a);
-			clone->id      = ++actionId;
-			clone->channel = newChanIndex;
-			temp[clone->frame].push_back(clone);
-			cloned = true;
-		}
+		if (a.channelId != channelId)
+			return;
+		Action clone(a);
+		clone.channelId = newChannelId;
+		actions.push_back(clone);
+		cloned = true;
 	});
 
-	recorder::updateActionId(actionId);
-	recorder::updateActionMap(std::move(temp));
+	recorder::rec(actions);
 
 	return cloned;
 }
@@ -203,24 +213,28 @@ bool cloneActions(int chanIndex, int newChanIndex)
 /* -------------------------------------------------------------------------- */
 
 
-void liveRec(int channel, MidiEvent e)
+void liveRec(ID channelId, MidiEvent e)
 {
 	assert(e.isNoteOnOff()); // Can't record any other kind of events for now
-	recs_.push_back(recorder::makeAction(-1, channel, clock::getCurrentFrame(), e));
+
+	if (recs_.size() >= recs_.capacity())
+		recs_.reserve(recs_.size() + MAX_LIVE_RECS_CHUNK);
+	
+	recs_.push_back(recorder::makeAction(-1, channelId, clock::getCurrentFrame(), e));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::unordered_set<int> consolidate()
+std::unordered_set<ID> consolidate()
 {
 	consolidate_();
 	recorder::rec(recs_);
 
-	std::unordered_set<int> out;
-	for (const Action* action : recs_)
-		out.insert(action->channel);
+	std::unordered_set<ID> out;
+	for (const Action& action : recs_)
+		out.insert(action.channelId);
 
 	recs_.clear();
 	return out;
@@ -230,23 +244,24 @@ std::unordered_set<int> consolidate()
 /* -------------------------------------------------------------------------- */
 
 
-void writePatch(int chanIndex, std::vector<patch::action_t>& pactions)
+void writePatch(ID channelId, std::vector<patch::action_t>& pactions)
 {
-	recorder::forEachAction([&] (const Action* a) 
+#if 0
+	recorder::forEachAction([&] (const Action& a) 
 	{
-		if (a->channel != chanIndex) 
+		if (a.channelId != channelId) 
 			return;
 		pactions.push_back(patch::action_t { 
-			a->id, 
-			a->channel, 
-			a->frame, 
-			a->event.getRaw(), 
-			a->prev != nullptr ? a->prev->id : -1,
-			a->next != nullptr ? a->next->id : -1
+			a.id, 
+			a.channelId, 
+			a.frame, 
+			a.event.getRaw(), 
+			a.prev != nullptr ? a.prev->id : -1,
+			a.next != nullptr ? a.next->id : -1
 		});
 	});
+#endif
 }
-
 
 
 /* -------------------------------------------------------------------------- */
@@ -254,6 +269,8 @@ void writePatch(int chanIndex, std::vector<patch::action_t>& pactions)
 
 void readPatch(const std::vector<patch::action_t>& pactions)
 {
+	assert(false);
+#if 0
 	if (u::ver::isLess(patch::versionMajor, patch::versionMinor, patch::versionPatch, 0, 15, 3)) {
 		readPatch_DEPR_(pactions);
 		return;
@@ -266,7 +283,7 @@ void readPatch(const std::vector<patch::action_t>& pactions)
 	for (const patch::action_t paction : pactions) {
 		temp[paction.frame].push_back(recorder::makeAction(
 			paction.id, 
-			paction.channel, 
+			paction.channelId, 
 			paction.frame, 
 			MidiEvent(paction.event)));
 		recorder::updateActionId(paction.id + 1);
@@ -290,6 +307,7 @@ void readPatch(const std::vector<patch::action_t>& pactions)
 	}
 
 	recorder::updateActionMap(std::move(temp));
+#endif
 }
 }}}; // giada::m::recorderHandler::
 

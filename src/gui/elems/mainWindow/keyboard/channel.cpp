@@ -26,33 +26,35 @@
 
 
 #include <FL/Fl.H>
-#include "../../../../core/const.h"
-#include "../../../../core/channel.h"
-#include "../../../../core/graphics.h"
-#include "../../../../core/pluginHost.h"
-#include "../../../../utils/gui.h"
-#include "../../../../glue/channel.h"
-#include "../../../dialogs/mainWindow.h"
-#include "../../../dialogs/pluginList.h"
-#include "../../basics/button.h"
-#include "../../basics/dial.h"
-#include "../../basics/statusButton.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
+#include "core/graphics.h"
+#include "core/pluginHost.h"
+#include "utils/gui.h"
+#include "glue/channel.h"
+#include "gui/dialogs/mainWindow.h"
+#include "gui/dialogs/pluginList.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/statusButton.h"
 #include "column.h"
 #include "channelStatus.h"
 #include "channelButton.h"
 #include "channel.h"
 
 
-extern gdMainWindow* G_MainWin;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
-using namespace giada;
-
-
-geChannel::geChannel(int X, int Y, int W, int H, giada::m::Channel* ch)
-: Fl_Group    (X, Y, W, H, nullptr),
-  ch          (ch)
+namespace giada {
+namespace v
 {
+geChannel::geChannel(int X, int Y, int W, int H, const m::Channel* ch)
+: Fl_Pack(X, Y, W, H),
+  ch     (ch)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
 }
 
 
@@ -71,9 +73,24 @@ void geChannel::cb_openFxWindow(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_ope
 /* -------------------------------------------------------------------------- */
 
 
+void geChannel::refresh()
+{
+	if (mainButton->visible())
+		mainButton->refresh();
+	if (ch->recStatus == ChannelStatus::WAIT || ch->status == ChannelStatus::WAIT)
+		blink();
+	playButton->setStatus(ch->isPlaying());
+	mute->setStatus(ch->mute);
+	solo->setStatus(ch->solo);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geChannel::cb_arm()
 {
-	c::channel::toggleArm(ch, true);
+	c::channel::setArm(ch->id, arm->value());
 }
 
 
@@ -82,7 +99,7 @@ void geChannel::cb_arm()
 
 void geChannel::cb_mute()
 {
-	c::channel::toggleMute(ch);
+	c::channel::setMute(ch->id, mute->value());
 }
 
 
@@ -91,7 +108,7 @@ void geChannel::cb_mute()
 
 void geChannel::cb_solo()
 {
-	c::channel::toggleSolo(ch);
+	c::channel::setSolo(ch->id, solo->value());
 }
 
 
@@ -100,7 +117,7 @@ void geChannel::cb_solo()
 
 void geChannel::cb_changeVol()
 {
-	c::channel::setVolume(ch, vol->value());
+	c::channel::setVolume(ch->id, vol->value());
 }
 
 
@@ -110,7 +127,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	u::gui::openSubWindow(G_MainWin, new gdPluginList(m::pluginHost::StackType::CHANNEL, ch), WID_FX_LIST);
+	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(ch->id), WID_FX_LIST);
 }
 #endif
 
@@ -134,48 +151,6 @@ void geChannel::blink()
 		mainButton->setPlayMode();
 	else
 		mainButton->setDefaultMode();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geChannel::setColorsByStatus()
-{
-	switch (ch->status) {
-		case ChannelStatus::OFF:
-		case ChannelStatus::EMPTY:
-			mainButton->setDefaultMode();
-			button->imgOn  = channelPlay_xpm;
-			button->imgOff = channelStop_xpm;
-			button->redraw();
-			break;
-		case ChannelStatus::PLAY:
-			mainButton->setPlayMode();
-			if (!button->value()) { // If not manually pressed (it would interfere)
-				button->imgOn  = channelStop_xpm;
-				button->imgOff = channelPlay_xpm;
-				button->redraw();			
-			}
-			break;
-		case ChannelStatus::WAIT:
-			blink();
-			break;
-		case ChannelStatus::ENDING:
-			mainButton->setEndingMode();
-			break;
-		default: break;
-	}
-
-	switch (ch->recStatus) {
-		case ChannelStatus::WAIT:
-			blink();
-			break;
-		case ChannelStatus::ENDING:
-			mainButton->setEndingMode();
-			break;
-		default: break;
-	}
 }
 
 
@@ -221,14 +196,14 @@ bool geChannel::handleKey(int e)
 	if (Fl::event_key() != ch->key) 
 		return false;
 
-	if (e == FL_KEYDOWN && !button->value()) {  // Key not already pressed
-		button->take_focus();                   // Move focus to this button
-		button->value(1);
+	if (e == FL_KEYDOWN && !playButton->value()) {  // Key not already pressed
+		playButton->take_focus();                   // Move focus to this playButton
+		playButton->value(1);
 		return true;
 	}
 
 	if (e == FL_KEYUP) {
-		button->value(0);
+		playButton->value(0);
 		return true;
 	}
 	
@@ -245,14 +220,14 @@ void geChannel::changeSize(int H)
 	
 	int Y = y() + (H / 2 - (G_GUI_UNIT / 2));
 
-	button->resize(x(), Y, w(), G_GUI_UNIT);
-	arm->resize(x(), Y, w(), G_GUI_UNIT);   
-	mainButton->resize(x(), y(), w(), H);
-	mute->resize(x(), Y, w(), G_GUI_UNIT);
-	solo->resize(x(), Y, w(), G_GUI_UNIT);
-	vol->resize(x(), Y, w(), G_GUI_UNIT);
+	playButton->resize(playButton->x(), Y, playButton->w(), G_GUI_UNIT);
+	arm->resize(arm->x(), Y, arm->w(), G_GUI_UNIT);   
+	mainButton->resize(mainButton->x(), mainButton->y(), mainButton->w(), H);
+	mute->resize(mute->x(), Y, mute->w(), G_GUI_UNIT);
+	solo->resize(solo->x(), Y, solo->w(), G_GUI_UNIT);
+	vol->resize(vol->x(), Y, vol->w(), G_GUI_UNIT);
 #ifdef WITH_VST
-	fx->resize(x(), Y, w(), G_GUI_UNIT);
+	fx->resize(fx->x(), Y, fx->w(), G_GUI_UNIT);
 #endif
 }
 
@@ -264,3 +239,5 @@ int geChannel::getSize()
 {
 	return h();
 }
+
+}} // giada::v::

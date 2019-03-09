@@ -28,8 +28,8 @@
 #include <cmath>
 #include <sndfile.h>
 #include <samplerate.h>
-#include "../utils/log.h"
-#include "../utils/fs.h"
+#include "utils/log.h"
+#include "utils/fs.h"
 #include "const.h"
 #include "wave.h"
 #include "waveFx.h"
@@ -130,14 +130,14 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b)
+std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 {
-	int channels = src->getChannels();
+	int channels = src.getChannels();
 	int frames   = b - a;
 
 	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
-	wave->alloc(frames, channels, src->getRate(), src->getBits(), src->getPath());
-	wave->copyData(src->getFrame(a), frames);
+	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
+	wave->copyData(src.getFrame(a), frames);
 	wave->setLogical(true);
 
 	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
@@ -149,31 +149,31 @@ std::unique_ptr<Wave> createFromWave(const Wave* src, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-int resample(Wave* w, int quality, int samplerate)
+int resample(Wave& w, int quality, int samplerate)
 {
-	float ratio = samplerate / (float) w->getRate();
-	int newSizeFrames = ceil(w->getSize() * ratio);
+	float ratio = samplerate / (float) w.getRate();
+	int newSizeFrames = ceil(w.getSize() * ratio);
 
 	AudioBuffer newData;
-	newData.alloc(newSizeFrames, w->getChannels());
+	newData.alloc(newSizeFrames, w.getChannels());
 
 	SRC_DATA src_data;
-	src_data.data_in       = w->getFrame(0);
-	src_data.input_frames  = w->getSize();
+	src_data.data_in       = w.getFrame(0);
+	src_data.input_frames  = w.getSize();
 	src_data.data_out      = newData[0];
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
 	gu_log("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
 
-	int ret = src_simple(&src_data, quality, w->getChannels());
+	int ret = src_simple(&src_data, quality, w.getChannels());
 	if (ret != 0) {
 		gu_log("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
 		return G_RES_ERR_PROCESSING;
 	}
 
-	w->moveData(newData);
-	w->setRate(samplerate);
+	w.moveData(newData);
+	w.setRate(samplerate);
 
 	return G_RES_OK;
 }
@@ -182,11 +182,11 @@ int resample(Wave* w, int quality, int samplerate)
 /* -------------------------------------------------------------------------- */
 
 
-int save(Wave* w, const string& path)
+int save(const Wave& w, const string& path)
 {
 	SF_INFO header;
-	header.samplerate = w->getRate();
-	header.channels   = w->getChannels();
+	header.samplerate = w.getRate();
+	header.channels   = w.getChannels();
 	header.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
@@ -196,13 +196,10 @@ int save(Wave* w, const string& path)
 		return G_RES_ERR_IO;
 	}
 
-	if (sf_writef_float(file, w->getFrame(0), w->getSize()) != w->getSize())
+	if (sf_writef_float(file, w.getFrame(0), w.getSize()) != w.getSize())
 		gu_log("[waveManager::save] warning: incomplete write!\n");
 
 	sf_close(file);
-
-	w->setLogical(false);
-	w->setEdited(false);
 
 	return G_RES_OK;
 }

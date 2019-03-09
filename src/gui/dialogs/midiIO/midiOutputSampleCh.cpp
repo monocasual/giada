@@ -25,35 +25,37 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../../../core/sampleChannel.h"
-#include "../../../utils/gui.h"
-#include "../../elems/midiLearner.h"
-#include "../../elems/basics/button.h"
-#include "../../elems/basics/check.h"
+#include "core/model/model.h"
+#include "core/channels/sampleChannel.h"
+#include "utils/gui.h"
+#include "gui/elems/midiLearner.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/check.h"
 #include "midiOutputSampleCh.h"
 
 
-using namespace giada;
-
-
-gdMidiOutputSampleCh::gdMidiOutputSampleCh(m::SampleChannel* ch)
-	: gdMidiOutputBase(300, 140), ch(ch)
+namespace giada {
+namespace v 
 {
-	setTitle(ch->index+1);
+gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
+: gdMidiOutputBase(300, 140), 
+  m_ch            (static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId)))
+{
+	setTitle(m_ch->id);
 
-	enableLightning = new geCheck(8, 8, 120, 20, "Enable MIDI lightning output");
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+8, w()-16, "playing", 
-		cb_learn, &ch->midiOutLplaying, ch);
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+32, w()-16, "mute",   
-		cb_learn, &ch->midiOutLmute, ch);
-	new geMidiLearner(8, enableLightning->y()+enableLightning->h()+56, w()-16, "solo",   
-		cb_learn, &ch->midiOutLsolo, ch);
+	m_enableLightning = new geCheck(8, 8, 120, 20, "Enable MIDI lightning output");
+	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+8, w()-16, "playing", 
+		m_ch->midiOutLplaying, m_ch));
+	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+32, w()-16, "mute",   
+		m_ch->midiOutLmute, m_ch));
+	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+56, w()-16, "solo",   
+		m_ch->midiOutLsolo, m_ch));
 
-	close = new geButton(w()-88, enableLightning->y()+enableLightning->h()+84, 80, 20, "Close");
-	close->callback(cb_close, (void*)this);
+	m_close = new geButton(w()-88, m_enableLightning->y()+m_enableLightning->h()+84, 80, 20, "Close");
+	m_close->callback(cb_close, (void*)this);
 
-	enableLightning->value(ch->midiOutL);
-	enableLightning->callback(cb_enableLightning, (void*)this);
+	m_enableLightning->value(m_ch->midiOutL);
+	m_enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
 	u::gui::setFavicon(this);
@@ -72,6 +74,8 @@ void gdMidiOutputSampleCh::cb_close(Fl_Widget* w, void* p) { ((gdMidiOutputSampl
 
 void gdMidiOutputSampleCh::cb_close()
 {
-	ch->midiOutL = enableLightning->value();
+	m_ch->midiOutL = m_enableLightning->value();
 	do_callback();
 }
+
+}} // giada::v::

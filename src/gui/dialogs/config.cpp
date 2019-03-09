@@ -26,32 +26,31 @@
 
 
 #include <FL/Fl_Tabs.H>
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../utils/gui.h"
-#include "../elems/basics/boxtypes.h"
-#include "../elems/basics/button.h"
-#include "../elems/config/tabMisc.h"
-#include "../elems/config/tabMidi.h"
-#include "../elems/config/tabAudio.h"
-#include "../elems/config/tabBehaviors.h"
-#include "../elems/config/tabPlugins.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "utils/gui.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/config/tabMisc.h"
+#include "gui/elems/config/tabMidi.h"
+#include "gui/elems/config/tabAudio.h"
+#include "gui/elems/config/tabBehaviors.h"
+#include "gui/elems/config/tabPlugins.h"
 #include "config.h"
 
 
-using namespace giada;
-using namespace giada::m;
-
-
+namespace giada {
+namespace v 
+{
 gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 {
-	if (conf::configX)
-		resize(conf::configX, conf::configY, this->w(), this->h());
+	if (m::conf::configX)
+		resize(m::conf::configX, m::conf::configY, this->w(), this->h());
 
 	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w-16, h-44);
-  tabs->box(G_CUSTOM_BORDER_BOX);
-  tabs->labelcolor(G_COLOR_LIGHT_2);
-  tabs->begin();
+	tabs->box(G_CUSTOM_BORDER_BOX);
+	tabs->labelcolor(G_COLOR_LIGHT_2);
+	tabs->begin();
 
 		tabAudio     = new geTabAudio(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
 		tabMidi      = new geTabMidi(tabs->x()+10, tabs->y()+20, tabs->w()-20, tabs->h()-40);
@@ -63,7 +62,7 @@ gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 
 	tabs->end();
 
-	save 	 = new geButton (w-88, h-28, 80, 20, "Save");
+	save   = new geButton (w-88, h-28, 80, 20, "Save");
 	cancel = new geButton (w-176, h-28, 80, 20, "Cancel");
 
 	end();
@@ -82,8 +81,8 @@ gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 
 gdConfig::~gdConfig()
 {
-	conf::configX = x();
-	conf::configY = y();
+	m::conf::configX = x();
+	m::conf::configY = y();
 }
 
 
@@ -129,3 +128,5 @@ void gdConfig::refreshVstPath()
 }
 
 #endif
+
+}} // giada::v::

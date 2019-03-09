@@ -26,105 +26,107 @@
 
 
 #include <cassert>
-#include <cstring>
-#include "../utils/log.h"
-#include "../gui/elems/mainWindow/keyboard/channel.h"
-#include "const.h"
-#include "channelManager.h"
-#include "pluginHost.h"
-#include "pluginManager.h"
-#include "plugin.h"
-#include "kernelMidi.h"
-#include "patch.h"
-#include "clock.h"
-#include "wave.h"
-#include "mixer.h"
-#include "mixerHandler.h"
-#include "recorderHandler.h"
-#include "conf.h"
-#include "patch.h"
-#include "waveFx.h"
-#include "midiMapConf.h"
+#include "utils/log.h"
+#include "core/channels/channelManager.h"
+#include "core/const.h"
+#include "core/pluginManager.h"
+#include "core/plugin.h"
+#include "core/kernelMidi.h"
+#include "core/patch.h"
+#include "core/clock.h"
+#include "core/wave.h"
+#include "core/mixer.h"
+#include "core/mixerHandler.h"
+#include "core/recorderHandler.h"
+#include "core/conf.h"
+#include "core/patch.h"
+#include "core/waveFx.h"
+#include "core/midiMapConf.h"
 #include "channel.h"
-
-
-using std::string;
 
 
 namespace giada {
 namespace m 
 {
-Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize)
-:	guiChannel     (nullptr),
-	type           (type),
-	status         (status),
-	recStatus      (ChannelStatus::OFF),
-	previewMode    (PreviewMode::NONE),
-	pan            (0.5f),
-	volume         (G_DEFAULT_VOL),
-	armed          (false),
-	key            (0),
-	mute           (false),
-	solo           (false),
-	volume_i       (1.0f),
-	volume_d       (0.0f),
-	hasActions     (false),
-	readActions    (false),
-	midiIn         (true),
-	midiInKeyPress (0x0),
-	midiInKeyRel   (0x0),
-	midiInKill     (0x0),
-	midiInArm      (0x0),
-	midiInVolume   (0x0),
-	midiInMute     (0x0),
-	midiInSolo     (0x0),
-	midiInFilter   (-1),
-	midiOutL       (false),
-	midiOutLplaying(0x0),
-	midiOutLmute   (0x0),
-	midiOutLsolo   (0x0)
+Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize, size_t columnIndex)
+: type           (type),
+  status         (status),
+  recStatus      (ChannelStatus::OFF),
+  columnIndex    (columnIndex),
+  previewMode    (PreviewMode::NONE),
+  pan            (0.5f),
+  volume         (G_DEFAULT_VOL),
+  armed          (false),
+  key            (0),
+  mute           (false),
+  solo           (false),
+  volume_i       (1.0f),
+  volume_d       (0.0f),
+  hasActions     (false),
+  readActions    (false),
+  midiIn         (true),
+  midiInKeyPress (0x0),
+  midiInKeyRel   (0x0),
+  midiInKill     (0x0),
+  midiInArm      (0x0),
+  midiInVolume   (0x0),
+  midiInMute     (0x0),
+  midiInSolo     (0x0),
+  midiInFilter   (-1),
+  midiOutL       (false),
+  midiOutLplaying(0x0),
+  midiOutLmute   (0x0),
+  midiOutLsolo   (0x0)
 {
 	buffer.alloc(bufferSize, G_MAX_IO_CHANS);
+
+#ifdef WITH_VST
+
+	midiBuffer.ensureSize(bufferSize);
+
+#endif
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::copy(const Channel* src, pthread_mutex_t* pluginMutex)
-{
-	key             = src->key;
-	volume          = src->volume;
-	volume_i        = src->volume_i;
-	volume_d        = src->volume_d;
-	name            = src->name;
-	pan             = src->pan;
-	mute            = src->mute;
-	solo            = src->solo;
-	hasActions      = src->hasActions;
-	recStatus       = src->recStatus;
-	midiIn          = src->midiIn;
-	midiInKeyPress  = src->midiInKeyPress;
-	midiInKeyRel    = src->midiInKeyRel;
-	midiInKill      = src->midiInKill;
-	midiInArm       = src->midiInArm;
-	midiInVolume    = src->midiInVolume;
-	midiInMute      = src->midiInMute;
-	midiInSolo      = src->midiInSolo;
-	midiOutL        = src->midiOutL;
-	midiOutLplaying = src->midiOutLplaying;
-	midiOutLmute    = src->midiOutLmute;
-	midiOutLsolo    = src->midiOutLsolo;
-
+Channel::Channel(const Channel& o)
+: type           (o.type),
+  status         (o.status.load()),
+  recStatus      (o.recStatus.load()),
+  columnIndex    (o.columnIndex),
+  id             (o.id),
+  previewMode    (o.previewMode.load()),
+  pan            (o.pan.load()),
+  volume         (o.volume.load()),
+  armed          (o.armed.load()),
+  name           (o.name),
+  key            (o.key.load()),
+  mute           (o.mute.load()),
+  solo           (o.solo.load()),
+  volume_i       (o.volume_i.load()),
+  volume_d       (o.volume_d.load()),
+  hasActions     (o.hasActions.load()),
+  readActions    (o.readActions.load()),
+  midiIn         (o.midiIn.load()),
+  midiInKeyPress (o.midiInKeyPress.load()),
+  midiInKeyRel   (o.midiInKeyRel.load()),
+  midiInKill     (o.midiInKill.load()),
+  midiInArm      (o.midiInArm.load()),
+  midiInVolume   (o.midiInVolume.load()),
+  midiInMute     (o.midiInMute.load()),
+  midiInSolo     (o.midiInSolo.load()),
+  midiInFilter   (o.midiInFilter.load()),
+  midiOutL       (o.midiOutL.load()),
+  midiOutLplaying(o.midiOutLplaying.load()),
+  midiOutLmute   (o.midiOutLmute.load()),
+  midiOutLsolo   (o.midiOutLsolo.load())
 #ifdef WITH_VST
-
-	for (const std::unique_ptr<Plugin>& plugin : src->plugins)
-		pluginHost::addPlugin(pluginManager::makePlugin(*plugin.get()), 
-			pluginHost::StackType::CHANNEL, pluginMutex, this);
-
+  ,plugins       (o.plugins)
 #endif
-
-	hasActions = recorderHandler::cloneActions(src->index, index);
+{
+	buffer.alloc(o.buffer.countFrames(), G_MAX_IO_CHANS);
 }
 
 
@@ -149,7 +151,7 @@ void Channel::writePatch(int i, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-void Channel::readPatch(const string& path, const patch::channel_t& pch)
+void Channel::readPatch(const std::string& path, const patch::channel_t& pch)
 {
 	channelManager::readPatch(this, pch);
 }
@@ -201,7 +203,7 @@ void Channel::sendMidiLstatus()
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopping);
 			break;
 		case ChannelStatus::PLAY:
-			if ((mixer::isChannelAudible(this) && !(this->mute)) || 
+			if ((mixer::isChannelAudible(this) && !mute) || 
 				!midimap::isDefined(midimap::playing_inaudible))
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
 			else
@@ -227,13 +229,10 @@ bool Channel::isMidiInAllowed(int c) const
 
 void Channel::setPan(float v)
 {
-	if (v > 1.0f)
-		pan = 1.0f;
+	if (v > 1.0f) v = 1.0f;
 	else 
-	if (v < 0.0f)
-		pan = 0.0f;
-	else
-		pan = v;
+	if (v < 0.0f) v = 0.0f;
+	pan = v;
 }
 
 
@@ -247,13 +246,14 @@ float Channel::getPan() const
 
 
 float Channel::calcPanning(int ch) const
-{
-	if (pan == 0.5f) // center: nothing to do
+{	
+	float p = pan;
+	if (p  == 0.5f) // center: nothing to do
 		return 1.0;
 	if (ch == 0)
-		return 1.0 - pan;
+		return 1.0 - p;
 	else  // channel 1
-		return pan; 
+		return p; 
 }
 
 
@@ -262,7 +262,7 @@ float Channel::calcPanning(int ch) const
 
 void Channel::calcVolumeEnvelope()
 {
-	volume_i += volume_d;
+	volume_i = volume_i + volume_d;
 	if (volume_i < 0.0f)
 		volume_i = 0.0f;
 	else
@@ -284,27 +284,5 @@ bool Channel::isReadingActions() const
 {
 	return hasActions && readActions;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-#ifdef WITH_VST
-
-const juce::MidiBuffer& Channel::getPluginMidiEvents() const
-{
-	return midiBuffer;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::clearMidiBuffer()
-{
-	midiBuffer.clear();
-}
-
-#endif
 
 }} // giada::m::

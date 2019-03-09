@@ -61,7 +61,7 @@ int closeDevice();
 int startStream();
 int stopStream();
 
-bool getStatus();
+bool isReady();
 bool isProbed(unsigned dev);
 bool isDefaultIn(unsigned dev);
 bool isDefaultOut(unsigned dev);

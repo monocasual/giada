@@ -32,20 +32,33 @@
 #define GE_PLUGIN_ELEMENT_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
-class gdPluginList;
 class geChoice;
 class geButton;
 
 
-class gePluginElement : public Fl_Group
+namespace giada {
+namespace v
 {
-private:
+class gdPluginList;
+class gePluginElement : public Fl_Pack
+{
+public:
 
-	gdPluginList*     m_parentWin;
-	giada::m::Plugin* m_plugin;
+	gePluginElement(const m::Plugin& p, ID chanID, int x, int y, int w);
+
+	ID getPluginID() const;
+
+	geButton* button;
+	geChoice* program;
+	geButton* bypass;
+	geButton* shiftUp;
+	geButton* shiftDown;
+	geButton* remove;
+
+private:
 
 	static void cb_removePlugin(Fl_Widget* v, void* p);
 	static void cb_openPluginWindow(Fl_Widget* v, void* p);
@@ -60,17 +73,11 @@ private:
 	void cb_shiftDown();
 	void cb_setProgram();
 
-public:
-
-	geButton* button;
-	geChoice* program;
-	geButton* bypass;
-	geButton* shiftUp;
-	geButton* shiftDown;
-	geButton* remove;
-
-	gePluginElement(gdPluginList* gdp, giada::m::Plugin* p, int x, int y, int w);
+	const m::Plugin& m_plugin;
+	ID m_chanID;
 };
+}} // giada::v::
+
 
 #endif
 

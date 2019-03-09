@@ -41,9 +41,14 @@ namespace v
 class geNoteEditor;
 class geVelocityEditor;
 
-
 class gdMidiActionEditor : public gdBaseActionEditor
 {
+public:
+
+    gdMidiActionEditor(ID channelId);
+
+    void rebuild() override;
+
 private:
 
     geNoteEditor*     m_ne;
@@ -51,12 +56,6 @@ private:
 
 	geVelocityEditor* m_ve;
     geResizerBar*     m_ver;
-
-public:
-
-	gdMidiActionEditor(m::MidiChannel* ch);
-
-	void rebuild() override;
 };
 }} // giada::v::
 

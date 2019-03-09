@@ -26,11 +26,11 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
+#include "core/const.h"
 #include "check.h"
 
 
-geCheck::geCheck(int x, int y, int w, int h, const char *l)
+geCheck::geCheck(int x, int y, int w, int h, const char* l)
 : Fl_Check_Button(x, y, w, h, l)
 {
 }
@@ -41,19 +41,19 @@ geCheck::geCheck(int x, int y, int w, int h, const char *l)
 
 void geCheck::draw()
 {
-  int color = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
+	int color = !active() ? FL_INACTIVE_COLOR : G_COLOR_GREY_4;
 
-  if (value()) {
-    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-    fl_rectf(x(), y(), 12, 12, (Fl_Color) color);
-  }
-  else {
-    fl_rectf(x(), y(), 12, 12, FL_BACKGROUND_COLOR);
-    fl_rect(x(), y(), 12, 12, (Fl_Color) color);
-  }
+	if (value()) {
+		fl_rect(x(), y(), 12, h(), (Fl_Color) color);
+		fl_rectf(x(), y(), 12, h(), (Fl_Color) color);
+	}
+	else {
+		fl_rectf(x(), y(), 12, h(), FL_BACKGROUND_COLOR);
+		fl_rect(x(), y(), 12, h(), (Fl_Color) color);
+	}
 
-  fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
-  fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-  fl_color(!active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2);
-  fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_TOP));
+	fl_rectf(x()+20, y(), w(), h(), FL_BACKGROUND_COLOR);  // clearer
+	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
+	fl_color(!active() ? FL_INACTIVE_COLOR : G_COLOR_LIGHT_2);
+	fl_draw(label(), x()+20, y(), w(), h(), (Fl_Align) (FL_ALIGN_LEFT | FL_ALIGN_CENTER));
 }

@@ -31,10 +31,12 @@
 
 #include <sndfile.h>
 #include <string>
-#include "const.h"
 #include "audioBuffer.h"
 
 
+namespace giada {
+namespace m 
+{
 class Wave
 {
 public:
@@ -73,25 +75,27 @@ public:
 	/* moveData
 	Moves data held by 'b' into this buffer. Then 'b' becomes an empty buffer. */
 
-	void moveData(giada::m::AudioBuffer& b); 
+	void moveData(AudioBuffer& b); 
 	
 	/* copyData
 	Copies 'frames' frames from the new 'data' into m_data, starting from frame 
 	'offset'. It takes for granted that the new data contains the same number of 
 	channels than m_channels. */
 
-	void copyData(float* data, int frames, int offset=0);
+	void copyData(const float* data, int frames, int offset=0);
 
 	void alloc(int size, int channels, int rate, int bits, const std::string& path);
 
 private:
 
-	giada::m::AudioBuffer buffer;
+	AudioBuffer buffer;
 	int m_rate;
 	int m_bits;
 	bool m_logical;     // memory only (a take)
 	bool m_edited;      // edited via editor
 	std::string m_path; // E.g. /path/to/my/sample.wav
 };
+}}; // giada::m::
+
 
 #endif

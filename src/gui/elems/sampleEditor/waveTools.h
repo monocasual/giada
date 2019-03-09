@@ -32,36 +32,39 @@
 #include <FL/Fl_Scroll.H>
 
 
+namespace giada {
+namespace v 
+{
 class geWaveform;
-
-
 class geWaveTools : public Fl_Scroll
 {
-private:
-
-	void openMenu();
-
 public:
 
-	giada::m::SampleChannel* ch;
-	geWaveform* waveform;
+	geWaveTools(int x, int y, int w, int h);
 
-	geWaveTools(int x, int y, int w, int h, giada::m::SampleChannel* ch, const char* l=0);
-	void resize(int x, int y, int w, int h);
-	int  handle(int e);
+	void resize(int x, int y, int w, int h) override;
+	int  handle(int e) override;
 
-	/* updateWaveform
+	/* rebuild
 	Updates the waveform by realloc-ing new data (i.e. when the waveform has
 	changed). */
 
-	void updateWaveform();
+	void rebuild();
 
-	/* redrawWaveformAsync
+	/* refresh
 	Redraws the waveform, called by the video thread. This is meant to be called
 	repeatedly when you need to update the play head inside the waveform. The
 	method is smart enough to skip painting if the channel is stopped. */
 
-	void redrawWaveformAsync();
+	void refresh();
+	
+	v::geWaveform* waveform;
+
+private:
+
+	void openMenu();
 };
+}} // giada::v::
+
 
 #endif

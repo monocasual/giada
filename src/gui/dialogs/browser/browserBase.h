@@ -29,9 +29,8 @@
 #define GD_BROWSER_BASE_H
 
 
-#include "../window.h"
-#include "../../../core/plugin.h"
-#include "../../../core/channel.h"
+#include<functional>
+#include "gui/dialogs/window.h"
 
 
 class Fl_Group;
@@ -42,20 +41,40 @@ class geInput;
 class geProgress;
 
 
+namespace giada {
+namespace m 
+{ 
+class Channel; 
+}
+namespace v
+{
 class gdBrowserBase : public gdWindow
 {
+public:
+
+	~gdBrowserBase();
+
+	/* getSelectedItem
+	Returns the full path of the selected file. */
+
+	std::string getSelectedItem() const;
+
+	std::string getCurrentPath() const;
+	const m::Channel* getChannel() const;
+	void fireCallback() const;
+	
+	/* setStatusBar
+	Increments status bar for progress tracking. */
+
+	void setStatusBar(float v);
+
+	void showStatusBar();
+	void hideStatusBar();
+
 protected:
 
-	giada::m::Channel* channel;
-
-	Fl_Group* groupTop;
-	geCheck* hiddenFiles;
-	geBrowser* browser;
-	geButton* ok;
-	geButton* cancel;
-	geInput* where;
-	geButton* updir;
-	geProgress* status;
+	gdBrowserBase(const std::string& title, const std::string& path, 
+		std::function<void(void*)> f, const m::Channel* ch);
 
 	static void cb_up(Fl_Widget* v, void* p);
 	static void cb_close(Fl_Widget* w, void* p);
@@ -64,36 +83,23 @@ protected:
 	void cb_close();
 	void cb_toggleHiddenFiles();
 
-	/* Callback
-	 * Fired when the save/load button is pressed. */
+	/* m_callback
+	Fired when the save/load button is pressed. */
 
-	void (*callback)(void*);
+	std::function<void(void*)> m_callback;
 
-	gdBrowserBase(int x, int y, int w, int h, const std::string& title,
-		const std::string& path, void (*callback)(void*));
+	const m::Channel* m_channel;
 
-public:
-
-	~gdBrowserBase();
-
-	/* getSelectedItem
-	 * Return the full path of the selected file. */
-
-	std::string getSelectedItem() const;
-
-	std::string getCurrentPath() const;
-	giada::m::Channel* getChannel() const;
-	void fireCallback() const;
-	
-	/* setStatusBar
-	 * Increment status bar for progress tracking. */
-
-	void setStatusBar(float v);
-
-	void showStatusBar();
-	void hideStatusBar();
-
+	Fl_Group*   groupTop;
+	geCheck*    hiddenFiles;
+	geBrowser*  browser;
+	geButton*   ok;
+	geButton*   cancel;
+	geInput*    where;
+	geButton*   updir;
+	geProgress* status;
 };
+}} // giada::v::
 
 
 #endif

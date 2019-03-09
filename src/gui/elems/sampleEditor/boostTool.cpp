@@ -26,58 +26,58 @@
 
 
 #include <FL/Fl.H>
-#include "../../../core/sampleChannel.h"
-#include "../../../core/const.h"
-#include "../../../core/waveFx.h"  
-#include "../../../glue/channel.h"
-#include "../../../utils/gui.h"
-#include "../../../utils/string.h"
-#include "../../../utils/math.h"
-#include "../../dialogs/sampleEditor.h"
-#include "../basics/dial.h"
-#include "../basics/input.h"
-#include "../basics/box.h"
-#include "../basics/button.h"
+#include "core/channels/sampleChannel.h"
+#include "core/const.h"
+#include "core/waveFx.h"  
+#include "glue/channel.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "utils/math.h"
+#include "gui/dialogs/sampleEditor.h"
+#include "gui/elems/basics/dial.h"
+#include "gui/elems/basics/input.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
 #include "waveTools.h"
 #include "boostTool.h"
 
 
-using namespace giada;
-
-
-geBoostTool::geBoostTool(int X, int Y, m::SampleChannel* ch)
-  : Fl_Group(X, Y, 220, 20),
-    ch      (ch)
+namespace giada {
+namespace v 
 {
-  begin();
-    label     = new geBox(x(), y(), u::gui::getStringWidth("Boost"), 20, "Boost", FL_ALIGN_RIGHT);
-    dial      = new geDial(label->x()+label->w()+4, y(), 20, 20);
-    input     = new geInput(dial->x()+dial->w()+4, y(), 70, 20);
-    normalize = new geButton(input->x()+input->w()+4, y(), 70, 20, "Normalize");
-  end();
+geBoostTool::geBoostTool(int X, int Y)
+: Fl_Pack(X, Y, 220, G_GUI_UNIT)
+{
+	type(Fl_Pack::HORIZONTAL);
+	spacing(G_GUI_INNER_MARGIN);
 
-  dial->range(1.0f, 10.0f);
-  dial->callback(cb_setBoost, (void*)this);
-  dial->when(FL_WHEN_CHANGED | FL_WHEN_RELEASE);
+	begin();
+		label     = new geBox   (0, 0, u::gui::getStringWidth("Boost"), G_GUI_UNIT, "Boost", FL_ALIGN_RIGHT);
+		dial      = new geDial  (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+		input     = new geInput (0, 0, 70, G_GUI_UNIT);
+		normalize = new geButton(0, 0, 70, G_GUI_UNIT, "Normalize");
+	end();
 
-  input->callback(cb_setBoostNum, (void*)this);
+	dial->range(1.0f, 10.0f);
+	dial->callback(cb_setBoost, (void*)this);
+	dial->when(FL_WHEN_CHANGED | FL_WHEN_RELEASE);
 
-  normalize->callback(cb_normalize, (void*)this);
+	input->callback(cb_setBoostNum, (void*)this);
 
-  refresh();
+	normalize->callback(cb_normalize, (void*)this);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geBoostTool::refresh()
+void geBoostTool::rebuild()
 {
-  using namespace giada::u;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  input->value(string::fToString(math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
-  // A dial greater than it's max value goes crazy
-  dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
+	input->value(u::string::fToString(u::math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
+	// A dial greater than it's max value goes crazy
+	dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
 }
 
 
@@ -94,15 +94,9 @@ void geBoostTool::cb_normalize  (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_
 
 void geBoostTool::cb_setBoost()
 {
-  using namespace giada::c;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  if (Fl::event() == FL_DRAG)
-    channel::setBoost(ch, dial->value());
-  else 
-  if (Fl::event() == FL_RELEASE) {
-    channel::setBoost(ch, dial->value());
-    static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
-  }
+	c::channel::setBoost(ch->id, dial->value());
 }
 
 
@@ -111,10 +105,9 @@ void geBoostTool::cb_setBoost()
 
 void geBoostTool::cb_setBoostNum()
 {
-  using namespace giada;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  c::channel::setBoost(ch, u::math::dBtoLinear(atof(input->value())));
-  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
+	c::channel::setBoost(ch->id, u::math::dBtoLinear(atof(input->value())));
 }
 
 
@@ -123,10 +116,9 @@ void geBoostTool::cb_setBoostNum()
 
 void geBoostTool::cb_normalize()
 {
-  using namespace giada;
+	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-  float val = m::wfx::normalizeSoft(*ch->wave);
-  c::channel::setBoost(ch, val); // it's like a fake user moving the dial 
-  static_cast<gdSampleEditor*>(window())->waveTools->updateWaveform();
+	c::channel::setBoost(ch->id, m::wfx::normalizeSoft(*ch->wave));
 }
 
+}} // giada::v::

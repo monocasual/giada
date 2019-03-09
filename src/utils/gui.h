@@ -32,18 +32,30 @@
 #include <string>
 
 
-class Fl_Window;
+namespace giada
+{
+namespace v
+{
 class gdWindow;
-
-
-namespace giada {
+}
 namespace u {
 namespace gui 
 {
 /* refresh
 Repaints some dynamic GUI elements. */
 
-void refreshUI();
+void refresh();
+
+/* rebuild
+Rebuilds the UI from scratch. Used when the model has changed. */
+
+void rebuild();
+
+/* [rebuild|refresh]SubWindow 
+Rebuilds or refreshes subwindow with ID 'wid' if it exists. i.e. if its open. */
+
+void rebuildSubWindow(int wid);
+void refreshSubWindow(int wid);
 
 /* shouldBlink
 Return whether is time to blink something or not. This is used to make widgets 
@@ -62,9 +74,11 @@ Updates the name of the main window */
 
 void updateMainWinLabel(const std::string& s);
 
-void setFavicon(Fl_Window* w);
+void setFavicon(v::gdWindow* w);
 
-void openSubWindow(gdWindow* parent, gdWindow* child, int id);
+void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id);
+
+// TODO closeSubWindow(...)
 
 /* refreshActionEditor
 Reloads the action editor window by closing and reopening it. It's used when you
@@ -80,7 +94,7 @@ void closeAllSubwindows();
 /* getSubwindow
 Returns a pointer to an open subwindow, otherwise nullptr. */
 
-gdWindow* getSubwindow(gdWindow* parent, int id);
+v::gdWindow* getSubwindow(v::gdWindow* parent, int id);
 
 /* removeFltkChars
 Strips special chars used by FLTK to split menus into sub-menus. */

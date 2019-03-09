@@ -2,13 +2,6 @@
  *
  * Giada - Your Hardcore Loopmachine
  *
- * glue
- * Intermediate layer GUI <-> CORE.
- *
- * How to know if you need another glue_ function? Ask yourself if the
- * new action will ever be called via MIDI or keyboard/mouse. If yes,
- * put it here.
- *
  * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
@@ -36,6 +29,11 @@
 #define G_GLUE_IO_H
 
 
+#include <atomic>
+#include "core/types.h"
+#include "core/midiEvent.h"
+
+
 namespace giada {
 namespace m
 {
@@ -45,28 +43,17 @@ namespace c {
 namespace io 
 {
 /* keyPress / keyRelease
-Handle the key pressure, either via mouse/keyboard or MIDI. If gui is true the 
-event comes from the main window (mouse, keyboard or MIDI), otherwise the event 
-comes from the action recorder. */
+Handle the key pressure, either via mouse/keyboard or MIDI. */
 
-void keyPress  (m::Channel* ch, bool ctrl, bool shift, int velocity);
-void keyRelease(m::Channel* ch, bool ctrl, bool shift);
+void keyPress  (ID channelId, bool ctrl, bool shift, int velocity);
+void keyRelease(ID channelId, bool ctrl, bool shift);
 
-/* start/stopActionRec
-Handles the action recording. If gui == true the signal comes from an user
-interaction, otherwise it's a MIDI/Jack/external signal. */
+/* setSampleChannelKey
+Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. */
 
-void toggleActionRec(bool gui=true);
-void startActionRec (bool gui=true);
-void stopActionRec  (bool gui=true);
+void setSampleChannelKey(ID channelId, int k);
 
-/* start/stopInputRec
-Handles the input recording (take). If gui == true the signal comes from an
-internal interaction on the GUI, otherwise it's a MIDI/Jack/external signal. */
-
-void toggleInputRec(bool gui=true);
-bool startInputRec (bool gui=true);
-void stopInputRec  (bool gui=true);
+void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, const m::Channel* c);
 }}} // giada::c::io::
 
 #endif

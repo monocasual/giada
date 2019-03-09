@@ -46,10 +46,10 @@
 
 /* -- version --------------------------------------------------------------- */
 constexpr auto G_APP_NAME      = "Giada";
-constexpr auto G_VERSION_STR   = "0.15.4";
+constexpr auto G_VERSION_STR   = "0.16.0";
 constexpr int  G_VERSION_MAJOR = 0;
-constexpr int  G_VERSION_MINOR = 15;
-constexpr int  G_VERSION_PATCH = 4;
+constexpr int  G_VERSION_MINOR = 16;
+constexpr int  G_VERSION_PATCH = 0;
 
 constexpr auto CONF_FILENAME = "giada.conf";
 
@@ -63,18 +63,17 @@ constexpr auto CONF_FILENAME = "giada.conf";
 
 
 /* -- GUI ------------------------------------------------------------------- */
-#define G_GUI_REFRESH_RATE   1000/24
-#define G_GUI_PLUGIN_RATE    0.05  // refresh rate for plugin GUI
-#define G_GUI_FONT_SIZE_BASE 12
-#define G_GUI_INNER_MARGIN   4
-#define G_GUI_OUTER_MARGIN   8
-#define G_GUI_UNIT           20    // base unit for elements 
-#define G_GUI_CHANNEL_H_1    G_GUI_UNIT
-#define G_GUI_CHANNEL_H_2    G_GUI_UNIT * 2
-#define G_GUI_CHANNEL_H_3    G_GUI_UNIT * 4
-#define G_GUI_CHANNEL_H_4    G_GUI_UNIT * 6
-#define G_GUI_ZOOM_FACTOR    2
-
+constexpr float G_GUI_REFRESH_RATE   = 0.05;
+constexpr float G_GUI_PLUGIN_RATE    = 0.05;   // refresh rate for plugin GUI
+constexpr int   G_GUI_FONT_SIZE_BASE = 12;
+constexpr int   G_GUI_INNER_MARGIN   = 4;
+constexpr int   G_GUI_OUTER_MARGIN   = 8;
+constexpr int   G_GUI_UNIT           = 20;    // base unit for elements 
+constexpr int   G_GUI_CHANNEL_H_1    = G_GUI_UNIT;
+constexpr int   G_GUI_CHANNEL_H_2    = G_GUI_UNIT * 2;
+constexpr int   G_GUI_CHANNEL_H_3    = G_GUI_UNIT * 4;
+constexpr int   G_GUI_CHANNEL_H_4    = G_GUI_UNIT * 6;
+constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 #define G_COLOR_RED       fl_rgb_color(28,  32,  80)
 #define G_COLOR_BLUE      fl_rgb_color(113, 31,  31)
@@ -92,27 +91,28 @@ constexpr auto CONF_FILENAME = "giada.conf";
 
 
 /* -- MIN/MAX values -------------------------------------------------------- */
-constexpr float G_MIN_BPM          = 20.0f;
-constexpr auto  G_MIN_BPM_STR      = "20.0";
-constexpr float G_MAX_BPM          = 999.0f;
-constexpr auto  G_MAX_BPM_STR      = "999.0";
-constexpr int   G_MAX_BEATS        = 32;
-constexpr int   G_MAX_BARS         = 32;
-constexpr int   G_MAX_QUANTIZE     = 8;
-constexpr float G_MIN_DB_SCALE     = 60.0f;
-constexpr int   G_MIN_COLUMN_WIDTH = 140;
-constexpr float G_MAX_BOOST_DB     = 20.0f;
-constexpr float G_MIN_PITCH        = 0.1f;
-constexpr float G_MAX_PITCH        = 4.0f;
-constexpr int   G_MAX_GRID_VAL     = 64;
-constexpr int   G_MIN_BUF_SIZE     = 8;
-constexpr int   G_MAX_BUF_SIZE     = 4096;
-constexpr int   G_MIN_GUI_WIDTH    = 816;
-constexpr int   G_MIN_GUI_HEIGHT   = 510;
-constexpr int   G_MAX_IO_CHANS     = 2;
-constexpr int   G_MAX_VELOCITY     = 0x7F;
-constexpr int   G_MAX_MIDI_CHANS   = 16;
-constexpr int   G_MAX_POLYPHONY    = 32;
+constexpr float  G_MIN_BPM          = 20.0f;
+constexpr auto   G_MIN_BPM_STR      = "20.0";
+constexpr float  G_MAX_BPM          = 999.0f;
+constexpr auto   G_MAX_BPM_STR      = "999.0";
+constexpr int    G_MAX_BEATS        = 32;
+constexpr int    G_MAX_BARS         = 32;
+constexpr int    G_MAX_QUANTIZE     = 8;
+constexpr float  G_MIN_DB_SCALE     = 60.0f;
+constexpr int    G_MIN_COLUMN_WIDTH = 140;
+constexpr float  G_MAX_BOOST_DB     = 20.0f;
+constexpr float  G_MIN_PITCH        = 0.1f;
+constexpr float  G_MAX_PITCH        = 4.0f;
+constexpr float  G_MAX_VOLUME       = 1.0f;
+constexpr int    G_MAX_GRID_VAL     = 64;
+constexpr int    G_MIN_BUF_SIZE     = 8;
+constexpr int    G_MAX_BUF_SIZE     = 4096;
+constexpr int    G_MIN_GUI_WIDTH    = 816;
+constexpr int    G_MIN_GUI_HEIGHT   = 510;
+constexpr int    G_MAX_IO_CHANS     = 2;
+constexpr int    G_MAX_VELOCITY     = 0x7F;
+constexpr int    G_MAX_MIDI_CHANS   = 16;
+constexpr int    G_MAX_POLYPHONY    = 32;
 
 
 
@@ -173,37 +173,40 @@ constexpr float G_DEFAULT_REC_TRIGGER_LEVEL = -10.0f;
 
 
 /* -- responses and return codes -------------------------------------------- */
-#define G_RES_ERR_PROCESSING    -6
-#define G_RES_ERR_WRONG_DATA    -5
-#define G_RES_ERR_NO_DATA       -4
-#define G_RES_ERR_PATH_TOO_LONG -3
-#define G_RES_ERR_IO            -2
-#define G_RES_ERR_MEMORY        -1
-#define G_RES_ERR                0
-#define G_RES_OK                 1
+constexpr int G_RES_ERR_PROCESSING    = -6;
+constexpr int G_RES_ERR_WRONG_DATA    = -5;
+constexpr int G_RES_ERR_NO_DATA       = -4;
+constexpr int G_RES_ERR_PATH_TOO_LONG = -3;
+constexpr int G_RES_ERR_IO            = -2;
+constexpr int G_RES_ERR_MEMORY        = -1;
+constexpr int G_RES_ERR               =  0;
+constexpr int G_RES_OK                =  1;
 
 
 
 /* -- log modes ------------------------------------------------------------- */
-#define LOG_MODE_STDOUT 0x01
-#define LOG_MODE_FILE   0x02
-#define LOG_MODE_MUTE   0x04
+constexpr int LOG_MODE_STDOUT = 0x01;
+constexpr int LOG_MODE_FILE   = 0x02;
+constexpr int LOG_MODE_MUTE   = 0x04;
 
 
 
 /* -- unique IDs of mainWin's subwindows ------------------------------------ */
 /* -- wid > 0 are reserved by gg_keyboard ----------------------------------- */
-#define WID_BEATS         -1
-#define WID_BPM           -2
-#define WID_ABOUT         -3
-#define WID_FILE_BROWSER  -4
-#define WID_CONFIG        -5
-#define WID_FX_LIST       -6
-#define WID_ACTION_EDITOR -7
-#define WID_SAMPLE_EDITOR -8
-#define WID_FX            -9
-#define WID_KEY_GRABBER   -10
-#define WID_SAMPLE_NAME   -11
+constexpr int WID_BEATS         = -1;
+constexpr int WID_BPM           = -2;
+constexpr int WID_ABOUT         = -3;
+constexpr int WID_FILE_BROWSER  = -4;
+constexpr int WID_CONFIG        = -5;
+constexpr int WID_FX_LIST       = -6;
+constexpr int WID_ACTION_EDITOR = -7;
+constexpr int WID_SAMPLE_EDITOR = -8;
+constexpr int WID_FX            = -9;
+constexpr int WID_KEY_GRABBER   = -10;
+constexpr int WID_SAMPLE_NAME   = -11;
+constexpr int WID_FX_CHOOSER    = -12;
+constexpr int WID_MIDI_INPUT    = -13;
+constexpr int WID_MIDI_OUTPUT   = -14;
 
 
 

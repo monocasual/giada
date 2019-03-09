@@ -29,7 +29,7 @@
 #define GE_SHIFT_TOOL_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geInput;
@@ -37,15 +37,18 @@ class geButton;
 class geBox;
 
 
-class geShiftTool : public Fl_Group
+namespace giada {
+namespace v 
 {
+class geShiftTool : public Fl_Pack
+{
+public:
+
+	geShiftTool(int x, int y);
+
+	void rebuild();
+
 private:
-
-	giada::m::SampleChannel* m_ch;
-
-	geBox*    m_label;
-	geInput*  m_shift;
-	geButton* m_reset;
 
 	static void cb_setShift(Fl_Widget* w, void* p);
 	static void cb_reset(Fl_Widget* w, void* p);
@@ -54,12 +57,11 @@ private:
 
 	void shift(int f);
 
-public:
-
-	geShiftTool(int x, int y, giada::m::SampleChannel* ch);
-
-	void refresh();
+	geBox*    m_label;
+	geInput*  m_shift;
+	geButton* m_reset;
 };
+}} // giada::v::
 
 
 #endif

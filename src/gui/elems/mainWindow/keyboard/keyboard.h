@@ -31,131 +31,77 @@
 
 #include <vector>
 #include <FL/Fl_Scroll.H>
-#include "../../../../core/const.h"
-#include "../../../../core/channel.h"
+#include "core/channels/channel.h"
+#include "core/const.h"
 
 
 class geButton;
 class geColumn;
-class geChannel;
-class geSampleChannel;
+class geResizerBar;
 
 
 namespace giada {
 namespace v
 {
+class geChannel;
+class geSampleChannel;
+
 class geKeyboard : public Fl_Scroll
 {
-private:
-
-	static const int COLUMN_GAP = 16;
-
-	/* refreshColIndexes
-	 * Recompute all column indexes in order to avoid any gaps between them.
-	 * Indexes must always be contiguous! */
-
-	void refreshColIndexes();
-
-	static void cb_addColumn  (Fl_Widget* v, void* p);
-	inline void __cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
-
-	/* indexColumn
-	 * the last index used for column. */
-
-	static int indexColumn;
-
-	geButton* addColumnBtn;
-
-	/* columns
-	 * a vector of columns which in turn contain channels. */
-
-	std::vector<geColumn*> columns;
-
 public:
 
 	geKeyboard(int X, int Y, int W, int H);
 
-	int handle(int e);
+	int handle(int e) override;
 
-	/* init
-	 * build the initial setup of empty channels. */
+	/* rebuild
+	Rebuilds this widget from scratch. Used when the model has changed. */
 
-	void init();
+	void rebuild();
 
-	/* addChannel
-	Adds a new channel to geChannels. Used by callbacks and during patch loading. 
-	Requires Channel (and not geChannel). If build is set to true, also generate 
-	the corresponding column if column (index) does not exist yet. */
+	/* refresh
+	Refreshes each column's channel, called on each GUI cycle. */
 
-	geChannel* addChannel(int column, giada::m::Channel* ch, int size, bool build=false);
+	void refresh();
 
 	/* addColumn
 	 * add a new column to the top of the stack. */
 
-	void addColumn(int width=380);
-
-	/* deleteChannel
-	 * delete a channel from geChannels<> where geChannel->ch == ch and remove
-	 * it from the stack. */
-
-	void deleteChannel(geChannel* gch);
-
-	/* freeChannel
-	 * free a channel from geChannels<> where geChannel->ch == ch. No channels
-	 * are deleted */
-
-	void freeChannel(geChannel* gch);
-
-	/* updateChannel
-	 * wrapper function to call gch->update(). */
-
-	void updateChannel(geChannel* gch);
+	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
 
 	/* organizeColumns
 	 * reorganize columns layout by removing empty gaps. */
 
 	void organizeColumns();
 
-	/* refreshColumns
-	 * refresh each column's channel, called on each GUI cycle. */
+	/* getChannel
+	Given a channel ID returns the UI channel it belongs to. */
 
-	void refreshColumns();
+	geChannel* getChannel(ID channelId);
 
-	/* getColumnByIndex
-	 * return the column with index 'index', or nullptr if not found. */
 
-	geColumn* getColumnByIndex(int index);
+	void forEachChannel(std::function<void(geChannel* c)> f) const;
 
-	/* getColumn
-	 * return the column with from columns->at(i). */
+private:
 
-	geColumn* getColumn(int i);
+	static const int COLUMN_GAP = 20;
 
-	/* clear
-	 * delete all channels and groups. */
+	/* indexColumn
+	The last index used for column. */
 
-	void clear();
+	static int indexGen;
+	
+	/* init
+	Builds the initial setup of empty channels. */
 
-	/* setChannelWithActions
-	 * add 'R' button if channel has actions, and set recorder to active. */
+	void init();
 
-	void setChannelWithActions(geSampleChannel* gch);
+	static void cb_addColumn(Fl_Widget* v, void* p);
+	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, int index=-1);
 
-	/* printChannelMessage
-	 * given any output by glue_loadChannel, print the message on screen
-	 * on a gdAlert subwindow. */
+	geButton* m_addColumnBtn;
 
-	void printChannelMessage(int res);
-
-	/* getTotalColumns */
-
-	unsigned getTotalColumns() { return columns.size(); }
-
-	/* getColumnWidth
-	 * return the width in pixel of i-th column. Warning: 'i' is the i-th column
-	 * in the column array, NOT the index. */
-
-	int getColumnWidth(int i);
+	std::vector<geColumn*> m_columns;
 };
 }} // giada::v::
 

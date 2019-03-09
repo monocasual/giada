@@ -34,16 +34,36 @@
 #define GE_LIQUID_SCROLL_H
 
 
-#include <FL/Fl_Scroll.H>
+#include "scroll.h"
 
 
-class geLiquidScroll : public Fl_Scroll
+class geLiquidScroll : public geScroll
 {
 public:
 
-	geLiquidScroll(int x, int y, int w, int h, const char *l=0);
+	geLiquidScroll(int x, int y, int w, int h);
 
-	void resize(int x, int y, int w, int h);
+	void resize(int x, int y, int w, int h) override;
+
+    /* addWidget
+    Adds a new widget to the bottom, with proper spacing. */
+    
+    template<typename T>
+    T* addWidget(T* wg)
+    {
+        int numChildren = countChildren();
+
+        int wx = x();
+        int wy = y() - yposition() + (numChildren * (wg->h() + G_GUI_INNER_MARGIN));
+        int ww = w() - 24;
+        int wh = wg->h();
+
+        wg->resize(wx, wy, ww, wh);
+        add(wg);
+        redraw();    
+
+        return wg;
+    }   
 };
 
 

@@ -28,23 +28,23 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/fl_draw.H>
 #include <jansson.h>
-#include "../../core/conf.h"
-#include "../../core/const.h"
-#include "../../core/graphics.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/graphics.h"
 #ifdef WITH_VST
-  #include "../../deps/juce-config.h"
+#include "deps/juce-config.h"
 #endif
-#include "../../utils/gui.h"
-#include "../../utils/string.h"
-#include "../../utils/ver.h"
-#include "../elems/basics/button.h"
-#include "../elems/basics/box.h"
+#include "utils/gui.h"
+#include "utils/string.h"
+#include "utils/ver.h"
+#include "gui/elems/basics/button.h"
+#include "gui/elems/basics/box.h"
 #include "about.h"
 
 
-using namespace giada;
-
-
+namespace giada {
+namespace v 
+{
 gdAbout::gdAbout()
 #ifdef WITH_VST
 : gdWindow(340, 435, "About Giada")
@@ -140,3 +140,5 @@ void gdAbout::cb_close()
 {
 	do_callback();
 }
+
+}} // giada::v::

@@ -25,20 +25,43 @@
  * -------------------------------------------------------------------------- */
 
 
+#include "utils/string.h"
+#include "core/channels/midiChannel.h"
 #include "midiChannelButton.h"
 
 
-geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, const char* l)
-	: geChannelButton(x, y, w, h, l)
+namespace giada {
+namespace v
 {
+geMidiChannelButton::geMidiChannelButton(int x, int y, int w, int h, 
+    const m::MidiChannel* ch)
+: geChannelButton(x, y, w, h, ch)
+{
+    std::string l; 
+    if (ch->name.empty())
+        l = "-- MIDI --";
+    else
+        l = ch->name.c_str();
+
+    if (ch->midiOut) 
+        l += " (ch " + u::string::iToString(ch->midiOutChan + 1) + " out)";
+
+    label(l.c_str());
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int geMidiChannelButton::handle(int e)
+void geMidiChannelButton::refresh()
 {
-	// Currently MIDI drag-n-drop does nothing.
-	return geButton::handle(e);
+	geChannelButton::refresh();
+	
+	if (m::recorder::isActive() && m_ch->armed)
+		setActionRecordMode();
+	else
+		setDefaultMode();
+	
+	redraw();
 }
+}} // giada::v::

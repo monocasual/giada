@@ -28,19 +28,19 @@
 
 
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
-#include "../../../core/recManager.h"
-#include "../../../core/mixer.h"
-#include "../../../core/clock.h"
-#include "../../../utils/gui.h"
+#include "core/const.h"
+#include "core/recManager.h"
+#include "core/mixer.h"
+#include "core/clock.h"
+#include "utils/gui.h"
 #include "beatMeter.h"
 
 
 namespace giada {
 namespace v
 {
-geBeatMeter::geBeatMeter(int x, int y, int w, int h, const char* l)
-: Fl_Box(x, y, w, h, l)
+geBeatMeter::geBeatMeter(int x, int y, int w, int h)
+: Fl_Box(x, y, w, h)
 {
 }
 

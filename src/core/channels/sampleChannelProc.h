@@ -29,9 +29,9 @@
 #define G_SAMPLE_CHANNEL_PROC_H
 
 
-#include "mixer.h"
-#include "audioBuffer.h"
-#include "types.h"
+#include "core/mixer.h"
+#include "core/audioBuffer.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -42,16 +42,13 @@ class SampleChannel;
 namespace sampleChannelProc
 {
 /**/
-void prepareBuffer(SampleChannel* ch, bool running);
+void render(SampleChannel* ch, AudioBuffer& out, const AudioBuffer& in, 
+    AudioBuffer& inToOut, bool audible, bool running);
 
 /* parseEvents
 Parses events gathered by Mixer::masterPlay(). */
 
 void parseEvents(SampleChannel* ch, mixer::FrameEvents ev);
-
-/**/
-void process(SampleChannel* ch, AudioBuffer& out, const AudioBuffer& in, 
-    bool audible, bool running);
 
 /* kill
 Stops a channel abruptly. */

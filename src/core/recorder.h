@@ -29,28 +29,28 @@
 #define G_RECORDER_H
 
 
-#include <pthread.h>
 #include <map>
 #include <vector>
 #include <functional>
-#include "types.h"
-#include "midiEvent.h"
+#include <memory>
+#include "core/types.h"
+#include "core/action.h"
+#include "core/midiEvent.h"
 
 
 namespace giada {
 namespace m 
 {
-struct Action;
-
 namespace recorder
 {
-using ActionMap = std::map<Frame, std::vector<const Action*>>;
+using ActionMap = std::map<Frame, std::vector<Action>>;
 
-void debug();
+void debug(const ActionMap& map);
+
 /* init
 Initializes the recorder: everything starts from here. */
 
-void init(pthread_mutex_t* mixerMutex);
+void init();
 
 /* clearAll
 Deletes all recorded actions. */
@@ -60,17 +60,22 @@ void clearAll();
 /* clearChannel
 Clears all actions from a channel. */
 
-void clearChannel(int channel);
+void clearChannel(ID channelId);
 
 /* clearActions
 Clears the actions by type from a channel. */
 
-void clearActions(int channel, int type);
+void clearActions(ID channelId, int type);
 
-/* deleteAction
+/* deleteAction (1)
 Deletes a specific action. */
 
-void deleteAction(const Action* a);
+void deleteAction(ID id);
+
+/* deleteAction (2)
+Deletes a specific pair of actions. Useful for composite stuff (i.e. MIDI). */
+
+void deleteAction(ID currId, ID nextId);
 
 /* updateKeyFrames
 Update all the key frames in the internal map of actions, according to a lambda 
@@ -78,29 +83,21 @@ function 'f'. */
 
 void updateKeyFrames(std::function<Frame(Frame old)> f);
 
-/* updateActionMap
-Replaces the current map of actions with a new one. Warning: 'am' will be moved
-as a replacement (no copy). */
-
-void updateActionMap(ActionMap&& am);
-
 /* updateEvent
 Changes the event in action 'a'. */
 
-void updateEvent(const Action* a, MidiEvent e);
+void updateEvent(ID id, MidiEvent e);
 
 /* updateSiblings
-Changes previous and next actions in action 'a'. Mostly used for chained actions
-such as envelopes. */
+Changes previous and next actions in action with id 'id'. Mostly used for 
+chained actions such as envelopes. */
 
-void updateSiblings(const Action* a, const Action* prev, const Action* next);
-
-void updateActionId(int id);
+void updateSiblings(ID id, ID prevId, ID nextId);
 
 /* hasActions
 Checks if the channel has at least one action recorded. */
 
-bool hasActions(int channel, int type=0);
+bool hasActions(ID channelId, int type=0);
 
 /* isActive
 Is recorder recording something? */
@@ -110,47 +107,61 @@ bool isActive();
 void enable();
 void disable();
 
-const Action* makeAction(int id, int channel, Frame frame, MidiEvent e);
+Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
 
 /* rec (1)
-Records an action and returns it. */
+Records an action and returns it. Used by the Action Editor. */
 
-const Action* rec(int channel, Frame frame, MidiEvent e);
+Action rec(ID channelId, Frame frame, MidiEvent e);
 
 /* rec (2)
 Transfer a vector of actions into the current ActionMap. This is called by 
 recordHandler when a live session is over and consolidation is required. */
 
-void rec(const std::vector<const Action*>& actions);
+void rec(std::vector<Action>& actions);
+
+/* rec (3)
+Records two actions on channel 'channel'. Useful when recording composite 
+actions in the Action Editor. */
+
+void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2);
 
 /* forEachAction
 Applies a read-only callback on each action recorded. NEVER do anything inside 
 the callback that might alter the ActionMap. */
 
-void forEachAction(std::function<void(const Action*)> f);
+void forEachAction(std::function<void(const Action&)> f);
 
 /* getActionsOnFrame
-Returns a vector of actions recorded on frame 'f'. */
+Returns a pointer to a vector of actions recorded on frame 'f', or nullptr if
+the frame has no actions. */
 
-std::vector<const Action*> getActionsOnFrame(Frame f);
+const std::vector<Action>* getActionsOnFrame(Frame f);
 
 /* getActionsOnChannel
 Returns a vector of actions belonging to channel 'ch'. */
 
-std::vector<const Action*> getActionsOnChannel(int ch);
+std::vector<Action> getActionsOnChannel(ID channelId);
 
 /* getClosestAction
 Given a frame 'f' returns the closest action. */
 
-const Action* getClosestAction(int channel, Frame f, int type);
+Action getClosestAction(ID channelId, Frame f, int type);
 
+/* updateMapPointers
+Updates all prev/next actions pointers into the action map. This is required
+after an action has been recorded, since pushing back new actions in a Action 
+vector makes it reallocating the existing ones. Also needed in model::Data copy
+constructor. */
+
+void updateMapPointers(ActionMap& src); 
 
 int getLatestActionId();
 
 /* getActionMap
 Returns a copy of the internal action map. Used only by recorderHandler. */
 
-ActionMap getActionMap();
+//ActionMap getActionMap();
 
 }}}; // giada::m::recorder::
 

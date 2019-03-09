@@ -27,43 +27,47 @@
 
 #ifdef WITH_VST
 
+
 #ifndef GD_PLUGINLIST_H
 #define GD_PLUGINLIST_H
 
 
-#include "../../core/pluginHost.h"
+#include "core/pluginHost.h"
 #include "window.h"
 
 
-class Fl_Scroll;
+class geLiquidScroll;
 class geButton;
 
 
+namespace giada {
+namespace v
+{
+class gePluginElement;
 class gdPluginList : public gdWindow
 {
-private:
+public:
 
-	geButton*  addPlugin;
-	Fl_Scroll* list;
+	gdPluginList(ID chanID);
+	~gdPluginList();
+
+	void rebuild() override;
+
+	const gePluginElement& getNextElement(const gePluginElement& curr) const;
+	const gePluginElement& getPrevElement(const gePluginElement& curr) const;
+
+private:
 
 	static void cb_addPlugin(Fl_Widget* v, void* p);
 	void cb_addPlugin();
 
-public:
+	geButton*       addPlugin;
+	geLiquidScroll* list;	
 
-	giada::m::Channel* ch;      // ch == nullptr ? masterOut
-	giada::m::pluginHost::StackType stackType;
-
-	gdPluginList(giada::m::pluginHost::StackType t, giada::m::Channel* ch=nullptr);
-	~gdPluginList();
-
-	/* special callback, passed to browser. When closed (i.e. plugin
-	 * has been selected) the same browser will refresh this window. */
-
-	static void cb_refreshList(Fl_Widget*, void*);
-
-	void refreshList();
+	ID m_chanID;
 };
+
+}} // giada::v::
 
 
 #endif

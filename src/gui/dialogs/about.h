@@ -36,8 +36,19 @@ class geBox;
 class geButton;
 
 
+namespace giada {
+namespace v 
+{
 class gdAbout : public gdWindow
 {
+public:
+
+    gdAbout();
+    ~gdAbout();
+
+    static void cb_close(Fl_Widget* w, void* p);
+    inline void cb_close();
+
 private:
 
 	geBox*    logo;
@@ -48,14 +59,8 @@ private:
 	geBox* vstText;
 	geBox* vstLogo;
 #endif
-
-public:
-
-	gdAbout();
-	~gdAbout();
-
-	static void cb_close(Fl_Widget* w, void* p);
-	inline void cb_close();
 };
+}} // giada::v::
+
 
 #endif

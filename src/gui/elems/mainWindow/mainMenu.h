@@ -29,7 +29,7 @@
 #define GE_MAIN_MENU_H
 
 
-#include <FL/Fl_Group.H>
+#include <FL/Fl_Pack.H>
 
 
 class geButton;
@@ -38,27 +38,23 @@ class geButton;
 namespace giada {
 namespace v
 {
-class geMainMenu : public Fl_Group
+class geMainMenu : public Fl_Pack
 {
-private:
-
-  geButton* file;
-  geButton* edit;
-  geButton* config;
-  geButton* about;
-
-	static void cb_about (Fl_Widget* v, void* p);
-	static void cb_config(Fl_Widget* v, void* p);
-	static void cb_file  (Fl_Widget* v, void* p);
-	static void cb_edit  (Fl_Widget* v, void* p);
-	void cb_about ();
-	void cb_config();
-	void cb_file  ();
-	void cb_edit  ();
-
 public:
 
 	geMainMenu(int x, int y);
+
+private:
+
+	static void cb_file(Fl_Widget* v, void* p);
+	static void cb_edit(Fl_Widget* v, void* p);
+	void cb_file();
+	void cb_edit();
+
+	geButton* file;
+	geButton* edit;
+	geButton* config;
+	geButton* about;
 };
 }} // giada::v::
 

@@ -29,45 +29,45 @@
 #define GE_SAMPLE_CHANNEL_H
 
 
-#include "../../../../core/sampleChannel.h"
 #include "channel.h"
 
 
-class geChannelMode;
-class geButton;
+class geStatusButton;
 
+
+namespace giada {
+namespace m 
+{ 
+class SampleChannel; 
+}
+namespace v
+{
+class geChannelMode;
 
 class geSampleChannel : public geChannel
 {
-private:
-
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_openMenu(Fl_Widget* v, void* p);
-	static void cb_readActions(Fl_Widget* v, void* p);
-	void cb_button();
-	void cb_openMenu();
-	void cb_readActions();
-
 public:
 
-	geSampleChannel(int x, int y, int w, int h, giada::m::SampleChannel* ch);
+	geSampleChannel(int x, int y, int w, int h, const m::SampleChannel* ch);
 
 	void resize(int x, int y, int w, int h) override;
 
-	void reset() override;
-	void update() override;
 	void refresh() override;
 	void changeSize(int h) override;
 
-	/* show/hideActionButton
-	Adds or removes 'R' button when actions are available. */
-
-	void showActionButton();
-	void hideActionButton();
-
 	geChannelMode* modeBox;
 	geButton*      readActions;
+
+private:
+
+	static void cb_playButton(Fl_Widget* v, void* p);
+	static void cb_openMenu(Fl_Widget* v, void* p);
+	static void cb_readActions(Fl_Widget* v, void* p);
+	void cb_playButton();
+	void cb_openMenu();
+	void cb_readActions();
 };
+}} // giada::v::
 
 
 #endif

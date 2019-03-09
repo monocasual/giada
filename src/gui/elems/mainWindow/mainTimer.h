@@ -41,25 +41,6 @@ namespace v
 {
 class geMainTimer : public Fl_Group
 {
-private:
-
-	geButton* bpm;
-	geButton* meter;
-	geChoice* quantizer;
-	geButton* multiplier;
-	geButton* divider;
-
-	static void cb_bpm       (Fl_Widget* v, void* p);
-	static void cb_meter     (Fl_Widget* v, void* p);
-	static void cb_quantizer (Fl_Widget* v, void* p);
-	static void cb_multiplier(Fl_Widget* v, void* p);
-	static void cb_divider   (Fl_Widget* v, void* p);
-	inline void cb_bpm();
-	inline void cb_meter();
-	inline void cb_quantizer();
-	inline void cb_multiplier();
-	inline void cb_divider();
-
 public:
 
 	geMainTimer(int x, int y);
@@ -73,6 +54,25 @@ public:
   Locks bpm, beter and multipliers. Used during audio recordings. */
 
   void setLock(bool v);
+
+private:
+
+	static void cb_bpm       (Fl_Widget* v, void* p);
+	static void cb_meter     (Fl_Widget* v, void* p);
+	static void cb_quantizer (Fl_Widget* v, void* p);
+	static void cb_multiplier(Fl_Widget* v, void* p);
+	static void cb_divider   (Fl_Widget* v, void* p);
+	void cb_bpm();
+	void cb_meter();
+	void cb_quantizer();
+	void cb_multiplier();
+	void cb_divider();
+
+	geButton* bpm;
+	geButton* meter;
+	geChoice* quantizer;
+	geButton* multiplier;
+	geButton* divider;
 };
 }} // giada::v::
 

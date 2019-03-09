@@ -27,6 +27,7 @@
 
 #ifdef WITH_VST
 
+
 #ifndef GE_PLUGIN_BROWSER_H
 #define GE_PLUGIN_BROWSER_H
 
@@ -34,20 +35,25 @@
 #include <FL/Fl_Browser.H>
 
 
+namespace giada {
+namespace v
+{
 class gePluginBrowser : public Fl_Browser
 {
-private:
-
-	int widths[5] = {0};
-
-	void computeWidths();
-
 public:
 
 	gePluginBrowser(int x, int y, int w, int h);
 
 	void refresh();
+
+private:
+
+    void computeWidths();
+
+    int widths[5] = {0};
 };
+}} // giada::v::
+
 
 #endif
 

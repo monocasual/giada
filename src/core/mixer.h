@@ -33,9 +33,9 @@
 #include <pthread.h>
 #include <functional>
 #include <vector>
-#include "recorder.h"
-#include "types.h"
-#include "../deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio-mod/RtAudio.h"
+#include "core/recorder.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -43,6 +43,7 @@ namespace m
 {
 struct Action;
 class Channel;
+class AudioBuffer;
 
 namespace mixer
 {
@@ -54,15 +55,14 @@ struct FrameEvents
 	bool  onBar;
 	bool  onFirstBeat;
 	bool  quantoPassed;
-	std::vector<const Action*> actions;
+	const std::vector<Action>* actions;
 };
 
-extern std::vector<Channel*> channels;
+constexpr int MASTER_OUT_CHANNEL_ID = 0;
+constexpr int MASTER_IN_CHANNEL_ID  = 1;
 
-extern bool   recording;     // is recording something?
-extern bool   ready;
-extern bool   rewindWait;    // rewind guard, if quantized
-extern bool   hasSolos;      // more than 0 channels soloed
+extern std::atomic<bool>  hasSolos;      // more than 0 channels soloed
+extern std::atomic<bool>  rewindWait;    // rewind guard, if quantized
 extern std::atomic<float> outVol;
 extern std::atomic<float> inVol;
 extern std::atomic<float> peakOut;
@@ -72,9 +72,7 @@ extern std::atomic<float> peakIn;
 Copy, process and paste the input into the output, in order to obtain a "hear 
 what you're playing" feature. */
 
-extern bool inToOut;
-
-extern pthread_mutex_t mutex;
+extern std::atomic<bool> inToOut;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 
@@ -84,6 +82,17 @@ shrink or resize the sequencer. */
 
 void allocVirtualInput(Frame frames);
 
+/* clearVirtualInput
+Clears internal virtual channel. */
+
+void clearVirtualInput();
+
+/* getVirtualInput
+Returns a read-only reference to the internal virtual channel. Use this to
+merge data into channel after an input recording session. */
+
+const AudioBuffer& getVirtualInput(); 
+
 void close();
 
 /* masterPlay
@@ -92,28 +101,13 @@ Core method (callback) */
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, double streamTime,
 	RtAudioStreamStatus status, void* userData);
 
-/* isSilent
-Is mixer silent? */
+bool isChannelAudible(const Channel* ch);
 
-bool isSilent();
-
-bool isChannelAudible(Channel* ch);
-
-/* rewind
-Rewinds sequencer to frame 0. */
-
-void rewind();
-
-/* startInputRec
-Starts input recording on frame clock::getCurrentFrame(). */
+/* startInputRec, stopInputRec
+Starts/stops input recording on frame clock::getCurrentFrame(). */
 
 void startInputRec();
-
-/* mergeVirtualInput
-Copies the virtual channel input in the channels designed for input recording. 
-Called by mixerHandler on stopInputRec(). */
-
-void mergeVirtualInput();
+void stopInputRec();
 
 void toggleMetronome();
 bool isMetronomeOn();

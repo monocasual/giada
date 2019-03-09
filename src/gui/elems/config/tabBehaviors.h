@@ -36,14 +36,16 @@ class geRadio;
 class geCheck;
 
 
+namespace giada {
+namespace v
+{
 class geTabBehaviors : public Fl_Group
 {
-private:
-
-	static void cb_radio_mutex  (Fl_Widget *w, void *p);
-	inline void __cb_radio_mutex(Fl_Widget *w);
-
 public:
+
+	geTabBehaviors(int x, int y, int w, int h);
+
+	void save();
 
 	geRadio *recsStopOnChanHalt_1;
 	geRadio *recsStopOnChanHalt_0;
@@ -52,11 +54,13 @@ public:
 	geCheck *treatRecsAsLoops;
 	geCheck *inputMonitorDefaultOn;
 
-	geTabBehaviors(int x, int y, int w, int h);
 
-	void save();
+private:
+
+	static void cb_radio_mutex(Fl_Widget* w, void* p);
+	void cb_radio_mutex(Fl_Widget* w);
 };
-
+}} // giada::v::
 
 
 #endif

@@ -26,11 +26,11 @@
 
 
 #include <FL/Fl_Double_Window.H>
-#include "../../../core/conf.h"
-#include "../../../core/clock.h"
-#include "../../../utils/math.h"
-#include "../basics/choice.h"
-#include "../basics/check.h"
+#include "core/conf.h"
+#include "core/clock.h"
+#include "utils/math.h"
+#include "gui/elems/basics/choice.h"
+#include "gui/elems/basics/check.h"
 #include "gridTool.h"
 
 

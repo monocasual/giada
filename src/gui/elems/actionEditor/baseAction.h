@@ -30,8 +30,8 @@
 
 
 #include <FL/Fl_Box.H>
-#include "../../../core/recorder.h"
-#include "../../../core/types.h"
+#include "core/recorder.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -43,17 +43,13 @@ namespace v
 {
 class geBaseAction : public Fl_Box
 {
-protected:
-	
-	bool m_resizable;
-
 public:
 
 	static const Pixel MIN_WIDTH    = 12;
 	static const Pixel HANDLE_WIDTH = 6;
 
 	geBaseAction(Pixel x, Pixel y, Pixel w, Pixel h, bool resizable, 
-		const m::Action* a1, const m::Action* a2);
+		m::Action a1, m::Action a2);
 
 	int handle(int e) override;
 
@@ -73,8 +69,12 @@ public:
 	bool altered;
 	Pixel pick;
 
-	const m::Action* a1;
-	const m::Action* a2;
+	m::Action a1;
+	m::Action a2;
+	
+protected:
+	
+	bool m_resizable;
 };
 }} // giada::v::
 

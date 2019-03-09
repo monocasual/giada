@@ -50,7 +50,7 @@ RtAudio* rtSystem     = nullptr;
 bool     status       = false;
 unsigned numDevs      = 0;
 bool     inputEnabled = false;
-unsigned realBufsize  = 0; 		// reale bufsize from the soundcard
+unsigned realBufsize  = 0;     // Real buffer size from the soundcard
 int      api          = 0;
 
 #ifdef __linux__
@@ -71,7 +71,7 @@ jack_client_t* jackGetHandle()
 /* -------------------------------------------------------------------------- */
 
 
-bool getStatus()
+bool isReady()
 {
   return status;
 }
