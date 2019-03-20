@@ -12,7 +12,8 @@
 --------------------------------------------------------------------------------
 
 
-0.15.4 ---
+0.15.4 --- 2019 . 03 . 22
+- New record-on-signal option for input and action recording
 - Initial support for plug-ins with mono I/O buses
 - PluginHost refactoring
 - Smart pointers for Wave and Plugin objects
