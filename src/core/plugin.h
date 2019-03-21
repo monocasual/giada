@@ -32,6 +32,7 @@
 
 
 #include "../deps/juce-config.h"
+#include "const.h"
 
 
 namespace giada {
@@ -94,6 +95,11 @@ public:
 	std::vector<uint32_t> midiInParams;
 
 private:
+
+#ifdef G_OS_WINDOWS
+	#undef IN
+	#undef OUT
+#endif
 
 	enum class BusType { IN = true, OUT = false };
 
