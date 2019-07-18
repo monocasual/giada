@@ -40,7 +40,7 @@ class geWaveTools : public Fl_Scroll
 {
 public:
 
-	geWaveTools(int x, int y, int w, int h);
+	geWaveTools(ID channelId, ID waveId, int x, int y, int w, int h);
 
 	void resize(int x, int y, int w, int h) override;
 	int  handle(int e) override;
@@ -59,6 +59,9 @@ public:
 	void refresh();
 	
 	v::geWaveform* waveform;
+
+	ID channelId;
+	ID waveId;
 
 private:
 

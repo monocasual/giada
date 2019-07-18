@@ -39,40 +39,35 @@ namespace sampleEditor
 /* setBeginEnd
 Sets start/end points in the sample editor. */
 
-void setBeginEnd(ID chanID, int b, int e);
+void setBeginEnd(ID channelId, int b, int e);
 
-void cut(ID chanID, int a, int b);
-void copy(ID chanID, int a, int b);
+void cut(ID channelId, ID waveId, int a, int b);
+void copy(ID waveId, int a, int b);
+void paste(ID channelId, ID waveId, int a);
 
-/* paste
-Pastes what's defined in m_copyBuffer into channel 'ch' at point 'a'. If 
-m_copyBuffer is empty, does nothing. */
-
-void paste(ID chanID, int a);
-
-void trim(ID chanID, int a, int b);
-void reverse(ID chanID, int a, int b);
-void normalizeHard(ID chanID, int a, int b);
-void silence(ID chanID, int a, int b);
-void fade(ID chanID, int a, int b, int type);
-void smoothEdges(ID chanID, int a, int b);
-void shift(ID chanID, int offset);
-void reload(ID chanID);
+void trim(ID channelId, ID waveId, int a, int b);
+void reverse(ID waveId, int a, int b);
+void normalizeHard(ID waveId, int a, int b);
+void silence(ID waveId, int a, int b);
+void fade(ID waveId, int a, int b, int type);
+void smoothEdges(ID waveId, int a, int b);
+void shift(ID channelId, ID waveId, int offset);
+void reload(ID channelId, ID waveId);
 
 bool isWaveBufferFull();
 
 /* setPlayHead
 Changes playhead's position. Used in preview. */
 
-void setPlayHead(ID chanID, Frame f);
+void setPlayHead(ID channelId, Frame f);
 
-void setPreview(ID chanID, PreviewMode mode);
-void rewindPreview(ID chanID);
+void setPreview(ID channelId, PreviewMode mode);
+void rewindPreview(ID channelId);
 
 /* toNewChannel
 Copies the selected range into a new sample channel. */
 
-void toNewChannel(ID chanID, int a, int b);
+void toNewChannel(ID channelId, int a, int b);
 }}}; // giada::c::sampleEditor::
 
 #endif

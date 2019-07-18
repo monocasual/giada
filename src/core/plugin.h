@@ -44,7 +44,7 @@ class Plugin
 {
 public:
 
-	Plugin(juce::AudioPluginInstance* p, double samplerate, int buffersize);
+	Plugin(ID id, juce::AudioPluginInstance* p, double samplerate, int buffersize);
 	Plugin(const Plugin& o);
 	~Plugin();
 

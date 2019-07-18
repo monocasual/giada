@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/graphics.h"
 #include "core/mixer.h"
+#include "core/mixerHandler.h"
 #include "core/pluginHost.h"
 #include "glue/main.h"
 #include "utils/gui.h"
@@ -54,6 +55,7 @@ geMainIO::geMainIO(int x, int y)
 	begin();
 
 #if defined(WITH_VST)
+
 	masterFxIn  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 	inVol       = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	inMeter     = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
@@ -61,11 +63,14 @@ geMainIO::geMainIO(int x, int y)
 	outMeter    = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	masterFxOut = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+
 #else
+
 	inVol       = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	inMeter     = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
 	outMeter    = new geSoundMeter(0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial      (0, 0, G_GUI_UNIT, G_GUI_UNIT);
+
 #endif
 
 	end();
@@ -73,15 +78,18 @@ geMainIO::geMainIO(int x, int y)
 	resizable(nullptr);   // don't resize any widget
 
 	outVol->callback(cb_outVol, (void*)this);
-	outVol->value(m::mixer::outVol.load());
 	inVol->callback(cb_inVol, (void*)this);
-	inVol->value(m::mixer::inVol.load());
+
+	outVol->value(m::mh::getOutVol());
+	inVol->value(m::mh::getInVol());
 
 #ifdef WITH_VST
+
 	masterFxOut->callback(cb_masterFxOut, (void*)this);
 	masterFxIn->callback(cb_masterFxIn, (void*)this);
 	inToOut->callback(cb_inToOut, (void*)this);
 	inToOut->type(FL_TOGGLE_BUTTON);
+
 #endif
 }
 
@@ -135,7 +143,7 @@ void geMainIO::cb_masterFxIn()
 
 void geMainIO::cb_inToOut()
 {
-	m::mixer::inToOut.store(inToOut->value());
+	m::mh::setInToOut(inToOut->value());
 }
 
 #endif

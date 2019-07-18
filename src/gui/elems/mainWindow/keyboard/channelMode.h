@@ -45,7 +45,7 @@ class geChannelMode : public Fl_Menu_Button
 {
 public:
 
-  geChannelMode(int x, int y, int w, int h, const m::SampleChannel* ch);
+  geChannelMode(int x, int y, int w, int h, ID channelId);
 
 	void draw() override;
 
@@ -54,7 +54,7 @@ private:
     static void cb_changeMode(Fl_Widget* v, void* p);
     void cb_changeMode(int mode);
 
-    const m::SampleChannel* ch;
+    ID m_channelId;
 };
 }} // giada::v::
 

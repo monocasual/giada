@@ -44,11 +44,13 @@ class geVolumeTool : public Fl_Pack
 {
 public:
 
-	geVolumeTool(int x, int y);
+	geVolumeTool(ID channelId, int x, int y);
 
 	void rebuild();
 	
 private:
+
+	ID m_channelId;
 
 	geBox*   label;
 	geDial*  dial;

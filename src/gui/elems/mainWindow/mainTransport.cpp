@@ -93,7 +93,7 @@ geMainTransport::geMainTransport(int x, int y)
 void geMainTransport::refresh()
 {
 	play->setStatus(m::clock::isRunning());
-	recAction->setStatus(m::recManager::isRecordingAction() && m::clock::isRunning());
+	recAction->setStatus(m::recManager::isRecordingAction());
 	recInput->setStatus(m::recManager::isRecordingInput());
 	metronome->setStatus(m::mixer::isMetronomeOn());
 }

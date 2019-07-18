@@ -40,7 +40,6 @@
 #include "utils/log.h"
 #include "utils/math.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/sampleChannel.h"
 #include "core/channels/channel.h"
 #include "core/channels/midiChannel.h"
@@ -93,7 +92,11 @@ void keyRelease(ID channelId, bool ctrl, bool shift)
 
 void setSampleChannelKey(ID channelId, int k)
 {
-	m::model::getLayout()->getChannel(channelId)->key = k;
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.key = k;
+	});
+
 	Fl::lock();
 	G_MainWin->keyboard->getChannel(channelId)->mainButton->setKey(k);
 	Fl::unlock();
@@ -103,15 +106,18 @@ void setSampleChannelKey(ID channelId, int k)
 /* -------------------------------------------------------------------------- */
 
 
-void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, const m::Channel* c)
+void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, ID channelId)
 {
-	/* No MIDI learning if we are learning a Channel (channel != nullptr) and 
+	/* No MIDI learning if we are learning a Channel (channel != 0) and 
 	the selected MIDI channel is filtered OR if we are learning a global 
-	parameter (channel == nullptr) and the selected MIDI channel is filtered. */
+	parameter (channel == 0) and the selected MIDI channel is filtered. */
 
-	if ((c != nullptr && !c->isMidiInAllowed(e.getChannel())) ||
-	    (c == nullptr && !m::conf::isMidiInAllowed(e.getChannel())))
-			return;
+	if (channelId == 0 && !m::conf::isMidiInAllowed(e.getChannel()))
+		return;
+
+	m::model::ChannelsLock l(m::model::channels);
+	if (!m::model::get(m::model::channels, channelId).isMidiInAllowed(e.getChannel()))
+		return;
 
 	param.store(e.getRawNoVelocity());
 	m::midiDispatcher::stopMidiLearn();

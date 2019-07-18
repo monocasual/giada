@@ -99,14 +99,6 @@ Checks if the channel has at least one action recorded. */
 
 bool hasActions(ID channelId, int type=0);
 
-/* isActive
-Is recorder recording something? */
-
-bool isActive();
-
-void enable();
-void disable();
-
 Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
 
 /* rec (1)

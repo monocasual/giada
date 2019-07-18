@@ -45,18 +45,17 @@ class Channel;
 namespace c {
 namespace plugin 
 {
-void addPlugin(int pluginListIndex, ID chanID);
+void addPlugin(int pluginListIndex, ID channelId);
 
-void swapPlugins(ID pluginID1, ID pluginID2, ID chanID);
+void swapPlugins(ID pluginId1, ID pluginId2, ID channelId);
 
-void freePlugin(ID pluginID, ID chanID);
+void freePlugin(ID pluginId, ID channelId);
 
-void setParameter(ID pluginID, int paramIndex, float value, ID chanID, 
-    bool gui=true); 
+void setParameter(ID pluginId, int paramIndex, float value, bool gui=true); 
 
-void setProgram(ID pluginID, int programIndex, ID chanID);
+void setProgram(ID pluginId, int programIndex);
 
-void toggleBypass(ID pluginID, ID chanID);
+void toggleBypass(ID pluginId);
 
 /* setPluginPathCb
 Callback attached to the DirBrowser for adding new Plug-in search paths in the

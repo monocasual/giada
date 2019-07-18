@@ -45,11 +45,11 @@ class geChannelStatus : public Fl_Box
 {
 public:
 
-	geChannelStatus(int x, int y, int w, int h, const m::SampleChannel* ch);
+	geChannelStatus(int x, int y, int w, int h, ID channelId);
 
 	void draw() override;
 
-	const m::SampleChannel* ch;
+	ID channelId;
 };
 }} // giada::v::
 

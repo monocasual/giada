@@ -32,6 +32,7 @@
 #include "core/channels/channel.h"
 #include "core/recorder.h"
 #include "core/recorderHandler.h"
+#include "core/recManager.h"
 #include "core/action.h"
 #include "core/patch.h"
 #include "core/const.h"
@@ -61,6 +62,15 @@ MidiChannel::MidiChannel(const MidiChannel& o)
   midiOut    (o.midiOut),
   midiOutChan(o.midiOutChan)
 {
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+MidiChannel* MidiChannel::clone() const
+{
+	return new MidiChannel(*this);
 }
 
 
@@ -197,7 +207,7 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 	namespace mrh = m::recorderHandler;
 	namespace mr  = m::recorder;
 
-	if (armed.load() == false)
+	if (!armed)
 		return;
 
 	/* Now all messages are turned into Channel-0 messages. Giada doesn't care 
@@ -216,7 +226,7 @@ void MidiChannel::receiveMidi(const MidiEvent& midiEvent)
 
 #endif
 
-	if (mr::isActive()) {
+	if (recManager::isRecordingAction()) {
 		mrh::liveRec(id, midiEventFlat);
 		hasActions = true;
 	}

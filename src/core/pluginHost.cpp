@@ -27,12 +27,10 @@
 
 #ifdef WITH_VST
 
-
 #include <cassert>
 #include "utils/log.h"
 #include "utils/vector.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/channel.h"
 #include "core/const.h"
 #include "core/plugin.h"
@@ -77,14 +75,31 @@ void juceToGiadaOutBuf_(AudioBuffer& outBuf)
 /* -------------------------------------------------------------------------- */
 
 
-void processPlugins_(const Stack& stack, juce::MidiBuffer& events)
+void processPlugins_(const std::vector<ID>& pluginIds, juce::MidiBuffer& events)
 {
-	for (const std::shared_ptr<Plugin>& p : stack) {
-		if (p->isSuspended() || p->isBypassed())
+	model::PluginsLock l(model::plugins);
+
+	for (ID id : pluginIds) {
+		Plugin& p = model::get(model::plugins, id);
+		if (p.isSuspended() || p.isBypassed())
 			continue;
-		const_cast<std::shared_ptr<Plugin>&>(p)->process(audioBuffer_, events);
+		p.process(audioBuffer_, events);
 		events.clear();
 	}
+}
+
+
+ID clonePlugin_(ID pluginId)
+{
+	model::PluginsLock l(model::plugins);
+
+	const Plugin&           original = model::get(model::plugins, pluginId);
+	std::unique_ptr<Plugin> clone    = pluginManager::makePlugin(original);
+	ID                      newId    = clone->id;
+
+	model::plugins.push(std::move(clone));
+
+	return newId;
 }
 }; // {anonymous}
 
@@ -114,7 +129,8 @@ void init(int buffersize)
 /* -------------------------------------------------------------------------- */
 
 
-void processStack(AudioBuffer& outBuf, const Stack& stack, juce::MidiBuffer* events)
+void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds, 
+	juce::MidiBuffer* events)
 {
 	assert(outBuf.countFrames() == audioBuffer_.getNumSamples());
 
@@ -126,11 +142,11 @@ void processStack(AudioBuffer& outBuf, const Stack& stack, juce::MidiBuffer* eve
 	if (events == nullptr) {
 		giadaToJuceTempBuf_(outBuf);
 		juce::MidiBuffer events; // empty
-		processPlugins_(stack, events);
+		processPlugins_(pluginIds, events);
 	}
 	else {
 		audioBuffer_.clear();
-		processPlugins_(stack, *events);
+		processPlugins_(pluginIds, *events);
 
 	}
 	juceToGiadaOutBuf_(outBuf);
@@ -140,67 +156,24 @@ void processStack(AudioBuffer& outBuf, const Stack& stack, juce::MidiBuffer* eve
 /* -------------------------------------------------------------------------- */
 
 
-const Plugin* getPluginByID(ID pluginID, ID chanID)
+const Plugin* getPluginByID(ID pluginID, ID channelId)
 {
-	return model::getLayout()->getPlugin(pluginID, chanID);
+	assert(false);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void addPlugin(std::shared_ptr<Plugin> p, ID chanID)
+void addPlugin(std::unique_ptr<Plugin> p, ID channelId)
 {
-	Stack& stack = model::getData().plugins[chanID]; // Let's create the key if non-existent with the [] operator
-	p->id = pluginId_++;
-	stack.push_back(p);
+	ID pluginId = p->id;
 	
-	std::shared_ptr<model::Layout> layout = model::cloneLayout();
-	layout->getPlugins(chanID)->push_back(p);
-	model::swapLayout(layout);
-}
+	model::plugins.push(std::move(p));
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void swapPlugin(ID pluginID1, ID pluginID2, ID chanID)
-{
-	if (model::getLayout()->getPlugins(chanID)->size() == 1 || pluginID1 == pluginID2)
-		return;
-
-	std::shared_ptr<model::Layout> layout = model::cloneLayout();
-	Stack& stack = *layout->getPlugins(chanID);
-
-	int index1 = u::vector::indexOf(stack, [=](const std::shared_ptr<Plugin>& p)
+	model::onSwap(model::channels, channelId, [&](Channel& c)
 	{
-		return p->id == pluginID1;
-	});
-	int index2 = u::vector::indexOf(stack, [=](const std::shared_ptr<Plugin>& p)
-	{
-		return p->id == pluginID2;
-	});
-
-	std::swap(stack[index1], stack[index2]);
-	model::swapLayout(layout);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void freePlugin(ID pluginID, ID chanID)
-{
-	std::shared_ptr<model::Layout> layout = model::cloneLayout();
-	u::vector::removeIf(*layout->getPlugins(chanID), [=](const std::shared_ptr<Plugin>& p)
-	{
-		return p->id == pluginID;
-	});
-	model::swapLayout(layout);
-
-	u::vector::removeIf(model::getData().plugins.at(chanID), [=](const std::shared_ptr<Plugin>& p)
-	{
-		return p->id == pluginID;
+		c.pluginIds.push_back(pluginId);
 	});
 }
 
@@ -208,43 +181,83 @@ void freePlugin(ID pluginID, ID chanID)
 /* -------------------------------------------------------------------------- */
 
 
-void clonePlugins(ID channelId, ID newChannelId)
+void swapPlugin(ID pluginId1, ID pluginId2, ID channelId)
 {
-	Stack& stack = model::getData().plugins[newChannelId]; // Create the key
+	model::onSwap(model::channels, channelId, [&](Channel& c)
+	{
+		auto a = u::vector::indexOf(c.pluginIds, pluginId1); 
+		auto b = u::vector::indexOf(c.pluginIds, pluginId2); 
 	
-	for (std::shared_ptr<Plugin>& p : *model::getLayout()->getPlugins(channelId)) {
-		std::shared_ptr<Plugin> clone = pluginManager::makePlugin(*p.get()); 
-		clone->id = pluginId_++;
-		stack.push_back(clone);
-	}
+		std::swap(c.pluginIds.at(a), c.pluginIds.at(b));
+	});
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setPluginParameter(ID pluginID, int paramIndex, float value, ID chanID)
+void freePlugin(ID pluginId, ID channelId)
 {
-	model::getLayout()->getPlugin(pluginID, chanID)->setParameter(paramIndex, value);
+	model::onSwap(model::channels, channelId, [&](Channel& c)
+	{
+		u::vector::remove(c.pluginIds, pluginId);
+	});
+
+	model::plugins.pop(model::getIndex(model::plugins, pluginId));
+}
+
+
+void freePlugins(const std::vector<ID>& pluginIds)
+{
+	for (ID id : pluginIds)
+		model::plugins.pop(model::getIndex(model::plugins, id));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setPluginProgram(ID pluginID, int programIndex, ID chanID)
+void clonePlugins(const Channel& oldChannel, Channel& newChannel)
 {
-	model::getLayout()->getPlugin(pluginID, chanID)->setCurrentProgram(programIndex);
+	newChannel.pluginIds.clear();
+	for (ID id : oldChannel.pluginIds)
+		newChannel.pluginIds.push_back(clonePlugin_(id));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void toggleBypass(ID pluginID, ID chanID)
+void setPluginParameter(ID pluginId, int paramIndex, float value)
 {
-	Plugin* p = model::getLayout()->getPlugin(pluginID, chanID);
-	p->setBypass(!p->isBypassed());
+	model::onGet(model::plugins, pluginId, [&](Plugin& p)
+	{
+		p.setParameter(paramIndex, value);
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void setPluginProgram(ID pluginId, int programIndex)
+{
+	model::onGet(model::plugins, pluginId, [&](Plugin& p)
+	{
+		p.setCurrentProgram(programIndex);
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toggleBypass(ID pluginId)
+{
+	model::onGet(model::plugins, pluginId, [&](Plugin& p)
+	{
+		p.setBypass(!p.isBypassed());
+	});
 }
 
 

@@ -55,36 +55,43 @@ void close();
 /* addPlugin
 Adds a new plugin to channel 'channelId'. */
 
-void addPlugin(std::shared_ptr<Plugin> p, ID channelId);
+void addPlugin(std::unique_ptr<Plugin> p, ID channelId);
 
 /* processStack
 Applies the fx list to the buffer. */
 
-void processStack(AudioBuffer& outBuf, const Stack& s, juce::MidiBuffer* events=nullptr);
+void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds, 
+	juce::MidiBuffer* events=nullptr);
 
 /* getPluginByIndex */
 
 const Plugin* getPluginByID(ID pluginId, ID channelId);
 
 /* swapPlugin 
-Swaps plug-in at index1 with plug-in at index 2 in Channel 'channelId'. */
+Swaps plug-in with ID 1 with plug-in with ID 2 in Channel 'channelId'. */
 
 void swapPlugin(ID pluginId1, ID pluginId2, ID channelId);
 
 /* freePlugin.
-Unloads plugin 'pluginId' from channel 'channelId'. */
+Unloads plugin from channel 'channelId'. */
 
 void freePlugin(ID pluginId, ID channelId);
+
+/* freePlugins
+Unloads multiple plugins. Useful when freeing or deleting a channel. */
+
+void freePlugins(const std::vector<ID>& pluginIds);
 
 /* clonePlugins
 Clones all the plug-ins from the current channel to the new one. */
 
-void clonePlugins(ID channelId, ID newChannelId);
+void clonePlugins(const Channel& oldChannel, Channel& newChannel);
 
-void setPluginParameter(ID pluginId, int paramIndex, float value, ID channelId);
-void setPluginProgram(ID pluginId, int programIndex, ID channelId); 
+void setPluginParameter(ID pluginId, int paramIndex, float value);
 
-void toggleBypass(ID pluginId, ID channelId);
+void setPluginProgram(ID pluginId, int programIndex); 
+
+void toggleBypass(ID pluginId);
 
 /* runDispatchLoop
 Wakes up plugins' GUI manager for N milliseconds. */

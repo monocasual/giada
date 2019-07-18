@@ -43,6 +43,8 @@ namespace pluginManager
 {
 namespace
 {
+ID pluginId_ = 0;
+
 int samplerate_;
 int buffersize_;
 
@@ -177,20 +179,18 @@ int saveList(const std::string& filepath)
 
 int loadList(const std::string& filepath)
 {
-	juce::XmlElement* elem = juce::XmlDocument::parse(juce::File(filepath));
-	if (elem != nullptr) {
-		knownPluginList_.recreateFromXml(*elem);
-		delete elem;
-		return 1;
-	}
-	return 0;
+	std::unique_ptr<juce::XmlElement> elem(juce::XmlDocument::parse(juce::File(filepath)));
+	if (elem == nullptr)
+		return 0;
+	knownPluginList_.recreateFromXml(*elem);
+	return 1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::shared_ptr<Plugin> makePlugin(const std::string& fid)
+std::unique_ptr<Plugin> makePlugin(const std::string& fid)
 {
 	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
 	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
@@ -216,14 +216,14 @@ std::shared_ptr<Plugin> makePlugin(const std::string& fid)
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return std::make_shared<Plugin>(pi, samplerate_, buffersize_);
+	return std::make_unique<Plugin>(++pluginId_, pi, samplerate_, buffersize_);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-std::shared_ptr<Plugin> makePlugin(int index)
+std::unique_ptr<Plugin> makePlugin(int index)
 {
 	juce::PluginDescription* pd = knownPluginList_.getType(index);
 	
@@ -241,9 +241,9 @@ std::shared_ptr<Plugin> makePlugin(int index)
 /* -------------------------------------------------------------------------- */
 
 
-std::shared_ptr<Plugin> makePlugin(const Plugin& src)
+std::unique_ptr<Plugin> makePlugin(const Plugin& src)
 {
-	std::shared_ptr<Plugin> p = makePlugin(src.getUniqueId());
+	std::unique_ptr<Plugin> p = makePlugin(src.getUniqueId());
 	
 	for (int i=0; i<src.getNumParameters(); i++)
 		p->setParameter(i, src.getParameter(i));	

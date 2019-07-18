@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "core/channels/channel.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "core/recorder.h"
 #include "utils/string.h"
@@ -36,10 +37,10 @@
 namespace giada {
 namespace v
 {
-geChannelButton::geChannelButton(int x, int y, int w, int h, const m::Channel* ch)
-: geButton(x, y, w, h), 
-  m_key   (""),
-  m_ch    (ch)
+geChannelButton::geChannelButton(int x, int y, int w, int h, ID channelId)
+: geButton   (x, y, w, h), 
+  m_channelId(channelId),
+  m_key      ("")
 {
 }
 
@@ -49,22 +50,25 @@ geChannelButton::geChannelButton(int x, int y, int w, int h, const m::Channel* c
 
 void geChannelButton::refresh()
 {
-	switch (m_ch->status) {
-		case ChannelStatus::OFF:
-		case ChannelStatus::EMPTY:
-			setDefaultMode(); break;
-		case ChannelStatus::PLAY:
-			setPlayMode(); break;
-		case ChannelStatus::ENDING:
-			setEndingMode(); break;
-		default: break;
-	}
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		switch (c.playStatus) {
+			case ChannelStatus::OFF:
+			case ChannelStatus::EMPTY:
+				setDefaultMode(); break;
+			case ChannelStatus::PLAY:
+				setPlayMode(); break;
+			case ChannelStatus::ENDING:
+				setEndingMode(); break;
+			default: break;
+		}
 
-	switch (m_ch->recStatus) {
-		case ChannelStatus::ENDING:
-			setEndingMode(); break;
-		default: break;
-	}
+		switch (c.recStatus) {
+			case ChannelStatus::ENDING:
+				setEndingMode(); break;
+			default: break;
+		}
+	});
 }
 
 

@@ -40,10 +40,10 @@ namespace giada {
 namespace v 
 {
 geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l, 
-	std::atomic<uint32_t>& param, const m::Channel* ch)
-: Fl_Group(X, Y, W, 20),
-  m_ch    (ch),
-  m_param (param)
+	std::atomic<uint32_t>& param, ID channelId)
+: Fl_Group   (X, Y, W, 20),
+  m_channelId(channelId),
+  m_param    (param)
 {
 	begin();
 	m_text   = new geBox(x(), y(), 156, 20, l);
@@ -96,7 +96,7 @@ void geMidiLearner::cb_value(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_va
 void geMidiLearner::cb_value()
 {
 	if (Fl::event_button() == FL_RIGHT_MOUSE)
-		c::io::midiLearn(m::MidiEvent(), m_param, m_ch);  // Empty event (0x0)
+		c::io::midiLearn(m::MidiEvent(), m_param, m_channelId);  // Empty event (0x0)
 }
 
 
@@ -108,10 +108,9 @@ void geMidiLearner::cb_button()
 	if (m_button->value() == 1)
 		m::midiDispatcher::startMidiLearn([this](m::MidiEvent e) 
 		{
-			c::io::midiLearn(e, m_param, m_ch);
+			c::io::midiLearn(e, m_param, m_channelId);
 		});
 	else
 		m::midiDispatcher::stopMidiLearn();	
 }
-
 }} // giada::v::

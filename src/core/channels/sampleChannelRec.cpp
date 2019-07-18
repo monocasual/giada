@@ -50,9 +50,6 @@ Things to do when the sequencer is on the first beat. */
 
 void onFirstBeat_(SampleChannel* ch, bool recsStopOnChanHalt)
 {
-	if (ch->wave == nullptr)
-		return;
-
 	switch (ch->recStatus) {
 		case ChannelStatus::ENDING:
 			ch->recStatus = ChannelStatus::OFF;
@@ -61,7 +58,7 @@ void onFirstBeat_(SampleChannel* ch, bool recsStopOnChanHalt)
 
 		case ChannelStatus::WAIT:
 			ch->recStatus = ChannelStatus::PLAY;
-			setReadActions(ch, true, recsStopOnChanHalt);   // rec start			
+			setReadActions(ch, true, recsStopOnChanHalt);   // rec start
 			break;
 
 		default: break;
@@ -80,10 +77,10 @@ bool recorderCanRec_(SampleChannel* ch)
 		- mixer is not recording a take somewhere
 		- channel is MIDI or SAMPLE type with data in it  */
 
-	return recorder::isActive()            && 
-		   clock::isRunning()              && 
-		   !recManager::isRecordingInput() && 
-		(ch->type == ChannelType::MIDI || (ch->type == ChannelType::SAMPLE && ch->hasData()));
+	return recManager::isRecordingAction() && 
+	       clock::isRunning()              && 
+	       !recManager::isRecordingInput() && 
+	       (ch->type == ChannelType::MIDI || (ch->type == ChannelType::SAMPLE && ch->hasData()));
 }
 
 
@@ -159,7 +156,7 @@ void quantize_(SampleChannel* ch, bool quantoPassed)
 	/* Skip if in loop mode or not in a quantization stage. Otherwise the 
 	quantization wait has expired: record the keypress.  */
 
-	if (!ch->isAnyLoopMode() && ch->quantizing && quantoPassed && ch->status == ChannelStatus::PLAY) {
+	if (!ch->isAnyLoopMode() && ch->quantizing && quantoPassed && ch->playStatus == ChannelStatus::PLAY) {
 		ch->quantizing = false;
 		recordKeyPressAction_(ch);
 	}
@@ -174,6 +171,8 @@ void quantize_(SampleChannel* ch, bool quantoPassed)
 
 void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 {
+	if (!ch->hasWave)
+		return;
 	quantize_(ch, fe.quantoPassed);
 	if (fe.onFirstBeat)
 		onFirstBeat_(ch, conf::recsStopOnChanHalt);
@@ -192,7 +191,7 @@ bool recordStart(SampleChannel* ch, bool canQuantize)
 	/* Record a 'start' event if the quantizer is off, otherwise let mixer to 
 	handle it when a quantoWait has passed (see quantize_()). Also skip if 
 	channel is in any loop mode, where KEYPRESS and KEYREL are meaningless. */
-
+	
 	if (!canQuantize && !ch->isAnyLoopMode() && recorderCanRec_(ch))
 		recordKeyPressAction_(ch);
 	return true;

@@ -39,17 +39,27 @@ MasterChannel::MasterChannel(int bufferSize, size_t column)
 
 /* -------------------------------------------------------------------------- */
 
+
+MasterChannel* MasterChannel::clone() const
+{
+	return new MasterChannel(*this);
+}
+
+	
+/* -------------------------------------------------------------------------- */
+
+
 void MasterChannel::render(AudioBuffer& out, const AudioBuffer& in, 
 	AudioBuffer& inToOut, bool audible, bool running)
 {
 #ifdef WITH_VST
-	if (plugins.size() == 0)
+	if (pluginIds.size() == 0)
 		return;
 	if (id == mixer::MASTER_OUT_CHANNEL_ID)
-		pluginHost::processStack(out, plugins);
+		pluginHost::processStack(out, pluginIds);
 	else
 	if (id == mixer::MASTER_IN_CHANNEL_ID)
-		pluginHost::processStack(inToOut, plugins);
+		pluginHost::processStack(inToOut, pluginIds);
 #endif
 }
 

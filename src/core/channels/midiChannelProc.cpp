@@ -44,13 +44,13 @@ namespace
 {
 void onFirstBeat_(MidiChannel* ch)
 {
-	if (ch->status == ChannelStatus::ENDING) {
-		ch->status = ChannelStatus::OFF;
+	if (ch->playStatus == ChannelStatus::ENDING) {
+		ch->playStatus = ChannelStatus::OFF;
 		ch->sendMidiLstatus();
 	}
 	else
-	if (ch->status == ChannelStatus::WAIT) {
-		ch->status = ChannelStatus::PLAY;
+	if (ch->playStatus == ChannelStatus::WAIT) {
+		ch->playStatus = ChannelStatus::PLAY;
 		ch->sendMidiLstatus();
 	}
 }
@@ -79,7 +79,7 @@ void parseEvents(MidiChannel* ch, mixer::FrameEvents fe)
 		onFirstBeat_(ch);
 	if (fe.actions != nullptr)
 		for (const Action& action : *fe.actions)
-			if (action.channelId == ch->id && ch->isPlaying() && ch->mute.load() == false)
+			if (action.channelId == ch->id && ch->isPlaying() && !ch->mute)
 				ch->sendMidi(action.event, fe.frameLocal);
 }
 
@@ -101,7 +101,7 @@ void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audi
 			e.getVelocity());
 		ch->midiBuffer.addEvent(message, e.getDelta());
 	}
-	pluginHost::processStack(ch->buffer, ch->plugins, &ch->midiBuffer);
+	pluginHost::processStack(ch->buffer, ch->pluginIds, &ch->midiBuffer);
 	
 	/* Process the plugin stack first, then quit if the channel is muted/soloed. 
 	This way there's no risk of cutting midi event pairs such as note-on and 
@@ -123,20 +123,20 @@ void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audi
 
 void start(MidiChannel* ch)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::PLAY:
-			ch->status = ChannelStatus::ENDING;
+			ch->playStatus = ChannelStatus::ENDING;
 			ch->sendMidiLstatus();
 			break;
 
 		case ChannelStatus::ENDING:
 		case ChannelStatus::WAIT:
-			ch->status = ChannelStatus::OFF;
+			ch->playStatus = ChannelStatus::OFF;
 			ch->sendMidiLstatus();
 			break;
 
 		case ChannelStatus::OFF:
-			ch->status = ChannelStatus::WAIT;
+			ch->playStatus = ChannelStatus::WAIT;
 			ch->sendMidiLstatus();
 			break;
 
@@ -153,7 +153,7 @@ void kill(MidiChannel* ch, int localFrame)
 	if (ch->isPlaying())
 		sendAllNotesOff_(ch);
 
-	ch->status = ChannelStatus::OFF;
+	ch->playStatus = ChannelStatus::OFF;
 	ch->sendMidiLstatus();
 }
 
@@ -192,8 +192,10 @@ void setSolo(MidiChannel* ch, bool v)
 	mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
-		c->sendMidiLstatus();
+	// TODO
+	assert(false);
+	//for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
+	//	c->sendMidiLstatus();
 
 	ch->sendMidiLsolo();
 }

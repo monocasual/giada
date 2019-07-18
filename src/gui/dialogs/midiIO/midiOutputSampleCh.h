@@ -49,7 +49,7 @@ private:
 	static void cb_close(Fl_Widget* w, void* p);
 	void cb_close();
 
-	m::SampleChannel* m_ch;
+	ID m_channelId;
 };
 }} // giada::v::
 

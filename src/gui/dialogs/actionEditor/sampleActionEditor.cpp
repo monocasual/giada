@@ -27,7 +27,6 @@
 
 #include <string>
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/sampleChannel.h"
 #include "core/const.h"
 #include "core/midiEvent.h"
@@ -104,8 +103,13 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 
 bool gdSampleActionEditor::canChangeActionType()
 {
-	const m::SampleChannel* sch = static_cast<const m::SampleChannel*>(ch); 
-	return sch->mode != ChannelMode::SINGLE_PRESS && !sch->isAnyLoopMode();
+	bool res;
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		const m::SampleChannel& sc = static_cast<const m::SampleChannel&>(c); 
+		res = sc.mode != ChannelMode::SINGLE_PRESS && !sc.isAnyLoopMode();
+	});
+	return res;
 }
 
 
@@ -114,7 +118,6 @@ bool gdSampleActionEditor::canChangeActionType()
 
 void gdSampleActionEditor::rebuild()
 {
-	ch        = m::model::getLayout()->getChannel(channelId);
 	m_actions = c::actionEditor::getActions(channelId);
 
 	canChangeActionType() ? actionType->activate() : actionType->deactivate(); 

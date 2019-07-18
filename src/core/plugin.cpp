@@ -42,8 +42,9 @@ using std::string;
 namespace giada {
 namespace m 
 {
-Plugin::Plugin(juce::AudioPluginInstance* plugin, double samplerate, int buffersize)
-: id      (0),
+Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
+	int buffersize)
+: id      (id),
   m_plugin(plugin),
   m_bypass(false)
 {

@@ -44,14 +44,14 @@ class geSampleAction : public geBaseAction
 {
 public:
 
-	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, const m::SampleChannel* ch,
+	geSampleAction(Pixel x, Pixel y, Pixel w, Pixel h, bool singlePress, 
 		m::Action a1, m::Action a2);
 
 	void draw() override;
 
 private:
 
-    const m::SampleChannel* m_ch;
+	bool m_singlePress;
 };
 }} // giada::v::
 

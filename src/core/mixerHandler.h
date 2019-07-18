@@ -44,11 +44,12 @@ class SampleChannel;
 namespace mh
 {
 void init();
+void close();
 
 /* addChannel
 Adds a new channel of type 'type' into the channels stack. */
 
-Channel* addChannel(ChannelType type, size_t column);
+void addChannel(ChannelType type, size_t column);
 
 /* loadChannel (1)
 Loads a new Wave inside a Sample Channel. */
@@ -89,6 +90,10 @@ void stopSequencer();
 void toggleSequencer();
 void rewindSequencer();
 
+void setInToOut(bool v);
+void setInVol(float f);
+void setOutVol(float f);
+
 /* updateSoloCount
 Updates the number of solo-ed channels in mixer. */
 
@@ -100,13 +105,11 @@ contain the address of the project folder. */
 
 void readPatch();
 
-/* startInputRec - record from line in
-Creates a new empty wave in the first available channels. Returns false if
-there are no available channels. */
+/* finalizeInputRec
+Fills armed Sample Channels with audio data coming from an input recording
+session. */
 
-bool startInputRec();
-
-void stopInputRec();
+void finalizeInputRec();
 
 /* uniqueSamplePath
 Returns true if path 'p' is unique. Requires SampleChannel 'skip' in order
@@ -124,11 +127,6 @@ True if 1 or more samples was edited via gEditor */
 
 bool hasEditedSamples();
 
-/* hasArmedSampleChannels
-Tells whether Mixer has one or more Sample Channels armed for input recording. */
-
-bool hasArmedSampleChannels();
-
 /* hasRecordableSampleChannels
 Tells whether Mixer has one or more recordable Sample Channels, that is: 
 a) armed; b) empty (no Wave). */
@@ -144,6 +142,10 @@ bool hasActions();
 True if at least one Sample Channel has some audio recorded in it. */
 
 bool hasAudioData();
+
+float getInVol();
+float getOutVol();
+bool getInToOut();
 }}}  // giada::m::mh::
 
 

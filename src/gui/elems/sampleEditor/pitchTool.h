@@ -45,7 +45,7 @@ class gePitchTool : public Fl_Pack
 {
 public:
 
-	gePitchTool(int x, int y);
+	gePitchTool(ID channelId, int x, int y);
 
 	void rebuild();
 
@@ -65,6 +65,8 @@ private:
 	void cb_setPitchDouble();
 	void cb_resetPitch();
 	void cb_setPitchNum();
+
+	ID m_channelId;
 
 	geBox*    label;
 	geDial*   dial;

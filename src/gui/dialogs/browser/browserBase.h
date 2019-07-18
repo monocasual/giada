@@ -31,6 +31,7 @@
 
 #include<functional>
 #include "gui/dialogs/window.h"
+#include "core/types.h"
 
 
 class Fl_Group;
@@ -60,7 +61,7 @@ public:
 	std::string getSelectedItem() const;
 
 	std::string getCurrentPath() const;
-	const m::Channel* getChannel() const;
+	ID getChannelId() const;
 	void fireCallback() const;
 	
 	/* setStatusBar
@@ -74,7 +75,7 @@ public:
 protected:
 
 	gdBrowserBase(const std::string& title, const std::string& path, 
-		std::function<void(void*)> f, const m::Channel* ch);
+		std::function<void(void*)> f, ID channelId);
 
 	static void cb_up(Fl_Widget* v, void* p);
 	static void cb_close(Fl_Widget* w, void* p);
@@ -88,7 +89,7 @@ protected:
 
 	std::function<void(void*)> m_callback;
 
-	const m::Channel* m_channel;
+	ID m_channelId;
 
 	Fl_Group*   groupTop;
 	geCheck*    hiddenFiles;

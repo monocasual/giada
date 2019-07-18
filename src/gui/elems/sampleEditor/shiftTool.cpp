@@ -28,6 +28,7 @@
 #include <cassert>
 #include <cstdlib>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "utils/gui.h"
 #include "utils/string.h"
@@ -43,8 +44,10 @@
 namespace giada {
 namespace v 
 {
-geShiftTool::geShiftTool(int x, int y)
-: Fl_Pack(x, y, 300, G_GUI_UNIT)
+geShiftTool::geShiftTool(ID channelId, ID waveId, int x, int y)
+: Fl_Pack    (x, y, 300, G_GUI_UNIT),
+  m_channelId(channelId),
+  m_waveId   (waveId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -93,9 +96,10 @@ void geShiftTool::cb_reset()
 
 void geShiftTool::rebuild()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	m_shift->value(u::string::iToString(ch->shift).c_str());
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		m_shift->value(std::to_string(static_cast<m::SampleChannel&>(c).shift).c_str());
+	});
 }
 
 
@@ -104,9 +108,6 @@ void geShiftTool::rebuild()
 
 void geShiftTool::shift(int f)
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::sampleEditor::shift(ch->id, f);	
+	c::sampleEditor::shift(m_channelId, m_waveId, f);
 }
-
 }} // giada::v::

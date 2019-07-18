@@ -25,6 +25,7 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <functional>
 #include <cmath>
 #include <cassert>
 #include <FL/Fl.H>
@@ -51,7 +52,6 @@
 #include "core/channels/sampleChannel.h"
 #include "core/channels/midiChannel.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/kernelAudio.h"
 #include "core/mixerHandler.h"
 #include "core/mixer.h"
@@ -86,9 +86,25 @@ void printLoadError_(int res)
 	else if (res == G_RES_ERR_NO_DATA)
 		v::gdAlert("No file specified.");
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void onRefreshSampleEditor_(bool gui, std::function<void(v::gdSampleEditor*)> f)
+{
+	v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
+	if (gdEditor == nullptr) 
+		return;
+	if (!gui) Fl::lock();
+	f(gdEditor);
+	if (!gui) Fl::unlock();
+}
 } // {anonymous}
 
 
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 
@@ -110,9 +126,9 @@ int loadChannel(ID channelId, const std::string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-m::Channel* addChannel(size_t columnIndex, ChannelType type, int size)
+void addChannel(size_t columnIndex, ChannelType type, int size)
 {
-	return m::mh::addChannel(type, columnIndex);
+	m::mh::addChannel(type, columnIndex);
 }
 
 
@@ -158,7 +174,13 @@ void freeChannel(ID channelId)
 
 void setArm(ID channelId, bool value)
 {
-	m::model::getLayout()->getChannel(channelId)->armed = value;
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) { c.armed = value; });
+}
+
+
+void toggleArm(ID channelId)
+{
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) { c.armed = !c.armed; });
 }
 
 
@@ -167,7 +189,10 @@ void setArm(ID channelId, bool value)
 
 void setInputMonitor(ID channelId, bool value)
 {
-	static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId))->inputMonitor = value;
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c) 
+	{ 
+		static_cast<m::SampleChannel&>(c).inputMonitor = value;
+	});
 }
 
 
@@ -185,18 +210,12 @@ void cloneChannel(ID channelId)
 
 void setVolume(ID channelId, float value, bool gui, bool editor)
 {
-	m::model::getLayout()->getChannel(channelId)->volume = value;
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) { c.volume = value; });
 
 	/* Changing channel volume? Update wave editor (if it's shown). */
 
-	if (editor) {
-		v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-		if (gdEditor != nullptr) {
-			if (!gui) Fl::lock();
-			gdEditor->volumeTool->rebuild();
-			if (!gui) Fl::unlock();
-		}
-	}
+	if (editor) 
+		onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->volumeTool->rebuild(); });
 
 	if (!gui) {
 		Fl::lock();
@@ -210,15 +229,13 @@ void setVolume(ID channelId, float value, bool gui, bool editor)
 
 
 void setPitch(ID channelId, float val, bool gui)
-{
-	static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId))->setPitch(val);
-
-	v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (gdEditor != nullptr) {
-		if (!gui) Fl::lock();
-		gdEditor->pitchTool->rebuild();
-		if (!gui) Fl::unlock();
-	}
+{	
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{ 
+		static_cast<m::SampleChannel&>(c).setPitch(val); 
+	});
+	
+	onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->pitchTool->rebuild(); });
 }
 
 
@@ -227,14 +244,9 @@ void setPitch(ID channelId, float val, bool gui)
 
 void setPan(ID channelId, float val, bool gui)
 {
-	m::model::getLayout()->getChannel(channelId)->setPan(val);
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c) { c.setPan(val); });
 
-	v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (gdEditor != nullptr) {
-		if (!gui) Fl::lock();
-		gdEditor->panTool->rebuild();
-		if (!gui) Fl::unlock();
-	}
+	onRefreshSampleEditor_(gui, [](v::gdSampleEditor* e) { e->panTool->rebuild(); });
 }
 
 
@@ -243,13 +255,13 @@ void setPan(ID channelId, float val, bool gui)
 
 void setMute(ID channelId, bool value)
 {
-	m::model::getLayout()->getChannel(channelId)->setMute(value);
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setMute(value); });
 }
 
 
 void toggleMute(ID channelId)
 {
-	setMute(channelId, !m::model::getLayout()->getChannel(channelId)->mute.load());
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setMute(!ch.mute); });
 }
 
 
@@ -258,7 +270,12 @@ void toggleMute(ID channelId)
 
 void setSampleMode(ID channelId, ChannelMode m)
 {
-	static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId))->mode = m;
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		static_cast<m::SampleChannel&>(ch).mode = m;
+	});
+
+	u::gui::refreshActionEditor();
 }
 
 
@@ -266,20 +283,29 @@ void setSampleMode(ID channelId, ChannelMode m)
 
 
 void setSolo(ID channelId, bool value)
-{
-	m::model::getLayout()->getChannel(channelId)->setSolo(value);
+{	
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setSolo(value); });
+	m::mh::updateSoloCount();
 }
 
+
+void toggleSolo(ID channelId)
+{	
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch) { ch.setSolo(!ch.solo); });
+	m::mh::updateSoloCount();
+}
 
 /* -------------------------------------------------------------------------- */
 
 
 void start(ID channelId, int velocity, bool record)
 {
-	m::Channel* ch = m::model::getLayout()->getChannel(channelId);
-	if (record && !ch->recordStart(m::clock::canQuantize()))
-		return;
-	ch->start(0, m::clock::canQuantize(), velocity); // On frame 0: it's a user-generated event
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		if (record && !ch.recordStart(m::clock::canQuantize()))
+			return;
+		ch.start(/*localFrame=*/0, m::clock::canQuantize(), velocity); // Frame 0: user-generated event
+	});
 }
 
 
@@ -288,10 +314,12 @@ void start(ID channelId, int velocity, bool record)
 
 void kill(ID channelId, bool record)
 {
-	m::Channel* ch = m::model::getLayout()->getChannel(channelId);
-	if (record && !ch->recordKill())
-		return;
-	ch->kill(0); // On frame 0: it's a user-generated event
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		if (record && !ch.recordKill())
+			return;
+		ch.kill(/*localFrame=*/0); // Frame 0: user-generated event
+	});
 }
 
 
@@ -299,10 +327,12 @@ void kill(ID channelId, bool record)
 
 
 void stop(ID channelId)
-{
-	m::Channel* ch = m::model::getLayout()->getChannel(channelId);
-	ch->recordStop();
-	ch->stop();
+{	
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		ch.recordStop();
+		ch.stop();
+	});
 }
 
 
@@ -311,15 +341,9 @@ void stop(ID channelId)
 
 void setBoost(ID channelId, float val, bool gui)
 {
-	static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId))->setBoost(val);
-
-	v::gdSampleEditor* gdEditor = static_cast<v::gdSampleEditor*>(u::gui::getSubwindow(G_MainWin, WID_SAMPLE_EDITOR));
-	if (gdEditor != nullptr) {
-		if (!gui) Fl::lock();
-		gdEditor->boostTool->rebuild();
-		gdEditor->waveTools->rebuild();
-		if (!gui) Fl::unlock();
-	}
+	assert(false);
+#if 0
+#endif
 }
 
 
@@ -337,8 +361,6 @@ void setName(ID channelId, const std::string& name)
 
 void toggleReadingActions(ID channelId)
 {
-	const m::Channel* ch = m::model::getLayout()->getChannel(channelId);
-
 	/* When you call startReadingRecs with conf::treatRecsAsLoops, the
 	member value ch->readActions actually is not set to true immediately, because
 	the channel is in wait mode (REC_WAITING). ch->readActions will become true on
@@ -347,10 +369,14 @@ void toggleReadingActions(ID channelId)
 	handle the case of when you press 'R', the channel goes into REC_WAITING and
 	then you press 'R' again to undo the status. */
 
-	if (ch->readActions || (!ch->readActions && ch->recStatus == ChannelStatus::WAIT))
-		stopReadingActions(channelId);
-	else
-		startReadingActions(channelId);
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		if (ch.readActions || (!ch.readActions && ch.recStatus == ChannelStatus::WAIT))
+			ch.stopReadingActions(m::clock::isRunning(), m::conf::treatRecsAsLoops, 
+				m::conf::recsStopOnChanHalt);
+		else
+			ch.startReadingActions(m::conf::treatRecsAsLoops, m::conf::recsStopOnChanHalt);
+	});
 }
 
 
@@ -359,8 +385,10 @@ void toggleReadingActions(ID channelId)
 
 void startReadingActions(ID channelId)
 {
-	m::model::getLayout()->getChannel(channelId)->startReadingActions(m::conf::treatRecsAsLoops, 
-		m::conf::recsStopOnChanHalt); 
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		ch.startReadingActions(m::conf::treatRecsAsLoops, m::conf::recsStopOnChanHalt);
+	});
 }
 
 
@@ -369,8 +397,11 @@ void startReadingActions(ID channelId)
 
 void stopReadingActions(ID channelId)
 {
-	m::model::getLayout()->getChannel(channelId)->stopReadingActions(m::clock::isRunning(), 
-		m::conf::treatRecsAsLoops, m::conf::recsStopOnChanHalt);
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
+	{
+		ch.stopReadingActions(m::clock::isRunning(), m::conf::treatRecsAsLoops, 
+			m::conf::recsStopOnChanHalt);
+	});
 }
 
 }}}; // giada::c::channel::

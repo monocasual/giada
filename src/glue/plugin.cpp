@@ -30,6 +30,7 @@
 
 #include <cassert>
 #include <FL/Fl.H>
+#include "core/model/model.h"
 #include "core/channels/channel.h"
 #include "core/pluginManager.h"
 #include "core/pluginHost.h"
@@ -51,16 +52,17 @@ extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
-namespace c     {
+namespace c {
 namespace plugin 
 {
 namespace
 {
-void updatePluginEditor_(ID pluginID, ID chanID, bool gui)
+void updatePluginEditor_(ID pluginId, bool gui)
 {
-	const m::Plugin* p = m::pluginHost::getPluginByID(pluginID, chanID);
+	m::model::PluginsLock l(m::model::plugins);
+	const m::Plugin& p = m::model::get(m::model::plugins, pluginId);
 
-	if (p->hasEditor())
+	if (p.hasEditor())
 		return;
 
 	/* Get the parent window first: the plug-in list. Then, if it exists, get
@@ -69,7 +71,7 @@ void updatePluginEditor_(ID pluginID, ID chanID, bool gui)
 	v::gdPluginList* parent = static_cast<v::gdPluginList*>(u::gui::getSubwindow(G_MainWin, WID_FX_LIST));
 	if (parent == nullptr)
 		return;
-	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, p->id + 1));
+	v::gdPluginWindow* child = static_cast<v::gdPluginWindow*>(u::gui::getSubwindow(parent, pluginId + 1));
 	if (child == nullptr) 
 		return;
 	
@@ -85,61 +87,60 @@ void updatePluginEditor_(ID pluginID, ID chanID, bool gui)
 /* -------------------------------------------------------------------------- */
 
 
-void addPlugin(int pluginListIndex, ID chanID)
+void addPlugin(int pluginListIndex, ID channelId)
 {
 	if (pluginListIndex >= m::pluginManager::countAvailablePlugins())
 		return;
-	std::shared_ptr<m::Plugin> p = m::pluginManager::makePlugin(pluginListIndex);
+	std::unique_ptr<m::Plugin> p = m::pluginManager::makePlugin(pluginListIndex);
 	if (p != nullptr)
-		m::pluginHost::addPlugin(p, chanID);
+		m::pluginHost::addPlugin(std::move(p), channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void swapPlugins(ID pluginID1, ID pluginID2, ID chanID)
+void swapPlugins(ID pluginId1, ID pluginId2, ID channelId)
 {
-	m::pluginHost::swapPlugin(pluginID1, pluginID2, chanID);
+	m::pluginHost::swapPlugin(pluginId1, pluginId2, channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void freePlugin(ID pluginID, ID chanID)
+void freePlugin(ID pluginId, ID channelId)
 {
-	m::pluginHost::freePlugin(pluginID, chanID);
+	m::pluginHost::freePlugin(pluginId, channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setProgram(ID pluginID, int programIndex, ID chanID)
+void setProgram(ID pluginId, int programIndex)
 {
-	m::pluginHost::setPluginProgram(pluginID, programIndex, chanID); 
-	updatePluginEditor_(pluginID, chanID, /*gui=*/true); 
+	m::pluginHost::setPluginProgram(pluginId, programIndex); 
+	updatePluginEditor_(pluginId, /*gui=*/true); 
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setParameter(ID pluginID, int paramIndex, float value, 
-    ID chanID, bool gui)
+void setParameter(ID pluginId, int paramIndex, float value, bool gui)
 {
-	m::pluginHost::setPluginParameter(pluginID, paramIndex, value, chanID); 
-	updatePluginEditor_(pluginID, chanID, gui); 
+	m::pluginHost::setPluginParameter(pluginId, paramIndex, value); 
+	updatePluginEditor_(pluginId, gui); 
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void toggleBypass(ID pluginID, ID chanID)
+void toggleBypass(ID pluginId)
 {
-	m::pluginHost::toggleBypass(pluginID, chanID);
+	m::pluginHost::toggleBypass(pluginId);
 }
 
 

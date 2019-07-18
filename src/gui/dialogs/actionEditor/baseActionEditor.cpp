@@ -33,7 +33,6 @@
 #include "utils/string.h"
 #include "core/channels/channel.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/clock.h"
@@ -48,7 +47,6 @@ namespace v
 {
 gdBaseActionEditor::gdBaseActionEditor(ID channelId)
 :	gdWindow (640, 284),
-	ch       (m::model::getLayout()->getChannel(channelId)),
 	channelId(channelId),
 	ratio    (G_DEFAULT_ZOOM_RATIO)
 {
@@ -199,9 +197,12 @@ void gdBaseActionEditor::prepareWindow()
 {
 	u::gui::setFavicon(this);
 
-	std::string l = "Action Editor";
-	if (ch->name != "") l += " - " + ch->name;
-	copy_label(l.c_str());
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		std::string l = "Action Editor";
+		if (c.name != "") l += " - " + c.name;
+		copy_label(l.c_str());
+	});
 
 	set_non_modal();
 	size_range(640, 284);

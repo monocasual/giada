@@ -66,7 +66,7 @@ private:
 
 #endif
 
-	m::Channel* m_ch;
+	ID m_channelId;
 
 	geScroll* m_container;
 	geCheck*  m_veloAsVol;

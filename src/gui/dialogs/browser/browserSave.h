@@ -48,7 +48,7 @@ public:
 
 	gdBrowserSave(const std::string& title, const std::string& path, 
         const std::string& name, std::function<void(void*)> cb, 
-        const m::Channel* ch);
+        ID channelId);
 
 	std::string getName() const;
 

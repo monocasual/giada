@@ -44,7 +44,7 @@ class geRangeTool : public Fl_Pack
 {
 public:
 
-	geRangeTool(int x, int y);
+	geRangeTool(ID channelId, ID waveId, int x, int y);
 
 	void rebuild();
 
@@ -54,6 +54,9 @@ private:
 	static void cb_resetStartEnd(Fl_Widget* w, void* p);
 	void cb_setChanPos();
 	void cb_resetStartEnd();
+
+	ID m_channelId;
+	ID m_waveId;
 
 	geBox*    m_label;
 	geInput*  m_begin;

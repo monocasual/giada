@@ -37,10 +37,6 @@
 #endif
 
 
-class RtAudio;
-class Mixer;
-
-
 namespace giada {
 namespace m {
 namespace kernelAudio

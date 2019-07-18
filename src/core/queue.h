@@ -6,6 +6,9 @@
 #include <atomic>
 
 
+namespace giada {
+namespace m
+{
 template<typename T, size_t size>
 class Queue
 {
@@ -56,6 +59,7 @@ private:
     std::atomic<size_t> m_head;
     std::atomic<size_t> m_tail;
 };
+}} // giada::m::
 
 
 #endif

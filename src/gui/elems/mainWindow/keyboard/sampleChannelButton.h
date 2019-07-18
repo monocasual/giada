@@ -43,7 +43,7 @@ class geSampleChannelButton : public geChannelButton
 {
 public:
 
-	geSampleChannelButton(int x, int y, int w, int h, const m::SampleChannel* ch);
+	geSampleChannelButton(int x, int y, int w, int h, ID channelId);
 	
     int handle(int e) override;
 

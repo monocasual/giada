@@ -81,8 +81,6 @@ sourcesCore =                               \
 	src/core/channels/midiChannelProc.cpp   \
 	src/core/model/model.h                  \
 	src/core/model/model.cpp                \
-	src/core/model/data.h                   \
-	src/core/model/data.cpp                 \
 	src/glue/main.h                         \
 	src/glue/main.cpp                       \
 	src/glue/io.h                           \

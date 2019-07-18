@@ -54,10 +54,9 @@ public:
 	geChannel* getChannel(ID chanID) const;
 	
 	/* addChannel
-	Adds a new channel in this column and set the internal pointer to channel 
-	to 'ch'. */
+	Adds a new channel in this column. */
 
-	geChannel* addChannel(const m::Channel* ch, int size);
+	geChannel* addChannel(ID channelId, ChannelType t, int size);
 
 	/* computeHeight
 	Resize column height and leave some space for drag n drop. */

@@ -36,9 +36,9 @@ namespace giada {
 namespace v
 {
 geSampleAction::geSampleAction(Pixel X, Pixel Y, Pixel W, Pixel H, 
-	const m::SampleChannel* ch, m::Action a1, m::Action a2)
-: geBaseAction(X, Y, W, H, ch->mode == ChannelMode::SINGLE_PRESS, a1, a2),
-  m_ch        (ch)
+	bool singlePress, m::Action a1, m::Action a2)
+: geBaseAction (X, Y, W, H, singlePress, a1, a2),
+  m_singlePress(singlePress)
 {
 }
 
@@ -50,7 +50,7 @@ void geSampleAction::draw()
 {
 	Fl_Color color = hovered ? G_COLOR_LIGHT_2 : G_COLOR_LIGHT_1; 
 
-	if (m_ch->mode == ChannelMode::SINGLE_PRESS) {
+	if (m_singlePress) {
 		fl_rectf(x(), y(), w(), h(), color);
 	}
 	else {

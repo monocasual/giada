@@ -44,7 +44,7 @@ class geShiftTool : public Fl_Pack
 {
 public:
 
-	geShiftTool(int x, int y);
+	geShiftTool(ID channelId, ID waveId, int x, int y);
 
 	void rebuild();
 
@@ -57,6 +57,9 @@ private:
 
 	void shift(int f);
 
+	ID m_channelId;
+	ID m_waveId;
+	
 	geBox*    m_label;
 	geInput*  m_shift;
 	geButton* m_reset;

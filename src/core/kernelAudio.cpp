@@ -28,16 +28,13 @@
 
 
 #include "../deps/rtaudio-mod/RtAudio.h"
-#include "../utils/log.h"
-#include "../glue/main.h"
+#include "utils/log.h"
+#include "glue/main.h"
+#include "core/model/model.h"
 #include "conf.h"
 #include "mixer.h"
 #include "const.h"
 #include "kernelAudio.h"
-
-
-using std::string;
-using std::vector;
 
 
 namespace giada {
@@ -47,7 +44,6 @@ namespace kernelAudio
 namespace
 {
 RtAudio* rtSystem     = nullptr;
-bool     status       = false;
 unsigned numDevs      = 0;
 bool     inputEnabled = false;
 unsigned realBufsize  = 0;     // Real buffer size from the soundcard
@@ -73,7 +69,9 @@ jack_client_t* jackGetHandle()
 
 bool isReady()
 {
-  return status;
+	model::KernelLock lock(model::kernel);
+
+	return model::kernel.get()->audioReady;
 }
 
 
@@ -153,9 +151,9 @@ int openDevice()
 	else
 		inputEnabled = false;
 
-  RtAudio::StreamOptions options;
-  options.streamName = G_APP_NAME;
-  options.numberOfBuffers = 4;
+	RtAudio::StreamOptions options;
+	options.streamName = G_APP_NAME;
+	options.numberOfBuffers = 4;
 
 	realBufsize = conf::buffersize;
 
@@ -170,15 +168,19 @@ int openDevice()
 
 	try {
 		rtSystem->openStream(
-			&outParams, 					              // output params
+			&outParams,                                       // output params
 			conf::soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
-			RTAUDIO_FLOAT32,			              // audio format
-			conf::samplerate, 					        // sample rate
-			&realBufsize, 				              // buffer size in byte
-			&mixer::masterPlay,                 // audio callback
-			nullptr,									          // user data (unused)
+			RTAUDIO_FLOAT32,                                  // audio format
+			conf::samplerate,                                 // sample rate
+			&realBufsize,                                     // buffer size in byte
+			&mixer::masterPlay,                               // audio callback
+			nullptr,                                          // user data (unused)
 			&options);
-    status = true;
+		
+		std::unique_ptr<model::Kernel> k = model::kernel.clone();
+		k->audioReady = true;
+		model::kernel.swap(std::move(k));
+		
 		return 1;
 	}
 	catch (RtAudioError &e) {
@@ -225,7 +227,7 @@ int stopStream()
 /* -------------------------------------------------------------------------- */
 
 
-string getDeviceName(unsigned dev)
+std::string getDeviceName(unsigned dev)
 {
 	try {
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).name;
@@ -243,11 +245,7 @@ string getDeviceName(unsigned dev)
 int closeDevice()
 {
 	if (rtSystem->isStreamOpen()) {
-#if defined(__linux__) || defined(__APPLE__)
-		rtSystem->abortStream(); // stopStream seems to lock the thread
-#elif defined(_WIN32)
-		rtSystem->stopStream();	 // on Windows it's the opposite
-#endif
+		rtSystem->stopStream();
 		rtSystem->closeStream();
 		delete rtSystem;
 		rtSystem = nullptr;
@@ -430,7 +428,7 @@ int	getDeviceByName(const char* name)
 
 bool hasAPI(int API)
 {
-	vector<RtAudio::Api> APIs;
+	std::vector<RtAudio::Api> APIs;
 	RtAudio::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
 		if (APIs.at(i) == API)

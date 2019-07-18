@@ -34,7 +34,6 @@
 #include "core/channels/midiChannel.h"
 #include "core/const.h"
 #include "core/clock.h"
-#include "core/model/data.h"
 #include "core/model/model.h"
 #include "core/kernelMidi.h"
 #include "core/recorderHandler.h"
@@ -90,7 +89,15 @@ void clearStartStopActions(ID channelId)
 
 void updateChannel(ID channelId, bool updateActionEditor)
 {
-	m::model::getLayout()->getChannel(channelId)->hasActions = m::recorder::hasActions(channelId);
+	/* TODO - optimization needed. This functions swaps a channel only to set a 
+	boolean flag. Query the channel first and swap it only if the flag has
+	actually changed. */
+
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		c.hasActions = m::recorder::hasActions(channelId);
+	});
+				
 	if (updateActionEditor)
 		u::gui::refreshActionEditor();
 }

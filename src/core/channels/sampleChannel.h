@@ -49,6 +49,7 @@ public:
 	SampleChannel(const SampleChannel& o);
 	~SampleChannel();
 
+	SampleChannel* clone() const override;
 	void parseEvents(mixer::FrameEvents fe) override;
 	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
 		bool audible, bool running) override;
@@ -75,7 +76,6 @@ public:
 	bool hasEditedData() const override;
 	bool hasData() const override;
 
-	float getBoost() const;	
 	int   getBegin() const;
 	int   getEnd() const;
 	float getPitch() const;
@@ -98,12 +98,12 @@ public:
 	/* pushWave
 	Adds a new wave to this channel. */
 
-	void pushWave(std::shared_ptr<const Wave> wave);
+	void pushWave(ID waveId, Frame waveSize);
+	void popWave();
 
 	void setPitch(float v);
 	void setBegin(int f);
 	void setEnd(int f);
-	void setBoost(float v);
 
 	void setReadActions(bool v, bool recsStopOnChanHalt);
 
@@ -112,30 +112,35 @@ public:
 
 	AudioBuffer bufferPreview;
 	
-	/* wave
-	Pointer to a read-only Wave object. Might be null. */
+	/* hasWave
+	Tells if a wave is linked to this channel. */
 
-	std::shared_ptr<const Wave> wave;
+	bool hasWave;
+
+	/* waveId
+	ID of a Wave object. Might be useless if hasWave == false. */
+
+	size_t waveId;
 
 	int shift;
-	/* TODO atomic */ ChannelMode mode;
+	ChannelMode mode;
+	bool quantizing;                    // quantization in progress
+	bool inputMonitor;  
+	float pitch;
+	
 	std::atomic<Frame> tracker;         // chan position
 	std::atomic<Frame> trackerPreview;  // chan position for audio preview
-	/* TODO atomic */ bool  quantizing; // quantization in progress
-	std::atomic<bool> inputMonitor;  
-	std::atomic<float> boost;
-	std::atomic<float> pitch;
 
 	/* begin, end
 	Begin/end point to read wave data from/to. */
 
-	std::atomic<int> begin;  // TODO - Frame, not int
-	std::atomic<int> end;    // TODO - Frame, not int
+	Frame begin;  
+	Frame end;    
 
 	/* midiIn*
 	MIDI input parameters. */
 
-	std::atomic<bool>     midiInVeloAsVol;
+	bool                  midiInVeloAsVol;
 	std::atomic<uint32_t> midiInReadActions;
 	std::atomic<uint32_t> midiInPitch;
 

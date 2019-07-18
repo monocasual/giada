@@ -66,10 +66,10 @@ std::function<void()> signalCb_ = nullptr;
 void perform_(const geChannel* gch, int event)
 {
 	if (event == FL_KEYDOWN)
-		c::io::keyPress(gch->ch->id, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
+		c::io::keyPress(gch->channelId, Fl::event_ctrl(), Fl::event_shift(), G_MAX_VELOCITY);
 	else
 	if (event == FL_KEYUP)	
-		c::io::keyRelease(gch->ch->id, Fl::event_ctrl(), Fl::event_shift());
+		c::io::keyRelease(gch->channelId, Fl::event_ctrl(), Fl::event_shift());
 }
 
 
@@ -111,8 +111,6 @@ void dispatchKey(int event)
 {
 	/* These events come from the keyboard, not from a direct interaction on the 
 	UI with the mouse/touch. So the 'gui' parameter is set to false. */
-
-	const bool gui = false;
 
 	if (event == FL_KEYDOWN) {
 		if (Fl::event_key() == FL_BackSpace && !backspace_) {

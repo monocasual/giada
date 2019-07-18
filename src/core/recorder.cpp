@@ -30,7 +30,6 @@
 #include <cassert>
 #include "utils/log.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/channel.h"
 #include "core/action.h"
 #include "core/recorder.h"
@@ -42,8 +41,7 @@ namespace recorder
 {
 namespace
 {
-bool active_   = false;
-ID   actionId_ = 0;
+ID actionId_ = 0;
 
 
 /* -------------------------------------------------------------------------- */
@@ -77,14 +75,16 @@ void optimize_(ActionMap& map)
 
 void removeIf_(std::function<bool(const Action&)> f)
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-	for (auto& kv : data->actions) {
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
+
+	for (auto& kv : ma->map) {
 		std::vector<Action>& as = kv.second;
 		as.erase(std::remove_if(as.begin(), as.end(), f), as.end());
 	}
-	optimize_(data->actions);
-	updateMapPointers(data->actions);
-	model::swapLayout(data);
+	optimize_(ma->map);
+	updateMapPointers(ma->map);
+
+	model::actions.swap(std::move(ma));
 }
 } // {anonymous}
 
@@ -96,7 +96,6 @@ void removeIf_(std::function<bool(const Action&)> f)
 
 void init()
 {
-	active_   = false;
 	actionId_ = 0;
 	clearAll();
 }
@@ -113,7 +112,7 @@ void debug(const ActionMap& map)
 		printf("frame: %d\n", kv.first);
 		for (const Action& a : kv.second) {
 			total++;
-			printf(" (%p) - id=%d, frame=%d, channel=%ld, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
+			printf(" (%p) - id=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
 				(void*) &a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*) a.prev, a.nextId, (void*) a.next);	
 		}
 	}
@@ -127,9 +126,9 @@ void debug(const ActionMap& map)
 
 void clearAll()
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-	data->actions.clear();
-	model::swapLayout(data);
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
+	ma->map.clear();
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -174,27 +173,32 @@ void deleteAction(ID currId, ID nextId)
 
 void updateKeyFrames(std::function<Frame(Frame old)> f)
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
+	
 	/* Remove all existing actions: let's start from scratch. */
 
-	data->actions.clear();
+	ma->map.clear();
 
 	/* Copy all existing actions in local data by cloning them, with just a
 	difference: they have a new frame value. */
 
-	for (const auto& kv : model::getLayout()->actions) {
-		Frame frame = f(kv.first);
-		for (const Action& a : kv.second) {
-			Action copy = a;
-			copy.frame = frame;
-			data->actions[frame].push_back(copy);
+	{
+		model::ActionsLock lock(model::actions);
+
+		for (const auto& kv : model::actions.get()->map) {
+			Frame frame = f(kv.first);
+			for (const Action& a : kv.second) {
+				Action copy = a;
+				copy.frame = frame;
+				ma->map[frame].push_back(copy);
+			}
+			gu_log("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);
 		}
-		gu_log("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);		
 	}
 
-	updateMapPointers(data->actions);
-	model::swapLayout(data);
+	updateMapPointers(ma->map);
+
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -203,9 +207,9 @@ void updateKeyFrames(std::function<Frame(Frame old)> f)
 
 void updateEvent(ID id, MidiEvent e)
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-	findAction_(data->actions, id)->event = e;
-	model::swapLayout(data);
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
+	findAction_(ma->map, id)->event = e;
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -214,11 +218,11 @@ void updateEvent(ID id, MidiEvent e)
 
 void updateSiblings(ID id, ID prevId, ID nextId)
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
 
-	Action* pcurr = findAction_(data->actions, id);
-	Action* pprev = findAction_(data->actions, prevId);
-	Action* pnext = findAction_(data->actions, nextId);
+	Action* pcurr = findAction_(ma->map, id);
+	Action* pprev = findAction_(ma->map, prevId);
+	Action* pnext = findAction_(ma->map, nextId);
 
 	pcurr->prev   = pprev;
 	pcurr->prevId = pprev->id;
@@ -234,7 +238,7 @@ void updateSiblings(ID id, ID prevId, ID nextId)
 		pnext->prevId = pcurr->id;
 	}
 
-	model::swapLayout(data);
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -243,20 +247,14 @@ void updateSiblings(ID id, ID prevId, ID nextId)
 
 bool hasActions(ID channelId, int type)
 {
-	for (const auto& kv : m::model::getLayout()->actions)
+	model::ActionsLock lock(model::actions);
+	
+	for (const auto& kv : model::actions.get()->map)
 		for (const Action& a : kv.second)
 			if (a.channelId == channelId && (type == 0 || type == a.event.getStatus()))
 				return true;
 	return false;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool isActive() { return active_; }
-void enable()   { active_ = true; }
-void disable()  { active_ = false; }
 
 
 /* -------------------------------------------------------------------------- */
@@ -273,16 +271,19 @@ Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 
 Action rec(ID channelId, Frame frame, MidiEvent event)
 {
+	Action a = makeAction(++actionId_, channelId, frame, event);
+	
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
 	enough to insert a new item first. No plug-in data for now. */
 
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-	data->actions[frame].push_back(makeAction(++actionId_, channelId, frame, event));
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
 
-	updateMapPointers(data->actions);
-	model::swapLayout(data);
+	ma->map[frame].push_back(a);
+	updateMapPointers(ma->map);
 
-	return model::getLayout()->actions[frame].back();
+	model::actions.swap(std::move(ma));
+
+	return a;
 }
 
 
@@ -304,12 +305,14 @@ void rec(std::vector<Action>& as)
 			if (aa.nextId == id) aa.nextId = a.id;
 		}
 	}
+	
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
 
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
 	for (const Action& a : as)
-		data->actions[a.frame].push_back(a);
-	updateMapPointers(data->actions);
-	model::swapLayout(data);
+		ma->map[a.frame].push_back(a);
+	updateMapPointers(ma->map);
+
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -318,17 +321,19 @@ void rec(std::vector<Action>& as)
 
 void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	std::shared_ptr<model::Layout> data = model::cloneLayout();
-	data->actions[f1].push_back(makeAction(++actionId_, channelId, f1, e1));
-	data->actions[f2].push_back(makeAction(++actionId_, channelId, f2, e2));
+	std::unique_ptr<model::Actions> ma = model::actions.clone();
 
-	Action* a1 = findAction_(data->actions, data->actions[f1].back().id);
-	Action* a2 = findAction_(data->actions, data->actions[f2].back().id);
+	ma->map[f1].push_back(makeAction(++actionId_, channelId, f1, e1));
+	ma->map[f2].push_back(makeAction(++actionId_, channelId, f2, e2));
+
+	Action* a1 = findAction_(ma->map, ma->map[f1].back().id);
+	Action* a2 = findAction_(ma->map, ma->map[f2].back().id);
 	a1->nextId = a2->id;
 	a2->prevId = a1->id;
 
-	updateMapPointers(data->actions);
-	model::swapLayout(data);
+	updateMapPointers(ma->map);
+
+	model::actions.swap(std::move(ma));
 }
 
 
@@ -337,7 +342,11 @@ void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 
 const std::vector<Action>* getActionsOnFrame(Frame frame)
 {
-	return m::model::getLayout()->actions.count(frame) ? &m::model::getLayout()->actions[frame] : nullptr;
+	model::ActionsLock lock(model::actions);
+	
+	if (model::actions.get()->map.count(frame) == 0)
+		return nullptr;
+	return &model::actions.get()->map.at(frame);
 }
 
 
@@ -400,9 +409,10 @@ void updateMapPointers(ActionMap& src)
 
 void forEachAction(std::function<void(const Action&)> f)
 {
-	for (auto& kv : m::model::getLayout()->actions)
+	model::ActionsLock lock(model::actions);
+	
+	for (auto& kv : model::actions.get()->map)
 		for (const Action& action : kv.second)
 			f(action);
 }
-
 }}}; // giada::m::recorder::

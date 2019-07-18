@@ -53,7 +53,7 @@ Set key 'k' to Sample Channel 'channelId'. Used for keyboard bindings. */
 
 void setSampleChannelKey(ID channelId, int k);
 
-void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, const m::Channel* c);
+void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, ID channelId);
 }}} // giada::c::io::
 
 #endif

@@ -25,9 +25,12 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <cassert>
 #include "core/model/model.h"
 #ifndef NDEBUG
 #include "core/channels/channel.h"
+#include "core/channels/sampleChannel.h"
+#include "core/channels/channelManager.h"
 #endif
 
 
@@ -35,84 +38,62 @@ namespace giada {
 namespace m {
 namespace model
 {
-std::atomic<bool> changed(false);
-std::shared_ptr<Layout> layout_ = std::make_shared<Layout>();
-Data data_;
+RCUList<Clock>    clock(std::make_unique<Clock>());
+RCUList<Mixer>    mixer(std::make_unique<Mixer>());
+RCUList<Kernel>   kernel(std::make_unique<Kernel>());
+RCUList<Recorder> recorder(std::make_unique<Recorder>());
+RCUList<Actions>  actions(std::make_unique<Actions>());
+RCUList<Channel>  channels;
+RCUList<Wave>     waves;
+RCUList<Plugin>   plugins;
 
 
-/* -------------------------------------------------------------------------- */
-
-
-std::shared_ptr<Layout> getLayout()
+Actions::Actions(const Actions& o) : map(o.map)
 {
-    return std::atomic_load(&layout_);
+	/* Needs to update all pointers of prev and next actions with addresses 
+	coming from the new 'actions' map.  */
+
+	recorder::updateMapPointers(map);
 }
-
-
-Data& getData()
-{
-    return data_;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::shared_ptr<Layout> cloneLayout()
-{
-    return std::make_shared<Layout>(*layout_);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void swapLayout(std::shared_ptr<Layout> newLayout)
-{
-    std::shared_ptr<Layout> oldLayout = std::atomic_load(&layout_);
-    while (!std::atomic_compare_exchange_weak(&layout_, &oldLayout, newLayout));
-    changed.store(true);
-}
-
-
-/* -------------------------------------------------------------------------- */
 
 
 #ifndef NDEBUG
 
 void debug()
 {
+	ChannelsLock cl(channels);
+	WavesLock    wl(waves);
+	PluginsLock  pl(plugins);
+
 	puts("======== SYSTEM STATUS ========");
 	
-	puts("model::Data");
-	
-	printf("  waves=%ld\n", data_.waves.size());
-	for (const auto& kv : data_.waves) 
-		printf("    [chanId=%d] %p - %s\n", kv.first, (void*)kv.second.get(), kv.second->getPath().c_str());
-	
-	printf("  plugins=%ld\n", data_.plugins.size());
-	for (const auto& kv : data_.plugins) {
-		printf("    [chanId=%d]\n", kv.first);
-		for (const auto& p : kv.second)
-			printf("      id=%d - %p %s\n", p->id, (void*)p.get(), p->getName().c_str());
+	puts("model::channel");
+
+	int i = 0;
+	for (const Channel* c : channels) {
+		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)c, c->id, c->name.c_str());
+		if (c->hasData())
+			printf("        wave: %d\n", static_cast<const SampleChannel*>(c)->waveId);
+		if (c->pluginIds.size() > 0) {
+			puts("        plugins:");
+			for (ID id : c->pluginIds)
+				printf("            ID=%d\n", id);
+		}
+
 	}
 
-	puts("");
+	puts("model::waves");
 
-	puts("model::Layout");
+	i = 0;
+	for (const Wave* w : waves) 
+		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)w, w->id, w->getPath().c_str());
+		
+	puts("model::plugins");
 
-	printf("  channels=%ld\n", layout_->channels.size());
-	for (const auto& ch : layout_->channels) {
-		printf("    id=%d - %p\n", ch->id, (void*)ch.get());
-		printf("      plugins=%ld\n", ch->plugins.size());
-		for (const auto& p : ch->plugins)
-			printf("        id=%d - %p %s\n", p->id, (void*)p.get(), p->getName().c_str());
+	i = 0;
+	for (const Plugin* p : plugins) {
+		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)p, p->id, p->getName().c_str());
 	}
-
-	printf("  bars=%d\n",     layout_->bars);
-	printf("  beats=%d\n",    layout_->beats);
-	printf("  bpm=%f\n",      layout_->bpm);
-	printf("  quantize=%d\n", layout_->quantize);
 	
 	puts("===============================");
 }

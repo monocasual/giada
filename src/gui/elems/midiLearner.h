@@ -31,6 +31,7 @@
 
 #include <atomic>
 #include <FL/Fl_Group.H>
+#include "core/types.h"
 
 
 class geBox;
@@ -49,7 +50,7 @@ class geMidiLearner : public Fl_Group
 public:
 
 	geMidiLearner(int x, int y, int w, const char* l, std::atomic<uint32_t>& param, 
-		const m::Channel* ch);
+		ID channelId);
 
 	void refresh();
 
@@ -60,11 +61,11 @@ private:
 	void cb_button();
 	void cb_value();
 
-	/* m_ch
-	Channel it belongs to. Might be nullptr if the learner comes from the MIDI
-	input master window. */
+	/* m_channelId
+	Channel it belongs to. Might be 0 if the learner comes from the MIDI input 
+	master window. */
 
-	const m::Channel* m_ch;
+	ID m_channelId;
 
 	/* m_param
 	Reference to ch->midiIn[value]. */

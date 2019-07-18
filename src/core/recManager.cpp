@@ -46,8 +46,22 @@ namespace recManager
 {
 namespace
 {
-bool isRecordingAction_ = false;
-bool isRecordingInput_  = false;
+void setRecordingAction_(bool v)
+{
+	model::onSwap(model::recorder, [&](model::Recorder& r)
+	{
+		r.isRecordingAction = v;
+	});
+}
+
+
+void setRecordingInput_(bool v)
+{
+	model::onSwap(model::recorder, [&](model::Recorder& r)
+	{
+		r.isRecordingInput = v;
+	});
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -58,10 +72,9 @@ bool startActionRec_()
 	if (!kernelAudio::isReady())
 		return false;
 	clock::setStatus(ClockStatus::RUNNING);
-	recorder::enable();
 	m::mh::startSequencer();
-	isRecordingAction_ = true;
-	return true;	
+	setRecordingAction_(true);
+	return true;
 }
 
 
@@ -70,10 +83,11 @@ bool startActionRec_()
 
 bool startInputRec_()
 {
-	if (!kernelAudio::isReady() || !mh::startInputRec())
+	if (!kernelAudio::isReady() || !mh::hasRecordableSampleChannels())
 		return false;
-	m::mh::startSequencer();
-	isRecordingInput_ = true;
+	mixer::startInputRec();
+	mh::startSequencer();
+	setRecordingInput_(true);
 	return true;
 }
 } // {anonymous}
@@ -86,17 +100,34 @@ bool startInputRec_()
 
 void init()
 {
-	isRecordingAction_ = false;
-	isRecordingInput_  = false;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isRecording()       { return isRecordingAction_ || isRecordingInput_; }
-bool isRecordingAction() { return isRecordingAction_; }
-bool isRecordingInput()  { return isRecordingInput_; }
+bool isRecording()
+{ 
+	return isRecordingAction() || isRecordingInput();
+}
+
+
+bool isRecordingAction()
+{ 
+	model::RecorderLock lock(model::recorder); 
+
+	bool isRecording = model::recorder.get()->isRecordingAction;
+	bool isWaiting   = clock::getStatus() == ClockStatus::WAITING;
+	
+	return isRecording || (!isRecording && isWaiting); 
+}
+
+
+bool isRecordingInput()
+{ 
+	model::RecorderLock lock(model::recorder); 
+	return model::recorder.get()->isRecordingInput; 
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -121,14 +152,18 @@ void startActionRec(RecTriggerMode mode)
 
 void stopActionRec()
 {
-	isRecordingAction_ = false;
+	setRecordingAction_(false);
+
+	/* If you stop the Action Recorder in SIGNAL mode before any actual 
+	recording: just clean up everything and return. */
 
 	if (clock::getStatus() == ClockStatus::WAITING)	{
 		clock::setStatus(ClockStatus::STOPPED);
+		m::midiDispatcher::setSignalCallback(nullptr);
+		v::dispatcher::setSignalCallback(nullptr);
 		return;
 	}
 
-	recorder::disable();
 	std::unordered_set<ID> channels = recorderHandler::consolidate();
 
 	/* Enable reading actions for Channels that have just been filled with 
@@ -136,8 +171,10 @@ void stopActionRec()
 	conf::treatRecsAsLoops is enabled or not. */
 
 	for (ID id : channels)
-		m::model::getLayout()->getChannel(id)->startReadingActions(
-			/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false);
+		m::model::onGet(m::model::channels, id, [](Channel& c)
+		{
+			c.startReadingActions(/*treatRecsAsLoops=*/false, /*recsStopOnChanHalt=*/false);
+		});
 }
 
 
@@ -146,7 +183,7 @@ void stopActionRec()
 
 void toggleActionRec(RecTriggerMode m)
 {
-	isRecordingAction_ ? stopActionRec() : startActionRec(m);
+	isRecordingAction() ? stopActionRec() : startActionRec(m);
 }
 
 
@@ -164,9 +201,9 @@ bool startInputRec(RecTriggerMode mode)
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);
-		isRecordingInput_ = true;
+		setRecordingInput_(true);
 	}
-	return isRecordingInput_;
+	return isRecordingInput();
 }
 
 
@@ -175,12 +212,19 @@ bool startInputRec(RecTriggerMode mode)
 
 void stopInputRec()
 {
-	isRecordingInput_ = false;
+	setRecordingInput_(false);
 
-	if (clock::getStatus() == ClockStatus::WAITING)
+	mixer::stopInputRec();
+	
+	/* If you stop the Input Recorder in SIGNAL mode before any actual 
+	recording: just clean up everything and return. */
+
+	if (clock::getStatus() == ClockStatus::WAITING) {
 		clock::setStatus(ClockStatus::STOPPED);
+		mixer::setSignalCallback(nullptr);
+	}
 	else
-		mh::stopInputRec();
+		mh::finalizeInputRec();
 }
 
 
@@ -189,7 +233,7 @@ void stopInputRec()
 
 bool toggleInputRec(RecTriggerMode m)
 {
-	if (isRecordingInput_) {
+	if (isRecordingInput()) {
 		stopInputRec();
 		return true;
 	}

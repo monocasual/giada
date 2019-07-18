@@ -29,6 +29,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/recorder.h"
 #include "core/const.h"
 #include "core/conf.h"
@@ -66,7 +67,15 @@ void geSampleActionEditor::rebuild()
 	namespace mr = m::recorder;
 	namespace ca = c::actionEditor;
 
-	const m::SampleChannel* sch = static_cast<const m::SampleChannel*>(m_base->ch);
+	bool isSinglePressMode;
+	bool isAnyLoopMode;
+	
+	m::model::onGet(m::model::channels, m_base->channelId, [&](m::Channel& c)
+	{
+		const m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
+		isSinglePressMode = sc.mode == ChannelMode::SINGLE_PRESS;
+		isAnyLoopMode     = sc.isAnyLoopMode();
+	});
 
 	/* Remove all existing actions and set a new width, according to the current
 	zoom level. */
@@ -85,10 +94,10 @@ void geSampleActionEditor::rebuild()
 		Pixel py = y() + 4;
 		Pixel pw = 0;
 		Pixel ph = h() - 8;
-		if (a2.isValid() && sch->mode == ChannelMode::SINGLE_PRESS)
+		if (a2.isValid() && isSinglePressMode)
 			pw = m_base->frameToPixel(a2.frame - a1.frame);
 
-		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, sch, a1, a2);
+		geSampleAction* gsa = new geSampleAction(px, py, pw, ph, isSinglePressMode, a1, a2);
 		add(gsa);
 		resizable(gsa);
 	}
@@ -96,7 +105,7 @@ void geSampleActionEditor::rebuild()
 	/* If channel is LOOP_ANY, deactivate it: a loop mode channel cannot hold 
 	keypress/keyrelease actions. */
 	
-	sch->isAnyLoopMode() ? deactivate() : activate();
+	isAnyLoopMode ? deactivate() : activate();
 
 	redraw();
 }
@@ -131,7 +140,7 @@ void geSampleActionEditor::draw()
 void geSampleActionEditor::onAddAction()     
 {
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
-	c::actionEditor::recordSampleAction(m_base->ch->id, m_base->getActionType(), f);
+	c::actionEditor::recordSampleAction(m_base->channelId, m_base->getActionType(), f);
 	
 	m_base->rebuild();
 }
@@ -142,7 +151,7 @@ void geSampleActionEditor::onAddAction()
 
 void geSampleActionEditor::onDeleteAction()  
 {
-	c::actionEditor::deleteSampleAction(m_base->ch->id, m_action->a1);
+	c::actionEditor::deleteSampleAction(m_base->channelId, m_action->a1);
 	
 	m_base->rebuild();
 }
@@ -209,7 +218,7 @@ void geSampleActionEditor::onRefreshAction()
 		f2 = m_base->pixelToFrame(p2);
 	}
 
-	ca::updateSampleAction(m_base->ch->id, m_action->a1, type, f1, f2);
+	ca::updateSampleAction(m_base->channelId, m_action->a1, type, f1, f2);
 			
 	m_base->rebuild();
 }
@@ -220,8 +229,12 @@ void geSampleActionEditor::onRefreshAction()
 
 bool geSampleActionEditor::isNoteOffSinglePress(const m::Action& a)
 {
-	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(m_base->ch);
-	return ch->mode == ChannelMode::SINGLE_PRESS && a.event.getStatus() == m::MidiEvent::NOTE_OFF;
+	bool res;
+	m::model::onGet(m::model::channels, m_base->channelId, [&](m::Channel& c)
+	{
+		const m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
+		res = sc.mode == ChannelMode::SINGLE_PRESS && a.event.getStatus() == m::MidiEvent::NOTE_OFF;
+	});
+	return res;
 }
-
 }} // giada::v::

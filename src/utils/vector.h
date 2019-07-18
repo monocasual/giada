@@ -38,13 +38,10 @@ namespace giada {
 namespace u {
 namespace vector 
 {
-template <typename T, typename F>
-int indexOf(T& v, F&& func)
+template <typename T, typename P>
+auto indexOf(T& v, const P& p)
 {
-    static_assert(std::is_same<T, std::vector<typename T::value_type>>::value);
-
-	auto it = std::find_if(v.begin(), v.end(), func);
-	return it != v.end() ? std::distance(v.begin(), it) : -1;
+	return std::distance(v.begin(), std::find(v.begin(), v.end(), p));
 }
 
 
@@ -54,9 +51,14 @@ int indexOf(T& v, F&& func)
 template <typename T, typename F>
 void removeIf(T& v, F&& func)
 {
-    static_assert(std::is_same<T, std::vector<typename T::value_type>>::value);
-
     v.erase(std::remove_if(v.begin(), v.end(), func), v.end());
+}
+
+
+template <typename T, typename V>
+void remove(T& v, V val)
+{
+    v.erase(std::remove(v.begin(), v.end(), val), v.end());
 }
 }}};  // giada::u::vector::
 

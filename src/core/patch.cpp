@@ -72,7 +72,6 @@ void sanitize()
 		ch.size        = um::bound(ch.size, G_GUI_CHANNEL_H_1, G_GUI_CHANNEL_H_4, G_GUI_CHANNEL_H_1);
 		ch.volume      = um::bound(ch.volume, 0.0f, 1.0f, G_DEFAULT_VOL);
 		ch.pan         = um::bound(ch.pan, 0.0f, 1.0f, 1.0f);
-		ch.boost       = um::bound(ch.boost, 1.0f, G_MAX_BOOST_DB, G_DEFAULT_BOOST);
 		ch.pitch       = um::bound(ch.pitch, 0.1f, G_MAX_PITCH, G_DEFAULT_PITCH);
 		ch.midiOutChan = um::bound(ch.midiOutChan, 0, G_MAX_MIDI_CHANS - 1, 0);
 	}

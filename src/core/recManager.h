@@ -37,8 +37,6 @@ namespace giada {
 namespace m {
 namespace recManager
 {
-void init();
-
 bool isRecording();
 bool isRecordingAction();
 bool isRecordingInput();

@@ -39,22 +39,25 @@ namespace v
 {
 gdMidiOutputSampleCh::gdMidiOutputSampleCh(ID channelId)
 : gdMidiOutputBase(300, 140), 
-  m_ch            (static_cast<m::SampleChannel*>(m::model::getLayout()->getChannel(channelId)))
+  m_channelId     (channelId)
 {
-	setTitle(m_ch->id);
+	m::model::ChannelsLock l(m::model::channels);
+	m::Channel& c = m::model::get(m::model::channels, m_channelId);
+	
+	setTitle(c.id);
 
 	m_enableLightning = new geCheck(8, 8, 120, 20, "Enable MIDI lightning output");
 	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+8, w()-16, "playing", 
-		m_ch->midiOutLplaying, m_ch));
+		c.midiOutLplaying, m_channelId));
 	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+32, w()-16, "mute",   
-		m_ch->midiOutLmute, m_ch));
+		c.midiOutLmute, m_channelId));
 	m_learners.push_back(new geMidiLearner(8, m_enableLightning->y()+m_enableLightning->h()+56, w()-16, "solo",   
-		m_ch->midiOutLsolo, m_ch));
+		c.midiOutLsolo, m_channelId));
 
 	m_close = new geButton(w()-88, m_enableLightning->y()+m_enableLightning->h()+84, 80, 20, "Close");
 	m_close->callback(cb_close, (void*)this);
 
-	m_enableLightning->value(m_ch->midiOutL);
+	m_enableLightning->value(c.midiOutL);
 	m_enableLightning->callback(cb_enableLightning, (void*)this);
 
 	set_modal();
@@ -74,7 +77,10 @@ void gdMidiOutputSampleCh::cb_close(Fl_Widget* w, void* p) { ((gdMidiOutputSampl
 
 void gdMidiOutputSampleCh::cb_close()
 {
-	m_ch->midiOutL = m_enableLightning->value();
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		c.midiOutL = m_enableLightning->value();
+	});
 	do_callback();
 }
 

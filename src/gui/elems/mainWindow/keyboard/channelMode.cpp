@@ -31,6 +31,7 @@
 #include <FL/fl_draw.H>
 #include "utils/gui.h"
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/graphics.h"
 #include "core/const.h"
 #include "glue/channel.h"
@@ -41,9 +42,9 @@
 namespace giada {
 namespace v
 {
-geChannelMode::geChannelMode(int x, int y, int w, int h, const m::SampleChannel* ch)
+geChannelMode::geChannelMode(int x, int y, int w, int h, ID channelId)
 : Fl_Menu_Button(x, y, w, h), 
-  ch            (ch)
+  m_channelId   (channelId)
 {
 	box(G_CUSTOM_BORDER_BOX);
 	textsize(G_GUI_FONT_SIZE_BASE);
@@ -67,7 +68,11 @@ geChannelMode::geChannelMode(int x, int y, int w, int h, const m::SampleChannel*
 void geChannelMode::draw() 
 {
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);    // border
-	switch (ch->mode) {
+
+	m::model::ChannelsLock l(m::model::channels);
+	const m::SampleChannel& ch = static_cast<m::SampleChannel&>(m::model::get(m::model::channels, m_channelId));
+	
+	switch (ch.mode) {
 		case ChannelMode::LOOP_BASIC:
 			fl_draw_pixmap(loopBasic_xpm, x()+1, y()+1);
 			break;
@@ -107,12 +112,6 @@ void geChannelMode::cb_changeMode(Fl_Widget* v, void* p) { ((geChannelMode*)v)->
 
 void geChannelMode::cb_changeMode(int mode)
 {
-
-	c::channel::setSampleMode(ch->id, static_cast<ChannelMode>(mode));
-
-	/* What to do when the channel is playing and you change the mode? Nothing, 
-	since v0.5.3. Just refresh the action editor window, in case it's open. */
-
-	u::gui::refreshActionEditor();
+	c::channel::setSampleMode(m_channelId, static_cast<ChannelMode>(mode));
 }
 }} // giada::v::

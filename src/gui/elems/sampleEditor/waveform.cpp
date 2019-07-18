@@ -30,6 +30,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Menu_Button.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/wave.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -47,9 +48,11 @@
 namespace giada {
 namespace v 
 {
-geWaveform::geWaveform(int x, int y, int w, int h)
+geWaveform::geWaveform(ID channelId, ID waveId, int x, int y, int w, int h)
 : Fl_Widget     (x, y, w, h, nullptr),
   m_selection   {},
+  m_channelId   (channelId),
+  m_waveId      (waveId),
   m_chanStart   (0),
   m_chanStartLit(false),
   m_chanEnd     (0),
@@ -84,18 +87,16 @@ void geWaveform::clearData()
 
 int geWaveform::alloc(int datasize, bool force)
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-	if (ch == nullptr)
-		return 0;
+	m::model::WavesLock lock(m::model::waves);
+	
+	const m::Wave& wave = m::model::get(m::model::waves, m_waveId);
 
-	const m::Wave* wave = ch->wave.get();
-
-	m_ratio = wave->getSize() / (float) datasize;
+	m_ratio = wave.getSize() / (float) datasize;
 
 	/* Limit 1:1 drawing (to avoid sub-frame drawing) by keeping m_ratio >= 1. */
 
 	if (m_ratio < 1) {  
-		datasize = wave->getSize();
+		datasize = wave.getSize();
 		m_ratio = 1;
 	}
 
@@ -116,12 +117,12 @@ int geWaveform::alloc(int datasize, bool force)
 	/* Frid frequency: store a grid point every 'gridFreq' frame (if grid is
 	enabled). TODO - this will cause round off errors, since gridFreq is integer. */
 
-	int gridFreq = m_grid.level != 0 ? wave->getSize() / m_grid.level : 0;
+	int gridFreq = m_grid.level != 0 ? wave.getSize() / m_grid.level : 0;
 
 	/* Resampling the waveform, hardcore way. Many thanks to 
 	http://fourier.eng.hmc.edu/e161/lectures/resize/node3.html */
 
-	for (int i=0; i<m_data.size; i++) {
+	for (int i = 0; i < m_data.size; i++) {
 		
 		/* Scan the original waveform in chunks [pc, pn]. */
 
@@ -131,18 +132,18 @@ int geWaveform::alloc(int datasize, bool force)
 		float peaksup = 0.0f;
 		float peakinf = 0.0f;
 
-		for (int k=pc; k<pn; k++) { // TODO - int until we switch to uint32_t for Wave size...
+		for (int k = pc; k < pn; k++) { // TODO - int until we switch to uint32_t for Wave size...
 
-			if (k >= wave->getSize())
+			if (k >= wave.getSize())
 				continue;
 
 			/* Compute average of stereo signal. */
 
 			float avg = 0.0f;
-			float* frame = wave->getFrame(k);
-			for (int j=0; j<wave->getChannels(); j++)
+			float* frame = wave.getFrame(k);
+			for (int j = 0; j < wave.getChannels(); j++)
 				avg += frame[j];
-			avg /= wave->getChannels();
+			avg /= wave.getChannels();
 			
 			/* Find peaks (greater and lower). */
 
@@ -155,8 +156,8 @@ int geWaveform::alloc(int datasize, bool force)
 				m_grid.points.push_back(k);
 		}
 
-		m_data.sup[i] = zero - (peaksup * ch->getBoost() * offset);
-		m_data.inf[i] = zero - (peakinf * ch->getBoost() * offset);
+		m_data.sup[i] = zero - (peaksup * offset);
+		m_data.inf[i] = zero - (peakinf * offset);
 
 		// avoid window overflow
 
@@ -174,10 +175,11 @@ int geWaveform::alloc(int datasize, bool force)
 
 void geWaveform::recalcPoints()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-	
-	m_chanStart = ch->getBegin();
-	m_chanEnd   = ch->getEnd();
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		m_chanStart = static_cast<m::SampleChannel&>(c).getBegin();
+		m_chanEnd   = static_cast<m::SampleChannel&>(c).getEnd();
+	});
 }
 
 
@@ -284,9 +286,13 @@ void geWaveform::drawStartEndPoints()
 
 void geWaveform::drawPlayHead()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	float tp;	
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		tp = static_cast<m::SampleChannel&>(c).trackerPreview.load();
+	});
 
-	int p = frameToPixel(ch->trackerPreview.load()) + x();
+	int p = frameToPixel(tp) + x();
 	fl_color(G_COLOR_LIGHT_2);
 	fl_line(p, y() + 1, p, y() + h() - 2);
 }
@@ -326,7 +332,9 @@ void geWaveform::draw()
 
 int geWaveform::handle(int e)
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	m::model::WavesLock lock(m::model::waves);
+	
+	const m::Wave& wave = m::model::get(m::model::waves, m_waveId);
 
 	m_mouseX = pixelToFrame(Fl::event_x() - x());
 	m_mouseY = pixelToFrame(Fl::event_y() - y());
@@ -370,7 +378,7 @@ int geWaveform::handle(int e)
 
 		case FL_RELEASE: {
 
-			c::sampleEditor::setPlayHead(ch->id, m_mouseX);
+			c::sampleEditor::setPlayHead(m_channelId, m_mouseX);
 
 			/* If selection has been done (m_dragged or resized), make sure that point A 
 			is always lower than B. */
@@ -381,7 +389,7 @@ int geWaveform::handle(int e)
 			/* Handle begin/end markers interaction. */
 
 			if (m_chanStartLit || m_chanEndLit)
-				c::sampleEditor::setBeginEnd(ch->id, m_chanStart, m_chanEnd);
+				c::sampleEditor::setBeginEnd(m_channelId, m_chanStart, m_chanEnd);
 
 			m_pushed   = false;
 			m_dragged  = false;
@@ -458,8 +466,8 @@ int geWaveform::handle(int e)
 
 				m_chanEnd = snap(m_mouseX);
 
-				if (m_chanEnd > ch->wave->getSize())
-					m_chanEnd = ch->wave->getSize();
+				if (m_chanEnd > wave.getSize())
+					m_chanEnd = wave.getSize();
 				else
 				if (m_chanEnd <= m_chanStart)
 					m_chanEnd = m_chanStart + 2;
@@ -564,12 +572,13 @@ bool geWaveform::mouseOnSelectionB() const
 
 int geWaveform::pixelToFrame(int p) const
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	Frame waveSize;
+	m::model::onGet(m::model::waves, m_waveId, [&](m::Wave& w) { waveSize = w.getSize(); });
 
 	if (p <= 0)
 		return 0;
 	if (p > m_data.size)
-		return ch->wave->getSize() - 1;
+		return waveSize - 1;
 	return p * m_ratio;
 }
 
@@ -588,12 +597,10 @@ int geWaveform::frameToPixel(int p) const
 
 void geWaveform::fixSelection()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
 	if (m_selection.a > m_selection.b) // inverted m_selection
 		std::swap(m_selection.a, m_selection.b);
 
-	c::sampleEditor::setPlayHead(ch->id, m_selection.a);
+	c::sampleEditor::setPlayHead(m_channelId, m_selection.a);
 }
 
 
@@ -716,11 +723,11 @@ int geWaveform::getSelectionB() const { return m_selection.b; }
 
 void geWaveform::selectAll()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	Frame waveSize;
+	m::model::onGet(m::model::waves, m_waveId, [&](m::Wave& w) { waveSize = w.getSize(); });
 
 	m_selection.a = 0;
-	m_selection.b = ch->wave->getSize() - 1;
+	m_selection.b = waveSize - 1;
 	redraw();
 }
-
 }} // giada::v::

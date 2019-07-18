@@ -47,9 +47,9 @@ class gePluginElement : public Fl_Pack
 {
 public:
 
-	gePluginElement(const m::Plugin& p, ID chanID, int x, int y, int w);
+	gePluginElement(ID pluginId, ID channelId, int x, int y, int w);
 
-	ID getPluginID() const;
+	ID getPluginId() const;
 
 	geButton* button;
 	geChoice* program;
@@ -73,8 +73,8 @@ private:
 	void cb_shiftDown();
 	void cb_setProgram();
 
-	const m::Plugin& m_plugin;
-	ID m_chanID;
+	ID m_channelId;
+	ID m_pluginId;
 };
 }} // giada::v::
 

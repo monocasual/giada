@@ -37,8 +37,9 @@
 namespace giada {
 namespace m 
 {
-Wave::Wave()
-: m_rate   (0),
+Wave::Wave(ID id)
+: id       (id),
+  m_rate   (0),
   m_bits   (0),
   m_logical(false),
   m_edited (false) 
@@ -59,11 +60,12 @@ float* Wave::operator [](int offset) const
 
 
 Wave::Wave(const Wave& other)
-:	m_rate    (other.m_rate),
-	m_bits    (other.m_bits),	
-	m_logical (false),
-	m_edited  (false),
-	m_path    (other.m_path)
+: id        (other.id), 
+  m_rate    (other.m_rate),
+  m_bits    (other.m_bits),	
+  m_logical (false),
+  m_edited  (false),
+  m_path    (other.m_path)
 {
 	buffer.alloc(other.getSize(), other.getChannels());
 	buffer.copyData(other.getFrame(0), other.getSize());

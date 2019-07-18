@@ -57,7 +57,7 @@ private:
 	geCheck*  m_enableOut;
 	geChoice* m_chanListOut;
 
-	m::MidiChannel* m_ch;
+	ID m_channelId;
 };
 }} // giada::v::
 

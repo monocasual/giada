@@ -47,7 +47,7 @@ class gdPluginWindowGUI : public gdWindow
 {
 public:
 
-	gdPluginWindowGUI(const m::Plugin& p);
+	gdPluginWindowGUI(ID pluginId);
 	~gdPluginWindowGUI();
 
 private:
@@ -60,7 +60,7 @@ private:
 	void openEditor(void* parent); 
 	void closeEditor(); 
 
-	const m::Plugin& m_plugin;
+	ID m_pluginId;
 
 	juce::AudioProcessorEditor* m_ui;
 };

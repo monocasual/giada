@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "core/waveFx.h"  
 #include "glue/channel.h"
@@ -45,8 +46,9 @@
 namespace giada {
 namespace v 
 {
-gePanTool::gePanTool(int x, int y)
-: Fl_Pack(x, y, 200, G_GUI_UNIT)
+gePanTool::gePanTool(ID channelId, int x, int y)
+: Fl_Pack    (x, y, 200, G_GUI_UNIT),
+  m_channelId(channelId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -74,19 +76,23 @@ gePanTool::gePanTool(int x, int y)
 
 void gePanTool::rebuild()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-	
-	dial->value(ch->getPan());
+	float p;
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		p = static_cast<m::SampleChannel&>(c).getPan();
+	});
 
-	if (ch->getPan() < 0.5f) {
-		std::string tmp = u::string::iToString((int) ((-ch->getPan() * 200.0f) + 100.0f)) + " L";
+	dial->value(p);
+
+	if (p < 0.5f) {
+		std::string tmp = u::string::iToString((int) ((-p * 200.0f) + 100.0f)) + " L";
 		input->value(tmp.c_str());
 	}
 	else 
-	if (ch->getPan() == 0.5)
+	if (p == 0.5)
 		input->value("C");
 	else {
-		std::string tmp = u::string::iToString((int) ((ch->getPan() * 200.0f) - 100.0f)) + " R";
+		std::string tmp = u::string::iToString((int) ((p * 200.0f) - 100.0f)) + " R";
 		input->value(tmp.c_str());
 	}
 }
@@ -105,9 +111,7 @@ void gePanTool::cb_panReset(Fl_Widget* w, void* p) { ((gePanTool*)p)->cb_panRese
 
 void gePanTool::cb_panning()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPan(ch->id, dial->value());
+	c::channel::setPan(m_channelId, dial->value());
 }
 
 
@@ -116,9 +120,7 @@ void gePanTool::cb_panning()
 
 void gePanTool::cb_panReset()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPan(ch->id, 0.5f);
+	c::channel::setPan(m_channelId, 0.5f);
 }
 
 }} // giada::v::

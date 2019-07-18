@@ -42,7 +42,6 @@
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
 #include "gui/elems/mainWindow/keyboard/channel.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/sampleChannel.h"
 #include "core/waveFx.h"
 #include "core/wave.h"
@@ -72,34 +71,21 @@ std::unique_ptr<m::Wave> waveBuffer_;
 
 /* -------------------------------------------------------------------------- */
 
+/* resetBeginEnd_
+Resets begin/end points when model has changed and a new Channel pointer is
+needed for the operation. */
 
-m::SampleChannel* getChannel_(std::shared_ptr<m::model::Layout>&& l, ID chanID)
+void resetBeginEnd_(ID channelId)
 {
-	return static_cast<m::SampleChannel*>(l->getChannel(chanID));
-}
+	Frame begin;
+	Frame end;
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		begin = static_cast<m::SampleChannel&>(c).begin;
+		end   = static_cast<m::SampleChannel&>(c).end;
+	});
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void onWave_(ID chanID, std::function<void(m::Wave&)> f)
-{
-	std::shared_ptr<m::model::Layout> layout = m::model::cloneLayout();
-	m::model::Data&                   data   = m::model::getData();
-
-	/* Create a new Wave out of the original one and modify it. */
-
-	std::shared_ptr<m::Wave> w = std::make_shared<m::Wave>(*data.waves.at(chanID));
-	f(*w.get());
-
-	/* Push back the new Wave into Data. */	
-
-	data.waves.at(chanID) = w;
-
-	/* Tell Layout something has changed: the Wave pointer. */
-	
-	static_cast<m::SampleChannel*>(layout->getChannel(chanID))->pushWave(w);
-	m::model::swapLayout(layout);
+	setBeginEnd(channelId, begin, end);
 }
 }; // {anonymous}
 
@@ -120,11 +106,14 @@ v::gdSampleEditor* getSampleEditorWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void setBeginEnd(ID chanID, int b, int e)
+void setBeginEnd(ID channelId, int b, int e)
 {
-	getChannel_(m::model::getLayout(), chanID)->setBegin(b);
-	getChannel_(m::model::getLayout(), chanID)->setEnd(e);
-	
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		static_cast<m::SampleChannel&>(c).setBegin(b);
+		static_cast<m::SampleChannel&>(c).setEnd(e);
+	});
+
 	getSampleEditorWindow()->rebuild();
 }
 
@@ -132,137 +121,123 @@ void setBeginEnd(ID chanID, int b, int e)
 /* -------------------------------------------------------------------------- */
 
 
-void cut(ID chanID, int a, int b)
+void cut(ID channelId, ID waveId, int a, int b)
 {
-	copy(chanID, a, b);
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::cut(w, a, b);
-	});
-
-	/* Model has changed, needs a new Channel pointer. */
-	
-	const m::SampleChannel* ch = getChannel_(m::model::getLayout(), chanID);
-
-	setBeginEnd(chanID, ch->getBegin(), ch->getEnd());
+	copy(waveId, a, b);
+	m::wfx::cut(waveId, a, b);
+	resetBeginEnd_(channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void copy(ID chanID, int a, int b)
+void copy(ID waveId, int a, int b)
 {
-	waveBuffer_ = m::waveManager::createFromWave(*getChannel_(m::model::getLayout(), chanID)->wave, a, b);
+	m::model::WavesLock lock(m::model::waves);
+
+	waveBuffer_ = m::waveManager::createFromWave(*m::model::waves.get(waveId), a, b);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void paste(ID chanID, int a)
+void paste(ID channelId, ID waveId, int a)
 {
 	if (!isWaveBufferFull()) {
 		gu_log("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
 		return;
 	}
 
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::paste(*waveBuffer_, w, a);
-	});	
+	m::wfx::paste(*waveBuffer_, waveId, a);
 
 	/* Shift begin/end points to keep the previous position. */
 
-	int begin = getChannel_(m::model::getLayout(), chanID)->getBegin();
-	int end   = getChannel_(m::model::getLayout(), chanID)->getEnd();
-	int delta = waveBuffer_->getSize();
+	int   delta = waveBuffer_->getSize();
+	Frame begin;
+	Frame end;
+
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		begin = static_cast<m::SampleChannel&>(c).begin;
+		end   = static_cast<m::SampleChannel&>(c).end;
+	});
 
 	if (a < begin && a < end)
-		setBeginEnd(chanID, begin + delta, end + delta);
+		setBeginEnd(channelId, begin + delta, end + delta);
 	else
 	if (a < end)
-		setBeginEnd(chanID, begin, end + delta);
+		setBeginEnd(channelId, begin, end + delta);
 
 	getSampleEditorWindow()->rebuild();
 }
 
+
 /* -------------------------------------------------------------------------- */
 
 
-void silence(ID chanID, int a, int b)
+void silence(ID waveId, int a, int b)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::silence(w, a, b);
-	});
+	m::wfx::silence(waveId, a, b);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void fade(ID chanID, int a, int b, int type)
+void fade(ID waveId, int a, int b, int type)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::fade(w, a, b, type);
-	});
+	m::wfx::fade(waveId, a, b, type);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void smoothEdges(ID chanID, int a, int b)
+void smoothEdges(ID waveId, int a, int b)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::smooth(w, a, b);
-	});
+	m::wfx::smooth(waveId, a, b);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void reverse(ID chanID, int a, int b)
+void reverse(ID waveId, int a, int b)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::reverse(w, a, b);
-	});
+	m::wfx::reverse(waveId, a, b);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void normalizeHard(ID chanID, int a, int b)
+void normalizeHard(ID waveId, int a, int b)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::normalizeHard(w, a, b);
-	});
+	m::wfx::normalizeHard(waveId, a, b);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void trim(ID chanID, int a, int b)
+void trim(ID channelId, ID waveId, int a, int b)
 {
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::trim(w, a, b);
-	});
-	
-	/* Model has changed, needs a new Channel pointer. */
-	
-	const m::SampleChannel* ch = getChannel_(m::model::getLayout(), chanID);
-
-	setBeginEnd(chanID, ch->getBegin(), ch->getEnd());
+	m::wfx::trim(waveId, a, b);
+	resetBeginEnd_(channelId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void setPlayHead(ID chanID, Frame f)
+void setPlayHead(ID channelId, Frame f)
 {
-	getChannel_(m::model::getLayout(), chanID)->trackerPreview.store(f);
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		static_cast<m::SampleChannel&>(c).trackerPreview.store(f);
+	});
 	getSampleEditorWindow()->refresh();
 }
 
@@ -270,35 +245,41 @@ void setPlayHead(ID chanID, Frame f)
 /* -------------------------------------------------------------------------- */
 
 
-void setPreview(ID chanID, PreviewMode mode)
+void setPreview(ID channelId, PreviewMode mode)
 {
-	getChannel_(m::model::getLayout(), chanID)->previewMode.store(mode);
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		static_cast<m::SampleChannel&>(c).previewMode = mode;
+	});
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void rewindPreview(ID chanID)
+void rewindPreview(ID channelId)
 {
-	const v::geWaveform* waveform = getSampleEditorWindow()->waveTools->waveform;
+	setPlayHead(channelId, 0);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void toNewChannel(ID channelId, int a, int b)
+{
+	size_t colIndex = G_MainWin->keyboard->getChannel(channelId)->getColumnIndex();
+	size_t waveId;
 	
-	if (waveform->isSelected() && getChannel_(m::model::getLayout(), chanID)->trackerPreview.load() != waveform->getSelectionA())
-		setPlayHead(chanID, waveform->getSelectionA());
-	else
-		setPlayHead(chanID, 0);
-}
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		waveId = static_cast<m::SampleChannel&>(c).waveId;
+	});
 
-
-/* -------------------------------------------------------------------------- */
-
-
-void toNewChannel(ID chanID, int a, int b)
-{
-	const size_t   colIndex = G_MainWin->keyboard->getChannel(chanID)->getColumnIndex();
-	const m::Wave* wave     = getChannel_(m::model::getLayout(), chanID)->wave.get();
-
-	m::mh::addAndLoadChannel(colIndex, m::waveManager::createFromWave(*wave, a, b));
+	m::model::onGet(m::model::waves, waveId, [&](m::Wave& w)
+	{
+		m::mh::addAndLoadChannel(colIndex, m::waveManager::createFromWave(w, a, b));
+	});
 }
 
 
@@ -314,25 +295,30 @@ bool isWaveBufferFull()
 /* -------------------------------------------------------------------------- */
 
 
-void reload(ID chanID)
+void reload(ID channelId, ID waveId)
 {
 	if (!v::gdConfirmWin("Warning", "Reload sample: are you sure?"))
 		return;
 
-	m::SampleChannel* ch = getChannel_(m::model::getLayout(), chanID);
+	std::string wavePath;
+	Frame       waveSize;
+	m::model::onGet(m::model::waves, waveId, [&](m::Wave& w)
+	{
+		wavePath = w.getPath();
+		waveSize = w.getSize();
+	});
 
-	if (channel::loadChannel(ch->id, ch->wave->getPath()) != G_RES_OK)
+	if (channel::loadChannel(channelId, wavePath) != G_RES_OK)
 		return;
 
-	/* Model has changed, needs a new Channel pointer. */
-	
-	ch = getChannel_(m::model::getLayout(), chanID);
-
-	ch->setBoost(G_DEFAULT_BOOST);
-	ch->setPitch(G_DEFAULT_PITCH);
-	ch->setPan(0.5f);
-	ch->setBegin(0);
-	ch->setEnd(ch->wave->getSize());
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
+		sc.setPitch(G_DEFAULT_PITCH);
+		sc.setPan(0.5f);
+		sc.setBegin(0);
+		sc.setEnd(waveSize);
+	});
 
 	getSampleEditorWindow()->rebuild();
 }
@@ -341,16 +327,20 @@ void reload(ID chanID)
 /* -------------------------------------------------------------------------- */
 
 
-void shift(ID chanID, int offset)
+void shift(ID channelId, ID waveId, int offset)
 {
-	m::SampleChannel* ch = static_cast<m::SampleChannel*>(getChannel_(m::model::getLayout(), chanID));
-	
-	onWave_(chanID, [=](m::Wave& w) {
-		m::wfx::shift(w, offset - ch->shift);
+	Frame shift;
+
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		shift = static_cast<m::SampleChannel&>(c).shift;
 	});
 	
-	ch->shift = offset;
+	m::wfx::shift(waveId, offset - shift);
+
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		static_cast<m::SampleChannel&>(c).shift = offset;
+	});
 }
-
-
 }}}; // giada::c::sampleEditor::

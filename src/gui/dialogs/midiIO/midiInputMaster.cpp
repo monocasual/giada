@@ -58,15 +58,15 @@ gdMidiInputMaster::gdMidiInputMaster()
 		LEARNER_WIDTH, 212);
 	pack->spacing(G_GUI_INNER_MARGIN);
 	pack->begin();
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "rewind",           m::conf::midiInRewind,     nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "play/stop",        m::conf::midiInStartStop,  nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "action recording", m::conf::midiInActionRec,  nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "input recording",  m::conf::midiInInputRec,   nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "metronome",        m::conf::midiInMetronome,  nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "input volume",     m::conf::midiInVolumeIn,   nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "output volume",    m::conf::midiInVolumeOut,  nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ×2",     m::conf::midiInBeatDouble, nullptr));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ÷2",     m::conf::midiInBeatHalf,   nullptr));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "rewind",           m::conf::midiInRewind,     0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "play/stop",        m::conf::midiInStartStop,  0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "action recording", m::conf::midiInActionRec,  0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "input recording",  m::conf::midiInInputRec,   0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "metronome",        m::conf::midiInMetronome,  0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "input volume",     m::conf::midiInVolumeIn,   0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "output volume",    m::conf::midiInVolumeOut,  0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ×2",     m::conf::midiInBeatDouble, 0));
+		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "sequencer ÷2",     m::conf::midiInBeatHalf,   0));
 	pack->end();
 
 	m_ok = new geButton(w()-88, pack->y()+pack->h()+G_GUI_OUTER_MARGIN, 80, G_GUI_UNIT, "Close");

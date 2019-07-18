@@ -42,7 +42,7 @@ public:
 
 	enum class Zoom	{ IN, OUT };
 
-	geWaveform(int x, int y, int w, int h);
+	geWaveform(ID channelId, ID waveId, int x, int y, int w, int h);
 
 	void draw() override;
 	int  handle(int e) override;
@@ -176,6 +176,9 @@ private:
 	datasize hasn't changed, but it can be forced otherwise. */
 
 	int alloc(int datasize, bool force=false);
+
+	ID m_channelId;
+	ID m_waveId;
 
 	int   m_chanStart;
 	bool  m_chanStartLit;

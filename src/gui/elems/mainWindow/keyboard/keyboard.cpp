@@ -96,10 +96,10 @@ void geKeyboard::init()
 void geKeyboard::rebuild()
 {
 	init();
+	
+	m::model::ChannelsLock lock(m::model::channels);
 
-	const std::vector<std::unique_ptr<m::Channel>>& channels = m::model::getLayout()->channels;
-
-	for (const std::unique_ptr<m::Channel>& ch : channels) {
+	for (const m::Channel* ch : m::model::channels) {
 		if (ch->id == m::mixer::MASTER_OUT_CHANNEL_ID ||
 			ch->id == m::mixer::MASTER_IN_CHANNEL_ID)
 			continue;
@@ -108,7 +108,7 @@ void geKeyboard::rebuild()
 			column = m_columns[ch->columnIndex];
 		else
 			column = cb_addColumn(G_DEFAULT_COLUMN_WIDTH, ch->columnIndex);
-		column->addChannel(ch.get(), G_GUI_CHANNEL_H_1);
+		column->addChannel(ch->id, ch->type, G_GUI_CHANNEL_H_1);
 	}
 }
 

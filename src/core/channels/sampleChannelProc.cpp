@@ -52,7 +52,7 @@ void rewind_(SampleChannel* ch, Frame localFrame)
 		ch->bufferOffset = localFrame;
 	}
 	else
-		ch->tracker = ch->begin.load();
+		ch->tracker = ch->begin;
 }
 
 
@@ -62,17 +62,11 @@ void rewind_(SampleChannel* ch, Frame localFrame)
 /* quantize
 Starts channel according to quantizer. */
 
-void quantize_(SampleChannel* ch, int localFrame, bool quantoPassed)
+void quantize_(SampleChannel* ch, int localFrame)
 {
-	/* Skip if LOOP_ANY, not in quantizer-wait mode or still waiting for the 
-	quantization time to end. */
-
-	if (ch->isAnyLoopMode() || !ch->quantizing || !quantoPassed)
-		return;
-
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::OFF:
-			ch->status       = ChannelStatus::PLAY;
+			ch->playStatus   = ChannelStatus::PLAY;
 			ch->bufferOffset = localFrame;
 			ch->sendMidiLstatus();
 			// ch->quantizing = false is set by sampleChannelRec::quantize()
@@ -93,7 +87,7 @@ Things to do when the sequencer is on a bar. */
 
 void onBar_(SampleChannel* ch, int localFrame)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::PLAY:
 			if (ch->mode == ChannelMode::LOOP_REPEAT)
 				rewind_(ch, localFrame);
@@ -101,7 +95,7 @@ void onBar_(SampleChannel* ch, int localFrame)
 
 		case ChannelStatus::WAIT:
 			if (ch->mode == ChannelMode::LOOP_ONCE_BAR) {
-				ch->status       = ChannelStatus::PLAY;
+				ch->playStatus       = ChannelStatus::PLAY;
 				ch->bufferOffset = localFrame;
 				ch->sendMidiLstatus();
 			}
@@ -120,14 +114,14 @@ Things to do when the sequencer is on the first beat. */
 
 void onFirstBeat_(SampleChannel* ch, Frame localFrame)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::PLAY: 
 			if (ch->isAnyLoopMode())
 				rewind_(ch, localFrame);
 			break;
 
 		case ChannelStatus::WAIT:
-			ch->status       = ChannelStatus::PLAY;
+			ch->playStatus       = ChannelStatus::PLAY;
 			ch->bufferOffset = localFrame;
 			ch->sendMidiLstatus();
 			break;
@@ -150,7 +144,7 @@ prepareBuffer(). */
 
 void onLastFrame_(SampleChannel* ch, bool running)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::PLAY:
 			/* Stop LOOP_* when the sequencer is off, or SINGLE_* except for
 			SINGLE_ENDLESS, which runs forever unless it's in ENDING mode. 
@@ -159,11 +153,11 @@ void onLastFrame_(SampleChannel* ch, bool running)
 				 ch->mode == ChannelMode::SINGLE_PRESS   ||
 				 ch->mode == ChannelMode::SINGLE_RETRIG) || 
 				(ch->isAnyLoopMode() && !running))
-				ch->status = ChannelStatus::OFF;
+				ch->playStatus = ChannelStatus::OFF;
 			else
 			if (ch->mode == ChannelMode::LOOP_ONCE     ||
 			    ch->mode == ChannelMode::LOOP_ONCE_BAR)
-				ch->status = ChannelStatus::WAIT;
+				ch->playStatus = ChannelStatus::WAIT;
 			ch->sendMidiLstatus();
 			break;			
 
@@ -172,9 +166,9 @@ void onLastFrame_(SampleChannel* ch, bool running)
 			their termination), stop 'em. Let them wait otherwise. */
 			if (ch->mode == ChannelMode::LOOP_ONCE ||
 			    ch->mode == ChannelMode::LOOP_ONCE_BAR)
-				ch->status = ChannelStatus::WAIT;
+				ch->playStatus = ChannelStatus::WAIT;
 			else {
-				ch->status = ChannelStatus::OFF;
+				ch->playStatus = ChannelStatus::OFF;
 				ch->sendMidiLstatus();
 			}
 			break;
@@ -207,7 +201,7 @@ void processIO_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in
 	}
 
 #ifdef WITH_VST
-	pluginHost::processStack(ch->buffer, ch->plugins);
+	pluginHost::processStack(ch->buffer, ch->pluginIds);
 #endif
 
 	for (int i=0; i<out.countFrames(); i++) {
@@ -215,7 +209,7 @@ void processIO_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in
 			ch->calcVolumeEnvelope();
 		if (ch->mute == false)
 			for (int j=0; j<out.countChannels(); j++)
-				out[i][j] += ch->buffer[i][j] * ch->volume * ch->volume_i * ch->calcPanning(j) * ch->boost;	
+				out[i][j] += ch->buffer[i][j] * ch->volume * ch->volume_i * ch->calcPanning(j);	
 	}
 }
 
@@ -233,7 +227,7 @@ void processPreview_(SampleChannel* ch, m::AudioBuffer& out)
 	if (ch->trackerPreview + ch->bufferPreview.countFrames() >= ch->end) {
 		int offset = ch->end - ch->trackerPreview;
 		ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->trackerPreview, 0);
-		ch->trackerPreview = ch->begin.load();
+		ch->trackerPreview = ch->begin;
 		if (ch->previewMode == PreviewMode::LOOP)
 			ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->begin, offset);
 		else
@@ -245,7 +239,7 @@ void processPreview_(SampleChannel* ch, m::AudioBuffer& out)
 
 	for (int i=0; i<out.countFrames(); i++)
 		for (int j=0; j<out.countChannels(); j++)
-			out[i][j] += ch->bufferPreview[i][j] * ch->volume * ch->calcPanning(j) * ch->boost;	
+			out[i][j] += ch->bufferPreview[i][j] * ch->volume * ch->calcPanning(j);	
 }
 
 
@@ -268,7 +262,7 @@ void fillBuffer_(SampleChannel* ch, bool running)
 		
 		/* Reset tracker to begin point. */
 
-		ch->tracker = ch->begin.load();
+		ch->tracker = ch->begin;
 		
 		/* Then fill the new head. */
 
@@ -282,7 +276,7 @@ void fillBuffer_(SampleChannel* ch, bool running)
 		ch->bufferOffset  = 0;
 		if (ch->isOnLastFrame()) {
 			onLastFrame_(ch, running);
-			ch->tracker = ch->begin.load();
+			ch->tracker = ch->begin;
 			if (ch->mode == ChannelMode::LOOP_BASIC  || 
 			    ch->mode == ChannelMode::LOOP_REPEAT || 
 			    ch->mode == ChannelMode::SINGLE_ENDLESS) {
@@ -305,7 +299,7 @@ void fillBuffer_(SampleChannel* ch, bool running)
 
 void kill(SampleChannel* ch, int localFrame)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::WAIT:
 		case ChannelStatus::PLAY:
 		case ChannelStatus::ENDING:
@@ -313,7 +307,7 @@ void kill(SampleChannel* ch, int localFrame)
 			occurs in the middle of the buffer. */
 			if (localFrame != 0)
 				ch->buffer.clear(localFrame);
-			ch->status = ChannelStatus::OFF;
+			ch->playStatus = ChannelStatus::OFF;
 			ch->sendMidiLstatus();
 			rewind_(ch, localFrame);
 			break;
@@ -328,7 +322,7 @@ void kill(SampleChannel* ch, int localFrame)
 
 void stop(SampleChannel* ch)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::PLAY:
 			if (ch->mode == ChannelMode::SINGLE_PRESS)
 				kill(ch, 0);
@@ -352,9 +346,9 @@ void stopInputRec(SampleChannel* ch, int globalFrame)
 	recording stuff and not yet in play. They are also started in force mode, i.e.
 	they must start playing right away at the current global frame, not at the 
 	next first beat. */
-	if (ch->isAnyLoopMode() && ch->status == ChannelStatus::OFF && ch->armed) {
-		ch->status  = ChannelStatus::PLAY;
-		ch->tracker = globalFrame;	
+	if (ch->isAnyLoopMode() && ch->playStatus == ChannelStatus::OFF && ch->armed) {
+		ch->playStatus  = ChannelStatus::PLAY;
+		ch->tracker = globalFrame;
 	}
 }
 
@@ -364,11 +358,11 @@ void stopInputRec(SampleChannel* ch, int globalFrame)
 
 void stopBySeq(SampleChannel* ch, bool chansStopOnSeqHalt)
 {
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::WAIT:
 			/* Loop-mode channels in wait status get stopped right away. */
 			if (ch->isAnyLoopMode())
-				ch->status = ChannelStatus::OFF;
+				ch->playStatus = ChannelStatus::OFF;
 			break;
 
 		case ChannelStatus::PLAY:
@@ -419,14 +413,13 @@ void setMute(SampleChannel* ch, bool value)
 void setSolo(SampleChannel* ch, bool value)
 {
 	ch->solo = value;
-	mh::updateSoloCount();
 
 	// This is for processing playing_inaudible
-	for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
+	model::ChannelsLock l(model::channels);
+	for (Channel* c : model::channels)
 		c->sendMidiLstatus();
-
+	
 	ch->sendMidiLsolo();
-
 }
 
 
@@ -438,21 +431,21 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 	/* For one-shot modes, velocity drives the internal volume. */
 	if (velocity != 0) {
 		if (ch->isAnySingleMode() && ch->midiInVeloAsVol)
-			ch->volume_i = u::math::map<int, float>(velocity, 0, G_MAX_VELOCITY, 0.0, 1.0);		
+			ch->volume_i.store(u::math::map<int, float>(velocity, 0, G_MAX_VELOCITY, 0.0, 1.0));		
 	}
 
-	switch (ch->status) {
+	switch (ch->playStatus) {
 		case ChannelStatus::OFF:
 			ch->bufferOffset = localFrame;
 			if (ch->isAnyLoopMode()) {
-				ch->status = ChannelStatus::WAIT;
+				ch->playStatus = ChannelStatus::WAIT;
 				ch->sendMidiLstatus();
 			}
 			else {
 				if (doQuantize)
 					ch->quantizing = true;
 				else {
-					ch->status = ChannelStatus::PLAY;
+					ch->playStatus = ChannelStatus::PLAY;
 					ch->sendMidiLstatus();
 				}
 			}
@@ -467,24 +460,24 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 			}
 			else
 			if (ch->isAnyLoopMode() || ch->mode == ChannelMode::SINGLE_ENDLESS) {
-				ch->status = ChannelStatus::ENDING;
+				ch->playStatus = ChannelStatus::ENDING;
 				ch->sendMidiLstatus();
 			}
 			else
 			if (ch->mode == ChannelMode::SINGLE_BASIC) {
 				rewind_(ch, localFrame);
-				ch->status = ChannelStatus::OFF;
+				ch->playStatus = ChannelStatus::OFF;
 				ch->sendMidiLstatus();
 			}
 			break;
 
 		case ChannelStatus::WAIT:
-			ch->status = ChannelStatus::OFF;
+			ch->playStatus = ChannelStatus::OFF;
 			ch->sendMidiLstatus();
 			break;
 
 		case ChannelStatus::ENDING:
-			ch->status = ChannelStatus::PLAY;
+			ch->playStatus = ChannelStatus::PLAY;
 			ch->sendMidiLstatus();
 			break;
 
@@ -514,10 +507,17 @@ void render(SampleChannel* ch, AudioBuffer& out, const AudioBuffer& in,
 
 void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 {
-	quantize_(ch, fe.frameLocal, fe.quantoPassed);
+	if (!ch->hasData())
+		return;
+
+	/* Quantize only if is single mode and in quantizer-wait mode and a
+	quantizer step has passed. */
+
+	if (ch->isAnySingleMode() && ch->quantizing && fe.quantoPassed)	
+		quantize_(ch, fe.frameLocal);
 	if (fe.onBar)
 		onBar_(ch, fe.frameLocal);
-	if (fe.onFirstBeat && ch->hasData())
+	if (fe.onFirstBeat)
 		onFirstBeat_(ch, fe.frameLocal);
 }
 }}};

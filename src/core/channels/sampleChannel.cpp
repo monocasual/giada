@@ -29,6 +29,7 @@
 #include "utils/log.h"
 #include "core/const.h"
 #include "core/wave.h"
+#include "core/model/model.h"
 #include "sampleChannelProc.h"
 #include "sampleChannelRec.h"
 #include "channelManager.h"
@@ -40,17 +41,18 @@ namespace m
 {
 SampleChannel::SampleChannel(bool inputMonitor, int bufferSize, size_t column)
 : Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize, column),
-  wave             (nullptr),
+  hasWave          (false),
+  waveId           (0),
   shift            (0),
   mode             (ChannelMode::SINGLE_BASIC),
-  tracker          (0),
-  trackerPreview   (0),
   quantizing       (false),
   inputMonitor     (inputMonitor),
-  boost            (G_DEFAULT_BOOST),
   pitch            (G_DEFAULT_PITCH),
+  tracker          (0),
+  trackerPreview   (0),
   begin            (0),
   end              (0),
+  midiInVeloAsVol  (false),
   midiInReadActions(0x0),
   midiInPitch      (0x0),
   bufferOffset     (0),
@@ -70,18 +72,18 @@ SampleChannel::SampleChannel(bool inputMonitor, int bufferSize, size_t column)
 
 SampleChannel::SampleChannel(const SampleChannel& o)
 : Channel          (o),
-  wave             (o.wave),
+  hasWave          (o.hasWave),
+  waveId           (o.waveId),
   shift            (o.shift),
   mode             (o.mode),
+  quantizing       (o.quantizing),
+  inputMonitor     (o.inputMonitor),
+  pitch            (o.pitch),
   tracker          (o.tracker.load()),
   trackerPreview   (0),
-  quantizing       (o.quantizing),
-  inputMonitor     (o.inputMonitor.load()),
-  boost            (o.boost.load()),
-  pitch            (o.pitch.load()),
-  begin            (o.begin.load()),
-  end              (o.end.load()),
-  midiInVeloAsVol  (o.midiInVeloAsVol.load()),
+  begin            (o.begin),
+  end              (o.end),
+  midiInVeloAsVol  (o.midiInVeloAsVol),
   midiInReadActions(o.midiInReadActions.load()),
   midiInPitch      (o.midiInPitch.load()),
   bufferOffset     (o.bufferOffset),
@@ -94,6 +96,15 @@ SampleChannel::SampleChannel(const SampleChannel& o)
 	}
 	
 	bufferPreview.alloc(o.bufferPreview.countFrames(), G_MAX_IO_CHANS);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+SampleChannel* SampleChannel::clone() const
+{
+	return new SampleChannel(*this);
 }
 
 
@@ -275,19 +286,21 @@ void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
 
 bool SampleChannel::hasLogicalData() const
 { 
-	return wave != nullptr && wave->isLogical();
+	assert(false);
+	//return wave != nullptr && wave->isLogical();
 };
 
 
 bool SampleChannel::hasEditedData() const
 { 
-	return wave != nullptr && wave->isEdited();
+	assert(false);
+	//return wave != nullptr && wave->isEdited();
 };
 
 
 bool SampleChannel::hasData() const
 {
-	return wave != nullptr;
+	return hasWave;
 }
 
 
@@ -296,11 +309,14 @@ bool SampleChannel::hasData() const
 
 void SampleChannel::setBegin(int f)
 {
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
+	
 	if (f < 0)
 		f = 0;
 	else
-	if (f > wave->getSize())
-		f = wave->getSize();
+	if (f > wave.getSize())
+		f = wave.getSize();
 	else
 	if (f >= end)
 		f = end - 1;
@@ -316,8 +332,11 @@ void SampleChannel::setBegin(int f)
 
 void SampleChannel::setEnd(int f)
 {
-	if (f >= wave->getSize())
-		f = wave->getSize() - 1;
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
+	
+	if (f >= wave.getSize())
+		f = wave.getSize() - 1;
 	else
 	if (f <= begin)
 		f = begin + 1;
@@ -361,9 +380,9 @@ float SampleChannel::getPitch() const { return pitch; }
 
 int SampleChannel::getPosition() const
 {
-	if (status != ChannelStatus::EMPTY   && 
-	    status != ChannelStatus::MISSING && 
-	    status != ChannelStatus::OFF)
+	if (playStatus != ChannelStatus::EMPTY   && 
+	    playStatus != ChannelStatus::MISSING && 
+	    playStatus != ChannelStatus::OFF)
 		return tracker - begin;
 	else
 		return -1;
@@ -373,34 +392,15 @@ int SampleChannel::getPosition() const
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::setBoost(float v)
-{
-	if (v > G_MAX_BOOST_DB)
-		boost = G_MAX_BOOST_DB;
-	else 
-	if (v < 0.0f)
-		boost = 0.0f;
-	else
-		boost = v;
-}
-
-
-float SampleChannel::getBoost() const { return boost; }
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void SampleChannel::empty()
 {
-	status     = ChannelStatus::EMPTY;
+	playStatus = ChannelStatus::EMPTY;
 	begin      = 0;
 	end        = 0;
 	tracker    = 0;
 	volume     = G_DEFAULT_VOL;
-	boost      = G_DEFAULT_BOOST;
 	hasActions = false;
-	wave       = nullptr;
+	hasWave    = false;
 	sendMidiLstatus();
 }
 
@@ -408,21 +408,36 @@ void SampleChannel::empty()
 /* -------------------------------------------------------------------------- */
 
 
-void SampleChannel::pushWave(std::shared_ptr<const Wave> w)
+void SampleChannel::pushWave(ID wid, Frame size)
 {
-	status = ChannelStatus::OFF;
-	wave   = w;
-	begin  = 0;
-	end    = w != nullptr ? wave->getSize() - 1 : 0;
+	playStatus = ChannelStatus::OFF;
+	waveId     = wid;
+	begin      = 0;
+	end        = size;
+	tracker    = 0;
+	hasWave    = true;
 	sendMidiLstatus();
 }
+
+
+void SampleChannel::popWave()
+{
+	playStatus = ChannelStatus::OFF;
+	waveId     = 0;
+	begin      = 0;
+	end        = 0;
+	tracker    = 0;
+	hasWave    = false;
+	sendMidiLstatus();
+}
+
 
 /* -------------------------------------------------------------------------- */
 
 
 bool SampleChannel::canInputRec() const
 {
-	return wave == nullptr && armed == true;
+	return !hasWave && armed == true;
 }
 
 
@@ -443,7 +458,10 @@ int SampleChannel::fillBuffer(AudioBuffer& dest, int start, int offset)
 
 int SampleChannel::fillBufferResampled(AudioBuffer& dest, int start, int offset)
 {
-	rsmp_data.data_in       = wave->getFrame(start);        // Source data
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
+	
+	rsmp_data.data_in       = wave.getFrame(start);        // Source data
 	rsmp_data.input_frames  = end - start;                  // How many readable frames
 	rsmp_data.data_out      = dest[offset];                 // Destination (processed data)
 	rsmp_data.output_frames = dest.countFrames() - offset;  // How many frames to process
@@ -460,11 +478,14 @@ int SampleChannel::fillBufferResampled(AudioBuffer& dest, int start, int offset)
 
 int SampleChannel::fillBufferCopy(AudioBuffer& dest, int start, int offset)
 {
-	int used = dest.countFrames() - offset;
-	if (used > wave->getSize() - start)
-		used = wave->getSize() - start;
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
 
-	dest.copyData(wave->getFrame(start), used, offset);
+	int used = dest.countFrames() - offset;
+	if (used > wave.getSize() - start)
+		used = wave.getSize() - start;
+
+	dest.copyData(wave.getFrame(start), used, offset);
 
 	return used;
 }

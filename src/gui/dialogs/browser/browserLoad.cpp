@@ -36,8 +36,8 @@ namespace giada {
 namespace v
 {
 gdBrowserLoad::gdBrowserLoad(const std::string& title, const std::string& path, 
-	std::function<void(void*)> cb, const m::Channel* ch)
-: gdBrowserBase(title, path, cb, ch)
+	std::function<void(void*)> cb, ID channelId)
+: gdBrowserBase(title, path, cb, channelId)
 {
 	where->size(groupTop->w()-updir->w()-8, 20);
 

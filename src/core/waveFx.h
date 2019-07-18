@@ -40,43 +40,43 @@ static const int FADE_IN  = 0;
 static const int FADE_OUT = 1;
 static const int SMOOTH_SIZE = 32;
 
-/* normalizeSoft
-Normalizes the wave by returning the dB value for the boost volume. */
+/* monoToStereo
+Converts a 1-channel Wave to a 2-channels wave. It works on a free Wave object,
+not yet added to the RCUList. */
 
-float normalizeSoft(const Wave& w);
+int monoToStereo(Wave& w);
 
 /* normalizeHard
 Normalizes the wave in range a-b by altering values in memory. */
 
-void normalizeHard(Wave& w, int a, int b);
+void normalizeHard(ID waveId, int a, int b);
 
-int monoToStereo(Wave& w);
-void silence(Wave& w, int a, int b);
-int cut(Wave& w, int a, int b);
-int trim(Wave& w, int a, int b);
+void silence(ID waveId, int a, int b);
+void cut(ID waveId, int a, int b);
+void trim(ID waveId, int a, int b);
 
 /* paste
-Pastes Wave 'src' into Wave 'dest', starting from frame 'a'. */
+Pastes Wave 'src' into Wave at 'waveIndex', starting from frame 'a'. */
 
-int paste(const Wave& src, Wave& dest, int a);
+void paste(const Wave& src, ID waveId, int a);
 
 /* fade
 Fades in or fades out selection. Fade In = type 0, Fade Out = type 1 */
 
-void fade(Wave& w, int a, int b, int type);
+void fade(ID waveId, int a, int b, int type);
 
 /* smooth
 Smooth edges of selection. */
 
-void smooth(Wave& w, int a, int b);
+void smooth(ID waveId, int a, int b);
 
 /* reverse
 Flips Wave's data. */
 
-void reverse(Wave& w, int a, int b);
+void reverse(ID waveId, int a, int b);
 
-void shift(Wave& w, int offset);
-
+void shift(ID waveId, int offset);
 }}}; // giada::m::wfx::
+
 
 #endif

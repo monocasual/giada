@@ -45,6 +45,7 @@ namespace giada {
 namespace m
 {
 class SampleChannel;
+class Wave;
 }
 namespace v 
 {
@@ -62,13 +63,13 @@ friend class geWaveform;
 
 public:
 
-	gdSampleEditor(ID chanID);
+	gdSampleEditor(ID channelId, ID waveId);
 	~gdSampleEditor();
 
 	void rebuild() override;
 	void refresh() override;
 
-	void updateInfo();
+	void updateInfo(const m::Wave& w);
 
 	geChoice* grid;
 	geCheck*  snap;
@@ -79,7 +80,6 @@ public:
 	geWaveTools* waveTools;
 
 	geVolumeTool* volumeTool;
-	geBoostTool*  boostTool;
 	gePanTool*    panTool;
 
 	gePitchTool* pitchTool;
@@ -93,9 +93,6 @@ public:
 	geCheck*        loop;
 	geBox*          info;
 
-	const m::SampleChannel* ch;
-
-	ID chanID;
 
 private:
 
@@ -120,6 +117,9 @@ private:
 	void cb_enableSnap();
 	void cb_togglePreview();
 	void cb_rewindPreview();
+	
+	ID m_channelId;
+	ID m_waveId;
 };
 }} // giada::v::
 

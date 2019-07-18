@@ -31,6 +31,7 @@
 #include <cassert>
 #include <string>
 #include "core/channels/channel.h"
+#include "core/model/model.h"
 #include "core/graphics.h"
 #include "core/pluginHost.h"
 #include "core/plugin.h"
@@ -49,10 +50,10 @@
 namespace giada {
 namespace v
 {
-gePluginElement::gePluginElement(const m::Plugin& p, ID chanID, int X, int Y, int W)
-: Fl_Pack (X, Y, W, G_GUI_UNIT), 
-  m_plugin(p),
-  m_chanID(chanID)
+gePluginElement::gePluginElement(ID pluginId, ID channelId, int X, int Y, int W)
+: Fl_Pack    (X, Y, W, G_GUI_UNIT), 
+  m_channelId(channelId),
+  m_pluginId (pluginId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -65,24 +66,28 @@ gePluginElement::gePluginElement(const m::Plugin& p, ID chanID, int X, int Y, in
 		remove    = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", fxRemoveOff_xpm, fxRemoveOn_xpm);
 	end();
 
-	button->copy_label(m_plugin.getName().c_str());
+	m::model::PluginsLock l(m::model::plugins);
+
+	const m::Plugin& p = m::model::get(m::model::plugins, m_pluginId);
+
+	button->copy_label(p.getName().c_str());
 	button->callback(cb_openPluginWindow, (void*)this);
 
 	program->callback(cb_setProgram, (void*)this);
 
-	for (int i=0; i<m_plugin.getNumPrograms(); i++)
-		program->add(u::gui::removeFltkChars(m_plugin.getProgramName(i)).c_str());
+	for (int i=0; i<p.getNumPrograms(); i++)
+		program->add(u::gui::removeFltkChars(p.getProgramName(i)).c_str());
 
 	if (program->size() == 0) {
 		program->add("-- no programs --\0");
 		program->deactivate();
 	}
 	else
-		program->value(m_plugin.getCurrentProgram());
+		program->value(p.getCurrentProgram());
 
 	bypass->callback(cb_setBypass, (void*)this);
 	bypass->type(FL_TOGGLE_BUTTON);
-	bypass->value(m_plugin.isBypassed() ? 0 : 1);
+	bypass->value(p.isBypassed() ? 0 : 1);
 
 	shiftUp->callback(cb_shiftUp, (void*)this);
 	shiftDown->callback(cb_shiftDown, (void*)this);
@@ -93,9 +98,9 @@ gePluginElement::gePluginElement(const m::Plugin& p, ID chanID, int X, int Y, in
 /* -------------------------------------------------------------------------- */
 
 
-ID gePluginElement::getPluginID() const
+ID gePluginElement::getPluginId() const
 {
-	return m_plugin.id;
+	return m_pluginId;
 }
 
 
@@ -117,7 +122,7 @@ void gePluginElement::cb_shiftUp()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.id, parent->getPrevElement(*this).getPluginID(), m_chanID);
+	c::plugin::swapPlugins(m_pluginId, parent->getPrevElement(*this).getPluginId(), m_channelId);
 }
 
 
@@ -128,7 +133,7 @@ void gePluginElement::cb_shiftDown()
 {
 	const gdPluginList* parent = static_cast<const gdPluginList*>(window());
 
-	c::plugin::swapPlugins(m_plugin.id, parent->getNextElement(*this).getPluginID(), m_chanID);
+	c::plugin::swapPlugins(m_pluginId, parent->getNextElement(*this).getPluginId(), m_channelId);
 }
 
 
@@ -141,8 +146,8 @@ void gePluginElement::cb_removePlugin()
 	pluginWindow has id = id_plugin + 1, because id=0 is reserved for the parent 
 	window 'add plugin'.*/
 	
-	static_cast<gdWindow*>(window())->delSubWindow(m_plugin.id + 1);
-	c::plugin::freePlugin(m_plugin.id, m_chanID);
+	static_cast<gdWindow*>(window())->delSubWindow(m_pluginId + 1);
+	c::plugin::freePlugin(m_pluginId, m_channelId);
 }
 
 
@@ -151,10 +156,14 @@ void gePluginElement::cb_removePlugin()
 
 void gePluginElement::cb_openPluginWindow()
 {
+	m::model::PluginsLock l(m::model::plugins);
+
+	const m::Plugin& p = m::model::get(m::model::plugins, m_pluginId);
+
 	/* The new pluginWindow has id = id_plugin + 1, because id=0 is reserved for 
 	the parent window 'add plugin'. */
 
-	int pwid = m_plugin.id + 1;
+	int pwid = m_pluginId + 1;
 
 	gdWindow* parent = static_cast<gdWindow*>(window());
 	gdWindow* child  = parent->getChild(pwid);
@@ -163,10 +172,10 @@ void gePluginElement::cb_openPluginWindow()
 		child->show();  // Raise it to top
 	}
 	else {
-		if (m_plugin.hasEditor())
-			child = new gdPluginWindowGUI(m_plugin);
+		if (p.hasEditor())
+			child = new gdPluginWindowGUI(m_pluginId);
 		else 
-			child = new gdPluginWindow(m_plugin, m_chanID);
+			child = new gdPluginWindow(m_pluginId);
 		child->setId(pwid);
 		parent->addSubWindow(child);
 	}
@@ -178,7 +187,7 @@ void gePluginElement::cb_openPluginWindow()
 
 void gePluginElement::cb_setBypass()
 {
-	c::plugin::toggleBypass(m_plugin.id, m_chanID);
+	c::plugin::toggleBypass(m_pluginId);
 }
 
 
@@ -187,7 +196,7 @@ void gePluginElement::cb_setBypass()
 
 void gePluginElement::cb_setProgram()
 {
-	c::plugin::setProgram(m_plugin.id, program->value(), m_chanID);
+	c::plugin::setProgram(m_pluginId, program->value());
 }
 }} // giada::v::
 

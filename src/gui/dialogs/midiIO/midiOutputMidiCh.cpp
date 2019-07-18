@@ -41,9 +41,12 @@ namespace v
 {
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 : gdMidiOutputBase(300, 168), 
-  m_ch            (static_cast<m::MidiChannel*>(m::model::getLayout()->getChannel(channelId)))
+  m_channelId     (channelId)
 {
-	setTitle(m_ch->id + 1);
+	m::model::ChannelsLock l(m::model::channels);
+	m::MidiChannel& c = static_cast<m::MidiChannel&>(m::model::get(m::model::channels, m_channelId));
+	
+	setTitle(m_channelId + 1);
 	begin();
 
 	m_enableOut   = new geCheck(x()+8, y()+8, 150, 20, "Enable MIDI output");
@@ -51,11 +54,11 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 
 	m_enableLightning = new geCheck(x()+8, m_chanListOut->y()+m_chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
 	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+8,  
-		w()-16, "playing", m_ch->midiOutLplaying, m_ch));
+		w()-16, "playing", c.midiOutLplaying, m_channelId));
 	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+32, 
-		w()-16, "mute", m_ch->midiOutLmute, m_ch));
+		w()-16, "mute", c.midiOutLmute, m_channelId));
 	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+56, 
-		w()-16, "solo", m_ch->midiOutLsolo, m_ch));
+		w()-16, "solo", c.midiOutLsolo, m_channelId));
 
 	m_close = new geButton(w()-88, m_enableLightning->y()+m_enableLightning->h()+84, 80, 20, "Close");
 
@@ -79,15 +82,15 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_chanListOut->add("Channel 16");
 	m_chanListOut->value(0);
 
-	if (m_ch->midiOut)
+	if (c.midiOut)
 		m_enableOut->value(1);
 	else
 		m_chanListOut->deactivate();
 
-	if (m_ch->midiOutL)
+	if (c.midiOutL)
 		m_enableLightning->value(1);
 
-	m_chanListOut->value(m_ch->midiOutChan);
+	m_chanListOut->value(c.midiOutChan);
 
 	m_enableOut->callback(cb_enableChanList, (void*)this);
 	m_close->callback(cb_close, (void*)this);
@@ -119,9 +122,13 @@ void gdMidiOutputMidiCh::cb_enableChanList()
 
 void gdMidiOutputMidiCh::cb_close()
 {
-	m_ch->midiOut     = m_enableOut->value();
-	m_ch->midiOutChan = m_chanListOut->value();
-	m_ch->midiOutL    = m_enableLightning->value();
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		m::MidiChannel& mc = static_cast<m::MidiChannel&>(c);
+		mc.midiOut     = m_enableOut->value();
+		mc.midiOutChan = m_chanListOut->value();
+		mc.midiOutL    = m_enableLightning->value();
+	});
 	do_callback();
 }
 

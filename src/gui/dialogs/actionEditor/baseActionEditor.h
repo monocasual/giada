@@ -68,7 +68,6 @@ public:
 	geButton*   zoomOutBtn;
 	geScroll*   viewport;       // widget container
 
-	const m::Channel* ch;
 	ID channelId;
 
 	float ratio;

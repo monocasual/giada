@@ -37,7 +37,7 @@ namespace v
 {
 gdBrowserDir::gdBrowserDir(const std::string& title, const std::string& path, 
 	std::function<void(void*)> cb)
-: gdBrowserBase(title, path, cb, nullptr)
+: gdBrowserBase(title, path, cb, 0)
 {
 	where->size(groupTop->w()-updir->w()-8, 20);
 

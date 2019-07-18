@@ -38,9 +38,15 @@ namespace updater
 {
 void update(void* p)
 {
-	if (m::model::changed.load() == true) {
+	if (m::model::waves.changed.load()    == true ||
+		m::model::actions.changed.load()  == true ||
+		m::model::channels.changed.load() == true)
+	{
 		u::gui::rebuild();
-		m::model::changed.store(false);
+		m::model::waves.changed.store(false);
+		m::model::actions.changed.store(false);
+		m::model::channels.changed.store(false);
+		puts("REBUILT");
 	}
 	else
 		u::gui::refresh();

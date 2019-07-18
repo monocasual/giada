@@ -28,7 +28,6 @@
 #include <string>
 #include "core/channels/midiChannel.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/graphics.h"
 #include "glue/actionEditor.h"
 #include "gui/elems/basics/scroll.h"
@@ -91,7 +90,6 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 
 void gdMidiActionEditor::rebuild()
 {
-	ch        = m::model::getLayout()->getChannel(channelId);
 	m_actions = c::actionEditor::getActions(channelId);
 
 	computeWidth();

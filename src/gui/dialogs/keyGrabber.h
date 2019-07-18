@@ -51,13 +51,6 @@ public:
 
 private:
 
-	const m::Channel* m_ch;
-	ID m_channelId;
-
-	geBox*    m_text;
-	geButton* m_clear;
-	geButton* m_cancel;
-
 	static void cb_clear (Fl_Widget* w, void* p);
 	static void cb_cancel(Fl_Widget* w, void* p);
 	void cb_clear ();
@@ -65,6 +58,12 @@ private:
 
 	void setButtonLabel(int key);
 	void updateText(int key);
+	
+	ID m_channelId;
+
+	geBox*    m_text;
+	geButton* m_clear;
+	geButton* m_cancel;
 };
 }} // giada::v::
 

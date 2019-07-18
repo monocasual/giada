@@ -42,9 +42,9 @@ namespace c {
 namespace channel 
 {
 /* addChannel
-Adds an empty new channel to the stack. Returns the new channel. */
+Adds an empty new channel to the stack. */
 
-m::Channel* addChannel(size_t columnIndex, ChannelType type, int size);
+void addChannel(size_t columnIndex, ChannelType type, int size);
 
 /* loadChannel
 Fills an existing channel with a wave. */
@@ -75,10 +75,12 @@ void cloneChannel(ID channelId);
 Sets several channel properties. */
 
 void setArm(ID channelId, bool value);
+void toggleArm(ID channelId);
 void setInputMonitor(ID channelId, bool value);
 void setMute(ID channelId, bool value);
 void toggleMute(ID channelId);
 void setSolo(ID channelId, bool value);
+void toggleSolo(ID channelId);
 void setVolume(ID channelId, float v, bool gui=true, bool editor=false);
 void setName(ID channelId, const std::string& name);
 void setPitch(ID channelId, float val, bool gui=true);

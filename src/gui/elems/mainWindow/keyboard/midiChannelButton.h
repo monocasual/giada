@@ -43,7 +43,7 @@ class geMidiChannelButton : public geChannelButton
 {
 public:
 
-	geMidiChannelButton(int x, int y, int w, int h, const m::MidiChannel* ch);
+	geMidiChannelButton(int x, int y, int w, int h, ID channelId);
 	
 	void refresh() override;
 };

@@ -64,7 +64,7 @@ private:
 	geButton*       addPlugin;
 	geLiquidScroll* list;	
 
-	ID m_chanID;
+	ID m_channelId;
 };
 
 }} // giada::v::

@@ -124,7 +124,7 @@ void geMainMenu::cb_file()
 
 	if (strcmp(m->label(), "Open patch or project...") == 0) {
 		gdWindow* childWin = new gdBrowserLoad("Load patch or project", 
-			conf::patchPath, c::storage::loadPatch, nullptr);
+			conf::patchPath, c::storage::loadPatch, 0);
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
@@ -133,13 +133,13 @@ void geMainMenu::cb_file()
 			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
 				return;
 		gdWindow* childWin = new gdBrowserSave("Save patch", conf::patchPath, 
-			patch::name, c::storage::savePatch, nullptr);
+			patch::name, c::storage::savePatch, 0);
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
 	if (strcmp(m->label(), "Save project...") == 0) {
 		gdWindow* childWin = new gdBrowserSave("Save project", conf::patchPath, 
-			patch::name, c::storage::saveProject, nullptr);
+			patch::name, c::storage::saveProject, 0);
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}

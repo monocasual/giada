@@ -45,6 +45,9 @@ namespace waveManager
 {
 namespace
 {
+ID waveId_ = 0;
+
+
 int getBits(SF_INFO& header)
 {
 	if      (header.format & SF_FORMAT_PCM_S8)
@@ -71,7 +74,7 @@ int getBits(SF_INFO& header)
 /* -------------------------------------------------------------------------- */
 
 
-Result createFromFile(const string& path)
+Result createFromFile(const string& path) // TODO ID parameter for patch persistence
 {
 	if (path == "" || gu_isDir(path)) {
 		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
@@ -94,7 +97,7 @@ Result createFromFile(const string& path)
 		return { G_RES_ERR_WRONG_DATA };
 	}
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
@@ -116,7 +119,7 @@ Result createFromFile(const string& path)
 std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
 	const string& name)
 {
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
@@ -135,7 +138,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	int channels = src.getChannels();
 	int frames   = b - a;
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>();
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->copyData(src.getFrame(a), frames);
 	wave->setLogical(true);

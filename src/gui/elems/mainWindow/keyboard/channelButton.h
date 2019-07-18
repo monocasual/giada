@@ -43,7 +43,7 @@ class geChannelButton : public geButton
 {
 public:
 
-	geChannelButton(int x, int y, int w, int h, const m::Channel* ch);
+	geChannelButton(int x, int y, int w, int h, ID channelId);
 
 	virtual void refresh();
 
@@ -58,9 +58,8 @@ public:
 
 protected:
 
+	ID          m_channelId;
 	std::string m_key;
-
-	const m::Channel* m_ch;
 };
 }} // giada::v::
 

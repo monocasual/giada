@@ -38,7 +38,6 @@
 #include "utils/string.h"
 #include "utils/log.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/midiChannel.h"
 #include "core/mixerHandler.h"
 #include "core/mixer.h"
@@ -173,7 +172,7 @@ void quantize(int val)
 
 void setOutVol(float v, bool gui)
 {
-	m::mixer::outVol = v;
+	m::mh::setOutVol(v);
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setOutVol(v);
@@ -187,7 +186,7 @@ void setOutVol(float v, bool gui)
 
 void setInVol(float v, bool gui)
 {
-	m::mixer::inVol = v;
+	m::mh::setInVol(v);
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setInVol(v);
@@ -216,13 +215,15 @@ void clearAllSamples()
 
 void clearAllActions()
 {
+	assert(false);
+	/*
 	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
 	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
 	for (std::unique_ptr<m::Channel>& ch : m::model::getLayout()->channels)
 		ch->hasActions = false;
 	m::recorder::clearAll();
-	u::gui::updateControls();
+	u::gui::updateControls();*/
 }
 
 
@@ -233,17 +234,16 @@ void resetToInitState(bool resetGui, bool createColumns)
 {
 	if (!v::gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 		return;
-	assert(false);
-#if 0
+	
 	u::gui::closeAllSubwindows();
-	mixer::close();
-	clock::init(conf::samplerate, conf::midiTCfps);
-	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
-	recorder::init(&mixer::mutex);
+	m::mh::close();
+	m::clock::init(m::conf::samplerate, m::conf::midiTCfps);
+	m::mh::init();
+	m::recorder::init();
 
 #ifdef WITH_VST
-	pluginHost::freeAllStacks();
-	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
+	m::pluginHost::close();
+	m::pluginManager::init(m::conf::samplerate, m::kernelAudio::getRealBufSize());
 #endif
 
 	G_MainWin->keyboard->clear();
@@ -254,7 +254,6 @@ void resetToInitState(bool resetGui, bool createColumns)
 
 	if (resetGui)
 		u::gui::updateControls();
-#endif
 }
 
 
@@ -291,16 +290,10 @@ void toggleActionRec()
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
 void startActionRec()
 {
 	m::recManager::startActionRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode));
 }
-
-
-/* -------------------------------------------------------------------------- */
 
 
 void stopActionRec()

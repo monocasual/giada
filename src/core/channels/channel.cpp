@@ -48,9 +48,10 @@
 namespace giada {
 namespace m 
 {
-Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize, size_t columnIndex)
+Channel::Channel(ChannelType type, ChannelStatus playStatus, int bufferSize, 
+	size_t columnIndex)
 : type           (type),
-  status         (status),
+  playStatus     (playStatus),
   recStatus      (ChannelStatus::OFF),
   columnIndex    (columnIndex),
   previewMode    (PreviewMode::NONE),
@@ -93,22 +94,22 @@ Channel::Channel(ChannelType type, ChannelStatus status, int bufferSize, size_t 
 
 Channel::Channel(const Channel& o)
 : type           (o.type),
-  status         (o.status.load()),
-  recStatus      (o.recStatus.load()),
+  playStatus     (o.playStatus),
+  recStatus      (o.recStatus),
   columnIndex    (o.columnIndex),
   id             (o.id),
-  previewMode    (o.previewMode.load()),
-  pan            (o.pan.load()),
-  volume         (o.volume.load()),
-  armed          (o.armed.load()),
+  previewMode    (o.previewMode),
+  pan            (o.pan),
+  volume         (o.volume),
+  armed          (o.armed),
   name           (o.name),
-  key            (o.key.load()),
-  mute           (o.mute.load()),
-  solo           (o.solo.load()),
+  key            (o.key),
+  mute           (o.mute),
+  solo           (o.solo),
   volume_i       (o.volume_i.load()),
-  volume_d       (o.volume_d.load()),
-  hasActions     (o.hasActions.load()),
-  readActions    (o.readActions.load()),
+  volume_d       (o.volume_d),
+  hasActions     (o.hasActions),
+  readActions    (o.readActions),
   midiIn         (o.midiIn.load()),
   midiInKeyPress (o.midiInKeyPress.load()),
   midiInKeyRel   (o.midiInKeyRel.load()),
@@ -123,7 +124,7 @@ Channel::Channel(const Channel& o)
   midiOutLmute   (o.midiOutLmute.load()),
   midiOutLsolo   (o.midiOutLsolo.load())
 #ifdef WITH_VST
-  ,plugins       (o.plugins)
+ ,pluginIds      (o.pluginIds)
 #endif
 {
 	buffer.alloc(o.buffer.countFrames(), G_MAX_IO_CHANS);
@@ -135,7 +136,8 @@ Channel::Channel(const Channel& o)
 
 bool Channel::isPlaying() const
 {
-	return status == ChannelStatus::PLAY || status == ChannelStatus::ENDING;
+	return playStatus == ChannelStatus::PLAY || 
+	       playStatus == ChannelStatus::ENDING;
 }
 
 
@@ -192,7 +194,7 @@ void Channel::sendMidiLstatus()
 {
 	if (!midiOutL || midiOutLplaying == 0x0)
 		return;
-	switch (status) {
+	switch (playStatus) {
 		case ChannelStatus::OFF:
 			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopped);
 			break;

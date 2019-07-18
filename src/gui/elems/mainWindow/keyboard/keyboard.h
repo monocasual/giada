@@ -79,6 +79,10 @@ public:
 
 	geChannel* getChannel(ID channelId);
 
+	/* init
+	Builds the initial setup of empty channels. */
+
+	void init();
 
 	void forEachChannel(std::function<void(geChannel* c)> f) const;
 
@@ -91,11 +95,6 @@ private:
 
 	static int indexGen;
 	
-	/* init
-	Builds the initial setup of empty channels. */
-
-	void init();
-
 	static void cb_addColumn(Fl_Widget* v, void* p);
 	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, int index=-1);
 

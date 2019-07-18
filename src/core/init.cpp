@@ -96,11 +96,9 @@ void initAudio_()
 {
 	kernelAudio::openDevice();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	mh::init();
 	recorder::init();
 	recorderHandler::init();
-	recManager::init();
 
 #ifdef WITH_VST
 
@@ -166,6 +164,9 @@ void initGUI_(int argc, char** argv)
 
 void shutdownAudio_()
 {
+	/* TODO - why cleaning plug-ins and mixer memory? Just shutdown the audio
+	device and let the OS take care of the rest. */
+
 #ifdef WITH_VST
 
 	pluginHost::close();
@@ -176,7 +177,7 @@ void shutdownAudio_()
 	if (kernelAudio::isReady()) {
 		kernelAudio::closeDevice();
 		gu_log("[init] KernelAudio closed\n");
-		mixer::close();
+		mh::close();
 		gu_log("[init] Mixer closed\n");
 	}
 }

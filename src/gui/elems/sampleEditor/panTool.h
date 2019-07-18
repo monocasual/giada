@@ -45,7 +45,7 @@ class gePanTool : public Fl_Pack
 {
 public:
 
-  gePanTool(int x, int y);
+  gePanTool(ID channelId, int x, int y);
 
   void rebuild();
 
@@ -55,6 +55,8 @@ private:
   static void cb_panReset(Fl_Widget* w, void* p);
   void cb_panning();
   void cb_panReset();
+
+  ID m_channelId;
 
   geBox*    label;
   geDial*   dial;

@@ -31,7 +31,6 @@
 #include <cassert>
 #include <string>
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/channel.h"
 #include "core/conf.h"
 #include "core/const.h"
@@ -58,7 +57,7 @@ namespace v
 {
 gdPluginList::gdPluginList(ID chanID)
 : gdWindow(m::conf::pluginListX, m::conf::pluginListY, 468, 204), 
-  m_chanID(chanID)
+  m_channelId(chanID)
 {
 	end();
 
@@ -69,13 +68,13 @@ gdPluginList::gdPluginList(ID chanID)
 
 	rebuild();
 
-	if (m_chanID == m::mixer::MASTER_OUT_CHANNEL_ID)
+	if (m_channelId == m::mixer::MASTER_OUT_CHANNEL_ID)
 		label("Master Out Plug-ins");
 	else
-	if (m_chanID == m::mixer::MASTER_IN_CHANNEL_ID)
+	if (m_channelId == m::mixer::MASTER_IN_CHANNEL_ID)
 		label("Master In Plug-ins");
 	else {
-		std::string l = "Channel " + u::string::iToString(m_chanID + 1) + " Plug-ins";
+		std::string l = "Channel " + u::string::iToString(m_channelId + 1) + " Plug-ins";
 		copy_label(l.c_str());
 	}
 
@@ -111,8 +110,12 @@ void gdPluginList::rebuild()
 	list->clear();
 	list->scroll_to(0, 0);
 
-	for (const auto& plugin : m::model::getLayout()->getChannel(m_chanID)->plugins)
-		list->addWidget(new gePluginElement(*plugin, m_chanID, 0, 0, 0));
+	m::model::ChannelsLock l(m::model::channels);
+
+	const m::Channel& ch = m::model::get(m::model::channels, m_channelId);
+
+	for (ID pluginId : ch.pluginIds)
+		list->addWidget(new gePluginElement(pluginId, m_channelId, 0, 0, 0));
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
 	
 	addPlugin->callback(cb_addPlugin, (void*)this);
@@ -129,7 +132,7 @@ void gdPluginList::cb_addPlugin()
 	int ww = m::conf::pluginChooserW;
 	int wh = m::conf::pluginChooserH;
 	u::gui::openSubWindow(G_MainWin, new v::gdPluginChooser(wx, wy, ww, wh, 
-		m_chanID), WID_FX_CHOOSER);
+		m_channelId), WID_FX_CHOOSER);
 }
 
 
@@ -154,7 +157,6 @@ const gePluginElement& gdPluginList::getPrevElement(const gePluginElement& currE
 		prev = 0;
 	return *static_cast<gePluginElement*>(list->child(prev));
 }
-
 }} // giada::v::
 
 

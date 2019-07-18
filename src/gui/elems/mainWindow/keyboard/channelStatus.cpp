@@ -27,6 +27,7 @@
 
 #include <FL/fl_draw.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/mixer.h"
 #include "core/clock.h"
 #include "core/recorder.h"
@@ -38,8 +39,8 @@
 namespace giada {
 namespace v
 {
-geChannelStatus::geChannelStatus(int x, int y, int w, int h, const m::SampleChannel* ch)
-: Fl_Box(x, y, w, h), ch(ch)
+geChannelStatus::geChannelStatus(int x, int y, int w, int h, ID channelId)
+: Fl_Box(x, y, w, h), channelId(channelId)
 {
 }
 
@@ -52,37 +53,37 @@ void geChannelStatus::draw()
 	fl_rect(x(), y(), w(), h(), G_COLOR_GREY_4);              // reset border
 	fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);     // reset background
 
-	if (ch == nullptr) 
-		return;
-
-	if (ch->status == ChannelStatus::WAIT    || 
-	    ch->status == ChannelStatus::ENDING  ||
-	    ch->recStatus == ChannelStatus::WAIT || 
-	    ch->recStatus == ChannelStatus::ENDING)
+	m::model::ChannelsLock l(m::model::channels);
+	const m::SampleChannel& ch = static_cast<m::SampleChannel&>(m::model::get(m::model::channels, channelId));
+	
+	if (ch.playStatus == ChannelStatus::WAIT    || 
+	    ch.playStatus == ChannelStatus::ENDING  ||
+	    ch.recStatus == ChannelStatus::WAIT || 
+	    ch.recStatus == ChannelStatus::ENDING)
 	{
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	}
 	else
-	if (ch->status == ChannelStatus::PLAY)
+	if (ch.playStatus == ChannelStatus::PLAY)
 		fl_rect(x(), y(), w(), h(), G_COLOR_LIGHT_1);
 	else
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_GREY_2);  // status empty
 
 
-	if (m::recManager::isRecordingInput() && ch->armed)
+	if (m::recManager::isRecordingInput() && ch.armed)
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_RED);     // take in progress
 	else
-	if (m::recorder::isActive())
+	if (m::recManager::isRecordingAction())
 		fl_rectf(x()+1, y()+1, w()-2, h()-2, G_COLOR_BLUE);    // action recording
 
 	/* Equation for the progress bar: 
 	((chanTracker - chanStart) * w()) / (chanEnd - chanStart). */
 
-	int pos = ch->getPosition();
+	int pos = ch.getPosition();
 	if (pos == -1)
 		pos = 0;
 	else
-		pos = (pos * (w()-1)) / ((ch->getEnd() - ch->getBegin()));
+		pos = (pos * (w()-1)) / ((ch.getEnd() - ch.getBegin()));
 	fl_rectf(x()+1, y()+1, pos, h()-2, G_COLOR_LIGHT_1);
 }
 

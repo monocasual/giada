@@ -45,6 +45,7 @@ public:
 	MidiChannel(int bufferSize, size_t column);
 	MidiChannel(const MidiChannel& o);
 
+	MidiChannel* clone() const override;
 	void parseEvents(mixer::FrameEvents fe) override;
 	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
 		bool audible, bool running) override;

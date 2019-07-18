@@ -52,7 +52,6 @@ namespace v
 {
 gdKeyGrabber::gdKeyGrabber(ID channelId)
 : gdWindow   (300, 126, "Key configuration"), 
-  m_ch       (nullptr),
   m_channelId(channelId)
 {
 	begin();
@@ -77,9 +76,10 @@ gdKeyGrabber::gdKeyGrabber(ID channelId)
 
 void gdKeyGrabber::rebuild()
 {
-	m_ch = m::model::getLayout()->getChannel(m_channelId);
-
-	updateText(m_ch->key);
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		updateText(c.key);
+	});
 }
 
 
@@ -114,7 +114,7 @@ void gdKeyGrabber::cb_clear()
 
 void gdKeyGrabber::setButtonLabel(int key)
 {
-	c::io::setSampleChannelKey(m_ch->id, key);
+	c::io::setSampleChannelKey(m_channelId, key);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -148,7 +148,7 @@ int gdKeyGrabber::handle(int e)
 			    && x != FL_End
 			    && x != ' ')
 			{
-				gu_log("set key '%c' (%d) for channel ID=%d\n", x, x, m_ch->id);
+				gu_log("set key '%c' (%d) for channel ID=%d\n", x, x, m_channelId);
 				setButtonLabel(x);
 				updateText(x);
 				break;

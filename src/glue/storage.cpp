@@ -31,6 +31,7 @@
 #include "core/channels/sampleChannel.h"
 #include "core/channels/midiChannel.h"
 #include "core/mixer.h"
+#include "core/wave.h"
 #include "core/mixerHandler.h"
 #include "core/recorderHandler.h"
 #include "core/pluginManager.h"
@@ -132,6 +133,8 @@ void fillPatchChannels_(bool isProject)
 
 void fillPatchGlobals_(const std::string& name)
 {
+	assert(false);
+#if 0
 	using namespace giada::m;
 
 	patch::version      = G_VERSION_STR;
@@ -154,6 +157,7 @@ void fillPatchGlobals_(const std::string& name)
 	//fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins,
 	//		patch::masterOutPlugins);
 
+#endif
 #endif
 }
 
@@ -191,6 +195,8 @@ std::string makeSamplePath_(const std::string& base, const m::Wave& w, int k)
 
 std::string makeUniqueSamplePath_(const std::string& base, const m::SampleChannel* ch)
 {
+	assert(false);
+/*
 	using namespace giada::m;
 
 	std::string path = base + G_SLASH + ch->wave->getBasename(true);
@@ -201,7 +207,7 @@ std::string makeUniqueSamplePath_(const std::string& base, const m::SampleChanne
 	path = makeSamplePath_(base, *ch->wave, k);
 	while (!mh::uniqueSamplePath(ch, path))
 		path = makeSamplePath_(base, *ch->wave, k++);
-	return path;
+	return path;*/
 }
 } // {anonymous}
 
@@ -339,6 +345,7 @@ void loadPatch(void* data)
 
 void saveProject(void* data)
 {
+	assert(false);
 #if 0
 	using namespace giada::m;
 
@@ -404,7 +411,7 @@ void loadSample(void* data)
 	if (fullPath.empty())
 		return;
 
-	int res = c::channel::loadChannel(browser->getChannel()->id, fullPath);
+	int res = c::channel::loadChannel(browser->getChannelId(), fullPath);
 
 	if (res == G_RES_OK) {
 		m::conf::samplePath = gu_dirname(fullPath);
@@ -433,9 +440,17 @@ void saveSample(void* data)
 	if (gu_fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
 		return;
 
-	const m::SampleChannel* ch = static_cast<const m::SampleChannel*>(browser->getChannel());
+	ID waveId;
+	m::model::onGet(m::model::channels, browser->getChannelId(), [&](m::Channel& c)
+	{
+		waveId = static_cast<m::SampleChannel&>(c).waveId;
+	});
 
-	if (!m::waveManager::save(*ch->wave.get(), filePath)) {
+	size_t waveIndex = m::model::getIndex(m::model::waves, waveId);
+
+	std::unique_ptr<m::Wave> wave = m::model::waves.clone(waveIndex);
+
+	if (!m::waveManager::save(*wave.get(), filePath)) {
 		v::gdAlert("Unable to save this sample!");
 		return;
 	}
@@ -446,12 +461,12 @@ void saveSample(void* data)
 
 	m::conf::samplePath = gu_dirname(filePath);
 
-	/* Update logical and edited states in Wave. No need for atomic operations
-	here: no other thread will read this data beyond the UI one. */
+	/* Update logical and edited states in Wave. */
 
-	m::Wave* w = m::model::getData().waves.at(ch->id).get();
-	w->setLogical(false);
-	w->setEdited(false);
+	wave->setLogical(false);
+	wave->setEdited(false);
+
+	m::model::waves.swap(std::move(wave), waveIndex);
 
 	/* Finally close the browser. */
 

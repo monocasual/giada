@@ -61,10 +61,7 @@ struct FrameEvents
 constexpr int MASTER_OUT_CHANNEL_ID = 0;
 constexpr int MASTER_IN_CHANNEL_ID  = 1;
 
-extern std::atomic<bool>  hasSolos;      // more than 0 channels soloed
 extern std::atomic<bool>  rewindWait;    // rewind guard, if quantized
-extern std::atomic<float> outVol;
-extern std::atomic<float> inVol;
 extern std::atomic<float> peakOut;
 extern std::atomic<float> peakIn;
 
@@ -72,7 +69,7 @@ extern std::atomic<float> peakIn;
 Copy, process and paste the input into the output, in order to obtain a "hear 
 what you're playing" feature. */
 
-extern std::atomic<bool> inToOut;
+//extern std::atomic<bool> inToOut;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 

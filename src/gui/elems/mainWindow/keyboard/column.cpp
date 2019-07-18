@@ -126,14 +126,14 @@ void geColumn::computeHeight()
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::addChannel(const m::Channel* ch, int size)
+geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
 {
 	geChannel* gch = nullptr;
 
-	if (ch->type == ChannelType::SAMPLE)
-		gch = new geSampleChannel(0, 0, w(), size, static_cast<const m::SampleChannel*>(ch));
+	if (t == ChannelType::SAMPLE)
+		gch = new geSampleChannel(0, 0, w(), size, channelId);
 	else
-		gch = new geMidiChannel(0, 0, w(), size, static_cast<const m::MidiChannel*>(ch));
+		gch = new geMidiChannel(0, 0, w(), size, channelId);
 
 	add(gch);
 	computeHeight();
@@ -178,7 +178,7 @@ geChannel* geColumn::getChannel(ID chanID) const
 {
 	for (int i=1; i<children(); i++) { // Skip "add channel" button
 		geChannel* gch = static_cast<geChannel*>(child(i));
-		if (gch->ch->id == chanID)
+		if (gch->channelId == chanID)
 			return gch;
 	}
 	return nullptr;

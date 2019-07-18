@@ -36,8 +36,8 @@ namespace giada {
 namespace v
 {
 gdBrowserSave::gdBrowserSave(const std::string& title, const std::string& path, 
-	const std::string& name_, std::function<void(void*)> cb, const m::Channel* ch)
-: gdBrowserBase(title, path, cb, ch)
+	const std::string& name_, std::function<void(void*)> cb, ID channelId)
+: gdBrowserBase(title, path, cb, channelId)
 {
 	where->size(groupTop->w()-236, 20);
 

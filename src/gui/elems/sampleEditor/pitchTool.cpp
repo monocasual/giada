@@ -28,6 +28,7 @@
 
 #include <FL/Fl.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "core/graphics.h"  
 #include "core/clock.h"
@@ -45,8 +46,9 @@
 namespace giada {
 namespace v 
 {
-gePitchTool::gePitchTool(int x, int y)
-: Fl_Pack(x, y, 600, G_GUI_UNIT)
+gePitchTool::gePitchTool(ID channelId, int x, int y)
+: Fl_Pack    (x, y, 600, G_GUI_UNIT),
+  m_channelId(channelId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -83,10 +85,13 @@ gePitchTool::gePitchTool(int x, int y)
 
 void gePitchTool::rebuild()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-	
-	dial->value(ch->getPitch());
-	input->value(u::string::fToString(ch->getPitch(), 4).c_str()); // 4 digits
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		float p = static_cast<m::SampleChannel&>(c).getPitch();
+		
+		dial->value(p);
+		input->value(u::string::fToString(p, 4).c_str()); // 4 digits
+	});
 }
 
 
@@ -107,9 +112,7 @@ void gePitchTool::cb_setPitchNum   (Fl_Widget* w, void* p) { ((gePitchTool*)p)->
 
 void gePitchTool::cb_setPitch()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPitch(ch->id, dial->value());
+	c::channel::setPitch(m_channelId, dial->value());
 }
 
 
@@ -118,9 +121,7 @@ void gePitchTool::cb_setPitch()
 
 void gePitchTool::cb_setPitchNum()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPitch(ch->id, atof(input->value()));
+	c::channel::setPitch(m_channelId, atof(input->value()));
 }
 
 
@@ -129,9 +130,7 @@ void gePitchTool::cb_setPitchNum()
 
 void gePitchTool::cb_setPitchHalf()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPitch(ch->id, dial->value()/2);
+	c::channel::setPitch(m_channelId, dial->value()/2);
 }
 
 
@@ -140,9 +139,7 @@ void gePitchTool::cb_setPitchHalf()
 
 void gePitchTool::cb_setPitchDouble()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPitch(ch->id, dial->value()*2);
+	c::channel::setPitch(m_channelId, dial->value()*2);
 }
 
 
@@ -151,9 +148,13 @@ void gePitchTool::cb_setPitchDouble()
 
 void gePitchTool::cb_setPitchToBar()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	Frame end;
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		end = static_cast<m::SampleChannel&>(c).getEnd();
+	});
 
-	c::channel::setPitch(ch->id, (ch->getEnd()) / (float) m::clock::getFramesInBar());
+	c::channel::setPitch(m_channelId, end / (float) m::clock::getFramesInBar());
 }
 
 
@@ -162,9 +163,13 @@ void gePitchTool::cb_setPitchToBar()
 
 void gePitchTool::cb_setPitchToSong()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	Frame end;
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		end = static_cast<m::SampleChannel&>(c).getEnd();
+	});
 
-	c::channel::setPitch(ch->id, ch->getEnd() / (float) m::clock::getFramesInLoop());
+	c::channel::setPitch(m_channelId, end / (float) m::clock::getFramesInLoop());
 }
 
 
@@ -173,9 +178,7 @@ void gePitchTool::cb_setPitchToSong()
 
 void gePitchTool::cb_resetPitch()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setPitch(ch->id, G_DEFAULT_PITCH);
+	c::channel::setPitch(m_channelId, G_DEFAULT_PITCH);
 }
 
 }} // giada::v::

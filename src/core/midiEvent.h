@@ -83,7 +83,6 @@ private:
 	int m_velocity;
 	int m_delta;
 };
-
 }} // giada::m::
 
 

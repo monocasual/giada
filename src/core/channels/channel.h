@@ -55,10 +55,17 @@ public:
 
 	virtual ~Channel() {};
 
+	/* clone
+	A trick to give the caller the ability to invoke the derived class copy
+	constructor given the base. TODO - This thing will go away with the Channel
+	"no-virtual inheritance" refactoring. */
+
+	virtual Channel* clone() const = 0;
+
 	/* parseEvents
 	Prepares channel for rendering. This is called on each frame. */
 
-	virtual void parseEvents(mixer::FrameEvents fe) = 0;
+	virtual void parseEvents(mixer::FrameEvents fe) {};
 
 	/* render
 	Audio rendering. Warning: inBuffer might be unallocated if no input devices 
@@ -71,42 +78,42 @@ public:
 	Action to do when channel starts. doQuantize = false (don't quantize)
 	when Mixer is reading actions from Recorder. */
 
-	virtual void start(int localFrame, bool doQuantize, int velocity) = 0;
+	virtual void start(int localFrame, bool doQuantize, int velocity) {};
 
 	/* stop
 	What to do when channel is stopped normally (via key or MIDI). */
 
-	virtual void stop() = 0;
+	virtual void stop() {};
 
 	/* kill
 	What to do when channel stops abruptly. */
 
-	virtual void kill(int localFrame) = 0;
+	virtual void kill(int localFrame) {};
 
 	/* set mute
 	What to do when channel is un/muted. */
 
-	virtual void setMute(bool value) = 0;
+	virtual void setMute(bool value) {};
 
 	/* set solo
 	What to do when channel is un/soloed. */
 
-	virtual void setSolo(bool value) = 0;
+	virtual void setSolo(bool value) {};
 
 	/* empty
 	Frees any associated resources (e.g. waveform for SAMPLE). */
 
-	virtual void empty() = 0;
+	virtual void empty() {};
 
 	/* stopBySeq
 	What to do when channel is stopped by sequencer. */
 
-	virtual void stopBySeq(bool chansStopOnSeqHalt) = 0;
+	virtual void stopBySeq(bool chansStopOnSeqHalt) {};
 
 	/* rewind
 	Rewinds channel when rewind button is pressed. */
 
-	virtual void rewindBySeq() = 0;
+	virtual void rewindBySeq() {};
 
 	/* canInputRec
 	Tells whether a channel can accept and handle input audio. Always false for
@@ -173,9 +180,9 @@ public:
 	
 	AudioBuffer buffer;
 
-	ChannelType type;
-	std::atomic<ChannelStatus> status;
-	std::atomic<ChannelStatus> recStatus;
+	ChannelType   type;
+	ChannelStatus playStatus;
+	ChannelStatus recStatus;
 
 	int columnIndex;
 	ID id;
@@ -183,15 +190,15 @@ public:
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 
-	std::atomic<PreviewMode> previewMode;
+	PreviewMode previewMode;
 
-	std::atomic<float> pan;
-	std::atomic<float> volume;   // global volume
-	std::atomic<bool> armed;
+	float pan;
+	float volume;   // global volume
+	bool armed;
 	std::string name;
-	std::atomic<int>  key;
-	std::atomic<bool> mute;
-	std::atomic<bool> solo;
+	int  key;
+	bool mute;
+	bool solo;
 
 	/* volume_*
 	Internal volume variables: volume_i for envelopes, volume_d keeps track of
@@ -199,10 +206,10 @@ public:
 	points). */
 	
 	std::atomic<double> volume_i;
-	std::atomic<double> volume_d;
+	double volume_d;
 	
-	std::atomic<bool> hasActions;  // If has some actions recorded
-	std::atomic<bool> readActions; // If should read recorded actions
+	bool hasActions;  // If has some actions recorded
+	bool readActions; // If should read recorded actions
 
 	std::atomic<bool>     midiIn;               // enable midi input
 	std::atomic<uint32_t> midiInKeyPress;
@@ -231,7 +238,7 @@ public:
 
 #ifdef WITH_VST
 
-	std::vector<std::shared_ptr<Plugin>> plugins;
+	std::vector<ID> pluginIds;
 
 	/* MidiBuffer 
 	Contains MIDI events. When ready, events are sent to each plugin in the 

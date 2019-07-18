@@ -35,6 +35,7 @@
 #endif
 #include "core/channels/channel.h"
 #include "core/mixer.h"
+#include "core/mixerHandler.h"
 #include "core/clock.h"
 #include "core/pluginHost.h"
 #include "core/conf.h"
@@ -148,8 +149,8 @@ void updateControls()
 	//for (const Channel* ch : mixer::channels)
 	//	ch->guiChannel->update();
 
-	G_MainWin->mainIO->setOutVol(mixer::outVol.load());
-	G_MainWin->mainIO->setInVol(mixer::inVol.load());
+	G_MainWin->mainIO->setOutVol(mh::getOutVol());
+	G_MainWin->mainIO->setInVol(mh::getInVol());
 
 #ifdef WITH_VST
 

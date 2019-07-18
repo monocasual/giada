@@ -175,7 +175,7 @@ void geEnvelopeEditor::onAddAction()
 	Frame f = m_base->pixelToFrame(Fl::event_x() - x());
 	int   v = yToValue(Fl::event_y() - y());
 	
-	c::actionEditor::recordEnvelopeAction(m_base->ch->id, f, v);
+	c::actionEditor::recordEnvelopeAction(m_base->channelId, f, v);
 	
 	m_base->rebuild();
 }
@@ -186,7 +186,7 @@ void geEnvelopeEditor::onAddAction()
 
 void geEnvelopeEditor::onDeleteAction()  
 {
-	c::actionEditor::deleteEnvelopeAction(m_base->ch->id, m_action->a1);
+	c::actionEditor::deleteEnvelopeAction(m_base->channelId, m_action->a1);
 		
 	m_base->rebuild();
 }
@@ -225,7 +225,7 @@ void geEnvelopeEditor::onRefreshAction()
 {
 	Frame f = m_base->pixelToFrame((m_action->x() - x()) + geEnvelopePoint::SIDE / 2);
 	float v = yToValue(m_action->y() - y(), geEnvelopePoint::SIDE);
-	c::actionEditor::updateEnvelopeAction(m_base->ch->id, m_action->a1, f, v);
+	c::actionEditor::updateEnvelopeAction(m_base->channelId, m_action->a1, f, v);
 
 	m_base->rebuild();
 }

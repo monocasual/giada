@@ -32,6 +32,7 @@
 #include "utils/log.h"
 #include "utils/gui.h"
 #include "core/pluginHost.h"
+#include "core/model/model.h"
 #include "core/plugin.h"
 #include "core/const.h"
 #include "pluginWindowGUI.h"
@@ -43,13 +44,14 @@
 namespace giada {
 namespace v
 {
-gdPluginWindowGUI::gdPluginWindowGUI(const m::Plugin& plugin)
+gdPluginWindowGUI::gdPluginWindowGUI(ID pluginId)
 #ifdef G_OS_MAC
-: gdWindow(Fl::w(), Fl::h()), m_plugin(plugin),
+: gdWindow     (Fl::w(), Fl::h()),
 #else
-: gdWindow(320, 200), m_plugin(plugin),
+: gdWindow     (320, 200),
 #endif
-  m_ui    (nullptr)
+  m_pluginId(pluginId),
+  m_ui         (nullptr)
 {
 	show();
 
@@ -91,8 +93,10 @@ gdPluginWindowGUI::gdPluginWindowGUI(const m::Plugin& plugin)
 
 	Fl::add_timeout(G_GUI_PLUGIN_RATE, cb_refresh, (void*) this);
 
-	copy_label(m_plugin.getName().c_str());
-
+	m::model::onGet(m::model::plugins, m_pluginId, [&](m::Plugin& p)
+	{
+		copy_label(p.getName().c_str());
+	});
 }
 
 
@@ -138,7 +142,10 @@ void gdPluginWindowGUI::cb_refresh()
 
 void gdPluginWindowGUI::openEditor(void* parent)
 {
-	m_ui = m_plugin.createEditor();
+	m::model::onGet(m::model::plugins, m_pluginId, [&](m::Plugin& p)
+	{
+		m_ui = p.createEditor();
+	});
 	if (m_ui == nullptr) {
 		gu_log("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
 		return;

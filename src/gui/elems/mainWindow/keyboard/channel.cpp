@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include "core/channels/channel.h"
+#include "core/model/model.h"
 #include "core/const.h"
 #include "core/graphics.h"
 #include "core/pluginHost.h"
@@ -49,9 +50,9 @@ extern giada::v::gdMainWindow* G_MainWin;
 namespace giada {
 namespace v
 {
-geChannel::geChannel(int X, int Y, int W, int H, const m::Channel* ch)
-: Fl_Pack(X, Y, W, H),
-  ch     (ch)
+geChannel::geChannel(int X, int Y, int W, int H, ID channelId)
+: Fl_Pack  (X, Y, W, H),
+  channelId(channelId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -75,13 +76,16 @@ void geChannel::cb_openFxWindow(Fl_Widget* v, void* p) { ((geChannel*)p)->cb_ope
 
 void geChannel::refresh()
 {
-	if (mainButton->visible())
-		mainButton->refresh();
-	if (ch->recStatus == ChannelStatus::WAIT || ch->status == ChannelStatus::WAIT)
-		blink();
-	playButton->setStatus(ch->isPlaying());
-	mute->setStatus(ch->mute);
-	solo->setStatus(ch->solo);
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		if (mainButton->visible())
+			mainButton->refresh();
+		if (c.recStatus == ChannelStatus::WAIT || c.playStatus == ChannelStatus::WAIT)
+			blink();
+		playButton->setStatus(c.isPlaying());
+		mute->setStatus(c.mute);
+		solo->setStatus(c.solo);
+	});
 }
 
 
@@ -90,7 +94,7 @@ void geChannel::refresh()
 
 void geChannel::cb_arm()
 {
-	c::channel::setArm(ch->id, arm->value());
+	c::channel::setArm(channelId, arm->value());
 }
 
 
@@ -99,7 +103,7 @@ void geChannel::cb_arm()
 
 void geChannel::cb_mute()
 {
-	c::channel::setMute(ch->id, mute->value());
+	c::channel::toggleMute(channelId);
 }
 
 
@@ -108,7 +112,7 @@ void geChannel::cb_mute()
 
 void geChannel::cb_solo()
 {
-	c::channel::setSolo(ch->id, solo->value());
+	c::channel::toggleSolo(channelId);
 }
 
 
@@ -117,7 +121,7 @@ void geChannel::cb_solo()
 
 void geChannel::cb_changeVol()
 {
-	c::channel::setVolume(ch->id, vol->value());
+	c::channel::setVolume(channelId, vol->value());
 }
 
 
@@ -127,7 +131,7 @@ void geChannel::cb_changeVol()
 #ifdef WITH_VST
 void geChannel::cb_openFxWindow()
 {
-	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(ch->id), WID_FX_LIST);
+	u::gui::openSubWindow(G_MainWin, new v::gdPluginList(channelId), WID_FX_LIST);
 }
 #endif
 
@@ -193,7 +197,10 @@ void geChannel::packWidgets()
 
 bool geChannel::handleKey(int e)
 {
-	if (Fl::event_key() != ch->key) 
+	m::model::ChannelsLock l(m::model::channels);
+	const m::Channel& ch = m::model::get(m::model::channels, channelId);
+	
+	if (Fl::event_key() != ch.key) 
 		return false;
 
 	if (e == FL_KEYDOWN && !playButton->value()) {  // Key not already pressed

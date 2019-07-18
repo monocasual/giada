@@ -73,11 +73,12 @@ geBoostTool::geBoostTool(int X, int Y)
 
 void geBoostTool::rebuild()
 {
+	/*
 	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
 	input->value(u::string::fToString(u::math::linearToDB(ch->getBoost()), 2).c_str());  // 2 digits
 	// A dial greater than it's max value goes crazy
-	dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);
+	dial->value(ch->getBoost() <= 10.0f ? ch->getBoost() : 10.0f);*/
 }
 
 
@@ -94,9 +95,9 @@ void geBoostTool::cb_normalize  (Fl_Widget* w, void* p) { ((geBoostTool*)p)->cb_
 
 void geBoostTool::cb_setBoost()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	/*const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-	c::channel::setBoost(ch->id, dial->value());
+	c::channel::setBoost(ch->id, dial->value());*/
 }
 
 
@@ -105,9 +106,9 @@ void geBoostTool::cb_setBoost()
 
 void geBoostTool::cb_setBoostNum()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
+	/*const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
 
-	c::channel::setBoost(ch->id, u::math::dBtoLinear(atof(input->value())));
+	c::channel::setBoost(ch->id, u::math::dBtoLinear(atof(input->value())));*/
 }
 
 
@@ -116,9 +117,6 @@ void geBoostTool::cb_setBoostNum()
 
 void geBoostTool::cb_normalize()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::channel::setBoost(ch->id, m::wfx::normalizeSoft(*ch->wave));
 }
 
 }} // giada::v::

@@ -29,9 +29,9 @@
 #define G_WAVE_H
 
 
-#include <sndfile.h>
 #include <string>
-#include "audioBuffer.h"
+#include "core/audioBuffer.h"
+#include "core/types.h"
 
 
 namespace giada {
@@ -41,7 +41,7 @@ class Wave
 {
 public:
 
-	Wave();
+	Wave(ID id);
 	Wave(const Wave& other);
 
 	float* operator [](int offset) const;
@@ -85,6 +85,8 @@ public:
 	void copyData(const float* data, int frames, int offset=0);
 
 	void alloc(int size, int channels, int rate, int bits, const std::string& path);
+
+	ID id;
 
 private:
 

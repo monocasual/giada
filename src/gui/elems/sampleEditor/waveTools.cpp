@@ -29,9 +29,10 @@
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Menu_Button.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/waveFx.h"
-#include "glue/sampleEditor.h"
 #include "core/const.h"
+#include "glue/sampleEditor.h"
 #include "gui/elems/basics/boxtypes.h"
 #include "gui/dialogs/sampleEditor.h"
 #include "waveform.h"
@@ -65,50 +66,51 @@ enum class Menu
 
 void menuCallback_(Fl_Widget* w, void* v)
 {
-	const geWaveTools*      wavetools = static_cast<geWaveTools*>(w);
-	const m::SampleChannel* ch        = static_cast<gdSampleEditor*>(wavetools->window())->ch;
+	const geWaveTools* wt = static_cast<geWaveTools*>(w);
+	
+	ID     channelId    = wt->channelId;
+	size_t waveId    = wt->waveId;
+	Menu   selectedItem = (Menu) (intptr_t) v;
 
-	Menu selectedItem = (Menu) (intptr_t) v;
-
-	int a = wavetools->waveform->getSelectionA();
-	int b = wavetools->waveform->getSelectionB();
+	int a = wt->waveform->getSelectionA();
+	int b = wt->waveform->getSelectionB();
 
 	switch (selectedItem) {
 		case Menu::CUT:
-			c::sampleEditor::cut(ch->id, a, b);
+			c::sampleEditor::cut(channelId, waveId, a, b);
 			break;		
 		case Menu::COPY:
-			c::sampleEditor::copy(ch->id, a, b);
+			c::sampleEditor::copy(waveId, a, b);
 			break;		
 		case Menu::PASTE:
-			c::sampleEditor::paste(ch->id, a);
+			c::sampleEditor::paste(channelId, waveId, a);
 			break;
 		case Menu::TRIM:
-			c::sampleEditor::trim(ch->id, a, b);
+			c::sampleEditor::trim(channelId, waveId, a, b);
 			break;
 		case Menu::SILENCE:
-			c::sampleEditor::silence(ch->id, a, b);
+			c::sampleEditor::silence(waveId, a, b);
 			break;	  
 		case Menu::REVERSE:
-			c::sampleEditor::reverse(ch->id, a, b);
+			c::sampleEditor::reverse(waveId, a, b);
 			break;			
 		case Menu::NORMALIZE:
-			c::sampleEditor::normalizeHard(ch->id, a, b);
+			c::sampleEditor::normalizeHard(waveId, a, b);
 			break;	
 		case Menu::FADE_IN:
-			c::sampleEditor::fade(ch->id, a, b, m::wfx::FADE_IN);
+			c::sampleEditor::fade(waveId, a, b, m::wfx::FADE_IN);
 			break;
 		case Menu::FADE_OUT:
-			c::sampleEditor::fade(ch->id, a, b, m::wfx::FADE_OUT);
+			c::sampleEditor::fade(waveId, a, b, m::wfx::FADE_OUT);
 			break;
 		case Menu::SMOOTH_EDGES:
-			c::sampleEditor::smoothEdges(ch->id, a, b);
+			c::sampleEditor::smoothEdges(waveId, a, b);
 			break;
 		case Menu::SET_BEGIN_END:
-			c::sampleEditor::setBeginEnd(ch->id, a, b);
+			c::sampleEditor::setBeginEnd(waveId, a, b);
 			break;		
 		case Menu::TO_NEW_CHANNEL:
-			c::sampleEditor::toNewChannel(ch->id, a, b);
+			c::sampleEditor::toNewChannel(waveId, a, b);
 			break;
 	}
 }
@@ -120,8 +122,10 @@ void menuCallback_(Fl_Widget* w, void* v)
 /* -------------------------------------------------------------------------- */
 
 
-geWaveTools::geWaveTools(int x, int y, int w, int h)
-: Fl_Scroll(x, y, w, h, nullptr)
+geWaveTools::geWaveTools(ID channelId, ID waveId, int x, int y, int w, int h)
+: Fl_Scroll(x, y, w, h, nullptr),
+  channelId(channelId),
+  waveId(waveId)
 {
 	type(Fl_Scroll::HORIZONTAL_ALWAYS);
 	hscrollbar.color(G_COLOR_GREY_2);
@@ -129,7 +133,7 @@ geWaveTools::geWaveTools(int x, int y, int w, int h)
 	hscrollbar.labelcolor(G_COLOR_LIGHT_1);
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
-	waveform = new v::geWaveform(x, y, w, h-24);
+	waveform = new v::geWaveform(channelId, waveId, x, y, w, h-24);
 }
 
 
@@ -148,10 +152,11 @@ void geWaveTools::rebuild()
 
 void geWaveTools::refresh()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	if (ch->isPreview())
-		waveform->redraw();
+	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+	{
+		if (c.isPreview())
+			waveform->redraw();
+	});
 }
 
 

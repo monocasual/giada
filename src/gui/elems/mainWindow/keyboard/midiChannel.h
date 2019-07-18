@@ -44,7 +44,7 @@ class geMidiChannel : public geChannel
 {
 public:
 
-    geMidiChannel(int x, int y, int w, int h, const m::MidiChannel* ch);
+    geMidiChannel(int x, int y, int w, int h, ID channelId);
 
     void resize(int x, int y, int w, int h) override;
 

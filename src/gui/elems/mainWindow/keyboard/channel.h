@@ -52,7 +52,7 @@ class geChannel : public Fl_Pack
 {
 public:
 
-	geChannel(int x, int y, int w, int h, const m::Channel* ch);
+	geChannel(int x, int y, int w, int h, ID channelId);
 
 	/* refresh
 	Updates graphics. */
@@ -77,7 +77,7 @@ public:
 
 	bool handleKey(int e);
 
-	const m::Channel* ch;
+	ID channelId;
  
 	geStatusButton*  playButton;
 	geChannelStatus* status;

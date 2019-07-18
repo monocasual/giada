@@ -42,11 +42,11 @@ namespace giada {
 namespace v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path, 
-	std::function<void(void*)> callback, const m::Channel* channel)
-: gdWindow  (m::conf::browserX, m::conf::browserY, m::conf::browserW, 
-	         m::conf::browserH, title.c_str()),
-  m_callback(callback),
-  m_channel (channel)
+	std::function<void(void*)> callback, ID channelId)
+: gdWindow   (m::conf::browserX, m::conf::browserY, m::conf::browserW, 
+	          m::conf::browserH, title.c_str()),
+  m_callback (callback),
+  m_channelId(channelId)
 {
 	set_non_modal();
 
@@ -180,9 +180,9 @@ std::string gdBrowserBase::getCurrentPath() const
 }
 
 
-const m::Channel* gdBrowserBase::getChannel() const 
+ID gdBrowserBase::getChannelId() const 
 { 
-	return m_channel; 
+	return m_channelId; 
 }
 
 

@@ -28,6 +28,7 @@
 #include <cassert>
 #include <FL/Fl.H>
 #include "core/channels/sampleChannel.h"
+#include "core/model/model.h"
 #include "core/wave.h"
 #include "glue/channel.h"
 #include "glue/sampleEditor.h"
@@ -44,8 +45,10 @@
 namespace giada {
 namespace v 
 {
-geRangeTool::geRangeTool(int x, int y)
-: Fl_Pack(x, y, 280, G_GUI_UNIT)
+geRangeTool::geRangeTool(ID channelId, ID waveId, int x, int y)
+: Fl_Pack    (x, y, 280, G_GUI_UNIT),
+  m_channelId(channelId),
+  m_waveId   (waveId)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -74,10 +77,11 @@ geRangeTool::geRangeTool(int x, int y)
 
 void geRangeTool::rebuild()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	m_begin->value(u::string::iToString(ch->getBegin()).c_str());
-	m_end->value(u::string::iToString(ch->getEnd()).c_str());
+	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		m_begin->value(std::to_string(static_cast<m::SampleChannel&>(c).getBegin()).c_str());
+		m_end->value(std::to_string(static_cast<m::SampleChannel&>(c).getEnd()).c_str());
+	});
 }
 
 
@@ -93,9 +97,7 @@ void geRangeTool::cb_resetStartEnd(Fl_Widget* w, void* p) { ((geRangeTool*)p)->c
 
 void geRangeTool::cb_setChanPos()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::sampleEditor::setBeginEnd(ch->id, atoi(m_begin->value()), atoi(m_end->value()));
+	c::sampleEditor::setBeginEnd(m_channelId, atoi(m_begin->value()), atoi(m_end->value()));
 }
 
 
@@ -104,9 +106,13 @@ void geRangeTool::cb_setChanPos()
 
 void geRangeTool::cb_resetStartEnd()
 {
-	const m::SampleChannel* ch = static_cast<gdSampleEditor*>(window())->ch;
-
-	c::sampleEditor::setBeginEnd(ch->id, 0, ch->wave->getSize() - 1);
+	Frame waveSize;
+	m::model::onGet(m::model::waves, m_waveId, [&](m::Wave& w)
+	{ 
+		waveSize = w.getSize();
+	});
+	
+	c::sampleEditor::setBeginEnd(m_channelId, 0, waveSize - 1);
 }
 
 }} // giada::v::

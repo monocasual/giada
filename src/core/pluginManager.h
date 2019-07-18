@@ -80,9 +80,9 @@ Returns how many plug-ins are in a unknown/not-found state. */
 
 unsigned countUnknownPlugins();
 
-std::shared_ptr<Plugin> makePlugin(const std::string& fid);
-std::shared_ptr<Plugin> makePlugin(int index);
-std::shared_ptr<Plugin> makePlugin(const Plugin& other);
+std::unique_ptr<Plugin> makePlugin(const std::string& fid);
+std::unique_ptr<Plugin> makePlugin(int index);
+std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

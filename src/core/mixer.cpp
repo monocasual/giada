@@ -31,13 +31,13 @@
 #include "utils/log.h"
 #include "utils/math.h"
 #include "core/model/model.h"
-#include "core/model/data.h"
 #include "core/channels/channel.h"
 #include "core/channels/sampleChannel.h"
 #include "core/channels/midiChannel.h"
 #include "core/wave.h"
 #include "core/kernelAudio.h"
 #include "core/recorder.h"
+#include "core/recManager.h"
 #include "core/pluginHost.h"
 #include "core/conf.h"
 #include "core/mixerHandler.h"
@@ -135,14 +135,16 @@ Records from line in. */
 
 void lineInRec_(const AudioBuffer& inBuf)
 {
-	if (!mh::hasArmedSampleChannels() || !kernelAudio::isInputEnabled())
+	if (!recManager::isRecordingInput() || !kernelAudio::isInputEnabled())
 		return;
 
+	model::MixerLock lock(model::mixer);
+	
 	for (int i=0; i<inBuf.countFrames(); i++, inputTracker_++)
 		for (int j=0; j<inBuf.countChannels(); j++) {
 			if (inputTracker_ >= clock::getFramesInLoop())
 				inputTracker_ = 0;
-			vChanInput_[inputTracker_][j] += inBuf[i][j] * inVol;  // adding: overdub!
+			vChanInput_[inputTracker_][j] += inBuf[i][j] * model::mixer.get()->inVol;  // adding: overdub!
 		}
 }
 
@@ -167,10 +169,12 @@ void processLineIn_(const AudioBuffer& inBuf)
 	/* "hear what you're playing" - process, copy and paste the input buffer onto 
 	the output buffer. */
 
-	if (inToOut)
+	model::MixerLock lock(model::mixer);
+	
+	if (model::mixer.get()->inToOut)
 		for (int i=0; i<vChanInToOut_.countFrames(); i++)
 			for (int j=0; j<vChanInToOut_.countChannels(); j++)
-				vChanInToOut_[i][j] = inBuf[i][j] * inVol;
+				vChanInToOut_[i][j] = inBuf[i][j] * model::mixer.get()->inVol;
 }
 
 
@@ -212,11 +216,64 @@ void renderMetronome_(AudioBuffer& outBuf, Frame f)
 /* -------------------------------------------------------------------------- */
 
 
-void processSequencer_(AudioBuffer& out, const AudioBuffer& in, model::Layout& layout)
+void parseEvents_(Frame f)
+{
+	mixer::FrameEvents fe = {
+		.frameLocal   = f,
+		.frameGlobal  = clock::getCurrentFrame(),
+		.doQuantize   = clock::getQuantize() == 0 || !clock::quantoHasPassed(),
+		.onBar        = clock::isOnBar(),
+		.onFirstBeat  = clock::isOnFirstBeat(),
+		.quantoPassed = clock::quantoHasPassed(),
+		.actions      = recorder::getActionsOnFrame(clock::getCurrentFrame()),
+	};
+
+	model::ChannelsLock lock(model::channels);
+
+	/* TODO - channel->parseEvents alters things in Channel (i.e. it's mutable).
+	Refactoring needed ASAP. */
+
+	for (Channel* ch : model::channels)
+		ch->parseEvents(fe); 
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void render_(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut)
+{
+	bool running = clock::isRunning();
+
+	model::ChannelsLock lock(model::channels);
+
+	/* TODO - channel->render alters things in Channel (i.e. it's mutable).
+	Refactoring needed ASAP. */
+
+	for (const Channel* ch : model::channels) {
+		if (ch == nullptr ||
+			ch->id == mixer::MASTER_OUT_CHANNEL_ID ||
+			ch->id == mixer::MASTER_IN_CHANNEL_ID)
+			continue;
+		const_cast<Channel*>(ch)->render(out, in, inToOut, isChannelAudible(ch), running);
+	}
+
+	/* Master channels are processed at the end, when the buffers have already 
+	been filled. */
+
+	const_cast<Channel*>(model::channels[mixer::MASTER_OUT_CHANNEL_ID])->render(out, in, inToOut, true, true);
+	const_cast<Channel*>(model::channels[mixer::MASTER_IN_CHANNEL_ID])->render(out, in, inToOut, true, true);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void processSequencer_(AudioBuffer& out, const AudioBuffer& in)
 {
 	for (int j=0; j<out.countFrames(); j++) {
 		if (clock::isRunning()) {
-			layout.parse(j);
+			parseEvents_(j);
 			doQuantize_(j);
 		}
 		clock::sendMIDIsync();
@@ -263,11 +320,13 @@ output volume. */
 
 void finalizeOutput_(AudioBuffer& outBuf)
 {
+	model::MixerLock lock(model::mixer);
+	
 	for (int i=0; i<outBuf.countFrames(); i++)
 		for (int j=0; j<outBuf.countChannels(); j++) {
-			if (inToOut) // Merge vChanInToOut_, if enabled
+			if (model::mixer.get()->inToOut) // Merge vChanInToOut_, if enabled
 				outBuf[i][j] += vChanInToOut_[i][j];
-			outBuf[i][j] *= outVol; 
+			outBuf[i][j] *= model::mixer.get()->outVol; 
 		}
 }
 }; // {anonymous}
@@ -279,10 +338,6 @@ void finalizeOutput_(AudioBuffer& outBuf)
 
 
 std::atomic<bool>  rewindWait(false);
-std::atomic<bool>  hasSolos(false);
-std::atomic<bool>  inToOut(false);
-std::atomic<float> outVol(G_DEFAULT_OUT_VOL);
-std::atomic<float> inVol(G_DEFAULT_IN_VOL);
 std::atomic<float> peakOut(0.0);
 std::atomic<float> peakIn(0.0);
 
@@ -300,8 +355,6 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 
 	gu_log("[Mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
 		framesInSeq, framesInBuffer);	
-
-	hasSolos = false;
 
 	clock::rewind();
 }
@@ -358,12 +411,13 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	/* Process model. */
 
 //out[0][0] = 3.0f;
-	std::shared_ptr<model::Layout> layout = model::getLayout();
+	//std::shared_ptr<model::Layout> layout = model::getLayout();
 
 	if (clock::isActive()) 
-		processSequencer_(out, in, *layout.get());
+		processSequencer_(out, in);
 
-	layout->render(out, in, vChanInToOut_);
+	render_(out, in, vChanInToOut_);
+	//layout->render(out, in, vChanInToOut_);
 
 	/* Post processing. */
 
@@ -394,6 +448,9 @@ void close()
 
 bool isChannelAudible(const Channel* ch)
 {
+	model::MixerLock l(model::mixer);
+
+	bool hasSolos = model::mixer.get()->hasSolos;
 	return !hasSolos || (hasSolos && ch->solo);
 }
 
