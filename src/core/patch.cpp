@@ -462,9 +462,7 @@ void writeCommons_(json_t* j, const std::string& name)
 	json_object_set_new(j, PATCH_KEY_MASTER_VOL_OUT, json_real(model::mixer.get()->outVol));
 	json_object_set_new(j, PATCH_KEY_LAST_TAKE_ID,   json_integer(lastTakeId));
 	json_object_set_new(j, PATCH_KEY_SAMPLERATE,     json_integer(samplerate));
-
-	/* TODO */
-	json_object_set_new(j, PATCH_KEY_METRONOME,      json_integer(metronome));
+	json_object_set_new(j, PATCH_KEY_METRONOME,      json_integer(mixer::isMetronomeOn()));
 }
 
 
@@ -581,12 +579,6 @@ std::vector<plugin_t> masterOutPlugins;
 
 void init()
 {
-	columns.clear();
-	channels.clear();
-#ifdef WITH_VST
-	masterInPlugins.clear();
-	masterOutPlugins.clear();
-#endif
 	lastTakeId = 0;
 	samplerate = G_DEFAULT_SAMPLERATE;
 }

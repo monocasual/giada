@@ -67,126 +67,6 @@ namespace storage
 {
 namespace
 {
-#ifdef WITH_VST
-
-void fillPatchGlobalsPlugins_(std::vector<const m::Plugin*> stack, std::vector<m::patch::plugin_t>& patch)
-{
-	using namespace giada::m;
-
-	for (const Plugin* plugin : stack) {
-		patch::plugin_t ppl;
-		ppl.path   = plugin->getUniqueId();
-		ppl.bypass = plugin->isBypassed();
-		for (int k=0; k<plugin->getNumParameters(); k++)
-			ppl.params.push_back(plugin->getParameter(k));
-		patch.push_back(ppl);
-	}
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void fillPatchColumns_()
-{
-/*
-	using namespace giada::m;
-
-	for (unsigned i=0; i<G_MainWin->keyboard->getTotalColumns(); i++) {
-		geColumn* gCol = G_MainWin->keyboard->getColumn(i);
-		patch::column_t pCol;
-		pCol.index = gCol->getIndex();
-		pCol.width = gCol->w();
-		for (int k=0; k<gCol->countChannels(); k++) {
-			Channel* colChannel = gCol->getChannel(k);
-			for (const Channel* mixerChannel : mixer::channels) {
-				if (colChannel == mixerChannel) {
-					pCol.channels.push_back(mixerChannel->index);
-					break;
-				}
-			}
-		}
-		patch::columns.push_back(pCol);
-	}
-*/
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void fillPatchChannels_(bool isProject)
-{
-#if 0
-	using namespace giada::m;
-
-	for (unsigned i=0; i<mixer::channels.size(); i++)
-		mixer::channels.at(i)->writePatch(i, isProject);
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void fillPatchGlobals_(const std::string& name)
-{
-	assert(false);
-#if 0
-	using namespace giada::m;
-
-	patch::version      = G_VERSION_STR;
-	patch::versionMajor = G_VERSION_MAJOR;
-	patch::versionMinor = G_VERSION_MINOR;
-	patch::versionPatch = G_VERSION_PATCH;
-	patch::name         = name;
-	patch::bpm          = clock::getBpm();
-	patch::bars         = clock::getBars();
-	patch::beats        = clock::getBeats();
-	patch::quantize     = clock::getQuantize();
-	patch::masterVolIn  = mixer::inVol.load();
-	patch::masterVolOut = mixer::outVol.load();
-	patch::metronome    = mixer::isMetronomeOn();
-
-#ifdef WITH_VST
-
-	//fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_IN).plugins,
-	//		patch::masterInPlugins);
-	//fillPatchGlobalsPlugins_(pluginHost::getStack(pluginHost::StackType::MASTER_OUT).plugins,
-	//		patch::masterOutPlugins);
-
-#endif
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool savePatch_(const std::string& fullPath, const std::string& name, bool isProject)
-{
-	using namespace giada::m;
-
-	patch::init();
-
-	//fillPatchGlobals_(name);
-	//fillPatchChannels_(isProject);
-	//fillPatchColumns_();
-
-	if (patch::write(name, fullPath, isProject)) {
-		u::gui::updateMainWinLabel(name);
-		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
-		return true;
-	}
-	return false;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 std::string makeSamplePath_(const std::string& base, const m::Wave& w, int k)
 {
 	return base + G_SLASH + w.getBasename(false) + "-" + std::to_string(k) + "." +  w.getExtension();
@@ -232,9 +112,11 @@ void savePatch(void* data)
 		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (savePatch_(fullPath, name, /*isProject=*/false)) {
+	if (m::patch::write(name, fullPath, /*isProject=*/false)) {
+		u::gui::updateMainWinLabel(name);
 		m::conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
+		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
 	}
 	else
 		v::gdAlert("Unable to save the patch!");
@@ -469,5 +351,4 @@ void saveSample(void* data)
 
 	browser->do_callback();
 }
-
 }}} // giada::c::storage::
