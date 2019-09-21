@@ -171,11 +171,11 @@ bool savePatch_(const std::string& fullPath, const std::string& name, bool isPro
 
 	patch::init();
 
-	fillPatchGlobals_(name);
-	fillPatchChannels_(isProject);
-	fillPatchColumns_();
+	//fillPatchGlobals_(name);
+	//fillPatchChannels_(isProject);
+	//fillPatchColumns_();
 
-	if (patch::write(fullPath)) {
+	if (patch::write(name, fullPath, isProject)) {
 		u::gui::updateMainWinLabel(name);
 		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
 		return true;
@@ -219,8 +219,6 @@ std::string makeUniqueSamplePath_(const std::string& base, const m::SampleChanne
 
 void savePatch(void* data)
 {
-	assert(false);
-#if 0	
 	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
 	std::string name          = gu_stripExt(browser->getName());
 	std::string fullPath      = browser->getCurrentPath() + G_SLASH + name + ".gptc";
@@ -234,13 +232,12 @@ void savePatch(void* data)
 		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (savePatch_(fullPath, name, false)) {  // false == not a project
+	if (savePatch_(fullPath, name, /*isProject=*/false)) {
 		m::conf::patchPath = gu_dirname(fullPath);
 		browser->do_callback();
 	}
 	else
 		v::gdAlert("Unable to save the patch!");
-#endif
 }
 
 

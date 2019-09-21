@@ -114,21 +114,21 @@ struct column_t
 	std::vector<int> channels;
 };
 
+extern std::string name;
 extern std::string header;
 extern std::string version;
 extern int         versionMajor;
 extern int         versionMinor;
 extern int         versionPatch;
-extern std::string name;
-extern float       bpm;
-extern int         bars;
-extern int         beats;
-extern int         quantize;
-extern float       masterVolIn;
-extern float       masterVolOut;
-extern int         metronome;
-extern int         lastTakeId;
 extern int         samplerate;   // original samplerate when the patch was saved
+extern int         lastTakeId;
+extern int         metronome;
+/*useless*/ extern float       bpm;
+/*useless*/ extern int         bars;
+/*useless*/ extern int         beats;
+/*useless*/ extern int         quantize;
+/*useless*/ extern float       masterVolIn;
+/*useless*/ extern float       masterVolOut;
 
 extern std::vector<column_t>  columns;
 extern std::vector<channel_t> channels;
@@ -139,15 +139,16 @@ extern std::vector<plugin_t> masterOutPlugins;
 #endif
 
 /* init
- * Init Patch with default values. */
+Initializes the patch with default values. */
 
 void init();
 
 /* read/write
- * Read/write patch to/from file. */
+Reads/writes patch to/from file. */
 
-int write(const std::string& file);
+int write(const std::string& name, const std::string& file, bool project);
 int read (const std::string& file);
 }}};  // giada::m::patch::
+
 
 #endif

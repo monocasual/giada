@@ -25,10 +25,19 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../utils/log.h"
-#include "../utils/string.h"
-#include "../utils/ver.h"
-#include "../utils/math.h"
+#include "utils/log.h"
+#include "utils/string.h"
+#include "utils/ver.h"
+#include "utils/math.h"
+#include "utils/fs.h"
+#include "gui/elems/mainWindow/keyboard/column.h"
+#include "gui/elems/mainWindow/keyboard/channel.h"
+#include "gui/elems/mainWindow/keyboard/keyboard.h"
+#include "gui/dialogs/mainWindow.h"
+#include "core/model/model.h"
+#include "core/channels/channel.h"
+#include "core/channels/midiChannel.h"
+#include "core/channels/sampleChannel.h"
 #include "const.h"
 #include "types.h"
 #include "storager.h"
@@ -38,8 +47,7 @@
 #include "patch.h"
 
 
-using std::string;
-using std::vector;
+extern giada::v::gdMainWindow* G_MainWin;
 
 
 namespace giada {
@@ -147,7 +155,7 @@ bool readCommons(json_t* jContainer)
 
 #ifdef WITH_VST
 
-bool readPlugins(json_t* jContainer, vector<plugin_t>* container, const char* key)
+bool readPlugins(json_t* jContainer, std::vector<plugin_t>* container, const char* key)
 {
 	json_t* jPlugins = json_object_get(jContainer, key);
 	if (!storager::checkArray(jPlugins, key))
@@ -258,7 +266,7 @@ bool readChannels(json_t* jContainer)
 	json_t* jChannel;
 	json_array_foreach(jChannels, channelIndex, jChannel) {
 
-		string channelIndexStr = "channel " + u::string::iToString(channelIndex);
+		std::string channelIndexStr = "channel " + u::string::iToString(channelIndex);
 		if (!storager::checkObject(jChannel, channelIndexStr.c_str()))
 			return 0;
 
@@ -326,7 +334,7 @@ bool readColumns(json_t* jContainer)
 	json_t* jColumn;
 	json_array_foreach(jColumns, columnIndex, jColumn) {
 
-		string columnIndexStr = "column " + u::string::iToString(columnIndex);
+		std::string columnIndexStr = "column " + u::string::iToString(columnIndex);
 		if (!storager::checkObject(jColumn, columnIndexStr.c_str()))
 			return 0;
 
@@ -344,31 +352,37 @@ bool readColumns(json_t* jContainer)
 
 #ifdef WITH_VST
 
-void writePlugins(json_t* jContainer, vector<plugin_t>* plugins, const char* key)
+void writePlugins_(json_t* j)
 {
-	json_t* jPlugins = json_array();
-	for (unsigned j=0; j<plugins->size(); j++) {
-		json_t*  jPlugin = json_object();
-		plugin_t plugin  = plugins->at(j);
-		json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PATH,   json_string(plugin.path.c_str()));
-		json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_BYPASS, json_boolean(plugin.bypass));
-		json_array_append_new(jPlugins, jPlugin);
+	model::PluginsLock pl(model::plugins);
+	
+	json_t* jps = json_array();
 
-		/* plugin params */
+	for (const Plugin* p : model::plugins) {
 
-		json_t* jPluginParams = json_array();
-		for (unsigned z=0; z<plugin.params.size(); z++)
-			json_array_append_new(jPluginParams, json_real(plugin.params.at(z)));
-		json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_PARAMS, jPluginParams);
+		/* Plugin. */
 
-		/* midiIn params (midi learning on plugins' parameters) */
+		json_t* jp = json_object();
+		json_object_set_new(jp, PATCH_KEY_PLUGIN_ID,     json_integer(p->id));
+		json_object_set_new(jp, PATCH_KEY_PLUGIN_PATH,   json_string(p->getUniqueId().c_str()));
+		json_object_set_new(jp, PATCH_KEY_PLUGIN_BYPASS, json_boolean(p->isBypassed()));
+		json_array_append_new(jps, jp);
+		
+		/* Plugin parameters. */
 
-		json_t* jPluginMidiInParams = json_array();
-		for (unsigned z=0; z<plugin.midiInParams.size(); z++)
-			json_array_append_new(jPluginMidiInParams, json_integer(plugin.midiInParams.at(z)));
-		json_object_set_new(jPlugin, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS, jPluginMidiInParams);
+		json_t* jparams = json_array();	
+		for (int k = 0; k < p->getNumParameters(); k++)
+			json_array_append_new(jparams, json_real(p->getParameter(k)));
+		json_object_set_new(jp, PATCH_KEY_PLUGIN_PARAMS, jparams);
+		
+		/* MidiIn params (midi learning on plugins' parameters). */
+
+		json_t* jmidiparams = json_array();
+		for (uint32_t param : p->midiInParams)
+			json_array_append_new(jmidiparams, json_integer(param));
+		json_object_set_new(jp, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS, jmidiparams);
 	}
-	json_object_set_new(jContainer, key, jPlugins);
+	json_object_set_new(j, PATCH_KEY_PLUGINS, jps);
 }
 
 #endif
@@ -377,122 +391,158 @@ void writePlugins(json_t* jContainer, vector<plugin_t>* plugins, const char* key
 /* -------------------------------------------------------------------------- */
 
 
-void writeColumns(json_t* jContainer, vector<column_t>* columns)
+void writeColumns_(json_t* j)
 {
-	json_t* jColumns = json_array();
-	for (unsigned i=0; i<columns->size(); i++) {
-		json_t*  jColumn = json_object();
-		column_t column  = columns->at(i);
-		json_object_set_new(jColumn, PATCH_KEY_COLUMN_INDEX, json_integer(column.index));
-		json_object_set_new(jColumn, PATCH_KEY_COLUMN_WIDTH, json_integer(column.width));
-		json_array_append_new(jColumns, jColumn);
-	}
-	json_object_set_new(jContainer, PATCH_KEY_COLUMNS, jColumns);
+	json_t* jcs = json_array();
+
+	G_MainWin->keyboard->forEachColumn([&](const v::geColumn& c)
+	{
+		json_t* jc = json_object();
+		json_object_set_new(jc, PATCH_KEY_COLUMN_INDEX, json_integer(c.getIndex()));
+		json_object_set_new(jc, PATCH_KEY_COLUMN_WIDTH, json_integer(c.w()));
+		
+		json_t* jchans = json_array();
+		c.forEachChannel([&](v::geChannel* c)
+		{	
+			json_array_append_new(jchans, json_integer(c->channelId));
+		});
+		json_object_set_new(jc, PATCH_KEY_COLUMN_CHANNELS, jchans);
+		
+		json_array_append_new(jcs, jc);
+
+	});
+	json_object_set_new(j, PATCH_KEY_COLUMNS, jcs);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void writeActions(json_t* jContainer, vector<action_t>& actions)
+void writeActions_(json_t* j)
 {
-	json_t* jActions = json_array();
-	for (action_t action : actions) {
-		json_t* jAction = json_object();
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_ID,      json_integer(action.id));
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_CHANNEL, json_integer(action.channel));
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_FRAME,   json_integer(action.frame));
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_EVENT,   json_integer(action.event));
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_PREV,    json_integer(action.prev));
-		json_object_set_new(jAction, G_PATCH_KEY_ACTION_NEXT,    json_integer(action.next));
-		json_array_append_new(jActions, jAction);
+	model::ActionsLock al(model::actions);
+	
+	json_t* jas = json_array();
+	
+	for (auto& kv : model::actions.get()->map) {
+		for (Action& a : kv.second) {
+			json_t* ja = json_object();
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_ID,      json_integer(a.id));
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_CHANNEL, json_integer(a.channelId));
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_FRAME,   json_integer(a.frame));
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_EVENT,   json_integer(a.event.getRaw()));
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_PREV,    json_integer(a.prevId));
+			json_object_set_new(ja, G_PATCH_KEY_ACTION_NEXT,    json_integer(a.nextId));
+			json_array_append_new(jas, ja);
+		}
 	}
-	json_object_set_new(jContainer, PATCH_KEY_CHANNEL_ACTIONS, jActions);
+	json_object_set_new(j, PATCH_KEY_CHANNEL_ACTIONS, jas);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void writeCommons(json_t* jContainer)
+void writeCommons_(json_t* j, const std::string& name)
 {
-	json_object_set_new(jContainer, PATCH_KEY_HEADER,         json_string(header.c_str()));
-	json_object_set_new(jContainer, PATCH_KEY_VERSION,        json_string(version.c_str()));
-	json_object_set_new(jContainer, PATCH_KEY_VERSION_MAJOR,  json_integer(versionMajor));
-	json_object_set_new(jContainer, PATCH_KEY_VERSION_MINOR,  json_integer(versionMinor));
-	json_object_set_new(jContainer, PATCH_KEY_VERSION_PATCH,  json_integer(versionPatch));
-	json_object_set_new(jContainer, PATCH_KEY_NAME,           json_string(name.c_str()));
-	json_object_set_new(jContainer, PATCH_KEY_BPM,            json_real(bpm));
-	json_object_set_new(jContainer, PATCH_KEY_BARS,           json_integer(bars));
-	json_object_set_new(jContainer, PATCH_KEY_BEATS,          json_integer(beats));
-	json_object_set_new(jContainer, PATCH_KEY_QUANTIZE,       json_integer(quantize));
-	json_object_set_new(jContainer, PATCH_KEY_MASTER_VOL_IN,  json_real(masterVolIn));
-	json_object_set_new(jContainer, PATCH_KEY_MASTER_VOL_OUT, json_real(masterVolOut));
-	json_object_set_new(jContainer, PATCH_KEY_METRONOME,      json_integer(metronome));
-	json_object_set_new(jContainer, PATCH_KEY_LAST_TAKE_ID,   json_integer(lastTakeId));
-	json_object_set_new(jContainer, PATCH_KEY_SAMPLERATE,     json_integer(samplerate));
+	model::ClockLock cl(model::clock);
+	model::MixerLock ml(model::mixer);
+	
+	json_object_set_new(j, PATCH_KEY_HEADER,         json_string("GIADAPTC"));
+	json_object_set_new(j, PATCH_KEY_VERSION,        json_string(G_VERSION_STR));
+	json_object_set_new(j, PATCH_KEY_VERSION_MAJOR,  json_integer(G_VERSION_MAJOR));
+	json_object_set_new(j, PATCH_KEY_VERSION_MINOR,  json_integer(G_VERSION_MINOR));
+	json_object_set_new(j, PATCH_KEY_VERSION_PATCH,  json_integer(G_VERSION_PATCH));
+	json_object_set_new(j, PATCH_KEY_NAME,           json_string(name.c_str()));
+	json_object_set_new(j, PATCH_KEY_BARS,           json_integer(model::clock.get()->bars));
+	json_object_set_new(j, PATCH_KEY_BEATS,          json_integer(model::clock.get()->beats));
+	json_object_set_new(j, PATCH_KEY_BPM,            json_real(model::clock.get()->bpm));
+	json_object_set_new(j, PATCH_KEY_QUANTIZE,       json_integer(model::clock.get()->quantize));
+	json_object_set_new(j, PATCH_KEY_MASTER_VOL_IN,  json_real(model::mixer.get()->inVol));
+	json_object_set_new(j, PATCH_KEY_MASTER_VOL_OUT, json_real(model::mixer.get()->outVol));
+	json_object_set_new(j, PATCH_KEY_LAST_TAKE_ID,   json_integer(lastTakeId));
+	json_object_set_new(j, PATCH_KEY_SAMPLERATE,     json_integer(samplerate));
+
+	/* TODO */
+	json_object_set_new(j, PATCH_KEY_METRONOME,      json_integer(metronome));
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void writeChannels(json_t* jContainer, vector<channel_t>* channels)
+void writeChannels_(json_t* j, bool project)
 {
-	json_t* jChannels = json_array();
-	for (unsigned i=0; i<channels->size(); i++) {
-		json_t*   jChannel = json_object();
-		channel_t channel  = channels->at(i);
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_TYPE,                 json_integer(channel.type));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_INDEX,                json_integer(channel.index));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SIZE,                 json_integer(channel.size));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_NAME,                 json_string(channel.name.c_str()));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_COLUMN,               json_integer(channel.column));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MUTE,                 json_integer(channel.mute));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SOLO,                 json_integer(channel.solo));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_VOLUME,               json_real(channel.volume));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PAN,                  json_real(channel.pan));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN,              json_boolean(channel.midiIn));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL,  json_boolean(channel.midiInVeloAsVol));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,     json_integer(channel.midiInKeyPress));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,       json_integer(channel.midiInKeyRel));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_KILL,         json_integer(channel.midiInKill));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_ARM,          json_integer(channel.midiInArm));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,       json_integer(channel.midiInVolume));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,         json_integer(channel.midiInMute));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,       json_integer(channel.midiInFilter));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,         json_integer(channel.midiInSolo));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L,           json_boolean(channel.midiOutL));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING,   json_integer(channel.midiOutLplaying));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,      json_integer(channel.midiOutLmute));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO,      json_integer(channel.midiOutLsolo));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_SAMPLE_PATH,          json_string(channel.samplePath.c_str()));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_KEY,                  json_integer(channel.key));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MODE,                 json_integer(channel.mode));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_BEGIN,                json_integer(channel.begin));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_END,                  json_integer(channel.end));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_BOOST,                json_real(channel.boost));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_READ_ACTIONS,         json_integer(channel.readActions));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_PITCH,                json_real(channel.pitch));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_INPUT_MONITOR,        json_boolean(channel.inputMonitor));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, json_integer(channel.midiInReadActions));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        json_integer(channel.midiInPitch));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT,             json_integer(channel.midiOut));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN,        json_integer(channel.midiOutChan));
-		json_object_set_new(jChannel, PATCH_KEY_CHANNEL_ARMED,                json_boolean(channel.armed));
-		json_array_append_new(jChannels, jChannel);
+	model::ChannelsLock l(model::channels);
+	
+	json_t* jcs = json_array();
+	
+	for (Channel* c : model::channels) {
+		
+		if (c->type == ChannelType::MASTER)
+			continue;
 
-		writeActions(jChannel, channel.actions);
+		json_t* jc = json_object();
 
-#ifdef WITH_VST
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_TYPE,               json_integer(static_cast<int>(c->type)));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_INDEX,              json_integer(c->id)); // TODO -> CHANNEL_ID
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_SIZE,               json_integer(G_MainWin->keyboard->getChannel(c->id)->getSize()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_NAME,               json_string(c->name.c_str()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_COLUMN,             json_integer(c->columnIndex));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MUTE,               json_integer(c->mute));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_SOLO,               json_integer(c->solo));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_VOLUME,             json_real(c->volume));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_PAN,                json_real(c->pan));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_ARMED,              json_boolean(c->armed));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN,            json_boolean(c->midiIn.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,     json_integer(c->midiInKeyRel.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,   json_integer(c->midiInKeyPress.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL,       json_integer(c->midiInKill.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_ARM,        json_integer(c->midiInArm.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,     json_integer(c->midiInVolume.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,       json_integer(c->midiInMute.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,       json_integer(c->midiInSolo.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,     json_integer(c->midiInFilter.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L,         json_boolean(c->midiOutL.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING, json_integer(c->midiOutLplaying.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,    json_integer(c->midiOutLmute.load()));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO,    json_integer(c->midiOutLsolo.load()));
+		
+		json_t* jplugins = json_array();
+		for (ID pid : c->pluginIds)
+			json_array_append_new(jplugins, json_integer(pid));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_PLUGINS, jplugins);
 
-		writePlugins(jChannel, &channel.plugins, PATCH_KEY_CHANNEL_PLUGINS);
+		if (c->type == ChannelType::SAMPLE) {
+			SampleChannel* sc = static_cast<SampleChannel*>(c);
+			
+			std::string samplePath = sc->getSamplePath();
+			if (project)
+				samplePath = gu_basename(samplePath); 
 
-#endif
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_SAMPLE_PATH,          json_string(samplePath.c_str()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_KEY,                  json_integer(sc->key));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MODE,                 json_integer(static_cast<int>(sc->mode)));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_BEGIN,                json_integer(sc->begin));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_END,                  json_integer(sc->end));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_READ_ACTIONS,         json_integer(sc->readActions));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_PITCH,                json_real(sc->pitch));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_INPUT_MONITOR,        json_boolean(sc->inputMonitor));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, json_integer(sc->midiInReadActions.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        json_integer(sc->midiInPitch.load()));
+		}
+		else
+		if (c->type == ChannelType::MIDI) {
+			MidiChannel* mc = static_cast<MidiChannel*>(c);
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT,      json_integer(mc->midiOut));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN, json_integer(mc->midiOutChan));
+		}
+
+		//writeActions_(jc);
+		json_array_append_new(jcs, jc);
 	}
-	json_object_set_new(jContainer, PATCH_KEY_CHANNELS, jChannels);
+	json_object_set_new(j, PATCH_KEY_CHANNELS, jcs);
 }
-
 }; // {anonymous}
 
 
@@ -537,7 +587,6 @@ void init()
 	masterInPlugins.clear();
 	masterOutPlugins.clear();
 #endif
-	header     = "GIADAPTC";
 	lastTakeId = 0;
 	samplerate = G_DEFAULT_SAMPLERATE;
 }
@@ -546,19 +595,19 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
-int write(const string& file)
+int write(const std::string& name, const std::string& file, bool isProject)
 {
-	json_t* jRoot = json_object();
+	json_t* j = json_object();
 
-	writeCommons(jRoot);
-	writeColumns(jRoot, &columns);
-	writeChannels(jRoot, &channels);
+	writeCommons_(j, name);
+	writeColumns_(j);
+	writeChannels_(j, isProject);
+	writeActions_(j);
 #ifdef WITH_VST
-	writePlugins(jRoot, &masterInPlugins, PATCH_KEY_MASTER_IN_PLUGINS);
-	writePlugins(jRoot, &masterOutPlugins, PATCH_KEY_MASTER_OUT_PLUGINS);
+	writePlugins_(j);
 #endif
 
-	if (json_dump_file(jRoot, file.c_str(), JSON_COMPACT) != 0) {
+	if (json_dump_file(j, file.c_str(), JSON_COMPACT) != 0) {
 		gu_log("[patch::write] unable to write patch file!\n");
 		return 0;
 	}
@@ -569,7 +618,7 @@ int write(const string& file)
 /* -------------------------------------------------------------------------- */
 
 
-int read(const string& file)
+int read(const std::string& file)
 {
 	json_error_t jError;
 	json_t* jRoot = json_load_file(file.c_str(), 0, &jError);

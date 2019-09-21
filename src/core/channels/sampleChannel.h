@@ -82,6 +82,7 @@ public:
 	bool isAnyLoopMode() const;
 	bool isAnySingleMode() const;
 	bool isOnLastFrame() const;
+	std::string getSamplePath() const;
 
 	/* getPosition
 	Returns the position of an active sample. If EMPTY o MISSING returns -1. */

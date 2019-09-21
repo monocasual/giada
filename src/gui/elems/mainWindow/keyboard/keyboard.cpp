@@ -243,6 +243,13 @@ void geKeyboard::forEachChannel(std::function<void(geChannel* c)> f) const
 }
 
 
+void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
+{
+	for (geColumn* column : m_columns) 
+		f(*column);
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

@@ -286,15 +286,21 @@ void SampleChannel::setReadActions(bool v, bool recsStopOnChanHalt)
 
 bool SampleChannel::hasLogicalData() const
 { 
-	assert(false);
-	//return wave != nullptr && wave->isLogical();
+	if (!hasWave)
+		return false;
+
+	model::WavesLock wl(model::waves);
+	return model::get(model::waves, waveId).isLogical();
 };
 
 
 bool SampleChannel::hasEditedData() const
 { 
-	assert(false);
-	//return wave != nullptr && wave->isEdited();
+	if (!hasWave)
+		return false;
+
+	model::WavesLock wl(model::waves);
+	return model::get(model::waves, waveId).isEdited();
 };
 
 
@@ -429,6 +435,19 @@ void SampleChannel::popWave()
 	tracker    = 0;
 	hasWave    = false;
 	sendMidiLstatus();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::string SampleChannel::getSamplePath() const
+{
+	if (!hasWave)
+		return "";
+
+	model::WavesLock wl(model::waves);
+	return model::get(model::waves, waveId).getPath();
 }
 
 

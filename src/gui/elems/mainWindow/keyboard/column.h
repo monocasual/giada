@@ -29,7 +29,9 @@
 #define GE_COLUMN_H
 
 
+#include <functional>
 #include <FL/Fl_Pack.H>
+#include "core/types.h"
 
 
 class geButton;
@@ -41,7 +43,6 @@ namespace v
 {
 class geKeyboard;
 class geChannel;
-
 class geColumn : public Fl_Pack
 {
 public:

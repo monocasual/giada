@@ -85,6 +85,7 @@ public:
 	void init();
 
 	void forEachChannel(std::function<void(geChannel* c)> f) const;
+	void forEachColumn(std::function<void(const geColumn& c)> f) const;
 
 private:
 
