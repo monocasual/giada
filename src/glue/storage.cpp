@@ -67,27 +67,69 @@ namespace storage
 {
 namespace
 {
-std::string makeSamplePath_(const std::string& base, const m::Wave& w, int k)
+std::string makeWavePath_(const std::string& base, const m::Wave& w, int k)
 {
-	return base + G_SLASH + w.getBasename(false) + "-" + std::to_string(k) + "." +  w.getExtension();
+	return base + G_SLASH + w.getBasename(/*ext=*/false) + "-" + std::to_string(k) + "." +  w.getExtension();
 } 
 
 
-std::string makeUniqueSamplePath_(const std::string& base, const m::SampleChannel* ch)
+bool isWavePathUnique_(const m::Wave& skip, const std::string& path)
 {
-	assert(false);
-/*
-	using namespace giada::m;
+	m::model::WavesLock l(m::model::waves);
 
-	std::string path = base + G_SLASH + ch->wave->getBasename(true);
-	if (mh::uniqueSamplePath(ch, path))
+	for (const m::Wave* w : m::model::waves)
+		if (w->id != skip.id && w->getPath() == path)
+			return false;
+	return true;
+}
+
+std::string makeUniqueWavePath_(const std::string& base, const m::Wave& w)
+{
+	std::string path = base + G_SLASH + w.getBasename(/*ext=*/true);
+	if (isWavePathUnique_(w, path))
 		return path;
 
 	int k = 0;
-	path = makeSamplePath_(base, *ch->wave, k);
-	while (!mh::uniqueSamplePath(ch, path))
-		path = makeSamplePath_(base, *ch->wave, k++);
-	return path;*/
+	path = makeWavePath_(base, w, k);
+	while (!isWavePathUnique_(w, path))
+		path = makeWavePath_(base, w, k++);
+	
+	return path;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool savePatch_(const std::string& path, const std::string& name, bool isProject)
+{
+	if (m::patch::write(name, path, isProject)) {
+		u::gui::updateMainWinLabel(name);
+		m::conf::patchPath = isProject ? gu_getUpDir(gu_getUpDir(path)) : gu_dirname(path);
+
+std::cout << path << "\n";
+std::cout << gu_getUpDir(path) << "\n";
+std::cout << gu_getUpDir(gu_getUpDir(path)) << "\n";
+
+		gu_log("[savePatch] patch saved as %s\n", path.c_str());
+		return true;
+	}
+	return false;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void saveWavesToProject_(const std::string& base)
+{
+	for (size_t i = 0; i < m::model::waves.size(); i++) {
+		m::model::onSwap(m::model::waves, m::model::getId(m::model::waves, i), [&](m::Wave& w)
+		{
+			w.setPath(makeUniqueWavePath_(base, w));
+			m::waveManager::save(w, w.getPath()); // TODO - error checking	
+		});
+	}
 }
 } // {anonymous}
 
@@ -112,12 +154,8 @@ void savePatch(void* data)
 		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
-	if (m::patch::write(name, fullPath, /*isProject=*/false)) {
-		u::gui::updateMainWinLabel(name);
-		m::conf::patchPath = gu_dirname(fullPath);
+	if (savePatch_(fullPath, name, /*isProject=*/false))
 		browser->do_callback();
-		gu_log("[savePatch] patch saved as %s\n", fullPath.c_str());
-	}
 	else
 		v::gdAlert("Unable to save the patch!");
 }
@@ -224,21 +262,18 @@ void loadPatch(void* data)
 
 void saveProject(void* data)
 {
-	assert(false);
-#if 0
-	using namespace giada::m;
-
 	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
-	string name            = gu_stripExt(browser->getName());
-	string folderPath      = browser->getCurrentPath();
-	string fullPath        = folderPath + G_SLASH + name + ".gprj";
+	std::string name            = gu_stripExt(browser->getName());
+	std::string folderPath      = browser->getCurrentPath();
+	std::string fullPath        = folderPath + G_SLASH + name + ".gprj";
+	std::string gptcPath        = fullPath + G_SLASH + name + ".gptc";
 
 	if (name == "") {
 		v::gdAlert("Please choose a project name.");
 		return;
 	}
 
-	if (gu_isProject(fullPath) && !gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (gu_isProject(fullPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
 	if (!gu_dirExists(fullPath) && !gu_mkdir(fullPath)) {
@@ -248,34 +283,13 @@ void saveProject(void* data)
 
 	gu_log("[saveProject] Project dir created: %s\n", fullPath.c_str());
 
-	/* Copy all samples inside the folder. Takes and logical ones are saved via 
-	saveSample(). Update the new sample path: everything now comes from the 
-	project folder (folderPath). Also make sure the file path is unique inside the 
-	project folder.*/
+	saveWavesToProject_(fullPath);
 
-	for (const Channel* ch : mixer::channels) {
-
-		if (ch->type == ChannelType::MIDI)
-			continue;
-
-		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-
-		if (sch->wave == nullptr)
-			continue;
-
-		sch->wave->setPath(makeUniqueSamplePath_(fullPath, sch));
-
-		gu_log("[saveProject] Save file to %s\n", sch->wave->getPath().c_str());
-
-		waveManager::save(sch->wave, sch->wave->getPath()); // TODO - error checking	
-	}
-
-	string gptcPath = fullPath + G_SLASH + name + ".gptc";
-	if (savePatch_(gptcPath, name, true)) // true == it's a project
+	if (savePatch_(gptcPath, name, /*isProject=*/true))
 		browser->do_callback();
 	else
 		v::gdAlert("Unable to save the project!");
-#endif
+
 }
 
 

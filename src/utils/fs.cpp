@@ -61,6 +61,17 @@ using std::vector;
 using namespace giada;
 
 
+std::string gu_normalize_(const std::string& s)
+{
+	if (s.back() == G_SLASH) {
+		std::string t = s;
+		t.pop_back();
+		return t;
+	}
+	return s;
+}
+
+
 bool gu_fileExists(const string &filename)
 {
 	FILE *fh = fopen(filename.c_str(), "rb");
@@ -305,5 +316,6 @@ std::string gu_getUpDir(const std::string& s)
 
 #endif
 
-	return s.substr(0, s.find_last_of(G_SLASH_STR)) + G_SLASH_STR;
+	std::string t = gu_normalize_(s);
+	return t.substr(0, t.find_last_of(G_SLASH_STR)) + G_SLASH_STR;
 }

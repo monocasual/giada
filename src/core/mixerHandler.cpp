@@ -188,18 +188,18 @@ void close()
 /* -------------------------------------------------------------------------- */
 
 
-bool uniqueSamplePath(const SampleChannel* skip, const std::string& path)
+bool uniqueSamplePath(ID channelToSkip, const std::string& path)
 {
-	assert(false);
-	/*
-	for (const Channel* ch : mixer::channels) {
-		if (skip == ch || ch->type != ChannelType::SAMPLE) // skip itself and MIDI channels
+	model::ChannelsLock cl(model::channels);
+	model::WavesLock    wl(model::waves);
+
+	for (const Channel* c : model::channels) {
+		if (c->id == channelToSkip || c->type != ChannelType::SAMPLE)
 			continue;
-		const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-		if (sch->wave != nullptr && path == sch->wave->getPath())
+		const SampleChannel* sc = static_cast<const SampleChannel*>(c);
+		if (sc->hasWave && model::get(model::waves, sc->waveId).getPath() == path)
 			return false;
 	}
-	*/
 	return true;
 }
 

@@ -115,7 +115,7 @@ void finalizeInputRec();
 Returns true if path 'p' is unique. Requires SampleChannel 'skip' in order
 to skip check against itself. */
 
-bool uniqueSamplePath(const SampleChannel* skip, const std::string& p);
+bool uniqueSamplePath(ID channelToSkip, const std::string& p);
 
 /* hasLogicalSamples
 True if 1 or more samples are logical (memory only, such as takes) */
