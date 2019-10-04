@@ -194,7 +194,7 @@ void geMainMenu::cb_edit()
 		return;
 	}
 	if (strcmp(m->label(), "Reset to init state") == 0) {
-		c::main::resetToInitState();
+		c::main::resetToInitState(/*createColumns=*/true);
 		return;
 	}
 	if (strcmp(m->label(), "Remove empty columns") == 0) {

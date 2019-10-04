@@ -37,7 +37,10 @@ namespace giada {
 namespace m 
 {
 class Wave;
-
+namespace patch
+{
+class Wave;
+}
 namespace waveManager
 {
 struct Result
@@ -47,9 +50,10 @@ struct Result
 };
 
 /* create
-Creates a new Wave object with data read from file 'path'. */
+Creates a new Wave object with data read from file 'path'. Takes an optional
+'id' parameter for patch persistence. */
 
-Result createFromFile(const std::string& path);
+Result createFromFile(const std::string& path, ID id=0);
 
 /* createEmpty
 Creates a new silent Wave object. */
@@ -61,6 +65,11 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 Creates a new Wave from an existing one, copying the data in range a - b. */
 
 std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b);
+
+/* createFromPatch
+Creates a new Wave given the patch raw data. */
+
+std::unique_ptr<Wave> createFromPatch(const patch::Wave& w);
 
 int resample(Wave& w, int quality, int samplerate); 
 

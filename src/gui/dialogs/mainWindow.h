@@ -48,17 +48,19 @@ class gdMainWindow : public gdWindow
 {
 public:
 
-	giada::v::geKeyboard* keyboard;
-	giada::v::geBeatMeter* beatMeter;
-	giada::v::geMainMenu* mainMenu;
-	giada::v::geMainIO* mainIO;
-	giada::v::geMainTimer* mainTimer;
-	giada::v::geMainTransport* mainTransport;
-
     gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 	~gdMainWindow();
 
     void rebuild() override;
+
+	void clearKeyboard(bool createColumns);
+
+	geKeyboard*      keyboard;
+	geBeatMeter*     beatMeter;
+	geMainMenu*      mainMenu;
+	geMainIO*        mainIO;
+	geMainTimer*     mainTimer;
+	geMainTransport* mainTransport;
 };
 }} // giada::v::
 

@@ -142,12 +142,9 @@ bool shouldBlink()
 /* -------------------------------------------------------------------------- */
 
 
-void updateControls()
+void updateStaticWidgets()
 {
 	using namespace giada::m;
-
-	//for (const Channel* ch : mixer::channels)
-	//	ch->guiChannel->update();
 
 	G_MainWin->mainIO->setOutVol(mh::getOutVol());
 	G_MainWin->mainIO->setInVol(mh::getInVol());
@@ -162,9 +159,6 @@ void updateControls()
 	G_MainWin->mainTimer->setMeter(clock::getBeats(), clock::getBars());
 	G_MainWin->mainTimer->setBpm(clock::getBpm());
 	G_MainWin->mainTimer->setQuantizer(clock::getQuantize());
-
-	//G_MainWin->mainTransport->updatePlay(clock::isRunning());
-	//G_MainWin->mainTransport->updateMetronome(mixer::isMetronomeOn());
 }
 
 

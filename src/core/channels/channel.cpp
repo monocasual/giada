@@ -49,11 +49,12 @@ namespace giada {
 namespace m 
 {
 Channel::Channel(ChannelType type, ChannelStatus playStatus, int bufferSize, 
-	size_t columnIndex)
+	size_t columnIndex, ID id)
 : type           (type),
   playStatus     (playStatus),
   recStatus      (ChannelStatus::OFF),
   columnIndex    (columnIndex),
+  id             (id),
   previewMode    (PreviewMode::NONE),
   pan            (0.5f),
   volume         (G_DEFAULT_VOL),
@@ -134,28 +135,52 @@ Channel::Channel(const Channel& o)
 /* -------------------------------------------------------------------------- */
 
 
+Channel::Channel(const patch::Channel& p, int bufferSize)
+: type           (p.type),
+  playStatus     (p.waveId == 0 ? ChannelStatus::EMPTY : ChannelStatus::OFF),
+  recStatus      (ChannelStatus::OFF),
+  columnIndex    (p.columnIndex),
+  id             (p.id),
+  previewMode    (PreviewMode::NONE),
+  pan            (p.pan),
+  volume         (p.volume),
+  armed          (p.armed),
+  name           (p.name),
+  key            (p.key),
+  mute           (p.mute),
+  solo           (p.solo),
+  volume_i       (1.0),
+  volume_d       (0.0),
+  hasActions     (p.hasActions),
+  readActions    (p.readActions),
+  midiIn         (p.midiIn),
+  midiInKeyPress (p.midiInKeyPress),
+  midiInKeyRel   (p.midiInKeyRel),
+  midiInKill     (p.midiInKill),
+  midiInArm      (p.midiInArm),
+  midiInVolume   (p.midiInVolume),
+  midiInMute     (p.midiInMute),
+  midiInSolo     (p.midiInSolo),
+  midiInFilter   (p.midiInFilter),
+  midiOutL       (p.midiOutL),
+  midiOutLplaying(p.midiOutLplaying),
+  midiOutLmute   (p.midiOutLmute),
+  midiOutLsolo   (p.midiOutLsolo)
+#ifdef WITH_VST
+ ,pluginIds      (p.pluginIds)
+#endif
+{
+	buffer.alloc(bufferSize, G_MAX_IO_CHANS);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool Channel::isPlaying() const
 {
 	return playStatus == ChannelStatus::PLAY || 
 	       playStatus == ChannelStatus::ENDING;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::writePatch(int i, bool isProject)
-{
-	channelManager::writePatch(this, isProject);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void Channel::readPatch(const std::string& path, const patch::channel_t& pch)
-{
-	channelManager::readPatch(this, pch);
 }
 
 

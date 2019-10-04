@@ -32,24 +32,25 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include "core/types.h"
 
 
 namespace giada {
 namespace m {
 namespace patch
 {
-struct action_t
+struct Action
 {
-	int      id;
-	int      channel;
-	int      frame;
+	ID       id;
+	ID       channelId;
+	Frame    frame;
 	uint32_t event;
-	int      prev;
-	int      next;
+	ID       prevId;
+	ID       nextId;
 };
 
 #ifdef WITH_VST
-struct plugin_t
+struct Plugin
 {
 	std::string           path;
 	bool                  bypass;
@@ -58,17 +59,26 @@ struct plugin_t
 };
 #endif
 
-struct channel_t
+struct Wave
 {
-	int         type;
-	int         index;
+	ID          id;
+	std::string path;
+};
+
+
+struct Channel
+{
+	ID          id;
+	ChannelType type;
 	int         size;
 	std::string name;
-	int         column;
-	int         mute;
-	int         solo;
+	size_t      columnIndex;
+	int         key;
+	bool        mute;
+	bool        solo;
 	float       volume;
 	float       pan;
+	bool        hasActions;
 	bool        midiIn;
 	bool        midiInVeloAsVol;
 	uint32_t    midiInKeyPress;
@@ -85,33 +95,24 @@ struct channel_t
 	uint32_t    midiOutLsolo;
 	bool        armed;
 	// sample channel
-	std::string samplePath;
-	int         key;
-	int         mode;
+	ID          waveId;
+	ChannelMode mode;
 	int         begin;
 	int         end;
+	// TODO - shift
 	float       boost;
-	int         readActions; // TODO - should be bool
+	bool        readActions;
 	float       pitch;
 	bool        inputMonitor;
 	uint32_t    midiInReadActions;
 	uint32_t    midiInPitch;
 	// midi channel
-	int         midiOut;   // TODO - should be bool
+	bool        midiOut;
 	int         midiOutChan;
 
-	std::vector<action_t> actions;
-
 #ifdef WITH_VST
-	std::vector<plugin_t> plugins;
+	std::vector<ID> pluginIds;
 #endif
-};
-
-struct column_t
-{
-	int index;
-	int width;
-	std::vector<int> channels;
 };
 
 extern std::string name;
@@ -120,23 +121,9 @@ extern std::string version;
 extern int         versionMajor;
 extern int         versionMinor;
 extern int         versionPatch;
-extern int         samplerate;   // original samplerate when the patch was saved
+extern int         samplerate;   // Original samplerate when the patch was saved
 extern int         lastTakeId;
 extern int         metronome;
-/*useless*/ extern float       bpm;
-/*useless*/ extern int         bars;
-/*useless*/ extern int         beats;
-/*useless*/ extern int         quantize;
-/*useless*/ extern float       masterVolIn;
-/*useless*/ extern float       masterVolOut;
-
-extern std::vector<column_t>  columns;
-extern std::vector<channel_t> channels;
-
-#ifdef WITH_VST
-extern std::vector<plugin_t> masterInPlugins;
-extern std::vector<plugin_t> masterOutPlugins;
-#endif
 
 /* init
 Initializes the patch with default values. */
@@ -146,8 +133,8 @@ void init();
 /* read/write
 Reads/writes patch to/from file. */
 
-int write(const std::string& name, const std::string& file, bool project);
-int read (const std::string& file);
+bool write(const std::string& name, const std::string& file, bool project);
+int read(const std::string& file);
 }}};  // giada::m::patch::
 
 

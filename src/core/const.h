@@ -210,11 +210,9 @@ constexpr int WID_MIDI_OUTPUT   = -14;
 
 
 /* -- patch signals --------------------------------------------------------- */
-#define PATCH_UNREADABLE    0x01
-#define PATCH_INVALID       0x02
-#define PATCH_READ_OK       0x04
-#define PATCH_WRONG_PLUGINS 0x08  // currently unused
-#define PATCH_WRONG_SAMPLES 0x10  // currently unused
+constexpr int G_PATCH_UNREADABLE = -1;
+constexpr int G_PATCH_INVALID    = 0;
+constexpr int G_PATCH_READ_OK    = 1;
 
 
 
@@ -284,7 +282,7 @@ constexpr auto PATCH_KEY_MASTER_OUT_PLUGINS           = "master_out_plugins";
 constexpr auto PATCH_KEY_MASTER_IN_PLUGINS            = "master_in_plugins";
 constexpr auto PATCH_KEY_CHANNELS                     = "channels";
 constexpr auto PATCH_KEY_CHANNEL_TYPE                 = "type";
-constexpr auto PATCH_KEY_CHANNEL_INDEX                = "index";
+constexpr auto PATCH_KEY_CHANNEL_ID                   = "id";
 constexpr auto PATCH_KEY_CHANNEL_SIZE                 = "size";
 constexpr auto PATCH_KEY_CHANNEL_NAME                 = "name";
 constexpr auto PATCH_KEY_CHANNEL_COLUMN               = "column";
@@ -306,13 +304,14 @@ constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L           = "midi_out_l";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING   = "midi_out_l_playing";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE      = "midi_out_l_mute";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO      = "midi_out_l_solo";
-constexpr auto PATCH_KEY_CHANNEL_SAMPLE_PATH          = "sample_path";
+constexpr auto PATCH_KEY_CHANNEL_WAVE_ID              = "wave_id";
 constexpr auto PATCH_KEY_CHANNEL_KEY                  = "key";
 constexpr auto PATCH_KEY_CHANNEL_MODE                 = "mode";
 constexpr auto PATCH_KEY_CHANNEL_BEGIN                = "begin";
 constexpr auto PATCH_KEY_CHANNEL_END                  = "end";
 constexpr auto PATCH_KEY_CHANNEL_BOOST                = "boost";
-constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "rec_active";  // TODO update string key in 1.0
+constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
+constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
 constexpr auto PATCH_KEY_CHANNEL_PITCH                = "pitch";
 constexpr auto PATCH_KEY_CHANNEL_INPUT_MONITOR        = "input_monitor";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS = "midi_in_read_actions";
@@ -321,8 +320,11 @@ constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT             = "midi_out";
 constexpr auto PATCH_KEY_CHANNEL_MIDI_OUT_CHAN        = "midi_out_chan";
 constexpr auto PATCH_KEY_CHANNEL_PLUGINS              = "plugins";
 constexpr auto PATCH_KEY_CHANNEL_PLUGIN_ID            = "plugin_id";
-constexpr auto PATCH_KEY_CHANNEL_ACTIONS              = "actions";
 constexpr auto PATCH_KEY_CHANNEL_ARMED                = "armed";
+constexpr auto PATCH_KEY_WAVES                        = "waves";
+constexpr auto PATCH_KEY_WAVE_ID                      = "id";
+constexpr auto PATCH_KEY_WAVE_PATH                    = "path";
+constexpr auto PATCH_KEY_ACTIONS                      = "actions";
 constexpr auto PATCH_KEY_ACTION_TYPE                  = "type";
 constexpr auto PATCH_KEY_ACTION_FRAME                 = "frame";
 constexpr auto PATCH_KEY_ACTION_F_VALUE               = "f_value";

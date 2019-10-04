@@ -135,9 +135,6 @@ public:
 		bool recsStopOnChanHalt) {};
 
 	virtual void stopInputRec(int globalFrame) {};
-	
-	virtual void readPatch(const std::string& basePath, const patch::channel_t& pch);
-	virtual void writePatch(int i, bool isProject);
 
 	/* receiveMidi
 	Receives and processes midi messages from external devices. */
@@ -258,8 +255,10 @@ public:
 
 protected:
 
-	Channel(ChannelType type, ChannelStatus status, int bufferSize, size_t column);
+	Channel(ChannelType type, ChannelStatus status, int bufferSize,
+		size_t column, ID id);
 	Channel(const Channel& o);
+	Channel(const patch::Channel& p, int bufferSize);
 };
 
 }} // giada::m::

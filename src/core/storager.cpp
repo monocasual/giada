@@ -37,20 +37,20 @@ namespace giada {
 namespace m {
 namespace storager
 {
-bool setString(json_t* jRoot, const char* key, string& output)
+bool setString(json_t* j, const char* key, string& output)
 {
-	json_t* jObject = json_object_get(jRoot, key);
-	if (!jObject) {
+	json_t* jo = json_object_get(j, key);
+	if (!jo) {
 		gu_log("[storager::setString] key '%s' not found, using default value\n", key);
 		output = "";
 		return true;
 	}
-	if (!json_is_string(jObject)) {
+	if (!json_is_string(jo)) {
 		gu_log("[storager::setString] key '%s' is not a string!\n", key);
-		json_decref(jRoot);
+		json_decref(j);
 		return false;
 	}
-	output = json_string_value(jObject);
+	output = json_string_value(jo);
 	return true;
 }
 

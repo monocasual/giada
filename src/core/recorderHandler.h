@@ -31,12 +31,15 @@
 
 #include <unordered_set>
 #include "midiEvent.h"
-#include "patch.h"
 
 
 namespace giada {
 namespace m 
 {
+namespace patch
+{
+struct Action;
+}
 struct Action;
 namespace recorderHandler
 {
@@ -73,8 +76,7 @@ recorded. */
 
 std::unordered_set<ID> consolidate();
 
-void writePatch(ID channelId, std::vector<patch::action_t>& pactions);
-void readPatch(const std::vector<patch::action_t>& pactions);
+recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pactions);
 
 }}}; // giada::m::recorderHandler::
 

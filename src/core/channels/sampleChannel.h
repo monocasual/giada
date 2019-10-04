@@ -45,16 +45,15 @@ class SampleChannel : public Channel
 {
 public:
 
-	SampleChannel(bool inputMonitor, int bufferSize, size_t column);
+	SampleChannel(bool inputMonitor, int bufferSize, size_t columnIndex, ID id);
 	SampleChannel(const SampleChannel& o);
+	SampleChannel(const patch::Channel& p, int bufferSize);
 	~SampleChannel();
 
 	SampleChannel* clone() const override;
 	void parseEvents(mixer::FrameEvents fe) override;
 	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
 		bool audible, bool running) override;
-	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
-	void writePatch(int i, bool isProject) override;
 
 	void start(int frame, bool doQuantize, int velocity) override;
 	void stop() override;
@@ -115,13 +114,14 @@ public:
 	
 	/* hasWave
 	Tells if a wave is linked to this channel. */
+	/* TODO - useless: check if waveId != 0 */
 
 	bool hasWave;
 
 	/* waveId
 	ID of a Wave object. Might be useless if hasWave == false. */
 
-	size_t waveId;
+	ID waveId;
 
 	int shift;
 	ChannelMode mode;

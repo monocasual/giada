@@ -30,40 +30,36 @@
 
 
 #include <memory>
-#include <string>
 #include "core/types.h"
 
 
 namespace giada {
 namespace m 
 {
+namespace patch
+{
+struct Channel;
+}
 class Channel;
 class SampleChannel;
 class MidiChannel;
-
-namespace patch
-{
-struct channel_t;
-}
 namespace channelManager
 {
 /* create (1)
 Creates a new Channel from scratch. */
 
-std::unique_ptr<Channel> create(ChannelType type, int bufferSize, bool inputMonitorOn, size_t column);
+std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
+	bool inputMonitorOn, size_t column);
 
 /* create (2)
 Creates a new Channel given an existing one (i.e. clone). */
 
 std::unique_ptr<Channel> create(const Channel& ch);
 
-int  writePatch(const Channel* ch, bool isProject);
-void writePatch(const SampleChannel* ch, bool isProject, int index);
-void writePatch(const MidiChannel* ch, bool isProject, int index);
+/* create (3)
+Creates a new Channel out of a patch::Channel. */
 
-void readPatch(Channel* ch, const patch::channel_t& pch);
-void readPatch(SampleChannel* ch, const std::string& basePath, const patch::channel_t& pch);
-void readPatch(MidiChannel* ch, const patch::channel_t& pch);
+std::unique_ptr<Channel> create(const patch::Channel& c, int bufferSize);
 }}}; // giada::m::channelManager
 
 

@@ -63,11 +63,12 @@ blink. */
 
 bool shouldBlink();
 
-/* updateControls
-Updates attributes of control elements (sample names, volumes, ...). Useful when 
-loading a new patch. */
+/* updateStaticWidgets
+Updates attributes of static widgets, i.e. those elements that don't get
+automatically refreshed during the UI update loop. Useful when loading a new 
+patch. */
 
-void updateControls();
+void updateStaticWidgets();
 
 /* updateMainWinLabel
 Updates the name of the main window */

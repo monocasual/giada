@@ -38,6 +38,10 @@
 namespace giada {
 namespace m
 {
+namespace patch
+{
+struct Plugin;
+}
 namespace pluginManager
 {
 enum class SortMethod : int
@@ -83,6 +87,7 @@ unsigned countUnknownPlugins();
 std::unique_ptr<Plugin> makePlugin(const std::string& fid);
 std::unique_ptr<Plugin> makePlugin(int index);
 std::unique_ptr<Plugin> makePlugin(const Plugin& other);
+std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

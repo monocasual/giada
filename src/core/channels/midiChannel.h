@@ -42,8 +42,9 @@ class MidiChannel : public Channel
 {
 public:
 
-	MidiChannel(int bufferSize, size_t column);
+	MidiChannel(int bufferSize, size_t columnIndex, ID id);
 	MidiChannel(const MidiChannel& o);
+	MidiChannel(const patch::Channel& p, int bufferSize);
 
 	MidiChannel* clone() const override;
 	void parseEvents(mixer::FrameEvents fe) override;
@@ -57,8 +58,6 @@ public:
 	void rewindBySeq() override;
 	void setMute(bool value) override;
 	void setSolo(bool value) override;
-	void readPatch(const std::string& basePath, const patch::channel_t& pch) override;
-	void writePatch(int i, bool isProject) override;
 	void receiveMidi(const MidiEvent& midiEvent) override;
 
 	/* sendMidi

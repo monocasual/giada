@@ -102,12 +102,10 @@ private:
 	#undef OUT
 #endif
 
-	enum class BusType { IN = true, OUT = false };
-
-	juce::AudioPluginInstance*  m_plugin; // core
-	juce::AudioBuffer<float>    m_buffer;
-
-	std::atomic<bool> m_bypass;
+	enum class BusType 
+	{ 
+		IN = true, OUT = false 
+	};
 
 	juce::AudioProcessor::Bus* getMainBus(BusType b) const;
 
@@ -115,8 +113,12 @@ private:
 	Returns the current channel layout for the main output bus. */
 
 	int countMainOutChannels() const;
-};
 
+	juce::AudioPluginInstance* m_plugin;
+	juce::AudioBuffer<float>   m_buffer;
+
+	std::atomic<bool> m_bypass;
+};
 }} // giada::m::
 
 #endif

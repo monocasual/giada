@@ -42,6 +42,7 @@
 #include "core/mixerHandler.h"
 #include "core/mixer.h"
 #include "core/clock.h"
+#include "core/init.h"
 #include "core/kernelMidi.h"
 #include "core/kernelAudio.h"
 #include "core/recorder.h"
@@ -230,30 +231,11 @@ void clearAllActions()
 /* -------------------------------------------------------------------------- */
 
 
-void resetToInitState(bool resetGui, bool createColumns)
+void resetToInitState(bool createColumns)
 {
 	if (!v::gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 		return;
-	
-	u::gui::closeAllSubwindows();
-	m::mh::close();
-	m::clock::init(m::conf::samplerate, m::conf::midiTCfps);
-	m::mh::init();
-	m::recorder::init();
-
-#ifdef WITH_VST
-	m::pluginHost::close();
-	m::pluginManager::init(m::conf::samplerate, m::kernelAudio::getRealBufSize());
-#endif
-
-	G_MainWin->keyboard->clear();
-	if (createColumns)
-		G_MainWin->keyboard->init();
-
-	u::gui::updateMainWinLabel(G_DEFAULT_PATCH_NAME);
-
-	if (resetGui)
-		u::gui::updateControls();
+	m::init::reset(createColumns);	
 }
 
 

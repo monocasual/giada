@@ -153,7 +153,7 @@ void initGUI_(int argc, char** argv)
 		v::gdAlert("Your soundcard isn't configured correctly.\n"
 			"Check the configuration and restart Giada.");
 
-	u::gui::updateControls();
+	u::gui::updateStaticWidgets();
 
 	Fl::add_timeout(G_GUI_REFRESH_RATE, v::updater::update, nullptr);
 }
@@ -223,6 +223,29 @@ void closeMainWindow()
 
 	G_MainWin->hide();
 	delete G_MainWin;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void reset(bool createColumns)
+{	
+	u::gui::closeAllSubwindows();
+	mh::close();
+	clock::init(conf::samplerate, conf::midiTCfps);
+	mh::init();
+	recorder::init();
+
+#ifdef WITH_VST
+	pluginHost::close();
+	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
+#endif
+
+	G_MainWin->clearKeyboard(createColumns); 
+	
+	u::gui::updateMainWinLabel(G_DEFAULT_PATCH_NAME);
+	u::gui::updateStaticWidgets();
 }
 
 

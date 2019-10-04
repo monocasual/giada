@@ -33,6 +33,7 @@
 #include "utils/fs.h"
 #include "utils/string.h"
 #include "const.h"
+#include "patch.h"
 #include "plugin.h"
 #include "pluginManager.h"
 
@@ -204,7 +205,7 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid)
 			gu_log("[pluginManager::makePlugin] still nothing to do, returning unknown plugin\n");
 			missingPlugins_ = true;
 			unknownPluginList_.push_back(fid);
-			return {};
+			return nullptr;
 		}
 	}
 
@@ -212,7 +213,7 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid)
 	if (!pi) {
 		gu_log("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
 		missingPlugins_ = true;
-		return {};
+		return nullptr;
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
@@ -249,6 +250,35 @@ std::unique_ptr<Plugin> makePlugin(const Plugin& src)
 		p->setParameter(i, src.getParameter(i));	
 
 	return p;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p)
+{
+	std::unique_ptr<Plugin> plugin = makePlugin(p.path);
+	if (plugin == nullptr)
+		return nullptr;
+	
+	/* Fill plug-in parameters. */
+
+	plugin->setBypass(p.bypass);
+	for (unsigned j=0; j<p.params.size(); j++)
+		plugin->setParameter(j, p.params.at(j));
+
+	/* Fill plug-in MidiIn parameters. Don't fill Channel::midiInParam if 
+	Plugin::midiInParams are zero: it would wipe out the current default 0x0
+	values. */
+	
+	if (!p.midiInParams.empty()) {
+		plugin->midiInParams.clear();
+		for (uint32_t midiInParam : p.midiInParams)
+			plugin->midiInParams.emplace_back(midiInParam);
+	}
+
+	return plugin;
 }
 
 

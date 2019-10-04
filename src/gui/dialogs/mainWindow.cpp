@@ -124,4 +124,15 @@ void gdMainWindow::rebuild()
 {
 	keyboard->rebuild();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdMainWindow::clearKeyboard(bool createColumns)
+{
+	keyboard->clear();
+	if (createColumns)
+		keyboard->init();
+}
 }} // giada::v::

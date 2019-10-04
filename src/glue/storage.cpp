@@ -39,6 +39,7 @@
 #include "core/plugin.h"
 #include "core/conf.h"
 #include "core/patch.h"
+#include "core/init.h"
 #include "core/waveManager.h"
 #include "core/clock.h"
 #include "core/wave.h"
@@ -103,18 +104,12 @@ std::string makeUniqueWavePath_(const std::string& base, const m::Wave& w)
 
 bool savePatch_(const std::string& path, const std::string& name, bool isProject)
 {
-	if (m::patch::write(name, path, isProject)) {
-		u::gui::updateMainWinLabel(name);
-		m::conf::patchPath = isProject ? gu_getUpDir(gu_getUpDir(path)) : gu_dirname(path);
-
-std::cout << path << "\n";
-std::cout << gu_getUpDir(path) << "\n";
-std::cout << gu_getUpDir(gu_getUpDir(path)) << "\n";
-
-		gu_log("[savePatch] patch saved as %s\n", path.c_str());
-		return true;
-	}
-	return false;
+	if (!m::patch::write(name, path, isProject))
+		return false;
+	u::gui::updateMainWinLabel(name);
+	m::conf::patchPath = isProject ? gu_getUpDir(gu_getUpDir(path)) : gu_dirname(path);
+	gu_log("[savePatch] patch saved as %s\n", path.c_str());
+	return true;
 }
 
 
@@ -166,10 +161,6 @@ void savePatch(void* data)
 
 void loadPatch(void* data)
 {
-	assert(false);
-#if 0
-	using namespace giada::m;
-
 	v::gdBrowserLoad* browser = (v::gdBrowserLoad*) data;
 	std::string fullPath      = browser->getSelectedItem();
 	bool isProject            = gu_isProject(browser->getSelectedItem());
@@ -185,27 +176,20 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	int res = patch::read(fileToLoad);
-	if (res != PATCH_READ_OK) {
-		if (res == PATCH_UNREADABLE)
+	m::init::reset(/*createColumns=*/false);
+
+	int res = m::patch::read(fileToLoad);
+	if (res != G_PATCH_READ_OK) {
+		if (res == G_PATCH_UNREADABLE)
 			isProject ? v::gdAlert("This project is unreadable.") : v::gdAlert("This patch is unreadable.");
 		else
-		if (res == PATCH_INVALID)
+		if (res == G_PATCH_INVALID)
 			isProject ? v::gdAlert("This project is not valid.") : v::gdAlert("This patch is not valid.");
 		browser->hideStatusBar();
 		return;
 	}
 
-	/* Close all other windows. This prevents problems if plugin windows are 
-	open. */
-
-	u::gui::closeAllSubwindows();
-
-	/* Reset the system. False(1): don't update the gui right now. False(2): do 
-	not create empty columns. */
-
-	c::main::resetToInitState(false, false);
-
+#if 0
 	browser->setStatusBar(0.1f);
 
 	/* Add common stuff, columns and channels. Also increment the progress bar by 
@@ -251,9 +235,9 @@ void loadPatch(void* data)
 		v::gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
 
 #endif
+#endif
 
 	browser->do_callback();
-#endif
 }
 
 

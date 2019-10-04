@@ -39,8 +39,10 @@
 namespace giada {
 namespace m 
 {
-SampleChannel::SampleChannel(bool inputMonitor, int bufferSize, size_t column)
-: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize, column),
+SampleChannel::SampleChannel(bool inputMonitor, int bufferSize,
+	size_t columnIndex, ID id)
+: Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize,
+                    columnIndex, id),
   hasWave          (false),
   waveId           (0),
   shift            (0),
@@ -96,6 +98,38 @@ SampleChannel::SampleChannel(const SampleChannel& o)
 	}
 	
 	bufferPreview.alloc(o.bufferPreview.countFrames(), G_MAX_IO_CHANS);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+SampleChannel::SampleChannel(const patch::Channel& p, int bufferSize)
+: Channel          (p, bufferSize),
+  hasWave          (p.waveId != 0),
+  waveId           (p.waveId),
+  shift            (0), // TODO
+  mode             (p.mode),
+  quantizing       (false),
+  inputMonitor     (p.inputMonitor),
+  pitch            (p.pitch),
+  tracker          (0),
+  trackerPreview   (0),
+  begin            (p.begin),
+  end              (p.end),
+  midiInVeloAsVol  (p.midiInVeloAsVol),
+  midiInReadActions(p.midiInReadActions),
+  midiInPitch      (p.midiInPitch),
+  bufferOffset     (0),
+  rewinding        (0),
+  rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
+{
+	if (rsmp_state == nullptr) {
+		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
+		throw std::bad_alloc();
+	}
+	
+	bufferPreview.alloc(bufferSize, G_MAX_IO_CHANS);
 }
 
 
@@ -249,26 +283,6 @@ void SampleChannel::setMute(bool value)
 void SampleChannel::setSolo(bool value)
 {
 	sampleChannelProc::setSolo(this, value);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void SampleChannel::readPatch(const std::string& basePath, const patch::channel_t& pch)
-{
-	Channel::readPatch("", pch);
-	channelManager::readPatch(this, basePath, pch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void SampleChannel::writePatch(int i, bool isProject)
-{
-	Channel::writePatch(i, isProject);
-	channelManager::writePatch(this, isProject, i);
 }
 
 

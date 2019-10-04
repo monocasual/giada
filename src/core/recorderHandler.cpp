@@ -34,6 +34,7 @@
 #include "action.h"
 #include "clock.h"
 #include "const.h"
+#include "patch.h"
 #include "recorderHandler.h"
 
 
@@ -50,16 +51,16 @@ std::vector<Action> recs_;
 
 /* -------------------------------------------------------------------------- */
 
-/*
-const Action* getActionById_(int id, const recorder::ActionMap& source)
+
+const Action* getActionPtrById_(int id, const recorder::ActionMap& source)
 {
 	for (auto& kv : source)
-		for (const Action* action : kv.second)
-			if (action->id == id)
-				return action;
+		for (const Action& action : kv.second)
+			if (action.id == id)
+				return &action;
 	return nullptr;
 }
-*/
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -110,20 +111,6 @@ void consolidate_()
 {
 	for (auto it = recs_.begin(); it != recs_.end(); ++it)
 		consolidate_(*it, it - recs_.begin());  // Pass current index
-}
-
-/* -------------------------------------------------------------------------- */
-
-
-void readPatch_DEPR_(const std::vector<patch::action_t>& pactions)
-{
-	assert(false);
-/*
-	for (const patch::action_t paction : pactions)
-		recs_.push_back(recorder::makeAction(-1, paction.channelId, paction.frame, MidiEvent(paction.event)));
-	
-	consolidate();
-*/
 }
 } // {anonymous}
 
@@ -244,9 +231,9 @@ std::unordered_set<ID> consolidate()
 /* -------------------------------------------------------------------------- */
 
 
+#if 0
 void writePatch(ID channelId, std::vector<patch::action_t>& pactions)
 {
-#if 0
 	recorder::forEachAction([&] (const Action& a) 
 	{
 		if (a.channelId != channelId) 
@@ -260,54 +247,47 @@ void writePatch(ID channelId, std::vector<patch::action_t>& pactions)
 			a.next != nullptr ? a.next->id : -1
 		});
 	});
-#endif
 }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void readPatch(const std::vector<patch::action_t>& pactions)
+recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pactions)
 {
-	assert(false);
-#if 0
-	if (u::ver::isLess(patch::versionMajor, patch::versionMinor, patch::versionPatch, 0, 15, 3)) {
-		readPatch_DEPR_(pactions);
-		return;
-	}
-
-	recorder::ActionMap temp = recorder::getActionMap();
+	recorder::ActionMap out;
 
 	/* First pass: add actions with no relationship (no prev/next). */
 
-	for (const patch::action_t paction : pactions) {
-		temp[paction.frame].push_back(recorder::makeAction(
+	for (const patch::Action& paction : pactions) {
+		out[paction.frame].push_back(recorder::makeAction(
 			paction.id, 
 			paction.channelId, 
 			paction.frame, 
 			MidiEvent(paction.event)));
-		recorder::updateActionId(paction.id + 1);
+		//recorder::updateActionId(paction.id + 1);
 	}
 
 	/* Second pass: fill in previous and next actions, if any. */
 
-	for (const patch::action_t paction : pactions) {
-		if (paction.next == -1 && paction.prev == -1) 
+	for (const patch::Action& paction : pactions) {
+		if (paction.nextId == 0 && paction.prevId == 0) 
 			continue;
-		Action* curr = const_cast<Action*>(getActionById_(paction.id, temp));
+		Action* curr = const_cast<Action*>(getActionPtrById_(paction.id, out));
 		assert(curr != nullptr);
-		if (paction.next != -1) {
-			curr->next = getActionById_(paction.next, temp);
+		if (paction.nextId != 0) {
+			curr->next = getActionPtrById_(paction.nextId, out);
 			assert(curr->next != nullptr);
 		}
-		if (paction.prev != -1) {
-			curr->prev = getActionById_(paction.prev, temp);
+		if (paction.prevId != 0) {
+			curr->prev = getActionPtrById_(paction.prevId, out);
 			assert(curr->prev != nullptr);
 		}
 	}
 
-	recorder::updateActionMap(std::move(temp));
-#endif
+	return out;
+	//recorder::updateActionMap(std::move(out));
 }
 }}}; // giada::m::recorderHandler::
 

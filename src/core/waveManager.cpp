@@ -32,6 +32,7 @@
 #include "utils/fs.h"
 #include "const.h"
 #include "wave.h"
+#include "patch.h"
 #include "waveFx.h"
 #include "waveManager.h"
 
@@ -74,7 +75,7 @@ int getBits(SF_INFO& header)
 /* -------------------------------------------------------------------------- */
 
 
-Result createFromFile(const string& path) // TODO ID parameter for patch persistence
+Result createFromFile(const string& path, ID id)
 {
 	if (path == "" || gu_isDir(path)) {
 		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
@@ -97,7 +98,10 @@ Result createFromFile(const string& path) // TODO ID parameter for patch persist
 		return { G_RES_ERR_WRONG_DATA };
 	}
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
+	if (id != 0)
+		waveId_ = id;
+
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(id != 0 ? id : ++waveId_);
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
@@ -146,6 +150,15 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
 
 	return wave;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::unique_ptr<Wave> createFromPatch(const patch::Wave& w)
+{
+	return createFromFile(w.path, w.id).wave;
 }
 
 

@@ -46,8 +46,8 @@
 namespace giada {
 namespace m 
 {
-MidiChannel::MidiChannel(int bufferSize, size_t column)
-: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize, column),
+MidiChannel::MidiChannel(int bufferSize, size_t columnIndex, ID id)
+: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize, columnIndex, id),
   midiOut    (false),
   midiOutChan(G_MIDI_CHANS[0])
 {
@@ -61,6 +61,17 @@ MidiChannel::MidiChannel(const MidiChannel& o)
 : Channel    (o),
   midiOut    (o.midiOut),
   midiOutChan(o.midiOutChan)
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+MidiChannel::MidiChannel(const patch::Channel& p, int bufferSize)
+: Channel    (p, bufferSize),
+  midiOut    (p.midiOut),
+  midiOutChan(p.midiOutChan)
 {
 }
 
@@ -143,26 +154,6 @@ void MidiChannel::setMute(bool value)
 void MidiChannel::setSolo(bool value)
 {
 	midiChannelProc::setSolo(this, value);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiChannel::readPatch(const std::string& basePath, const patch::channel_t& pch)
-{
-	Channel::readPatch("", pch);
-	channelManager::readPatch(this, pch);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void MidiChannel::writePatch(int i, bool isProject)
-{
-	Channel::writePatch(i, isProject);
-	channelManager::writePatch(this, isProject, i);
 }
 
 

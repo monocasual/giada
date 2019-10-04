@@ -261,8 +261,8 @@ void render_(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut)
 	/* Master channels are processed at the end, when the buffers have already 
 	been filled. */
 
-	const_cast<Channel*>(model::channels[mixer::MASTER_OUT_CHANNEL_ID])->render(out, in, inToOut, true, true);
-	const_cast<Channel*>(model::channels[mixer::MASTER_IN_CHANNEL_ID])->render(out, in, inToOut, true, true);
+	model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).render(out, in, inToOut, true, true);
+	model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).render(out, in, inToOut, true, true);
 }
 
 
@@ -411,13 +411,10 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	/* Process model. */
 
 //out[0][0] = 3.0f;
-	//std::shared_ptr<model::Layout> layout = model::getLayout();
 
 	if (clock::isActive()) 
 		processSequencer_(out, in);
-
 	render_(out, in, vChanInToOut_);
-	//layout->render(out, in, vChanInToOut_);
 
 	/* Post processing. */
 

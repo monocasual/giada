@@ -54,7 +54,7 @@ void clearAllActions();
 Resets Giada to init state. If resetGui also refresh all widgets. If 
 createColumns also build initial empty columns. */
 
-void resetToInitState(bool resetGui=true, bool createColumns=true);
+void resetToInitState(bool createColumns);
 
 /* beatsDivide/Multiply
 Shrinks or enlarges the number of beats by 2. */

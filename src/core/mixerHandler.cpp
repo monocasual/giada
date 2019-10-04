@@ -66,41 +66,16 @@ namespace mh
 {
 namespace
 {
-ID channelId_ = 0;
-
-#ifdef WITH_VST
-
-int readPatchPlugins_(const std::vector<patch::plugin_t>& list/*, pluginHost::StackType t*/)
-{
-#if 0
-	int ret = 1;
-	for (const patch::plugin_t& ppl : list) {
-		std::unique_ptr<Plugin> p = pluginManager::makePlugin(ppl.path);
-		if (p != nullptr) {
-			p->setBypass(ppl.bypass);
-			for (unsigned j=0; j<ppl.params.size(); j++)
-				p->setParameter(j, ppl.params.at(j));
-			pluginHost::addPlugin(std::move(p), {t, 0});
-			ret &= 1;
-		}
-		else
-			ret &= 0;
-	}
-	return ret;
-#endif
-}
-
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
-std::unique_ptr<Channel> createChannel_(ChannelType type, size_t column, ID id)
+std::unique_ptr<Channel> createChannel_(ChannelType type, size_t column, ID id=0)
 {
 	std::unique_ptr<Channel> ch = channelManager::create(type, 
 		kernelAudio::getRealBufSize(), conf::inputMonitorDefaultOn, column);
-	ch->id = id;
+
+	if (type == ChannelType::MASTER) {
+		assert(id != 0);
+		ch->id = id;
+	}
+	
 	return ch;	
 }
 
@@ -166,11 +141,6 @@ void init()
 		mixer::MASTER_OUT_CHANNEL_ID));
 	model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
 		mixer::MASTER_IN_CHANNEL_ID));
-
-	/* IDs here start from 2: ID=0 and ID=1 are already taken by master
-	channels. */
-
-	channelId_ = model::channels.size() + 1;
 }
 
 
@@ -209,7 +179,7 @@ bool uniqueSamplePath(ID channelToSkip, const std::string& path)
 
 void addChannel(ChannelType type, size_t column)
 {
-	model::channels.push(createChannel_(type, column, channelId_++));
+	model::channels.push(createChannel_(type, column));
 }
 
 
@@ -263,7 +233,7 @@ void addAndLoadChannel(size_t columnIndex, std::unique_ptr<Wave>&& w)
 	size_t channelIndex = model::channels.size();
 	
 	std::unique_ptr<Channel> ch = createChannel_(ChannelType::SAMPLE, 
-		columnIndex, channelId_++);
+		columnIndex);
 
 	/* Add Wave to Wave list first. */
 	/* TODO - error: missing ch->waveIndex assignment */

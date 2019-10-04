@@ -58,18 +58,12 @@ struct FrameEvents
 	const std::vector<Action>* actions;
 };
 
-constexpr int MASTER_OUT_CHANNEL_ID = 0;
-constexpr int MASTER_IN_CHANNEL_ID  = 1;
+constexpr int MASTER_OUT_CHANNEL_ID = 1;
+constexpr int MASTER_IN_CHANNEL_ID  = 2;
 
 extern std::atomic<bool>  rewindWait;    // rewind guard, if quantized
 extern std::atomic<float> peakOut;
 extern std::atomic<float> peakIn;
-
-/* inToOut
-Copy, process and paste the input into the output, in order to obtain a "hear 
-what you're playing" feature. */
-
-//extern std::atomic<bool> inToOut;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 
