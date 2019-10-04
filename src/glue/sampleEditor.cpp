@@ -136,7 +136,7 @@ void copy(ID waveId, int a, int b)
 {
 	m::model::WavesLock lock(m::model::waves);
 
-	waveBuffer_ = m::waveManager::createFromWave(*m::model::waves.get(waveId), a, b);
+	waveBuffer_ = m::waveManager::createFromWave(m::model::get(m::model::waves, waveId), a, b);
 }
 
 
