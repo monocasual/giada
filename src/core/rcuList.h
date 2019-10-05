@@ -386,20 +386,53 @@ public:
 	}
 
 	/* clear
-	Removes all nodes. Warning: this is not thread-safe yet! */
-	/* TODO */
+	Removes all nodes. */
 
 	void clear()
 	{
+		/* Never start two overlapping writing sessions. */
+
+		if (m_writing.load() == true)
+			return;
+
+		/* Begin of writing session. */
+
+		m_writing.store(true);
+
+		/* Flip the current grace bit. Now we have entered a new grace period
+		with a different number from the previous one. */
+
+		std::int8_t oldgrace = m_grace.fetch_xor(1);
+	
+		/* Store the first node locally. We will need it later on. */
+
 		Node* current = m_head.load();
+
+		/* Block any other reader by setting the size to 0 in advance and
+		cleaning up head/tail pointers. */
+
+		m_size.store(0);
+		m_head.store(nullptr);
+		m_tail.store(nullptr);
+
 		while (current != nullptr) {
+
+			/* Wait until no readers from the previous grace period are reading the 
+			list. Avoid brutal spinlock with a tiny sleep. */
+
+			while (m_readers[oldgrace] > 0)
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+			/* Delete old node. Node destructor makes sure data is deleted. */
+
     		Node* next = current->next;
     		delete current;
     		current = next;
 		}
-		m_head.store(nullptr);
-		m_tail.store(nullptr);
-		m_size.store(0);
+
+		/* End of writing session. Data has changed, set the flag. */
+
+		m_writing.store(false);
 		changed.store(true);
 	}
 

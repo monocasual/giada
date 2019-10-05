@@ -115,6 +115,9 @@ Callback triggered when the input signal level reaches a threshold. */
 
 std::function<void()> signalCb_ = nullptr;
 
+std::atomic<bool> processing_(false);
+std::atomic<bool> active_(false);
+
 
 /* -------------------------------------------------------------------------- */
 
@@ -363,6 +366,23 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 /* -------------------------------------------------------------------------- */
 
 
+void enable()
+{ 
+	active_.store(true); 
+}
+
+
+void disable() 
+{ 
+	active_.store(false);
+	while (processing_.load() == true); 
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void allocVirtualInput(Frame frames)
 {
 	vChanInput_.alloc(frames, G_MAX_IO_CHANS);
@@ -387,8 +407,10 @@ const AudioBuffer& getVirtualInput()
 int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize, 
 	double streamTime, RtAudioStreamStatus status, void* userData)
 {
-	if (!kernelAudio::isReady())
+	if (!kernelAudio::isReady() || active_.load() == false)
 		return 0;
+
+	processing_.store(true);
 
 #ifdef __linux__
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
@@ -426,6 +448,8 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 	destroy memory allocated by RtAudio ---> havoc. */
 	out.setData(nullptr, 0, 0);
 	in.setData (nullptr, 0, 0);
+
+	processing_.store(false);
 
 	return 0;
 }

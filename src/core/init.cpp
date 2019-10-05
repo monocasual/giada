@@ -164,6 +164,13 @@ void initGUI_(int argc, char** argv)
 
 void shutdownAudio_()
 {
+	if (kernelAudio::isReady()) {
+		kernelAudio::closeDevice();
+		gu_log("[init] KernelAudio closed\n");
+		mh::close();
+		gu_log("[init] Mixer closed\n");
+	}
+
 	/* TODO - why cleaning plug-ins and mixer memory? Just shutdown the audio
 	device and let the OS take care of the rest. */
 
@@ -173,13 +180,6 @@ void shutdownAudio_()
 	gu_log("[init] PluginHost cleaned up\n");
 
 #endif
-
-	if (kernelAudio::isReady()) {
-		kernelAudio::closeDevice();
-		gu_log("[init] KernelAudio closed\n");
-		mh::close();
-		gu_log("[init] Mixer closed\n");
-	}
 }
 
 

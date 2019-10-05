@@ -67,6 +67,14 @@ extern std::atomic<float> peakIn;
 
 void init(Frame framesInSeq, Frame framesInBuffer);
 
+/* enable, disable
+Toggles master callback processing. Useful when loading a new patch. Mixer
+will flush itself to wait for a processing cycle to finish when disable() is
+called. */
+
+void enable();
+void disable();
+
 /* allocVirtualInput
 Allocates new memory for the virtual input channel. Call this whenever you 
 shrink or resize the sequencer. */

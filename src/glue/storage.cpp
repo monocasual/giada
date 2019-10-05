@@ -177,6 +177,7 @@ void loadPatch(void* data)
 	}
 
 	m::init::reset();
+	m::mixer::disable();
 
 	int res = m::patch::read(fileToLoad);
 	if (res != G_PATCH_READ_OK) {
@@ -188,6 +189,9 @@ void loadPatch(void* data)
 		browser->hideStatusBar();
 		return;
 	}
+
+
+	m::mixer::enable();
 
 #if 0
 	browser->setStatusBar(0.1f);

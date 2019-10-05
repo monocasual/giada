@@ -141,6 +141,8 @@ void init()
 		mixer::MASTER_OUT_CHANNEL_ID));
 	model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
 		mixer::MASTER_IN_CHANNEL_ID));
+
+	mixer::enable();
 }
 
 
@@ -149,6 +151,7 @@ void init()
 
 void close()
 {
+	mixer::disable();
 	model::channels.clear();
 	model::waves.clear();
 	mixer::close();
