@@ -306,6 +306,7 @@ bool readPlugins_(json_t* j)
 			return false;
 
 		Plugin p;
+		p.id     = readInt_   (jp, PATCH_KEY_PLUGIN_ID);
 		p.path   = readString_(jp, PATCH_KEY_PLUGIN_PATH);
 		p.bypass = readBool_  (jp, PATCH_KEY_PLUGIN_BYPASS);
 
@@ -421,7 +422,7 @@ bool readChannels_(json_t* j)
 		c.type              = static_cast<ChannelType>(readInt_(jc, PATCH_KEY_CHANNEL_TYPE));
 		c.size              = readInt_   (jc, PATCH_KEY_CHANNEL_SIZE);
 		c.name              = readString_(jc, PATCH_KEY_CHANNEL_NAME);
-		c.columnIndex       = readInt_   (jc, PATCH_KEY_CHANNEL_COLUMN);
+		c.columnId          = readInt_   (jc, PATCH_KEY_CHANNEL_COLUMN);
 		c.key               = readInt_   (jc, PATCH_KEY_CHANNEL_KEY);
 		c.mute              = readInt_   (jc, PATCH_KEY_CHANNEL_MUTE);
 		c.solo              = readInt_   (jc, PATCH_KEY_CHANNEL_SOLO);
@@ -521,7 +522,7 @@ void writeColumns_(json_t* j)
 	G_MainWin->keyboard->forEachColumn([&](const v::geColumn& c)
 	{
 		json_t* jc = json_object();
-		json_object_set_new(jc, PATCH_KEY_COLUMN_INDEX, json_integer(c.getIndex()));
+		json_object_set_new(jc, PATCH_KEY_COLUMN_INDEX, json_integer(c.id));
 		json_object_set_new(jc, PATCH_KEY_COLUMN_WIDTH, json_integer(c.w()));
 
 		json_t* jchans = json_array();
@@ -627,7 +628,7 @@ void writeChannels_(json_t* j, bool project)
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_TYPE,               json_integer(static_cast<int>(c->type)));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_SIZE,               json_integer(G_MainWin->keyboard->getChannel(c->id)->getSize()));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_NAME,               json_string(c->name.c_str()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_COLUMN,             json_integer(c->columnIndex));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_COLUMN,             json_integer(c->columnId));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_MUTE,               json_integer(c->mute));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_SOLO,               json_integer(c->solo));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_VOLUME,             json_real(c->volume));

@@ -34,6 +34,7 @@
 #include "core/const.h"
 #include "core/patch.h"
 #include "core/mixer.h"
+#include "core/idManager.h"
 #include "core/wave.h"
 #include "core/waveManager.h"
 #include "core/pluginHost.h"
@@ -50,7 +51,7 @@ namespace channelManager
 {
 namespace
 {
-ID channelId_ = 0;
+IdManager channelId_;
 } // {anonymous}
 
 
@@ -60,18 +61,18 @@ ID channelId_ = 0;
 
 
 std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
-	bool inputMonitorOn, size_t column)
+	bool inputMonitorOn, ID columnId)
 {
 	std::unique_ptr<Channel> ch = nullptr;
 
 	if (type == ChannelType::SAMPLE)
-		ch = std::make_unique<SampleChannel>(inputMonitorOn, bufferSize, column, ++channelId_);
+		ch = std::make_unique<SampleChannel>(inputMonitorOn, bufferSize, columnId, channelId_.get());
 	else
 	if (type == ChannelType::MIDI)
-		ch = std::make_unique<MidiChannel>(bufferSize, column, ++channelId_);
+		ch = std::make_unique<MidiChannel>(bufferSize, columnId, channelId_.get());
 	else
 	if (type == ChannelType::MASTER)
-		ch = std::make_unique<MasterChannel>(bufferSize, column, ++channelId_);
+		ch = std::make_unique<MasterChannel>(bufferSize, channelId_.get());
 	
 	assert(ch != nullptr);
 	return ch;
@@ -97,7 +98,7 @@ std::unique_ptr<Channel> create(const Channel& o)
 	assert(ch != nullptr);
 
 	if (o.type != ChannelType::MASTER)
-		ch->id = ++channelId_;
+		ch->id = channelId_.get();
 
 	return ch;
 }
@@ -118,7 +119,7 @@ std::unique_ptr<Channel> create(const patch::Channel& pch, int bufferSize)
 
 	assert(ch != nullptr);
 
-	channelId_ = pch.id;
+	channelId_.set(pch.id);
 
 	return ch;
 }

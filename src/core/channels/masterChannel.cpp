@@ -31,8 +31,8 @@
 namespace giada {
 namespace m 
 {
-MasterChannel::MasterChannel(int bufferSize, size_t columnIndex, ID id)
-: Channel(ChannelType::MASTER, ChannelStatus::OFF, bufferSize, columnIndex, id)
+MasterChannel::MasterChannel(int bufferSize, ID id)
+: Channel(ChannelType::MASTER, ChannelStatus::OFF, bufferSize, 0, id)
 {
 }
 

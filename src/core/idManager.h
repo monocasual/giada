@@ -25,37 +25,30 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef G_MASTER_CHANNEL_H
-#define G_MASTER_CHANNEL_H
+#ifndef G_ID_MANAGER_H
+#define G_ID_MANAGER_H
 
 
-#include "core/channels/channel.h"
+#include "core/types.h"
 
 
 namespace giada {
 namespace m 
 {
-class MasterChannel : public Channel
+class IdManager
 {
 public:
 
-	MasterChannel(int bufferSize, ID id);
+	IdManager();
+	
+	void set(ID id);
+	ID   get(ID id=0);
 
-	MasterChannel* clone() const override;
-	void parseEvents(mixer::FrameEvents fe) override {};
-	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
-		bool audible, bool running) override;
-	void start(int frame, bool doQuantize, int velocity) override {};
-	void kill(int localFrame) override {};
-	void empty() override {};
-	void stopBySeq(bool chansStopOnSeqHalt) override {};
-	void stop() override {};
-	void rewindBySeq() override {};
-	void setMute(bool value) override {};
-	void setSolo(bool value) override {};
-	void receiveMidi(const MidiEvent& midiEvent) override {};
+private:
+
+	//static ID m_gen;
+	ID m_id;
 };
-
 }} // giada::m::
 
 

@@ -140,9 +140,9 @@ void geChannel::cb_openFxWindow()
 
 
 
-int geChannel::getColumnIndex()
+int geChannel::getColumnId()
 {
-	return static_cast<geColumn*>(parent())->getIndex();
+	return static_cast<geColumn*>(parent())->id;
 }
 
 

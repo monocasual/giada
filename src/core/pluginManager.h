@@ -84,7 +84,7 @@ Returns how many plug-ins are in a unknown/not-found state. */
 
 unsigned countUnknownPlugins();
 
-std::unique_ptr<Plugin> makePlugin(const std::string& fid);
+std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id=0);
 std::unique_ptr<Plugin> makePlugin(int index);
 std::unique_ptr<Plugin> makePlugin(const Plugin& other);
 std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p);

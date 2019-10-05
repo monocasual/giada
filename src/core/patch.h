@@ -52,6 +52,7 @@ struct Action
 #ifdef WITH_VST
 struct Plugin
 {
+	ID                    id;
 	std::string           path;
 	bool                  bypass;
 	std::vector<float>    params;
@@ -72,7 +73,7 @@ struct Channel
 	ChannelType type;
 	int         size;
 	std::string name;
-	size_t      columnIndex;
+	ID          columnId;
 	int         key;
 	bool        mute;
 	bool        solo;
@@ -109,7 +110,6 @@ struct Channel
 	// midi channel
 	bool        midiOut;
 	int         midiOutChan;
-
 #ifdef WITH_VST
 	std::vector<ID> pluginIds;
 #endif

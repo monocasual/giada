@@ -327,7 +327,7 @@ public:
 	/* pop
 	Removes the i-th element. There is a natural protection against multiple
 	calls to pop() made by the same thread: the caller is blocked by the
-	spinlock below: no progress is made until m_readers[oldgrace] > 0. */
+	spinlock below: no progress is made while m_readers[oldgrace] > 0. */
 
 	void pop(size_t i)
 	{
@@ -386,7 +386,8 @@ public:
 	}
 
 	/* clear
-	Removes all nodes. */
+	Removes all nodes. Warning: this is not thread-safe yet! */
+	/* TODO */
 
 	void clear()
 	{

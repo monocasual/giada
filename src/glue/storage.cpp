@@ -176,7 +176,7 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	m::init::reset(/*createColumns=*/false);
+	m::init::reset();
 
 	int res = m::patch::read(fileToLoad);
 	if (res != G_PATCH_READ_OK) {

@@ -33,6 +33,7 @@
 #include "utils/fs.h"
 #include "utils/string.h"
 #include "const.h"
+#include "idManager.h"
 #include "patch.h"
 #include "plugin.h"
 #include "pluginManager.h"
@@ -44,7 +45,7 @@ namespace pluginManager
 {
 namespace
 {
-ID pluginId_ = 0;
+IdManager pluginId_;
 
 int samplerate_;
 int buffersize_;
@@ -191,22 +192,12 @@ int loadList(const std::string& filepath)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Plugin> makePlugin(const std::string& fid)
+std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 {
-	/* Initialize plugin. The default mode uses getTypeForIdentifierString, 
-	falling back to  getTypeForFile (deprecated) for old patches (< 0.14.4). */
-
 	const juce::PluginDescription* pd = findPluginDescription_(fid);
 	if (pd == nullptr) {
-		gu_log("[pluginManager::makePlugin] no plugin found with fid=%s! Trying with "
-			"deprecated mode...\n", fid.c_str());
-		pd = knownPluginList_.getTypeForFile(fid);
-		if (pd == nullptr) {
-			gu_log("[pluginManager::makePlugin] still nothing to do, returning unknown plugin\n");
-			missingPlugins_ = true;
-			unknownPluginList_.push_back(fid);
-			return nullptr;
-		}
+		gu_log("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
+		return nullptr;
 	}
 
 	juce::AudioPluginInstance* pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
@@ -217,7 +208,7 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid)
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
-	return std::make_unique<Plugin>(++pluginId_, pi, samplerate_, buffersize_);
+	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
 }
 
 
@@ -258,7 +249,7 @@ std::unique_ptr<Plugin> makePlugin(const Plugin& src)
 
 std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p)
 {
-	std::unique_ptr<Plugin> plugin = makePlugin(p.path);
+	std::unique_ptr<Plugin> plugin = makePlugin(p.path, p.id);
 	if (plugin == nullptr)
 		return nullptr;
 	

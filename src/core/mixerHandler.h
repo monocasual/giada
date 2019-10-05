@@ -49,7 +49,7 @@ void close();
 /* addChannel
 Adds a new channel of type 'type' into the channels stack. */
 
-void addChannel(ChannelType type, size_t column);
+void addChannel(ChannelType type, ID columnId);
 
 /* loadChannel (1)
 Loads a new Wave inside a Sample Channel. */
@@ -64,12 +64,12 @@ void loadChannel(ID channelId, std::unique_ptr<Wave>&& w);
 /* addAndLoadChannel (1)
 Creates a new channels, fills it with a Wave and then add it to the stack. */
 
-int addAndLoadChannel(size_t column, const std::string& fname); 
+int addAndLoadChannel(ID columnId, const std::string& fname); 
 
 /* addAndLoadChannel (2)
 Same as (1), but Wave is already provided. */
 
-void addAndLoadChannel(size_t column, std::unique_ptr<Wave>&& w); 
+void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w); 
 
 /* freeChannel
 Unloads existing Wave from a Sample Channel. */

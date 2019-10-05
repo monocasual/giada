@@ -91,13 +91,15 @@ private:
 
 	static const int COLUMN_GAP = 20;
 
-	/* indexColumn
-	The last index used for column. */
+	/* columnId
+	The last ID used for column. */
 
-	static int indexGen;
+	static ID columnId;
 	
 	static void cb_addColumn(Fl_Widget* v, void* p);
-	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, int index=-1);
+	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
+
+	geColumn* getColumn(ID id);
 
 	geButton* m_addColumnBtn;
 

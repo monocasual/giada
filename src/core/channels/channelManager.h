@@ -49,7 +49,7 @@ namespace channelManager
 Creates a new Channel from scratch. */
 
 std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
-	bool inputMonitorOn, size_t column);
+	bool inputMonitorOn, ID columnId);
 
 /* create (2)
 Creates a new Channel given an existing one (i.e. clone). */

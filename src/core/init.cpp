@@ -229,7 +229,7 @@ void closeMainWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void reset(bool createColumns)
+void reset()
 {	
 	u::gui::closeAllSubwindows();
 	mh::close();
@@ -242,7 +242,7 @@ void reset(bool createColumns)
 	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
 #endif
 
-	G_MainWin->clearKeyboard(createColumns); 
+	G_MainWin->clearKeyboard(); 
 	
 	u::gui::updateMainWinLabel(G_DEFAULT_PATCH_NAME);
 	u::gui::updateStaticWidgets();

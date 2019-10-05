@@ -45,9 +45,9 @@
 namespace giada {
 namespace v
 {
-geColumn::geColumn(int X, int Y, int W, int H, int index)
+geColumn::geColumn(int X, int Y, int W, int H, ID id)
 : Fl_Pack(X, Y, W, H), 
-  m_index(index)
+  id     (id)
 {
 	type(Fl_Pack::VERTICAL);
 	spacing(G_GUI_INNER_MARGIN);
@@ -80,7 +80,7 @@ int geColumn::handle(int e)
 			/* TODO - add only the first element for now. Need new c::channel::
 			function that takes a list of paths in input...*/
 			std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
-			c::channel::addAndLoadChannel(m_index, G_GUI_CHANNEL_H_1, gu_stripFileUrl(paths[0])); 
+			c::channel::addAndLoadChannel(id, G_GUI_CHANNEL_H_1, gu_stripFileUrl(paths[0])); 
 			return 1;
 		}
 	}
@@ -116,10 +116,11 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->cb_addChan
 
 void geColumn::computeHeight()
 {
+	/*
 	int totalH = 0;
 	for (int i=0; i<children(); i++)
 		totalH += child(i)->h() + G_GUI_INNER_MARGIN;
-	resize(x(), y(), w(), totalH + 66); // evil space for drag n drop
+	resize(x(), y(), w(), totalH + 66); // evil space for drag n drop*/
 }
 
 
@@ -147,7 +148,7 @@ geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
 
 void geColumn::cb_addChannel()
 {
-	gu_log("[geColumn::cb_addChannel] m_index = %d\n", m_index);
+	gu_log("[geColumn::cb_addChannel] id = %d\n", id);
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Sample channel"},
@@ -165,9 +166,9 @@ void geColumn::cb_addChannel()
 	if (m == nullptr) return;
 
 	if (strcmp(m->label(), "Sample channel") == 0)
-		c::channel::addChannel(m_index, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1);
+		c::channel::addChannel(id, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1);
 	else
-		c::channel::addChannel(m_index, ChannelType::MIDI, G_GUI_CHANNEL_H_1);
+		c::channel::addChannel(id, ChannelType::MIDI, G_GUI_CHANNEL_H_1);
 }
 
 
@@ -188,15 +189,23 @@ geChannel* geColumn::getChannel(ID chanID) const
 /* -------------------------------------------------------------------------- */
 
 
+void geColumn::init()
+{
+	clear();
+
+	m_addChannelBtn = new geButton(0, 0, w(), G_GUI_UNIT, "Add new channel");
+	m_addChannelBtn->callback(cb_addChannel, (void*)this);
+
+	add(m_addChannelBtn);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geColumn::forEachChannel(std::function<void(geChannel* c)> f) const
 {
 	for (int i=1; i<children(); i++) // Skip "add channel" button
 		f(static_cast<geChannel*>(child(i)));
 }
-
-/* -------------------------------------------------------------------------- */
-
-
-int geColumn::getIndex() const { return m_index; }
-
 }} // giada::v::

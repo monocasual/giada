@@ -66,14 +66,14 @@ namespace mh
 {
 namespace
 {
-std::unique_ptr<Channel> createChannel_(ChannelType type, size_t column, ID id=0)
+std::unique_ptr<Channel> createChannel_(ChannelType type, ID columnId, ID channelId=0)
 {
 	std::unique_ptr<Channel> ch = channelManager::create(type, 
-		kernelAudio::getRealBufSize(), conf::inputMonitorDefaultOn, column);
+		kernelAudio::getRealBufSize(), conf::inputMonitorDefaultOn, columnId);
 
 	if (type == ChannelType::MASTER) {
-		assert(id != 0);
-		ch->id = id;
+		assert(channelId != 0);
+		ch->id = channelId;
 	}
 	
 	return ch;	
@@ -177,9 +177,9 @@ bool uniqueSamplePath(ID channelToSkip, const std::string& path)
 /* -------------------------------------------------------------------------- */
 
 
-void addChannel(ChannelType type, size_t column)
+void addChannel(ChannelType type, ID columnId)
 {
-	model::channels.push(createChannel_(type, column));
+	model::channels.push(createChannel_(type, columnId));
 }
 
 
@@ -219,21 +219,21 @@ void loadChannel(ID channelId, std::unique_ptr<Wave>&& w)
 /* -------------------------------------------------------------------------- */
 
 
-int addAndLoadChannel(size_t columnIndex, const std::string& fname)
+int addAndLoadChannel(ID columnId, const std::string& fname)
 {
 	waveManager::Result res = createWave_(fname);
 	if (res.status == G_RES_OK)
-		addAndLoadChannel(columnIndex, std::move(res.wave));
+		addAndLoadChannel(columnId, std::move(res.wave));
 	return res.status;
 }
 
 
-void addAndLoadChannel(size_t columnIndex, std::unique_ptr<Wave>&& w)
+void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w)
 {
 	size_t channelIndex = model::channels.size();
 	
 	std::unique_ptr<Channel> ch = createChannel_(ChannelType::SAMPLE, 
-		columnIndex);
+		columnId);
 
 	/* Add Wave to Wave list first. */
 	/* TODO - error: missing ch->waveIndex assignment */
@@ -284,8 +284,8 @@ void cloneChannel(ID channelId)
 
 void freeChannel(ID channelId)
 {
-	bool   hasWave;	
-	size_t waveId;
+	bool hasWave;	
+	ID   waveId;
 	
 	/* Remove Wave reference from Channel. */
 	
@@ -325,7 +325,7 @@ void freeAllChannels()
 void deleteChannel(ID channelId)
 {
 	bool            hasWave = false;
-	size_t          waveId;
+	ID              waveId;
 	std::vector<ID> pluginIds;
 
 	model::onGet(model::channels, channelId, [&](Channel& c)
@@ -422,7 +422,6 @@ void updateSoloCount()
 	m::model::onSwap(m::model::mixer, [&](m::model::Mixer& m)
 	{
 		m.hasSolos = channelHas_([](const Channel* ch) { return ch->solo; });
-		printf("%d\n", m.hasSolos);
 	});
 }
 

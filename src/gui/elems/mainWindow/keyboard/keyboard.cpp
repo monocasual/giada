@@ -43,7 +43,7 @@
 namespace giada {
 namespace v
 {
-int geKeyboard::indexGen = 0;
+ID geKeyboard::columnId = 0;
 
 
 /* -------------------------------------------------------------------------- */
@@ -95,21 +95,25 @@ void geKeyboard::init()
 
 void geKeyboard::rebuild()
 {
-	init();
+	for (geColumn* c : m_columns)
+		c->init();
 	
 	m::model::ChannelsLock lock(m::model::channels);
 
 	for (const m::Channel* ch : m::model::channels) {
+		
 		if (ch->id == m::mixer::MASTER_OUT_CHANNEL_ID ||
 			ch->id == m::mixer::MASTER_IN_CHANNEL_ID)
 			continue;
-		geColumn* column;
-		if (ch->columnIndex < m_columns.size())
-			column = m_columns[ch->columnIndex];
-		else
-			column = cb_addColumn(G_DEFAULT_COLUMN_WIDTH, ch->columnIndex);
+		
+		geColumn* column = getColumn(ch->columnId);
+		if (column == nullptr)
+			column = cb_addColumn(G_DEFAULT_COLUMN_WIDTH, ch->columnId);
+		
 		column->addChannel(ch->id, ch->type, G_GUI_CHANNEL_H_1);
 	}
+
+	redraw();
 }
 
 
@@ -193,7 +197,7 @@ int geKeyboard::handle(int e)
 /* -------------------------------------------------------------------------- */
 
 
-geColumn* geKeyboard::cb_addColumn(int width, int index)
+geColumn* geKeyboard::cb_addColumn(int width, ID id)
 {
 	int colx = x() - xposition();  // Mind the x-scroll offset with xposition()
 
@@ -204,11 +208,12 @@ geColumn* geKeyboard::cb_addColumn(int width, int index)
 
 	/* Generate new index. If not passed in. */
 
-	int newIndex = index != -1 ? index : m_columns.size(); 
+	if (id != 0)
+		columnId = id;
 
 	/* Add a new column + a new resizer bar. */
 
-	geColumn*     column = new geColumn(colx, y(), width, h(), newIndex);
+	geColumn*     column = new geColumn(colx, y(), width, h(), id != 0 ? id : ++columnId);
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
 	add(column);
 	add(bar);
@@ -253,10 +258,22 @@ void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geKeyboard::getChannel(ID chanID)
+geColumn* geKeyboard::getColumn(ID id)
+{
+	for (geColumn* column : m_columns) 
+		if (column->id == id)
+			return column;
+	return nullptr;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+geChannel* geKeyboard::getChannel(ID channelId)
 {
 	for (geColumn* column : m_columns) {
-		geChannel* c = column->getChannel(chanID);
+		geChannel* c = column->getChannel(channelId);
 		if (c != nullptr) 
 			return c;
 	}

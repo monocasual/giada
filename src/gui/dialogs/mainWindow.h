@@ -53,7 +53,7 @@ public:
 
     void rebuild() override;
 
-	void clearKeyboard(bool createColumns);
+	void clearKeyboard();
 
 	geKeyboard*      keyboard;
 	geBeatMeter*     beatMeter;

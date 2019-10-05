@@ -45,7 +45,7 @@ class SampleChannel : public Channel
 {
 public:
 
-	SampleChannel(bool inputMonitor, int bufferSize, size_t columnIndex, ID id);
+	SampleChannel(bool inputMonitor, int bufferSize, ID columnId, ID id);
 	SampleChannel(const SampleChannel& o);
 	SampleChannel(const patch::Channel& p, int bufferSize);
 	~SampleChannel();

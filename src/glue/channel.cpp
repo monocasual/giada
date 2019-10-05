@@ -126,18 +126,18 @@ int loadChannel(ID channelId, const std::string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-void addChannel(size_t columnIndex, ChannelType type, int size)
+void addChannel(ID columnId, ChannelType type, int size)
 {
-	m::mh::addChannel(type, columnIndex);
+	m::mh::addChannel(type, columnId);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void addAndLoadChannel(size_t columnIndex, int size, const std::string& fname)
+void addAndLoadChannel(ID columnId, int size, const std::string& fname)
 {
-	int res = m::mh::addAndLoadChannel(columnIndex, fname);
+	int res = m::mh::addAndLoadChannel(columnId, fname);
 	if (res != G_RES_OK)
 		printLoadError_(res);
 }

@@ -49,11 +49,11 @@ namespace giada {
 namespace m 
 {
 Channel::Channel(ChannelType type, ChannelStatus playStatus, int bufferSize, 
-	size_t columnIndex, ID id)
+	ID columnId, ID id)
 : type           (type),
   playStatus     (playStatus),
   recStatus      (ChannelStatus::OFF),
-  columnIndex    (columnIndex),
+  columnId       (columnId),
   id             (id),
   previewMode    (PreviewMode::NONE),
   pan            (0.5f),
@@ -97,7 +97,7 @@ Channel::Channel(const Channel& o)
 : type           (o.type),
   playStatus     (o.playStatus),
   recStatus      (o.recStatus),
-  columnIndex    (o.columnIndex),
+  columnId       (o.columnId),
   id             (o.id),
   previewMode    (o.previewMode),
   pan            (o.pan),
@@ -139,7 +139,7 @@ Channel::Channel(const patch::Channel& p, int bufferSize)
 : type           (p.type),
   playStatus     (p.waveId == 0 ? ChannelStatus::EMPTY : ChannelStatus::OFF),
   recStatus      (ChannelStatus::OFF),
-  columnIndex    (p.columnIndex),
+  columnId       (p.columnId),
   id             (p.id),
   previewMode    (PreviewMode::NONE),
   pan            (p.pan),

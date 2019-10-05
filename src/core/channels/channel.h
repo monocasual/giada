@@ -181,7 +181,7 @@ public:
 	ChannelStatus playStatus;
 	ChannelStatus recStatus;
 
-	int columnIndex;
+	ID columnId;
 	ID id;
 
 	/* previewMode
@@ -256,7 +256,7 @@ public:
 protected:
 
 	Channel(ChannelType type, ChannelStatus status, int bufferSize,
-		size_t column, ID id);
+		ID columnId, ID id);
 	Channel(const Channel& o);
 	Channel(const patch::Channel& p, int bufferSize);
 };

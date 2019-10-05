@@ -46,8 +46,8 @@
 namespace giada {
 namespace m 
 {
-MidiChannel::MidiChannel(int bufferSize, size_t columnIndex, ID id)
-: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize, columnIndex, id),
+MidiChannel::MidiChannel(int bufferSize, ID columnId, ID id)
+: Channel    (ChannelType::MIDI, ChannelStatus::OFF, bufferSize, columnId, id),
   midiOut    (false),
   midiOutChan(G_MIDI_CHANS[0])
 {

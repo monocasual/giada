@@ -64,10 +64,10 @@ public:
 
 	virtual void changeSize(int h);
 
-	/* getColumnIndex
-	Returns the numeric index of the column in which this channel is located. */
+	/* getColumnId
+	Returns the ID of the column this channel resides in. */
 
-	int getColumnIndex();
+	ID getColumnId();
 
 	int getSize();
 

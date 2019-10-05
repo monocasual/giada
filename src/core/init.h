@@ -34,7 +34,7 @@ namespace m {
 namespace init
 {
 void startup(int argc, char** argv);
-void reset(bool createColumns); 
+void reset(); 
 void closeMainWindow();
 void shutdown();
 }}} // giada::m::init

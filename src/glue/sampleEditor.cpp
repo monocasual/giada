@@ -268,8 +268,8 @@ void rewindPreview(ID channelId)
 
 void toNewChannel(ID channelId, int a, int b)
 {
-	size_t colIndex = G_MainWin->keyboard->getChannel(channelId)->getColumnIndex();
-	size_t waveId;
+	ID columnId = G_MainWin->keyboard->getChannel(channelId)->getColumnId();
+	ID waveId;
 	
 	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
@@ -278,7 +278,7 @@ void toNewChannel(ID channelId, int a, int b)
 
 	m::model::onGet(m::model::waves, waveId, [&](m::Wave& w)
 	{
-		m::mh::addAndLoadChannel(colIndex, m::waveManager::createFromWave(w, a, b));
+		m::mh::addAndLoadChannel(columnId, m::waveManager::createFromWave(w, a, b));
 	});
 }
 

@@ -112,6 +112,7 @@ ID clonePlugin_(ID pluginId)
 void close()
 {
 	messageManager_->deleteInstance();
+	model::plugins.clear();
 }
 
 

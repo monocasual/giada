@@ -235,7 +235,7 @@ void resetToInitState(bool createColumns)
 {
 	if (!v::gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 		return;
-	m::init::reset(createColumns);	
+	m::init::reset();	
 }
 
 

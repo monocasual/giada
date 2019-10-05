@@ -44,7 +44,7 @@ namespace channel
 /* addChannel
 Adds an empty new channel to the stack. */
 
-void addChannel(size_t columnIndex, ChannelType type, int size);
+void addChannel(ID columnId, ChannelType type, int size);
 
 /* loadChannel
 Fills an existing channel with a wave. */
@@ -54,7 +54,7 @@ int loadChannel(ID channelId, const std::string& fname);
 /* addAndLoadChannel
 Adds a new Sample Channel and fills it with a wave right away. */
 
-void addAndLoadChannel(size_t columnIndex, int size, const std::string& fname); 
+void addAndLoadChannel(ID columnInd, int size, const std::string& fname); 
 
 /* deleteChannel
 Removes a channel from Mixer. */

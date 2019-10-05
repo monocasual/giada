@@ -42,7 +42,7 @@ class MidiChannel : public Channel
 {
 public:
 
-	MidiChannel(int bufferSize, size_t columnIndex, ID id);
+	MidiChannel(int bufferSize, ID columnId, ID id);
 	MidiChannel(const MidiChannel& o);
 	MidiChannel(const patch::Channel& p, int bufferSize);
 

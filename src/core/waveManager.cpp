@@ -31,13 +31,11 @@
 #include "utils/log.h"
 #include "utils/fs.h"
 #include "const.h"
+#include "idManager.h"
 #include "wave.h"
 #include "patch.h"
 #include "waveFx.h"
 #include "waveManager.h"
-
-
-using std::string;
 
 
 namespace giada {
@@ -46,10 +44,13 @@ namespace waveManager
 {
 namespace
 {
-ID waveId_ = 0;
+IdManager waveId_;
 
 
-int getBits(SF_INFO& header)
+/* -------------------------------------------------------------------------- */
+
+
+int getBits_(const SF_INFO& header)
 {
 	if      (header.format & SF_FORMAT_PCM_S8)
 		return 8;
@@ -75,7 +76,7 @@ int getBits(SF_INFO& header)
 /* -------------------------------------------------------------------------- */
 
 
-Result createFromFile(const string& path, ID id)
+Result createFromFile(const std::string& path, ID id)
 {
 	if (path == "" || gu_isDir(path)) {
 		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
@@ -98,11 +99,10 @@ Result createFromFile(const string& path, ID id)
 		return { G_RES_ERR_WRONG_DATA };
 	}
 
-	if (id != 0)
-		waveId_ = id;
+	waveId_.set(id);
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(id != 0 ? id : ++waveId_);
-	wave->alloc(header.frames, header.channels, header.samplerate, getBits(header), path);
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get(id));
+	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
 		gu_log("[waveManager::create] warning: incomplete read!\n");
@@ -121,9 +121,9 @@ Result createFromFile(const string& path, ID id)
 
 
 std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate, 
-	const string& name)
+	const std::string& name)
 {
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get());
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
@@ -142,7 +142,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	int channels = src.getChannels();
 	int frames   = b - a;
 
-	std::unique_ptr<Wave> wave = std::make_unique<Wave>(++waveId_);
+	std::unique_ptr<Wave> wave = std::make_unique<Wave>(waveId_.get());
 	wave->alloc(frames, channels, src.getRate(), src.getBits(), src.getPath());
 	wave->copyData(src.getFrame(a), frames);
 	wave->setLogical(true);
@@ -198,7 +198,7 @@ int resample(Wave& w, int quality, int samplerate)
 /* -------------------------------------------------------------------------- */
 
 
-int save(const Wave& w, const string& path)
+int save(const Wave& w, const std::string& path)
 {
 	SF_INFO header;
 	header.samplerate = w.getRate();

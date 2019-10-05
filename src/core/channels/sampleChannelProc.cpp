@@ -207,7 +207,7 @@ void processIO_(SampleChannel* ch, m::AudioBuffer& out, const m::AudioBuffer& in
 	for (int i=0; i<out.countFrames(); i++) {
 		if (running)
 			ch->calcVolumeEnvelope();
-		if (ch->mute == false)
+		if (!ch->mute)
 			for (int j=0; j<out.countChannels(); j++)
 				out[i][j] += ch->buffer[i][j] * ch->volume * ch->volume_i * ch->calcPanning(j);	
 	}

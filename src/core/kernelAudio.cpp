@@ -373,28 +373,9 @@ int	getFreq(unsigned dev, int i)
 /* -------------------------------------------------------------------------- */
 
 
-unsigned getRealBufSize()
-{
-  return realBufsize;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool isInputEnabled()
-{
-  return inputEnabled;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-unsigned countDevices()
-{
-  return numDevs;
-}
+unsigned getRealBufSize() { return realBufsize; }
+bool isInputEnabled() { return inputEnabled; }
+unsigned countDevices() { return numDevs; }
 
 
 /* -------------------------------------------------------------------------- */

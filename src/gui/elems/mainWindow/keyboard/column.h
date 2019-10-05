@@ -47,11 +47,10 @@ class geColumn : public Fl_Pack
 {
 public:
 
-	geColumn(int x, int y, int w, int h, int index);
+	geColumn(int x, int y, int w, int h, ID id);
 
 	int handle(int e) override;
 	
-	int getIndex() const;
 	geChannel* getChannel(ID chanID) const;
 	
 	/* addChannel
@@ -69,7 +68,11 @@ public:
 
 	void refresh();
 
+	void init(); 
+
 	void forEachChannel(std::function<void(geChannel* c)> f) const;
+	
+	ID id;
 
 private:
 
@@ -77,8 +80,6 @@ private:
 	void cb_addChannel();
 
 	geButton* m_addChannelBtn;
-
-	int m_index;
 };
 }} // giada::v::
 

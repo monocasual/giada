@@ -40,9 +40,9 @@ namespace giada {
 namespace m 
 {
 SampleChannel::SampleChannel(bool inputMonitor, int bufferSize,
-	size_t columnIndex, ID id)
+	ID columnId, ID id)
 : Channel          (ChannelType::SAMPLE, ChannelStatus::EMPTY, bufferSize,
-                    columnIndex, id),
+                    columnId, id),
   hasWave          (false),
   waveId           (0),
   shift            (0),
