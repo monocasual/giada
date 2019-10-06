@@ -43,7 +43,15 @@ class SampleChannel;
 
 namespace mh
 {
-void init();
+/* init
+Initializes mixer. If addHiddenChannels is true creates also Master and other
+utility channels. */
+
+void init(bool addHiddenChannels);
+
+/* close
+Closes mixer and frees resources. */
+
 void close();
 
 /* addChannel

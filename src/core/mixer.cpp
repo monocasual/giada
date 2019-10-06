@@ -375,7 +375,7 @@ void enable()
 void disable() 
 { 
 	active_.store(false);
-	while (processing_.load() == true); 
+	while (processing_.load() == true) 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 

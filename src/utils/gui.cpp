@@ -99,14 +99,10 @@ void refreshSubWindow(int wid)
 
 void refresh()
 {
-	/* Update dynamic elements: in and out meters, beat meter and each 
-	channel. */
+	/* Update dynamic elements inside main window: in and out meters, beat meter
+	and each channel. */
 
-	/* TODO G_MainWin::refresh() override */
-	G_MainWin->mainIO->refresh();
-	G_MainWin->mainTransport->refresh();
-	G_MainWin->beatMeter->redraw(); // TODO change name for consistency
-	G_MainWin->keyboard->refresh();
+	G_MainWin->refresh();
 
 	/* Compute timer for blinker. */
 

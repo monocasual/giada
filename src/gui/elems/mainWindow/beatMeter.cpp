@@ -59,6 +59,15 @@ Fl_Color geBeatMeter::getCursorColor()
 /* -------------------------------------------------------------------------- */
 
 
+void geBeatMeter::refresh()
+{
+	redraw();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geBeatMeter::draw()
 {
 	using namespace giada::m;
@@ -92,5 +101,4 @@ void geBeatMeter::draw()
 
 	fl_rectf(x()+greyX+1, y()+1, w()-greyX-1,  h()-2, G_COLOR_GREY_4);
 }
-
 }} // giada::v::

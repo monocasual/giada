@@ -50,6 +50,7 @@ public:
 	geMainIO(int x, int y);
 
 	void refresh();
+	void rebuild();
 
 	void setOutVol(float v);
 	void setInVol (float v);

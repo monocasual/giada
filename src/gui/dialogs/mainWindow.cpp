@@ -120,9 +120,22 @@ gdMainWindow::~gdMainWindow()
 /* -------------------------------------------------------------------------- */
 
 
+void gdMainWindow::refresh()
+{
+	mainIO->refresh();
+	mainTransport->refresh();
+	beatMeter->refresh();
+	keyboard->refresh();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void gdMainWindow::rebuild()
 {
 	keyboard->rebuild();
+	mainIO->rebuild();
 }
 
 

@@ -418,35 +418,38 @@ bool readChannels_(json_t* j)
 			return false;
 
 		Channel c;
-		c.id                = readInt_   (jc, PATCH_KEY_CHANNEL_ID);
-		c.type              = static_cast<ChannelType>(readInt_(jc, PATCH_KEY_CHANNEL_TYPE));
-		c.size              = readInt_   (jc, PATCH_KEY_CHANNEL_SIZE);
-		c.name              = readString_(jc, PATCH_KEY_CHANNEL_NAME);
-		c.columnId          = readInt_   (jc, PATCH_KEY_CHANNEL_COLUMN);
-		c.key               = readInt_   (jc, PATCH_KEY_CHANNEL_KEY);
-		c.mute              = readInt_   (jc, PATCH_KEY_CHANNEL_MUTE);
-		c.solo              = readInt_   (jc, PATCH_KEY_CHANNEL_SOLO);
-		c.volume            = readFloat_ (jc, PATCH_KEY_CHANNEL_VOLUME);
-		c.pan               = readFloat_ (jc, PATCH_KEY_CHANNEL_PAN);
-		c.hasActions        = readBool_  (jc, PATCH_KEY_CHANNEL_HAS_ACTIONS);
-		c.midiIn            = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_IN);
-		c.midiInKeyPress    = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS);
-		c.midiInKeyRel      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL);
-		c.midiInKill        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL);
-		c.midiInArm         = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_ARM);
-		c.midiInVolume      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME);
-		c.midiInMute        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_MUTE);
-		c.midiInSolo        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_SOLO);
-		c.midiInFilter      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_FILTER);
-		c.midiOutL          = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L);
-		c.midiOutLplaying   = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING);
-		c.midiOutLmute      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE);
-		c.midiOutLsolo      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO);
-		c.armed             = readBool_  (jc, PATCH_KEY_CHANNEL_ARMED);
+		c.id     = readInt_   (jc, PATCH_KEY_CHANNEL_ID);
+		c.type   = static_cast<ChannelType>(readInt_(jc, PATCH_KEY_CHANNEL_TYPE));
+		c.volume = readFloat_ (jc, PATCH_KEY_CHANNEL_VOLUME);
+		
+		if (c.type != ChannelType::MASTER) {
+			c.size              = readInt_   (jc, PATCH_KEY_CHANNEL_SIZE);
+			c.name              = readString_(jc, PATCH_KEY_CHANNEL_NAME);
+			c.columnId          = readInt_   (jc, PATCH_KEY_CHANNEL_COLUMN);
+			c.key               = readInt_   (jc, PATCH_KEY_CHANNEL_KEY);
+			c.mute              = readInt_   (jc, PATCH_KEY_CHANNEL_MUTE);
+			c.solo              = readInt_   (jc, PATCH_KEY_CHANNEL_SOLO);
+			c.pan               = readFloat_ (jc, PATCH_KEY_CHANNEL_PAN);
+			c.hasActions        = readBool_  (jc, PATCH_KEY_CHANNEL_HAS_ACTIONS);
+			c.midiIn            = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_IN);
+			c.midiInKeyPress    = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS);
+			c.midiInKeyRel      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL);
+			c.midiInKill        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL);
+			c.midiInArm         = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_ARM);
+			c.midiInVolume      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME);
+			c.midiInMute        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_MUTE);
+			c.midiInSolo        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_SOLO);
+			c.midiInFilter      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_FILTER);
+			c.midiOutL          = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L);
+			c.midiOutLplaying   = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING);
+			c.midiOutLmute      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE);
+			c.midiOutLsolo      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO);
+			c.armed             = readBool_  (jc, PATCH_KEY_CHANNEL_ARMED);
+		}
 
 		readChannelPlugins_(jc, c.pluginIds);
 
-		if (static_cast<ChannelType>(c.type) == ChannelType::SAMPLE) {
+		if (c.type == ChannelType::SAMPLE) {
 			c.waveId            = readInt_  (jc, PATCH_KEY_CHANNEL_WAVE_ID);
 			c.mode              = static_cast<ChannelMode>(readInt_(jc, PATCH_KEY_CHANNEL_MODE));
 			c.begin             = readInt_  (jc, PATCH_KEY_CHANNEL_BEGIN);
@@ -459,7 +462,7 @@ bool readChannels_(json_t* j)
 			c.midiInPitch       = readInt_  (jc, PATCH_KEY_CHANNEL_MIDI_IN_PITCH);
 		}
 		else
-		if (static_cast<ChannelType>(c.type) == ChannelType::MIDI) {
+		if (c.type == ChannelType::MIDI) {
 			c.midiOut     = readInt_(jc, PATCH_KEY_CHANNEL_MIDI_OUT);
 			c.midiOutChan = readInt_(jc, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN);
 		}
@@ -619,36 +622,36 @@ void writeChannels_(json_t* j, bool project)
 
 	for (m::Channel* c : model::channels) {
 
-		if (c->type == ChannelType::MASTER)
-			continue;
-
 		json_t* jc = json_object();
 
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_ID,                 json_integer(c->id));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_TYPE,               json_integer(static_cast<int>(c->type)));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_SIZE,               json_integer(G_MainWin->keyboard->getChannel(c->id)->getSize()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_NAME,               json_string(c->name.c_str()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_COLUMN,             json_integer(c->columnId));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MUTE,               json_integer(c->mute));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_SOLO,               json_integer(c->solo));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_VOLUME,             json_real(c->volume));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_PAN,                json_real(c->pan));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_ARMED,              json_boolean(c->armed));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_HAS_ACTIONS,        json_boolean(c->hasActions));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN,            json_boolean(c->midiIn.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,     json_integer(c->midiInKeyRel.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,   json_integer(c->midiInKeyPress.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL,       json_integer(c->midiInKill.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_ARM,        json_integer(c->midiInArm.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,     json_integer(c->midiInVolume.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,       json_integer(c->midiInMute.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,       json_integer(c->midiInSolo.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,     json_integer(c->midiInFilter.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L,         json_boolean(c->midiOutL.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING, json_integer(c->midiOutLplaying.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,    json_integer(c->midiOutLmute.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO,    json_integer(c->midiOutLsolo.load()));
-		json_object_set_new(jc, PATCH_KEY_CHANNEL_KEY,                json_integer(c->key));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_ID,     json_integer(c->id));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_TYPE,   json_integer(static_cast<int>(c->type)));
+		json_object_set_new(jc, PATCH_KEY_CHANNEL_VOLUME, json_real(c->volume));
+
+		if (c->type != ChannelType::MASTER) {
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_SIZE,               json_integer(G_MainWin->keyboard->getChannel(c->id)->getSize()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_NAME,               json_string(c->name.c_str()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_COLUMN,             json_integer(c->columnId));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MUTE,               json_integer(c->mute));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_SOLO,               json_integer(c->solo));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_PAN,                json_real(c->pan));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_ARMED,              json_boolean(c->armed));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_HAS_ACTIONS,        json_boolean(c->hasActions));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN,            json_boolean(c->midiIn.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL,     json_integer(c->midiInKeyRel.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS,   json_integer(c->midiInKeyPress.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL,       json_integer(c->midiInKill.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_ARM,        json_integer(c->midiInArm.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_VOLUME,     json_integer(c->midiInVolume.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_MUTE,       json_integer(c->midiInMute.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_SOLO,       json_integer(c->midiInSolo.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_FILTER,     json_integer(c->midiInFilter.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L,         json_boolean(c->midiOutL.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_PLAYING, json_integer(c->midiOutLplaying.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_MUTE,    json_integer(c->midiOutLmute.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_OUT_L_SOLO,    json_integer(c->midiOutLsolo.load()));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_KEY,                json_integer(c->key));
+		}	
 
 		json_t* jplugins = json_array();
 		for (ID pid : c->pluginIds)

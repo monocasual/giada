@@ -26,6 +26,7 @@
 
 
 #include "core/const.h"
+#include "core/model/model.h"
 #include "core/graphics.h"
 #include "core/mixer.h"
 #include "core/mixerHandler.h"
@@ -194,4 +195,22 @@ void geMainIO::refresh()
 	inMeter->redraw();
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMainIO::rebuild()
+{
+	m::model::onGet(m::model::channels, m::mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& c)
+	{
+		outVol->value(c.volume);
+		masterFxOut->setStatus(c.pluginIds.size() > 0);
+	});
+
+	m::model::onGet(m::model::channels, m::mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& c)
+	{
+		inVol->value(c.volume);
+		masterFxIn->setStatus(c.pluginIds.size() > 0);
+	});
+}
 }} // giada::v::

@@ -176,8 +176,8 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	m::init::reset();
 	m::mixer::disable();
+	m::init::reset(/*createHiddenChannels=*/false);
 
 	int res = m::patch::read(fileToLoad);
 	if (res != G_PATCH_READ_OK) {

@@ -51,6 +51,7 @@ public:
     gdMainWindow(int w, int h, const char* title, int argc, char** argv);
 	~gdMainWindow();
 
+	void refresh() override;
     void rebuild() override;
 
 	void clearKeyboard();

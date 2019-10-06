@@ -111,11 +111,14 @@ std::unique_ptr<Channel> create(const patch::Channel& pch, int bufferSize)
 {
 	std::unique_ptr<Channel> ch = nullptr;
 
-	if (static_cast<ChannelType>(pch.type) == ChannelType::SAMPLE)
+	if (pch.type == ChannelType::SAMPLE)
 		ch = std::make_unique<SampleChannel>(pch, bufferSize);
 	else
-	if (static_cast<ChannelType>(pch.type) == ChannelType::MIDI)
+	if (pch.type == ChannelType::MIDI)
 		ch = std::make_unique<MidiChannel>(pch, bufferSize);
+	else
+	if (pch.type == ChannelType::MASTER)
+		ch = std::make_unique<MasterChannel>(pch, bufferSize);
 
 	assert(ch != nullptr);
 

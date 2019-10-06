@@ -173,7 +173,11 @@ void quantize(int val)
 
 void setOutVol(float v, bool gui)
 {
-	m::mh::setOutVol(v);
+	m::model::onGet(m::model::channels, m::mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& c) 
+	{ 
+		c.volume = v; 
+	});
+	
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setOutVol(v);
@@ -187,7 +191,11 @@ void setOutVol(float v, bool gui)
 
 void setInVol(float v, bool gui)
 {
-	m::mh::setInVol(v);
+	m::model::onGet(m::model::channels, m::mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& c) 
+	{ 
+		c.volume = v; 
+	});
+
 	if (!gui) {
 		Fl::lock();
 		G_MainWin->mainIO->setInVol(v);
@@ -235,7 +243,7 @@ void resetToInitState(bool createColumns)
 {
 	if (!v::gdConfirmWin("Warning", "Reset to init state: are you sure?"))
 		return;
-	m::init::reset();	
+	m::init::reset(/*createHiddenChannels=*/true);	
 }
 
 

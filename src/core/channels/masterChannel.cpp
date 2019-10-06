@@ -40,6 +40,15 @@ MasterChannel::MasterChannel(int bufferSize, ID id)
 /* -------------------------------------------------------------------------- */
 
 
+MasterChannel::MasterChannel(const patch::Channel& p, int bufferSize)
+: Channel(p, bufferSize)
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 MasterChannel* MasterChannel::clone() const
 {
 	return new MasterChannel(*this);

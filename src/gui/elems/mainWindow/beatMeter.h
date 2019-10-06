@@ -42,7 +42,10 @@ class geBeatMeter : public Fl_Box
 public:
 
 	geBeatMeter(int x, int y, int w, int h);
-	void draw();
+	
+	void draw() override;
+
+	void refresh();
 
 private:
 

@@ -134,18 +134,16 @@ void pushWave_(SampleChannel& ch, std::unique_ptr<Wave>&& w)
 /* -------------------------------------------------------------------------- */
 
 
-void init()
+void init(bool createHiddenChannels)
 {
 	mixer::init(clock::getFramesInLoop(), kernelAudio::getRealBufSize());
 	
-	/* Create two MASTER channels: input and output. */
-		
-	model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
-		mixer::MASTER_OUT_CHANNEL_ID));
-	model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
-		mixer::MASTER_IN_CHANNEL_ID));
-
-	mixer::enable();
+	if (createHiddenChannels) {
+		model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
+			mixer::MASTER_OUT_CHANNEL_ID));
+		model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
+			mixer::MASTER_IN_CHANNEL_ID));
+	}
 }
 
 

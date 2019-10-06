@@ -96,7 +96,7 @@ void initAudio_()
 {
 	kernelAudio::openDevice();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mh::init();
+	mh::init(/*createHiddenChannels=*/true);
 	recorder::init();
 	recorderHandler::init();
 
@@ -111,6 +111,7 @@ void initAudio_()
 	if (!kernelAudio::isReady())
 		return;
 
+	mixer::enable();
 	kernelAudio::startStream();
 }
 
@@ -229,12 +230,12 @@ void closeMainWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void reset()
+void reset(bool createHiddenChannels)
 {	
 	u::gui::closeAllSubwindows();
 	mh::close();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mh::init();
+	mh::init(createHiddenChannels);
 	recorder::init();
 
 #ifdef WITH_VST

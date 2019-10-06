@@ -40,6 +40,7 @@ class MasterChannel : public Channel
 public:
 
 	MasterChannel(int bufferSize, ID id);
+	MasterChannel(const patch::Channel& p, int bufferSize);
 
 	MasterChannel* clone() const override;
 	void parseEvents(mixer::FrameEvents fe) override {};
