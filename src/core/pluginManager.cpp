@@ -208,6 +208,8 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
+	pluginId_.set(id);
+
 	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
 }
 
