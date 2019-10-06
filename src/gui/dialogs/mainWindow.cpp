@@ -136,6 +136,7 @@ void gdMainWindow::rebuild()
 {
 	keyboard->rebuild();
 	mainIO->rebuild();
+	mainTimer->rebuild();
 }
 
 

@@ -173,12 +173,27 @@ typename L::value_type& get(L& list, ID id)
 /* -------------------------------------------------------------------------- */
 
 
+/* onGet (1)
+Utility function for reading ID-based things from a RCUList. */
+
 template<typename L>
 void onGet(L& list, ID id, std::function<void(typename L::value_type&)> f)
 {
 	static_assert(has_id<typename L::value_type>());
 	typename L::Lock l(list);
 	f(**getIter(list, id));
+}
+
+
+/* onGet (2)
+Same as (1), for non-ID-based things. */
+
+template<typename L>
+void onGet(L& list, std::function<void(typename L::value_type&)> f)
+{
+	static_assert(!has_id<typename L::value_type>());
+	typename L::Lock l(list);
+	f(*list.get());
 }
 
 

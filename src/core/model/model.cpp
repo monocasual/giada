@@ -61,19 +61,20 @@ Actions::Actions(const Actions& o) : map(o.map)
 
 void debug()
 {
-	ChannelsLock cl(channels);
+	ChannelsLock chl(channels);
 	WavesLock    wl(waves);
 	PluginsLock  pl(plugins);
+	ClockLock    cl(clock);
 
 	puts("======== SYSTEM STATUS ========");
 	
-	puts("model::channel");
+	puts("model::channels");
 
 	int i = 0;
 	for (const Channel* c : channels) {
 		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)c, c->id, c->name.c_str());
 		if (c->hasData())
-			printf("        wave: %d\n", static_cast<const SampleChannel*>(c)->waveId);
+			printf("        wave: ID=%d\n", static_cast<const SampleChannel*>(c)->waveId);
 		if (c->pluginIds.size() > 0) {
 			puts("        plugins:");
 			for (ID id : c->pluginIds)
@@ -94,6 +95,15 @@ void debug()
 	for (const Plugin* p : plugins) {
 		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)p, p->id, p->getName().c_str());
 	}
+
+	puts("model::clock");
+
+	printf("    clock.status   = %d\n", static_cast<int>(clock.get()->status));
+	printf("    clock.bars     = %d\n", clock.get()->bars);
+	printf("    clock.beats    = %d\n", clock.get()->beats);
+	printf("    clock.bpm      = %f\n", clock.get()->bpm);
+	printf("    clock.quantize = %d\n", clock.get()->quantize);
+
 	
 	puts("===============================");
 }

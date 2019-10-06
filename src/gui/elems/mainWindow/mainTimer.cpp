@@ -26,6 +26,7 @@
 
 
 #include "core/const.h"
+#include "core/model/model.h"
 #include "core/mixer.h"
 #include "core/graphics.h"
 #include "core/clock.h"
@@ -139,6 +140,20 @@ void geMainTimer::cb_divider()
 /* -------------------------------------------------------------------------- */
 
 
+void geMainTimer::rebuild()
+{
+	m::model::onGet(m::model::clock, [&](m::model::Clock& c)
+	{
+		setBpm(c.bpm);
+		setMeter(c.beats, c.bars);
+		setQuantizer(c.quantize);
+	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void geMainTimer::setBpm(const char* v)
 {
 	bpm->copy_label(v);
@@ -185,8 +200,8 @@ void geMainTimer::setQuantizer(int q)
 
 void geMainTimer::setMeter(int beats, int bars)
 {
-	std::string tmp = u::string::iToString(beats) + "/" + u::string::iToString(bars);
-	meter->copy_label(tmp.c_str());
+	std::string s = std::to_string(beats) + "/" + std::to_string(bars);
+	meter->copy_label(s.c_str());
 }
 
 }} // giada::v::

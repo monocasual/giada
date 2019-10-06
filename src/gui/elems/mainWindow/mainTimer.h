@@ -45,15 +45,17 @@ public:
 
 	geMainTimer(int x, int y);
 
+	void rebuild();
+
 	void setBpm(const char* v);
 	void setBpm(float v);
 	void setMeter(int beats, int bars);
 	void setQuantizer(int q);
 
-  /* setLock
-  Locks bpm, beter and multipliers. Used during audio recordings. */
+	/* setLock
+	Locks bpm, beter and multipliers. Used during audio recordings. */
 
-  void setLock(bool v);
+	void setLock(bool v);
 
 private:
 

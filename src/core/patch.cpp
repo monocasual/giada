@@ -43,6 +43,7 @@
 #include "core/pluginManager.h"
 #include "core/waveManager.h"
 #include "core/const.h"
+#include "core/clock.h"
 #include "core/types.h"
 #include "core/midiEvent.h"
 #include "core/recorderHandler.h"
@@ -237,13 +238,9 @@ bool readCommons_(json_t* j)
 	lastTakeId   = readInt_(j, PATCH_KEY_LAST_TAKE_ID);
 	metronome    = readInt_(j, PATCH_KEY_METRONOME);
 
-	model::onSwap(model::clock, [&](model::Clock& c)
-	{
-		c.bpm      = readFloat_(j, PATCH_KEY_BPM);
-		c.bars     = readInt_(j, PATCH_KEY_BARS);
-		c.beats    = readInt_(j, PATCH_KEY_BEATS);
-		c.quantize = readInt_(j, PATCH_KEY_QUANTIZE);
-	});
+	clock::setBpm     (readFloat_(j, PATCH_KEY_BPM));
+	clock::setBeats   (readInt_(j, PATCH_KEY_BEATS), readInt_(j, PATCH_KEY_BARS));
+	clock::setQuantize(readInt_(j, PATCH_KEY_QUANTIZE));
 
 	model::onSwap(model::mixer, [&](model::Mixer& m)
 	{

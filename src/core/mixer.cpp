@@ -356,7 +356,7 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 	vChanInput_.alloc(framesInSeq, G_MAX_IO_CHANS);
 	vChanInToOut_.alloc(framesInBuffer, G_MAX_IO_CHANS);
 
-	gu_log("[Mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
+	gu_log("[mixer::init] buffers ready - framesInSeq=%d, framesInBuffer=%d\n", 
 		framesInSeq, framesInBuffer);	
 
 	clock::rewind();
@@ -369,6 +369,7 @@ void init(Frame framesInSeq, Frame framesInBuffer)
 void enable()
 { 
 	active_.store(true); 
+	gu_log("[mixer::enable] enabled\n");
 }
 
 
@@ -377,6 +378,7 @@ void disable()
 	active_.store(false);
 	while (processing_.load() == true) 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	gu_log("[mixer::disable] disabled\n");
 }
 
 
