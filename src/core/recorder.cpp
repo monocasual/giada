@@ -32,6 +32,7 @@
 #include "core/model/model.h"
 #include "core/channels/channel.h"
 #include "core/action.h"
+#include "core/idManager.h"
 #include "core/recorder.h"
 
 
@@ -41,7 +42,7 @@ namespace recorder
 {
 namespace
 {
-ID actionId_ = 0;
+IdManager actionId_;
 
 
 /* -------------------------------------------------------------------------- */
@@ -75,16 +76,15 @@ void optimize_(ActionMap& map)
 
 void removeIf_(std::function<bool(const Action&)> f)
 {
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
-
-	for (auto& kv : ma->map) {
-		std::vector<Action>& as = kv.second;
-		as.erase(std::remove_if(as.begin(), as.end(), f), as.end());
-	}
-	optimize_(ma->map);
-	updateMapPointers(ma->map);
-
-	model::actions.swap(std::move(ma));
+	model::onSwap(model::actions, [&](model::Actions& a)
+	{
+		for (auto& kv : a.map) {
+			std::vector<Action>& as = kv.second;
+			as.erase(std::remove_if(as.begin(), as.end(), f), as.end());
+		}
+		optimize_(a.map);
+		updateMapPointers(a.map);
+	});
 }
 } // {anonymous}
 
@@ -96,28 +96,7 @@ void removeIf_(std::function<bool(const Action&)> f)
 
 void init()
 {
-	actionId_ = 0;
 	clearAll();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void debug(const ActionMap& map)
-{
-	int total = 0;
-	puts("-------------");
-	for (auto& kv : map) {
-		printf("frame: %d\n", kv.first);
-		for (const Action& a : kv.second) {
-			total++;
-			printf(" (%p) - id=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
-				(void*) &a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*) a.prev, a.nextId, (void*) a.next);	
-		}
-	}
-	printf("TOTAL: %d\n", total);
-	puts("-------------");
 }
 
 
@@ -126,9 +105,10 @@ void debug(const ActionMap& map)
 
 void clearAll()
 {
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
-	ma->map.clear();
-	model::actions.swap(std::move(ma));
+	model::onSwap(model::actions, [&](model::Actions& a)
+	{
+		a.map.clear();
+	});
 }
 
 
@@ -207,9 +187,10 @@ void updateKeyFrames(std::function<Frame(Frame old)> f)
 
 void updateEvent(ID id, MidiEvent e)
 {
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
-	findAction_(ma->map, id)->event = e;
-	model::actions.swap(std::move(ma));
+	model::onSwap(model::actions, [&](model::Actions& a)
+	{
+		findAction_(a.map, id)->event = e;
+	});
 }
 
 
@@ -218,27 +199,26 @@ void updateEvent(ID id, MidiEvent e)
 
 void updateSiblings(ID id, ID prevId, ID nextId)
 {
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
+	model::onSwap(model::actions, [&](model::Actions& a)
+	{
+		Action* pcurr = findAction_(a.map, id);
+		Action* pprev = findAction_(a.map, prevId);
+		Action* pnext = findAction_(a.map, nextId);
 
-	Action* pcurr = findAction_(ma->map, id);
-	Action* pprev = findAction_(ma->map, prevId);
-	Action* pnext = findAction_(ma->map, nextId);
+		pcurr->prev   = pprev;
+		pcurr->prevId = pprev->id;
+		pcurr->next   = pnext;
+		pcurr->nextId = pnext->id;
 
-	pcurr->prev   = pprev;
-	pcurr->prevId = pprev->id;
-	pcurr->next   = pnext;
-	pcurr->nextId = pnext->id;
-
-	if (pprev != nullptr) {
-		pprev->next   = pcurr;
-		pprev->nextId = pcurr->id;
-	}
-	if (pnext != nullptr) {
-		pnext->prev   = pcurr;
-		pnext->prevId = pcurr->id;
-	}
-
-	model::actions.swap(std::move(ma));
+		if (pprev != nullptr) {
+			pprev->next   = pcurr;
+			pprev->nextId = pcurr->id;
+		}
+		if (pnext != nullptr) {
+			pnext->prev   = pcurr;
+			pnext->prevId = pcurr->id;
+		}
+	});
 }
 
 
@@ -271,17 +251,16 @@ Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 
 Action rec(ID channelId, Frame frame, MidiEvent event)
 {
-	Action a = makeAction(++actionId_, channelId, frame, event);
+	Action a = makeAction(actionId_.get(), channelId, frame, event);
 	
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
 	enough to insert a new item first. No plug-in data for now. */
 
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
-
-	ma->map[frame].push_back(a);
-	updateMapPointers(ma->map);
-
-	model::actions.swap(std::move(ma));
+	model::onSwap(model::actions, [&](model::Actions& mas)
+	{
+		mas.map[frame].push_back(a);
+		updateMapPointers(mas.map);
+	});
 
 	return a;
 }
@@ -299,20 +278,19 @@ void rec(std::vector<Action>& as)
 
 	for (Action& a : as) {
 		int id = a.id;
-		a.id = ++actionId_;
+		a.id = actionId_.get();
 		for (Action& aa : as) {
 			if (aa.prevId == id) aa.prevId = a.id;
 			if (aa.nextId == id) aa.nextId = a.id;
 		}
 	}
 	
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
-
-	for (const Action& a : as)
-		ma->map[a.frame].push_back(a);
-	updateMapPointers(ma->map);
-
-	model::actions.swap(std::move(ma));
+	model::onSwap(model::actions, [&](model::Actions& mas)
+	{
+		for (const Action& a : as)
+			mas.map[a.frame].push_back(a);
+		updateMapPointers(mas.map);
+	});
 }
 
 
@@ -321,19 +299,18 @@ void rec(std::vector<Action>& as)
 
 void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
-	std::unique_ptr<model::Actions> ma = model::actions.clone();
+	model::onSwap(model::actions, [&](model::Actions& mas)
+	{
+		mas.map[f1].push_back(makeAction(actionId_.get(), channelId, f1, e1));
+		mas.map[f2].push_back(makeAction(actionId_.get(), channelId, f2, e2));
 
-	ma->map[f1].push_back(makeAction(++actionId_, channelId, f1, e1));
-	ma->map[f2].push_back(makeAction(++actionId_, channelId, f2, e2));
+		Action* a1 = findAction_(mas.map, mas.map[f1].back().id);
+		Action* a2 = findAction_(mas.map, mas.map[f2].back().id);
+		a1->nextId = a2->id;
+		a2->prevId = a1->id;
 
-	Action* a1 = findAction_(ma->map, ma->map[f1].back().id);
-	Action* a2 = findAction_(ma->map, ma->map[f2].back().id);
-	a1->nextId = a2->id;
-	a2->prevId = a1->id;
-
-	updateMapPointers(ma->map);
-
-	model::actions.swap(std::move(ma));
+		updateMapPointers(mas.map);
+	});
 }
 
 
@@ -370,7 +347,7 @@ Action getClosestAction(ID channelId, Frame f, int type)
 /* -------------------------------------------------------------------------- */
 
 
-int getLatestActionId() { return actionId_; }
+int getLatestActionId() { assert(false); /*return actionId_;*/ }
 
 
 /* -------------------------------------------------------------------------- */

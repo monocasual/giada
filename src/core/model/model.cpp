@@ -65,6 +65,7 @@ void debug()
 	WavesLock    wl(waves);
 	PluginsLock  pl(plugins);
 	ClockLock    cl(clock);
+	ActionsLock  al(actions);
 
 	puts("======== SYSTEM STATUS ========");
 	
@@ -103,6 +104,15 @@ void debug()
 	printf("    clock.beats    = %d\n", clock.get()->beats);
 	printf("    clock.bpm      = %f\n", clock.get()->bpm);
 	printf("    clock.quantize = %d\n", clock.get()->quantize);
+
+	puts("model::actions");
+
+	for (auto& kv : actions.get()->map) {
+		printf("    frame: %d\n", kv.first);
+		for (const Action& a : kv.second)
+			printf("        (%p) - ID=%d, frame=%d, channel=%d, value=0x%X, prevId=%d, prev=%p, nextId=%d, next=%p\n", 
+				(void*) &a, a.id, a.frame, a.channelId, a.event.getRaw(), a.prevId, (void*) a.prev, a.nextId, (void*) a.next);	
+	}
 
 	
 	puts("===============================");

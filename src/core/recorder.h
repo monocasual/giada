@@ -45,8 +45,6 @@ namespace recorder
 {
 using ActionMap = std::map<Frame, std::vector<Action>>;
 
-void debug(const ActionMap& map);
-
 /* init
 Initializes the recorder: everything starts from here. */
 
