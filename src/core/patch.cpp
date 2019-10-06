@@ -430,7 +430,6 @@ bool readChannels_(json_t* j)
 		c.pan               = readFloat_ (jc, PATCH_KEY_CHANNEL_PAN);
 		c.hasActions        = readBool_  (jc, PATCH_KEY_CHANNEL_HAS_ACTIONS);
 		c.midiIn            = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_IN);
-		c.midiInVeloAsVol   = readBool_  (jc, PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL);
 		c.midiInKeyPress    = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYPRESS);
 		c.midiInKeyRel      = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KEYREL);
 		c.midiInKill        = readInt_   (jc, PATCH_KEY_CHANNEL_MIDI_IN_KILL);
@@ -455,6 +454,7 @@ bool readChannels_(json_t* j)
 			c.readActions       = readBool_ (jc, PATCH_KEY_CHANNEL_READ_ACTIONS);
 			c.pitch             = readFloat_(jc, PATCH_KEY_CHANNEL_PITCH);
 			c.inputMonitor      = readBool_ (jc, PATCH_KEY_CHANNEL_INPUT_MONITOR);
+			c.midiInVeloAsVol   = readBool_ (jc, PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL);
 			c.midiInReadActions = readInt_  (jc, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS);
 			c.midiInPitch       = readInt_  (jc, PATCH_KEY_CHANNEL_MIDI_IN_PITCH);
 		}
@@ -669,6 +669,7 @@ void writeChannels_(json_t* j, bool project)
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_READ_ACTIONS,         json_boolean(sc->readActions));
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_PITCH,                json_real(sc->pitch));
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_INPUT_MONITOR,        json_boolean(sc->inputMonitor));
+			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_VELO_AS_VOL,  json_boolean(sc->midiInVeloAsVol));
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_READ_ACTIONS, json_integer(sc->midiInReadActions.load()));
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_MIDI_IN_PITCH,        json_integer(sc->midiInPitch.load()));
 		}

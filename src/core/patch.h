@@ -81,7 +81,6 @@ struct Channel
 	float       pan;
 	bool        hasActions;
 	bool        midiIn;
-	bool        midiInVeloAsVol;
 	uint32_t    midiInKeyPress;
 	uint32_t    midiInKeyRel;
 	uint32_t    midiInKill;
@@ -105,6 +104,7 @@ struct Channel
 	bool        readActions;
 	float       pitch;
 	bool        inputMonitor;
+	bool        midiInVeloAsVol;
 	uint32_t    midiInReadActions;
 	uint32_t    midiInPitch;
 	// midi channel
