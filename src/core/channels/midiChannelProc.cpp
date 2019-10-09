@@ -93,6 +93,10 @@ void process(MidiChannel* ch, AudioBuffer& out, const AudioBuffer& in, bool audi
 
 	ch->midiBuffer.clear();
 	
+	/* Fill the MIDI buffer vector with messages coming from the MIDI queue
+	filled by the MIDI thread. This is for live events, e.g. piano keyboards,
+	controllers, ... */
+
 	MidiEvent e;
 	while (ch->midiQueue.pop(e)) {
 		juce::MidiMessage message = juce::MidiMessage(
@@ -193,7 +197,6 @@ void setSolo(MidiChannel* ch, bool v)
 
 	// This is for processing playing_inaudible
 	// TODO
-	assert(false);
 	//for (std::unique_ptr<Channel>& c : model::getLayout()->channels)
 	//	c->sendMidiLstatus();
 

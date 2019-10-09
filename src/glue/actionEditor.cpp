@@ -154,8 +154,6 @@ void recordMidiAction(ID channelId, int note, int velocity, Frame f1, Frame f2)
 
 void deleteMidiAction(ID channelId, const m::Action& a)
 {
-assert(false);
-#if 0
 	namespace mr = m::recorder;
 	namespace cr = c::recorder;
 
@@ -165,18 +163,19 @@ assert(false);
 	/* Send a note-off first in case we are deleting it in a middle of a 
 	key_on/key_off sequence. Check if 'next' exist first: could be orphaned. */
 	
-	if (a.next != nullptr) {		
-		m::MidiChannel* ch = static_cast<m::MidiChannel*>(
-			m::model::getLayout()->getChannel(channelId));
-		if (ch->isPlaying() && !ch->mute)
-			ch->sendMidi(a.next->event, 0);
+	if (a.next != nullptr) {
+		m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
+		{
+			m::MidiChannel& mc = static_cast<m::MidiChannel&>(c);
+			if (mc.isPlaying() && !mc.mute)
+				mc.sendMidi(a.next->event, 0);
+		});
 		mr::deleteAction(a.id, a.next->id);
 	}
 	else
 		mr::deleteAction(a.id);
 
 	recorder::updateChannel(channelId, /*updateActionEditor=*/false);
-#endif
 }
 
 /* -------------------------------------------------------------------------- */
