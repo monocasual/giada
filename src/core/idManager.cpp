@@ -31,12 +31,6 @@
 namespace giada {
 namespace m 
 {
-//ID IdManager::m_gen = 0;
-
-
-/* -------------------------------------------------------------------------- */
-
-
 IdManager::IdManager() : m_id(0)
 {
 }
@@ -47,8 +41,6 @@ IdManager::IdManager() : m_id(0)
 
 void IdManager::set(ID id)
 {
-	//if (id != 0 && id > m_gen)
-	//	m_gen = id;
 	if (id != 0 && id > m_id)
 		m_id = id;
 }
@@ -59,7 +51,6 @@ void IdManager::set(ID id)
 
 ID IdManager::get(ID id)
 {
-	//return id != 0 ? id : ++m_gen;
 	return id != 0 ? id : ++m_id;
 }
 }} // giada::m::

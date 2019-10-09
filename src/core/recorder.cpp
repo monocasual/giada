@@ -242,7 +242,9 @@ bool hasActions(ID channelId, int type)
 
 Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 {
-	return Action{id, channelId, frame, e, -1, -1};
+	Action out {actionId_.get(id), channelId, frame, e, -1, -1};
+	actionId_.set(id);
+	return out;
 }
 
 
@@ -251,7 +253,7 @@ Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 
 Action rec(ID channelId, Frame frame, MidiEvent event)
 {
-	Action a = makeAction(actionId_.get(), channelId, frame, event);
+	Action a = makeAction(0, channelId, frame, event);
 	
 	/* If key frame doesn't exist yet, the [] operator in std::map is smart 
 	enough to insert a new item first. No plug-in data for now. */
@@ -301,8 +303,8 @@ void rec(ID channelId, Frame f1, Frame f2, MidiEvent e1, MidiEvent e2)
 {
 	model::onSwap(model::actions, [&](model::Actions& mas)
 	{
-		mas.map[f1].push_back(makeAction(actionId_.get(), channelId, f1, e1));
-		mas.map[f2].push_back(makeAction(actionId_.get(), channelId, f2, e2));
+		mas.map[f1].push_back(makeAction(0, channelId, f1, e1));
+		mas.map[f2].push_back(makeAction(0, channelId, f2, e2));
 
 		Action* a1 = findAction_(mas.map, mas.map[f1].back().id);
 		Action* a2 = findAction_(mas.map, mas.map[f2].back().id);
