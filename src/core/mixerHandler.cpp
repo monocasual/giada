@@ -365,20 +365,20 @@ void renameChannel(ID channelId, const std::string& name)
 
 void startSequencer()
 {
-	switch (m::clock::getStatus()) {
+	switch (clock::getStatus()) {
 		case ClockStatus::STOPPED:
-			m::clock::setStatus(ClockStatus::RUNNING); 
+			clock::setStatus(ClockStatus::RUNNING); 
 			break;
 		case ClockStatus::WAITING:
-			m::clock::setStatus(ClockStatus::RUNNING); 
-			m::recManager::stopActionRec();
+			clock::setStatus(ClockStatus::RUNNING); 
+			recManager::stopActionRec();
 			break;
 		default: 
 			break;
 	}
 
 #ifdef __linux__
-	m::kernelAudio::jackStart();
+	kernelAudio::jackStart();
 #endif
 }
 
@@ -395,17 +395,17 @@ void stopSequencer()
 		c->stopBySeq(conf::chansStopOnSeqHalt);
 
 #ifdef __linux__
-	m::kernelAudio::jackStop();
+	kernelAudio::jackStop();
 #endif
 
 	/* If recordings (both input and action) are active deactivate them, but 
 	store the takes. RecManager takes care of it. */
 
-	if (m::recManager::isRecordingAction())
-		m::recManager::stopActionRec();
+	if (recManager::isRecordingAction())
+		recManager::stopActionRec();
 	else
-	if (m::recManager::isRecordingInput())
-		m::recManager::stopInputRec();
+	if (recManager::isRecordingInput())
+		recManager::stopInputRec();
 }
 
 
@@ -414,7 +414,7 @@ void stopSequencer()
 
 void toggleSequencer()
 {
-	m::clock::isRunning() ? stopSequencer() : startSequencer();
+	clock::isRunning() ? stopSequencer() : startSequencer();
 }
 
 
@@ -423,7 +423,7 @@ void toggleSequencer()
 
 void updateSoloCount()
 {
-	m::model::onSwap(m::model::mixer, [&](m::model::Mixer& m)
+	model::onSwap(model::mixer, [&](model::Mixer& m)
 	{
 		m.hasSolos = channelHas_([](const Channel* ch) { return ch->solo; });
 	});
@@ -435,27 +435,25 @@ void updateSoloCount()
 
 void setInVol(float v)
 {
-	/* TODO - too much swap operations. Use direct variable update */
-	m::model::onSwap(m::model::mixer, [&](m::model::Mixer& m)
+	model::onSwap(model::channels, mixer::MASTER_IN_CHANNEL_ID, [&](Channel& c)
 	{
-		m.inVol = v;
+		c.volume = v;
 	});
 }
 
 
 void setOutVol(float v)
 {
-	/* TODO - too much swap operations. Use direct variable update */
-	m::model::onSwap(m::model::mixer, [&](m::model::Mixer& m)
+	model::onSwap(model::channels, mixer::MASTER_OUT_CHANNEL_ID, [&](Channel& c)
 	{
-		m.outVol = v;
+		c.volume = v;
 	});
 }
 
 
 void setInToOut(bool v)
 {
-	m::model::onSwap(m::model::mixer, [&](m::model::Mixer& m)
+	model::onSwap(model::mixer, [&](model::Mixer& m)
 	{
 		m.inToOut = v;
 	});
@@ -467,54 +465,21 @@ void setInToOut(bool v)
 
 float getInVol()
 {
-	model::MixerLock lock(model::mixer); return model::mixer.get()->inVol;
+	model::ChannelsLock l(model::channels); 
+	return model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).volume;
 }
 
 
 float getOutVol()
 {
-	model::MixerLock lock(model::mixer); return model::mixer.get()->outVol;
+	model::ChannelsLock l(model::channels); 
+	return model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).volume;
 }
 
 
 bool getInToOut()
 {
 	model::MixerLock lock(model::mixer); return model::mixer.get()->inToOut;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void readPatch()
-{
-#if 0
-	mixer::ready = false;
-
-	mixer::outVol.store(patch::masterVolOut);
-	mixer::inVol.store(patch::masterVolIn);
-	clock::setBpm(patch::bpm);
-	clock::setBars(patch::bars);
-	clock::setBeats(patch::beats);
-	clock::setQuantize(patch::quantize);
-	clock::updateFrameBars();
-	mixer::setMetronome(patch::metronome);
-
-#ifdef WITH_VST
-
-	readPatchPlugins_(patch::masterInPlugins, pluginHost::StackType::MASTER_IN);
-	readPatchPlugins_(patch::masterOutPlugins, pluginHost::StackType::MASTER_OUT);
-
-#endif
-
-	/* Rewind and update frames in Mixer. Also alloc new space in the virtual
-	input buffer, in case the patch has a sequencer size != default one (which is
-	very likely). */
-
-	mixer::rewind();
-	mixer::allocVirtualInput(clock::getFramesInLoop());
-	mixer::ready = true;
-#endif
 }
 
 
@@ -533,11 +498,11 @@ void rewindSequencer()
 	state. */
 
 #ifdef __linux__
-	m::kernelAudio::jackSetPosition(0);
+	kernelAudio::jackSetPosition(0);
 #endif
 
-	if (m::conf::midiSync == MIDI_SYNC_CLOCK_M)
-		m::kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
+	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
 

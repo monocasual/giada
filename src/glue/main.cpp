@@ -173,10 +173,7 @@ void quantize(int val)
 
 void setOutVol(float v, bool gui)
 {
-	m::model::onGet(m::model::channels, m::mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& c) 
-	{ 
-		c.volume = v; 
-	});
+	m::mh::setOutVol(v);
 	
 	if (!gui) {
 		Fl::lock();
@@ -191,10 +188,7 @@ void setOutVol(float v, bool gui)
 
 void setInVol(float v, bool gui)
 {
-	m::model::onGet(m::model::channels, m::mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& c) 
-	{ 
-		c.volume = v; 
-	});
+	m::mh::setInVol(v);
 
 	if (!gui) {
 		Fl::lock();

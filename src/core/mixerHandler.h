@@ -106,12 +106,6 @@ Updates the number of solo-ed channels in mixer. */
 
 void updateSoloCount();
 
-/* loadPatch
-Loads a path or a project (if isProject) into Mixer. If isProject, path must 
-contain the address of the project folder. */
-
-void readPatch();
-
 /* finalizeInputRec
 Fills armed Sample Channels with audio data coming from an input recording
 session. */

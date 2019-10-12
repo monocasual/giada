@@ -141,13 +141,11 @@ void lineInRec_(const AudioBuffer& inBuf)
 	if (!recManager::isRecordingInput() || !kernelAudio::isInputEnabled())
 		return;
 
-	model::MixerLock lock(model::mixer);
-	
 	for (int i=0; i<inBuf.countFrames(); i++, inputTracker_++)
 		for (int j=0; j<inBuf.countChannels(); j++) {
 			if (inputTracker_ >= clock::getFramesInLoop())
 				inputTracker_ = 0;
-			vChanInput_[inputTracker_][j] += inBuf[i][j] * model::mixer.get()->inVol;  // adding: overdub!
+			vChanInput_[inputTracker_][j] += inBuf[i][j] * mh::getInVol();  // adding: overdub!
 		}
 }
 
@@ -177,7 +175,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 	if (model::mixer.get()->inToOut)
 		for (int i=0; i<vChanInToOut_.countFrames(); i++)
 			for (int j=0; j<vChanInToOut_.countChannels(); j++)
-				vChanInToOut_[i][j] = inBuf[i][j] * model::mixer.get()->inVol;
+				vChanInToOut_[i][j] = inBuf[i][j] * mh::getInVol();
 }
 
 
@@ -327,11 +325,13 @@ void finalizeOutput_(AudioBuffer& outBuf)
 {
 	model::MixerLock lock(model::mixer);
 	
+	//printf("%f\n", mh::getOutVol());
+
 	for (int i=0; i<outBuf.countFrames(); i++)
 		for (int j=0; j<outBuf.countChannels(); j++) {
 			if (model::mixer.get()->inToOut) // Merge vChanInToOut_, if enabled
 				outBuf[i][j] += vChanInToOut_[i][j];
-			outBuf[i][j] *= model::mixer.get()->outVol; 
+			outBuf[i][j] *= mh::getOutVol(); 
 		}
 }
 }; // {anonymous}

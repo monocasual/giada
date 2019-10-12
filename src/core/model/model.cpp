@@ -73,7 +73,7 @@ void debug()
 
 	int i = 0;
 	for (const Channel* c : channels) {
-		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)c, c->id, c->name.c_str());
+		printf("    %d) %p - ID=%d name='%s' columnID=%d\n", i++, (void*)c, c->id, c->name.c_str(), c->columnId);
 		if (c->hasData())
 			printf("        wave: ID=%d\n", static_cast<const SampleChannel*>(c)->waveId);
 		if (c->pluginIds.size() > 0) {
@@ -88,13 +88,13 @@ void debug()
 
 	i = 0;
 	for (const Wave* w : waves) 
-		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)w, w->id, w->getPath().c_str());
+		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)w, w->id, w->getPath().c_str());
 		
 	puts("model::plugins");
 
 	i = 0;
 	for (const Plugin* p : plugins) {
-		printf("    %d) %p - ID=%d name=%s\n", i++, (void*)p, p->id, p->getName().c_str());
+		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
 	}
 
 	puts("model::clock");

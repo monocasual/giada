@@ -57,10 +57,8 @@ struct Clock
 
 struct Mixer
 {
-	bool  hasSolos = false;    
-	bool  inToOut  = false;
-	float outVol   = G_DEFAULT_OUT_VOL;
-	float inVol    = G_DEFAULT_IN_VOL;
+	bool hasSolos = false;    
+	bool inToOut  = false;
 };
 
 

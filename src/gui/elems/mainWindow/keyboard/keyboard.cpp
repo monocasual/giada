@@ -43,12 +43,6 @@
 namespace giada {
 namespace v
 {
-ID geKeyboard::columnId = 0;
-
-
-/* -------------------------------------------------------------------------- */
-
-
 geKeyboard::geKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll     (X, Y, W, H),
   m_addColumnBtn(nullptr)
@@ -83,6 +77,7 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 void geKeyboard::init()
 {
 	clear();
+	m_columnId = m::IdManager();
 	m_columns.clear();
 	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
 	m_addColumnBtn->callback(cb_addColumn, (void*) this);
@@ -209,12 +204,11 @@ geColumn* geKeyboard::cb_addColumn(int width, ID id)
 
 	/* Generate new index. If not passed in. */
 
-	if (id != 0)
-		columnId = id;
+	m_columnId.set(id);
 
 	/* Add a new column + a new resizer bar. */
 
-	geColumn*     column = new geColumn(colx, y(), width, h(), id != 0 ? id : ++columnId);
+	geColumn*     column = new geColumn(colx, y(), width, h(), m_columnId.get(id));
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
 	add(column);
 	add(bar);

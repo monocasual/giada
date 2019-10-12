@@ -229,11 +229,10 @@ void readCommons_(json_t* j)
 	clock::setBeats   (readInt_(j, PATCH_KEY_BEATS), readInt_(j, PATCH_KEY_BARS));
 	clock::setQuantize(readInt_(j, PATCH_KEY_QUANTIZE));
 
+	/*
 	model::onSwap(model::mixer, [&](model::Mixer& m)
 	{
-		m.inVol  = readFloat_(j, PATCH_KEY_MASTER_VOL_IN);
-		m.outVol = readFloat_(j, PATCH_KEY_MASTER_VOL_OUT);
-	});
+	});*/
 }
 
 
@@ -592,8 +591,6 @@ void writeCommons_(json_t* j, const std::string& name)
 	json_object_set_new(j, PATCH_KEY_BEATS,          json_integer(model::clock.get()->beats));
 	json_object_set_new(j, PATCH_KEY_BPM,            json_real(model::clock.get()->bpm));
 	json_object_set_new(j, PATCH_KEY_QUANTIZE,       json_integer(model::clock.get()->quantize));
-	json_object_set_new(j, PATCH_KEY_MASTER_VOL_IN,  json_real(model::mixer.get()->inVol));
-	json_object_set_new(j, PATCH_KEY_MASTER_VOL_OUT, json_real(model::mixer.get()->outVol));
 	json_object_set_new(j, PATCH_KEY_LAST_TAKE_ID,   json_integer(lastTakeId));
 	json_object_set_new(j, PATCH_KEY_SAMPLERATE,     json_integer(samplerate));
 	json_object_set_new(j, PATCH_KEY_METRONOME,      json_boolean(mixer::isMetronomeOn()));

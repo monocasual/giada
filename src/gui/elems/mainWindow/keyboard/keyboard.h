@@ -32,6 +32,7 @@
 #include <vector>
 #include <FL/Fl_Scroll.H>
 #include "core/channels/channel.h"
+#include "core/idManager.h"
 #include "core/const.h"
 
 
@@ -91,19 +92,15 @@ private:
 
 	static const int COLUMN_GAP = 20;
 
-	/* columnId
-	The last ID used for column. */
-
-	static ID columnId;
-	
 	static void cb_addColumn(Fl_Widget* v, void* p);
 	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
 	geColumn* getColumn(ID id);
 
-	geButton* m_addColumnBtn;
-
+	m::IdManager m_columnId;
 	std::vector<geColumn*> m_columns;
+
+	geButton* m_addColumnBtn;
 };
 }} // giada::v::
 
