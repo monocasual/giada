@@ -198,6 +198,7 @@ void loadPatch(void* data)
 
 	if (m::patch::read(fileToLoad) != G_PATCH_OK) {
 		v::gdAlert("This patch is unreadable.");
+		m::mixer::enable();
 		return;
 	}
 
@@ -215,6 +216,10 @@ void loadPatch(void* data)
 	/* Mixer is ready to go back online. */
 
 	m::mixer::enable();
+
+	/* Update Main Window's title. */
+
+	u::gui::updateMainWinLabel(m::patch::name);
 
 	gu_log("[glue] patch loaded successfully\n");
 
