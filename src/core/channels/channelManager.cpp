@@ -60,6 +60,15 @@ IdManager channelId_;
 /* -------------------------------------------------------------------------- */
 
 
+void init()
+{
+	channelId_ = IdManager();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
 	bool inputMonitorOn, ID columnId)
 {
@@ -73,6 +82,9 @@ std::unique_ptr<Channel> create(ChannelType type, int bufferSize,
 	else
 	if (type == ChannelType::MASTER)
 		ch = std::make_unique<MasterChannel>(bufferSize, channelId_.get());
+	else
+	if (type == ChannelType::PREVIEW)
+		ch = std::make_unique<MasterChannel>(bufferSize, channelId_.get()); // TODO - temporary placeholder
 	
 	assert(ch != nullptr);
 	return ch;
@@ -116,9 +128,6 @@ std::unique_ptr<Channel> create(const patch::Channel& pch, int bufferSize)
 	else
 	if (pch.type == ChannelType::MIDI)
 		ch = std::make_unique<MidiChannel>(pch, bufferSize);
-	else
-	if (pch.type == ChannelType::MASTER)
-		ch = std::make_unique<MasterChannel>(pch, bufferSize);
 
 	assert(ch != nullptr);
 

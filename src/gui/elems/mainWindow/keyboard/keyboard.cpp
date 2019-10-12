@@ -103,7 +103,8 @@ void geKeyboard::rebuild()
 	for (const m::Channel* ch : m::model::channels) {
 		
 		if (ch->id == m::mixer::MASTER_OUT_CHANNEL_ID ||
-			ch->id == m::mixer::MASTER_IN_CHANNEL_ID)
+			ch->id == m::mixer::MASTER_IN_CHANNEL_ID  ||
+			ch->id == m::mixer::PREVIEW_CHANNEL_ID)
 			continue;
 		
 		geColumn* column = getColumn(ch->columnId);

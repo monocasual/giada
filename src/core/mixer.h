@@ -60,6 +60,7 @@ struct FrameEvents
 
 constexpr int MASTER_OUT_CHANNEL_ID = 1;
 constexpr int MASTER_IN_CHANNEL_ID  = 2;
+constexpr int PREVIEW_CHANNEL_ID    = 3;
 
 extern std::atomic<bool>  rewindWait;    // rewind guard, if quantized
 extern std::atomic<float> peakOut;

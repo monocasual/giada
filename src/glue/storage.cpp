@@ -176,69 +176,41 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	m::mixer::disable();
-	m::init::reset(/*createHiddenChannels=*/false);
+	m::init::reset(/*createHiddenChannels=*/true);
 
 	int res = m::patch::read(fileToLoad);
-	if (res != G_PATCH_READ_OK) {
+	if (res != G_PATCH_OK) {
 		if (res == G_PATCH_UNREADABLE)
-			isProject ? v::gdAlert("This project is unreadable.") : v::gdAlert("This patch is unreadable.");
+			v::gdAlert("This patch is unreadable.");
 		else
 		if (res == G_PATCH_INVALID)
-			isProject ? v::gdAlert("This project is not valid.") : v::gdAlert("This patch is not valid.");
+			v::gdAlert("This patch is not valid.");
 		browser->hideStatusBar();
 		return;
 	}
 
+	/* Prepare Mixer and Recorder. The latter has to recompute the actions 
+	positions if the current samplerate != patch samplerate. */
+
+	m::mh::updateSoloCount();
+	m::recorderHandler::updateSamplerate(m::conf::samplerate, m::patch::samplerate);
+
+	/* Save patchPath by taking the last dir of the broswer, in order to reuse
+	it the next time. */
+
+	m::conf::patchPath = gu_dirname(fullPath);
+
+	/* Mixer is ready to go back online. */
 
 	m::mixer::enable();
-
-#if 0
-	browser->setStatusBar(0.1f);
-
-	/* Add common stuff, columns and channels. Also increment the progress bar by 
-	0.8 / total_channels steps. */
-
-	float steps = 0.8 / patch::channels.size();
-	
-	for (const patch::column_t& col : patch::columns) {
-		G_MainWin->keyboard->addColumn(col.width);
-		for (const patch::channel_t& pch : patch::channels) {
-			if (pch.column == col.index) {
-				Channel* ch = c::channel::addChannel(pch.column, static_cast<ChannelType>(pch.type), pch.size);
-				ch->readPatch(basePath, pch);
-			}
-			browser->setStatusBar(steps);
-		}
-	}
-
-	/* Prepare Mixer and Recorder. The latter has to recompute the actions' 
-	positions if the current samplerate != patch samplerate.*/
-
-	mh::updateSoloCount();
-	mh::readPatch();
-	recorderHandler::updateSamplerate(conf::samplerate, patch::samplerate);
-
-	/* Save patchPath by taking the last dir of the broswer, in order to reuse it 
-	the next time. */
-
-	conf::patchPath = gu_dirname(fullPath);
-
-	/* Refresh GUI. */
-
-	u::gui::updateControls();
-	u::gui::updateMainWinLabel(patch::name);
-
-	browser->setStatusBar(0.1f);
 
 	gu_log("[glue] patch loaded successfully\n");
 
 #ifdef WITH_VST
 
-	if (pluginManager::hasMissingPlugins())
+	if (m::pluginManager::hasMissingPlugins())
 		v::gdAlert("Some plugins were not loaded successfully.\nCheck the plugin browser to know more.");
 
-#endif
 #endif
 
 	browser->do_callback();

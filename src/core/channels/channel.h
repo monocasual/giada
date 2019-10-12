@@ -62,6 +62,12 @@ public:
 
 	virtual Channel* clone() const = 0;
 
+	/* load
+	Loads persistence data into an existing channel. Used for built-in channels
+	such as masters and preview. */
+
+	virtual void load(const patch::Channel& p) {}
+
 	/* parseEvents
 	Prepares channel for rendering. This is called on each frame. */
 

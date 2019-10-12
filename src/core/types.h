@@ -37,7 +37,7 @@ using Frame = int;
 
 enum class ClockStatus { STOPPED, WAITING, RUNNING };
 
-enum class ChannelType : int { SAMPLE = 1, MIDI, MASTER };
+enum class ChannelType : int { SAMPLE = 1, MIDI, MASTER, PREVIEW };
 
 enum class ChannelStatus : int
 {

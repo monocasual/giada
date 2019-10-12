@@ -143,6 +143,8 @@ void init(bool createHiddenChannels)
 			mixer::MASTER_OUT_CHANNEL_ID));
 		model::channels.push(createChannel_(ChannelType::MASTER, /*column=*/0, 
 			mixer::MASTER_IN_CHANNEL_ID));
+		model::channels.push(createChannel_(ChannelType::PREVIEW, /*column=*/0, 
+			mixer::PREVIEW_CHANNEL_ID));
 	}
 }
 

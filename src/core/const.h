@@ -210,9 +210,10 @@ constexpr int WID_MIDI_OUTPUT   = -14;
 
 
 /* -- patch signals --------------------------------------------------------- */
-constexpr int G_PATCH_UNREADABLE = -1;
-constexpr int G_PATCH_INVALID    = 0;
-constexpr int G_PATCH_READ_OK    = 1;
+constexpr int G_PATCH_UNSUPPORTED = -2;
+constexpr int G_PATCH_UNREADABLE  = -1;
+constexpr int G_PATCH_INVALID     =  0;
+constexpr int G_PATCH_OK          =  1;
 
 
 
@@ -262,7 +263,6 @@ constexpr int G_MIDI_CHANS[G_MAX_MIDI_CHANS] = {
 /* JSON patch keys */
 
 constexpr auto PATCH_KEY_HEADER                       = "header";
-constexpr auto PATCH_KEY_VERSION                      = "version";
 constexpr auto PATCH_KEY_VERSION_MAJOR                = "version_major";
 constexpr auto PATCH_KEY_VERSION_MINOR                = "version_minor";
 constexpr auto PATCH_KEY_VERSION_PATCH                = "version_patch";
@@ -309,7 +309,6 @@ constexpr auto PATCH_KEY_CHANNEL_KEY                  = "key";
 constexpr auto PATCH_KEY_CHANNEL_MODE                 = "mode";
 constexpr auto PATCH_KEY_CHANNEL_BEGIN                = "begin";
 constexpr auto PATCH_KEY_CHANNEL_END                  = "end";
-constexpr auto PATCH_KEY_CHANNEL_BOOST                = "boost";
 constexpr auto PATCH_KEY_CHANNEL_HAS_ACTIONS          = "has_actions";
 constexpr auto PATCH_KEY_CHANNEL_READ_ACTIONS         = "read_actions";
 constexpr auto PATCH_KEY_CHANNEL_PITCH                = "pitch";

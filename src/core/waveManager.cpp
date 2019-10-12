@@ -76,6 +76,15 @@ int getBits_(const SF_INFO& header)
 /* -------------------------------------------------------------------------- */
 
 
+void init()
+{
+	waveId_ = IdManager();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Result createFromFile(const std::string& path, ID id)
 {
 	if (path == "" || gu_isDir(path)) {

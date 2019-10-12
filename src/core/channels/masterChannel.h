@@ -43,6 +43,7 @@ public:
 	MasterChannel(const patch::Channel& p, int bufferSize);
 
 	MasterChannel* clone() const override;
+	void load(const patch::Channel& p) override;
 	void parseEvents(mixer::FrameEvents fe) override {};
 	void render(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut, 
 		bool audible, bool running) override;

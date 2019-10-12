@@ -45,6 +45,11 @@ class SampleChannel;
 class MidiChannel;
 namespace channelManager
 {
+/* init
+Initializes internal data. */
+	
+void init();
+
 /* create (1)
 Creates a new Channel from scratch. */
 

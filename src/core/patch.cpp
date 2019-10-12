@@ -65,17 +65,17 @@ namespace
 Tiny wrappers around the old C-style macros provided by Jansson. This way we can
 pass them as template parameters. */
 
-bool jsonIsString(json_t* j) { return json_is_string(j); }
-bool jsonIsInt   (json_t* j) { return json_is_integer(j); }
-bool jsonIsFloat (json_t* j) { return json_is_real(j); }
-bool jsonIsBool  (json_t* j) { return json_is_boolean(j); }
-bool jsonIsArray (json_t* j) { return json_is_array(j); }
-bool jsonIsObject(json_t* j) { return json_is_object(j); }
+bool jsonIsString_(json_t* j) { return json_is_string(j); }
+bool jsonIsInt_   (json_t* j) { return json_is_integer(j); }
+bool jsonIsFloat_ (json_t* j) { return json_is_real(j); }
+bool jsonIsBool_  (json_t* j) { return json_is_boolean(j); }
+bool jsonIsArray_ (json_t* j) { return json_is_array(j); }
+bool jsonIsObject_(json_t* j) { return json_is_object(j); }
 
-std::string jsonGetString(json_t* j) { return json_string_value(j); }
-uint32_t    jsonGetInt   (json_t* j) { return json_integer_value(j); }
-float       jsonGetFloat (json_t* j) { return json_real_value(j); }
-bool        jsonGetBool  (json_t* j) { return json_boolean_value(j); }
+std::string jsonGetString_(json_t* j) { return json_string_value(j); }
+uint32_t    jsonGetInt_   (json_t* j) { return json_integer_value(j); }
+float       jsonGetFloat_ (json_t* j) { return json_real_value(j); }
+bool        jsonGetBool_  (json_t* j) { return json_boolean_value(j); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -105,8 +105,7 @@ O read_(json_t* j, const char* key, FC checker, FG getter, O def)
 		return def;
 	}
 	if (!checker(jo)) {
-		gu_log("[patch::read_] key '%s' is of the wrong type!\n", key);
-		json_decref(j);
+		gu_log("[patch::read_] key '%s' is of the wrong type, using default value\n", key);
 		return def;
 	}
 	return getter(jo);
@@ -118,39 +117,51 @@ O read_(json_t* j, const char* key, FC checker, FG getter, O def)
 
 std::string readString_(json_t* j, const char* key, const std::string& def="")
 {
-	return read_(j, key, jsonIsString, jsonGetString, def);
+	return read_(j, key, jsonIsString_, jsonGetString_, def);
 }
 
 uint32_t readInt_(json_t* j, const char* key, uint32_t def=0)
 {
-	return read_(j, key, jsonIsInt, jsonGetInt, def);
+	return read_(j, key, jsonIsInt_, jsonGetInt_, def);
 }
 
 float readFloat_(json_t* j, const char* key, float def=0.0f)
 {
-	return read_(j, key, jsonIsFloat, jsonGetFloat, def);
+	return read_(j, key, jsonIsFloat_, jsonGetFloat_, def);
 }
 
-float readBool_(json_t* j, const char* key, bool def=false)
+bool readBool_(json_t* j, const char* key, bool def=false)
 {
-	return read_(j, key, jsonIsBool, jsonGetBool, def);
+	return read_(j, key, jsonIsBool_, jsonGetBool_, def);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isArray_(json_t* j)  { return is_(j, jsonIsArray); };
-bool isObject_(json_t* j) { return is_(j, jsonIsObject); };
+bool isArray_(json_t* j)  { return is_(j, jsonIsArray_); };
+bool isObject_(json_t* j) { return is_(j, jsonIsObject_); };
 
 
 /* -------------------------------------------------------------------------- */
 
-/* sanitize
-Internal sanity check. */
 
-void sanitize()
+void sanitize_()
 {
+	namespace um = u::math;
+	samplerate = um::bound(samplerate, 0, G_DEFAULT_SAMPLERATE);
+}
+
+
+void sanitize_(Channel& c)
+{
+	namespace um = u::math;
+	c.size        = um::bound(c.size, G_GUI_CHANNEL_H_1, G_GUI_CHANNEL_H_4);
+	c.volume      = um::bound(c.volume, 0.0f, G_DEFAULT_VOL);
+	c.pan         = um::bound(c.pan, 0.0f, 1.0f);
+	c.pitch       = um::bound(c.pitch, 0.1f, G_MAX_PITCH);
+	c.midiOutChan = um::bound(c.midiOutChan, 0, G_MAX_MIDI_CHANS - 1);
+	
 #if 0
 	namespace um = u::math;
 
@@ -160,32 +171,28 @@ void sanitize()
 	quantize     = um::bound(quantize, 0, G_MAX_QUANTIZE, G_DEFAULT_QUANTIZE);
 	masterVolIn  = um::bound(masterVolIn, 0.0f, 1.0f, G_DEFAULT_VOL);
 	masterVolOut = um::bound(masterVolOut, 0.0f, 1.0f, G_DEFAULT_VOL);
-	samplerate   = samplerate <= 0 ? G_DEFAULT_SAMPLERATE : samplerate;
 
-	for (column_t& col : columns) {
-		col.index = col.index < 0 ? 0 : col.index;
-		col.width = col.width < G_MIN_COLUMN_WIDTH ? G_MIN_COLUMN_WIDTH : col.width;
-	}
-
-	for (channel_t& ch : channels) {
-		ch.size        = um::bound(ch.size, G_GUI_CHANNEL_H_1, G_GUI_CHANNEL_H_4, G_GUI_CHANNEL_H_1);
-		ch.volume      = um::bound(ch.volume, 0.0f, 1.0f, G_DEFAULT_VOL);
-		ch.pan         = um::bound(ch.pan, 0.0f, 1.0f, 1.0f);
-		ch.pitch       = um::bound(ch.pitch, 0.1f, G_MAX_PITCH, G_DEFAULT_PITCH);
-		ch.midiOutChan = um::bound(ch.midiOutChan, 0, G_MAX_MIDI_CHANS - 1, 0);
-	}
 #endif
 }
 
+/*
+void sanitize_(Column& c)
+{
+	namespace um = u::math;
+	c.index = um::bound(c.index, 0, col.index);
+	c.width = um::bound(c.width, G_MIN_COLUMN_WIDTH, c.width);
+}
+*/
 
 /* -------------------------------------------------------------------------- */
+
 
 /* modernize
 Makes sure an older patch is compatible with the current version. */
 
+#if 0
 void modernize()
 {
-#if 0
 	/* Starting from 0.15.0 actions are recorded on frames, not samples. */
 	if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 0)) {
 		for (channel_t& ch : channels)
@@ -204,16 +211,16 @@ void modernize()
 			else if (ch.mode == 0x80) ch.mode = static_cast<int>(ChannelMode::LOOP_ONCE_BAR);
 		}
 	}
-#endif
 }
+#endif
 
 
 /* -------------------------------------------------------------------------- */
 
-/* setInvalid
+/* setInvalid_
 Helper function used to return invalid status while reading. */
 
-int setInvalid(json_t* jRoot)
+int setInvalid_(json_t* jRoot)
 {
 	json_decref(jRoot);
 	return G_PATCH_INVALID;
@@ -223,20 +230,31 @@ int setInvalid(json_t* jRoot)
 /* -------------------------------------------------------------------------- */
 
 
+bool isValid_(json_t* j)
+{
+	std::string header = readString_(j, PATCH_KEY_HEADER);
+	if (header != "GIADAPTC")
+		return false;
+	
+	Version version = {
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MAJOR)),
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MINOR)),
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_PATCH))
+	};
+	
+	return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool readCommons_(json_t* j)
 {
-	header = readString_(j, PATCH_KEY_HEADER);
-	if (header == "")
-		return false;
-
 	name         = readString_(j, PATCH_KEY_NAME);
-	version      = readString_(j, PATCH_KEY_VERSION);
-	versionMajor = readInt_(j, PATCH_KEY_VERSION_MAJOR);
-	versionMinor = readInt_(j, PATCH_KEY_VERSION_MINOR);
-	versionPatch = readInt_(j, PATCH_KEY_VERSION_PATCH);
 	samplerate   = readInt_(j, PATCH_KEY_SAMPLERATE);
 	lastTakeId   = readInt_(j, PATCH_KEY_LAST_TAKE_ID);
-	metronome    = readInt_(j, PATCH_KEY_METRONOME);
+	metronome    = readBool_(j, PATCH_KEY_METRONOME);
 
 	clock::setBpm     (readFloat_(j, PATCH_KEY_BPM));
 	clock::setBeats   (readInt_(j, PATCH_KEY_BEATS), readInt_(j, PATCH_KEY_BARS));
@@ -249,6 +267,15 @@ bool readCommons_(json_t* j)
 	});
 
 	return true;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void readColumns_(json_t* j)
+{
+
 }
 
 
@@ -463,8 +490,16 @@ bool readChannels_(json_t* j)
 			c.midiOut     = readInt_(jc, PATCH_KEY_CHANNEL_MIDI_OUT);
 			c.midiOutChan = readInt_(jc, PATCH_KEY_CHANNEL_MIDI_OUT_CHAN);
 		}
+
+		sanitize_(c);
 		
-		model::channels.push(channelManager::create(c, conf::buffersize));
+		if (c.type == ChannelType::MASTER || c.type == ChannelType::PREVIEW) {
+			model::ChannelsLock lock(model::channels);
+			model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).load(c);
+			model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).load(c);
+		}
+		else
+			model::channels.push(channelManager::create(c, conf::buffersize));
 	}
 	
 	return true;
@@ -591,7 +626,6 @@ void writeCommons_(json_t* j, const std::string& name)
 	model::MixerLock ml(model::mixer);
 
 	json_object_set_new(j, PATCH_KEY_HEADER,         json_string("GIADAPTC"));
-	json_object_set_new(j, PATCH_KEY_VERSION,        json_string(G_VERSION_STR));
 	json_object_set_new(j, PATCH_KEY_VERSION_MAJOR,  json_integer(G_VERSION_MAJOR));
 	json_object_set_new(j, PATCH_KEY_VERSION_MINOR,  json_integer(G_VERSION_MINOR));
 	json_object_set_new(j, PATCH_KEY_VERSION_PATCH,  json_integer(G_VERSION_PATCH));
@@ -604,7 +638,7 @@ void writeCommons_(json_t* j, const std::string& name)
 	json_object_set_new(j, PATCH_KEY_MASTER_VOL_OUT, json_real(model::mixer.get()->outVol));
 	json_object_set_new(j, PATCH_KEY_LAST_TAKE_ID,   json_integer(lastTakeId));
 	json_object_set_new(j, PATCH_KEY_SAMPLERATE,     json_integer(samplerate));
-	json_object_set_new(j, PATCH_KEY_METRONOME,      json_integer(mixer::isMetronomeOn()));
+	json_object_set_new(j, PATCH_KEY_METRONOME,      json_boolean(mixer::isMetronomeOn()));
 }
 
 
@@ -618,6 +652,9 @@ void writeChannels_(json_t* j, bool project)
 	json_t* jcs = json_array();
 
 	for (m::Channel* c : model::channels) {
+
+		if (c->type == ChannelType::MASTER)
+			continue;
 
 		json_t* jc = json_object();
 
@@ -693,14 +730,27 @@ void writeChannels_(json_t* j, bool project)
 
 
 std::string name;
-std::string header;
-std::string version;
-int         versionMajor;
-int         versionMinor;
-int         versionPatch;
 int         samplerate;
 int         lastTakeId;
-int         metronome;
+bool        metronome;
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool Version::operator ==(const Version& o) const
+{
+	return major == o.major && minor == o.minor && patch == o.patch;	
+}
+
+
+bool Version::operator <(const Version& o) const
+{
+	if (major < o.major) return true;
+	if (minor < o.minor) return true;
+	if (patch < o.patch) return true;
+	return false;
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -757,19 +807,18 @@ int read(const std::string& file)
 
 	/* TODO json_decref also when PATCH_INVALID */
 
+	if (!readCommons_(j)) return setInvalid_(j);
 #ifdef WITH_VST
-	if (!readPlugins_(j)) return setInvalid(j);
+	if (!readPlugins_(j)) return setInvalid_(j);
 #endif
-	if (!readCommons_(j)) return setInvalid(j);
-	if (!readWaves_(j)) return setInvalid(j);
-	if (!readActions_(j)) return setInvalid(j);
-	if (!readChannels_(j)) return setInvalid(j);
+	if (!readWaves_(j)) return setInvalid_(j);
+	if (!readActions_(j)) return setInvalid_(j);
+	if (!readChannels_(j)) return setInvalid_(j);
 
 	json_decref(j);
 
-	sanitize();
-	modernize();
+	sanitize_();
 
-	return G_PATCH_READ_OK;
+	return G_PATCH_OK;
 }
 }}}; // giada::m::patch::

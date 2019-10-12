@@ -75,23 +75,4 @@ string getRtMidiVersion()
   return RtMidi::getVersion();
 #endif
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool isLess(int a1, int b1, int c1, int a2, int b2, int c2)
-{
-	const int s = 3;
-	int v1[s] = {a1, b1, c1};
-	int v2[s] = {a2, b2, c2};
-
-	for (int i=0; i<s; i++) {
-		if (v1[i] == v2[i])
-			continue;
-		return v1[i] < v2[i];
-	}
-	return false;
-}
-
 }}};  // giada::u::ver::

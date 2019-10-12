@@ -58,6 +58,18 @@ MasterChannel* MasterChannel::clone() const
 /* -------------------------------------------------------------------------- */
 
 
+void MasterChannel::load(const patch::Channel& p)
+{
+	volume    = p.volume;
+#ifdef WITH_VST
+    pluginIds = p.pluginIds;
+#endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 void MasterChannel::render(AudioBuffer& out, const AudioBuffer& in, 
 	AudioBuffer& inToOut, bool audible, bool running)
 {

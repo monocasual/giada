@@ -125,6 +125,7 @@ const juce::PluginDescription* findPluginDescription_(const std::string& id)
 
 void init(int samplerate, int buffersize)
 {
+	pluginId_       = IdManager();
 	samplerate_     = samplerate;
     buffersize_     = buffersize;
 	missingPlugins_ = false;

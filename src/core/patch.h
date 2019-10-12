@@ -33,12 +33,24 @@
 #include <vector>
 #include <cstdint>
 #include "core/types.h"
+#include "core/const.h"
 
 
 namespace giada {
 namespace m {
 namespace patch
 {
+struct Version
+{
+	int major = G_VERSION_MAJOR;
+	int minor = G_VERSION_MINOR;
+	int patch = G_VERSION_PATCH;
+
+	bool operator ==(const Version& o) const;
+	bool operator <(const Version& o) const;
+};
+
+
 struct Action
 {
 	ID       id;
@@ -48,6 +60,7 @@ struct Action
 	ID       prevId;
 	ID       nextId;
 };
+
 
 #ifdef WITH_VST
 struct Plugin
@@ -59,6 +72,7 @@ struct Plugin
 	std::vector<uint32_t> midiInParams;
 };
 #endif
+
 
 struct Wave
 {
@@ -77,7 +91,7 @@ struct Channel
 	int         key;
 	bool        mute;
 	bool        solo;
-	float       volume;
+	float       volume = G_DEFAULT_VOL;
 	float       pan;
 	bool        hasActions;
 	bool        midiIn;
@@ -97,12 +111,11 @@ struct Channel
 	// sample channel
 	ID          waveId;
 	ChannelMode mode;
-	int         begin;
-	int         end;
+	Frame       begin;
+	Frame       end;
 	// TODO - shift
-	float       boost;
 	bool        readActions;
-	float       pitch;
+	float       pitch = G_DEFAULT_PITCH;
 	bool        inputMonitor;
 	bool        midiInVeloAsVol;
 	uint32_t    midiInReadActions;
@@ -116,19 +129,19 @@ struct Channel
 };
 
 extern std::string name;
-extern std::string header;
-extern std::string version;
-extern int         versionMajor;
-extern int         versionMinor;
-extern int         versionPatch;
 extern int         samplerate;   // Original samplerate when the patch was saved
 extern int         lastTakeId;
-extern int         metronome;
+extern bool        metronome;
 
 /* init
 Initializes the patch with default values. */
 
 void init();
+
+/* verify
+Checks if the patch is valid. */
+
+int verify(const std::string& file);
 
 /* read/write
 Reads/writes patch to/from file. */

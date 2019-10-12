@@ -44,6 +44,7 @@
 #include "gui/dialogs/warnings.h"
 #include "glue/main.h"
 #include "core/channels/channel.h"
+#include "core/channels/channelManager.h"
 #include "core/mixer.h"
 #include "core/wave.h"
 #include "core/const.h"
@@ -51,6 +52,7 @@
 #include "core/mixerHandler.h"
 #include "core/patch.h"
 #include "core/conf.h"
+#include "core/waveManager.h"
 #include "core/pluginManager.h"
 #include "core/pluginHost.h"
 #include "core/recorder.h"
@@ -233,17 +235,22 @@ void closeMainWindow()
 void reset(bool createHiddenChannels)
 {	
 	u::gui::closeAllSubwindows();
+	G_MainWin->clearKeyboard(); 
+
 	mh::close();
+#ifdef WITH_VST
+	pluginHost::close();
+#endif
+
+	channelManager::init();
+	waveManager::init();
 	clock::init(conf::samplerate, conf::midiTCfps);
 	mh::init(createHiddenChannels);
 	recorder::init();
-
 #ifdef WITH_VST
-	pluginHost::close();
 	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
 #endif
 
-	G_MainWin->clearKeyboard(); 
 	
 	u::gui::updateMainWinLabel(G_DEFAULT_PATCH_NAME);
 	u::gui::updateStaticWidgets();

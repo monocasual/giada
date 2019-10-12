@@ -261,9 +261,11 @@ void render_(AudioBuffer& out, const AudioBuffer& in, AudioBuffer& inToOut)
 		const_cast<Channel*>(ch)->render(out, in, inToOut, isChannelAudible(ch), running);
 	}
 
+	assert(model::channels.size() >= 3); // Preview channel included
+
 	/* Master channels are processed at the end, when the buffers have already 
 	been filled. */
-
+	
 	model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).render(out, in, inToOut, true, true);
 	model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).render(out, in, inToOut, true, true);
 }

@@ -96,6 +96,7 @@ void removeIf_(std::function<bool(const Action&)> f)
 
 void init()
 {
+	actionId_ = IdManager();
 	clearAll();
 }
 

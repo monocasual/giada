@@ -48,6 +48,10 @@ struct Result
     int status;
     std::unique_ptr<Wave> wave;
 };
+/* init
+Initializes internal data. */
+	
+void init();
 
 /* create
 Creates a new Wave object with data read from file 'path'. Takes an optional
