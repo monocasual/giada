@@ -143,11 +143,16 @@ Checks if the patch is valid. */
 
 int verify(const std::string& file);
 
-/* read/write
-Reads/writes patch to/from file. */
+/* read
+Reads patch from file. Always call verify() first in order to see if the patch
+format is valid. */
 
-bool write(const std::string& name, const std::string& file, bool project);
 int read(const std::string& file);
+
+/* write
+Writes patch to file. */
+
+bool write(const std::string& name, const std::string& file, bool isProject);
 }}};  // giada::m::patch::
 
 

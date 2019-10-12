@@ -176,16 +176,24 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	m::init::reset(/*createHiddenChannels=*/true);
-
-	int res = m::patch::read(fileToLoad);
-	if (res != G_PATCH_OK) {
-		if (res == G_PATCH_UNREADABLE)
+	int ver = m::patch::verify(fileToLoad);	
+	if (ver != G_PATCH_OK) {
+		if (ver == G_PATCH_UNREADABLE)
 			v::gdAlert("This patch is unreadable.");
 		else
-		if (res == G_PATCH_INVALID)
+		if (ver == G_PATCH_INVALID)
 			v::gdAlert("This patch is not valid.");
+		else
+		if (ver == G_PATCH_UNSUPPORTED)
+			v::gdAlert("This patch format is no longer supported.");
 		browser->hideStatusBar();
+		return;
+	}
+
+	m::init::reset(/*createHiddenChannels=*/true);
+
+	if (m::patch::read(fileToLoad) != G_PATCH_OK) {
+		v::gdAlert("This patch is unreadable.");
 		return;
 	}
 

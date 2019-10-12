@@ -217,39 +217,8 @@ void modernize()
 
 /* -------------------------------------------------------------------------- */
 
-/* setInvalid_
-Helper function used to return invalid status while reading. */
 
-int setInvalid_(json_t* jRoot)
-{
-	json_decref(jRoot);
-	return G_PATCH_INVALID;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool isValid_(json_t* j)
-{
-	std::string header = readString_(j, PATCH_KEY_HEADER);
-	if (header != "GIADAPTC")
-		return false;
-	
-	Version version = {
-		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MAJOR)),
-		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MINOR)),
-		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_PATCH))
-	};
-	
-	return true;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-bool readCommons_(json_t* j)
+void readCommons_(json_t* j)
 {
 	name         = readString_(j, PATCH_KEY_NAME);
 	samplerate   = readInt_(j, PATCH_KEY_SAMPLERATE);
@@ -265,8 +234,6 @@ bool readCommons_(json_t* j)
 		m.inVol  = readFloat_(j, PATCH_KEY_MASTER_VOL_IN);
 		m.outVol = readFloat_(j, PATCH_KEY_MASTER_VOL_OUT);
 	});
-
-	return true;
 }
 
 
@@ -283,63 +250,58 @@ void readColumns_(json_t* j)
 
 #ifdef WITH_VST
 
-bool readPluginParams_(json_t* j, std::vector<float>& params)
+void readPluginParams_(json_t* j, std::vector<float>& params)
 {
 	json_t* jps = json_object_get(j, PATCH_KEY_PLUGIN_PARAMS);
-	if (!isArray_(jps))
-		return false;
+	if (jps == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jp;
 	json_array_foreach(jps, i, jp)
 		params.push_back(json_real_value(jp));
-
-	return true;
 }
 
 
-bool readMidiInPluginParams_(json_t* j, std::vector<uint32_t>& params)
+void readMidiInPluginParams_(json_t* j, std::vector<uint32_t>& params)
 {
 	json_t* jps = json_object_get(j, PATCH_KEY_PLUGIN_MIDI_IN_PARAMS);
-	if (!isArray_(jps))
-		return false;
+	if (jps == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jp;
 	json_array_foreach(jps, i, jp)
 		params.push_back(json_integer_value(jp));
-
-	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool readPlugins_(json_t* j)
+void readPlugins_(json_t* j)
 {
 	json_t* jps = json_object_get(j, PATCH_KEY_PLUGINS);
-	if (!isArray_(jps))
-		return false;
+	if (jps == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jp;
 	json_array_foreach(jps, i, jp) {
 		
 		if (!isObject_(jp))
-			return false;
+			continue;
 
 		Plugin p;
 		p.id     = readInt_   (jp, PATCH_KEY_PLUGIN_ID);
 		p.path   = readString_(jp, PATCH_KEY_PLUGIN_PATH);
 		p.bypass = readBool_  (jp, PATCH_KEY_PLUGIN_BYPASS);
 
-		if (!readPluginParams_(jp, p.params)) return false;
-		if (!readMidiInPluginParams_(jp, p.midiInParams)) return false;
+		readPluginParams_(jp, p.params);
+		readMidiInPluginParams_(jp, p.midiInParams);
 
 		model::plugins.push(std::move(pluginManager::makePlugin(p)));
 	}
-	return true;
 }
 
 #endif
@@ -347,18 +309,18 @@ bool readPlugins_(json_t* j)
 /* -------------------------------------------------------------------------- */
 
 
-bool readWaves_(json_t* j)
+void readWaves_(json_t* j)
 {
 	json_t* jws = json_object_get(j, PATCH_KEY_WAVES);
-	if (!isArray_(jws))
-		return false;
+	if (jws == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jw;
 	json_array_foreach(jws, i, jw) {
 		
 		if (!isObject_(jw))
-			return false;
+			continue;
 
 		Wave w;
 		w.id   = readInt_   (jw, PATCH_KEY_WAVE_ID);
@@ -366,18 +328,18 @@ bool readWaves_(json_t* j)
 
 		model::waves.push(std::move(waveManager::createFromPatch(w)));
 	}
-	return true;
+	return;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool readActions_(json_t* j)
+void readActions_(json_t* j)
 {
 	json_t* jas = json_object_get(j, PATCH_KEY_ACTIONS);
-	if (!isArray_(jas))
-		return false;
+	if (jas == nullptr)
+		return;
 
 	std::vector<Action> actions;
 	size_t  i;
@@ -385,7 +347,7 @@ bool readActions_(json_t* j)
 	json_array_foreach(jas, i, ja) {
 		
 		if (!isObject_(ja))
-			return false;
+			continue;
 
 		Action a;
 		a.id        = readInt_(ja, G_PATCH_KEY_ACTION_ID);
@@ -402,44 +364,40 @@ bool readActions_(json_t* j)
 	{
 		a.map = std::move(recorderHandler::makeActionsFromPatch(actions));
 	});
-
-	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool readChannelPlugins_(json_t* j, std::vector<ID>& pluginIds)
+void readChannelPlugins_(json_t* j, std::vector<ID>& pluginIds)
 {
 	json_t* jps = json_object_get(j, PATCH_KEY_CHANNEL_PLUGINS);
-	if (!isArray_(jps))
-		return false;
+	if (jps == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jp;
 	json_array_foreach(jps, i, jp)
 		pluginIds.push_back(json_integer_value(jp));
-
-	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool readChannels_(json_t* j)
+void readChannels_(json_t* j)
 {
 	json_t* jcs = json_object_get(j, PATCH_KEY_CHANNELS);
-	if (!isArray_(jcs))
-		return false;
+	if (jcs == nullptr)
+		return;
 
 	size_t  i;
 	json_t* jc;
 	json_array_foreach(jcs, i, jc) {
 
 		if (!isObject_(jc))
-			return false;
+			continue;
 
 		Channel c;
 		c.id     = readInt_   (jc, PATCH_KEY_CHANNEL_ID);
@@ -501,8 +459,6 @@ bool readChannels_(json_t* j)
 		else
 			model::channels.push(channelManager::create(c, conf::buffersize));
 	}
-	
-	return true;
 }
 
 
@@ -721,6 +677,21 @@ void writeChannels_(json_t* j, bool project)
 	}
 	json_object_set_new(j, PATCH_KEY_CHANNELS, jcs);
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+json_t* load_(const std::string& file)
+{
+	json_error_t jerr;
+	json_t* j = json_load_file(file.c_str(), 0, &jerr);
+	if (j == nullptr) {
+		gu_log("[patch::load_] unable to read json file! Error on line %d: %s\n",
+			jerr.line, jerr.text);
+	}
+	return j;
+}
 }; // {anonymous}
 
 
@@ -766,6 +737,30 @@ void init()
 /* -------------------------------------------------------------------------- */
 
 
+int verify(const std::string& file)
+{
+	json_t* j = load_(file);
+	if (j == nullptr)
+		return G_PATCH_UNREADABLE;
+
+	if (readString_(j, PATCH_KEY_HEADER) != "GIADAPTC")
+		return G_PATCH_INVALID;
+	
+	Version version = {
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MAJOR)),
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_MINOR)),
+		static_cast<int>(readInt_(j, PATCH_KEY_VERSION_PATCH))
+	};
+	if (version < Version{0, 16, 0})
+		return G_PATCH_UNSUPPORTED;
+	
+	return G_PATCH_OK;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool write(const std::string& name, const std::string& file, bool isProject)
 {
 	json_t* j = json_object();
@@ -792,28 +787,18 @@ bool write(const std::string& name, const std::string& file, bool isProject)
 
 int read(const std::string& file)
 {
-	json_error_t jerr;
-	json_t* j = json_load_file(file.c_str(), 0, &jerr);
-	if (j == nullptr) {
-		gu_log("[patch::read] unable to read patch file! Error on line %d: %s\n",
-			jerr.line, jerr.text);
+	json_t* j = load_(file);
+	if (j == nullptr) 
 		return G_PATCH_UNREADABLE;
-	}
-/*
-	if (!storager::checkObject(j, "root element"))
-		return PATCH_INVALID;
-*/
+	
 	init();
-
-	/* TODO json_decref also when PATCH_INVALID */
-
-	if (!readCommons_(j)) return setInvalid_(j);
+	readCommons_(j);
 #ifdef WITH_VST
-	if (!readPlugins_(j)) return setInvalid_(j);
+	readPlugins_(j);
 #endif
-	if (!readWaves_(j)) return setInvalid_(j);
-	if (!readActions_(j)) return setInvalid_(j);
-	if (!readChannels_(j)) return setInvalid_(j);
+	readWaves_(j);
+	readActions_(j);
+	readChannels_(j);
 
 	json_decref(j);
 
