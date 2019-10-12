@@ -176,6 +176,8 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
+	/* Verify that the patch file is valid first. */
+
 	int ver = m::patch::verify(fileToLoad);	
 	if (ver != G_PATCH_OK) {
 		if (ver == G_PATCH_UNREADABLE)
@@ -190,7 +192,9 @@ void loadPatch(void* data)
 		return;
 	}
 
-	m::init::reset(/*createHiddenChannels=*/true);
+	/* Then reset the system and read the patch. */
+
+	m::init::reset();
 
 	if (m::patch::read(fileToLoad) != G_PATCH_OK) {
 		v::gdAlert("This patch is unreadable.");

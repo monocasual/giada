@@ -452,9 +452,11 @@ void readChannels_(json_t* j)
 		sanitize_(c);
 		
 		if (c.type == ChannelType::MASTER || c.type == ChannelType::PREVIEW) {
-			model::ChannelsLock lock(model::channels);
-			model::get(model::channels, mixer::MASTER_OUT_CHANNEL_ID).load(c);
-			model::get(model::channels, mixer::MASTER_IN_CHANNEL_ID).load(c);
+			if (c.id == mixer::MASTER_OUT_CHANNEL_ID)
+				model::onSwap(model::channels, mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& ch) { ch.load(c); });
+			else
+			if (c.id == mixer::MASTER_IN_CHANNEL_ID)
+				model::onSwap(model::channels, mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& ch) { ch.load(c); });
 		}
 		else
 			model::channels.push(channelManager::create(c, conf::buffersize));
@@ -608,9 +610,6 @@ void writeChannels_(json_t* j, bool project)
 	json_t* jcs = json_array();
 
 	for (m::Channel* c : model::channels) {
-
-		if (c->type == ChannelType::MASTER)
-			continue;
 
 		json_t* jc = json_object();
 

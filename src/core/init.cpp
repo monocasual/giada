@@ -98,7 +98,7 @@ void initAudio_()
 {
 	kernelAudio::openDevice();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mh::init(/*createHiddenChannels=*/true);
+	mh::init();
 	recorder::init();
 	recorderHandler::init();
 
@@ -232,7 +232,7 @@ void closeMainWindow()
 /* -------------------------------------------------------------------------- */
 
 
-void reset(bool createHiddenChannels)
+void reset()
 {	
 	u::gui::closeAllSubwindows();
 	G_MainWin->clearKeyboard(); 
@@ -245,7 +245,7 @@ void reset(bool createHiddenChannels)
 	channelManager::init();
 	waveManager::init();
 	clock::init(conf::samplerate, conf::midiTCfps);
-	mh::init(createHiddenChannels);
+	mh::init();
 	recorder::init();
 #ifdef WITH_VST
 	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
