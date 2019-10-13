@@ -86,10 +86,15 @@ void updateFrameBars_(model::Clock& c)
 void init(int sampleRate, float midiTCfps)
 {
 	midiTCrate_ = (sampleRate / midiTCfps) * G_MAX_IO_CHANS;  // stereo values
-	
-	std::unique_ptr<model::Clock> c = model::clock.clone();
-	updateFrameBars_(*c);
-	model::clock.swap(std::move(c));
+
+	model::onSwap(model::clock, [&](model::Clock& c)
+	{
+		c.bars     = G_DEFAULT_BARS;
+		c.beats    = G_DEFAULT_BEATS;
+		c.bpm      = G_DEFAULT_BPM;
+		c.quantize = G_DEFAULT_QUANTIZE;
+		updateFrameBars_(c);
+	});
 }
 
 
