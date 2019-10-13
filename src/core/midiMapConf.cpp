@@ -32,13 +32,9 @@
 #include "utils/string.h"
 #include "utils/log.h"
 #include "utils/fs.h"
+#include "utils/json.h"
 #include "const.h"
-#include "storager.h"
 #include "midiMapConf.h"
-
-
-using std::string;
-using std::vector;
 
 
 namespace giada {
@@ -47,82 +43,85 @@ namespace midimap
 {
 namespace
 {
-bool readInitCommands(json_t *jContainer)
+bool readInitCommands_(json_t* j)
 {
-	json_t *jInitCommands = json_object_get(jContainer, MIDIMAP_KEY_INIT_COMMANDS);
-  if (!storager::checkArray(jInitCommands, MIDIMAP_KEY_INIT_COMMANDS))
-    return 0;
+	namespace uj = u::json;
 
-	size_t commandIndex;
-	json_t *jInitCommand;
-	json_array_foreach(jInitCommands, commandIndex, jInitCommand) {
+	json_t* jcs = json_object_get(j, MIDIMAP_KEY_INIT_COMMANDS);
+	if (jcs == nullptr)
+    	return false;
 
-		string indexStr = "init command " + u::string::iToString(commandIndex);
-		if (!storager::checkObject(jInitCommand, indexStr.c_str()))
-			return 0;
+	size_t  i;
+	json_t* jc;
+	json_array_foreach(jcs, i, jc) {
 
-		message_t message;
-    if (!storager::setInt(jInitCommand, MIDIMAP_KEY_CHANNEL, message.channel)) return 0;
-    if (!storager::setString(jInitCommand, MIDIMAP_KEY_MESSAGE, message.valueStr)) return 0;
-		message.value = strtoul(message.valueStr.c_str(), nullptr, 16);
+		if (!uj::isObject(jc))
+			return false;
 
-    initCommands.push_back(message);
+		Message m;
+		m.channel  = uj::readInt   (jc, MIDIMAP_KEY_CHANNEL);
+		m.valueStr = uj::readString(jc, MIDIMAP_KEY_MESSAGE);
+		m.value    = strtoul(m.valueStr.c_str(), nullptr, 16);
+
+		initCommands.push_back(m);
 	}
 
-	return 1;
+	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool readCommand(json_t *jContainer, message_t *msg, const string &key)
+bool readCommand_(json_t* j, Message& m, const std::string& key)
 {
-	json_t *jCommand = json_object_get(jContainer, key.c_str());
-  if (!storager::checkObject(jCommand, key.c_str()))
-    return 0;
+	namespace uj = u::json;
 
-  if (!storager::setInt(jCommand, MIDIMAP_KEY_CHANNEL, msg->channel)) return 0;
-  if (!storager::setString(jCommand, MIDIMAP_KEY_MESSAGE, msg->valueStr)) return 0;
+	json_t* jc = json_object_get(j, key.c_str());
+	if (jc == nullptr)
+		return false;
 
-	return 1;
+	m.channel  = uj::readInt   (jc, MIDIMAP_KEY_CHANNEL);
+	m.valueStr = uj::readString(jc, MIDIMAP_KEY_MESSAGE);
+
+	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void parse(message_t *message)
+void parse_(Message& message)
 {
 	/* Remove '0x' part from the original string. */
 
-	string input = message->valueStr;
+	std::string input = message.valueStr;
 
-	size_t f = input.find("0x");					// check if "0x" is there
-	if (f!=std::string::npos)
-		input = message->valueStr.replace(f, 2, "");
+	size_t f = input.find("0x"); // check if "0x" is there
+	if (f != std::string::npos)
+		input = message.valueStr.replace(f, 2, "");
 
 	/* Then transform string value into the actual uint32_t value, by parsing
-	 * each char (i.e. nibble) in the original string. Substitute 'n' with
-	 * zeros. */
+	each char (i.e. nibble) in the original string. Substitute 'n' with
+	zeros. */
 
-	string output;
+	std::string output;
 	for (unsigned i=0, p=24; i<input.length(); i++, p-=4) {
 		if (input[i] == 'n') {
 			output += '0';
-			if (message->offset == -1) // do it once
-				message->offset = p;
+			if (message.offset == -1) // do it once
+				message.offset = p;
 		}
 		else
 			output += input[i];
 	}
 
-	/* from string to uint32_t */
+	/* From string to uint32_t */
 
-	message->value = strtoul(output.c_str(), nullptr, 16);
+	message.value = strtoul(output.c_str(), nullptr, 16);
 
 	gu_log("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
-			message->channel, message->valueStr.c_str(), message->value, message->offset);
+			message.channel, message.valueStr.c_str(), message.value, message.offset);
 }
 
 }; // {anonymous}
@@ -134,21 +133,21 @@ void parse(message_t *message)
 
 
 
-string brand;
-string device;
-vector<message_t> initCommands;
-message_t muteOn;
-message_t muteOff;
-message_t soloOn;
-message_t soloOff;
-message_t waiting;
-message_t playing;
-message_t stopping;
-message_t stopped;
-message_t playing_inaudible;
+std::string brand;
+std::string device;
+std::vector<Message> initCommands;
+Message muteOn;
+Message muteOff;
+Message soloOn;
+Message soloOff;
+Message waiting;
+Message playing;
+Message stopping;
+Message stopped;
+Message playingInaudible;
 
-string midimapsPath;
-vector<string> maps;
+std::string midimapsPath;
+std::vector<std::string> maps;
 
 
 /* -------------------------------------------------------------------------- */
@@ -160,14 +159,15 @@ void init()
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
-	gu_log("[init] scanning midimaps directory...\n");
+	gu_log("[midiMapConf::init] scanning midimaps directory '%s'...\n",
+		midimapsPath.c_str());
 
-  DIR    *dp;
-  dirent *ep;
-  dp = opendir(midimapsPath.c_str());
+	DIR*    dp;
+	dirent* ep;
+	dp = opendir(midimapsPath.c_str());
 
-	if (!dp) {
-		gu_log("[init] unable to scan midimaps directory!\n");
+	if (dp == nullptr) {
+		gu_log("[midiMapConf::init] unable to scan midimaps directory!\n");
 		return;
 	}
 
@@ -177,12 +177,12 @@ void init()
 
 		// TODO - check if is a valid midimap file (verify headers)
 
-		gu_log("[init] found midimap '%s'\n", ep->d_name);
+		gu_log("[midiMapConf::init] found midimap '%s'\n", ep->d_name);
 
 		maps.push_back(ep->d_name);
 	}
 
-	gu_log("[init] total midimaps found: %d\n", maps.size());
+	gu_log("[midiMapConf::init] total midimaps found: %d\n", maps.size());
 	closedir(dp);
 }
 
@@ -226,56 +226,54 @@ void setDefault()
 	stopped.valueStr  = "";
 	stopped.offset    = -1;
 	stopped.value     = 0;
-	playing_inaudible.channel   = 0;
-	playing_inaudible.valueStr  = "";
-	playing_inaudible.offset    = -1;
-	playing_inaudible.value     = 0;
+	playingInaudible.channel   = 0;
+	playingInaudible.valueStr  = "";
+	playingInaudible.offset    = -1;
+	playingInaudible.value     = 0;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool isDefined(message_t msg)
+bool isDefined(const Message& m)
 {
-	return (msg.offset!=-1);
+	return m.offset != -1;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int read(const string &file)
+int read(const std::string& file)
 {
+	namespace uj = u::json;
+
 	if (file.empty()) {
-		gu_log("[read] midimap not specified, nothing to do\n");
+		gu_log("[midiMapConf::read] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	gu_log("[read] reading midimap file '%s'\n", file.c_str());
+	gu_log("[midiMapConf::read] reading midimap file '%s'\n", file.c_str());
 
-  json_error_t jError;
-	string path = midimapsPath + file;
-  json_t *jRoot = json_load_file(path.c_str(), 0, &jError);
-	if (!jRoot) {
-    gu_log("[read] unreadable midimap file. Error on line %d: %s\n", jError.line, jError.text);
-    return MIDIMAP_UNREADABLE;
-  }
+	json_t* j = uj::load(std::string(midimapsPath + file).c_str());
+	if (j == nullptr)
+		return MIDIMAP_UNREADABLE;
 
-	if (!storager::setString(jRoot, MIDIMAP_KEY_BRAND, brand))   return MIDIMAP_UNREADABLE;
-    if (!storager::setString(jRoot, MIDIMAP_KEY_DEVICE, device)) return MIDIMAP_UNREADABLE;
-	if (!readInitCommands(jRoot)) return MIDIMAP_UNREADABLE;
-	if (readCommand(jRoot, &muteOn,   MIDIMAP_KEY_MUTE_ON))  parse(&muteOn);
-	if (readCommand(jRoot, &muteOff,  MIDIMAP_KEY_MUTE_OFF)) parse(&muteOff);
-	if (readCommand(jRoot, &soloOn,   MIDIMAP_KEY_SOLO_ON))  parse(&soloOn);
-	if (readCommand(jRoot, &soloOff,  MIDIMAP_KEY_SOLO_OFF)) parse(&soloOff);
-	if (readCommand(jRoot, &waiting,  MIDIMAP_KEY_WAITING))  parse(&waiting);
-	if (readCommand(jRoot, &playing,  MIDIMAP_KEY_PLAYING))  parse(&playing);
-	if (readCommand(jRoot, &stopping, MIDIMAP_KEY_STOPPING)) parse(&stopping);
-	if (readCommand(jRoot, &stopped,  MIDIMAP_KEY_STOPPED))  parse(&stopped);
-	if (readCommand(jRoot, &playing_inaudible,  MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse(&playing_inaudible);
+	brand  = uj::readString(j, MIDIMAP_KEY_BRAND);
+	device = uj::readString(j, MIDIMAP_KEY_DEVICE);
+	
+	if (!readInitCommands_(j)) return MIDIMAP_UNREADABLE;
+	if (readCommand_(j, muteOn,           MIDIMAP_KEY_MUTE_ON))  parse_(muteOn);
+	if (readCommand_(j, muteOff,          MIDIMAP_KEY_MUTE_OFF)) parse_(muteOff);
+	if (readCommand_(j, soloOn,           MIDIMAP_KEY_SOLO_ON))  parse_(soloOn);
+	if (readCommand_(j, soloOff,          MIDIMAP_KEY_SOLO_OFF)) parse_(soloOff);
+	if (readCommand_(j, waiting,          MIDIMAP_KEY_WAITING))  parse_(waiting);
+	if (readCommand_(j, playing,          MIDIMAP_KEY_PLAYING))  parse_(playing);
+	if (readCommand_(j, stopping,         MIDIMAP_KEY_STOPPING)) parse_(stopping);
+	if (readCommand_(j, stopped,          MIDIMAP_KEY_STOPPED))  parse_(stopped);
+	if (readCommand_(j, playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse_(playingInaudible);
 
 	return MIDIMAP_READ_OK;
 }
-
 }}}; // giada::m::midimap::

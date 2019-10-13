@@ -37,10 +37,6 @@
 #include "kernelMidi.h"
 
 
-using std::string;
-using std::vector;
-
-
 namespace giada {
 namespace m {
 namespace kernelMidi
@@ -55,7 +51,7 @@ unsigned numOutPorts_ = 0;
 unsigned numInPorts_  = 0;
 
 
-static void callback_(double t, vector<unsigned char>* msg, void* data)
+static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 {
 	if (msg->size() < 3) {
 		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
@@ -73,11 +69,10 @@ static void callback_(double t, vector<unsigned char>* msg, void* data)
 
 void sendMidiLightningInitMsgs_()
 {
-	for(unsigned i=0; i<midimap::initCommands.size(); i++) {
-		midimap::message_t msg = midimap::initCommands.at(i);
-		if (msg.value != 0x0 && msg.channel != -1) {
-			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", msg.channel, msg.value);
-			send(msg.value | G_MIDI_CHANS[msg.channel]);
+	for (const midimap::Message& m : midimap::initCommands) {
+		if (m.value != 0x0 && m.channel != -1) {
+			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
+			send(m.value | G_MIDI_CHANS[m.channel]);
 		}
 	}
 }
@@ -191,7 +186,7 @@ int openInDevice(int port)
 
 bool hasAPI(int API)
 {
-	vector<RtMidi::Api> APIs;
+	std::vector<RtMidi::Api> APIs;
 	RtMidi::getCompiledApi(APIs);
 	for (unsigned i=0; i<APIs.size(); i++)
 		if (APIs.at(i) == API)
@@ -203,13 +198,13 @@ bool hasAPI(int API)
 /* -------------------------------------------------------------------------- */
 
 
-string getOutPortName(unsigned p)
+std::string getOutPortName(unsigned p)
 {
 	try { return midiOut_->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
 }
 
-string getInPortName(unsigned p)
+std::string getInPortName(unsigned p)
 {
 	try { return midiIn_->getPortName(p); }
 	catch (RtMidiError &error) { return ""; }
@@ -224,7 +219,7 @@ void send(uint32_t data)
 	if (!status_)
 		return;
 
-	vector<unsigned char> msg(1, getB1(data));
+	std::vector<unsigned char> msg(1, getB1(data));
 	msg.push_back(getB2(data));
 	msg.push_back(getB3(data));
 
@@ -241,7 +236,7 @@ void send(int b1, int b2, int b3)
 	if (!status_)
 		return;
 
-	vector<unsigned char> msg(1, b1);
+	std::vector<unsigned char> msg(1, b1);
 
 	if (b2 != -1)
 		msg.push_back(b2);
@@ -256,26 +251,28 @@ void send(int b1, int b2, int b3)
 /* -------------------------------------------------------------------------- */
 
 
-void sendMidiLightning(uint32_t learn, const midimap::message_t& msg)
+void sendMidiLightning(uint32_t learn, const midimap::Message& m)
 {
 	// Skip lightning message if not defined in midi map
 
-	if (!midimap::isDefined(msg))
+	if (!midimap::isDefined(m))
 	{
 		gu_log("[KM] message skipped (not defined in midimap)");
 		return;
 	}
 
-	gu_log("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, msg.channel, 
-		msg.value, msg.offset);
+	gu_log("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, m.channel, 
+		m.value, m.offset);
 
 	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 
 	the midimap configuration file. */
-	uint32_t out = ((learn & 0x00FF0000) >> 16) << msg.offset;
+
+	uint32_t out = ((learn & 0x00FF0000) >> 16) << m.offset;
 
 	/* Merge the previously prepared channel into final message, and finally send 
 	it. */
-	out |= msg.value | (msg.channel << 24);
+
+	out |= m.value | (m.channel << 24);
 	send(out);
 }
 

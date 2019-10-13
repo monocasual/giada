@@ -55,8 +55,6 @@ sourcesCore =                               \
 	src/core/recorder.cpp                   \
 	src/core/mixer.h                        \
 	src/core/mixer.cpp                      \
-	src/core/storager.h	                    \
-	src/core/storager.cpp                   \
 	src/core/clock.h                        \
 	src/core/clock.cpp                      \
 	src/core/waveManager.h                  \

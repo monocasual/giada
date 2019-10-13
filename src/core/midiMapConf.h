@@ -37,7 +37,7 @@ namespace giada {
 namespace m {
 namespace midimap
 {
-struct message_t
+struct Message
 {
     int         channel;
     std::string valueStr;
@@ -47,48 +47,47 @@ struct message_t
 
 extern std::string brand;
 extern std::string device;
-extern std::vector<message_t> initCommands;
-extern message_t muteOn;
-extern message_t muteOff;
-extern message_t soloOn;
-extern message_t soloOff;
-extern message_t waiting;
-extern message_t playing;
-extern message_t stopping;
-extern message_t stopped;
-extern message_t playing_inaudible;
+extern std::vector<Message> initCommands;
+extern Message muteOn;
+extern Message muteOff;
+extern Message soloOn;
+extern Message soloOff;
+extern Message waiting;
+extern Message playing;
+extern Message stopping;
+extern Message stopped;
+extern Message playingInaudible;
 
 /* midimapsPath
- * path of midimap files, different between OSes. */
+Path of midimap files, different between OSes. */
 
 extern std::string midimapsPath;
 
 /* maps
- * Maps are the available .giadamap files. Each element of the std::vector
- * represents a .giadamap filename. */
+Maps are the available .giadamap files. Each element of the std::vector 
+represents a .giadamap filename. */
 
 extern std::vector<std::string> maps;
 
 /* init
-Parse the midi maps folders and find the available maps. */
+Parses the midi maps folders and find the available maps. */
 
 void init();
 
 /* setDefault
-Set default values in case no maps are available/chosen. */
+Sets default values in case no maps are available/chosen. */
 
 void setDefault();
 
 /* isDefined
-Check whether a specific message has been defined within midi map file.*/
+Checks whether a specific message has been defined within midi map file. */
 
-bool isDefined(message_t msg);
+bool isDefined(const Message& msg);
 
 /* read
-Read a midi map from file 'file'. */
+Reads a midi map from file 'file'. */
 
-int read(const std::string &file);
-
+int read(const std::string& file);
 }}}; // giada::m::midimap::
 
 #endif

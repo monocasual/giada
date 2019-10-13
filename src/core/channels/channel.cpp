@@ -231,10 +231,10 @@ void Channel::sendMidiLstatus()
 			break;
 		case ChannelStatus::PLAY:
 			if ((mixer::isChannelAudible(this) && !mute) || 
-				!midimap::isDefined(midimap::playing_inaudible))
+				!midimap::isDefined(midimap::playingInaudible))
 				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
 			else
-				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing_inaudible);
+				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playingInaudible);
 			break;
 		default:
 			break;

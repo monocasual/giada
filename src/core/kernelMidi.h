@@ -59,7 +59,7 @@ void send(int b1, int b2=-1, int b3=-1);
 /* sendMidiLightning
 Sends a MIDI lightning message defined by 'msg'. */
 
-void sendMidiLightning(uint32_t learn, const midimap::message_t& msg);
+void sendMidiLightning(uint32_t learn, const midimap::Message& msg);
 
 /* setApi
  * set the Api in use for both in & out messages. */
