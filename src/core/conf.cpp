@@ -28,15 +28,12 @@
 #include <cassert>
 #include <string>
 #include <FL/Fl.H>
-#include "../utils/fs.h"
-#include "../utils/log.h"
-#include "storager.h"
-#include "const.h"
-#include "types.h"
+#include "utils/fs.h"
+#include "utils/log.h"
+#include "utils/json.h"
+#include "core/const.h"
+#include "core/types.h"
 #include "conf.h"
-
-
-using std::string;
 
 
 namespace giada {
@@ -45,8 +42,8 @@ namespace conf
 {
 namespace
 {
-string confFilePath = "";
-string confDirPath = "";
+std::string confFilePath = "";
+std::string confDirPath  = "";
 
 
 /* -------------------------------------------------------------------------- */
@@ -98,7 +95,7 @@ void sanitize()
 	if (pluginChooserW < 640) pluginChooserW = 640;
 	if (pluginChooserH < 480) pluginChooserW = 480;
 #endif
-  if (bpmX < 0) bpmX = 0;
+	if (bpmX < 0) bpmX = 0;
 	if (bpmY < 0) bpmY = 0;
 	if (beatsX < 0) beatsX = 0;
 	if (beatsY < 0) beatsY = 0;
@@ -149,7 +146,7 @@ int createConfigFolder()
 /* -------------------------------------------------------------------------- */
 
 
-string header = "GIADACFG";
+std::string header = "GIADACFG";
 
 int  logMode        = LOG_MODE_MUTE;
 int  soundSystem    = G_DEFAULT_SOUNDSYS;
@@ -162,14 +159,15 @@ int  buffersize     = G_DEFAULT_BUFSIZE;
 bool limitOutput    = false;
 int  rsmpQuality    = 0;
 
-int    midiSystem  = 0;
-int    midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
-int    midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
-string midiMapPath = "";
-string lastFileMap = "";
-int    midiSync    = MIDI_SYNC_NONE;
-float  midiTCfps   = 25.0f;
+int         midiSystem  = 0;
+int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
+int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
+std::string midiMapPath = "";
+std::string lastFileMap = "";
+int         midiSync    = MIDI_SYNC_NONE;
+float       midiTCfps   = 25.0f;
 
+/* TODO - move these into a RCUList */
 std::atomic<bool>     midiIn          (false);
 std::atomic<int>      midiInFilter    (-1);
 std::atomic<uint32_t> midiInRewind    (0x0);
@@ -187,22 +185,22 @@ bool chansStopOnSeqHalt    = false;
 bool treatRecsAsLoops      = false;
 bool inputMonitorDefaultOn = false;
 
-string pluginPath = "";
-string patchPath  = "";
-string samplePath = "";
+std::string pluginPath = "";
+std::string patchPath  = "";
+std::string samplePath = "";
 
 int mainWindowX = (Fl::w() / 2) - (G_MIN_GUI_WIDTH / 2);
 int mainWindowY = (Fl::h() / 2) - (G_MIN_GUI_HEIGHT / 2);
 int mainWindowW = G_MIN_GUI_WIDTH;
 int mainWindowH = G_MIN_GUI_HEIGHT;
 
-int browserX         = 0;
-int browserY         = 0;
-int browserW         = 640;
-int browserH         = 480;
-int browserPosition  = 0;
-int browserLastValue = 0;
-string browserLastPath = "";
+int         browserX         = 0;
+int         browserY         = 0;
+int         browserW         = 640;
+int         browserH         = 480;
+int         browserPosition  = 0;
+int         browserLastValue = 0;
+std::string browserLastPath = "";
 
 int actionEditorX       = 0;
 int actionEditorY       = 0;
@@ -297,235 +295,231 @@ bool isMidiInAllowed(int c)
 /* -------------------------------------------------------------------------- */
 
 
-int read()
+bool read()
 {
+	namespace uj = u::json;
+
 	init();
 
-	json_error_t jError;
-	json_t *jRoot = json_load_file(confFilePath.c_str(), 0, &jError);
-	if (!jRoot) {
-		gu_log("[conf::read] unable to read configuration file! Error on line %d: %s\n",
-		jError.line, jError.text);
-	return 0;
+	json_t* j = uj::load(confFilePath);
+	if (j == nullptr)
+		return false;
+
+	if (!uj::isObject(j)) {
+		json_decref(j);
+		return false;
 	}
 
-	if (!storager::checkObject(jRoot, "root element")) {
-		json_decref(jRoot);
-		return 0;
-	}
-
-	if (!storager::setString(jRoot, CONF_KEY_HEADER, header)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_LOG_MODE, logMode)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SOUND_SYSTEM, soundSystem)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SOUND_DEVICE_OUT, soundDeviceOut)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SOUND_DEVICE_IN, soundDeviceIn)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_CHANNELS_OUT, channelsOut)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_CHANNELS_IN, channelsIn)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLERATE, samplerate)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BUFFER_SIZE, buffersize)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_LIMIT_OUTPUT, limitOutput)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_RESAMPLE_QUALITY, rsmpQuality)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYSTEM, midiSystem)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_OUT, midiPortOut)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_PORT_IN, midiPortIn)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_MIDIMAP_PATH, midiMapPath)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_LAST_MIDIMAP, lastFileMap)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_SYNC, midiSync)) return 0;
-	if (!storager::setFloat(jRoot, CONF_KEY_MIDI_TC_FPS, midiTCfps)) return 0;
-#warning "ATOMIC VALUES NOT STORED IN CONF YET"
-	/*
-	if (!storager::setBool(jRoot, CONF_KEY_MIDI_IN, midiIn)) return 0; 
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_IN_FILTER, midiInFilter)) return 0; 
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_REWIND, midiInRewind)) return 0; 
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_START_STOP, midiInStartStop)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_ACTION_REC, midiInActionRec)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_INPUT_REC, midiInInputRec)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_METRONOME, midiInMetronome)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_IN, midiInVolumeIn)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_VOLUME_OUT, midiInVolumeOut)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_DOUBLE, midiInBeatDouble)) return 0;
-	if (!storager::setUint32(jRoot, CONF_KEY_MIDI_IN_BEAT_HALF, midiInBeatHalf)) return 0;*/
-	if (!storager::setBool(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT, recsStopOnChanHalt)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT, chansStopOnSeqHalt)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS, treatRecsAsLoops)) return 0;
-	if (!storager::setBool(jRoot, CONF_KEY_INPUT_MONITOR_DEFAULT_ON, inputMonitorDefaultOn)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_PLUGINS_PATH, pluginPath)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_PATCHES_PATH, patchPath)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_SAMPLES_PATH, samplePath)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_X, mainWindowX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_Y, mainWindowY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_W, mainWindowW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MAIN_WINDOW_H, mainWindowH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_X, browserX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_Y, browserY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_W, browserW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_H, browserH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_POSITION, browserPosition)) return 0;
-	if (!storager::setString(jRoot, CONF_KEY_BROWSER_LAST_PATH, browserLastPath)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BROWSER_LAST_VALUE, browserLastValue)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_X, actionEditorX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_Y, actionEditorY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_W, actionEditorW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_H, actionEditorH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_ZOOM, actionEditorZoom)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_GRID_VAL, actionEditorGridVal)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ACTION_EDITOR_GRID_ON, actionEditorGridOn)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_X, sampleEditorX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_Y, sampleEditorY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_W, sampleEditorW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_H, sampleEditorH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_VAL, sampleEditorGridVal)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_ON, sampleEditorGridOn)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PIANO_ROLL_Y, pianoRollY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PIANO_ROLL_H, pianoRollH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_SAMPLE_ACTION_EDITOR_H, sampleActionEditorH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_VELOCITY_EDITOR_H, velocityEditorH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ENVELOPE_EDITOR_H, envelopeEditorH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_LIST_X, pluginListX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_LIST_Y, pluginListY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_CONFIG_X, configX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_CONFIG_Y, configY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BPM_X, bpmX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BPM_Y, bpmY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BEATS_X, beatsX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_BEATS_Y, beatsY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_X, aboutX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_ABOUT_Y, aboutY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_NAME_X, nameX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_NAME_Y, nameY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_X, midiInputX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_Y, midiInputY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_W, midiInputW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_MIDI_INPUT_H, midiInputH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_REC_TRIGGER_MODE, recTriggerMode)) return 0;
-	if (!storager::setFloat(jRoot, CONF_KEY_REC_TRIGGER_LEVEL, recTriggerLevel)) return 0;
+	header         = uj::readString(j, CONF_KEY_HEADER);
+	logMode        = uj::readInt(j, CONF_KEY_LOG_MODE);
+	soundSystem    = uj::readInt(j, CONF_KEY_SOUND_SYSTEM);
+	soundDeviceOut = uj::readInt(j, CONF_KEY_SOUND_DEVICE_OUT);
+	soundDeviceIn  = uj::readInt(j, CONF_KEY_SOUND_DEVICE_IN);
+	channelsOut    = uj::readInt(j, CONF_KEY_CHANNELS_OUT);
+	channelsIn     = uj::readInt(j, CONF_KEY_CHANNELS_IN);
+	samplerate     = uj::readInt(j, CONF_KEY_SAMPLERATE);
+	buffersize     = uj::readInt(j, CONF_KEY_BUFFER_SIZE);
+	limitOutput    = uj::readBool(j, CONF_KEY_LIMIT_OUTPUT);
+	rsmpQuality    = uj::readInt(j, CONF_KEY_RESAMPLE_QUALITY);
+	midiSystem     = uj::readInt(j, CONF_KEY_MIDI_SYSTEM);
+	midiPortOut    = uj::readInt(j, CONF_KEY_MIDI_PORT_OUT);
+	midiPortIn     = uj::readInt(j, CONF_KEY_MIDI_PORT_IN);
+	midiMapPath    = uj::readString(j, CONF_KEY_MIDIMAP_PATH);
+	lastFileMap    = uj::readString(j, CONF_KEY_LAST_MIDIMAP);
+	midiSync       = uj::readInt(j, CONF_KEY_MIDI_SYNC);
+	midiTCfps      = uj::readFloat(j, CONF_KEY_MIDI_TC_FPS);
+	midiIn           = uj::readBool(j, CONF_KEY_MIDI_IN);
+	midiInFilter     = uj::readInt(j, CONF_KEY_MIDI_IN_FILTER); 
+	midiInRewind     = uj::readInt(j, CONF_KEY_MIDI_IN_REWIND);
+	midiInStartStop  = uj::readInt(j, CONF_KEY_MIDI_IN_START_STOP);
+	midiInActionRec  = uj::readInt(j, CONF_KEY_MIDI_IN_ACTION_REC);
+	midiInInputRec   = uj::readInt(j, CONF_KEY_MIDI_IN_INPUT_REC);
+	midiInMetronome  = uj::readInt(j, CONF_KEY_MIDI_IN_METRONOME);
+	midiInVolumeIn   = uj::readInt(j, CONF_KEY_MIDI_IN_VOLUME_IN);
+	midiInVolumeOut  = uj::readInt(j, CONF_KEY_MIDI_IN_VOLUME_OUT);
+	midiInBeatDouble = uj::readInt(j, CONF_KEY_MIDI_IN_BEAT_DOUBLE);
+	midiInBeatHalf   = uj::readInt(j, CONF_KEY_MIDI_IN_BEAT_HALF);
+	recsStopOnChanHalt = uj::readBool(j, CONF_KEY_RECS_STOP_ON_CHAN_HALT);
+	chansStopOnSeqHalt = uj::readBool(j, CONF_KEY_CHANS_STOP_ON_SEQ_HALT);
+	treatRecsAsLoops = uj::readBool(j, CONF_KEY_TREAT_RECS_AS_LOOPS);
+	inputMonitorDefaultOn = uj::readBool(j, CONF_KEY_INPUT_MONITOR_DEFAULT_ON);
+	pluginPath = uj::readString(j, CONF_KEY_PLUGINS_PATH);
+	patchPath = uj::readString(j, CONF_KEY_PATCHES_PATH);
+	samplePath = uj::readString(j, CONF_KEY_SAMPLES_PATH);
+	mainWindowX = uj::readInt(j, CONF_KEY_MAIN_WINDOW_X);
+	mainWindowY = uj::readInt(j, CONF_KEY_MAIN_WINDOW_Y);
+	mainWindowW = uj::readInt(j, CONF_KEY_MAIN_WINDOW_W);
+	mainWindowH = uj::readInt(j, CONF_KEY_MAIN_WINDOW_H);
+	browserX = uj::readInt(j, CONF_KEY_BROWSER_X);
+	browserY = uj::readInt(j, CONF_KEY_BROWSER_Y);
+	browserW = uj::readInt(j, CONF_KEY_BROWSER_W);
+	browserH = uj::readInt(j, CONF_KEY_BROWSER_H);
+	browserPosition = uj::readInt(j, CONF_KEY_BROWSER_POSITION);
+	browserLastPath = uj::readString(j, CONF_KEY_BROWSER_LAST_PATH);
+	browserLastValue = uj::readInt(j, CONF_KEY_BROWSER_LAST_VALUE);
+	actionEditorX = uj::readInt(j, CONF_KEY_ACTION_EDITOR_X);
+	actionEditorY = uj::readInt(j, CONF_KEY_ACTION_EDITOR_Y);
+	actionEditorW = uj::readInt(j, CONF_KEY_ACTION_EDITOR_W);
+	actionEditorH = uj::readInt(j, CONF_KEY_ACTION_EDITOR_H);
+	actionEditorZoom = uj::readInt(j, CONF_KEY_ACTION_EDITOR_ZOOM);
+	actionEditorGridVal = uj::readInt(j, CONF_KEY_ACTION_EDITOR_GRID_VAL);
+	actionEditorGridOn = uj::readInt(j, CONF_KEY_ACTION_EDITOR_GRID_ON);
+	sampleEditorX = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_X);
+	sampleEditorY = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_Y);
+	sampleEditorW = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_W);
+	sampleEditorH = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_H);
+	sampleEditorGridVal = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_GRID_VAL);
+	sampleEditorGridOn = uj::readInt(j, CONF_KEY_SAMPLE_EDITOR_GRID_ON);
+	pianoRollY = uj::readInt(j, CONF_KEY_PIANO_ROLL_Y);
+	pianoRollH = uj::readInt(j, CONF_KEY_PIANO_ROLL_H);
+	sampleActionEditorH = uj::readInt(j, CONF_KEY_SAMPLE_ACTION_EDITOR_H);
+	velocityEditorH = uj::readInt(j, CONF_KEY_VELOCITY_EDITOR_H);
+	envelopeEditorH = uj::readInt(j, CONF_KEY_ENVELOPE_EDITOR_H);
+	pluginListX = uj::readInt(j, CONF_KEY_PLUGIN_LIST_X);
+	pluginListY = uj::readInt(j, CONF_KEY_PLUGIN_LIST_Y);
+	configX = uj::readInt(j, CONF_KEY_CONFIG_X);
+	configY = uj::readInt(j, CONF_KEY_CONFIG_Y);
+	bpmX = uj::readInt(j, CONF_KEY_BPM_X);
+	bpmY = uj::readInt(j, CONF_KEY_BPM_Y);
+	beatsX = uj::readInt(j, CONF_KEY_BEATS_X);
+	beatsY = uj::readInt(j, CONF_KEY_BEATS_Y);
+	aboutX = uj::readInt(j, CONF_KEY_ABOUT_X);
+	aboutY = uj::readInt(j, CONF_KEY_ABOUT_Y);
+	nameX = uj::readInt(j, CONF_KEY_NAME_X);
+	nameY = uj::readInt(j, CONF_KEY_NAME_Y);
+	midiInputX = uj::readInt(j, CONF_KEY_MIDI_INPUT_X);
+	midiInputY = uj::readInt(j, CONF_KEY_MIDI_INPUT_Y);
+	midiInputW = uj::readInt(j, CONF_KEY_MIDI_INPUT_W);
+	midiInputH = uj::readInt(j, CONF_KEY_MIDI_INPUT_H);
+	recTriggerMode = uj::readInt(j, CONF_KEY_REC_TRIGGER_MODE);
+	recTriggerLevel = uj::readFloat(j, CONF_KEY_REC_TRIGGER_LEVEL);
 
 #ifdef WITH_VST
 
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_X, pluginChooserX)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y, pluginChooserY)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_W, pluginChooserW)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_CHOOSER_H, pluginChooserH)) return 0;
-	if (!storager::setInt(jRoot, CONF_KEY_PLUGIN_SORT_METHOD, pluginSortMethod)) return 0;
+	pluginChooserX   = uj::readInt(j, CONF_KEY_PLUGIN_CHOOSER_X);
+	pluginChooserY   = uj::readInt(j, CONF_KEY_PLUGIN_CHOOSER_Y);
+	pluginChooserW   = uj::readInt(j, CONF_KEY_PLUGIN_CHOOSER_W);
+	pluginChooserH   = uj::readInt(j, CONF_KEY_PLUGIN_CHOOSER_H);
+	pluginSortMethod = uj::readInt(j, CONF_KEY_PLUGIN_SORT_METHOD);
 
 #endif
 
-	json_decref(jRoot);
+	json_decref(j);
 
 	sanitize();
 
-	return 1;
+	return true;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-int write()
+bool write()
 {
 	if (!createConfigFolder())
-		return 0;
+		return false;
 
-	json_t *jRoot = json_object();
+	json_t* j = json_object();
 
-	json_object_set_new(jRoot, CONF_KEY_HEADER,                    json_string(header.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_LOG_MODE,                  json_integer(logMode));
-	json_object_set_new(jRoot, CONF_KEY_SOUND_SYSTEM,              json_integer(soundSystem));
-	json_object_set_new(jRoot, CONF_KEY_SOUND_DEVICE_OUT,          json_integer(soundDeviceOut));
-	json_object_set_new(jRoot, CONF_KEY_SOUND_DEVICE_IN,           json_integer(soundDeviceIn));
-	json_object_set_new(jRoot, CONF_KEY_CHANNELS_OUT,              json_integer(channelsOut));
-	json_object_set_new(jRoot, CONF_KEY_CHANNELS_IN,               json_integer(channelsIn));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLERATE,                json_integer(samplerate));
-	json_object_set_new(jRoot, CONF_KEY_BUFFER_SIZE,               json_integer(buffersize));
-	json_object_set_new(jRoot, CONF_KEY_LIMIT_OUTPUT,              json_boolean(limitOutput));
-	json_object_set_new(jRoot, CONF_KEY_RESAMPLE_QUALITY,          json_integer(rsmpQuality));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_SYSTEM,               json_integer(midiSystem));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_OUT,             json_integer(midiPortOut));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_PORT_IN,              json_integer(midiPortIn));
-	json_object_set_new(jRoot, CONF_KEY_MIDIMAP_PATH,              json_string(midiMapPath.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_LAST_MIDIMAP,              json_string(lastFileMap.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_SYNC,                 json_integer(midiSync));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_TC_FPS,               json_real(midiTCfps));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN,                   json_boolean(midiIn));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_FILTER,            json_integer(midiInFilter));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_REWIND,            json_integer(midiInRewind));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_START_STOP,        json_integer(midiInStartStop));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_ACTION_REC,        json_integer(midiInActionRec));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_INPUT_REC,         json_integer(midiInInputRec));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_METRONOME,         json_integer(midiInMetronome));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_VOLUME_IN,         json_integer(midiInVolumeIn));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_VOLUME_OUT,        json_integer(midiInVolumeOut));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_BEAT_DOUBLE,       json_integer(midiInBeatDouble));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_IN_BEAT_HALF,         json_integer(midiInBeatHalf));
-	json_object_set_new(jRoot, CONF_KEY_RECS_STOP_ON_CHAN_HALT,    json_boolean(recsStopOnChanHalt));
-	json_object_set_new(jRoot, CONF_KEY_CHANS_STOP_ON_SEQ_HALT,    json_boolean(chansStopOnSeqHalt));
-	json_object_set_new(jRoot, CONF_KEY_TREAT_RECS_AS_LOOPS,       json_boolean(treatRecsAsLoops));
-	json_object_set_new(jRoot, CONF_KEY_INPUT_MONITOR_DEFAULT_ON,  json_boolean(inputMonitorDefaultOn));
-	json_object_set_new(jRoot, CONF_KEY_PLUGINS_PATH,              json_string(pluginPath.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_PATCHES_PATH,              json_string(patchPath.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLES_PATH,              json_string(samplePath.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_MAIN_WINDOW_X,             json_integer(mainWindowX));
-	json_object_set_new(jRoot, CONF_KEY_MAIN_WINDOW_Y,             json_integer(mainWindowY));
-	json_object_set_new(jRoot, CONF_KEY_MAIN_WINDOW_W,             json_integer(mainWindowW));
-	json_object_set_new(jRoot, CONF_KEY_MAIN_WINDOW_H,             json_integer(mainWindowH));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_X,                 json_integer(browserX));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_Y,                 json_integer(browserY));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_W,                 json_integer(browserW));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_H,                 json_integer(browserH));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_POSITION,          json_integer(browserPosition));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_LAST_PATH,         json_string(browserLastPath.c_str()));
-	json_object_set_new(jRoot, CONF_KEY_BROWSER_LAST_VALUE,        json_integer(browserLastValue));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_X,           json_integer(actionEditorX));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_Y,           json_integer(actionEditorY));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_W,           json_integer(actionEditorW));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_H,           json_integer(actionEditorH));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_ZOOM,        json_integer(actionEditorZoom));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_GRID_VAL,    json_integer(actionEditorGridVal));
-	json_object_set_new(jRoot, CONF_KEY_ACTION_EDITOR_GRID_ON,     json_integer(actionEditorGridOn));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_X,           json_integer(sampleEditorX));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_Y,           json_integer(sampleEditorY));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_W,           json_integer(sampleEditorW));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_H,           json_integer(sampleEditorH));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_VAL,    json_integer(sampleEditorGridVal));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_EDITOR_GRID_ON,     json_integer(sampleEditorGridOn));
-	json_object_set_new(jRoot, CONF_KEY_PIANO_ROLL_Y,              json_integer(pianoRollY));
-	json_object_set_new(jRoot, CONF_KEY_PIANO_ROLL_H,              json_integer(pianoRollH));
-	json_object_set_new(jRoot, CONF_KEY_SAMPLE_ACTION_EDITOR_H,    json_integer(sampleActionEditorH));
-	json_object_set_new(jRoot, CONF_KEY_VELOCITY_EDITOR_H,         json_integer(velocityEditorH));
-	json_object_set_new(jRoot, CONF_KEY_ENVELOPE_EDITOR_H,         json_integer(envelopeEditorH));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_LIST_X,             json_integer(pluginListX));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_LIST_Y,             json_integer(pluginListY));
-	json_object_set_new(jRoot, CONF_KEY_CONFIG_X,                  json_integer(configX));
-	json_object_set_new(jRoot, CONF_KEY_CONFIG_Y,                  json_integer(configY));
-	json_object_set_new(jRoot, CONF_KEY_BPM_X,                     json_integer(bpmX));
-	json_object_set_new(jRoot, CONF_KEY_BPM_Y,                     json_integer(bpmY));
-	json_object_set_new(jRoot, CONF_KEY_BEATS_X,                   json_integer(beatsX));
-	json_object_set_new(jRoot, CONF_KEY_BEATS_Y,                   json_integer(beatsY));
-	json_object_set_new(jRoot, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
-	json_object_set_new(jRoot, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));	
-	json_object_set_new(jRoot, CONF_KEY_NAME_X,                    json_integer(nameX));
-	json_object_set_new(jRoot, CONF_KEY_NAME_Y,                    json_integer(nameY));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_X,              json_integer(midiInputX));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
-	json_object_set_new(jRoot, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
-	json_object_set_new(jRoot, CONF_KEY_REC_TRIGGER_MODE,          json_integer(recTriggerMode));
-	json_object_set_new(jRoot, CONF_KEY_REC_TRIGGER_LEVEL,         json_real(recTriggerLevel));
+	json_object_set_new(j, CONF_KEY_HEADER,                    json_string(header.c_str()));
+	json_object_set_new(j, CONF_KEY_LOG_MODE,                  json_integer(logMode));
+	json_object_set_new(j, CONF_KEY_SOUND_SYSTEM,              json_integer(soundSystem));
+	json_object_set_new(j, CONF_KEY_SOUND_DEVICE_OUT,          json_integer(soundDeviceOut));
+	json_object_set_new(j, CONF_KEY_SOUND_DEVICE_IN,           json_integer(soundDeviceIn));
+	json_object_set_new(j, CONF_KEY_CHANNELS_OUT,              json_integer(channelsOut));
+	json_object_set_new(j, CONF_KEY_CHANNELS_IN,               json_integer(channelsIn));
+	json_object_set_new(j, CONF_KEY_SAMPLERATE,                json_integer(samplerate));
+	json_object_set_new(j, CONF_KEY_BUFFER_SIZE,               json_integer(buffersize));
+	json_object_set_new(j, CONF_KEY_LIMIT_OUTPUT,              json_boolean(limitOutput));
+	json_object_set_new(j, CONF_KEY_RESAMPLE_QUALITY,          json_integer(rsmpQuality));
+	json_object_set_new(j, CONF_KEY_MIDI_SYSTEM,               json_integer(midiSystem));
+	json_object_set_new(j, CONF_KEY_MIDI_PORT_OUT,             json_integer(midiPortOut));
+	json_object_set_new(j, CONF_KEY_MIDI_PORT_IN,              json_integer(midiPortIn));
+	json_object_set_new(j, CONF_KEY_MIDIMAP_PATH,              json_string(midiMapPath.c_str()));
+	json_object_set_new(j, CONF_KEY_LAST_MIDIMAP,              json_string(lastFileMap.c_str()));
+	json_object_set_new(j, CONF_KEY_MIDI_SYNC,                 json_integer(midiSync));
+	json_object_set_new(j, CONF_KEY_MIDI_TC_FPS,               json_real(midiTCfps));
+	json_object_set_new(j, CONF_KEY_MIDI_IN,                   json_boolean(midiIn));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_FILTER,            json_integer(midiInFilter));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_REWIND,            json_integer(midiInRewind));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_START_STOP,        json_integer(midiInStartStop));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_ACTION_REC,        json_integer(midiInActionRec));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_INPUT_REC,         json_integer(midiInInputRec));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_METRONOME,         json_integer(midiInMetronome));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_VOLUME_IN,         json_integer(midiInVolumeIn));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_VOLUME_OUT,        json_integer(midiInVolumeOut));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_BEAT_DOUBLE,       json_integer(midiInBeatDouble));
+	json_object_set_new(j, CONF_KEY_MIDI_IN_BEAT_HALF,         json_integer(midiInBeatHalf));
+	json_object_set_new(j, CONF_KEY_RECS_STOP_ON_CHAN_HALT,    json_boolean(recsStopOnChanHalt));
+	json_object_set_new(j, CONF_KEY_CHANS_STOP_ON_SEQ_HALT,    json_boolean(chansStopOnSeqHalt));
+	json_object_set_new(j, CONF_KEY_TREAT_RECS_AS_LOOPS,       json_boolean(treatRecsAsLoops));
+	json_object_set_new(j, CONF_KEY_INPUT_MONITOR_DEFAULT_ON,  json_boolean(inputMonitorDefaultOn));
+	json_object_set_new(j, CONF_KEY_PLUGINS_PATH,              json_string(pluginPath.c_str()));
+	json_object_set_new(j, CONF_KEY_PATCHES_PATH,              json_string(patchPath.c_str()));
+	json_object_set_new(j, CONF_KEY_SAMPLES_PATH,              json_string(samplePath.c_str()));
+	json_object_set_new(j, CONF_KEY_MAIN_WINDOW_X,             json_integer(mainWindowX));
+	json_object_set_new(j, CONF_KEY_MAIN_WINDOW_Y,             json_integer(mainWindowY));
+	json_object_set_new(j, CONF_KEY_MAIN_WINDOW_W,             json_integer(mainWindowW));
+	json_object_set_new(j, CONF_KEY_MAIN_WINDOW_H,             json_integer(mainWindowH));
+	json_object_set_new(j, CONF_KEY_BROWSER_X,                 json_integer(browserX));
+	json_object_set_new(j, CONF_KEY_BROWSER_Y,                 json_integer(browserY));
+	json_object_set_new(j, CONF_KEY_BROWSER_W,                 json_integer(browserW));
+	json_object_set_new(j, CONF_KEY_BROWSER_H,                 json_integer(browserH));
+	json_object_set_new(j, CONF_KEY_BROWSER_POSITION,          json_integer(browserPosition));
+	json_object_set_new(j, CONF_KEY_BROWSER_LAST_PATH,         json_string(browserLastPath.c_str()));
+	json_object_set_new(j, CONF_KEY_BROWSER_LAST_VALUE,        json_integer(browserLastValue));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_X,           json_integer(actionEditorX));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_Y,           json_integer(actionEditorY));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_W,           json_integer(actionEditorW));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_H,           json_integer(actionEditorH));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_ZOOM,        json_integer(actionEditorZoom));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_GRID_VAL,    json_integer(actionEditorGridVal));
+	json_object_set_new(j, CONF_KEY_ACTION_EDITOR_GRID_ON,     json_integer(actionEditorGridOn));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_X,           json_integer(sampleEditorX));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_Y,           json_integer(sampleEditorY));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_W,           json_integer(sampleEditorW));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_H,           json_integer(sampleEditorH));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_GRID_VAL,    json_integer(sampleEditorGridVal));
+	json_object_set_new(j, CONF_KEY_SAMPLE_EDITOR_GRID_ON,     json_integer(sampleEditorGridOn));
+	json_object_set_new(j, CONF_KEY_PIANO_ROLL_Y,              json_integer(pianoRollY));
+	json_object_set_new(j, CONF_KEY_PIANO_ROLL_H,              json_integer(pianoRollH));
+	json_object_set_new(j, CONF_KEY_SAMPLE_ACTION_EDITOR_H,    json_integer(sampleActionEditorH));
+	json_object_set_new(j, CONF_KEY_VELOCITY_EDITOR_H,         json_integer(velocityEditorH));
+	json_object_set_new(j, CONF_KEY_ENVELOPE_EDITOR_H,         json_integer(envelopeEditorH));
+	json_object_set_new(j, CONF_KEY_PLUGIN_LIST_X,             json_integer(pluginListX));
+	json_object_set_new(j, CONF_KEY_PLUGIN_LIST_Y,             json_integer(pluginListY));
+	json_object_set_new(j, CONF_KEY_CONFIG_X,                  json_integer(configX));
+	json_object_set_new(j, CONF_KEY_CONFIG_Y,                  json_integer(configY));
+	json_object_set_new(j, CONF_KEY_BPM_X,                     json_integer(bpmX));
+	json_object_set_new(j, CONF_KEY_BPM_Y,                     json_integer(bpmY));
+	json_object_set_new(j, CONF_KEY_BEATS_X,                   json_integer(beatsX));
+	json_object_set_new(j, CONF_KEY_BEATS_Y,                   json_integer(beatsY));
+	json_object_set_new(j, CONF_KEY_ABOUT_X,                   json_integer(aboutX));
+	json_object_set_new(j, CONF_KEY_ABOUT_Y,                   json_integer(aboutY));	
+	json_object_set_new(j, CONF_KEY_NAME_X,                    json_integer(nameX));
+	json_object_set_new(j, CONF_KEY_NAME_Y,                    json_integer(nameY));
+	json_object_set_new(j, CONF_KEY_MIDI_INPUT_X,              json_integer(midiInputX));
+	json_object_set_new(j, CONF_KEY_MIDI_INPUT_Y,              json_integer(midiInputY));
+	json_object_set_new(j, CONF_KEY_MIDI_INPUT_W,              json_integer(midiInputW));
+	json_object_set_new(j, CONF_KEY_MIDI_INPUT_H,              json_integer(midiInputH));
+	json_object_set_new(j, CONF_KEY_REC_TRIGGER_MODE,          json_integer(recTriggerMode));
+	json_object_set_new(j, CONF_KEY_REC_TRIGGER_LEVEL,         json_real(recTriggerLevel));
 
 #ifdef WITH_VST
 
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_X,   json_integer(pluginChooserX));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_Y,   json_integer(pluginChooserY));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_W,   json_integer(pluginChooserW));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_CHOOSER_H,   json_integer(pluginChooserH));
-	json_object_set_new(jRoot, CONF_KEY_PLUGIN_SORT_METHOD, json_integer(pluginSortMethod));
+	json_object_set_new(j, CONF_KEY_PLUGIN_CHOOSER_X,   json_integer(pluginChooserX));
+	json_object_set_new(j, CONF_KEY_PLUGIN_CHOOSER_Y,   json_integer(pluginChooserY));
+	json_object_set_new(j, CONF_KEY_PLUGIN_CHOOSER_W,   json_integer(pluginChooserW));
+	json_object_set_new(j, CONF_KEY_PLUGIN_CHOOSER_H,   json_integer(pluginChooserH));
+	json_object_set_new(j, CONF_KEY_PLUGIN_SORT_METHOD, json_integer(pluginSortMethod));
 
 #endif
 
-  if (json_dump_file(jRoot, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
+  if (json_dump_file(j, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
 	gu_log("[conf::write] unable to write configuration file!\n");
-	return 0;
+	return false;
   }
-  return 1;
+  return true;
 }
 }}}; // giada::m::conf::

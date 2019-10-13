@@ -293,6 +293,8 @@ sourcesCore =                               \
 	src/utils/vector.h                     \
 	src/utils/ver.h                        \
 	src/utils/ver.cpp                      \
+	src/utils/json.h                       \
+	src/utils/json.cpp                     \
 	src/utils/string.h                     \
 	src/utils/string.cpp                   \
 	src/deps/rtaudio-mod/RtAudio.h         \

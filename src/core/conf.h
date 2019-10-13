@@ -38,8 +38,8 @@ namespace m {
 namespace conf
 {
 void init();
-int read();
-int write();
+bool read();
+bool write();
 
 /* isMidiAllowed
 Given a MIDI channel 'c' tells whether this channel should be allowed to receive
