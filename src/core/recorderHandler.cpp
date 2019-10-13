@@ -231,45 +231,18 @@ std::unordered_set<ID> consolidate()
 /* -------------------------------------------------------------------------- */
 
 
-#if 0
-void writePatch(ID channelId, std::vector<patch::action_t>& pactions)
-{
-	recorder::forEachAction([&] (const Action& a) 
-	{
-		if (a.channelId != channelId) 
-			return;
-		pactions.push_back(patch::action_t { 
-			a.id, 
-			a.channelId, 
-			a.frame, 
-			a.event.getRaw(), 
-			a.prev != nullptr ? a.prev->id : -1,
-			a.next != nullptr ? a.next->id : -1
-		});
-	});
-}
-#endif
-
-
-/* -------------------------------------------------------------------------- */
-
-
 recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pactions)
 {
 	recorder::ActionMap out;
 
-	/* First pass: add actions with no relationship (no prev/next). */
+	/* First pass: add actions with no relationship, that is with no prev/next
+	pointers filled in. */
 
-	for (const patch::Action& paction : pactions) {
-		out[paction.frame].push_back(recorder::makeAction(
-			paction.id, 
-			paction.channelId, 
-			paction.frame, 
-			MidiEvent(paction.event)));
-		//recorder::updateActionId(paction.id + 1);
-	}
+	for (const patch::Action& paction : pactions)
+		out[paction.frame].push_back(recorder::makeAction(paction));
 
-	/* Second pass: fill in previous and next actions, if any. */
+	/* Second pass: fill in previous and next actions, if any. Is this the
+	fastest/smartest way to do it? Maybe not. Optimizations are welcome. */
 
 	for (const patch::Action& paction : pactions) {
 		if (paction.nextId == 0 && paction.prevId == 0) 
@@ -287,7 +260,6 @@ recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pacti
 	}
 
 	return out;
-	//recorder::updateActionMap(std::move(out));
 }
 }}}; // giada::m::recorderHandler::
 

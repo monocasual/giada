@@ -249,6 +249,14 @@ Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e)
 }
 
 
+Action makeAction(const patch::Action& a)
+{
+	actionId_.set(a.id);
+	return Action {a.id, a.channelId, a.frame, a.event, -1, -1, a.prevId,
+		a.nextId};
+}
+
+
 /* -------------------------------------------------------------------------- */
 
 

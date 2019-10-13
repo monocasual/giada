@@ -35,6 +35,7 @@
 #include <memory>
 #include "core/types.h"
 #include "core/action.h"
+#include "core/patch.h"
 #include "core/midiEvent.h"
 
 
@@ -97,7 +98,11 @@ Checks if the channel has at least one action recorded. */
 
 bool hasActions(ID channelId, int type=0);
 
+/* makeAction
+Makes a new action given some data. */
+
 Action makeAction(ID id, ID channelId, Frame frame, MidiEvent e);
+Action makeAction(const patch::Action& a);
 
 /* rec (1)
 Records an action and returns it. Used by the Action Editor. */
