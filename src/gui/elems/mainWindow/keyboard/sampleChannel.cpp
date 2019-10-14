@@ -177,22 +177,18 @@ void menuCallback(Fl_Widget* w, void* v)
 		}
 		case Menu::RESIZE_H1: {
 			gch->changeSize(G_GUI_CHANNEL_H_1);
-			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H2: {
 			gch->changeSize(G_GUI_CHANNEL_H_2);
-			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H3: {
 			gch->changeSize(G_GUI_CHANNEL_H_3);
-			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}		
 		case Menu::RESIZE_H4: {
 			gch->changeSize(G_GUI_CHANNEL_H_4);
-			static_cast<geColumn*>(gch->parent())->computeHeight();
 			break;
 		}
 		case Menu::CLONE_CHANNEL: {

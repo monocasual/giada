@@ -54,6 +54,7 @@ public:
 	geKeyboard(int X, int Y, int W, int H);
 
 	int handle(int e) override;
+	void draw() override;
 
 	/* rebuild
 	Rebuilds this widget from scratch. Used when the model has changed. */

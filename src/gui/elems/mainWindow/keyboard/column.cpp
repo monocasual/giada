@@ -52,10 +52,7 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id)
 	type(Fl_Pack::VERTICAL);
 	spacing(G_GUI_INNER_MARGIN);
 
-	m_addChannelBtn = new geButton(0, 0, w(), G_GUI_UNIT, "Add new channel");
-	m_addChannelBtn->callback(cb_addChannel, (void*)this);
-
-	end();
+	init();
 }
 
 
@@ -114,19 +111,6 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->cb_addChan
 /* -------------------------------------------------------------------------- */
 
 
-void geColumn::computeHeight()
-{
-	/*
-	int totalH = 0;
-	for (int i=0; i<children(); i++)
-		totalH += child(i)->h() + G_GUI_INNER_MARGIN;
-	resize(x(), y(), w(), totalH + 66); // evil space for drag n drop*/
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
 {
 	geChannel* gch = nullptr;
@@ -137,7 +121,6 @@ geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
 		gch = new geMidiChannel(0, 0, w(), size, channelId);
 
 	add(gch);
-	computeHeight();
 	gch->redraw();      // fix corruption
 	return gch;
 }

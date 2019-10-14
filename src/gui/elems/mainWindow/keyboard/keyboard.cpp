@@ -26,6 +26,7 @@
 
 
 #include <cassert>
+#include <FL/fl_draw.H>
 #include "core/model/model.h"
 #include "core/channels/sampleChannel.h"
 #include "glue/io.h"
@@ -62,12 +63,12 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 
 	/* Add 6 empty columns as initial layout. */
 
-	//cb_addColumn();
-	//cb_addColumn();
-	//cb_addColumn();
-	//cb_addColumn();
-	//cb_addColumn();
-	//cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
 }
 
 
@@ -187,6 +188,30 @@ int geKeyboard::handle(int e)
 		}
 	}
 	return Fl_Group::handle(e);     // Assume the buttons won't handle the Keyboard events
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geKeyboard::draw()
+{
+	Fl_Scroll::draw();
+
+	/* Paint columns background. Use a clip to draw only what's visible. */
+
+	fl_color(G_COLOR_GREY_1_5);
+
+	fl_push_clip(
+		x(), 
+		y(), 
+		w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2), 
+		h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
+
+	for (const geColumn* c : m_columns)
+		fl_rectf(c->x(), c->y() + c->h(), c->w(), h() + yposition());
+
+	fl_pop_clip();
 }
 
 

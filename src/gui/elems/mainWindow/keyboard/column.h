@@ -58,11 +58,6 @@ public:
 
 	geChannel* addChannel(ID channelId, ChannelType t, int size);
 
-	/* computeHeight
-	Resize column height and leave some space for drag n drop. */
-
-	void computeHeight();
-
 	/* refreshChannels
 	Updates channels' graphical statues. Called on each GUI cycle. */
 
