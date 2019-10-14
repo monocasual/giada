@@ -59,43 +59,10 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id)
 /* -------------------------------------------------------------------------- */
 
 
-int geColumn::handle(int e)
-{
-	switch (e) {
-		case FL_RELEASE: {
-			if (Fl::event_button() == FL_RIGHT_MOUSE) {
-				cb_addChannel();
-				return 1;
-			}
-		}
-		case FL_DND_ENTER:           	// return(1) for these events to 'accept' dnd
-		case FL_DND_DRAG:
-		case FL_DND_RELEASE: {
-			return 1;
-		}
-		case FL_PASTE: {              // handle actual drop (paste) operation
-			/* TODO - add only the first element for now. Need new c::channel::
-			function that takes a list of paths in input...*/
-			std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
-			c::channel::addAndLoadChannel(id, G_GUI_CHANNEL_H_1, gu_stripFileUrl(paths[0])); 
-			return 1;
-		}
-	}
-
-	/* Return fl_Group::handle only if none of the cases above are fired. That
-	is because you don't want to propagate a dnd drop to all the sub widgets. */
-
-	return Fl_Group::handle(e);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void geColumn::refresh()
 {
 	for (int i=1; i<children(); i++) {  // Skip "add channel" button
-		geChannel* c = dynamic_cast<geChannel*>(child(i));
+		geChannel* c = static_cast<geChannel*>(child(i));
 		if (c != nullptr)
 			c->refresh();
 	}

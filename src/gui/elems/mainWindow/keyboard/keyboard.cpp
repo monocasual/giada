@@ -30,7 +30,10 @@
 #include "core/model/model.h"
 #include "core/channels/sampleChannel.h"
 #include "glue/io.h"
+#include "glue/channel.h"
+#include "utils/fs.h"
 #include "utils/log.h"
+#include "utils/string.h"
 #include "gui/dispatcher.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/boxtypes.h"
@@ -186,6 +189,22 @@ int geKeyboard::handle(int e)
 			dispatcher::dispatchKey(e);
 			return 1;
 		}
+		case FL_DND_ENTER:          // return(1) for these events to 'accept' dnd
+		case FL_DND_DRAG:
+		case FL_DND_RELEASE: {
+			return 1;
+		}
+		case FL_PASTE: {            // handle actual drop (paste) operation
+			/* TODO - add only the first element for now. Need new c::channel::
+			function that takes a list of paths in input...*/
+			
+			std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
+		
+			const geColumn* c = getColumnAtCursor(Fl::event_x());
+			if (c != nullptr)
+				c::channel::addAndLoadChannel(c->id, G_GUI_CHANNEL_H_1, gu_stripFileUrl(paths[0])); 
+			return 1;
+		}
 	}
 	return Fl_Group::handle(e);     // Assume the buttons won't handle the Keyboard events
 }
@@ -280,9 +299,19 @@ void geKeyboard::forEachColumn(std::function<void(const geColumn& c)> f) const
 
 geColumn* geKeyboard::getColumn(ID id)
 {
-	for (geColumn* column : m_columns) 
-		if (column->id == id)
-			return column;
+	for (geColumn* c : m_columns) 
+		if (c->id == id)
+			return c;
+	return nullptr;
+}
+
+
+geColumn* geKeyboard::getColumnAtCursor(Pixel px)
+{
+	px += xposition();
+	for (geColumn* c : m_columns)
+		if (px > c->x() && px <= c->x() + c->w())
+			return c;
 	return nullptr;
 }
 

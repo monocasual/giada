@@ -96,7 +96,15 @@ private:
 	static void cb_addColumn(Fl_Widget* v, void* p);
 	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
+	/* getColumn
+	Returns the column given the ID. */
+
 	geColumn* getColumn(ID id);
+
+	/* getColumnAtCursor
+	Returns the column below the cursor. */
+
+	geColumn* getColumnAtCursor(Pixel x);
 
 	m::IdManager m_columnId;
 	std::vector<geColumn*> m_columns;

@@ -49,8 +49,6 @@ public:
 
 	geColumn(int x, int y, int w, int h, ID id);
 
-	int handle(int e) override;
-	
 	geChannel* getChannel(ID chanID) const;
 	
 	/* addChannel

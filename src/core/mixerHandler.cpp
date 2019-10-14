@@ -234,13 +234,8 @@ int addAndLoadChannel(ID columnId, const std::string& fname)
 
 void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w)
 {
-	size_t channelIndex = model::channels.size();
-	
 	std::unique_ptr<Channel> ch = createChannel_(ChannelType::SAMPLE, 
 		columnId);
-
-	/* Add Wave to Wave list first. */
-	/* TODO - error: missing ch->waveIndex assignment */
 
 	pushWave_(static_cast<SampleChannel&>(*ch.get()), std::move(w));
 
