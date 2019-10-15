@@ -354,17 +354,6 @@ void stop(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void setBoost(ID channelId, float val, bool gui)
-{
-	assert(false);
-#if 0
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void setName(ID channelId, const std::string& name)
 {
 	m::mh::renameChannel(channelId, name);

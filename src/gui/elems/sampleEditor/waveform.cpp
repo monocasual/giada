@@ -346,7 +346,7 @@ int geWaveform::handle(int e)
 				static_cast<v::gdSampleEditor*>(window())->cb_togglePreview();
 			else
 			if (Fl::event_key() == FL_BackSpace)
-				assert(false); //sampleEditor::rewindPreview(m_ch);
+				c::sampleEditor::rewindPreview(m_channelId);
 			return 1;
 		}
 

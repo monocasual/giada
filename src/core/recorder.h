@@ -150,14 +150,6 @@ vector makes it reallocating the existing ones. Also needed in model::Data copy
 constructor. */
 
 void updateMapPointers(ActionMap& src); 
-
-int getLatestActionId();
-
-/* getActionMap
-Returns a copy of the internal action map. Used only by recorderHandler. */
-
-//ActionMap getActionMap();
-
 }}}; // giada::m::recorder::
 
 

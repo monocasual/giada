@@ -63,10 +63,6 @@ Applies the fx list to the buffer. */
 void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds, 
 	juce::MidiBuffer* events=nullptr);
 
-/* getPluginByIndex */
-
-const Plugin* getPluginByID(ID pluginId, ID channelId);
-
 /* swapPlugin 
 Swaps plug-in with ID 1 with plug-in with ID 2 in Channel 'channelId'. */
 

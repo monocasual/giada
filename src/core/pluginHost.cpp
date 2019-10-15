@@ -157,15 +157,6 @@ void processStack(AudioBuffer& outBuf, const std::vector<ID>& pluginIds,
 /* -------------------------------------------------------------------------- */
 
 
-const Plugin* getPluginByID(ID pluginID, ID channelId)
-{
-	assert(false);
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
 void addPlugin(std::unique_ptr<Plugin> p, ID channelId)
 {
 	ID pluginId = p->id;

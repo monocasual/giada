@@ -91,7 +91,6 @@ void setVolume(ID channelId, float v, bool gui=true, bool editor=false);
 void setName(ID channelId, const std::string& name);
 void setPitch(ID channelId, float val, bool gui=true);
 void setPan(ID channelId, float val, bool gui=true);
-void setBoost(ID channelId, float val, bool gui=true);
 void setSampleMode(ID channelId, ChannelMode m);
 
 void start(ID channelId, int velocity, bool record);

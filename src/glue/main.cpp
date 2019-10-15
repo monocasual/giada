@@ -218,15 +218,12 @@ void clearAllSamples()
 
 void clearAllActions()
 {
-	assert(false);
-	/*
 	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
 	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-	for (std::unique_ptr<m::Channel>& ch : m::model::getLayout()->channels)
-		ch->hasActions = false;
+	//for (std::unique_ptr<m::Channel>& ch : m::model::getLayout()->channels)
+	//	ch->hasActions = false;
 	m::recorder::clearAll();
-	u::gui::updateControls();*/
 }
 
 

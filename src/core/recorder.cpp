@@ -358,12 +358,6 @@ Action getClosestAction(ID channelId, Frame f, int type)
 /* -------------------------------------------------------------------------- */
 
 
-int getLatestActionId() { assert(false); /*return actionId_;*/ }
-
-
-/* -------------------------------------------------------------------------- */
-
-
 std::vector<Action> getActionsOnChannel(ID channelId)
 {
 	std::vector<Action> out;
