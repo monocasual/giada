@@ -204,13 +204,17 @@ void geMainIO::rebuild()
 	m::model::onGet(m::model::channels, m::mixer::MASTER_OUT_CHANNEL_ID, [&](m::Channel& c)
 	{
 		outVol->value(c.volume);
+#ifdef WITH_VST
 		masterFxOut->setStatus(c.pluginIds.size() > 0);
+#endif
 	});
 
 	m::model::onGet(m::model::channels, m::mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& c)
 	{
 		inVol->value(c.volume);
+#ifdef WITH_VST
 		masterFxIn->setStatus(c.pluginIds.size() > 0);
+#endif
 	});
 }
 }} // giada::v::

@@ -354,7 +354,9 @@ void readChannels_(json_t* j)
 			c.armed             = uj::readBool  (jc, PATCH_KEY_CHANNEL_ARMED);
 		}
 
+#ifdef WITH_VST
 		readChannelPlugins_(jc, c.pluginIds);
+#endif
 
 		if (c.type == ChannelType::SAMPLE) {
 			c.waveId            = uj::readInt  (jc, PATCH_KEY_CHANNEL_WAVE_ID);
@@ -565,10 +567,12 @@ void writeChannels_(json_t* j, bool project)
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_KEY,                json_integer(c->key));
 		}	
 
+#ifdef WITH_VST
 		json_t* jplugins = json_array();
 		for (ID pid : c->pluginIds)
 			json_array_append_new(jplugins, json_integer(pid));
 		json_object_set_new(jc, PATCH_KEY_CHANNEL_PLUGINS, jplugins);
+#endif
 
 		if (c->type == ChannelType::SAMPLE) {
 			SampleChannel* sc = static_cast<SampleChannel*>(c);

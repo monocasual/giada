@@ -29,6 +29,7 @@
 #define G_RENDER_MODEL_H
 
 
+#include <algorithm>
 #include <type_traits>
 #include "core/channels/channel.h"
 #include "core/const.h"
@@ -92,8 +93,9 @@ using RecorderLock = RCUList<Recorder>::Lock;
 using ActionsLock  = RCUList<Actions>::Lock;
 using ChannelsLock = RCUList<Channel>::Lock;
 using WavesLock    = RCUList<Wave>::Lock;
+#ifdef WITH_VST
 using PluginsLock  = RCUList<Plugin>::Lock;
-
+#endif
 
 extern RCUList<Clock>    clock;
 extern RCUList<Mixer>    mixer;
@@ -102,7 +104,9 @@ extern RCUList<Recorder> recorder;
 extern RCUList<Actions>  actions;
 extern RCUList<Channel>  channels;
 extern RCUList<Wave>     waves;
+#ifdef WITH_VST
 extern RCUList<Plugin>   plugins;
+#endif
 
 
 /* ---------------------------------------------------------------------------*/ 
@@ -111,7 +115,9 @@ extern RCUList<Plugin>   plugins;
 template <typename T> struct has_id : std::false_type {};
 template <> struct has_id<Channel>  : std::true_type {};
 template <> struct has_id<Wave>     : std::true_type {};
+#ifdef WITH_VST
 template <> struct has_id<Plugin>   : std::true_type {};
+#endif
 
 template <typename T> struct is_copyable : std::true_type {};
 template <> struct is_copyable<Channel>  : std::false_type {};

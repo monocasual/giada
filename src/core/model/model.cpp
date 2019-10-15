@@ -45,7 +45,9 @@ RCUList<Recorder> recorder(std::make_unique<Recorder>());
 RCUList<Actions>  actions(std::make_unique<Actions>());
 RCUList<Channel>  channels;
 RCUList<Wave>     waves;
+#ifdef WITH_VST
 RCUList<Plugin>   plugins;
+#endif
 
 
 Actions::Actions(const Actions& o) : map(o.map)
@@ -62,10 +64,12 @@ Actions::Actions(const Actions& o) : map(o.map)
 void debug()
 {
 	ChannelsLock chl(channels);
-	WavesLock    wl(waves);
-	PluginsLock  pl(plugins);
 	ClockLock    cl(clock);
+	WavesLock    wl(waves);
 	ActionsLock  al(actions);
+#ifdef WITH_VST
+	PluginsLock  pl(plugins);
+#endif
 
 	puts("======== SYSTEM STATUS ========");
 	
@@ -76,12 +80,13 @@ void debug()
 		printf("    %d) %p - ID=%d name='%s' columnID=%d\n", i++, (void*)c, c->id, c->name.c_str(), c->columnId);
 		if (c->hasData())
 			printf("        wave: ID=%d\n", static_cast<const SampleChannel*>(c)->waveId);
+#ifdef WITH_VST
 		if (c->pluginIds.size() > 0) {
 			puts("        plugins:");
 			for (ID id : c->pluginIds)
 				printf("            ID=%d\n", id);
 		}
-
+#endif
 	}
 
 	puts("model::waves");
@@ -90,12 +95,14 @@ void debug()
 	for (const Wave* w : waves) 
 		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)w, w->id, w->getPath().c_str());
 		
+#ifdef WITH_VST
 	puts("model::plugins");
 
 	i = 0;
 	for (const Plugin* p : plugins) {
 		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
 	}
+#endif
 
 	puts("model::clock");
 

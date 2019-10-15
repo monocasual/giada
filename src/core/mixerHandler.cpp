@@ -261,7 +261,9 @@ void cloneChannel(ID channelId)
 
 	/* Clone plugins, actions and wave first in their own lists. */
 	
+#ifdef WITH_VST
 	pluginHost::clonePlugins(oldChannel, *newChannel.get());
+#endif
 	recorderHandler::cloneActions(channelId, newChannel->id);
 	
 	if (newChannel->hasData()) {
@@ -320,11 +322,15 @@ void deleteChannel(ID channelId)
 {
 	bool            hasWave = false;
 	ID              waveId;
+#ifdef WITH_VST
 	std::vector<ID> pluginIds;
+#endif
 
 	model::onGet(model::channels, channelId, [&](Channel& c)
 	{
+#ifdef WITH_VST
 		pluginIds = c.pluginIds;
+#endif
 		if (c.type != ChannelType::SAMPLE)
 			return;
 		SampleChannel& sc = static_cast<SampleChannel&>(c);
@@ -337,7 +343,9 @@ void deleteChannel(ID channelId)
 	if (hasWave)
 		model::waves.pop(model::getIndex(model::waves, waveId)); 
 
+#ifdef WITH_VST
 	pluginHost::freePlugins(pluginIds);
+#endif
 }
 
 
