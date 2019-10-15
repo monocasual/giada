@@ -208,8 +208,7 @@ void clearAllSamples()
 	G_MainWin->delSubWindow(WID_SAMPLE_EDITOR);
 	m::clock::setStatus(ClockStatus::STOPPED);
 	m::mh::freeAllChannels();
-	m::recorder::clearAll();
-	return;
+	m::recorderHandler::clearAllActions();
 }
 
 
@@ -221,9 +220,7 @@ void clearAllActions()
 	if (!v::gdConfirmWin("Warning", "Clear all actions: are you sure?"))
 		return;
 	G_MainWin->delSubWindow(WID_ACTION_EDITOR);
-	//for (std::unique_ptr<m::Channel>& ch : m::model::getLayout()->channels)
-	//	ch->hasActions = false;
-	m::recorder::clearAll();
+	m::recorderHandler::clearAllActions();
 }
 
 

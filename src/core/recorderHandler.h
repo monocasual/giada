@@ -76,6 +76,11 @@ recorded. */
 
 std::unordered_set<ID> consolidate();
 
+/* clearAllActions
+Deletes all recorded actions. */
+
+void clearAllActions();
+
 recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pactions);
 
 }}}; // giada::m::recorderHandler::

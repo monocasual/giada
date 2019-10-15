@@ -307,12 +307,8 @@ void freeChannel(ID channelId)
 
 void freeAllChannels()
 {
-	for (size_t i = 0; i < model::channels.size(); i++) {
-		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c)
-		{
-			c.empty();
-		});
-	}
+	for (size_t i = 0; i < model::channels.size(); i++)
+		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c) { c.empty(); });
 	model::waves.clear();
 }
 

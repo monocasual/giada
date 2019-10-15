@@ -30,6 +30,7 @@
 #include <cassert>
 #include "utils/log.h"
 #include "utils/ver.h"
+#include "model/model.h"
 #include "recorder.h"
 #include "action.h"
 #include "clock.h"
@@ -225,6 +226,17 @@ std::unordered_set<ID> consolidate()
 
 	recs_.clear();
 	return out;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void clearAllActions()
+{
+	for (size_t i = 0; i < model::channels.size(); i++)
+		model::onSwap(model::channels, model::getId(model::channels, i), [](Channel& c)	{ c.hasActions = false; });
+	recorder::clearAll();
 }
 
 
