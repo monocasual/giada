@@ -195,14 +195,9 @@ int geKeyboard::handle(int e)
 			return 1;
 		}
 		case FL_PASTE: {            // handle actual drop (paste) operation
-			/* TODO - add only the first element for now. Need new c::channel::
-			function that takes a list of paths in input...*/
-			
-			std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
-		
 			const geColumn* c = getColumnAtCursor(Fl::event_x());
 			if (c != nullptr)
-				c::channel::addAndLoadChannel(c->id, G_GUI_CHANNEL_H_1, gu_stripFileUrl(paths[0])); 
+				c::channel::addAndLoadChannels(c->id, getDroppedFilePaths());
 			return 1;
 		}
 	}
@@ -330,4 +325,15 @@ geChannel* geKeyboard::getChannel(ID channelId)
 	return nullptr;
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+std::vector<std::string> geKeyboard::getDroppedFilePaths() const
+{			
+	std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
+		for (std::string& p : paths)
+			p = gu_stripFileUrl(p);
+	return paths;
+}
 }} // giada::v::

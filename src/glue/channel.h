@@ -30,6 +30,7 @@
 
 
 #include <string>
+#include <vector>
 #include "core/types.h"
 
 
@@ -54,7 +55,12 @@ int loadChannel(ID channelId, const std::string& fname);
 /* addAndLoadChannel
 Adds a new Sample Channel and fills it with a wave right away. */
 
-void addAndLoadChannel(ID columnInd, int size, const std::string& fname); 
+void addAndLoadChannel(ID columnId, const std::string& fpath); 
+
+/* addAndLoadChannels
+As above, with multiple audio file paths in input. */
+
+void addAndLoadChannels(ID columnId, const std::vector<std::string>& fpaths);
 
 /* deleteChannel
 Removes a channel from Mixer. */

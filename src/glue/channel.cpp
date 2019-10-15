@@ -135,11 +135,26 @@ void addChannel(ID columnId, ChannelType type, int size)
 /* -------------------------------------------------------------------------- */
 
 
-void addAndLoadChannel(ID columnId, int size, const std::string& fname)
+void addAndLoadChannel(ID columnId, const std::string& fpath)
 {
-	int res = m::mh::addAndLoadChannel(columnId, fname);
+	int res = m::mh::addAndLoadChannel(columnId, fpath);
 	if (res != G_RES_OK)
 		printLoadError_(res);
+}
+
+
+void addAndLoadChannels(ID columnId, const std::vector<std::string>& fpaths)
+{
+	if (fpaths.size() == 1)
+		return addAndLoadChannel(columnId, fpaths[0]);
+
+	bool errors = false;
+	for (const std::string& f : fpaths)
+		if (m::mh::addAndLoadChannel(columnId, f) != G_RES_OK)
+			errors = true;
+
+	if (errors)
+		v::gdAlert("Some files weren't loaded sucessfully.");
 }
 
 

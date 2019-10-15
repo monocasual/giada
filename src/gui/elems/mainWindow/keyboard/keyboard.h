@@ -96,6 +96,12 @@ private:
 	static void cb_addColumn(Fl_Widget* v, void* p);
 	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
+	/* getDroppedFilePaths
+	Returns a vector of audio file paths after a drag-n-drop from desktop
+	event. */
+
+	std::vector<std::string> getDroppedFilePaths() const;
+
 	/* getColumn
 	Returns the column given the ID. */
 

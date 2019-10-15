@@ -181,9 +181,12 @@ bool uniqueSamplePath(ID channelToSkip, const std::string& path)
 /* -------------------------------------------------------------------------- */
 
 
-void addChannel(ChannelType type, ID columnId)
+ID addChannel(ChannelType type, ID columnId)
 {
-	model::channels.push(createChannel_(type, columnId));
+	std::unique_ptr<Channel> c  = createChannel_(type, columnId);
+	ID                       id = c->id;
+	model::channels.push(std::move(c));
+	return id;
 }
 
 
@@ -203,20 +206,6 @@ int loadChannel(ID channelId, const std::string& fname)
 	});
 
 	return res.status;
-}
-
-
-void loadChannel(ID channelId, std::unique_ptr<Wave>&& w)
-{
-	/* TODO */
-	assert(false);
-#if 0
-	std::unique_ptr<SampleChannel> mc = model::channels.clone<SampleChannel>(model::getChannelIndex(channelId));
-
-	pushWave_(static_cast<SampleChannel&>(*mc.get()), std::move(w));
-	
-	model::channels.swap(std::move(mc));
-#endif
 }
 
 
@@ -526,17 +515,15 @@ void finalizeInputRec()
 
 	/* Can't loop with foreach, as it would require a lock on model::channels
 	list which would deadlock during the model::channels::swap() call below. 
-	Also skip channels 0 and 1: they are MASTER_IN and MASTER_OUT. */
+	Also skip channels 0, 1 and 2: they are MASTER_IN, MASTER_OUT and PREVIEW. */
 
-	for (size_t i = 2; i < model::channels.size(); i++) {
+	for (size_t i = 3; i < model::channels.size(); i++) {
 
-		ID channelId;
+		// TODO - canInputRec_ local function
 		{
 			model::ChannelsLock l(model::channels);
-			Channel* ch = model::channels.get(i);
-			if (!ch->canInputRec())
+			if (!model::channels.get(i)->canInputRec())
 				continue;
-			channelId = ch->id;
 		}
 
 		/* Create a new Wave with audio coming from Mixer's virtual input and
@@ -552,7 +539,7 @@ void finalizeInputRec()
 		model::waves.push(std::move(wave));
 
 		/* Update Channel with the new Wave. */
-
+		// TODO - model::onSwap
 		std::unique_ptr<SampleChannel> ch = model::channels.clone<SampleChannel>(i);
 		static_cast<SampleChannel*>(ch.get())->pushWave(wave->id, wave->getSize());
 		model::channels.swap(std::move(ch), i);

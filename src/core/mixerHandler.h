@@ -54,19 +54,15 @@ Closes mixer and frees resources. */
 void close();
 
 /* addChannel
-Adds a new channel of type 'type' into the channels stack. */
+Adds a new channel of type 'type' into the channels stack. Returns the new
+channel ID. */
 
-void addChannel(ChannelType type, ID columnId);
+ID addChannel(ChannelType type, ID columnId);
 
-/* loadChannel (1)
+/* loadChannel
 Loads a new Wave inside a Sample Channel. */
 
 int loadChannel(ID channelId, const std::string& fname);
-
-/* loadChannel (2)
-Loads a new channel with an existing Wave. */
-
-void loadChannel(ID channelId, std::unique_ptr<Wave>&& w);
 
 /* addAndLoadChannel (1)
 Creates a new channels, fills it with a Wave and then add it to the stack. */
