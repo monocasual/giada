@@ -62,7 +62,7 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id)
 void geColumn::refresh()
 {
 	for (int i=1; i<children(); i++) {  // Skip "add channel" button
-		geChannel* c = static_cast<geChannel*>(child(i));
+		geChannel* c = dynamic_cast<geChannel*>(child(i));
 		if (c != nullptr)
 			c->refresh();
 	}
