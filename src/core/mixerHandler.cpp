@@ -111,6 +111,16 @@ bool channelHas_(std::function<bool(const Channel*)> f)
 
 /* -------------------------------------------------------------------------- */
 
+
+bool canInputRec_(size_t chanIndex)
+{
+	model::ChannelsLock l(model::channels);
+	return model::channels.get(chanIndex)->canInputRec();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
 /* pushWave_
 Pushes a new wave into Sample Channel 'ch' and into the corresponding Wave list.
 Use this when modifying a local model, before swapping it. */
@@ -519,30 +529,25 @@ void finalizeInputRec()
 
 	for (size_t i = 3; i < model::channels.size(); i++) {
 
-		// TODO - canInputRec_ local function
-		{
-			model::ChannelsLock l(model::channels);
-			if (!model::channels.get(i)->canInputRec())
-				continue;
-		}
+		if (!canInputRec_(i))
+			continue;
 
-		/* Create a new Wave with audio coming from Mixer's virtual input and
-		push it in the model::waves list. */
+		/* Create a new Wave with audio coming from Mixer's virtual input. */
 
-		std::string filename = "TAKE-" + std::to_string(patch::lastTakeId++);
-
+		std::string filename = "TAKE-" + std::to_string(patch::lastTakeId++) + ".wav";
+	
 		std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(), 
-			G_MAX_IO_CHANS, conf::samplerate, filename + ".wav");
+			G_MAX_IO_CHANS, conf::samplerate, filename);
 
 		wave->copyData(virtualInput[0], virtualInput.countFrames());
-		
-		model::waves.push(std::move(wave));
 
-		/* Update Channel with the new Wave. */
-		// TODO - model::onSwap
-		std::unique_ptr<SampleChannel> ch = model::channels.clone<SampleChannel>(i);
-		static_cast<SampleChannel*>(ch.get())->pushWave(wave->id, wave->getSize());
-		model::channels.swap(std::move(ch), i);
+		/* Update Channel with the new Wave. The function pushWave_ will take
+		take of pushing it into the stack first. */
+
+		model::onSwap(model::channels, model::getId(model::channels, i), [&](Channel& c)
+		{
+			pushWave_(static_cast<SampleChannel&>(c), std::move(wave));
+		});
 	}
 
 	mixer::clearVirtualInput();
