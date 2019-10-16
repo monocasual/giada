@@ -10,11 +10,7 @@ TEST_CASE("recorder")
 	using namespace giada;
 	using namespace giada::m;
 
-	pthread_mutex_t mutex;
-	pthread_mutex_init(&mutex, nullptr);
-
-	recorder::init(&mutex);
-	recorder::enable();
+	recorder::init();
 
 	REQUIRE(recorder::hasActions(/*ch=*/0) == false);
 
@@ -26,16 +22,16 @@ TEST_CASE("recorder")
 		const MidiEvent e1 = MidiEvent(MidiEvent::NOTE_ON, 0x00, 0x00);
 		const MidiEvent e2 = MidiEvent(MidiEvent::NOTE_OFF, 0x00, 0x00);
 
-		const Action* a1 = recorder::rec(ch, f1, e1);
-		const Action* a2 = recorder::rec(ch, f2, e2);
+		const Action a1 = recorder::rec(ch, f1, e1);
+		const Action a2 = recorder::rec(ch, f2, e2);
 
 		REQUIRE(recorder::hasActions(ch) == true);
-		REQUIRE(a1->frame == f1);
-		REQUIRE(a2->frame == f2);
-		REQUIRE(a1->prev == nullptr);
-		REQUIRE(a1->next == nullptr);
-		REQUIRE(a2->prev == nullptr);
-		REQUIRE(a2->next == nullptr);
+		REQUIRE(a1.frame == f1);
+		REQUIRE(a2.frame == f2);
+		REQUIRE(a1.prevId == 0);
+		REQUIRE(a1.nextId == 0);
+		REQUIRE(a2.prevId == 0);
+		REQUIRE(a2.nextId == 0);
 
 		SECTION("Test clear actions by channel")
 		{

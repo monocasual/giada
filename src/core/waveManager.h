@@ -31,6 +31,7 @@
 
 #include <string>
 #include <memory>
+#include "core/types.h"
 
 
 namespace giada {

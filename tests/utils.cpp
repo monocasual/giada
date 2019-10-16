@@ -1,7 +1,6 @@
 #include "../src/utils/fs.h"
 #include "../src/utils/string.h"
 #include "../src/utils/math.h"
-#include "../src/utils/ver.h"
 #include <catch.hpp>
 
 
@@ -60,15 +59,4 @@ TEST_CASE("::math")
 	REQUIRE(map( 0.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 0.0f);
 	REQUIRE(map(30.0f, 0.0f, 30.0f, 0.0f, 1.0f) == 1.0f);
 	REQUIRE(map(15.0f, 0.0f, 30.0f, 0.0f, 1.0f) == Approx(0.5f));
-}
-
-
-TEST_CASE("u::ver")
-{
-	using namespace giada::u::ver;
-
-	REQUIRE(isLess(6, 6, 6, 0, 15, 0) == false);
-	REQUIRE(isLess(0, 15, 0, 6, 6, 6) == true);
-	REQUIRE(isLess(6, 6, 6, 6, 6, 6) == false);
-	REQUIRE(isLess(6, 6, 5, 6, 6, 6) == true);
 }

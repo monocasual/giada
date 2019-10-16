@@ -1,6 +1,4 @@
-#include "../src/core/sampleChannel.h"
-#include "../src/core/wave.h"
-#include "../src/core/waveManager.h"
+#include "../src/core/channels/sampleChannel.h"
 #include <catch.hpp>
 
 
@@ -18,14 +16,14 @@ TEST_CASE("sampleChannel")
 		ChannelMode::SINGLE_PRESS, ChannelMode::SINGLE_RETRIG, 
 		ChannelMode::SINGLE_ENDLESS };
 
-	SampleChannel ch(false, BUFFER_SIZE);
-	waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
-	int waveSize = res.wave->getSize();
-	ch.pushWave(std::move(res.wave));
+	SampleChannel ch(false, BUFFER_SIZE, 1, 1);
+	int waveSize = 1024;
+
+	ch.pushWave(1, waveSize);
 
 	SECTION("push wave")
 	{
-		REQUIRE(ch.status == ChannelStatus::OFF);
+		REQUIRE(ch.playStatus == ChannelStatus::OFF);
 		REQUIRE(ch.begin == 0);
 		REQUIRE(ch.end == waveSize - 1);
 		REQUIRE(ch.name == "");		
@@ -87,8 +85,8 @@ TEST_CASE("sampleChannel")
 	{
 		REQUIRE(ch.getPosition() == -1);  // Initially OFF
 
-		ch.status  = ChannelStatus::PLAY;
-		ch.tracker = 1000;
+		ch.playStatus = ChannelStatus::PLAY;
+		ch.tracker    = 1000;
 
 		REQUIRE(ch.getPosition() == 1000);
 
@@ -101,14 +99,14 @@ TEST_CASE("sampleChannel")
 	{
 		ch.empty();
 
-		REQUIRE(ch.status == ChannelStatus::EMPTY);
+		REQUIRE(ch.playStatus == ChannelStatus::EMPTY);
 		REQUIRE(ch.begin == 0);
 		REQUIRE(ch.end == 0);
 		REQUIRE(ch.tracker == 0);
 		REQUIRE(ch.volume == G_DEFAULT_VOL);
-		REQUIRE(ch.boost == G_DEFAULT_BOOST);
 		REQUIRE(ch.hasActions == false);
-		REQUIRE(ch.wave == nullptr);
+		REQUIRE(ch.hasWave == false);
+		REQUIRE(ch.waveId == 0);
 	}
 
 	SECTION("can record audio")

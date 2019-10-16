@@ -47,7 +47,7 @@ TEST_CASE("waveManager")
 		waveManager::Result res = waveManager::createFromFile("tests/resources/test.wav");
 
 		int oldSize = res.wave->getSize();
-		waveManager::resample(res.wave.get(), 1, G_SAMPLE_RATE * 2);
+		waveManager::resample(*res.wave.get(), 1, G_SAMPLE_RATE * 2);
 		
 		REQUIRE(res.wave->getRate() == G_SAMPLE_RATE * 2);
 		REQUIRE(res.wave->getSize() == oldSize * 2);

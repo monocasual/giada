@@ -3,23 +3,22 @@
 #include <catch.hpp>
 
 
-using std::string;
-
-
 TEST_CASE("Wave")
 {
+	using namespace giada;
+
 	static const int SAMPLE_RATE = 44100;
 	static const int BUFFER_SIZE = 4096;
 	static const int CHANNELS = 2;
 	static const int BIT_DEPTH = 32;
 
 	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
-	this comment and the first SECTION macro is exectuted before each SECTION. */
+	this comment and the first SECTION macro is executed before each SECTION. */
 
 
 	SECTION("test allocation")
 	{
-		Wave wave;
+		m::Wave wave(1);
 		wave.alloc(BUFFER_SIZE, CHANNELS, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav");
 
 		SECTION("test basename")

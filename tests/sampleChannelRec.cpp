@@ -1,5 +1,5 @@
-#include "../src/core/sampleChannel.h"
-#include "../src/core/sampleChannelRec.h"
+#include "../src/core/channels/sampleChannel.h"
+#include "../src/core/channels/sampleChannelRec.h"
 #include <catch.hpp>
 
 
@@ -11,7 +11,7 @@ TEST_CASE("sampleChannelRec")
 {
 	const int BUFFER_SIZE = 1024;
 
-	SampleChannel ch(false, BUFFER_SIZE);
+	SampleChannel ch(false, BUFFER_SIZE, 1, 1);
 
 	SECTION("start reading actions, don't treat recs as loop")
 	{
@@ -72,13 +72,13 @@ TEST_CASE("sampleChannelRec")
 
 	SECTION("set read actions status to false with recsStopOnChanHalt")
 	{
-		ch.status  = ChannelStatus::PLAY;
-		ch.tracker = 1024;
+		ch.playStatus = ChannelStatus::PLAY;
+		ch.tracker    = 1024;
 
 		sampleChannelRec::setReadActions(&ch, false, /*recsStopOnChanHalt=*/true);
 
 		REQUIRE(ch.readActions == false);
-		REQUIRE(ch.status == ChannelStatus::OFF);
+		REQUIRE(ch.playStatus == ChannelStatus::OFF);
 		REQUIRE(ch.tracker == 0);
 
 	}
