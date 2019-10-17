@@ -100,6 +100,8 @@ public:
 			return m_curr->data.get();
 		}
 
+		// TODO - this non-const will go away with the non-virtual Channel
+		// refactoring. 
 		T* operator* ()
 		{
 			return m_curr->data.get();
@@ -176,6 +178,8 @@ public:
 
 	/* get
 	Returns a reference to the data held by node 'i'. */
+	// TODO - this will return a const ref with the non-virtual Channel
+	// refactoring. 
 
 	T* get(size_t i=0) const
 	{
@@ -186,6 +190,8 @@ public:
 
 	/* Subscript operator []
 	Same as above for the [] syntax. */
+	// TODO - this will return a const ref with the non-virtual Channel
+	// refactoring. 
 
 	T* operator[] (size_t i) const
 	{
@@ -194,6 +200,8 @@ public:
 
 	/* back
 	Return data held by the last node. */
+	// TODO - this will return a const ref with the non-virtual Channel
+	// refactoring. 
 
 	T* back() const
 	{

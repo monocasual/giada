@@ -1,3 +1,4 @@
+#if 0
 #include "../src/core/channels/sampleChannel.h"
 #include "../src/core/channels/sampleChannelProc.h"
 #include <catch.hpp>
@@ -250,3 +251,4 @@ TEST_CASE("sampleChannelProc")
 		}		
 	}
 }
+#endif

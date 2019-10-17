@@ -1,41 +1,58 @@
 #include <memory>
+#include "../src/core/model/model.h"
 #include "../src/core/const.h"
 #include "../src/core/wave.h"
 #include "../src/core/waveFx.h"
+#include "../src/core/types.h"
 #include <catch.hpp>
 
 
-using std::string;
-using namespace giada::m;
+using namespace giada;
+
+
+m::Wave& getWave(ID id)
+{
+	m::model::WavesLock l(m::model::waves);
+	return m::model::get(m::model::waves, id);
+}
 
 
 TEST_CASE("waveFx")
 {
-	static const int SAMPLE_RATE = 44100;
-	static const int BUFFER_SIZE = 4000;
-	static const int BIT_DEPTH = 32;
+	using namespace giada::m;
 
-	Wave waveMono(1);
-	Wave waveStereo(1);
-	waveMono.alloc(BUFFER_SIZE, 1, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav");
-	waveStereo.alloc(BUFFER_SIZE, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/sample.wav");
+	static const ID  WAVE_MONO_ID   = 1;
+	static const ID  WAVE_STEREO_ID = 2;
+	static const int SAMPLE_RATE    = 44100;
+	static const int BUFFER_SIZE    = 4000;
+	static const int BIT_DEPTH      = 32;
+
+	std::unique_ptr<Wave> waveMono   = std::make_unique<Wave>(WAVE_MONO_ID);
+	std::unique_ptr<Wave> waveStereo = std::make_unique<Wave>(WAVE_STEREO_ID);
+
+	waveMono->alloc(BUFFER_SIZE, 1, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-mono.wav");
+	waveStereo->alloc(BUFFER_SIZE, 2, SAMPLE_RATE, BIT_DEPTH, "path/to/sample-stereo.wav");
+	
+	model::waves.clear();
+	model::waves.push(std::move(waveMono));
+	model::waves.push(std::move(waveStereo));
 
 	SECTION("test mono->stereo conversion")
 	{
-		int prevSize = waveMono.getSize();
+		int prevSize = getWave(WAVE_MONO_ID).getSize();
 
-		REQUIRE(wfx::monoToStereo(waveMono) == G_RES_OK);
-		REQUIRE(waveMono.getSize() == prevSize);  // size does not change, channels do
-		REQUIRE(waveMono.getChannels() == 2);
+		REQUIRE(wfx::monoToStereo(getWave(WAVE_MONO_ID)) == G_RES_OK);
+		REQUIRE(getWave(WAVE_MONO_ID).getSize() == prevSize);  // size does not change, channels do
+		REQUIRE(getWave(WAVE_MONO_ID).getChannels() == 2);
 
 		SECTION("test mono->stereo conversion for already stereo wave")
 		{
 			/* Should do nothing. */
-			int prevSize = waveStereo.getSize();
+			int prevSize = getWave(WAVE_STEREO_ID).getSize();
 
-			REQUIRE(wfx::monoToStereo(waveStereo) == G_RES_OK);
-			REQUIRE(waveStereo.getSize() == prevSize);
-			REQUIRE(waveStereo.getChannels() == 2);
+			REQUIRE(wfx::monoToStereo(getWave(WAVE_STEREO_ID)) == G_RES_OK);
+			REQUIRE(getWave(WAVE_STEREO_ID).getSize() == prevSize);
+			REQUIRE(getWave(WAVE_STEREO_ID).getChannels() == 2);
 		}
 	}
 
@@ -43,19 +60,19 @@ TEST_CASE("waveFx")
 	{
 		int a = 20;
 		int b = 57;
-		wfx::silence(waveStereo.id, a, b);
+		wfx::silence(getWave(WAVE_STEREO_ID).id, a, b);
 
 		for (int i=a; i<b; i++)
-			for (int k=0; k<waveStereo.getChannels(); k++)
-				REQUIRE(waveStereo[i][k] == 0.0f);
+			for (int k=0; k<getWave(WAVE_STEREO_ID).getChannels(); k++)
+				REQUIRE(getWave(WAVE_STEREO_ID)[i][k] == 0.0f);
 
 		SECTION("test silence (mono)")
 		{
-			wfx::silence(waveMono.id, a, b);
+			wfx::silence(getWave(WAVE_MONO_ID).id, a, b);
 
 			for (int i=a; i<b; i++)
-				for (int k=0; k<waveMono.getChannels(); k++)
-					REQUIRE(waveMono[i][k] == 0.0f);
+				for (int k=0; k<getWave(WAVE_MONO_ID).getChannels(); k++)
+					REQUIRE(getWave(WAVE_MONO_ID)[i][k] == 0.0f);
 		}
 	}
 
@@ -64,18 +81,18 @@ TEST_CASE("waveFx")
 		int a = 47;
 		int b = 210;
 		int range = b - a;
-		int prevSize = waveStereo.getSize();
+		int prevSize = getWave(WAVE_STEREO_ID).getSize();
 
-		wfx::cut(waveStereo.id, a, b);
+		wfx::cut(getWave(WAVE_STEREO_ID).id, a, b);
 
-		REQUIRE(waveStereo.getSize() == prevSize - range);
+		REQUIRE(getWave(WAVE_STEREO_ID).getSize() == prevSize - range);
 
 		SECTION("test cut (mono)")
 		{
-			prevSize = waveMono.getSize();
-			wfx::cut(waveMono.id, a, b);
+			prevSize = getWave(WAVE_MONO_ID).getSize();
+			wfx::cut(getWave(WAVE_MONO_ID).id, a, b);
 
-			REQUIRE(waveMono.getSize() == prevSize - range);
+			REQUIRE(getWave(WAVE_MONO_ID).getSize() == prevSize - range);
 		}
 	}
 
@@ -85,15 +102,15 @@ TEST_CASE("waveFx")
 		int b = 210;
 		int area = b - a;
 
-		wfx::trim(waveStereo.id, a, b);
+		wfx::trim(getWave(WAVE_STEREO_ID).id, a, b);
 
-		REQUIRE(waveStereo.getSize() == area);
+		REQUIRE(getWave(WAVE_STEREO_ID).getSize() == area);
 
 		SECTION("test trim (mono)")
 		{
-			wfx::trim(waveMono.id, a, b);
+			wfx::trim(getWave(WAVE_MONO_ID).id, a, b);
 
-			REQUIRE(waveMono.getSize() == area);
+			REQUIRE(getWave(WAVE_MONO_ID).getSize() == area);
 		}
 	}
 
@@ -102,21 +119,21 @@ TEST_CASE("waveFx")
 		int a = 47;
 		int b = 500;
 
-		wfx::fade(waveStereo.id, a, b, wfx::FADE_IN);
-		wfx::fade(waveStereo.id, a, b, wfx::FADE_OUT);
+		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::FADE_IN);
+		wfx::fade(getWave(WAVE_STEREO_ID).id, a, b, wfx::FADE_OUT);
 
-		REQUIRE(waveStereo.getFrame(a)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(a)[1] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[1] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[0] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[1] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[0] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[1] == 0.0f);
 
 		SECTION("test fade (mono)")
 		{
-			wfx::fade(waveMono.id, a, b, wfx::FADE_IN);
-			wfx::fade(waveMono.id, a, b, wfx::FADE_OUT);
+			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::FADE_IN);
+			wfx::fade(getWave(WAVE_MONO_ID).id, a, b, wfx::FADE_OUT);
 
-			REQUIRE(waveMono.getFrame(a)[0] == 0.0f);
-			REQUIRE(waveMono.getFrame(b)[0] == 0.0f);		
+			REQUIRE(getWave(WAVE_MONO_ID).getFrame(a)[0] == 0.0f);
+			REQUIRE(getWave(WAVE_MONO_ID).getFrame(b)[0] == 0.0f);		
 		}
 	}
 
@@ -125,18 +142,18 @@ TEST_CASE("waveFx")
 		int a = 11;
 		int b = 79;
 
-		wfx::smooth(waveStereo.id, a, b);
+		wfx::smooth(getWave(WAVE_STEREO_ID).id, a, b);
 
-		REQUIRE(waveStereo.getFrame(a)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(a)[1] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[0] == 0.0f);
-		REQUIRE(waveStereo.getFrame(b)[1] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[0] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(a)[1] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[0] == 0.0f);
+		REQUIRE(getWave(WAVE_STEREO_ID).getFrame(b)[1] == 0.0f);
 		
 		SECTION("test smooth (mono)")
 		{
-			wfx::smooth(waveMono.id, a, b);
-			REQUIRE(waveMono.getFrame(a)[0] == 0.0f);
-			REQUIRE(waveMono.getFrame(b)[0] == 0.0f);		
+			wfx::smooth(getWave(WAVE_MONO_ID).id, a, b);
+			REQUIRE(getWave(WAVE_MONO_ID).getFrame(a)[0] == 0.0f);
+			REQUIRE(getWave(WAVE_MONO_ID).getFrame(b)[0] == 0.0f);		
 		}
 	}
 }

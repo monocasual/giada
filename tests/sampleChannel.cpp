@@ -1,14 +1,15 @@
 #include "../src/core/channels/sampleChannel.h"
+#include "../src/core/model/model.h"
 #include <catch.hpp>
-
-
-using namespace giada;
-using namespace giada::m;
 
 
 TEST_CASE("sampleChannel")
 {
+	using namespace giada;
+	using namespace giada::m;
+
 	const int BUFFER_SIZE = 1024;
+	const int WAVE_SIZE   = 50000;
 
 	std::vector<ChannelMode> modes = { ChannelMode::LOOP_BASIC, 
 		ChannelMode::LOOP_ONCE, ChannelMode::LOOP_REPEAT, 
@@ -16,16 +17,23 @@ TEST_CASE("sampleChannel")
 		ChannelMode::SINGLE_PRESS, ChannelMode::SINGLE_RETRIG, 
 		ChannelMode::SINGLE_ENDLESS };
 
-	SampleChannel ch(false, BUFFER_SIZE, 1, 1);
-	int waveSize = 1024;
+	model::channels.clear();
+	model::channels.push(std::make_unique<SampleChannel>(false, BUFFER_SIZE, 1, 1));
 
-	ch.pushWave(1, waveSize);
+	model::onSwap(model::channels, 1, [&](Channel& c)
+	{
+		static_cast<SampleChannel&>(c).pushWave(1, WAVE_SIZE);
+	});
+
+	model::channels.lock();
+	SampleChannel& ch = static_cast<SampleChannel&>(*model::channels.get(0));
+	model::channels.unlock();
 
 	SECTION("push wave")
 	{
 		REQUIRE(ch.playStatus == ChannelStatus::OFF);
 		REQUIRE(ch.begin == 0);
-		REQUIRE(ch.end == waveSize - 1);
+		REQUIRE(ch.end == WAVE_SIZE);
 		REQUIRE(ch.name == "");		
 	}
 
@@ -39,9 +47,9 @@ TEST_CASE("sampleChannel")
 
 		ch.setBegin(100000);
 
-		REQUIRE(ch.getBegin() == waveSize);
-		REQUIRE(ch.tracker == waveSize);
-		REQUIRE(ch.trackerPreview == waveSize);
+		REQUIRE(ch.getBegin() == WAVE_SIZE);
+		REQUIRE(ch.tracker == WAVE_SIZE);
+		REQUIRE(ch.trackerPreview == WAVE_SIZE);
 
 		ch.setBegin(16);
 
@@ -55,7 +63,7 @@ TEST_CASE("sampleChannel")
 
 		ch.setEnd(100000);
 
-		REQUIRE(ch.getEnd() == waveSize - 1);
+		REQUIRE(ch.getEnd() == WAVE_SIZE - 1);
 
 		ch.setEnd(32);
 
