@@ -8,19 +8,18 @@
 
 
 using namespace giada;
+using namespace giada::m;
 
 
-m::Wave& getWave(ID id)
+Wave& getWave(ID id)
 {
-	m::model::WavesLock l(m::model::waves);
-	return m::model::get(m::model::waves, id);
+	model::WavesLock l(model::waves);
+	return model::get(model::waves, id);
 }
 
 
 TEST_CASE("waveFx")
 {
-	using namespace giada::m;
-
 	static const ID  WAVE_MONO_ID   = 1;
 	static const ID  WAVE_STEREO_ID = 2;
 	static const int SAMPLE_RATE    = 44100;
