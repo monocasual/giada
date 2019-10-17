@@ -122,8 +122,9 @@ public:
 	/* RCUList
 	Singly linked list protected by a Read-Copy-Update (RCU) mechanism. */
 
-	RCUList() 
-		: m_grace  (0), 
+	RCUList()
+		: changed  (false),
+		  m_grace  (0), 
 		  m_size   (0), 
 		  m_writing(false),
 		  m_head   (nullptr),

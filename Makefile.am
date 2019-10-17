@@ -299,6 +299,7 @@ sourcesCore =                               \
 	src/deps/rtaudio-mod/RtAudio.cpp
 sourcesTests =                   \
 	tests/main.cpp               \
+	tests/rcuList.cpp            \
 	tests/conf.cpp               \
 	tests/wave.cpp               \
 	tests/waveManager.cpp        \
