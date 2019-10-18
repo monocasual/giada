@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <FL/Fl_Widget.H>
+#include "core/const.h"
 
 
 namespace giada {
@@ -40,6 +41,11 @@ class geWaveform : public Fl_Widget
 {
 public:
 
+#ifdef G_OS_WINDOWS
+	/* Fuck... */
+	#undef IN
+	#undef OUT
+#endif
 	enum class Zoom	{ IN, OUT };
 
 	geWaveform(ID channelId, ID waveId, int x, int y, int w, int h);
