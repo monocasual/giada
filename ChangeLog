@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.16.0 beta-1 --- 2019 . 10 . 19
+- Fix macOS build error + warnings
+
+
 0.16.0 beta-0 --- 2019 . 10 . 19
 - New internal engine<->UI architecture 
 - New persistence layer
