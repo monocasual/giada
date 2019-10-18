@@ -1,4 +1,3 @@
-
 --------------------------------------------------------------------------------
 
 
@@ -10,6 +9,14 @@
 
   CHANGELOG
 --------------------------------------------------------------------------------
+
+
+0.16.0 beta-0 --- 2019 . 10 . 19
+- New internal engine<->UI architecture 
+- New persistence layer
+- New MIDI queue for incoming live MIDI messages
+- Absolute #include paths in source code
+- Removed Boost parameter from Sample Channel 
 
 
 0.15.4 --- 2019 . 03 . 22
