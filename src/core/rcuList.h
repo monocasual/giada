@@ -29,6 +29,7 @@
 #define G_RCU_LIST_H
 
 
+#include <array>
 #include <cassert>
 #include <thread>
 #include <atomic>

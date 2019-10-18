@@ -129,7 +129,7 @@ template <> struct is_copyable<Channel>  : std::false_type {};
 template<typename L>
 auto getIter(L& list, ID id)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	auto it = std::find_if(list.begin(), list.end(), [&](auto* t)
 	{
 		return t->id == id;
@@ -145,7 +145,7 @@ auto getIter(L& list, ID id)
 template<typename L>
 size_t getIndex(L& list, ID id)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
 	return std::distance(list.begin(), getIter(list, id));
 }
@@ -157,7 +157,7 @@ size_t getIndex(L& list, ID id)
 template<typename L>
 ID getId(L& list, size_t i)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
 	return list.get(i)->id;
 }
@@ -169,7 +169,7 @@ ID getId(L& list, size_t i)
 template<typename L>
 typename L::value_type& get(L& list, ID id)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	return **getIter(list, id);
 }
 
@@ -183,7 +183,7 @@ Utility function for reading ID-based things from a RCUList. */
 template<typename L>
 void onGet(L& list, ID id, std::function<void(typename L::value_type&)> f)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	typename L::Lock l(list);
 	f(**getIter(list, id));
 }
@@ -195,7 +195,7 @@ Same as (1), for non-ID-based things. */
 template<typename L>
 void onGet(L& list, std::function<void(typename L::value_type&)> f)
 {
-	static_assert(!has_id<typename L::value_type>());
+	static_assert(!has_id<typename L::value_type>(), "This type has ID");
 	typename L::Lock l(list);
 	f(*list.get());
 }
@@ -219,7 +219,7 @@ template<typename L>
 void onSwapById_(L& list, ID id, std::function<void(typename L::value_type&)> f, 
 	const std::true_type& /*is_copyable=true*/)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	onSwapByIndex_(list, getIndex(list, id), f); 
 }
 
@@ -232,7 +232,7 @@ template<typename L>
 void onSwapById_(L& list, ID id, std::function<void(typename L::value_type&)> f,
 	const std::false_type& /*is_copyable=false*/)
 {	
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	
 	size_t i = getIndex(list, id);
 	
@@ -252,7 +252,7 @@ Utility function for swapping things in a RCUList. */
 template<typename L>
 void onSwap(L& list, ID id, std::function<void(typename L::value_type&)> f)
 {
-	static_assert(has_id<typename L::value_type>());
+	static_assert(has_id<typename L::value_type>(), "This type has no ID");
 	onSwapById_(list, id, f, is_copyable<typename L::value_type>());
 }
 
@@ -264,7 +264,7 @@ a single element (and so with no ID). */
 template<typename L>
 void onSwap(L& list, std::function<void(typename L::value_type&)> f)
 {
-	static_assert(!has_id<typename L::value_type>());
+	static_assert(!has_id<typename L::value_type>(), "This type has ID");
 	onSwapByIndex_(list, 0, f); 
 }
 
