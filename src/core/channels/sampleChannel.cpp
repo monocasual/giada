@@ -77,6 +77,7 @@ SampleChannel::SampleChannel(const SampleChannel& o)
 : Channel          (o),
   hasWave          (o.hasWave),
   waveId           (o.waveId),
+  waveSize         (o.waveSize),
   shift            (o.shift),
   mode             (o.mode),
   quantizing       (o.quantizing),
