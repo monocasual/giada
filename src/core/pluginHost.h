@@ -33,7 +33,6 @@
 
 
 #include <functional>
-#include <pthread.h>
 #include "deps/juce-config.h"
 #include "core/types.h"
 

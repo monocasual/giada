@@ -30,7 +30,6 @@
 
 
 #include <atomic>
-#include <pthread.h>
 #include <functional>
 #include <vector>
 #include "deps/rtaudio-mod/RtAudio.h"

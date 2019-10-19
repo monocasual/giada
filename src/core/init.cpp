@@ -61,7 +61,7 @@
 #include "core/midiMapConf.h"
 #include "core/kernelMidi.h"
 #include "core/kernelAudio.h"
-#include "core/init.h"
+#include "init.h"
 
 
 extern std::atomic<bool>       G_quit;

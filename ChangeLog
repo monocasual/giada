@@ -11,6 +11,10 @@
 --------------------------------------------------------------------------------
 
 
+0.16.0 beta-2 ---
+Removed all pthread.h leftovers 
+
+
 0.16.0 beta-1 --- 2019 . 10 . 19
 - Fix macOS build error + warnings
 
