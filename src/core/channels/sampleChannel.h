@@ -121,8 +121,7 @@ public:
 	/* waveId
 	ID of a Wave object. Might be useless if hasWave == false. */
 
-	ID    waveId;
-	Frame waveSize;
+	ID waveId;
 
 	int shift;
 	ChannelMode mode;

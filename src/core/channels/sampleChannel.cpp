@@ -45,7 +45,6 @@ SampleChannel::SampleChannel(bool inputMonitor, int bufferSize,
                     columnId, id),
   hasWave          (false),
   waveId           (0),
-  waveSize         (0),
   shift            (0),
   mode             (ChannelMode::SINGLE_BASIC),
   quantizing       (false),
@@ -77,7 +76,6 @@ SampleChannel::SampleChannel(const SampleChannel& o)
 : Channel          (o),
   hasWave          (o.hasWave),
   waveId           (o.waveId),
-  waveSize         (o.waveSize),
   shift            (o.shift),
   mode             (o.mode),
   quantizing       (o.quantizing),
@@ -331,11 +329,14 @@ bool SampleChannel::hasData() const
 
 void SampleChannel::setBegin(int f)
 {
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
+	
 	if (f < 0)
 		f = 0;
 	else
-	if (f > waveSize)
-		f = waveSize;
+	if (f > wave.getSize())
+		f = wave.getSize();
 	else
 	if (f >= end)
 		f = end - 1;
@@ -351,14 +352,16 @@ void SampleChannel::setBegin(int f)
 
 void SampleChannel::setEnd(int f)
 {
-	if (f >= waveSize)
-		f = waveSize - 1;
+	model::WavesLock lock(model::waves);
+	const Wave& wave = model::get(model::waves, waveId);
+	
+	if (f >= wave.getSize())
+		f = wave.getSize() - 1;
 	else
 	if (f <= begin)
 		f = begin + 1;
 
-	end = f;
-}
+	end = f;}
 
 
 /* -------------------------------------------------------------------------- */
@@ -418,7 +421,6 @@ void SampleChannel::empty()
 	hasActions = false;
 	hasWave    = false;
 	waveId     = 0;
-	waveSize   = 0;
 	sendMidiLstatus();
 }
 
@@ -430,7 +432,6 @@ void SampleChannel::pushWave(ID wid, Frame size)
 {
 	playStatus = ChannelStatus::OFF;
 	waveId     = wid;
-	waveSize   = size;
 	begin      = 0;
 	end        = size;
 	tracker    = 0;
@@ -443,7 +444,6 @@ void SampleChannel::popWave()
 {
 	playStatus = ChannelStatus::OFF;
 	waveId     = 0;
-	waveSize   = 0;
 	begin      = 0;
 	end        = 0;
 	tracker    = 0;
