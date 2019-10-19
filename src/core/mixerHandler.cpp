@@ -125,9 +125,9 @@ bool canInputRec_(size_t chanIndex)
 Pushes a new wave into Sample Channel 'ch' and into the corresponding Wave list.
 Use this when modifying a local model, before swapping it. */
 
-void pushWave_(SampleChannel& ch, std::unique_ptr<Wave>&& w)
+void pushWave_(SampleChannel& ch, std::unique_ptr<Wave>&& w, bool clone)
 {
-	if (ch.hasWave)
+	if (ch.hasWave && !clone) // Don't pop if cloning a channel
 		model::waves.pop(model::getIndex(model::waves, ch.waveId));
 	
 	ID    id   = w->id;
@@ -212,7 +212,7 @@ int loadChannel(ID channelId, const std::string& fname)
 
 	model::onSwap(model::channels, channelId, [&](Channel& c)
 	{
-		pushWave_(static_cast<SampleChannel&>(c), std::move(res.wave));
+		pushWave_(static_cast<SampleChannel&>(c), std::move(res.wave), /*clone=*/false);
 	});
 
 	return res.status;
@@ -236,7 +236,7 @@ void addAndLoadChannel(ID columnId, std::unique_ptr<Wave>&& w)
 	std::unique_ptr<Channel> ch = createChannel_(ChannelType::SAMPLE, 
 		columnId);
 
-	pushWave_(static_cast<SampleChannel&>(*ch.get()), std::move(w));
+	pushWave_(static_cast<SampleChannel&>(*ch.get()), std::move(w), /*clone=*/false);
 
 	/* Then add new channel to Channel list. */
 
@@ -255,10 +255,6 @@ void cloneChannel(ID channelId)
 	const Channel&           oldChannel = model::get(model::channels, channelId);
 	std::unique_ptr<Channel> newChannel = channelManager::create(oldChannel);
 
-	/* Set a new ID for the new channel. */
-
-	newChannel->id = model::channels.size() + 1; 
-
 	/* Clone plugins, actions and wave first in their own lists. */
 	
 #ifdef WITH_VST
@@ -267,10 +263,9 @@ void cloneChannel(ID channelId)
 	recorderHandler::cloneActions(channelId, newChannel->id);
 	
 	if (newChannel->hasData()) {
-		SampleChannel* sch = static_cast<SampleChannel*>(newChannel.get());
-		const Wave&    w   = model::get(model::waves, sch->waveId);
-
-		pushWave_(*sch, waveManager::createFromWave(w, 0, w.getSize()));
+		SampleChannel* sch  = static_cast<SampleChannel*>(newChannel.get());
+		Wave&          wave = model::get(model::waves, sch->waveId);
+		pushWave_(*sch, waveManager::createFromWave(wave, 0, wave.getSize()), /*clone=*/true);
 	}
 
 	/* Then push the new channel in the channels list. */
@@ -550,7 +545,7 @@ void finalizeInputRec()
 
 		model::onSwap(model::channels, model::getId(model::channels, i), [&](Channel& c)
 		{
-			pushWave_(static_cast<SampleChannel&>(c), std::move(wave));
+			pushWave_(static_cast<SampleChannel&>(c), std::move(wave), /*clone=*/false);
 		});
 	}
 

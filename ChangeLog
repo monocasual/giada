@@ -13,8 +13,10 @@
 
 0.16.0 beta-2 ---
 - Removed all pthread.h leftovers 
-- Fix Windows build
-- Fix memory corruption on Keyboard refresh
+- Fixed Windows build
+- Fixed memory corruption on Keyboard refresh
+- Fixed wave size corruption while editing samples in Sample Editor
+- Fixed freeze when cloning a Sample Channel with a sample in it
 
 
 0.16.0 beta-1 --- 2019 . 10 . 19
