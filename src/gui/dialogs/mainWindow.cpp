@@ -145,7 +145,6 @@ void gdMainWindow::rebuild()
 
 void gdMainWindow::clearKeyboard()
 {
-	keyboard->clear();
 	keyboard->init();
 }
 }} // giada::v::

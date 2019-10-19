@@ -49,6 +49,8 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id)
 : Fl_Pack(X, Y, W, H), 
   id     (id)
 {
+	end();
+
 	type(Fl_Pack::VERTICAL);
 	spacing(G_GUI_INNER_MARGIN);
 

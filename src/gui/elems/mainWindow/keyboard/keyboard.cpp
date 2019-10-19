@@ -51,6 +51,8 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 : Fl_Scroll     (X, Y, W, H),
   m_addColumnBtn(nullptr)
 {
+	end();
+
 	color(G_COLOR_GREY_1);
 	type(Fl_Scroll::BOTH_ALWAYS);
 	scrollbar.color(G_COLOR_GREY_2);
@@ -80,9 +82,9 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 
 void geKeyboard::init()
 {
-	clear();
-	m_columnId = m::IdManager();
+	Fl_Scroll::clear();
 	m_columns.clear();
+	m_columnId = m::IdManager();
 	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
 	m_addColumnBtn->callback(cb_addColumn, (void*) this);
 	add(m_addColumnBtn);
