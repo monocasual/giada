@@ -65,15 +65,6 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 	hscrollbar.slider(G_CUSTOM_BORDER_BOX);
 
 	init();
-
-	/* Add 6 empty columns as initial layout. */
-
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
 }
 
 
@@ -88,6 +79,15 @@ void geKeyboard::init()
 	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
 	m_addColumnBtn->callback(cb_addColumn, (void*) this);
 	add(m_addColumnBtn);
+
+	/* Add 6 empty columns as initial layout. */
+
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
+	cb_addColumn();
 }
 
 
