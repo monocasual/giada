@@ -442,7 +442,7 @@ void writeColumns_(json_t* j)
 	G_MainWin->keyboard->forEachColumn([&](const v::geColumn& c)
 	{
 		json_t* jc = json_object();
-		json_object_set_new(jc, PATCH_KEY_COLUMN_INDEX, json_integer(c.id));
+		json_object_set_new(jc, PATCH_KEY_COLUMN_ID, json_integer(c.id));
 		json_object_set_new(jc, PATCH_KEY_COLUMN_WIDTH, json_integer(c.w()));
 
 		json_t* jchans = json_array();
