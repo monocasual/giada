@@ -19,6 +19,7 @@
 - Fixed freeze when cloning a Sample Channel with a sample in it
 - Fixed buffer overflow when playing an edited sample
 - Creates default empty columns on 'Reset to initial state'
+- Save relative Wave paths in project files
 
 
 0.16.0 beta-1 --- 2019 . 10 . 19

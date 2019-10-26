@@ -196,7 +196,7 @@ void loadPatch(void* data)
 
 	m::init::reset();
 
-	if (m::patch::read(fileToLoad) != G_PATCH_OK) {
+	if (m::patch::read(fileToLoad, basePath) != G_PATCH_OK) {
 		v::gdAlert("This patch is unreadable.");
 		m::mixer::enable();
 		return;

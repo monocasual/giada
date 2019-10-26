@@ -228,7 +228,7 @@ void readPlugins_(json_t* j)
 /* -------------------------------------------------------------------------- */
 
 
-void readWaves_(json_t* j)
+void readWaves_(json_t* j, const std::string& basePath)
 {
 	namespace uj = u::json;
 
@@ -244,8 +244,8 @@ void readWaves_(json_t* j)
 			continue;
 
 		Wave w;
-		w.id   = uj::readInt   (jw, PATCH_KEY_WAVE_ID);
-		w.path = uj::readString(jw, PATCH_KEY_WAVE_PATH);
+		w.id   = uj::readInt(jw, PATCH_KEY_WAVE_ID);
+		w.path = basePath + uj::readString(jw, PATCH_KEY_WAVE_PATH);
 
 		model::waves.push(std::move(waveManager::createFromPatch(w)));
 	}
@@ -487,16 +487,19 @@ void writeActions_(json_t* j)
 /* -------------------------------------------------------------------------- */
 
 
-void writeWaves_(json_t* j)
+void writeWaves_(json_t* j, bool isProject)
 {
 	model::WavesLock l(model::waves);
 
 	json_t* jws = json_array();
 
 	for (const m::Wave* w : model::waves) {
+	
+		std::string path = isProject ? gu_basename(w->getPath()) : w->getPath();
+
 		json_t* jw = json_object();
 		json_object_set_new(jw, PATCH_KEY_WAVE_ID,   json_integer(w->id));
-		json_object_set_new(jw, PATCH_KEY_WAVE_PATH, json_string(w->getPath().c_str()));
+		json_object_set_new(jw, PATCH_KEY_WAVE_PATH, json_string(path.c_str()));
 		json_array_append_new(jws, jw);
 	}
 	json_object_set_new(j, PATCH_KEY_WAVES, jws);
@@ -528,7 +531,7 @@ void writeCommons_(json_t* j, const std::string& name)
 /* -------------------------------------------------------------------------- */
 
 
-void writeChannels_(json_t* j, bool project)
+void writeChannels_(json_t* j)
 {
 	model::ChannelsLock l(model::channels);
 
@@ -576,10 +579,6 @@ void writeChannels_(json_t* j, bool project)
 
 		if (c->type == ChannelType::SAMPLE) {
 			SampleChannel* sc = static_cast<SampleChannel*>(c);
-
-			std::string samplePath = sc->getSamplePath();
-			if (project)
-				samplePath = gu_basename(samplePath);
 
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_WAVE_ID,              json_integer(sc->waveId));
 			json_object_set_new(jc, PATCH_KEY_CHANNEL_MODE,                 json_integer(static_cast<int>(sc->mode)));
@@ -680,9 +679,9 @@ bool write(const std::string& name, const std::string& file, bool isProject)
 
 	writeCommons_(j, name);
 	writeColumns_(j);
-	writeChannels_(j, isProject);
+	writeChannels_(j);
 	writeActions_(j);
-	writeWaves_(j);
+	writeWaves_(j, isProject);
 #ifdef WITH_VST
 	writePlugins_(j);
 #endif
@@ -698,7 +697,7 @@ bool write(const std::string& name, const std::string& file, bool isProject)
 /* -------------------------------------------------------------------------- */
 
 
-int read(const std::string& file)
+int read(const std::string& file, const std::string& basePath)
 {
 	namespace uj = u::json;
 
@@ -711,7 +710,7 @@ int read(const std::string& file)
 #ifdef WITH_VST
 	readPlugins_(j);
 #endif
-	readWaves_(j);
+	readWaves_(j, basePath);
 	readActions_(j);
 	readChannels_(j);
 

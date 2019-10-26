@@ -145,9 +145,9 @@ int verify(const std::string& file);
 
 /* read
 Reads patch from file. Always call verify() first in order to see if the patch
-format is valid. */
+format is valid. It takes 'basePath' as parameter for Wave reading.*/
 
-int read(const std::string& file);
+int read(const std::string& file, const std::string& basePath);
 
 /* write
 Writes patch to file. */
