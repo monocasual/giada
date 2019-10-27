@@ -44,6 +44,7 @@ class Plugin
 {
 public:
 
+	Plugin(ID id);
 	Plugin(ID id, juce::AudioPluginInstance* p, double samplerate, int buffersize);
 	Plugin(const Plugin& o);
 	~Plugin();
@@ -52,6 +53,11 @@ public:
 	Returns a string-based UID. */
 
 	std::string getUniqueId() const;
+
+	/* isValid
+	A missing plug-in is loaded aynway, yet marked as 'invalid'. */
+	
+	bool isValid() const { return m_valid; }
 
 	std::string getName() const;
 	bool hasEditor() const;
@@ -118,6 +124,8 @@ private:
 	juce::AudioBuffer<float>   m_buffer;
 
 	std::atomic<bool> m_bypass;
+
+	bool m_valid;
 };
 }} // giada::m::
 

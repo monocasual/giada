@@ -81,7 +81,7 @@ void processPlugins_(const std::vector<ID>& pluginIds, juce::MidiBuffer& events)
 
 	for (ID id : pluginIds) {
 		Plugin& p = model::get(model::plugins, id);
-		if (p.isSuspended() || p.isBypassed())
+		if (!p.isValid() || p.isSuspended() || p.isBypassed())
 			continue;
 		p.process(audioBuffer_, events);
 		events.clear();

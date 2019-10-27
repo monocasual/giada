@@ -42,14 +42,24 @@ using std::string;
 namespace giada {
 namespace m 
 {
+Plugin::Plugin(ID id)
+: id      (id),
+  m_plugin(nullptr),
+  m_valid (false)
+{
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
 : id      (id),
   m_plugin(plugin),
-  m_bypass(false)
+  m_bypass(false),
+  m_valid (true)
 {
-	using namespace juce;
-	
 	/* Init midiInParams. All values are empty (0x0): they will be filled during
 	midi learning process. */
 
@@ -78,7 +88,8 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 Plugin::Plugin(const Plugin& o)
 : id          (o.id),
   m_plugin    (o.m_plugin),
-  m_bypass    (o.m_bypass.load())
+  m_bypass    (o.m_bypass.load()),
+  m_valid     (true)
 {
 	for (const std::atomic<uint32_t>& p : o.midiInParams)
 		midiInParams.emplace_back(p.load());
@@ -90,6 +101,8 @@ Plugin::Plugin(const Plugin& o)
 
 Plugin::~Plugin()
 {
+	if (!m_valid)
+		return;
 	m_plugin->suspendProcessing(true);
 	m_plugin->releaseResources();
 }

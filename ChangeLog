@@ -18,7 +18,8 @@
 - Fixed wave size corruption while editing samples in Sample Editor
 - Fixed freeze when cloning a Sample Channel with a sample in it
 - Fixed buffer overflow when playing an edited sample
-- Creates default empty columns on 'Reset to initial state'
+- Fixed crash when loading a project with missing plug-ins
+- Create default empty columns on 'Reset to initial state'
 - Save relative Wave paths in project files
 
 

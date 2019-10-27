@@ -198,14 +198,17 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 	const juce::PluginDescription* pd = findPluginDescription_(fid);
 	if (pd == nullptr) {
 		gu_log("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
-		return nullptr;
+		missingPlugins_ = true;
+		unknownPluginList_.push_back(fid);
+		return std::make_unique<Plugin>(pluginId_.get(id)); // Invalid plug-in
 	}
 
 	juce::AudioPluginInstance* pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
-	if (!pi) {
+	if (pi == nullptr) {
 		gu_log("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
 		missingPlugins_ = true;
-		return nullptr;
+		unknownPluginList_.push_back(fid);
+		return std::make_unique<Plugin>(pluginId_.get(id)); // Invalid plug-in
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
@@ -253,8 +256,8 @@ std::unique_ptr<Plugin> makePlugin(const Plugin& src)
 std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p)
 {
 	std::unique_ptr<Plugin> plugin = makePlugin(p.path, p.id);
-	if (plugin == nullptr)
-		return nullptr;
+	if (!plugin->isValid())
+		return plugin; // Return invalid version
 	
 	/* Fill plug-in parameters. */
 
