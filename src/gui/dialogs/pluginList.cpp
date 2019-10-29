@@ -110,12 +110,16 @@ void gdPluginList::rebuild()
 	list->clear();
 	list->scroll_to(0, 0);
 
-	m::model::ChannelsLock l(m::model::channels);
+	m::model::ChannelsLock cl(m::model::channels);
+	m::model::PluginsLock  pl(m::model::plugins);
 
 	const m::Channel& ch = m::model::get(m::model::channels, m_channelId);
 
-	for (ID pluginId : ch.pluginIds)
+	for (ID pluginId : ch.pluginIds) {
+		if (!m::model::get(m::model::plugins, pluginId).isValid())
+			continue;
 		list->addWidget(new gePluginElement(pluginId, m_channelId, 0, 0, 0));
+	}
 	addPlugin = list->addWidget(new geButton(0, 0, 0, G_GUI_UNIT, "-- add new plugin --"));
 	
 	addPlugin->callback(cb_addPlugin, (void*)this);

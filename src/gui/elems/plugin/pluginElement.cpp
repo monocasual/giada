@@ -70,11 +70,6 @@ gePluginElement::gePluginElement(ID pluginId, ID channelId, int X, int Y, int W)
 
 	const m::Plugin& p = m::model::get(m::model::plugins, m_pluginId);
 
-	if (!p.isValid()) {
-		button->label("*** missing ***");
-		return;
-	}
-
 	button->copy_label(p.getName().c_str());
 	button->callback(cb_openPluginWindow, (void*)this);
 
