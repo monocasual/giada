@@ -100,7 +100,10 @@ void debug()
 
 	i = 0;
 	for (const Plugin* p : plugins) {
-		printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
+		if (p->isValid())
+			printf("    %d) %p - ID=%d name='%s'\n", i++, (void*)p, p->id, p->getName().c_str());
+		else
+			printf("    %d) %p - ID=%d INVALID\n", i++, (void*)p, p->id); 
 	}
 #endif
 
