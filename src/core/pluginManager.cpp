@@ -195,6 +195,11 @@ int loadList(const std::string& filepath)
 
 std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 {
+	/* Plug-in ID generator is updated anyway, as we store Plugin objects also
+	if they are in an invalid state. */
+	
+	pluginId_.set(id);
+
 	const juce::PluginDescription* pd = findPluginDescription_(fid);
 	if (pd == nullptr) {
 		gu_log("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
@@ -211,8 +216,6 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 		return std::make_unique<Plugin>(pluginId_.get(id)); // Invalid plug-in
 	}
 	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
-
-	pluginId_.set(id);
 
 	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
 }
