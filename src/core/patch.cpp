@@ -403,6 +403,12 @@ void writePlugins_(json_t* j)
 	json_t* jps = json_array();
 
 	for (const m::Plugin* p : model::plugins) {
+		
+		/* Brutally discard invalid plugins. TODO - might be wiser to save them
+		anyway so that they can be restored later on... */
+		
+		if (!p->isValid())
+			continue;
 
 		/* Plugin. */
 
