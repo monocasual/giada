@@ -70,6 +70,16 @@ gePluginElement::gePluginElement(ID pluginId, ID channelId, int X, int Y, int W)
 
 	const m::Plugin& p = m::model::get(m::model::plugins, m_pluginId);
 
+	remove->callback(cb_removePlugin, (void*)this);
+
+	if (!p.valid) {
+		button->copy_label(p.getUniqueId().c_str());
+		button->deactivate();
+		bypass->deactivate();
+		shiftUp->deactivate();
+		shiftDown->deactivate();
+		return;
+	}
 	button->copy_label(p.getName().c_str());
 	button->callback(cb_openPluginWindow, (void*)this);
 
@@ -91,7 +101,6 @@ gePluginElement::gePluginElement(ID pluginId, ID channelId, int X, int Y, int W)
 
 	shiftUp->callback(cb_shiftUp, (void*)this);
 	shiftDown->callback(cb_shiftDown, (void*)this);
-	remove->callback(cb_removePlugin, (void*)this);
 }
 
 

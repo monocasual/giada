@@ -44,7 +44,7 @@ class Plugin
 {
 public:
 
-	Plugin(ID id);
+	Plugin(ID id, const std::string& UID);
 	Plugin(ID id, juce::AudioPluginInstance* p, double samplerate, int buffersize);
 	Plugin(const Plugin& o);
 	~Plugin();
@@ -53,12 +53,6 @@ public:
 	Returns a string-based UID. */
 
 	std::string getUniqueId() const;
-
-	/* isValid
-	A missing plug-in is loaded aynway, yet marked as 'invalid'. */
-	
-	bool isValid() const { return m_valid; }
-
 	std::string getName() const;
 	bool hasEditor() const;
 	int getNumParameters() const;
@@ -99,6 +93,11 @@ public:
 	copy-assignable: such type won't suit a std::vector. */
 
 	std::deque<std::atomic<uint32_t>> midiInParams;
+	
+	/* valid
+	A missing plug-in is loaded anyway, yet marked as 'invalid'. */
+
+	bool valid;
 
 private:
 
@@ -125,7 +124,10 @@ private:
 
 	std::atomic<bool> m_bypass;
 
-	bool m_valid;
+	/* UID
+	The original UID, used for missing plugins. */
+
+	std::string m_UID;
 };
 }} // giada::m::
 

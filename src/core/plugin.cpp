@@ -42,10 +42,11 @@ using std::string;
 namespace giada {
 namespace m 
 {
-Plugin::Plugin(ID id)
+Plugin::Plugin(ID id, const std::string& UID)
 : id      (id),
+  valid   (false),
   m_plugin(nullptr),
-  m_valid (false)
+  m_UID   (UID)
 {
 }
 
@@ -56,9 +57,9 @@ Plugin::Plugin(ID id)
 Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
 : id      (id),
+  valid   (true),
   m_plugin(plugin),
-  m_bypass(false),
-  m_valid (true)
+  m_bypass(false)
 {
 	/* Init midiInParams. All values are empty (0x0): they will be filled during
 	midi learning process. */
@@ -86,10 +87,10 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 
 
 Plugin::Plugin(const Plugin& o)
-: id          (o.id),
-  m_plugin    (o.m_plugin),
-  m_bypass    (o.m_bypass.load()),
-  m_valid     (true)
+: id      (o.id),
+  valid   (true),
+  m_plugin(o.m_plugin),
+  m_bypass(o.m_bypass.load())
 {
 	for (const std::atomic<uint32_t>& p : o.midiInParams)
 		midiInParams.emplace_back(p.load());
@@ -101,7 +102,7 @@ Plugin::Plugin(const Plugin& o)
 
 Plugin::~Plugin()
 {
-	if (!m_valid)
+	if (!valid)
 		return;
 	m_plugin->suspendProcessing(true);
 	m_plugin->releaseResources();
@@ -143,6 +144,8 @@ juce::AudioProcessorEditor* Plugin::createEditor() const
 
 string Plugin::getUniqueId() const
 {
+	if (!valid)
+		return m_UID;
 	return m_plugin->getPluginDescription().createIdentifierString().toStdString();
 }
 
@@ -152,7 +155,7 @@ string Plugin::getUniqueId() const
 
 int Plugin::getNumParameters() const
 {
-	return m_plugin->getParameters().size();
+	return valid ? m_plugin->getParameters().size() : 0;
 }
 
 

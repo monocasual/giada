@@ -19,6 +19,7 @@
 - Fixed freeze when cloning a Sample Channel with a sample in it
 - Fixed buffer overflow when playing an edited sample
 - Fixed crash when loading a project with missing plug-ins
+- Show missing (and removable) plug-ins in Plug-in Window list
 - Create default empty columns on 'Reset to initial state'
 - Save relative Wave paths in project files
 
