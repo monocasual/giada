@@ -86,7 +86,7 @@ void gePluginBrowser::refresh()
 		m::pluginManager::PluginInfo pi = m::pluginManager::getAvailablePluginInfo(i);
 		std::string m = m::pluginManager::doesPluginExist(pi.uid) ? "" : "@-";
 		std::string s = m + pi.name + "\t" + m + pi.manufacturerName + "\t" + m +
-				pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
+			pi.category +	"\t" + m + pi.format + "\t" + m + pi.uid;
 		add(s.c_str());
 	}
 

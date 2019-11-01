@@ -32,10 +32,11 @@
 #include "utils/log.h"
 #include "utils/fs.h"
 #include "utils/string.h"
-#include "const.h"
-#include "idManager.h"
-#include "patch.h"
-#include "plugin.h"
+#include "core/const.h"
+#include "core/idManager.h"
+#include "core/patch.h"
+#include "core/conf.h"
+#include "core/plugin.h"
 #include "pluginManager.h"
 
 
@@ -131,6 +132,7 @@ void init(int samplerate, int buffersize)
 	missingPlugins_ = false;
 	unknownPluginList_.clear();
 	loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	sortPlugins(static_cast<pluginManager::SortMethod>(conf::pluginSortMethod));
 }
 
 
@@ -364,7 +366,6 @@ void sortPlugins(SortMethod method)
 			break;
 	}
 }
-
 }}}; // giada::m::pluginManager::
 
 

@@ -105,7 +105,6 @@ void initAudio_()
 #ifdef WITH_VST
 
 	pluginManager::init(conf::samplerate, kernelAudio::getRealBufSize());
-	pluginManager::sortPlugins(static_cast<pluginManager::SortMethod>(conf::pluginSortMethod));
 	pluginHost::init(kernelAudio::getRealBufSize());
 
 #endif
