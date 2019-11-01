@@ -311,15 +311,14 @@ void reload(ID channelId, ID waveId)
 	if (channel::loadChannel(channelId, wavePath) != G_RES_OK)
 		return;
 
+	ID newWaveId;
 	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
 	{
 		m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
-		sc.setPitch(G_DEFAULT_PITCH);
-		sc.setPan(0.5f);
-		sc.setBegin(0);
-		sc.setEnd(waveSize);
+		newWaveId = sc.waveId;
 	});
 
+	getSampleEditorWindow()->setWaveId(newWaveId);
 	getSampleEditorWindow()->rebuild();
 }
 

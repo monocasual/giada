@@ -70,6 +70,7 @@ public:
 	void refresh() override;
 
 	void updateInfo(const m::Wave& w);
+	void setWaveId(ID id);
 
 	geChoice* grid;
 	geCheck*  snap;

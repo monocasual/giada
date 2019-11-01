@@ -371,4 +371,15 @@ void gdSampleEditor::updateInfo(const m::Wave& w)
 
 	info->copy_label(infoText.c_str());
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void gdSampleEditor::setWaveId(ID id)
+{
+	m_waveId = id;
+	waveTools->waveId = id;
+	waveTools->waveform->setWaveId(id);
+}
 }} // giada::v::
