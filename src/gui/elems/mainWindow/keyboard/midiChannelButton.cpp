@@ -66,8 +66,6 @@ void geMidiChannelButton::refresh()
 	{
 		if (m::recManager::isRecordingAction() && c.armed)
 			setActionRecordMode();
-		else
-			setDefaultMode();
 	});
 	
 	redraw();
