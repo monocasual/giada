@@ -432,7 +432,7 @@ void updateSoloCount()
 
 void setInVol(float v)
 {
-	model::onSwap(model::channels, mixer::MASTER_IN_CHANNEL_ID, [&](Channel& c)
+	model::onGet(model::channels, mixer::MASTER_IN_CHANNEL_ID, [&](Channel& c)
 	{
 		c.volume = v;
 	});
@@ -441,7 +441,7 @@ void setInVol(float v)
 
 void setOutVol(float v)
 {
-	model::onSwap(model::channels, mixer::MASTER_OUT_CHANNEL_ID, [&](Channel& c)
+	model::onGet(model::channels, mixer::MASTER_OUT_CHANNEL_ID, [&](Channel& c)
 	{
 		c.volume = v;
 	});

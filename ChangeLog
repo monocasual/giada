@@ -12,16 +12,17 @@
 
 
 0.16.0 beta-2 ---
-- Removed all pthread.h leftovers 
-- Fixed Windows build
-- Fixed memory corruption on Keyboard refresh
-- Fixed wave size corruption while editing samples in Sample Editor
-- Fixed freeze when cloning a Sample Channel with a sample in it
-- Fixed buffer overflow when playing an edited sample
-- Fixed crash when loading a project with missing plug-ins
-- Fixed freeze when pressing 'play' during an audio recording session
-- Fixed play/ending UI status of MIDI channels
-- Fixed plug-in sorting on reload
+- Remove all pthread.h leftovers 
+- Fix Windows build
+- Fix memory corruption on Keyboard refresh
+- Fix wave size corruption while editing samples in Sample Editor
+- Fix freeze when cloning a Sample Channel with a sample in it
+- Fix buffer overflow when playing an edited sample
+- Fix crash when loading a project with missing plug-ins
+- Fix freeze when pressing 'play' during an audio recording session
+- Fix play/ending UI status of MIDI channels
+- Fix plug-in sorting on reload
+- Optimize model updates on keyboard interaction
 - Show missing (and removable) plug-ins in Plug-in Window list
 - Create default empty columns on 'Reset to initial state'
 - Save relative Wave paths in project files
