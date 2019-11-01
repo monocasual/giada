@@ -56,6 +56,8 @@ bool end_       = false;
 bool enter_     = false;
 bool space_     = false;
 bool esc_       = false;
+bool key_       = false;
+
 
 std::function<void()> signalCb_ = nullptr;
 
@@ -133,8 +135,11 @@ void dispatchKey(int event)
 			esc_ = true;
 			m::init::closeMainWindow();
 		}
-		else
+		else if (!key_) {
+			key_ = true;
 			triggerSignalCb_();
+			dispatchChannels_(event);
+		}
 	}
 	else if (event == FL_KEYUP) {
 		if (Fl::event_key() == FL_BackSpace)
@@ -147,9 +152,11 @@ void dispatchKey(int event)
 			enter_ = false;
 		else if (Fl::event_key() == FL_Escape)
 			esc_ = false;
+		else {
+			key_ = false;
+			dispatchChannels_(event);
+		}
 	}
-
-	dispatchChannels_(event);
 }
 
 
