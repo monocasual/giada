@@ -383,9 +383,13 @@ void stopSequencer()
 {
 	clock::setStatus(ClockStatus::STOPPED);
 
-	model::ChannelsLock l(model::channels);
+	/* Stop channels with explicit locks. The RAII version would trigger a
+	deadlock if recManager::stopInputRec() is called down below. */
+
+	model::channels.lock();
 	for (Channel* c : model::channels)
 		c->stopBySeq(conf::chansStopOnSeqHalt);
+	model::channels.unlock();
 
 #ifdef __linux__
 	kernelAudio::jackStop();
