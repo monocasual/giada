@@ -22,6 +22,8 @@
 - Fix freeze when pressing 'play' during an audio recording session
 - Fix play/ending UI status of MIDI channels
 - Fix plug-in sorting on reload
+- Fix crash when reloading a sample in the Sample Editor
+- Fix messy 'R' button status when toggled
 - Optimize model updates on keyboard interaction
 - Show missing (and removable) plug-ins in Plug-in Window list
 - Create default empty columns on 'Reset to initial state'
