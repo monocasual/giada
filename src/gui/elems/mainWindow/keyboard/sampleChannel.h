@@ -56,7 +56,7 @@ public:
 	void changeSize(int h) override;
 
 	geChannelMode* modeBox;
-	geButton*      readActions;
+	geStatusButton*      readActions;
 
 private:
 

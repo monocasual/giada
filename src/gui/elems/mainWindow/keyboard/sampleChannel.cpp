@@ -225,7 +225,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 	arm         = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
 	status      = new geChannelStatus(0, 0, G_GUI_UNIT, H, channelId);
 	mainButton  = new geSampleChannelButton(0, 0, G_GUI_UNIT, H, channelId);
-	readActions = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", readActionOff_xpm, readActionOn_xpm);
+	readActions = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm);
 	modeBox     = new geChannelMode(0, 0, G_GUI_UNIT, G_GUI_UNIT, channelId);
 	mute        = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
 	solo        = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
@@ -268,8 +268,9 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 	mainButton->setKey(ch.key);
 	mainButton->callback(cb_openMenu, (void*)this);
 
-	readActions->type(FL_TOGGLE_BUTTON);
-	readActions->value(ch.readActions);
+	//readActions->type(FL_TOGGLE_BUTTON);
+	//readActions->value(ch.readActions);
+	readActions->setStatus(ch.readActions);
 	readActions->callback(cb_readActions, (void*)this);
 
 	vol->value(ch.volume);
@@ -292,7 +293,6 @@ void geSampleChannel::cb_readActions(Fl_Widget* v, void* p) { ((geSampleChannel*
 
 void geSampleChannel::cb_playButton()
 {
-puts("HERE");
 	v::dispatcher::dispatchTouch(this, playButton->value());
 }
 
@@ -400,8 +400,11 @@ void geSampleChannel::refresh()
 		if (c.hasData()) 
 			status->redraw();
 
-		if (c.hasActions)
+		if (c.hasActions) {
 			readActions->show();
+			readActions->setStatus(c.readActions);
+			readActions->redraw();
+		}
 		else 
 			readActions->hide();
 	});
