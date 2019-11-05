@@ -67,14 +67,19 @@ public:
 	void refresh();
 
 	/* addColumn
-	 * add a new column to the top of the stack. */
+	Adds a new column on the top of the stack. */
 
-	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH);
+	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
 	/* organizeColumns
-	 * reorganize columns layout by removing empty gaps. */
+	Reorganizes columns layout by removing empty gaps. */
 
 	void organizeColumns();
+
+	/* deleteAllColumns
+	Deletes all columns from the stack. */
+
+	void deleteAllColumns();
 
 	/* getChannel
 	Given a channel ID returns the UI channel it belongs to. */
@@ -82,7 +87,7 @@ public:
 	geChannel* getChannel(ID channelId);
 
 	/* init
-	Builds the initial setup of empty channels. */
+	Builds the default setup of empty columns. */
 
 	void init();
 

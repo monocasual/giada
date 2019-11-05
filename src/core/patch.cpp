@@ -77,58 +77,7 @@ void sanitize_(Channel& c)
 	c.pan         = um::bound(c.pan, 0.0f, 1.0f);
 	c.pitch       = um::bound(c.pitch, 0.1f, G_MAX_PITCH);
 	c.midiOutChan = um::bound(c.midiOutChan, 0, G_MAX_MIDI_CHANS - 1);
-	
-#if 0
-	namespace um = u::math;
-
-	bpm          = um::bound(bpm, G_MIN_BPM, G_MAX_BPM, G_DEFAULT_BPM);
-	bars         = um::bound(bars, 1, G_MAX_BARS, G_DEFAULT_BARS);
-	beats        = um::bound(beats, 1, G_MAX_BEATS, G_DEFAULT_BEATS);
-	quantize     = um::bound(quantize, 0, G_MAX_QUANTIZE, G_DEFAULT_QUANTIZE);
-	masterVolIn  = um::bound(masterVolIn, 0.0f, 1.0f, G_DEFAULT_VOL);
-	masterVolOut = um::bound(masterVolOut, 0.0f, 1.0f, G_DEFAULT_VOL);
-
-#endif
 }
-
-/*
-void sanitize_(Column& c)
-{
-	namespace um = u::math;
-	c.index = um::bound(c.index, 0, col.index);
-	c.width = um::bound(c.width, G_MIN_COLUMN_WIDTH, c.width);
-}
-*/
-
-/* -------------------------------------------------------------------------- */
-
-
-/* modernize
-Makes sure an older patch is compatible with the current version. */
-
-#if 0
-void modernize()
-{
-	/* Starting from 0.15.0 actions are recorded on frames, not samples. */
-	if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 0)) {
-		for (channel_t& ch : channels)
-			for (action_t& a : ch.actions)
-				a.frame /= 2;
-	}
-
-	/* Starting from 0.15.1 Channel Modes have different values. */
-	if (u::ver::isLess(versionMajor, versionMinor, versionPatch, 0, 15, 1)) {
-		for (channel_t& ch : channels) {
-			if      (ch.mode == 0x04) ch.mode = static_cast<int>(ChannelMode::SINGLE_BASIC);
-			else if (ch.mode == 0x08) ch.mode = static_cast<int>(ChannelMode::SINGLE_PRESS);
-			else if (ch.mode == 0x10) ch.mode = static_cast<int>(ChannelMode::SINGLE_RETRIG);
-			else if (ch.mode == 0x20) ch.mode = static_cast<int>(ChannelMode::LOOP_REPEAT);
-			else if (ch.mode == 0x40) ch.mode = static_cast<int>(ChannelMode::SINGLE_ENDLESS);
-			else if (ch.mode == 0x80) ch.mode = static_cast<int>(ChannelMode::LOOP_ONCE_BAR);
-		}
-	}
-}
-#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -146,11 +95,6 @@ void readCommons_(json_t* j)
 	clock::setBpm     (uj::readFloat(j, PATCH_KEY_BPM));
 	clock::setBeats   (uj::readInt(j, PATCH_KEY_BEATS), uj::readInt(j, PATCH_KEY_BARS));
 	clock::setQuantize(uj::readInt(j, PATCH_KEY_QUANTIZE));
-
-	/*
-	model::onSwap(model::mixer, [&](model::Mixer& m)
-	{
-	});*/
 }
 
 
@@ -159,7 +103,21 @@ void readCommons_(json_t* j)
 
 void readColumns_(json_t* j)
 {
+	namespace uj = u::json;
 
+	json_t* jcs = json_object_get(j, PATCH_KEY_COLUMNS);
+	if (jcs == nullptr)
+		return;
+	
+	G_MainWin->keyboard->deleteAllColumns();
+
+	size_t  i;
+	json_t* jc;
+	json_array_foreach(jcs, i, jc) {
+		G_MainWin->keyboard->addColumn(
+			uj::readInt(jc, PATCH_KEY_COLUMN_WIDTH),
+			uj::readInt(jc, PATCH_KEY_COLUMN_ID));
+	};
 }
 
 
@@ -707,6 +665,7 @@ int read(const std::string& file, const std::string& basePath)
 	
 	init();
 	readCommons_(j);
+	readColumns_(j);
 #ifdef WITH_VST
 	readPlugins_(j);
 #endif

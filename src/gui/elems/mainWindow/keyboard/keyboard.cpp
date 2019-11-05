@@ -73,12 +73,9 @@ geKeyboard::geKeyboard(int X, int Y, int W, int H)
 
 void geKeyboard::init()
 {
-	Fl_Scroll::clear();
-	m_columns.clear();
 	m_columnId = m::IdManager();
-	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
-	m_addColumnBtn->callback(cb_addColumn, (void*) this);
-	add(m_addColumnBtn);
+
+	deleteAllColumns();
 
 	/* Add 6 empty columns as initial layout. */
 
@@ -153,6 +150,20 @@ void geKeyboard::organizeColumns()
 	refreshColIndexes();
 	redraw();
 #endif
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geKeyboard::deleteAllColumns()
+{
+	Fl_Scroll::clear();
+	m_columns.clear();
+
+	m_addColumnBtn = new geButton(8, y(), 200, 20, "Add new column");
+	m_addColumnBtn->callback(cb_addColumn, (void*) this);
+	add(m_addColumnBtn);
 }
 
 
@@ -268,9 +279,9 @@ geColumn* geKeyboard::cb_addColumn(int width, ID id)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::addColumn(int width)
+void geKeyboard::addColumn(int width, ID id)
 {
-	cb_addColumn(width);
+	cb_addColumn(width, id);
 }
 
 
