@@ -49,15 +49,15 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 {
 	computeWidth();
 
-	Fl_Group* upperArea = new Fl_Group(8, 8, w()-16, 20);
+	Fl_Group* upperArea = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w()-16, G_GUI_UNIT);
 
 	upperArea->begin();
 
-		gridTool = new geGridTool(8, 8);
+		gridTool = new geGridTool(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN);
 
-		geBox *b1  = new geBox(gridTool->x()+gridTool->w()+4, 8, 300, 20);    // padding actionType - zoomButtons
-		zoomInBtn  = new geButton(w()-8-40-4, 8, 20, 20, "", zoomInOff_xpm, zoomInOn_xpm);
-		zoomOutBtn = new geButton(w()-8-20,   8, 20, 20, "", zoomOutOff_xpm, zoomOutOn_xpm);
+		geBox *b1  = new geBox(gridTool->x()+gridTool->w()+4, 8, 300, G_GUI_UNIT);    // padding actionType - zoomButtons
+		zoomInBtn  = new geButton(w()-8-40-4, G_GUI_OUTER_MARGIN, G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
+		zoomOutBtn = new geButton(w()-8-20,   G_GUI_OUTER_MARGIN, G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
 	
 	upperArea->end();
 	upperArea->resizable(b1);
@@ -67,7 +67,7 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 
 	/* Main viewport: contains all widgets. */
 
-	viewport = new geScroll(8, 36, w()-16, h()-44);
+	viewport = new geScroll(G_GUI_OUTER_MARGIN, upperArea->y()+upperArea->h()+G_GUI_OUTER_MARGIN, w()-16, h()-44);
 
 	m_ne  = new geNoteEditor(viewport->x(), viewport->y(), this);
 	m_ner = new geResizerBar(m_ne->x(), m_ne->y()+m_ne->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);

@@ -60,7 +60,7 @@ geMainIO::geMainIO(int x, int y)
 	masterFxIn  = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
 	inVol       = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	inMeter     = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
-	inToOut     = new geButton      (0, 0, 15, G_GUI_UNIT, "", inputToOutputOff_xpm, inputToOutputOn_xpm);
+	inToOut     = new geButton      (0, 0, 12, G_GUI_UNIT, "");
 	outMeter    = new geSoundMeter  (0, 0, 140, G_GUI_UNIT);
 	outVol      = new geDial        (0, 0, G_GUI_UNIT, G_GUI_UNIT);
 	masterFxOut = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);

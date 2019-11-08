@@ -42,14 +42,6 @@ namespace v
 {
 class geGridTool : public Fl_Group
 {
-private:
-
-  geChoice* gridType;
-	geCheck*  active;
-
-	static void cb_changeType(Fl_Widget* w, void* p);
-	inline void cb_changeType();
-
 public:
 
 	geGridTool(Pixel x, Pixel y);
@@ -65,6 +57,13 @@ public:
 
 	Frame getCellSize() const;
 
+private:
+
+  	geChoice* gridType;
+	geCheck*  active;
+
+	static void cb_changeType(Fl_Widget* w, void* p);
+	void cb_changeType();
 };
 }} // giada::v::
 

@@ -45,17 +45,17 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	Fl_Group* radioGrp_1 = new Fl_Group(x(), y()+10, w(), 70); // radio group for the mutex
 		new geBox(x(), y()+10, 70, 25, "When a channel with recorded actions is halted:", FL_ALIGN_LEFT);
 		recsStopOnChanHalt_1 = new geRadio(x()+25, y()+35, 280, 20, "stop it immediately");
-		recsStopOnChanHalt_0 = new geRadio(x()+25, y()+55, 280, 20, "play it until finished");
+		recsStopOnChanHalt_0 = new geRadio(x()+25, y()+60, 280, 20, "play it until finished");
 	radioGrp_1->end();
 
-	Fl_Group* radioGrp_2 = new Fl_Group(x(), y()+70, w(), 70); // radio group for the mutex
+	Fl_Group* radioGrp_2 = new Fl_Group(x(), radioGrp_1->y()+radioGrp_1->h(), w(), 70); // radio group for the mutex
 		new geBox(x(), y()+80, 70, 25, "When the sequencer is halted:", FL_ALIGN_LEFT);
 		chansStopOnSeqHalt_1 = new geRadio(x()+25, y()+105, 280, 20, "stop immediately all dynamic channels");
-		chansStopOnSeqHalt_0 = new geRadio(x()+25, y()+125, 280, 20, "play all dynamic channels until finished");
+		chansStopOnSeqHalt_0 = new geRadio(x()+25, y()+130, 280, 20, "play all dynamic channels until finished");
 	radioGrp_2->end();
 
-	treatRecsAsLoops = new geCheck(x(), y()+155, 280, 20, "Treat one shot channels with actions as loops");
-	inputMonitorDefaultOn = new geCheck(x(), y()+180, 280, 20, "New sample channels have input monitor on by default");
+	treatRecsAsLoops      = new geCheck(x(), radioGrp_2->y()+radioGrp_2->h() + 15, 280, 20, "Treat one shot channels with actions as loops");
+	inputMonitorDefaultOn = new geCheck(x(), treatRecsAsLoops->y()+treatRecsAsLoops->h() + 5, 280, 20, "New sample channels have input monitor on by default");
 
 	end();
 
@@ -77,7 +77,10 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 /* -------------------------------------------------------------------------- */
 
 
-void geTabBehaviors::cb_radio_mutex(Fl_Widget* w, void* p) { ((geTabBehaviors*)p)->cb_radio_mutex(w); }
+void geTabBehaviors::cb_radio_mutex(Fl_Widget* w, void* p) 
+{ 
+	static_cast<geTabBehaviors*>(p)->cb_radio_mutex(w); 
+}
 
 
 /* -------------------------------------------------------------------------- */
@@ -85,7 +88,7 @@ void geTabBehaviors::cb_radio_mutex(Fl_Widget* w, void* p) { ((geTabBehaviors*)p
 
 void geTabBehaviors::cb_radio_mutex(Fl_Widget* w)
 {
-	((Fl_Button*)w)->type(FL_RADIO_BUTTON);
+	static_cast<Fl_Button*>(w)->type(FL_RADIO_BUTTON);
 }
 
 

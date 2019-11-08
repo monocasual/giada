@@ -59,7 +59,7 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 	upperArea->begin();
 
 	  actionType = new geChoice(8, 8, 80, 20);
-	  gridTool   = new geGridTool(actionType->x()+actionType->w()+4, 8);
+	  gridTool   = new geGridTool(actionType->x()+actionType->w()+8, 8);
 		actionType->add("Key press");
 		actionType->add("Key release");
 		actionType->add("Kill chan");

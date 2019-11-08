@@ -1,10 +1,10 @@
-/* ---------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
  *
  * Giada - Your Hardcore Loopmachine
  *
  * graphics
  *
- * ---------------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  *
  * Copyright (C) 2010-2019 Giovanni A. Zuliani | Monocasual
  *
@@ -24,10 +24,12 @@
  * along with Giada - Your Hardcore Loopmachine. If not, see
  * <http://www.gnu.org/licenses/>.
  *
- * ------------------------------------------------------------------ */
+ * -------------------------------------------------------------------------- */
+
 
 #ifndef G_GRAPHICS_H
 #define G_GRAPHICS_H
+
 
 extern const char* giada_logo_xpm[];
 
@@ -71,9 +73,6 @@ extern const char* recTriggerModeOn_xpm[];
 extern const char* inputRecOn_xpm[];
 extern const char* inputRecOff_xpm[];
 
-extern const char* inputToOutputOn_xpm[];
-extern const char* inputToOutputOff_xpm[];
-
 extern const char* divideOn_xpm[];
 extern const char* divideOff_xpm[];
 extern const char* multiplyOn_xpm[];
@@ -110,5 +109,6 @@ extern const char* vstLogo_xpm[];
 #endif
 
 extern const char* giada_icon[];
+
 
 #endif

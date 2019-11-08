@@ -52,7 +52,7 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 	gridType->value(0);
 	gridType->callback(cb_changeType, (void*)this);
 
-	active = new geCheck(gridType->x() + gridType->w() + 4, y+4, 12, 12);
+	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
 
 	gridType->value(m::conf::actionEditorGridVal);
 	active->value(m::conf::actionEditorGridOn);

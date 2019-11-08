@@ -36,9 +36,10 @@ class geRadio : public Fl_Radio_Button
 {
 public:
 
-  geRadio(int x, int y, int w, int h, const char *l=0);
+	geRadio(int x, int y, int w, int h, const char *l=0);
 
-  void draw();
+	void draw() override;
 };
+
 
 #endif

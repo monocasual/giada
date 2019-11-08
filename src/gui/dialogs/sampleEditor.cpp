@@ -159,7 +159,7 @@ Fl_Group* gdSampleEditor::createUpperBar()
 	Fl_Group* g = new Fl_Group(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w()-16, G_GUI_UNIT);
 	g->begin();
 		grid    = new geChoice(g->x(), g->y(), 50, G_GUI_UNIT);
-		snap    = new geCheck(grid->x()+grid->w()+4, g->y()+3, 12, 12, "Snap");
+		snap    = new geCheck(grid->x()+grid->w()+4, g->y(), 12, G_GUI_UNIT, "Snap");
 		sep1    = new geBox(snap->x()+snap->w()+4, g->y(), g->w() - 118, G_GUI_UNIT);
 		zoomOut = new geButton(sep1->x()+sep1->w()+4, g->y(), G_GUI_UNIT, G_GUI_UNIT, "", zoomOutOff_xpm, zoomOutOn_xpm);
 		zoomIn  = new geButton(zoomOut->x()+zoomOut->w()+4, g->y(), G_GUI_UNIT, G_GUI_UNIT, "", zoomInOff_xpm, zoomInOn_xpm);
@@ -225,8 +225,8 @@ Fl_Group* gdSampleEditor::createPreviewBox(int x, int y, int h)
 	Fl_Group* g = new Fl_Group(x, y, 110, h);
 	g->begin();
 		rewind = new geButton(g->x(), g->y()+(g->h()/2)-12, 25, 25, "", rewindOff_xpm, rewindOn_xpm);
-		play   = new geStatusButton(rewind->x()+rewind->w()+4, g->y()+(g->h()/2)-12, 25, 25, play_xpm, pause_xpm);
-		loop   = new geCheck(play->x()+play->w()+6, g->y()+(g->h()/2)-6, 12, 12, "Loop");
+		play   = new geStatusButton(rewind->x()+rewind->w()+4, rewind->y(), 25, 25, play_xpm, pause_xpm);
+		loop   = new geCheck(play->x()+play->w()+4, play->y(), 12, 25, "Loop");
 	g->end();
 
 	play->callback(cb_togglePreview, (void*)this);

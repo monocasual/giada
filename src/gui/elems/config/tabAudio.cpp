@@ -53,7 +53,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	sounddevOut     = new geChoice(x()+114, y()+65, 222, 20, "Output device");
 	devOutInfo      = new geButton(x()+344, y()+65, 20,  20, "?");
 	channelsOut     = new geChoice(x()+114, y()+93, 55,  20, "Output channels");
-	limitOutput     = new geCheck (x()+177, y()+97, 55,  20, "Limit output");
+	limitOutput     = new geCheck (x()+177, y()+93, 55,  20, "Limit output");
 	sounddevIn      = new geChoice(x()+114, y()+121, 222, 20, "Input device");
 	devInInfo       = new geButton(x()+344, y()+121, 20,  20, "?");
 	channelsIn      = new geChoice(x()+114, y()+149, 55,  20, "Input channels");
