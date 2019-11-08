@@ -24,7 +24,9 @@
 - Fix plug-in sorting on reload
 - Fix crash when reloading a sample in the Sample Editor
 - Fix messy 'R' button status when toggled
+- Fix missing icons and broken checkboxes
 - Optimize model updates on keyboard interaction
+- Always read Columns data from patch files
 - Show missing (and removable) plug-ins in Plug-in Window list
 - Create default empty columns on 'Reset to initial state'
 - Save relative Wave paths in project files
@@ -38,6 +40,7 @@
 - New internal engine<->UI architecture 
 - New persistence layer
 - New MIDI queue for incoming live MIDI messages
+- Switch to std::thread
 - Absolute #include paths in source code
 - Removed Boost parameter from Sample Channel 
 
