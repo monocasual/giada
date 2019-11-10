@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-0.16.0 beta-2 ---
+0.16.0 beta-2 --- 2019 . 11 . 11
 - Remove all pthread.h leftovers 
 - Fix Windows build
 - Fix memory corruption on Keyboard refresh
