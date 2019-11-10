@@ -108,6 +108,7 @@ bool savePatch_(const std::string& path, const std::string& name, bool isProject
 		return false;
 	u::gui::updateMainWinLabel(name);
 	m::conf::patchPath = isProject ? gu_getUpDir(gu_getUpDir(path)) : gu_dirname(path);
+	m::patch::name     = name;
 	gu_log("[savePatch] patch saved as %s\n", path.c_str());
 	return true;
 }
