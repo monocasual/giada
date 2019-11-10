@@ -417,9 +417,11 @@ int masterPlay(void* outBuf, void* inBuf, unsigned bufferSize,
 
 	processing_.store(true);
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
+
 	if (kernelAudio::getAPI() == G_SYS_API_JACK)
 		clock::recvJackSync();
+
 #endif
 
 	AudioBuffer out, in;

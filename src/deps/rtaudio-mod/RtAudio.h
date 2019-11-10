@@ -676,7 +676,7 @@ class RtApi
 public:
 
   /* --- Monocasual hack ---------------------------------------------------- */
-  #ifdef __linux__
+  #if defined(__linux__) || defined(__FreeBSD__)
   	void *__HACK__getJackClient();
   #endif
   /* ------------------------------------------------------------------------ */

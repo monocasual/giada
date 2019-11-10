@@ -49,7 +49,7 @@ bool     inputEnabled = false;
 unsigned realBufsize  = 0;     // Real buffer size from the soundcard
 int      api          = 0;
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 
 JackState jackState;
 
@@ -83,13 +83,21 @@ int openDevice()
 	api = conf::soundSystem;
 	gu_log("[KA] using system 0x%x\n", api);
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 
 	if (api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		rtSystem = new RtAudio(RtAudio::UNIX_JACK);
 	else
 	if (api == G_SYS_API_ALSA && hasAPI(RtAudio::LINUX_ALSA))
 		rtSystem = new RtAudio(RtAudio::LINUX_ALSA);
+	else
+	if (api == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
+		rtSystem = new RtAudio(RtAudio::LINUX_PULSE);
+
+#elif defined(__FreeBSD__)
+
+	if (api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
+		rtSystem = new RtAudio(RtAudio::UNIX_JACK);
 	else
 	if (api == G_SYS_API_PULSE && hasAPI(RtAudio::LINUX_PULSE))
 		rtSystem = new RtAudio(RtAudio::LINUX_PULSE);
@@ -157,7 +165,7 @@ int openDevice()
 
 	realBufsize = conf::buffersize;
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
 	if (api == G_SYS_API_JACK) {
 		conf::samplerate = getFreq(conf::soundDeviceOut, 0);
@@ -424,7 +432,7 @@ int getAPI() { return api; }
 /* -------------------------------------------------------------------------- */
 
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__FreeBSD__)
 
 
 const JackState &jackTransportQuery()
@@ -491,6 +499,6 @@ void jackStop()
 		jack_transport_stop(jackGetHandle());
 }
 
-#endif  // #ifdef __linux__
+#endif  // defined(__linux__) || defined(__FreeBSD__)
 
 }}}; // giada::m::kernelAudio

@@ -15,12 +15,15 @@ AM_INIT_AUTOMAKE([subdir-objects])
 # Usage: ./configure --target=[windows | linux | osx]
 
 if test "$target" = ""; then
-	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | osx>"])
+	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | freebsd | osx>"])
 fi
 
 case "$target" in
   linux)
     os=linux
+    ;;
+  freebsd)
+    os=freebsd
     ;;
   windows)
     os=windows
@@ -28,13 +31,18 @@ case "$target" in
   osx)
     os=osx
     ;;
+  freebsd)
+    os=freebsd
+    ;;
   *)
     AC_MSG_ERROR(["Unrecognised target OS: $target"])
     ;;
 esac
 AM_CONDITIONAL(LINUX,   test "x$os" = "xlinux")
+AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
 AM_CONDITIONAL(WINDOWS, test "x$os" = "xwindows")
 AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
+AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
 
 # ------------------------------------------------------------------------------
 
@@ -186,7 +194,7 @@ AC_LANG_POP
 
 # Check for linux header files.
 
-if test "x$os" = "xlinux"; then
+if test "x$os" = "xlinux" || test "x$os" = "xfreebsd"; then
 
 	AC_LANG_PUSH([C++])
 	AC_CHECK_HEADER(

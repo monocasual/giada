@@ -29,8 +29,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #if defined(_WIN32)
-	#include "ext/resource.h"
-#elif defined(__linux__)
+	#include "../ext/resource.h"
+#elif defined(__linux__) || defined(__FreeBSD__)
 	#include <X11/xpm.h>
 #endif
 #include "core/channels/channel.h"
@@ -173,7 +173,7 @@ void updateMainWinLabel(const std::string& s)
 
 void setFavicon(v::gdWindow* w)
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 
 	fl_open_display();
 	Pixmap p, mask;
