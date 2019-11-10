@@ -46,7 +46,6 @@ void update(void* p)
 		m::model::waves.changed.store(false);
 		m::model::actions.changed.store(false);
 		m::model::channels.changed.store(false);
-		puts("REBUILT");
 	}
 	else
 		u::gui::refresh();
