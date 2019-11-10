@@ -15,7 +15,7 @@ AM_INIT_AUTOMAKE([subdir-objects])
 # Usage: ./configure --target=[windows | linux | osx]
 
 if test "$target" = ""; then
-	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | osx>"])
+	AC_MSG_ERROR(["target OS not specified. Please run ./configure --target=<windows | linux | osx | freebsd>"])
 fi
 
 case "$target" in
@@ -28,6 +28,9 @@ case "$target" in
   osx)
     os=osx
     ;;
+  freebsd)
+    os=freebsd
+    ;;
   *)
     AC_MSG_ERROR(["Unrecognised target OS: $target"])
     ;;
@@ -35,6 +38,7 @@ esac
 AM_CONDITIONAL(LINUX,   test "x$os" = "xlinux")
 AM_CONDITIONAL(WINDOWS, test "x$os" = "xwindows")
 AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
+AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
 
 # ------------------------------------------------------------------------------
 

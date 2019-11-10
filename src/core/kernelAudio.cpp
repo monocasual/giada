@@ -83,7 +83,7 @@ int openDevice()
 	api = conf::soundSystem;
 	gu_log("[KA] using system 0x%x\n", api);
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 
 	if (api == G_SYS_API_JACK && hasAPI(RtAudio::UNIX_JACK))
 		rtSystem = new RtAudio(RtAudio::UNIX_JACK);

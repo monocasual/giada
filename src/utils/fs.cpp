@@ -92,7 +92,7 @@ bool gu_isDir(const string &path)
 {
 	bool ret;
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 
 	struct stat s1;
 	stat(path.c_str(), &s1);
@@ -145,7 +145,7 @@ bool gu_dirExists(const string &path)
 
 bool gu_mkdir(const string &path)
 {
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 	if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
 #else
 	if (_mkdir(path.c_str()) == 0)
@@ -257,7 +257,7 @@ string gu_getHomePath()
 {
 	char path[PATH_MAX];
 
-#if   defined(__linux__)
+#if   defined(__linux__) || defined(__FreeBSD__)
 
 	snprintf(path, PATH_MAX, "%s/.giada", getenv("HOME"));
 
