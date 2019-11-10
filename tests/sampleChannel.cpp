@@ -39,6 +39,9 @@ TEST_CASE("sampleChannel")
 
 	SECTION("begin/end")
 	{
+		/* TODO - This section requires model::waves interaction. Let's wait for 
+		the non-virtual channel refactoring... */
+		/*
 		ch.setBegin(-100);
 
 		REQUIRE(ch.getBegin() == 0);
@@ -72,6 +75,7 @@ TEST_CASE("sampleChannel")
 		ch.setBegin(64);
 
 		REQUIRE(ch.getBegin() == 31);
+		*/
 	}
 
 	SECTION("pitch")
