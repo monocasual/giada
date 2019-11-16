@@ -47,7 +47,7 @@ class geColumn : public Fl_Pack
 {
 public:
 
-	geColumn(int x, int y, int w, int h, ID id);
+	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
 
 	geChannel* getChannel(ID chanID) const;
 	
@@ -66,6 +66,8 @@ public:
 	void forEachChannel(std::function<void(geChannel* c)> f) const;
 	
 	ID id;
+
+	geResizerBar* resizerBar;
 
 private:
 

@@ -45,9 +45,10 @@
 namespace giada {
 namespace v
 {
-geColumn::geColumn(int X, int Y, int W, int H, ID id)
-: Fl_Pack(X, Y, W, H), 
-  id     (id)
+geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
+: Fl_Pack   (X, Y, W, H), 
+  id        (id),
+  resizerBar(b)
 {
 	end();
 

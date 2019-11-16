@@ -235,8 +235,10 @@ void geKeyboard::draw()
 		w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2), 
 		h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
 
-	for (const geColumn* c : m_columns)
+	for (const geColumn* c : m_columns) {
 		fl_rectf(c->x(), c->y() + c->h(), c->w(), h() + yposition());
+		c->resizerBar->size(c->resizerBar->x(), h());
+	}
 
 	fl_pop_clip();
 }
@@ -260,8 +262,8 @@ geColumn* geKeyboard::cb_addColumn(int width, ID id)
 
 	/* Add a new column + a new resizer bar. */
 
-	geColumn*     column = new geColumn(colx, y(), width, h(), m_columnId.get(id));
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
+	geColumn*     column = new geColumn(colx, y(), width, h(), m_columnId.get(id), bar);
 	add(column);
 	add(bar);
 	m_columns.push_back(column);
