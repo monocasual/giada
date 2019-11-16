@@ -108,16 +108,19 @@ void setSampleChannelKey(ID channelId, int k)
 
 void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, ID channelId)
 {
-	/* No MIDI learning if we are learning a Channel (channel != 0) and 
+	/* No MIDI learning if we are learning a Channel (channelId != 0) and 
 	the selected MIDI channel is filtered OR if we are learning a global 
 	parameter (channel == 0) and the selected MIDI channel is filtered. */
 
-	if (channelId == 0 && !m::conf::isMidiInAllowed(e.getChannel()))
-		return;
-
-	m::model::ChannelsLock l(m::model::channels);
-	if (!m::model::get(m::model::channels, channelId).isMidiInAllowed(e.getChannel()))
-		return;
+	if (channelId == 0) {
+		if (!m::conf::isMidiInAllowed(e.getChannel()))
+			return;
+	}
+	else {
+		m::model::ChannelsLock l(m::model::channels);
+		if (!m::model::get(m::model::channels, channelId).isMidiInAllowed(e.getChannel()))
+			return;
+	}
 
 	param.store(e.getRawNoVelocity());
 	m::midiDispatcher::stopMidiLearn();
