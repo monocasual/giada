@@ -288,7 +288,7 @@ void readChannels_(json_t* j)
 		c.volume = uj::readFloat(jc, PATCH_KEY_CHANNEL_VOLUME);
 		
 		if (c.type != ChannelType::MASTER) {
-			c.size              = uj::readInt   (jc, PATCH_KEY_CHANNEL_SIZE);
+			c.size              = G_GUI_CHANNEL_H_1; // TODO temporarily disabled - uj::readInt   (jc, PATCH_KEY_CHANNEL_SIZE);
 			c.name              = uj::readString(jc, PATCH_KEY_CHANNEL_NAME);
 			c.columnId          = uj::readInt   (jc, PATCH_KEY_CHANNEL_COLUMN);
 			c.key               = uj::readInt   (jc, PATCH_KEY_CHANNEL_KEY);

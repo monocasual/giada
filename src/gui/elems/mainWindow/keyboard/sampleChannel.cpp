@@ -86,12 +86,12 @@ enum class Menu
 	CLEAR_ACTIONS_VOLUME,
 	CLEAR_ACTIONS_START_STOP,
 	__END_CLEAR_ACTIONS_SUBMENU__,
-	RESIZE,
+	/*RESIZE,
 	RESIZE_H1,
 	RESIZE_H2,
 	RESIZE_H3,
 	RESIZE_H4,
-	__END_RESIZE_SUBMENU__,
+	__END_RESIZE_SUBMENU__,*/
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	FREE_CHANNEL,
@@ -159,9 +159,9 @@ void menuCallback(Fl_Widget* w, void* v)
 			break;
 		}
 		case Menu::CLEAR_ACTIONS:
-		case Menu::RESIZE:
 		case Menu::__END_CLEAR_ACTIONS_SUBMENU__:
-		case Menu::__END_RESIZE_SUBMENU__:
+		//case Menu::RESIZE:
+		//case Menu::__END_RESIZE_SUBMENU__:
 			break;
 		case Menu::CLEAR_ACTIONS_ALL: {
 			c::recorder::clearAllActions(gch->channelId);
@@ -175,7 +175,7 @@ void menuCallback(Fl_Widget* w, void* v)
 			c::recorder::clearStartStopActions(gch->channelId);
 			break;
 		}
-		case Menu::RESIZE_H1: {
+		/*case Menu::RESIZE_H1: {
 			gch->changeSize(G_GUI_CHANNEL_H_1);
 			break;
 		}		
@@ -190,7 +190,7 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::RESIZE_H4: {
 			gch->changeSize(G_GUI_CHANNEL_H_4);
 			break;
-		}
+		}*/
 		case Menu::CLONE_CHANNEL: {
 			c::channel::cloneChannel(gch->channelId);
 			break;
@@ -336,12 +336,12 @@ void geSampleChannel::cb_openMenu()
 			{"Volume",     0, menuCallback, (void*) Menu::CLEAR_ACTIONS_VOLUME},
 			{"Start/Stop", 0, menuCallback, (void*) Menu::CLEAR_ACTIONS_START_STOP},
 			{0},
-		{"Resize",    0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
+/*		{"Resize",    0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
 			{"Normal",  0, menuCallback, (void*) Menu::RESIZE_H1},
 			{"Medium",  0, menuCallback, (void*) Menu::RESIZE_H2},
 			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
 			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
-			{0},
+			{0},*/
 		{"Rename", 0, menuCallback, (void*) Menu::RENAME_CHANNEL},
 		{"Clone",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Free",   0, menuCallback, (void*) Menu::FREE_CHANNEL},
