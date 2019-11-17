@@ -44,6 +44,7 @@
 #include "core/pluginManager.h"
 #include "core/waveManager.h"
 #include "core/const.h"
+#include "core/kernelAudio.h"
 #include "core/clock.h"
 #include "core/types.h"
 #include "core/midiEvent.h"
@@ -344,7 +345,7 @@ void readChannels_(json_t* j)
 				model::onSwap(model::channels, mixer::MASTER_IN_CHANNEL_ID, [&](m::Channel& ch) { ch.load(c); });
 		}
 		else
-			model::channels.push(channelManager::create(c, conf::buffersize));
+			model::channels.push(channelManager::create(c, kernelAudio::getRealBufSize()));
 	}
 }
 
