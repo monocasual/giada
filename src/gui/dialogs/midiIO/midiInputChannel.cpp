@@ -59,7 +59,7 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId)
 	m::model::ChannelsLock l(m::model::channels);
 	const m::Channel& c = m::model::get(m::model::channels, m_channelId);
 
-	copy_label(std::string("MIDI Input Setup (m_channel " + std::to_string(c.id) + ")").c_str());
+	copy_label(std::string("MIDI Input Setup (channel " + std::to_string(c.id) + ")").c_str());
 	
 	int extra = c.type == ChannelType::SAMPLE ? 28 : 0;
 
@@ -151,7 +151,7 @@ void gdMidiInputChannel::addChannelLearners()
 	Fl_Pack* pack = new Fl_Pack(m_container->x(), m_container->y(), LEARNER_WIDTH, 200);
 	pack->spacing(G_GUI_INNER_MARGIN);
 	pack->begin();
-		geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, "m_channel");
+		geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, "Channel");
 		header->box(FL_BORDER_BOX);
 		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   c.midiInKeyPress, m_channelId));
 		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", c.midiInKeyRel,   m_channelId));
@@ -246,7 +246,7 @@ void gdMidiInputChannel::cb_setChannel()
 	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
 	{
 		c.midiInFilter = m_channel->value() == 0 ? -1 : m_channel->value() - 1;
-		gu_log("[gdMidiInputChannel] Set MIDI m_channel to %d\n", c.midiInFilter.load());
+		gu_log("[gdMidiInputChannel] Set MIDI channel to %d\n", c.midiInFilter.load());
 	});
 }
 }} // giada::v::

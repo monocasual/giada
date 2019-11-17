@@ -106,8 +106,8 @@ void processChannels_(const MidiEvent& midiEvent)
 
 	std::vector<std::function<void()>> actions;
 
-	m::model::channels.lock();
-	for (Channel* ch : m::model::channels) {
+	model::channels.lock();
+	for (Channel* ch : model::channels) {
 
 		/* Do nothing on this channel if MIDI in is disabled or filtered out for
 		the current MIDI channel. */
@@ -115,44 +115,44 @@ void processChannels_(const MidiEvent& midiEvent)
 		if (!ch->midiIn || !ch->isMidiInAllowed(midiEvent.getChannel()))
 			continue;
 
-		if      (pure == ch->midiInKeyPress) {
-			actions.push_back([&] {
+		if      (pure == ch->midiInKeyPress.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::io::keyPress(ch->id, false, false, midiEvent.getVelocity());
 			});
 		}
-		else if (pure == ch->midiInKeyRel) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInKeyRel.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> keyRel ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::io::keyRelease(ch->id, false, false);
 			});
 		}
-		else if (pure == ch->midiInMute) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInMute.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> mute ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleMute(ch->id);
 			});
 		}		
-		else if (pure == ch->midiInKill) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInKill.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> kill ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::kill(ch->id, /*record=*/false);
 			});
 		}		
-		else if (pure == ch->midiInArm) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInArm.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> arm ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleArm(ch->id);
 			});
 		}
-		else if (pure == ch->midiInSolo) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInSolo.load()) {
+			actions.push_back([=] {
 				gu_log("  >>> solo ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleSolo(ch->id);
 			});
 		}
-		else if (pure == ch->midiInVolume) {
-			actions.push_back([&] {
+		else if (pure == ch->midiInVolume.load()) {
+			actions.push_back([=] {
 				float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
 				gu_log("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
 					ch->id, pure, midiEvent.getVelocity(), vf);
@@ -161,8 +161,8 @@ void processChannels_(const MidiEvent& midiEvent)
 		}
 		else {
 			const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-			if (pure == sch->midiInPitch) {
-				actions.push_back([&] {
+			if (pure == sch->midiInPitch.load()) {
+				actions.push_back([=] {
 					float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH); 
 					gu_log("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
 						sch->id, pure, midiEvent.getVelocity(), vf);
@@ -170,8 +170,8 @@ void processChannels_(const MidiEvent& midiEvent)
 				});
 			}
 			else 
-			if (pure == sch->midiInReadActions) {
-				actions.push_back([&] {
+			if (pure == sch->midiInReadActions.load()) {
+				actions.push_back([=] {
 					gu_log("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->id, pure);
 					c::channel::toggleReadingActions(sch->id);
 				});
@@ -187,7 +187,7 @@ void processChannels_(const MidiEvent& midiEvent)
 		/* Redirect full midi message (pure + velocity) to plugins. */
 		ch->receiveMidi(midiEvent.getRaw());
 	}
-	m::model::channels.unlock();
+	model::channels.unlock();
 
 	/* Apply all the collected actions. */
 	for (auto& action : actions)
