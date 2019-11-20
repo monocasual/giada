@@ -92,6 +92,7 @@ void startSequencer();
 void stopSequencer();
 void toggleSequencer();
 void rewindSequencer();
+void rewindChannels();
 
 void setInToOut(bool v);
 void setInVol(float f);

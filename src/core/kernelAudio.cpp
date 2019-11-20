@@ -430,13 +430,13 @@ int getAPI() { return api; }
 const JackState &jackTransportQuery()
 {
 	if (api != G_SYS_API_JACK)
-    return jackState;
-  jack_position_t position;
+		return jackState;
+	jack_position_t position;
 	jack_transport_state_t ts = jack_transport_query(jackGetHandle(), &position);
-  jackState.running = ts != JackTransportStopped;
-  jackState.bpm     = position.beats_per_minute;
-  jackState.frame   = position.frame;
-  return jackState;
+	jackState.running = ts != JackTransportStopped;
+	jackState.bpm     = position.beats_per_minute;
+	jackState.frame   = position.frame;
+	return jackState;
 }
 
 
@@ -456,11 +456,11 @@ void jackStart()
 void jackSetPosition(uint32_t frame)
 {
 	if (api != G_SYS_API_JACK)
-    return;
-  jack_position_t position;
-  jack_transport_query(jackGetHandle(), &position);
-  position.frame = frame;
-  jack_transport_reposition(jackGetHandle(), &position);
+    	return;
+	jack_position_t position;
+	jack_transport_query(jackGetHandle(), &position);
+	position.frame = frame;
+	jack_transport_reposition(jackGetHandle(), &position);
 }
 
 
@@ -469,16 +469,16 @@ void jackSetPosition(uint32_t frame)
 
 void jackSetBpm(double bpm)
 {
-  if (api != G_SYS_API_JACK)
-    return;
-  jack_position_t position;
-  jack_transport_query(jackGetHandle(), &position);
-  position.valid = jack_position_bits_t::JackPositionBBT;
-  position.bar  = 0;  // no such info from Giada
-  position.beat = 0;  // no such info from Giada
-  position.tick = 0;  // no such info from Giada
-  position.beats_per_minute = bpm;
-  jack_transport_reposition(jackGetHandle(), &position);
+	if (api != G_SYS_API_JACK)
+		return;
+	jack_position_t position;
+	jack_transport_query(jackGetHandle(), &position);
+	position.valid = jack_position_bits_t::JackPositionBBT;
+	position.bar  = 0;  // no such info from Giada
+	position.beat = 0;  // no such info from Giada
+	position.tick = 0;  // no such info from Giada
+	position.beats_per_minute = bpm;
+	jack_transport_reposition(jackGetHandle(), &position);
 }
 
 

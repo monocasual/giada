@@ -487,8 +487,10 @@ void rewindSequencer()
 {
 	if (clock::getQuantize() > 0 && clock::isRunning())   // quantize rewind
 		mixer::rewindWait = true;
-	else
+	else {
 		clock::rewind();
+		rewindChannels();
+	}
 
 	/* FIXME - potential desync when Quantizer is enabled from this point on.
 	Mixer would wait, while the following calls would be made regardless of its
@@ -505,15 +507,13 @@ void rewindSequencer()
 
 /* -------------------------------------------------------------------------- */
 
-/*
-bool startInputRec()
+
+void rewindChannels()
 {
-	if (!hasRecordableSampleChannels())
-		return false;
-	mixer::startInputRec();
-	return true;
+	for (size_t i = 3; i < model::channels.size(); i++)
+		model::onSwap(model::channels, model::getId(model::channels, i), [&](Channel& c) { c.rewindBySeq();	});
 }
-*/
+
 
 /* -------------------------------------------------------------------------- */
 

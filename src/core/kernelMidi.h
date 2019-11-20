@@ -62,7 +62,7 @@ Sends a MIDI lightning message defined by 'msg'. */
 void sendMidiLightning(uint32_t learn, const midimap::Message& msg);
 
 /* setApi
- * set the Api in use for both in & out messages. */
+Sets the Api in use for both in & out messages. */
 
 void setApi(int api);
 
@@ -79,7 +79,7 @@ int closeInDevice();
 int closeOutDevice();
 
 /* getIn/OutPortName
- * return the name of the port 'p'. */
+Returns the name of the port 'p'. */
 
 std::string getInPortName(unsigned p);
 std::string getOutPortName(unsigned p);

@@ -194,6 +194,7 @@ void doQuantize_(unsigned frame)
 	if (rewindWait) {
 		rewindWait = false;
 		clock::rewind();
+		mh::rewindChannels();
 	}
 }
 
