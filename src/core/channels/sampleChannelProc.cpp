@@ -224,6 +224,9 @@ void processPreview_(SampleChannel* ch, m::AudioBuffer& out)
 	/* If the tracker exceedes the end point and preview is looped, split the 
 	rendering as in SampleChannel::reset(). */
 
+	if (ch->trackerPreview == ch->end)
+		ch->trackerPreview = ch->begin;
+	else
 	if (ch->trackerPreview + ch->bufferPreview.countFrames() >= ch->end) {
 		int offset = ch->end - ch->trackerPreview;
 		ch->trackerPreview += ch->fillBuffer(ch->bufferPreview, ch->trackerPreview, 0);
