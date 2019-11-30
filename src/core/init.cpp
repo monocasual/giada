@@ -133,10 +133,6 @@ void initMIDI_()
 
 void initGUI_(int argc, char** argv)
 {
-	/* This enables the FLTK lock and start the runtime multithreading support. */
-
-	Fl::lock();
-
 	/* This is of paramount importance on Linux with VST enabled, otherwise many
 	plug-ins go nuts and crash hard. It seems that some plug-ins or our Juce-based
 	PluginHost use Xlib concurrently. */
@@ -150,7 +146,7 @@ void initGUI_(int argc, char** argv)
 		conf::mainWindowH);
 
 	u::gui::updateMainWinLabel(patch::name == "" ? G_DEFAULT_PATCH_NAME : patch::name);
-
+	
 	if (!kernelAudio::isReady())
 		v::gdAlert("Your soundcard isn't configured correctly.\n"
 			"Check the configuration and restart Giada.");
