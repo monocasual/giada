@@ -11,12 +11,13 @@
 --------------------------------------------------------------------------------
 
 
-0.16.0 ---
+0.16.0 --- 2019 . 12 . 02
 - Fix columns' resizer bar height on verical window resize
 - Fix crash on MIDI learn global commands
 - Fix wrong channel routing when triggering MIDI learnt commands
 - Fix rewind button not rewinding sample channels in LOOP_* mode 
 - Use actual buffer size from KernelAudio when loading channels from a patch
+- Remove FLTK multithreading initialization
 
 
 0.16.0 beta-2 --- 2019 . 11 . 11
