@@ -125,7 +125,7 @@ void geTabPlugins::cb_scan()
 
 	m_info->show();
 	m::pluginManager::scanDirs(m_folderPath->value(), callback);
-	m::pluginManager::saveList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	m::pluginManager::saveList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 	m_info->hide();
 	refreshCount();
 }

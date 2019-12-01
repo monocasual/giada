@@ -117,12 +117,12 @@ int createConfigFolder()
 {
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
-	if (gu_dirExists(confDirPath))
+	if (u::fs::dirExists(confDirPath))
 		return 1;
 
 	gu_log("[conf::createConfigFolder] .giada folder not present. Updating...\n");
 
-	if (gu_mkdir(confDirPath)) {
+	if (u::fs::mkdir(confDirPath)) {
 		gu_log("[conf::createConfigFolder] status: ok\n");
 		return 1;
 	}
@@ -271,8 +271,8 @@ void init()
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
-	confFilePath = gu_getHomePath() + G_SLASH + CONF_FILENAME;
-	confDirPath  = gu_getHomePath() + G_SLASH;
+	confFilePath = u::fs::getHomePath() + G_SLASH + CONF_FILENAME;
+	confDirPath  = u::fs::getHomePath() + G_SLASH;
 
 #elif defined(_WIN32)
 

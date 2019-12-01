@@ -89,7 +89,7 @@ void Wave::alloc(int size, int channels, int rate, int bits, const std::string& 
 
 std::string Wave::getBasename(bool ext) const
 {
-	return ext ? gu_basename(m_path) : gu_stripExt(gu_basename(m_path));
+	return ext ? u::fs::basename(m_path) : u::fs::stripExt(u::fs::basename(m_path));
 }
 
 
@@ -119,7 +119,7 @@ int Wave::getDuration() const
 
 std::string Wave::getExtension() const
 {
-	return gu_getExt(m_path);
+	return u::fs::getExt(m_path);
 }
 
 
@@ -148,7 +148,7 @@ void Wave::setPath(const std::string& p, int id)
 	if (id == -1)
 		m_path = p; 
 	else 
-		m_path = gu_stripExt(p) + "-" + std::to_string(id) + "." + gu_getExt(p);
+		m_path = u::fs::stripExt(p) + "-" + std::to_string(id) + "." + u::fs::getExt(p);
 }
 
 

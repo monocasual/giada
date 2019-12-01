@@ -454,7 +454,7 @@ void writeWaves_(json_t* j, bool isProject)
 
 	for (const m::Wave* w : model::waves) {
 	
-		std::string path = isProject ? gu_basename(w->getPath()) : w->getPath();
+		std::string path = isProject ? u::fs::basename(w->getPath()) : w->getPath();
 
 		json_t* jw = json_object();
 		json_object_set_new(jw, PATCH_KEY_WAVE_ID,   json_integer(w->id));

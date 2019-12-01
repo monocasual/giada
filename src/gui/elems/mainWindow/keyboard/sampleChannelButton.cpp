@@ -112,7 +112,7 @@ int geSampleChannelButton::handle(int e)
 			break;
 		}
 		case FL_PASTE: {
-			c::channel::loadChannel(m_channelId, u::string::trim(gu_stripFileUrl(Fl::event_text())));
+			c::channel::loadChannel(m_channelId, u::string::trim(u::fs::stripFileUrl(Fl::event_text())));
 			ret = 1;
 			break;
 		}

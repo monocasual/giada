@@ -33,16 +33,11 @@
 #else
 	#include <unistd.h>
 #endif
-
 #include <cstdarg>
-#include <sys/stat.h>   // stat (gu_dirExists)
+#include <sys/stat.h>       // stat (fs::dirExists)
 #include <errno.h>
 #include <cstdlib>
-#ifdef __APPLE__  // our Clang still doesn't know about cstdint (c++11 stuff)
-	#include <stdint.h>
-#else
-	#include <cstdint>
-#endif
+#include <cstdint>
 #include <string>
 #include <cstring>
 #include <climits>
@@ -50,18 +45,19 @@
 	#include <libgen.h>     // basename unix
 	#include <pwd.h>        // getpwuid
 #endif
-#include "../core/const.h"
-#include "string.h"
-#include "log.h"
-#include "fs.h"
+#include "core/const.h"
+#include "utils/string.h"
+#include "utils/log.h"
+#include "utils/fs.h"
 
 
-using std::string;
-using std::vector;
-using namespace giada;
-
-
-std::string gu_normalize_(const std::string& s)
+namespace giada {
+namespace u     {
+namespace fs 
+{
+namespace
+{
+std::string normalize_(const std::string& s)
 {
 	if (s.back() == G_SLASH) {
 		std::string t = s;
@@ -70,11 +66,17 @@ std::string gu_normalize_(const std::string& s)
 	}
 	return s;
 }
+} // {anonymous}
 
 
-bool gu_fileExists(const string &filename)
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+bool fileExists(const std::string &filename)
 {
-	FILE *fh = fopen(filename.c_str(), "rb");
+	FILE* fh = fopen(filename.c_str(), "rb");
 	if (!fh) {
 		return 0;
 	}
@@ -88,7 +90,7 @@ bool gu_fileExists(const string &filename)
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_isDir(const string &path)
+bool isDir(const std::string &path)
 {
 	bool ret;
 
@@ -112,7 +114,7 @@ bool gu_isDir(const string &path)
 		 * FIXME - consider native functions CFBundle... */
 
 		if (ret) {
-			if (gu_fileExists(path + "/Contents/Info.plist"))
+			if (fileExists(path + "/Contents/Info.plist"))
 				ret = false;
 		}
 	}
@@ -124,14 +126,14 @@ bool gu_isDir(const string &path)
         (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 #endif
 
-	return ret & !gu_isProject(path);
+	return ret & !isProject(path);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_dirExists(const string &path)
+bool dirExists(const std::string &path)
 {
 	struct stat st;
 	if (stat(path.c_str(), &st) != 0 && errno == ENOENT)
@@ -143,10 +145,10 @@ bool gu_dirExists(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_mkdir(const string &path)
+bool mkdir(const std::string &path)
 {
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
-	if (mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
+	if (::mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0)
 #else
 	if (_mkdir(path.c_str()) == 0)
 #endif
@@ -158,9 +160,9 @@ bool gu_mkdir(const string &path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_basename(const string& s)
+std::string basename(const std::string& s)
 {
-	string out = s;
+	std::string out = s;
 	out.erase(0, out.find_last_of(G_SLASH_STR) + 1);
 	return out;
 }
@@ -169,11 +171,11 @@ string gu_basename(const string& s)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_dirname(const string& path)
+std::string dirname(const std::string& path)
 {
 	if (path.empty())
 		return "";
-	string out = path;
+	std::string out = path;
 	out.erase(out.find_last_of(G_SLASH_STR));
 	return out;
 }
@@ -182,7 +184,7 @@ string gu_dirname(const string& path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_getCurrentPath()
+std::string getCurrentPath()
 {
  char buf[PATH_MAX];
 #if defined(__WIN32)
@@ -199,19 +201,19 @@ string gu_getCurrentPath()
 /* -------------------------------------------------------------------------- */
 
 
-string gu_getExt(const string& file)
+std::string getExt(const std::string& file)
 {
 	// TODO - use std functions
 	int len = strlen(file.c_str());
 	int pos = len;
-	while (pos>0) {
+	while (pos > 0) {
 		if (file[pos] == '.')
 			break;
 		pos--;
 	}
 	if (pos==0)
 		return "";
-	string out = file;
+	std::string out = file;
 	return out.substr(pos+1, len);
 }
 
@@ -219,7 +221,7 @@ string gu_getExt(const string& file)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_stripExt(const string& s)
+std::string stripExt(const std::string& s)
 {
 	return s.substr(0, s.find_last_of("."));
 }
@@ -228,11 +230,11 @@ string gu_stripExt(const string& s)
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_isProject(const string& path)
+bool isProject(const std::string& path)
 {
 	/** FIXME - checks too weak */
 
-	if (gu_getExt(path.c_str()) == "gprj" && gu_dirExists(path))
+	if (getExt(path.c_str()) == "gprj" && dirExists(path))
 		return 1;
 	return 0;
 }
@@ -241,9 +243,9 @@ bool gu_isProject(const string& path)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_stripFileUrl(const string& f)
+std::string stripFileUrl(const std::string& f)
 {
-	string out = f;
+	std::string out = f;
 	out = u::string::replace(out, "file://", "");
 	out = u::string::replace(out, "%20", " ");
 	return out;
@@ -253,7 +255,7 @@ string gu_stripFileUrl(const string& f)
 /* -------------------------------------------------------------------------- */
 
 
-string gu_getHomePath()
+std::string getHomePath()
 {
 	char path[PATH_MAX];
 
@@ -269,7 +271,7 @@ string gu_getHomePath()
 
 	struct passwd* p = getpwuid(getuid());
 	if (p == nullptr) {
-		gu_log("[gu_getHomePath] unable to fetch user infos\n");
+		log("[getHomePath] unable to fetch user infos\n");
 		return "";
 	}
 	else {
@@ -279,14 +281,14 @@ string gu_getHomePath()
 
 #endif
 
-	return string(path);
+	return std::string(path);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-bool gu_isRootDir(const std::string& s)
+bool isRootDir(const std::string& s)
 {
 	if (s == "")
 		return false;
@@ -306,16 +308,17 @@ bool gu_isRootDir(const std::string& s)
 /* -------------------------------------------------------------------------- */
 
 
-std::string gu_getUpDir(const std::string& s)
+std::string getUpDir(const std::string& s)
 {
 #ifdef G_OS_WINDOWS
 
 	/* If root, let the user browse the drives list by returning "". */
-	if (gu_isRootDir(s))
+	if (isRootDir(s))
 		return "";
 
 #endif
 
-	std::string t = gu_normalize_(s);
+	std::string t = normalize_(s);
 	return t.substr(0, t.find_last_of(G_SLASH_STR)) + G_SLASH_STR;
 }
+}}}  // giada::u::fs::

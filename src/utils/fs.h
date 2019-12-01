@@ -34,47 +34,52 @@
 #include <string>
 
 
-bool gu_fileExists(const std::string& path);
-bool gu_dirExists(const std::string& path);
-bool gu_isDir(const std::string& path);
+namespace giada {
+namespace u     {
+namespace fs 
+{
+bool fileExists(const std::string& path);
+bool dirExists(const std::string& path);
+bool isDir(const std::string& path);
 
 /* isRootDir
 Tells whether 's' is '/' on Unix or '[X]:\' on Windows. */
 
-bool gu_isRootDir(const std::string& s);
+bool isRootDir(const std::string& s);
 
-bool gu_isProject(const std::string& path);
-bool gu_mkdir(const std::string& path);
-std::string gu_getCurrentPath();
-std::string gu_getHomePath();
+bool isProject(const std::string& path);
+bool mkdir(const std::string& path);
+std::string getCurrentPath();
+std::string getHomePath();
 
-/* gu_basename
+/* basename
 /path/to/file.txt -> file.txt */
 
-std::string gu_basename(const std::string& s);
+std::string basename(const std::string& s);
 
-/* gu_dirname
+/* dirname
 /path/to/file.txt -> /path/to */
 
-std::string gu_dirname(const std::string& s);
+std::string dirname(const std::string& s);
 
-/* gu_getExt
+/* getExt
 /path/to/file.txt -> txt */
 
-std::string gu_getExt(const std::string& s);
+std::string getExt(const std::string& s);
 
-/* gu_stripExt
+/* stripExt
 /path/to/file.txt -> /path/to/file */
 
-std::string gu_stripExt(const std::string& s);
+std::string stripExt(const std::string& s);
 
-std::string gu_stripFileUrl(const std::string& s);
+std::string stripFileUrl(const std::string& s);
 
-/* gu_getUpDir
+/* getUpDir
 Returns the upper directory:
 /path/to/my/directory -> /path/to/my/ */
 
-std::string gu_getUpDir(const std::string& s);
+std::string getUpDir(const std::string& s);
+}}}  // giada::u::fs::
 
 
 #endif

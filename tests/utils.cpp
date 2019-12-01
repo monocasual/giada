@@ -6,35 +6,36 @@
 
 TEST_CASE("u::fs")
 {
-	REQUIRE(gu_fileExists("README.md") == true);
-	REQUIRE(gu_fileExists("ghost_file") == false);
-	REQUIRE(gu_dirExists("src/") == true);
-	REQUIRE(gu_dirExists("ghost_dir/") == false);
-	REQUIRE(gu_isDir("src/") == true);
-	REQUIRE(gu_isDir("giada_tests") == false);
-	REQUIRE(gu_basename("tests/utils.cpp") == "utils.cpp");
-	REQUIRE(gu_dirname("tests/utils.cpp") == "tests");
-	REQUIRE(gu_getExt("tests/utils.cpp") == "cpp");
-	REQUIRE(gu_stripExt("tests/utils.cpp") == "tests/utils");
+	using namespace giada::u::fs;
+
+	REQUIRE(fileExists("README.md") == true);
+	REQUIRE(fileExists("ghost_file") == false);
+	REQUIRE(dirExists("src/") == true);
+	REQUIRE(dirExists("ghost_dir/") == false);
+	REQUIRE(isDir("src/") == true);
+	REQUIRE(isDir("giada_tests") == false);
+	REQUIRE(basename("tests/utils.cpp") == "utils.cpp");
+	REQUIRE(dirname("tests/utils.cpp") == "tests");
+	REQUIRE(getExt("tests/utils.cpp") == "cpp");
+	REQUIRE(stripExt("tests/utils.cpp") == "tests/utils");
 #if defined(_WIN32)
-	REQUIRE(gu_isRootDir("C:\\") == true);
-	REQUIRE(gu_isRootDir("C:\\path\\to\\something") == false);
-	REQUIRE(gu_getUpDir("C:\\path\\to\\something") == "C:\\path\\to\\");
-	REQUIRE(gu_getUpDir("C:\\path") == "C:\\");
-	REQUIRE(gu_getUpDir("C:\\") == "");
+	REQUIRE(isRootDir("C:\\") == true);
+	REQUIRE(isRootDir("C:\\path\\to\\something") == false);
+	REQUIRE(getUpDir("C:\\path\\to\\something") == "C:\\path\\to\\");
+	REQUIRE(getUpDir("C:\\path") == "C:\\");
+	REQUIRE(getUpDir("C:\\") == "");
 #else
-	REQUIRE(gu_isRootDir("/") == true);
-	REQUIRE(gu_isRootDir("/path/to/something") == false);
-	REQUIRE(gu_getUpDir("/path/to/something") == "/path/to/");
-	REQUIRE(gu_getUpDir("/path") == "/");
-	REQUIRE(gu_getUpDir("/") == "/");
+	REQUIRE(isRootDir("/") == true);
+	REQUIRE(isRootDir("/path/to/something") == false);
+	REQUIRE(getUpDir("/path/to/something") == "/path/to/");
+	REQUIRE(getUpDir("/path") == "/");
+	REQUIRE(getUpDir("/") == "/");
 #endif
 }
 
 
 TEST_CASE("u::string")
 {
-	using std::vector;
 	using namespace giada::u::string;
 
 	REQUIRE(replace("Giada is cool", "cool", "hot") == "Giada is hot");
@@ -44,7 +45,7 @@ TEST_CASE("u::string")
 	REQUIRE(fToString(3.14159, 2) == "3.14");
 	REQUIRE(format("I see %d men with %s hats", 5, "strange") == "I see 5 men with strange hats");
 
-	vector<std::string> v = split("Giada is cool", " ");
+	std::vector<std::string> v = split("Giada is cool", " ");
 	REQUIRE(v.size() == 3);
 	REQUIRE(v.at(0) == "Giada");
 	REQUIRE(v.at(1) == "is");

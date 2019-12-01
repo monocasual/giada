@@ -107,7 +107,7 @@ bool savePatch_(const std::string& path, const std::string& name, bool isProject
 	if (!m::patch::write(name, path, isProject))
 		return false;
 	u::gui::updateMainWinLabel(name);
-	m::conf::patchPath = isProject ? gu_getUpDir(gu_getUpDir(path)) : gu_dirname(path);
+	m::conf::patchPath = isProject ? u::fs::getUpDir(u::fs::getUpDir(path)) : u::fs::dirname(path);
 	m::patch::name     = name;
 	gu_log("[savePatch] patch saved as %s\n", path.c_str());
 	return true;
@@ -138,7 +138,7 @@ void saveWavesToProject_(const std::string& base)
 void savePatch(void* data)
 {
 	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
-	std::string name          = gu_stripExt(browser->getName());
+	std::string name          = u::fs::stripExt(browser->getName());
 	std::string fullPath      = browser->getCurrentPath() + G_SLASH + name + ".gptc";
 
 	if (name == "") {
@@ -146,7 +146,7 @@ void savePatch(void* data)
 		return;
 	}
 
-	if (gu_fileExists(fullPath))
+	if (u::fs::fileExists(fullPath))
 		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
 			return;
 
@@ -164,7 +164,7 @@ void loadPatch(void* data)
 {
 	v::gdBrowserLoad* browser = (v::gdBrowserLoad*) data;
 	std::string fullPath      = browser->getSelectedItem();
-	bool isProject            = gu_isProject(browser->getSelectedItem());
+	bool isProject            = u::fs::isProject(browser->getSelectedItem());
 
 	browser->showStatusBar();
 
@@ -173,7 +173,7 @@ void loadPatch(void* data)
 	std::string fileToLoad = fullPath;  // patch file to read from
 	std::string basePath   = "";        // base path, in case of reading from a project
 	if (isProject) {
-		fileToLoad = fullPath + G_SLASH + gu_stripExt(gu_basename(fullPath)) + ".gptc";
+		fileToLoad = fullPath + G_SLASH + u::fs::stripExt(u::fs::basename(fullPath)) + ".gptc";
 		basePath   = fullPath + G_SLASH;
 	}
 
@@ -212,7 +212,7 @@ void loadPatch(void* data)
 	/* Save patchPath by taking the last dir of the broswer, in order to reuse
 	it the next time. */
 
-	m::conf::patchPath = gu_dirname(fullPath);
+	m::conf::patchPath = u::fs::dirname(fullPath);
 
 	/* Mixer is ready to go back online. */
 
@@ -241,7 +241,7 @@ void loadPatch(void* data)
 void saveProject(void* data)
 {
 	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
-	std::string name            = gu_stripExt(browser->getName());
+	std::string name            = u::fs::stripExt(browser->getName());
 	std::string folderPath      = browser->getCurrentPath();
 	std::string fullPath        = folderPath + G_SLASH + name + ".gprj";
 	std::string gptcPath        = fullPath + G_SLASH + name + ".gptc";
@@ -251,10 +251,10 @@ void saveProject(void* data)
 		return;
 	}
 
-	if (gu_isProject(fullPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
+	if (u::fs::isProject(fullPath) && !v::gdConfirmWin("Warning", "Project exists: overwrite?"))
 		return;
 
-	if (!gu_dirExists(fullPath) && !gu_mkdir(fullPath)) {
+	if (!u::fs::dirExists(fullPath) && !u::fs::mkdir(fullPath)) {
 		gu_log("[saveProject] Unable to make project directory!\n");
 		return;
 	}
@@ -285,7 +285,7 @@ void loadSample(void* data)
 	int res = c::channel::loadChannel(browser->getChannelId(), fullPath);
 
 	if (res == G_RES_OK) {
-		m::conf::samplePath = gu_dirname(fullPath);
+		m::conf::samplePath = u::fs::dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -306,9 +306,9 @@ void saveSample(void* data)
 		return;
 	}
 
-	std::string filePath = folderPath + G_SLASH + gu_stripExt(name) + ".wav";
+	std::string filePath = folderPath + G_SLASH + u::fs::stripExt(name) + ".wav";
 
-	if (gu_fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
+	if (u::fs::fileExists(filePath) && !v::gdConfirmWin("Warning", "File exists: overwrite?"))
 		return;
 
 	ID waveId;
@@ -330,7 +330,7 @@ void saveSample(void* data)
 	
 	/* Update last used path in conf, so that it can be reused next time. */
 
-	m::conf::samplePath = gu_dirname(filePath);
+	m::conf::samplePath = u::fs::dirname(filePath);
 
 	/* Update logical and edited states in Wave. */
 

@@ -113,7 +113,7 @@ int loadChannel(ID channelId, const std::string& fname)
 	/* Save the patch and take the last browser's dir in order to re-use it the 
 	next time. */
 
-	m::conf::samplePath = gu_dirname(fname);
+	m::conf::samplePath = u::fs::dirname(fname);
 
 	int res = m::mh::loadChannel(channelId, fname);
 	if (res != G_RES_OK)

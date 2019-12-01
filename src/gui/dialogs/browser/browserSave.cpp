@@ -79,7 +79,7 @@ void gdBrowserSave::cb_down()
 	/* if the selected item is a directory just load its content. If it's a file
 	 * use it as the file name (i.e. fill name->value()). */
 
-	if (gu_isDir(path)) {
+	if (u::fs::isDir(path)) {
 		browser->loadDir(path);
 		where->value(browser->getCurrentDir().c_str());
 	}

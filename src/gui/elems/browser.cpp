@@ -184,7 +184,7 @@ std::string geBrowser::normalize(const std::string& s)
 	that is '/' on Unix or '[x]:\' on Windows. */
 
 	//if (out.back() == G_SLASH && out.length() > 1)
-	if (out.back() == G_SLASH && !gu_isRootDir(s))
+	if (out.back() == G_SLASH && !u::fs::isRootDir(s))
 		out = out.substr(0, out.size()-1);
 	return out;
 }

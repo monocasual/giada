@@ -87,7 +87,7 @@ void init()
 
 Result createFromFile(const std::string& path, ID id)
 {
-	if (path == "" || gu_isDir(path)) {
+	if (path == "" || u::fs::isDir(path)) {
 		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
 		return { G_RES_ERR_NO_DATA };
 	}

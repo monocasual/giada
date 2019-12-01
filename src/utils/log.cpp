@@ -30,15 +30,12 @@
 #include <cstdio>
 #include <cstdarg>
 #include <string>
-#include "../utils/fs.h"
-#include "../core/const.h"
+#include "utils/fs.h"
+#include "core/const.h"
 #include "log.h"
 
 
-using std::string;
-
-
-static FILE *f;
+static FILE* f;
 static int   mode;
 static bool  stat;
 
@@ -48,7 +45,7 @@ int gu_logInit(int m)
 	mode = m;
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
-		string fpath = gu_getHomePath() + G_SLASH + "giada.log";
+		std::string fpath = giada::u::fs::getHomePath() + G_SLASH + "giada.log";
 		f = fopen(fpath.c_str(), "a");
 		if (!f) {
 			stat = false;
@@ -72,19 +69,19 @@ void gu_logClose()
 /* -------------------------------------------------------------------------- */
 
 
-void gu_log(const char *format, ...)
+void gu_log(const char* format, ...)
 {
 	if (mode == LOG_MODE_MUTE)
 		return;
-  va_list args;
-  va_start(args, format);
-  if (mode == LOG_MODE_FILE && stat == true) {
+	va_list args;
+	va_start(args, format);
+	if (mode == LOG_MODE_FILE && stat == true) {
 		vfprintf(f, format, args);
 #ifdef _WIN32
 		fflush(f);
 #endif
 	}
-  else
+  	else
 		vprintf(format, args);
-  va_end(args);
+	va_end(args);
 }

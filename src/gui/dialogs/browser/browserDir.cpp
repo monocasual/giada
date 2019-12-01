@@ -77,7 +77,7 @@ void gdBrowserDir::cb_down()
 {
 	std::string path = browser->getSelectedItem();
 
-	if (path.empty() || !gu_isDir(path)) // when click on an empty area or not a dir
+	if (path.empty() || !u::fs::isDir(path)) // when click on an empty area or not a dir
 		return;
 
 	browser->loadDir(path);

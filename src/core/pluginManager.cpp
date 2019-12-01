@@ -131,7 +131,7 @@ void init(int samplerate, int buffersize)
     buffersize_     = buffersize;
 	missingPlugins_ = false;
 	unknownPluginList_.clear();
-	loadList(gu_getHomePath() + G_SLASH + "plugins.xml");
+	loadList(u::fs::getHomePath() + G_SLASH + "plugins.xml");
 	sortPlugins(static_cast<pluginManager::SortMethod>(conf::pluginSortMethod));
 }
 

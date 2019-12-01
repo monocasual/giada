@@ -120,7 +120,7 @@ void gdBrowserBase::cb_toggleHiddenFiles(Fl_Widget *v, void *p) { ((gdBrowserBas
 
 void gdBrowserBase::cb_up()
 {
-	browser->loadDir(gu_getUpDir(browser->getCurrentDir()));
+	browser->loadDir(u::fs::getUpDir(browser->getCurrentDir()));
 	where->value(browser->getCurrentDir().c_str());
 }
 

@@ -348,7 +348,7 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 {			
 	std::vector<std::string> paths = u::string::split(Fl::event_text(), "\n");
 		for (std::string& p : paths)
-			p = gu_stripFileUrl(p);
+			p = u::fs::stripFileUrl(p);
 	return paths;
 }
 }} // giada::v::

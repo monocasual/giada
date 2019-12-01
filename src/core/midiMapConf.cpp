@@ -155,7 +155,7 @@ std::vector<std::string> maps;
 
 void init()
 {
-	midimapsPath = gu_getHomePath() + G_SLASH + "midimaps" + G_SLASH;
+	midimapsPath = u::fs::getHomePath() + G_SLASH + "midimaps" + G_SLASH;
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
