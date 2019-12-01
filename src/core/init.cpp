@@ -64,7 +64,6 @@
 #include "init.h"
 
 
-extern std::atomic<bool>       G_quit;
 extern giada::v::gdMainWindow* G_MainWin;
 
 
@@ -257,8 +256,6 @@ void reset()
 
 void shutdown()
 {
-	G_quit.store(true);
-
 	shutdownGUI_();
 
 	if (!conf::write())

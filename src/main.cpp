@@ -30,7 +30,6 @@
 #include "core/init.h"
 
 
-std::atomic<bool> G_quit(false);
 class gdMainWindow* G_MainWin = nullptr;
 
 
