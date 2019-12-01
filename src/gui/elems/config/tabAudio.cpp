@@ -95,12 +95,12 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 
 #elif defined(__FreeBSD__)
 
-	if (kernelAudio::hasAPI(RtAudio::UNIX_JACK))
+	if (m::kernelAudio::hasAPI(RtAudio::UNIX_JACK))
 		soundsys->add("Jack");
-	if (kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
+	if (m::kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
 		soundsys->add("PulseAudio");
 
-	switch (conf::soundSystem) {
+	switch (m::conf::soundSystem) {
 		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
