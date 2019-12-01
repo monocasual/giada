@@ -54,10 +54,10 @@ unsigned numInPorts_  = 0;
 static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 {
 	if (msg->size() < 3) {
-		//gu_log("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
+		//u::log::print("[KM] MIDI received - unknown signal - size=%d, value=0x", (int) msg->size());
 		//for (unsigned i=0; i<msg->size(); i++)
-		//	gu_log("%X", (int) msg->at(i));
-		//gu_log("\n");
+		//	u::log::print("%X", (int) msg->at(i));
+		//u::log::print("\n");
 		return;
 	}
 	midiDispatcher::dispatch(msg->at(0), msg->at(1), msg->at(2));
@@ -71,7 +71,7 @@ void sendMidiLightningInitMsgs_()
 {
 	for (const midimap::Message& m : midimap::initCommands) {
 		if (m.value != 0x0 && m.channel != -1) {
-			gu_log("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
+			u::log::print("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
 			send(m.value | G_MIDI_CHANS[m.channel]);
 		}
 	}
@@ -88,7 +88,7 @@ void sendMidiLightningInitMsgs_()
 void setApi(int api)
 {
 	api_ = api;
-	gu_log("[KM] using system 0x%x\n", api_);
+	u::log::print("[KM] using system 0x%x\n", api_);
 }
 
 
@@ -102,7 +102,7 @@ int openOutDevice(int port)
 		status_  = true;
 	}
 	catch (RtMidiError &error) {
-		gu_log("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
+		u::log::print("[KM] MIDI out device error: %s\n", error.getMessage().c_str());
 		status_ = false;
 		return 0;
 	}
@@ -110,16 +110,16 @@ int openOutDevice(int port)
 	/* print output ports */
 
 	numOutPorts_ = midiOut_->getPortCount();
-	gu_log("[KM] %d output MIDI ports found\n", numOutPorts_);
+	u::log::print("[KM] %d output MIDI ports found\n", numOutPorts_);
 	for (unsigned i=0; i<numOutPorts_; i++)
-		gu_log("  %d) %s\n", i, getOutPortName(i).c_str());
+		u::log::print("  %d) %s\n", i, getOutPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
 	if (port != -1 && numOutPorts_ > 0) {
 		try {
 			midiOut_->openPort(port, getOutPortName(port));
-			gu_log("[KM] MIDI out port %d open\n", port);
+			u::log::print("[KM] MIDI out port %d open\n", port);
 
 			/* TODO - it shold send midiLightning message only if there is a map loaded
 			and available in midimap:: */
@@ -128,7 +128,7 @@ int openOutDevice(int port)
 			return 1;
 		}
 		catch (RtMidiError& error) {
-			gu_log("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
+			u::log::print("[KM] unable to open MIDI out port %d: %s\n", port, error.getMessage().c_str());
 			status_ = false;
 			return 0;
 		}
@@ -148,7 +148,7 @@ int openInDevice(int port)
 		status_ = true;
 	}
 	catch (RtMidiError &error) {
-		gu_log("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
+		u::log::print("[KM] MIDI in device error: %s\n", error.getMessage().c_str());
 		status_ = false;
 		return 0;
 	}
@@ -156,9 +156,9 @@ int openInDevice(int port)
 	/* print input ports */
 
 	numInPorts_ = midiIn_->getPortCount();
-	gu_log("[KM] %d input MIDI ports found\n", numInPorts_);
+	u::log::print("[KM] %d input MIDI ports found\n", numInPorts_);
 	for (unsigned i=0; i<numInPorts_; i++)
-		gu_log("  %d) %s\n", i, getInPortName(i).c_str());
+		u::log::print("  %d) %s\n", i, getInPortName(i).c_str());
 
 	/* try to open a port, if enabled */
 
@@ -166,12 +166,12 @@ int openInDevice(int port)
 		try {
 			midiIn_->openPort(port, getInPortName(port));
 			midiIn_->ignoreTypes(true, false, true); // ignore all system/time msgs, for now
-			gu_log("[KM] MIDI in port %d open\n", port);
+			u::log::print("[KM] MIDI in port %d open\n", port);
 			midiIn_->setCallback(&callback_);
 			return 1;
 		}
 		catch (RtMidiError& error) {
-			gu_log("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
+			u::log::print("[KM] unable to open MIDI in port %d: %s\n", port, error.getMessage().c_str());
 			status_ = false;
 			return 0;
 		}
@@ -224,7 +224,7 @@ void send(uint32_t data)
 	msg.push_back(getB3(data));
 
 	midiOut_->sendMessage(&msg);
-	gu_log("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
+	u::log::print("[KM] send msg=0x%X (%X %X %X)\n", data, msg[0], msg[1], msg[2]);
 }
 
 
@@ -244,7 +244,7 @@ void send(int b1, int b2, int b3)
 		msg.push_back(b3);
 
 	midiOut_->sendMessage(&msg);
-	//gu_log("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
+	//u::log::print("[KM] send msg=(%X %X %X)\n", b1, b2, b3);
 }
 
 
@@ -257,11 +257,11 @@ void sendMidiLightning(uint32_t learn, const midimap::Message& m)
 
 	if (!midimap::isDefined(m))
 	{
-		gu_log("[KM] message skipped (not defined in midimap)");
+		u::log::print("[KM] message skipped (not defined in midimap)");
 		return;
 	}
 
-	gu_log("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, m.channel, 
+	u::log::print("[KM] learn=%#X, chan=%d, msg=%#X, offset=%d\n", learn, m.channel, 
 		m.value, m.offset);
 
 	/* Isolate 'channel' from learnt message and offset it as requested by 'nn' in 

@@ -101,7 +101,7 @@ geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
 
 void geColumn::cb_addChannel()
 {
-	gu_log("[geColumn::cb_addChannel] id = %d\n", id);
+	u::log::print("[geColumn::cb_addChannel] id = %d\n", id);
 
 	Fl_Menu_Item rclick_menu[] = {
 		{"Sample channel"},

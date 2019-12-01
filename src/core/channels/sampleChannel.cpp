@@ -62,7 +62,7 @@ SampleChannel::SampleChannel(bool inputMonitor, int bufferSize,
   rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
 {
 	if (rsmp_state == nullptr) {
-		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
+		u::log::print("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
 		throw std::bad_alloc();
 	}
 	bufferPreview.alloc(bufferSize, G_MAX_IO_CHANS);
@@ -93,7 +93,7 @@ SampleChannel::SampleChannel(const SampleChannel& o)
   rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
 {
 	if (rsmp_state == nullptr) {
-		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
+		u::log::print("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
 		throw std::bad_alloc();
 	}
 	
@@ -125,7 +125,7 @@ SampleChannel::SampleChannel(const patch::Channel& p, int bufferSize)
   rsmp_state       (src_new(SRC_LINEAR, G_MAX_IO_CHANS, nullptr))
 {
 	if (rsmp_state == nullptr) {
-		gu_log("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
+		u::log::print("[SampleChannel] unable to alloc memory for SRC_STATE!\n");
 		throw std::bad_alloc();
 	}
 	

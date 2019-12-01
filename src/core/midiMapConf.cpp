@@ -120,7 +120,7 @@ void parse_(Message& message)
 
 	message.value = strtoul(output.c_str(), nullptr, 16);
 
-	gu_log("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
+	u::log::print("[parse] parsed chan=%d valueStr=%s value=%#x, offset=%d\n",
 			message.channel, message.valueStr.c_str(), message.value, message.offset);
 }
 
@@ -159,7 +159,7 @@ void init()
 
 	/* scan dir of midi maps and load the filenames into <>maps. */
 
-	gu_log("[midiMapConf::init] scanning midimaps directory '%s'...\n",
+	u::log::print("[midiMapConf::init] scanning midimaps directory '%s'...\n",
 		midimapsPath.c_str());
 
 	DIR*    dp;
@@ -167,7 +167,7 @@ void init()
 	dp = opendir(midimapsPath.c_str());
 
 	if (dp == nullptr) {
-		gu_log("[midiMapConf::init] unable to scan midimaps directory!\n");
+		u::log::print("[midiMapConf::init] unable to scan midimaps directory!\n");
 		return;
 	}
 
@@ -177,12 +177,12 @@ void init()
 
 		// TODO - check if is a valid midimap file (verify headers)
 
-		gu_log("[midiMapConf::init] found midimap '%s'\n", ep->d_name);
+		u::log::print("[midiMapConf::init] found midimap '%s'\n", ep->d_name);
 
 		maps.push_back(ep->d_name);
 	}
 
-	gu_log("[midiMapConf::init] total midimaps found: %d\n", maps.size());
+	u::log::print("[midiMapConf::init] total midimaps found: %d\n", maps.size());
 	closedir(dp);
 }
 
@@ -250,11 +250,11 @@ int read(const std::string& file)
 	namespace uj = u::json;
 
 	if (file.empty()) {
-		gu_log("[midiMapConf::read] midimap not specified, nothing to do\n");
+		u::log::print("[midiMapConf::read] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
 	}
 
-	gu_log("[midiMapConf::read] reading midimap file '%s'\n", file.c_str());
+	u::log::print("[midiMapConf::read] reading midimap file '%s'\n", file.c_str());
 
 	json_t* j = uj::load(std::string(midimapsPath + file).c_str());
 	if (j == nullptr)

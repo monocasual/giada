@@ -120,14 +120,14 @@ int createConfigFolder()
 	if (u::fs::dirExists(confDirPath))
 		return 1;
 
-	gu_log("[conf::createConfigFolder] .giada folder not present. Updating...\n");
+	u::log::print("[conf::createConfigFolder] .giada folder not present. Updating...\n");
 
 	if (u::fs::mkdir(confDirPath)) {
-		gu_log("[conf::createConfigFolder] status: ok\n");
+		u::log::print("[conf::createConfigFolder] status: ok\n");
 		return 1;
 	}
 	else {
-		gu_log("[conf::createConfigFolder] status: error!\n");
+		u::log::print("[conf::createConfigFolder] status: error!\n");
 		return 0;
 	}
 
@@ -517,7 +517,7 @@ bool write()
 #endif
 
   if (json_dump_file(j, confFilePath.c_str(), JSON_INDENT(2)) != 0) {
-	gu_log("[conf::write] unable to write configuration file!\n");
+	u::log::print("[conf::write] unable to write configuration file!\n");
 	return false;
   }
   return true;

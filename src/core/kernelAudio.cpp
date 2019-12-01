@@ -81,7 +81,7 @@ bool isReady()
 int openDevice()
 {
 	api = conf::soundSystem;
-	gu_log("[KA] using system 0x%x\n", api);
+	u::log::print("[KA] using system 0x%x\n", api);
 
 #if defined(__linux__) || defined(__FreeBSD__)
 
@@ -121,24 +121,24 @@ int openDevice()
 #endif
 
 	else {
-		gu_log("[KA] No API available, nothing to do!\n");
+		u::log::print("[KA] No API available, nothing to do!\n");
 		return 0;
 	}
 
-	gu_log("[KA] Opening devices %d (out), %d (in), f=%d...\n",
+	u::log::print("[KA] Opening devices %d (out), %d (in), f=%d...\n",
     conf::soundDeviceOut, conf::soundDeviceIn, conf::samplerate);
 
 	numDevs = rtSystem->getDeviceCount();
 
 	if (numDevs < 1) {
-		gu_log("[KA] no devices found with this API\n");
+		u::log::print("[KA] no devices found with this API\n");
 		closeDevice();
 		return 0;
 	}
 	else {
-		gu_log("[KA] %d device(s) found\n", numDevs);
+		u::log::print("[KA] %d device(s) found\n", numDevs);
 		for (unsigned i=0; i<numDevs; i++)
-			gu_log("  %d) %s\n", i, getDeviceName(i).c_str());
+			u::log::print("  %d) %s\n", i, getDeviceName(i).c_str());
 	}
 
 	RtAudio::StreamParameters outParams;
@@ -169,7 +169,7 @@ int openDevice()
 
 	if (api == G_SYS_API_JACK) {
 		conf::samplerate = getFreq(conf::soundDeviceOut, 0);
-		gu_log("[KA] JACK in use, freq = %d\n", conf::samplerate);
+		u::log::print("[KA] JACK in use, freq = %d\n", conf::samplerate);
 	}
 
 #endif
@@ -192,7 +192,7 @@ int openDevice()
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] rtSystem init error: %s\n", e.getMessage().c_str());
+		u::log::print("[KA] rtSystem init error: %s\n", e.getMessage().c_str());
 		closeDevice();
 		return 0;
 	}
@@ -206,11 +206,11 @@ int startStream()
 {
 	try {
 		rtSystem->startStream();
-		gu_log("[KA] latency = %lu\n", rtSystem->getStreamLatency());
+		u::log::print("[KA] latency = %lu\n", rtSystem->getStreamLatency());
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] Start stream error: %s\n", e.getMessage().c_str());
+		u::log::print("[KA] Start stream error: %s\n", e.getMessage().c_str());
 		return 0;
 	}
 }
@@ -226,7 +226,7 @@ int stopStream()
 		return 1;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] Stop stream error\n");
+		u::log::print("[KA] Stop stream error\n");
 		return 0;
 	}
 }
@@ -241,7 +241,7 @@ std::string getDeviceName(unsigned dev)
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).name;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] invalid device ID = %d\n", dev);
+		u::log::print("[KA] invalid device ID = %d\n", dev);
 		return "";
 	}
 }
@@ -273,7 +273,7 @@ unsigned getMaxInChans(int dev)
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).inputChannels;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] Unable to get input channels\n");
+		u::log::print("[KA] Unable to get input channels\n");
 		return 0;
 	}
 }
@@ -288,7 +288,7 @@ unsigned getMaxOutChans(unsigned dev)
 		return static_cast<RtAudio::DeviceInfo>(rtSystem->getDeviceInfo(dev)).outputChannels;
 	}
 	catch (RtAudioError &e) {
-		gu_log("[KA] Unable to get output channels\n");
+		u::log::print("[KA] Unable to get output channels\n");
 		return 0;
 	}
 }

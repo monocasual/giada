@@ -195,7 +195,7 @@ void setFavicon(v::gdWindow* w)
 void openSubWindow(v::gdWindow* parent, v::gdWindow* child, int id)
 {
 	if (parent->hasWindow(id)) {
-		gu_log("[GU] parent has subwindow with id=%d, deleting\n", id);
+		u::log::print("[GU] parent has subwindow with id=%d, deleting\n", id);
 		parent->delSubWindow(id);
 	}
 	child->setId(id);

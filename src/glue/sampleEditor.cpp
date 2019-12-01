@@ -146,7 +146,7 @@ void copy(ID waveId, int a, int b)
 void paste(ID channelId, ID waveId, int a)
 {
 	if (!isWaveBufferFull()) {
-		gu_log("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
+		u::log::print("[sampleEditor::paste] Buffer is empty, nothing to paste\n");
 		return;
 	}
 

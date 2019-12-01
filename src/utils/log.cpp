@@ -35,17 +35,29 @@
 #include "log.h"
 
 
-static FILE* f;
-static int   mode;
-static bool  stat;
+namespace giada {
+namespace u {
+namespace log 
+{
+namespace
+{
+FILE* f;
+int   mode;
+bool  stat;
+} // {anonymouse}
 
 
-int gu_logInit(int m)
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
+int init(int m)
 {
 	mode = m;
 	stat = true;
 	if (mode == LOG_MODE_FILE) {
-		std::string fpath = giada::u::fs::getHomePath() + G_SLASH + "giada.log";
+		std::string fpath = fs::getHomePath() + G_SLASH + "giada.log";
 		f = fopen(fpath.c_str(), "a");
 		if (!f) {
 			stat = false;
@@ -59,7 +71,7 @@ int gu_logInit(int m)
 /* -------------------------------------------------------------------------- */
 
 
-void gu_logClose()
+void close()
 {
 	if (mode == LOG_MODE_FILE)
 		fclose(f);
@@ -69,7 +81,7 @@ void gu_logClose()
 /* -------------------------------------------------------------------------- */
 
 
-void gu_log(const char* format, ...)
+void print(const char* format, ...)
 {
 	if (mode == LOG_MODE_MUTE)
 		return;
@@ -85,3 +97,4 @@ void gu_log(const char* format, ...)
 		vprintf(format, args);
 	va_end(args);
 }
+}}}  // giada::u::log::

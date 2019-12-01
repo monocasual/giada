@@ -109,7 +109,7 @@ int geWaveform::alloc(int datasize, bool force)
 	m_data.sup.resize(m_data.size);
 	m_data.inf.resize(m_data.size);
 
-	gu_log("[geWaveform::alloc] %d pixels, %f m_ratio\n", m_data.size, m_ratio);
+	u::log::print("[geWaveform::alloc] %d pixels, %f m_ratio\n", m_data.size, m_ratio);
 
 	int offset = h() / 2;
 	int zero   = y() + offset; // center, zero amplitude (-inf dB)

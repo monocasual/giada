@@ -246,7 +246,7 @@ void gdMidiInputChannel::cb_setChannel()
 	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
 	{
 		c.midiInFilter = m_channel->value() == 0 ? -1 : m_channel->value() - 1;
-		gu_log("[gdMidiInputChannel] Set MIDI channel to %d\n", c.midiInFilter.load());
+		u::log::print("[gdMidiInputChannel] Set MIDI channel to %d\n", c.midiInFilter.load());
 	});
 }
 }} // giada::v::

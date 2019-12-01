@@ -60,7 +60,7 @@ template<typename F>
 bool is_(json_t* j, F f)
 {
 	if (!f(j)) {
-		gu_log("[patch::is_] malformed json!\n");
+		u::log::print("[patch::is_] malformed json!\n");
 		json_decref(j);
 		return false;
 	}
@@ -76,11 +76,11 @@ O read_(json_t* j, const char* key, FC checker, FG getter, O def)
 {
 	json_t* jo = json_object_get(j, key);
 	if (jo == nullptr) {
-		gu_log("[patch::read_] key '%s' not found, using default value\n", key);
+		u::log::print("[patch::read_] key '%s' not found, using default value\n", key);
 		return def;
 	}
 	if (!checker(jo)) {
-		gu_log("[patch::read_] key '%s' is of the wrong type, using default value\n", key);
+		u::log::print("[patch::read_] key '%s' is of the wrong type, using default value\n", key);
 		return def;
 	}
 	return getter(jo);
@@ -129,7 +129,7 @@ json_t* load(const std::string& file)
 	json_error_t jerr;
 	json_t* j = json_load_file(file.c_str(), 0, &jerr);
 	if (j == nullptr)
-		gu_log("[u::json::load] unable to read json file! Error on line %d: %s\n",
+		u::log::print("[u::json::load] unable to read json file! Error on line %d: %s\n",
 			jerr.line, jerr.text);
 	return j;
 }

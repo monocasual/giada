@@ -646,7 +646,7 @@ bool write(const std::string& name, const std::string& file, bool isProject)
 #endif
 
 	if (json_dump_file(j, file.c_str(), JSON_COMPACT) != 0) {
-		gu_log("[patch::write] unable to write patch file!\n");
+		u::log::print("[patch::write] unable to write patch file!\n");
 		return false;
 	}
 	return true;

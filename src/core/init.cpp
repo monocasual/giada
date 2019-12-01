@@ -77,17 +77,17 @@ namespace
 void initConf_()
 {
 	if (!conf::read())
-		gu_log("[init] Can't read configuration file! Using default values\n");
+		u::log::print("[init] Can't read configuration file! Using default values\n");
 	
 	patch::init();
 	midimap::init();
 	midimap::setDefault();
 	
-	if (!gu_logInit(conf::logMode))
-		gu_log("[init] log init failed! Using default stdout\n");
+	if (!u::log::init(conf::logMode))
+		u::log::print("[init] log init failed! Using default stdout\n");
 
 	if (midimap::read(conf::midiMapPath) != MIDIMAP_READ_OK)
-		gu_log("[init] MIDI map read failed!\n");
+		u::log::print("[init] MIDI map read failed!\n");
 }
 
 
@@ -164,9 +164,9 @@ void shutdownAudio_()
 {
 	if (kernelAudio::isReady()) {
 		kernelAudio::closeDevice();
-		gu_log("[init] KernelAudio closed\n");
+		u::log::print("[init] KernelAudio closed\n");
 		mh::close();
-		gu_log("[init] Mixer closed\n");
+		u::log::print("[init] Mixer closed\n");
 	}
 
 	/* TODO - why cleaning plug-ins and mixer memory? Just shutdown the audio
@@ -175,7 +175,7 @@ void shutdownAudio_()
 #ifdef WITH_VST
 
 	pluginHost::close();
-	gu_log("[init] PluginHost cleaned up\n");
+	u::log::print("[init] PluginHost cleaned up\n");
 
 #endif
 }
@@ -188,7 +188,7 @@ void shutdownGUI_()
 {
 	u::gui::closeAllSubwindows();
 
-	gu_log("[init] All subwindows and UI thread closed\n");
+	u::log::print("[init] All subwindows and UI thread closed\n");
 }
 } // {anonymous}
 
@@ -202,7 +202,7 @@ void startup(int argc, char** argv)
 {
 	time_t t;
 	time (&t);
-	gu_log("[init] Giada %s - %s", G_VERSION_STR, ctime(&t));
+	u::log::print("[init] Giada %s - %s", G_VERSION_STR, ctime(&t));
 
 	initConf_();
 	initAudio_();
@@ -262,13 +262,13 @@ void shutdown()
 	shutdownGUI_();
 
 	if (!conf::write())
-		gu_log("[init] error while saving configuration file!\n");
+		u::log::print("[init] error while saving configuration file!\n");
 	else
-		gu_log("[init] configuration saved\n");
+		u::log::print("[init] configuration saved\n");
 
 	shutdownAudio_();
 
-	gu_log("[init] Giada %s closed\n\n", G_VERSION_STR);
-	gu_logClose();
+	u::log::print("[init] Giada %s closed\n\n", G_VERSION_STR);
+	u::log::close();
 }
 }}} // giada::m::init

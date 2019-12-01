@@ -71,7 +71,7 @@ gdPluginWindowGUI::gdPluginWindowGUI(ID pluginId)
 
 #endif
 
-	gu_log("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
+	u::log::print("[gdPluginWindowGUI] opening GUI, this=%p, xid=%p\n",
 		(void*) this, (void*) fl_xid(this));
 
 #ifdef G_OS_MAC
@@ -123,7 +123,7 @@ void gdPluginWindowGUI::cb_close()
 {
 	Fl::remove_timeout(cb_refresh);
 	closeEditor();
-	gu_log("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
+	u::log::print("[gdPluginWindowGUI::__cb_close] GUI closed, this=%p\n", (void*) this);
 }
 
 
@@ -147,7 +147,7 @@ void gdPluginWindowGUI::openEditor(void* parent)
 		m_ui = p.createEditor();
 	});
 	if (m_ui == nullptr) {
-		gu_log("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
+		u::log::print("[gdPluginWindowGUI::openEditor] unable to create editor!\n");
 		return;
 	}
 	m_ui->setOpaque(true);

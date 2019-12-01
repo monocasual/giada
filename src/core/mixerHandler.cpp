@@ -89,7 +89,7 @@ waveManager::Result createWave_(const std::string& fname)
 	if (res.status != G_RES_OK)
 		return res;
 	if (res.wave->getRate() != conf::samplerate) {
-		gu_log("[mh::createWave_] input rate (%d) != system rate (%d), conversion needed\n",
+		u::log::print("[mh::createWave_] input rate (%d) != system rate (%d), conversion needed\n",
 			res.wave->getRate(), conf::samplerate);
 		res.status = waveManager::resample(*res.wave.get(), conf::rsmpQuality, conf::samplerate); 
 		if (res.status != G_RES_OK)

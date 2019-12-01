@@ -148,13 +148,13 @@ int gdKeyGrabber::handle(int e)
 			    && x != FL_End
 			    && x != ' ')
 			{
-				gu_log("set key '%c' (%d) for channel ID=%d\n", x, x, m_channelId);
+				u::log::print("set key '%c' (%d) for channel ID=%d\n", x, x, m_channelId);
 				setButtonLabel(x);
 				updateText(x);
 				break;
 			}
 			else
-				gu_log("invalid key\n");
+				u::log::print("invalid key\n");
 		}
 	}
 	return(ret);

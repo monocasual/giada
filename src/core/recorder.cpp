@@ -173,7 +173,7 @@ void updateKeyFrames(std::function<Frame(Frame old)> f)
 				copy.frame = frame;
 				ma->map[frame].push_back(copy);
 			}
-			gu_log("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);
+			u::log::print("[recorder::updateKeyFrames] %d -> %d\n", kv.first, frame);
 		}
 	}
 

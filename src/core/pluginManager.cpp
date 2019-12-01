@@ -141,8 +141,8 @@ void init(int samplerate, int buffersize)
 
 int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 {
-	gu_log("[pluginManager::scanDir] requested directories: '%s'\n", dirs.c_str());
-	gu_log("[pluginManager::scanDir] current plugins: %d\n", knownPluginList_.getNumTypes());
+	u::log::print("[pluginManager::scanDir] requested directories: '%s'\n", dirs.c_str());
+	u::log::print("[pluginManager::scanDir] current plugins: %d\n", knownPluginList_.getNumTypes());
 
 	knownPluginList_.clear();   // clear up previous plugins
 
@@ -158,11 +158,11 @@ int scanDirs(const std::string& dirs, const std::function<void(float)>& cb)
 
 	juce::String name;
 	while (scanner.scanNextFile(false, name)) {
-		gu_log("[pluginManager::scanDir]   scanning '%s'\n", name.toRawUTF8());
+		u::log::print("[pluginManager::scanDir]   scanning '%s'\n", name.toRawUTF8());
 		cb(scanner.getProgress());
 	}
 
-	gu_log("[pluginManager::scanDir] %d plugin(s) found\n", knownPluginList_.getNumTypes());
+	u::log::print("[pluginManager::scanDir] %d plugin(s) found\n", knownPluginList_.getNumTypes());
 	return knownPluginList_.getNumTypes();
 }
 
@@ -174,7 +174,7 @@ int saveList(const std::string& filepath)
 {
 	int out = knownPluginList_.createXml()->writeToFile(juce::File(filepath), "");
 	if (!out)
-		gu_log("[pluginManager::saveList] unable to save plugin list to %s\n", filepath.c_str());
+		u::log::print("[pluginManager::saveList] unable to save plugin list to %s\n", filepath.c_str());
 	return out;
 }
 
@@ -204,7 +204,7 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 
 	const juce::PluginDescription* pd = findPluginDescription_(fid);
 	if (pd == nullptr) {
-		gu_log("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
+		u::log::print("[pluginManager::makePlugin] no plugin found with fid=%s!\n", fid.c_str());
 		missingPlugins_ = true;
 		unknownPluginList_.push_back(fid);
 		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
@@ -212,12 +212,12 @@ std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id)
 
 	juce::AudioPluginInstance* pi = pluginFormat_.createInstanceFromDescription(*pd, samplerate_, buffersize_);
 	if (pi == nullptr) {
-		gu_log("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
+		u::log::print("[pluginManager::makePlugin] unable to create instance with fid=%s!\n", fid.c_str());
 		missingPlugins_ = true;
 		unknownPluginList_.push_back(fid);
 		return std::make_unique<Plugin>(pluginId_.get(id), fid); // Invalid plug-in
 	}
-	gu_log("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
+	u::log::print("[pluginManager::makePlugin] plugin instance with fid=%s created\n", fid.c_str());
 
 	return std::make_unique<Plugin>(pluginId_.get(id), pi, samplerate_, buffersize_);
 }
@@ -233,7 +233,7 @@ std::unique_ptr<Plugin> makePlugin(int index)
 	if (pd == nullptr) 
 		return {};
 	
-	gu_log("[pluginManager::makePlugin] plugin found, uid=%s, name=%s...\n",
+	u::log::print("[pluginManager::makePlugin] plugin found, uid=%s, name=%s...\n",
 		pd->createIdentifierString().toRawUTF8(), pd->name.toRawUTF8());
 	
 	return makePlugin(pd->createIdentifierString().toStdString());

@@ -89,7 +89,7 @@ void setBpm_(float f, std::string s)
 		G_MainWin->mainTimer->setBpm(s.c_str());
 	}
 
-	gu_log("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), m::clock::getBpm());
+	u::log::print("[glue::setBpm_] Bpm changed to %s (real=%f)\n", s.c_str(), m::clock::getBpm());
 }
 } // {anonymous}
 

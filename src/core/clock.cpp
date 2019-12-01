@@ -344,7 +344,7 @@ void sendMIDIsync()
 					midiTCminutes_ = 0;
 				}
 			}
-			//gu_log("%d:%d:%d:%d\n", midiTChours_, midiTCminutes_, midiTCseconds_, midiTCframes_);
+			//u::log::print("%d:%d:%d:%d\n", midiTChours_, midiTCminutes_, midiTCseconds_, midiTCframes_);
 		}
 	}
 }

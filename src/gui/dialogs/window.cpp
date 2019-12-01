@@ -90,7 +90,7 @@ void gdWindow::addSubWindow(gdWindow* w)
 	/** TODO - useless: delete ---------------------------------------- */
 	for (unsigned i=0; i<subWindows.size(); i++)
 		if (w->getId() == subWindows.at(i)->getId()) {
-			//gu_log("[gdWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
+			//u::log::print("[gdWindow] window %p (id=%d) exists, not added (and deleted)\n", (void*)w, w->getId());
 			delete w;
 			return;
 		}
@@ -155,10 +155,10 @@ void gdWindow::setId(int id)
 
 void gdWindow::debug() const
 {
-	gu_log("---- window stack (id=%d): ----\n", getId());
+	u::log::print("---- window stack (id=%d): ----\n", getId());
 	for (unsigned i=0; i<subWindows.size(); i++)
-		gu_log("[gdWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
-	gu_log("----\n");
+		u::log::print("[gdWindow] %p (id=%d)\n", (void*)subWindows.at(i), subWindows.at(i)->getId());
+	u::log::print("----\n");
 }
 
 

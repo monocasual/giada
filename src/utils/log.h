@@ -31,15 +31,20 @@
 #define G_UTILS_LOG_H
 
 
+namespace giada {
+namespace u {
+namespace log 
+{
 /* init
- * init logger. Mode defines where to write the output: LOG_MODE_STDOUT,
- * LOG_MODE_FILE and LOG_MODE_MUTE. */
+Initializes logger. Mode defines where to write the output: LOG_MODE_STDOUT,
+LOG_MODE_FILE and LOG_MODE_MUTE. */
 
-int  gu_logInit(int mode);
+int init(int mode);
 
-void gu_logClose();
+void close();
 
-void gu_log(const char *format, ...);
+void print(const char* format, ...);
+}}}  // giada::u::log::
 
 
 #endif

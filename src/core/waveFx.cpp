@@ -114,7 +114,7 @@ int monoToStereo(Wave& w)
 
 void silence(ID waveId, int a, int b)
 {
-	gu_log("[wfx::silence] silencing from %d to %d\n", a, b);
+	u::log::print("[wfx::silence] silencing from %d to %d\n", a, b);
 	
 	model::onSwap(m::model::waves, waveId, [&](Wave& w)
 	{
@@ -144,7 +144,7 @@ void cut(ID waveId, int a, int b)
 		AudioBuffer newData;
 		newData.alloc(newSize, w.getChannels());
 
-		gu_log("[wfx::cut] cutting from %d to %d\n", a, b);
+		u::log::print("[wfx::cut] cutting from %d to %d\n", a, b);
 
 		for (int i=0, k=0; i<w.getSize(); i++) {
 			if (i < a || i >= b) {
@@ -175,7 +175,7 @@ void trim(ID waveId, int a, int b)
 		AudioBuffer newData;
 		newData.alloc(newSize, w.getChannels());
 
-		gu_log("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
+		u::log::print("[wfx::trim] trimming from %d to %d (area = %d)\n", a, b, b-a);
 
 		for (int i=0; i<newData.countFrames(); i++)
 			for (int j=0; j<newData.countChannels(); j++)
@@ -217,7 +217,7 @@ void paste(const Wave& src, ID waveId, int a)
 
 void fade(ID waveId, int a, int b, int type)
 {
-	gu_log("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
+	u::log::print("[wfx::fade] fade from %d to %d (range = %d)\n", a, b, b-a);
 
 	float m = 0.0f;
 	float d = 1.0f / (float) (b - a);
@@ -245,7 +245,7 @@ void smooth(ID waveId, int a, int b)
 	portion of wave. SMOOTH_SIZE*2 to count both edges. */
 
 	if (SMOOTH_SIZE*2 > (b-a)) {
-		gu_log("[wfx::smooth] selection is too small, nothing to do\n");
+		u::log::print("[wfx::smooth] selection is too small, nothing to do\n");
 		return;
 	}
 

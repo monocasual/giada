@@ -109,7 +109,7 @@ bool savePatch_(const std::string& path, const std::string& name, bool isProject
 	u::gui::updateMainWinLabel(name);
 	m::conf::patchPath = isProject ? u::fs::getUpDir(u::fs::getUpDir(path)) : u::fs::dirname(path);
 	m::patch::name     = name;
-	gu_log("[savePatch] patch saved as %s\n", path.c_str());
+	u::log::print("[savePatch] patch saved as %s\n", path.c_str());
 	return true;
 }
 
@@ -168,7 +168,7 @@ void loadPatch(void* data)
 
 	browser->showStatusBar();
 
-	gu_log("[glue] loading %s...\n", fullPath.c_str());
+	u::log::print("[glue] loading %s...\n", fullPath.c_str());
 
 	std::string fileToLoad = fullPath;  // patch file to read from
 	std::string basePath   = "";        // base path, in case of reading from a project
@@ -222,7 +222,7 @@ void loadPatch(void* data)
 
 	u::gui::updateMainWinLabel(m::patch::name);
 
-	gu_log("[glue] patch loaded successfully\n");
+	u::log::print("[glue] patch loaded successfully\n");
 
 #ifdef WITH_VST
 
@@ -255,11 +255,11 @@ void saveProject(void* data)
 		return;
 
 	if (!u::fs::dirExists(fullPath) && !u::fs::mkdir(fullPath)) {
-		gu_log("[saveProject] Unable to make project directory!\n");
+		u::log::print("[saveProject] Unable to make project directory!\n");
 		return;
 	}
 
-	gu_log("[saveProject] Project dir created: %s\n", fullPath.c_str());
+	u::log::print("[saveProject] Project dir created: %s\n", fullPath.c_str());
 
 	saveWavesToProject_(fullPath);
 
@@ -326,7 +326,7 @@ void saveSample(void* data)
 		return;
 	}
 	
-	gu_log("[saveSample] sample saved to %s\n", filePath.c_str());
+	u::log::print("[saveSample] sample saved to %s\n", filePath.c_str());
 	
 	/* Update last used path in conf, so that it can be reused next time. */
 

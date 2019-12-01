@@ -88,7 +88,7 @@ void init()
 Result createFromFile(const std::string& path, ID id)
 {
 	if (path == "" || u::fs::isDir(path)) {
-		gu_log("[waveManager::create] malformed path (was '%s')\n", path.c_str());
+		u::log::print("[waveManager::create] malformed path (was '%s')\n", path.c_str());
 		return { G_RES_ERR_NO_DATA };
 	}
 
@@ -99,12 +99,12 @@ Result createFromFile(const std::string& path, ID id)
 	SNDFILE* fileIn = sf_open(path.c_str(), SFM_READ, &header);
 
 	if (fileIn == nullptr) {
-		gu_log("[waveManager::create] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
+		u::log::print("[waveManager::create] unable to read %s. %s\n", path.c_str(), sf_strerror(fileIn));
 		return { G_RES_ERR_IO };
 	}
 
 	if (header.channels > G_MAX_IO_CHANS) {
-		gu_log("[waveManager::create] unsupported multi-channel sample\n");
+		u::log::print("[waveManager::create] unsupported multi-channel sample\n");
 		return { G_RES_ERR_WRONG_DATA };
 	}
 
@@ -114,14 +114,14 @@ Result createFromFile(const std::string& path, ID id)
 	wave->alloc(header.frames, header.channels, header.samplerate, getBits_(header), path);
 
 	if (sf_readf_float(fileIn, wave->getFrame(0), header.frames) != header.frames)
-		gu_log("[waveManager::create] warning: incomplete read!\n");
+		u::log::print("[waveManager::create] warning: incomplete read!\n");
 
 	sf_close(fileIn);
 
 	if (header.channels == 1 && !wfx::monoToStereo(*wave))
 		return { G_RES_ERR_PROCESSING };
 
-	gu_log("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
+	u::log::print("[waveManager::create] new Wave created, %d frames\n", wave->getSize());
 
 	return { G_RES_OK, std::move(wave) };
 }
@@ -136,7 +136,7 @@ std::unique_ptr<Wave> createEmpty(int frames, int channels, int samplerate,
 	wave->alloc(frames, channels, samplerate, G_DEFAULT_BIT_DEPTH, name);
 	wave->setLogical(true);
 
-	gu_log("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
+	u::log::print("[waveManager::createEmpty] new empty Wave created, %d frames\n", 
 		wave->getSize());
 
 	return wave;
@@ -156,7 +156,7 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 	wave->copyData(src.getFrame(a), frames);
 	wave->setLogical(true);
 
-	gu_log("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
+	u::log::print("[waveManager::createFromWave] new Wave created, %d frames\n", frames);
 
 	return wave;
 }
@@ -189,11 +189,11 @@ int resample(Wave& w, int quality, int samplerate)
 	src_data.output_frames = newSizeFrames;
 	src_data.src_ratio     = ratio;
 
-	gu_log("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
+	u::log::print("[waveManager::resample] resampling: new size=%d frames\n", newSizeFrames);
 
 	int ret = src_simple(&src_data, quality, w.getChannels());
 	if (ret != 0) {
-		gu_log("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
+		u::log::print("[waveManager::resample] resampling error: %s\n", src_strerror(ret));
 		return G_RES_ERR_PROCESSING;
 	}
 
@@ -216,13 +216,13 @@ int save(const Wave& w, const std::string& path)
 
 	SNDFILE* file = sf_open(path.c_str(), SFM_WRITE, &header);
 	if (file == nullptr) {
-		gu_log("[waveManager::save] unable to open %s for exporting: %s\n",
+		u::log::print("[waveManager::save] unable to open %s for exporting: %s\n",
 			path.c_str(), sf_strerror(file));
 		return G_RES_ERR_IO;
 	}
 
 	if (sf_writef_float(file, w.getFrame(0), w.getSize()) != w.getSize())
-		gu_log("[waveManager::save] warning: incomplete write!\n");
+		u::log::print("[waveManager::save] warning: incomplete write!\n");
 
 	sf_close(file);
 

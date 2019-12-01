@@ -78,7 +78,7 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 
 	m_plugin->prepareToPlay(samplerate, buffersize);
 
-	gu_log("[Plugin] plugin initialized and ready. MIDI input params: %lu\n", 
+	u::log::print("[Plugin] plugin initialized and ready. MIDI input params: %lu\n", 
 		midiInParams.size());
 }
 
