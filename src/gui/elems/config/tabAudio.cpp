@@ -483,9 +483,9 @@ void geTabAudio::save()
 #elif defined(__FreeBSD__)
 
 	else if (text == "Jack")
-		conf::soundSystem = G_SYS_API_JACK;
+		m::conf::soundSystem = G_SYS_API_JACK;
 	else if (text == "PulseAudio")
-		conf::soundSystem = G_SYS_API_PULSE;
+		m::conf::soundSystem = G_SYS_API_PULSE;
 
 #elif defined(_WIN32)
 
