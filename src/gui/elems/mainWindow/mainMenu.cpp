@@ -106,6 +106,7 @@ void geMainMenu::cb_file()
 		{"Open patch or project..."},
 		{"Save patch..."},
 		{"Save project..."},
+		{"Close project"},
 #ifndef NDEBUG
 		{"Debug stats"},
 #endif
@@ -143,6 +144,10 @@ void geMainMenu::cb_file()
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
 		return;
 	}
+	if (strcmp(m->label(), "Close project") == 0) {
+		c::main::resetToInitState(/*createColumns=*/true);
+		return;
+	}
 #ifndef NDEBUG
 	if (strcmp(m->label(), "Debug stats") == 0) {
 		m::model::debug();
@@ -165,7 +170,6 @@ void geMainMenu::cb_edit()
 		{"Clear all samples"},
 		{"Clear all actions"},
 		{"Remove empty columns"},
-		{"Reset to init state"},
 		{"Setup global MIDI input..."},
 		{0}
 	};
@@ -191,10 +195,6 @@ void geMainMenu::cb_edit()
 	}
 	if (strcmp(m->label(), "Clear all actions") == 0) {
 		c::main::clearAllActions();
-		return;
-	}
-	if (strcmp(m->label(), "Reset to init state") == 0) {
-		c::main::resetToInitState(/*createColumns=*/true);
 		return;
 	}
 	if (strcmp(m->label(), "Remove empty columns") == 0) {
