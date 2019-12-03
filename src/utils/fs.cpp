@@ -271,7 +271,7 @@ std::string getHomePath()
 
 	struct passwd* p = getpwuid(getuid());
 	if (p == nullptr) {
-		log("[getHomePath] unable to fetch user infos\n");
+		log::print("[getHomePath] unable to fetch user infos\n");
 		return "";
 	}
 	else {

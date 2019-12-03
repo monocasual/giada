@@ -11,6 +11,11 @@
 --------------------------------------------------------------------------------
 
 
+0.16.1 --- 
+- Add namespaces to file system and logging functions 
+- Remove unused G_quit global variable
+
+
 0.16.0 --- 2019 . 12 . 02
 - Fix columns' resizer bar height on verical window resize
 - Fix crash on MIDI learn global commands

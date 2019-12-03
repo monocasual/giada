@@ -178,7 +178,7 @@ void readPlugins_(json_t* j)
 		readPluginParams_(jp, p.params);
 		readMidiInPluginParams_(jp, p.midiInParams);
 
-		model::plugins.push(std::move(pluginManager::makePlugin(p)));
+		model::plugins.push(pluginManager::makePlugin(p));
 	}
 }
 
