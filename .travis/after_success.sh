@@ -41,7 +41,7 @@ EOF
 
 	# Run linuxdeployqt to make the AppImage, then move it to ./build dir.
 
-	./linuxdeployqt-5-x86_64.AppImage ./temp/giada_lin -appimage
+	./linuxdeployqt-6-x86_64.AppImage ./temp/giada_lin -appimage
 	cp Giada-x86_64.AppImage ./build
 
 fi

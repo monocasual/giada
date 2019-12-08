@@ -44,26 +44,26 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
-  sudo apt-get install -y gcc-6 g++-6 libsndfile1-dev libsamplerate0-dev \
+  sudo apt-get install -y g++-7 libsndfile1-dev libsamplerate0-dev \
   	libasound2-dev libxpm-dev libpulse-dev libjack-dev \
   	libxft-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev \
-    libfontconfig1-dev 
+    libfontconfig1-dev libjansson-dev
 
   # Symlink gcc in order to use the latest version
 
-  sudo ln -f -s /usr/bin/g++-6 /usr/bin/g++
+  sudo ln -f -s /usr/bin/g++-7 /usr/bin/g++
 
   # Download and build latest version of FLTK.
 
-  wget http://fltk.org/pub/fltk/1.3.4/fltk-1.3.4-2-source.tar.gz
-  tar -xvf fltk-1.3.4-2-source.tar.gz
-  cd fltk-1.3.4-2 && ./configure && make -j2 && sudo make install || true
+  wget http://fltk.org/pub/fltk/1.3.5/fltk-1.3.5-source.tar.gz
+  tar -xvf fltk-1.3.5-source.tar.gz
+  cd fltk-1.3.5 && ./configure && make -j2 && sudo make install || true
   cd ..
 
   # Download linuxdeployqt for building AppImages.
 
-  wget https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage
-  chmod a+x linuxdeployqt-5-x86_64.AppImage
+  wget https://github.com/probonopd/linuxdeployqt/releases/download/6/linuxdeployqt-6-x86_64.AppImage
+  chmod a+x linuxdeployqt-6-x86_64.AppImage
 
   # Download and build latest version of RtMidi
 
@@ -72,13 +72,9 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   cd rtmidi-master && ./autogen.sh && ./configure --with-jack --with-alsa && make -j2 && sudo make install || true
   cd ..
 
-  # Download and install latest version of Jansson
+  # Update the shared libraries cache
 
-  wget http://www.digip.org/jansson/releases/jansson-2.7.tar.gz
-  tar -xvf jansson-2.7.tar.gz
-  cd jansson-2.7 && ./configure && make -j2 && sudo make install || true
   sudo ldconfig
-  cd ..
 
   # Download midimaps package for testing purposes.
 

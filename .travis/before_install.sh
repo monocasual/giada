@@ -6,7 +6,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
-  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y # for gcc 6
+  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y # For more recent GCC versions
   sudo apt-get update -qq
 
 fi
