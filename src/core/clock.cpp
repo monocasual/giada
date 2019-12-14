@@ -28,12 +28,13 @@
 #include <atomic>
 #include <cassert>
 #include "glue/main.h"
+#include "utils/math.h"
 #include "core/model/model.h"
-#include "conf.h"
-#include "const.h"
-#include "kernelAudio.h"
-#include "mixerHandler.h"
-#include "kernelMidi.h"
+#include "core/conf.h"
+#include "core/const.h"
+#include "core/kernelAudio.h"
+#include "core/mixerHandler.h"
+#include "core/kernelMidi.h"
 #include "clock.h"
 
 
@@ -162,8 +163,7 @@ bool isOnFirstBeat()
 
 void setBpm(float b)
 {	
-	if (b < G_MIN_BPM)
-		b = G_MIN_BPM;
+	b = u::math::bound(b, G_MIN_BPM, G_MAX_BPM);
 
 	model::onSwap(model::clock, [&](model::Clock& c)
 	{
@@ -175,17 +175,8 @@ void setBpm(float b)
 
 void setBeats(int newBeats, int newBars)
 {
-	if (newBeats > G_MAX_BEATS)
-		newBeats = G_MAX_BEATS;
-	else if (newBeats < 1)
-		newBeats = 1;
-	
-	/* Bars cannot be greater than beats. */
-	
-	if (newBars > newBeats)
-		newBars = newBeats;
-	else if (newBars <= 0)
-		newBars = 1;
+	newBeats = u::math::bound(newBeats, 1, G_MAX_BEATS);
+	newBars  = u::math::bound(newBars, 1, newBeats); // Bars cannot be greater than beats
 
 	model::onSwap(model::clock, [&](model::Clock& c)
 	{

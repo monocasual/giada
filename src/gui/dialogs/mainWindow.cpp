@@ -123,6 +123,7 @@ gdMainWindow::~gdMainWindow()
 void gdMainWindow::refresh()
 {
 	mainIO->refresh();
+	mainTimer->refresh();
 	mainTransport->refresh();
 	beatMeter->refresh();
 	keyboard->refresh();

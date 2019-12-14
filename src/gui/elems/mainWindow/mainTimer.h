@@ -44,7 +44,8 @@ class geMainTimer : public Fl_Group
 public:
 
 	geMainTimer(int x, int y);
-
+	
+	void refresh();
 	void rebuild();
 
 	void setBpm(const char* v);

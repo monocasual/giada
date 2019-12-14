@@ -64,21 +64,21 @@ namespace main
 {
 namespace
 {
-void setBpm_(float f, std::string s)
+void setBpm_(float current, std::string s)
 {
-	if (f < G_MIN_BPM) {
-		f = G_MIN_BPM;
+	if (current < G_MIN_BPM) {
+		current = G_MIN_BPM;
 		s = G_MIN_BPM_STR;
 	}
 	else
-	if (f > G_MAX_BPM) {
-		f = G_MAX_BPM;
+	if (current > G_MAX_BPM) {
+		current = G_MAX_BPM;
 		s = G_MAX_BPM_STR;		
 	}
 
-	float vPre = m::clock::getBpm();
-	m::clock::setBpm(f);
-	m::recorderHandler::updateBpm(vPre, f, m::clock::getQuanto());
+	float previous = m::clock::getBpm();
+	m::clock::setBpm(current);
+	m::recorderHandler::updateBpm(previous, current, m::clock::getQuanto());
 	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 
 	/* This function might get called by Jack callback BEFORE the UI is up
@@ -107,9 +107,9 @@ void setBpm(const char* v1, const char* v2)
 		return;
 
 	/* A value such as atof("120.1") will never be 120.1 but 120.0999999, because 
-	of the rounding error. So we pass the real "wrong" value to mixer and we show 
+	of the rounding error. So we pass the actual "wrong" value to mixer and we show 
 	the nice looking (but fake) one to the GUI. 
-	On Linux, let Jack handle the bpm change if its on. */
+	On Linux, let Jack handle the bpm change if it's on. */
 
 	float       f = std::atof(v1) + (std::atof(v2)/10);
 	std::string s = std::string(v1) + "." + std::string(v2);
@@ -146,7 +146,7 @@ void setBpm(float f)
 
 void setBeats(int beats, int bars)
 {
-	/* Never change this stuff while recording audio */
+	/* Never change this stuff while recording audio. */
 
 	if (m::recManager::isRecordingInput())
 		return;

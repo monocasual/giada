@@ -28,6 +28,7 @@
 #include "core/const.h"
 #include "core/model/model.h"
 #include "core/mixer.h"
+#include "core/recManager.h"
 #include "core/graphics.h"
 #include "core/clock.h"
 #include "glue/main.h"
@@ -134,6 +135,26 @@ void geMainTimer::cb_multiplier()
 void geMainTimer::cb_divider()
 {
 	c::main::beatsDivide();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMainTimer::refresh()
+{
+	if (m::recManager::isRecordingInput()) {
+		bpm->deactivate();
+		meter->deactivate();
+		multiplier->deactivate();
+		divider->deactivate();
+	}
+	else {
+		bpm->activate();
+		meter->activate();	
+		multiplier->activate();
+		divider->activate();	
+	}
 }
 
 
