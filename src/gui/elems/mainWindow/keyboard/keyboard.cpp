@@ -33,6 +33,7 @@
 #include "glue/channel.h"
 #include "utils/fs.h"
 #include "utils/log.h"
+#include "utils/vector.h"
 #include "utils/string.h"
 #include "gui/dispatcher.h"
 #include "gui/dialogs/warnings.h"
@@ -119,37 +120,27 @@ void geKeyboard::rebuild()
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::organizeColumns()
+void geKeyboard::deleteColumn(ID id)
 {
-#if 0
-	if (columns.size() == 0)
-		return;
+	size_t i = u::vector::indexOfIf(m_columns, [=](const geColumn* c) { return c->id == id; });
 
-	/* Otherwise delete all empty columns. */
+	assert(i < m_columns.size());
 
-	for (size_t i=columns.size(); i-- > 0;) {
-		if (columns.at(i)->isEmpty()) {
-			Fl::delete_widget(columns.at(i));
-			columns.erase(columns.begin() + i);
-		}
+	/* Delete selected column. */
+
+	Fl::delete_widget(m_columns.at(i)->resizerBar);
+	Fl::delete_widget(m_columns.at(i));
+	m_columns.erase(m_columns.begin() + i);
+
+	/* Reposition remaining columns and 'add column' button. */
+
+	int px = G_GUI_OUTER_MARGIN;
+	for (geColumn* c : m_columns) {
+		c->position(px, c->y());
+		c->resizerBar->position(c->x() + c->w(), c->resizerBar->y());
+		px = c->resizerBar->x() + c->resizerBar->w();
 	}
-
-	/* Zero columns? Just add the "add column" button. Compact column and avoid 
-	empty spaces otherwise. */
-
-	if (columns.size() == 0)
-		addColumnBtn->position(x() - xposition(), y());
-	else {
-		for (size_t i=0; i<columns.size(); i++) {
-			int pos = i == 0 ? x() - xposition() : columns.at(i-1)->x() + columns.at(i-1)->w() + COLUMN_GAP;
-			columns.at(i)->position(pos, y());
-		}
-		addColumnBtn->position(columns.back()->x() + columns.back()->w() + COLUMN_GAP, y());
-	}
-
-	refreshColIndexes();
-	redraw();
-#endif
+	m_addColumnBtn->position(px, y());
 }
 
 

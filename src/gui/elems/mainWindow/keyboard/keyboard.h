@@ -71,10 +71,10 @@ public:
 
 	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
-	/* organizeColumns
-	Reorganizes columns layout by removing empty gaps. */
-
-	void organizeColumns();
+	/* deleteColumn
+	Deletes column by id. */
+	
+	void deleteColumn(ID id);
 
 	/* deleteAllColumns
 	Deletes all columns from the stack. */

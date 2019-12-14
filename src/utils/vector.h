@@ -39,9 +39,16 @@ namespace u {
 namespace vector 
 {
 template <typename T, typename P>
-auto indexOf(T& v, const P& p)
+size_t indexOf(T& v, const P& p)
 {
 	return std::distance(v.begin(), std::find(v.begin(), v.end(), p));
+}
+
+
+template <typename T, typename P>
+size_t indexOfIf(T& v, P p)
+{
+	return std::distance(v.begin(), std::find_if(v.begin(), v.end(), p));
 }
 
 

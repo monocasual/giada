@@ -103,11 +103,15 @@ void geColumn::cb_addChannel()
 {
 	u::log::print("[geColumn::cb_addChannel] id = %d\n", id);
 
-	Fl_Menu_Item rclick_menu[] = {
-		{"Sample channel"},
-		{"MIDI channel"},
+	Fl_Menu_Item menu[] = {
+		{"Add Sample channel"},
+		{"Add MIDI channel"},
+		{"Remove"},
 		{0}
 	};
+
+	if (countChannels() > 0)
+		menu[2].deactivate();
 
 	Fl_Menu_Button b(0, 0, 100, 50);
 	b.box(G_CUSTOM_BORDER_BOX);
@@ -115,13 +119,17 @@ void geColumn::cb_addChannel()
 	b.textcolor(G_COLOR_LIGHT_2);
 	b.color(G_COLOR_GREY_2);
 
-	const Fl_Menu_Item* m = rclick_menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
+	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
 	if (m == nullptr) return;
 
-	if (strcmp(m->label(), "Sample channel") == 0)
+	if (strcmp(m->label(), "Add Sample channel") == 0)
 		c::channel::addChannel(id, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1);
 	else
+	if (strcmp(m->label(), "Add MIDI channel") == 0)
 		c::channel::addChannel(id, ChannelType::MIDI, G_GUI_CHANNEL_H_1);
+	else
+		static_cast<geKeyboard*>(parent())->deleteColumn(id);
+		
 }
 
 
@@ -146,7 +154,7 @@ void geColumn::init()
 {
 	clear();
 
-	m_addChannelBtn = new geButton(0, 0, w(), G_GUI_UNIT, "Add new channel");
+	m_addChannelBtn = new geButton(0, 0, w(), G_GUI_UNIT, "Edit column");
 	m_addChannelBtn->callback(cb_addChannel, (void*)this);
 
 	add(m_addChannelBtn);
@@ -160,5 +168,14 @@ void geColumn::forEachChannel(std::function<void(geChannel* c)> f) const
 {
 	for (int i=1; i<children(); i++) // Skip "add channel" button
 		f(static_cast<geChannel*>(child(i)));
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geColumn::countChannels() const
+{
+	return children() - 1;
 }
 }} // giada::v::

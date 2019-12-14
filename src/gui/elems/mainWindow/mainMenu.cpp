@@ -169,7 +169,6 @@ void geMainMenu::cb_edit()
 	Fl_Menu_Item menu[] = {
 		{"Clear all samples"},
 		{"Clear all actions"},
-		{"Remove empty columns"},
 		{"Setup global MIDI input..."},
 		{0}
 	};
@@ -189,22 +188,14 @@ void geMainMenu::cb_edit()
 	const Fl_Menu_Item* m = menu->popup(Fl::event_x(), Fl::event_y(), 0, 0, &b);
 	if (!m) return;
 
-	if (strcmp(m->label(), "Clear all samples") == 0) {
+	if (strcmp(m->label(), "Clear all samples") == 0) 
 		c::main::clearAllSamples();
-		return;
-	}
-	if (strcmp(m->label(), "Clear all actions") == 0) {
+	else
+	if (strcmp(m->label(), "Clear all actions") == 0) 
 		c::main::clearAllActions();
-		return;
-	}
-	if (strcmp(m->label(), "Remove empty columns") == 0) {
-		G_MainWin->keyboard->organizeColumns();
-		return;
-	}
-	if (strcmp(m->label(), "Setup global MIDI input...") == 0) {
+	else
+	if (strcmp(m->label(), "Setup global MIDI input...") == 0) 
 		u::gui::openSubWindow(G_MainWin, new gdMidiInputMaster(), WID_MIDI_INPUT);
-		return;
-	}
 }
 
 }} // giada::v::

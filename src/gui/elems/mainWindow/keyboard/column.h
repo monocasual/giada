@@ -74,6 +74,8 @@ private:
 	static void cb_addChannel(Fl_Widget* v, void* p);
 	void cb_addChannel();
 
+	int countChannels() const;
+
 	geButton* m_addChannelBtn;
 };
 }} // giada::v::
