@@ -545,11 +545,15 @@ void finalizeInputRec()
 		wave->copyData(virtualInput[0], virtualInput.countFrames());
 
 		/* Update Channel with the new Wave. The function pushWave_ will take
-		take of pushing it into the stack first. */
+		take of pushing it into the stack first. Also start all channels in
+		LOOP mode. */
 
 		model::onSwap(model::channels, model::getId(model::channels, i), [&](Channel& c)
 		{
-			pushWave_(static_cast<SampleChannel&>(c), std::move(wave), /*clone=*/false);
+			SampleChannel& sc = static_cast<SampleChannel&>(c);
+			pushWave_(sc, std::move(wave), /*clone=*/false);
+			if (sc.isAnyLoopMode())
+				sc.playStatus = ChannelStatus::PLAY;
 		});
 	}
 

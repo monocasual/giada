@@ -12,9 +12,14 @@
 
 
 0.16.1 --- 
+- FreeBSD support
 - Add namespaces to file system and logging functions 
 - Gray out bpm value when in JACK client mode
 - Remove unused G_quit global variable
+- 'Reset to init state' becomes 'close project' under File menu
+- [Linux] Upgrade Travis CI Linux machine to Xenial
+- Fix Sample Channels in loop mode not playing automatically after audio 
+  recording
 
 
 0.16.0 --- 2019 . 12 . 02
