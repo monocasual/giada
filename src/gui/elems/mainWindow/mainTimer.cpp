@@ -27,6 +27,7 @@
 
 #include "core/const.h"
 #include "core/model/model.h"
+#include "core/kernelAudio.h"
 #include "core/mixer.h"
 #include "core/recManager.h"
 #include "core/graphics.h"
@@ -80,6 +81,15 @@ geMainTimer::geMainTimer(int x, int y)
 	quantizer->add("1\\/6", 0, cb_quantizer, (void*)this);
 	quantizer->add("1\\/8", 0, cb_quantizer, (void*)this);
 	quantizer->value(0); //  "off" by default
+
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+	
+	/* Can't change bpm from within Giada when using JACK. */
+
+	if (m::kernelAudio::getAPI() == G_SYS_API_JACK)
+		bpm->deactivate();
+
+#endif
 }
 
 
@@ -150,7 +160,14 @@ void geMainTimer::refresh()
 		divider->deactivate();
 	}
 	else {
+		/* Don't reactivate bpm when using JACK. It must stay disabled. */
+
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+		if (m::kernelAudio::getAPI() != G_SYS_API_JACK)
+			bpm->activate();
+#else
 		bpm->activate();
+#endif
 		meter->activate();	
 		multiplier->activate();
 		divider->activate();	

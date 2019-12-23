@@ -13,6 +13,7 @@
 
 0.16.1 --- 
 - Add namespaces to file system and logging functions 
+- Gray out bpm value when in JACK client mode
 - Remove unused G_quit global variable
 
 

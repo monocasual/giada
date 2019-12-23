@@ -163,6 +163,15 @@ bool isOnFirstBeat()
 
 void setBpm(float b)
 {	
+#if defined(G_OS_LINUX) || defined(G_OS_FREEBSD)
+	
+	/* Can't change bpm from within Giada when using JACK. */
+
+	if (m::kernelAudio::getAPI() == G_SYS_API_JACK)
+		return;
+
+#endif
+
 	b = u::math::bound(b, G_MIN_BPM, G_MAX_BPM);
 
 	model::onSwap(model::clock, [&](model::Clock& c)
