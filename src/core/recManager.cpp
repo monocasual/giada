@@ -73,7 +73,6 @@ bool startActionRec_()
 		return false;
 	clock::setStatus(ClockStatus::RUNNING);
 	m::mh::startSequencer();
-	setRecordingAction_(true);
 	return true;
 }
 
@@ -87,7 +86,6 @@ bool startInputRec_()
 		return false;
 	mixer::startInputRec();
 	mh::startSequencer();
-	setRecordingInput_(true);
 	return true;
 }
 } // {anonymous}
@@ -95,14 +93,6 @@ bool startInputRec_()
 
 /* -------------------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-
-
-void init()
-{
-}
-
-
 /* -------------------------------------------------------------------------- */
 
 
@@ -115,11 +105,7 @@ bool isRecording()
 bool isRecordingAction()
 { 
 	model::RecorderLock lock(model::recorder); 
-
-	bool isRecording = model::recorder.get()->isRecordingAction;
-	bool isWaiting   = clock::getStatus() == ClockStatus::WAITING;
-	
-	return isRecording || (!isRecording && isWaiting); 
+	return model::recorder.get()->isRecordingAction;
 }
 
 
@@ -135,14 +121,16 @@ bool isRecordingInput()
 
 void startActionRec(RecTriggerMode mode)
 {
-	if (mode == RecTriggerMode::NORMAL)
-		startActionRec_();
-	else
-	if (mode == RecTriggerMode::SIGNAL) {
+	if (mode == RecTriggerMode::NORMAL) {
+		if (startActionRec_())
+			setRecordingAction_(true);
+	}
+	else {   // RecTriggerMode::SIGNAL
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		m::midiDispatcher::setSignalCallback(startActionRec_);
 		v::dispatcher::setSignalCallback(startActionRec_);
+		setRecordingAction_(true);
 	}
 }
 
@@ -192,18 +180,21 @@ void toggleActionRec(RecTriggerMode m)
 
 bool startInputRec(RecTriggerMode mode)
 {
-	if (mode == RecTriggerMode::NORMAL)
-		startInputRec_();
-	else
-	if (mode == RecTriggerMode::SIGNAL) {
+	if (mode == RecTriggerMode::NORMAL) {
+		if (!startInputRec_())
+			return false;
+		setRecordingInput_(true);
+		return true;
+	}
+	else {   // RecTriggerMode::SIGNAL
 		if (!mh::hasRecordableSampleChannels())
 			return false;
 		clock::setStatus(ClockStatus::WAITING);
 		clock::rewind();
 		mixer::setSignalCallback(startInputRec_);
 		setRecordingInput_(true);
+		return true;
 	}
-	return isRecordingInput();
 }
 
 
