@@ -72,7 +72,7 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID chanID)
 	sortMethod->add("Category");
 	sortMethod->add("Manufacturer");
 	sortMethod->callback(cb_sort, (void*) this);
-	sortMethod->value(m::conf::pluginSortMethod);
+	sortMethod->value(m::conf::conf.pluginSortMethod);
 
 	addBtn->callback(cb_add, (void*) this);
 	addBtn->shortcut(FL_Enter);
@@ -89,11 +89,11 @@ gdPluginChooser::gdPluginChooser(int X, int Y, int W, int H, ID chanID)
 
 gdPluginChooser::~gdPluginChooser()
 {
-	m::conf::pluginChooserX = x();
-	m::conf::pluginChooserY = y();
-	m::conf::pluginChooserW = w();
-	m::conf::pluginChooserH = h();
-	m::conf::pluginSortMethod = sortMethod->value();
+	m::conf::conf.pluginChooserX = x();
+	m::conf::conf.pluginChooserY = y();
+	m::conf::conf.pluginChooserW = w();
+	m::conf::conf.pluginChooserH = h();
+	m::conf::conf.pluginSortMethod = sortMethod->value();
 }
 
 

@@ -65,8 +65,8 @@ namespace giada {
 namespace v 
 {
 gdSampleEditor::gdSampleEditor(ID channelId, ID waveId)
-: gdWindow   (m::conf::sampleEditorX, m::conf::sampleEditorY, 
-	          m::conf::sampleEditorW, m::conf::sampleEditorH),
+: gdWindow   (m::conf::conf.sampleEditorX, m::conf::conf.sampleEditorY, 
+	          m::conf::conf.sampleEditorW, m::conf::conf.sampleEditorH),
   m_channelId(channelId),
   m_waveId   (waveId)
 {
@@ -100,12 +100,12 @@ gdSampleEditor::gdSampleEditor(ID channelId, ID waveId)
 
 gdSampleEditor::~gdSampleEditor()
 {
-	m::conf::sampleEditorX = x();
-	m::conf::sampleEditorY = y();
-	m::conf::sampleEditorW = w();
-	m::conf::sampleEditorH = h();
-	m::conf::sampleEditorGridVal = atoi(grid->text());
-	m::conf::sampleEditorGridOn  = snap->value();
+	m::conf::conf.sampleEditorX = x();
+	m::conf::conf.sampleEditorY = y();
+	m::conf::conf.sampleEditorW = w();
+	m::conf::conf.sampleEditorH = h();
+	m::conf::conf.sampleEditorGridVal = atoi(grid->text());
+	m::conf::conf.sampleEditorGridOn  = snap->value();
 	
 	c::sampleEditor::setPreview(m_channelId, PreviewMode::NONE);
 }
@@ -175,13 +175,13 @@ Fl_Group* gdSampleEditor::createUpperBar()
 	grid->add("16");
 	grid->add("32");
 	grid->add("64");
-	if (m::conf::sampleEditorGridVal == 0)
+	if (m::conf::conf.sampleEditorGridVal == 0)
 		grid->value(0);
 	else 
-		grid->value(grid->find_item(u::string::iToString(m::conf::sampleEditorGridVal).c_str()));
+		grid->value(grid->find_item(u::string::iToString(m::conf::conf.sampleEditorGridVal).c_str()));
 	grid->callback(cb_changeGrid, (void*)this);
 
-	snap->value(m::conf::sampleEditorGridOn);
+	snap->value(m::conf::conf.sampleEditorGridOn);
 	snap->callback(cb_enableSnap, (void*)this);
 
 	/* TODO - redraw grid if != (off) */

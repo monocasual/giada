@@ -64,6 +64,28 @@ std::function<void(MidiEvent)> learnCb_  = nullptr;
 /* -------------------------------------------------------------------------- */
 
 
+bool isMasterMidiInAllowed_(int c)
+{
+	model::MidiInLock l(model::midiIn);
+	int filter   = model::midiIn.get()->filter;
+	bool enabled = model::midiIn.get()->enabled;
+	return enabled && (filter == -1 || filter == c);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+bool isChannelMidiInAllowed_(ID channelId, int c)
+{
+	model::ChannelsLock l(model::channels);
+	return model::get(model::channels, channelId).isMidiInAllowed(c);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 #ifdef WITH_VST
 
 void processPlugins_(const std::vector<ID>& ids, const MidiEvent& midiEvent)
@@ -115,43 +137,43 @@ void processChannels_(const MidiEvent& midiEvent)
 		if (!ch->midiIn || !ch->isMidiInAllowed(midiEvent.getChannel()))
 			continue;
 
-		if      (pure == ch->midiInKeyPress.load()) {
+		if      (pure == ch->midiInKeyPress) {
 			actions.push_back([=] {
 				u::log::print("  >>> keyPress, ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::io::keyPress(ch->id, false, false, midiEvent.getVelocity());
 			});
 		}
-		else if (pure == ch->midiInKeyRel.load()) {
+		else if (pure == ch->midiInKeyRel) {
 			actions.push_back([=] {
 				u::log::print("  >>> keyRel ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::io::keyRelease(ch->id, false, false);
 			});
 		}
-		else if (pure == ch->midiInMute.load()) {
+		else if (pure == ch->midiInMute) {
 			actions.push_back([=] {
 				u::log::print("  >>> mute ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleMute(ch->id);
 			});
 		}		
-		else if (pure == ch->midiInKill.load()) {
+		else if (pure == ch->midiInKill) {
 			actions.push_back([=] {
 				u::log::print("  >>> kill ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::kill(ch->id, /*record=*/false);
 			});
 		}		
-		else if (pure == ch->midiInArm.load()) {
+		else if (pure == ch->midiInArm) {
 			actions.push_back([=] {
 				u::log::print("  >>> arm ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleArm(ch->id);
 			});
 		}
-		else if (pure == ch->midiInSolo.load()) {
+		else if (pure == ch->midiInSolo) {
 			actions.push_back([=] {
 				u::log::print("  >>> solo ch=%d (pure=0x%X)\n", ch->id, pure);
 				c::channel::toggleSolo(ch->id);
 			});
 		}
-		else if (pure == ch->midiInVolume.load()) {
+		else if (pure == ch->midiInVolume) {
 			actions.push_back([=] {
 				float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
 				u::log::print("  >>> volume ch=%d (pure=0x%X, value=%d, float=%f)\n",
@@ -161,7 +183,7 @@ void processChannels_(const MidiEvent& midiEvent)
 		}
 		else {
 			const SampleChannel* sch = static_cast<const SampleChannel*>(ch);
-			if (pure == sch->midiInPitch.load()) {
+			if (pure == sch->midiInPitch) {
 				actions.push_back([=] {
 					float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_PITCH); 
 					u::log::print("  >>> pitch ch=%d (pure=0x%X, value=%d, float=%f)\n",
@@ -170,7 +192,7 @@ void processChannels_(const MidiEvent& midiEvent)
 				});
 			}
 			else 
-			if (pure == sch->midiInReadActions.load()) {
+			if (pure == sch->midiInReadActions) {
 				actions.push_back([=] {
 					u::log::print("  >>> toggle read actions ch=%d (pure=0x%X)\n", sch->id, pure);
 					c::channel::toggleReadingActions(sch->id);
@@ -200,50 +222,120 @@ void processChannels_(const MidiEvent& midiEvent)
 
 void processMaster_(const MidiEvent& midiEvent)
 {
-	const bool gui = false;
+	m::model::MidiInLock l(m::model::midiIn);
 
-	uint32_t pure = midiEvent.getRawNoVelocity();
+	const uint32_t       pure   = midiEvent.getRawNoVelocity();
+	const model::MidiIn* midiIn = model::midiIn.get();
 
-	if      (pure == conf::midiInRewind) {
-		u::log::print("  >>> rewind (master) (pure=0x%X)\n", pure);
+	if      (pure == midiIn->rewind) {
 		mh::rewindSequencer();
+		u::log::print("  >>> rewind (master) (pure=0x%X)\n", pure);
 	}
-	else if (pure == conf::midiInStartStop) {
-		u::log::print("  >>> startStop (master) (pure=0x%X)\n", pure);
+	else if (pure == midiIn->startStop) {
 		mh::toggleSequencer();
+		u::log::print("  >>> startStop (master) (pure=0x%X)\n", pure);
 	}
-	else if (pure == conf::midiInActionRec) {
+	else if (pure == midiIn->actionRec) {
+		recManager::toggleActionRec(conf::conf.recTriggerMode);
 		u::log::print("  >>> actionRec (master) (pure=0x%X)\n", pure);
-		recManager::toggleActionRec(static_cast<RecTriggerMode>(conf::recTriggerMode));
 	}
-	else if (pure == conf::midiInInputRec) {
-		u::log::print("  >>> inputRec (master) (pure=0x%X)\n", pure);
+	else if (pure == midiIn->inputRec) {
 		c::main::toggleInputRec();
+		u::log::print("  >>> inputRec (master) (pure=0x%X)\n", pure);
 	}
-	else if (pure == conf::midiInMetronome) {
-		u::log::print("  >>> metronome (master) (pure=0x%X)\n", pure);
+	else if (pure == midiIn->metronome) {
 		m::mixer::toggleMetronome();
+		u::log::print("  >>> metronome (master) (pure=0x%X)\n", pure);
 	}
-	else if (pure == conf::midiInVolumeIn) {
+	else if (pure == midiIn->volumeIn) {
 		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
+		c::main::setInVol(vf, /*gui=*/false);
 		u::log::print("  >>> input volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		c::main::setInVol(vf, gui);
 	}
-	else if (pure == conf::midiInVolumeOut) {
+	else if (pure == midiIn->volumeOut) {
 		float vf = u::math::map(midiEvent.getVelocity(), G_MAX_VELOCITY, G_MAX_VOLUME); 
+		c::main::setOutVol(vf, /*gui=*/false);
 		u::log::print("  >>> output volume (master) (pure=0x%X, value=%d, float=%f)\n",
 			pure, midiEvent.getVelocity(), vf);
-		c::main::setOutVol(vf, gui);
 	}
-	else if (pure == conf::midiInBeatDouble) {
-		u::log::print("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
+	else if (pure == midiIn->beatDouble) {
 		c::main::beatsMultiply();
+		u::log::print("  >>> sequencer x2 (master) (pure=0x%X)\n", pure);
 	}
-	else if (pure == conf::midiInBeatHalf) {
-		u::log::print("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
+	else if (pure == midiIn->beatHalf) {
 		c::main::beatsDivide();
+		u::log::print("  >>> sequencer /2 (master) (pure=0x%X)\n", pure);
 	}
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void learnChannel_(MidiEvent e, int param, ID channelId, std::function<void()> doneCb)
+{
+	if (!isChannelMidiInAllowed_(channelId, e.getChannel()))
+		return;	
+
+	uint32_t raw = e.getRawNoVelocity();
+
+	model::onSwap(model::channels, channelId, [&](Channel& c)
+	{	
+		switch (param) {
+			case G_MIDI_IN_KEYPRESS:     c.midiInKeyPress = raw; break;
+			case G_MIDI_IN_KEYREL:       c.midiInKeyRel   = raw; break;
+			case G_MIDI_IN_KILL:         c.midiInKill     = raw; break;
+			case G_MIDI_IN_ARM:          c.midiInArm      = raw; break;
+			case G_MIDI_IN_MUTE:         c.midiInVolume   = raw; break;
+			case G_MIDI_IN_SOLO:         c.midiInMute     = raw; break;
+			case G_MIDI_IN_VOLUME:       c.midiInVolume   = raw; break;
+			case G_MIDI_IN_PITCH:        static_cast<SampleChannel&>(c).midiInPitch       = raw; break;
+			case G_MIDI_IN_READ_ACTIONS: static_cast<SampleChannel&>(c).midiInReadActions = raw; break;
+		}
+	});
+
+	stopLearn();
+	doneCb();
+}
+
+
+void learnMaster_(MidiEvent e, int param, std::function<void()> doneCb)
+{
+	if (!isMasterMidiInAllowed_(e.getChannel()))
+		return;
+
+	uint32_t raw = e.getRawNoVelocity();
+
+	model::onSwap(model::midiIn, [&](model::MidiIn& m)
+	{
+		switch (param) {
+			case G_MIDI_IN_REWIND:      m.rewind     = raw; break;
+			case G_MIDI_IN_START_STOP:  m.startStop  = raw; break;
+			case G_MIDI_IN_ACTION_REC:  m.actionRec  = raw; break;
+			case G_MIDI_IN_INPUT_REC:   m.inputRec   = raw; break;
+			case G_MIDI_IN_METRONOME:   m.volumeIn   = raw; break;
+			case G_MIDI_IN_VOLUME_IN:   m.volumeOut  = raw; break;
+			case G_MIDI_IN_VOLUME_OUT:  m.beatDouble = raw; break;
+			case G_MIDI_IN_BEAT_DOUBLE: m.beatHalf   = raw; break;
+			case G_MIDI_IN_BEAT_HALF:   m.metronome  = raw; break;
+		}
+	});
+
+	stopLearn();
+	doneCb();
+}
+
+
+void learnPlugin_(MidiEvent e, int paramIndex, ID pluginId, std::function<void()> doneCb)
+{
+	model::onSwap(model::plugins, pluginId, [&](Plugin& p)
+	{
+		p.midiInParams[paramIndex] = e.getRawNoVelocity();
+	});
+
+	stopLearn();
+	doneCb();
 }
 
 
@@ -265,18 +357,48 @@ void triggerSignalCb_()
 /* -------------------------------------------------------------------------- */
 
 
-void startMidiLearn(std::function<void(MidiEvent)> f)
+void startChannelLearn(int param, ID channelId, std::function<void()> f)
 {
-	learnCb_ = f;
+	learnCb_ = [=](m::MidiEvent e) { learnChannel_(e, param, channelId, f); };
+}
+
+
+void startMasterLearn (int param, std::function<void()> f)
+{
+	learnCb_ = [=](m::MidiEvent e) { learnMaster_(e, param, f); };
+}
+
+
+void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
+{
+	learnCb_ = [=](m::MidiEvent e) { learnPlugin_(e, paramIndex, pluginId, f); };
+}
+
+
+void stopLearn()
+{
+	learnCb_ = nullptr;
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void stopMidiLearn()
+void clearMasterLearn(int param, std::function<void()> f)
 {
-	learnCb_ = nullptr;
+	learnMaster_(MidiEvent(), param, f); // Empty event (0x0)
+}
+
+
+void clearChannelLearn(int param, ID channelId, std::function<void()> f)
+{
+	learnChannel_(MidiEvent(), param, channelId, f); // Empty event (0x0)
+}
+
+
+void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
+{
+	learnPlugin_(MidiEvent(), paramIndex, pluginId, f); // Empty event (0x0)
 }
 
 

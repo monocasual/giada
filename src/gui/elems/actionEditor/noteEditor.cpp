@@ -43,7 +43,7 @@ geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 {
 	pianoRoll = new gePianoRoll(x, y, m_base->fullWidth);
 	
-	size(m_base->fullWidth, m::conf::pianoRollH);
+	size(m_base->fullWidth, m::conf::conf.pianoRollH);
 	
 	type(Fl_Scroll::VERTICAL_ALWAYS);
 }
@@ -54,8 +54,8 @@ geNoteEditor::geNoteEditor(Pixel x, Pixel y, gdMidiActionEditor* base)
 
 geNoteEditor::~geNoteEditor()
 {
-	m::conf::pianoRollH = h();
-	m::conf::pianoRollY = pianoRoll->y();
+	m::conf::conf.pianoRollH = h();
+	m::conf::conf.pianoRollY = pianoRoll->y();
 }
 
 

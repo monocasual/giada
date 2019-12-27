@@ -87,7 +87,12 @@ unsigned countUnknownPlugins();
 std::unique_ptr<Plugin> makePlugin(const std::string& fid, ID id=0);
 std::unique_ptr<Plugin> makePlugin(int index);
 std::unique_ptr<Plugin> makePlugin(const Plugin& other);
-std::unique_ptr<Plugin> makePlugin(const patch::Plugin& p);
+
+/* (de)serializePlugin
+Transforms patch data into a Plugin object and vice versa. */
+
+const patch::Plugin     serializePlugin(const Plugin& p);
+std::unique_ptr<Plugin> deserializePlugin(const patch::Plugin& p);
 
 /* getAvailablePluginInfo
 Returns the available plugin information (name, type, ...) given a plug-in

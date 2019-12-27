@@ -25,11 +25,8 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "core/channels/channel.h"
-#include "core/midiDispatcher.h"
+#include "glue/io.h"
 #include "core/conf.h"
-#include "utils/log.h"
-#include "gui/elems/midiLearner.h"
 #include "midiInputBase.h"
 
 
@@ -47,12 +44,12 @@ gdMidiInputBase::gdMidiInputBase(int x, int y, int w, int h, const char* title)
 
 gdMidiInputBase::~gdMidiInputBase()
 {
-	m::midiDispatcher::stopMidiLearn();
+	c::io::stopMidiLearn();
 	
-	m::conf::midiInputX = x();
-	m::conf::midiInputY = y();
-	m::conf::midiInputW = w();
-	m::conf::midiInputH = h();
+	m::conf::conf.midiInputX = x();
+	m::conf::conf.midiInputY = y();
+	m::conf::conf.midiInputW = w();
+	m::conf::conf.midiInputH = h();
 }
 
 
@@ -61,7 +58,7 @@ gdMidiInputBase::~gdMidiInputBase()
 
 void gdMidiInputBase::refresh()
 {
-	for (geMidiLearner* l : m_learners)
+	for (geMidiLearnerBase* l : m_learners)
 		l->refresh();
 }
 

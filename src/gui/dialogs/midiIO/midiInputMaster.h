@@ -29,6 +29,7 @@
 #define GD_MIDI_INPUT_MASTER_H
 
 
+#include "core/model/model.h"
 #include "midiInputBase.h"
 
 

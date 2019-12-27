@@ -243,7 +243,7 @@ void clearAllActions()
 /* -------------------------------------------------------------------------- */
 
 
-recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pactions)
+recorder::ActionMap deserializeActions(const std::vector<patch::Action>& pactions)
 {
 	recorder::ActionMap out;
 
@@ -273,6 +273,29 @@ recorder::ActionMap makeActionsFromPatch(const std::vector<patch::Action>& pacti
 
 	return out;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+std::vector<patch::Action> serializeActions(const recorder::ActionMap& actions)
+{
+	std::vector<patch::Action> out;
+	for (const auto& kv : actions) {
+		for (const Action& a : kv.second) {
+			out.push_back({
+				a.id,
+				a.channelId,
+				a.frame,
+				a.event.getRaw(),
+				a.prevId,
+				a.nextId,
+			});
+		}
+	}
+	return out;	
+}
+
 }}}; // giada::m::recorderHandler::
 
 

@@ -80,7 +80,7 @@ bool isReady()
 
 int openDevice()
 {
-	api = conf::soundSystem;
+	api = conf::conf.soundSystem;
 	u::log::print("[KA] using system 0x%x\n", api);
 
 #if defined(__linux__) || defined(__FreeBSD__)
@@ -126,7 +126,7 @@ int openDevice()
 	}
 
 	u::log::print("[KA] Opening devices %d (out), %d (in), f=%d...\n",
-    conf::soundDeviceOut, conf::soundDeviceIn, conf::samplerate);
+    conf::conf.soundDeviceOut, conf::conf.soundDeviceIn, conf::conf.samplerate);
 
 	numDevs = rtSystem->getDeviceCount();
 
@@ -144,16 +144,16 @@ int openDevice()
 	RtAudio::StreamParameters outParams;
 	RtAudio::StreamParameters inParams;
 
-	outParams.deviceId     = conf::soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? getDefaultOut() : conf::soundDeviceOut;
+	outParams.deviceId     = conf::conf.soundDeviceOut == G_DEFAULT_SOUNDDEV_OUT ? getDefaultOut() : conf::conf.soundDeviceOut;
 	outParams.nChannels    = G_MAX_IO_CHANS;
-	outParams.firstChannel = conf::channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
+	outParams.firstChannel = conf::conf.channelsOut * G_MAX_IO_CHANS; // chan 0=0, 1=2, 2=4, ...
 
 	/* inDevice can be disabled. */
 
-	if (conf::soundDeviceIn != -1) {
-		inParams.deviceId     = conf::soundDeviceIn;
+	if (conf::conf.soundDeviceIn != -1) {
+		inParams.deviceId     = conf::conf.soundDeviceIn;
 		inParams.nChannels    = G_MAX_IO_CHANS;
-		inParams.firstChannel = conf::channelsIn * G_MAX_IO_CHANS;   // chan 0=0, 1=2, 2=4, ...
+		inParams.firstChannel = conf::conf.channelsIn * G_MAX_IO_CHANS;   // chan 0=0, 1=2, 2=4, ...
 		inputEnabled = true;
 	}
 	else
@@ -163,13 +163,13 @@ int openDevice()
 	options.streamName = G_APP_NAME;
 	options.numberOfBuffers = 4;
 
-	realBufsize = conf::buffersize;
+	realBufsize = conf::conf.buffersize;
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
 
 	if (api == G_SYS_API_JACK) {
-		conf::samplerate = getFreq(conf::soundDeviceOut, 0);
-		u::log::print("[KA] JACK in use, freq = %d\n", conf::samplerate);
+		conf::conf.samplerate = getFreq(conf::conf.soundDeviceOut, 0);
+		u::log::print("[KA] JACK in use, freq = %d\n", conf::conf.samplerate);
 	}
 
 #endif
@@ -177,9 +177,9 @@ int openDevice()
 	try {
 		rtSystem->openStream(
 			&outParams,                                       // output params
-			conf::soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
+			conf::conf.soundDeviceIn != -1 ? &inParams : nullptr,  // input params if inDevice is selected
 			RTAUDIO_FLOAT32,                                  // audio format
-			conf::samplerate,                                 // sample rate
+			conf::conf.samplerate,                                 // sample rate
 			&realBufsize,                                     // buffer size in byte
 			&mixer::masterPlay,                               // audio callback
 			nullptr,                                          // user data (unused)

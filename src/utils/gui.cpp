@@ -265,4 +265,18 @@ std::string removeFltkChars(const std::string& s)
 	return out;
 }
 
+
+/* -------------------------------------------------------------------------- */
+
+
+int centerWindowX(int w)
+{
+	return (Fl::w() / 2) - (w / 2);
+}
+
+
+int centerWindowY(int h)
+{
+	return (Fl::h() / 2) - (h / 2);
+}
 }}} // giada::u::gui::

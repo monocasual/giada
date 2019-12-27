@@ -77,6 +77,22 @@ struct Recorder
 };
 
 
+struct MidiIn
+{
+	bool     enabled    = false;
+	int      filter     = -1;
+	uint32_t rewind     = 0x0;
+	uint32_t startStop  = 0x0;
+	uint32_t actionRec  = 0x0;
+	uint32_t inputRec   = 0x0;
+	uint32_t volumeIn   = 0x0;
+	uint32_t volumeOut  = 0x0;
+	uint32_t beatDouble = 0x0;
+	uint32_t beatHalf   = 0x0;
+	uint32_t metronome  = 0x0;	
+};
+
+
 struct Actions
 {
 	Actions() = default;
@@ -90,6 +106,7 @@ using ClockLock    = RCUList<Clock>::Lock;
 using MixerLock    = RCUList<Mixer>::Lock;
 using KernelLock   = RCUList<Kernel>::Lock;
 using RecorderLock = RCUList<Recorder>::Lock;
+using MidiInLock   = RCUList<MidiIn>::Lock;
 using ActionsLock  = RCUList<Actions>::Lock;
 using ChannelsLock = RCUList<Channel>::Lock;
 using WavesLock    = RCUList<Wave>::Lock;
@@ -101,6 +118,7 @@ extern RCUList<Clock>    clock;
 extern RCUList<Mixer>    mixer;
 extern RCUList<Kernel>   kernel;
 extern RCUList<Recorder> recorder;
+extern RCUList<MidiIn>   midiIn;
 extern RCUList<Actions>  actions;
 extern RCUList<Channel>  channels;
 extern RCUList<Wave>     waves;

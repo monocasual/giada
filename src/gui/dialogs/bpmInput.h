@@ -44,7 +44,6 @@ class gdBpmInput : public gdWindow
 public:
 
 	gdBpmInput(const char* label); // pointer to mainWin->timing->bpm->label()
-	~gdBpmInput();
 
 private:
 

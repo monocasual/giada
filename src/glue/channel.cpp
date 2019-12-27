@@ -113,7 +113,7 @@ int loadChannel(ID channelId, const std::string& fname)
 	/* Save the patch and take the last browser's dir in order to re-use it the 
 	next time. */
 
-	m::conf::samplePath = u::fs::dirname(fname);
+	m::conf::conf.samplePath = u::fs::dirname(fname);
 
 	int res = m::mh::loadChannel(channelId, fname);
 	if (res != G_RES_OK)
@@ -376,10 +376,10 @@ void toggleReadingActions(ID channelId)
 	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
 	{
 		if (ch.readActions || (!ch.readActions && ch.recStatus == ChannelStatus::WAIT))
-			ch.stopReadingActions(m::clock::isRunning(), m::conf::treatRecsAsLoops, 
-				m::conf::recsStopOnChanHalt);
+			ch.stopReadingActions(m::clock::isRunning(), m::conf::conf.treatRecsAsLoops, 
+				m::conf::conf.recsStopOnChanHalt);
 		else
-			ch.startReadingActions(m::conf::treatRecsAsLoops, m::conf::recsStopOnChanHalt);
+			ch.startReadingActions(m::conf::conf.treatRecsAsLoops, m::conf::conf.recsStopOnChanHalt);
 	});
 }
 
@@ -391,7 +391,7 @@ void startReadingActions(ID channelId)
 {
 	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
 	{
-		ch.startReadingActions(m::conf::treatRecsAsLoops, m::conf::recsStopOnChanHalt);
+		ch.startReadingActions(m::conf::conf.treatRecsAsLoops, m::conf::conf.recsStopOnChanHalt);
 	});
 }
 
@@ -403,8 +403,8 @@ void stopReadingActions(ID channelId)
 {
 	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
 	{
-		ch.stopReadingActions(m::clock::isRunning(), m::conf::treatRecsAsLoops, 
-			m::conf::recsStopOnChanHalt);
+		ch.stopReadingActions(m::clock::isRunning(), m::conf::conf.treatRecsAsLoops, 
+			m::conf::conf.recsStopOnChanHalt);
 	});
 }
 

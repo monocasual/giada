@@ -56,7 +56,7 @@ namespace giada {
 namespace v
 {
 gdPluginList::gdPluginList(ID chanID)
-: gdWindow(m::conf::pluginListX, m::conf::pluginListY, 468, 204), 
+: gdWindow(m::conf::conf.pluginListX, m::conf::conf.pluginListY, 468, 204), 
   m_channelId(chanID)
 {
 	end();
@@ -89,8 +89,8 @@ gdPluginList::gdPluginList(ID chanID)
 
 gdPluginList::~gdPluginList()
 {
-	m::conf::pluginListX = x();
-	m::conf::pluginListY = y();
+	m::conf::conf.pluginListX = x();
+	m::conf::conf.pluginListY = y();
 }
 
 
@@ -128,10 +128,10 @@ void gdPluginList::rebuild()
 
 void gdPluginList::cb_addPlugin()
 {
-	int wx = m::conf::pluginChooserX;
-	int wy = m::conf::pluginChooserY;
-	int ww = m::conf::pluginChooserW;
-	int wh = m::conf::pluginChooserH;
+	int wx = m::conf::conf.pluginChooserX;
+	int wy = m::conf::conf.pluginChooserY;
+	int ww = m::conf::conf.pluginChooserW;
+	int wh = m::conf::conf.pluginChooserH;
 	u::gui::openSubWindow(G_MainWin, new v::gdPluginChooser(wx, wy, ww, wh, 
 		m_channelId), WID_FX_CHOOSER);
 }

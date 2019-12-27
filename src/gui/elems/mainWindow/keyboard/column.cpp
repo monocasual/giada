@@ -164,10 +164,10 @@ void geColumn::init()
 /* -------------------------------------------------------------------------- */
 
 
-void geColumn::forEachChannel(std::function<void(geChannel* c)> f) const
+void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
 {
 	for (int i=1; i<children(); i++) // Skip "add channel" button
-		f(static_cast<geChannel*>(child(i)));
+		f(static_cast<geChannel&>(*child(i)));
 }
 
 

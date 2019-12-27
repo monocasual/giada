@@ -69,7 +69,7 @@ namespace
 std::unique_ptr<Channel> createChannel_(ChannelType type, ID columnId, ID channelId=0)
 {
 	std::unique_ptr<Channel> ch = channelManager::create(type, 
-		kernelAudio::getRealBufSize(), conf::inputMonitorDefaultOn, columnId);
+		kernelAudio::getRealBufSize(), conf::conf.inputMonitorDefaultOn, columnId);
 
 	if (type == ChannelType::MASTER) {
 		assert(channelId != 0);
@@ -88,10 +88,10 @@ waveManager::Result createWave_(const std::string& fname)
 	waveManager::Result res = waveManager::createFromFile(fname); 
 	if (res.status != G_RES_OK)
 		return res;
-	if (res.wave->getRate() != conf::samplerate) {
+	if (res.wave->getRate() != conf::conf.samplerate) {
 		u::log::print("[mh::createWave_] input rate (%d) != system rate (%d), conversion needed\n",
-			res.wave->getRate(), conf::samplerate);
-		res.status = waveManager::resample(*res.wave.get(), conf::rsmpQuality, conf::samplerate); 
+			res.wave->getRate(), conf::conf.samplerate);
+		res.status = waveManager::resample(*res.wave.get(), conf::conf.rsmpQuality, conf::conf.samplerate); 
 		if (res.status != G_RES_OK)
 			return res;
 	}
@@ -388,7 +388,7 @@ void stopSequencer()
 
 	model::channels.lock();
 	for (Channel* c : model::channels)
-		c->stopBySeq(conf::chansStopOnSeqHalt);
+		c->stopBySeq(conf::conf.chansStopOnSeqHalt);
 	model::channels.unlock();
 
 #ifdef __linux__
@@ -500,7 +500,7 @@ void rewindSequencer()
 	kernelAudio::jackSetPosition(0);
 #endif
 
-	if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
 		kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 }
 
@@ -537,10 +537,10 @@ void finalizeInputRec()
 
 		/* Create a new Wave with audio coming from Mixer's virtual input. */
 
-		std::string filename = "TAKE-" + std::to_string(patch::lastTakeId++) + ".wav";
+		std::string filename = "TAKE-" + std::to_string(patch::patch.lastTakeId++) + ".wav";
 	
 		std::unique_ptr<Wave> wave = waveManager::createEmpty(clock::getFramesInLoop(), 
-			G_MAX_IO_CHANS, conf::samplerate, filename);
+			G_MAX_IO_CHANS, conf::conf.samplerate, filename);
 
 		wave->copyData(virtualInput[0], virtualInput.countFrames());
 

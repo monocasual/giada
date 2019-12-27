@@ -64,12 +64,12 @@ kernelAudio::JackState jackStatePrev_;
 
 /* -------------------------------------------------------------------------- */
 
-/* updateFrameBars
-Updates bpm, frames, beats and so on. */
+/* recomputeFrames_
+Updates bpm, frames, beats and so on. Private version. */
 
-void updateFrameBars_(model::Clock& c)
+void recomputeFrames_(model::Clock& c)
 {
-	c.framesInLoop = (conf::samplerate * (60.0f / c.bpm)) * c.beats;
+	c.framesInLoop = (conf::conf.samplerate * (60.0f / c.bpm)) * c.beats;
 	c.framesInBar  = c.framesInLoop / (float) c.bars;
 	c.framesInBeat = c.framesInLoop / (float) c.beats;
 	c.framesInSeq  = c.framesInBeat * G_MAX_BEATS;
@@ -95,8 +95,17 @@ void init(int sampleRate, float midiTCfps)
 		c.beats    = G_DEFAULT_BEATS;
 		c.bpm      = G_DEFAULT_BPM;
 		c.quantize = G_DEFAULT_QUANTIZE;
-		updateFrameBars_(c);
+		recomputeFrames_(c);
 	});
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void recomputeFrames()
+{
+	model::onSwap(model::clock, [&](model::Clock& c) { recomputeFrames_(c);	});
 }
 
 
@@ -177,7 +186,7 @@ void setBpm(float b)
 	model::onSwap(model::clock, [&](model::Clock& c)
 	{
 		c.bpm = b;
-		updateFrameBars_(c);
+		recomputeFrames_(c);
 	});
 }
 
@@ -191,7 +200,7 @@ void setBeats(int newBeats, int newBars)
 	{
 		c.beats = newBeats;
 		c.bars  = newBars;
-		updateFrameBars_(c);
+		recomputeFrames_(c);
 	});
 }
 
@@ -201,7 +210,7 @@ void setQuantize(int q)
 	model::onSwap(model::clock, [&](model::Clock& c)
 	{
 		c.quantize = q;	
-		updateFrameBars_(c);
+		recomputeFrames_(c);
 	});
 }
 
@@ -214,14 +223,14 @@ void setStatus(ClockStatus s)
 	});
 	
 	if (s == ClockStatus::RUNNING) {
-		if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
+		if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M) {
 			kernelMidi::send(MIDI_START, -1, -1);
 			kernelMidi::send(MIDI_POSITION_PTR, 0, 0);
 		}
 	}
 	else
 	if (s == ClockStatus::STOPPED) {
-		if (conf::midiSync == MIDI_SYNC_CLOCK_M)
+		if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M)
 			kernelMidi::send(MIDI_STOP, -1, -1);
 	}
 }
@@ -288,13 +297,13 @@ void sendMIDIsync()
 
 	/* TODO - only Master (_M) is implemented so far. */
 
-	if (conf::midiSync == MIDI_SYNC_CLOCK_M) {
+	if (conf::conf.midiSync == MIDI_SYNC_CLOCK_M) {
 		if (currentFrame % (c->framesInBeat / 24) == 0)
 			kernelMidi::send(MIDI_CLOCK, -1, -1);
 		return;
 	}
 
-	if (conf::midiSync == MIDI_SYNC_MTC_M) {
+	if (conf::conf.midiSync == MIDI_SYNC_MTC_M) {
 
 		/* check if a new timecode frame has passed. If so, send MIDI TC
 		 * quarter frames. 8 quarter frames, divided in two branches:
@@ -333,7 +342,7 @@ void sendMIDIsync()
 		/* check if total timecode frames are greater than timecode fps:
 		 * if so, a second has passed */
 
-		if (midiTCframes_ > conf::midiTCfps) {
+		if (midiTCframes_ > conf::conf.midiTCfps) {
 			midiTCframes_ = 0;
 			midiTCseconds_++;
 			if (midiTCseconds_ >= 60) {
@@ -365,7 +374,7 @@ void sendMIDIrewind()
 	 * be sent. The Full Frame is a SysEx message that encodes the entire
 	 * SMPTE time in one message */
 
-	if (conf::midiSync == MIDI_SYNC_MTC_M) {
+	if (conf::conf.midiSync == MIDI_SYNC_MTC_M) {
 		kernelMidi::send(MIDI_SYSEX, 0x7F, 0x00);  // send msg on channel 0
 		kernelMidi::send(0x01, 0x01, 0x00);        // hours 0
 		kernelMidi::send(0x00, 0x00, 0x00);        // mins, secs, frames 0

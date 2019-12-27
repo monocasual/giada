@@ -65,8 +65,8 @@ geWaveform::geWaveform(ID channelId, ID waveId, int x, int y, int w, int h)
 {
 	m_data.size = w;
 
-	m_grid.snap  = m::conf::sampleEditorGridOn;
-	m_grid.level = m::conf::sampleEditorGridVal;
+	m_grid.snap  = m::conf::conf.sampleEditorGridOn;
+	m_grid.level = m::conf::conf.sampleEditorGridVal;
 }
 
 
@@ -289,7 +289,7 @@ void geWaveform::drawPlayHead()
 	float tp;	
 	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
 	{
-		tp = static_cast<m::SampleChannel&>(c).trackerPreview.load();
+		tp = static_cast<m::SampleChannel&>(c).trackerPreview;
 	});
 
 	int p = frameToPixel(tp) + x();

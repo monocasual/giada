@@ -47,7 +47,63 @@ struct Version
 	int patch = G_VERSION_PATCH;
 
 	bool operator ==(const Version& o) const;
-	bool operator <(const Version& o) const;
+	bool operator < (const Version& o) const;
+};
+
+
+struct Column
+{
+	ID              id;
+	int             width;
+	std::vector<ID> channelIds;
+};
+
+
+struct Channel
+{
+	ID          id;
+	ChannelType type;
+	int         size;
+	std::string name;
+	ID          columnId;
+	int         key;
+	bool        mute;
+	bool        solo;
+	float       volume = G_DEFAULT_VOL;
+	float       pan    = 0.5f;
+	bool        hasActions;
+	bool        armed;
+	bool        midiIn;
+	uint32_t    midiInKeyPress;
+	uint32_t    midiInKeyRel;
+	uint32_t    midiInKill;
+	uint32_t    midiInArm;
+	uint32_t    midiInVolume;
+	uint32_t    midiInMute;
+	uint32_t    midiInSolo;
+	int         midiInFilter;
+	bool        midiOutL;
+	uint32_t    midiOutLplaying;
+	uint32_t    midiOutLmute;
+	uint32_t    midiOutLsolo;
+	// sample channel
+	ID          waveId;
+	ChannelMode mode;
+	Frame       begin;
+	Frame       end;
+	Frame       shift;
+	bool        readActions;
+	float       pitch = G_DEFAULT_PITCH;
+	bool        inputMonitor;
+	bool        midiInVeloAsVol;
+	uint32_t    midiInReadActions;
+	uint32_t    midiInPitch;
+	// midi channel
+	bool        midiOut;
+	int         midiOutChan;
+#ifdef WITH_VST
+	std::vector<ID> pluginIds;
+#endif
 };
 
 
@@ -59,6 +115,13 @@ struct Action
 	uint32_t event;
 	ID       prevId;
 	ID       nextId;
+};
+
+
+struct Wave
+{
+	ID          id;
+	std::string path;
 };
 
 
@@ -74,85 +137,49 @@ struct Plugin
 #endif
 
 
-struct Wave
+struct Patch
 {
-	ID          id;
-	std::string path;
-};
+	std::string name       = G_DEFAULT_PATCH_NAME;
+	int         bars       = G_DEFAULT_BARS;
+	int         beats      = G_DEFAULT_BEATS;
+	float       bpm        = G_DEFAULT_BPM;
+	bool        quantize   = G_DEFAULT_QUANTIZE;
+	int         lastTakeId = 0;
+	int         samplerate = G_DEFAULT_SAMPLERATE;
+	bool        metronome  = false;
 
-
-struct Channel
-{
-	ID          id;
-	ChannelType type;
-	int         size;
-	std::string name;
-	ID          columnId;
-	int         key;
-	bool        mute;
-	bool        solo;
-	float       volume = G_DEFAULT_VOL;
-	float       pan;
-	bool        hasActions;
-	bool        midiIn;
-	uint32_t    midiInKeyPress;
-	uint32_t    midiInKeyRel;
-	uint32_t    midiInKill;
-	uint32_t    midiInArm;
-	uint32_t    midiInVolume;
-	uint32_t    midiInMute;
-	uint32_t    midiInSolo;
-	int         midiInFilter;
-	bool        midiOutL;
-	uint32_t    midiOutLplaying;
-	uint32_t    midiOutLmute;
-	uint32_t    midiOutLsolo;
-	bool        armed;
-	// sample channel
-	ID          waveId;
-	ChannelMode mode;
-	Frame       begin;
-	Frame       end;
-	// TODO - shift
-	bool        readActions;
-	float       pitch = G_DEFAULT_PITCH;
-	bool        inputMonitor;
-	bool        midiInVeloAsVol;
-	uint32_t    midiInReadActions;
-	uint32_t    midiInPitch;
-	// midi channel
-	bool        midiOut;
-	int         midiOutChan;
+	std::vector<Column>  columns;
+	std::vector<Channel> channels;
+	std::vector<Action>  actions;
+	std::vector<Wave>    waves;
 #ifdef WITH_VST
-	std::vector<ID> pluginIds;
+	std::vector<Plugin>  plugins;
 #endif
 };
 
-extern std::string name;
-extern int         samplerate;   // Original samplerate when the patch was saved
-extern int         lastTakeId;
-extern bool        metronome;
+
+/* -------------------------------------------------------------------------- */
+
+
+extern Patch patch;
+
+
+/* -------------------------------------------------------------------------- */
 
 /* init
 Initializes the patch with default values. */
 
 void init();
 
-/* verify
-Checks if the patch is valid. */
-
-int verify(const std::string& file);
-
 /* read
-Reads patch from file. Always call verify() first in order to see if the patch
-format is valid. It takes 'basePath' as parameter for Wave reading.*/
+Reads patch from file. It takes 'basePath' as parameter for Wave reading. */
 
 int read(const std::string& file, const std::string& basePath);
 
 /* write
 Writes patch to file. */
 
-bool write(const std::string& name, const std::string& file, bool isProject);
+bool write(const std::string& name, const std::string& file);
 }}};  // giada::m::patch::
 
 

@@ -236,7 +236,7 @@ void setPlayHead(ID channelId, Frame f)
 {
 	m::model::onGet(m::model::channels, channelId, [&](m::Channel& c)
 	{
-		static_cast<m::SampleChannel&>(c).trackerPreview.store(f);
+		static_cast<m::SampleChannel&>(c).trackerPreview = f;
 	});
 	getSampleEditorWindow()->refresh();
 }

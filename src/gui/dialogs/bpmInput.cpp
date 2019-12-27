@@ -46,11 +46,8 @@ namespace giada {
 namespace v 
 {
 gdBpmInput::gdBpmInput(const char* label)
-: gdWindow(144, 36, "Bpm")
+: gdWindow(u::gui::centerWindowX(144), u::gui::centerWindowY(36), 144, 36, "Bpm")
 {
-	if (m::conf::bpmX)
-		resize(m::conf::bpmX, m::conf::bpmY, w(), h());
-
 	set_modal();
 
 	input_a = new geInput(8,  8, 30, G_GUI_UNIT);
@@ -76,16 +73,6 @@ gdBpmInput::gdBpmInput(const char* label)
 	u::gui::setFavicon(this);
 	setId(WID_BPM);
 	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdBpmInput::~gdBpmInput()
-{
-	m::conf::bpmX = x();
-	m::conf::bpmY = y();
 }
 
 

@@ -35,11 +35,11 @@
 #include "core/const.h"
 #include "core/conf.h"
 #ifdef WITH_VST
-#include "core/pluginHost.h"
 #include "core/plugin.h"
 #endif
 #include "utils/string.h"
-#include "gui/elems/midiLearner.h"
+#include "gui/elems/midiIO/midiLearnerChannel.h"
+#include "gui/elems/midiIO/midiLearnerPlugin.h"
 #include "gui/elems/basics/scroll.h"
 #include "gui/elems/basics/box.h"
 #include "gui/elems/basics/button.h"
@@ -52,8 +52,8 @@ namespace giada {
 namespace v 
 {
 gdMidiInputChannel::gdMidiInputChannel(ID channelId)
-: gdMidiInputBase(m::conf::midiInputX, m::conf::midiInputY, m::conf::midiInputW, 
-	m::conf::midiInputH, "MIDI Input Setup"),
+: gdMidiInputBase(m::conf::conf.midiInputX, m::conf::conf.midiInputY, m::conf::conf.midiInputW, 
+	m::conf::conf.midiInputH, "MIDI Input Setup"),
   m_channelId    (channelId)
 {
 	m::model::ChannelsLock l(m::model::channels);
@@ -86,6 +86,9 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId)
 
 	m_container->end();
 
+	for (auto* l : m_learners)
+		c.midiIn ? l->activate() : l->deactivate();
+
 	Fl_Group* groupButtons = new Fl_Group(8, m_container->y()+m_container->h()+8, m_container->w(), 20);
 	groupButtons->begin();
 
@@ -94,7 +97,6 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId)
 
 	groupButtons->resizable(spacer);
 	groupButtons->end();
-
 
 	m_ok->callback(cb_close, (void*)this);
 
@@ -132,8 +134,6 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId)
 
 	end();
 
-	size_range(G_DEFAULT_MIDI_INPUT_UI_W, G_DEFAULT_MIDI_INPUT_UI_H);
-
 	u::gui::setFavicon(this);
 	set_modal();
 	show();
@@ -146,24 +146,24 @@ gdMidiInputChannel::gdMidiInputChannel(ID channelId)
 void gdMidiInputChannel::addChannelLearners()
 {
 	m::model::ChannelsLock l(m::model::channels);
-	m::Channel& c = m::model::get(m::model::channels, m_channelId);
+	const m::Channel& c = m::model::get(m::model::channels, m_channelId);
 
 	Fl_Pack* pack = new Fl_Pack(m_container->x(), m_container->y(), LEARNER_WIDTH, 200);
 	pack->spacing(G_GUI_INNER_MARGIN);
 	pack->begin();
 		geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, "Channel");
 		header->box(FL_BORDER_BOX);
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "key press",   c.midiInKeyPress, m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "key release", c.midiInKeyRel,   m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "key kill",    c.midiInKill,     m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "arm",         c.midiInArm,      m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "mute",        c.midiInMute,     m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "solo",        c.midiInSolo,     m_channelId));
-		m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "volume",      c.midiInVolume,   m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "key press",   G_MIDI_IN_KEYPRESS, c.midiInKeyPress, m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "key release", G_MIDI_IN_KEYREL,   c.midiInKeyRel,   m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "key kill",    G_MIDI_IN_KILL,     c.midiInKill,     m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "arm",         G_MIDI_IN_ARM,      c.midiInArm,      m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "mute",        G_MIDI_IN_MUTE,     c.midiInVolume,   m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "solo",        G_MIDI_IN_SOLO,     c.midiInMute,     m_channelId));
+		m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "volume",      G_MIDI_IN_VOLUME,   c.midiInSolo,     m_channelId));
 		if (c.type == ChannelType::SAMPLE) {
-			m::SampleChannel& sc = static_cast<m::SampleChannel&>(c);
-			m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "pitch",        sc.midiInPitch,       m_channelId));
-			m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, "read actions", sc.midiInReadActions, m_channelId));
+			const m::SampleChannel& sc = static_cast<const m::SampleChannel&>(c);
+			m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "pitch",        G_MIDI_IN_PITCH,        sc.midiInPitch,       m_channelId));
+			m_learners.push_back(new geMidiLearnerChannel(0, 0, LEARNER_WIDTH, "read actions", G_MIDI_IN_READ_ACTIONS, sc.midiInReadActions, m_channelId));
 		}
 	pack->end();
 }
@@ -194,9 +194,8 @@ void gdMidiInputChannel::addPluginLearners()
 			geBox* header = new geBox(0, 0, LEARNER_WIDTH, G_GUI_UNIT, p.getName().c_str());
 			header->box(FL_BORDER_BOX);
 
-			for (int k=0; k<p.getNumParameters(); k++)
-				m_learners.push_back(new geMidiLearner(0, 0, LEARNER_WIDTH, 
-					p.getParameterName(k).c_str(), p.midiInParams.at(k), m_channelId));
+			for (int k = 0; k < p.getNumParameters(); k++)
+				m_learners.push_back(new geMidiLearnerPlugin(0, 0, LEARNER_WIDTH, p.getParameterName(k), k, p.midiInParams.at(k), p.id));
 
 		pack->end();
 	}
@@ -222,7 +221,11 @@ void gdMidiInputChannel::cb_enable()
 	{
 		c.midiIn = m_enable->value();
 	});
+
 	m_enable->value() ? m_channel->activate() : m_channel->deactivate();
+
+	for (auto* l : m_learners)
+		m_enable->value() ? l->activate() : l->deactivate();
 }
 
 
@@ -246,7 +249,7 @@ void gdMidiInputChannel::cb_setChannel()
 	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
 	{
 		c.midiInFilter = m_channel->value() == 0 ? -1 : m_channel->value() - 1;
-		u::log::print("[gdMidiInputChannel] Set MIDI channel to %d\n", c.midiInFilter.load());
+		u::log::print("[gdMidiInputChannel] Set MIDI channel to %d\n", c.midiInFilter);
 	});
 }
 }} // giada::v::

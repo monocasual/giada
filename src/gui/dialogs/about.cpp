@@ -52,9 +52,6 @@ gdAbout::gdAbout()
 : gdWindow(340, 350, "About Giada")
 #endif
 {
-	if (m::conf::aboutX)
-		resize(m::conf::aboutX, m::conf::aboutY, w(), h());
-
 	set_modal();
 
 	logo  = new geBox(8, 20, 324, 86);
@@ -114,16 +111,6 @@ gdAbout::gdAbout()
 	u::gui::setFavicon(this);
 	setId(WID_ABOUT);
 	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdAbout::~gdAbout()
-{
-	m::conf::aboutX = x();
-	m::conf::aboutY = y();
 }
 
 

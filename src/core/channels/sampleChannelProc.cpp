@@ -434,7 +434,7 @@ void start(SampleChannel* ch, int localFrame, bool doQuantize, int velocity)
 	/* For one-shot modes, velocity drives the internal volume. */
 	if (velocity != 0) {
 		if (ch->isAnySingleMode() && ch->midiInVeloAsVol)
-			ch->volume_i.store(u::math::map<int, float>(velocity, 0, G_MAX_VELOCITY, 0.0, 1.0));		
+			ch->volume_i = u::math::map<int, float>(velocity, 0, G_MAX_VELOCITY, 0.0, 1.0);		
 	}
 
 	switch (ch->playStatus) {

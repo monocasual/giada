@@ -110,10 +110,10 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 
 gdMainWindow::~gdMainWindow()
 {
-	m::conf::mainWindowX = x();
-	m::conf::mainWindowY = y();
-	m::conf::mainWindowW = w();
-	m::conf::mainWindowH = h();
+	m::conf::conf.mainWindowX = x();
+	m::conf::conf.mainWindowY = y();
+	m::conf::conf.mainWindowW = w();
+	m::conf::conf.mainWindowH = h();
 }
 
 

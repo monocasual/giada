@@ -55,7 +55,6 @@ class gdConfig : public gdWindow
 public:
 
 	gdConfig(int w, int h);
-	~gdConfig();
 
 #ifdef WITH_VST
 	void refreshVstPath();

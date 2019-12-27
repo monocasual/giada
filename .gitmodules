@@ -5,3 +5,6 @@
 [submodule "tests/catch2"]
 	path = tests/catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "src/deps/json"]
+	path = src/deps/json
+	url = https://github.com/nlohmann/json.git

@@ -74,10 +74,10 @@ geMainTransport::geMainTransport(int x, int y)
 		c::main::toggleInputRec();
 	});
 
-	recTriggerMode->value(m::conf::recTriggerMode);
+	recTriggerMode->value(static_cast<int>(m::conf::conf.recTriggerMode));
 	recTriggerMode->type(FL_TOGGLE_BUTTON);
 	recTriggerMode->callback([](Fl_Widget* w, void* v) { 
-		m::conf::recTriggerMode = static_cast<geButton*>(w)->value();
+		m::conf::conf.recTriggerMode = static_cast<RecTriggerMode>(static_cast<geButton*>(w)->value());
 	});
 
 	metronome->type(FL_TOGGLE_BUTTON);

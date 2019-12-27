@@ -25,18 +25,17 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "core/midiDispatcher.h"
-#include "utils/log.h"
-#include "utils/string.h"
-#include "gui/elems/midiLearner.h"
+#include "glue/io.h"
+#include "gui/elems/basics/check.h"
 #include "midiOutputBase.h"
 
 
 namespace giada {
 namespace v 
 {
-gdMidiOutputBase::gdMidiOutputBase(int w, int h)
-	: gdWindow(w, h, "Midi Output Setup")
+gdMidiOutputBase::gdMidiOutputBase(int w, int h, ID channelId)
+: gdWindow   (w, h, "Midi Output Setup"),
+  m_channelId(channelId)
 {
 }
 
@@ -46,7 +45,7 @@ gdMidiOutputBase::gdMidiOutputBase(int w, int h)
 
 gdMidiOutputBase::~gdMidiOutputBase()
 {
-	m::midiDispatcher::stopMidiLearn();
+	c::io::stopMidiLearn();
 }
 
 
@@ -55,7 +54,7 @@ gdMidiOutputBase::~gdMidiOutputBase()
 
 void gdMidiOutputBase::refresh()
 {
-	for (geMidiLearner* l : m_learners)
+	for (geMidiLearnerBase* l : m_learners)
 		l->refresh();	
 }
 
@@ -63,7 +62,8 @@ void gdMidiOutputBase::refresh()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_close(Fl_Widget* w, void* p)  { ((gdMidiOutputBase*)p)->cb_close(); }
+void gdMidiOutputBase::cb_close(Fl_Widget* w, void* p)           { ((gdMidiOutputBase*)p)->cb_close(); }
+void gdMidiOutputBase::cb_enableLightning(Fl_Widget *w, void *p) { ((gdMidiOutputBase*)p)->cb_enableLightning(); }
 
 
 /* -------------------------------------------------------------------------- */
@@ -78,16 +78,16 @@ void gdMidiOutputBase::cb_close()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputBase::cb_enableLightning(Fl_Widget* w, void* p)
+void gdMidiOutputBase::cb_enableLightning()
 {
-	((gdMidiOutputBase*)p)->cb_enableLightning();
+	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		c.midiOutL = m_enableLightning->value();
+	});
+
+	for (geMidiLearnerBase* l : m_learners)
+		m_enableLightning->value() ? l->activate() : l->deactivate();
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void gdMidiOutputBase::cb_enableLightning() {}
 
 
 /* -------------------------------------------------------------------------- */

@@ -45,7 +45,7 @@ namespace giada {
 namespace v
 {
 geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l)
-:	geBaseActionEditor(x, y, 200, m::conf::envelopeEditorH)
+:	geBaseActionEditor(x, y, 200, m::conf::conf.envelopeEditorH)
 {
 	copy_label(l);
 }
@@ -56,7 +56,7 @@ geEnvelopeEditor::geEnvelopeEditor(Pixel x, Pixel y, const char* l)
 
 geEnvelopeEditor::~geEnvelopeEditor()
 {
-	m::conf::envelopeEditorH = h();
+	m::conf::conf.envelopeEditorH = h();
 }
 
 

@@ -65,6 +65,22 @@ namespace giada {
 namespace c {
 namespace io 
 {
+namespace
+{
+void refreshMidiWindows_()
+{
+	Fl::lock();
+	u::gui::refreshSubWindow(WID_MIDI_INPUT);
+	u::gui::refreshSubWindow(WID_MIDI_OUTPUT);
+	Fl::unlock();	
+}
+} // {anonymous}
+
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------- */
+
+
 void keyPress(ID channelId, bool ctrl, bool shift, int velocity)
 {
 	if (ctrl)
@@ -106,28 +122,51 @@ void setSampleChannelKey(ID channelId, int k)
 /* -------------------------------------------------------------------------- */
 
 
-void midiLearn(m::MidiEvent e, std::atomic<uint32_t>& param, ID channelId)
+void startChannelMidiLearn(int param, ID channelId)
 {
-	/* No MIDI learning if we are learning a Channel (channelId != 0) and 
-	the selected MIDI channel is filtered OR if we are learning a global 
-	parameter (channel == 0) and the selected MIDI channel is filtered. */
+	m::midiDispatcher::startChannelLearn(param, channelId, refreshMidiWindows_);
+}
 
-	if (channelId == 0) {
-		if (!m::conf::isMidiInAllowed(e.getChannel()))
-			return;
-	}
-	else {
-		m::model::ChannelsLock l(m::model::channels);
-		if (!m::model::get(m::model::channels, channelId).isMidiInAllowed(e.getChannel()))
-			return;
-	}
 
-	param.store(e.getRawNoVelocity());
-	m::midiDispatcher::stopMidiLearn();
+void startMasterMidiLearn(int param)
+{
+	m::midiDispatcher::startMasterLearn(param, refreshMidiWindows_);
+}
 
-	Fl::lock();
-	u::gui::refreshSubWindow(WID_MIDI_INPUT);
-	u::gui::refreshSubWindow(WID_MIDI_OUTPUT);
-	Fl::unlock();
+
+void startPluginMidiLearn(int paramIndex, ID pluginId)
+{
+	m::midiDispatcher::startPluginLearn(paramIndex, pluginId, refreshMidiWindows_);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void stopMidiLearn()
+{
+	m::midiDispatcher::stopLearn();
+	refreshMidiWindows_();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void clearChannelMidiLearn(int param, ID channelId)
+{
+	m::midiDispatcher::clearChannelLearn(param, channelId, refreshMidiWindows_);
+}
+
+
+void clearMasterMidiLearn (int param)
+{
+	m::midiDispatcher::clearMasterLearn(param, refreshMidiWindows_);
+}
+
+
+void clearPluginMidiLearn (int param, ID pluginId)
+{
+	m::midiDispatcher::clearPluginLearn(param, pluginId, refreshMidiWindows_);
 }
 }}} // giada::c::io::

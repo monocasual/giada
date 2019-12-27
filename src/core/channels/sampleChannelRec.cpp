@@ -175,7 +175,7 @@ void parseEvents(SampleChannel* ch, mixer::FrameEvents fe)
 		return;
 	quantize_(ch, fe.quantoPassed);
 	if (fe.onFirstBeat)
-		onFirstBeat_(ch, conf::recsStopOnChanHalt);
+		onFirstBeat_(ch, conf::conf.recsStopOnChanHalt);
 	if (ch->readActions && fe.actions != nullptr)
 		for (const Action& action : *fe.actions)
 			if (action.channelId == ch->id)

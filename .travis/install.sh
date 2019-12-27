@@ -10,7 +10,7 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   brew install libsndfile
   brew install upx
 
-  #ls Remove dynamic libraries to force static linking.
+  # Remove dynamic libraries to force static linking.
 
   rm -rf /usr/local/lib/librtmidi.dylib
   rm -rf /usr/local/lib/librtmidi.4.dylib
@@ -39,8 +39,6 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
   rm -rf /usr/local/lib/libvorbis.dylib
   rm -rf /usr/local/lib/libvorbisenc.2.dylib
   rm -rf /usr/local/lib/libvorbisenc.dylib
-
-  # TODO - what about midimaps?
 
 elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
 
@@ -75,18 +73,5 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   # Update the shared libraries cache
 
   sudo ldconfig
-
-  # Download midimaps package for testing purposes.
-
-  wget https://github.com/monocasual/giada-midimaps/archive/master.zip -O giada-midimaps-master.zip
-  unzip giada-midimaps-master.zip
-  mkdir -p $HOME/.giada/midimaps
-  cp giada-midimaps-master/midimaps/* $HOME/.giada/midimaps
-
-  # Download vst plugin for testing purposes
-
-  #- wget http://www.discodsp.com/download/?id=18 -O bliss-linux.zip
-  #- unzip bliss-linux.zip -d bliss-linux
-  #- cp bliss-linux/64-bit/Bliss64Demo.so .
 
 fi

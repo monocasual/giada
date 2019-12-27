@@ -50,7 +50,7 @@ gePianoRoll::gePianoRoll(Pixel X, Pixel Y, Pixel W)
 	: geBaseActionEditor(X, Y, W, 40),
 	  pick              (0)
 {
-	position(x(), m::conf::pianoRollY == -1 ? y()-(h()/2) : m::conf::pianoRollY);
+	position(x(), m::conf::conf.pianoRollY == -1 ? y()-(h()/2) : m::conf::conf.pianoRollY);
 }
 
 

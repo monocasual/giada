@@ -39,24 +39,36 @@ namespace midimap
 {
 struct Message
 {
-    int         channel;
-    std::string valueStr;
-	int         offset;
-	uint32_t    value;
+    int         channel  = 0;
+    std::string valueStr = "";
+	int         offset   = -1;
+	uint32_t    value    = 0;
 };
 
-extern std::string brand;
-extern std::string device;
-extern std::vector<Message> initCommands;
-extern Message muteOn;
-extern Message muteOff;
-extern Message soloOn;
-extern Message soloOff;
-extern Message waiting;
-extern Message playing;
-extern Message stopping;
-extern Message stopped;
-extern Message playingInaudible;
+
+struct MidiMap
+{
+    std::string brand;
+    std::string device;
+    std::vector<Message> initCommands;
+    Message muteOn;
+    Message muteOff;
+    Message soloOn;
+    Message soloOff;
+    Message waiting;
+    Message playing;
+    Message stopping;
+    Message stopped;
+    Message playingInaudible;
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+/* midimap
+The actual MidiMap struct with data. */
+
+extern MidiMap midimap;
 
 /* midimapsPath
 Path of midimap files, different between OSes. */
@@ -68,6 +80,9 @@ Maps are the available .giadamap files. Each element of the std::vector
 represents a .giadamap filename. */
 
 extern std::vector<std::string> maps;
+
+
+/* -------------------------------------------------------------------------- */
 
 /* init
 Parses the midi maps folders and find the available maps. */

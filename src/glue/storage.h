@@ -33,8 +33,7 @@ namespace giada {
 namespace c {
 namespace storage
 {
-void loadPatch  (void* data);
-void savePatch  (void* data);
+void loadProject(void* data);
 void saveProject(void* data);
 void saveSample (void* data);
 void loadSample (void* data);

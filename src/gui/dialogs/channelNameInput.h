@@ -44,7 +44,6 @@ class gdChannelNameInput : public gdWindow
 public:
 
 	gdChannelNameInput(ID channelId);
-	~gdChannelNameInput();
 
 private:
 

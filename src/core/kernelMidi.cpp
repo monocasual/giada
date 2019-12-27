@@ -69,7 +69,7 @@ static void callback_(double t, std::vector<unsigned char>* msg, void* data)
 
 void sendMidiLightningInitMsgs_()
 {
-	for (const midimap::Message& m : midimap::initCommands) {
+	for (const midimap::Message& m : midimap::midimap.initCommands) {
 		if (m.value != 0x0 && m.channel != -1) {
 			u::log::print("[KM] MIDI send (init) - Channel %x - Event 0x%X\n", m.channel, m.value);
 			send(m.value | G_MIDI_CHANS[m.channel]);

@@ -31,18 +31,22 @@
 
 #include <functional>
 #include <cstdint>
+#include "core/model/model.h"
 #include "core/midiEvent.h"
+#include "core/types.h"
 
 
 namespace giada {
 namespace m {
 namespace midiDispatcher
 {
-/*typedef void (cb_midiLearn) (uint32_t, void*);
-
-void startMidiLearn(cb_midiLearn* cb, void* data);*/
-void startMidiLearn(std::function<void(MidiEvent)> f);
-void stopMidiLearn();
+void startChannelLearn(int param, ID channelId, std::function<void()> f);
+void startMasterLearn (int param, std::function<void()> f);
+void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
+void stopLearn();
+void clearMasterLearn (int param, std::function<void()> f);
+void clearChannelLearn(int param, ID channelId, std::function<void()> f);
+void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
 
 void dispatch(int byte1, int byte2, int byte3);
 

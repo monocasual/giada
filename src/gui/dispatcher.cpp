@@ -83,10 +83,10 @@ found, trigger the key-press/key-release function. */
 
 void dispatchChannels_(int event)
 {
-	G_MainWin->keyboard->forEachChannel([=](geChannel* c)
+	G_MainWin->keyboard->forEachChannel([=](geChannel& c)
 	{
-		if (c->handleKey(event))
-			perform_(c, event);
+		if (c.handleKey(event))
+			perform_(&c, event);
 	});
 }
 
@@ -125,7 +125,7 @@ void dispatchKey(int event)
 		}
 		else if (Fl::event_key() == FL_Enter && !enter_) {
 			enter_ = true;
-			m::recManager::toggleActionRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode));
+			m::recManager::toggleActionRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode));
 		}
 		else if (Fl::event_key() == ' ' && !space_) {
 			space_ = true;

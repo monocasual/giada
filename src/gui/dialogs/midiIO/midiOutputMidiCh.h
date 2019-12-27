@@ -45,19 +45,13 @@ public:
 
 private:
 
-	static void cb_enableChanList(Fl_Widget* w, void* p);
-	void cb_enableChanList();
-
-	/* cb_close
-	override parent method, we need to do more stuff on close. */
-
-	static void cb_close(Fl_Widget* w, void* p);
-	void cb_close();
+	static void cb_enableOut (Fl_Widget* w, void* p);
+	static void cb_setChannel(Fl_Widget* w, void* p);
+	void cb_enableOut();
+	void cb_setChannel();
 
 	geCheck*  m_enableOut;
 	geChoice* m_chanListOut;
-
-	ID m_channelId;
 };
 }} // giada::v::
 

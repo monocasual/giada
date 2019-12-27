@@ -49,7 +49,7 @@ public:
 
 	geColumn(int x, int y, int w, int h, ID id, geResizerBar* b);
 
-	geChannel* getChannel(ID chanID) const;
+	geChannel* getChannel(ID channelId) const;
 	
 	/* addChannel
 	Adds a new channel in this column. */
@@ -63,7 +63,7 @@ public:
 
 	void init(); 
 
-	void forEachChannel(std::function<void(geChannel* c)> f) const;
+	void forEachChannel(std::function<void(geChannel& c)> f) const;
 	
 	ID id;
 

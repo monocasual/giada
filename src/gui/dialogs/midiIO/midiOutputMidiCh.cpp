@@ -28,11 +28,10 @@
 #include "core/channels/midiChannel.h"
 #include "core/model/model.h"
 #include "utils/gui.h"
-#include "gui/elems/midiLearner.h"
+#include "gui/elems/midiIO/midiLearnerChannel.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/check.h"
 #include "gui/elems/basics/choice.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
 #include "midiOutputMidiCh.h"
 
 
@@ -40,8 +39,7 @@ namespace giada {
 namespace v 
 {
 gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
-: gdMidiOutputBase(300, 168), 
-  m_channelId     (channelId)
+: gdMidiOutputBase(300, 168, channelId)
 {
 	m::model::ChannelsLock l(m::model::channels);
 	m::MidiChannel& c = static_cast<m::MidiChannel&>(m::model::get(m::model::channels, m_channelId));
@@ -53,12 +51,12 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_chanListOut = new geChoice(w()-108, y()+8, 100, 20);
 
 	m_enableLightning = new geCheck(x()+8, m_chanListOut->y()+m_chanListOut->h()+8, 120, 20, "Enable MIDI lightning output");
-	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+8,  
-		w()-16, "playing", c.midiOutLplaying, m_channelId));
-	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+32, 
-		w()-16, "mute", c.midiOutLmute, m_channelId));
-	m_learners.push_back(new geMidiLearner(x()+8, m_enableLightning->y()+m_enableLightning->h()+56, 
-		w()-16, "solo", c.midiOutLsolo, m_channelId));
+	m_learners.push_back(new geMidiLearnerChannel(x()+8, m_enableLightning->y()+m_enableLightning->h()+8,  
+		w()-16, "playing", G_MIDI_OUT_L_PLAYING, c.midiOutLplaying, m_channelId));
+	m_learners.push_back(new geMidiLearnerChannel(x()+8, m_enableLightning->y()+m_enableLightning->h()+32, 
+		w()-16, "mute", G_MIDI_OUT_L_MUTE, c.midiOutLmute, m_channelId));
+	m_learners.push_back(new geMidiLearnerChannel(x()+8, m_enableLightning->y()+m_enableLightning->h()+56, 
+		w()-16, "solo", G_MIDI_OUT_L_SOLO, c.midiOutLsolo, m_channelId));
 
 	m_close = new geButton(w()-88, m_enableLightning->y()+m_enableLightning->h()+84, 80, 20, "Close");
 
@@ -81,18 +79,21 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 	m_chanListOut->add("Channel 15");
 	m_chanListOut->add("Channel 16");
 	m_chanListOut->value(0);
-
+		
 	if (c.midiOut)
 		m_enableOut->value(1);
 	else
 		m_chanListOut->deactivate();
 
-	if (c.midiOutL)
-		m_enableLightning->value(1);
+	m_enableLightning->value(c.midiOutL);
+	for (geMidiLearnerBase* l : m_learners)
+		c.midiOutL ? l->activate() : l->deactivate();
 
 	m_chanListOut->value(c.midiOutChan);
+	m_chanListOut->callback(cb_setChannel, (void*)this);
 
-	m_enableOut->callback(cb_enableChanList, (void*)this);
+	m_enableOut->callback(cb_enableOut, (void*)this);
+	m_enableLightning->callback(cb_enableLightning, (void*)this);
 	m_close->callback(cb_close, (void*)this);
 
 	set_modal();
@@ -104,15 +105,21 @@ gdMidiOutputMidiCh::gdMidiOutputMidiCh(ID channelId)
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::cb_close         (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_close(); }
-void gdMidiOutputMidiCh::cb_enableChanList(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_enableChanList(); }
+void gdMidiOutputMidiCh::cb_enableOut (Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_enableOut(); }
+void gdMidiOutputMidiCh::cb_setChannel(Fl_Widget *w, void *p) { ((gdMidiOutputMidiCh*)p)->cb_setChannel(); }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::cb_enableChanList()
+void gdMidiOutputMidiCh::cb_enableOut()
 {
+	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
+	{
+		static_cast<m::MidiChannel&>(c).midiOut     = m_enableOut->value();
+		static_cast<m::MidiChannel&>(c).midiOutChan = m_chanListOut->value();
+	});
+
 	m_enableOut->value() ? m_chanListOut->activate() : m_chanListOut->deactivate();
 }
 
@@ -120,16 +127,11 @@ void gdMidiOutputMidiCh::cb_enableChanList()
 /* -------------------------------------------------------------------------- */
 
 
-void gdMidiOutputMidiCh::cb_close()
+void gdMidiOutputMidiCh::cb_setChannel()
 {
-	m::model::onGet(m::model::channels, m_channelId, [&](m::Channel& c)
+	m::model::onSwap(m::model::channels, m_channelId, [&](m::Channel& c)
 	{
-		m::MidiChannel& mc = static_cast<m::MidiChannel&>(c);
-		mc.midiOut     = m_enableOut->value();
-		mc.midiOutChan = m_chanListOut->value();
-		mc.midiOutL    = m_enableLightning->value();
+		static_cast<m::MidiChannel&>(c).midiOutChan = m_chanListOut->value();
 	});
-	do_callback();
 }
-
 }} // giada::v::

@@ -107,23 +107,23 @@ Channel::Channel(const Channel& o)
   key            (o.key),
   mute           (o.mute),
   solo           (o.solo),
-  volume_i       (o.volume_i.load()),
+  volume_i       (o.volume_i),
   volume_d       (o.volume_d),
   hasActions     (o.hasActions),
   readActions    (o.readActions),
-  midiIn         (o.midiIn.load()),
-  midiInKeyPress (o.midiInKeyPress.load()),
-  midiInKeyRel   (o.midiInKeyRel.load()),
-  midiInKill     (o.midiInKill.load()),
-  midiInArm      (o.midiInArm.load()),
-  midiInVolume   (o.midiInVolume.load()),
-  midiInMute     (o.midiInMute.load()),
-  midiInSolo     (o.midiInSolo.load()),
-  midiInFilter   (o.midiInFilter.load()),
-  midiOutL       (o.midiOutL.load()),
-  midiOutLplaying(o.midiOutLplaying.load()),
-  midiOutLmute   (o.midiOutLmute.load()),
-  midiOutLsolo   (o.midiOutLsolo.load())
+  midiIn         (o.midiIn),
+  midiInKeyPress (o.midiInKeyPress),
+  midiInKeyRel   (o.midiInKeyRel),
+  midiInKill     (o.midiInKill),
+  midiInArm      (o.midiInArm),
+  midiInVolume   (o.midiInVolume),
+  midiInMute     (o.midiInMute),
+  midiInSolo     (o.midiInSolo),
+  midiInFilter   (o.midiInFilter),
+  midiOutL       (o.midiOutL),
+  midiOutLplaying(o.midiOutLplaying),
+  midiOutLmute   (o.midiOutLmute),
+  midiOutLsolo   (o.midiOutLsolo)
 #ifdef WITH_VST
  ,pluginIds      (o.pluginIds)
 #endif
@@ -137,7 +137,7 @@ Channel::Channel(const Channel& o)
 
 Channel::Channel(const patch::Channel& p, int bufferSize)
 : type           (p.type),
-  playStatus     (p.waveId == 0 ? ChannelStatus::EMPTY : ChannelStatus::OFF),
+  playStatus     (p.waveId == 0 && type == ChannelType::SAMPLE ? ChannelStatus::EMPTY : ChannelStatus::OFF),
   recStatus      (ChannelStatus::OFF),
   columnId       (p.columnId),
   id             (p.id),
@@ -170,7 +170,7 @@ Channel::Channel(const patch::Channel& p, int bufferSize)
  ,pluginIds      (p.pluginIds)
 #endif
 {
-	buffer.alloc(bufferSize, G_MAX_IO_CHANS);
+    buffer.alloc(bufferSize, G_MAX_IO_CHANS);
 }
 
 
@@ -192,9 +192,9 @@ void Channel::sendMidiLmute()
 	if (!midiOutL || midiOutLmute == 0x0)
 		return;
 	if (mute)
-		kernelMidi::sendMidiLightning(midiOutLmute, midimap::muteOn);
+		kernelMidi::sendMidiLightning(midiOutLmute, midimap::midimap.muteOn);
 	else
-		kernelMidi::sendMidiLightning(midiOutLmute, midimap::muteOff);
+		kernelMidi::sendMidiLightning(midiOutLmute, midimap::midimap.muteOff);
 }
 
 
@@ -206,9 +206,9 @@ void Channel::sendMidiLsolo()
 	if (!midiOutL || midiOutLsolo == 0x0)
 		return;
 	if (solo)
-		kernelMidi::sendMidiLightning(midiOutLsolo, midimap::soloOn);
+		kernelMidi::sendMidiLightning(midiOutLsolo, midimap::midimap.soloOn);
 	else
-		kernelMidi::sendMidiLightning(midiOutLsolo, midimap::soloOff);
+		kernelMidi::sendMidiLightning(midiOutLsolo, midimap::midimap.soloOff);
 }
 
 
@@ -221,20 +221,20 @@ void Channel::sendMidiLstatus()
 		return;
 	switch (playStatus) {
 		case ChannelStatus::OFF:
-			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopped);
+			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::midimap.stopped);
 			break;
 		case ChannelStatus::WAIT:
-			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::waiting);
+			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::midimap.waiting);
 			break;
 		case ChannelStatus::ENDING:
-			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::stopping);
+			kernelMidi::sendMidiLightning(midiOutLplaying, midimap::midimap.stopping);
 			break;
 		case ChannelStatus::PLAY:
 			if ((mixer::isChannelAudible(this) && !mute) || 
-				!midimap::isDefined(midimap::playingInaudible))
-				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playing);
+				!midimap::isDefined(midimap::midimap.playingInaudible))
+				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::midimap.playing);
 			else
-				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::playingInaudible);
+				kernelMidi::sendMidiLightning(midiOutLplaying, midimap::midimap.playingInaudible);
 			break;
 		default:
 			break;

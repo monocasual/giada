@@ -43,8 +43,8 @@ namespace v
 {
 gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path, 
 	std::function<void(void*)> callback, ID channelId)
-: gdWindow   (m::conf::browserX, m::conf::browserY, m::conf::browserW, 
-	          m::conf::browserH, title.c_str()),
+: gdWindow   (m::conf::conf.browserX, m::conf::conf.browserY, m::conf::conf.browserW, 
+	          m::conf::conf.browserH, title.c_str()),
   m_callback (callback),
   m_channelId(channelId)
 {
@@ -67,8 +67,8 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 	browser = new geBrowser(8, groupTop->y()+groupTop->h()+8, w()-16, h()-101);
 	browser->loadDir(path);
-	if (path == m::conf::browserLastPath)
-		browser->preselect(m::conf::browserPosition, m::conf::browserLastValue);
+	if (path == m::conf::conf.browserLastPath)
+		browser->preselect(m::conf::conf.browserPosition, m::conf::conf.browserLastValue);
 
 	Fl_Group* groupButtons = new Fl_Group(8, browser->y()+browser->h()+8, w()-16, 20);
 		ok      = new geButton(w()-88, groupButtons->y(), 80, 20);
@@ -97,13 +97,13 @@ gdBrowserBase::gdBrowserBase(const std::string& title, const std::string& path,
 
 gdBrowserBase::~gdBrowserBase()
 {
-	m::conf::browserX = x();
-	m::conf::browserY = y();
-	m::conf::browserW = w();
-	m::conf::browserH = h();
-	m::conf::browserPosition  = browser->position();
-	m::conf::browserLastPath  = browser->getCurrentDir();
-	m::conf::browserLastValue = browser->value();
+	m::conf::conf.browserX = x();
+	m::conf::conf.browserY = y();
+	m::conf::conf.browserW = w();
+	m::conf::conf.browserH = h();
+	m::conf::conf.browserPosition  = browser->position();
+	m::conf::conf.browserLastPath  = browser->getCurrentDir();
+	m::conf::conf.browserLastValue = browser->value();
 }
 
 

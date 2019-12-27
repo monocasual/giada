@@ -156,9 +156,9 @@ void setPluginPathCb(void* data)
 		return;
 	}
 
-	if (!m::conf::pluginPath.empty() && m::conf::pluginPath.back() != ';')
-		m::conf::pluginPath += ";";
-	m::conf::pluginPath += browser->getCurrentPath();
+	if (!m::conf::conf.pluginPath.empty() && m::conf::conf.pluginPath.back() != ';')
+		m::conf::conf.pluginPath += ";";
+	m::conf::conf.pluginPath += browser->getCurrentPath();
 
 	browser->do_callback();
 

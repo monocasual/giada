@@ -45,7 +45,7 @@ namespace giada {
 namespace v
 {
 geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y)
-: geBaseActionEditor(x, y, 200, m::conf::sampleActionEditorH)
+: geBaseActionEditor(x, y, 200, m::conf::conf.sampleActionEditorH)
 {
 }
 
@@ -55,7 +55,7 @@ geSampleActionEditor::geSampleActionEditor(Pixel x, Pixel y)
 
 geSampleActionEditor::~geSampleActionEditor()
 {
-	m::conf::sampleActionEditorH = h();
+	m::conf::conf.sampleActionEditorH = h();
 }
 
 

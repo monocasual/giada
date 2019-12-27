@@ -25,92 +25,81 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <string>
 #include "utils/string.h"
-#include "core/midiDispatcher.h"
-#include "core/midiEvent.h"
-#include "glue/io.h"
-#include "gui/dialogs/midiIO/midiInputBase.h"
-#include "basics/boxtypes.h"
-#include "basics/button.h"
-#include "basics/box.h"
-#include "midiLearner.h"
+#include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/box.h"
+#include "gui/elems/basics/button.h"
+#include "midiLearnerBase.h"
 
 
 namespace giada {
 namespace v 
 {
-geMidiLearner::geMidiLearner(int X, int Y, int W, const char* l, 
-	std::atomic<uint32_t>& param, ID channelId)
+geMidiLearnerBase::geMidiLearnerBase(int X, int Y, int W, std::string l, int param, uint32_t value)
 : Fl_Group   (X, Y, W, 20),
-  m_channelId(channelId),
   m_param    (param)
 {
 	begin();
-	m_text   = new geBox(x(), y(), 156, 20, l);
-	m_value  = new geButton(m_text->x()+m_text->w()+4, y(), 80, 20);
-	m_button = new geButton(m_value->x()+m_value->w()+4, y(), 40, 20, "learn");
+	m_text     = new geBox(x(), y(), 156, 20, l.c_str());
+	m_valueBtn = new geButton(m_text->x()+m_text->w()+4, y(), 80, 20);
+	m_button   = new geButton(m_valueBtn->x()+m_valueBtn->w()+4, y(), 40, 20, "learn");
 	end();
 
 	m_text->box(G_CUSTOM_BORDER_BOX);
 	m_text->align(FL_ALIGN_LEFT | FL_ALIGN_INSIDE);
 
-	m_value->box(G_CUSTOM_BORDER_BOX);
-	m_value->callback(cb_value, (void*)this);
-	m_value->when(FL_WHEN_RELEASE);
+	m_valueBtn->box(G_CUSTOM_BORDER_BOX);
+	m_valueBtn->callback(cb_value, (void*)this);
+	m_valueBtn->when(FL_WHEN_RELEASE);
 
 	m_button->type(FL_TOGGLE_BUTTON);
 	m_button->callback(cb_button, (void*)this);
 	
-	refresh();
+	update(value);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::refresh()
+void geMidiLearnerBase::cb_button(Fl_Widget* v, void* p) { ((geMidiLearnerBase*)p)->onLearn(); }
+void geMidiLearnerBase::cb_value(Fl_Widget* v, void* p)  { ((geMidiLearnerBase*)p)->onReset(); }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geMidiLearnerBase::update(uint32_t value)
 {
 	std::string tmp = "(not set)";
 	
-	if (m_param != 0x0) {
-		tmp = "0x" + u::string::iToString(m_param.load(), true); // true: hex mode
+	if (value != 0x0) {
+		tmp = "0x" + u::string::iToString(value, /*hex=*/true);
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 		tmp.pop_back();  // Remove last two digits, useless in MIDI messages
 	}
 
-	m_value->copy_label(tmp.c_str());
-	m_button->value(0);
+	m_valueBtn->copy_label(tmp.c_str());
+	m_button->value(0);	
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geMidiLearner::cb_button(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_button(); }
-void geMidiLearner::cb_value(Fl_Widget* v, void* p) { ((geMidiLearner*)p)->cb_value(); }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiLearner::cb_value()
+void geMidiLearnerBase::activate()
 {
-	if (Fl::event_button() == FL_RIGHT_MOUSE)
-		c::io::midiLearn(m::MidiEvent(), m_param, m_channelId);  // Empty event (0x0)
+	Fl_Group::activate();
+	m_valueBtn->activate();
+	m_button->activate();
 }
 
 
-/* -------------------------------------------------------------------------- */
-
-
-void geMidiLearner::cb_button()
+void geMidiLearnerBase::deactivate()
 {
-	if (m_button->value() == 1)
-		m::midiDispatcher::startMidiLearn([this](m::MidiEvent e) 
-		{
-			c::io::midiLearn(e, m_param, m_channelId);
-		});
-	else
-		m::midiDispatcher::stopMidiLearn();	
+	Fl_Group::deactivate();
+	m_valueBtn->deactivate();
+	m_button->deactivate();
 }
 }} // giada::v::

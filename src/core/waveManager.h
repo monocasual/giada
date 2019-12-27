@@ -71,10 +71,11 @@ Creates a new Wave from an existing one, copying the data in range a - b. */
 
 std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b);
 
-/* createFromPatch
-Creates a new Wave given the patch raw data. */
+/* (de)serializeWave
+Creates a new Wave given the patch raw data and vice versa. */
 
-std::unique_ptr<Wave> createFromPatch(const patch::Wave& w);
+std::unique_ptr<Wave> deserializeWave(const patch::Wave& w);
+const patch::Wave     serializeWave(const Wave& w);
 
 int resample(Wave& w, int quality, int samplerate); 
 

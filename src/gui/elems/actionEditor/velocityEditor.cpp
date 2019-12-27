@@ -45,7 +45,7 @@ namespace giada {
 namespace v
 {
 geVelocityEditor::geVelocityEditor(Pixel x, Pixel y)
-:	geBaseActionEditor(x, y, 200, m::conf::velocityEditorH)
+:	geBaseActionEditor(x, y, 200, m::conf::conf.velocityEditorH)
 {
 }
 
@@ -55,7 +55,7 @@ geVelocityEditor::geVelocityEditor(Pixel x, Pixel y)
 
 geVelocityEditor::~geVelocityEditor()
 {
-	m::conf::velocityEditorH = h();
+	m::conf::conf.velocityEditorH = h();
 }
 
 

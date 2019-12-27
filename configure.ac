@@ -88,15 +88,6 @@ AC_ARG_ENABLE(
 
 # ------------------------------------------------------------------------------
 
-# test if files needed for Travis CI are present. If so, define a new macro
-# RUN_TESTS_WITH_LOCAL_FILES used during the test suite
-
-if test -f "giada-midimaps-master.zip" && test -f "dexed.tar.xz" ; then
-  AC_DEFINE(RUN_TESTS_WITH_LOCAL_FILES)
-fi
-
-# ------------------------------------------------------------------------------
-
 # Check for C++ compiler
 
 AC_PROG_CXX
@@ -155,15 +146,6 @@ else
 	AC_LANG_POP
 fi
 
-
-AC_LANG_PUSH([C++])
-AC_CHECK_HEADER(
-	[jansson.h],
-	[],
-	[AC_MSG_ERROR([library 'Jansson' not found!])]
-)
-AC_LANG_POP
-
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
 	[sndfile.h],
@@ -172,14 +154,6 @@ AC_CHECK_HEADER(
 )
 AC_LANG_POP
 
-#~ AC_LANG_PUSH([C++])
-#~ AC_CHECK_HEADER(
-	#~ [RtAudio.h],
-	#~ [],
-	#~ [AC_MSG_ERROR([library 'RtAudio' not found!])]
-#~ )
-#~ AC_LANG_POP
-
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADER(
 	[samplerate.h],
@@ -187,7 +161,6 @@ AC_CHECK_HEADER(
 	[AC_MSG_ERROR([library 'samplerate' not found!])]
 )
 AC_LANG_POP
-
 
 
 # ------------------------------------------------------------------------------

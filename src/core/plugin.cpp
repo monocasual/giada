@@ -56,16 +56,17 @@ Plugin::Plugin(ID id, const std::string& UID)
 
 Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 	int buffersize)
-: id      (id),
-  valid   (true),
-  m_plugin(plugin),
-  m_bypass(false)
+: id          (id),
+  valid       (true),
+  m_plugin    (plugin),
+  m_bypass    (false)
 {
-	/* Init midiInParams. All values are empty (0x0): they will be filled during
-	midi learning process. */
+	/* Initialize midiInParams vector, where midiInParams.size == number of 
+	plugin parameters. All values are initially empty (0x0): they will be filled
+	during MIDI learning process. */
 
-	midiInParams = std::deque<std::atomic<uint32_t>>(m_plugin->getParameters().size());
-	
+	midiInParams = std::vector<uint32_t>(m_plugin->getParameters().size());
+
 	m_buffer.setSize(G_MAX_IO_CHANS, buffersize);
 
 	/* Try to set the main bus to the current number of channels. In the future
@@ -87,13 +88,12 @@ Plugin::Plugin(ID id, juce::AudioPluginInstance* plugin, double samplerate,
 
 
 Plugin::Plugin(const Plugin& o)
-: id      (o.id),
-  valid   (true),
-  m_plugin(o.m_plugin),
-  m_bypass(o.m_bypass.load())
+: id          (o.id),
+  valid       (o.valid),
+  m_plugin    (o.m_plugin),
+  m_bypass    (o.m_bypass.load()),
+  midiInParams(o.midiInParams)
 {
-	for (const std::atomic<uint32_t>& p : o.midiInParams)
-		midiInParams.emplace_back(p.load());
 }
 
 

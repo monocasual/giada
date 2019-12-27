@@ -79,6 +79,8 @@ sourcesCore =                               \
 	src/core/channels/midiChannelProc.cpp   \
 	src/core/model/model.h                  \
 	src/core/model/model.cpp                \
+	src/core/model/storage.h                \
+	src/core/model/storage.cpp              \
 	src/core/idManager.h                    \
 	src/core/idManager.cpp                  \
 	src/glue/main.h                         \
@@ -103,6 +105,8 @@ sourcesCore =                               \
 	src/gui/dispatcher.cpp                  \
 	src/gui/updater.h                       \
 	src/gui/updater.cpp                     \
+	src/gui/storager.h                      \
+	src/gui/storager.cpp                    \
 	src/gui/dialogs/keyGrabber.h            \
 	src/gui/dialogs/keyGrabber.cpp          \
 	src/gui/dialogs/about.h                 \
@@ -157,12 +161,10 @@ sourcesCore =                               \
 	src/gui/dialogs/midiIO/midiInputChannel.cpp      \
 	src/gui/dialogs/midiIO/midiInputMaster.h         \
 	src/gui/dialogs/midiIO/midiInputMaster.cpp       \
-	src/gui/elems/midiLearner.h        \
-	src/gui/elems/midiLearner.cpp      \
-	src/gui/elems/browser.h		         \
-	src/gui/elems/browser.cpp          \
-	src/gui/elems/soundMeter.h		     \
-	src/gui/elems/soundMeter.cpp       \
+	src/gui/elems/browser.h		                     \
+	src/gui/elems/browser.cpp                        \
+	src/gui/elems/soundMeter.h		                 \
+	src/gui/elems/soundMeter.cpp                     \
 	src/gui/elems/plugin/pluginBrowser.h                \
 	src/gui/elems/plugin/pluginBrowser.cpp              \
 	src/gui/elems/plugin/pluginParameter.h              \
@@ -247,6 +249,14 @@ sourcesCore =                               \
 	src/gui/elems/config/tabBehaviors.cpp  \
 	src/gui/elems/config/tabPlugins.h      \
 	src/gui/elems/config/tabPlugins.cpp    \
+	src/gui/elems/midiIO/midiLearnerBase.h        \
+	src/gui/elems/midiIO/midiLearnerBase.cpp      \
+	src/gui/elems/midiIO/midiLearnerMaster.h      \
+	src/gui/elems/midiIO/midiLearnerMaster.cpp    \
+	src/gui/elems/midiIO/midiLearnerChannel.h     \
+	src/gui/elems/midiIO/midiLearnerChannel.cpp   \
+	src/gui/elems/midiIO/midiLearnerPlugin.h      \
+	src/gui/elems/midiIO/midiLearnerPlugin.cpp    \
 	src/gui/elems/basics/scroll.h          \
 	src/gui/elems/basics/scroll.cpp        \
 	src/gui/elems/basics/boxtypes.h        \
@@ -291,8 +301,6 @@ sourcesCore =                               \
 	src/utils/vector.h                     \
 	src/utils/ver.h                        \
 	src/utils/ver.cpp                      \
-	src/utils/json.h                       \
-	src/utils/json.cpp                     \
 	src/utils/string.h                     \
 	src/utils/string.cpp                   \
 	src/deps/rtaudio-mod/RtAudio.h         \
@@ -300,19 +308,13 @@ sourcesCore =                               \
 sourcesTests =                   \
 	tests/main.cpp               \
 	tests/rcuList.cpp            \
-	tests/conf.cpp               \
 	tests/wave.cpp               \
 	tests/waveManager.cpp        \
-	tests/patch.cpp              \
-	tests/midiMapConf.cpp        \
-	tests/pluginHost.cpp         \
 	tests/utils.cpp              \
 	tests/recorder.cpp           \
 	tests/waveFx.cpp             \
 	tests/audioBuffer.cpp        \
-	tests/sampleChannel.cpp      \
-	tests/sampleChannelProc.cpp  \
-	tests/sampleChannelRec.cpp  
+	tests/sampleChannel.cpp
 
 if WITH_VST
 

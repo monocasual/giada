@@ -129,8 +129,8 @@ public:
 	bool inputMonitor;  
 	float pitch;
 	
-	std::atomic<Frame> tracker;         // chan position
-	std::atomic<Frame> trackerPreview;  // chan position for audio preview
+	Frame tracker;         // chan position
+	Frame trackerPreview;  // chan position for audio preview
 
 	/* begin, end
 	Begin/end point to read wave data from/to. */
@@ -141,9 +141,9 @@ public:
 	/* midiIn*
 	MIDI input parameters. */
 
-	bool                  midiInVeloAsVol;
-	std::atomic<uint32_t> midiInReadActions;
-	std::atomic<uint32_t> midiInPitch;
+	bool     midiInVeloAsVol;
+	uint32_t midiInReadActions;
+	uint32_t midiInPitch;
 
 	/* bufferOffset
 	Offset used while filling the internal buffer with audio data. Value is 

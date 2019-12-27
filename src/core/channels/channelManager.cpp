@@ -119,7 +119,7 @@ std::unique_ptr<Channel> create(const Channel& o)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Channel> create(const patch::Channel& pch, int bufferSize)
+std::unique_ptr<Channel> deserializeChannel(const patch::Channel& pch, int bufferSize)
 {
 	std::unique_ptr<Channel> ch = nullptr;
 
@@ -134,5 +134,70 @@ std::unique_ptr<Channel> create(const patch::Channel& pch, int bufferSize)
 	channelId_.set(pch.id);
 
 	return ch;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+const patch::Channel serializeChannel(const Channel& c)
+{
+	patch::Channel pc;
+
+	pc.id   = c.id;
+	pc.type = c.type;
+
+#ifdef WITH_VST
+	for (ID pid : c.pluginIds)
+		pc.pluginIds.push_back(pid);
+#endif	
+
+	if (c.type != ChannelType::MASTER) {
+		pc.size            = 20; // c->size;  // TODO
+		pc.name            = c.name.c_str();
+		pc.columnId        = c.columnId;
+		pc.key             = c.key;
+		pc.mute            = c.mute;
+		pc.solo            = c.solo;
+		pc.volume          = c.volume;
+		pc.pan             = c.pan;
+		pc.hasActions      = c.hasActions;
+		pc.armed           = c.armed;
+		pc.midiIn          = c.midiIn;
+		pc.midiInKeyPress  = c.midiInKeyRel;
+		pc.midiInKeyRel    = c.midiInKeyPress;
+		pc.midiInKill      = c.midiInKill;
+		pc.midiInArm       = c.midiInArm;
+		pc.midiInVolume    = c.midiInVolume;
+		pc.midiInMute      = c.midiInMute;
+		pc.midiInSolo      = c.midiInSolo;
+		pc.midiInFilter    = c.midiInFilter;
+		pc.midiOutL        = c.midiOutL;
+		pc.midiOutLplaying = c.midiOutLplaying;
+		pc.midiOutLmute    = c.midiOutLmute;
+		pc.midiOutLsolo    = c.midiOutLsolo;
+	}
+
+	if (c.type == ChannelType::SAMPLE) {
+		const SampleChannel& sc = static_cast<const SampleChannel&>(c);
+		pc.waveId            = sc.waveId;
+		pc.mode              = sc.mode;
+		pc.begin             = sc.begin;
+		pc.end               = sc.end;
+		pc.readActions       = sc.readActions;
+		pc.pitch             = sc.pitch;
+		pc.inputMonitor      = sc.inputMonitor;
+		pc.midiInVeloAsVol   = sc.midiInVeloAsVol;
+		pc.midiInReadActions = sc.midiInReadActions;
+		pc.midiInPitch       = sc.midiInPitch;
+	}
+	else
+	if (c.type == ChannelType::MIDI) {
+		const MidiChannel& mc = static_cast<const MidiChannel&>(c);
+		pc.midiOut     = mc.midiOut;
+		pc.midiOutChan = mc.midiOutChan;
+	}
+
+	return pc;
 }
 }}}; // giada::m::channelManager

@@ -40,16 +40,6 @@ class gdMidiOutputSampleCh : public gdMidiOutputBase
 public:
 
     gdMidiOutputSampleCh(ID channelId);
-
-private:
-
-	/* cb_close
-	Override parent method, we need to do more stuff on close. */
-
-	static void cb_close(Fl_Widget* w, void* p);
-	void cb_close();
-
-	ID m_channelId;
 };
 }} // giada::v::
 

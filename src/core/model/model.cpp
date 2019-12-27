@@ -42,6 +42,7 @@ RCUList<Clock>    clock(std::make_unique<Clock>());
 RCUList<Mixer>    mixer(std::make_unique<Mixer>());
 RCUList<Kernel>   kernel(std::make_unique<Kernel>());
 RCUList<Recorder> recorder(std::make_unique<Recorder>());
+RCUList<MidiIn>   midiIn(std::make_unique<MidiIn>());
 RCUList<Actions>  actions(std::make_unique<Actions>());
 RCUList<Channel>  channels;
 RCUList<Wave>     waves;

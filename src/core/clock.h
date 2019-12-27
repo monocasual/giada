@@ -38,6 +38,11 @@ namespace clock
 {
 void init(int sampleRate, float midiTCfps);
 
+/* recomputeFrames
+Updates bpm, frames, beats and so on. */
+
+void recomputeFrames();
+
 /* sendMIDIsync
 Generates MIDI sync output data. */
 

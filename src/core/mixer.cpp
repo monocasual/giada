@@ -162,7 +162,7 @@ void processLineIn_(const AudioBuffer& inBuf)
 
 	computePeak_(inBuf, peakIn);
 
-	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > conf::recTriggerLevel) {
+	if (signalCb_ != nullptr && u::math::linearToDB(peakIn) > conf::conf.recTriggerLevel) {
 		signalCb_();
 		signalCb_ = nullptr;
 	}
@@ -307,7 +307,7 @@ Applies a very dumb hard limiter. */
 
 void limitOutput_(AudioBuffer& outBuf)
 {
-	if (!conf::limitOutput)
+	if (!conf::conf.limitOutput)
 		return;
 	for (int i=0; i<outBuf.countFrames(); i++)
 		for (int j=0; j<outBuf.countChannels(); j++)

@@ -104,6 +104,9 @@ std::string removeFltkChars(const std::string& s);
 
 int getStringWidth(const std::string& s);
 
+int centerWindowX(int w);
+int centerWindowY(int h);
+
 }}} // giada::u::gui::
 
 

@@ -42,11 +42,9 @@
 namespace giada {
 namespace v 
 {
-gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
+gdConfig::gdConfig(int w, int h)
+: gdWindow(u::gui::centerWindowX(w), u::gui::centerWindowY(h), w, h, "Configuration")
 {
-	if (m::conf::configX)
-		resize(m::conf::configX, m::conf::configY, this->w(), this->h());
-
 	Fl_Tabs* tabs = new Fl_Tabs(8, 8, w-16, h-44);
 	tabs->box(G_CUSTOM_BORDER_BOX);
 	tabs->labelcolor(G_COLOR_LIGHT_2);
@@ -73,16 +71,6 @@ gdConfig::gdConfig(int w, int h) : gdWindow(w, h, "Configuration")
 	u::gui::setFavicon(this);
 	setId(WID_CONFIG);
 	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdConfig::~gdConfig()
-{
-	m::conf::configX = x();
-	m::conf::configY = y();
 }
 
 

@@ -48,7 +48,7 @@ geTabMisc::geTabMisc(int X, int Y, int W, int H)
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	switch (m::conf::logMode) {
+	switch (m::conf::conf.logMode) {
 		case LOG_MODE_MUTE:
 			debugMsg->value(0);
 			break;
@@ -69,13 +69,13 @@ void geTabMisc::save()
 {
 	switch(debugMsg->value()) {
 		case 0:
-			m::conf::logMode = LOG_MODE_MUTE;
+			m::conf::conf.logMode = LOG_MODE_MUTE;
 			break;
 		case 1:
-			m::conf::logMode = LOG_MODE_STDOUT;
+			m::conf::conf.logMode = LOG_MODE_STDOUT;
 			break;
 		case 2:
-			m::conf::logMode = LOG_MODE_FILE;
+			m::conf::conf.logMode = LOG_MODE_FILE;
 			break;
 	}
 }

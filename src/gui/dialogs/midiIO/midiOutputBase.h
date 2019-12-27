@@ -29,9 +29,9 @@
 #define GD_MIDI_OUTPUT_BASE_H
 
 
-#include <FL/Fl.H>
+#include "core/types.h"
 #include "gui/dialogs/window.h"
-#include "gui/elems/midiLearner.h"
+#include "gui/elems/midiIO/midiLearnerBase.h"
 
 
 class geButton;
@@ -56,7 +56,7 @@ class gdMidiOutputBase : public gdWindow
 {
 public:
 
-	gdMidiOutputBase(int w, int h);
+	gdMidiOutputBase(int w, int h, ID channelId);
 	~gdMidiOutputBase();
 
 	void refresh() override;
@@ -69,9 +69,6 @@ protected:
 	static void cb_close(Fl_Widget* w, void* p);
 	void cb_close();
 
-	/* cb_enableLightning
-	enable MIDI lightning output. */
-
 	static void cb_enableLightning(Fl_Widget* w, void* p);
 	void cb_enableLightning();
 
@@ -80,7 +77,9 @@ protected:
 
 	void setTitle(int chanNum);
 
-	std::vector<geMidiLearner*> m_learners;
+	ID m_channelId;
+
+	std::vector<geMidiLearnerBase*> m_learners;
 	
 	geButton* m_close;
 	geCheck*  m_enableLightning;

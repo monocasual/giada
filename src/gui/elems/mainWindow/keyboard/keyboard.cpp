@@ -281,7 +281,7 @@ void geKeyboard::addColumn(int width, ID id)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::forEachChannel(std::function<void(geChannel* c)> f) const
+void geKeyboard::forEachChannel(std::function<void(geChannel& c)> f) const
 {
 	for (geColumn* column : m_columns) 
 		column->forEachChannel(f);

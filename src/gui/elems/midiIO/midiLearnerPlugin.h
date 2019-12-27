@@ -25,58 +25,36 @@
  * -------------------------------------------------------------------------- */
 
 
-#ifndef GE_MIDI_LEARNER_H
-#define GE_MIDI_LEARNER_H
+#ifdef WITH_VST
 
 
-#include <atomic>
-#include <FL/Fl_Group.H>
+#ifndef GE_MIDI_LEARNER_PLUGIN_H
+#define GE_MIDI_LEARNER_PLUGIN_H
+
+
 #include "core/types.h"
-
-
-class geBox;
-class geButton;
+#include "midiLearnerBase.h"
 
 
 namespace giada {
-namespace m
-{
-class Channel;	
-}
 namespace v 
 {
-class geMidiLearner : public Fl_Group
+class geMidiLearnerPlugin : public geMidiLearnerBase
 {
 public:
 
-	geMidiLearner(int x, int y, int w, const char* l, std::atomic<uint32_t>& param, 
-		ID channelId);
-
-	void refresh();
+	geMidiLearnerPlugin(int x, int y, int w, std::string l, int param, uint32_t value, ID pluginId);
+	
+	void refresh() override;
+	void onLearn() override;
+	void onReset() override;
 
 private:
 
-	static void cb_button(Fl_Widget* v, void* p);
-	static void cb_value (Fl_Widget* v, void* p);
-	void cb_button();
-	void cb_value();
-
-	/* m_channelId
-	Channel it belongs to. Might be 0 if the learner comes from the MIDI input 
-	master window. */
-
-	ID m_channelId;
-
-	/* m_param
-	Reference to ch->midiIn[value]. */
-
-	std::atomic<uint32_t>& m_param;
-
-	geBox*    m_text;
-	geButton* m_value;
-	geButton* m_button;
+	ID m_pluginId;
 };
 }} // giada::v::
 
 
+#endif
 #endif

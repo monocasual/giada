@@ -45,7 +45,6 @@ class gdBeatsInput : public gdWindow
 public:
 
     gdBeatsInput();
-    ~gdBeatsInput();
 
 private:
 

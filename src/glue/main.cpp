@@ -255,7 +255,7 @@ void beatsDivide()
 
 void toggleInputRec()
 {
-	if (!m::recManager::toggleInputRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode)))
+	if (!m::recManager::toggleInputRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode)))
 		v::gdAlert("No channels armed/available for audio recording.");
 }
 
@@ -271,7 +271,7 @@ void toggleActionRec()
 
 void startActionRec()
 {
-	m::recManager::startActionRec(static_cast<RecTriggerMode>(m::conf::recTriggerMode));
+	m::recManager::startActionRec(static_cast<RecTriggerMode>(m::conf::conf.recTriggerMode));
 }
 
 

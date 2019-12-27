@@ -25,16 +25,20 @@
  * -------------------------------------------------------------------------- */
 
 
+#include <fstream>
 #include <vector>
 #include <string>
 #include <cstring>
 #include <dirent.h>
+#include "deps/json/single_include/nlohmann/json.hpp"
 #include "utils/string.h"
 #include "utils/log.h"
 #include "utils/fs.h"
-#include "utils/json.h"
 #include "const.h"
 #include "midiMapConf.h"
+
+
+namespace nl = nlohmann;
 
 
 namespace giada {
@@ -43,27 +47,19 @@ namespace midimap
 {
 namespace
 {
-bool readInitCommands_(json_t* j)
+bool readInitCommands_(const nl::json& j)
 {
-	namespace uj = u::json;
+	if (j.find(MIDIMAP_KEY_INIT_COMMANDS) == j.end())
+		return false;
 
-	json_t* jcs = json_object_get(j, MIDIMAP_KEY_INIT_COMMANDS);
-	if (jcs == nullptr)
-    	return false;
-
-	size_t  i;
-	json_t* jc;
-	json_array_foreach(jcs, i, jc) {
-
-		if (!uj::isObject(jc))
-			return false;
-
+	for (const auto& jc : j[MIDIMAP_KEY_INIT_COMMANDS])
+	{
 		Message m;
-		m.channel  = uj::readInt   (jc, MIDIMAP_KEY_CHANNEL);
-		m.valueStr = uj::readString(jc, MIDIMAP_KEY_MESSAGE);
+		m.channel  = jc[MIDIMAP_KEY_CHANNEL];
+		m.valueStr = jc[MIDIMAP_KEY_MESSAGE];
 		m.value    = strtoul(m.valueStr.c_str(), nullptr, 16);
 
-		initCommands.push_back(m);
+		midimap.initCommands.push_back(m);
 	}
 
 	return true;
@@ -73,16 +69,15 @@ bool readInitCommands_(json_t* j)
 /* -------------------------------------------------------------------------- */
 
 
-bool readCommand_(json_t* j, Message& m, const std::string& key)
+bool readCommand_(const nl::json& j, Message& m, const std::string& key)
 {
-	namespace uj = u::json;
-
-	json_t* jc = json_object_get(j, key.c_str());
-	if (jc == nullptr)
+	if (j.find(key) == j.end())
 		return false;
 
-	m.channel  = uj::readInt   (jc, MIDIMAP_KEY_CHANNEL);
-	m.valueStr = uj::readString(jc, MIDIMAP_KEY_MESSAGE);
+	const nl::json& jc = j[key];
+
+	m.channel  = jc[MIDIMAP_KEY_CHANNEL];
+	m.valueStr = jc[MIDIMAP_KEY_MESSAGE];
 
 	return true;
 }
@@ -132,21 +127,8 @@ void parse_(Message& message)
 /* -------------------------------------------------------------------------- */
 
 
-
-std::string brand;
-std::string device;
-std::vector<Message> initCommands;
-Message muteOn;
-Message muteOff;
-Message soloOn;
-Message soloOff;
-Message waiting;
-Message playing;
-Message stopping;
-Message stopped;
-Message playingInaudible;
-
-std::string midimapsPath;
+MidiMap                  midimap;
+std::string              midimapsPath;
 std::vector<std::string> maps;
 
 
@@ -192,44 +174,7 @@ void init()
 
 void setDefault()
 {
-	brand  = "";
-	device = "";
-	muteOn.channel    = 0;
-	muteOn.valueStr   = "";
-	muteOn.offset     = -1;
-	muteOn.value      = 0;
-	muteOff.channel   = 0;
-	muteOff.valueStr  = "";
-	muteOff.offset    = -1;
-	muteOff.value     = 0;
-	soloOn.channel    = 0;
-	soloOn.valueStr   = "";
-	soloOn.offset     = -1;
-	soloOn.value      = 0;
-	soloOff.channel   = 0;
-	soloOff.valueStr  = "";
-	soloOff.offset    = -1;
-	soloOff.value     = 0;
-	waiting.channel   = 0;
-	waiting.valueStr  = "";
-	waiting.offset    = -1;
-	waiting.value     = 0;
-	playing.channel   = 0;
-	playing.valueStr  = "";
-	playing.offset    = -1;
-	playing.value     = 0;
-	stopping.channel  = 0;
-	stopping.valueStr = "";
-	stopping.offset   = -1;
-	stopping.value    = 0;
-	stopped.channel   = 0;
-	stopped.valueStr  = "";
-	stopped.offset    = -1;
-	stopped.value     = 0;
-	playingInaudible.channel   = 0;
-	playingInaudible.valueStr  = "";
-	playingInaudible.offset    = -1;
-	playingInaudible.value     = 0;
+	midimap = MidiMap();
 }
 
 
@@ -247,8 +192,6 @@ bool isDefined(const Message& m)
 
 int read(const std::string& file)
 {
-	namespace uj = u::json;
-
 	if (file.empty()) {
 		u::log::print("[midiMapConf::read] midimap not specified, nothing to do\n");
 		return MIDIMAP_NOT_SPECIFIED;
@@ -256,23 +199,25 @@ int read(const std::string& file)
 
 	u::log::print("[midiMapConf::read] reading midimap file '%s'\n", file.c_str());
 
-	json_t* j = uj::load(std::string(midimapsPath + file).c_str());
-	if (j == nullptr)
+	std::ifstream ifs(midimapsPath + file);
+	if (!ifs.good())
 		return MIDIMAP_UNREADABLE;
 
-	brand  = uj::readString(j, MIDIMAP_KEY_BRAND);
-	device = uj::readString(j, MIDIMAP_KEY_DEVICE);
+	nl::json j = nl::json::parse(ifs);
+
+	midimap.brand  = j[MIDIMAP_KEY_BRAND];
+	midimap.device = j[MIDIMAP_KEY_DEVICE];
 	
 	if (!readInitCommands_(j)) return MIDIMAP_UNREADABLE;
-	if (readCommand_(j, muteOn,           MIDIMAP_KEY_MUTE_ON))  parse_(muteOn);
-	if (readCommand_(j, muteOff,          MIDIMAP_KEY_MUTE_OFF)) parse_(muteOff);
-	if (readCommand_(j, soloOn,           MIDIMAP_KEY_SOLO_ON))  parse_(soloOn);
-	if (readCommand_(j, soloOff,          MIDIMAP_KEY_SOLO_OFF)) parse_(soloOff);
-	if (readCommand_(j, waiting,          MIDIMAP_KEY_WAITING))  parse_(waiting);
-	if (readCommand_(j, playing,          MIDIMAP_KEY_PLAYING))  parse_(playing);
-	if (readCommand_(j, stopping,         MIDIMAP_KEY_STOPPING)) parse_(stopping);
-	if (readCommand_(j, stopped,          MIDIMAP_KEY_STOPPED))  parse_(stopped);
-	if (readCommand_(j, playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse_(playingInaudible);
+	if (readCommand_(j, midimap.muteOn,           MIDIMAP_KEY_MUTE_ON))  parse_(midimap.muteOn);
+	if (readCommand_(j, midimap.muteOff,          MIDIMAP_KEY_MUTE_OFF)) parse_(midimap.muteOff);
+	if (readCommand_(j, midimap.soloOn,           MIDIMAP_KEY_SOLO_ON))  parse_(midimap.soloOn);
+	if (readCommand_(j, midimap.soloOff,          MIDIMAP_KEY_SOLO_OFF)) parse_(midimap.soloOff);
+	if (readCommand_(j, midimap.waiting,          MIDIMAP_KEY_WAITING))  parse_(midimap.waiting);
+	if (readCommand_(j, midimap.playing,          MIDIMAP_KEY_PLAYING))  parse_(midimap.playing);
+	if (readCommand_(j, midimap.stopping,         MIDIMAP_KEY_STOPPING)) parse_(midimap.stopping);
+	if (readCommand_(j, midimap.stopped,          MIDIMAP_KEY_STOPPED))  parse_(midimap.stopped);
+	if (readCommand_(j, midimap.playingInaudible, MIDIMAP_KEY_PLAYING_INAUDIBLE))  parse_(midimap.playingInaudible);
 
 	return MIDIMAP_READ_OK;
 }

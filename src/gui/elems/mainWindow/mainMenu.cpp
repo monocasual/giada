@@ -103,8 +103,7 @@ void geMainMenu::cb_file()
 	/* An Fl_Menu_Button is made of many Fl_Menu_Item */
 
 	Fl_Menu_Item menu[] = {
-		{"Open patch or project..."},
-		{"Save patch..."},
+		{"Open project..."},
 		{"Save project..."},
 		{"Close project"},
 #ifndef NDEBUG
@@ -123,40 +122,30 @@ void geMainMenu::cb_file()
 	const Fl_Menu_Item* m = menu->popup(Fl::event_x(),	Fl::event_y(), 0, 0, &b);
 	if (!m) return;
 
-	if (strcmp(m->label(), "Open patch or project...") == 0) {
-		gdWindow* childWin = new gdBrowserLoad("Load patch or project", 
-			conf::patchPath, c::storage::loadPatch, 0);
+	if (strcmp(m->label(), "Open project...") == 0) {
+		gdWindow* childWin = new gdBrowserLoad("Open project", 
+			conf::conf.patchPath, c::storage::loadProject, 0);
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
-		return;
 	}
-	if (strcmp(m->label(), "Save patch...") == 0) {
-		if (mh::hasLogicalSamples() || mh::hasEditedSamples())
-			if (!gdConfirmWin("Warning", "You should save a project in order to store\nyour takes and/or processed samples."))
-				return;
-		gdWindow* childWin = new gdBrowserSave("Save patch", conf::patchPath, 
-			patch::name, c::storage::savePatch, 0);
-		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
-		return;
-	}
+	else
 	if (strcmp(m->label(), "Save project...") == 0) {
-		gdWindow* childWin = new gdBrowserSave("Save project", conf::patchPath, 
-			patch::name, c::storage::saveProject, 0);
+		gdWindow* childWin = new gdBrowserSave("Save project", conf::conf.patchPath, 
+			patch::patch.name, c::storage::saveProject, 0);
 		u::gui::openSubWindow(G_MainWin, childWin, WID_FILE_BROWSER);
-		return;
 	}
+	else
 	if (strcmp(m->label(), "Close project") == 0) {
 		c::main::resetToInitState(/*createColumns=*/true);
-		return;
 	}
 #ifndef NDEBUG
+	else
 	if (strcmp(m->label(), "Debug stats") == 0) {
 		m::model::debug();
-		return;
 	}
 #endif
+	else
 	if (strcmp(m->label(), "Quit Giada") == 0) {
 		G_MainWin->do_callback();
-		return;
 	}
 }
 

@@ -88,11 +88,9 @@ public:
 	ID id;
 
 	/* midiInParams
-	A list of midiIn hex values for parameter automation. Why not a vector? 
-	Unfortunately std::atomic types are not copy-constructible, nor 
-	copy-assignable: such type won't suit a std::vector. */
+	A vector of midiIn hex values for parameter automation. */
 
-	std::deque<std::atomic<uint32_t>> midiInParams;
+	std::vector<uint32_t> midiInParams;
 	
 	/* valid
 	A missing plug-in is loaded anyway, yet marked as 'invalid'. */

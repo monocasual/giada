@@ -76,7 +76,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	if (m::kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
 		soundsys->add("PulseAudio");
 
-	switch (m::conf::soundSystem) {
+	switch (m::conf::conf.soundSystem) {
 		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -100,7 +100,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	if (m::kernelAudio::hasAPI(RtAudio::LINUX_PULSE))
 		soundsys->add("PulseAudio");
 
-	switch (m::conf::soundSystem) {
+	switch (m::conf::conf.soundSystem) {
 		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -123,7 +123,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	if (m::kernelAudio::hasAPI(RtAudio::WINDOWS_WASAPI))
 		soundsys->add("WASAPI");
 
-	switch (m::conf::soundSystem) {
+	switch (m::conf::conf.soundSystem) {
 		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -143,7 +143,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	if (m::kernelAudio::hasAPI(RtAudio::MACOSX_CORE))
 		soundsys->add("CoreAudio");
 
-	switch (m::conf::soundSystem) {
+	switch (m::conf::conf.soundSystem) {
 		case G_SYS_API_NONE:
 			soundsys->showItem("(none)");
 			break;
@@ -164,7 +164,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	devOutInfo->callback(cb_showOutputInfo, this);
 	devInInfo->callback(cb_showInputInfo, this);
 
-	if (m::conf::soundSystem != G_SYS_API_NONE) {
+	if (m::conf::conf.soundSystem != G_SYS_API_NONE) {
 		fetchSoundDevs();
 		fetchOutChans(sounddevOut->value());
 		fetchInChans(sounddevIn->value());
@@ -176,7 +176,7 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 		for (int i=0; i<nfreq; i++) {
 			int freq = m::kernelAudio::getFreq(sounddevOut->value(), i);
 			samplerate->add(u::string::iToString(freq).c_str());
-			if (freq == m::conf::samplerate)
+			if (freq == m::conf::conf.samplerate)
 				samplerate->value(i);
 		}
 	}
@@ -200,18 +200,18 @@ geTabAudio::geTabAudio(int X, int Y, int W, int H)
 	buffersize->add("1024");
 	buffersize->add("2048");
 	buffersize->add("4096");
-	buffersize->showItem(u::string::iToString(m::conf::buffersize).c_str());
+	buffersize->showItem(u::string::iToString(m::conf::conf.buffersize).c_str());
 
 	rsmpQuality->add("Sinc best quality (very slow)");
 	rsmpQuality->add("Sinc medium quality (slow)");
 	rsmpQuality->add("Sinc basic quality (medium)");
 	rsmpQuality->add("Zero Order Hold (fast)");
 	rsmpQuality->add("Linear (very fast)");
-	rsmpQuality->value(m::conf::rsmpQuality);
+	rsmpQuality->value(m::conf::conf.rsmpQuality);
 
-	recTriggerLevel->value(u::string::fToString(m::conf::recTriggerLevel, 1).c_str());
+	recTriggerLevel->value(u::string::fToString(m::conf::conf.recTriggerLevel, 1).c_str());
 
-	limitOutput->value(m::conf::limitOutput);
+	limitOutput->value(m::conf::conf.limitOutput);
 }
 
 
@@ -343,7 +343,7 @@ void geTabAudio::fetchInChans(int menuItem)
 		std::string tmp = u::string::iToString(i+1) + "-" + u::string::iToString(i+2);
 		channelsIn->add(tmp.c_str());
 	}
-	channelsIn->value(m::conf::channelsIn);
+	channelsIn->value(m::conf::conf.channelsIn);
 }
 
 
@@ -366,7 +366,7 @@ void geTabAudio::fetchOutChans(int menuItem)
 		std::string tmp = u::string::iToString(i+1) + "-" + u::string::iToString(i+2);
 		channelsOut->add(tmp.c_str());
 	}
-	channelsOut->value(m::conf::channelsOut);
+	channelsOut->value(m::conf::conf.channelsOut);
 }
 
 
@@ -442,7 +442,7 @@ void geTabAudio::fetchSoundDevs()
 			devOutInfo->deactivate();
 		}
 		else {
-			int outMenuValue = findMenuDevice(sounddevOut, m::conf::soundDeviceOut);
+			int outMenuValue = findMenuDevice(sounddevOut, m::conf::conf.soundDeviceOut);
 			sounddevOut->value(outMenuValue);
 		}
 
@@ -452,7 +452,7 @@ void geTabAudio::fetchSoundDevs()
 			devInInfo->deactivate();
 		}
 		else {
-			int inMenuValue = findMenuDevice(sounddevIn, m::conf::soundDeviceIn);
+			int inMenuValue = findMenuDevice(sounddevIn, m::conf::conf.soundDeviceIn);
 			sounddevIn->value(inMenuValue);
 		}
 	}
@@ -467,63 +467,63 @@ void geTabAudio::save()
 	std::string text = soundsys->text(soundsys->value());
 
 	if (text == "(none)") {
-		m::conf::soundSystem = G_SYS_API_NONE;
+		m::conf::conf.soundSystem = G_SYS_API_NONE;
 		return;
 	}
 
 #if defined(__linux__)
 
 	else if (text == "ALSA")
-		m::conf::soundSystem = G_SYS_API_ALSA;
+		m::conf::conf.soundSystem = G_SYS_API_ALSA;
 	else if (text == "Jack")
-		m::conf::soundSystem = G_SYS_API_JACK;
+		m::conf::conf.soundSystem = G_SYS_API_JACK;
 	else if (text == "PulseAudio")
-		m::conf::soundSystem = G_SYS_API_PULSE;
+		m::conf::conf.soundSystem = G_SYS_API_PULSE;
 
 #elif defined(__FreeBSD__)
 
 	else if (text == "Jack")
-		m::conf::soundSystem = G_SYS_API_JACK;
+		m::conf::conf.soundSystem = G_SYS_API_JACK;
 	else if (text == "PulseAudio")
-		m::conf::soundSystem = G_SYS_API_PULSE;
+		m::conf::conf.soundSystem = G_SYS_API_PULSE;
 
 #elif defined(_WIN32)
 
 	else if (text == "DirectSound")
-		m::conf::soundSystem = G_SYS_API_DS;
+		m::conf::conf.soundSystem = G_SYS_API_DS;
 	else if (text == "ASIO")
-		m::conf::soundSystem = G_SYS_API_ASIO;
+		m::conf::conf.soundSystem = G_SYS_API_ASIO;
 	else if (text == "WASAPI")
-		m::conf::soundSystem = G_SYS_API_WASAPI;
+		m::conf::conf.soundSystem = G_SYS_API_WASAPI;
 
 #elif defined (__APPLE__)
 
 	else if (text == "CoreAudio")
-		m::conf::soundSystem = G_SYS_API_CORE;
+		m::conf::conf.soundSystem = G_SYS_API_CORE;
 
 #endif
 
 	/* use the device name to search into the drop down menu's */
 
-	m::conf::soundDeviceOut = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
-	m::conf::soundDeviceIn  = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
-	m::conf::channelsOut    = channelsOut->value();
-	m::conf::channelsIn     = channelsIn->value();
-	m::conf::limitOutput    = limitOutput->value();
-	m::conf::rsmpQuality    = rsmpQuality->value();
+	m::conf::conf.soundDeviceOut = m::kernelAudio::getDeviceByName(sounddevOut->text(sounddevOut->value()));
+	m::conf::conf.soundDeviceIn  = m::kernelAudio::getDeviceByName(sounddevIn->text(sounddevIn->value()));
+	m::conf::conf.channelsOut    = channelsOut->value();
+	m::conf::conf.channelsIn     = channelsIn->value();
+	m::conf::conf.limitOutput    = limitOutput->value();
+	m::conf::conf.rsmpQuality    = rsmpQuality->value();
 
 	/* if sounddevOut is disabled (because of system change e.g. alsa ->
 	 * jack) its value is equal to -1. Change it! */
 
-	if (m::conf::soundDeviceOut == -1)
-		m::conf::soundDeviceOut = 0;
+	if (m::conf::conf.soundDeviceOut == -1)
+		m::conf::conf.soundDeviceOut = 0;
 
-	m::conf::buffersize = std::atoi(buffersize->text());
-	m::conf::recTriggerLevel = std::atof(recTriggerLevel->value());
+	m::conf::conf.buffersize = std::atoi(buffersize->text());
+	m::conf::conf.recTriggerLevel = std::atof(recTriggerLevel->value());
 
 	const Fl_Menu_Item* i = nullptr;
 	i = samplerate->mvalue(); // mvalue() returns a pointer to the last menu item that was picked
 	if (i != nullptr)
-		m::conf::samplerate = std::atoi(i->label());
+		m::conf::conf.samplerate = std::atoi(i->label());
 }
 }} // giada::v::

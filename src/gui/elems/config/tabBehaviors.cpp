@@ -62,10 +62,10 @@ geTabBehaviors::geTabBehaviors(int X, int Y, int W, int H)
 	labelsize(G_GUI_FONT_SIZE_BASE);
 	selection_color(G_COLOR_GREY_4);
 
-	m::conf::recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
-	m::conf::chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
-	treatRecsAsLoops->value(m::conf::treatRecsAsLoops);
-	inputMonitorDefaultOn->value(m::conf::inputMonitorDefaultOn);
+	m::conf::conf.recsStopOnChanHalt == 1 ? recsStopOnChanHalt_1->value(1) : recsStopOnChanHalt_0->value(1);
+	m::conf::conf.chansStopOnSeqHalt == 1 ? chansStopOnSeqHalt_1->value(1) : chansStopOnSeqHalt_0->value(1);
+	treatRecsAsLoops->value(m::conf::conf.treatRecsAsLoops);
+	inputMonitorDefaultOn->value(m::conf::conf.inputMonitorDefaultOn);
 
 	recsStopOnChanHalt_1->callback(cb_radio_mutex, (void*)this);
 	recsStopOnChanHalt_0->callback(cb_radio_mutex, (void*)this);
@@ -97,9 +97,9 @@ void geTabBehaviors::cb_radio_mutex(Fl_Widget* w)
 
 void geTabBehaviors::save()
 {
-	m::conf::recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
-	m::conf::chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
-	m::conf::treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
-	m::conf::inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
+	m::conf::conf.recsStopOnChanHalt = recsStopOnChanHalt_1->value() == 1 ? 1 : 0;
+	m::conf::conf.chansStopOnSeqHalt = chansStopOnSeqHalt_1->value() == 1 ? 1 : 0;
+	m::conf::conf.treatRecsAsLoops = treatRecsAsLoops->value() == 1 ? 1 : 0;
+	m::conf::conf.inputMonitorDefaultOn = inputMonitorDefaultOn->value() == 1 ? 1 : 0;
 }
 }} // giada::v::

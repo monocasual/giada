@@ -44,7 +44,6 @@ class gdAbout : public gdWindow
 public:
 
     gdAbout();
-    ~gdAbout();
 
     static void cb_close(Fl_Widget* w, void* p);
     inline void cb_close();

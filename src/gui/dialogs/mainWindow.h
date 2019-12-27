@@ -32,9 +32,6 @@
 #include "window.h"
 
 
-class Fl_Widget;
-
-
 namespace giada {
 namespace v 
 {
@@ -53,6 +50,9 @@ public:
 
 	void refresh() override;
     void rebuild() override;
+
+	/* clearKeyboard
+	Resets Keyboard to initial state, with no columns. */
 
 	void clearKeyboard();
 

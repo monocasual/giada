@@ -27,6 +27,7 @@
 
 #include <cassert>
 #include "core/model/model.h"
+#include "core/model/storage.h"
 #include "core/channels/channel.h"
 #include "core/channels/sampleChannel.h"
 #include "core/channels/midiChannel.h"
@@ -47,6 +48,7 @@
 #include "utils/log.h"
 #include "utils/string.h"
 #include "utils/fs.h"
+#include "gui/storager.h"
 #include "gui/elems/basics/progress.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -102,14 +104,20 @@ std::string makeUniqueWavePath_(const std::string& base, const m::Wave& w)
 /* -------------------------------------------------------------------------- */
 
 
-bool savePatch_(const std::string& path, const std::string& name, bool isProject)
+bool savePatch_(const std::string& path, const std::string& name)
 {
-	if (!m::patch::write(name, path, isProject))
+	m::patch::init();
+	m::patch::patch.name = name;
+	m::model::store(m::patch::patch);
+	v::storager::store(m::patch::patch);
+
+	if (!m::patch::write(name, path))
 		return false;
+
 	u::gui::updateMainWinLabel(name);
-	m::conf::patchPath = isProject ? u::fs::getUpDir(u::fs::getUpDir(path)) : u::fs::dirname(path);
-	m::patch::name     = name;
+	m::conf::conf.patchPath = u::fs::getUpDir(u::fs::getUpDir(path));
 	u::log::print("[savePatch] patch saved as %s\n", path.c_str());
+
 	return true;
 }
 
@@ -135,32 +143,7 @@ void saveWavesToProject_(const std::string& base)
 /* -------------------------------------------------------------------------- */
 
 
-void savePatch(void* data)
-{
-	v::gdBrowserSave* browser = (v::gdBrowserSave*) data;
-	std::string name          = u::fs::stripExt(browser->getName());
-	std::string fullPath      = browser->getCurrentPath() + G_SLASH + name + ".gptc";
-
-	if (name == "") {
-		v::gdAlert("Please choose a file name.");
-		return;
-	}
-
-	if (u::fs::fileExists(fullPath))
-		if (!v::gdConfirmWin("Warning", "File exists: overwrite?"))
-			return;
-
-	if (savePatch_(fullPath, name, /*isProject=*/false))
-		browser->do_callback();
-	else
-		v::gdAlert("Unable to save the patch!");
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void loadPatch(void* data)
+void loadProject(void* data)
 {
 	v::gdBrowserLoad* browser = (v::gdBrowserLoad*) data;
 	std::string fullPath      = browser->getSelectedItem();
@@ -168,7 +151,7 @@ void loadPatch(void* data)
 
 	browser->showStatusBar();
 
-	u::log::print("[glue] loading %s...\n", fullPath.c_str());
+	u::log::print("[loadProject] load from %s\n", fullPath.c_str());
 
 	std::string fileToLoad = fullPath;  // patch file to read from
 	std::string basePath   = "";        // base path, in case of reading from a project
@@ -177,53 +160,49 @@ void loadPatch(void* data)
 		basePath   = fullPath + G_SLASH;
 	}
 
-	/* Verify that the patch file is valid first. */
+	/* Read the patch from file. */
 
-	int ver = m::patch::verify(fileToLoad);	
-	if (ver != G_PATCH_OK) {
-		if (ver == G_PATCH_UNREADABLE)
+	m::patch::init();
+	int res = m::patch::read(fileToLoad, basePath);
+	if (res != G_PATCH_OK) {
+		if (res == G_PATCH_UNREADABLE)
 			v::gdAlert("This patch is unreadable.");
 		else
-		if (ver == G_PATCH_INVALID)
+		if (res == G_PATCH_INVALID)
 			v::gdAlert("This patch is not valid.");
 		else
-		if (ver == G_PATCH_UNSUPPORTED)
+		if (res == G_PATCH_UNSUPPORTED)
 			v::gdAlert("This patch format is no longer supported.");
 		browser->hideStatusBar();
 		return;
-	}
+	}	
 
-	/* Then reset the system and read the patch. */
+	if (!isProject)
+		v::gdAlert("Support for raw patches is deprecated\nand will be removed soon!");
+
+	/* Then reset the system (it disables mixer) and fill the model. */
 
 	m::init::reset();
+	m::model::load(m::patch::patch);
 
-	if (m::patch::read(fileToLoad, basePath) != G_PATCH_OK) {
-		v::gdAlert("This patch is unreadable.");
-		m::mixer::enable();
-		return;
-	}
-
-	/* Prepare Mixer and Recorder. The latter has to recompute the actions 
-	positions if the current samplerate != patch samplerate. */
+	/* Prepare the engine. Recorder has to recompute the actions positions if 
+	the current samplerate != patch samplerate. Clock needs to update frames
+	in sequencer. */
 
 	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 	m::mh::updateSoloCount();
-	m::recorderHandler::updateSamplerate(m::conf::samplerate, m::patch::samplerate);
-
-	/* Save patchPath by taking the last dir of the broswer, in order to reuse
-	it the next time. */
-
-	m::conf::patchPath = u::fs::dirname(fullPath);
+	m::recorderHandler::updateSamplerate(m::conf::conf.samplerate, m::patch::patch.samplerate);
+	m::clock::recomputeFrames();
 
 	/* Mixer is ready to go back online. */
 
 	m::mixer::enable();
 
-	/* Update Main Window's title. */
+	/* Utilities and cosmetics. Save patchPath by taking the last dir of the 
+	broswer, in order to reuse it the next time. Also update UI. */
 
-	u::gui::updateMainWinLabel(m::patch::name);
-
-	u::log::print("[glue] patch loaded successfully\n");
+	m::conf::conf.patchPath = u::fs::dirname(fullPath);
+	u::gui::updateMainWinLabel(m::patch::patch.name);
 
 #ifdef WITH_VST
 
@@ -264,7 +243,7 @@ void saveProject(void* data)
 
 	saveWavesToProject_(fullPath);
 
-	if (savePatch_(gptcPath, name, /*isProject=*/true))
+	if (savePatch_(gptcPath, name))
 		browser->do_callback();
 	else
 		v::gdAlert("Unable to save the project!");
@@ -286,7 +265,7 @@ void loadSample(void* data)
 	int res = c::channel::loadChannel(browser->getChannelId(), fullPath);
 
 	if (res == G_RES_OK) {
-		m::conf::samplePath = u::fs::dirname(fullPath);
+		m::conf::conf.samplePath = u::fs::dirname(fullPath);
 		browser->do_callback();
 		G_MainWin->delSubWindow(WID_SAMPLE_EDITOR); // if editor is open
 	}
@@ -331,7 +310,7 @@ void saveSample(void* data)
 	
 	/* Update last used path in conf, so that it can be reused next time. */
 
-	m::conf::samplePath = u::fs::dirname(filePath);
+	m::conf::conf.samplePath = u::fs::dirname(filePath);
 
 	/* Update logical and edited states in Wave. */
 

@@ -41,12 +41,9 @@ namespace giada {
 namespace v 
 {
 gdChannelNameInput::gdChannelNameInput(ID channelId)
-: gdWindow   (400, 64, "New channel name"),
+: gdWindow   (u::gui::centerWindowX(400), u::gui::centerWindowY(64), 400, 64, "New channel name"),
   m_channelId(channelId)
 {
-	if (m::conf::nameX)
-		resize(m::conf::nameX, m::conf::nameY, w(), h());
-
 	set_modal();
 
 	m_name   = new geInput(G_GUI_OUTER_MARGIN, G_GUI_OUTER_MARGIN, w() - (G_GUI_OUTER_MARGIN * 2), G_GUI_UNIT);
@@ -67,16 +64,6 @@ gdChannelNameInput::gdChannelNameInput(ID channelId)
 	u::gui::setFavicon(this);
 	setId(WID_SAMPLE_NAME);
 	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdChannelNameInput::~gdChannelNameInput()
-{
-	m::conf::nameX = x();
-	m::conf::nameY = y();
 }
 
 

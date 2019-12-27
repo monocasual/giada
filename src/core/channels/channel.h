@@ -208,36 +208,36 @@ public:
 	the delta during volume changes (or the line slope between two volume 
 	points). */
 	
-	std::atomic<double> volume_i;
+	double volume_i;
 	double volume_d;
 	
 	bool hasActions;  // If has some actions recorded
 	bool readActions; // If should read recorded actions
 
-	std::atomic<bool>     midiIn;               // enable midi input
-	std::atomic<uint32_t> midiInKeyPress;
-	std::atomic<uint32_t> midiInKeyRel;
-	std::atomic<uint32_t> midiInKill;
-	std::atomic<uint32_t> midiInArm;
-	std::atomic<uint32_t> midiInVolume;
-	std::atomic<uint32_t> midiInMute;
-	std::atomic<uint32_t> midiInSolo;
+	bool     midiIn;               // enable midi input
+	uint32_t midiInKeyPress;
+	uint32_t midiInKeyRel;
+	uint32_t midiInKill;
+	uint32_t midiInArm;
+	uint32_t midiInVolume;
+	uint32_t midiInMute;
+	uint32_t midiInSolo;
 
 	/* midiInFilter
 	Which MIDI channel should be filtered out when receiving MIDI messages. -1
 	means 'all'. */
 
-	std::atomic<int> midiInFilter;
+	int midiInFilter;
 
 	/*  midiOutL*
 	Enables MIDI lightning output, plus a set of midi lighting event to be sent
 	to a device. Those events basically contains the MIDI channel, everything
 	else gets stripped out. */
 
-	std::atomic<bool>     midiOutL;
-	std::atomic<uint32_t> midiOutLplaying;
-	std::atomic<uint32_t> midiOutLmute;
-	std::atomic<uint32_t> midiOutLsolo;
+	bool     midiOutL;
+	uint32_t midiOutLplaying;
+	uint32_t midiOutLmute;
+	uint32_t midiOutLsolo;
 
 #ifdef WITH_VST
 

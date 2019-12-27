@@ -29,101 +29,128 @@
 #define G_CONF_H
 
 
-#include <atomic>
 #include <string>
+#include "utils/gui.h"
+#include "core/const.h"
+#include "core/types.h"
 
 
 namespace giada {
 namespace m {
 namespace conf
 {
-void init();
-bool read();
-bool write();
+struct Conf
+{
+	int  logMode        = LOG_MODE_MUTE;
+	int  soundSystem    = G_DEFAULT_SOUNDSYS;
+	int  soundDeviceOut = G_DEFAULT_SOUNDDEV_OUT;
+	int  soundDeviceIn  = G_DEFAULT_SOUNDDEV_IN;
+	int  channelsOut    = 0;
+	int  channelsIn     = 0;
+	int  samplerate     = G_DEFAULT_SAMPLERATE;
+	int  buffersize     = G_DEFAULT_BUFSIZE;
+	bool limitOutput    = false;
+	int  rsmpQuality    = 0;
 
-/* isMidiAllowed
-Given a MIDI channel 'c' tells whether this channel should be allowed to receive
-and process MIDI events on MIDI channel 'c'. */
+	int         midiSystem  = 0;
+	int         midiPortOut = G_DEFAULT_MIDI_PORT_OUT;
+	int         midiPortIn  = G_DEFAULT_MIDI_PORT_IN;
+	std::string midiMapPath = "";
+	std::string lastFileMap = "";
+	int         midiSync    = MIDI_SYNC_NONE;
+	float       midiTCfps   = 25.0f;
 
-bool isMidiInAllowed(int c);
+	bool recsStopOnChanHalt    = false;
+	bool chansStopOnSeqHalt    = false;
+	bool treatRecsAsLoops      = false;
+	bool inputMonitorDefaultOn = false;
 
-extern std::string header;
+	std::string pluginPath;
+	std::string patchPath;
+	std::string samplePath;
 
-extern int  logMode;
-extern int  soundSystem;
-extern int  soundDeviceOut;
-extern int  soundDeviceIn;
-extern int  channelsOut;
-extern int  channelsIn;
-extern int  samplerate;
-extern int  buffersize;
-extern bool limitOutput;
-extern int  rsmpQuality;
+	int mainWindowX = u::gui::centerWindowX(G_MIN_GUI_WIDTH);
+	int mainWindowY = u::gui::centerWindowY(G_MIN_GUI_HEIGHT);
+	int mainWindowW = G_MIN_GUI_WIDTH;
+	int mainWindowH = G_MIN_GUI_HEIGHT;
 
-extern int  midiSystem;
-extern int  midiPortOut;
-extern int  midiPortIn;
-extern std::string midiMapPath;
-extern std::string lastFileMap;
-extern int   midiSync;  // see const.h
-extern float midiTCfps;
+	int         browserX = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
+	int         browserY = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H); 
+	int         browserW = G_DEFAULT_SUBWINDOW_W; 
+	int         browserH = G_DEFAULT_SUBWINDOW_H;
+	int         browserPosition;
+	int         browserLastValue;
+	std::string browserLastPath;
 
-extern std::atomic<bool>     midiIn;
-extern std::atomic<int>      midiInFilter;
-extern std::atomic<uint32_t> midiInRewind;
-extern std::atomic<uint32_t> midiInStartStop;
-extern std::atomic<uint32_t> midiInActionRec;
-extern std::atomic<uint32_t> midiInInputRec;
-extern std::atomic<uint32_t> midiInMetronome;
-extern std::atomic<uint32_t> midiInVolumeIn;
-extern std::atomic<uint32_t> midiInVolumeOut;
-extern std::atomic<uint32_t> midiInBeatDouble;
-extern std::atomic<uint32_t> midiInBeatHalf;
+	int actionEditorY       = u::gui::centerWindowY(G_DEFAULT_SUBWINDOW_H);
+	int actionEditorX       = u::gui::centerWindowX(G_DEFAULT_SUBWINDOW_W);
+	int actionEditorW       = G_DEFAULT_SUBWINDOW_W; 
+	int actionEditorH       = G_DEFAULT_SUBWINDOW_H; 
+	int actionEditorZoom    = 100;
+	int actionEditorGridVal = 0;
+	int actionEditorGridOn  = false;
 
-extern bool recsStopOnChanHalt;
-extern bool chansStopOnSeqHalt;
-extern bool treatRecsAsLoops;
-extern bool inputMonitorDefaultOn;
+	int sampleEditorX;
+	int sampleEditorY;
+	int sampleEditorW = G_DEFAULT_SUBWINDOW_W;
+	int sampleEditorH = G_DEFAULT_SUBWINDOW_H;
+	int sampleEditorGridVal = 0;
+	int sampleEditorGridOn  = false;
 
-extern std::string pluginPath;
-extern std::string patchPath;
-extern std::string samplePath;
+	int midiInputX; 
+	int midiInputY; 
+	int midiInputW = G_DEFAULT_SUBWINDOW_W; 
+	int midiInputH = G_DEFAULT_SUBWINDOW_H;
 
-extern int mainWindowX, mainWindowY, mainWindowW, mainWindowH;
+	int pianoRollY = -1;
+	int pianoRollH = 422;
 
-extern int browserX, browserY, browserW, browserH, browserPosition, browserLastValue;
-extern std::string browserLastPath;
+	int sampleActionEditorH = 40; 
+	int velocityEditorH     = 40; 
+	int envelopeEditorH     = 40; 
 
-extern int actionEditorX, actionEditorY, actionEditorW, actionEditorH, actionEditorZoom;
-extern int actionEditorGridVal;
-extern int actionEditorGridOn;
+	int pluginListX;
+	int pluginListY;
 
-extern int sampleEditorX, sampleEditorY, sampleEditorW, sampleEditorH;
-extern int sampleEditorGridVal;
-extern int sampleEditorGridOn;
+	RecTriggerMode recTriggerMode  = RecTriggerMode::NORMAL;
+	float          recTriggerLevel = G_DEFAULT_REC_TRIGGER_LEVEL;
 
-extern int midiInputX, midiInputY, midiInputW, midiInputH;
-
-extern int pianoRollY, pianoRollH;
-extern int sampleActionEditorH; 
-extern int velocityEditorH; 
-extern int envelopeEditorH; 
-extern int pluginListX, pluginListY;
-extern int configX, configY;
-extern int bpmX, bpmY;
-extern int beatsX, beatsY;
-extern int aboutX, aboutY;
-extern int nameX, nameY;
-
-extern int   recTriggerMode;
-extern float recTriggerLevel;
+	bool     midiInEnabled    = false;
+	int      midiInFilter     = -1;
+	uint32_t midiInRewind     = 0x0;
+	uint32_t midiInStartStop  = 0x0;
+	uint32_t midiInActionRec  = 0x0;
+	uint32_t midiInInputRec   = 0x0;
+	uint32_t midiInMetronome  = 0x0;
+	uint32_t midiInVolumeIn   = 0x0;
+	uint32_t midiInVolumeOut  = 0x0;
+	uint32_t midiInBeatDouble = 0x0;
+	uint32_t midiInBeatHalf   = 0x0;
 
 #ifdef WITH_VST
 
-extern int pluginChooserX, pluginChooserY, pluginChooserW, pluginChooserH;
-extern int pluginSortMethod;
+	int pluginChooserX; 
+	int pluginChooserY;
+	int pluginChooserW   = G_DEFAULT_SUBWINDOW_W; 
+	int pluginChooserH   = G_DEFAULT_SUBWINDOW_H;
+	int pluginSortMethod = 0;
 
 #endif
+};
+
+
+/* -------------------------------------------------------------------------- */
+
+
+extern Conf conf;
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void init();
+bool read();
+bool write();
 }}}; // giada::m::conf::
 
 #endif

@@ -54,8 +54,8 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 
 	active = new geCheck(gridType->x() + gridType->w() + 4, y, 20, 20);
 
-	gridType->value(m::conf::actionEditorGridVal);
-	active->value(m::conf::actionEditorGridOn);
+	gridType->value(m::conf::conf.actionEditorGridVal);
+	active->value(m::conf::conf.actionEditorGridOn);
 
 	end();
 }
@@ -66,8 +66,8 @@ geGridTool::geGridTool(Pixel x, Pixel y)
 
 geGridTool::~geGridTool()
 {
-	m::conf::actionEditorGridVal = gridType->value();
-	m::conf::actionEditorGridOn  = active->value();
+	m::conf::conf.actionEditorGridVal = gridType->value();
+	m::conf::conf.actionEditorGridOn  = active->value();
 }
 
 

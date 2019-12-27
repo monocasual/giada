@@ -47,11 +47,8 @@ namespace giada {
 namespace v 
 {
 gdBeatsInput::gdBeatsInput()
-: gdWindow(180, 36, "Beats")
+: gdWindow(u::gui::centerWindowX(180), u::gui::centerWindowY(36), 180, 36, "Beats")
 {
-	if (m::conf::beatsX)
-		resize(m::conf::beatsX, m::conf::beatsY, w(), h());
-
 	set_modal();
 
 	beats = new geInput(8,  8,  43, G_GUI_UNIT);
@@ -73,16 +70,6 @@ gdBeatsInput::gdBeatsInput()
 	u::gui::setFavicon(this);
 	setId(WID_BEATS);
 	show();
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-gdBeatsInput::~gdBeatsInput()
-{
-	m::conf::beatsX = x();
-	m::conf::beatsY = y();
 }
 
 

@@ -165,9 +165,15 @@ std::unique_ptr<Wave> createFromWave(const Wave& src, int a, int b)
 /* -------------------------------------------------------------------------- */
 
 
-std::unique_ptr<Wave> createFromPatch(const patch::Wave& w)
+std::unique_ptr<Wave> deserializeWave(const patch::Wave& w)
 {
 	return createFromFile(w.path, w.id).wave;
+}
+
+
+const patch::Wave serializeWave(const Wave& w)
+{
+	return { w.id, u::fs::basename(w.getPath()) };
 }
 
 

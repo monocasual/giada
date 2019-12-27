@@ -52,9 +52,10 @@ gdBaseActionEditor::gdBaseActionEditor(ID channelId)
 {
 	using namespace giada::m;
 
-	if (conf::actionEditorW) {
-		resize(conf::actionEditorX, conf::actionEditorY, conf::actionEditorW, conf::actionEditorH);
-		ratio = conf::actionEditorZoom;
+	if (conf::conf.actionEditorW) {
+		resize(conf::conf.actionEditorX, conf::conf.actionEditorY, 
+			conf::conf.actionEditorW, conf::conf.actionEditorH);
+		ratio = conf::conf.actionEditorZoom;
 	}
 }
 
@@ -66,11 +67,11 @@ gdBaseActionEditor::~gdBaseActionEditor()
 {
 	using namespace giada::m;
 
-	conf::actionEditorX = x();
-	conf::actionEditorY = y();
-	conf::actionEditorW = w();
-	conf::actionEditorH = h();
-	conf::actionEditorZoom = ratio;
+	conf::conf.actionEditorX = x();
+	conf::conf.actionEditorY = y();
+	conf::conf.actionEditorW = w();
+	conf::conf.actionEditorH = h();
+	conf::conf.actionEditorZoom = ratio;
 }
 
 
