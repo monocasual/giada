@@ -206,6 +206,7 @@ void loadPatch(void* data)
 	/* Prepare Mixer and Recorder. The latter has to recompute the actions 
 	positions if the current samplerate != patch samplerate. */
 
+	m::mixer::allocVirtualInput(m::clock::getFramesInLoop());
 	m::mh::updateSoloCount();
 	m::recorderHandler::updateSamplerate(m::conf::samplerate, m::patch::samplerate);
 
