@@ -30,12 +30,14 @@
 #include <FL/Fl_Menu_Button.H>
 #include "core/channels/sampleChannel.h"
 #include "core/channels/midiChannel.h"
+#include "core/model/model.h"
 #include "glue/channel.h"
 #include "utils/log.h"
 #include "utils/fs.h"
 #include "utils/string.h"
 #include "gui/dialogs/warnings.h"
 #include "gui/elems/basics/boxtypes.h"
+#include "gui/elems/basics/resizerBar.h"
 #include "keyboard.h"
 #include "sampleChannel.h"
 #include "midiChannel.h"
@@ -46,15 +48,11 @@ namespace giada {
 namespace v
 {
 geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
-: Fl_Pack   (X, Y, W, H), 
+: Fl_Group  (X, Y, W, H), 
   id        (id),
   resizerBar(b)
 {
 	end();
-
-	type(Fl_Pack::VERTICAL);
-	spacing(G_GUI_INNER_MARGIN);
-
 	init();
 }
 
@@ -64,11 +62,8 @@ geColumn::geColumn(int X, int Y, int W, int H, ID id, geResizerBar* b)
 
 void geColumn::refresh()
 {
-	for (int i=1; i<children(); i++) {  // Skip "add channel" button
-		geChannel* c = dynamic_cast<geChannel*>(child(i));
-		if (c != nullptr)
-			c->refresh();
-	}
+	for (geChannel* c : m_channels)
+		c->refresh();
 }
 
 
@@ -81,17 +76,47 @@ void geColumn::cb_addChannel(Fl_Widget* v, void* p) { ((geColumn*)p)->cb_addChan
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::addChannel(ID channelId, ChannelType t, int size)
+geChannel* geColumn::addChannel(ID channelId, ChannelType t, int height)
 {
-	geChannel* gch = nullptr;
+	geChannel* gch  = nullptr;
+	Fl_Widget* last = m_channels.size() == 0 ? static_cast<Fl_Widget*>(m_addChannelBtn) : m_channels.back();
 
 	if (t == ChannelType::SAMPLE)
-		gch = new geSampleChannel(0, 0, w(), size, channelId);
+		gch = new geSampleChannel(x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), height, channelId);
 	else
-		gch = new geMidiChannel(0, 0, w(), size, channelId);
+		gch = new geMidiChannel  (x(), last->y() + last->h() + G_GUI_INNER_MARGIN, w(), height, channelId);
 
+	geResizerBar* bar = new geResizerBar(x(), gch->y() + gch->h(), w(), 
+		G_GUI_INNER_MARGIN, G_GUI_UNIT, geResizerBar::VERTICAL, gch);
+
+	/* Update the column height while dragging the resizer bar. */
+
+	bar->onDrag = [=](const Fl_Widget* w)
+	{
+		resizable(nullptr);	
+		size(this->w(), (child(children() - 1)->y() - y()) + G_GUI_INNER_MARGIN);
+	};	
+
+	/* Store the channel height in model when the resizer bar is released. */
+
+	bar->onRelease = [=](const Fl_Widget* w)
+	{
+		storeChannelHeight(w, channelId);
+	};
+
+	m_channels.push_back(gch);
+
+	/* Temporarily disable the resizability, add new stuff, resize the group and 
+	bring the resizability back. This is needed to prevent weird vertical 
+	stretching on existing content. */ 
+
+	resizable(nullptr);
 	add(gch);
-	gch->redraw();      // fix corruption
+	add(bar);
+	size(w(), computeHeight());
+	init_sizes();
+	resizable(this);
+
 	return gch;
 }
 
@@ -123,10 +148,10 @@ void geColumn::cb_addChannel()
 	if (m == nullptr) return;
 
 	if (strcmp(m->label(), "Add Sample channel") == 0)
-		c::channel::addChannel(id, ChannelType::SAMPLE, G_GUI_CHANNEL_H_1);
+		c::channel::addChannel(id, ChannelType::SAMPLE);
 	else
 	if (strcmp(m->label(), "Add MIDI channel") == 0)
-		c::channel::addChannel(id, ChannelType::MIDI, G_GUI_CHANNEL_H_1);
+		c::channel::addChannel(id, ChannelType::MIDI);
 	else
 		static_cast<geKeyboard*>(parent())->deleteColumn(id);
 		
@@ -136,13 +161,11 @@ void geColumn::cb_addChannel()
 /* -------------------------------------------------------------------------- */
 
 
-geChannel* geColumn::getChannel(ID chanID) const
+geChannel* geColumn::getChannel(ID channelId) const
 {
-	for (int i=1; i<children(); i++) { // Skip "add channel" button
-		geChannel* gch = static_cast<geChannel*>(child(i));
-		if (gch->channelId == chanID)
-			return gch;
-	}
+	for (geChannel* c : m_channels)
+		if (c->channelId == channelId)
+			return c;
 	return nullptr;
 }
 
@@ -152,9 +175,10 @@ geChannel* geColumn::getChannel(ID chanID) const
 
 void geColumn::init()
 {
-	clear();
+	Fl_Group::clear();
+	m_channels.clear();
 
-	m_addChannelBtn = new geButton(0, 0, w(), G_GUI_UNIT, "Edit column");
+	m_addChannelBtn = new geButton(x(), y(), w(), G_GUI_UNIT, "Edit column");
 	m_addChannelBtn->callback(cb_addChannel, (void*)this);
 
 	add(m_addChannelBtn);
@@ -166,8 +190,8 @@ void geColumn::init()
 
 void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
 {
-	for (int i=1; i<children(); i++) // Skip "add channel" button
-		f(static_cast<geChannel&>(*child(i)));
+	for (geChannel* c : m_channels)
+		f(*c);
 }
 
 
@@ -176,6 +200,31 @@ void geColumn::forEachChannel(std::function<void(geChannel& c)> f) const
 
 int geColumn::countChannels() const
 {
-	return children() - 1;
+	return m_channels.size();
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+int geColumn::computeHeight() const
+{
+	int out = 0;
+	for (const geChannel* c : m_channels)
+		out += c->h() + G_GUI_INNER_MARGIN;
+	return out + m_addChannelBtn->h() + G_GUI_INNER_MARGIN;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geColumn::storeChannelHeight(const Fl_Widget* w, ID channelId) const
+{	
+	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& c)
+	{	
+		c.height = w->h();
+	});
+}
+
 }} // giada::v::

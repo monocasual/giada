@@ -44,16 +44,18 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
-#include "../../../core/const.h"
+#include "core/const.h"
 #include "resizerBar.h"
 
 
-geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type)
-	: Fl_Box   (X, Y, W, H), 
-	  m_type   (type),
-	  m_minSize(minSize),
-	  m_lastPos(0),
-	  m_hover  (false)
+geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type, Fl_Widget* target)
+: Fl_Box      (X, Y, W, H), 
+  m_type      (type),
+  m_minSize   (minSize),
+  m_lastPos   (0),
+  m_initialPos(0),
+  m_hover     (false),
+  m_target    (target)
 {
 	if (m_type == VERTICAL) {
 		m_origSize = H;
@@ -74,64 +76,57 @@ geResizerBar::geResizerBar(int X, int Y, int W, int H, int minSize, bool type)
 
 void geResizerBar::handleDrag(int diff)
 {
-	Fl_Scroll* grp = static_cast<Fl_Scroll*>(parent());
-	int top;
-	int bot;
-	if (m_type == VERTICAL) {
-		top = y();
-		bot = y()+h();
-	}
-	else {
-		top = x();
-		bot = x()+w();
-	}
+	Fl_Scroll* group = static_cast<Fl_Scroll*>(parent());
+
+	const int top = m_type == VERTICAL ? y() : x();
+	const int bot = m_type == VERTICAL ? y() + h() : x() + w();
 
 	// First pass: find widget directly above us with common edge
-	//    Possibly clamp 'diff' if widget would get too small..
+	// Possibly clamp 'diff' if widget would get too small..
 
-	for (int t=0; t<grp->children(); t++) {
-		Fl_Widget* wd = grp->child(t);
+	for (int t = 0; t < group->children(); t++) {
+		Fl_Widget* wd = group->child(t);
 		if (m_type == VERTICAL) {
-			if ((wd->y()+wd->h()) == top) {                          // found widget directly above?
-				if ((wd->h()+diff) < m_minSize)
+			if ((wd->y() + wd->h()) == top) {                            // found widget directly above?
+				if ((wd->h() + diff) < m_minSize)
 					diff = wd->h() - m_minSize;                          // clamp
-				wd->resize(wd->x(), wd->y(), wd->w(), wd->h()+diff);   // change height
-				break;                                                 // done with first pass
+				wd->resize(wd->x(), wd->y(), wd->w(), wd->h() + diff);   // change height
+				break;                                                   // done with first pass
 			}
 		}
 		else {
-			if ((wd->x()+wd->w()) == top) {                          // found widget directly above?
-				if ((wd->w()+diff) < m_minSize)
+			if ((wd->x() + wd->w()) == top) {                            // found widget directly above?
+				if ((wd->w() + diff) < m_minSize)
 					diff = wd->w() - m_minSize;                          // clamp
-				wd->resize(wd->x(), wd->y(), wd->w()+diff, wd->h());   // change width
-				break;                                                 // done with first pass
+				wd->resize(wd->x(), wd->y(), wd->w() + diff, wd->h());   // change width
+				break;                                                   // done with first pass
 			}
 		}
 	}
 
 	// Second pass: find widgets below us, move based on clamped diff
 
-	for (int t=0; t<grp->children(); t++) {
-		Fl_Widget* wd = grp->child(t);
+	for (int t = 0; t < group->children(); t++) {
+		Fl_Widget* wd = group->child(t);
 		if (m_type == VERTICAL) {
-			if (wd->y() >= bot)                                     // found widget below us?
-				wd->resize(wd->x(), wd->y()+diff, wd->w(), wd->h());  // change position
+			if (wd->y() >= bot)                                         // found widget below us?
+				wd->resize(wd->x(), wd->y() + diff, wd->w(), wd->h());  // change position
 		}
 		else {
 			if (wd->x() >= bot)
-				wd->resize(wd->x()+diff, wd->y(), wd->w(), wd->h());
+				wd->resize(wd->x() + diff, wd->y(), wd->w(), wd->h());
 		}
 	}
 
 	// Change our position last
 
 	if (m_type == VERTICAL)
-		resize(x(), y()+diff, w(), h());
+		resize(x(), y() + diff, w(), h());
 	else
-		resize(x()+diff, y(), w(), h());
+		resize(x() + diff, y(), w(), h());
 
-	grp->init_sizes();
-	grp->redraw();
+	group->init_sizes();
+	group->redraw();
 }
 
 
@@ -151,11 +146,8 @@ void geResizerBar::draw()
 int geResizerBar::handle(int e)
 {
 	int ret = 0;
-	int this_y;
-	if (m_type == VERTICAL)
-		this_y = Fl::event_y_root();
-	else
-		this_y = Fl::event_x_root();
+	int currentPos = m_type == VERTICAL ? Fl::event_y_root() : Fl::event_x_root();
+
 	switch (e) {
 		case FL_FOCUS:
 			ret = 1;
@@ -174,12 +166,19 @@ int geResizerBar::handle(int e)
 			break;
 		case FL_PUSH:
 			ret = 1;
-			m_lastPos = this_y;
+			m_lastPos    = currentPos;
+			m_initialPos = currentPos;
 			break;
 		case FL_DRAG:
-			handleDrag(this_y-m_lastPos);
-			m_lastPos = this_y;
+			handleDrag(currentPos - m_lastPos);
+			m_lastPos = currentPos;
 			ret = 1;
+			if (onDrag != nullptr)
+				onDrag(m_target);
+			break;
+		case FL_RELEASE:
+			if (m_initialPos != currentPos && onRelease != nullptr)
+				onRelease(m_target);
 			break;
 		default: break;
 	}

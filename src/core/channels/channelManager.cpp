@@ -153,7 +153,7 @@ const patch::Channel serializeChannel(const Channel& c)
 #endif	
 
 	if (c.type != ChannelType::MASTER) {
-		pc.size            = 20; // c->size;  // TODO
+		pc.height          = c.height;
 		pc.name            = c.name.c_str();
 		pc.columnId        = c.columnId;
 		pc.key             = c.key;

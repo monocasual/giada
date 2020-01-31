@@ -30,7 +30,8 @@
 
 
 #include <functional>
-#include <FL/Fl_Pack.H>
+#include <vector>
+#include <FL/Fl_Group.H>
 #include "core/types.h"
 
 
@@ -43,7 +44,7 @@ namespace v
 {
 class geKeyboard;
 class geChannel;
-class geColumn : public Fl_Pack
+class geColumn : public Fl_Group
 {
 public:
 
@@ -75,6 +76,10 @@ private:
 	void cb_addChannel();
 
 	int countChannels() const;
+	int computeHeight() const;
+	void storeChannelHeight(const Fl_Widget* c, ID channelId) const;
+
+	std::vector<geChannel*> m_channels;
 
 	geButton* m_addChannelBtn;
 };

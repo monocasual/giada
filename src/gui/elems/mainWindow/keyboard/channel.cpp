@@ -26,6 +26,7 @@
 
 
 #include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include "core/channels/channel.h"
 #include "core/model/model.h"
 #include "core/const.h"
@@ -51,11 +52,31 @@ namespace giada {
 namespace v
 {
 geChannel::geChannel(int X, int Y, int W, int H, ID channelId)
-: Fl_Pack  (X, Y, W, H),
+: Fl_Group (X, Y, W, H),
   channelId(channelId)
 {
-	type(Fl_Pack::HORIZONTAL);
-	spacing(G_GUI_INNER_MARGIN);
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geChannel::draw()
+{
+	const int ny = y() + (h() / 2) - (G_GUI_UNIT / 2);
+
+	playButton->resize(playButton->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+	arm->resize(arm->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+	mute->resize(mute->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+	solo->resize(solo->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+	vol->resize(vol->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+#ifdef WITH_VST
+	fx->resize(fx->x(), ny, G_GUI_UNIT, G_GUI_UNIT);
+#endif
+
+	fl_rectf(x(), y(), w(), h(), G_COLOR_GREY_1_5);
+
+	Fl_Group::draw();	
 }
 
 
@@ -167,7 +188,7 @@ void geChannel::packWidgets()
 	are visible. */
 
 	int visibles = 0;
-	for (int i=0; i<children(); i++) {
+	for (int i = 0; i < children(); i++) {
 		child(i)->size(MIN_ELEM_W, child(i)->h());  // also normalize widths
 		if (child(i)->visible())
 			visibles++;
@@ -177,10 +198,10 @@ void geChannel::packWidgets()
 
 	/* Reposition everything else */
 
-	for (int i=1, p=0; i<children(); i++) {
+	for (int i = 1, p = 0; i < children(); i++) {
 		if (!child(i)->visible())
 			continue;
-		for (int k=i-1; k>=0; k--) // Get the first visible item prior to i
+		for (int k = i - 1; k >= 0; k--) // Get the first visible item prior to i
 			if (child(k)->visible()) {
 				p = k;
 				break;
@@ -216,35 +237,4 @@ bool geChannel::handleKey(int e)
 	
 	return false;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geChannel::changeSize(int H)
-{
-	size(w(), H);
-	
-	int Y = y() + (H / 2 - (G_GUI_UNIT / 2));
-
-	playButton->resize(playButton->x(), Y, playButton->w(), G_GUI_UNIT);
-	arm->resize(arm->x(), Y, arm->w(), G_GUI_UNIT);   
-	mainButton->resize(mainButton->x(), mainButton->y(), mainButton->w(), H);
-	mute->resize(mute->x(), Y, mute->w(), G_GUI_UNIT);
-	solo->resize(solo->x(), Y, solo->w(), G_GUI_UNIT);
-	vol->resize(vol->x(), Y, vol->w(), G_GUI_UNIT);
-#ifdef WITH_VST
-	fx->resize(fx->x(), Y, fx->w(), G_GUI_UNIT);
-#endif
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-int geChannel::getSize()
-{
-	return h();
-}
-
 }} // giada::v::

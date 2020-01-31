@@ -29,7 +29,7 @@
 #define GE_CHANNEL_H
 
 
-#include <FL/Fl_Pack.H>
+#include <FL/Fl_Group.H>
 #include "core/types.h"
 
 
@@ -48,28 +48,23 @@ namespace v
 {
 class geChannelButton;
 
-class geChannel : public Fl_Pack
+class geChannel : public Fl_Group
 {
 public:
 
 	geChannel(int x, int y, int w, int h, ID channelId);
+
+	void draw() override;
 
 	/* refresh
 	Updates graphics. */
 
 	virtual void refresh();
 
-	/* changeSize
-	Changes channel's size according to a template (x1, x2, ...). */
-
-	virtual void changeSize(int h);
-
 	/* getColumnId
 	Returns the ID of the column this channel resides in. */
 
 	ID getColumnId();
-
-	int getSize();
 
 	/* handleKey
 	Performs some UI-related operations when the bound key is pressed. Returns
@@ -80,8 +75,8 @@ public:
 	ID channelId;
  
 	geStatusButton*  playButton;
-	geChannelStatus* status;
 	geButton*        arm;
+	geChannelStatus* status;
 	geChannelButton* mainButton;
 	geStatusButton*  mute;
 	geStatusButton*  solo;

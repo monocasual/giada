@@ -126,7 +126,7 @@ int loadChannel(ID channelId, const std::string& fname)
 /* -------------------------------------------------------------------------- */
 
 
-void addChannel(ID columnId, ChannelType type, int size)
+void addChannel(ID columnId, ChannelType type)
 {
 	m::mh::addChannel(type, columnId);
 }
@@ -375,6 +375,8 @@ void toggleReadingActions(ID channelId)
 
 	m::model::onSwap(m::model::channels, channelId, [&](m::Channel& ch)
 	{
+		if (!ch.hasActions)
+			return;
 		if (ch.readActions || (!ch.readActions && ch.recStatus == ChannelStatus::WAIT))
 			ch.stopReadingActions(m::clock::isRunning(), m::conf::conf.treatRecsAsLoops, 
 				m::conf::conf.recsStopOnChanHalt);

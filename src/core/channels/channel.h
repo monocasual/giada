@@ -190,6 +190,8 @@ public:
 	ID columnId;
 	ID id;
 
+	int height;
+
 	/* previewMode
 	Whether the channel is in audio preview mode or not. */
 

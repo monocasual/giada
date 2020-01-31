@@ -51,12 +51,12 @@ public:
 	geSampleChannel(int x, int y, int w, int h, ID channelId);
 
 	void resize(int x, int y, int w, int h) override;
+	void draw() override;
 
 	void refresh() override;
-	void changeSize(int h) override;
 
-	geChannelMode* modeBox;
-	geStatusButton*      readActions;
+	geChannelMode*  modeBox;
+	geStatusButton* readActions;
 
 private:
 

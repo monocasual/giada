@@ -161,7 +161,7 @@ void readChannels_(const nl::json& j)
 		c.id                = jchannel.value(PATCH_KEY_CHANNEL_ID, ++id);
 		c.type              = static_cast<ChannelType>(jchannel.value(PATCH_KEY_CHANNEL_TYPE, 1));
 		c.volume            = jchannel.value(PATCH_KEY_CHANNEL_VOLUME, G_DEFAULT_VOL);		
-		c.size              = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_CHANNEL_H_1);
+		c.height            = jchannel.value(PATCH_KEY_CHANNEL_SIZE, G_GUI_UNIT);
 		c.name              = jchannel.value(PATCH_KEY_CHANNEL_NAME, "");
 		c.columnId          = jchannel.value(PATCH_KEY_CHANNEL_COLUMN, 1);
 		c.key               = jchannel.value(PATCH_KEY_CHANNEL_KEY, 0);
@@ -333,7 +333,7 @@ void writeChannels_(nl::json& j)
 
 		jchannel[PATCH_KEY_CHANNEL_ID]                   = c.id;
 		jchannel[PATCH_KEY_CHANNEL_TYPE]                 = static_cast<int>(c.type);
-		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.size;
+		jchannel[PATCH_KEY_CHANNEL_SIZE]                 = c.height;
 		jchannel[PATCH_KEY_CHANNEL_NAME]                 = c.name;
 		jchannel[PATCH_KEY_CHANNEL_COLUMN]               = c.columnId;
 		jchannel[PATCH_KEY_CHANNEL_MUTE]                 = c.mute;

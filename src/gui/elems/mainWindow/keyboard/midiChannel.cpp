@@ -72,12 +72,6 @@ enum class Menu
 	SETUP_KEYBOARD_INPUT,
 	SETUP_MIDI_INPUT,
 	SETUP_MIDI_OUTPUT,
-	/*RESIZE,
-	RESIZE_H1,
-	RESIZE_H2,
-	RESIZE_H3,
-	RESIZE_H4,
-	__END_RESIZE_SUBMENU__,*/
 	RENAME_CHANNEL,
 	CLONE_CHANNEL,
 	DELETE_CHANNEL
@@ -97,8 +91,6 @@ void menuCallback(Fl_Widget* w, void* v)
 	{
 		case Menu::CLEAR_ACTIONS:
 		case Menu::__END_CLEAR_ACTION_SUBMENU__:
-		/*case Menu::RESIZE:
-		case Menu::__END_RESIZE_SUBMENU__:*/
 			break;
 		case Menu::EDIT_ACTIONS:
 			u::gui::openSubWindow(G_MainWin, new v::gdMidiActionEditor(gch->channelId), WID_ACTION_EDITOR);
@@ -115,18 +107,6 @@ void menuCallback(Fl_Widget* w, void* v)
 		case Menu::SETUP_MIDI_OUTPUT:
 			u::gui::openSubWindow(G_MainWin, new gdMidiOutputMidiCh(gch->channelId), WID_MIDI_OUTPUT);
 			break;
-		/*case Menu::RESIZE_H1:
-			gch->changeSize(G_GUI_CHANNEL_H_1);
-			break;		
-		case Menu::RESIZE_H2:
-			gch->changeSize(G_GUI_CHANNEL_H_2);
-			break;		
-		case Menu::RESIZE_H3:
-			gch->changeSize(G_GUI_CHANNEL_H_3);
-			break;		
-		case Menu::RESIZE_H4:
-			gch->changeSize(G_GUI_CHANNEL_H_4);
-			break;*/
 		case Menu::CLONE_CHANNEL:
 			c::channel::cloneChannel(gch->channelId);
 			break;		
@@ -145,23 +125,25 @@ void menuCallback(Fl_Widget* w, void* v)
 
 
 geMidiChannel::geMidiChannel(int X, int Y, int W, int H, ID channelId)
-	: geChannel(X, Y, W, H, channelId)
+: geChannel(X, Y, W, H, channelId)
 {
 #if defined(WITH_VST)
-	const int delta = 144; // (6 widgets * G_GUI_UNIT) + (6 paddings * 4)
+	constexpr int delta = 6 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
 #else
-	const int delta = 120; // (5 widgets * G_GUI_UNIT) + (5 paddings * 4)
+	constexpr int delta = 5 * (G_GUI_UNIT + G_GUI_INNER_MARGIN);
 #endif
 
-	playButton = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
-	arm        = new geButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
-	mainButton = new geMidiChannelButton(0, 0, w() - delta, H, channelId);
-	mute       = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
-	solo       = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
+	playButton = new geStatusButton     (x(), y(), G_GUI_UNIT, G_GUI_UNIT, channelStop_xpm, channelPlay_xpm);
+	arm        = new geButton           (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
+	mainButton = new geMidiChannelButton(arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, channelId);
+	mute       = new geStatusButton     (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
+	solo       = new geStatusButton     (mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
 #if defined(WITH_VST)
-	fx         = new geStatusButton(0, 0, G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	fx         = new geStatusButton     (solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, fxOff_xpm, fxOn_xpm);
+	vol        = new geDial             (fx->x() + fx->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
+#else
+	vol        = new geDial             (solo->x() + solo->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT);
 #endif
-	vol        = new geDial(0, 0, G_GUI_UNIT, G_GUI_UNIT);
 
 	end();
 
@@ -197,7 +179,7 @@ geMidiChannel::geMidiChannel(int X, int Y, int W, int H, ID channelId)
 	vol->value(ch.volume);
 	vol->callback(cb_changeVol, (void*)this);
 
-	changeSize(H);  // Update size dynamically
+	size(w(), h()); // Force responsiveness
 }
 
 
@@ -230,12 +212,6 @@ void geMidiChannel::cb_openMenu()
 		{"Setup keyboard input...", 0, menuCallback, (void*) Menu::SETUP_KEYBOARD_INPUT},
 		{"Setup MIDI input...",     0, menuCallback, (void*) Menu::SETUP_MIDI_INPUT},
 		{"Setup MIDI output...",    0, menuCallback, (void*) Menu::SETUP_MIDI_OUTPUT},
-		/*{"Resize",    0, menuCallback, (void*) Menu::RESIZE, FL_SUBMENU},
-			{"Normal",  0, menuCallback, (void*) Menu::RESIZE_H1},
-			{"Medium",  0, menuCallback, (void*) Menu::RESIZE_H2},
-			{"Large",   0, menuCallback, (void*) Menu::RESIZE_H3},
-			{"X-Large", 0, menuCallback, (void*) Menu::RESIZE_H4},
-			{0},*/
 		{"Rename", 0, menuCallback, (void*) Menu::RENAME_CHANNEL},
 		{"Clone",  0, menuCallback, (void*) Menu::CLONE_CHANNEL},
 		{"Delete", 0, menuCallback, (void*) Menu::DELETE_CHANNEL},

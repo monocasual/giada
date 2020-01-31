@@ -71,10 +71,6 @@ constexpr int   G_GUI_FONT_SIZE_BASE = 12;
 constexpr int   G_GUI_INNER_MARGIN   = 4;
 constexpr int   G_GUI_OUTER_MARGIN   = 8;
 constexpr int   G_GUI_UNIT           = 20;    // base unit for elements 
-constexpr int   G_GUI_CHANNEL_H_1    = G_GUI_UNIT;
-constexpr int   G_GUI_CHANNEL_H_2    = G_GUI_UNIT * 2;
-constexpr int   G_GUI_CHANNEL_H_3    = G_GUI_UNIT * 4;
-constexpr int   G_GUI_CHANNEL_H_4    = G_GUI_UNIT * 6;
 constexpr int   G_GUI_ZOOM_FACTOR    = 2;
 
 #define G_COLOR_RED       fl_rgb_color(28,  32,  80)

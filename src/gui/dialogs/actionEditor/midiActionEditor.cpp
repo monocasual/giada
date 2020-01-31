@@ -70,12 +70,12 @@ gdMidiActionEditor::gdMidiActionEditor(ID channelId)
 	viewport = new geScroll(G_GUI_OUTER_MARGIN, upperArea->y()+upperArea->h()+G_GUI_OUTER_MARGIN, w()-16, h()-44);
 
 	m_ne  = new geNoteEditor(viewport->x(), viewport->y(), this);
-	m_ner = new geResizerBar(m_ne->x(), m_ne->y()+m_ne->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	m_ner = new geResizerBar(m_ne->x(), m_ne->y()+m_ne->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ne);
 	viewport->add(m_ner);
 	
 	m_ve  = new geVelocityEditor(viewport->x(), m_ne->y()+m_ne->h()+RESIZER_BAR_H);
-	m_ver = new geResizerBar(m_ve->x(), m_ve->y()+m_ve->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	m_ver = new geResizerBar(m_ve->x(), m_ve->y()+m_ve->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ve);
 	viewport->add(m_ver);
 

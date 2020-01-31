@@ -83,12 +83,12 @@ gdSampleActionEditor::gdSampleActionEditor(ID channelId)
 	viewport = new geScroll(8, 36, w()-16, h()-44);
 
 	m_ae  = new geSampleActionEditor(viewport->x(), viewport->y());
-	m_aer = new geResizerBar(m_ae->x(), m_ae->y()+m_ae->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	m_aer = new geResizerBar(m_ae->x(), m_ae->y()+m_ae->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ae);
 	viewport->add(m_aer);
 	
 	m_ee  = new geEnvelopeEditor(viewport->x(), m_ae->y()+m_ae->h()+RESIZER_BAR_H, "volume");
-	m_eer = new geResizerBar(m_ee->x(), m_ee->y()+m_ee->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H);
+	m_eer = new geResizerBar(m_ee->x(), m_ee->y()+m_ee->h(), viewport->w(), RESIZER_BAR_H, MIN_WIDGET_H, geResizerBar::VERTICAL);
 	viewport->add(m_ee);
 	viewport->add(m_eer);
 

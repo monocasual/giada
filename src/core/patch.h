@@ -63,7 +63,7 @@ struct Channel
 {
 	ID          id;
 	ChannelType type;
-	int         size;
+	int         height;
 	std::string name;
 	ID          columnId;
 	int         key;

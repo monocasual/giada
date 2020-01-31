@@ -45,7 +45,7 @@ namespace channel
 /* addChannel
 Adds an empty new channel to the stack. */
 
-void addChannel(ID columnId, ChannelType type, int size);
+void addChannel(ID columnId, ChannelType type);
 
 /* loadChannel
 Fills an existing channel with a wave. */
