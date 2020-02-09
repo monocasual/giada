@@ -45,15 +45,7 @@ void store(m::patch::Patch& patch)
 {
     G_MainWin->keyboard->forEachColumn([&](const geColumn& c)
     {
-        m::patch::Column pc;
-        pc.id    = c.id;
-        pc.width = c.w();
-        c.forEachChannel([&](geChannel& ch) 
-        {
-            pc.channelIds.push_back(ch.channelId);
-        });
-
-        patch.columns.push_back(pc);
+        patch.columns.push_back({ c.id, c.w() });
     });
 }
 

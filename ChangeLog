@@ -13,12 +13,14 @@
 
 0.16.2 ---
 - Switch to Json for modern C++ library for reading and writing Json data
+- Resizable channels, improved version
 - Drop support for raw patches (still readable for backward compatibility)
 - Simplify global configuration parameters
+- Simplify column data storage in patch files
 - Center all micro-subwindow to screen
 - Revamped MIDI learning algorithm and related UI components
-- Fix crash during audio recording after opening a project (thanks AdTb!)
 - Don't download external files for unit tests
+- Fix crash during audio recording after opening a project (thanks AdTb!)
 
 
 0.16.1 --- 2020 . 01 . 08

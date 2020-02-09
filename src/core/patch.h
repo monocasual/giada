@@ -53,9 +53,8 @@ struct Version
 
 struct Column
 {
-	ID              id;
-	int             width;
-	std::vector<ID> channelIds;
+	ID  id;
+	int width;
 };
 
 

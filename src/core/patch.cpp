@@ -64,12 +64,7 @@ void readColumns_(const nl::json& j)
 	for (const auto& jcol : j[PATCH_KEY_COLUMNS]) {
 		Column c;
 		c.id    = jcol.value(PATCH_KEY_COLUMN_ID, ++id);
-		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);
-
-		if (jcol.contains(PATCH_KEY_COLUMN_CHANNELS))	
-			for (const auto& jchannel : jcol[PATCH_KEY_COLUMN_CHANNELS])
-				c.channelIds.push_back(jchannel);
-	
+		c.width = jcol.value(PATCH_KEY_COLUMN_WIDTH, G_DEFAULT_COLUMN_WIDTH);	
 		patch.columns.push_back(c);
 	}
 }
@@ -248,17 +243,9 @@ void writeColumns_(nl::json& j)
 	j[PATCH_KEY_COLUMNS] = nl::json::array();
 
 	for (const Column& column : patch.columns) {
-		
 		nl::json jcolumn;
-
 		jcolumn[PATCH_KEY_COLUMN_ID]    = column.id;
 		jcolumn[PATCH_KEY_COLUMN_WIDTH] = column.width;
-
-		jcolumn[PATCH_KEY_COLUMN_CHANNELS] = nl::json::array();
-
-		for (ID channelId : column.channelIds)
-			jcolumn[PATCH_KEY_COLUMN_CHANNELS].push_back(channelId);
-
 		j[PATCH_KEY_COLUMNS].push_back(jcolumn);
 	}
 }
