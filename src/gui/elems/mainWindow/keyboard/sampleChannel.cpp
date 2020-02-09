@@ -207,7 +207,7 @@ geSampleChannel::geSampleChannel(int X, int Y, int W, int H, ID channelId)
 	arm         = new geButton             (playButton->x() + playButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, "", armOff_xpm, armOn_xpm);
 	status      = new geChannelStatus      (arm->x() + arm->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, H, channelId);
 	mainButton  = new geSampleChannelButton(status->x() + status->w() + G_GUI_INNER_MARGIN, y(), w() - delta, H, channelId);
-	readActions = new geStatusButton       (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm);
+	readActions = new geStatusButton       (mainButton->x() + mainButton->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, readActionOff_xpm, readActionOn_xpm, readActionDisabled_xpm);
 	modeBox     = new geChannelMode        (readActions->x() + readActions->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, channelId);
 	mute        = new geStatusButton       (modeBox->x() + modeBox->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, muteOff_xpm, muteOn_xpm);
 	solo        = new geStatusButton       (mute->x() + mute->w() + G_GUI_INNER_MARGIN, y(), G_GUI_UNIT, G_GUI_UNIT, soloOff_xpm, soloOn_xpm);
@@ -375,7 +375,12 @@ void geSampleChannel::refresh()
 	{
 		if (c.hasData()) 
 			status->redraw();
-		readActions->setStatus(c.readActions);
+		if (c.hasActions) {
+			readActions->activate();
+			readActions->setStatus(c.readActions);
+		}
+		else
+			readActions->deactivate();
 	});
 }
 

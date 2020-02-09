@@ -40,7 +40,7 @@ class geStatusButton : public geButton
 public:
 
 	geStatusButton(int x, int y, int w, int h, const char** imgOff=nullptr,
-    const char** imgOn=nullptr);
+    const char** imgOn=nullptr, const char** imgDisabled=nullptr);
 
 	void draw() override;
 

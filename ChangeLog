@@ -17,8 +17,9 @@
 - Drop support for raw patches (still readable for backward compatibility)
 - Simplify global configuration parameters
 - Simplify column data storage in patch files
-- Center all micro-subwindow to screen
+- Center all micro-subwindows to screen
 - Revamped MIDI learning algorithm and related UI components
+- Always display 'R' button in Sample Channel
 - Don't download external files for unit tests
 - Fix crash during audio recording after opening a project (thanks AdTb!)
 

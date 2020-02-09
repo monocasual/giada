@@ -31,10 +31,11 @@
 
 
 geButton::geButton(int x, int y, int w, int h, const char* l, 
-	const char** imgOff, const char** imgOn)
+	const char** imgOff, const char** imgOn, const char** imgDisabled)
 : geBaseButton(x, y, w, h, l),
   imgOff      (imgOff),
   imgOn       (imgOn),
+  imgDisabled (imgDisabled),
   bgColor0    (G_COLOR_GREY_2),
   bgColor1    (G_COLOR_GREY_4),
   bdColor     (G_COLOR_GREY_4),
@@ -49,26 +50,29 @@ geButton::geButton(int x, int y, int w, int h, const char* l,
 void geButton::draw()
 {
 	geBaseButton::draw();
-	
-	if (!active()) txtColor = bdColor;
-	else           txtColor = G_COLOR_LIGHT_2;
 
-	fl_rect(x(), y(), w(), h(), bdColor);             // borders
-	if (value()) {                                    // -- clicked
-		if (imgOn != nullptr)
-			fl_draw_pixmap(imgOn, x()+1, y()+1);
-		else
-			fl_rectf(x(), y(), w(), h(), bgColor1);       // covers the border
-	}
-	else {                                            // -- not clicked
-		fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor0); // bg inside the border
-		if (imgOff != nullptr)
-			fl_draw_pixmap(imgOff, x()+1, y()+1);
-	}
-	if (!active())
-		fl_color(FL_INACTIVE_COLOR);
+	if (active())
+		if (value()) draw(imgOn,  bgColor1, txtColor);
+		else         draw(imgOff, bgColor0, txtColor);
+	else
+		draw(imgDisabled, bgColor0, bdColor);
+}
 
-	fl_color(txtColor);
-	fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
-	fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
+
+/* -------------------------------------------------------------------------- */
+
+
+void geButton::draw(const char** img, Fl_Color bgColor, Fl_Color textColor)
+{
+	fl_rect(x(), y(), w(), h(), bdColor);               // draw border
+
+	if (img != nullptr) {
+		fl_draw_pixmap(img, x()+1, y()+1);
+	}
+	else {
+		fl_rectf(x()+1, y()+1, w()-2, h()-2, bgColor); // draw background
+		fl_color(textColor);
+		fl_font(FL_HELVETICA, G_GUI_FONT_SIZE_BASE);
+		fl_draw(label(), x()+2, y(), w()-2, h(), FL_ALIGN_CENTER);
+	}
 }
