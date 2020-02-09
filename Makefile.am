@@ -105,8 +105,8 @@ sourcesCore =                               \
 	src/gui/dispatcher.cpp                  \
 	src/gui/updater.h                       \
 	src/gui/updater.cpp                     \
-	src/gui/storager.h                      \
-	src/gui/storager.cpp                    \
+	src/gui/model.h                         \
+	src/gui/model.cpp                       \
 	src/gui/dialogs/keyGrabber.h            \
 	src/gui/dialogs/keyGrabber.cpp          \
 	src/gui/dialogs/about.h                 \

@@ -46,7 +46,6 @@ public:
 
 private:
 
-	//static ID m_gen;
 	ID m_id;
 };
 }} // giada::m::

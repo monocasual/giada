@@ -25,33 +25,21 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "gui/dialogs/mainWindow.h"
-#include "gui/elems/mainWindow/keyboard/keyboard.h"
-#include "gui/elems/mainWindow/keyboard/column.h"
-#include "gui/elems/mainWindow/keyboard/channel.h"
-#include "storager.h"
-
-
-extern giada::v::gdMainWindow* G_MainWin;
+#ifndef G_V_MODEL_H
+#define G_V_MODEL_H
 
 
 namespace giada {
+namespace m { namespace patch
+{
+struct Patch;
+}}
 namespace v {
-namespace storager
+namespace model
 {
-void store(m::patch::Patch& patch)
-{
-    G_MainWin->keyboard->forEachColumn([&](const geColumn& c)
-    {
-        m::patch::Column pc;
-        pc.id    = c.id;
-        pc.width = c.w();
-        c.forEachChannel([&](geChannel& ch) 
-        {
-            pc.channelIds.push_back(ch.channelId);
-        });
+void store(m::patch::Patch& patch);
+void load(const m::patch::Patch& patch);
+}}} // giada::v::model
 
-        patch.columns.push_back(pc);
-    });
-}
-}}} // giada::v::storager
+
+#endif

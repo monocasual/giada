@@ -80,12 +80,13 @@ void geKeyboard::init()
 
 	/* Add 6 empty columns as initial layout. */
 
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
-	cb_addColumn();
+	layout.clear();
+	layout.push_back({1, G_DEFAULT_COLUMN_WIDTH});
+	layout.push_back({2, G_DEFAULT_COLUMN_WIDTH});
+	layout.push_back({3, G_DEFAULT_COLUMN_WIDTH});
+	layout.push_back({4, G_DEFAULT_COLUMN_WIDTH});
+	layout.push_back({5, G_DEFAULT_COLUMN_WIDTH});
+	layout.push_back({6, G_DEFAULT_COLUMN_WIDTH});
 }
 
 
@@ -94,25 +95,21 @@ void geKeyboard::init()
 
 void geKeyboard::rebuild()
 {
-	for (geColumn* c : m_columns)
-		c->init();
+	/* Wipe out all columns and add them according to the current layout. */
+
+	deleteAllColumns();
 	
+	for (ColumnLayout c : layout)
+		addColumn(c.width, c.id);
+
+	/* Parse the model and assign each channel to its column. */
+
 	m::model::ChannelsLock lock(m::model::channels);
 
-	for (const m::Channel* ch : m::model::channels) {
-		
-		if (ch->id == m::mixer::MASTER_OUT_CHANNEL_ID ||
-			ch->id == m::mixer::MASTER_IN_CHANNEL_ID  ||
-			ch->id == m::mixer::PREVIEW_CHANNEL_ID)
-			continue;
-		
-		geColumn* column = getColumn(ch->columnId);
-		if (column == nullptr)
-			column = cb_addColumn(G_DEFAULT_COLUMN_WIDTH, ch->columnId);
-		
-		column->addChannel(ch->id, ch->type, ch->height);
-	}
-
+	for (const m::Channel* ch : m::model::channels)
+		if (!ch->isInternal())
+			getColumn(ch->columnId)->addChannel(ch->id, ch->type, ch->height);
+	
 	redraw();
 }
 
@@ -122,32 +119,15 @@ void geKeyboard::rebuild()
 
 void geKeyboard::deleteColumn(ID id)
 {
-	size_t i = u::vector::indexOfIf(m_columns, [=](const geColumn* c) { return c->id == id; });
-
-	assert(i < m_columns.size());
-
-	/* Delete selected column. */
-
-	Fl::delete_widget(m_columns.at(i)->resizerBar);
-	Fl::delete_widget(m_columns.at(i));
-	m_columns.erase(m_columns.begin() + i);
-
-	/* Reposition remaining columns and 'add column' button. */
-
-	int px = G_GUI_OUTER_MARGIN;
-	for (geColumn* c : m_columns) {
-		c->position(px, c->y());
-		c->resizerBar->position(c->x() + c->w(), c->resizerBar->y());
-		px = c->resizerBar->x() + c->resizerBar->w();
-	}
-	m_addColumnBtn->position(px, y());
+	u::vector::removeIf(layout, [=](const ColumnLayout& c) { return c.id == id; });
+	rebuild();
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::deleteAllColumns()
+void geKeyboard::deleteAllColumns(bool clearLayout)
 {
 	Fl_Scroll::clear();
 	m_columns.clear();
@@ -163,7 +143,7 @@ void geKeyboard::deleteAllColumns()
 
 void geKeyboard::cb_addColumn(Fl_Widget* v, void* p)
 {
-	((geKeyboard*)p)->cb_addColumn(G_DEFAULT_COLUMN_WIDTH);
+	((geKeyboard*)p)->cb_addColumn();
 }
 
 
@@ -238,7 +218,17 @@ void geKeyboard::draw()
 /* -------------------------------------------------------------------------- */
 
 
-geColumn* geKeyboard::cb_addColumn(int width, ID id)
+void geKeyboard::cb_addColumn()
+{
+	addColumn();
+	storeLayout();
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geKeyboard::addColumn(int width, ID id)
 {
 	int colx = x() - xposition();  // Mind the x-scroll offset with xposition()
 
@@ -255,6 +245,14 @@ geColumn* geKeyboard::cb_addColumn(int width, ID id)
 
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
 	geColumn*     column = new geColumn(colx, y(), width, 20, m_columnId.get(id), bar);
+
+	/* Store the column width in layout when the resizer bar is released. */
+
+	bar->onRelease = [=](const Fl_Widget* w)
+	{
+		storeLayout();
+	};
+
 	add(column);
 	add(bar);
 	m_columns.push_back(column);
@@ -264,17 +262,6 @@ geColumn* geKeyboard::cb_addColumn(int width, ID id)
 	m_addColumnBtn->position(colx + width + COLUMN_GAP, y());
 
 	redraw();
-
-	return column;
-}
-
-
-/* -------------------------------------------------------------------------- */
-
-
-void geKeyboard::addColumn(int width, ID id)
-{
-	cb_addColumn(width, id);
 }
 
 
@@ -303,6 +290,7 @@ geColumn* geKeyboard::getColumn(ID id)
 	for (geColumn* c : m_columns) 
 		if (c->id == id)
 			return c;
+	assert(false);
 	return nullptr;
 }
 
@@ -342,4 +330,16 @@ std::vector<std::string> geKeyboard::getDroppedFilePaths() const
 			p = u::fs::stripFileUrl(p);
 	return paths;
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void geKeyboard::storeLayout()
+{
+	layout.clear();
+	for (const geColumn* c : m_columns)
+		layout.push_back({ c->id, c->w() });
+}
+
 }} // giada::v::

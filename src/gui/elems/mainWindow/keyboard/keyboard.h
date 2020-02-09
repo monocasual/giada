@@ -51,6 +51,12 @@ class geKeyboard : public Fl_Scroll
 {
 public:
 
+	struct ColumnLayout
+	{
+		ID id;
+		int width;
+	};
+
 	geKeyboard(int X, int Y, int W, int H);
 
 	int handle(int e) override;
@@ -69,7 +75,7 @@ public:
 	/* addColumn
 	Adds a new column on the top of the stack. */
 
-	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
+	//void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
 	/* deleteColumn
 	Deletes column by id. */
@@ -77,9 +83,10 @@ public:
 	void deleteColumn(ID id);
 
 	/* deleteAllColumns
-	Deletes all columns from the stack. */
+	Deletes all columns from the stack. If 'clearLayout' also wipes out the
+	layout. Sometimes you want to keep it (e.g. when rebuilding the UI). */
 
-	void deleteAllColumns();
+	void deleteAllColumns(bool clearLayout=true);
 
 	/* getChannel
 	Given a channel ID returns the UI channel it belongs to. */
@@ -94,12 +101,19 @@ public:
 	void forEachChannel(std::function<void(geChannel& c)> f) const;
 	void forEachColumn(std::function<void(const geColumn& c)> f) const;
 
+	/* layout
+	The column layout. Each element is a column with a specific witdh. */
+
+	std::vector<ColumnLayout> layout;
+
 private:
 
 	static const int COLUMN_GAP = 20;
 
 	static void cb_addColumn(Fl_Widget* v, void* p);
-	geColumn* cb_addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
+	void cb_addColumn();
+
+	void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
 
 	/* getDroppedFilePaths
 	Returns a vector of audio file paths after a drag-n-drop from desktop
@@ -116,6 +130,11 @@ private:
 	Returns the column below the cursor. */
 
 	geColumn* getColumnAtCursor(Pixel x);
+
+	/* storeLayout
+	Stores the current column layout into the layout vector. */
+	
+	void storeLayout();
 
 	m::IdManager m_columnId;
 	std::vector<geColumn*> m_columns;

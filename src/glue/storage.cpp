@@ -48,7 +48,7 @@
 #include "utils/log.h"
 #include "utils/string.h"
 #include "utils/fs.h"
-#include "gui/storager.h"
+#include "gui/model.h"
 #include "gui/elems/basics/progress.h"
 #include "gui/elems/mainWindow/keyboard/column.h"
 #include "gui/elems/mainWindow/keyboard/keyboard.h"
@@ -109,7 +109,7 @@ bool savePatch_(const std::string& path, const std::string& name)
 	m::patch::init();
 	m::patch::patch.name = name;
 	m::model::store(m::patch::patch);
-	v::storager::store(m::patch::patch);
+	v::model::store(m::patch::patch);
 
 	if (!m::patch::write(name, path))
 		return false;
@@ -184,6 +184,7 @@ void loadProject(void* data)
 
 	m::init::reset();
 	m::model::load(m::patch::patch);
+	v::model::load(m::patch::patch);
 
 	/* Prepare the engine. Recorder has to recompute the actions positions if 
 	the current samplerate != patch samplerate. Clock needs to update frames

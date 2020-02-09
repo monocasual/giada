@@ -310,6 +310,17 @@ bool Channel::isPreview() const
 /* -------------------------------------------------------------------------- */
 
 
+bool Channel::isInternal() const
+{
+    return id == mixer::MASTER_OUT_CHANNEL_ID ||
+	       id == mixer::MASTER_IN_CHANNEL_ID  ||
+	       id == mixer::PREVIEW_CHANNEL_ID;
+}
+
+
+/* -------------------------------------------------------------------------- */
+
+
 bool Channel::isReadingActions() const
 {
 	return hasActions && readActions;

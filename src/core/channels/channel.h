@@ -155,6 +155,7 @@ public:
 	bool isPlaying() const;
 	float getPan() const;
 	bool isPreview() const;
+	bool isInternal() const;
 
 	/* isMidiInAllowed
 	Given a MIDI channel 'c' tells whether this channel should be allowed to 
