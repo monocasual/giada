@@ -42,11 +42,13 @@ namespace midiDispatcher
 {
 void startChannelLearn(int param, ID channelId, std::function<void()> f);
 void startMasterLearn (int param, std::function<void()> f);
-void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
 void stopLearn();
 void clearMasterLearn (int param, std::function<void()> f);
 void clearChannelLearn(int param, ID channelId, std::function<void()> f);
+#ifdef WITH_VST
+void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
 void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f);
+#endif
 
 void dispatch(int byte1, int byte2, int byte3);
 

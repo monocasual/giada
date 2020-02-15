@@ -45,7 +45,9 @@ namespace model
 {
 void store(patch::Patch& patch)
 {
+#ifdef WITH_VST
 	PluginsLock  pl (plugins);
+#endif
 	ActionsLock  al (actions);
 	WavesLock    wl (waves);
 	ClockLock    cl (clock);
@@ -57,8 +59,10 @@ void store(patch::Patch& patch)
 	patch.quantize   = clock.get()->quantize;
 	patch.metronome  = mixer::isMetronomeOn();  // TODO - not here
 
+#ifdef WITH_VST
 	for (const Plugin* p : plugins) 
 		patch.plugins.push_back(pluginManager::serializePlugin(*p));
+#endif
 
 	patch.actions = recorderHandler::serializeActions(actions.get()->map); 
 
@@ -109,9 +113,10 @@ void load(const patch::Patch& patch)
 	{
 		a.map = std::move(recorderHandler::deserializeActions(patch.actions));
 	});
-
+#ifdef WITH_VST
     for (const patch::Plugin& pplugin : patch.plugins)
         plugins.push(pluginManager::deserializePlugin(pplugin));
+#endif
     
     for (const patch::Wave& pwave : patch.waves)
         waves.push(std::move(waveManager::deserializeWave(pwave)));	

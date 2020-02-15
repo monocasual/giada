@@ -56,11 +56,13 @@ void setSampleChannelKey(ID channelId, int k);
 
 void startChannelMidiLearn(int param, ID channelId);
 void startMasterMidiLearn (int param);
-void startPluginMidiLearn (int paramIndex, ID pluginId);
 void stopMidiLearn();
 void clearChannelMidiLearn(int param, ID channelId);
 void clearMasterMidiLearn (int param);
+#ifdef WITH_VST
+void startPluginMidiLearn (int paramIndex, ID pluginId);
 void clearPluginMidiLearn (int param, ID pluginId);
+#endif
 }}} // giada::c::io::
 
 #endif

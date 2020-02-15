@@ -327,6 +327,8 @@ void learnMaster_(MidiEvent e, int param, std::function<void()> doneCb)
 }
 
 
+#ifdef WITH_VST
+
 void learnPlugin_(MidiEvent e, int paramIndex, ID pluginId, std::function<void()> doneCb)
 {
 	model::onSwap(model::plugins, pluginId, [&](Plugin& p)
@@ -337,6 +339,8 @@ void learnPlugin_(MidiEvent e, int paramIndex, ID pluginId, std::function<void()
 	stopLearn();
 	doneCb();
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -369,10 +373,14 @@ void startMasterLearn (int param, std::function<void()> f)
 }
 
 
+#ifdef WITH_VST
+
 void startPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 {
 	learnCb_ = [=](m::MidiEvent e) { learnPlugin_(e, paramIndex, pluginId, f); };
 }
+
+#endif
 
 
 void stopLearn()
@@ -396,10 +404,14 @@ void clearChannelLearn(int param, ID channelId, std::function<void()> f)
 }
 
 
+#ifdef WITH_VST
+
 void clearPluginLearn (int paramIndex, ID pluginId, std::function<void()> f)
 {
 	learnPlugin_(MidiEvent(), paramIndex, pluginId, f); // Empty event (0x0)
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */

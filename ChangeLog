@@ -22,6 +22,7 @@
 - Always display 'R' button in Sample Channel
 - Don't download external files for unit tests
 - Fix crash during audio recording after opening a project (thanks AdTb!)
+- Optimized UI drawings for base buttons
 
 
 0.16.1 --- 2020 . 01 . 08

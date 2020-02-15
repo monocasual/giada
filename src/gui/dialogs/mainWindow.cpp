@@ -49,7 +49,7 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 {
 	Fl::visible_focus(0);
 
-	Fl::background(25, 25, 25);
+	Fl::background(25, 25, 25); // TODO use G_COLOR_GREY_1
 
 	Fl::set_boxtype(G_CUSTOM_BORDER_BOX, g_customBorderBox, 1, 1, 2, 2);
 	Fl::set_boxtype(G_CUSTOM_UP_BOX,     g_customUpBox,     1, 1, 2, 2);
@@ -62,7 +62,11 @@ gdMainWindow::gdMainWindow(int W, int H, const char* title, int argc, char** arg
 	size_range(G_MIN_GUI_WIDTH, G_MIN_GUI_HEIGHT);
 
 	mainMenu      = new v::geMainMenu(8, 0);
+#if defined(WITH_VST)
 	mainIO        = new v::geMainIO(408, 8);
+#else
+	mainIO        = new v::geMainIO(476, 8);
+#endif
 	mainTransport = new v::geMainTransport(8, 39);
 	mainTimer     = new v::geMainTimer(598, 44);
 	beatMeter     = new v::geBeatMeter(100, 83, 609, 20);

@@ -48,7 +48,7 @@ namespace giada {
 namespace v
 {
 geMainIO::geMainIO(int x, int y)
-: Fl_Pack(x, y, 396, 20)
+: Fl_Pack(x, y, 396, G_GUI_UNIT)
 {
 	type(Fl_Pack::HORIZONTAL);
 	spacing(G_GUI_INNER_MARGIN);

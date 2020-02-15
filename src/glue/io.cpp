@@ -134,10 +134,14 @@ void startMasterMidiLearn(int param)
 }
 
 
+#ifdef WITH_VST
+
 void startPluginMidiLearn(int paramIndex, ID pluginId)
 {
 	m::midiDispatcher::startPluginLearn(paramIndex, pluginId, refreshMidiWindows_);
 }
+
+#endif
 
 
 /* -------------------------------------------------------------------------- */
@@ -165,8 +169,12 @@ void clearMasterMidiLearn (int param)
 }
 
 
+#ifdef WITH_VST
+
 void clearPluginMidiLearn (int param, ID pluginId)
 {
 	m::midiDispatcher::clearPluginLearn(param, pluginId, refreshMidiWindows_);
 }
+
+#endif
 }}} // giada::c::io::
