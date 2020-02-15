@@ -47,6 +47,8 @@ public:
 
 protected:
 
+	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
+
 	const char** imgOff;
 	const char** imgOn;
 	const char** imgDisabled;
@@ -55,10 +57,6 @@ protected:
 	Fl_Color bgColor1;   // background clicked
 	Fl_Color bdColor;    // border
 	Fl_Color txtColor;	 // text
-
-private:
-
-	void draw(const char** img, Fl_Color bgColor, Fl_Color textColor);
 };
 
 

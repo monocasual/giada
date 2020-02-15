@@ -35,7 +35,7 @@
 
 geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
 	const char** imgOn, const char** imgDisabled)
-: geButton(x, y, w, h, nullptr, imgOff, imgOn, imgDisabled),
+: geButton(x, y, w, h, "", imgOff, imgOn, imgDisabled),
   m_status(false)
 {
 }
@@ -46,8 +46,11 @@ geStatusButton::geStatusButton(int x, int y, int w, int h, const char** imgOff,
 
 void geStatusButton::draw()
 {
-	geButton::draw();
-	fl_draw_pixmap(m_status ? imgOn : imgOff, x()+1, y()+1, G_COLOR_GREY_4);
+	if (active())
+		if (m_status) geButton::draw(imgOn,  bgColor1, txtColor);
+		else          geButton::draw(imgOff, bgColor0, txtColor);
+	else
+		geButton::draw(imgDisabled, bgColor0, bdColor);
 }
 
 
