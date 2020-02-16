@@ -32,7 +32,7 @@
 #include <atomic>
 #include <functional>
 #include <vector>
-#include "deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio/RtAudio.h"
 #include "core/recorder.h"
 #include "core/types.h"
 

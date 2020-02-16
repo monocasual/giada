@@ -27,7 +27,7 @@
 
 #include <cassert>
 #include <cstring>
-#include "deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio/RtAudio.h"
 #include "utils/log.h"
 #include "utils/math.h"
 #include "core/model/model.h"

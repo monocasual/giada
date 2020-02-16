@@ -27,7 +27,7 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio/RtAudio.h"
 #include "utils/log.h"
 #include "glue/main.h"
 #include "core/model/model.h"

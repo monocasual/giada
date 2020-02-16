@@ -303,8 +303,8 @@ sourcesCore =                               \
 	src/utils/ver.cpp                      \
 	src/utils/string.h                     \
 	src/utils/string.cpp                   \
-	src/deps/rtaudio-mod/RtAudio.h         \
-	src/deps/rtaudio-mod/RtAudio.cpp
+	src/deps/rtaudio/RtAudio.h         \
+	src/deps/rtaudio/RtAudio.cpp
 sourcesTests =                   \
 	tests/main.cpp               \
 	tests/rcuList.cpp            \
@@ -351,18 +351,18 @@ endif
 if WINDOWS
 
 sourcesExtra += \
-	src/deps/rtaudio-mod/include/asio.h                    \
-	src/deps/rtaudio-mod/include/asio.cpp                  \
-	src/deps/rtaudio-mod/include/asiolist.h                \
-	src/deps/rtaudio-mod/include/asiolist.cpp              \
-	src/deps/rtaudio-mod/include/asiodrivers.h             \
-	src/deps/rtaudio-mod/include/asiodrivers.cpp           \
-	src/deps/rtaudio-mod/include/iasiothiscallresolver.h   \
-	src/deps/rtaudio-mod/include/iasiothiscallresolver.cpp \
+	src/deps/rtaudio/include/asio.h                    \
+	src/deps/rtaudio/include/asio.cpp                  \
+	src/deps/rtaudio/include/asiolist.h                \
+	src/deps/rtaudio/include/asiolist.cpp              \
+	src/deps/rtaudio/include/asiodrivers.h             \
+	src/deps/rtaudio/include/asiodrivers.cpp           \
+	src/deps/rtaudio/include/iasiothiscallresolver.h   \
+	src/deps/rtaudio/include/iasiothiscallresolver.cpp \
 	resource.rc
 
 cppFlags += \
-	-I$(top_srcdir)/src/deps/rtaudio-mod/include \
+	-I$(top_srcdir)/src/deps/rtaudio/include \
 	-D__WINDOWS_ASIO__                           \
 	-D__WINDOWS_WASAPI__                         \
 	-D__WINDOWS_DS__

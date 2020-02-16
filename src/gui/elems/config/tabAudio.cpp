@@ -26,7 +26,7 @@
 
 
 #include <string>
-#include "deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio/RtAudio.h"
 #include "core/const.h"
 #include "core/conf.h"
 #include "core/kernelAudio.h"
