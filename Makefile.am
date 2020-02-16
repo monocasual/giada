@@ -369,7 +369,7 @@ cppFlags += \
 
 ldAdd += -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
   -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile -lsamplerate -lrtmidi \
-  -lwinmm -lsetupapi -lksuser -ljansson -limm32 -lglu32 -lshell32 -lversion \
+  -lwinmm -lsetupapi -lksuser -limm32 -lglu32 -lshell32 -lversion \
   -lopengl32 -loleaut32 -lshlwapi -lcomdlg32 -lflac -lvorbis -logg -lvorbisenc
 
 # Generate a GUI application (-mwindows), make the build static (-static).
@@ -383,7 +383,7 @@ if LINUX
 cppFlags += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
-  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
+  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi \
   -lfreetype -lfontconfig -lXrender -lXfixes -lXcursor -lXinerama
 
 endif
@@ -394,7 +394,7 @@ if FREEBSD
 cppFlags += -D__LINUX_PULSE__ -D__UNIX_JACK__
 
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
-  -lpthread -lpulse-simple -lpulse -lsamplerate -lrtmidi -ljansson \
+  -lpthread -lpulse-simple -lpulse -lsamplerate -lrtmidi \
   -lfreetype
 
 endif
@@ -409,7 +409,7 @@ cppFlags += -D__MACOSX_CORE__
 # -ObjC++: Juce requires to build some Objective C code
 cxxFlags += -ObjC++
 
-ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -ljansson -lm -lpthread \
+ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -lm -lpthread \
   -lFLAC -logg -lvorbis -lvorbisenc
 
 ldFlags += -framework CoreAudio -framework Cocoa -framework Carbon \

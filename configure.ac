@@ -39,7 +39,6 @@ case "$target" in
     ;;
 esac
 AM_CONDITIONAL(LINUX,   test "x$os" = "xlinux")
-AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
 AM_CONDITIONAL(WINDOWS, test "x$os" = "xwindows")
 AM_CONDITIONAL(OSX,     test "x$os" = "xosx")
 AM_CONDITIONAL(FREEBSD, test "x$os" = "xfreebsd")
@@ -95,10 +94,6 @@ AC_PROG_CXX
 # Check for Objective-C++ compiler
 
 AC_PROG_OBJCXX
-
-# Check for C compiler (TODO - is that really needed?)
-
-AC_PROG_CC
 
 # Check for make
 
