@@ -35,11 +35,13 @@
 	#include <X11/Xlib.h> // For XInitThreads
 #endif
 #include <FL/Fl.H>
+#include "deps/json/single_include/nlohmann/json.hpp"
 #include "gui/updater.h"
 #include "utils/log.h"
 #include "utils/fs.h"
 #include "utils/time.h"
 #include "utils/gui.h"
+#include "utils/ver.h"
 #include "gui/dialogs/mainWindow.h"
 #include "gui/dialogs/warnings.h"
 #include "glue/main.h"
@@ -189,6 +191,27 @@ void shutdownGUI_()
 
 	u::log::print("[init] All subwindows and UI thread closed\n");
 }
+
+
+/* -------------------------------------------------------------------------- */
+
+
+void printBuildInfo_()
+{
+	u::log::print("[init] Giada %s\n", G_VERSION_STR);
+	u::log::print("[init] Build date: " BUILD_DATE "\n");
+	u::log::print("[init] Dependencies:\n");
+	u::log::print("[init]   FLTK - %d.%d.%d\n", FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION);
+	u::log::print("[init]   RtAudio - %s\n", u::ver::getRtAudioVersion().c_str());
+	u::log::print("[init]   RtMidi - %s\n", u::ver::getRtMidiVersion().c_str());
+	u::log::print("[init]   Libsamplerate\n"); // TODO - print version
+	u::log::print("[init]   Libsndfile - %s\n", u::ver::getLibsndfileVersion().c_str());
+	u::log::print("[init]   JSON for modern C++ - %d.%d.%d\n", 
+		NLOHMANN_JSON_VERSION_MAJOR, NLOHMANN_JSON_VERSION_MINOR, NLOHMANN_JSON_VERSION_PATCH);
+#ifdef WITH_VST
+	u::log::print("[init]   JUCE - %d.%d.%d\n", JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER);
+#endif
+}
 } // {anonymous}
 
 
@@ -199,10 +222,7 @@ void shutdownGUI_()
 
 void startup(int argc, char** argv)
 {
-	time_t t;
-	time (&t);
-	u::log::print("[init] Giada %s - %s", G_VERSION_STR, ctime(&t));
-
+	printBuildInfo_();
 	initConf_();
 	initAudio_();
 	initMIDI_();

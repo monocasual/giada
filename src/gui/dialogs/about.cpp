@@ -27,7 +27,6 @@
 
 #include <FL/Fl_Pixmap.H>
 #include <FL/fl_draw.H>
-#include <jansson.h>
 #include "core/conf.h"
 #include "core/const.h"
 #include "core/graphics.h"
@@ -36,7 +35,6 @@
 #endif
 #include "utils/gui.h"
 #include "utils/string.h"
-#include "utils/ver.h"
 #include "gui/elems/basics/button.h"
 #include "gui/elems/basics/box.h"
 #include "about.h"
@@ -47,15 +45,15 @@ namespace v
 {
 gdAbout::gdAbout()
 #ifdef WITH_VST
-: gdWindow(340, 435, "About Giada")
+: gdWindow(340, 415, "About Giada")
 #else
-: gdWindow(340, 350, "About Giada")
+: gdWindow(340, 330, "About Giada")
 #endif
 {
 	set_modal();
 
 	logo  = new geBox(8, 20, 324, 86);
-	text  = new geBox(8, 120, 324, 145);
+	text  = new geBox(8, 120, 324, 140);
 	close = new geButton(252, h()-28, 80, 20, "Close");
 #ifdef WITH_VST
 	vstLogo = new geBox(8, 265, 324, 50);
@@ -65,40 +63,18 @@ gdAbout::gdAbout()
 
 	logo->image(new Fl_Pixmap(giada_logo_xpm));
 	text->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE | FL_ALIGN_TOP);
-
-	std::string message = u::string::format(
-	  "Version %s (" BUILD_DATE ")\n\n"
-		"Developed by Monocasual Laboratories\n"
-		"Based on FLTK (%d.%d.%d), RtAudio (%s),\n"
-		"RtMidi (%s), Libsamplerate, Jansson (%s),\n"
-		"Libsndfile (%s)"
-#ifdef WITH_VST
-		", JUCE (%d.%d.%d)\n\n"
-#else
-		"\n\n"
-#endif
+	text->copy_label(std::string(
+		"Version " + std::string(G_VERSION_STR) + " (" BUILD_DATE ")\n\n"
+		"Developed by Monocasual Laboratories\n\n"
 		"Released under the terms of the GNU General\n"
 		"Public License (GPL v3)\n\n"
 		"News, infos, contacts and documentation:\n"
-		"www.giadamusic.com",
-		G_VERSION_STR, FL_MAJOR_VERSION, FL_MINOR_VERSION, FL_PATCH_VERSION,
-		u::ver::getRtAudioVersion().c_str(),
-		u::ver::getRtMidiVersion().c_str(),
-		JANSSON_VERSION, u::ver::getLibsndfileVersion().c_str()
-#ifdef WITH_VST
-		, JUCE_MAJOR_VERSION, JUCE_MINOR_VERSION, JUCE_BUILDNUMBER
-#endif
-	);
-
-	int tw = 0;
-	int th = 0;
-	fl_measure(message.c_str(), tw, th);
-	text->copy_label(message.c_str());
-	text->size(text->w(), th);
+		"www.giadamusic.com").c_str());
 
 #ifdef WITH_VST
+
 	vstLogo->image(new Fl_Pixmap(vstLogo_xpm));
-	vstLogo->position(vstLogo->x(), text->y()+text->h()+8);
+	vstLogo->position(vstLogo->x(), text->y() + text->h() + 8);
 	vstText->label(
 		"VST Plug-In Technology by Steinberg\n"
 		"VST is a trademark of Steinberg\nMedia Technologies GmbH"
