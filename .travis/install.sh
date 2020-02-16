@@ -4,7 +4,6 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
   brew update
   brew install rtmidi
-  brew install jansson
   brew install libsamplerate
   brew install fltk
   brew install libsndfile
@@ -14,8 +13,6 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 
   rm -rf /usr/local/lib/librtmidi.dylib
   rm -rf /usr/local/lib/librtmidi.4.dylib
-  rm -rf /usr/local/lib/libjansson.dylib
-  rm -rf /usr/local/lib/libjansson.4.dylib
   rm -rf /usr/local/lib/libsamplerate.dylib
   rm -rf /usr/local/lib/libsamplerate.0.dylib
   rm -rf /usr/local/lib/libfltk.1.3.dylib
@@ -45,7 +42,7 @@ elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
   sudo apt-get install -y g++-7 libsndfile1-dev libsamplerate0-dev \
   	libasound2-dev libxpm-dev libpulse-dev libjack-dev \
   	libxft-dev libxrandr-dev libx11-dev libxinerama-dev libxcursor-dev \
-    libfontconfig1-dev libjansson-dev
+    libfontconfig1-dev
 
   # Symlink gcc in order to use the latest version
 
