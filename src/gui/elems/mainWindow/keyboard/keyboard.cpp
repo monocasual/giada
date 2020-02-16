@@ -127,7 +127,7 @@ void geKeyboard::deleteColumn(ID id)
 /* -------------------------------------------------------------------------- */
 
 
-void geKeyboard::deleteAllColumns(bool clearLayout)
+void geKeyboard::deleteAllColumns()
 {
 	Fl_Scroll::clear();
 	m_columns.clear();
@@ -206,10 +206,8 @@ void geKeyboard::draw()
 		w() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2), 
 		h() - scrollbar_size() - (G_GUI_OUTER_MARGIN * 2));
 
-	for (const geColumn* c : m_columns) {
+	for (const geColumn* c : m_columns)
 		fl_rectf(c->x(), c->y() + c->h(), c->w(), h() + yposition());
-		// TODO - c->resizerBar->size(c->resizerBar->w(), c->h() < h() ? h() : c->h());
-	}
 
 	fl_pop_clip();
 }
@@ -244,7 +242,7 @@ void geKeyboard::addColumn(int width, ID id)
 	/* Add a new column + a new resizer bar. */
 
 	geResizerBar* bar    = new geResizerBar(colx + width, y(), COLUMN_GAP, h(), G_MIN_COLUMN_WIDTH, geResizerBar::HORIZONTAL);
-	geColumn*     column = new geColumn(colx, y(), width, 20, m_columnId.get(id), bar);
+	geColumn*     column = new geColumn(colx, y(), width, G_GUI_UNIT, m_columnId.get(id), bar);
 
 	/* Store the column width in layout when the resizer bar is released. */
 

@@ -72,21 +72,15 @@ public:
 
 	void refresh();
 
-	/* addColumn
-	Adds a new column on the top of the stack. */
-
-	//void addColumn(int width=G_DEFAULT_COLUMN_WIDTH, ID id=0);
-
 	/* deleteColumn
 	Deletes column by id. */
 	
 	void deleteColumn(ID id);
 
 	/* deleteAllColumns
-	Deletes all columns from the stack. If 'clearLayout' also wipes out the
-	layout. Sometimes you want to keep it (e.g. when rebuilding the UI). */
+	Deletes all columns from the stack. */
 
-	void deleteAllColumns(bool clearLayout=true);
+	void deleteAllColumns();
 
 	/* getChannel
 	Given a channel ID returns the UI channel it belongs to. */
@@ -108,7 +102,7 @@ public:
 
 private:
 
-	static const int COLUMN_GAP = 20;
+	static constexpr int COLUMN_GAP = 20;
 
 	static void cb_addColumn(Fl_Widget* v, void* p);
 	void cb_addColumn();
