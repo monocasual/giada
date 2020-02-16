@@ -8,3 +8,6 @@
 [submodule "src/deps/json"]
 	path = src/deps/json
 	url = https://github.com/nlohmann/json.git
+[submodule "src/deps/rtaudio"]
+	path = src/deps/rtaudio
+	url = git@github.com:monocasual/rtaudio.git

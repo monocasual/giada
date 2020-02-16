@@ -25,41 +25,38 @@
  * -------------------------------------------------------------------------- */
 
 
-#include "../core/const.h"
+#include "core/const.h"
 #ifdef G_OS_MAC
 	#include <RtMidi.h>
 #else
 	#include <rtmidi/RtMidi.h>
 #endif
 #include <sndfile.h>
-#include "../deps/rtaudio-mod/RtAudio.h"
+#include "deps/rtaudio/RtAudio.h"
 #include "ver.h"
 
 
-using std::string;
-
-
 namespace giada {
-namespace u     {
+namespace u {
 namespace ver  
 {
-string getLibsndfileVersion()
+std::string getLibsndfileVersion()
 {
-  char buffer[128];
-  sf_command(NULL, SFC_GET_LIB_VERSION, buffer, sizeof(buffer));
-  return string(buffer);
+	char buffer[128];
+	sf_command(nullptr, SFC_GET_LIB_VERSION, buffer, sizeof(buffer));
+	return std::string(buffer);
 }
 
 
 /* -------------------------------------------------------------------------- */
 
 
-string getRtAudioVersion()
+std::string getRtAudioVersion()
 {
 #ifdef TESTS
-		return "";
+	return "";
 #else
-  return RtAudio::getVersion();
+	return RtAudio::getVersion();
 #endif
 }
 
@@ -67,12 +64,12 @@ string getRtAudioVersion()
 /* -------------------------------------------------------------------------- */
 
 
-string getRtMidiVersion()
+std::string getRtMidiVersion()
 {
 #ifdef TESTS
-		return "";
+	return "";
 #else
-  return RtMidi::getVersion();
+	return RtMidi::getVersion();
 #endif
 }
 }}};  // giada::u::ver::
