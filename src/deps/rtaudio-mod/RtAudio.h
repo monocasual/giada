@@ -568,8 +568,12 @@ class RtAudio
   void showWarnings( bool value = true ) throw();
 
   /* --- Monocasual hack ---------------------------------------------------- */
-  	//protected:
+#if defined(__UNIX_JACK__)
+  void* HACK__getJackClient();
+#endif
   /* ------------------------------------------------------------------------ */
+
+protected:
 
   void openRtApi( RtAudio::Api api );
   RtApi *rtapi_;
@@ -673,13 +677,9 @@ class S24 {
 
 class RtApi
 {
-public:
+friend RtAudio;
 
-  /* --- Monocasual hack ---------------------------------------------------- */
-  #if defined(__linux__) || defined(__FreeBSD__)
-  	void *__HACK__getJackClient();
-  #endif
-  /* ------------------------------------------------------------------------ */
+public:
 
   RtApi();
   virtual ~RtApi();

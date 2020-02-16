@@ -1941,10 +1941,10 @@ struct JackHandle {
 };
 
 /* --- Monocasual hack ------------------------------------------------------ */
-#if defined(__linux__) || defined(__FreeBSD__)
-void *RtApi :: __HACK__getJackClient() {
-	JackHandle *handle = (JackHandle *) stream_.apiHandle;
-	return (void*) handle->client;
+#if defined(__UNIX_JACK__)
+void* RtAudio :: HACK__getJackClient()
+{
+  return static_cast<JackHandle*>(rtapi_->stream_.apiHandle)->client; 
 }
 #endif
 /* -------------------------------------------------------------------------- */

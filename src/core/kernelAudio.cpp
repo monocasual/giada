@@ -55,7 +55,7 @@ JackState jackState;
 
 jack_client_t* jackGetHandle()
 {
-	return static_cast<jack_client_t*>(rtSystem->rtapi_->__HACK__getJackClient());
+	return static_cast<jack_client_t*>(rtSystem->HACK__getJackClient());
 }
 
 #endif
