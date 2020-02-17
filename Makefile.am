@@ -329,16 +329,16 @@ sourcesExtra += \
 	src/deps/juce/modules/juce_gui_extra/juce_gui_extra.cpp
 
 cppFlags += \
-  -I$(top_srcdir)/src/deps/juce/modules      \
-  -I$(top_srcdir)/src/deps/vst               \
-  -I/usr/include                             \
-  -I/usr/include/freetype2                   \
-  -DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1   \
-  -DJUCE_STANDALONE_APPLICATION=1            \
-  -DJUCE_PLUGINHOST_VST=1                    \
-  -DJUCE_PLUGINHOST_VST3=0                   \
-  -DJUCE_PLUGINHOST_AU=0                     \
-  -DJUCE_WEB_BROWSER=0 
+	-I$(top_srcdir)/src/deps/juce/modules      \
+	-I$(top_srcdir)/src/deps/vst               \
+	-I/usr/include                             \
+	-I/usr/include/freetype2                   \
+	-DJUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1   \
+	-DJUCE_STANDALONE_APPLICATION=1            \
+	-DJUCE_PLUGINHOST_VST=1                    \
+	-DJUCE_PLUGINHOST_VST3=0                   \
+	-DJUCE_PLUGINHOST_AU=0                     \
+	-DJUCE_WEB_BROWSER=0 
 
 endif
 
@@ -368,9 +368,10 @@ cppFlags += \
 	-D__WINDOWS_DS__
 
 ldAdd += -ldsound -lwsock32 -lm -lfltk -lwininet -lgdi32 -lshell32 -lvfw32 \
-  -lrpcrt4 -luuid -lcomctl32 -lole32 -lws2_32 -lsndfile -lsamplerate -lrtmidi \
-  -lwinmm -lsetupapi -lksuser -limm32 -lglu32 -lshell32 -lversion \
-  -lopengl32 -loleaut32 -lshlwapi -lcomdlg32 -lflac -lvorbis -logg -lvorbisenc
+	-lrpcrt4 -luuid -lcomctl32 -lws2_32 -lsndfile -lsamplerate -lrtmidi \
+	-lsetupapi -limm32 -lglu32 -lshell32 -lversion \
+	-lopengl32 -loleaut32 -lshlwapi -lcomdlg32 -lflac -lvorbis -logg -lvorbisenc \
+	-lole32 -lwinmm -lksuser -lmfplat -lmfuuid -lwmcodecdspuuid
 
 # Generate a GUI application (-mwindows), make the build static (-static).
 ldFlags += -mwindows -static
@@ -383,8 +384,8 @@ if LINUX
 cppFlags += -D__LINUX_ALSA__ -D__LINUX_PULSE__ -D__UNIX_JACK__
 
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
-  -lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi \
-  -lfreetype -lfontconfig -lXrender -lXfixes -lXcursor -lXinerama
+	-lpthread -ldl -lpulse-simple -lpulse -lsamplerate -lrtmidi \
+	-lfreetype -lfontconfig -lXrender -lXfixes -lXcursor -lXinerama
 
 endif
 
@@ -394,8 +395,8 @@ if FREEBSD
 cppFlags += -D__LINUX_PULSE__ -D__UNIX_JACK__
 
 ldAdd += -lsndfile -lfltk -lXext -lX11 -lXft -lXpm -lm -ljack -lasound \
-  -lpthread -lpulse-simple -lpulse -lsamplerate -lrtmidi \
-  -lfreetype
+	-lpthread -lpulse-simple -lpulse -lsamplerate -lrtmidi \
+	-lfreetype
 
 endif
 
@@ -410,11 +411,11 @@ cppFlags += -D__MACOSX_CORE__
 cxxFlags += -ObjC++
 
 ldAdd += -lsndfile -lfltk -lrtmidi -lsamplerate -lm -lpthread \
-  -lFLAC -logg -lvorbis -lvorbisenc
+	-lFLAC -logg -lvorbis -lvorbisenc
 
 ldFlags += -framework CoreAudio -framework Cocoa -framework Carbon \
-  -framework CoreMIDI -framework CoreFoundation -framework Accelerate \
-  -framework WebKit -framework QuartzCore -framework IOKit
+	-framework CoreMIDI -framework CoreFoundation -framework Accelerate \
+	-framework WebKit -framework QuartzCore -framework IOKit
 
 endif
 
