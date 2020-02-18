@@ -11,7 +11,7 @@
 --------------------------------------------------------------------------------
 
 
-0.16.2 ---
+0.16.2 --- 2020 . 02 . 18
 - Switch to Json for modern C++ library for reading and writing Json data
 - Resizable channels, improved version
 - Drop support for raw patches (still readable for backward compatibility)
@@ -21,8 +21,10 @@
 - Revamped MIDI learning algorithm and related UI components
 - Always display 'R' button in Sample Channel
 - Don't download external files for unit tests
-- Fix crash during audio recording after opening a project (thanks AdTb!)
 - Optimized UI drawings for base buttons
+- Move build info from 'About' window to console log
+- Update RtAudio to 5.1.0
+- Fix crash during audio recording after opening a project (thanks AdTb!)
 
 
 0.16.1 --- 2020 . 01 . 08
